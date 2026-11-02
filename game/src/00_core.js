@@ -112,7 +112,9 @@ M.TINT={
   // Geister in Markos Blick: blass-lavendel
   spirit: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.70+40, L*0.68+40, L*0.80+62]; }),
   // Mala in Markos Blick: kühl, blass
-  mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; })
+  mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; }),
+  // Malas Porträt: dieselbe Kühle, aber mehr eigene Farbe, damit das Gesicht lebendig bleibt
+  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; })
 };
 
 // ---------------------------------------------------------------- indizierter Puffer
@@ -233,7 +235,7 @@ M.wrap=function(s,maxw){ var out=[]; String(s).split('\n').forEach(function(par)
 var MF={
  'A':'.#.|#.#|###|#.#|#.#','B':'##.|#.#|##.|#.#|##.','C':'.##|#..|#..|#..|.##','D':'##.|#.#|#.#|#.#|##.','E':'###|#..|##.|#..|###','F':'###|#..|##.|#..|#..',
  'G':'.##|#..|#.#|#.#|.##','H':'#.#|#.#|###|#.#|#.#','I':'###|.#.|.#.|.#.|###','J':'..#|..#|..#|#.#|.#.','K':'#.#|#.#|##.|#.#|#.#','L':'#..|#..|#..|#..|###',
- 'M':'#.#|###|###|#.#|#.#','N':'###|#.#|#.#|#.#|#.#','O':'.#.|#.#|#.#|#.#|.#.','P':'##.|#.#|##.|#..|#..','Q':'.#.|#.#|#.#|.#.|..#','R':'##.|#.#|##.|#.#|#.#',
+ 'M':'#.#|###|###|#.#|#.#','N':'#..#|##.#|#.##|#..#|#..#','O':'.#.|#.#|#.#|#.#|.#.','P':'##.|#.#|##.|#..|#..','Q':'.#.|#.#|#.#|.#.|..#','R':'##.|#.#|##.|#.#|#.#',
  'S':'.##|#..|.#.|..#|##.','T':'###|.#.|.#.|.#.|.#.','U':'#.#|#.#|#.#|#.#|###','V':'#.#|#.#|#.#|.#.|.#.','W':'#.#|#.#|###|###|#.#','X':'#.#|#.#|.#.|#.#|#.#',
  'Y':'#.#|#.#|.#.|.#.|.#.','Z':'###|..#|.#.|#..|###','Č':'#.#|.##|#..|#..|.##','Š':'#.#|.##|##.|..#|##.','Ž':'#.#|###|.#.|#..|###','Ć':'..#|.##|#..|#..|.##',
  '0':'###|#.#|#.#|#.#|###','1':'.#.|##.|.#.|.#.|###','2':'##.|..#|.#.|#..|###','3':'##.|..#|.#.|..#|##.','4':'#.#|#.#|###|..#|..#','5':'###|#..|##.|..#|##.',
@@ -241,8 +243,8 @@ var MF={
  '-':'...|...|###|...|...',':':'...|.#.|...|.#.|...','/':'..#|..#|.#.|#..|#..','!':'.#.|.#.|.#.|...|.#.','?':'##.|..#|.#.|...|.#.',' ':'...|...|...|...|...',
  "'":'.#.|.#.|...|...|...','&':'.#.|#.#|.#.|#.#|.##','+':'...|.#.|###|.#.|...','=':'...|###|...|###|...'
 };
-M.microText=function(buf,s,x,y,c){ var cx=x; s.toUpperCase().split('').forEach(function(ch){ var g=(MF[ch]||MF[' ']).split('|'); for (var r=0;r<5;r++) for (var q=0;q<3;q++) if (g[r][q]==='#') buf.px(cx+q,y+r,c); cx+=4; }); };
-M.microWidth=function(s){ return s.length*4-1; };
+M.microText=function(buf,s,x,y,c){ var cx=x; s.toUpperCase().split('').forEach(function(ch){ var g=(MF[ch]||MF[' ']).split('|'), gw=g[0].length; for (var r=0;r<5;r++) for (var q=0;q<gw;q++) if (g[r][q]==='#') buf.px(cx+q,y+r,c); cx+=gw+1; }); };
+M.microWidth=function(s){ var w=0; s.toUpperCase().split('').forEach(function(ch){ w+=(MF[ch]||MF[' ']).split('|')[0].length+1; }); return Math.max(0,w-1); };
 // große Schrift (skaliert, mit Schatten)
 M.big=function(buf,s,cx,y,c,scale,shadow){ scale=scale||2; var w=M.textWidth(s), tmp=new Buf(w+2,12,T); M.text(tmp,s,0,2,c); var x0=Math.round(cx-w*scale/2);
   if (shadow!==false) for (var yy=0;yy<tmp.h;yy++) for (var xx=0;xx<tmp.w;xx++) if (tmp.get(xx,yy)!==T) buf.rect(x0+xx*scale+1,y+(yy-2)*scale+1,scale,scale,shadow===undefined?P.k0:shadow);

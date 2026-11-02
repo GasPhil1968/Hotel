@@ -13,8 +13,8 @@ var WINR=[152,10,24,16];          // kleines hohes Fenster
 var DOOR=[27,50,27,54];           // Tür zurück ins Büro
 var DESK=[144,196,80];            // Schreibtisch x0,x1,Platte
 var BOXR=[278,58,19,46];          // Kartonstapel rechts
-var BX=0, BY=0;                   // Position des falschen Ordners (aus paint)
-var GAPX=0, GAPY=0;               // Position der Lücke
+var BX=60+4+3*7, BY=2+6;          // Position des falschen Ordners (4. Ordner der 40er-Reihe; paint bestätigt sie)
+var GAPX=200+4+4*7, GAPY=36+6;    // Position der Lücke bei den 80ern
 // Ordnerfarben je Jahrzehnt (dunkel, mittel, hell)
 var DEC={ 40:['w0','w1','w2'], 50:['g0','g1','g2'], 60:['r0','r1','r2'], 70:['e0','e1','e2'], 80:['c0','c1','c2'], 90:['k1','m0','m1'] };
 function R(s){ return M.R(s); }

@@ -88,7 +88,7 @@ function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
   if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', pb=portraitBuf(other,'n'), hot=hoverUI==='sw'&&pointer.show;
   var cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
-  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.mala.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
+  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.malaP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -133,7 +133,7 @@ function drawPortrait(a,pos,mirror,speaking,dim){ var x0=pos[0], y0=pos[1], hd='
   // Rahmen + Hintergrund (abhängig von Geist / Lebend)
   var ghostLook=a.ghost && !isG(), bgR=a.ghost?M.R('x0 x1 x2'):(isG()?M.R('k1 k2 n0'):M.R('w0 w1 w2'));
   for (var y=0;y<PR_H;y++) for (var x=0;x<PR_W;x++){ var v=y/PR_H; var col=M.rampAt(bgR,0.7-v*0.6,x0+x,y0+y);
-    var bx=Math.floor((mirror?(PR_W-1-x):x)/sc), by=Math.floor((y0+y-oy)/sc); if (by>=0&&by<pb.h&&bx>=0&&bx<pb.w){ var pc=pb.d[by*pb.w+bx]; if (pc!==T){ col=pc; if (ghostLook) col=(a.id==='mala'?M.TINT.mala:M.TINT.spirit).a[col]; else if (isG() && !a.ghost) col=M.tintPx(M.TINT.ghost,col,x,y); } }
+    var bx=Math.floor((mirror?(PR_W-1-x):x)/sc), by=Math.floor((y0+y-oy)/sc); if (by>=0&&by<pb.h&&bx>=0&&bx<pb.w){ var pc=pb.d[by*pb.w+bx]; if (pc!==T){ col=pc; if (ghostLook) col=(a.id==='mala'?M.TINT.malaP:M.TINT.spirit).a[col]; else if (isG() && !a.ghost) col=M.tintPx(M.TINT.ghost,col,x,y); } }
     if (dim) col=M.DN[col]; fb.px(x0+x,y0+y,col); }
   var fr=a.ghost?P.x2:c.fr; fb.hl(x0-1,x0+PR_W,y0-1,fr); fb.hl(x0-1,x0+PR_W,y0+PR_H,fr); fb.vl(x0-1,y0-1,y0+PR_H,fr); fb.vl(x0+PR_W,y0-1,y0+PR_H,fr);
   var nm=a.name||a.id, nw=M.textWidth(nm); M.text(fb,nm,x0+Math.floor((PR_W-nw)/2),y0+PR_H+4,dim?P.k2:(a.color===undefined?P.s6:a.color),P.k0); }

@@ -137,6 +137,14 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), x, y, i, k, night=tod==='ni
   M.light(b,LF);
   var warm=function(x,y){ return doorLight(x,y)*1.1+(night?0:winBeam(x,y)+winFloor(x,y)); }, cold=function(x,y){ return night?(winBeam(x,y)*1.05+winFloor(x,y)):0; };
   finishLit(b,tod,warm,cold);
+  // Schlüsseldetails nach dem Licht in festen Farben: T.P. auf dem Seesack, das Foto, der Kerzenstummel
+  var lb=night?[P.n0,P.n2,P.n3,P.n4]:[P.w1,P.e2,P.e3,P.s5], tpx=BAG[0]+15, tpy=Math.round(BAG[1]+BAG[3]*0.58)-3;
+  var tt=new M.Buf(16,5,T); M.microText(tt,'T.P.',0,0,lb[0]); b.blit(tt,tpx,tpy); b.px(tpx+1,tpy+1,lb[1]); b.px(tpx+9,tpy+3,lb[1]);
+  var phx=PHOTO[0], phy=PHOTO[1], pw=PHOTO[2], ph=PHOTO[3];
+  b.rect(phx,phy,pw,ph,night?P.n3:P.s5); b.rect(phx+1,phy+1,pw-2,ph-3,night?P.n1:P.e3); b.rect(phx+1,phy+ph-5,pw-2,3,night?P.n0:P.e2);
+  b.ellipse(phx+pw/2,phy+5,1.9,2.3,night?P.n3:P.q3); b.rect(phx+3,phy+2,4,2,night?P.k2:P.h2); b.rect(phx+2,phy+8,pw-4,3,night?P.k2:P.c1); b.px(phx+4,phy+5,night?P.n1:P.q1); b.px(phx+6,phy+5,night?P.n1:P.q1);
+  b.px(phx+Math.floor(pw/2),phy-1,P.r3); b.px(phx+Math.floor(pw/2),phy,night?P.n4:P.m3); b.px(phx+pw-1,phy+ph-1,night?P.n2:P.s3);
+  var cx2=CANDLE[0], cy2=CANDLE[1]; b.ellipse(cx2+4,cy2+6,4,1.2,night?P.n2:P.s3); b.hl(cx2+1,cx2+7,cy2+6,night?P.n3:P.s4); b.rect(cx2+3,cy2+2,2,4,night?P.n4:P.s6); b.px(cx2+3,cy2+2,night?P.n3:P.s5); b.px(cx2+4,cy2+1,P.k1); b.px(cx2+2,cy2+5,night?P.n3:P.s5); b.px(cx2+5,cy2+5,night?P.n3:P.s5);
   // ---- Lichtquellen selbst: leuchtende Ritzen, Fensterglas
   var cr=night?[P.y3,P.y4,P.y5]:[P.d5,P.d6,P.l0];
   CRACKS.forEach(function(cx,ci){ for (y=dy+1;y<dy+dh-1;y++){ if (hash(cx,y)<0.12) continue; b.px(cx,y,(y%7===0)?cr[1]:cr[ci===1?2:1]); } });
@@ -179,13 +187,14 @@ function walk(x,y){ var f=R3.floor(x,y); if (!f) return false; if (y<104||y>=139
   if (x>=218&&x<258&&y<126) return false;      // Außenborder auf dem Bock
   if (x>=258&&x<288&&y<130) return false;      // Kanister
   if (x>=100&&x<116&&y<130) return false;      // Demižana
+  if (x>=194&&x<218&&y<119) return false;      // Flaschenkiste
   return true; }
 var wqx=Math.floor(Math.min(WINQ[0][0],WINQ[3][0])), wqy=Math.floor(Math.min(WINQ[0][1],WINQ[1][1]));
 M.defineArt('shed',{
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, ghost:ghost,
   spots:{ door:[DOOR[0]-3,DOOR[1]-3,DOOR[2]+6,DOOR[3]+3], seabag:[BAG[0]-1,BAG[1]-2,BAG[2]+2,BAG[3]+2], photo:[PHOTO[0]-1,PHOTO[1]-2,PHOTO[2]+2,PHOTO[3]+3], candle:[CANDLE[0]-1,CANDLE[1],CANDLE[2]+2,CANDLE[3]+1],
     nets:[46,28,26,66], motor:[222,76,40,50], oars:[282,0,38,118], window:[wqx-2,wqy-2,Math.ceil(Math.max(WINQ[1][0],WINQ[2][0]))-wqx+4,26] },
-  stands:{ door:[142,106,'B'], seabag:[204,108,'B'], photo:[238,110,'B'], candle:[240,110,'B'], nets:[62,128,'L'], motor:[236,130,'B'], oars:[280,132,'R'], window:[58,130,'L'] },
+  stands:{ door:[142,106,'B'], seabag:[188,112,'B'], photo:[226,128,'B'], candle:[230,128,'B'], nets:[62,128,'L'], motor:[236,130,'B'], oars:[280,132,'R'], window:[58,130,'L'] },
   start:[142,108,'F'], entries:{ matejuska:[142,106,'F'] }
 });
 })(M);

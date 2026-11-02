@@ -228,8 +228,8 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0);
   palaceWall(b); protiron(b); kiosk(b); alley(b); shopHouse(b);
   bench(b,48,GY+9,40);
   // Schatten des gegenüberliegenden Säulengangs (hinter dem Betrachter) fällt vorn aufs Pflaster: Pfeiler als Streifen, Bögen als Lichtzungen
-  for (var fx=0;fx<W;fx++){ var ph=((fx+14)%40+40)%40, col=ph<6, u=col?0:(ph-6)/34, arc=Math.sqrt(Math.max(0,1-(2*u-1)*(2*u-1)));
-    var edge=col?127:Math.round(131+arc*8); for (var fyy=edge;fyy<144;fyy++){ shadePx(b,fx,fyy,(fyy-edge<1)?1:2); } }
+  for (var fyy=124;fyy<144;fyy++) for (var fx=0;fx<W;fx++){ var sx=fx-(144-fyy)*0.7, ph=((sx+14)%40+40)%40, col=ph<7, u=col?0:(ph-7)/33, arc=Math.sqrt(Math.max(0,1-(2*u-1)*(2*u-1)));
+    var edge=col?125:131+arc*9; if (fyy<edge) continue; shadePx(b,fx,fyy,(fyy-edge<1.2)?1:2); }
   // Kontaktschatten an der Fassadenkante
   for (var x=0;x<W;x++){ if (x>=PRO.x0&&x<PRO.x1) continue; shadePx(b,x,GY,1); }
   // Tauben auf den Gesimsen (statisch)
@@ -256,7 +256,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, tint=tod!=='day'?M.TIN
       for (var yy=0;yy<m.length;yy++){ var sh=Math.round(yy*0.45+Math.sin(t*10+k*2.1+li+yy*0.9)*0.7); for (var xx=0;xx<m[yy].length;xx++){ if (m[yy][xx]==='.') continue; var cc=(m[yy][xx]==='d')?M.DN[c]:c; if (yy===m.length-1||xx===0) cc=M.DN[c]; tp(lx+xx+sh,ly+yy,cc); } }
       tp(lx,ly-1,P.k1); tp(lx+m[0].length-1,ly-1,P.k1); }); }); }
 var CLOTH={ shirt:['#######','#######','##.#.##','.#####.','.#####.','.##d##.'], trous:['######','######','##..##','##..##','##..##','##..##','dd..dd'], towel:['######','######','dddddd','######','######','######'], sock:['##','##','##','###'] };
-function front(fb,v,S,GS){ M.scn.buraDebris(fb,v.t,112,140,v.cam); }
+function front(fb,v,S,GS){ M.scn.buraDebris(fb,v.t,112,140,v.cam); if (v.tod==='day') M.scn.gulls(fb,v.t*1.6,0,4,W,18,3,v.cam); }   // Möwen, von der Bura getrieben
 
 // ---------------------------------------------------------------- Lauffläche
 var WALK=function(x,y,S,GS){ return y>=110 && y<=138 && x>=6 && x<=470; };

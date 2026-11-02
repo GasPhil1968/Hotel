@@ -59,4 +59,28 @@ ${js}
 `;
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'index.html'), html);
+// Fassung als claude.ai-Artefakt: ohne eigenes Gerüst (wird beim Veröffentlichen ergänzt), ohne Offline-Teil
+const ai = process.argv.indexOf('--artifact');
+if (ai >= 0) {
+  const page = `<title>Mala in Split</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{ color-scheme:dark; background:#08070d; }
+html,body{ height:100%; margin:0; background:#08070d; overflow:hidden; touch-action:none; overscroll-behavior:none; }
+body{ box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:0; color:#82c1c9; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+#game{ display:block; image-rendering:pixelated; image-rendering:crisp-edges; touch-action:none; cursor:none; background:#08070d; }
+#hint{ display:none; color:#82c1c9; font:13px/1.4 "Courier New",monospace; text-align:center; padding:14px 18px 0; max-width:30em; }
+</style>
+<canvas id="game" width="320" height="200" aria-label="Mala in Split. Ein Point-and-Click-Adventure."></canvas>
+<div id="hint">Dreh das Gerät quer.</div>
+<script>
+window.MALA_FIT=function(){ var b=document.body, cs=getComputedStyle(b); return [b.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight), b.clientHeight]; };
+${js}
+</script>
+`;
+  const af = process.argv[ai + 1];
+  fs.mkdirSync(path.dirname(af), { recursive: true });
+  fs.writeFileSync(af, page);
+  console.log('Artefakt', af, (page.length / 1024).toFixed(0) + ' KB');
+}
 console.log('web/index.html', (html.length / 1024).toFixed(0) + ' KB', files.length + ' Module');

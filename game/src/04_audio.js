@@ -145,7 +145,7 @@ var lastDrop=0;
 function ambientTick(){ if (!AC) return; var now=AC.currentTime; if (!soundOn) return;
   beds.forEach(function(b){ if (!b.d.drops) return; if (now-lastDrop>0.07+Math.random()*0.3){ lastDrop=now; noise(now,0.02,(0.018+Math.random()*0.03)*(b.d.dv||1),'highpass',3000+Math.random()*3000,1,ambG); } });
   if (!scape) return;
-  (scape.ev||[]).forEach(function(e,i){ if (now<evNext[i]) return; evNext[i]=now+e[1]+Math.random()*(e[2]-e[1]); var p=e[4]+Math.random()*(e[5]-e[4]); try{ EV[e[0]](now+0.05,pan(p,ambG),e[3]); }catch(err){} });
+  (scape.ev||[]).forEach(function(e,i){ if (now<evNext[i]) return; evNext[i]=now+e[1]+Math.random()*(e[2]-e[1]); var p=e[4]+Math.random()*(e[5]-e[4]); try{ EV[e[0]](now+0.05,pan(p,ambG),e[3]); }catch(err){} if (M.onAmbient) M.onAmbient(e[0],p); });
   (scape.fixed||[]).forEach(function(e,i){ while (fixNext[i]<now+0.2){ var t=Math.max(fixNext[i],now); try{ EV[e[0]](t,pan(e[3],ambG),e[2],fixN[i]++); }catch(err){} fixNext[i]=t+e[1]; } }); }
 // Schritte nach Bodenart, leise, mit Position im Stereobild
 var STEP={ wood:[420,0.7,110,0.045], plank:[380,0.9,95,0.055], stone:[1000,0.6,0,0.04], tile:[1600,0.8,0,0.035], carpet:[300,0.5,0,0.025], metal:[1200,4,240,0.04], gravel:[2200,0.5,0,0.04] };

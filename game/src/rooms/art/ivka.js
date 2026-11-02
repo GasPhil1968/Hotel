@@ -210,6 +210,12 @@ function paintRoomProps(b,S){
     if (t<0.08||t>0.92||v<0.04) c=P.s5; if (Math.abs(v-0.5)<0.02) c=P.s3; if ((t>0.2&&t<0.8)&&((v>0.1&&v<0.45)||(v>0.56&&v<0.92))){ c=P.s3; if (t>0.25&&t<0.75&&((v>0.13&&v<0.42)||(v>0.59&&v<0.89))) c=P.s4; }
     if (hash(x,y)<0.05) c=P.s3; return c; });
   var kp=M.wallPt(SPEC,'L',DOOR.u0+2.5,80); dw.rect(rnd(kp[0])-1,rnd(kp[1]),3,2,P.y3); dw.px(rnd(kp[0])-1,rnd(kp[1])+3,P.k1);
+  // gesticktes Bild (Goblen) mit Segelboot an der linken Wand
+  var gq=M.wallQuad(SPEC,'L',16,30,50,68), gw=PW(b,RG.furn,zfL); gw.poly(gq,P.w2);
+  var gi=M.wallQuad(SPEC,'L',17.3,28.7,51.5,66.5); gw.poly(gi,function(x,y){ var t=(x-gi[0][0])/(gi[1][0]-gi[0][0]), top=gi[0][1]+(gi[1][1]-gi[0][1])*t, bot=gi[3][1]+(gi[2][1]-gi[3][1])*t, v=(y-top)/(bot-top), c;
+    c=v<0.45?(((x+y)%2)?P.d5:P.d4):(((x+y)%2)?P.b2:P.a3); if (v>0.25&&v<0.62&&Math.abs(t-0.5)<0.06) c=P.w1; if (v>0.22&&v<0.58&&t>0.52&&t<0.52+(v-0.22)*0.9) c=P.s5; if (v>0.6&&v<0.7&&t>0.3&&t<0.72) c=P.r2; return c; });
+  // Kruzifix über dem Bett, in der Nische
+  var cr=M.wallPt(SPEC,'R',36,66), cxr=rnd(cr[0]), cyr=rnd(cr[1]), xw=PW(b,RG.furn,36); xw.vl(cxr,cyr,cyr+9,P.w1); xw.hl(cxr-2,cxr+2,cyr+2,P.w1); xw.px(cxr,cyr+3,P.p3); xw.px(cxr,cyr+4,P.p3); xw.px(cxr+1,cyr,P.w3);
   // Haken mit dem schwarzen Mantel
   var hk=M.wallPt(SPEC,'L',HOOK.u,HOOK.v), hx=rnd(hk[0]), hy=rnd(hk[1]), cw=PW(b,RG.furn,function(){ return HOOK.u+3; });
   cw.rect(hx-1,hy-1,3,2,P.m2);
@@ -301,7 +307,7 @@ function dynamic(fb,v,S,GS){ var t=v.t, tod=v.tod, tint=tod!=='day'?M.TINT[tod]:
   var dx=GL.X0+27, dy=GL.Y0+rnd(((t*2.2)%40)); if (dy<GL.Y1-1 && Math.abs(dx-GL.MX)>1 && Math.abs(dy-GL.MY)>1){ fb.px(dx,dy,P.s6); fb.px(dx,dy-1,P.m4); } }
 
 // Geistersicht: der Stuhl am Fenster, auf dem sie siebenundzwanzig Jahre gewartet hat, und die zweite Tasse schimmern kalt
-function ghost(fb,v,S,GS){ var t=v.t, bg=(M.E&&M.E.rebuildIfDirty)?M.E.rebuildIfDirty().bg:null, G=M.TINT.ghost;
+function ghost(fb,v,S,GS){ var t=v.t, bg=LAST, G=M.TINT.ghost;
   function free(x,y){ if (!bg) return true; return fb.get(x,y)===M.tintPx(G,bg.get(x,y),x,y); }
   var r=R3.rect(CH.X0,CH.X1,CH.YB,96,CH.Z0,CH.Z1), a=0.5+0.5*Math.sin(t*1.1);
   for (var y=r[1];y<r[1]+r[3];y++) for (var x=r[0];x<r[0]+r[2];x++){ if (!bg) break; var c=bg.get(x,y), k=y*W+x; if (REG[k]!==RG.furn||DEPTH[k]>CH.Z1+0.5||DEPTH[k]<CH.Z0-0.5) continue;
@@ -317,7 +323,7 @@ var WALK=function(x,y){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=
 M.defineArt('ivka',{
   width:W, paint:paint, layers:layers, dynamic:dynamic, ghost:ghost, walk:WALK, walkG:function(){ return false; },
   spots:{ door:(function(){ var q=M.wallQuad(SPEC,'L',DOOR.u0-2,DOOR.u1+2,DOOR.v0-3,DOOR.v1); return [rnd(q[1][0]),rnd(q[1][1]),rnd(q[0][0]-q[1][0])+1,rnd(q[2][1]-q[1][1])]; })(),
-    window:[WN.X0-3,WN.Y0-2,WN.X1-WN.X0+6,WN.Y1-WN.Y0+4], chair:rr(CH.X0,CH.X1,CH.YB,96,CH.Z0,CH.Z1), cupboard:rr(CR.X0,CR.X1,CR.Y0,96,0,CR.Z1),
+    window:[WN.X0-3,WN.Y0-2,WN.X1-WN.X0+6,WN.Y1-WN.Y0+4], chair:rr(CH.X0,CH.X1,CH.YB,96,CH.Z0,CH.Z1), cupboard:(function(){ var a=ip3(CR.X0,CR.Y0,CR.Z1), c=ip3(CR.X1,CR.Y0,CR.Z1), tb=ip3(TB.X0,TB.Y0,TB.Z0); return [a[0],a[1]-3,c[0]-a[0]+1,tb[1]-a[1]+3]; })(),
     photo_tonci:(function(){ var a=ip3(PT.X0,PT.Y0,PT.Z), c=ip3(PT.X1,CR.Y0,PT.Z); return [a[0]-1,a[1]-1,c[0]-a[0]+2,c[1]-a[1]+2]; })(),
     photo_boat:(function(){ var a=ip3(PB.X0,PB.Y0,PB.Z), c=ip3(PB.X1,CR.Y0,PB.Z); return [a[0]-1,a[1]-1,c[0]-a[0]+2,c[1]-a[1]+2]; })(),
     radio:rr(RD.X0,RD.X1,RD.Y0-3,CR.Y0,RD.Z0,RD.Z1), table:rr(TB.X0,TB.X1,TB.Y0,96,TB.Z0,TB.Z1), cups:rr(102,122,TB.Y0-5,TB.Y0,47,53),

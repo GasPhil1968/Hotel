@@ -41,12 +41,12 @@ function paint(S,GS,tod){ var b=new M.Buf(320,144,P.k0), wea=M.scn.weather(GS), 
   ['06:30','09:00','12:00','15:30','19:00'].forEach(function(s,i){ M.microText(b,s,55,28+i*6,i===4?P.r2:P.k2); b.hl(75,85,30+i*6,P.s3); b.hl(75,80,32+i*6,P.s4); });
   // Aushänge: ein Zettel mit Reißzwecke, eine Bura-Warnung mit rotem Rand
   b.rect(55,61,10,8,P.s5); b.hl(56,63,63,P.s2); b.hl(56,62,65,P.s2); b.hl(56,61,67,P.s2); b.px(59,61,P.r3);
-  b.rect(68,60,19,10,P.s6); b.rect(68,60,19,1,P.r3); b.rect(68,69,19,1,P.r3); b.vl(68,60,69,P.r3); b.vl(86,60,69,P.r3); M.microText(b,'BURA',70,62,P.r2); b.hl(70,84,68,P.s3); b.px(77,60,P.y3);
+  b.rect(67,60,21,10,P.s6); b.rect(67,60,21,1,P.r3); b.rect(67,69,21,1,P.r3); b.vl(67,60,69,P.r3); b.vl(87,60,69,P.r3); M.microText(b,'BURA',70,62,P.r2); b.hl(70,84,68,P.s3); b.px(77,60,P.y3);
   // ---- Rückwand Mitte (hinter dem Tresen): Schiffsfotos, Uhr, Seekarte, Kalender
   [[98,16,15,11,0],[116,18,13,10,1],[132,15,14,12,2]].forEach(function(f){ photo(b,f[0],f[1],f[2],f[3],f[4]); });
   M.prop.clock(b,CLK[0],CLK[1],CLK[2],(tod==='night')?11:6,(tod==='night')?20:52);
   chart(b,170,15,42,26);
-  b.rect(198,44,11,13,P.s6); b.rect(198,44,11,3,P.r3); M.microText(b,'11',200,48,P.k2); b.hl(199,207,54,P.s3); b.px(203,43,P.m1);   // Kalender, November 2011
+  b.rect(210,45,11,13,P.s6); b.rect(210,45,11,3,P.r3); M.microText(b,'11',212,49,P.k2); b.hl(211,219,55,P.s3); b.px(215,44,P.m1);   // Kalender, November 2011
   // Aktenschrank, Regal mit Ordnern, Schreibtisch mit Funkgerät
   cabinet(b,96,54,16,36);
   b.rect(116,48,26,42,P.w1); for (var s=0;s<3;s++){ var sy=50+s*13; ordner(b,118,sy,22,10,s); b.hl(116,141,sy+10,P.w3); b.hl(116,141,sy+11,P.w0); }
@@ -163,7 +163,6 @@ function layers(S,GS,tod){ var L=[];
   var p0=R3.p(CX0,CY,CZ1), p1=R3.p(CX1,90,CZ1), top=R3.p(CX0,GY,CZ0), base=Math.round(R3.p(CX0,90,CZ1)[1]);
   var l=M.layer(60,30,200,82,base+1), w=M.lw(l);
   var wr={poly:function(p,c){ w.poly(p,c); }};
-  // Seitenteile (zurück zur Wand)
   // Front: senkrechte Paneele, Sockel; Deckplatte
   R3.box(wr,CX0,CX1,CY,90,CZ0,CZ1,{top:function(x,y){ return P.w4; },front:function(x,y){ var u=Math.round(x-p0[0]), c=(u%14===0)?P.w1:((u%14===1)?P.w4:((u%2)?P.w3:P.w2)); if (y>p1[1]-5) c=P.w0; if (y<p0[1]+2) c=P.w4; return c; }});
   var fl=Math.round(p0[1]); w.hl(Math.round(p0[0])-3,Math.round(p1[0])+3,fl-1,P.w5); w.hl(Math.round(p0[0])-3,Math.round(p1[0])+3,fl,P.w4); w.hl(Math.round(p0[0])-2,Math.round(p1[0])+2,fl+1,P.w1);
@@ -202,6 +201,12 @@ function dyn(fb,v,S,GS){ var t=v.t, gt=v.gt;
   var a2=(gt/1000%60)/60*Math.PI*2-Math.PI/2, ex=Math.round(CLK[0]+Math.cos(a2)*(CLK[2]-1)), ey=Math.round(CLK[1]+Math.sin(a2)*(CLK[2]-1)); fb.line(CLK[0],CLK[1],ex,ey,P.r3);
   fb.px(CLK[0],CLK[1],P.k1); }
 
+// ---------------------------------------------------------------- nur Malas Sicht: kalter Hauch unter der Archivtür
+function ghost(fb,v,S,GS){ var t=v.t, x0=ADOOR[0], y0=ADOOR[1]+ADOOR[3];
+  for (var i=0;i<14;i++){ var ph=(t*0.25+hash(i,3))%1, x=Math.round(x0+2+hash(i,4)*(ADOOR[2]-4)+Math.sin(t*1.3+i)*2-ph*10), y=Math.round(y0-ph*18-Math.sin(ph*3+i)*2);
+    if (x<0||x>=320||y<0||y>=144) continue; fb.px(x,y,ph<0.4?P.x6:(ph<0.75?P.x5:P.x3)); }
+  for (var xx=x0;xx<x0+ADOOR[2];xx++){ if (bayer(xx,y0)<0.5+Math.sin(t*2+xx*0.4)*0.3) fb.px(xx,y0,P.x5); } }
+
 // ---------------------------------------------------------------- Laufflächen
 function walk(x,y){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z;
   if (x<6||x>314||y>139) return false;
@@ -215,14 +220,14 @@ var dq=M.wallQuad(SPEC,'L',DOORL[0],DOORL[1],DOORL[2],DOORL[3]);
 var DR=(function(){ var xs=dq.map(function(p){ return p[0]; }), ys=dq.map(function(p){ return p[1]; }), x0=Math.floor(Math.min.apply(null,xs)), y0=Math.floor(Math.min.apply(null,ys)); return [x0,y0,Math.ceil(Math.max.apply(null,xs))-x0,Math.ceil(Math.max.apply(null,ys))-y0]; })();
 var CR=rr(CX0,CX1,CY,90,CZ0,CZ1);
 M.defineArt('office',{
-  width:320, paint:paint, layers:layers, walk:walk, dynamic:dyn,
+  width:320, paint:paint, layers:layers, walk:walk, dynamic:dyn, ghost:ghost,
   actorLut:function(a,S,GS,tod){ return NEONLUT; },
-  spots:{ door:DR, counter:[CR[0],CR[1]-2,CR[2],CR[3]+2], timetable:[51,19,38,40], photos:[97,14,50,15], radio:[RADIO[0]-2,RADIO[1]-10,RADIO[2]+8,RADIO[3]+12],
+  spots:{ door:DR, counter:[CR[0],CR[1]-2,CR[2],CR[3]+2], timetable:[51,16,38,43], photos:[97,14,50,15], radio:[RADIO[0]-2,RADIO[1]-10,RADIO[2]+8,RADIO[3]+12],
     clock:[CLK[0]-8,CLK[1]-8,17,17], bench:[50,68,42,25], plant:[280,72,32,68], archive_door:[ADOOR[0]-3,ADOOR[1]-3,ADOOR[2]+6,ADOOR[3]+3] },
   stands:{ door:R3.st(58,26,'L'), counter:[156,113,'B'], timetable:R3.st(70,16,'B'), photos:[122,113,'B'], radio:[188,113,'B'], clock:[158,113,'B'],
-    bench:R3.st(72,16,'B'), plant:[272,124,'R'], archive_door:R3.st(241,10,'B') },
+    bench:R3.st(72,16,'B'), plant:[272,124,'R'], archive_door:R3.st(249,10,'B') },
   actorPos:{ mladen:[150,104,'F'] },
-  start:[160,124,'L'], entries:{ riva:R3.st(60,28,'R'), archive:R3.st(241,10,'F') }
+  start:[160,124,'L'], entries:{ riva:R3.st(60,28,'R'), archive:R3.st(249,10,'F') }
 });
 var NEONLUT=M.tintMake(function(r,g,b){ return [r*0.9+2, g*0.97+8, b*0.95+10]; }).a;
 })(M);

@@ -12,13 +12,14 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 | `web/` | **Das spielbare Spiel** (eine einzige `index.html` + Offline-Service-Worker + Icons). Ordner bei Netlify hochladen oder `index.html` im Browser öffnen. Siehe `web/LIESMICH.txt` |
 | `game/src/` | Quelltext: Engine (`00`–`06`, `99`), Gegenstände & Notizen (`10`, `11`), Szenerie (`20`), Räume (`rooms/` Logik, `rooms/art/` Kunst), Story (`90`–`92`) |
 | `game/build.js` | Baut `web/index.html` aus den Quellen: `node game/build.js` |
-| `game/tools/` | Entwicklungswerkzeuge: `walkthrough.js` (automatischer Komplett-Durchlauf), `roomshot.js` (Raum-Screenshots), `sheet.js` (Figuren-Modellblatt), `icons.js` |
+| `game/tools/` | Entwicklungswerkzeuge: `walkthrough.js` (automatischer Komplett-Durchlauf), `roomshot.js` (Raum-Screenshots), `contact.js` (alle Räume und Tageszeiten auf einem Blatt), `memsheet.js` (Erinnerungsbilder), `uishots.js` (Oberfläche), `sheet.js` (Figuren-Modellblatt), `icons.js` |
 | `game/ART_API.md`, `game/ROOM_SPECS.md` | Mal-Vertrag und Raumvorgaben für die Kunst-Dateien |
 
 ## Spielen
 
 ```
 node game/build.js          # baut web/index.html
+node game/build.js --artifact out/mala.html   # zusätzlich eine Fassung für claude.ai-Artefakte
 open web/index.html         # oder bei Netlify hochladen
 ```
 

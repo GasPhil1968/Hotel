@@ -137,7 +137,9 @@ M.TINT={
   // Geister in Markos Blick: blass-lavendel
   spirit: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.70+40, L*0.68+40, L*0.80+62]; }),
   // Mala in Markos Blick: kühl, blass
-  mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; })
+  mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; }),
+  // Malas Porträt: dieselbe Kühle, aber mehr eigene Farbe, damit das Gesicht lebendig bleibt
+  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; })
 };
 
 // ---------------------------------------------------------------- indizierter Puffer
@@ -258,7 +260,7 @@ M.wrap=function(s,maxw){ var out=[]; String(s).split('\n').forEach(function(par)
 var MF={
  'A':'.#.|#.#|###|#.#|#.#','B':'##.|#.#|##.|#.#|##.','C':'.##|#..|#..|#..|.##','D':'##.|#.#|#.#|#.#|##.','E':'###|#..|##.|#..|###','F':'###|#..|##.|#..|#..',
  'G':'.##|#..|#.#|#.#|.##','H':'#.#|#.#|###|#.#|#.#','I':'###|.#.|.#.|.#.|###','J':'..#|..#|..#|#.#|.#.','K':'#.#|#.#|##.|#.#|#.#','L':'#..|#..|#..|#..|###',
- 'M':'#.#|###|###|#.#|#.#','N':'###|#.#|#.#|#.#|#.#','O':'.#.|#.#|#.#|#.#|.#.','P':'##.|#.#|##.|#..|#..','Q':'.#.|#.#|#.#|.#.|..#','R':'##.|#.#|##.|#.#|#.#',
+ 'M':'#.#|###|###|#.#|#.#','N':'#..#|##.#|#.##|#..#|#..#','O':'.#.|#.#|#.#|#.#|.#.','P':'##.|#.#|##.|#..|#..','Q':'.#.|#.#|#.#|.#.|..#','R':'##.|#.#|##.|#.#|#.#',
  'S':'.##|#..|.#.|..#|##.','T':'###|.#.|.#.|.#.|.#.','U':'#.#|#.#|#.#|#.#|###','V':'#.#|#.#|#.#|.#.|.#.','W':'#.#|#.#|###|###|#.#','X':'#.#|#.#|.#.|#.#|#.#',
  'Y':'#.#|#.#|.#.|.#.|.#.','Z':'###|..#|.#.|#..|###','Č':'#.#|.##|#..|#..|.##','Š':'#.#|.##|##.|..#|##.','Ž':'#.#|###|.#.|#..|###','Ć':'..#|.##|#..|#..|.##',
  '0':'###|#.#|#.#|#.#|###','1':'.#.|##.|.#.|.#.|###','2':'##.|..#|.#.|#..|###','3':'##.|..#|.#.|..#|##.','4':'#.#|#.#|###|..#|..#','5':'###|#..|##.|..#|##.',
@@ -266,8 +268,8 @@ var MF={
  '-':'...|...|###|...|...',':':'...|.#.|...|.#.|...','/':'..#|..#|.#.|#..|#..','!':'.#.|.#.|.#.|...|.#.','?':'##.|..#|.#.|...|.#.',' ':'...|...|...|...|...',
  "'":'.#.|.#.|...|...|...','&':'.#.|#.#|.#.|#.#|.##','+':'...|.#.|###|.#.|...','=':'...|###|...|###|...'
 };
-M.microText=function(buf,s,x,y,c){ var cx=x; s.toUpperCase().split('').forEach(function(ch){ var g=(MF[ch]||MF[' ']).split('|'); for (var r=0;r<5;r++) for (var q=0;q<3;q++) if (g[r][q]==='#') buf.px(cx+q,y+r,c); cx+=4; }); };
-M.microWidth=function(s){ return s.length*4-1; };
+M.microText=function(buf,s,x,y,c){ var cx=x; s.toUpperCase().split('').forEach(function(ch){ var g=(MF[ch]||MF[' ']).split('|'), gw=g[0].length; for (var r=0;r<5;r++) for (var q=0;q<gw;q++) if (g[r][q]==='#') buf.px(cx+q,y+r,c); cx+=gw+1; }); };
+M.microWidth=function(s){ var w=0; s.toUpperCase().split('').forEach(function(ch){ w+=(MF[ch]||MF[' ']).split('|')[0].length+1; }); return Math.max(0,w-1); };
 // große Schrift (skaliert, mit Schatten)
 M.big=function(buf,s,cx,y,c,scale,shadow){ scale=scale||2; var w=M.textWidth(s), tmp=new Buf(w+2,12,T); M.text(tmp,s,0,2,c); var x0=Math.round(cx-w*scale/2);
   if (shadow!==false) for (var yy=0;yy<tmp.h;yy++) for (var xx=0;xx<tmp.w;xx++) if (tmp.get(xx,yy)!==T) buf.rect(x0+xx*scale+1,y+(yy-2)*scale+1,scale,scale,shadow===undefined?P.k0:shadow);
@@ -827,12 +829,12 @@ var maS=[
 "..kHHHHHHk..",
 "..kHHHhHHHk.",
 ".kHHHHHSSHk.",
-".kHHHHSSSSk.",
-".kHHtSSSeSk.",
+".kHHHHSShSk.",
+".kHHsSSSeSk.",
 ".kHHSSSSSSSk",
-".kHHtSSSSSk.",
-".kHHktSSmk..",
-".kHk.ktSk...",
+".kHHsSSSSSk.",
+".kHHksSSmk..",
+".kHk.ksSk...",
 ".kHk..kk....",
 ".kHk.kttk...",
 ".kHk.ktsk...",
@@ -844,14 +846,14 @@ var maF=[
 ".kHHHHHHHk.",
 "kHHHhHHHHHk",
 "kHHSSSSSHHk",
-"kHSSSSSSSHk",
+"kHShSSShSHk",
 "kHSeSSSeSHk",
-"kHSSSStSSHk",
-"kHkSSSSSkHk",
-"kHktSmStkHk",
-"kHk.tSt.kHk",
-".k..kkk..k.",
-"...ktttk...",
+"kHSSSSSSSHk",
+"kHHSSSSSHHk",
+"kHHsSmSsHHk",
+"kHHHsSsHHHk",
+".kHHkkkHHk.",
+"..kktttkk..",
 "...kssk...."];
 var maB=[
 "...kkkkk...",
@@ -872,7 +874,7 @@ var maB=[
 "....kjk....",
 ".....k....."];
 M.defineChar('mala',{
-  legend:L({H:P.h1,h:P.h2,j:P.h3,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
+  legend:L({H:P.h2,h:P.h3,j:P.w1,S:P.p4,s:P.p3,t:P.p2,m:P.q3,e:P.n1}),
   heads:{S:HS(maS),F:HS(maF),B:{n:maB}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
   torso:{w:10,len:12,col:[P.c2,P.c3,P.c1],scarf:[P.m3,P.m4,P.m2],buttons:P.y2,side:7},
   bones:[10,10,7,7], shoulder:4, hipY:22,
@@ -1577,7 +1579,7 @@ var lastDrop=0;
 function ambientTick(){ if (!AC) return; var now=AC.currentTime; if (!soundOn) return;
   beds.forEach(function(b){ if (!b.d.drops) return; if (now-lastDrop>0.07+Math.random()*0.3){ lastDrop=now; noise(now,0.02,(0.018+Math.random()*0.03)*(b.d.dv||1),'highpass',3000+Math.random()*3000,1,ambG); } });
   if (!scape) return;
-  (scape.ev||[]).forEach(function(e,i){ if (now<evNext[i]) return; evNext[i]=now+e[1]+Math.random()*(e[2]-e[1]); var p=e[4]+Math.random()*(e[5]-e[4]); try{ EV[e[0]](now+0.05,pan(p,ambG),e[3]); }catch(err){} });
+  (scape.ev||[]).forEach(function(e,i){ if (now<evNext[i]) return; evNext[i]=now+e[1]+Math.random()*(e[2]-e[1]); var p=e[4]+Math.random()*(e[5]-e[4]); try{ EV[e[0]](now+0.05,pan(p,ambG),e[3]); }catch(err){} if (M.onAmbient) M.onAmbient(e[0],p); });
   (scape.fixed||[]).forEach(function(e,i){ while (fixNext[i]<now+0.2){ var t=Math.max(fixNext[i],now); try{ EV[e[0]](t,pan(e[3],ambG),e[2],fixN[i]++); }catch(err){} fixNext[i]=t+e[1]; } }); }
 // Schritte nach Bodenart, leise, mit Position im Stereobild
 var STEP={ wood:[420,0.7,110,0.045], plank:[380,0.9,95,0.055], stone:[1000,0.6,0,0.04], tile:[1600,0.8,0,0.035], carpet:[300,0.5,0,0.025], metal:[1200,4,240,0.04], gravel:[2200,0.5,0,0.04] };
@@ -1761,6 +1763,10 @@ function Actor(id,o){ this.id=id; this.ch=o.ch||id; this.x=o.x===undefined?160:o
 var ACT={}; M.ACT=ACT;
 function player(){ return ACT[GS.active]; }
 E.player=player;
+// Mala hält inne, wenn ein Fährhorn oder eine Glocke im Raumklang ertönt, und dreht sich zum Geräusch (nicht blockierend)
+var REACT_EV=/^(horn|hornNear|bellFar|bellSmall|bellBig)$/;
+M.onAmbient=function(name,p){ if (!REACT_EV.test(name)) return; var a=ACT.mala; if (!a||!GS.malaOn||!a.visible) return; var now=gt; if (now-(E.lastReact||-1e9)<14000) return;
+  setTimeout(function(){ if (!ACT.mala||ACT.mala!==a||a.mode!=='idle'||E.busy||E.dlg||E.overlay||E.screen!=='game') return; E.lastReact=gt; if (p<-0.25) a.f='L'; else if (p>0.25) a.f='R'; playAnimOn(a,'look'); },500); };
 function charAnim(a,name){ var ch=M.CHARS[a.ch]; return (ch&&ch.anims&&ch.anims[name])||A_[name]; }
 function idleSetFor(a){ if (a.idle){ var an=charAnim(a,a.idle); if (an) return an; } if (a.ghost && a.id==='mala') return a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); return a.f==='F'?A_.idleF:(a.f==='B'?A_.idleB:A_.idleS); }
 function setIdle(a){ a.mode='idle'; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
@@ -2094,7 +2100,8 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
   if (!M.PHASES[base.phase]) return null; ['marko','mala'].forEach(function(k){ if (!base.pos[k]||!M.ROOMS[base.pos[k].room]) base.pos[k]={room:base.pos.marko&&M.ROOMS[base.pos.marko.room]?base.pos.marko.room:'flat',x:160,y:120,f:'R'}; });
   if (M.ROOMS[base.pos[base.active].room].noSave) return null; return base; }
 function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; var d=JSON.parse(raw), base=validate(d); if (!base) return false;
-    setGame(base); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null;
+    setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
+    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false); if (M.startGame) M.startGame(API); };
@@ -2245,7 +2252,7 @@ function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
   if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', pb=portraitBuf(other,'n'), hot=hoverUI==='sw'&&pointer.show;
   var cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
-  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.mala.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
+  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.malaP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -2290,7 +2297,7 @@ function drawPortrait(a,pos,mirror,speaking,dim){ var x0=pos[0], y0=pos[1], hd='
   // Rahmen + Hintergrund (abhängig von Geist / Lebend)
   var ghostLook=a.ghost && !isG(), bgR=a.ghost?M.R('x0 x1 x2'):(isG()?M.R('k1 k2 n0'):M.R('w0 w1 w2'));
   for (var y=0;y<PR_H;y++) for (var x=0;x<PR_W;x++){ var v=y/PR_H; var col=M.rampAt(bgR,0.7-v*0.6,x0+x,y0+y);
-    var bx=Math.floor((mirror?(PR_W-1-x):x)/sc), by=Math.floor((y0+y-oy)/sc); if (by>=0&&by<pb.h&&bx>=0&&bx<pb.w){ var pc=pb.d[by*pb.w+bx]; if (pc!==T){ col=pc; if (ghostLook) col=(a.id==='mala'?M.TINT.mala:M.TINT.spirit).a[col]; else if (isG() && !a.ghost) col=M.tintPx(M.TINT.ghost,col,x,y); } }
+    var bx=Math.floor((mirror?(PR_W-1-x):x)/sc), by=Math.floor((y0+y-oy)/sc); if (by>=0&&by<pb.h&&bx>=0&&bx<pb.w){ var pc=pb.d[by*pb.w+bx]; if (pc!==T){ col=pc; if (ghostLook) col=(a.id==='mala'?M.TINT.malaP:M.TINT.spirit).a[col]; else if (isG() && !a.ghost) col=M.tintPx(M.TINT.ghost,col,x,y); } }
     if (dim) col=M.DN[col]; fb.px(x0+x,y0+y,col); }
   var fr=a.ghost?P.x2:c.fr; fb.hl(x0-1,x0+PR_W,y0-1,fr); fb.hl(x0-1,x0+PR_W,y0+PR_H,fr); fb.vl(x0-1,y0-1,y0+PR_H,fr); fb.vl(x0+PR_W,y0-1,y0+PR_H,fr);
   var nm=a.name||a.id, nw=M.textWidth(nm); M.text(fb,nm,x0+Math.floor((PR_W-nw)/2),y0+PR_H+4,dim?P.k2:(a.color===undefined?P.s6:a.color),P.k0); }
@@ -2843,8 +2850,8 @@ var WINR=[152,10,24,16];          // kleines hohes Fenster
 var DOOR=[27,50,27,54];           // Tür zurück ins Büro
 var DESK=[144,196,80];            // Schreibtisch x0,x1,Platte
 var BOXR=[278,58,19,46];          // Kartonstapel rechts
-var BX=0, BY=0;                   // Position des falschen Ordners (aus paint)
-var GAPX=0, GAPY=0;               // Position der Lücke
+var BX=60+4+3*7, BY=2+6;          // Position des falschen Ordners (4. Ordner der 40er-Reihe; paint bestätigt sie)
+var GAPX=200+4+4*7, GAPY=36+6;    // Position der Lücke bei den 80ern
 // Ordnerfarben je Jahrzehnt (dunkel, mittel, hell)
 var DEC={ 40:['w0','w1','w2'], 50:['g0','g1','g2'], 60:['r0','r1','r2'], 70:['e0','e1','e2'], 80:['c0','c1','c2'], 90:['k1','m0','m1'] };
 function R(s){ return M.R(s); }
@@ -3033,26 +3040,26 @@ function motif(w,h,o){ o=o||{}; var b=new M.Buf(w,h,P.k0), hz=Math.round(h*(o.hz
   var kw=Math.max(3,Math.round(w*0.17)), kh=Math.max(3,Math.round(h*0.24)), kx=Math.max(1,Math.round(w*(o.kx||0.1))), ky=qy-kh;
   b.rect(kx,ky,kw,kh,P.k2); b.rect(kx+1,ky+1,Math.max(1,kw-2),Math.max(1,kh-2),P.y3); b.hl(kx-1,kx+kw,ky-1,P.n2); if (kw>4) b.px(kx+1,ky+1,P.y5);
   for (var ly=qy-1;ly>=Math.max(0,qy-Math.round(h*0.12));ly--) for (var lx=kx-1;lx<kx+kw+3;lx++) if (bayer(lx,ly)<0.25) b.px(lx,ly,P.y1);
-  var px=kx+kw+Math.max(1,Math.round(w*0.04)), ph=Math.max(3,Math.round(h*0.22)); b.vl(px,qy-ph,qy-1,P.k0); b.px(px,qy-ph-1,P.k0); if (ph>4){ b.vl(px+1,qy-ph+1,qy-2,P.k0); b.px(px-1,qy-ph+2,P.k1); }
+  var px=kx+kw+Math.max(1,Math.round(w*0.04)), ph=Math.max(3,Math.round(h*0.22)); if (!o.unfinished){ b.vl(px,qy-ph,qy-1,P.k0); b.px(px,qy-ph-1,P.k0); if (ph>4){ b.vl(px+1,qy-ph+1,qy-2,P.k0); b.px(px-1,qy-ph+2,P.k1); } }
   if (w>18){ var lp=Math.round(w*0.62); b.vl(lp,qy-Math.round(h*0.3),qy-1,P.k1); b.px(lp,qy-Math.round(h*0.3)-1,P.y5); }
-  if (o.unfinished){ // rechte Hälfte und unten noch rohe Leinwand mit Bleistiftlinien
-    for (y=0;y<h;y++) for (x=0;x<w;x++){ var raw=(x>w*0.58 && y>h*0.18) || (y>h*0.82 && x>w*0.3); if (!raw) continue; var c2=(hash(x,y)<0.08)?P.s4:P.s5; if (x>w*0.58 && x<w*0.62 && bayer(x,y)<0.5) c2=P.n1; b.px(x,y,c2); }
-    b.line(Math.round(w*0.62),hz-2,w-3,hz-2,P.s2); b.line(Math.round(w*0.66),hz-5,Math.round(w*0.86),hz-5,P.s2); b.line(Math.round(w*0.66),hz-5,Math.round(w*0.64),hz-2,P.s2); b.px(Math.round(w*0.78),hz-7,P.s2);
-    b.line(Math.round(w*0.35),h-3,w-4,h-3,P.s3); }
+  if (o.unfinished){ // Fähre und Himmel sind fertig; unten links (Kai, Kiosk, die Gestalt) noch rohe Leinwand mit Bleistiftlinien
+    for (y=0;y<h;y++) for (x=0;x<w;x++){ var raw=(x<w*0.45 && y>h*0.62) || (y>h*0.86); if (!raw) continue; var c2=(hash(x,y)<0.08)?P.s4:P.s5; if (Math.abs(y-h*0.62)<1 && x<w*0.45 && bayer(x,y)<0.5) c2=P.n1; b.px(x,y,c2); }
+    var k0=Math.round(w*0.08), k1=Math.round(w*0.25), ky0=Math.round(h*0.66), ky1=h-3;
+    b.line(k0,ky0,k1,ky0,P.s2); b.line(k0,ky0,k0,ky1,P.s2); b.line(k1,ky0,k1,ky1,P.s2); b.line(k0+1,ky0+3,k1-1,ky0+3,P.s3); b.line(0,ky1,Math.round(w*0.45),ky1,P.s3); }
   return b; }
 // Bild auf einer Wandfläche (senkrechte Kanten, schräge Ober-/Unterkante)
 function onQuad(b,Q,src,shade){ var xl=Math.min(Q[0][0],Q[3][0]), xr=Math.max(Q[1][0],Q[2][0]);
   for (var x=Math.ceil(xl);x<=Math.floor(xr);x++){ var u=(x-Q[0][0])/(Q[1][0]-Q[0][0]); if (u<0||u>1) continue; var top=Q[0][1]+(Q[1][1]-Q[0][1])*u, bot=Q[3][1]+(Q[2][1]-Q[3][1])*u;
     for (var y=Math.ceil(top);y<=Math.floor(bot);y++){ var v=(y-top)/Math.max(1,bot-top), c=src.get(Math.min(src.w-1,Math.floor(u*src.w)),Math.min(src.h-1,Math.floor(v*src.h))); if (shade) c=M.step(c,shade); b.px(x,y,c); } } }
 // Leinwand von hinten: rohes Tuch, Keilrahmen mit Kreuz
-function canvasBack(b,x,y,w,h){ b.rect(x,y,w,h,P.e4); for (var yy=y;yy<y+h;yy++) for (var xx=x;xx<x+w;xx++) if (hash(xx,yy)<0.1) b.px(xx,yy,P.e3);
-  b.rect(x,y,w,2,P.w3); b.rect(x,y+h-2,w,2,P.w2); b.rect(x,y,2,h,P.w3); b.rect(x+w-2,y,2,h,P.w2); b.vl(x+(w>>1),y,y+h-1,P.w2); if (h>12) b.hl(x,x+w-1,y+(h>>1),P.w2); b.hl(x,x+w-1,y,P.w4); }
+function canvasBack(b,x,y,w,h){ b.rect(x,y,w,h,P.s4); for (var yy=y;yy<y+h;yy++) for (var xx=x;xx<x+w;xx++) if (hash(xx,yy)<0.12) b.px(xx,yy,P.e4);
+  b.rect(x,y,w,1,P.w3); b.rect(x,y+h-1,w,1,P.w2); b.rect(x,y,1,h,P.w3); b.rect(x+w-1,y,1,h,P.w1); b.line(x+1,y+1,x+w-2,y+h-2,P.w2); b.line(x+w-2,y+1,x+1,y+h-2,P.w2); b.hl(x,x+w-1,y,P.w4); M.microText(b,'N.B.',x+2,y+h-7,P.s2); }
 // Leinwand von vorn mit dem Motiv und schmalem Rand
 function canvasFront(b,x,y,w,h,o){ var m=motif(w-2,h-2,o); b.rect(x,y,w,h,P.e3); b.blit(m,x+1,y+1); b.hl(x,x+w-1,y,P.e4); b.vl(x+w-1,y,y+h-1,P.e2); b.hl(x,x+w-1,y+h-1,P.e1); }
 
-function wallBack(u,v,x,y){ var n=Math.sin(u*0.06+v*0.03)+Math.sin(u*0.17-v*0.05)*0.5+(hash(u>>3,v>>2)-0.5); var c=M.rampAt(M.R('s2 s3 s4'),0.55+n*0.12,x,y); if (v>=72) c=(v===72)?P.w2:P.w1; return c; }
-function wallSide(u,v,x,y,sd){ var n=Math.sin(u*0.11+v*0.03+(sd==='L'?0:3))+(hash((u*2)>>2,v>>2)-0.5); var c=M.rampAt(M.R('s1 s2 s3'),0.55+n*0.13,x,y); if (v>=72) c=(v===72)?P.w2:P.w0; return sd==='L'?c:M.DN[c]; }
-function floorTex(xb,d,x,y){ var c=tex.planks(xb,y,VP[1],FY,M.R('w0 w1 w2 w3'),8); var f=R3.floor(x,y); if (f && f.X>140 && f.X<200 && f.Z>20 && f.Z<56 && hash(Math.floor(f.X/2),Math.floor(f.Z/2))<0.035) c=[P.r2,P.n2,P.y2,P.s4][Math.floor(hash(f.Z,f.X)*4)]; return c; }   // ein paar Farbspritzer unter der Staffelei
+function wallBack(u,v,x,y){ var n=Math.sin(u*0.06+v*0.03)+Math.sin(u*0.17-v*0.05)*0.5+(hash(u>>3,v>>2)-0.5); var c=M.rampAt(M.R('s2 s3 s4'),0.5+n*0.05+(v>50?-0.08:0),x,y); if (hash(u>>2,v>>1)<0.03) c=M.DN[c]; if (v>=72) c=(v===72)?P.w2:P.w1; return c; }
+function wallSide(u,v,x,y,sd){ var n=Math.sin(u*0.11+v*0.03+(sd==='L'?0:3))+(hash((u*2)>>2,v>>2)-0.5); var c=M.rampAt(M.R('s1 s2 s3'),0.5+n*0.06,x,y); if (v>=72) c=(v===72)?P.w2:P.w0; return sd==='L'?c:M.DN[c]; }
+function floorTex(xb,d,x,y){ var c=tex.planks(xb,y,VP[1],FY,M.R('w0 w1 w2 w3'),8); var f=R3.floor(x,y); if (f && f.X>140 && f.X<200 && f.Z>20 && f.Z<56 && hash(Math.floor(f.X/2),Math.floor(f.Z/2))<0.035) c=[P.b1,P.n2,P.b2,P.y2][Math.floor(hash(f.Z,f.X)*4)]; return c; }   // ein paar Farbspritzer (viel Blau) unter der Staffelei
 function ceilTex(xb,d,x,y){ return ((Math.floor(xb)%20)<2)?P.k2:P.w0; }
 
 function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
@@ -3065,7 +3072,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
   for (y=wy;y<wy+wh;y++) for (x=wx;x<wx+ww;x++){ var c=(y<wy+6)?P.b4:(y<wy+10?P.s5:P.s4); if (y>=wy+10 && ((x+y)%5===0)) c=P.s3; b.px(x,y,c); }
   [wx+5,wx+11].forEach(function(gx){ b.vl(gx,wy,wy+wh-1,P.k2); }); b.hl(wx,wx+ww-1,wy+7,P.k2);
   // ---- an der Rückwand: das gerahmte Ticket, die Skizze, ein Bild, Regal mit Farbgläsern
-  var tk=TICKET; b.rect(tk[0]-1,tk[1]-1,tk[2]+2,tk[3]+2,P.e1); b.rect(tk[0],tk[1],tk[2],tk[3],P.k1); b.rect(tk[0]+1,tk[1]+1,tk[2]-2,tk[3]-2,P.k2); b.hl(tk[0],tk[0]+tk[2]-1,tk[1],P.m1);
+  var tk=TICKET; b.rect(tk[0]-1,tk[1]-1,tk[2]+2,tk[3]+2,P.k0); b.rect(tk[0],tk[1],tk[2],tk[3],P.k1); b.rect(tk[0]+1,tk[1]+1,tk[2]-2,tk[3]-2,P.k2); b.hl(tk[0],tk[0]+tk[2]-1,tk[1],P.m1); b.vl(tk[0],tk[1],tk[1]+tk[3]-1,P.m0);
   b.rect(tk[0]+2,tk[1]+2,tk[2]-4,tk[3]-4,P.s5); b.rect(tk[0]+2,tk[1]+2,tk[2]-4,2,P.b1); b.hl(tk[0]+3,tk[0]+tk[2]-5,tk[1]+5,P.s3); b.hl(tk[0]+3,tk[0]+6,tk[1]+6,P.s3); b.px(tk[0]+tk[2]-4,tk[1]+6,P.r3);
   b.px(tk[0]+(tk[2]>>1),tk[1]-3,P.k2); b.line(tk[0]+(tk[2]>>1),tk[1]-3,tk[0]+2,tk[1]-1,P.s1); b.line(tk[0]+(tk[2]>>1),tk[1]-3,tk[0]+tk[2]-3,tk[1]-1,P.s1);
   // Bleistiftskizze: junger Mann mit Gitarre, mit einer Nadel angepinnt, Ecke eingerollt
@@ -3077,7 +3084,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
   b.hl(sk[0]+2,sk[0]+sk[2]-3,sk[1]+sk[3]-2,P.s3);
   canvasFront(b,140,40,26,18,{seed:4,fx:0.5});
   b.rect(172,46,34,2,P.w2); b.hl(172,205,46,P.w3); b.hl(173,204,48,P.k2);    // Regalbrett
-  [[174,'r3'],[179,'b2'],[184,'y3'],[189,'s5'],[194,'g3'],[199,'t3']].forEach(function(t){ b.rect(t[0],41,4,5,P.a5); b.rect(t[0],43,4,3,P[t[1]]); b.hl(t[0],t[0]+3,40,P.m2); b.px(t[0],42,P.s6); });
+  [[174,'b1'],[179,'n2'],[184,'b2'],[189,'a3'],[194,'y3'],[199,'b3']].forEach(function(t){ b.rect(t[0],41,4,5,P.a5); b.rect(t[0],43,4,3,P[t[1]]); b.hl(t[0],t[0]+3,40,P.m2); b.px(t[0],42,P.s6); });
   // Leinwände an der Rückwand (frontal), unten gestapelt
   canvasFront(b,98,58,22,16,{seed:8,fx:0.55}); canvasBack(b,104,62,18,26); canvasFront(b,186,54,26,20,{seed:12,fx:0.4,kx:0.15}); canvasFront(b,196,68,16,20,{seed:15,fx:0.45});
   // ---- linke Wand: Vorhang zum Laden (Tür), Leinwände schräg an der Wand
@@ -3097,15 +3104,15 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
   // ---- Tisch mit Farben: Gläser, Pinsel in Dosen, Palette, Lappen (vorne rechts)
   R3.box(b,196,212,74,FY,22,44,{top:function(x,y){ var c=(hash(x>>1,y)<0.3)?P.w2:P.w3; if (hash(x,y)<0.08) c=[P.r3,P.b3,P.y4,P.g4][Math.floor(hash(y,x)*4)]; return c; },left:function(x,y){ return ((y%5)===0)?P.w0:P.w1; }});
   var tp=function(X,Z){ var p=R3.p(X,74,Z); return [rnd(p[0]),rnd(p[1])]; };
-  [[199,26,'r3'],[203,28,'b2'],[207,25,'y3'],[200,33,'s5']].forEach(function(t){ var p=tp(t[0],t[1]); b.rect(p[0],p[1]-6,4,6,P.a5); b.rect(p[0],p[1]-4,4,4,P[t[2]]); b.hl(p[0],p[0]+3,p[1]-7,P.m2); b.px(p[0],p[1]-5,P.s6); });
+  [[199,26,'b1'],[203,28,'n2'],[207,25,'b3'],[200,33,'y3'],[208,32,'c2']].forEach(function(t){ var p=tp(t[0],t[1]); b.rect(p[0],p[1]-6,4,6,P.a5); b.rect(p[0],p[1]-4,4,4,P[t[2]]); b.hl(p[0],p[0]+3,p[1]-7,P.m2); b.px(p[0],p[1]-5,P.s6); });
   [[205,34],[200,40]].forEach(function(t,i){ var p=tp(t[0],t[1]); b.rect(p[0],p[1]-6,5,6,P.m2); b.vl(p[0],p[1]-6,p[1]-1,P.m4); for (var k=0;k<4;k++){ b.line(p[0]+1+k,p[1]-6,p[0]-1+k*2,p[1]-14-(k%2)*2,[P.w4,P.w3,P.y2,P.w2][k]); b.px(p[0]-1+k*2,p[1]-14-(k%2)*2,[P.r3,P.b2,P.k2,P.y3][k]); } });
-  var pl=tp(207,40); b.ellipse(pl[0]+3,pl[1]-1,5,1.8,P.w4); [P.r3,P.y4,P.b3,P.s6,P.g4].forEach(function(c,i){ b.px(pl[0]+i*2,pl[1]-1-(i%2),c); });
-  var rg=tp(201,42); b.rect(rg[0]-4,rg[1]-2,6,3,P.s4); b.px(rg[0]-3,rg[1]-1,P.b3); b.px(rg[0],rg[1]-2,P.r2);
+  var pl=tp(207,40); b.ellipse(pl[0]+3,pl[1]-1,5,1.8,P.w4); [P.b2,P.y4,P.n2,P.s6,P.b3].forEach(function(c,i){ b.px(pl[0]+i*2,pl[1]-1-(i%2),c); }); b.px(pl[0]+3,pl[1],P.b1);
+  var rg=tp(201,42); b.rect(rg[0]-4,rg[1]-2,6,3,P.s4); b.px(rg[0]-3,rg[1]-1,P.b2); b.px(rg[0],rg[1]-2,P.b1); b.px(rg[0]-1,rg[1],P.n2);
   // Farbdosen auf dem Boden, Terpentinflasche
-  [[140,8,'m3'],[132,10,'t3'],[186,16,'m2']].forEach(function(t){ var p=R3.p(t[0],FY,t[1]); b.rect(rnd(p[0]),rnd(p[1])-5,5,5,P[t[2]]); b.hl(rnd(p[0]),rnd(p[0])+4,rnd(p[1])-5,M.UP[P[t[2]]]); b.px(rnd(p[0])+1,rnd(p[1])-6,P.y3); });
+  [[140,8,'b2'],[132,10,'n2'],[186,16,'b1']].forEach(function(t){ var p=R3.p(t[0],FY,t[1]); b.rect(rnd(p[0]),rnd(p[1])-5,5,5,P[t[2]]); b.hl(rnd(p[0]),rnd(p[0])+4,rnd(p[1])-5,M.UP[P[t[2]]]); b.px(rnd(p[0])+1,rnd(p[1])-6,P.y3); });
   // ---- Licht: ein Strahl aus dem hohen Fenster fällt schräg auf Staffelei und Boden, sonst Dämmer
   var beam=M.lf.beam(WIN[0]+WIN[2]/2,WIN[1]+WIN[3],EASEL.cv[0]+EASEL.cv[2]/2+8,128,7,26,1.9);
-  M.light(b,M.lf.sum(beam,M.lf.pool(166,96,110,50,0.7),M.lf.vignette(W,144,1.5),M.lf.k(-0.55)),0,0,function(x,y){ return !(x>=WIN[0]&&x<WIN[0]+WIN[2]&&y>=WIN[1]&&y<WIN[1]+WIN[3]); });
+  M.light(b,M.lf.sum(beam,M.lf.pool(166,96,110,50,0.7),M.lf.vignette(W,144,1.1),M.lf.k(-0.55)),0,0,function(x,y){ return !(x>=WIN[0]&&x<WIN[0]+WIN[2]&&y>=WIN[1]&&y<WIN[1]+WIN[3]); });
   return M.finishTOD(b,tod,{sky:function(x,y){ return x>=WIN[0]&&x<WIN[0]+WIN[2]&&y>=WIN[1]&&y<WIN[1]+WIN[3]; }}); }
 
 // ---------------------------------------------------------------- Vordergrund: Staffelei, ein Stapel Leinwände vorn links
@@ -3169,7 +3176,7 @@ M.defineArt('backroom',{
     paints:[190,60,40,34],
     window:[143,14,24,21]
   },
-  stands:{ door:[86,118,'L'], canvases:[230,124,'R'], easel:[166,132,'B'], ticket:[112,104,'B'], sketch:[128,104,'B'], paints:[204,116,'R'], window:[150,104,'B'] },
+  stands:{ door:[86,118,'L'], canvases:[230,124,'R'], easel:[166,132,'B'], ticket:[112,104,'B'], sketch:[128,104,'B'], paints:[204,116,'R'], window:[140,100,'B'] },
   start:[88,120,'R'], entries:{ shop:[88,120,'R'] }
 });
 })(M);
@@ -3528,6 +3535,175 @@ M.defineArt('bar',{
 });
 })(M);
 
+/* ---- rooms/art/coldroom.js ---- */
+/* ===== rooms/art/coldroom.js — Der Kühlraum der Ledana (Mala zuerst): ein dunkler, isolierter Raum.
+   Verzinkte Isolierwände mit Stockflecken, Fleischhaken an Laufschienen unter der Decke. Hinten rechts ist ein Teil der
+   Decke eingestürzt und hat einen Schutthaufen gebildet; darunter liegt Lukas Gitarrenkoffer (S.caseOpen: offen, die
+   Gitarre mit gebrochenem Hals). Ein Lichtkeil fällt aus der Tür in der linken Wand, ein dünner Schacht durch das Deckenloch. ===== */
+(function(M){
+'use strict';
+var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, tex=M.tex;
+var W=320, H=144;
+var VP=[176,60], F=90, FY=100, RECT=[72,24,268,100];
+var R3=M.room3(VP,F,FY), SPEC={vp:VP,rect:RECT};
+var R=M.R;
+var DOORQ=M.wallQuad(SPEC,'L',40,70,40,100);       // Tür in der linken Wand
+var HOLE={X0:204,X1:250,Z0:8,Z1:30};                // Loch in der Decke
+var CASE={x:214,y:110};                             // Gitarrenkoffer (unter dem Schutt, Ende ragt heraus)
+
+function cl(v,a,b){ return v<a?a:(v>b?b:v); }
+function rnd(v){ return Math.round(v); }
+function vn(x,y){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, a=hash(xi,yi), b=hash(xi+1,yi), c=hash(xi,yi+1), d=hash(xi+1,yi+1), u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf); return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v; }
+function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.3,y*4.1+8.1)*0.15; }
+function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
+function p3(X,Y,Z){ var q=R3.p(X,Y,Z); return [q[0],q[1]]; }
+
+// ---------------------------------------------------------------- Licht: kaltes Dunkel, warmes Tageslicht aus der Tür und vom Loch
+var DARK=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.46+L*0.1+2, g*0.5+L*0.12+4, b*0.6+L*0.14+10]; });
+var DAY=M.tintMake(function(r,g,b){ return [r*0.96+10, g*0.9+6, b*0.8+2]; });
+function finishLit(b,lit){ var d=b.d; for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x, c=d[k]; if (c===T) continue; var bb=bayer(x,y), v=(lit(x,y)-0.3)*2.4, L=(v>0&&bb<v)?DAY:DARK, r=L.r[c]; d[k]=(r>0.2&&bb<(r-0.2)*1.4)?L.b[c]:L.a[c]; } }
+var DOORW=null;   // Lichtkeil (abhängig davon, ob die Tür offen steht)
+function wedge(x,y,wide){ // Keil aus der Tür quer über den Boden nach rechts
+  var dB=DOORQ[3], dA=DOORQ[2]; // untere Türkante: von (x≈32,115) bis (x≈2,127)
+  if (y<100) { var dx=(x-12)/(wide?34:22), dy=(y-78)/40, q=dx*dx+dy*dy; return q<1?(1-q)*0.4:0; }
+  var t=(y-108)/36; if (t<-0.2) return 0; var xl=8+t*30, xr=(wide?60:44)+t*(wide?190:150); if (x<xl||x>xr) return 0; var e=Math.min(1,Math.min(x-xl,xr-x)/7); return e*Math.max(0,1.05-(x-xl)/(xr-xl+40)*1.1)*Math.min(1,(t+0.3)*1.6); }
+function shaft(x,y){ // dünner Schacht durch das Deckenloch auf den Schutt
+  var ax=232, ay=12, bx=228, by=104, vx=bx-ax, vy=by-ay, L2=vx*vx+vy*vy, t=((x-ax)*vx+(y-ay)*vy)/L2; if (t<0||t>1.1) return 0; var qx=ax+vx*t, qy=ay+vy*t, d=Math.hypot(x-qx,y-qy), w=7+12*t; if (d>w) return 0;
+  return Math.min(1,(1-d/w)*1.8)*(0.32+0.25*t); }
+function pool(x,y){ var dx=(x-230)/36, dy=(y-104)/12, q=dx*dx+dy*dy; return q<1?Math.min(1,(1-q)*1.4)*0.85:0; }
+
+// ---------------------------------------------------------------- Texturen
+function panel(u,v,x,y){ // verzinkte Blechpaneele mit Nietreihen, Stockflecken, Rost
+  var pw=22, ph=26, fu=((u%pw)+pw)%pw, fv=((v%ph)+ph)%ph, c=ra(R('m0 m1 m2 m3'),0.62+(fbm(u*0.08,v*0.05)-0.5)*0.5,x,y);
+  if (fu<1) c=P.k1; else if (fu<2) c=P.m3; if (fv<1) c=P.k1; if ((fu===3||fu===pw-3) && fv%5===2) c=P.m4;
+  var mold=fbm(u*0.11+3,v*0.09+7), sp=hash(Math.floor(u/2)*7+1,Math.floor(v/2)*3); if (mold>0.6 && sp<(mold-0.6)*4.5) c=(sp<0.12)?P.k2:((sp<0.3)?P.g0:P.g1); if (v>40 && mold>0.5 && sp<(v-40)/90) c=M.DN[c];
+  var rs=fbm(u*0.4,v*0.02); if (rs>0.7 && v>10 && hash(x,y)<0.6) c=(hash(x,y)<0.3)?P.t2:P.t1;
+  if (v>62){ c=ra(R('k1 m0 m1'),0.6-(v-62)/40,x,y); if ((v-62)%7===0) c=P.m2; }
+  return c; }
+function floorTex(xb,d,x,y){ var k=(y-VP[1])/(FY-VP[1]), Z=(k-1)*F, X=VP[0]+(x-VP[0])/k, c;
+  var tx=((X+400)%12), tz=((Z+400)%8); c=(hash(Math.floor((X+400)/12),Math.floor((Z+400)/8))<0.5)?P.t1:P.t0; if (tx<0.8/k+0.3||tz<0.5) c=P.k1;
+  var wet=fbm(X*0.05,Z*0.08); if (wet>0.62) c=(c===P.k1)?P.k2:P.n0; if (hash(x,y)<0.04) c=P.t2; return c; }
+
+// ---------------------------------------------------------------- Malen
+function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), x, y, i, k;
+  var ld=GS&&GS.rooms&&GS.rooms.ledana, wide=!!(ld&&ld.coldOpen);
+  M.box(b,{vp:VP,rect:RECT,
+    back:function(u,v,x,y){ return panel(u+72,v,x,y); },
+    side:function(u,v,x,y,sd){ var c=panel(u*1.7+(sd==='L'?0:400),v,x,y); return sd==='L'?c:M.DN[c]; },
+    floor:floorTex,
+    ceil:function(xb,d,x,y){ var kk=(VP[1]-y)/(VP[1]-RECT[1]), Z=(kk-1)*F, X=VP[0]+(x-VP[0])/kk; var c=ra(R('k1 m0 m1 m2'),0.55+(fbm(X*0.05,Z*0.1)-0.5)*0.6,x,y); if (((X+400)%22)<0.8/kk+0.3) c=P.k1; if (((Z+400)%18)<1) c=P.k1; if (fbm(X*0.1,Z*0.1)>0.66) c=P.g0; return c; } });
+  // Abfluss im Boden, Pfützen
+  var dr=p3(150,FY,40); b.ellipse(dr[0],dr[1],5,1.6,P.k1); for (x=rnd(dr[0])-3;x<=rnd(dr[0])+3;x+=2) b.px(x,rnd(dr[1]),P.m2);
+  // ---- Thermometer, Lampe mit Drahtkorb (tot)
+  b.ellipse(118,46,7,7,P.m2); b.ellipse(118,46,5.6,5.6,P.s4); for (k=0;k<10;k++){ var an=Math.PI*0.75+k/9*Math.PI*1.5; b.px(rnd(118+Math.cos(an)*4.5),rnd(46+Math.sin(an)*4.5),P.k2); } b.line(118,46,115,49,P.r2); b.px(118,46,P.k1); M.microText(b,'°C',116,50,P.k2);
+  var lp=p3(170,RECT[1],20); b.vl(rnd(lp[0]),rnd(lp[1]),rnd(lp[1])+4,P.k1); b.ellipse(lp[0],lp[1]+7,3,3.4,P.m1); for (y=rnd(lp[1])+4;y<rnd(lp[1])+11;y+=2) b.hl(rnd(lp[0])-2,rnd(lp[0])+2,y,P.k1); b.px(rnd(lp[0]),rnd(lp[1])+7,P.s3);
+  // ---- Deckenschienen mit Fleischhaken
+  var rails=[[110,0,92],[176,0,96],[238,0,40]], hooks=[];
+  rails.forEach(function(rl,ri){ var X=rl[0], a=p3(X,RECT[1]+2,rl[1]), z=p3(X,RECT[1]+2,rl[2]); b.line(rnd(a[0]),rnd(a[1]),rnd(z[0]),rnd(z[1]),P.m3); b.line(rnd(a[0]),rnd(a[1])-1,rnd(z[0]),rnd(z[1])-1,P.m1); b.line(rnd(a[0]),rnd(a[1])+1,rnd(z[0]),rnd(z[1])+1,P.k1);
+    for (var hz=rl[1]+6;hz<rl[2];hz+=(hz>40?20:13)){ if (ri===2 && hz>30) break; var hp=p3(X,RECT[1]+2,hz), kk=1+hz/F, len=Math.round((10+hash(ri,hz)*9)*kk); hooks.push([rnd(hp[0]),rnd(hp[1]),len,kk]); } });
+  // Schiene an der Rückwand mit Haken vor der Wand
+  b.hl(RECT[0]+4,RECT[2]-4,40,P.m3); b.hl(RECT[0]+4,RECT[2]-4,41,P.k1); for (x=RECT[0]+14;x<RECT[2]-10;x+=17){ if (x>196&&x<262) continue; hooks.push([x,41,10+Math.floor(hash(x,3)*8),1]); }
+  hooks.forEach(function(h,hi){ drawHook(b,h[0],h[1],h[2],h[3],(hi%4===2)?0.15:0); });
+  // ---- Schutthaufen unter dem Deckenloch: weicher Hügel aus Putz und Kork, darauf große Stücke; der Koffer ragt vorn heraus
+  var r=M.rng(23), MX=246, MY=108;
+  for (y=MY-18;y<MY+8;y++) for (x=MX-48;x<MX+44;x++){ var u=(x-MX)/46, hgt=Math.max(0,1-u*u)*(15+fbm(x*0.08,3)*6)*(u<0?1:0.9), top=MY+5-hgt, bot=MY+6-Math.abs(u)*2; if (y<top||y>bot) continue;
+    var v=(y-top)/Math.max(1,bot-top), f=fbm(x*0.25,y*0.4), c=ra(R('k1 m0 m1 s1 s2 s3'),0.9-v*0.6+(f-0.5)*0.5,x,y); if (f>0.68) c=(hash(x,y)<0.5)?P.e1:P.e2; b.px(x,y,c); }
+  [[214,96,22,4,'m'],[236,90,26,5,'m'],[258,96,18,4,'e'],[226,100,14,4,'e'],[268,102,14,3,'s'],[246,98,12,3,'s']].forEach(function(pc){ var x0=pc[0], y0=pc[1], w=pc[2], h=pc[3], col=pc[4]==='m'?R('k1 m0 m1 m2 m3'):(pc[4]==='e'?R('e0 e1 e2 e3'):R('s1 s2 s3 s4')), sl=(hash(x0,y0)-0.5)*0.35;
+    b.poly([[x0,y0],[x0+w,y0+sl*w],[x0+w-1,y0+h+sl*w],[x0+1,y0+h]],function(xx,yy){ var v=(yy-y0-sl*(xx-x0))/(h+0.5); return col[cl(Math.floor((1-v)*col.length*0.99),0,col.length-1)]; });
+    b.line(x0,y0,x0+w,rnd(y0+sl*w),col[col.length-1]); if (pc[4]==='m') for (var q=x0+3;q<x0+w-2;q+=5) b.px(q,rnd(y0+1+sl*(q-x0)),P.m4); });
+  for (i=0;i<7;i++){ var sx=220+r()*50, sy=90+r()*12; b.line(rnd(sx),rnd(sy),rnd(sx+(r()-0.5)*16),rnd(sy-5-r()*8),P.t1); b.px(rnd(sx),rnd(sy),P.t2); }
+  // heruntergefallene Schiene mit Haken quer über dem Haufen
+  b.line(230,94,276,86,P.m3); b.line(230,95,276,87,P.k1); drawHook(b,254,90,7,1.1,0.4);
+  // ---- Deckenloch: zerbrochene Paneele, Kork, Bewehrung hängt herab, darüber schwaches Tageslicht
+  var hp=[p3(HOLE.X0,RECT[1],HOLE.Z0),p3(HOLE.X1,RECT[1],HOLE.Z0),p3(HOLE.X1,RECT[1],HOLE.Z1),p3(HOLE.X0,RECT[1],HOLE.Z1)];
+  b.poly(hp,function(x,y){ return (fbm(x*0.3,y*0.5)>0.55)?P.s3:P.s2; }); for (x=rnd(hp[0][0])-4;x<rnd(hp[1][0])+4;x++){ var jg=Math.round(fbm(x*0.4,1)*5); for (var yy=rnd(hp[0][1])-jg;yy<=rnd(hp[0][1]);yy++) b.px(x,yy,P.k1); }
+  for (i=0;i<6;i++){ var ix=rnd(hp[0][0]+4+i*8+r()*4), iy=rnd(hp[0][1])+1, il=6+rnd(r()*10); b.rect(ix,iy,3,il,P.e1); b.vl(ix,iy,iy+il-1,P.e2); b.px(ix+1,iy+il,P.e0); }
+  for (i=0;i<12;i++){ var hx=rnd(hp[0][0]+r()*(hp[1][0]-hp[0][0])), hy=rnd(Math.min(hp[0][1],hp[2][1])+r()*8); b.line(hx,hy,hx+rnd((r()-0.5)*6),hy+3+rnd(r()*9),r()<0.5?P.t1:P.e1); }
+  for (x=rnd(hp[3][0]);x<rnd(hp[2][0]);x++){ if (hash(x,5)<0.5) b.px(x,rnd(hp[3][1])+1,P.e1); }
+  // ---- Tür in der linken Wand (dicke Isolierung), Lichtkeil
+  var dq=DOORQ; b.poly([[dq[0][0]+2,dq[0][1]-2],[dq[1][0]-2,dq[1][1]-3],[dq[2][0]-2,dq[2][1]+2],[dq[3][0]+2,dq[3][1]+2]],P.k1);
+  b.poly(dq,function(x,y){ return ra(R('s2 s3 s4 s5'),0.7-(y-30)/100*0.4,x,y); });
+  var inner=M.wallQuad(SPEC,'L',wide?44:52,wide?68:58,42,100); b.poly(inner,function(x,y){ return ra(R('s3 s4 s5 s6'),0.9-(y-30)/100*0.3,x,y); });
+  // Türblatt (von innen): steht offen in den Raum, Kante sichtbar
+  var lf=M.wallQuad(SPEC,'L',40,wide?44:52,42,100); b.poly([lf[0],lf[1],lf[2],lf[3]],function(x,y){ return ra(R('m0 m1 m2'),0.5,x,y); });
+  var e0=M.wallPt(SPEC,'L',wide?44:52,42), e1=M.wallPt(SPEC,'L',wide?44:52,100); b.line(rnd(e0[0]),rnd(e0[1]),rnd(e1[0]),rnd(e1[1]),P.m3);
+  // Kisten an der Rückwand, ein Holzschemel
+  R3.box(b,84,112,86,FY,2,16,{front:function(x,y){ return tex.boards(x,y,R('w0 w1 w2 w3'),4); },top:P.w2,right:P.w0});
+  R3.box(b,90,108,74,86,6,14,{front:function(x,y){ return tex.boards(x,y*1.3,R('w0 w1 w2'),4); },top:P.w2,right:P.w0});
+  // ---- Licht
+  var lit=function(x,y){ return wedge(x,y,wide)+shaft(x,y)+pool(x,y)+(inDoor(x,y)?1:0); };
+  var LF=function(x,y){ var v=-0.25+wedge(x,y,wide)*2.6+shaft(x,y)*2.2+pool(x,y)*1.5; var vx=(x-180)/210, vy=(y-80)/120; v-=Math.max(0,vx*vx+vy*vy-0.32)*2.0; if (inDoor(x,y)) v=1.4; return v; };
+  function inDoor(x,y){ return M.inPoly(x+0.5,y+0.5,inner); }
+  M.light(b,LF); finishLit(b,lit);
+  // der Koffer erst nach dem Licht, in festen Farben (bleibt lesbar)
+  if (!S.caseOpen) caseClosed(b,CASE.x,CASE.y); else caseOpen(b,CASE.x,CASE.y);
+  // Lichtkante am Deckenloch und in der Tür
+  for (x=rnd(hp[0][0])+2;x<rnd(hp[1][0])-2;x++){ if (hash(x,3)<0.6) b.px(x,rnd(hp[0][1])+1,P.s5); }
+  return b; }
+function drawHook(b,x,y,len,kk,tilt){ var D=P.k0, M1=P.k2, HL=P.m4; b.rect(x-2,y,5,3,M1); b.hl(x-2,x+2,y,P.m3); b.px(x-2,y+1,HL); var ex=x+Math.round((tilt||0)*len);
+  for (var k=0;k<len;k++){ var cx=Math.round(x+(ex-x)*k/len), cy=y+3+k; b.px(cx,cy,(k%3===0)?M1:D); b.px(cx+1,cy,(k%3===1)?M1:D); if (k%3===0) b.px(cx-1,cy,HL); }
+  var hx=ex, hy=y+3+len; b.px(hx,hy,D); b.px(hx+1,hy,D); b.px(hx+1,hy+1,M1); b.px(hx+2,hy+2,D); b.px(hx+2,hy+3,D); b.px(hx+1,hy+4,D); b.px(hx,hy+4,M1); b.px(hx-1,hy+3,D); b.px(hx-2,hy+2,HL); b.px(hx-2,hy+1,HL); b.px(hx-1,hy+4,HL); }
+// Gitarrenkoffer (Dreadnought-Form), liegend, Kopfende links
+function caseShape(x,y,sx,sy){ var pts=[], i, t, X, half;
+  function hw(t){ return (t<0.42)?(2.6+t*2.2):(3.6+Math.sin((t-0.42)/0.58*Math.PI)*2.4+(t>0.7?1.2:0)); }
+  for (i=0;i<=24;i++){ t=i/24; X=-22+t*44; pts.push([x+X*sx,y-hw(t)*sy]); }
+  for (i=24;i>=0;i--){ t=i/24; X=-22+t*44; pts.push([x+X*sx,y+hw(t)*sy*0.55]); }
+  return pts; }
+function caseClosed(b,x,y){ var sh=caseShape(x,y,1,1), i;
+  b.poly(caseShape(x+1,y+1,1.04,1.1),P.k0);
+  b.poly(sh,function(xx,yy){ var v=(yy-(y-8))/11; return v<0.25?P.m1:(v<0.5?P.k2:(v<0.8?P.k1:P.k0)); });
+  for (i=0;i<25;i++){ var q=sh[i]; b.px(rnd(q[0]),rnd(q[1]),i%3?P.m2:P.m3); }
+  b.line(x-21,y,x+22,y-1,P.m0); b.line(x-21,y+1,x+22,y,P.k0);
+  b.rect(x-4,y-7,7,2,P.k0); b.hl(x-4,x+2,y-8,P.m2); b.px(x-5,y-7,P.m1); b.px(x+3,y-7,P.m1);
+  [[x+10,y-2],[x-12,y-1],[x+1,y-1]].forEach(function(l){ b.rect(l[0],l[1],2,2,P.y3); b.px(l[0],l[1],P.y5); });
+  b.rect(x+13,y-6,4,3,P.r3); b.px(x+13,y-6,P.s6); b.px(x+16,y-4,P.b2);
+  // Schutt liegt halb darüber (rechtes Ende)
+  [[x+14,y-9,10,4,R('m1 m2 m3 s4')],[x+19,y-5,9,5,R('e1 e2 e3 e4')],[x+8,y-11,8,3,R('s2 s3 s4 s5')]].forEach(function(pc){ var x0=pc[0], y0=pc[1], w=pc[2], h=pc[3], col=pc[4];
+    b.poly([[x0,y0],[x0+w,y0-1],[x0+w-1,y0+h],[x0+1,y0+h+1]],function(xx,yy){ var v=(yy-y0)/(h+1); return col[cl(Math.floor((1-v)*col.length*0.99),0,col.length-1)]; }); b.hl(x0+1,x0+w-1,y0,col[col.length-1]); });
+  for (i=0;i<8;i++) b.px(x+12+Math.floor(hash(i,2)*16),y+Math.floor(hash(i,3)*3)-1,P.s3); }
+function caseOpen(b,x,y){ var k;
+  var lid=caseShape(x-2,y-9,1,1.05).map(function(p){ return [p[0],y-9-(y-9-p[1])*1.6-(p[0]-x)*0.05]; });
+  b.poly(lid,function(xx,yy){ var v=(yy-(y-24))/16; return v<0.3?P.m1:(v<0.7?P.k2:P.k1); }); b.poly(caseShape(x-2,y-10,0.9,0.9).map(function(p){ return [p[0],y-10-(y-10-p[1])*1.4]; }),function(xx,yy){ return hash(xx,yy)<0.35?P.r3:P.r2; });
+  var sh=caseShape(x,y,1,1); b.poly(caseShape(x+1,y+1,1.04,1.1),P.k0); b.poly(sh,P.k1); b.poly(caseShape(x,y,0.92,0.75),function(xx,yy){ return hash(xx,yy)<0.4?P.r2:P.r1; });
+  // Gitarre: Fichtendecke, Schallloch mit Rosette, Steg, abgebrochener Hals, lose Saiten
+  b.ellipse(x+12,y-1,8.5,3.6,function(xx,yy){ var v=(yy-(y-5))/8; return v<0.3?P.d6:(v<0.7?P.w5:P.w4); }); b.ellipse(x+2,y-1,6,3,function(xx,yy){ var v=(yy-(y-4))/6; return v<0.3?P.d6:(v<0.7?P.w5:P.w4); });
+  b.ellipse(x+5,y-1.5,2.2,1.5,P.w2); b.ellipse(x+5,y-1.5,1.6,1.1,P.k0); b.hl(x+13,x+16,y-1,P.w1); b.px(x+12,y-2,P.w2);
+  b.line(x-4,y-1,x-12,y,P.w2); b.line(x-4,y,x-12,y+1,P.w1);
+  b.line(x-13,y+1,x-17,y-6,P.w3); b.line(x-12,y+1,x-16,y-6,P.w1); b.rect(x-20,y-9,3,4,P.w2); b.px(x-19,y-9,P.m4); b.px(x-18,y-7,P.m4);
+  for (k=0;k<3;k++) b.line(x+15,y-2+k,x-11,y-1+Math.round(k*0.5),P.s5); b.line(x-12,y-1,x-18,y-9,P.s6); b.line(x-18,y-9,x-23,y-4,P.s5); b.line(x-11,y,x-14,y+4,P.s5); b.line(x-14,y+4,x-9,y+5,P.s4);
+  // Splitter neben dem Koffer
+  b.line(x+22,y+2,x+27,y,P.w3); b.line(x+21,y+3,x+25,y+3,P.w2); }
+// ---------------------------------------------------------------- Ebenen: ein Haken ganz vorn (Figuren gehen dahinter)
+function layers(S,GS,tod){ var L=[], h=M.layer(286,0,20,40,200), w=M.lw(h);
+  w.line(290,0,304,0,P.m1); for (var y=1;y<22;y++){ w.px(296+((y>>2)&1),y,y%2?P.m1:P.m0); } w.rect(295,22,3,3,P.m1); w.px(297,25,P.m2); w.px(298,26,P.m2); w.px(298,27,P.m1); w.px(297,28,P.m1); w.px(295,27,P.m2); w.px(294,26,P.m3);
+  M.tintApply(h,DARK); L.push(h); return L; }
+
+// ---------------------------------------------------------------- dynamisch: Staub im Licht, ein Haken pendelt leise
+function dyn(fb,v,S,GS){ var t=v.t, ld=GS&&GS.rooms&&GS.rooms.ledana, wide=!!(ld&&ld.coldOpen);
+  for (var i=0;i<26;i++){ var u=(hash(i,1)+t*0.015*(0.4+hash(i,2)))%1, x, y; if (i<16){ x=Math.round(20+u*(wide?180:130)+Math.sin(t*0.5+i)*3); y=Math.round(104+hash(i,3)*36-u*6); if (wedge(x,y,wide)<0.3) continue; }
+    else { x=Math.round(230-4*u+(hash(i,3)-0.5)*14+Math.sin(t*0.7+i)*2); y=Math.round(14+u*88); if (shaft(x,y)<0.2) continue; }
+    if (Math.sin(t*1.6+i*1.7)>0) fb.px(x,y,P.s5); }
+  // Rieseln aus dem Deckenloch
+  var fall=(t*0.6)%1; if (fall<0.5){ fb.px(226,Math.round(18+fall*170),P.s3); } }
+// ---------------------------------------------------------------- Geistersicht: der Koffer unter dem Schutt glimmt
+function ghost(fb,v,S,GS){ if (S.caseOpen) return; var t=v.t, cx=CASE.x, cy=CASE.y-2;
+  for (var a=0;a<40;a++){ var ang=a/40*Math.PI*2, rr=1+0.15*Math.sin(ang*4+t*1.7); if (Math.sin(ang*3-t*2.2)>0.2) fb.px(Math.round(cx+Math.cos(ang)*19*rr),Math.round(cy+Math.sin(ang)*7*rr),a%3?P.x4:P.x5); } }
+
+// ---------------------------------------------------------------- Lauffläche
+function walk(x,y){ var f=R3.floor(x,y); if (!f) return false; if (y<104||y>=139) return false; if (f.X<RECT[0]+4||f.X>RECT[2]-6) return false;
+  if (Math.hypot((x-238)/46,(y-107)/9)<1) return false;    // Schutthaufen mit Koffer
+  if (x>=74&&x<124&&y<112) return false;                    // Kisten
+  return true; }
+var dqx=[DOORQ[0][0],DOORQ[1][0],DOORQ[2][0],DOORQ[3][0]], dqy=[DOORQ[0][1],DOORQ[1][1],DOORQ[2][1],DOORQ[3][1]];
+M.defineArt('coldroom',{
+  width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, ghost:ghost,
+  actorLut:function(a,S,GS,tod){ if (a.ghost) return undefined; return a.x<80||(a.y>110&&a.x<180)?undefined:DARK.a; },
+  spots:{ door:[0,24,36,104], case:[CASE.x-24,CASE.y-12,48,18], debris:[200,84,86,34], hooks:[96,24,170,34], walls:[72,24,196,60] },
+  stands:{ door:[34,124,'L'], case:[212,124,'B'], debris:[230,124,'B'], hooks:[170,120,'B'], walls:[150,112,'B'] },
+  start:[40,124,'R'], entries:{ ledana:[40,124,'R'] }
+});
+})(M);
+
 /* ---- rooms/art/ivka.js ---- */
 /* ===== rooms/art/ivka.js — Ivkas Wohnung: ein kleines, sehr ordentliches Zimmer einer alten Frau =====
    Rückwand: Kochecke mit Herd, Kredenz mit Häkeldeckchen, zwei Fotos (Tonći im Matrosenpullover, zwei junge Männer auf einem
@@ -3741,6 +3917,12 @@ function paintRoomProps(b,S){
     if (t<0.08||t>0.92||v<0.04) c=P.s5; if (Math.abs(v-0.5)<0.02) c=P.s3; if ((t>0.2&&t<0.8)&&((v>0.1&&v<0.45)||(v>0.56&&v<0.92))){ c=P.s3; if (t>0.25&&t<0.75&&((v>0.13&&v<0.42)||(v>0.59&&v<0.89))) c=P.s4; }
     if (hash(x,y)<0.05) c=P.s3; return c; });
   var kp=M.wallPt(SPEC,'L',DOOR.u0+2.5,80); dw.rect(rnd(kp[0])-1,rnd(kp[1]),3,2,P.y3); dw.px(rnd(kp[0])-1,rnd(kp[1])+3,P.k1);
+  // gesticktes Bild (Goblen) mit Segelboot an der linken Wand
+  var gq=M.wallQuad(SPEC,'L',16,30,50,68), gw=PW(b,RG.furn,zfL); gw.poly(gq,P.w2);
+  var gi=M.wallQuad(SPEC,'L',17.3,28.7,51.5,66.5); gw.poly(gi,function(x,y){ var t=(x-gi[0][0])/(gi[1][0]-gi[0][0]), top=gi[0][1]+(gi[1][1]-gi[0][1])*t, bot=gi[3][1]+(gi[2][1]-gi[3][1])*t, v=(y-top)/(bot-top), c;
+    c=v<0.45?(((x+y)%2)?P.d5:P.d4):(((x+y)%2)?P.b2:P.a3); if (v>0.25&&v<0.62&&Math.abs(t-0.5)<0.06) c=P.w1; if (v>0.22&&v<0.58&&t>0.52&&t<0.52+(v-0.22)*0.9) c=P.s5; if (v>0.6&&v<0.7&&t>0.3&&t<0.72) c=P.r2; return c; });
+  // Kruzifix über dem Bett, in der Nische
+  var cr=M.wallPt(SPEC,'R',36,66), cxr=rnd(cr[0]), cyr=rnd(cr[1]), xw=PW(b,RG.furn,36); xw.vl(cxr,cyr,cyr+9,P.w1); xw.hl(cxr-2,cxr+2,cyr+2,P.w1); xw.px(cxr,cyr+3,P.p3); xw.px(cxr,cyr+4,P.p3); xw.px(cxr+1,cyr,P.w3);
   // Haken mit dem schwarzen Mantel
   var hk=M.wallPt(SPEC,'L',HOOK.u,HOOK.v), hx=rnd(hk[0]), hy=rnd(hk[1]), cw=PW(b,RG.furn,function(){ return HOOK.u+3; });
   cw.rect(hx-1,hy-1,3,2,P.m2);
@@ -3832,7 +4014,7 @@ function dynamic(fb,v,S,GS){ var t=v.t, tod=v.tod, tint=tod!=='day'?M.TINT[tod]:
   var dx=GL.X0+27, dy=GL.Y0+rnd(((t*2.2)%40)); if (dy<GL.Y1-1 && Math.abs(dx-GL.MX)>1 && Math.abs(dy-GL.MY)>1){ fb.px(dx,dy,P.s6); fb.px(dx,dy-1,P.m4); } }
 
 // Geistersicht: der Stuhl am Fenster, auf dem sie siebenundzwanzig Jahre gewartet hat, und die zweite Tasse schimmern kalt
-function ghost(fb,v,S,GS){ var t=v.t, bg=(M.E&&M.E.rebuildIfDirty)?M.E.rebuildIfDirty().bg:null, G=M.TINT.ghost;
+function ghost(fb,v,S,GS){ var t=v.t, bg=LAST, G=M.TINT.ghost;
   function free(x,y){ if (!bg) return true; return fb.get(x,y)===M.tintPx(G,bg.get(x,y),x,y); }
   var r=R3.rect(CH.X0,CH.X1,CH.YB,96,CH.Z0,CH.Z1), a=0.5+0.5*Math.sin(t*1.1);
   for (var y=r[1];y<r[1]+r[3];y++) for (var x=r[0];x<r[0]+r[2];x++){ if (!bg) break; var c=bg.get(x,y), k=y*W+x; if (REG[k]!==RG.furn||DEPTH[k]>CH.Z1+0.5||DEPTH[k]<CH.Z0-0.5) continue;
@@ -3848,7 +4030,7 @@ var WALK=function(x,y){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=
 M.defineArt('ivka',{
   width:W, paint:paint, layers:layers, dynamic:dynamic, ghost:ghost, walk:WALK, walkG:function(){ return false; },
   spots:{ door:(function(){ var q=M.wallQuad(SPEC,'L',DOOR.u0-2,DOOR.u1+2,DOOR.v0-3,DOOR.v1); return [rnd(q[1][0]),rnd(q[1][1]),rnd(q[0][0]-q[1][0])+1,rnd(q[2][1]-q[1][1])]; })(),
-    window:[WN.X0-3,WN.Y0-2,WN.X1-WN.X0+6,WN.Y1-WN.Y0+4], chair:rr(CH.X0,CH.X1,CH.YB,96,CH.Z0,CH.Z1), cupboard:rr(CR.X0,CR.X1,CR.Y0,96,0,CR.Z1),
+    window:[WN.X0-3,WN.Y0-2,WN.X1-WN.X0+6,WN.Y1-WN.Y0+4], chair:rr(CH.X0,CH.X1,CH.YB,96,CH.Z0,CH.Z1), cupboard:(function(){ var a=ip3(CR.X0,CR.Y0,CR.Z1), c=ip3(CR.X1,CR.Y0,CR.Z1), tb=ip3(TB.X0,TB.Y0,TB.Z0); return [a[0],a[1]-3,c[0]-a[0]+1,tb[1]-a[1]+3]; })(),
     photo_tonci:(function(){ var a=ip3(PT.X0,PT.Y0,PT.Z), c=ip3(PT.X1,CR.Y0,PT.Z); return [a[0]-1,a[1]-1,c[0]-a[0]+2,c[1]-a[1]+2]; })(),
     photo_boat:(function(){ var a=ip3(PB.X0,PB.Y0,PB.Z), c=ip3(PB.X1,CR.Y0,PB.Z); return [a[0]-1,a[1]-1,c[0]-a[0]+2,c[1]-a[1]+2]; })(),
     radio:rr(RD.X0,RD.X1,RD.Y0-3,CR.Y0,RD.Z0,RD.Z1), table:rr(TB.X0,TB.X1,TB.Y0,96,TB.Z0,TB.Z1), cups:rr(102,122,TB.Y0-5,TB.Y0,47,53),
@@ -3994,7 +4176,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   b.rect(cx+9,cy-6,2,6,P.g2); b.px(cx+9,cy-7,P.g3); b.px(cx+10,cy-5,P.g4); b.px(cx-10,cy-1,P.s5); b.px(cx-12,cy,P.s5);
   // ---- Eismaschinen und Kompressoren unter der Galerie
   // großer liegender Ammoniakbehälter auf Sätteln
-  for (y=86;y<104;y++) for (x=2;x<62;x++){ var u=(y-86)/18, cc=ra(R('k1 t0 t1 t2 m1 m2'),0.25+Math.sin(u*Math.PI)*0.75-(u>0.6?0.15:0),x,y); var rs=tex.rust(x,y,R('t0 t1 t2 m1')); if (hash(x>>1,y>>1)<0.35) cc=rs; if (x===2||x===61) cc=P.k1; b.px(x,y,cc); }
+  for (y=86;y<104;y++) for (x=2;x<62;x++){ var u=(y-86)/18, cc=ra(R('k1 m0 m1 m2 m3 m4'),0.2+Math.pow(Math.sin(u*Math.PI),0.7)*0.8-(u>0.55?0.25:0),x,y); var rs=tex.rust(x,y,R('t0 t1 t2 t3')); if (fbm(x*0.15,y*0.3)<0.38) cc=rs; if (x===2||x===61) cc=P.k1; if (u>0.92) cc=P.k1; b.px(x,y,cc); }
   b.ellipse(62,95,3,9,function(x,y){ return ra(R('m0 m1 m2'),0.6-(y-86)/18*0.4,x,y); }); [12,48].forEach(function(sx){ b.rect(sx,104,8,10,P.m0); b.hl(sx,sx+7,104,P.m1); });
   for (x=4;x<60;x++) if (hash(x,1)<0.8) b.px(x,87,P.m3); for (x=8;x<58;x+=10){ b.px(x,89,P.m4); b.px(x,101,P.k1); } M.microText(b,'NH3',26,92,P.s4);
   // Kompressor mit Schwungrad und Riemen
@@ -4035,13 +4217,15 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // Kühlraumtür: dick isoliert, Blech mit Nieten, großer Hebel
   var dq=DOORQ; var open=!!S.coldOpen;
   var frame=M.wallQuad(SPEC,'R',3,31,39,100); b.poly(frame,function(x,y){ return (x+y)%3?P.m0:P.k1; }); var fr2=M.wallQuad(SPEC,'R',4.5,29.5,41,100); b.poly(fr2,P.e2);
-  if (!open){ b.poly(dq,function(x,y){ var c=ra(R('m0 m1 m2 m3'),0.7-(y-44)/80*0.35+(fbm(x*0.4,y*0.1)-0.5)*0.4,x,y); if (fbm(x*0.2,y*0.05)>0.66) c=tex.rust(x,y,R('t0 t1 t2 m1')); return c; });
-    for (k=0;k<8;k++){ var ry0=48+k*8; var rl=M.wallPt(SPEC,'R',8,ry0), rr=M.wallPt(SPEC,'R',26,ry0); b.px(rnd(rl[0]),rnd(rl[1]),P.m4); b.px(rnd(rr[0]),rnd(rr[1]),P.m0); }
-    var hg=[M.wallPt(SPEC,'R',27,56),M.wallPt(SPEC,'R',27,88)]; hg.forEach(function(h){ b.rect(rnd(h[0])-1,rnd(h[1])-2,3,5,P.m0); b.px(rnd(h[0]),rnd(h[1])-1,P.m3); });
-    var lv=M.wallPt(SPEC,'R',9,72); b.rect(rnd(lv[0])-1,rnd(lv[1])-3,4,7,P.m0); b.line(rnd(lv[0])+1,rnd(lv[1]),rnd(lv[0])+8,rnd(lv[1])-6,P.m4); b.line(rnd(lv[0])+1,rnd(lv[1])+1,rnd(lv[0])+8,rnd(lv[1])-5,P.m2); b.rect(rnd(lv[0])+7,rnd(lv[1])-8,3,3,P.k1);
-    var sg=M.wallPt(SPEC,'R',12,52); b.rect(rnd(sg[0]),rnd(sg[1]),11,7,P.s5); M.microText(b,'-18',rnd(sg[0])+1,rnd(sg[1])+1,P.b0); }
-  else { b.poly(dq,P.k0); var dq2=[dq[0],M.wallPt(SPEC,'R',10,44),M.wallPt(SPEC,'R',10,100),dq[3]]; var lip=[[dq[0][0],dq[0][1]],[dq[0][0]-9,dq[0][1]+2],[dq[3][0]-9,dq[3][1]+4],[dq[3][0],dq[3][1]]];
-    b.poly(lip,function(x,y){ return ra(R('m1 m2 m3 m4'),0.6-(y-44)/80*0.3,x,y); }); b.line(rnd(lip[1][0]),rnd(lip[1][1]),rnd(lip[2][0]),rnd(lip[2][1]),P.m4); b.line(rnd(dq[0][0])+2,rnd(dq[0][1])+4,rnd(dq[3][0])+2,rnd(dq[3][1])-2,P.k1); }
+  // Türblatt (zu oder einen Spalt offen: Riegelseite links schwingt in die Halle, dahinter Dunkelheit)
+  var leaf=open?[M.wallPt(SPEC,'R',11,44),dq[1],dq[2],M.wallPt(SPEC,'R',11,100)]:dq;
+  if (open){ b.poly([dq[0],M.wallPt(SPEC,'R',11,44),M.wallPt(SPEC,'R',11,100),dq[3]],P.k0); }
+  b.poly(leaf,function(x,y){ var c=ra(R('m0 m1 m2 m3'),0.7-(y-44)/80*0.35+(fbm(x*0.4,y*0.1)-0.5)*0.4,x,y); if (fbm(x*0.2,y*0.05)>0.66) c=tex.rust(x,y,R('t0 t1 t2 m1')); return c; });
+  for (k=0;k<8;k++){ var ry0=48+k*8; var rl=M.wallPt(SPEC,'R',open?13:8,ry0), rr=M.wallPt(SPEC,'R',26,ry0); b.px(rnd(rl[0]),rnd(rl[1]),P.m4); b.px(rnd(rr[0]),rnd(rr[1]),P.m0); }
+  var hg=[M.wallPt(SPEC,'R',27,56),M.wallPt(SPEC,'R',27,88)]; hg.forEach(function(h){ b.rect(rnd(h[0])-1,rnd(h[1])-2,3,5,P.m0); b.px(rnd(h[0]),rnd(h[1])-1,P.m3); });
+  var lv=M.wallPt(SPEC,'R',open?14:9,72); b.rect(rnd(lv[0])-1,rnd(lv[1])-3,4,7,P.m0); b.line(rnd(lv[0])+1,rnd(lv[1]),rnd(lv[0])+8,rnd(lv[1])-(open?2:6),P.m4); b.line(rnd(lv[0])+1,rnd(lv[1])+1,rnd(lv[0])+8,rnd(lv[1])-(open?1:5),P.m2); b.rect(rnd(lv[0])+7,rnd(lv[1])-(open?4:8),3,3,P.k1);
+  var sg=M.wallPt(SPEC,'R',14,52); b.rect(rnd(sg[0]),rnd(sg[1]),11,7,P.s5); M.microText(b,'-18',rnd(sg[0])+1,rnd(sg[1])+1,P.b0);
+  if (open){ var e0=M.wallPt(SPEC,'R',11,44), e1=M.wallPt(SPEC,'R',11,100); b.line(rnd(e0[0])-1,rnd(e0[1])+1,rnd(e1[0])-1,rnd(e1[1])-1,P.m4); b.line(rnd(e0[0])-2,rnd(e0[1])+2,rnd(e1[0])-2,rnd(e1[1])-2,P.m2); }
   // Ladetor: Laufschiene oben, Torflügel zurückgeschoben (rostig)
   var g0=M.wallPt(SPEC,'R',38,20), g1=M.wallPt(SPEC,'R',140,20); b.line(rnd(g0[0]),rnd(g0[1]),rnd(g1[0]),rnd(g1[1]),P.k1); b.line(rnd(g0[0]),rnd(g0[1])-1,rnd(g1[0]),rnd(g1[1])-1,P.m1);
   // ---- Blick nach draußen durch das Tor
@@ -4058,7 +4242,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   function spots(x,y){ var v=0; beams.forEach(function(bm){ var dy=(y-bm[3])/(bm[5]*0.45); if (Math.abs(dy)>1) return; var dx=(x-bm[2]-dy*bm[5]*0.6)/(bm[5]*1.5); if (Math.abs(dx)>1) return; var e=Math.min(1,(1-Math.abs(dx))*3)*Math.min(1,(1-Math.abs(dy))*3); v=Math.max(v,e); }); return v; }
   function gateSpill(x,y){ if (y<100) return 0; var dx=(x-252)/56, dy=(y-128)/16, q=dx*dx+dy*dy; return q<1?(1-q):0; }
   function underGal(x,y){ var f=R3.floor(x,y); if (!f) return 0; if (y>=78 && f.X<GAL.X1+4 && f.Z<GAL.Z1) return 1; return (y>=78 && y<120 && x<132)?0.6:0; }
-  var LF=function(x,y){ var v=night?-0.5:-1.3; v+=beamV(x,y)*(night?1.4:2.7)+spots(x,y)*(night?1.3:2.4)+gateSpill(x,y)*(night?0.8:2.0); v-=underGal(x,y)*(night?0.5:1.1); var vx=(x-170)/230, vy=(y-80)/120; v-=Math.max(0,vx*vx+vy*vy-0.3)*2.2; return v; };
+  var LF=function(x,y){ var v=night?-0.5:-1.3; v+=beamV(x,y)*(night?1.4:2.7)+spots(x,y)*(night?1.3:2.4)+gateSpill(x,y)*(night?0.8:2.0); v-=underGal(x,y)*(night?0.45:0.75); var vx=(x-170)/230, vy=(y-80)/120; v-=Math.max(0,vx*vx+vy*vy-0.3)*2.2; return v; };
   M.light(b,LF,0,0,function(x,y){ return !OUTM[y*W+x]; });
   if (night) finishNight(b,OUTM,function(x,y){ return beamV(x,y)*0.85+spots(x,y)*0.9+gateSpill(x,y)*0.75; });
   // nach dem Licht: Pfütze spiegelt (Mond/Oberlicht), Lichtkante am Tor
@@ -4143,10 +4327,10 @@ M.defineArt('ledana',{
   width:W, paint:paint, layers:layers, walk:walk, walkG:walkG, dynamic:dyn, ghost:ghost, actorLut:actorLut,
   spots:{ exit:[0,96,12,48], stairs:[124,62,64,58], gallery:[0,42,132,38], office_window:[OWIN[0]-3,OWIN[1]-3,OWIN[2]+6,OWIN[3]+6], machines:[0,76,124,40], pipes:[124,58,72,10],
     graffiti:[124,66,72,34], puddle:[122,124,48,10], pallets:[2,114,64,28], colddoor:DOORR, gate:[230,4,90,120], ramp:[238,110,82,34], brick:BR, harbor_view:[240,10,80,44] },
-  stands:{ exit:[10,128,'L'], stairs:[194,124,'L'], gallery:[110,124,'B'], office_window:[120,124,'B'], machines:[70,126,'L'], pipes:[160,114,'B'], graffiti:[160,114,'B'], puddle:[150,136,'B'],
-    pallets:[40,134,'L'], colddoor:[198,114,'R'], gate:[230,128,'R'], ramp:[262,126,'R'], brick:[222,120,'R'], harbor_view:[262,126,'R'] },
+  stands:{ exit:[10,128,'L'], stairs:[194,124,'L'], gallery:[110,124,'B'], office_window:[120,124,'B'], machines:[70,126,'L'], pipes:[160,124,'B'], graffiti:[160,124,'B'], puddle:[150,136,'B'],
+    pallets:[40,134,'L'], colddoor:[208,113,'R'], gate:[230,128,'R'], ramp:[262,126,'R'], brick:[222,120,'R'], harbor_view:[262,126,'R'] },
   actorPos:{ luka:[LUKA[0],LUKA[1],'R','luka',1,'guitarSit'], nina:[NINA[0],NINA[1],'R','nina'] },
-  start:[30,128,'R'], entries:{ matejuska:[18,128,'R'], coldroom:[198,114,'L'] }
+  start:[30,128,'R'], entries:{ matejuska:[18,128,'R'], coldroom:[208,113,'L'] }
 });
 })(M);
 
@@ -4188,11 +4372,12 @@ var BGL={ dusk:[rampLUT('k2 d0 d1 d2',0,0.85,1.1),rampLUT('k2 d0 d1 d2 d3 d4',0.
           night:[rampLUT('k1 k2 n0 n1',0,0.9,1.1),rampLUT('k0 k1 k2 n0 n1 n2',0,0.95,1),rampLUT('k0 k1 k2 n0 n1 n2 n3',0,0.95,0.95)],
           dawn:[rampLUT('n0 n1 n2 d2',0.1,0.95,1),rampLUT('k2 n0 n1 n2 d2 d3',0,1,1),rampLUT('k1 n0 n1 n2 d2 d3 d4',0,1,1)] };
 // wie M.finishTOD, aber mit sanfterem Dither (Texturen bleiben ruhig)
+var DUSKCOOL=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.62+L*0.08+14, g*0.5+L*0.06+8, b*0.7+L*0.1+30]; });
 function finish(b,tod,opt){ if (tod==='day'||!M.TINT[tod]){ if (opt.after) opt.after(b,tod); return b; }
-  var t=M.TINT[tod], L=opt.lights||[], LT=M.TINT.lamp, d=b.d, w=b.w;
+  var t0=M.TINT[tod], L=opt.lights||[], LT=M.TINT.lamp, d=b.d, w=b.w;
   for (var y=0;y<b.h;y++) for (var x=0;x<w;x++){ var k=y*w+x, c=d[k]; if (c===T) continue; if (opt.sky && opt.sky(x,y)) continue;
     var lit=0; for (var i=0;i<L.length;i++){ var l=L[i], dx=(x-l[0])/l[2], dy=(y-l[1])/(l[4]||l[2]), q=dx*dx+dy*dy; if (q<1){ var v=(1-q)*l[3]; if (v>lit) lit=v; } }
-    if (tod==='dusk') lit*=0.6; var bb=bayer(x,y), tt=(lit>0.05 && bb<lit)?LT:t, r=tt.r[c];
+    if (tod==='dusk') lit*=0.6; var t=(tod==='dusk' && y>=QY)?DUSKCOOL:t0, bb=bayer(x,y), tt=(lit>0.05 && bb<lit)?LT:t, r=tt.r[c];
     d[k]=(r>0.18 && bb<(r-0.18)*1.5)?tt.b[c]:tt.a[c]; if (tt===LT && lit>0.75) d[k]=M.UP[d[k]]; }
   if (opt.after) opt.after(b,tod); return b; }
 
@@ -4681,12 +4866,12 @@ function paint(S,GS,tod){ var b=new M.Buf(320,144,P.k0), wea=M.scn.weather(GS), 
   ['06:30','09:00','12:00','15:30','19:00'].forEach(function(s,i){ M.microText(b,s,55,28+i*6,i===4?P.r2:P.k2); b.hl(75,85,30+i*6,P.s3); b.hl(75,80,32+i*6,P.s4); });
   // Aushänge: ein Zettel mit Reißzwecke, eine Bura-Warnung mit rotem Rand
   b.rect(55,61,10,8,P.s5); b.hl(56,63,63,P.s2); b.hl(56,62,65,P.s2); b.hl(56,61,67,P.s2); b.px(59,61,P.r3);
-  b.rect(68,60,19,10,P.s6); b.rect(68,60,19,1,P.r3); b.rect(68,69,19,1,P.r3); b.vl(68,60,69,P.r3); b.vl(86,60,69,P.r3); M.microText(b,'BURA',70,62,P.r2); b.hl(70,84,68,P.s3); b.px(77,60,P.y3);
+  b.rect(67,60,21,10,P.s6); b.rect(67,60,21,1,P.r3); b.rect(67,69,21,1,P.r3); b.vl(67,60,69,P.r3); b.vl(87,60,69,P.r3); M.microText(b,'BURA',70,62,P.r2); b.hl(70,84,68,P.s3); b.px(77,60,P.y3);
   // ---- Rückwand Mitte (hinter dem Tresen): Schiffsfotos, Uhr, Seekarte, Kalender
   [[98,16,15,11,0],[116,18,13,10,1],[132,15,14,12,2]].forEach(function(f){ photo(b,f[0],f[1],f[2],f[3],f[4]); });
   M.prop.clock(b,CLK[0],CLK[1],CLK[2],(tod==='night')?11:6,(tod==='night')?20:52);
   chart(b,170,15,42,26);
-  b.rect(198,44,11,13,P.s6); b.rect(198,44,11,3,P.r3); M.microText(b,'11',200,48,P.k2); b.hl(199,207,54,P.s3); b.px(203,43,P.m1);   // Kalender, November 2011
+  b.rect(210,45,11,13,P.s6); b.rect(210,45,11,3,P.r3); M.microText(b,'11',212,49,P.k2); b.hl(211,219,55,P.s3); b.px(215,44,P.m1);   // Kalender, November 2011
   // Aktenschrank, Regal mit Ordnern, Schreibtisch mit Funkgerät
   cabinet(b,96,54,16,36);
   b.rect(116,48,26,42,P.w1); for (var s=0;s<3;s++){ var sy=50+s*13; ordner(b,118,sy,22,10,s); b.hl(116,141,sy+10,P.w3); b.hl(116,141,sy+11,P.w0); }
@@ -4803,7 +4988,6 @@ function layers(S,GS,tod){ var L=[];
   var p0=R3.p(CX0,CY,CZ1), p1=R3.p(CX1,90,CZ1), top=R3.p(CX0,GY,CZ0), base=Math.round(R3.p(CX0,90,CZ1)[1]);
   var l=M.layer(60,30,200,82,base+1), w=M.lw(l);
   var wr={poly:function(p,c){ w.poly(p,c); }};
-  // Seitenteile (zurück zur Wand)
   // Front: senkrechte Paneele, Sockel; Deckplatte
   R3.box(wr,CX0,CX1,CY,90,CZ0,CZ1,{top:function(x,y){ return P.w4; },front:function(x,y){ var u=Math.round(x-p0[0]), c=(u%14===0)?P.w1:((u%14===1)?P.w4:((u%2)?P.w3:P.w2)); if (y>p1[1]-5) c=P.w0; if (y<p0[1]+2) c=P.w4; return c; }});
   var fl=Math.round(p0[1]); w.hl(Math.round(p0[0])-3,Math.round(p1[0])+3,fl-1,P.w5); w.hl(Math.round(p0[0])-3,Math.round(p1[0])+3,fl,P.w4); w.hl(Math.round(p0[0])-2,Math.round(p1[0])+2,fl+1,P.w1);
@@ -4842,6 +5026,12 @@ function dyn(fb,v,S,GS){ var t=v.t, gt=v.gt;
   var a2=(gt/1000%60)/60*Math.PI*2-Math.PI/2, ex=Math.round(CLK[0]+Math.cos(a2)*(CLK[2]-1)), ey=Math.round(CLK[1]+Math.sin(a2)*(CLK[2]-1)); fb.line(CLK[0],CLK[1],ex,ey,P.r3);
   fb.px(CLK[0],CLK[1],P.k1); }
 
+// ---------------------------------------------------------------- nur Malas Sicht: kalter Hauch unter der Archivtür
+function ghost(fb,v,S,GS){ var t=v.t, x0=ADOOR[0], y0=ADOOR[1]+ADOOR[3];
+  for (var i=0;i<14;i++){ var ph=(t*0.25+hash(i,3))%1, x=Math.round(x0+2+hash(i,4)*(ADOOR[2]-4)+Math.sin(t*1.3+i)*2-ph*10), y=Math.round(y0-ph*18-Math.sin(ph*3+i)*2);
+    if (x<0||x>=320||y<0||y>=144) continue; fb.px(x,y,ph<0.4?P.x6:(ph<0.75?P.x5:P.x3)); }
+  for (var xx=x0;xx<x0+ADOOR[2];xx++){ if (bayer(xx,y0)<0.5+Math.sin(t*2+xx*0.4)*0.3) fb.px(xx,y0,P.x5); } }
+
 // ---------------------------------------------------------------- Laufflächen
 function walk(x,y){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z;
   if (x<6||x>314||y>139) return false;
@@ -4855,14 +5045,14 @@ var dq=M.wallQuad(SPEC,'L',DOORL[0],DOORL[1],DOORL[2],DOORL[3]);
 var DR=(function(){ var xs=dq.map(function(p){ return p[0]; }), ys=dq.map(function(p){ return p[1]; }), x0=Math.floor(Math.min.apply(null,xs)), y0=Math.floor(Math.min.apply(null,ys)); return [x0,y0,Math.ceil(Math.max.apply(null,xs))-x0,Math.ceil(Math.max.apply(null,ys))-y0]; })();
 var CR=rr(CX0,CX1,CY,90,CZ0,CZ1);
 M.defineArt('office',{
-  width:320, paint:paint, layers:layers, walk:walk, dynamic:dyn,
+  width:320, paint:paint, layers:layers, walk:walk, dynamic:dyn, ghost:ghost,
   actorLut:function(a,S,GS,tod){ return NEONLUT; },
-  spots:{ door:DR, counter:[CR[0],CR[1]-2,CR[2],CR[3]+2], timetable:[51,19,38,40], photos:[97,14,50,15], radio:[RADIO[0]-2,RADIO[1]-10,RADIO[2]+8,RADIO[3]+12],
+  spots:{ door:DR, counter:[CR[0],CR[1]-2,CR[2],CR[3]+2], timetable:[51,16,38,43], photos:[97,14,50,15], radio:[RADIO[0]-2,RADIO[1]-10,RADIO[2]+8,RADIO[3]+12],
     clock:[CLK[0]-8,CLK[1]-8,17,17], bench:[50,68,42,25], plant:[280,72,32,68], archive_door:[ADOOR[0]-3,ADOOR[1]-3,ADOOR[2]+6,ADOOR[3]+3] },
   stands:{ door:R3.st(58,26,'L'), counter:[156,113,'B'], timetable:R3.st(70,16,'B'), photos:[122,113,'B'], radio:[188,113,'B'], clock:[158,113,'B'],
-    bench:R3.st(72,16,'B'), plant:[272,124,'R'], archive_door:R3.st(241,10,'B') },
+    bench:R3.st(72,16,'B'), plant:[272,124,'R'], archive_door:R3.st(249,10,'B') },
   actorPos:{ mladen:[150,104,'F'] },
-  start:[160,124,'L'], entries:{ riva:R3.st(60,28,'R'), archive:R3.st(241,10,'F') }
+  start:[160,124,'L'], entries:{ riva:R3.st(60,28,'R'), archive:R3.st(249,10,'F') }
 });
 var NEONLUT=M.tintMake(function(r,g,b){ return [r*0.9+2, g*0.97+8, b*0.95+10]; }).a;
 })(M);
@@ -5098,8 +5288,8 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0);
   palaceWall(b); protiron(b); kiosk(b); alley(b); shopHouse(b);
   bench(b,48,GY+9,40);
   // Schatten des gegenüberliegenden Säulengangs (hinter dem Betrachter) fällt vorn aufs Pflaster: Pfeiler als Streifen, Bögen als Lichtzungen
-  for (var fx=0;fx<W;fx++){ var ph=((fx+14)%40+40)%40, col=ph<6, u=col?0:(ph-6)/34, arc=Math.sqrt(Math.max(0,1-(2*u-1)*(2*u-1)));
-    var edge=col?127:Math.round(131+arc*8); for (var fyy=edge;fyy<144;fyy++){ shadePx(b,fx,fyy,(fyy-edge<1)?1:2); } }
+  for (var fyy=124;fyy<144;fyy++) for (var fx=0;fx<W;fx++){ var sx=fx-(144-fyy)*0.7, ph=((sx+14)%40+40)%40, col=ph<7, u=col?0:(ph-7)/33, arc=Math.sqrt(Math.max(0,1-(2*u-1)*(2*u-1)));
+    var edge=col?125:131+arc*9; if (fyy<edge) continue; shadePx(b,fx,fyy,(fyy-edge<1.2)?1:2); }
   // Kontaktschatten an der Fassadenkante
   for (var x=0;x<W;x++){ if (x>=PRO.x0&&x<PRO.x1) continue; shadePx(b,x,GY,1); }
   // Tauben auf den Gesimsen (statisch)
@@ -5126,7 +5316,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, tint=tod!=='day'?M.TIN
       for (var yy=0;yy<m.length;yy++){ var sh=Math.round(yy*0.45+Math.sin(t*10+k*2.1+li+yy*0.9)*0.7); for (var xx=0;xx<m[yy].length;xx++){ if (m[yy][xx]==='.') continue; var cc=(m[yy][xx]==='d')?M.DN[c]:c; if (yy===m.length-1||xx===0) cc=M.DN[c]; tp(lx+xx+sh,ly+yy,cc); } }
       tp(lx,ly-1,P.k1); tp(lx+m[0].length-1,ly-1,P.k1); }); }); }
 var CLOTH={ shirt:['#######','#######','##.#.##','.#####.','.#####.','.##d##.'], trous:['######','######','##..##','##..##','##..##','##..##','dd..dd'], towel:['######','######','dddddd','######','######','######'], sock:['##','##','##','###'] };
-function front(fb,v,S,GS){ M.scn.buraDebris(fb,v.t,112,140,v.cam); }
+function front(fb,v,S,GS){ M.scn.buraDebris(fb,v.t,112,140,v.cam); if (v.tod==='day') M.scn.gulls(fb,v.t*1.6,0,4,W,18,3,v.cam); }   // Möwen, von der Bura getrieben
 
 // ---------------------------------------------------------------- Lauffläche
 var WALK=function(x,y,S,GS){ return y>=110 && y<=138 && x>=6 && x<=470; };
@@ -5644,8 +5834,8 @@ var BENCH2=[218,242];
 var MBENCH=[498,528];      // Bank auf der Mole
 var MLAMP=628, MLB=116, MLH=50;   // Laterne am Molenende
 var IBOL=610;              // Ivkas Poller (hintere Kante)
-var FERRY_END=518;
-var MOONX=593;              // Mond über Ivkas Platz: ihr Umriss steht im Mondpfad         // dort kommt die Fähre zum Stehen (Bug)
+var FERRY_END=482;         // dort kommt die einlaufende Fähre zum Stehen (Bug); hinter Ivka liegt dann nur das flache Heck
+var MOONX=593;             // Mond über Ivkas Platz: ihr Umriss steht im Mondpfad
 var FLAG=[350,26];         // Fahnenspitze am Hafenbüro
 var PUD=[[88,127,9,2],[176,131,13,2.5],[268,121,8,1.8],[352,129,11,2],[448,118,9,2],[541,121,11,2],[586,111,6,1.5]];   // Pfützen bei Regen
 var RING=476;              // Rettungsring an der Mole
@@ -5706,8 +5896,8 @@ function paintIslands(b,tod,wea){ var c=farCols(tod,wea,true);
   for (var x=386;x<W;x++){ var h=Math.max(brac(x),solta(x)); for (var y=HZ-h;y<HZ;y++){ var v=0.5-(y-(HZ-h))*0.07; if (y===HZ-h) v=0.95; b.px(x,y,ra(c,v,x,y)); } } }
 
 // ---------------------------------------------------------------- Wasser (gleiche Formel für paint und dynamic)
-var WR={ day:'a1 b0 a2 a3 a4 a5 a6', dusk:'k2 d0 d1 d2 d3 d4 d5 d6', night:'k0 k1 a0 n0 a1 n1 n2 n3', dawn:'n0 n1 a2 n2 d3 a4 d4', rain:'k2 d0 m0 d1 m1 m2 d2 m3', rainN:'k0 k1 m0 n0 m1 n1' };
-var WRC={}; function wramp(tod,wea){ var k=wea==='rain'?(tod==='night'?'rainN':'rain'):tod; return WRC[k]||(WRC[k]=R(WR[k]||WR.day)); }
+var WR={ day:'a1 b0 a2 a3 a4 a5 a6', dusk:'k2 d0 d1 d2 d3 d4 d5 d6', night:'k0 k1 a0 n0 a1 n1 n2 n3', dawn:'n0 n1 a2 n2 d3 a4 d4', rain:'k2 d0 m0 d1 m1 m2 d2 m3', rainD:'k2 m0 a1 m1 a2 m2 a3 m3', rainN:'k0 k1 m0 n0 m1 n1' };
+var WRC={}; function wramp(tod,wea){ var k=wea==='rain'?(tod==='night'?'rainN':(tod==='day'?'rainD':'rain')):tod; return WRC[k]||(WRC[k]=R(WR[k]||WR.day)); }
 function wdepth(kind,y){ return kind===3?clamp((y-HZ)/(MB-HZ),0,1):1; }
 function wbase(kind,y,tod,wea,x){ var d=wdepth(kind,y), n=0;
   if (kind===4){ var e=(y-MW)/(H-MW); if (tod==='dusk') return 0.3-e*0.12; if (tod==='night') return 0.32-e*0.12; return 0.4-e*0.12; }
@@ -5736,7 +5926,6 @@ function paintWater(b,tod,wea){ var rmp=wramp(tod,wea), x, y;
   b.code=0; }
 
 // ---------------------------------------------------------------- Glockenturm von Sveti Duje
-var TWM=null;
 function tower(b,tod){ var cx=TWX, S6=R('s1 s2 s3 s4 s5 s6'), x, y;
   function wall(x,y,x0,x1){ var u=(x+0.5-x0)/(x1-x0+1); var v=0.86-u*0.46+(hash(Math.floor(x/4)+Math.floor(y/3)*7,3)-0.5)*0.1; if ((y%4)===0) v-=0.1; return ra(S6,v,x,y); }
   function level(y0,y1,hw,n,kind){ var x0=cx-hw, x1=cx+hw, yy, xx;
@@ -6038,7 +6227,7 @@ function paint(S,GS,tod){ var b=track(new M.Buf(W,H,P.k0)), wea=M.scn.weather(GS
   lamp(b,MLAMP,MLB,MLH);
   b.rect(MX1-5,MF-6,3,6,P.s5); b.vl(MX1-5,MF-6,MF-1,P.s6); b.px(MX1-4,MF-7,P.g3); b.px(MX1-4,MF-8,P.m1);
   // Flagge (statischer Stand; bewegt sich in dynamic)
-  flag(b,FLAG[0],FLAG[1],0,wea);
+  if (wea!=='bura') flag(b,FLAG[0],FLAG[1],0,wea);
   // ---- Licht (Tag): Schatten der Palmen auf Fassade und Pflaster
   if (tod==='day') dayShadows(b);
   var pre=b.clone(), out;
@@ -6106,7 +6295,6 @@ function nightLights(b,pre,tod,wea){ var n=tod==='night', rain=wea==='rain', x, 
   if (rain){ LAMPS.forEach(function(lx){ refl(lx+0.5,108,134,2.5,P.y4,P.y2); }); refl(MLAMP+0.5,112,125,2.5,P.y4,P.y2);
     SHOPS.forEach(function(s,i){ if (n && i%3) return; refl((s[0]+s[1])/2,101,116,(s[1]-s[0])*0.35,P.y3,P.y1); }); }
   else if (!n){ LAMPS.forEach(function(lx){ refl(lx+0.5,108,122,1.5,P.y3,P.t3); }); } }
-function isTower(x,y){ var hw; if (y<1) return false; if (y<8) return x===TWX||(y===2&&Math.abs(x-TWX)<=2); if (y<20) hw=Math.round((y-7)*0.72); else if (y<30) hw=10; else if (y<40) hw=12; else if (y<50) hw=13; else hw=14; return Math.abs(x-TWX)<=hw; }
 
 // ---------------------------------------------------------------- Vordergrund-Ebenen
 function layers(S,GS,tod){ var L=[];
@@ -6149,7 +6337,7 @@ function gl(fb,cx,y0,y1,spread,t,c1,c2,cam,thr){ var bura=LIT.wea==='bura'; thr=
   for (var y=y0;y<y1;y++){ var k=(y-y0)/(y1-y0+1), half=1+spread*k; for (var x=Math.floor(cx-half);x<=cx+half;x++){ var sx=x-cam; if (sx<0||sx>=320||x<0||x>=W) continue; var kind=FAR[y*W+x]; if (kind<3) continue;
     var e=Math.abs(x-cx)/half, cr=wsig(x,y,t,kind,bura)+0.3*WS2; if (cr>thr+e*0.75) fb.d[y*320+sx]=(e<0.4 && cr>thr+0.35)?c1:c2; } } }
 function flagFb(fb,v,cam){ var tod=LIT.tod, tint=M.TINT[tod]; var tmp={px:function(x,y,c){ var sx=x-cam; if (sx<0||sx>=320||y<0||y>=H) return; fb.d[y*320+sx]=(tod==='day'||!tint)?c:M.tintPx(tint,c,x,y); }};
-  // alten Stand nicht löschen (gleiche Fläche wird übermalt) – nur bei Wind bewegt
+  // nur bei Wind: die Flagge wird jedes Bild neu gezeichnet (im Hintergrundbild fehlt sie dann)
   if (LIT.wea==='bura') flag(tmp,FLAG[0],FLAG[1],v.t,LIT.wea); }
 function ferry(fb,v,S){ var ft=(v.gt-S.ferryAt)/1000, T0=24, e=clamp(ft/T0,0,1), p=1-Math.pow(1-e,3), x=Math.round(700+(FERRY_END-700)*p), cam=v.cam, tod=LIT.tod, lit=tod!=='day', tint=M.TINT[tod];
   if (tod==='dusk' && LIT.wea!=='rain') tint=M.TINT.night;
@@ -6160,11 +6348,11 @@ function ferry(fb,v,S){ var ft=(v.gt-S.ferryAt)/1000, T0=24, e=clamp(ft/T0,0,1),
 
 // ---------------------------------------------------------------- nur in Malas Sicht: die Spur, die Ivka 27 Jahre lang gegangen ist
 function ghost(fb,v,S,GS){ var cam=v.cam, t=v.t;
-  for (var i=0;i<42;i++){ var wx=338+i*6.6, side=(i%2)?1:-1, wy=Math.round((wx<MX0?119-(wx-338)*0.07:114.5)+side*1.2), sx=Math.round(wx-cam); if (sx<0||sx>=318) continue;
+  for (var i=0;i<38;i++){ var wx=338+i*6.6, side=(i%2)?1:-1, wy=Math.round((wx<MX0?119-(wx-338)*0.07:114.5)+side*1.2), sx=Math.round(wx-cam); if (sx<0||sx>=318) continue;
     var wave=(Math.sin(i*0.33-t*1.8)+1)/2, c=wave>0.82?P.x6:(wave>0.5?P.x5:P.x4); if (wave<0.25 && (i%3)) continue;
     fb.px(sx,wy,c); fb.px(sx+1,wy,wave>0.6?P.x5:P.x3); }
   var bx=IBOL-cam; if (bx>-14 && bx<334){ var a=0.55+Math.sin(t*1.2)*0.25;
-    for (var y=92;y<112;y++) for (var x=bx-9;x<=bx+9;x++){ if (x<0||x>=320) continue; var d=Math.hypot((x-bx)/9,(y-102)/9); if (d<1 && bayer(x,y)<(1-d)*a){ var k=y*320+x; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } }
+    for (var y=92;y<112;y++) for (var x=bx-5;x<=bx+9;x++){ if (x<0||x>=320) continue; var d=Math.hypot((x-bx)/9,(y-102)/9); if (d<1 && bayer(x,y)<(1-d)*a){ var k=y*320+x; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } }
     for (var j=0;j<7;j++){ var ph=(t*0.35+hash(j,3))%1, px=Math.round(bx+(hash(j,5)-0.5)*12+Math.sin(t*1.5+j)*1.5), py=Math.round(106-ph*26); if (px<0||px>=320) continue; fb.px(px,py,ph<0.6?P.x6:P.x4); } } }
 
 // ---------------------------------------------------------------- über allem: Regen, Bura
@@ -6185,6 +6373,360 @@ M.defineArt('riva',{
     mole_lamp:[612,118,'R'], mole_bench:[513,112,'B'], islands:[560,112,'B'] },
   actorPos:{ ivka:[596,114,'R'], mala:[560,116,'R'] },
   start:[60,122,'R'], entries:{ map:[12,122,'R'], office:[292,112,'F'] }
+});
+})(M);
+
+/* ---- rooms/art/salon.js ---- */
+/* ===== rooms/art/salon.js — Der Salon im ersten Stock des Hotel Palma, verschlossen seit 1993 =====
+   Ein Ballsaal bei Nacht und Regen: drei hohe Bogenfenster, Fischgrätparkett, ein verstaubter Kronleuchter,
+   Möbel unter weißen Tüchern. In der Mitte der Flügel unter einem Tuch (S.sheetOff: schwarzer Flügel, Tuch am Boden)
+   mit Klavierbank, links das Grammofon mit Trichter auf dem Plattenschrank (S.crank: Kurbel steckt),
+   rechts gestapelte Eisenbetten und gerollte Matratzen aus der Flüchtlingszeit. Hinten links die offene Tür zur Treppe.
+   S.dawn: das erste Morgenlicht färbt die Fenster rosa.
+   Geistersicht: unter der Farbe die Kreidebilder der Kinder (Straßenbahn Nr. 3, Häuser, Sonne, Mädchen mit Zopf,
+   „KUĆA“, Größenstriche am Türrahmen) und auf dem Parkett ein Himmel-und-Hölle-Spiel. */
+(function(M){
+'use strict';
+var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer;
+var W=320, VX=160, VY=58, F=90, FY=100, BX0=30, BX1=290, BY0=14;
+var R3=M.room3([VX,VY],F,FY), SPEC={vp:[VX,VY],rect:[BX0,BY0,BX1,FY]};
+var WINS=[[64,92],[146,174],[228,256]], WY0=24, WY1=82;
+var DOOR={X0:34,X1:54,Y0:46};
+var CAB={X0:60,X1:92,Z0:2,Z1:12,Y0:80};
+var PIA={X0:167,X1:209,Z0:29,Z1:57,Y0:81,Yb:87};
+var BEN={X0:152,X1:165,Z0:38,Z1:47,Y0:90};
+var CH={X:160,Z:30,Y0:18,Y1:44};
+function K(Z){ return 1+Z/F; }
+function SX(X,Z){ return VX+(X-VX)*K(Z); }
+function SY(Y,Z){ return VY+(Y-VY)*K(Z); }
+function Xat(x,Z){ return VX+(x-VX)/K(Z); }
+function fl(x,y){ var k=(y-VY)/(FY-VY); if (k<=0) return null; return {X:VX+(x-VX)/k, Z:(k-1)*F, k:k}; }
+function rd(v){ return Math.round(v); }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+var CACHE={}, BG=null, CHALKOK=null;
+
+// ---------------------------------------------------------------- Licht: Stufen zwischen Nacht (oder Morgengrauen) und warmem Türlicht
+function lum(r,g,b){ return r*0.3+g*0.59+b*0.11; }
+var TF={
+  night:function(r,g,b){ var L=lum(r,g,b); return [r*0.17+L*0.08, g*0.22+L*0.10, b*0.36+L*0.20+14]; },
+  dawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.42+L*0.22+18, g*0.30+L*0.16+8, b*0.44+L*0.20+28]; },
+  dusk:function(r,g,b){ var L=lum(r,g,b); return [r*0.52+L*0.10+12, g*0.38+L*0.08+4, b*0.50+L*0.10+22]; },
+  lamp:function(r,g,b){ var L=lum(r,g,b); return [r*0.62+L*0.5+30, g*0.5+L*0.36+12, b*0.28+L*0.12]; }
+};
+var LV={};
+function levels(base){ if (LV[base]) return LV[base]; var a=[], n=6, A=TF[base], B=TF.lamp;
+  for (var i=0;i<n;i++){ (function(t){ a.push(M.tintMake(function(r,g,b){ var p=A(r,g,b), q=B(r,g,b); return [lerp(p[0],q[0],t),lerp(p[1],q[1],t),lerp(p[2],q[2],t)]; })); })(Math.pow(i/(n-1),1.2)); }
+  return LV[base]=a; }
+function baseOf(S,tod){ if (tod==='day') return null; if (S.dawn) return 'dawn'; return TF[tod]?tod:'night'; }
+function doorLight(x,y){ var f=fl(x,y), s=0, dx=(x-46)/18, dy=(y-74)/32; if (dx*dx+dy*dy<1) s=0.7*(1-dx*dx-dy*dy);
+  if (f && y>=FY){ var t=f.Z/74; if (t<1){ var c=lerp(44,70,t), hw=lerp(9,28,t), d=Math.abs(f.X-c)/hw; if (d<1) s=Math.max(s,(1-d*d)*(1-t)*0.95); } } return s>1?1:s; }
+function shade(buf,ox,oy,base,fn,skip){ if (!base) return; var L=levels(base), n=L.length;
+  for (var y=0;y<buf.h;y++) for (var x=0;x<buf.w;x++){ var k=y*buf.w+x, c=buf.d[k]; if (c===T) continue; var X=x+ox, Y=y+oy; if (skip && skip(X,Y)) continue;
+    var f=fn(X,Y)*(n-1), i=Math.floor(f); if (f-i>bayer(X,Y)) i++; if (i>n-1) i=n-1; buf.d[k]=M.tintPx(L[i],c,X,Y); } }
+// kaltes Fensterlicht (in Tagesfarben, vor dem Umfärben)
+function windowLight(x,y){ var s=0, f=fl(x,y);
+  for (var i=0;i<WINS.length;i++){ var w=WINS[i], cx=(w[0]+w[1])/2, hw=(w[1]-w[0])/2;
+    if (f && y>=FY){ var t=f.Z/70; if (t<1){ var c=lerp(cx,cx+(cx-VX)*0.08,t), hh=lerp(hw-1,hw+5,t), d=Math.abs(f.X-c)/hh; if (d<1){ var e=(1-Math.pow(d,5))*(1-t*0.8); s=Math.max(s,e*3.0); } } }
+    var dx=(x-cx)/(hw+12), dy=(y-(WY0+WY1)/2)/((WY1-WY0)/2+12), d2=dx*dx+dy*dy; if (d2<1) s=Math.max(s,(1-d2)*1.0);
+    var bx=(x-cx)/(hw+4), by=(y-(FY+10))/14; var b2=bx*bx+by*by; if (b2<1 && y<FY) s=Math.max(s,(1-b2)*0.6); }
+  return s; }
+
+// ---------------------------------------------------------------- Texturen
+function wallCol(X,Y){
+  if (Y<BY0+3) return Y<BY0+1?P.s2:P.y1;
+  if (Y<BY0+6) return ((X>>1)&1)?P.s3:P.s2;
+  if (Y>=FY-3) return Y===FY-3?P.s4:P.s2;
+  if (Y>=86 && Y<88) return Y===86?P.s5:P.s3;
+  var c=P.s4; if (hash(Math.floor(X/2),Math.floor(Y/3))<0.05) c=P.s3;
+  var st=Math.sin(X*0.05)+Math.sin(X*0.17+1)*0.5; if (Y<44 && st>1.0 && bayer(X,Y)<0.45-(Y-BY0)/60) c=P.s3;
+  return c; }
+function panelFrame(b,x0,y0,x1,y1){ b.hl(x0,x1,y0,P.y2); b.vl(x0,y0,y1,P.y2); b.hl(x0,x1,y1,P.y1); b.vl(x1,y0,y1,P.y1); b.hl(x0+1,x1-1,y0+1,P.s5); b.vl(x0+1,y0+1,y1-1,P.s5); }
+// Fischgrätparkett (Blöcke 2:1, diagonal verzahnt), echte Verkürzung, staubig
+function parquet(x,y){ var f=fl(x,y); if (!f) return P.k0; var X=f.X, D=64*(1-1/f.k);
+  if (D<0.8) return P.w0;
+  if (D<2.2) return (Math.floor(X/4)&1)?P.w1:P.w2;                 // Fries an der Wand
+  var u=X/3.2, v=(D-2.2)/1.05, i=Math.floor(u), j=Math.floor(v), fx=u-i, fy=v-j, m=(((i+j)%4)+4)%4, e=0.16, edge=false, bi, bj;
+  if (m<2){ bi=m===0?i:i-1; bj=j; if (fy<e*1.6||fy>1-e*0.6) edge=true; if (m===0&&fx<e) edge=true; if (m===1&&fx>1-e) edge=true; }
+  else { bi=i; bj=m===2?j:j-1; if (fx<e||fx>1-e) edge=true; if (m===2&&fy<e*1.6) edge=true; if (m===3&&fy>1-e*0.6) edge=true; }
+  if (edge) return P.w1;
+  var id=hash(bi*7+bj*3,bj-bi), c=id<0.28?P.w2:(id<0.86?P.w3:P.w4); if (m>=2 && id>0.5) c=M.DN[c]===P.w1?c:c;
+  if (hash(Math.floor(X*1.5),Math.floor(D*8))<0.03) c=P.w4;
+  return c; }
+function ceilCol(xc,d){ var c=P.s2; if (d<2) c=P.y1; else if (d<4) c=P.s3; if (((Math.floor(xc/24))&1) && d>5) c=P.s1; if (hash(Math.floor(xc/3),d)<0.04) c=P.s1; return c; }
+
+// ---------------------------------------------------------------- Blick aus den Fenstern
+function outside(S){ var o=new M.Buf(W,144,P.k0), dawn=!!S.dawn, y, x;
+  var sky=dawn?M.R('n1 v2 d2 d3 d4 d5 d6'):M.R('k1 k2 n0 n1');
+  for (y=0;y<90;y++) for (x=0;x<W;x++){ var v=clamp((y-WY0)/(WY1-WY0),0,1), n=Math.sin(x*0.07+y*0.3)*0.05+hash(x>>3,y>>2)*0.07; o.px(x,y,M.rampAt(sky,dawn?0.15+v*0.78+n:0.12+v*0.5+n,x,y)); }
+  for (x=0;x<W;x++){ var hz=62, ih=Math.round(3+Math.sin(x*0.03)*2+Math.sin(x*0.11)); for (y=hz-ih;y<hz;y++) o.px(x,y,dawn?P.v1:P.k1);
+    for (y=hz;y<WY1+2;y++) o.px(x,y,M.rampAt(dawn?M.R('v1 d2 v2 d3'):M.R('k0 k1 a0 n0'),0.2+(y-hz)/30+Math.sin(x*0.3+y*1.7)*0.08,x,y)); }
+  for (x=2;x<W;x+=5){ var lx=x+(hash(x,4)*3|0); if (hash(x,5)<0.7){ o.px(lx,71,dawn?P.d4:P.y4); o.px(lx,73+(x%3),dawn?P.d3:P.y2); } }
+  if (!dawn) for (var i=0;i<90;i++){ var rx=Math.floor(hash(i,41)*W), ry=WY0+Math.floor(hash(i,42)*(WY1-WY0)); o.px(rx,ry,P.n2); o.px(rx,ry+1,P.n1); }
+  return o; }
+
+// ---------------------------------------------------------------- Kronleuchter (verstaubt, aus)
+function paintChandelier(b){ var x=rd(SX(CH.X,CH.Z)), y0=rd(SY(CH.Y0,CH.Z)), y1=rd(SY(CH.Y1,CH.Z)), cy=y1-6;
+  b.ellipse(x+0.5,4,9,2.2,P.s3); b.ellipse(x+0.5,4,5,1.3,P.s4); for (var yy=5;yy<y0+4;yy++) b.px(x,yy,(yy%3===0)?P.y1:P.y0);
+  b.ellipse(x+0.5,cy,14,3.4,P.y0); b.ellipse(x+0.5,cy-0.5,12,2.4,P.k2); b.rect(x-1,y0+2,3,cy-y0,P.y0); b.px(x,y0+3,P.y2);
+  b.ellipse(x+0.5,y0+6,5,2.5,P.y0); b.ellipse(x+0.5,y0+6,3.5,1.6,P.y1);
+  for (var a=0;a<8;a++){ var an=a/8*Math.PI*2, ax=x+Math.cos(an)*13, ay=cy+Math.sin(an)*3; b.line(x,cy,rd(ax),rd(ay),P.y1); b.vl(rd(ax),rd(ay)-4,rd(ay)-1,P.s3); b.px(rd(ax),rd(ay)-5,P.s4);
+    for (var d=1;d<6;d++){ var px=rd(ax+(x-ax)*d/6), py=rd(ay+(cy-ay)*d/6)+2+((d*7+a)%3); b.px(px,py,(d+a)%3?P.s3:P.s5); } }
+  for (var k=0;k<14;k++){ var t=k/13, px2=rd(x-11+t*22), py2=cy+3+rd(Math.sin(t*Math.PI)*5); b.vl(px2,cy+1,py2,P.s2); b.px(px2,py2,(k%3)?P.s4:P.s6); }
+  b.vl(x,cy,cy+10,P.s3); b.ellipse(x+0.5,cy+11,1.6,2,P.s4); b.px(x,cy+12,P.s6);
+  b.line(x-14,cy-1,x-21,cy-13,P.s3); b.line(x-18,cy-7,x-12,cy-10,P.s3); b.line(x+14,cy,x+20,cy-11,P.s3); b.line(x+17,cy-5,x+13,cy-8,P.s3);
+  CACHE.chand=[x,cy]; }
+
+// ---------------------------------------------------------------- Fenster mit Samtvorhängen
+function paintWindows(b,out,sky){ WINS.forEach(function(w){ var x0=w[0], x1=w[1], cx=(x0+x1)/2, r=(x1-x0)/2, top=WY0+r, x, y;
+  for (y=WY0-3;y<WY1+3;y++) for (x=x0-3;x<x1+3;x++){ if (y>=top || Math.hypot(x+0.5-cx,(y+0.5-top))<=r+3) b.px(x,y,(x<x0||x>=x1)?P.s3:P.s2); }
+  for (y=WY0;y<WY1;y++) for (x=x0;x<x1;x++){ var dd=Math.hypot(x+0.5-cx,y+0.5-top); if (y<top && dd>r) continue;
+    var mull=(Math.abs(x+0.5-cx)<0.8)||(y===Math.round((top+WY1)/2))||(y===top)||(y<top && Math.abs(Math.atan2(y+0.5-top,x+0.5-cx)+Math.PI/2)<0.07);
+    if (y<top && dd>r-1.2) b.px(x,y,P.s2); else if (mull) b.px(x,y,P.w1); else { b.px(x,y,out.get(x,y)); sky[y*W+x]=1; } }
+  b.hl(x0-4,x1+3,WY1+2,P.s5); b.hl(x0-4,x1+3,WY1+3,P.s2);
+  var cw=5; for (var s2=0;s2<2;s2++){ var cxs=s2?x1:x0-cw; for (var yc=WY0-6;yc<70;yc++){ var tie=yc>54?Math.min(2,(yc-54)/4):0, ww=cw-Math.round(tie), x00=s2?cxs:cxs+cw-ww; if (yc>58) ww=Math.max(2,cw-2-Math.round((yc-58)/5));
+      for (var xc=x00;xc<x00+ww;xc++){ var u=(xc-x00)/ww, fold=Math.sin(u*Math.PI*2.5+(s2?1:0)), c=fold>0.3?P.v3:(fold<-0.4?P.v1:P.v2); if (hash(xc,yc>>1)<0.04) c=P.v1; b.px(xc,yc,c); } }
+    var tx=s2?cxs+1:cxs+cw-3; b.px(tx,55,P.y3); b.px(tx+1,55,P.y2); b.px(tx,56,P.y2); b.vl(tx+(s2?0:1),57,60,P.y1); }
+  b.hl(x0-cw-2,x1+cw+1,WY0-7,P.y2); b.px(x0-cw-2,WY0-7,P.y4); b.px(x1+cw+1,WY0-7,P.y4); }); }
+
+// ---------------------------------------------------------------- Tür zur Treppe (offen, warmes Licht vom Treppenhaus)
+function paintDoor(b){ var x0=DOOR.X0, x1=DOOR.X1, y0=DOOR.Y0;
+  b.rect(x0-3,y0-4,x1-x0+6,FY-y0+4,P.s3); b.vl(x1+1,y0-3,FY-1,P.s4); b.vl(x1+2,y0-3,FY-1,P.s2); b.hl(x0-3,x1+2,y0-4,P.s5); b.rect(x0-2,y0-7,x1-x0+4,3,P.s4); b.hl(x0-2,x1+1,y0-7,P.y2);
+  for (var y=y0;y<FY;y++) for (var x=x0;x<x1;x++){ var u=(x-x0)/(x1-x0), c=u<0.35?P.y2:(u<0.8?P.y3:P.y2); if (y>FY-14){ c=(u>0.2&&u<0.9)?P.w3:P.w2; if (((x+y)&1)&&u<0.5) c=P.w2; } else if (u>0.75 && y<y0+30) c=P.y4;
+    if (x<x0+4 && y>y0+10) c=P.w1; if (y>FY-14 && y<FY-11 && u>0.3) c=P.w4; b.px(x,y,c); }
+  for (var bx=x0+6;bx<x1;bx+=3) b.vl(bx,FY-28,FY-15,P.w1); b.hl(x0+4,x1-1,FY-29,P.w2);
+  b.poly([[x1+3,y0],[x1+11,y0+5],[x1+11,FY+5],[x1+3,FY]],function(x,y){ var u=(x-x1-3)/8, c=u<0.3?P.w3:P.w2; if (((y-y0)%18)<1) c=P.w1; if (u>0.85) c=P.w1; return c; });
+  b.px(x1+8,y0+30,P.y3); b.px(x1+8,y0+31,P.y2); }
+
+// ---------------------------------------------------------------- Plattenschrank mit Grammofon (Blütentrichter vor dem ersten Fenster)
+function paintCabinet(b,S){ var p=R3.p, C=CAB;
+  R3.box(b,C.X0,C.X1,C.Y0,FY,C.Z0,C.Z1,{top:function(x,y){ return (y&1)?P.w3:P.w4; },right:P.w1,
+    front:function(x,y){ var Y=VY+(y-VY)/K(C.Z1), X=Xat(x,C.Z1), u=X-C.X0, mid=(C.X1-C.X0)/2; if (Y<81.5) return P.w4; if (Y>=FY-2) return P.w0; if (u<1.2||u>C.X1-C.X0-1.2) return P.w1;
+      if (Math.abs(u-mid)<0.8) return P.w0; if (Y<83||Y>FY-5) return P.w1;
+      if (Math.abs(u-mid+3)<0.9 && Math.abs(Y-90)<1.5) return P.y3; if (Math.abs(u-mid-3)<0.9 && Math.abs(Y-90)<1.5) return P.y3;
+      var lu=u<mid?u:u-mid; if (lu<2.2||lu>mid-2.2||Y<85||Y>FY-7) return P.w2; return ((Math.floor(lu*1.4)%3)===0)?P.w2:P.w3; }});
+  var g0=p(66,C.Y0,6), g1=p(84,C.Y0,6), gx=rd(g0[0]), gy=rd(g0[1]), gw=rd(g1[0]-g0[0]);
+  b.rect(gx,gy-7,gw,7,P.w2); b.hl(gx,gx+gw-1,gy-7,P.w4); b.hl(gx,gx+gw-1,gy-1,P.w0); b.vl(gx,gy-7,gy-1,P.w3); b.vl(gx+gw-1,gy-7,gy-1,P.w1);
+  b.rect(gx+3,gy-5,gw-6,3,P.w1); b.hl(gx+3,gx+gw-4,gy-5,P.w3); b.px(gx+(gw>>1),gy-4,P.y3);
+  b.ellipse(gx+gw/2,gy-8,gw/2-2,1.4,P.k2); b.hl(rd(gx+3),rd(gx+gw-4),gy-8,P.k1); b.px(rd(gx+gw/2),gy-9,P.y3);
+  // Tonarm
+  var hx=gx+gw-4, hy=gy-8; b.line(hx,hy,hx+1,hy-4,P.y2); b.px(hx+1,hy-5,P.y3);
+  // Trichter: Querschnitte von klein (am Tonarm) bis zur großen Blüte, Segmente wie Blütenblätter
+  var N=40, EX=gx+5, EY=hy-33; for (var i=0;i<N;i++){ var t=i/(N-1), cxh=lerp(hx+1,EX,t)-Math.sin(t*Math.PI)*4, cyh=lerp(hy-5,EY,t)-Math.sin(t*Math.PI)*2, r=0.9+Math.pow(t,2.6)*10;
+    for (var a=0;a<Math.PI*2;a+=0.12){ var px=cxh+Math.cos(a)*r, py=cyh+Math.sin(a)*r*0.78, seg=Math.floor((a+0.2)/(Math.PI/4))%2, c=seg?P.y2:P.y3; if (Math.sin(a)>0.6) c=P.y1; if (Math.cos(a)<-0.7) c=P.y4; b.px(rd(px),rd(py),c); } }
+  var ex=EX, ey=EY, R=9; b.ellipse(ex,ey,R,R*0.74,function(x,y){ var d=Math.hypot((x+0.5-ex)/R,(y+0.5-ey)/(R*0.74)); return d>0.82?P.y2:(d>0.6?P.r2:(d>0.32?P.r1:P.k1)); });
+  for (var a2=0;a2<Math.PI*2;a2+=0.04){ var rx=ex+Math.cos(a2)*(R+0.6), ry=ey+Math.sin(a2)*(R+0.6)*0.74, wav=(Math.floor((a2+0.2)/(Math.PI/4))%2); b.px(rd(rx),rd(ry),Math.cos(a2)<-0.2?P.y4:(wav?P.y3:P.y2)); }
+  for (var sI=0;sI<8;sI++){ var sa=sI/8*Math.PI*2+0.2; b.line(rd(ex+Math.cos(sa)*R*0.35),rd(ey+Math.sin(sa)*R*0.26),rd(ex+Math.cos(sa)*R*0.95),rd(ey+Math.sin(sa)*R*0.7),P.y0); }
+  b.px(rd(ex-R*0.7),rd(ey-R*0.4),P.y5);
+  CACHE.horn=[ex,ey];
+  if (S.crank){ var kx=gx+gw-1, ky=gy-4; b.hl(kx,kx+4,ky,P.m3); b.vl(kx+4,ky,ky+4,P.m3); b.hl(kx+4,kx+6,ky+4,P.w1); b.px(kx+6,ky+4,P.w3); b.px(kx+1,ky-1,P.m4); }
+  else { b.px(gx+gw-1,gy-4,P.k1); b.px(gx+gw,gy-4,P.w0); }
+  b.rect(gx+gw+2,gy-3,6,3,P.r1); b.hl(gx+gw+2,gx+gw+7,gy-3,P.r2); b.rect(gx+gw+3,gy-4,5,1,P.e3); }
+
+// ---------------------------------------------------------------- Flügel (unter dem Tuch oder frei)
+function paintPiano(b,S){ var p=R3.p, Pp=PIA;
+  if (!S.sheetOff){ paintSheetOver(b); return; }
+  [[Pp.X0+3,Pp.Z1-3],[Pp.X1-6,Pp.Z1-4],[Pp.X1-10,Pp.Z0+5]].forEach(function(l){ var a=p(l[0],Pp.Yb,l[1]), e=p(l[0],FY,l[1]); b.rect(rd(a[0])-1,rd(a[1]),3,rd(e[1]-a[1]),P.k1); b.vl(rd(a[0])-1,rd(a[1]),rd(e[1]),P.m1); b.px(rd(a[0]),rd(e[1]),P.y3); b.px(rd(a[0]),rd(a[1])+2,P.m2); b.hl(rd(a[0])-2,rd(a[0])+2,rd(a[1])+1,P.k2); });
+  var ly=p(Pp.X0+14,Pp.Yb,Pp.Z1-12), le=p(Pp.X0+14,FY-3,Pp.Z1-12); b.vl(rd(ly[0]),rd(ly[1]),rd(le[1]),P.k1); b.vl(rd(ly[0])+1,rd(ly[1]),rd(le[1]),P.m0); b.hl(rd(le[0])-2,rd(le[0])+3,rd(le[1]),P.y3); b.px(rd(le[0])-2,rd(le[1])-1,P.y4);
+  var lid=[p(Pp.X0,Pp.Y0,Pp.Z1),p(Pp.X1,Pp.Y0,Pp.Z1-2),p(Pp.X1+3,Pp.Y0,Pp.Z1-10),p(Pp.X1-2,Pp.Y0,Pp.Z0+6),p(Pp.X0+22,Pp.Y0,Pp.Z0),p(Pp.X0,Pp.Y0,Pp.Z0)];
+  b.poly(lid,function(x,y){ var c=P.k2; if (((x*2+y*5)%13)===0) c=P.m0; if (((x-y*3)%29+29)%29<2) c=P.m1; return c; });
+  var fz=[p(Pp.X0,Pp.Y0,Pp.Z1),p(Pp.X1,Pp.Y0,Pp.Z1-2),p(Pp.X1,Pp.Yb,Pp.Z1-2),p(Pp.X0,Pp.Yb,Pp.Z1)]; b.poly(fz,function(x,y){ var t=(y-fz[0][1])/(fz[3][1]-fz[0][1]); return t<0.2?P.m1:(t>0.8?P.k0:P.k1); });
+  b.line(rd(fz[0][0]),rd(fz[0][1]),rd(fz[1][0]),rd(fz[1][1]),P.m3); b.line(rd(fz[0][0])+8,rd(fz[0][1])+1,rd(fz[0][0])+30,rd(fz[0][1])+1,P.l0);
+  b.poly([p(Pp.X1,Pp.Y0,Pp.Z1-2),p(Pp.X1+3,Pp.Y0,Pp.Z1-10),p(Pp.X1+3,Pp.Yb,Pp.Z1-10),p(Pp.X1,Pp.Yb,Pp.Z1-2)],P.k1);
+  var k0=p(Pp.X0-4,Pp.Y0+1,Pp.Z1-2), k1=p(Pp.X0,Pp.Y0+1,Pp.Z1-2), k2=p(Pp.X0,Pp.Y0+1,Pp.Z0+3), k3=p(Pp.X0-4,Pp.Y0+1,Pp.Z0+3);
+  b.poly([k0,k1,k2,k3],function(x,y){ return ((x+y)%3===0)?P.k1:P.s5; }); b.line(rd(k0[0]),rd(k0[1]),rd(k3[0]),rd(k3[1]),P.s6);
+  b.rect(rd(k0[0])-1,rd(k0[1])+1,rd(k1[0]-k0[0])+2,3,P.k1);
+  var md=p(Pp.X0+3,Pp.Y0-8,Pp.Z1-9), md2=p(Pp.X0+3,Pp.Y0,Pp.Z1-9); b.rect(rd(md[0])-1,rd(md[1]),3,rd(md2[1]-md[1]),P.k2); b.vl(rd(md[0])-1,rd(md[1]),rd(md2[1]),P.m1);
+  b.rect(rd(md[0])+1,rd(md[1])+1,3,6,P.s5); b.px(rd(md[0])+2,rd(md[1])+2,P.r2); b.px(rd(md[0])+3,rd(md[1])+4,P.s3); }
+// das Tuch über dem Flügel: Deckelfläche, Buckel über Pult und Tastatur, schwere Falten, darunter Beine
+function paintSheetOver(b){ var p=R3.p, Pp=PIA;
+  var fL=p(Pp.X0-5,Pp.Y0-1,Pp.Z1+1), fR=p(Pp.X1+1,Pp.Y0-1,Pp.Z1-1), tR=p(Pp.X1+5,Pp.Y0-1,Pp.Z1-11), bR=p(Pp.X1-4,Pp.Y0-1,Pp.Z0+4), bM=p(Pp.X0+22,Pp.Y0-1,Pp.Z0-1), bL=p(Pp.X0-5,Pp.Y0-1,Pp.Z0+2);
+  // Beine unter dem Saum
+  [[Pp.X0+3,Pp.Z1-3],[Pp.X1-6,Pp.Z1-4]].forEach(function(l){ var e=p(l[0],FY,l[1]); b.rect(rd(e[0])-1,rd(e[1])-7,3,7,P.k1); b.px(rd(e[0]),rd(e[1]),P.y2); b.vl(rd(e[0])-1,rd(e[1])-7,rd(e[1])-1,P.m0); });
+  var ly=p(Pp.X0+14,FY,Pp.Z1-12); b.vl(rd(ly[0]),rd(ly[1])-6,rd(ly[1])-3,P.k1); b.hl(rd(ly[0])-2,rd(ly[0])+3,rd(ly[1])-3,P.y2);
+  // Deckelfläche (oben, vom Fensterlicht gestreift)
+  b.poly([fL,fR,tR,bR,bM,bL],function(x,y){ var f=Math.sin(x*0.35+y*0.9); return f>0.75?P.s6:(f<-0.8?P.s4:P.s5); });
+  // Buckel über dem Notenpult und der Tastatur
+  var mx=SX(Pp.X0+3,Pp.Z1-9); b.poly([[mx-4,fL[1]+1],[mx-2,fL[1]-8],[mx+3,fL[1]-10],[mx+8,fL[1]-6],[mx+12,fL[1]]],function(x,y){ return x<mx+1?P.s6:(x<mx+6?P.s5:P.s4); });
+  b.line(rd(mx-2),rd(fL[1])-8,rd(mx+3),rd(fL[1])-10,P.s6);
+  // herabhängende Vorderseite mit Falten aus den Ecken
+  var top=fL[1], x0=fL[0]-1, x1=tR[0]+1, hem=function(x){ var u=(x-x0)/(x1-x0); return lerp(SY(FY-6,Pp.Z1+2),SY(FY-7,Pp.Z1-8),u)+Math.sin(u*Math.PI*5)*1.6+Math.sin(u*31)*0.7; };
+  for (var x=Math.floor(x0);x<=Math.ceil(x1);x++){ var u=(x-x0)/(x1-x0), yt=lerp(top,tR[1],Math.max(0,(u-0.8)/0.2)), yb=hem(x);
+    for (var y=Math.floor(yt);y<yb;y++){ var t=(y-yt)/(yb-yt), fold=Math.sin(u*34+t*3*Math.sin(u*7))+Math.sin(u*9-t*2)*0.6;
+      var diagL=Math.abs((x-x0)-t*18)<1.2 && t<0.8, diagR=Math.abs((x1-x)-t*14)<1.2 && t<0.8;
+      var c=P.s5; if (fold>0.85) c=P.s6; else if (fold<-0.9) c=P.s3; else if (fold<-0.3) c=P.s4; if (diagL||diagR) c=P.s3; if (t<0.1) c=P.s6; if (yb-y<1.5) c=P.s3; if (u<0.04||u>0.97) c=P.s3;
+      b.px(x,y,c); } }
+  b.line(rd(fL[0]),rd(fL[1]),rd(fR[0]),rd(fR[1]),P.s6); }
+function paintSheetHeap(b){ var cx=258, cy=128; b.ellipse(cx,cy,15,5,P.s4); b.ellipse(cx-3,cy-3,9,4,P.s5); b.ellipse(cx+5,cy-2,7,3.4,P.s5); b.ellipse(cx-5,cy-5,4,2.4,P.s6); b.line(cx-14,cy+2,cx+12,cy+3,P.s3); b.line(cx-2,cy-2,cx+6,cy+3,P.s3); b.line(cx-8,cy-1,cx-4,cy+4,P.s3); }
+function paintBench(b){ var B=BEN, p=R3.p; R3.box(b,B.X0,B.X1,B.Y0,FY,B.Z0,B.Z1,{top:function(x,y){ var t=(y-SY(B.Y0,B.Z0))/(SY(B.Y0,B.Z1)-SY(B.Y0,B.Z0)+0.01); return t>0.6?P.w4:(((x+y)&1)?P.w2:P.w3); },left:P.w0,right:P.w0,
+    front:function(x,y){ var Y=VY+(y-VY)/K(B.Z1), X=Xat(x,B.Z1); if (Y<91) return P.w3; if (Y<95){ if (Math.abs(X-(B.X0+B.X1)/2)<0.9 && Y>92) return P.y4; return P.w2; } if (Y<96) return P.w1; var lx=X-B.X0; if (lx<1.5||lx>B.X1-B.X0-1.5) return P.w1; return T; }});
+  var bl=p(B.X0+1,FY,B.Z1), br=p(B.X1-1,FY,B.Z1); b.vl(rd(bl[0]),rd(SY(96,B.Z1)),rd(bl[1]),P.w1); b.vl(rd(br[0]),rd(SY(96,B.Z1)),rd(br[1]),P.w1);
+  var bk=p(B.X0+1,FY,B.Z0+1), bk2=p(B.X1-1,FY,B.Z0+1); b.vl(rd(bk[0]),rd(SY(96,B.Z0+1)),rd(bk[1]),P.w0); b.vl(rd(bk2[0]),rd(SY(96,B.Z0+1)),rd(bk2[1]),P.w0); }
+
+// ---------------------------------------------------------------- Eisenbetten, Matratzen, Möbel unter Tüchern
+function paintBeds(b){ var r=M.rng(17);
+  for (var m=0;m<3;m++){ var mx=262+m*8, my=97, mw=7, mh=24-m*3; for (var y=my-mh;y<my;y++) for (var x=mx;x<mx+mw;x++){ var u=(x-mx)/mw, c=((x+m)%3===0)?P.c2:P.s4; if (u<0.2||u>0.85) c=M.DN[c]; if (((y-my+mh)%9)===4) c=P.e1; b.px(x,y,c); }
+    b.ellipse(mx+mw/2,my-mh,mw/2,1.6,P.s3); b.ellipse(mx+mw/2,my-mh,mw/2-1.6,0.8,P.s2); }
+  for (var k=0;k<5;k++){ var uo=4+k*2.6, yo=k*2;
+    var A=M.wallPt(SPEC,'R',uo,58+yo), B=M.wallPt(SPEC,'R',uo+20,58+yo), Cc=M.wallPt(SPEC,'R',uo+20,FY-2), D=M.wallPt(SPEC,'R',uo,FY-2);
+    var col=k%2?P.m3:P.s3, dk=k%2?P.m1:P.s1;
+    b.line(rd(A[0])-k*2,rd(A[1]),rd(D[0])-k*2,rd(D[1]),col); b.line(rd(A[0])-k*2+1,rd(A[1]),rd(D[0])-k*2+1,rd(D[1]),dk);
+    b.line(rd(B[0])-k*2,rd(B[1]),rd(Cc[0])-k*2,rd(Cc[1]),col);
+    b.line(rd(A[0])-k*2,rd(A[1]),rd(B[0])-k*2,rd(B[1]),col); b.line(rd(A[0])-k*2,rd(A[1])+6,rd(B[0])-k*2,rd(B[1])+6,dk);
+    for (var s=1;s<7;s++){ var t=s/7, ax=lerp(A[0],B[0],t)-k*2, ay=lerp(A[1],B[1],t), dy=lerp(A[1],B[1],t)+14+((s*7+k)%3); b.line(rd(ax),rd(ay),rd(ax),rd(dy),s%2?col:dk); }
+    b.px(rd(A[0])-k*2,rd(A[1])-1,P.y2); b.px(rd(B[0])-k*2,rd(B[1])-1,P.y2);
+    if (r()<0.6){ var rs=lerp(A[0],B[0],0.4)-k*2; b.px(rd(rs),rd(lerp(A[1],B[1],0.4))+3,P.t2); } }
+  b.poly([[268,112],[312,108],[318,118],[272,124]],function(x,y){ return ((x+y*2)%5===0)?P.c2:P.s4; }); b.line(268,112,312,108,P.s5); b.line(272,124,318,118,P.s2);
+  b.poly([[282,110],[300,108],[304,116],[286,119]],function(x,y){ return ((x>>1)+(y>>1))%2?P.e1:P.e2; });
+  b.rect(296,96,14,10,P.e3); b.hl(296,309,96,P.e4); b.vl(309,96,105,P.e1); M.microText(b,'DEKE',297,99,P.e0); }
+function paintDraped(b){ // ein Stapel Stühle unter einem Tuch, unter dem dritten Fenster
+  var Z=8, x0=rd(SX(229,Z)), x1=rd(SX(257,Z)), yb=rd(SY(FY,Z))+1;
+  var top=function(x){ var u=(x-x0)/(x1-x0); return rd(SY(64,Z)+Math.abs(Math.sin(u*Math.PI*2.2))*-3+Math.sin(u*Math.PI)*-4+u*6); };
+  for (var x=x0;x<=x1;x++){ var yt=top(x); for (var y=yt;y<yb;y++){ var u=(x-x0)/(x1-x0), t=(y-yt)/(yb-yt), f=Math.sin(u*22+t*2.5), c=f>0.5?P.s5:(f<-0.5?P.s3:P.s4);
+      if (y===yt) c=P.s5; if (yb-y<2) c=P.s3; if (t>0.55 && Math.abs(Math.sin(u*Math.PI*3))<0.12) c=P.s2; b.px(x,y,c); } }
+  // Stuhlbeine schauen unten heraus
+  [[0.12],[0.4],[0.66],[0.9]].forEach(function(q){ var lx=rd(lerp(x0,x1,q[0])); b.vl(lx,yb-1,yb+1,P.w1); }); }
+function paintSofa(b){ var pts=[[0,104],[16,98],[30,102],[34,118],[30,128],[0,134]];
+  b.poly(pts,function(x,y){ var f=Math.sin(x*0.55+y*0.12), c=f>0.5?P.s5:(f<-0.45?P.s3:P.s4); if (y>126) c=P.s3; return c; }); b.line(0,104,16,98,P.s5); b.line(16,98,30,102,P.s5); }
+
+// ---------------------------------------------------------------- Bild
+function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), sky=new Uint8Array(W*144), out=outside(S), base=baseOf(S,tod);
+  M.box(b,{vp:SPEC.vp,rect:SPEC.rect,
+    back:function(u,v,x,y){ return wallCol(x,y); },
+    side:function(u,v,x,y,sd){ var D=(sd==='L'?(VX-BX0):(BX1-VX)), ut=D*(1-1/(1+u/D)); return M.DN[wallCol(sd==='L'?ut*1.7:400+ut*1.7,Math.floor(v+BY0))]; },
+    floor:function(xb,d,x,y){ return parquet(x,y); },
+    ceil:function(xc,d,x,y){ return ceilCol(xc,d); } });
+  [[98,140],[180,222],[262,286]].forEach(function(q){ panelFrame(b,q[0],28,q[1],80); panelFrame(b,q[0]+3,31,q[1]-3,77); });
+  [[98,140],[180,222]].forEach(function(q){ panelFrame(b,q[0],89,q[1],96); });
+  var wallOnly=b.clone();
+  paintWindows(b,out,sky);
+  paintDoor(b);
+  paintDraped(b);
+  paintBeds(b);
+  paintCabinet(b,S);
+  paintPiano(b,S); if (S.sheetOff) paintSheetHeap(b); paintBench(b);
+  paintSofa(b);
+  for (var q=0;q<W*144;q++) if (sky[q] && b.d[q]!==out.d[q]) sky[q]=0;
+  // wo Wand oder Boden frei sichtbar sind, dürfen Kreidebilder erscheinen (Türrahmen ausdrücklich auch)
+  CHALKOK=new Uint8Array(W*144); for (var i=0;i<W*144;i++){ var x=i%W, y=(i/W)|0; CHALKOK[i]=(b.d[i]===wallOnly.d[i])||(x>=DOOR.X1+1&&x<=DOOR.X1+2&&y>=DOOR.Y0&&y<FY)?1:0; }
+  var notSky=function(x,y){ return !sky[y*W+x]; };
+  var p0=R3.p(PIA.X0,FY,PIA.Z1), p1=R3.p(PIA.X1,FY,PIA.Z0);
+  M.light(b,M.lf.sum(windowLight,M.lf.vignette(W,144,1.2),M.lf.band(0,16,-1.2,0),M.lf.pool((p0[0]+p1[0])/2,(p0[1]+p1[1])/2+3,42,7,-1.4),M.lf.pool(70,113,24,4,-1),M.lf.pool(158,121,10,3,-1),M.lf.k(-0.45)),0,0,notSky);
+  paintChandelier(b);
+  for (var q2=0;q2<W*144;q2++) if (sky[q2] && b.d[q2]!==out.d[q2]) sky[q2]=0;
+  shade(b,0,0,base,doorLight,function(x,y){ return !!sky[y*W+x]; });
+  if (base){ for (var yy=DOOR.Y0;yy<FY-14;yy++) for (var xx=DOOR.X0+4;xx<DOOR.X1;xx++){ var u=(xx-DOOR.X0)/(DOOR.X1-DOOR.X0); if (bayer(xx,yy)<0.6) b.px(xx,yy,u>0.7?P.y4:P.y3); } b.vl(DOOR.X1-2,DOOR.Y0+2,DOOR.Y0+26,P.y5); }
+  BG=b; return b; }
+
+// ---------------------------------------------------------------- Ebenen: Flügel, Klavierbank, Tuch am Boden, Sofa
+function copyInto(L,src){ for (var y=0;y<L.h;y++) for (var x=0;x<L.w;x++){ var c=src.get(x+L.ox,y+L.oy); if (c!==T) L.d[y*L.w+x]=c; } }
+function finishL(L,base,pre){ M.light(L,M.lf.sum(windowLight,M.lf.vignette(W,144,1.4),M.lf.k(-0.35),pre||M.lf.k(0)),L.ox,L.oy); shade(L,L.ox,L.oy,base,doorLight); return L; }
+function layers(S,GS,tod){ var base=baseOf(S,tod), out=[], t;
+  var L=M.layer(160,72,104,64,rd(SY(FY,PIA.Z1))+1); t=new M.Buf(W,144,T); paintPiano(t,S); copyInto(L,t); out.push(finishL(L,base));
+  var Bl=M.layer(148,96,24,32,rd(SY(FY,BEN.Z1))+1); t=new M.Buf(W,144,T); paintBench(t); copyInto(Bl,t); out.push(finishL(Bl,base));
+  if (S.sheetOff){ var H=M.layer(240,116,36,20,134); t=new M.Buf(W,144,T); paintSheetHeap(t); copyInto(H,t); out.push(finishL(H,base)); }
+  var So=M.layer(0,96,36,40,135); t=new M.Buf(W,144,T); paintSofa(t); copyInto(So,t); out.push(finishL(So,base,M.lf.k(-0.2)));
+  return out; }
+
+// ---------------------------------------------------------------- Bewegung: Regen an den Fenstern, Staub im Licht, Türlicht
+function dyn(fb,v,S,GS){ WINS.forEach(function(w,i){ M.scn.windowRain(fb,w[0]+1,WY0+6,w[1]-w[0]-2,WY1-WY0-7,v.t*(0.9+i*0.1)+i*3,v.cam); });
+  var col=S.dawn?P.d4:P.n3; WINS.forEach(function(w,i){ M.dust(fb,v.t*0.6+i*7,w[0]-4,WY1,w[1]-w[0]+12,30,6,col); });
+  if (Math.sin(v.t*2.3)+Math.sin(v.t*5.1)>1.7){ for (var y=DOOR.Y0+2;y<FY-16;y+=2) fb.px(DOOR.X1-3,y,P.y4); } }
+
+// ---------------------------------------------------------------- Geistersicht: die Kreidebilder der Kinder
+var CHALK=null;
+function chalkLines(){ if (CHALK) return CHALK; var pts={}, flo={}, glow={};
+  function dot(x,y,v,f){ x=rd(x); y=rd(y); if (x<0||y<0||x>=W||y>=144) return; var k=y*W+x; pts[k]=Math.max(pts[k]||0,v||1); if (f) flo[k]=1; }
+  function ln(x0,y0,x1,y1,v,wob,f){ var n=Math.max(1,Math.ceil(Math.hypot(x1-x0,y1-y0))); for (var i=0;i<=n;i++){ var t=i/n, j=wob?Math.sin(t*9+x0)*0.35:0; dot(lerp(x0,x1,t)+j,lerp(y0,y1,t)-j,v,f); } }
+  function circ(cx,cy,rx,ry,v){ var n=Math.ceil((rx+ry)*3); for (var i=0;i<n;i++){ var a=i/n*Math.PI*2; dot(cx+Math.cos(a)*rx,cy+Math.sin(a)*ry,v); } }
+  function poly(a,v){ for (var i=0;i<a.length-1;i++) ln(a[i][0],a[i][1],a[i+1][0],a[i+1][1],v,true); }
+  function txt(s,x,y,v){ var cx=x; for (var i=0;i<s.length;i++){ var g=M.FONT[s[i]]; if (!g){ cx+=3; continue; } var jy=(i%2)?1:0; for (var k=0;k<g.px.length;k+=2) dot(cx+g.px[k],y+g.px[k+1]+jy,v); cx+=g.w+2; } }
+  function micro(s,x,y,v){ M.microText({px:function(xx,yy){ dot(xx,yy,v,1); }},s,rd(x),rd(y),0); }
+  // --- das Mädchen mit Zopf wartet an der Haltestelle (links), daneben die Straßenbahn Nr. 3
+  var gx=103, gy=72; circ(gx,gy,2.6,2.8,1); poly([[gx-1,gy+3],[gx-4.5,gy+12],[gx+4.5,gy+12],[gx+1,gy+3]],1);
+  ln(gx-1.5,gy+12,gx-2,gy+17,1); ln(gx+1.5,gy+12,gx+2,gy+17,1); ln(gx-3,gy+17,gx-1,gy+17,0.8); ln(gx+1,gy+17,gx+3,gy+17,0.8);
+  ln(gx+2,gy+5,gx+6,gy+8,0.9); ln(gx-2,gy+5,gx-5,gy+9,0.9);
+  poly([[gx-2,gy-2],[gx-4,gy],[gx-3,gy+2],[gx-5,gy+4],[gx-4,gy+6],[gx-6,gy+8]],1); dot(gx-7,gy+8,1); dot(gx-6,gy+9,1); dot(gx-5,gy+9,1); dot(gx-7,gy+10,0.8);
+  dot(gx-1,gy-0.6,0.7); dot(gx+1,gy-0.6,0.7); ln(gx-1,gy+1.3,gx+1,gy+1.3,0.6);
+  ln(gx+8,gy+17,gx+8,gy+2,0.7); poly([[gx+6,gy+2],[gx+10,gy+2],[gx+10,gy-1],[gx+6,gy-1],[gx+6,gy+2]],0.7);  // Haltestellenschild
+  var tx=112, ty=70;
+  poly([[tx,ty+14],[tx,ty+3],[tx+2,ty],[tx+22,ty],[tx+25,ty+3],[tx+25,ty+14],[tx,ty+14]],1);
+  for (var wI=0;wI<3;wI++) poly([[tx+2+wI*5,ty+3],[tx+5+wI*5,ty+3],[tx+5+wI*5,ty+7],[tx+2+wI*5,ty+7],[tx+2+wI*5,ty+3]],0.8);
+  ln(tx+1,ty+9,tx+16,ty+9,0.6,true);
+  poly([[tx+18,ty+2],[tx+24,ty+2],[tx+24,ty+11],[tx+18,ty+11],[tx+18,ty+2]],0.9);
+  poly([[tx+19,ty+3.6],[tx+22.6,ty+3.4],[tx+23,ty+5],[tx+20.6,ty+6.6],[tx+23,ty+8],[tx+22.6,ty+9.6],[tx+19,ty+9.8]],1.25);
+  circ(tx+5,ty+15,2,2,1); circ(tx+20,ty+15,2,2,1); ln(tx-4,ty+18,tx+30,ty+18,0.7,true); for (var s=0;s<6;s++) ln(tx-2+s*6,ty+18,tx-3+s*6,ty+20,0.5);
+  poly([[tx+10,ty],[tx+14,ty-4],[tx+9,ty-7],[tx+15,ty-10]],0.9); ln(tx-6,ty-10,tx+30,ty-11,0.7,true);
+  // gezählte Tage unter der Bahn
+  for (var tI=0;tI<13;tI++){ var tx2=114+(tI%5)*2+Math.floor(tI/5)*12, ty2=93; if (tI%5===4) ln(tx2-8,ty2+2,tx2+1,ty2-2,0.7); else ln(tx2,ty2-2,tx2,ty2+2,0.7); }
+  var hzx=100, hzy=94; poly([[hzx,hzy+3],[hzx-3,hzy],[hzx-3,hzy-1],[hzx-2,hzy-2],[hzx,hzy-1],[hzx+2,hzy-2],[hzx+3,hzy-1],[hzx+3,hzy],[hzx,hzy+3]],0.9);
+  // --- Häuser, Sonne, KUĆA (zwischen dem zweiten und dritten Fenster)
+  var hx=183, hy=76;
+  poly([[hx,hy+12],[hx,hy+3],[hx+6,hy-3],[hx+12,hy+3],[hx+12,hy+12],[hx,hy+12]],1); poly([[hx+4,hy+12],[hx+4,hy+7],[hx+7,hy+7],[hx+7,hy+12]],0.8); poly([[hx+8,hy+4],[hx+10,hy+4],[hx+10,hy+6],[hx+8,hy+6],[hx+8,hy+4]],0.7);
+  poly([[hx+16,hy+12],[hx+16,hy],[hx+23,hy-6],[hx+30,hy],[hx+30,hy+12],[hx+16,hy+12]],1); poly([[hx+21,hy+12],[hx+21,hy+6],[hx+25,hy+6],[hx+25,hy+12]],0.8);
+  poly([[hx+18,hy+2],[hx+20,hy+2],[hx+20,hy+4],[hx+18,hy+4],[hx+18,hy+2]],0.7); poly([[hx+26,hy+2],[hx+28,hy+2],[hx+28,hy+4],[hx+26,hy+4],[hx+26,hy+2]],0.7);
+  poly([[hx+26,hy-3],[hx+26,hy-7],[hx+28,hy-7],[hx+28,hy-2]],0.8); circ(hx+28,hy-10,1.4,1,0.6); circ(hx+30,hy-13,1.8,1.2,0.5);
+  ln(hx-2,hy+13,hx+34,hy+13,0.8,true); for (var gI=0;gI<9;gI++) ln(hx-1+gI*4,hy+13,hx+gI*4,hy+11,0.6);
+  var sx=hx+33, sy=hy-17; circ(sx,sy,3,3,1); for (var rI=0;rI<10;rI++){ var a=rI/10*Math.PI*2; ln(sx+Math.cos(a)*4.4,sy+Math.sin(a)*4.4,sx+Math.cos(a)*6.4,sy+Math.sin(a)*6.4,0.8); }
+  dot(sx-1,sy-1,0.8); dot(sx+1,sy-1,0.8); ln(sx-1,sy+1.4,sx+1,sy+1.4,0.7);
+  txt('KUĆA',hx+1,hy-22,1);
+  var fx=219, fy=88; circ(fx,fy,1.2,1.2,0.9); for (var pI=0;pI<5;pI++){ var pa=pI/5*Math.PI*2; circ(fx+Math.cos(pa)*2.4,fy+Math.sin(pa)*2.4,0.9,0.9,0.7); } ln(fx,fy+2,fx,fy+7,0.8);
+  // --- Größenstriche der Kinder am Türrahmen
+  [66,70,73,77,80].forEach(function(m){ ln(DOOR.X1+1,m,DOOR.X1+2,m,0.9); });
+  // --- Himmel und Hölle auf dem Parkett: Feld 1 vorn, NEBO hinten
+  var HX=130, hw=6.5, dd=2.6, rows=[[31.2,1,'1'],[28.6,1,'2'],[26.0,1,'3'],[23.4,2,'45'],[20.8,1,'6'],[18.2,2,'78']];
+  function fp(X,D){ var k=1/(1-D/64), Z=(k-1)*F; return R3.p(X,FY,Z); }
+  for (var rI2=0;rI2<rows.length;rI2++){ var r=rows[rI2], dN=r[0], dF=r[0]-dd, w2=r[1]===2?hw*2:hw;
+    var a0=fp(HX-w2,dN), a1=fp(HX+w2,dN), b0=fp(HX-w2,dF), b1=fp(HX+w2,dF);
+    ln(a0[0],a0[1],a1[0],a1[1],0.85,true,1); ln(b0[0],b0[1],b1[0],b1[1],0.85,true,1); ln(a0[0],a0[1],b0[0],b0[1],0.85,false,1); ln(a1[0],a1[1],b1[0],b1[1],0.85,false,1);
+    if (r[1]===2){ var m0=fp(HX,dN), m1=fp(HX,dF); ln(m0[0],m0[1],m1[0],m1[1],0.85,false,1); }
+    var dm=(dN+dF)/2; if (r[1]===1){ var c=fp(HX,dm); if (rI2<3||rI2===4) micro(r[2],c[0]-1,c[1]-2,0.7); } else if (rI2<4){ var cl=fp(HX-hw,dm), cr=fp(HX+hw,dm); micro(r[2][0],cl[0]-1,cl[1]-2,0.7); micro(r[2][1],cr[0]-1,cr[1]-2,0.7); } }
+  var dTop=rows[rows.length-1][0]-dd; for (var i2=0;i2<=32;i2++){ var a2=Math.PI*i2/32, q=fp(HX-Math.cos(a2)*hw*2,dTop-Math.sin(a2)*3.4); dot(q[0],q[1],0.85,1); }
+  var nb=fp(HX,dTop-1.6); micro('NEBO',nb[0]-7,nb[1]-2,0.65);
+  var st=fp(HX+2.5,26.0-1.3); dot(st[0],st[1],1,1); dot(st[0]+1,st[1],1,1); dot(st[0],st[1]+1,0.8,1);
+  Object.keys(pts).forEach(function(k){ k=+k; var x=k%W, y=(k/W)|0, R=flo[k]?1:2; for (var dy=-R;dy<=R;dy++) for (var dx=-R;dx<=R;dx++){ var d=Math.abs(dx)+Math.abs(dy); if (!d||d>R+1) continue; var kk=(y+dy)*W+(x+dx); if (!pts[kk]) glow[kk]=Math.max(glow[kk]||0,(R+2-d)/(R+1)*pts[k]*(flo[k]?0.7:1)); } });
+  CHALK={pts:pts,glow:glow}; return CHALK; }
+function ghost(fb,v,S,GS){ var C=chalkLines(), t=v.t, cam=v.cam, bg=BG, tg=M.TINT.ghost; if (!bg||!CHALKOK) return;
+  var breath=0.84+Math.sin(t*0.9)*0.12;
+  function visible(x,y){ var sx=x-cam, k=y*W+x; if (sx<0||sx>=fb.w||!CHALKOK[k]) return false; return fb.d[y*fb.w+sx]===M.tintPx(tg,bg.d[k],sx,y); }
+  var k;
+  for (k in C.glow){ k=+k; var x=k%W, y=(k/W)|0; if (!visible(x,y)) continue; var g=C.glow[k]*breath; if (bayer(x,y)<g*0.55) fb.d[y*fb.w+x-cam]=g>0.8?P.x3:P.x2; }
+  for (k in C.pts){ k=+k; var x2=k%W, y2=(k/W)|0; if (!visible(x2,y2)) continue; var vv=C.pts[k], wave=Math.sin(t*1.7-x2*0.08-y2*0.05)*0.5+0.5, lev=vv*breath+wave*0.18;
+    var c=lev>0.95?P.x6:(lev>0.72?P.x5:(lev>0.5?P.x4:P.x3)); if (hash(x2,y2)<0.1) c=M.DN[c]; fb.d[y2*fb.w+x2-cam]=c; }
+  M.dust(fb,t*0.4,60,60,200,60,10,P.x4); }
+
+// ---------------------------------------------------------------- Lauffläche
+function WALK(x,y){ if (y<106||y>140||x<6||x>304) return false; var f=fl(x,y); if (!f) return false; var X=f.X, Z=f.Z;
+  if (X<BX0+4||X>BX1-30) return false;
+  if (Z<CAB.Z1+4 && X<CAB.X1+3) return false;
+  if (X>PIA.X0-6 && X<PIA.X1+6 && Z>PIA.Z0-3 && Z<PIA.Z1+3) return false;
+  if (X>BEN.X0-2 && X<BEN.X1+2 && Z>BEN.Z0-2 && Z<BEN.Z1+2) return false;
+  if (x>=262) return false;
+  if (x<36 && y<134) return false;
+  if (Z<12 && X>220) return false;
+  return true; }
+M.defineArt('salon',{
+  width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, ghost:ghost,
+  actorLut:function(a,S,GS,tod){ var base=baseOf(S,tod); if (!base) return null; return levels(base)[1].a; },
+  spots:{
+    door:[DOOR.X0-3,DOOR.Y0-8,DOOR.X1-DOOR.X0+16,FY-DOOR.Y0+10],
+    piano:[164,78,88,50],
+    sheet:[164,78,88,40],
+    bench:[150,100,20,24],
+    gramophone:[36,40,52,44],
+    cabinet:[46,82,40,32],
+    beds:[256,58,64,70],
+    windows:[56,14,206,72],
+    chandelier:[140,0,40,52],
+    chalk:[92,50,140,50],
+    hopscotch:[94,108,76,34]
+  },
+  stands:{
+    door:[64,116,'L'], piano:[178,134,'B'], sheet:[200,134,'B'], bench:[148,128,'R'], gramophone:[74,118,'B'], cabinet:[70,118,'B'],
+    beds:[248,124,'R'], windows:[160,112,'B'], chandelier:[150,128,'B'], chalk:[124,112,'B'], hopscotch:[96,130,'B']
+  },
+  actorPos:{ bruno:[60,118,'F','bruno',true,'porter'], ljerkaNight:[160,120,'R','ljerkaNight',false,'sit'] },
+  start:[66,124,'R'], entries:{ palma:[62,120,'R'] }
 });
 })(M);
 
@@ -6328,6 +6870,14 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), x, y, i, k, night=tod==='ni
   M.light(b,LF);
   var warm=function(x,y){ return doorLight(x,y)*1.1+(night?0:winBeam(x,y)+winFloor(x,y)); }, cold=function(x,y){ return night?(winBeam(x,y)*1.05+winFloor(x,y)):0; };
   finishLit(b,tod,warm,cold);
+  // Schlüsseldetails nach dem Licht in festen Farben: T.P. auf dem Seesack, das Foto, der Kerzenstummel
+  var lb=night?[P.n0,P.n2,P.n3,P.n4]:[P.w1,P.e2,P.e3,P.s5], tpx=BAG[0]+15, tpy=Math.round(BAG[1]+BAG[3]*0.58)-3;
+  var tt=new M.Buf(16,5,T); M.microText(tt,'T.P.',0,0,lb[0]); b.blit(tt,tpx,tpy); b.px(tpx+1,tpy+1,lb[1]); b.px(tpx+9,tpy+3,lb[1]);
+  var phx=PHOTO[0], phy=PHOTO[1], pw=PHOTO[2], ph=PHOTO[3];
+  b.rect(phx,phy,pw,ph,night?P.n3:P.s5); b.rect(phx+1,phy+1,pw-2,ph-3,night?P.n1:P.e3); b.rect(phx+1,phy+ph-5,pw-2,3,night?P.n0:P.e2);
+  b.ellipse(phx+pw/2,phy+5,1.9,2.3,night?P.n3:P.q3); b.rect(phx+3,phy+2,4,2,night?P.k2:P.h2); b.rect(phx+2,phy+8,pw-4,3,night?P.k2:P.c1); b.px(phx+4,phy+5,night?P.n1:P.q1); b.px(phx+6,phy+5,night?P.n1:P.q1);
+  b.px(phx+Math.floor(pw/2),phy-1,P.r3); b.px(phx+Math.floor(pw/2),phy,night?P.n4:P.m3); b.px(phx+pw-1,phy+ph-1,night?P.n2:P.s3);
+  var cx2=CANDLE[0], cy2=CANDLE[1]; b.ellipse(cx2+4,cy2+6,4,1.2,night?P.n2:P.s3); b.hl(cx2+1,cx2+7,cy2+6,night?P.n3:P.s4); b.rect(cx2+3,cy2+2,2,4,night?P.n4:P.s6); b.px(cx2+3,cy2+2,night?P.n3:P.s5); b.px(cx2+4,cy2+1,P.k1); b.px(cx2+2,cy2+5,night?P.n3:P.s5); b.px(cx2+5,cy2+5,night?P.n3:P.s5);
   // ---- Lichtquellen selbst: leuchtende Ritzen, Fensterglas
   var cr=night?[P.y3,P.y4,P.y5]:[P.d5,P.d6,P.l0];
   CRACKS.forEach(function(cx,ci){ for (y=dy+1;y<dy+dh-1;y++){ if (hash(cx,y)<0.12) continue; b.px(cx,y,(y%7===0)?cr[1]:cr[ci===1?2:1]); } });
@@ -6370,13 +6920,14 @@ function walk(x,y){ var f=R3.floor(x,y); if (!f) return false; if (y<104||y>=139
   if (x>=218&&x<258&&y<126) return false;      // Außenborder auf dem Bock
   if (x>=258&&x<288&&y<130) return false;      // Kanister
   if (x>=100&&x<116&&y<130) return false;      // Demižana
+  if (x>=194&&x<218&&y<119) return false;      // Flaschenkiste
   return true; }
 var wqx=Math.floor(Math.min(WINQ[0][0],WINQ[3][0])), wqy=Math.floor(Math.min(WINQ[0][1],WINQ[1][1]));
 M.defineArt('shed',{
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, ghost:ghost,
   spots:{ door:[DOOR[0]-3,DOOR[1]-3,DOOR[2]+6,DOOR[3]+3], seabag:[BAG[0]-1,BAG[1]-2,BAG[2]+2,BAG[3]+2], photo:[PHOTO[0]-1,PHOTO[1]-2,PHOTO[2]+2,PHOTO[3]+3], candle:[CANDLE[0]-1,CANDLE[1],CANDLE[2]+2,CANDLE[3]+1],
     nets:[46,28,26,66], motor:[222,76,40,50], oars:[282,0,38,118], window:[wqx-2,wqy-2,Math.ceil(Math.max(WINQ[1][0],WINQ[2][0]))-wqx+4,26] },
-  stands:{ door:[142,106,'B'], seabag:[204,108,'B'], photo:[238,110,'B'], candle:[240,110,'B'], nets:[62,128,'L'], motor:[236,130,'B'], oars:[280,132,'R'], window:[58,130,'L'] },
+  stands:{ door:[142,106,'B'], seabag:[188,112,'B'], photo:[226,128,'B'], candle:[230,128,'B'], nets:[62,128,'L'], motor:[236,130,'B'], oars:[280,132,'R'], window:[58,130,'L'] },
   start:[142,108,'F'], entries:{ matejuska:[142,106,'F'] }
 });
 })(M);
@@ -6392,10 +6943,10 @@ var W=320;
 var VP=[172,48], RECT=[64,8,282,92], F=100, FY=92;
 var R3=M.room3(VP,F,FY), SPEC={vp:VP,rect:RECT};
 var WINU=[10,34,24,72], DOORU=[40,58,28,92];    // Schaufenster und Ladentür in der linken Wand (u0,u1,vOben,vUnten)
-var BENCH={X0:150,X1:188,Y0:76,Z0:48,Z1:62};   // Werkbank
+var BENCH={X0:164,X1:222,Y0:78,Z0:30,Z1:44};   // Werkbank (Nina steht davor, mit dem Rücken zu uns)
 var CNT={X0:92,X1:128,Y0:74,Z0:26,Z1:40};      // Ladentisch
 var PRIV=[232,34,24,58];                       // Durchgang „PRIVAT“ in der Rückwand
-var LAMP=[176,62];                             // Arbeitslampe über der Werkbank (Schirm)
+var LAMP=[226,66];                             // Arbeitslampe über der Werkbank (Schirm)
 function rnd(v){ return Math.round(v); }
 function fy(Z){ return VP[1]+(FY-VP[1])*(1+Z/F); }
 function q(sd,u,v){ var p=M.wallPt(SPEC,sd,u,v); return [rnd(p[0]),rnd(p[1])]; }
@@ -6483,18 +7034,23 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), night=tod!=='day';
   [FR.gold,FR.oak,FR.black,FR.silver,FR.red,FR.white,FR.dark].forEach(function(R,i){ var cx=mb[0]+1+i*4; b.rect(cx,mb[1]+1,3,2,R[3]); b.rect(cx,mb[1]+3,2,3,R[2]); b.px(cx+1,mb[1]+3,R[1]); });
   // Rahmen, die unten an der Wand lehnen
   [[66,72,16,18,'oak',3],[78,76,14,14,'gold',2,1],[190,74,18,16,'black',2],[204,78,12,12,'white',2]].forEach(function(f){ frame(b,f[0],f[1],f[2],f[3],FR[f[4]],f[5],f[6]); for (var xx=f[0]+1;xx<f[0]+f[2]+2;xx++){ var cc=b.get(xx,f[1]+f[3]); if (cc!==T) b.px(xx,f[1]+f[3],M.DN[cc]); } });
-  // ---- Durchgang „PRIVAT“ mit schwerem Vorhang
+  // ---- Durchgang mit Holzperlenvorhang, dahinter die Tür „PRIVAT“
   var px0=PRIV[0], py0=PRIV[1], pw=PRIV[2], ph=PRIV[3];
   b.rect(px0-3,py0-3,pw+6,ph+3,P.w2); b.hl(px0-3,px0+pw+2,py0-3,P.w4); b.vl(px0-3,py0-3,py0+ph-1,P.w3); b.vl(px0+pw+2,py0-3,py0+ph-1,P.w0);
-  b.rect(px0,py0,pw,ph,P.k1); b.rect(px0+8,py0+2,6,ph-2,P.k0);
-  for (var yy=py0;yy<py0+ph;yy++) for (var xx=px0;xx<px0+pw;xx++){ var gap=(xx>=px0+9&&xx<=px0+12+Math.round((yy-py0)*0.04)); if (gap) continue; var fold=Math.sin((xx-px0)*1.25+(xx>px0+12?1:0)), c=fold>0.45?P.r2:(fold>-0.3?P.r1:P.r0); if (yy>py0+ph-3) c=M.DN[c]; b.px(xx,yy,c); }
-  b.hl(px0-1,px0+pw,py0-1,P.m2); for (var ri=px0;ri<px0+pw;ri+=3) b.px(ri,py0,P.m3);
-  b.rect(px0+4,py0-12,16,7,P.s5); b.hl(px0+4,px0+19,py0-12,P.s6); b.hl(px0+4,px0+19,py0-6,P.s3); M.microText(b,'PRIVAT',px0+5,py0-11,P.r2); b.px(px0+12,py0-13,P.k2);
+  for (var yy=py0;yy<py0+ph;yy++) for (var xx=px0;xx<px0+pw;xx++){ var c=((xx-px0)%11===0||(yy-py0)%26===0)?P.w0:P.w1; if (xx===px0+pw-1) c=P.k2; b.px(xx,yy,c); }   // Tür (dunkel)
+  b.rect(px0+3,py0+30,2,3,P.y2); b.px(px0+3,py0+30,P.y4);
+  // Perlenschnüre, in der Mitte auseinandergeschoben
+  var BEAD=[P.w3,P.w4,P.y2,P.w2,P.e4];
+  for (var bs=0;bs<pw;bs+=2){ var bxx=px0+bs, mid=Math.abs(bs-pw/2); if (mid<=7) continue; var bend=(bs<pw/2)?-1:1;
+    for (var by2=py0;by2<py0+ph-1;by2+=2){ var sway=Math.round(Math.max(0,(by2-py0-6))*0.04*bend*(7-Math.min(7,mid-5))); var cc2=BEAD[(bs*3+(by2>>1))%BEAD.length]; b.px(bxx+sway,by2,cc2); b.px(bxx+sway,by2+1,P.k2); } }
+  b.hl(px0-1,px0+pw,py0-1,P.m2);
+  // Schild „PRIVAT“ hängt an zwei Schnüren vor dem Perlenvorhang
+  var sx0=px0-1, sy0=py0+8; b.line(sx0+4,py0,sx0+3,sy0,P.k2); b.line(sx0+21,py0,sx0+22,sy0,P.k2); b.rect(sx0,sy0,26,8,P.s5); b.hl(sx0,sx0+25,sy0,P.s6); b.hl(sx0,sx0+25,sy0+7,P.s3); b.vl(sx0+25,sy0,sy0+7,P.s3); M.microText(b,'PRIVAT',sx0+2,sy0+2,P.r2);
   // ---- Werkzeugwand rechts: Lochblech mit Spachteln, Zangen, Hämmern
   var tq=M.wallQuad(SPEC,'R',5,33,22,70); b.poly(tq,function(x,y){ return ((x+y)%3===0 && (y%3===0))?P.e1:P.e3; });
   for (var e3=0;e3<4;e3++) b.line(rnd(tq[e3][0]),rnd(tq[e3][1]),rnd(tq[(e3+1)%4][0]),rnd(tq[(e3+1)%4][1]),P.w1);
   [[8,28,'sp'],[12,28,'sp'],[16,28,'sp'],[21,28,'pl'],[26,28,'pl'],[30,29,'sp'],[9,46,'ha'],[15,46,'ha'],[22,45,'sa'],[29,47,'ha'],[10,60,'cl'],[18,60,'cl'],[26,59,'pl']].forEach(function(t,i){ var p0=q('R',t[0],t[1]);
-    if (t[2]==='sp'){ b.vl(p0[0],p0[1],p0[1]+5,P.w3); b.rect(p0[0]-1,p0[1]+6,3,4,P.m3); b.px(p0[0]-1,p0[1]+6,P.m4); }
+    if (t[2]==='sp'){ var sw2=1+(i%4); b.vl(p0[0],p0[1],p0[1]+5,P.w3); b.rect(p0[0]-(sw2>>1),p0[1]+6,sw2+1,4,P.m3); b.px(p0[0]-(sw2>>1),p0[1]+6,P.m4); }
     else if (t[2]==='pl'){ b.line(p0[0],p0[1],p0[0]-1,p0[1]+8,P.r2); b.line(p0[0]+1,p0[1],p0[0]+2,p0[1]+8,P.r2); b.rect(p0[0],p0[1]-2,2,3,P.m2); }
     else if (t[2]==='ha'){ b.vl(p0[0],p0[1],p0[1]+9,P.w3); b.rect(p0[0]-2,p0[1]-1,5,3,P.m1); b.px(p0[0]-2,p0[1]-1,P.m3); }
     else if (t[2]==='sa'){ b.rect(p0[0]-2,p0[1],5,10,P.m3); b.hl(p0[0]-2,p0[0]+2,p0[1]+9,P.m2); for (var tt=0;tt<5;tt++) b.px(p0[0]-2+tt,p0[1]+10,P.m2); b.rect(p0[0]-1,p0[1]-3,3,3,P.w2); }
@@ -6511,7 +7067,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), night=tod!=='day';
   var kx=rnd(R3.p(98,74,32)[0]), ky=rnd(R3.p(98,74,32)[1]); b.rect(kx,ky-9,14,9,P.k2); b.hl(kx,kx+13,ky-9,P.m2); b.rect(kx+1,ky-12,12,3,P.y2); b.hl(kx+1,kx+12,ky-12,P.y4); b.rect(kx+3,ky-11,8,1,P.k1);
   for (var kk=0;kk<8;kk++) b.px(kx+2+(kk%4)*3,ky-7+Math.floor(kk/4)*2,P.s5); b.rect(kx,ky-2,14,2,P.y1); b.px(kx+6,ky-2,P.y4);
   // Klingel
-  var bx=rnd(R3.p(118,74,36)[0]), by=rnd(R3.p(118,74,36)[1]); b.ellipse(bx+0.5,by-2,3,2.4,function(x,y){ return y<by-1?(x<bx?P.m4:P.m3):T; }); b.hl(bx-3,bx+3,by-1,P.k2); b.px(bx,by-5,P.m4); b.px(bx-1,by-3,P.s6);
+  var bx=rnd(R3.p(118,74,36)[0]), by=rnd(R3.p(118,74,36)[1]); b.ellipse(bx+0.5,by-2,3,2.4,function(x,y){ return y<by-1?(x<bx?P.y4:P.y2):T; }); b.hl(bx-3,bx+3,by-1,P.y1); b.px(bx,by-5,P.y3); b.px(bx-1,by-3,P.y5);
+  // Quittungen auf einem Dorn, ein Stapel Zettel
+  var qr=R3.p(126,74,38); b.vl(rnd(qr[0]),rnd(qr[1])-6,rnd(qr[1])-1,P.m2); for (var qi=0;qi<4;qi++) b.hl(rnd(qr[0])-2,rnd(qr[0])+2,rnd(qr[1])-2-qi,qi%2?P.s5:P.s6); b.rect(rnd(qr[0])-8,rnd(qr[1])-2,5,2,P.s5); b.hl(rnd(qr[0])-8,rnd(qr[0])-4,rnd(qr[1])-2,P.s6);
   // Packpapierrolle, Schnur
   var pr=R3.p(110,74,29); b.rect(rnd(pr[0]),rnd(pr[1])-3,9,3,P.e3); b.hl(rnd(pr[0]),rnd(pr[0])+8,rnd(pr[1])-3,P.e4); b.ellipse(pr[0]+9,pr[1]-1.5,1,1.5,P.e2);
   // Radio auf dem Tresen
@@ -6530,7 +7088,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), night=tod!=='day';
 // Sonnenfleck: Bodenpunkt -> zurück zur linken Wand (Strahl kommt von links oben), liegt er im Schaufenster?
 function sunPatch(x,y){ var f=R3.floor(x,y); if (!f) return 0; var t=(f.X-RECT[0])/1.25; if (t<=0) return 0; var X=RECT[0], Z=f.Z-t*0.35, Y=FY-t*0.72;
   var D=VP[0]-RECT[0], u=Z; if (u<WINU[0]||u>WINU[1]||Y<WINU[2]||Y>WINU[3]) return 0; if (Math.abs(u-(WINU[0]+WINU[1])/2)<0.9||Math.abs(Y-40)<1.1) return 0.1; return 1; }
-var LIGHTS=[[176,90,70,1.25,40],[176,104,110,0.55,40],[46,52,26,0.55,30]];
+var LIGHTS=[[214,92,74,1.25,40],[204,104,120,0.55,42],[46,52,26,0.55,30]];
 function lampAmt(x,y){ var m=0; for (var i=0;i<LIGHTS.length;i++){ var l=LIGHTS[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[4], d=dx*dx+dy*dy; if (d<1) m=Math.max(m,(1-d)*l[3]); } return Math.min(1,m); }
 function nightLight(b,tod,ox,oy,mask){ var TN=M.TINT[tod]||M.TINT.night;
   M.light(b,function(x,y){ return -1.2+lampAmt(x,y)*2.2; },ox,oy,mask);
@@ -6541,7 +7099,7 @@ var WARM=M.tintMake(function(r,g,b){ return [r*0.80+12, g*0.62+4, b*0.50+6]; });
 
 // ---------------------------------------------------------------- Werkbank (Vordergrund-Ebene, Nina steht rechts daneben)
 function layers(S,GS,tod){ var L=[], night=tod!=='day';
-  var lay=M.layer(128,48,88,76,119), w=M.lw(lay), fw={poly:function(p,c){ w.poly(p,c); }};
+  var lay=M.layer(152,52,100,64,111), w=M.lw(lay), fw={poly:function(p,c){ w.poly(p,c); }};
   // Beine und Zwischenboden
   [[BENCH.X0+1,BENCH.Z1-1],[BENCH.X1-2,BENCH.Z1-1],[BENCH.X0+1,BENCH.Z0+1],[BENCH.X1-2,BENCH.Z0+1]].forEach(function(lg,i){ var a=R3.p(lg[0],BENCH.Y0+3,lg[1]), z=R3.p(lg[0],FY,lg[1]); w.rect(rnd(a[0]),rnd(a[1]),3,rnd(z[1]-a[1]),i<2?P.w2:P.w1); w.px(rnd(a[0]),rnd(a[1]),P.w3); });
   R3.box(fw,BENCH.X0,BENCH.X1,85,87,BENCH.Z0+1,BENCH.Z1-1,{top:P.w2,front:P.w1});
@@ -6557,7 +7115,8 @@ function layers(S,GS,tod){ var L=[], night=tod!=='day';
   var pp=R3.p(BENCH.X0+16,BENCH.Y0,BENCH.Z0+4), pp2=R3.p(BENCH.X1-2,BENCH.Y0,BENCH.Z0+4); w.hl(rnd(pp[0]),rnd(pp2[0]),rnd(pp[1])-1,P.m3); w.hl(rnd(pp[0]),rnd(pp2[0]),rnd(pp[1]),P.m1); w.rect(rnd(pp[0])+14,rnd(pp[1])-3,4,3,P.k2); w.px(rnd(pp[0])+15,rnd(pp[1])-3,P.r3);
   var fr=R3.p(BENCH.X0+18,BENCH.Y0,BENCH.Z0+10); w.rect(rnd(fr[0]),rnd(fr[1])-1,16,2,P.y2); w.hl(rnd(fr[0]),rnd(fr[0])+15,rnd(fr[1])-1,P.y4); w.rect(rnd(fr[0])+2,rnd(fr[1])-1,12,1,P.a5);   // Rahmen mit Glas
   var gc=R3.p(BENCH.X1-6,BENCH.Y0,BENCH.Z0+11); w.line(rnd(gc[0]),rnd(gc[1])-1,rnd(gc[0])+4,rnd(gc[1])-3,P.w4); w.px(rnd(gc[0])+5,rnd(gc[1])-3,P.m4);       // Glasschneider
-  var lf=R3.p(BENCH.X1-12,BENCH.Y0,BENCH.Z0+3); w.rect(rnd(lf[0]),rnd(lf[1])-5,3,5,P.s5); w.px(rnd(lf[0])+1,rnd(lf[1])-6,P.r3); w.px(rnd(lf[0]),rnd(lf[1])-3,P.b2);  // Leim
+  var lf=R3.p(BENCH.X1-14,BENCH.Y0,BENCH.Z0+3); w.rect(rnd(lf[0]),rnd(lf[1])-5,3,5,P.s5); w.px(rnd(lf[0])+1,rnd(lf[1])-6,P.r3); w.px(rnd(lf[0]),rnd(lf[1])-3,P.b2);  // Leim
+  var tc=R3.p(BENCH.X1-4,BENCH.Y0,BENCH.Z0+9); w.rect(rnd(tc[0]),rnd(tc[1])-3,3,3,P.s6); w.px(rnd(tc[0])+3,rnd(tc[1])-2,P.s5); w.hl(rnd(tc[0]),rnd(tc[0])+2,rnd(tc[1])-3,P.e2); w.hl(rnd(tc[0])-1,rnd(tc[0])+3,rnd(tc[1]),P.s4);   // Tasse kalter Tee
   // Arbeitslampe (Gelenkarm)
   var lb=R3.p(BENCH.X1-8,BENCH.Y0,BENCH.Z0+2); w.rect(rnd(lb[0])-2,rnd(lb[1])-1,5,1,P.k2); w.line(rnd(lb[0]),rnd(lb[1])-1,rnd(lb[0])-4,rnd(lb[1])-14,P.m2); w.line(rnd(lb[0])-4,rnd(lb[1])-14,LAMP[0]+2,LAMP[1]-3,P.m2);
   w.poly([[LAMP[0]-3,LAMP[1]-4],[LAMP[0]+3,LAMP[1]-4],[LAMP[0]+4,LAMP[1]],[LAMP[0]-4,LAMP[1]]],P.g3); w.hl(LAMP[0]-3,LAMP[0]+3,LAMP[1]-4,P.g4); w.hl(LAMP[0]-4,LAMP[0]+4,LAMP[1],P.g1);
@@ -6567,7 +7126,18 @@ function layers(S,GS,tod){ var L=[], night=tod!=='day';
   return L; }
 
 // ---------------------------------------------------------------- bewegte Teile
-function dyn(fb,v,S,GS){ var tod=v.tod;
+function dyn(fb,v,S,GS){ var tod=v.tod, night=tod!=='day';
+  function wp(x,y,c){ if (inWin(x,y)) fb.px(x,y,c); }
+  // draußen in der Gasse: Wäsche in der Bura
+  for (var lx=28;lx<58;lx++) wp(lx,37+Math.round(Math.sin((lx-28)/30*Math.PI)*1.5),night?P.k1:P.k2);
+  [[33,night?P.n1:P.s6],[41,night?P.n0:P.r3],[48,night?P.n1:P.b3]].forEach(function(it,k){ for (var yy=0;yy<5;yy++){ var sh=Math.round(yy*0.5+Math.sin(v.t*10+k*2+yy)*0.7); for (var xx=0;xx<4;xx++) wp(it[0]+xx+sh,39+yy,(xx===0||yy===4)?M.DN[it[1]]:it[1]); } });
+  // eine Frau mit Einkaufstüten kämpft sich durch die Bura (nur am Tag)
+  if (!night){ var ph=(v.t%22)/3.2; if (ph<1){ var x=Math.round(57-ph*30), y=72, st=Math.floor(v.t*6)%2;
+      wp(x,y-13,P.h1); wp(x+1,y-13,P.h1); wp(x,y-12,P.p3); wp(x+1,y-12,P.h1);                       // Kopf mit Kopftuch
+      for (var cy=y-11;cy<y-4;cy++){ wp(x-1+Math.round((y-4-cy)*-0.15),cy,P.r1); wp(x+Math.round((y-4-cy)*-0.15),cy,P.r2); wp(x+1+Math.round((y-4-cy)*-0.15),cy,P.r2); }   // Mantel, vornübergebeugt
+      wp(x-1,y-4,P.r1); wp(x+1,y-4,P.r1); wp(x-1+st,y-3,P.k2); wp(x+1-st,y-3,P.k2); wp(x-1+st,y-2,P.k2); wp(x+1-st,y-2,P.k2); wp(x-1+st,y-1,P.k1); wp(x+1-st,y-1,P.k1);
+      for (var by=y-7;by<y-3;by++){ wp(x-3,by,P.s5); wp(x-2,by,P.s4); wp(x+3,by,P.b3); wp(x+4,by,P.b2); }   // Tüten
+      wp(x+2,y-11,P.r3); wp(x+3,y-10,P.r3); } }                                                      // Schal im Wind
   if (tod==='day'){ // Staub tanzt im Sonnenstrahl
     for (var i=0;i<22;i++){ var u=(hash(i,7)+v.t*0.012*(0.5+hash(i,8)))%1, x=rnd(36+u*130+Math.sin(v.t*0.7+i)*3), y=rnd(44+u*74+Math.cos(v.t*0.5+i*1.3)*4+hash(i,9)*14-7); if (Math.sin(v.t*1.3+i*2)>0.1) fb.px(x,y,P.s6); } }
   else M.glow(fb,LAMP[0],LAMP[1]+3,9,v.t,0.3); }
@@ -6576,7 +7146,7 @@ function dyn(fb,v,S,GS){ var tod=v.tod;
 var WALK=function(x,y,S,GS){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z; if (Z<10||Z>94||y>140) return false;
   if (X<40-Z*0.5 && Z<40) return false;
   if (X>=CNT.X0-3 && X<=CNT.X1+3 && Z>=CNT.Z0-4 && Z<=CNT.Z1+3) return false;    // Ladentisch
-  if (X>=BENCH.X0-4 && X<=BENCH.X1+3 && Z>=BENCH.Z0-2 && Z<=BENCH.Z1+3) return false;   // Werkbank
+  if (X>=BENCH.X0-4 && X<=BENCH.X1+4 && Z>=BENCH.Z0-2 && Z<=BENCH.Z1+4) return false;   // Werkbank
   if (X>262 && Z<30) return false;                                                // Leisten in der Ecke
   return x>4 && x<316; };
 
@@ -6587,16 +7157,336 @@ M.defineArt('shop',{
     door:[2,16,24,100],
     frames:[66,10,160,66],
     paintings:[108,30,122,22],
-    bench:[132,64,70,56],
+    bench:[156,60,92,54],
     tools:[286,20,32,58],
     counter:[58,72,62,40],
     bell:[112,92,10,8],
     window:[28,16,28,70],
     private:[228,20,32,72]
   },
-  stands:{ door:[24,122,'L'], frames:[126,112,'B'], paintings:[228,112,'B'], bench:[168,126,'B'], tools:[286,118,'R'], counter:[88,120,'B'], bell:[114,118,'B'], window:[56,112,'L'], private:[244,104,'B'] },
+  stands:{ door:[24,122,'L'], frames:[126,112,'B'], paintings:[254,116,'B'], bench:[182,120,'B'], tools:[286,118,'R'], counter:[88,120,'B'], bell:[114,118,'B'], window:[56,112,'L'], private:[250,104,'B'] },
   actorPos:{ nina:[210,116,'L','nina'] },
-  start:[26,124,'R'], entries:{ oldtown:[26,124,'R'], backroom:[244,106,'F'] }
+  start:[26,124,'R'], entries:{ oldtown:[26,124,'R'], backroom:[250,106,'F'] }
+});
+})(M);
+
+/* ---- rooms/art/sustipan.js ---- */
+/* ===== rooms/art/sustipan.js — Sustipan, der Park auf dem alten Friedhof =====
+   Eine Landzunge mit hohen Pinien, Kieswegen und niedrigen Steinmauern. Rechts vorn der kleine runde Pavillon mit Säulen und
+   Kuppel an der Spitze über dem Meer, in der Mitte der Gedenkstein „ONIMA KOJE JE MORE ZADRŽALO“ mit der Namensliste, eine Bank,
+   eine alte Parklaterne. Links in der Ferne die Hafeneinfahrt mit dem grünen Leuchtfeuer auf dem Wellenbrecher und die Lichter
+   der Stadt über der Bucht. In Malas Geistersicht erscheint der alte Friedhof, der in den 1950ern eingeebnet wurde:
+   Kreuze, Grabsteine und eine kleine Kapelle als blasse, leuchtende Umrisse zwischen den Pinien, auf und neben den Wegen. */
+(function(M){
+'use strict';
+var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, tex=M.tex, R=M.R;
+var W=320, H=144, HZ=60;
+
+// ---------------------------------------------------------------- kleine Helfer
+function cl(v,a,b){ return v<a?a:(v>b?b:v); }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function rnd(v){ return Math.round(v); }
+function vn(x,y,s,sd){ var gx=Math.floor(x/s), gy=Math.floor(y/s), fx=x/s-gx, fy=y/s-gy, o=sd*57.31;
+  var a=hash(gx+o,gy), b=hash(gx+1+o,gy), c=hash(gx+o,gy+1), d=hash(gx+1+o,gy+1), ux=fx*fx*(3-2*fx), uy=fy*fy*(3-2*fy);
+  return a+(b-a)*ux+(c-a)*uy+(a-b-c+d)*ux*uy; }
+function fbm(x,y,s,sd){ return vn(x,y,s,sd)*0.55+vn(x,y,s/2,sd+3)*0.3+vn(x,y,s/4,sd+7)*0.15; }
+function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
+function puff(x,y,sx,sy,sd){ var gx=Math.floor(x/sx), gy=Math.floor(y/sy), b1=9, b2=9, bx=0, by=0;
+  for (var j=-1;j<=1;j++) for (var i=-1;i<=1;i++){ var cx=(gx+i+0.15+hash(gx+i+sd,gy+j)*0.7)*sx, cy=(gy+j+0.15+hash(gx+i,gy+j+sd*1.7)*0.7)*sy;
+    var dx=(x-cx)/sx, dy=(y-cy)/sy, d=dx*dx+dy*dy; if (d<b1){ b2=b1; b1=d; bx=dx; by=dy; } else if (d<b2) b2=d; }
+  var v=0.6-by*0.75-bx*0.25-b1*0.3; if (b2-b1<0.1) v-=0.32; return v; }
+function blocks(u,v,sw,sh,sd,ramps,jc){ var row=Math.floor(v/sh), fv=v-row*sh, bw=sw*(0.75+hash(row,sd+2)*0.6), uu=u+hash(row,sd)*sw, col=Math.floor(uu/bw), fu=uu-col*bw;
+  if (fv<1||fu<1) return jc; var rr=ramps[Math.floor(hash(col+sd*3,row+11)*ramps.length)], t=hash(col*13+sd,row*7+sd), k=t<0.3?0:(t<0.8?1:2), c=rr[k];
+  if (fv<2&&fu>1&&fu<bw-1) c=rr[k+1]; else if (fv>=sh-1||fu>=bw-1) c=rr[Math.max(0,k-1)];
+  var p=hash(u*3+col,v*5+row); if (p<0.05) c=M.DN[c]; else if (p>0.975) c=M.UP[c]; return c; }
+// Regionen: wer wo gemalt hat
+var REG=new Uint8Array(W*H), RG={sky:0,far:1,sea:2,land:3,stone:4,tree:5,prop:6,path:7};
+function RW(b,id){ var o={w:W,h:H,buf:null};
+  o.px=function(x,y,c){ x|=0; y|=0; if (x<0||y<0||x>=W||y>=H||c===undefined||c===T) return; b.d[y*W+x]=c; REG[y*W+x]=id; };
+  o.get=function(x,y){ return b.get(x,y); };
+  o.rect=function(x,y,w,h,c){ for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++) o.px(i,j,c); };
+  o.hl=function(x0,x1,y,c){ if (x0>x1){ var t=x0; x0=x1; x1=t; } for (var i=x0;i<=x1;i++) o.px(i,y,c); };
+  o.vl=function(x,y0,y1,c){ if (y0>y1){ var t=y0; y0=y1; y1=t; } for (var j=y0;j<=y1;j++) o.px(x,j,c); };
+  ['line','poly','ellipse','fn','drect'].forEach(function(k){ o[k]=function(){ return M.Buf.prototype[k].apply(o,arguments); }; });
+  return o; }
+
+// ---------------------------------------------------------------- Geometrie
+function wallTop(x){ return 91+Math.sin(x*0.05)*1.2+Math.sin(x*0.17)*0.6; }    // Oberkante der Brüstungsmauer über dem Meer
+var WALLB=99;                                                               // Mauerfuß
+function pathTop(x){ return 107+Math.sin(x*0.03+1)*1.5; }                   // hinterer Rand des Kieswegs
+var PAV={cx:270,fy:98.5,R:30};                                              // Pavillon: Mitte, Fußboden, Radius
+var LAMP={x:84,by:106,h:42};
+var MEM={x0:94,x1:146,y0:76,y1:108}, PLQ={x0:98,x1:142,y0:80,y1:104};       // Gedenkstein, Bronzetafel
+var BENCH={x0:168,x1:204,by:104};
+var BEACON={x:105,y:61};
+var MOON=[201,8,5];
+// Pinien: Stamm von (x0,y0) unten nach (x1,y1) oben, Krone (cx,cy,rx,ry)
+var PINES=[{x0:41,y0:146,x1:53,y1:4,w:6,cr:[34,2,50,14],fg:true},{x0:150,y0:104,x1:141,y1:18,w:4,cr:[148,13,40,12]},{x0:214,y0:102,x1:220,y1:30,w:3,cr:[222,25,28,9]},{x0:313,y0:98,x1:309,y1:12,w:3,cr:[301,8,30,10]}];
+
+// ---------------------------------------------------------------- Himmel, Stadt, Meer
+function skyPaint(b,tod,weather){ var w=RW(b,RG.sky);
+  if (weather==='rain'){ var RR=tod==='night'?R('k1 k2 n0 n1'):(tod==='dusk'?R('d0 m1 d1 m2 d2'):R('m2 m3 s3 m3'));          // Regen: tief verhangen
+    for (var y0=0;y0<HZ;y0++) for (var x0=0;x0<W;x0++) w.px(x0,y0,ra(RR,0.2+y0/HZ*0.55+(fbm(x0,y0*2,18,4)-0.5)*0.45,x0,y0)); return; }
+  if (tod==='dusk'){ var DR=R('d0 d1 d2 d3 d4 d5 d6');                    // Nachglühen im Westen (rechts)
+    for (var y=0;y<HZ;y++) for (var x=0;x<W;x++){ var v=0.05+Math.pow(y/HZ,1.25)*0.88+(x/W-0.3)*0.12*(y/HZ); w.px(x,y,ra(DR,v,x,y)); }
+    var r=M.rng(17); for (var i=0;i<9;i++){ var cx=r()*W, cy=12+r()*36, rx=18+r()*40, ry=1+r()*1.6; for (var yy=Math.floor(cy-ry);yy<=cy+ry;yy++) for (var xx=Math.floor(cx-rx);xx<=cx+rx;xx++){ var dx=(xx-cx)/rx, dy=(yy-cy)/ry; if (dx*dx+dy*dy>1||bayer(xx,yy)<dx*dx*0.8) continue; w.px(xx,yy,dy<-0.2?(cy>34?P.d6:P.d5):(cy>34?P.d4:P.d3)); } } }
+  else if (tod==='night'){ var NR=R('k0 k1 k2 n0 n1 n2');
+    for (var y2=0;y2<HZ;y2++) for (var x2=0;x2<W;x2++) w.px(x2,y2,ra(NR,0.3+Math.pow(y2/HZ,1.4)*0.62,x2,y2));
+    var r2=M.rng(29), n=weather==='bura'?260:200; for (var s=0;s<n;s++){ var sx=Math.floor(r2()*W), sy=Math.floor(Math.pow(r2(),1.3)*(HZ-6)), q=r2(); w.px(sx,sy,q<0.08?P.n5:(q<0.35?P.n4:P.n3)); if (q<0.03){ w.px(sx+1,sy,P.n3); w.px(sx-1,sy,P.n3); w.px(sx,sy-1,P.n3); w.px(sx,sy+1,P.n3); } }
+    // Milchstraße als feiner Schleier
+    for (var x3=0;x3<W;x3++){ var my=8+x3*0.12+Math.sin(x3*0.03)*4; for (var yy3=Math.floor(my-6);yy3<my+6;yy3++){ if (yy3<0||yy3>=HZ-8) continue; if (bayer(x3,yy3)<0.16*(1-Math.abs(yy3-my)/6)*(0.5+fbm(x3,yy3,7,3))) w.px(x3,yy3,P.n1); } }
+    if (weather!=='bura'){ var mx=MOON[0], my=MOON[1], mr=MOON[2];                                       // Vollmond mit Hof
+      for (var yy4=my-13;yy4<=my+13;yy4++) for (var xx4=mx-13;xx4<=mx+13;xx4++){ var d=Math.hypot(xx4+0.5-mx,yy4+0.5-my); if (d<=mr){ var mar=fbm(xx4*2,yy4*2,5,7)>0.6; w.px(xx4,yy4,(xx4-mx+yy4-my>mr*0.9)?P.n4:(mar?P.n4:P.n5)); }
+        else if (d<13 && bayer(xx4,yy4)<(1-(d-mr)/(13-mr))*0.55) w.px(xx4,yy4,M.UP[b.get(xx4,yy4)]); }
+      w.px(mx-2,my-2,P.l1); w.px(mx-1,my-3,P.l1); } }
+  else if (tod==='dawn'){ M.sky(b,0,0,W,HZ,'dawn',23); }
+  else { M.scn.sky(b,0,0,W,HZ,'day',weather,23); } }
+function farPaint(b,tod){ var w=RW(b,RG.far), night=tod==='night', dusk=tod==='dusk', day=tod==='day';
+  var MT=day?P.b2:(dusk?P.d1:P.n0), MT2=day?P.b1:(dusk?P.d0:P.k2), CT=day?P.s2:(dusk?P.d0:P.k1), CT2=day?P.s1:(dusk?P.k2:P.k0);
+  // Kozjak und Mosor hinter der Stadt
+  for (var x=0;x<170;x++){ var h=rnd(14+Math.sin(x*0.035+0.6)*5+Math.sin(x*0.11)*2-x*0.06); if (h<0) continue; for (var y=HZ-h;y<HZ;y++) w.px(x,y,(y<HZ-h+1)?MT:(bayer(x,y)<0.3?MT:MT2)); }
+  // die Stadt über der Bucht: Häuserzeile, Glockenturm von Sv. Duje
+  for (var x2=0;x2<150;x2++){ var hh=rnd(3+hash(Math.floor(x2/5),2)*4*(1-x2/170)); for (var y2=HZ-hh;y2<HZ;y2++) w.px(x2,y2,CT2); }
+  M.scn.belltower(w,64,HZ-5,19,CT2,!day); w.rect(62,HZ-8,5,4,CT2);
+  if (!day){ var r=M.rng(51); for (var i=0;i<70;i++){ var lx=Math.floor(Math.pow(r(),0.8)*148), ly=HZ-1-Math.floor(r()*Math.max(1,5*(1-lx/170))); w.px(lx,ly,r()<0.3?P.y5:(r()<0.6?P.y4:P.y3)); }
+    for (var j=0;j<12;j++){ var hx=Math.floor(r()*120), hy=HZ-6-Math.floor(r()*8*(1-hx/150)); if (b.get(hx,hy)===MT||b.get(hx,hy)===MT2) w.px(hx,hy,P.y3); } }
+  // Inseln im Süden (Šolta, Brač): ganz blass
+  for (var x3=176;x3<W;x3++){ var h3=rnd(3+Math.sin(x3*0.025)*2+Math.sin(x3*0.09)*0.8); for (var y3=HZ-h3;y3<HZ;y3++) w.px(x3,y3,day?P.b3:(dusk?P.d2:P.n0)); } }
+function seaR(tod){ return tod==='dusk'?R('n0 n1 d1 d2 d3 d4'):M.seaRamp(tod); }
+function seaV(x,y,t,bura){ var d=(y-HZ)/44, s=Math.sin(x*0.11+y*0.9+t*(bura?2.2:1.1))+Math.sin(x*0.037-t*(bura?1.1:0.5)+y*0.33); return 0.66-d*0.42+s*0.05+(Math.sin(y*2.3)>0.6?0.04:0); }
+function seaPaint(b,tod){ var w=RW(b,RG.sea), ramp=seaR(tod);
+  for (var y=HZ;y<104;y++) for (var x=0;x<W;x++) w.px(x,y,M.rampAt(ramp,seaV(x,y,0,false),x,y));
+  // Wellenbrecher der Hafeneinfahrt mit dem grünen Leuchtfeuer
+  var BW=tod==='day'?P.s3:(tod==='dusk'?P.d1:P.k2), BW2=tod==='day'?P.s1:(tod==='dusk'?P.k2:P.k1);
+  for (var x2=0;x2<=BEACON.x;x2++){ var yb=rnd(lerp(70,67,x2/BEACON.x)); w.px(x2,yb-1,BW); w.px(x2,yb,BW2); }
+  w.rect(BEACON.x-1,BEACON.y,3,6,tod==='day'?P.s5:BW); w.px(BEACON.x,BEACON.y-1,tod==='day'?P.g3:P.g5); w.px(BEACON.x,BEACON.y+2,tod==='day'?P.g2:P.g3); }
+
+// ---------------------------------------------------------------- Land: Mauer, Wiese, Weg
+var WS=[R('s1 s2 s3 s4'),R('s2 s3 s4 s5'),R('e1 e2 e3 e4'),R('s1 s2 s3 s4')];
+function landPaint(b){ var w=RW(b,RG.land), st=RW(b,RG.stone), pa=RW(b,RG.path);
+  for (var x=0;x<W;x++){ var wt=rnd(wallTop(x)), pt=rnd(pathTop(x));
+    for (var y=wt;y<H;y++){
+      if (y<wt+2){ st.px(x,y,y===wt?P.s5:P.s3); continue; }                                    // Abdeckung der Mauer
+      if (y<WALLB){ st.px(x,y,blocks(x,y,7,3,11,WS,P.s0)); continue; }                          // Trockenmauer
+      if (y<pt){ var g=fbm(x,y*2,5,4), c=ra(R('g1 g2 g3 e3'),0.35+g*0.55+(y-WALLB)*0.03,x,y); if (y===WALLB) c=P.g1; if (hash(x,y)<0.06) c=P.e2; w.px(x,y,c); continue; }   // Wiese
+      var d=(y-pt)/(H-pt), lo=fbm(x,y*1.8,22,3), mid=1-Math.abs(d-0.45)*2, v=0.42+(lo-0.5)*0.4+mid*0.14+(bayer(x,y)-0.5)*0.06, c2=v<0.33?P.e3:(v<0.5?P.s3:(v<0.66?P.s4:P.s5));   // Kies: ruhig, in der Mitte ausgetreten
+      var gr=hash(x,y); if (gr<0.035) c2=P.s2; else if (gr>0.975) c2=P.s5; else if (gr>0.955 && hash(x+1,y)>0.5){ c2=P.e2; }
+      if (y===pt) c2=P.s1; else if (y===pt+1) c2=(hash(Math.floor(x/4),1)<0.5)?P.s3:P.s4;                 // Kantsteine am Wegrand
+      if (y>H-6 && fbm(x,y,5,8)>0.55-((y-(H-6))*0.05)) c2=(hash(x,y)<0.5)?P.g3:P.g2;                       // Gras am vorderen Rand
+      pa.px(x,y,c2); } }
+  // Kiefernnadeln und Zapfen
+  var r=M.rng(33); for (var i=0;i<140;i++){ var nx=Math.floor(r()*W), ny=rnd(pathTop(nx)+2+r()*34); if (ny>=H) continue; pa.line(nx,ny,nx+(r()<0.5?2:-2),ny+(r()<0.5?1:0),r()<0.5?P.w2:P.e2); }
+  for (var j=0;j<9;j++){ var cx=Math.floor(r()*W), cy=rnd(pathTop(cx)+4+r()*30); if (cy>=H-1) continue; pa.rect(cx,cy,2,2,P.w1); pa.px(cx,cy,P.w3); }
+  // Agaven an der Mauer
+  [[12,104,9],[226,104,8],[128,106,5]].forEach(function(a,ai){ var ax=a[0], ay=a[1], L=a[2]; for (var lf=0;lf<9;lf++){ var an=-Math.PI*(0.08+lf/8*0.84), len=L*(0.6+hash(lf,ai)*0.5);
+      for (var q=0;q<len;q++){ var px=rnd(ax+Math.cos(an)*q), py=rnd(ay+Math.sin(an)*q*0.85+q*q*0.012), th=Math.max(0,1.6*(1-q/len)); for (var o=-th;o<=th;o++){ w.px(px+rnd(o*Math.sin(an)),py,(q>len-2)?P.e3:(o<0?P.g4:(o>0.5?P.g2:P.g3))); } } } });
+  // Grasbüschel und Rosmarin an der Mauer
+  for (var k=0;k<30;k++){ var gx=Math.floor(r()*W), gy=rnd(pathTop(gx)); for (var q=0;q<5;q++) w.px(gx+q-2,gy-1-Math.floor(r()*3),r()<0.5?P.g3:P.g2); } }
+
+// ---------------------------------------------------------------- Pinien
+function pineCrown(w,cx,cy,rx,ry,sd,G,rim){
+  for (var y=Math.floor(cy-ry-2);y<=cy+ry+3;y++) for (var x=Math.floor(cx-rx-3);x<=cx+rx+3;x++){ var dx=(x-cx)/rx, dy=(y-cy)/ry, e=dx*dx+dy*dy*(dy>0?2.2:1.2)+(fbm(x,y,5,sd)-0.5)*0.95;
+    if (e>1) continue; var v=puff(x,y,6,3.4,sd)*0.8+0.12-Math.max(0,dy)*0.5; if (e>0.8){ if (rim>0) v+=0.28*(dx>0?1:-0.4); else if (dy<-0.2) v+=0.34; } w.px(x,y,ra(G,v,x,y)); } }
+function trunk(w,p,G){ for (var y=p.y1;y<p.y0;y++){ var t=(p.y0-y)/(p.y0-p.y1), x=lerp(p.x0,p.x1,t)+Math.sin(t*5+p.x0)*1.6, wd=Math.max(2,rnd(p.w*(1-t*0.4)));
+    for (var i=0;i<wd;i++){ var u=i/(wd-1||1), c=u<0.3?G[2]:(u<0.7?G[1]:G[0]); if (((y+Math.floor(i*1.7))%5)===0) c=G[0]; w.px(rnd(x)-(wd>>1)+i,y,c); } } }
+function pinesPaint(b,tod,fgOnly){ var w=RW(b,RG.tree), G=R('g0 g1 g2 g3 g4'), TR=R('w0 w1 t1'), rim=tod==='dusk'?1:-1;
+  PINES.forEach(function(p,i){ if (!!p.fg!==!!fgOnly) return; trunk(w,p,TR);
+    // Äste zur Krone
+    var c=p.cr; for (var k=0;k<3;k++){ var ex=c[0]+(k-1)*c[2]*0.55, ey=c[1]+c[3]*0.4; w.line(rnd(p.x1),rnd(p.y1+8),rnd(ex),rnd(ey),TR[1]); }
+    pineCrown(w,c[0],c[1],c[2],c[3],40+i*9,G,rim); pineCrown(w,c[0]+c[2]*0.45,c[1]+c[3]*0.5,c[2]*0.45,c[3]*0.6,47+i*9,G,rim); pineCrown(w,c[0]-c[2]*0.5,c[1]+c[3]*0.35,c[2]*0.4,c[3]*0.55,53+i*9,G,rim); }); }
+
+// ---------------------------------------------------------------- Pavillon an der Spitze
+function pavilionPaint(b,tod){ var w=RW(b,RG.stone), cx=PAV.cx, L=tod==='dusk'?1:-1, S=R('s1 s2 s3 s4 s5 s6');
+  function shade(x,half){ var u=(x-cx)/half; return 0.55+u*L*0.3; }
+  // drei Stufen als Ellipsen
+  [[106,39,7,4],[102.5,36,6.5,3.5],[99,33,6,3]].forEach(function(t){ var yc=t[0], rx=t[1], ry=t[2], hh=t[3];
+    for (var y=Math.floor(yc-ry);y<=Math.ceil(yc+ry+hh);y++) for (var x=Math.floor(cx-rx);x<=Math.ceil(cx+rx);x++){ var dx=(x+0.5-cx)/rx; if (Math.abs(dx)>1) continue; var e=Math.sqrt(1-dx*dx)*ry;
+      if (y>=yc-e&&y<=yc+e) w.px(x,y,ra(S,0.72+(hash(x,y)-0.5)*0.15,x,y)); else if (y>yc+e&&y<=yc+e+hh) w.px(x,y,ra(S,shade(x,rx)-0.15-(y-yc-e)/hh*0.2,x,y)); } });
+  // hintere Säulen (im Schatten), dann Gebälk-Innenseite
+  [-0.92,-0.38,0.38,0.92].forEach(function(s){ var x=rnd(cx+s*PAV.R*0.86); for (var y=64;y<rnd(PAV.fy-5.5*Math.sqrt(1-s*s));y++){ w.px(x-1,y,P.s2); w.px(x,y,P.s1); w.px(x+1,y,P.s1); } });
+  // vordere Säulen: Basis, Schaft mit Kanneluren, Kapitell
+  [-0.92,-0.38,0.38,0.92].forEach(function(s){ var x=rnd(cx+s*PAV.R), by=rnd(PAV.fy+5.5*Math.sqrt(1-s*s))-1;
+    for (var y=64;y<by;y++) for (var i=-2;i<=2;i++){ var u=i/2, v=0.55-u*L*0.35*(-1)+(i===0?0.08:0); if (Math.abs(i)===2) v-=0.2; w.px(x+i,y,ra(S,v+(L>0?u*0.3:-u*0.3)-0.1,x+i,y)); }
+    w.rect(x-3,by-2,7,2,P.s4); w.hl(x-3,x+3,by-2,P.s5); w.rect(x-3,64,7,2,P.s5); w.hl(x-3,x+3,66,P.s3); });
+  // Gebälk (Ring) auf Augenhöhe: gerades Band mit Gesims
+  for (var y2=56;y2<64;y2++) for (var x2=cx-PAV.R-3;x2<=cx+PAV.R+3;x2++){ var c=ra(S,shade(x2,PAV.R+3)+(y2<58?0.15:0)-(y2>62?0.15:0),x2,y2); if (y2===59&&(x2%3)===0) c=P.s3; w.px(x2,y2,c); }
+  w.hl(cx-PAV.R-4,cx+PAV.R+4,55,P.s5); w.hl(cx-PAV.R-4,cx+PAV.R+4,56,P.s3); w.hl(cx-PAV.R-3,cx+PAV.R+3,64,P.s2);
+  // Kuppel (Kupfer mit Patina) mit Rippen, Laterne und Kugel
+  var CU=R('a1 a2 a3 a4 a5');
+  for (var y3=33;y3<55;y3++) for (var x3=cx-PAV.R;x3<=cx+PAV.R;x3++){ var dx=(x3+0.5-cx)/PAV.R, dy=(55-y3)/22; if (dx*dx+dy*dy>1) continue; var nz=Math.sqrt(Math.max(0,1-dx*dx-dy*dy));
+    var v=0.45+dx*L*0.35+dy*0.15+nz*0.1; var c=ra(CU,v+(fbm(x3,y3*2,4,6)-0.5)*0.25,x3,y3); var mer=Math.asin(cl(dx/Math.sqrt(Math.max(0.01,1-dy*dy)),-1,1)); if (Math.abs(((mer/Math.PI*8)%1+1)%1-0.5)<0.07) c=M.DN[c]; if (fbm(x3,y3,3,8)>0.72) c=P.g4; w.px(x3,y3,c); }
+  w.rect(cx-3,28,7,6,P.s4); w.hl(cx-3,cx+3,28,P.s5); w.vl(cx+L*2,29,33,P.s3); w.ellipse(cx+0.5,26,2.2,2.2,P.a4); w.vl(cx,20,24,P.k2); w.hl(cx-1,cx+1,22,P.k2); }
+
+// ---------------------------------------------------------------- Gedenkstein, Laterne, Bank
+function memorialPaint(b){ var w=RW(b,RG.stone), S=[R('s1 s2 s3 s4'),R('s2 s3 s4 s5')];
+  w.poly([[MEM.x0,MEM.y1],[MEM.x0+1,MEM.y0+3],[MEM.x0+6,MEM.y0],[MEM.x1-5,MEM.y0+1],[MEM.x1,MEM.y0+4],[MEM.x1+1,MEM.y1]],function(x,y){ var c=blocks(x,y,13,9,61,S,P.s1); if (fbm(x,y,4,2)>0.7) c=M.DN[c]; if (y<MEM.y0+3) c=M.UP[c]; return c; });
+  w.hl(MEM.x0-2,MEM.x1+3,MEM.y1,P.s1); w.hl(MEM.x0-1,MEM.x1+2,MEM.y1-1,P.s2);
+  // Bronzetafel mit Inschrift und Namensliste
+  var x0=PLQ.x0, y0=PLQ.y0, x1=PLQ.x1, y1=PLQ.y1;
+  w.rect(x0,y0,x1-x0,y1-y0,P.y1); w.hl(x0,x1-1,y0,P.y3); w.vl(x0,y0,y1-1,P.y2); w.hl(x0,x1-1,y1-1,P.y0); w.vl(x1-1,y0,y1-1,P.y0);
+  for (var y=y0+1;y<y1-1;y++) for (var x=x0+1;x<x1-1;x++) if (fbm(x,y,3,5)>0.68) w.px(x,y,P.a3);                       // Patina
+  M.microText(w,'ONIMA KOJE',x0+3,y0+2,P.y4); M.microText(w,'JE MORE',x0+9,y0+8,P.y4); M.microText(w,'ZADRŽALO',x0+7,y0+14,P.y4);
+  w.hl(x0+5,x1-6,y0+20,P.y2);
+  for (var r=0;r<2;r++) for (var cI=0;cI<3;cI++){ var nx=x0+3+cI*13, ny=y0+22+r*1, L=5+rnd(hash(r,cI)*5); w.hl(nx,nx+L,ny,P.y3); } }
+function lampPaint(b,lit){ var w=RW(b,RG.prop), x=LAMP.x, by=LAMP.by, h=LAMP.h, top=by-h;
+  w.rect(x-2,by-4,5,4,P.k2); w.hl(x-2,x+2,by-4,P.m1); w.rect(x-1,top+8,3,h-12,P.k2); w.vl(x-1,top+8,by-5,P.m1); w.px(x,top+16,P.m1); w.px(x,top+26,P.m1);
+  w.hl(x-3,x+3,top+7,P.k1); w.poly([[x-4,top],[x+4,top],[x+3,top+7],[x-3,top+7]],lit?P.y4:P.m2); w.vl(x,top,top+6,lit?P.y5:P.m1);
+  w.hl(x-5,x+5,top-1,P.k1); w.poly([[x-4,top-1],[x+4,top-1],[x,top-5]],P.k2); w.px(x,top-6,P.k1);
+  if (lit){ w.px(x-1,top+3,P.l1); w.px(x+1,top+3,P.l0); w.vl(x-3,top+1,top+5,P.y3); } }
+function benchPaint(b){ var w=RW(b,RG.prop), x0=BENCH.x0, x1=BENCH.x1, by=BENCH.by;
+  [x0+3,x1-5].forEach(function(lx){ w.rect(lx,by-12,2,12,P.k2); w.px(lx,by-1,P.k1); w.px(lx+1,by-1,P.k1); });
+  w.rect(x0,by-8,x1-x0,2,P.w2); w.hl(x0,x1-1,by-8,P.w3);                                  // Sitz (hinter der Lehne)
+  w.rect(x0-1,by-13,x1-x0+2,2,P.w3); w.hl(x0-1,x1,by-13,P.w4); w.rect(x0-1,by-10,x1-x0+2,2,P.w2); w.hl(x0-1,x1,by-10,P.w3);   // Lehne
+  for (var x=x0;x<x1;x+=6) w.px(x,by-12,P.w1); }
+
+// ---------------------------------------------------------------- Licht
+var DIMW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.5+r*0.12+12, L*0.38+g*0.08+8, L*0.26+b*0.1+16]; });
+var MIDW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.45+L*0.36+16, g*0.32+L*0.26+6, b*0.16+L*0.08+4]; });
+var LW=[[LAMP.x,LAMP.by-LAMP.h+18,48,40,1.0]], LF=[[LAMP.x+6,118,62,15,0.95]];
+function lightAt(x,y,tod,r){ var set=(r===RG.path||r===RG.land)?LF:LW, L=0; for (var i=0;i<set.length;i++){ var l=set[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[3], f=1-dx*dx-dy*dy; if (f>0){ var v=l[4]*Math.pow(f,1.1); if (v>L) L=v; } }
+  if (r===RG.tree) L*=0.35; return tod==='dusk'?L*0.7:L; }
+function warmPass(b,base,tod){ var LT=M.TINT.lamp;
+  for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x, r=REG[k]; if (r===RG.sky||r===RG.far||r===RG.sea) continue; var L=lightAt(x,y,tod,r); if (L<0.03) continue;
+    var f=L*3.3, lv=Math.floor(f), fr=f-lv, t=lv===0?fr:(fr-0.5)*1.7+0.5; if (t>bayer(x,y)) lv++; if (lv<=0) continue; if (tod==='dusk'&&lv===1) continue;
+    var c=base.d[k]; b.d[k]=lv===1?M.tintPx(DIMW,c,x,y):(lv===2?M.tintPx(MIDW,c,x,y):(lv===3?M.tintPx(LT,c,x,y):M.UP[M.tintPx(LT,c,x,y)])); } }
+function actorLut(a,S,GS,tod){ if (tod==='day'||!M.TINT[tod]) return null; var dx=(a.x-LAMP.x-6)/50, dy=(a.y-118)/22, f=1-dx*dx-dy*dy, L=f>0?Math.pow(f,0.8):0; if (tod==='dusk') L*=0.8;
+  if (L>0.5) return MIDW.a; if (L>0.2) return DIMW.a; return M.TINT[tod].a; }
+function shadePass(b,tod){ var dusk=tod==='dusk';
+  M.light(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky||r===RG.far||r===RG.sea) return 0; var v=0, cx=(x-160)/190, cy=(y-80)/105; v-=Math.max(0,cx*cx+cy*cy-0.3)*1.1;
+    if (r===RG.path){ v+=(y-pathTop(x))/36*0.2; }
+    if (r===RG.tree) v-=0.4;
+    if (dusk) v-=0.35;
+    return v; },0,0); }
+
+// ---------------------------------------------------------------- Bild
+var SEAPX=null, LAST=null;
+function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS); REG.fill(0);
+  skyPaint(b,tod,weather); farPaint(b,tod); seaPaint(b,tod);
+  landPaint(b); pinesPaint(b,tod,false);                      // die Pinien stehen auf der Wiese vor der Mauer
+  pavilionPaint(b,tod); memorialPaint(b); lampPaint(b,false); benchPaint(b);
+  shadePass(b,tod);
+  var base=b.clone();
+  M.finishTOD(b,tod,{ sky:function(x,y){ var r=REG[y*W+x]; return r===RG.sky||r===RG.far||r===RG.sea; } });
+  if (tod!=='day' && M.TINT[tod]){ warmPass(b,base,tod); lampPaint(b,true); }
+  SEAPX=[]; for (var y=HZ;y<104;y++) for (var x=0;x<W;x++) if (REG[y*W+x]===RG.sea && !(y<72&&x<=BEACON.x+2&&y>=BEACON.y-1&&x>=BEACON.x-2)) SEAPX.push(y*W+x);
+  LAST=b; return b; }
+
+// ---------------------------------------------------------------- Ebenen: die große Pinie vorn links
+function layers(S,GS,tod){ var l=M.layer(0,0,110,H,143), w=M.lw(l), G=R('g0 g1 g2 g3 g4'), TR=R('w0 w1 t1'), p=PINES[0];
+  var tmp={px:function(x,y,c){ w.px(x,y,c); },line:function(a,b2,c2,d,c){ w.line(a,b2,c2,d,c); }};
+  trunk(tmp,p,TR); var c=p.cr; for (var k=0;k<3;k++) w.line(rnd(p.x1),rnd(p.y1+8),rnd(c[0]+(k-1)*c[2]*0.55),rnd(c[1]+c[3]*0.4),TR[1]);
+  pineCrown(tmp,c[0],c[1],c[2],c[3],40,G,tod==='dusk'?1:-1); pineCrown(tmp,c[0]+c[2]*0.45,c[1]+c[3]*0.5,c[2]*0.45,c[3]*0.6,47,G,1); pineCrown(tmp,c[0]-c[2]*0.5,c[1]+c[3]*0.35,c[2]*0.4,c[3]*0.55,53,G,1);
+  for (var g=0;g<26;g++){ var gx=rnd(30+hash(g,1)*30), gy=140+rnd(hash(g,2)*4); w.px(gx,gy,hash(g,3)<0.5?P.g2:P.g3); w.px(gx,gy-1,P.g3); }   // Gras am Stammfuß
+  M.light(l,function(x,y){ return -0.6+(y<30?-0.2:0); },0,0);
+  if (tod!=='day' && M.TINT[tod]) M.tintApply(l,M.TINT[tod]);
+  return [l]; }
+
+// ---------------------------------------------------------------- jedes Bild: Meer, Lichter im Wasser, Leuchtfeuer, Sterne, Bura-Schaum
+function dynamic(fb,v,S,GS){ var t=v.t, tod=v.tod, weather=M.scn.weather(GS), ramp=seaR(tod), bura=weather==='bura';
+  if (SEAPX){ for (var i=0;i<SEAPX.length;i++){ var k=SEAPX[i], x=k%W, y=(k/W)|0; fb.d[k]=M.rampAt(ramp,seaV(x,y,t,bura),x,y); } }
+  // Bura: Schaumkronen, die aufs offene Meer hinausziehen
+  if (bura){ for (var j=0;j<70;j++){ var per=2+hash(j,3)*2.5, ph=((t+hash(j,4)*per)%per)/per, yy=HZ+3+Math.floor(Math.pow(hash(j,5),0.8)*38), sp=0.4+(yy-HZ)/44, xx=Math.floor((hash(j,6)*W+t*14*sp)%(W+20))-10, len=1+Math.floor(sp*3*(1-Math.abs(ph-0.5)*2));
+      if (ph>0.85) continue; for (var q=0;q<len;q++){ var px=xx+q; if (px<0||px>=W) continue; var kk=yy*W+px; if (REG[kk]===RG.sea) fb.d[kk]=(q===0||ph>0.6)?(tod==='night'?P.n3:P.s4):(tod==='night'?P.n4:P.s5); } } }
+  if (tod!=='day'){ var night=tod==='night';
+    // Lichter der Stadt spiegeln sich
+    [[20,0.7],[38,1],[56,0.8],[78,1],[96,0.6],[124,0.7]].forEach(function(g,i){ M.glints(fb,g[0],HZ+1,HZ+16+i%3*3,3*g[1],t+i,i%2?P.y3:P.y4,v.cam); });
+    // grünes Leuchtfeuer: blinkt alle drei Sekunden
+    var on=(t%3)<1.2; fb.px(BEACON.x,BEACON.y-1,on?P.g5:P.g2); if (on){ fb.px(BEACON.x-1,BEACON.y-1,P.g4); fb.px(BEACON.x+1,BEACON.y-1,P.g4); M.glints(fb,BEACON.x,70,84,2,t,P.g4,v.cam); }
+    // Mondweg (windstill)
+    if (night && !bura && weather!=='rain'){ glitter(fb,MOON[0],HZ+1,100,2,14,t,P.n5,P.n4); glitter(fb,MOON[0]+3,HZ+6,100,1,9,t*1.3+2,P.n4,P.n3); }
+    if (tod==='dusk' && weather!=='rain') glitter(fb,262,HZ+1,96,2,10,t,P.d6,P.d5);
+    // Sterne funkeln
+    if (night && weather!=='rain') for (var s2=0;s2<14;s2++){ var sx=rnd(hash(s2,71)*W), sy=rnd(hash(s2,72)*40); if (REG[sy*W+sx]===RG.sky && Math.sin(t*2.3+s2*1.7)>0.6) fb.px(sx,sy,P.n5); }
+    M.glow(fb,LAMP.x-v.cam,LAMP.by-LAMP.h+3,9,t,0.4); } }
+// Glitzerweg unter Mond oder Abendhimmel: kurze waagrechte Striche, nach vorn breiter
+function glitter(fb,cx,y0,y1,w0,w1,t,c1,c2){ for (var y=y0;y<y1;y++){ var k=(y-y0)/(y1-y0), half=w0+(w1-w0)*k, n=Math.floor(1+half*0.5);
+  for (var i=0;i<n;i++){ var sd=y*31+i*7, ph=t*(0.8+hash(sd,1)*1.4)+hash(sd,2)*6.28; if (Math.sin(ph)<0.35) continue; var x=Math.round(cx+(hash(sd,3)-0.5)*2*half+Math.sin(t*0.7+y)*1.5), L=1+Math.floor(hash(sd,4)*2.5*(0.4+k));
+    for (var q=0;q<L;q++){ var px=x+q, kk=y*W+px; if (px>=0&&px<W&&REG[kk]===RG.sea) fb.d[kk]=(q===0&&L>1)?c2:c1; } } } }
+function front(fb,v,S,GS){ var w=M.scn.weather(GS); if (w==='bura') M.scn.buraDebris(fb,v.t,110,142,v.cam); if (w==='rain') M.rain(fb,v.t,{n:80}); }
+
+// ---------------------------------------------------------------- Geisterebene: der alte Friedhof
+// Die Formen werden einmal in eine Maske gemalt (1 Füllung, 2 Umriss, 3 Gravur) und je Bild schimmernd eingefärbt.
+// Wo schon eine Figur oder eine Vordergrund-Ebene steht, wird nur gemalt, wenn das Grab davor liegt.
+var GM=null, GB=null, GMOTE=[], GLAMP=[], GPX=null, GHALO=null, GFOG=null;
+function gravesBuild(){ GM=new Uint8Array(W*H); GB=new Uint8Array(W*H);
+  var tmp=new M.Buf(W,H,0);
+  function put(x,y,v,base){ x=rnd(x); y=rnd(y); if (x<0||y<0||x>=W||y>=H) return; var k=y*W+x; if (v>=2||GM[k]===0){ GM[k]=v; GB[k]=base; } }
+  function shape(polys,base){ tmp.d.fill(0); polys.forEach(function(pts){ tmp.poly(pts,1); });
+    for (var y=1;y<H-1;y++) for (var x=1;x<W-1;x++){ var k=y*W+x; if (!tmp.d[k]) continue; var edge=!tmp.d[k-1]||!tmp.d[k+1]||!tmp.d[k-W]||!tmp.d[k+W]; put(x,y,edge?2:1,base); } }
+  function rot(pts,cx,cy,a){ if (!a) return pts; var s2=Math.sin(a), c=Math.cos(a); return pts.map(function(p){ var dx=p[0]-cx, dy=p[1]-cy; return [cx+dx*c-dy*s2, cy+dx*s2+dy*c]; }); }
+  function rect(x0,y0,x1,y1){ return [[x0,y0],[x1,y0],[x1,y1],[x0,y1]]; }
+  function cross(x,base,h,a){ var w=Math.max(2.4,h/5.5), arm=h*0.64, ay=base-h+h*0.27;
+    shape([rot(rect(x-w/2,base-h,x+w/2,base),x,base,a),rot(rect(x-arm/2,ay,x+arm/2,ay+w),x,base,a),rect(x-w*1.5,base-2.5,x+w*1.5,base)],base); }
+  function stone(x,base,h,a,lamp){ var w=h*0.68, pts=[[x-w/2,base]]; for (var i=0;i<=12;i++){ var an=Math.PI-i/12*Math.PI; pts.push([x+Math.cos(an)*w/2,base-h+w/2-Math.sin(an)*w/2]); } pts.push([x+w/2,base]);
+    shape([rot(pts,x,base,a),rect(x-w/2-2,base-2.5,x+w/2+2,base)],base);
+    var c=rot([[x,base-h*0.66]],x,base,a)[0]; for (var q=-2;q<=2;q++) put(c[0],c[1]+q,3,base); put(c[0]-1,c[1]-1,3,base); put(c[0]+1,c[1]-1,3,base);
+    for (var l=0;l<2;l++){ var ly=base-h*0.36+l*2.2; for (var q2=-w/2+2;q2<w/2-1.5;q2++) if (hash(q2+x,l)<0.75){ var r2=rot([[x+q2,ly]],x,base,a)[0]; put(r2[0],r2[1],3,base); } }
+    if (lamp) GLAMP.push([x+w/2+1,base-3]); }
+  function obelisk(x,base,h){ var w=Math.max(3.5,h/4.5); shape([rect(x-w/2-2,base-3.5,x+w/2+2,base),[[x-w/2,base-3.5],[x+w/2,base-3.5],[x+w/3,base-h+3],[x,base-h],[x-w/3,base-h+3]]],base); }
+  function slab(x0,x1,base,hs){ shape([[[x0,base],[x1,base],[x1-4,base-5],[x0+4,base-5]]],base); for (var q=x0+5;q<x1-5;q+=2) put(q,base-2,3,base); stone((x0+x1)/2,base-5,hs,0,true); }
+  function iron(x,base,h){ cross(x,base,h,0); var cy=base-h+h*0.27+1.2; for (var a=0;a<20;a++){ var an=a/20*Math.PI*2; put(x+Math.cos(an)*h*0.24,cy+Math.sin(an)*h*0.24,2,base); } }
+  function chapel(x0,x1,base,top){ var mx=(x0+x1)/2, eave=top+15;
+    shape([[[x0,base],[x1,base],[x1,eave],[mx,top],[x0,eave]],rect(mx-4,top-9,mx+4,top+3),rect(x0-2,base-3,x1+2,base)],base);
+    for (var y=base-18;y<base-3;y++) for (var x=mx-5;x<=mx+5;x++){ var dx=(x-mx)/5.5, yt=base-18+(1-Math.sqrt(Math.max(0,1-dx*dx)))*5; if (y>=yt) GM[y*W+rnd(x)]=0; }
+    for (var x2=mx-6;x2<=mx+6;x2++){ var dd=(x2-mx)/6.5, yt2=base-19+(1-Math.sqrt(Math.max(0,1-dd*dd)))*5; put(x2,yt2,2,base); } for (var y3=base-15;y3<base-3;y3++){ put(mx-6,y3,2,base); put(mx+6,y3,2,base); }
+    for (var a=0;a<14;a++){ var an=a/14*Math.PI*2; put(mx+Math.cos(an)*3,eave+2+Math.sin(an)*3,3,base); } put(mx,eave+2,3,base);
+    [x0+5,x1-6].forEach(function(wx){ for (var y4=base-20;y4<base-10;y4++){ put(wx,y4,3,base); put(wx+1,y4,3,base); } put(wx,base-21,3,base); });
+    for (var y5=eave;y5<base-3;y5+=4){ put(x0+1,y5,3,base); put(x1-1,y5,3,base); }
+    for (var a2=0;a2<9;a2++){ var an2=Math.PI+a2/8*Math.PI; put(mx+Math.cos(an2)*2.2,top-4+Math.sin(an2)*2.2,3,base); }
+    for (var q=0;q<7;q++) put(mx,top-16+q,2,base); put(mx-2,top-13,2,base); put(mx-1,top-13,2,base); put(mx+1,top-13,2,base); put(mx+2,top-13,2,base);
+    GLAMP.push([mx-9,base-4]); }
+  // hintere Reihe, zwischen den Pinien an der Mauer; die Kapelle hinter der Bank
+  chapel(160,208,101,60);
+  cross(18,100,13,0.06); stone(58,100,11,0,true); cross(72,99,12,-0.1); cross(222,99,13,0); stone(312,99,10,0.12);
+  // mittlere Reihe, am Weg und zum Teil darauf
+  stone(16,116,14,-0.05); cross(62,118,19,0.12); slab(90,122,119,13); iron(192,115,18); stone(232,117,14,-0.1); cross(262,114,16,0); stone(300,116,13,0.08);
+  // vordere Reihe, mitten auf dem Weg
+  cross(30,141,25,-0.07); stone(108,138,21,0.05,true); cross(166,142,27,0.16); stone(228,137,18,-0.06,true); cross(286,141,23,0);
+  for (var i=0;i<28;i++) GMOTE.push([hash(i,91)*W,96+hash(i,92)*44,hash(i,93)*6.28]);
+  // einmal vorberechnen: Grabpixel (mit Kantenrichtung), Schein, Nebelrauschen
+  GPX=[]; GHALO=[];
+  for (var k=W*2+2;k<W*H-W*2-2;k++){ var m=GM[k];
+    if (m){ var e=0; if (m===2){ var tl=!GM[k-W]||!GM[k-1], br=!GM[k+W]||!GM[k+1]; e=(tl&&!br)?1:((br&&!tl)?2:0); } GPX.push(k,m,GB[k],e); continue; }
+    var nb=GM[k-1]===2||GM[k+1]===2||GM[k-W]===2||GM[k+W]===2, nb2=!nb&&(GM[k-2]===2||GM[k+2]===2||GM[k-W*2]===2||GM[k+W*2]===2); if (!nb&&!nb2) continue;
+    var bs=GB[k-1]||GB[k+1]||GB[k-W]||GB[k+W]||GB[k-2]||GB[k+2]||GB[k-W*2]||GB[k+W*2]; if (bayer(k%W,(k/W)|0)<(nb?0.5:0.22)) GHALO.push(k,nb?1:2,bs); }
+  GFOG=new Float32Array(640*50); for (var fy=0;fy<50;fy++) for (var fx=0;fx<640;fx++) GFOG[fy*640+fx]=fbm(fx,(fy+94)*3,16,5); }
+function ghost(fb,v,S,GS){ if (!GM) gravesBuild(); var t=v.t, bg=LAST, G=M.TINT.ghost, cam=v.cam;
+  var acts=[]; if (M.ACT && M.E && M.E.actorShown) Object.keys(M.ACT).forEach(function(k){ var a=M.ACT[k]; if (M.E.actorShown(a)) acts.push(a); });
+  function plain(k,x,y){ return !bg || fb.d[k]===M.tintPx(G,bg.d[k],x,y); }
+  function inFront(x,y,base){ var k=y*W+x; if (plain(k,x,y)) return true;
+    for (var i=0;i<acts.length;i++){ var a=acts[i], ax=a.x-cam; if (x>ax-11&&x<ax+11&&y>a.y-52&&y<=a.y+1) return base>a.y+1; }
+    return false; }
+  // Bodennebel über den alten Grabreihen
+  var rows=[100,117,139];
+  for (var y=94;y<H;y++){ var md=9; for (var q=0;q<3;q++) md=Math.min(md,Math.abs(y-rows[q]+1)); if (md>3) continue;
+    var off=Math.floor(t*3)%320, fr=(y-94)*640; for (var x=0;x<W;x++){ var n=GFOG[fr+x+off]; if (n<0.5||bayer(x,y)>(n-0.5)*1.5*(1-md/4)) continue; var k=y*W+x; if (!plain(k,x,y)) continue; fb.d[k]=n>0.64?P.x2:P.x1; } }
+  // Schein um die Umrisse
+  for (var h=0;h<GHALO.length;h+=3){ var k3=GHALO[h]; if (inFront(k3%W,(k3/W)|0,GHALO[h+2])) fb.d[k3]=GHALO[h+1]===1?P.x2:P.x1; }
+  // Gräber, Kreuze, Kapelle: oben links heller Rand, unten rechts dunkler, innen durchscheinend
+  for (var g=0;g<GPX.length;g+=4){ var k2=GPX[g], m=GPX[g+1], base=GPX[g+2], x2=k2%W, y2=(k2/W)|0; if (!inFront(x2,y2,base)) continue;
+    var wave=Math.sin(t*1.2+x2*0.045-y2*0.03)+Math.sin(t*0.7-x2*0.02);
+    if (m===2){ var e=GPX[g+3]; fb.d[k2]=e===1?(wave>-0.4?P.x6:P.x5):(e===2?P.x4:(wave>0.8?P.x6:P.x5)); }
+    else if (m===3) fb.d[k2]=wave>0.4?P.x4:P.x3;
+    else { var dn=0.46+wave*0.08; if (bayer(x2,y2)<dn) fb.d[k2]=(bayer(x2+2,y2+1)<0.32)?P.x3:P.x2; } }
+  // Grablichter flackern
+  GLAMP.forEach(function(l,i){ var x=rnd(l[0]), y=rnd(l[1]), f=Math.sin(t*9+i*2)+Math.sin(t*23+i)*0.5; if (!inFront(x,y,y+3)) return;
+    fb.px(x,y,P.x4); fb.px(x+1,y,P.x4); fb.px(x,y-1,f>-0.6?P.x6:P.x5); fb.px(x+1,y-1,P.x5); fb.px(x,y-2,P.x4); fb.px(x+1,y-2,P.x4); if (f>0.2){ fb.px(x,y-3,P.x5); } });
+  // Jakovs alter Weg zwischen den Gräbern: zwei Reihen Kantsteine
+  for (var x4=84;x4<238;x4+=3){ [123,129].forEach(function(yy,i){ var y4=rnd(yy+Math.sin(x4*0.04)*1.5); if (inFront(x4,y4,yy+1)) fb.px(x4,y4,(x4+i)%2?P.x3:P.x2); }); }
+  // aufsteigende Lichtpunkte
+  GMOTE.forEach(function(m2,i){ var mx=rnd(m2[0]+Math.sin(t*0.5+m2[2])*4), my=rnd(m2[1]-((t*3+i*7)%40)); if (mx<0||mx>=W||my<0||my>=H) return; if (Math.sin(t*1.7+i)>-0.2 && inFront(mx,my,255)) fb.px(mx,my,(i%3)?P.x4:P.x6); }); }
+
+// ---------------------------------------------------------------- Raum
+M.defineArt('sustipan',{
+  width:W, paint:paint, layers:layers, dynamic:dynamic, front:front, ghost:ghost, actorLut:actorLut,
+  walk:function(x,y,S,GS){ if (x<=6||x>=306||y>=139) return false; if (y<pathTop(x)+2) return false; if (x>228&&x<312&&y<113) return false; if (x>34&&x<60&&y>134) return false; return true; },
+  walkG:function(){ return false; },
+  spots:{ exit:[0,60,14,84], pines:[104,0,150,34], pavilion:[230,18,80,94], plaque:[93,75,54,34], bench:[166,88,40,18], sea:[150,63,80,26],
+    lighthouse:[99,55,13,14], city:[0,34,98,28], wall:[0,88,230,13], graves:[0,44,320,100] },
+  stands:{ exit:[10,124,'L'], pines:[150,113,'B'], pavilion:[270,118,'B'], plaque:[120,114,'B'], bench:[186,112,'B'], sea:[190,112,'B'],
+    lighthouse:[104,113,'B'], city:[62,113,'B'], wall:[214,112,'B'], graves:[130,124,'B'] },
+  actorPos:{ jakov:[150,120,'L','jakov',true,'sweep'] },
+  start:[72,124,'R'], entries:{ map:[14,124,'R'] }
 });
 })(M);
 
@@ -6662,6 +7552,8 @@ function paintSky(b,tod,weather){
   if (tod==='day' && weather!=='rain'){ var rp=R('b0 b1 b2 b3 b4');
     for (var y=0;y<80;y++) for (var x=0;x<W;x++) b.px(x,y,ra(rp,0.1+y/80*0.95,x,y));
     var r=M.rng(5); for (var i=0;i<6;i++){ var cx=r()*W, cy=2+r()*30, L=24+r()*44; for (var k=0;k<L;k++){ var xx=rnd(cx+k), yy=rnd(cy+k*0.06+Math.sin(k*0.21)*0.7); if (bayer(xx,yy)<0.5*(1-Math.abs(k/L-0.5)*2)) b.px(xx,yy,yy<24?P.b3:P.b4); } }
+  } else if (tod==='night' && weather==='rain'){ var NR=R('k1 k2 n0 n1');                       // Regennacht: tiefe Wolken, keine Sterne
+    for (var y2=0;y2<80;y2++) for (var x2=0;x2<W;x2++) b.px(x2,y2,ra(NR,0.25+y2/80*0.45+(fbm(x2,y2*2,16,4)-0.5)*0.4,x2,y2));
   } else M.scn.sky(b,0,0,W,72,tod,weather,23);
   if (tod==='night' && weather!=='rain') M.moon(b,244,8,3);
 }
@@ -6883,18 +7775,19 @@ function reflections(b){ var src=b.clone(), PR=R('s0 m1 m2 m3 m4 s5');
 // ---------------------------------------------------------------- Licht (Tag) und Lichtinseln (Dämmerung, Nacht)
 function lightFn(tod,weather){ var sunny=tod==='day'&&weather!=='rain', grey=tod==='day'&&weather==='rain', eve=tod!=='day';
   function sunY(x){ return 47+x*0.03+5*Math.sin(x*0.033+1)+(x>58&&x<72?-7:0)+(x>170&&x<178?-5:0); }
+  function gap(x,y){ if (!sunny) return false; var o=(y-40)*0.42, g0=176+o, g1=203+o; return x>=g0&&x<g1; }   // Lücke zwischen den Häusern gegenüber: ein Sonnenstreifen
   return function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; var v=0, cx=(x-160)/190, cy=(y-(y<72?40:80))/110, vg=cx*cx+cy*cy; v-=Math.max(0,vg-0.32)*1.0;
     if (r===RG.wall||r===RG.prop||r===RG.glass){ var by=baseY(x), ev=x<116?EA:EB;
       if (y>by-16) v-=(y-(by-16))/16*0.5; if (y<ev+6) v-=(ev+6-y)/6*0.9;
-      if (sunny){ var s=sunY(x); v+=(y<s-1)?0.6:((y<s+1)?(bayer(x,y)<0.5?0.6:-0.45):-0.45); }
+      if (sunny){ var s=sunY(x); v+=(y<s-1||gap(x,y))?0.7:((y<s+1)?(bayer(x,y)<0.5?0.7:-0.6):-0.6); }
       else if (grey) v+=-0.12+(1-y/110)*0.3; }
-    else if (r===RG.floor){ var d=y-floorTop(x); if (d<7) v-=(7-d)/7*0.7; if (sunny) v-=0.4; v+=(y-110)/34*0.2; }
+    else if (r===RG.floor){ var d=y-floorTop(x); if (d<7) v-=(7-d)/7*0.7; if (sunny) v+=gap(x,y)?0.35:-0.75; v+=(y-110)/34*0.2; }
     else if (r===RG.stair){ if (sunny) v+=(y<92?0.45:0.1); if (x<LX+14) v-=(LX+14-x)/14*0.6; }
     else if (r===RG.side){ v+=sunny?0.55:0.1; if (y>95) v-=(y-95)/13*0.4; }
     else if (r===RG.wallE){ if (y>96) v-=(y-96)/12*0.4; if (sunny) v-=0.25; }
     else if (r===RG.up){ if (sunny) v+=0.45; }
     else if (r===RG.far){ if (sunny) v+=0.2; }
-    if (eve) v-=(tod==='dusk'?0.5:(tod==='night'?0.12:0.25));
+    if (eve) v-=(tod==='dusk'?(r===RG.far?0.6:0.85):(tod==='night'?0.12:0.25));
     return v; }; }
 // warme Lichtinseln in vier Stufen (blau → umbra → bernstein → gold), weich gedithert; eigene Ellipsen für Wände und Boden
 var DIMW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.5+r*0.12+12, L*0.38+g*0.08+8, L*0.26+b*0.1+16]; });
@@ -6914,7 +7807,7 @@ function actorLut(a,S,GS,tod){ if (tod==='day'||!M.TINT[tod]) return null; var d
   if (L>0.5) return MIDW.a; if (L>0.2) return DIMW.a; return M.TINT[tod].a; }
 
 // ---------------------------------------------------------------- Bild
-var catSave=null, catCol=[P.k1,P.s5];
+var catSave=null, catCol=[P.k1,P.s5], LAST=null;
 var CATS=['.k.k......','.kkk......','kykk......','.kkkw.....','..kkkk....','..kkkkk...','..kwkkkk..','..kwkkkk..','.wwkkkkk..'];
 function drawCat(b){ var x0=CAT[0], y0=CAT[1]-CATS.length; for (var j=0;j<CATS.length;j++) for (var i=0;i<CATS[j].length;i++){ var ch=CATS[j][i]; if (ch==='.') continue; var c=ch==='k'?((i>4&&j>5)?P.k2:P.k1):(ch==='w'?P.s5:P.g4); b.px(x0+i,y0+j,c); REG[(y0+j)*W+x0+i]=RG.prop; } }
 var TAILS=[[[8,8],[9,8],[10,7],[10,6]],[[8,8],[9,7],[10,6],[10,5],[11,4]],[[8,8],[9,7],[10,7],[11,6],[11,5]]];
@@ -6934,7 +7827,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
     b.rect(229,46,6,9,P.y3); b.drect(229,46,6,9,P.y3,P.y4,0.4); b.vl(232,46,54,P.y1);
     b.rect(314,30,6,20,P.y2); b.drect(314,31,6,4,P.y3,P.y4,0.5);
     b.px(x0,y0+2,P.y4); }
-  return b; }
+  LAST=b; return b; }
 
 // ---------------------------------------------------------------- Ebenen
 function layers(S,GS,tod){ var L=[];
@@ -6973,7 +7866,7 @@ function front(fb,v,S,GS){ var weather=M.scn.weather(GS);
   if (weather==='bura') M.scn.buraDebris(fb,v.t,112,140,v.cam);
   if (weather==='rain' && GS.phase!=='pro') M.rain(fb,v.t,{n:70}); }
 // Geistersicht: Ivkas tausend Wege zur Riva als blasse Spur, ein kalter Schimmer an ihrer Tür
-function ghost(fb,v,S,GS){ var t=v.t, bg=(M.E&&M.E.rebuildIfDirty)?M.E.rebuildIfDirty().bg:null, G=M.TINT.ghost;
+function ghost(fb,v,S,GS){ var t=v.t, bg=LAST, G=M.TINT.ghost;
   function free(x,y){ if (!bg) return true; var c=bg.get(x+v.cam,y); return fb.get(x,y)===M.tintPx(G,c,x,y); }
   for (var i=0;i<44;i++){ var x=rnd(160-i*3.6), y=rnd(117+Math.sin(i*0.5)*2.5+((i%2)?1.5:-1.5)); if (x<2) break; var a=0.55+0.45*Math.sin(t*0.9-i*0.25); if (a<0.3||!free(x,y)) continue; fb.px(x,y,a>0.75?P.x5:P.x4); if (free(x+1,y)) fb.px(x+1,y,a>0.75?P.x4:P.x3); if (free(x,y+1)&&a>0.6) fb.px(x,y+1,P.x2); }
   for (var k=0;k<9;k++){ var mx=DB[0]+2+rnd(hash(k,3)*(DB[2]-4)+Math.sin(t*0.7+k)*2), my=rnd(doorBot(DB)-((t*5+hash(k,4)*60)%60)); if (free(mx,my)) fb.px(mx,my,(k%3)?P.x4:P.x5); }
@@ -8123,7 +9016,7 @@ M.room('riva',{ name:'Riva', scape:'riva',
   music:function(GS){ return (GS.phase==='c1'||GS.phase==='c1_night')?'case1':(GS.phase==='c2'?'case2':(GS.phase==='c3'?'case3':'flat')); },
   actors:function(S,GS){ var L=[]; if (ivkaHere(GS)){ var p=M.apos('riva','ivka',[596,114,'R']); L.push({id:'ivka',ch:'ivka',x:p[0],y:p[1],f:p[2]||'R',name:'Ivka',ghost:true,idle:'waitF',speed:110,step:3}); } return L; },
   hotspots:HS,
-  enter:async function(A,from){ var p=A.G.phase;
+  enter:async function(A,from){ var p=A.G.phase; if (A.S.ferryAt) delete A.S.ferryAt; // die Fähre aus dem Finale liegt nur, solange man bleibt
     if (p==='c1' && A.first('rivaC1')){ await A.m('Die Riva am Abend. Die Lichter gehen an, eine nach der anderen, als könnten sie sich nicht entscheiden.'); await A.m('Ich gehe bis zum Ende der Mole. Da ist der Wind ehrlicher.'); }
     if (p==='c1_night' && A.first('rivaNight') && !A.flag('c1.done')){ await A.m('Die Bura ist da. Ivka steht immer noch am Ende der Mole.'); if (ready(A)) await A.g('Jetzt weißt du, was sie wissen muss.'); }
     if (p==='c2' && A.first('rivaC2')) await A.g('Die Mole ist leer. Das ist gut so.');
@@ -8973,8 +9866,8 @@ var crt=false; try{ crt=localStorage.getItem('mala.crt')==='1'; }catch(e){}
 function placeCRT(){ var r=cv.getBoundingClientRect(); crtEl.style.left=r.left+'px'; crtEl.style.top=r.top+'px'; crtEl.style.width=r.width+'px'; crtEl.style.height=r.height+'px'; var row=r.height/200; crtEl.style.setProperty('--a',(row*0.45)+'px'); crtEl.style.setProperty('--b',row+'px'); }
 M.crtOn=function(){ return crt; };
 M.setCRT=function(on){ crt=on; try{ localStorage.setItem('mala.crt',on?'1':'0'); }catch(e){} crtEl.className=on?'on':''; cv.className=on?'crt':''; placeCRT(); };
-M.fullscreen=function(){ var d=document.documentElement; try{ (d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d); }catch(e){} };
-function fit(){ var dpr=window.devicePixelRatio||1, vw=window.innerWidth, vh=window.innerHeight; var s=Math.floor(Math.min(vw*dpr/320,vh*dpr/200)), css;
+M.fullscreen=function(){ var d=document.documentElement; try{ var r=(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d); if (r&&r.catch) r.catch(function(){}); }catch(e){} };
+function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1]; var s=Math.floor(Math.min(vw*dpr/320,vh*dpr/200)), css;
   if (s>=1) css=320*s/dpr; else css=vw; if (css*200/320>vh) css=vh*320/200; if (css>vw) css=vw;
   cv.style.width=css+'px'; cv.style.height=(css*200/320)+'px'; if (hint) hint.style.display=(vh>vw*1.1)?'block':'none'; setTimeout(placeCRT,0); }
 window.addEventListener('resize',fit); window.addEventListener('orientationchange',function(){ setTimeout(fit,250); }); fit();

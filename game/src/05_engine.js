@@ -80,6 +80,10 @@ function Actor(id,o){ this.id=id; this.ch=o.ch||id; this.x=o.x===undefined?160:o
 var ACT={}; M.ACT=ACT;
 function player(){ return ACT[GS.active]; }
 E.player=player;
+// Mala hält inne, wenn ein Fährhorn oder eine Glocke im Raumklang ertönt, und dreht sich zum Geräusch (nicht blockierend)
+var REACT_EV=/^(horn|hornNear|bellFar|bellSmall|bellBig)$/;
+M.onAmbient=function(name,p){ if (!REACT_EV.test(name)) return; var a=ACT.mala; if (!a||!GS.malaOn||!a.visible) return; var now=gt; if (now-(E.lastReact||-1e9)<14000) return;
+  setTimeout(function(){ if (!ACT.mala||ACT.mala!==a||a.mode!=='idle'||E.busy||E.dlg||E.overlay||E.screen!=='game') return; E.lastReact=gt; if (p<-0.25) a.f='L'; else if (p>0.25) a.f='R'; playAnimOn(a,'look'); },500); };
 function charAnim(a,name){ var ch=M.CHARS[a.ch]; return (ch&&ch.anims&&ch.anims[name])||A_[name]; }
 function idleSetFor(a){ if (a.idle){ var an=charAnim(a,a.idle); if (an) return an; } if (a.ghost && a.id==='mala') return a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); return a.f==='F'?A_.idleF:(a.f==='B'?A_.idleB:A_.idleS); }
 function setIdle(a){ a.mode='idle'; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
@@ -413,7 +417,8 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
   if (!M.PHASES[base.phase]) return null; ['marko','mala'].forEach(function(k){ if (!base.pos[k]||!M.ROOMS[base.pos[k].room]) base.pos[k]={room:base.pos.marko&&M.ROOMS[base.pos.marko.room]?base.pos.marko.room:'flat',x:160,y:120,f:'R'}; });
   if (M.ROOMS[base.pos[base.active].room].noSave) return null; return base; }
 function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; var d=JSON.parse(raw), base=validate(d); if (!base) return false;
-    setGame(base); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null;
+    setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
+    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false); if (M.startGame) M.startGame(API); };

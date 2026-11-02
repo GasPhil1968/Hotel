@@ -35,11 +35,12 @@ var BGL={ dusk:[rampLUT('k2 d0 d1 d2',0,0.85,1.1),rampLUT('k2 d0 d1 d2 d3 d4',0.
           night:[rampLUT('k1 k2 n0 n1',0,0.9,1.1),rampLUT('k0 k1 k2 n0 n1 n2',0,0.95,1),rampLUT('k0 k1 k2 n0 n1 n2 n3',0,0.95,0.95)],
           dawn:[rampLUT('n0 n1 n2 d2',0.1,0.95,1),rampLUT('k2 n0 n1 n2 d2 d3',0,1,1),rampLUT('k1 n0 n1 n2 d2 d3 d4',0,1,1)] };
 // wie M.finishTOD, aber mit sanfterem Dither (Texturen bleiben ruhig)
+var DUSKCOOL=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.62+L*0.08+14, g*0.5+L*0.06+8, b*0.7+L*0.1+30]; });
 function finish(b,tod,opt){ if (tod==='day'||!M.TINT[tod]){ if (opt.after) opt.after(b,tod); return b; }
-  var t=M.TINT[tod], L=opt.lights||[], LT=M.TINT.lamp, d=b.d, w=b.w;
+  var t0=M.TINT[tod], L=opt.lights||[], LT=M.TINT.lamp, d=b.d, w=b.w;
   for (var y=0;y<b.h;y++) for (var x=0;x<w;x++){ var k=y*w+x, c=d[k]; if (c===T) continue; if (opt.sky && opt.sky(x,y)) continue;
     var lit=0; for (var i=0;i<L.length;i++){ var l=L[i], dx=(x-l[0])/l[2], dy=(y-l[1])/(l[4]||l[2]), q=dx*dx+dy*dy; if (q<1){ var v=(1-q)*l[3]; if (v>lit) lit=v; } }
-    if (tod==='dusk') lit*=0.6; var bb=bayer(x,y), tt=(lit>0.05 && bb<lit)?LT:t, r=tt.r[c];
+    if (tod==='dusk') lit*=0.6; var t=(tod==='dusk' && y>=QY)?DUSKCOOL:t0, bb=bayer(x,y), tt=(lit>0.05 && bb<lit)?LT:t, r=tt.r[c];
     d[k]=(r>0.18 && bb<(r-0.18)*1.5)?tt.b[c]:tt.a[c]; if (tt===LT && lit>0.75) d[k]=M.UP[d[k]]; }
   if (opt.after) opt.after(b,tod); return b; }
 

@@ -38,26 +38,26 @@ function motif(w,h,o){ o=o||{}; var b=new M.Buf(w,h,P.k0), hz=Math.round(h*(o.hz
   var kw=Math.max(3,Math.round(w*0.17)), kh=Math.max(3,Math.round(h*0.24)), kx=Math.max(1,Math.round(w*(o.kx||0.1))), ky=qy-kh;
   b.rect(kx,ky,kw,kh,P.k2); b.rect(kx+1,ky+1,Math.max(1,kw-2),Math.max(1,kh-2),P.y3); b.hl(kx-1,kx+kw,ky-1,P.n2); if (kw>4) b.px(kx+1,ky+1,P.y5);
   for (var ly=qy-1;ly>=Math.max(0,qy-Math.round(h*0.12));ly--) for (var lx=kx-1;lx<kx+kw+3;lx++) if (bayer(lx,ly)<0.25) b.px(lx,ly,P.y1);
-  var px=kx+kw+Math.max(1,Math.round(w*0.04)), ph=Math.max(3,Math.round(h*0.22)); b.vl(px,qy-ph,qy-1,P.k0); b.px(px,qy-ph-1,P.k0); if (ph>4){ b.vl(px+1,qy-ph+1,qy-2,P.k0); b.px(px-1,qy-ph+2,P.k1); }
+  var px=kx+kw+Math.max(1,Math.round(w*0.04)), ph=Math.max(3,Math.round(h*0.22)); if (!o.unfinished){ b.vl(px,qy-ph,qy-1,P.k0); b.px(px,qy-ph-1,P.k0); if (ph>4){ b.vl(px+1,qy-ph+1,qy-2,P.k0); b.px(px-1,qy-ph+2,P.k1); } }
   if (w>18){ var lp=Math.round(w*0.62); b.vl(lp,qy-Math.round(h*0.3),qy-1,P.k1); b.px(lp,qy-Math.round(h*0.3)-1,P.y5); }
-  if (o.unfinished){ // rechte Hälfte und unten noch rohe Leinwand mit Bleistiftlinien
-    for (y=0;y<h;y++) for (x=0;x<w;x++){ var raw=(x>w*0.58 && y>h*0.18) || (y>h*0.82 && x>w*0.3); if (!raw) continue; var c2=(hash(x,y)<0.08)?P.s4:P.s5; if (x>w*0.58 && x<w*0.62 && bayer(x,y)<0.5) c2=P.n1; b.px(x,y,c2); }
-    b.line(Math.round(w*0.62),hz-2,w-3,hz-2,P.s2); b.line(Math.round(w*0.66),hz-5,Math.round(w*0.86),hz-5,P.s2); b.line(Math.round(w*0.66),hz-5,Math.round(w*0.64),hz-2,P.s2); b.px(Math.round(w*0.78),hz-7,P.s2);
-    b.line(Math.round(w*0.35),h-3,w-4,h-3,P.s3); }
+  if (o.unfinished){ // Fähre und Himmel sind fertig; unten links (Kai, Kiosk, die Gestalt) noch rohe Leinwand mit Bleistiftlinien
+    for (y=0;y<h;y++) for (x=0;x<w;x++){ var raw=(x<w*0.45 && y>h*0.62) || (y>h*0.86); if (!raw) continue; var c2=(hash(x,y)<0.08)?P.s4:P.s5; if (Math.abs(y-h*0.62)<1 && x<w*0.45 && bayer(x,y)<0.5) c2=P.n1; b.px(x,y,c2); }
+    var k0=Math.round(w*0.08), k1=Math.round(w*0.25), ky0=Math.round(h*0.66), ky1=h-3;
+    b.line(k0,ky0,k1,ky0,P.s2); b.line(k0,ky0,k0,ky1,P.s2); b.line(k1,ky0,k1,ky1,P.s2); b.line(k0+1,ky0+3,k1-1,ky0+3,P.s3); b.line(0,ky1,Math.round(w*0.45),ky1,P.s3); }
   return b; }
 // Bild auf einer Wandfläche (senkrechte Kanten, schräge Ober-/Unterkante)
 function onQuad(b,Q,src,shade){ var xl=Math.min(Q[0][0],Q[3][0]), xr=Math.max(Q[1][0],Q[2][0]);
   for (var x=Math.ceil(xl);x<=Math.floor(xr);x++){ var u=(x-Q[0][0])/(Q[1][0]-Q[0][0]); if (u<0||u>1) continue; var top=Q[0][1]+(Q[1][1]-Q[0][1])*u, bot=Q[3][1]+(Q[2][1]-Q[3][1])*u;
     for (var y=Math.ceil(top);y<=Math.floor(bot);y++){ var v=(y-top)/Math.max(1,bot-top), c=src.get(Math.min(src.w-1,Math.floor(u*src.w)),Math.min(src.h-1,Math.floor(v*src.h))); if (shade) c=M.step(c,shade); b.px(x,y,c); } } }
 // Leinwand von hinten: rohes Tuch, Keilrahmen mit Kreuz
-function canvasBack(b,x,y,w,h){ b.rect(x,y,w,h,P.e4); for (var yy=y;yy<y+h;yy++) for (var xx=x;xx<x+w;xx++) if (hash(xx,yy)<0.1) b.px(xx,yy,P.e3);
-  b.rect(x,y,w,2,P.w3); b.rect(x,y+h-2,w,2,P.w2); b.rect(x,y,2,h,P.w3); b.rect(x+w-2,y,2,h,P.w2); b.vl(x+(w>>1),y,y+h-1,P.w2); if (h>12) b.hl(x,x+w-1,y+(h>>1),P.w2); b.hl(x,x+w-1,y,P.w4); }
+function canvasBack(b,x,y,w,h){ b.rect(x,y,w,h,P.s4); for (var yy=y;yy<y+h;yy++) for (var xx=x;xx<x+w;xx++) if (hash(xx,yy)<0.12) b.px(xx,yy,P.e4);
+  b.rect(x,y,w,1,P.w3); b.rect(x,y+h-1,w,1,P.w2); b.rect(x,y,1,h,P.w3); b.rect(x+w-1,y,1,h,P.w1); b.line(x+1,y+1,x+w-2,y+h-2,P.w2); b.line(x+w-2,y+1,x+1,y+h-2,P.w2); b.hl(x,x+w-1,y,P.w4); M.microText(b,'N.B.',x+2,y+h-7,P.s2); }
 // Leinwand von vorn mit dem Motiv und schmalem Rand
 function canvasFront(b,x,y,w,h,o){ var m=motif(w-2,h-2,o); b.rect(x,y,w,h,P.e3); b.blit(m,x+1,y+1); b.hl(x,x+w-1,y,P.e4); b.vl(x+w-1,y,y+h-1,P.e2); b.hl(x,x+w-1,y+h-1,P.e1); }
 
-function wallBack(u,v,x,y){ var n=Math.sin(u*0.06+v*0.03)+Math.sin(u*0.17-v*0.05)*0.5+(hash(u>>3,v>>2)-0.5); var c=M.rampAt(M.R('s2 s3 s4'),0.55+n*0.12,x,y); if (v>=72) c=(v===72)?P.w2:P.w1; return c; }
-function wallSide(u,v,x,y,sd){ var n=Math.sin(u*0.11+v*0.03+(sd==='L'?0:3))+(hash((u*2)>>2,v>>2)-0.5); var c=M.rampAt(M.R('s1 s2 s3'),0.55+n*0.13,x,y); if (v>=72) c=(v===72)?P.w2:P.w0; return sd==='L'?c:M.DN[c]; }
-function floorTex(xb,d,x,y){ var c=tex.planks(xb,y,VP[1],FY,M.R('w0 w1 w2 w3'),8); var f=R3.floor(x,y); if (f && f.X>140 && f.X<200 && f.Z>20 && f.Z<56 && hash(Math.floor(f.X/2),Math.floor(f.Z/2))<0.035) c=[P.r2,P.n2,P.y2,P.s4][Math.floor(hash(f.Z,f.X)*4)]; return c; }   // ein paar Farbspritzer unter der Staffelei
+function wallBack(u,v,x,y){ var n=Math.sin(u*0.06+v*0.03)+Math.sin(u*0.17-v*0.05)*0.5+(hash(u>>3,v>>2)-0.5); var c=M.rampAt(M.R('s2 s3 s4'),0.5+n*0.05+(v>50?-0.08:0),x,y); if (hash(u>>2,v>>1)<0.03) c=M.DN[c]; if (v>=72) c=(v===72)?P.w2:P.w1; return c; }
+function wallSide(u,v,x,y,sd){ var n=Math.sin(u*0.11+v*0.03+(sd==='L'?0:3))+(hash((u*2)>>2,v>>2)-0.5); var c=M.rampAt(M.R('s1 s2 s3'),0.5+n*0.06,x,y); if (v>=72) c=(v===72)?P.w2:P.w0; return sd==='L'?c:M.DN[c]; }
+function floorTex(xb,d,x,y){ var c=tex.planks(xb,y,VP[1],FY,M.R('w0 w1 w2 w3'),8); var f=R3.floor(x,y); if (f && f.X>140 && f.X<200 && f.Z>20 && f.Z<56 && hash(Math.floor(f.X/2),Math.floor(f.Z/2))<0.035) c=[P.b1,P.n2,P.b2,P.y2][Math.floor(hash(f.Z,f.X)*4)]; return c; }   // ein paar Farbspritzer (viel Blau) unter der Staffelei
 function ceilTex(xb,d,x,y){ return ((Math.floor(xb)%20)<2)?P.k2:P.w0; }
 
 function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
@@ -70,7 +70,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
   for (y=wy;y<wy+wh;y++) for (x=wx;x<wx+ww;x++){ var c=(y<wy+6)?P.b4:(y<wy+10?P.s5:P.s4); if (y>=wy+10 && ((x+y)%5===0)) c=P.s3; b.px(x,y,c); }
   [wx+5,wx+11].forEach(function(gx){ b.vl(gx,wy,wy+wh-1,P.k2); }); b.hl(wx,wx+ww-1,wy+7,P.k2);
   // ---- an der Rückwand: das gerahmte Ticket, die Skizze, ein Bild, Regal mit Farbgläsern
-  var tk=TICKET; b.rect(tk[0]-1,tk[1]-1,tk[2]+2,tk[3]+2,P.e1); b.rect(tk[0],tk[1],tk[2],tk[3],P.k1); b.rect(tk[0]+1,tk[1]+1,tk[2]-2,tk[3]-2,P.k2); b.hl(tk[0],tk[0]+tk[2]-1,tk[1],P.m1);
+  var tk=TICKET; b.rect(tk[0]-1,tk[1]-1,tk[2]+2,tk[3]+2,P.k0); b.rect(tk[0],tk[1],tk[2],tk[3],P.k1); b.rect(tk[0]+1,tk[1]+1,tk[2]-2,tk[3]-2,P.k2); b.hl(tk[0],tk[0]+tk[2]-1,tk[1],P.m1); b.vl(tk[0],tk[1],tk[1]+tk[3]-1,P.m0);
   b.rect(tk[0]+2,tk[1]+2,tk[2]-4,tk[3]-4,P.s5); b.rect(tk[0]+2,tk[1]+2,tk[2]-4,2,P.b1); b.hl(tk[0]+3,tk[0]+tk[2]-5,tk[1]+5,P.s3); b.hl(tk[0]+3,tk[0]+6,tk[1]+6,P.s3); b.px(tk[0]+tk[2]-4,tk[1]+6,P.r3);
   b.px(tk[0]+(tk[2]>>1),tk[1]-3,P.k2); b.line(tk[0]+(tk[2]>>1),tk[1]-3,tk[0]+2,tk[1]-1,P.s1); b.line(tk[0]+(tk[2]>>1),tk[1]-3,tk[0]+tk[2]-3,tk[1]-1,P.s1);
   // Bleistiftskizze: junger Mann mit Gitarre, mit einer Nadel angepinnt, Ecke eingerollt
@@ -82,7 +82,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
   b.hl(sk[0]+2,sk[0]+sk[2]-3,sk[1]+sk[3]-2,P.s3);
   canvasFront(b,140,40,26,18,{seed:4,fx:0.5});
   b.rect(172,46,34,2,P.w2); b.hl(172,205,46,P.w3); b.hl(173,204,48,P.k2);    // Regalbrett
-  [[174,'r3'],[179,'b2'],[184,'y3'],[189,'s5'],[194,'g3'],[199,'t3']].forEach(function(t){ b.rect(t[0],41,4,5,P.a5); b.rect(t[0],43,4,3,P[t[1]]); b.hl(t[0],t[0]+3,40,P.m2); b.px(t[0],42,P.s6); });
+  [[174,'b1'],[179,'n2'],[184,'b2'],[189,'a3'],[194,'y3'],[199,'b3']].forEach(function(t){ b.rect(t[0],41,4,5,P.a5); b.rect(t[0],43,4,3,P[t[1]]); b.hl(t[0],t[0]+3,40,P.m2); b.px(t[0],42,P.s6); });
   // Leinwände an der Rückwand (frontal), unten gestapelt
   canvasFront(b,98,58,22,16,{seed:8,fx:0.55}); canvasBack(b,104,62,18,26); canvasFront(b,186,54,26,20,{seed:12,fx:0.4,kx:0.15}); canvasFront(b,196,68,16,20,{seed:15,fx:0.45});
   // ---- linke Wand: Vorhang zum Laden (Tür), Leinwände schräg an der Wand
@@ -102,15 +102,15 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), x, y, i;
   // ---- Tisch mit Farben: Gläser, Pinsel in Dosen, Palette, Lappen (vorne rechts)
   R3.box(b,196,212,74,FY,22,44,{top:function(x,y){ var c=(hash(x>>1,y)<0.3)?P.w2:P.w3; if (hash(x,y)<0.08) c=[P.r3,P.b3,P.y4,P.g4][Math.floor(hash(y,x)*4)]; return c; },left:function(x,y){ return ((y%5)===0)?P.w0:P.w1; }});
   var tp=function(X,Z){ var p=R3.p(X,74,Z); return [rnd(p[0]),rnd(p[1])]; };
-  [[199,26,'r3'],[203,28,'b2'],[207,25,'y3'],[200,33,'s5']].forEach(function(t){ var p=tp(t[0],t[1]); b.rect(p[0],p[1]-6,4,6,P.a5); b.rect(p[0],p[1]-4,4,4,P[t[2]]); b.hl(p[0],p[0]+3,p[1]-7,P.m2); b.px(p[0],p[1]-5,P.s6); });
+  [[199,26,'b1'],[203,28,'n2'],[207,25,'b3'],[200,33,'y3'],[208,32,'c2']].forEach(function(t){ var p=tp(t[0],t[1]); b.rect(p[0],p[1]-6,4,6,P.a5); b.rect(p[0],p[1]-4,4,4,P[t[2]]); b.hl(p[0],p[0]+3,p[1]-7,P.m2); b.px(p[0],p[1]-5,P.s6); });
   [[205,34],[200,40]].forEach(function(t,i){ var p=tp(t[0],t[1]); b.rect(p[0],p[1]-6,5,6,P.m2); b.vl(p[0],p[1]-6,p[1]-1,P.m4); for (var k=0;k<4;k++){ b.line(p[0]+1+k,p[1]-6,p[0]-1+k*2,p[1]-14-(k%2)*2,[P.w4,P.w3,P.y2,P.w2][k]); b.px(p[0]-1+k*2,p[1]-14-(k%2)*2,[P.r3,P.b2,P.k2,P.y3][k]); } });
-  var pl=tp(207,40); b.ellipse(pl[0]+3,pl[1]-1,5,1.8,P.w4); [P.r3,P.y4,P.b3,P.s6,P.g4].forEach(function(c,i){ b.px(pl[0]+i*2,pl[1]-1-(i%2),c); });
-  var rg=tp(201,42); b.rect(rg[0]-4,rg[1]-2,6,3,P.s4); b.px(rg[0]-3,rg[1]-1,P.b3); b.px(rg[0],rg[1]-2,P.r2);
+  var pl=tp(207,40); b.ellipse(pl[0]+3,pl[1]-1,5,1.8,P.w4); [P.b2,P.y4,P.n2,P.s6,P.b3].forEach(function(c,i){ b.px(pl[0]+i*2,pl[1]-1-(i%2),c); }); b.px(pl[0]+3,pl[1],P.b1);
+  var rg=tp(201,42); b.rect(rg[0]-4,rg[1]-2,6,3,P.s4); b.px(rg[0]-3,rg[1]-1,P.b2); b.px(rg[0],rg[1]-2,P.b1); b.px(rg[0]-1,rg[1],P.n2);
   // Farbdosen auf dem Boden, Terpentinflasche
-  [[140,8,'m3'],[132,10,'t3'],[186,16,'m2']].forEach(function(t){ var p=R3.p(t[0],FY,t[1]); b.rect(rnd(p[0]),rnd(p[1])-5,5,5,P[t[2]]); b.hl(rnd(p[0]),rnd(p[0])+4,rnd(p[1])-5,M.UP[P[t[2]]]); b.px(rnd(p[0])+1,rnd(p[1])-6,P.y3); });
+  [[140,8,'b2'],[132,10,'n2'],[186,16,'b1']].forEach(function(t){ var p=R3.p(t[0],FY,t[1]); b.rect(rnd(p[0]),rnd(p[1])-5,5,5,P[t[2]]); b.hl(rnd(p[0]),rnd(p[0])+4,rnd(p[1])-5,M.UP[P[t[2]]]); b.px(rnd(p[0])+1,rnd(p[1])-6,P.y3); });
   // ---- Licht: ein Strahl aus dem hohen Fenster fällt schräg auf Staffelei und Boden, sonst Dämmer
   var beam=M.lf.beam(WIN[0]+WIN[2]/2,WIN[1]+WIN[3],EASEL.cv[0]+EASEL.cv[2]/2+8,128,7,26,1.9);
-  M.light(b,M.lf.sum(beam,M.lf.pool(166,96,110,50,0.7),M.lf.vignette(W,144,1.5),M.lf.k(-0.55)),0,0,function(x,y){ return !(x>=WIN[0]&&x<WIN[0]+WIN[2]&&y>=WIN[1]&&y<WIN[1]+WIN[3]); });
+  M.light(b,M.lf.sum(beam,M.lf.pool(166,96,110,50,0.7),M.lf.vignette(W,144,1.1),M.lf.k(-0.55)),0,0,function(x,y){ return !(x>=WIN[0]&&x<WIN[0]+WIN[2]&&y>=WIN[1]&&y<WIN[1]+WIN[3]); });
   return M.finishTOD(b,tod,{sky:function(x,y){ return x>=WIN[0]&&x<WIN[0]+WIN[2]&&y>=WIN[1]&&y<WIN[1]+WIN[3]; }}); }
 
 // ---------------------------------------------------------------- Vordergrund: Staffelei, ein Stapel Leinwände vorn links
@@ -174,7 +174,7 @@ M.defineArt('backroom',{
     paints:[190,60,40,34],
     window:[143,14,24,21]
   },
-  stands:{ door:[86,118,'L'], canvases:[230,124,'R'], easel:[166,132,'B'], ticket:[112,104,'B'], sketch:[128,104,'B'], paints:[204,116,'R'], window:[150,104,'B'] },
+  stands:{ door:[86,118,'L'], canvases:[230,124,'R'], easel:[166,132,'B'], ticket:[112,104,'B'], sketch:[128,104,'B'], paints:[204,116,'R'], window:[140,100,'B'] },
   start:[88,120,'R'], entries:{ shop:[88,120,'R'] }
 });
 })(M);

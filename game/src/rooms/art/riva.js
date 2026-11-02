@@ -25,8 +25,8 @@ var BENCH2=[218,242];
 var MBENCH=[498,528];      // Bank auf der Mole
 var MLAMP=628, MLB=116, MLH=50;   // Laterne am Molenende
 var IBOL=610;              // Ivkas Poller (hintere Kante)
-var FERRY_END=518;
-var MOONX=593;              // Mond über Ivkas Platz: ihr Umriss steht im Mondpfad         // dort kommt die Fähre zum Stehen (Bug)
+var FERRY_END=482;         // dort kommt die einlaufende Fähre zum Stehen (Bug); hinter Ivka liegt dann nur das flache Heck
+var MOONX=593;             // Mond über Ivkas Platz: ihr Umriss steht im Mondpfad
 var FLAG=[350,26];         // Fahnenspitze am Hafenbüro
 var PUD=[[88,127,9,2],[176,131,13,2.5],[268,121,8,1.8],[352,129,11,2],[448,118,9,2],[541,121,11,2],[586,111,6,1.5]];   // Pfützen bei Regen
 var RING=476;              // Rettungsring an der Mole
@@ -87,8 +87,8 @@ function paintIslands(b,tod,wea){ var c=farCols(tod,wea,true);
   for (var x=386;x<W;x++){ var h=Math.max(brac(x),solta(x)); for (var y=HZ-h;y<HZ;y++){ var v=0.5-(y-(HZ-h))*0.07; if (y===HZ-h) v=0.95; b.px(x,y,ra(c,v,x,y)); } } }
 
 // ---------------------------------------------------------------- Wasser (gleiche Formel für paint und dynamic)
-var WR={ day:'a1 b0 a2 a3 a4 a5 a6', dusk:'k2 d0 d1 d2 d3 d4 d5 d6', night:'k0 k1 a0 n0 a1 n1 n2 n3', dawn:'n0 n1 a2 n2 d3 a4 d4', rain:'k2 d0 m0 d1 m1 m2 d2 m3', rainN:'k0 k1 m0 n0 m1 n1' };
-var WRC={}; function wramp(tod,wea){ var k=wea==='rain'?(tod==='night'?'rainN':'rain'):tod; return WRC[k]||(WRC[k]=R(WR[k]||WR.day)); }
+var WR={ day:'a1 b0 a2 a3 a4 a5 a6', dusk:'k2 d0 d1 d2 d3 d4 d5 d6', night:'k0 k1 a0 n0 a1 n1 n2 n3', dawn:'n0 n1 a2 n2 d3 a4 d4', rain:'k2 d0 m0 d1 m1 m2 d2 m3', rainD:'k2 m0 a1 m1 a2 m2 a3 m3', rainN:'k0 k1 m0 n0 m1 n1' };
+var WRC={}; function wramp(tod,wea){ var k=wea==='rain'?(tod==='night'?'rainN':(tod==='day'?'rainD':'rain')):tod; return WRC[k]||(WRC[k]=R(WR[k]||WR.day)); }
 function wdepth(kind,y){ return kind===3?clamp((y-HZ)/(MB-HZ),0,1):1; }
 function wbase(kind,y,tod,wea,x){ var d=wdepth(kind,y), n=0;
   if (kind===4){ var e=(y-MW)/(H-MW); if (tod==='dusk') return 0.3-e*0.12; if (tod==='night') return 0.32-e*0.12; return 0.4-e*0.12; }
@@ -117,7 +117,6 @@ function paintWater(b,tod,wea){ var rmp=wramp(tod,wea), x, y;
   b.code=0; }
 
 // ---------------------------------------------------------------- Glockenturm von Sveti Duje
-var TWM=null;
 function tower(b,tod){ var cx=TWX, S6=R('s1 s2 s3 s4 s5 s6'), x, y;
   function wall(x,y,x0,x1){ var u=(x+0.5-x0)/(x1-x0+1); var v=0.86-u*0.46+(hash(Math.floor(x/4)+Math.floor(y/3)*7,3)-0.5)*0.1; if ((y%4)===0) v-=0.1; return ra(S6,v,x,y); }
   function level(y0,y1,hw,n,kind){ var x0=cx-hw, x1=cx+hw, yy, xx;
@@ -419,7 +418,7 @@ function paint(S,GS,tod){ var b=track(new M.Buf(W,H,P.k0)), wea=M.scn.weather(GS
   lamp(b,MLAMP,MLB,MLH);
   b.rect(MX1-5,MF-6,3,6,P.s5); b.vl(MX1-5,MF-6,MF-1,P.s6); b.px(MX1-4,MF-7,P.g3); b.px(MX1-4,MF-8,P.m1);
   // Flagge (statischer Stand; bewegt sich in dynamic)
-  flag(b,FLAG[0],FLAG[1],0,wea);
+  if (wea!=='bura') flag(b,FLAG[0],FLAG[1],0,wea);
   // ---- Licht (Tag): Schatten der Palmen auf Fassade und Pflaster
   if (tod==='day') dayShadows(b);
   var pre=b.clone(), out;
@@ -487,7 +486,6 @@ function nightLights(b,pre,tod,wea){ var n=tod==='night', rain=wea==='rain', x, 
   if (rain){ LAMPS.forEach(function(lx){ refl(lx+0.5,108,134,2.5,P.y4,P.y2); }); refl(MLAMP+0.5,112,125,2.5,P.y4,P.y2);
     SHOPS.forEach(function(s,i){ if (n && i%3) return; refl((s[0]+s[1])/2,101,116,(s[1]-s[0])*0.35,P.y3,P.y1); }); }
   else if (!n){ LAMPS.forEach(function(lx){ refl(lx+0.5,108,122,1.5,P.y3,P.t3); }); } }
-function isTower(x,y){ var hw; if (y<1) return false; if (y<8) return x===TWX||(y===2&&Math.abs(x-TWX)<=2); if (y<20) hw=Math.round((y-7)*0.72); else if (y<30) hw=10; else if (y<40) hw=12; else if (y<50) hw=13; else hw=14; return Math.abs(x-TWX)<=hw; }
 
 // ---------------------------------------------------------------- Vordergrund-Ebenen
 function layers(S,GS,tod){ var L=[];
@@ -530,7 +528,7 @@ function gl(fb,cx,y0,y1,spread,t,c1,c2,cam,thr){ var bura=LIT.wea==='bura'; thr=
   for (var y=y0;y<y1;y++){ var k=(y-y0)/(y1-y0+1), half=1+spread*k; for (var x=Math.floor(cx-half);x<=cx+half;x++){ var sx=x-cam; if (sx<0||sx>=320||x<0||x>=W) continue; var kind=FAR[y*W+x]; if (kind<3) continue;
     var e=Math.abs(x-cx)/half, cr=wsig(x,y,t,kind,bura)+0.3*WS2; if (cr>thr+e*0.75) fb.d[y*320+sx]=(e<0.4 && cr>thr+0.35)?c1:c2; } } }
 function flagFb(fb,v,cam){ var tod=LIT.tod, tint=M.TINT[tod]; var tmp={px:function(x,y,c){ var sx=x-cam; if (sx<0||sx>=320||y<0||y>=H) return; fb.d[y*320+sx]=(tod==='day'||!tint)?c:M.tintPx(tint,c,x,y); }};
-  // alten Stand nicht löschen (gleiche Fläche wird übermalt) – nur bei Wind bewegt
+  // nur bei Wind: die Flagge wird jedes Bild neu gezeichnet (im Hintergrundbild fehlt sie dann)
   if (LIT.wea==='bura') flag(tmp,FLAG[0],FLAG[1],v.t,LIT.wea); }
 function ferry(fb,v,S){ var ft=(v.gt-S.ferryAt)/1000, T0=24, e=clamp(ft/T0,0,1), p=1-Math.pow(1-e,3), x=Math.round(700+(FERRY_END-700)*p), cam=v.cam, tod=LIT.tod, lit=tod!=='day', tint=M.TINT[tod];
   if (tod==='dusk' && LIT.wea!=='rain') tint=M.TINT.night;
@@ -541,11 +539,11 @@ function ferry(fb,v,S){ var ft=(v.gt-S.ferryAt)/1000, T0=24, e=clamp(ft/T0,0,1),
 
 // ---------------------------------------------------------------- nur in Malas Sicht: die Spur, die Ivka 27 Jahre lang gegangen ist
 function ghost(fb,v,S,GS){ var cam=v.cam, t=v.t;
-  for (var i=0;i<42;i++){ var wx=338+i*6.6, side=(i%2)?1:-1, wy=Math.round((wx<MX0?119-(wx-338)*0.07:114.5)+side*1.2), sx=Math.round(wx-cam); if (sx<0||sx>=318) continue;
+  for (var i=0;i<38;i++){ var wx=338+i*6.6, side=(i%2)?1:-1, wy=Math.round((wx<MX0?119-(wx-338)*0.07:114.5)+side*1.2), sx=Math.round(wx-cam); if (sx<0||sx>=318) continue;
     var wave=(Math.sin(i*0.33-t*1.8)+1)/2, c=wave>0.82?P.x6:(wave>0.5?P.x5:P.x4); if (wave<0.25 && (i%3)) continue;
     fb.px(sx,wy,c); fb.px(sx+1,wy,wave>0.6?P.x5:P.x3); }
   var bx=IBOL-cam; if (bx>-14 && bx<334){ var a=0.55+Math.sin(t*1.2)*0.25;
-    for (var y=92;y<112;y++) for (var x=bx-9;x<=bx+9;x++){ if (x<0||x>=320) continue; var d=Math.hypot((x-bx)/9,(y-102)/9); if (d<1 && bayer(x,y)<(1-d)*a){ var k=y*320+x; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } }
+    for (var y=92;y<112;y++) for (var x=bx-5;x<=bx+9;x++){ if (x<0||x>=320) continue; var d=Math.hypot((x-bx)/9,(y-102)/9); if (d<1 && bayer(x,y)<(1-d)*a){ var k=y*320+x; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } }
     for (var j=0;j<7;j++){ var ph=(t*0.35+hash(j,3))%1, px=Math.round(bx+(hash(j,5)-0.5)*12+Math.sin(t*1.5+j)*1.5), py=Math.round(106-ph*26); if (px<0||px>=320) continue; fb.px(px,py,ph<0.6?P.x6:P.x4); } } }
 
 // ---------------------------------------------------------------- über allem: Regen, Bura

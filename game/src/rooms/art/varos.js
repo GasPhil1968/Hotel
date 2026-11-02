@@ -59,6 +59,8 @@ function paintSky(b,tod,weather){
   if (tod==='day' && weather!=='rain'){ var rp=R('b0 b1 b2 b3 b4');
     for (var y=0;y<80;y++) for (var x=0;x<W;x++) b.px(x,y,ra(rp,0.1+y/80*0.95,x,y));
     var r=M.rng(5); for (var i=0;i<6;i++){ var cx=r()*W, cy=2+r()*30, L=24+r()*44; for (var k=0;k<L;k++){ var xx=rnd(cx+k), yy=rnd(cy+k*0.06+Math.sin(k*0.21)*0.7); if (bayer(xx,yy)<0.5*(1-Math.abs(k/L-0.5)*2)) b.px(xx,yy,yy<24?P.b3:P.b4); } }
+  } else if (tod==='night' && weather==='rain'){ var NR=R('k1 k2 n0 n1');                       // Regennacht: tiefe Wolken, keine Sterne
+    for (var y2=0;y2<80;y2++) for (var x2=0;x2<W;x2++) b.px(x2,y2,ra(NR,0.25+y2/80*0.45+(fbm(x2,y2*2,16,4)-0.5)*0.4,x2,y2));
   } else M.scn.sky(b,0,0,W,72,tod,weather,23);
   if (tod==='night' && weather!=='rain') M.moon(b,244,8,3);
 }
@@ -280,18 +282,19 @@ function reflections(b){ var src=b.clone(), PR=R('s0 m1 m2 m3 m4 s5');
 // ---------------------------------------------------------------- Licht (Tag) und Lichtinseln (Dämmerung, Nacht)
 function lightFn(tod,weather){ var sunny=tod==='day'&&weather!=='rain', grey=tod==='day'&&weather==='rain', eve=tod!=='day';
   function sunY(x){ return 47+x*0.03+5*Math.sin(x*0.033+1)+(x>58&&x<72?-7:0)+(x>170&&x<178?-5:0); }
+  function gap(x,y){ if (!sunny) return false; var o=(y-40)*0.42, g0=176+o, g1=203+o; return x>=g0&&x<g1; }   // Lücke zwischen den Häusern gegenüber: ein Sonnenstreifen
   return function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; var v=0, cx=(x-160)/190, cy=(y-(y<72?40:80))/110, vg=cx*cx+cy*cy; v-=Math.max(0,vg-0.32)*1.0;
     if (r===RG.wall||r===RG.prop||r===RG.glass){ var by=baseY(x), ev=x<116?EA:EB;
       if (y>by-16) v-=(y-(by-16))/16*0.5; if (y<ev+6) v-=(ev+6-y)/6*0.9;
-      if (sunny){ var s=sunY(x); v+=(y<s-1)?0.6:((y<s+1)?(bayer(x,y)<0.5?0.6:-0.45):-0.45); }
+      if (sunny){ var s=sunY(x); v+=(y<s-1||gap(x,y))?0.7:((y<s+1)?(bayer(x,y)<0.5?0.7:-0.6):-0.6); }
       else if (grey) v+=-0.12+(1-y/110)*0.3; }
-    else if (r===RG.floor){ var d=y-floorTop(x); if (d<7) v-=(7-d)/7*0.7; if (sunny) v-=0.4; v+=(y-110)/34*0.2; }
+    else if (r===RG.floor){ var d=y-floorTop(x); if (d<7) v-=(7-d)/7*0.7; if (sunny) v+=gap(x,y)?0.35:-0.75; v+=(y-110)/34*0.2; }
     else if (r===RG.stair){ if (sunny) v+=(y<92?0.45:0.1); if (x<LX+14) v-=(LX+14-x)/14*0.6; }
     else if (r===RG.side){ v+=sunny?0.55:0.1; if (y>95) v-=(y-95)/13*0.4; }
     else if (r===RG.wallE){ if (y>96) v-=(y-96)/12*0.4; if (sunny) v-=0.25; }
     else if (r===RG.up){ if (sunny) v+=0.45; }
     else if (r===RG.far){ if (sunny) v+=0.2; }
-    if (eve) v-=(tod==='dusk'?0.5:(tod==='night'?0.12:0.25));
+    if (eve) v-=(tod==='dusk'?(r===RG.far?0.6:0.85):(tod==='night'?0.12:0.25));
     return v; }; }
 // warme Lichtinseln in vier Stufen (blau → umbra → bernstein → gold), weich gedithert; eigene Ellipsen für Wände und Boden
 var DIMW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.5+r*0.12+12, L*0.38+g*0.08+8, L*0.26+b*0.1+16]; });
@@ -311,7 +314,7 @@ function actorLut(a,S,GS,tod){ if (tod==='day'||!M.TINT[tod]) return null; var d
   if (L>0.5) return MIDW.a; if (L>0.2) return DIMW.a; return M.TINT[tod].a; }
 
 // ---------------------------------------------------------------- Bild
-var catSave=null, catCol=[P.k1,P.s5];
+var catSave=null, catCol=[P.k1,P.s5], LAST=null;
 var CATS=['.k.k......','.kkk......','kykk......','.kkkw.....','..kkkk....','..kkkkk...','..kwkkkk..','..kwkkkk..','.wwkkkkk..'];
 function drawCat(b){ var x0=CAT[0], y0=CAT[1]-CATS.length; for (var j=0;j<CATS.length;j++) for (var i=0;i<CATS[j].length;i++){ var ch=CATS[j][i]; if (ch==='.') continue; var c=ch==='k'?((i>4&&j>5)?P.k2:P.k1):(ch==='w'?P.s5:P.g4); b.px(x0+i,y0+j,c); REG[(y0+j)*W+x0+i]=RG.prop; } }
 var TAILS=[[[8,8],[9,8],[10,7],[10,6]],[[8,8],[9,7],[10,6],[10,5],[11,4]],[[8,8],[9,7],[10,7],[11,6],[11,5]]];
@@ -331,7 +334,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
     b.rect(229,46,6,9,P.y3); b.drect(229,46,6,9,P.y3,P.y4,0.4); b.vl(232,46,54,P.y1);
     b.rect(314,30,6,20,P.y2); b.drect(314,31,6,4,P.y3,P.y4,0.5);
     b.px(x0,y0+2,P.y4); }
-  return b; }
+  LAST=b; return b; }
 
 // ---------------------------------------------------------------- Ebenen
 function layers(S,GS,tod){ var L=[];
@@ -370,7 +373,7 @@ function front(fb,v,S,GS){ var weather=M.scn.weather(GS);
   if (weather==='bura') M.scn.buraDebris(fb,v.t,112,140,v.cam);
   if (weather==='rain' && GS.phase!=='pro') M.rain(fb,v.t,{n:70}); }
 // Geistersicht: Ivkas tausend Wege zur Riva als blasse Spur, ein kalter Schimmer an ihrer Tür
-function ghost(fb,v,S,GS){ var t=v.t, bg=(M.E&&M.E.rebuildIfDirty)?M.E.rebuildIfDirty().bg:null, G=M.TINT.ghost;
+function ghost(fb,v,S,GS){ var t=v.t, bg=LAST, G=M.TINT.ghost;
   function free(x,y){ if (!bg) return true; var c=bg.get(x+v.cam,y); return fb.get(x,y)===M.tintPx(G,c,x,y); }
   for (var i=0;i<44;i++){ var x=rnd(160-i*3.6), y=rnd(117+Math.sin(i*0.5)*2.5+((i%2)?1.5:-1.5)); if (x<2) break; var a=0.55+0.45*Math.sin(t*0.9-i*0.25); if (a<0.3||!free(x,y)) continue; fb.px(x,y,a>0.75?P.x5:P.x4); if (free(x+1,y)) fb.px(x+1,y,a>0.75?P.x4:P.x3); if (free(x,y+1)&&a>0.6) fb.px(x,y+1,P.x2); }
   for (var k=0;k<9;k++){ var mx=DB[0]+2+rnd(hash(k,3)*(DB[2]-4)+Math.sin(t*0.7+k)*2), my=rnd(doorBot(DB)-((t*5+hash(k,4)*60)%60)); if (free(mx,my)) fb.px(mx,my,(k%3)?P.x4:P.x5); }

@@ -8,10 +8,10 @@ var W=320;
 var VP=[172,48], RECT=[64,8,282,92], F=100, FY=92;
 var R3=M.room3(VP,F,FY), SPEC={vp:VP,rect:RECT};
 var WINU=[10,34,24,72], DOORU=[40,58,28,92];    // Schaufenster und Ladentür in der linken Wand (u0,u1,vOben,vUnten)
-var BENCH={X0:150,X1:188,Y0:76,Z0:48,Z1:62};   // Werkbank
+var BENCH={X0:164,X1:222,Y0:78,Z0:30,Z1:44};   // Werkbank (Nina steht davor, mit dem Rücken zu uns)
 var CNT={X0:92,X1:128,Y0:74,Z0:26,Z1:40};      // Ladentisch
 var PRIV=[232,34,24,58];                       // Durchgang „PRIVAT“ in der Rückwand
-var LAMP=[176,62];                             // Arbeitslampe über der Werkbank (Schirm)
+var LAMP=[226,66];                             // Arbeitslampe über der Werkbank (Schirm)
 function rnd(v){ return Math.round(v); }
 function fy(Z){ return VP[1]+(FY-VP[1])*(1+Z/F); }
 function q(sd,u,v){ var p=M.wallPt(SPEC,sd,u,v); return [rnd(p[0]),rnd(p[1])]; }
@@ -99,18 +99,23 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), night=tod!=='day';
   [FR.gold,FR.oak,FR.black,FR.silver,FR.red,FR.white,FR.dark].forEach(function(R,i){ var cx=mb[0]+1+i*4; b.rect(cx,mb[1]+1,3,2,R[3]); b.rect(cx,mb[1]+3,2,3,R[2]); b.px(cx+1,mb[1]+3,R[1]); });
   // Rahmen, die unten an der Wand lehnen
   [[66,72,16,18,'oak',3],[78,76,14,14,'gold',2,1],[190,74,18,16,'black',2],[204,78,12,12,'white',2]].forEach(function(f){ frame(b,f[0],f[1],f[2],f[3],FR[f[4]],f[5],f[6]); for (var xx=f[0]+1;xx<f[0]+f[2]+2;xx++){ var cc=b.get(xx,f[1]+f[3]); if (cc!==T) b.px(xx,f[1]+f[3],M.DN[cc]); } });
-  // ---- Durchgang „PRIVAT“ mit schwerem Vorhang
+  // ---- Durchgang mit Holzperlenvorhang, dahinter die Tür „PRIVAT“
   var px0=PRIV[0], py0=PRIV[1], pw=PRIV[2], ph=PRIV[3];
   b.rect(px0-3,py0-3,pw+6,ph+3,P.w2); b.hl(px0-3,px0+pw+2,py0-3,P.w4); b.vl(px0-3,py0-3,py0+ph-1,P.w3); b.vl(px0+pw+2,py0-3,py0+ph-1,P.w0);
-  b.rect(px0,py0,pw,ph,P.k1); b.rect(px0+8,py0+2,6,ph-2,P.k0);
-  for (var yy=py0;yy<py0+ph;yy++) for (var xx=px0;xx<px0+pw;xx++){ var gap=(xx>=px0+9&&xx<=px0+12+Math.round((yy-py0)*0.04)); if (gap) continue; var fold=Math.sin((xx-px0)*1.25+(xx>px0+12?1:0)), c=fold>0.45?P.r2:(fold>-0.3?P.r1:P.r0); if (yy>py0+ph-3) c=M.DN[c]; b.px(xx,yy,c); }
-  b.hl(px0-1,px0+pw,py0-1,P.m2); for (var ri=px0;ri<px0+pw;ri+=3) b.px(ri,py0,P.m3);
-  b.rect(px0+4,py0-12,16,7,P.s5); b.hl(px0+4,px0+19,py0-12,P.s6); b.hl(px0+4,px0+19,py0-6,P.s3); M.microText(b,'PRIVAT',px0+5,py0-11,P.r2); b.px(px0+12,py0-13,P.k2);
+  for (var yy=py0;yy<py0+ph;yy++) for (var xx=px0;xx<px0+pw;xx++){ var c=((xx-px0)%11===0||(yy-py0)%26===0)?P.w0:P.w1; if (xx===px0+pw-1) c=P.k2; b.px(xx,yy,c); }   // Tür (dunkel)
+  b.rect(px0+3,py0+30,2,3,P.y2); b.px(px0+3,py0+30,P.y4);
+  // Perlenschnüre, in der Mitte auseinandergeschoben
+  var BEAD=[P.w3,P.w4,P.y2,P.w2,P.e4];
+  for (var bs=0;bs<pw;bs+=2){ var bxx=px0+bs, mid=Math.abs(bs-pw/2); if (mid<=7) continue; var bend=(bs<pw/2)?-1:1;
+    for (var by2=py0;by2<py0+ph-1;by2+=2){ var sway=Math.round(Math.max(0,(by2-py0-6))*0.04*bend*(7-Math.min(7,mid-5))); var cc2=BEAD[(bs*3+(by2>>1))%BEAD.length]; b.px(bxx+sway,by2,cc2); b.px(bxx+sway,by2+1,P.k2); } }
+  b.hl(px0-1,px0+pw,py0-1,P.m2);
+  // Schild „PRIVAT“ hängt an zwei Schnüren vor dem Perlenvorhang
+  var sx0=px0-1, sy0=py0+8; b.line(sx0+4,py0,sx0+3,sy0,P.k2); b.line(sx0+21,py0,sx0+22,sy0,P.k2); b.rect(sx0,sy0,26,8,P.s5); b.hl(sx0,sx0+25,sy0,P.s6); b.hl(sx0,sx0+25,sy0+7,P.s3); b.vl(sx0+25,sy0,sy0+7,P.s3); M.microText(b,'PRIVAT',sx0+2,sy0+2,P.r2);
   // ---- Werkzeugwand rechts: Lochblech mit Spachteln, Zangen, Hämmern
   var tq=M.wallQuad(SPEC,'R',5,33,22,70); b.poly(tq,function(x,y){ return ((x+y)%3===0 && (y%3===0))?P.e1:P.e3; });
   for (var e3=0;e3<4;e3++) b.line(rnd(tq[e3][0]),rnd(tq[e3][1]),rnd(tq[(e3+1)%4][0]),rnd(tq[(e3+1)%4][1]),P.w1);
   [[8,28,'sp'],[12,28,'sp'],[16,28,'sp'],[21,28,'pl'],[26,28,'pl'],[30,29,'sp'],[9,46,'ha'],[15,46,'ha'],[22,45,'sa'],[29,47,'ha'],[10,60,'cl'],[18,60,'cl'],[26,59,'pl']].forEach(function(t,i){ var p0=q('R',t[0],t[1]);
-    if (t[2]==='sp'){ b.vl(p0[0],p0[1],p0[1]+5,P.w3); b.rect(p0[0]-1,p0[1]+6,3,4,P.m3); b.px(p0[0]-1,p0[1]+6,P.m4); }
+    if (t[2]==='sp'){ var sw2=1+(i%4); b.vl(p0[0],p0[1],p0[1]+5,P.w3); b.rect(p0[0]-(sw2>>1),p0[1]+6,sw2+1,4,P.m3); b.px(p0[0]-(sw2>>1),p0[1]+6,P.m4); }
     else if (t[2]==='pl'){ b.line(p0[0],p0[1],p0[0]-1,p0[1]+8,P.r2); b.line(p0[0]+1,p0[1],p0[0]+2,p0[1]+8,P.r2); b.rect(p0[0],p0[1]-2,2,3,P.m2); }
     else if (t[2]==='ha'){ b.vl(p0[0],p0[1],p0[1]+9,P.w3); b.rect(p0[0]-2,p0[1]-1,5,3,P.m1); b.px(p0[0]-2,p0[1]-1,P.m3); }
     else if (t[2]==='sa'){ b.rect(p0[0]-2,p0[1],5,10,P.m3); b.hl(p0[0]-2,p0[0]+2,p0[1]+9,P.m2); for (var tt=0;tt<5;tt++) b.px(p0[0]-2+tt,p0[1]+10,P.m2); b.rect(p0[0]-1,p0[1]-3,3,3,P.w2); }
@@ -127,7 +132,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), night=tod!=='day';
   var kx=rnd(R3.p(98,74,32)[0]), ky=rnd(R3.p(98,74,32)[1]); b.rect(kx,ky-9,14,9,P.k2); b.hl(kx,kx+13,ky-9,P.m2); b.rect(kx+1,ky-12,12,3,P.y2); b.hl(kx+1,kx+12,ky-12,P.y4); b.rect(kx+3,ky-11,8,1,P.k1);
   for (var kk=0;kk<8;kk++) b.px(kx+2+(kk%4)*3,ky-7+Math.floor(kk/4)*2,P.s5); b.rect(kx,ky-2,14,2,P.y1); b.px(kx+6,ky-2,P.y4);
   // Klingel
-  var bx=rnd(R3.p(118,74,36)[0]), by=rnd(R3.p(118,74,36)[1]); b.ellipse(bx+0.5,by-2,3,2.4,function(x,y){ return y<by-1?(x<bx?P.m4:P.m3):T; }); b.hl(bx-3,bx+3,by-1,P.k2); b.px(bx,by-5,P.m4); b.px(bx-1,by-3,P.s6);
+  var bx=rnd(R3.p(118,74,36)[0]), by=rnd(R3.p(118,74,36)[1]); b.ellipse(bx+0.5,by-2,3,2.4,function(x,y){ return y<by-1?(x<bx?P.y4:P.y2):T; }); b.hl(bx-3,bx+3,by-1,P.y1); b.px(bx,by-5,P.y3); b.px(bx-1,by-3,P.y5);
+  // Quittungen auf einem Dorn, ein Stapel Zettel
+  var qr=R3.p(126,74,38); b.vl(rnd(qr[0]),rnd(qr[1])-6,rnd(qr[1])-1,P.m2); for (var qi=0;qi<4;qi++) b.hl(rnd(qr[0])-2,rnd(qr[0])+2,rnd(qr[1])-2-qi,qi%2?P.s5:P.s6); b.rect(rnd(qr[0])-8,rnd(qr[1])-2,5,2,P.s5); b.hl(rnd(qr[0])-8,rnd(qr[0])-4,rnd(qr[1])-2,P.s6);
   // Packpapierrolle, Schnur
   var pr=R3.p(110,74,29); b.rect(rnd(pr[0]),rnd(pr[1])-3,9,3,P.e3); b.hl(rnd(pr[0]),rnd(pr[0])+8,rnd(pr[1])-3,P.e4); b.ellipse(pr[0]+9,pr[1]-1.5,1,1.5,P.e2);
   // Radio auf dem Tresen
@@ -146,7 +153,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), night=tod!=='day';
 // Sonnenfleck: Bodenpunkt -> zurück zur linken Wand (Strahl kommt von links oben), liegt er im Schaufenster?
 function sunPatch(x,y){ var f=R3.floor(x,y); if (!f) return 0; var t=(f.X-RECT[0])/1.25; if (t<=0) return 0; var X=RECT[0], Z=f.Z-t*0.35, Y=FY-t*0.72;
   var D=VP[0]-RECT[0], u=Z; if (u<WINU[0]||u>WINU[1]||Y<WINU[2]||Y>WINU[3]) return 0; if (Math.abs(u-(WINU[0]+WINU[1])/2)<0.9||Math.abs(Y-40)<1.1) return 0.1; return 1; }
-var LIGHTS=[[176,90,70,1.25,40],[176,104,110,0.55,40],[46,52,26,0.55,30]];
+var LIGHTS=[[214,92,74,1.25,40],[204,104,120,0.55,42],[46,52,26,0.55,30]];
 function lampAmt(x,y){ var m=0; for (var i=0;i<LIGHTS.length;i++){ var l=LIGHTS[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[4], d=dx*dx+dy*dy; if (d<1) m=Math.max(m,(1-d)*l[3]); } return Math.min(1,m); }
 function nightLight(b,tod,ox,oy,mask){ var TN=M.TINT[tod]||M.TINT.night;
   M.light(b,function(x,y){ return -1.2+lampAmt(x,y)*2.2; },ox,oy,mask);
@@ -157,7 +164,7 @@ var WARM=M.tintMake(function(r,g,b){ return [r*0.80+12, g*0.62+4, b*0.50+6]; });
 
 // ---------------------------------------------------------------- Werkbank (Vordergrund-Ebene, Nina steht rechts daneben)
 function layers(S,GS,tod){ var L=[], night=tod!=='day';
-  var lay=M.layer(128,48,88,76,119), w=M.lw(lay), fw={poly:function(p,c){ w.poly(p,c); }};
+  var lay=M.layer(152,52,100,64,111), w=M.lw(lay), fw={poly:function(p,c){ w.poly(p,c); }};
   // Beine und Zwischenboden
   [[BENCH.X0+1,BENCH.Z1-1],[BENCH.X1-2,BENCH.Z1-1],[BENCH.X0+1,BENCH.Z0+1],[BENCH.X1-2,BENCH.Z0+1]].forEach(function(lg,i){ var a=R3.p(lg[0],BENCH.Y0+3,lg[1]), z=R3.p(lg[0],FY,lg[1]); w.rect(rnd(a[0]),rnd(a[1]),3,rnd(z[1]-a[1]),i<2?P.w2:P.w1); w.px(rnd(a[0]),rnd(a[1]),P.w3); });
   R3.box(fw,BENCH.X0,BENCH.X1,85,87,BENCH.Z0+1,BENCH.Z1-1,{top:P.w2,front:P.w1});
@@ -173,7 +180,8 @@ function layers(S,GS,tod){ var L=[], night=tod!=='day';
   var pp=R3.p(BENCH.X0+16,BENCH.Y0,BENCH.Z0+4), pp2=R3.p(BENCH.X1-2,BENCH.Y0,BENCH.Z0+4); w.hl(rnd(pp[0]),rnd(pp2[0]),rnd(pp[1])-1,P.m3); w.hl(rnd(pp[0]),rnd(pp2[0]),rnd(pp[1]),P.m1); w.rect(rnd(pp[0])+14,rnd(pp[1])-3,4,3,P.k2); w.px(rnd(pp[0])+15,rnd(pp[1])-3,P.r3);
   var fr=R3.p(BENCH.X0+18,BENCH.Y0,BENCH.Z0+10); w.rect(rnd(fr[0]),rnd(fr[1])-1,16,2,P.y2); w.hl(rnd(fr[0]),rnd(fr[0])+15,rnd(fr[1])-1,P.y4); w.rect(rnd(fr[0])+2,rnd(fr[1])-1,12,1,P.a5);   // Rahmen mit Glas
   var gc=R3.p(BENCH.X1-6,BENCH.Y0,BENCH.Z0+11); w.line(rnd(gc[0]),rnd(gc[1])-1,rnd(gc[0])+4,rnd(gc[1])-3,P.w4); w.px(rnd(gc[0])+5,rnd(gc[1])-3,P.m4);       // Glasschneider
-  var lf=R3.p(BENCH.X1-12,BENCH.Y0,BENCH.Z0+3); w.rect(rnd(lf[0]),rnd(lf[1])-5,3,5,P.s5); w.px(rnd(lf[0])+1,rnd(lf[1])-6,P.r3); w.px(rnd(lf[0]),rnd(lf[1])-3,P.b2);  // Leim
+  var lf=R3.p(BENCH.X1-14,BENCH.Y0,BENCH.Z0+3); w.rect(rnd(lf[0]),rnd(lf[1])-5,3,5,P.s5); w.px(rnd(lf[0])+1,rnd(lf[1])-6,P.r3); w.px(rnd(lf[0]),rnd(lf[1])-3,P.b2);  // Leim
+  var tc=R3.p(BENCH.X1-4,BENCH.Y0,BENCH.Z0+9); w.rect(rnd(tc[0]),rnd(tc[1])-3,3,3,P.s6); w.px(rnd(tc[0])+3,rnd(tc[1])-2,P.s5); w.hl(rnd(tc[0]),rnd(tc[0])+2,rnd(tc[1])-3,P.e2); w.hl(rnd(tc[0])-1,rnd(tc[0])+3,rnd(tc[1]),P.s4);   // Tasse kalter Tee
   // Arbeitslampe (Gelenkarm)
   var lb=R3.p(BENCH.X1-8,BENCH.Y0,BENCH.Z0+2); w.rect(rnd(lb[0])-2,rnd(lb[1])-1,5,1,P.k2); w.line(rnd(lb[0]),rnd(lb[1])-1,rnd(lb[0])-4,rnd(lb[1])-14,P.m2); w.line(rnd(lb[0])-4,rnd(lb[1])-14,LAMP[0]+2,LAMP[1]-3,P.m2);
   w.poly([[LAMP[0]-3,LAMP[1]-4],[LAMP[0]+3,LAMP[1]-4],[LAMP[0]+4,LAMP[1]],[LAMP[0]-4,LAMP[1]]],P.g3); w.hl(LAMP[0]-3,LAMP[0]+3,LAMP[1]-4,P.g4); w.hl(LAMP[0]-4,LAMP[0]+4,LAMP[1],P.g1);
@@ -183,7 +191,18 @@ function layers(S,GS,tod){ var L=[], night=tod!=='day';
   return L; }
 
 // ---------------------------------------------------------------- bewegte Teile
-function dyn(fb,v,S,GS){ var tod=v.tod;
+function dyn(fb,v,S,GS){ var tod=v.tod, night=tod!=='day';
+  function wp(x,y,c){ if (inWin(x,y)) fb.px(x,y,c); }
+  // draußen in der Gasse: Wäsche in der Bura
+  for (var lx=28;lx<58;lx++) wp(lx,37+Math.round(Math.sin((lx-28)/30*Math.PI)*1.5),night?P.k1:P.k2);
+  [[33,night?P.n1:P.s6],[41,night?P.n0:P.r3],[48,night?P.n1:P.b3]].forEach(function(it,k){ for (var yy=0;yy<5;yy++){ var sh=Math.round(yy*0.5+Math.sin(v.t*10+k*2+yy)*0.7); for (var xx=0;xx<4;xx++) wp(it[0]+xx+sh,39+yy,(xx===0||yy===4)?M.DN[it[1]]:it[1]); } });
+  // eine Frau mit Einkaufstüten kämpft sich durch die Bura (nur am Tag)
+  if (!night){ var ph=(v.t%22)/3.2; if (ph<1){ var x=Math.round(57-ph*30), y=72, st=Math.floor(v.t*6)%2;
+      wp(x,y-13,P.h1); wp(x+1,y-13,P.h1); wp(x,y-12,P.p3); wp(x+1,y-12,P.h1);                       // Kopf mit Kopftuch
+      for (var cy=y-11;cy<y-4;cy++){ wp(x-1+Math.round((y-4-cy)*-0.15),cy,P.r1); wp(x+Math.round((y-4-cy)*-0.15),cy,P.r2); wp(x+1+Math.round((y-4-cy)*-0.15),cy,P.r2); }   // Mantel, vornübergebeugt
+      wp(x-1,y-4,P.r1); wp(x+1,y-4,P.r1); wp(x-1+st,y-3,P.k2); wp(x+1-st,y-3,P.k2); wp(x-1+st,y-2,P.k2); wp(x+1-st,y-2,P.k2); wp(x-1+st,y-1,P.k1); wp(x+1-st,y-1,P.k1);
+      for (var by=y-7;by<y-3;by++){ wp(x-3,by,P.s5); wp(x-2,by,P.s4); wp(x+3,by,P.b3); wp(x+4,by,P.b2); }   // Tüten
+      wp(x+2,y-11,P.r3); wp(x+3,y-10,P.r3); } }                                                      // Schal im Wind
   if (tod==='day'){ // Staub tanzt im Sonnenstrahl
     for (var i=0;i<22;i++){ var u=(hash(i,7)+v.t*0.012*(0.5+hash(i,8)))%1, x=rnd(36+u*130+Math.sin(v.t*0.7+i)*3), y=rnd(44+u*74+Math.cos(v.t*0.5+i*1.3)*4+hash(i,9)*14-7); if (Math.sin(v.t*1.3+i*2)>0.1) fb.px(x,y,P.s6); } }
   else M.glow(fb,LAMP[0],LAMP[1]+3,9,v.t,0.3); }
@@ -192,7 +211,7 @@ function dyn(fb,v,S,GS){ var tod=v.tod;
 var WALK=function(x,y,S,GS){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z; if (Z<10||Z>94||y>140) return false;
   if (X<40-Z*0.5 && Z<40) return false;
   if (X>=CNT.X0-3 && X<=CNT.X1+3 && Z>=CNT.Z0-4 && Z<=CNT.Z1+3) return false;    // Ladentisch
-  if (X>=BENCH.X0-4 && X<=BENCH.X1+3 && Z>=BENCH.Z0-2 && Z<=BENCH.Z1+3) return false;   // Werkbank
+  if (X>=BENCH.X0-4 && X<=BENCH.X1+4 && Z>=BENCH.Z0-2 && Z<=BENCH.Z1+4) return false;   // Werkbank
   if (X>262 && Z<30) return false;                                                // Leisten in der Ecke
   return x>4 && x<316; };
 
@@ -203,15 +222,15 @@ M.defineArt('shop',{
     door:[2,16,24,100],
     frames:[66,10,160,66],
     paintings:[108,30,122,22],
-    bench:[132,64,70,56],
+    bench:[156,60,92,54],
     tools:[286,20,32,58],
     counter:[58,72,62,40],
     bell:[112,92,10,8],
     window:[28,16,28,70],
     private:[228,20,32,72]
   },
-  stands:{ door:[24,122,'L'], frames:[126,112,'B'], paintings:[228,112,'B'], bench:[168,126,'B'], tools:[286,118,'R'], counter:[88,120,'B'], bell:[114,118,'B'], window:[56,112,'L'], private:[244,104,'B'] },
+  stands:{ door:[24,122,'L'], frames:[126,112,'B'], paintings:[254,116,'B'], bench:[182,120,'B'], tools:[286,118,'R'], counter:[88,120,'B'], bell:[114,118,'B'], window:[56,112,'L'], private:[250,104,'B'] },
   actorPos:{ nina:[210,116,'L','nina'] },
-  start:[26,124,'R'], entries:{ oldtown:[26,124,'R'], backroom:[244,106,'F'] }
+  start:[26,124,'R'], entries:{ oldtown:[26,124,'R'], backroom:[250,106,'F'] }
 });
 })(M);
