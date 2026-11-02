@@ -59,12 +59,18 @@ SPIELSTÄNDE
 - Drei Speicherplätze. Das Spiel speichert bei jedem Ortswechsel selbst.
 - Beim Fortsetzen fragt das Spiel nach dem Platz.
 
-INSTALLATION (wie bei der bisherigen iPad-Version)
-1. Diesen Ordner bei Netlify hochladen (Deploys -> Ordner hineinziehen).
-2. Auf dem iPad mit Internet die Adresse + /index.html in Safari öffnen,
-   auf "Offline bereit ✓" warten, dann Teilen -> "Zum Home-Bildschirm".
-3. Test im Flugmodus.
-Oder einfach index.html in einem aktuellen Browser öffnen.
+INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
+1. Den Inhalt dieses Ordners bei Netlify hochladen: app.netlify.com/drop
+   öffnen und den Ordner hineinziehen. Netlify zeigt eine https-Adresse.
+2. Auf dem iPad mit Internet diese Adresse in Safari öffnen und warten,
+   bis unten "Offline bereit ✓" erscheint (einige Sekunden).
+3. Teilen-Knopf -> "Zum Home-Bildschirm". Das Spiel startet dann vom
+   Home-Bildschirm aus im Vollbild, auch im Flugmodus.
+4. Neue Version: Ordner erneut bei derselben Netlify-Seite hochladen und
+   das Spiel einmal mit Internet starten; es holt sich die neue Fassung.
+Hinweis: Eine direkt geöffnete index.html (Dateien-App) oder der
+claude.ai-Link können nicht offline gespeichert werden; dafür braucht
+Safari eine https-Adresse.
 
 TON
 - Jeder Ort hat eine eigene, live erzeugte Geräuschkulisse: Meer, Bura,

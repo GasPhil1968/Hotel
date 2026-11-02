@@ -59,6 +59,10 @@ ${js}
 `;
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'index.html'), html);
+// Offline-Speicher: Versionsname aus dem Inhalt, damit installierte Fassungen Updates bekommen
+{ const swp = path.join(OUT, 'sw.js'), src = path.join(__dirname, '..', 'web', 'sw.js');
+  if (fs.existsSync(src)) { const hash = require('crypto').createHash('sha1').update(html).digest('hex').slice(0, 10);
+    fs.writeFileSync(swp, fs.readFileSync(src, 'utf8').replace(/var VERSION = '[^']*';/, "var VERSION = 'mala-split-" + hash + "';")); } }
 // Fassung als claude.ai-Artefakt: ohne eigenes Gerüst (wird beim Veröffentlichen ergänzt), ohne Offline-Teil
 const ai = process.argv.indexOf('--artifact');
 if (ai >= 0) {
