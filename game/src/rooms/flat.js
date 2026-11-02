@@ -99,7 +99,7 @@ var HS=[
  {id:'laptop',name:'Laptop',r:[172,62,26,18],st:R3.st(188,22,'B'),reach:'M',
    look:function(A){ if (A.G.phase==='pro_eve') return A.m('Der Text über Ivka Perić. Noch kein erster Satz. Der erste Satz ist immer der schwerste.'); return A.m('Eine italienische Bedienungsanleitung für eine Espressomaschine. Seite 31 von 48. „Die Maschine ist kein Spielzeug.“ Das glaube ich ihr.'); },
    use:async function(A){ if (A.G.phase==='pro_eve' && !A.flag('pro.article')) return writeArticle(A);
-     if (A.G.phase==='pro') return A.m('Erst der Auftrag, dann die Espressomaschine. Die Maschine wartet. Maschinen können das.');
+     if (A.G.phase==='pro') return A.m('Die Maschine wartet. Maschinen können das.');
      if (A.G.phase==='c3' && !A.flag('c3.call')) return A.m('Ich übersetze zwei Sätze und lese sie dreimal. Heute wird das nichts.');
      return A.m('Ich tippe einen Satz. Ich lösche ihn wieder. Das ist mein Beruf.'); },
    g:{look:'Er schreibt fremde Sätze in seine Sprache. Seine eigenen schreibt er nicht.'}},
@@ -136,12 +136,12 @@ var HS=[
  {id:'fridge',name:'Kühlschrank',r:R3.rect(72,96,54,98,56,74),st:R3.st(100,60,'L'),look:'Ein Kühlschrank, der seit 1987 brummt.',open:'Eine Zitrone, ein Glas Senf, zwei Bier. Ein Stillleben.',g:{look:'Er brummt. Für mich klingt das wie ein Lied ohne Worte.'}},
  {id:'bed',name:'Bett',r:r(236,262,86,98,12,52),st:R3.st(226,40,'R'),reach:'L',
    look:'Ungemacht. Ich schlafe schlecht, also lohnt sich das Machen nicht.',
-   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Erst der Text. Vesna will ihn bis morgen früh.'); return goToSleep(A); } return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
+   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); } return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
    g:{look:'Er schläft nicht. Er liegt nur.'}},
  {id:'coat',name:'Garderobe',r:[300,48,10,18],st:R3.st(226,62,'R'),look:'Ein Haken. Sonst hängt mein Mantel hier. Ich habe ihn an.',g:{look:'Ein Haken für einen Mantel.'}},
  {id:'door',name:'Wohnungstür',r:[278,30,30,90],st:R3.st(228,62,'R'),exit:{to:'map'},pri:2,
    canExit:async function(A){ var p=A.G.phase;
-     if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Erst der Anrufbeantworter. Er blinkt mich an wie ein schlechtes Gewissen.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht ohne Kaffee. Nicht bei diesem Kopf.'); return false; } return true; }
+     if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Ich bleibe noch. Hinter mir blinkt etwas rot.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht mit diesem Kopf. Der ist noch nicht wach.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
      if (p==='c3' && !A.flag('c3.call')){ await A.m('Das Telefon. Es klingelt schon wieder.'); return false; }
      return true; },

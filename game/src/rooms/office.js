@@ -34,7 +34,7 @@ async function askDay(A,Ml){ if (A.flag('c1.searched')) return Ml.say('Der Band 
   var m=A.npc('mladen'); A.sfx('door'); m.hide(); await A.wait(2200); A.sfx('door'); m.show(); A.setFlag('c1.searched');
   await Ml.say('Der Band 1984 ist nicht da. Irgendwer hat das Regal durcheinandergebracht. Ich suche doch nicht fünfzig Jahre durch.'); A.note('c1_nobook');
   await Ml.say('Da drin ist es immer kalt. Ich gehe nicht gern hinein.');
-  if (A.malaHere()) await A.g('Ich gehe nachsehen. Mich stört die Kälte nicht.'); }
+  if (A.malaHere()) await A.g('Da drin ist es nicht kalt. Da drin ist es still.'); }
 async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.'); await Ml.say('Bei achtundvierzig? Warum sollte …'); await Ml.say('Na gut. Weil Sie es sind.');
   var m=A.npc('mladen'); A.sfx('door'); m.hide(); await A.wait(2000); A.sfx('door'); m.show(); A.sfx('paper');
   await Ml.say('Tatsächlich. Irgendein Praktikant mit einem Zahlendreher. Neunzehnvierundachtzig bei achtundvierzig.'); await Ml.say('Hier. Zweiundzwanzigster Dezember.'); A.setFlag('c1.logRead');
@@ -73,7 +73,7 @@ M.defineScape('office',{beds:['room','neon','seaFar'],step:'tile',ev:[['radio',8
 var AH=[
  {id:'door',name:'Tür',gexit:{to:'office'},look:'Die Tür.',g:{look:'Zurück zu ihm.'}},
  {id:'shelf_40s',name:'Regal: 1946–1959',g:{look:'Neunzehnhundertsechsundvierzig, siebenundvierzig, achtundvierzig … Die Jahre nach dem Krieg sind dünn. Es fuhr nicht viel.',sense:'Hier sind die Ordner kalt wie Stein. Niemand hat sie je wieder angefasst.'}},
- {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ await A.g('Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.'); A.setFlag('c1.found1984'); A.note('c1_1948'); await A.g('Ich kann ihn nicht herausziehen. Aber ich kann es Marko sagen.'); },
+ {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ await A.g('Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.'); A.setFlag('c1.found1984'); A.note('c1_1948'); await A.g('Ich kann ihn nicht herausziehen.'); },
    sense:async function(A){ await A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.'); if (!A.hasNote('c1_1948')){ A.setFlag('c1.found1984'); A.note('c1_1948'); } }}},
  {id:'shelf_80s',name:'Regal: 1980–1989',g:{look:'Die Achtziger. Dicke Ordner. Damals fuhren viele.'}},
  {id:'gap_1984',name:'Lücke',g:{look:'Zwischen 1983 und 1985 ist eine Lücke. So breit wie ein Jahr.'}},

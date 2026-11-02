@@ -139,7 +139,12 @@ M.TINT={
   // Mala in Markos Blick: kühl, blass
   mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; }),
   // Malas Porträt: dieselbe Kühle, aber mehr eigene Farbe, damit das Gesicht lebendig bleibt
-  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; })
+  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; }),
+  // Mala in Markos Blick: einfarbig kalt, leuchtend (wie ein Geist, nicht wie ein Mensch)
+  malaG: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.46+26, L*0.78+44, L*0.88+70]; }),
+  // gemalte Porträts der Geister: einfarbig kalt (Mala blau-türkis, die anderen fahl-lavendel)
+  ghostP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.50+12, L*0.80+22, L*0.92+48]; }),
+  spiritP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.66+34, L*0.62+32, L*0.84+58]; })
 };
 
 // ---------------------------------------------------------------- indizierter Puffer
@@ -1480,6 +1485,7 @@ var SFX={
   creak:function(t){ var o=AC.createOscillator(), g=AC.createGain(), f=AC.createBiquadFilter(); o.type='sawtooth'; o.frequency.setValueAtTime(110,t); o.frequency.linearRampToValueAtTime(160,t+0.5); f.type='bandpass'; f.frequency.value=700; f.Q.value=6; env(g,t,0.05,0.06,0.8); o.connect(f); f.connect(g); g.connect(sfxG); o.start(t); o.stop(t+0.95); },
   lock:function(t){ tone('sine',170,t,0.1,0.15); noise(t+0.07,0.04,0.18,'highpass',2600,1); tone('square',900,t+0.09,0.03,0.04); },
   click:function(t){ noise(t,0.025,0.15,'highpass',3000,1); },
+  drop:function(t){ noise(t,0.06,0.06,'lowpass',500,1); noise(t+0.09,0.05,0.04,'lowpass',420,1); },
   drawer:function(t){ noise(t,0.32,0.09,'bandpass',900,2.5,null,500); noise(t+0.3,0.05,0.12,'lowpass',400,1); tone('sine',70,t+0.3,0.12,0.08,null,50); },
   knock:function(t){ [0,0.2,0.4].forEach(function(d){ tone('sine',110,t+d,0.08,0.25,null,70); noise(t+d,0.05,0.15,'lowpass',500,1); }); },
   radioOn:function(t){ noise(t,1.2,0.12,'bandpass',1600,1.2,null,900); tone('sine',60,t,0.1,0.06); },
@@ -1689,21 +1695,19 @@ M.defineSong('silence',{ bpm:60, bars:[{b:[]}] });
 var P=M.P, T=M.T, Buf=M.Buf, A_=M.ANIMS;
 var W=320, H=200, SH=144;
 M.W=W; M.H=H;
-M.ROOMS={}; M.ART={}; M.ITEMS={}; M.COMBOS={}; M.NOTES={}; M.DEDUCE={}; M.HINTS=[]; M.GOALS=[]; M.OVERLAYS={}; M.PHASES={}; M.MAPLOCS=[];
+M.ROOMS={}; M.ART={}; M.ITEMS={}; M.COMBOS={}; M.NOTES={}; M.DEDUCE={}; M.OVERLAYS={}; M.PHASES={}; M.MAPLOCS=[];
 M.defineArt=function(id,def){ def.id=id; M.ART[id]=def; return def; };
 M.defineRoom=function(def){ def.width=def.width||W; def.hotspots=def.hotspots||[]; def.byId={}; def.hotspots.forEach(function(h){ def.byId[h.id]=h; h.room=def.id; }); M.ROOMS[def.id]=def; return def; };
 M.defineItems=function(o){ Object.keys(o).forEach(function(k){ if (M.ITEMS[k]) throw new Error('Gegenstand doppelt: '+k); o[k].id=k; M.ITEMS[k]=o[k]; }); };
 M.defineCombos=function(o){ Object.keys(o).forEach(function(k){ M.COMBOS[k]=o[k]; }); };
 M.defineNotes=function(o){ Object.keys(o).forEach(function(k){ if (M.NOTES[k]) throw new Error('Notiz doppelt: '+k); var v=o[k]; M.NOTES[k]=typeof v==='string'?{t:v}:v; M.NOTES[k].id=k; }); };
 M.defineDeductions=function(o){ Object.keys(o).forEach(function(k){ M.DEDUCE[k]=o[k]; }); };
-M.defineHints=function(l){ l.forEach(function(h){ M.HINTS.push(h); }); };
-M.defineGoals=function(l){ l.forEach(function(g){ M.GOALS.push(g); }); };
 M.defineOverlay=function(k,fn){ M.OVERLAYS[k]=fn; };
 M.definePhases=function(o){ Object.keys(o).forEach(function(k){ M.PHASES[k]=o[k]; }); };
 
 // ---------------------------------------------------------------- Spielstand
 function freshGame(){ return { v:1, phase:'pro', tod:'day', active:'marko', malaOn:false, pos:{marko:{room:null,x:160,y:120,f:'R'},mala:{room:null,x:150,y:120,f:'R'}},
-  flags:{}, inv:[], notes:[], noteNew:{}, rooms:{}, seen:{}, cyc:{}, hintTier:{}, hintsUsed:0, playMs:0, map:{}, ended:false }; }
+  flags:{}, inv:[], notes:[], noteNew:{}, rooms:{}, seen:{}, cyc:{}, playMs:0, map:{}, ended:false }; }
 M.freshGame=freshGame;
 var GS=freshGame(); M.GS=GS;
 var room=null, S={};
@@ -1759,7 +1763,7 @@ E.gt=function(){ return gt; };
 // ---------------------------------------------------------------- Figuren
 function Actor(id,o){ this.id=id; this.ch=o.ch||id; this.x=o.x===undefined?160:o.x; this.y=o.y===undefined?120:o.y; this.f=o.f||'R'; this.mode='idle'; this.anim=null; this.fi=0; this.ft=0; this.path=[]; this.res=null; this.hooks=null;
   this.idleT=0; this.visible=o.visible!==false; this.idle=o.idle||null; this.talk=o.talk||null; this.color=o.color===undefined?(M.CAST_COLORS[this.ch]||P.s6):o.color; this.name=o.name||id;
-  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; }
+  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; this.anchor=o.anchor||null; }
 var ACT={}; M.ACT=ACT;
 function player(){ return ACT[GS.active]; }
 E.player=player;
@@ -1891,6 +1895,9 @@ E.switchTo=switchTo;
 var API={
   // Sprechen: say = gerade gespielte Figur, m = Marko, g = Mala, narrate = Erzähler
   say:function(t,o){ return say(t,GS.active,o); }, m:function(t,o){ return say(t,ACT.marko?'marko':'@marko',Object.assign({color:M.CAST_COLORS.marko},o||{})); }, g:function(t,o){ return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',Object.assign({color:M.CAST_COLORS.mala},o||{})); },
+  // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
+  crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
+  crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
   narrate:function(t){ return say(t,'#',{color:P.s5}); }, voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
   phoneVoice:function(t,who){ return say(t,'@'+(who||'vesna'),{color:M.CAST_COLORS[who||'vesna']||P.y5,phone:1}); },
   wait:wait, face:function(f){ return faceOn(player(),f); }, walk:function(x,y){ return walkActor(player(),x,y); },
@@ -1939,7 +1946,7 @@ API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem 
 // ---------------------------------------------------------------- Hotspots, Verben
 // Marko-Verben und Mala-Verben, mit Anzeige-Text
 var VLABEL={look:'Schau an',take:'Nimm',use:'Benutze',open:'Öffne',push:'Schiebe',talk:'Rede mit',read:'Lies',walk:'Hingehen',give:'Gib',
-  glook:'Schau an',gtalk:'Sprich mit',sense:'Spüre',listen:'Lausche',pass:'Hindurchgehen'};
+  glook:'Schau an',gtalk:'Sprich mit',sense:'Spüre',listen:'Lausche',pass:'Hindurchgehen',cross:'Hinüberbringen'};
 E.VLABEL=VLABEL;
 var M_VERBS=['talk','take','open','use','push','read'], G_VERBS=['talk','sense','listen'];
 function hsRect(h){ if (h.npc){ var a=ACT[h.npc]; if (!a||!actorShown(a)) return null; if (h.r) return typeof h.r==='function'?h.r(S,GS,a):h.r; var hh=h.hgt||48; return [Math.round(a.x)-8,Math.round(a.y)-hh,16,hh]; }
@@ -2040,7 +2047,7 @@ function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]
     else if (ACT[k]) delete ACT[k]; }); }
 function placeActors(){ Object.keys(ACT).forEach(function(k){ delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
   list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); ACT[o.id]=a; setIdle(a); }); placePlayers(); }
-function loadRoom(id){ room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
+function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }
 M.loadRoom=loadRoom;
@@ -2074,15 +2081,6 @@ function showCard(c){ return new Promise(function(res){ E.card=Object.assign({at
 function closeCard(){ if (!E.card) return; var r=E.card.res, p=E.card.prev; E.card=null; E.screen=(p==='card'?'game':p)||'game'; r(); }
 E.closeCard=closeCard;
 
-// ---------------------------------------------------------------- Tipps und Ziele
-function currentGoal(){ for (var i=0;i<M.GOALS.length;i++){ var g=M.GOALS[i]; try{ if (!g.when||g.when(GS)) return typeof g.t==='function'?g.t(GS):g.t; }catch(e){} } return 'Weitermachen. Zuhören. Hinsehen.'; }
-function currentHint(){ for (var i=0;i<M.HINTS.length;i++){ var h=M.HINTS[i]; try{ if (h.phase && h.phase.indexOf(GS.phase)<0) continue; if (h.done&&h.done(GS)) continue; if (h.when&&!h.when(GS)) continue; }catch(e){ continue; } return h; } return null; }
-E.currentGoal=currentGoal; E.currentHint=currentHint;
-E.useHint=async function(){ var h=currentHint(); if (!h){ await showOverlay('hint',{goal:currentGoal(),hint:'Gerade drängt sich nichts auf. Sieh dich um, rede mit Leuten, lass Mala nachsehen.'}); return; }
-  var tier=GS.hintTier[h.id]||0, text=h.t[Math.min(tier,h.t.length-1)]; GS.hintTier[h.id]=Math.min(tier+1,h.t.length-1); GS.hintsUsed++;
-  await showOverlay('hint',{goal:currentGoal(),hint:text,tier:tier,of:h.t.length}); };
-E.leads=function(){ var leads=[], done=0, tot=0; M.HINTS.forEach(function(h){ var inCase=true; try{ inCase=!h.phase || h.phase.indexOf(GS.phase)>=0; }catch(e){} if (!inCase) return; tot++; var d=false, w=true; try{ d=!!(h.done&&h.done(GS)); }catch(e){} if (d){ done++; return; } try{ w=!h.when||h.when(GS); }catch(e){ w=false; } if (w) leads.push(h.t[0]); }); return {leads:leads,done:done,tot:tot}; };
-
 // ---------------------------------------------------------------- Speichern / Laden
 var SAVE='mala.save.', SLOTS=3, slot=1;
 try{ slot=Math.max(1,Math.min(SLOTS,+localStorage.getItem('mala.slot')||1)); }catch(e){}
@@ -2102,7 +2100,7 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
   if (M.ROOMS[base.pos[base.active].room].noSave) return null; return base; }
 function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; var d=JSON.parse(raw), base=validate(d); if (!base) return false;
     setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
-    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null;
+    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false); if (M.startGame) M.startGame(API); };
@@ -2191,20 +2189,28 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   list.forEach(function(l){
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost;
-      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { o.lut=(a.id==='mala'?M.TINT.mala:M.TINT.spirit).a; o.alpha=a.alpha||(a.id==='mala'?0.8:0.72); o.wobble=1; } }
+      var lift=0;
+      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.id==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||(isM?0.62:0.7); o.wobble=1;
+        if (isM){ lift=1+Math.round((Math.sin(tq/760)+1)*0.75); if ((tq%7300)<150) o.alpha*=0.45; } } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
       if (a.fadeOut){ var k=(E.gt()-a.fadeOut)/900; if (k>=1){ a.visible=false; a.fadeOut=0; return; } o.alpha=(o.alpha||1)*(1-k); }
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
-      M.drawPose(fb,sx,a.y,p,f,a.ch,o); }
+      if (spirit && !ghostView) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
+      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
+      if (spirit && !ghostView && a.id==='mala') malaMotes(sx,a.y-lift,o.alpha); }
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
   if (room.front) room.front(fb,view,S,gs);
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
+    // Leinen: woran die Geister festgemacht sind (nur Mala sieht sie)
+    Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (!a.ghost || a.id==='mala' || !E.actorShown(a)) return; var an=typeof a.anchor==='function'?a.anchor(S,gs):a.anchor; if (an) drawLeash(a.x-cx+ox,a.y-24,an[0]-cx+ox,an[1],E.gt(),false); });
+    var ma=E.ACT.mala; if (ma && E.actorShown(ma) && !room.noMalaLeash){ var mx0=ma.x-cx+ox, my0=ma.y-22; drawLeash(mx0,my0,mx0+64,my0-58,E.gt(),true); }
     // kalter Schimmer am Rand
     var tt=E.gt()/1000; for (var yy=0;yy<SH;yy++){ var e=Math.min(yy,SH-1-yy); if (e>5) continue; for (var xx=0;xx<W;xx++){ if (bayer(xx+Math.floor(tt*3),yy)<(6-e)/14) fb.d[yy*W+xx]=P.x0; } } }
+  if (E.crossing) drawCrossing(E.crossing,cx-ox,E.gt());
   // Kopfschmerz: ein unentdeckter Geist ist nah
   var hidden=!ghostView && Object.keys(E.ACT).some(function(k){ var a=E.ACT[k]; return a.ghost && a.id!=='mala' && a.visible && !E.ghostVisible(a) && !a.noAche; });
   var ache=hidden || (E.headache && E.gt()<E.headache);
@@ -2214,12 +2220,29 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
+// Geisterschein: ein weicher, kalter Rand um die Gestalt
+function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.id==='mala', t=Math.floor(E.gt()/120);
+  var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
+  for (var j=-2;j<h+2;j++){ var yy=by+j; if (yy<0||yy>=SH) continue; for (var i=-2;i<w+2;i++){ if (at(i,j)) continue; var n1=at(i-1,j)||at(i+1,j)||at(i,j-1)||at(i,j+1), n2=!n1&&(at(i-2,j)||at(i+2,j)||at(i,j-2)||at(i,j+2));
+      if (!n1&&!n2) continue; var xx=bx+i; if (xx<0||xx>=W) continue; var th=(n1?0.55:0.22)*(al+0.3); if (bayer(xx+t,yy)>=th) continue; var k=yy*W+xx, c=fb.d[k]; fb.d[k]=M.lum(c)<70?gl[0]:(M.lum(c)<140?gl[1]:gl[2]); } } }
+// kleine Lichtpunkte, die von Mala aufsteigen
+function malaMotes(x,y,al){ var t=E.gt()/1000; for (var i=0;i<4;i++){ var ph=(t*0.32+i*0.27)%1, px=Math.round(x+Math.sin(i*2.7+t*1.3)*7), py=Math.round(y-12-ph*34); if (ph>0.85||px<0||px>=W||py<0||py>=SH) continue; if (bayer(px,py)<(1-ph)*al) fb.d[py*W+px]=P.x5; } }
+// eine Leine aus Licht von (x0,y0) nach (x1,y1), leicht durchhängend; east=true: Malas eigene, die sich im Osten verliert
+function drawLeash(x0,y0,x1,y1,gt,east){ var dx=x1-x0, dy=y1-y0, L=Math.max(2,Math.hypot(dx,dy)), sag=Math.min(18,L*0.16), mx=(x0+x1)/2, my=(y0+y1)/2+sag, n=Math.ceil(L*1.3), t=gt/1000;
+  for (var i=0;i<=n;i++){ var u=i/n, a=(1-u)*(1-u), b=2*(1-u)*u, c=u*u, px=Math.round(a*x0+b*mx+c*x1), py=Math.round(a*y0+b*my+c*y1+Math.sin(u*9+t*2.2)*0.6); if (px<0||px>=W||py<0||py>=SH) continue;
+    var vis=east?(1-u)*(1-u)*0.8:0.9; if (bayer(px+Math.floor(t*8),py)>=vis) continue; var k=py*W+px; fb.d[k]=(Math.sin(u*40-t*5)>0.6)?P.x6:(east?P.x4:P.x5); } }
+// die Schwelle: ein warmes, aufrechtes Licht, das sich öffnet und wieder schließt
+function drawCrossing(c,cam,gt){ var k=Math.min(1,(gt-c.at)/1200); if (c.close) k*=Math.max(0,1-(gt-c.close)/1200); if (k<=0) return; var X=c.x-cam, hw=Math.max(1,c.w/2*k), top=c.y-c.h, t=gt/1000;
+  for (var y=Math.max(0,top-8);y<Math.min(SH,c.y+4);y++){ var vy=y<top?Math.max(0,1-(top-y)/8):(y>c.y-6?Math.max(0,(c.y+4-y)/10):1);
+    for (var x=Math.max(0,Math.floor(X-hw-10));x<Math.min(W,Math.ceil(X+hw+10));x++){ var d=Math.abs(x-X)/hw, I=(d<1?1-d*d*0.6:Math.max(0,1-(d-1)*hw/10)*0.4)*vy*k; if (I<=0) continue; var q=I-bayer(x+Math.floor(t*6),y)*0.5;
+      var kk=y*W+x, cc=fb.d[kk]; if (q>0.75) fb.d[kk]=P.l1; else if (q>0.55) fb.d[kk]=P.l0; else if (q>0.38) fb.d[kk]=P.y5; else if (q>0.2) fb.d[kk]=M.UP[M.UP[cc]]; else if (q>0.05) fb.d[kk]=M.UP[cc]; } }
+  for (var i=0;i<10;i++){ var ph=(t*0.25+i*0.13)%1, px=Math.round(X+Math.sin(i*1.9+t)*hw*0.8), py=Math.round(c.y-ph*c.h*1.1); if (px>=0&&px<W&&py>=0&&py<SH&&ph<0.95) fb.d[py*W+px]=P.l1; } }
 function clearMask(l,ox,oy){ for (var j=0;j<l.h;j++){ var y=oy+j; if (y<0||y>=SH) continue; for (var i=0;i<l.w;i++){ if (l.d[j*l.w+i]===T) continue; var x=ox+i; if (x<0||x>=W) continue; mask[y*W+x]=0; } } }
 function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ if (Math.abs(dx)>(dy===0?w:w-2)) continue; var px=Math.round(x)+dx, py=Math.round(y)+dy; if (px<0||px>=W||py<0||py>=SH) continue; var c=fb.d[py*W+px]; fb.d[py*W+px]=M.DN[c]; } }
 
 // ---------------------------------------------------------------- Leiste
 var BTN_Y=SH+2, INV_Y=161, SLOT_W=40, SLOT_H=36, INV_X=51, INV_N=6, SW_X=2, SW_W=38;
-var BTNS=[{id:'hint',t:'Tipp',x:4},{id:'notes',t:'Notizen',x:34},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
+var BTNS=[{id:'notes',t:'Notizen',x:4},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
 (function(){ var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); })();
 function btnAt(x,y){ if (y<SH||y>=SH+15) return null; for (var i=0;i<BTNS.length;i++){ var b=BTNS[i]; if (x>=b.x-5&&x<b.x+b.w+5) return b.id; } return null; }
 function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
@@ -2229,7 +2252,7 @@ function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.
 function invList(){ return isG()?['tin']:GS().inv; }
 function drawUI(){ fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
   if (E.dlg && E.conv) return;
-  if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS[3],true); return; }
+  if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS.filter(function(b){ return b.id==='menu'; })[0],true); return; }
   var s=E.overlay?(pointer.touch?'(Tippen zum Schließen)':''):(E.pop||drag?'':sentence()); var sw=M.textWidth(s); M.text(fb,s,Math.max(100,Math.floor((W-sw)/2)),SH+4,c.tx);
   BTNS.forEach(function(b){ drawButton(b,true); });
   // Wechsel-Knopf
@@ -2251,9 +2274,11 @@ M.iconOf=iconOf;
 function trim(b){ var x0=b.w,y0=b.h,x1=-1,y1=-1; for (var y=0;y<b.h;y++) for (var x=0;x<b.w;x++) if (b.d[y*b.w+x]!==T){ if (x<x0)x0=x; if (y<y0)y0=y; if (x>x1)x1=x; if (y>y1)y1=y; } if (x1<0) return b; var o=new Buf(x1-x0+1,y1-y0+1,T); for (y=y0;y<=y1;y++) for (x=x0;x<=x1;x++) o.d[(y-y0)*o.w+(x-x0)]=b.d[y*b.w+x]; return o; }
 function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2, avail=g.malaOn && !(E.room&&(E.room.noMala||E.room.noSwitch));
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
-  if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', pb=portraitBuf(other,'n'), hot=hoverUI==='sw'&&pointer.show;
-  var cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
-  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.malaP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
+  if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', hot=hoverUI==='sw'&&pointer.show;
+  if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
+    for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; if (!avail) c2=M.DN[M.DN[c2]]; fb.px(x+2+i2,y+1+j2,c2); } }
+  else { var pb=portraitBuf(other,'n'), cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
+    for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.ghostP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); } }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -2265,7 +2290,7 @@ function hsOpts(hs){ var room=E.room; if (room.noVerbs) return null; var o=[], g
   if (hs===E.MALA_HS){ return [{t:'Rede mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (hs===E.MARKO_HS){ return [{t:'Sprich mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (ex) o.push({t:g&&hs.gexit?'Hindurchgehen':'Hingehen',v:g&&hs.gexit?'pass':'walk'});
-  if (g){ var gv=hs.g||{}; ['talk','sense','listen'].forEach(function(v){ if (gv[v]!==undefined) o.push({t:E.VLABEL[v==='talk'?'gtalk':v],v:v}); });
+  if (g){ var gv=hs.g||{}; if (gv.cross!==undefined && (!gv.crossIf || gv.crossIf(M.RS(room.id),GS()))) o.push({t:E.VLABEL.cross,v:'cross'}); ['talk','sense','listen'].forEach(function(v){ if (gv[v]!==undefined) o.push({t:E.VLABEL[v==='talk'?'gtalk':v],v:v}); });
     if (hs.npc && !gv.talk && E.ACT[hs.npc] && E.ACT[hs.npc].ghost) o.push({t:'Sprich mit',v:'talk'}); }
   else { ['talk','take','open','use','push','read'].forEach(function(v){ if (hs[v]!==undefined) o.push({t:E.VLABEL[v],v:v}); }); if (hs.npc && hs.talk===undefined) o.unshift({t:'Rede mit',v:'talk'}); }
   if (!ex && o.length===0) return null;
@@ -2289,55 +2314,68 @@ function portraitBuf(chId,hd){ var key=chId+':'+hd; if (PCACHE[key]) return PCAC
   var cw=21, ch=22, cx0=M.SPR.OX-10, b=new Buf(cw,ch,T); for (y=0;y<ch;y++) for (x=0;x<cw;x++){ var sy=top-1+y, sx=cx0+x; if (sy>=0&&sy<s.h&&sx>=0&&sx<s.w) b.d[y*cw+x]=s.d[sy*s.w+sx]; }
   return (PCACHE[key]=b); }
 M.portraitBuf=portraitBuf;
-var PR_W=58, PR_H=64, PR_L=[4,6], PR_R=[W-4-PR_W,6], NB_X=68, NB_W=184, NB_Y=6, NB_LH=10, NB_TW=162;
+// ---------------------------------------------------------------- Porträts und Gespräche (wie in den Blackwell-Spielen: Brustbild oben, Satz im Kasten daneben)
+var PW=56, PH=64, NB_LH=10;
 function convOn(){ return !!(E.screen==='game' && E.room && !E.overlay && !E.menu && (E.dlg || (E.conv && E.conv.room===E.room))); }
 function convPartner(){ if (!E.conv||!E.conv.npc) return null; var a=E.ACT[E.conv.npc]; return (a && M.CHARS[a.ch] && a.id!==GS().active && E.actorShown(a))?a:null; }
-function drawPortrait(a,pos,mirror,speaking,dim){ var x0=pos[0], y0=pos[1], hd='n', c=ui(); var g=E.gt();
-  if (speaking) hd=(Math.floor(g/130)%2)?'o':'n'; else if ((g+(mirror?1700:0))%4300<120) hd='b';
-  var pb=portraitBuf(a.ch,hd), sc=PR_W/pb.w, ox=x0, oy=y0+PR_H-Math.round(pb.h*sc);
-  // Rahmen + Hintergrund (abhängig von Geist / Lebend)
-  var ghostLook=a.ghost && !isG(), bgR=a.ghost?M.R('x0 x1 x2'):(isG()?M.R('k1 k2 n0'):M.R('w0 w1 w2'));
-  for (var y=0;y<PR_H;y++) for (var x=0;x<PR_W;x++){ var v=y/PR_H; var col=M.rampAt(bgR,0.7-v*0.6,x0+x,y0+y);
-    var bx=Math.floor((mirror?(PR_W-1-x):x)/sc), by=Math.floor((y0+y-oy)/sc); if (by>=0&&by<pb.h&&bx>=0&&bx<pb.w){ var pc=pb.d[by*pb.w+bx]; if (pc!==T){ col=pc; if (ghostLook) col=(a.id==='mala'?M.TINT.malaP:M.TINT.spirit).a[col]; else if (isG() && !a.ghost) col=M.tintPx(M.TINT.ghost,col,x,y); } }
-    if (dim) col=M.DN[col]; fb.px(x0+x,y0+y,col); }
-  var fr=a.ghost?P.x2:c.fr; fb.hl(x0-1,x0+PR_W,y0-1,fr); fb.hl(x0-1,x0+PR_W,y0+PR_H,fr); fb.vl(x0-1,y0-1,y0+PR_H,fr); fb.vl(x0+PR_W,y0-1,y0+PR_H,fr);
-  var nm=a.name||a.id, nw=M.textWidth(nm); M.text(fb,nm,x0+Math.floor((PR_W-nw)/2),y0+PR_H+4,dim?P.k2:(a.color===undefined?P.s6:a.color),P.k0); }
+// gemaltes Porträt (portraits/<id>.js) oder ersatzweise der vergrößerte Kopf-Stempel der Spielfigur
+var FALLBACK={};
+function portraitFor(ch,variant){ if (M.hasPortrait && M.hasPortrait(ch)) return M.portrait(ch,variant); var key=ch+':'+variant; if (FALLBACK[key]) return FALLBACK[key]; if (!M.CHARS[ch]) return null;
+  var hb=portraitBuf(ch,variant), b=new Buf(PW,PH,T), sc=PW/hb.w;
+  for (var y=0;y<PH;y++) for (var x=0;x<PW;x++){ var sx=Math.floor(x/sc), sy=Math.floor(y/sc); if (sy<hb.h&&sx<hb.w){ var c=hb.d[sy*hb.w+sx]; if (c!==T) b.d[y*PW+x]=c; } }
+  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]) M.tintApply(b,M.TINT[gt]); return (FALLBACK[key]=b); }
+function drawBust(ch,x0,y0,variant,mirror){ var pb=portraitFor(ch,variant); if (!pb) return false; var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch];
+  if (gh){ var cx=x0+(PW>>1), cy=y0+26, aur=ch==='mala'?[P.x1,P.x2]:[P.v1,P.v2], t=Math.floor(E.gt()/150); // kalter Schein hinter Geistern
+    for (var y=Math.max(0,y0-4);y<y0+PH;y++) for (var x=Math.max(0,x0-6);x<Math.min(W,x0+PW+6);x++){ var d=Math.hypot((x-cx)/34,(y-cy)/31); if (d>1) continue; if (bayer(x+t,y)<(1-d)*0.5) fb.px(x,y,d<0.55?aur[1]:aur[0]); } }
+  for (var yy=0;yy<pb.h;yy++){ var Y=y0+yy; if (Y<0||Y>=H) continue; for (var xx=0;xx<pb.w;xx++){ var c=pb.d[yy*pb.w+(mirror?pb.w-1-xx:xx)]; if (c!==T) fb.px(x0+xx,Y,c); } }
+  return true; }
+function idleVariant(seed){ return ((E.gt()+seed)%4300)<120?'b':'n'; }
 function dlgBye(){ if (!E.dlg) return -1; for (var i=E.dlg.opts.length-1;i>=0;i--) if (E.dlg.opts[i].bye) return i; return -1; }
-function drawConv(){ if (!convOn()) return; var who=E.speech?E.speech.who:null, pa=convPartner(), me=E.ACT[GS().active];
-  if (pa){ if (me && !E.room.noActor) drawPortrait(me,PR_L,false,who===me.id,!!(who&&who!==me.id&&who===pa.id)); drawPortrait(pa,PR_R,true,who===pa.id,!!(who&&me&&who===me.id)); }
-  if (E.dlg) drawChoices(); }
-function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=NB_X, w=NB_W, tx=x0+14, y, i; if (!convPartner()){ x0=40; w=240; tx=x0+14; }
-  var tw=w-24; if (d.top>=o.length) d.top=Math.max(0,o.length-1);
-  var head=d.title||(convPartner()?(convPartner().name||''):''), hh=head?13:4, rows=[], yy=NB_Y+hh+3, more=false, maxY=SH+52;
-  for (var k=d.top;k<o.length;k++){ var ls=o[k].lines||(o[k].lines=M.wrap(o[k].t,tw)), h=ls.length*NB_LH+5; if (yy+h>maxY-((k<o.length-1||d.top>0)?13:0)){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
-  if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+5,ls:l1}); yy+=rows[0].h; more=d.top<o.length-1; }
-  var pager=more||d.top>0, foot=pager?13:0, y1=yy+foot+3;
-  // Papier (Marko) oder dunkles Glas (Mala)
-  if (!g){ fb.map(x0+3,NB_Y+3,w,y1-NB_Y,M.DN); fb.rect(x0,NB_Y,w,y1-NB_Y,P.s5); for (y=NB_Y+hh+12;y<y1-2;y+=NB_LH) fb.hl(x0+1,x0+w-2,y,P.s4); fb.vl(x0+10,NB_Y+1,y1-2,P.r4); fb.hl(x0,x0+w-1,NB_Y,P.s6);
-    fb.ellipse(x0+w-24,y1-14,9,6,function(px,py){ var dd=Math.hypot((px-(x0+w-24))/9,(py-(y1-14))/6); return (dd>0.78&&dd<1&&bayer(px,py)<0.6)?P.s3:fb.get(px,py); }); }
-  else { for (y=NB_Y;y<y1;y++) for (var x=x0;x<x0+w;x++){ var cc=fb.get(x,y); fb.px(x,y,bayer(x,y)<0.75?P.x0:M.DN[M.DN[cc]]); } fb.hl(x0,x0+w-1,NB_Y,P.x2); fb.hl(x0,x0+w-1,y1-1,P.x2); fb.vl(x0,NB_Y,y1-1,P.x2); fb.vl(x0+w-1,NB_Y,y1-1,P.x2); }
-  fb.hl(x0-1,x0+w,NB_Y-1,P.k1); fb.hl(x0-1,x0+w,y1,P.k1); fb.vl(x0-1,NB_Y,y1-1,P.k1); fb.vl(x0+w,NB_Y,y1-1,P.k1);
-  if (head) M.text(fb,head,tx,NB_Y+3,g?P.x4:P.n2);
-  var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null};
-  if (bye>=0){ var cxx=x0+w-11, cyy=NB_Y+3, hot=hoverUI==='cx', cc2=hot?P.r4:(g?P.x3:P.n2); for (i=0;i<6;i++){ fb.px(cxx+i,cyy+i,cc2); fb.px(cxx+i+1,cyy+i,cc2); fb.px(cxx+5-i,cyy+i,cc2); fb.px(cxx+6-i,cyy+i,cc2); } lay.close=[x0+w-24,NB_Y-3,26,16]; }
-  var talk=!!convPartner();
-  rows.forEach(function(r){ var hot=pointer.show&&hoverUI==='c:'+r.k, asked=talk&&!o[r.k].bye&&!o[r.k].noGray&&GS().seen['ask:'+o[r.k].t], col=g?(hot?P.x6:(asked?P.x2:P.x4)):(hot?P.n0:(asked?P.s2:P.n1));
-    if (hot) fb.rect(x0+11,r.y+1,w-12,r.h-2,g?P.x1:P.s6);
-    if (o[r.k].ask){ fb.px(tx-5,r.y+4,col); fb.px(tx-4,r.y+5,col); fb.px(tx-5,r.y+6,col); }
-    r.ls.forEach(function(l,j){ M.text(fb,l,tx,r.y+3+j*NB_LH,col); }); lay.rows.push({k:r.k,r:[x0+11,r.y,w-11,r.h]}); });
-  if (pager){ var py=y1-foot-1, upOn=d.top>0, dnOn=more, tri=function(cx,up,on,hot){ var c=on?(hot?(g?P.x6:P.n0):(g?P.x4:P.n2)):(g?P.x1:P.s3); for (var t=0;t<5;t++){ var ty=up?py+3+t:py+7-t; fb.hl(cx-t,cx+t,ty,c); } };
-    tri(x0+w/2-20|0,true,upOn,hoverUI==='cu'); tri(x0+w/2+20|0,false,dnOn,hoverUI==='cd'); lay.up=upOn?[x0+11,py,w/2-11,foot+3]:null; lay.dn=dnOn?[x0+w/2,py,w/2,foot+3]:null; }
+// während der Auswahl: oben das Gegenüber, unten die Liste der Sätze
+function drawConv(){ if (!convOn()) return; if (!E.dlg) return; var pa=convPartner();
+  if (pa && !E.speech){ var right=true, me=E.ACT[GS().active]; if (me) right=pa.x>=me.x; drawBust(pa.ch,right?W-4-PW:4,4,idleVariant(1700),right); }
+  drawChoices(); }
+function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=2, w=W-4, y0=SH+1, y1=H-1, tx=x0+12, tw=w-34, i;
+  if (d.top>=o.length) d.top=Math.max(0,o.length-1);
+  fb.rect(0,SH,W,H-SH,P.k0); var fr=g?P.x2:P.s4; fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
+  var rows=[], yy=y0+4, more=false;
+  for (var k=d.top;k<o.length;k++){ var ls=o[k].lines||(o[k].lines=M.wrap(o[k].t,tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
+  if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+1,ls:l1}); more=d.top<o.length-1; }
+  var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null}, talk=!!convPartner();
+  rows.forEach(function(r){ var hot=pointer.show&&hoverUI==='c:'+r.k, asked=talk&&!o[r.k].bye&&!o[r.k].noGray&&GS().seen['ask:'+o[r.k].t];
+    var col=g?(hot?P.x6:(asked?P.x2:P.x4)):(hot?P.l1:(asked?P.s2:P.s5));
+    if (hot) fb.rect(x0+3,r.y-1,w-24,r.h,g?P.x0:P.k2);
+    if (o[r.k].ask){ fb.px(tx-6,r.y+2,col); fb.px(tx-5,r.y+3,col); fb.px(tx-6,r.y+4,col); } else { fb.px(tx-6,r.y+3,g?P.x1:P.s1); fb.px(tx-5,r.y+3,g?P.x1:P.s1); }
+    r.ls.forEach(function(l,j){ M.text(fb,l,tx,r.y+j*NB_LH,col); }); lay.rows.push({k:r.k,r:[x0+3,r.y-1,w-24,r.h]}); });
+  // rechts: Schließen und Blättern
+  var ax=x0+w-11, upOn=d.top>0, dnOn=more;
+  if (bye>=0){ var cyy=y0+4, hot2=hoverUI==='cx', cc2=hot2?P.r4:(g?P.x3:P.s3); for (i=0;i<5;i++){ fb.px(ax-2+i,cyy+i,cc2); fb.px(ax+2-i,cyy+i,cc2); } lay.close=[ax-8,y0+1,18,14]; }
+  if (upOn||dnOn){ var tri=function(cy,up,on,hot){ var c=on?(hot?(g?P.x6:P.l1):(g?P.x4:P.s5)):(g?P.x1:P.s1); for (var t=0;t<4;t++){ var ty=up?cy+t:cy+3-t; fb.hl(ax-t,ax+t,ty,c); } };
+    tri(y0+20,true,upOn,hoverUI==='cu'); tri(y1-9,false,dnOn,hoverUI==='cd'); lay.up=upOn?[ax-8,y0+16,18,14]:null; lay.dn=dnOn?[ax-8,y1-16,18,14]:null; }
   d.lay=lay; }
+// Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
+function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phone||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;
+  var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
+function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
+  var right=false, me=E.ACT[GS().active], pa=convPartner();
+  if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me; right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
+  var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
+  var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
+  var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
+  drawBust(pr.ch,px,4,variant,right);
+  var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
+  fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
+  lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
+  if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var ix=bx1-6, iy=by1-6; for (var t=0;t<3;t++) fb.hl(ix-2+t,ix+2-t,iy+t,frame); } }
 
 // ---------------------------------------------------------------- Sprechtext
 function speakerPos(who){ var a=E.ACT[who]; if (a && E.actorShown(a) && E.room){ return [Math.round(a.x)-Math.round(E.camX), Math.round(a.y)-(a.speechY||(a.idle&&/sit|mend|cards|guitar/.test(a.idle)?40:54))]; } return null; }
-function drawSpeech(){ var sp=E.speech; if (!sp) return; var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.color!==undefined?o.color:P.l0, a=E.ACT[sp.who], M2=8;
+function drawSpeech(){ var sp=E.speech; if (!sp) return; var pr=speechPortrait(sp); if (pr) return drawSpeechBust(sp,pr); return drawSpeechPlain(sp); }
+function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.color!==undefined?o.color:P.l0, a=E.ACT[sp.who], M2=8;
   var lines=M.wrap(sp.text,200), pos=speakerPos(sp.who);
   if (a) col=o.color!==undefined?o.color:a.color;
   if (sp.who&&sp.who[0]==='@'){ var nm=sp.who.slice(1); if (M.CAST_COLORS[nm]!==undefined && o.color===undefined) col=M.CAST_COLORS[nm]; }
   if (pos){ cx=pos[0]; top=pos[1]-lines.length*lh-2; }
-  var inConv=convOn()&&!E.dlg&&a&&(a.player||a===convPartner())&&o.x===undefined&&convPartner();
-  if (inConv){ lines=M.wrap(sp.text,NB_W-10); cx=160; top=10; pos=null; M2=PR_W+12; }
   if (o.x!==undefined) cx=o.x; if (o.y!==undefined) top=o.y;
   if (sp.who==='#'){ lines=M.wrap(sp.text,240); cx=160; top=Math.max(8,60-lines.length*lh/2); }
   if (o.phone){ lines=M.wrap(sp.text,220); cx=160; top=18; }
@@ -2355,10 +2393,6 @@ function paper(x,y,w,h,opt){ opt=opt||{}; var base=opt.col||P.s5; fb.rect(x+2,y+
   fb.hl(x,x+w-1,y,M.UP[base]); fb.vl(x+w-1,y,y+h-1,M.DN[base]); fb.hl(x,x+w-1,y+h-1,M.DN[base]); if (opt.lines){ for (var ly=y+opt.lines[0];ly<y+h-4;ly+=opt.lines[1]) fb.hl(x+3,x+w-4,ly,P.b4); } if (opt.margin) fb.vl(x+opt.margin,y+1,y+h-2,P.r4); }
 M.paper=paper; M.dimAll=dimAll;
 function drawOverlay(){ var ov=E.overlay; if (!ov) return; dimAll(2); var fn=M.OVERLAYS[ov.kind]; if (fn) fn(fb,ov,E.gt()); }
-// Tipp
-M.defineOverlay('hint',function(fb,ov){ var d=ov.data; paper(36,10,248,124,{lines:[24,9],margin:12}); M.text(fb,'GEDANKEN',54,14,P.k1);
-  var y=28; M.text(fb,'Was ich vorhabe:',54,y,P.r2); y+=10; M.wrap(d.goal||'',216).forEach(function(l){ M.text(fb,l,58,y,P.k1); y+=9; });
-  if (d.hint){ y+=5; M.text(fb,d.tier!==undefined?('Ein Gedanke ('+(d.tier+1)+' von '+d.of+'):'):'Ein Gedanke:',54,y,P.r2); y+=10; M.wrap(d.hint,216).forEach(function(l){ M.text(fb,l,58,y,P.n1); y+=9; }); } });
 // Dokument (Brief, Postkarte, Buch, Register, Ticket, Zeitung)
 M.defineOverlay('doc',function(fb,ov){ var d=ov.data, st=d.style||'letter', w=d.w||220, lines=[], col=P.s5, ink=P.k1, x, y;
   (d.lines||[]).forEach(function(l){ if (l==='') lines.push(''); else M.wrap(l,w-28).forEach(function(q){ lines.push(q); }); });
@@ -2391,48 +2425,42 @@ M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||d.slots.
   M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2);
   if (ov.msg) M.wrap(ov.msg,250).forEach(function(l,i){ M.text(fb,l,36,by+18+i*9,P.r2); }); });
 
-// ---------------------------------------------------------------- Notizbuch (Der Fall / Notizen, Verbinden, Fragen)
+// ---------------------------------------------------------------- Notizbuch (Notizen, Verbinden, Fragen)
 function notesOf(){ var g=GS(); var list=g.notes.slice(); var ph=M.PHASES[g.phase]||{}; var cs=ph.case; var mine=list.filter(function(id){ var n=M.NOTES[id]; return !cs || !n.c || n.c===cs || n.c==='mala'; }); return mine.length?mine:list; }
-var NB={page:'case',sel:null,top:0,msg:null,lay:null};
-E.openNotes=function(){ NB.page='notes'; NB.sel=null; NB.top=0; NB.msg=null; return showNotes(); };
+var NB={sel:null,top:0,msg:null,lay:null};
+E.openNotes=function(){ NB.sel=null; NB.top=0; NB.msg=null; return showNotes(); };
 function showNotes(){ return E.showOverlay('notebook',{mode:'browse'}); }
-M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'; if (ask) NB.page='notes'; if (ov.page && !ov.init){ NB.page=ov.page; ov.init=1; NB.top=0; NB.sel=null; NB.msg=null; }
-  var lx=6, rx=162, y0=6, pw=152, ph=182, g=GS();
+// zwei Seiten, auf denen die Notizen weiterlaufen; keine Ziele, keine Hinweise auf den nächsten Schritt
+M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'; if (!ov.init){ ov.init=1; NB.top=0; NB.sel=null; NB.msg=null; }
+  var lx=6, rx=162, y0=6, pw=152, ph=182, g=GS(), ph0=M.PHASES[g.phase]||{};
   paper(lx,y0,pw,ph,{lines:[22,9],margin:10}); paper(rx,y0,pw,ph,{lines:[22,9],margin:10}); fb.vl(159,y0,y0+ph,P.k1); fb.vl(160,y0,y0+ph,P.s2);
-  var lay={notes:[],tabCase:[lx+14,y0+2,60,14],tabNotes:[rx+14,y0+2,70,14],close:[rx+pw-22,y0+2,20,14],up:null,dn:null};
-  // linke Seite: der Fall
-  var ph0=M.PHASES[g.phase]||{}; M.text(fb,'DER FALL',lx+16,y0+5,NB.page==='case'?P.r2:P.s2);
-  var y=y0+22; M.wrap(ph0.title||'',pw-26).forEach(function(l){ M.text(fb,l,lx+16,y,P.k1); y+=9; }); y+=2;
-  M.text(fb,'Ziel:',lx+16,y,P.r2); y+=9; M.wrap(E.currentGoal(),pw-30).forEach(function(l){ M.text(fb,l,lx+20,y,P.n1); y+=9; }); y+=3;
-  var L=E.leads(); M.text(fb,'Spuren:',lx+16,y,P.r2); y+=9;
-  if (!L.leads.length){ M.text(fb,'Keine offenen.',lx+20,y,P.s2); y+=9; }
-  L.leads.slice(0,5).forEach(function(t){ var ls=M.wrap(t,pw-36); if (y+ls.length*9>y0+ph-22) return; fb.rect(lx+16,y+2,4,4,P.n2); ls.forEach(function(l){ M.text(fb,l,lx+24,y,P.n1); y+=9; }); });
-  if (L.tot){ var by=y0+ph-14, bw=80, fw=Math.round(bw*L.done/L.tot); M.text(fb,'Stand',lx+16,by-1,P.s1); fb.rect(lx+46,by,bw+2,6,P.s2); fb.rect(lx+47,by+1,bw,4,P.s6); fb.rect(lx+47,by+1,fw,4,P.g3); }
-  // rechte Seite: Notizen
-  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZEN',rx+16,y0+5,P.r2); M.text(fb,ask?'Zurück':'X',rx+pw-(ask?34:12),y0+5,hoverUI==='nx'?P.r3:P.s1); if (ask) lay.close=[rx+pw-40,y0+2,38,14];
-  var notes=notesOf(), ny=y0+20, maxY=y0+ph-(NB.msg?40:(ask?16:32));
-  if (NB.top>=notes.length) NB.top=Math.max(0,notes.length-1);
-  if (!notes.length){ M.text(fb,'Noch nichts.',rx+16,ny,P.s2); }
-  for (var i=NB.top;i<notes.length;i++){ var n=M.NOTES[notes[i]], ls=M.wrap(n.t,pw-28), hh=ls.length*9+3; if (ny+hh>maxY){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; }
-    var sel=NB.sel===notes[i], hot=hoverUI==='n:'+i, isNew=g.noteNew[notes[i]], ded=g.flags['deduced.'+notes[i]];
-    if (sel) fb.rect(rx+12,ny-1,pw-16,hh,P.y4); else if (hot) fb.rect(rx+12,ny-1,pw-16,hh,P.s6);
-    if (isNew) fb.rect(rx+12,ny+2,2,3,P.r4); if (ded) { fb.px(rx+13,ny+2,P.g3); fb.px(rx+14,ny+3,P.g3); }
-    ls.forEach(function(l,j){ M.text(fb,l,rx+16,ny+j*9,ded?P.g1:P.n1); }); lay.notes.push({id:notes[i],idx:i,r:[rx+12,ny-1,pw-16,hh]}); ny+=hh+1; }
+  var lay={notes:[],close:ask?[rx+pw-40,y0+2,38,14]:[rx+pw-22,y0+2,20,14],up:null,dn:null};
+  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZBUCH',lx+16,y0+5,P.r2);
+  if (ph0.short) M.text(fb,ph0.short,rx+16,y0+5,P.s2);
+  M.text(fb,ask?'Zurück':'X',rx+pw-(ask?34:12),y0+5,hoverUI==='nx'?P.r3:P.s1);
+  var notes=notesOf(); if (NB.top>=notes.length) NB.top=Math.max(0,notes.length-1);
+  var pages=[{x:lx,ny:y0+20,max:y0+ph-(ask?14:24)},{x:rx,ny:y0+20,max:y0+ph-(NB.msg?40:16)}], pi=0;
+  if (!notes.length) M.text(fb,'Noch nichts.',lx+16,y0+20,P.s2);
+  for (var i=NB.top;i<notes.length;i++){ var n=M.NOTES[notes[i]], ls=M.wrap(n.t,pw-28), hh=ls.length*9+3, pg=pages[pi];
+    if (pg.ny+hh>pg.max){ pi++; if (pi>=pages.length){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; } pg=pages[pi]; if (pg.ny+hh>pg.max){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; } }
+    var px0=pg.x, ny=pg.ny, sel=NB.sel===notes[i], hot=hoverUI==='n:'+i, isNew=g.noteNew[notes[i]], ded=g.flags['deduced.'+notes[i]];
+    if (sel) fb.rect(px0+12,ny-1,pw-16,hh,P.y4); else if (hot) fb.rect(px0+12,ny-1,pw-16,hh,P.s6);
+    if (isNew) fb.rect(px0+12,ny+2,2,3,P.r4); if (ded){ fb.px(px0+13,ny+2,P.g3); fb.px(px0+14,ny+3,P.g3); }
+    ls.forEach(function(l,j){ M.text(fb,l,px0+16,ny+j*9,ded?P.g1:P.n1); }); lay.notes.push({id:notes[i],idx:i,r:[px0+12,ny-1,pw-16,hh]}); pg.ny+=hh+1; }
   if (NB.top>0) lay.up=[rx+12,y0+ph-14,pw/2-12,14];
   if (lay.up||lay.dn){ var tri=function(cx,up,on){ var c=on?P.n2:P.s3; for (var t=0;t<5;t++){ var ty=up?y0+ph-12+t:y0+ph-8-t; fb.hl(cx-t,cx+t,ty,c); } }; tri(rx+pw/2-16,true,!!lay.up); tri(rx+pw/2+16,false,!!lay.dn); }
-  if (!ask){ var hint=NB.sel?'Zweite Notiz antippen zum Verbinden.':'Zwei Notizen antippen, um sie zu verbinden.'; if (!NB.msg){ var hl=M.wrap(hint,pw-24); hl.forEach(function(l,j){ M.text(fb,l,rx+16,y0+ph-31+j*9+(hl.length>1?0:9),P.s2); }); } }
+  if (!ask){ var hint=NB.sel?'Zweite Notiz antippen zum Verbinden.':'Zwei Notizen antippen, um sie zu verbinden.'; var hl=M.wrap(hint,pw-24); hl.forEach(function(l,j){ M.text(fb,l,lx+16,y0+ph-21+j*9+(hl.length>1?0:9),P.s2); }); }
   if (NB.msg){ var my=y0+ph-38; fb.rect(rx+10,my-2,pw-14,36,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,pw-26).slice(0,4).forEach(function(l,j){ M.text(fb,l,rx+14,my+j*9,NB.msg.ok?P.g0:P.k1); }); }
   ov.lay=lay; });
 async function notebookTap(x,y){ var ov=E.overlay, lay=ov.lay; if (!lay) return; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }, ask=ov.data.mode==='ask';
   if (inR(lay.close)){ NB.sel=null; NB.msg=null; E.closeOverlay(null); return; }
-  if (inR(lay.up)){ NB.top=Math.max(0,NB.top-3); return; } if (inR(lay.dn)){ NB.top=NB.top+3; return; }
+  if (inR(lay.up)){ NB.top=Math.max(0,NB.top-4); return; } if (inR(lay.dn)){ NB.top=NB.top+4; return; }
   for (var i=0;i<lay.notes.length;i++){ var n=lay.notes[i]; if (!inR(n.r)) continue; delete GS().noteNew[n.id];
     if (ask){ NB.sel=null; E.closeOverlay(n.id); M.sfx('page'); return; }
     if (!NB.sel){ NB.sel=n.id; NB.msg=null; M.sfx('click'); return; }
     if (NB.sel===n.id){ NB.sel=null; return; }
     var a=NB.sel; NB.sel=null; var res=await E.combineNotes(a,n.id); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t};
-    if (res.ok && res.say){ /* gesprochen nach dem Schließen */ ov.after=res.say; } return; }
-  if (x<160){ NB.page='case'; } }
+    if (res.ok && res.say){ ov.after=res.say; } return; } }
 // Text für das Notizbuch beim Schließen nachreichen
 E.afterNotes=function(){ };
 
@@ -2472,9 +2500,9 @@ M.centerText=centerText;
 async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Tippe etwas an: Ist nur etwas zu sehen, schaue ich es mir an. Kann man etwas damit tun, kommt ein kleines Menü.');
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
-  if (GS().malaOn) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt.');
+  if (GS().malaOn) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
   await M.API.m('„Notizen“ ist mein Notizbuch. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen.');
-  await M.API.m('„Tipp“ hilft, wenn ich festsitze. „Zeigen“ markiert alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
+  await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
  } finally { E.busy=false; } }
 M.help=help;
 
@@ -2561,7 +2589,6 @@ async function click(x,y){
   if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
   var uiH=uiAt(x,y);
   if (E.pop){ var pr=popAt(x,y); if (pr!==null){ if (pr>=0){ M.sfx('click'); popPick(E.pop,E.pop.opts[pr]); } return; } E.pop=null; if (!uiH || y<SH) { if (y<SH) return; } }
-  if (uiH==='hint'){ if (!E.busy) E.useHint(); return; }
   if (uiH==='notes'){ if (!E.busy) E.openNotes(); return; }
   if (uiH==='reveal'){ reveal={at:E.gt()}; M.sfx('click'); return; }
   if (uiH==='menu'){ E.menu=true; E.paused(true); return; }
@@ -2587,7 +2614,31 @@ async function click(x,y){
 function fastExit(hs,ex){ var p=E.player(); if (!p) return; var st=hs.st; if (typeof st==='function') st=st(M.RS(E.room.id),GS()); if (st){ p.x=st[0]; p.y=st[1]; } E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); }
 M.key=function(k){ if (k==='Escape'){ if (E.overlay) E.closeOverlay(null); else if (E.menu){ E.menu=null; E.paused(false); } else if (E.screen==='game'){ E.menu=true; E.paused(true); } return; }
   if (E.screen!=='game'||E.menu) return; if (k===' '||k==='Enter'){ if (E.speech) E.endSpeech(); return; }
-  if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ E.switchChar(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='h'||kl==='t'){ E.useHint(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
+  if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ E.switchChar(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
+})(M);
+
+/* ---- 07_portraits.js ---- */
+/* ===== 07_portraits.js — gemalte Porträts (Brustbilder 56 × 64) für Gespräche =====
+   Jede Figur hat eine Datei in portraits/<id>.js mit M.definePortrait(id,{paint:function(b,v){…}}).
+   Varianten: 'n' ruhig, 'o' spricht (Mund offen), 'b' blinzelt (Augen zu). Gemalt wird nach rechts blickend
+   auf transparentem Grund; die Oberfläche spiegelt, wenn das Porträt rechts steht. Geister werden beim
+   Zwischenspeichern eingefärbt (Mala kalt blau, die anderen fahl-lavendel). */
+(function(M){
+'use strict';
+var P=M.P, T=M.T, Buf=M.Buf;
+M.PORTRAIT_W=56; M.PORTRAIT_H=64;
+M.PORTRAITS={};
+M.PORTRAIT_GHOSTS={ mala:'ghostP', ivka:'spiritP', luka:'spiritP', bruno:'spiritP', jakov:'spiritP' };
+M.definePortrait=function(id,def){ def=def||{}; def.id=id; def.cache={}; M.PORTRAITS[id]=def; };
+M.hasPortrait=function(id){ return !!M.PORTRAITS[id]; };
+// ghost: true = so, wie Marko einen Geist sieht (eingefärbt); false = ungefärbt (Malas eigene Sicht auf sich selbst, Testblatt)
+M.portrait=function(id,variant,ghost){ var d=M.PORTRAITS[id]; if (!d) return null; variant=variant||'n'; if (ghost===undefined) ghost=!!M.PORTRAIT_GHOSTS[id];
+  var key=variant+(ghost?'g':''); if (d.cache[key]) return d.cache[key];
+  var b=d.cache[variant];
+  if (!b){ b=new Buf(M.PORTRAIT_W,M.PORTRAIT_H,T); var v={mouth:variant==='o'?1:0,eyes:variant==='b'?1:0,variant:variant};
+    try{ d.paint(b,v); }catch(e){ console.error('Porträt '+id,e); } d.cache[variant]=b; }
+  if (!ghost) return b;
+  var g=new Buf(b.w,b.h,T); g.d.set(b.d); var tn=M.TINT[M.PORTRAIT_GHOSTS[id]||'spiritP']; if (tn) M.tintApply(g,tn); return (d.cache[key]=g); };
 })(M);
 
 /* ---- 10_items.js ---- */
@@ -2679,6 +2730,7 @@ M.defineNotes({
   pro_zdenka:{c:'c1',t:'Die Nachbarin, Gospođa Zdenka, hat den Schlüssel.'},
   pro_riva:{c:'c1',t:'Zdenka: Ivka ging jeden Abend um sieben zur Riva. Seit 1984.'},
   pro_sohn:{c:'c1',t:'Zdenka: Ivkas Sohn kam 1984 nicht nach Hause. „Die Bura.“'},
+  pro_notice:{c:'c1',t:'Todesanzeige an Ivkas Tür: „Nach kurzer Krankheit verstarb im Alter von 85 Jahren Ivka Perić.“ Beerdigung am 13.11.2011.'},
   c1_boat7:{c:'c1',t:'Tonći wollte am 22.12.1984 mit dem Boot um sieben aus Supetar kommen.',s:'Tonći wollte mit dem Boot um sieben kommen.'},
   c1_dinko:{c:'c1',t:'Tonći auf der Postkarte: „Dinko kommt mit.“'},
   c1_gift:{c:'c1',t:'Tonći schrieb: „Ich bringe dir etwas mit.“'},
@@ -2712,6 +2764,7 @@ M.defineNotes({
   m_find:{c:'mala',t:'Mala: „Du kannst mit ihnen reden. Ich kann sie finden.“'},
   m_horn:{c:'mala',t:'Mala hält inne, wenn ein Fährenhorn tutet.'},
   m_bells:{c:'mala',t:'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“'},
+  m_leash:{c:'mala',t:'Mala sieht an Ivka eine Leine aus Licht, festgemacht am Poller. „Wie ein Boot, das niemand mehr losmacht.“'},
   m_tin:{c:'mala',t:'Mala trägt eine verbeulte Blechdose. Sie sagt nur: „Meins.“'},
   m_mother:{c:'mala',t:'Ivka zu Mala: „Kind, du frierst ja. Wo ist deine Mutter?“ Mala schwieg.'},
   m_flight:{c:'mala',t:'Luka: „Bist du auch auf der Flucht?“ Mala: „Nicht mehr.“'},
@@ -2735,7 +2788,7 @@ M.defineNotes({
   c2_mailbox:{c:'c2',t:'Luka und Nina lassen sich Zettel im „Briefkasten“: dem lockeren Ziegel an der Rampe.'},
   c2_case:{c:'c2',t:'Mala: Im Kühlraum liegt Lukas Gitarrenkoffer. Darin zwei Tickets und eine Kassette.'},
   c2_paper:{c:'c2',t:'Mala: Hinter dem lockeren Ziegel steckt ein gefaltetes Papier.'},
-  c2_thin:{c:'c2',t:'Für den Ziegel brauche ich etwas Dünnes. Das Brecheisen ist zu grob.'},
+  c2_thin:{c:'c2',t:'Der Ziegel sitzt fest in der Fuge. Mit dem Brecheisen käme die halbe Wand mit.'},
   c2_died:{c:'c2',t:'Sanja: Luka wurde drei Tage später gefunden, am Fuß der Treppe in der Ledana.',s:'Luka starb an der Treppe.'},
   c2_stayed:{c:'c2',t:'Sanja: Nina ist nie aus Split weggegangen.'},
   c2_shop:{c:'c2',t:'Nina hat einen kleinen Rahmenladen in der Altstadt: „Okvir“.'},
@@ -2747,7 +2800,7 @@ M.defineNotes({
   c2_mira1:{c:'c2',t:'Mira: Ein Mädchen wartete bis zum Morgen. Ich gab ihr einen Kaffee. Sie sagte kein Wort.'},
   c2_mira2:{c:'c2',t:'Mira: Der Junge kaufte am Vormittag zwei Tickets. Er hat gestrahlt.'},
   c2_note:{c:'c2',t:'Ninas Zettel: „Ich habe bis zum letzten Schiff gewartet. Ich bin nicht wütend. Morgen bin ich wieder da.“',s:'Ninas Zettel von 1999.'},
-  c2_tape:{c:'c2',t:'Luka: „Spiel ihr die Kassette vor. Sie weiß nicht, dass es das Lied gibt.“'},
+  c2_tape:{c:'c2',t:'Luka: „Sag ihr, ich hab ein Lied für sie. Die Kassette ist im Koffer. Sie soll es hören.“'},
   c2_tonight:{c:'c2',t:'Nina: „Heute Abend. An der Rampe. Wenn die Fähre ablegt.“'},
   // Fall 3
   c3_job:{c:'c3',t:'Ljerka Lalić vom Hotel Palma braucht Übersetzungen für den Verkauf am Montag.'},
@@ -2833,6 +2886,355 @@ scn.gulls=function(fb,t,x0,y0,w,h,n,cam){ cam=cam||0; for (var i=0;i<(n||3);i++)
   if (x<1||x>=fb.w-1) continue; fb.px(x,y,P.s6); fb.px(x-1,y-(f?1:0),P.s5); fb.px(x+1,y-(f?1:0),P.s5); fb.px(x-2,y-(f?0:1),P.s4); fb.px(x+2,y-(f?0:1),P.s4); } };
 // Bura: über den Boden wehende Blätter / Papierfetzen (dynamisch)
 scn.buraDebris=function(fb,t,y0,y1,cam){ for (var i=0;i<6;i++){ var sp=60+hash(i,31)*60, x=Math.floor(((t*sp+hash(i,32)*400)%420)-50), y=Math.floor(y0+hash(i,33)*(y1-y0)+Math.sin(t*4+i)*3); if (x<0||x>=fb.w) continue; fb.px(x,y,i%2?P.e3:P.s4); fb.px(x+1,y+(Math.floor(t*6+i)%2),i%2?P.e2:P.s3); } };
+})(M);
+
+/* ---- portraits/ivka.js ---- */
+/* ===== portraits/ivka.js — Ivka Perić (Geist, 85): schwarzes Kopftuch, langer schwarzer Mantel ===== */
+(function(M){
+'use strict';
+var P=M.P, T=M.T;
+var LEG={"0":P.k0, "1":P.p0, "2":P.p1, "3":P.p2, "4":P.p3, "5":P.p4, "6":P.p5, "7":P.q2, "8":P.q1, "9":P.q3, K:P.k1, a:P.k1, b:P.k2, c:P.m0, d:P.m1, e:P.m2, f:P.m3, A:P.k0, B:P.k1, C:P.k2, D:P.h2, E:P.h3, F:P.s0, H:P.s1, g:P.s2, h:P.s3, j:P.s4, s:P.s1, w:P.s5, x:P.s4, i:P.w1, o:P.k0, L:P.l1};
+//        1111111111222222222233333333334444444444555555
+//1234567890123456789012345678901234567890123456789012345
+var MAP=[
+"........................................................", // 0
+"........................................................", // 1
+"........................................................", // 2
+"........................................................", // 3
+"........................................................", // 4
+"........................dddccccc........................", // 5
+"......................dddddccccccb......................", // 6
+"....................ddddddccccccbbba....................", // 7
+"...................dddddddccccccbbaaa...................", // 8
+"..................dddddddcccccccbbaaaa..................", // 9
+".................ddddddddccccccbbbaaaaa.................", // 10
+".................dddddddccddeeeeeeeedda.................", // 11
+"................dddddddccdeeeffffeeeddaa................", // 12
+"................dddddddcccee44444444dcaa................", // 13
+"...............dddddddcccde45666555544dca...............", // 14
+"...............ddebddcccde4554444455544dc...............", // 15
+"...............ddebdcccce45666655555544ccb..............", // 16
+"...............ddebccccce555544444555444cb..............", // 17
+"...............ddebcccce4566655555555444cb..............", // 18
+"..............ddebccccce4gssssg555gssg44cb..............", // 19
+"..............dcebccccce44433334543334g44b..............", // 20
+"..............ccebccccce44311112541111344b..............", // 21
+"..............ccebccccce441xLox354xLo1444b..............", // 22
+"..............ccebccccce5444ii44544ii3444b..............", // 23
+"..............ccebccccbe55443345564334454b..............", // 24
+"..............ccebcccbbe56544445565444554b..............", // 25
+".............ccccebbbbbe56665555556444554b..............", // 26
+".............cbccebbbbbe45555555556543444b..............", // 27
+".............cbcbebbbbae44544555545665433b..............", // 28
+".............bbbbebbaaae44444555434233433b..............", // 29
+".............bbbbebaaaade444455643443443ba..............", // 30
+".............bbbaaebaaade45445643555443bb...............", // 31
+".............baaaaebaaaade5545534444443bb...............", // 32
+"............abaaaaaebaaade5545432222233bb...............", // 33
+"............abaaaaaebaaaade545434554443bb...............", // 34
+"............abaaaaaaebaaade554434334433bb...............", // 35
+"...........aabaaaaaaebaaaade5445566543bb................", // 36
+"...........abaadbaaaaaaaaaade445555443bb................", // 37
+"...........abaaadbaaaaaaaaa.de3444443bb.................", // 38
+"..........aabaaadbaaaaaaaaaa..cd3333bb..................", // 39
+"..........aabaaaadbaaaaaaaaaabbcccbbba..................", // 40
+"..........aaaaaaadbaaaaaaaa..bcddeddcCDDC...............", // 41
+".........aaaaaaaaadbaaaaaaaCCbcdeeddBCDEDCB.............", // 42
+"..........aaaaaaaaaddbaaaaCCCabcddccBCDDEDCBBB..........", // 43
+"..........aaaaaaaaaaadbaaaCCCabcdBdcbACDDDCCBBBB........", // 44
+"...........aaaaaaaaaaaaCCCCCabcdbBbdcbACCDCCBBBBB.......", // 45
+"........DDDDDDDDDCCCCCCCCCCCabcbBBbcbBAACCBBBBBBBB......", // 46
+"......DDDDDDDDDDDCCCCCCCCCCCabaBBBBbaBBBBBBBBBBABBB.....", // 47
+".....EEDDDDDDDDDDCCCCCCCCCCCCBBBDABBBBBBBBBBBBBABBBB....", // 48
+"....DDDEBCCCCCCCCCCCCCCCCCCCCCBBDABBBBBBBBBBBBBABBBBB...", // 49
+"...DDDDEBCCCCCCCCCCCCCCCCCCCCBBBDABBBBBBBBBBBBBABBBBBB..", // 50
+"..DDDDCCEBCCCCCCCCCCCCCCCCCCBBBBDABBBBBBBBBBBBABBBBBBB..", // 51
+".DDDDCCCEBCCCCCCCCCCCCCCCCCBBBBBDABBBBBBBBBBBBABBBBBBBB.", // 52
+".DDDCCCCEBCCCCCCCCCCCCCCCCBBBBBBDAdeBBBBBBBBBBABBBBBBBB.", // 53
+".DDCCCCCCEBCCCCCCCCCCCCCCBBBBBBBDAcdBBBBBBBBBBABBBBBBBB.", // 54
+"DDCCCCCCCEBCCCCCCCCCCCCCBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 55
+"DCCCCCCCCEBCCCCCCCCCCCCBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 56
+"CCCCCCCCCEBCCCCCCCCCCCBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 57
+"CCCCCCCCCEBCCCCCCCCCCBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 58
+"CCCCCCCCCCEBCCCCCCCCCBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 59
+"CCCCCCCCCCEBCCCCCCCCCBBBBBBBBBBBDAdeBBBBBBBBBBABBBBBBBBB", // 60
+"CCCCCCCCCCEBCCCCCCCBBBBBBBBBBBBBDAcdBBBBBBBBBBABBBBBBBBB", // 61
+"CCCCCCCCCCEBCCCCCCCBBBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 62
+"CCCCCCCCCCEBCCCCCBBBBBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 63
+];
+var PATCH={"mouth":[],"eyes":[]};
+function put(b,list){ list.forEach(function(r){ var y=r[0], x0=r[1], str=r[2]; for (var i=0;i<str.length;i++){ var ch=str[i]; if (ch==='_') continue; if (ch==='.') { if (x0+i>=0&&x0+i<b.w) b.d[y*b.w+x0+i]=T; } else b.px(x0+i,y,LEG[ch]); } }); }
+function paint(b,v){
+  for (var y=0;y<MAP.length;y++){ var r=MAP[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch!=='.') b.px(x,y,LEG[ch]); } }
+  if (v.mouth) put(b,PATCH.mouth||[]);
+  if (v.eyes) put(b,PATCH.eyes||[]);
+  M.outline(b,P.k1);
+}
+M.definePortrait('ivka',{ paint:paint });
+})(M);
+
+/* ---- portraits/ljerka.js ---- */
+/* ===== portraits/ljerka.js — Ljerka Lalić (56), Besitzerin des Hotel Palma; ljerkaNight: dieselbe Frau nachts */
+(function(M){
+'use strict';
+var P=M.P;
+// Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
+var L={"0":P.p0, "1":P.p1, "2":P.p2, "3":P.p3, "4":P.p4, "5":P.p5, "6":P.l0, "k":P.k1, "K":P.k0, "x":P.k2, "w":P.s5, "W":P.s4, "i":P.e2, "I":P.h1, "*":P.l1, "z":P.s1, "Z":P.s0, "l":P.d3, "L":P.d4, "n":P.r1, "a":P.m1, "b":P.m2, "c":P.e3, "d":P.s3, "e":P.s4, "f":P.s5, "g":P.s6, "F":P.m1, "G":P.m3, "+":P.l1, "A":P.e0, "B":P.e1, "C":P.e2, "D":P.e3, "E":P.e4, "R":P.s3, "S":P.s4, "U":P.s5, "V":P.s6, "X":P.w1, "p":P.l0, "q":P.s3};
+var DAY=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"..........................kkkkkk........................",
+"..............k........kkkddedcckkk.....................",
+"...........kkkbkkk...kkcdeeeedccccbkk...................",
+"..........kdeeedcakkkddeffeddddddddcck..................",
+".........kdeffffebaddefffedeeeeeeedccbk.................",
+".........keedddeedbefffeeeeeeffffedccbak................",
+"........kdddddcdecbaeeeefffffeeeeddccbaak...............",
+"........kcddeededcbaffffffeeekkddddcccbaak..............",
+"........kbcdedcccbbaeedddddk4455554444cbbk..............",
+".........kbdddcbbcbffffeek45555554444434bk..............",
+".........kabdddccbaeeeeek4455555554444434k..............",
+"..........kaabbbaaeffedd44455555444444433k..............",
+"...........kkkadeefdefe344445554444444433k..............",
+".............kedfdeedee344444444444444433k..............",
+".............kddeedeed3444444444444444433k..............",
+".............kddeeddee3444444555444444433k..............",
+".............kdddeedde344444zZZZZzz54zZZz3k.............",
+".............kddde344334444z444443z4z33333k.............",
+".............kcddd4543344444421III1432II1k..............",
+"..............kdcd433434444442Ww*I343WiI2k..............",
+"..............kdcc4224344444443Wii3533ii3k..............",
+"..............kccc421434444444433344533333k.............",
+"..............kbcc432434445554444444543233k.............",
+"...............kbc443434455544333444453233k.............",
+"...............kbb344334445544444444445423k.............",
+"................kba4433444444444444344433k..............",
+"................kaa3433444444444443421223k..............",
+".................kaap33444444444434443433k..............",
+"..................ka33344444444443lllll33k..............",
+"..................ka3323444444442nnnnn23k...............",
+"...................k332k3444444443LLLL33k...............",
+"...................k3332k344444444333443k...............",
+"...................k33332k34444444554433k...............",
+"...................k333332k3444444454433k...............",
+"...................k33333322k3444444433k................",
+"...................k333333322k33444433k.................",
+"...................k33333333322233332k..................",
+"...................k3333333333222kkkk...................",
+".................kkk33CCCCCCCCBCBCk.....................",
+"..............kkkDDDCCCCCCCCCCCCCBk.....................",
+"...........kkkDDDDDDCCCCCCCCBCBCBBk.....................",
+".........kkDDDDDDDDDCCCCCCCCCCCBCBCkkkkk................",
+".......kkDDDDDDDDDCDCCCCCCCCCCBCBCBBBBBBkkk.............",
+"......kDDDDDDDDDDDDCCCCCCCCCCCCBCBCBBBBBBBBkkk..........",
+".....kDDDDDDDDDDCDCDCCCCCCCCBCBCBBBBBBBBBBBBBAkk........",
+"....kDDDDDDDDDDDDCDCCCCCCCCCCBCBCBBBBBBBBBBBBABAk.......",
+"...kDDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAkk.....",
+"...kDDDCDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBABAAAAk....",
+"..kDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBAAAAAAk....",
+"..kDDCDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBABAAAAAk...",
+"..kDCDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBAAAAAAAAk..",
+"..kDDDDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBAAAAAAAAk..",
+"..kDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAAAAAAAk..",
+"..kDDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAAAAAAk..",
+"..kDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBBAAAAAAAAAk..",
+"..kCDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAAAAAAk..",
+".kCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBBABAAAAAAAAAk..",
+".kDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBBAAAAAAAAAk.",
+".kCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBABAAAAAAAAAAk.",
+".kDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBABAAAAAAAAAk."];
+function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
+function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
+M.definePortrait('ljerka',{ paint:function(b,v){
+  put(b,L,DAY,0,0);
+} });
+M.definePortrait('ljerkaNight',{ paint:function(b,v){
+  put(b,L,DAY,0,0);
+} });
+})(M);
+
+/* ---- portraits/luka.js ---- */
+/* ===== portraits/luka.js — Luka Radić (Geist, 20), Gitarrist, August 1999 =====
+   Strubbeliges Haar, offenes Flanellhemd über weißem T-Shirt, junges Gesicht, Vorfreude in den Augen.
+   In natürlichen Farben gemalt; das Spiel färbt Geister selbst ein (M.TINT.spiritP). */
+(function(M){
+'use strict';
+var P=M.P;
+// Legende: ein Zeichen je Palettenfarbe ('.' = durchsichtig)
+var C={'a':P.s2,'b':P.s3,'c':P.s4,'d':P.s5,'e':P.s6,'f':P.w2,'g':P.w3,'h':P.r0,'i':P.r1,'j':P.r2,'k':P.r3,'l':P.r4,'m':P.p2,'n':P.p3,'o':P.p4,'p':P.q0,'q':P.q1,'r':P.q2,'s':P.q3,'t':P.q4,'u':P.h0,'v':P.h1,'w':P.h2,'x':P.h3,'y':P.l1};
+// Pixelkarte 56 × 64, ruhige Fassung
+var MAP=[
+"........................................................",
+"........................................................",
+".....................w......w...........................",
+"...................wxxw....wxw...w......................",
+"................wwxgfxwwwxxwwwxwwwww....................",
+"..............wwxffwwvwxgfxwwwxxwwwwww..................",
+".............wwxxwwwwxwwwvwxgfxwwwxwwww.................",
+"............wwxwwwwxxwwwwwwwwvwxffwwxwww................",
+"............wwwwwxwwwvwwxxwwwwwvwwxxwwww................",
+"...........wwxwwwvwwwwwwvwwxxxwwwwwwwxxww...............",
+"...........wwwwvwwwwwwwwwwwwwvvwxxwwvwwww...............",
+"...........wwwwwwwwwwwwwsssssswwwvwwwwww................",
+"...........wwwvwwwwwwwwsswwwtwwww.wwwww.................",
+"...........wwwwwwwwwwwwsttwtoowwts.www..................",
+"...........wwwwwvwwwwwstttooottwtttsww..................",
+"...........wwwwwwwwwwwrtttooootttttsrw..................",
+"...........vvvwwwwvwwwstttooootttttssr..................",
+"...........vvvwwwwwwwwstttwwwtttttwwsr..................",
+"...........vvvvwwwwwwwstwvvvvvwttvvvvwr.................",
+"...........vvvvwuuwwwwwtttttttstssssssr.................",
+"...........vvvvvuu.ss.vssrvvvqrtsqvvvr..................",
+"...........vvvvvwustsrvttcdyucstocyucr..................",
+"...........vvvvvwwtrqssttscffcstorffrr..................",
+"...........vvvvvwwtrqssttttttttttossssr.................",
+"...........vvvvvwwtsqrstoooootttttosssr.................",
+"............vvvvwwssrrsttttttttstttootsr................",
+"............vvvvvustrsstttttttsssttttsrr................",
+"............vvvvvuusssstttttttsrsrqrsrq.................",
+".............vvvvvuur.ssttttttsssrqqrr..................",
+".............vvvvvuussrstttttttsststsr..................",
+"..............vvvvvwwsrsssssssqrmmmmrr..................",
+"...............vvvvvwsqrsssssssqppppqr..................",
+"................vvvvwsqrssssssssnonnrr..................",
+".................vvwsssqrsssssssrrrsr...................",
+"....................ssssqrrssstttttsr...................",
+"....................sssssqrrssttottsr...................",
+"....................sssssqqqrrsttttsr...................",
+"....................sssrssqqqqrrsssr....................",
+"....................sssrrssrqqqq........................",
+"....................sssrrrsrrrqq........................",
+".................jj.sssrrrssrrrr.jjj....................",
+".................jjjsssrrrrssrrrjjjjj...................",
+"..............klkjjjsrsrrrrrsrrrdqjjjjk.................",
+"............kkklkkjjscrrrrrrssrrqbjjjjkjj...............",
+".........ijjjjjjjillldcrrrrrrsqqbccjjjiiiii.............",
+".......jiijjjjjjjilllldccrrqqqbbcccjjjiiiiiih...........",
+"......kkhjkkkklkkjjlllkddcccbbccccccjjiijkjjiij.........",
+".....lkkhjkkkklkkjjklllkedddccddcccccjiijkjjiijh........",
+"....lkkjhkkkklkkjjkkkllkeeddddddcccccjiikjjiijjhi.......",
+"...klkkhjkkkklkkjjkkklilkeddddddccccchijkjjiijjhii......",
+"..kklkkhjkkkklkkjjkkkklikdddddddccccajhjkjjiijjihii.....",
+"..kklkkhjkkkklkkjjkkkklilddddddcccccajjhkjjiijjihiii....",
+"..klkkjhkkkklkkjjkkkklkkikdddddcccccajjkjjiijjjihiihh...",
+".jjjjjihjjjjjhjiijjjjjjjilbddddcccccaiiiiihhhiihhhhhh...",
+".jjiijihjjjjjhjiijjjjjjjeiiddddcccccaiiiiihhhiihhhhhh...",
+".kjkjkhjkkkklkijjkkkklkkjdbddddcccccajjkjjiihjjiihihhi..",
+".jkjjjhkkkklkkhjkkkklkkjidbddddcccccabkjjiijhjjiihhhii..",
+".jkjjjhkkkklkkjhkkkklkkiidbdddcccccccakjjiijhjjiihhhii..",
+".jkjjjhkkkklkkjhkkkklkjiiddbddccccccbakjjiihjjjiihhhii..",
+".jkjjjhkkkklkkjhkkkkljjiiddbddccccccbakjjiihjjjiihhhii..",
+".kjjijikkklkkjjkikkljjiijddbddccccccbajjiijhjjkiihhiii..",
+".kjjihkkkklkkjjkikjkjjiijjdbddccccccbajjiijhjjkiihhiiii.",
+".iiihhjjjjjjjiijjhiiiihhiidbdcccccccbaiihhihiiihhhhhhhh.",
+".iiihhjjjjjjjiijihiiiihhiidbdccccccbbaiihhihiiihhhhhhhh."];
+// Flicken [x, y, Zeilen] für „spricht“ (Mund offen) und „blinzelt“ (Augen zu); '.' = bleibt
+var MUND=[32,32,[
+  "peppq",
+  "nonn."]];
+var LID=[25,20,[
+  "sssss...ssss",
+  "stttt...ssss",
+  "rvvvq...qvv."]];
+function put(b,rows,x0,y0){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var c=C[r.charAt(x)]; if (c!==undefined) b.px(x0+x,y0+y,c); } } }
+M.definePortrait('luka',{ paint:function(b,v){
+  put(b,MAP,0,0);
+  if (v.mouth && MUND) put(b,MUND[2],MUND[0],MUND[1]);
+  if (v.eyes && LID) put(b,LID[2],LID[0],LID[1]);
+  M.outline(b,P.k1);
+} });
+})(M);
+
+/* ---- portraits/marko.js ---- */
+/* Porträt: Marko Vuković (33) — kurzes dunkles Haar, Bartschatten, müde dunkle Augen, dunkler Wollmantel über dunklem Pullover */
+(function(M){
+'use strict';
+var P=M.P, T=M.T, bayer=M.bayer, hash=M.hash;
+var HEAD=[
+"........................................................", // 0
+"........................................................", // 1
+"........................................................", // 2
+"........................................................", // 3
+"......................123332211.........................", // 4
+"...................112332332221110......................", // 5
+".................1123322333222211100....................", // 6
+"................112332122333222211100...................", // 7
+"...............11233212233322221111105..................", // 8
+"..............1123321122333222221111055.................", // 9
+"..............1122211222233222222111105.................", // 10
+".............011221112222233222222211105................", // 11
+".............011111112222222332222221110................", // 12
+".............01111222112211111CDE1EDDCC.................", // 13
+".............011112221122221DEEEEEEDDDC.................", // 14
+".............01111222112222DEEEFFEEEDDC.................", // 15
+".............0111122211222DEEEFFEEEEDDC.................", // 16
+".............011112221122DEEEEEEFFEEDDC.................", // 17
+".............01111221122E22111EEEEED221.................", // 18
+"..............0111221112EDD11111FE1111CC................", // 19
+"..............01112DED11EDCCDDCCFECDDCC.................", // 20
+"..............0111DErD11EEBAAAAAFEAAABC.................", // 21
+"..............0111EDBr11EEDwLkiwEEikwCC.................", // 22
+"...............011ECAC12EEDDiiiDEEFiDCC.................", // 23
+"...............011ECBD1DEFEDCCCDEEEFCCDC................", // 24
+"................01DECDSDEFFEEEDDEEEEFCCD................", // 25
+"................011DECSDEEFEEEEDDEEEEFEDC...............", // 26
+".................01CDCSSDEEEEDDDCDCDEEDCB...............", // 27
+".................011CBSSTDDDDDDCCDCBABCB................", // 28
+"..................011BsSTTDDDDDCTTsTSSC.................", // 29
+"...................1CBsSSTTDDDTSTTSTTTSC................", // 30
+"....................CCBsSTTTTTSCCrrrrrCC................", // 31
+"....................CCCBsSTTTTSBAAAAABC.................", // 32
+"....................DCCCBsSTTTTDDRRRRDC.................", // 33
+"....................DDCCCBsSSTTSsCCCsC..................", // 34
+"....................DDCCCCBsSTTTTEETSC..................", // 35
+"....................DDDCCCCBsSSSTTTSSC..................", // 36
+"....................DDDCCCCCBzssSSSsz...................", // 37
+"....................DDDCCCCCCBBBBB......................", // 38
+"....................DDDCCCCCCCCBBC......................", // 39
+"....................DDCCCCCCCCCCDC......................", // 40
+"....................DDCCCCCCCCCCCC......................", // 41
+".....................DCCCCCCCCCCCC......................", // 42
+"......................CCCCCCCCCCCC......................", // 43
+".......................CCCCCCCCCCC......................", // 44
+"........................................................"  // 45
+];
+var LEG={ '0':P.h0,'1':P.h1,'2':P.h2,'3':P.h3,'4':P.w2,'5':P.c1,
+  A:P.q0,B:P.q1,C:P.q2,D:P.q3,E:P.q4,F:P.p4,G:P.p5,r:P.p2,R:P.p3,
+  s:P.s1,S:P.s2,T:P.s3,z:P.s0, w:P.s4,W:P.s5,i:P.w1,k:P.k0,L:P.s6,K:P.k1 };
+function stamp(b,rows,leg,ox,oy){ ox=ox||0; oy=oy||0; for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(ox+x,oy+y,c); } } }
+function back(b){
+  // Mantel: Grundform, beleuchtete nahe Seite, Schulterlicht, kühler Rand rechts
+  b.poly([[0,64],[0,51],[2,48],[5,45],[9,43],[14,42],[20,41],[34,42],[39,43],[44,44.5],[49,47],[52,50],[54,54],[55.5,58],[56,64]],P.c1);
+  b.poly([[0,64],[0,52],[2,48],[5,45],[9,43],[14,42],[18,42],[19,48],[21,56],[22,64]],P.c2);
+  b.poly([[1,50],[3,47],[6,45],[10,43.5],[15,42.5],[17,42.5],[15,44],[10,45],[6,47],[3,50]],P.c3);
+  b.poly([[42,44.5],[47,46],[51,49],[53,52],[54.5,56],[53.5,56],[52,52.5],[50,50],[46,47.5],[42,46]],P.c2);
+  // ferner Kragenteil hinter dem Hals
+  b.poly([[33,41],[35,39],[38,38.5],[40,40],[41,44],[36,43]],P.c1); b.line(35,39,38,38,P.c2);
+}
+function front(b){
+  // Pullover im Mantelausschnitt, Rippenkragen
+  b.poly([[22,42],[35,42],[38,50],[39.5,64],[32,64],[28,52]],P.m1);
+  b.poly([[35,44],[37,46],[39.5,64],[36.5,64],[35.5,52]],P.m0);
+  b.poly([[21,41],[24,44],[28,45.5],[32,45.5],[35,44],[36,42],[36.5,44],[34.5,47],[29,47.5],[24,46.5],[21,43.5]],P.m2);
+  b.line(22,43,27,46,P.m3);
+  // naher Kragen und Revers
+  b.poly([[13,42.5],[15,39],[18,37.5],[21.5,37.5],[22,42],[14,43.5]],P.c2); b.line(15,39,21,38,P.c3);
+  b.poly([[14,42],[21,41],[23.5,44],[26,49],[29,55],[31,60],[32.5,64],[24,64],[22,57],[19,50],[15,46]],P.c2);
+  b.line(21,41,24,45,P.c3); b.line(24,45,28,53,P.c3); b.line(28,53,32,63,P.c3);
+  b.line(15,46,19,50,P.c0); b.line(19,51,22,58,P.c0); b.line(22,59,23,63,P.c0);
+  // ferner Revers
+  b.poly([[35,42],[38,42.5],[41,45],[42,50],[43,57],[44.5,64],[39.5,64],[38.5,57],[37.5,50],[36.5,45]],P.c1);
+  b.line(36,44,38,52,P.c2); b.line(38,53,39,63,P.c2); b.line(41,45,43,56,P.c0);
+}
+function paint(b,v){
+  back(b);
+  stamp(b,HEAD,LEG);
+  front(b);
+  M.outline(b,P.k1);
+}
+M.definePortrait('marko',{ paint:paint });
 })(M);
 
 /* ---- rooms/art/archive.js ---- */
@@ -8473,7 +8875,7 @@ var HS=[
  {id:'laptop',name:'Laptop',r:[172,62,26,18],st:R3.st(188,22,'B'),reach:'M',
    look:function(A){ if (A.G.phase==='pro_eve') return A.m('Der Text über Ivka Perić. Noch kein erster Satz. Der erste Satz ist immer der schwerste.'); return A.m('Eine italienische Bedienungsanleitung für eine Espressomaschine. Seite 31 von 48. „Die Maschine ist kein Spielzeug.“ Das glaube ich ihr.'); },
    use:async function(A){ if (A.G.phase==='pro_eve' && !A.flag('pro.article')) return writeArticle(A);
-     if (A.G.phase==='pro') return A.m('Erst der Auftrag, dann die Espressomaschine. Die Maschine wartet. Maschinen können das.');
+     if (A.G.phase==='pro') return A.m('Die Maschine wartet. Maschinen können das.');
      if (A.G.phase==='c3' && !A.flag('c3.call')) return A.m('Ich übersetze zwei Sätze und lese sie dreimal. Heute wird das nichts.');
      return A.m('Ich tippe einen Satz. Ich lösche ihn wieder. Das ist mein Beruf.'); },
    g:{look:'Er schreibt fremde Sätze in seine Sprache. Seine eigenen schreibt er nicht.'}},
@@ -8510,12 +8912,12 @@ var HS=[
  {id:'fridge',name:'Kühlschrank',r:R3.rect(72,96,54,98,56,74),st:R3.st(100,60,'L'),look:'Ein Kühlschrank, der seit 1987 brummt.',open:'Eine Zitrone, ein Glas Senf, zwei Bier. Ein Stillleben.',g:{look:'Er brummt. Für mich klingt das wie ein Lied ohne Worte.'}},
  {id:'bed',name:'Bett',r:r(236,262,86,98,12,52),st:R3.st(226,40,'R'),reach:'L',
    look:'Ungemacht. Ich schlafe schlecht, also lohnt sich das Machen nicht.',
-   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Erst der Text. Vesna will ihn bis morgen früh.'); return goToSleep(A); } return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
+   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); } return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
    g:{look:'Er schläft nicht. Er liegt nur.'}},
  {id:'coat',name:'Garderobe',r:[300,48,10,18],st:R3.st(226,62,'R'),look:'Ein Haken. Sonst hängt mein Mantel hier. Ich habe ihn an.',g:{look:'Ein Haken für einen Mantel.'}},
  {id:'door',name:'Wohnungstür',r:[278,30,30,90],st:R3.st(228,62,'R'),exit:{to:'map'},pri:2,
    canExit:async function(A){ var p=A.G.phase;
-     if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Erst der Anrufbeantworter. Er blinkt mich an wie ein schlechtes Gewissen.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht ohne Kaffee. Nicht bei diesem Kopf.'); return false; } return true; }
+     if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Ich bleibe noch. Hinter mir blinkt etwas rot.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht mit diesem Kopf. Der ist noch nicht wach.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
      if (p==='c3' && !A.flag('c3.call')){ await A.m('Das Telefon. Es klingelt schon wieder.'); return false; }
      return true; },
@@ -8640,9 +9042,11 @@ M.readPostcard=async function(A){ await A.doc({style:'postcard',title:'Supetar, 
 'use strict';
 var P=M.P;
 function lukaHere(GS){ return (GS.phase==='c2'||GS.phase==='c2_night') && !GS.flags['c2.done']; }
+function G2(GS){ return !!GS.flags['c2.release']; }
 function ninaHere(GS){ return GS.phase==='c2_night' && !GS.flags['c2.done']; }
 // ---------------------------------------------------------------- Luka (mit Mala)
 async function lukaMala(A,L){
+  if (A.flag('c2.release')) return L.say('Die Treppe hält nicht. Oder?');
   if (A.first('luMala')){ A.found('luka'); await L.say('Wer bist du? Hat dich Ninas Vater geschickt?'); await A.g('Nein. Ich bin … niemand.'); await L.say('Niemand. Gut. Niemand darf hier sein.');
     await L.say('Bist du auch auf der Flucht?'); await A.wait(800); await A.g('Nicht mehr.'); A.note('m_flight'); }
   await A.menuLoop(function(){ return [
@@ -8651,19 +9055,20 @@ async function lukaMala(A,L){
     {t:'Warum bist du hier oben?',once:'lm3',go:async function(A){ await L.say('Ich muss nur noch die Gitarre holen. Ich hab sie heute früh im Kühlraum versteckt, damit ihr Vater sie nicht findet. Er hätte sie zerschlagen.'); await L.say('Die Tür klemmt. Man muss sie mit Gefühl aufmachen.'); A.note('c2_guitar'); }},
     {t:'Wie sagt ihr euch Bescheid, wenn einer nicht kann?',once:'lm4',if:!!A.G.seen['dlg:lm1'],go:async function(A){ await L.say('Wir haben einen Briefkasten. Den lockeren Ziegel unten im Tor zur Rampe. Wenn einer nicht kann, legt er einen Zettel rein.'); await L.say('Das war ihre Idee. Sie sagt, Handys sind für Leute, die nichts zu sagen haben.'); A.note('c2_mailbox'); }},
     {t:'Da unten ist jemand, der mit dir reden will.',once:'lm5',go:async function(A){ await L.say('Der Typ im Mantel? Ist der Polizist?'); await A.g('Er ist mit mir.'); await L.say('…Okay. Wenn er mit dir ist.'); A.found('luka'); }},
-    {t:'Luka … sieh dir die Treppe an.',if:A.flag('c2.noteRead')&&!A.flag('c2.lukaKnows'),go:async function(A){ await realize(A,L); return 'bye'; }},
     {t:'Ich lasse dich.',bye:true,go:async function(A){ await L.say('Sag ihm, er soll leise sein. Wenn Ninas Vater hier herumschleicht …'); }}
   ]; }); }
 // ---------------------------------------------------------------- Luka (mit Marko, von unten)
 async function lukaMarko(A,L){
+  if (A.flag('c2.release')) return A.m('Er sieht mich nicht mehr. Er sieht nur noch sie.');
   if (A.flag('c2.lukaKnows')){ await L.say(A.cycle('luK',['Hast du es ihr gebracht?','Sie soll es hören. Bitte.','Ich bleibe hier, bis sie es gehört hat.'])); return; }
   if (A.first('luMarko')){ await L.say('He, du da unten. Mit dem Mantel. Wie spät ist es?'); await A.m('Spät.'); await L.say('Sehr witzig. Ich darf die Fähre nicht verpassen.'); }
   await A.menuLoop(function(){ return [
     {t:'Wie heißt du?',once:'lk1',go:async function(A){ await L.say('Luka. Und du?'); await A.m('Marko.'); await L.say('Bist du von hier, Marko? Du klingst nicht wie von hier.'); await A.m('Sarajevo.'); await L.say('Oh. Sorry.'); await A.m('Wofür?'); await L.say('Weiß nicht. Sagt man so.'); A.note('c2_luka',true); }},
-    {t:'Es ist nicht mehr 1999, Luka.',once:'lkWrong',go:async function(A){ await L.say('Sehr witzig. Und morgen ist Silvester, oder was?'); A.G.seen['dlg:lkWrong']=0; if (A.malaHere()) await A.g('So nicht. Er muss es selbst sehen.'); }},
+    {t:'Es ist nicht mehr 1999, Luka.',once:'lkWrong',go:async function(A){ await L.say('Sehr witzig. Und morgen ist Silvester, oder was?'); A.G.seen['dlg:lkWrong']=0; if (A.malaHere()) await A.g('Er hört es nicht. Noch nicht.'); }},
+    {t:'Siehst du nicht, wie kaputt hier alles ist?',once:'lk5',go:async function(A){ await L.say('Die Ledana war immer kaputt. Deshalb ist hier ja keiner. Deshalb treffen wir uns hier.'); }},
+    {t:'Warum sieht dich außer uns niemand?',once:'lk6',go:async function(A){ await L.say('Weil ich mich verstecke, Mann. Ninas Vater hat überall Leute.'); await L.say('Und die Typen, die hier manchmal durchlaufen, gucken einfach durch einen durch. Komische Stadt.'); }},
     {t:'Nina hat auf dich gewartet. Am Kiosk.',if:A.hasNote('c2_waited')||A.hasNote('c2_echo')||A.hasNote('c2_mira1'),once:'lk3',go:async function(A){ await L.say('Was? Nein. Die Fähre geht doch erst um neun. Es ist … es ist doch noch hell.'); await L.say('Oder?'); }},
     {t:'Ich habe euren Briefkasten aufgemacht.',if:A.has('note_n')&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
-    {t:'Luka … sieh dir die Treppe an.',if:A.flag('c2.noteRead')&&!A.flag('c2.lukaKnows'),go:async function(A){ await realize(A,L); return 'bye'; }},
     A.askOpt({ c2_guitar:'Im Kühlraum, ja. Die Tür klemmt. Mit Gefühl.', c2_meet:'Halb neun. Kiosk. Sie hat ein rotes Kleid an, du kannst sie nicht verfehlen.',
       c2_mailbox:'Der Ziegel. Wenn sie nicht kann, legt sie mir was rein. Sie kann. Heute kann sie.', c2_died:async function(A){ await L.say('Was? Wer?'); await L.say('Red keinen Mist, Mann.'); },
       c2_stairs:'Die Treppe? Ich bin da hundertmal rauf und runter. Die hält.', c2_unused:async function(A){ await L.say('Ihr Ticket? Die hat sie doch selbst. Ich habe zwei gekauft, heute früh.'); },
@@ -8673,28 +9078,37 @@ async function lukaMarko(A,L){
 async function readNoteToLuka(A,L){ A.setFlag('c2.noteRead'); await A.m('Da lag ein Zettel. Von Nina. Ich lese ihn dir vor.'); await A.anim('read');
   await A.m('„L., ich habe am Kiosk bis zum letzten Schiff gewartet. Ich bin nicht wütend. Wenn du es dir anders überlegt hast, sag es mir ins Gesicht. Morgen Abend bin ich wieder da. Immer. N.“');
   await A.wait(900); await L.say('Bis zum letzten Schiff? Aber … das ist doch heute. Ich gehe doch gleich.'); await L.say('Das muss ein alter Zettel sein. Von einem anderen Mal.');
-  if (A.malaHere()) await A.g('Er muss es selbst sehen. Die Treppe.'); }
-async function realize(A,L){ A.music('ghost');
-  if (A.malaHere()) await A.g('Luka. Sieh dir die Treppe an.'); else await A.m('Luka. Sieh dir die Treppe an.');
-  await A.wait(800); await L.say('Die Treppe? Die …'); await A.wait(1000);
-  await A.memory({title:'Nachhall – die Treppe',draw:M.mem.fall,tint:'ghost',lines:['Abend. Die Sonne steht schon tief. Ein Junge rennt die Treppe hinauf, zwei Stufen auf einmal.','Er hat es eilig. Er lacht. Er denkt an halb neun.','Die siebte Stufe gibt nach.','Dann ist es dunkel. Lange dunkel.']});
-  await L.say('Ich bin gefallen.'); await A.wait(900); await L.say('Ich bin nie angekommen.'); await L.say('Sie dachte, ich komme nicht. Sie dachte, ich hätte es mir anders überlegt.');
-  await L.say('Sag ihr, dass ich nicht weggelaufen bin. Bitte.'); await A.m('Sie wird mir nicht glauben, Luka. Ich bin ein Fremder.');
-  await L.say('Die Kassette. Im Gitarrenkoffer. Ich hab ihr ein Lied aufgenommen. Das wollte ich ihr auf der Fähre vorspielen. Sie weiß nicht, dass es das gibt.');
-  A.note('c2_tape'); A.setFlag('c2.lukaKnows'); A.music('case2'); A.save(); }
+  await A.wait(1100); await L.say('…'); await L.say('Wenn sie denkt, ich hätte sie sitzen lassen …');
+  await L.say('Hör zu. Wenn du sie siehst, bevor ich unten bin: Sag ihr, ich hab ein Lied für sie. Die Kassette ist im Koffer. Sie soll es hören. Dann weiß sie es.');
+  A.note('c2_tape'); A.setFlag('c2.lukaKnows'); A.save(); }
 // ---------------------------------------------------------------- Finale an der Rampe (Nacht)
 async function finale(A){ var N=A.npc('nina'), L=A.npc('luka'); A.setFlag('c2.finale'); A.take('radioT'); await A.animM('give'); await N.say('Danke.'); await A.wait(800);
   A.music('silence'); A.sfx('cassette'); await A.wait(700); A.music('tape');
   await A.voice('Luka (auf Band): „Nina. Wenn du das hörst, sind wir schon auf dem Schiff. Oder du hast mich sitzen lassen.“',M.CAST_COLORS.luka);
   await A.voice('„…Nein. Das machst du nicht. Okay. Das ist für dich. Es hat noch keinen Namen. Du darfst ihm einen geben.“',M.CAST_COLORS.luka);
-  await A.wait(2500); var st=M.apos('ledana','nina',[270,124,'R']);
-  if (L.actor){ L.idle(null); L.set('speed',110); await L.walk(st[0]-30,st[1]+2); await L.face('R'); }
-  await A.wait(3000); A.S.ferryGo=A.gt; A.sfx('horn'); await A.wait(1500);
-  await L.say('Sie ist geblieben.'); if (A.malaHere()) await A.g('Sie hat gewartet. Jetzt musst du nicht mehr warten.');
-  await L.say('Sag ihr …'); await A.wait(900); await L.say('Nein. Sie weiß es jetzt.'); await A.wait(1200);
-  if (L.actor){ var w=L.walk(st[0]+40,st[1]-2); await A.wait(1600); L.actor.fadeOut=A.gt; await w; }
-  await A.wait(1600); L.hide(); A.setFlag('c2.done');
-  await A.wait(4000); A.music('silence');
+  await A.wait(2200); if (L.actor){ L.idle(null); await L.face('R'); }
+  await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
+  await L.say('Warum ist sie … Sie ist älter. Sie sieht aus wie ihre Mutter.'); await A.wait(900); await L.say('Wie lange …?');
+  await A.memory({title:'Nachhall – die Treppe',draw:M.mem.fall,tint:'ghost',lines:['Abend. Die Sonne steht schon tief. Ein Junge rennt die Treppe hinauf, zwei Stufen auf einmal.','Er hat es eilig. Er lacht. Er denkt an halb neun.','Die siebte Stufe gibt nach.','Dann ist es dunkel. Lange dunkel.']});
+  await L.say('Ich bin gefallen.'); await A.wait(900); await L.say('Ich bin nie unten angekommen.'); await L.say('Sie hat gewartet. Und ich war die ganze Zeit hier oben.');
+  await A.wait(1500); await L.say('Zwölf Jahre halb neun.'); await A.wait(900); await L.say('Ich muss nicht mehr auf halb neun warten.');
+  A.setFlag('c2.release'); if (L.actor) L.idle('sit'); A.sfx('shimmer'); A.music('ghost'); await A.wait(1200);
+  if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});
+  await A.switchTo('mala'); await A.wait(400);
+  await A.g('Luka. Ich bringe dich hinunter.'); await L.say('Die Treppe hält nicht.'); await A.g('Für uns schon.'); A.save(); }
+// Mala bringt Luka hinunter zur Rampe und hinüber (spielbar: als Mala „Hinüberbringen“)
+async function crossLuka(A){ var N=A.npc('nina'), L=A.npc('luka'); A.G.flags['mala.lock']=true;
+  await L.say('Wohin?'); await A.g('Zum Wasser. Da, wo die Fähre ablegt.');
+  await A.fade(8,800); var st=M.apos('ledana','nina',[270,124,'R']);
+  if (L.actor){ L.place(st[0]-26,st[1]+2,'R'); L.idle(null); } A.placeG(st[0]-46,st[1]+4,'R');
+  await A.narrate('Sie nimmt seine Hand. Sie gehen die Treppe hinunter, die es nicht mehr gibt.'); await A.fade(0,900);
+  await A.wait(1200); A.S.ferryGo=A.gt; A.sfx('horn'); await A.wait(1600);
+  await A.crossOpen(st[0]+30,st[1]+2,{w:18,h:78});
+  await L.say('Nina.'); await A.wait(1300); await N.say('…'); await N.say('Es ist kalt geworden.'); await A.wait(1100);
+  await L.say('Sie weiß es jetzt.'); await A.wait(800);
+  if (L.actor){ L.set('speed',70); var w=L.walk(st[0]+28,st[1]+1); await A.wait(1700); L.actor.fadeOut=A.gt; A.sfx('shimmer'); await w; }
+  await A.wait(1400); L.hide(); A.setFlag('c2.done'); await A.crossClose(); await A.wait(900);
+  await A.switchTo('marko'); A.G.flags['mala.lock']=false; A.music('silence'); await A.wait(2400);
   await N.say('Zwölf Jahre habe ich gedacht, er ist einfach nicht gekommen.'); await A.m('Er war auf dem Weg.'); await A.wait(1400);
   await N.say('Ich glaube, jetzt kann ich die Bilder fertig malen.'); await N.say('Das Radio …'); await A.m('Es gehörte einer alten Frau, die siebenundzwanzig Jahre auf ein Boot gewartet hat. Behalten Sie die Kassette.');
   await N.say('…Danke, Marko.'); await N.face('L'); var nw=N.walk(20,st[1]+6); await A.wait(2200); N.hide();
@@ -8708,7 +9122,9 @@ var HS=[
    st:function(){ return M.stand('ledana','stairs'); }, gst:function(S,GS){ var p=M.apos('ledana','luka',[92,70,'R']); return [p[0]+18,p[1],'L']; },
    talk:function(A){ return lukaMarko(A,A.npc('luka')); },
    look:'Ein junger Mann oben auf der Galerie, auf einer alten Kiste, eine Gitarre auf dem Schoß. Er sieht zum Hafen hinaus, als zähle er die Minuten. Er ist durchscheinend.',
-   g:{look:'Er ist zwanzig. Er wird immer zwanzig sein.',talk:function(A){ return lukaMala(A,A.npc('luka')); },sense:'Er ist voller Vorfreude. Seit zwölf Jahren. Das ist das Traurigste, was ich je gespürt habe.'}},
+   g:{look:async function(A){ if (A.flag('c2.release')) return A.g('Die Leine ist los. Er sitzt nur noch da, ohne Gitarre.'); await A.g('Er ist zwanzig. Er wird immer zwanzig sein.'); await A.g('Seine Leine läuft vom Geländer hinunter, quer durch die Halle, bis zur Kühlraumtür. Dahin, wo er sein Versprechen versteckt hat.'); A.note('m_leash',true); },
+     talk:function(A){ return lukaMala(A,A.npc('luka')); },sense:'Er ist voller Vorfreude. Seit zwölf Jahren. Das ist das Traurigste, was ich je gespürt habe.',
+     cross:function(A){ return crossLuka(A); },crossIf:function(S,G){ return !!G.flags['c2.release'] && !G.flags['c2.done']; }}},
  {id:'stairs',name:'Eingestürzte Treppe',look:'Eine Holztreppe zur Galerie. Die unteren Stufen fehlen, die mittleren hängen schief. Die siebte ist gebrochen.',use:'Da gehe ich nicht hinauf. Dinko hatte recht.',
    g:{look:'Für mich ist sie nur ein Weg nach oben.',sense:async function(A){ await A.g('Hier ist jemand gefallen. Der Nachhall ist laut. Ich will ihn nicht allein ansehen.'); }}},
  {id:'gallery',name:'Galerie',look:'Die Galerie, wo früher das Büro war. Oben ein Geländer, ein zerbrochenes Fenster, Wind.',g:{look:'Von hier oben sieht man den ganzen Hafen. Und die Fähre gegenüber.'}},
@@ -8719,15 +9135,15 @@ var HS=[
  {id:'puddle',name:'Pfütze',look:'Eine Pfütze, in der sich das Oberlicht spiegelt.',g:{look:'Ich spiegle mich nicht. Ich sehe trotzdem hin.'}},
  {id:'pallets',name:'Paletten',look:'Kaputte Paletten und eine Matratze, auf der Kinder geraucht haben.',g:{look:'Hier haben Kinder Mut gesammelt.'}},
  {id:'colddoor',name:'Kühlraumtür',look:function(A){ return A.m(A.S.coldOpen?'Die Kühlraumtür, einen Spalt offen. Dahinter ist es dunkel.':'Eine schwere Kühlraumtür mit Isolierung und einem Hebel. Rost frisst sich durch den Lack.'); },
-   open:async function(A){ if (A.S.coldOpen) return A.goto('coldroom'); await A.anim('pull'); A.sfx('crank'); A.setFlag('c2.coldJammed'); await A.m('Der Hebel bewegt sich keinen Millimeter. „Mit Gefühl“ reicht hier nicht. Hier braucht es ein Brecheisen.'); },
+   open:async function(A){ if (A.S.coldOpen) return A.goto('coldroom'); await A.anim('pull'); A.sfx('crank'); A.setFlag('c2.coldJammed'); await A.m('Der Hebel bewegt sich keinen Millimeter. „Mit Gefühl“ reicht hier nicht.'); },
    with:{ crowbar:async function(A){ if (A.S.coldOpen) return A.m('Sie ist schon offen.'); await A.anim('push'); A.sfx('crowbar'); A.set('coldOpen',true); A.setFlag('c2.coldOpen'); await A.m('Ein Kreischen, das bis nach Brač zu hören sein muss. Dann gibt die Tür nach.'); } },
    exit:function(S){ return S.coldOpen?{to:'coldroom'}:null; },
-   gexit:{to:'coldroom'},g:{look:'Kalt. Für Lebende. Ich gehe hinein.'}},
+   gexit:{to:'coldroom'},g:{look:'Kalt. Für Lebende.'}},
  {id:'gate',name:'Ladetor',look:'Das große Ladetor, offen zum Wasser. Hier fuhren früher die Wagen mit dem Eis hinaus zur Rampe.',g:{look:'Draußen ist der Hafen. Drüben das Fährterminal.'}},
  {id:'ramp',name:'Rampe',look:'Die Rampe hinunter zum Wasser. Gegenüber, quer über den Hafen, liegt das Fährterminal.',g:{look:'Von hier sieht man den Kiosk. Ganz klein.'}},
  {id:'brick',name:'Lockerer Ziegel',vis:function(S){ return !S.brickOut; },look:'Ein Ziegel im Torrahmen, der ein wenig vorsteht. Ein bisschen zu ordentlich für eine Ruine.',
    take:async function(A){ await A.reach(); await A.m('Er sitzt fest. Mit den Fingern bekomme ich ihn nicht heraus.'); },
-   with:{ crowbar:async function(A){ await A.m('Damit breche ich die halbe Wand heraus. Und alles, was dahinter steckt. Ich brauche etwas Dünnes.'); A.note('c2_thin'); },
+   with:{ crowbar:async function(A){ await A.m('Damit breche ich die halbe Wand heraus. Und alles, was dahinter steckt.'); A.note('c2_thin'); },
      spatula:async function(A){ await A.reach(function(){ A.sfx('stone'); A.set('brickOut',true); }); A.sfx('paper'); A.give('note_n'); A.take('spatula'); A.setFlag('c2.brickDone'); await A.m('Der Spachtel gleitet in die Fuge. Der Ziegel gibt nach. Dahinter: ein gefalteter Zettel, zwölf Jahre trocken geblieben.'); await M.readNinasNote(A); } },
    g:{look:async function(A){ await A.g('Hinter dem Ziegel ist ein Hohlraum. Darin steckt ein gefaltetes Papier.'); A.note('c2_paper'); },sense:async function(A){ await A.g('Ein Zettel. Jemand hat ihn am Morgen hineingeschoben, mit nassen Augen und trockenen Händen.'); A.note('c2_paper'); }}},
  {id:'harbor_view',name:'Blick über den Hafen',look:function(A){ return A.m(A.G.tod==='night'?'Gegenüber liegt die Nachtfähre nach Ancona, hell erleuchtet wie ein Haus, das gleich abfährt.':'Über den Hafen hinweg das Fährterminal, die Busse, der Kiosk. Von hier sieht man alles und hört nichts.'); },g:{look:'Er hat zwölf Jahre lang da hinübergesehen.'}},
@@ -8738,11 +9154,11 @@ var HS=[
    g:{look:'Sie sieht ihn nicht. Aber sie sieht zur richtigen Stelle.'}}
 ];
 M.room('ledana',{ name:'Die alte Ledana', scape:'ledana', music:function(GS){ return GS.phase==='c2_night'?'silence':'case2'; },
-  actors:function(S,GS){ var L=[]; if (lukaHere(GS)){ var p=M.apos('ledana','luka',[92,70,'R']); L.push({id:'luka',ch:'luka',x:p[0],y:p[1],f:p[2]||'R',name:'Luka',ghost:true,idle:'guitarSit',talk:'guitarTalk',speechY:40}); }
+  actors:function(S,GS){ var L=[]; if (lukaHere(GS)){ var p=M.apos('ledana','luka',[92,70,'R']); L.push({id:'luka',ch:'luka',x:p[0],y:p[1],f:p[2]||'R',name:'Luka',ghost:true,idle:G2(GS)?'sit':'guitarSit',talk:'guitarTalk',speechY:40,anchor:function(S,G){ if (G.flags['c2.release']) return null; var d=M.spot('ledana','colddoor'); return [d[0]+(d[2]>>1),d[1]+(d[3]>>1)]; }}); }
     if (ninaHere(GS)){ var n=M.apos('ledana','nina',[270,124,'R']); L.push({id:'nina',ch:'nina',x:n[0],y:n[1],f:n[2]||'R',name:'Nina'}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
-    if (p==='c2' && A.first('ledIn')){ await A.m('Die alte Ledana. Es riecht nach Rost, Tauben und nassem Beton. Der Wind pfeift durch die Oberlichter.'); A.headache(2500); if (A.malaHere()) await A.g('Er ist oben. Auf der Galerie. Du kannst ihn noch nicht sehen.'); }
+    if (p==='c2' && A.first('ledIn')){ await A.m('Die alte Ledana. Es riecht nach Rost, Tauben und nassem Beton. Der Wind pfeift durch die Oberlichter.'); A.headache(2500); if (A.malaHere()) await A.g('Er ist hier. Oben.'); }
     if (p==='c2_night' && A.first('ledNight')){ await A.narrate('Am Abend. Gegenüber liegt die Nachtfähre nach Ancona, hell erleuchtet.'); await A.npc('nina').say('Ich war seit zwölf Jahren nicht mehr hier.'); await A.m('Ich weiß.'); } }
 });
 M.defineScape('ledana',function(o){ var n=o.tod==='night'; return { beds:n?['seaFar','bura']:['bura','windHigh','room'], step:'stone', ev:n?[['horn',40,90,0.4,0.5,1],['lap',6,12,0.8,0.4,1],['drip',4,9,0.6,-0.8,0.2]]:[['coo',5,12,1,-0.8,0.4],['flutter',12,26,0.8,-0.6,0.6],['drip',3,8,0.7,-0.8,0.2],['creak',10,22,0.7,-0.8,-0.2],['gust',8,18,0.8,-1,1]] }; });
@@ -8821,7 +9237,6 @@ async function confession(A,D){ A.music('ghost'); await A.m('„Halt die Tasche.
   await D.say('Wenn du was brauchst … ich bin hier.'); D.idle('mend'); A.setFlag('c1.dinkoTold');
   await A.fade(6,900); A.phase('c1_night'); A.rebuild(); await A.fade(0,900); A.music('case1');
   await A.narrate('Es ist dunkel geworden. Die Bura kommt von den Bergen herunter.');
-  if (A.malaHere()){ await A.g('Der Brief. Du kannst ihn nicht ganz lesen, oder?'); await A.m('Das Salz hat die Hälfte gefressen.'); await A.g('Zeig ihn mir.'); }
   A.save(); }
 async function dinkoAfter(A,D){ await D.say(A.cycle('diAf',['Geh. Sie wartet.','Hast du es ihr gebracht?','…']));
   await A.menuLoop(function(){ return [
@@ -8878,8 +9293,8 @@ M.room('matejuska',{ name:'Matejuška', scape:'matejuska',
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='c1' && A.first('matC1')){ await A.m('Die Matejuška. Der kleine Hafen der Fischer, gleich neben der Riva und doch eine andere Welt.'); }
-    if (p==='c2' && A.first('matC2')){ await A.m('Bura. Die Boote zerren an den Leinen.'); if (A.malaHere()) await A.g('Er ist noch da. In der Eisfabrik.'); }
-    if (from==='shed' && A.isMala() && A.hasNote('c1_words') && A.first('!backFromShed')) await A.g('Ich weiß jetzt, was er nie gesagt hat. Marko muss es ihm sagen.'); }
+    if (p==='c2' && A.first('matC2')){ await A.m('Bura. Die Boote zerren an den Leinen.'); if (A.malaHere()) await A.g('Er ist nicht weit. Ich höre ihn.'); }
+    if (from==='shed' && A.isMala() && A.hasNote('c1_words') && A.first('!backFromShed')) await A.g('Ich weiß jetzt, was er nie gesagt hat.'); }
 });
 M.defineScape('matejuska',function(o){ var tod=o.tod, w=M.scn.weather(o.GS); return { beds:w==='bura'?['bura','sea','windHigh']:['sea','seaFar'], step:'stone',
   ev:[['rope',5,12,0.9,-0.9,0.4],['lap',4,9,1,-0.8,0.5],['gull',8,18,tod==='night'?0.2:0.8,-1,1],['boat',25,55,0.5,-1,0.2],['horn',35,70,0.5,0.2,0.8],['creak',15,35,0.5,0.4,1]] }; });
@@ -8940,7 +9355,7 @@ async function askDay(A,Ml){ if (A.flag('c1.searched')) return Ml.say('Der Band 
   var m=A.npc('mladen'); A.sfx('door'); m.hide(); await A.wait(2200); A.sfx('door'); m.show(); A.setFlag('c1.searched');
   await Ml.say('Der Band 1984 ist nicht da. Irgendwer hat das Regal durcheinandergebracht. Ich suche doch nicht fünfzig Jahre durch.'); A.note('c1_nobook');
   await Ml.say('Da drin ist es immer kalt. Ich gehe nicht gern hinein.');
-  if (A.malaHere()) await A.g('Ich gehe nachsehen. Mich stört die Kälte nicht.'); }
+  if (A.malaHere()) await A.g('Da drin ist es nicht kalt. Da drin ist es still.'); }
 async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.'); await Ml.say('Bei achtundvierzig? Warum sollte …'); await Ml.say('Na gut. Weil Sie es sind.');
   var m=A.npc('mladen'); A.sfx('door'); m.hide(); await A.wait(2000); A.sfx('door'); m.show(); A.sfx('paper');
   await Ml.say('Tatsächlich. Irgendein Praktikant mit einem Zahlendreher. Neunzehnvierundachtzig bei achtundvierzig.'); await Ml.say('Hier. Zweiundzwanzigster Dezember.'); A.setFlag('c1.logRead');
@@ -8979,7 +9394,7 @@ M.defineScape('office',{beds:['room','neon','seaFar'],step:'tile',ev:[['radio',8
 var AH=[
  {id:'door',name:'Tür',gexit:{to:'office'},look:'Die Tür.',g:{look:'Zurück zu ihm.'}},
  {id:'shelf_40s',name:'Regal: 1946–1959',g:{look:'Neunzehnhundertsechsundvierzig, siebenundvierzig, achtundvierzig … Die Jahre nach dem Krieg sind dünn. Es fuhr nicht viel.',sense:'Hier sind die Ordner kalt wie Stein. Niemand hat sie je wieder angefasst.'}},
- {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ await A.g('Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.'); A.setFlag('c1.found1984'); A.note('c1_1948'); await A.g('Ich kann ihn nicht herausziehen. Aber ich kann es Marko sagen.'); },
+ {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ await A.g('Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.'); A.setFlag('c1.found1984'); A.note('c1_1948'); await A.g('Ich kann ihn nicht herausziehen.'); },
    sense:async function(A){ await A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.'); if (!A.hasNote('c1_1948')){ A.setFlag('c1.found1984'); A.note('c1_1948'); } }}},
  {id:'shelf_80s',name:'Regal: 1980–1989',g:{look:'Die Achtziger. Dicke Ordner. Damals fuhren viele.'}},
  {id:'gap_1984',name:'Lücke',g:{look:'Zwischen 1983 und 1985 ist eine Lücke. So breit wie ein Jahr.'}},
@@ -9078,17 +9493,21 @@ var JOURNAL=['12.6.1960 – Nedjelja. Ples u salonu poslije ponoći. D. i ja. �
 // ---------------------------------------------------------------- Bruno
 async function talkBruno(A){ var B=A.npc('bruno');
   if (A.isMala()) return brunoMala(A,B);
+  if (A.flag('c3.release')) return A.m('Er sieht mich nicht mehr an. Er wartet auf Mala.');
   if (A.first('brHello')){ await B.say('Buona sera, signore … Dobra večer … Sie wünschen?'); A.note('c3_bruno'); }
   else await B.say(['Signore … ?','Dobra … Sie … wünschen …','Danica … ne … Ljerka …','Ljerka. Sada. Molim.'][Math.min(3,lvl(A))]);
   await A.menuLoop(function(){ return [
     {t:'Wer sind Sie?',once:'br1',go:async function(A){ await B.say('Lalić … portir … trideset dvije … godine … Dienst … immer Dienst.'); }},
+    {t:'Gospodine Lalić, Ihr Dienst ist vorbei.',once:'br4',go:async function(A){ await B.say('Ne … ne … Dienst … noć … gosti … dolaze …'); await A.m('„Nein. Dienst. Nacht. Die Gäste kommen.“'); if (A.malaHere()) await A.g('Er hört es nicht. Noch nicht.'); }},
+    {t:'Das Hotel wird am Montag verkauft.',once:'br5',go:async function(A){ await B.say('Palma … uvijek … otvoreno … uvijek.'); await A.m('„Das Palma ist immer offen. Immer.“'); }},
+    {t:'Welches Jahr ist heute?',once:'br6',go:async function(A){ await B.say('Prosinac … devedeset tri … hladno … izbjeglice … gore …'); await A.m('„Dezember dreiundneunzig. Kalt. Flüchtlinge oben.“ Für ihn ist der Krieg noch nicht vorbei.'); }},
     {t:'Haben Sie den Schlüssel für den Salon?',once:'br2',go:async function(A){ await B.say('Ključ … ne … ne ovdje … trinaest … Mantel … Haken …'); A.note('c3_f13'); await A.m('Dreizehn. Ein Mantel. Ein Haken.'); }},
     {t:'Was ist oben im Salon?',once:'br3',go:async function(A){ await B.say('Salon … zatvoreno … nema glazbe … nema … ručka …'); A.note('c3_fcrank'); await A.m('„Keine Musik … Kurbel.“'); }},
     {t:'Was wollen Sie sagen, Gospodine Lalić?',go:async function(A){ var l=lvl(A);
         if (l===0){ await B.say('Ljerka … ona … pismo … ja … ja sam …'); await B.anim('porterTalk'); await B.say('… ne … ne …'); A.note('c3_fletter'); await A.m('Ljerka … Brief … „ich habe …“ Er findet die Wörter nicht.'); }
         else if (l===1){ await B.say('Danica … ples … nedjelja … Ljerka … mala … pismo … Zagreb …'); }
         else if (l===2){ await B.say('Ljerka … Zagreb … pismo … ja … ja sam ga … sakrio … ne … ne mogu …'); }
-        else { await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Kroatisch, Italienisch, Deutsch. Alles durcheinander. Aber es ist ein Satz. Ich muss ihn nur übersetzen.'); } }},
+        else { await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Kroatisch, Italienisch, Deutsch. Alles durcheinander. Aber es ist ein Satz.'); } }},
     {t:'Ich versuche, Ihren Satz zu übersetzen.',if:lvl(A)>=3&&!A.flag('c3.translated'),go:function(A){ return translate(A,B); }},
     A.askOpt({ c3_dance:async function(A){ await B.say('Nedjelja … ples … Danica …'); await B.anim('porterTalk'); },
       c3_zagreb:async function(A){ await B.say('Ne … ne još … ne još …'); A.shake(250); },
@@ -9099,6 +9518,7 @@ async function talkBruno(A){ var B=A.npc('bruno');
     {t:'Laku noć, Gospodine Lalić.',bye:true,go:async function(A){ await B.say('Laku noć … signore … gute Nacht …'); }}
   ]; }); }
 async function brunoMala(A,B){
+  if (A.flag('c3.release')) return B.say('… vrata …');
   if (A.first('brMala')){ await B.say('Mala!'); await B.anim('porterTalk'); await B.say('Trideset i jedan … vratila si se. Čaj?'); await A.wait(1100); await A.g('Du verwechselst mich.'); A.note('m_31'); A.note('c3_bruno',true); await B.say('… mala …'); }
   await A.menuLoop(function(){ return [
     {t:'Was siehst du, Bruno? Zeig es mir.',go:async function(A){ var g=[];
@@ -9109,7 +9529,6 @@ async function brunoMala(A,B){
         if (!g.length){ await A.g('Er zeigt mir immer wieder dasselbe Mädchen am Klavier. Und eine Treppe.'); return; }
         A.sfx('shimmer'); await A.g(g[0][1]); A.note(g[0][0]); }},
     {t:'Woher kennst du mich?',once:'bm2',go:async function(A){ await B.say('Trideset i jedan … zima … stube … čaj … kutija …'); await A.wait(800); await A.g('Hör auf.'); await A.g('Er ist alt, und ihm fehlen die Wörter. Er verwechselt Gesichter.'); }},
-    {t:'Er hört dich. Marko. Sag es ihm, nicht mir.',once:'bm3',if:lvl(A)>=3,go:async function(A){ await B.say('… Marko … sviraj …'); }},
     {t:'(Gehen.)',bye:true}
   ]; }); }
 async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übersetzen',hint:'Bruno: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.“ Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',
@@ -9118,11 +9537,11 @@ async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übers
       for (var i=0;i<sel.length;i++) if (sel[i]!==0) return {ok:false,bad:i,msg:msgs[i]}; return {ok:true}; }});
   if (!res) return;
   await A.m('„Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“'); await A.wait(900);
-  await B.say('Da. Tako.'); await A.wait(600); await B.say('Sada. Molim.'); A.note('c3_message'); A.setFlag('c3.translated'); await A.m('Jetzt. Bitte. Er will, dass ich sie wecke.'); A.save(); }
+  await B.say('Da. Tako.'); await A.wait(600); await B.say('Sada. Molim.'); A.note('c3_message'); A.setFlag('c3.translated'); await A.m('„Jetzt. Bitte.“'); A.save(); }
 async function showToBruno(A,item){ var B=A.npc('bruno');
   if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); setLvl(A,1); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.'); return; }
   if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); setLvl(A,Math.max(2,lvl(A))); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“'); return; }
-  if (item==='envelope'){ await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen. Ich muss ihn nur richtig zusammensetzen.'); return; }
+  if (item==='envelope'){ await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
   if (item==='keyring') return B.say('Ključevi … moji … salon …');
   if (item==='crank') return B.say('Ručka … glazba … nedjelja …');
   if (item==='record') return B.say('„Večer na Rivi“ … Danica …');
@@ -9142,7 +9561,7 @@ async function wakeLjerka(A){ await A.anim('knock'); A.sfx('knock'); await A.wai
       await L.say('Ich bin angenommen worden?'); await A.wait(1000); await L.say('Ich dachte … sie hätten mich nicht gewollt. Ich habe nie nachgefragt. Ich war zwanzig, und meine Mutter war gerade gestorben.');
       await L.say('Woher haben Sie das?'); await A.m('Aus dem Klavierhocker im Salon.'); await A.wait(1300); await L.say('Sechsunddreißig Jahre.'); }
     else if (c==='letter'){ done.letter=1; await A.animM('give'); A.take('brunoletter'); A.sfx('paper'); await L.say('Seine Schrift.'); await L.say('„Ljerka, ja sam …“ Ich was?'); await L.say('Er hat nie einen Satz zu Ende gebracht. Nicht mit mir.'); }
-    else { if (!done.env){ await A.m('Erst muss sie sehen, worum es geht.'); continue; } done.msg=1; await A.m('Ihr Vater wollte Ihnen etwas sagen. Am Ende konnte er es nicht mehr. Ich glaube, es war das hier:');
+    else { if (!done.env){ await A.m('Sie würde nicht verstehen, wovon ich rede.'); continue; } done.msg=1; await A.m('Ihr Vater wollte Ihnen etwas sagen. Am Ende konnte er es nicht mehr. Ich glaube, es war das hier:');
       await A.m('„Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“');
       await L.say('Woher wollen Sie wissen, was er sagen wollte?');
       var c2=await A.choose([{t:'Ich bin Übersetzer. Ich habe gelesen, was da steht. Und was nicht.',id:'tr'},{t:'Er hat es mir gesagt.',id:'he'}],{title:'Ljerka'});
@@ -9150,12 +9569,30 @@ async function wakeLjerka(A){ await A.anim('knock'); A.sfx('knock'); await A.wai
       await L.say('Er hat es gewusst. Die ganzen Jahre. Jeden Morgen, wenn ich den Frühstücksraum aufgeschlossen habe.'); } }
   await A.wait(1500); await L.say('Kommen Sie.'); A.setFlag('c3.ljerkaUp');
   await A.goto('salon',{noEnter:true}); return salonFinale(A); }
-async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'), S=A.R('salon'); A.set('sheetOff',true); A.rebuild();
+async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.set('sheetOff',true); A.rebuild();
   var p=M.apos('salon','ljerkaNight',[160,120,'R']); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
   await A.narrate('Ljerka setzt sich an den Flügel. Lange sitzt sie nur da.'); await A.wait(1200);
-  A.music('vecerPiano'); await A.wait(9000); if (B.actor){ await B.face('R'); } await A.wait(9000);
-  if (A.malaHere()){ await A.g('Er hört zu.'); }
-  await A.wait(7000); if (B.actor){ await B.anim('bow'); B.actor.fadeOut=A.gt; } await A.wait(1600); A.setFlag('c3.gone'); B.hide();
+  A.music('vecerPiano'); await A.wait(7000); if (B.actor){ await B.face('R'); } await A.wait(4500);
+  await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
+  await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
+  await A.wait(1600); await B.say('Koliko … godina …?'); await A.wait(1800);
+  if (B.actor) await B.anim('look'); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
+  await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
+  await A.narrate('Er nimmt die Mütze ab und hält sie vor die Brust, wie vor einem Gast.'); A.setFlag('c3.release'); A.sfx('shimmer'); await A.wait(1500);
+  if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});
+  await A.switchTo('mala'); await A.wait(400);
+  await A.g('Bruno.'); await B.say('Mala. Iz trideset jedan.'); await A.g('Ich bringe dich hinaus.'); await B.say('Ne … ja … ja otvaram … vrata. Uvijek.');
+  await A.g('Gut. Du öffnest die Tür.'); A.save(); }
+// Mala bringt Bruno hinüber (spielbar: als Mala „Hinüberbringen“)
+async function crossBruno(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.G.flags['mala.lock']=true;
+  var d=M.spot('salon','door'), dx=d[0]+(d[2]>>1), dy=B.actor?Math.round(B.actor.y):118;
+  await A.crossOpen(dx,dy+2,{w:16,h:72});
+  if (B.actor){ B.set('speed',60); await B.walk(dx+10,dy); await B.face('L'); await B.anim('bow'); }
+  await B.say('Izvolite.'); await A.wait(900); await A.g('Nach dir, Bruno.'); await A.wait(800);
+  await B.say('Hvala … mala.'); await A.wait(900); await B.say('Kommst … du … mit?'); await A.wait(1500); await A.g('Noch nicht.');
+  if (B.actor){ var w=B.walk(dx,dy); await A.wait(700); B.actor.fadeOut=A.gt; A.sfx('shimmer'); await w; }
+  await A.wait(1500); A.setFlag('c3.gone'); B.hide(); await A.crossClose(); await A.wait(900);
+  await A.switchTo('marko'); A.G.flags['mala.lock']=false;
   await A.wait(2000); A.set('dawn',true); A.rebuild(); await A.wait(900);
   await L.say('Ich habe seit sechsunddreißig Jahren nicht gespielt.'); await A.m('Es klang wie jemand, der lange gewartet hat.');
   await L.say('Ich weiß nicht, ob ich verkaufe. Vielleicht. Aber nicht am Montag.'); await L.say('Ihr Honorar. Nehmen Sie es, bevor ich es mir anders überlege.'); A.give('fee'); A.setFlag('c3.done');
@@ -9171,7 +9608,7 @@ var HS=[
  {id:'ljerkaNight',npc:'ljerkaNight',name:'Ljerka',hgt:46,vis:function(S,GS){ return !!GS.flags['c3.woke'] && !GS.flags['c3.ljerkaUp']; },look:'Ljerka im Morgenmantel, die Brille in der Hand.'},
  {id:'bruno',npc:'bruno',name:'Bruno Lalić',hgt:40,noTurn:true,vis:function(S,GS){ return brunoInLodge(GS); },talk:talkBruno,give:BRUNO_GIVE,r:function(S,GS,a){ return [Math.round(a.x)-10,Math.round(a.y)-50,20,36]; },
    look:'Ein alter Mann in einer flaschengrünen Portiersuniform mit Messingknöpfen. Er steht in der Loge, als wäre gleich ein Gast gekommen. Durchscheinend.',
-   g:{look:'Bruno. Er hat die Uniform nie ausgezogen.',talk:function(A){ return talkBruno(A); }}},
+   g:{look:async function(A){ await A.g('Bruno. Er hat die Uniform nie ausgezogen.'); await A.g('Seine Leine läuft zur Glocke auf dem Tresen. Jedes Mal, wenn sie klingelt, steht er auf.'); A.note('m_leash',true); },talk:function(A){ return talkBruno(A); }}},
  {id:'reception',name:'Rezeption',look:'Ein Tresen aus dunklem Holz, poliert von hundert Jahren Ellbogen. Ein Gästebuch, eine Lampe, ein Glöckchen.',g:{look:'Hier hat er gestanden. Jede Nacht.'}},
  {id:'lodge',name:'Portiersloge',look:function(A){ return A.m(A.G.phase==='c3_night'?'Die Portiersloge, im Dunkeln. Auf dem Stuhl liegt eine Mütze, die vorhin noch nicht da lag.':'Die Portiersloge: ein Glaskasten mit Stuhl, Telefonvermittlung und Schlüsselbrett. Seit achtzehn Jahren leer.'); },
    g:{look:'Sein Stuhl. Er ist noch warm. Für mich.',sense:async function(A){ if (A.G.phase!=='c3_night') return A.g('Jemand hat hier zweiunddreißig Jahre lang gewacht. Jetzt schläft er nicht.'); if (A.isFound('bruno')) return A.g('Er ist da.'); A.found('bruno'); await A.g('Er ist da. Er hat sich nur nicht gezeigt. Ein Portier zeigt sich erst, wenn man klingelt.'); }}},
@@ -9213,7 +9650,7 @@ async function readRegister(A){ await A.doc({style:'register',title:'Popis smje�
   if (A.malaHere()){ await A.g('Hör auf zu lesen.'); await A.m('Mala …'); await A.g('Es gibt viele Mädchen aus Sarajevo. Viele mit L.'); } }
 M.room('palma',{ name:'Hotel Palma', scape:'palma', music:function(GS){ return GS.phase==='c3_night'?'case3':'case3'; },
   actors:function(S,GS){ var L=[]; if (ljerkaUp(GS)){ var p=M.apos('palma','ljerka',[92,112,'F']); L.push({id:'ljerka',ch:'ljerka',x:p[0],y:p[1],f:p[2]||'F',name:'Ljerka'}); }
-    if (brunoInLodge(GS)){ var b=M.apos('palma','bruno',[52,108,'F']); L.push({id:'bruno',ch:'bruno',x:b[0],y:b[1],f:b[2]||'F',name:'Bruno',ghost:true,idle:'porter',talk:'porterTalk'}); }
+    if (brunoInLodge(GS)){ var b=M.apos('palma','bruno',[52,108,'F']); L.push({id:'bruno',ch:'bruno',x:b[0],y:b[1],f:b[2]||'F',name:'Bruno',ghost:true,idle:'porter',talk:'porterTalk',anchor:function(){ var q=M.spot('palma','bell'); return [q[0]+(q[2]>>1),q[1]+(q[3]>>1)]; }}); }
     if (GS.flags['c3.woke'] && !GS.flags['c3.ljerkaUp']){ var n=M.apos('palma','ljerkaNight',[96,116,'F']); L.push({id:'ljerkaNight',ch:'ljerkaNight',x:n[0],y:n[1],f:n[2]||'F',name:'Ljerka'}); }
     return L; },
   hotspots:HS,
@@ -9226,14 +9663,16 @@ M.readEnvelope=async function(A,quiet){ await A.doc({style:'letter',title:'Muzi�
 // ---------------------------------------------------------------- Salon
 async function playRecord(A){ if (!A.S.crank) return A.m('Ohne Kurbel dreht sich da nichts.'); A.take('record'); A.set('playing',true); A.sfx('crank'); await A.wait(600); A.music('vecer');
   await A.m('„Večer na Rivi“. Knisternd, dünn, aus einer anderen Zeit.'); A.setFlag('c3.brunoUp'); await A.wait(1200);
-  var bp=M.apos('salon','bruno',[60,118,'R']); var B=A.spawn({id:'bruno',ch:'bruno',x:bp[0],y:bp[1],f:bp[2]||'R',name:'Bruno',ghost:true}); A.found('bruno'); A.sfx('shimmer'); await A.wait(1000);
+  var bp=M.apos('salon','bruno',[60,118,'R']); var B=A.spawn({id:'bruno',ch:'bruno',x:bp[0],y:bp[1],f:bp[2]||'R',name:'Bruno',ghost:true,anchor:function(S,G){ if (G.flags['c3.release']) return null; var q=M.spot('salon','door'); return [q[0]+(q[2]>>1),q[1]+(q[3]>>2)]; }}); A.found('bruno'); A.sfx('shimmer'); await A.wait(1000);
   if (A.malaHere()) await A.g('Er kommt. Die Musik hat ihn heraufgeholt.'); await B.say('Nedjelja … poslije ponoći …'); }
 var SH=[
  {id:'door',name:'Tür zur Treppe',exit:{to:'palma',gok:true},gexit:{to:'palma'},look:'Die Tür zurück zur Treppe.'},
  {id:'bruno',npc:'bruno',name:'Bruno Lalić',hgt:46,noTurn:true,vis:function(S,GS){ return brunoInSalon(GS); },talk:talkBruno,give:BRUNO_GIVE,
-   look:'Bruno steht an der Tür, wie er früher an der Tür stand, wenn sie tanzten: gerade, die Hände auf dem Rücken.',g:{look:'Er hört der Musik zu, als hätte er sie noch nie gehört.',talk:function(A){ return talkBruno(A); }}},
+   look:'Bruno steht an der Tür, wie er früher an der Tür stand, wenn sie tanzten: gerade, die Hände auf dem Rücken.',
+   g:{look:function(A){ return A.g(A.flag('c3.release')?'Die Leine ist los. Er hält die Mütze vor der Brust.':'Er hört der Musik zu, als hätte er sie noch nie gehört. Seine Leine läuft zur Tür hinaus, die Treppe hinunter, zu seiner Glocke.'); },talk:function(A){ return talkBruno(A); },
+     cross:function(A){ return crossBruno(A); },crossIf:function(S,G){ return !!G.flags['c3.release'] && !G.flags['c3.gone']; }}},
  {id:'piano',name:'Flügel',look:function(A){ return A.m(A.S.sheetOff?(A.S.bookTaken?'Ein schwarzer Flügel, verstaubt, aber heil. Der Deckel ist zu.':'Ein schwarzer Flügel. Auf dem Notenpult liegt noch eine aufgeschlagene Klavierschule.'):'Ein Flügel unter einem weißen Tuch.'); },
-   take:async function(A){ if (!A.S.sheetOff) return A.m('Erst das Tuch.'); if (A.S.bookTaken) return A.m('Der Flügel bleibt, wo er ist.'); A.set('bookTaken',true); A.give('musicbook'); await A.m('Die Klavierschule vom Notenpult. Innen, in runder Kinderschrift: „Ljerka Lalić, 1966“.'); },
+   take:async function(A){ if (!A.S.sheetOff) return A.m('Da liegt ein Tuch darüber.'); if (A.S.bookTaken) return A.m('Der Flügel bleibt, wo er ist.'); A.set('bookTaken',true); A.give('musicbook'); await A.m('Die Klavierschule vom Notenpult. Innen, in runder Kinderschrift: „Ljerka Lalić, 1966“.'); },
    use:'Ich spiele nicht. Das wäre falsch. Das ist nicht mein Klavier.', g:{look:'Kleine Hände. Hier.',sense:'Hier hat ein Mädchen gespielt, und ein Mann stand an der Tür und hat zugehört, ohne dass sie es wusste.'}},
  {id:'sheet',name:'Tuch',vis:function(S){ return !S.sheetOff; },look:'Ein weißes Laken über dem Flügel, grau vom Staub.',take:async function(A){ A.set('sheetOff',true); A.sfx('whoosh'); await A.m('Ich ziehe das Tuch herunter. Staub tanzt im Licht vom Fenster. Darunter ein schwarzer Flügel.'); },use:async function(A){ A.set('sheetOff',true); A.sfx('whoosh'); await A.m('Ich ziehe das Tuch herunter. Darunter ein schwarzer Flügel.'); },g:{look:'Darunter schläft er.'}},
  {id:'bench',name:'Klavierhocker',look:function(A){ return A.m(A.S.benchOpen?'Der Klavierhocker ist offen. Nur noch alte Noten darin.':'Ein Klavierhocker mit Klappsitz. Er hat ein winziges Schloss.'); },
@@ -9280,12 +9719,13 @@ async function meeting(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
   await A.g('Du siehst sie also auch.'); await A.faceM('L'); await A.m('Du schon wieder.');
   await A.g('Sie steht hier jeden Abend. Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.');
   await A.m('Das ist Ivka Perić. Sie ist seit einer Woche tot. Ich habe heute ihren Nachruf geschrieben.'); await A.g('Dann weißt du schon mehr über sie als die meisten.');
-  await A.m('Und was soll ich jetzt tun?'); await A.g('Mit ihr reden. Ich kann sie finden. Reden musst du.'); await A.faceM('R');
+  await A.m('Und was soll ich jetzt tun?'); await A.g('Ich kann sie finden. Reden kannst nur du.'); await A.faceM('R');
   await A.g('Und wenn du willst, dass ich mir etwas ansehe, wo du nicht hinkommst, dann sag es mir.'); A.flash('Unten links: zu Mala wechseln.');
   A.note('m_find',true); A.save(); }
 // ---------------------------------------------------------------- Gespräch mit Ivka (Marko)
 async function talkIvka(A){ var I=A.npc('ivka');
   if (A.isMala()) return talkIvkaMala(A,I);
+  if (A.flag('c1.release')) return A.m('Sie sieht mich nicht mehr an. Sie sieht zu Mala.');
   if (A.first('ivHello')){ await I.say('Ist das Boot aus Supetar schon durch? Ich sehe es nicht.'); }
   else await I.say(A.cycle('ivAgain',['Sehen Sie es? Das Boot?','Es ist spät heute. Die Bura.','Er kommt. Er hat es versprochen.']));
   await A.menuLoop(function(){ return [
@@ -9294,8 +9734,9 @@ async function talkIvka(A){ var I=A.npc('ivka');
     {t:'Welcher Tag ist heute?',once:'iv2',go:async function(A){ await I.say('Der zweiundzwanzigste. Was für eine Frage. In zwei Tagen ist Badnjak.'); A.note('c1_date'); await A.m('Für sie ist es der zweiundzwanzigste Dezember vierundachtzig.'); }},
     {t:'Warum wartet niemand mit Ihnen?',once:'iv3',go:async function(A){ await I.say('Die Leute haben zu tun. Ich habe Zeit.'); await I.say('Ich habe immer Zeit gehabt. Das ist das Einzige, wovon ich genug habe.'); }},
     {t:'Das Boot ist spät.',once:'iv4',go:async function(A){ await I.say('Die Bura. Sie haben sie im Radio angesagt. Die Fenster haben schon gesungen.'); await I.say('Fragen Sie doch im Hafenbüro, warum es so lange dauert. Mich nehmen sie da nicht mehr ernst.'); A.note('c1_askoffice'); }},
+    {t:'Frieren Sie nicht? Ohne Handschuhe, bei dem Wind?',once:'iv5',go:async function(A){ await I.say('Ich friere nie.'); await A.wait(700); await I.say('Heute spüre ich nicht einmal den Wind. Komisch, bei der Bura.'); await I.say('Das macht das Alter. Man wird zäh wie Leder.'); }},
     {t:'Gospođa Perić … Sie sind gestorben.',once:'ivWrong',go:async function(A){ await I.say('Was reden Sie da?'); await I.face('R'); await I.say('Gehen Sie nach Hause, junger Mann. Sie haben getrunken.');
-        if (A.malaHere()) await A.g('Nicht so. So hört sie dich nicht. So hört das niemand.'); A.G.seen['dlg:ivWrong']=0; return 'bye'; }},
+        if (A.malaHere()) await A.g('Sie hört es nicht. Noch nicht.'); A.G.seen['dlg:ivWrong']=0; return 'bye'; }},
     A.askOpt({
       c1_ferry:async function(A){ await I.say('Ausgefallen? Dann kommt er mit dem nächsten. Er hat es versprochen. Er verspricht nie etwas, das er nicht hält.'); },
       c1_capsized:async function(A){ await I.say('Gekentert? Wer? Nein, nein. Das Boot aus Supetar ist ein großes Schiff. Das kentert nicht.'); },
@@ -9308,7 +9749,8 @@ async function talkIvka(A){ var I=A.npc('ivka');
       c1_rescued:async function(A){ await I.say('…'); await I.say('Ich weiß nicht, wovon Sie reden.'); await I.face('R'); },
       c1_story:async function(A){ await I.say('Mit dem kleinen Boot? Bei der Bura? Das würde er nicht tun.'); await I.say('…Das würde er tun.'); },
       c1_letter:async function(A){ await I.say('Ein Brief? Von Tonći? Lesen Sie ihn mir vor. Nicht jetzt. Wenn er da ist, lacht er mich sonst aus.'); },
-      c1_came:async function(A){ await I.say('Er kam nicht mit der Fähre? Womit denn dann?'); await I.face('R'); }
+      c1_came:async function(A){ await I.say('Er kam nicht mit der Fähre? Womit denn dann?'); await I.face('R'); },
+      pro_notice:async function(A){ await I.say('Die Anzeige an meiner Tür? Die ist für die alte Kovačka, die Arme. Die hängen sie an jede Tür in der Gasse.'); await A.m('Da steht Ihr Name.'); await I.say('Halb Varoš heißt Perić. Gehen Sie, ich muss aufpassen, sonst sehe ich das Boot nicht.'); await I.face('R'); }
     },'Das sagt mir nichts, junger Mann.'),
     {t:'Ich gehe ein Stück.',bye:true,go:async function(A){ await I.say('Ziehen Sie sich was an. Es wird kalt.'); }}
   ]; }); }
@@ -9318,47 +9760,68 @@ async function talkIvkaMala(A,I){
     await I.say('Du solltest nicht allein hier draußen sein. Die Bura kommt.'); await A.g('Ich weiß.'); return; }
   await I.say(A.cycle('ivM',['Hast du einen Jungen gesehen? Groß, lacht viel, immer zu spät?','Geh nach Hause, Kind. Hier wartet man nur.','Wenn das Boot kommt, darfst du mit Fritule essen.']));
   await A.g(A.cycle('ivMa',['Nein.','Gleich.','Danke.'])); }
-// ---------------------------------------------------------------- Finale: vier Runden
+// ---------------------------------------------------------------- Finale: Ivka hört, was geschah – und merkt erst ganz am Ende, dass sie selbst nicht mehr lebt
 async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.gt; A.sfx('horn'); await A.wait(700);
   if (A.malaHere()){ await A.animG('look'); A.note('m_horn',true); }
   await I.say('Das Boot. Da ist es.'); await I.say('Siehst du ihn? Ich sehe ihn nicht.');
   // Runde 1: die Fähre
   for (var tries=0;;tries++){ var n=await A.askNote('Was sage ich ihr?');
     if (n==='c1_ferry'){ await A.m('Gospođa Perić. An dem Abend, an dem er kommen wollte, fuhr keine Fähre. Die Bura war zu stark.'); await I.say('Keine Fähre …'); await I.say('Dann kommt er mit der ersten morgen früh. Dann warte ich eben bis morgen.'); break; }
-    await roundMiss(A,I,n,tries,['Ich weiß, dass er kommt. Er hat es geschrieben.','Er ist immer zu spät. Aber er kommt.','Das Boot kommt doch gerade. Sehen Sie nicht?'],'Erst die Fähre. Was an dem Abend mit der Fähre war.'); }
+    await roundMiss(A,I,n,tries,['Ich weiß, dass er kommt. Er hat es geschrieben.','Er ist immer zu spät. Aber er kommt.','Das Boot kommt doch gerade. Sehen Sie nicht?']); }
   // Runde 2: die ANKICA
   await I.say('Ich warte. Ich habe Zeit.');
   for (tries=0;;tries++){ n=await A.askNote('Was sage ich ihr jetzt?');
     if (n==='c1_came'||n==='c1_story'||n==='c1_aboard'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
       await I.say('Mit Matićs kleinem Boot? Bei der Bura?'); await I.say('Dieser Dickkopf. Dieser …'); await A.wait(800); await I.say('Und Dinko?'); await A.m('Dinko hat es geschafft.'); await A.wait(1100); await I.say('…und Tonći nicht.'); break; }
-    await roundMiss(A,I,n,tries,['Was hat das mit meinem Sohn zu tun?','Ich verstehe nicht, was Sie meinen.','Sagen Sie, was Sie sagen wollen.'],'Sie muss wissen, warum er nicht auf dem Schiff war. Wie er kommen wollte.'); }
-  // Runde 3: die Handschuhe
+    await roundMiss(A,I,n,tries,['Was hat das mit meinem Sohn zu tun?','Ich verstehe nicht, was Sie meinen.','Sagen Sie, was Sie sagen wollen.']); }
+  // Runde 3: der Brief
   await I.say('Dann ist er da draußen. Dann warte ich, bis das Meer ihn bringt. Das Meer bringt alles zurück.');
-  for (tries=0;;tries++){ var c=await A.choose([{t:'(Ihr die grauen Handschuhe geben.)',id:'gloves',silent:true},{t:'„Das Meer bringt ihn nicht zurück.“',id:'hard',silent:true},{t:'„Sie müssen nicht mehr warten.“',id:'soft',silent:true}],{title:'Ivka'});
-    if (c==='gloves'){ await A.animM('give'); A.take('gloves'); A.sfx('paper'); await A.m('Das hat er Ihnen mitgebracht. Dinko hat es siebenundzwanzig Jahre lang aufbewahrt.'); I.idle('gloveF');
-      await I.say('Handschuhe.'); await A.wait(700); await I.say('Grau. Er wusste, dass ich nie welche trage.'); await I.say('Dieser Junge. Für das Geld hätte er sich Schuhe kaufen können.'); break; }
-    if (c==='hard'){ await I.say('Das Meer behält nichts. Das Meer bringt alles zurück. Irgendwann. Ich habe Zeit.'); }
-    else { await I.say('Ich warte gern. Wer wartet, hat noch etwas vor sich.'); }
-    if (tries>=1 && A.malaHere()) await A.g('Er hat ihr etwas mitgebracht. Gib es ihr.'); }
-  // Runde 4: der Brief
-  await I.say('Aber warum Handschuhe? Er hätte mir Schokolade bringen können. Oder Feigen.');
-  for (tries=0;;tries++){ c=await A.choose([{t:'(Seinen Brief vorlesen.)',id:'letter',silent:true},{t:'„Damit Sie nicht mehr frieren.“',id:'warm',silent:true},{t:'„Er ist tot, Gospođa Perić.“',id:'dead',silent:true}],{title:'Ivka'});
+  for (tries=0;;tries++){ var c=await A.choose([{t:'(Seinen Brief vorlesen.)',id:'letter',silent:true},{t:'„Das Meer bringt ihn nicht zurück.“',id:'hard',silent:true},{t:'„Er ist tot, Gospođa Perić.“',id:'dead',silent:true}],{title:'Ivka'});
     if (c==='letter'){ await A.anim('read'); await A.m('Er hat Ihnen geschrieben. „Liebe Mama. Das ist das letzte Mal, dass du in der Kälte auf mich wartest. Ich habe dir Handschuhe gekauft, für die kalten Abende auf der Riva.“');
       await A.m('„Aber warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen. Ich komme. Dein Tonći.“'); break; }
-    if (c==='warm'){ await I.say('Ich friere nicht. Ich habe nie gefroren. Das sagt jeder, und ich friere nie.'); }
-    else { await I.say('…'); await I.face('R'); await I.say('Ich warte trotzdem. Ein Brief von ihm, der sagt, ich soll aufhören. Dann höre ich auf. Sonst nicht.'); }
-    if (tries>=1 && A.malaHere()) await A.g('Er hat ihr geschrieben, was sie tun soll. Lies es ihr vor.'); }
-  // Abschied
-  await A.wait(1500); await I.say('Zu Hause.'); await I.face('L'); await A.wait(900); await I.say('Es ist kalt geworden.');
-  await I.anim('gloveF'); await A.wait(400); await I.say('Er hätte nicht fahren sollen. Bei der Bura. Er hätte warten sollen.'); await I.say('Na ja. Wir haben beide gewartet. Nur an verschiedenen Orten.');
-  var st=M.apos('riva','ivka'); I.set('speed',120); I.set('step',3); var walk=I.walk(st[0]-260,st[1]+4); await A.wait(2600); A.sfx('bellBig'); await A.wait(400);
-  if (A.malaHere()){ await A.animG('hugSelf'); }
-  await walk; if (I.actor) I.actor.fadeOut=A.gt; await A.wait(1100); A.setFlag('c1.done'); I.hide();
-  await A.wait(800); A.music('case1');
-  if (A.malaHere()){ await A.g('Sie geht nach Hause.'); await A.m('Und du?'); await A.wait(1200); await A.g('…'); }
+    if (c==='hard'){ await I.say('Das Meer behält nichts. Das Meer bringt alles zurück. Irgendwann. Ich habe Zeit.'); }
+    else { await I.say('…'); await I.face('R'); await I.say('Das sagen sie mir seit siebenundzwanzig Jahren. Alle. Ich warte trotzdem.'); } }
+  await A.wait(1300); await I.say('Zu Hause. Im Warmen.'); await I.say('Und wenn er dann hier ankommt, und niemand ist da?');
+  // Runde 4: die Handschuhe – und was sie dabei merkt
+  for (tries=0;;tries++){ c=await A.choose([{t:'(Ihr die grauen Handschuhe geben.)',id:'gloves',silent:true},{t:'„Sie müssen nicht mehr warten.“',id:'soft',silent:true},{t:'„Gehen Sie nach Hause, Gospođa Perić.“',id:'home',silent:true}],{title:'Ivka'});
+    if (c==='gloves') break;
+    if (c==='soft') await I.say('Ich warte gern. Wer wartet, hat noch etwas vor sich.'); else await I.say('Nach Hause. Da ist es so still. Da tickt nur die Uhr.'); }
+  await A.animM('give'); A.take('gloves'); await A.m('Die hat er Ihnen mitgebracht. Dinko hat sie siebenundzwanzig Jahre lang aufbewahrt.');
+  await I.say('Handschuhe. Grau.'); await I.say('Er wusste doch, dass ich nie welche trage.'); await I.anim('gloveF'); await A.wait(700);
+  A.sfx('drop'); A.shake(250); await A.wait(900); A.music('silence');
+  await A.narrate('Die Handschuhe fallen durch ihre Finger auf die Steine der Mole.'); await A.wait(1400);
+  await I.say('…'); await A.wait(900); await I.say('Ich kann sie nicht halten.'); await I.say('Warum kann ich sie nicht halten?');
+  c=await A.choose([{t:'„Weil Sie nicht mehr hier sind.“',id:'here'},{t:'(Nichts sagen.)',id:'quiet',silent:true},{t:'„Sie sind letzte Woche gestorben, Gospođa Perić.“',id:'week'}],{title:'Ivka'});
+  if (c==='quiet'){ await A.wait(2200); await I.say('Meine Hände sind nicht kalt.'); await I.say('Sie sind gar nichts.'); }
+  else if (c==='week'){ await I.say('Letzte Woche …'); await A.wait(900); }
+  else { await I.say('Nicht mehr hier.'); await A.wait(900); }
+  await I.face('L'); await A.wait(800); await I.say('Ich war krank. Ich habe mich ans Fenster gesetzt, wie jeden Abend um Viertel vor sieben.'); await I.say('Ich wollte nur kurz die Augen zumachen, bevor ich gehe.');
+  await A.wait(1200); await I.say('Und dann bin ich trotzdem gegangen. Wie jeden Abend.'); await I.say('Die Anzeige an meiner Tür. Das war ich. Nicht die Kovačka.');
+  await A.wait(1500); await I.say('Siebenundzwanzig Jahre habe ich auf ihn gewartet. Und eine Woche, ohne es zu merken.');
+  await A.wait(1200); await I.say('Er kommt nicht mehr.'); await A.wait(700); await I.say('Und ich muss nicht mehr kommen.');
+  // die Leine löst sich vom Poller
+  A.setFlag('c1.release'); A.sfx('shimmer'); A.music('ghost'); await A.wait(1200);
+  if (A.malaHere() && I.actor){ await A.walkG(Math.round(I.actor.x)-26,Math.round(I.actor.y)+2); }
+  if (A.malaHere()){ await I.say('Kind.'); await A.wait(600); await I.say('Du bist ja auch eine von uns. Und ich habe dich gefragt, wo deine Mutter ist.'); await A.g('Ist schon gut.'); }
+  else A.malaJoin({x:Math.round(A.marko.x)-22,y:Math.round(A.marko.y)+2,f:'R'});
+  await A.animM('pickup'); await A.m('Ich lege die Handschuhe auf den Poller. Irgendjemand wird sie finden.');
+  await A.switchTo('mala'); await A.wait(500);
+  await A.g('Gospođa Perić. Ich kann Sie hinüberbringen. Wenn Sie wollen.'); await I.say('Ist es weit?'); await A.g('Nein.');
+  I.idle('waitF'); A.save(); }
+// Mala bringt Ivka hinüber (spielbar: als Mala „Hinüberbringen“)
+async function crossIvka(A){ var I=A.npc('ivka'); A.G.flags['mala.lock']=true; A.music('ghost');
+  var sp=M.spot('riva','bollard'), bx=sp[0]+7, by=M.apos('riva','ivka',[596,114,'R'])[1];
+  await A.g('Kommen Sie. Ich gehe mit bis an den Rand.'); await I.say('Ist es kalt da drüben?'); await A.g('Nein. Da ist es nicht kalt.');
+  await A.crossOpen(bx+26,by+2,{w:18,h:74});
+  I.set('speed',70); var w=I.walk(bx+22,by+1); await A.wait(900); await w; await I.face('R');
+  await A.wait(1200); await I.say('Da ist er.'); await A.wait(1400); await I.say('Tonći.');
+  if (I.actor) I.actor.fadeOut=A.gt; A.sfx('shimmer'); await A.wait(1400); I.hide(); A.setFlag('c1.done');
+  await A.crossClose(); await A.wait(1200); A.music('case1');
+  await A.switchTo('marko'); A.G.flags['mala.lock']=false; await A.wait(400);
+  await A.m('Ist sie …?'); await A.g('Drüben.'); await A.m('Und du?'); await A.wait(1300); await A.g('…');
   await A.m('Ich muss mich setzen.'); A.save();
   await interlude(A); }
-async function roundMiss(A,I,n,tries,lines,hint){ if (n===null||n===undefined){ await A.m('…'); await I.say('Sie sehen müde aus, junger Mann.'); } else await I.say(lines[tries%lines.length]); if (tries>=1 && A.malaHere()) await A.g(hint); }
+async function roundMiss(A,I,n,tries,lines){ if (n===null||n===undefined){ await A.m('…'); await I.say('Sie sehen müde aus, junger Mann.'); } else await I.say(lines[tries%lines.length]); }
 // ---------------------------------------------------------------- Zwischenspiel 1: die Bank an der Riva
 async function interlude(A){ await A.fade(8,900); A.phase('i1'); A.rebuild(); var b=M.stand('riva','bench')||[180,122,'B'];
   A.placeM(b[0],b[1],'R'); A.idleM('sit'); if (A.malaHere()){ A.placeG(b[0]+16,b[1],'L'); A.idleG('sit'); } A.G.flags['mala.lock']=true;
@@ -9384,7 +9847,7 @@ async function interlude(A){ await A.fade(8,900); A.phase('i1'); A.rebuild(); va
   if (c===0) await A.g('Nachsehen, ob es noch da ist.');
   else if (c===1) await A.g('Da ist immer jemand.');
   else { await A.wait(1500); await A.g('Ist gut.'); }
-  await A.wait(800); A.sfx('gust'); await A.g('Am Fischerhafen, in der alten Eisfabrik. Da ist noch einer.'); await A.m('Noch einer.'); await A.g('Ein Junge. Er ist unruhig. Er wartet auf etwas, das gleich passieren soll. Seit Jahren.');
+  await A.wait(800); A.sfx('gust'); await A.g('Da ist noch einer.'); await A.m('Noch einer.'); await A.g('Ein Junge. Er ist unruhig. Er wartet auf etwas, das gleich passieren soll. Seit Jahren.');
   await A.m('Du findest sie einfach so?'); await A.g('Sie sind laut. Für mich.'); await A.m('Morgen. Heute nicht mehr.');
   A.G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i1.done'); await M.startCase2(A); }
 // ---------------------------------------------------------------- Hotspots
@@ -9392,9 +9855,11 @@ var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Die Riva entlang, in die Stadt.'},
  {id:'ivka',npc:'ivka',name:'Ivka',hgt:44,vis:function(S,GS){ return ivkaHere(GS); },talk:talkIvka,
    look:function(A){ return A.m('Ivka Perić. Sie steht da, als würde ihr der Wind nichts tun. Er tut ihr auch nichts. Er geht durch sie hindurch.'); },
-   g:{look:'Sie ist klarer als die meisten. Sie hat sich siebenundzwanzig Jahre lang selbst hierher gemalt.',talk:function(A){ return talkIvka(A); },sense:async function(A){ await A.g('Sie wartet nicht auf ein Schiff. Sie wartet auf einen Satz.'); }},
-   give:{ gloves:async function(A){ if (!ready(A)) return A.m('Noch nicht. Erst muss sie verstehen, warum er sie ihr nicht selbst gibt.'); return A.m('Nicht so, mitten im Satz. Ich muss es ihr richtig sagen.'); },
-     letter_t:async function(A){ if (!A.hasNote('c1_letter')) return A.m('Ich kann ihn noch nicht ganz lesen. Das Salz hat die Hälfte gefressen.'); return A.m('Ich lese ihn ihr vor, wenn sie bereit ist. Wenn ich bereit bin.'); },
+   g:{look:async function(A){ if (A.flag('c1.release')) return A.g('Die Leine ist los. Sie steht ganz leicht da.'); await A.g('Sie ist festgemacht. Eine Leine aus Licht, von ihr bis zum Poller. Wie ein Boot, das niemand mehr losmacht.'); A.note('m_leash',true); },
+     talk:function(A){ if (A.flag('c1.release')) return A.npc('ivka').say('Ist es weit?'); return talkIvka(A); },sense:async function(A){ await A.g('Sie wartet nicht auf ein Schiff. Sie wartet auf einen Satz.'); },
+     cross:function(A){ return crossIvka(A); },crossIf:function(S,G){ return !!G.flags['c1.release'] && !G.flags['c1.done']; }},
+   give:{ gloves:async function(A){ return A.m('Nicht so. Nicht mitten im Satz.'); },
+     letter_t:async function(A){ if (!A.hasNote('c1_letter')) return A.m('Das Salz hat die Hälfte gefressen.'); return A.m('Nicht so. Nicht mitten im Satz.'); },
      photo1:async function(A){ await A.npc('ivka').say('Tonći und Dinko. Auf der ANKICA. Woher haben Sie das? Das steht bei mir zu Hause auf der Kredenz.'); },
      postcard:async function(A){ await A.npc('ivka').say('Seine Karte. „Um sieben.“ Sehen Sie? Er kommt um sieben.'); } }},
  {id:'palace',name:'Palastmauer',look:'Die Südmauer des Diokletianpalastes. Siebzehnhundert Jahre alt. Heute sind Cafés in den Bögen. Der Kaiser hätte es verstanden, glaube ich.',g:{look:'Diese Mauer hat mehr Leute warten sehen als jeder Hafen.'}},
@@ -9409,7 +9874,7 @@ var HS=[
  {id:'ferries',name:'Fähren',look:'Die Fähren nach Brač, Hvar, Šolta. Sie kommen und gehen, als wäre es nichts.',g:{look:'…',listen:'Wenn sie tuten, will ich weg. Ich weiß nicht, wohin.'}},
  {id:'mole',name:'Mole',look:'Die Mole. Ein steinerner Finger, der ins Wasser zeigt.',g:{look:'Hier fängt das Wasser an. Für manche hört hier das Land auf.'}},
  {id:'bollard',name:'Poller',look:'Ein eiserner Poller am Ende der Mole, blank gerieben von Tauen. Und von Händen.',
-   g:{look:'Hier hat sie immer gestanden.',sense:async function(A){ if (A.hasNote('c1_years')) return A.g('Siebenundzwanzig Winter. Ich will das nicht noch einmal sehen.');
+   g:{look:function(A){ return A.g(A.flag('c1.release')?'Der Poller ist nur noch ein Poller.':'Hier ist ihre Leine festgemacht. Siebenundzwanzig Winter lang.'); },sense:async function(A){ if (A.hasNote('c1_years')) return A.g('Siebenundzwanzig Winter. Ich will das nicht noch einmal sehen.');
      await A.memory({title:'Nachhall – der Poller',draw:M.mem&&M.mem.pier,lines:['1985. Eine Frau im offenen Mantel. Sie sieht auf die Uhr, dann aufs Wasser.','1993. Ein Schirm, den der Wind ihr aus der Hand nimmt. Sie lässt ihn fliegen.','2003. Sie geht langsamer. Sie kommt trotzdem.','2011. Sie kommt noch.']}); A.note('c1_years'); }}},
  {id:'mole_lamp',name:'Laterne am Molenende',look:'Die letzte Laterne der Mole. Danach kommt nur noch Wasser.',g:{look:'Sie hat jeden Abend unter diesem Licht gestanden.'}},
  {id:'mole_bench',name:'Bank auf der Mole',look:'Eine Bank auf der Mole. Ivka hat nie darauf gesessen. Das hätte nach Aufgeben ausgesehen.',g:{look:'Niemand setzt sich hierher. Hier wartet man im Stehen.'}},
@@ -9417,11 +9882,11 @@ var HS=[
 ];
 M.room('riva',{ name:'Riva', scape:'riva',
   music:function(GS){ return (GS.phase==='c1'||GS.phase==='c1_night')?'case1':(GS.phase==='c2'?'case2':(GS.phase==='c3'?'case3':'flat')); },
-  actors:function(S,GS){ var L=[]; if (ivkaHere(GS)){ var p=M.apos('riva','ivka',[596,114,'R']); L.push({id:'ivka',ch:'ivka',x:p[0],y:p[1],f:p[2]||'R',name:'Ivka',ghost:true,idle:'waitF',speed:110,step:3}); } return L; },
+  actors:function(S,GS){ var L=[]; if (ivkaHere(GS)){ var p=M.apos('riva','ivka',[596,114,'R']); L.push({id:'ivka',ch:'ivka',x:p[0],y:p[1],f:p[2]||'R',name:'Ivka',ghost:true,idle:'waitF',speed:110,step:3,anchor:function(S,G){ if (G.flags['c1.release']) return null; var sp=M.spot('riva','bollard'); return [sp[0]+7,sp[1]+5]; }}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase; if (A.S.ferryAt) delete A.S.ferryAt; // die Fähre aus dem Finale liegt nur, solange man bleibt
-    if (p==='c1' && A.first('rivaC1')){ await A.m('Die Riva am Abend. Die Lichter gehen an, eine nach der anderen, als könnten sie sich nicht entscheiden.'); await A.m('Ich gehe bis zum Ende der Mole. Da ist der Wind ehrlicher.'); }
-    if (p==='c1_night' && A.first('rivaNight') && !A.flag('c1.done')){ await A.m('Die Bura ist da. Ivka steht immer noch am Ende der Mole.'); if (ready(A)) await A.g('Jetzt weißt du, was sie wissen muss.'); }
+    if (p==='c1' && A.first('rivaC1')){ await A.m('Die Riva am Abend. Die Lichter gehen an, eine nach der anderen, als könnten sie sich nicht entscheiden.');  }
+    if (p==='c1_night' && A.first('rivaNight') && !A.flag('c1.done')){ await A.m('Die Bura ist da. Ivka steht immer noch am Ende der Mole.'); }
     if (p==='c2' && A.first('rivaC2')) await A.g('Die Mole ist leer. Das ist gut so.');
     if (p==='c3' && A.first('rivaC3')) await A.m('Regen auf der Riva. Die Palmen sehen aus, als wären sie lieber woanders.'); },
   tick:function(A){ if (A.G.phase==='c1' && !A.flag('c1.met') && !A.isBusy && A.marko && A.marko.x>430){ A.busy(true); var a=A.marko; a.path=[]; meeting(A).then(function(){ A.busy(false); }); } }
@@ -9517,10 +9982,10 @@ async function talkJakov(A){ var J=A.npc('jakov');
     return A.menuLoop(function(){ return [
       {t:'Was fegst du hier?',once:'jk1',go:async function(A){ await J.say('Die Wege. Sie haben die Gräber achtundfünfzig weggeräumt. Die Knochen nach Lovrinac, die Steine in die Ufermauer.'); await J.say('Die Namen sind geblieben. Ich fege die Wege für die Namen.'); }},
       {t:'Kommt jemand an die Tafel?',once:'jk2',if:A.hasNote('c1_plaque')||A.G.phase==='c1'||A.G.phase==='c1_night',go:async function(A){ await J.say('Jedes Jahr am zweiundzwanzigsten Dezember kommt ein Mann und steht vor der Tafel. Er sagt nichts. Er bleibt, bis es hell wird.'); A.note('c1_jakov'); }},
-      {t:'Warum bist du noch hier?',once:'jk3',go:async function(A){ await J.say('Einer muss bleiben, wenn alle gehen. Ich habe es mir ausgesucht.'); await J.say('Und du, mala? Hast du es dir ausgesucht?'); await A.wait(900); await A.g('…'); }},
+      {t:'Warum bist du noch hier?',once:'jk3',go:async function(A){ await J.say('Wo soll ich denn hin? Die Wege fegen sich nicht von allein.'); await J.say('Und du, mala? Wo sollst du hin?'); await A.wait(900); await A.g('…'); }},
       {t:'Lass gut sein, Jakov.',bye:true,go:async function(A){ await J.say('Ist gut. Ich fege weiter.'); }}
     ]; }); }
-  if (A.first('jkMarko')){ await J.say('Du siehst mich? Dann bist du einer von denen, die nachts nicht schlafen.'); await A.m('Kann man so sagen.'); }
+  if (A.first('jkMarko')){ await J.say('Dobra večer. Spät für einen Spaziergang. Pass auf, wo du hintrittst.'); await A.m('Hier ist doch nur Kies.'); await J.say('Kies und Namen. Ich halte die Wege sauber. Die Stadt tut es ja nicht.'); }
   await A.menuLoop(function(){ return [
     {t:'Wer liegt hier begraben?',once:'jm1',go:async function(A){ await J.say('Niemand mehr. Und alle. Fischer, Kapitäne, Kinder, die das Fieber geholt hat. Ein Bischof. Ein Dieb. Die lagen alle nebeneinander. Da war nie Streit.'); }},
     {t:'Kommen die Ertrunkenen auch hierher?',once:'jm2',go:async function(A){ await J.say('Die das Meer behält, kommen nicht her. Die bleiben draußen.'); await J.say('Oder sie kommen nach Hause, wenn einer sie ruft. Nicht hierher. Nach Hause.'); }},
@@ -9546,7 +10011,7 @@ M.interlude2=async function(A){ M.E.busy=true;
       {t:'(Den Sternen zusehen.)',once:'s4',go:async function(A){ await A.wait(2200); A.sfx('horn'); await A.wait(1400); await A.g('Die Fähre nach Ancona. Sie fährt jetzt ohne die beiden.'); await A.m('Sie fahren trotzdem. Irgendwie.'); }},
       {t:'Gehen wir nach Hause.',bye:true}
     ]; });
-    await A.g('Im Hotel am Wasser, dem alten mit den Palmen, schläft einer nicht.'); await A.m('Wer?'); await A.g('Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.');
+    await A.g('Da ist noch einer. Einer, der nicht schläft.'); await A.m('Wer?'); await A.g('Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.');
     await A.m('Morgen.'); await A.g('Morgen.'); A.G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i2.done');
   } finally { M.E.busy=false; }
   await M.startCase3(A); };
@@ -9739,7 +10204,7 @@ var HS=[
  {id:'cat',name:'Katze',look:'Eine schwarze Katze auf einer Stufe. Mrki. Er gehört Zdenka oder niemandem, was hier dasselbe ist.',talk:'„Mic, mic.“ Mrki sieht mich an und dann an mir vorbei. Genau an die Stelle, wo Mala steht.',take:'Er würde mich zerkratzen. Mit Recht.',g:{look:'Er sieht mich. Katzen sehen mich immer.',talk:async function(A){ await A.g('…'); await A.g('Er blinzelt langsam. Das heißt, er hat keine Angst.'); }}}
 ];
 async function readNotice(A){ await A.doc({style:'letter',title:'✝  OSMRTNICA',lines:['Nach kurzer Krankheit verstarb im Alter von 85 Jahren','IVKA PERIĆ','geb. 1926.','','Die Beerdigung fand am Sonntag, 13.11.2011,','auf dem Friedhof Lovrinac statt.','','Es trauern die Nachbarn aus Veli Varoš.']});
-  if (A.first('noticeSaid')) await A.m('„Es trauern die Nachbarn.“ Sonst niemand. Sonst war niemand mehr da.'); }
+  A.note('pro_notice'); if (A.first('noticeSaid')) await A.m('„Es trauern die Nachbarn.“ Sonst niemand. Sonst war niemand mehr da.'); }
 async function enterIvka(A){ A.sfx('lock'); await A.wait(200); A.sfx('door'); await A.goto('ivka'); }
 M.room('varos',{ name:'Veli Varoš', scape:'varos',
   music:function(GS){ return GS.phase==='pro'?'flat':(GS.phase==='c2'?'case2':'case1'); },
@@ -9928,7 +10393,7 @@ M.boot=function(){ M.artTestRooms(); M.E.screen='title'; M.E.titleMode='main'; }
 })(M);
 
 /* ---- 91_case1.js ---- */
-/* ===== 91_case1.js — Fall 1 „Das Boot um sieben“: Brief lesen, Erinnerungsbilder, Ziele, gestufte Tipps ===== */
+/* ===== 91_case1.js — Fall 1 „Das Boot um sieben“: Brief lesen ===== */
 (function(M){
 'use strict';
 var P=M.P, hash=M.hash, bayer=M.bayer;
@@ -9939,57 +10404,20 @@ M.readToncisLetter=async function(A){
   await A.doc({style:'faded',title:'Supetar, 21.12.1984',lines:['Draga mama,','ovo … zadnji put … na hladnoći.','… rukavice … hladne večeri na Rivi.','… nemoj … više … na moli.','… doma, … toplom. …','Tvoj Tonći'],faded:[1,2,3,4]});
   await A.m('„Liebe Mama … das letzte Mal … in der Kälte … Handschuhe … kalte Abende auf der Riva … nicht mehr … an der Mole … zu Hause … warm …“');
   await A.m('Das Salz hat die Hälfte der Wörter gefressen. Die Hälfte, auf die es ankommt.');
-  if (A.malaHere() && A.first('!letterHint')) await A.g('Zeig ihn mir. Manchmal bleibt von einer Schrift mehr übrig als die Tinte.'); };
+  };
 M.malaReadsLetter=async function(A){ if (A.hasNote('c1_letter')) return A.g('Ich habe ihn dir schon gelesen. Er hat ihn im Stehen geschrieben, an einem Kai, mit kalten Fingern.');
   await A.g('Halt ihn still.'); await A.animG('look'); A.sfx('shimmer');
   await A.memory({title:'Nachhall – Tonćis Brief',draw:M.mem.letter,tint:'ghost',lines:['Eine Hand schreibt, im Licht einer Kioskbirne in Supetar. Der Wind reißt am Papier.','„Ovo ti je zadnji put da me čekaš na hladnoći.“ – Das ist das letzte Mal, dass du in der Kälte auf mich wartest.','„Kupio sam ti rukavice … ali nemoj me više čekati na moli.“ – Ich habe dir Handschuhe gekauft … aber warte nicht mehr an der Mole auf mich.','„Čekaj me doma, na toplom. Ja ću doći.“ – Warte zu Hause, im Warmen. Ich komme.']});
   A.note('c1_letter'); await A.m('„…Warte zu Hause, im Warmen.“'); await A.wait(500); await A.g('Er hat beim Schreiben an sie gedacht. Darum ist es so deutlich.');
   await A.m('Und du? An wen denkst du?'); await A.wait(1200); await A.g('…'); };
 // Erinnerungsbilder: siehe 93_mem.js
-// ---------------------------------------------------------------- Ziele (erste passende Zeile gilt)
-function has(GS,id){ return GS.notes.indexOf(id)>=0; } function inv(GS,id){ return GS.inv.indexOf(id)>=0; }
-M.defineGoals([
-  {when:function(G){ return G.phase==='pro' && !G.flags['pro.msg']; },t:'Den Anrufbeantworter abhören.'},
-  {when:function(G){ return G.phase==='pro' && !G.flags['pro.coffee']; },t:'Erst einen Kaffee kochen. Dann nach Veli Varoš, zu Ivka Perićs Wohnung.'},
-  {when:function(G){ return G.phase==='pro'; },t:'In Ivka Perićs Wohnung in Veli Varoš genug für einen Text finden. Die Nachbarin Zdenka hat den Schlüssel.'},
-  {when:function(G){ return G.phase==='pro_eve'; },t:'Den Text über Ivka Perić schreiben. Dann schlafen.'},
-  {when:function(G){ return G.phase==='pro_night'; },t:'…'},
-  {when:function(G){ return G.phase==='c1' && !G.flags['c1.met']; },t:'Raus an die Luft. Zur Riva, bis ans Ende der Mole.'},
-  {when:function(G){ return (G.phase==='c1'||G.phase==='c1_night') && !G.flags['c1.logRead']; },t:'Herausfinden, was mit dem Boot aus Supetar am 22. Dezember 1984 geschah.'},
-  {when:function(G){ return (G.phase==='c1'||G.phase==='c1_night') && !G.flags['c1.dinkoTold']; },t:'Dinko Matić an der Matejuška zum Reden bringen. Er war in jener Nacht dabei.'},
-  {when:function(G){ return (G.phase==='c1'||G.phase==='c1_night') && !has(G,'c1_letter'); },t:'Tonćis verwaschenen Brief ganz lesen.'},
-  {when:function(G){ return (G.phase==='c1'||G.phase==='c1_night') && !has(G,'c1_came'); },t:'Verstehen, warum Tonći nicht auf der Fähre war.'},
-  {when:function(G){ return (G.phase==='c1'||G.phase==='c1_night'); },t:'Ivka auf der Mole sagen, was geschah. In der richtigen Reihenfolge.'},
-  {when:function(G){ return G.phase==='i1'; },t:'Ausruhen. Reden.'}
-]);
-// ---------------------------------------------------------------- gestufte Tipps
-M.defineHints([
-  {id:'p_msg',phase:['pro'],done:function(G){ return !!G.flags['pro.msg']; },t:['Das rote Blinken in der Ecke ist eine Nachricht.','Der Anrufbeantworter auf dem Nachttisch neben dem Bett.','Den Anrufbeantworter benutzen.']},
-  {id:'p_coffee',phase:['pro'],done:function(G){ return !!G.flags['pro.coffee']; },t:['Ohne Kaffee gehe ich nicht los. Die Džezva steht auf dem Regal über der Kochnische.','Džezva nehmen, an der Spüle Wasser einfüllen.','Die Džezva mit Wasser auf den Herd: Džezva aus der Leiste auf den Herd ziehen.']},
-  {id:'p_key',phase:['pro'],done:function(G){ return inv(G,'key_ivka')||!!G.flags['pro.visited']; },t:['In Veli Varoš sitzt Zdenka vor ihrer Tür. Sie hat den Schlüssel.','Sie gibt den Schlüssel nur jemandem, dem es um Ivka geht und nicht um Zeilen.','Frag nach dem Schlüssel und antworte: „Ein paar Zeilen, damit jemand weiß, dass sie gelebt hat.“']},
-  {id:'p_items',phase:['pro'],done:function(G){ return (inv(G,'postcard')&&inv(G,'photo1'))||!!G.flags['pro.visited']; },t:['Ein Text braucht etwas Persönliches. Briefe, Fotos.','Der Schuhkarton auf dem Tisch und die Fotos auf der Kredenz.','Den Schuhkarton öffnen (Postkarte) und das Foto mit dem Boot nehmen.']},
-  {id:'p_write',phase:['pro_eve'],done:function(G){ return !!G.flags['pro.article']; },t:['Vesna wartet auf den Text.','Am Laptop schreiben.','Den Laptop benutzen und einen ersten Satz wählen. Danach ins Bett.']},
-  {id:'p_sleep',phase:['pro_eve'],when:function(G){ return !!G.flags['pro.article']; },done:function(G){ return G.phase!=='pro_eve'; },t:['Es ist spät.','Das Bett.','Das Bett benutzen.']},
-  {id:'c_met',phase:['c1'],done:function(G){ return !!G.flags['c1.met']; },t:['Vesna hat recht: raus an die Luft.','Auf der Karte die Riva wählen.','Auf der Riva bis ans Ende der Mole gehen (ganz nach rechts).']},
-  {id:'c_ask',phase:['c1','c1_night'],when:function(G){ return !!G.flags['c1.met']; },done:function(G){ return has(G,'c1_askoffice')||!!G.flags['c1.searched']; },t:['Ivka wartet auf ein Boot. Frag sie danach.','Rede mit Ivka über das Boot und den Tag.','Sag ihr, dass das Boot spät ist. Sie schickt dich ins Hafenbüro.']},
-  {id:'c_mladen',phase:['c1','c1_night'],when:function(G){ return !!G.flags['c1.met']; },done:function(G){ return !!G.flags['c1.searched']; },t:['Das Hafenbüro liegt an der Riva.','Mladen braucht einen guten Grund und ein genaues Datum.','Sag ihm, es geht um einen Text über Ivka, und nenne den 22. Dezember (von der Postkarte).']},
-  {id:'c_1948',phase:['c1','c1_night'],when:function(G){ return !!G.flags['c1.searched']; },done:function(G){ return has(G,'c1_1948'); },t:['Mladen findet den Band nicht. Mala kommt durch die Archivtür.','Wechsle zu Mala (unten links) und geh durch die Tür „Arhiva“.','Mala soll sich im Archiv den Ordner im Fach „1948“ ansehen.']},
-  {id:'c_log',phase:['c1','c1_night'],when:function(G){ return has(G,'c1_1948'); },done:function(G){ return !!G.flags['c1.logRead']; },t:['Mala weiß, wo der Band steht. Mladen kann ihn holen.','Zurück zu Marko und mit Mladen reden.','Sag Mladen: „Schauen Sie mal im Regal bei 1948.“']},
-  {id:'c_deduce',phase:['c1','c1_night'],when:function(G){ return has(G,'c1_ferry')&&has(G,'c1_boat7'); },done:function(G){ return has(G,'c1_came'); },t:['Er wollte um sieben kommen. Aber an dem Abend fuhr keine Fähre.','Im Notizbuch zwei Notizen verbinden.','Verbinde „Tonći wollte mit dem Boot um sieben kommen“ mit „Die Fähre fiel wegen der Bura aus“.']},
-  {id:'c_dinko1',phase:['c1','c1_night'],when:function(G){ return !!G.flags['c1.logRead']; },done:function(G){ return has(G,'c1_brother')||!!G.flags['c1.dinkoTold']; },t:['Dinko flickt an der Matejuška Netze.','Zeig ihm etwas aus Tonćis Leben.','Gib Dinko das Foto von der ANKICA.']},
-  {id:'c_shed',phase:['c1','c1_night'],when:function(G){ return has(G,'c1_brother')||!!G.flags['c1.logRead']; },done:function(G){ return has(G,'c1_words'); },t:['Dinko schweigt über die Nacht. Vielleicht verrät sein Schuppen mehr.','Mala kann durch die verschlossene Schuppentür gehen.','Als Mala im Schuppen den Seesack spüren.']},
-  {id:'c_confess',phase:['c1','c1_night'],when:function(G){ return has(G,'c1_words'); },done:function(G){ return !!G.flags['c1.dinkoTold']; },t:['Mala weiß jetzt, was nur Dinko wissen kann.','Sag es ihm. Als Marko, im Gespräch.','Rede mit Dinko: „Ich weiß, was Tonći im Wasser gesagt hat.“']},
-  {id:'c_letter',phase:['c1','c1_night'],when:function(G){ return inv(G,'letter_t'); },done:function(G){ return has(G,'c1_letter'); },t:['Der Brief ist verwaschen. Marko kann ihn nicht ganz lesen.','Mala sieht, was die Hand geschrieben hat.','Den Brief aus der Leiste auf Mala ziehen.']},
-  {id:'c_finale',phase:['c1','c1_night'],when:function(G){ return has(G,'c1_letter')&&inv(G,'gloves')&&has(G,'c1_came'); },done:function(G){ return !!G.flags['c1.done']; },t:['Du weißt jetzt alles, was Ivka wissen muss.','Geh zu Ivka ans Ende der Mole und sag ihr, dass du ihr etwas sagen musst.','Erst die Fähre, dann die ANKICA, dann die Handschuhe, dann der Brief.']}
-]);
 })(M);
 
 /* ---- 92_story2.js ---- */
-/* ===== 92_story2.js — Übergänge (Fall 2, Fall 3, Epilog), Malas Gespräche, Ziele und Tipps für Fall 2/3/Epilog ===== */
+/* ===== 92_story2.js — Übergänge (Fall 2, Fall 3, Epilog), Malas Gespräche ===== */
 (function(M){
 'use strict';
 var P=M.P;
-function has(G,id){ return G.notes.indexOf(id)>=0; } function inv(G,id){ return G.inv.indexOf(id)>=0; }
 // ---------------------------------------------------------------- Übergänge
 M.startCase2=async function(A){ await A.fade(8,900); M.E.screen='card'; await A.card({kicker:'Zweiter Fall',title:'Das letzte Schiff nach Ancona',time:'Donnerstag, 17. November · Bura',ms:4600});
   A.phase('c2'); A.unlock('bar'); A.unlock('matejuska'); A.G.pos.marko={room:'bar',x:60,y:124,f:'R'}; ['postcard','photo1','letter_t'].forEach(function(i){ A.take(i); });
@@ -10003,15 +10431,15 @@ M.case3CallImpl=async function(A){ A.sfx('phone'); await A.wait(1200); await A.m
   await A.phoneVoice('„Ich verkaufe am Montag das Hotel. Die Anwälte wollen alle alten Papiere übersetzt haben, Italienisch und Deutsch. Bis Montag früh. Ich zahle gut.“','ljerka');
   await A.m('Heute Abend?'); await A.phoneVoice('„Heute Abend. Ich bin an der Rezeption. Ich bin immer an der Rezeption.“','ljerka');
   A.setFlag('c3.call'); A.unlock('palma');
-  if (A.malaHere()){ await A.g('Das Hotel mit den Palmen.'); await A.m('Du kennst es?'); await A.g('Ich habe dir gestern davon erzählt.'); await A.m('Du hast gesagt, da schläft einer nicht.'); await A.g('Er schläft nie.'); } A.save(); };
+  if (A.malaHere()){ await A.g('Das Palma.'); await A.m('Du kennst es?'); await A.wait(900); await A.g('Ich war einmal dort. Glaube ich.'); } A.save(); };
 M.startEpilogue=async function(A){ M.E.screen='card'; await A.card({kicker:'Epilog',title:'Die Straße nach Osten',time:'Samstag, 19. November · Morgengrauen',ms:4600});
   A.phase('epi'); ['documents','keyring','photo2','musicbook','crank','record'].forEach(function(i){ A.take(i); }); A.G.malaOn=false; A.G.flags['mala.lock']=false; A.G.pos.marko={room:'terminal',x:40,y:124,f:'R'}; A.unlock('terminal'); await A.goto('terminal',{x:40,y:124,f:'R'}); A.save(); };
 // Schuppen/Laden: nach Ninas „Heute Abend“ in den Abend wechseln
 var shop=M.ROOMS.shop; if (shop) shop.check=async function(A){ if (A.flag('c2.tonight') && !A.flag('c2.nightStarted')){ await A.wait(600); await M.startC2Night(A); } };
 // Reisebeschränkungen
 M.canTravel=async function(A,L){ var p=A.G.phase;
-  if (p==='pro' && L.id!=='varos' && L.id!=='flat'){ await A.m('Erst Ivka Perić.'); return false; }
-  if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos'){ await A.m('Ich wollte an die Luft. Zur Riva.'); return false; }
+  if (p==='pro' && L.id!=='varos' && L.id!=='flat'){ await A.m('Heute nicht.'); return false; }
+  if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos'){ await A.m('Nicht jetzt.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
@@ -10021,25 +10449,27 @@ M.lookAtMala=async function(A){ var p=A.G.phase;
   return A.m(A.cycle('mLook',['Mala. Sie hält die Hände in den Taschen der Jacke, eine um die Blechdose.','Sie sieht aus wie siebzehn. Sie spricht wie jemand, der sehr lange siebzehn war.','Durchscheinend, wenn das Licht von hinten kommt. Sonst fast nicht.'])); };
 M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.mala') && M.talkMalaEnd) return M.talkMalaEnd(A);
   await A.menuLoop(function(){ return [
-    {t:'Was meinst du, was als Nächstes kommt?',go:async function(A){ var h=M.E.currentHint(); if (!h) return A.g('Sieh dich um. Ich sehe mich auch um.'); var tier=A.G.hintTier[h.id]||0; await A.g(h.t[0]); }},
     {t:'Wie lange bist du schon in meiner Nähe?',once:'mt1',if:p!=='epi',go:async function(A){ await A.g('Lange genug, um zu wissen, dass du deinen Kaffee zu stark machst.'); await A.m('Das ist keine Antwort.'); await A.g('Nein.'); }},
     {t:'Wo bist du, wenn ich dich nicht sehe?',once:'mt2',if:p!=='pro_night',go:async function(A){ await A.g('In der Nähe. Am Wasser, meistens.'); await A.g('Ich mag die Fähren nicht. Ich gehe trotzdem hin.'); A.note('m_horn',true); }},
     {t:'Warum zuckst du bei den Glocken zusammen?',once:'mt3',if:A.hasNote('m_bells')||A.hasNote('m_horn'),go:async function(A){ await A.wait(900); await A.g('Weil sie laut sind.'); await A.m('Das ist nicht der Grund.'); await A.g('Für heute schon.'); }},
     {t:'Bist du aus Sarajevo?',once:'mt4',if:A.hasNote('m_sarajevo')||A.hasNote('m_31'),go:async function(A){ await A.g('Frag mich in Sarajevo.'); }},
     {t:'Die Dose …',once:'mt5',if:A.hasNote('m_tin'),go:async function(A){ await A.g('Nicht.'); }},
+    {t:'Und du? Woran bist du festgemacht?',once:'mt7',if:A.hasNote('m_leash'),go:async function(A){ await A.wait(1500); await A.g('An etwas, das ich nicht loslassen will.'); await A.m('Was ist es?'); await A.wait(900); await A.g('Wenn ich es wüsste, wäre es leichter.'); }},
     {t:'Bruno hat dich erkannt.',once:'mt6',if:A.hasNote('m_31'),go:async function(A){ await A.g('Bruno ist alt. Ihm fehlen die Wörter. Er verwechselt Gesichter.'); await A.m('Er hat dir Tee angeboten.'); await A.wait(1200); await A.g('Er hat allen Tee angeboten.'); }},
     A.askOpt({
       c1_waits:'Sie wartet nicht auf ein Schiff. Sie wartet auf einen Satz.', c1_ferry:'Das Boot kam nicht. Er schon. Nur anders.',
-      c1_nobook:'Ich gehe da rein. Mich stört die Kälte nicht.', c1_1948:'Sag es Mladen. Ich kann ihn nicht herausziehen. Ich kann gar nichts herausziehen.',
+      c1_nobook:'Archive sind die stillsten Orte. Da ist niemand außer dem Papier.', c1_1948:'Ich kann ihn nicht herausziehen. Ich kann gar nichts herausziehen.',
       c1_brother:'Er lügt nicht. Er schweigt nur. Das ist schlimmer.', c1_bag:'Er hat ihn behalten. Siebenundzwanzig Jahre. Man behält nur, was man nicht loslassen kann.',
-      c1_words:'Sag es ihm. Er muss hören, dass jemand es weiß.', c1_letter:'Sie muss es von dir hören. Nicht von mir.',
+      c1_words:'Er hat es nie jemandem erzählt. Niemand weiß es. Außer uns.', c1_letter:'Ein Brief, der siebenundzwanzig Jahre zu spät kommt.',
       c1_came:'Ja. Er hat nicht gewartet. Sie hat gewartet. Einer von beiden muss es ja tun.',
-      c2_luka:'Er glaubt, es ist August. Er riecht nach Sommer.', c2_gap:'Schieb die Kisten weg. Ich halte sie dir nicht.', c2_case:'Der Kühlraum. Du brauchst etwas, das stärker ist als Rost.',
-      c2_paper:'Ein Zettel hinter dem Ziegel. Du brauchst etwas Dünnes.', c2_unused:'Sie hat ihr Ticket aufgehoben wie einen Beweis. Nur dass sie nicht weiß, wofür.',
-      c2_note:'Er muss ihn hören. Und dann muss er die Treppe ansehen.', c2_tape:'Sie hat nichts, um es abzuspielen. Ivkas Radio hat ein Kassettenfach.',
-      c3_bruno:'Er sucht ein Wort. Er sucht es seit achtzehn Jahren.', c3_f13:'Ein Mantel. Eine Dreizehn. Die Haken im Flur haben Nummern.',
-      c3_fcrank:'Eine Kurbel. Er hat sie versteckt, damit niemand ihre Platte spielt.', c3_zagreb:'„Wo sie nicht mehr spielt.“ Wo hat sie früher gespielt?',
-      c3_accept:'Zeig ihm den Umschlag. Er muss ihn noch einmal sehen.', c3_message:'Weck sie. Er hat lange genug gewartet.',
+      c2_luka:'Er glaubt, es ist August. Er riecht nach Sommer.', c2_gap:'Hinter den Kisten pfeift der Wind durch den Zaun.', c2_case:'Der Koffer liegt da, wo er ihn hingelegt hat. Die Tür hält ihn fest.',
+      c2_paper:'Ein gefaltetes Papier. Es wartet auch.', c2_unused:'Sie hat ihr Ticket aufgehoben wie einen Beweis. Nur dass sie nicht weiß, wofür.',
+      c2_note:'Sie hat gewartet. Er weiß es nicht.', c2_tape:'Ein Lied, das noch niemand gehört hat.',
+      c3_bruno:'Er sucht ein Wort. Er sucht es seit achtzehn Jahren.', c3_f13:'Ein Mantel. Eine Dreizehn.',
+      c3_fcrank:'Eine Kurbel. Er hat sie versteckt, damit niemand ihre Platte spielt.', c3_zagreb:'„Wo sie nicht mehr spielt.“ Er hat es so geschrieben, dass nur er es versteht.',
+      c3_accept:'Er hat ihn sechsunddreißig Jahre lang nicht vergessen.', c3_message:'Er hat lange genug gewartet.',
+      pro_notice:'Sie hat ihren Namen gelesen. Sie hat ihn nur nicht geglaubt.',
+      m_leash:'Wer nicht weiterkommt, hält sich an etwas fest. An einem Ort, einem Ding, einem Versprechen. Wenn er loslässt, bringe ich ihn hinüber.',
       m_31:'…', m_register:'Hör auf.', m_tin:'Meins.'
     },'Dazu weiß ich nichts.'),
     {t:'Komm.',bye:true}
@@ -10052,54 +10482,6 @@ M.malaLooksAtMarko=async function(A){ await A.g('Er sieht müde aus. Er sieht im
 // Mala sieht Gegenstände, die Marko ihr zeigt: Standard
 M.showToMalaDefault=async function(A){ await A.g('Für mich ist das nur ein Ding. Da hängt nichts dran.'); };
 
-// ---------------------------------------------------------------- Ziele
-M.defineGoals([
-  {when:function(G){ return G.phase==='c2' && !G.flags['found.luka']; },t:'Den unruhigen Geist in der alten Ledana finden. Mala sagt, er wartet auf etwas.'},
-  {when:function(G){ return G.phase==='c2' && !G.flags['c2.lukaKnows']; },t:'Herausfinden, was Luka in der Nacht des 23. August 1999 passiert ist – und was mit Nina geschah.'},
-  {when:function(G){ return G.phase==='c2' && !G.flags['c2.tonight']; },t:'Nina das bringen, was Luka ihr sagen wollte. Sie braucht etwas, das sie abspielen kann.'},
-  {when:function(G){ return G.phase==='c2_night'; },t:'An der Rampe der Ledana: Nina das Radio mit der Kassette geben.'},
-  {when:function(G){ return G.phase==='i2'; },t:'Reden. Zuhören.'},
-  {when:function(G){ return G.phase==='c3' && !G.flags['c3.call']; },t:'Ans Telefon gehen.'},
-  {when:function(G){ return G.phase==='c3'; },t:'Für Ljerka Lalić im Hotel Palma die alten Dokumente übersetzen.'},
-  {when:function(G){ return G.phase==='c3_night' && !G.flags['found.bruno']; },t:'Jemand ist im Hotel noch im Dienst. Mala kann ihn finden.'},
-  {when:function(G){ return G.phase==='c3_night' && !G.flags['c3.translated']; },t:'Bruno die Worte zurückgeben: Erinnerungsstücke finden, ihm zeigen und seinen Satz übersetzen.'},
-  {when:function(G){ return G.phase==='c3_night'; },t:'Ljerka wecken und ihr geben, was ihr Vater ihr sagen wollte.'},
-  {when:function(G){ return G.phase==='epi' && !inv(G,'busticket'); },t:'Eine Fahrkarte kaufen. Nur hin.'},
-  {when:function(G){ return G.phase==='epi'; },t:'Der Bus nach Sarajevo fährt um sieben.'}
-]);
-// ---------------------------------------------------------------- Tipps
-M.defineHints([
-  {id:'d_news',phase:['c2'],done:function(G){ return inv(G,'newspaper')||!!G.flags['c2.radioGiven']; },t:['Zdenka wollte Ivkas Text in der Zeitung sehen.','In der Bar liegt die Zeitung von heute auf dem Tresen.','Die Zeitung in der Bar nehmen (oder am Zeitungsstand am Peristil kaufen).']},
-  {id:'d_gap',phase:['c2'],done:function(G){ return has(G,'c2_gap')||!!(G.rooms.matejuska&&G.rooms.matejuska.cratesMoved); },t:['Die Ledana liegt hinter einem Bauzaun an der Matejuška.','Mala sieht vielleicht, wie die Kinder hineinkommen.','Als Mala die Fischkisten am Zaun ansehen.']},
-  {id:'d_crates',phase:['c2'],when:function(G){ return has(G,'c2_gap'); },done:function(G){ return !!(G.rooms.matejuska&&G.rooms.matejuska.cratesMoved); },t:['Hinter den Kisten ist das Zaunfeld lose.','Marko kann die Kisten bewegen.','Als Marko die Kisten am Zaun schieben, dann durch das Loch gehen.']},
-  {id:'d_find',phase:['c2'],when:function(G){ return !!(G.rooms.matejuska&&G.rooms.matejuska.cratesMoved); },done:function(G){ return !!G.flags['found.luka']; },t:['In der Ledana pocht Markos Kopf. Hier ist jemand.','Die Galerie oben erreicht nur Mala.','Wechsle zu Mala, geh die eingestürzte Treppe hinauf und sprich mit dem Jungen.']},
-  {id:'d_crowbar',phase:['c2'],when:function(G){ return !!G.flags['c2.coldJammed']||has(G,'c2_case')||has(G,'c2_guitar'); },done:function(G){ return inv(G,'crowbar')||!!G.flags['c2.coldOpen']; },t:['Die Kühlraumtür klemmt. Rost.','Dinko an der Matejuška hat gesagt: Wenn du was brauchst …','Frag Dinko nach einem Brecheisen.']},
-  {id:'d_cold',phase:['c2'],when:function(G){ return inv(G,'crowbar'); },done:function(G){ return inv(G,'tickets')||!!G.flags['c2.case']; },t:['Mit dem Brecheisen geht die Kühlraumtür auf.','Brecheisen auf die Kühlraumtür, dann hinein.','Den Gitarrenkoffer unter dem Schutt öffnen.']},
-  {id:'d_sanja',phase:['c2'],when:function(G){ return has(G,'c2_luka')||has(G,'c2_meet')||inv(G,'tickets'); },done:function(G){ return has(G,'c2_shop'); },t:['Sanja kannte die beiden, wenn sie will.','Sie redet, wenn du etwas Greifbares hast oder die Namen kennst. Nicht, wenn du von Geistern sprichst.','Frag Sanja nach Luka und Nina (oder zeig ihr die Tickets).']},
-  {id:'d_spatula',phase:['c2'],when:function(G){ return has(G,'c2_paper')||has(G,'c2_mailbox')||has(G,'c2_thin'); },done:function(G){ return inv(G,'spatula')||inv(G,'note_n')||has(G,'c2_note'); },t:['Hinter dem lockeren Ziegel steckt ein Zettel. Das Brecheisen ist zu grob.','Wer hat dünnes Werkzeug? Jemand, der Rahmen macht.','In Ninas Laden nach einem dünnen Spachtel fragen.']},
-  {id:'d_brick',phase:['c2'],when:function(G){ return inv(G,'spatula'); },done:function(G){ return inv(G,'note_n')||has(G,'c2_note'); },t:['Jetzt hast du etwas Dünnes.','Der Ziegel im Ladetor der Ledana.','Spachtel auf den lockeren Ziegel.']},
-  {id:'d_back',phase:['c2'],when:function(G){ return has(G,'c2_shop'); },done:function(G){ return has(G,'c2_unused'); },t:['Nina redet nicht. Ihr Laden vielleicht schon.','Hinter der Tür „PRIVAT“ ist ihr Hinterzimmer. Mala kommt hinein.','Als Mala das gerahmte Ticket im Hinterzimmer ansehen und spüren.']},
-  {id:'d_deduce',phase:['c2'],when:function(G){ return has(G,'c2_unused')&&has(G,'c2_meet'); },done:function(G){ return has(G,'c2_waited'); },t:['Ein Ticket, nie entwertet. Ein Treffpunkt.','Im Notizbuch verbinden.','Verbinde „Ninas Ticket wurde nie entwertet“ mit „Treffpunkt: der Kiosk am Fährterminal“.']},
-  {id:'d_radio',phase:['c2'],when:function(G){ return inv(G,'newspaper')||has(G,'c2_tape'); },done:function(G){ return inv(G,'radio')||inv(G,'radioB')||inv(G,'radioT'); },t:['Eine Kassette braucht einen Rekorder. Ivka hatte einen.','Zdenka in Veli Varoš hat die Wohnung bis Freitag.','Zdenka die Zeitung mit deinem Text geben.']},
-  {id:'d_bat',phase:['c2'],when:function(G){ return inv(G,'radio'); },done:function(G){ return inv(G,'radioB')||inv(G,'radioT'); },t:['Das Radio hat keine Batterien.','Wer verkauft am Hafen Batterien?','Bei Mira am Kiosk am Fährterminal Batterien kaufen und ins Radio legen.']},
-  {id:'d_luka',phase:['c2'],when:function(G){ return inv(G,'note_n'); },done:function(G){ return !!G.flags['c2.lukaKnows']; },t:['Luka muss hören, was Nina geschrieben hat.','Lies ihm den Zettel vor. Dann muss er sehen, was passiert ist.','Zettel vorlesen, dann: „Luka … sieh dir die Treppe an.“']},
-  {id:'d_tape',phase:['c2'],when:function(G){ return inv(G,'radioB')&&inv(G,'cassette'); },done:function(G){ return inv(G,'radioT'); },t:['Die Kassette und das Radio.','Im Inventar kombinieren.','Kassette auf das Radio ziehen.']},
-  {id:'d_nina',phase:['c2'],when:function(G){ return !!G.flags['c2.lukaKnows']&&inv(G,'radioT')&&inv(G,'note_n')&&inv(G,'tickets'); },done:function(G){ return !!G.flags['c2.tonight']; },t:['Jetzt hast du, was Nina sehen muss.','Geh zu Nina und sag: „Ich war in der Ledana.“','Zeig ihr Zettel, Tickets und Kassette, dann frag, ob sie es hören will.']},
-  {id:'d_final',phase:['c2_night'],done:function(G){ return !!G.flags['c2.done']; },t:['Nina wartet an der Rampe.','Gib ihr das Radio.','Das Radio mit der Kassette auf Nina ziehen.']},
-  {id:'e_call',phase:['c3'],done:function(G){ return !!G.flags['c3.call']; },t:['Das Telefon klingelt.','Nur in der Wohnung bleiben.','Geh in Markos Wohnung (der Anruf kommt von selbst).']},
-  {id:'e_docs',phase:['c3'],when:function(G){ return !!G.flags['c3.call']; },done:function(G){ return !!G.flags['c3.read']; },t:['Ljerka wartet im Hotel Palma.','Lass dir die Dokumente geben.','Dokumente am Lesetisch benutzen (übersetzen).']},
-  {id:'e_find',phase:['c3_night'],done:function(G){ return !!G.flags['found.bruno']; },t:['Die Glocke hat von selbst geklingelt.','Mala findet ihn. Die Loge.','Als Mala die Portiersloge spüren (oder die Glocke).']},
-  {id:'e_key',phase:['c3_night'],when:function(G){ return !!G.flags['found.bruno']; },done:function(G){ return inv(G,'keyring'); },t:['Der Salonschlüssel hängt nicht am Brett. „Bei mir“, steht da.','Bruno sagt „trinaest … Mantel … Haken“.','Den Mantel an Haken 13 durchsuchen (benutzen).']},
-  {id:'e_photo',phase:['c3_night'],when:function(G){ return !!G.flags['found.bruno']; },done:function(G){ return (G.flags['c3.lvl']||0)>=1; },t:['Erinnerungen geben Bruno Worte zurück.','An der Wand hängt ein Tanzfoto.','Das Tanzfoto nehmen und Bruno zeigen.']},
-  {id:'e_crank',phase:['c3_night'],when:function(G){ return !!G.flags['found.bruno']; },done:function(G){ return inv(G,'crank')||!!(G.rooms.salon&&G.rooms.salon.crank); },t:['„Nema glazbe … ručka.“ Keine Musik … Kurbel.','Mala sieht, wo er sie versteckt hat.','Das Telefonbuch in der Loge nehmen – darunter liegt die Kurbel.']},
-  {id:'e_book',phase:['c3_night'],when:function(G){ return inv(G,'keyring'); },done:function(G){ return inv(G,'musicbook')||(G.flags['c3.lvl']||0)>=2; },t:['Im Salon steht der Flügel unter einem Tuch.','Tuch herunter, dann sieh auf das Notenpult.','Die Klavierschule vom Flügel nehmen und Bruno zeigen.']},
-  {id:'e_bench',phase:['c3_night'],when:function(G){ return inv(G,'keyring'); },done:function(G){ return inv(G,'envelope')||has(G,'c3_accept'); },t:['„Dorthin, wo sie nicht mehr spielt.“','Der Klavierhocker hat ein winziges Schloss.','Den Schlüsselring auf den Klavierhocker ziehen.']},
-  {id:'e_env',phase:['c3_night'],when:function(G){ return inv(G,'envelope'); },done:function(G){ return (G.flags['c3.lvl']||0)>=3; },t:['Bruno muss den Umschlag noch einmal sehen.','Zeig ihn ihm.','Den Umschlag aus Zagreb auf Bruno ziehen.']},
-  {id:'e_trans',phase:['c3_night'],when:function(G){ return (G.flags['c3.lvl']||0)>=3; },done:function(G){ return !!G.flags['c3.translated']; },t:['Sein Satz ist in drei Sprachen durcheinander.','Rede mit ihm: „Ich versuche, Ihren Satz zu übersetzen.“','Ljerka, verzeih mir. Brief aus Zagreb versteckt. Angst, allein zu sein. Spiel wieder.']},
-  {id:'e_wake',phase:['c3_night'],when:function(G){ return !!G.flags['c3.translated']; },done:function(G){ return !!G.flags['c3.done']; },t:['Bruno will, dass du Ljerka weckst.','Ihre Tür ist hinter der Rezeption.','Die Tür „PRIVAT“ benutzen. Gib ihr erst den Umschlag, dann den Brief, dann sag ihr den Satz.']},
-  {id:'f_ticket',phase:['epi'],done:function(G){ return inv(G,'busticket'); },t:['Ljerkas Honorar reicht für eine Fahrkarte.','Am Schalter BLAGAJNA.','Den Fahrkartenschalter benutzen.']},
-  {id:'f_bus',phase:['epi'],when:function(G){ return inv(G,'busticket'); },done:function(G){ return !!G.ended; },t:['Der Bus wartet.','Mala sitzt auf der Bank. Rede mit ihr, wenn du willst.','Den Bus benutzen.']}
-]);
 })(M);
 
 /* ---- 93_mem.js ---- */

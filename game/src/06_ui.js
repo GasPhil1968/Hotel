@@ -26,20 +26,28 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   list.forEach(function(l){
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost;
-      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { o.lut=(a.id==='mala'?M.TINT.mala:M.TINT.spirit).a; o.alpha=a.alpha||(a.id==='mala'?0.8:0.72); o.wobble=1; } }
+      var lift=0;
+      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.id==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||(isM?0.62:0.7); o.wobble=1;
+        if (isM){ lift=1+Math.round((Math.sin(tq/760)+1)*0.75); if ((tq%7300)<150) o.alpha*=0.45; } } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
       if (a.fadeOut){ var k=(E.gt()-a.fadeOut)/900; if (k>=1){ a.visible=false; a.fadeOut=0; return; } o.alpha=(o.alpha||1)*(1-k); }
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
-      M.drawPose(fb,sx,a.y,p,f,a.ch,o); }
+      if (spirit && !ghostView) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
+      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
+      if (spirit && !ghostView && a.id==='mala') malaMotes(sx,a.y-lift,o.alpha); }
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
   if (room.front) room.front(fb,view,S,gs);
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
+    // Leinen: woran die Geister festgemacht sind (nur Mala sieht sie)
+    Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (!a.ghost || a.id==='mala' || !E.actorShown(a)) return; var an=typeof a.anchor==='function'?a.anchor(S,gs):a.anchor; if (an) drawLeash(a.x-cx+ox,a.y-24,an[0]-cx+ox,an[1],E.gt(),false); });
+    var ma=E.ACT.mala; if (ma && E.actorShown(ma) && !room.noMalaLeash){ var mx0=ma.x-cx+ox, my0=ma.y-22; drawLeash(mx0,my0,mx0+64,my0-58,E.gt(),true); }
     // kalter Schimmer am Rand
     var tt=E.gt()/1000; for (var yy=0;yy<SH;yy++){ var e=Math.min(yy,SH-1-yy); if (e>5) continue; for (var xx=0;xx<W;xx++){ if (bayer(xx+Math.floor(tt*3),yy)<(6-e)/14) fb.d[yy*W+xx]=P.x0; } } }
+  if (E.crossing) drawCrossing(E.crossing,cx-ox,E.gt());
   // Kopfschmerz: ein unentdeckter Geist ist nah
   var hidden=!ghostView && Object.keys(E.ACT).some(function(k){ var a=E.ACT[k]; return a.ghost && a.id!=='mala' && a.visible && !E.ghostVisible(a) && !a.noAche; });
   var ache=hidden || (E.headache && E.gt()<E.headache);
@@ -49,12 +57,29 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
+// Geisterschein: ein weicher, kalter Rand um die Gestalt
+function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.id==='mala', t=Math.floor(E.gt()/120);
+  var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
+  for (var j=-2;j<h+2;j++){ var yy=by+j; if (yy<0||yy>=SH) continue; for (var i=-2;i<w+2;i++){ if (at(i,j)) continue; var n1=at(i-1,j)||at(i+1,j)||at(i,j-1)||at(i,j+1), n2=!n1&&(at(i-2,j)||at(i+2,j)||at(i,j-2)||at(i,j+2));
+      if (!n1&&!n2) continue; var xx=bx+i; if (xx<0||xx>=W) continue; var th=(n1?0.55:0.22)*(al+0.3); if (bayer(xx+t,yy)>=th) continue; var k=yy*W+xx, c=fb.d[k]; fb.d[k]=M.lum(c)<70?gl[0]:(M.lum(c)<140?gl[1]:gl[2]); } } }
+// kleine Lichtpunkte, die von Mala aufsteigen
+function malaMotes(x,y,al){ var t=E.gt()/1000; for (var i=0;i<4;i++){ var ph=(t*0.32+i*0.27)%1, px=Math.round(x+Math.sin(i*2.7+t*1.3)*7), py=Math.round(y-12-ph*34); if (ph>0.85||px<0||px>=W||py<0||py>=SH) continue; if (bayer(px,py)<(1-ph)*al) fb.d[py*W+px]=P.x5; } }
+// eine Leine aus Licht von (x0,y0) nach (x1,y1), leicht durchhängend; east=true: Malas eigene, die sich im Osten verliert
+function drawLeash(x0,y0,x1,y1,gt,east){ var dx=x1-x0, dy=y1-y0, L=Math.max(2,Math.hypot(dx,dy)), sag=Math.min(18,L*0.16), mx=(x0+x1)/2, my=(y0+y1)/2+sag, n=Math.ceil(L*1.3), t=gt/1000;
+  for (var i=0;i<=n;i++){ var u=i/n, a=(1-u)*(1-u), b=2*(1-u)*u, c=u*u, px=Math.round(a*x0+b*mx+c*x1), py=Math.round(a*y0+b*my+c*y1+Math.sin(u*9+t*2.2)*0.6); if (px<0||px>=W||py<0||py>=SH) continue;
+    var vis=east?(1-u)*(1-u)*0.8:0.9; if (bayer(px+Math.floor(t*8),py)>=vis) continue; var k=py*W+px; fb.d[k]=(Math.sin(u*40-t*5)>0.6)?P.x6:(east?P.x4:P.x5); } }
+// die Schwelle: ein warmes, aufrechtes Licht, das sich öffnet und wieder schließt
+function drawCrossing(c,cam,gt){ var k=Math.min(1,(gt-c.at)/1200); if (c.close) k*=Math.max(0,1-(gt-c.close)/1200); if (k<=0) return; var X=c.x-cam, hw=Math.max(1,c.w/2*k), top=c.y-c.h, t=gt/1000;
+  for (var y=Math.max(0,top-8);y<Math.min(SH,c.y+4);y++){ var vy=y<top?Math.max(0,1-(top-y)/8):(y>c.y-6?Math.max(0,(c.y+4-y)/10):1);
+    for (var x=Math.max(0,Math.floor(X-hw-10));x<Math.min(W,Math.ceil(X+hw+10));x++){ var d=Math.abs(x-X)/hw, I=(d<1?1-d*d*0.6:Math.max(0,1-(d-1)*hw/10)*0.4)*vy*k; if (I<=0) continue; var q=I-bayer(x+Math.floor(t*6),y)*0.5;
+      var kk=y*W+x, cc=fb.d[kk]; if (q>0.75) fb.d[kk]=P.l1; else if (q>0.55) fb.d[kk]=P.l0; else if (q>0.38) fb.d[kk]=P.y5; else if (q>0.2) fb.d[kk]=M.UP[M.UP[cc]]; else if (q>0.05) fb.d[kk]=M.UP[cc]; } }
+  for (var i=0;i<10;i++){ var ph=(t*0.25+i*0.13)%1, px=Math.round(X+Math.sin(i*1.9+t)*hw*0.8), py=Math.round(c.y-ph*c.h*1.1); if (px>=0&&px<W&&py>=0&&py<SH&&ph<0.95) fb.d[py*W+px]=P.l1; } }
 function clearMask(l,ox,oy){ for (var j=0;j<l.h;j++){ var y=oy+j; if (y<0||y>=SH) continue; for (var i=0;i<l.w;i++){ if (l.d[j*l.w+i]===T) continue; var x=ox+i; if (x<0||x>=W) continue; mask[y*W+x]=0; } } }
 function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ if (Math.abs(dx)>(dy===0?w:w-2)) continue; var px=Math.round(x)+dx, py=Math.round(y)+dy; if (px<0||px>=W||py<0||py>=SH) continue; var c=fb.d[py*W+px]; fb.d[py*W+px]=M.DN[c]; } }
 
 // ---------------------------------------------------------------- Leiste
 var BTN_Y=SH+2, INV_Y=161, SLOT_W=40, SLOT_H=36, INV_X=51, INV_N=6, SW_X=2, SW_W=38;
-var BTNS=[{id:'hint',t:'Tipp',x:4},{id:'notes',t:'Notizen',x:34},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
+var BTNS=[{id:'notes',t:'Notizen',x:4},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
 (function(){ var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); })();
 function btnAt(x,y){ if (y<SH||y>=SH+15) return null; for (var i=0;i<BTNS.length;i++){ var b=BTNS[i]; if (x>=b.x-5&&x<b.x+b.w+5) return b.id; } return null; }
 function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
@@ -64,7 +89,7 @@ function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.
 function invList(){ return isG()?['tin']:GS().inv; }
 function drawUI(){ fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
   if (E.dlg && E.conv) return;
-  if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS[3],true); return; }
+  if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS.filter(function(b){ return b.id==='menu'; })[0],true); return; }
   var s=E.overlay?(pointer.touch?'(Tippen zum Schließen)':''):(E.pop||drag?'':sentence()); var sw=M.textWidth(s); M.text(fb,s,Math.max(100,Math.floor((W-sw)/2)),SH+4,c.tx);
   BTNS.forEach(function(b){ drawButton(b,true); });
   // Wechsel-Knopf
@@ -86,9 +111,11 @@ M.iconOf=iconOf;
 function trim(b){ var x0=b.w,y0=b.h,x1=-1,y1=-1; for (var y=0;y<b.h;y++) for (var x=0;x<b.w;x++) if (b.d[y*b.w+x]!==T){ if (x<x0)x0=x; if (y<y0)y0=y; if (x>x1)x1=x; if (y>y1)y1=y; } if (x1<0) return b; var o=new Buf(x1-x0+1,y1-y0+1,T); for (y=y0;y<=y1;y++) for (x=x0;x<=x1;x++) o.d[(y-y0)*o.w+(x-x0)]=b.d[y*b.w+x]; return o; }
 function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2, avail=g.malaOn && !(E.room&&(E.room.noMala||E.room.noSwitch));
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
-  if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', pb=portraitBuf(other,'n'), hot=hoverUI==='sw'&&pointer.show;
-  var cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
-  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.malaP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
+  if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', hot=hoverUI==='sw'&&pointer.show;
+  if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
+    for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; if (!avail) c2=M.DN[M.DN[c2]]; fb.px(x+2+i2,y+1+j2,c2); } }
+  else { var pb=portraitBuf(other,'n'), cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
+    for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.ghostP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); } }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -100,7 +127,7 @@ function hsOpts(hs){ var room=E.room; if (room.noVerbs) return null; var o=[], g
   if (hs===E.MALA_HS){ return [{t:'Rede mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (hs===E.MARKO_HS){ return [{t:'Sprich mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (ex) o.push({t:g&&hs.gexit?'Hindurchgehen':'Hingehen',v:g&&hs.gexit?'pass':'walk'});
-  if (g){ var gv=hs.g||{}; ['talk','sense','listen'].forEach(function(v){ if (gv[v]!==undefined) o.push({t:E.VLABEL[v==='talk'?'gtalk':v],v:v}); });
+  if (g){ var gv=hs.g||{}; if (gv.cross!==undefined && (!gv.crossIf || gv.crossIf(M.RS(room.id),GS()))) o.push({t:E.VLABEL.cross,v:'cross'}); ['talk','sense','listen'].forEach(function(v){ if (gv[v]!==undefined) o.push({t:E.VLABEL[v==='talk'?'gtalk':v],v:v}); });
     if (hs.npc && !gv.talk && E.ACT[hs.npc] && E.ACT[hs.npc].ghost) o.push({t:'Sprich mit',v:'talk'}); }
   else { ['talk','take','open','use','push','read'].forEach(function(v){ if (hs[v]!==undefined) o.push({t:E.VLABEL[v],v:v}); }); if (hs.npc && hs.talk===undefined) o.unshift({t:'Rede mit',v:'talk'}); }
   if (!ex && o.length===0) return null;
@@ -124,55 +151,68 @@ function portraitBuf(chId,hd){ var key=chId+':'+hd; if (PCACHE[key]) return PCAC
   var cw=21, ch=22, cx0=M.SPR.OX-10, b=new Buf(cw,ch,T); for (y=0;y<ch;y++) for (x=0;x<cw;x++){ var sy=top-1+y, sx=cx0+x; if (sy>=0&&sy<s.h&&sx>=0&&sx<s.w) b.d[y*cw+x]=s.d[sy*s.w+sx]; }
   return (PCACHE[key]=b); }
 M.portraitBuf=portraitBuf;
-var PR_W=58, PR_H=64, PR_L=[4,6], PR_R=[W-4-PR_W,6], NB_X=68, NB_W=184, NB_Y=6, NB_LH=10, NB_TW=162;
+// ---------------------------------------------------------------- Porträts und Gespräche (wie in den Blackwell-Spielen: Brustbild oben, Satz im Kasten daneben)
+var PW=56, PH=64, NB_LH=10;
 function convOn(){ return !!(E.screen==='game' && E.room && !E.overlay && !E.menu && (E.dlg || (E.conv && E.conv.room===E.room))); }
 function convPartner(){ if (!E.conv||!E.conv.npc) return null; var a=E.ACT[E.conv.npc]; return (a && M.CHARS[a.ch] && a.id!==GS().active && E.actorShown(a))?a:null; }
-function drawPortrait(a,pos,mirror,speaking,dim){ var x0=pos[0], y0=pos[1], hd='n', c=ui(); var g=E.gt();
-  if (speaking) hd=(Math.floor(g/130)%2)?'o':'n'; else if ((g+(mirror?1700:0))%4300<120) hd='b';
-  var pb=portraitBuf(a.ch,hd), sc=PR_W/pb.w, ox=x0, oy=y0+PR_H-Math.round(pb.h*sc);
-  // Rahmen + Hintergrund (abhängig von Geist / Lebend)
-  var ghostLook=a.ghost && !isG(), bgR=a.ghost?M.R('x0 x1 x2'):(isG()?M.R('k1 k2 n0'):M.R('w0 w1 w2'));
-  for (var y=0;y<PR_H;y++) for (var x=0;x<PR_W;x++){ var v=y/PR_H; var col=M.rampAt(bgR,0.7-v*0.6,x0+x,y0+y);
-    var bx=Math.floor((mirror?(PR_W-1-x):x)/sc), by=Math.floor((y0+y-oy)/sc); if (by>=0&&by<pb.h&&bx>=0&&bx<pb.w){ var pc=pb.d[by*pb.w+bx]; if (pc!==T){ col=pc; if (ghostLook) col=(a.id==='mala'?M.TINT.malaP:M.TINT.spirit).a[col]; else if (isG() && !a.ghost) col=M.tintPx(M.TINT.ghost,col,x,y); } }
-    if (dim) col=M.DN[col]; fb.px(x0+x,y0+y,col); }
-  var fr=a.ghost?P.x2:c.fr; fb.hl(x0-1,x0+PR_W,y0-1,fr); fb.hl(x0-1,x0+PR_W,y0+PR_H,fr); fb.vl(x0-1,y0-1,y0+PR_H,fr); fb.vl(x0+PR_W,y0-1,y0+PR_H,fr);
-  var nm=a.name||a.id, nw=M.textWidth(nm); M.text(fb,nm,x0+Math.floor((PR_W-nw)/2),y0+PR_H+4,dim?P.k2:(a.color===undefined?P.s6:a.color),P.k0); }
+// gemaltes Porträt (portraits/<id>.js) oder ersatzweise der vergrößerte Kopf-Stempel der Spielfigur
+var FALLBACK={};
+function portraitFor(ch,variant){ if (M.hasPortrait && M.hasPortrait(ch)) return M.portrait(ch,variant); var key=ch+':'+variant; if (FALLBACK[key]) return FALLBACK[key]; if (!M.CHARS[ch]) return null;
+  var hb=portraitBuf(ch,variant), b=new Buf(PW,PH,T), sc=PW/hb.w;
+  for (var y=0;y<PH;y++) for (var x=0;x<PW;x++){ var sx=Math.floor(x/sc), sy=Math.floor(y/sc); if (sy<hb.h&&sx<hb.w){ var c=hb.d[sy*hb.w+sx]; if (c!==T) b.d[y*PW+x]=c; } }
+  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]) M.tintApply(b,M.TINT[gt]); return (FALLBACK[key]=b); }
+function drawBust(ch,x0,y0,variant,mirror){ var pb=portraitFor(ch,variant); if (!pb) return false; var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch];
+  if (gh){ var cx=x0+(PW>>1), cy=y0+26, aur=ch==='mala'?[P.x1,P.x2]:[P.v1,P.v2], t=Math.floor(E.gt()/150); // kalter Schein hinter Geistern
+    for (var y=Math.max(0,y0-4);y<y0+PH;y++) for (var x=Math.max(0,x0-6);x<Math.min(W,x0+PW+6);x++){ var d=Math.hypot((x-cx)/34,(y-cy)/31); if (d>1) continue; if (bayer(x+t,y)<(1-d)*0.5) fb.px(x,y,d<0.55?aur[1]:aur[0]); } }
+  for (var yy=0;yy<pb.h;yy++){ var Y=y0+yy; if (Y<0||Y>=H) continue; for (var xx=0;xx<pb.w;xx++){ var c=pb.d[yy*pb.w+(mirror?pb.w-1-xx:xx)]; if (c!==T) fb.px(x0+xx,Y,c); } }
+  return true; }
+function idleVariant(seed){ return ((E.gt()+seed)%4300)<120?'b':'n'; }
 function dlgBye(){ if (!E.dlg) return -1; for (var i=E.dlg.opts.length-1;i>=0;i--) if (E.dlg.opts[i].bye) return i; return -1; }
-function drawConv(){ if (!convOn()) return; var who=E.speech?E.speech.who:null, pa=convPartner(), me=E.ACT[GS().active];
-  if (pa){ if (me && !E.room.noActor) drawPortrait(me,PR_L,false,who===me.id,!!(who&&who!==me.id&&who===pa.id)); drawPortrait(pa,PR_R,true,who===pa.id,!!(who&&me&&who===me.id)); }
-  if (E.dlg) drawChoices(); }
-function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=NB_X, w=NB_W, tx=x0+14, y, i; if (!convPartner()){ x0=40; w=240; tx=x0+14; }
-  var tw=w-24; if (d.top>=o.length) d.top=Math.max(0,o.length-1);
-  var head=d.title||(convPartner()?(convPartner().name||''):''), hh=head?13:4, rows=[], yy=NB_Y+hh+3, more=false, maxY=SH+52;
-  for (var k=d.top;k<o.length;k++){ var ls=o[k].lines||(o[k].lines=M.wrap(o[k].t,tw)), h=ls.length*NB_LH+5; if (yy+h>maxY-((k<o.length-1||d.top>0)?13:0)){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
-  if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+5,ls:l1}); yy+=rows[0].h; more=d.top<o.length-1; }
-  var pager=more||d.top>0, foot=pager?13:0, y1=yy+foot+3;
-  // Papier (Marko) oder dunkles Glas (Mala)
-  if (!g){ fb.map(x0+3,NB_Y+3,w,y1-NB_Y,M.DN); fb.rect(x0,NB_Y,w,y1-NB_Y,P.s5); for (y=NB_Y+hh+12;y<y1-2;y+=NB_LH) fb.hl(x0+1,x0+w-2,y,P.s4); fb.vl(x0+10,NB_Y+1,y1-2,P.r4); fb.hl(x0,x0+w-1,NB_Y,P.s6);
-    fb.ellipse(x0+w-24,y1-14,9,6,function(px,py){ var dd=Math.hypot((px-(x0+w-24))/9,(py-(y1-14))/6); return (dd>0.78&&dd<1&&bayer(px,py)<0.6)?P.s3:fb.get(px,py); }); }
-  else { for (y=NB_Y;y<y1;y++) for (var x=x0;x<x0+w;x++){ var cc=fb.get(x,y); fb.px(x,y,bayer(x,y)<0.75?P.x0:M.DN[M.DN[cc]]); } fb.hl(x0,x0+w-1,NB_Y,P.x2); fb.hl(x0,x0+w-1,y1-1,P.x2); fb.vl(x0,NB_Y,y1-1,P.x2); fb.vl(x0+w-1,NB_Y,y1-1,P.x2); }
-  fb.hl(x0-1,x0+w,NB_Y-1,P.k1); fb.hl(x0-1,x0+w,y1,P.k1); fb.vl(x0-1,NB_Y,y1-1,P.k1); fb.vl(x0+w,NB_Y,y1-1,P.k1);
-  if (head) M.text(fb,head,tx,NB_Y+3,g?P.x4:P.n2);
-  var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null};
-  if (bye>=0){ var cxx=x0+w-11, cyy=NB_Y+3, hot=hoverUI==='cx', cc2=hot?P.r4:(g?P.x3:P.n2); for (i=0;i<6;i++){ fb.px(cxx+i,cyy+i,cc2); fb.px(cxx+i+1,cyy+i,cc2); fb.px(cxx+5-i,cyy+i,cc2); fb.px(cxx+6-i,cyy+i,cc2); } lay.close=[x0+w-24,NB_Y-3,26,16]; }
-  var talk=!!convPartner();
-  rows.forEach(function(r){ var hot=pointer.show&&hoverUI==='c:'+r.k, asked=talk&&!o[r.k].bye&&!o[r.k].noGray&&GS().seen['ask:'+o[r.k].t], col=g?(hot?P.x6:(asked?P.x2:P.x4)):(hot?P.n0:(asked?P.s2:P.n1));
-    if (hot) fb.rect(x0+11,r.y+1,w-12,r.h-2,g?P.x1:P.s6);
-    if (o[r.k].ask){ fb.px(tx-5,r.y+4,col); fb.px(tx-4,r.y+5,col); fb.px(tx-5,r.y+6,col); }
-    r.ls.forEach(function(l,j){ M.text(fb,l,tx,r.y+3+j*NB_LH,col); }); lay.rows.push({k:r.k,r:[x0+11,r.y,w-11,r.h]}); });
-  if (pager){ var py=y1-foot-1, upOn=d.top>0, dnOn=more, tri=function(cx,up,on,hot){ var c=on?(hot?(g?P.x6:P.n0):(g?P.x4:P.n2)):(g?P.x1:P.s3); for (var t=0;t<5;t++){ var ty=up?py+3+t:py+7-t; fb.hl(cx-t,cx+t,ty,c); } };
-    tri(x0+w/2-20|0,true,upOn,hoverUI==='cu'); tri(x0+w/2+20|0,false,dnOn,hoverUI==='cd'); lay.up=upOn?[x0+11,py,w/2-11,foot+3]:null; lay.dn=dnOn?[x0+w/2,py,w/2,foot+3]:null; }
+// während der Auswahl: oben das Gegenüber, unten die Liste der Sätze
+function drawConv(){ if (!convOn()) return; if (!E.dlg) return; var pa=convPartner();
+  if (pa && !E.speech){ var right=true, me=E.ACT[GS().active]; if (me) right=pa.x>=me.x; drawBust(pa.ch,right?W-4-PW:4,4,idleVariant(1700),right); }
+  drawChoices(); }
+function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=2, w=W-4, y0=SH+1, y1=H-1, tx=x0+12, tw=w-34, i;
+  if (d.top>=o.length) d.top=Math.max(0,o.length-1);
+  fb.rect(0,SH,W,H-SH,P.k0); var fr=g?P.x2:P.s4; fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
+  var rows=[], yy=y0+4, more=false;
+  for (var k=d.top;k<o.length;k++){ var ls=o[k].lines||(o[k].lines=M.wrap(o[k].t,tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
+  if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+1,ls:l1}); more=d.top<o.length-1; }
+  var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null}, talk=!!convPartner();
+  rows.forEach(function(r){ var hot=pointer.show&&hoverUI==='c:'+r.k, asked=talk&&!o[r.k].bye&&!o[r.k].noGray&&GS().seen['ask:'+o[r.k].t];
+    var col=g?(hot?P.x6:(asked?P.x2:P.x4)):(hot?P.l1:(asked?P.s2:P.s5));
+    if (hot) fb.rect(x0+3,r.y-1,w-24,r.h,g?P.x0:P.k2);
+    if (o[r.k].ask){ fb.px(tx-6,r.y+2,col); fb.px(tx-5,r.y+3,col); fb.px(tx-6,r.y+4,col); } else { fb.px(tx-6,r.y+3,g?P.x1:P.s1); fb.px(tx-5,r.y+3,g?P.x1:P.s1); }
+    r.ls.forEach(function(l,j){ M.text(fb,l,tx,r.y+j*NB_LH,col); }); lay.rows.push({k:r.k,r:[x0+3,r.y-1,w-24,r.h]}); });
+  // rechts: Schließen und Blättern
+  var ax=x0+w-11, upOn=d.top>0, dnOn=more;
+  if (bye>=0){ var cyy=y0+4, hot2=hoverUI==='cx', cc2=hot2?P.r4:(g?P.x3:P.s3); for (i=0;i<5;i++){ fb.px(ax-2+i,cyy+i,cc2); fb.px(ax+2-i,cyy+i,cc2); } lay.close=[ax-8,y0+1,18,14]; }
+  if (upOn||dnOn){ var tri=function(cy,up,on,hot){ var c=on?(hot?(g?P.x6:P.l1):(g?P.x4:P.s5)):(g?P.x1:P.s1); for (var t=0;t<4;t++){ var ty=up?cy+t:cy+3-t; fb.hl(ax-t,ax+t,ty,c); } };
+    tri(y0+20,true,upOn,hoverUI==='cu'); tri(y1-9,false,dnOn,hoverUI==='cd'); lay.up=upOn?[ax-8,y0+16,18,14]:null; lay.dn=dnOn?[ax-8,y1-16,18,14]:null; }
   d.lay=lay; }
+// Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
+function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phone||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;
+  var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
+function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
+  var right=false, me=E.ACT[GS().active], pa=convPartner();
+  if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me; right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
+  var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
+  var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
+  var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
+  drawBust(pr.ch,px,4,variant,right);
+  var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
+  fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
+  lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
+  if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var ix=bx1-6, iy=by1-6; for (var t=0;t<3;t++) fb.hl(ix-2+t,ix+2-t,iy+t,frame); } }
 
 // ---------------------------------------------------------------- Sprechtext
 function speakerPos(who){ var a=E.ACT[who]; if (a && E.actorShown(a) && E.room){ return [Math.round(a.x)-Math.round(E.camX), Math.round(a.y)-(a.speechY||(a.idle&&/sit|mend|cards|guitar/.test(a.idle)?40:54))]; } return null; }
-function drawSpeech(){ var sp=E.speech; if (!sp) return; var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.color!==undefined?o.color:P.l0, a=E.ACT[sp.who], M2=8;
+function drawSpeech(){ var sp=E.speech; if (!sp) return; var pr=speechPortrait(sp); if (pr) return drawSpeechBust(sp,pr); return drawSpeechPlain(sp); }
+function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.color!==undefined?o.color:P.l0, a=E.ACT[sp.who], M2=8;
   var lines=M.wrap(sp.text,200), pos=speakerPos(sp.who);
   if (a) col=o.color!==undefined?o.color:a.color;
   if (sp.who&&sp.who[0]==='@'){ var nm=sp.who.slice(1); if (M.CAST_COLORS[nm]!==undefined && o.color===undefined) col=M.CAST_COLORS[nm]; }
   if (pos){ cx=pos[0]; top=pos[1]-lines.length*lh-2; }
-  var inConv=convOn()&&!E.dlg&&a&&(a.player||a===convPartner())&&o.x===undefined&&convPartner();
-  if (inConv){ lines=M.wrap(sp.text,NB_W-10); cx=160; top=10; pos=null; M2=PR_W+12; }
   if (o.x!==undefined) cx=o.x; if (o.y!==undefined) top=o.y;
   if (sp.who==='#'){ lines=M.wrap(sp.text,240); cx=160; top=Math.max(8,60-lines.length*lh/2); }
   if (o.phone){ lines=M.wrap(sp.text,220); cx=160; top=18; }
@@ -190,10 +230,6 @@ function paper(x,y,w,h,opt){ opt=opt||{}; var base=opt.col||P.s5; fb.rect(x+2,y+
   fb.hl(x,x+w-1,y,M.UP[base]); fb.vl(x+w-1,y,y+h-1,M.DN[base]); fb.hl(x,x+w-1,y+h-1,M.DN[base]); if (opt.lines){ for (var ly=y+opt.lines[0];ly<y+h-4;ly+=opt.lines[1]) fb.hl(x+3,x+w-4,ly,P.b4); } if (opt.margin) fb.vl(x+opt.margin,y+1,y+h-2,P.r4); }
 M.paper=paper; M.dimAll=dimAll;
 function drawOverlay(){ var ov=E.overlay; if (!ov) return; dimAll(2); var fn=M.OVERLAYS[ov.kind]; if (fn) fn(fb,ov,E.gt()); }
-// Tipp
-M.defineOverlay('hint',function(fb,ov){ var d=ov.data; paper(36,10,248,124,{lines:[24,9],margin:12}); M.text(fb,'GEDANKEN',54,14,P.k1);
-  var y=28; M.text(fb,'Was ich vorhabe:',54,y,P.r2); y+=10; M.wrap(d.goal||'',216).forEach(function(l){ M.text(fb,l,58,y,P.k1); y+=9; });
-  if (d.hint){ y+=5; M.text(fb,d.tier!==undefined?('Ein Gedanke ('+(d.tier+1)+' von '+d.of+'):'):'Ein Gedanke:',54,y,P.r2); y+=10; M.wrap(d.hint,216).forEach(function(l){ M.text(fb,l,58,y,P.n1); y+=9; }); } });
 // Dokument (Brief, Postkarte, Buch, Register, Ticket, Zeitung)
 M.defineOverlay('doc',function(fb,ov){ var d=ov.data, st=d.style||'letter', w=d.w||220, lines=[], col=P.s5, ink=P.k1, x, y;
   (d.lines||[]).forEach(function(l){ if (l==='') lines.push(''); else M.wrap(l,w-28).forEach(function(q){ lines.push(q); }); });
@@ -226,48 +262,42 @@ M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||d.slots.
   M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2);
   if (ov.msg) M.wrap(ov.msg,250).forEach(function(l,i){ M.text(fb,l,36,by+18+i*9,P.r2); }); });
 
-// ---------------------------------------------------------------- Notizbuch (Der Fall / Notizen, Verbinden, Fragen)
+// ---------------------------------------------------------------- Notizbuch (Notizen, Verbinden, Fragen)
 function notesOf(){ var g=GS(); var list=g.notes.slice(); var ph=M.PHASES[g.phase]||{}; var cs=ph.case; var mine=list.filter(function(id){ var n=M.NOTES[id]; return !cs || !n.c || n.c===cs || n.c==='mala'; }); return mine.length?mine:list; }
-var NB={page:'case',sel:null,top:0,msg:null,lay:null};
-E.openNotes=function(){ NB.page='notes'; NB.sel=null; NB.top=0; NB.msg=null; return showNotes(); };
+var NB={sel:null,top:0,msg:null,lay:null};
+E.openNotes=function(){ NB.sel=null; NB.top=0; NB.msg=null; return showNotes(); };
 function showNotes(){ return E.showOverlay('notebook',{mode:'browse'}); }
-M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'; if (ask) NB.page='notes'; if (ov.page && !ov.init){ NB.page=ov.page; ov.init=1; NB.top=0; NB.sel=null; NB.msg=null; }
-  var lx=6, rx=162, y0=6, pw=152, ph=182, g=GS();
+// zwei Seiten, auf denen die Notizen weiterlaufen; keine Ziele, keine Hinweise auf den nächsten Schritt
+M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'; if (!ov.init){ ov.init=1; NB.top=0; NB.sel=null; NB.msg=null; }
+  var lx=6, rx=162, y0=6, pw=152, ph=182, g=GS(), ph0=M.PHASES[g.phase]||{};
   paper(lx,y0,pw,ph,{lines:[22,9],margin:10}); paper(rx,y0,pw,ph,{lines:[22,9],margin:10}); fb.vl(159,y0,y0+ph,P.k1); fb.vl(160,y0,y0+ph,P.s2);
-  var lay={notes:[],tabCase:[lx+14,y0+2,60,14],tabNotes:[rx+14,y0+2,70,14],close:[rx+pw-22,y0+2,20,14],up:null,dn:null};
-  // linke Seite: der Fall
-  var ph0=M.PHASES[g.phase]||{}; M.text(fb,'DER FALL',lx+16,y0+5,NB.page==='case'?P.r2:P.s2);
-  var y=y0+22; M.wrap(ph0.title||'',pw-26).forEach(function(l){ M.text(fb,l,lx+16,y,P.k1); y+=9; }); y+=2;
-  M.text(fb,'Ziel:',lx+16,y,P.r2); y+=9; M.wrap(E.currentGoal(),pw-30).forEach(function(l){ M.text(fb,l,lx+20,y,P.n1); y+=9; }); y+=3;
-  var L=E.leads(); M.text(fb,'Spuren:',lx+16,y,P.r2); y+=9;
-  if (!L.leads.length){ M.text(fb,'Keine offenen.',lx+20,y,P.s2); y+=9; }
-  L.leads.slice(0,5).forEach(function(t){ var ls=M.wrap(t,pw-36); if (y+ls.length*9>y0+ph-22) return; fb.rect(lx+16,y+2,4,4,P.n2); ls.forEach(function(l){ M.text(fb,l,lx+24,y,P.n1); y+=9; }); });
-  if (L.tot){ var by=y0+ph-14, bw=80, fw=Math.round(bw*L.done/L.tot); M.text(fb,'Stand',lx+16,by-1,P.s1); fb.rect(lx+46,by,bw+2,6,P.s2); fb.rect(lx+47,by+1,bw,4,P.s6); fb.rect(lx+47,by+1,fw,4,P.g3); }
-  // rechte Seite: Notizen
-  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZEN',rx+16,y0+5,P.r2); M.text(fb,ask?'Zurück':'X',rx+pw-(ask?34:12),y0+5,hoverUI==='nx'?P.r3:P.s1); if (ask) lay.close=[rx+pw-40,y0+2,38,14];
-  var notes=notesOf(), ny=y0+20, maxY=y0+ph-(NB.msg?40:(ask?16:32));
-  if (NB.top>=notes.length) NB.top=Math.max(0,notes.length-1);
-  if (!notes.length){ M.text(fb,'Noch nichts.',rx+16,ny,P.s2); }
-  for (var i=NB.top;i<notes.length;i++){ var n=M.NOTES[notes[i]], ls=M.wrap(n.t,pw-28), hh=ls.length*9+3; if (ny+hh>maxY){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; }
-    var sel=NB.sel===notes[i], hot=hoverUI==='n:'+i, isNew=g.noteNew[notes[i]], ded=g.flags['deduced.'+notes[i]];
-    if (sel) fb.rect(rx+12,ny-1,pw-16,hh,P.y4); else if (hot) fb.rect(rx+12,ny-1,pw-16,hh,P.s6);
-    if (isNew) fb.rect(rx+12,ny+2,2,3,P.r4); if (ded) { fb.px(rx+13,ny+2,P.g3); fb.px(rx+14,ny+3,P.g3); }
-    ls.forEach(function(l,j){ M.text(fb,l,rx+16,ny+j*9,ded?P.g1:P.n1); }); lay.notes.push({id:notes[i],idx:i,r:[rx+12,ny-1,pw-16,hh]}); ny+=hh+1; }
+  var lay={notes:[],close:ask?[rx+pw-40,y0+2,38,14]:[rx+pw-22,y0+2,20,14],up:null,dn:null};
+  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZBUCH',lx+16,y0+5,P.r2);
+  if (ph0.short) M.text(fb,ph0.short,rx+16,y0+5,P.s2);
+  M.text(fb,ask?'Zurück':'X',rx+pw-(ask?34:12),y0+5,hoverUI==='nx'?P.r3:P.s1);
+  var notes=notesOf(); if (NB.top>=notes.length) NB.top=Math.max(0,notes.length-1);
+  var pages=[{x:lx,ny:y0+20,max:y0+ph-(ask?14:24)},{x:rx,ny:y0+20,max:y0+ph-(NB.msg?40:16)}], pi=0;
+  if (!notes.length) M.text(fb,'Noch nichts.',lx+16,y0+20,P.s2);
+  for (var i=NB.top;i<notes.length;i++){ var n=M.NOTES[notes[i]], ls=M.wrap(n.t,pw-28), hh=ls.length*9+3, pg=pages[pi];
+    if (pg.ny+hh>pg.max){ pi++; if (pi>=pages.length){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; } pg=pages[pi]; if (pg.ny+hh>pg.max){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; } }
+    var px0=pg.x, ny=pg.ny, sel=NB.sel===notes[i], hot=hoverUI==='n:'+i, isNew=g.noteNew[notes[i]], ded=g.flags['deduced.'+notes[i]];
+    if (sel) fb.rect(px0+12,ny-1,pw-16,hh,P.y4); else if (hot) fb.rect(px0+12,ny-1,pw-16,hh,P.s6);
+    if (isNew) fb.rect(px0+12,ny+2,2,3,P.r4); if (ded){ fb.px(px0+13,ny+2,P.g3); fb.px(px0+14,ny+3,P.g3); }
+    ls.forEach(function(l,j){ M.text(fb,l,px0+16,ny+j*9,ded?P.g1:P.n1); }); lay.notes.push({id:notes[i],idx:i,r:[px0+12,ny-1,pw-16,hh]}); pg.ny+=hh+1; }
   if (NB.top>0) lay.up=[rx+12,y0+ph-14,pw/2-12,14];
   if (lay.up||lay.dn){ var tri=function(cx,up,on){ var c=on?P.n2:P.s3; for (var t=0;t<5;t++){ var ty=up?y0+ph-12+t:y0+ph-8-t; fb.hl(cx-t,cx+t,ty,c); } }; tri(rx+pw/2-16,true,!!lay.up); tri(rx+pw/2+16,false,!!lay.dn); }
-  if (!ask){ var hint=NB.sel?'Zweite Notiz antippen zum Verbinden.':'Zwei Notizen antippen, um sie zu verbinden.'; if (!NB.msg){ var hl=M.wrap(hint,pw-24); hl.forEach(function(l,j){ M.text(fb,l,rx+16,y0+ph-31+j*9+(hl.length>1?0:9),P.s2); }); } }
+  if (!ask){ var hint=NB.sel?'Zweite Notiz antippen zum Verbinden.':'Zwei Notizen antippen, um sie zu verbinden.'; var hl=M.wrap(hint,pw-24); hl.forEach(function(l,j){ M.text(fb,l,lx+16,y0+ph-21+j*9+(hl.length>1?0:9),P.s2); }); }
   if (NB.msg){ var my=y0+ph-38; fb.rect(rx+10,my-2,pw-14,36,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,pw-26).slice(0,4).forEach(function(l,j){ M.text(fb,l,rx+14,my+j*9,NB.msg.ok?P.g0:P.k1); }); }
   ov.lay=lay; });
 async function notebookTap(x,y){ var ov=E.overlay, lay=ov.lay; if (!lay) return; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }, ask=ov.data.mode==='ask';
   if (inR(lay.close)){ NB.sel=null; NB.msg=null; E.closeOverlay(null); return; }
-  if (inR(lay.up)){ NB.top=Math.max(0,NB.top-3); return; } if (inR(lay.dn)){ NB.top=NB.top+3; return; }
+  if (inR(lay.up)){ NB.top=Math.max(0,NB.top-4); return; } if (inR(lay.dn)){ NB.top=NB.top+4; return; }
   for (var i=0;i<lay.notes.length;i++){ var n=lay.notes[i]; if (!inR(n.r)) continue; delete GS().noteNew[n.id];
     if (ask){ NB.sel=null; E.closeOverlay(n.id); M.sfx('page'); return; }
     if (!NB.sel){ NB.sel=n.id; NB.msg=null; M.sfx('click'); return; }
     if (NB.sel===n.id){ NB.sel=null; return; }
     var a=NB.sel; NB.sel=null; var res=await E.combineNotes(a,n.id); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t};
-    if (res.ok && res.say){ /* gesprochen nach dem Schließen */ ov.after=res.say; } return; }
-  if (x<160){ NB.page='case'; } }
+    if (res.ok && res.say){ ov.after=res.say; } return; } }
 // Text für das Notizbuch beim Schließen nachreichen
 E.afterNotes=function(){ };
 
@@ -307,9 +337,9 @@ M.centerText=centerText;
 async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Tippe etwas an: Ist nur etwas zu sehen, schaue ich es mir an. Kann man etwas damit tun, kommt ein kleines Menü.');
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
-  if (GS().malaOn) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt.');
+  if (GS().malaOn) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
   await M.API.m('„Notizen“ ist mein Notizbuch. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen.');
-  await M.API.m('„Tipp“ hilft, wenn ich festsitze. „Zeigen“ markiert alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
+  await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
  } finally { E.busy=false; } }
 M.help=help;
 
@@ -396,7 +426,6 @@ async function click(x,y){
   if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
   var uiH=uiAt(x,y);
   if (E.pop){ var pr=popAt(x,y); if (pr!==null){ if (pr>=0){ M.sfx('click'); popPick(E.pop,E.pop.opts[pr]); } return; } E.pop=null; if (!uiH || y<SH) { if (y<SH) return; } }
-  if (uiH==='hint'){ if (!E.busy) E.useHint(); return; }
   if (uiH==='notes'){ if (!E.busy) E.openNotes(); return; }
   if (uiH==='reveal'){ reveal={at:E.gt()}; M.sfx('click'); return; }
   if (uiH==='menu'){ E.menu=true; E.paused(true); return; }
@@ -422,5 +451,5 @@ async function click(x,y){
 function fastExit(hs,ex){ var p=E.player(); if (!p) return; var st=hs.st; if (typeof st==='function') st=st(M.RS(E.room.id),GS()); if (st){ p.x=st[0]; p.y=st[1]; } E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); }
 M.key=function(k){ if (k==='Escape'){ if (E.overlay) E.closeOverlay(null); else if (E.menu){ E.menu=null; E.paused(false); } else if (E.screen==='game'){ E.menu=true; E.paused(true); } return; }
   if (E.screen!=='game'||E.menu) return; if (k===' '||k==='Enter'){ if (E.speech) E.endSpeech(); return; }
-  if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ E.switchChar(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='h'||kl==='t'){ E.useHint(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
+  if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ E.switchChar(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
 })(M);

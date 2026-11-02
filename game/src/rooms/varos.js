@@ -85,7 +85,7 @@ var HS=[
  {id:'cat',name:'Katze',look:'Eine schwarze Katze auf einer Stufe. Mrki. Er gehört Zdenka oder niemandem, was hier dasselbe ist.',talk:'„Mic, mic.“ Mrki sieht mich an und dann an mir vorbei. Genau an die Stelle, wo Mala steht.',take:'Er würde mich zerkratzen. Mit Recht.',g:{look:'Er sieht mich. Katzen sehen mich immer.',talk:async function(A){ await A.g('…'); await A.g('Er blinzelt langsam. Das heißt, er hat keine Angst.'); }}}
 ];
 async function readNotice(A){ await A.doc({style:'letter',title:'✝  OSMRTNICA',lines:['Nach kurzer Krankheit verstarb im Alter von 85 Jahren','IVKA PERIĆ','geb. 1926.','','Die Beerdigung fand am Sonntag, 13.11.2011,','auf dem Friedhof Lovrinac statt.','','Es trauern die Nachbarn aus Veli Varoš.']});
-  if (A.first('noticeSaid')) await A.m('„Es trauern die Nachbarn.“ Sonst niemand. Sonst war niemand mehr da.'); }
+  A.note('pro_notice'); if (A.first('noticeSaid')) await A.m('„Es trauern die Nachbarn.“ Sonst niemand. Sonst war niemand mehr da.'); }
 async function enterIvka(A){ A.sfx('lock'); await A.wait(200); A.sfx('door'); await A.goto('ivka'); }
 M.room('varos',{ name:'Veli Varoš', scape:'varos',
   music:function(GS){ return GS.phase==='pro'?'flat':(GS.phase==='c2'?'case2':'case1'); },

@@ -6,21 +6,19 @@
 var P=M.P, T=M.T, Buf=M.Buf, A_=M.ANIMS;
 var W=320, H=200, SH=144;
 M.W=W; M.H=H;
-M.ROOMS={}; M.ART={}; M.ITEMS={}; M.COMBOS={}; M.NOTES={}; M.DEDUCE={}; M.HINTS=[]; M.GOALS=[]; M.OVERLAYS={}; M.PHASES={}; M.MAPLOCS=[];
+M.ROOMS={}; M.ART={}; M.ITEMS={}; M.COMBOS={}; M.NOTES={}; M.DEDUCE={}; M.OVERLAYS={}; M.PHASES={}; M.MAPLOCS=[];
 M.defineArt=function(id,def){ def.id=id; M.ART[id]=def; return def; };
 M.defineRoom=function(def){ def.width=def.width||W; def.hotspots=def.hotspots||[]; def.byId={}; def.hotspots.forEach(function(h){ def.byId[h.id]=h; h.room=def.id; }); M.ROOMS[def.id]=def; return def; };
 M.defineItems=function(o){ Object.keys(o).forEach(function(k){ if (M.ITEMS[k]) throw new Error('Gegenstand doppelt: '+k); o[k].id=k; M.ITEMS[k]=o[k]; }); };
 M.defineCombos=function(o){ Object.keys(o).forEach(function(k){ M.COMBOS[k]=o[k]; }); };
 M.defineNotes=function(o){ Object.keys(o).forEach(function(k){ if (M.NOTES[k]) throw new Error('Notiz doppelt: '+k); var v=o[k]; M.NOTES[k]=typeof v==='string'?{t:v}:v; M.NOTES[k].id=k; }); };
 M.defineDeductions=function(o){ Object.keys(o).forEach(function(k){ M.DEDUCE[k]=o[k]; }); };
-M.defineHints=function(l){ l.forEach(function(h){ M.HINTS.push(h); }); };
-M.defineGoals=function(l){ l.forEach(function(g){ M.GOALS.push(g); }); };
 M.defineOverlay=function(k,fn){ M.OVERLAYS[k]=fn; };
 M.definePhases=function(o){ Object.keys(o).forEach(function(k){ M.PHASES[k]=o[k]; }); };
 
 // ---------------------------------------------------------------- Spielstand
 function freshGame(){ return { v:1, phase:'pro', tod:'day', active:'marko', malaOn:false, pos:{marko:{room:null,x:160,y:120,f:'R'},mala:{room:null,x:150,y:120,f:'R'}},
-  flags:{}, inv:[], notes:[], noteNew:{}, rooms:{}, seen:{}, cyc:{}, hintTier:{}, hintsUsed:0, playMs:0, map:{}, ended:false }; }
+  flags:{}, inv:[], notes:[], noteNew:{}, rooms:{}, seen:{}, cyc:{}, playMs:0, map:{}, ended:false }; }
 M.freshGame=freshGame;
 var GS=freshGame(); M.GS=GS;
 var room=null, S={};
@@ -76,7 +74,7 @@ E.gt=function(){ return gt; };
 // ---------------------------------------------------------------- Figuren
 function Actor(id,o){ this.id=id; this.ch=o.ch||id; this.x=o.x===undefined?160:o.x; this.y=o.y===undefined?120:o.y; this.f=o.f||'R'; this.mode='idle'; this.anim=null; this.fi=0; this.ft=0; this.path=[]; this.res=null; this.hooks=null;
   this.idleT=0; this.visible=o.visible!==false; this.idle=o.idle||null; this.talk=o.talk||null; this.color=o.color===undefined?(M.CAST_COLORS[this.ch]||P.s6):o.color; this.name=o.name||id;
-  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; }
+  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; this.anchor=o.anchor||null; }
 var ACT={}; M.ACT=ACT;
 function player(){ return ACT[GS.active]; }
 E.player=player;
@@ -208,6 +206,9 @@ E.switchTo=switchTo;
 var API={
   // Sprechen: say = gerade gespielte Figur, m = Marko, g = Mala, narrate = Erzähler
   say:function(t,o){ return say(t,GS.active,o); }, m:function(t,o){ return say(t,ACT.marko?'marko':'@marko',Object.assign({color:M.CAST_COLORS.marko},o||{})); }, g:function(t,o){ return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',Object.assign({color:M.CAST_COLORS.mala},o||{})); },
+  // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
+  crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
+  crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
   narrate:function(t){ return say(t,'#',{color:P.s5}); }, voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
   phoneVoice:function(t,who){ return say(t,'@'+(who||'vesna'),{color:M.CAST_COLORS[who||'vesna']||P.y5,phone:1}); },
   wait:wait, face:function(f){ return faceOn(player(),f); }, walk:function(x,y){ return walkActor(player(),x,y); },
@@ -256,7 +257,7 @@ API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem 
 // ---------------------------------------------------------------- Hotspots, Verben
 // Marko-Verben und Mala-Verben, mit Anzeige-Text
 var VLABEL={look:'Schau an',take:'Nimm',use:'Benutze',open:'Öffne',push:'Schiebe',talk:'Rede mit',read:'Lies',walk:'Hingehen',give:'Gib',
-  glook:'Schau an',gtalk:'Sprich mit',sense:'Spüre',listen:'Lausche',pass:'Hindurchgehen'};
+  glook:'Schau an',gtalk:'Sprich mit',sense:'Spüre',listen:'Lausche',pass:'Hindurchgehen',cross:'Hinüberbringen'};
 E.VLABEL=VLABEL;
 var M_VERBS=['talk','take','open','use','push','read'], G_VERBS=['talk','sense','listen'];
 function hsRect(h){ if (h.npc){ var a=ACT[h.npc]; if (!a||!actorShown(a)) return null; if (h.r) return typeof h.r==='function'?h.r(S,GS,a):h.r; var hh=h.hgt||48; return [Math.round(a.x)-8,Math.round(a.y)-hh,16,hh]; }
@@ -357,7 +358,7 @@ function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]
     else if (ACT[k]) delete ACT[k]; }); }
 function placeActors(){ Object.keys(ACT).forEach(function(k){ delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
   list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); ACT[o.id]=a; setIdle(a); }); placePlayers(); }
-function loadRoom(id){ room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
+function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }
 M.loadRoom=loadRoom;
@@ -391,15 +392,6 @@ function showCard(c){ return new Promise(function(res){ E.card=Object.assign({at
 function closeCard(){ if (!E.card) return; var r=E.card.res, p=E.card.prev; E.card=null; E.screen=(p==='card'?'game':p)||'game'; r(); }
 E.closeCard=closeCard;
 
-// ---------------------------------------------------------------- Tipps und Ziele
-function currentGoal(){ for (var i=0;i<M.GOALS.length;i++){ var g=M.GOALS[i]; try{ if (!g.when||g.when(GS)) return typeof g.t==='function'?g.t(GS):g.t; }catch(e){} } return 'Weitermachen. Zuhören. Hinsehen.'; }
-function currentHint(){ for (var i=0;i<M.HINTS.length;i++){ var h=M.HINTS[i]; try{ if (h.phase && h.phase.indexOf(GS.phase)<0) continue; if (h.done&&h.done(GS)) continue; if (h.when&&!h.when(GS)) continue; }catch(e){ continue; } return h; } return null; }
-E.currentGoal=currentGoal; E.currentHint=currentHint;
-E.useHint=async function(){ var h=currentHint(); if (!h){ await showOverlay('hint',{goal:currentGoal(),hint:'Gerade drängt sich nichts auf. Sieh dich um, rede mit Leuten, lass Mala nachsehen.'}); return; }
-  var tier=GS.hintTier[h.id]||0, text=h.t[Math.min(tier,h.t.length-1)]; GS.hintTier[h.id]=Math.min(tier+1,h.t.length-1); GS.hintsUsed++;
-  await showOverlay('hint',{goal:currentGoal(),hint:text,tier:tier,of:h.t.length}); };
-E.leads=function(){ var leads=[], done=0, tot=0; M.HINTS.forEach(function(h){ var inCase=true; try{ inCase=!h.phase || h.phase.indexOf(GS.phase)>=0; }catch(e){} if (!inCase) return; tot++; var d=false, w=true; try{ d=!!(h.done&&h.done(GS)); }catch(e){} if (d){ done++; return; } try{ w=!h.when||h.when(GS); }catch(e){ w=false; } if (w) leads.push(h.t[0]); }); return {leads:leads,done:done,tot:tot}; };
-
 // ---------------------------------------------------------------- Speichern / Laden
 var SAVE='mala.save.', SLOTS=3, slot=1;
 try{ slot=Math.max(1,Math.min(SLOTS,+localStorage.getItem('mala.slot')||1)); }catch(e){}
@@ -419,7 +411,7 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
   if (M.ROOMS[base.pos[base.active].room].noSave) return null; return base; }
 function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; var d=JSON.parse(raw), base=validate(d); if (!base) return false;
     setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
-    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null;
+    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false); if (M.startGame) M.startGame(API); };

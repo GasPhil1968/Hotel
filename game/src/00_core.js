@@ -114,7 +114,12 @@ M.TINT={
   // Mala in Markos Blick: kühl, blass
   mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; }),
   // Malas Porträt: dieselbe Kühle, aber mehr eigene Farbe, damit das Gesicht lebendig bleibt
-  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; })
+  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; }),
+  // Mala in Markos Blick: einfarbig kalt, leuchtend (wie ein Geist, nicht wie ein Mensch)
+  malaG: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.46+26, L*0.78+44, L*0.88+70]; }),
+  // gemalte Porträts der Geister: einfarbig kalt (Mala blau-türkis, die anderen fahl-lavendel)
+  ghostP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.50+12, L*0.80+22, L*0.92+48]; }),
+  spiritP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.66+34, L*0.62+32, L*0.84+58]; })
 };
 
 // ---------------------------------------------------------------- indizierter Puffer

@@ -9,7 +9,7 @@ function list(dir) { return fs.readdirSync(dir).flatMap(f => { const p = path.jo
 // Reihenfolge: Kern (00–09), Inhalte (10–89, auch Unterordner rooms/), Story (90–98), Start (99)
 const files = list(SRC).sort((a, b) => {
   const ka = path.relative(SRC, a).replace(/\\/g, '/'), kb = path.relative(SRC, b).replace(/\\/g, '/');
-  const rank = k => { const n = parseInt(path.basename(k), 10); if (k.startsWith('rooms/art/')) return 45; if (k.startsWith('rooms/')) return 50; return isNaN(n) ? 60 : n; };
+  const rank = k => { const n = parseInt(path.basename(k), 10); if (k.startsWith('portraits/')) return 40; if (k.startsWith('rooms/art/')) return 45; if (k.startsWith('rooms/')) return 50; return isNaN(n) ? 60 : n; };
   return rank(ka) - rank(kb) || ka.localeCompare(kb);
 });
 let js = 'var M={VERSION:"1.0.0"};\n';

@@ -11,10 +11,10 @@ async function talkJakov(A){ var J=A.npc('jakov');
     return A.menuLoop(function(){ return [
       {t:'Was fegst du hier?',once:'jk1',go:async function(A){ await J.say('Die Wege. Sie haben die Gräber achtundfünfzig weggeräumt. Die Knochen nach Lovrinac, die Steine in die Ufermauer.'); await J.say('Die Namen sind geblieben. Ich fege die Wege für die Namen.'); }},
       {t:'Kommt jemand an die Tafel?',once:'jk2',if:A.hasNote('c1_plaque')||A.G.phase==='c1'||A.G.phase==='c1_night',go:async function(A){ await J.say('Jedes Jahr am zweiundzwanzigsten Dezember kommt ein Mann und steht vor der Tafel. Er sagt nichts. Er bleibt, bis es hell wird.'); A.note('c1_jakov'); }},
-      {t:'Warum bist du noch hier?',once:'jk3',go:async function(A){ await J.say('Einer muss bleiben, wenn alle gehen. Ich habe es mir ausgesucht.'); await J.say('Und du, mala? Hast du es dir ausgesucht?'); await A.wait(900); await A.g('…'); }},
+      {t:'Warum bist du noch hier?',once:'jk3',go:async function(A){ await J.say('Wo soll ich denn hin? Die Wege fegen sich nicht von allein.'); await J.say('Und du, mala? Wo sollst du hin?'); await A.wait(900); await A.g('…'); }},
       {t:'Lass gut sein, Jakov.',bye:true,go:async function(A){ await J.say('Ist gut. Ich fege weiter.'); }}
     ]; }); }
-  if (A.first('jkMarko')){ await J.say('Du siehst mich? Dann bist du einer von denen, die nachts nicht schlafen.'); await A.m('Kann man so sagen.'); }
+  if (A.first('jkMarko')){ await J.say('Dobra večer. Spät für einen Spaziergang. Pass auf, wo du hintrittst.'); await A.m('Hier ist doch nur Kies.'); await J.say('Kies und Namen. Ich halte die Wege sauber. Die Stadt tut es ja nicht.'); }
   await A.menuLoop(function(){ return [
     {t:'Wer liegt hier begraben?',once:'jm1',go:async function(A){ await J.say('Niemand mehr. Und alle. Fischer, Kapitäne, Kinder, die das Fieber geholt hat. Ein Bischof. Ein Dieb. Die lagen alle nebeneinander. Da war nie Streit.'); }},
     {t:'Kommen die Ertrunkenen auch hierher?',once:'jm2',go:async function(A){ await J.say('Die das Meer behält, kommen nicht her. Die bleiben draußen.'); await J.say('Oder sie kommen nach Hause, wenn einer sie ruft. Nicht hierher. Nach Hause.'); }},
@@ -40,7 +40,7 @@ M.interlude2=async function(A){ M.E.busy=true;
       {t:'(Den Sternen zusehen.)',once:'s4',go:async function(A){ await A.wait(2200); A.sfx('horn'); await A.wait(1400); await A.g('Die Fähre nach Ancona. Sie fährt jetzt ohne die beiden.'); await A.m('Sie fahren trotzdem. Irgendwie.'); }},
       {t:'Gehen wir nach Hause.',bye:true}
     ]; });
-    await A.g('Im Hotel am Wasser, dem alten mit den Palmen, schläft einer nicht.'); await A.m('Wer?'); await A.g('Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.');
+    await A.g('Da ist noch einer. Einer, der nicht schläft.'); await A.m('Wer?'); await A.g('Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.');
     await A.m('Morgen.'); await A.g('Morgen.'); A.G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i2.done');
   } finally { M.E.busy=false; }
   await M.startCase3(A); };

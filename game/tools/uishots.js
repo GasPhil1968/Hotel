@@ -9,7 +9,6 @@ const OUT = process.argv[2] || '/tmp';
     ['pro_auftrag', 'c1_boat7', 'c1_ferry', 'c1_ankica', 'c1_capsized', 'c1_rescued', 'c1_words', 'c1_letter', 'm_tin'].forEach(function (n) { M.GS.notes.push(n); });
     M.GS.inv = ['postcard', 'photo1', 'gloves', 'letter_t', 'crowbar']; M.E.openNotes(); });
   await D.page.waitForTimeout(500); await D.shot(OUT + '/ui_notes.png');
-  await D.ev(() => { M.E.closeOverlay(null); M.E.useHint(); }); await D.page.waitForTimeout(400); await D.shot(OUT + '/ui_hint.png');
   await D.ev(() => { M.E.closeOverlay(null); M.API.memory({ title: 'Nachhall – der Seesack', draw: M.mem.storm, tint: 'ghost', lines: ['Nacht. Schwarzes Wasser. Die Bura reißt die Kämme von den Wellen.', 'Zwei Jungen am umgedrehten Kiel.'] }); });
   await D.page.waitForTimeout(1500); await D.ev(() => { M.E.overlay.step = 1; }); await D.page.waitForTimeout(200); await D.shot(OUT + '/ui_memory.png');
   await D.ev(() => { M.E.closeOverlay(null); M.API.puzzle({ title: 'Brunos Satz übersetzen', hint: 'Bruno: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt …“', slots: [['Ljerka,', 'Danica,'], ['verzeih mir.', 'vergiss mich.'], ['Ich habe deinen Brief aus Zagreb versteckt,', 'x'], ['weil ich Angst hatte, allein zu sein.', 'y'], ['Spiel wieder.', 'z']] }); });

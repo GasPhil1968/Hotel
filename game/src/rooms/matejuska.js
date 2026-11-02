@@ -50,7 +50,6 @@ async function confession(A,D){ A.music('ghost'); await A.m('„Halt die Tasche.
   await D.say('Wenn du was brauchst … ich bin hier.'); D.idle('mend'); A.setFlag('c1.dinkoTold');
   await A.fade(6,900); A.phase('c1_night'); A.rebuild(); await A.fade(0,900); A.music('case1');
   await A.narrate('Es ist dunkel geworden. Die Bura kommt von den Bergen herunter.');
-  if (A.malaHere()){ await A.g('Der Brief. Du kannst ihn nicht ganz lesen, oder?'); await A.m('Das Salz hat die Hälfte gefressen.'); await A.g('Zeig ihn mir.'); }
   A.save(); }
 async function dinkoAfter(A,D){ await D.say(A.cycle('diAf',['Geh. Sie wartet.','Hast du es ihr gebracht?','…']));
   await A.menuLoop(function(){ return [
@@ -107,8 +106,8 @@ M.room('matejuska',{ name:'Matejuška', scape:'matejuska',
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='c1' && A.first('matC1')){ await A.m('Die Matejuška. Der kleine Hafen der Fischer, gleich neben der Riva und doch eine andere Welt.'); }
-    if (p==='c2' && A.first('matC2')){ await A.m('Bura. Die Boote zerren an den Leinen.'); if (A.malaHere()) await A.g('Er ist noch da. In der Eisfabrik.'); }
-    if (from==='shed' && A.isMala() && A.hasNote('c1_words') && A.first('!backFromShed')) await A.g('Ich weiß jetzt, was er nie gesagt hat. Marko muss es ihm sagen.'); }
+    if (p==='c2' && A.first('matC2')){ await A.m('Bura. Die Boote zerren an den Leinen.'); if (A.malaHere()) await A.g('Er ist nicht weit. Ich höre ihn.'); }
+    if (from==='shed' && A.isMala() && A.hasNote('c1_words') && A.first('!backFromShed')) await A.g('Ich weiß jetzt, was er nie gesagt hat.'); }
 });
 M.defineScape('matejuska',function(o){ var tod=o.tod, w=M.scn.weather(o.GS); return { beds:w==='bura'?['bura','sea','windHigh']:['sea','seaFar'], step:'stone',
   ev:[['rope',5,12,0.9,-0.9,0.4],['lap',4,9,1,-0.8,0.5],['gull',8,18,tod==='night'?0.2:0.8,-1,1],['boat',25,55,0.5,-1,0.2],['horn',35,70,0.5,0.2,0.8],['creak',15,35,0.5,0.4,1]] }; });

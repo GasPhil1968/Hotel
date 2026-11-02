@@ -28,23 +28,31 @@ MARKO UND MALA
   nicht sieht. Mala kann ihn finden.
 - Zieh Gegenstände auf Mala, damit sie sie ansieht. Manchmal sieht sie mehr.
 
+DIE GEISTER
+- Die Toten wissen meist nicht, dass sie tot sind. Sie leugnen es oder
+  übergehen es. Sagt man es ihnen einfach, hören sie es nicht.
+- In Malas Sicht sieht man ihre Leine: einen Faden aus Licht zu dem Ort
+  oder Ding, an dem sie festgemacht sind.
+- Erst wenn ein Geist selbst begreift, was geschehen ist, lässt er los.
+  Dann kann Mala ihn hinüberbringen ("Hinüberbringen").
+
 DAS NOTIZBUCH ("Notizen")
 - Alles Wichtige, was Marko und Mala erfahren, wird notiert.
 - Zwei Notizen nacheinander antippen = verbinden. Passen sie zusammen,
   entsteht eine Schlussfolgerung.
 - Im Gespräch: "Nach etwas aus dem Notizbuch fragen …" – dann eine Notiz
   antippen. So öffnet man neue Antworten.
-- Linke Seite: der Fall – Ziel, offene Spuren, Fortschritt.
 
 HILFE
-- "Tipp": ein Gedanke zum aktuellen Schritt, in drei Stufen bis zur Lösung.
+- Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
+  mit Mala nachsehen, im Notizbuch Notizen verbinden.
 - "Zeigen": alle anklickbaren Stellen blinken kurz auf.
 - "Menü": Speichern, Laden (drei Plätze), Textgeschwindigkeit
   (oder "wartet auf Tippen"), Musik, Geräusche, Röhrenbild, Vollbild, Anleitung.
 - Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
 
 TASTATUR (am Rechner)
-- Tab oder M = Figur wechseln · N = Notizbuch · H = Tipp · Z = Zeigen
+- Tab oder M = Figur wechseln · N = Notizbuch · Z = Zeigen
 - Leertaste = Satz überspringen · Esc = Menü
 
 SPIELSTÄNDE

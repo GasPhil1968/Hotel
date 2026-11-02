@@ -55,8 +55,10 @@ const SHOTS = process.argv[2] || null;
     await D.exit('exit'); await D.drain(); await D.travel('riva'); await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain();
     await talk('ivka', 'Ich muss Ihnen etwas sagen');
     await D.pickNote('c1_ferry'); await D.drain(); await D.pickNote('c1_came'); await D.drain();
-    await D.choose('Handschuhe'); await D.drain(); await D.choose('Brief vorlesen'); await D.drain(); await shot('ivka_finale');
-    await flag('c1.done'); log('Ivka geht nach Hause');
+    await D.choose('Brief vorlesen'); await D.drain(); await D.choose('Handschuhe'); await D.drain(); await D.choose('nicht mehr hier'); await D.drain();
+    await flag('c1.release'); await expect((await D.st()).active === 'mala', 'Mala aktiv'); log('Ivka erkennt, dass sie tot ist'); await shot('ivka_release');
+    await D.act('cross', 'ivka'); await D.drain(); await shot('ivka_finale');
+    await flag('c1.done'); log('Mala bringt Ivka hinüber');
     await D.choose('Gehen wir'); await D.drain(); await D.choose('Hier ist das Meer'); await D.drain(); await D.choose('Was soll ich da'); await D.drain();
     await expect((await D.st()).phase === 'c2', 'Fall 2'); log('Zwischenspiel 1 → Fall 2', await room()); await shot('bar');
     // ================= FALL 2
@@ -89,11 +91,12 @@ const SHOTS = process.argv[2] || null;
     await D.item('use', 'radio', 'batteries'); await D.drain(); await inv('radioB'); await D.item('use', 'radioB', 'cassette'); await D.drain(); await inv('radioT'); log('Radio mit Kassette');
     await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await D.exit('gap'); await D.drain();
     await D.act('use', 'brick', 'spatula'); await D.drain(); await inv('note_n'); await note('c2_note'); log('Ninas Zettel');
-    await talk('luka', 'Briefkasten aufgemacht', 'sieh dir die Treppe an'); await flag('c2.lukaKnows'); log('Luka versteht');
+    await talk('luka', 'Briefkasten aufgemacht', 'Bis später'); await flag('c2.lukaKnows'); log('Luka bittet um das Lied');
     await D.exit('exit'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('oldtown'); await D.exit('shop_door'); await D.drain();
     await talk('nina', 'Ich war in der Ledana', 'Ninas Zettel', 'Er hat es mir gesagt', 'Lukas Tickets', 'Die Kassette', 'Wollen Sie es hören');
     await D.drain(); await flag('c2.tonight'); await expect((await D.st()).phase === 'c2_night', 'Abend'); await expect(await room() === 'ledana', 'Ledana nachts'); log('Abend an der Ledana'); await shot('ledana_night');
-    await D.act('use', 'nina', 'radioT'); await D.drain(); await flag('c2.done'); log('Luka geht'); await shot('sustipan');
+    await D.act('use', 'nina', 'radioT'); await D.drain(); await flag('c2.release'); await expect((await D.st()).active === 'mala', 'Mala aktiv'); log('Luka erkennt, dass er tot ist'); await shot('luka_release');
+    await D.act('cross', 'luka'); await D.drain(); await flag('c2.done'); log('Mala bringt Luka hinüber'); await shot('sustipan');
     await D.choose('Meine Großmutter'); await D.drain(); await D.choose('Hast du jemanden'); await D.drain(); await D.choose('Gehen wir nach Hause'); await D.drain();
     await expect((await D.st()).phase === 'c3', 'Fall 3'); await flag('c3.call'); log('Fall 3', await room());
     // ================= FALL 3
@@ -120,6 +123,8 @@ const SHOTS = process.argv[2] || null;
     r = await D.combine('c3_zagreb', 'c3_accept'); await expect(r.ok, 'Kombination c3_hid');
     await D.exit('door'); await D.drain(); await expect(await room() === 'palma', 'Halle');
     await D.act('use', 'private'); await D.drain(); await D.choose('Umschlag'); await D.drain(); await D.choose('Brunos Brief'); await D.drain(); await D.choose('Satz sagen'); await D.drain(); await D.choose('Übersetzer'); await D.drain();
+    await flag('c3.release'); await expect((await D.st()).active === 'mala', 'Mala aktiv'); log('Bruno erkennt, dass er tot ist'); await shot('bruno_release');
+    await D.act('cross', 'bruno'); await D.drain();
     await flag('c3.done'); await expect((await D.st()).phase === 'epi', 'Epilog'); log('Ljerka spielt, Epilog'); await shot('epi');
     // ================= EPILOG
     await D.act('use', 'ticket_counter'); await D.drain(); await D.choose('Nur hin'); await D.drain(); await inv('busticket'); await flag('epi.mala');
