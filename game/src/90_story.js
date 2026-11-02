@@ -118,16 +118,38 @@ M.defineRoom({ id:'map', name:'Stadtplan', width:320, noActor:true, noVerbs:true
 M.defineScape('map',{beds:['seaFar'],ev:[['gull',10,25,0.4,-1,1],['horn',30,60,0.4,-0.6,0.6]],step:'none'});
 
 // ---------------------------------------------------------------- Titelbild: Split bei Nacht, der Glockenturm, eine Gestalt auf der Mole
-M.paintTitle=function(){ var b=new M.Buf(320,144,P.k0); M.sky(b,0,0,320,78,'night',17); M.moon(b,252,18,4);
-  M.scn.marjan(b,0,120,78,52,'night'); M.scn.roofs(b,96,320,78,'night',33,{min:8,var:14,lit:0.4}); M.scn.belltower(b,214,78,44,P.k1,true);
-  for (var x=96;x<320;x+=13) M.scn.belltower;
-  M.sea(b,0,78,320,66,'night',0,0);
+M.paintTitle=function(){ var b=new M.Buf(320,144,P.k0), x, y, i; M.sky(b,0,0,320,80,'night',17); M.moon(b,262,20,4);
+  // Mosor hinter der Stadt, sehr dunkel
+  for (x=0;x<320;x++){ var ry=Math.round(60+Math.sin(x*0.021+1)*4+Math.sin(x*0.067)*2); for (y=ry;y<80;y++) b.px(x,y,bayer(x,y)<0.3?P.n0:P.k1); }
+  M.scn.marjan(b,0,120,80,52,'night');
+  var r=M.rng(33), base=80;
+  // hintere Häuserreihe: dunkle Wände, Ziegeldächer, wenige Fenster
+  for (x=104;x<320;){ var w=8+Math.floor(r()*9), h=10+Math.floor(r()*10), top=base-h-6;
+    for (y=top;y<base;y++) for (var xx=x;xx<Math.min(320,x+w);xx++){ var c=(xx===x)?P.k1:(bayer(xx,y)<0.5?P.n0:P.k2); b.px(xx,y,c); }
+    for (xx=x;xx<Math.min(320,x+w);xx++){ b.px(xx,top-1,P.t1); if (bayer(xx,top)<0.6) b.px(xx,top,P.t0); }
+    for (i=0;i<3;i++) if (r()<0.45){ var wx=x+2+Math.floor(r()*(w-3)), wy=top+3+Math.floor(r()*(h-4)); b.px(wx,wy,r()<0.5?P.y3:P.y2); if (r()<0.5) b.px(wx,wy+1,P.y1); }
+    x+=w; }
+  // Palastfront an der Riva, von unten angestrahlt
+  for (y=68;y<base;y++) for (x=148;x<252;x++){ var c2=M.rampAt(M.R('n1 s1 s2 s3'),(y-68)/12,x,y); var ax=(x-150)%9; if (y>71 && y<78 && ax>2 && ax<7) c2=(y<73&&(ax===3||ax===6))?P.s1:P.k1; if (y===68) c2=P.s2; b.px(x,y,c2); }
+  for (x=152;x<250;x+=9) if (r()<0.5){ b.px(x+4,75,P.y3); b.px(x+4,76,P.y2); }
+  // Glockenturm von Sv. Duje, angestrahlt
+  var tx=224, ty0=42; for (y=ty0;y<base;y++){ var top6=y<ty0+6, hw=top6?Math.round((y-ty0)*0.6):3, band=(y-ty0-6)%7, lvl=Math.floor((y-ty0-6)/7);
+    for (x=tx-hw;x<=tx+hw;x++){ var cc=x<tx?P.s3:(x===tx?P.s3:P.s2); if (top6) cc=x<=tx?P.s2:P.s1; if (x===tx-hw && !top6) cc=P.s4;
+      if (!top6 && band===0) cc=P.s4; // Gesims
+      if (!top6 && band>=2 && band<=5){ var offs=lvl<1?[-2,0,2]:(lvl<3?[-1,1]:[0]); if (offs.indexOf(x-tx)>=0) cc=(band===2)?P.s1:P.k1; }
+      b.px(x,y,cc); } }
+  b.px(tx,ty0-1,P.s3); b.px(tx,ty0-2,P.s2); b.px(tx+1,ty0+24,P.y3);
+  // Palmen an der Riva
+  [160,184,236,250].forEach(function(px){ for (y=66;y<base;y++) b.px(px+((y<72)?1:0),y,P.k0); [[-6,-2],[-4,-4],[0,-5],[4,-4],[6,-2],[-5,1],[5,1]].forEach(function(f){ b.line(px+1,66,px+1+f[0],66+f[1],P.k0); }); });
+  // Laternen an der Uferlinie
+  for (x=150;x<252;x+=17){ b.px(x,79,P.y4); b.px(x,78,P.y3); }
+  M.sea(b,0,80,320,64,'night',0,0);
   // Mole
   b.rect(0,98,170,6,P.s1); b.hl(0,169,98,P.s2); for (x=0;x<170;x+=20){ M.prop.bollard(b,x+8,98); }
   M.prop.lamp(b,150,98,22,true); M.prop.lamp(b,60,98,22,true);
   return b; };
 M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){ if (y>=96&&y<=104&&x<170) continue; var s=Math.sin(x*0.11+y*0.9+t*1.2)+Math.sin(x*0.04-t*0.5+y*0.3); if (s>1.55 && (y&1)) fb.px(x,y,P.n3); }
-  M.glints(fb,150,104,140,12,t,P.y3,0); M.glints(fb,252,82,140,8,t,P.n4,0); M.glints(fb,60,104,140,10,t,P.y2,0);
+  M.glints(fb,150,104,140,12,t,P.y3,0); M.glints(fb,262,82,140,8,t,P.n4,0); M.glints(fb,60,104,140,10,t,P.y2,0); M.glints(fb,200,81,96,30,t,P.y2,0);
   // Mala auf der Mole: kaum mehr als ein Schimmer
   var mx=118, my=97, a=0.5+Math.sin(t*0.7)*0.15; M.drawPose(fb,mx,my,M.poseF({},'B'),'B','mala',{lut:M.TINT.mala.a,alpha:a,t:t*1000,wobble:1,h:144});
   // Fähre am Horizont

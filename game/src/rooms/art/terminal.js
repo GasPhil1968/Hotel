@@ -152,8 +152,8 @@ function paintPole(b,tod){ var x=POLE.x, by=POLE.base, top=by-62;
   b.line(x,top+2,x+9,top-1,P.m1); b.poly([[x+5,top-3],[x+13,top-3],[x+12,top+1],[x+6,top+1]],P.m2); b.hl(x+6,x+12,top+1,P.s5);
   // zwei Druckkammer-Lautsprecher (Trichter nach links und rechts) an einer Schelle
   var sy=top+12; b.rect(x-2,sy-1,5,4,P.m1); b.hl(x-2,x+2,sy-1,P.m3);
-  b.poly([[x-2,sy],[x-11,sy-4],[x-11,sy+6],[x-2,sy+2]],function(xx,yy){ return yy<sy?P.s4:(yy>sy+2?P.m2:P.m3); }); b.vl(x-11,sy-4,sy+6,P.s5); b.vl(x-12,sy-3,sy+5,P.m1);
-  b.poly([[x+3,sy],[x+12,sy-4],[x+12,sy+6],[x+3,sy+2]],function(xx,yy){ return yy<sy?P.s3:(yy>sy+2?P.m1:P.m2); }); b.vl(x+12,sy-4,sy+6,P.s4); b.vl(x+13,sy-3,sy+5,P.m0);
+  b.poly([[x-2,sy],[x-11,sy-4],[x-11,sy+6],[x-2,sy+2]],function(xx,yy){ return yy<sy?P.m2:(yy>sy+2?P.k2:P.m1); }); b.vl(x-11,sy-4,sy+6,P.m3); b.vl(x-12,sy-3,sy+5,P.k1);
+  b.poly([[x+3,sy],[x+12,sy-4],[x+12,sy+6],[x+3,sy+2]],function(xx,yy){ return yy<sy?P.m1:(yy>sy+2?P.k1:P.m0); }); b.vl(x+12,sy-4,sy+6,P.m2); b.vl(x+13,sy-3,sy+5,P.k1);
   b.line(x-1,sy+3,x-1,sy+9,P.k2); b.line(x-1,sy+9,x+1,sy+12,P.k2);
   CACHE.pole=[x+9,top-1]; }
 function paintLamp(b,L){ var x=L[0], by=L[1], h=L[2]; b.rect(x-1,by-h,2,h,P.m1); b.vl(x-1,by-h,by-1,P.m2); b.rect(x-2,by-3,5,3,P.m0); b.line(x,by-h,x+5,by-h-3,P.m1); b.poly([[x+2,by-h-5],[x+9,by-h-5],[x+8,by-h-2],[x+3,by-h-2]],P.m2); b.hl(x+3,x+8,by-h-2,P.s4); }

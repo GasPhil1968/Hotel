@@ -5431,7 +5431,7 @@ function shade(buf,ox,oy,tod,Ls,skip){ if (tod==='day'||!TF[tod]) return; var L=
 function lightsFor(tod){
   if (tod==='night') return [[TAB.x0+14,TAB.top-6,70,44,1.0],[TAB.x0+14,TAB.top+6,34,22,0.4]];
   return [[SX(PEND[0][0],PEND[0][2]),60,92,82,0.62],[SX(PEND[1][0],PEND[1][2]),60,92,82,0.62],[TAB.x0+14,TAB.top-6,56,36,0.75],
-    [133,80,40,26,0.55],[268,84,34,30,0.55],[62,66,36,28,0.7],[148,46,18,14,0.35],[241,46,18,14,0.35]]; }
+    [133,80,40,26,0.55],[268,84,34,30,0.55],[60,66,34,26,0.85],[148,46,18,14,0.35],[241,46,18,14,0.35]]; }
 
 // ---------------------------------------------------------------- Texturen
 function damask(X,Y){ var tw=16, th=20, row=Math.floor(Y/th), ox=(row&1)*8, u=((X+ox)%tw+tw)%tw-8, v=((Y%th)+th)%th-10, au=Math.abs(u), av=Math.abs(v), c=P.e2;
@@ -5528,25 +5528,26 @@ function paintLodgeInside(b){ var L=LODGE, p=R3.p, x, y;
   for (y=L.Y0;y<FY;y++) for (x=L.X0;x<L.X1;x++) b.px(x,y,M.DN[b.get(x,y)]);
   b.poly([p(L.X0,L.Y0,0),p(L.X0,L.Y0,L.Z1),p(L.X0,FY,L.Z1),p(L.X0,FY,0)],function(x,y){ var Z=(VX-L.X0)/(VX-x)*F-F, Y=VY+(y-VY)/K(Z); return M.DN[M.DN[backWall(400+Math.floor(Z*1.3),Math.floor(Y))]]; });
   b.poly([p(L.X0,53,3),p(L.X0,53,22),p(L.X0,FY,22),p(L.X0,FY,3)],function(x,y){ var Z=(VX-L.X0)/(VX-x)*F-F, Y=VY+(y-VY)/K(Z);
-    if (Y<55) return P.w3; if (Y<56) return P.w0;
-    if (Y<73){ var ry=(Y-57)%3.2, rz=(Z-4)%2.1; if (Z>4.5 && Z<21 && ry<1.1 && rz<1) return (hash(Math.floor(Y/3.2),Math.floor((Z-4)/2.1))<0.22)?P.s5:P.y3; return P.k1; }
-    if (Y<75) return P.w4; if (Y<76) return P.w0; return ((Math.floor(Z/4))&1)?P.w2:P.w1; });
+    if (Y<55) return P.w4; if (Y<56) return P.w1; if (Z<4.6||Z>20.6) return P.w3;
+    if (Y<59){ return (((Math.floor(Z*1.4))&1)&&Y>56.5)?P.s5:P.k1; }
+    if (Y<73){ var ry=(Y-59)%2.8, rz=(Z-4)%1.8; if (ry<1.2 && rz<1) return (hash(Math.floor(Y/2.8),Math.floor((Z-4)/1.8))<0.2)?P.r3:P.y4; return P.k1; }
+    if (Y<75) return P.w5; if (Y<76) return P.w1; return ((Math.floor(Z/4))&1)?P.w3:P.w2; });
   for (var z=5;z<21;z+=2){ var q=p(L.X0,74.5,z); b.px(rd(q[0]),rd(q[1]),P.k1); b.px(rd(q[0]),rd(q[1])-1,(z%4)?P.r3:P.m3); }
   [[7,60,9],[11,66,14],[15,62,19],[9,70,5],[17,58,13]].forEach(function(c,i){ var a=p(L.X0,74,c[0]), e=p(L.X0,c[1],c[2]); b.line(rd(a[0]),rd(a[1])-1,rd(e[0]),rd(e[1]),i%2?P.r3:P.m1); });
   var hp=p(L.X0,57,24); b.ellipse(hp[0]+1,hp[1]+2,2.2,2.6,P.k1); b.ellipse(hp[0]+1,hp[1]+2,1.1,1.5,P.w0); b.rect(rd(hp[0]),rd(hp[1])+4,2,2,P.m2);
   var kx=KEYS.X0, ky=KEYS.Y0, kw=KEYS.cols*KEYS.cw+1, kh=KEYS.rows*KEYS.ch+1;
   b.rect(kx-2,ky-4,kw+4,kh+6,P.w1); b.hl(kx-2,kx+kw+1,ky-4,P.w4); b.hl(kx-2,kx+kw+1,ky-3,P.w2); b.vl(kx-2,ky-4,ky+kh+1,P.w2); b.vl(kx+kw+1,ky-4,ky+kh+1,P.w0); b.hl(kx-2,kx+kw+1,ky+kh+1,P.w0);
   for (var r=0;r<KEYS.rows;r++) for (var cI=0;cI<KEYS.cols;cI++){ var n=r*KEYS.cols+cI+1, cx=kx+cI*KEYS.cw, cy=ky+r*KEYS.ch;
-    b.rect(cx,cy,KEYS.cw+1,KEYS.ch+1,P.w0); b.rect(cx+1,cy+1,KEYS.cw-1,KEYS.ch-1,P.k1); b.hl(cx,cx+KEYS.cw,cy+KEYS.ch,P.w2); b.px(cx+2,cy+KEYS.ch,P.y1);
+    b.rect(cx,cy,KEYS.cw+1,KEYS.ch+1,P.w2); b.rect(cx+1,cy+1,KEYS.cw-1,KEYS.ch-1,P.w0); b.hl(cx,cx+KEYS.cw,cy+KEYS.ch,P.w3); b.px(cx+2,cy+KEYS.ch,P.y2);
     var hs=hash(n,7); if (hs<0.16 && n!==31) continue;
     if (hs>0.86){ b.rect(cx+1,cy+2,3,3,P.s5); b.px(cx+1,cy+2,P.s6); b.px(cx+3,cy+4,P.s3); continue; }
-    b.px(cx+2,cy+1,P.m3); b.px(cx+2,cy+2,P.m3); b.px(cx+2,cy+3,P.y3); b.rect(cx+1,cy+4,3,2,P.y2); b.px(cx+1,cy+4,P.y4); b.px(cx+3,cy+5,P.y1); }
+    b.px(cx+2,cy+1,P.m4); b.px(cx+2,cy+2,P.m3); b.px(cx+2,cy+3,P.y4); b.rect(cx+1,cy+4,3,2,P.y3); b.px(cx+1,cy+4,P.y5); b.px(cx+3,cy+5,P.y2); }
   var c0=p(76,80,12), c1=p(85,80,12), cm=(c0[0]+c1[0])/2; b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1]),P.w3); b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1])+1,P.w1);
   b.ellipse(cm,c0[1]-7,4.5,6,P.w2); b.ellipse(cm,c0[1]-7,3,4.5,P.k1); b.ellipse(cm,c0[1]-8,1.5,2.5,P.w1);
   b.vl(rd(c0[0]),rd(c0[1])+1,rd(c0[1])+12,P.w1); b.vl(rd(c1[0]),rd(c1[1])+1,rd(c1[1])+12,P.w1);
   R3.box(b,87,99,66,FY,18,25,{front:function(x,y){ var Y=VY+(y-VY)/K(25); if (Y<67) return P.w4; var fy=(Y-67)%7; if (fy<1) return P.w0; if (Math.abs(x-SX(93,25))<0.9 && fy>2.5&&fy<4.5) return P.y4; return fy<2?P.w3:P.w2; },top:P.w3,right:P.w1});
   var pb=p(88,66,22), pb2=p(97,66,22), pbx=rd(pb[0]), pby=rd(pb[1]), pbw=rd(pb2[0]-pb[0]);
-  b.rect(pbx,pby-4,pbw,4,P.y3); b.hl(pbx,pbx+pbw-1,pby-4,P.y4); b.hl(pbx,pbx+pbw-1,pby-1,P.e2); b.vl(pbx,pby-4,pby-1,P.r2); b.vl(pbx+1,pby-4,pby-1,P.r1); b.hl(pbx+3,pbx+pbw-2,pby-3,P.e3);
+  b.rect(pbx-1,pby-5,pbw+2,5,P.y3); b.hl(pbx-1,pbx+pbw,pby-5,P.y5); b.hl(pbx-1,pbx+pbw,pby-1,P.e2); b.vl(pbx-1,pby-5,pby-1,P.r2); b.vl(pbx,pby-5,pby-1,P.r1); b.hl(pbx+2,pbx+pbw-1,pby-3,P.y2); b.hl(pbx+2,pbx+pbw-1,pby-2,P.e4);
   var tc=p(98,66,20); b.rect(rd(tc[0])-1,rd(tc[1])-3,3,3,P.s5); b.px(rd(tc[0])+2,rd(tc[1])-2,P.s4); b.hl(rd(tc[0])-2,rd(tc[0])+2,rd(tc[1]),P.s4);
   CACHE.phone=[pbx,pby-4,pbw];
   var lp=p(80,49,12); b.vl(rd(lp[0]),rd(lp[1])-4,rd(lp[1]),P.k1); b.poly([[lp[0]-3,lp[1]+3],[lp[0]+4,lp[1]+3],[lp[0]+1.5,lp[1]],[lp[0]-0.5,lp[1]]],P.g3); b.hl(rd(lp[0])-3,rd(lp[0])+3,rd(lp[1])+3,P.g4);
@@ -5711,7 +5712,7 @@ function lodgeLayer(S,tod){ var L=LODGE, p=R3.p, a=M.layer(28,44,76,68,rd(SY(FY,
   for (var y=Math.floor(fyT);y<Math.ceil(fyB);y++) for (var x=Math.floor(fx0);x<Math.ceil(fx1);x++){ var c=T, u=x-fx0;
     if (y<fyG){ c=(y<fyT+1)?P.w4:((y>fyG-1.2)?P.y2:P.w1); }
     else if (y<fyP){ var mu=u%12.6; if (mu<1.3||u>fx1-fx0-1.4) c=P.w1; else if (mu<1.9) c=P.y2;
-      else { var rf=((x*0.6-y)%22+22)%22; if (rf<1.1 && y>fyG+3) c=P.s4; else if (rf>=1.1 && rf<2.4 && y>fyG+4 && bayer(x,y)<0.5) c=P.s3; else if (y<fyG+1.2) c=P.w0; } }
+      else { var rf=((x*0.6-y+8)%40+40)%40; if (rf<1 && y>fyG+3 && bayer(x,y)<0.7) c=P.s4; else if (rf>=1 && rf<2.2 && y>fyG+4 && bayer(x,y)<0.3) c=P.s3; else if (y<fyG+1.2) c=P.w0; } }
     else { if (y<fyP+1.2) c=P.w4; else if (y<fyP+2.2) c=P.w0; else if (y>fyB-3) c=P.w0; else { var pu=u%15.6, pv=y-fyP-2; c=P.w1; if (pu>2&&pu<13.6&&pv>2&&pv<fyB-fyP-6){ c=P.w2; if (pu<3||pv<3) c=P.w3; if (pu>12.6||pv>fyB-fyP-7) c=P.w0; } } }
     if (c!==T) a.px(x-a.ox,y-a.oy,c); }
   var sw=M.microWidth('PORTIR'); w.rect(rd((fx0+fx1)/2-sw/2)-2,rd(fyT)+1,sw+4,6,P.w0); w.micro('PORTIR',rd((fx0+fx1)/2-sw/2),rd(fyT)+1,P.y4);
@@ -6659,7 +6660,7 @@ function copyInto(L,src){ for (var y=0;y<L.h;y++) for (var x=0;x<L.w;x++){ var c
 function finishL(L,base,pre){ M.light(L,M.lf.sum(windowLight,M.lf.vignette(W,144,1.4),M.lf.k(-0.35),pre||M.lf.k(0)),L.ox,L.oy); shade(L,L.ox,L.oy,base,doorLight); return L; }
 function layers(S,GS,tod){ var base=baseOf(S,tod), out=[], t;
   var L=M.layer(160,72,104,64,rd(SY(FY,PIA.Z1))+1); t=new M.Buf(W,144,T); paintPiano(t,S); copyInto(L,t); out.push(finishL(L,base));
-  var Bl=M.layer(148,96,24,32,rd(SY(FY,BEN.Z1))+1); t=new M.Buf(W,144,T); paintBench(t); copyInto(Bl,t); out.push(finishL(Bl,base));
+  var Bl=M.layer(148,96,24,32,118);   // Basis vor Ljerkas Füßen (120): sie sitzt auf der Bank, nicht dahinter t=new M.Buf(W,144,T); paintBench(t); copyInto(Bl,t); out.push(finishL(Bl,base));
   if (S.sheetOff){ var H=M.layer(240,116,36,20,134); t=new M.Buf(W,144,T); paintSheetHeap(t); copyInto(H,t); out.push(finishL(H,base)); }
   var So=M.layer(0,96,36,40,135); t=new M.Buf(W,144,T); paintSofa(t); copyInto(So,t); out.push(finishL(So,base,M.lf.k(-0.2)));
   return out; }
@@ -7685,8 +7686,8 @@ function paintPole(b,tod){ var x=POLE.x, by=POLE.base, top=by-62;
   b.line(x,top+2,x+9,top-1,P.m1); b.poly([[x+5,top-3],[x+13,top-3],[x+12,top+1],[x+6,top+1]],P.m2); b.hl(x+6,x+12,top+1,P.s5);
   // zwei Druckkammer-Lautsprecher (Trichter nach links und rechts) an einer Schelle
   var sy=top+12; b.rect(x-2,sy-1,5,4,P.m1); b.hl(x-2,x+2,sy-1,P.m3);
-  b.poly([[x-2,sy],[x-11,sy-4],[x-11,sy+6],[x-2,sy+2]],function(xx,yy){ return yy<sy?P.s4:(yy>sy+2?P.m2:P.m3); }); b.vl(x-11,sy-4,sy+6,P.s5); b.vl(x-12,sy-3,sy+5,P.m1);
-  b.poly([[x+3,sy],[x+12,sy-4],[x+12,sy+6],[x+3,sy+2]],function(xx,yy){ return yy<sy?P.s3:(yy>sy+2?P.m1:P.m2); }); b.vl(x+12,sy-4,sy+6,P.s4); b.vl(x+13,sy-3,sy+5,P.m0);
+  b.poly([[x-2,sy],[x-11,sy-4],[x-11,sy+6],[x-2,sy+2]],function(xx,yy){ return yy<sy?P.m2:(yy>sy+2?P.k2:P.m1); }); b.vl(x-11,sy-4,sy+6,P.m3); b.vl(x-12,sy-3,sy+5,P.k1);
+  b.poly([[x+3,sy],[x+12,sy-4],[x+12,sy+6],[x+3,sy+2]],function(xx,yy){ return yy<sy?P.m1:(yy>sy+2?P.k1:P.m0); }); b.vl(x+12,sy-4,sy+6,P.m2); b.vl(x+13,sy-3,sy+5,P.k1);
   b.line(x-1,sy+3,x-1,sy+9,P.k2); b.line(x-1,sy+9,x+1,sy+12,P.k2);
   CACHE.pole=[x+9,top-1]; }
 function paintLamp(b,L){ var x=L[0], by=L[1], h=L[2]; b.rect(x-1,by-h,2,h,P.m1); b.vl(x-1,by-h,by-1,P.m2); b.rect(x-2,by-3,5,3,P.m0); b.line(x,by-h,x+5,by-h-3,P.m1); b.poly([[x+2,by-h-5],[x+9,by-h-5],[x+8,by-h-2],[x+3,by-h-2]],P.m2); b.hl(x+3,x+8,by-h-2,P.s4); }
@@ -9827,16 +9828,38 @@ M.defineRoom({ id:'map', name:'Stadtplan', width:320, noActor:true, noVerbs:true
 M.defineScape('map',{beds:['seaFar'],ev:[['gull',10,25,0.4,-1,1],['horn',30,60,0.4,-0.6,0.6]],step:'none'});
 
 // ---------------------------------------------------------------- Titelbild: Split bei Nacht, der Glockenturm, eine Gestalt auf der Mole
-M.paintTitle=function(){ var b=new M.Buf(320,144,P.k0); M.sky(b,0,0,320,78,'night',17); M.moon(b,252,18,4);
-  M.scn.marjan(b,0,120,78,52,'night'); M.scn.roofs(b,96,320,78,'night',33,{min:8,var:14,lit:0.4}); M.scn.belltower(b,214,78,44,P.k1,true);
-  for (var x=96;x<320;x+=13) M.scn.belltower;
-  M.sea(b,0,78,320,66,'night',0,0);
+M.paintTitle=function(){ var b=new M.Buf(320,144,P.k0), x, y, i; M.sky(b,0,0,320,80,'night',17); M.moon(b,262,20,4);
+  // Mosor hinter der Stadt, sehr dunkel
+  for (x=0;x<320;x++){ var ry=Math.round(60+Math.sin(x*0.021+1)*4+Math.sin(x*0.067)*2); for (y=ry;y<80;y++) b.px(x,y,bayer(x,y)<0.3?P.n0:P.k1); }
+  M.scn.marjan(b,0,120,80,52,'night');
+  var r=M.rng(33), base=80;
+  // hintere Häuserreihe: dunkle Wände, Ziegeldächer, wenige Fenster
+  for (x=104;x<320;){ var w=8+Math.floor(r()*9), h=10+Math.floor(r()*10), top=base-h-6;
+    for (y=top;y<base;y++) for (var xx=x;xx<Math.min(320,x+w);xx++){ var c=(xx===x)?P.k1:(bayer(xx,y)<0.5?P.n0:P.k2); b.px(xx,y,c); }
+    for (xx=x;xx<Math.min(320,x+w);xx++){ b.px(xx,top-1,P.t1); if (bayer(xx,top)<0.6) b.px(xx,top,P.t0); }
+    for (i=0;i<3;i++) if (r()<0.45){ var wx=x+2+Math.floor(r()*(w-3)), wy=top+3+Math.floor(r()*(h-4)); b.px(wx,wy,r()<0.5?P.y3:P.y2); if (r()<0.5) b.px(wx,wy+1,P.y1); }
+    x+=w; }
+  // Palastfront an der Riva, von unten angestrahlt
+  for (y=68;y<base;y++) for (x=148;x<252;x++){ var c2=M.rampAt(M.R('n1 s1 s2 s3'),(y-68)/12,x,y); var ax=(x-150)%9; if (y>71 && y<78 && ax>2 && ax<7) c2=(y<73&&(ax===3||ax===6))?P.s1:P.k1; if (y===68) c2=P.s2; b.px(x,y,c2); }
+  for (x=152;x<250;x+=9) if (r()<0.5){ b.px(x+4,75,P.y3); b.px(x+4,76,P.y2); }
+  // Glockenturm von Sv. Duje, angestrahlt
+  var tx=224, ty0=42; for (y=ty0;y<base;y++){ var top6=y<ty0+6, hw=top6?Math.round((y-ty0)*0.6):3, band=(y-ty0-6)%7, lvl=Math.floor((y-ty0-6)/7);
+    for (x=tx-hw;x<=tx+hw;x++){ var cc=x<tx?P.s3:(x===tx?P.s3:P.s2); if (top6) cc=x<=tx?P.s2:P.s1; if (x===tx-hw && !top6) cc=P.s4;
+      if (!top6 && band===0) cc=P.s4; // Gesims
+      if (!top6 && band>=2 && band<=5){ var offs=lvl<1?[-2,0,2]:(lvl<3?[-1,1]:[0]); if (offs.indexOf(x-tx)>=0) cc=(band===2)?P.s1:P.k1; }
+      b.px(x,y,cc); } }
+  b.px(tx,ty0-1,P.s3); b.px(tx,ty0-2,P.s2); b.px(tx+1,ty0+24,P.y3);
+  // Palmen an der Riva
+  [160,184,236,250].forEach(function(px){ for (y=66;y<base;y++) b.px(px+((y<72)?1:0),y,P.k0); [[-6,-2],[-4,-4],[0,-5],[4,-4],[6,-2],[-5,1],[5,1]].forEach(function(f){ b.line(px+1,66,px+1+f[0],66+f[1],P.k0); }); });
+  // Laternen an der Uferlinie
+  for (x=150;x<252;x+=17){ b.px(x,79,P.y4); b.px(x,78,P.y3); }
+  M.sea(b,0,80,320,64,'night',0,0);
   // Mole
   b.rect(0,98,170,6,P.s1); b.hl(0,169,98,P.s2); for (x=0;x<170;x+=20){ M.prop.bollard(b,x+8,98); }
   M.prop.lamp(b,150,98,22,true); M.prop.lamp(b,60,98,22,true);
   return b; };
 M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){ if (y>=96&&y<=104&&x<170) continue; var s=Math.sin(x*0.11+y*0.9+t*1.2)+Math.sin(x*0.04-t*0.5+y*0.3); if (s>1.55 && (y&1)) fb.px(x,y,P.n3); }
-  M.glints(fb,150,104,140,12,t,P.y3,0); M.glints(fb,252,82,140,8,t,P.n4,0); M.glints(fb,60,104,140,10,t,P.y2,0);
+  M.glints(fb,150,104,140,12,t,P.y3,0); M.glints(fb,262,82,140,8,t,P.n4,0); M.glints(fb,60,104,140,10,t,P.y2,0); M.glints(fb,200,81,96,30,t,P.y2,0);
   // Mala auf der Mole: kaum mehr als ein Schimmer
   var mx=118, my=97, a=0.5+Math.sin(t*0.7)*0.15; M.drawPose(fb,mx,my,M.poseF({},'B'),'B','mala',{lut:M.TINT.mala.a,alpha:a,t:t*1000,wobble:1,h:144});
   // Fähre am Horizont

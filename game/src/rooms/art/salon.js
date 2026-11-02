@@ -249,7 +249,7 @@ function copyInto(L,src){ for (var y=0;y<L.h;y++) for (var x=0;x<L.w;x++){ var c
 function finishL(L,base,pre){ M.light(L,M.lf.sum(windowLight,M.lf.vignette(W,144,1.4),M.lf.k(-0.35),pre||M.lf.k(0)),L.ox,L.oy); shade(L,L.ox,L.oy,base,doorLight); return L; }
 function layers(S,GS,tod){ var base=baseOf(S,tod), out=[], t;
   var L=M.layer(160,72,104,64,rd(SY(FY,PIA.Z1))+1); t=new M.Buf(W,144,T); paintPiano(t,S); copyInto(L,t); out.push(finishL(L,base));
-  var Bl=M.layer(148,96,24,32,rd(SY(FY,BEN.Z1))+1); t=new M.Buf(W,144,T); paintBench(t); copyInto(Bl,t); out.push(finishL(Bl,base));
+  var Bl=M.layer(148,96,24,32,118);   // Basis vor Ljerkas Füßen (120): sie sitzt auf der Bank, nicht dahinter t=new M.Buf(W,144,T); paintBench(t); copyInto(Bl,t); out.push(finishL(Bl,base));
   if (S.sheetOff){ var H=M.layer(240,116,36,20,134); t=new M.Buf(W,144,T); paintSheetHeap(t); copyInto(H,t); out.push(finishL(H,base)); }
   var So=M.layer(0,96,36,40,135); t=new M.Buf(W,144,T); paintSofa(t); copyInto(So,t); out.push(finishL(So,base,M.lf.k(-0.2)));
   return out; }

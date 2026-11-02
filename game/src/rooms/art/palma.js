@@ -52,7 +52,7 @@ function shade(buf,ox,oy,tod,Ls,skip){ if (tod==='day'||!TF[tod]) return; var L=
 function lightsFor(tod){
   if (tod==='night') return [[TAB.x0+14,TAB.top-6,70,44,1.0],[TAB.x0+14,TAB.top+6,34,22,0.4]];
   return [[SX(PEND[0][0],PEND[0][2]),60,92,82,0.62],[SX(PEND[1][0],PEND[1][2]),60,92,82,0.62],[TAB.x0+14,TAB.top-6,56,36,0.75],
-    [133,80,40,26,0.55],[268,84,34,30,0.55],[62,66,36,28,0.7],[148,46,18,14,0.35],[241,46,18,14,0.35]]; }
+    [133,80,40,26,0.55],[268,84,34,30,0.55],[60,66,34,26,0.85],[148,46,18,14,0.35],[241,46,18,14,0.35]]; }
 
 // ---------------------------------------------------------------- Texturen
 function damask(X,Y){ var tw=16, th=20, row=Math.floor(Y/th), ox=(row&1)*8, u=((X+ox)%tw+tw)%tw-8, v=((Y%th)+th)%th-10, au=Math.abs(u), av=Math.abs(v), c=P.e2;
@@ -149,25 +149,26 @@ function paintLodgeInside(b){ var L=LODGE, p=R3.p, x, y;
   for (y=L.Y0;y<FY;y++) for (x=L.X0;x<L.X1;x++) b.px(x,y,M.DN[b.get(x,y)]);
   b.poly([p(L.X0,L.Y0,0),p(L.X0,L.Y0,L.Z1),p(L.X0,FY,L.Z1),p(L.X0,FY,0)],function(x,y){ var Z=(VX-L.X0)/(VX-x)*F-F, Y=VY+(y-VY)/K(Z); return M.DN[M.DN[backWall(400+Math.floor(Z*1.3),Math.floor(Y))]]; });
   b.poly([p(L.X0,53,3),p(L.X0,53,22),p(L.X0,FY,22),p(L.X0,FY,3)],function(x,y){ var Z=(VX-L.X0)/(VX-x)*F-F, Y=VY+(y-VY)/K(Z);
-    if (Y<55) return P.w3; if (Y<56) return P.w0;
-    if (Y<73){ var ry=(Y-57)%3.2, rz=(Z-4)%2.1; if (Z>4.5 && Z<21 && ry<1.1 && rz<1) return (hash(Math.floor(Y/3.2),Math.floor((Z-4)/2.1))<0.22)?P.s5:P.y3; return P.k1; }
-    if (Y<75) return P.w4; if (Y<76) return P.w0; return ((Math.floor(Z/4))&1)?P.w2:P.w1; });
+    if (Y<55) return P.w4; if (Y<56) return P.w1; if (Z<4.6||Z>20.6) return P.w3;
+    if (Y<59){ return (((Math.floor(Z*1.4))&1)&&Y>56.5)?P.s5:P.k1; }
+    if (Y<73){ var ry=(Y-59)%2.8, rz=(Z-4)%1.8; if (ry<1.2 && rz<1) return (hash(Math.floor(Y/2.8),Math.floor((Z-4)/1.8))<0.2)?P.r3:P.y4; return P.k1; }
+    if (Y<75) return P.w5; if (Y<76) return P.w1; return ((Math.floor(Z/4))&1)?P.w3:P.w2; });
   for (var z=5;z<21;z+=2){ var q=p(L.X0,74.5,z); b.px(rd(q[0]),rd(q[1]),P.k1); b.px(rd(q[0]),rd(q[1])-1,(z%4)?P.r3:P.m3); }
   [[7,60,9],[11,66,14],[15,62,19],[9,70,5],[17,58,13]].forEach(function(c,i){ var a=p(L.X0,74,c[0]), e=p(L.X0,c[1],c[2]); b.line(rd(a[0]),rd(a[1])-1,rd(e[0]),rd(e[1]),i%2?P.r3:P.m1); });
   var hp=p(L.X0,57,24); b.ellipse(hp[0]+1,hp[1]+2,2.2,2.6,P.k1); b.ellipse(hp[0]+1,hp[1]+2,1.1,1.5,P.w0); b.rect(rd(hp[0]),rd(hp[1])+4,2,2,P.m2);
   var kx=KEYS.X0, ky=KEYS.Y0, kw=KEYS.cols*KEYS.cw+1, kh=KEYS.rows*KEYS.ch+1;
   b.rect(kx-2,ky-4,kw+4,kh+6,P.w1); b.hl(kx-2,kx+kw+1,ky-4,P.w4); b.hl(kx-2,kx+kw+1,ky-3,P.w2); b.vl(kx-2,ky-4,ky+kh+1,P.w2); b.vl(kx+kw+1,ky-4,ky+kh+1,P.w0); b.hl(kx-2,kx+kw+1,ky+kh+1,P.w0);
   for (var r=0;r<KEYS.rows;r++) for (var cI=0;cI<KEYS.cols;cI++){ var n=r*KEYS.cols+cI+1, cx=kx+cI*KEYS.cw, cy=ky+r*KEYS.ch;
-    b.rect(cx,cy,KEYS.cw+1,KEYS.ch+1,P.w0); b.rect(cx+1,cy+1,KEYS.cw-1,KEYS.ch-1,P.k1); b.hl(cx,cx+KEYS.cw,cy+KEYS.ch,P.w2); b.px(cx+2,cy+KEYS.ch,P.y1);
+    b.rect(cx,cy,KEYS.cw+1,KEYS.ch+1,P.w2); b.rect(cx+1,cy+1,KEYS.cw-1,KEYS.ch-1,P.w0); b.hl(cx,cx+KEYS.cw,cy+KEYS.ch,P.w3); b.px(cx+2,cy+KEYS.ch,P.y2);
     var hs=hash(n,7); if (hs<0.16 && n!==31) continue;
     if (hs>0.86){ b.rect(cx+1,cy+2,3,3,P.s5); b.px(cx+1,cy+2,P.s6); b.px(cx+3,cy+4,P.s3); continue; }
-    b.px(cx+2,cy+1,P.m3); b.px(cx+2,cy+2,P.m3); b.px(cx+2,cy+3,P.y3); b.rect(cx+1,cy+4,3,2,P.y2); b.px(cx+1,cy+4,P.y4); b.px(cx+3,cy+5,P.y1); }
+    b.px(cx+2,cy+1,P.m4); b.px(cx+2,cy+2,P.m3); b.px(cx+2,cy+3,P.y4); b.rect(cx+1,cy+4,3,2,P.y3); b.px(cx+1,cy+4,P.y5); b.px(cx+3,cy+5,P.y2); }
   var c0=p(76,80,12), c1=p(85,80,12), cm=(c0[0]+c1[0])/2; b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1]),P.w3); b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1])+1,P.w1);
   b.ellipse(cm,c0[1]-7,4.5,6,P.w2); b.ellipse(cm,c0[1]-7,3,4.5,P.k1); b.ellipse(cm,c0[1]-8,1.5,2.5,P.w1);
   b.vl(rd(c0[0]),rd(c0[1])+1,rd(c0[1])+12,P.w1); b.vl(rd(c1[0]),rd(c1[1])+1,rd(c1[1])+12,P.w1);
   R3.box(b,87,99,66,FY,18,25,{front:function(x,y){ var Y=VY+(y-VY)/K(25); if (Y<67) return P.w4; var fy=(Y-67)%7; if (fy<1) return P.w0; if (Math.abs(x-SX(93,25))<0.9 && fy>2.5&&fy<4.5) return P.y4; return fy<2?P.w3:P.w2; },top:P.w3,right:P.w1});
   var pb=p(88,66,22), pb2=p(97,66,22), pbx=rd(pb[0]), pby=rd(pb[1]), pbw=rd(pb2[0]-pb[0]);
-  b.rect(pbx,pby-4,pbw,4,P.y3); b.hl(pbx,pbx+pbw-1,pby-4,P.y4); b.hl(pbx,pbx+pbw-1,pby-1,P.e2); b.vl(pbx,pby-4,pby-1,P.r2); b.vl(pbx+1,pby-4,pby-1,P.r1); b.hl(pbx+3,pbx+pbw-2,pby-3,P.e3);
+  b.rect(pbx-1,pby-5,pbw+2,5,P.y3); b.hl(pbx-1,pbx+pbw,pby-5,P.y5); b.hl(pbx-1,pbx+pbw,pby-1,P.e2); b.vl(pbx-1,pby-5,pby-1,P.r2); b.vl(pbx,pby-5,pby-1,P.r1); b.hl(pbx+2,pbx+pbw-1,pby-3,P.y2); b.hl(pbx+2,pbx+pbw-1,pby-2,P.e4);
   var tc=p(98,66,20); b.rect(rd(tc[0])-1,rd(tc[1])-3,3,3,P.s5); b.px(rd(tc[0])+2,rd(tc[1])-2,P.s4); b.hl(rd(tc[0])-2,rd(tc[0])+2,rd(tc[1]),P.s4);
   CACHE.phone=[pbx,pby-4,pbw];
   var lp=p(80,49,12); b.vl(rd(lp[0]),rd(lp[1])-4,rd(lp[1]),P.k1); b.poly([[lp[0]-3,lp[1]+3],[lp[0]+4,lp[1]+3],[lp[0]+1.5,lp[1]],[lp[0]-0.5,lp[1]]],P.g3); b.hl(rd(lp[0])-3,rd(lp[0])+3,rd(lp[1])+3,P.g4);
@@ -332,7 +333,7 @@ function lodgeLayer(S,tod){ var L=LODGE, p=R3.p, a=M.layer(28,44,76,68,rd(SY(FY,
   for (var y=Math.floor(fyT);y<Math.ceil(fyB);y++) for (var x=Math.floor(fx0);x<Math.ceil(fx1);x++){ var c=T, u=x-fx0;
     if (y<fyG){ c=(y<fyT+1)?P.w4:((y>fyG-1.2)?P.y2:P.w1); }
     else if (y<fyP){ var mu=u%12.6; if (mu<1.3||u>fx1-fx0-1.4) c=P.w1; else if (mu<1.9) c=P.y2;
-      else { var rf=((x*0.6-y)%22+22)%22; if (rf<1.1 && y>fyG+3) c=P.s4; else if (rf>=1.1 && rf<2.4 && y>fyG+4 && bayer(x,y)<0.5) c=P.s3; else if (y<fyG+1.2) c=P.w0; } }
+      else { var rf=((x*0.6-y+8)%40+40)%40; if (rf<1 && y>fyG+3 && bayer(x,y)<0.7) c=P.s4; else if (rf>=1 && rf<2.2 && y>fyG+4 && bayer(x,y)<0.3) c=P.s3; else if (y<fyG+1.2) c=P.w0; } }
     else { if (y<fyP+1.2) c=P.w4; else if (y<fyP+2.2) c=P.w0; else if (y>fyB-3) c=P.w0; else { var pu=u%15.6, pv=y-fyP-2; c=P.w1; if (pu>2&&pu<13.6&&pv>2&&pv<fyB-fyP-6){ c=P.w2; if (pu<3||pv<3) c=P.w3; if (pu>12.6||pv>fyB-fyP-7) c=P.w0; } } }
     if (c!==T) a.px(x-a.ox,y-a.oy,c); }
   var sw=M.microWidth('PORTIR'); w.rect(rd((fx0+fx1)/2-sw/2)-2,rd(fyT)+1,sw+4,6,P.w0); w.micro('PORTIR',rd((fx0+fx1)/2-sw/2),rd(fyT)+1,P.y4);
