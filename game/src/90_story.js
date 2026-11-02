@@ -34,7 +34,8 @@ M.endProVisit=async function(A){ A.phase('pro_eve'); await A.fade(8,700); await 
 // Fall 1 beginnt (nach der Nacht)
 M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster Fall',title:'Das Boot um sieben',time:'Mittwoch, 16. November · Abend',ms:4400});
   A.phase('c1'); await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); await A.fade(0,600);
-  A.sfx('phone'); await A.wait(1200); await A.m('Vesna.');
+  await A.m('Das Fenster ist zu. Der Riegel ist alt. Er springt manchmal auf.'); await A.wait(500); await A.m('Ich habe von einem Mädchen geträumt. Es stand hinter mir in der Scheibe.');
+  await A.wait(800); A.sfx('phone'); await A.wait(1200); await A.m('Vesna.');
   await A.phoneVoice('„Marko. Dein Text über Ivka Perić ist gut. Er kommt morgen. Ein bisschen traurig, aber das sind sie alle.“');
   await A.m('Danke. Ich habe schlecht geschlafen.'); await A.phoneVoice('„Du schläfst immer schlecht. Geh raus. An die Luft. Ciao.“');
   await A.m('Sie hat recht. Die Riva. Ein bisschen Luft, ein bisschen Meer. Nichts weiter.'); A.unlock('riva'); A.save(); };

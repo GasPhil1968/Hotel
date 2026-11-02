@@ -9,14 +9,22 @@ async function meeting(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
   await A.face('R'); A.headache(4500); await A.animM('headache'); await A.m('…'); A.sfx('static');
   await A.m('Am Ende der Mole steht eine alte Frau. Schwarzer Mantel. Kein Schirm, keine Handschuhe.');
   A.found('ivka'); if (I.actor) I.actor.fadeIn=A.gt; await A.wait(900);
-  await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.');
-  var mp=M.apos('riva','mala',[A.marko.x-22,A.marko.y+2,'R']); A.malaJoin({x:Math.round(A.marko.x)-22,y:Math.round(A.marko.y)+2,f:'R'}); A.sfx('shimmer'); await A.wait(900);
-  await A.g('Du siehst sie also auch.'); await A.faceM('L'); await A.m('Du schon wieder.');
-  await A.g('Sie steht hier jeden Abend. Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.');
-  await A.m('Das ist Ivka Perić. Sie ist seit einer Woche tot. Ich habe heute ihren Nachruf geschrieben.'); await A.g('Dann weißt du schon mehr über sie als die meisten.');
-  await A.m('Und was soll ich jetzt tun?'); await A.g('Ich kann sie finden. Reden kannst nur du.'); await A.faceM('R');
-  await A.g('Und wenn du willst, dass ich mir etwas ansehe, wo du nicht hinkommst, dann sag es mir.'); A.flash('Unten links: zu Mala wechseln.');
-  A.note('m_find',true); A.save(); }
+  await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.'); await A.wait(900);
+  await A.m('Nein. In Split tragen viele alte Frauen schwarze Mäntel.');
+  // Mala: zuerst nur eine Stimme hinter ihm
+  A.malaJoin({x:Math.round(A.marko.x)-28,y:Math.round(A.marko.y)+2,f:'R'}); A.sfx('shimmer'); await A.wait(1100);
+  await A.g('Du siehst sie also auch.',{noPortrait:true});
+  var c=await A.choose([{t:'(Nicht umdrehen.)',id:'no',silent:true},{t:'„Du bist nicht da.“',id:'not'},{t:'„Ich habe schlecht geschlafen. Das ist alles.“',id:'sleep'}],{title:'',conv:false});
+  if (c==='no'){ await A.wait(1500); await A.g('Du kannst so tun, als wäre ich nicht da. Das können die meisten gut.'); }
+  else if (c==='not'){ await A.wait(900); await A.g('Dann redest du gerade mit niemandem.'); }
+  else { await A.g('Ich weiß. Ich war dabei.'); }
+  await A.faceM('L'); await A.wait(700); await A.m('…'); await A.m('Die Kirchentreppe in Varoš. Das Fenster letzte Nacht.'); await A.g('Ja.');
+  await A.m('Wer bist du?'); await A.g('Mala.'); delete A.G.flags['mala.unknown']; await A.m('Das ist kein Name. So sagt man zu kleinen Mädchen.'); await A.g('Es reicht.');
+  await A.wait(800); await A.g('Sie steht hier jeden Abend. Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.');
+  await A.m('Das ist eine alte Frau, die auf ein Schiff wartet. Davon gibt es in Split Hunderte.'); await A.g('Auf welches Schiff?');
+  await A.m('Woher soll ich das wissen?'); await A.wait(900); await A.m('Ich rede nicht mit Leuten, die es nicht gibt.'); await A.g('Sie gibt es. Mich auch. Nur anders.');
+  await A.faceM('R'); await A.wait(600); await A.m('Ich gehe jetzt zu ihr. Dann sehe ich, dass sie lebt. Und dann gehe ich nach Hause und schlafe.');
+  A.flash('Unten links: zu Mala wechseln.'); A.save(); }
 // ---------------------------------------------------------------- Gespräch mit Ivka (Marko)
 async function talkIvka(A){ var I=A.npc('ivka');
   if (A.isMala()) return talkIvkaMala(A,I);
@@ -30,7 +38,7 @@ async function talkIvka(A){ var I=A.npc('ivka');
     {t:'Warum wartet niemand mit Ihnen?',once:'iv3',go:async function(A){ await I.say('Die Leute haben zu tun. Ich habe Zeit.'); await I.say('Ich habe immer Zeit gehabt. Das ist das Einzige, wovon ich genug habe.'); }},
     {t:'Das Boot ist spät.',once:'iv4',go:async function(A){ await I.say('Die Bura. Sie haben sie im Radio angesagt. Die Fenster haben schon gesungen.'); await I.say('Fragen Sie doch im Hafenbüro, warum es so lange dauert. Mich nehmen sie da nicht mehr ernst.'); A.note('c1_askoffice'); }},
     {t:'Frieren Sie nicht? Ohne Handschuhe, bei dem Wind?',once:'iv5',go:async function(A){ await I.say('Ich friere nie.'); await A.wait(700); await I.say('Heute spüre ich nicht einmal den Wind. Komisch, bei der Bura.'); await I.say('Das macht das Alter. Man wird zäh wie Leder.'); }},
-    {t:'Gospođa Perić … Sie sind gestorben.',once:'ivWrong',go:async function(A){ await I.say('Was reden Sie da?'); await I.face('R'); await I.say('Gehen Sie nach Hause, junger Mann. Sie haben getrunken.');
+    {t:'Gospođa Perić … ich habe gestern Ihren Nachruf geschrieben.',once:'ivWrong',go:async function(A){ await I.say('Meinen was?'); await I.face('R'); await I.say('Gehen Sie nach Hause, junger Mann. Sie haben getrunken.');
         if (A.malaHere()) await A.g('Sie hört es nicht. Noch nicht.'); A.G.seen['dlg:ivWrong']=0; return 'bye'; }},
     A.askOpt({
       c1_ferry:async function(A){ await I.say('Ausgefallen? Dann kommt er mit dem nächsten. Er hat es versprochen. Er verspricht nie etwas, das er nicht hält.'); },
@@ -47,7 +55,7 @@ async function talkIvka(A){ var I=A.npc('ivka');
       c1_came:async function(A){ await I.say('Er kam nicht mit der Fähre? Womit denn dann?'); await I.face('R'); },
       pro_notice:async function(A){ await I.say('Die Anzeige an meiner Tür? Die ist für die alte Kovačka, die Arme. Die hängen sie an jede Tür in der Gasse.'); await A.m('Da steht Ihr Name.'); await I.say('Halb Varoš heißt Perić. Gehen Sie, ich muss aufpassen, sonst sehe ich das Boot nicht.'); await I.face('R'); }
     },'Das sagt mir nichts, junger Mann.'),
-    {t:'Ich gehe ein Stück.',bye:true,go:async function(A){ await I.say('Ziehen Sie sich was an. Es wird kalt.'); }}
+    {t:'Ich gehe ein Stück.',bye:true,go:async function(A){ await I.say('Ziehen Sie sich was an. Es wird kalt.'); if (!A.flag('mk.accept') && A.first('ivBreath')){ await A.wait(700); await A.m('Mein Atem dampft. Ihrer nicht.'); await A.wait(600); await A.m('Ich sehe schlecht im Dunkeln.'); } }}
   ]; }); }
 // ---------------------------------------------------------------- Mala und Ivka
 async function talkIvkaMala(A,I){
@@ -122,6 +130,9 @@ async function interlude(A){ await A.fade(8,900); A.phase('i1'); A.rebuild(); va
   A.placeM(b[0],b[1],'R'); A.idleM('sit'); if (A.malaHere()){ A.placeG(b[0]+16,b[1],'L'); A.idleG('sit'); } A.G.flags['mala.lock']=true;
   await A.fade(0,1200); A.sfx('gust'); await A.narrate('Später. Die Bura ist aufgekommen. Die Riva ist leer bis auf eine Bank.');
   await A.animM('smoke'); await A.g('Du rauchst.'); await A.m('Nur wenn ich nicht schlafen kann.'); await A.g('Also immer.');
+  await A.wait(900); await A.m('Ich glaube nicht an Geister.'); await A.g('Musst du nicht.');
+  await A.m('Ich habe gerade einer alten Frau zugesehen, wie sie in ein Licht gegangen ist, das es nicht gibt.'); await A.wait(1300);
+  await A.m('Und das Schlimmste ist: Es war richtig so.'); await A.wait(700); await A.g('Ja.'); A.setFlag('mk.accept');
   await A.menuLoop(function(){ return [
     {t:'Wie lange machst du das schon? Leute finden, die nicht weiterkommen.',once:'i1a',go:async function(A){ await A.g('Lange. Aber du bist der Erste, der zuhört.'); await A.m('Und die anderen?'); await A.g('Die haben Kopfschmerzen bekommen. Und das Fenster zugemacht.'); }},
     {t:'Woher kommst du?',once:'i1b',go:async function(A){ await A.g('Von irgendwo, wo es auch Brücken gibt.'); await A.m('Das ist keine Antwort.'); await A.g('Es ist die, die ich habe.'); }},

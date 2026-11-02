@@ -153,7 +153,7 @@ async function playMessage(A){ A.set('ansBlink',false); A.sfx('beep'); await A.w
   await A.phoneVoice('„Freitag kommt die Stadt und räumt die Wohnung. Die Nachbarin, Gospođa Zdenka, hat den Schlüssel. Zweitausend Zeichen, bis morgen früh. Danke dir.“');
   A.sfx('beep'); A.setFlag('pro.msg'); A.note('pro_auftrag'); A.note('pro_zdenka',true); A.unlock('varos');
   await A.m('Die Stillen. Menschen, die allein sterben, bekommen in Vesnas Zeitung zweitausend Zeichen. Mehr, als die meisten im Leben bekommen.');
-  if (!A.flag('pro.coffee')) await A.m('Aber zuerst Kaffee.'); }
+  }
 async function makeCoffee(A){ await A.reach(); A.take('dzezvaW'); A.set('steam',A.gt+4500); A.sfx('boil');
   await A.m('Wasser aufsetzen. Kaffee hinein, wenn es summt. Warten, bis er steigt. Nicht rühren.'); await A.wait(800); A.sfx('boil');
   await A.walk(192,108); await A.face('B'); await A.anim('drink'); A.sfx('horn');
@@ -166,26 +166,23 @@ async function writeArticle(A){ await A.walk(188,106); await A.face('B'); A.sfx(
   await A.m(['Der Rest kommt fast von allein. Das ist das Traurige an diesen Texten.','Danach schreibt sich der Rest. Leider.','Der Rest ist leicht. Die zwei Tassen waren das Schwerste.'][c]);
   A.sfx('click'); await A.m('Abgeschickt. Jetzt schlafen. Vielleicht.'); A.setFlag('pro.article'); }
 async function goToSleep(A){ await A.walk(226,118); await A.fade(8,900); A.phase('pro_night'); A.set('winOpen',true); A.rebuild(); A.placeM(214,120,'R');
-  A.setFlag('mala.lock'); A.malaJoin({x:176,y:107,f:'B',fadeIn:false}); A.idleG(null); if (A.mala) A.mala.visible=false; await A.wait(300); await A.fade(0,1400);
+  A.setFlag('mala.lock'); A.setFlag('mala.unknown'); A.malaJoin({x:236,y:119,f:'L',fadeIn:false}); A.idleG(null); if (A.mala){ A.mala.visible=false; A.mala.alpha=0.32; } await A.wait(300); await A.fade(0,1400);
   A.sfx('gust'); await A.narrate('Nachts. Irgendwann nach zwei.'); A.headache(3000);
-  await A.m('Kalt. Das Fenster ist offen.'); await A.faceM('L'); await A.wait(500);
-  if (A.mala){ A.mala.visible=true; A.mala.fadeIn=A.gt; } A.sfx('shimmer'); await A.wait(1200);
-  await A.animM('surprise'); await A.m('…'); await A.g('Du hast das Fenster offen gelassen.'); await A.m('Ich habe es zugemacht.'); await A.g('Dann war ich es.');
-  A.music('ghost');
-  await A.menuLoop(function(){ return [
-    {t:'Wer bist du?',once:'n1',go:async function(A){ await A.g('Nenn mich Mala.'); await A.m('Das ist kein Name. Das sagt man zu kleinen Mädchen.'); await A.g('Es reicht.'); }},
-    {t:'Wie bist du hier hereingekommen?',once:'n2',go:async function(A){ await A.g('Ich bin schon länger hier. Nicht immer in diesem Zimmer. Aber in deiner Nähe.'); }},
-    {t:'Ich träume.',once:'n3',go:async function(A){ await A.g('Vielleicht. Aber Träume machen keine Fenster auf.'); }},
-    {t:'Was willst du von mir?',once:'n4',go:async function(A){ await A.g('Nichts. Du bist der Erste seit Jahren, der mich so sieht. Und hört.'); await A.m('Seit Jahren.'); await A.g('Lange Jahre.'); }},
-    {t:'Bist du … tot?',once:'n5',if:A.G.seen['dlg:n1']&&A.G.seen['dlg:n4'],go:async function(A){ await A.wait(600); await A.g('Frag das nicht so.'); }},
-    {t:'Heute, in der Wohnung in Varoš … warst das du?',once:'n6',go:async function(A){ await A.g('Nein. Sie ist nicht dort. Sie ist da, wo sie immer war.'); await A.m('Wer?'); await A.g('Die Frau, über die du geschrieben hast.'); }},
-    {t:'Was ist in dem Karton auf meinem Schrank?',once:'n7',if:!!A.G.seen['dlg:n4'],go:async function(A){ await A.g('Das weißt du besser als ich. Du hast ihn nie aufgemacht.'); }},
-    {t:'Geh weg.',bye:true,go:async function(A){ await A.g('Gleich.'); }}
-  ]; });
-  await A.g('Es gibt Leute, die nicht weiterkommen. Du kannst mit ihnen reden. Ich kann sie finden.'); A.note('m_near',true); A.note('m_find',true);
-  A.sfx('horn'); await A.wait(400); await A.animG('look'); await A.wait(900);
-  if (A.mala) A.mala.fadeOut=A.gt; await A.wait(1000); A.malaLeave(); A.G.flags['mala.lock']=false;
-  A.set('winOpen',false); A.rebuild(); A.sfx('shutter'); await A.m('…'); await A.m('Ich brauche Schlaf.');
+  await A.m('Kalt.'); await A.wait(700); await A.m('Das Fenster ist offen. Ich habe es zugemacht. Ich weiß, dass ich es zugemacht habe.');
+  await A.walk(192,108); await A.face('B'); await A.wait(400); A.sfx('shutter'); A.set('winOpen',false); A.rebuild(); await A.wait(900);
+  // in der Scheibe, hinter ihm: kaum mehr als ein Schimmer
+  if (A.mala){ A.mala.visible=true; A.mala.fadeIn=A.gt; } A.sfx('shimmer'); A.music('ghost'); await A.wait(1600);
+  await A.narrate('In der dunklen Scheibe, hinter seinem eigenen Spiegelbild, steht jemand. Ein Mädchen. Ganz still.'); await A.wait(900);
+  await A.g('Es gibt Leute, die nicht weiterkommen.',{noPortrait:true}); await A.wait(1000);
+  await A.g('Du kannst mit ihnen reden.',{noPortrait:true}); await A.wait(1000);
+  await A.g('Ich kann sie finden.',{noPortrait:true}); A.note('m_find',true); await A.wait(700);
+  if (A.mala) A.mala.fadeOut=A.gt; A.sfx('horn'); await A.faceM('L'); await A.animM('surprise'); await A.wait(1300);
+  A.malaLeave(); A.G.flags['mala.lock']=false; if (A.mala) A.mala.alpha=undefined;
+  var c=await A.choose([{t:'„Wer ist da?“',id:'who'},{t:'(Licht machen.)',id:'light',silent:true},{t:'„Ich träume.“',id:'dream'}],{title:'Nachts',conv:false});
+  if (c==='who'){ await A.wait(1500); await A.m('Niemand.'); }
+  else if (c==='light'){ A.sfx('click'); await A.wait(700); await A.m('Niemand. Natürlich niemand.'); }
+  else { await A.wait(1000); await A.m('Ja. Ich träume.'); }
+  A.music('silence'); await A.m('Ich schlafe zu wenig. Ich trinke zu viel Kaffee. Und ich schreibe zu viele Nachrufe.'); await A.wait(600); await A.m('Das ist alles.');
   await A.fade(8,1200); await M.startCase1(A); }
 // ---------------------------------------------------------------- Raum
 M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
@@ -195,7 +192,7 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   start:[200,118,'L'], entries:{map:[226,122,'L']},
   noMala:false,
   enter:async function(A,from){ var p=A.G.phase;
-    if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); await A.m('Der Text. Zweitausend Zeichen. Am Laptop.'); }
+    if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     if (p==='c3' && !A.flag('c3.call') && A.first('c3call')){ await M.case3Call(A); } }
 });
 M.defineScape('flat',function(o){ var GS=o.GS, w=M.scn.weather(GS), tod=o.tod; return { beds:(w==='rain'?['rainIn','fridge']:(tod==='night'?['room','fridge']:['seaFar','fridge'])), step:'wood',

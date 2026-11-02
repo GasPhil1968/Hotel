@@ -95,8 +95,12 @@ M.room('varos',{ name:'Veli Varoš', scape:'varos',
     if (p==='pro' && from==='ivka' && !A.flag('pro.visited')){ A.setFlag('pro.visited'); var Z=A.npc('zdenka'); await A.walk(M.apos('varos','zdenka')[0]+30,M.apos('varos','zdenka')[1]+2); await A.face('L');
       await Z.say('Haben Sie, was Sie brauchen?'); await A.m('Mehr, als in zweitausend Zeichen passt.'); A.take('key_ivka'); A.sfx('click'); await Z.say('Das ist immer so.'); await A.m('Danke, Gospođa Zdenka.');
       await A.wait(300); return M.endProVisit(A); }
-    if (p==='pro' && from!=='ivka' && A.first('varosFirst')){ await A.m('Veli Varoš. Hier sind die Gassen so eng, dass sich die Nachbarn über die Straße das Salz reichen.'); }
-    if (p==='c2' && A.has('newspaper') && A.first('c2zdHint')){ await A.m('Zdenka sitzt wieder auf ihrem Posten. Ich habe die Zeitung dabei.'); } }
+    if (p==='pro' && from!=='ivka' && A.first('varosFirst')){ await A.m('Veli Varoš. Hier sind die Gassen so eng, dass sich die Nachbarn über die Straße das Salz reichen.');
+      // ein flüchtiger Blick: oben an der Kirchentreppe steht jemand und ist gleich wieder fort
+      await A.wait(500); A.G.flags['found.malaGlimpse']=true; var sp=M.spot('varos','steps'), gl=A.spawn({id:'malaGlimpse',ch:'mala',x:sp[0]+38,y:sp[1]+3,f:'L',name:'',ghost:true,noAche:true});
+      await A.wait(1400); if (gl.actor) gl.actor.fadeOut=A.gt; await A.wait(1000); gl.hide(); delete A.G.flags['found.malaGlimpse'];
+      await A.m('…'); await A.wait(400); await A.m('Oben an der Kirchentreppe stand eben jemand.'); await A.wait(600); await A.m('Jetzt nicht mehr.'); }
+    if (p==='c2' && A.first('c2zdHint')){ await A.m('Zdenka sitzt wieder auf ihrem Posten.'); } }
 });
 M.defineScape('varos',function(o){ var tod=o.tod, w=M.scn.weather(o.GS); return { beds:w==='rain'?['rain','city']:(w==='bura'?['bura','city']:['city','seaFar']), step:'stone',
   ev:tod==='night'?[['tv',8,20,0.6,-0.8,-0.4],['cat',30,70,0.5,0.2,0.6],['bellFar',60,120,0.3,0.4,0.8],['shutter',20,45,0.6,-1,1]]:[['tv',10,25,0.5,-0.8,-0.4],['scooter',15,40,0.4,-1,-0.4],['cat',25,60,0.4,0.2,0.6],['dog',30,70,0.3,0.6,1],['gull',15,35,0.3,-1,1],['bellSmall',70,140,0.4,0.6,0.9]] }; });

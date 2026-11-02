@@ -31,11 +31,11 @@ const SHOTS = process.argv[2] || null;
     await expect((await D.st()).phase === 'pro_eve', 'Abend');
     await D.act('use', 'laptop'); await D.choose('Jeden Abend um sieben'); await D.drain(); await flag('pro.article'); log('Text geschrieben');
     await D.act('use', 'bed'); await D.drain(); await shot('night');
-    await D.choose('Wer bist du'); await D.drain(); await D.choose('Was willst du'); await D.drain(); await D.choose('Bist du'); await D.drain(); await D.choose('Geh weg'); await D.drain();
+    await D.choose('Licht machen'); await D.drain();
     await expect((await D.st()).phase === 'c1', 'Fall 1 begonnen'); log('Nacht mit Mala, Fall 1');
     // ================= FALL 1
     await D.exit('door'); await D.travel('riva'); log('Riva');
-    await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain(); await D.page.waitForTimeout(300); await D.drain();
+    await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain(); await D.page.waitForTimeout(300); await D.choose('Nicht umdrehen'); await D.drain();
     await flag('c1.met'); await expect((await D.st()).dlg === null, 'kein Dialog'); log('Begegnung'); await shot('riva_meet');
     await talk('ivka', 'Welches Boot', 'Welcher Tag', 'Das Boot ist spät', 'Ich gehe ein Stück'); await note('c1_askoffice');
     await D.switchTo('mala'); await D.act('sense', 'bollard'); await D.drain(); await note('c1_years'); await D.act('talk', 'ivka'); await D.drain(); await note('m_mother'); await D.switchTo('marko'); log('Mala an der Mole');

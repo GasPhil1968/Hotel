@@ -193,7 +193,7 @@ function malaPlaceNear(){ var mk=GS.pos.marko; var p=nearestPoint('mala',mk.x-16
 function syncPos(){ ['marko','mala'].forEach(function(k){ var a=ACT[k]; if (a && GS.pos[k].room===room.id){ GS.pos[k].x=a.x; GS.pos[k].y=a.y; GS.pos[k].f=a.f; } }); }
 function malaJoin(o){ o=o||{}; GS.malaOn=true; if (o.x!==undefined) GS.pos.mala={room:room.id,x:o.x,y:o.y,f:o.f||'L'}; else malaPlaceNear(); placePlayers(); var a=ACT.mala; if (a && o.fadeIn!==false){ a.fadeIn=gt; } }
 function malaLeave(o){ o=o||{}; if (GS.active==='mala') switchTo('marko',true); GS.malaOn=false; var a=ACT.mala; if (a){ a.fadeOut=gt; } }
-function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
+function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']||GS.flags['mala.unknown']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
 E.canSwitch=canSwitch;
 async function switchTo(who,silent){ if (GS.active===who) return; syncPos(); GS.active=who; M.setGhostAudio(who==='mala'); if (!silent) M.sfx('whoosh');
   var target=GS.pos[who].room; if (target && target!==room.id){ await gotoRoom(target,{x:GS.pos[who].x,y:GS.pos[who].y,f:GS.pos[who].f,noEnter:true,fadeMs:250,keepPos:true}); }

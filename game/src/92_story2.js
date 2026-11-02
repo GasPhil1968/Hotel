@@ -28,16 +28,25 @@ M.canTravel=async function(A,L){ var p=A.G.phase;
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
 M.lookAtMala=async function(A){ var p=A.G.phase;
+  if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.m(A.cycle('mDeny',['Ich sehe nicht hin. Wenn ich nicht hinsehe, ist da niemand.','Jeansjacke, grauer Schal. Ein Mädchen wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Ich sehe nicht hin.','Wenn das Licht von hinten kommt, sieht man durch sie hindurch. Das liegt am Licht.']));
   if (p==='c1'||p==='c1_night') return A.m('Mala. Jeansjacke, grauer Schal, weiße Turnschuhe. Kleidung wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Wenn das Licht von hinten kommt, sieht man durch sie hindurch.');
   if (p==='c3'||p==='c3_night') return A.m('Mala sieht sich nicht um. Hier sieht sie sich nicht um. Als kenne sie den Weg.');
   return A.m(A.cycle('mLook',['Mala. Sie hält die Hände in den Taschen der Jacke, eine um die Blechdose.','Sie sieht aus wie siebzehn. Sie spricht wie jemand, der sehr lange siebzehn war.','Durchscheinend, wenn das Licht von hinten kommt. Sonst fast nicht.'])); };
 M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.mala') && M.talkMalaEnd) return M.talkMalaEnd(A);
+  if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.menuLoop(function(){ return [
+    {t:'Was willst du von mir?',once:'dn1',go:async function(A){ await A.g('Nichts. Sie braucht etwas. Nicht ich.'); await A.m('Sie braucht einen Arzt. Und ich auch.'); }},
+    {t:'Du bist eine Einbildung.',once:'dn2',go:async function(A){ await A.g('Vielleicht.'); await A.wait(700); await A.g('Dann eine, die dir nichts tut.'); }},
+    {t:'Woher wusstest du das mit „achtundvierzig“?',once:'dn3',if:A.flag('c1.logRead'),go:async function(A){ await A.g('Ich habe nachgesehen.'); await A.m('Zufall. Ein Praktikant mit einem Zahlendreher.'); await A.g('Ja. Zufall.'); }},
+    {t:'Woher wusstest du, was Tonći im Wasser gesagt hat?',once:'dn4',if:A.flag('c1.dinkoTold'),go:async function(A){ await A.wait(900); await A.g('Ich habe es gehört. An dem Seesack.'); await A.m('…'); await A.m('Ich will das nicht.'); await A.g('Ich weiß.'); }},
+    {t:'Geh weg.',bye:true,go:async function(A){ await A.g('Nicht weit.'); }}
+  ]; });
   await A.menuLoop(function(){ return [
     {t:'Wie lange bist du schon in meiner Nähe?',once:'mt1',if:p!=='epi',go:async function(A){ await A.g('Lange genug, um zu wissen, dass du deinen Kaffee zu stark machst.'); await A.m('Das ist keine Antwort.'); await A.g('Nein.'); }},
     {t:'Wo bist du, wenn ich dich nicht sehe?',once:'mt2',if:p!=='pro_night',go:async function(A){ await A.g('In der Nähe. Am Wasser, meistens.'); await A.g('Ich mag die Fähren nicht. Ich gehe trotzdem hin.'); A.note('m_horn',true); }},
     {t:'Warum zuckst du bei den Glocken zusammen?',once:'mt3',if:A.hasNote('m_bells')||A.hasNote('m_horn'),go:async function(A){ await A.wait(900); await A.g('Weil sie laut sind.'); await A.m('Das ist nicht der Grund.'); await A.g('Für heute schon.'); }},
     {t:'Bist du aus Sarajevo?',once:'mt4',if:A.hasNote('m_sarajevo')||A.hasNote('m_31'),go:async function(A){ await A.g('Frag mich in Sarajevo.'); }},
     {t:'Die Dose …',once:'mt5',if:A.hasNote('m_tin'),go:async function(A){ await A.g('Nicht.'); }},
+    {t:'Was weißt du über den Karton auf meinem Schrank?',once:'mt8',go:async function(A){ await A.wait(800); await A.g('Nur, dass du ihn nie aufgemacht hast.'); }},
     {t:'Und du? Woran bist du festgemacht?',once:'mt7',if:A.hasNote('m_leash'),go:async function(A){ await A.wait(1500); await A.g('An etwas, das ich nicht loslassen will.'); await A.m('Was ist es?'); await A.wait(900); await A.g('Wenn ich es wüsste, wäre es leichter.'); }},
     {t:'Bruno hat dich erkannt.',once:'mt6',if:A.hasNote('m_31'),go:async function(A){ await A.g('Bruno ist alt. Ihm fehlen die Wörter. Er verwechselt Gesichter.'); await A.m('Er hat dir Tee angeboten.'); await A.wait(1200); await A.g('Er hat allen Tee angeboten.'); }},
     A.askOpt({

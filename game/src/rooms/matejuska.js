@@ -48,6 +48,7 @@ async function confession(A,D){ A.music('ghost'); await A.m('„Halt die Tasche.
   A.give('letter_t'); A.give('gloves'); await A.m('Ein Seesack, steif vom Salz. Darin ein Brief, verwaschen, und ein Päckchen in Zeitungspapier vom Dezember vierundachtzig.');
   await A.m('Graue Wollhandschuhe. An einem Faden ein Zettel: „Za mamu.“'); A.note('c1_gift',true);
   await D.say('Wenn du was brauchst … ich bin hier.'); D.idle('mend'); A.setFlag('c1.dinkoTold');
+  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(1100); await A.m('Das konnte ich nicht wissen.'); await A.wait(700); await A.g('Nein.'); await A.wait(600); await A.m('…'); } A.setFlag('mk.crack');
   await A.fade(6,900); A.phase('c1_night'); A.rebuild(); await A.fade(0,900); A.music('case1');
   await A.narrate('Es ist dunkel geworden. Die Bura kommt von den Bergen herunter.');
   A.save(); }

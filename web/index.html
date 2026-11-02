@@ -1882,7 +1882,7 @@ function malaPlaceNear(){ var mk=GS.pos.marko; var p=nearestPoint('mala',mk.x-16
 function syncPos(){ ['marko','mala'].forEach(function(k){ var a=ACT[k]; if (a && GS.pos[k].room===room.id){ GS.pos[k].x=a.x; GS.pos[k].y=a.y; GS.pos[k].f=a.f; } }); }
 function malaJoin(o){ o=o||{}; GS.malaOn=true; if (o.x!==undefined) GS.pos.mala={room:room.id,x:o.x,y:o.y,f:o.f||'L'}; else malaPlaceNear(); placePlayers(); var a=ACT.mala; if (a && o.fadeIn!==false){ a.fadeIn=gt; } }
 function malaLeave(o){ o=o||{}; if (GS.active==='mala') switchTo('marko',true); GS.malaOn=false; var a=ACT.mala; if (a){ a.fadeOut=gt; } }
-function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
+function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']||GS.flags['mala.unknown']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
 E.canSwitch=canSwitch;
 async function switchTo(who,silent){ if (GS.active===who) return; syncPos(); GS.active=who; M.setGhostAudio(who==='mala'); if (!silent) M.sfx('whoosh');
   var target=GS.pos[who].room; if (target && target!==room.id){ await gotoRoom(target,{x:GS.pos[who].x,y:GS.pos[who].y,f:GS.pos[who].f,noEnter:true,fadeMs:250,keepPos:true}); }
@@ -2190,7 +2190,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost;
       var lift=0;
-      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.id==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||(isM?0.62:0.7); o.wobble=1;
+      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.ch==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||(isM?0.62:0.7); o.wobble=1;
         if (isM){ lift=1+Math.round((Math.sin(tq/760)+1)*0.75); if ((tq%7300)<150) o.alpha*=0.45; } } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
@@ -2198,7 +2198,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
       if (spirit && !ghostView) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
-      if (spirit && !ghostView && a.id==='mala') malaMotes(sx,a.y-lift,o.alpha); }
+      if (spirit && !ghostView && a.ch==='mala') malaMotes(sx,a.y-lift,o.alpha); }
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
@@ -2221,7 +2221,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
 // Geisterschein: ein weicher, kalter Rand um die Gestalt
-function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.id==='mala', t=Math.floor(E.gt()/120);
+function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.ch==='mala', t=Math.floor(E.gt()/120);
   var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
   for (var j=-2;j<h+2;j++){ var yy=by+j; if (yy<0||yy>=SH) continue; for (var i=-2;i<w+2;i++){ if (at(i,j)) continue; var n1=at(i-1,j)||at(i+1,j)||at(i,j-1)||at(i,j+1), n2=!n1&&(at(i-2,j)||at(i+2,j)||at(i,j-2)||at(i,j+2));
       if (!n1&&!n2) continue; var xx=bx+i; if (xx<0||xx>=W) continue; var th=(n1?0.55:0.22)*(al+0.3); if (bayer(xx+t,yy)>=th) continue; var k=yy*W+xx, c=fb.d[k]; fb.d[k]=M.lum(c)<70?gl[0]:(M.lum(c)<140?gl[1]:gl[2]); } } }
@@ -2274,7 +2274,7 @@ M.iconOf=iconOf;
 function trim(b){ var x0=b.w,y0=b.h,x1=-1,y1=-1; for (var y=0;y<b.h;y++) for (var x=0;x<b.w;x++) if (b.d[y*b.w+x]!==T){ if (x<x0)x0=x; if (y<y0)y0=y; if (x>x1)x1=x; if (y>y1)y1=y; } if (x1<0) return b; var o=new Buf(x1-x0+1,y1-y0+1,T); for (y=y0;y<=y1;y++) for (x=x0;x<=x1;x++) o.d[(y-y0)*o.w+(x-x0)]=b.d[y*b.w+x]; return o; }
 function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2, avail=g.malaOn && !(E.room&&(E.room.noMala||E.room.noSwitch));
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
-  if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', hot=hoverUI==='sw'&&pointer.show;
+  if (!g.malaOn || g.flags['mala.unknown']) return; var other=g.active==='marko'?'mala':'marko', hot=hoverUI==='sw'&&pointer.show;
   if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
     for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; if (!avail) c2=M.DN[M.DN[c2]]; fb.px(x+2+i2,y+1+j2,c2); } }
   else { var pb=portraitBuf(other,'n'), cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
@@ -2764,7 +2764,6 @@ M.defineNotes({
   c1_plaque:{c:'c1',t:'In Sustipan steht Tonćis Name auf der Tafel „Denen, die das Meer behielt“.'},
   c1_jakov:{c:'c1',t:'Jakov: „Jedes Jahr kommt ein Mann und steht vor dieser Tafel.“'},
   // Mala
-  m_near:{c:'mala',t:'Mala: „Ich bin schon länger in deiner Nähe.“'},
   m_find:{c:'mala',t:'Mala: „Du kannst mit ihnen reden. Ich kann sie finden.“'},
   m_horn:{c:'mala',t:'Mala hält inne, wenn ein Fährenhorn tutet.'},
   m_bells:{c:'mala',t:'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“'},
@@ -10122,7 +10121,7 @@ async function playMessage(A){ A.set('ansBlink',false); A.sfx('beep'); await A.w
   await A.phoneVoice('„Freitag kommt die Stadt und räumt die Wohnung. Die Nachbarin, Gospođa Zdenka, hat den Schlüssel. Zweitausend Zeichen, bis morgen früh. Danke dir.“');
   A.sfx('beep'); A.setFlag('pro.msg'); A.note('pro_auftrag'); A.note('pro_zdenka',true); A.unlock('varos');
   await A.m('Die Stillen. Menschen, die allein sterben, bekommen in Vesnas Zeitung zweitausend Zeichen. Mehr, als die meisten im Leben bekommen.');
-  if (!A.flag('pro.coffee')) await A.m('Aber zuerst Kaffee.'); }
+  }
 async function makeCoffee(A){ await A.reach(); A.take('dzezvaW'); A.set('steam',A.gt+4500); A.sfx('boil');
   await A.m('Wasser aufsetzen. Kaffee hinein, wenn es summt. Warten, bis er steigt. Nicht rühren.'); await A.wait(800); A.sfx('boil');
   await A.walk(192,108); await A.face('B'); await A.anim('drink'); A.sfx('horn');
@@ -10135,26 +10134,23 @@ async function writeArticle(A){ await A.walk(188,106); await A.face('B'); A.sfx(
   await A.m(['Der Rest kommt fast von allein. Das ist das Traurige an diesen Texten.','Danach schreibt sich der Rest. Leider.','Der Rest ist leicht. Die zwei Tassen waren das Schwerste.'][c]);
   A.sfx('click'); await A.m('Abgeschickt. Jetzt schlafen. Vielleicht.'); A.setFlag('pro.article'); }
 async function goToSleep(A){ await A.walk(226,118); await A.fade(8,900); A.phase('pro_night'); A.set('winOpen',true); A.rebuild(); A.placeM(214,120,'R');
-  A.setFlag('mala.lock'); A.malaJoin({x:176,y:107,f:'B',fadeIn:false}); A.idleG(null); if (A.mala) A.mala.visible=false; await A.wait(300); await A.fade(0,1400);
+  A.setFlag('mala.lock'); A.setFlag('mala.unknown'); A.malaJoin({x:236,y:119,f:'L',fadeIn:false}); A.idleG(null); if (A.mala){ A.mala.visible=false; A.mala.alpha=0.32; } await A.wait(300); await A.fade(0,1400);
   A.sfx('gust'); await A.narrate('Nachts. Irgendwann nach zwei.'); A.headache(3000);
-  await A.m('Kalt. Das Fenster ist offen.'); await A.faceM('L'); await A.wait(500);
-  if (A.mala){ A.mala.visible=true; A.mala.fadeIn=A.gt; } A.sfx('shimmer'); await A.wait(1200);
-  await A.animM('surprise'); await A.m('…'); await A.g('Du hast das Fenster offen gelassen.'); await A.m('Ich habe es zugemacht.'); await A.g('Dann war ich es.');
-  A.music('ghost');
-  await A.menuLoop(function(){ return [
-    {t:'Wer bist du?',once:'n1',go:async function(A){ await A.g('Nenn mich Mala.'); await A.m('Das ist kein Name. Das sagt man zu kleinen Mädchen.'); await A.g('Es reicht.'); }},
-    {t:'Wie bist du hier hereingekommen?',once:'n2',go:async function(A){ await A.g('Ich bin schon länger hier. Nicht immer in diesem Zimmer. Aber in deiner Nähe.'); }},
-    {t:'Ich träume.',once:'n3',go:async function(A){ await A.g('Vielleicht. Aber Träume machen keine Fenster auf.'); }},
-    {t:'Was willst du von mir?',once:'n4',go:async function(A){ await A.g('Nichts. Du bist der Erste seit Jahren, der mich so sieht. Und hört.'); await A.m('Seit Jahren.'); await A.g('Lange Jahre.'); }},
-    {t:'Bist du … tot?',once:'n5',if:A.G.seen['dlg:n1']&&A.G.seen['dlg:n4'],go:async function(A){ await A.wait(600); await A.g('Frag das nicht so.'); }},
-    {t:'Heute, in der Wohnung in Varoš … warst das du?',once:'n6',go:async function(A){ await A.g('Nein. Sie ist nicht dort. Sie ist da, wo sie immer war.'); await A.m('Wer?'); await A.g('Die Frau, über die du geschrieben hast.'); }},
-    {t:'Was ist in dem Karton auf meinem Schrank?',once:'n7',if:!!A.G.seen['dlg:n4'],go:async function(A){ await A.g('Das weißt du besser als ich. Du hast ihn nie aufgemacht.'); }},
-    {t:'Geh weg.',bye:true,go:async function(A){ await A.g('Gleich.'); }}
-  ]; });
-  await A.g('Es gibt Leute, die nicht weiterkommen. Du kannst mit ihnen reden. Ich kann sie finden.'); A.note('m_near',true); A.note('m_find',true);
-  A.sfx('horn'); await A.wait(400); await A.animG('look'); await A.wait(900);
-  if (A.mala) A.mala.fadeOut=A.gt; await A.wait(1000); A.malaLeave(); A.G.flags['mala.lock']=false;
-  A.set('winOpen',false); A.rebuild(); A.sfx('shutter'); await A.m('…'); await A.m('Ich brauche Schlaf.');
+  await A.m('Kalt.'); await A.wait(700); await A.m('Das Fenster ist offen. Ich habe es zugemacht. Ich weiß, dass ich es zugemacht habe.');
+  await A.walk(192,108); await A.face('B'); await A.wait(400); A.sfx('shutter'); A.set('winOpen',false); A.rebuild(); await A.wait(900);
+  // in der Scheibe, hinter ihm: kaum mehr als ein Schimmer
+  if (A.mala){ A.mala.visible=true; A.mala.fadeIn=A.gt; } A.sfx('shimmer'); A.music('ghost'); await A.wait(1600);
+  await A.narrate('In der dunklen Scheibe, hinter seinem eigenen Spiegelbild, steht jemand. Ein Mädchen. Ganz still.'); await A.wait(900);
+  await A.g('Es gibt Leute, die nicht weiterkommen.',{noPortrait:true}); await A.wait(1000);
+  await A.g('Du kannst mit ihnen reden.',{noPortrait:true}); await A.wait(1000);
+  await A.g('Ich kann sie finden.',{noPortrait:true}); A.note('m_find',true); await A.wait(700);
+  if (A.mala) A.mala.fadeOut=A.gt; A.sfx('horn'); await A.faceM('L'); await A.animM('surprise'); await A.wait(1300);
+  A.malaLeave(); A.G.flags['mala.lock']=false; if (A.mala) A.mala.alpha=undefined;
+  var c=await A.choose([{t:'„Wer ist da?“',id:'who'},{t:'(Licht machen.)',id:'light',silent:true},{t:'„Ich träume.“',id:'dream'}],{title:'Nachts',conv:false});
+  if (c==='who'){ await A.wait(1500); await A.m('Niemand.'); }
+  else if (c==='light'){ A.sfx('click'); await A.wait(700); await A.m('Niemand. Natürlich niemand.'); }
+  else { await A.wait(1000); await A.m('Ja. Ich träume.'); }
+  A.music('silence'); await A.m('Ich schlafe zu wenig. Ich trinke zu viel Kaffee. Und ich schreibe zu viele Nachrufe.'); await A.wait(600); await A.m('Das ist alles.');
   await A.fade(8,1200); await M.startCase1(A); }
 // ---------------------------------------------------------------- Raum
 M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
@@ -10164,7 +10160,7 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   start:[200,118,'L'], entries:{map:[226,122,'L']},
   noMala:false,
   enter:async function(A,from){ var p=A.G.phase;
-    if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); await A.m('Der Text. Zweitausend Zeichen. Am Laptop.'); }
+    if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     if (p==='c3' && !A.flag('c3.call') && A.first('c3call')){ await M.case3Call(A); } }
 });
 M.defineScape('flat',function(o){ var GS=o.GS, w=M.scn.weather(GS), tod=o.tod; return { beds:(w==='rain'?['rainIn','fridge']:(tod==='night'?['room','fridge']:['seaFar','fridge'])), step:'wood',
@@ -10428,6 +10424,7 @@ async function confession(A,D){ A.music('ghost'); await A.m('„Halt die Tasche.
   A.give('letter_t'); A.give('gloves'); await A.m('Ein Seesack, steif vom Salz. Darin ein Brief, verwaschen, und ein Päckchen in Zeitungspapier vom Dezember vierundachtzig.');
   await A.m('Graue Wollhandschuhe. An einem Faden ein Zettel: „Za mamu.“'); A.note('c1_gift',true);
   await D.say('Wenn du was brauchst … ich bin hier.'); D.idle('mend'); A.setFlag('c1.dinkoTold');
+  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(1100); await A.m('Das konnte ich nicht wissen.'); await A.wait(700); await A.g('Nein.'); await A.wait(600); await A.m('…'); } A.setFlag('mk.crack');
   await A.fade(6,900); A.phase('c1_night'); A.rebuild(); await A.fade(0,900); A.music('case1');
   await A.narrate('Es ist dunkel geworden. Die Bura kommt von den Bergen herunter.');
   A.save(); }
@@ -10554,7 +10551,8 @@ async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.')
   await Ml.say('Tatsächlich. Irgendein Praktikant mit einem Zahlendreher. Neunzehnvierundachtzig bei achtundvierzig.'); await Ml.say('Hier. Zweiundzwanzigster Dezember.'); A.setFlag('c1.logRead');
   await readLog(A);
   await Ml.say('Matić … Dinko Matić. Der flickt heute noch seine Netze an der Matejuška. Fragen Sie ihn, wenn Sie den Mut haben.'); A.note('c1_matejuska'); A.unlock('matejuska'); A.unlock('sustipan');
-  await A.m('Danke, Gospodine Šimić.'); await Ml.say('Bedanken Sie sich nicht. Das ist kein schöner Eintrag.'); }
+  await A.m('Danke, Gospodine Šimić.'); await Ml.say('Bedanken Sie sich nicht. Das ist kein schöner Eintrag.');
+  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(700); await A.m('…'); await A.g('Bei achtundvierzig.'); await A.m('Zufall.'); } }
 async function readLog(A){ await A.doc({style:'log',title:'Lučka kapetanija Split · Brodski dnevnik 1984',w:252,lines:['22.12.1984','Bura, 9–10 Bf. Linija Supetar–Split:','polazak 17:00 otkazan.  Sljedeći: 23.12., 06:00.','','21:40  Ribarska brodica ANKICA (vl. M. Matić)','prevrnuta pred Sustipanom.','Spašen: Dinko Matić (19).  Nestao: Antonio Perić (22).','Potraga obustavljena 27.12.']});
   await A.m('Am zweiundzwanzigsten Dezember: Bura, Stärke neun bis zehn. Die Fähre aus Supetar um fünf fiel aus.'); await A.m('Um 21:40 kenterte das Fischerboot ANKICA vor Sustipan. Gerettet: Dinko Matić, neunzehn. Vermisst: Antonio Perić, zweiundzwanzig.');
   A.note('c1_ferry'); A.note('c1_capsized',true); A.note('c1_rescued',true);
@@ -10907,14 +10905,22 @@ async function meeting(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
   await A.face('R'); A.headache(4500); await A.animM('headache'); await A.m('…'); A.sfx('static');
   await A.m('Am Ende der Mole steht eine alte Frau. Schwarzer Mantel. Kein Schirm, keine Handschuhe.');
   A.found('ivka'); if (I.actor) I.actor.fadeIn=A.gt; await A.wait(900);
-  await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.');
-  var mp=M.apos('riva','mala',[A.marko.x-22,A.marko.y+2,'R']); A.malaJoin({x:Math.round(A.marko.x)-22,y:Math.round(A.marko.y)+2,f:'R'}); A.sfx('shimmer'); await A.wait(900);
-  await A.g('Du siehst sie also auch.'); await A.faceM('L'); await A.m('Du schon wieder.');
-  await A.g('Sie steht hier jeden Abend. Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.');
-  await A.m('Das ist Ivka Perić. Sie ist seit einer Woche tot. Ich habe heute ihren Nachruf geschrieben.'); await A.g('Dann weißt du schon mehr über sie als die meisten.');
-  await A.m('Und was soll ich jetzt tun?'); await A.g('Ich kann sie finden. Reden kannst nur du.'); await A.faceM('R');
-  await A.g('Und wenn du willst, dass ich mir etwas ansehe, wo du nicht hinkommst, dann sag es mir.'); A.flash('Unten links: zu Mala wechseln.');
-  A.note('m_find',true); A.save(); }
+  await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.'); await A.wait(900);
+  await A.m('Nein. In Split tragen viele alte Frauen schwarze Mäntel.');
+  // Mala: zuerst nur eine Stimme hinter ihm
+  A.malaJoin({x:Math.round(A.marko.x)-28,y:Math.round(A.marko.y)+2,f:'R'}); A.sfx('shimmer'); await A.wait(1100);
+  await A.g('Du siehst sie also auch.',{noPortrait:true});
+  var c=await A.choose([{t:'(Nicht umdrehen.)',id:'no',silent:true},{t:'„Du bist nicht da.“',id:'not'},{t:'„Ich habe schlecht geschlafen. Das ist alles.“',id:'sleep'}],{title:'',conv:false});
+  if (c==='no'){ await A.wait(1500); await A.g('Du kannst so tun, als wäre ich nicht da. Das können die meisten gut.'); }
+  else if (c==='not'){ await A.wait(900); await A.g('Dann redest du gerade mit niemandem.'); }
+  else { await A.g('Ich weiß. Ich war dabei.'); }
+  await A.faceM('L'); await A.wait(700); await A.m('…'); await A.m('Die Kirchentreppe in Varoš. Das Fenster letzte Nacht.'); await A.g('Ja.');
+  await A.m('Wer bist du?'); await A.g('Mala.'); delete A.G.flags['mala.unknown']; await A.m('Das ist kein Name. So sagt man zu kleinen Mädchen.'); await A.g('Es reicht.');
+  await A.wait(800); await A.g('Sie steht hier jeden Abend. Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.');
+  await A.m('Das ist eine alte Frau, die auf ein Schiff wartet. Davon gibt es in Split Hunderte.'); await A.g('Auf welches Schiff?');
+  await A.m('Woher soll ich das wissen?'); await A.wait(900); await A.m('Ich rede nicht mit Leuten, die es nicht gibt.'); await A.g('Sie gibt es. Mich auch. Nur anders.');
+  await A.faceM('R'); await A.wait(600); await A.m('Ich gehe jetzt zu ihr. Dann sehe ich, dass sie lebt. Und dann gehe ich nach Hause und schlafe.');
+  A.flash('Unten links: zu Mala wechseln.'); A.save(); }
 // ---------------------------------------------------------------- Gespräch mit Ivka (Marko)
 async function talkIvka(A){ var I=A.npc('ivka');
   if (A.isMala()) return talkIvkaMala(A,I);
@@ -10928,7 +10934,7 @@ async function talkIvka(A){ var I=A.npc('ivka');
     {t:'Warum wartet niemand mit Ihnen?',once:'iv3',go:async function(A){ await I.say('Die Leute haben zu tun. Ich habe Zeit.'); await I.say('Ich habe immer Zeit gehabt. Das ist das Einzige, wovon ich genug habe.'); }},
     {t:'Das Boot ist spät.',once:'iv4',go:async function(A){ await I.say('Die Bura. Sie haben sie im Radio angesagt. Die Fenster haben schon gesungen.'); await I.say('Fragen Sie doch im Hafenbüro, warum es so lange dauert. Mich nehmen sie da nicht mehr ernst.'); A.note('c1_askoffice'); }},
     {t:'Frieren Sie nicht? Ohne Handschuhe, bei dem Wind?',once:'iv5',go:async function(A){ await I.say('Ich friere nie.'); await A.wait(700); await I.say('Heute spüre ich nicht einmal den Wind. Komisch, bei der Bura.'); await I.say('Das macht das Alter. Man wird zäh wie Leder.'); }},
-    {t:'Gospođa Perić … Sie sind gestorben.',once:'ivWrong',go:async function(A){ await I.say('Was reden Sie da?'); await I.face('R'); await I.say('Gehen Sie nach Hause, junger Mann. Sie haben getrunken.');
+    {t:'Gospođa Perić … ich habe gestern Ihren Nachruf geschrieben.',once:'ivWrong',go:async function(A){ await I.say('Meinen was?'); await I.face('R'); await I.say('Gehen Sie nach Hause, junger Mann. Sie haben getrunken.');
         if (A.malaHere()) await A.g('Sie hört es nicht. Noch nicht.'); A.G.seen['dlg:ivWrong']=0; return 'bye'; }},
     A.askOpt({
       c1_ferry:async function(A){ await I.say('Ausgefallen? Dann kommt er mit dem nächsten. Er hat es versprochen. Er verspricht nie etwas, das er nicht hält.'); },
@@ -10945,7 +10951,7 @@ async function talkIvka(A){ var I=A.npc('ivka');
       c1_came:async function(A){ await I.say('Er kam nicht mit der Fähre? Womit denn dann?'); await I.face('R'); },
       pro_notice:async function(A){ await I.say('Die Anzeige an meiner Tür? Die ist für die alte Kovačka, die Arme. Die hängen sie an jede Tür in der Gasse.'); await A.m('Da steht Ihr Name.'); await I.say('Halb Varoš heißt Perić. Gehen Sie, ich muss aufpassen, sonst sehe ich das Boot nicht.'); await I.face('R'); }
     },'Das sagt mir nichts, junger Mann.'),
-    {t:'Ich gehe ein Stück.',bye:true,go:async function(A){ await I.say('Ziehen Sie sich was an. Es wird kalt.'); }}
+    {t:'Ich gehe ein Stück.',bye:true,go:async function(A){ await I.say('Ziehen Sie sich was an. Es wird kalt.'); if (!A.flag('mk.accept') && A.first('ivBreath')){ await A.wait(700); await A.m('Mein Atem dampft. Ihrer nicht.'); await A.wait(600); await A.m('Ich sehe schlecht im Dunkeln.'); } }}
   ]; }); }
 // ---------------------------------------------------------------- Mala und Ivka
 async function talkIvkaMala(A,I){
@@ -11020,6 +11026,9 @@ async function interlude(A){ await A.fade(8,900); A.phase('i1'); A.rebuild(); va
   A.placeM(b[0],b[1],'R'); A.idleM('sit'); if (A.malaHere()){ A.placeG(b[0]+16,b[1],'L'); A.idleG('sit'); } A.G.flags['mala.lock']=true;
   await A.fade(0,1200); A.sfx('gust'); await A.narrate('Später. Die Bura ist aufgekommen. Die Riva ist leer bis auf eine Bank.');
   await A.animM('smoke'); await A.g('Du rauchst.'); await A.m('Nur wenn ich nicht schlafen kann.'); await A.g('Also immer.');
+  await A.wait(900); await A.m('Ich glaube nicht an Geister.'); await A.g('Musst du nicht.');
+  await A.m('Ich habe gerade einer alten Frau zugesehen, wie sie in ein Licht gegangen ist, das es nicht gibt.'); await A.wait(1300);
+  await A.m('Und das Schlimmste ist: Es war richtig so.'); await A.wait(700); await A.g('Ja.'); A.setFlag('mk.accept');
   await A.menuLoop(function(){ return [
     {t:'Wie lange machst du das schon? Leute finden, die nicht weiterkommen.',once:'i1a',go:async function(A){ await A.g('Lange. Aber du bist der Erste, der zuhört.'); await A.m('Und die anderen?'); await A.g('Die haben Kopfschmerzen bekommen. Und das Fenster zugemacht.'); }},
     {t:'Woher kommst du?',once:'i1b',go:async function(A){ await A.g('Von irgendwo, wo es auch Brücken gibt.'); await A.m('Das ist keine Antwort.'); await A.g('Es ist die, die ich habe.'); }},
@@ -11407,8 +11416,12 @@ M.room('varos',{ name:'Veli Varoš', scape:'varos',
     if (p==='pro' && from==='ivka' && !A.flag('pro.visited')){ A.setFlag('pro.visited'); var Z=A.npc('zdenka'); await A.walk(M.apos('varos','zdenka')[0]+30,M.apos('varos','zdenka')[1]+2); await A.face('L');
       await Z.say('Haben Sie, was Sie brauchen?'); await A.m('Mehr, als in zweitausend Zeichen passt.'); A.take('key_ivka'); A.sfx('click'); await Z.say('Das ist immer so.'); await A.m('Danke, Gospođa Zdenka.');
       await A.wait(300); return M.endProVisit(A); }
-    if (p==='pro' && from!=='ivka' && A.first('varosFirst')){ await A.m('Veli Varoš. Hier sind die Gassen so eng, dass sich die Nachbarn über die Straße das Salz reichen.'); }
-    if (p==='c2' && A.has('newspaper') && A.first('c2zdHint')){ await A.m('Zdenka sitzt wieder auf ihrem Posten. Ich habe die Zeitung dabei.'); } }
+    if (p==='pro' && from!=='ivka' && A.first('varosFirst')){ await A.m('Veli Varoš. Hier sind die Gassen so eng, dass sich die Nachbarn über die Straße das Salz reichen.');
+      // ein flüchtiger Blick: oben an der Kirchentreppe steht jemand und ist gleich wieder fort
+      await A.wait(500); A.G.flags['found.malaGlimpse']=true; var sp=M.spot('varos','steps'), gl=A.spawn({id:'malaGlimpse',ch:'mala',x:sp[0]+38,y:sp[1]+3,f:'L',name:'',ghost:true,noAche:true});
+      await A.wait(1400); if (gl.actor) gl.actor.fadeOut=A.gt; await A.wait(1000); gl.hide(); delete A.G.flags['found.malaGlimpse'];
+      await A.m('…'); await A.wait(400); await A.m('Oben an der Kirchentreppe stand eben jemand.'); await A.wait(600); await A.m('Jetzt nicht mehr.'); }
+    if (p==='c2' && A.first('c2zdHint')){ await A.m('Zdenka sitzt wieder auf ihrem Posten.'); } }
 });
 M.defineScape('varos',function(o){ var tod=o.tod, w=M.scn.weather(o.GS); return { beds:w==='rain'?['rain','city']:(w==='bura'?['bura','city']:['city','seaFar']), step:'stone',
   ev:tod==='night'?[['tv',8,20,0.6,-0.8,-0.4],['cat',30,70,0.5,0.2,0.6],['bellFar',60,120,0.3,0.4,0.8],['shutter',20,45,0.6,-1,1]]:[['tv',10,25,0.5,-0.8,-0.4],['scooter',15,40,0.4,-1,-0.4],['cat',25,60,0.4,0.2,0.6],['dog',30,70,0.3,0.6,1],['gull',15,35,0.3,-1,1],['bellSmall',70,140,0.4,0.6,0.9]] }; });
@@ -11451,7 +11464,8 @@ M.endProVisit=async function(A){ A.phase('pro_eve'); await A.fade(8,700); await 
 // Fall 1 beginnt (nach der Nacht)
 M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster Fall',title:'Das Boot um sieben',time:'Mittwoch, 16. November · Abend',ms:4400});
   A.phase('c1'); await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); await A.fade(0,600);
-  A.sfx('phone'); await A.wait(1200); await A.m('Vesna.');
+  await A.m('Das Fenster ist zu. Der Riegel ist alt. Er springt manchmal auf.'); await A.wait(500); await A.m('Ich habe von einem Mädchen geträumt. Es stand hinter mir in der Scheibe.');
+  await A.wait(800); A.sfx('phone'); await A.wait(1200); await A.m('Vesna.');
   await A.phoneVoice('„Marko. Dein Text über Ivka Perić ist gut. Er kommt morgen. Ein bisschen traurig, aber das sind sie alle.“');
   await A.m('Danke. Ich habe schlecht geschlafen.'); await A.phoneVoice('„Du schläfst immer schlecht. Geh raus. An die Luft. Ciao.“');
   await A.m('Sie hat recht. Die Riva. Ein bisschen Luft, ein bisschen Meer. Nichts weiter.'); A.unlock('riva'); A.save(); };
@@ -11637,16 +11651,25 @@ M.canTravel=async function(A,L){ var p=A.G.phase;
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
 M.lookAtMala=async function(A){ var p=A.G.phase;
+  if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.m(A.cycle('mDeny',['Ich sehe nicht hin. Wenn ich nicht hinsehe, ist da niemand.','Jeansjacke, grauer Schal. Ein Mädchen wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Ich sehe nicht hin.','Wenn das Licht von hinten kommt, sieht man durch sie hindurch. Das liegt am Licht.']));
   if (p==='c1'||p==='c1_night') return A.m('Mala. Jeansjacke, grauer Schal, weiße Turnschuhe. Kleidung wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Wenn das Licht von hinten kommt, sieht man durch sie hindurch.');
   if (p==='c3'||p==='c3_night') return A.m('Mala sieht sich nicht um. Hier sieht sie sich nicht um. Als kenne sie den Weg.');
   return A.m(A.cycle('mLook',['Mala. Sie hält die Hände in den Taschen der Jacke, eine um die Blechdose.','Sie sieht aus wie siebzehn. Sie spricht wie jemand, der sehr lange siebzehn war.','Durchscheinend, wenn das Licht von hinten kommt. Sonst fast nicht.'])); };
 M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.mala') && M.talkMalaEnd) return M.talkMalaEnd(A);
+  if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.menuLoop(function(){ return [
+    {t:'Was willst du von mir?',once:'dn1',go:async function(A){ await A.g('Nichts. Sie braucht etwas. Nicht ich.'); await A.m('Sie braucht einen Arzt. Und ich auch.'); }},
+    {t:'Du bist eine Einbildung.',once:'dn2',go:async function(A){ await A.g('Vielleicht.'); await A.wait(700); await A.g('Dann eine, die dir nichts tut.'); }},
+    {t:'Woher wusstest du das mit „achtundvierzig“?',once:'dn3',if:A.flag('c1.logRead'),go:async function(A){ await A.g('Ich habe nachgesehen.'); await A.m('Zufall. Ein Praktikant mit einem Zahlendreher.'); await A.g('Ja. Zufall.'); }},
+    {t:'Woher wusstest du, was Tonći im Wasser gesagt hat?',once:'dn4',if:A.flag('c1.dinkoTold'),go:async function(A){ await A.wait(900); await A.g('Ich habe es gehört. An dem Seesack.'); await A.m('…'); await A.m('Ich will das nicht.'); await A.g('Ich weiß.'); }},
+    {t:'Geh weg.',bye:true,go:async function(A){ await A.g('Nicht weit.'); }}
+  ]; });
   await A.menuLoop(function(){ return [
     {t:'Wie lange bist du schon in meiner Nähe?',once:'mt1',if:p!=='epi',go:async function(A){ await A.g('Lange genug, um zu wissen, dass du deinen Kaffee zu stark machst.'); await A.m('Das ist keine Antwort.'); await A.g('Nein.'); }},
     {t:'Wo bist du, wenn ich dich nicht sehe?',once:'mt2',if:p!=='pro_night',go:async function(A){ await A.g('In der Nähe. Am Wasser, meistens.'); await A.g('Ich mag die Fähren nicht. Ich gehe trotzdem hin.'); A.note('m_horn',true); }},
     {t:'Warum zuckst du bei den Glocken zusammen?',once:'mt3',if:A.hasNote('m_bells')||A.hasNote('m_horn'),go:async function(A){ await A.wait(900); await A.g('Weil sie laut sind.'); await A.m('Das ist nicht der Grund.'); await A.g('Für heute schon.'); }},
     {t:'Bist du aus Sarajevo?',once:'mt4',if:A.hasNote('m_sarajevo')||A.hasNote('m_31'),go:async function(A){ await A.g('Frag mich in Sarajevo.'); }},
     {t:'Die Dose …',once:'mt5',if:A.hasNote('m_tin'),go:async function(A){ await A.g('Nicht.'); }},
+    {t:'Was weißt du über den Karton auf meinem Schrank?',once:'mt8',go:async function(A){ await A.wait(800); await A.g('Nur, dass du ihn nie aufgemacht hast.'); }},
     {t:'Und du? Woran bist du festgemacht?',once:'mt7',if:A.hasNote('m_leash'),go:async function(A){ await A.wait(1500); await A.g('An etwas, das ich nicht loslassen will.'); await A.m('Was ist es?'); await A.wait(900); await A.g('Wenn ich es wüsste, wäre es leichter.'); }},
     {t:'Bruno hat dich erkannt.',once:'mt6',if:A.hasNote('m_31'),go:async function(A){ await A.g('Bruno ist alt. Ihm fehlen die Wörter. Er verwechselt Gesichter.'); await A.m('Er hat dir Tee angeboten.'); await A.wait(1200); await A.g('Er hat allen Tee angeboten.'); }},
     A.askOpt({

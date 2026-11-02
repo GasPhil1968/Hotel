@@ -37,7 +37,6 @@ M.defineNotes({
   c1_plaque:{c:'c1',t:'In Sustipan steht Tonćis Name auf der Tafel „Denen, die das Meer behielt“.'},
   c1_jakov:{c:'c1',t:'Jakov: „Jedes Jahr kommt ein Mann und steht vor dieser Tafel.“'},
   // Mala
-  m_near:{c:'mala',t:'Mala: „Ich bin schon länger in deiner Nähe.“'},
   m_find:{c:'mala',t:'Mala: „Du kannst mit ihnen reden. Ich kann sie finden.“'},
   m_horn:{c:'mala',t:'Mala hält inne, wenn ein Fährenhorn tutet.'},
   m_bells:{c:'mala',t:'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“'},

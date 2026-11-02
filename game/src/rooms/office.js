@@ -40,7 +40,8 @@ async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.')
   await Ml.say('Tatsächlich. Irgendein Praktikant mit einem Zahlendreher. Neunzehnvierundachtzig bei achtundvierzig.'); await Ml.say('Hier. Zweiundzwanzigster Dezember.'); A.setFlag('c1.logRead');
   await readLog(A);
   await Ml.say('Matić … Dinko Matić. Der flickt heute noch seine Netze an der Matejuška. Fragen Sie ihn, wenn Sie den Mut haben.'); A.note('c1_matejuska'); A.unlock('matejuska'); A.unlock('sustipan');
-  await A.m('Danke, Gospodine Šimić.'); await Ml.say('Bedanken Sie sich nicht. Das ist kein schöner Eintrag.'); }
+  await A.m('Danke, Gospodine Šimić.'); await Ml.say('Bedanken Sie sich nicht. Das ist kein schöner Eintrag.');
+  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(700); await A.m('…'); await A.g('Bei achtundvierzig.'); await A.m('Zufall.'); } }
 async function readLog(A){ await A.doc({style:'log',title:'Lučka kapetanija Split · Brodski dnevnik 1984',w:252,lines:['22.12.1984','Bura, 9–10 Bf. Linija Supetar–Split:','polazak 17:00 otkazan.  Sljedeći: 23.12., 06:00.','','21:40  Ribarska brodica ANKICA (vl. M. Matić)','prevrnuta pred Sustipanom.','Spašen: Dinko Matić (19).  Nestao: Antonio Perić (22).','Potraga obustavljena 27.12.']});
   await A.m('Am zweiundzwanzigsten Dezember: Bura, Stärke neun bis zehn. Die Fähre aus Supetar um fünf fiel aus.'); await A.m('Um 21:40 kenterte das Fischerboot ANKICA vor Sustipan. Gerettet: Dinko Matić, neunzehn. Vermisst: Antonio Perić, zweiundzwanzig.');
   A.note('c1_ferry'); A.note('c1_capsized',true); A.note('c1_rescued',true);
