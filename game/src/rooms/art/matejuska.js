@@ -13,7 +13,7 @@ var LX0=416;             // Ledana: linke Fassadenkante
 var SHED={x0:164,x1:228,top:50,base:110};      // Schuppen (Vorderwand)
 var SDOOR=[185,60,22,50];                     // Schuppentür
 var SWIN=[213,64,9,8];                        // Schuppenfenster
-var LAMP={x:292,base:110,h:46};               // Kai-Laterne
+var LAMP={x:272,base:110,h:46};               // Kai-Laterne
 var FENCE={x0:424,x1:640,top:62,base:110};    // Bauzaun
 var GAP=[556,84,22,26];                       // Loch im Zaun (hinter den Kisten)
 var DINKO=[244,124];
@@ -28,7 +28,12 @@ var R=M.R;
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 // Luftperspektive: Farben Richtung Himmelsblau aufhellen
 function hazeT(a){ return M.tintMake(function(r,g,b){ return [r*(1-a)+168*a, g*(1-a)+196*a, b*(1-a)+226*a]; }); }
-var HZ=[hazeT(0.4),hazeT(0.27),hazeT(0.15),hazeT(0.3)];
+var HZ=[hazeT(0.24),hazeT(0.15),hazeT(0.08),hazeT(0.3)];
+// Helligkeit -> Rampe (ohne Dither): ferner Hintergrund in Dämmerung und Nacht als ruhige Silhouette
+function rampLUT(names,lo,hi,gam){ var ramp=R(names), a=new Uint8Array(256); for (var c=0;c<256;c++){ if (c>=M.NCOL){ a[c]=c; continue; } var L=Math.pow(M.lum(c)/255,gam||1), v=lo+(hi-lo)*L; a[c]=ramp[cl(Math.round(v*(ramp.length-1)),0,ramp.length-1)]; } return {a:a}; }
+var BGL={ dusk:[rampLUT('k2 d0 d1 d2',0,0.85,1.1),rampLUT('k2 d0 d1 d2 d3 d4',0.05,1,1),rampLUT('k1 d0 d1 d2 d3 d4 d5',0,1,0.95)],
+          night:[rampLUT('k1 k2 n0 n1',0,0.9,1.1),rampLUT('k0 k1 k2 n0 n1 n2',0,0.95,1),rampLUT('k0 k1 k2 n0 n1 n2 n3',0,0.95,0.95)],
+          dawn:[rampLUT('n0 n1 n2 d2',0.1,0.95,1),rampLUT('k2 n0 n1 n2 d2 d3',0,1,1),rampLUT('k1 n0 n1 n2 d2 d3 d4',0,1,1)] };
 // wie M.finishTOD, aber mit sanfterem Dither (Texturen bleiben ruhig)
 function finish(b,tod,opt){ if (tod==='day'||!M.TINT[tod]){ if (opt.after) opt.after(b,tod); return b; }
   var t=M.TINT[tod], L=opt.lights||[], LT=M.TINT.lamp, d=b.d, w=b.w;
@@ -158,7 +163,7 @@ var BOATS=[
 ];
 
 // ---------------------------------------------------------------- Wasser des Beckens
-var WATER={day:R('a1 a2 a3 a4 a5 a6'),dusk:R('d0 d1 d2 a2 d3 d4 d5'),night:R('k0 a0 a1 n0 n1 n2'),dawn:R('n1 a2 n2 d3 a4')};
+var WATER={day:R('a1 a2 a3 a4 a5 a6'),dusk:R('k1 d0 d1 d2 d3 d4 d5'),night:R('k0 a0 a1 n0 n1 n2'),dawn:R('n1 n2 d2 d3 a4')};
 function wcol(x,y,t,tod,calm){ var ramp=WATER[tod]||WATER.day, d=(y-FQ)/(QY-FQ);
   var s=Math.sin(x*0.09+y*1.15+t*1.3)+Math.sin(x*0.031-t*0.55+y*0.41)*0.8+(calm?0:Math.sin(x*0.27+y*2.3-t*2.9)*0.55);
   var v=0.6-d*0.34+s*(calm?0.055:0.09)+(tod==='dusk'?0.08:0); var c=ra(ramp,v,x,y); if (!calm && s>1.95 && ((x+y)&1)) c=ramp[ramp.length-1]; if (calm && s>1.8 && (y&1) && (x%3===0)) c=ramp[ramp.length-2]; return c; }
@@ -219,6 +224,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   FARLAMPS.forEach(function(lx){ b.vl(lx,62,72,P.m1); b.px(lx,61,P.m2); b.px(lx-1,61,P.m1); b.px(lx+1,61,P.m1); });
   for (x=8;x<BX1;x+=23) b.rect(x,71,2,2,P.m1);
   [[150,P.r3],[196,P.s5],[286,P.b2]].forEach(function(cr){ var cx=cr[0]; b.rect(cx,68,12,4,cr[1]); b.rect(cx+2,65,7,3,cr[1]); b.rect(cx+3,66,5,2,P.n1); b.hl(cx,cx+11,68,M.UP[cr[1]]); b.px(cx+2,72,P.k1); b.px(cx+9,72,P.k1); });
+  // ferner Hintergrund: je Tageszeit fertig gefärbt (nicht nachträglich umgefärbt)
+  if (BGL[tod]){ var BL=BGL[tod]; for (y=0;y<FQ;y++) for (x=0;x<LX0;x++){ var o=y*W+x; if (b.d[o]===SKYB.d[o]) continue; b.d[o]=BL[y<38?0:(y<60?1:2)].a[b.d[o]]; } }
+  var S0=b.clone();
   // Becken (Tönung je Tageszeit, wird nicht umgefärbt)
   for (y=FQ;y<QY;y++) for (x=0;x<BX1;x++) b.px(x,y,wcol(x,y,0,tod,calm));
   var S1=b.clone();
@@ -244,15 +252,15 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   [[24,111],[136,111],[154,111],[262,111],[348,111]].forEach(function(p){ bollard(bw,p[0],p[1]); });
   rope(bw,24,102,28,96,0.6,P.e3); rope(bw,136,102,124,93,1.4,P.e3); rope(bw,262,102,250,96,1.2,P.e3); rope(bw,348,102,334,95,1.6,P.e4); rope(bw,154,102,172,93,1,P.e2);
   // Netze: orange und grün, auf der Mole aufgeschossen
-  netHeap(bw,120,126,17,7,R('t0 t1 t2 t3 t4'),7); netHeap(bw,92,119,12,5,R('g0 g1 g2 g3 g4'),8); netHeap(bw,146,121,9,4,R('t1 t2 t3 y3 y4'),9);
+  netHeap(bw,120,126,17,7,R('t1 t2 t3 t4 t5'),7); netHeap(bw,92,119,12,5,R('g1 g2 g3 g4 g5'),8); netHeap(bw,146,121,9,4,R('t2 t3 t4 y3 y4'),9);
   // Dinkos Netz: vom Schoß über die Kiste auf den Boden gezogen
-  for (y=116;y<133;y++) for (x=194;x<240;x++){ var dxn=(x-216)/23, dyn=(y-126)/6.5, edge=1+Math.sin(x*0.6)*0.12+Math.sin(y*1.3)*0.08; if (dxn*dxn+dyn*dyn>edge) continue; var cn=netTex(x,y,R('t0 t1 t2 t3'),4); if (bayer(x,y)<0.3 && cn!==P.t3) continue; if (Math.sin(x*0.35+y*0.2)>0.7) cn=M.UP[cn]; b.px(x,y,cn); }
+  for (y=116;y<133;y++) for (x=194;x<240;x++){ var dxn=(x-216)/23, dyn=(y-126)/6.5, edge=1+Math.sin(x*0.6)*0.12+Math.sin(y*1.3)*0.08; if (dxn*dxn+dyn*dyn>edge) continue; var cn=netTex(x,y,R('t1 t2 t3 t4'),4); if (bayer(x,y)<0.3 && cn!==P.t4) continue; if (Math.sin(x*0.35+y*0.2)>0.7) cn=M.UP[cn]; b.px(x,y,cn); }
   for (x=230;x<241;x++){ var yy0=Math.round(116+(x-230)*0.2); b.px(x,yy0,P.t2); if (x%2) b.px(x,yy0+1,P.t3); }
   for (x=198;x<236;x+=4) b.px(x,Math.round(120.5+Math.sin(x*0.3)*1.2),P.y4);
   for (x=200;x<234;x+=5) b.px(x,Math.round(131+Math.sin(x*0.4)),P.m0);
   // Eimer, Kanister, Transistorradio bei Dinko
   b.rect(257,117,7,7,P.s5); b.hl(257,263,117,P.s6); b.vl(263,117,123,P.s3); b.hl(257,263,119,P.b2); b.line(256,115,264,115,P.m2); b.px(256,116,P.m2); b.px(264,116,P.m2);
-  b.rect(267,112,8,11,P.r3); b.hl(267,274,112,P.r4); b.vl(274,112,122,P.r1); b.rect(269,110,3,2,P.k2); b.hl(267,274,117,P.r2);
+  b.rect(280,112,8,11,P.r3); b.hl(280,287,112,P.r4); b.vl(287,112,122,P.r1); b.rect(282,110,3,2,P.k2); b.hl(280,287,117,P.r2);
   b.rect(226,121,7,4,P.k2); b.hl(226,232,121,P.m1); b.px(231,122,P.s4); b.vl(232,117,120,P.m3);
   // Fischkisten am Kai (links, am Ausgang)
   [[38,114,3],[54,113,2],[68,116,4]].forEach(function(s,si){ for (var j=0;j<s[2];j++){ var Rb=(si===1&&j===1)?R('r0 r1 r2 r3'):((si===2&&j===3)?R('s2 s3 s4 s5'):R('b0 b1 b2 b3')); fishbox(bw,s[0]+(j%2),s[1]-j*6,15,6,Rb); } });
@@ -264,13 +272,13 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
     function(x,y){ var s=0; // Schlagschatten (Sonne von rechts vorn): nach links hinten
       if (y>=110&&y<117&&x>SHED.x0-14&&x<SHED.x1-6) s-=0.9*(1-(y-110)/7); if (y>=110&&y<114&&x>=LX0-6) s-=0.6;
       if (y>=113&&y<125&&x>=222&&x<240) s-=0.7*(1-Math.abs(y-121)/6); if (y>=110&&y<118&&x>=30&&x<70) s-=0.6; if (y>=118&&y<128&&x>=100&&x<120) s-=0.5;
-      if (y>=109&&y<112&&x>=260&&x<292) s-=0.5; return s; },
+      if (y>=109&&y<112&&x>=LAMP.x-30&&x<LAMP.x) s-=0.5; return s; },
     function(x,y){ if (!dusk) return 0; if (y<QY && x<LX0) return -0.6*(1-x/LX0)-0.2; return 0; },
-    function(x,y){ if (tod!=='day') return 0; return (x>=LX0 && y<QY)?0.15:0; });
-  function maskOf(buf){ var m=new Uint8Array(W*H); for (var yy=0;yy<QY;yy++) for (var xx=0;xx<W;xx++){ var o=yy*W+xx; if (yy<FQ){ if (buf.d[o]===SKYB.d[o]) m[o]=1; } else if (xx<BX1 && buf.d[o]===S1.d[o]) m[o]=1; } return m; }
+    function(x,y){ if (x<LX0-8 || y>=QY+2) return 0; return tod==='day'?0.15:(dusk?-0.55:0); });
+  function maskOf(buf){ var m=new Uint8Array(W*H); for (var yy=0;yy<QY;yy++) for (var xx=0;xx<W;xx++){ var o=yy*W+xx; if (yy<FQ){ if (buf.d[o]===S0.d[o] && (xx<LX0 || buf.d[o]===SKYB.d[o])) m[o]=1; } else if (xx<BX1 && buf.d[o]===S1.d[o]) m[o]=1; } return m; }
   var mB=maskOf(b), m1=maskOf(S1), m2=maskOf(S2);
   var lights=[];
-  if (tod!=='day'){ lights.push([LAMP.x,LAMP.base+12,70,0.95,26],[LAMP.x,LAMP.base-LAMP.h+8,30,0.85,34],[SDOOR[0]+10,90,24,0.35,30]); FARLAMPS.forEach(function(lx){ lights.push([lx,70,9,0.7,5]); }); }
+  if (tod!=='day'){ lights.push([LAMP.x-10,LAMP.base+13,50,0.85,17],[LAMP.x-8,LAMP.base+8,30,0.95,10],[LAMP.x,LAMP.base-LAMP.h-2,13,0.9,13]); }
   function fin(buf,m){ M.light(buf,LF,0,0,function(x,y){ return !m[y*W+x]; }); return finish(buf,tod,{sky:function(x,y){ return m[y*W+x]===1; },lights:lights,after:function(bb,td){ afterLights(bb,td,wins); }}); }
   var out=fin(b,mB), S1T=fin(S1,m1), S2T=fin(S2,m2);
   buildDyn(out,S1T,S2T,boatBufs,tod);
@@ -320,7 +328,7 @@ function paintLedana(b,tod){ var x0=LX0, top=18, base=QY+2, x, y;
   for (y=top-2;y<base;y++) for (x=x0-8;x<x0;x++){ var kk=(x-(x0-8))/8, yt=top+4-Math.round(kk*4); if (y<yt) continue; b.px(x,y,M.DN[M.DN[tex.plaster(x,y,Rp.slice(1,4),0)]]); }
   // Fassade: verwaschener Ockerputz, große Stellen bis auf das Ziegelwerk abgeplatzt
   for (y=top;y<base;y++) for (x=x0;x<W;x++){ var f=fbm(x*0.05,y*0.07), c2;
-      if (f<0.34) c2=tex.bricks(x,y,Rb,7,3); else { c2=tex.plaster(x,y,Rp.slice(2,5),0); if (f<0.37) c2=Rp[1]; else if (f<0.39) c2=Rp[2]; }
+      if (f<0.34){ c2=tex.bricks(x,y,Rb,7,3); if (f>0.325 && fbm(x*0.05,(y-1)*0.07)>=0.34) c2=P.t0; } else { c2=tex.plaster(x,y,Rp.slice(2,5),0); if (f<0.352) c2=(fbm(x*0.05,(y+1)*0.07)<0.34||fbm((x+1)*0.05,y*0.07)<0.34)?P.s5:Rp[3]; else if (f<0.37) c2=Rp[2]; }
       var stn=fbm(x*0.35,y*0.012); if (stn>0.64) c2=M.DN[c2];
       if (y>base-22 && bayer(x,y)<(y-(base-22))/30) c2=M.DN[c2];
       b.px(x,y,c2); }
@@ -355,16 +363,16 @@ function archWin(b,x,y,w,h,i,tod){ b.rect(x-2,y-2,w+4,h+4,P.s2); b.hl(x-3,x+w+2,
   var cx=x+w/2-0.5, rad=w/2, xx, yy;
   for (yy=y-2;yy<y+h;yy++) for (xx=x-2;xx<x+w+2;xx++){ var inArch=yy>=y+rad || Math.hypot(xx-cx,(y+rad)-yy)<=rad; var inFr=yy>=y+rad-2 || Math.hypot(xx-cx,(y+rad)-yy)<=rad+2;
     if (!inFr){ continue; } if (!inArch || xx<x || xx>=x+w){ b.px(xx,yy,P.s2); continue; }
-    var pc=Math.floor((xx-x)/6), pr=Math.floor((yy-y)/7), c, broken=hash(pc+i*5,pr*3+1)<0.42;
-    if ((xx-x)%6===0||(yy-y)%7===0) c=((xx-x)%6===0&&(yy-y)%7===0)?P.m1:P.m0;
-    else if (broken) c=(yy-y)%7<3?P.k0:P.k1;
-    else { var sh=((xx+yy*2)%9<2); c=tod==='day'?(sh?P.b4:(pr<2?P.a2:P.a1)):(sh?P.m2:P.a1); if (hash(xx,yy)<0.1) c=P.m2; }
+    var pc=Math.floor((xx-x)/5), pr=Math.floor((yy-y)/6), fu=(xx-x)%5, fv=(yy-y)%6, c, hb=hash(pc+i*7,pr*3+1), broken=hb<0.5;
+    if (fu===0||fv===0) c=(fu===0&&fv===0)?P.m2:P.m0;
+    else if (broken){ c=P.k0; if (hb<0.12 && fv===1) c=P.a2; if (hb>0.38 && fu===1 && fv<3) c=P.a1; }
+    else { c=pr<2?P.a2:P.a1; if (tod==='day' && (fu+fv)<3) c=P.b3; if (fv===1&&fu>1) c=M.UP[c]; if (hash(xx,yy)<0.12) c=P.m1; }
     b.px(xx,yy,c); }
   b.px(Math.round(cx),y-3,P.s4); b.px(Math.round(cx)-1,y-2,P.s4); b.px(Math.round(cx)+1,y-2,P.s4);
   for (yy=y+h+3;yy<y+h+20;yy++) for (xx=x+1;xx<x+w-1;xx++){ if (hash(xx,3)<0.22 && bayer(xx,yy)<0.7-(yy-y-h)/24) b.px(xx,yy,P.t1); } }
 function graffiti(b,x,y){ // TORCIDA in Weiß mit rotem Rand, darunter Tags
-  var tmp=new M.Buf(60,12,T); M.text(tmp,'TORCIDA',1,1,P.s6); M.outline(tmp,P.r3);
-  for (var yy=0;yy<tmp.h;yy++) for (var xx=0;xx<tmp.w;xx++){ var c=tmp.get(xx,yy); if (c===T) continue; var X=x+xx, Y=y+yy+Math.round(Math.sin(xx*0.2)*1); if (hash(X,Y)<0.1) continue; b.px(X,Y,c); }
+  var tmp=new M.Buf(60,12,T); M.text(tmp,'TORCIDA',1,1,P.s6); M.outline(tmp,P.r2);
+  for (var yy=0;yy<tmp.h;yy++) for (var xx=0;xx<tmp.w;xx++){ var c=tmp.get(xx,yy); if (c===T) continue; var X=x+xx, Y=y+yy+Math.round(Math.sin(xx*0.15)*1.2); b.px(X,Y,c); if (c===P.s6 && hash(X,Y)<0.15 && Y+1<y+14) b.px(X,Y+1,P.s5); }
   M.microText(b,'HNK',x+2,y+14,P.b2); b.line(x+18,y+16,x+28,y+13,P.g4); b.line(x+28,y+13,x+32,y+17,P.g4); M.microText(b,'2003',x+34,y+14,P.y3); b.line(x+2,y+22,x+12,y+20,P.v3); }
 
 // ---------------------------------------------------------------- Bauzaun mit Kettentor, Schild, Kistenstapel
@@ -392,12 +400,18 @@ function paintFence(b,bw,S){ var top=FENCE.top, base=FENCE.base, x, y, k, j;
   b.rect(503,top-5,5,5,P.y1); b.hl(503,507,top-5,P.y2); b.rect(504,top-1,3,2,P.k1);
   // Kistenstapel vor dem losen Feld
   if (!S.cratesMoved){ for (j=0;j<5;j++){ fishbox(bw,550+(j%2),base-6-j*6,16,6,j===3?R('r0 r1 r2 r3'):R('b0 b1 b2 b3')); fishbox(bw,567-(j%2),base-6-j*6,15,6,j===1?R('s2 s3 s4 s5'):R('b0 b1 b2 b3')); } fishbox(bw,558,base-36,15,6); }
-  else { for (j=0;j<3;j++){ fishbox(bw,592+(j%2),base-6-j*6,16,6,j===2?R('r0 r1 r2 r3'):R('b0 b1 b2 b3')); fishbox(bw,609,base-6-j*6,15,6,R('b0 b1 b2 b3')); }
-    fishbox(bw,594,base-24,15,6,R('s2 s3 s4 s5')); fishbox(bw,625,base-6,14,6); fishbox(bw,614,base-24,15,6);
-    for (x=556;x<592;x++) if (bayer(x,113)<0.5) b.px(x,113,M.DN[b.get(x,113)]); }
+  else { for (j=0;j<2;j++){ fishbox(bw,514+(j%2),base-6-j*6,16,6,j===1?R('r0 r1 r2 r3'):R('b0 b1 b2 b3')); fishbox(bw,531,base-6-j*6,15,6,j===0?R('s2 s3 s4 s5'):R('b0 b1 b2 b3')); }
+    var Rq=R('b0 b1 b2 b3'); b.rect(547,base-13,6,13,Rq[2]); b.vl(547,base-13,base-1,Rq[3]); b.vl(552,base-13,base-1,Rq[0]); b.hl(547,552,base-13,Rq[3]); for (y=base-11;y<base-1;y+=3) b.hl(548,551,y,Rq[1]);
+    for (x=528;x<562;x++) if (bayer(x,113)<0.5) b.px(x,113,M.DN[b.get(x,113)]); }
   // Fahrrad am Zaun
   var fx=448; b.ellipse(fx,103,5,5,function(x,y){ var d=Math.hypot(x+0.5-fx,y+0.5-103); return d>3.6?P.k1:T; }); b.ellipse(fx+15,103,5,5,function(x,y){ var d=Math.hypot(x+0.5-fx-15,y+0.5-103); return d>3.6?P.k1:T; });
   b.line(fx,103,fx+6,96,P.r2); b.line(fx+6,96,fx+13,96,P.r2); b.line(fx+13,96,fx+15,103,P.r2); b.line(fx+6,96,fx+8,103,P.r2); b.line(fx+8,103,fx,103,P.r2); b.hl(fx+4,fx+7,94,P.k2); b.line(fx+13,96,fx+12,92,P.m2); b.hl(fx+10,fx+13,92,P.k2);
+  // Bauschuttcontainer, Paletten, Dose, Reifen
+  var kx=604, ky=110; for (y=ky-16;y<ky;y++) for (x=kx;x<kx+34;x++){ var ins=Math.round((ky-y)*0.25), c3; if (x<kx+ins||x>kx+34-1-ins) continue; c3=((x-kx)%6===0)?P.g1:P.g2; if (y===ky-16) c3=P.g4; if (y===ky-15) c3=P.g3; if (hash(x>>1,y>>1)<0.12) c3=P.t1; if (y>ky-3) c3=P.g1; b.px(x,y,c3); }
+  for (x=kx+3;x<kx+31;x++){ var hh=Math.round(2+Math.sin(x*0.7)*1.5+hash(x,1)*2); for (y=ky-16-hh;y<ky-16;y++) b.px(x,y,hash(x,y)<0.5?P.s2:(hash(x,y)<0.7?P.t2:P.w2)); }
+  b.line(kx+8,ky-22,kx+14,ky-17,P.w3); b.line(kx+20,ky-21,kx+18,ky-16,P.m2); M.microText(b,'ČISTOĆA',kx+4,ky-11,P.s4);
+  for (k=0;k<3;k++){ var px1=440+k*2, py1=110-k*3; b.rect(px1,py1-2,22,2,P.w3); b.hl(px1,px1+21,py1-2,P.w4); for (x=px1+2;x<px1+22;x+=7) b.rect(x,py1,3,2,P.w1); }
+  b.ellipse(530,111,3,1.2,P.k1); b.px(529,110,P.m2); b.rect(470,112,3,2,P.r3); b.px(471,111,P.m4);
   // Unkraut am Zaunfuß
   for (x=424;x<640;x+=3){ if (hash(x,4)<0.45){ var hgt=2+Math.floor(hash(x,5)*4); b.vl(x,base-hgt,base-1,hash(x,6)<0.5?P.g3:P.g2); if (hgt>3) b.px(x+1,base-hgt+1,P.g4); } } }
 
@@ -412,17 +426,18 @@ function dyn(fb,v,S,GS){ if (!DYN) return; var cam=v.cam, t=v.t, tod=v.tod, calm
   var xa=Math.max(0,cam), xb=Math.min(BX1,cam+320);
   if (xb>xa){
     var bob=[], i, k; for (i=0;i<n;i++){ var o=D.boats[i], amp=o.wl>100?(calm?0.6:1.15):(o.wl>90?(calm?0.55:0.9):0.45); bob[i]=Math.round(Math.sin(t*(calm?0.9:1.7)+i*1.7)*amp); }
-    var rlen=calm?24:9;
+    var rlen=calm?24:9, GL=[];
+    if (tod!=='day'){ FARLAMPS.forEach(function(lx){ GL.push([lx,FQ+1,QY-3,4,P.y3,lx]); GL.push([lx,FQ+1,FQ+7,1,P.y5,lx*2]); }); if (tod==='night') GL.push([MOON[0],FQ+1,QY-1,7,P.n4,0]); else GL.push([60,FQ+1,QY-1,16,P.d6,0]); }
+    else GL.push([200,FQ+3,QY-3,30,P.a6,0]);
     for (var Y=D.y0;Y<D.y1;Y++) for (var X=xa;X<xb;X++){ var o2=Y*W+X; if (D.fg[o2]) continue; var c=-1;
       for (k=n-1;k>=0;k--){ var s=D.spr[k], sx=X-s.ox, sy=Y-bob[k]-s.oy; if (sx<0||sy<0||sx>=s.w||sy>=s.h) continue; var cc=s.d[sy*s.w+sx]; if (cc!==T){ c=cc; break; } }
       if (c<0){ if (isWater(X,Y)){ c=wcol(X,Y,t,tod,calm); var refl=false;
           for (k=n-1;k>=0;k--){ var s2=D.spr[k], bo=D.boats[k], dd=Y-bo.wl; if (dd<1||dd>(bo.wl>100?9:(bo.wl>90?6:3))) continue; var wob=Math.round(Math.sin(Y*0.9+t*2.2+k)*(calm?0.7:1.4)), sx2=X+wob-s2.ox, sy2=bo.wl-dd-bob[k]-s2.oy; if (sx2<0||sy2<0||sx2>=s2.w||sy2>=s2.h) continue; var rc=s2.d[sy2*s2.w+sx2];
             if (rc!==T && bayer(X,Y)<0.82-dd*0.08){ c=M.DN[rc]; refl=true; break; } }
+          if (!refl) for (var gi=0;gi<GL.length;gi++){ var g=GL[gi]; if (Y<g[1]||Y>=g[2]) continue; var half=2+g[3]*(Y-g[1])/(g[2]-g[1]+1); if (Math.abs(X-g[0])>half) continue; if (Math.sin(X*0.7+Y*1.9+t*3+g[5])+Math.sin(X*0.23-t*2+Y+g[5])>1.25){ c=g[4]; refl=true; break; } }
           var dq=Y-FQ; if (!refl && dq<rlen && bayer(X,Y+1)<(calm?0.6:0.5)-dq*(calm?0.022:0.06)){ var wob2=Math.round(Math.sin(Y*1.3+t*1.7+X*0.05)*(calm?1:2.2)), sy3=FQ-1-dq; if (sy3>=0){ var mc=D.bg.d[sy3*W+cl(X+wob2,0,W-1)]; c=M.DN[mc]; } } }
         else c=D.bg.d[o2]; }
       fb.d[Y*fb.w+(X-cam)]=c; }
-    if (tod!=='day'){ FARLAMPS.forEach(function(lx){ M.glints(fb,lx,FQ+1,QY-3,4,t+lx,P.y3,cam); M.glints(fb,lx,FQ+1,FQ+7,1,t*1.3+lx,P.y5,cam); }); if (tod==='night') M.glints(fb,MOON[0],FQ+1,QY-1,7,t*0.7,P.n4,cam); else M.glints(fb,60,FQ+1,QY-1,16,t*0.8,P.d6,cam); }
-    else M.glints(fb,200,FQ+3,QY-3,30,t,P.a6,cam);
     D.boats.forEach(function(o,i){ if (!o._mt) return; var fx=o._mt[0]-cam, fy=o._mt[1]+bob[i]; if (fx<0||fx>=316) return; var ph=Math.floor(t*(calm?2:10)+i*3)%3, col=tod==='day'?P.r3:M.tintPx(M.TINT[tod]||M.TINT.night,P.r3,fx,fy);
       fb.px(fx,fy,col); fb.px(fx+1,fy+(calm?1:(ph===1?1:0)),col); if (!calm) fb.px(fx+2,fy+(ph===2?1:(ph===0?-1:0)),M.DN[col]); else fb.px(fx,fy+1,col); });
   }
@@ -453,14 +468,17 @@ function walk(x,y,S,GS){ if (y<110||y>=139||x<6||x>=600) return false;
 var spots={
   exit:[0,92,12,48], boats:[20,40,140,68], nets:[78,108,80,20], fishboxes:[36,90,48,27], shed:[156,34,74,60], shed_door:[SDOOR[0]-2,SDOOR[1]-2,SDOOR[2]+4,SDOOR[3]+2],
   lamp:[LAMP.x-5,LAMP.base-LAMP.h-12,11,LAMP.h+12], marjan:[0,2,200,40], sea:[0,78,398,30], ledana:[LX0-8,0,224,74], fence:[424,62,216,48],
-  sign:[478,70,58,24], crates:function(S){ return (S&&S.cratesMoved)?[590,84,50,26]:[548,74,36,36]; }, gap:[GAP[0],GAP[1],GAP[2],GAP[3]]
+  sign:[478,70,58,24], crates:function(S){ return (S&&S.cratesMoved)?[512,96,42,14]:[548,74,36,36]; }, gap:[GAP[0],GAP[1],GAP[2],GAP[3]]
 };
 var stands={
-  exit:[10,124,'L'], boats:[90,114,'B'], nets:[100,132,'B'], fishboxes:[60,120,'B'], shed:[196,118,'B'], shed_door:[196,113,'B'], lamp:[300,118,'B'],
-  marjan:[60,120,'B'], sea:[170,114,'B'], ledana:[520,118,'B'], fence:[456,116,'B'], sign:[506,116,'B'], crates:function(S){ return (S&&S.cratesMoved)?[598,117,'B']:[566,116,'B']; }, gap:[567,113,'B']
+  exit:[10,124,'L'], boats:[90,114,'B'], nets:[100,132,'B'], fishboxes:[60,120,'B'], shed:[196,118,'B'], shed_door:[196,113,'B'], lamp:[LAMP.x+10,118,'B'],
+  marjan:[60,120,'B'], sea:[170,114,'B'], ledana:[520,118,'B'], fence:[456,116,'B'], sign:[506,116,'B'], crates:function(S){ return (S&&S.cratesMoved)?[532,116,'B']:[566,116,'B']; }, gap:[567,113,'B']
 };
+// Figuren im Laternenlicht warm färben (Dämmerung, Nacht)
+var LAMPN=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.5+L*0.32+16, g*0.4+L*0.24+6, b*0.22+L*0.1+4]; });
+function actorLut(a,S,GS,tod){ if (tod==='day'||!M.TINT[tod]) return undefined; var dx=(a.x-(LAMP.x-10))/46, dy=(a.y-(LAMP.base+13))/16; return (dx*dx+dy*dy<1)?LAMPN.a:M.TINT[tod].a; }
 M.defineArt('matejuska',{
-  width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost, spots:spots, stands:stands,
+  width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost, spots:spots, stands:stands, actorLut:actorLut,
   actorPos:{ dinko:[DINKO[0],DINKO[1],'L','dinko',0,'mend'] },
   start:[40,124,'R'], entries:{ map:[14,124,'R'], shed:[196,114,'F'], ledana:[567,114,'F'] }
 });

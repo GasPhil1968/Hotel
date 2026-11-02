@@ -135,7 +135,7 @@ E.textSpeed=function(){ return textSpeed; }; E.tapText=function(){ return tapTex
 E.setText=function(sp,tap){ textSpeed=sp; tapText=tap; try{ localStorage.setItem('mala.tspeed',String(sp)); localStorage.setItem('mala.tap',tap?'1':'0'); }catch(e){} };
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
-    var sa=ACT[E.speech.who]; if (sa && !sa.player && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }
+    var sa=ACT[E.speech.who]; if (sa && sa.id!==GS.active && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }
 function endSpeech(){ if (!E.speech) return; var r=E.speech.res; E.speech=null; r(); }
 E.endSpeech=endSpeech;
 function showOverlay(kind,data){ return new Promise(function(res){ E.overlay={kind:kind,data:data||{},res:res,at:gt,step:0}; M.sfx('paper'); }); }
@@ -237,7 +237,7 @@ M.API=API;
 // Gesprächsschleife: getOpts() -> [{t, go:async fn(A), once:'key', if:bool, bye:true, silent:true, ask:fn(A,noteId)}]
 async function menuLoop(getOpts){
   for (var guard=0;guard<80;guard++){
-    var opts=getOpts().filter(function(o){ return o && o.if!==false && !(o.once && GS.seen['dlg:'+o.once]); });
+    var opts=getOpts().filter(function(o){ return o && !(('if' in o) && !o.if) && !(o.once && GS.seen['dlg:'+o.once]); });
     if (!opts.length) return;
     var i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!o.ask}; }));
     var o=opts[i]; if (o.once) GS.seen['dlg:'+o.once]=1;

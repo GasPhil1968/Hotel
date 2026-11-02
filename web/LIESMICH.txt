@@ -1,0 +1,64 @@
+MALA – KAPITEL 1: SPLIT
+iPad- und Browser-Version, deutsch
+
+WORUM ES GEHT
+Split, November 2011. Marko Vuković, Übersetzer, kann mit Menschen reden,
+die nicht weiterkommen. Mala, ein Geist, kann sie finden. Drei Fälle,
+ein Prolog, zwei Zwischenspiele und ein Epilog. Etwa zwei bis drei Stunden.
+
+STEUERUNG
+- Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit
+  wirklich etwas tun, erscheint stattdessen ein kleines Menü mit genau
+  diesen Aktionen ("Nimm", "Öffne", "Benutze", "Rede mit", "Lies" …).
+- Boden antippen: hingehen. Ausgang antippen: hinausgehen.
+  Zweimal schnell auf einen Ausgang tippen = sofort da.
+- Gegenstand aus der Leiste mit dem Finger auf ein Ziel ziehen = benutzen
+  oder geben (auch auf einen anderen Gegenstand oder auf Mala).
+  Oder: Gegenstand antippen, "Benutze", dann das Ziel antippen.
+- Leiste seitlich wischen oder die Pfeile antippen = Inventar blättern.
+
+MARKO UND MALA
+- Unten links: das Porträt der anderen Figur. Antippen = Figur wechseln.
+- Marko lebt: Er redet mit Lebenden, nimmt, öffnet, benutzt, liest.
+- Mala ist ein Geist: Sie geht durch Wände und verschlossene Türen,
+  sieht Verborgenes ("Geistersicht" – das Bild wird kalt und blau),
+  "Spürt" den Nachhall an Dingen und Orten, spricht mit Geistern und
+  "Lauscht" Lebenden. Anfassen kann sie nichts. Ohne Marko geht sie nicht weit.
+- Pocht Markos Kopf (dunkler Rand), ist ein Geist in der Nähe, den er noch
+  nicht sieht. Mala kann ihn finden.
+- Zieh Gegenstände auf Mala, damit sie sie ansieht. Manchmal sieht sie mehr.
+
+DAS NOTIZBUCH ("Notizen")
+- Alles Wichtige, was Marko und Mala erfahren, wird notiert.
+- Zwei Notizen nacheinander antippen = verbinden. Passen sie zusammen,
+  entsteht eine Schlussfolgerung.
+- Im Gespräch: "Nach etwas aus dem Notizbuch fragen …" – dann eine Notiz
+  antippen. So öffnet man neue Antworten.
+- Linke Seite: der Fall – Ziel, offene Spuren, Fortschritt.
+
+HILFE
+- "Tipp": ein Gedanke zum aktuellen Schritt, in drei Stufen bis zur Lösung.
+- "Zeigen": alle anklickbaren Stellen blinken kurz auf.
+- "Menü": Speichern, Laden (drei Plätze), Textgeschwindigkeit
+  (oder "wartet auf Tippen"), Musik, Geräusche, Röhrenbild, Vollbild, Anleitung.
+- Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
+
+TASTATUR (am Rechner)
+- Tab oder M = Figur wechseln · N = Notizbuch · H = Tipp · Z = Zeigen
+- Leertaste = Satz überspringen · Esc = Menü
+
+SPIELSTÄNDE
+- Drei Speicherplätze. Das Spiel speichert bei jedem Ortswechsel selbst.
+- Beim Fortsetzen fragt das Spiel nach dem Platz.
+
+INSTALLATION (wie bei der bisherigen iPad-Version)
+1. Diesen Ordner bei Netlify hochladen (Deploys -> Ordner hineinziehen).
+2. Auf dem iPad mit Internet die Adresse + /index.html in Safari öffnen,
+   auf "Offline bereit ✓" warten, dann Teilen -> "Zum Home-Bildschirm".
+3. Test im Flugmodus.
+Oder einfach index.html in einem aktuellen Browser öffnen.
+
+TON
+- Jeder Ort hat eine eigene, live erzeugte Geräuschkulisse: Meer, Bura,
+  Regen, Fährenhörner, die Glocken von Sveti Duje, Möwen, Tassen, Karten.
+  Als Mala klingt die Welt dumpf und fern. Kopfhörer lohnen sich.

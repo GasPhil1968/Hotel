@@ -136,9 +136,10 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), weather=M.scn.weather(GS)
   for (var pl=0;pl<7;pl++) b.line(wx+4,wy+wh-3,wx+pl,wy+wh-9-(pl%3)*2,pl%2?P.g3:P.g4);
 
   // ---- Fotos von Hajduk an der Rückwand links, Schal, Wimpel
-  M.prop.frame(b,40,23,30,19,{frame:M.R('k1 k2 m1'),fill:function(x,y){ return team(x-42,y-25,26,15); }});
-  M.prop.frame(b,40,46,14,12,{frame:M.R('w0 w1 w2'),fill:function(x,y){ return stadium(x-42,y-48,10,8); }});
-  M.prop.frame(b,57,46,13,12,{frame:M.R('w0 w1 w2'),fill:function(x,y){ return portrait(x-59,y-48); }});
+  // Hajduk 1971 (groß), 1979 und 1994 (kleiner), jeweils mit Jahreszahl auf dem Passepartout
+  M.prop.frame(b,40,23,30,21,{frame:M.R('k1 k2 m1'),fill:function(x,y){ return (y>=40)?P.s5:team(x-42,y-25,26,15); }}); M.microText(b,'1971',47,39,P.s2);
+  M.prop.frame(b,39,47,16,14,{frame:M.R('w0 w1 w2'),fill:function(x,y){ return (y>=57)?P.s5:team(x-41,y-49,12,8); }}); M.microText(b,'79',44,56,P.s2);
+  M.prop.frame(b,57,47,15,14,{frame:M.R('w0 w1 w2'),fill:function(x,y){ return (y>=57)?P.s5:team(x-59,y-49,11,8); }}); M.microText(b,'94',61,56,P.s2);
   for (var sc=0;sc<36;sc++){ var sxx=37+sc, syy=22-Math.round(Math.sin(sc/35*Math.PI)*2)+1, band=Math.floor(sc/3)%4, cc=[P.s6,P.s6,P.r3,P.b1][band]; b.px(sxx,syy,cc); b.px(sxx,syy+1,M.DN[cc]); }
   for (var fr=0;fr<7;fr++){ b.px(36,23+fr,fr%3?P.s6:P.r3); b.px(73,23+fr,fr%3?P.s6:P.b1); }
 
@@ -153,6 +154,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), weather=M.scn.weather(GS)
   var kn=M.wallPt(SPEC,'L',11,66); b.rect(rnd(kn[0]),rnd(kn[1]),2,4,P.y2); b.px(rnd(kn[0]),rnd(kn[1]),P.y5);
   var sg=M.wallPt(SPEC,'L',19,40); b.line(rnd(sg[0])-1,rnd(sg[1])-4,rnd(sg[0])+2,rnd(sg[1])-1,P.k2); b.rect(rnd(sg[0])-4,rnd(sg[1]),9,5,P.s5); b.hl(rnd(sg[0])-3,rnd(sg[0])+3,rnd(sg[1])+2,P.r2);
   b.poly([R3.p(4,FY,10),R3.p(30,FY,10),R3.p(30,FY,24),R3.p(4,FY,24)],function(x,y){ return ((x+y)&1)?P.r1:P.w1; });
+  var tb=M.wallPt(SPEC,'L',20,27); b.line(rnd(tb[0]),rnd(tb[1]),rnd(tb[0])+3,rnd(tb[1])+2,P.k2); b.ellipse(tb[0]+3.5,tb[1]+4,1.8,2,P.y3); b.px(rnd(tb[0])+3,rnd(tb[1])+3,P.y5);   // Türglöckchen
   var gx=28, gyb=99;   // Garderobenständer (Bugholz) in der Ecke
   b.vl(gx,46,gyb-2,P.w1); b.vl(gx+1,46,gyb-2,P.w3); b.line(gx,gyb-3,gx-5,gyb,P.w1); b.line(gx+1,gyb-3,gx+6,gyb,P.w2); b.line(gx,gyb-3,gx+1,gyb,P.w0);
   b.line(gx,48,gx-4,44,P.w2); b.line(gx+1,48,gx+5,44,P.w3); b.rect(gx-1,44,4,2,P.w4);
@@ -209,10 +211,12 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), weather=M.scn.weather(GS)
   // ---- Kartentisch der beiden Alten: Stühle passend zu den Sitzpositionen (Stipe 214 'R', Frane 252 'L')
   thonet(b,213,111,124,'L'); thonet(b,253,111,124,'R');
   bistro(b,CT.x,CT.top,CT.y,12);
-  var ty=CT.top; b.rect(225,ty-1,4,2,P.s6); b.px(226,ty-1,P.r3); b.rect(238,ty-1,4,2,P.s6); b.px(240,ty,P.b1);    // Karten in der Hand abgelegt
-  b.rect(231,ty,4,2,P.e4); b.hl(231,234,ty,P.s6); b.px(232,ty+1,P.r3); b.rect(229,ty+1,3,1,P.s5);                    // Talon + Trumpf
-  b.rect(222,ty-3,2,3,P.a5); b.px(222,ty-3,P.s6); b.px(223,ty-1,P.y3); b.rect(243,ty-3,2,3,P.a5); b.px(243,ty-3,P.s6); b.px(243,ty-1,P.r2);   // zwei Gläser
-  b.ellipse(236.5,ty+2,1.8,0.8,P.m2); b.px(237,ty+1,P.s5);                                                                       // Aschenbecher
+  var ty=CT.top, regulars=(GS.phase==='c1'||GS.phase==='c2');
+  if (regulars){ b.rect(225,ty-1,4,2,P.s6); b.px(226,ty-1,P.r3); b.rect(238,ty-1,4,2,P.s6); b.px(240,ty,P.b1);       // abgelegte Stiche
+    b.rect(231,ty,4,2,P.e4); b.hl(231,234,ty,P.s6); b.px(232,ty+1,P.r3); b.rect(229,ty+1,3,1,P.s5);                  // Talon + Trumpf
+    b.rect(222,ty-3,2,3,P.a5); b.px(222,ty-3,P.s6); b.px(223,ty-1,P.y3); b.rect(243,ty-3,2,3,P.a5); b.px(243,ty-3,P.s6); b.px(243,ty-1,P.r2); }   // zwei Gläser
+  else { b.rect(230,ty,5,2,P.e4); b.hl(230,234,ty,P.s5); }                                                       // nur das Kartenspiel, zusammengelegt
+  b.ellipse(236.5,ty+2,1.8,0.8,P.m2); b.px(237,ty+1,P.s5);                                                       // Aschenbecher
 
   // ---- Licht
   var noWin=function(x,y){ return !inWin(x,y); };
@@ -248,14 +252,14 @@ function layers(S,GS,tod){ var L=[];
   var x0=48, y0=56, lay=M.layer(x0,y0,160,60,114), w=M.lw(lay), fw={poly:function(p,c){ w.poly(p,c); }};
   var fl=R3.p(CNT.X0,CNT.Y0,CNT.Z1)[0], frx=R3.p(CNT.X1,CNT.Y0,CNT.Z1)[0];
   R3.box(fw,CNT.X0,CNT.X1,CNT.Y0,FY,CNT.Z0,CNT.Z1,{
-    top:function(x,y){ var c=(hash(x>>2,y)<0.25)?P.s4:P.s5; if (Math.sin(x*0.21+y*1.3)>0.92) c=P.s3; if (y<=82) c=P.s3; return c; },
+    top:function(x,y){ var c=(hash(x>>2,y)<0.3)?P.m3:P.m4; var rx=((x*7)%23)-11; if (Math.abs(Math.hypot(rx*0.5,(y-83)*1.6)-2.2)<0.5 && hash(Math.floor(x/23),2)<0.7) c=P.m2; if (y<=82) c=P.m2; return c; },   // Zink, Ringe von Tassen
     front:function(x,y){ var p=((x-fl)%20+20)%20, top=89, bot=108, c=P.w2;
-      if (y<88) c=(y<=86)?P.s3:P.w1;                       // Plattenkante, Schattenfuge
+      if (y<88) c=(y<=86)?P.m2:P.w1;                       // Zinkkante, Schattenfuge
       else if (y>=bot+1) c=(y>=bot+4)?P.k2:P.w1;           // Sockel
       else if (p<2) c=p<1?P.w1:P.w3;                       // Rahmen zwischen den Füllungen
       else if (y>=top+2 && y<=bot-2 && p>=4 && p<=17){ c=P.w3; if (y===top+2||p===4) c=P.w4; if (y===bot-2||p===17) c=P.w1; if (p>=6&&p<=15&&y>=top+4&&y<=bot-4){ var tt=(y-top-4)/(bot-top-8); c=(tt<0.42)?P.w3:(tt>0.62?P.w2:(bayer(x,y)<(tt-0.42)/0.2?P.w2:P.w3)); if (p===6||y===top+4) c=P.w1; } }
       return c; } });
-  var a=R3.p(CNT.X0,CNT.Y0,CNT.Z1), bb=R3.p(CNT.X1,CNT.Y0,CNT.Z1); w.hl(rnd(a[0]),rnd(bb[0]),rnd(a[1]),P.s6); w.hl(rnd(a[0]),rnd(bb[0]),rnd(a[1])+1,P.s4);
+  var a=R3.p(CNT.X0,CNT.Y0,CNT.Z1), bb=R3.p(CNT.X1,CNT.Y0,CNT.Z1); w.hl(rnd(a[0]),rnd(bb[0]),rnd(a[1]),P.s6); w.hl(rnd(a[0]),rnd(bb[0]),rnd(a[1])+1,P.m3); w.hl(rnd(a[0]),rnd(bb[0]),rnd(a[1])+2,P.m1);
   // Messingstange unten
   var fr0=R3.p(CNT.X0,90,CNT.Z1+3), fr1=R3.p(CNT.X1,90,CNT.Z1+3); w.hl(rnd(fr0[0])+1,rnd(fr1[0])-1,rnd(fr0[1]),P.y4); w.hl(rnd(fr0[0])+1,rnd(fr1[0])-1,rnd(fr0[1])+1,P.y2);
   for (var hx=rnd(fr0[0])+8;hx<fr1[0];hx+=40){ w.vl(hx,rnd(fr0[1])+2,rnd(fr0[1])+4,P.y1); w.px(hx,rnd(fr0[1])+5,P.y2); }
@@ -270,7 +274,7 @@ function layers(S,GS,tod){ var L=[];
   [140,146].forEach(function(xx){ w.hl(xx,xx+4,81,P.s5); w.rect(xx+1,78,3,3,P.s6); w.px(xx+4,79,P.s5); w.px(xx+1,80,P.s4); });
   [132,135].forEach(function(xx){ w.rect(xx,76,2,5,P.a5); w.px(xx,76,P.s6); w.px(xx+1,80,P.a4); });
   // Zeitung (auf dem Tresen, hängt vorne über die Kante)
-  if (!S.paperTaken){ var nx=160, ny=81; w.poly([[nx,ny],[nx+15,ny-1],[nx+17,ny+1],[nx+1,ny+2]],P.s5); w.hl(nx+1,nx+15,ny,P.s6); w.rect(nx+2,ny+2,14,9,P.s5); w.hl(nx+2,nx+15,ny+2,P.s6);
+  if (!S.paperTaken && GS.phase==='c2'){ var nx=160, ny=81; w.poly([[nx,ny],[nx+15,ny-1],[nx+17,ny+1],[nx+1,ny+2]],P.s5); w.hl(nx+1,nx+15,ny,P.s6); w.rect(nx+2,ny+2,14,9,P.s5); w.hl(nx+2,nx+15,ny+2,P.s6);
     w.rect(nx+3,ny+3,12,2,P.k2); w.px(nx+4,ny+3,P.s5); w.px(nx+8,ny+3,P.s5); for (var ln=0;ln<3;ln++) w.hl(nx+3,nx+8,ny+6+ln,P.s3); w.rect(nx+10,ny+6,5,4,P.s2); w.px(nx+12,ny+7,P.s4);
     w.vl(nx+16,ny+2,ny+10,P.s3); w.hl(nx+2,nx+16,ny+11,P.s2); }
   // Trinkgeld-Schälchen, Serviettenhalter
@@ -304,6 +308,9 @@ function dyn(fb,v,S,GS){ var tod=v.tod, weather=M.scn.weather(GS), tint=tod!=='d
     for (var s=3;s<24;s++){ var x=rnd(cx+ca*s), y=rnd(cy+sa*s*0.18); tp(x,y,s<5?P.y2:P.w3); tp(x,y+1,s<5?P.y1:(wd>0.7?P.w2:P.w1)); if (wd>1&&s>6) tp(x,y-1,P.w4); } }
   if (tod==='day') M.scn.gulls(fb,v.t,WIN[0]+2,WIN[1]+1,WIN[2]-4,9,2,0);
   if (weather==='rain') M.scn.windowRain(fb,WIN[0],WIN[1],WIN[2],WIN[3],v.t,0);
+  if (weather==='bura' && tod==='day'){ var ch=(v.t*0.11)%1, chx=WIN[0]-12+Math.round(ch*(WIN[2]+28)), chy=STREETY+6-Math.round(Math.abs(Math.sin(ch*18))*3), rot=Math.floor(v.t*6)%4;
+    var CH=[['#..#','####','#..#','#..#'],['####','#...','####','#..#'],['#..#','#..#','####','#..#'],['#..#','####','...#','####']][rot];
+    for (var cy2=0;cy2<4;cy2++) for (var cx2=0;cx2<4;cx2++) if (CH[cy2][cx2]==='#'){ var px2=chx+cx2, py2=chy+cy2; if (px2>=WIN[0]&&px2<WIN[0]+WIN[2]&&py2<WIN[1]+WIN[3]) fb.px(px2,py2,(cy2===0)?P.s6:P.s5); } }
   if (weather==='bura'){ for (var i=0;i<3;i++){ var sp=50+hash(i,41)*50, x2=WIN[0]+Math.floor((v.t*sp+hash(i,42)*200)%(WIN[2]+20))-10, y2=STREETY-4+Math.floor(hash(i,43)*12+Math.sin(v.t*5+i)*2);
       if (x2>=WIN[0]&&x2<WIN[0]+WIN[2]){ fb.px(x2,y2,i%2?P.e3:P.s5); fb.px(x2+1,y2+(i&1),i%2?P.e2:P.s4); } } }
   // Dampf aus der Espressomaschine, ab und zu

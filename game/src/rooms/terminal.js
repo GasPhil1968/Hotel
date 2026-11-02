@@ -45,9 +45,7 @@ async function talkMalaEnd(A){
   await A.card({kicker:'',title:'Ende des ersten Kapitels',sub:'Fortsetzung: Sarajevo',ms:5200});
   await A.endChapter(); }
 M.talkMalaEnd=talkMalaEnd;
-M.mem=M.mem||{};
-M.mem.bus=function(b){ var w=b.w,h=b.h; M.vgrad(b,0,0,w,h,M.R('n1 d2 d4 d5')); M.islands(b,0,w,58,'dawn',9,{amp:6}); M.sea(b,0,58,w,20,'dawn',0.2,0); b.rect(0,0,w,14,P.k1); b.rect(0,78,w,h-78,P.k1); b.rect(0,0,10,h,P.k1); b.rect(w-10,0,10,h,P.k1);
-  b.rect(150,70,28,26,P.m2); b.rect(152,72,24,12,P.m3); b.hl(152,175,72,P.m4); b.px(158,76,P.r3); b.px(166,78,P.y2); b.ellipse(120,88,10,6,P.s3); b.rect(112,86,16,12,P.s3); for (var y=86;y<98;y+=3) b.hl(112,127,y,P.s1); b.rect(132,82,12,9,P.s4); M.text(b,'3',137,84,P.k1); };
+// Erinnerungsbild „Im Bus“: siehe 93_mem.js
 var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Zurück in die Stadt.',canExit:async function(A){ if (A.G.phase==='epi'){ if (A.has('busticket')){ await A.m('Ich habe eine Fahrkarte. Ich gehe nicht mehr zurück in die Stadt. Nicht heute.'); return false; } await A.m('Nein. Ich bin aus einem Grund hier.'); return false; } return true; }},
  {id:'mira',npc:'mira',name:'Mira',hgt:30,vis:function(S,GS){ return miraHere(GS); },talk:talkMira,r:function(S,GS,a){ return [Math.round(a.x)-10,Math.round(a.y)-50,20,30]; },

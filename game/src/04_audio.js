@@ -46,6 +46,7 @@ var SFX={
   creak:function(t){ var o=AC.createOscillator(), g=AC.createGain(), f=AC.createBiquadFilter(); o.type='sawtooth'; o.frequency.setValueAtTime(110,t); o.frequency.linearRampToValueAtTime(160,t+0.5); f.type='bandpass'; f.frequency.value=700; f.Q.value=6; env(g,t,0.05,0.06,0.8); o.connect(f); f.connect(g); g.connect(sfxG); o.start(t); o.stop(t+0.95); },
   lock:function(t){ tone('sine',170,t,0.1,0.15); noise(t+0.07,0.04,0.18,'highpass',2600,1); tone('square',900,t+0.09,0.03,0.04); },
   click:function(t){ noise(t,0.025,0.15,'highpass',3000,1); },
+  drawer:function(t){ noise(t,0.32,0.09,'bandpass',900,2.5,null,500); noise(t+0.3,0.05,0.12,'lowpass',400,1); tone('sine',70,t+0.3,0.12,0.08,null,50); },
   knock:function(t){ [0,0.2,0.4].forEach(function(d){ tone('sine',110,t+d,0.08,0.25,null,70); noise(t+d,0.05,0.15,'lowpass',500,1); }); },
   radioOn:function(t){ noise(t,1.2,0.12,'bandpass',1600,1.2,null,900); tone('sine',60,t,0.1,0.06); },
   static:function(t){ noise(t,0.6,0.07,'bandpass',1400,1.5,null,2200); },

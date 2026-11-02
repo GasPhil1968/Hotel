@@ -52,32 +52,48 @@ M.MAPLOCS=[
   {id:'terminal',name:'Fährhafen & Busbahnhof',x:262,y:94, to:'terminal', at:null, icon:'ferry'},
   {id:'palma',   name:'Hotel Palma',           x:70, y:104,to:'palma',    at:null, icon:'hotel'}
 ];
-function coastY(x){ return 76+Math.sin(x*0.03)*4+Math.sin(x*0.11)*1.5; }
-function land(x,y){ // Split-Halbinsel, stark vereinfacht: Festland im Norden, Hafenbecken, Sustipan-Zunge, Marjan im Westen
+function coastY(x){ return 76+Math.sin(x*0.03)*4+Math.sin(x*0.11)*1.5; }             // Nordufer des Hafens (Riva)
+function marjanCoast(x){ return 104+Math.sin(x*0.07+1)*3+Math.sin(x*0.19)*1.2+Math.sin(x*0.5)*0.6; } // Südküste unter dem Marjan
+function marjanEdge(y){ return 98+Math.sin(y*0.06+0.5)*7+Math.sin(y*0.17)*2.5; }             // Ostrand des Waldes
+function land(x,y){ // Split-Halbinsel, stark vereinfacht: Festland im Norden, Hafenbecken, Sustipan, Marjan im Westen
+  if (x<108 && y<marjanCoast(x)) return true;                                                // Marjan und Meje
+  if (((x-116)*(x-116))/121+((y-100)*(y-100))/144<1) return true;                            // Sustipan
+  if (x>=104 && x<134 && y<96-(x-104)*0.6) return true;                                      // Zvončac, zwischen Sustipan und Matejuška
   if (y<coastY(x)) return true;
-  if (x>98 && x<126 && y<120-((x-112)*(x-112))/10) return true;             // Sustipan
-  if (x<96 && y<112-(x*0.12)) return true;                                 // Marjan-Küste
-  if (x>236 && x<300 && y<104 && y>=coastY(x)) return y<92+((x-236)/64)*6;  // Hafenmole Ost
+  if (y<99 && y>=coastY(x)-1 && ((x>=246&&x<251)||(x>=264&&x<269)||(x>=282&&x<287))) return true; // Fähranleger
+  var t=(x-250)/56; if (t>=0 && t<=1){ var by=110-t*24; if (Math.abs(y-by)<1.6) return true; }   // Wellenbrecher
   return false; }
+function forest(x,y){ var e=marjanEdge(y)-x; return e>0 || (e>-6 && bayer(x,y)<(e+6)/6); }
 function paintMap(S,GS){ var b=new M.Buf(320,144,P.k0);
   for (var y=0;y<144;y++) for (var x=0;x<320;x++) b.px(x,y,M.tex.boards(x,y,M.R('w0 w1 w2 w3'),7));
   var x0=8,y0=6,x1=312,y1=138;
-  for (y=y0;y<y1;y++) for (x=x0;x<x1;x++){ var c; if (!land(x,y)){ c=M.rampAt(M.R('a3 a4 a5'),0.45+Math.sin(x*0.25+y*0.8)*0.06+(y-90)/160,x,y); if (((x+Math.floor(y/4)*7)%27===0)&&(y%5===0)) c=P.a5; }
-    else { c=M.tex.foliage(x,y,M.R('s4 s5 e4 s5')); if (x<104 && y<100) c=M.rampAt(M.R('g3 g4 g5'),0.3+hash(Math.floor(x/4),Math.floor(y/3))*0.5,x,y); }
+  for (y=y0;y<y1;y++) for (x=x0;x<x1;x++){ var c;
+    if (!land(x,y)){ var dc=0; for (var k=1;k<5&&!dc;k++){ if (land(x,y-k)||land(x-k,y)||land(x+k,y)) dc=k; }
+      c=M.rampAt(M.R('a3 a4 a5'),0.45+Math.sin(x*0.25+y*0.8)*0.06+(y-90)/160,x,y); if (dc && dc<3) c=P.a5; else if (dc===3 && bayer(x,y)<0.5) c=P.a5;
+      if (((x+Math.floor(y/4)*7)%27===0)&&(y%5===0)) c=P.a5; }
+    else if (forest(x,y)){ var e=1-Math.hypot((x-50)/56,(y-60)/44); c=M.rampAt(M.R('g2 g3 g4 g5'),0.25+Math.max(0,e)*0.6+(hash(x>>2,y/3|0)-0.5)*0.25,x,y);
+      var fr=(Math.max(0,e)*7)%1; if (e>0.05 && fr<0.1) c=P.g2; if (hash(x,y)<0.05) c=P.g1; }
+    else if (((x-116)*(x-116))/121+((y-100)*(y-100))/144<0.8){ c=M.tex.foliage(x,y,M.R('g3 g4 g5 g4')); } // Sustipan: Park mit Pinien
+    else { c=M.tex.foliage(x,y,M.R('s4 s5 e4 s5')); }
     var u=x-x0, v=y-y0; if (u===Math.floor((x1-x0)/3)||u===Math.floor((x1-x0)*2/3)||v===Math.floor((y1-y0)/2)) c=M.DN[c];
     b.px(x,y,c); }
   // Küstenlinie
   for (y=y0+1;y<y1-1;y++) for (x=x0+1;x<x1-1;x++){ if (land(x,y) && (!land(x+1,y)||!land(x,y+1)||!land(x-1,y)||!land(x,y-1))) b.px(x,y,P.e1); }
-  // Altstadt (Palast) als Raster
-  b.rect(196,50,34,22,P.s3); for (var gx=198;gx<230;gx+=5) b.vl(gx,50,71,P.s2); for (var gy=52;gy<72;gy+=5) b.hl(196,229,gy,P.s2); b.rect(208,56,8,8,P.s5);
+  // Leuchtfeuer am Ende des Wellenbrechers
+  b.rect(249,109,3,3,P.r2); b.px(250,108,P.s6);
+  // Altstadt: der Palast mit Mauern und Ecktürmen
+  b.rect(198,48,32,24,P.s3); for (var gx=200;gx<229;gx+=5) b.vl(gx,49,70,P.s2); for (var gy=52;gy<71;gy+=5) b.hl(199,228,gy,P.s2);
+  b.hl(197,230,47,P.e1); b.hl(197,230,72,P.e1); b.vl(197,47,72,P.e1); b.vl(230,47,72,P.e1); [[197,47],[227,47],[197,69],[227,69]].forEach(function(q){ b.rect(q[0],q[1],4,4,P.e2); }); b.rect(210,56,8,8,P.s5);
   // Straßen
-  [[120,40,300,48],[100,64,240,72],[150,30,160,76],[240,40,250,80],[60,80,140,70]].forEach(function(s){ b.line(s[0],s[1],s[2],s[3],P.e2); });
+  [[120,40,300,46],[100,64,196,70],[150,28,158,76],[244,36,250,78],[232,60,300,64],[132,56,150,74]].forEach(function(s2){ b.line(s2[0],s2[1],s2[2],s2[3],P.e2); });
+  for (x=12;x<104;x++){ var my=Math.round(marjanCoast(x))-4; if (x%4<3) b.px(x,my,P.e3); } // Uferweg unter dem Marjan
+  for (var i=0;i<60;i++){ var px=14+Math.floor(hash(i,7)*80), py=14+Math.floor(hash(i,9)*80); if (forest(px,py) && land(px,py)) b.px(px,py,P.g1); }
   // Riva-Linie
-  for (x=150;x<248;x++){ var yy=Math.round(coastY(x))-2; if (x%3) b.px(x,yy,P.g2); }
+  for (x=150;x<244;x++){ var yy=Math.round(coastY(x))-2; if (x%3) b.px(x,yy,P.g2); }
   // Kartusche + Kompass
   b.rect(16,118,58,16,P.s5); b.hl(16,73,118,P.e1); b.hl(16,73,133,P.e1); b.vl(16,118,133,P.e1); b.vl(73,118,133,P.e1); M.microText(b,'SPLIT',30,121,P.e0); M.microText(b,'2011',34,127,P.e2);
   var cx=290,cy=24; b.line(cx,cy-9,cx,cy+9,P.e1); b.line(cx-9,cy,cx+9,cy,P.e1); b.poly([[cx,cy-10],[cx+2,cy],[cx,cy+10],[cx-2,cy]],P.r2); M.text(b,'N',cx-2,cy-19,P.e1);
-  M.microText(b,'MARJAN',40,40,P.g1); M.microText(b,'LUKA',190,104,P.a1); M.microText(b,'KANAL BRAČ',200,130,P.a2);
+  M.microText(b,'MARJAN',37,53,P.g5); M.microText(b,'MARJAN',36,52,P.g0); M.microText(b,'LUKA',190,100,P.a1); M.microText(b,'KANAL BRAČ',196,128,P.a2);
   M.MAPLOCS.forEach(function(L){ drawIcon(b,L,!!GS.map[L.id]); });
   M.light(b,M.lf.sum(M.lf.pool(170,64,200,110,1.1),M.lf.vignette(320,144,2.2),M.lf.k(-0.3)));
   return b; }

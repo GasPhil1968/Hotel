@@ -87,8 +87,8 @@ function trim(b){ var x0=b.w,y0=b.h,x1=-1,y1=-1; for (var y=0;y<b.h;y++) for (va
 function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2, avail=g.malaOn && !(E.room&&(E.room.noMala||E.room.noSwitch));
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
   if (!g.malaOn) return; var other=g.active==='marko'?'mala':'marko', pb=portraitBuf(other,'n'), hot=hoverUI==='sw'&&pointer.show;
-  var ox=x+Math.floor((w-pb.w*1.5)/2), oy=y+2;
-  for (var j=0;j<Math.floor(pb.h*1.5);j++) for (var i=0;i<Math.floor(pb.w*1.5);i++){ var col=pb.d[Math.floor(j/1.5)*pb.w+Math.floor(i/1.5)]; if (col===T) continue; if (other==='mala') col=M.TINT.mala.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
+  var cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
+  for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.mala.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -126,7 +126,7 @@ function portraitBuf(chId,hd){ var key=chId+':'+hd; if (PCACHE[key]) return PCAC
 M.portraitBuf=portraitBuf;
 var PR_W=58, PR_H=64, PR_L=[4,6], PR_R=[W-4-PR_W,6], NB_X=68, NB_W=184, NB_Y=6, NB_LH=10, NB_TW=162;
 function convOn(){ return !!(E.screen==='game' && E.room && !E.overlay && !E.menu && (E.dlg || (E.conv && E.conv.room===E.room))); }
-function convPartner(){ if (!E.conv||!E.conv.npc) return null; var a=E.ACT[E.conv.npc]; return (a && M.CHARS[a.ch] && !a.player)?a:null; }
+function convPartner(){ if (!E.conv||!E.conv.npc) return null; var a=E.ACT[E.conv.npc]; return (a && M.CHARS[a.ch] && a.id!==GS().active && E.actorShown(a))?a:null; }
 function drawPortrait(a,pos,mirror,speaking,dim){ var x0=pos[0], y0=pos[1], hd='n', c=ui(); var g=E.gt();
   if (speaking) hd=(Math.floor(g/130)%2)?'o':'n'; else if ((g+(mirror?1700:0))%4300<120) hd='b';
   var pb=portraitBuf(a.ch,hd), sc=PR_W/pb.w, ox=x0, oy=y0+PR_H-Math.round(pb.h*sc);
@@ -211,9 +211,12 @@ M.defineOverlay('memory',function(fb,ov,gt){ var d=ov.data, x0=44, y0=8, w=232, 
   var k=Math.min(1,(gt-ov.at)/600);
   for (var y=0;y<h;y++) for (var x=0;x<w;x++){ var c=ov.pic.d[y*w+x]; var e=Math.min(x,w-1-x,y,h-1-y); if (e<10 && bayer(x,y)>e/10) c=P.k0; if (bayer(x,y)>k) c=P.k0; fb.px(x0+x,y0+y,c); }
   if (d.anim) d.anim(fb,x0,y0,w,h,(gt-ov.at)/1000);
+  // dunkler Grund unter dem Text (deckt die Leiste ab), weiche Kanten
+  for (var yy=y0+h+1;yy<H;yy++) for (var xx=x0-10;xx<x0+w+10;xx++){ var ed=Math.min(xx-(x0-10),(x0+w+9)-xx); if (ed<8 && bayer(xx,yy)>ed/8) continue; fb.px(xx,yy,P.k0); }
   M.text(fb,d.title||'Nachhall',x0,y0+h+4,P.x4);
-  var lines=d.lines||[], shown=lines.slice(0,ov.step+1), ty=y0+h+15;
-  shown.forEach(function(l,i){ M.wrap(l,w).forEach(function(q){ M.text(fb,q,x0,ty,i===ov.step?P.x5:P.x3); ty+=9; }); });
+  var lines=d.lines||[], rows=[], ty=y0+h+15, maxRows=Math.floor((H-ty-1)/9);
+  lines.slice(0,ov.step+1).forEach(function(l,i){ M.wrap(l,w-8).forEach(function(q){ rows.push([q,i===ov.step]); }); });
+  rows.slice(-maxRows).forEach(function(r){ M.text(fb,r[0],x0,ty,r[1]?P.x5:P.x3); ty+=9; });
   if (Math.floor(gt/500)%2) M.text(fb,ov.step<lines.length-1?'▸':'✓',x0+w-6,H-10,P.x4); });
 // Satzbau-Rätsel (Übersetzung)
 M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||d.slots.map(function(){ return 0; }); paper(20,8,280,178,{lines:[30,22],margin:12});
@@ -242,7 +245,7 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
   if (L.tot){ var by=y0+ph-14, bw=80, fw=Math.round(bw*L.done/L.tot); M.text(fb,'Stand',lx+16,by-1,P.s1); fb.rect(lx+46,by,bw+2,6,P.s2); fb.rect(lx+47,by+1,bw,4,P.s6); fb.rect(lx+47,by+1,fw,4,P.g3); }
   // rechte Seite: Notizen
   M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZEN',rx+16,y0+5,P.r2); M.text(fb,ask?'Zurück':'X',rx+pw-(ask?34:12),y0+5,hoverUI==='nx'?P.r3:P.s1); if (ask) lay.close=[rx+pw-40,y0+2,38,14];
-  var notes=notesOf(), ny=y0+20, maxY=y0+ph-(NB.msg?40:16);
+  var notes=notesOf(), ny=y0+20, maxY=y0+ph-(NB.msg?40:(ask?16:32));
   if (NB.top>=notes.length) NB.top=Math.max(0,notes.length-1);
   if (!notes.length){ M.text(fb,'Noch nichts.',rx+16,ny,P.s2); }
   for (var i=NB.top;i<notes.length;i++){ var n=M.NOTES[notes[i]], ls=M.wrap(n.t,pw-28), hh=ls.length*9+3; if (ny+hh>maxY){ lay.dn=[rx+pw/2,y0+ph-14,pw/2,14]; break; }
@@ -252,7 +255,7 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
     ls.forEach(function(l,j){ M.text(fb,l,rx+16,ny+j*9,ded?P.g1:P.n1); }); lay.notes.push({id:notes[i],idx:i,r:[rx+12,ny-1,pw-16,hh]}); ny+=hh+1; }
   if (NB.top>0) lay.up=[rx+12,y0+ph-14,pw/2-12,14];
   if (lay.up||lay.dn){ var tri=function(cx,up,on){ var c=on?P.n2:P.s3; for (var t=0;t<5;t++){ var ty=up?y0+ph-12+t:y0+ph-8-t; fb.hl(cx-t,cx+t,ty,c); } }; tri(rx+pw/2-16,true,!!lay.up); tri(rx+pw/2+16,false,!!lay.dn); }
-  if (!ask){ var hint=NB.sel?'Zweite Notiz antippen zum Verbinden.':'Zwei Notizen antippen, um sie zu verbinden.'; if (!NB.msg) M.wrap(hint,pw-24).forEach(function(l,j){ M.text(fb,l,rx+16,y0+ph-26+j*9-(M.wrap(hint,pw-24).length>1?0:-9),P.s2); }); }
+  if (!ask){ var hint=NB.sel?'Zweite Notiz antippen zum Verbinden.':'Zwei Notizen antippen, um sie zu verbinden.'; if (!NB.msg){ var hl=M.wrap(hint,pw-24); hl.forEach(function(l,j){ M.text(fb,l,rx+16,y0+ph-31+j*9+(hl.length>1?0:9),P.s2); }); } }
   if (NB.msg){ var my=y0+ph-38; fb.rect(rx+10,my-2,pw-14,36,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,pw-26).slice(0,4).forEach(function(l,j){ M.text(fb,l,rx+14,my+j*9,NB.msg.ok?P.g0:P.k1); }); }
   ov.lay=lay; });
 async function notebookTap(x,y){ var ov=E.overlay, lay=ov.lay; if (!lay) return; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }, ask=ov.data.mode==='ask';

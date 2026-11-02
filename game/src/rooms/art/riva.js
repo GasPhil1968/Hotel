@@ -25,8 +25,11 @@ var BENCH2=[218,242];
 var MBENCH=[498,528];      // Bank auf der Mole
 var MLAMP=628, MLB=116, MLH=50;   // Laterne am Molenende
 var IBOL=610;              // Ivkas Poller (hintere Kante)
-var FERRY_END=518;         // dort kommt die Fähre zum Stehen (Bug)
+var FERRY_END=518;
+var MOONX=593;              // Mond über Ivkas Platz: ihr Umriss steht im Mondpfad         // dort kommt die Fähre zum Stehen (Bug)
 var FLAG=[350,26];         // Fahnenspitze am Hafenbüro
+var PUD=[[88,127,9,2],[176,131,13,2.5],[268,121,8,1.8],[352,129,11,2],[448,118,9,2],[541,121,11,2],[586,111,6,1.5]];   // Pfützen bei Regen
+var RING=476;              // Rettungsring an der Mole
 // ---------------------------------------------------------------- Masken (vom letzten paint)
 // FAR: 0 = Vordergrund (wird umgefärbt), 1 = Himmel, 2 = Berge/Inseln, 3 = Becken, 4 = Wasser vorn
 var FAR=new Uint8Array(W*H), WM=new Uint16Array(W*H), OBJ=new Uint8Array(W*H), WIN=[], FWIN=[], LIT={tod:'day',wea:'calm'};
@@ -65,7 +68,7 @@ function paintSky(b,tod,wea){ var rain=wea==='rain', r, x, y, v;
     for (y=4;y<44;y++) for (x=0;x<W;x++){ var q=fbm(x/34,y/5,6)-0.66-(x>360?0.1:0); if (q<=0) continue; if (q<0.03&&bayer(x,y)>q/0.03) continue; b.px(x,y,ra(D,0.35+q*5,x,y)); } }
   if (tod==='night'||tod==='dawn'){ var rr=M.rng(91);
     for (var i=0;i<380;i++){ var sx=Math.floor(rr()*W), sy=Math.floor(Math.pow(rr(),1.4)*(HZ-10)), q2=rr(); if (q2<0.06) b.px(sx,sy,P.n5); else if (q2<0.35) b.px(sx,sy,P.n4); else b.px(sx,sy,P.n3); if (q2<0.015){ b.px(sx-1,sy,P.n3); b.px(sx+1,sy,P.n3); b.px(sx,sy-1,P.n3); b.px(sx,sy+1,P.n3); } }
-    if (tod==='night' && !rain){ var mx=574, my=18;
+    if (tod==='night' && !rain){ var mx=MOONX, my=19;
       b.ellipse(mx+0.5,my+0.5,9,9,function(x,y){ return bayer(x,y)<0.3?P.n2:undefined; });
       b.ellipse(mx+0.5,my+0.5,5.2,5.2,function(x,y){ var dx=x+0.5-mx, dy=y+0.5-my; if (dx*0.7+dy*0.7>2.2) return P.n4; return (dx*dx+dy*dy<6&&dx<1)?P.l1:P.n5; });
       b.px(mx-2,my+1,P.n4); b.px(mx+1,my-2,P.n4); b.px(mx,my+2,P.n4); } } }
@@ -76,7 +79,7 @@ function farCols(tod,wea,near){ var rain=wea==='rain';
   if (near) return { day:R('b1 b2 b3'), dusk:R('d0 d1 d2'), night:R('k1 k2 n0'), dawn:R('n0 n1 n2') }[tod]||R('b1 b2 b3');
   return { day:R('b2 b3 b4'), dusk:R('d1 d2 d3'), night:R('k2 n0 n1'), dawn:R('n1 n2 d2') }[tod]||R('b2 b3 b4'); }
 function paintMountains(b,tod,wea){ var c=farCols(tod,wea,false);
-  for (var x=0;x<400;x++){ var ridge=37+Math.sin(x*0.011+1.3)*5+Math.sin(x*0.034+0.4)*2.6+Math.sin(x*0.093)*1.1+(x>300?Math.pow((x-300)/100,2)*36:0);
+  for (var x=0;x<398;x++){ var hi=37+Math.sin(x*0.011+1.3)*5+Math.sin(x*0.034+0.4)*2.6+Math.sin(x*0.093)*1.1, lo=67+Math.sin(x*0.07)*1.5+Math.sin(x*0.19)*0.8+(x>380?(x-380)*0.5:0), m=clamp((x-300)/40,0,1), ridge=hi+(lo-hi)*m*m*(3-2*m);
     for (var y=Math.round(ridge);y<HZ;y++){ var v=0.7-(y-ridge)/22+(fbm(x/9,y/5,12)-0.5)*0.3; if (y===Math.round(ridge)) v=0.95; b.px(x,y,ra(c,v,x,y)); } } }
 function brac(x){ if (x<392||x>606) return 0; var t=(x-392)/214; return Math.max(0,Math.round(Math.sin(Math.min(1,t*4)*Math.PI*0.5)*6.5+Math.sin(x*0.045+1)*1.4+Math.sin(x*0.15)*0.5+Math.max(0,1.6-Math.abs(x-470)/14)*1.4-(t>0.86?(t-0.86)*44:0))); }
 function solta(x){ if (x<614) return 0; return Math.max(0,Math.round(Math.sin(Math.min(1,(x-614)/20)*Math.PI*0.5)*3.6+Math.sin(x*0.2)*0.4)); }
@@ -95,9 +98,11 @@ function wbase(kind,y,tod,wea,x){ var d=wdepth(kind,y), n=0;
   else n=0.8-Math.pow(d,0.8)*0.5;
   if (y<HZ+4 && (brac(x)||solta(x))) n-=0.09*(HZ+4-y)/4;   // Spiegelung der Inseln
   return n; }
-function wcol(wx,y,t,kind,tod,wea,rmp){ var d=wdepth(kind,y), bura=wea==='bura', st=1/(rmp.length-1);
-  var per=5+d*24+(kind===4?14:0), dir=(hash(y,kind*3)<0.5)?1:-1, spd=(bura?10:4)*(0.35+d)*dir, ph=hash(y,kind+7)*40;
-  var u=(wx+t*spd+ph)/per, s=Math.sin(u*6.2832), s2=Math.sin((wx-t*spd*0.5+ph*3)/(per*2.7)*6.2832);
+var WS2=0;
+function wsig(wx,y,t,kind,bura){ var d=wdepth(kind,y), per=5+d*24+(kind===4?14:0), dir=(hash(y,kind*3)<0.5)?1:-1, spd=(bura?10:4)*(0.35+d)*dir, ph=hash(y,kind+7)*40;
+  WS2=Math.sin((wx-t*spd*0.5+ph*3)/(per*2.7)*6.2832); return Math.sin((wx+t*spd+ph)/per*6.2832); }
+function wcol(wx,y,t,kind,tod,wea,rmp){ var bura=wea==='bura', ph=hash(y,kind+7)*40;
+  var s=wsig(wx,y,t,kind,bura), s2=WS2;
   var n=rmp.length-1, v=wbase(kind,y,tod,wea,wx)*n, i=Math.floor(v), f=v-i;
   if (f>bayer(Math.floor((wx+ph*7)/3),y)) i++;
   if (s>0.68-s2*0.22) i+=1; else if (s<-0.74+s2*0.12) i-=1;
@@ -263,8 +268,8 @@ function parapet(b){ for (var x=OF1;x<MX0;x++){ for (var y=92;y<=PB;y++){ var c=
   for (var px=OF1+6;px<MX0-4;px+=22){ b.rect(px,89,5,4,P.s4); b.hl(px,px+4,89,P.s6); b.vl(px+4,89,92,P.s2); } }
 
 // ---------------------------------------------------------------- Pflaster (poliert, mit Perspektive)
-function paveAt(x,y,yb,yf,ramp,seed){ var d=(y-yb)/(yf-yb), a=3, bb=3.2/(yf-yb), v=Math.log((a+bb*(y-yb))/a)/bb, row=Math.floor(v/2.2), fy=v/2.2-row;
-  var s=11+d*12, off=(row%2)*0.5+hash(row,seed)*0.37, u=x/s+off, col=Math.floor(u), fx=u-col, rh=(a+bb*(y-yb))*2.2;
+function paveAt(x,y,yb,yf,ramp,seed){ var a=3, bb=3.2/(yf-yb), v=Math.log((a+bb*(y-yb))/a)/bb, row=Math.floor(v/2.2), fy=v/2.2-row;
+  var yr=yb+(Math.exp(row*2.2*bb)-1)*a/bb, d=clamp((yr-yb)/(yf-yb),0,1), s=11+d*13, off=(row%2)*0.5+hash(row,seed)*0.37, u=x/s+off+0.24*Math.sin(x/s*2.1+row*1.7+seed), col=Math.floor(u), fx=u-col, rh=(a+bb*(y-yb))*2.2;
   if (fy*rh<1 || fx*s<1) return ramp[0];
   var t=hash(col*7.13+row*3.71,row*1.93+seed), c=t<0.3?ramp[1]:(t<0.86?ramp[2]:ramp[3]);
   if (fy*rh<2 && fx*s>2) c=M.UP[c];
@@ -407,20 +412,26 @@ function paint(S,GS,tod){ var b=track(new M.Buf(W,H,P.k0)), wea=M.scn.weather(GS
   bollard(b,456,107,false); bollard(b,IBOL,108,true);
   // Tau vom Poller ins Wasser
   b.line(IBOL+4,101,IBOL+12,104,P.e2); b.px(IBOL+3,101,P.e3);
+  // Rettungsring am Pfosten
+  b.rect(RING-1,95,3,13,P.w2); b.vl(RING-1,95,107,P.w3); b.hl(RING-1,RING+1,94,P.w3);
+  b.ellipse(RING+0.5,100.5,4.2,4.2,function(x,y){ var dx=x+0.5-RING-0.5, dy=y+0.5-100.5, d=Math.hypot(dx,dy); if (d<2.1) return undefined; var a=Math.atan2(dy,dx), band=(Math.floor((a+3.1416)/0.785)%2)===0; return band?(dy<0?P.s6:P.s4):(dy<0?P.r4:P.r2); });
+  if (wea==='rain') PUD.forEach(function(q){ b.ellipse(q[0],q[1],q[2],q[3],function(x,y){ var e=(y<q[1]-q[3]*0.4)?P.s4:(bayer(x,y)<0.3?P.s1:P.s2); return e; }); });
   lamp(b,MLAMP,MLB,MLH);
   b.rect(MX1-5,MF-6,3,6,P.s5); b.vl(MX1-5,MF-6,MF-1,P.s6); b.px(MX1-4,MF-7,P.g3); b.px(MX1-4,MF-8,P.m1);
   // Flagge (statischer Stand; bewegt sich in dynamic)
   flag(b,FLAG[0],FLAG[1],0,wea);
   // ---- Licht (Tag): Schatten der Palmen auf Fassade und Pflaster
   if (tod==='day') dayShadows(b);
-  var pre=b.clone();
-  var out=M.finishTOD(b,tod,{ sky:function(x,y){ return FAR[y*W+x]>0; } });
+  var pre=b.clone(), out;
+  if (wea==='rain' && tod==='dusk'){ out=M.finishTOD(b,tod,{ sky:function(){ return true; } }); for (var k0=0;k0<W*H;k0++){ if (FAR[k0]===0) out.d[k0]=M.tintPx(RAINDUSK,out.d[k0],k0%W,(k0/W)|0); } }
+  else out=M.finishTOD(b,tod,{ sky:function(x,y){ return FAR[y*W+x]>0; } });
   if (tod==='dusk' && wea!=='rain'){ var NT=M.TINT.night; for (var k=0;k<W*H;k++){ if (OBJ[k]===2) out.d[k]=M.UP[M.tintPx(NT,pre.d[k],k%W,(k/W)|0)]; } }
   if (tod!=='day') nightLights(out,pre,tod,wea);
   return out; }
 function dayShadows(b){ var m=new Uint8Array(W*H), tmp={px:function(x,y){ x|=0; y|=0; if (x>=0&&y>=0&&x<W&&y<H) m[y*W+x]=1; },rect:function(){},hl:function(){},vl:function(){},line:function(){},ellipse:function(){},poly:function(){}};
   PALMS.forEach(function(p){ palm(tmp,p.x,104,p.h,{seed:p.s,wind:1,lean:p.x>300?-2:2}); });
   var DX=13, DY=10; LAMPS.forEach(function(lx){ for (var yy=LB-LH-14;yy<LB-LH;yy++) for (var xx=lx-4;xx<=lx+5;xx++) m[yy*W+xx]=1; });
+  PALMS.forEach(function(p){ for (var yy=104-p.h+5;yy<=104;yy++) for (var xx=p.x-6;xx<=p.x+6;xx++) m[yy*W+xx]=0; });
   for (var y=0;y<H;y++) for (var x=0;x<W;x++){ if (!m[y*W+x]) continue; var sx=x+DX, sy=y+DY; if (sx>=W||sy>=PB) continue; var k=sy*W+sx; if (FAR[k]!==0 || m[k]) continue; if (WM[k]) continue; b.d[k]=M.DN[M.DN[b.d[k]]]; }
   // Laternen und Stämme werfen kurze Schatten aufs Pflaster
   PALMS.concat(LAMPS.map(function(l){ return {x:l}; })).forEach(function(p){ for (var k=0;k<12;k++){ var sx=p.x+1+Math.round(k*0.9), sy=103-Math.round(k*0.25); for (var w=0;w<2;w++){ var kk=sy*W+sx+w; if (FAR[kk]===0 && !m[kk]) b.d[kk]=M.DN[b.d[kk]]; } } }); }
@@ -431,6 +442,7 @@ function flag(b,x,y,ph,wea){ var bura=wea==='bura', calm=wea==='calm';
 
 // ---------------------------------------------------------------- Lichter bei Dämmerung und Nacht
 var LAMPT=M.TINT.lamp;
+var RAINDUSK=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.5+L*0.2+14, g*0.46+L*0.22+10, b*0.58+L*0.22+26]; });
 // angestrahlter Stein: warm, aber mit voller Helligkeitsstaffel (Bögen bleiben dunkel)
 var FLOOD=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*1.06+14, L*0.84+2, L*0.42-6]; });
 // warme Lichtinsel: Kern hell, Körper warm, schmaler geditherter Rand
@@ -488,12 +500,14 @@ function layers(S,GS,tod){ var L=[];
 function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=LIT.tod, wea=LIT.wea, rmp=wramp(tod,wea), x, y, sx;
   for (y=HZ;y<H;y++){ var row=y*W; for (sx=0;sx<320;sx++){ x=sx+cam; if (x<0||x>=W) continue; var k=FAR[row+x]; if (k<3) continue; fb.d[y*320+sx]=wcol(x,y,t,k,tod,wea,rmp); } }
   if (tod!=='day'){
-    LAMPS.forEach(function(lx){ gl(fb,lx+0.5,FW,H,3,t,P.y4,P.y2,cam); }); gl(fb,MLAMP+0.5,MW,H,5,t,P.y4,P.y2,cam);
-    if (tod==='night' && wea!=='rain') gl(fb,574,HZ+1,MB+1,9,t*0.7,P.n4,P.n3,cam);
-    gl(fb,525,HZ,HZ+9,2,t,P.y3,P.y2,cam);
-  } else if (wea!=='rain'){ gl(fb,560,HZ+1,MB+1,6,t,P.a6,P.s6,cam); }
-  if (tod==='dusk' && wea!=='rain') gl(fb,560,HZ+1,MB+1,8,t*0.8,P.d6,P.d5,cam);
+    LAMPS.forEach(function(lx){ gl(fb,lx+0.5,FW,H,3,t,P.y4,P.y2,cam,0.2); }); gl(fb,MLAMP+0.5,MW,H,6,t,P.y4,P.y2,cam,0.15);
+    if (tod==='night' && wea!=='rain'){ gl(fb,MOONX+0.5,HZ+1,MB+1,17,t,P.n5,P.n4,cam,0.0); gl(fb,MOONX+0.5,HZ+1,MB+1,7,t,P.l1,P.n5,cam,0.1); gl(fb,MOONX+0.5,MW,H,20,t,P.n5,P.n3,cam,0.15); }
+    gl(fb,526,HZ,HZ+10,2,t,P.y4,P.y2,cam,0.4);
+  } else if (wea!=='rain'){ gl(fb,560,HZ+1,MB+1,7,t,P.s6,P.a6,cam,0.45); }
+  if (tod==='dusk' && wea!=='rain') gl(fb,562,HZ+1,MB+1,9,t,P.d6,P.d5,cam,0.3);
   if (tod==='day') M.scn.gulls(fb,t,300,10,340,30,4,cam);
+  if (tod==='day' && wea!=='rain') pigeons(fb,t,cam);
+  if (wea==='rain') rainRings(fb,t,cam);
   if (S && S.ferryAt && v.gt>=S.ferryAt) ferry(fb,v,S);
   // Flagge
   var fx=FLAG[0]-cam; if (fx>-14 && fx<330) flagFb(fb,v,cam);
@@ -501,7 +515,20 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=LIT.tod, wea=LIT.wea, rmp=wra
   if (wea==='bura'){ var ph=(t*0.55)%1; if (ph<0.35){ var a=ph/0.35; for (var i=0;i<14;i++){ var sx2=Math.round(MX1-8+hash(i,1)*12-cam), sy2=Math.round(MW-2-a*14*hash(i,2)-Math.sin(a*3.14)*6); if (sx2>=0&&sx2<320&&sy2>=0&&sy2<H && hash(i,3)>a*0.8) fb.d[sy2*320+sx2]=(tod==='night'?P.n4:P.s6); } } }
   if (tod!=='day'){ LAMPS.forEach(function(lx){ M.glow(fb,lx-cam+0.5,LB-LH-7,9,t,0.45); }); M.glow(fb,MLAMP-cam+0.5,MLB-MLH-7,11,t,0.5); }
 }
-function gl(fb,cx,y0,y1,spread,t,c1,c2,cam){ for (var y=y0;y<y1;y++){ var k=(y-y0)/(y1-y0+1), half=1+spread*k; for (var x=Math.floor(cx-half);x<=cx+half;x++){ var sx=x-cam; if (sx<0||sx>=320||x<0||x>=W) continue; if (FAR[y*W+x]<3) continue; var f=Math.sin(x*0.9+y*2.3+t*3)+Math.sin(x*0.31-t*2.2+y*1.7); if (f>1.2) fb.d[y*320+sx]=(Math.abs(x-cx)<half*0.45)?c1:c2; } } }
+// Tauben auf dem Pflaster (nur am Tag), picken
+var PIG=[[182,121],[189,123],[262,126],[270,124],[121,129]];
+function pigeons(fb,t,cam){ PIG.forEach(function(p,i){ var sx=p[0]-cam, y=p[1]; if (sx<2||sx>316) return; var peck=Math.sin(t*2.3+i*1.7)>0.55, f=(i%2)?1:-1, hop=Math.floor((t*0.15+hash(i,4))%1*6)===0?1:0; sx+=hop*f;
+  fb.px(sx,y,P.m2); fb.px(sx+f,y,P.m2); fb.px(sx-f,y,P.m3); fb.px(sx,y-1,P.m3); fb.px(sx-f,y-1,P.m4); fb.px(sx-2*f,y,P.m1);
+  if (peck){ fb.px(sx+2*f,y,P.m1); fb.px(sx+2*f,y+1,P.e2); } else { fb.px(sx+f,y-1,P.g3); fb.px(sx+2*f,y-2,P.m1); fb.px(sx+3*f,y-2,P.e2); }
+  fb.px(sx,y+1,P.t3); }); }
+// Regen: Ringe in Pfützen und Tropfen auf dem Wasser
+function rainRings(fb,t,cam){ PUD.forEach(function(q,i){ for (var j=0;j<2;j++){ var ph=(t*0.9+hash(i,j*5+1))%1, n=Math.floor(t*0.9+hash(i,j*5+1)), rx=q[0]+(hash(i*7+n,j)-0.5)*q[2]*1.2, ry=q[1]+(hash(i+n,j*3)-0.5)*q[3]; var r=1+ph*3, sx=Math.round(rx-cam);
+    [[-r,0],[r,0],[-r*0.6,-0.6],[r*0.6,-0.6],[-r*0.6,0.6],[r*0.6,0.6]].forEach(function(o){ var xx=Math.round(sx+o[0]), yy=Math.round(ry+o[1]); if (xx<0||xx>=320||yy<0||yy>=H) return; var k=yy*320+xx; fb.d[k]=M.UP[fb.d[k]]; }); } });
+  for (var i2=0;i2<36;i2++){ var n2=Math.floor(t*6+hash(i2,9)), x=Math.floor(hash(i2,n2)*320), y=HZ+Math.floor(hash(n2,i2)*(H-HZ)); if (FAR[y*W+x+cam]<3) continue; var k2=y*320+x; fb.d[k2]=M.UP[M.UP[fb.d[k2]]]; if (x+1<320) fb.d[k2+1]=M.UP[fb.d[k2+1]]; } }
+// Lichtpfad auf dem Wasser: dieselben Wellenkämme, innerhalb eines nach vorn breiter werdenden Bandes
+function gl(fb,cx,y0,y1,spread,t,c1,c2,cam,thr){ var bura=LIT.wea==='bura'; thr=thr===undefined?0.35:thr;
+  for (var y=y0;y<y1;y++){ var k=(y-y0)/(y1-y0+1), half=1+spread*k; for (var x=Math.floor(cx-half);x<=cx+half;x++){ var sx=x-cam; if (sx<0||sx>=320||x<0||x>=W) continue; var kind=FAR[y*W+x]; if (kind<3) continue;
+    var e=Math.abs(x-cx)/half, cr=wsig(x,y,t,kind,bura)+0.3*WS2; if (cr>thr+e*0.75) fb.d[y*320+sx]=(e<0.4 && cr>thr+0.35)?c1:c2; } } }
 function flagFb(fb,v,cam){ var tod=LIT.tod, tint=M.TINT[tod]; var tmp={px:function(x,y,c){ var sx=x-cam; if (sx<0||sx>=320||y<0||y>=H) return; fb.d[y*320+sx]=(tod==='day'||!tint)?c:M.tintPx(tint,c,x,y); }};
   // alten Stand nicht löschen (gleiche Fläche wird übermalt) – nur bei Wind bewegt
   if (LIT.wea==='bura') flag(tmp,FLAG[0],FLAG[1],v.t,LIT.wea); }
@@ -512,6 +539,15 @@ function ferry(fb,v,S){ var ft=(v.gt-S.ferryAt)/1000, T0=24, e=clamp(ft/T0,0,1),
   for (var yy=MB-1;yy<=MB;yy++) for (var xx=sh.x0+4;xx<sh.x1;xx++){ var sxx=xx-cam; if (sxx<0||sxx>=320) continue; if (FAR[yy*W+xx]!==3) continue; if (((xx+yy)&1)===0) fb.d[yy*320+sxx]=lit?(hash(xx,1)<0.35?P.y3:P.n0):P.a2; }
   if (e<1){ var foam=(1-e); for (var q=0;q<Math.round(16*foam)+3;q++){ var wx2=sh.x0+1-q, wy2=MB-1-((q+Math.floor(v.t*9))%2); put(wx2,wy2,lit?P.n4:P.s6,true); } } }
 
+// ---------------------------------------------------------------- nur in Malas Sicht: die Spur, die Ivka 27 Jahre lang gegangen ist
+function ghost(fb,v,S,GS){ var cam=v.cam, t=v.t;
+  for (var i=0;i<42;i++){ var wx=338+i*6.6, side=(i%2)?1:-1, wy=Math.round((wx<MX0?119-(wx-338)*0.07:114.5)+side*1.2), sx=Math.round(wx-cam); if (sx<0||sx>=318) continue;
+    var wave=(Math.sin(i*0.33-t*1.8)+1)/2, c=wave>0.82?P.x6:(wave>0.5?P.x5:P.x4); if (wave<0.25 && (i%3)) continue;
+    fb.px(sx,wy,c); fb.px(sx+1,wy,wave>0.6?P.x5:P.x3); }
+  var bx=IBOL-cam; if (bx>-14 && bx<334){ var a=0.55+Math.sin(t*1.2)*0.25;
+    for (var y=92;y<112;y++) for (var x=bx-9;x<=bx+9;x++){ if (x<0||x>=320) continue; var d=Math.hypot((x-bx)/9,(y-102)/9); if (d<1 && bayer(x,y)<(1-d)*a){ var k=y*320+x; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } }
+    for (var j=0;j<7;j++){ var ph=(t*0.35+hash(j,3))%1, px=Math.round(bx+(hash(j,5)-0.5)*12+Math.sin(t*1.5+j)*1.5), py=Math.round(106-ph*26); if (px<0||px>=320) continue; fb.px(px,py,ph<0.6?P.x6:P.x4); } } }
+
 // ---------------------------------------------------------------- über allem: Regen, Bura
 function front(fb,v,S,GS){ var wea=LIT.wea;
   if (wea==='rain') M.rain(fb,v.t,{n:90,col:P.m3,col2:P.m4,speed:260,slant:0.25});
@@ -520,7 +556,7 @@ function front(fb,v,S,GS){ var wea=LIT.wea;
 // ---------------------------------------------------------------- Laufflächen, Hotspots
 function walk(x,y){ if (x>6 && x<MX0 && y>=108 && y<=134) return true; if (x>=MX0 && x<620 && y>=108 && y<=124) return true; return false; }
 M.defineArt('riva',{
-  width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front,
+  width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{ exit:[0,96,9,44], palace:[0,36,246,64], belltower:[TWX-14,0,29,50], palms:[84,36,44,70], bench:[BENCH[0]-2,80,BENCH[1]-BENCH[0]+5,30],
     lamp:[LAMPS[1]-6,44,13,62], office:[OF0,0,OF1-OF0,100], office_door:[ODOOR[0]-4,ODOOR[1]-8,ODOOR[2]+8,ODOOR[3]+8],
     sea:[338,76,302,68], ferries:[448,72,92,20], mole:[MX0,MB-2,MX1-MX0,MW-MB+2], bollard:[IBOL-7,94,15,15],
