@@ -2323,7 +2323,7 @@ var FALLBACK={};
 function portraitFor(ch,variant){ if (M.hasPortrait && M.hasPortrait(ch)) return M.portrait(ch,variant); var key=ch+':'+variant; if (FALLBACK[key]) return FALLBACK[key]; if (!M.CHARS[ch]) return null;
   var hb=portraitBuf(ch,variant), b=new Buf(PW,PH,T), sc=PW/hb.w;
   for (var y=0;y<PH;y++) for (var x=0;x<PW;x++){ var sx=Math.floor(x/sc), sy=Math.floor(y/sc); if (sy<hb.h&&sx<hb.w){ var c=hb.d[sy*hb.w+sx]; if (c!==T) b.d[y*PW+x]=c; } }
-  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]) M.tintApply(b,M.TINT[gt]); return (FALLBACK[key]=b); }
+  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]){ var lut=M.TINT[gt].a; for (var i=0;i<b.d.length;i++) if (b.d[i]!==T) b.d[i]=lut[b.d[i]]; } return (FALLBACK[key]=b); }
 function drawBust(ch,x0,y0,variant,mirror){ var pb=portraitFor(ch,variant); if (!pb) return false; var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch];
   if (gh){ var cx=x0+(PW>>1), cy=y0+26, aur=ch==='mala'?[P.x1,P.x2]:[P.v1,P.v2], t=Math.floor(E.gt()/150); // kalter Schein hinter Geistern
     for (var y=Math.max(0,y0-4);y<y0+PH;y++) for (var x=Math.max(0,x0-6);x<Math.min(W,x0+PW+6);x++){ var d=Math.hypot((x-cx)/34,(y-cy)/31); if (d>1) continue; if (bayer(x+t,y)<(1-d)*0.5) fb.px(x,y,d<0.55?aur[1]:aur[0]); } }
@@ -2358,7 +2358,10 @@ function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phon
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
 function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
-  if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me; right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
+  if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me;
+    if (!other || other===a){ other=null; var best=1e9, pick=function(npcOnly){ Object.keys(E.ACT).forEach(function(k){ var b=E.ACT[k]; if (b===a||!E.actorShown(b)) return; if (npcOnly && (b.id==='marko'||b.id==='mala')) return; var dd=Math.abs(b.x-a.x); if (dd<best){ best=dd; other=b; } }); };
+      pick(a.id==='marko'||a.id==='mala'); if (!other) pick(false); }
+    right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
   var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
@@ -2638,7 +2641,8 @@ M.portrait=function(id,variant,ghost){ var d=M.PORTRAITS[id]; if (!d) return nul
   if (!b){ b=new Buf(M.PORTRAIT_W,M.PORTRAIT_H,T); var v={mouth:variant==='o'?1:0,eyes:variant==='b'?1:0,variant:variant};
     try{ d.paint(b,v); }catch(e){ console.error('Porträt '+id,e); } d.cache[variant]=b; }
   if (!ghost) return b;
-  var g=new Buf(b.w,b.h,T); g.d.set(b.d); var tn=M.TINT[M.PORTRAIT_GHOSTS[id]||'spiritP']; if (tn) M.tintApply(g,tn); return (d.cache[key]=g); };
+  // ohne Dithering (ruhigere Gesichter): jede Farbe auf ihre nächste Geisterfarbe
+  var g=new Buf(b.w,b.h,T), tn=M.TINT[M.PORTRAIT_GHOSTS[id]||'spiritP']; for (var i=0;i<b.d.length;i++){ var c=b.d[i]; g.d[i]=(c===T||!tn)?c:((c===P.k0||c===P.k1)?P.k0:tn.a[c]); } return (d.cache[key]=g); }; // Kontur bleibt dunkel, damit sie sich vom Schein abhebt
 })(M);
 
 /* ---- 10_items.js ---- */
@@ -2888,170 +2892,654 @@ scn.gulls=function(fb,t,x0,y0,w,h,n,cam){ cam=cam||0; for (var i=0;i<(n||3);i++)
 scn.buraDebris=function(fb,t,y0,y1,cam){ for (var i=0;i<6;i++){ var sp=60+hash(i,31)*60, x=Math.floor(((t*sp+hash(i,32)*400)%420)-50), y=Math.floor(y0+hash(i,33)*(y1-y0)+Math.sin(t*4+i)*3); if (x<0||x>=fb.w) continue; fb.px(x,y,i%2?P.e3:P.s4); fb.px(x+1,y+(Math.floor(t*6+i)%2),i%2?P.e2:P.s3); } };
 })(M);
 
-/* ---- portraits/ivka.js ---- */
-/* ===== portraits/ivka.js — Ivka Perić (Geist, 85): schwarzes Kopftuch, langer schwarzer Mantel ===== */
+/* ---- portraits/bruno.js ---- */
+/* ===== portraits/bruno.js — Bruno Lalić (Geist, 66), Nachtportier im Hotel Palma
+   Portiersmütze mit Messingband und Lackschild, grauer Schnurrbart, flaschengrüne Uniform mit Messingknöpfen,
+   Schlüssel-Abzeichen am Revers; höflich, würdevoll, ein wenig verloren. Natürliche Farben, das Spiel färbt ein (spiritP).
+   Hautrampe bewusst p5/q4/q3/q2/q1/l0: diese Töne bleiben unter spiritP fast rauschfrei (p4/p3 würden stark rastern).
+   Legende: Ziffern Haut · w/W Augenweiß · i Iris · I Wimpern/Pupille · X Z z y Haar, Brauen, Schnurrbart (grau) ·
+   c C d D Mütze · b B f F e Messingband und Abzeichen · u v V Schild · Q G H J M Uniform · S U T Hemd · q r Krawatte.
+   Varianten: EYES (Lid zu) und MOUTH (Lippen geöffnet, 1 Pixel Zähne) werden über das Grundbild gelegt. */
+(function(M){
+'use strict';
+var P=M.P;
+// Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
+var L={"1":P.q1, "2":P.q2, "3":P.q3, "4":P.q4, "5":P.p5, "6":P.l0, "k":P.k1, "w":P.s5, "W":P.s4, "i":P.c2, "I":P.h1, "X":P.m1, "Z":P.m2, "z":P.m3, "y":P.m4, "n":P.q1, "e":P.g0, "c":P.g1, "C":P.g2, "d":P.g3, "D":P.g4, "b":P.y2, "B":P.y3, "f":P.y4, "F":P.y5, "u":P.k0, "v":P.k1, "V":P.m2, "Q":P.g0, "G":P.g1, "H":P.g2, "J":P.g3, "M":P.g4, "S":P.s4, "U":P.s5, "T":P.s6, "q":P.r1, "r":P.r0};
+var BASE=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"....................kkkkkkkkkkkkkkkkkkkkkk..............",
+".................kkkDDDDDDDDDDDDDDDDDDddddk.............",
+"...............kkDDDddddCCCCCCCCCCCCCCccccdk............",
+"..............kDDdddddddCCCCCCCCCCCCCCccccck............",
+"..............kdddddddddCCCCCCCCCCCCCCccccck............",
+".............kDCCCCCCCCCCCCCCCCCCCCCCCccccck............",
+"..............kcCCCCCCCCCCCCCCCCCCCCCCcccck.............",
+"..............kBBBccccccccccccccccccccBBBk..............",
+"..............kbbbBBBBBBBBBBBBBBBBBFfBBbbk..............",
+"..............keeebbbbbbbbbbbbbbbbbfFbbeekkkk...........",
+"..............kZZzzeeeeeeeeuuveeeeevvvvvvvvvvk..........",
+"..............kZZzyzzy4555554uuVWWVvvvvvvVVvvuk.........",
+"..............kZZyzzyy455555544uuuuuuuvvvuuuuk..........",
+"..............kZZzzyzy4555555544443333uuukkkk...........",
+"..............kZZzyzzy4555555555544433333k..............",
+"..............kZZyzzyy4555555555yz55zy444k..............",
+"..............kZZz344345555yyzzzZZ454ZzzZ4k.............",
+"..............kZZz45434555zZZ44444454444Z4k.............",
+"..............kZZy4434455555421III2543II2k..............",
+"..............kZZz4334455554523WiI454WiI3k..............",
+"..............kZZz4224455545554Wii4644ii4k..............",
+"...............kZy421445545555544455644444k.............",
+"...............kZz432445556655433455643444k.............",
+"...............kZz433445566655544555564344k.............",
+"................kZ443445556655555555556653k.............",
+"................kZ34434555555555544555444k..............",
+".................kX3434555555555455432334k..............",
+"..................kX444555555544zyyyyzzZ4k..............",
+"..................k44445555555zzZzzzZZZ3k...............",
+"..................k44444555555Z43ZZZZ344k...............",
+"..................k444445555555444544454k...............",
+"..................k444444455555554444554k...............",
+"..................k444443455555555566544k...............",
+"..................k444444345555555565544k...............",
+"..................k444444434555555555444k...............",
+"..................k44444444334455555444k................",
+"..................k4444444444344454443k.................",
+"..................k44444444444334443kk..................",
+"...............kkkJJJJTTTT444443333k....................",
+"............kkkJJJJJMJJUUUTTTTUUUUSTk...................",
+".........kkkJJJJJJHHMJJSSSUUUUTTTTTUTkk.................",
+".......kkJJJJJJHHHHHMJJJUUSSSUUUSSSSSSSkkk..............",
+"......kJJJJJHHHHHHHHHMJJJGUUUSSSUUqSSSSHHHkkkk..........",
+".....kJJJHHHHHHHHHHHHMJJHHGbUUUUUUqrSSSHHGHHHHkk........",
+"....kJJHHGHHHHHHHHHHHHMJJHfGBUUUUUqrSSHHHGGGGGHHkk......",
+"...kJJJJHGHHHHHHHHHHHHHMJJHBUUUUUUqrSSHHHGGGGGGGHHk.....",
+"..kGJJJJHGHHHHHHHHHHHHHHMJJHGUUUUUqrSSHHHGGGGGGQGGHk....",
+"..kGJJJJHGHHHHHHHHHHHHHHHHMJHGUUUUqrSSHHHGGGGGGQGGQHk...",
+"..kGJJJJHGHHHHHHHHHHHHHHHHHMJHGUUUqrSSHHHGGGGGQGGGQQHk..",
+".kGGHHHHHGHHHHHHHHHHHHHHHHHHMJHGUUqrSHHHHGGGGGQGGGQQQk..",
+".kGGHHHHHGHHHHHHHHHHHHHHHHHHHHMHGUqrSHHHHGGGGGQGGGQQQk..",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHMGHqrSHHHHGGGGGQGGGQQQHk.",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHHHGqrSHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHGrHHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHHHfHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHHbBHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHHfHHHHGGGGGQGGGQQQQk.",
+".kGGHHHHHHHGHHHHHHHHHHHHHHHHHHHHHHHbBHHHHGGGGGQGGGQQQQk."];
+var EYES={x:29,y:22,rows:[
+"455554  4544",
+"45554   4444",
+" 32II3  3II3"]};
+var MOUTH={x:32,y:34,rows:[
+"3nwnn3",
+"  5   ",
+"  444 "]};
+function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
+function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
+M.definePortrait('bruno',{ paint:function(b,v){
+  put(b,L,BASE,0,0);
+  if (v.mouth){ patch(b,L,MOUTH); }
+  if (v.eyes){ patch(b,L,EYES); }
+} });
+})(M);
+
+/* ---- portraits/dinko.js ---- */
+/* ===== portraits/dinko.js — Dinko Matić (46), Fischer an der Matejuška =====
+   Rippenstrick-Mütze mit Krempe, schwere Brauen, tiefliegende, gesenkte Augen, wettergegerbte Haut,
+   kurzer grauer Bart, dunkelgrüner Fischerpullover mit Rollkragen und Zopfmuster.
+   Gemalt als Pixelkarte MAP (56 × 64, ein Zeichen = ein Pixel, '.' = transparent) mit Farblegende LEG;
+   Varianten als kleine Flicken [y, x, zeichen] ('_' = Pixel bleibt): PATCH.mouth (spricht), PATCH.eyes (blinzelt).
+   Licht von links oben (warm), kühles Gegenlicht an der rechten Kante; die dunkle Kontur setzt M.outline. */
 (function(M){
 'use strict';
 var P=M.P, T=M.T;
-var LEG={"0":P.k0, "1":P.p0, "2":P.p1, "3":P.p2, "4":P.p3, "5":P.p4, "6":P.p5, "7":P.q2, "8":P.q1, "9":P.q3, K:P.k1, a:P.k1, b:P.k2, c:P.m0, d:P.m1, e:P.m2, f:P.m3, A:P.k0, B:P.k1, C:P.k2, D:P.h2, E:P.h3, F:P.s0, H:P.s1, g:P.s2, h:P.s3, j:P.s4, s:P.s1, w:P.s5, x:P.s4, i:P.w1, o:P.k0, L:P.l1};
-//        1111111111222222222233333333334444444444555555
-//1234567890123456789012345678901234567890123456789012345
+var LEG={"1":P.q0, "2":P.q1, "3":P.q2, "4":P.q3, "5":P.q4, "6":P.p4, a:P.m1, b:P.m2, c:P.m3, d:P.m4, r:P.p3, R:P.p2, x:P.s4, w:P.s5, i:P.w1, o:P.k0, A:P.n0, B:P.n1, C:P.n2, D:P.n3, I:P.g0, J:P.g1, K:P.g2, L:P.g3};
+//          1111111111222222222233333333334444444444555555
+//01234567890123456789012345678901234567890123456789012345
 var MAP=[
-"........................................................", // 0
-"........................................................", // 1
-"........................................................", // 2
-"........................................................", // 3
-"........................................................", // 4
-"........................dddccccc........................", // 5
-"......................dddddccccccb......................", // 6
-"....................ddddddccccccbbba....................", // 7
-"...................dddddddccccccbbaaa...................", // 8
-"..................dddddddcccccccbbaaaa..................", // 9
-".................ddddddddccccccbbbaaaaa.................", // 10
-".................dddddddccddeeeeeeeedda.................", // 11
-"................dddddddccdeeeffffeeeddaa................", // 12
-"................dddddddcccee44444444dcaa................", // 13
-"...............dddddddcccde45666555544dca...............", // 14
-"...............ddebddcccde4554444455544dc...............", // 15
-"...............ddebdcccce45666655555544ccb..............", // 16
-"...............ddebccccce555544444555444cb..............", // 17
-"...............ddebcccce4566655555555444cb..............", // 18
-"..............ddebccccce4gssssg555gssg44cb..............", // 19
-"..............dcebccccce44433334543334g44b..............", // 20
-"..............ccebccccce44311112541111344b..............", // 21
-"..............ccebccccce441xLox354xLo1444b..............", // 22
-"..............ccebccccce5444ii44544ii3444b..............", // 23
-"..............ccebccccbe55443345564334454b..............", // 24
-"..............ccebcccbbe56544445565444554b..............", // 25
-".............ccccebbbbbe56665555556444554b..............", // 26
-".............cbccebbbbbe45555555556543444b..............", // 27
-".............cbcbebbbbae44544555545665433b..............", // 28
-".............bbbbebbaaae44444555434233433b..............", // 29
-".............bbbbebaaaade444455643443443ba..............", // 30
-".............bbbaaebaaade45445643555443bb...............", // 31
-".............baaaaebaaaade5545534444443bb...............", // 32
-"............abaaaaaebaaade5545432222233bb...............", // 33
-"............abaaaaaebaaaade545434554443bb...............", // 34
-"............abaaaaaaebaaade554434334433bb...............", // 35
-"...........aabaaaaaaebaaaade5445566543bb................", // 36
-"...........abaadbaaaaaaaaaade445555443bb................", // 37
-"...........abaaadbaaaaaaaaa.de3444443bb.................", // 38
-"..........aabaaadbaaaaaaaaaa..cd3333bb..................", // 39
-"..........aabaaaadbaaaaaaaaaabbcccbbba..................", // 40
-"..........aaaaaaadbaaaaaaaa..bcddeddcCDDC...............", // 41
-".........aaaaaaaaadbaaaaaaaCCbcdeeddBCDEDCB.............", // 42
-"..........aaaaaaaaaddbaaaaCCCabcddccBCDDEDCBBB..........", // 43
-"..........aaaaaaaaaaadbaaaCCCabcdBdcbACDDDCCBBBB........", // 44
-"...........aaaaaaaaaaaaCCCCCabcdbBbdcbACCDCCBBBBB.......", // 45
-"........DDDDDDDDDCCCCCCCCCCCabcbBBbcbBAACCBBBBBBBB......", // 46
-"......DDDDDDDDDDDCCCCCCCCCCCabaBBBBbaBBBBBBBBBBABBB.....", // 47
-".....EEDDDDDDDDDDCCCCCCCCCCCCBBBDABBBBBBBBBBBBBABBBB....", // 48
-"....DDDEBCCCCCCCCCCCCCCCCCCCCCBBDABBBBBBBBBBBBBABBBBB...", // 49
-"...DDDDEBCCCCCCCCCCCCCCCCCCCCBBBDABBBBBBBBBBBBBABBBBBB..", // 50
-"..DDDDCCEBCCCCCCCCCCCCCCCCCCBBBBDABBBBBBBBBBBBABBBBBBB..", // 51
-".DDDDCCCEBCCCCCCCCCCCCCCCCCBBBBBDABBBBBBBBBBBBABBBBBBBB.", // 52
-".DDDCCCCEBCCCCCCCCCCCCCCCCBBBBBBDAdeBBBBBBBBBBABBBBBBBB.", // 53
-".DDCCCCCCEBCCCCCCCCCCCCCCBBBBBBBDAcdBBBBBBBBBBABBBBBBBB.", // 54
-"DDCCCCCCCEBCCCCCCCCCCCCCBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 55
-"DCCCCCCCCEBCCCCCCCCCCCCBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 56
-"CCCCCCCCCEBCCCCCCCCCCCBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 57
-"CCCCCCCCCEBCCCCCCCCCCBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 58
-"CCCCCCCCCCEBCCCCCCCCCBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 59
-"CCCCCCCCCCEBCCCCCCCCCBBBBBBBBBBBDAdeBBBBBBBBBBABBBBBBBBB", // 60
-"CCCCCCCCCCEBCCCCCCCBBBBBBBBBBBBBDAcdBBBBBBBBBBABBBBBBBBB", // 61
-"CCCCCCCCCCEBCCCCCCCBBBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 62
-"CCCCCCCCCCEBCCCCCBBBBBBBBBBBBBBBDABBBBBBBBBBBBABBBBBBBBB", // 63
+ "........................................................", // 0
+ "........................................................", // 1
+ "........................................................", // 2
+ "........................................................", // 3
+ "........................................................", // 4
+ ".....................CCCCCCCCCCBB.......................", // 5
+ "...................DCCDDDCCCCCBBBBC.....................", // 6
+ "..................DCDDCCCCCCCBCBBBBB....................", // 7
+ ".................DCDCCDCCCCCBBCBBBAAB...................", // 8
+ "................DCDCDCCCCCCCBCBBBABAAB..................", // 9
+ "...............DCDCDCCCCCCBCBBBBBBAAAAB.................", // 10
+ "..............DDCDCCCCCCAAAAAAAAAAAAAAAB................", // 11
+ "..............DCDCAAAAAADDDDDDCCCCCCCCD.................", // 12
+ "..............AAAADDDDDDCBCABABAAAAAAAB.................", // 13
+ "...............DDDDCCBCBCABABAAAAAAAAAB.................", // 14
+ "..............DCDCCBCBCABABAAAAAAAAAAAa.................", // 15
+ "..............DCCBCBCABABAAAAAaaaaaaaaaa................", // 16
+ "..............CBCBCABABA344555544444433a................", // 17
+ "..............CBBABABAA45665554343455543................", // 18
+ "..............BABABAAAA4bbaaaab353baaab3................", // 19
+ ".............ABABAAAaaa4433333a353a333443...............", // 20
+ ".............ABAAb55caa453111123531112343...............", // 21
+ ".............AAaab543bcb51xwox3453xwo1443...............", // 22
+ "..............aaab532cbc444ii444544ii3443...............", // 23
+ "..............aaab543bcb45333345564334543...............", // 24
+ "..............aabb554cbc56544455563445543...............", // 25
+ "..............abbab54bcc665rr55555634r543...............", // 26
+ "..............abbab54cbc565r5555456r34543...............", // 27
+ "..............abcaa4bcb455555554r66rr3443...............", // 28
+ "...............abaabaab44b4555543R2RR3433...............", // 29
+ "................aaaaaabcbcb454bbccccbbb3................", // 30
+ "...................aaacccccbcbbcdcccbbaa................", // 31
+ "....................aaccccccbbabccbbbbaa................", // 32
+ "....................2abcccccbba11111aaaa................", // 33
+ "....................232bcccccbba2332abaa................", // 34
+ "....................232bccccccbbaaabbaa.................", // 35
+ "...................JLL22abccccccbbbbaaa.................", // 36
+ "...................JKJLLLabbccccbbbaaa..................", // 37
+ "...................JKJKJJLLabbbbbbaaa...................", // 38
+ "...................JKJKJJJJLLLLbbaaa....................", // 39
+ "...................JKJKJJJJIJIJLLLLLLL..................", // 40
+ "...................JKJKJJJJIJIJIIIIIII..................", // 41
+ "...................JKJKJJJJIJIJIIIIIII..................", // 42
+ "...................JKJKJJJJIJIJIIIIIII..................", // 43
+ "..................JJKJKJJJJIJIJIIIIIIIIIIIIKK...........", // 44
+ ".............LKKKJJIIIIIIIIIIIIIIIIIIIIIIIIIIKKJ........", // 45
+ ".........LLKKKKKKJJJJJJJJJJJJJJJJJIIIIIIIIIIIIIKKJ......", // 46
+ "......LKKKKKKKKKKJJJJJJJJJJJJJJJJJIIIIIIIIIIIIIIIKJ.....", // 47
+ "....LKKKKKKKKKKKKJJJJJJJJJJJKIJJJJIIIIIIJIIIIIIIIIKKJ...", // 48
+ "...LKKKKKKKKKKKKKJJJKIJJJJJJKIJJJJIIIIIIJIIIIIIIIIIIKJ..", // 49
+ "..LKKKKKKIKKKKKKKJJJKIJJJJJJIKJJJIIIIIIIIJIIIIIIIIIIIJ..", // 50
+ ".LKKKKKKKIKKKKKKJJJJIKJJJJJIIKJJIIIIIIIIIJIIIIIIIIIIIIJ.", // 51
+ ".LKKKKKKKKIKKKKJJJJIIKJJJJJJKIJIIIIIIIIIJIIIIIIIIIIIIIIJ", // 52
+ "KLKKKKKKKKIKKKJJJJJJKIJJJJJJKIIIIIIIIIIIJIIIIIIIIIIIIIIJ", // 53
+ "LKKKKKKKKKIKKJJJJJJJKIJJJJJJIKIIIIIIIIIIIJIIIIIIIIIIIIIJ", // 54
+ "LKKKKKKKKKKIJJJJJJJJIKJJJJJIIKIIIIIIIIIIIJIIIIIIIIIIIIIJ", // 55
+ "KKKKKKKKKKKIJJJJJJJIIKJJJJJJKIIIIIIIIIIIJIIIIIIIIIIIIIIJ", // 56
+ "KKKKKKKKKKJIJJJJJJJJKIJJJJJIKIIIIIIIIIIIJIIIIIIIIIIIIIIJ", // 57
+ "KKKKKKKKKJJIJJJJJJJJKIJJJJIIIKIIIIIIIIIIIJIIIIIIIIIIIIIJ", // 58
+ "KKKKKKKKJJJIJJJJJJJJIKJJJIIIIKIIIIIIIIIIIJIIIIIIIIIIIIII", // 59
+ "KKKKKKKJJJJJIJJJJJJIIKJJJIIIKIIIIIIIIIIIJIIIIIIIIIIIIIII", // 60
+ "KKKKKKKJJJJJIJJJJJJJKIJIIIIIKIIIIIIIIIIIJIIIIIIIIIIIIIII", // 61
+ "KKKKKKJJJJJJIJJJJJJJKIJIIIIIIKIIIIIIIIIIIJIIIIIIIIIIIIII", // 62
+ "KKKKKJJJJJJJIJJJJJJJIKIIIIIIIKIIIIIIIIIIIJIIIIIIIIIIIIII", // 63
 ];
-var PATCH={"mouth":[],"eyes":[]};
-function put(b,list){ list.forEach(function(r){ var y=r[0], x0=r[1], str=r[2]; for (var i=0;i<str.length;i++){ var ch=str[i]; if (ch==='_') continue; if (ch==='.') { if (x0+i>=0&&x0+i<b.w) b.d[y*b.w+x0+i]=T; } else b.px(x0+i,y,LEG[ch]); } }); }
+var PATCH={
+  mouth:[[33,31,"21112"], [34,31,"a1112"], [35,32,"2332"]],
+  eyes:[[21,25,"333333"], [22,25,"222223"], [23,27,"44"], [21,34,"3333"], [22,34,"2222"], [23,35,"44"]]
+};
+function put(b,list){ list.forEach(function(r){ var y=r[0], x0=r[1], str=r[2]; for (var i=0;i<str.length;i++){ var ch=str[i]; if (ch==='_') continue;
+  if (ch==='.'){ if (x0+i>=0&&x0+i<b.w) b.d[y*b.w+x0+i]=T; } else b.px(x0+i,y,LEG[ch]); } }); }
 function paint(b,v){
   for (var y=0;y<MAP.length;y++){ var r=MAP[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch!=='.') b.px(x,y,LEG[ch]); } }
-  if (v.mouth) put(b,PATCH.mouth||[]);
-  if (v.eyes) put(b,PATCH.eyes||[]);
+  if (v.mouth) put(b,PATCH.mouth);
+  if (v.eyes) put(b,PATCH.eyes);
+  M.outline(b,P.k1);
+}
+M.definePortrait('dinko',{ paint:paint });
+})(M);
+
+/* ---- portraits/frane.js ---- */
+/* ===== portraits/frane.js — Frane (70+), Kartenspieler in der Bar „Bura“ =====
+   Glatze (Hautfarbe mit Glanzlicht) und weißer Haarkranz, buschige weiße Brauen, kurzer weißer Bart wie bei der Spielfigur,
+   graue Strickjacke über hellem Hemd. */
+(function(M){
+'use strict';
+var P=M.P;
+// Legende: ein Zeichen je Palettenfarbe ('.' = durchsichtig)
+var C={'a':P.n0,'b':P.s2,'c':P.s3,'d':P.s4,'e':P.s5,'f':P.s6,'g':P.b1,'h':P.b2,'i':P.d4,'j':P.m0,'k':P.m1,'l':P.m2,'m':P.m3,'n':P.p0,'o':P.p1,'p':P.p2,'q':P.p3,'r':P.p4,'s':P.p5,'t':P.q4,'u':P.l0,'v':P.l1};
+// Pixelkarte 56 × 64, ruhige Fassung
+var MAP=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+".....................rrrrttt............................",
+"..................rsrrrrttttqqq.........................",
+"................srsrrrrtrttttqqqp.......................",
+"...............srsrrssrrttttqqqqpp......................",
+"..............srsrrsuusttttqqqqpppp.....................",
+"..............rrrrrrssttttttqqqqpppp....................",
+".............rrrqrrrrttttttqqqqppppp....................",
+".............rrrrrtrtttttrrqqqppppppp...................",
+".............trtrtrttttttqqqqtppppppp...................",
+"............ebtfbtffttttqrrqpppppppppp..................",
+"...........eeddedeedbttqqqtqqqqtpppppp..................",
+"...........eedeedfectrrqqcdeeddpppdepp..................",
+"...........eddeecedbqtrqcdeffeedcdeedc..................",
+"...........dcdedbeccqqttbcddcbrrtbccrqp.................",
+"...........ddcedbcqrqqpqptttttqrqtttqqp.................",
+"...........ddcdccqrtpqpqqponnoqrqonnop..................",
+"............dcdccrtpoqppqdevadqrtdvapp..................",
+"............dcdb.rqpotqqpqdhgqqrsqhgqp..................",
+"............cccb.rqpotqtqpppqqtrrsppqqp.................",
+".............cbc.tqqpqqrtrssrtrrrrstqqp.................",
+".............cbc.trppqqrrssrrrttrrsstqpp................",
+"..............cc.qtqqqqrrrrrrrtqtrrtsttq................",
+"..............cc..qttqqrrrrrrrqptqpqtiqp................",
+"..................qtq.qrrqrrrrpqqpooppp.................",
+"...................qpffrrqrrspcdeeedcp..................",
+"....................qfeedqrrpbcdeeeedc..................",
+"....................qdeedeeqpqbonnnnob..................",
+"....................qqqdeedddqopqiqppp..................",
+"....................qqqeeeddcddddddddc..................",
+"....................qqqpdddeddddddbcbc..................",
+"....................qqqppddccddddccbb...................",
+"....................qqqppppddcccccccc...................",
+"....................qqqppppppccccccc....................",
+"....................qqqppppppdccccc.....................",
+"....................qqqqpppppppbc.......................",
+"....................qqqqppoppopp........................",
+".................mlmbbqpqpoppobbc.......................",
+"..............mlmmlmcbbpqppopbbcccll....................",
+"............lmmlmmlmeccbqppobbcccclkjll.................",
+"..........mmlmmlmmlmmeccbppbbccccclkjllll...............",
+".........lmmlmmlmmlkmmeeccpccccdcclkjllllll.............",
+".......mmlmmlmmlmmlmkmleececccddclkjlllllllll...........",
+"......lmjlmmlmmlmmlmklmleeeccdddclkjlllllllllll.........",
+".....mlmjlmmlmmlmmlmmkmleeeeddddclkjlllllllllllj........",
+"....mmlmjlmmlmmlmmlmmkmmleeeddddclkjllllllllllljk.......",
+"...lmmlmjlmmlmmlmmlmmlkmleeeddddckjlllllllllllljkk......",
+"..mlmmljmlmmlmmlmmlmmlkmmleeddddckjlllllllllllljkkk.....",
+"..mlmmljmlmmlmmlmmlmmlmkmdbeddddckjllllllllllllkjkkk....",
+"..mlmmljmlmmlmmlmmlmmlmmkmleddddlkjllllllllllllkjkkkk...",
+".mmlmmljmlmmlmmlmmlmmlmlkmleddddlkjllllllllllllkjkkkk...",
+".mmlmmljmlmmlmmlmmlmmllllkmlddddkjlllllllllllllkjkkkj...",
+".mmllmljmlmmlmmlmmlmmllllkmdbdddkjllllllllllllkkjkkjjj..",
+".mmllmljmlmmlmmlmmlmmlllllkmldddkjllllllllllllkkjkjjjj..",
+".mlllmljmlmmlmmlmmlmllllllkmlddlkjlllllllllllkkkjkjjjj..",
+".llllmjmmlmmlmmlmmlllllllllkmldkjlllllllllllkkkkjjjjjj..",
+".llllmjmmlmmlmmlmmlllllllllkmdbkjllllllllllkkkkkjjjjjj..",
+".llllmjmmlmmlmmlmlllllllllllkmlkjlllllllllkkkkkjjjjjjjj.",
+".llllmjmmlmmlmmllllllllllllllllllllllllllkkkkkkjjjjjjjj.",
+".llllmjmmlmmlmmllllllllllllllkkkllllllllkkkkkkkjjjjjjjj."];
+// Flicken [x, y, Zeilen] für „spricht“ (Mund offen) und „blinzelt“ (Augen zu); '.' = bleibt
+var MUND=[31,31,[
+  "..dd..",
+  "onnnno",
+  "pqiqp."]];
+var LID=[25,20,[
+  "qtttq...qttq",
+  "ponno...pnno",
+  ".ppp.....pp."]];
+function put(b,rows,x0,y0){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var c=C[r.charAt(x)]; if (c!==undefined) b.px(x0+x,y0+y,c); } } }
+M.definePortrait('frane',{ paint:function(b,v){
+  put(b,MAP,0,0);
+  if (v.mouth && MUND) put(b,MUND[2],MUND[0],MUND[1]);
+  if (v.eyes && LID) put(b,LID[2],LID[0],LID[1]);
+  M.outline(b,P.k1);
+} });
+})(M);
+
+/* ---- portraits/ivka.js ---- */
+/* ===== portraits/ivka.js — Ivka Perić (Geist, 85), wartet seit 1984 an der Mole =====
+   Schwarzes Kopftuch unter dem Kinn geknotet (kühles Schwarz, Zugfalten zum Knoten), langer schwarzer Mantel
+   (warmes Schwarz, eine Stufe dunkler als das Tuch), tiefe Falten, eingefallene Wangen, wache Augen.
+   Natürliche Farben: das Spiel färbt Ivka als Geist selbst ein (M.TINT.spiritP); Augen, Brauen, Mund und
+   Kontur sind über Helligkeit getrennt und bleiben auch eingefärbt lesbar.
+   Gemalt als Pixelkarte MAP (56 × 64, ein Zeichen = ein Pixel, '.' = transparent) mit Farblegende LEG;
+   Varianten als kleine Flicken [y, x, zeichen] ('_' = Pixel bleibt): PATCH.mouth (spricht), PATCH.eyes (blinzelt).
+   Licht von links oben (warm), kühles Gegenlicht an der rechten Kante; die dunkle Kontur setzt M.outline. */
+(function(M){
+'use strict';
+var P=M.P, T=M.T;
+var LEG={"1":P.p0, "2":P.p1, "3":P.p2, "4":P.p3, "5":P.p4, "6":P.p5, a:P.k1, b:P.k2, c:P.m0, d:P.m1, e:P.m2, f:P.m3, A:P.k0, B:P.k1, C:P.k2, F:P.s0, g:P.s2, h:P.s3, j:P.s4, s:P.s1, x:P.s4, i:P.w1, o:P.k0, L:P.l1};
+//          1111111111222222222233333333334444444444555555
+//01234567890123456789012345678901234567890123456789012345
+var MAP=[
+ "........................................................", // 0
+ "........................................................", // 1
+ "........................................................", // 2
+ "........................................................", // 3
+ "........................................................", // 4
+ "........................eddddddd........................", // 5
+ "......................eeeddddddddd......................", // 6
+ "....................eeeeeddddddddddc....................", // 7
+ "...................eeeeeeddddddddddcd...................", // 8
+ "..................eeeeeeddddddddddcccd..................", // 9
+ ".................eeeeeeeddddddddddccccd.................", // 10
+ ".................eeeeeedddddeeeeeeeeddd.................", // 11
+ "................eeeeeeedddeeeffffeeeddbd................", // 12
+ "................eeeeeeddddee44455444dcbd................", // 13
+ "...............deeeeddddddeh4556655544dcc...............", // 14
+ "...............ddddddddddejh54444455544dd...............", // 15
+ "...............dddddddddeh4566666555444ccd..............", // 16
+ "...............ddddedddde455444455555444cd..............", // 17
+ "...............ddddebdde4566665555555444cd..............", // 18
+ "..............dddddebdde44gssg4555gssg44cd..............", // 19
+ "..............dddddebdde4g444433543444g44d..............", // 20
+ "..............ddddddbdde44311112541111344d..............", // 21
+ "...............dddddebde441xLox354xLo1444d..............", // 22
+ "...............dbdddebde5444ii44554ii3444d..............", // 23
+ "..............cdbdddebde55543345564334544d..............", // 24
+ "..............cdbdddebde55554455563445554d..............", // 25
+ "..............ccbddddbce56666555556344554d..............", // 26
+ "..............ccdbcccebe55665555456634443d..............", // 27
+ ".............cccdbcccebe44555555455663443d..............", // 28
+ ".............cccdbcccebd44445556542333443d..............", // 29
+ ".............ccccbccccbde444456634333443bc..............", // 30
+ ".............ccccdbbbbebe44455635543443bd...............", // 31
+ ".............ccccdbaaaabde4555534444443bd...............", // 32
+ "............cccccdbbaaaebe5555432222233bd...............", // 33
+ "............dccccbbbbbaabde555434456443bd...............", // 34
+ "............daccbbdbbbaaebe455444333443bd...............", // 35
+ "...........bbabbbbbbbaaaa.de4555566543bd................", // 36
+ "...........bbdabbbbbbaaaae.de445555443bd................", // 37
+ "...........bbbabbbbbdbaaaab.de3444443bd.................", // 38
+ "..........bbbbdabbbaabaaaaab..cd3333bd..................", // 39
+ "..........bbbbbabbbaaabaaaaaabbcccbbbc..................", // 40
+ "..........bbbbbbabaaaaabaaaa.bcddeddcb..................", // 41
+ ".........bbbbbbbbaaaaaaabaaBBbcdeeddcBBBBBC.............", // 42
+ "..........bbbbbbaaaaaaaaaaaBBabcddccbCCBBBBBBC..........", // 43
+ "..........aaaaaaaaaaaaaaaaBBBabcdBdcABBCCBBBBBBC........", // 44
+ "..........FddddcddddcddcCCBBabcdbBbdcABBBCBABBBBC.......", // 45
+ "........FFCabbbbabbbbabCCCBAabcbBBbcbBABBCBABBBBBC......", // 46
+ "......CFCCCCCCCCCCCCCCCCCFCBAbaBBBBbaABBCBABBBBABBC.....", // 47
+ ".....FCCCCCCCCCCCCCCCCCCCCFCBABBBBBBBABBCBABBBBABBBC....", // 48
+ "....FCCCCCCCCCCCCCCCCCCCCCBFCBABBBBBABBCBABBBBBABBBBC...", // 49
+ "...FCCCCBCCCCCCCCCCCCCCCCCBBFCBABBBABBCBABBBBBBABBBBBC..", // 50
+ "..FCCCCFBCCCCCCCCCCCCCCCCCBBBFCBABBABCBBABBBBBABBBBBBC..", // 51
+ ".CFCCCCFCBCCCCCCCCBCCCCCCCBBBBFCBAABCBBABBBBBBABBBBBBBC.", // 52
+ ".FCCCCCCFBCCCCCCCCBCCCCCCCBBBBBFCBBBBBABBBBBBBABBBBBBBC.", // 53
+ ".FCCCCCCFBCCCCCCCCCBCCCCCCBBBBBBFBBBBABBBBBBBBABBBBBBBC.", // 54
+ "CFCCCCCCFCBCCCCCCCCBCCCCCBBBBBBBFBBBABBBBBBBBBABBBBBBBBC", // 55
+ "FCCCCCCCCFBCCCCCCCCBCCCCCBBBBBBBBABBBBBBBBBBBBABBBBBBBBC", // 56
+ "FCCCCCCCCFBCCCCCCCCCBCCCBBBBBBBdeABBBBBBBBBBBBABBBBBBBBB", // 57
+ "CCCCCCCCCFBCCCCCCCCCBCCBBBBBBBBcdABBBBBBBBBBBBABBBBBBBBB", // 58
+ "CCCCCCCCCFBCCCCCCCCCBCCBBBBBBBBBBABBBBBBBBBBBBABBBBBBBBB", // 59
+ "CCCCCCCCCCFBCCCCCCCCBCCBBBBBBBBBBABBBBBBBBBBBBABBBBBBBBB", // 60
+ "CCCCCCCCCCFBCCCCCCCCCBBBBBBBBBBBBABBBBBBBBBBBBABBBBBBBBB", // 61
+ "CCCCCCCCCCFBCCCCCCCCCBBBBBBBBBBdeABBBBBBBBBBBBABBBBBBBBB", // 62
+ "CCCCCCCCCCFBCCCCCCCCBBBBBBBBBBBcdABBBBBBBBBBBBABBBBBBBBB", // 63
+];
+var PATCH={
+  mouth:[[33,31,"3211123"], [34,31,"3321123"], [35,31,"4445544"]],
+  eyes:[[21,26,"444443"], [22,26,"222233"], [23,26,"44444"], [21,34,"4444"], [22,34,"2222"], [23,34,"4443"]]
+};
+function put(b,list){ list.forEach(function(r){ var y=r[0], x0=r[1], str=r[2]; for (var i=0;i<str.length;i++){ var ch=str[i]; if (ch==='_') continue;
+  if (ch==='.'){ if (x0+i>=0&&x0+i<b.w) b.d[y*b.w+x0+i]=T; } else b.px(x0+i,y,LEG[ch]); } }); }
+function paint(b,v){
+  for (var y=0;y<MAP.length;y++){ var r=MAP[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch!=='.') b.px(x,y,LEG[ch]); } }
+  if (v.mouth) put(b,PATCH.mouth);
+  if (v.eyes) put(b,PATCH.eyes);
   M.outline(b,P.k1);
 }
 M.definePortrait('ivka',{ paint:paint });
 })(M);
 
-/* ---- portraits/ljerka.js ---- */
-/* ===== portraits/ljerka.js — Ljerka Lalić (56), Besitzerin des Hotel Palma; ljerkaNight: dieselbe Frau nachts */
+/* ---- portraits/jakov.js ---- */
+/* ===== portraits/jakov.js — Jakov (Geist), Totengräber des alten Friedhofs Sustipan, gestorben 1959
+   Dunkle Schiebermütze (Fischgrät), wettergegerbtes Gesicht mit Lachfältchen und grauen Stoppeln, buschige weiße Brauen,
+   graues Hemd mit offenem Kragen, braune Weste mit Uhrkette; freundlich. Natürliche Farben, das Spiel färbt ein (spiritP).
+   Legende: Ziffern Haut (q-Rampe, p5 Licht) · s Stoppeln · w/W Augenweiß · i Iris · I Wimpern · X Z z y Y Haar/Brauen ·
+   a b c d Mütze · u v Schirm · R S T U Hemd · A B C D Weste · f F Knöpfe und Uhrkette.
+   Varianten: EYES (Lid zu) und MOUTH (Lippen geöffnet) werden über das Grundbild gelegt. */
 (function(M){
 'use strict';
 var P=M.P;
 // Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
-var L={"0":P.p0, "1":P.p1, "2":P.p2, "3":P.p3, "4":P.p4, "5":P.p5, "6":P.l0, "k":P.k1, "K":P.k0, "x":P.k2, "w":P.s5, "W":P.s4, "i":P.e2, "I":P.h1, "*":P.l1, "z":P.s1, "Z":P.s0, "l":P.d3, "L":P.d4, "n":P.r1, "a":P.m1, "b":P.m2, "c":P.e3, "d":P.s3, "e":P.s4, "f":P.s5, "g":P.s6, "F":P.m1, "G":P.m3, "+":P.l1, "A":P.e0, "B":P.e1, "C":P.e2, "D":P.e3, "E":P.e4, "R":P.s3, "S":P.s4, "U":P.s5, "V":P.s6, "X":P.w1, "p":P.l0, "q":P.s3};
+var L={"2":P.q1, "3":P.q2, "4":P.q3, "5":P.q4, "6":P.p5, "k":P.k1, "s":P.m3, "w":P.s4, "W":P.s3, "i":P.w1, "I":P.h1, "X":P.m1, "Z":P.m2, "z":P.m3, "y":P.m4, "Y":P.s5, "n":P.q1, "a":P.h1, "b":P.h2, "c":P.h3, "d":P.e1, "u":P.k1, "v":P.h1, "R":P.m1, "S":P.m3, "T":P.m4, "U":P.s5, "A":P.w0, "B":P.w1, "C":P.w2, "D":P.w3, "f":P.y1, "F":P.y2};
+var BASE=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"...........................kkkkkkk......................",
+"......................kkkkkccccccckkkkk.................",
+"...................kkkcccacbbbbbbbcbbbbkk...............",
+".................kkcdcbbcbaabbbbbbaabaabbk..............",
+"...............kkdccbcbbbbbbaabbbbababaaabk.............",
+"..............kccbcbbbbbbbbbbbaaaabaaaaaaabk............",
+"..............kbbbbbbbbbbbbbbabaaaaaaaaaaaaak...........",
+".............kcbcbbbbbbbbbabbaaabaaaaaaaaaaak...........",
+".............kbcbbbbbbbbbbbbababaaaaaaaaaaaak...........",
+".............kcbbbbbbbbbabaaaaaauuuuuuuuuuuuuk..........",
+".............kabbbbbaaaaaakkkkkkcccvvvvvvvvccck.........",
+"..............kaaaaazy4555555543333cccccccckkk..........",
+"..............kZZyzzyy4555444444533333333kk.............",
+"..............kZZzyzzy4555555555554443333k..............",
+"..............kZZzzyzy4555555YYyy5554yYy3k..............",
+"..............kZZy455445555Yyyzzzyz5yzzzy4k.............",
+"..............kZZz565445555z45554445445444k.............",
+"..............kZZz5545455555432II23543II3k..............",
+"..............kZZy544545554542WiIW454WiI3k..............",
+"..............kZZz53354554554433345644334k..............",
+"...............kZz532545555556655555644444k.............",
+"...............kZy543545566555544555643444k.............",
+"...............kZz544545566555555555565434k.............",
+"................kZ5545455565554555555566543k............",
+"................kZ4554455555555553455555443k............",
+".................kX45445555555553454323334k.............",
+"..................kX444555555553455555544k..............",
+"..................k4444555555534444444344k..............",
+"..................k44444555555543nnnn344k...............",
+"..................k444445555555544554454k...............",
+"..................k444444455555554444s54k...............",
+"..................k444443455555555665544k...............",
+"..................k44444434555555s565544k...............",
+"..................k444444434s555555s5444k...............",
+"..................k444444443344s5555444k................",
+"..................k4444444444344444443k.................",
+"..................k44444444444334443kk..................",
+"...............kkkTDUUUU44444443333k....................",
+"............kkkTDDDCTTTTUUUTTTTTTSSkk...................",
+".........kkkDDDDCCCCSTTTTTTUUTTTTRSSSkk.................",
+".......kkTTTDCCCCCCCCSSTTTTTTUTTTSSSSSSkkk..............",
+"......kTTSSDCCCCCCCCCCDSSTTTTTUTTSRSSSSBAAkkkk..........",
+".....kTSSSSDCCCCCCCCCCCDCSSTTTSRTSSRRSSBABBBATkk........",
+"....kTSSSSSDCCCCCCCCCCCCDCTSSTTTRSSSSRRBABBBBATTkk......",
+"...kTSSSSSSDCCCCCCCCCCCCCDCTTSTTRSSSSSSABBBBBASSSSk.....",
+"..kTRSSSSSDCCCCCCCCCCCCCCCDCTTTTRSSSSSSABBBBBASSSSSk....",
+"..kRRSSSSSDCCCCCCCCCCCCCCCCDCTTTRSSSSSFABBBBBASSSSRSk...",
+"..kRRSSSSSDCCCCCCCCCCCCCCCCCDCTTTRSSSSfABBBBBASSSSRRSk..",
+".kTRRSSSSSDCCCCCCCCCCCCCCCCCCDCTTRSSSSABBBBBBASSSSRRRk..",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCDCTRSSSCABBBBBBASSSSRRRk..",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCCCDCSRSSFABBBBBBASSSSRRRSk.",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCCCCDCRSSfABBBBBBASSSSRRRRk.",
+".kRRRSSSSDCCCCCCCCCCCCCCBBBBBBCCCDRSSABBBBBBBASSSSRRRRk.",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCFCCCfDRCABBBBBBBASSSSRRRRk.",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCCfCFCCDCFBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCCfBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCFCBBBBBBBASSSSRRRRk."];
+var EYES={x:29,y:22,rows:[
+"455554  5544",
+"5433454 4334",
+" 555     55 "]};
+var MOUTH={x:33,y:33,rows:[
+" w   ",
+"3223 ",
+" 55  ",
+"44444"]};
+function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
+function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
+M.definePortrait('jakov',{ paint:function(b,v){
+  put(b,L,BASE,0,0);
+  if (v.mouth){ patch(b,L,MOUTH); }
+  if (v.eyes){ patch(b,L,EYES); }
+} });
+})(M);
+
+/* ---- portraits/ljerka.js ---- */
+/* ===== portraits/ljerka.js — Ljerka Lalić (56), Besitzerin des Hotel Palma; ljerkaNight: dieselbe Frau nachts
+   Tag: hellgrauer Haarknoten, Halbrandbrille, Perlenohrstecker, Bluse mit Kragen unter khakifarbener Strickjacke.
+   Nacht: dasselbe Gesicht (gemeinsamer Gesichtsblock), Haar offen bis zur Schulter, dunkelroter Morgenmantel mit
+   Schalkragen über dem Nachthemd. Stolz, müde, verschlossen: strenge Brauen, schwere Lider, fester Mund.
+   Legende: Ziffern Haut (p-Rampe) · w/W Augenweiß · i Iris · I Wimpern · * Glanz · z Z Brauen · l m L n Lippen ·
+   a–g Haar (grau) · F Brille · + Glasglanz · p Perle · A–E Strickjacke bzw. Morgenmantel · X Knopf · R S U V Bluse/Nachthemd.
+   Varianten: *_EYES (Lid zu) und *_MOUTH (Lippen geöffnet, 1 Pixel Zähne) werden über das Grundbild gelegt. */
+(function(M){
+'use strict';
+var P=M.P;
+// Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
+var L={"1":P.p1, "2":P.p2, "3":P.p3, "4":P.p4, "5":P.p5, "6":P.l0, "k":P.k1, "w":P.s5, "W":P.s4, "i":P.e2, "I":P.h1, "*":P.s5, "z":P.s2, "Z":P.s1, "l":P.r3, "m":P.p2, "L":P.d4, "n":P.p1, "a":P.s0, "b":P.s1, "c":P.s2, "d":P.s3, "e":P.s4, "f":P.s5, "F":P.m1, "+":P.s6, "B":P.e1, "C":P.e2, "D":P.e3, "E":P.e4, "R":P.s3, "S":P.s4, "U":P.s5, "V":P.s6, "X":P.w1, "p":P.l0};
+var LN={"1":P.p1, "2":P.p2, "3":P.p3, "4":P.p4, "5":P.p5, "6":P.l0, "k":P.k1, "w":P.s5, "W":P.s4, "i":P.e2, "I":P.h1, "*":P.s5, "z":P.s2, "Z":P.s1, "l":P.r3, "m":P.p2, "L":P.d4, "n":P.p1, "b":P.s1, "c":P.s2, "d":P.s3, "e":P.s4, "f":P.s5, "g":P.s6, "F":P.m1, "+":P.s6, "A":P.r0, "B":P.r1, "C":P.r2, "D":P.r3, "E":P.r4, "S":P.s4, "U":P.s5, "V":P.s6};
 var DAY=[
 "........................................................",
 "........................................................",
 "........................................................",
 "........................................................",
 "..........................kkkkkk........................",
-"..............k........kkkddedcckkk.....................",
-"...........kkkbkkk...kkcdeeeedccccbkk...................",
-"..........kdeeedcakkkddeffeddddddddcck..................",
-".........kdeffffebaddefffedeeeeeeedccbk.................",
-".........keedddeedbefffeeeeeeffffedccbak................",
-"........kdddddcdecbaeeeefffffeeeeddccbaak...............",
-"........kcddeededcbaffffffeeekkddddcccbaak..............",
-"........kbcdedcccbbaeedddddk4455554444cbbk..............",
-".........kbdddcbbcbffffeek45555554444434bk..............",
-".........kabdddccbaeeeeek4455555554444434k..............",
-"..........kaabbbaaeffedd44455555444444433k..............",
-"...........kkkadeefdefe344445554444444433k..............",
-".............kedfdeedee344444444444444433k..............",
-".............kddeedeed3444444444444444433k..............",
-".............kddeeddee3444444555444444433k..............",
-".............kdddeedde344444zZZZZzz54zZZz3k.............",
-".............kddde344334444z444443z4z33333k.............",
-".............kcddd4543344444421III1432II1k..............",
-"..............kdcd433434444442Ww*I343WiI2k..............",
-"..............kdcc4224344444443Wii3533ii3k..............",
-"..............kccc421434444444433344533333k.............",
-"..............kbcc432434445554444444543233k.............",
-"...............kbc443434455544333444453233k.............",
-"...............kbb344334445544444444445423k.............",
-"................kba4433444444444444344433k..............",
-"................kaa3433444444444443421223k..............",
-".................kaap33444444444434443433k..............",
-"..................ka33344444444443lllll33k..............",
-"..................ka3323444444442nnnnn23k...............",
-"...................k332k3444444443LLLL33k...............",
-"...................k3332k344444444333443k...............",
-"...................k33332k34444444554433k...............",
-"...................k333332k3444444454433k...............",
-"...................k33333322k3444444433k................",
-"...................k333333322k33444433k.................",
-"...................k33333333322233332k..................",
-"...................k3333333333222kkkk...................",
-".................kkk33CCCCCCCCBCBCk.....................",
-"..............kkkDDDCCCCCCCCCCCCCBk.....................",
-"...........kkkDDDDDDCCCCCCCCBCBCBBk.....................",
-".........kkDDDDDDDDDCCCCCCCCCCCBCBCkkkkk................",
-".......kkDDDDDDDDDCDCCCCCCCCCCBCBCBBBBBBkkk.............",
-"......kDDDDDDDDDDDDCCCCCCCCCCCCBCBCBBBBBBBBkkk..........",
-".....kDDDDDDDDDDCDCDCCCCCCCCBCBCBBBBBBBBBBBBBAkk........",
-"....kDDDDDDDDDDDDCDCCCCCCCCCCBCBCBBBBBBBBBBBBABAk.......",
-"...kDDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAkk.....",
-"...kDDDCDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBABAAAAk....",
-"..kDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBAAAAAAk....",
-"..kDDCDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBABAAAAAk...",
-"..kDCDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBAAAAAAAAk..",
-"..kDDDDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBAAAAAAAAk..",
-"..kDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAAAAAAAk..",
-"..kDDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAAAAAAk..",
-"..kDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBBAAAAAAAAAk..",
-"..kCDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBAAAAAAAAk..",
-".kCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBBABAAAAAAAAAk..",
-".kDCDCDCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBBBAAAAAAAAAk.",
-".kCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBABAAAAAAAAAAk.",
-".kDCDCCCCCCCCCCCCCCCCCCBCBCBBBBBBBBBBBBBBBBABAAAAAAAAAk."];
+".......................kkkfffeddkkk.....................",
+".....................kkfffffeedddcckk...................",
+"...................kkefffffeedddddddck..................",
+"............kkkk..keefffffeeeddddddddck.................",
+"..........kkdeedkkeefffffeeeddeeeeedddck................",
+".........kdefeddcceffffeeeeeeeeeeeeddccbk...............",
+"........kdefedcccddffeeeeeeeeeeeeedddccbbk..............",
+"........kefedccdeeceeeeeeeffe44554443cbbbk..............",
+"........keedcdeedddcefffff4455555444433bbk..............",
+"........kdedeeddccbcfffff445555554444333bk..............",
+"........kddcdddddbbceeee44455554544443333k..............",
+"........kcdcccccbbbbedd344445454444443333k..............",
+"........kccdccbbbabfeee344444444444443333k..............",
+".........kbccbbaaadeee3344444555544443333k..............",
+"..........kkbbaaeedddd334444zzZZZZz54ZZz3k..............",
+"............kkeddeeddd34444zz4443zZ4zz333k..............",
+".............kedcd34433222FFFFFFFFFFFFFFFk..............",
+".............kddcc454334444F321III2432II1k..............",
+"..............kdcc433434444442Ww*I343WiI2k..............",
+"..............kdcc4224344444463Wii3533ii3k..............",
+"..............kccc4214344444+443334453W33k..............",
+"..............kccc432434445554444444532233k.............",
+"...............kcb443434455544333444453223k.............",
+"...............kcb344334445544444444445542k.............",
+"................kcb4433444444444444344432k..............",
+"................kcb3433444444444443421222k..............",
+".................kcbp33444444444434443432k..............",
+"..................kc33344444444443mmlmm2k...............",
+"..................kc3333444444442nnnnn23k...............",
+"...................k33333444444443LLL423k...............",
+"...................k33423344444444333423k...............",
+"...................k33342234444444455423k...............",
+"...................k3334232344444445433k................",
+"...................k3333423223444444323k................",
+"...................k333342333233444323k.................",
+"...................k3333342333223332kk..................",
+"...................k3333342333332kkk....................",
+".................kk33VVVVV33333333kk....................",
+"..............kkkEEEEUUUUUVV33333UUUk...................",
+"...........kkkEEEEEEEUUUUUUUV3333SSSkk..................",
+".........kkEEEEEEDDDDUUUUUUUUV33USSSSBkk................",
+".......kkEEEEEDDDDDDDSUUUUUUUUV2SSSSUBCDkkk.............",
+"......kEEEEDDDDDDDDDDDSUUUUUUSS2RRSSSBDCDDDkkk..........",
+".....kEECDDDDDDDDDDDDDDSSUUUSSSSSSRRSBCCCCCDDDkk........",
+"....kEEECDDDDDDDDDDDDDDDCSUSSSSUSSSSRUDCCCCCCCDDk.......",
+"...kEEEECDDDDDDDDDDDDDDDDDSSSSUUSSSSSBCCCCCCCCCBDkk.....",
+"...kEEEECDDDDDDCDDDDDDDDDDECBUUUSSSSSBDCCCCCCCBCCDDk....",
+"..kCEEEEDCDDDDDCDDDDDDDDDDDDDCUUURSSSBCCCCBCCCBCCCCk....",
+"..kCDDDDDCDDDDDCDDDDDDDDDDDDECDUUSSSBDDCCCBCCCBCCCCBk...",
+"..kCDDDDDCDDDDDDCDDDDDDDDDDDDDCUUSSSBCDCCCBCCCBCCCCBBk..",
+"..kCDDDDDCDDDDDDCDDDDDDDDDDDDEDCUSSSBDDCCBCCCCBCCCCBBk..",
+"..kCDDDDDCDDDDDDCDDDDDDDDDDDDDDDCSSSBCDCCBCCCCBCCCCBBk..",
+"..kCDDDDDCDDDDDDCDDDDDDDDDDDDDDEDCRSBDDCCBCCCCBCCCCBBk..",
+"..kCDDDDDDCDDDDDDDDDDDDDDDDDDDDDDCSSBCDCCBCCCCBCCCCBBk..",
+"..kCDDDDDDCDDDDDCDDDDDDDDDDCDDDDEDCSBDDCCCCCCCBCCCCBBk..",
+".kCCDDDDDDCDDDDDCDDDDDDDDDDCDDDDDDSCBCDCCCCCCCBCCCCBBk..",
+".kCCDDDDDDCDDDDDDCDDDDDDDDDDCDDDDDESBDDCCCCCCCBCCCCBBBk.",
+".kCCDDDDDDCDDDDDDCDDDDDDDDDDCDDDDDDDDDDCCCCCCCBCCCCBBBk.",
+".kCCDDDDDDCDDDDDDCDDDDDDDDDDCDDDDDDXBDDCCCCCCBCCCCCBBBk."];
+var NIGHT=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"..........................kkkkkkk.......................",
+"......................kkkkfffeeeekkkk...................",
+"....................kkffffgggeeeeeeddkk.................",
+"...................kfffgggfccceeeeeddddk................",
+"..................kfffgbccceeeeeeeeddddck...............",
+".................kffggcffffeeccceedddddcck..............",
+"................kffgcfffffbcceeeeedddddccck.............",
+"...............kfffbfffffceeeeeeeedddddccck.............",
+"...............kffcffffcceeeefffffdddddccck.............",
+"..............kfffcfffbeeeeffee5eefffddcccek............",
+"..............kffcfffeceeee55555544443fcccek............",
+".............keffbffeceeee45555454444333fcek............",
+".............kefecfeece3e4445454444443333cek............",
+".............kefecfecee344444444444443333cek............",
+".............kefcefebe3344444555544443333cck............",
+".............kefcefece334444zzZZZZz54ZZz3cck............",
+".............kefbfeece34444zz4443zZ4zz333kk.............",
+".............kefcfecee3222FFFFFFFFFFFFFFFk..............",
+".............kefcfecee34444F321III2432II1k..............",
+".............kefcfecee34444442Ww*I343WiI2k..............",
+".............kefcfebdb344444463Wii3533ii3k..............",
+".............kdfcfecdb344444+443334453W33k..............",
+"............kddfbfdcdb34445554444444532233k.............",
+"............kdfdcfcddb34455544333444453223k.............",
+"............kdfdcdcddb34445544444444445542k.............",
+"............kdfcddcddb3444444444444344432cck............",
+"............kcccddbdcb3444444444443421222cck............",
+"............kccbedcccb3444444444434443432cck............",
+"............kccbeccccb344444444443mmlmm2bcck............",
+"............kccbecbccbc3444444442nnnnn23cbcck...........",
+"............kccbecbccbc33444444443LLL423cbcck...........",
+"............kccbecbccbc33344444444333423cbcck...........",
+"...........kcccbecbccbc33234444444455423cbcck...........",
+"...........kcccbecbccbc3332344444445433ccbck............",
+"...........kcccbecbccbc3333223444444323ccbck............",
+"...........kcccbebcccbcc33333233444323ccbcck............",
+"..........kccccbebcccbcc333333223332ccccbcck............",
+"..........kcccbccbcccbc3333333332cccccccbcck............",
+"..........kcccbccbcccbc33333333322ccccccbck.............",
+"..........kcccbccbcccbAD3333333333cccccccck.............",
+".........kcccccccbcccCCED333333333ccccccck..............",
+".........kcccccccbEDCCCCDAVS22222SVSCBckk...............",
+".......kkCCCcccBBBBEDCCCCDAVU2222VUVVCBCkkk.............",
+"......kCCCCBCBBBBBBBEDCCCCDBUUUUUUUSUSCBBCCkkk..........",
+".....kCCCCBBBBBBBBBBBEDCCCDABUUUUUUSSVCBBAACCCkk........",
+"....kDCDCBBBBBBBBBBBBBEDCCCDABUUUUUSSSCBBAAAAACCk.......",
+"...kDCDCBBBBBBBBBBBBBBBEDCCCDABUUUUSSSCBBAAAAAAACkk.....",
+"...kCDCDBBBBBBBABBBBBBBEDCCCDABBUUUSSBCBBAAAAAAAACCk....",
+"..kCDCDCBBBBBBBABBBBBBBBEDCCCDABUUUSSBCBBAAAAAAAAAAk....",
+"..kDCDCDBBBBBBBABBBBBBBBBEDCCCDABUUSSBCBBAAAAAAAAAACk...",
+"..kCCCBBBBBBBBBBBBBBBBBBBBEDCCCDBBUSSCBBBAAAAAAAAAAACk..",
+"..kCCCBBBBBBBBBBABBBBBBBBBEDCCCDABUSSCBBBAAAAAAAAAAAAk..",
+"..kCCCBBBBBBBBBBABBBBBBBBBBEDCCCDABBBCBBBAAAAAAAAAAAAk..",
+"..kCCCBBBBBBBBBBABBBBBBBBBBBEDCCCDBBBCBBBAAAAAAAAAAAAk..",
+"..kBBBBBBBBBBBBBBBBBBBBBBBBBEDCCCDABBCBBBAAAAAAAAAAAAk..",
+"..kBBBBBBBBBBBBBBABBBBBBBBBBBEDCCCDBBCBBBAAAAAAAAAAAAk..",
+".kCBBBBBBBBBBBBBBABBBBBBBBBBBBEDCCCDCBBBBAAAAAAAAAAAAk..",
+".kCBBBBBBBBBBBBBBABBBBBBBBBBBBEDCCCDBCBBBAAAAAAAAAAAACk.",
+".kBBBBBBBBBBBBBBBBBBBBBBBBBBBBBEDCCCDCBBBAAAAAAAAAAAAAk.",
+".kBBBBBBBBBBBBBBBBABBBBBBBBBBBBEDCCCACBBBAAAAAAAAAAAAAk."];
+var DAY_EYES={x:29,y:22,rows:[
+"344443  3443",
+"34444   3333",
+" 21112  2112"]};
+var DAY_MOUTH={x:33,y:33,rows:[
+"  w   ",
+" 2nn23",
+"3LLL 3",
+" 333 3",
+"   54 "]};
+var NIGHT_EYES={x:29,y:22,rows:[
+"344443  3443",
+"34444   3333",
+" 21112  2112"]};
+var NIGHT_MOUTH={x:33,y:33,rows:[
+"  w   ",
+" 2nn23",
+"3LLL 3",
+" 333 3",
+"   54 "]};
 function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
 function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
 M.definePortrait('ljerka',{ paint:function(b,v){
   put(b,L,DAY,0,0);
+  if (v.mouth){ patch(b,L,DAY_MOUTH); }
+  if (v.eyes){ patch(b,L,DAY_EYES); }
 } });
 M.definePortrait('ljerkaNight',{ paint:function(b,v){
-  put(b,L,DAY,0,0);
+  put(b,LN,NIGHT,0,0);
+  if (v.mouth){ patch(b,LN,NIGHT_MOUTH); }
+  if (v.eyes){ patch(b,LN,NIGHT_EYES); }
 } });
 })(M);
 
@@ -3068,76 +3556,78 @@ var C={'a':P.s2,'b':P.s3,'c':P.s4,'d':P.s5,'e':P.s6,'f':P.w2,'g':P.w3,'h':P.r0,'
 var MAP=[
 "........................................................",
 "........................................................",
-".....................w......w...........................",
-"...................wxxw....wxw...w......................",
-"................wwxgfxwwwxxwwwxwwwww....................",
-"..............wwxffwwvwxgfxwwwxxwwwwww..................",
-".............wwxxwwwwxwwwvwxgfxwwwxwwww.................",
-"............wwxwwwwxxwwwwwwwwvwxffwwxwww................",
-"............wwwwwxwwwvwwxxwwwwwvwwxxwwww................",
-"...........wwxwwwvwwwwwwvwwxxxwwwwwwwxxww...............",
-"...........wwwwvwwwwwwwwwwwwwvvwxxwwvwwww...............",
-"...........wwwwwwwwwwwwwsssssswwwvwwwwww................",
-"...........wwwvwwwwwwwwsswwwtwwww.wwwww.................",
-"...........wwwwwwwwwwwwsttwtoowwts.www..................",
-"...........wwwwwvwwwwwstttooottwtttsww..................",
-"...........wwwwwwwwwwwrtttooootttttsrw..................",
-"...........vvvwwwwvwwwstttooootttttssr..................",
-"...........vvvwwwwwwwwstttwwwtttttwwsr..................",
-"...........vvvvwwwwwwwstwvvvvvwttvvvvwr.................",
-"...........vvvvwuuwwwwwtttttttstssssssr.................",
-"...........vvvvvuu.ss.vssrvvvqrtsqvvvr..................",
-"...........vvvvvwustsrvttcdyucstocyucr..................",
-"...........vvvvvwwtrqssttscffcstorffrr..................",
-"...........vvvvvwwtrqssttttttttttossssr.................",
-"...........vvvvvwwtsqrstoooootttttosssr.................",
-"............vvvvwwssrrsttttttttstttootsr................",
-"............vvvvvustrsstttttttsssttttsrr................",
-"............vvvvvuusssstttttttsrsrqrsrq.................",
-".............vvvvvuur.ssttttttsssrqqrr..................",
-".............vvvvvuussrstttttttsststsr..................",
-"..............vvvvvwwsrsssssssqrmmmmrr..................",
-"...............vvvvvwsqrsssssssqppppqr..................",
-"................vvvvwsqrssssssssnonnrr..................",
-".................vvwsssqrsssssssrrrsr...................",
-"....................ssssqrrssstttttsr...................",
-"....................sssssqrrssttottsr...................",
-"....................sssssqqqrrsttttsr...................",
-"....................sssrssqqqqrrsssr....................",
-"....................sssrrssrqqqq........................",
-"....................sssrrrsrrrqq........................",
-".................jj.sssrrrssrrrr.jjj....................",
-".................jjjsssrrrrssrrrjjjjj...................",
-"..............klkjjjsrsrrrrrsrrrdqjjjjk.................",
-"............kkklkkjjscrrrrrrssrrqbjjjjkjj...............",
-".........ijjjjjjjillldcrrrrrrsqqbccjjjiiiii.............",
-".......jiijjjjjjjilllldccrrqqqbbcccjjjiiiiiih...........",
-"......kkhjkkkklkkjjlllkddcccbbccccccjjiijkjjiij.........",
-".....lkkhjkkkklkkjjklllkedddccddcccccjiijkjjiijh........",
-"....lkkjhkkkklkkjjkkkllkeeddddddcccccjiikjjiijjhi.......",
-"...klkkhjkkkklkkjjkkklilkeddddddccccchijkjjiijjhii......",
-"..kklkkhjkkkklkkjjkkkklikdddddddccccajhjkjjiijjihii.....",
-"..kklkkhjkkkklkkjjkkkklilddddddcccccajjhkjjiijjihiii....",
-"..klkkjhkkkklkkjjkkkklkkikdddddcccccajjkjjiijjjihiihh...",
-".jjjjjihjjjjjhjiijjjjjjjilbddddcccccaiiiiihhhiihhhhhh...",
-".jjiijihjjjjjhjiijjjjjjjeiiddddcccccaiiiiihhhiihhhhhh...",
-".kjkjkhjkkkklkijjkkkklkkjdbddddcccccajjkjjiihjjiihihhi..",
-".jkjjjhkkkklkkhjkkkklkkjidbddddcccccabkjjiijhjjiihhhii..",
-".jkjjjhkkkklkkjhkkkklkkiidbdddcccccccakjjiijhjjiihhhii..",
-".jkjjjhkkkklkkjhkkkklkjiiddbddccccccbakjjiihjjjiihhhii..",
-".jkjjjhkkkklkkjhkkkkljjiiddbddccccccbakjjiihjjjiihhhii..",
-".kjjijikkklkkjjkikkljjiijddbddccccccbajjiijhjjkiihhiii..",
-".kjjihkkkklkkjjkikjkjjiijjdbddccccccbajjiijhjjkiihhiiii.",
-".iiihhjjjjjjjiijjhiiiihhiidbdcccccccbaiihhihiiihhhhhhhh.",
-".iiihhjjjjjjjiijihiiiihhiidbdccccccbbaiihhihiiihhhhhhhh."];
+"........................................................",
+"........................................................",
+"..................x........x............................",
+"..................xxu.xx.fxu.....xwu....................",
+"...................xxxxxxxxxvvvxwvu.....................",
+".............ffffffxwwxxxxxxxxxwwuv.....................",
+"............fxxxxxfuxxwxxxwwwwwwwwwvvv..................",
+"...........xvuuuvvguxxwwwwwwvvwwwvvvvvv.................",
+"..........x.vfxxgfwxuwwwvwwwwuvvvvvuuuu.................",
+"............fxxgxwwxxuwwwuvvwwtuuuvu....................",
+"............xxgxwxwxwwuuwttuvvttntuur...................",
+"...........xwgxvxwvxwwusntooovvtttnuu...................",
+"...........wxfwxwwwxwwunttoooovtttnsu...................",
+"...........wxxuxfwwxvwunttoooottttnssr..................",
+"...........vwxxwxwvwuwunttoootttttnssr..................",
+"...........wwwwfwwxwuvunttwwwttottwwsr..................",
+"...........wvuwxwvxuvvunwvvvvvwttvvvvws.................",
+"...........wuwvwvuvu.vutttoootntnnnnssr.................",
+"...........vuvxwvusnsrsttqvvvqstsqvvvr..................",
+"...........vuvwvusnsrsstncdyucstocyucr..................",
+"...........vuwwuunsrqsstnncgfnstosgfsr..................",
+"............vvuuunsrqsssnntttnnttonnssr.................",
+"............vuuuunsmrsssoooootttttonssr.................",
+"............vuuuusnsmssstoootttntttootns................",
+"...........vuuuuursnssssttttttnnsntttnsr................",
+"...........uuuuuu.snssssttttttnsnsqrsmr.................",
+"...........u..uuu..rsssstnnnttnnsrqrrr..................",
+"...........u..uuu....srsnnnnttnnntntnr..................",
+"...............uu....srsnnttnnqrmmmmrr..................",
+"...............u.u...sqrsnnnnnsqppppqr..................",
+".................u...sqrssttttssnonnsr..................",
+".....................ssqrssnnnnssrrsr...................",
+".....................ssqqrssnnttottnr...................",
+".....................ssrqqrssntootnsr...................",
+".....................ssrrqqqrsntttnsr...................",
+".....................ssrrrqqqqrssssr....................",
+".....................ssrrrrrqqqq........................",
+".....................ssrrrrrrrqq........................",
+".................jjjjssrrsrrrrrr.iiii...................",
+".................kkkkssrrrsrrrrrkjjjji..................",
+"..............jkklkkkrsrrrrsrrrrkkjjjji.................",
+"............kjjkkilkkcrrrrrsrrrrqkkjjjikk...............",
+".........kkkkjjkkkilkdcrrrrrsrqqbkkkjjikjjj.............",
+".......kkkkkkjjkkkillkdccrrqqqbbcjjkjjijjjjjj...........",
+"......ijhjjjjiijjjjilkkddcccbbccddikjjiiiiiiihh.........",
+".....iijhjjjjiijjjjjilkkjdddccdddccikjiiiiiiihhh........",
+"....kjjkikkkkjjkkkkkkilkjeeeeedddcccjiijjjjjjiihi.......",
+"...kkjjkikkkkjjkkkkkkjilkjedcddddcccjhijjjjjjiihii......",
+"..kkkjjkikkkkjjkkkkkkjjikjeddcdddcbcjaijjjjjjiihiii.....",
+"..kkkjjikkkkkjjkkkkkkjjkijeddcdddcbcjaijjjjjjiijhiii....",
+"..kkkjjikkkkkjjkkkkkkjjkkhbddccddcbccaijjjjjjiijhiiii...",
+".kkkjjjikkkkkjjkkkkkkjjkkebddccddcbccaijjjjjjiijhiiii...",
+".jiiiiihjjjjjihjjjjjjiijjebdddcccccbcahiiiihihhihhhhh...",
+".iiiiiihjjjjjihjjjjjjiijjebdddcccccbcahiiiihihhihhhhhh..",
+".jjjjjjikkkkkjjikkkkkjjkkebdddcccccbciajjjjhjiijhiiiih..",
+".jjjjjjikkkkkjjikkkkkjjkjebdddcccccbciajjjjhjiijhiiiih..",
+".jjjjjjikkkkkjjkikkkkjijjjdbdddccccbciajjjjhjiijhiiiih..",
+".jjjjjhkkkkkkjjkikkkkiijjjdbdddcccccciajjjhjjiijihiiih..",
+".jjjjjhkkkkkkjjkkikkjiijjjdbdddccccccbaijjhjjiijihiiih..",
+".jjjjjhkkkkkkjjkkikjjiijjjdbdddccccccbaijjhjjiijihiiihh.",
+".iiiiihjjjjjjiijjihiihhiiidbdddccccccbahiihiihhihhhhhhh.",
+".iiiiihjjjjjjiijiihiihhiiidbdddccccccbahiihiihhhhhhhhhh."];
 // Flicken [x, y, Zeilen] für „spricht“ (Mund offen) und „blinzelt“ (Augen zu); '.' = bleibt
-var MUND=[32,32,[
-  "peppq",
-  "nonn."]];
+var MUND=[31,31,[
+  "..bb.",
+  ".qppq",
+  ".nonn",
+  "srrrs"]];
 var LID=[25,20,[
-  "sssss...ssss",
-  "stttt...ssss",
-  "rvvvq...qvv."]];
+  "ntttn...nnns",
+  "qtttq...qssq",
+  ".vvv.....vv."]];
 function put(b,rows,x0,y0){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var c=C[r.charAt(x)]; if (c!==undefined) b.px(x0+x,y0+y,c); } } }
 M.definePortrait('luka',{ paint:function(b,v){
   put(b,MAP,0,0);
@@ -3147,94 +3637,797 @@ M.definePortrait('luka',{ paint:function(b,v){
 } });
 })(M);
 
-/* ---- portraits/marko.js ---- */
-/* Porträt: Marko Vuković (33) — kurzes dunkles Haar, Bartschatten, müde dunkle Augen, dunkler Wollmantel über dunklem Pullover */
+/* ---- portraits/mala.js ---- */
+/* Porträt: Mala (Geist, wirkt 17–18, frühe Neunziger) — dunkler lockerer Zopf über der Schulter, Strähnen im Gesicht,
+   übergroße Jeansjacke mit hochgeschlagenem Kragen, handgestrickter grauer Schal, große ernste Augen.
+   In natürlichen Farben gemalt; das Spiel färbt das Bild kalt blau-türkis ein (M.TINT.ghostP). Deshalb sind die
+   Tonstufen nach Helligkeit gewählt: Augenweiß hell, Iris mittel, Lippenspalt und Schatten weich, nie schwarz. */
 (function(M){
 'use strict';
-var P=M.P, T=M.T, bayer=M.bayer, hash=M.hash;
+var P=M.P;
 var HEAD=[
 "........................................................", // 0
 "........................................................", // 1
 "........................................................", // 2
 "........................................................", // 3
-"......................123332211.........................", // 4
-"...................112332332221110......................", // 5
-".................1123322333222211100....................", // 6
-"................112332122333222211100...................", // 7
-"...............11233212233322221111105..................", // 8
-"..............1123321122333222221111055.................", // 9
-"..............1122211222233222222111105.................", // 10
-".............011221112222233222222211105................", // 11
-".............011111112222222332222221110................", // 12
-".............01111222112211111CDE1EDDCC.................", // 13
-".............011112221122221DEEEEEEDDDC.................", // 14
-".............01111222112222DEEEFFEEEDDC.................", // 15
-".............0111122211222DEEEFFEEEEDDC.................", // 16
-".............011112221122DEEEEEEFFEEDDC.................", // 17
-".............01111221122E22111EEEEED221.................", // 18
-"..............0111221112EDD11111FE1111CC................", // 19
-"..............01112DED11EDCCDDCCFECDDCC.................", // 20
-"..............0111DErD11EEBAAAAAFEAAABC.................", // 21
-"..............0111EDBr11EEDwLkiwEEikwCC.................", // 22
-"...............011ECAC12EEDDiiiDEEFiDCC.................", // 23
-"...............011ECBD1DEFEDCCCDEEEFCCDC................", // 24
-"................01DECDSDEFFEEEDDEEEEFCCD................", // 25
-"................011DECSDEEFEEEEDDEEEEFEDC...............", // 26
-".................01CDCSSDEEEEDDDCDCDEEDCB...............", // 27
-".................011CBSSTDDDDDDCCDCBABCB................", // 28
-"..................011BsSTTDDDDDCTTsTSSC.................", // 29
-"...................1CBsSSTTDDDTSTTSTTTSC................", // 30
-"....................CCBsSTTTTTSCCrrrrrCC................", // 31
-"....................CCCBsSTTTTSBAAAAABC.................", // 32
-"....................DCCCBsSTTTTDDRRRRDC.................", // 33
-"....................DDCCCBsSSTTSsCCCsC..................", // 34
-"....................DDCCCCBsSTTTTEETSC..................", // 35
-"....................DDDCCCCBsSSSTTTSSC..................", // 36
-"....................DDDCCCCCBzssSSSsz...................", // 37
-"....................DDDCCCCCCBBBBB......................", // 38
-"....................DDDCCCCCCCCBBC......................", // 39
-"....................DDCCCCCCCCCCDC......................", // 40
-"....................DDCCCCCCCCCCCC......................", // 41
-".....................DCCCCCCCCCCCC......................", // 42
-"......................CCCCCCCCCCCC......................", // 43
-".......................CCCCCCCCCCC......................", // 44
-"........................................................"  // 45
+"........................................................", // 4
+"........................22222111........................", // 5
+".....................22324301111111.....................", // 6
+"...................22432431101211111....................", // 7
+"..................2243223111012311111...................", // 8
+".................222322311121011221111..................", // 9
+"................22232131112110121121111.................", // 10
+"................22321311121111012111111.................", // 11
+"...............223113111211111C112211111................", // 12
+"...............211113112111112DDC1121111................", // 13
+"...............11113111211112DEEDDC11111................", // 14
+"...............1111211211113DEEEEEDDC11.................", // 15
+"...............11112112111C2EEEEEEDDC21.................", // 16
+"...............0012111211C2EEEEEEEEDDC1.................", // 17
+"...............0012112111D1EEEEEEEEDDC1.................", // 18
+"...............001111211DE3222EEEDD322C.................", // 19
+"...............0011111112EEDDD23ED2DCCC.................", // 20
+"...............0011111112EDDCCCDEDDCCDC.................", // 21
+"...............000111112DDC32223ED3223C.................", // 22
+"...............00011DEC3DD3WLkiWEDikW3C.................", // 23
+"...............0001DErC2DDDwiiiwEDiiwDC.................", // 24
+"...............0001ECBD2EEDDCCDDEEDCCDD.................", // 25
+"................001ECrD3EEEEEEEDEEEECCD.................", // 26
+"................000DED02DEEEEEDDDDEEEDCC................", // 27
+"................0000DC.C2EEDDDDDCDCBCCC.................", // 28
+".................00000BC1EEDDDDDCDCCCDD.................", // 29
+".................00000BC2DDDDDDCDCCrCDD.................", // 30
+"..................0000BBCDDDDDDCBBBmBCC.................", // 31
+".....................CBBCCDDDDDDDDCrCDC.................", // 32
+".....................CCBBCCDDDDDDDCCDDC.................", // 33
+".....................CCBBBCCDDEEEEDDDC..................", // 34
+".....................CCCBBBCCDDEEDDDC...................", // 35
+".....................CCCCCBBBCCCCCCB....................", // 36
+".....................CCCCCCCBBBBBB......................", // 37
+".....................CCCCCCCCBB.........................", // 38
+".....................CCCCCCCCBB.........................", // 39
+".....................CCCCCCCCBB........................."  // 40
 ];
-var LEG={ '0':P.h0,'1':P.h1,'2':P.h2,'3':P.h3,'4':P.w2,'5':P.c1,
-  A:P.q0,B:P.q1,C:P.q2,D:P.q3,E:P.q4,F:P.p4,G:P.p5,r:P.p2,R:P.p3,
-  s:P.s1,S:P.s2,T:P.s3,z:P.s0, w:P.s4,W:P.s5,i:P.w1,k:P.k0,L:P.s6,K:P.k1 };
-function stamp(b,rows,leg,ox,oy){ ox=ox||0; oy=oy||0; for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(ox+x,oy+y,c); } } }
+// Legende: Haar 0–4 (h0–h3, w2) · Haut A–E (p1–p5) · Lippen r (d4), Lippenspalt m (d3) · Auge W w Weiß (s6 s5), i Iris (c3), k Pupille (n1), L Glanzlicht
+// Helligkeit im Geister-Tint: Weiß ≈ hellste Stufe, Haut p4/p5 hell, Iris und Lippenspalt mittel, Wimpern/Brauen dunkel, nichts schwarz
+var LEG={ '0':P.h0,'1':P.h1,'2':P.h2,'3':P.h3,'4':P.w2,
+  A:P.p1,B:P.p2,C:P.p3,D:P.p4,E:P.p5, r:P.d4,m:P.d3,
+  w:P.s5,W:P.s6,i:P.c3,k:P.n1,L:P.l1 };
+var HAIR=[P.h0,P.h1,P.h2,P.h3,P.w2];
+function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
+function put(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]); }
+function lerpPath(path,y){ for (var i=0;i<path.length-1;i++){ var a=path[i], c=path[i+1]; if (y>=a[1] && y<=c[1]) return a[0]+(c[0]-a[0])*(y-a[1])/Math.max(0.001,c[1]-a[1]); } return path[path.length-1][0]; }
+// Übergroße Jeansjacke: breite Schultern, Licht auf der nahen Schulter, Knopfleiste, Passe-Naht, zwei Brusttaschen
+function jacket(b){
+  b.poly([[0,64],[0,57],[1,53],[4,49.5],[9,47],[14,46.5],[20,47],[30,49],[38,48],[45,47],[50,49],[53,52],[55,57],[56,64]],P.c2);
+  b.poly([[0,60],[0,57],[1,53],[4,49.5],[9,47],[13,46.5],[10,49],[6,52],[3,56]],P.c3);
+  b.line(4,50,8,48,P.b2);
+  b.poly([[40,50],[46,48],[51,50],[54,54],[56,60],[56,64],[42,64]],P.c1);
+  b.line(46,48,50,49,P.c3); b.line(51,50,53,53,P.c3);
+  // Knopfleiste
+  b.line(31,49,31,63,P.c1); b.line(32,50,32,63,P.c3);
+  // Passe-Naht (doppelt, goldgelb) über der Brust
+  b.line(2,52,12,50,P.y2); b.line(41,52,52,53,P.y1);
+  // Brusttaschen mit Klappe und Messingknopf (nah im Licht, fern im Schatten)
+  b.poly([[3,55],[11.5,55],[11.5,58],[7.5,59.5],[3,58]],P.c3); b.line(3,55,11,55,P.b2); b.line(3,58,7,59,P.c1); b.line(8,59,11,58,P.c1);
+  b.px(7,57,P.y3); b.px(7,58,P.y1);
+  b.poly([[43,56],[50,56.5],[50,59],[46.5,60.5],[43,59]],P.c2); b.line(43,56,50,56,P.c3); b.line(43,59,46,60,P.c0); b.line(47,60,50,59,P.c0);
+  b.px(46,58,P.y2);
+}
+// hochgeschlagener Kragen: ferne Hälfte hinter dem Schal, nahe Hälfte davor (unter dem Zopf)
+function collarBack(b){
+  b.poly([[38,46],[38.5,38],[41,35],[44,35.5],[45.5,41],[46.5,47],[42,48]],P.c2); b.line(41,35,44,35,P.c3); b.line(39,38,40,45,P.c1); b.line(45,37,46,46,P.c1);
+}
+function collarFront(b){
+  b.poly([[9,47],[11,41],[13,35.5],[16,35],[19,35.5],[20,40],[19,46],[14,48]],P.c2);
+  b.line(13,36,18,35,P.c3); b.line(12,38,10,45,P.c3); b.line(19,37,19,45,P.c1);
+}
+// Schal: zwei Wülste um den Hals (oben Licht, unten Schatten), Rippenmaschen als feine Längsstreifen; ein Ende hängt vorn herab
+var KN=[P.m1,P.m2,P.m3,P.m4];
+function scarf(b){
+  b.poly([[18,36],[21,34.5],[24,36],[28,37.5],[33,37.5],[37,35.5],[40,37],[41,42],[38,45.5],[31,47],[24,46.5],[19,44.5],[17,40]],function(x,y){
+    var yb=40.5+(x-18)*0.05, top=y<yb, y0=top?35:yb, h=top?(yb-35):(47-yb), f=(y-y0)/h;
+    var v=f<0.22?2.4:(f<0.7?2:(f<0.88?1:0)); if (x>34) v-=1; if (x<24 && f<0.7) v+=0.6;
+    var vi=Math.max(0,Math.min(3,Math.round(v))); if (vi===2 && ((x>>1)&1) && f>0.25 && f<0.7) vi=1; return KN[vi]; });
+  b.poly([[33,45.5],[39,44.5],[40.5,50],[40,57],[40.5,64],[33.5,64],[34,56],[33,51]],function(x,y){ var v=2; if (x>=39) v=1; if (v===2 && ((x>>1)&1) && x>34) v=1; if (y===51||y===58) v=Math.max(0,v-1); return KN[v]; });
+}
+// Zopf: Rautenglieder entlang eines Pfades, Licht von links oben
+function braid(b){
+  var path=[[18.5,30],[16.5,35],[14.5,40],[13.5,45],[13.5,52],[14,58],[14.5,64]];
+  for (var y=30;y<64;y++){ var cx=lerpPath(path,y), hw=y<45?2.6:2.2;
+    for (var x=Math.floor(cx-hw);x<=Math.ceil(cx+hw);x++){ var dx=x+0.5-cx; if (Math.abs(dx)>hw) continue;
+      var t=(y+(dx<0?0:1.6)-Math.abs(dx)*0.9)/3.2, f=t-Math.floor(t);
+      var v=f<0.28?3:(f<0.62?2:(f<0.84?1:0)); if (dx>hw-1.1) v=Math.max(0,v-1); if (dx<-hw+1.1 && v<3) v++;
+      if (v===3 && f<0.12 && dx<0) v=4; b.px(x,y,HAIR[v]); } }
+}
+// Varianten: Lippen leicht geöffnet mit einem Pixel Zähne (spricht), Lider zu mit weicher Wimpernlinie (Lidschlag)
+var MOUTH_O=[[32,31,'B'],[33,31,'B'],[34,31,'w'],[35,31,'A'],[36,31,'B'],[32,32,'C'],[33,32,'A'],[34,32,'A'],[35,32,'A'],[36,32,'C'],[33,33,'D'],[34,33,'C'],[35,33,'r'],[36,33,'C'],[34,34,'C'],[35,34,'C']];
+var EYES_B=[[26,22,'D'],[27,22,'D'],[28,22,'D'],[29,22,'D'],[30,22,'D'],[31,22,'D'],[26,23,'3'],[27,23,'2'],[28,23,'2'],[29,23,'2'],[30,23,'2'],[31,23,'3'],[26,24,'D'],[27,24,'C'],[28,24,'D'],[29,24,'D'],[30,24,'D'],[31,24,'D'],[34,22,'D'],[35,22,'D'],[36,22,'D'],[37,22,'C'],[34,23,'3'],[35,23,'2'],[36,23,'2'],[37,23,'3'],[34,24,'D'],[35,24,'D'],[36,24,'D'],[37,24,'C']];
+function paint(b,v){
+  jacket(b); collarBack(b);
+  stamp(b,HEAD,LEG);
+  if (v.mouth) put(b,MOUTH_O);
+  if (v.eyes) put(b,EYES_B);
+  scarf(b); collarFront(b); braid(b);
+  M.outline(b,P.k1);
+}
+M.definePortrait('mala',{ paint:paint });
+})(M);
+
+/* ---- portraits/marko.js ---- */
+/* Porträt: Marko Vuković (33) — kurzes dunkles Haar, Bartschatten, müde dunkle Augen, dunkler Wollmantel über dunklem Pullover */
+(function(M){
+'use strict';
+var P=M.P;
+var HEAD=[
+"........................................................", // 0
+"........................................................", // 1
+"........................................................", // 2
+"........................................................", // 3
+".....................2222222111.........................", // 4
+"..................2223221333332110......................", // 5
+"................222332210233333222111...................", // 6
+"...............2233221110223333322211...................", // 7
+"..............223322121102223323322211..................", // 8
+"..............1222111211102222222332211.................", // 9
+".............212211112111011122223222110................", // 10
+".............121211112111101111111222211................", // 11
+".............1121111112111101111011111110...............", // 12
+".............01111111112111101CDD1DDDCC.................", // 13
+".............011111211112111REEEEERRDDC.................", // 14
+".............01111112111121REFFEEERRDDC.................", // 15
+".............0011111211111REFFEEEERRDDC.................", // 16
+".............0011111121111REEFEEEERRDDC.................", // 17
+".............001111111211REEFEEFEEERDDC.................", // 18
+".............00011111111RR21112EEE21121.................", // 19
+"..............0011111111ERD211111F1112CC................", // 20
+"..............01110DER11ERDCDDCCFECDDCC.................", // 21
+"..............0110DErR11EEBAAAAAFRAAABC.................", // 22
+"..............0110ERBr11EEDTLkiwEEikwCC.................", // 23
+"...............010ECAC10EEDDiiiDEEFiDCC.................", // 24
+"...............010ECBR1REFEDCCDREEEFDCDC................", // 25
+"................10RECRRDEFFEEERDREEEFCCD................", // 26
+"................100RECRDEEFEEEEDDEEEEFEDC...............", // 27
+".................10CRCRRREEEERDDCDCDRERCB...............", // 28
+".................100CBDREERRDDDCCDCBABCB................", // 29
+"..................100BCDRERDDDDCCCCCCCC.................", // 30
+"...................0CBCDDRRDDDDDDRDRDDDC................", // 31
+"....................CCBCDDRDDDCCDCrrCCCC................", // 32
+"....................DCBCDDDDDDCCBAAABCCC................", // 33
+"....................DCCBCDDDDDDDDRERDDC.................", // 34
+"....................DDCCBCDDDDDCCCCCCC..................", // 35
+"....................DDCCCBCDDRRREERDDC..................", // 36
+"....................DDDCCCBCDDREERRDDC..................", // 37
+"....................DDDCCCCBCDDRRDDDC...................", // 38
+"....................DDDCCCCCBCCDDCCB....................", // 39
+"....................DDDCCCCCBBBBBB......................", // 40
+"....................DDDCCCCCCBBBCC......................", // 41
+"....................DDCCCCCCCCCCRC......................", // 42
+"....................DDCCCCCCCCCCCC......................", // 43
+".....................DCCCCCCCCCCCC......................", // 44
+"......................CCCCCCCCCCCC......................", // 45
+".......................CCCCCCCCCCC......................"  // 46
+];
+// Bartschatten-Maske: [y, x, Dichten] mit 3 = voll, 2 = Schachbrett (weicher Rand)
+var BEARD=[[26,22,'2'],[27,22,'32'],[28,22,'32'],[29,22,'332'],[30,22,'3332'],[30,32,'2222222'],[31,22,'23332'],[31,31,'22333332'],[32,23,'23332'],[32,31,'2'],[33,23,'223332'],[34,24,'223333'],[35,25,'22233322222'],[36,26,'2223333332'],[37,27,'223333332'],[38,28,'23333332'],[39,29,'2333332']];
+// Legende: Haar 0–3 (h0–h3) · Haut A–F (q0 q1 q2 q3 q4 p4), r R warme Halbtöne (p2 p3) · Auge w T Weiß (s4 s3), i Iris (w1), k Pupille, L Glanzlicht
+var LEG={ '0':P.h0,'1':P.h1,'2':P.h2,'3':P.h3,
+  A:P.q0,B:P.q1,C:P.q2,D:P.q3,E:P.q4,F:P.p4,r:P.p2,R:P.p3,
+  w:P.s4,T:P.s3,i:P.w1,k:P.k0,L:P.s6 };
+function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
+// Bartschatten: Haut eine Stufe dunkler (gleiche Rampe), Kern voll, Rand im Schachbrett
+var STUB={}; STUB[P.p4]=P.p3; STUB[P.q4]=P.q3; STUB[P.p3]=P.q3; STUB[P.q3]=P.q2; STUB[P.p2]=P.q2; STUB[P.q2]=P.q1; STUB[P.q1]=P.q0;
+function beard(b){ BEARD.forEach(function(sg){ var y=sg[0];
+  for (var i=0;i<sg[2].length;i++){ var x=sg[1]+i, d=+sg[2][i]; if (d<3 && ((x+y)&1)) continue; var s=STUB[b.get(x,y)]; if (s!==undefined) b.px(x,y,s); } }); }
+
 function back(b){
-  // Mantel: Grundform, beleuchtete nahe Seite, Schulterlicht, kühler Rand rechts
-  b.poly([[0,64],[0,51],[2,48],[5,45],[9,43],[14,42],[20,41],[34,42],[39,43],[44,44.5],[49,47],[52,50],[54,54],[55.5,58],[56,64]],P.c1);
-  b.poly([[0,64],[0,52],[2,48],[5,45],[9,43],[14,42],[18,42],[19,48],[21,56],[22,64]],P.c2);
-  b.poly([[1,50],[3,47],[6,45],[10,43.5],[15,42.5],[17,42.5],[15,44],[10,45],[6,47],[3,50]],P.c3);
-  b.poly([[42,44.5],[47,46],[51,49],[53,52],[54.5,56],[53.5,56],[52,52.5],[50,50],[46,47.5],[42,46]],P.c2);
+  // Mantel (dunkles Marineblau): Grundform, Licht auf der nahen Schulter, kühler Rand an der fernen Schulter
+  b.poly([[0,64],[0,54],[1,51.5],[3,49],[6,46.5],[10,45],[15,44],[21,43],[34,44],[40,45],[45,46.5],[49,48.5],[52,51.5],[54,55],[55.5,59],[56,64]],P.c1);
+  b.poly([[0,59],[0,54],[1,51.5],[3,49],[6,46.5],[10,45],[15,44],[17,44],[13,47],[8,49.5],[4,52.5],[1.5,57]],P.c2);
+  b.line(3,49,6,47,P.c3); b.line(6,47,12,45,P.c3);
+  b.line(41,45,45,46,P.c2); b.line(46,47,49,48,P.c2); b.line(50,49,52,51,P.c2); b.line(53,52,54,55,P.c2);
+  b.poly([[44,52],[50,54],[55,60],[56,64],[45,64]],P.c0);
+  b.line(9,55,10,60,P.c0); b.line(10,61,11,63,P.c0); b.line(3,61,4,63,P.c0);
   // ferner Kragenteil hinter dem Hals
-  b.poly([[33,41],[35,39],[38,38.5],[40,40],[41,44],[36,43]],P.c1); b.line(35,39,38,38,P.c2);
+  b.poly([[33,43],[35,41],[38,40.5],[40,42],[41,46],[36,45]],P.c1); b.line(35,41,38,40,P.c2);
 }
 function front(b){
   // Pullover im Mantelausschnitt, Rippenkragen
-  b.poly([[22,42],[35,42],[38,50],[39.5,64],[32,64],[28,52]],P.m1);
-  b.poly([[35,44],[37,46],[39.5,64],[36.5,64],[35.5,52]],P.m0);
-  b.poly([[21,41],[24,44],[28,45.5],[32,45.5],[35,44],[36,42],[36.5,44],[34.5,47],[29,47.5],[24,46.5],[21,43.5]],P.m2);
-  b.line(22,43,27,46,P.m3);
-  // naher Kragen und Revers
-  b.poly([[13,42.5],[15,39],[18,37.5],[21.5,37.5],[22,42],[14,43.5]],P.c2); b.line(15,39,21,38,P.c3);
-  b.poly([[14,42],[21,41],[23.5,44],[26,49],[29,55],[31,60],[32.5,64],[24,64],[22,57],[19,50],[15,46]],P.c2);
-  b.line(21,41,24,45,P.c3); b.line(24,45,28,53,P.c3); b.line(28,53,32,63,P.c3);
-  b.line(15,46,19,50,P.c0); b.line(19,51,22,58,P.c0); b.line(22,59,23,63,P.c0);
+  b.poly([[22,44],[36,44],[38,52],[39.5,64],[32,64],[28,54]],P.m1);
+  b.poly([[35,46],[37,48],[39.5,64],[36.5,64],[35.5,54]],P.m0);
+  b.poly([[21,43],[24,46],[28,47.5],[32,47.5],[35,46],[36,44],[36.5,46],[34.5,49],[29,49.5],[24,48.5],[21,45.5]],P.m2);
+  b.line(23,46,26,47,P.m3);
+  // naher Kragen (steht hinter dem Hals auf) und Revers
+  b.poly([[13,45],[15,41.5],[19,40],[22,40.5],[22,44],[15,46]],P.c2); b.line(16,41,20,40,P.c3); b.line(21,41,21,44,P.c0);
+  b.poly([[14,48],[17,46],[21,44],[24,46.5],[26.5,52],[29,58],[31,62],[32,64],[29,64],[24,59],[19,53]],P.c2);
+  b.line(22,45,25,50,P.c3);
+  b.line(14,49,19,54,P.c0); b.line(19,54,24,60,P.c0); b.line(24,60,27,64,P.c0);
   // ferner Revers
-  b.poly([[35,42],[38,42.5],[41,45],[42,50],[43,57],[44.5,64],[39.5,64],[38.5,57],[37.5,50],[36.5,45]],P.c1);
-  b.line(36,44,38,52,P.c2); b.line(38,53,39,63,P.c2); b.line(41,45,43,56,P.c0);
+  b.poly([[35,45],[38,44.5],[41,47],[43,54],[44,64],[39,64],[38,58],[36.5,50]],P.c1);
+  b.line(36,46,37,50,P.c2); b.line(41,48,43,58,P.c0); b.line(43,59,44,63,P.c0);
 }
+// Varianten: Mund leicht geöffnet (spricht), Augen zu (Lidschlag)
+var MOUTH_O=[[32,33,'B'],[33,33,'B'],[34,33,'w'],[35,33,'A'],[36,33,'A'],[37,33,'B'],
+  [33,34,'A'],[34,34,'A'],[35,34,'A'],[36,34,'B'],[37,34,'C'],
+  [33,35,'D'],[34,35,'R'],[35,35,'E'],[36,35,'R'],[37,35,'C'],[33,36,'C'],[34,36,'C'],[35,36,'C'],[36,36,'C']];
+var EYES_B=[[26,22,'C'],[27,22,'D'],[28,22,'R'],[29,22,'R'],[30,22,'D'],[31,22,'D'],
+  [26,23,'B'],[27,23,'B'],[28,23,'A'],[29,23,'A'],[30,23,'A'],[31,23,'B'],
+  [27,24,'D'],[28,24,'D'],[29,24,'D'],[30,24,'D'],
+  [34,22,'D'],[35,22,'D'],[36,22,'C'],[37,22,'C'],
+  [34,23,'B'],[35,23,'A'],[36,23,'A'],[37,23,'B'],[35,24,'D']];
+function put(b,list){ for (var i=0;i<list.length;i++){ var c=LEG[list[i][2]]; b.px(list[i][0],list[i][1],c); } }
 function paint(b,v){
   back(b);
   stamp(b,HEAD,LEG);
+  if (v.mouth) put(b,MOUTH_O);
+  if (v.eyes) put(b,EYES_B);
+  beard(b);
   front(b);
   M.outline(b,P.k1);
 }
 M.definePortrait('marko',{ paint:paint });
+})(M);
+
+/* ---- portraits/mira.js ---- */
+/* ===== portraits/mira.js — Mira (61), Kiosk am Fährterminal
+   Weinrote Dauerwelle (Locken als helle Bögen mit dunklem Kern), Silberbrille an goldener Kette, Ohrstecker,
+   lila Strickjacke mit V-Ausschnitt über cremefarbenem Top; neugierig gehobene Brauen, gutmütiges Lächeln, etwas Rouge.
+   Legende: Ziffern Haut (p-Rampe) · d Rouge · q r s t u v Locken · w Augenweiß · i Iris · I Wimpern · * Glanz · z Z Brauen ·
+   l L n Lippen · F G Brille · + Glasglanz · y Y Kette/Ohrring · A B C D E Strickjacke · S U Top.
+   Varianten: EYES (Lid zu) und MOUTH (Lippen geöffnet, 1 Pixel Zähne) werden über das Grundbild gelegt. */
+(function(M){
+'use strict';
+var P=M.P;
+// Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
+var L={"1":P.p1, "2":P.p2, "3":P.p3, "4":P.p4, "5":P.p5, "k":P.k1, "d":P.d5, "q":P.r0, "r":P.r1, "s":P.r2, "t":P.r3, "u":P.r4, "v":P.d5, "w":P.s5, "i":P.w3, "I":P.h1, "*":P.l1, "z":P.w2, "Z":P.w1, "l":P.r3, "L":P.r4, "n":P.r2, "F":P.m2, "G":P.m3, "+":P.l1, "y":P.y2, "Y":P.y4, "A":P.v0, "B":P.v1, "C":P.v2, "D":P.v3, "E":P.v4, "S":P.s4, "U":P.s5};
+var BASE=[
+"........................................................",
+"........................................................",
+"........................................................",
+"...........................kkkk.........................",
+"......................kkkkkuvuskk.......................",
+"..................kkkktttttustttskk.....................",
+".................kssttttttttstttssskk...................",
+"................kuvuttuvuttttuvusssssk..................",
+"................kustttustuvutusttttsssk.................",
+"...............kttsttttstustttsttrssssrkk...............",
+"..............ktttttuvutttsttttssrtttsrrrk..............",
+"..............ktuvutustuvutttttttttrsssssrk.............",
+".............kttustttstustuuttuttsttsrssrrk.............",
+".............ktttsttttttstuttstssstssstssrk.............",
+"............ktuvuuvutuvut4tss5rsq4srrrsrrrk.............",
+"............ktustusttust44555555444443rrqrk.............",
+"............kttsttsttts344555554444443333rk.............",
+"............ksttttttttt344455544444443333rk.............",
+"............ksstrssstr3344444444444443333rk.............",
+"............ksssrssssr3444444zZZz44544zZ3rk.............",
+"............ktttstttss34444zZ4444Zz44z44Z3k.............",
+"............ktrsstrsss3FFFFFGGGFFFFFGGFFFFk.............",
+"............krrsssrsss34444F421III2F32II1Fk.............",
+".............krrssssss34444F42ww*I343wiI2Fk.............",
+"..............krssssqr34444F443wii3533ii3Fk.............",
+".............krrsq454334444F+443334453+33Fk.............",
+"............krrrrs4334344444FFFFFFF5FFFFF3k.............",
+"............krssss42243445dd54444444453223k.............",
+"............krsqrr4324344ddd44444444445542k.............",
+"............krrqrr344334444444444443444323k.............",
+".............krrsss43r34444444444344212223k.............",
+".............krrsqryr334444444443444434323k.............",
+"..............krrqr33Y34444444442lllll223k..............",
+"...............krrr33333444444444nnnnn423k..............",
+"................kkk33y334444444443LLL3423k..............",
+"..................k333333444444444333423k...............",
+"..................k333Y32344444444455423k...............",
+"..................k33333323444444455433k................",
+"..................k333y333234444444323k.................",
+"..................k333333332234444323k..................",
+"..................k3333Y333332334433k...................",
+"..................k333333333332222kk....................",
+"................kkk33333y3333332222k....................",
+".............kkkDDDDD33333333332222k....................",
+"..........kkkDDDDDDDDEB44Y443333222kk...................",
+"........kkDDDDDDCCCCCCEB5555533332222kkk................",
+".......kDDDDDCCCCCCCCCCEB334333332222CBCkkk.............",
+"......kDDDCCCCCCCCCCCCCEB443333332222CBCCCCkkk..........",
+".....kDDBCCCCCCCCCCCCCCCEB44333332222CBCBBBCCCkk........",
+"....kDDDBCCCCCCCCCCCCCCCCEB4333332222CBCBBBBBBCCk.......",
+"...kDDDDCBCCCCCCCCCCCCCCCCEB333332222BCBBBBBBBBACkk.....",
+"...kDDDDCBCCCCCCCCCCCCCCCCEUBUUUUU2UUBCBBBBBBBABBCCk....",
+"..kBDDDDCBCCCCCCCCCCCCCCCCCECBUUUUUSSBCBBBBBBBABBBBk....",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCEBCUUUUSSBCBBBBBBBABBBBAk...",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCCEBUUUUSSBCBBBBBBBABBBBAAk..",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCCECBUUUSCBCBBBBBBBABBBBAAk..",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCCCECBUUSCBCBBBBBBBABBBBAAk..",
+"..kBCCCCCCBCCCCCCCCCCCCCCCCCCCCECBUSCBCBBBBBBBABBBBAAk..",
+"..kBCCCCCCBCCCCCCCCCCCCCCCCCCCCCEBUSBCCBBBBBBBABBBBAAk..",
+"..kBCCCCCCBCCCCCCCCCCCCCCCCCCCCCECBSBCCBBBBBBBABBBBAAk..",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCECBBCCBBBBBBBABBBBAAk..",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCCECBCCBBBBBBBABBBBAAAk.",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBBABBBBAAAk.",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBABBBBBAAAk."];
+var EYES={x:29,y:22,rows:[
+"344443  3443",
+"34444   3443",
+" 21112  2112"]};
+var MOUTH={x:34,y:33,rows:[
+" w ",
+"nnn",
+"LLL",
+"333"]};
+function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
+function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
+M.definePortrait('mira',{ paint:function(b,v){
+  put(b,L,BASE,0,0);
+  if (v.mouth){ patch(b,L,MOUTH); }
+  if (v.eyes){ patch(b,L,EYES); }
+} });
+})(M);
+
+/* ---- portraits/mladen.js ---- */
+/* ===== portraits/mladen.js — Mladen Šimić (63), Beamter im Hafenamt seit 1975 =====
+   Halbglatze in Hautfarbe mit Glanzlicht, grauer Haarkranz mit Koteletten klar abgesetzt, dünne Metallbrille,
+   grauer Schnurrbart, müde Lider; weißes Hemd mit Krawatte, dunkelblaue Weste.
+   Gemalt als Pixelkarte MAP (56 × 64, ein Zeichen = ein Pixel, '.' = transparent) mit Farblegende LEG;
+   Varianten als kleine Flicken [y, x, zeichen] ('_' = Pixel bleibt): PATCH.mouth (spricht), PATCH.eyes (blinzelt).
+   Licht von links oben (warm), kühles Gegenlicht an der rechten Kante; die dunkle Kontur setzt M.outline. */
+(function(M){
+'use strict';
+var P=M.P, T=M.T;
+var LEG={"1":P.p0, "2":P.p1, "3":P.p2, "4":P.p3, "5":P.p4, "6":P.p5, "7":P.l0, a:P.m1, b:P.m2, c:P.m3, d:P.m4, G:P.m2, H:P.m3, N:P.l1, x:P.s4, i:P.c1, o:P.k0, L:P.l1, M:P.m3, Y:P.m4, O:P.s5, P:P.s6, Q:P.l1, U:P.n0, V:P.n1, W:P.n2, X:P.n3, q:P.r1, r:P.r2, s:P.r3, t:P.r1};
+//          1111111111222222222233333333334444444444555555
+//01234567890123456789012345678901234567890123456789012345
+var MAP=[
+ "........................................................", // 0
+ "........................................................", // 1
+ "........................................................", // 2
+ "........................................................", // 3
+ "........................................................", // 4
+ "........................655555..........................", // 5
+ ".....................666655555554.......................", // 6
+ "....................66666555555544......................", // 7
+ "...................6667765555554443.....................", // 8
+ "..................666677655555544433....................", // 9
+ ".................66666665555555444333...................", // 10
+ "................6666655555555544433333..................", // 11
+ "................d6d6555555666555555444..................", // 12
+ "...............d6d555555556644444445544.................", // 13
+ "...............dddc5d554556666665555544.................", // 14
+ "...............dddcdc5545554444444555444................", // 15
+ "..............cddcddbcd55666665555554444b...............", // 16
+ "..............cddcdcbcc55555544445555444cb..............", // 17
+ "..............cdccdcccc4baaabb5545baab44ca..............", // 18
+ "..............cccccccbc4a4444444544444a44b..............", // 19
+ "..............cccbccbbc44dHHHHHG4GHHHHG44...............", // 20
+ "..............ccc466HHH4HN43334GGGN334G44...............", // 21
+ "..............cbc4535bc4GH21112G4G2112G44...............", // 22
+ "..............bbc4525bb54HxLox4G5GxLo3G44...............", // 23
+ "..............abc4535ab55H4ii44G5G4ii4G44...............", // 24
+ "..............aab4544ab554HHHHH454HHHG444...............", // 25
+ "..............aaab554aa665544455563445544...............", // 26
+ "..............aaab454a5566555555556344544...............", // 27
+ "..............aaaab54a5555555555456663444...............", // 28
+ "...............aaab44a4555555555423443443...............", // 29
+ "...............aaaabaa445555563bcccccb43................", // 30
+ "................aaaaaa44555563bcddccccb3................", // 31
+ ".................aaaaa34455553abccbbcba3................", // 32
+ "....................3aa4455543a2222223a3................", // 33
+ "....................33445555443455654443................", // 34
+ "....................3334455544443334443.................", // 35
+ "....................3334345554555665443.................", // 36
+ "....................3333434455555655443.................", // 37
+ ".....................33343334455555443..................", // 38
+ ".....................3333433333444433...................", // 39
+ ".....................3OPPO3333333333....................", // 40
+ ".....................OPQQPO33333333PO...................", // 41
+ ".....................YOPQQPPO33rst3QPO..................", // 42
+ ".....................3YOPQQPPOYrsstQPO..................", // 43
+ ".......................YOOPPQQPqrstPPOY.................", // 44
+ "....................YYYYYYOOPPPOrsYOPOYMMMY.............", // 45
+ "..............OOOOOVVVVVYYYYOOOYqrYMOYMMMUUUUOO.........", // 46
+ "..........POOOOOOVVVVXWVVYYYYYYYqrsMMMMMUUUUUUMOO.......", // 47
+ "......PPOOOOOOOOUVVVVVXWVVYYYYYYqrsMMMMMUUUUUUUMMMO.....", // 48
+ ".....OOOOOOOOOOUWVVVVVVXWWVYYYYYqrsMMMMUUUUUUUUUMMMO....", // 49
+ "...POOOOOOOOOOUWWVVVVVVVVXWVYYYYqrrsMMUUUUUUUUUUMMMMO...", // 50
+ "..POOOOOOOOOOWUWWVVVVVVVVVXWVYYYqrrsMMUUUUUUUUUUMMMMY...", // 51
+ ".OPOOMOOOOOOOUWWWVVVVVVVVVVXWYYMqrrsMUUUUUUUUUUUUMMMMY..", // 52
+ ".POOOMOOOOOOWUWWWVVVVVVVVVVVXWMMqrrsMUUUUUUUUUUUUMMMMMY.", // 53
+ "OPOOOMOOOOMOWUWWWVVVVVVVVVVVVXWMqqrsUUUUUUUUUUUUUMMMMMY.", // 54
+ "OOOOOOMOOOMOUWWWWVVVVVVVVVVVVVXWMqrMUUUUUUUUUUUUUMMMMMMY", // 55
+ "OOOOOOMOOOMYUWWWWVVVVVVVVVVVVVVXWMMUUUUUUUUUUUUUUMMMMMMY", // 56
+ "OOOOOOMOOYYMUWWWVVVVVVVVVVVVVVVVXWUUUUUUUUUUUUUUUMMMMMMY", // 57
+ "OOYOOOMOYYYMUWWWVVVVVVVVVVVVVVVVUUUUUUUUUUUUUUUUUMMMMMMY", // 58
+ "OOOYOOMOYYYMUWWVVVVVVVVVVVVVVVVUUUXUUUUUUUUUUUUUUMMMMMMY", // 59
+ "OOOYOYMOYYYMUWWVVVVVVVVVVVVVVVVUUUUUUUUUUUUUUUUUUMMMMMMY", // 60
+ "OOOOYYMOYYYMYUVVVVVVVVVVVVVVVVUUUUUUUUUUUUUUUUUUMUMMMMMM", // 61
+ "OOOYYYMOYYYMYUVVVVVVVVVVVVVVVUUUUUXUUUUUUUUUUUUUMUMMMMMM", // 62
+ "OOYYYYMOYYYMYUVVVVVVVVVVVVVVVUUUUUUUUUUUUUUUUUUUMUMMMMMM", // 63
+];
+var PATCH={
+  mouth:[[33,31,"211112"], [34,31,"31xx13"], [35,31,"455554"]],
+  eyes:[[22,26,"44444"], [23,26,"22222"], [24,27,"44"], [22,34,"4444"], [23,34,"2222"], [24,35,"44"]]
+};
+function put(b,list){ list.forEach(function(r){ var y=r[0], x0=r[1], str=r[2]; for (var i=0;i<str.length;i++){ var ch=str[i]; if (ch==='_') continue;
+  if (ch==='.'){ if (x0+i>=0&&x0+i<b.w) b.d[y*b.w+x0+i]=T; } else b.px(x0+i,y,LEG[ch]); } }); }
+function paint(b,v){
+  for (var y=0;y<MAP.length;y++){ var r=MAP[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch!=='.') b.px(x,y,LEG[ch]); } }
+  if (v.mouth) put(b,PATCH.mouth);
+  if (v.eyes) put(b,PATCH.eyes);
+  M.outline(b,P.k1);
+}
+M.definePortrait('mladen',{ paint:paint });
+})(M);
+
+/* ---- portraits/nina.js ---- */
+/* Porträt: Nina Barić (31), Malerin und Rahmenmacherin — kastanienbraunes Haar, rotes Tuch im Haar, senfgelber Pullover,
+   Jeansschürze; müde, aufmerksam. Rotes Tupfentuch mit Knoten im Nacken, Farbflecken auf der Schürze. */
+(function(M){
+'use strict';
+var P=M.P;
+var HEAD=[
+"........................................................", // 0
+"........................................................", // 1
+"........................................................", // 2
+"........................................................", // 3
+"........................................................", // 4
+".......................zzzzzzzzy........................", // 5
+"....................zzzzzzzzzzzzyyy.....................", // 6
+"..................zzozzzozzzozzzZyyyZ...................", // 7
+".................zzzzzzzzzzzzzzzyyyyyx..................", // 8
+"................zzzzzzzzzzzzzzzzzzzzzzx.................", // 9
+"...............zzzozZZozzzozZZoyyyyyyyz.................", // 10
+"...............zzzzzyyzzzzZZzzzyyy1yyyyy................", // 11
+"...............zzzzzzzyzZZzzz21111211111................", // 12
+"..............zzozzzozZZoz121CDDDCC11211................", // 13
+"..............zzzzzzZZzz111CDEEEDDC11111................", // 14
+"..............zzzzZZzz1112CDEEEDDDDC111.................", // 15
+"..............ozZZoz111111DEEEEEDDDDC11.................", // 16
+".............ZZzzz2121111CDEEEEEDDDDC11.................", // 17
+"............ZZzzzy2121111DEEEEEEEDDDDC1.................", // 18
+"............Zzzzyy213111DE10001EEED1001C................", // 19
+"............zzzyyy21DED1DEEDDDD1EED1DCCC................", // 20
+".............zyyy21DEBD1DEDCCCCDEDCCCDC.................", // 21
+"............zz2yy12EDCB2DDBkkkkBEDBkkBC.................", // 22
+"...........zz.2yy12ECAC2DDBwLkIwEDIkwBC.................", // 23
+"..........yy..yy212ECB1DDDCDIIiDEDIIDCC.................", // 24
+"..........yy..xx213DECDDEDDCCCDDEECCDDD.................", // 25
+"..........y..xxx2133DECDEEEDDDDDEEEDCCD.................", // 26
+"..............x21313CD0DDEDDDDDDDDEEEDCC................", // 27
+"..............21131300.CDDDDDDDDCDCBCCC.................", // 28
+"...............2131300BCDDDDDDDDCDCCCDDC................", // 29
+"...............2131200BCCDDDDDDCDCCRRCDC................", // 30
+"...............1311200BBCDDDDDCBBAAABCC.................", // 31
+"................311200BBCCDDDDDDCRRCDDC.................", // 32
+"................311200CBBCCDDDDDDCCCDDC.................", // 33
+"................200200CBBBCCDDDEEEDDDC..................", // 34
+".................00200CCBBBCCDDEEDDDC...................", // 35
+".................00200CCCBBBCCDDDDCCB...................", // 36
+"..................0200CCCCCBBBCCCCB.....................", // 37
+"..................0020CCCCCCCBBBBB......................", // 38
+"...................020CCCCCCCBB.........................", // 39
+"....................CCCCCCCCCBB.........................", // 40
+"....................CCCCCCCCCBB........................."  // 41
+];
+// Legende: Haar 0–3 (t0 t1 t2, Glanz w4) · Tuch x y z Z (r1–r4), Tupfen o (s5) · Haut A–E (p1–p5), Lippen R (d4)
+//          Auge w Weiß (s4), I i Iris (w3 w2), k Wimpern/Pupille (h1), L Glanzlicht
+var LEG={ '0':P.t0,'1':P.t1,'2':P.t2,'3':P.w4,
+  x:P.r1,y:P.r2,z:P.r3,Z:P.r4,o:P.s5,
+  A:P.p1,B:P.p2,C:P.p3,D:P.p4,E:P.p5, R:P.d4,
+  w:P.s4,i:P.w2,I:P.w3,k:P.h1,L:P.s6 };
+function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
+function put(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]); }
+// Senfgelber Pullover: Grundform, Licht auf der nahen Schulter, weiche Falten, gerippter Halsausschnitt
+function sweater(b){
+  b.poly([[0,64],[0,53],[2,49],[6,45.5],[12,43],[20,41],[33,42],[40,43],[46,45.5],[51,49],[54,54],[55.5,58],[56,64]],P.y2);
+  b.poly([[0,57],[0,53],[2,49],[6,45.5],[12,43],[17,42],[12,45.5],[7,48.5],[3,52.5]],P.y3);
+  b.line(2,49,6,46,P.y4); b.line(6,46,12,43,P.y4);
+  b.poly([[43,47],[48,47.5],[52,51],[54.5,56],[56,64],[46,64],[45,55]],P.y1);
+  b.line(41,44,46,46,P.y3); b.line(47,46,50,48,P.y3);
+  b.poly([[49,55],[52,57],[56,64],[51,64]],P.y0);
+  b.line(10,52,9,58,P.y1); b.line(9,59,10,63,P.y1); b.line(4,56,3,63,P.y1);
+}
+function neckband(b){
+  b.poly([[19.5,40.5],[23,43],[28,44.5],[32,44],[34,42],[34.5,44],[32,46],[27,46.5],[22,45],[19,42.5]],function(x,y){ return (x&1)?P.y2:P.y3; });
+  b.line(20,42,24,44,P.y4);
+}
+// Jeansschürze: Latz mit Trägern über den Schultern, Ziernaht, Farbflecken
+function apron(b){
+  b.poly([[14.5,42.5],[17.5,42.5],[25,52],[22,52]],P.c3); b.line(15,43,22,52,P.b2); b.line(17,43,24,52,P.c2);
+  b.poly([[40.5,43.5],[43,44],[42,52],[39.5,52]],P.c1); b.line(41,44,40,51,P.c2);
+  b.poly([[20,52],[42,52],[43,64],[19,64]],function(x,y){ var v=P.c2; if (x<24) v=P.c3; if (x>38) v=P.c1; return v; });
+  b.line(20,52,42,52,P.c3); b.line(21,54,41,54,P.y2);
+  b.px(30,58,P.r3); b.px(31,58,P.r4); b.px(31,59,P.r3); b.px(34,60,P.b3); b.px(35,60,P.b4); b.px(27,61,P.g4); b.px(26,61,P.g3);
+}
+// Varianten: Lippen leicht geöffnet mit einem Pixel Zähne (spricht), Lider zu mit Wimpernlinie (Lidschlag)
+var MOUTH_O=[[32,31,'B'],[33,31,'A'],[34,31,'w'],[35,31,'A'],[36,31,'B'],[32,32,'C'],[33,32,'A'],[34,32,'A'],[35,32,'A'],[36,32,'C'],[33,33,'R'],[34,33,'R'],[35,33,'C'],[33,34,'C'],[34,34,'C'],[35,34,'C']];
+var EYES_B=[[26,22,'C'],[27,22,'D'],[28,22,'D'],[29,22,'D'],[30,22,'D'],[31,22,'C'],[26,23,'B'],[27,23,'k'],[28,23,'k'],[29,23,'k'],[30,23,'k'],[31,23,'B'],[26,24,'D'],[27,24,'C'],[28,24,'D'],[29,24,'D'],[30,24,'D'],[31,24,'D'],[34,22,'C'],[35,22,'D'],[36,22,'D'],[37,22,'C'],[34,23,'B'],[35,23,'k'],[36,23,'k'],[37,23,'B'],[34,24,'D'],[35,24,'D'],[36,24,'D'],[37,24,'C']];
+function paint(b,v){
+  sweater(b);
+  stamp(b,HEAD,LEG);
+  if (v.mouth) put(b,MOUTH_O);
+  if (v.eyes) put(b,EYES_B);
+  neckband(b); apron(b);
+  M.outline(b,P.k1);
+}
+M.definePortrait('nina',{ paint:paint });
+})(M);
+
+/* ---- portraits/sanja.js ---- */
+/* ===== portraits/sanja.js — Sanja Lozić (32), Wirtin der Bar „Bura“ =====
+   Kurzes schwarzes Haar mit seitlichem Pony, schwarzes Shirt, dunkelrote Schürze mit Trägern; wach, beschützend. */
+(function(M){
+'use strict';
+var P=M.P;
+// Legende: ein Zeichen je Palettenfarbe ('.' = durchsichtig)
+var C={'a':P.k1,'b':P.k2,'c':P.n0,'d':P.s3,'e':P.s4,'f':P.s5,'g':P.w1,'h':P.w2,'i':P.d4,'j':P.r0,'k':P.r1,'l':P.r2,'m':P.r3,'n':P.r4,'o':P.m0,'p':P.m1,'q':P.m2,'r':P.m3,'s':P.m4,'t':P.p1,'u':P.p2,'v':P.p3,'w':P.p4,'x':P.p5,'y':P.q4,'z':P.c1,'A':P.h0,'B':P.h1,'C':P.l1};
+// Pixelkarte 56 × 64, ruhige Fassung
+var MAP=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"....................pooppppooo..........................",
+".................pppppoooooooobb........................",
+"...............ppppppooooboooobbbba.....................",
+".............pppppoAAbooooobbbbbaaaA....................",
+"............opoopooAAoooobbbbbbbbaaa....................",
+"............ooopooboAAbbbbbbbbbaaaaaA...................",
+"............ooooobbobAaabbbbbbbbaaaAAA..................",
+"............oooobbaobaAAAaaabbaaaaaAbb..................",
+"...........oooobbaoobAAvywwAAaaaAaAAAb..................",
+"...........oooobaoboabAvywxxxxAabAAAAb..................",
+"...........bbobaAbbbabAywwxxxxxwAwAAAb..................",
+"...........bbbbabbabAbAywwxxxxwwwwyAbb..................",
+"...........bbbbabbbaAbAywwbbxwwwwwybvu..................",
+"............bbaAbabAAbAybBBBBBwxwBBBbu..................",
+"............bbaAbAaAAaAywwwwwwbwwwwwvvu.................",
+"............bbaAaA....vwBwxxxwywyyyyvBu.................",
+".............aAAaAvyvuvwtAAAAtvwvtAAAt..................",
+".............aAAavyvuvvwyefCAevwxeCAeu..................",
+".............AAAayvutvvwyvehgevwxehgvu..................",
+".............AAAAyvutvvvyyvvvyywwxvvvvu.................",
+"..............AAAyvuuvvvxxxxxwwwwywxxy..................",
+"..............AAAvyvuvvvxwxwwwwvwyuvyu..................",
+"................Auvyvvvvwwwwwwyyvuuvvu..................",
+"..................vyvvvvwyywwwyyywywyu..................",
+"...................svvuvyyyywyyyywywyu..................",
+".....................vtuvywwwyyvumuuvu..................",
+".....................vtuvyyyyyvulllluu..................",
+".....................vvtuvyyyyvviwiivu..................",
+".....................vvttuvyyyyvvuuvu...................",
+".....................vvuttuvywwwxwyvu...................",
+".....................vvuuttuvywxwwyvu...................",
+".....................vvuuutttuvywyvu....................",
+".....................vvuuuuttttuvvu.....................",
+".....................vvuuuuuutt.........................",
+".....................vvvuuuuuuu.........................",
+".....................vvuvuuuuuu.........................",
+".....................vvuvuuuuuu.........................",
+"..................pppvvuuvuuuuuoooo.....................",
+"...............ppppppvvuuvuuuuuooolooo..................",
+".............pppppppvvvuuuvuuuuoollljooo................",
+"...........ppppppqqppmmmuuvuuuuuuolljooooo..............",
+".........ppppppqqpppmmmvkuuuuuuoobllljooooo.............",
+"........ppbqqqqpppppmmmpkvuuuoobbollljoooobbz...........",
+".......ppqqppppppppnmmmkbppoobboooollkjoobbbbz..........",
+"......pqqpbppppppoommmokobbbboooooollkjobbbbbazz........",
+".....oqpppbpppppoonmmmkooooooooooooolkjbbbbbbabbz.......",
+"....ooppppbppppooonmmmkooooooooooooolkkjbbbbbabbbz......",
+"....oopppbppppoooommmokooooooooooooolkkjbbbbbbabbbz.....",
+"....oopppbpppoooonmmmkooooooooooooobbkkkjbbbbbabbbz.....",
+"...ooopppbppooooonmmmkoooooooooooobnnnrqjnbbbbabbbbz....",
+"...ooopppbpooooonmmmkmmnnnnnnnnnnnnlllllllbbbbabbbb.c...",
+"...ooopppboobooonnsrknnlllllllllllllkkkkkbbbbbabbbbbc...",
+"...oobpppboobooolllllllmllllllllllllkkkkkbbbababbbbbc...",
+"...ooobooboooboommmmmmmmllllllklllllkkkkkbbbababbbbbc...",
+"...ooobooboooboommmmmmmmllllllklllllkkkkkkbbbaabbbbac...",
+"...oooobbooooobmmmmmmmmmllllllklllllkkkkkkbbbababbaac...",
+"...oooobbooooobmmmmmmmmmllllllklllllkkkkkkbbbababaaac...",
+"...ooooobooooobmmmmmmmmmllllllklllllkkkkkkbbbabaaaaac...",
+"...oooooboooooommmmmmmmmllllllklllllkkkkkkbbbbaaaaaac...",
+"...ooooobbooooommmmmmmmmllllllklllllkkkkkkbbbaaaaaaac..."];
+// Flicken [x, y, Zeilen] für „spricht“ (Mund offen) und „blinzelt“ (Augen zu); '.' = bleibt
+var MUND=[32,30,[
+  ".dd.",
+  "llll",
+  "iwii",
+  "vuu."]];
+var LID=[24,19,[
+  "w............v",
+  "vywwwy...yyyvu",
+  "ttwwwt...tvvt.",
+  ".yAAAy...vAA..",
+  "..www.....yy.."]];
+function put(b,rows,x0,y0){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var c=C[r.charAt(x)]; if (c!==undefined) b.px(x0+x,y0+y,c); } } }
+M.definePortrait('sanja',{ paint:function(b,v){
+  put(b,MAP,0,0);
+  if (v.mouth && MUND) put(b,MUND[2],MUND[0],MUND[1]);
+  if (v.eyes && LID) put(b,LID[2],LID[0],LID[1]);
+  M.outline(b,P.k1);
+} });
+})(M);
+
+/* ---- portraits/stipe.js ---- */
+/* ===== portraits/stipe.js — Stipe (70+), Kartenspieler in der Bar „Bura“ =====
+   Schiebermütze (Khaki-Tweed), wettergegerbtes, faltiges Gesicht mit grauen Stoppeln, alte Jacke in Khaki/Grau über hellem Hemd. */
+(function(M){
+'use strict';
+var P=M.P;
+// Legende: ein Zeichen je Palettenfarbe ('.' = durchsichtig)
+var C={'a':P.s0,'b':P.s1,'c':P.s2,'d':P.s3,'e':P.s4,'f':P.s5,'g':P.w1,'h':P.w2,'i':P.p2,'j':P.p3,'k':P.p4,'l':P.q0,'m':P.q1,'n':P.q2,'o':P.q3,'p':P.q4,'q':P.e0,'r':P.e1,'s':P.e2,'t':P.e3,'u':P.e4,'v':P.h0};
+// Pixelkarte 56 × 64, ruhige Fassung
+var MAP=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"..................ttuuuuuttts...........................",
+"...............sttuuuuttttsrsssrr.......................",
+"..............sttttttttsrsssrsrsrrrr....................",
+".............rstttttttsrstssssstsrrrrq..................",
+".............rsrttttstsssssssssssrrrrrq.................",
+".............rsrstttstssssstsssssrrrrrqq................",
+".............rrssssssssssssrsrssrrrrrrqq................",
+".............rrstssssssssssrrrrqqqqqqqqqq...............",
+".............rrrrrrrrrrrrtttttuuuuuuttttss..............",
+".............qqqqqqqqqqqqsssssssssssssssrr..............",
+".............qqqqqqqqqqqqnnnnqqqqqqqqqqqq...............",
+".............eedbededbcnoooooooooooonm..................",
+"............bedcfececdcojjjjjjjjjjoonn..................",
+"............eecbedaeadbocddeddcojcdddc..................",
+"............ddcaecbcbdbooccdcoojoocconn.................",
+"............bdcbdaopodaonjjjjjopojjjoon.................",
+"............bdcbcopjnonoonmllmopomllmn..................",
+".............dbbbpjnmonnoeffveopjehvnn..................",
+".............cbb.ponmjoononnnoopkonnon..................",
+".............cbb.ponmjojonnnoojppknnoon.................",
+".............cbb.joonoopjpkkpjppppkjoon.................",
+"..............bb.jpnnooppkkpppjjppkkjonn................",
+"..............bbbojoooopppppppjojppjkjjo................",
+"..............bbb.ojjooppppppponjonojjon................",
+"..................ojo.oppoppppnoonmmnnn.................",
+"...................onooppoppknjonnnnnn..................",
+"....................ooopooppnjcnniiinn..................",
+"....................ooooonpononmllllmn..................",
+"....................oomncncocomojkjjnn..................",
+"....................oomnoonooononnnoon..................",
+"....................oocmbocncpdpdpdjcn..................",
+"....................ooommnonoppkppjon...................",
+"....................oocnmmmncodpdjcob...................",
+"....................ooonnmmmmnooooon....................",
+"....................oooonnnmmmmm........................",
+"....................oooonnmnnmmm........................",
+"....................oooonnmnnmnn........................",
+".................dddccononmnnmccd.......................",
+"..............dddddddccnonnmnccdddbbb...................",
+"............dddddddceddconnmccddddbbbac.................",
+"..........dddddddddcceddcnnccddddbbbbaacc...............",
+".........dddddddcdddcceeddnddddedbbbaaaaccc.............",
+".......dddddddddddadccceedfddddedbbbaaaaccccc...........",
+"......ddbdddddddddcadccceffddededbbbaaacccccccb.........",
+".....dddbcdddddddccadcccbffffededbbabacccccccbba........",
+"....cdddbdddddddccccadcccbfffedebbbabaccccccbbbab.......",
+"...cccddbdbbdddccccccacccbfffecebbbabcccccbbbbbaba......",
+"..cccddbddddbbddcccccadcccbffedebbabbccccccccbbaaaa.....",
+"..cccddbdcdddcbbccccccacccbffedebbabcccccaaaabbaaaaa....",
+"..cccddbddddcccccccccccaccbffedebbacccaaabbbbbbaaaaaa...",
+".ccccddbcddcccccccccccccaccbfedebabccccbbbbbbbbaaaaaa...",
+".ccccddbddccccbcccccccccaccbfecbbaccccbbbbbaabbaaaaaa...",
+".ccccddbdccccccbcccccccccaccbedbbacccbbbbbbabbbaaaaaaa..",
+".ccccddbcccccccbccccccccccacbedbaccccbbbbbbabbbaaaaaaa..",
+".ccccddbccccccccbcccccccccaccbdbaccbbbbbbbbabbbaaaaaaa..",
+".ccccdbcccccccccbccccccccccacbccccbbbbabbbabbbbaaaaaaa..",
+".cccccbccccccccccbccccccccccccaccbbbbbbbbbabbbbaaaaaaa..",
+".cccccbccccccccccbcccccccbccccghbbbbbabbbbabbbbaaaaaaaa.",
+".cccccbccbccccccccbcccccccccccbbbbbbbbbbbbabbbbaaaaaaaa.",
+".cccccbcccccccccccbcccccccccccbbbbbbbbbbbbabbbbaaaaaaaa."];
+// Flicken [x, y, Zeilen] für „spricht“ (Mund offen) und „blinzelt“ (Augen zu); '.' = bleibt
+var MUND=[32,32,[
+  "leelm",
+  "jkjjn"]];
+var LID=[25,20,[
+  "ojjjo...ojjo",
+  "nmllm...nllm"]];
+function put(b,rows,x0,y0){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var c=C[r.charAt(x)]; if (c!==undefined) b.px(x0+x,y0+y,c); } } }
+M.definePortrait('stipe',{ paint:function(b,v){
+  put(b,MAP,0,0);
+  if (v.mouth && MUND) put(b,MUND[2],MUND[0],MUND[1]);
+  if (v.eyes && LID) put(b,LID[2],LID[0],LID[1]);
+  M.outline(b,P.k1);
+} });
+})(M);
+
+/* ---- portraits/zdenka.js ---- */
+/* ===== portraits/zdenka.js — Zdenka Bašić (78), Nachbarin in Veli Varoš =====
+   Graues Haar straff zum Knoten zurückgekämmt, scharfe Züge (hohe Wangenknochen, spitze Nase und Kinn,
+   gebogene Brauen, schmale Lippen mit einem Hauch Spott), ganz in Schwarz: Strickjacke über Bluse, kleines Kreuz.
+   Gemalt als Pixelkarte MAP (56 × 64, ein Zeichen = ein Pixel, '.' = transparent) mit Farblegende LEG;
+   Varianten als kleine Flicken [y, x, zeichen] ('_' = Pixel bleibt): PATCH.mouth (spricht), PATCH.eyes (blinzelt).
+   Licht von links oben (warm), kühles Gegenlicht an der rechten Kante; die dunkle Kontur setzt M.outline. */
+(function(M){
+'use strict';
+var P=M.P, T=M.T;
+var LEG={"1":P.p0, "2":P.p1, "3":P.p2, "4":P.p3, "5":P.p4, "6":P.p5, a:P.m1, b:P.m2, c:P.m3, d:P.m4, e:P.s5, A:P.k0, B:P.k1, C:P.k2, D:P.m0, E:P.m1, F:P.m2, S:P.m4, W:P.s6, g:P.m2, s:P.m1, x:P.s4, i:P.w1, o:P.k0, L:P.l1, y:P.y3};
+//          1111111111222222222233333333334444444444555555
+//01234567890123456789012345678901234567890123456789012345
+var MAP=[
+ "........................................................", // 0
+ "........................................................", // 1
+ "........................................................", // 2
+ "........................................................", // 3
+ "........................................................", // 4
+ "................cdd......dddd...........................", // 5
+ "..............deeccdd.ddbbebdddd........................", // 6
+ ".............ddccddbadddddddebbbdd......................", // 7
+ ".............dccdbbdaadbbbdddcccbbd.....................", // 8
+ "............ccccbbaadaadddbbbddcccbc....................", // 9
+ "............cccbbaaaaaaddddddbbddccbc...................", // 10
+ ".............abbaaabbaddddddcccbbdcbbc..................", // 11
+ ".............baabbbaaaadddddc5665b54bb..................", // 12
+ "..............aaaaaaaaddddd56665555544b.................", // 13
+ "...............daaaaaddddd5665444555544.................", // 14
+ "...............dcddbbdddd55666665555444.................", // 15
+ "..............ddbccddbbdd455544555445444................", // 16
+ "..............addbbcdddbb566655555555444................", // 17
+ "..............addddbcccc45gss555455ssg44................", // 18
+ "..............daddddbbc44g444ss545s444g44...............", // 19
+ "..............cacaabbbb444444334543444444...............", // 20
+ "..............ccaab5544433111124541111344...............", // 21
+ "..............ccaa56445441xLox3454xLo1444...............", // 22
+ "..............ccca543555344ii444554ii3444...............", // 23
+ "..............ccca54255465433455564334544...............", // 24
+ "..............baca54355664354455563445554...............", // 25
+ "..............bbca55445566555555556344544...............", // 26
+ "..............abcab5544555555555456634443...............", // 27
+ "..............aaaab5544445555555455665343...............", // 28
+ "...............aaca4544444555565542333343...............", // 29
+ "...............aaaab4y444444566343333443................", // 30
+ "................aaaab3344444563544444443................", // 31
+ ".................aaaaaa34455553444444333................", // 32
+ "....................34a34555543222222443................", // 33
+ "....................34434555543345654443................", // 34
+ "....................3344245553443334433.................", // 35
+ "....................3344324545455665433.................", // 36
+ "....................333443233445565543..................", // 37
+ ".....................33333323334455443..................", // 38
+ ".....................3334433223334433...................", // 39
+ ".....................33343333322333.....................", // 40
+ ".....................CDDC4433343223.....................", // 41
+ "....................CDEEDC43333443CD....................", // 42
+ "....................BCDEEDDC33333CDDC...................", // 43
+ ".....................BCDDEEDDDCC3CDDCB..................", // 44
+ "......................BCCDDDDDDCCB3BBBBBBC..............", // 45
+ "...............CCCCCCCCCBBCFCCCCCCBBFBBBBADBBC..........", // 46
+ "..........EECCCCCCCEDACCCCCCFBBBBBBFBBBBADBBBBBBC.......", // 47
+ ".......CEECCCCCCCCCCEDACCCCCCFBBBBFBBBBBADBBBBBABC......", // 48
+ ".....DEECCCCCCCCCCCCCEDAACCCBBFBBFBBBBBADBBBBBBABBC.....", // 49
+ "....EECCCCCCCCCCCCCCCCCEDACCBBBFFBBBBBBADBBBBBBABBBC....", // 50
+ "...EDDCCCCCCCCCCCCCCCCCCEDACBBBSBBBBBBADBBBBBBBABBBBC...", // 51
+ "..EDDDCCDBCCCCCCCCCCCCCCCEDACBSWSBBBBBAEBBBBBBABBBBBBC..", // 52
+ ".EDDDDCCDBCCCCCCCCCCCCCCCCEDABBSBBBBBADBBBBBBBABBBBBBBC.", // 53
+ ".EDDDDCCCDBCCCCCCCCCCCCCCCCEDABSBBBBBADBBBBBBBABBBBBBBC.", // 54
+ "DEDDDCCCCDBCCCCCCCCCCCCCCCCBEDASBBBBBADBBBBBBBABBBBBBBC.", // 55
+ "EDDDDCCCCCDBCCCCCCCCCCCCCCCBBEDABBBBADBBBBBBBBABBBBBBBBC", // 56
+ "EDDDCCCCCCDBCCCCCCCCCCCCCCBBBEDABBBBAEBBBBBBBBABBBBBBBBC", // 57
+ "DDDCCCCCCCDBCCCCCCCCCCCCCBBBBBEDABBBADBBBBBBBBABBBBBBBBC", // 58
+ "DDDCCCCCCCDBCCCCCCCCCCCCCBBBBBEDBABBADBBBBBBBBABBBBBBBBB", // 59
+ "DDCCCCCCCCCDBCCCCCCCCCCCCBBBBBBEDABBADBBBBBBBBABBBBBBBBB", // 60
+ "DDCCCCCCCCCDBCCCCCCCCCCCBBBBBBBEDBAADBBBBBBBBBABBBBBBBBB", // 61
+ "DCCCCCCCCCCDBCCCCCCCCCCBBBBBBBBBEDAAEBBBBBBBBBABBBBBBBBB", // 62
+ "CCCCCCCCCCCDBCCCCCCCCCBBBBBBBBBBEDBADBBBBBBBBBABBBBBBBBB", // 63
+];
+var PATCH={
+  mouth:[[33,31,"21x112"], [34,31,"321124"], [35,32,"4554"]],
+  eyes:[[21,25,"444444"], [22,25,"222223"], [23,26,"4444"], [21,34,"4444"], [22,34,"2222"], [23,34,"4443"]]
+};
+function put(b,list){ list.forEach(function(r){ var y=r[0], x0=r[1], str=r[2]; for (var i=0;i<str.length;i++){ var ch=str[i]; if (ch==='_') continue;
+  if (ch==='.'){ if (x0+i>=0&&x0+i<b.w) b.d[y*b.w+x0+i]=T; } else b.px(x0+i,y,LEG[ch]); } }); }
+function paint(b,v){
+  for (var y=0;y<MAP.length;y++){ var r=MAP[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch!=='.') b.px(x,y,LEG[ch]); } }
+  if (v.mouth) put(b,PATCH.mouth);
+  if (v.eyes) put(b,PATCH.eyes);
+  M.outline(b,P.k1);
+}
+M.definePortrait('zdenka',{ paint:paint });
 })(M);
 
 /* ---- rooms/art/archive.js ---- */
@@ -9812,8 +11005,8 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
 async function crossIvka(A){ var I=A.npc('ivka'); A.G.flags['mala.lock']=true; A.music('ghost');
   var sp=M.spot('riva','bollard'), bx=sp[0]+7, by=M.apos('riva','ivka',[596,114,'R'])[1];
   await A.g('Kommen Sie. Ich gehe mit bis an den Rand.'); await I.say('Ist es kalt da drüben?'); await A.g('Nein. Da ist es nicht kalt.');
-  await A.crossOpen(bx+26,by+2,{w:18,h:74});
-  I.set('speed',70); var w=I.walk(bx+22,by+1); await A.wait(900); await w; await I.face('R');
+  await A.crossOpen(bx+12,by+2,{w:18,h:74});
+  I.set('speed',70); var w=I.walk(bx+10,by+1); await A.wait(900); await w; await I.face('R');
   await A.wait(1200); await I.say('Da ist er.'); await A.wait(1400); await I.say('Tonći.');
   if (I.actor) I.actor.fadeOut=A.gt; A.sfx('shimmer'); await A.wait(1400); I.hide(); A.setFlag('c1.done');
   await A.crossClose(); await A.wait(1200); A.music('case1');

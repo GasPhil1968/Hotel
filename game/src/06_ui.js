@@ -160,7 +160,7 @@ var FALLBACK={};
 function portraitFor(ch,variant){ if (M.hasPortrait && M.hasPortrait(ch)) return M.portrait(ch,variant); var key=ch+':'+variant; if (FALLBACK[key]) return FALLBACK[key]; if (!M.CHARS[ch]) return null;
   var hb=portraitBuf(ch,variant), b=new Buf(PW,PH,T), sc=PW/hb.w;
   for (var y=0;y<PH;y++) for (var x=0;x<PW;x++){ var sx=Math.floor(x/sc), sy=Math.floor(y/sc); if (sy<hb.h&&sx<hb.w){ var c=hb.d[sy*hb.w+sx]; if (c!==T) b.d[y*PW+x]=c; } }
-  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]) M.tintApply(b,M.TINT[gt]); return (FALLBACK[key]=b); }
+  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]){ var lut=M.TINT[gt].a; for (var i=0;i<b.d.length;i++) if (b.d[i]!==T) b.d[i]=lut[b.d[i]]; } return (FALLBACK[key]=b); }
 function drawBust(ch,x0,y0,variant,mirror){ var pb=portraitFor(ch,variant); if (!pb) return false; var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch];
   if (gh){ var cx=x0+(PW>>1), cy=y0+26, aur=ch==='mala'?[P.x1,P.x2]:[P.v1,P.v2], t=Math.floor(E.gt()/150); // kalter Schein hinter Geistern
     for (var y=Math.max(0,y0-4);y<y0+PH;y++) for (var x=Math.max(0,x0-6);x<Math.min(W,x0+PW+6);x++){ var d=Math.hypot((x-cx)/34,(y-cy)/31); if (d>1) continue; if (bayer(x+t,y)<(1-d)*0.5) fb.px(x,y,d<0.55?aur[1]:aur[0]); } }
@@ -195,7 +195,10 @@ function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phon
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
 function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
-  if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me; right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
+  if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me;
+    if (!other || other===a){ other=null; var best=1e9, pick=function(npcOnly){ Object.keys(E.ACT).forEach(function(k){ var b=E.ACT[k]; if (b===a||!E.actorShown(b)) return; if (npcOnly && (b.id==='marko'||b.id==='mala')) return; var dd=Math.abs(b.x-a.x); if (dd<best){ best=dd; other=b; } }); };
+      pick(a.id==='marko'||a.id==='mala'); if (!other) pick(false); }
+    right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
   var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);

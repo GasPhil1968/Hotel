@@ -18,5 +18,6 @@ M.portrait=function(id,variant,ghost){ var d=M.PORTRAITS[id]; if (!d) return nul
   if (!b){ b=new Buf(M.PORTRAIT_W,M.PORTRAIT_H,T); var v={mouth:variant==='o'?1:0,eyes:variant==='b'?1:0,variant:variant};
     try{ d.paint(b,v); }catch(e){ console.error('Porträt '+id,e); } d.cache[variant]=b; }
   if (!ghost) return b;
-  var g=new Buf(b.w,b.h,T); g.d.set(b.d); var tn=M.TINT[M.PORTRAIT_GHOSTS[id]||'spiritP']; if (tn) M.tintApply(g,tn); return (d.cache[key]=g); };
+  // ohne Dithering (ruhigere Gesichter): jede Farbe auf ihre nächste Geisterfarbe
+  var g=new Buf(b.w,b.h,T), tn=M.TINT[M.PORTRAIT_GHOSTS[id]||'spiritP']; for (var i=0;i<b.d.length;i++){ var c=b.d[i]; g.d[i]=(c===T||!tn)?c:((c===P.k0||c===P.k1)?P.k0:tn.a[c]); } return (d.cache[key]=g); }; // Kontur bleibt dunkel, damit sie sich vom Schein abhebt
 })(M);

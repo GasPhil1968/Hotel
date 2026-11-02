@@ -53,6 +53,10 @@ M.definePortrait('nina',{ paint:function(b,v){
 | `bruno` | Bruno Lalić, Geist, 66, Nachtportier | Portiersmütze, gepflegter Schnurrbart, flaschengrüne Uniform mit Messingknöpfen; höflich, würdevoll, ein wenig verloren |
 | `jakov` | Jakov, Geist, Totengräber von Sustipan (gest. 1959) | Schiebermütze, Weste über Hemd, wettergegerbt, freundlich |
 
+## Einfärbung der Geister
+
+Geister-Porträts werden ohne Dithering eingefärbt: Jede Farbe wird auf ihre nächste Geisterfarbe abgebildet, die Kontur (`k0`, `k1`) bleibt dunkel. Dabei fallen manche Töne zusammen (zum Beispiel `p4`/`p5` und `s5`/`s6`, `g2`/`g3`). Augenweiß, Iris, Brauen und Lippen deshalb über **Helligkeit** trennen, nicht über Farbe. Bewährt hat sich für Geistergesichter die Hautrampe `l0 p5 q4 q3 q2 q1`, die eingefärbt sechs getrennte Stufen ergibt.
+
 ## Prüfen
 
 ```

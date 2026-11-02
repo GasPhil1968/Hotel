@@ -107,8 +107,8 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
 async function crossIvka(A){ var I=A.npc('ivka'); A.G.flags['mala.lock']=true; A.music('ghost');
   var sp=M.spot('riva','bollard'), bx=sp[0]+7, by=M.apos('riva','ivka',[596,114,'R'])[1];
   await A.g('Kommen Sie. Ich gehe mit bis an den Rand.'); await I.say('Ist es kalt da drüben?'); await A.g('Nein. Da ist es nicht kalt.');
-  await A.crossOpen(bx+26,by+2,{w:18,h:74});
-  I.set('speed',70); var w=I.walk(bx+22,by+1); await A.wait(900); await w; await I.face('R');
+  await A.crossOpen(bx+12,by+2,{w:18,h:74});
+  I.set('speed',70); var w=I.walk(bx+10,by+1); await A.wait(900); await w; await I.face('R');
   await A.wait(1200); await I.say('Da ist er.'); await A.wait(1400); await I.say('Tonći.');
   if (I.actor) I.actor.fadeOut=A.gt; A.sfx('shimmer'); await A.wait(1400); I.hide(); A.setFlag('c1.done');
   await A.crossClose(); await A.wait(1200); A.music('case1');
