@@ -1,0 +1,77 @@
+/* ===== 10_items.js — Gegenstände, ihre Icons (gezeichnet, max. 32x24) und Kombinationen ===== */
+(function(M){
+'use strict';
+var P=M.P;
+function art(fn){ return fn; }
+M.defineItems({
+  dzezva:{name:'Džezva',icon:function(w){ w.rect(9,9,9,9,P.y2); w.hl(9,17,9,P.y4); w.vl(9,10,17,P.y3); w.rect(10,17,7,1,P.y1); w.line(18,11,28,7,P.w2); w.line(18,12,28,8,P.w1); w.px(8,9,P.y3); },
+    look:'Die Džezva meiner Großmutter. Leer.', mala:'Sie riecht nach jemandem, der nicht mehr da ist.'},
+  dzezvaW:{name:'Džezva mit Wasser',icon:function(w){ w.rect(9,9,9,9,P.y2); w.hl(9,17,9,P.a5); w.hl(10,16,10,P.a4); w.vl(9,10,17,P.y3); w.line(18,11,28,7,P.w2); w.line(18,12,28,8,P.w1); },
+    look:'Kaltes Wasser. Jetzt fehlt nur noch der Herd.'},
+  postcard:{name:'Tonćis Postkarte',icon:function(w){ w.rect(4,5,24,15,P.s5); w.rect(4,5,24,7,P.a4); w.hl(4,27,12,P.s3); w.rect(21,7,5,5,P.r3); w.hl(6,15,15,P.s2); w.hl(6,13,17,P.s2); w.px(10,9,P.s6); w.hl(5,26,8,P.a5); },
+    look:'Eine Postkarte aus Supetar. Vorne der Hafen, hinten Tonćis Schrift.', read:function(A){ return M.readPostcard(A); }, mala:'Er hat sie im Stehen geschrieben, an einem Kiosk. Er hatte es eilig. Er hatte es immer eilig.'},
+  photo1:{name:'Foto: Tonći und Dinko',icon:function(w){ w.rect(5,4,22,16,P.s6); w.rect(7,6,18,11,P.a3); w.rect(7,13,18,4,P.s4); w.rect(11,9,3,5,P.q3); w.rect(17,9,3,5,P.q2); w.hl(8,23,15,P.b1); },
+    look:'Zwei junge Männer auf einem weißen Fischerboot. Am Bug: ANKICA. Auf der Rückseite: „Ja i Dinko, Supetar, ljeto ’84.“ Ich und Dinko, Supetar, Sommer ’84.',
+    mala:'Der Linke lacht. Der Rechte schaut zu ihm hin, nicht in die Kamera. So schaut man jemanden an, den man nicht verlieren will.'},
+  newspaper:{name:'Glas Rive',icon:function(w){ w.rect(4,4,24,17,P.s5); w.hl(6,25,6,P.k2); w.hl(6,25,7,P.k2); for (var y=10;y<19;y+=2){ w.hl(6,14,y,P.s2); w.hl(17,25,y,P.s2); } w.rect(17,10,8,4,P.s3); },
+    look:'Die Zeitung von heute. Seite 14, unten: „Die Stillen“. Mein Text über Ivka Perić.', read:function(A){ return M.readNewspaper(A); }, mala:'Zweitausend Zeichen. Er hat sie gut gewählt.'},
+  letter_t:{name:'Tonćis Brief',icon:function(w){ w.rect(6,5,20,15,P.s4); w.hl(8,22,8,P.s2); w.hl(8,18,10,P.s3); w.hl(8,23,12,P.s2); w.hl(8,15,14,P.s3); w.rect(14,9,6,4,P.e3); w.px(20,15,P.e2); },
+    look:'Ein Brief, der 27 Jahre in einem Seesack lag. Das Salz hat die Hälfte der Wörter gefressen.', read:function(A){ return M.readToncisLetter(A); }, mala:function(A){ return M.malaReadsLetter(A); }},
+  gloves:{name:'Graue Handschuhe',icon:function(w){ w.rect(7,8,7,10,P.m3); w.rect(6,4,2,6,P.m3); w.rect(8,3,2,6,P.m3); w.rect(10,3,2,6,P.m3); w.rect(12,4,2,6,P.m3); w.rect(14,9,2,4,P.m3); w.hl(7,13,16,P.m2); w.rect(17,9,7,10,P.m2); w.rect(16,5,2,6,P.m2); w.rect(18,4,2,6,P.m2); w.rect(20,4,2,6,P.m2); w.rect(22,5,2,6,P.m2); w.hl(17,23,17,P.m1); },
+    look:'Graue Wollhandschuhe, in Zeitungspapier vom Dezember 1984. Nie getragen. Ein Zettel daran: „Za mamu.“ Für Mama.', mala:'Sie sind für jemanden gemacht, der wartet.'},
+  crowbar:{name:'Brecheisen',icon:function(w){ w.line(5,19,25,5,P.m2); w.line(6,19,26,5,P.m3); w.line(25,5,28,7,P.m2); w.px(28,8,P.m1); w.line(5,19,4,16,P.m2); w.hl(10,13,15,P.r3); },
+    look:'Dinkos Brecheisen. Schwer, rostig, ehrlich.', mala:'Er hat es dir gern gegeben. Er gibt Dinge lieber als Worte.'},
+  spatula:{name:'Spachtel',icon:function(w){ w.rect(4,10,10,5,P.w3); w.hl(4,13,10,P.w4); w.poly([[14,11],[27,9],[27,16],[14,14]],P.m3); w.hl(15,26,10,P.m4); },
+    look:'Ein alter, dünner Spachtel aus Ninas Werkstatt. Zwanzig Kuna.', mala:'Dünn genug für eine Ritze.'},
+  note_n:{name:'Ninas Zettel',icon:function(w){ w.rect(8,6,16,13,P.s5); w.hl(10,21,9,P.b1); w.hl(10,19,11,P.b1); w.hl(10,22,13,P.b1); w.hl(10,16,15,P.b1); w.px(20,17,P.r3); w.line(8,6,11,4,P.s4); },
+    look:'Ein Zettel aus einem Skizzenbuch, zwölf Jahre lang gefaltet. Blauer Kugelschreiber, Ninas Schrift.', read:function(A){ return M.readNinasNote(A); }, mala:'Sie hat ihn im Stehen geschrieben, an die Wand gedrückt. Ihre Hand hat nicht gezittert. Erst danach.'},
+  tickets:{name:'Zwei Fährtickets',icon:function(w){ w.rect(4,7,18,10,P.b4); w.rect(9,10,18,10,P.b3); w.hl(11,24,13,P.b1); w.hl(11,20,15,P.b1); for (var x=10;x<26;x+=2) w.px(x,18,P.b0); },
+    look:'Zwei Tickets Split – Ancona, 23.08.1999, 21:00 Uhr. Gekauft um 10:14. Nie entwertet.', read:function(A){ return A.doc({style:'ticket',title:'JADRAN LINIJA – SPLIT · ANCONA',lines:['23.08.1999   Abfahrt 21:00','Deck · 2 Personen','Ausgestellt 23.08.1999, 10:14','Nicht entwertet.']}); }, mala:'Zwei. Er wollte nicht allein fahren.'},
+  cassette:{name:'Kassette „Za Ninu“',icon:function(w){ w.rect(5,6,22,14,P.k2); w.rect(7,8,18,6,P.s5); w.hl(8,23,9,P.r3); w.ellipse(11,15.5,2,2,P.s4); w.ellipse(21,15.5,2,2,P.s4); w.hl(13,19,17,P.m1); },
+    look:'Eine Kassette. Auf dem Etikett, in Kugelschreiber: „Za Ninu – 23.8.“', mala:'Da ist eine Stimme drauf. Seine. Ich höre sie nicht. Ich weiß es nur.'},
+  radio:{name:'Ivkas Radiorekorder',icon:function(w){ w.rect(3,8,26,13,P.m1); w.hl(3,28,8,P.m3); w.ellipse(9,15,3.5,3.5,P.k2); w.ellipse(23,15,3.5,3.5,P.k2); w.rect(13,11,6,4,P.k2); w.rect(14,12,4,2,P.m3); w.line(6,8,10,3,P.m2); w.hl(13,18,18,P.m3); },
+    look:'Ein alter Radiorekorder mit Kassettenfach. Die Batterien fehlen.', mala:'Sie hat jeden Abend damit gehört, ob die Bura kommt.'},
+  radioB:{name:'Ivkas Radiorekorder',icon:function(w){ w.rect(3,8,26,13,P.m1); w.hl(3,28,8,P.m3); w.ellipse(9,15,3.5,3.5,P.k2); w.ellipse(23,15,3.5,3.5,P.k2); w.rect(13,11,6,4,P.k2); w.rect(14,12,4,2,P.g4); w.line(6,8,10,3,P.m2); },
+    look:'Der Radiorekorder, mit frischen Batterien. Er rauscht, wenn man ihn anschaltet.', use2:function(A){ A.sfx('radioOn'); return A.m('Rauschen. Dann ein Sender mit Klapa-Musik. Ich schalte ihn aus.'); }, use2Label:'Einschalten', mala:'Er rauscht wie damals.'},
+  radioT:{name:'Radiorekorder mit Kassette',icon:function(w){ w.rect(3,8,26,13,P.m1); w.hl(3,28,8,P.m3); w.ellipse(9,15,3.5,3.5,P.k2); w.ellipse(23,15,3.5,3.5,P.k2); w.rect(13,11,6,4,P.s5); w.hl(14,17,12,P.r3); w.line(6,8,10,3,P.m2); },
+    look:'Der Radiorekorder mit Lukas Kassette im Fach. Ich drücke nicht auf Play. Das ist nicht mein Lied.', mala:'Nicht hier. Nicht für uns.'},
+  batteries:{name:'Batterien',icon:function(w){ for (var i=0;i<4;i++){ w.rect(6+i*6,6,4,13,P.y3); w.hl(6+i*6,9+i*6,6,P.k2); w.rect(7+i*6,5,2,1,P.m3); w.hl(6+i*6,9+i*6,15,P.k2); } },
+    look:'Vier Batterien vom Kiosk. Mira hat sie mir in Zeitungspapier gewickelt.'},
+  documents:{name:'Ljerkas Dokumente',icon:function(w){ w.rect(4,6,24,15,P.e3); w.rect(6,4,10,3,P.e3); w.hl(4,27,6,P.e4); w.rect(8,9,18,10,P.s5); w.hl(10,22,11,P.s2); w.hl(10,20,13,P.s2); w.hl(10,23,15,P.s2); },
+    look:'Eine Mappe voller Papiere: ein Kaufvertrag von 1938, Briefe, Rechnungen und Brunos Nachtbuch.', read:function(A){ return M.readDocuments(A); }, mala:'Da ist viel Nachhall drin. Vor allem in dem kleinen schwarzen Buch.'},
+  keyring:{name:'Brunos Schlüsselring',icon:function(w){ w.ellipse(10,10,5,5,P.y3); w.ellipse(10,10,3.4,3.4,0); w.rect(13,12,10,3,P.y2); w.rect(20,15,3,3,P.y2); w.rect(16,15,2,2,P.y2); w.rect(5,15,6,4,P.y4); w.rect(24,4,4,7,P.y2); w.px(25,6,P.k2); },
+    look:'Ein Messingring mit zwei Schlüsseln. Ein großer mit einem Schild: SALON. Ein winziger, wie für eine Spieldose.', mala:'Er hat sie jeden Abend in der Hand gehabt.'},
+  crank:{name:'Grammofonkurbel',icon:function(w){ w.line(6,18,20,8,P.m3); w.line(6,19,20,9,P.m2); w.rect(20,6,3,6,P.m3); w.rect(22,5,6,3,P.w3); w.rect(4,17,4,4,P.m2); },
+    look:'Eine Kurbel für ein Grammofon. Sie lag unter dem Telefonbuch, als hätte sie jemand versteckt.'},
+  photo2:{name:'Tanzfoto',icon:function(w){ w.rect(6,3,20,18,P.y2); w.rect(8,5,16,14,P.s4); w.rect(12,8,3,9,P.k2); w.rect(16,8,3,9,P.s2); w.ellipse(13.5,7,1.6,1.6,P.s1); w.ellipse(17.5,7,1.6,1.6,P.s1); },
+    look:'Ein Schwarzweißfoto im Messingrahmen: ein Paar, tanzend, in einem Saal mit Kronleuchter. Hinten drauf: „B. i D., nedjelja, 1960.“', mala:'Sie lacht. Er sieht nur sie an.'},
+  record:{name:'Schellackplatte',icon:function(w){ w.ellipse(16,12,10,10,P.k2); w.ellipse(16,12,7,7,P.k1); w.ellipse(16,12,3,3,P.r3); w.px(16,12,P.k0); w.px(12,7,P.m2); w.px(21,16,P.m1); },
+    look:'Eine Schellackplatte, 78 Umdrehungen. Auf dem roten Etikett: „Večer na Rivi“. Darunter mit Bleistift: „D. i B.“', mala:'Darauf haben sie getanzt.'},
+  musicbook:{name:'Klavierschule',icon:function(w){ w.rect(6,4,20,17,P.n2); w.rect(8,6,16,4,P.s5); w.hl(9,22,8,P.k2); for (var i=0;i<4;i++) w.hl(9,22,12+i*2,P.n3); w.px(12,13,P.k1); w.px(16,15,P.k1); },
+    look:'Eine abgegriffene Klavierschule. Innen, in runder Kinderschrift: „Ljerka Lalić, 1966“. Daneben eine kleine gemalte Palme.', mala:'Kleine Hände. Ich sehe kleine Hände.'},
+  envelope:{name:'Umschlag aus Zagreb',icon:function(w){ w.rect(4,6,24,15,P.s5); w.line(4,6,16,14,P.s3); w.line(27,6,16,14,P.s3); w.ellipse(22,16,3,3,P.r3); w.hl(6,13,18,P.s2); },
+    look:'Ein Umschlag der Musikakademie Zagreb, Juni 1975, an „Ljerka Lalić“. Aufgerissen und wieder zugeklebt.', read:function(A){ return M.readEnvelope(A); }, mala:'Er hat ihn aufgemacht. Und dann hatte er Angst vor dem, was drinstand.'},
+  brunoletter:{name:'Brunos Brief',icon:function(w){ w.rect(7,4,18,17,P.s5); w.hl(9,21,7,P.k2); w.hl(9,18,9,P.k2); w.hl(9,13,11,P.k2); w.line(14,11,16,13,P.k2); },
+    look:'Ein Briefbogen des Hotel Palma. Brunos Schrift. Nur eine Zeile.', read:function(A){ return A.doc({style:'letter',title:'Hotel Palma · Split',lines:['Ljerka,','','ja sam …'],faded:[]}); }, mala:'Er hat hundert Mal angefangen. Das ist der eine Bogen, den er nicht zerrissen hat.'},
+  fee:{name:'Honorar',icon:function(w){ w.rect(5,7,22,13,P.s5); w.line(5,7,16,14,P.s3); w.line(26,7,16,14,P.s3); w.rect(9,4,14,4,P.g4); w.hl(10,21,5,P.g5); },
+    look:'Ein Umschlag von Ljerka. Mehr, als wir vereinbart hatten. Ich habe nicht nachgezählt.', mala:'Genug für eine Fahrkarte.'},
+  busticket:{name:'Busfahrkarte',icon:function(w){ w.rect(4,7,24,11,P.s5); w.rect(4,7,6,11,P.r3); w.hl(12,25,10,P.k2); w.hl(12,22,13,P.k2); w.hl(12,24,15,P.s2); },
+    look:'Split – Mostar – Sarajevo, 07:00 Uhr. Nur hin.', mala:'Nur hin.'},
+  key_ivka:{name:'Ivkas Schlüssel',icon:function(w){ w.ellipse(9,11,4,4,P.y3); w.ellipse(9,11,2,2,0); w.rect(12,10,13,3,P.y3); w.rect(21,13,2,3,P.y2); w.rect(24,13,2,2,P.y2); w.rect(4,14,6,3,P.g3); },
+    look:'Ivkas Wohnungsschlüssel, an einem grünen Band. Zdenka will ihn zurück.'},
+  tin:{name:'Blechdose',icon:function(w){ w.rect(9,6,14,14,P.m2); w.hl(9,22,6,P.m4); w.hl(9,22,7,P.m3); w.rect(11,10,10,6,P.m3); w.px(14,12,P.r3); w.px(17,13,P.y2); w.px(10,9,P.m1); w.px(21,17,P.m1); w.line(20,6,22,9,P.m1); },
+    look:function(A){ return A.g(A.cycle('tinL',['…','Nicht.','Das ist meins.'])); }}
+});
+// Gegenstand + Gegenstand
+M.defineCombos({
+  'radio+batteries':async function(A){ A.take('radio'); A.take('batteries'); A.give('radioB'); A.sfx('click'); await A.m('Vier Batterien hinein, Deckel zu. Ein Rauschen, dann Stille. Er lebt noch.'); },
+  'radioB+cassette':async function(A){ A.take('radioB'); A.take('cassette'); A.give('radioT'); A.sfx('cassette'); await A.m('Die Kassette passt. Ich drücke nicht auf Play. Das ist nicht für mich.'); A.setFlag('c2.tapeIn'); },
+  'radio+cassette':'Die Kassette passt hinein. Aber ohne Batterien dreht sich nichts.',
+  'documents+journal':'Das Nachtbuch gehört zu den Dokumenten.',
+  'keyring+envelope':'Der kleine Schlüssel hat mit dem Umschlag nichts zu tun. Mit dem Hocker schon.',
+  'photo1+postcard':'Dasselbe Jahr. Derselbe Hafen. Derselbe Junge, der „bis bald“ schreibt.',
+  'letter_t+gloves':'Der Brief und die Handschuhe gehören zusammen. Sie gehören zu ihr.',
+  'tickets+note_n':'Zwei Tickets. Ein Zettel. Sie haben beide gewartet, an verschiedenen Orten.'
+});
+M.showToMalaDefault='Mala sieht es an. „Für mich ist das nur ein Ding.“';
+})(M);
