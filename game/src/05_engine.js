@@ -31,7 +31,7 @@ E.get=function(){ return {room:room,S:S,GS:GS}; };
 
 // ---------------------------------------------------------------- Bildspeicher
 var bg=null, layers=[], dirty=true;
-function rebuild(){ var tod=todOf(); bg=room.paint(S,GS,tod); layers=room.layers?room.layers(S,GS,tod):[]; dirty=false; }
+function rebuild(){ if (!room) return; var tod=todOf(); bg=room.paint(S,GS,tod); layers=room.layers?room.layers(S,GS,tod):[]; dirty=false; }
 function todOf(){ return (room && room.tod) ? (typeof room.tod==='function'?room.tod(GS):room.tod) : GS.tod; }
 M.todOf=todOf;
 
@@ -435,7 +435,7 @@ M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
     if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); } }
   M.scheduleMusic(); };
 E.gtAdd=function(ms){ gt+=ms; };
-E.rebuildIfDirty=function(){ if (dirty) rebuild(); return {bg:bg,layers:layers}; };
+E.rebuildIfDirty=function(){ if (dirty && room) rebuild(); return {bg:bg,layers:layers}; };
 E.markDirty=function(){ dirty=true; navDirty=true; };
 E.room=null;
 E.todOf=todOf;

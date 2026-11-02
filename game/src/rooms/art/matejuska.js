@@ -143,7 +143,7 @@ function boat(w,o){ var L=o.len, h=o.h, wl=o.wl, dir=o.dir||1, sb=o.sb===undefin
     if (o.stay!==false){ w.line(mx,mt-mh+1,X(0.99),info.top[L-1]-1,P.s1); }
     info.mt=[mx,mt-mh-1]; o._mt=info.mt; }
   if (o.motor){ var mx2=X(0)-dir*2, my=info.top[0]; w.rect(mx2-1,my-3,4,6,P.s5); w.hl(mx2-1,mx2+2,my-3,P.s6); w.vl(mx2+2,my-3,my+2,P.s3); w.px(mx2,my-1,P.b1); w.vl(mx2,my+3,wl,P.m1); w.px(mx2+dir,my+3,P.m2); }
-  if (o.name){ var ny=info.top[Math.round(0.8*(L-1))]+(h>8?4:3), nx=dir>0?X(0.84)-M.microWidth(o.name):X(0.84); if (h>6) w.micro(o.name,nx,ny,o.nameCol||P.k2); }
+  if (o.name){ var nt=o.nameAt||0.84, ny=info.top[Math.round(Math.min(nt,0.8)*(L-1))]+(h>8?4:3), nx=dir>0?X(nt)-M.microWidth(o.name):X(nt); if (h>6) w.micro(o.name,nx,ny,o.nameCol||P.k2); }
   if (o.reg && h>8){ var rx=dir>0?X(0.1):X(0.1)-M.microWidth(o.reg), ry=info.top[Math.round(0.12*(L-1))]+4; w.micro(o.reg,rx,ry,o.nameCol||P.k2); }
   (o.tyres||[]).forEach(function(tt){ var tx=X(tt), tyy=info.top[Math.round(tt*(L-1))]+2; w.vl(tx,tyy-2,tyy,P.e2); w.ellipse(tx+0.5,tyy+3,3.1,2.4,P.k1); w.hl(tx-1,tx+1,tyy+3,P.k0); w.px(tx-2,tyy+2,P.m1); w.px(tx-1,tyy+1,P.m1); });
   return info; }
@@ -157,10 +157,10 @@ var BOATS=[
   {x:338,wl:81,len:36,h:4,dir:-1,hull:R('s3 s4 s5 s6'),trim:R('b0 b1 b2 b3'),band:null,deep:1,sb:2,mast:[0.6,15],noStem:true,far:1},
   // Mitte (an Bojen)
   {x:110,wl:94,len:62,h:7,dir:1,hull:R('g1 g2 g3 g4 g5'),trim:R('y1 y2 y3 y4'),band:P.r1,name:'GALEB',nameCol:P.s6,transom:true,motor:true,cargo:[[0.3,0.55,P.t3,2]]},
-  {x:318,wl:94,len:68,h:7,dir:-1,hull:R('s3 s4 s5 s6'),trim:R('r1 r2 r3 r4'),band:P.r2,name:'ZORA',nameCol:P.r1,mast:[0.58,32],yard:true,sail:P.s4,cargo:[[0.2,0.4,P.b2,2]]},
+  {x:318,wl:94,len:68,h:7,dir:-1,hull:R('s3 s4 s5 s6'),trim:R('r1 r2 r3 r4'),band:P.r2,name:'SV. NIKOLA',nameCol:P.r1,mast:[0.58,32],yard:true,sail:P.s4,cargo:[[0.2,0.4,P.b2,2]]},
   // nah (längsseits an der Mole)
   {x:22,wl:106,len:108,h:12,dir:1,hull:R('s2 s3 s4 s5 s6'),trim:R('b0 b1 b2 b3'),band:P.r2,name:'MARIJA',nameCol:P.b0,reg:'ST 2061',mast:[0.6,60],yard:true,sail:P.s5,tyres:[0.3,0.52,0.72],cargo:[[0.16,0.38,P.t3,3],[0.64,0.78,P.b2,2]],deep:3},
-  {x:238,wl:106,len:100,h:12,dir:-1,hull:R('b0 b1 b2 b3 b4'),trim:R('s3 s4 s5 s6'),band:P.k2,name:'DORA',nameCol:P.s6,reg:'ST 1187',cabin:[0.28,0.48,13],mast:[0.6,30],tyres:[0.24,0.7],transom:true,cargo:[[0.62,0.8,P.g3,2]],deep:3}
+  {x:238,wl:106,len:100,h:12,dir:-1,hull:R('b0 b1 b2 b3 b4'),trim:R('s3 s4 s5 s6'),band:P.k2,name:'DVA BRATA',nameCol:P.s6,nameAt:0.62,cabin:[0.28,0.48,13],mast:[0.6,30],tyres:[0.24,0.7],transom:true,cargo:[[0.62,0.8,P.g3,2]],deep:3}
 ];
 
 // ---------------------------------------------------------------- Wasser des Beckens
@@ -329,7 +329,7 @@ function paintLedana(b,tod){ var x0=LX0, top=18, base=QY+2, x, y;
   for (y=top-2;y<base;y++) for (x=x0-8;x<x0;x++){ var kk=(x-(x0-8))/8, yt=top+4-Math.round(kk*4); if (y<yt) continue; b.px(x,y,M.DN[M.DN[tex.plaster(x,y,Rp.slice(1,4),0)]]); }
   // Fassade: verwaschener Ockerputz, große Stellen bis auf das Ziegelwerk abgeplatzt
   for (y=top;y<base;y++) for (x=x0;x<W;x++){ var f=fbm(x*0.05,y*0.07), c2;
-      if (f<0.34){ c2=tex.bricks(x,y,Rb,7,3); if (f>0.325 && fbm(x*0.05,(y-1)*0.07)>=0.34) c2=P.t0; } else { c2=tex.plaster(x,y,Rp.slice(2,5),0); if (f<0.352) c2=(fbm(x*0.05,(y+1)*0.07)<0.34||fbm((x+1)*0.05,y*0.07)<0.34)?P.s5:Rp[3]; else if (f<0.37) c2=Rp[2]; }
+      if (f<0.4){ c2=tex.bricks(x,y,Rb,7,3); if (f>0.385 && fbm(x*0.05,(y-1)*0.07)>=0.4) c2=P.t0; } else { c2=tex.plaster(x,y,Rp.slice(2,5),0); if (f<0.412) c2=(fbm(x*0.05,(y+1)*0.07)<0.4||fbm((x+1)*0.05,y*0.07)<0.4)?P.s5:Rp[3]; else if (f<0.43) c2=Rp[2]; }
       var stn=fbm(x*0.35,y*0.012); if (stn>0.64) c2=M.DN[c2];
       if (y>base-22 && bayer(x,y)<(y-(base-22))/30) c2=M.DN[c2];
       b.px(x,y,c2); }
@@ -345,7 +345,9 @@ function paintLedana(b,tod){ var x0=LX0, top=18, base=QY+2, x, y;
   for (x=x0+30;x<W;x+=7){ if (hash(x,2)<0.5) b.px(x,top-5,P.g3); }
   // Schriftzug LEDANA (aufgemalt, verblasst) und Baujahr
   var tmp=new M.Buf(80,20,T); M.big(tmp,'LEDANA',40,3,P.r2,2,false); var lx=506-40;
-  for (y=0;y<tmp.h;y++) for (x=0;x<tmp.w;x++){ if (tmp.get(x,y)===T) continue; var X=lx+x, Y=19+y; var ff=fbm(X*0.25,Y*0.3); if (ff<0.24) continue; b.px(X,Y,ff<0.36?P.t3:(ff>0.66?P.r1:P.r2)); }
+  // Schilderfläche (hellerer Putz), darauf LEDA; vom NA sind nur hellere Abdrücke und Dübellöcher geblieben
+  for (y=18;y<34;y++) for (x=lx-4;x<lx+84;x++){ var cc0=tex.plaster(x,y,R('e3 e4 s4'),0); if (y===18||y===33) cc0=P.e2; b.px(x,y,cc0); }
+  for (y=0;y<tmp.h;y++) for (x=0;x<tmp.w;x++){ if (tmp.get(x,y)===T) continue; var X=lx+x, Y=19+y; if (x>=52){ b.px(X,Y,(hash(X,Y)<0.6)?P.s5:P.e4); if (hash(X,Y*2)<0.05) b.px(X,Y,P.k2); continue; } var ff=fbm(X*0.25,Y*0.3); if (ff<0.2) continue; b.px(X,Y,ff<0.32?P.t3:(ff>0.66?P.r1:P.r2)); }
   M.microText(b,'1928',600,27,P.r1);
   // Hohe Rundbogenfenster mit Stahlsprossen
   [[468,40],[504,40],[556,40],[600,40]].forEach(function(wd,i){ archWin(b,wd[0],wd[1],30,32,i,tod); });
@@ -435,6 +437,7 @@ function dyn(fb,v,S,GS){ if (!DYN) return; var cam=v.cam, t=v.t, tod=v.tod, calm
       if (c<0){ if (isWater(X,Y)){ c=wcol(X,Y,t,tod,calm); var refl=false;
           for (k=n-1;k>=0;k--){ var s2=D.spr[k], bo=D.boats[k], dd=Y-bo.wl; if (dd<1||dd>(bo.wl>100?9:(bo.wl>90?6:3))) continue; var wob=Math.round(Math.sin(Y*0.9+t*2.2+k)*(calm?0.7:1.4)), sx2=X+wob-s2.ox, sy2=bo.wl-dd-bob[k]-s2.oy; if (sx2<0||sy2<0||sx2>=s2.w||sy2>=s2.h) continue; var rc=s2.d[sy2*s2.w+sx2];
             if (rc!==T && bayer(X,Y)<0.82-dd*0.08){ c=M.DN[rc]; refl=true; break; } }
+          if (!refl && tod==='day'){ var oi=Math.floor(X/92), oxx=X-oi*92-30, oyy=Y-(84+(oi%3)*7)-Math.round(Math.sin(X*0.25+t*0.4+oi)*1.2); if (oxx>=0&&oxx<26&&oyy===0&&((oxx+oi)%5)<2){ c=(oxx%7<3)?P.v3:P.a5; refl=true; } }
           if (!refl) for (var gi=0;gi<GL.length;gi++){ var g=GL[gi]; if (Y<g[1]||Y>=g[2]) continue; var half=2+g[3]*(Y-g[1])/(g[2]-g[1]+1); if (Math.abs(X-g[0])>half) continue; if (Math.sin(X*0.7+Y*1.9+t*3+g[5])+Math.sin(X*0.23-t*2+Y+g[5])>1.25){ c=g[4]; refl=true; break; } }
           var dq=Y-FQ; if (!refl && dq<rlen && bayer(X,Y+1)<(calm?0.6:0.5)-dq*(calm?0.022:0.06)){ var wob2=Math.round(Math.sin(Y*1.3+t*1.7+X*0.05)*(calm?1:2.2)), sy3=FQ-1-dq; if (sy3>=0){ var mc=D.bg.d[sy3*W+cl(X+wob2,0,W-1)]; c=M.DN[mc]; } } }
         else c=D.bg.d[o2]; }
@@ -442,7 +445,8 @@ function dyn(fb,v,S,GS){ if (!DYN) return; var cam=v.cam, t=v.t, tod=v.tod, calm
     D.boats.forEach(function(o,i){ if (!o._mt) return; var fx=o._mt[0]-cam, fy=o._mt[1]+bob[i]; if (fx<0||fx>=316) return; var ph=Math.floor(t*(calm?2:10)+i*3)%3, col=tod==='day'?P.r3:M.tintPx(M.TINT[tod]||M.TINT.night,P.r3,fx,fy);
       fb.px(fx,fy,col); fb.px(fx+1,fy+(calm?1:(ph===1?1:0)),col); if (!calm) fb.px(fx+2,fy+(ph===2?1:(ph===0?-1:0)),M.DN[col]); else fb.px(fx,fy+1,col); });
   }
-  if (tod==='day') M.scn.gulls(fb,t,0,6,W,30,4,cam);
+  if (tod==='day'){ M.scn.gulls(fb,t,0,6,W,30,4,cam);
+    var gx=LAMP.x-cam, gy=LAMP.base-LAMP.h-12; if (gx>3&&gx<316){ var hb=Math.sin(t*0.9)>0.6?1:0; fb.px(gx-2,gy,P.s6); fb.px(gx-1,gy,P.s6); fb.px(gx,gy,P.s5); fb.px(gx+1,gy,P.m3); fb.px(gx-1,gy-1,P.s6); fb.px(gx-3+hb,gy-2,P.s6); fb.px(gx-4+hb,gy-2,P.y3); fb.px(gx,gy+1,P.y3); fb.px(gx-1,gy+1,P.y3); } }
   var on=Math.floor(v.gt/650)%2===0; if (on && tod!=='day'){ var lx2=505-cam; if (lx2>2&&lx2<316){ fb.px(lx2,FENCE.top-4,P.y5); fb.px(lx2+1,FENCE.top-4,P.y4); fb.px(lx2,FENCE.top-3,P.y4); fb.px(lx2+1,FENCE.top-3,P.y3); fb.px(lx2-1,FENCE.top-3,P.y2); fb.px(lx2+2,FENCE.top-4,P.y2); fb.px(lx2,FENCE.top-5,P.y3); } }
   var fl=64-cam; if (fl>=0&&fl<312){ var FC=[P.r3,P.s6,P.b1]; for (var fy2=0;fy2<3;fy2++) for (var fx2=1;fx2<7;fx2++){ var wv=Math.round(Math.sin(fx2*0.9-t*(calm?2:8))*(fx2/6)*(calm?0.4:1)), cc2=FC[fy2]; fb.px(fl+fx2,3+fy2+wv,tod==='day'?cc2:M.tintPx(M.TINT[tod]||M.TINT.night,cc2,fl+fx2,3+fy2)); } } }
 function front(fb,v,S,GS){ if (M.scn.weather(GS)==='bura') M.scn.buraDebris(fb,v.t,112,140,v.cam); }

@@ -83,4 +83,4 @@ ${js}
   fs.writeFileSync(af, page);
   console.log('Artefakt', af, (page.length / 1024).toFixed(0) + ' KB');
 }
-console.log('web/index.html', (html.length / 1024).toFixed(0) + ' KB', files.length + ' Module');
+console.log(path.relative(process.cwd(), path.join(OUT, 'index.html')) || 'index.html', (html.length / 1024).toFixed(0) + ' KB', files.length + ' Module');

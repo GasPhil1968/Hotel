@@ -118,7 +118,10 @@ function caseClosed(b,x,y){ var sh=caseShape(x,y,1,1), i;
   b.line(x-21,y,x+22,y-1,P.m0); b.line(x-21,y+1,x+22,y,P.k0);
   b.rect(x-4,y-7,7,2,P.k0); b.hl(x-4,x+2,y-8,P.m2); b.px(x-5,y-7,P.m1); b.px(x+3,y-7,P.m1);
   [[x+10,y-2],[x-12,y-1],[x+1,y-1]].forEach(function(l){ b.rect(l[0],l[1],2,2,P.y3); b.px(l[0],l[1],P.y5); });
-  b.rect(x+13,y-6,4,3,P.r3); b.px(x+13,y-6,P.s6); b.px(x+16,y-4,P.b2);
+  // Aufkleber: HAJDUK (rot-weiß-blau), gelber Smiley, „Ancona“
+  b.rect(x-15,y-5,5,3,P.s6); b.hl(x-15,x-11,y-5,P.r3); b.px(x-14,y-4,P.r3); b.px(x-12,y-4,P.r3); b.hl(x-15,x-11,y-3,P.b1);
+  b.ellipse(x-7.5,y-3.5,1.7,1.7,P.y4); b.px(x-8,y-4,P.k1); b.px(x-7,y-4,P.k1); b.px(x-8,y-3,P.y2); b.px(x-7,y-3,P.y2);
+  b.rect(x+13,y-7,6,3,P.b3); b.hl(x+14,x+17,y-6,P.s6); b.px(x+13,y-7,P.s6);
   // Schutt liegt halb darüber (rechtes Ende)
   [[x+14,y-9,10,4,R('m1 m2 m3 s4')],[x+19,y-5,9,5,R('e1 e2 e3 e4')],[x+8,y-11,8,3,R('s2 s3 s4 s5')]].forEach(function(pc){ var x0=pc[0], y0=pc[1], w=pc[2], h=pc[3], col=pc[4];
     b.poly([[x0,y0],[x0+w,y0-1],[x0+w-1,y0+h],[x0+1,y0+h+1]],function(xx,yy){ var v=(yy-y0)/(h+1); return col[cl(Math.floor((1-v)*col.length*0.99),0,col.length-1)]; }); b.hl(x0+1,x0+w-1,y0,col[col.length-1]); });

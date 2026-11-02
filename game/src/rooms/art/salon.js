@@ -30,7 +30,7 @@ var CACHE={}, BG=null, CHALKOK=null;
 // ---------------------------------------------------------------- Licht: Stufen zwischen Nacht (oder Morgengrauen) und warmem Türlicht
 function lum(r,g,b){ return r*0.3+g*0.59+b*0.11; }
 var TF={
-  night:function(r,g,b){ var L=lum(r,g,b); return [r*0.17+L*0.08, g*0.22+L*0.10, b*0.36+L*0.20+14]; },
+  night:function(r,g,b){ var L=lum(r,g,b); return [r*0.21+L*0.10, g*0.26+L*0.12, b*0.40+L*0.22+16]; },
   dawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.42+L*0.22+18, g*0.30+L*0.16+8, b*0.44+L*0.20+28]; },
   dusk:function(r,g,b){ var L=lum(r,g,b); return [r*0.52+L*0.10+12, g*0.38+L*0.08+4, b*0.50+L*0.10+22]; },
   lamp:function(r,g,b){ var L=lum(r,g,b); return [r*0.62+L*0.5+30, g*0.5+L*0.36+12, b*0.28+L*0.12]; }
@@ -48,9 +48,10 @@ function shade(buf,ox,oy,base,fn,skip){ if (!base) return; var L=levels(base), n
 // kaltes Fensterlicht (in Tagesfarben, vor dem Umfärben)
 function windowLight(x,y){ var s=0, f=fl(x,y);
   for (var i=0;i<WINS.length;i++){ var w=WINS[i], cx=(w[0]+w[1])/2, hw=(w[1]-w[0])/2;
-    if (f && y>=FY){ var t=f.Z/70; if (t<1){ var c=lerp(cx,cx+(cx-VX)*0.08,t), hh=lerp(hw-1,hw+5,t), d=Math.abs(f.X-c)/hh; if (d<1){ var e=(1-Math.pow(d,5))*(1-t*0.8); s=Math.max(s,e*3.0); } } }
+    if (f && y>=FY){ var t=f.Z/90; if (t<1){ var c=cx-24*t, hh=hw+3*t, d=Math.abs(f.X-c)/hh;
+        if (d<1){ var e=(1-Math.pow(d,6))*(1-t*0.75); var mu=Math.abs(f.X-c), tr=Math.abs(t-0.42); if (mu<0.9+t*0.6 || tr<0.025) e*=0.25; s=Math.max(s,e*3.0); } } }
     var dx=(x-cx)/(hw+12), dy=(y-(WY0+WY1)/2)/((WY1-WY0)/2+12), d2=dx*dx+dy*dy; if (d2<1) s=Math.max(s,(1-d2)*1.0);
-    var bx=(x-cx)/(hw+4), by=(y-(FY+10))/14; var b2=bx*bx+by*by; if (b2<1 && y<FY) s=Math.max(s,(1-b2)*0.6); }
+    var bx=(x-cx)/(hw+4), by=(y-(FY+10))/14, b2=bx*bx+by*by; if (b2<1 && y<FY) s=Math.max(s,(1-b2)*0.6); }
   return s; }
 
 // ---------------------------------------------------------------- Texturen
@@ -236,7 +237,11 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), sky=new Uint8Array(W*144)
   paintChandelier(b);
   for (var q2=0;q2<W*144;q2++) if (sky[q2] && b.d[q2]!==out.d[q2]) sky[q2]=0;
   shade(b,0,0,base,doorLight,function(x,y){ return !!sky[y*W+x]; });
-  if (base){ for (var yy=DOOR.Y0;yy<FY-14;yy++) for (var xx=DOOR.X0+4;xx<DOOR.X1;xx++){ var u=(xx-DOOR.X0)/(DOOR.X1-DOOR.X0); if (bayer(xx,yy)<0.6) b.px(xx,yy,u>0.7?P.y4:P.y3); } b.vl(DOOR.X1-2,DOOR.Y0+2,DOOR.Y0+26,P.y5); }
+  if (base){ // kühle Glanzlichter vom Fenster: Trichterrand, Bettknäufe, Kronleuchter
+    var gl=S.dawn?P.d4:P.n4, h=CACHE.horn; if (h){ for (var a=2.3;a<4.0;a+=0.12) b.px(rd(h[0]+Math.cos(a)*9.6),rd(h[1]+Math.sin(a)*7.1),gl); }
+    for (var k=0;k<5;k++){ var A=M.wallPt(SPEC,'R',4+k*2.6,58+k*2); b.px(rd(A[0])-k*2,rd(A[1])-1,gl); }
+    var ch=CACHE.chand; if (ch){ [[-8,4],[-3,6],[4,5],[9,3],[0,12]].forEach(function(q){ b.px(ch[0]+q[0],ch[1]+q[1],S.dawn?P.d5:P.n5); }); }
+    for (var yy=DOOR.Y0;yy<FY-14;yy++) for (var xx=DOOR.X0+4;xx<DOOR.X1;xx++){ var u=(xx-DOOR.X0)/(DOOR.X1-DOOR.X0); if (bayer(xx,yy)<0.6) b.px(xx,yy,u>0.7?P.y4:P.y3); } b.vl(DOOR.X1-2,DOOR.Y0+2,DOOR.Y0+26,P.y5); }
   BG=b; return b; }
 
 // ---------------------------------------------------------------- Ebenen: Flügel, Klavierbank, Tuch am Boden, Sofa
@@ -263,21 +268,21 @@ function chalkLines(){ if (CHALK) return CHALK; var pts={}, flo={}, glow={};
   function poly(a,v){ for (var i=0;i<a.length-1;i++) ln(a[i][0],a[i][1],a[i+1][0],a[i+1][1],v,true); }
   function txt(s,x,y,v){ var cx=x; for (var i=0;i<s.length;i++){ var g=M.FONT[s[i]]; if (!g){ cx+=3; continue; } var jy=(i%2)?1:0; for (var k=0;k<g.px.length;k+=2) dot(cx+g.px[k],y+g.px[k+1]+jy,v); cx+=g.w+2; } }
   function micro(s,x,y,v){ M.microText({px:function(xx,yy){ dot(xx,yy,v,1); }},s,rd(x),rd(y),0); }
-  // --- das Mädchen mit Zopf wartet an der Haltestelle (links), daneben die Straßenbahn Nr. 3
-  var gx=103, gy=72; circ(gx,gy,2.6,2.8,1); poly([[gx-1,gy+3],[gx-4.5,gy+12],[gx+4.5,gy+12],[gx+1,gy+3]],1);
-  ln(gx-1.5,gy+12,gx-2,gy+17,1); ln(gx+1.5,gy+12,gx+2,gy+17,1); ln(gx-3,gy+17,gx-1,gy+17,0.8); ln(gx+1,gy+17,gx+3,gy+17,0.8);
-  ln(gx+2,gy+5,gx+6,gy+8,0.9); ln(gx-2,gy+5,gx-5,gy+9,0.9);
-  poly([[gx-2,gy-2],[gx-4,gy],[gx-3,gy+2],[gx-5,gy+4],[gx-4,gy+6],[gx-6,gy+8]],1); dot(gx-7,gy+8,1); dot(gx-6,gy+9,1); dot(gx-5,gy+9,1); dot(gx-7,gy+10,0.8);
-  dot(gx-1,gy-0.6,0.7); dot(gx+1,gy-0.6,0.7); ln(gx-1,gy+1.3,gx+1,gy+1.3,0.6);
-  ln(gx+8,gy+17,gx+8,gy+2,0.7); poly([[gx+6,gy+2],[gx+10,gy+2],[gx+10,gy-1],[gx+6,gy-1],[gx+6,gy+2]],0.7);  // Haltestellenschild
-  var tx=112, ty=70;
+  // --- das Mädchen mit Zopf wartet an der Haltestelle (links) und winkt der Straßenbahn Nr. 3
+  var gx=103, gy=69; circ(gx,gy,3,3.2,1); dot(gx-1,gy-0.5,0.8); dot(gx+1.4,gy-0.5,0.8); ln(gx-1,gy+1.4,gx+1.4,gy+1.4,0.7);
+  poly([[gx-1,gy+3.4],[gx-5.5,gy+15],[gx+5.5,gy+15],[gx+1,gy+3.4]],1); ln(gx-4.5,gy+13,gx+4.5,gy+13,0.6);
+  ln(gx-2,gy+15,gx-2.5,gy+21,1); ln(gx+2,gy+15,gx+2.5,gy+21,1); ln(gx-4,gy+21,gx-2,gy+21,0.8); ln(gx+2,gy+21,gx+4,gy+21,0.8);
+  ln(gx+1.5,gy+5,gx+6,gy+2,0.9); ln(gx+6,gy+2,gx+7,gy-1,0.9); ln(gx-1.5,gy+5,gx-5,gy+10,0.9);
+  poly([[gx-2.6,gy-1.6],[gx-4.4,gy+0.6],[gx-3.4,gy+2.6],[gx-5,gy+4.6],[gx-4,gy+6.6],[gx-5.6,gy+8.6]],1); dot(gx-6.6,gy+9,1); dot(gx-5.6,gy+10,1); dot(gx-4.6,gy+9.4,1); dot(gx-6.4,gy+10.6,0.8);
+  for (var hI=-2;hI<=2;hI++) dot(gx+hI,gy-3.2,0.8);
+  var tx=114, ty=70;
   poly([[tx,ty+14],[tx,ty+3],[tx+2,ty],[tx+22,ty],[tx+25,ty+3],[tx+25,ty+14],[tx,ty+14]],1);
   for (var wI=0;wI<3;wI++) poly([[tx+2+wI*5,ty+3],[tx+5+wI*5,ty+3],[tx+5+wI*5,ty+7],[tx+2+wI*5,ty+7],[tx+2+wI*5,ty+3]],0.8);
   ln(tx+1,ty+9,tx+16,ty+9,0.6,true);
   poly([[tx+18,ty+2],[tx+24,ty+2],[tx+24,ty+11],[tx+18,ty+11],[tx+18,ty+2]],0.9);
-  poly([[tx+19,ty+3.6],[tx+22.6,ty+3.4],[tx+23,ty+5],[tx+20.6,ty+6.6],[tx+23,ty+8],[tx+22.6,ty+9.6],[tx+19,ty+9.8]],1.25);
-  circ(tx+5,ty+15,2,2,1); circ(tx+20,ty+15,2,2,1); ln(tx-4,ty+18,tx+30,ty+18,0.7,true); for (var s=0;s<6;s++) ln(tx-2+s*6,ty+18,tx-3+s*6,ty+20,0.5);
-  poly([[tx+10,ty],[tx+14,ty-4],[tx+9,ty-7],[tx+15,ty-10]],0.9); ln(tx-6,ty-10,tx+30,ty-11,0.7,true);
+  var g3=M.FONT['3']; for (var k3=0;k3<g3.px.length;k3+=2) dot(tx+19+g3.px[k3],ty+3+g3.px[k3+1],1.3);
+  circ(tx+5,ty+15,2,2,1); circ(tx+20,ty+15,2,2,1); ln(tx-3,ty+18,tx+28,ty+18,0.7,true); for (var s=0;s<6;s++) ln(tx-1+s*6,ty+18,tx-2+s*6,ty+20,0.5);
+  poly([[tx+10,ty],[tx+14,ty-4],[tx+9,ty-7],[tx+15,ty-10]],0.9); ln(tx-4,ty-10,tx+28,ty-11,0.7,true);
   // gezählte Tage unter der Bahn
   for (var tI=0;tI<13;tI++){ var tx2=114+(tI%5)*2+Math.floor(tI/5)*12, ty2=93; if (tI%5===4) ln(tx2-8,ty2+2,tx2+1,ty2-2,0.7); else ln(tx2,ty2-2,tx2,ty2+2,0.7); }
   var hzx=100, hzy=94; poly([[hzx,hzy+3],[hzx-3,hzy],[hzx-3,hzy-1],[hzx-2,hzy-2],[hzx,hzy-1],[hzx+2,hzy-2],[hzx+3,hzy-1],[hzx+3,hzy],[hzx,hzy+3]],0.9);
@@ -330,11 +335,11 @@ M.defineArt('salon',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, ghost:ghost,
   actorLut:function(a,S,GS,tod){ var base=baseOf(S,tod); if (!base) return null; return levels(base)[1].a; },
   spots:{
-    door:[DOOR.X0-3,DOOR.Y0-8,DOOR.X1-DOOR.X0+16,FY-DOOR.Y0+10],
+    door:[DOOR.X0-3,DOOR.Y0-8,DOOR.X1-DOOR.X0+6,FY-DOOR.Y0+10],
     piano:[164,78,88,50],
     sheet:[164,78,88,40],
     bench:[150,100,20,24],
-    gramophone:[36,40,52,44],
+    gramophone:[54,30,32,54],
     cabinet:[46,82,40,32],
     beds:[256,58,64,70],
     windows:[56,14,206,72],

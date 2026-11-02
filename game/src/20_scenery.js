@@ -6,7 +6,7 @@ var scn={}; M.scn=scn;
 // Wetter je Phase: 'rain' (Jugo), 'clear' (Bura, klar), 'calm'
 scn.weather=function(GS){ var ph=M.PHASES[GS.phase]||{}; return ph.weather||'calm'; };
 // Himmel bei Regen: grau verhangen
-scn.sky=function(b,x0,y0,w,h,tod,weather,seed){ if (weather==='rain' && (tod==='day'||tod==='dusk')){ var ramp=M.R(tod==='day'?'m2 m3 s3 m3':'d0 m1 d1 m2');
+scn.sky=function(b,x0,y0,w,h,tod,weather,seed){ if (weather==='rain'){ var ramp=M.R(tod==='day'?'m2 m3 s3 m3':(tod==='dusk'?'d0 m1 d1 m2':(tod==='dawn'?'m1 n1 m2 d2':'k0 k1 m0 k2')));
     for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var v=(y-y0)/h+Math.sin(x*0.05+y*0.2)*0.08+hash(Math.floor(x/9),Math.floor(y/4))*0.15; b.px(x,y,M.rampAt(ramp,v,x,y)); } return; }
   M.sky(b,x0,y0,w,h,tod,seed); };
 // Glockenturm von Sveti Duje (Silhouette, schlank, mit Spitze)

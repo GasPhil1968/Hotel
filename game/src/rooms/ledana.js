@@ -70,7 +70,7 @@ var HS=[
    r:function(S,GS,a){ return [Math.round(a.x)-10,Math.round(a.y)-38,22,38]; },
    st:function(){ return M.stand('ledana','stairs'); }, gst:function(S,GS){ var p=M.apos('ledana','luka',[92,70,'R']); return [p[0]+18,p[1],'L']; },
    talk:function(A){ return lukaMarko(A,A.npc('luka')); },
-   look:'Ein junger Mann auf der Galerie, die Beine über der Kante, eine Gitarre auf dem Schoß. Er sieht zum Hafen hinaus, als zähle er die Minuten. Er ist durchscheinend.',
+   look:'Ein junger Mann oben auf der Galerie, auf einer alten Kiste, eine Gitarre auf dem Schoß. Er sieht zum Hafen hinaus, als zähle er die Minuten. Er ist durchscheinend.',
    g:{look:'Er ist zwanzig. Er wird immer zwanzig sein.',talk:function(A){ return lukaMala(A,A.npc('luka')); },sense:'Er ist voller Vorfreude. Seit zwölf Jahren. Das ist das Traurigste, was ich je gespürt habe.'}},
  {id:'stairs',name:'Eingestürzte Treppe',look:'Eine Holztreppe zur Galerie. Die unteren Stufen fehlen, die mittleren hängen schief. Die siebte ist gebrochen.',use:'Da gehe ich nicht hinauf. Dinko hatte recht.',
    g:{look:'Für mich ist sie nur ein Weg nach oben.',sense:async function(A){ await A.g('Hier ist jemand gefallen. Der Nachhall ist laut. Ich will ihn nicht allein ansehen.'); }}},

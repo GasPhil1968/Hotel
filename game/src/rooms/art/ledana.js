@@ -52,6 +52,8 @@ function paintOut(tod,weather){ var o=new M.Buf(W,H,P.k0), x, y, night=tod==='ni
   // Stadt und Fährhafen am anderen Ufer: Blöcke, Kräne, Terminal, Lichter
   var r=M.rng(77); for (x=214;x<W;){ var w=4+Math.floor(r()*9), h=2+Math.floor(r()*6); for (y=HZ-2-h;y<HZ;y++) for (var xx2=x;xx2<x+w&&xx2<W;xx2++){ var c2=night?((hash(xx2,y)<0.18)?(hash(xx2,y*3)<0.5?P.y4:P.y3):P.k2):((xx2===x)?P.s5:(hash(xx2,y)<0.15?P.s2:P.s4)); o.px(xx2,y,c2); } x+=w+(r()<0.3?1:0); }
   [[236,14],[312,18]].forEach(function(cr){ var cx2=cr[0], ch=cr[1]; o.vl(cx2,HZ-2-ch,HZ-2,night?P.k2:P.m2); o.line(cx2-6,HZ-2-ch,cx2+8,HZ-2-ch,night?P.k2:P.m2); o.vl(cx2+7,HZ-1-ch,HZ-ch+4,night?P.k2:P.m1); if (night) o.px(cx2,HZ-3-ch,P.r4); });
+  // Kiosk am Fährterminal (ganz klein)
+  o.rect(244,HZ-5,6,5,night?P.k2:P.s5); o.hl(243,250,HZ-6,night?P.k1:P.r3); o.rect(245,HZ-4,4,2,night?P.y4:P.n1); if (night){ o.px(246,HZ-3,P.y5); o.px(244,HZ-1,P.y2); }
   // Terminalgebäude (Beton, 70er) mit Lichterkette
   for (y=HZ-9;y<HZ;y++) for (x=256;x<300;x++){ var c3=night?P.k2:(y===HZ-9?P.s5:P.s4); if (!night && (x-256)%5===0 && y>HZ-7) c3=P.n1; if (night && (x-256)%4===0 && y===HZ-6) c3=P.y3; o.px(x,y,c3); }
   for (x=214;x<W;x+=3) if (hash(x,9)<0.6) o.px(x,HZ-1,night?P.y4:P.s3);
@@ -95,11 +97,23 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // ---- Rohre an der Rückwand
   for (x=126;x<196;x++){ b.px(x,62,P.t2); b.px(x,63,P.t1); b.px(x,64,P.t0); if (x%18===0){ b.rect(x-1,61,3,5,P.m1); } }
   b.vl(186,22,61,P.m1); b.vl(187,22,61,P.m2); b.vl(188,22,61,P.m0); b.rect(184,40,5,3,P.r2); b.hl(184,188,40,P.r3);
-  // ---- Graffiti (2000er): SPLIT in Blasenschrift, HAJDUK ŽIVI VJEČNO, Tags
-  var gt=new M.Buf(60,16,T); M.big(gt,'SPLIT',30,3,P.b3,2,false); M.outline(gt,P.k1);
-  for (y=0;y<gt.h;y++) for (x=0;x<gt.w;x++){ var gc=gt.get(x,y); if (gc===T) continue; var X=136+x, Y=74+y; if (gc===P.b3){ gc=(y<7)?P.b4:(y>11?P.b1:P.b3); if (hash(X,Y)<0.06) continue; } b.px(X,Y,gc); }
-  M.microText(b,'HAJDUK ŽIVI VJEČNO',126,92,P.r3); b.hl(126,196,98,P.k2);
-  b.line(150,70,158,67,P.s5); b.line(158,67,160,71,P.s5); M.microText(b,'03',162,67,P.y3); b.ellipse(126,80,3,3,P.y3); b.px(125,79,P.k1); b.px(127,79,P.k1); b.hl(125,127,81,P.k1);
+  // ---- Graffiti aus zwölf Jahren: ein sehr gut gemalter Wal, das Hajduk-Wappen, ein Herz mit „I + M“, Tags; ganz klein „N + L, 23.8.“
+  // Wal (blau, heller gefurchter Bauch, Fluke hoch, Fontäne), schwarz umrandet
+  var WX0=128, WY=76, WL=44, wb=new M.Buf(60,30,T);
+  for (var i2=0;i2<WL;i2++){ var u=i2/(WL-1), top=Math.round(12-7.5*Math.pow(Math.sin(Math.PI*Math.min(1,u*1.25+0.08)),0.55)*(1-u*0.55)), bot=Math.round(12+5.5*Math.pow(Math.sin(Math.PI*Math.min(1,u*1.45+0.06)),0.7)*(1-u*0.75));
+    if (u>0.86){ top=11; bot=13; } for (var yy=top;yy<=bot;yy++){ var vv=(yy-top)/Math.max(1,bot-top), cw=vv<0.18?P.b3:(vv<0.55?P.b2:(vv<0.68?P.b1:(((i2+yy)%3===0)?P.s3:P.s5))); wb.px(i2+2,yy,cw); } }
+  wb.poly([[WL-2,12],[WL+8,3],[WL+6,9],[WL+2,12],[WL+7,16],[WL+9,19],[WL-1,14]],P.b1); wb.line(WL-1,12,WL+8,3,P.b2);
+  wb.px(9,11,P.s6); wb.px(10,11,P.k1); wb.line(3,14,14,15,P.k2); wb.line(16,16,22,19,P.b0); wb.line(17,16,23,19,P.b1);
+  for (var k3=0;k3<6;k3++){ wb.px(8+(k3%2?k3:-k3)*0.7,4-k3%3,P.b4); } wb.vl(8,4,6,P.b4); wb.px(6,2,P.b4); wb.px(10,2,P.b4); wb.px(5,3,P.s6); wb.px(11,3,P.s6);
+  M.outline(wb,P.k1); b.blit(wb,WX0,WY-12);
+  // Hajduk-Wappen: Schild mit rot-weißem Schachbrett, blauer Rand, Schrift
+  var HX=180, HY=70; for (y=HY;y<HY+14;y++) for (x=HX;x<HX+12;x++){ var inS=(y<HY+8)||Math.abs(x-(HX+5.5))<(HY+14-y)*0.75; if (!inS) continue; var c2=((Math.floor((x-HX-1)/2)+Math.floor((y-HY-3)/2))%2)?P.r3:P.s6; if (x===HX||x===HX+11||y===HY||y>=HY+12) c2=P.b1; if (y<HY+3) c2=P.b1; b.px(x,y,c2); }
+  M.microText(b,'HNK',HX+1,HY-6,P.s5); b.hl(HX+1,HX+10,HY+1,P.s5);
+  // Herz mit I + M
+  b.ellipse(132,70,2.6,2.4,P.r3); b.ellipse(137,70,2.6,2.4,P.r3); b.poly([[129.5,70.5],[139.5,70.5],[134.5,77]],P.r3); M.microText(b,'I+M',129,69,P.s6);
+  // Tags und Kleinkram
+  b.line(160,95,170,92,P.s5); b.line(170,92,172,96,P.s5); b.line(172,96,180,93,P.s5); M.microText(b,'04',184,92,P.y3); b.line(128,96,140,94,P.g4); b.line(140,94,142,98,P.g4);
+  M.microText(b,'N+L',190,96,P.s3); b.px(191,94,P.s3); M.microText(b,'23.8.',182,99,P.s2);
   // ---- Galerie: Bodenbretter, Stahlträger, Säulen; Bürotür und Plakat an der Rückwand
   var gp=[p3(GAL.X0-40,GAL.Y,0),p3(GAL.X1,GAL.Y,0),p3(GAL.X1,GAL.Y,GAL.Z1),p3(GAL.X0-40,GAL.Y,GAL.Z1)];
   b.poly(gp,function(x,y){ var kk=(y-VP[1])/(GAL.Y-VP[1]), X=VP[0]+(x-VP[0])/kk, fu=((X+400)%7), c=fu<0.9/kk?P.w0:(hash(Math.floor((X+400)/7),2)<0.5?P.w2:P.w1); if (hash(x,y)<0.06) c=P.w0; return c; });
@@ -123,8 +137,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   var cx0=ow[0]+23, cy0=ow[1]+22; for (k=0;k<7;k++){ var ang=k/7*Math.PI*2+0.3, len=5+hash(k,4)*7; b.line(cx0,cy0,rnd(cx0+Math.cos(ang)*len),rnd(cy0+Math.sin(ang)*len),P.s4); }
   for (y=ow[1]+1;y<ow[1]+14;y++) for (x=ow[0]+1;x<ow[0]+14;x++) if (x-ow[0]+(y-ow[1])*0.6<9) OUTM[y*W+x]=1; else b.px(x,y,M.UP[b.get(x,y)]);
   // Lukas Stuhl am Fenster (Holz, Lehne links)
-  var cx=LUKA[0], cy=LUKA[1]; b.rect(cx-6,cy-13,12,2,P.w3); b.hl(cx-6,cx+5,cy-13,P.w4); b.vl(cx-5,cy-11,cy,P.w1); b.vl(cx+4,cy-11,cy,P.w1); b.vl(cx-3,cy-11,cy-1,P.w0); b.rect(cx-7,cy-29,2,17,P.w2); b.vl(cx-7,cy-29,cy-13,P.w3); b.hl(cx-7,cx-3,cy-29,P.w3); b.hl(cx-7,cx-4,cy-22,P.w1);
-  // Gitarrenkoffer? nein – der liegt im Kühlraum. Eine leere Flasche und Zigarettenstummel neben dem Stuhl
+  var cx=LUKA[0], cy=LUKA[1]; for (y=cy-13;y<cy;y++) for (x=cx-8;x<cx+5;x++){ var cw=((y-(cy-13))%4===0)?P.w1:P.w2; if (x===cx-8) cw=P.w3; if (x===cx+4) cw=P.w0; b.px(x,y,cw); } b.hl(cx-8,cx+4,cy-13,P.w4); b.hl(cx-8,cx+4,cy-1,P.w0);
+  M.microText(b,'ST',cx-6,cy-9,P.w0);
+  // eine leere Flasche und Zigarettenstummel neben der Kiste
   b.rect(cx+9,cy-6,2,6,P.g2); b.px(cx+9,cy-7,P.g3); b.px(cx+10,cy-5,P.g4); b.px(cx-10,cy-1,P.s5); b.px(cx-12,cy,P.s5);
   // ---- Eismaschinen und Kompressoren unter der Galerie
   // großer liegender Ammoniakbehälter auf Sätteln
@@ -136,6 +151,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   for (y=92;y<112;y+=4) b.hl(72,93,y,P.m0);
   b.ellipse(108,98,11,11,function(x,y){ var d=Math.hypot(x+0.5-108,y+0.5-98); if (d>9.5) return P.k1; if (d>8) return (Math.atan2(y-98,x-108)>0)?P.m1:P.m2; if (d<2) return P.m3; var a=Math.atan2(y-98,x-108)*3; return (Math.abs(Math.sin(a))<0.25)?P.m1:T; });
   b.line(96,96,104,88,P.k1); b.line(96,104,104,108,P.k1); b.rect(107,97,3,3,P.m3);
+  // Eiswannen: Reihen von Blockeis-Zellen in einem Rahmen
+  for (k=0;k<5;k++){ var ex=4+k*7, ey=104; b.rect(ex,ey,6,12,P.m1); b.hl(ex,ex+5,ey,P.m3); b.vl(ex+5,ey,ey+11,P.k1); if (hash(k,8)<0.6) b.rect(ex+1,ey+3,4,3,P.t1); b.px(ex+2,ey+1,P.m4); }
+  b.hl(2,40,116,P.k1); b.hl(2,40,103,P.m2);
   // Ventile, Manometer, Rohre zur Galerie
   [[66,78],[84,76]].forEach(function(v){ b.ellipse(v[0],v[1],3,3,P.s5); b.px(v[0],v[1],P.k1); b.line(v[0],v[1],v[0]+2,v[1]-2,P.r2); b.vl(v[0],v[1]+3,v[1]+8,P.m1); });
   for (y=79;y<104;y++){ b.px(120,y,P.t1); b.px(121,y,P.t2); } b.ellipse(120.5,96,3,1.5,P.r3); b.hl(117,124,96,P.r2);
@@ -185,6 +203,12 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // Torpfosten (Schatten) und Schwelle aus Stahl
   for (y=0;y<H;y++){ var gl=M.wallPt(SPEC,'R',38,22)[0]; } b.line(234,12,234,122,P.k1); b.line(235,12,235,122,P.m0);
   var th0=M.wallPt(SPEC,'R',38,100), th1=M.wallPt(SPEC,'R',90,100); b.line(rnd(th0[0]),rnd(th0[1]),rnd(th1[0]),rnd(th1[1]),P.m2); b.line(rnd(th0[0]),rnd(th0[1])+1,rnd(th1[0]),rnd(th1[1])+1,P.k1);
+  // ---- Schienen der Eiswagen im Boden, zum Tor hinaus
+  [[0,58],[0,70]].forEach(function(rl){ var Zr=rl[1]; for (var X=60;X<=196;X+=0.5){ var q=p3(X,FY,Zr); var xx=rnd(q[0]), yy=rnd(q[1]); if (yy>=H||yy<100) continue; b.px(xx,yy,P.m3); b.px(xx,yy+1,P.k1); } });
+  for (var X2=64;X2<196;X2+=9){ var q1=p3(X2,FY,56), q2=p3(X2,FY,72); b.line(rnd(q1[0]),rnd(q1[1]),rnd(q2[0]),rnd(q2[1])+1,P.w1); }
+  // alte Matratze, auf der Kinder geraucht haben
+  b.poly([[54,122],[96,118],[104,124],[60,130]],function(x,y){ var c=((x+Math.floor(y*0.6))%6<3)?P.s4:P.b3; if (fbm(x*0.2,y*0.3)>0.62) c=P.e2; if (hash(x,y)<0.08) c=P.s3; return c; }); b.line(54,122,96,118,P.s5); b.line(60,130,104,124,P.s2); b.line(96,118,104,124,P.s2);
+  [[70,124],[78,122],[86,125]].forEach(function(cg){ b.px(cg[0],cg[1],P.s6); b.px(cg[0]+1,cg[1],P.t3); }); b.ellipse(82,123,3,1,P.k2);
   // ---- Pfütze, Paletten, Federn, Taubendreck
   var PUD=[146,129,24,4.2]; b.ellipse(PUD[0],PUD[1],PUD[2],PUD[3],function(x,y){ var v=(y-PUD[1]+PUD[3])/(2*PUD[3]); return night?(((x+y)%5===0)?P.n1:P.k1):((x*3+y)%7<2?P.s3:P.m1); }); OUTM[0]=0;
   for (i=0;i<40;i++){ var px=rnd(hash(i,51)*300+10), py=rnd(102+hash(i,52)*38); if (inGate(px,py)) continue; b.px(px,py,hash(i,53)<0.6?P.s5:P.s4); }
@@ -278,7 +302,7 @@ var BR=[Math.floor(Math.min(BRICK[0][0],BRICK[3][0]))-1,Math.floor(Math.min(BRIC
 M.defineArt('ledana',{
   width:W, paint:paint, layers:layers, walk:walk, walkG:walkG, dynamic:dyn, ghost:ghost, actorLut:actorLut,
   spots:{ exit:[0,96,12,48], stairs:[124,62,64,58], gallery:[0,42,132,38], office_window:[OWIN[0]-3,OWIN[1]-3,OWIN[2]+6,OWIN[3]+6], machines:[0,76,124,40], pipes:[124,58,72,10],
-    graffiti:[124,66,72,34], puddle:[122,124,48,10], pallets:[2,114,64,28], colddoor:DOORR, gate:[230,4,90,120], ramp:[238,110,82,34], brick:BR, harbor_view:[240,10,80,44] },
+    graffiti:[124,62,72,40], puddle:[122,124,48,10], pallets:[2,114,64,28], colddoor:DOORR, gate:[230,4,90,120], ramp:[238,110,82,34], brick:BR, harbor_view:[240,10,80,44] },
   stands:{ exit:[10,128,'L'], stairs:[194,124,'L'], gallery:[110,124,'B'], office_window:[120,124,'B'], machines:[70,126,'L'], pipes:[160,124,'B'], graffiti:[160,124,'B'], puddle:[150,136,'B'],
     pallets:[40,134,'L'], colddoor:[208,113,'R'], gate:[230,128,'R'], ramp:[262,126,'R'], brick:[222,120,'R'], harbor_view:[262,126,'R'] },
   actorPos:{ luka:[LUKA[0],LUKA[1],'R','luka',1,'guitarSit'], nina:[NINA[0],NINA[1],'R','nina'] },

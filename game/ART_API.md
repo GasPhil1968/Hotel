@@ -30,6 +30,7 @@ M.defineArt('varos',{
   dynamic:function(fb,view,S,GS){ },  // jedes Bild: Wasser, Flackern … (view.cam = Kamera-x, view.t Sekunden, view.tod)
   front:function(fb,view,S,GS){ },    // über allem: Regen, Nebel, Blätter
   ghost:function(fb,view,S,GS){ },    // nur in Malas Geistersicht, NACH der Geisterfärbung (alte Gräber, Kreidebilder …)
+  actorLut:function(actor,S,GS,tod){ return lut; }, // optional: Farbtabelle (Uint8Array 256) für lebende Figuren, z. B. Laternen- oder Neonlicht; ohne sie gilt die Tageszeit-Färbung
   spots:{ zdenka_door:[x,y,w,h], … },          // Hotspot-Rechtecke in WELT-Koordinaten
   stands:{ zdenka_door:[x,y,'B'], … },         // wo die Figur steht, um damit zu interagieren ('L','R','B','F' = Blickrichtung)
   actorPos:{ zdenka:[x,y,'R'] },               // wo NPCs stehen/sitzen (Füße)

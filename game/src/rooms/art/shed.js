@@ -111,7 +111,8 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), x, y, i, k, night=tod==='ni
   [[18,P.t3],[30,P.s5],[42,P.t3]].forEach(function(bo){ var p=M.wallPt(SPEC,'L',bo[0],60); b.ellipse(p[0],p[1]+4,3.2,4,bo[1]); b.px(rnd(p[0])-1,rnd(p[1])+2,M.UP[bo[1]]); b.vl(rnd(p[0]),rnd(p[1])-3,rnd(p[1]),P.e1); });
   var lr=M.wallPt(SPEC,'L',56,66); b.ellipse(lr[0],lr[1],6,7,P.r3); b.ellipse(lr[0],lr[1],3,4,function(x,y){ return M.DN[wallTex(x*2,y,x,y)]; }); b.px(rnd(lr[0])-4,rnd(lr[1])-3,P.s6); b.px(rnd(lr[0])+4,rnd(lr[1])+3,P.s6); b.px(rnd(lr[0])-5,rnd(lr[1])+2,P.s6);
   // ---- rechte Wand: Ruder, Reuse (vrša)
-  [[300,2,286,104],[308,0,296,110],[315,4,306,118]].forEach(function(o,oi){ b.line(o[0],o[1],o[2],o[3],P.w3); b.line(o[0]+1,o[1],o[2]+1,o[3],P.w2); b.poly([[o[2]-3,o[3]-18],[o[2]+4,o[3]-18],[o[2]+3,o[3]],[o[2]-2,o[3]]],oi===1?P.b1:P.w3); b.vl(o[2],o[3]-17,o[3]-1,oi===1?P.b2:P.w4); });
+  [[302,2,288,106],[313,0,302,116]].forEach(function(o,oi){ b.line(o[0],o[1],o[2],o[3],P.w3); b.line(o[0]+1,o[1],o[2]+1,o[3],P.w2); b.poly([[o[2]-3,o[3]-18],[o[2]+4,o[3]-18],[o[2]+3,o[3]],[o[2]-2,o[3]]],oi===1?P.b1:P.w3); b.vl(o[2],o[3]-17,o[3]-1,oi===1?P.b2:P.w4);
+    if (oi===0){ var my=50, mx=Math.round(o[0]+(o[2]-o[0])*(my-o[1])/(o[3]-o[1])); b.line(mx-1,my-2,mx+2,my+3,P.k2); for (var wq=0;wq<4;wq++){ b.px(mx-1,my-2+wq*2,P.m3); b.px(mx+2,my-1+wq*2,P.m3); b.px(mx,my-1+wq*2,P.m4); } } });
   b.ellipse(290,62,10,8,function(x,y){ return ((x+y)%3===0||(x-y)%3===0)?P.e2:((hash(x,y)<0.5)?T:P.e1); }); b.ellipse(290,62,4,4,P.k1);
   // ---- Boden: Teerfass, Kanister, Außenborder auf dem Bock, Anker, Demižana, Tauknäuel
   // Außenborder (TOMOS) am Holzbock: Haube, Schaft, Unterwasserteil mit Schraube
@@ -138,13 +139,16 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), x, y, i, k, night=tod==='ni
   var warm=function(x,y){ return doorLight(x,y)*1.1+(night?0:winBeam(x,y)+winFloor(x,y)); }, cold=function(x,y){ return night?(winBeam(x,y)*1.05+winFloor(x,y)):0; };
   finishLit(b,tod,warm,cold);
   // Schlüsseldetails nach dem Licht in festen Farben: T.P. auf dem Seesack, das Foto, der Kerzenstummel
+  var rim=night?[P.n1,P.n2,P.n3]:[P.d1,P.d2,P.d3];
+  [[302,2,288,106],[313,0,302,116]].forEach(function(o,oi){ b.line(o[0]-1,o[1]+6,o[2]-1,o[3]-18,rim[0]); b.vl(o[2]-3,o[3]-18,o[3]-1,rim[1]); b.px(o[2]-2,o[3]-18,rim[2]); if (oi===0){ var my=50, mx=Math.round(o[0]+(o[2]-o[0])*(my-o[1])/(o[3]-o[1])); for (var wq=0;wq<4;wq++){ b.px(mx-1,my-2+wq*2,rim[2]); b.px(mx+2,my-1+wq*2,rim[1]); } } });
+  b.ellipse(290,62,10,8,function(x,y){ var d=Math.hypot(x+0.5-290,(y+0.5-62)*1.25); return (d>8.6 && x<292)?rim[1]:T; });
   var lb=night?[P.n0,P.n2,P.n3,P.n4]:[P.w1,P.e2,P.e3,P.s5], tpx=BAG[0]+15, tpy=Math.round(BAG[1]+BAG[3]*0.58)-3;
   var tt=new M.Buf(16,5,T); M.microText(tt,'T.P.',0,0,lb[0]); b.blit(tt,tpx,tpy); b.px(tpx+1,tpy+1,lb[1]); b.px(tpx+9,tpy+3,lb[1]);
   var phx=PHOTO[0], phy=PHOTO[1], pw=PHOTO[2], ph=PHOTO[3];
   b.rect(phx,phy,pw,ph,night?P.n3:P.s5); b.rect(phx+1,phy+1,pw-2,ph-3,night?P.n1:P.e3); b.rect(phx+1,phy+ph-5,pw-2,3,night?P.n0:P.e2);
   b.ellipse(phx+pw/2,phy+5,1.9,2.3,night?P.n3:P.q3); b.rect(phx+3,phy+2,4,2,night?P.k2:P.h2); b.rect(phx+2,phy+8,pw-4,3,night?P.k2:P.c1); b.px(phx+4,phy+5,night?P.n1:P.q1); b.px(phx+6,phy+5,night?P.n1:P.q1);
   b.px(phx+Math.floor(pw/2),phy-1,P.r3); b.px(phx+Math.floor(pw/2),phy,night?P.n4:P.m3); b.px(phx+pw-1,phy+ph-1,night?P.n2:P.s3);
-  var cx2=CANDLE[0], cy2=CANDLE[1]; b.ellipse(cx2+4,cy2+6,4,1.2,night?P.n2:P.s3); b.hl(cx2+1,cx2+7,cy2+6,night?P.n3:P.s4); b.rect(cx2+3,cy2+2,2,4,night?P.n4:P.s6); b.px(cx2+3,cy2+2,night?P.n3:P.s5); b.px(cx2+4,cy2+1,P.k1); b.px(cx2+2,cy2+5,night?P.n3:P.s5); b.px(cx2+5,cy2+5,night?P.n3:P.s5);
+  var cx2=CANDLE[0], cy2=CANDLE[1]; b.ellipse(cx2+4,cy2+6,4,1.2,night?P.n2:P.s3); b.hl(cx2+1,cx2+7,cy2+6,night?P.n3:P.s4); b.rect(cx2+3,cy2+3,2,3,night?P.n4:P.s6); b.px(cx2+3,cy2+3,night?P.n3:P.s5); b.px(cx2+4,cy2+2,P.k1); b.hl(cx2+1,cx2+6,cy2+5,night?P.n3:P.s5); b.px(cx2+2,cy2+4,night?P.n3:P.s5); b.px(cx2+5,cy2+4,night?P.n4:P.s6); b.px(cx2+6,cy2+6,night?P.n3:P.s5); b.px(cx2,cy2+6,night?P.n3:P.s5);
   // ---- Lichtquellen selbst: leuchtende Ritzen, Fensterglas
   var cr=night?[P.y3,P.y4,P.y5]:[P.d5,P.d6,P.l0];
   CRACKS.forEach(function(cx,ci){ for (y=dy+1;y<dy+dh-1;y++){ if (hash(cx,y)<0.12) continue; b.px(cx,y,(y%7===0)?cr[1]:cr[ci===1?2:1]); } });
