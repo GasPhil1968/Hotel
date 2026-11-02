@@ -12,16 +12,16 @@ var R3=M.room3([VX,VY],F,FY), SPEC={vp:[VX,VY],rect:[0,0,RW,FY]};
 // ---- Lage der Dinge: X = Rückwand-x, Y = Höhe (0 oben, 96 Boden), Z = Tiefe zum Betrachter
 var LODGE={X0:61,X1:100,Z1:27,Y0:48};
 var DESK={X0:88,X1:150,Z0:36,Z1:44,Y0:75};
-var KEYS={X0:65,Y0:50,cols:8,rows:5,cw:4,ch:7};
+var KEYS={X0:65,Y0:28,cols:8,rows:5,cw:4,ch:7};
 var PRIV={X0:103,X1:126,Y0:48};
 var REG={X0:129,X1:146,Y0:44};
 var COAT={X0:151,X1:202,Y0:37};
 var ENT={X0:211,X1:239,Y0:32};
 var ST={X0:243,X1:RW,Zb:36,Zt:10,Yt:58,n:8};
-var CLK={X0:254,X1:266,Z:3,Y0:10};
+var CLK={X0:244,X1:254,Z:3,Y0:12}, SDOOR={X0:256,X1:275,Y0:16};
 var WIN={u0:7,u1:26,Y0:14,Y1:50};
 var TAB={x0:147,x1:175,top:118,base:136};
-var PEND=[[128,30,40],[198,30,40]];
+var PEND=[[143,30,40],[198,30,40]];
 var HK13=COAT.X0+3+2*5;
 function K(Z){ return 1+Z/F; }
 function SX(X,Z){ return VX+(X-VX)*K(Z); }
@@ -36,7 +36,7 @@ var CACHE={}, LASTBG=null;
 // ---------------------------------------------------------------- weiches Lampenlicht: Stufen zwischen Schatten- und Lampenfarbe
 function lum(r,g,b){ return r*0.3+g*0.59+b*0.11; }
 var TF={
-  dusk:function(r,g,b){ var L=lum(r,g,b); return [r*0.52+L*0.10+12, g*0.38+L*0.08+4, b*0.50+L*0.10+22]; },
+  dusk:function(r,g,b){ var L=lum(r,g,b); return [r*0.55+L*0.10+12, g*0.38+L*0.09+4, b*0.44+L*0.08+17]; },
   night:function(r,g,b){ var L=lum(r,g,b); return [r*0.18+L*0.07, g*0.24+L*0.09, b*0.38+L*0.16+14]; },
   dawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.55+L*0.12+12, g*0.52+L*0.10+8, b*0.64+L*0.12+22]; },
   lamp:function(r,g,b){ var L=lum(r,g,b); return [r*0.62+L*0.5+30, g*0.5+L*0.36+12, b*0.28+L*0.12]; }
@@ -80,6 +80,7 @@ function floorCol(x,y){ var f=fl(x,y); if (!f) return P.k0; var X=f.X, k=f.k, D=
     if (u<1.3||u>w-1.3) return P.y2; if (u<2.4||u>w-2.4) return P.r1;
     var pz=(D*2.2)%4, pu=Math.abs(u-w/2), m=(pz<2?pz:4-pz)*2.4; if (Math.abs(pu-m)<0.8) return P.r3; if (pu<0.7&&pz<0.5) return P.y2;
     return P.r2; }
+  var rc=rug(X,D); if (rc!==null) return rc;
   var TU=11, TD=2.9, a=(X/TU)+(D/TD), b2=(X/TU)-(D/TD), ia=Math.floor(a), ib=Math.floor(b2), fa=a-ia, fb=b2-ib;
   var gx=1/(TU*k), gd=60/(42*k*k*TD), g=Math.max(gx,gd)*0.75;
   var dark=((ia+ib)&1)===1;
@@ -89,6 +90,20 @@ function floorCol(x,y){ var f=fl(x,y); if (!f) return P.k0; var X=f.X, k=f.k, D=
   else { c=P.s4; if (v>1.35) c=P.s3; else if (tv<0.3) c=P.s3; }
   return c; }
 
+// großer, abgetretener Orientteppich unter der Leseecke (Bordüren, Mittelmedaillon, Fransen vorn)
+var RUG={X0:126,X1:208,D0:14.5,D1:31.5};
+function rug(X,D){ if (X<RUG.X0||X>RUG.X1||D<RUG.D0||D>RUG.D1+0.8) return null;
+  if (D>RUG.D1) return ((Math.floor(X*1.3))&1)?P.s4:null;                       // Fransen
+  var u=(X-RUG.X0)/(RUG.X1-RUG.X0), v=(D-RUG.D0)/(RUG.D1-RUG.D0), e=Math.min(u,1-u,v*0.55,(1-v)*0.55);
+  if (e<0.012) return P.r0; if (e<0.03) return P.y2;
+  if (e<0.075){ var m=((Math.floor(X/3.2)+Math.floor(D*1.3))&1); return m?P.c1:P.b0; }
+  if (e<0.09) return P.y1;
+  var cu=u-0.5, cv=(v-0.5)*1.9, md=Math.abs(cu)*2.2+Math.abs(cv);                  // Medaillon
+  if (md<0.3) return md<0.12?P.y2:(md<0.2?P.b0:P.r3);
+  if (md<0.33) return P.y1;
+  var wear=hash(Math.floor(X/2),Math.floor(D*3)), c=((Math.floor(X/4)+Math.floor(D*1.6))%3===0)?P.r1:P.r2; if (Math.abs(Math.sin(X*0.4)*Math.cos(D*1.2))>0.92) c=P.r3;
+  if (wear<0.12 && u>0.3 && u<0.7) c=P.e2;                                         // abgetretene Stellen
+  return c; }
 // ---------------------------------------------------------------- kleine Malhilfen
 function plate(b,x,y,s){ var w=s.length>1?9:5, x0=x-(w>>1); b.rect(x0,y,w,7,P.s3); b.hl(x0,x0+w-1,y,P.s4); b.hl(x0,x0+w-1,y+6,P.s1); b.vl(x0+w-1,y+1,y+6,P.s1); b.px(x0,y,P.s5); M.microText(b,s,x0+1,y+1,P.k1); }
 function hook(b,x,y){ b.px(x,y,P.y4); b.px(x,y+1,P.y3); b.px(x-1,y+2,P.y2); b.px(x+1,y+2,P.y3); b.px(x+1,y+1,P.y1); b.px(x,y-1,P.y1); }
@@ -158,12 +173,13 @@ function paintLodgeInside(b){ var L=LODGE, p=R3.p, x, y;
   var hp=p(L.X0,57,24); b.ellipse(hp[0]+1,hp[1]+2,2.2,2.6,P.k1); b.ellipse(hp[0]+1,hp[1]+2,1.1,1.5,P.w0); b.rect(rd(hp[0]),rd(hp[1])+4,2,2,P.m2);
   var kx=KEYS.X0, ky=KEYS.Y0, kw=KEYS.cols*KEYS.cw+1, kh=KEYS.rows*KEYS.ch+1;
   b.rect(kx-2,ky-4,kw+4,kh+6,P.w1); b.hl(kx-2,kx+kw+1,ky-4,P.w4); b.hl(kx-2,kx+kw+1,ky-3,P.w2); b.vl(kx-2,ky-4,ky+kh+1,P.w2); b.vl(kx+kw+1,ky-4,ky+kh+1,P.w0); b.hl(kx-2,kx+kw+1,ky+kh+1,P.w0);
+  b.rect(kx+6,ky-9,kw-12,5,P.y2); b.hl(kx+6,kx+kw-7,ky-9,P.y4); M.microText(b,'SOBE',kx+((kw-15)>>1),ky-9,P.w0);
   for (var r=0;r<KEYS.rows;r++) for (var cI=0;cI<KEYS.cols;cI++){ var n=r*KEYS.cols+cI+1, cx=kx+cI*KEYS.cw, cy=ky+r*KEYS.ch;
     b.rect(cx,cy,KEYS.cw+1,KEYS.ch+1,P.w2); b.rect(cx+1,cy+1,KEYS.cw-1,KEYS.ch-1,P.w0); b.hl(cx,cx+KEYS.cw,cy+KEYS.ch,P.w3); b.px(cx+2,cy+KEYS.ch,P.y2);
     var hs=hash(n,7); if (hs<0.16 && n!==31) continue;
     if (hs>0.86){ b.rect(cx+1,cy+2,3,3,P.s5); b.px(cx+1,cy+2,P.s6); b.px(cx+3,cy+4,P.s3); continue; }
     b.px(cx+2,cy+1,P.m4); b.px(cx+2,cy+2,P.m3); b.px(cx+2,cy+3,P.y4); b.rect(cx+1,cy+4,3,2,P.y3); b.px(cx+1,cy+4,P.y5); b.px(cx+3,cy+5,P.y2); }
-  var c0=p(76,80,12), c1=p(85,80,12), cm=(c0[0]+c1[0])/2; b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1]),P.w3); b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1])+1,P.w1);
+  var c0=p(68,80,16), c1=p(77,80,16), cm=(c0[0]+c1[0])/2; b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1]),P.w3); b.hl(rd(c0[0]),rd(c1[0]),rd(c0[1])+1,P.w1);
   b.ellipse(cm,c0[1]-7,4.5,6,P.w2); b.ellipse(cm,c0[1]-7,3,4.5,P.k1); b.ellipse(cm,c0[1]-8,1.5,2.5,P.w1);
   b.vl(rd(c0[0]),rd(c0[1])+1,rd(c0[1])+12,P.w1); b.vl(rd(c1[0]),rd(c1[1])+1,rd(c1[1])+12,P.w1);
   R3.box(b,87,99,66,FY,18,25,{front:function(x,y){ var Y=VY+(y-VY)/K(25); if (Y<67) return P.w4; var fy=(Y-67)%7; if (fy<1) return P.w0; if (Math.abs(x-SX(93,25))<0.9 && fy>2.5&&fy<4.5) return P.y4; return fy<2?P.w3:P.w2; },top:P.w3,right:P.w1});
@@ -178,7 +194,7 @@ function paintLodgeInside(b){ var L=LODGE, p=R3.p, x, y;
 function paintWallThings(b,S,tod,out,sky){
   [[147,150],[203,209],[239,243]].forEach(function(pl){ for (var y=9;y<FY;y++) for (var x=pl[0];x<pl[1];x++){ var c=(x===pl[0])?P.w3:((x===pl[1]-1)?P.w0:P.w2); if (y<13) c=y===9?P.y2:(y<12?P.w3:P.w1); if (y>=88) c=(x===pl[0])?P.w2:P.w0; b.px(x,y,c); } });
   var px0=PRIV.X0, pw=PRIV.X1-PRIV.X0; M.prop.door(b,px0,PRIV.Y0,pw,FY-PRIV.Y0,{ramp:M.R('w0 w1 w2 w3 w4'),frame:M.R('w0 w1 w2 w3'),knob:'L'});
-  var sw=M.microWidth('PRIVAT')+4, sx=px0+((pw-sw)>>1); b.rect(sx,PRIV.Y0-10,sw,7,P.s5); b.hl(sx,sx+sw-1,PRIV.Y0-10,P.s6); b.hl(sx,sx+sw-1,PRIV.Y0-4,P.s2); M.microText(b,'PRIVAT',sx+2,PRIV.Y0-9,P.r1);
+  var sw=M.microWidth('PRIVAT')+4, sx=px0+((pw-sw)>>1); b.rect(sx,PRIV.Y0-9,sw,7,P.s5); b.hl(sx,sx+sw-1,PRIV.Y0-9,P.s6); b.hl(sx,sx+sw-1,PRIV.Y0-3,P.s2); M.microText(b,'PRIVAT',sx+2,PRIV.Y0-8,P.r1);
   var rx=REG.X0, rw=REG.X1-REG.X0; b.rect(rx-1,REG.Y0-3,rw+2,FY-REG.Y0+3,P.w0); b.hl(rx-2,rx+rw+1,REG.Y0-3,P.w3); b.hl(rx-2,rx+rw+1,REG.Y0-2,P.w1);
   for (var s=0;s<4;s++){ var sy=REG.Y0+1+s*12, r=M.rng(40+s), xx=rx;
     while (xx<rx+rw-1){ var bw=2+Math.floor(r()*2), bh=8+Math.floor(r()*3), cc=[P.r1,P.w2,P.g1,P.e1,P.r2,P.c1,P.w1][Math.floor(r()*7)]; if (xx+bw>rx+rw) break;
@@ -207,8 +223,8 @@ function paintWallThings(b,S,tod,out,sky){
     var hx2=lf?lx+1:lx+lw-2; b.vl(hx2,ey+35,ey+45,P.y3); b.px(hx2,ey+35,P.y4); b.px(hx2,ey+45,P.y1); }
   b.vl(ex+(ew>>1),ey+17,FY-1,P.k1);
   b.rect(ex+4,ey-10,ew-8,7,P.g2); b.hl(ex+4,ex+ew-5,ey-10,P.g4); b.hl(ex+4,ex+ew-5,ey-4,P.g1); M.microText(b,'IZLAZ',ex+((ew-19)>>1),ey-9,P.s4);
-  var f1=[68,13,28,22]; b.line(f1[0]+14,7,f1[0]+2,f1[1]-2,P.y1); b.line(f1[0]+14,7,f1[0]+f1[2]-3,f1[1]-2,P.y1); frameBox(b,f1[0]-2,f1[1]-2,f1[2]+4,f1[3]+4); b.rect(f1[0],f1[1],f1[2],f1[3],P.e4); photoHotel(b,f1[0]+1,f1[1]+1,f1[2]-2,f1[3]-2);
-  b.rect(f1[0]+5,f1[1]+f1[3]+3,19,7,P.w0); M.microText(b,'1936',f1[0]+7,f1[1]+f1[3]+4,P.y3);
+  var f1=[104,12,22,17]; b.line(f1[0]+11,8,f1[0]+2,f1[1]-2,P.y1); b.line(f1[0]+11,8,f1[0]+f1[2]-3,f1[1]-2,P.y1); frameBox(b,f1[0]-2,f1[1]-2,f1[2]+4,f1[3]+4); b.rect(f1[0],f1[1],f1[2],f1[3],P.e4); photoHotel(b,f1[0]+1,f1[1]+1,f1[2]-2,f1[3]-2);
+  b.rect(f1[0]+2,f1[1]+f1[3]+2,18,6,P.y1); b.hl(f1[0]+2,f1[0]+19,f1[1]+f1[3]+2,P.y3); M.microText(b,'1936',f1[0]+4,f1[1]+f1[3]+3,P.k1);
   var f2=[159,10,36,15]; frameBox(b,f2[0]-2,f2[1]-2,f2[2]+4,f2[3]+4,M.R('w0 w1 w2 w3')); photoStaff(b,f2[0],f2[1],f2[2],f2[3]);
   var f3=[8,42,16,20];
   if (S.photoTaken){ for (var y5=f3[1]-2;y5<f3[1]+f3[3]+2;y5++) for (var x5=f3[0]-2;x5<f3[0]+f3[2]+2;x5++){ var c5=backWall(x5,y5); b.px(x5,y5,(x5===f3[0]-2||y5===f3[1]+f3[3]+1)?c5:M.UP[c5]); } b.px(f3[0]+8,f3[1]-4,P.m4); b.px(f3[0]+8,f3[1]-3,P.m1); }
@@ -273,6 +289,9 @@ function paintWindowR(b,out,sky){ var q=M.wallQuad(SPEC,'R',WIN.u0,WIN.u1,WIN.Y0
   var c0=M.wallQuad(SPEC,'R',WIN.u1+1.5,WIN.u1+6,WIN.Y0-5,WIN.Y1+12); b.poly(c0,function(x,y){ return ((x+((y>>2)&1))%3===0)?P.r1:P.r2; });
   var c1=M.wallQuad(SPEC,'R',WIN.u0-5,WIN.u0-1.5,WIN.Y0-5,WIN.Y1+10); b.poly(c1,function(x,y){ return ((x+((y>>2)&1))%3===0)?P.r0:P.r1; });
   var rod0=M.wallPt(SPEC,'R',WIN.u0-6,WIN.Y0-6), rod1=M.wallPt(SPEC,'R',WIN.u1+7,WIN.Y0-6); b.line(rd(rod0[0]),rd(rod0[1]),rd(rod1[0]),rd(rod1[1]),P.y2); }
+// die Tür zum Salon oben auf dem Absatz, seit 1993 verschlossen
+function paintSalonDoor(b){ var x0=SDOOR.X0, x1=SDOOR.X1, y0=SDOOR.Y0, y1=ST.Yt; M.prop.door(b,x0,y0,x1-x0,y1-y0,{ramp:M.R('w0 w1 w2 w3 w4'),frame:M.R('w0 w1 w2 w3'),knob:'L'});
+  b.rect(x0+3,y0+3,x1-x0-6,9,P.w1); for (var y=y0+4;y<y0+11;y++) for (var x=x0+4;x<x1-4;x++){ if (((x+y)&3)===0) b.px(x,y,P.w0); } b.px(x0+2,y0+24,P.k1); b.px(x0+2,y0+25,P.y1); }
 function clockHands(tod){ return tod==='night'?[1,48]:(tod==='dusk'?[7,22]:(tod==='dawn'?[6,10]:[11,5])); }
 function paintClock(b,tod){ var p=R3.p, a=p(CLK.X0,CLK.Y0,CLK.Z), c=p(CLK.X1,ST.Yt,CLK.Z), x0=rd(a[0]), x1=rd(c[0]), y0=rd(a[1]), y1=rd(c[1]), w=x1-x0;
   b.rect(x0+1,y0+4,w-2,y1-y0-4,P.w2); b.vl(x0+1,y0+4,y1-1,P.w4); b.vl(x1-2,y0+4,y1-1,P.w0);
@@ -288,7 +307,10 @@ function paintPendants(b){ PEND.forEach(function(pp){ var x=rd(SX(pp[0],pp[2])),
   for (var yy=0;yy<y-6;yy++) b.px(x,yy,(yy%3)?P.y1:P.y0); b.rect(x-2,y-7,5,3,P.y2); b.hl(x-2,x+2,y-7,P.y3);
   b.ellipse(x+0.5,y+0.5,r,r*0.95,P.s4); b.ellipse(x,y,r*0.7,r*0.65,P.s5); b.ellipse(x-1,y-1,r*0.3,r*0.3,P.s6); b.hl(x-2,x+2,rd(y+r),P.s2); b.px(x,rd(y+r)+1,P.y2); }); }
 function paintChain(b,S){ var Yc=ST.Yt-14, a=R3.p(ST.X0+1,Yc,ST.Zt), e=R3.p(ST.X1,Yc,ST.Zt);
-  if (S.chainOff){ for (var i=0;i<14;i++) b.px(rd(a[0])+1+(i&1),rd(a[1])+i,i%2?P.m2:P.m4); b.px(rd(a[0])+1,rd(a[1])+14,P.m3); return; }
+  if (S.chainOff){ for (var i=0;i<14;i++) b.px(rd(a[0])+1+(i&1),rd(a[1])+i,i%2?P.m2:P.m4); b.px(rd(a[0])+1,rd(a[1])+14,P.m3);
+    // das abgenommene Schild lehnt unten an der ersten Stufe
+    var sw0=M.microWidth('ZATVORENO')+4, sx0=232, sy0=102; for (var yy=0;yy<7;yy++){ var sh=Math.round((6-yy)*0.5); b.hl(sx0+sh,sx0+sh+sw0-1,sy0+yy,yy===0?P.s6:(yy===6?P.s2:P.s5)); b.px(sx0+sh,sy0+yy,P.r2); b.px(sx0+sh+sw0-1,sy0+yy,P.r2); }
+    M.microText(b,'ZATVORENO',sx0+4,sy0+1,P.r1); b.hl(sx0,sx0+sw0,sy0+7,P.k2); return; }
   var n=Math.round(e[0]-a[0]); for (var j=0;j<=n;j++){ var t=j/n, x=rd(a[0]+j), y=rd(lerp(a[1],e[1],t)+Math.sin(Math.PI*t)*4); b.px(x,y,(j&1)?P.m2:P.m4); if (!(j&1)) b.px(x,y+1,P.m1); }
   var mx=rd((a[0]+e[0])/2), my=rd((a[1]+e[1])/2+4), sw=M.microWidth('ZATVORENO')+4, sx=mx-(sw>>1);
   b.line(mx-6,my,sx+3,my+2,P.m3); b.line(mx+6,my,sx+sw-4,my+2,P.m3);
@@ -301,6 +323,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), weather=M.scn.weather(GS)
   paintWallThings(b,S,tod,out,sky);
   paintLodgeInside(b);
   paintWindowR(b,out,sky);
+  paintSalonDoor(b);
   paintClock(b,tod);
   paintStair(b,S);
   paintChain(b,S);
@@ -398,7 +421,7 @@ function palmLayer(tod,cx,by,seed,size){ var lx0=cx-32; lx0-=((lx0%4)+4)%4; var 
       if (s>2 && (s&1)===0){ w.px(px+side,py+1,u<0.6?P.g3:P.g2); w.px(px,py+2,P.g2); w.px(px-side,py+1,(f%3===0&&u<0.5)?P.g5:P.g4); if (u>0.35) w.px(px,py+3,P.g1); if (u>0.55) w.px(px+side,py+4,P.g0); } } }
   finishLayer(L,tod,tod==='night'?M.lf.k(-0.6):null); return L; }
 function layers(S,GS,tod){ var out=[lodgeLayer(S,tod),deskLayer(S,tod)]; readingLayers(S,tod).forEach(function(l){ out.push(l); });
-  out.push(palmLayer(tod,22,143,91,52)); out.push(palmLayer(tod,306,143,57,44)); return out; }
+  out.push(palmLayer(tod,22,143,91,52)); out.push(palmLayer(tod,316,143,57,36)); return out; }
 
 // ---------------------------------------------------------------- Bewegung: Regen am Glas, Pendel, Lampen
 function dyn(fb,v,S,GS){ var weather=M.scn.weather(GS), tod=v.tod;
@@ -414,13 +437,14 @@ function ghost(fb,v,S,GS){ var t=v.t, kx=KEYS.X0+6*KEYS.cw, ky=KEYS.Y0+3*KEYS.ch
   M.dust(fb,t*0.5,32,52,52,44,9,P.x3); }
 
 // ---------------------------------------------------------------- Lauffläche
-function WALK(x,y){ if (y<100||y>140||x<4||x>316) return false; var f=fl(x,y); if (!f) return false; var X=f.X, Z=f.Z;
+function WALK(x,y,S,GS){ if (y<100||y>140||x<4||x>316) return false; var f=fl(x,y); if (!f) return false; var X=f.X, Z=f.Z;
   if (X>RW-3) return false;
   if (X>ST.X0-3 && Z<ST.Zb+3) return false;
   if (Z<LODGE.Z1+1.5 && X<LODGE.X1+1.5) return false;
   if (Z>=DESK.Z0-1.5 && Z<=DESK.Z1+1.5 && X>DESK.X0-3 && X<DESK.X1+2) return false;
   if (y>=TAB.base-6 && x>=112 && x<=212) return false;
-  if (y>=130 && (x<36||x>292)) return false;
+  if (y>=130 && (x<36||x>300)) return false;
+  if (S && S.chainOff && x>=230 && x<=274 && y<=112) return false;
   return true; }
 M.defineArt('palma',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, ghost:ghost,
@@ -431,14 +455,14 @@ M.defineArt('palma',{
     lodge:[29,44,72,40],
     bell:[60,77,10,9],
     switchboard:[36,54,18,26],
-    pigeonholes:[KEYS.X0-2,KEYS.Y0-4,KEYS.cols*KEYS.cw+5,30],
+    pigeonholes:[KEYS.X0-2,KEYS.Y0-4,KEYS.cols*KEYS.cw+5,KEYS.rows*KEYS.ch+6],
     drawer:[77,69,13,13],
     phonebook:[78,63,12,6],
     stairs:[250,56,70,62],
     chain:[250,40,40,18],
     hooks:[COAT.X0,COAT.Y0-12,COAT.X1-COAT.X0,52],
     coat13:[HK13-8,COAT.Y0+34,17,27],
-    photos:[64,6,38,40],
+    photos:[100,6,98,30],
     photo_dance:[4,34,24,30],
     reading_table:[TAB.x0-2,TAB.top-26,TAB.x1-TAB.x0+5,TAB.base-TAB.top+26],
     armchairs:[114,100,92,40],
@@ -446,7 +470,7 @@ M.defineArt('palma',{
     register:[REG.X0-1,REG.Y0-3,REG.X1-REG.X0+2,40],
     private:[PRIV.X0-2,PRIV.Y0-11,PRIV.X1-PRIV.X0+4,38],
     window:[278,4,34,52],
-    clock:[252,5,16,52]
+    clock:[246,8,13,52]
   },
   stands:{
     door:[225,104,'B'], reception:[100,122,'B'], lodge:[42,116,'B'], bell:[64,122,'B'], switchboard:[42,116,'B'], pigeonholes:[80,122,'B'],

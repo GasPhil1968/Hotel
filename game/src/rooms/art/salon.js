@@ -211,6 +211,24 @@ function paintDraped(b){ // ein Stapel Stühle unter einem Tuch, unter dem dritt
 function paintSofa(b){ var pts=[[0,104],[16,98],[30,102],[34,118],[30,128],[0,134]];
   b.poly(pts,function(x,y){ var f=Math.sin(x*0.55+y*0.12), c=f>0.5?P.s5:(f<-0.45?P.s3:P.s4); if (y>126) c=P.s3; return c; }); b.line(0,104,16,98,P.s5); b.line(16,98,30,102,P.s5); }
 
+// ---------------------------------------------------------------- Wandschmuck: Seestück, blinder Spiegel, erloschene Leuchter, Spinnweben, Kinderschuh
+function paintWallDecor(b){ var x, y;
+  // Seestück im Goldrahmen (oberhalb der Kreidebilder)
+  var px=104, py=33, pw=32, ph=18; b.rect(px-2,py-2,pw+4,ph+4,P.y1); b.hl(px-2,px+pw+1,py-2,P.y3); b.vl(px-2,py-2,py+ph+1,P.y2); b.hl(px-2,px+pw+1,py+ph+1,P.y0);
+  for (y=py;y<py+ph;y++) for (x=px;x<px+pw;x++){ var t=(y-py)/ph, c=t<0.45?M.rampAt(M.R('e2 e3 e4 s4'),0.9-t*1.4,x,y):M.rampAt(M.R('a1 a2 a3 e2'),0.3+(t-0.45)*0.8+Math.sin(x*0.6+y)*0.06,x,y); b.px(x,y,c); }
+  b.poly([[px+18,py+9],[px+22,py+9],[px+21,py+11],[px+18,py+11]],P.w1); b.vl(px+20,py+2,py+9,P.w0); b.poly([[px+20,py+3],[px+25,py+8],[px+20,py+8]],P.s4); b.hl(px+2,px+12,py+8,P.e1); b.px(px+6,py+3,P.s5);
+  b.vl(px+pw/2,py-6,py-3,P.y1); b.px(px+pw/2,py-7,P.y2);
+  // ovaler Spiegel mit blinden Stellen
+  var mx=201, my=42, rx=13, ry=9; b.ellipse(mx,my,rx+2,ry+2,P.y2); b.ellipse(mx,my,rx+1,ry+1,P.y1);
+  b.ellipse(mx,my,rx,ry,function(x,y){ var d=((x-mx)*0.6-(y-my)); var c=M.rampAt(M.R('m0 m1 m2 m3'),0.3+(y-my)/ry*-0.2+(Math.abs(d)<2?0.4:0),x,y); if (hash(x>>1,y>>1)<0.12) c=P.e1; if (hash(x,y)<0.05) c=P.s3; return c; });
+  b.px(mx-6,my-4,P.s5); b.px(mx-5,my-5,P.s4); b.px(mx,my-ry-2,P.y4);
+  // erloschene Wandleuchter mit Kristallbehang zwischen den Fenstern
+  [96,232].forEach(function(cx){ var yy=50; b.rect(cx-1,yy-3,3,4,P.y1); b.line(cx,yy,cx-4,yy-3,P.y1); b.line(cx,yy,cx+4,yy-3,P.y1); b.vl(cx-4,yy-6,yy-3,P.s4); b.vl(cx+4,yy-6,yy-3,P.s4); b.px(cx-4,yy-7,P.s5); b.px(cx+4,yy-7,P.s5); b.px(cx-2,yy+2,P.s5); b.px(cx+2,yy+2,P.s5); b.px(cx,yy+3,P.s6); });
+  // Spinnweben in den oberen Fensterecken
+  WINS.forEach(function(w){ var x0=w[0]-6, y0=WY0-6; b.line(x0,y0,x0+7,y0+7,P.s3); b.line(x0,y0+4,x0+4,y0,P.s3); b.line(x0+1,y0+7,x0+7,y0+1,P.s2); });
+  // ein vergessener roter Kinderschuh bei den Betten
+  var sx=252, sy=128; b.rect(sx,sy-2,5,2,P.r3); b.px(sx+4,sy-3,P.r3); b.hl(sx,sx+5,sy,P.r1); b.px(sx+1,sy-3,P.r4); b.px(sx+2,sy-2,P.s5); }
+
 // ---------------------------------------------------------------- Bild
 function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), sky=new Uint8Array(W*144), out=outside(S), base=baseOf(S,tod);
   M.box(b,{vp:SPEC.vp,rect:SPEC.rect,
@@ -221,6 +239,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), sky=new Uint8Array(W*144)
   [[98,140],[180,222],[262,286]].forEach(function(q){ panelFrame(b,q[0],28,q[1],80); panelFrame(b,q[0]+3,31,q[1]-3,77); });
   [[98,140],[180,222]].forEach(function(q){ panelFrame(b,q[0],89,q[1],96); });
   var wallOnly=b.clone();
+  paintWallDecor(b);
   paintWindows(b,out,sky);
   paintDoor(b);
   paintDraped(b);
@@ -311,13 +330,14 @@ function chalkLines(){ if (CHALK) return CHALK; var pts={}, flo={}, glow={};
   var nb=fp(HX,dTop-1.6); micro('NEBO',nb[0]-7,nb[1]-2,0.65);
   var st=fp(HX+2.5,26.0-1.3); dot(st[0],st[1],1,1); dot(st[0]+1,st[1],1,1); dot(st[0],st[1]+1,0.8,1);
   Object.keys(pts).forEach(function(k){ k=+k; var x=k%W, y=(k/W)|0, R=flo[k]?1:2; for (var dy=-R;dy<=R;dy++) for (var dx=-R;dx<=R;dx++){ var d=Math.abs(dx)+Math.abs(dy); if (!d||d>R+1) continue; var kk=(y+dy)*W+(x+dx); if (!pts[kk]) glow[kk]=Math.max(glow[kk]||0,(R+2-d)/(R+1)*pts[k]*(flo[k]?0.7:1)); } });
-  CHALK={pts:pts,glow:glow}; return CHALK; }
+  var pk=Object.keys(pts).map(Number), gk=Object.keys(glow).map(Number);
+  CHALK={pk:Int32Array.from(pk), pv:Float32Array.from(pk.map(function(k){ return pts[k]; })), gk:Int32Array.from(gk), gv:Float32Array.from(gk.map(function(k){ return glow[k]; }))}; return CHALK; }
 function ghost(fb,v,S,GS){ var C=chalkLines(), t=v.t, cam=v.cam, bg=BG, tg=M.TINT.ghost; if (!bg||!CHALKOK) return;
   var breath=0.84+Math.sin(t*0.9)*0.12;
   function visible(x,y){ var sx=x-cam, k=y*W+x; if (sx<0||sx>=fb.w||!CHALKOK[k]) return false; return fb.d[y*fb.w+sx]===M.tintPx(tg,bg.d[k],sx,y); }
-  var k;
-  for (k in C.glow){ k=+k; var x=k%W, y=(k/W)|0; if (!visible(x,y)) continue; var g=C.glow[k]*breath; if (bayer(x,y)<g*0.55) fb.d[y*fb.w+x-cam]=g>0.8?P.x3:P.x2; }
-  for (k in C.pts){ k=+k; var x2=k%W, y2=(k/W)|0; if (!visible(x2,y2)) continue; var vv=C.pts[k], wave=Math.sin(t*1.7-x2*0.08-y2*0.05)*0.5+0.5, lev=vv*breath+wave*0.18;
+  var i, k;
+  for (i=0;i<C.gk.length;i++){ k=C.gk[i]; var x=k%W, y=(k/W)|0; if (!visible(x,y)) continue; var g=C.gv[i]*breath; if (bayer(x,y)<g*0.55) fb.d[y*fb.w+x-cam]=g>0.8?P.x3:P.x2; }
+  for (i=0;i<C.pk.length;i++){ k=C.pk[i]; var x2=k%W, y2=(k/W)|0; if (!visible(x2,y2)) continue; var vv=C.pv[i], wave=Math.sin(t*1.7-x2*0.08-y2*0.05)*0.5+0.5, lev=vv*breath+wave*0.18;
     var c=lev>0.95?P.x6:(lev>0.72?P.x5:(lev>0.5?P.x4:P.x3)); if (hash(x2,y2)<0.1) c=M.DN[c]; fb.d[y2*fb.w+x2-cam]=c; }
   M.dust(fb,t*0.4,60,60,200,60,10,P.x4); }
 

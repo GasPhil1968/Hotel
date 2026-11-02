@@ -10,16 +10,16 @@ var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer;
 var W=480, HZ=84;                   // Horizont (Wasserlinie in der Ferne)
 var QB=106, QF=138;                 // hintere Kaikante (Hafenbecken) und vordere Kaikante (Wasser vorn, rechts)
 var TERM={x0:0,x1:118,top:42};
-var FER={x0:126,x1:304,wl:104};
+var FER={x0:126,x1:284,wl:104};
 var KIO={x0:218,x1:254,base:112};
 var PALM={x:268,base:112};
 var POLE={x:291,base:114};
 var CAN={x0:300,x1:480,y0:46,y1:54};
-var BOARD={x0:308,x1:368,y0:58,y1:91};
+var BOARD={x0:306,x1:372,y0:58,y1:91};
 var BENCH={x0:334,x1:366,base:124};
 var BUS={x0:372,x1:422,top:70,base:113};
 var TICK={x0:446,x1:478,top:64,base:112};
-var LAMPS=[[66,112,30],[196,113,30]]; var TUBES=[[322,57],[406,57]];
+var LAMPS=[[66,112,30],[196,113,30]]; var TUBES=[[322,57],[430,57]];
 function rd(v){ return Math.round(v); }
 function lerp(a,b,t){ return a+(b-a)*t; }
 function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
@@ -57,6 +57,9 @@ function paintFar(b,tod){ var dawn=tod==='dawn', x, y;
   for (x=200;x<W;x++){ var h=Math.round(18+Math.sin(x*0.018)*7+Math.sin(x*0.061+1)*3+Math.max(0,(x-300)*0.04)); for (y=HZ-h;y<HZ;y++){ var t=(y-(HZ-h))/h; b.px(x,y,dawn?(t<0.15?P.v3:(bayer(x,y)<0.4?P.v2:P.v1)):(t<0.12?P.b4:(bayer(x,y)<0.45?P.b3:P.b2))); } }
   // Wohnblöcke der Stadt (70er) hinter den Bussteigen
   var r=M.rng(31); for (var i=0;i<9;i++){ var bx=300+i*20+Math.floor(r()*8), bw=10+Math.floor(r()*8), bh=18+Math.floor(r()*20); for (y=HZ+8-bh;y<HZ+8;y++) for (x=bx;x<bx+bw;x++){ var c=dawn?P.v2:P.s3; if (x===bx) c=dawn?P.v3:P.s4; if (x===bx+bw-1) c=dawn?P.v1:P.s2; if (((y-(HZ+8-bh))%4)===2 && ((x-bx)%3)!==0) c=dawn?(hash(x,y)<0.2?P.y3:P.v1):P.m2; b.px(x,y,c); } }
+  // gegenüber, klein und kaum zu erkennen: die alte Ledana mit Sägezahndach und Rampe
+  var lx0=284, lw=22; for (y=HZ-7;y<HZ;y++) for (x=lx0;x<lx0+lw;x++){ var c2=dawn?P.v1:P.s2; if (y<HZ-5 && ((x-lx0)%5)<((HZ-5-y)+2)) c2=dawn?P.v0:P.s1; if (y>=HZ-4 && y<HZ-2 && ((x-lx0)%4)===1) c2=dawn?P.k2:P.m0; b.px(x,y,c2); }
+  b.vl(lx0+18,HZ-12,HZ-7,dawn?P.v1:P.s2); b.line(lx0+lw,HZ-1,lx0+lw+5,HZ+2,dawn?P.v1:P.s2);
   // Altstadt mit dem Glockenturm (links, über dem Terminaldach)
   for (x=0;x<140;x++){ var hh=Math.round(10+Math.sin(x*0.2)*2+hash(x>>3,2)*5); for (y=HZ-hh;y<HZ;y++) b.px(x,y,dawn?P.v1:((y===HZ-hh)?P.t3:P.s3)); }
   var tx=26; for (y=14;y<HZ;y++){ var w2=y<22?Math.max(1,Math.round((y-14)/2)):(y<30?4:5); b.hl(tx-w2,tx+w2,y,dawn?P.v2:(y<22?P.s3:P.s4)); if (!dawn) b.px(tx+w2,y,P.s2); }
@@ -164,12 +167,13 @@ function paintCanopy(b){ var x, y;
   for (x=CAN.x0;x<CAN.x1;x++) b.px(x,CAN.y1,P.k2);
   [304,368,440,476].forEach(function(cx){ b.rect(cx-2,CAN.y1,5,QB+6-CAN.y1,P.m3); b.vl(cx-2,CAN.y1,QB+5,P.s4); b.vl(cx+2,CAN.y1,QB+5,P.m1); b.rect(cx-3,QB+4,7,3,P.m2); });
   M.microText(b,'AUTOBUSNI KOLODVOR',CAN.x0+50,CAN.y0+2,P.k2);
+  var pw=M.microWidth('PERON 3')+4, px=rd((BUS.x0+BUS.x1)/2-pw/2); b.vl(px+3,CAN.y1,CAN.y1+3,P.m1); b.vl(px+pw-4,CAN.y1,CAN.y1+3,P.m1); b.rect(px,CAN.y1+3,pw,7,P.b0); b.hl(px,px+pw-1,CAN.y1+3,P.b2); M.microText(b,'PERON 3',px+2,CAN.y1+4,P.s6);
   TUBES.forEach(function(q){ b.vl(q[0]-5,CAN.y1,q[1],P.m1); b.vl(q[0]+5,CAN.y1,q[1],P.m1); b.hl(q[0]-7,q[0]+7,q[1],P.s4); b.hl(q[0]-7,q[0]+7,q[1]+1,P.m2); }); }
 function paintBoard(b){ var x0=BOARD.x0, x1=BOARD.x1, y0=BOARD.y0, y1=BOARD.y1;
   b.vl(x0+6,CAN.y1,y0,P.m1); b.vl(x1-6,CAN.y1,y0,P.m1);
   b.rect(x0,y0,x1-x0,y1-y0,P.k1); b.rect(x0+1,y0+1,x1-x0-2,y1-y0-2,P.k2); b.hl(x0,x1-1,y0,P.m2); b.hl(x0,x1-1,y1-1,P.k0);
   M.microText(b,'POLASCI',x0+3,y0+2,P.s5); b.hl(x0+2,x1-3,y0+8,P.m1);
-  var rows=[['07:00','SARAJEVO'],['07:30','ZAGREB'],['08:15','MAKARSKA'],['09:00','RIJEKA']];
+  var rows=[['07:00','SARAJEVO'],['08:15','ZAGREB'],['09:30','DUBROVNIK'],['10:00','MOSTAR']];
   rows.forEach(function(r,i){ var yy=y0+10+i*6; M.microText(b,r[0],x0+3,yy,P.y4); M.microText(b,r[1],x0+24,yy,i===0?P.s6:P.s4); }); }
 function paintBench(b){ var x0=BENCH.x0, x1=BENCH.x1, by=BENCH.base;
   for (var s=0;s<3;s++){ var y=by-26+s*4; b.rect(x0,y,x1-x0,3,P.w3); b.hl(x0,x1-1,y,P.w4); b.hl(x0,x1-1,y+2,P.w1); }
@@ -187,7 +191,7 @@ function paintBus(b,tod){ var x0=BUS.x0, x1=BUS.x1, top=BUS.top, by=BUS.base, da
   b.vl(x0+(w>>1),wy0,wy1-1,P.k1); b.hl(x0+2,x1-3,wy0,P.k1);
   for (var sI=0;sI<4;sI++){ var sx=x0+6+sI*11; b.rect(sx,wy1-7,6,4,dawn?P.r1:P.c1); b.hl(sx,sx+5,wy1-7,dawn?P.r2:P.c2); }
   // Schild SARAJEVO hinter der Frontscheibe
-  var cw=M.microWidth('SARAJEVO')+4, cx=x1-4-cw, cy=wy1-8; b.rect(cx,cy,cw,7,P.s6); b.hl(cx,cx+cw-1,cy+6,P.s3); M.microText(b,'SARAJEVO',cx+2,cy+1,P.k1); CACHE.busSign=[cx,cy,cw,7];
+  var cw=M.microWidth('SARAJEVO')+4, cx=x1-4-cw, cy=wy1-13; b.rect(cx,cy,cw,12,P.e4); b.hl(cx,cx+cw-1,cy,P.s4); b.hl(cx,cx+cw-1,cy+11,P.e2); b.vl(cx+cw-1,cy,cy+11,P.e2); M.microText(b,'MOSTAR',cx+6,cy+1,P.k2); M.microText(b,'SARAJEVO',cx+2,cy+6,P.k1); CACHE.busSign=[cx,cy,cw,12];
   b.line(x0+6,wy1-1,x0+16,wy1-6,P.k1); b.line(x0+w/2+3,wy1-1,x0+w/2+13,wy1-6,P.k1);
   // Spiegel („Hasenohren“)
   b.line(x0,top+6,x0-5,top+2,P.k1); b.rect(x0-8,top+2,4,8,P.k1); b.vl(x0-7,top+3,top+8,P.m2); b.line(x1-1,top+6,x1+4,top+2,P.k1); b.rect(x1+3,top+2,4,8,P.k1); b.vl(x1+4,top+3,top+8,P.m2);
@@ -236,7 +240,7 @@ function afterLights(b,tod){
   [LAMPS[0]].forEach(function(L){ var x=L[0], top=L[1]-L[2]; b.poly([[x+2,top-5],[x+9,top-5],[x+8,top-2],[x+3,top-2]],P.y3); b.hl(x+3,x+8,top-2,P.y5); b.px(x+5,top-3,P.l1); });
   (CACHE.ferryLights||[]).forEach(function(l){ b.px(l[0],l[1],l[2]); });
   (CACHE.busLights||[]).forEach(function(q){ b.rect(q[0],q[1],4,3,P.y5); b.px(q[0]+1,q[1]+1,P.l1); });
-  var s=CACHE.busSign; if (s){ b.rect(s[0],s[1],s[2],s[3],P.s5); b.hl(s[0],s[0]+s[2]-1,s[1]+6,P.s3); M.microText(b,'SARAJEVO',s[0]+2,s[1]+1,P.k1); }
+  var s=CACHE.busSign; if (s){ b.rect(s[0],s[1],s[2],s[3],P.e3); b.hl(s[0],s[0]+s[2]-1,s[1],P.e4); M.microText(b,'MOSTAR',s[0]+6,s[1]+1,P.k1); M.microText(b,'SARAJEVO',s[0]+2,s[1]+6,P.k0); }
   M.microText(b,'SARAJEVO',BUS.x0+((BUS.x1-BUS.x0-31)>>1),BUS.top+3,P.y4); }
 
 // ---------------------------------------------------------------- Ebene: Kioskfassade (verdeckt Mira bis zur Brust)
@@ -295,17 +299,17 @@ M.defineArt('terminal',{
     bench:[BENCH.x0-1,BENCH.base-27,BENCH.x1-BENCH.x0+2,28],
     palm:[PALM.x-16,PALM.base-70,32,70],
     bus:[BUS.x0-8,BUS.top-6,BUS.x1-BUS.x0+28,BUS.base-BUS.top+8],
-    bus_sign:[BUS.x1-4-35,BUS.top+22,36,9],
+    bus_sign:[BUS.x1-4-36,BUS.top+16,38,14],
     ticket_counter:[TICK.x0-1,TICK.top-3,TICK.x1-TICK.x0+2,TICK.base-TICK.top+3],
     timetable:[BOARD.x0,BOARD.y0,BOARD.x1-BOARD.x0,BOARD.y1-BOARD.y0],
     speaker:[POLE.x-14,POLE.base-56,29,22],
-    sea:[278,139,202,5]
+    sea:[278,136,202,8]
   },
   stands:{
     exit:[10,124,'L'], ferry:[200,114,'B'], terminal_bldg:[60,114,'B'], kiosk:[236,118,'B'], bench:[326,126,'R'], palm:[272,120,'R'],
     bus:[398,120,'B'], bus_sign:[404,118,'B'], ticket_counter:[460,118,'B'], timetable:[338,116,'B'], speaker:[306,118,'B'], sea:[380,134,'F']
   },
-  actorPos:{ mira:[236,108,'F'], mala:[350,124,'F'] },
+  actorPos:{ mira:[236,108,'F'], mala:[350,124,'L'] },
   start:[40,124,'R'], entries:{ map:[16,124,'R'] }
 });
 })(M);

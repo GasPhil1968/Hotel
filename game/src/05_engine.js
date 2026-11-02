@@ -116,7 +116,8 @@ function updateActor(a,dt){ if (a.frozen) return;
     if (a.anim!==set){ a.anim=set; a.fi=0; a.ft=0; }
     a.ft+=dt; a.idleT+=dt; var guard=0; while (a.ft>=a.anim[a.fi][1] && guard++<50){ a.ft-=a.anim[a.fi][1]; a.fi=(a.fi+1)%a.anim.length; }
     // Mala folgt Marko, wenn sie nicht gespielt wird
-    if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
+    // nicht, wenn sie sitzt oder die Szene sie festhält (Bank an der Riva, Sustipan, Busbahnhof)
+    if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow && !GS.flags['mala.lock'] && !(a.idle && /sit/.test(a.idle))){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
       if (Math.hypot(a.x-tx,a.y-ty)>34 && a.mode==='idle'){ walkActor(a,tx,ty); } } } }
 function arrive(a){ a.mode='idle'; setIdle(a); var r=a.res; a.res=null; if (r) r(true); }
 function actorPose(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
