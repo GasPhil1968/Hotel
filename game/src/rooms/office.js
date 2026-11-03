@@ -82,8 +82,8 @@ var HS=[
 M.room('office',{ name:'Hafenbüro', scape:'office', music:'case1',
   actors:function(S,GS){ var p=M.apos('office','mladen',[150,104,'F']); return [{id:'mladen',ch:'mladen',x:p[0],y:p[1],f:p[2]||'F',name:'Mladen',speechY:52}]; },
   hotspots:HS,
-  tick:function(A){ if (!A.flag('mala.voice') || !A.flag('c1.searched') || A.isBusy || !A.S.nudge || A.gt<A.S.nudge) return; A.S.nudge=A.gt+24000; A.busy(true);
-    A.g(A.cycle('nudge',['Lass mich nachsehen.','Ich kann durch Türen gehen. Du nicht.','Du musst nichts sagen. Nur nicken.','Je länger du so tust, desto lauter werde ich.'])).then(function(){ A.busy(false); }); },
+  tick:function(A){ if (!A.flag('mala.voice') || !A.flag('c1.searched') || A.isBusy || M.E.acting || M.E.speech || M.E.dlg || !A.S.nudge || A.gt<A.S.nudge) return; A.S.nudge=A.gt+24000;
+    A.g(A.cycle('nudge',['Lass mich nachsehen.','Ich kann durch Türen gehen. Du nicht.','Du musst nichts sagen. Nur nicken.','Je länger du so tust, desto lauter werde ich.'])); },
   enter:async function(A,from){ if (from==='riva' && A.first('offIn')) await A.m('Neonlicht und Kaffeegeruch. Ein Amt, das nie ganz schließt, weil das Meer nie ganz schließt.');
     if (A.flag('mala.voice') && A.flag('c1.searched')) A.S.nudge=A.gt+9000;
     if (from==='archive' && A.isMala() && A.hasNote('c1_1948') && A.first('!backFromArchive')) await A.g('Ich habe ihn gefunden. Ich kann ihn nur nicht herausholen.'); }

@@ -48,6 +48,7 @@ async function talkLuka(A){ var L=A.npc('luka'); if (A.S.given) return L.say('Sa
     {t:'Hast du Angst?',once:'ll1',go:async function(A){ await L.say('Ich? Ich bin zwanzig. Wir haben vor nichts Angst. Das ist ja das Problem.'); }},
     {t:'Was siehst du im Licht?',once:'ll2',go:async function(A){ await L.say('Weiß nicht. Sieht aus wie Venedig. Ich habe Venedig nie gesehen. Also könnte es Venedig sein.'); }},
     {t:'Was soll ich Nina sagen?',once:'ll3',go:async function(A){ await L.say('Dass ich auf dem Weg war. Die ganze Zeit.'); await L.say('Und dass das Lied noch keinen Namen hat. Sie soll ihm einen geben.'); }},
+    {t:'Deine Tickets hat Nina.',if:!A.has('tickets'),go:async function(A){ await lukaWithout(A); return 'bye'; }},
     {t:'(Schweigen.)',bye:true}
   ]; }); }
 async function lukaTickets(A){ var L=A.npc('luka'); A.S.given=true; await A.animM('give'); A.take('tickets');
@@ -55,6 +56,10 @@ async function lukaTickets(A){ var L=A.npc('luka'); A.S.given=true; await A.anim
   await A.animM('pickup'); A.give('ticket_n'); await A.m('Mache ich.');
   await intoLight(A,'luka',[async function(){ await A.wait(700); await L.say('Halb neun.'); await A.wait(600); await L.say('Diesmal bin ich pünktlich.'); }]);
   A.setFlag('c2.done'); await A.wait(800); await A.g('Er ist gefahren.'); await A.m('Mit einem Ticket von neunundneunzig.'); await A.g('Die gelten dort.'); await A.wait(900); await A.g('Komm. Sie wartet noch an der Rampe.'); }
+// (ältere Spielstände: Nina hat die Tickets schon behalten)
+async function lukaWithout(A){ var L=A.npc('luka'); A.S.given=true; await L.say('Bei Nina?'); await A.wait(900); await L.say('Dann sind sie da, wo sie hingehören.'); await L.say('Dann fahre ich ohne. Das hätte sie lustig gefunden.');
+  await intoLight(A,'luka',[async function(){ await A.wait(700); await L.say('Halb neun.'); await A.wait(600); await L.say('Diesmal bin ich pünktlich.'); }]);
+  A.setFlag('c2.done'); await A.wait(800); await A.g('Er ist gefahren.'); await A.wait(900); await A.g('Komm. Sie wartet noch an der Rampe.'); }
 // ---------------------------------------------------------------- Bruno: die Glocke um sieben, die Ablösung
 async function talkBruno(A){ var B=A.npc('bruno'); if (A.S.given) return B.say('Hvala … hvala.');
   await A.menuLoop(function(){ return [
@@ -83,6 +88,7 @@ var HS=[
      if (w==='bruno') return A.m('Ein Stück Hoteltresen, poliertes Holz, und darauf eine Messingglocke. Sie glänzt, als hätte jemand sie jeden Abend geputzt.'); return A.m('Ein Poller, wie am Ende der Mole, blank gerieben von Händen. Hier ist kein Tau daran. Und kein Wasser.'); },
    use:function(A){ var w=who(A.S); if (w==='bruno') return brunoBell(A); if (w==='luka') return A.m('Ich steige nicht hinauf. Dahinter ist nichts.'); return A.m('Er ist kalt. Wie der am Hafen.'); },
    push:function(A){ var w=who(A.S); if (w==='bruno') return brunoBell(A); return A.m('Er bewegt sich nicht.'); },
+   take:async function(A){ var w=who(A.S); if (w==='ivka' && !A.has('gloves') && !A.S.given){ await A.reach(); A.give('gloves'); return A.m('Auf dem Poller liegen die grauen Handschuhe. Die, die ich am Hafen dort hingelegt habe.'); } return A.m('Das lasse ich hier.'); },
    g:{look:function(A){ var w=who(A.S); return A.g(w==='bruno'?'Seine Glocke. Er ist aufgestanden, jedes Mal, wenn sie klang.':(w==='luka'?'Seine Treppe. Hier hält sie.':'Hier war sie festgemacht. Jetzt nicht mehr.')); }}},
  {id:'ghost',npc:'ivka',name:'Ivka',hgt:46,vis:function(S){ return !S.gone && who(S)==='ivka'; },talk:talkIvka,look:'Ivka Perić. Hier sieht sie nicht durchscheinend aus. Hier sehe ich durch mich.',
    give:{ gloves:function(A){ return ivkaGloves(A); }, letter_t:'„Sie haben ihn mir doch vorgelesen.“' }},
@@ -91,7 +97,7 @@ var HS=[
  {id:'ghost_b',npc:'bruno',name:'Bruno',hgt:46,vis:function(S){ return !S.gone && who(S)==='bruno'; },talk:talkBruno,look:'Bruno Lalić in seiner grünen Uniform. Er steht, als warte er auf einen Gast. Oder auf eine Ablösung.',
    give:{ keyring:'„Ne … Ljerki.“ Für Ljerka.', fee:'„Ne … ne …“' }}
 ];
-M.room('limbo',{ name:'Zwischenwelt', scape:'limbo', music:'ghost', noSave:true, noSwitch:true, noGhostView:true, noMalaLeash:true, noFollow:true,
+M.room('limbo',{ name:'Zwischenwelt', scape:'limbo', music:'ghost', noSave:true, noSwitch:true, noGhostView:true, noMalaLeash:true, noFollow:true, spiritAlpha:0.9,
   actors:function(S,GS){ if (S.gone) return []; var w=who(S), g=GHOST[w], p=M.apos('limbo','ghost',[214,116,'L']); return [{id:w,ch:w,x:p[0],y:p[1],f:p[2]||'L',name:g.name,ghost:true,idle:g.idle,noAche:true,routine:false}]; },
   hotspots:HS
 });

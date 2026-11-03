@@ -18,6 +18,9 @@ STEUERUNG
 - Leiste seitlich wischen oder die Pfeile antippen = Inventar blättern.
 
 MARKO UND MALA
+- Am Anfang hört Marko Mala nur. Er will sie nicht hören, und jeder Satz,
+  den er überhört, macht seinen Kopfschmerz schlimmer. Erst wenn er sie
+  zulässt, sieht er sie, und man kann zu ihr wechseln.
 - Unten links: das Porträt der anderen Figur. Antippen = Figur wechseln.
 - Marko lebt: Er redet mit Lebenden, nimmt, öffnet, benutzt, liest.
 - Mala ist ein Geist: Sie geht durch Wände und verschlossene Türen,
@@ -27,6 +30,7 @@ MARKO UND MALA
 - Pocht Markos Kopf (dunkler Rand), ist ein Geist in der Nähe, den er noch
   nicht sieht. Mala kann ihn finden.
 - Zieh Gegenstände auf Mala, damit sie sie ansieht. Manchmal sieht sie mehr.
+- Im Dunkeln sieht Marko nur, was in Malas kaltem Schein liegt.
 
 DIE GEISTER
 - Die Toten wissen meist nicht, dass sie tot sind. Sie leugnen es oder
@@ -34,14 +38,20 @@ DIE GEISTER
 - In Malas Sicht sieht man ihre Leine: einen Faden aus Licht zu dem Ort
   oder Ding, an dem sie festgemacht sind.
 - Erst wenn ein Geist selbst begreift, was geschehen ist, lässt er los.
-  Dann kann Mala ihn hinüberbringen ("Hinüberbringen").
+  Dann kann Mala ihn hinüberbringen ("Hinüberbringen"). Marko geht mit,
+  in eine Zwischenwelt aus schwebenden Steinen und Licht. Dort muss er
+  noch etwas tun, bevor der Geist gehen kann. Durch das steinerne Tor
+  geht es danach zurück.
 
 DAS NOTIZBUCH ("Notizen")
 - Alles Wichtige, was Marko und Mala erfahren, wird notiert.
-- Zwei Notizen nacheinander antippen = verbinden. Passen sie zusammen,
+- Links das Register: kurze Titel, nach Themen geordnet, oben die Reiter
+  "Fall" und "Mala". Erledigtes sammelt sich eingeklappt unter "Erledigt".
+- Eine Notiz antippen = rechts steht sie ganz.
+- "Verbinden", dann eine zweite Notiz antippen. Passen sie zusammen,
   entsteht eine Schlussfolgerung.
-- Im Gespräch: "Nach etwas aus dem Notizbuch fragen …" – dann eine Notiz
-  antippen. So öffnet man neue Antworten.
+- Im Gespräch: "Nach etwas aus dem Notizbuch fragen …" – Notiz antippen,
+  dann "Danach fragen" (oder die Notiz ein zweites Mal antippen).
 
 HILFE
 - Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,

@@ -74,9 +74,10 @@ async function crossLuka(A){ var N=A.npc('nina'), L=A.npc('luka'); A.G.flags['ma
 M.afterLimbo_luka=async function(A){ A.G.flags['mala.lock']=false; var st=M.apos('ledana','nina',[270,124,'R']);
   await A.goto('ledana',{x:st[0]-26,y:st[1]+2,f:'R',fade:false,noEnter:true}); A.music('silence'); await A.fade(0,900);
   var N=A.npc('nina'); await A.wait(1500); await N.say('Zwölf Jahre habe ich gedacht, er ist einfach nicht gekommen.'); await A.m('Er war auf dem Weg. Die ganze Zeit.'); A.save(); };
-async function ninaTicket(A){ var N=A.npc('nina'); await A.animM('give'); A.take('ticket_n'); await N.say('Ein Ticket nach Ancona. Dreiundzwanzigster August neunundneunzig.'); await A.wait(900);
+async function ninaTicket(A){ var N=A.npc('nina'); if (A.has('ticket_n')){ await A.animM('give'); A.take('ticket_n'); await N.say('Ein Ticket nach Ancona. Dreiundzwanzigster August neunundneunzig.'); await A.wait(900);
   await N.say('Das ist meins. Er hatte zwei gekauft.'); await A.m('Eins hat er mitgenommen. Das hier soll ich Ihnen geben. Sie sollen selbst entscheiden, ob Sie fahren.'); await A.wait(1400);
-  await N.say('Venedig.'); await A.wait(900); await N.say('Ich glaube, jetzt kann ich die Bilder fertig malen.'); await N.say('Und das Lied … hat es einen Namen?'); await A.m('Noch nicht. Er sagt, Sie sollen ihm einen geben.'); await A.wait(1500);
+  await N.say('Venedig.'); await A.wait(900); } else { await N.say('Ist er … fort?'); await A.m('Er war auf dem Weg. Die ganze Zeit.'); await A.wait(1200); }
+  await N.say('Ich glaube, jetzt kann ich die Bilder fertig malen.'); await N.say('Und das Lied … hat es einen Namen?'); await A.m('Noch nicht. Er sagt, Sie sollen ihm einen geben.'); await A.wait(1500);
   await N.say('„Halb neun.“'); await A.wait(1200);
   await N.say('Das Radio …'); await A.m('Es gehörte einer alten Frau, die siebenundzwanzig Jahre auf ein Boot gewartet hat. Behalten Sie die Kassette.');
   await N.say('…Danke, Marko.'); await N.face('L'); var st=M.apos('ledana','nina',[270,124,'R']); N.walk(20,st[1]+6); await A.wait(2200); N.hide(); A.setFlag('c2.ninaGone');
@@ -118,7 +119,7 @@ var HS=[
  {id:'nina',npc:'nina',name:'Nina',hgt:46,vis:function(S,GS){ return ninaHere(GS); },
    look:'Nina, mit verschränkten Armen an der Rampe. Sie sieht zur Fähre hinüber. Sie zittert nicht. Noch nicht.',
    talk:async function(A){ var N=A.npc('nina');
-     if (A.flag('c2.done')){ await N.say('Ist er … fort?'); await A.m('Ja.'); if (!A.has('ticket_n')) return; var c=await A.choose([{t:'(Ihr Lukas zweites Ticket geben.)',id:'t',silent:true},{t:'Gleich.',id:'w'}],{title:'Nina'}); if (c==='t') return ninaTicket(A); return; }
+     if (A.flag('c2.done')){ if (!A.has('ticket_n')) return ninaTicket(A); await N.say('Ist er … fort?'); await A.m('Ja.'); var c=await A.choose([{t:'(Ihr Lukas zweites Ticket geben.)',id:'t',silent:true},{t:'Gleich.',id:'w'}],{title:'Nina'}); if (c==='t') return ninaTicket(A); return; }
      if (!A.has('radioT')) return N.say('Haben Sie es dabei?'); await N.say('Sie haben es dabei.'); await A.m('Ja.'); },
    give:{ radioT:function(A){ return finale(A); }, ticket_n:function(A){ return ninaTicket(A); }, radioB:'„Wo ist die Kassette?“', cassette:'„Ich habe nichts, womit ich die abspielen kann. Sie haben doch das Radio.“' },
    g:{look:'Sie sieht ihn nicht. Aber sie sieht zur richtigen Stelle.'}}

@@ -456,7 +456,7 @@ M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
     for (var f=faders.length-1;f>=0;f--){ var F=faders[f]; if (F.f()){ faders.splice(f,1); F.res(); } }
     if (E.speech && gt>=E.speech.until && !(tapText && E.busy && E.screen==='game' && !M.TEST)) endSpeech();
     if (E.conv && ((!E.busy && !E.dlg) || E.conv.room!==room || E.screen!=='game')) E.conv=null;
-    if (room && E.screen==='game'){ Object.keys(ACT).forEach(function(k){ updateActor(ACT[k],dt); }); updateCamera(dt); if (room.tick) room.tick(API,dt); syncPos(); }
+    if (room && E.screen==='game'){ Object.keys(ACT).forEach(function(k){ updateActor(ACT[k],dt); }); updateCamera(dt); if (room.tick) room.tick(API,dt); if (M.ambientTick) M.ambientTick(API,dt); syncPos(); }
     if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); } }
   M.scheduleMusic(); };
 E.gtAdd=function(ms){ gt+=ms; };

@@ -71,6 +71,17 @@ M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.ma
     },'Dazu weiß ich nichts.'),
     {t:'Komm.',bye:true}
   ]; }); };
+// ---------------------------------------------------------------- die Stimme redet von selbst, solange Marko sie überhört (Stimmen-Phase)
+var VOICE={ flat:['Du hast die Straßenbahn nicht weggewischt.','Du schläfst mit offenen Augen.','Der Kühlschrank redet nicht. Ich schon.'],
+  riva:['Sie friert nicht. Merkst du das?','Du kannst nicht ewig so tun.','Ihr Atem dampft nicht. Deiner schon.','Ich war schon vor dir hier.'],
+  varos:['Die Katze sieht mich. Warum du nicht?','Hier hat sie gewohnt. Hier hat sie gewartet.'],
+  bar:['Hier riecht es nach dir.','Sie weiß, dass du nicht schläfst.'],
+  office:['Lass mich nachsehen.','Ich kann durch Türen gehen. Du nicht.'] };
+var MK_IGNORE=['(Nicht hinhören.)','…','Tinnitus.','Ich höre nichts.'];
+M.ambientTick=function(A){ var G=A.G; if (M.TEST || !G.flags['mala.voice'] || !G.malaOn || G.active!=='marko' || A.isBusy || M.E.acting || M.E.dlg || M.E.overlay || M.E.speech || M.E.screen!=='game') return;
+  var r=A.room; if (!r || !VOICE[r.id] || r.id==='office') return; var now=A.gt; if (!M.E.voiceNext){ M.E.voiceNext=now+22000; return; } if (now<M.E.voiceNext) return;
+  M.E.voiceNext=now+32000+Math.random()*22000;   // nicht blockierend: der Spieler kann weiterspielen, Marko überhört es ja
+  A.g(A.cycle('voiceAmb',VOICE[r.id])).then(function(){ if (Math.random()<0.6 && !A.isBusy && !M.E.acting && !M.E.speech) return A.m(MK_IGNORE[Math.floor(Math.random()*MK_IGNORE.length)]); }); };
 // Mala klickt Marko an
 M.malaToMarko=async function(A){ var p=A.G.phase;
   await A.g(A.cycle('m2m',['Er tut so, als hätte er keine Angst. Er macht das gut.','Wenn er nachdenkt, reibt er sich die Schläfe. Wegen mir, glaube ich.','Er hört zu. Auch wenn er so tut, als würde er es nicht.']));

@@ -27,7 +27,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost;
       var lift=0;
-      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.ch==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||(isM?0.62:0.7); o.wobble=1;
+      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.ch==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||room.spiritAlpha||(isM?0.62:0.7); o.wobble=1;
         if (isM){ lift=1+Math.round((Math.sin(tq/760)+1)*0.75); if ((tq%7300)<150) o.alpha*=0.45; if (gs.flags['mala.voice']){ var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; } } } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
@@ -387,8 +387,8 @@ M.centerText=centerText;
 async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Tippe etwas an: Ist nur etwas zu sehen, schaue ich es mir an. Kann man etwas damit tun, kommt ein kleines Menü.');
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
-  if (GS().malaOn) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
-  await M.API.m('„Notizen“ ist mein Notizbuch. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen.');
+  if (GS().malaOn && !GS().flags['mala.unknown']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
+  await M.API.m('„Notizen“ ist mein Notizbuch. Links stehen kurze Einträge, rechts die ganze Notiz. Mit „Verbinden“ und einer zweiten Notiz verbinde ich sie. Im Gespräch kann ich nach jeder Notiz fragen.');
   await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
  } finally { E.busy=false; } }
 M.help=help;

@@ -63,7 +63,7 @@ Das beigelegte Spiel ist eine einzige HTML-Datei (rund 25.000 Zeilen JavaScript,
 ## 2. Wie die Blackwell-Mechanik umgesetzt wird
 
 ### 2.1 Zwei Figuren, ein Band
-- Gesteuert wird meist **Marko**. Ab dem ersten Fall erscheint unten links ein Porträt-Knopf. Ein Tipp darauf **wechselt zu Mala**, ein zweiter zurück. Wechsel sind an fast allen Orten möglich, außer in einigen Szenen, in denen Mala bewusst fehlt.
+- Gesteuert wird meist **Marko**. Erst wenn Marko die Stimme zum ersten Mal zulässt (im Hafenbüro, Fall 1), erscheint unten links ein Porträt-Knopf. Ein Tipp darauf **wechselt zu Mala**, ein zweiter zurück. Bis dahin ist Mala nur eine Stimme, die er überhört (siehe 2.6b). Wechsel sind danach an fast allen Orten möglich, außer in einigen Szenen, in denen Mala bewusst fehlt, und in der Zwischenwelt.
 - **Mala ist an Marko gebunden.** Wenn Marko einen Ort verlässt, kommt sie mit. Allein kann sie keine normalen Ausgänge nehmen („Ohne ihn komme ich nicht weit.“), wohl aber **Geisterwege**: durch Wände, verschlossene Türen und eingestürzte Treppen in angrenzende Räume, die Marko nicht betreten kann (Archiv, Schuppen, Hinterzimmer, Kühlraum, das Obergeschoss der Ledana).
 - Wechselt man zu Marko zurück, während Mala in einem solchen Nebenraum steht, springt die Kamera zu ihm, und Mala bleibt dort, bis man sie zurückholt oder Marko geht.
 
@@ -90,26 +90,64 @@ Beim Wechsel zu Mala wird das Bild über eine eigene Farbtabelle in kalte, ents�
 - **Die Leine.** Wer nicht weiterkommt, ist irgendwo festgemacht, wie ein Boot an einem Poller. In Malas Sicht läuft von jedem Geist ein dünner Faden aus Licht zu dem Ort oder Ding, an dem er hängt. Ivka ist an den Poller am Ende der Mole gebunden, Luka an die Kühlraumtür, hinter der sein Versprechen liegt, Bruno an die Portiersglocke auf dem Tresen. Marko sieht die Leinen nicht. Mala erklärt sie einmal, wenn Marko fragt: „Wer nicht weiterkommt, hält sich an etwas fest. An einem Ort, einem Ding, einem Versprechen. Wenn er loslässt, bringe ich ihn hinüber.“
 - **Leugnen.** Die Geister wissen zu Beginn nicht, dass sie tot sind, oder sie übergehen es. Ivka spürt den Wind nicht mehr („Das macht das Alter“) und erklärt ihre eigene Todesanzeige zur Anzeige einer Nachbarin. Luka hält die Ruine für „immer schon kaputt“ und die Leute, die durch ihn hindurchsehen, für komisch. Bruno besteht auf seinem Dienst, „das Palma ist immer offen“, und glaubt, es sei Dezember 1993. Wer es ihnen direkt sagt („Sie sind gestorben“), wird nicht gehört.
 - **Erkennen.** Erst ganz am Ende jedes Falls merken sie es selbst, plötzlich und an einem Ding, das sie berühren oder sehen: Ivka will die Handschuhe ihres Sohnes nehmen, und sie fallen ihr durch die Finger. Luka hört seine eigene Stimme vom Band und sieht Nina, zwölf Jahre älter. Bruno hört seine Tochter nach 36 Jahren spielen und sieht, dass ihr Haar grau ist.
-- **Loslassen und Hinüber.** Mit dem Erkennen löst sich die Leine. Dann ist Mala dran: Das Spiel wechselt zu ihr, und der Spieler bringt den Geist mit **Hinüberbringen** über die **Schwelle**, ein warmes, aufrechtes Licht in der kalten Geistersicht, an einem Ort, der zum Geist gehört (das Ende der Mole, die Rampe, an der die Nachtfähre ablegt, die Salontür, die Bruno ein letztes Mal aufhält). Mala geht bis an den Rand mit und kommt allein zurück.
+- **Loslassen und Hinüber.** Mit dem Erkennen löst sich die Leine. Dann ist Mala dran: Das Spiel wechselt zu ihr, und der Spieler öffnet mit **Hinüberbringen** die **Schwelle**, ein warmes, aufrechtes Licht an einem Ort, der zum Geist gehört (das Ende der Mole, die Rampe, an der die Nachtfähre ablegt, die Salontür, die Bruno ein letztes Mal aufhält).
+- **Die Zwischenwelt.** Mala nimmt Marko mit: „Nimm meine Hand. Du wirst sie nicht spüren. Nimm sie trotzdem.“ Das Bild wird weiß, und die drei stehen auf schwebenden Platten aus hellem Kalkstein in einer schwarzen Leere voller Sternenstaub. Links steht ein steinernes Tor, in dem blass der Ort zu sehen ist, von dem sie gekommen sind. In der Mitte leuchtet das Licht. Auf den Platten liegt ein Stück des Ortes, an dem der Geist hing: Ivkas Poller, drei Stufen von Lukas Treppe, Brunos Tresen mit der Glocke. Hier spielt man **Marko**, und der Geist geht erst, wenn Marko das Letzte getan hat:
+  - **Ivka** spürt zum ersten Mal seit Jahren die Kälte an den Händen. Marko gibt ihr die Handschuhe, die in der Welt durch ihre Finger gefallen sind. Hier kann sie sie halten.
+  - **Luka** will nicht ohne Ticket fahren. Marko gibt ihm die beiden Tickets aus dem Koffer. Eins nimmt er mit, das andere soll Marko Nina geben: „Sie soll selbst entscheiden, ob sie fährt.“
+  - **Bruno** kann nicht gehen, solange niemand ihn ablöst. Die Ablösung kommt um sieben und läutet die Glocke. Marko läutet sie.
+
+  Danach geht der Geist ins Licht. Mala bleibt am Rand („Noch nicht.“), und Marko kehrt durch das Tor zurück.
 - **Malas eigene Leine.** Auch von Mala läuft ein Faden, schwach, schräg nach oben, und er verliert sich immer im Osten. Sie kommentiert ihn nie. Fragt Marko, woran sie festgemacht ist, sagt sie nur: „An etwas, das ich nicht loslassen will.“
 
 ### 2.4 Das Notizbuch: Hinweise sammeln, verbinden, ansprechen
 - Was Marko und Mala erfahren, landet als kurzer Satz im **Notizbuch**, etwa „Die Fähre fiel am 22.12.1984 wegen der Bura aus.“
+- **Aufbau wie ein Register:** Die linke Seite zeigt nur kurze Titel, eine Zeile je Notiz, nach Themen gruppiert (in Fall 1 etwa *Ivka*, *Tonći*, *Das Boot*, *Dinko*). Zwei Reiter trennen den laufenden Fall von allem, was Mala betrifft. Schlussfolgerungen stehen oben unter *Schlüsse*. Was erledigt ist, etwa „Der Band 1984 fehlt“ nach dem Fund, rutscht in eine eingeklappte Gruppe *Erledigt*. Die rechte Seite zeigt die angetippte Notiz ganz, mit dem Knopf **Verbinden** (im Gespräch: **Danach fragen**).
 - **Zwei Notizen verbinden:** Passen sie zusammen, entsteht eine **Schlussfolgerung** wie „Tonći hat nicht auf die Fähre gewartet – er kam mit der ANKICA.“ Passen sie nicht, sagt Marko nur: „Das hängt nicht zusammen.“ Das ist das Herzstück der Blackwell-Rätsel.
 - **Im Gespräch fragen:** Jede Unterhaltung hat die Option „Nach etwas aus dem Notizbuch fragen …“. Wer die richtige Notiz anspricht, öffnet neue Antworten. Dialogoptionen hängen also direkt davon ab, was man schon weiß.
 - **Konfrontationen:** Am Ende jedes Falls muss der Geist begreifen, was geschehen ist. Im Finale wählt man nacheinander die passenden Notizen oder Gegenstände. Eine falsche Wahl beunruhigt den Geist, er wiederholt sich oder wendet sich kurz ab, und man versucht es noch einmal. Niemand sagt dabei, was richtig wäre. **Es gibt kein Game Over.**
 
 ### 2.5 Inventar
-Eine Reihe mit sieben Feldern, Ziehen auf ein Ziel oder „Benutze“ und dann das Ziel, wie im Original. Viele Gegenstände tragen Erinnerung: eine Postkarte, ein Foto auf einem Fischerboot, ein Paar graue Handschuhe, zwei nie benutzte Fährtickets, eine Kassette, eine Klavierschule mit Kinderschrift. Kombinationen ergeben sich aus der Situation, zum Beispiel Radio + Batterien + Kassette, Brecheisen + klemmende Kühlraumtür oder Kurbel + Grammofon.
+Eine Reihe mit sieben Feldern, Ziehen auf ein Ziel oder „Benutze“ und dann das Ziel, wie im Original. Viele Gegenstände tragen Erinnerung: eine Postkarte, ein Foto auf einem Fischerboot, ein Paar graue Handschuhe, zwei nie benutzte Fährtickets, eine Kassette, eine Klavierschule mit Kinderschrift. Kombinationen ergeben sich aus der Situation, zum Beispiel:
+- Stricknadel aus Ivkas Nähkorb + verknoteter Schuhkarton
+- Džezva + Spüle + Herd, um einen vom Salz verbackenen Brief über Dampf zu öffnen (oder Sanja hält ihn an ihre Espressomaschine)
+- Radio + Batterien + Kassette, Brecheisen + klemmende Kühlraumtür, Brecheisen + Schutthaufen, Spachtel + lockerer Ziegel, Kurbel + Grammofon
+
+Manche Gegenstände wirken erst in der Zwischenwelt, wie die Handschuhe oder Lukas Tickets.
 
 ### 2.6 Keine Lenkung, wenige Hilfen
 - **Das Spiel verrät nicht, was als Nächstes zu tun ist oder wohin man gehen muss.** Es gibt keine Ziel-Anzeige, keine Spurenliste und keine Tipps. Marko und Mala sprechen Beobachtungen und Gefühle aus, keine Anweisungen. Orte erscheinen auf dem Stadtplan, wenn jemand von ihnen erzählt hat.
-- **Notizen:** zwei Seiten, auf denen die Notizen fortlaufend stehen (Verbinden, im Gespräch ansprechen).
+- **Notizen:** das Register mit kurzen Titeln links und der ganzen Notiz rechts (siehe 2.4).
 - **Zeigen:** Alle Hotspots blinken einige Sekunden lang auf.
 - **Menü:** Speichern und Laden (drei Plätze), Textgeschwindigkeit, Musik, Geräusche, Röhrenbild-Effekt, Anleitung.
 
+### 2.6b Die Stimme und der Kopfschmerz
+Marko nimmt Mala nicht einfach an. Er überhört sie, und das kostet ihn etwas.
+- **Die Stimme:** Vom Ende des Prologs bis in die Mitte von Fall 1 ist Mala für Marko nur eine Stimme und ein Flimmern in der Luft. Ihre Sätze stehen kalt und leicht zitternd oben im Bild, ohne Porträt und ohne Körper. Klickt man das Flimmern an, heißt es „Schimmer“, und Marko weigert sich: „Ich rede nicht mit Lichtflecken.“
+- **Kopfschmerz als Preis:** Jeder Satz, den er überhört, verstärkt den Kopfschmerz: einen pochenden, dunklen Rand am Bild und ein feines Pfeifen.
+- **Andere Zeichen:**
+  - Auf der beschlagenen Fensterscheibe ist eine Straßenbahn mit einer Drei gemalt.
+  - Das Foto im Regal liegt mit dem Bild nach oben.
+  - Seine Uhr steht genau auf sieben.
+  - Die Katze in Varoš sieht hinter ihn.
+  - Sein Atem dampft, Ivkas nicht.
+
+  Marko erklärt alles weg: Tinnitus, Jugo, zu wenig Schlaf.
+- **Der Übergang:** Im Hafenbüro fehlt der Band von 1984, und die Stimme bietet an nachzusehen. Sie drängt weiter, wenn er schweigt. Erst wenn der Spieler Marko antworten lässt, leise, damit Mladen nichts hört („Wenn du da bist, dann sieh nach.“), ist der Kopfschmerz schlagartig weg. Mala wird sichtbar, nennt ihren Namen, und der Wechsel-Knopf erscheint. Marko nennt es eine Probe, keine Annahme: „Und wenn da nichts ist, bist du der Jugo.“
+- **Dunkle Orte:** Im Kühlraum der Ledana sieht Marko nur, was im Lichtkeil der Tür oder in Malas kaltem Schein liegt. Ohne sie ist er blind.
+
 ### 2.6a Gespräche
 Wie in den Blackwell-Spielen erscheint bei jeder gesprochenen Zeile ein gemaltes Brustbild der Figur oben links oder oben rechts (je nachdem, wo sie im Bild steht), daneben der Satz in einem schwarzen Kasten mit hellem Rand, in der Farbe der Figur. Die Antwortmöglichkeiten stehen als Liste im unteren Bildbereich. Geister haben einfarbige Porträts mit kaltem Schein: Mala blau-türkis, die anderen fahl-lavendel. In Markos Sicht ist auch Malas Gestalt einfarbig kalt, durchscheinend, mit einem schimmernden Rand und aufsteigenden Lichtpunkten; sie berührt den Boden nicht ganz.
+
+### 2.8 Leben in der Stadt
+Nebenfiguren stehen nicht bloß herum, sie tun etwas, und ab und zu wechseln sie die Tätigkeit:
+- **Zdenka** strickt vor ihrer Tür, sieht die Gasse hinauf, steht auf und reckt sich.
+- **Mladen** löst Kreuzworträtsel, stempelt, holt etwas aus dem Regal und trinkt Tee.
+- **Dinko** flickt Netze, sieht aufs Wasser, steht auf und rollt eine Leine auf.
+- **Sanja** poliert Gläser, wischt den Tresen und holt eine Flasche.
+- **Stipe und Frane** spielen Briškula, knallen Karten auf den Tisch und trinken.
+- **Nina** rahmt, misst und holt Leisten. **Mira** liest im Kiosk und sortiert. **Ljerka** blättert in Papieren und stempelt.
+
+Auch die Geister wiederholen, was sie immer getan haben: Ivka geht ein paar Schritte auf der Mole, sieht mit der Hand über den Augen aufs Meer und reibt sich die Hände, ohne es zu merken. Luka sieht beim Spielen zum Hafen. Bruno poliert die Glocke. Jakov fegt den Weg ab. Spricht man jemanden an, hält er inne. Während Szenen ruht alles.
 
 ### 2.7 Zeit
 Das Kapitel spielt an fünf Tagen. Die Tageszeit (Tag, Dämmerung, Nacht, Morgengrauen) wird von der Geschichte weitergeschaltet, nicht von einer Uhr. Jeder Ort hat vier Lichtstimmungen: Bei Nacht wird umgefärbt, und Fenster, Laternen und Schiffslichter leuchten auf. Manche Menschen und Geister sind nur zu bestimmten Zeiten da: Ivka am Abend auf der Mole, Bruno in der Nacht in der Portiersloge.
@@ -133,18 +171,20 @@ Marko Vuković, freier Übersetzer, schläft über einer italienischen Bedienung
 
 Marko kocht sich in seiner Džezva einen bosnischen Kaffee (Bedienungs-Tutorial) und geht hinauf nach Veli Varoš. Zdenka Bašić sitzt vor ihrer Tür und mustert ihn: Siebenundzwanzig Jahre habe niemand nach Ivka gefragt, und jetzt komme die Zeitung. Sie erzählt, dass Ivka jeden Abend um sieben zur Riva ging. Seit 1984, seit „der Junge“ nicht nach Hause kam.
 
-In Ivkas Wohnung spürt Marko zum ersten Mal etwas sehr Deutliches: Druck hinter den Augen, Stimmenfetzen, das Gefühl, nicht allein zu sein. Ein Stuhl steht am Fenster mit Blick auf die Mole, zwei Tassen auf dem Tisch, eine davon nie benutzt. Im Schuhkarton liegen Briefe ihres Sohnes **Tonći** von der Insel Brač. Auf der letzten Postkarte steht: „Ich komme am 22. mit dem Boot um sieben. Dinko kommt mit.“ Ein Foto zeigt zwei junge Männer auf einem Fischerboot namens ANKICA. Das alte Radio schaltet sich von selbst ein: Rauschen und dann eine Bura-Warnung aus einem anderen Jahrzehnt. Marko nimmt Postkarte und Foto mit und schreibt am Abend den Text. Die Wahl seines ersten Satzes erscheint später gedruckt in der Zeitung.
+In Ivkas Wohnung spürt Marko zum ersten Mal etwas sehr Deutliches: Druck hinter den Augen, Stimmenfetzen, das Gefühl, nicht allein zu sein. Ein Stuhl steht am Fenster mit Blick auf die Mole, zwei Tassen auf dem Tisch, eine davon nie benutzt. Den Schuhkarton hält ein rotes Band mit einem harten, alten Knoten zu. Marko will es nicht zerschneiden und lockert es mit einer Stricknadel aus Ivkas Nähkorb. Darin liegen Briefe ihres Sohnes **Tonći** von der Insel Brač. Auf der letzten Postkarte steht: „Ich komme am 22. mit dem Boot um sieben. Dinko kommt mit.“ Ein Foto zeigt zwei junge Männer auf einem Fischerboot namens ANKICA. Das alte Radio schaltet sich von selbst ein: Rauschen und dann eine Bura-Warnung aus einem anderen Jahrzehnt. Marko nimmt Postkarte und Foto mit und schreibt am Abend den Text. Die Wahl seines ersten Satzes erscheint später gedruckt in der Zeitung.
 
 Mala kündigt sich leise an, und Marko wehrt jedes Zeichen ab. In Veli Varoš steht für einen Augenblick ein Mädchen oben an der Kirchentreppe und ist fort, als er genauer hinsieht. In der Nacht ist das Fenster offen, obwohl er es zugemacht hat. Als er es schließt, steht in der dunklen Scheibe, hinter seinem eigenen Spiegelbild, ein Mädchen in Kleidung aus den frühen Neunzigern. Es sagt nur drei Sätze: „Es gibt Leute, die nicht weiterkommen. Du kannst mit ihnen reden. Ich kann sie finden.“ Ein Fährenhorn tutet; als Marko sich umdreht, ist niemand da. Er macht Licht und erklärt es sich: zu wenig Schlaf, zu viel Kaffee, zu viele Nachrufe. Am Morgen ist das Fenster zu („Der Riegel ist alt“), und er nennt es einen Traum.
 
 ### Erster Fall – „Das Boot um sieben“ (Mittwoch, Abend bis Nacht)
-Am nächsten Abend steht am Ende der Mole eine alte Frau in einem schwarzen Mantel. Marko kennt den Mantel; er hing gestern an Ivkas Garderobe. „Nein. In Split tragen viele alte Frauen schwarze Mäntel.“ Kopfschmerz, Druck, dann eine Stimme hinter ihm: „Du siehst sie also auch.“ Er dreht sich nicht um, oder er sagt ihr, sie sei nicht da. Dann erkennt er sie wieder, die Kirchentreppe, das Fenster. Sie nennt sich Mala. „Ich rede nicht mit Leuten, die es nicht gibt.“ – „Sie gibt es. Mich auch. Nur anders.“ Marko geht zu der alten Frau, um zu beweisen, dass sie lebt. Ivka wartet auf das Siebenuhrboot aus Supetar; für sie ist es der 22. Dezember 1984. Ihr Atem dampft nicht in der Kälte, seiner schon. „Ich sehe schlecht im Dunkeln.“
+Marko erwacht am späten Nachmittag mit Kopfschmerzen. Auf der beschlagenen Scheibe hat jemand eine Straßenbahn mit einer Drei gemalt, und das Foto im Regal liegt mit dem Bild nach oben. Eine Stimme sagt: „Das war kein Traum.“ Marko schiebt es auf den Kühlschrank, der manchmal so brummt, dass man Wörter hört.
 
-Den ganzen ersten Fall über will Marko Mala nicht annehmen. Er sieht nicht hin, wenn er sie ansehen soll, und nennt sie eine Einbildung. Doch was sie ihm sagt, stimmt: Der verschwundene Band steht im Archiv tatsächlich bei „1948“ („Zufall.“), und als Dinko Tonćis letzte Worte hört, die niemand außer ihm kennen kann, sagt Marko leise: „Das konnte ich nicht wissen.“ – „Nein.“ Erst auf der Bank an der Riva, nachdem er Ivka ins Licht hat gehen sehen, gibt er nach: „Ich glaube nicht an Geister.“ – „Musst du nicht.“ – „…Und das Schlimmste ist: Es war richtig so.“
+Am Abend steht am Ende der Mole eine alte Frau in einem schwarzen Mantel. Marko kennt den Mantel; er hing gestern an Ivkas Garderobe. „Nein. In Split tragen viele alte Frauen schwarze Mäntel.“ Kopfschmerz, Druck, dann eine Stimme hinter ihm: „Du siehst sie also auch.“ Er dreht sich nicht um, oder er fragt „Wer ist da?“ und sieht nur die Riva, oder er summt laut das Lied seiner Großmutter, und die Stimme sagt: „Das kenne ich.“ Er nennt es Tinnitus und geht zu der alten Frau, um zu beweisen, dass sie lebt. Ivka wartet auf das Siebenuhrboot aus Supetar; für sie ist es der 22. Dezember 1984. Ihr Atem dampft nicht in der Kälte, seiner schon. „Ich sehe schlecht im Dunkeln.“
 
-Marko und Mala setzen die Nacht zusammen. Im Hafenbüro steht das alte Fahrtenbuch falsch einsortiert; nur Mala findet es, nur der Beamte kann es holen. Darin steht, dass die Fähre wegen der Bura ausfiel und das Fischerboot ANKICA vor Sustipan kenterte. Gerettet wurde Dinko Matić, vermisst ist Antonio Perić. Dinko flickt bis heute seine Netze an der Matejuška. Er schweigt, bis Mala in seinem verschlossenen Schuppen Tonćis alten Seesack findet und im Nachhall Tonćis letzte Worte hört: „Halt die Tasche! Sie ist für Mama!“ Als Marko ihm diese Worte sagt, bricht Dinko nach 27 Jahren sein Schweigen. Im Seesack liegen ein verwaschener Brief und ein Paar graue Wollhandschuhe. Die fehlenden Worte des Briefes liest Mala aus seinem Nachhall: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen.“
+Bis ins Hafenbüro bleibt Mala eine Stimme, die Marko überhört, und jedes Überhören tut weh. Erst als der Band von 1984 fehlt und die Stimme anbietet nachzusehen, lässt er sie zu, leise, als Probe. Der Kopfschmerz ist sofort weg, zum ersten Mal seit drei Tagen. Jetzt sieht er sie, und sie nennt sich Mala. „Das ist kein Name. So sagt man zu kleinen Mädchen.“ – „Es reicht.“ Den ganzen ersten Fall über will Marko sie trotzdem nicht annehmen. Er sieht nicht hin, wenn er sie ansehen soll, und nennt sie eine Einbildung. Doch was sie ihm sagt, stimmt: Der verschwundene Band steht im Archiv tatsächlich bei „1948“ („Zufall.“), und als Dinko Tonćis letzte Worte hört, die niemand außer ihm kennen kann, sagt Marko leise: „Das konnte ich nicht wissen.“ – „Nein.“ Erst auf der Bank an der Riva, nachdem er mit Ivka in der Zwischenwelt war, gibt er nach: „Ich glaube nicht an Geister.“ – „Musst du nicht.“ – „…Und das Schlimmste ist: Es war richtig so.“
 
-Am Ende der Nacht hört Ivka die Wahrheit in der richtigen Reihenfolge: Die Fähre fuhr nicht, Tonći kam trotzdem, mit Dinkos Boot. Dann bekommt sie die Handschuhe, und zuletzt liest Marko ihr den Brief vor. Sie zieht die Handschuhe an, sagt „Es ist kalt geworden“ und geht die Riva entlang nach Hause, hinauf nach Varoš, bis sie zwischen den Palmen verblasst. Die Glocken von Sveti Duje schlagen. Mala zuckt.
+Marko und Mala setzen die Nacht zusammen. Im Hafenbüro steht das alte Fahrtenbuch falsch einsortiert; nur Mala findet es, nur der Beamte kann es holen. Darin steht, dass die Fähre wegen der Bura ausfiel und das Fischerboot ANKICA vor Sustipan kenterte. Gerettet wurde Dinko Matić, vermisst ist Antonio Perić. Dinko flickt bis heute seine Netze an der Matejuška. Er schweigt, bis Mala in seinem verschlossenen Schuppen Tonćis alten Seesack findet und im Nachhall Tonćis letzte Worte hört: „Halt die Tasche! Sie ist für Mama!“ Als Marko ihm diese Worte sagt, bricht Dinko nach 27 Jahren sein Schweigen. Im Seesack liegen ein Brief und ein Paar graue Wollhandschuhe. Das Salz hat die Seiten des Briefs zusammengebacken. Trocken bekommt Marko ihn nicht auf, ohne dass er reißt. Zu Hause hält er ihn über den Dampf der Džezva, oder Sanja hält ihn an das Dampfrohr ihrer Espressomaschine. Dann ist der Brief offen, aber verwaschen. Die fehlenden Worte liest Mala aus seinem Nachhall: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen.“
+
+Am Ende der Nacht hört Ivka die Wahrheit in der richtigen Reihenfolge: Die Fähre fuhr nicht, Tonći kam trotzdem, mit Dinkos Boot. Dann liest Marko ihr den Brief vor und gibt ihr die Handschuhe. Sie fallen ihr durch die Finger, und daran merkt sie, dass sie nicht mehr lebt. Marko hebt sie auf. Mala öffnet die Schwelle und nimmt Marko mit in die Zwischenwelt. Dort friert Ivka zum ersten Mal seit siebenundzwanzig Jahren an den Händen, und Marko gibt ihr die Handschuhe noch einmal. Diesmal kann sie sie halten. „Sie sind warm.“ Aus dem Licht ruft jemand „Mama!“, und sie geht hinein.
 
 ### Zwischenspiel – Die Bank an der Riva (Nacht, die Bura frischt auf)
 Ein langes, ruhiges Gespräch. Mala fragt, warum Marko in Split geblieben ist und warum er nicht nach Sarajevo zurückgeht. Marko weicht aus, antwortet knapp oder schweigt. Was der Spieler wählt, verändert Malas Erwiderungen und wie offen Marko in späteren Gesprächen ist. Auf die Frage nach ihrer Blechdose sagt sie nur: „Meins.“ Zum Schluss: „Bei der alten Eisfabrik ist noch einer. Er ist unruhig.“
@@ -177,8 +217,10 @@ Marko geht im ersten Licht zum Busbahnhof am Fährhafen. Mala ist nicht da, und 
 | Abschnitt | Marko | Mala |
 |---|---|---|
 | Prolog | sieht sie nur als Schimmer (Kirchentreppe, Spiegelung im Fenster) und erklärt sie weg: Traum, Schlafmangel | sagt nur ihre drei Sätze, zeigt sich kaum |
-| Fall 1 | lehnt sie ab („Ich rede nicht mit Leuten, die es nicht gibt.“), sieht nicht hin, nennt alles Zufall; die Risse kommen mit dem Archiv und mit Dinko | hilft, ohne zu erklären, und drängt nicht; Ivka fragt sie „Wo ist deine Mutter?“, sie schweigt |
-| Zwischenspiel 1 | nimmt sie widerwillig an („Ich glaube nicht an Geister.“ – „Musst du nicht.“), antwortet ausweichend | stellt Fragen, beantwortet keine |
+| Fall 1, erste Hälfte | überhört die Stimme, dreht sich nicht um, summt, nennt es Tinnitus; der Kopfschmerz wird mit jedem Satz stärker | ist nur Stimme und Flimmern, bleibt in seiner Nähe, kann warten |
+| Fall 1, Hafenbüro | lässt sie zum ersten Mal zu, als Probe, damit sie nachsieht; der Kopfschmerz ist weg | wird sichtbar, nennt ihren Namen: „Mala. – Es reicht.“ |
+| Fall 1, zweite Hälfte | lehnt sie weiter ab, sieht nicht hin, nennt alles Zufall; die Risse kommen mit dem Archiv und mit Dinko | hilft, ohne zu erklären, und drängt nicht; Ivka fragt sie „Wo ist deine Mutter?“, sie schweigt |
+| Zwischenspiel 1 | nimmt sie widerwillig an, nachdem er in der Zwischenwelt war („Ich glaube nicht an Geister.“ – „Musst du nicht.“) | stellt Fragen, beantwortet keine |
 | Fall 2 | beginnt, ihr zu vertrauen; fragt nach | zeigt Mitgefühl für Luka („Ich weiß, wie es ist zu warten.“) |
 | Zwischenspiel 2 | erzählt von Sarajevo | verrät sich durch ein Detail; erste eigene Verletzlichkeit |
 | Fall 3 | stellt sie zur Rede | wird erkannt, weicht aus, verschwindet |
@@ -251,6 +293,7 @@ Alle Orte erreicht man über **Markos Stadtplan** (wie eine auf dem Tisch ausgeb
 | 16 | **Hotel Palma – Salon** (verschlossen) | Staubtücher, Regen auf dem Oberlicht, Grammofon-Knistern | Flügel, Klavierhocker, Grammofon, Kreidezeichnungen der Flüchtlingskinder (nur Geistersicht) |
 | 17 | **Sustipan** (Park auf dem alten Friedhof) | Wind in den Pinien, offenes Meer, ferne Glocke | Pavillon, Gedenktafel „Denen, die das Meer behielt“, Jakov, die unsichtbaren Gräber (Geistersicht) |
 | 18 | **Fährterminal & Busbahnhof** | Motoren im Leerlauf, Lautsprechergong, Möwen, Busse | Mira am Kiosk (Batterien, Zeugin), Bänke, Nachtfähre nach Ancona, Bus nach Sarajevo, Fahrkartenschalter |
+| 19 | **Die Zwischenwelt** (nur beim Hinübergehen) | Stille, ein heller Ton, Wind ohne Wind | schwebende Kalksteinplatten in schwarzer Leere, steinernes Tor zurück, das Licht; je Geist ein Bruchstück seines Ortes (Poller, Treppenstufen, Tresen mit Glocke) |
 
 Die Ledana, Ivkas Wohnung, das Hotel Palma und Sustipan sind erfundene oder verfremdete Orte; Riva, Matejuška, Veli Varoš, Peristil und Fährhafen sind der Topografie von Split nachempfunden.
 
@@ -265,10 +308,11 @@ Legende: **[M]** = Marko, **[G]** = Mala (Geist), **[M+G]** = Zusammenarbeit.
 **Was wirklich geschah:** Tonći Perić, 22, Steinmetzlehrling auf Brač, hatte seiner Mutter versprochen, am 22. Dezember 1984 mit dem Siebenuhrboot nach Hause zu kommen. Er brachte ihr graue Wollhandschuhe mit, weil sie bei jedem Wetter ohne Handschuhe an der Mole auf ihn wartete. Die Fähre fiel wegen der Bura aus. Tonći wollte sein Versprechen trotzdem halten. Mit seinem Freund Dinko nahm er das Fischerboot von Dinkos Vater, die ANKICA. Vor Sustipan setzte der Motor aus, und das Boot kenterte. Tonći drückte Dinko den Seesack in die Hand – „Halt die Tasche! Sie ist für Mama!“ – und wurde von der See weggezogen. Dinko wurde im Morgengrauen gerettet. Er ging zweimal bis zu Ivkas Tür. Beim zweiten Mal öffnete sie und sagte: „Tonći kommt mit dem Boot um sieben.“ Er ging und kam nie wieder. Ivka wartete 27 Jahre lang jeden Abend an der Mole, und nach ihrem Tod wartete sie weiter.
 
 **Schritte und Rätsel**
-1. **[M] Ivkas Wohnung (Prolog):** Postkarte im Schuhkarton (Datum, „Boot um sieben“, „Dinko kommt mit“, „Ich bringe dir etwas mit“) und das Foto mit der ANKICA mitnehmen. Notizen: *Boot um sieben*, *Dinko*, *ANKICA*.
+1. **[M] Ivkas Wohnung (Prolog):** Den Knoten am Schuhkarton mit der Stricknadel aus dem Nähkorb lösen. Postkarte im Schuhkarton (Datum, „Boot um sieben“, „Dinko kommt mit“, „Ich bringe dir etwas mit“) und das Foto mit der ANKICA mitnehmen. Notizen: *Boot um sieben*, *Dinko*, *ANKICA*.
 2. **[M] Ivka auf der Mole:** Sie fragt nach dem Boot und hält den 22.12.1984 für heute. Sie friert nicht („Heute spüre ich nicht einmal den Wind. Das macht das Alter.“), und ihre Todesanzeige an der Tür in Varoš hält sie für die einer Nachbarin. Sagt Marko ihr, dass sie gestorben ist, schickt sie ihn nach Hause („Sie haben getrunken.“). Sie bittet ihn, im Hafenbüro nachzufragen. **[G]** Mala sieht ihre Leine: einen Faden aus Licht bis zum Poller.
 3. **[G] Nachhall an Ivkas Poller:** Mala sieht in schnellen Bildern dieselbe Frau, Jahr für Jahr älter, an derselben Stelle.
 4. **[M] Hafenbüro:** Mladen sucht erst, wenn Marko das genaue Datum nennt (Postkarte vorzeigen oder die Notiz ansprechen). Er findet den Band 1984 nicht.
+4a. **[M+G] Der Übergang:** Die Stimme bietet an nachzusehen und drängt, solange Marko schweigt. Das Archiv ist abgeschlossen, und Mladen geht nicht noch einmal hinein. Spricht man das Flimmern an, kann Marko weiter schweigen (der Kopfschmerz bleibt) oder leise sagen: „Wenn du da bist, dann sieh nach.“ Dann wird Mala sichtbar, nennt ihren Namen, und man kann zu ihr wechseln.
 5. **[G] Archiv:** Mala geht durch die Tür „SAMO OSOBLJE“ und findet den Band 1984 im Regal bei 1948, mit vertauschten Ziffern. Sie kann ihn nicht herausziehen.
 6. **[M] Mladen** den richtigen Platz sagen. Er holt den Band und liest vor: Die Fähre fiel aus, die ANKICA kenterte um 21:40 vor Sustipan, gerettet wurde D. Matić, vermisst ist A. Perić. Dabei erwähnt er: „Der Dinko flickt heute noch Netze an der Matejuška.“ Die Matejuška erscheint auf der Karte.
 7. **Notizen verbinden:** *Tonći wollte mit dem Boot um sieben kommen* + *Die Fähre fiel aus* → **„Tonći wartete nicht auf die Fähre – er kam mit der ANKICA.“**
@@ -276,7 +320,8 @@ Legende: **[M]** = Marko, **[G]** = Mala (Geist), **[M+G]** = Zusammenarbeit.
 9. **[M] Dinko an der Matejuška:** Er ist abweisend. Zeigt Marko das Foto, wird er weicher („Er war wie ein Bruder“), schweigt aber über die Nacht.
 10. **[G] Dinkos Schuppen:** Mala geht durch die verschlossene Tür. Am Seesack „T.P.“ sieht sie im Nachhall die Sturmnacht und hört Tonćis letzte Worte. An der Wand hängt Tonćis Foto mit Kerzenstummel („Jedes Jahr am 22. Dezember“).
 11. **[M] Dinko konfrontieren:** Mit der Notiz *Tonćis letzte Worte* bricht er sein Schweigen. Er erzählt alles und gibt Marko den Seesack. Darin liegen der **verwaschene Brief** und die **Handschuhe** in Zeitungspapier von 1984. Ab jetzt sagt Dinko: „Wenn du was brauchst, ich bin hier.“ Das bereitet Fall 2 vor.
-12. **[M+G] Den Brief lesen:** Marko kann nur Bruchstücke entziffern. Er zieht den Brief auf Mala, und sie liest die verwaschenen Worte aus dem Nachhall der schreibenden Hand. Marko übersetzt: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen. Ich komme.“
+12. **[M] Den Brief öffnen:** Das Salz hat die Seiten verbacken. Trocken reißt er. Zu Hause Džezva + Spüle + Herd, dann den Brief in den Dampf halten. Oder Sanja den Brief geben, die ihn an ihre Espressomaschine hält.
+12a. **[M+G] Den Brief lesen:** Marko kann nur Bruchstücke entziffern. Er zieht den Brief auf Mala, und sie liest die verwaschenen Worte aus dem Nachhall der schreibenden Hand. Marko übersetzt: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen. Ich komme.“
 13. *(optional)* **[M] Sustipan:** Auf der Gedenktafel steht Tonćis Name. **[G]** Jakov erzählt: „Jedes Jahr kommt ein Mann und steht hier.“ Dinko darauf angesprochen: „Das war ich. Zehn Jahre danach.“
 14. **Finale an der Mole (Konfrontation):** Ivka wartet. In vier Runden wählt Marko:
     - *„Die Fähre fuhr an diesem Abend nicht.“* → „Dann kommt er mit der ersten morgen früh.“
@@ -286,7 +331,8 @@ Legende: **[M]** = Marko, **[G]** = Mala (Geist), **[M+G]** = Zusammenarbeit.
 
     Falsche Wahl: Ivka wiederholt ihre Frage, wendet sich kurz ab oder wird unruhig. Dann versucht man es noch einmal.
 15. **Erkennen:** „Ich kann sie nicht halten. Warum kann ich sie nicht halten?“ Sie erinnert sich: krank am Fenster, kurz die Augen zugemacht, und dann trotzdem gegangen, wie jeden Abend. „Die Anzeige an meiner Tür. Das war ich.“ – „Siebenundzwanzig Jahre habe ich auf ihn gewartet. Und eine Woche, ohne es zu merken. … Er kommt nicht mehr. Und ich muss nicht mehr kommen.“ Die Leine löst sich vom Poller. Ivka erkennt Mala: „Du bist ja auch eine von uns.“
-16. **[G] Hinüber:** Das Spiel wechselt zu Mala. Mit **Hinüberbringen** begleitet sie Ivka bis an das Ende der Mole, wo die Schwelle aufgeht. „Ist es kalt da drüben?“ – „Nein.“ Ivka sieht hinein: „Da ist er. … Tonći.“ Marko legt die Handschuhe auf den Poller.
+16. **[G] Hinüber:** Das Spiel wechselt zu Mala. Marko hebt die Handschuhe auf. Mit **Hinüberbringen** öffnet Mala die Schwelle am Ende der Mole. „Ist es kalt da drüben?“ – „Nein.“ Ivka will, dass der junge Mann mitkommt, „er hat mir den Brief vorgelesen“. Mala nimmt Marko an der Hand.
+17. **[M] Zwischenwelt:** Ivka friert an den Händen. Marko kann mit ihr reden („Was sehen Sie im Licht?“, „Soll ich Zdenka etwas ausrichten?“) und gibt ihr die **Handschuhe**. Hier kann sie sie halten. Aus dem Licht ruft es „Mama!“, und sie geht. Durch das steinerne Tor zurück zur Riva.
 
 **Zusammenarbeit im Überblick:** Mala findet, was hinter Türen liegt (Archiv, Schuppen) und liest, was das Wasser gelöscht hat. Marko bringt Lebende zum Reden (Mladen, Zdenka, Dinko) und trägt, was Mala nicht tragen kann (Seesack, Handschuhe, Brief).
 
@@ -299,8 +345,8 @@ Legende: **[M]** = Marko, **[G]** = Mala (Geist), **[M+G]** = Zusammenarbeit.
 2. **[M] Dinko:** Wer ihn nach Werkzeug fragt, bekommt das **Brecheisen** und eine Warnung: „Pass auf die Treppe auf. Die ist morsch.“
 3. **[G→M] Bauzaun:** Mala geht durch den Zaun und findet das lose Feld hinter den Fischkisten, aber den Draht kann sie nicht lösen. **[M]** schiebt die Kisten weg und kriecht durch.
 4. **[G] Empore:** Nur Mala kommt hinauf. Sie findet Luka, danach sieht ihn auch Marko von unten. Luka ist misstrauisch („Hat dich Ninas Vater geschickt?“) und wird bei Mala ruhiger („Bist du auch auf der Flucht?“ – „Nicht mehr.“). Er leugnet alles, was nicht passt: Die Ledana „war immer schon kaputt“, und die Leute, die durch ihn hindurchsehen, sind eben komisch. Seine Leine läuft vom Geländer bis zur Kühlraumtür. Notizen: *Treffpunkt Kiosk 20:30*, *Nachtfähre 21:00*, *Gitarre im Kühlraum*, *Für Luka ist es der 23.08.1999*, *der „Briefkasten“*.
-5. **[G] Kühlraum:** Mala geht durch die verrostete Tür. Am Gitarrenkoffer unter dem Schutt sieht sie im Nachhall, wie Luka am Morgen zwei Tickets und eine Kassette einsteckt: „Za Ninu.“
-6. **[M] Kühlraum öffnen:** Brecheisen an der Tür. Aus dem Koffer nimmt er **zwei Tickets** (gekauft am 23.08.1999 um 10:14) und die **Kassette**. Die Gitarre mit gebrochenem Hals bleibt liegen.
+5. **[G] Kühlraum:** Mala geht durch die verrostete Tür. Für sie ist es nicht dunkel. Unter dem Schutthaufen glimmt etwas: „Darunter liegt ein Koffer.“
+6. **[M] Kühlraum öffnen:** Brecheisen an der Tür. Drinnen ist es stockdunkel. Marko sieht nur, was im Lichtkeil der Tür oder in Malas Schein liegt. Ohne Malas Hinweis stochert er sinnlos im Schutt. Mit ihm hebelt er die Brocken mit dem Brecheisen beiseite und findet den Gitarrenkoffer. Darin liegen **zwei Tickets** (gekauft am 23.08.1999 um 10:14) und die **Kassette**. Die Gitarre mit gebrochenem Hals bleibt liegen. **[G]** Am offenen Koffer sieht Mala im Nachhall, wie Luka am Morgen alles einsteckte: „Za Ninu.“
 7. **[G] Briefkasten:** Mit Geistersicht sieht Mala ein gefaltetes Papier hinter dem Ziegel. **[M]** Mit dem Brecheisen ginge die halbe Wand mit, also braucht er etwas Dünnes.
 8. **[M] Sanja:** Hat Marko etwas Greifbares (Tickets oder Notizen von Luka), erzählt sie: Luka spielte an der Riva Gitarre, Nina hörte immer zu, und man fand ihn drei Tage später an der Treppe. Nina ist geblieben und hat den Laden „Okvir“ in der Altstadt. „Lass sie in Ruhe, Marko.“ Wer behauptet, Luka „warte“ noch, verärgert sie und muss später wiederkommen.
 9. **[M] Altstadt:** Die Mittagsglocken läuten, und Mala verschwindet für einen Moment. „Zu laut.“
@@ -315,7 +361,9 @@ Legende: **[M]** = Marko, **[G]** = Mala (Geist), **[M+G]** = Zusammenarbeit.
 18. **[M] Nina (zweiter Besuch, Konfrontation):** Zuerst *„Ich war in der Ledana“*, dann Ninas eigenen **Zettel** zeigen, dann **Lukas Ticket**, dann das **Radio mit Kassette**. Fragt Nina, woher er von dem Ziegel wusste, kann Marko die Wahrheit sagen („Er hat es mir gesagt“) oder eine halbe Wahrheit. Beides führt weiter, nur mit anderem Nachklang. Nina: „Heute Abend. An der Rampe. Wenn die Fähre ablegt.“
 19. **Finale an der Rampe der Ledana (21:00):** Marko gibt Nina das Radio, sie drückt auf „Play“. Es läuft Lukas Stimme, dann das Lied.
 20. **Erkennen:** Oben auf der Galerie hört Luka seine eigene Stimme und sieht hinunter: „Nina? … Sie ist älter. Wie lange …?“ Im Nachhall sieht er den Sturz von der siebten Stufe. „Ich bin nie unten angekommen. Sie hat gewartet. Und ich war die ganze Zeit hier oben. … Ich muss nicht mehr auf halb neun warten.“ Er legt die Gitarre weg, die Leine reißt.
-21. **[G] Hinüber:** Das Spiel wechselt zu Mala. Mit **Hinüberbringen** führt sie ihn „die Treppe hinunter, die es nicht mehr gibt“, bis zur Rampe. Die Nachtfähre legt ab, die Schwelle öffnet sich über dem Wasser. Luka steht neben Nina, die ihn nicht sieht: „Es ist kalt geworden.“ – „Sie weiß es jetzt.“ Dann geht er.
+21. **[G] Hinüber:** Das Spiel wechselt zu Mala. Mit **Hinüberbringen** führt sie ihn „die Treppe hinunter, die es nicht mehr gibt“, bis zur Rampe. Die Nachtfähre legt ab, die Schwelle öffnet sich über dem Wasser. Luka steht neben Nina, die ihn nicht sieht: „Es ist kalt geworden.“ – „Sie weiß es jetzt.“ Er fragt Marko, ob er mitkommt, bis zur Fähre.
+22. **[M] Zwischenwelt:** Luka sucht die Fähre, und ohne Ticket „lassen sie ihn nirgends rein“. Marko gibt ihm die **zwei Tickets**. Eins nimmt er mit, das andere gibt er Marko für Nina: „Sie soll selbst entscheiden, ob sie fährt.“ Dann geht Luka ins Licht: „Diesmal bin ich pünktlich.“
+23. **[M] Rampe:** Nina ist noch da. Marko gibt ihr **ihr Ticket**. „Venedig.“ Das Lied soll einen Namen bekommen, und sie nennt es „Halb neun“.
 
 ### Fall 3 – „Der Nachtportier“ (Bruno Lalić, Hotel Palma)
 
@@ -346,7 +394,9 @@ Legende: **[M]** = Marko, **[G]** = Mala (Geist), **[M+G]** = Zusammenarbeit.
 16. **[M+G] Übersetzungsrätsel:** Bruno sagt seine Botschaft nur noch als Wortsalat: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.“ Marko setzt den Satz aus fünf Teilen zusammen: **„Ljerka, – verzeih mir. – Ich habe deinen Brief aus Zagreb versteckt, – weil ich Angst hatte, allein zu sein. – Spiel wieder.“** Für jeden Teil gibt es drei Möglichkeiten. Liest Marko eine falsche Fassung vor, schüttelt Bruno genau bei dem Teil den Kopf, der nicht stimmt („Ne … ne hotel … ja … sam.“).
 17. **Finale:** Marko klopft um zwei Uhr nachts an Ljerkas Tür. Erst gibt er ihr den Umschlag, dann Brunos Brief, und zuletzt sagt er ihr den übersetzten Satz. Auf ihre Frage, woher er wissen will, was ihr Vater sagen wollte, antwortet Marko entweder „Ich bin Übersetzer. Ich habe gelesen, was dasteht – und was nicht.“ oder „Er hat es mir gesagt.“ Ljerka geht in den Salon und spielt mit einer Hand, dann mit beiden.
 18. **Erkennen:** Bruno hört zu. „Ljerka … sviraš.“ (Du spielst.) Dann sieht er ihr graues Haar: „Sijeda … koliko godina?“ (Grau … wie viele Jahre?) Er sieht auf seine Hände: „Ja nisam više ovdje.“ (Ich bin nicht mehr hier.) Und zum ersten Mal ein ganzer Satz, auf Deutsch: „Ich bin nicht mehr im Dienst.“ Er nimmt die Mütze ab, die Leine löst sich.
-19. **[G] Hinüber:** Das Spiel wechselt zu Mala. Bruno will die Tür selbst öffnen, „wie immer“. Mit **Hinüberbringen** geht er zur Salontür, hinter der die Schwelle leuchtet, verbeugt sich vor Mala („Izvolite.“ – „Nach dir, Bruno.“) und fragt: „Kommst du mit?“ – „Noch nicht.“ Ljerka zahlt Marko danach sein **Honorar**: „Ich weiß noch nicht, ob ich verkaufe.“
+19. **[G] Hinüber:** Das Spiel wechselt zu Mala. Bruno will die Tür selbst öffnen, „wie immer“. Mit **Hinüberbringen** geht er zur Salontür, hinter der die Schwelle leuchtet, und verbeugt sich vor Mala („Izvolite.“ – „Nach dir, Bruno.“). „Und der Herr?“ – „Er kommt mit. Bis an den Rand.“
+20. **[M] Zwischenwelt:** Ein Stück Tresen mit Brunos Glocke. Bruno kann nicht gehen, „nema smjene“, es gibt keine Ablösung. Fragt Marko nach, erfährt er, dass die Ablösung um sieben kommt und die Glocke läutet. Marko **läutet die Glocke**. „Sedam sati. Smjena.“ (Sieben Uhr. Ablösung.) Bruno nimmt die Mütze ab, zeigt auf seinen Schlüsselring in Markos Tasche („Ključevi … Ljerki.“) und geht zu Danica ins Licht. „Nedjelja je.“ (Es ist Sonntag.)
+21. **[M] Salon, Morgengrauen:** Marko gibt Ljerka den Schlüsselring. „Er hat den Dienst übergeben.“ Ljerka zahlt ihm sein **Honorar**: „Ich weiß noch nicht, ob ich verkaufe.“
 
 ### Epilog – Kein Fall, ein Entschluss
 Mit dem Honorar kauft Marko am Schalter eine **Fahrkarte nach Sarajevo**. Mala sitzt auf der Bank. Es folgen das letzte Gespräch, die Busfahrt in der Morgendämmerung und der kurze Blick in die Dose.
@@ -358,13 +408,13 @@ Mit dem Honorar kauft Marko am Schalter eine **Fahrkarte nach Sarajevo**. Mala s
 | Abschnitt | Orte | Inhalte | Zeit (Erstspieler) |
 |---|---|---|---|
 | Prolog | Wohnung, Varoš, Ivkas Wohnung, Nacht | Tutorial (Kaffee, Anrufbeantworter, Karte), Zdenka, Erkundung voller Erinnerungsgegenstände, Text schreiben, erste Begegnung mit Mala | 15–25 Min. |
-| Fall 1 | Riva, Hafenbüro, Archiv, Varoš, Matejuška, Schuppen, Sustipan | 14 Schritte, zwei Geisterräume, Kombination, Konfrontation | 40–55 Min. |
+| Fall 1 | Wohnung, Riva, Hafenbüro, Archiv, Varoš, Bar, Matejuška, Schuppen, Sustipan, Zwischenwelt | 19 Schritte, die Stimme und der Übergang, zwei Geisterräume, Brief über Dampf öffnen, Kombination, Konfrontation, Abschied in der Zwischenwelt | 50–65 Min. |
 | Zwischenspiel 1 | Riva | langes Gespräch mit Wahlmöglichkeiten | 5–10 Min. |
-| Fall 2 | Bar, Matejuška, Ledana, Kühlraum, Altstadt, Werkstatt, Hinterzimmer, Fährterminal, Varoš | 19 Schritte, viele Gesprächspartner, zwei Konfrontationen | 45–60 Min. |
+| Fall 2 | Bar, Matejuška, Ledana, Kühlraum, Altstadt, Werkstatt, Hinterzimmer, Fährterminal, Varoš, Zwischenwelt | 23 Schritte, viele Gesprächspartner, dunkler Kühlraum, zwei Konfrontationen, Abschied in der Zwischenwelt | 50–65 Min. |
 | Zwischenspiel 2 | Sustipan | Gespräch, Geistersicht auf die Gräber, Jakov | 5–10 Min. |
-| Fall 3 | Wohnung, Hotelhalle, Büro, Salon | Übersetzen, Bruchstück-Dialoge, sechs Erinnerungsstücke, Satzbau-Rätsel, Konfrontation | 35–50 Min. |
+| Fall 3 | Wohnung, Hotelhalle, Büro, Salon, Zwischenwelt | Übersetzen, Bruchstück-Dialoge, sechs Erinnerungsstücke, Satzbau-Rätsel, Konfrontation, die Glocke der Ablösung | 40–55 Min. |
 | Epilog | Fährterminal & Busbahnhof | Abschluss, Andeutungen | 5–10 Min. |
-| **Gesamt** | **18 Orte** | | **≈ 2½ Stunden (2–3 h)** |
+| **Gesamt** | **19 Orte** | | **≈ 2¾ Stunden (2–3 h)** |
 
 Was die Zeit füllt:
 - **Dialoge:** Jede Figur hat mehrere Themen, und jede kann man nach Notizen fragen. Rund zwei Drittel der Gespräche sind optional und vertiefen nur Figuren und Stadt.
