@@ -131,7 +131,8 @@ async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.s
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
   await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
   await A.wait(1600); await B.say('Koliko … godina …?'); await A.wait(1800);
-  if (B.actor) await B.anim('look'); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
+  if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
+  await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
   await A.narrate('Er nimmt die Mütze ab und hält sie vor die Brust, wie vor einem Gast.'); A.setFlag('c3.release'); A.sfx('shimmer'); await A.wait(1500);
   if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});

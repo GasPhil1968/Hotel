@@ -119,6 +119,23 @@ function updateActor(a,dt){ if (a.frozen) return;
     if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow && !GS.flags['mala.lock'] && !(a.idle && /sit/.test(a.idle))){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
       if (Math.hypot(a.x-tx,a.y-ty)>34 && a.mode==='idle'){ walkActor(a,tx,ty); } } } }
 function arrive(a){ a.mode='idle'; setIdle(a); var r=a.res; a.res=null; if (r) r(true); }
+// ---------------------------------------------------------------- Erkenntnis eines Geistes: die Gestalt wird für 2,5 s instabil und fängt sich wieder
+// Phasen: 0–0,4 s Erstarren (Mund offen, kleiner Ruck), 0,4–1,3 s Flackern, 1,3–1,8 s Höhepunkt, 1,8–2,5 s Stabilisieren. Zeichnen: 06_ui.js (drawRealize).
+var REAL_MS=2500;
+function playGhostRealization(id,onComplete){ var a=ACT[id], fin=false;
+  return new Promise(function(res){
+    var end=function(){ if (fin) return; fin=true;
+      try{ if (a && ACT[id]===a && a.realize){ a.realize=null; a.frozen=a.realizePrev||null; a.realizePrev=null; if (!a.frozen) setIdle(a); a.rtUntil=gt+4000; } }catch(e){ console.error(e); }
+      if (onComplete){ try{ onComplete(); }catch(e){ console.error(e); } } res(); };
+    try{
+      if (!a || !a.ghost || GS.flags['realized.'+id]){ end(); return; }    // nur einmal je Geist; fehlt die Figur, geht es einfach weiter
+      GS.flags['realized.'+id]=true;
+      if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); }
+      var pose=actorPose(a); cancelRes(a); a.realizePrev=a.frozen||null; a.frozen=Object.assign({},pose,{hd:'o'}); a.realize={t0:gt,seed:Math.floor(Math.random()*997)};
+      try{ M.sfx('realize'); }catch(e){}
+      timers.push({t:gt+REAL_MS,r:end});
+    }catch(e){ console.error(e); end(); } }); }
+M.playGhostRealization=playGhostRealization; E.REAL_MS=REAL_MS;
 // ---------------------------------------------------------------- Tagesablauf der Nebenfiguren: Tätigkeiten wechseln, kurze Wege, umdrehen
 // Schritte: ['idle',anim|null,minS,maxS] ['face',f,minS,maxS] ['anim',name] ['walk',dx,dy] (relativ zum Platz) ['home',anim] ['skip',p,n] (mit Wahrscheinlichkeit 1-p n Schritte überspringen)
 function glideActor(a,x,y){ cancelRes(a); a.path=[[x,y]]; if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null; return new Promise(function(r){ a.res=r; }); }
@@ -263,6 +280,7 @@ var API={
   spawn:function(o){ var a=new Actor(o.id,o); ACT[o.id]=a; setIdle(a); if (o.fadeIn!==false) a.fadeIn=gt; return npcHandle(o.id); },
   despawn:function(id){ delete ACT[id]; },
   flash:function(t){ E.msg={t:t,until:gt+2400}; },
+  realize:function(id,cb){ return playGhostRealization(id,cb); },
   headache:function(ms){ E.headache=gt+(ms||2500); M.sfx('static'); },
   get S(){ return S; }, get G(){ return GS; }, get gt(){ return gt; }, get room(){ return room; }, get isBusy(){ return E.busy; }, get actor(){ return player(); }, get marko(){ return ACT.marko; }, get mala(){ return ACT.mala; }
 };

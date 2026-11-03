@@ -102,7 +102,8 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
   if (c==='quiet'){ await A.wait(2200); await I.say('Meine Hände sind nicht kalt.'); await I.say('Sie sind gar nichts.'); }
   else if (c==='week'){ await I.say('Letzte Woche …'); await A.wait(900); }
   else { await I.say('Nicht mehr hier.'); await A.wait(900); }
-  await I.face('L'); await A.wait(800); await I.say('Ich war krank. Ich habe mich ans Fenster gesetzt, wie jeden Abend um Viertel vor sieben.'); await I.say('Ich wollte nur kurz die Augen zumachen, bevor ich gehe.');
+  await A.realize('ivka');   // jetzt begreift sie es: die Gestalt wird instabil und fängt sich wieder
+  await A.wait(500); await I.face('L'); await A.wait(800); await I.say('Ich war krank. Ich habe mich ans Fenster gesetzt, wie jeden Abend um Viertel vor sieben.'); await I.say('Ich wollte nur kurz die Augen zumachen, bevor ich gehe.');
   await A.wait(1200); await I.say('Und dann bin ich trotzdem gegangen. Wie jeden Abend.'); await I.say('Die Anzeige an meiner Tür. Das war ich. Nicht die Kovačka.');
   await A.wait(1500); await I.say('Siebenundzwanzig Jahre habe ich auf ihn gewartet. Und eine Woche, ohne es zu merken.');
   await A.wait(1200); await I.say('Er kommt nicht mehr.'); await A.wait(700); await I.say('Und ich muss nicht mehr kommen.');

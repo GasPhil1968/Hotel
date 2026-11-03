@@ -1507,6 +1507,22 @@ var SFX={
   piano:function(t){ pianoNote(nf(64),t,0.06,2,sfxG); },
   whoosh:function(t){ noise(t,0.6,0.09,'bandpass',300,1.2,null,2400); tone('sine',880,t+0.1,0.6,0.02,null,1320); },
   shimmer:function(t){ [84,88,91,96].forEach(function(m,i){ tone('sine',nf(m),t+i*0.06,0.9,0.015); }); },
+  // Erkenntnis eines Geistes (2,6 s, im Takt mit playGhostRealization): Stille, tiefer Geisterwind, ein anschwellender Sog, Resonanzen, langsamer Ausklang
+  realize:function(t){
+    var w=AC.createBufferSource(), wf=AC.createBiquadFilter(), wg=AC.createGain(); w.buffer=NOISE; w.loop=true; wf.type='bandpass'; wf.Q.value=0.9;
+    wf.frequency.setValueAtTime(150,t); wf.frequency.linearRampToValueAtTime(240,t+0.4); wf.frequency.exponentialRampToValueAtTime(720,t+1.5); wf.frequency.exponentialRampToValueAtTime(260,t+2.6);
+    wg.gain.setValueAtTime(0.0001,t); wg.gain.linearRampToValueAtTime(0.018,t+0.4); wg.gain.linearRampToValueAtTime(0.05,t+1.3); wg.gain.linearRampToValueAtTime(0.085,t+1.6); wg.gain.exponentialRampToValueAtTime(0.0001,t+2.65);
+    w.connect(wf); wf.connect(wg); wg.connect(sfxG); w.start(t,Math.random()); w.stop(t+2.8);
+    // der Sog: steigt an und reißt am Höhepunkt ab
+    var s=AC.createBufferSource(), sf=AC.createBiquadFilter(), sg=AC.createGain(); s.buffer=NOISE; s.loop=true; sf.type='bandpass'; sf.Q.value=2.2;
+    sf.frequency.setValueAtTime(500,t+0.4); sf.frequency.exponentialRampToValueAtTime(2600,t+1.55);
+    sg.gain.setValueAtTime(0.0001,t); sg.gain.setValueAtTime(0.0001,t+0.4); sg.gain.exponentialRampToValueAtTime(0.03,t+1.5); sg.gain.exponentialRampToValueAtTime(0.0001,t+1.85);
+    s.connect(sf); sf.connect(sg); sg.connect(sfxG); s.start(t,Math.random()); s.stop(t+2);
+    // Resonanzen: zwei leicht verstimmte tiefe Töne und eine Quinte darüber, langsam ein und aus
+    [[nf(45),0.022],[nf(45)*1.007,0.018],[nf(52),0.012],[nf(57),0.008]].forEach(function(p){ var o=AC.createOscillator(), g=AC.createGain(); o.type='sine'; o.frequency.setValueAtTime(p[0],t);
+      g.gain.setValueAtTime(0.0001,t); g.gain.setValueAtTime(0.0001,t+0.5); g.gain.linearRampToValueAtTime(p[1],t+1.5); g.gain.exponentialRampToValueAtTime(0.0001,t+2.7); o.connect(g); g.connect(sfxG); o.start(t); o.stop(t+2.8); });
+    // Ausklang: ein heller Ton, der langsam fällt
+    tone('sine',nf(79),t+1.8,0.85,0.009,null,nf(72),0.08); },
   gust:function(t){ swell(t,2.2,0.08,'bandpass',600,2,sfxG,1500); },
   chain:function(t){ for (var i=0;i<4;i++){ noise(t+i*0.07,0.04,0.1,'highpass',3000,2); tone('sine',1700+i*80,t+i*0.07,0.05,0.03); } },
   coin:function(t){ tone('square',1976,t,0.05,0.03); tone('square',2637,t+0.06,0.2,0.03); },
@@ -1598,6 +1614,8 @@ function startDrone(){ if (!AC) return; var o1=AC.createOscillator(), o2=AC.crea
   o1.connect(f); o2.connect(f); f.connect(g); g.connect(ghostG); o1.start(); o2.start(); lfo.start();
   var s=AC.createBufferSource(), nf2=AC.createBiquadFilter(), ng=AC.createGain(); s.buffer=NOISE; s.loop=true; nf2.type='bandpass'; nf2.frequency.value=2400; nf2.Q.value=8; ng.gain.value=0.006; s.connect(nf2); nf2.connect(ng); ng.connect(ghostG); s.start();
   droneNodes=[o1,o2,lfo,s]; }
+// Entwicklungswerkzeug: Ton für Videoaufnahmen abgreifen (wird im Spiel nicht benutzt)
+M.audioStream=function(){ if (!AC) M.audioInit(); if (!AC||!AC.createMediaStreamDestination) return null; var d=AC.createMediaStreamDestination(); master.connect(d); return d.stream; };
 M.setGhostAudio=function(on){ ghostOn=on; if (!AC) return; var t=AC.currentTime; ambF.frequency.cancelScheduledValues(t); ambF.frequency.setTargetAtTime(on?650:18000,t,0.25); ghostG.gain.cancelScheduledValues(t); ghostG.gain.setTargetAtTime(on&&soundOn?1:0,t,0.4); };
 
 // ---------------------------------------------------------------- Instrumente
@@ -1808,6 +1826,23 @@ function updateActor(a,dt){ if (a.frozen) return;
     if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow && !GS.flags['mala.lock'] && !(a.idle && /sit/.test(a.idle))){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
       if (Math.hypot(a.x-tx,a.y-ty)>34 && a.mode==='idle'){ walkActor(a,tx,ty); } } } }
 function arrive(a){ a.mode='idle'; setIdle(a); var r=a.res; a.res=null; if (r) r(true); }
+// ---------------------------------------------------------------- Erkenntnis eines Geistes: die Gestalt wird für 2,5 s instabil und fängt sich wieder
+// Phasen: 0–0,4 s Erstarren (Mund offen, kleiner Ruck), 0,4–1,3 s Flackern, 1,3–1,8 s Höhepunkt, 1,8–2,5 s Stabilisieren. Zeichnen: 06_ui.js (drawRealize).
+var REAL_MS=2500;
+function playGhostRealization(id,onComplete){ var a=ACT[id], fin=false;
+  return new Promise(function(res){
+    var end=function(){ if (fin) return; fin=true;
+      try{ if (a && ACT[id]===a && a.realize){ a.realize=null; a.frozen=a.realizePrev||null; a.realizePrev=null; if (!a.frozen) setIdle(a); a.rtUntil=gt+4000; } }catch(e){ console.error(e); }
+      if (onComplete){ try{ onComplete(); }catch(e){ console.error(e); } } res(); };
+    try{
+      if (!a || !a.ghost || GS.flags['realized.'+id]){ end(); return; }    // nur einmal je Geist; fehlt die Figur, geht es einfach weiter
+      GS.flags['realized.'+id]=true;
+      if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); }
+      var pose=actorPose(a); cancelRes(a); a.realizePrev=a.frozen||null; a.frozen=Object.assign({},pose,{hd:'o'}); a.realize={t0:gt,seed:Math.floor(Math.random()*997)};
+      try{ M.sfx('realize'); }catch(e){}
+      timers.push({t:gt+REAL_MS,r:end});
+    }catch(e){ console.error(e); end(); } }); }
+M.playGhostRealization=playGhostRealization; E.REAL_MS=REAL_MS;
 // ---------------------------------------------------------------- Tagesablauf der Nebenfiguren: Tätigkeiten wechseln, kurze Wege, umdrehen
 // Schritte: ['idle',anim|null,minS,maxS] ['face',f,minS,maxS] ['anim',name] ['walk',dx,dy] (relativ zum Platz) ['home',anim] ['skip',p,n] (mit Wahrscheinlichkeit 1-p n Schritte überspringen)
 function glideActor(a,x,y){ cancelRes(a); a.path=[[x,y]]; if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null; return new Promise(function(r){ a.res=r; }); }
@@ -1952,6 +1987,7 @@ var API={
   spawn:function(o){ var a=new Actor(o.id,o); ACT[o.id]=a; setIdle(a); if (o.fadeIn!==false) a.fadeIn=gt; return npcHandle(o.id); },
   despawn:function(id){ delete ACT[id]; },
   flash:function(t){ E.msg={t:t,until:gt+2400}; },
+  realize:function(id,cb){ return playGhostRealization(id,cb); },
   headache:function(ms){ E.headache=gt+(ms||2500); M.sfx('static'); },
   get S(){ return S; }, get G(){ return GS; }, get gt(){ return gt; }, get room(){ return room; }, get isBusy(){ return E.busy; }, get actor(){ return player(); }, get marko(){ return ACT.marko; }, get mala(){ return ACT.mala; }
 };
@@ -2235,6 +2271,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
       if (a.fadeOut){ var k=(E.gt()-a.fadeOut)/900; if (k>=1){ a.visible=false; a.fadeOut=0; return; } o.alpha=(o.alpha||1)*(1-k); }
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
+      if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (spirit && !ghostView && !o.voice) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
       if (spirit && !ghostView && a.ch==='mala') malaMotes(sx,a.y-lift,o.alpha); }
@@ -2260,6 +2297,25 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
+// ---------------------------------------------------------------- Erkenntnis eines Geistes (siehe playGhostRealization in 05_engine.js)
+// Nur die Figur wird verzerrt: Zeilenversatz, Wellen, Flackern, Konturdopplung, Streckung und ein Lichtimpuls. Die Szene bleibt unberührt.
+function realizeCurve(t){ // Stärke 0..1 über die Zeit (s)
+  if (t<0.4) return 0; if (t<1.3){ var u=(t-0.4)/0.9; return 0.15+0.55*u*u; } if (t<1.8) return 0.7+0.3*Math.sin((t-1.3)/0.5*Math.PI); if (t<2.5){ var v=(t-1.8)/0.7; return 0.7*(1-v)*(1-v); } return 0; }
+function drawRealize(a,p,f,x,y,gv,baseA){ var R=a.realize, gt=E.gt(), t=(gt-R.t0)/1000, k=realizeCurve(t), peak=(t>=1.3&&t<1.8)?Math.sin((t-1.3)/0.5*Math.PI):0;
+  var s=M.poseBuf(p,a.ch,gt), fl=f==='L', OX=M.SPR.OX, OY=M.SPR.OY, bx=Math.round(x)-OX+(fl?1:0), by=Math.round(y)-OY, isM=a.ch==='mala';
+  var lut=gv?null:(isM?M.TINT.malaG:M.TINT.spirit).a, alt=gv?null:(isM?M.TINT.spirit:M.TINT.malaG).a, sd=R.seed;
+  var fr=Math.floor(gt/(70-35*k)), hz=M.hash;
+  // Phase 1: Erstarren mit kleinem Ruck nach oben
+  var jolt=t<0.4?Math.round(Math.sin(t/0.4*Math.PI)*2):0, trem=t<0.4&&t>0.05?((Math.floor(gt/40)%2)?1:0):0;
+  var sxs=1+0.3*peak, sys=1+0.07*peak, A=baseA*(1-0.5*k*hz(fr,sd)); if (A<0.3) A=0.3; var bright=k>0.25&&hz(fr,sd+5)>0.72;
+  var pulseY=peak>0?Math.round(OY-(t-1.3)/0.5*s.h*1.1):-99;
+  function off(j){ if (k<=0) return trem; var w=Math.sin(j*0.31+t*11)*1.6*k, slip=(hz(j>>1,fr+sd)-0.5)*5*k*k, blk=(hz(j>>2,fr*7+sd)>0.84)?Math.round((hz(j>>2,fr+3)-0.5)*8*k):0; return Math.round(w+slip)+blk+trem; }
+  function pass(dx,al,tab,echo){ for (var j=-8;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sys); if (sj<0||sj>=s.h) continue; var Y=by+j-jolt; if (Y<0||Y>=SH) continue; var o=off(j)+dx, pl=Math.abs(sj-pulseY)<=2;
+      for (var i=-12;i<s.w+12;i++){ var si=Math.round(OX+(i-OX)/sxs); if (si<0||si>=s.w) continue; var c=s.d[sj*s.w+(fl?s.w-1-si:si)]; if (c===T) continue; var X=bx+i+o; if (X<0||X>=W) continue;
+        if (al<1 && bayer(X+fr,Y+(fr>>1))>=al) continue; var cc=tab?tab[c]:c; if (bright&&!echo) cc=M.UP[cc]; if (pl) cc=echo?P.x6:(Math.abs(sj-pulseY)<1?P.l1:M.UP[M.UP[cc]]); fb.d[Y*W+X]=cc; if (gv) mask[Y*W+X]=1; } } }
+  if (!gv) ghostHalo(a,p,f,x+off(40),y-jolt,Math.min(1,A+0.25*k));
+  if (k>0.12){ var ex=(hz(fr,sd+9)>0.5?1:-1)*(2+Math.round(4*k)); pass(ex,Math.min(0.55,A*0.7)*k+0.1,alt,true); }   // Konturdopplung in verschobener Farbe
+  pass(0,A,lut,false); }
 // Geisterschein: ein weicher, kalter Rand um die Gestalt
 function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.ch==='mala', t=Math.floor(E.gt()/120);
   var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
@@ -11650,7 +11706,8 @@ async function finale(A){ var N=A.npc('nina'), L=A.npc('luka'); A.setFlag('c2.fi
   await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
   await L.say('Warum ist sie … Sie ist älter. Sie sieht aus wie ihre Mutter.'); await A.wait(900); await L.say('Wie lange …?');
   await A.memory({title:'Nachhall – die Treppe',draw:M.mem.fall,tint:'ghost',lines:['Abend. Die Sonne steht schon tief. Ein Junge rennt die Treppe hinauf, zwei Stufen auf einmal.','Er hat es eilig. Er lacht. Er denkt an halb neun.','Die siebte Stufe gibt nach.','Dann ist es dunkel. Lange dunkel.']});
-  await L.say('Ich bin gefallen.'); await A.wait(900); await L.say('Ich bin nie unten angekommen.'); await L.say('Sie hat gewartet. Und ich war die ganze Zeit hier oben.');
+  await A.realize('luka');   // er hat seinen Sturz gesehen
+  await A.wait(500); await L.say('Ich bin gefallen.'); await A.wait(900); await L.say('Ich bin nie unten angekommen.'); await L.say('Sie hat gewartet. Und ich war die ganze Zeit hier oben.');
   await A.wait(1500); await L.say('Zwölf Jahre halb neun.'); await A.wait(900); await L.say('Ich muss nicht mehr auf halb neun warten.');
   A.setFlag('c2.release'); if (L.actor) L.idle('sit'); A.sfx('shimmer'); A.music('ghost'); await A.wait(1200);
   if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});
@@ -12284,7 +12341,8 @@ async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.s
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
   await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
   await A.wait(1600); await B.say('Koliko … godina …?'); await A.wait(1800);
-  if (B.actor) await B.anim('look'); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
+  if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
+  await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
   await A.narrate('Er nimmt die Mütze ab und hält sie vor die Brust, wie vor einem Gast.'); A.setFlag('c3.release'); A.sfx('shimmer'); await A.wait(1500);
   if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});
@@ -12520,7 +12578,8 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
   if (c==='quiet'){ await A.wait(2200); await I.say('Meine Hände sind nicht kalt.'); await I.say('Sie sind gar nichts.'); }
   else if (c==='week'){ await I.say('Letzte Woche …'); await A.wait(900); }
   else { await I.say('Nicht mehr hier.'); await A.wait(900); }
-  await I.face('L'); await A.wait(800); await I.say('Ich war krank. Ich habe mich ans Fenster gesetzt, wie jeden Abend um Viertel vor sieben.'); await I.say('Ich wollte nur kurz die Augen zumachen, bevor ich gehe.');
+  await A.realize('ivka');   // jetzt begreift sie es: die Gestalt wird instabil und fängt sich wieder
+  await A.wait(500); await I.face('L'); await A.wait(800); await I.say('Ich war krank. Ich habe mich ans Fenster gesetzt, wie jeden Abend um Viertel vor sieben.'); await I.say('Ich wollte nur kurz die Augen zumachen, bevor ich gehe.');
   await A.wait(1200); await I.say('Und dann bin ich trotzdem gegangen. Wie jeden Abend.'); await I.say('Die Anzeige an meiner Tür. Das war ich. Nicht die Kovačka.');
   await A.wait(1500); await I.say('Siebenundzwanzig Jahre habe ich auf ihn gewartet. Und eine Woche, ohne es zu merken.');
   await A.wait(1200); await I.say('Er kommt nicht mehr.'); await A.wait(700); await I.say('Und ich muss nicht mehr kommen.');

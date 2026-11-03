@@ -68,6 +68,22 @@ var SFX={
   piano:function(t){ pianoNote(nf(64),t,0.06,2,sfxG); },
   whoosh:function(t){ noise(t,0.6,0.09,'bandpass',300,1.2,null,2400); tone('sine',880,t+0.1,0.6,0.02,null,1320); },
   shimmer:function(t){ [84,88,91,96].forEach(function(m,i){ tone('sine',nf(m),t+i*0.06,0.9,0.015); }); },
+  // Erkenntnis eines Geistes (2,6 s, im Takt mit playGhostRealization): Stille, tiefer Geisterwind, ein anschwellender Sog, Resonanzen, langsamer Ausklang
+  realize:function(t){
+    var w=AC.createBufferSource(), wf=AC.createBiquadFilter(), wg=AC.createGain(); w.buffer=NOISE; w.loop=true; wf.type='bandpass'; wf.Q.value=0.9;
+    wf.frequency.setValueAtTime(150,t); wf.frequency.linearRampToValueAtTime(240,t+0.4); wf.frequency.exponentialRampToValueAtTime(720,t+1.5); wf.frequency.exponentialRampToValueAtTime(260,t+2.6);
+    wg.gain.setValueAtTime(0.0001,t); wg.gain.linearRampToValueAtTime(0.018,t+0.4); wg.gain.linearRampToValueAtTime(0.05,t+1.3); wg.gain.linearRampToValueAtTime(0.085,t+1.6); wg.gain.exponentialRampToValueAtTime(0.0001,t+2.65);
+    w.connect(wf); wf.connect(wg); wg.connect(sfxG); w.start(t,Math.random()); w.stop(t+2.8);
+    // der Sog: steigt an und reißt am Höhepunkt ab
+    var s=AC.createBufferSource(), sf=AC.createBiquadFilter(), sg=AC.createGain(); s.buffer=NOISE; s.loop=true; sf.type='bandpass'; sf.Q.value=2.2;
+    sf.frequency.setValueAtTime(500,t+0.4); sf.frequency.exponentialRampToValueAtTime(2600,t+1.55);
+    sg.gain.setValueAtTime(0.0001,t); sg.gain.setValueAtTime(0.0001,t+0.4); sg.gain.exponentialRampToValueAtTime(0.03,t+1.5); sg.gain.exponentialRampToValueAtTime(0.0001,t+1.85);
+    s.connect(sf); sf.connect(sg); sg.connect(sfxG); s.start(t,Math.random()); s.stop(t+2);
+    // Resonanzen: zwei leicht verstimmte tiefe Töne und eine Quinte darüber, langsam ein und aus
+    [[nf(45),0.022],[nf(45)*1.007,0.018],[nf(52),0.012],[nf(57),0.008]].forEach(function(p){ var o=AC.createOscillator(), g=AC.createGain(); o.type='sine'; o.frequency.setValueAtTime(p[0],t);
+      g.gain.setValueAtTime(0.0001,t); g.gain.setValueAtTime(0.0001,t+0.5); g.gain.linearRampToValueAtTime(p[1],t+1.5); g.gain.exponentialRampToValueAtTime(0.0001,t+2.7); o.connect(g); g.connect(sfxG); o.start(t); o.stop(t+2.8); });
+    // Ausklang: ein heller Ton, der langsam fällt
+    tone('sine',nf(79),t+1.8,0.85,0.009,null,nf(72),0.08); },
   gust:function(t){ swell(t,2.2,0.08,'bandpass',600,2,sfxG,1500); },
   chain:function(t){ for (var i=0;i<4;i++){ noise(t+i*0.07,0.04,0.1,'highpass',3000,2); tone('sine',1700+i*80,t+i*0.07,0.05,0.03); } },
   coin:function(t){ tone('square',1976,t,0.05,0.03); tone('square',2637,t+0.06,0.2,0.03); },
@@ -159,6 +175,8 @@ function startDrone(){ if (!AC) return; var o1=AC.createOscillator(), o2=AC.crea
   o1.connect(f); o2.connect(f); f.connect(g); g.connect(ghostG); o1.start(); o2.start(); lfo.start();
   var s=AC.createBufferSource(), nf2=AC.createBiquadFilter(), ng=AC.createGain(); s.buffer=NOISE; s.loop=true; nf2.type='bandpass'; nf2.frequency.value=2400; nf2.Q.value=8; ng.gain.value=0.006; s.connect(nf2); nf2.connect(ng); ng.connect(ghostG); s.start();
   droneNodes=[o1,o2,lfo,s]; }
+// Entwicklungswerkzeug: Ton für Videoaufnahmen abgreifen (wird im Spiel nicht benutzt)
+M.audioStream=function(){ if (!AC) M.audioInit(); if (!AC||!AC.createMediaStreamDestination) return null; var d=AC.createMediaStreamDestination(); master.connect(d); return d.stream; };
 M.setGhostAudio=function(on){ ghostOn=on; if (!AC) return; var t=AC.currentTime; ambF.frequency.cancelScheduledValues(t); ambF.frequency.setTargetAtTime(on?650:18000,t,0.25); ghostG.gain.cancelScheduledValues(t); ghostG.gain.setTargetAtTime(on&&soundOn?1:0,t,0.4); };
 
 // ---------------------------------------------------------------- Instrumente

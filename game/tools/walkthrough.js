@@ -65,6 +65,7 @@ const SHOTS = process.argv[2] || null;
     await D.exit('exit'); await D.drain(); await D.travel('riva'); await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain();
     await D.switchTo('mala'); await D.act('sense', 'bollard'); await D.drain(); await note('c1_years'); await D.act('talk', 'ivka'); await D.drain(); await note('m_mother'); await D.switchTo('marko'); log('Mala an der Mole');
     if (process.env.MALA_PRESET) { const g = await D.ev(() => { M.saveGame(); return JSON.parse(JSON.stringify(M.GS)); }); require('fs').writeFileSync(process.env.MALA_PRESET, JSON.stringify(g)); console.log('Spielstand gespeichert:', process.env.MALA_PRESET); await D.close2(); process.exit(0); }
+    if (process.env.MALA_DUMPS) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); require('fs').writeFileSync(process.env.MALA_DUMPS + '/ivka.json', JSON.stringify(g)); }
     await D.act('use', 'ivka', 'letter_t'); await D.drain();
     await D.pickNote('c1_ferry'); await D.drain(); await D.pickNote('c1_came'); await D.drain();
     await D.choose('Brief vorlesen'); await D.drain(); await D.choose('Handschuhe'); await D.drain(); await D.choose('nicht mehr hier'); await D.drain();
@@ -110,6 +111,7 @@ const SHOTS = process.argv[2] || null;
     await D.exit('exit'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('oldtown'); await D.exit('shop_door'); await D.drain();
     await talk('nina', 'Ich war in der Ledana', 'Ninas Zettel', 'Er hat es mir gesagt', 'Lukas Tickets', 'Die Kassette', 'Wollen Sie es hören');
     await D.drain(); await flag('c2.tonight'); await expect((await D.st()).phase === 'c2_night', 'Abend'); await expect(await room() === 'ledana', 'Ledana nachts'); log('Abend an der Ledana'); await shot('ledana_night');
+    if (process.env.MALA_DUMPS) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); require('fs').writeFileSync(process.env.MALA_DUMPS + '/luka.json', JSON.stringify(g)); }
     await D.act('use', 'nina', 'radioT'); await D.drain(); await flag('c2.release'); await expect((await D.st()).active === 'mala', 'Mala aktiv'); log('Luka erkennt, dass er tot ist'); await shot('luka_release');
     await D.act('cross', 'luka'); await D.drain(); await expect(await room() === 'limbo', 'Zwischenwelt (Luka)'); await shot('limbo_luka');
     await D.act('use', 'ghost_l', 'tickets'); await D.drain(); await flag('c2.done'); await inv('ticket_n'); log('Luka nimmt ein Ticket mit');
@@ -140,6 +142,7 @@ const SHOTS = process.argv[2] || null;
     await D.close([0, 0, 0, 0, 0]); await D.drain(); await D.choose('Laku noć'); await D.drain(); await flag('c3.translated'); log('Satz übersetzt');
     r = await D.combine('c3_zagreb', 'c3_accept'); await expect(r.ok, 'Kombination c3_hid');
     await D.exit('door'); await D.drain(); await expect(await room() === 'palma', 'Halle');
+    if (process.env.MALA_DUMPS) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); require('fs').writeFileSync(process.env.MALA_DUMPS + '/bruno.json', JSON.stringify(g)); }
     await D.act('use', 'private'); await D.drain(); await D.choose('Umschlag'); await D.drain(); await D.choose('Brunos Brief'); await D.drain(); await D.choose('Satz sagen'); await D.drain(); await D.choose('Übersetzer'); await D.drain();
     await flag('c3.release'); await expect((await D.st()).active === 'mala', 'Mala aktiv'); log('Bruno erkennt, dass er tot ist'); await shot('bruno_release');
     await D.act('cross', 'bruno'); await D.drain(); await expect(await room() === 'limbo', 'Zwischenwelt (Bruno)'); await shot('limbo_bruno');

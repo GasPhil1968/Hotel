@@ -51,7 +51,8 @@ async function finale(A){ var N=A.npc('nina'), L=A.npc('luka'); A.setFlag('c2.fi
   await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
   await L.say('Warum ist sie … Sie ist älter. Sie sieht aus wie ihre Mutter.'); await A.wait(900); await L.say('Wie lange …?');
   await A.memory({title:'Nachhall – die Treppe',draw:M.mem.fall,tint:'ghost',lines:['Abend. Die Sonne steht schon tief. Ein Junge rennt die Treppe hinauf, zwei Stufen auf einmal.','Er hat es eilig. Er lacht. Er denkt an halb neun.','Die siebte Stufe gibt nach.','Dann ist es dunkel. Lange dunkel.']});
-  await L.say('Ich bin gefallen.'); await A.wait(900); await L.say('Ich bin nie unten angekommen.'); await L.say('Sie hat gewartet. Und ich war die ganze Zeit hier oben.');
+  await A.realize('luka');   // er hat seinen Sturz gesehen
+  await A.wait(500); await L.say('Ich bin gefallen.'); await A.wait(900); await L.say('Ich bin nie unten angekommen.'); await L.say('Sie hat gewartet. Und ich war die ganze Zeit hier oben.');
   await A.wait(1500); await L.say('Zwölf Jahre halb neun.'); await A.wait(900); await L.say('Ich muss nicht mehr auf halb neun warten.');
   A.setFlag('c2.release'); if (L.actor) L.idle('sit'); A.sfx('shimmer'); A.music('ghost'); await A.wait(1200);
   if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});

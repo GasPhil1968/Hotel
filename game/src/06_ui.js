@@ -33,6 +33,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
       if (a.fadeOut){ var k=(E.gt()-a.fadeOut)/900; if (k>=1){ a.visible=false; a.fadeOut=0; return; } o.alpha=(o.alpha||1)*(1-k); }
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
+      if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (spirit && !ghostView && !o.voice) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
       if (spirit && !ghostView && a.ch==='mala') malaMotes(sx,a.y-lift,o.alpha); }
@@ -58,6 +59,25 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
+// ---------------------------------------------------------------- Erkenntnis eines Geistes (siehe playGhostRealization in 05_engine.js)
+// Nur die Figur wird verzerrt: Zeilenversatz, Wellen, Flackern, Konturdopplung, Streckung und ein Lichtimpuls. Die Szene bleibt unberührt.
+function realizeCurve(t){ // Stärke 0..1 über die Zeit (s)
+  if (t<0.4) return 0; if (t<1.3){ var u=(t-0.4)/0.9; return 0.15+0.55*u*u; } if (t<1.8) return 0.7+0.3*Math.sin((t-1.3)/0.5*Math.PI); if (t<2.5){ var v=(t-1.8)/0.7; return 0.7*(1-v)*(1-v); } return 0; }
+function drawRealize(a,p,f,x,y,gv,baseA){ var R=a.realize, gt=E.gt(), t=(gt-R.t0)/1000, k=realizeCurve(t), peak=(t>=1.3&&t<1.8)?Math.sin((t-1.3)/0.5*Math.PI):0;
+  var s=M.poseBuf(p,a.ch,gt), fl=f==='L', OX=M.SPR.OX, OY=M.SPR.OY, bx=Math.round(x)-OX+(fl?1:0), by=Math.round(y)-OY, isM=a.ch==='mala';
+  var lut=gv?null:(isM?M.TINT.malaG:M.TINT.spirit).a, alt=gv?null:(isM?M.TINT.spirit:M.TINT.malaG).a, sd=R.seed;
+  var fr=Math.floor(gt/(70-35*k)), hz=M.hash;
+  // Phase 1: Erstarren mit kleinem Ruck nach oben
+  var jolt=t<0.4?Math.round(Math.sin(t/0.4*Math.PI)*2):0, trem=t<0.4&&t>0.05?((Math.floor(gt/40)%2)?1:0):0;
+  var sxs=1+0.3*peak, sys=1+0.07*peak, A=baseA*(1-0.5*k*hz(fr,sd)); if (A<0.3) A=0.3; var bright=k>0.25&&hz(fr,sd+5)>0.72;
+  var pulseY=peak>0?Math.round(OY-(t-1.3)/0.5*s.h*1.1):-99;
+  function off(j){ if (k<=0) return trem; var w=Math.sin(j*0.31+t*11)*1.6*k, slip=(hz(j>>1,fr+sd)-0.5)*5*k*k, blk=(hz(j>>2,fr*7+sd)>0.84)?Math.round((hz(j>>2,fr+3)-0.5)*8*k):0; return Math.round(w+slip)+blk+trem; }
+  function pass(dx,al,tab,echo){ for (var j=-8;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sys); if (sj<0||sj>=s.h) continue; var Y=by+j-jolt; if (Y<0||Y>=SH) continue; var o=off(j)+dx, pl=Math.abs(sj-pulseY)<=2;
+      for (var i=-12;i<s.w+12;i++){ var si=Math.round(OX+(i-OX)/sxs); if (si<0||si>=s.w) continue; var c=s.d[sj*s.w+(fl?s.w-1-si:si)]; if (c===T) continue; var X=bx+i+o; if (X<0||X>=W) continue;
+        if (al<1 && bayer(X+fr,Y+(fr>>1))>=al) continue; var cc=tab?tab[c]:c; if (bright&&!echo) cc=M.UP[cc]; if (pl) cc=echo?P.x6:(Math.abs(sj-pulseY)<1?P.l1:M.UP[M.UP[cc]]); fb.d[Y*W+X]=cc; if (gv) mask[Y*W+X]=1; } } }
+  if (!gv) ghostHalo(a,p,f,x+off(40),y-jolt,Math.min(1,A+0.25*k));
+  if (k>0.12){ var ex=(hz(fr,sd+9)>0.5?1:-1)*(2+Math.round(4*k)); pass(ex,Math.min(0.55,A*0.7)*k+0.1,alt,true); }   // Konturdopplung in verschobener Farbe
+  pass(0,A,lut,false); }
 // Geisterschein: ein weicher, kalter Rand um die Gestalt
 function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.ch==='mala', t=Math.floor(E.gt()/120);
   var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
