@@ -87,7 +87,7 @@ function btnAt(x,y){ if (y<SH||y>=SH+15) return null; for (var i=0;i<BTNS.length
 function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
   fb.rect(x0+1,y0+1,x1-x0-1,y1-y0-1,act?c.sel:P.k1); fb.hl(x0+1,x1-1,y0,c.fr); fb.hl(x0+1,x1-1,y1,c.fr); fb.vl(x0,y0+1,y1-1,c.fr); fb.vl(x1,y0+1,y1-1,c.fr);
   M.text(fb,b.t,b.x,BTN_Y+2,!on?c.dim:((hot||act)?c.hi:c.tx));
-  if (b.id==='notes' && Object.keys(GS().noteNew).length){ fb.rect(x1-2,y0-1,3,3,P.r4); } }
+  if (b.id==='notes' && Object.keys(GS().noteNew).some(function(k){ return M.NOTES[k]&&M.NOTES[k].show; })){ fb.rect(x1-2,y0-1,3,3,P.r4); } }
 function invList(){ return isG()?['tin']:GS().inv; }
 function drawUI(){ fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
   if (E.dlg && E.conv) return;
@@ -290,7 +290,7 @@ function noteDone(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) 
 // offene Hinweise des Falls (beim Fragen auch Malas), Schlüsse und Neues zuerst, im Gespräch zuerst die zum Gegenüber
 function nbOpen(ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[], who=ask&&E.conv&&E.conv.npc&&E.ACT[E.conv.npc]?E.ACT[E.conv.npc].ch:null;
   var old=function(n){ return !!(cs && n.c && n.c!=='mala' && n.c!==cs); };
-  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (old(n) && !ask) return; out.push(id); });
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || !n.show || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (old(n) && !ask) return; out.push(id); });
   out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1)+(old(A)?4:0), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1)+(old(B)?4:0); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
   return out; }
 E.nbOpen=nbOpen;
@@ -304,7 +304,7 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
   M.text(fb,ask?(d.title||'Wonach fragen?'):'Notizbuch',52,10,P.r2); if (!ask && ph0.short) M.text(fb,ph0.short,52+M.textWidth('Notizbuch')+10,10,P.s2);
   var cl=ask?'Zurück':'X', cw=M.textWidth(cl); lay.close=[282-cw-8,6,cw+10,14]; M.text(fb,cl,282-cw-3,10,hoverUI==='nx'?P.r3:P.s1);
   var list=nbOpen(ask), pages=Math.max(1,Math.ceil(list.length/NB_PER)); if (NB.page>=pages) NB.page=pages-1;
-  if (!list.length) M.text(fb,'Noch nichts.',54,NB_Y0+6,P.s2);
+  if (!list.length) M.text(fb,'Noch nichts, was zusammengehören könnte.',54,NB_Y0+6,P.s2);
   for (i=NB.page*NB_PER;i<Math.min(list.length,(NB.page+1)*NB_PER);i++){ var id=list[i], n=M.NOTES[id], y=NB_Y0+(i-NB.page*NB_PER)*NB_RH, sel=NB.sel===id, hot=hoverUI==='n:'+id;
     if (sel) fb.rect(48,y+1,234,NB_RH-3,P.y4); else if (hot) fb.rect(48,y+1,234,NB_RH-3,P.s6);
     var t=n.s||n.t; while (M.textWidth(t)>214 && t.length>3) t=t.slice(0,-2)+'…';

@@ -44,7 +44,9 @@ DIE GEISTER
   geht es danach zurück.
 
 DAS NOTIZBUCH ("Notizen")
-- Alles Wichtige, was Marko und Mala erfahren, wird notiert.
+- Im Notizbuch steht nur, was man wirklich braucht: Hinweise, die sich
+  verbinden lassen, und was man am Ende eines Falls sagen muss. Meist sind
+  es nur drei bis fünf Einträge.
 - Im Menü umschaltbar: "Notizbuch: Liste" oder "Notizbuch: Nachdenken".
 - Liste: eine Seite, nur was noch offen ist. Eine Notiz antippen, dann
   eine zweite, die dazu passt = verbinden. Unten steht der ganze Satz.

@@ -180,7 +180,7 @@ E.convStart=convStart;
 
 // ---------------------------------------------------------------- Notizen
 function hasNote(id){ return GS.notes.indexOf(id)>=0; }
-function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz '+id); if (hasNote(id)) return false; GS.notes.push(id); GS.noteNew[id]=1; if (!quiet){ M.sfx('note'); E.msg={t:'Neue Notiz: '+(M.NOTES[id].s||M.NOTES[id].t),until:gt+3200,note:1}; } return true; }
+function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz '+id); if (hasNote(id)) return false; GS.notes.push(id); if (!M.NOTES[id].show) return true; GS.noteNew[id]=1; if (!quiet){ M.sfx('note'); E.msg={t:'Neue Notiz: '+(M.NOTES[id].s||M.NOTES[id].t),until:gt+3200,note:1}; } return true; }
 E.hasNote=hasNote; E.addNote=addNote;
 // zwei Notizen verbinden
 async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];

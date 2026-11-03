@@ -175,5 +175,10 @@ var MORE={ pro_sohn:['c1_boat7'], pro_riva:['c1_waits'], c1_dinko:['c1_rescued',
   c3_f13:['c3_img_coat'], c3_fcrank:['c3_img_crank'], c3_fletter:['c3_message'], c3_dance:['c3_sunday'], c3_wanted:['c3_hid'], c3_zagreb:['c3_hid'], c3_accept:['c3_hid'], c3_img_env:['c3_hid'], c3_img_hands:['c3_wanted'] };
 Object.keys(MORE).forEach(function(id){ var n=M.NOTES[id]; if (!n) return; n.doneBy=(n.doneBy||[]).concat(MORE[id]); });
 M.NOTES.pro_notice.doneIf=function(G){ return !!G.flags['c1.release']; };
+// Ins Notizbuch kommt nur, was man wirklich braucht: zum Verbinden und für das Gespräch mit Ivka am Ende.
+// Alles andere merkt sich das Spiel im Hintergrund (Gesprächsoptionen hängen weiter davon ab).
+['c1_boat7','c1_ferry','c1_came','c1_story','c1_letter','c2_meet','c2_unused','c2_waited','c3_zagreb','c3_accept','c3_hid','c3_message'].forEach(function(id){ M.NOTES[id].show=true; });
+M.NOTES.c1_ferry.doneIf=function(G){ return !!G.flags['c1.release']; }; M.NOTES.c1_came.doneIf=M.NOTES.c1_ferry.doneIf; M.NOTES.c1_story.doneIf=M.NOTES.c1_ferry.doneIf; M.NOTES.c1_letter.doneIf=M.NOTES.c1_ferry.doneIf;
+M.NOTES.c1_story.doneBy=[]; M.NOTES.c2_meet.doneBy=['c2_waited']; M.NOTES.c2_unused.doneBy=['c2_waited'];
 
 })(M);
