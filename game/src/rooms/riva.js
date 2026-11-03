@@ -3,7 +3,13 @@
 'use strict';
 var P=M.P;
 function ivkaHere(GS){ return (GS.phase==='c1'||GS.phase==='c1_night') && !GS.flags['c1.done']; }
-function ready(A){ return A.hasNote('c1_came') && A.hasNote('c1_letter') && A.has('gloves'); }
+function ready(A){ return A.hasNote('c1_ferry') && A.hasNote('c1_letter') && A.has('gloves'); }
+// den Brief zeigen oder danach fragen: ist alles beisammen, beginnt das Gespräch, in dem sie es erfährt
+async function letterToIvka(A){ var I=A.npc('ivka'); if (!A.flag('c1.letterOpen')) return A.m('Die Seiten kleben zusammen. So kann ich ihn niemandem vorlesen.');
+  if (!A.hasNote('c1_letter')) return A.m('Das Salz hat die Hälfte gefressen. Die Hälfte, auf die es ankommt.');
+  if (!A.has('gloves')) return I.say('Ein Brief von Tonći? Und was hat er mir mitgebracht? Er bringt immer etwas mit.');
+  if (!A.hasNote('c1_ferry')) return I.say('Ein Brief? Erst sagen Sie mir, wo das Boot bleibt.');
+  return finale(A); }
 // ---------------------------------------------------------------- erste Begegnung (auf der Mole): Ivka – und eine Stimme hinter ihm, die er überhört
 async function meeting(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
   await A.face('R'); A.headache(4500); await A.animM('headache'); await A.m('…'); A.sfx('static');
@@ -48,7 +54,7 @@ async function talkIvka(A){ var I=A.npc('ivka');
       c1_never:async function(A){ await I.say('Dinko? Der kommt jeden Sonntag zum Essen. Was reden Sie denn.'); },
       c1_rescued:async function(A){ await I.say('…'); await I.say('Ich weiß nicht, wovon Sie reden.'); await I.face('R'); },
       c1_story:async function(A){ await I.say('Mit dem kleinen Boot? Bei der Bura? Das würde er nicht tun.'); await I.say('…Das würde er tun.'); },
-      c1_letter:async function(A){ await I.say('Ein Brief? Von Tonći? Lesen Sie ihn mir vor. Nicht jetzt. Wenn er da ist, lacht er mich sonst aus.'); },
+      c1_letter:async function(A){ var r=await letterToIvka(A); if (A.flag('c1.release')) return 'bye'; return r; },
       c1_came:async function(A){ await I.say('Er kam nicht mit der Fähre? Womit denn dann?'); await I.face('R'); },
       pro_notice:async function(A){ await I.say('Die Anzeige an meiner Tür? Die ist für die alte Kovačka, die Arme. Die hängen sie an jede Tür in der Gasse.'); await A.m('Da steht Ihr Name.'); await I.say('Halb Varoš heißt Perić. Gehen Sie, ich muss aufpassen, sonst sehe ich das Boot nicht.'); await I.face('R'); }
     },'Das sagt mir nichts, junger Mann.'),
@@ -163,7 +169,7 @@ var HS=[
      talk:function(A){ if (A.flag('c1.release')) return A.npc('ivka').say('Ist es weit?'); return talkIvka(A); },sense:async function(A){ await A.g('Sie wartet nicht auf ein Schiff. Sie wartet auf einen Satz.'); },
      cross:function(A){ return crossIvka(A); },crossIf:function(S,G){ return !!G.flags['c1.release'] && !G.flags['c1.done']; }},
    give:{ gloves:async function(A){ return A.m('Nicht so. Nicht mitten im Satz.'); },
-     letter_t:async function(A){ if (!A.hasNote('c1_letter')) return A.m('Das Salz hat die Hälfte gefressen.'); return A.m('Nicht so. Nicht mitten im Satz.'); },
+     letter_t:function(A){ return letterToIvka(A); },
      photo1:async function(A){ await A.npc('ivka').say('Tonći und Dinko. Auf der ANKICA. Woher haben Sie das? Das steht bei mir zu Hause auf der Kredenz.'); },
      postcard:async function(A){ await A.npc('ivka').say('Seine Karte. „Um sieben.“ Sehen Sie? Er kommt um sieben.'); } }},
  {id:'palace',name:'Palastmauer',look:'Die Südmauer des Diokletianpalastes. Siebzehnhundert Jahre alt. Heute sind Cafés in den Bögen. Der Kaiser hätte es verstanden, glaube ich.',g:{look:'Diese Mauer hat mehr Leute warten sehen als jeder Hafen.'}},
