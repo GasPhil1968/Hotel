@@ -204,11 +204,11 @@ function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz 
 E.hasNote=hasNote; E.addNote=addNote;
 // zwei Notizen verbinden
 async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
-  if (!d){ M.sfx('nope'); return {ok:false,t:'Das hängt nicht zusammen.'}; }
+  if (!d){ M.sfx('nope'); return {ok:false,t:M.noCombo?M.noCombo(a,b,GS):'Das hängt nicht zusammen.'}; }
   if (typeof d==='function'){ return await d(API)||{ok:true}; }
   if (d.if && !d.if(GS)) { M.sfx('nope'); return {ok:false,t:d.no||'Da fehlt noch etwas.'}; }
   if (hasNote(d.to)) return {ok:false,t:'Das habe ich schon verstanden.'};
-  addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
+  addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
 E.combineNotes=combineNotes;
 // im Gespräch eine Notiz auswählen
 function pickNote(title){ if (E.nbStyle && E.nbStyle()==='think' && E.pickNoteThink) return E.pickNoteThink(title); return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?'},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
@@ -244,7 +244,9 @@ E.canSwitch=canSwitch;
 async function switchTo(who,silent){ if (GS.active===who) return; syncPos(); GS.active=who; M.setGhostAudio(who==='mala'); if (!silent) M.sfx('whoosh');
   var target=GS.pos[who].room; if (target && target!==room.id){ await gotoRoom(target,{x:GS.pos[who].x,y:GS.pos[who].y,f:GS.pos[who].f,noEnter:true,fadeMs:250,keepPos:true}); }
   else { placePlayers(); E.switchFx=gt; }
-  snapCamera(); }
+  snapCamera();
+  // Raum darf auf den Wechsel reagieren (z. B. Mala hört unten, was Marko oben ausgelöst hat)
+  if (room && room.onSwitch && !E.busy){ E.busy=true; try{ await room.onSwitch(API,who); } catch(e){ console.error(e); } finally{ E.busy=false; } } }
 E.switchChar=function(){ if (!canSwitch()) return; switchTo(GS.active==='marko'?'mala':'marko'); };
 E.switchTo=switchTo;
 
@@ -475,7 +477,8 @@ function loadData(d){ try{ var base=validate(d); if (!base) return false;
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
-E.newGame=function(){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false); if (M.startGame) M.startGame(API); };
+E.newGame=function(ch){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false);
+  if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
 E.toTitle=function(){ saveGame(); M.scapeStop(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber
@@ -508,7 +511,7 @@ M.TA={
   combine:function(a,b){ return combineNotes(a,b); },
   switchTo:function(w){ return switchTo(w,true); },
   skip:function(){ if (E.speech) endSpeech(); if (E.card) closeCard(); },
-  travel:function(loc){ var L=M.MAPLOCS.filter(function(l){ return l.id===loc; })[0]; if (!L) throw new Error('kein Ort '+loc); return gotoRoom(L.to,{x:L.at?L.at[0]:undefined,y:L.at?L.at[1]:undefined,f:L.at?L.at[2]:undefined}); },
+  travel:function(loc){ var L=M.MAPLOCS.concat(M.MAPLOCS2||[]).filter(function(l){ return l.id===loc; })[0]; if (!L) throw new Error('kein Ort '+loc); return gotoRoom(L.to,{x:L.at?L.at[0]:undefined,y:L.at?L.at[1]:undefined,f:L.at?L.at[2]:undefined}); },
   get GS(){ return GS; }
 };
 })(M);

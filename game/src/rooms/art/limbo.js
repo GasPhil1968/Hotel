@@ -237,17 +237,61 @@ function viewPaint(w,who){ var vw=clipW(w,inView), x, y;
     vw.vl(54,49,55,P.k2); vw.hl(52,56,56,P.w2); vw.hl(51,57,57,P.y2); vw.hl(52,56,58,P.y4); vw.px(54,58,P.y5);
     for (y=52;y<70;y++) for (x=44;x<=64;x++){ var dl=Math.hypot(x-54,(y-59)*1.2); if (dl>2.5 && dl<9 && bayer(x,y)<(1-dl/9)*0.55){ var c1=w.get(x,y); if (c1===P.k2||c1===P.w0||c1===P.w1) vw.px(x,y,M.UP[c1]); } }
     forView(function(x,y){ var e=Math.min(x-(A.cx-A.ri+3),A.cx+A.ri-1-x,A.thr-1-y); if (e<3 && bayer(x,y)<(3-e)/3*0.55) vw.px(x,y,BLUE[w.get(x,y)]===w.get(x,y)?P.n1:BLUE[w.get(x,y)]); }); }
+  else if (who==='tomaz') viewTomaz(w,vw);
+  else if (who==='ivan') viewIvan(w,vw);
+  else if (who==='zora') viewZora(w,vw);
   else { forView(function(x,y){ var dx=(x+0.5-A.cx)/13, dy=(y+0.5-84)/30, d=Math.sqrt(dx*dx+dy*dy); vw.px(x,y,q(R('n0 n1 x1 x2 x3 x4'),0.95-d*0.75+Math.sin(x*1.3)*0.03,x,y)); }); }
   // leichte Abdunklung an den Rändern der Öffnung
   forView(function(x,y){ var e=Math.min(x-(A.cx-A.ri+3),A.cx+A.ri-1-x), top=openDist(x,y-3)>0||!inOpen(x,y-2); if ((e<1||top) && bayer(x,y)<0.6) vw.px(x,y,M.DN[w.get(x,y)]); }); }
+
+// Kapitel 2 (Sarajevo): Tomaž – der Platz unter der Sahat-kula bei Nacht mit Laterne
+function viewTomaz(w,vw){ var x, y, hz=100;
+  forView(function(x,y){ var c; if (y<hz){ var t=(y-48)/(hz-48); c=q(R('k1 k2 n0 n1 n2 n3'),0.15+t*0.6+(fbm(x,y*2,8,9)-0.5)*0.08,x,y); if (y<78 && hash(x*2.1,y*1.3)<0.016) c=(hash(x,y)<0.4)?P.n4:P.n3; }
+    else { var d=(y-hz)/(A.thr-hz); c=q(R('k1 k2 n0 n1'),0.6-d*0.35+(hash(x>>1,y)-0.5)*0.2,x,y); if ((((x+(y>>1)*2)%5)===0)&&(y%2===0)) c=P.k1; } vw.px(x,y,c); });   // Nachthimmel, Kopfsteinpflaster
+  for (y=89;y<hz;y++) for (x=40;x<=68;x++){ var arch=(x>=55&&x<=61&&y>=92-(x>=57&&x<=59?1:0)); vw.px(x,y,arch?P.k1:(y===89?P.n2:(hash(x,y>>1)<0.2?P.n0:P.n1))); }   // Hofmauer der Moschee mit Bogentor
+  for (x=54;x<=62;x+=2) vw.px(x,88,P.n0);
+  for (y=56;y<hz;y++) for (x=45;x<=51;x++){ var c2=(x===45)?P.n4:((x===51)?P.k2:(x<48?P.n3:P.n2)); if ((y-56)%9===0) c2=P.n1; vw.px(x,y,c2); }          // Sahat-kula
+  vw.poly([[44,56],[53,56],[48.5,49]],P.n1); vw.vl(48,47,49,P.n2); vw.px(48,46,P.n3); vw.hl(44,52,56,P.n3);
+  vw.ellipse(48.5,62.5,2.6,2.6,P.x5); vw.px(48,61,P.k2); vw.px(48,62,P.k2); vw.px(49,62,P.k2);                                                  // Zifferblatt, schwach erleuchtet
+  vw.rect(47,93,3,7,P.k1); vw.px(48,92,P.k1);                                                                                              // Tür im Turm
+  vw.vl(63,82,112,P.k2); vw.vl(64,97,112,P.k1); vw.rect(61,77,5,5,P.n1); vw.rect(62,78,3,3,P.y3); vw.px(63,79,P.y5); vw.hl(61,65,76,P.k2); vw.px(63,75,P.k2);   // Laterne
+  for (y=69;y<93;y++) for (x=52;x<=68;x++){ var d2=Math.hypot(x-63.5,(y-79.5)*1.1); if (d2<10 && d2>2.6 && bayer(x,y)<(1-d2/10)*0.55){ var c0=w.get(x,y); if (c0!==P.k2&&c0!==P.k1) vw.px(x,y,M.UP[c0]); } }
+  for (y=104;y<113;y++) for (x=52;x<=68;x++){ var d3=Math.hypot((x-62.5)/7,(y-109)/3); if (d3<1 && bayer(x,y)<(1-d3)*0.7) vw.px(x,y,d3<0.5?P.y1:P.w1); }   // Lichtfleck auf dem Pflaster
+  vw.hl(50,58,107,P.n2); vw.vl(51,108,110,P.k2); vw.vl(57,108,110,P.k2); }                                                                // Steinbank
+// Ivan – die Miljacka und die gestreifte Fassade der Vijećnica
+function viewIvan(w,vw){ var x, y;
+  forView(function(x,y){ var c; if (y<58) c=q(R('k1 k2 n0 n1'),0.15+(y-48)/10*0.5,x,y);
+    else if (y<96){ var band=Math.floor((y-58)/3)%2; c=band?q(R('t0 t1 t2'),0.45+(hash(x,y)-0.5)*0.25,x,y):q(R('n1 e1 e2 e3'),0.55+(hash(x,y)-0.5)*0.25,x,y);      // ockerrote Streifen
+      var col=(x-43)%7, row=y-63; if (col>=2&&col<=4 && ((row>=0&&row<9)||(row>=14&&row<22))){ var top=(row<9?0:14); if (row-top>=((col===3)?0:1)) c=(hash(x>>1,y>>2)<0.25)?P.y2:P.k1; } }   // Spitzbogenfenster
+    else if (y<100) c=(y===96)?P.n2:(hash(x,y)<0.3?P.n0:P.n1);                                                                               // Ufermauer
+    else { var s=Math.sin(x*0.9+y*1.7)+Math.sin(x*0.3-y*0.6); c=q(R('k1 k2 n0 x0 x1'),0.55-(y-100)/13*0.3+s*0.08,x,y); if ((Math.floor((y-100+Math.sin(x*0.7)*1.2)/2)%2) && hash(x,y)<0.3) c=P.d0; }   // Miljacka, Spiegelung der Streifen
+    vw.px(x,y,c); });
+  for (x=40;x<=68;x++){ if ((x%4)<2) vw.vl(x,55,57,P.n1); vw.px(x,58,P.n2); }                                                               // Zinnen
+  for (y=82;y<96;y++) for (x=50;x<=58;x++){ var dx=(x+0.5-54.5)/4.5, top2=82+(1-Math.sqrt(Math.max(0,1-dx*dx)))*4; if (y>=top2) vw.px(x,y,(y<top2+1)?P.e2:((x===54&&y>88)?P.y1:P.k0)); }   // Portal
+  for (x=46;x<=62;x+=8){ for (y=100;y<113;y+=2) if (hash(x,y)<0.6) vw.px(x+((y>>1)%2),y,P.y1); } }                                       // Lichter im Wasser
+// Zora – der Hof der Hochhäuser im Nebel
+function viewZora(w,vw){ var x, y, FG=R('n1 n2 n3 x2 x3 n4');
+  forView(function(x,y){ var t=(y-48)/(A.thr-48); vw.px(x,y,q(FG,0.78-t*0.28+(fbm(x,y*1.5,9,4)-0.5)*0.12,x,y)); });
+  for (y=60;y<101;y++) for (x=57;x<=68;x++){ var c=(((x-57)%3===0)||((y-60)%4===0))?P.n3:P.x3; if (hash(x,y)<0.3) c=P.n4; vw.px(x,y,c); }        // hinteres Hochhaus, kaum zu sehen
+  for (y=50;y<104;y++) for (x=40;x<=53;x++){ var c2=P.n2; if ((y-50)%5===0) c2=P.n1; else if (((x-41)%4===1||(x-41)%4===2)&&(y-50)%5<3) c2=P.n1; if (x===53) c2=P.n1; if (x===52) c2=P.n3; vw.px(x,y,c2); }   // vorderes Hochhaus mit Loggien
+  vw.px(43,62,P.x4); vw.px(47,77,P.x4);                                                                                                    // zwei Fenster
+  for (y=104;y<113;y++) for (x=40;x<=68;x++) vw.px(x,y,q(R('n1 n2 n3'),0.35+(y-104)/9*0.35+(hash(x,y)-0.5)*0.2,x,y));                         // Hofboden
+  for (x=55;x<=63;x++){ vw.px(x,99,P.n1); } [55,59,63].forEach(function(px){ vw.vl(px,99,105,P.n1); }); vw.hl(55,63,102,P.n1);                 // Klettergerüst
+  vw.vl(66,86,105,P.n1); vw.px(66,85,P.x4); vw.px(65,85,P.n3); vw.px(67,85,P.n3);                                                           // Laterne im Nebel
+  for (y=88;y<104;y++){ var tx=46+Math.round(Math.sin(y*0.4)*0.6); vw.px(tx,y,P.n1); } [[-4,-3],[-3,-6],[3,-5],[4,-2]].forEach(function(o){ vw.line(46,92,46+o[0],92+o[1],P.n1); });   // kahler Baum
+  forView(function(x,y){ var f=Math.sin(y*0.33+x*0.05)+Math.sin(y*0.12-x*0.03); if (f>1.15 && bayer(x,y)<0.55) vw.px(x,y,M.UP[w.get(x,y)]); }); }   // Nebelbänke
 
 // ---------------------------------------------------------------- Stücke der Orte, an die die Geister gebunden waren
 var PROPS={
   ivka:{ r:[230,95,30,29], st:[222,126,'R'], foot:[228,0,260,123] },
   luka:{ r:[225,84,40,40], st:[218,126,'R'], foot:[226,0,265,123] },
-  bruno:{ r:[228,89,36,35], st:[220,126,'R'], foot:[228,0,264,123] }
+  bruno:{ r:[228,89,36,35], st:[220,126,'R'], foot:[228,0,264,123] },
+  // Kapitel 2
+  tomaz:{ r:[229,75,35,49], st:[221,126,'R'], foot:[228,0,264,123] },
+  ivan:{ r:[226,88,40,36], st:[219,126,'R'], foot:[226,0,265,123] },
+  zora:{ r:[227,88,38,36], st:[220,126,'R'], foot:[227,0,265,123] }
 };
-var PROP_ANY={ r:[225,84,40,40], st:[218,126,'R'] };     // Vereinigung aller drei, falls niemand gesetzt ist
+var PROP_ANY={ r:[225,75,41,49], st:[218,126,'R'] };     // Vereinigung aller Varianten, falls niemand gesetzt ist
 function castShadow(b,cx,by,rx,ry){ for (var y=by-1;y<=by+ry+1;y++) for (var x=Math.floor(cx-rx-2);x<=cx+rx+2;x++){ var k=y*W+x; if (x<0||x>=W||y>=H||SID[k]<0) continue;
   var dx=(x-cx)/rx, dy=(y-by)/ry, d=dx*dx+dy*dy; if (d<1 && bayer(x,y)<(1-d)*1.2) b.d[k]=M.DN[b.d[k]]; } }
 // Ivka: zwei Kaisteine der Riva mit einem gusseisernen Poller, die Kappe von Händen blank gerieben; kein Tau mehr daran
@@ -306,7 +350,57 @@ function propBruno(b,w){ var x, y, x0=231, x1=261, top=97, by=122;
   // Messingglocke
   w.hl(250,257,96,P.y1); w.hl(251,256,95,P.y3); w.hl(251,256,94,P.y3); w.hl(252,255,93,P.y4); w.px(252,94,P.y5); w.px(252,93,P.l0); w.px(253,93,P.y5); w.px(256,94,P.y2); w.px(255,93,P.y3); w.px(256,95,P.y2);
   w.px(253,92,P.y3); w.px(254,92,P.y2); w.px(253,91,P.y5); w.px(254,91,P.y3); }
-function propPaint(b,S){ var w=RW(b), who=whoOf(S); if (who==='ivka') propIvka(b,w); else if (who==='luka') propLuka(b,w); else if (who==='bruno') propBruno(b,w); }
+// Tomaž: ein Pfeiler aus Steinquadern, oben abgebrochen, mit dem Zifferblatt der Sahat-kula (arabische Ziffern, zwei Zeiger)
+var AR=[['#','#','#'],['##','#.','#.'],['###','#..','#..'],['##','#.','##'],['.#.','#.#','.#.'],['##','.#','.#'],['#.#','#.#','.#.'],['.#.','#.#','#.#'],['##','##','.#'],['#..','#.#','#..'],['#.#','#.#','#.#'],['#.##','#.#.','#.#.']];
+var CLK={x:245,y:93,r:12};
+function propTomaz(b,w,S){ var x, y, x0=231, x1=259, top=77, by=122, cx=CLK.x, cy=CLK.y;
+  castShadow(b,249,123,17,3.5);
+  for (y=top;y<=by;y++) for (x=x0;x<=x1;x++){ var brk=top+Math.round(Math.abs(Math.sin(x*0.9+1))*2.5+(hash(x,7)<0.3?1:0)); if (y<brk) continue;
+    var row=Math.floor((y-top)/7), off=(row%2)*7, col=Math.floor((x-x0+off)/14), jx=((x-x0+off)%14===0), jy=((y-top)%7===0);
+    var v=0.5+(hash(col,row)-0.5)*0.12+(x<cx?0.06:-0.04)-(y>by-4?0.1:0)+0.1*Math.exp(-Math.pow((x-LX)/80,2)), c=(jx||jy)?P.n1:q(STONE,v,x,y);
+    if (y===brk) c=P.s5; else if (y===brk+1) c=P.s4; if (x===x0) c=(y===brk)?P.s5:P.x4; if (x===x1) c=P.n1; w.px(x,y,c); }
+  for (y=top+3;y<=by;y++){ w.px(x1+1,y,P.n0); w.px(x1+2,y,(y>top+5)?P.k2:P.n0); }                                         // rechte Seitenfläche im Schatten
+  w.hl(x0-1,x1+2,108,P.s4); w.hl(x0-1,x1+2,109,P.n1); w.hl(x0-2,x1+3,by,P.n1); w.hl(x0-2,x1+3,by+1,P.k1); w.vl(x0-2,108,by,P.n1);   // Gesims, Sockel
+  for (y=cy-CLK.r;y<=cy+CLK.r;y++) for (x=cx-CLK.r;x<=cx+CLK.r;x++){ var d=Math.hypot(x-cx,y-cy); if (d>CLK.r+0.4) continue;
+    var c2=d>CLK.r-0.6?P.n1:(d>CLK.r-1.6?P.m3:(d>CLK.r-2.2?P.m2:P.s5)); if (d<CLK.r-2.2 && (x-cx)+(y-cy)>7) c2=P.s4; w.px(x,y,c2); }               // Zifferblatt
+  AR.forEach(function(g,i){ var a=(i+1)/12*Math.PI*2, gw=g[0].length, gx=Math.round(cx+Math.sin(a)*7.6-(gw-1)/2), gy=Math.round(cy-Math.cos(a)*7.6-1);
+    for (var j=0;j<3;j++) for (var k=0;k<gw;k++) if (g[j][k]==='#') w.px(gx+k,gy+j,P.n0); });                                             // arabische Ziffern
+  var hr=(S&&S.clockSet)?7:3, ha=hr/12*Math.PI*2;                                                                                        // Zeiger: sieben oder drei
+  w.line(cx,cy,Math.round(cx),Math.round(cy-8),P.k1); w.line(cx,cy,Math.round(cx+Math.sin(ha)*5.4),Math.round(cy-Math.cos(ha)*5.4),P.k1); w.px(cx+Math.round(Math.sin(ha)*1.5),cy-Math.round(Math.cos(ha)*1.5),P.k1);
+  w.px(cx,cy,P.y3); w.px(cx+1,cy,P.y2); }
+// Ivan: ein Lesetisch aus dunklem Holz mit grüner Bankerlampe und einem aufgeschlagenen Buch; S.lineDone: die Lampe leuchtet heller
+function propIvan(b,w,S){ var x, y, x0=228, x1=263, ty=105, by=122, lit=!!(S&&S.lineDone), lx=255;
+  castShadow(b,247,123,18,3.5);
+  [x0+2,x1-4].forEach(function(px){ for (y=ty+4;y<=by;y++){ var bl=((y-ty)%6===2)?1:0; for (x=px-bl;x<=px+2+bl;x++) w.px(x,y,x===px-bl?P.w3:(x===px+2+bl?P.k1:P.w1)); } });   // gedrechselte Beine
+  w.hl(x0+5,x1-5,by-6,P.w2); w.hl(x0+5,x1-5,by-5,P.w0);                                                                                  // Querstrebe
+  for (y=ty;y<ty+4;y++) for (x=x0;x<=x1;x++){ var c=(y===ty)?P.w4:(y===ty+1?P.w3:(y===ty+2?P.w2:P.w0)); if (x===x0) c=(y===ty)?P.w4:P.x4; if (x===x1) c=P.k1; w.px(x,y,c); }   // Platte
+  // aufgeschlagenes Buch: zwei Seiten, zur Mitte hin abfallend, Zeilen
+  var bx=233; for (x=bx;x<bx+16;x++){ var u=x-bx, mid=Math.abs(u-7.5), top=ty-2-Math.round(mid*0.3); for (y=top;y<ty;y++){ var c3=(y===top)?P.s6:(((y-top)%2===1&&u>1&&u<14&&Math.abs(u-7.5)>1)?P.n3:P.s5); if (mid<0.6) c3=P.s3; w.px(x,y,c3); } }
+  w.hl(bx-1,bx+16,ty-1,P.r1); w.px(bx-1,ty-2,P.r1); w.px(bx+16,ty-2,P.r1);
+  // Bankerlampe: Messingfuß, Stiel, grüner Glasschirm
+  w.hl(lx-3,lx+3,ty-1,P.y1); w.hl(lx-2,lx+2,ty-2,P.y3); w.vl(lx,ty-9,ty-3,P.y2); w.px(lx+1,ty-7,P.y1); w.vl(lx+3,ty-8,ty-5,P.y2);
+  for (y=ty-14;y<ty-9;y++){ var hw=2+(y-(ty-14)); for (x=lx-hw;x<=lx+hw;x++){ var c2=lit?((y===ty-14||x<lx-hw+2)?P.g5:P.g4):((y===ty-14||x<lx-hw+2)?P.g4:P.g3); if (x===lx+hw) c2=lit?P.g3:P.g2; w.px(x,y,c2); } }
+  w.hl(lx-6,lx+6,ty-9,lit?P.y5:P.y3); w.px(lx-6,ty-9,lit?P.l0:P.y2);
+  // warmer Lichtkegel auf Buch und Platte
+  for (y=ty-8;y<=ty+1;y++) for (x=lx-17;x<=lx+7;x++){ var dl=Math.hypot((x-lx+3)/(lit?14:10),(y-ty)/(lit?6:4.5)); if (dl>1||bayer(x,y)>(1-dl)*(lit?0.95:0.6)) continue; var c4=w.get(x,y); if (c4===T||c4===P.k0) continue; if (c4===P.s5||c4===P.s6||c4===P.n3) w.px(x,y,lit?P.l0:P.y5); else if (c4===P.w4||c4===P.w3) w.px(x,y,lit?P.y4:P.w5); } }
+// Zora: eine alte Schulbank (Pult mit schräger Platte, gusseiserne Wangen, Sitz davor) mit einer Handglocke; S.rung: die Glocke ist fort
+function propZora(b,w,S){ var x, y, x0=230, x1=262, ty=103, by=122, rung=!!(S&&S.rung);
+  castShadow(b,247,123,18,3.5);
+  [x0+1,x1-3].forEach(function(px){ for (y=ty+1;y<=by;y++){ w.px(px,y,P.k2); w.px(px+1,y,P.m0); }                                         // gusseiserne Wangen mit Bogen
+    for (var k=0;k<6;k++){ var ax=px+(px<246?1:-1)*(1+Math.round(Math.sin(k/5*Math.PI)*3)); w.px(ax,by-7+k,P.m0); } w.hl(px-2,px+3,by,P.k1); });
+  for (y=ty+4;y<ty+13;y++) for (x=x0+2;x<=x1-2;x++){ var c=((x-x0)%5===0)?P.w1:P.w2; if (y===ty+4) c=P.w3; if (y===ty+12) c=P.w0; w.px(x,y,c); }   // Vorderwand
+  for (x=x0-1;x<=x1+1;x++){ var sl=Math.round((x-x0)*0.04); for (y=ty-sl;y<ty+4-sl;y++){ var c2=(y===ty-sl)?P.w5:(y===ty+1-sl?P.w4:(y===ty+3-sl?P.w1:P.w3)); if (x===x0-1) c2=P.x4; if (x===x1+1) c2=P.k2; if (hash(x*1.7,y)<0.08) c2=P.w2; w.px(x,y,c2); } }   // schräge Pultplatte
+  w.hl(x0+2,x1-2,ty+4,P.w1);                                                                                                            // Stiftrinne
+  w.rect(x0+6,ty,3,2,P.k1); w.px(x0+6,ty,P.y2); w.px(x0+8,ty+1,P.y1);                                                                  // Tintenfass
+  w.px(x0+14,ty+1,P.w1); w.px(x0+15,ty+2,P.w1); w.px(x0+18,ty+1,P.w1);                                                                  // eingeritzte Kerben
+  for (x=x0+3;x<=x1-3;x++){ w.px(x,by-4,P.w3); w.px(x,by-3,P.w1); } w.hl(x0+3,x1-3,by-2,P.k2);                                           // Sitz davor
+  if (!rung){ var gx=251, gy=ty-1;                                                                                                       // Handglocke aus Messing mit Holzgriff
+    w.vl(gx,gy-11,gy-7,P.w2); w.vl(gx+1,gy-11,gy-7,P.w1); w.rect(gx-1,gy-13,4,2,P.w3); w.hl(gx-1,gx+2,gy-13,P.w4);
+    [[gy-6,1],[gy-5,2],[gy-4,2],[gy-3,3],[gy-2,3],[gy-1,4]].forEach(function(r){ for (x=gx-r[1];x<=gx+1+r[1];x++){ var u=(x-(gx-r[1]))/(2*r[1]+1), c5=u<0.25?P.y4:(u<0.55?P.y3:(u<0.85?P.y2:P.y1)); if (r[0]===gy-1) c5=(u<0.5)?P.y2:P.y1; w.px(x,r[0],c5); } });
+    w.px(gx-1,gy-5,P.y5); w.px(gx-2,gy-3,P.y5); w.px(gx,gy,P.y0); w.px(gx+1,gy,P.y0); }
+  else { for (x=248;x<=255;x++) if (hash(x,4)<0.7) w.px(x,ty-1,P.w4); } }                                                    // nur ein heller Ring, wo sie stand
+function propPaint(b,S){ var w=RW(b), who=whoOf(S); if (who==='ivka') propIvka(b,w); else if (who==='luka') propLuka(b,w); else if (who==='bruno') propBruno(b,w);
+  else if (who==='tomaz') propTomaz(b,w,S); else if (who==='ivan') propIvan(b,w,S); else if (who==='zora') propZora(b,w,S); }
 
 // ---------------------------------------------------------------- lose, schwebende Steine (wippen in dynamic um 1 px)
 var FLOAT=[{x:8,y:113,w:12,h:7,s:1.05,p:0.4},{x:18,y:130,w:8,h:5,s:1.3,p:2.2},{x:2,y:99,w:6,h:4,s:0.9,p:4.1},{x:22,y:95,w:4,h:3,s:1.4,p:0.9},
@@ -349,7 +443,9 @@ function dyn(fb,view,S,GS){ var t=view.t, cam=view.cam|0, x, y, k, i;
   for (i=0;i<TWINK.length;i++){ var tw=TWINK[i], a=Math.sin(t*(0.7+i*0.11)+i*2.4); if (a>0.8) fb.px(tw[0]-cam,tw[1],M.UP[M.UP[tw[2]]]); else if (a<-0.8) fb.px(tw[0]-cam,tw[1],M.DN[tw[2]]); }
   for (i=0;i<FSPR.length;i++){ var f=FSPR[i]; if (Math.sin(t*f.s+f.p)<=0) continue; var j, ii, ox=f.x-cam;
     for (j=0;j<=f.h;j++) for (ii=0;ii<f.w;ii++) fb.px(ox+ii,f.y+j,f.bg[j*f.w+ii]);
-    for (j=0;j<f.h;j++) for (ii=0;ii<f.w;ii++){ var c=f.fg[j*f.w+ii]; if (c!==T) fb.px(ox+ii,f.y+j+1,c); } } }
+    for (j=0;j<f.h;j++) for (ii=0;ii<f.w;ii++){ var c=f.fg[j*f.w+ii]; if (c!==T) fb.px(ox+ii,f.y+j+1,c); } }
+  // Kapitel 2, Ivan: ist die Zeile übersetzt, schimmern die Seiten des Buchs
+  if (S && S.who==='ivan' && S.lineDone){ for (i=0;i<7;i++){ var px=234+Math.round(hash(i,51)*14), py=101+Math.round(hash(i,52)*3), a=Math.sin(t*(2+hash(i,53)*2)+i*1.9); if (a>0.55) fb.px(px-cam,py,a>0.85?P.l1:P.x6); } } }
 
 // ---------------------------------------------------------------- Lauffläche, Hotspots
 function surfOK(x,y){ x|=0; y|=0; if (x<3||x>W-4||y<2||y>H-3) return false; var k=y*W+x; return SID[k]>=0&&SID[k-3]>=0&&SID[k+3]>=0&&SID[k-2*W]>=0&&SID[k+2*W]>=0; }

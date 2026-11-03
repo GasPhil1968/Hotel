@@ -4,7 +4,7 @@
 (function(M){
 'use strict';
 var P=M.P;
-var GHOST={ ivka:{name:'Ivka',idle:'waitF'}, luka:{name:'Luka',idle:null}, bruno:{name:'Bruno',idle:'porter'} };
+var GHOST=M.LIMBO_GHOST={ ivka:{name:'Ivka',idle:'waitF'}, luka:{name:'Luka',idle:null}, bruno:{name:'Bruno',idle:'porter'} };   // Kapitel 2 ergänzt hier weitere
 function who(S){ return S.who||'ivka'; }
 function lightPt(){ var sp=M.spot('limbo','light'); if (!sp[2]) sp=[150,8,100,96]; return [sp[0]+(sp[2]>>1)+4, Math.min(112,sp[1]+sp[3]+6)]; }
 // in die Zwischenwelt (aus dem Licht der Schwelle heraus, Weißblende vorher)

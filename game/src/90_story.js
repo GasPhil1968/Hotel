@@ -164,7 +164,8 @@ M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){
 M.CREDITS=['MALA','Kapitel 1: Split','','','Marko Vuković','Mala','','Ivka Perić, die wartete','Luka Radić, der unterwegs war','Bruno Lalić, der keine Worte mehr hatte','',
   'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','und Jakov, der Wege fegt, die es nicht mehr gibt','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Split nachempfunden.','Manche gibt es nicht.','','','FORTSETZUNG','Kapitel 2: Sarajevo','','','',''];
-M.endChapter=async function(A){ M.GS.ended=true; try{ localStorage.removeItem('mala.save.'+M.E.slot()); }catch(e){} await A.fade(8,1400); M.E.fade=0; M.E.startCredits(); };
+M.endChapter=async function(A){ M.GS.ended=true; if (M.storeC1End) M.storeC1End(M.GS); try{ localStorage.removeItem('mala.save.'+M.E.slot()); }catch(e){} await A.fade(8,1400); M.E.fade=0;
+  M.E.creditLines=M.CREDITS; M.E.creditMusic='end'; M.E.afterCredits=M.ROOMS.stanica?'ch2':null; M.E.startCredits(); };
 // Testräume aus reiner Kunst (für die Entwicklung): jede M.ART-Definition ohne Raumlogik wird ein einfacher Raum
 M.artTestRooms=function(){ Object.keys(M.ART).forEach(function(id){ if (M.ROOMS[id]) return; var A=M.ART[id];
   M.defineRoom({id:id,name:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries,scape:A.scape||id,

@@ -207,6 +207,16 @@ var DRUMS={
   hiss:function(t,beat,spb,dest){ noise(t,spb,0.006,'highpass',4000,0.5,dest); },
   heart:function(t,beat,spb,dest){ if (beat%2===0){ tone('sine',55,t,0.16,0.1,dest,40); tone('sine',55,t+0.22,0.14,0.07,dest,40); } }
 };
+// Erweiterungen (Kapitel 2): neue Effekte, Teppiche, Einzelgeräusche, Instrumente und Rhythmen von außen registrieren.
+// Die Funktionen bekommen dieselben Bausteine wie hier (M.AK.tone, M.AK.noise …); AC existiert erst nach dem ersten Tippen.
+M.AK={ tone:function(){ return tone.apply(null,arguments); }, noise:function(){ return noise.apply(null,arguments); }, swell:function(){ return swell.apply(null,arguments); },
+  low:function(){ return low.apply(null,arguments); }, bell:function(){ return bell.apply(null,arguments); }, horn:function(){ return horn.apply(null,arguments); }, pan:function(p,d){ return pan(p,d); }, nf:nf,
+  get AC(){ return AC; }, get sfx(){ return sfxG; }, get mus(){ return musG; }, get noiseBuf(){ return NOISE; } };
+M.addSfx=function(o){ Object.keys(o).forEach(function(k){ SFX[k]=o[k]; }); };
+M.addBeds=function(o){ Object.keys(o).forEach(function(k){ BEDS[k]=o[k]; }); };
+M.addEvents=function(o){ Object.keys(o).forEach(function(k){ EV[k]=o[k]; }); };
+M.addInstruments=function(o){ Object.keys(o).forEach(function(k){ INST[k]=o[k]; }); };
+M.addDrums=function(o){ Object.keys(o).forEach(function(k){ DRUMS[k]=o[k]; }); };
 // Lied: {bpm, meter, bars:[{b:[bass je Schlag], c:[Akkord]}], bassInst, bassVol, comp, compBeats, compVol, compLen, lead:[[schlag,midi,länge],...], leadInst, leadVol, leadEvery, drums, loop, lead2...}
 M.music=function(name){ if (name===songName) return; songName=name; song=M.SONGS[name]||null; beatN=0; if (AC) nextBeat=Math.max(AC.currentTime+0.2,nextBeat); };
 M.currentSong=function(){ return songName; };
