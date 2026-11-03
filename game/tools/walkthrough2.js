@@ -29,7 +29,7 @@ const SHOTS = process.argv[2] || null;
   try {
     if (process.env.MALA_NB) await D.ev((v) => M.E.setNbStyle(v), process.env.MALA_NB);
     // ================= PROLOG: die Linie Drei
-    await D.ev(() => { M.E.setSlot(1); M.E.newGame(2); }); await D.drain(); await at('stanica'); await expect(await phase() === 'k2_pro', 'Prolog'); await note('p2_mala_gone'); await note('m2_split_register'); await log('Ankunft in Sarajevo'); await shot('arrive');
+    await D.ev(() => { M.__gt0 = M.E.gt(); M.E.setSlot(1); M.E.newGame(2); }); await D.drain(); await at('stanica'); await expect(await phase() === 'k2_pro', 'Prolog'); await note('p2_mala_gone'); await note('m2_split_register'); await log('Ankunft in Sarajevo'); await shot('arrive');
     await talk('senada', 'Einen Fahrschein'); await note('p2_km'); await log('Kune? Ne.');
     await D.act('talk', 'fikret'); await D.drain(); await D.choose('Was ist das für ein Brief'); await D.drain(); await solve([1, 1, 2, 1, 2]); await D.choose('Gute Geschäfte'); await D.drain(); await inv('km'); await flag('k2.p1.km'); await log('Fikrets Brief übersetzt, 10 KM');
     await talk('senada', 'Einen Fahrschein'); await inv('tramkarta'); await log('Fahrschein');
@@ -159,6 +159,7 @@ const SHOTS = process.argv[2] || null;
     await D.act('use', 'bus'); await D.drain(); await D.until(s => s.dlg, 20000, 'letztes Gespräch'); await D.ev(() => M.TA.choose('Steigen wir ein'));
     for (let i = 0; i < 40; i++) { const s2 = await D.st(); if (s2.screen === 'credits' || s2.screen === 'title') break; if (s2.overlay) await D.ev(() => M.TA.closeOverlay()); await D.page.waitForTimeout(300); }
     await D.until(s => s.screen === 'credits' || s.screen === 'title', 60000, 'Abspann'); await expect(await D.flag('k2.epi.done'), 'Abfahrt'); await expect(await D.ev(() => !!localStorage.getItem('mala.c2end')), 'Kapitel 2 als beendet gemerkt'); await log('Abspann');
+    console.log('Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): ' + (await D.ev(() => M.E.gt() - (M.__gt0 || 0)) / 60000).toFixed(1) + ' min');
     const errs = D.errors.filter(e => !/Kunst fehlt|Spot fehlt/.test(e)); console.log(errs.length ? 'FEHLER:\n' + errs.join('\n') : 'DURCHLAUF KAPITEL 2 OK, keine JS-Fehler');
   } catch (e) { console.error('ABBRUCH:', e.message); const s = await D.st().catch(() => null); console.error('Zustand:', JSON.stringify(s)); console.error(D.errors.slice(0, 8).join('\n')); process.exitCode = 1; }
   await D.close2();

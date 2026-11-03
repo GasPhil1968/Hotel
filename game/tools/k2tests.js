@@ -75,6 +75,16 @@ function ok(c, what) { if (c) { pass++; out.push('  ok   ' + what); } else { fai
     n = findStep('Emina überzeugt'); await loadDump(n); await D.act('talk', 'tomaz'); await D.drain(); await D.pickNote('s1_missed'); await D.drain();
     ok(!(await D.flag('k2.s1.stay')), 'Tomaž mit falschem Argument: bleibt unruhig, geht aber nicht');
     await D.pickNote('s1_campus'); await D.drain(); await D.pickNote('s1_twosevens'); await D.drain(); ok(!!(await D.flag('k2.s1.free')), 'mit den richtigen Argumenten: die Kula schlägt sieben');
+    // Hinweise an jedem Zwischenstand des Durchlaufs: nie ohne Hilfe festsitzen
+    out.push('Hinweise an jedem Zwischenstand des Durchlaufs');
+    { const fsx = fs.readdirSync(DUMPS).filter(f => f.endsWith('.json')).sort(); const empty = [], bad = []; const used = new Set();
+      for (const f of fsx) { const d = JSON.parse(fs.readFileSync(path.join(DUMPS, f), 'utf8'));
+        const r = await D.ev((g) => { const old = M.GS; M.GS = JSON.parse(JSON.stringify(g)); try { return M.hintsOpen().map(h => [h.id, h.h.length]); } finally { M.GS = old; } }, d.GS);
+        if (!r.length) empty.push(d.step + ' „' + d.label + '“'); r.forEach(x => { used.add(x[0]); if (x[1] !== 3) bad.push(x[0]); }); }
+      const all = await D.ev(() => M.K2HINTS.map(h => h.id)); const never = all.filter(id => !used.has(id));
+      ok(!bad.length, 'jeder offene Hinweis hat drei Stufen' + (bad.length ? ' (nicht: ' + [...new Set(bad)].join(', ') + ')' : ''));
+      ok(empty.length <= 1, 'an ' + (fsx.length - empty.length) + ' von ' + fsx.length + ' Zwischenständen ist mindestens ein Hinweis offen' + (empty.length ? ' (ohne Hinweis: ' + empty.join(' · ') + ')' : ''));
+      out.push('  info ' + used.size + ' von ' + all.length + ' Hinweisthemen kommen im Durchlauf vor' + (never.length ? '; nicht berührt: ' + never.join(', ') : '')); }
   } catch (e) { fail++; out.push('ABBRUCH: ' + e.message); }
   const errs = D.errors.filter(e => !/Kunst fehlt|Spot fehlt/.test(e)); if (errs.length) { fail++; out.push('JS-Fehler:\n' + errs.slice(0, 8).join('\n')); }
   console.log(out.join('\n')); console.log(`\n${pass} bestanden, ${fail} fehlgeschlagen`); process.exitCode = fail ? 1 : 0; await D.close2();

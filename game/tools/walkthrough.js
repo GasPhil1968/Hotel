@@ -18,7 +18,7 @@ const SHOTS = process.argv[2] || null;
   try {
     // ================= PROLOG
     if (process.env.MALA_NB) await D.ev((v) => M.E.setNbStyle(v), process.env.MALA_NB);
-    await D.ev(() => { M.E.setSlot(1); M.E.newGame(); }); await D.drain(); await log('Start', await room()); await shot('start');
+    await D.ev(() => { M.__gt0 = M.E.gt(); M.E.setSlot(1); M.E.newGame(); }); await D.drain(); await log('Start', await room()); await shot('start');
     await D.act('use', 'answer'); await D.drain(); await note('pro_auftrag'); await log('Anrufbeantworter');
     await D.act('take', 'dzezva'); await D.act('use', 'sink', 'dzezva'); await D.act('use', 'stove', 'dzezvaW'); await D.drain(); await flag('pro.coffee'); await log('Kaffee');
     await D.act('take', 'photo'); await D.drain();
@@ -157,6 +157,7 @@ const SHOTS = process.argv[2] || null;
     for (let i = 0; i < 400; i++) { const s = await D.st(); if (s.screen === 'credits' || s.screen === 'title') break; if (s.overlay && s.overlay !== 'notebook') await D.ev(() => M.TA.closeOverlay()); if (s.card) await D.ev(() => M.TA.skip()); await D.page.waitForTimeout(100); }
     await D.until(s => s.screen === 'credits' || s.screen === 'title', 60000, 'Abspann');
     await log('ENDE erreicht:', (await D.st()).screen, 'Spielzeit (Spieluhr, beschleunigt):', await D.ev(() => Math.round(M.GS.playMs / 1000)) + 's');
+    console.log('Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): ' + (await D.ev(() => M.E.gt() - (M.__gt0 || 0)) / 60000).toFixed(1) + ' min');
     console.log('DURCHLAUF OK');
   } catch (e) { console.log('FEHLER bei Schritt', step, e.message); try { await D.shot((SHOTS || '/tmp') + '/wt_error.png'); } catch (_) {} }
   console.log(D.errors.length ? 'JS-FEHLER:\n' + D.errors.slice(0, 8).join('\n') : 'keine JS-Fehler');

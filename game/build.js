@@ -15,6 +15,8 @@ const files = list(SRC).sort((a, b) => {
 let js = 'var M={VERSION:"1.0.0"};\n';
 const keep = f => { if (!ONLY) return true; const k = path.relative(SRC, f).replace(/\\/g, '/'); if (!k.startsWith('rooms/')) return true; const id = path.basename(k, '.js'); if (k.startsWith('rooms/art/')) return ONLY.indexOf(id) >= 0; return id === 'flat'; };
 for (const f of files.filter(keep)) js += `/* ---- ${path.relative(SRC, f).replace(/\\/g, '/')} ---- */\n` + fs.readFileSync(f, 'utf8') + '\n';
+// Syntaxprüfung je Datei: ein Tippfehler bricht den Bau mit Dateiname und Zeile ab, statt eine leere Seite zu liefern
+for (const f of files.filter(keep)) { try { new (require('vm').Script)(fs.readFileSync(f, 'utf8'), { filename: path.relative(SRC, f) }); } catch (e) { console.error('Syntaxfehler: ' + (e.stack || e).toString().split('\n').slice(0, 4).join('\n')); process.exit(1); } }
 if (js.includes('</script')) throw new Error('</script im Quelltext');
 const html = `<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8">

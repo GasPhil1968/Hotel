@@ -49,6 +49,7 @@ async function talkSenada(A){ var S=A.npc('senada');
     {t:'Einen Fahrschein, bitte.',go:async function(A){ if (!A.has('km')){ await S.say('Eins sechzig.'); await A.m('Ich habe nur Kuna.'); await S.say('Kune? Ne.'); await A.wait(400); await S.say('Hier ist Bosnien. Hier nimmt man Mark.'); A.note('p2_km'); A.setFlag('k2.p1.noKm'); return 'bye'; }
         await S.say('Eins sechzig.'); A.sfx('coin'); A.give('tramkarta'); A.setFlag('k2.p1.ticket'); await S.say('Im Wagen entwerten. Der Entwerter ist orange.'); await A.m('Danke.'); return 'bye'; }},
     {t:'Fährt die Eins in die Baščaršija?',once:'sn1',go:async function(A){ await S.say('Die Eins fährt immer in die Baščaršija. Seit hundert Jahren. Fast immer.'); }},
+    ...M.k2Extra('senada',A,S),
     {t:'Danke.',bye:true}
   ]; }); }
 async function talkFadila(A){ var Fa=A.npc('fadila'), p=A.G.phase;
@@ -57,6 +58,7 @@ async function talkFadila(A){ var Fa=A.npc('fadila'), p=A.G.phase;
       {t:'Ich möchte ein Paket abholen. Aus Split.',go:async function(A){ await Fa.say('Nummer?'); if (!A.hasNote('f2_parcel')){ await A.m('Die Nummer … kommt per SMS. Mein Handy ist leer.'); await Fa.say('Ohne Nummer kein Paket. Ohne Ausweis auch nicht.'); return 'bye'; }
           await A.m('Viertausendvierhunderteinundsiebzig.'); await Fa.anim('stamp'); await Fa.say('Ausweis.'); await A.narrate('Sie sieht lange auf meinen Ausweis. Dann auf mich. Dann wieder auf den Ausweis.'); await Fa.say('Vuković, Marko. Geboren in Sarajevo.'); await A.m('Ja.');
           await Fa.say('Dann ist es ja nach Hause gekommen.'); A.sfx('thud'); A.give('karton'); A.setFlag('k2.f2.parcel'); await A.m('…'); await A.m('Ein Karton, in Packpapier, mit Paketband. Darunter, in meiner Schrift: SARAJEVO.'); A.save(); return 'bye'; }},
+      ...M.k2Extra('fadila',A,Fa),
       {t:'Danke.',bye:true}
     ]; }); return; }
   if (p==='k2_epi') return busTicket(A,Fa);

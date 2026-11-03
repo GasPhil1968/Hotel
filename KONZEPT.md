@@ -2,7 +2,7 @@
 ### Konzept für ein Point-and-Click-Adventure nach dem Vorbild der Blackwell-Reihe
 
 > Arbeitstitel der Reihe: **MALA**. Kapitel 1: **„Split – Was das Meer behält“**.
-> Weitere Kapitel (Sarajevo, Mostar, Dubrovnik …) sind vorbereitet, kommen hier aber nicht vor.
+> Kapitel 2 (Sarajevo) ist umgesetzt: Entwurf in [KAPITEL2.md](KAPITEL2.md), Lösung in [LOESUNG2.md](LOESUNG2.md), Testbericht in [BERICHT_K2.md](BERICHT_K2.md). Weitere Kapitel (Mostar, Dubrovnik …) sind nur angedacht.
 > Der spielbare Prototyp dieses Kapitels liegt im Ordner `web/` (siehe `README.md`).
 
 ---

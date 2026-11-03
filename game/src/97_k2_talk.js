@@ -18,6 +18,13 @@ var X={
     o('xh3','Wie war Kovači früher?',true,async function(A){ await H.say('Wie heute, nur mit mehr Leuten. Die Kinder haben auf der Treppe Ball gespielt, und die Alten haben geschimpft und zugesehen.'); await A.wait(500); await H.say('Unten am Hang sind jetzt die weißen Steine. Da liegen viele, die ich gekannt habe. Ich grüße sie, wenn ich Brot hole.'); }),
     o('xh4','Kennen Sie Nada Delić?',ph(A,['k2_fin']),async function(A){ await H.say('Vom Sehen. Eine Frau mit einem Mantel, der ihr zu groß ist. Sie kommt einmal im Jahr zur Baščaršija und kauft Kerzen.'); await H.say('Im Januar. Immer im Januar.'); })
   ]; },
+  senada:function(A,S){ return [
+    o('xn1','Wie lange arbeiten Sie schon hier?',true,async function(A){ await S.say('Seit es den Kiosk gibt.'); await A.wait(400); await S.say('Davor gab es einen anderen Kiosk. Da war ich auch.'); }),
+    o('xn2','Was verkaufen Sie am meisten?',true,async function(A){ await S.say('Fahrscheine, Zigaretten, Zeitungen. In dieser Reihenfolge.'); await S.say('Früher kamen die Zeitungen zuerst. Heute lesen die Leute im Telefon und rauchen trotzdem.'); })
+  ]; },
+  fadila:function(A,Fa){ return [
+    o('xfa1','Wird hier viel verschickt?',true,async function(A){ await Fa.say('Pakete nach Deutschland, Pakete aus Deutschland. Kaffee hin, Schokolade her.'); await Fa.say('Dazwischen Briefe, die keiner mehr schreibt. Die kommen trotzdem an. Die sind schwerer.'); })
+  ]; },
   rade:function(A,R){ return [
     o('rf1','Wer fährt heute Nacht die letzte Drei?',ph(A,['k2_fin']),async function(A){ await R.say('Damir. 23:40 ab Ilidža, ganze Strecke. Er hat darum gebeten. Zum ersten Mal, dass einer um die letzte bittet.'); }),
     o('rf2','Wie wird das Wetter?',ph(A,['k2_fin']),async function(A){ await R.say('Schnee. Ich spüre es im Knie. Mein Knie ist zuverlässiger als der Wetterbericht und pünktlicher als die Eins.'); }),
@@ -26,7 +33,9 @@ var X={
     o('xr3','Haben Sie Familie?',!!A.G.seen['dlg:xr2'],async function(A){ await R.say('Eine Frau, die sagt, ich bin mit der Straßenbahn verheiratet. Zwei Töchter in Kanada. Ich schicke ihnen Fotos von Bahnen. Sie schicken mir Fotos von Schnee.'); })
   ]; },
   damir:function(A,D){ return [
-    o('xd1','Wie ist es, die Drei zu fahren?',true,async function(A){ await D.say('Laut. Die Kurve an der Skenderija quietscht, egal was man macht. Im Winter friert die Weiche, im Sommer kleben die Fahrgäste.'); await D.say('Und jeden Tag fährt man an allem vorbei. An allem. Man gewöhnt sich daran, oder man hört auf.'); })
+    o('xd1','Wie ist es, die Drei zu fahren?',true,async function(A){ await D.say('Laut. Die Kurve an der Skenderija quietscht, egal was man macht. Im Winter friert die Weiche, im Sommer kleben die Fahrgäste.'); await D.say('Und jeden Tag fährt man an allem vorbei. An allem. Man gewöhnt sich daran, oder man hört auf.'); }),
+    o('xd2','Wie lange fahren Sie schon die Drei?',true,async function(A){ await D.say('Elf Jahre. Davor die Eins, davor den Bus nach Ilidža, davor war ich jung.'); await D.say('Die Drei ist die beste Linie. Die einzige, die einmal durch alles fährt: Hochhäuser, Krieg, Österreich, Türken. In vierzig Minuten.'); }),
+    o('xd3','Was ist das Schwierigste an der Strecke?',!!A.G.seen['dlg:xd2'],async function(A){ await D.say('Die Kurve am Marijin Dvor. Und die Leute, die glauben, die Bahn hält für sie, weil sie winken.'); await D.say('Die Bahn hält an der Haltestelle. Wer winkt, steht falsch.'); })
   ]; },
   lejla:function(A,L){ return [
     o('xl1','Was spielst du auf der Geige?',true,async function(A){ await L.say('Bach, die Partita in d-Moll. Für Wien. Und Sevdah, wenn Oma zuhört. Dann tut sie so, als würde sie nicht zuhören.'); await L.say('Sie weint bei „Kad ja pođoh na Benbašu“. Jedes Mal. Und dann sagt sie, es ist der Zwiebelduft aus der Küche.'); }),
@@ -38,7 +47,9 @@ var X={
     o('xs2','(Lauter.) Wer gewinnt beim Domino?',true,async function(A){ await Sc.say('Ich. Immer. Ich spiele gegen mich selbst. Einer von uns gewinnt immer.'); })
   ]; },
   emina:function(A,E){ return [
-    o('xe1','Seit wann gibt es hier keinen Espresso?',true,async function(A){ await E.say('Seit es Espresso gibt.'); await A.wait(500); await E.say('Mein Vater hat gesagt: Kaffee, den man in einer Minute trinkt, hat man nicht verdient.'); })
+    o('xe1','Seit wann gibt es hier keinen Espresso?',true,async function(A){ await E.say('Seit es Espresso gibt.'); await A.wait(500); await E.say('Mein Vater hat gesagt: Kaffee, den man in einer Minute trinkt, hat man nicht verdient.'); }),
+    o('xe2','Wie lange gibt es die Kafana schon?',true,async function(A){ await E.say('Seit meinem Großvater. Neunzehnhundertdreißig. Die Tische sind älter als die Stadtverwaltung und haben mehr gesehen.'); await E.say('Im Krieg war sie zwei Wochen zu. Dann habe ich Kaffee aus Kichererbsen gekocht, und die Leute sind trotzdem gekommen.'); }),
+    o('xe3','Welche Lieder spielt Ihr Radio?',true,async function(A){ await E.say('Sevdah. Lieder, in denen jemand am Fenster wartet, und der andere kommt nicht.'); await E.say('Die Jungen sagen, das ist traurige Musik. Das ist keine traurige Musik. Das ist genaue Musik.'); })
   ]; },
   nedzad:function(A,N){ return [
     o('xn1','Wie lernt man Gravieren?',true,async function(A){ await N.say('Mit Schlägen auf die Finger. Mit dem eigenen Hammer. Mein Großvater hat gesagt: Wenn es nicht wehtut, hast du es nicht gelernt.'); await N.say('Zehn Jahre bis zur ersten Rose, die er nicht wieder weggeschliffen hat.'); }),
@@ -54,29 +65,35 @@ var X={
     o('xm2','Sie füttern die Tauben schon lange?',true,async function(A){ await Mi.say('Seit neunzehnhundertzweiundneunzig. Damals hatte ich selbst kein Brot. Ich habe ihnen trotzdem etwas gegeben. Einen Krümel. Damit noch irgendwer satt wird.'); })
   ]; },
   amra:function(A,Am){ return [
-    o('xa1','Was ist das Schwerste an der Restaurierung?',true,async function(A){ await Am.say('Die Farben. Wir haben Fotos von 1910, schwarzweiß. Wir wissen, wo ein Ornament war, aber nicht, ob es grün oder blau war.'); await Am.say('Dann fragen wir alte Leute. Jeder erinnert sich an eine andere Farbe. Am Ende malen wir das, woran sich die meisten erinnern.'); })
+    o('xa1','Was ist das Schwerste an der Restaurierung?',true,async function(A){ await Am.say('Die Farben. Wir haben Fotos von 1910, schwarzweiß. Wir wissen, wo ein Ornament war, aber nicht, ob es grün oder blau war.'); await Am.say('Dann fragen wir alte Leute. Jeder erinnert sich an eine andere Farbe. Am Ende malen wir das, woran sich die meisten erinnern.'); }),
+    o('xa2','Wo haben Sie so gut Deutsch gelernt?',true,async function(A){ await Am.say('In Wien. Sechs Jahre Kunstgeschichte und Restaurierung, und ein Jahr, bis ich verstanden habe, was die Leute in der Straßenbahn sagen.'); await Am.say('Wienerisch ist keine Sprache. Es ist eine Stimmung.'); })
   ]; },
   ilija:function(A,I){ return [
     o('xi1','Spielen Sie Schach?',true,async function(A){ await I.say('Jede Nacht. Gegen mich. Weiß bin ich, wenn ich gute Laune habe. Schwarz, wenn es regnet.'); var c=await A.choose([{t:'Ich spiele schlecht.',id:'bad'},{t:'Ich spiele mit Ihnen eine Partie.',id:'play'}],{title:'Ilija'});
-      if (c==='play'){ await I.say('Heute nicht. Heute ist Dienst.'); await A.wait(500); await I.say('Kommen Sie wieder, wenn hier eine Bibliothek ist. Dann habe ich Zeit.'); } else await I.say('Gut. Dann lügen Sie wenigstens nicht.'); })
+      if (c==='play'){ await I.say('Heute nicht. Heute ist Dienst.'); await A.wait(500); await I.say('Kommen Sie wieder, wenn hier eine Bibliothek ist. Dann habe ich Zeit.'); } else await I.say('Gut. Dann lügen Sie wenigstens nicht.'); }),
+    o('xi2','Ist es nachts unheimlich hier?',true,async function(A){ await I.say('Unheimlich? Ich war zwanzig Jahre Polizist. Unheimlich sind Menschen, nicht Häuser.'); await A.wait(500); await I.say('Aber manchmal riecht es nach Papier. Nach verbranntem. Dann trinke ich Kaffee und schaue nicht hin.'); })
   ]; },
   dragica:function(A,D){ return [
     o('xg1','Erinnern Sie sich an meine Eltern?',true,async function(A){ await D.say('Zoran hat jeden Sonntag das Auto gewaschen, einen roten Zastava, und ist nie damit gefahren. Jasna hat die beste Pita im Haus gemacht, und das sage ich, obwohl ich selbst Pita mache.'); await D.say('Wie geht es deiner Mutter? Schreibt sie?'); await A.m('Sie ruft an. Zu Weihnachten.'); await D.say('Zu Weihnachten. Na. Besser als nichts.'); }),
     o('xg2','Was macht der Kanarienvogel?',true,async function(A){ await D.say('Mali singt, wenn die Drei vorbeifährt. Nur dann. Ich glaube, er hält sie für eine sehr große Frau.'); })
   ]; },
   sehic:function(A,S){ return [
-    o('xse1','Warum geht der Aufzug nicht?',true,async function(A){ await S.say('Der Antrag auf Reparatur wurde im Oktober neunzehnhundertzweiundneunzig gestellt. Er ist noch in Bearbeitung.'); await S.say('Ich frage jedes Jahr nach. Schriftlich. Man muss Ordnung halten, auch wenn keiner antwortet.'); })
+    o('xse1','Warum geht der Aufzug nicht?',true,async function(A){ await S.say('Der Antrag auf Reparatur wurde im Oktober neunzehnhundertzweiundneunzig gestellt. Er ist noch in Bearbeitung.'); await S.say('Ich frage jedes Jahr nach. Schriftlich. Man muss Ordnung halten, auch wenn keiner antwortet.'); }),
+    o('xse2','Was ist mit dem Aufzug?',true,async function(A){ await S.say('Der Aufzug ist seit dem vierzehnten März außer Betrieb. Ich habe drei Anträge gestellt. Mit Durchschlag.'); await S.say('Die Antwort kam auch mit Durchschlag. Sie lautet: Nein.'); }),
+    o('xse3','Was macht der Hausrat eigentlich?',true,async function(A){ await S.say('Ordnung. Wer die Treppe putzt, wer den Müll trägt, wer zu laut ist. Jemand muss es aufschreiben.'); await S.say('Was niemand aufschreibt, ist nicht passiert. Das ist das Schlimmste, was einem Haus passieren kann.'); })
   ]; },
   mirza:function(A,Mz){ return [
     o('xz1','Was reparieren Sie gerade?',true,async function(A){ await Mz.say('Das Licht im Treppenhaus. Die Zeitschaltung gibt einem eine Minute für neun Stockwerke. Niemand schafft neun Stockwerke in einer Minute.'); await Mz.say('Ich mache zwei daraus. Šehić darf das nicht wissen.'); }),
     o('xz2','Geht die Arbeit mit der Hand?',!!A.G.seen['dlg:xz1'],async function(A){ await Mz.say('Acht Finger reichen für fast alles. Für Schrauben, für Kabel, für Kinder.'); await A.wait(500); await Mz.say('Nur nicht für Klavier. Ich wollte nie Klavier spielen.'); })
   ]; },
   selma:function(A,Se){ return [
-    o('xsl1','Wie heißt Ihr Kind?',true,async function(A){ await Se.say('Amar. Acht Monate. Er schläft nur, wenn der Kinderwagen fährt. Ich fahre ihn manchmal die ganze Nacht durch den Flur.'); await Se.say('Wie ein Kind, das Straßenbahn spielt. Das bin dann ich.'); })
+    o('xsl1','Wie heißt Ihr Kind?',true,async function(A){ await Se.say('Amar. Acht Monate. Er schläft nur, wenn der Kinderwagen fährt. Ich fahre ihn manchmal die ganze Nacht durch den Flur.'); await Se.say('Wie ein Kind, das Straßenbahn spielt. Das bin dann ich.'); }),
+    o('xsl2','Wie alt ist Amar?',true,async function(A){ await Se.say('Neun Monate. Er schläft nur, wenn man ihn trägt, und am liebsten auf der Treppe. Er hat den Aufzug nie fahren sehen.'); await Se.say('Vielleicht glaubt er, Häuser haben gar keine Aufzüge. Nur Treppen und Nachbarn.'); })
   ]; },
   nada:function(A,N){ return [
     o('xna1','Was hat Lana gern gemacht?',A.G.flags['k2.f2.lanaOpen'],async function(A){ await N.say('Gezeichnet. Immer. Auf Servietten, auf Zeitungen, auf meinen Einkaufszetteln. Ich habe Brot gekauft, auf dem eine Straßenbahn war.'); await N.say('Und gesungen. Falsch und laut. Sevdah, wie eine alte Frau. Sie war siebzehn und sang wie siebzig.'); }),
-    o('xna2','Haben Sie je daran gedacht, wegzuziehen?',A.G.flags['k2.f2.lanaOpen'],async function(A){ await N.say('Und wenn sie kommt? Und klingelt? Und ein Fremder macht auf?'); await A.wait(800); await N.say('Nein.'); })
+    o('xna2','Haben Sie je daran gedacht, wegzuziehen?',A.G.flags['k2.f2.lanaOpen'],async function(A){ await N.say('Und wenn sie kommt? Und klingelt? Und ein Fremder macht auf?'); await A.wait(800); await N.say('Nein.'); }),
+    o('xna3','Warum unterschreiben Sie nichts mehr?',true,async function(A){ await N.say('Ich war Sekretärin im Krankenhaus. Dreißig Jahre habe ich unterschrieben, dass Leute gekommen und gegangen sind.'); await A.wait(600); await N.say('Seit dreiundneunzig unterschreibe ich nichts mehr. Nicht einmal für die Post.'); })
   ]; }
 };
 M.k2Extra=function(id,A,h){ var f=X[id]; if (!f || M.chapterOf(A.G)!==2) return []; try{ return f(A,h); }catch(e){ console.error(e); return []; } };
@@ -177,11 +194,13 @@ wrapTalk('kafana','emina',['k2_s2'],async function(A,t0){ var E=A.npc('emina'); 
   {t:'Wie geht es Ihnen?',once:'es1',go:async function(A){ await E.say('Ich habe heute Nacht geschlafen. Zum ersten Mal seit … ich weiß es nicht.'); await E.say('Und ich habe von Ljubljana geträumt. Ich war nie in Ljubljana.'); }},
   {t:'Tragen Sie das Armband?',once:'es2',go:async function(A){ await E.say('Unter dem Ärmel. Lejla sieht es nicht. Lejla sieht alles.'); await A.wait(500); await E.say('Es ist kalt, wenn ich es anziehe, und warm, wenn ich es ablege. Das ist falsch herum. Es stört mich nicht.'); }},
   {t:'Werden Sie Lejla die Briefe zeigen?',once:'es3',go:async function(A){ await E.say('Wenn sie aus Wien zurückkommt. Wenn sie selbst einmal auf jemanden gewartet hat.'); await E.say('Vorher versteht man es nicht. Vorher ist es eine Geschichte.'); }},
+  ...M.k2Extra('emina',A,E),
   {t:'Und sonst?',go:function(A){ return t0(A); }},
   {t:'Einen Kaffee, bitte.',bye:true,go:async function(A){ await E.anim('pour'); A.sfx('cup'); await E.say('Heute auf das Haus. Morgen nicht mehr.'); }} ]; }); });
 wrapTalk('kafana','lejla',['k2_s2'],async function(A,t0){ var L=A.npc('lejla'); await A.menuLoop(function(){ return [
   {t:'Hast du den Brief abgeschickt?',once:'ls1',go:async function(A){ await L.say('Gestern! Mit Ihren Kommas. Ich habe ihn dreimal geküsst, bevor ich ihn eingeworfen habe. Das ist kein Deutsch, das ist Aberglaube.'); }},
   {t:'Was ist mit deiner Großmutter?',once:'ls2',go:async function(A){ await L.say('Sie ist komisch. Sie summt. Sie hat mir heute früh die Haare geflochten, wie früher, als ich klein war.'); await L.say('Und sie hat gesagt: Wenn du nach Wien gehst, schreib. Jede Woche. Auch wenn nichts passiert.'); }},
+  ...M.k2Extra('lejla',A,L),
   {t:'Und sonst?',go:function(A){ return t0(A); }},
   {t:'Bis bald, Lejla.',bye:true,go:async function(A){ await L.say('Ciao, Übersetzer. Wenn ich berühmt bin, übersetzen Sie meine Interviews.'); }} ]; }); });
 var HX2=M.ROOMS.haustor; if (HX2){ var se=HX2.byId.selma, sv=se.vis; se.vis=function(S,G){ return (sv&&sv(S,G)) || (G.phase==='k2_fin' && !!G.flags['k2.s3.done']); };
@@ -207,7 +226,7 @@ var IT=M.ITEMS, MI={
   kurrent:async function(A){ await A.g('Die Buchstaben sehen aus wie Wäsche auf der Leine, bei Wind.'); await A.g('Ich kann sie nicht lesen. Du auch nicht. Aber die Tafel kann es.'); },
   pass:async function(A){ await A.g('Ein Zettel, der Türen aufmacht. Früher brauchte man so einen, um über eine Brücke zu gehen.'); await A.g('Jetzt braucht man ihn für ein Haus, das gebrannt hat.'); },
   rilke:async function(A){ await A.g('Das Buch hat den Brand überlebt. Die Blätter darin nicht ganz.'); await A.wait(600); await A.g('Wer sagt, dass er etwas zurückbringt, kommt wieder. Sogar dann.'); },
-  key_shelter:async function(A){ await A.g('Šehić will ihn heute zurück. Er hat es dir viermal gesagt.'); await A.g('Hausmeister sagen alles viermal. Damit es auch der vierte Stock hört.'); },
+  key_shelter:async function(A){ await A.g('Šehić will ihn heute zurück. Er hat es dir viermal gesagt.'); await A.g('Leute vom Hausrat sagen alles viermal. Damit es auch der vierte Stock hört.'); },
   deskkey:async function(A){ await A.g('Unter das Pult geklebt, damit ihn kein Kind findet.'); await A.wait(500); await A.g('Und dann hat ihn siebzehn Jahre lang kein Kind gesucht.'); },
   dnevnik:async function(A){ await A.g('Mit Bleistift geschrieben. Bleistift kann man radieren.'); await A.wait(700); await A.g('Sie hat keinen einzigen Namen radiert.'); },
   svjedocanstva:async function(A){ await A.g('Zeugnisse aus einem Keller. Mit Stempel und Unterschrift, wie in einer richtigen Schule.'); await A.m('Es war eine richtige Schule.'); await A.g('Ja. Der Keller war nur das Haus drumherum.'); },

@@ -123,6 +123,8 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 
 ## Malas Spur (ab dem zweiten Tag, in beliebiger Reihenfolge mit Fall 2)
 
+Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar erst im dritten Akt. Spätestens für „Lana Delić?“ im dritten Fall braucht man ihr Ergebnis („Neunter Stock“). Beide Reihenfolgen sind im automatischen Test durchgespielt.
+
 1. **[M]** Rade das Foto zeigen. Er erzählt:
    - die alte Haltestelle;
    - die **Uhr auf dem Siebener** (Haus 7, B-Phase);
@@ -280,7 +282,8 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 
 **Die letzte Fahrt der Drei**
 - **[M]** In Alipašino Polje Mala um ihren **Fahrschein** bitten.
-- **[M]** An der Haltestelle einsteigen und **beide Fahrscheine** (den alten und Malas) auf den Entwerter ziehen.
+- **[M]** An der Haltestelle einsteigen. Bevor die Türen schließen, erkennt **Alija** seine gelochten Fahrscheine, begreift, welches Jahr es ist, und macht seinen Kiosk zu (Erkenntnis, ohne Zutun).
+- **[M]** In der Bahn **beide Fahrscheine** (den alten und Malas) auf den Entwerter ziehen.
 - Fahrt durch die Stadt. Das Geständnis hat keine falsche Antwort.
 - **[M]** In der Baščaršija aussteigen und die Bank benutzen: Mala sagt ihren Namen, der letzte Splitter (die Brücke), die Leine zeigt nach Südwesten.
 
@@ -306,3 +309,9 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - Die Anrufe bei Ana und Petar.
 - Die Fotos auf Hajras Wand.
 - Dragica das ganze Foto zeigen: Sie hat es gemacht.
+- Gegenstände auf Mala ziehen: Zu fast jedem Ding im Inventar hat sie etwas zu sagen.
+- Am ersten Regenmorgen in der Pension ruft Vesna aus Split an (die Antwort ist frei).
+- Jede Figur hat neben den Fallgesprächen eigene Themen: Fikret und Fußball, Hajras Küche, Rades Fahrgäste, Šaćirs Domino, Milkas Tauben, Amras Restaurierung und andere.
+- Mala über die Stadt, Split, Ruža und den Bus fragen. Mit ihr auch die Geister ansprechen, solange sie noch da sind.
+- Nach dem dritten Fall: Damir an der Baščaršija, Selma und Mirza im Hausflur erzählen, was die Zeugnisse bewirkt haben.
+- Im Epilog noch einmal in die Pension: Hajra gibt etwas „für zwei“ mit.

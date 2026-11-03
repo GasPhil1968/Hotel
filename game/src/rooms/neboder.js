@@ -3,7 +3,7 @@
 'use strict';
 var P=M.P;
 function ph(G){ return G.phase; }
-function alijaHere(G){ return ['k2_s2','k2_s3','k2_s3_n','k2_fin'].indexOf(G.phase)>=0 || (G.phase==='k2_fin_n' && !G.flags['k2.f2.boarded']); }
+function alijaHere(G){ return ['k2_s2','k2_s3','k2_s3_n','k2_fin'].indexOf(G.phase)>=0 || (G.phase==='k2_fin_n' && !G.flags['k2.f2.boarded'] && !G.flags['k2.f2.alija']); }
 // ---------------------------------------------------------------- Alija, der Kiosk
 async function talkAlija(A){ var Al=A.npc('alija'); A.found('alija');
   if (A.G.phase==='k2_fin_n') return alijaLast(A,Al);
@@ -21,7 +21,19 @@ async function alijaLast(A,Al){ if (A.first('alLast')){ await Al.say('Ihr fahrt?
 async function boardNight(A){ if (A.G.phase!=='k2_fin_n') return A.m(A.G.phase==='k2_epi'?'Heute fahre ich mit dem Bus. Von dort.':'Die Drei. Nicht jetzt.');
   if (!A.has('ticket_l')){ await A.g('Warte. Du brauchst meinen Fahrschein.'); return; }
   if (!A.S.tramIn){ A.set('tramIn',true); A.sfx('tramBell'); A.rebuild(); await A.wait(700); await A.narrate('Die Drei kommt durch den Schnee, gelbes Licht hinter beschlagenen Scheiben. Leer bis auf den Fahrer.'); await A.wait(400); }
+  if (!A.flag('k2.f2.alija')) await alijaRealize(A);
   A.setFlag('k2.f2.boarded'); A.sfx('tramDoor'); await A.goto('tramvaj',{noEnter:false}); }
+// Alija erkennt es, als die erste Drei mit seinen gelochten Fahrscheinen kommt
+async function alijaRealize(A){ var Al=A.npc('alija'); if (!Al || !Al.actor) return; A.setFlag('k2.f2.alija'); A.found('alija');
+  await A.wait(500); await Al.say('Meine Sterne.'); await A.wait(600); await A.g('Ihre Fahrscheine, Čika Alija. Die vom November.');
+  await Al.say('Die habe ich gelocht. Für dich, Kleine. Für später.'); await A.g('Jetzt ist später.');
+  await Al.say('Später …'); await A.wait(700); await Al.say('Welches Jahr haben wir denn?'); await A.m('Zweitausendelf.');
+  Al.agitate(3600); await A.wait(900); await Al.say('Zweitausendelf. Und ich stehe hier und halte die Zeitung von gestern hin.');
+  await A.realize('alija');
+  await A.wait(600); await Al.say('Keiner hat mehr bei mir gekauft. Alle sind vorbeigegangen, als stünde hier nichts.'); await A.wait(700); await Al.say('Hier stand ja auch nichts.');
+  await A.wait(800); await Al.say('Dann mache ich jetzt zu. Gute Fahrt, Kinder.'); A.sfx('gate');
+  if (Al.actor) Al.actor.fadeOut=M.E.gt(); await A.narrate('Er zieht einen Rollladen herunter, den es nicht mehr gibt. Dann ist die Betonplatte leer.'); A.despawn('alija');
+  await A.wait(500); await A.g('Er hat mir die Fahrscheine verkauft, kurz bevor ich wegmusste. Er hat „Gute Fahrt“ gesagt. Genau wie eben.'); A.save(); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Zur Stadt',exit:{to:'map'},look:'Die Straße an den Hochhäusern entlang, Richtung Zentrum.',canExit:async function(A){ if (A.G.phase==='k2_fin_n'){ await A.g('Nicht weggehen. Die Drei kommt hierher.'); return false; } return true; }},

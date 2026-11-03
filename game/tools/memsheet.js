@@ -1,14 +1,16 @@
-// Rendert alle Erinnerungsbilder (M.mem) mit ihrer Färbung auf ein Blatt: node game/tools/memsheet.js out.png
+// Rendert alle Erinnerungsbilder (M.mem) mit ihrer Färbung auf ein Blatt: node game/tools/memsheet.js out.png [k2] [web/index.html]
+// Mit „k2“ die Bilder von Kapitel 2 (Färbung so, wie die Szenen sie aufrufen).
 const { chromium } = require('playwright');
 const path = require('path');
 (async () => {
   const out = process.argv[2] || path.join(__dirname, 'memsheet.png');
   const browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 1400, height: 1000 } });
   page.on('pageerror', e => console.log('PAGEERROR', e.message));
-  await page.goto('file://' + path.join(__dirname, '..', '..', 'web', 'index.html'));
+  const K2 = process.argv[3] === 'k2'; await page.goto('file://' + (process.argv[4] ? path.resolve(process.argv[4]) : path.join(__dirname, '..', '..', 'web', 'index.html')));
   await page.waitForFunction(() => window.M && M.mem && M.drawPose, null, { timeout: 15000 });
-  const dims = await page.evaluate(() => {
-    const tints = { pier: 'memory', storm: 'ghost', letter: 'ghost', kiosk: 'ghost', guitarcase: 'ghost', fall: 'ghost', bus: 'memory' };
+  const dims = await page.evaluate((K2) => {
+    let tints = { pier: 'memory', storm: 'ghost', letter: 'ghost', kiosk: 'ghost', guitarcase: 'ghost', fall: 'ghost', bus: 'memory' };
+    if (K2) { tints = {}; Object.keys(M.mem).filter(k => /^k2_/.test(k)).sort().forEach(k => { tints[k] = (M.K2_MEM_TINT && M.K2_MEM_TINT[k]) || 'memory'; }); }
     const ids = Object.keys(tints), w = 232, h = 104, S = 3, cols = 2, pad = 6;
     const W = cols * (w + pad) + pad, H = Math.ceil(ids.length / cols) * (h + pad) + pad;
     const sheet = new M.Buf(W, H, M.P.s2);
@@ -22,7 +24,7 @@ const path = require('path');
     for (let i = 0; i < W * H; i++) { const q = M.RGB[sheet.d[i]] || [255, 0, 255]; img.data[i * 4] = q[0]; img.data[i * 4 + 1] = q[1]; img.data[i * 4 + 2] = q[2]; img.data[i * 4 + 3] = 255; }
     const t = document.createElement('canvas'); t.width = W; t.height = H; t.getContext('2d').putImageData(img, 0, 0); x.imageSmoothingEnabled = false; x.drawImage(t, 0, 0, W * S, H * S);
     return [W * S, H * S];
-  });
+  }, K2);
   await page.setViewportSize({ width: dims[0], height: dims[1] });
   await page.screenshot({ path: out, clip: { x: 0, y: 0, width: dims[0], height: dims[1] } });
   await browser.close(); console.log('ok', out, dims);

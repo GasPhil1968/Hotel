@@ -1,19 +1,24 @@
-# MALA – Kapitel 1: Split
+# MALA – Kapitel 1: Split · Kapitel 2: Sarajevo
 
 Ein ernstes Point-and-Click-Adventure nach dem Vorbild der Blackwell-Reihe, im technischen und ästhetischen Stil des beigelegten „Twenty to Four“ (VGA-Pixelgrafik, alles im Code gemalt und vertont), aber komplett eigenständig.
 
 Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterkommen. Mala, ein Geist in Kleidung der frühen Neunziger, kann sie finden. Drei Fälle im November 2011: eine Mutter, die seit 1984 auf das Boot um sieben wartet; ein Junge, der seit 1999 auf die Nachtfähre nach Ancona wartet; ein Nachtportier, dem die Worte fehlen.
 
+**Kapitel 2: Sarajevo.** Marko fährt mit Mala in die Stadt seiner Kindheit. Drei neue Fälle: ein junger Mann, der seit 1972 unter dem Uhrturm wartet; ein Professor, der ein Buch aus der brennenden Nationalbibliothek zurückgeben will; eine Lehrerin, die im Schutzraum eines Hochhauses noch immer Schule hält. Dazu Malas eigene Geschichte. Kapitel 2 ist nach dem Ende von Split freigeschaltet oder lässt sich nach Rückfrage direkt beginnen.
+
 ## Inhalt
 
 | Pfad | Was |
 |---|---|
+| [`KAPITEL2.md`](KAPITEL2.md) | Entwurf von Kapitel 2: Umfang, Kontinuität, Phasen, Figuren, 18 Schauplätze, alle Rätselketten, Abhängigkeitsgraph, Audio |
+| [`LOESUNG2.md`](LOESUNG2.md) | Komplettlösung von Kapitel 2 |
+| [`BERICHT_K2.md`](BERICHT_K2.md) | Entwicklungs- und Testbericht von Kapitel 2 (was geprüft wurde und was nicht) |
 | [`KONZEPT.md`](KONZEPT.md) | Das vollständige Konzept: Analyse des Originals, Umsetzung der Blackwell-Mechanik, Story, Figuren, 19 Orte, die drei Fälle mit allen Rätseln und Lösungen, Spielzeit, Malas Geheimnis |
 | `web/` | **Das spielbare Spiel** (eine einzige `index.html` + Offline-Service-Worker + Icons). Ordner bei Netlify hochladen oder `index.html` im Browser öffnen. Siehe `web/LIESMICH.txt` |
-| `game/src/` | Quelltext: Engine (`00`–`06`, `99`), Porträts (`07`, `portraits/`), Tagesabläufe der Nebenfiguren (`08`), Gegenstände & Notizen (`10`, `11`), Szenerie (`20`), Räume (`rooms/` Logik, `rooms/art/` Kunst, `rooms/limbo.js` die Zwischenwelt), Story (`90`–`93`) |
+| `game/src/` | Quelltext: Engine (`00`–`06`, `99`), Porträts (`07`, `portraits/`), Tagesabläufe der Nebenfiguren (`08`), Gegenstände & Notizen (`10`, `11`), Szenerie (`20`), Räume (`rooms/` Logik, `rooms/art/` Kunst, `rooms/limbo.js` die Zwischenwelt), Story (`90`–`93`); Kapitel 2: Gegenstände, Notizen, Figuren, Hinweise, Klang (`12`–`16`), Story, Mala, Zwischenwelt, Gespräche, Erinnerungsbilder (`96`–`98`) |
 | `game/build.js` | Baut `web/index.html` aus den Quellen: `node game/build.js` |
-| `game/tools/` | Entwicklungswerkzeuge: `walkthrough.js` (automatischer Komplett-Durchlauf), `roomshot.js` (Raum-Screenshots), `contact.js` (alle Räume und Tageszeiten auf einem Blatt), `memsheet.js` (Erinnerungsbilder), `uishots.js` (Oberfläche), `portraitsheet.js` (Porträts), `sheet.js` (Figuren-Modellblatt), `icons.js` |
-| `game/ART_API.md`, `game/ROOM_SPECS.md`, `game/PORTRAIT_API.md` | Mal-Verträge für Räume und Porträts, Raumvorgaben |
+| `game/tools/` | Entwicklungswerkzeuge: `walkthrough.js` (automatischer Komplett-Durchlauf), `roomshot.js` (Raum-Screenshots), `contact.js` (alle Räume und Tageszeiten auf einem Blatt), `memsheet.js` (Erinnerungsbilder), `uishots.js` (Oberfläche), `portraitsheet.js` (Porträts), `sheet.js` (Figuren-Modellblatt), `icons.js`; für Kapitel 2: `walkthrough2.js` (Durchlauf, auch in anderer Reihenfolge), `k2tests.js` (Kapitelwahl, Übernahme, Spielstände, falsche Reihenfolgen, Hinweise), `devicetest.js` (iPad-Ansicht mit Touch, offline, Bildzeit) |
+| `game/ART_API.md`, `game/ROOM_SPECS.md`, `game/ROOM_SPECS2.md`, `game/CAST2.md`, `game/PORTRAIT_API.md` | Mal-Verträge für Räume und Porträts, Raumvorgaben |
 
 ## Spielen
 
@@ -23,12 +28,15 @@ node game/build.js --artifact out/mala.html   # zusätzlich eine Fassung für cl
 open web/index.html         # oder bei Netlify hochladen
 ```
 
-Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen · unten links = zwischen Marko und Mala wechseln · „Notizen“ = Notizbuch (zwei Einträge antippen = verbinden; im Menü auf „Nachdenken“ umschaltbar) · „Zeigen“, „Menü“. Das Spiel gibt keine Lösungshinweise.
+Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen · unten links = zwischen Marko und Mala wechseln · „Notizen“ = Notizbuch (zwei Einträge antippen = verbinden; im Menü auf „Nachdenken“ umschaltbar) · „Zeigen“, „Menü“. Kapitel 1 gibt keine Lösungshinweise. In Kapitel 2 gibt es sie auf Wunsch unter „Menü → Hinweis …“, in drei Stufen.
 
 ## Prüfen
 
 ```
-node game/tools/walkthrough.js [screenshot-ordner]   # spielt das ganze Kapitel automatisch durch
+node game/tools/walkthrough.js [screenshot-ordner]   # spielt Kapitel 1 automatisch durch
+MALA_DUMPALL=/tmp/d node game/tools/walkthrough2.js # spielt Kapitel 2 durch (MALA_ORDER=alt: andere Reihenfolge)
+node game/tools/k2tests.js /tmp/d                   # Einzeltests für Kapitel 2
+node game/tools/devicetest.js                       # iPad-Ansicht, Touch, offline, Bildzeit
 node game/tools/roomshot.js --room riva --phase c1 --cam 320 --out riva.png [--debug] [--who mala]
 ```
 
