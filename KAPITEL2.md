@@ -2,6 +2,8 @@
 
 Entwurf, Handlung und Rätselarchitektur. Dieses Dokument ist die verbindliche Grundlage für Kunst, Skripte und Tests. Es verrät alles; die Lösung für Spieler steht in `LOESUNG2.md`.
 
+> **Umsetzung:** Kapitel 2 ist nach diesem Entwurf gebaut. Die gemessenen Werte (Zeilen, Optionen, Schlüsse, Hinweise), alle ausgeführten Tests und die Abweichungen vom Entwurf stehen in [`BERICHT_K2.md`](BERICHT_K2.md). Zwei Ergänzungen gegenüber diesem Entwurf: Auch der Nebengeist Alija hat eine Erkenntnisszene (beim Einsteigen in die letzte Drei), und die Hinweise umfassen 50 Themen statt der hier geplanten.
+
 ---
 
 ## 0. Bestandsaufnahme: Split gemessen, Ziele für Sarajevo
@@ -120,7 +122,7 @@ Neues Wetter `fog` (Nebelschleier, Kohlerauch, gedämpfte Lichter) und `snow` (e
 | **Tomaž Zupan** | 2009, Ljubljana, mit 58 | unter dem Uhrturm (Sahat-kula) | an der Verabredung vom 14.11.1972 „wenn die Kula sieben schlägt“ | für ihn ist es der 14.11.1972, er ist 21 und muss um halb zwölf in der Kaserne sein |
 | **Prof. Ivan Barać** | 2003, mit 82 | Antiquariat und Vijećnica | an einem Bibliotheksbuch, das er 1992 auslieh und nie zurückgeben konnte | für ihn läuft die Frist am 7.9.1992 ab |
 | **Zora Marić** | 1998, mit 61 | Schutzraum im Keller von Haus 7 | an den Namen der Kinder ihrer Kellerschule und an einem Versprechen: Zeugnisse mit Stempel | für sie ist Januar 1994, draußen wird geschossen |
-| **Alija** (Nebengeist) | 1995 | Stelle des alten Kiosks an der Haltestelle Alipašino Polje | an seinem Kiosk | verkauft weiter Fahrscheine |
+| **Alija** (Nebengeist) | 1995 | Stelle des alten Kiosks an der Haltestelle Alipašino Polje | an seinem Kiosk | verkauft weiter Fahrscheine; begreift es, als die letzte Drei mit seinen gelochten Fahrscheinen kommt |
 
 Aussehen der Geister (lesbar, siehe Geisterdarstellung): Tomaž braune Cordjacke, Hemd mit breitem Kragen, Koteletten, schulterlanges Haar, kleines Schmuckkästchen; Ivan Tweedmantel, Schal, runde Brille, weißes Haar, ein Buch unter dem Arm; Zora grauer Knoten, Strickjacke, Brille an Kette, Kreide an den Fingern, Handglocke; Alija Schiebermütze, Weste, Zeitungsbündel.
 

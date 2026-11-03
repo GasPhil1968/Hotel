@@ -9,10 +9,10 @@ Dieser Bericht trennt streng zwischen dem, was **tatsächlich ausgeführt und ge
 ## 1. Ergebnis in Kürze
 
 - Kapitel 2 ist von der Ankunft am Busbahnhof bis zur Abfahrt nach Mostar **vollständig spielbar**. Es gibt kein Game Over und nach allen ausgeführten Prüfungen keine Sackgasse.
-- **Drei Geisterfälle:** Tomaž unter der Uhr (Fall 1), Professor Ivan Barać und das Bibliotheksbuch (Fall 2), die Lehrerin Zora im Schutzraum (Fall 3). Dazu kommt **Malas eigene Geschichte** in drei Teilen mit dem Kioskgeist Alija, einem Zwischenspiel, dem Finale und dem Epilog. Jeder Geist hat eine eigene Erkenntnisszene und einen eigenen Übergang in der Zwischenwelt.
+- **Drei Geisterfälle:** Tomaž unter der Uhr (Fall 1), Professor Ivan Barać und das Bibliotheksbuch (Fall 2), die Lehrerin Zora im Schutzraum (Fall 3). Dazu kommt **Malas eigene Geschichte** in drei Teilen mit dem Kioskgeist Alija, einem Zwischenspiel, dem Finale und dem Epilog. Alle vier Geister haben eine eigene Erkenntnisszene. Die drei Fallgeister gehen danach mit Mala durch die Zwischenwelt, jeder mit einem eigenen Übergang.
 - **18 neue Schauplätze**, alle gemalt, dazu der Stadtplan von Sarajevo. **26 neue Figuren** mit Rig und Animationen, **22 neue Porträts**.
 - **Kapitelwahl** im Titelmenü. Kapitel 2 ist nach dem Ende von Split freigeschaltet und lässt sich nach einer Rückfrage auch direkt beginnen. Nach dem Abspann von Split heißt es „Weiter mit Kapitel 2“. Antworten und Erinnerungen aus Split werden übernommen. Alte Spielstände laufen unverändert weiter, das Spiel funktioniert weiterhin offline.
-- **Umfang gegenüber Split** (gleiche Zählweise für beide Kapitel): Dialog- und Erzählzeilen **+52,6 %**, Gesprächsoptionen **+50,2 %**, Schlussfolgerungen im Notizbuch **9 → 24**, Rätsel-Overlays **1 → 7**, Erinnerungsszenen **8 → 23**. Hinzu kommen **50 Hinweisthemen mit je drei Stufen**, nur auf Wunsch.
+- **Umfang gegenüber Split** (gleiche Zählweise für beide Kapitel): Dialog- und Erzählzeilen **+53,6 %**, Gesprächsoptionen **+50,2 %**, Schlussfolgerungen im Notizbuch **9 → 24**, Rätsel-Overlays **1 → 7**, Erinnerungsszenen **8 → 23**. Hinzu kommen **50 Hinweisthemen mit je drei Stufen**, nur auf Wunsch.
 - **Automatisch geprüft** (Abschnitt 5): zwei vollständige Durchläufe von Kapitel 2 in zwei Reihenfolgen, ein vollständiger Durchlauf von Kapitel 1, 31 Einzeltests, 19 Gerätetests (iPad-Ansicht mit Touch, offline, Bildzeit) und Bilder aller Räume.
 - **Nicht geprüft:** ein echtes iPad, Safari/WebKit, der Klang mit dem Ohr und die Spielzeit mit Menschen (Abschnitt 7).
 
@@ -40,7 +40,7 @@ Dieser Bericht trennt streng zwischen dem, was **tatsächlich ausgeführt und ge
 | Zwischenwelt | drei neue Übergänge (Uhr, Ausleihzettel, Glocke) | `97_k2_limbo.js` |
 | Mala | Gespräche, Bemerkungen zu jedem Ort, Reaktionen auf Gegenstände, Erinnerungsfolge im Finale | `97_k2_mala.js`, `97_k2_talk.js` |
 | Erinnerungsbilder | 22 gemalte Bilder für die Nachhall- und Erinnerungsszenen | `97_k2_mem_a.js`, `97_k2_mem_b.js` |
-| Musik und Klang | 12 eigene Stücke (u. a. Sarajevo, Kafana, Ermittlung, Geist, Erkenntnis, Erinnerung, Mala, Nacht, Zwischenwelt, Finale, Bus, Abspann), 18 Klangkulissen, rund 30 neue Geräusche (Straßenbahn, Kupferhämmern, Kula, Glocken, Gebetsruf aus der Ferne, Domino …) | `16_k2_audio.js` |
+| Musik und Klang | 12 eigene Stücke (u. a. Sarajevo, Kafana, Ermittlung, Geist, Erkenntnis, Erinnerung, Mala, Nacht, Zwischenwelt, Finale, Bus, Abspann), 18 Klangkulissen, 27 neue Geräusche und 14 Klangereignisse für die Kulissen (Straßenbahn, Kupferhämmern, Kula, Glocken, Gebetsruf aus der Ferne, Domino …), 5 neue Instrumente (Saz, Klarinette, Akkordeon, Glockenspiel, Cello) | `16_k2_audio.js` |
 | Werkzeuge | Durchlauf Kapitel 2 (zwei Reihenfolgen), Einzeltests, Gerätetest, Syntaxprüfung beim Bauen | `game/tools/walkthrough2.js`, `k2tests.js`, `devicetest.js`, `game/build.js` |
 
 ## 4. Umfang, gemessen
@@ -49,11 +49,11 @@ Gezählt mit demselben Skript für beide Kapitel. Es zählt im Quelltext Sprecha
 
 | Größe | Kapitel 1 (Split) | Kapitel 2 (Sarajevo) | Veränderung |
 |---|---:|---:|---:|
-| Dialog- und Erzählzeilen | 1323 | **2019** | **+52,6 %** |
-| davon Figuren | 571 | 875 | +53 % |
-| davon Marko | 470 | 610 | +30 % |
-| davon Mala | 249 | 434 | +74 % |
-| davon Erzähler, Telefon, Stimme | 33 | 100 | |
+| Dialog- und Erzählzeilen | 1323 | **2032** | **+53,6 %** |
+| davon Figuren | 571 | 883 | +55 % |
+| davon Marko | 470 | 611 | +30 % |
+| davon Mala | 249 | 437 | +76 % |
+| davon Erzähler, Telefon, Stimme | 33 | 101 | |
 | Beschreibungen („Schau an“) | 444 | 564 | +27 % |
 | Gesprächsoptionen | 205 | **308** | **+50,2 %** |
 | Hotspots | 240 | 280 | +17 % |
@@ -61,10 +61,10 @@ Gezählt mit demselben Skript für beide Kapitel. Es zählt im Quelltext Sprecha
 | mehrstufige Rätselketten (laut Entwurf) | 12 | 24 | ×2 |
 | Rätsel-Overlays | 1 | 7 | |
 | Erinnerungs- und Nachhallszenen (Aufrufe) | 8 | 23 | |
-| gemalte Erinnerungsbilder | 7 | {{MEMK2}} | |
+| gemalte Erinnerungsbilder | 7 | 22 | |
 | Dokumente (Briefe, Postkarten, Register …) | 16 | 17 | |
 | Hinweise | 0 | 50 × 3 Stufen | |
-| Wörter in Texten | 29 239 | 40 068 | +37 % |
+| Wörter in Texten | 29 239 | 40 194 | +37 % |
 | Schauplätze | 18 | 18 | |
 | Musikstücke | 11 | 12 | |
 | Klangkulissen | 21 | 18 | |
@@ -75,11 +75,71 @@ Die Wortzahl von Kapitel 2 enthält auch die Hinweistexte. Die Zeilenzahl enthä
 
 Alle Prüfungen liefen automatisch in Chromium (Playwright), headless, in diesem Container. Die Ergebnisse unten stammen vom **letzten Bau** (`web/index.html`, mit allen Räumen und Erinnerungsbildern).
 
-{{TESTS}}
+### 5.1 Vollständige Durchläufe
+
+Die Durchläufe spielen das Spiel über die echte Oberfläche: Verben auf Hotspots, Gesprächsoptionen, Notizen verbinden, Rätsel-Overlays lösen, Räume wechseln. Nach jedem Schritt prüfen sie konkret, ob die erwartete Notiz, der Gegenstand, das Flag, die Phase oder der Raum da ist. Der Spieltakt ist die Spieluhr in Normaltempo (der Test läuft 25-fach beschleunigt). Er enthält auch die kurzen Wartezeiten des Testtreibers.
+
+| Prüfung | Ergebnis |
+|---|---|
+| Kapitel 2, Musterlösung (`walkthrough2.js`) | **bestanden**: 67 Prüfschritte von der Ankunft bis zum Abspann, keine JS-Fehler, das Ende von Kapitel 2 ist gespeichert. Alle vier Geister erkennen ihren Tod (Tomaž, Ivan, Zora, Alija). Spieltakt 95,5 min. |
+| Kapitel 2, andere Reihenfolge (`MALA_ORDER=alt`) | **bestanden**: Fall 2 und das Zwischenspiel kommen vor Malas Spur, die erst im dritten Akt folgt. 68 Prüfschritte, keine JS-Fehler. Spieltakt 95,2 min. |
+| Kapitel 1, Musterlösung (`walkthrough.js`) | **bestanden**: 53 Prüfschritte bis zum Abspann, keine JS-Fehler. Kapitel 1 funktioniert also weiterhin. Spieltakt 64,4 min. |
+
+### 5.2 Einzeltests (`k2tests.js`): 31 von 31 bestanden
+
+Die Tests laden Zwischenstände aus dem Durchlauf und prüfen gezielt:
+
+- **Kapitelwahl und Übernahme (13):**
+  - Ohne Split-Ende ist Kapitel 2 gesperrt, es kommt eine Rückfrage, und Kapitel 2 beginnt am Busbahnhof.
+  - Ohne Split gelten die Vorgaben; das Register aus Split ist immer da.
+  - Nach dem Ende von Split ist Kapitel 2 frei. Die Antworten („Meer“, „niemand mehr“) und die Notizen werden übernommen.
+  - Nach dem Abspann heißt es „Weiter mit Kapitel 2“.
+  - Kapitel 1 startet wie bisher, der mitgelieferte Spielstand aus Split lädt, ein alter Stand gilt als Kapitel 1, und Kapitel 1 hat keine Hinweise.
+- **Spielstände (3):** Laden mitten in Fall 1, dann die Seite neu laden: Der Stand ist identisch. Der Speicherplatz zeigt „Sarajevo: …“.
+- **Falsche Wege (13):**
+  - Emina in falscher Reihenfolge: Sie wendet sich ab, danach klappt es mit der richtigen Reihenfolge.
+  - Vor dem Datum gibt es keinen Sonnenuntergang.
+  - Mala kann nichts nehmen.
+  - Falsche Verbindungen bekommen eine eigene Antwort, auch beim zweiten Versuch.
+  - Hinweise sind offen und zeigen die erste Stufe.
+  - Die Klingel ohne Mala unten bringt keinen Fortschritt und lässt sich wiederholen.
+  - Der Karton öffnet sich erst mit den nötigen Schlüssen.
+  - Tomaž mit falschem Argument bleibt unruhig, mit den richtigen schlägt die Kula sieben.
+- **Hinweisabdeckung (2):**
+  - Jeder Hinweis hat drei Stufen.
+  - **An 66 von 67 Zwischenständen ist mindestens ein Hinweis offen**, nur am Abspann nicht. Diese Prüfung ist neu. Beim ersten Lauf fand sie zwölf Stellen ohne Hinweis, die ich mit 15 neuen Themen geschlossen habe.
+  - 49 der 50 Themen kommen im Durchlauf vor. Das fehlende („Was geschah im Januar 1994?“) öffnet sich nur für einen Moment.
+
+### 5.3 Gerätetest (`devicetest.js`): 19 von 19 bestanden
+
+Profil „iPad (gen 7) landscape“, 1080 × 810, Touch. Das Spiel läuft dabei über einen lokalen Webserver, damit der Service Worker greift.
+
+- **Darstellung:** Das Spielbild ist 960 × 600 groß, passt ganz auf den Bildschirm, behält das Verhältnis 320:200 und nutzt 89 % der Breite.
+- **Touch:** Alles per Tippen:
+  - Titel, „Neues Spiel“, Kapitelwahl, Rückfrage, Speicherplatz;
+  - die Einleitung durchtippen;
+  - den Kiosk antippen, das Verbmenü öffnet sich, „Ansehen“ wählen, Marko spricht;
+  - Inventar und Menüknopf sind antippbar; der Spielstand wird gespeichert.
+- **Offline:** Der Service Worker ist aktiv und hat alle 6 Dateien gespeichert. Ohne Netz lädt die Seite vollständig neu, und der Spielstand ist noch da.
+- **Bildzeit** (Chromium, CPU vierfach gedrosselt, alle 18 Schauplätze, der Stadtplan und zwei Räume aus Split, je mit und ohne Geistersicht):
+  - Im Schnitt 0,3–2,8 ms pro Bild, schlechtester 95-%-Wert 7,3 ms. Für 60 Bilder pro Sekunde wären 16,7 ms erlaubt.
+  - Ein Raumwechsel samt erstem Bild dauert 142–792 ms.
+
+### 5.4 Weitere Prüfungen
+
+- **Ladeprüfung des Endstands:** 38 Räume, 202 Notizen, 60 Gegenstände, 24 Phasen. 0 JS-Fehler und 0 Warnungen; kein Spot und keine Raumkunst fehlt.
+- **Syntaxprüfung je Quelldatei** beim Bauen. Ein absichtlich eingebauter Fehler wurde mit Datei und Zeile gemeldet.
+- **Bilder aller Schauplätze** mit echter Logik, Figuren und Mala: alle 18 Orte und der Stadtplan, mehrere Phasen (Tag, Nacht, Geistersicht), ohne JS-Fehler. Die Mal-Agenten haben jeden Raum zusätzlich in jeder vorgegebenen Phase, mit Debug-Rahmen und in Geistersicht aufgenommen.
+- **Erinnerungsbilder:** Alle 22 werden im Endstand ohne Fehler gezeichnet. Die Mal-Agenten haben jedes zusätzlich im echten Overlay mit seinem Text geöffnet.
+- **Gezielter Test für Alijas Erkenntnis** an der letzten Drei: Das Flag ist gesetzt, die Erkenntnis lief ab, danach geht es weiter in die Straßenbahn, ohne Fehler. Der Durchlauf prüft diese Szene außerdem in beiden Reihenfolgen.
 
 ## 6. Geschätzt oder nur theoretisch begründet (nicht gemessen)
 
-- **Spielzeit 4–5 Stunden:** nicht mit Menschen gemessen. Gemessen ist nur der Spieltakt der Musterlösung (siehe 5.1): {{GT2}} Minuten für Kapitel 2 gegenüber {{GT1}} Minuten für Kapitel 1, jeweils ohne Umwege, Suchen, Nachdenken und freiwillige Gespräche. Das Verhältnis passt zum größeren Umfang. Ob ein Mensch beim ersten Spielen auf 4–5 Stunden kommt, ist eine Schätzung: Kapitel 2 hat rund 40 000 Wörter Text, und die freiwilligen Gespräche, die Rätsel und das Erkunden kommen zum Pflichtweg hinzu.
+- **Spielzeit 4–5 Stunden:** nicht mit Menschen gemessen.
+  - **Gemessen** ist nur der Spieltakt der Musterlösung (siehe 5.1): 95,5 Minuten für Kapitel 2 und 64,4 Minuten für Kapitel 1, jeweils ohne Umwege, Suchen, Nachdenken und freiwillige Gespräche. Das ist das 1,48-Fache.
+  - **Hochgerechnet:** Für Split war die Spielzeit auf 2–3 Stunden geschätzt, ebenfalls ohne Messung. Mit demselben Faktor ergäben sich für Sarajevo etwa 3 bis 4½ Stunden.
+  - **Zusätzlich** ist der freiwillige Teil in Kapitel 2 deutlich größer: Mala hat 76 % mehr Zeilen, es gibt eigene Themen bei jeder Figur und Reaktionen auf Gegenstände.
+  - **Meine Schätzung:** 4–5 Stunden für Spieler, die erkunden. Zielstrebige Spieler eher 3–4 Stunden.
 - **Schwierigkeit und Fairness der Rätsel:** Die Rätsel folgen festen Regeln: jeder Schluss hat eine Begründung im Spiel, falsche Versuche setzen nur zurück, kein Pixelsuchen, weil jeder Hotspot beim Zeigen oder Tippen seinen Namen nennt. Ob die Rätsel für Menschen angenehm schwer sind, hat niemand ausprobiert.
 - **iPad:** Die Bildzeit wurde in Chromium mit vierfach gedrosselter CPU gemessen. Das soll ein älteres Tablet nachahmen, ist aber kein echtes iPad. Eine echte Messung auf Safari fehlt.
 - **Wirkung der Musik:** Die Stücke sind nach Plan komponiert: Tonarten, Instrumente wie Saz, Klarinette, Akkordeon und Glockenspiel, Tempo je Szene. Gehört hat sie niemand.
@@ -102,6 +162,7 @@ Alle Prüfungen liefen automatisch in Chromium (Playwright), headless, in diesem
 - **Haus 7:** Ein Eingang in Figurengröße und die Dachuhr sind am Fuß eines 18-stöckigen Hauses nicht zusammen darstellbar. Deshalb steht vorn ein flacher Eingangsbau, der Turm mit der Uhr dahinter wirkt kleiner als die Nachbartürme.
 - **Schrift mit Hatschek:** Auf Schildern sind Haken und Striche als eigene Pixel über die Buchstaben gesetzt, weil die 5-Pixel-Schrift Š und Ž kaum lesbar macht.
 - **Hinweis „Was geschah im Januar 1994?“:** Dieses Thema öffnet sich nur kurz, weil der passende Schluss meist sofort folgt. Im Durchlauf kam es deshalb nicht vor. Es ist trotzdem erreichbar.
+- **Split mit einer älteren Fassung beendet:** Die Fassung vor Kapitel 2 hat beim Abspann den Spielstand gelöscht und sonst nichts gespeichert. Für solche Spieler ist Kapitel 2 deshalb nicht automatisch freigeschaltet. Sie bekommen die Rückfrage und spielen mit den Vorgaben. Wer Split mit der neuen Fassung beendet, wird erkannt und übernimmt seine Antworten. Nach dem Code gilt das auch, wenn man dafür einen Spielstand aus der alten Fassung weiterspielt, denn die Spiellogik von Split ist unverändert. Geprüft wurde aber nur das Laden eines alten Stands, nicht das Weiterspielen bis zum Ende.
 - **Direktstart in Kapitel 2 ohne Split:** Dann gelten Vorgaben, nämlich „hängen geblieben“ und „Da ist niemand mehr“ sowie alle Erinnerungen aus Split. Vor dem Start fragt das Spiel nach („Split ist noch nicht zu Ende gespielt. Trotzdem?“). Welche Vorgaben gelten, sagt es nicht.
 
 ## 9. Auslieferung
