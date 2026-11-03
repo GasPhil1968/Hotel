@@ -80,15 +80,19 @@ const SHOTS = process.argv[2] || null;
     await D.choose('Sie war da'); await D.drain(); await flag('k2.s1.done'); await note('m2_f_clock'); await log('Tomaž ist hinüber, Splitter: Uhr');
     await D.exit('exit'); await D.drain(); await toMap(); await go('pansion'); await D.act('use', 'bed'); await D.drain(); await expect(await phase() === 'k2_s2', 'Fall 2'); await log('Zweiter Fall');
     { await D.until(s => s.dlg && s.dlg.some(t => /Vielleicht/.test(t)), 15000, 'Vesna ruft an'); await D.choose('Diesmal schreibe ich'); await D.drain(); await log('Vesna ruft an (Kapitel-1-Figur)'); }
-    // ================= MALAS SPUR I
-    await toMap('door'); await go('carsija'); await talk('rade', 'Ihm das Foto zeigen', 'Auf Wiedersehen'); await note('m2_clocktower'); await note('m2_kids'); await comb('m2_f_clock', 'm2_clocktower', 'm2_building'); await log('Das Siebener');
+    // ================= MALAS SPUR I (MALA_ORDER=alt: erst Fall 2 und Zwischenspiel, die Spur erst im dritten Akt)
+    const ALT = process.env.MALA_ORDER === 'alt';
+    const spurI = async () => {
+    await go('carsija'); await talk('rade', 'Ihm das Foto zeigen', 'Auf Wiedersehen'); await note('m2_clocktower'); await note('m2_kids'); await comb('m2_f_clock', 'm2_clocktower', 'm2_building'); await log('Das Siebener');
     await toMap(); await go('neboder'); await at('neboder'); await note('m2_marko7'); await shot('neboder');
     await mala(); await talk('alija', 'Was habe ich zuletzt', '(Gehen.)'); await note('m2_alija'); await marko(); await log('Alija: zwei Fahrscheine');
     await talk('_mala', 'Darf ich sehen, was in deiner Dose', 'Komm.'); await note('m2_ticket'); await comb('m2_kids', 'm2_marko7', 'm2_mali'); await log('Malas Fahrschein; ich war Mali');
     await toMap(); await go('carsija'); await talk('rade', 'Fuhren im November', 'Auf Wiedersehen'); await note('m2_notrams'); await comb('m2_ticket', 'm2_notrams', 'm2_promise');
     await D.act('talk', '_mala'); await D.drain(); await note('m2_f_ninth'); await log('Ein Versprechen; neunter Stock');
+    await toMap(); };
+    await toMap('door'); if (!ALT) await spurI();
     // ================= FALL 2: Die Leihfrist
-    await toMap(); await go('ferhadija'); await D.exit('passage'); await D.drain(); await at('antikvarijat');
+    await go('ferhadija'); await D.exit('passage'); await D.drain(); await at('antikvarijat');
     await talk('jakob', 'Was ist mit dem Buch in der Vitrine', 'Sie hatten einen Brief aus Frankfurt', 'Danke, Gospodine'); await note('s2_spook'); await note('s2_buyer');
     await mala(); await D.act('look', 'book'); await D.drain(); await note('s2_stamp'); await talk('ivan', 'Was lesen Sie', '(Schweigen.)'); await note('s2_due'); await marko(); await log('Der Leser im Sessel');
     await talk('jakob', 'Was wissen Sie über die Nationalbibliothek', 'Woher haben Sie das Buch', 'Danke, Gospodine'); await note('s2_fire'); await D.act('read', 'ledger'); await D.drain(); await note('s2_ledger');
@@ -111,7 +115,7 @@ const SHOTS = process.argv[2] || null;
     await toMap(); await go('pansion'); await D.act('use', 'bed'); await D.drain(); await expect(await phase() === 'k2_s3', 'Fall 3'); await log('Dritter Fall');
     // ================= FALL 3: Das verschlossene Zimmer
     await D.act('use', 'phone'); await D.drain(); await D.choose('Sanja'); await D.drain(); await D.choose('im Regal liegt ein Foto'); await D.drain(); await D.choose('Ja.'); await D.drain(); await flag('k2.s3.called'); await log('Sanja schickt den Karton');
-    await toMap('door'); await go('neboder'); await D.exit('haustor_door'); await D.drain(); await at('haustor'); await note('s3_dragica'); await shot('haustor');
+    await toMap('door'); if (ALT) { await log('andere Reihenfolge: Malas Spur erst jetzt'); await spurI(); } await go('neboder'); await D.exit('haustor_door'); await D.drain(); await at('haustor'); await note('s3_dragica'); await shot('haustor');
     await talk('dragica', 'Wer wohnt hier noch', 'Was war im Keller', 'Kann ich das Hausbuch', 'Danke, teta Dragica'); await note('s3_zora');
     await D.act('read', 'housebook'); await D.drain(); await note('m2_housebook'); await comb('m2_split_register', 'm2_housebook', 'm2_lana'); await log('Lana Delić?');
     await mala(); await D.exit('shelter_door'); await D.drain(); await at('skloniste'); await talk('zora', 'Was wollen Sie ihnen geben', 'Wo sind die Zeugnisse', '(Schweigen.)'); await note('s3_stamp'); await note('s3_roll');

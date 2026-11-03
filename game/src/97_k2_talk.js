@@ -197,4 +197,27 @@ M.K2_INTER_EXTRA=function(A){ return [
   o('ia5','Wie war Split für dich, damals?',true,async function(A){ await A.g('Grau. Im Winter war das Meer grau, und ich habe es trotzdem jeden Tag angesehen, weil man von der Treppe aus ein Stück davon sah.'); await A.g('Ich habe gedacht: Wenn ich lange genug hinsehe, kommt von dort ein Boot mit dir.'); await A.m('Ich bin mit dem Bus gekommen. Im Mai.'); await A.g('Natürlich. Du bist immer anders gekommen, als ich gedacht habe.'); }),
   o('ia6','Was, wenn ich mich nicht erinnern will?',true,async function(A){ await A.g('Dann bleibe ich leer.'); await A.wait(800); await A.g('Das ist keine Drohung. Das ist nur, wie es ist.'); await A.m('Ich will.'); await A.g('Ich weiß. Du hast nur Angst. Das ist etwas anderes.'); })
 ]; };
+// ================================================================ Mala zu Markos Sachen (Gegenstand auf Mala ziehen)
+var IT=M.ITEMS, MI={
+  mobitel:async function(A){ await A.g('Du schaust da öfter hinein als in Gesichter.'); await A.m('Ich schaue nach der Uhrzeit.'); await A.g('In Sarajevo fragt man jemanden nach der Uhrzeit. Dann hat man ein Gespräch und kommt zu spät.'); },
+  km:async function(A){ await A.g('Zehn Mark für einen Brief an einen Lieferanten.'); await A.g('Fikret bezahlt Wörter besser als deine Zeitung.'); },
+  letters_tz:async function(A){ await A.g('Sechs Briefe, und keiner ist aufgemacht worden.'); await A.wait(700); await A.g('Briefe, die nicht ankommen, werden schwer. Ich weiß nicht, woher ich das weiß.'); },
+  bracelet:async function(A){ await A.g('Kupfer wird dunkel, wenn es niemand trägt.'); await A.wait(500); await A.g('Wie Leute.'); },
+  lejla_letter:async function(A){ await A.g('Lejla will nach Wien. Alle wollen weg, und dann wollen alle zurück.'); await A.m('Ich wollte nie zurück.'); await A.g('Und wo stehst du gerade?'); },
+  kurrent:async function(A){ await A.g('Die Buchstaben sehen aus wie Wäsche auf der Leine, bei Wind.'); await A.g('Ich kann sie nicht lesen. Du auch nicht. Aber die Tafel kann es.'); },
+  pass:async function(A){ await A.g('Ein Zettel, der Türen aufmacht. Früher brauchte man so einen, um über eine Brücke zu gehen.'); await A.g('Jetzt braucht man ihn für ein Haus, das gebrannt hat.'); },
+  rilke:async function(A){ await A.g('Das Buch hat den Brand überlebt. Die Blätter darin nicht ganz.'); await A.wait(600); await A.g('Wer sagt, dass er etwas zurückbringt, kommt wieder. Sogar dann.'); },
+  key_shelter:async function(A){ await A.g('Šehić will ihn heute zurück. Er hat es dir viermal gesagt.'); await A.g('Hausmeister sagen alles viermal. Damit es auch der vierte Stock hört.'); },
+  deskkey:async function(A){ await A.g('Unter das Pult geklebt, damit ihn kein Kind findet.'); await A.wait(500); await A.g('Und dann hat ihn siebzehn Jahre lang kein Kind gesucht.'); },
+  dnevnik:async function(A){ await A.g('Mit Bleistift geschrieben. Bleistift kann man radieren.'); await A.wait(700); await A.g('Sie hat keinen einzigen Namen radiert.'); },
+  svjedocanstva:async function(A){ await A.g('Zeugnisse aus einem Keller. Mit Stempel und Unterschrift, wie in einer richtigen Schule.'); await A.m('Es war eine richtige Schule.'); await A.g('Ja. Der Keller war nur das Haus drumherum.'); },
+  pecat:async function(A){ await A.g('Ein Stempel für eine Schule, die es nicht mehr gibt.'); await A.g('Jedes Mal, wenn man ihn benutzt, gibt es sie wieder. Für ein Blatt lang.'); },
+  zvono:async function(A){ await A.g('Zoras Glocke. Wenn sie geläutet hat, war die Pause vorbei.'); await A.wait(600); await A.g('Oder der Krieg. Die Kinder wussten nie, welches von beiden.'); },
+  karton:async function(A){ if (!A.hasNote('m2_lana')||!A.flag('k2.s3.done')){ await A.g('Ein Karton, den du siebzehn Jahre nicht aufgemacht hast.'); await A.g('Ich kann warten. Das kann ich am besten.'); return; } await A.g('Jetzt.'); await A.wait(600); await A.g('Mach ihn auf, Mali. Ich bin da.'); },
+  key_kuca:async function(A){ await A.g('Er ist warm.'); await A.m('Er hing siebzehn Jahre an Hajras Nagel.'); await A.g('Trotzdem. Schlüssel von Häusern, in denen jemand gewartet hat, bleiben warm.'); },
+  rcm:async function(A){ if (!A.hasNote('m2_lana')) return A.g('Eine kleine, enge Schrift. Wie von jemandem, der wenig Platz hatte.'); await A.g('Meine Schrift.'); await A.wait(800); await A.g('Ich habe ganz klein geschrieben, damit alles auf das Formular passt.'); await A.m('Es passt alles drauf.'); await A.g('Nicht alles. Nur das Wichtigste.'); },
+  busticket2:async function(A){ await A.g('Hin und zurück.'); await A.wait(700); await A.g('Das Zurück gefällt mir.'); },
+  olovka:async function(A){ await A.g('Du hast immer einen Stift dabei und schreibst nie etwas für dich auf.'); await A.m('Ich übersetze.'); await A.g('Das ist Aufschreiben, nur mit den Wörtern von anderen.'); }
+};
+Object.keys(MI).forEach(function(k){ if (IT[k] && IT[k].mala===undefined) IT[k].mala=MI[k]; });
 })(M);

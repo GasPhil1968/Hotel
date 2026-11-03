@@ -58,7 +58,7 @@ async function readLedger(A){ if (!A.flag('k2.s2.ledgerOk')) return A.m('Jakobs 
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'door',name:'Tür',exit:{to:'ferhadija'},look:'Die Ladentür zur Passage. Die Glocke darüber hängt still.'},
- {id:'jakob',npc:'jakob',name:'Jakob',hgt:44,vis:function(S,G){ return open(G); },talk:talkJakob,
+ {id:'jakob',npc:'jakob',name:'Jakob',hgt:44,talkDist:32,vis:function(S,G){ return open(G); },talk:talkJakob,
    look:'Ein schmaler alter Herr mit weißem Bart, Fliege und Lupe an der Schnur. Er sieht über die Brille, als würde er gleich den Preis meiner Seele schätzen.',
    give:{ photo_stop:'Jakob: „Behalten Sie es. Fotos gehören denen, die darauf etwas sehen.“', kurrent:async function(A){ if (!A.flag('k2.s2.pass')) return A.m('Die brauche ich noch.'); A.take('kurrent'); A.set('kurrentOff',false); A.rebuild(); await A.npc('jakob').say('Und die Geschichte?'); await A.m('Ein Bauamt von 1894 wollte wissen, wie tief man graben darf. Es durfte nicht tief.'); await A.npc('jakob').say('Sehr gut. Das ist eine Geschichte für einen Antiquar.'); },
      rilke:'Jakob: „Bringen Sie es dahin, wo es hingehört. Hierher gehört es nicht.“' },
