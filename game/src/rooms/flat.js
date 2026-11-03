@@ -85,9 +85,14 @@ function dyn(fb,v,S,GS){ var wx=WIN[0], wy=WIN[1], ww=WIN[2], wh=WIN[3], tod=v.t
   if (tod==='day') M.scn.gulls(fb,v.t,wx,wy+2,ww,12,2,0);
   if (S.ansBlink && Math.floor(v.gt/500)%2){ var am=R3.p(238,84,4); fb.px(Math.round(am[0])+8,Math.round(am[1])-3,P.r4); }
   if (v.tod!=='day') M.glow(fb,R3.p(226,80,4)[0]-6,R3.p(226,80,4)[1]-16,14,v.t,0.5);
-  if (S.tram && !S.tramWiped){ var tx=wx+5, ty=wy+(wh>>1)+5, tc=P.s5; for (var i=0;i<15;i++){ if ((i+Math.floor(v.t*0.5))%7) fb.px(tx+i,ty,tc); if (i%3) fb.px(tx+i,ty+7,tc); } for (var j=0;j<8;j++){ fb.px(tx,ty+j,tc); fb.px(tx+15,ty+j,tc); }
-    for (var q=0;q<3;q++){ fb.px(tx+3+q*4,ty+2,tc); fb.px(tx+4+q*4,ty+2,tc); fb.px(tx+3+q*4,ty+3,tc); fb.px(tx+4+q*4,ty+3,tc); } fb.px(tx+7,ty-1,tc); fb.px(tx+7,ty-2,tc); fb.px(tx+6,ty-3,tc); fb.px(tx+8,ty-3,tc);
-    M.microText(fb,'3',tx+12,ty+1,P.s6); fb.px(tx+3,ty+8,tc); fb.px(tx+12,ty+8,tc); for (var d=0;d<3;d++) fb.px(tx+2+d*5,ty+9+((d+Math.floor(v.t))%2),P.s4); }
+  if (S.tram && !S.tramWiped){ // mit dem Finger auf die beschlagene Scheibe gemalt: eine Straßenbahn unter der Oberleitung, vorne eine Drei
+    var tx=wx+4, ty=wy+(wh>>1)+7, tc=P.s5, L=21, i, j;
+    for (i=-2;i<L+3;i++) if ((i+3)%5) fb.px(tx+i,ty-5,P.s4);                       // Oberleitung
+    fb.px(tx+9,ty-1,tc); fb.px(tx+8,ty-2,tc); fb.px(tx+10,ty-2,tc); fb.px(tx+9,ty-3,tc); fb.px(tx+9,ty-4,tc);   // Stromabnehmer
+    for (i=1;i<L;i++){ fb.px(tx+i,ty,tc); if (i%4) fb.px(tx+i,ty+7,tc); } for (j=1;j<7;j++){ fb.px(tx,ty+j,tc); fb.px(tx+L,ty+j,tc); }
+    for (var q=0;q<4;q++){ fb.px(tx+2+q*4,ty+2,tc); fb.px(tx+3+q*4,ty+2,tc); fb.px(tx+2+q*4,ty+3,tc); fb.px(tx+3+q*4,ty+3,tc); }
+    M.microText(fb,'3',tx+L-4,ty+1,P.s6); fb.px(tx+4,ty+8,tc); fb.px(tx+5,ty+8,tc); fb.px(tx+L-5,ty+8,tc); fb.px(tx+L-4,ty+8,tc);
+    for (var d=0;d<3;d++){ var dl=1+((d+Math.floor(v.t*0.7))%3); for (j=0;j<dl;j++) fb.px(tx+3+d*8,ty+9+j,P.s4); } }   // Tropfen, die herunterlaufen
   if (S.steam && v.gt<S.steam){ var sp=R3.p(80,76,16); for (var i=0;i<6;i++){ var yy=Math.round(sp[1]-6-((v.t*12+i*5)%18)), xx=Math.round(sp[0]+Math.sin(v.t*3+i)*2); fb.px(xx,yy,P.s5); } } }
 
 // ---------------------------------------------------------------- Hotspots
