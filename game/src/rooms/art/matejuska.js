@@ -18,7 +18,7 @@ var FENCE={x0:424,x1:640,top:62,base:110};    // Bauzaun
 var GAP=[556,84,22,26];                       // Loch im Zaun (hinter den Kisten)
 var DINKO=[244,124];
 var FARLAMPS=[34,122,246,350];
-var MOON=[364,14];
+var MOON=[330,13];
 
 function cl(v,a,b){ return v<a?a:(v>b?b:v); }
 function rnd(v){ return Math.round(v); }
@@ -28,7 +28,7 @@ var R=M.R;
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 // Luftperspektive: Farben Richtung Himmelsblau aufhellen
 function hazeT(a){ return M.tintMake(function(r,g,b){ return [r*(1-a)+168*a, g*(1-a)+196*a, b*(1-a)+226*a]; }); }
-var HZ=[hazeT(0.24),hazeT(0.15),hazeT(0.08),hazeT(0.3)];
+var HZ=[hazeT(0.24),hazeT(0.15),hazeT(0.08),hazeT(0.3)], HZT=hazeT(0.22);
 // Helligkeit -> Rampe (ohne Dither): ferner Hintergrund in Dämmerung und Nacht als ruhige Silhouette
 function rampLUT(names,lo,hi,gam){ var ramp=R(names), a=new Uint8Array(256); for (var c=0;c<256;c++){ if (c>=M.NCOL){ a[c]=c; continue; } var L=Math.pow(M.lum(c)/255,gam||1), v=lo+(hi-lo)*L; a[c]=ramp[cl(Math.round(v*(ramp.length-1)),0,ramp.length-1)]; } return {a:a}; }
 var BGL={ dusk:[rampLUT('k2 d0 d1 d2',0,0.85,1.1),rampLUT('k2 d0 d1 d2 d3 d4',0.05,1,1),rampLUT('k1 d0 d1 d2 d3 d4 d5',0,1,0.95)],
@@ -81,9 +81,29 @@ function paintMarjan(b){ var G=R('g0 g1 g2 g3 g4');
     if (r()<0.35){ b.vl(px,Math.round(cy+ry),Math.round(cy+ry+2),P.w1); } }
   for (var k=0;k<7;k++){ var zx=84+k*43+Math.floor(r()*14), zy=Math.round(mjY(zx))+6+Math.floor(r()*8), zh=9+Math.floor(r()*6);
     for (var yy=0;yy<zh;yy++){ var ww=Math.max(0.6,Math.sin((yy/zh)*Math.PI*0.9+0.25)*2.0); for (var xx=-Math.ceil(ww);xx<=Math.ceil(ww);xx++){ if (Math.abs(xx)>ww) continue; b.px(zx+xx,zy-yy,xx<0?P.g2:P.g1); } } }
-  // Kapelle Sv. Nikola auf dem Marjan, Fahnenmast auf dem Gipfel
-  var cx=118, cy2=Math.round(mjY(118))+3; b.rect(cx,cy2-5,7,5,P.s4); b.vl(cx+6,cy2-5,cy2-1,P.s3); b.hl(cx-1,cx+7,cy2-6,P.t2); b.px(cx+3,cy2-7,P.t3); b.px(cx+3,cy2-3,P.k2);
+  // Schirmpinien auf dem Kamm: Stamm und flache Krone gegen den Himmel
+  PINES.forEach(function(p){ var px2=p[0], ty=Math.round(mjY(px2)), lean=p[1], th=p[2], rx=p[3], cy=ty-th-1.5;
+    for (var j=0;j<=th;j++) b.px(px2+Math.round(lean*j/th),ty-j,j>th-2?P.w2:P.w1);
+    b.ellipse(px2+lean,cy,rx,1.9,function(x,y){ var u=(y-(cy-1.9))/3.8, l=(x-(px2+lean))/rx; var v=0.75-u*0.6-l*0.18+(hash(x,y)-0.5)*0.3; return ra(G,v,x,y); });
+    b.hl(Math.round(px2+lean-rx*0.6),Math.round(px2+lean+rx*0.3),Math.round(cy-1.6),P.g3); });
+  // Marjanske skale: die Treppe im Zickzack von Varoš hinauf zur Vidilica, mit Laternen (abends an)
+  STLAMPS.length=0; STPATH.length=0;
+  for (var si=0;si+1<STAIR.length;si++){ var A=STAIR[si], B=STAIR[si+1], n=Math.abs(B[0]-A[0]), dir=B[0]>A[0]?1:-1;
+    for (var q=0;q<=n;q++){ var sx=A[0]+q*dir, sy=Math.round(A[1]+(B[1]-A[1])*q/Math.max(1,n)), tc=((sx+si)%2)?P.s5:P.s4;
+      b.px(sx,sy,tc); STPATH.push(sx,sy,tc); b.px(sx,sy+1,P.s3); b.px(sx,sy+2,P.s1); if (hash(sx,si)<0.5) b.px(sx,sy-1,P.g2);
+      if (q>1 && q<n-1 && (q%7)===3){ b.vl(sx,sy-3,sy-1,P.m1); b.px(sx,sy-4,P.m2); STLAMPS.push([sx,sy-4]); } } }
+  var top=STAIR[STAIR.length-1]; b.rect(top[0]-8,top[1]-1,10,2,P.s4); b.hl(top[0]-8,top[0]+1,top[1]-1,P.s5); b.hl(top[0]-8,top[0]+1,top[1]+1,P.s1);   // Aussichtsterrasse
+  // Kapelle Sv. Nikola am Kamm: weiße Steinkirche mit Glockengiebel, daneben Zypressen
+  var cx=CHAP[0], cb=Math.round(mjY(cx+5))+2; CHAP[1]=cb;
+  [[cx-3,9],[cx+14,11]].forEach(function(z){ for (var yy2=0;yy2<z[1];yy2++){ var w2=Math.max(0.5,Math.sin((yy2/z[1])*Math.PI*0.85+0.3)*1.4); for (var xx2=-1;xx2<=1;xx2++){ if (Math.abs(xx2)>w2) continue; b.px(z[0]+xx2,cb-1-yy2,xx2<0?P.g2:P.g1); } } });
+  for (var y2=cb-6;y2<cb;y2++) for (var x2=cx;x2<cx+11;x2++) b.px(x2,y2,x2<cx+2?P.s6:(x2>cx+8?P.s3:(hash(x2,y2)<0.1?P.s4:P.s5)));
+  b.hl(cx-1,cx+11,cb-7,P.t2); b.hl(cx,cx+10,cb-8,P.t3); b.hl(cx+1,cx+9,cb-8,P.t4);
+  b.rect(cx,cb-12,4,5,P.s5); b.vl(cx,cb-12,cb-8,P.s6); b.px(cx+1,cb-11,P.k2); b.px(cx+2,cb-11,P.k2); b.px(cx+1,cb-10,P.y2); b.hl(cx-1,cx+4,cb-13,P.s4); b.px(cx+1,cb-14,P.s3); b.px(cx+2,cb-14,P.s3);
+  b.rect(cx+5,cb-3,2,3,P.w1); b.px(cx+8,cb-5,P.k2); b.hl(cx-1,cx+11,cb,P.s2);
   b.vl(64,3,13,P.m2); }
+var PINES=[[12,1,6,5],[30,-1,5,4.5],[46,1,7,5.6],[80,0,6,4.8],[127,-1,5,5],[148,1,6,5.4],[171,0,5,4.4]];
+var CHAP=[96];
+var STAIR=[[134,33],[112,30],[128,26],[106,23],[116,20]], STLAMPS=[], STPATH=[];
 // Häuserreihe am Hang. wins sammelt Fenster für die Nacht.
 function houses(b,wins,x0,x1,baseFn,hMin,hVar,seed,sc){ var r=M.rng(seed), x=x0;
   var walls=[R('s2 s3 s4 s5'),R('e2 e3 e4 s5'),R('s2 s3 s4 s5'),R('t3 t4 t5 s5'),R('s1 s2 s3 s4'),R('e3 e4 s4 s5'),R('s3 s4 s5 s6')], roofs=[R('t1 t2 t3 t4'),R('t0 t1 t2 t3'),R('t2 t3 t4 t5')];
@@ -106,6 +126,51 @@ function church(b,x,base){ // kleines Kirchlein mit Glockengiebel (preslica)
   b.rect(x+5,base-26,5,7,P.s5); b.rect(x+6,base-24,3,4,P.k2); b.px(x+7,base-22,P.y2); b.px(x+7,base-21,P.y3); b.hl(x+5,x+9,base-27,P.s4); b.px(x+7,base-28,P.s3);
   b.rect(x+5,base-8,4,8,P.w1); b.ellipse(x+7,base-12,1.5,1.5,P.k2); }
 function haze(b,x0,x1,y0,y1,lut,mask){ for (var y=y0;y<y1;y++) for (var x=x0;x<x1;x++){ if (mask && !mask(x,y)) continue; var L=typeof lut==='function'?lut(x,y):lut; if (!L) continue; var k=y*b.w+x; if (b.d[k]===T) continue; b.d[k]=L.a[b.d[k]]; } }
+// Glockenturm von Sveti Duje in der Ferne, über den Dächern von Varoš: schlank, nach oben offener, Pyramidenhelm
+var TWX=371, TWPIX=[];
+var FLOOD=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.86+34, L*0.66+18, L*0.34+6]; });
+function farTower(b){ var cx=TWX, x, y; TWPIX.length=0;
+  function put(xx,yy,c){ b.px(xx,yy,c); TWPIX.push(xx,yy,c); }
+  put(cx,5,P.m2); put(cx-1,6,P.m2); put(cx,6,P.m2); put(cx+1,6,P.m2); put(cx,7,P.m2);
+  for (y=8;y<21;y++){ var hw=Math.round((y-7)*0.27); for (x=cx-hw;x<=cx+hw;x++) put(x,y,x<cx?P.s5:(x===cx?P.s4:P.s3)); if (hw>0) put(cx-hw,y,P.s6); }
+  [[21,28,3,1,3],[28,35,4,2,2],[35,42,4,2,2],[42,49,5,3,1],[49,62,5,2,1]].forEach(function(L){ var y0=L[0], y1=L[1], hw=L[2], n=L[3], ow=L[4], i;
+    for (y=y0;y<y1;y++) for (x=cx-hw;x<=cx+hw;x++){ var u=(x-(cx-hw))/(2*hw), c=u<0.35?P.s5:(u<0.75?P.s4:P.s3); if (x===cx-hw) c=P.s6; if (x===cx+hw) c=P.s2; put(x,y,c); }
+    for (x=cx-hw-1;x<=cx+hw+1;x++) put(x,y0,x===cx+hw+1?P.s3:P.s6); for (x=cx-hw;x<=cx+hw;x++) put(x,y0+1,P.s2);
+    var span=2*hw-1, gap=Math.max(1,Math.floor((span-n*ow)/(n+1)));
+    for (i=0;i<n;i++){ var ox=cx-hw+1+gap+i*(ow+gap); for (y=y0+3;y<y1-1;y++) for (x=ox;x<ox+ow;x++) put(x,y,(y===y0+3&&ow>1&&x===ox+ow-1)?P.s2:P.k2); } }); }
+// nur die Turmpixel behalten, die nach den vorderen Häusern noch zu sehen sind
+function stillThere(b,a){ var out=[]; for (var i=0;i<a.length;i+=3){ if (b.get(a[i],a[i+1])===a[i+2]) out.push(a[i],a[i+1],a[i+2]); } return out; }
+function towerVisible(b){ TWPIX=stillThere(b,TWPIX); STPATH=stillThere(b,STPATH); }
+// Konobe: kleine steinerne Fischerschuppen mit Holztüren an der Kaimauer drüben (eine steht abends offen, drinnen Licht)
+var KONOBE=[[36,17,'g'],[55,15,'b'],[72,19,'w'],[93,16,'r'],[111,20,'g'],[133,13,'b']], KOPEN=[];
+function konobe(b){ var DR={g:R('g1 g2 g3 g4'),b:R('b0 b1 b2 b3'),w:R('w1 w2 w3 w4'),r:R('r1 r2 r3 r4')}, Rr=R('t1 t2 t3 t4'), Rs=R('s1 s2 s3 s4'); KOPEN.length=0;
+  KONOBE.forEach(function(k,i){ var x0=k[0], w=k[1], base=72, h=8+(i%2), top=base-h, x, y, D=DR[k[2]];
+    for (y=top;y<base;y++) for (x=x0;x<x0+w;x++){ var c=stones(x*1.3,y*1.2,Rs,4,3,0.17); if (x===x0) c=M.UP[c]; if (x>=x0+w-1) c=M.DN[c]; b.px(x,y,c); }
+    for (x=x0-1;x<=x0+w;x++){ b.px(x,top-2,rooftile(x,0,Rr)); b.px(x,top-1,rooftile(x,2,Rr)); } b.hl(x0-1,x0+w,top-3,Rr[3]); b.hl(x0,x0+w-1,top,P.s1);
+    var dw=6, dx=x0+Math.floor((w-dw)/2)-(i%2), dh=7, open=(i===3);
+    for (y=base-dh;y<base;y++) for (x=dx;x<dx+dw;x++){ var ax=Math.abs(x+0.5-(dx+dw/2))/(dw/2); if (y===base-dh && ax>0.55) continue;
+      var c2=open?P.k1:((x===dx)?D[3]:((x-dx)%2===0?D[1]:D[2])); if (!open && y===base-1) c2=D[0]; b.px(x,y,c2); }
+    for (x=dx-1;x<=dx+dw;x++){ var ax2=Math.abs(x+0.5-(dx+dw/2))/(dw/2+1); b.px(x,ax2>0.6?base-dh:base-dh-1,P.s4); }
+    if (open){ b.rect(dx+dw,base-dh,2,dh,D[2]); b.vl(dx+dw+1,base-dh,base-1,D[1]); KOPEN.push([dx,base-dh,dw,dh]); }
+    if (i%2===0){ var nx=x0+w-4; for (y=base-7;y<base-2;y++) for (x=nx;x<nx+3;x++) b.px(x,y,netTex(x,y,R('t1 t2 t3 t4'),3)); b.px(nx+1,base-8,P.e1); }
+    if (i===1||i===4){ b.ellipse(x0+2.5,base-5,1.5,1.5,P.t3); b.px(x0+2,base-6,P.t5); }
+    if (i===2){ b.rect(x0+w-5,top+2,3,2,P.k2); b.vl(x0+w-4,top+2,top+3,P.m1); } }); }
+// Varoš: Stiegengassen zwischen den Häusern, Bäume in den Höfen, Wäsche, Bougainvillea
+function skala(b,x,y0,y1){ for (var y=y0;y<y1;y++){ var tr=((y1-y)%2)===0; b.px(x,y,P.s1); b.px(x+1,y,tr?P.s5:P.s3); b.px(x+2,y,tr?P.s4:P.s2); b.px(x+3,y,P.s1); } }
+function cypress(b,x,base,h){ for (var yy=0;yy<h;yy++){ var w=Math.max(0.5,Math.sin((yy/h)*Math.PI*0.85+0.3)*1.6); for (var xx=-2;xx<=2;xx++){ if (Math.abs(xx)>w) continue; b.px(x+xx,base-1-yy,xx<0?P.g2:(hash(x+xx,yy)<0.3?P.g2:P.g1)); } } }
+function palmS(b,x,base,h){ for (var i=0;i<h;i++) b.px(x+(i>h*0.6?1:0),base-1-i,i%3===0?P.w1:P.w2); var tx=x+1, ty=base-h;
+  [[-5,1],[-3,-1],[0,-2],[3,-1],[5,1],[-4,2],[4,2]].forEach(function(f,j){ b.line(tx,ty,tx+f[0],ty+f[1],j%2?P.g2:P.g3); b.px(tx+f[0],ty+f[1]+1,P.g1); }); }
+function figTree(b,cx,cy,rx,ry){ b.ellipse(cx,cy,rx,ry,function(x,y){ var u=(y-(cy-ry))/(2*ry), l=(x-cx)/rx, v=0.7-u*0.5-l*0.2+(hash(x>>1,y)-0.5)*0.5; return ra(R('g1 g2 g3 g4'),v,x,y); }); }
+function varosExtras(b){
+  skala(b,141,58,72); skala(b,233,57,72); skala(b,316,60,72); skala(b,186,46,58);
+  cypress(b,88,57,12); cypress(b,302,62,11); cypress(b,214,47,9);
+  palmS(b,176,61,9); palmS(b,262,62,10);
+  figTree(b,226,66,5,3); figTree(b,124,67,4,2.5);
+  // Bougainvillea über Mauern und Türen
+  [[104,66,5],[196,65,4],[282,67,5],[350,68,4]].forEach(function(q){ for (var k=0;k<q[2]*4;k++){ var x=q[0]+Math.floor(hash(k,q[0])*q[2]*2)-q[2], y=q[1]+Math.floor(hash(q[0],k)*4)-2; b.px(x,y,hash(k,7)<0.5?P.d3:(hash(k,8)<0.5?P.d4:P.r3)); } b.px(q[0],q[1]-2,P.g2); });
+  // Wäsche zwischen den Fenstern
+  [[150,61,164],[246,60,258],[330,62,342]].forEach(function(q,j){ var x0=q[0], y0=q[1], x1=q[2]; for (var x=x0;x<=x1;x++) b.px(x,y0+Math.round(Math.sin(Math.PI*(x-x0)/(x1-x0))*1),P.s1);
+    var cols=[P.s6,P.b3,P.r3,P.y4,P.s5,P.g4]; for (var k=0;k<4;k++){ var px=x0+2+k*3, c=cols[(j*2+k)%cols.length]; b.rect(px,y0+1+Math.round(Math.sin(Math.PI*(px-x0)/(x1-x0))),2,2+(k%2),c); } }); }
 
 // ---------------------------------------------------------------- Boote
 // o: x, wl (Wasserlinie), len, h (Freibord), dir (1 = Bug rechts), hull/trim (Rampen), band, name, cabin:[t0,t1,h], mast:[t,h], yard, motor, tyres:[t..], cargo, transom
@@ -131,6 +196,11 @@ function boat(w,o){ var L=o.len, h=o.h, wl=o.wl, dir=o.dir||1, sb=o.sb===undefin
   if (!o.noStem){ var sx=X(1), sy=info.top[L-1]; w.px(sx,sy-1,P.w1); w.px(sx,sy-2,P.w1); w.px(sx-dir,sy-1,P.w2); }
   (o.cargo||[]).forEach(function(cg){ var a=Math.round(cg[0]*(L-1)), b2=Math.round(cg[1]*(L-1)), col=cg[2], hh=cg[3]||2;
     for (var i2=Math.min(a,b2);i2<=Math.max(a,b2);i2++){ var tt=info.top[i2], xx2=info.X[i2], hgt=Math.round(hh*Math.sin(Math.PI*(i2-a)/Math.max(1,b2-a)))+1; for (var y2=tt-1-hgt;y2<tt;y2++) w.px(xx2,y2,(hash(xx2,y2)<0.3)?M.DN[col]:(y2===tt-1-hgt?M.UP[col]:col)); } });
+  // Ruder: im Boot liegend (oars) und in der Dolle, ins Wasser gestreckt (oarsOut)
+  (o.oars||[]).forEach(function(oa){ var a=Math.round(oa[0]*(L-1)), b2=Math.round(oa[1]*(L-1)), lift=oa[2]||0; for (var i2=a;i2<=b2;i2++){ var xx2=info.X[i2], tt=info.top[i2]-1-Math.round(lift*(i2-a)/Math.max(1,b2-a)); w.px(xx2,tt,P.w4); w.px(xx2,tt+1,P.w2); }
+    var bxo=info.X[b2], byo=info.top[b2]-1-lift; w.rect(bxo-1,byo-1,3,2,P.w3); w.px(bxo-1,byo-1,P.w5); });
+  if (o.oarsOut){ var oi=Math.round(o.oarsOut*(L-1)), oxo=info.X[oi], oyo=info.top[oi]; w.px(oxo,oyo-1,P.m1); w.px(oxo,oyo-2,P.m2); w.line(oxo,oyo-1,oxo+dir*8,wl+1,P.w4); w.line(oxo+1,oyo,oxo+dir*8+1,wl+1,P.w2); w.rect(oxo+dir*8-1,wl,4,2,P.w3); w.hl(oxo+dir*8-1,oxo+dir*8+2,wl,P.w4);
+    w.line(oxo-dir*3,oyo-6,oxo,oyo-1,P.w3); w.px(oxo-dir*3,oyo-7,P.w4); }
   if (o.cabin){ var ca=X(o.cabin[0]), cb=X(o.cabin[1]), cx0=Math.min(ca,cb), cx1=Math.max(ca,cb), ty=info.top[Math.round(o.cabin[0]*(L-1))]-1, ch=o.cabin[2], Cr=o.cabinCol||R('s3 s4 s5 s6');
     for (var yy=ty-ch;yy<ty;yy++) for (var xx3=cx0;xx3<=cx1;xx3++){ var c3=Cr[2]; if (xx3===cx0) c3=Cr[3]; if (xx3>=cx1-1) c3=Cr[1]; if (yy===ty-1) c3=Cr[0]; w.px(xx3,yy,c3); }
     for (var wx=cx0+2;wx+2<cx1-1;wx+=4){ w.rect(wx,ty-ch+3,3,3,P.n1); w.px(wx,ty-ch+3,P.b4); w.px(wx+1,ty-ch+3,P.b3); }
@@ -156,10 +226,12 @@ var BOATS=[
   {x:300,wl:81,len:24,h:3,dir:-1,hull:R('y2 y3 y4 y5'),trim:R('w1 w2 w3 w4'),band:null,deep:1,sb:2,noStem:true,far:1},
   {x:338,wl:81,len:36,h:4,dir:-1,hull:R('s3 s4 s5 s6'),trim:R('b0 b1 b2 b3'),band:null,deep:1,sb:2,mast:[0.6,15],noStem:true,far:1},
   // Mitte (an Bojen)
-  {x:110,wl:94,len:62,h:7,dir:1,hull:R('g1 g2 g3 g4 g5'),trim:R('y1 y2 y3 y4'),band:P.r1,name:'GALEB',nameCol:P.s6,transom:true,motor:true,cargo:[[0.3,0.55,P.t3,2]]},
+  {x:110,wl:94,len:62,h:7,dir:1,hull:R('g1 g2 g3 g4 g5'),trim:R('y1 y2 y3 y4'),band:P.r1,name:'GALEB',nameCol:P.s6,transom:true,motor:true,cargo:[[0.3,0.55,P.t3,2]],oars:[[0.58,0.84,1]]},
   {x:318,wl:94,len:68,h:7,dir:-1,hull:R('s3 s4 s5 s6'),trim:R('r1 r2 r3 r4'),band:P.r2,name:'SV. NIKOLA',nameCol:P.r1,mast:[0.58,32],yard:true,sail:P.s4,cargo:[[0.2,0.4,P.b2,2]]},
   // nah (längsseits an der Mole)
-  {x:22,wl:106,len:108,h:12,dir:1,hull:R('s2 s3 s4 s5 s6'),trim:R('b0 b1 b2 b3'),band:P.r2,name:'MARIJA',nameCol:P.b0,reg:'ST 2061',mast:[0.6,60],yard:true,sail:P.s5,tyres:[0.3,0.52,0.72],cargo:[[0.16,0.38,P.t3,3],[0.64,0.78,P.b2,2]],deep:3},
+  {x:22,wl:106,len:108,h:12,dir:1,hull:R('s2 s3 s4 s5 s6'),trim:R('b0 b1 b2 b3'),band:P.r2,name:'MARIJA',nameCol:P.b0,reg:'ST 2061',mast:[0.6,60],yard:true,sail:P.s5,tyres:[0.3,0.52,0.72],cargo:[[0.16,0.38,P.t3,3],[0.64,0.78,P.b2,2]],oars:[[0.4,0.58,2]],deep:3},
+  // kleine Pasara mit Rudern, rechts im Becken
+  {x:352,wl:104,len:40,h:7,dir:1,hull:R('s3 s4 s5 s6'),trim:R('g1 g2 g3 g4'),band:P.g1,name:'SRIĆA',nameCol:P.g1,nameAt:0.86,oarsOut:0.46,oars:[[0.16,0.36,1]],deep:2,sb:5,ss:3},
   {x:238,wl:106,len:100,h:12,dir:-1,hull:R('b0 b1 b2 b3 b4'),trim:R('s3 s4 s5 s6'),band:P.k2,name:'DVA BRATA',nameCol:P.s6,nameAt:0.62,cabin:[0.28,0.48,13],mast:[0.6,30],tyres:[0.24,0.7],transom:true,cargo:[[0.62,0.8,P.g3,2]],deep:3}
 ];
 
@@ -196,6 +268,13 @@ function lamp(w){ var x=LAMP.x, by=LAMP.base, h=LAMP.h, I=R('k1 m0 m1 m2');
   w.rect(x-3,by-4,7,4,I[1]); w.hl(x-3,x+3,by-4,I[3]); w.rect(x-2,by-8,5,4,I[1]); w.rect(x-1,by-h,3,h-8,I[1]); w.vl(x-1,by-h,by-9,I[2]); w.vl(x+1,by-h,by-9,I[0]);
   for (var yy=by-h+6;yy<by-10;yy+=9) w.hl(x-2,x+2,yy,I[2]);
   var hy=by-h; w.rect(x-3,hy-7,7,7,P.m2); w.rect(x-2,hy-6,5,5,P.s3); w.vl(x,hy-6,hy-2,P.m1); w.hl(x-4,x+4,hy-8,I[1]); w.poly([[x-4,hy-8],[x,hy-11],[x+4,hy-8]],I[1]); w.px(x,hy-12,I[2]); w.hl(x-3,x+3,hy,I[1]); w.hl(x-2,x+2,hy+1,I[1]); }
+// Ruder, an die Schuppenwand gelehnt
+function shedOars(b){ [[151,110,158,60],[154,110,161,63]].forEach(function(o,i){ b.line(o[0],o[1],o[2],o[3],i?P.w3:P.w4); b.line(o[0]+1,o[1],o[2]+1,o[3],P.w1); var bx=o[2], by=o[3]; b.rect(bx-1,by,3,8,i?P.w3:P.w4); b.vl(bx-1,by,by+7,i?P.w4:P.w5); b.vl(bx+1,by,by+7,P.w2); b.px(bx,by+8,P.w2); }); }
+// Vrša: glockenförmige Fischreuse aus Draht
+function vrsa(w,cx,by){ for (var y=by-10;y<by;y++){ var t=(y-(by-10))/10, hw=Math.round(1.5+Math.sin(t*Math.PI*0.6)*4.5); for (var x=cx-hw;x<=cx+hw;x++){ var edge=(x===cx-hw||x===cx+hw), on=edge||((x+y)&1)===0||y===by-1||((y-by)%4===0); if (!on) continue; w.px(x,y,edge?(x<cx?P.m3:P.m1):(x<cx?P.m2:P.m1)); } }
+  w.hl(cx-1,cx+1,by-11,P.m3); w.px(cx,by-12,P.e3); for (var x2=cx-5;x2<=cx+5;x2++) w.px(x2,by,P.k2); w.px(cx-2,by-5,P.t3); }
+// sitzende Möwe (f: Blick nach rechts 1, links -1)
+function gullSit(b,x,y,f){ function p(dx,dy,c){ b.px(x+dx*f,y+dy,c); } p(0,0,P.s6); p(1,0,P.s6); p(2,-1,P.s6); p(2,-2,P.s5); p(3,-1,P.y3); p(-1,0,P.m2); p(-2,-1,P.m1); p(0,1,P.s4); p(1,1,P.s4); p(-1,1,P.m3); p(0,2,P.y2); }
 // rostiger Drehkran an der Beckenecke (früher für das Eis)
 function crane(b,x,by){ var y, k; b.rect(x-2,by-34,4,34,P.t1); b.vl(x-2,by-34,by-1,P.t2); b.vl(x+1,by-34,by-1,P.t0); for (y=by-32;y<by;y+=5){ b.px(x-1,y,P.m1); }
   b.rect(x-4,by-3,8,3,P.m0); b.hl(x-4,x+3,by-3,P.m2);
@@ -212,16 +291,20 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // Varoš: drei Häuserreihen den Hang hinab
   houses(b,wins,92,330,function(x){ return 41+(x-100)*0.055; },11,7,51,0.8);
   church(b,214,Math.round(41+(221-100)*0.055)+1);
+  farTower(b);
   houses(b,wins,60,392,function(x){ return 57+(x-80)*0.03; },13,8,61,0.9);
   houses(b,wins,30,BX1+4,function(){ return 72; },15,9,71,1.0);
+  varosExtras(b); towerVisible(b);
   // Luftperspektive (vor allem der Marjan und die oberen Häuser)
   haze(b,0,W,0,FQ,function(x,y){ return y<38?HZ[0]:(y<54?HZ[1]:(y<64?HZ[2]:null)); },function(x,y){ return b.d[y*W+x]!==SKYB.d[y*W+x]; });
+  for (k=0;k<TWPIX.length;k+=3){ var to=TWPIX[k+1]*W+TWPIX[k]; b.d[to]=HZT.a[b.d[to]]; }      // der Turm ist weiter weg als Varoš
   // Gasse rechts hinauf nach Varoš (zwischen Becken und Ledana)
   for (y=40;y<QY;y++) for (x=BX1;x<LX0;x++){ var c=stones(x,y,R('s0 s1 s2 s3'),6,4); if (x<BX1+3||x>LX0-4) c=M.DN[c]; b.px(x,y,c); }
   for (var st=0;st<12;st++){ var sy=QY-3-Math.round(st*3.6-st*st*0.06); if (sy<44) break; b.hl(BX1+3,LX0-5,sy,st<6?P.s4:P.s3); b.hl(BX1+3,LX0-5,sy+1,P.s1); }
   b.rect(BX1+5,40,8,4,P.s3); b.px(BX1+8,38,P.m1); b.vl(BX1+8,32,38,P.m1); b.px(BX1+7,31,P.m2); b.px(BX1+9,31,P.m2);
   // Kaistraße und Kaimauer drüben, Laternen, geparkte Autos
   for (x=0;x<BX1;x++){ for (y=72;y<FQ;y++){ var cq=y<75?(y===72?P.s5:P.s4):stones(x,y,R('s1 s2 s3 s4'),7,3); if (y>=FQ-1) cq=(hash(x,1)<0.5)?P.g1:P.e1; b.px(x,y,cq); } }
+  konobe(b);
   FARLAMPS.forEach(function(lx){ b.vl(lx,62,72,P.m1); b.px(lx,61,P.m2); b.px(lx-1,61,P.m1); b.px(lx+1,61,P.m1); });
   for (x=8;x<BX1;x+=23) b.rect(x,71,2,2,P.m1);
   [[150,P.r3],[196,P.s5],[286,P.b2]].forEach(function(cr){ var cx=cr[0]; b.rect(cx,68,12,4,cr[1]); b.rect(cx+2,65,7,3,cr[1]); b.rect(cx+3,66,5,2,P.n1); b.hl(cx,cx+11,68,M.UP[cr[1]]); b.px(cx+2,72,P.k1); b.px(cx+9,72,P.k1); });
@@ -242,15 +325,17 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
       b.px(x,y,cm); } }
   for (x=0;x<W;x++){ if (bayer(x,110)<0.8) b.px(x,110,P.s1); if (bayer(x,111)<0.3) b.px(x,111,M.DN[b.get(x,111)]); }
   for (k=0;k<22;k++){ var fx=Math.floor(hash(k,77)*W), fy=113+Math.floor(hash(k,78)*24); b.ellipse(fx,fy,3+hash(k,79)*6,1+hash(k,80)*1.2,function(xx,yy){ var c0=b.get(xx,yy); return (c0===RM[0]||c0===RM[1])?c0:M.DN[c0]; }); }
-  [70,150,336,388].forEach(function(rx){ b.ellipse(rx,112,2.2,1.1,P.m1); b.px(rx,111,P.t2); b.px(rx+1,113,P.t1); });
+  // eiserne Festmacherringe an der Kante
+  [70,150,336,388].forEach(function(rx){ b.rect(rx-1,110,3,1,P.s1); for (var a=0;a<14;a++){ var an=a/14*Math.PI*2, ex=rnd(rx+Math.cos(an)*2.6), ey=rnd(112+Math.sin(an)*1.3); b.px(ex,ey,an>Math.PI*0.9&&an<Math.PI*1.6?P.m3:(an<Math.PI?P.k2:P.m1)); } b.px(rx+2,113,P.t2); b.px(rx-2,111,P.t1); });
   for (k=0;k<60;k++){ var sx=Math.floor(hash(k,91)*390), sy2=112+Math.floor(hash(k,92)*26); b.px(sx,sy2,hash(k,93)<0.5?P.s5:P.a5); }
   // ---- Ledana, Kran, Schuppen
   paintLedana(b,tod);
   crane(b,404,QY);
-  paintShed(b);
+  paintShed(b); shedOars(b);
   // ---- Poller, Taue, Netze, Kisten
   var bw={px:function(x,y,c){ b.px(x,y,c); },rect:function(x,y,w,h,c){ b.rect(x,y,w,h,c); },hl:function(a,z,y,c){ b.hl(a,z,y,c); },vl:function(x,a,z,c){ b.vl(x,a,z,c); },line:function(a,c2,d,e,f){ b.line(a,c2,d,e,f); },ellipse:function(a,c2,d,e,f){ b.ellipse(a,c2,d,e,f); },poly:function(p,c){ b.poly(p,c); },micro:function(s,x,y,c){ M.microText(b,s,x,y,c); }};
   [[24,111],[136,111],[154,111],[262,111],[348,111]].forEach(function(p){ bollard(bw,p[0],p[1]); });
+  rope(bw,388,111,389,97,0.4,P.e3); vrsa(bw,110,116);
   rope(bw,24,102,28,96,0.6,P.e3); rope(bw,136,102,124,93,1.4,P.e3); rope(bw,262,102,250,96,1.2,P.e3); rope(bw,348,102,334,95,1.6,P.e4); rope(bw,154,102,172,93,1,P.e2);
   // Netze: orange und grün, auf der Mole aufgeschossen
   netHeap(bw,120,126,17,7,R('t1 t2 t3 t4 t5'),7); netHeap(bw,92,119,12,5,R('g1 g2 g3 g4 g5'),8); netHeap(bw,146,121,9,4,R('t2 t3 t4 y3 y4'),9);
@@ -267,6 +352,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   [[38,114,3],[54,113,2],[68,116,4]].forEach(function(s,si){ for (var j=0;j<s[2];j++){ var Rb=(si===1&&j===1)?R('r0 r1 r2 r3'):((si===2&&j===3)?R('s2 s3 s4 s5'):R('b0 b1 b2 b3')); fishbox(bw,s[0]+(j%2),s[1]-j*6,15,6,Rb); } });
   M.microText(b,'ST',72,104,P.b0);
   lamp(bw);
+  [[22,98,1],[346,98,-1],[199,33,1]].forEach(function(g){ gullSit(b,g[0],g[1],g[2]); });
   paintFence(b,bw,S);
   // ---- Licht und Schatten (vor dem Umfärben)
   var LF=M.lf.sum(M.lf.band(112,144,0.15,-0.75),
@@ -289,7 +375,14 @@ function afterLights(b,tod,wins){ if (tod==='day') return;
   wins.forEach(function(w,i){ var p=w[4]*(tod==='night'?1:0.6); if (hash(w[0]*1.3,w[1]*0.7)<p){ if (w[4]<0.1){ for (var yy=w[1];yy<w[1]+w[3];yy+=2) b.hl(w[0],w[0]+w[2]-1,yy,P.y2); } else { b.rect(w[0],w[1],w[2],w[3],hash(i,3)<0.5?P.y3:P.y4); if (w[2]>1) b.px(w[0],w[1],P.y5); } } });
   FARLAMPS.forEach(function(lx){ b.px(lx,61,P.y5); b.px(lx-1,61,P.y4); b.px(lx+1,61,P.y4); b.px(lx,62,P.y3); });
   var hx=LAMP.x, hy=LAMP.base-LAMP.h; b.rect(hx-2,hy-6,5,5,P.y4); b.rect(hx-1,hy-5,3,3,P.y5); b.px(hx,hy-4,P.l1); b.vl(hx,hy-6,hy-2,P.y2);
-  b.hl(SDOOR[0]+2,SDOOR[0]+SDOOR[2]-3,SDOOR[1]+SDOOR[3]-1,P.k0); }
+  b.hl(SDOOR[0]+2,SDOOR[0]+SDOOR[2]-3,SDOOR[1]+SDOOR[3]-1,P.k0);
+  // Laternen an der Marjan-Treppe, der angestrahlte Glockenturm, eine offene Konoba
+  for (var j=0;j<STPATH.length;j+=3){ var sx=STPATH[j], sy=STPATH[j+1], dm=9; for (var l=0;l<STLAMPS.length;l++){ var dd=Math.abs(STLAMPS[l][0]-sx)+Math.abs(STLAMPS[l][1]+4-sy)*0.7; if (dd<dm) dm=dd; }
+    if (dm<5 && bayer(sx,sy)<(5-dm)/5+0.2) b.px(sx,sy,dm<2?P.y3:P.y2); else if (bayer(sx,sy)<0.4) b.px(sx,sy,P.y1); }
+  STLAMPS.forEach(function(p){ b.px(p[0],p[1],P.y5); b.px(p[0],p[1]+1,P.y2); if (tod==='night'){ b.px(p[0]-1,p[1],P.y2); b.px(p[0]+1,p[1],P.y2); } });
+  if (CHAP[1]){ var chx=CHAP[0], chb=CHAP[1]; b.px(chx+5,chb-5,P.y4); b.px(chx+6,chb-5,P.y3); b.px(chx+5,chb-4,P.y2); b.px(chx+6,chb-3,P.y1); b.px(chx+1,chb-10,P.y3); }
+  for (var i=0;i<TWPIX.length;i+=3){ var tx=TWPIX[i], ty=TWPIX[i+1], c=M.tintPx(FLOOD,TWPIX[i+2],tx,ty), dn=M.qd((34-ty)/36*(tod==='night'?1.3:0.9),tx,ty); if (tod!=='night' && c!==P.k2) c=M.DN[c]; while (dn>0){ c=M.DN[c]; dn--; } b.px(tx,ty,c); }
+  KOPEN.forEach(function(d){ for (var y=d[1];y<d[1]+d[3];y++) for (var x=d[0];x<d[0]+d[2];x++){ var ax=Math.abs(x+0.5-(d[0]+d[2]/2))/(d[2]/2); if (y===d[1] && ax>0.55) continue; b.px(x,y,y>d[1]+d[3]-3?(bayer(x,y)<0.5?P.y4:P.y3):(bayer(x,y)<0.4?P.y3:P.y2)); } b.px(d[0]+1,d[1]+3,P.k2); b.px(d[0]+1,d[1]+4,P.w0); b.px(d[0]+2,d[1]+4,P.w0); b.vl(d[0]+2,d[1]+2,d[1]+6,P.w0); }); }
 
 // ---------------------------------------------------------------- Dinkos Schuppen
 function paintShed(b){ var x0=SHED.x0, x1=SHED.x1, top=SHED.top, base=SHED.base, Rs=R('s0 s1 s2 s3 s4 s5'), x, y;
@@ -447,8 +540,12 @@ function dyn(fb,v,S,GS){ if (!DYN) return; var cam=v.cam, t=v.t, tod=v.tod, calm
   }
   if (tod==='day'){ M.scn.gulls(fb,t,0,6,W,30,4,cam);
     var gx=LAMP.x-cam, gy=LAMP.base-LAMP.h-12; if (gx>3&&gx<316){ var hb=Math.sin(t*0.9)>0.6?1:0; fb.px(gx-2,gy,P.s6); fb.px(gx-1,gy,P.s6); fb.px(gx,gy,P.s5); fb.px(gx+1,gy,P.m3); fb.px(gx-1,gy-1,P.s6); fb.px(gx-3+hb,gy-2,P.s6); fb.px(gx-4+hb,gy-2,P.y3); fb.px(gx,gy+1,P.y3); fb.px(gx-1,gy+1,P.y3); } }
+  else if (tod==='dusk') gullsCol(fb,t,120,8,W-120,24,3,cam,P.d1,P.d2);
   var on=Math.floor(v.gt/650)%2===0; if (on && tod!=='day'){ var lx2=505-cam; if (lx2>2&&lx2<316){ fb.px(lx2,FENCE.top-4,P.y5); fb.px(lx2+1,FENCE.top-4,P.y4); fb.px(lx2,FENCE.top-3,P.y4); fb.px(lx2+1,FENCE.top-3,P.y3); fb.px(lx2-1,FENCE.top-3,P.y2); fb.px(lx2+2,FENCE.top-4,P.y2); fb.px(lx2,FENCE.top-5,P.y3); } }
   var fl=64-cam; if (fl>=0&&fl<312){ var FC=[P.r3,P.s6,P.b1]; for (var fy2=0;fy2<3;fy2++) for (var fx2=1;fx2<7;fx2++){ var wv=Math.round(Math.sin(fx2*0.9-t*(calm?2:8))*(fx2/6)*(calm?0.4:1)), cc2=FC[fy2]; fb.px(fl+fx2,3+fy2+wv,tod==='day'?cc2:M.tintPx(M.TINT[tod]||M.TINT.night,cc2,fl+fx2,3+fy2)); } } }
+// Möwen als dunkle Silhouetten vor dem Abendhimmel
+function gullsCol(fb,t,x0,y0,w,h,n,cam,c1,c2){ for (var i=0;i<n;i++){ var x=Math.floor(x0+((hash(i,21)*w+t*(6+hash(i,22)*8))%w))-cam, y=Math.floor(y0+hash(i,23)*h+Math.sin(t*1.1+i)*3), f=Math.floor(t*3+i)%2;
+  if (x<2||x>=fb.w-2) continue; fb.px(x,y,c1); fb.px(x-1,y-(f?1:0),c1); fb.px(x+1,y-(f?1:0),c1); fb.px(x-2,y-(f?0:1),c2); fb.px(x+2,y-(f?0:1),c2); } }
 function front(fb,v,S,GS){ if (M.scn.weather(GS)==='bura') M.scn.buraDebris(fb,v.t,112,140,v.cam); }
 function ghost(fb,v,S,GS){ // aus den Ritzen der Schuppentür sickert ein kalter Schimmer
   var t=v.t, cam=v.cam; for (var y=SDOOR[1]+2;y<SDOOR[1]+SDOOR[3];y++){ var x=SDOOR[0]+SDOOR[2]-1-cam; if (x<0||x>=320) continue; if (Math.sin(y*0.4+t*2)>0.1) fb.px(x,y,P.x4); }

@@ -136,7 +136,7 @@ var META={
   c1_never:['Dinko','Dinko war nie bei Ivka'], c1_noglove:['Ivka','Ivka trug nie Handschuhe'], c1_brother:['Dinko','„Er war wie ein Bruder.“',['c1_story']], c1_bag:['Dinko','Der Seesack mit T.P.',['c1_story']],
   c1_words:['Dinko','Tonćis letzte Worte',['c1_story']], c1_candle:['Dinko','Die Kerze am 22. Dezember',['c1_story']], c1_story:['Dinko','Dinkos Geschichte'], c1_letter:['Tonći','Tonćis Brief, ganz gelesen'],
   c1_plaque:['Tonći','Die Tafel in Sustipan'], c1_jakov:['Tonći','Ein Mann vor der Tafel'],
-  m_find:['Die Stimme','„Ich kann sie finden.“'], m_voice:['Die Stimme','Eine Stimme hinter mir'], m_tram:['Die Stimme','Die Straßenbahn auf der Scheibe'], m_name:['Mala','Sie heißt Mala'],
+  m_find:['Die Stimme','„Ich kann sie finden.“'], m_voice:['Die Stimme','Eine Stimme hinter mir'], m_tram:['Die Stimme','Straßenbahn am Fenster'], m_name:['Mala','Sie heißt Mala'],
   c1_stuck:['Tonći','Der Brief klebt zusammen',flag('c1.letterOpen')], c2_dark:['Die Ledana','Der Kühlraum ist dunkel',['c2_case']], c2_under:['Luka','Unter dem Schutt: ein Koffer',['c2_case']], m_horn:['Mala','Das Fährhorn'], m_bells:['Mala','Die Glocken sind ihr zu laut'], m_leash:['Mala','Die Leine aus Licht'], m_tin:['Mala','Die Blechdose: „Meins.“'],
   m_mother:['Mala','„Wo ist deine Mutter?“'], m_flight:['Mala','„Auch auf der Flucht?“'], m_sarajevo:['Mala','Sie kennt Sarajevo'], m_jakov:['Mala','Jakov kennt sie'], m_waited:['Mala','Sie hat gewartet'],
   m_31:['Mala','„Die Kleine aus 31“'], m_register:['Mala','Register 1993, Zimmer 31'], m_journal:['Mala','Die Kleine auf der Treppe'], m_chalk:['Mala','Kreide: Straßenbahn 3'],

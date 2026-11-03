@@ -2,7 +2,9 @@
    Links Zdenkas Haus (Nr. 12, Ockerputz) mit Schemel und Blechdosen voller Basilikum und Geranien, in der Mitte Ivkas
    Steinhaus (Nr. 14) mit grüner Tür, geschlossenen Läden, Briefkasten „PERIĆ“ und der Todesanzeige. Rechts führt eine
    Treppengasse hinauf zum Kirchlein Sv. Nikola mit Glockengiebel, darüber die Pinien des Marjan. Wäscheleine, Wandlaterne,
-   eine Katze auf den Stufen. Nach dem Regen glänzt das Pflaster, die Pfützen spiegeln den grauen Himmel. */
+   eine Katze auf den Stufen. Weiter oben am Hang schauen kleinere Häuser zwischen den Pinien über die Dächer, an Ivkas Wand steht
+   eine steinerne Bank, die Treppe ist von Töpfen gesäumt, Kabel, Antenne und Schüssel erzählen von 2011. Nach dem Regen glänzt
+   das Pflaster, die Pfützen spiegeln den grauen Himmel. */
 (function(M){
 'use strict';
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, tex=M.tex, R=M.R;
@@ -47,12 +49,16 @@ var WA=[52,27,20,17], WB=[152,21,24,22], WG=[15,63,16,17];
 var NOTE=[130,64,14,18], MAIL=[185,71,23,15], LAMP=[218,37];
 var STOOL=[79,110,16,122];                          // x, Sitzhöhe, Breite, Fußhöhe
 var LINE=[84,30,146,27];                            // Wäscheleine
+var LINE2=[0,33,37,31];                             // zweite Leine links, vom Nachbarhaus herüber
+var BENCH=[188,99,34];                              // Steinbank an Ivkas Wand: x, Sitzfläche, Breite
+var FAR=[[40,63,4,0],[77,99,2,1],[124,147,1,2],[163,186,0,3],[203,224,1,4]];   // Häuser weiter oben am Hang: x0, x1, Traufe, Muster
 var LX=226;                                         // linke Kante der Treppengasse (Ecke von Haus B)
 var STEPS=(function(){ var a=[], y=108; for (var i=0;i<10;i++){ var rise=4.8-0.13*i; a.push({y0:y-rise,y1:y,xl:LX,xr:lerp(306,295,i/10)}); y-=rise; } return a; })();
 var TOPY=STEPS[9].y0, KX=261;                       // Absatz oben, Mitte des Kirchleins
 var CAT=[284,Math.round(STEPS[3].y0)+1];            // Füße der Katze (auf der vierten Stufe)
 function doorBot(d){ return Math.round(baseY(d[0]+d[2]/2)); }
 function lineY(t){ return LINE[1]+(LINE[3]-LINE[1])*t+Math.sin(Math.PI*t)*5; }
+function line2Y(t){ return LINE2[1]+(LINE2[3]-LINE2[1])*t+Math.sin(Math.PI*t)*3; }
 
 // ---------------------------------------------------------------- Himmel und Marjan
 function paintSky(b,tod,weather){
@@ -71,8 +77,17 @@ function pineCrown(w,cx,cy,rx,ry,sd,G){
     if (e>1) continue; var v=puff(x,y,4.5,3,sd)*0.85+0.22-Math.max(0,dy)*0.5-Math.max(0,e-0.75)*0.35-(dy<-0.5?-0.08:0); w.px(x,y,ra(G,v,x,y)); } }
 function paintForest(b){ var w=RW(b,RG.far), G=R('g0 g1 g2 g3 g4'), G2=R('g0 g1 g2 g3 g4 g5');
   for (var x=0;x<W;x++){ var hy=rnd(hillY(x)); for (var y=hy;y<H;y++){ var v=puff(x,y,6,4,3)*0.75+0.02-(y-hy)*0.008; w.px(x,y,ra(G,v,x,y)); } }
+  paintFar(w);
   [[296,12,70,1],[229,26,60,-1]].forEach(function(t){ for (var y=t[1];y<t[2];y++){ var x=rnd(t[0]+Math.sin(y*0.06)*1.5+(y-t[1])*t[3]*0.03); w.px(x,y,P.w1); w.px(x+1,y,P.t1); } });
   PINES.forEach(function(p,i){ pineCrown(w,p[0],p[1],p[2],p[3],31+i*7,G2); }); }
+
+// ---------------------------------------------------------------- weiter oben am Hang: kleine Häuser, nur Traufe und Oberlicht über den Dächern
+var FARC=[R('s2 s3 s4 s5'),R('e2 e3 e4 s5'),R('s3 s4 s5 s6'),R('w3 w4 w5 d6'),R('s2 s3 s4 s5')];
+function paintFar(w){ FAR.forEach(function(h,k){ var x0=h[0], x1=h[1], ye=h[2], F=FARC[k];
+    for (var y=ye+2;y<26;y++) for (var x=x0;x<x1;x++){ var v=0.6+(fbm(x,y,6,k+20)-0.5)*0.4+(hash(x,y)-0.5)*0.1-(x>x1-4?0.35:0); w.px(x,y,ra(F,v,x,y)); }
+    for (var x2=x0-1;x2<=x1;x2++){ w.px(x2,ye,((x2+k)%3)?P.t3:P.t1); w.px(x2,ye+1,(x2%2)?P.t2:P.t3); if (ye>0) w.px(x2,ye-1,((x2+k)%4)?P.t2:P.t1); }
+    for (var i=x0+3;i<x1-4;i+=8){ w.rect(i,ye+4,3,4,P.k2); w.px(i+1,ye+4,P.k1); if ((k+i)%3){ w.vl(i-1,ye+4,ye+7,P.g2); w.vl(i+3,ye+4,ye+7,P.g1); } w.hl(i-1,i+3,ye+8,P.s4); } });
+  w.vl(87,0,1,P.m1); w.hl(85,89,0,P.m1); w.rect(170,0,2,1,P.s3); }                      // eine Antenne, ein Kamin
 
 // ---------------------------------------------------------------- oben am Hang: Haus C, Kirchlein Sv. Nikola
 var CHR=[R('s1 s2 s3 s4'),R('s2 s3 s4 s5'),R('e1 e2 e3 e4'),R('s1 s2 s3 s4')];
@@ -84,7 +99,7 @@ function paintUpper(b){ var w=RW(b,RG.up);
   // Kirchlein: Fassade mit Giebel, Glockengiebel (preslica) mit einer Glocke
   var K0=KX-24, K1=KX+24, KB=65, KE=35, KA=21;
   w.poly([[K0,KB],[K0,KE],[KX,KA],[K1,KE],[K1,KB]],function(x,y){ return blocks(x,y,8,5,7,CHR,P.s1); });
-  for (var x5=K0-2;x5<=K1+2;x5++){ var yy=rnd(KE-(KE-KA)*(1-Math.abs(x5-KX)/(KX-K0))); w.px(x5,yy-2,P.t2); w.px(x5,yy-1,P.s5); w.px(x5,yy,P.s4); w.px(x5,yy+1,P.s2); }
+  for (var x5=K0-2;x5<=K1+2;x5++){ var yy=rnd(KE-(KE-KA)*(1-Math.abs(x5-KX)/(KX-K0))); w.px(x5,yy-2,(x5%5===0)?P.s2:P.s3); w.px(x5,yy-1,(x5%5===0)?P.s3:P.s5); w.px(x5,yy,P.s4); w.px(x5,yy+1,P.s2); }   // Steinplatten wie auf den alten Kirchen
   w.hl(K0-1,K1+1,KE+1,P.s2);
   var gx0=KX-8, gx1=KX+8, gy0=6, gy1=24;
   for (var y6=gy0;y6<gy1;y6++) for (var x6=gx0;x6<=gx1;x6++){ var inA=(x6>=KX-5&&x6<=KX+5&&y6>=10&&y6<=22)&&!(y6<14&&Math.pow((x6-KX)/5.6,2)+Math.pow((y6-14)/4.2,2)>1); if (inA) continue; w.px(x6,y6,blocks(x6,y6,6,4,13,CHR,P.s1)); }
@@ -111,6 +126,8 @@ function paintLane(b){ var w=RW(b,RG.stair);
       w.px(x,y,c); }
     if (i%3===1){ var lx=rnd(lerp(s.xl,s.xr,0.2+hash(i,5)*0.6)); w.px(lx,y0,P.y3); w.px(lx+1,y0,P.e3); }  // ein gelbes Feigenblatt
   });
+  // Töpfe und Dosen am Rand der Treppe: Geranien, Basilikum, eine Aloe
+  [[1,229,'g'],[3,231,'b'],[5,229,'a'],[7,230,'g'],[2,0,'b'],[6,0,'g']].forEach(function(q,k){ var st=STEPS[q[0]], px=q[1]||rnd(st.xr)-9, by=rnd(st.y0)+1; potOn(w,px,by,q[2],k); });
   // rechte Gassenwand (Seite von Haus E), im Licht
   var sw=RW(b,RG.side);
   sw.poly([[306,EE],[295,29],[295,rnd(TOPY)],[306,108]],function(x,y){ var t=(306-x)/11, v=0.55+(fbm(x*3,y,10,6)-0.5)*0.5+(hash(x,y)-0.5)*0.1-t*0.2;
@@ -120,12 +137,24 @@ function paintLane(b){ var w=RW(b,RG.stair);
   for (var y3=40;y3<92;y3++){ var xx=rnd(304-(y3-40)*0.02); sw.px(xx,y3,P.m1); sw.px(xx+1,y3,P.m2); }   // Fallrohr
   sw.rect(298,54,5,4,P.t3); sw.hl(297,303,53,P.t4); for (var g=0;g<10;g++) sw.px(297+rnd(hash(g,7)*7),51-rnd(hash(g,8)*3),hash(g,9)<0.4?P.r3:P.g3);   // Blumentopf am Haken
   sw.vl(300,46,53,P.k1);
+  // Wandnische mit einer kleinen Madonna und einem roten Grablicht, wie an vielen Ecken in Varoš
+  for (var y6=33;y6<42;y6++) for (var x7=297;x7<303;x7++){ var top=(x7===297||x7===302)?35:33; if (y6<top) continue; sw.px(x7,y6,(x7===297||y6===top)?P.k1:P.k2); }
+  sw.hl(297,302,32,P.s5); sw.px(296,33,P.s5); sw.px(303,33,P.s3); sw.hl(296,303,42,P.s6); sw.hl(296,303,43,P.s2);
+  sw.px(299,35,P.s5); sw.px(300,35,P.s4); sw.rect(299,36,2,4,P.b2); sw.px(299,36,P.b4); sw.px(299,40,P.b1); sw.px(300,40,P.b1);
+  sw.px(301,40,P.r2); sw.px(301,39,P.r3); sw.px(301,38,P.y2);
   // Haus E: Front am rechten Bildrand
   var e=RW(b,RG.wallE);
   for (var y4=EE;y4<108;y4++) for (var x4=306;x4<W;x4++) e.px(x4,y4,ra(EPL,0.5+(fbm(x4,y4,14,12)-0.5)*0.5+(hash(x4,y4)-0.5)*0.12-(y4>96?(y4-96)/12*0.3:0),x4,y4));
   for (var y5=EE;y5<108;y5++){ var q=Math.floor((y5-EE)/7)%2; for (var x5=306;x5<(q?313:310);x5++) e.px(x5,y5,(y5-EE)%7===0?P.s1:(x5===306?P.s3:(hash(x5,y5)<0.1?P.s3:P.s4))); }
   winFrameE(e,314,30,10,20); shutters(e,314,30,10,20,13); shutters(e,312,72,9,18,17);
+  e.ellipse(312.5,15.5,3.2,3.6,function(x,y){ return (x<312)?P.m4:P.m3; }); e.px(311,14,P.s6); e.line(313,16,316,18,P.m1); e.px(316,18,P.k1); e.vl(317,13,20,P.m1); e.px(317,21,P.k1);   // Satellitenschüssel
   for (var x6=305;x6<W;x6++){ e.px(x6,EE-3,(x6%3)?P.t3:P.t1); e.px(x6,EE-2,P.t2); e.px(x6,EE-1,P.s5); e.px(x6,EE,P.s2); } }
+function potOn(w,x,by,kind,sd){ var tin=kind==='b', r=M.rng(sd*31+7);
+  for (var y=by-4;y<by;y++) for (var x2=x;x2<x+5;x2++){ var u=(x2-x)/4, c=tin?(u<0.3?P.m4:(u<0.7?P.m3:P.m1)):(u<0.3?P.t4:(u<0.7?P.t3:P.t1)); if (y===by-4) c=tin?P.m2:P.t4; w.px(x2,y,c); }
+  if (tin){ w.hl(x,x+4,by-2,P.r2); }
+  if (kind==='a'){ [[0,-1],[1,-2],[2,-3],[2,-4],[3,-2],[4,-1],[-1,-2]].forEach(function(o,i){ w.px(x+o[0]+(i%2),by-4+o[1],i%2?P.c3:P.g4); w.px(x+o[0],by-5+o[1],P.g3); }); return; }
+  for (var i=0;i<26;i++){ var a=-Math.PI*(0.1+r()*0.8), d=Math.sqrt(r()), px=rnd(x+2+Math.cos(a)*d*4), py=rnd(by-5+Math.sin(a)*d*4); w.px(px,py,kind==='b'?(r()<0.5?P.g4:P.g5):(r()<0.5?P.g2:P.g3)); }
+  if (kind==='g') for (var f=0;f<3;f++){ var fx=x+rnd(r()*4), fy=by-7-rnd(r()*3); w.px(fx,fy,P.r3); w.px(fx+1,fy,P.r4); w.px(fx,fy+1,P.r2); } }
 function winFrameE(w,x,y,ww,wh){ w.rect(x-2,y-2,ww+4,wh+4,P.s5); w.hl(x-3,x+ww+2,y+wh+2,P.s4); w.hl(x-3,x+ww+2,y+wh+3,P.s1); }
 
 // ---------------------------------------------------------------- Häuser A und B
@@ -210,7 +239,23 @@ function paintProps(b,wet){ var w=RW(b,RG.prop), g=RW(b,RG.glass);
   stool(w); cans(w);
   // ---- Wäscheleine (die Wäsche selbst hängt in dynamic)
   for (var i=0;i<=LINE[2]-LINE[0];i++){ var t=i/(LINE[2]-LINE[0]); w.px(LINE[0]+i,rnd(lineY(t)),P.s1); }
-  w.px(LINE[0],LINE[1]-1,P.m2); w.px(LINE[2],LINE[3]-1,P.m2); w.px(LINE[2],LINE[3],P.m1); }
+  w.px(LINE[0],LINE[1]-1,P.m2); w.px(LINE[2],LINE[3]-1,P.m2); w.px(LINE[2],LINE[3],P.m1);
+  for (var i2=0;i2<=LINE2[2]-LINE2[0];i2++){ var t2=i2/(LINE2[2]-LINE2[0]); w.px(LINE2[0]+i2,rnd(line2Y(t2)),P.s1); }
+  w.px(LINE2[2],LINE2[3]-1,P.m1); w.px(LINE2[2]+1,LINE2[3]-1,P.m2); w.px(LINE2[2]+1,LINE2[3],P.k1);           // Rolle am Fensterladen
+  // ---- Steinbank an Ivkas Wand, darauf eine Dose Basilikum: Zdenka gießt auch Ivkas Pflanzen
+  stoneBench(w); can(w,191,BENCH[1]-6,5,6,'b',null);
+  // ---- Kabel an der Hausecke hinunter zum Zählerkasten, Antenne auf dem Dach, ein Kapernstrauch aus der Fuge
+  for (var y3=EB+6;y3<86;y3++){ w.px(223,y3,P.k1); if ((y3-EB)%9===0){ w.px(222,y3,P.m2); w.px(224,y3,P.m2); } }
+  w.rect(220,86,6,7,P.m2); w.hl(220,225,86,P.m3); w.vl(225,86,92,P.m1); w.px(221,88,P.k2); w.px(222,88,P.y2);
+  var f=RW(b,RG.far); f.vl(180,1,EB-8,P.m1); f.hl(177,183,2,P.m1); f.hl(178,182,4,P.m2); f.hl(176,184,6,P.m1);
+  caper(w,190,EB+3); }
+function stoneBench(w){ var x0=BENCH[0], y0=BENCH[1], bw=BENCH[2], x, y;
+  for (x=x0+3;x<x0+bw-3;x++) for (y=y0+3;y<Math.ceil(baseY(x));y++){ var c=w.get(x,y); if (c!==T) w.px(x,y,M.step(c,-3)); }   // Schatten unter der Platte
+  for (x=x0;x<x0+bw;x++){ var e=(x===x0||x===x0+bw-1); w.px(x,y0-1,P.s1); w.px(x,y0,e?P.s5:(hash(x>>2,9)<0.2?P.s5:P.s6)); w.px(x,y0+1,e?P.s3:P.s4); w.px(x,y0+2,P.s2); }
+  [x0+2,x0+bw-8].forEach(function(lx){ for (y=y0+3;y<Math.ceil(baseY(lx));y++) for (x=lx;x<lx+6;x++) w.px(x,y,(x===lx)?P.s4:(x===lx+5?P.s1:(hash(x,y)<0.15?P.s2:P.s3))); }); }
+function caper(w,x,y){ var r=M.rng(77);   // Kapern wachsen in Split aus jeder alten Mauer
+  for (var i=0;i<34;i++){ var a=Math.PI*(0.05+r()*0.9), d=Math.sqrt(r()), px=rnd(x+Math.cos(a)*d*7), py=rnd(y+Math.sin(a)*d*5); w.px(px,py,r()<0.35?P.g4:(r()<0.6?P.g3:P.g2)); }
+  [[x-3,y+3],[x+2,y+4],[x+5,y+2]].forEach(function(p){ w.px(p[0],p[1],P.d5); w.px(p[0]+1,p[1],P.s6); }); w.px(x,y,P.g1); }
 function geraniums(w,x,y,ww,hh,sd){ var r=M.rng(sd);
   for (var i=0;i<ww*3;i++){ var px=x+rnd(r()*ww), py=y-rnd(r()*r()*hh); w.px(px,py,r()<0.5?P.g2:(r()<0.6?P.g3:P.g1)); }
   for (var f=0;f<Math.max(2,ww/4);f++){ var fx=x+1+rnd(r()*(ww-3)), fy=y-2-rnd(r()*(hh-1)), fc=r()<0.7?P.r3:P.d4; w.px(fx,fy,fc); w.px(fx+1,fy,M.UP[fc]); w.px(fx,fy+1,M.DN[fc]); w.px(fx+1,fy+1,fc); if (r()<0.6) w.px(fx-1,fy,fc); } }
@@ -299,7 +344,7 @@ function lightFn(tod,weather){ var sunny=tod==='day'&&weather!=='rain', grey=tod
 // warme Lichtinseln in vier Stufen (blau → umbra → bernstein → gold), weich gedithert; eigene Ellipsen für Wände und Boden
 var DIMW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.5+r*0.12+12, L*0.38+g*0.08+8, L*0.26+b*0.1+16]; });
 var MIDW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.45+L*0.36+16, g*0.32+L*0.26+6, b*0.16+L*0.08+4]; });
-var LWALL=[[217,50,64,54,1.08],[62,38,25,22,0.95],[232,51,9,8,0.8],[318,40,8,12,0.7]];
+var LWALL=[[217,50,64,54,1.08],[62,38,25,22,0.95],[232,51,9,8,0.8],[318,40,8,12,0.7],[300,39,6,6,0.8]];
 var LFLOOR=[[212,120,74,17,1.0],[62,119,30,8,0.42]];
 function lightAt(x,y,tod,r){ var set=r===RG.floor?LFLOOR:LWALL, L=0; for (var i=0;i<set.length;i++){ var l=set[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[3], f=1-dx*dx-dy*dy; if (f>0){ var v=l[4]*Math.pow(f,1.15); if (v>L) L=v; } }
   if (r===RG.up) L*=(x>228&&x<238)?1:0.3; else if (r===RG.far) L*=0.15; else if (r===RG.wallE) L*=(y<52&&x>312)?1:0.4;
@@ -333,7 +378,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
     b.fn(WA[0],WA[1],WA[2],WA[3],function(x,y){ return (x===WA[0]+(WA[2]>>1))?P.y2:curtain(x,y,true); });
     b.rect(229,46,6,9,P.y3); b.drect(229,46,6,9,P.y3,P.y4,0.4); b.vl(232,46,54,P.y1);
     b.rect(314,30,6,20,P.y2); b.drect(314,31,6,4,P.y3,P.y4,0.5);
-    b.px(x0,y0+2,P.y4); }
+    [[43,8,3],[88,6,4],[166,4,4],[214,5,3]].forEach(function(q){ for (var yy=q[1];yy<q[1]+q[2];yy++) for (var xx=q[0];xx<q[0]+3;xx++){ if (REG[yy*W+xx]!==RG.far) continue; b.px(xx,yy,(yy===q[1])?P.y2:(bayer(xx,yy)<0.5?P.y4:P.y3)); } });   // Fenster oben am Hang
+    b.px(x0,y0+2,P.y4);
+    b.px(301,38,P.y5); b.px(301,37,P.y4); b.px(301,39,P.r4); }   // das Grablicht in der Nische
   LAST=b; return b; }
 
 // ---------------------------------------------------------------- Ebenen
@@ -349,10 +396,11 @@ function layers(S,GS,tod){ var L=[];
 
 // ---------------------------------------------------------------- jedes Bild
 var CLOTHES=[[0.08,8,9,'s6'],[0.23,6,11,'b3'],[0.4,13,13,'s5'],[0.61,7,9,'r3'],[0.75,3,5,'m3'],[0.81,3,5,'m3'],[0.9,6,10,'c2']];
+var CLOTHES2=[[0.12,7,8,'d4'],[0.42,3,5,'s5'],[0.52,3,5,'s5'],[0.7,8,10,'g4']];
 function dynamic(fb,v,S,GS){ var weather=M.scn.weather(GS), tod=v.tod, tint=tod!=='day'?M.TINT[tod]:null, cam=v.cam, t=v.t;
   // Wäsche: hängt schlaff, flattert in der Bura
   var wind=weather==='bura'?1:0;
-  CLOTHES.forEach(function(cd,k){ var tt=cd[0], cw=cd[1], ch=cd[2], base=P[cd[3]], x0=rnd(LINE[0]+(LINE[2]-LINE[0])*tt), y0=rnd(lineY(tt))+1;
+  CLOTHES.concat(CLOTHES2).forEach(function(cd,k){ var two=k>=CLOTHES.length, L=two?LINE2:LINE, tt=cd[0], cw=cd[1], ch=cd[2], base=P[cd[3]], x0=rnd(L[0]+(L[2]-L[0])*tt), y0=rnd(two?line2Y(tt):lineY(tt))+1;
     var ph=t*(wind?7:0.9)+k*1.7, lift=wind?(0.32+0.22*Math.sin(ph)):0.03*Math.sin(ph);
     for (var u=0;u<cw;u++){ var hgt=Math.max(2,rnd(ch*(1-lift*(0.6+0.4*Math.sin(ph+u*0.6)))));
       for (var q=0;q<hgt;q++){ var sh=wind?rnd((q/hgt)*(q/ch)*(3+2*Math.sin(ph*1.3+u*0.4))):0, sx=x0+u+sh, sy=y0+q;
