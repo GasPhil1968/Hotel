@@ -67,7 +67,7 @@ async function talkMirza(A){ var Mz=A.npc('mirza'), p=A.G.phase;
     {t:'Danke.',bye:true}
   ]; }); }
 async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_rescued')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
-  await Mz.say('Ich komme.'); A.setFlag('k2.s3.mirza'); await Mz.say('Ich bringe Kerzen. Und ich mache das Licht nicht an. Wie damals.'); A.save(); await M.k2CheckS3Night(A); }
+  await Mz.say('Ich komme.'); A.setFlag('k2.s3.mirza'); await Mz.say('Ich bringe Kerzen. Und ich mache das Licht nicht an. Wie damals.'); A.save(); await M.k2CheckS3Night(A); return 'bye'; }
 async function mirzaGuilt(A,Mz){ if (A.hasNote('s3_rescued')) return Mz.say('Sie hat mich gerettet. Und sie hat es nie gewusst.');
   await A.m('Im Klassenbuch steht, in Zoras Schrift: „Mirza H. – verwundet. Meine Schuld.“'); await A.wait(1000); await Mz.say('Ihre Schuld?'); await A.wait(800); await Mz.say('Ich bin in der Pause hinausgerannt. Ich wollte meinen Ball holen. Sie hat es mir verboten, und ich bin trotzdem gerannt.');
   await Mz.say('Dann ist es passiert. Und sie ist hinausgelaufen, in die Splitter, ohne Mantel, und hat mich hineingetragen. Sie hat mich hineingetragen!'); await A.wait(900); await Mz.say('Ihre Schuld? Sie hat mich gerettet.'); A.note('s3_rescued');

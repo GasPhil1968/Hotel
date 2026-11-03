@@ -64,7 +64,7 @@ async function talkDamir(A){ var D=A.npc('damir');
   ]; }); }
 async function damirBook(A,D){ await A.m('Hier. Seite drei. Unter „Likovno“, Zeichnen.'); await A.wait(700); await A.narrate('Zwischen den Seiten liegt ein Blatt: eine Straßenbahn mit Buntstift, viel zu viele Fenster. Darunter „Damir K., 3. r.“ und, in einer anderen Schrift, eine Fünf.');
   await D.say('…'); await A.wait(900); await D.say('Das ist meine.'); await D.say('Die Helferin hat uns Straßenbahnen malen lassen. Damit wir an etwas denken, das fährt.'); await A.wait(800);
-  await D.say('Ich bin Straßenbahnfahrer geworden.'); await A.wait(700); await D.say('Um neun hab ich Schluss. Ich komme.'); A.setFlag('k2.s3.damir'); A.sfx('note'); A.save(); await M.k2CheckS3Night(A); }
+  await D.say('Ich bin Straßenbahnfahrer geworden.'); await A.wait(700); await D.say('Um neun hab ich Schluss. Ich komme.'); A.setFlag('k2.s3.damir'); A.sfx('note'); A.save(); await M.k2CheckS3Night(A); return 'bye'; }
 // ---------------------------------------------------------------- Die letzte Nacht: an der Bank
 async function finalBench(A){ if (A.flag('k2.f2.ride')) return; A.setFlag('k2.f2.ride'); A.G.flags['mala.lock']=true;
   var b=M.stand('carsija','bench')||[80,124,'L']; await A.walk(b[0]+18,b[1]); await A.face('L'); var mp=M.apos('carsija','mala',[70,120,'R']); A.placeG(mp[0],mp[1],'R'); A.idleG('sit');

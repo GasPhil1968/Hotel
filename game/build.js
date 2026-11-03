@@ -20,7 +20,7 @@ const html = `<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#08070d">
-<title>Mala – Kapitel 1: Split</title>
+<title>Mala – Split und Sarajevo</title>
 <style>
 :root{ background:#08070d; }
 html,body{ margin:0; height:100%; background:#08070d; overflow:hidden; touch-action:none; overscroll-behavior:none; }
@@ -36,7 +36,7 @@ body{ display:flex; flex-direction:column; align-items:center; justify-content:c
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Mala">
 </head><body>
-<canvas id="game" width="320" height="200" aria-label="Mala – Kapitel 1: Split. Ein Point-and-Click-Adventure."></canvas>
+<canvas id="game" width="320" height="200" aria-label="Mala – Kapitel 1: Split und Kapitel 2: Sarajevo. Ein Point-and-Click-Adventure."></canvas>
 <div id="hint">Dreh das Gerät quer.</div>
 <script>
 ${js}
@@ -66,7 +66,7 @@ fs.writeFileSync(path.join(OUT, 'index.html'), html);
 // Fassung als claude.ai-Artefakt: ohne eigenes Gerüst (wird beim Veröffentlichen ergänzt), ohne Offline-Teil
 const ai = process.argv.indexOf('--artifact');
 if (ai >= 0) {
-  const page = `<title>Mala in Split</title>
+  const page = `<title>Mala in Sarajevo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 :root{ color-scheme:dark; background:#08070d; }

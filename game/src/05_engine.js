@@ -245,8 +245,8 @@ async function switchTo(who,silent){ if (GS.active===who) return; syncPos(); GS.
   var target=GS.pos[who].room; if (target && target!==room.id){ await gotoRoom(target,{x:GS.pos[who].x,y:GS.pos[who].y,f:GS.pos[who].f,noEnter:true,fadeMs:250,keepPos:true}); }
   else { placePlayers(); E.switchFx=gt; }
   snapCamera();
-  // Raum darf auf den Wechsel reagieren (z. B. Mala hört unten, was Marko oben ausgelöst hat)
-  if (room && room.onSwitch && !E.busy){ E.busy=true; try{ await room.onSwitch(API,who); } catch(e){ console.error(e); } finally{ E.busy=false; } } }
+  // Raum darf auf den Wechsel reagieren (z. B. Mala hört unten, was Marko oben ausgelöst hat): läuft direkt danach, der Wechsel wartet nicht darauf
+  var rr=room; if (rr && rr.onSwitch && !E.busy){ Promise.resolve().then(async function(){ if (E.busy || room!==rr) return; E.busy=true; try{ await rr.onSwitch(API,who); } catch(e){ console.error(e); } finally{ E.busy=false; } }); } }
 E.switchChar=function(){ if (!canSwitch()) return; switchTo(GS.active==='marko'?'mala':'marko'); };
 E.switchTo=switchTo;
 

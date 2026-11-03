@@ -1,10 +1,25 @@
-MALA – KAPITEL 1: SPLIT
+MALA – KAPITEL 1: SPLIT · KAPITEL 2: SARAJEVO
 iPad- und Browser-Version, deutsch
 
 WORUM ES GEHT
 Split, November 2011. Marko Vuković, Übersetzer, kann mit Menschen reden,
 die nicht weiterkommen. Mala, ein Geist, kann sie finden. Drei Fälle,
 ein Prolog, zwei Zwischenspiele und ein Epilog. Etwa zwei bis drei Stunden.
+
+Kapitel 2 setzt direkt danach ein: Der Bus aus Split kommt in Sarajevo an,
+und Mala ist verschwunden. Drei neue Fälle, Malas eigene Spur durch die
+Stadt, ein Zwischenspiel, ein Finale und ein Epilog. Etwa vier bis fünf
+Stunden. Die Frage, die alles trägt: Was verbindet Mala mit Sarajevo, und
+warum erinnert sie sich nicht?
+
+KAPITEL WÄHLEN
+- „Neues Spiel“ fragt nach dem Kapitel. Kapitel 2 ist frei, sobald Split
+  einmal zu Ende gespielt wurde. Man kann es auch direkt beginnen (das
+  Spiel fragt einmal nach); dann gelten für die Erinnerungen aus Split
+  sinnvolle Vorgaben.
+- Nach dem Abspann von Split bietet das Spiel an, gleich weiterzuspielen.
+  Antworten und Hinweise aus Split (zum Beispiel, was Marko Mala auf der
+  Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
 
 STEUERUNG
 - Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit
@@ -62,6 +77,15 @@ DAS NOTIZBUCH ("Notizen")
 HILFE
 - Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
   mit Mala nachsehen, im Notizbuch Notizen verbinden.
+- In Sarajevo: „Menü“ → „Hinweis …“ zeigt die offenen Probleme. Jedes Mal,
+  wenn man eines wählt, kommt eine Stufe mehr (drei Stufen: woran man
+  hängt, wo man suchen kann, ein konkreter Denkanstoß). Nie ungefragt.
+- Manche Schlüsse bauen aufeinander auf: Was man verbunden hat, kann man
+  wieder verbinden. Widersprüche zwischen zwei Aussagen sind auch Schlüsse.
+- Mala erinnert sich in Splittern. Sie stehen im Notizbuch wie Notizen.
+- Manches geht nur zu zweit und gleichzeitig: Mala bleibt in einem Raum,
+  Marko löst anderswo etwas aus, dann zu Mala wechseln. Klappt es nicht,
+  passiert nichts Schlimmes; man versucht es einfach noch einmal.
 - "Zeigen": alle anklickbaren Stellen blinken kurz auf.
 - "Menü": Speichern, Laden (drei Plätze), Textgeschwindigkeit
   (oder "wartet auf Tippen"), Musik, Geräusche, Röhrenbild, Vollbild, Anleitung.
@@ -72,7 +96,9 @@ TASTATUR (am Rechner)
 - Leertaste = Satz überspringen · Esc = Menü
 
 SPIELSTÄNDE
-- Drei Speicherplätze. Das Spiel speichert bei jedem Ortswechsel selbst.
+- Drei Speicherplätze für beide Kapitel. Das Spiel speichert bei jedem
+  Ortswechsel selbst. Am Platz steht, in welchem Kapitel und Abschnitt man ist.
+  Alte Spielstände aus Kapitel 1 laden unverändert.
 - Beim Fortsetzen fragt das Spiel nach dem Platz.
 - "Mitgelieferter Spielstand" im Titelbild: lädt einen Stand kurz bevor
   Marko Ivka die Wahrheit sagt (Nacht an der Mole) auf einen Platz deiner Wahl.
@@ -100,4 +126,6 @@ Safari eine https-Adresse.
 TON
 - Jeder Ort hat eine eigene, live erzeugte Geräuschkulisse: Meer, Bura,
   Regen, Fährenhörner, die Glocken von Sveti Duje, Möwen, Tassen, Karten.
+  In Sarajevo: Straßenbahnglocken, die Kula, Kupferhämmer, Tauben, die
+  Miljacka, Nebel, ein Keller, in dem es tropft.
   Als Mala klingt die Welt dumpf und fern. Kopfhörer lohnen sich.
