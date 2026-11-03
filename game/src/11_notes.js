@@ -155,4 +155,25 @@ var META={
 };
 Object.keys(META).forEach(function(id){ var n=M.NOTES[id], m=META[id]; if (!n) return; n.g=m[0]; n.s=m[1]; if (Array.isArray(m[2])) n.doneBy=m[2]; else if (typeof m[2]==='function') n.doneIf=m[2]; });
 Object.keys(M.NOTES).forEach(function(id){ if (!M.NOTES[id].g) console.warn('Notiz ohne Gruppe: '+id); });
+// ---------------------------------------------------------------- Kartenbilder (p:Porträt, i:Gegenstand) und strengeres Ausdünnen
+var PIC={ pro_auftrag:'i:newspaper', pro_zdenka:'p:zdenka', pro_riva:'p:ivka', pro_sohn:'i:photo1', pro_notice:'p:ivka',
+  c1_boat7:'i:postcard', c1_dinko:'i:postcard', c1_gift:'i:postcard', c1_ankica:'i:photo1', c1_radio:'i:radio', c1_waits:'p:ivka', c1_date:'p:ivka', c1_askoffice:'p:ivka', c1_years:'p:ivka',
+  c1_nobook:'p:mladen', c1_1948:'p:mala', c1_ferry:'p:mladen', c1_capsized:'p:mladen', c1_rescued:'p:dinko', c1_matejuska:'p:dinko', c1_came:'i:photo1', c1_aboard:'i:photo1',
+  c1_never:'p:zdenka', c1_noglove:'i:gloves', c1_brother:'p:dinko', c1_bag:'p:dinko', c1_words:'p:dinko', c1_candle:'p:dinko', c1_story:'p:dinko', c1_stuck:'i:letter_t', c1_letter:'i:letter_t',
+  c1_plaque:'p:jakov', c1_jakov:'p:jakov',
+  c2_demolish:'p:sanja', c2_boy:'p:stipe', c2_stairs:'p:dinko', c2_gap:'p:mala', c2_luka:'p:luka', c2_meet:'p:luka', c2_ferry:'i:tickets', c2_date:'p:luka', c2_guitar:'p:luka', c2_mailbox:'p:luka',
+  c2_case:'i:tickets', c2_paper:'p:mala', c2_thin:'i:crowbar', c2_dark:'p:mala', c2_under:'p:mala', c2_died:'p:sanja', c2_stayed:'p:sanja', c2_shop:'p:nina', c2_riva:'p:sanja', c2_unused:'i:tickets',
+  c2_paintings:'p:nina', c2_echo:'p:nina', c2_waited:'p:nina', c2_mira1:'p:mira', c2_mira2:'p:mira', c2_note:'i:note_n', c2_tape:'i:cassette', c2_tonight:'p:nina',
+  c3_job:'p:ljerka', c3_father:'p:ljerka', c3_salon:'p:ljerka', c3_dance:'i:photo2', c3_danica:'i:documents', c3_zagreb:'i:documents', c3_kids:'i:documents', c3_stroke:'i:documents',
+  c3_bruno:'p:bruno', c3_f13:'p:bruno', c3_fcrank:'p:bruno', c3_fletter:'p:bruno', c3_img_coat:'i:keyring', c3_img_crank:'i:crank', c3_img_hands:'i:musicbook', c3_img_env:'i:envelope',
+  c3_sunday:'i:photo2', c3_wanted:'i:musicbook', c3_bench:'p:mala', c3_accept:'i:envelope', c3_unfinished:'i:brunoletter', c3_hid:'p:bruno', c3_message:'p:bruno' };
+Object.keys(M.NOTES).forEach(function(id){ var n=M.NOTES[id]; n.p=PIC[id]||(n.c==='mala'?'p:mala':null); });
+// was überholt ist, verschwindet aus den Karten (bleibt im Tagebuch)
+var MORE={ pro_sohn:['c1_boat7'], pro_riva:['c1_waits'], c1_dinko:['c1_rescued','c1_story'], c1_gift:['c1_story'], c1_radio:['c1_ferry'], c1_date:['c1_ferry'], c1_years:['c1_ferry'],
+  c1_boat7:['c1_came'], c1_capsized:['c1_came','c1_story'], c1_rescued:['c1_story'], c1_ankica:['c1_came','c1_story'], c1_aboard:['c1_came'], c1_never:['c1_story'],
+  c2_boy:['c2_luka','c2_died'], c2_date:['c2_died'], c2_riva:['c2_waited'], c2_stayed:['c2_shop'], c2_echo:['c2_waited'], c2_unused:['c2_waited'], c2_mira1:['c2_waited'], c2_mira2:['c2_waited'],
+  c3_f13:['c3_img_coat'], c3_fcrank:['c3_img_crank'], c3_fletter:['c3_message'], c3_dance:['c3_sunday'], c3_wanted:['c3_hid'], c3_zagreb:['c3_hid'], c3_accept:['c3_hid'], c3_img_env:['c3_hid'], c3_img_hands:['c3_wanted'] };
+Object.keys(MORE).forEach(function(id){ var n=M.NOTES[id]; if (!n) return; n.doneBy=(n.doneBy||[]).concat(MORE[id]); });
+M.NOTES.pro_notice.doneIf=function(G){ return !!G.flags['c1.release']; };
+
 })(M);

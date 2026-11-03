@@ -101,7 +101,9 @@ Beim Wechsel zu Mala wird das Bild über eine eigene Farbtabelle in kalte, ents�
 
 ### 2.4 Das Notizbuch: Hinweise sammeln, verbinden, ansprechen
 - Was Marko und Mala erfahren, landet als kurzer Satz im **Notizbuch**, etwa „Die Fähre fiel am 22.12.1984 wegen der Bura aus.“
-- **Aufbau wie ein Register:** Die linke Seite zeigt nur kurze Titel, eine Zeile je Notiz, nach Themen gruppiert (in Fall 1 etwa *Ivka*, *Tonći*, *Das Boot*, *Dinko*). Zwei Reiter trennen den laufenden Fall von allem, was Mala betrifft. Schlussfolgerungen stehen oben unter *Schlüsse*. Was erledigt ist, etwa „Der Band 1984 fehlt“ nach dem Fund, rutscht in eine eingeklappte Gruppe *Erledigt*. Die rechte Seite zeigt die angetippte Notiz ganz, mit dem Knopf **Verbinden** (im Gespräch: **Danach fragen**).
+- **Karten wie in Blackwell und Ace Attorney:** Jeder offene Hinweis ist eine Karte mit Bild (das Gesicht der Person aus ihrem Porträt oder der Gegenstand) und einem Titel aus wenigen Wörtern, acht Karten je Seite. Unten steht der ganze Satz der angetippten Karte. **Eine Karte auf eine andere ziehen** verbindet sie; eine Schlussfolgerung bekommt einen grünen Rand und rückt nach vorn.
+- **Konsequent ausdünnen:** Was überholt ist (der fehlende Band nach dem Fund, das Boot um sieben nach der ANKICA-Schlussfolgerung, die Teile von Dinkos Geschichte, nachdem er sie erzählt hat), verschwindet aus den Karten. So liegen selten mehr als zehn Karten offen.
+- **Reiter:** *Hinweise* (der laufende Fall), *Mala* (was sie betrifft) und *Tagebuch*, in dem alles noch einmal in ganzen Sätzen steht, neueste zuerst. Im Gespräch liegen die Karten zur Person, mit der Marko redet, vorn.
 - **Zwei Notizen verbinden:** Passen sie zusammen, entsteht eine **Schlussfolgerung** wie „Tonći hat nicht auf die Fähre gewartet – er kam mit der ANKICA.“ Passen sie nicht, sagt Marko nur: „Das hängt nicht zusammen.“ Das ist das Herzstück der Blackwell-Rätsel.
 - **Im Gespräch fragen:** Jede Unterhaltung hat die Option „Nach etwas aus dem Notizbuch fragen …“. Wer die richtige Notiz anspricht, öffnet neue Antworten. Dialogoptionen hängen also direkt davon ab, was man schon weiß.
 - **Konfrontationen:** Am Ende jedes Falls muss der Geist begreifen, was geschehen ist. Im Finale wählt man nacheinander die passenden Notizen oder Gegenstände. Eine falsche Wahl beunruhigt den Geist, er wiederholt sich oder wendet sich kurz ab, und man versucht es noch einmal. Niemand sagt dabei, was richtig wäre. **Es gibt kein Game Over.**
@@ -116,7 +118,7 @@ Manche Gegenstände wirken erst in der Zwischenwelt, wie die Handschuhe oder Luk
 
 ### 2.6 Keine Lenkung, wenige Hilfen
 - **Das Spiel verrät nicht, was als Nächstes zu tun ist oder wohin man gehen muss.** Es gibt keine Ziel-Anzeige, keine Spurenliste und keine Tipps. Marko und Mala sprechen Beobachtungen und Gefühle aus, keine Anweisungen. Orte erscheinen auf dem Stadtplan, wenn jemand von ihnen erzählt hat.
-- **Notizen:** das Register mit kurzen Titeln links und der ganzen Notiz rechts (siehe 2.4).
+- **Notizen:** Karten mit Bild und Titel, Tagebuch mit ganzen Sätzen (siehe 2.4).
 - **Zeigen:** Alle Hotspots blinken einige Sekunden lang auf.
 - **Menü:** Speichern und Laden (drei Plätze), Textgeschwindigkeit, Musik, Geräusche, Röhrenbild-Effekt, Anleitung.
 

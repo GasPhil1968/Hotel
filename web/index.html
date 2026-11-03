@@ -2468,83 +2468,102 @@ M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||d.slots.
   M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2);
   if (ov.msg) M.wrap(ov.msg,250).forEach(function(l,i){ M.text(fb,l,36,by+18+i*9,P.r2); }); });
 
-// ---------------------------------------------------------------- Notizbuch: links das Register (kurze Einträge nach Themen), rechts die ganze Notiz
-// Reiter „Fall“ und „Mala“. Erledigte Notizen rutschen in eine eingeklappte Gruppe. Verbinden: Notiz wählen, „Verbinden“, zweite Notiz antippen.
-var NB={sel:null,top:0,msg:null,lay:null,tab:'case',link:false,open:{}};
+// ---------------------------------------------------------------- Notizbuch als Karten (wie in Blackwell und Ace Attorney)
+// Oben ein Raster aus Karten mit Bild und kurzem Titel, unten die ganze Notiz. Karte auf Karte ziehen = verbinden.
+// Erledigtes verschwindet aus den Karten und steht nur noch im Tagebuch. Reiter: Hinweise, Mala, Tagebuch.
+var NB={sel:null,page:0,msg:null,tab:'case',link:false,drag:null,tpage:0};
+var NB_COLS=4, NB_ROWS=2, NB_PER=NB_COLS*NB_ROWS, CW=74, CH=54, CX0=8, CY0=24, CG=4;
 function nbTargets(){ var t={}; Object.keys(M.DEDUCE).forEach(function(k){ var d=M.DEDUCE[k]; if (d&&d.to) t[d.to]=1; }); return t; }
 function noteDone(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) for (var i=0;i<n.doneBy.length;i++) if (g.notes.indexOf(n.doneBy[i])>=0) return true; return false; }
-function noteShort(n){ if (n.s) return n.s; var t=n.t, i=t.search(/[.:!?](\s|$)/); if (i>0 && i<44) t=t.slice(0,i+1); if (M.textWidth(t)>124){ while (t.length>4 && M.textWidth(t+' …')>124) t=t.slice(0,-1); t=t.replace(/[\s,;:]+$/,'')+' …'; } return t; }
-function noteGroup(n,ded){ return ded?'Schlüsse':(n.g||'Notizen'); }
-// gegliederte Liste für den aktuellen Reiter: [{head:'…'},{id:'…'},…]
-function nbList(tab){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), groups={}, order=[], done=[];
-  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n) return; var mala=n.c==='mala'; if (tab==='mala'?!mala:(mala||(cs&&n.c&&n.c!==cs))) return;
-    if (noteDone(n,g)){ done.push(id); return; } var gr=noteGroup(n,ded[id]); if (!groups[gr]){ groups[gr]=[]; order.push(gr); } groups[gr].push(id); });
-  var pref=(M.NOTE_GROUPS&&M.NOTE_GROUPS[tab==='mala'?'mala':cs])||[]; pref=['Schlüsse'].concat(pref);
-  order.sort(function(a,b){ var ia=pref.indexOf(a), ib=pref.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib); });
-  var out=[]; order.forEach(function(gr){ out.push({head:gr}); groups[gr].forEach(function(id){ out.push({id:id}); }); });
-  if (done.length){ out.push({head:'Erledigt',fold:true,n:done.length}); if (NB.open.Erledigt) done.forEach(function(id){ out.push({id:id,done:true}); }); }
+function noteShort(n){ return n.s||n.t; }
+function nbPartner(){ var c=E.conv&&E.conv.npc&&E.ACT[E.conv.npc]; return c?c.ch:null; }
+// Karten des Reiters: nur offene Notizen; im Gespräch zuerst, was zum Gegenüber gehört; Schlüsse zuerst, Neues vorn
+function nbCards(tab,ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[];
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n) return; var mala=n.c==='mala'; if (tab==='mala'?!mala:(mala||(cs&&n.c&&n.c!==cs))) return; if (noteDone(n,g)) return; out.push(id); });
+  var who=ask?nbPartner():null, order=g.notes;
+  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1); return (sa-sb)||(order.indexOf(b)-order.indexOf(a)); });
   return out; }
-function notesOf(){ return nbList('case').filter(function(r){ return r.id; }).map(function(r){ return r.id; }); }
-E.openNotes=function(){ NB.sel=null; NB.top=0; NB.msg=null; NB.link=false; NB.tab='case'; return showNotes(); };
+function notesOf(){ return nbCards('case'); }
+E.openNotes=function(){ NB.sel=null; NB.page=0; NB.msg=null; NB.link=false; NB.tab='case'; NB.drag=null; return showNotes(); };
 function showNotes(){ return E.showOverlay('notebook',{mode:'browse'}); }
-function nbButton(x,y,w,t,hot,on){ var c=on?(hot?P.r3:P.n1):P.s3; fb.rect(x,y,w,12,hot&&on?P.s6:P.s4); fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+11,c); fb.vl(x,y,y+11,c); fb.vl(x+w-1,y,y+11,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+2,on?(hot?P.r2:P.n1):P.s3); return [x,y,w,12]; }
-M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'; if (!ov.init){ ov.init=1; NB.top=0; NB.sel=null; NB.msg=null; NB.link=false; NB.tab='case'; }
-  var lx=6, rx=162, y0=6, pw=152, ph=182, g=GS(), ph0=M.PHASES[g.phase]||{}, i;
-  paper(lx,y0,pw,ph,{lines:[30,9],margin:10}); paper(rx,y0,pw,ph,{margin:10}); fb.vl(159,y0,y0+ph,P.k1); fb.vl(160,y0,y0+ph,P.s2);
-  var lay={rows:[],tabs:[],close:ask?[rx+pw-40,y0+2,38,14]:[rx+pw-22,y0+2,20,14],up:null,dn:null,btn:null,btn2:null};
-  // Kopf links: Titel und Reiter
-  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZBUCH',lx+16,y0+4,P.r2);
-  var tx=lx+16; [['case',ph0.short?ph0.short.replace(/,.*$/,''):'Fall'],['mala','Mala']].forEach(function(tb){ var w=M.textWidth(tb[1])+8, on=NB.tab===tb[0], hot=hoverUI==='nt:'+tb[0];
-    fb.rect(tx,y0+14,w,11,on?P.s6:(hot?P.s5:P.s4)); fb.hl(tx,tx+w-1,y0+14,on?P.r3:P.s3); fb.vl(tx,y0+14,y0+24,on?P.r3:P.s3); fb.vl(tx+w-1,y0+14,y0+24,on?P.r3:P.s3); if (!on) fb.hl(tx,tx+w-1,y0+24,P.s3);
-    var nw=nbList(tb[0]).some(function(r){ return r.id&&g.noteNew[r.id]; }); M.text(fb,tb[1],tx+4,y0+16,on?P.n1:P.s2); if (nw) fb.rect(tx+w-3,y0+15,2,2,P.r4);
-    lay.tabs.push({id:tb[0],r:[tx,y0+13,w,13]}); tx+=w+3; });
-  fb.hl(lx+12,lx+pw-4,y0+25,P.r3);
-  // Register
-  var list=nbList(NB.tab), rowsMax=15, RY=y0+29; if (NB.top>Math.max(0,list.length-rowsMax)) NB.top=Math.max(0,list.length-rowsMax);
-  if (!list.length) M.text(fb,'Noch nichts.',lx+18,RY+2,P.s2);
-  for (i=NB.top;i<list.length&&i<NB.top+rowsMax;i++){ var row=list[i], y=RY+(i-NB.top)*9;
-    if (row.head){ var hh=hoverUI==='nh:'+row.head&&row.fold, ht=row.fold?(NB.open[row.head]?'▾ ':'▸ ')+row.head+' ('+row.n+')':row.head; M.text(fb,ht.replace('▾','-').replace('▸','+'),lx+14,y+1,row.fold?(hh?P.r3:P.s2):P.r2);
-      if (!row.fold) fb.hl(lx+14,lx+14+M.textWidth(row.head),y+8,P.r4); if (row.fold) lay.rows.push({head:row.head,r:[lx+12,y,pw-16,9]}); continue; }
-    var n=M.NOTES[row.id], sel=NB.sel===row.id, hot=hoverUI==='n:'+row.id, isNew=g.noteNew[row.id], ded=nbTargets()[row.id], lk=NB.link&&NB.sel&&!sel;
-    if (sel) fb.rect(lx+12,y,pw-16,9,P.y4); else if (hot) fb.rect(lx+12,y,pw-16,9,lk?P.g5:P.s6);
-    var t=noteShort(n), col=row.done?P.s2:(ded?P.g1:P.n1); while (M.textWidth(t)>pw-31 && t.length>3) t=t.slice(0,-2)+'…';
-    if (ded){ fb.px(lx+16,y+3,P.g3); fb.px(lx+15,y+4,P.g3); fb.px(lx+16,y+4,P.g2); fb.px(lx+17,y+4,P.g3); fb.px(lx+16,y+5,P.g3); } else { fb.px(lx+16,y+4,row.done?P.s3:P.n2); }
-    M.text(fb,t,lx+20,y+1,col); if (isNew) fb.rect(lx+pw-8,y+3,3,3,P.r4);
-    lay.rows.push({id:row.id,r:[lx+12,y,pw-16,9]}); }
-  if (NB.top>0||NB.top+rowsMax<list.length){ var tri=function(cx,up,on,hot){ var c=on?(hot?P.r3:P.n2):P.s4; for (var t2=0;t2<5;t2++){ var ty=up?y0+ph-12+t2:y0+ph-8-t2; fb.hl(cx-t2,cx+t2,ty,c); } };
-    if (NB.top>0) lay.up=[lx+pw/2-26,y0+ph-15,22,14]; if (NB.top+rowsMax<list.length) lay.dn=[lx+pw/2+4,y0+ph-15,22,14];
-    tri(lx+pw/2-15,true,!!lay.up,hoverUI==='nu'); tri(lx+pw/2+15,false,!!lay.dn,hoverUI==='nd'); }
-  // rechte Seite: die gewählte Notiz
-  M.text(fb,ask?'Zurück':'X',rx+pw-(ask?34:12),y0+4,hoverUI==='nx'?P.r3:P.s1);
-  var by=y0+ph-17, bx=rx+16, bw=pw-26;
-  if (NB.sel && M.NOTES[NB.sel]){ var sn=M.NOTES[NB.sel], dd=nbTargets()[NB.sel], gname=noteDone(sn,g)?'Erledigt':noteGroup(sn,dd);
-    M.text(fb,gname.toUpperCase(),rx+16,y0+4,P.r2); fb.hl(rx+12,rx+pw-4,y0+13,P.r3);
-    var ls=M.wrap(sn.t,pw-30), yy=y0+19, maxY=by-(NB.msg?44:6);
-    ls.forEach(function(l){ if (yy+9>maxY) return; M.text(fb,l,rx+16,yy,dd?P.g1:P.n1); yy+=10; });
-    if (NB.link){ M.wrap('Womit verbinden? Tippe links eine zweite Notiz an.',pw-30).forEach(function(l,j){ M.text(fb,l,rx+16,Math.min(yy+6,maxY-10)+j*9,P.r2); }); }
-    if (!ask){ lay.btn=nbButton(bx,by,(bw>>1)-2,NB.link?'Abbrechen':'Verbinden',hoverUI==='nb',true); }
-    else { lay.btn=nbButton(bx,by,bw,'Danach fragen',hoverUI==='nb',true); } }
-  else { M.text(fb,ph0.short||'',rx+16,y0+4,P.s2); fb.hl(rx+12,rx+pw-4,y0+13,P.s3);
-    var info=ask?['Tippe links eine Notiz an, nach der du fragen willst.']:[ph0.when||'','','Tippe links eine Notiz an, um sie ganz zu lesen.','','Zwei Notizen, die zusammengehören, kannst du verbinden.'];
-    var yi=y0+20; info.forEach(function(p){ if (!p){ yi+=5; return; } M.wrap(p,pw-30).forEach(function(l){ M.text(fb,l,rx+16,yi,P.s2); yi+=9; }); }); }
-  if (NB.msg){ var my=by-40; fb.rect(rx+12,my,pw-18,36,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,pw-28).slice(0,4).forEach(function(l,j){ M.text(fb,l,rx+16,my+3+j*8,NB.msg.ok?P.g0:P.k1); }); }
+// Bild einer Karte: Gesicht aus dem Porträt oder das Icon eines Gegenstands
+var NB_IMG={};
+function cardImg(n){ var key=n.p||''; if (NB_IMG[key]!==undefined) return NB_IMG[key]; var b=null;
+  if (key.indexOf('p:')===0 && M.hasPortrait && M.hasPortrait(key.slice(2))){ var pb=M.portrait(key.slice(2),'n'), w=36, h=30, ox=10, oy=6; b=new Buf(w,h,T); for (var y=0;y<h;y++) for (var x=0;x<w;x++){ var c=pb.d[(y+oy)*pb.w+x+ox]; if (c!==T) b.d[y*w+x]=c; } }
+  else if (key.indexOf('i:')===0 && M.ITEMS[key.slice(2)]) b=iconOf(key.slice(2));
+  return (NB_IMG[key]=b); }
+function cardRect(i){ var k=i%NB_PER, c=k%NB_COLS, r=Math.floor(k/NB_COLS); return [CX0+c*(CW+CG),CY0+r*(CH+CG),CW,CH]; }
+function drawNoteCard(id,x,y,o){ o=o||{}; var n=M.NOTES[id], g=GS(), ded=nbTargets()[id], sel=NB.sel===id, hot=o.hot;
+  var bgc=sel?P.y4:(hot?P.s6:P.s5), fr=ded?P.g3:(sel?P.r3:P.s3);
+  fb.rect(x+1,y+1,CW,CH,P.k1); fb.rect(x,y,CW,CH,bgc); fb.hl(x,x+CW-1,y,fr); fb.hl(x,x+CW-1,y+CH-1,fr); fb.vl(x,y,y+CH-1,fr); fb.vl(x+CW-1,y,y+CH-1,fr);
+  if (ded){ fb.hl(x+1,x+CW-2,y+1,P.g4); fb.vl(x+1,y+1,y+CH-2,P.g4); fb.vl(x+CW-2,y+1,y+CH-2,P.g4); fb.hl(x+1,x+CW-2,y+CH-2,P.g4); }
+  var im=cardImg(n), iy=y+3; fb.rect(x+3,iy,CW-6,28,sel?P.y2:P.s3);
+  if (im){ var ix=x+((CW-im.w)>>1), iy2=iy+Math.max(0,(28-im.h)>>1); for (var j=0;j<im.h;j++) for (var i=0;i<im.w;i++){ var c=im.d[j*im.w+i]; if (c!==T && iy2+j>=iy && iy2+j<iy+28) fb.px(ix+i,iy2+j,c); } }
+  var ls=M.wrap(noteShort(n),CW-6); if (ls.length>2){ ls=ls.slice(0,2); var l=ls[1]; while (M.textWidth(l+'…')>CW-6&&l.length>2) l=l.slice(0,-1); ls[1]=l+'…'; }
+  ls.forEach(function(l,k){ M.text(fb,l,x+((CW-M.textWidth(l))>>1),y+34+k*9+(ls.length<2?4:0),ded?P.g0:P.n0); });
+  if (g.noteNew[id]) fb.rect(x+CW-6,y+3,3,3,P.r4); if (ded){ fb.px(x+5,y+5,P.g5); fb.px(x+4,y+6,P.g5); fb.px(x+6,y+6,P.g5); fb.px(x+5,y+7,P.g5); fb.px(x+5,y+6,P.g5); } }
+function nbButton(x,y,w,t,hot){ fb.rect(x,y,w,13,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+12,c); fb.vl(x,y,y+12,c); fb.vl(x+w-1,y,y+12,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+3,hot?P.r2:P.n1); return [x,y,w,13]; }
+M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask', g=GS(), ph0=M.PHASES[g.phase]||{}, i;
+  if (!ov.init){ ov.init=1; NB.page=0; NB.sel=null; NB.msg=null; NB.link=false; NB.tab='case'; NB.drag=null; }
+  if (ask && NB.tab==='diary') NB.tab='case';
+  paper(4,4,312,188,{}); var lay={cards:[],tabs:[],close:null,prev:null,next:null,btn:null,up:null,dn:null};
+  // Kopf: Titel, Reiter, Schließen
+  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZBUCH',10,9,P.r2);
+  var tx=Math.max(96,16+M.textWidth(ask?(d.title||'Wonach fragen?'):'NOTIZBUCH')); var tabs=[['case','Hinweise'],['mala','Mala']]; if (!ask) tabs.push(['diary','Tagebuch']);
+  tabs.forEach(function(tb){ var w=M.textWidth(tb[1])+10, on=NB.tab===tb[0], hot=hoverUI==='nt:'+tb[0]; fb.rect(tx,6,w,13,on?P.s6:(hot?P.s5:P.s4)); var fc=on?P.r3:P.s3; fb.hl(tx,tx+w-1,6,fc); fb.vl(tx,6,18,fc); fb.vl(tx+w-1,6,18,fc); if (!on) fb.hl(tx,tx+w-1,18,fc);
+    M.text(fb,tb[1],tx+5,9,on?P.n0:P.s2); if (tb[0]!=='diary' && nbCards(tb[0]).some(function(id){ return g.noteNew[id]; })) fb.rect(tx+w-4,8,2,2,P.r4); lay.tabs.push({id:tb[0],r:[tx,5,w,15]}); tx+=w+3; });
+  var cl=ask?'Zurück':'X'; lay.close=[312-M.textWidth(cl)-12,5,M.textWidth(cl)+10,14]; M.text(fb,cl,312-M.textWidth(cl)-6,9,hoverUI==='nx'?P.r3:P.s1);
+  fb.hl(8,311,20,P.r3);
+  if (NB.tab==='diary'){ // Tagebuch: alles, auch Erledigtes, als ganze Sätze, neueste zuerst
+    var all=g.notes.filter(function(id){ var n=M.NOTES[id]; return n && (n.c==='mala' || !ph0.case || !n.c || n.c===ph0.case); }).slice().reverse(), rows=[];
+    all.forEach(function(id){ M.wrap('· '+M.NOTES[id].t,290).forEach(function(l,k){ rows.push([k?'  '+l:l, noteDone(M.NOTES[id],g)]); }); rows.push(null); });
+    var per=17; if (NB.tpage*per>=rows.length) NB.tpage=Math.max(0,Math.ceil(rows.length/per)-1);
+    rows.slice(NB.tpage*per,NB.tpage*per+per).forEach(function(r,k){ if (r) M.text(fb,r[0],12,25+k*9,r[1]?P.s2:P.n1); });
+    if (!all.length) M.text(fb,'Noch nichts.',12,26,P.s2);
+    if (NB.tpage>0) lay.up=nbButton(196,176,54,'Zurück',hoverUI==='nu'); if ((NB.tpage+1)*per<rows.length) lay.dn=nbButton(254,176,54,'Weiter',hoverUI==='nd');
+    ov.lay=lay; return; }
+  // Karten
+  var cards=nbCards(NB.tab,ask), pages=Math.max(1,Math.ceil(cards.length/NB_PER)); if (NB.page>=pages) NB.page=pages-1;
+  if (!cards.length) M.text(fb,'Noch nichts.',12,28,P.s2);
+  for (i=NB.page*NB_PER;i<Math.min(cards.length,(NB.page+1)*NB_PER);i++){ var r=cardRect(i), id=cards[i]; if (NB.drag&&NB.drag.on&&NB.drag.id===id){ fb.rect(r[0],r[1],CW,CH,P.s4); continue; }
+    drawNoteCard(id,r[0],r[1],{hot:hoverUI==='n:'+id}); lay.cards.push({id:id,r:r}); }
+  if (pages>1){ M.text(fb,(NB.page+1)+'/'+pages,286,9+0,P.s2); }
+  if (NB.page>0) lay.prev=[CX0-6,CY0+CH-8,8,20]; if (NB.page<pages-1) lay.next=[CX0+4*(CW+CG)-4,CY0+CH-8,8,20];
+  [['prev',lay.prev,true],['next',lay.next,false]].forEach(function(a){ if (!a[1]) return; var cx=a[2]?a[1][0]+3:a[1][0]+4, cy=a[1][1]+10, c=hoverUI==='n'+a[0]?P.r3:P.n2; for (var t=0;t<5;t++) fb.vl(a[2]?cx+t:cx-t,cy-t,cy+t,c); });
+  // unten: die ganze Notiz
+  var by=CY0+2*(CH+CG)+1; fb.hl(8,311,by-3,P.s3);
+  if (NB.msg){ fb.rect(10,by,300,40,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,288).slice(0,4).forEach(function(l,j){ M.text(fb,l,14,by+3+j*9,NB.msg.ok?P.g0:P.k1); }); }
+  else if (NB.sel && M.NOTES[NB.sel]){ M.wrap(M.NOTES[NB.sel].t,ask?220:226).slice(0,5).forEach(function(l,j){ M.text(fb,l,12,by+j*9,P.n0); }); }
+  else M.wrap(ask?'Tippe eine Karte an. Noch einmal tippen oder „Danach fragen“ fragt danach.':(NB.link?'Womit verbinden? Tippe die zweite Karte an.':'Tippe eine Karte an, um sie zu lesen. Ziehe eine Karte auf eine andere, um sie zu verbinden.'),290).forEach(function(l,j){ M.text(fb,l,12,by+j*9,P.s2); });
+  if (NB.sel && !NB.msg){ lay.btn=nbButton(ask?236:244,by+30,ask?74:66,ask?'Danach fragen':(NB.link?'Abbrechen':'Verbinden'),hoverUI==='nb'); }
+  if (NB.link && NB.sel) M.text(fb,'Womit verbinden?',12,by+33,P.r2);
+  // die gezogene Karte am Finger
+  if (NB.drag && NB.drag.on){ drawNoteCard(NB.drag.id,Math.round(pointer.x)-(CW>>1),Math.round(pointer.y)-(CH>>1),{hot:true}); }
   ov.lay=lay; });
 function nbAt(x,y){ var ov=E.overlay, lay=ov&&ov.lay; if (!lay) return null; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };
-  if (inR(lay.close)) return 'nx'; if (inR(lay.btn)) return 'nb'; if (inR(lay.up)) return 'nu'; if (inR(lay.dn)) return 'nd';
+  if (inR(lay.close)) return 'nx'; if (inR(lay.btn)) return 'nb'; if (inR(lay.prev)) return 'nprev'; if (inR(lay.next)) return 'nnext'; if (inR(lay.up)) return 'nu'; if (inR(lay.dn)) return 'nd';
   for (var t=0;t<lay.tabs.length;t++) if (inR(lay.tabs[t].r)) return 'nt:'+lay.tabs[t].id;
-  for (var q=0;q<lay.rows.length;q++){ var r=lay.rows[q]; if (inR(r.r)) return r.head?'nh:'+r.head:'n:'+r.id; } return null; }
+  for (var q=0;q<lay.cards.length;q++) if (inR(lay.cards[q].r)) return 'n:'+lay.cards[q].id; return null; }
+async function nbCombine(a,b){ var ov=E.overlay; NB.link=false; var res=await E.combineNotes(a,b); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t};
+  if (res.ok && res.to){ NB.sel=res.to; delete GS().noteNew[res.to]; if (res.say && ov) ov.after=res.say; } else NB.sel=a; }
 async function notebookTap(x,y){ var ov=E.overlay; if (!ov||!ov.lay) return; var ask=ov.data.mode==='ask', u=nbAt(x,y);
-  if (!u) return;
+  if (NB.msg && u && u.indexOf('n:')!==0 && u!=='nx'){ NB.msg=null; }
+  if (!u){ NB.msg=null; return; }
   if (u==='nx'){ NB.sel=null; NB.msg=null; NB.link=false; E.closeOverlay(null); return; }
-  if (u==='nu'){ NB.top=Math.max(0,NB.top-8); M.sfx('page'); return; } if (u==='nd'){ NB.top=NB.top+8; M.sfx('page'); return; }
-  if (u.indexOf('nt:')===0){ var tb=u.slice(3); if (NB.tab!==tb){ NB.tab=tb; NB.top=0; NB.sel=null; NB.link=false; NB.msg=null; M.sfx('page'); } return; }
-  if (u.indexOf('nh:')===0){ var h=u.slice(3); NB.open[h]=!NB.open[h]; M.sfx('page'); return; }
+  if (u==='nprev'){ NB.page=Math.max(0,NB.page-1); M.sfx('page'); return; } if (u==='nnext'){ NB.page++; M.sfx('page'); return; }
+  if (u==='nu'){ NB.tpage=Math.max(0,NB.tpage-1); M.sfx('page'); return; } if (u==='nd'){ NB.tpage++; M.sfx('page'); return; }
+  if (u.indexOf('nt:')===0){ var tb=u.slice(3); if (NB.tab!==tb){ NB.tab=tb; NB.page=0; NB.tpage=0; NB.sel=null; NB.link=false; NB.msg=null; M.sfx('page'); } return; }
   if (u==='nb'){ if (!NB.sel) return; if (ask){ var id0=NB.sel; NB.sel=null; E.closeOverlay(id0); M.sfx('page'); return; } NB.link=!NB.link; NB.msg=null; M.sfx('click'); return; }
-  var id=u.slice(2); delete GS().noteNew[id];
+  var id=u.slice(2); delete GS().noteNew[id]; NB.msg=null;
   if (ask){ if (NB.sel===id){ NB.sel=null; E.closeOverlay(id); M.sfx('page'); return; } NB.sel=id; M.sfx('click'); return; }
-  if (NB.link && NB.sel && NB.sel!==id){ var a=NB.sel; NB.link=false; var res=await E.combineNotes(a,id); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t}; if (res.ok && res.to){ NB.sel=res.to; delete GS().noteNew[res.to]; if (res.say) ov.after=res.say; } return; }
-  NB.link=false; NB.msg=null; NB.sel=(NB.sel===id)?null:id; M.sfx('click'); }
+  if (NB.link && NB.sel && NB.sel!==id){ await nbCombine(NB.sel,id); return; }
+  NB.link=false; NB.sel=(NB.sel===id)?null:id; M.sfx('click'); }
+// Ziehen im Notizbuch: Karte aufnehmen, auf eine andere fallen lassen
+function nbDragCheck(x,y){ var u=press&&press.ui; if (!u||u.indexOf('n:')!==0||!E.overlay||E.overlay.kind!=='notebook'||E.overlay.data.mode==='ask') return false; if (NB.drag) return true;
+  if (Math.hypot(x-press.x,y-press.y)>5){ NB.drag={id:u.slice(2),on:true}; NB.msg=null; M.sfx('click'); } return true; }
+function nbDrop(x,y){ var dg=NB.drag; NB.drag=null; if (!dg||!dg.on) return false; var u=nbAt(x,y); if (u && u.indexOf('n:')===0 && u.slice(2)!==dg.id){ delete GS().noteNew[dg.id]; nbCombine(dg.id,u.slice(2)); } return true; }
 E.afterNotes=function(){ };
+
 
 // ---------------------------------------------------------------- Zeigen (alle Hotspots kurz markieren)
 var REVEAL_MS=4500;
@@ -2583,7 +2602,7 @@ async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Tippe etwas an: Ist nur etwas zu sehen, schaue ich es mir an. Kann man etwas damit tun, kommt ein kleines Menü.');
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
   if (GS().malaOn && !GS().flags['mala.unknown']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
-  await M.API.m('„Notizen“ ist mein Notizbuch. Links stehen kurze Einträge, rechts die ganze Notiz. Mit „Verbinden“ und einer zweiten Notiz verbinde ich sie. Im Gespräch kann ich nach jeder Notiz fragen.');
+  await M.API.m('„Notizen“ ist mein Notizbuch: Karten mit dem, was noch offen ist. Antippen liest eine Karte, eine Karte auf eine andere ziehen verbindet sie. Erledigtes steht im Tagebuch. Im Gespräch kann ich nach jeder Karte fragen.');
   await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
  } finally { E.busy=false; } }
 M.help=help;
@@ -2643,10 +2662,10 @@ function uiAt(x,y){
   return null; }
 function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay||E.dlg||!E.room){ hover=null; return; }
   if (pointer.y<SH&&pointer.show) hover=E.hotspotAt(pointer.x+Math.round(E.camX),pointer.y); else if (hoverUI&&hoverUI[0]==='i'){ var id=invList()[+hoverUI.slice(2)]; hover=id?{item:id}:null; } else hover=null; }
-M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
+M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game'){ if (!nbDragCheck(x,y)) dragCheck(x,y); } updateHover(); };
 M.pointerDown=function(x,y,touch){ M.audioInit(); pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt()}; M.pointerMove(x,y,touch); };
 M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
-  var pr=press; press=null; if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return; click(x,y); };
+  var pr=press; press=null; if (NB.drag){ nbDrop(x,y); return; } if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return; click(x,y); };
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
 function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; var id=invList()[+u.slice(2)], dx=x-press.x, dy=y-press.y;
   if (id && !press.swiped && y<INV_Y-6){ E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }
@@ -3031,6 +3050,27 @@ var META={
 };
 Object.keys(META).forEach(function(id){ var n=M.NOTES[id], m=META[id]; if (!n) return; n.g=m[0]; n.s=m[1]; if (Array.isArray(m[2])) n.doneBy=m[2]; else if (typeof m[2]==='function') n.doneIf=m[2]; });
 Object.keys(M.NOTES).forEach(function(id){ if (!M.NOTES[id].g) console.warn('Notiz ohne Gruppe: '+id); });
+// ---------------------------------------------------------------- Kartenbilder (p:Porträt, i:Gegenstand) und strengeres Ausdünnen
+var PIC={ pro_auftrag:'i:newspaper', pro_zdenka:'p:zdenka', pro_riva:'p:ivka', pro_sohn:'i:photo1', pro_notice:'p:ivka',
+  c1_boat7:'i:postcard', c1_dinko:'i:postcard', c1_gift:'i:postcard', c1_ankica:'i:photo1', c1_radio:'i:radio', c1_waits:'p:ivka', c1_date:'p:ivka', c1_askoffice:'p:ivka', c1_years:'p:ivka',
+  c1_nobook:'p:mladen', c1_1948:'p:mala', c1_ferry:'p:mladen', c1_capsized:'p:mladen', c1_rescued:'p:dinko', c1_matejuska:'p:dinko', c1_came:'i:photo1', c1_aboard:'i:photo1',
+  c1_never:'p:zdenka', c1_noglove:'i:gloves', c1_brother:'p:dinko', c1_bag:'p:dinko', c1_words:'p:dinko', c1_candle:'p:dinko', c1_story:'p:dinko', c1_stuck:'i:letter_t', c1_letter:'i:letter_t',
+  c1_plaque:'p:jakov', c1_jakov:'p:jakov',
+  c2_demolish:'p:sanja', c2_boy:'p:stipe', c2_stairs:'p:dinko', c2_gap:'p:mala', c2_luka:'p:luka', c2_meet:'p:luka', c2_ferry:'i:tickets', c2_date:'p:luka', c2_guitar:'p:luka', c2_mailbox:'p:luka',
+  c2_case:'i:tickets', c2_paper:'p:mala', c2_thin:'i:crowbar', c2_dark:'p:mala', c2_under:'p:mala', c2_died:'p:sanja', c2_stayed:'p:sanja', c2_shop:'p:nina', c2_riva:'p:sanja', c2_unused:'i:tickets',
+  c2_paintings:'p:nina', c2_echo:'p:nina', c2_waited:'p:nina', c2_mira1:'p:mira', c2_mira2:'p:mira', c2_note:'i:note_n', c2_tape:'i:cassette', c2_tonight:'p:nina',
+  c3_job:'p:ljerka', c3_father:'p:ljerka', c3_salon:'p:ljerka', c3_dance:'i:photo2', c3_danica:'i:documents', c3_zagreb:'i:documents', c3_kids:'i:documents', c3_stroke:'i:documents',
+  c3_bruno:'p:bruno', c3_f13:'p:bruno', c3_fcrank:'p:bruno', c3_fletter:'p:bruno', c3_img_coat:'i:keyring', c3_img_crank:'i:crank', c3_img_hands:'i:musicbook', c3_img_env:'i:envelope',
+  c3_sunday:'i:photo2', c3_wanted:'i:musicbook', c3_bench:'p:mala', c3_accept:'i:envelope', c3_unfinished:'i:brunoletter', c3_hid:'p:bruno', c3_message:'p:bruno' };
+Object.keys(M.NOTES).forEach(function(id){ var n=M.NOTES[id]; n.p=PIC[id]||(n.c==='mala'?'p:mala':null); });
+// was überholt ist, verschwindet aus den Karten (bleibt im Tagebuch)
+var MORE={ pro_sohn:['c1_boat7'], pro_riva:['c1_waits'], c1_dinko:['c1_rescued','c1_story'], c1_gift:['c1_story'], c1_radio:['c1_ferry'], c1_date:['c1_ferry'], c1_years:['c1_ferry'],
+  c1_boat7:['c1_came'], c1_capsized:['c1_came','c1_story'], c1_rescued:['c1_story'], c1_ankica:['c1_came','c1_story'], c1_aboard:['c1_came'], c1_never:['c1_story'],
+  c2_boy:['c2_luka','c2_died'], c2_date:['c2_died'], c2_riva:['c2_waited'], c2_stayed:['c2_shop'], c2_echo:['c2_waited'], c2_unused:['c2_waited'], c2_mira1:['c2_waited'], c2_mira2:['c2_waited'],
+  c3_f13:['c3_img_coat'], c3_fcrank:['c3_img_crank'], c3_fletter:['c3_message'], c3_dance:['c3_sunday'], c3_wanted:['c3_hid'], c3_zagreb:['c3_hid'], c3_accept:['c3_hid'], c3_img_env:['c3_hid'], c3_img_hands:['c3_wanted'] };
+Object.keys(MORE).forEach(function(id){ var n=M.NOTES[id]; if (!n) return; n.doneBy=(n.doneBy||[]).concat(MORE[id]); });
+M.NOTES.pro_notice.doneIf=function(G){ return !!G.flags['c1.release']; };
+
 })(M);
 
 /* ---- 20_scenery.js ---- */
