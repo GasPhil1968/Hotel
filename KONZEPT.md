@@ -72,7 +72,7 @@ Das beigelegte Spiel ist eine einzige HTML-Datei (rund 25.000 Zeilen JavaScript,
 | Fähigkeit | Marko (lebend) | Mala (Geist) |
 |---|---|---|
 | Mit lebenden Menschen sprechen | ja | nein. Sie kann nur **lauschen**, wenn Menschen miteinander, am Telefon oder vor sich hin reden |
-| Mit Geistern sprechen | ja, sobald Mala ihn auf sie aufmerksam gemacht hat | ja, oft vertrauter („von Geist zu Geist“) |
+| Geister sehen und mit ihnen sprechen | ja, er sieht sie blass und durchscheinend (nur Ivka erscheint ihm erst auf der Mole) | ja, oft vertrauter („von Geist zu Geist“) |
 | Gegenstände nehmen, benutzen, kombinieren, geben | ja | nein. Sie hat nur ihre **Blechdose**, und die gibt sie nicht her |
 | Türen öffnen, schieben, suchen, Dokumente lesen | ja | nein |
 | Durch Wände und Türen gehen | nein | ja |
@@ -138,6 +138,14 @@ Marko nimmt Mala nicht einfach an. Er überhört sie, und das kostet ihn etwas.
   Marko erklärt alles weg: Tinnitus, Jugo, zu wenig Schlaf.
 - **Der Übergang:** Im Hafenbüro fehlt der Band von 1984, und die Stimme bietet an nachzusehen. Sie drängt weiter, wenn er schweigt. Erst wenn der Spieler Marko antworten lässt, leise, damit Mladen nichts hört („Wenn du da bist, dann sieh nach.“), ist der Kopfschmerz schlagartig weg. Mala wird sichtbar, nennt ihren Namen, und der Wechsel-Knopf erscheint. Marko nennt es eine Probe, keine Annahme: „Und wenn da nichts ist, bist du der Jugo.“
 - **Dunkle Orte:** Im Kühlraum der Ledana sieht Marko nur, was im Lichtkeil der Tür oder in Malas kaltem Schein liegt. Ohne sie ist er blind.
+
+### 2.6c Fremde und Vorstellungen
+- Wen Marko noch nicht kennt, heißt beim Zeigen und im Satz unten „???“, und „Schau an“ beschreibt nur, was er sieht („Ein Fischer mit Wollmütze …“).
+- Jedes erste Gespräch beginnt mit einer Vorstellung, erst danach steht der Name da. Marko nennt seinen Namen, das Gegenüber seinen: „Zdenka Bašić. Ich wohne neben ihr. Habe neben ihr gewohnt.“
+- Betritt Marko einen Ort zum ersten Mal, sprechen ihn die Leute dort von selbst an: Zdenka vor ihrer Tür, Mladen hinter der Glasscheibe, Dinko beim Flicken, Sanja hinter dem Tresen und die Kartenspieler, Nina im Laden, Mira im Kiosk, Ljerka an der Rezeption, Jakov mit dem Besen, Luka oben auf der Galerie. Ivka und Bruno stellen sich vor, wenn sie zum ersten Mal erscheinen.
+
+### 2.6d Mitgelieferter Spielstand
+Im Titelbild lädt „Mitgelieferter Spielstand“ auf einen gewählten Platz einen Stand kurz bevor Marko Ivka die Wahrheit sagt: Nacht an der Mole, Brief gelesen, Handschuhe dabei. Er wird mit dem automatischen Durchlauf erzeugt (`MALA_PRESET=datei node game/tools/walkthrough.js`) und steht in `game/src/95_preset.js`.
 
 ### 2.6a Gespräche
 Wie in den Blackwell-Spielen erscheint bei jeder gesprochenen Zeile ein gemaltes Brustbild der Figur oben links oder oben rechts (je nachdem, wo sie im Bild steht), daneben der Satz in einem schwarzen Kasten mit hellem Rand, in der Farbe der Figur. Die Antwortmöglichkeiten stehen als Liste im unteren Bildbereich. Geister haben einfarbige Porträts mit kaltem Schein: Mala blau-türkis, die anderen fahl-lavendel. In Markos Sicht ist auch Malas Gestalt einfarbig kalt, durchscheinend, mit einem schimmernden Rand und aufsteigenden Lichtpunkten; sie berührt den Boden nicht ganz.

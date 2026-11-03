@@ -64,6 +64,7 @@ const SHOTS = process.argv[2] || null;
     await D.exit('door'); await D.drain(); await D.travel('sustipan'); await D.act('look', 'plaque'); await D.drain(); await note('c1_plaque'); await shot('sustipan1');
     await D.exit('exit'); await D.drain(); await D.travel('riva'); await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain();
     await D.switchTo('mala'); await D.act('sense', 'bollard'); await D.drain(); await note('c1_years'); await D.act('talk', 'ivka'); await D.drain(); await note('m_mother'); await D.switchTo('marko'); log('Mala an der Mole');
+    if (process.env.MALA_PRESET) { const g = await D.ev(() => { M.saveGame(); return JSON.parse(JSON.stringify(M.GS)); }); require('fs').writeFileSync(process.env.MALA_PRESET, JSON.stringify(g)); console.log('Spielstand gespeichert:', process.env.MALA_PRESET); await D.close2(); process.exit(0); }
     await D.act('use', 'ivka', 'letter_t'); await D.drain();
     await D.pickNote('c1_ferry'); await D.drain(); await D.pickNote('c1_came'); await D.drain();
     await D.choose('Brief vorlesen'); await D.drain(); await D.choose('Handschuhe'); await D.drain(); await D.choose('nicht mehr hier'); await D.drain();

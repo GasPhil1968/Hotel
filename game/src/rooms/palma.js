@@ -38,6 +38,7 @@ M.readDocuments=async function(A){ if (A.flag('c3.read')) return A.doc({style:'l
   await A.fade(7,900); A.phase('c3_night'); A.rebuild(); await A.goto('palma',{x:A.marko.x,y:A.marko.y,f:A.marko.f,noEnter:true,fade:false}); await A.fade(0,900);
   await A.narrate('Später. Das Haus ist still. Nur der Regen und die Standuhr.'); await A.wait(800); await A.m('…'); A.sfx('click'); await A.wait(500);
   M.sfxBell(A); await A.m('Die Portiersglocke. Niemand hat sie angefasst.'); A.headache(3000);
+  if (A.npc('bruno').actor){ await A.wait(900); await A.m('In der Loge steht ein alter Mann in Uniform. Durch ihn hindurch sieht man das Schlüsselbrett.'); await M.introduce(A,'bruno'); }
   if (A.malaHere()) await A.g('Er ist hier. Er hat nie Feierabend gemacht.'); A.save(); };
 M.sfxBell=function(A){ A.sfx('cup'); setTimeout(function(){ A.sfx('cup'); },180); };
 var JOURNAL=['12.6.1960 – Nedjelja. Ples u salonu poslije ponoći. D. i ja. „Večer na Rivi“.','   (Sonntag. Tanz im Salon nach Mitternacht. D. und ich.)','3.3.1975 – Danica je umrla u 4:10. Nisam bio s njom. Bio sam na recepciji.','   (Danica ist um 4:10 gestorben. Ich war nicht bei ihr. Ich war am Empfang.)',

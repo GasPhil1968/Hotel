@@ -27,7 +27,8 @@ async function meeting(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
   else { await A.m('Ich summe. Laut. Das Lied, das meine Großmutter beim Kaffeekochen gesungen hat.'); await A.wait(1100); await A.g('Das kenne ich.'); await A.wait(700); await A.m('…'); A.setFlag('mk.hummed'); }
   await A.wait(700); await A.g('Sie steht hier jeden Abend. Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.');
   await A.m('Tinnitus. Drei Tage Jugo, zu viel Kaffee, zu wenig Schlaf. Das hat einen Namen, und der Name ist nicht Gespenst.');
-  await A.faceM('R'); await A.wait(600); await A.m('Ich gehe jetzt zu ihr. Dann sehe ich, dass sie lebt. Und dann gehe ich nach Hause und schlafe.'); A.save(); }
+  await A.faceM('R'); await A.wait(600); await A.m('Ich gehe jetzt zu ihr. Dann sehe ich, dass sie lebt. Und dann gehe ich nach Hause und schlafe.');
+  var ia=I.actor; if (ia){ await A.walk(Math.round(ia.x)-24,Math.round(ia.y)); await A.face('R'); } await M.introduce(A,'ivka'); A.save(); }
 // ---------------------------------------------------------------- Gespräch mit Ivka (Marko)
 async function talkIvka(A){ var I=A.npc('ivka');
   if (A.isMala()) return talkIvkaMala(A,I);
@@ -192,7 +193,7 @@ var HS=[
 ];
 M.room('riva',{ name:'Riva', scape:'riva',
   music:function(GS){ return (GS.phase==='c1'||GS.phase==='c1_night')?'case1':(GS.phase==='c2'?'case2':(GS.phase==='c3'?'case3':'flat')); },
-  actors:function(S,GS){ var L=[]; if (ivkaHere(GS)){ var p=M.apos('riva','ivka',[596,114,'R']); L.push({id:'ivka',ch:'ivka',x:p[0],y:p[1],f:p[2]||'R',name:'Ivka',ghost:true,idle:'waitF',speed:110,step:3,anchor:function(S,G){ if (G.flags['c1.release']) return null; var sp=M.spot('riva','bollard'); return [sp[0]+7,sp[1]+5]; }}); } return L; },
+  actors:function(S,GS){ var L=[]; if (ivkaHere(GS)){ var p=M.apos('riva','ivka',[596,114,'R']); L.push({id:'ivka',ch:'ivka',x:p[0],y:p[1],f:p[2]||'R',name:'Ivka',ghost:true,reveal:true,idle:'waitF',speed:110,step:3,anchor:function(S,G){ if (G.flags['c1.release']) return null; var sp=M.spot('riva','bollard'); return [sp[0]+7,sp[1]+5]; }}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase; if (A.S.ferryAt) delete A.S.ferryAt; // die Fähre aus dem Finale liegt nur, solange man bleibt
     if (p==='c1' && A.first('rivaC1')){ await A.m('Die Riva am Abend. Die Lichter gehen an, eine nach der anderen, als könnten sie sich nicht entscheiden.');  }

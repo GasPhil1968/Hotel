@@ -91,14 +91,14 @@ var HS=[
    push:function(A){ var w=who(A.S); if (w==='bruno') return brunoBell(A); return A.m('Er bewegt sich nicht.'); },
    take:async function(A){ var w=who(A.S); if (w==='ivka' && !A.has('gloves') && !A.S.given){ await A.reach(); A.give('gloves'); return A.m('Auf dem Poller liegen die grauen Handschuhe. Die, die ich am Hafen dort hingelegt habe.'); } return A.m('Das lasse ich hier.'); },
    g:{look:function(A){ var w=who(A.S); return A.g(w==='bruno'?'Seine Glocke. Er ist aufgestanden, jedes Mal, wenn sie klang.':(w==='luka'?'Seine Treppe. Hier hält sie.':'Hier war sie festgemacht. Jetzt nicht mehr.')); }}},
- {id:'ghost',npc:'ivka',name:'Ivka',hgt:46,vis:function(S){ return !S.gone && who(S)==='ivka'; },talk:talkIvka,look:'Ivka Perić. Hier sieht sie nicht durchscheinend aus. Hier sehe ich durch mich.',
+ {id:'ghost',npc:'ivka',name:'Ivka',hgt:46,vis:function(S){ return !S.gone && who(S)==='ivka'; },talk:talkIvka,look:'Ivka Perić. Auch hier sieht man durch sie hindurch. Aber sie steht nicht mehr, als würde sie warten.',
    give:{ gloves:function(A){ return ivkaGloves(A); }, letter_t:'„Sie haben ihn mir doch vorgelesen.“' }},
  {id:'ghost_l',npc:'luka',name:'Luka',hgt:46,vis:function(S){ return !S.gone && who(S)==='luka'; },talk:talkLuka,look:'Luka. Er steht da, als würde gleich die Fähre anlegen. Ohne Gitarre sieht er jünger aus.',
    give:{ tickets:function(A){ return lukaTickets(A); }, radioB:'„Das Lied ist bei ihr. Da gehört es hin.“' }},
  {id:'ghost_b',npc:'bruno',name:'Bruno',hgt:46,vis:function(S){ return !S.gone && who(S)==='bruno'; },talk:talkBruno,look:'Bruno Lalić in seiner grünen Uniform. Er steht, als warte er auf einen Gast. Oder auf eine Ablösung.',
    give:{ keyring:'„Ne … Ljerki.“ Für Ljerka.', fee:'„Ne … ne …“' }}
 ];
-M.room('limbo',{ name:'Zwischenwelt', scape:'limbo', music:'ghost', noSave:true, noSwitch:true, noGhostView:true, noMalaLeash:true, noFollow:true, spiritAlpha:0.9,
+M.room('limbo',{ name:'Zwischenwelt', scape:'limbo', music:'ghost', noSave:true, noSwitch:true, noGhostView:true, noMalaLeash:true, noFollow:true,
   actors:function(S,GS){ if (S.gone) return []; var w=who(S), g=GHOST[w], p=M.apos('limbo','ghost',[214,116,'L']); return [{id:w,ch:w,x:p[0],y:p[1],f:p[2]||'L',name:g.name,ghost:true,idle:g.idle,noAche:true,routine:false}]; },
   hotspots:HS
 });

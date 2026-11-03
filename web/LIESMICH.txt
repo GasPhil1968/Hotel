@@ -27,8 +27,8 @@ MARKO UND MALA
   sieht Verborgenes ("Geistersicht" – das Bild wird kalt und blau),
   "Spürt" den Nachhall an Dingen und Orten, spricht mit Geistern und
   "Lauscht" Lebenden. Anfassen kann sie nichts. Ohne Marko geht sie nicht weit.
-- Pocht Markos Kopf (dunkler Rand), ist ein Geist in der Nähe, den er noch
-  nicht sieht. Mala kann ihn finden.
+- Pocht Markos Kopf (dunkler Rand), ist ein Geist in der Nähe, oder Marko
+  überhört gerade jemanden.
 - Zieh Gegenstände auf Mala, damit sie sie ansieht. Manchmal sieht sie mehr.
 - Im Dunkeln sieht Marko nur, was in Malas kaltem Schein liegt.
 
@@ -70,6 +70,14 @@ TASTATUR (am Rechner)
 SPIELSTÄNDE
 - Drei Speicherplätze. Das Spiel speichert bei jedem Ortswechsel selbst.
 - Beim Fortsetzen fragt das Spiel nach dem Platz.
+- "Mitgelieferter Spielstand" im Titelbild: lädt einen Stand kurz bevor
+  Marko Ivka die Wahrheit sagt (Nacht an der Mole) auf einen Platz deiner Wahl.
+
+FREMDE
+- Wen Marko noch nicht kennt, heißt "???". Jedes erste Gespräch beginnt
+  mit einer Vorstellung. Wer einen Ort zum ersten Mal betritt, wird von den
+  Leuten dort angesprochen.
+- Marko sieht auch die anderen Geister, blass und durchscheinend.
 
 INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
 1. Den Inhalt dieses Ordners bei Netlify hochladen: app.netlify.com/drop

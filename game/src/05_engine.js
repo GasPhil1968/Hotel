@@ -149,7 +149,7 @@ function litAt(x,y){ var best=0, ma=ACT.mala; if (ma && GS.malaOn && GS.pos.mala
   var L=typeof room.darkLights==='function'?room.darkLights(S,GS):(room.darkLights||[]); for (var i=0;i<L.length;i++){ var d2=Math.hypot(x-L[i][0],y-L[i][1]); best=Math.max(best,(1-d2/L[i][2])*(L[i][3]||1)); } return Math.max(0,Math.min(1,best)); }
 E.darkOn=darkOn; E.litAt=litAt;
 // Geister: für Marko erst sichtbar, wenn Mala sie gefunden hat
-function ghostVisible(a){ if (!a.ghost||a.id==='mala') return true; if (GS.active==='mala') return true; return !!GS.flags['found.'+a.id]; }
+function ghostVisible(a){ if (!a.ghost||a.id==='mala') return true; if (GS.active==='mala') return true; if (a.reveal) return !!GS.flags['found.'+a.id]; return true; }
 E.ghostVisible=ghostVisible;
 function actorShown(a){ if (!a.visible) return false; if (a.id==='mala'){ return GS.malaOn && GS.pos.mala.room===room.id; } if (a.id==='marko') return GS.pos.marko.room===room.id && !room.noActor; return ghostVisible(a); }
 E.actorShown=actorShown;
@@ -304,7 +304,9 @@ function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h
   var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var r3=[Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]; if (x>=r3[0]&&x<r3[0]+r3[2]&&y>=r3[1]&&y<r3[1]+r3[3]){ var a3=r3[2]*r3[3]; if (a3<ba) best=MARKO_HS; } }
   return best; }
 E.hotspotAt=hotspotAt;
-function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; var n=(GS.active==='mala'&&o.gname)?o.gname:o.name; return typeof n==='function'?n(S,GS):n; }
+function unmetNpc(o){ return !!(o && o.npc && o.npc!=='mala' && o.npc!=='marko' && M.INTRO && M.isMet && M.INTRO[(M.METKEY&&M.METKEY[o.npc])||o.npc] && !M.isMet(GS,o.npc)); }
+E.unmetNpc=unmetNpc;
+function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; if (unmetNpc(o)) return '???'; var n=(GS.active==='mala'&&o.gname)?o.gname:o.name; return typeof n==='function'?n(S,GS):n; }
 E.nameOf=nameOf;
 // Mala und Marko als Gesprächsziele
 var MALA_HS={id:'_mala',name:function(S,G){ return G.flags['mala.unknown']?'Schimmer':'Mala'; },npc:'mala',hgt:46,talk:function(A){ return M.talkToMala?M.talkToMala(A):A.g('…'); },look:function(A){ return M.lookAtMala?M.lookAtMala(A):A.m('Mala. Durchscheinend, wenn das Licht von hinten kommt.'); }};
@@ -343,6 +345,7 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
   E.busy=true;
   if ((v==='talk') && hs.npc) convStart(hs.npc);
   try{ var ctx={key:hs.id+':'+v+(withItem?':'+withItem:'')+(isG?':g':''),hs:hs,item:withItem};
+    if (unmetNpc(hs)){ if ((v==='talk'||withItem) && M.introduce) await M.introduce(API,hs.npc); else if (v==='look' && !isG && M.lookUnknown && M.lookUnknown(hs.npc)){ await say(M.lookUnknown(hs.npc),GS.active); return; } }
     API.reach=function(fn){ var an=reachFor(hs); if (!an||isG){ if (fn) fn(); return Promise.resolve(); } return playAnimOn(player(),an,fn); };
     if (withItem){
       if (isG){ await say(withItem==='tin'?pick(['Nein.','Die bleibt bei mir.']):pick(DEF.g.notouch),'mala'); }
@@ -410,6 +413,7 @@ async function gotoRoom(id,o){ o=o||{}; var from=room?room.id:null; syncPos();
   snapCamera(); if (E.screen!=='game') E.screen='game';
   if (o.fade!==false) await fadeTo(0,o.fadeMs||320);
   if (!o.noEnter && room.enter){ var wb=E.busy; E.busy=true; try{ await room.enter(API,from); } finally{ E.busy=wb; } }
+  if (!o.noEnter && M.autoIntro && GS.active==='marko' && E.screen==='game'){ var wb2=E.busy; E.busy=true; try{ await M.autoIntro(API); } finally{ E.busy=wb2; } }
   if (!o.noSave) autosave(); }
 M.gotoRoom=gotoRoom;
 function snapCamera(){ var p=player(); var tgt=Math.round((p?p.x:160)-160); E.camX=Math.max(0,Math.min(room.width-W,tgt)); if (room.camX!==undefined) E.camX=room.camX; }
@@ -441,7 +445,10 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
   base.inv=(base.inv||[]).filter(function(id,i,a){ return M.ITEMS[id] && a.indexOf(id)===i; }); base.notes=(base.notes||[]).filter(function(id){ return M.NOTES[id]; });
   if (!M.PHASES[base.phase]) return null; ['marko','mala'].forEach(function(k){ if (!base.pos[k]||!M.ROOMS[base.pos[k].room]) base.pos[k]={room:base.pos.marko&&M.ROOMS[base.pos.marko.room]?base.pos.marko.room:'flat',x:160,y:120,f:'R'}; });
   if (M.ROOMS[base.pos[base.active].room].noSave) return null; return base; }
-function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; var d=JSON.parse(raw), base=validate(d); if (!base) return false;
+function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; return loadData(JSON.parse(raw)); }catch(e){ console.error(e); return false; } }
+// mitgelieferter Spielstand: in den gewählten Platz laden und dort gleich speichern
+E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return false; if (n) E.setSlot(n); var ok=loadData({GS:JSON.parse(JSON.stringify(p.GS))}); if (ok) saveGame(); return ok; };
+function loadData(d){ try{ var base=validate(d); if (!base) return false;
     setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
