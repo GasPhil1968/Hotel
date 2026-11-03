@@ -15,6 +15,7 @@ const SHOTS = process.argv[2] || null;
   const room = async () => (await D.st()).room;
   try {
     // ================= PROLOG
+    if (process.env.MALA_NB) await D.ev((v) => M.E.setNbStyle(v), process.env.MALA_NB);
     await D.ev(() => { M.E.setSlot(1); M.E.newGame(); }); await D.drain(); log('Start', await room()); await shot('start');
     await D.act('use', 'answer'); await D.drain(); await note('pro_auftrag'); log('Anrufbeantworter');
     await D.act('take', 'dzezva'); await D.act('use', 'sink', 'dzezva'); await D.act('use', 'stove', 'dzezvaW'); await D.drain(); await flag('pro.coffee'); log('Kaffee');

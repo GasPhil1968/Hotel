@@ -1880,7 +1880,7 @@ async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
   addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
 E.combineNotes=combineNotes;
 // im Gespräch eine Notiz auswählen
-function pickNote(title){ return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?'},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
+function pickNote(title){ if (E.nbStyle && E.nbStyle()==='think' && E.pickNoteThink) return E.pickNoteThink(title); return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?'},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
 
 // ---------------------------------------------------------------- Interaktions-Helfer
 var lastClick=null;
@@ -2163,7 +2163,7 @@ M.TA={
   exit:function(id){ var hs=room.byId[id]; if (!hs) throw new Error('kein Ausgang '+id); E.pop=null; doVerb(hs.gexit&&GS.active==='mala'?'pass':'walk',hs); },
   item:function(verb,id,other){ doItem(verb,id,other); },
   choose:function(sub){ if (!E.dlg) throw new Error('keine Auswahl offen'); var i=E.dlg.opts.findIndex(function(o){ return o.t.indexOf(sub)>=0; }); if (i<0) throw new Error('Option nicht gefunden: '+sub+' | '+E.dlg.opts.map(function(o){ return o.t; }).join(' / ')); E.chooseDone(i); },
-  pickNote:function(id){ if (!E.overlay||E.overlay.kind!=='notebook') throw new Error('kein Notizbuch offen'); closeOverlay(id); },
+  pickNote:function(id){ if (E.dlg){ var k=E.dlg.opts.findIndex(function(o){ return o.id===id; }); if (k<0) throw new Error('Gedanke nicht in der Auswahl: '+id); E.chooseDone(k); return; } if (!E.overlay||E.overlay.kind!=='notebook') throw new Error('kein Notizbuch offen'); closeOverlay(id); },
   closeOverlay:function(v){ closeOverlay(v); },
   combine:function(a,b){ return combineNotes(a,b); },
   switchTo:function(w){ return switchTo(w,true); },
@@ -2276,7 +2276,8 @@ function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ i
 // ---------------------------------------------------------------- Leiste
 var BTN_Y=SH+2, INV_Y=161, SLOT_W=40, SLOT_H=36, INV_X=51, INV_N=6, SW_X=2, SW_W=38;
 var BTNS=[{id:'notes',t:'Notizen',x:4},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
-(function(){ var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); })();
+function layoutBtns(){ BTNS[0].t=(E.nbStyle&&E.nbStyle()==='think')?'Nachdenken':'Notizen'; var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); }
+layoutBtns();
 function btnAt(x,y){ if (y<SH||y>=SH+15) return null; for (var i=0;i<BTNS.length;i++){ var b=BTNS[i]; if (x>=b.x-5&&x<b.x+b.w+5) return b.id; } return null; }
 function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
   fb.rect(x0+1,y0+1,x1-x0-1,y1-y0-1,act?c.sel:P.k1); fb.hl(x0+1,x1-1,y0,c.fr); fb.hl(x0+1,x1-1,y1,c.fr); fb.vl(x0,y0+1,y1-1,c.fr); fb.vl(x1,y0+1,y1-1,c.fr);
@@ -2370,7 +2371,9 @@ function drawConv(){ if (!convOn()) return; if (!E.dlg) return; var pa=convPartn
   drawChoices(); }
 function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=2, w=W-4, y0=SH+1, y1=H-1, tx=x0+12, tw=w-34, i;
   if (d.top>=o.length) d.top=Math.max(0,o.length-1);
-  fb.rect(0,SH,W,H-SH,P.k0); var fr=g?P.x2:P.s4; fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
+  fb.rect(0,SH,W,H-SH,P.k0); var fr=g?P.x2:P.s4;
+  if (d.title && !convPartner() && !E.speech){ var tw2=M.textWidth(d.title); fb.rect(x0,SH-12,tw2+12,12,P.k0); fb.hl(x0,x0+tw2+11,SH-12,fr); fb.vl(x0,SH-12,SH,fr); fb.vl(x0+tw2+11,SH-12,SH,fr); M.text(fb,d.title,x0+6,SH-9,g?P.x5:P.y4); }
+  fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
   var rows=[], yy=y0+4, more=false;
   for (var k=d.top;k<o.length;k++){ var ls=o[k].lines||(o[k].lines=M.wrap(o[k].t,tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
   if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+1,ls:l1}); more=d.top<o.length-1; }
@@ -2468,101 +2471,73 @@ M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||d.slots.
   M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2);
   if (ov.msg) M.wrap(ov.msg,250).forEach(function(l,i){ M.text(fb,l,36,by+18+i*9,P.r2); }); });
 
-// ---------------------------------------------------------------- Notizbuch als Karten (wie in Blackwell und Ace Attorney)
-// Oben ein Raster aus Karten mit Bild und kurzem Titel, unten die ganze Notiz. Karte auf Karte ziehen = verbinden.
-// Erledigtes verschwindet aus den Karten und steht nur noch im Tagebuch. Reiter: Hinweise, Mala, Tagebuch.
-var NB={sel:null,page:0,msg:null,tab:'case',link:false,drag:null,tpage:0};
-var NB_COLS=4, NB_ROWS=2, NB_PER=NB_COLS*NB_ROWS, CW=74, CH=54, CX0=8, CY0=24, CG=4;
+// ---------------------------------------------------------------- Notizbuch: zwei Arten, im Menü umschaltbar
+// „Liste“ (wie in Blackwell): eine Seite, große Schrift, nur offene Hinweise, zwei antippen = verbinden.
+// „Nachdenken“: kein eigener Bildschirm; Marko denkt in der gewohnten Auswahlliste nach, zwei Gedanken = verbinden.
+var NB={sel:null,page:0,msg:null};
+var NB_PER=6, NB_RH=22, NB_Y0=30;
+var nbStyle='list'; try{ nbStyle=localStorage.getItem('mala.nbstyle')||'list'; }catch(e){}
+E.nbStyle=function(){ return nbStyle; };
+E.setNbStyle=function(v){ nbStyle=v; try{ localStorage.setItem('mala.nbstyle',v); }catch(e){} layoutBtns(); };
+layoutBtns();
 function nbTargets(){ var t={}; Object.keys(M.DEDUCE).forEach(function(k){ var d=M.DEDUCE[k]; if (d&&d.to) t[d.to]=1; }); return t; }
 function noteDone(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) for (var i=0;i<n.doneBy.length;i++) if (g.notes.indexOf(n.doneBy[i])>=0) return true; return false; }
-function noteShort(n){ return n.s||n.t; }
-function nbPartner(){ var c=E.conv&&E.conv.npc&&E.ACT[E.conv.npc]; return c?c.ch:null; }
-// Karten des Reiters: nur offene Notizen; im Gespräch zuerst, was zum Gegenüber gehört; Schlüsse zuerst, Neues vorn
-function nbCards(tab,ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[];
-  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n) return; var mala=n.c==='mala'; if (tab==='mala'?!mala:(mala||(cs&&n.c&&n.c!==cs))) return; if (noteDone(n,g)) return; out.push(id); });
-  var who=ask?nbPartner():null, order=g.notes;
-  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1); return (sa-sb)||(order.indexOf(b)-order.indexOf(a)); });
+// offene Hinweise des Falls (beim Fragen auch Malas), Schlüsse und Neues zuerst, im Gespräch zuerst die zum Gegenüber
+function nbOpen(ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[], who=ask&&E.conv&&E.conv.npc&&E.ACT[E.conv.npc]?E.ACT[E.conv.npc].ch:null;
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (cs && n.c && n.c!==cs) return; out.push(id); });
+  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
   return out; }
-function notesOf(){ return nbCards('case'); }
-E.openNotes=function(){ NB.sel=null; NB.page=0; NB.msg=null; NB.link=false; NB.tab='case'; NB.drag=null; return showNotes(); };
-function showNotes(){ return E.showOverlay('notebook',{mode:'browse'}); }
-// Bild einer Karte: Gesicht aus dem Porträt oder das Icon eines Gegenstands
-var NB_IMG={};
-function cardImg(n){ var key=n.p||''; if (NB_IMG[key]!==undefined) return NB_IMG[key]; var b=null;
-  if (key.indexOf('p:')===0 && M.hasPortrait && M.hasPortrait(key.slice(2))){ var pb=M.portrait(key.slice(2),'n'), w=36, h=30, ox=10, oy=6; b=new Buf(w,h,T); for (var y=0;y<h;y++) for (var x=0;x<w;x++){ var c=pb.d[(y+oy)*pb.w+x+ox]; if (c!==T) b.d[y*w+x]=c; } }
-  else if (key.indexOf('i:')===0 && M.ITEMS[key.slice(2)]) b=iconOf(key.slice(2));
-  return (NB_IMG[key]=b); }
-function cardRect(i){ var k=i%NB_PER, c=k%NB_COLS, r=Math.floor(k/NB_COLS); return [CX0+c*(CW+CG),CY0+r*(CH+CG),CW,CH]; }
-function drawNoteCard(id,x,y,o){ o=o||{}; var n=M.NOTES[id], g=GS(), ded=nbTargets()[id], sel=NB.sel===id, hot=o.hot;
-  var bgc=sel?P.y4:(hot?P.s6:P.s5), fr=ded?P.g3:(sel?P.r3:P.s3);
-  fb.rect(x+1,y+1,CW,CH,P.k1); fb.rect(x,y,CW,CH,bgc); fb.hl(x,x+CW-1,y,fr); fb.hl(x,x+CW-1,y+CH-1,fr); fb.vl(x,y,y+CH-1,fr); fb.vl(x+CW-1,y,y+CH-1,fr);
-  if (ded){ fb.hl(x+1,x+CW-2,y+1,P.g4); fb.vl(x+1,y+1,y+CH-2,P.g4); fb.vl(x+CW-2,y+1,y+CH-2,P.g4); fb.hl(x+1,x+CW-2,y+CH-2,P.g4); }
-  var im=cardImg(n), iy=y+3; fb.rect(x+3,iy,CW-6,28,sel?P.y2:P.s3);
-  if (im){ var ix=x+((CW-im.w)>>1), iy2=iy+Math.max(0,(28-im.h)>>1); for (var j=0;j<im.h;j++) for (var i=0;i<im.w;i++){ var c=im.d[j*im.w+i]; if (c!==T && iy2+j>=iy && iy2+j<iy+28) fb.px(ix+i,iy2+j,c); } }
-  var ls=M.wrap(noteShort(n),CW-6); if (ls.length>2){ ls=ls.slice(0,2); var l=ls[1]; while (M.textWidth(l+'…')>CW-6&&l.length>2) l=l.slice(0,-1); ls[1]=l+'…'; }
-  ls.forEach(function(l,k){ M.text(fb,l,x+((CW-M.textWidth(l))>>1),y+34+k*9+(ls.length<2?4:0),ded?P.g0:P.n0); });
-  if (g.noteNew[id]) fb.rect(x+CW-6,y+3,3,3,P.r4); if (ded){ fb.px(x+5,y+5,P.g5); fb.px(x+4,y+6,P.g5); fb.px(x+6,y+6,P.g5); fb.px(x+5,y+7,P.g5); fb.px(x+5,y+6,P.g5); } }
+E.nbOpen=nbOpen;
+function notesOf(){ return nbOpen(false); }
+E.openNotes=function(){ if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; return E.showOverlay('notebook',{mode:'browse'}); };
 function nbButton(x,y,w,t,hot){ fb.rect(x,y,w,13,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+12,c); fb.vl(x,y,y+12,c); fb.vl(x+w-1,y,y+12,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+3,hot?P.r2:P.n1); return [x,y,w,13]; }
-M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask', g=GS(), ph0=M.PHASES[g.phase]||{}, i;
-  if (!ov.init){ ov.init=1; NB.page=0; NB.sel=null; NB.msg=null; NB.link=false; NB.tab='case'; NB.drag=null; }
-  if (ask && NB.tab==='diary') NB.tab='case';
-  paper(4,4,312,188,{}); var lay={cards:[],tabs:[],close:null,prev:null,next:null,btn:null,up:null,dn:null};
-  // Kopf: Titel, Reiter, Schließen
-  M.text(fb,ask?(d.title||'Wonach fragen?'):'NOTIZBUCH',10,9,P.r2);
-  var tx=Math.max(96,16+M.textWidth(ask?(d.title||'Wonach fragen?'):'NOTIZBUCH')); var tabs=[['case','Hinweise'],['mala','Mala']]; if (!ask) tabs.push(['diary','Tagebuch']);
-  tabs.forEach(function(tb){ var w=M.textWidth(tb[1])+10, on=NB.tab===tb[0], hot=hoverUI==='nt:'+tb[0]; fb.rect(tx,6,w,13,on?P.s6:(hot?P.s5:P.s4)); var fc=on?P.r3:P.s3; fb.hl(tx,tx+w-1,6,fc); fb.vl(tx,6,18,fc); fb.vl(tx+w-1,6,18,fc); if (!on) fb.hl(tx,tx+w-1,18,fc);
-    M.text(fb,tb[1],tx+5,9,on?P.n0:P.s2); if (tb[0]!=='diary' && nbCards(tb[0]).some(function(id){ return g.noteNew[id]; })) fb.rect(tx+w-4,8,2,2,P.r4); lay.tabs.push({id:tb[0],r:[tx,5,w,15]}); tx+=w+3; });
-  var cl=ask?'Zurück':'X'; lay.close=[312-M.textWidth(cl)-12,5,M.textWidth(cl)+10,14]; M.text(fb,cl,312-M.textWidth(cl)-6,9,hoverUI==='nx'?P.r3:P.s1);
-  fb.hl(8,311,20,P.r3);
-  if (NB.tab==='diary'){ // Tagebuch: alles, auch Erledigtes, als ganze Sätze, neueste zuerst
-    var all=g.notes.filter(function(id){ var n=M.NOTES[id]; return n && (n.c==='mala' || !ph0.case || !n.c || n.c===ph0.case); }).slice().reverse(), rows=[];
-    all.forEach(function(id){ M.wrap('· '+M.NOTES[id].t,290).forEach(function(l,k){ rows.push([k?'  '+l:l, noteDone(M.NOTES[id],g)]); }); rows.push(null); });
-    var per=17; if (NB.tpage*per>=rows.length) NB.tpage=Math.max(0,Math.ceil(rows.length/per)-1);
-    rows.slice(NB.tpage*per,NB.tpage*per+per).forEach(function(r,k){ if (r) M.text(fb,r[0],12,25+k*9,r[1]?P.s2:P.n1); });
-    if (!all.length) M.text(fb,'Noch nichts.',12,26,P.s2);
-    if (NB.tpage>0) lay.up=nbButton(196,176,54,'Zurück',hoverUI==='nu'); if ((NB.tpage+1)*per<rows.length) lay.dn=nbButton(254,176,54,'Weiter',hoverUI==='nd');
-    ov.lay=lay; return; }
-  // Karten
-  var cards=nbCards(NB.tab,ask), pages=Math.max(1,Math.ceil(cards.length/NB_PER)); if (NB.page>=pages) NB.page=pages-1;
-  if (!cards.length) M.text(fb,'Noch nichts.',12,28,P.s2);
-  for (i=NB.page*NB_PER;i<Math.min(cards.length,(NB.page+1)*NB_PER);i++){ var r=cardRect(i), id=cards[i]; if (NB.drag&&NB.drag.on&&NB.drag.id===id){ fb.rect(r[0],r[1],CW,CH,P.s4); continue; }
-    drawNoteCard(id,r[0],r[1],{hot:hoverUI==='n:'+id}); lay.cards.push({id:id,r:r}); }
-  if (pages>1){ M.text(fb,(NB.page+1)+'/'+pages,286,9+0,P.s2); }
-  if (NB.page>0) lay.prev=[CX0-6,CY0+CH-8,8,20]; if (NB.page<pages-1) lay.next=[CX0+4*(CW+CG)-4,CY0+CH-8,8,20];
-  [['prev',lay.prev,true],['next',lay.next,false]].forEach(function(a){ if (!a[1]) return; var cx=a[2]?a[1][0]+3:a[1][0]+4, cy=a[1][1]+10, c=hoverUI==='n'+a[0]?P.r3:P.n2; for (var t=0;t<5;t++) fb.vl(a[2]?cx+t:cx-t,cy-t,cy+t,c); });
-  // unten: die ganze Notiz
-  var by=CY0+2*(CH+CG)+1; fb.hl(8,311,by-3,P.s3);
-  if (NB.msg){ fb.rect(10,by,300,40,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,288).slice(0,4).forEach(function(l,j){ M.text(fb,l,14,by+3+j*9,NB.msg.ok?P.g0:P.k1); }); }
-  else if (NB.sel && M.NOTES[NB.sel]){ M.wrap(M.NOTES[NB.sel].t,ask?220:226).slice(0,5).forEach(function(l,j){ M.text(fb,l,12,by+j*9,P.n0); }); }
-  else M.wrap(ask?'Tippe eine Karte an. Noch einmal tippen oder „Danach fragen“ fragt danach.':(NB.link?'Womit verbinden? Tippe die zweite Karte an.':'Tippe eine Karte an, um sie zu lesen. Ziehe eine Karte auf eine andere, um sie zu verbinden.'),290).forEach(function(l,j){ M.text(fb,l,12,by+j*9,P.s2); });
-  if (NB.sel && !NB.msg){ lay.btn=nbButton(ask?236:244,by+30,ask?74:66,ask?'Danach fragen':(NB.link?'Abbrechen':'Verbinden'),hoverUI==='nb'); }
-  if (NB.link && NB.sel) M.text(fb,'Womit verbinden?',12,by+33,P.r2);
-  // die gezogene Karte am Finger
-  if (NB.drag && NB.drag.on){ drawNoteCard(NB.drag.id,Math.round(pointer.x)-(CW>>1),Math.round(pointer.y)-(CH>>1),{hot:true}); }
+// Variante 1: die Liste
+M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask', g=GS(), ph0=M.PHASES[g.phase]||{}, ded=nbTargets(), i;
+  if (!ov.init){ ov.init=1; NB.page=0; NB.sel=null; NB.msg=null; }
+  paper(30,4,260,188,{lines:[NB_Y0-4,NB_RH],margin:16}); var lay={rows:[],close:null,prev:null,next:null,btn:null};
+  M.text(fb,ask?(d.title||'Wonach fragen?'):'Notizbuch',52,10,P.r2); if (!ask && ph0.short) M.text(fb,ph0.short,52+M.textWidth('Notizbuch')+10,10,P.s2);
+  var cl=ask?'Zurück':'X', cw=M.textWidth(cl); lay.close=[282-cw-8,6,cw+10,14]; M.text(fb,cl,282-cw-3,10,hoverUI==='nx'?P.r3:P.s1);
+  var list=nbOpen(ask), pages=Math.max(1,Math.ceil(list.length/NB_PER)); if (NB.page>=pages) NB.page=pages-1;
+  if (!list.length) M.text(fb,'Noch nichts.',54,NB_Y0+6,P.s2);
+  for (i=NB.page*NB_PER;i<Math.min(list.length,(NB.page+1)*NB_PER);i++){ var id=list[i], n=M.NOTES[id], y=NB_Y0+(i-NB.page*NB_PER)*NB_RH, sel=NB.sel===id, hot=hoverUI==='n:'+id;
+    if (sel) fb.rect(48,y+1,234,NB_RH-3,P.y4); else if (hot) fb.rect(48,y+1,234,NB_RH-3,P.s6);
+    var t=n.s||n.t; while (M.textWidth(t)>214 && t.length>3) t=t.slice(0,-2)+'…';
+    M.text(fb,t,56,y+7,ded[id]?P.g1:P.n0); if (ded[id]){ fb.px(51,y+9,P.g3); fb.px(50,y+10,P.g3); fb.px(52,y+10,P.g3); fb.px(51,y+11,P.g3); fb.px(51,y+10,P.g2); }
+    if (g.noteNew[id]) fb.rect(276,y+8,3,3,P.r4); lay.rows.push({id:id,r:[48,y,234,NB_RH-1]}); }
+  if (pages>1){ M.text(fb,(NB.page+1)+' / '+pages,150,NB_Y0+NB_PER*NB_RH+1,P.s2); if (NB.page>0) lay.prev=nbButton(48,NB_Y0+NB_PER*NB_RH-1,40,'<',hoverUI==='nprev'); if (NB.page<pages-1) lay.next=nbButton(242,NB_Y0+NB_PER*NB_RH-1,40,'>',hoverUI==='nnext'); }
+  var by=NB_Y0+NB_PER*NB_RH+16; fb.hl(46,284,by-3,P.s3);
+  if (NB.msg){ fb.rect(46,by,238,186-by,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+3+j*9,NB.msg.ok?P.g0:P.k1); }); }
+  else if (NB.sel && M.NOTES[NB.sel]){ M.wrap(M.NOTES[NB.sel].t,ask?160:228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.n1); }); if (ask) lay.btn=nbButton(214,by+20,68,'Danach fragen',hoverUI==='nb'); }
+  else M.wrap(ask?'Antippen, dann „Danach fragen“.':'Eine Notiz antippen, dann eine zweite, die dazu passt.',228).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.s2); });
   ov.lay=lay; });
 function nbAt(x,y){ var ov=E.overlay, lay=ov&&ov.lay; if (!lay) return null; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };
-  if (inR(lay.close)) return 'nx'; if (inR(lay.btn)) return 'nb'; if (inR(lay.prev)) return 'nprev'; if (inR(lay.next)) return 'nnext'; if (inR(lay.up)) return 'nu'; if (inR(lay.dn)) return 'nd';
-  for (var t=0;t<lay.tabs.length;t++) if (inR(lay.tabs[t].r)) return 'nt:'+lay.tabs[t].id;
-  for (var q=0;q<lay.cards.length;q++) if (inR(lay.cards[q].r)) return 'n:'+lay.cards[q].id; return null; }
-async function nbCombine(a,b){ var ov=E.overlay; NB.link=false; var res=await E.combineNotes(a,b); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t};
-  if (res.ok && res.to){ NB.sel=res.to; delete GS().noteNew[res.to]; if (res.say && ov) ov.after=res.say; } else NB.sel=a; }
+  if (inR(lay.close)) return 'nx'; if (inR(lay.btn)) return 'nb'; if (inR(lay.prev)) return 'nprev'; if (inR(lay.next)) return 'nnext';
+  for (var q=0;q<lay.rows.length;q++) if (inR(lay.rows[q].r)) return 'n:'+lay.rows[q].id; return null; }
 async function notebookTap(x,y){ var ov=E.overlay; if (!ov||!ov.lay) return; var ask=ov.data.mode==='ask', u=nbAt(x,y);
-  if (NB.msg && u && u.indexOf('n:')!==0 && u!=='nx'){ NB.msg=null; }
   if (!u){ NB.msg=null; return; }
-  if (u==='nx'){ NB.sel=null; NB.msg=null; NB.link=false; E.closeOverlay(null); return; }
+  if (u==='nx'){ NB.sel=null; NB.msg=null; E.closeOverlay(null); return; }
   if (u==='nprev'){ NB.page=Math.max(0,NB.page-1); M.sfx('page'); return; } if (u==='nnext'){ NB.page++; M.sfx('page'); return; }
-  if (u==='nu'){ NB.tpage=Math.max(0,NB.tpage-1); M.sfx('page'); return; } if (u==='nd'){ NB.tpage++; M.sfx('page'); return; }
-  if (u.indexOf('nt:')===0){ var tb=u.slice(3); if (NB.tab!==tb){ NB.tab=tb; NB.page=0; NB.tpage=0; NB.sel=null; NB.link=false; NB.msg=null; M.sfx('page'); } return; }
-  if (u==='nb'){ if (!NB.sel) return; if (ask){ var id0=NB.sel; NB.sel=null; E.closeOverlay(id0); M.sfx('page'); return; } NB.link=!NB.link; NB.msg=null; M.sfx('click'); return; }
+  if (u==='nb'){ if (NB.sel){ var id0=NB.sel; NB.sel=null; E.closeOverlay(id0); M.sfx('page'); } return; }
   var id=u.slice(2); delete GS().noteNew[id]; NB.msg=null;
   if (ask){ if (NB.sel===id){ NB.sel=null; E.closeOverlay(id); M.sfx('page'); return; } NB.sel=id; M.sfx('click'); return; }
-  if (NB.link && NB.sel && NB.sel!==id){ await nbCombine(NB.sel,id); return; }
-  NB.link=false; NB.sel=(NB.sel===id)?null:id; M.sfx('click'); }
-// Ziehen im Notizbuch: Karte aufnehmen, auf eine andere fallen lassen
-function nbDragCheck(x,y){ var u=press&&press.ui; if (!u||u.indexOf('n:')!==0||!E.overlay||E.overlay.kind!=='notebook'||E.overlay.data.mode==='ask') return false; if (NB.drag) return true;
-  if (Math.hypot(x-press.x,y-press.y)>5){ NB.drag={id:u.slice(2),on:true}; NB.msg=null; M.sfx('click'); } return true; }
-function nbDrop(x,y){ var dg=NB.drag; NB.drag=null; if (!dg||!dg.on) return false; var u=nbAt(x,y); if (u && u.indexOf('n:')===0 && u.slice(2)!==dg.id){ delete GS().noteNew[dg.id]; nbCombine(dg.id,u.slice(2)); } return true; }
+  if (!NB.sel){ NB.sel=id; M.sfx('click'); return; } if (NB.sel===id){ NB.sel=null; return; }
+  var a=NB.sel, res=await E.combineNotes(a,id); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t}; NB.sel=res.ok&&res.to?res.to:null; if (res.ok&&res.to) delete GS().noteNew[res.to]; }
+// Variante 3: Nachdenken in der Auswahlliste
+function thinkOpts(list,ex){ return list.filter(function(id){ return id!==ex; }).map(function(id){ var n=M.NOTES[id]; return {t:n.s||n.t,id:id,silent:true,noGray:true}; }); }
+M.thinkAbout=async function(){ if (E.busy) return; var A=M.API; E.busy=true;
+  try{ var list=nbOpen(false); if (!list.length){ await A.m('Mir geht nichts im Kopf herum. Noch nicht.'); return; }
+    list.forEach(function(id){ delete GS().noteNew[id]; });
+    var a=await A.choose(thinkOpts(list).concat([{t:'(Nicht mehr nachdenken.)',id:null,silent:true,bye:true,noGray:true}]),{title:'Worüber denke ich nach?',conv:false});
+    if (!a) return; await A.m(M.NOTES[a].t);
+    var b=await A.choose(thinkOpts(list,a).concat([{t:'(Das passt zu nichts.)',id:null,silent:true,bye:true,noGray:true}]),{title:'Und was gehört dazu?',conv:false});
+    if (!b) return; var res=await E.combineNotes(a,b);
+    if (res.ok){ await A.m(res.say||res.t); if (res.to) await A.m(M.NOTES[res.to].t); } else await A.m(res.t);
+  } finally { E.busy=false; } };
+// im Gespräch fragen: in der Liste oder gleich in der Auswahl
+E.pickNoteThink=async function(title){ var list=nbOpen(true); if (!list.length) return null; var o=thinkOpts(list).concat([{t:'(Doch nichts.)',id:null,silent:true,bye:true,noGray:true}]);
+  return await M.API.choose(o,{title:title||'Wonach frage ich?'}); };
 E.afterNotes=function(){ };
+
 
 
 // ---------------------------------------------------------------- Zeigen (alle Hotspots kurz markieren)
@@ -2583,6 +2558,7 @@ function menuItems(){ var inG=E.screen==='game', sl=E.slot(); return [
   {t:'Speichern (Platz '+sl+')',dis:E.busy||!inG||(E.room&&E.room.noSave),a:function(){ var ok=E.saveGame(); flash(ok?'Gespeichert.':'Hier geht Speichern nicht.'); }},
   {t:'Laden (Platz '+sl+')',dis:!E.hasSave(),a:function(){ if (E.loadGame()){ E.menu=null; E.paused(false); flash('Geladen.'); } else flash('Kein Spielstand.'); }},
   {t:'Text: '+(E.tapText()?'wartet auf Tippen':['langsam','normal','schnell'][E.textSpeed()]),a:function(){ if (E.tapText()) E.setText(0,false); else if (E.textSpeed()<2) E.setText(E.textSpeed()+1,false); else E.setText(1,true); }},
+  {t:'Notizbuch: '+(E.nbStyle()==='think'?'Nachdenken':'Liste'),a:function(){ E.setNbStyle(E.nbStyle()==='think'?'list':'think'); }},
   {t:'Musik: '+(M.musicOn()?'an':'aus'),a:function(){ M.setMusic(!M.musicOn()); }},
   {t:'Geräusche: '+(M.soundOn()?'an':'aus'),a:function(){ M.setSound(!M.soundOn()); }},
   {t:'Röhrenbild: '+(M.crtOn&&M.crtOn()?'an':'aus'),a:function(){ if (M.setCRT) M.setCRT(!M.crtOn()); }},
@@ -2602,7 +2578,8 @@ async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Tippe etwas an: Ist nur etwas zu sehen, schaue ich es mir an. Kann man etwas damit tun, kommt ein kleines Menü.');
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
   if (GS().malaOn && !GS().flags['mala.unknown']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
-  await M.API.m('„Notizen“ ist mein Notizbuch: Karten mit dem, was noch offen ist. Antippen liest eine Karte, eine Karte auf eine andere ziehen verbindet sie. Erledigtes steht im Tagebuch. Im Gespräch kann ich nach jeder Karte fragen.');
+  if (E.nbStyle()==='think') await M.API.m('„Nachdenken“: Ich wähle einen Gedanken und dann einen zweiten, der dazugehört. Passt es, ziehe ich einen Schluss. Im Gespräch kann ich nach jedem Gedanken fragen. Im Menü lässt sich auf ein Notizbuch umschalten.');
+  else await M.API.m('„Notizen“ ist mein Notizbuch. Es steht nur drin, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.');
   await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
  } finally { E.busy=false; } }
 M.help=help;
@@ -2662,10 +2639,10 @@ function uiAt(x,y){
   return null; }
 function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay||E.dlg||!E.room){ hover=null; return; }
   if (pointer.y<SH&&pointer.show) hover=E.hotspotAt(pointer.x+Math.round(E.camX),pointer.y); else if (hoverUI&&hoverUI[0]==='i'){ var id=invList()[+hoverUI.slice(2)]; hover=id?{item:id}:null; } else hover=null; }
-M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game'){ if (!nbDragCheck(x,y)) dragCheck(x,y); } updateHover(); };
+M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 M.pointerDown=function(x,y,touch){ M.audioInit(); pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt()}; M.pointerMove(x,y,touch); };
 M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
-  var pr=press; press=null; if (NB.drag){ nbDrop(x,y); return; } if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return; click(x,y); };
+  var pr=press; press=null; if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return; click(x,y); };
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
 function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; var id=invList()[+u.slice(2)], dx=x-press.x, dy=y-press.y;
   if (id && !press.swiped && y<INV_Y-6){ E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }

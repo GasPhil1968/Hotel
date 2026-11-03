@@ -21,7 +21,7 @@ async function open(opts = {}) {
     async exit(id) { await page.evaluate((i) => M.TA.exit(i), id); await page.waitForTimeout(60); return D.settle(); },
     async item(verb, id, other) { const s0 = await D.st(); [id, other].forEach(x => { if (x && s0.inv.indexOf(x) < 0 && s0.active === 'marko') throw new Error('Gegenstand nicht im Inventar: ' + x); }); await page.evaluate(([v, i, o]) => M.TA.item(v, i, o), [verb, id, other]); await page.waitForTimeout(60); return D.settle(); },
     async choose(sub) { await D.until(s => s.dlg, 20000, 'Auswahl für ' + sub); await page.evaluate((x) => M.TA.choose(x), sub); await page.waitForTimeout(60); return D.settle(); },
-    async pickNote(id) { await D.until(s => s.overlay === 'notebook', 20000, 'Notizbuch'); await page.evaluate((x) => M.TA.pickNote(x), id); await page.waitForTimeout(60); return D.settle(); },
+    async pickNote(id) { await D.until(s => s.overlay === 'notebook' || s.dlg, 20000, 'Notizbuch'); await page.evaluate((x) => M.TA.pickNote(x), id); await page.waitForTimeout(60); return D.settle(); },
     async close(v) { await D.until(s => s.overlay, 20000, 'Overlay'); await page.evaluate((x) => M.TA.closeOverlay(x), v); await page.waitForTimeout(60); return D.settle(); },
     // schließt alle Dokumente/Erinnerungen, bis nichts mehr offen ist (Auswahl bleibt offen)
     async drain(max = 12) { for (let i = 0; i < max; i++) { const s = await D.settle(); if (s.overlay && s.overlay !== 'notebook' && s.overlay !== 'puzzle') { await page.evaluate(() => M.TA.closeOverlay()); await page.waitForTimeout(60); continue; } return s; } return D.st(); },

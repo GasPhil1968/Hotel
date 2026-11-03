@@ -101,9 +101,11 @@ Beim Wechsel zu Mala wird das Bild über eine eigene Farbtabelle in kalte, ents�
 
 ### 2.4 Das Notizbuch: Hinweise sammeln, verbinden, ansprechen
 - Was Marko und Mala erfahren, landet als kurzer Satz im **Notizbuch**, etwa „Die Fähre fiel am 22.12.1984 wegen der Bura aus.“
-- **Karten wie in Blackwell und Ace Attorney:** Jeder offene Hinweis ist eine Karte mit Bild (das Gesicht der Person aus ihrem Porträt oder der Gegenstand) und einem Titel aus wenigen Wörtern, acht Karten je Seite. Unten steht der ganze Satz der angetippten Karte. **Eine Karte auf eine andere ziehen** verbindet sie; eine Schlussfolgerung bekommt einen grünen Rand und rückt nach vorn.
-- **Konsequent ausdünnen:** Was überholt ist (der fehlende Band nach dem Fund, das Boot um sieben nach der ANKICA-Schlussfolgerung, die Teile von Dinkos Geschichte, nachdem er sie erzählt hat), verschwindet aus den Karten. So liegen selten mehr als zehn Karten offen.
-- **Reiter:** *Hinweise* (der laufende Fall), *Mala* (was sie betrifft) und *Tagebuch*, in dem alles noch einmal in ganzen Sätzen steht, neueste zuerst. Im Gespräch liegen die Karten zur Person, mit der Marko redet, vorn.
+- **Zwei Arten, im Menü umschaltbar:**
+  - *Liste* (wie in Blackwell): eine einzige Seite, große Zeilen, sechs Einträge je Seite, nur was noch offen ist. Zwei nacheinander antippen verbindet sie. Unten steht der ganze Satz.
+  - *Nachdenken*: kein eigener Bildschirm. Der Knopf heißt „Nachdenken“ und öffnet die gewohnte Auswahlliste („Worüber denke ich nach?“, dann „Und was gehört dazu?“). Passt es, spricht Marko die Schlussfolgerung aus. Im Gespräch erscheinen die Gedanken als Fragen in derselben Liste.
+- **Konsequent ausdünnen:** Was überholt ist (der fehlende Band nach dem Fund, das Boot um sieben nach der ANKICA-Schlussfolgerung, die Teile von Dinkos Geschichte, nachdem er sie erzählt hat), verschwindet von selbst. So sind selten mehr als zehn Einträge offen.
+- Im Gespräch stehen die Einträge zur Person, mit der Marko redet, vorn; beim Fragen kommen auch Malas Einträge dazu.
 - **Zwei Notizen verbinden:** Passen sie zusammen, entsteht eine **Schlussfolgerung** wie „Tonći hat nicht auf die Fähre gewartet – er kam mit der ANKICA.“ Passen sie nicht, sagt Marko nur: „Das hängt nicht zusammen.“ Das ist das Herzstück der Blackwell-Rätsel.
 - **Im Gespräch fragen:** Jede Unterhaltung hat die Option „Nach etwas aus dem Notizbuch fragen …“. Wer die richtige Notiz anspricht, öffnet neue Antworten. Dialogoptionen hängen also direkt davon ab, was man schon weiß.
 - **Konfrontationen:** Am Ende jedes Falls muss der Geist begreifen, was geschehen ist. Im Finale wählt man nacheinander die passenden Notizen oder Gegenstände. Eine falsche Wahl beunruhigt den Geist, er wiederholt sich oder wendet sich kurz ab, und man versucht es noch einmal. Niemand sagt dabei, was richtig wäre. **Es gibt kein Game Over.**
@@ -118,7 +120,7 @@ Manche Gegenstände wirken erst in der Zwischenwelt, wie die Handschuhe oder Luk
 
 ### 2.6 Keine Lenkung, wenige Hilfen
 - **Das Spiel verrät nicht, was als Nächstes zu tun ist oder wohin man gehen muss.** Es gibt keine Ziel-Anzeige, keine Spurenliste und keine Tipps. Marko und Mala sprechen Beobachtungen und Gefühle aus, keine Anweisungen. Orte erscheinen auf dem Stadtplan, wenn jemand von ihnen erzählt hat.
-- **Notizen:** Karten mit Bild und Titel, Tagebuch mit ganzen Sätzen (siehe 2.4).
+- **Notizen / Nachdenken:** Liste oder Gedanken in der Auswahl, im Menü umschaltbar (siehe 2.4).
 - **Zeigen:** Alle Hotspots blinken einige Sekunden lang auf.
 - **Menü:** Speichern und Laden (drei Plätze), Textgeschwindigkeit, Musik, Geräusche, Röhrenbild-Effekt, Anleitung.
 

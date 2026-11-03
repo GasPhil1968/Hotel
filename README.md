@@ -23,7 +23,7 @@ node game/build.js --artifact out/mala.html   # zusätzlich eine Fassung für cl
 open web/index.html         # oder bei Netlify hochladen
 ```
 
-Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen · unten links = zwischen Marko und Mala wechseln · „Notizen“ = Notizbuch (Karten; Karte auf Karte ziehen = verbinden) · „Zeigen“, „Menü“. Das Spiel gibt keine Lösungshinweise.
+Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen · unten links = zwischen Marko und Mala wechseln · „Notizen“ = Notizbuch (zwei Einträge antippen = verbinden; im Menü auf „Nachdenken“ umschaltbar) · „Zeigen“, „Menü“. Das Spiel gibt keine Lösungshinweise.
 
 ## Prüfen
 

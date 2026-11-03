@@ -45,17 +45,15 @@ DIE GEISTER
 
 DAS NOTIZBUCH ("Notizen")
 - Alles Wichtige, was Marko und Mala erfahren, wird notiert.
-- Jeder offene Hinweis ist eine Karte mit Bild (Person oder Gegenstand)
-  und kurzem Titel. Reiter oben: "Hinweise", "Mala", "Tagebuch".
-- Karte antippen = unten steht der ganze Satz.
-- Karte auf eine andere ziehen = verbinden (oder "Verbinden" und die
-  zweite Karte antippen). Passt es, entsteht eine Schlussfolgerung mit
-  grünem Rand.
-- Was erledigt ist, verschwindet aus den Karten. Im "Tagebuch" steht
-  alles noch einmal in ganzen Sätzen.
-- Im Gespräch: "Nach etwas aus dem Notizbuch fragen …" – Karte antippen,
-  dann "Danach fragen" (oder die Karte ein zweites Mal antippen). Karten
-  zur Person, mit der man redet, liegen vorn.
+- Im Menü umschaltbar: "Notizbuch: Liste" oder "Notizbuch: Nachdenken".
+- Liste: eine Seite, nur was noch offen ist. Eine Notiz antippen, dann
+  eine zweite, die dazu passt = verbinden. Unten steht der ganze Satz.
+- Nachdenken: Der Knopf heißt dann "Nachdenken". Marko wählt einen
+  Gedanken und dann einen zweiten, der dazugehört. Passt es, zieht er
+  einen Schluss.
+- Was erledigt ist, verschwindet in beiden Arten von selbst.
+- Im Gespräch: "Nach etwas aus dem Notizbuch fragen …", dann den Eintrag
+  wählen. Einträge zur Person, mit der man redet, stehen vorn.
 
 HILFE
 - Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
