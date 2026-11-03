@@ -64,6 +64,7 @@ async function dinkoC2(A,D){ if (A.first('diC2')){ await D.say('Du.'); await A.w
         var c=await A.choose([{t:'Für die alte Ledana.',id:'led'},{t:'Frag lieber nicht.',id:'no'}],{title:'Dinko'});
         if (c==='no') await D.say('Ich frage nicht. Ich frage nie.'); else await D.say('Die Eisfabrik. Da wollen sie am Montag ein Hotel draus machen.');
         await D.say('Hier.'); A.sfx('chain'); A.give('crowbar'); await D.say('Pass auf die Treppe auf. Die ist morsch. Da ist schon einer runtergefallen.'); A.note('c2_stairs'); }},
+    {t:'Haben Sie Tonćis Namen auf die Tafel in Sustipan setzen lassen?',once:'diPl',if:A.hasNote('c1_plaque')||A.hasNote('c1_jakov'),go:async function(A){ await D.say('Zehn Jahre danach. Ich dachte, wenn sein Name irgendwo steht, muss sie nicht mehr suchen.'); await D.say('Sie ist nie hingegangen.'); }},
     {t:'Was wissen Sie über die Ledana?',once:'diL',if:A.hasNote('c2_demolish')||A.hasNote('c2_boy'),go:async function(A){ await D.say('Da haben wir als Kinder das Eis für die Boote geholt. Seit dem Krieg steht sie leer. Die Kinder kriechen durch den Zaun.');
         await D.say('Neunundneunzig haben wir da einen Jungen rausgetragen. Drei Tage hat ihn keiner gefunden. Die Treppe.'); A.note('c2_died'); }},
     A.askOpt({ c2_luka:async function(A){ await D.say('Luka hieß er? Kann sein. Der mit der Gitarre an der Riva. Er hat uns manchmal die Netze getragen, für ein paar Fische.'); },

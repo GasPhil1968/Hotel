@@ -289,8 +289,9 @@ function nbTargets(){ var t={}; Object.keys(M.DEDUCE).forEach(function(k){ var d
 function noteDone(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) for (var i=0;i<n.doneBy.length;i++) if (g.notes.indexOf(n.doneBy[i])>=0) return true; return false; }
 // offene Hinweise des Falls (beim Fragen auch Malas), Schlüsse und Neues zuerst, im Gespräch zuerst die zum Gegenüber
 function nbOpen(ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[], who=ask&&E.conv&&E.conv.npc&&E.ACT[E.conv.npc]?E.ACT[E.conv.npc].ch:null;
-  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (cs && n.c && n.c!==cs) return; out.push(id); });
-  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
+  var old=function(n){ return !!(cs && n.c && n.c!=='mala' && n.c!==cs); };
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (old(n) && !ask) return; out.push(id); });
+  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1)+(old(A)?4:0), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1)+(old(B)?4:0); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
   return out; }
 E.nbOpen=nbOpen;
 function notesOf(){ return nbOpen(false); }

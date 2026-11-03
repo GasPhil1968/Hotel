@@ -2491,8 +2491,9 @@ function nbTargets(){ var t={}; Object.keys(M.DEDUCE).forEach(function(k){ var d
 function noteDone(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) for (var i=0;i<n.doneBy.length;i++) if (g.notes.indexOf(n.doneBy[i])>=0) return true; return false; }
 // offene Hinweise des Falls (beim Fragen auch Malas), Schlüsse und Neues zuerst, im Gespräch zuerst die zum Gegenüber
 function nbOpen(ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[], who=ask&&E.conv&&E.conv.npc&&E.ACT[E.conv.npc]?E.ACT[E.conv.npc].ch:null;
-  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (cs && n.c && n.c!==cs) return; out.push(id); });
-  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
+  var old=function(n){ return !!(cs && n.c && n.c!=='mala' && n.c!==cs); };
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (old(n) && !ask) return; out.push(id); });
+  out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1)+(old(A)?4:0), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1)+(old(B)?4:0); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
   return out; }
 E.nbOpen=nbOpen;
 function notesOf(){ return nbOpen(false); }
@@ -11929,6 +11930,7 @@ async function dinkoC2(A,D){ if (A.first('diC2')){ await D.say('Du.'); await A.w
         var c=await A.choose([{t:'Für die alte Ledana.',id:'led'},{t:'Frag lieber nicht.',id:'no'}],{title:'Dinko'});
         if (c==='no') await D.say('Ich frage nicht. Ich frage nie.'); else await D.say('Die Eisfabrik. Da wollen sie am Montag ein Hotel draus machen.');
         await D.say('Hier.'); A.sfx('chain'); A.give('crowbar'); await D.say('Pass auf die Treppe auf. Die ist morsch. Da ist schon einer runtergefallen.'); A.note('c2_stairs'); }},
+    {t:'Haben Sie Tonćis Namen auf die Tafel in Sustipan setzen lassen?',once:'diPl',if:A.hasNote('c1_plaque')||A.hasNote('c1_jakov'),go:async function(A){ await D.say('Zehn Jahre danach. Ich dachte, wenn sein Name irgendwo steht, muss sie nicht mehr suchen.'); await D.say('Sie ist nie hingegangen.'); }},
     {t:'Was wissen Sie über die Ledana?',once:'diL',if:A.hasNote('c2_demolish')||A.hasNote('c2_boy'),go:async function(A){ await D.say('Da haben wir als Kinder das Eis für die Boote geholt. Seit dem Krieg steht sie leer. Die Kinder kriechen durch den Zaun.');
         await D.say('Neunundneunzig haben wir da einen Jungen rausgetragen. Drei Tage hat ihn keiner gefunden. Die Treppe.'); A.note('c2_died'); }},
     A.askOpt({ c2_luka:async function(A){ await D.say('Luka hieß er? Kann sein. Der mit der Gitarre an der Riva. Er hat uns manchmal die Netze getragen, für ein paar Fische.'); },
@@ -12710,6 +12712,7 @@ async function talkJakov(A){ var J=A.npc('jakov');
   if (A.first('jkMarko')){ await J.say('Dobra večer. Spät für einen Spaziergang. Pass auf, wo du hintrittst.'); await A.m('Hier ist doch nur Kies.'); await J.say('Kies und Namen. Ich halte die Wege sauber. Die Stadt tut es ja nicht.'); }
   await A.menuLoop(function(){ return [
     {t:'Wer liegt hier begraben?',once:'jm1',go:async function(A){ await J.say('Niemand mehr. Und alle. Fischer, Kapitäne, Kinder, die das Fieber geholt hat. Ein Bischof. Ein Dieb. Die lagen alle nebeneinander. Da war nie Streit.'); }},
+    {t:'Kommt jemand an diese Tafel?',once:'jm4',if:A.hasNote('c1_plaque')&&!A.hasNote('c1_jakov'),go:async function(A){ await J.say('Einmal im Jahr. Am zweiundzwanzigsten Dezember kommt ein Mann und steht davor. Er sagt nichts. Er bleibt, bis es hell wird.'); A.note('c1_jakov'); }},
     {t:'Kommen die Ertrunkenen auch hierher?',once:'jm2',go:async function(A){ await J.say('Die das Meer behält, kommen nicht her. Die bleiben draußen.'); await J.say('Oder sie kommen nach Hause, wenn einer sie ruft. Nicht hierher. Nach Hause.'); }},
     {t:'Kennen Sie Mala?',once:'jm3',if:A.malaHere(),go:async function(A){ await J.say('Die Kleine? Die war schon einmal hier. Im Winter. Sie hat auf der Bank gesessen und auf die Fähren geschaut.'); if (A.malaHere()){ await A.g('Jakov.'); await J.say('Ich sage ja nichts.'); } }},
     A.askOpt({ c1_plaque:async function(A){ await J.say('Die Tafel ist neu. Achtzig, neunzig. Neu für mich.'); await J.say('Einmal im Jahr kommt einer und steht davor. Am zweiundzwanzigsten Dezember. Bis es hell wird.'); A.note('c1_jakov'); },
