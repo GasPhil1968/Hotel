@@ -1,5 +1,7 @@
 /* ===== rooms/art/matejuska.js — Matejuška: der kleine Fischerhafen unter Varoš (640 breit, scrollend).
    Vorn die Mole (Lauffläche), dahinter das Becken mit bunten Holzbooten, drüben die Kaimauer, Varoš am Hang und der Marjan.
+   Drüben an der Kaimauer eine Reihe Konobe mit bunten Holztüren (abends steht eine offen), über Varoš in der Ferne der Glockenturm
+   von Sv. Duje (abends angestrahlt); am Marjan Schirmpinien auf dem Kamm, die Kapelle Sv. Nikola und die Treppe im Zickzack mit Laternen.
    In der Mitte Dinkos Schuppen (konoba) mit Vorhängeschloss, davor seine umgedrehte Kiste. Rechts die alte Ledana
    hinter dem Bauzaun, vor dem losen Zaunfeld ein Stapel Fischkisten (S.cratesMoved: beiseitegeschoben, Loch sichtbar). ===== */
 (function(M){
@@ -540,10 +542,10 @@ function dyn(fb,v,S,GS){ if (!DYN) return; var cam=v.cam, t=v.t, tod=v.tod, calm
   }
   if (tod==='day'){ M.scn.gulls(fb,t,0,6,W,30,4,cam);
     var gx=LAMP.x-cam, gy=LAMP.base-LAMP.h-12; if (gx>3&&gx<316){ var hb=Math.sin(t*0.9)>0.6?1:0; fb.px(gx-2,gy,P.s6); fb.px(gx-1,gy,P.s6); fb.px(gx,gy,P.s5); fb.px(gx+1,gy,P.m3); fb.px(gx-1,gy-1,P.s6); fb.px(gx-3+hb,gy-2,P.s6); fb.px(gx-4+hb,gy-2,P.y3); fb.px(gx,gy+1,P.y3); fb.px(gx-1,gy+1,P.y3); } }
-  else if (tod==='dusk') gullsCol(fb,t,120,8,W-120,24,3,cam,P.d1,P.d2);
+  else if (tod==='dusk') gullsCol(fb,t,120,10,W-120,22,3,cam,P.d5,P.d4);
   var on=Math.floor(v.gt/650)%2===0; if (on && tod!=='day'){ var lx2=505-cam; if (lx2>2&&lx2<316){ fb.px(lx2,FENCE.top-4,P.y5); fb.px(lx2+1,FENCE.top-4,P.y4); fb.px(lx2,FENCE.top-3,P.y4); fb.px(lx2+1,FENCE.top-3,P.y3); fb.px(lx2-1,FENCE.top-3,P.y2); fb.px(lx2+2,FENCE.top-4,P.y2); fb.px(lx2,FENCE.top-5,P.y3); } }
   var fl=64-cam; if (fl>=0&&fl<312){ var FC=[P.r3,P.s6,P.b1]; for (var fy2=0;fy2<3;fy2++) for (var fx2=1;fx2<7;fx2++){ var wv=Math.round(Math.sin(fx2*0.9-t*(calm?2:8))*(fx2/6)*(calm?0.4:1)), cc2=FC[fy2]; fb.px(fl+fx2,3+fy2+wv,tod==='day'?cc2:M.tintPx(M.TINT[tod]||M.TINT.night,cc2,fl+fx2,3+fy2)); } } }
-// Möwen als dunkle Silhouetten vor dem Abendhimmel
+// Möwen im letzten Abendlicht (rosa angeleuchtet) vor dem dunklen Himmel
 function gullsCol(fb,t,x0,y0,w,h,n,cam,c1,c2){ for (var i=0;i<n;i++){ var x=Math.floor(x0+((hash(i,21)*w+t*(6+hash(i,22)*8))%w))-cam, y=Math.floor(y0+hash(i,23)*h+Math.sin(t*1.1+i)*3), f=Math.floor(t*3+i)%2;
   if (x<2||x>=fb.w-2) continue; fb.px(x,y,c1); fb.px(x-1,y-(f?1:0),c1); fb.px(x+1,y-(f?1:0),c1); fb.px(x-2,y-(f?0:1),c2); fb.px(x+2,y-(f?0:1),c2); } }
 function front(fb,v,S,GS){ if (M.scn.weather(GS)==='bura') M.scn.buraDebris(fb,v.t,112,140,v.cam); }

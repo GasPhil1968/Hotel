@@ -236,7 +236,8 @@ function paintProps(b,wet){ var w=RW(b,RG.prop), g=RW(b,RG.glass);
   winFrame(w,WB[0],WB[1],WB[2],WB[3]); shutters(w,WB[0],WB[1],WB[2],WB[3],8); w.px(WB[0]+5,WB[1]+13,P.k1); w.px(WB[0]+6,WB[1]+13,P.k1);
   plate(w,184,51,'14'); mailbox(w); notice(w,wet); lantern(w,false);
   // ---- Schemel, Blechdosen mit Basilikum und Geranien (auch zwei an Nägeln an der Wand)
-  stool(w); cans(w);
+  stool(w); cans(w); vine(w); cage(w,79,29);
+  potOn(w,134,rnd(baseY(136))+1,'g',11); potOn(w,140,rnd(baseY(142))+1,'b',12);           // Ivkas Töpfe neben der Tür
   // ---- Wäscheleine (die Wäsche selbst hängt in dynamic)
   for (var i=0;i<=LINE[2]-LINE[0];i++){ var t=i/(LINE[2]-LINE[0]); w.px(LINE[0]+i,rnd(lineY(t)),P.s1); }
   w.px(LINE[0],LINE[1]-1,P.m2); w.px(LINE[2],LINE[3]-1,P.m2); w.px(LINE[2],LINE[3],P.m1);
@@ -249,6 +250,16 @@ function paintProps(b,wet){ var w=RW(b,RG.prop), g=RW(b,RG.glass);
   w.rect(220,86,6,7,P.m2); w.hl(220,225,86,P.m3); w.vl(225,86,92,P.m1); w.px(221,88,P.k2); w.px(222,88,P.y2);
   var f=RW(b,RG.far); f.vl(180,1,EB-8,P.m1); f.hl(177,183,2,P.m1); f.hl(178,182,4,P.m2); f.hl(176,184,6,P.m1);
   caper(w,190,EB+3); }
+// Weinrebe aus einem Kübel an Zdenkas Wand hinauf, im November gelb und rostrot
+function vine(w){ var r=M.rng(23), x, y;
+  for (y=44;y<108;y++){ x=rnd(104+Math.sin(y*0.15)*1.6); w.px(x,y,P.w1); if (y>96) w.px(x+1,y,P.w0); }
+  for (x=92;x<114;x++){ y=rnd(44+Math.sin((x-92)*0.4)*1.2); w.px(x,y,P.w1); }
+  for (y=60;y<108;y++){ x=rnd(104+Math.sin(y*0.15)*1.6); if (y%11===3){ w.line(x,y,x+(y%2?4:-4),y-3,P.w1); } }   // Seitentriebe
+  for (var i=0;i<120;i++){ var t=r(), lx, ly; if (i<70){ lx=91+rnd(t*24); ly=rnd(44+Math.sin((lx-92)*0.4)*1.2)+rnd(r()*7)-3; } else { ly=48+rnd(t*52); lx=rnd(104+Math.sin(ly*0.15)*1.6)+rnd(r()*8)-4; }
+    var q=r(), c=q<0.28?P.g3:(q<0.48?P.y3:(q<0.66?P.t3:(q<0.82?P.y2:(q<0.92?P.g2:P.t4)))); w.px(lx,ly,M.UP[c]); w.px(lx+1,ly,c); w.px(lx,ly+1,c); if (r()<0.6) w.px(lx+1,ly+1,M.DN[c]); }
+  w.rect(100,104,9,5,P.t2); w.hl(99,109,103,P.t3); w.hl(100,108,108,P.t1); }
+function cage(w,x,y){ w.px(x+2,y-2,P.k1); w.px(x+2,y-1,P.m1); w.hl(x+1,x+3,y,P.m2);   // Vogelkäfig am Fensterladen, ein Kanarienvogel
+  for (var j=y+1;j<y+7;j++){ w.px(x,j,P.m2); w.px(x+2,j,(j%2)?P.m3:P.m2); w.px(x+4,j,P.m1); } w.hl(x,x+4,y+7,P.m1); w.px(x+1,y+4,P.y4); w.px(x+2,y+4,P.y3); w.px(x+1,y+3,P.y4); w.px(x+3,y+5,P.w2); }
 function stoneBench(w){ var x0=BENCH[0], y0=BENCH[1], bw=BENCH[2], x, y;
   for (x=x0+3;x<x0+bw-3;x++) for (y=y0+3;y<Math.ceil(baseY(x));y++){ var c=w.get(x,y); if (c!==T) w.px(x,y,M.step(c,-3)); }   // Schatten unter der Platte
   for (x=x0;x<x0+bw;x++){ var e=(x===x0||x===x0+bw-1); w.px(x,y0-1,P.s1); w.px(x,y0,e?P.s5:(hash(x>>2,9)<0.2?P.s5:P.s6)); w.px(x,y0+1,e?P.s3:P.s4); w.px(x,y0+2,P.s2); }
