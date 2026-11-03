@@ -48,7 +48,8 @@ var HS=[
  {id:'stairs',name:'Treppe',look:'Die große Treppe, gesperrt mit einem rot-weißen Band. „ZABRANJENO.“',use:'Gesperrt. Und ich habe Ilija versprochen, auf nichts zu treten.',g:{look:'Oben war der Lesesaal. Oben ist er noch. Für ihn.'}},
  {id:'mixer',name:'Mischmaschine',look:'Eine Betonmischmaschine, sauber gespült, mit einem Aufkleber: „Ne diraj!“ Nicht anfassen.',g:{look:'Sie mischen Steine mit Wasser. Ich mische Erinnerungen mit Wasser. Ähnlich.'}}
 ];
-M.room('vijecnica',{ name:'Vijećnica', scape:'k2_vijecnica', music:function(G){ return G.flags['k2.s2.free']?'k2_duh':'k2_noc'; },
+M.room('vijecnica',{ name:'Vijećnica', scape:'k2_vijecnica', music:function(G){ return G.flags['k2.s2.free']?'k2_duh':''; },   // bis zur Rückgabe nur Regen unter der Kuppel
+ 
   state:function(G){ return {bookOnDesk:false,lampOn:false}; },
   actors:function(S,G){ var L=[]; S.lampOn=night(G); if (ivanHere(G)){ var p=M.apos('vijecnica','ivan',[170,120,'F']), d=M.spot('vijecnica','desk'); L.push({id:'ivan',ch:'ivan',x:p[0],y:p[1],f:p[2]||'F',name:'Professor Barać',ghost:true,idle:'wait',speechY:46,anchor:d[2]?[d[0]+(d[2]>>1),d[1]]:null}); } return L; },
   hotspots:HS,

@@ -49,7 +49,7 @@ async function radePhoto(A,R){ A.setFlag('k2.m1.radePhoto'); await R.say('Zeigen
   await A.wait(700); await R.say('Samstags um 11:10 bin ich da jahrelang gefahren. Da stiegen immer zwei Kinder ein. Ein Mädchen und ein kleiner Junge. Sie hat ihn „Mali“ genannt, und er sie „Mala“, damit sie sich ärgert.'); A.note('m2_kids');
   await R.say('Sie hat sich nie geärgert. Sie hat gelacht.'); if (A.G.malaOn){ await A.wait(800); await A.g('…'); } }
 async function radeNoTrams(A,R){ await R.say('Im November dreiundneunzig?'); await A.wait(700); await R.say('Mein Herr. Im November dreiundneunzig fuhr keine einzige Straßenbahn. Nicht eine. Die Wagen standen ausgebrannt im Depot, die Leitungen lagen auf der Straße.');
-  await R.say('Die erste Drei nach dem Krieg ist im März vierundneunzig gefahren. Ich saß drin, als Fahrer. Die Leute haben geweint. Erwachsene Leute, wegen einer Straßenbahn.'); A.note('m2_notrams'); }
+  await R.say('Die erste Drei nach dem Stillstand ist im März vierundneunzig gefahren. Mitten im Krieg, in einer Waffenruhe. Ich saß drin, als Fahrer. Die Leute haben geweint. Erwachsene Leute, wegen einer Straßenbahn.'); A.note('m2_notrams'); }
 async function radeNight(A,R){ if (A.first('rdN')){ await R.say('Die letzte Drei. 23 Uhr 40, Damir, pünktlich.'); await R.anim('write'); await R.say('Ich trage jede Fahrt ein. Seit einunddreißig Jahren.'); await A.wait(700); await R.say('Dva putnika.'); await A.m('Zwei Fahrgäste?'); await R.say('Ich zähle, was ich sehe.'); await A.wait(800); await R.say('Heute sehe ich schlecht.'); return; }
   await R.say(A.cycle('rdN2',['Gehen Sie nach Hause, Vuković. Es schneit.','Sretno, Mali.'])); }
 // ---------------------------------------------------------------- Damir (Dritter Fall)

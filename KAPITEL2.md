@@ -366,7 +366,7 @@ Klangkulissen je Ort: Straßenbahn (Glocke, Rollen, Kurvenquietschen, Türen), V
 ## 12. Technik
 
 - **Kapitel:** `GS.chapter` (1 oder 2). Neue Phasen, Räume, Notizen, Gegenstände, Flags (`k2.*`) sind eigene IDs. Kapitel 2 startet mit eigenem Anfangszustand und übernimmt die Kontinuität aus `localStorage['mala.c1end']` (am Ende von Split geschrieben) oder Standardwerte.
-- **Titelmenü:** „Neues Spiel“ → „Kapitel 1: Split“ / „Kapitel 2: Sarajevo“ (nach Split frei; sonst Rückfrage „Split ist noch nicht abgeschlossen. Trotzdem beginnen?“). Nach dem Abspann von Split: „Weiter mit Kapitel 2“.
+- **Titelmenü:** „Kapitel 1: Split“ und „Kapitel 2: Sarajevo“ stehen direkt im Hauptmenü (ohne Sperre, ohne Rückfrage). Nach dem Abspann von Split: „Weiter mit Kapitel 2“.
 - **Spielstände:** drei gemeinsame Plätze, Beschriftung mit Kapitel. Alte Stände ohne `chapter` gelten als Kapitel 1. Laden eines Kapitel-1-Standes ändert nichts an Kapitel 2; Kapitel-2-Zustände werden beim Start sicher initialisiert.
 - **Stadtplan:** `map2` mit `M.MAPLOCS2`; Ausgänge in Kapitel 2 führen dorthin.
 - **Offline:** alles in `index.html`; Service-Worker-Version aus dem Inhalt.

@@ -51,6 +51,13 @@ ${js}
   function show(t,ms){ note.textContent=t; note.style.display='block'; note.style.opacity='1'; if(ms) setTimeout(function(){ note.style.opacity='0'; setTimeout(function(){ note.style.display='none'; },700); },ms); }
   var shown=false;
   navigator.serviceWorker.addEventListener('message',function(e){ if(e.data==='offline-ready' && !shown){ shown=true; show('Offline bereit \\u2713',4000); } });
+  // Update: Übernimmt eine neue Fassung die Seite, wird sie gleich geladen (auf dem Titelbild sofort, mitten im Spiel beim nächsten Titelbild)
+  var hadCtl=!!navigator.serviceWorker.controller, reloading=false;
+  function reloadNow(){ if(reloading) return; reloading=true; location.reload(); }
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(!hadCtl) return;
+    if(!window.M||!M.E||M.E.screen==='title'){ reloadNow(); return; }
+    show('Neue Fassung geladen \\u2013 sie startet beim n\\u00e4chsten Titelbild',6000);
+    var iv=setInterval(function(){ if(window.M&&M.E&&M.E.screen==='title'){ clearInterval(iv); reloadNow(); } },1500); });
   window.addEventListener('load',function(){
     var first=!navigator.serviceWorker.controller; if(first) show('Wird f\\u00fcr offline gespeichert \\u2026');
     navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready; }).then(function(reg){ if(reg.active) reg.active.postMessage('check'); }).catch(function(err){ console.warn('SW',err); if(first) note.style.display='none'; });

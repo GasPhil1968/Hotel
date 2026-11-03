@@ -97,7 +97,8 @@ M.room('tramvaj',{ name:'Straßenbahn', scape:'k2_tram', noSave:false,
       var s=M.apos('tramvaj','student',[214,124,'F']); L.push({id:'student',ch:'student',x:s[0],y:s[1],f:s[2]||'F',name:'Student',idle:'hold',speechY:46}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var S=A.S;
-    if (night(A.G)){ S.line='3'; if (!A.flag('k2.f2.rideStart')){ S.moving=false; S.view='towers'; A.rebuild(); if (A.first('k2trN')){ await A.m('Die Drei. Leer, warm, gelbes Licht. Draußen schneit es auf die Gleise.'); await A.g('Hast du deinen Fahrschein?'); await A.m('Meinen alten. Und du?'); await A.wait(700); await A.g('Meinen.'); } }
+    if (night(A.G)){ S.line='3'; if (!A.flag('k2.f2.rideStart')){ S.moving=false; S.view='towers'; A.rebuild(); if (A.first('k2trN')){ await A.m('Die Drei. Leer, warm, gelbes Licht. Draußen schneit es auf die Gleise.'); await A.g('Hast du deinen Fahrschein?'); await A.m('Meinen alten. Und du?'); await A.wait(700); await A.g('Meinen.');
+        if (A.flag('k2.f2.alija')){ await A.wait(700); A.sfx('gate'); await A.narrate('Durch das hintere Fenster sehe ich Alija an der Haltestelle. Er zieht einen Rollladen herunter, den es nicht mehr gibt, und hebt die Hand. Dann ist die Haltestelle leer.'); } } }
       return; }
     if (A.first('k2trP')){ S.line='1'; S.moving=true; S.view='city'; A.rebuild(); A.sfx('tramBell'); await A.m('Die Eins ruckelt los. Sie quietscht in der ersten Kurve wie früher.'); await A.m('Niemand sieht auf, außer mir.'); } }
 });

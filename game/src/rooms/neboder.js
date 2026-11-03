@@ -31,8 +31,7 @@ async function alijaRealize(A){ var Al=A.npc('alija'); if (!Al || !Al.actor) ret
   Al.agitate(3600); await A.wait(900); await Al.say('Zweitausendelf. Und ich stehe hier und halte die Zeitung von gestern hin.');
   await A.realize('alija');
   await A.wait(600); await Al.say('Keiner hat mehr bei mir gekauft. Alle sind vorbeigegangen, als stünde hier nichts.'); await A.wait(700); await Al.say('Hier stand ja auch nichts.');
-  await A.wait(800); await Al.say('Dann mache ich jetzt zu. Gute Fahrt, Kinder.'); A.sfx('gate');
-  if (Al.actor) Al.actor.fadeOut=M.E.gt(); await A.narrate('Er zieht einen Rollladen herunter, den es nicht mehr gibt. Dann ist die Betonplatte leer.'); A.despawn('alija');
+  await A.wait(800); await Al.say('Ich mache zu, wenn ihr weg seid. Erst fährt die Bahn, dann schließt der Kiosk. So war es immer.'); await Al.say('Gute Fahrt, Kinder.');
   await A.wait(500); await A.g('Er hat mir die Fahrscheine verkauft, kurz bevor ich wegmusste. Er hat „Gute Fahrt“ gesagt. Genau wie eben.'); A.save(); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[

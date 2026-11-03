@@ -2811,18 +2811,15 @@ function titleItems(){ var tm=E.titleMode;
   if (tm==='slots'){ var b=[], cont=E.titleNext==='cont'; for (var k=1;k<=3;k++){ (function(k){ var has=E.hasSave(k), pre=E.titleNext==='preset'; b.push({t:slotLabel(k),dis:cont&&!has,a:function(){ E.setSlot(k); if (cont){ E.titleMode='main'; if (!E.loadGame(k)) flash('Spielstand beschädigt.'); return; } if (has){ E.confirmSlot=k; E.titleMode='confirm'; return; } E.titleMode='main'; if (pre){ if (!E.loadPreset('ivka',k)) flash('Spielstand beschädigt.'); return; } E.newGame(E.newCh||1); }}); })(k); }
     b.push({t:'Zurück',a:function(){ E.titleMode='main'; }}); return b; }
   if (tm==='confirm'){ var pre2=E.titleNext==='preset'; return [{t:pre2?'Ja, Platz '+E.confirmSlot+' überschreiben':'Ja, Platz '+E.confirmSlot+' neu beginnen',a:function(){ E.setSlot(E.confirmSlot); E.titleMode='main'; if (pre2){ if (!E.loadPreset('ivka',E.confirmSlot)) flash('Spielstand beschädigt.'); return; } E.newGame(E.newCh||1); }},{t:'Nein, behalten',a:function(){ E.titleMode='slots'; }}]; }
-  if (tm==='chapter'){ var un=M.ch2Unlocked&&M.ch2Unlocked(); return [{t:'Kapitel 1: Split',a:function(){ E.newCh=1; E.titleNext='new'; E.titleMode='slots'; }},
-      {t:'Kapitel 2: Sarajevo',a:function(){ if (!un){ E.titleMode='unlock'; return; } E.newCh=2; E.titleNext='new'; E.titleMode='slots'; }},{t:'Zurück',a:function(){ E.titleMode='main'; }}]; }
-  if (tm==='unlock') return [{t:'Ja, in Sarajevo beginnen',a:function(){ E.newCh=2; E.titleNext='new'; E.titleMode='slots'; }},{t:'Nein, zurück',a:function(){ E.titleMode='chapter'; }}];
   if (tm==='next') return [{t:'Weiter mit Kapitel 2: Sarajevo',a:function(){ E.titleMode='main'; E.newCh=2; E.newGame(2); }},{t:'Zum Titelbild',a:function(){ E.titleMode='main'; }}];
-  var a=[]; if (E.anySave()) a.push({t:'Fortsetzen',a:function(){ E.titleNext='cont'; E.titleMode='slots'; }}); a.push({t:'Neues Spiel',a:function(){ E.titleNext='new'; E.titleMode='chapter'; }}); if (M.PRESETS&&M.PRESETS.ivka) a.push({t:'Mitgelieferter Spielstand',a:function(){ E.titleNext='preset'; E.titleMode='slots'; }}); a.push({t:'Über das Spiel',a:function(){ E.titleMode='about'; }}); if (E.titleMode==='about') return [{t:'Zurück',a:function(){ E.titleMode='main'; }}]; return a; }
-function titleRowY(i,n){ if (E.titleMode==='main') return 150+i*12; var h=30+n*13, y0=Math.max(4,100-(h>>1)); return y0+24+i*13; }
+  var a=[]; if (E.anySave()) a.push({t:'Fortsetzen',a:function(){ E.titleNext='cont'; E.titleMode='slots'; }}); a.push({t:'Kapitel 1: Split',a:function(){ E.newCh=1; E.titleNext='new'; E.titleMode='slots'; }}); a.push({t:'Kapitel 2: Sarajevo',a:function(){ E.newCh=2; E.titleNext='new'; E.titleMode='slots'; }}); if (M.PRESETS&&M.PRESETS.ivka) a.push({t:'Mitgelieferter Spielstand',a:function(){ E.titleNext='preset'; E.titleMode='slots'; }}); a.push({t:'Über das Spiel',a:function(){ E.titleMode='about'; }}); if (E.titleMode==='about') return [{t:'Zurück',a:function(){ E.titleMode='main'; }}]; return a; }
+function titleRowY(i,n){ if (E.titleMode==='main') return n>4?144+i*11:150+i*12; var h=30+n*13, y0=Math.max(4,100-(h>>1)); return y0+24+i*13; }
 function drawTitle(){ if (!TITLE_BG && M.paintTitle) TITLE_BG=M.paintTitle(); fb.rect(0,0,W,H,P.k0); if (TITLE_BG) for (var i=0;i<W*SH;i++) fb.d[i]=TITLE_BG.d[i];
   if (M.titleDynamic) M.titleDynamic(fb,E.gt()/1000);
   M.big(fb,'MALA',160,22,P.x5,4,P.k0); centerText('Kapitel 1: Split  ·  Kapitel 2: Sarajevo',58,P.s5,P.k0);
   if (E.titleMode==='about'){ dimAll(2); var lines=['MALA – Kapitel 1: Split · Kapitel 2: Sarajevo','','Ein Point-and-Click-Adventure über Menschen,','die nicht weiterkommen, und über einen,','der mit ihnen reden kann.','','Marko lebt. Mala nicht.','Er spricht mit den Lebenden, sie geht durch Wände.','','Alle Grafik, Musik und Geräusche entstehen','im Spiel selbst. Kopfhörer lohnen sich.']; lines.forEach(function(l,i){ centerText(l,30+i*10,i===0?P.x5:P.s5); }); }
-  var opts=titleItems(), boxed=['slots','confirm','chapter','unlock','next'].indexOf(E.titleMode)>=0; if (boxed){ dimAll(2); var h=30+opts.length*13, y0=Math.max(4,100-(h>>1)); fb.rect(46,y0,228,h,P.k1); fb.hl(46,273,y0,P.x2); fb.hl(46,273,y0+h-1,P.x2); fb.vl(46,y0,y0+h-1,P.x2); fb.vl(273,y0,y0+h-1,P.x2);
-    var hd=E.titleMode==='chapter'?'Welches Kapitel?':(E.titleMode==='unlock'?'Split ist noch nicht zu Ende gespielt. Trotzdem?':(E.titleMode==='next'?'Split ist zu Ende. Weiter nach Sarajevo?':(E.titleMode==='confirm'?('Auf Platz '+E.confirmSlot+' liegt ein Spielstand. '+(E.titleNext==='preset'?'Überschreiben?':'Neu beginnen?')):(E.titleNext==='cont'?'Welchen Spielstand fortsetzen?':(E.titleNext==='preset'?'Auf welchen Platz laden?':'Auf welchem Platz spielen?')))));
+  var opts=titleItems(), boxed=['slots','confirm','next'].indexOf(E.titleMode)>=0; if (boxed){ dimAll(2); var h=30+opts.length*13, y0=Math.max(4,100-(h>>1)); fb.rect(46,y0,228,h,P.k1); fb.hl(46,273,y0,P.x2); fb.hl(46,273,y0+h-1,P.x2); fb.vl(46,y0,y0+h-1,P.x2); fb.vl(273,y0,y0+h-1,P.x2);
+    var hd=E.titleMode==='next'?'Split ist zu Ende. Weiter nach Sarajevo?':(E.titleMode==='confirm'?('Auf Platz '+E.confirmSlot+' liegt ein Spielstand. '+(E.titleNext==='preset'?'Überschreiben?':'Neu beginnen?')):(E.titleNext==='cont'?'Welchen Spielstand fortsetzen?':(E.titleNext==='preset'?'Auf welchen Platz laden?':((E.newCh===2?'Sarajevo':'Split')+': auf welchem Platz spielen?'))));
     centerText(hd,y0+8,P.x5); }
   opts.forEach(function(o,i){ var y=E.titleMode==='about'?184:titleRowY(i,opts.length), hot=hoverUI==='t:'+i; centerText(o.t,y,o.dis?P.x1:(hot?P.x6:P.x4)); }); }
 function drawCard(){ var c=E.card; fb.rect(0,0,W,H,P.k0); var t=(E.gt()-c.at)/1000, a=Math.min(1,t/0.8), ms=(c.ms||4200)/1000, b=Math.min(1,(ms-t)/0.8);
@@ -23382,7 +23379,7 @@ async function radePhoto(A,R){ A.setFlag('k2.m1.radePhoto'); await R.say('Zeigen
   await A.wait(700); await R.say('Samstags um 11:10 bin ich da jahrelang gefahren. Da stiegen immer zwei Kinder ein. Ein Mädchen und ein kleiner Junge. Sie hat ihn „Mali“ genannt, und er sie „Mala“, damit sie sich ärgert.'); A.note('m2_kids');
   await R.say('Sie hat sich nie geärgert. Sie hat gelacht.'); if (A.G.malaOn){ await A.wait(800); await A.g('…'); } }
 async function radeNoTrams(A,R){ await R.say('Im November dreiundneunzig?'); await A.wait(700); await R.say('Mein Herr. Im November dreiundneunzig fuhr keine einzige Straßenbahn. Nicht eine. Die Wagen standen ausgebrannt im Depot, die Leitungen lagen auf der Straße.');
-  await R.say('Die erste Drei nach dem Krieg ist im März vierundneunzig gefahren. Ich saß drin, als Fahrer. Die Leute haben geweint. Erwachsene Leute, wegen einer Straßenbahn.'); A.note('m2_notrams'); }
+  await R.say('Die erste Drei nach dem Stillstand ist im März vierundneunzig gefahren. Mitten im Krieg, in einer Waffenruhe. Ich saß drin, als Fahrer. Die Leute haben geweint. Erwachsene Leute, wegen einer Straßenbahn.'); A.note('m2_notrams'); }
 async function radeNight(A,R){ if (A.first('rdN')){ await R.say('Die letzte Drei. 23 Uhr 40, Damir, pünktlich.'); await R.anim('write'); await R.say('Ich trage jede Fahrt ein. Seit einunddreißig Jahren.'); await A.wait(700); await R.say('Dva putnika.'); await A.m('Zwei Fahrgäste?'); await R.say('Ich zähle, was ich sehe.'); await A.wait(800); await R.say('Heute sehe ich schlecht.'); return; }
   await R.say(A.cycle('rdN2',['Gehen Sie nach Hause, Vuković. Es schneit.','Sretno, Mali.'])); }
 // ---------------------------------------------------------------- Damir (Dritter Fall)
@@ -24809,8 +24806,7 @@ async function alijaRealize(A){ var Al=A.npc('alija'); if (!Al || !Al.actor) ret
   Al.agitate(3600); await A.wait(900); await Al.say('Zweitausendelf. Und ich stehe hier und halte die Zeitung von gestern hin.');
   await A.realize('alija');
   await A.wait(600); await Al.say('Keiner hat mehr bei mir gekauft. Alle sind vorbeigegangen, als stünde hier nichts.'); await A.wait(700); await Al.say('Hier stand ja auch nichts.');
-  await A.wait(800); await Al.say('Dann mache ich jetzt zu. Gute Fahrt, Kinder.'); A.sfx('gate');
-  if (Al.actor) Al.actor.fadeOut=M.E.gt(); await A.narrate('Er zieht einen Rollladen herunter, den es nicht mehr gibt. Dann ist die Betonplatte leer.'); A.despawn('alija');
+  await A.wait(800); await Al.say('Ich mache zu, wenn ihr weg seid. Erst fährt die Bahn, dann schließt der Kiosk. So war es immer.'); await Al.say('Gute Fahrt, Kinder.');
   await A.wait(500); await A.g('Er hat mir die Fahrscheine verkauft, kurz bevor ich wegmusste. Er hat „Gute Fahrt“ gesagt. Genau wie eben.'); A.save(); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
@@ -25141,7 +25137,8 @@ var HS=[
    use:async function(A){ A.set('lit',!A.S.lit); A.sfx('click'); await A.m(A.S.lit?'Licht. Staub tanzt darin.':'Dunkel.'); },push:async function(A){ A.set('lit',!A.S.lit); A.sfx('click'); },
    g:{look:'Ich brauche kein Licht. Er schon.'}}
 ];
-M.room('ostava',{ name:'Kammer', scape:'k2_ostava', music:'k2_istraga',
+M.room('ostava',{ name:'Kammer', scape:'k2_ostava', music:'',   // bewusst Stille: nur Tropfen und Holz
+ 
   state:function(G){ return {lit:false,frameOff:false,tinTaken:false}; },
   dark:function(S,G){ return !S.lit; }, darkLights:function(S){ var sp=M.spot('ostava','window'); return sp[2]?[[sp[0]+(sp[2]>>1),sp[1]+sp[3],40,0.7]]:[]; },
   hotspots:HS,
@@ -25933,7 +25930,8 @@ var HS=[
  {id:'bulb',name:'Glühbirne',look:function(A){ return A.m(A.S.lit?'Die Glühbirne brennt.':'Eine nackte Glühbirne an einem Kabel. Kein Strom. Mirza hat den Keller vom Netz genommen.'); },use:'Kein Strom hier unten.',g:{look:'Wir hatten Kerzen. Und manchmal Strom für eine Stunde.'}},
  {id:'bellbox',name:'Klingel',look:'Eine alte elektrische Klingel an der Wand, eine Schale mit Klöppel. Ein Kabel führt nach oben.',g:{look:'Sie läutet, wenn oben jemand drückt.'}}
 ];
-M.room('skloniste',{ name:'Schutzraum', scape:'k2_skloniste', music:function(G){ return night(G)?'k2_duh':'k2_noc'; },
+M.room('skloniste',{ name:'Schutzraum', scape:'k2_skloniste', music:function(G){ return night(G)?'k2_duh':''; },   // am Tag bewusst Stille im dunklen Keller
+ 
   state:function(G){ return {lit:false,cabinetOpen:false,rang:false,rollcall:false}; },
   dark:function(S,G){ return !S.lit; },
   darkLights:function(S,G){ var f=M.ART.skloniste&&M.ART.skloniste.darkLights; return typeof f==='function'?f(S,G):(f||[]); },
@@ -26432,7 +26430,8 @@ M.room('tramvaj',{ name:'Straßenbahn', scape:'k2_tram', noSave:false,
       var s=M.apos('tramvaj','student',[214,124,'F']); L.push({id:'student',ch:'student',x:s[0],y:s[1],f:s[2]||'F',name:'Student',idle:'hold',speechY:46}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var S=A.S;
-    if (night(A.G)){ S.line='3'; if (!A.flag('k2.f2.rideStart')){ S.moving=false; S.view='towers'; A.rebuild(); if (A.first('k2trN')){ await A.m('Die Drei. Leer, warm, gelbes Licht. Draußen schneit es auf die Gleise.'); await A.g('Hast du deinen Fahrschein?'); await A.m('Meinen alten. Und du?'); await A.wait(700); await A.g('Meinen.'); } }
+    if (night(A.G)){ S.line='3'; if (!A.flag('k2.f2.rideStart')){ S.moving=false; S.view='towers'; A.rebuild(); if (A.first('k2trN')){ await A.m('Die Drei. Leer, warm, gelbes Licht. Draußen schneit es auf die Gleise.'); await A.g('Hast du deinen Fahrschein?'); await A.m('Meinen alten. Und du?'); await A.wait(700); await A.g('Meinen.');
+        if (A.flag('k2.f2.alija')){ await A.wait(700); A.sfx('gate'); await A.narrate('Durch das hintere Fenster sehe ich Alija an der Haltestelle. Er zieht einen Rollladen herunter, den es nicht mehr gibt, und hebt die Hand. Dann ist die Haltestelle leer.'); } } }
       return; }
     if (A.first('k2trP')){ S.line='1'; S.moving=true; S.view='city'; A.rebuild(); A.sfx('tramBell'); await A.m('Die Eins ruckelt los. Sie quietscht in der ersten Kurve wie früher.'); await A.m('Niemand sieht auf, außer mir.'); } }
 });
@@ -26601,7 +26600,8 @@ var HS=[
  {id:'stairs',name:'Treppe',look:'Die große Treppe, gesperrt mit einem rot-weißen Band. „ZABRANJENO.“',use:'Gesperrt. Und ich habe Ilija versprochen, auf nichts zu treten.',g:{look:'Oben war der Lesesaal. Oben ist er noch. Für ihn.'}},
  {id:'mixer',name:'Mischmaschine',look:'Eine Betonmischmaschine, sauber gespült, mit einem Aufkleber: „Ne diraj!“ Nicht anfassen.',g:{look:'Sie mischen Steine mit Wasser. Ich mische Erinnerungen mit Wasser. Ähnlich.'}}
 ];
-M.room('vijecnica',{ name:'Vijećnica', scape:'k2_vijecnica', music:function(G){ return G.flags['k2.s2.free']?'k2_duh':'k2_noc'; },
+M.room('vijecnica',{ name:'Vijećnica', scape:'k2_vijecnica', music:function(G){ return G.flags['k2.s2.free']?'k2_duh':''; },   // bis zur Rückgabe nur Regen unter der Kuppel
+ 
   state:function(G){ return {bookOnDesk:false,lampOn:false}; },
   actors:function(S,G){ var L=[]; S.lampOn=night(G); if (ivanHere(G)){ var p=M.apos('vijecnica','ivan',[170,120,'F']), d=M.spot('vijecnica','desk'); L.push({id:'ivan',ch:'ivan',x:p[0],y:p[1],f:p[2]||'F',name:'Professor Barać',ghost:true,idle:'wait',speechY:46,anchor:d[2]?[d[0]+(d[2]>>1),d[1]]:null}); } return L; },
   hotspots:HS,
@@ -28868,7 +28868,7 @@ var X={
   rade:function(A,R){ return [
     o('rf1','Wer fährt heute Nacht die letzte Drei?',ph(A,['k2_fin']),async function(A){ await R.say('Damir. 23:40 ab Ilidža, ganze Strecke. Er hat darum gebeten. Zum ersten Mal, dass einer um die letzte bittet.'); }),
     o('rf2','Wie wird das Wetter?',ph(A,['k2_fin']),async function(A){ await R.say('Schnee. Ich spüre es im Knie. Mein Knie ist zuverlässiger als der Wetterbericht und pünktlicher als die Eins.'); }),
-    o('xr1','Erzählen Sie von der ersten Drei nach dem Krieg.',A.hasNote('m2_notrams'),async function(A){ await R.say('März vierundneunzig. Der Wagen hatte keine Scheiben mehr, nur Plastikfolie. Er war voll mit Leuten, die nirgendwohin mussten. Sie wollten nur fahren.'); await R.say('An der Skenderija haben sie geklatscht. Ich habe die Glocke geläutet, bis mir der Daumen wehtat.'); }),
+    o('xr1','Erzählen Sie von der ersten Drei im März vierundneunzig.',A.hasNote('m2_notrams'),async function(A){ await R.say('März vierundneunzig. Der Wagen hatte keine Scheiben mehr, nur Plastikfolie. Er war voll mit Leuten, die nirgendwohin mussten. Sie wollten nur fahren.'); await R.say('An der Skenderija haben sie geklatscht. Ich habe die Glocke geläutet, bis mir der Daumen wehtat.'); }),
     o('xr2','Wie viele Fahrgäste zählen Sie am Tag?',true,async function(A){ await R.say('Ich zähle nicht alle. Ich zähle die, die mir auffallen. Ein Mann mit einem Hund. Eine Frau mit Blumen, jeden Freitag. Ein Junge, der immer die letzte Bahn verpasst.'); await R.say('Und jetzt Sie. Sie fallen auf. Sie sehen die Bahn an, als würde sie Ihnen etwas schulden.'); }),
     o('xr3','Haben Sie Familie?',!!A.G.seen['dlg:xr2'],async function(A){ await R.say('Eine Frau, die sagt, ich bin mit der Straßenbahn verheiratet. Zwei Töchter in Kanada. Ich schicke ihnen Fotos von Bahnen. Sie schicken mir Fotos von Schnee.'); })
   ]; },
@@ -29149,19 +29149,33 @@ ctx.imageSmoothingEnabled=false;
 var hint=document.getElementById('hint');
 // Röhrenbild (Menüpunkt): Scanlines + Vignette
 var crtEl=document.createElement('div'); crtEl.id='crt'; document.body.appendChild(crtEl);
-var st=document.createElement('style'); st.textContent='#crt{position:fixed;pointer-events:none;display:none;z-index:5}#crt.on{display:block;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 60%,rgba(0,0,0,.5) 100%),repeating-linear-gradient(to bottom,rgba(0,0,0,.3) 0,rgba(0,0,0,.3) var(--a),rgba(0,0,0,0) var(--a),rgba(0,0,0,0) var(--b));border-radius:16px}#game.crt{filter:saturate(1.15) contrast(1.06) brightness(1.1);border-radius:16px}';
+var st=document.createElement('style'); st.textContent='#crt{position:fixed;pointer-events:none;display:none;z-index:5}#crt.on{display:block;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 60%,rgba(0,0,0,.5) 100%),repeating-linear-gradient(var(--dir,to bottom),rgba(0,0,0,.3) 0,rgba(0,0,0,.3) var(--a),rgba(0,0,0,0) var(--a),rgba(0,0,0,0) var(--b));border-radius:16px}#game.crt{filter:saturate(1.15) contrast(1.06) brightness(1.1);border-radius:16px}';
 document.head.appendChild(st);
 var crt=false; try{ crt=localStorage.getItem('mala.crt')==='1'; }catch(e){}
-function placeCRT(){ var r=cv.getBoundingClientRect(); crtEl.style.left=r.left+'px'; crtEl.style.top=r.top+'px'; crtEl.style.width=r.width+'px'; crtEl.style.height=r.height+'px'; var row=r.height/200; crtEl.style.setProperty('--a',(row*0.45)+'px'); crtEl.style.setProperty('--b',row+'px'); }
+function placeCRT(){ var r=cv.getBoundingClientRect(); crtEl.style.left=r.left+'px'; crtEl.style.top=r.top+'px'; crtEl.style.width=r.width+'px'; crtEl.style.height=r.height+'px'; var row=(rot?r.width:r.height)/200; crtEl.style.setProperty('--a',(row*0.45)+'px'); crtEl.style.setProperty('--b',row+'px'); crtEl.style.setProperty('--dir',rot?'to left':'to bottom'); }
 M.crtOn=function(){ return crt; };
 M.setCRT=function(on){ crt=on; try{ localStorage.setItem('mala.crt',on?'1':'0'); }catch(e){} crtEl.className=on?'on':''; cv.className=on?'crt':''; placeCRT(); };
-M.fullscreen=function(){ var d=document.documentElement; try{ var r=(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d); if (r&&r.catch) r.catch(function(){}); }catch(e){} };
-function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1]; var s=Math.floor(Math.min(vw*dpr/320,vh*dpr/200)), css;
-  if (s>=1) css=320*s/dpr; else css=vw; if (css*200/320>vh) css=vh*320/200; if (css>vw) css=vw;
-  cv.style.width=css+'px'; cv.style.height=(css*200/320)+'px'; if (hint) hint.style.display=(vh>vw*1.1)?'block':'none'; setTimeout(placeCRT,0); }
+M.fullscreen=function(){ var d=document.documentElement; try{ var r=(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d); if (r&&r.then) r.then(function(){ lockLandscape(); setTimeout(fit,200); }).catch(function(){}); }catch(e){} };
+// Querformat: Steht das Gerät hochkant, wird das Spielbild um 90° gedreht und füllt die lange Seite.
+// So spielt man immer quer, auch mit gesperrter Bildschirmdrehung (iPad/iPhone können die Ausrichtung nicht per Skript sperren).
+var rot=false;
+function touchDev(){ try{ return (navigator.maxTouchPoints||0)>0 || (window.matchMedia&&matchMedia('(pointer: coarse)').matches); }catch(e){ return false; } }   // nur Tablets und Telefone drehen, kein hohes Desktopfenster
+function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1];
+  rot=touchDev()&&vh>vw*1.05; var lw=rot?vh:vw, lh=rot?vw:vh;   // verfügbare Breite und Höhe im Querformat
+  var s=Math.floor(Math.min(lw*dpr/320,lh*dpr/200)), css;
+  if (s>=1) css=320*s/dpr; else css=lw; if (css*200/320>lh) css=lh*320/200; if (css>lw) css=lw;
+  cv.style.width=css+'px'; cv.style.height=(css*200/320)+'px';
+  if (rot){ cv.style.position='fixed'; cv.style.left='50%'; cv.style.top='50%'; cv.style.transform='translate(-50%,-50%) rotate(90deg)'; }
+  else { cv.style.position=''; cv.style.left=''; cv.style.top=''; cv.style.transform=''; }
+  document.documentElement.classList.toggle('mala-rot',rot); if (hint) hint.style.display='none'; setTimeout(placeCRT,0); }
+M.isRotated=function(){ return rot; };
+// Wo der Browser es kann (Android, Vollbild, installierte App), zusätzlich die Ausrichtung auf quer sperren
+function lockLandscape(){ try{ var o=screen.orientation; if (o&&o.lock){ var r=o.lock('landscape'); if (r&&r.catch) r.catch(function(){}); } }catch(e){} }
 window.addEventListener('resize',fit); window.addEventListener('orientationchange',function(){ setTimeout(fit,250); }); fit();
-function toLogical(e){ var r=cv.getBoundingClientRect(); return [(e.clientX-r.left)/r.width*320,(e.clientY-r.top)/r.height*200]; }
-cv.addEventListener('pointerdown',function(e){ e.preventDefault(); try{ cv.setPointerCapture(e.pointerId); }catch(_){} var p=toLogical(e); M.pointerDown(p[0],p[1],e.pointerType!=='mouse'); });
+function toLogical(e){ var r=cv.getBoundingClientRect();
+  if (rot) return [(e.clientY-r.top)/r.height*320,(r.right-e.clientX)/r.width*200];   // im Uhrzeigersinn gedreht: x läuft nach unten, y nach links
+  return [(e.clientX-r.left)/r.width*320,(e.clientY-r.top)/r.height*200]; }
+var locked=false; cv.addEventListener('pointerdown',function(e){ e.preventDefault(); if (!locked){ locked=true; lockLandscape(); } try{ cv.setPointerCapture(e.pointerId); }catch(_){} var p=toLogical(e); M.pointerDown(p[0],p[1],e.pointerType!=='mouse'); });
 cv.addEventListener('pointermove',function(e){ var p=toLogical(e); M.pointerMove(p[0],p[1],e.pointerType!=='mouse'); });
 cv.addEventListener('pointerup',function(e){ e.preventDefault(); var p=toLogical(e); M.pointerUp(p[0],p[1],e.pointerType!=='mouse'); });
 cv.addEventListener('contextmenu',function(e){ e.preventDefault(); });
@@ -29191,6 +29205,13 @@ requestAnimationFrame(frame);
   function show(t,ms){ note.textContent=t; note.style.display='block'; note.style.opacity='1'; if(ms) setTimeout(function(){ note.style.opacity='0'; setTimeout(function(){ note.style.display='none'; },700); },ms); }
   var shown=false;
   navigator.serviceWorker.addEventListener('message',function(e){ if(e.data==='offline-ready' && !shown){ shown=true; show('Offline bereit \u2713',4000); } });
+  // Update: Übernimmt eine neue Fassung die Seite, wird sie gleich geladen (auf dem Titelbild sofort, mitten im Spiel beim nächsten Titelbild)
+  var hadCtl=!!navigator.serviceWorker.controller, reloading=false;
+  function reloadNow(){ if(reloading) return; reloading=true; location.reload(); }
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(!hadCtl) return;
+    if(!window.M||!M.E||M.E.screen==='title'){ reloadNow(); return; }
+    show('Neue Fassung geladen \u2013 sie startet beim n\u00e4chsten Titelbild',6000);
+    var iv=setInterval(function(){ if(window.M&&M.E&&M.E.screen==='title'){ clearInterval(iv); reloadNow(); } },1500); });
   window.addEventListener('load',function(){
     var first=!navigator.serviceWorker.controller; if(first) show('Wird f\u00fcr offline gespeichert \u2026');
     navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready; }).then(function(reg){ if(reg.active) reg.active.postMessage('check'); }).catch(function(err){ console.warn('SW',err); if(first) note.style.display='none'; });

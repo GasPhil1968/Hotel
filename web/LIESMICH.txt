@@ -13,13 +13,19 @@ Stunden. Die Frage, die alles trägt: Was verbindet Mala mit Sarajevo, und
 warum erinnert sie sich nicht?
 
 KAPITEL WÄHLEN
-- „Neues Spiel“ fragt nach dem Kapitel. Kapitel 2 ist frei, sobald Split
-  einmal zu Ende gespielt wurde. Man kann es auch direkt beginnen (das
-  Spiel fragt einmal nach); dann gelten für die Erinnerungen aus Split
-  sinnvolle Vorgaben.
-- Nach dem Abspann von Split bietet das Spiel an, gleich weiterzuspielen.
-  Antworten und Hinweise aus Split (zum Beispiel, was Marko Mala auf der
-  Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
+- Im Hauptmenü stehen beide Kapitel direkt zur Wahl: „Kapitel 1: Split“
+  und „Kapitel 2: Sarajevo“. Ein Tippen auf Kapitel 2 und dann auf einen
+  Speicherplatz startet Sarajevo sofort, ohne Split gespielt zu haben.
+  Für die Erinnerungen aus Split gelten dann sinnvolle Vorgaben.
+- Wer Split zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
+  weiterzuspielen. Antworten und Hinweise aus Split (zum Beispiel, was
+  Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
+
+QUERFORMAT
+- Das Spiel läuft immer im Querformat. Hält man das iPad hochkant, dreht
+  sich das Spielbild um 90 Grad und füllt den Bildschirm trotzdem quer aus;
+  dann das Gerät einfach drehen. Das klappt auch mit gesperrter
+  Bildschirmdrehung.
 
 STEUERUNG
 - Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit
@@ -118,7 +124,9 @@ INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
 3. Teilen-Knopf -> "Zum Home-Bildschirm". Das Spiel startet dann vom
    Home-Bildschirm aus im Vollbild, auch im Flugmodus.
 4. Neue Version: Ordner erneut bei derselben Netlify-Seite hochladen und
-   das Spiel einmal mit Internet starten; es holt sich die neue Fassung.
+   das Spiel einmal mit Internet starten. Es holt sich die neue Fassung
+   und lädt sie auf dem Titelbild von selbst neu (mitten im Spiel erst
+   beim nächsten Titelbild; der Spielstand bleibt erhalten).
 Hinweis: Eine direkt geöffnete index.html (Dateien-App) oder der
 claude.ai-Link können nicht offline gespeichert werden; dafür braucht
 Safari eine https-Adresse.

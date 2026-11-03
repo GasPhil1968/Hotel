@@ -98,7 +98,8 @@ var HS=[
  {id:'bulb',name:'Glühbirne',look:function(A){ return A.m(A.S.lit?'Die Glühbirne brennt.':'Eine nackte Glühbirne an einem Kabel. Kein Strom. Mirza hat den Keller vom Netz genommen.'); },use:'Kein Strom hier unten.',g:{look:'Wir hatten Kerzen. Und manchmal Strom für eine Stunde.'}},
  {id:'bellbox',name:'Klingel',look:'Eine alte elektrische Klingel an der Wand, eine Schale mit Klöppel. Ein Kabel führt nach oben.',g:{look:'Sie läutet, wenn oben jemand drückt.'}}
 ];
-M.room('skloniste',{ name:'Schutzraum', scape:'k2_skloniste', music:function(G){ return night(G)?'k2_duh':'k2_noc'; },
+M.room('skloniste',{ name:'Schutzraum', scape:'k2_skloniste', music:function(G){ return night(G)?'k2_duh':''; },   // am Tag bewusst Stille im dunklen Keller
+ 
   state:function(G){ return {lit:false,cabinetOpen:false,rang:false,rollcall:false}; },
   dark:function(S,G){ return !S.lit; },
   darkLights:function(S,G){ var f=M.ART.skloniste&&M.ART.skloniste.darkLights; return typeof f==='function'?f(S,G):(f||[]); },

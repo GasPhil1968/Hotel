@@ -11,9 +11,10 @@ Dieser Bericht trennt streng zwischen dem, was **tatsächlich ausgeführt und ge
 - Kapitel 2 ist von der Ankunft am Busbahnhof bis zur Abfahrt nach Mostar **vollständig spielbar**. Es gibt kein Game Over und nach allen ausgeführten Prüfungen keine Sackgasse.
 - **Drei Geisterfälle:** Tomaž unter der Uhr (Fall 1), Professor Ivan Barać und das Bibliotheksbuch (Fall 2), die Lehrerin Zora im Schutzraum (Fall 3). Dazu kommt **Malas eigene Geschichte** in drei Teilen mit dem Kioskgeist Alija, einem Zwischenspiel, dem Finale und dem Epilog. Alle vier Geister haben eine eigene Erkenntnisszene. Die drei Fallgeister gehen danach mit Mala durch die Zwischenwelt, jeder mit einem eigenen Übergang.
 - **18 neue Schauplätze**, alle gemalt, dazu der Stadtplan von Sarajevo. **26 neue Figuren** mit Rig und Animationen, **22 neue Porträts**.
-- **Kapitelwahl** im Titelmenü. Kapitel 2 ist nach dem Ende von Split freigeschaltet und lässt sich nach einer Rückfrage auch direkt beginnen. Nach dem Abspann von Split heißt es „Weiter mit Kapitel 2“. Antworten und Erinnerungen aus Split werden übernommen. Alte Spielstände laufen unverändert weiter, das Spiel funktioniert weiterhin offline.
+- **Kapitelwahl direkt im Hauptmenü:** „Kapitel 1: Split“ und „Kapitel 2: Sarajevo“ stehen nebeneinander. Sarajevo startet sofort, auch ohne Split, ohne Sperre und ohne Rückfrage. Nach dem Abspann von Split heißt es „Weiter mit Kapitel 2“.
+- **Immer Querformat:** Hält man das Gerät hochkant, dreht sich das Spielbild um 90° und füllt die lange Seite. Das funktioniert auch bei gesperrter Bildschirmdrehung. Wo der Browser es erlaubt, wird die Ausrichtung zusätzlich auf quer gesperrt. Antworten und Erinnerungen aus Split werden übernommen. Alte Spielstände laufen unverändert weiter, das Spiel funktioniert weiterhin offline.
 - **Umfang gegenüber Split** (gleiche Zählweise für beide Kapitel): Dialog- und Erzählzeilen **+53,6 %**, Gesprächsoptionen **+50,2 %**, Schlussfolgerungen im Notizbuch **9 → 24**, Rätsel-Overlays **1 → 7**, Erinnerungsszenen **8 → 23**. Hinzu kommen **50 Hinweisthemen mit je drei Stufen**, nur auf Wunsch.
-- **Automatisch geprüft** (Abschnitt 5): zwei vollständige Durchläufe von Kapitel 2 in zwei Reihenfolgen, ein vollständiger Durchlauf von Kapitel 1, 31 Einzeltests, 19 Gerätetests (iPad-Ansicht mit Touch, offline, Bildzeit) und Bilder aller Räume.
+- **Automatisch geprüft** (Abschnitt 5): zwei vollständige Durchläufe von Kapitel 2 in zwei Reihenfolgen, ein vollständiger Durchlauf von Kapitel 1, 32 Einzeltests, 27 Gerätetests (iPad-Ansicht quer und hochkant mit Touch, Update einer offline gespeicherten Fassung, offline, Bildzeit) und Bilder aller Räume.
 - **Nicht geprüft:** ein echtes iPad, Safari/WebKit, der Klang mit dem Ohr und die Spielzeit mit Menschen (Abschnitt 7).
 
 ## 2. Grundlage und bewusste Abweichungen
@@ -81,16 +82,16 @@ Die Durchläufe spielen das Spiel über die echte Oberfläche: Verben auf Hotspo
 
 | Prüfung | Ergebnis |
 |---|---|
-| Kapitel 2, Musterlösung (`walkthrough2.js`) | **bestanden**: 67 Prüfschritte von der Ankunft bis zum Abspann, keine JS-Fehler, das Ende von Kapitel 2 ist gespeichert. Alle vier Geister erkennen ihren Tod (Tomaž, Ivan, Zora, Alija). Spieltakt 95,5 min. |
-| Kapitel 2, andere Reihenfolge (`MALA_ORDER=alt`) | **bestanden**: Fall 2 und das Zwischenspiel kommen vor Malas Spur, die erst im dritten Akt folgt. 68 Prüfschritte, keine JS-Fehler. Spieltakt 95,2 min. |
+| Kapitel 2, Musterlösung (`walkthrough2.js`) | **bestanden**: 67 Prüfschritte von der Ankunft bis zum Abspann, keine JS-Fehler, das Ende von Kapitel 2 ist gespeichert. Alle vier Geister erkennen ihren Tod (Tomaž, Ivan, Zora, Alija). Spieltakt 95,8 min. |
+| Kapitel 2, andere Reihenfolge (`MALA_ORDER=alt`) | **bestanden**: Fall 2 und das Zwischenspiel kommen vor Malas Spur, die erst im dritten Akt folgt. 68 Prüfschritte, keine JS-Fehler. Spieltakt 95,6 min. |
 | Kapitel 1, Musterlösung (`walkthrough.js`) | **bestanden**: 53 Prüfschritte bis zum Abspann, keine JS-Fehler. Kapitel 1 funktioniert also weiterhin. Spieltakt 64,4 min. |
 
-### 5.2 Einzeltests (`k2tests.js`): 31 von 31 bestanden
+### 5.2 Einzeltests (`k2tests.js`): 32 von 32 bestanden
 
 Die Tests laden Zwischenstände aus dem Durchlauf und prüfen gezielt:
 
-- **Kapitelwahl und Übernahme (13):**
-  - Ohne Split-Ende ist Kapitel 2 gesperrt, es kommt eine Rückfrage, und Kapitel 2 beginnt am Busbahnhof.
+- **Kapitelwahl und Übernahme (14):**
+  - Beide Kapitel stehen im Hauptmenü. Ein Antippen von „Kapitel 2: Sarajevo“ führt, auch ohne Split-Ende, sofort zu den Speicherplätzen, ohne Sperre und ohne Rückfrage. Danach beginnt Sarajevo am Busbahnhof. Bedient wird dabei über den echten Eingabeweg.
   - Ohne Split gelten die Vorgaben; das Register aus Split ist immer da.
   - Nach dem Ende von Split ist Kapitel 2 frei. Die Antworten („Meer“, „niemand mehr“) und die Notizen werden übernommen.
   - Nach dem Abspann heißt es „Weiter mit Kapitel 2“.
@@ -110,20 +111,23 @@ Die Tests laden Zwischenstände aus dem Durchlauf und prüfen gezielt:
   - **An 66 von 67 Zwischenständen ist mindestens ein Hinweis offen**, nur am Abspann nicht. Diese Prüfung ist neu. Beim ersten Lauf fand sie zwölf Stellen ohne Hinweis, die ich mit 15 neuen Themen geschlossen habe.
   - 49 der 50 Themen kommen im Durchlauf vor. Das fehlende („Was geschah im Januar 1994?“) öffnet sich nur für einen Moment.
 
-### 5.3 Gerätetest (`devicetest.js`): 19 von 19 bestanden
+### 5.3 Gerätetest (`devicetest.js`): 27 von 27 bestanden
 
 Profil „iPad (gen 7) landscape“, 1080 × 810, Touch. Das Spiel läuft dabei über einen lokalen Webserver, damit der Service Worker greift.
 
 - **Darstellung:** Das Spielbild ist 960 × 600 groß, passt ganz auf den Bildschirm, behält das Verhältnis 320:200 und nutzt 89 % der Breite.
 - **Touch:** Alles per Tippen:
-  - Titel, „Neues Spiel“, Kapitelwahl, Rückfrage, Speicherplatz;
+  - im Hauptmenü „Kapitel 2: Sarajevo“ antippen, dann den Speicherplatz;
   - die Einleitung durchtippen;
   - den Kiosk antippen, das Verbmenü öffnet sich, „Ansehen“ wählen, Marko spricht;
-  - Inventar und Menüknopf sind antippbar; der Spielstand wird gespeichert.
+  - Inventar und Menüknopf sind antippbar; der Spielstand wird gespeichert;
+  - Doppeltippen zoomt und scrollt nicht.
+- **Hochformat** (Profil „iPad (gen 7)“, 810 × 1080): Das Spielbild ist um 90° gedreht und passt ganz auf den Bildschirm (600 × 960). Es nutzt 89 % der langen Seite und bleibt bei 320:200. Antippen im gedrehten Bild trifft „Kapitel 2: Sarajevo“ und „Zurück“. Wird das Gerät quer gedreht, steht das Bild wieder normal.
 - **Offline:** Der Service Worker ist aktiv und hat alle 6 Dateien gespeichert. Ohne Netz lädt die Seite vollständig neu, und der Spielstand ist noch da.
+- **Update:** Eine offline gespeicherte Fassung wird auf dem Server durch eine neue ersetzt. Das Titelbild lädt die neue Fassung dann von selbst, und der alte Offline-Speicher ist gelöscht. Ohne diese Änderung hätte ein installiertes Spiel beim ersten Öffnen nach einem Update noch die alte Fassung gezeigt, also womöglich auch das alte Menü ohne Kapitel 2.
 - **Bildzeit** (Chromium, CPU vierfach gedrosselt, alle 18 Schauplätze, der Stadtplan und zwei Räume aus Split, je mit und ohne Geistersicht):
-  - Im Schnitt 0,3–2,8 ms pro Bild, schlechtester 95-%-Wert 7,3 ms. Für 60 Bilder pro Sekunde wären 16,7 ms erlaubt.
-  - Ein Raumwechsel samt erstem Bild dauert 142–792 ms.
+  - Im Schnitt 0,3–2,2 ms pro Bild, schlechtester 95-%-Wert 6,8 ms. Für 60 Bilder pro Sekunde wären 16,7 ms erlaubt.
+  - Ein Raumwechsel samt erstem Bild dauert 137–856 ms.
 
 ### 5.4 Weitere Prüfungen
 
@@ -136,7 +140,7 @@ Profil „iPad (gen 7) landscape“, 1080 × 810, Touch. Das Spiel läuft dabei 
 ## 6. Geschätzt oder nur theoretisch begründet (nicht gemessen)
 
 - **Spielzeit 4–5 Stunden:** nicht mit Menschen gemessen.
-  - **Gemessen** ist nur der Spieltakt der Musterlösung (siehe 5.1): 95,5 Minuten für Kapitel 2 und 64,4 Minuten für Kapitel 1, jeweils ohne Umwege, Suchen, Nachdenken und freiwillige Gespräche. Das ist das 1,48-Fache.
+  - **Gemessen** ist nur der Spieltakt der Musterlösung (siehe 5.1): rund 96 Minuten für Kapitel 2 und 64 Minuten für Kapitel 1, jeweils ohne Umwege, Suchen, Nachdenken und freiwillige Gespräche. Das ist knapp das 1,5-Fache.
   - **Hochgerechnet:** Für Split war die Spielzeit auf 2–3 Stunden geschätzt, ebenfalls ohne Messung. Mit demselben Faktor ergäben sich für Sarajevo etwa 3 bis 4½ Stunden.
   - **Zusätzlich** ist der freiwillige Teil in Kapitel 2 deutlich größer: Mala hat 76 % mehr Zeilen, es gibt eigene Themen bei jeder Figur und Reaktionen auf Gegenstände.
   - **Meine Schätzung:** 4–5 Stunden für Spieler, die erkunden. Zielstrebige Spieler eher 3–4 Stunden.
@@ -162,8 +166,8 @@ Profil „iPad (gen 7) landscape“, 1080 × 810, Touch. Das Spiel läuft dabei 
 - **Haus 7:** Ein Eingang in Figurengröße und die Dachuhr sind am Fuß eines 18-stöckigen Hauses nicht zusammen darstellbar. Deshalb steht vorn ein flacher Eingangsbau, der Turm mit der Uhr dahinter wirkt kleiner als die Nachbartürme.
 - **Schrift mit Hatschek:** Auf Schildern sind Haken und Striche als eigene Pixel über die Buchstaben gesetzt, weil die 5-Pixel-Schrift Š und Ž kaum lesbar macht.
 - **Hinweis „Was geschah im Januar 1994?“:** Dieses Thema öffnet sich nur kurz, weil der passende Schluss meist sofort folgt. Im Durchlauf kam es deshalb nicht vor. Es ist trotzdem erreichbar.
-- **Split mit einer älteren Fassung beendet:** Die Fassung vor Kapitel 2 hat beim Abspann den Spielstand gelöscht und sonst nichts gespeichert. Für solche Spieler ist Kapitel 2 deshalb nicht automatisch freigeschaltet. Sie bekommen die Rückfrage und spielen mit den Vorgaben. Wer Split mit der neuen Fassung beendet, wird erkannt und übernimmt seine Antworten. Nach dem Code gilt das auch, wenn man dafür einen Spielstand aus der alten Fassung weiterspielt, denn die Spiellogik von Split ist unverändert. Geprüft wurde aber nur das Laden eines alten Stands, nicht das Weiterspielen bis zum Ende.
-- **Direktstart in Kapitel 2 ohne Split:** Dann gelten Vorgaben, nämlich „hängen geblieben“ und „Da ist niemand mehr“ sowie alle Erinnerungen aus Split. Vor dem Start fragt das Spiel nach („Split ist noch nicht zu Ende gespielt. Trotzdem?“). Welche Vorgaben gelten, sagt es nicht.
+- **Split mit einer älteren Fassung beendet:** Die Fassung vor Kapitel 2 hat beim Abspann den Spielstand gelöscht und sonst nichts gespeichert. Ihr Split-Ende wird deshalb nicht erkannt. Sie starten Kapitel 2 direkt im Hauptmenü und spielen mit den Vorgaben. Wer Split mit der neuen Fassung beendet, wird erkannt und übernimmt seine Antworten. Nach dem Code gilt das auch, wenn man dafür einen Spielstand aus der alten Fassung weiterspielt, denn die Spiellogik von Split ist unverändert. Geprüft wurde aber nur das Laden eines alten Stands, nicht das Weiterspielen bis zum Ende.
+- **Direktstart in Kapitel 2 ohne Split:** Dann gelten Vorgaben, nämlich „hängen geblieben“ und „Da ist niemand mehr“ sowie alle Erinnerungen aus Split. Welche Vorgaben gelten, sagt das Spiel nicht.
 
 ## 9. Auslieferung
 
@@ -185,3 +189,16 @@ MALA_ORDER=alt node game/tools/walkthrough2.js      # Kapitel 2, andere Reihenfo
 node game/tools/k2tests.js /tmp/dumps               # Einzeltests (braucht die Zwischenstände)
 node game/tools/devicetest.js                       # iPad-Ansicht, Touch, offline, Bildzeit
 ```
+
+## 10. Nachträge
+
+Nach dem ersten Bericht kamen diese Änderungen hinzu. Alle sind von den Tests in Abschnitt 5 abgedeckt, denn die Tests liefen danach erneut auf dem neuen Stand.
+
+- **Kapitelwahl:** Kapitel 2 steht direkt im Hauptmenü, ohne Sperre und ohne Rückfrage (siehe 5.2 und 5.3).
+- **Updates kommen sofort an:** Übernimmt eine neue Fassung den Offline-Speicher, lädt das Spiel sie auf dem Titelbild sofort. Mitten im Spiel erscheint ein Hinweis, und die neue Fassung startet beim nächsten Titelbild. Außerdem holt der Service Worker die Dateien am Browser-Cache vorbei (siehe 5.3).
+- **Querformat:** Im Hochformat dreht sich das Spielbild um 90°, die Touch-Eingabe wird mitgedreht. Wo möglich, wird zusätzlich `screen.orientation.lock('landscape')` versucht. Das gelingt auf Android im Vollbild und in installierten Apps, auf iPad und iPhone nicht; dort hilft die Drehung des Bildes (siehe 5.3).
+- **Bewusste Stille:** In der Kammer, im dunklen Schutzraum am Tag und in der Vijećnica bis zur Rückgabe des Buchs spielt keine Musik, nur die Klangkulisse.
+- **Alija:** Er verschwindet nach seiner Erkenntnis nicht sofort. Er bleibt an der Haltestelle, bis die Drei abfährt, und Marko sieht durch das Rückfenster, wie er seinen Kiosk schließt.
+- **Geschichtliche Genauigkeit:**
+  - Rade sagt jetzt, die erste Drei nach dem Stillstand sei im März 1994 gefahren, „mitten im Krieg, in einer Waffenruhe“. Vorher hieß es „nach dem Krieg“. Die Quellen nennen den 8. März oder den 15. April 1994; der Krieg dauerte bis Ende 1995.
+  - Der Fahrpreis von 1,60 KM am Kiosk (1,80 KM beim Fahrer) deckt sich mit mehreren Reiseführern. Eine Quelle, die das Jahr 2011 ausdrücklich belegt, habe ich nicht gefunden.

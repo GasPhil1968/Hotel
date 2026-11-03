@@ -4,7 +4,7 @@ Ein ernstes Point-and-Click-Adventure nach dem Vorbild der Blackwell-Reihe, im t
 
 Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterkommen. Mala, ein Geist in Kleidung der frühen Neunziger, kann sie finden. Drei Fälle im November 2011: eine Mutter, die seit 1984 auf das Boot um sieben wartet; ein Junge, der seit 1999 auf die Nachtfähre nach Ancona wartet; ein Nachtportier, dem die Worte fehlen.
 
-**Kapitel 2: Sarajevo.** Marko fährt mit Mala in die Stadt seiner Kindheit. Drei neue Fälle: ein junger Mann, der seit 1972 unter dem Uhrturm wartet; ein Professor, der ein Buch aus der brennenden Nationalbibliothek zurückgeben will; eine Lehrerin, die im Schutzraum eines Hochhauses noch immer Schule hält. Dazu Malas eigene Geschichte. Kapitel 2 ist nach dem Ende von Split freigeschaltet oder lässt sich nach Rückfrage direkt beginnen.
+**Kapitel 2: Sarajevo.** Marko fährt mit Mala in die Stadt seiner Kindheit. Drei neue Fälle: ein junger Mann, der seit 1972 unter dem Uhrturm wartet; ein Professor, der ein Buch aus der brennenden Nationalbibliothek zurückgeben will; eine Lehrerin, die im Schutzraum eines Hochhauses noch immer Schule hält. Dazu Malas eigene Geschichte. Beide Kapitel lassen sich im Hauptmenü direkt wählen; Sarajevo startet auch ohne Split. Das Spiel läuft immer im Querformat (hochkant dreht sich das Bild mit).
 
 ## Inhalt
 

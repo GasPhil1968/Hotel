@@ -1,14 +1,15 @@
-// Gerätetest: iPad im Querformat mit Touch, Offline-Betrieb (Service Worker) und Bildzeit je Raum.
+// Gerätetest: iPad im Querformat mit Touch, Hochformat (gedrehtes Spielbild), Offline-Betrieb (Service Worker) und Bildzeit je Raum.
 // node game/tools/devicetest.js [web-ordner]      Standard: ../../web (vorher node game/build.js)
 // Die Bildzeit wird in Chromium mit vierfach gedrosselter CPU gemessen. Das ist eine Näherung, kein echtes iPad.
 const { chromium, devices } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.resolve(process.argv[2] || path.join(__dirname, '..', '..', 'web'));
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8' };
-const srv = http.createServer((req, res) => {
+const handler = (root) => (req, res) => {
   let u = decodeURIComponent(req.url.split('?')[0]); if (u.endsWith('/')) u += 'index.html';
-  const f = path.join(ROOT, u); if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
-  res.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(res); });
+  const f = path.join(root, u); if (!f.startsWith(root) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
+  res.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(res); };
+const srv = http.createServer(handler(ROOT));
 let pass = 0, fail = 0; const ok = (c, w) => { console.log((c ? '  ok   ' : '  FEHL ') + w); if (c) pass++; else fail++; };
 (async () => {
   await new Promise(r => srv.listen(0, '127.0.0.1', r)); const base = 'http://127.0.0.1:' + srv.address().port + '/';
@@ -43,10 +44,9 @@ let pass = 0, fail = 0; const ok = (c, w) => { console.log((c ? '  ok   ' : '  F
     if (i < 0) throw new Error('Titelzeile fehlt: ' + label + ' | ' + Ls.join(' | ')); const m = await uiMap(); const c = m['t:' + i]; if (!c) throw new Error('Zeile nicht antippbar: ' + label); await tapL(c[0], c[1]); };
   const st = () => p.evaluate(() => ({ screen: M.E.screen, mode: M.E.titleMode, room: M.E.room && M.E.room.id, phase: M.GS && M.GS.phase, busy: !!M.E.busy, speech: !!M.E.speech, dlg: !!M.E.dlg, overlay: M.E.overlay && M.E.overlay.kind, card: !!M.E.card, pop: !!M.E.pop }));
   await tapL(160, 100); // erste Berührung schaltet den Ton frei
-  await tapTitle('Neues Spiel'); ok((await st()).mode === 'chapter', 'Tippen auf „Neues Spiel“ öffnet die Kapitelwahl');
-  await tapTitle('Kapitel 2'); ok((await st()).mode === 'unlock', 'Kapitel 2 ohne Split-Ende: Rückfrage erscheint');
-  await tapTitle('Ja, in Sarajevo'); ok((await st()).mode === 'slots', 'Rückfrage bestätigt: Speicherplätze');
-  await tapTitle('1'); await p.waitForTimeout(600);
+  const labels = await p.evaluate(() => M.titleLabels()); ok(labels.indexOf('Kapitel 2: Sarajevo') >= 0, 'Hauptmenü zeigt „Kapitel 2: Sarajevo“ direkt (' + labels.join(' · ') + ')');
+  await tapTitle('Kapitel 2: Sarajevo'); ok((await st()).mode === 'slots', 'Tippen auf „Kapitel 2: Sarajevo“: sofort die Speicherplätze, keine Rückfrage');
+  await tapTitle('Platz 1'); await p.waitForTimeout(600);
   let s = await st(); if (s.screen === 'title' && s.mode === 'confirm') { await tapTitle('Ja'); await p.waitForTimeout(600); s = await st(); }
   ok(s.screen !== 'title', 'Kapitel 2 beginnt nach Tippen (' + s.screen + ')');
   for (let i = 0; i < 200; i++) { s = await st(); if (s.screen === 'game' && !s.busy && !s.overlay && !s.dlg && !s.speech) break; if (s.dlg) { const m = await uiMap(); const c = m['c:0']; if (c) await tapL(c[0], c[1]); else await p.waitForTimeout(300); } else await tapL(160, 60); }
@@ -63,6 +63,47 @@ let pass = 0, fail = 0; const ok = (c, w) => { console.log((c ? '  ok   ' : '  F
   const inv = await uiMap(); ok(!!inv['i:0'], 'Inventarleiste antippbar'); ok(!!inv['menu'] || Object.keys(inv).some(k => /menu/.test(k)), 'Menüknopf antippbar');
   const saved = await p.evaluate(() => { M.E.saveGame && M.E.saveGame(); return !!localStorage.getItem('mala.save1') || Object.keys(localStorage).some(k => /save/.test(k)); });
   ok(saved, 'Spielstand im Gerät gespeichert');
+
+  { const r = await rect(); const cx = r.l + r.w / 2, cy = r.t + r.h / 3; await p.touchscreen.tap(cx, cy); await p.waitForTimeout(80); await p.touchscreen.tap(cx, cy); await p.waitForTimeout(400);
+    const vp = await p.evaluate(() => ({ sc: window.visualViewport ? window.visualViewport.scale : 1, sy: window.scrollY, sx: window.scrollX, st: (document.scrollingElement || document.documentElement).scrollTop }));
+    ok(vp.sc === 1 && vp.sy === 0 && vp.sx === 0 && vp.st === 0, 'Doppeltippen zoomt und scrollt nicht (Maßstab ' + vp.sc + ', Scroll ' + vp.sx + '/' + vp.sy + ')'); }
+
+  console.log('Hochformat (Gerät hochkant): Spielbild wird ins Querformat gedreht');
+  { const devP = devices['iPad (gen 7)'] || { viewport: { width: 810, height: 1080 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
+    const ctxP = await b.newContext({ ...devP }); const q = await ctxP.newPage(); q.on('pageerror', e => errs.push('hoch: ' + e.message));
+    await q.goto(base + 'index.html'); await q.waitForFunction(() => window.M && M.E && M.E.screen === 'title', null, { timeout: 30000 });
+    const R = await q.evaluate(() => { const r = document.getElementById('game').getBoundingClientRect(); return { l: r.left, t: r.top, w: r.width, h: r.height, r: r.right, b: r.bottom, vw: innerWidth, vh: innerHeight, rot: M.isRotated() }; });
+    ok(R.rot, 'im Hochformat (' + R.vw + '×' + R.vh + ') ist das Spielbild gedreht');
+    ok(R.l >= -0.5 && R.t >= -0.5 && R.r <= R.vw + 0.5 && R.b <= R.vh + 0.5, 'gedrehtes Spielbild passt ganz auf den Bildschirm (' + Math.round(R.w) + '×' + Math.round(R.h) + ')');
+    ok(R.h / R.vh > 0.8 && Math.abs(R.h / R.w - 1.6) < 0.02, 'es nutzt die lange Seite (' + Math.round(100 * R.h / R.vh) + ' %) und bleibt 320:200');
+    // Antippen im gedrehten Bild: logische Koordinaten auf den Bildschirm umrechnen
+    const tapRot = async (x, y) => { const r = await q.evaluate(() => { const c = document.getElementById('game').getBoundingClientRect(); return [c.left, c.top, c.width, c.height]; });
+      await q.touchscreen.tap(r[0] + r[2] - (y + 0.5) / 200 * r[2], r[1] + (x + 0.5) / 320 * r[3]); await q.waitForTimeout(260); };
+    const rowOf = async (label) => q.evaluate((lb) => { const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lb) >= 0); for (let y = 0; y < 200; y++) for (let x = 40; x < 280; x += 2) if (M.uiHit(x, y) === 't:' + i) return [x + 40, y + 3]; return null; }, label);
+    await tapRot(160, 100); const k2 = await rowOf('Kapitel 2: Sarajevo'); if (k2) await tapRot(k2[0], k2[1]);
+    ok(await q.evaluate(() => M.E.titleMode === 'slots' && M.E.newCh === 2), 'Tippen im gedrehten Bild trifft „Kapitel 2: Sarajevo“');
+    const back = await rowOf('Zurück'); if (back) await tapRot(back[0], back[1]); ok(await q.evaluate(() => M.E.titleMode === 'main'), '„Zurück“ im gedrehten Bild führt ins Hauptmenü');
+    await q.setViewportSize({ width: 1080, height: 810 }); await q.waitForTimeout(400);
+    ok(!(await q.evaluate(() => M.isRotated())), 'Gerät quer gedreht: das Spielbild steht wieder normal');
+    await ctxP.close(); }
+
+  console.log('Update einer offline gespeicherten Fassung');
+  { const tmp = fs.mkdtempSync(path.join(process.env.MALA_TMP || require('os').tmpdir(), 'mala-upd-'));
+    for (const f of fs.readdirSync(ROOT)) { const src = path.join(ROOT, f); if (fs.statSync(src).isFile()) fs.copyFileSync(src, path.join(tmp, f)); }
+    const srv2 = http.createServer(handler(tmp)); await new Promise(r => srv2.listen(0, '127.0.0.1', r)); const base2 = 'http://127.0.0.1:' + srv2.address().port + '/';
+    const ctxU = await b.newContext({ ...dev }); const u = await ctxU.newPage(); u.on('pageerror', e => errs.push('update: ' + e.message));
+    await u.goto(base2 + 'index.html'); await u.waitForFunction(() => window.M && M.E && M.E.screen === 'title', null, { timeout: 30000 });
+    await u.evaluate(async () => { await navigator.serviceWorker.ready; for (let i = 0; i < 100 && !navigator.serviceWorker.controller; i++) await new Promise(z => setTimeout(z, 100)); });
+    await u.reload(); await u.waitForFunction(() => window.M && M.E && M.E.screen === 'title' && !!navigator.serviceWorker.controller, null, { timeout: 30000 });
+    // neue Fassung auf dem Server bereitstellen (andere Version, erkennbar am Meta-Tag)
+    fs.writeFileSync(path.join(tmp, 'sw.js'), fs.readFileSync(path.join(tmp, 'sw.js'), 'utf8').replace(/var VERSION = '[^']*';/, "var VERSION = 'mala-update-test';"));
+    fs.writeFileSync(path.join(tmp, 'index.html'), fs.readFileSync(path.join(tmp, 'index.html'), 'utf8').replace('<head>', '<head><meta name="mala-test" content="neu">'));
+    await u.evaluate(() => navigator.serviceWorker.getRegistration().then(r => r && r.update()));
+    let fresh = false; for (let i = 0; i < 60 && !fresh; i++) { await u.waitForTimeout(500); try { fresh = await u.evaluate(() => !!document.querySelector('meta[name="mala-test"]')); } catch (e) {} }
+    ok(fresh, 'nach einem Update lädt das Titelbild die neue Fassung von selbst');
+    let keys = []; try { keys = await u.evaluate(() => caches.keys()); } catch (e) {}
+    ok(keys.length === 1 && keys[0] === 'mala-update-test', 'alter Offline-Speicher gelöscht, nur die neue Fassung bleibt (' + keys.join(', ') + ')');
+    await ctxU.close(); srv2.close(); }
 
   console.log('Ohne Netz');
   await ctx.setOffline(true); srv.close();

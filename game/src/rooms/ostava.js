@@ -28,7 +28,8 @@ var HS=[
    use:async function(A){ A.set('lit',!A.S.lit); A.sfx('click'); await A.m(A.S.lit?'Licht. Staub tanzt darin.':'Dunkel.'); },push:async function(A){ A.set('lit',!A.S.lit); A.sfx('click'); },
    g:{look:'Ich brauche kein Licht. Er schon.'}}
 ];
-M.room('ostava',{ name:'Kammer', scape:'k2_ostava', music:'k2_istraga',
+M.room('ostava',{ name:'Kammer', scape:'k2_ostava', music:'',   // bewusst Stille: nur Tropfen und Holz
+ 
   state:function(G){ return {lit:false,frameOff:false,tinTaken:false}; },
   dark:function(S,G){ return !S.lit; }, darkLights:function(S){ var sp=M.spot('ostava','window'); return sp[2]?[[sp[0]+(sp[2]>>1),sp[1]+sp[3],40,0.7]]:[]; },
   hotspots:HS,
