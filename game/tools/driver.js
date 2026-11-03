@@ -7,7 +7,7 @@ async function open(opts = {}) {
   const errors = [];
   page.on('pageerror', e => errors.push('PAGEERROR ' + e.message + '\n' + (e.stack || '')));
   page.on('console', m => { if (m.type() === 'error') errors.push('console.error: ' + m.text()); });
-  await page.goto('file://' + path.join(__dirname, '..', '..', 'web', 'index.html'));
+  await page.goto('file://' + (process.env.MALA_HTML || path.join(__dirname, '..', '..', 'web', 'index.html')));
   await page.waitForTimeout(200);
   await page.evaluate((t) => { M.TEST = true; M.TURBO = t; try { localStorage.clear(); } catch (e) {} }, opts.turbo || 10);
   const D = {

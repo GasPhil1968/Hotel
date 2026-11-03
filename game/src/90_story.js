@@ -32,13 +32,17 @@ M.startGame=async function(A){ var E=M.E; E.busy=true;
 // nach Ivkas Wohnung: zurück nach Hause, Abend
 M.endProVisit=async function(A){ A.phase('pro_eve'); await A.fade(8,700); await A.goto('flat',{x:226,y:122,f:'L',noEnter:false}); };
 // Fall 1 beginnt (nach der Nacht)
+// Fall 1 beginnt (nach der Nacht): Mala ist da – aber nur als Stimme und als Flimmern, das Marko überhört
 M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster Fall',title:'Das Boot um sieben',time:'Mittwoch, 16. November · Abend',ms:4400});
-  A.phase('c1'); await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); await A.fade(0,600);
+  A.phase('c1'); A.setFlag('mala.voice'); A.setFlag('mala.unknown'); A.G.flags['mk.ache']=0; var F=A.R('flat'); F.tram=true; F.photoUp=true; F.winOpen=false;
+  await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); A.malaJoin({x:150,y:116,f:'R',fadeIn:false}); await A.fade(0,600);
+  A.headache(3500); await A.animM('headache'); await A.m('Ich habe den ganzen Tag geschlafen und bin müder als vorher.');
   await A.m('Das Fenster ist zu. Der Riegel ist alt. Er springt manchmal auf.'); await A.wait(500); await A.m('Ich habe von einem Mädchen geträumt. Es stand hinter mir in der Scheibe.');
+  await A.wait(700); await A.g('Das war kein Traum.'); await A.wait(900); await A.m('…'); await A.m('Der Kühlschrank. Der brummt manchmal so, dass man Wörter hört.');
   await A.wait(800); A.sfx('phone'); await A.wait(1200); await A.m('Vesna.');
   await A.phoneVoice('„Marko. Dein Text über Ivka Perić ist gut. Er kommt morgen. Ein bisschen traurig, aber das sind sie alle.“');
   await A.m('Danke. Ich habe schlecht geschlafen.'); await A.phoneVoice('„Du schläfst immer schlecht. Geh raus. An die Luft. Ciao.“');
-  await A.m('Sie hat recht. Die Riva. Ein bisschen Luft, ein bisschen Meer. Nichts weiter.'); A.unlock('riva'); A.save(); };
+  await A.m('Sie hat recht. Die Riva. Ein bisschen Luft, ein bisschen Meer. Nichts weiter.'); A.unlock('riva'); A.unlock('bar'); A.save(); };
 M.case3Call=async function(A){ if (M.case3CallImpl) return M.case3CallImpl(A); A.setFlag('c3.call'); };
 
 // ---------------------------------------------------------------- Stadtplan

@@ -34,7 +34,24 @@ async function askDay(A,Ml){ if (A.flag('c1.searched')) return Ml.say('Der Band 
   var m=A.npc('mladen'); A.sfx('door'); m.hide(); await A.wait(2200); A.sfx('door'); m.show(); A.setFlag('c1.searched');
   await Ml.say('Der Band 1984 ist nicht da. Irgendwer hat das Regal durcheinandergebracht. Ich suche doch nicht fünfzig Jahre durch.'); A.note('c1_nobook');
   await Ml.say('Da drin ist es immer kalt. Ich gehe nicht gern hinein.');
-  if (A.malaHere()) await A.g('Da drin ist es nicht kalt. Da drin ist es still.'); }
+  if (A.malaHere()) await A.g('Da drin ist es nicht kalt. Da drin ist es still.');
+  if (A.flag('mala.voice')){ await A.wait(700); await A.g('Ich kann nachsehen.'); await A.animM('headache'); await A.m('…'); A.S.nudge=A.gt+16000; } }
+// der Übergang: Marko lässt die Stimme zum ersten Mal zu – als Probe, leise, damit Mladen nichts hört
+M.voiceTest=async function(A){ if (A.flag('mk.test')) return;
+  var c=await A.choose([{t:'(Leise:) „Wenn du da bist, dann sieh nach.“',id:'test'},{t:'(Leise:) „Hör auf.“',id:'stop'},{t:'(Weiter so tun, als wäre nichts.)',id:'ignore',silent:true}],{title:'',conv:false});
+  if (c==='stop'){ await A.g('Ich habe noch gar nicht angefangen.'); return; }
+  if (c==='ignore'){ await A.wait(1100); await A.g('Das tut weh. Ich weiß.'); await A.animM('headache'); return; }
+  A.setFlag('mk.test'); delete A.G.flags['mala.voice']; A.G.flags['mk.ache']=0; M.E.headache=0;
+  if (A.mala){ A.mala.fadeIn=A.gt; } A.sfx('shimmer'); A.music('ghost'); await A.wait(1500);
+  await A.m('…'); await A.m('Der Kopfschmerz ist weg. Einfach weg. Zum ersten Mal seit drei Tagen.');
+  if (A.mala && A.marko) await A.faceM(A.mala.x<A.marko.x?'L':'R'); await A.wait(900);
+  await A.m('Du.'); await A.g('Ich.');
+  await A.m(A.hasNote('m_tram')?'Die Kirchentreppe in Varoš. Das Fenster. Die Straßenbahn auf der Scheibe.':'Die Kirchentreppe in Varoš. Das Fenster letzte Nacht.'); await A.g('Ja.');
+  await A.m('Wer bist du?'); await A.g('Mala.'); delete A.G.flags['mala.unknown']; A.note('m_name',true);
+  await A.m('Das ist kein Name. So sagt man zu kleinen Mädchen.'); await A.g('Es reicht.');
+  await A.m('Damit das klar ist: Ich glaube nicht an dich.'); await A.g('Musst du nicht. Lass mich nur nachsehen.');
+  await A.m('Bei vierundachtzig. Und wenn da nichts ist, bist du der Jugo, und ich gehe morgen zum Arzt.'); await A.g('Abgemacht.');
+  A.music('case1'); A.flash('Unten links kannst du jetzt zu Mala wechseln.'); A.save(); };
 async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.'); await Ml.say('Bei achtundvierzig? Warum sollte …'); await Ml.say('Na gut. Weil Sie es sind.');
   var m=A.npc('mladen'); A.sfx('door'); m.hide(); await A.wait(2000); A.sfx('door'); m.show(); A.sfx('paper');
   await Ml.say('Tatsächlich. Irgendein Praktikant mit einem Zahlendreher. Neunzehnvierundachtzig bei achtundvierzig.'); await Ml.say('Hier. Zweiundzwanzigster Dezember.'); A.setFlag('c1.logRead');
@@ -56,7 +73,7 @@ var HS=[
  {id:'timetable',name:'Fahrpläne',look:'Fahrpläne. Supetar, Stari Grad, Rogač, Ancona. Die Winterzeiten, mit Kugelschreiber korrigiert.',read:'Supetar: 6:00, 7:30, 9:30, … 19:00, 21:30. Das Boot um sieben gibt es immer noch.',g:{look:'Lauter Zeiten, zu denen jemand irgendwo ankommt.'}},
  {id:'photos',name:'Schiffsfotos',look:'Alte Fotos von Fähren, mit Datum: 1958, 1967, 1979. Auf einem winken Menschen von Deck. Niemand winkt mehr von Fähren.',g:{look:'Auf einem steht ein Mädchen an der Reling. Es ist nicht wichtig. Ich sehe es trotzdem an.'}},
  {id:'radio',name:'Funkgerät',look:'Ein Seefunkgerät. Es knistert und sagt dann wieder nichts.',use:'Ich funke nicht im Hafenamt herum.',g:{listen:'Kanal 16. Ein Fischer fragt nach dem Wetter. Niemand antwortet.',look:'Es rauscht wie das Radio in Ivkas Wohnung.'}},
- {id:'clock',name:'Wanduhr',look:'Eine Amtsuhr. Sie geht drei Minuten vor. Wahrscheinlich absichtlich.',g:{look:'…'}},
+ {id:'clock',name:'Wanduhr',look:function(A){ if (A.flag('mala.voice')) return A.m('Die Amtsuhr: zehn nach sieben. Meine Uhr: sieben. Sie steht. Genau auf sieben.'); return A.m('Eine Amtsuhr. Sie geht drei Minuten vor. Wahrscheinlich absichtlich.'); },g:{look:'…'}},
  {id:'bench',name:'Wartebank',look:'Eine Wartebank aus Kunststoff, orange. Wer hier sitzt, hat eine Fähre verpasst.',use:'Ich warte lieber im Stehen.',g:{look:'Hier sitzt nachts manchmal jemand, der nirgends hin kann.'}},
  {id:'plant',name:'Gummibaum',look:'Ein Gummibaum, der seit Jahrzehnten so tut, als wäre er glücklich.',g:{look:'Er lebt. Das ist hier drin schon viel.'}},
  {id:'archive_door',name:'Tür „Arhiva“',look:'„ARHIVA – SAMO OSOBLJE.“ Archiv, nur Personal. Abgeschlossen. Natürlich.',open:'Abgeschlossen. Und Mladen sieht mich an.',
@@ -65,7 +82,10 @@ var HS=[
 M.room('office',{ name:'Hafenbüro', scape:'office', music:'case1',
   actors:function(S,GS){ var p=M.apos('office','mladen',[150,104,'F']); return [{id:'mladen',ch:'mladen',x:p[0],y:p[1],f:p[2]||'F',name:'Mladen',speechY:52}]; },
   hotspots:HS,
+  tick:function(A){ if (!A.flag('mala.voice') || !A.flag('c1.searched') || A.isBusy || !A.S.nudge || A.gt<A.S.nudge) return; A.S.nudge=A.gt+24000; A.busy(true);
+    A.g(A.cycle('nudge',['Lass mich nachsehen.','Ich kann durch Türen gehen. Du nicht.','Du musst nichts sagen. Nur nicken.','Je länger du so tust, desto lauter werde ich.'])).then(function(){ A.busy(false); }); },
   enter:async function(A,from){ if (from==='riva' && A.first('offIn')) await A.m('Neonlicht und Kaffeegeruch. Ein Amt, das nie ganz schließt, weil das Meer nie ganz schließt.');
+    if (A.flag('mala.voice') && A.flag('c1.searched')) A.S.nudge=A.gt+9000;
     if (from==='archive' && A.isMala() && A.hasNote('c1_1948') && A.first('!backFromArchive')) await A.g('Ich habe ihn gefunden. Ich kann ihn nur nicht herausholen.'); }
 });
 M.defineScape('office',{beds:['room','neon','seaFar'],step:'tile',ev:[['radio',8,18,0.8,0.3,0.7],['horn',40,80,0.4,-0.6,-0.2],['steps',30,60,0.3,-1,-0.6]],fixed:[['tick',1,0.5,-0.3]]});

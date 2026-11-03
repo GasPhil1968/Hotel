@@ -4,7 +4,7 @@
 var P=M.P;
 function lukaHere(GS){ return (GS.phase==='c2'||GS.phase==='c2_night') && !GS.flags['c2.done']; }
 function G2(GS){ return !!GS.flags['c2.release']; }
-function ninaHere(GS){ return GS.phase==='c2_night' && !GS.flags['c2.done']; }
+function ninaHere(GS){ return GS.phase==='c2_night' && !GS.flags['c2.ninaGone']; }
 // ---------------------------------------------------------------- Luka (mit Mala)
 async function lukaMala(A,L){
   if (A.flag('c2.release')) return L.say('Die Treppe hält nicht. Oder?');
@@ -57,22 +57,29 @@ async function finale(A){ var N=A.npc('nina'), L=A.npc('luka'); A.setFlag('c2.fi
   if (!A.malaHere()) A.malaJoin({x:Math.round(A.marko.x)-20,y:Math.round(A.marko.y),f:'L'});
   await A.switchTo('mala'); await A.wait(400);
   await A.g('Luka. Ich bringe dich hinunter.'); await L.say('Die Treppe hält nicht.'); await A.g('Für uns schon.'); A.save(); }
-// Mala bringt Luka hinunter zur Rampe und hinüber (spielbar: als Mala „Hinüberbringen“)
+// Mala bringt Luka hinunter zur Rampe und hinüber (spielbar: als Mala „Hinüberbringen“) – Marko kommt mit bis an den Rand
 async function crossLuka(A){ var N=A.npc('nina'), L=A.npc('luka'); A.G.flags['mala.lock']=true;
   await L.say('Wohin?'); await A.g('Zum Wasser. Da, wo die Fähre ablegt.');
   await A.fade(8,800); var st=M.apos('ledana','nina',[270,124,'R']);
   if (L.actor){ L.place(st[0]-26,st[1]+2,'R'); L.idle(null); } A.placeG(st[0]-46,st[1]+4,'R');
   await A.narrate('Sie nimmt seine Hand. Sie gehen die Treppe hinunter, die es nicht mehr gibt.'); await A.fade(0,900);
   await A.wait(1200); A.S.ferryGo=A.gt; A.sfx('horn'); await A.wait(1600);
-  await A.crossOpen(st[0]+30,st[1]+2,{w:18,h:78});
   await L.say('Nina.'); await A.wait(1300); await N.say('…'); await N.say('Es ist kalt geworden.'); await A.wait(1100);
   await L.say('Sie weiß es jetzt.'); await A.wait(800);
-  if (L.actor){ L.set('speed',70); var w=L.walk(st[0]+28,st[1]+1); await A.wait(1700); L.actor.fadeOut=A.gt; A.sfx('shimmer'); await w; }
-  await A.wait(1400); L.hide(); A.setFlag('c2.done'); await A.crossClose(); await A.wait(900);
-  await A.switchTo('marko'); A.G.flags['mala.lock']=false; A.music('silence'); await A.wait(2400);
-  await N.say('Zwölf Jahre habe ich gedacht, er ist einfach nicht gekommen.'); await A.m('Er war auf dem Weg.'); await A.wait(1400);
-  await N.say('Ich glaube, jetzt kann ich die Bilder fertig malen.'); await N.say('Das Radio …'); await A.m('Es gehörte einer alten Frau, die siebenundzwanzig Jahre auf ein Boot gewartet hat. Behalten Sie die Kassette.');
-  await N.say('…Danke, Marko.'); await N.face('L'); var nw=N.walk(20,st[1]+6); await A.wait(2200); N.hide();
+  await A.crossOpen(st[0]+30,st[1]+2,{w:18,h:78});
+  await L.say('He, Marko. Kommst du mit bis zur Fähre?'); await A.g('Er kommt mit. Bis an den Rand.'); await A.wait(600); await A.m('Bis an den Rand.');
+  A.sfx('shimmer'); await A.fade(-8,1200); await A.crossClose();
+  await M.enterLimbo(A,'luka'); }
+// zurück an der Rampe: Nina ist noch da
+M.afterLimbo_luka=async function(A){ A.G.flags['mala.lock']=false; var st=M.apos('ledana','nina',[270,124,'R']);
+  await A.goto('ledana',{x:st[0]-26,y:st[1]+2,f:'R',fade:false,noEnter:true}); A.music('silence'); await A.fade(0,900);
+  var N=A.npc('nina'); await A.wait(1500); await N.say('Zwölf Jahre habe ich gedacht, er ist einfach nicht gekommen.'); await A.m('Er war auf dem Weg. Die ganze Zeit.'); A.save(); };
+async function ninaTicket(A){ var N=A.npc('nina'); await A.animM('give'); A.take('ticket_n'); await N.say('Ein Ticket nach Ancona. Dreiundzwanzigster August neunundneunzig.'); await A.wait(900);
+  await N.say('Das ist meins. Er hatte zwei gekauft.'); await A.m('Eins hat er mitgenommen. Das hier soll ich Ihnen geben. Sie sollen selbst entscheiden, ob Sie fahren.'); await A.wait(1400);
+  await N.say('Venedig.'); await A.wait(900); await N.say('Ich glaube, jetzt kann ich die Bilder fertig malen.'); await N.say('Und das Lied … hat es einen Namen?'); await A.m('Noch nicht. Er sagt, Sie sollen ihm einen geben.'); await A.wait(1500);
+  await N.say('„Halb neun.“'); await A.wait(1200);
+  await N.say('Das Radio …'); await A.m('Es gehörte einer alten Frau, die siebenundzwanzig Jahre auf ein Boot gewartet hat. Behalten Sie die Kassette.');
+  await N.say('…Danke, Marko.'); await N.face('L'); var st=M.apos('ledana','nina',[270,124,'R']); N.walk(20,st[1]+6); await A.wait(2200); N.hide(); A.setFlag('c2.ninaGone');
   A.give('radioB'); A.save(); await A.wait(1200); await A.fade(8,1400); await M.interlude2(A); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
@@ -110,8 +117,10 @@ var HS=[
  {id:'harbor_view',name:'Blick über den Hafen',look:function(A){ return A.m(A.G.tod==='night'?'Gegenüber liegt die Nachtfähre nach Ancona, hell erleuchtet wie ein Haus, das gleich abfährt.':'Über den Hafen hinweg das Fährterminal, die Busse, der Kiosk. Von hier sieht man alles und hört nichts.'); },g:{look:'Er hat zwölf Jahre lang da hinübergesehen.'}},
  {id:'nina',npc:'nina',name:'Nina',hgt:46,vis:function(S,GS){ return ninaHere(GS); },
    look:'Nina, mit verschränkten Armen an der Rampe. Sie sieht zur Fähre hinüber. Sie zittert nicht. Noch nicht.',
-   talk:async function(A){ var N=A.npc('nina'); if (!A.has('radioT')) return N.say('Haben Sie es dabei?'); await N.say('Sie haben es dabei.'); await A.m('Ja.'); },
-   give:{ radioT:function(A){ return finale(A); }, radioB:'„Wo ist die Kassette?“', cassette:'„Ich habe nichts, womit ich die abspielen kann. Sie haben doch das Radio.“' },
+   talk:async function(A){ var N=A.npc('nina');
+     if (A.flag('c2.done')){ await N.say('Ist er … fort?'); await A.m('Ja.'); if (!A.has('ticket_n')) return; var c=await A.choose([{t:'(Ihr Lukas zweites Ticket geben.)',id:'t',silent:true},{t:'Gleich.',id:'w'}],{title:'Nina'}); if (c==='t') return ninaTicket(A); return; }
+     if (!A.has('radioT')) return N.say('Haben Sie es dabei?'); await N.say('Sie haben es dabei.'); await A.m('Ja.'); },
+   give:{ radioT:function(A){ return finale(A); }, ticket_n:function(A){ return ninaTicket(A); }, radioB:'„Wo ist die Kassette?“', cassette:'„Ich habe nichts, womit ich die abspielen kann. Sie haben doch das Radio.“' },
    g:{look:'Sie sieht ihn nicht. Aber sie sieht zur richtigen Stelle.'}}
 ];
 M.room('ledana',{ name:'Die alte Ledana', scape:'ledana', music:function(GS){ return GS.phase==='c2_night'?'silence':'case2'; },
@@ -130,17 +139,23 @@ M.readNinasNote=async function(A){ await A.doc({style:'letter',title:'24.8.1999'
 // ---------------------------------------------------------------- Kühlraum
 var CH=[
  {id:'door',name:'Tür',exit:{to:'ledana',gok:true},gexit:{to:'ledana'},look:'Der Lichtspalt der Tür.',g:{look:'Zurück.'}},
- {id:'case',name:'Gitarrenkoffer',look:function(A){ return A.m(A.S.caseOpen?'Der Koffer ist offen. Die Gitarre darin ist zerbrochen, der Hals hängt an den Saiten.':'Unter dem Schutt ragt ein Gitarrenkoffer hervor. Schwarz, mit Aufklebern: HAJDUK, ein gelber Smiley, „Ancona“.'); },
+ {id:'case',name:'Gitarrenkoffer',dark:true,vis:function(S){ return !!S.caseOut; },look:function(A){ return A.m(A.S.caseOpen?'Der Koffer ist offen. Die Gitarre darin ist zerbrochen, der Hals hängt an den Saiten.':'Unter dem Schutt ragt ein Gitarrenkoffer hervor. Schwarz, mit Aufklebern: HAJDUK, ein gelber Smiley, „Ancona“.'); },
    open:async function(A){ if (A.S.caseOpen) return A.m('Darin ist nur noch die Gitarre. Sie bleibt hier, bei ihm.'); await A.anim('kneelF'); A.sfx('click'); A.set('caseOpen',true); A.give('tickets'); A.give('cassette');
      await A.m('Im Deckelfach: zwei Fährtickets Split–Ancona, dreiundzwanzigster August neunundneunzig, und eine Kassette. „Za Ninu – 23.8.“'); A.setFlag('c2.case'); },
    take:'Den ganzen Koffer? Die Gitarre ist zerbrochen. Ich nehme nur, was ihm wichtig war.',
    g:{look:'Sein Koffer. Er hat ihn heute früh hier versteckt. Vor zwölf Jahren.',sense:async function(A){ if (A.hasNote('c2_case')) return A.g('Zwei Tickets. Eine Kassette. Za Ninu.');
      await A.memory({title:'Nachhall – der Koffer',draw:M.mem.guitarcase,tint:'ghost',lines:['Ein Morgen im August. Ein Junge kniet hier und öffnet den Koffer.','Er steckt zwei Fahrkarten in das Fach im Deckel. Er sieht sie lange an.','Dann eine Kassette. Er schreibt etwas darauf: „Za Ninu“.','Er lacht, ganz allein, in einem dunklen Kühlraum.']}); A.note('c2_case'); }}},
- {id:'debris',name:'Schutt',look:'Ein Haufen aus Deckenputz und Isolierung. Ein Teil der Decke ist heruntergekommen. Zum Glück nicht auf mich.',g:{look:'Staub, der nicht mehr fällt.'}},
- {id:'hooks',name:'Fleischhaken',look:'Haken an Schienen. Hier hing früher Fisch, in langen glänzenden Reihen.',g:{look:'Sie schwingen nicht. Nur wenn ich vorbeigehe.'}},
- {id:'walls',name:'Wände',look:'Die Wände sind fleckig von Stockflecken. Es ist immer noch kälter als draußen.',g:{look:'Kalt. Ich spüre es nicht. Ich weiß es nur.'}}
+ {id:'debris',name:'Schutt',dark:true,look:function(A){ return A.m(A.S.caseOut?'Der Schutthaufen. Ich habe ein Loch hineingegraben.':'Ein Haufen aus Deckenputz und Isolierung. Ein Teil der Decke ist heruntergekommen. Zum Glück nicht auf mich.'); },
+   push:function(A){ return A.m(A.S.caseOut?'Da ist nichts mehr.':'Mit bloßen Händen? Das sind Brocken so groß wie Koffer.'); }, take:'Mit bloßen Händen? Das sind Brocken so groß wie Koffer.',
+   with:{ crowbar:async function(A){ if (A.S.caseOut) return A.m('Da ist nichts mehr.'); if (!A.hasNote('c2_under')) return A.m(A.cycle('digBlind',['Ich stochere im Schutt herum. Irgendwo hier? Ich weiß nicht einmal, wonach ich suche.','Nur Putz und Glaswolle. Ich grabe nicht den ganzen Raum um.']));
+       await A.anim('kneelF'); A.sfx('stone'); await A.wait(500); A.sfx('crowbar'); A.set('caseOut',true); A.rebuild(); await A.m('Ich hebe die Brocken mit dem Brecheisen an, einen nach dem anderen. Darunter: schwarzes Kunstleder. Ein Gitarrenkoffer.'); } },
+   g:{look:'Staub, der nicht mehr fällt. Und darunter etwas, das glimmt.',sense:async function(A){ if (A.S.caseOut) return A.g('Er hat ihn ausgegraben.'); await A.g('Darunter liegt ein Koffer. Er hat ihn heute früh hier versteckt. Dann kam die Decke. Viel später.'); A.note('c2_under'); }}},
+ {id:'hooks',name:'Fleischhaken',dark:true,look:'Haken an Schienen. Hier hing früher Fisch, in langen glänzenden Reihen.',g:{look:'Sie schwingen nicht. Nur wenn ich vorbeigehe.'}},
+ {id:'walls',name:'Wände',dark:true,look:'Die Wände sind fleckig von Stockflecken. Es ist immer noch kälter als draußen.',g:{look:'Kalt. Ich spüre es nicht. Ich weiß es nur.'}}
 ];
-M.room('coldroom',{ name:'Kühlraum', scape:'coldroom', music:'case2', hotspots:CH,
-  enter:async function(A,from){ if (A.first('coldIn')){ if (A.isMala()) await A.g('Dunkel. Kalt. Und ein Koffer unter dem Schutt.'); else await A.m('Kalt und dunkel. Wie in einem Grab, in dem niemand liegt.'); } } });
+M.room('coldroom',{ name:'Kühlraum', scape:'coldroom', music:'case2', hotspots:CH, glowR:50,
+  dark:function(S,GS){ return true; }, darkLights:[[22,104,58,0.9],[40,124,44,0.7],[228,40,26,0.5]],
+  enter:async function(A,from){ if (A.isMala()){ if (A.first('coldInG')) await A.g('Dunkel. Kalt. Und etwas unter dem Schutt, das glimmt.'); return; }
+    if (A.first('coldInM')){ await A.m('Kalt und stockdunkel. Wie in einem Grab, in dem niemand liegt.'); A.note('c2_dark'); if (A.malaHere()) await A.g('Für mich ist es nicht dunkel. Bleib bei mir.'); } } });
 M.defineScape('coldroom',{beds:['room','seaFar'],step:'stone',ev:[['drip',3,8,0.9,-0.6,0.6],['creak',14,30,0.5,-0.6,0.6]]});
 })(M);

@@ -113,17 +113,41 @@ function updateActor(a,dt){ if (a.frozen) return;
     else set=idleSetFor(a);
     if (a.anim!==set){ a.anim=set; a.fi=0; a.ft=0; }
     a.ft+=dt; a.idleT+=dt; var guard=0; while (a.ft>=a.anim[a.fi][1] && guard++<50){ a.ft-=a.anim[a.fi][1]; a.fi=(a.fi+1)%a.anim.length; }
+    if (a.routine && !a.player) routineTick(a);
     // Mala folgt Marko, wenn sie nicht gespielt wird
     // nicht, wenn sie sitzt oder die Szene sie festhält (Bank an der Riva, Sustipan, Busbahnhof)
     if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow && !GS.flags['mala.lock'] && !(a.idle && /sit/.test(a.idle))){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
       if (Math.hypot(a.x-tx,a.y-ty)>34 && a.mode==='idle'){ walkActor(a,tx,ty); } } } }
 function arrive(a){ a.mode='idle'; setIdle(a); var r=a.res; a.res=null; if (r) r(true); }
+// ---------------------------------------------------------------- Tagesablauf der Nebenfiguren: Tätigkeiten wechseln, kurze Wege, umdrehen
+// Schritte: ['idle',anim|null,minS,maxS] ['face',f,minS,maxS] ['anim',name] ['walk',dx,dy] (relativ zum Platz) ['home',anim] ['skip',p,n] (mit Wahrscheinlichkeit 1-p n Schritte überspringen)
+function glideActor(a,x,y){ cancelRes(a); a.path=[[x,y]]; if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null; return new Promise(function(r){ a.res=r; }); }
+function routineSteps(a){ var r=a.routine; if (typeof r==='function') r=r(S,GS,room); return (r&&r.length)?r:null; }
+function routineTick(a){ if (E.busy || E.dlg || E.overlay || E.screen!=='game' || a.frozen || a.mode!=='idle' || a.rtHold) return; if (E.conv && E.conv.npc===a.id) return;
+  if (gt<(a.rtUntil||0)) return; var r=routineSteps(a); if (!r){ a.rtUntil=gt+2000; return; } if (a.rtI===undefined||a.rtI>=r.length) a.rtI=0;
+  var st=r[a.rtI]; a.rtI=(a.rtI+1)%r.length; var dur=function(lo,hi){ lo=lo||3; hi=hi||lo; return (lo+Math.random()*(hi-lo))*1000; }, h=a.home||[a.x,a.y,a.f];
+  switch(st[0]){
+    case 'idle': a.idle=st[1]||null; setIdle(a); a.rtUntil=gt+dur(st[2],st[3]); break;
+    case 'face': a.f=st[1]; setIdle(a); a.rtUntil=gt+dur(st[2],st[3]); break;
+    case 'anim': a.rtUntil=gt+400; playAnimOn(a,st[1]); break;
+    case 'walk': a.idle=null; a.rtUntil=gt+200; glideActor(a,h[0]+st[1],h[1]+(st[2]||0)); break;
+    case 'home': a.idle=null; a.rtUntil=gt+200; var an=st[1]; glideActor(a,h[0],h[1]).then(function(ok){ if (!ok) return; a.f=h[2]||a.f; if (an!==undefined) a.idle=an; setIdle(a); }); break;
+    case 'skip': if (Math.random()>st[1]) a.rtI=(a.rtI+st[2])%r.length; break;
+    default: a.rtUntil=gt+1000; } }
+// eine Figur, die gerade angesprochen wird, bleibt stehen und unterbricht ihren Ablauf eine Weile
+function holdNpc(a){ if (!a||!a.routine) return; if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); } a.rtUntil=gt+9000; }
+E.holdNpc=holdNpc;
 function actorPose(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
     if (a.ghost){ var fl=a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); if (a.id==='mala'){ var wS=anims.walkS||A_.walkS, wF=anims.walkF||A_.walkF, wB=anims.walkB||A_.walkB; return (a.f==='F'?wF:(a.f==='B'?wB:wS))[a.fi%8]; } return fl[0][0]; }
     var wS2=anims.walkS||A_.walkS, wF2=anims.walkF||A_.walkF, wB2=anims.walkB||A_.walkB; return (a.f==='F'?wF2:(a.f==='B'?wB2:wS2))[a.fi%8]; }
   var fr=a.anim&&a.anim[a.fi]; return fr?fr[0]:A_.idleS[0][0]; }
 E.actorPose=actorPose; E.ACT=ACT;
 
+// dunkle Räume: Marko sieht nur, was in Malas Schein oder in einem festen Licht liegt (room.dark(S,GS), room.darkLights: [[x,y,r],…])
+function darkOn(){ return !!(room && room.dark && room.dark(S,GS) && GS.active==='marko'); }
+function litAt(x,y){ var best=0, ma=ACT.mala; if (ma && GS.malaOn && GS.pos.mala.room===room.id && ma.visible){ var d=Math.hypot(x-ma.x,(y-(ma.y-24))*1.15); best=Math.max(best,1-d/(room.glowR||48)); }
+  var L=typeof room.darkLights==='function'?room.darkLights(S,GS):(room.darkLights||[]); for (var i=0;i<L.length;i++){ var d2=Math.hypot(x-L[i][0],y-L[i][1]); best=Math.max(best,(1-d2/L[i][2])*(L[i][3]||1)); } return Math.max(0,Math.min(1,best)); }
+E.darkOn=darkOn; E.litAt=litAt;
 // Geister: für Marko erst sichtbar, wenn Mala sie gefunden hat
 function ghostVisible(a){ if (!a.ghost||a.id==='mala') return true; if (GS.active==='mala') return true; return !!GS.flags['found.'+a.id]; }
 E.ghostVisible=ghostVisible;
@@ -183,9 +207,10 @@ function flag(k){ return GS.flags[k]; }
 function setFlag(k,v){ GS.flags[k]=(v===undefined?true:v); dirty=true; navDirty=true; }
 function npcHandle(id){ var a=ACT[id]; if (!a){ var nop=function(){ return Promise.resolve(); }; return { x:160,y:120,f:'F',actor:null,say:function(t){ return say(t,'@'+id,{color:M.CAST_COLORS[id]||P.s5}); },walk:nop,face:nop,anim:function(n,h){ if (h) h(); return nop(); },show:function(){},hide:function(){},place:function(){},idle:function(){},freeze:function(){},set:function(){} }; }
   return { get x(){ return a.x; }, get y(){ return a.y; }, get f(){ return a.f; }, actor:a,
-    say:function(t,opt){ return say(t,id,opt); }, walk:function(x,y){ return walkActor(a,x,y); }, face:function(f){ return faceOn(a,f); },
+    say:function(t,opt){ return say(t,id,opt); }, walk:function(x,y){ a.rtUntil=gt+12000; return walkActor(a,x,y); }, face:function(f){ return faceOn(a,f); },
+    routine:function(v){ if (v===false){ a.rtHold=true; } else { a.rtHold=false; if (v) a.routine=v; a.rtUntil=gt+3000; } }, home:function(x,y,f){ a.home=[x,y,f||a.f]; },
     anim:function(n,h,hold){ return playAnimOn(a,n,h,hold); }, show:function(){ a.visible=true; }, hide:function(){ a.visible=false; },
-    place:function(x,y,f){ cancelRes(a); a.x=x; a.y=y; if (f) a.f=f; setIdle(a); }, idle:function(n){ a.idle=n; setIdle(a); }, freeze:function(p){ a.frozen=p||null; }, set:function(k,v){ a[k]=v; },
+    place:function(x,y,f){ cancelRes(a); a.x=x; a.y=y; if (f) a.f=f; a.rtHold=true; setIdle(a); }, idle:function(n){ a.idle=n; setIdle(a); }, freeze:function(p){ a.frozen=p||null; }, set:function(k,v){ a[k]=v; },
     faceMe:function(){ var p=player(); if (!p) return Promise.resolve(); return faceOn(a,p.x<a.x?'L':'R'); } }; }
 
 // ---------------------------------------------------------------- Mala: Beitreten, Gehen, Wechseln
@@ -205,7 +230,9 @@ E.switchTo=switchTo;
 // ---------------------------------------------------------------- Skript-API
 var API={
   // Sprechen: say = gerade gespielte Figur, m = Marko, g = Mala, narrate = Erzähler
-  say:function(t,o){ return say(t,GS.active,o); }, m:function(t,o){ return say(t,ACT.marko?'marko':'@marko',Object.assign({color:M.CAST_COLORS.marko},o||{})); }, g:function(t,o){ return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',Object.assign({color:M.CAST_COLORS.mala},o||{})); },
+  say:function(t,o){ return say(t,GS.active,o); }, m:function(t,o){ return say(t,ACT.marko?'marko':'@marko',Object.assign({color:M.CAST_COLORS.marko},o||{})); },
+  g:function(t,o){ o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if (GS.flags['mala.voice'] && GS.active==='marko'){ o.voice=true; o.noPortrait=true; GS.flags['mk.ache']=Math.min(9,(GS.flags['mk.ache']||0)+1); E.headache=gt+1500+GS.flags['mk.ache']*120; M.sfx('static'); }
+    return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',o); },
   // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
   crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
   crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
@@ -268,7 +295,9 @@ function hsStand(h){ var isG=GS.active==='mala'; var st=isG&&h.gst!==undefined?h
   if (h.npc){ var a=ACT[h.npc], p=player(); if (!a||!p) return null; var side=p.x<a.x?-1:1; return [a.x+side*(h.talkDist||24),a.y,side<0?'R':'L']; }
   if (st===null||!room||room.noActor) return null; var r=hsRect(h); if (!r) return null; var cx=r[0]+r[2]/2, p2=nearestPoint(GS.active,cx,Math.min(SH-4,r[1]+r[3]+6)), dx=cx-p2[0];
   return [p2[0],p2[1],Math.abs(dx)<14?'B':(dx<0?'L':'R')]; }
-function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h){ if (!hsVisible(h)) return; var r=hsRect(h); if (!r) return;
+function hsLit(h,r){ if (!h.dark || !darkOn()) return true; return litAt(r[0]+r[2]/2,r[1]+r[3]/2)>0.15; }
+E.hsLit=hsLit;
+function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h){ if (!hsVisible(h)) return; var r=hsRect(h); if (!r) return; if (!hsLit(h,r)) return;
   if (x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]){ var a=r[2]*r[3]*(h.pri||1); if (a<ba){ ba=a; best=h; } } });
   // Mala als Ziel (für Marko: Gegenstände zeigen, mit ihr reden)
   var ml=ACT.mala; if (GS.active==='marko' && ml && actorShown(ml)){ var r2=[Math.round(ml.x)-8,Math.round(ml.y)-46,16,46]; if (x>=r2[0]&&x<r2[0]+r2[2]&&y>=r2[1]&&y<r2[1]+r2[3]){ var a2=r2[2]*r2[3]; if (a2<ba) best=MALA_HS; } }
@@ -278,7 +307,7 @@ E.hotspotAt=hotspotAt;
 function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; var n=(GS.active==='mala'&&o.gname)?o.gname:o.name; return typeof n==='function'?n(S,GS):n; }
 E.nameOf=nameOf;
 // Mala und Marko als Gesprächsziele
-var MALA_HS={id:'_mala',name:'Mala',npc:'mala',hgt:46,talk:function(A){ return M.talkToMala?M.talkToMala(A):A.g('…'); },look:function(A){ return M.lookAtMala?M.lookAtMala(A):A.m('Mala. Durchscheinend, wenn das Licht von hinten kommt.'); }};
+var MALA_HS={id:'_mala',name:function(S,G){ return G.flags['mala.unknown']?'Schimmer':'Mala'; },npc:'mala',hgt:46,talk:function(A){ return M.talkToMala?M.talkToMala(A):A.g('…'); },look:function(A){ return M.lookAtMala?M.lookAtMala(A):A.m('Mala. Durchscheinend, wenn das Licht von hinten kommt.'); }};
 var MARKO_HS={id:'_marko',name:'Marko',npc:'marko',hgt:48,g:{talk:function(A){ return M.malaToMarko?M.malaToMarko(A):A.g('Er hört mich. Das reicht.'); },look:function(A){ return M.malaLooksAtMarko?M.malaLooksAtMarko(A):A.g('Er sieht müde aus. Er sieht immer müde aus.'); }}};
 E.MALA_HS=MALA_HS; E.MARKO_HS=MARKO_HS;
 async function respond(val,ctx){ if (val===undefined||val===null) return false; if (typeof val==='function'){ await val(API,ctx); return true; }
@@ -307,7 +336,9 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
   if (v==='pass' && hs.gexit) return takeExit(hs,typeof hs.gexit==='function'?hs.gexit(S,GS):hs.gexit);
   if (v==='walk' && isG && hs.exit && !ex){ E.busy=true; try{ await say(pick(['Ohne Marko komme ich nicht weit.','Dorthin gehe ich nicht ohne ihn.']),'mala'); } finally{ E.busy=false; } return; }
   if (v==='walk'){ if (lastClick && !hs.st && !hs.npc){ await walkActor(player(),lastClick[0],lastClick[1]); return; } if (hsStand(hs)) await approach(hs); return; }
+  if (hs.npc && ACT[hs.npc]) holdNpc(ACT[hs.npc]);
   var ok=await approach(hs); if (!ok||tok!==actionTok) return;
+  if (hs.npc && ACT[hs.npc]) holdNpc(ACT[hs.npc]);
   if (hs.npc && ACT[hs.npc] && hs.npc!=='mala' && hs.npc!=='marko'){ var na=ACT[hs.npc]; if (!hs.noTurn && na.mode!=='anim' && !na.frozen && !na.idle) await faceOn(na,na.x<player().x?'R':'L'); var tf=player().x<na.x?'R':'L'; if (player().f!==tf && !(isG&&hs.noTurn)) await faceOn(player(),tf); }
   E.busy=true;
   if ((v==='talk') && hs.npc) convStart(hs.npc);
@@ -318,7 +349,8 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
       else { var it=M.ITEMS[withItem], h=hs.with&&hs.with[withItem];
         if (h===undefined && hs.give && hs.give[withItem]!==undefined) h=hs.give[withItem];
         if (h===undefined && it.on && it.on[hs.id]!==undefined) h=it.on[hs.id];
-        if (h===undefined && hs===MALA_HS) h=it.mala!==undefined?it.mala:(M.showToMalaDefault||null);
+        if (h===undefined && hs===MALA_HS){ h=it.mala!==undefined?it.mala:(M.showToMalaDefault||null); if (typeof h==='string'){ var mt=h; h=function(A){ return A.g(mt); }; }
+          if (GS.flags['mala.voice'] && h){ var h0=h; h=async function(A,c){ await A.m('Ich halte einem Lichtfleck etwas hin. So weit ist es schon.'); return h0(A,c); }; } }
         if (h===undefined) h=hs.withAny;
         if (h!==undefined && h!==null) await respond(h,ctx); else await say(pick(hs.npc?DEF.m.give:DEF.m.usewith),'marko'); } }
     else { var val=verbHandler(hs,v);
@@ -357,7 +389,7 @@ function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]
       else { a.x=pos.x; a.y=pos.y; a.f=pos.f; } a.visible=!(k==='marko'&&room.noActor); }
     else if (ACT[k]) delete ACT[k]; }); }
 function placeActors(){ Object.keys(ACT).forEach(function(k){ delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
-  list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); ACT[o.id]=a; setIdle(a); }); placePlayers(); }
+  list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); a.home=[a.x,a.y,a.f]; if (o.routine!==false){ var rt=o.routine||(M.ROUTINES&&M.ROUTINES[o.id]); if (rt) a.routine=rt; } a.rtUntil=gt+1500+Math.random()*4000; ACT[o.id]=a; setIdle(a); }); placePlayers(); }
 function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }

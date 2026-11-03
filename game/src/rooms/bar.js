@@ -46,11 +46,14 @@ var HS=[
  {id:'sanja',npc:'sanja',name:'Sanja',hgt:40,vis:function(S,GS){ return open(GS); },talk:talkSanja,r:function(S,GS,a){ return [Math.round(a.x)-9,Math.round(a.y)-50,18,30]; },
    look:'Sanja. Kurze schwarze Haare, eine Schürze, ein Blick, der seit fünfzehn Jahren Gäste sortiert.',
    g:{look:'Sie mag ihn. Sie würde es nie sagen.',listen:async function(A){ if (!A.hasNote('c2_shop')) return A.g('Sie summt beim Spülen. Ein Lied von der Riva. Dann hört sie plötzlich auf.'); await A.g('Sie redet leise mit sich selbst: „Zwölf Jahre. Und jetzt kommt er mit den Namen.“'); }},
-   give:{ newspaper:'„Behalt sie. Ich habe zwei.“', tickets:async function(A){ var S=A.npc('sanja'); await S.say('Zwei Tickets nach Ancona …'); await A.wait(900); await S.say('Woher hast du die?'); await A.m('Aus der Ledana.'); return sanjaStory(A,S); } }},
+   give:{ letter_t:async function(A){ if (A.flag('c1.letterOpen')) return A.npc('sanja').say('Der ist doch offen. Lies ihn.'); return M.steamLetter(A,'bar'); },
+     newspaper:'„Behalt sie. Ich habe zwei.“', tickets:async function(A){ var S=A.npc('sanja'); await S.say('Zwei Tickets nach Ancona …'); await A.wait(900); await S.say('Woher hast du die?'); await A.m('Aus der Ledana.'); return sanjaStory(A,S); } }},
  {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:'Er schummelt. Nur ein bisschen. Seit vierzig Jahren.',listen:'Er zählt die Punkte laut und falsch.'}},
  {id:'frane',npc:'frane',name:'Frane',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Frane, Glatze mit weißem Kranz, die Karten fächerförmig vor der Nase.',g:{look:'Er lässt Stipe gewinnen, wenn Stipe traurig ist. Stipe merkt es nicht.',listen:'„Meine Frau hat immer gesagt, ich spiele schlecht.“ Er lächelt dabei.'}},
  {id:'counter',name:'Tresen',look:'Ein Tresen aus Zink und Holz, mit Ringen von zehntausend Tassen.',g:{look:'Hier lehnen sie alle, wenn sie nicht nach Hause wollen.'}},
- {id:'espresso',name:'Espressomaschine',look:'Eine verchromte Espressomaschine, älter als Sanja. Sie faucht wie ein Drache, der Kaffee macht.',use:'Niemand außer Sanja fasst diese Maschine an. Niemand.',g:{look:'Sie zischt. Ich mag das Geräusch.'}},
+ {id:'espresso',name:'Espressomaschine',look:'Eine verchromte Espressomaschine, älter als Sanja. Sie faucht wie ein Drache, der Kaffee macht. Aus dem Dampfrohr zischt es.',use:'Niemand außer Sanja fasst diese Maschine an. Niemand.',
+   with:{ letter_t:async function(A){ if (A.flag('c1.letterOpen')) return A.m('Er ist schon offen.'); if (!A.npc('sanja').actor) return A.m('Ohne Sanja fasse ich diese Maschine nicht an.'); await A.m('Darf ich?'); await A.npc('sanja').say('Finger weg von meiner Maschine, Marko.'); return M.steamLetter(A,'bar'); } },
+   g:{look:'Sie zischt. Ich mag das Geräusch.'}},
  {id:'bottles',name:'Flaschen',look:'Travarica, Pelinkovac, Maraschino, ein Whisky, den nie jemand bestellt.',g:{look:'Sie stehen da wie Zuschauer.'}},
  {id:'radio',name:'Radio',look:'Ein Radio, auf Sport gestellt. Hajduk verliert wahrscheinlich gerade. Auch wenn sie nicht spielen.',use:'Ich lasse es laufen. Das Radio gehört zur Bar wie die Bura.',g:{listen:'Fußball. Ein Mann schreit, weil ein anderer Mann gegen einen Ball getreten hat.',look:'Es redet für alle, die schweigen.'}},
  {id:'photos',name:'Mannschaftsfotos',look:'Hajduk, 1971, 1979, 1994. Männer mit Schnurrbärten und Hoffnung.',g:{look:'Alle lächeln. Fotos von damals lächeln immer.'}},
@@ -67,7 +70,9 @@ M.room('bar',{ name:'Bar „Bura“', scape:'bar',
     if (regulars(GS)){ var s=M.apos('bar','stipe',[214,124,'R']), f=M.apos('bar','frane',[252,124,'L']); L.push({id:'stipe',ch:'stipe',x:s[0],y:s[1],f:s[2]||'R',name:'Stipe',idle:'cards',speechY:40}); L.push({id:'frane',ch:'frane',x:f[0],y:f[1],f:f[2]||'L',name:'Frane',idle:'cards',speechY:40}); }
     return L; },
   hotspots:HS,
-  enter:async function(A,from){ A.S.angry=false; if (A.G.phase==='c2' && A.first('barC2')){ await A.m('Die Bar „Bura“. Bei Bura ist sie immer voll. Heute sind es zwei alte Männer und ich.'); } }
+  enter:async function(A,from){ A.S.angry=false;
+    if ((A.G.phase==='c1'||A.G.phase==='c1_night') && A.first('barC1')){ await A.m('Die Bar „Bura“. Mein Ecktisch, mein Kaffee. Sanja sieht mich an, als wüsste sie, dass ich nicht geschlafen habe.'); if (A.flag('mala.voice')) await A.g('Hier riecht es nach dir.'); }
+    if (A.G.phase==='c2' && A.first('barC2')){ await A.m('Die Bar „Bura“. Bei Bura ist sie immer voll. Heute sind es zwei alte Männer und ich.'); } }
 });
 M.defineScape('bar',function(o){ return { beds:['crowdFar','room'], step:'tile', ev:[['cups',3,8,0.8,-0.6,0.2],['cards',4,9,0.9,0.4,0.7],['espresso',20,45,0.7,-0.6,-0.3],['radio',8,16,0.6,-0.8,-0.5],['door',40,90,0.4,-1,-0.8]] }; });
 M.readNewspaper=async function(A){ var lead=['Ivka Perić hat siebenundzwanzig Jahre lang auf ein Schiff gewartet.','Jeden Abend um sieben ging Ivka Perić zur Riva.','Ivka Perić hinterlässt zwei Tassen und einen Stuhl am Fenster.'][A.G.flags.lead||0];

@@ -10,7 +10,7 @@ const DEFAULT = ['flat:pro', 'flat:pro_night', 'varos:pro', 'ivka:pro', 'riva:c1
   const list = process.argv.length > 3 ? process.argv.slice(3) : DEFAULT;
   const browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 640, height: 400 } });
   const errs = []; page.on('pageerror', e => errs.push(e.message));
-  await page.goto('file://' + path.join(__dirname, '..', '..', 'web', 'index.html')); await page.waitForTimeout(300);
+  await page.goto('file://' + (process.env.MALA_HTML||path.join(__dirname, '..', '..', 'web', 'index.html'))); await page.waitForTimeout(300);
   const shots = [];
   for (const spec of list) {
     const [roomId, phase, who] = spec.split(':');

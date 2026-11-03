@@ -23,16 +23,20 @@ var shop=M.ROOMS.shop; if (shop) shop.check=async function(A){ if (A.flag('c2.to
 // Reisebeschränkungen
 M.canTravel=async function(A,L){ var p=A.G.phase;
   if (p==='pro' && L.id!=='varos' && L.id!=='flat'){ await A.m('Heute nicht.'); return false; }
-  if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos'){ await A.m('Nicht jetzt.'); return false; }
+  if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos' && L.id!=='bar'){ await A.m('Nicht jetzt.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
 M.lookAtMala=async function(A){ var p=A.G.phase;
+  if (A.flag('mala.voice')) return A.m(A.cycle('mVoiceL',['Ein Flimmern in der Luft. Wie über heißem Asphalt. Im November.','Da ist nichts. Nur ein Lichtfleck, der nicht weggeht, wenn ich blinzle.','Wenn ich nicht hinsehe, ist es weg. Fast.']));
   if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.m(A.cycle('mDeny',['Ich sehe nicht hin. Wenn ich nicht hinsehe, ist da niemand.','Jeansjacke, grauer Schal. Ein Mädchen wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Ich sehe nicht hin.','Wenn das Licht von hinten kommt, sieht man durch sie hindurch. Das liegt am Licht.']));
   if (p==='c1'||p==='c1_night') return A.m('Mala. Jeansjacke, grauer Schal, weiße Turnschuhe. Kleidung wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Wenn das Licht von hinten kommt, sieht man durch sie hindurch.');
   if (p==='c3'||p==='c3_night') return A.m('Mala sieht sich nicht um. Hier sieht sie sich nicht um. Als kenne sie den Weg.');
   return A.m(A.cycle('mLook',['Mala. Sie hält die Hände in den Taschen der Jacke, eine um die Blechdose.','Sie sieht aus wie siebzehn. Sie spricht wie jemand, der sehr lange siebzehn war.','Durchscheinend, wenn das Licht von hinten kommt. Sonst fast nicht.'])); };
 M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.mala') && M.talkMalaEnd) return M.talkMalaEnd(A);
+  if (A.flag('mala.voice')){ if (A.room && A.room.id==='office' && A.flag('c1.searched') && M.voiceTest) return M.voiceTest(A);
+    await A.m(A.cycle('mVoiceT',['Ich rede nicht mit Lichtflecken.','Wenn ich antworte, ist es wahr. Also antworte ich nicht.','Nein.']));
+    return A.g(A.cycle('mVoiceA',['Du hast trotzdem hingesehen.','Ich warte. Ich kann gut warten.','Das ist auch eine Antwort.'])); }
   if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.menuLoop(function(){ return [
     {t:'Was willst du von mir?',once:'dn1',go:async function(A){ await A.g('Nichts. Sie braucht etwas. Nicht ich.'); await A.m('Sie braucht einen Arzt. Und ich auch.'); }},
     {t:'Du bist eine Einbildung.',once:'dn2',go:async function(A){ await A.g('Vielleicht.'); await A.wait(700); await A.g('Dann eine, die dir nichts tut.'); }},

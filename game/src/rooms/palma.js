@@ -137,21 +137,26 @@ async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.s
   await A.switchTo('mala'); await A.wait(400);
   await A.g('Bruno.'); await B.say('Mala. Iz trideset jedan.'); await A.g('Ich bringe dich hinaus.'); await B.say('Ne … ja … ja otvaram … vrata. Uvijek.');
   await A.g('Gut. Du öffnest die Tür.'); A.save(); }
-// Mala bringt Bruno hinüber (spielbar: als Mala „Hinüberbringen“)
+// Mala bringt Bruno hinüber (spielbar: als Mala „Hinüberbringen“) – Bruno öffnet die Tür, Marko geht mit bis an den Rand
 async function crossBruno(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.G.flags['mala.lock']=true;
   var d=M.spot('salon','door'), dx=d[0]+(d[2]>>1), dy=B.actor?Math.round(B.actor.y):118;
   await A.crossOpen(dx,dy+2,{w:16,h:72});
   if (B.actor){ B.set('speed',60); await B.walk(dx+10,dy); await B.face('L'); await B.anim('bow'); }
   await B.say('Izvolite.'); await A.wait(900); await A.g('Nach dir, Bruno.'); await A.wait(800);
-  await B.say('Hvala … mala.'); await A.wait(900); await B.say('Kommst … du … mit?'); await A.wait(1500); await A.g('Noch nicht.');
-  if (B.actor){ var w=B.walk(dx,dy); await A.wait(700); B.actor.fadeOut=A.gt; A.sfx('shimmer'); await w; }
-  await A.wait(1500); A.setFlag('c3.gone'); B.hide(); await A.crossClose(); await A.wait(900);
-  await A.switchTo('marko'); A.G.flags['mala.lock']=false;
-  await A.wait(2000); A.set('dawn',true); A.rebuild(); await A.wait(900);
+  await B.say('I … gospodin … ?'); await A.m('„Und der Herr?“'); await A.g('Er kommt mit. Bis an den Rand.');
+  A.sfx('shimmer'); await A.fade(-8,1200); await A.crossClose();
+  await M.enterLimbo(A,'bruno'); }
+// zurück im Salon: Morgengrauen, Ljerka am Flügel
+M.afterLimbo_bruno=async function(A){ A.G.flags['mala.lock']=false; var L=A.npc('ljerkaNight');
+  var p=M.apos('salon','ljerkaNight',[160,120,'R']); await A.goto('salon',{x:p[0]-30,y:p[1]+4,f:'R',fade:false,noEnter:true});
+  A.set('dawn',true); A.rebuild(); await A.fade(0,1100); L=A.npc('ljerkaNight'); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
+  await A.wait(1400);
   await L.say('Ich habe seit sechsunddreißig Jahren nicht gespielt.'); await A.m('Es klang wie jemand, der lange gewartet hat.');
+  await A.m('Gospođa Lalić. Ihr Vater … er hat mir etwas für Sie gegeben.'); await A.animM('give'); A.take('keyring'); A.sfx('chain');
+  await L.say('Seine Schlüssel.'); await A.wait(1100); await L.say('Die hatte er immer in der Hand. Auch im Krankenhaus.'); await A.m('Er hat Dienst übergeben.'); await A.wait(1200);
   await L.say('Ich weiß nicht, ob ich verkaufe. Vielleicht. Aber nicht am Montag.'); await L.say('Ihr Honorar. Nehmen Sie es, bevor ich es mir anders überlege.'); A.give('fee'); A.setFlag('c3.done');
   if (A.malaHere() && A.mala){ await A.wait(900); await A.animG('look'); await A.wait(800); A.mala.fadeOut=A.gt; await A.wait(1200); A.malaLeave(); await A.m('Mala?'); await A.wait(1500); await A.m('…'); }
-  A.save(); await A.fade(8,1600); await M.startEpilogue(A); }
+  A.save(); await A.fade(8,1600); await M.startEpilogue(A); };
 // ---------------------------------------------------------------- Hotspots Halle
 var HS=[
  {id:'door',name:'Eingangstür',exit:{to:'map'},look:'Die Drehtür zur Straße, verriegelt bis auf einen Flügel. Regen läuft am Glas herunter.',

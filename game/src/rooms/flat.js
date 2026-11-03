@@ -28,7 +28,7 @@ function paint(S,GS,tod){ var b=new M.Buf(320,144,P.k0), weather=M.scn.weather(G
   // ---- Bücherregal mit Wörterbüchern und dem umgedrehten Foto
   b.rect(121,28,30,70,P.w1); b.vl(121,28,97,P.w2); b.vl(150,28,97,P.w0);
   for (var s=0;s<4;s++){ var sy=34+s*16; M.prop.books(b,123,sy,26,12,40+s); b.hl(121,150,sy+12,P.w3); b.hl(121,150,sy+13,P.w0); }
-  b.rect(124,85,10,4,P.k2); b.rect(125,85,8,3,P.w0);  // umgedrehtes Foto (Rückseite)
+  if (S.photoUp){ b.rect(124,85,10,4,P.s5); b.rect(125,85,8,3,P.s3); b.px(127,86,P.s1); b.px(130,86,P.s1); b.hl(125,132,87,P.s2); } else { b.rect(124,85,10,4,P.k2); b.rect(125,85,8,3,P.w0); }  // das Foto (meist mit der Rückseite nach oben)
   b.rect(137,80,10,8,P.c2); b.hl(137,146,80,P.c3);    // Ordner
   // ---- Schreibtisch unter dem Fenster
   R3.box(b,148,234,80,98,0,15,{top:function(x,y){ return tex.boards(x,y*3,M.R('w2 w3 w4 w5'),5); },front:function(x,y){ return (y%7===0)?P.w1:P.w2; },left:P.w1});
@@ -85,15 +85,19 @@ function dyn(fb,v,S,GS){ var wx=WIN[0], wy=WIN[1], ww=WIN[2], wh=WIN[3], tod=v.t
   if (tod==='day') M.scn.gulls(fb,v.t,wx,wy+2,ww,12,2,0);
   if (S.ansBlink && Math.floor(v.gt/500)%2){ var am=R3.p(238,84,4); fb.px(Math.round(am[0])+8,Math.round(am[1])-3,P.r4); }
   if (v.tod!=='day') M.glow(fb,R3.p(226,80,4)[0]-6,R3.p(226,80,4)[1]-16,14,v.t,0.5);
+  if (S.tram && !S.tramWiped){ var tx=wx+5, ty=wy+(wh>>1)+5, tc=P.s5; for (var i=0;i<15;i++){ if ((i+Math.floor(v.t*0.5))%7) fb.px(tx+i,ty,tc); if (i%3) fb.px(tx+i,ty+7,tc); } for (var j=0;j<8;j++){ fb.px(tx,ty+j,tc); fb.px(tx+15,ty+j,tc); }
+    for (var q=0;q<3;q++){ fb.px(tx+3+q*4,ty+2,tc); fb.px(tx+4+q*4,ty+2,tc); fb.px(tx+3+q*4,ty+3,tc); fb.px(tx+4+q*4,ty+3,tc); } fb.px(tx+7,ty-1,tc); fb.px(tx+7,ty-2,tc); fb.px(tx+6,ty-3,tc); fb.px(tx+8,ty-3,tc);
+    M.microText(fb,'3',tx+12,ty+1,P.s6); fb.px(tx+3,ty+8,tc); fb.px(tx+12,ty+8,tc); for (var d=0;d<3;d++) fb.px(tx+2+d*5,ty+9+((d+Math.floor(v.t))%2),P.s4); }
   if (S.steam && v.gt<S.steam){ var sp=R3.p(80,76,16); for (var i=0;i<6;i++){ var yy=Math.round(sp[1]-6-((v.t*12+i*5)%18)), xx=Math.round(sp[0]+Math.sin(v.t*3+i)*2); fb.px(xx,yy,P.s5); } } }
 
 // ---------------------------------------------------------------- Hotspots
 function r(X0,X1,Y0,Y1,Z0,Z1){ return R3.rect(X0,X1,Y0,Y1,Z0,Z1); }
 var HS=[
  {id:'window',name:'Fenster',r:[WIN[0]-4,WIN[1]-2,WIN[2]+8,WIN[3]+4],st:R3.st(188,20,'B'),reach:'none',
-   look:function(A){ var t=A.G.tod; if (A.G.phase==='pro') return A.m('Der Hafen im Regen. Die Fähre nach Supetar legt ab, als hätte sie es nicht eilig. Seit drei Tagen Jugo. Seit drei Tagen Kopfschmerzen.');
+   look:function(A){ var t=A.G.tod; if (A.S.tram && !A.S.tramWiped) return lookTram(A); if (A.G.phase==='pro') return A.m('Der Hafen im Regen. Die Fähre nach Supetar legt ab, als hätte sie es nicht eilig. Seit drei Tagen Jugo. Seit drei Tagen Kopfschmerzen.');
      if (t==='night') return A.m('Unten liegen die Lichter der Riva im Wasser. Draußen ist alles still, nur das Meer nicht.');
      return A.m('Der Hafen. Fähren kommen, Fähren fahren. Ich habe aufgehört mitzuzählen.'); },
+   use:function(A){ if (A.S.tram && !A.S.tramWiped){ A.set('tramWiped',true); A.sfx('paper'); return A.m('Ich wische die Scheibe mit dem Ärmel ab. Dahinter ist nur der Hafen.'); } return A.m('Ich lehne die Stirn an die Scheibe. Sie ist kalt. Das hilft ein bisschen.'); },
    open:function(A){ if (A.S.winOpen){ A.set('winOpen',false); A.sfx('shutter'); return A.m('Ich mache es zu.'); } return A.m('Die Läden sind offen. Das Fenster bleibt zu. Der Jugo drückt den Regen sonst bis aufs Bett.'); },
    g:{look:'Von hier sieht man die Mole. Ich stehe oft hier, wenn er schläft.',sense:'Hier hat er viele Nächte gestanden. Der Nachhall ist müde, nicht mehr.'}},
  {id:'laptop',name:'Laptop',r:[172,62,26,18],st:R3.st(188,22,'B'),reach:'M',
@@ -115,8 +119,10 @@ var HS=[
    g:{look:'Eine Maschine, die für ihn zuhört. Ich kenne das.'}},
  {id:'shelf',name:'Bücherregal',r:[121,28,30,52],st:R3.st(136,20,'B'),look:'Wörterbücher. Deutsch, Italienisch, Englisch. Die einzigen, die mir nie widersprechen.',take:'Ich brauche heute keine Wörter. Ich habe zu viele.',g:{look:'Bücher voller Wörter für Dinge, die man trotzdem nicht sagt.'}},
  {id:'photo',name:'umgedrehtes Foto',r:[123,83,12,7],st:R3.st(130,20,'B'),reach:'M',
-   look:function(A){ if (A.first('photoLook')) return A.m('Ein Foto, mit dem Bild nach unten. Das liegt da schon lange so.'); return A.m('Es liegt richtig so.'); },
-   take:async function(A){ if (!A.first('photoTurn')) return A.m('Einmal reicht.'); await A.reach(); await A.memory({title:'Ein altes Foto',tint:'memory',draw:M.drawMarkoPhoto,lines:['Ein Junge in einem gestreiften Pullover. Neben ihm eine alte Frau mit Kopftuch.','Hinter ihnen eine Straßenbahn. Auf der Tafel: 3.','Ich lege es zurück. Mit dem Bild nach unten.']}); A.setFlag('pro.photo'); },
+   look:async function(A){ if (A.S.photoUp){ await A.m('Das Foto liegt mit dem Bild nach oben. Ein Junge, eine alte Frau, eine Straßenbahn.'); await A.m('Ich habe es nicht umgedreht. Ich weiß, dass ich es nicht umgedreht habe.'); if (A.malaHere()) await A.g('Der Pullover war dir zu groß.'); return; }
+     if (A.first('photoLook')) return A.m('Ein Foto, mit dem Bild nach unten. Das liegt da schon lange so.'); return A.m('Es liegt richtig so.'); },
+   take:async function(A){ if (A.S.photoUp){ await A.reach(); A.set('photoUp',false); A.sfx('paper'); return A.m('Ich drehe es wieder um. Mit dem Bild nach unten. So gehört es.'); }
+     if (!A.first('photoTurn')) return A.m('Einmal reicht.'); await A.reach(); await A.memory({title:'Ein altes Foto',tint:'memory',draw:M.drawMarkoPhoto,lines:['Ein Junge in einem gestreiften Pullover. Neben ihm eine alte Frau mit Kopftuch.','Hinter ihnen eine Straßenbahn. Auf der Tafel: 3.','Ich lege es zurück. Mit dem Bild nach unten.']}); A.setFlag('pro.photo'); },
    g:{look:'Er dreht es nicht um. Ich weiß trotzdem, was darauf ist.',sense:async function(A){ await A.g('Ein Winter. Kohlenrauch. Jemand lacht über den Pullover, weil er zu groß ist.'); await A.g('…Mehr will ich nicht sehen.'); }}},
  {id:'wardrobe',name:'Schrank',r:r(76,116,22,98,0,14),st:R3.st(96,20,'B'),look:'Ein Schrank aus Nussholz, älter als das Haus. Er gehörte schon zur Wohnung.',open:'Hemden. Zwei gute, fünf andere. Ein Anzug für Beerdigungen. Er hängt öfter draußen, als mir lieb ist.',g:{look:'Ein Schrank. Darauf der Karton.'}},
  {id:'box',name:'Karton „SARAJEVO“',r:r(82,108,12,22,3,12),st:R3.st(96,20,'B'),reach:'H',
@@ -131,7 +137,9 @@ var HS=[
    with:{dzezva:async function(A){ await A.reach(); A.sfx('pour'); A.take('dzezva'); A.give('dzezvaW'); await A.m('Kaltes Wasser, bis knapp unter den Rand.'); }, dzezvaW:'Da ist schon Wasser drin.'},
    g:{look:'Wasser, das nirgends hinwill.'}},
  {id:'stove',name:'Herd',r:R3.rect(72,92,73,80,10,26),st:R3.st(98,24,'L'),reach:'M',look:'Zwei Platten. Eine funktioniert.',use:'Den Herd anstellen und nichts darauf? So weit bin ich noch nicht.',
-   with:{dzezva:'Erst Wasser. Sonst kocht nur das Messing.', dzezvaW:function(A){ return makeCoffee(A); }},
+   with:{dzezva:'Erst Wasser. Sonst kocht nur das Messing.', dzezvaW:function(A){ if (A.G.phase==='pro') return makeCoffee(A); return boilWater(A); },
+     letter_t:async function(A){ if (A.flag('c1.letterOpen')) return A.m('Er ist schon offen.'); if (A.S.steam && A.gt<A.S.steam){ await A.reach(); await M.steamLetter(A,'flat'); A.set('steam',0); A.set('dzezvaTaken',false); return; }
+       return A.m(A.cycle('letterFire',['Direkt über die Flamme? Dann habe ich Asche statt eines Briefs.','Über eine kalte Platte? Da passiert gar nichts.'])); }},
    g:{look:'Er stellt jeden Morgen dasselbe darauf. Das ist schön, glaube ich.'}},
  {id:'fridge',name:'Kühlschrank',r:R3.rect(72,96,54,98,56,74),st:R3.st(100,60,'L'),look:'Ein Kühlschrank, der seit 1987 brummt.',open:'Eine Zitrone, ein Glas Senf, zwei Bier. Ein Stillleben.',g:{look:'Er brummt. Für mich klingt das wie ein Lied ohne Worte.'}},
  {id:'bed',name:'Bett',r:r(236,262,86,98,12,52),st:R3.st(226,40,'R'),reach:'L',
@@ -154,6 +162,9 @@ async function playMessage(A){ A.set('ansBlink',false); A.sfx('beep'); await A.w
   A.sfx('beep'); A.setFlag('pro.msg'); A.note('pro_auftrag'); A.note('pro_zdenka',true); A.unlock('varos');
   await A.m('Die Stillen. Menschen, die allein sterben, bekommen in Vesnas Zeitung zweitausend Zeichen. Mehr, als die meisten im Leben bekommen.');
   }
+async function lookTram(A){ await A.m('Auf der beschlagenen Scheibe hat jemand eine Straßenbahn gemalt. Mit dem Finger. Vorne eine Drei.'); A.note('m_tram');
+  if (A.malaHere()) await A.g('Die Drei fährt bis ganz nach hinten.'); await A.wait(500); await A.m('Ich war es. Im Halbschlaf. Wer sonst.'); }
+async function boilWater(A){ await A.reach(); A.take('dzezvaW'); A.set('steam',A.gt+45000); A.sfx('boil'); await A.m('Wasser aufsetzen. Kein Kaffee diesmal. Nur Dampf.'); }
 async function makeCoffee(A){ await A.reach(); A.take('dzezvaW'); A.set('steam',A.gt+4500); A.sfx('boil');
   await A.m('Wasser aufsetzen. Kaffee hinein, wenn es summt. Warten, bis er steigt. Nicht rühren.'); await A.wait(800); A.sfx('boil');
   await A.walk(192,108); await A.face('B'); await A.anim('drink'); A.sfx('horn');

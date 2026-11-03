@@ -98,7 +98,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), x, y, i, k;
   function inDoor(x,y){ return M.inPoly(x+0.5,y+0.5,inner); }
   M.light(b,LF); finishLit(b,lit);
   // der Koffer erst nach dem Licht, in festen Farben (bleibt lesbar)
-  if (!S.caseOpen) caseClosed(b,CASE.x,CASE.y); else caseOpen(b,CASE.x,CASE.y);
+  if (S.caseOut){ if (!S.caseOpen) caseClosed(b,CASE.x,CASE.y); else caseOpen(b,CASE.x,CASE.y); }   // erst, wenn Marko ihn aus dem Schutt gezogen hat
   // Lichtkante am Deckenloch und in der Tür
   for (x=rnd(hp[0][0])+2;x<rnd(hp[1][0])-2;x++){ if (hash(x,3)<0.6) b.px(x,rnd(hp[0][1])+1,P.s5); }
   return b; }

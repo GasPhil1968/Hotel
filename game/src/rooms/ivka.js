@@ -22,12 +22,16 @@ var HS=[
  {id:'table',name:'Tisch',look:'Ein Tisch mit Wachstuch, Zitronenmuster. Darauf zwei Tassen und ein Schuhkarton mit einem Band darum.'},
  {id:'cups',name:'Zwei Tassen',look:'Zwei Tassen. Eine mit einem braunen Rand vom Kaffee. Die andere so sauber, als würde sie jeden Tag gespült, ohne je benutzt zu werden.',take:'Nein. Die gehören zusammen.'},
  {id:'shoebox',name:'Schuhkarton',look:function(A){ return A.m(A.S.boxOpen?'Briefe, in Bündeln, nach Jahren sortiert. 1982, 1983, 1984.':'Ein Schuhkarton, mit einem roten Band verschnürt. „Tonći“ steht darauf, in alter Schrift.'); },
-   open:async function(A){ if (A.has('postcard')) return A.m('Ich habe, was ich brauche. Der Rest gehört ihr.'); await A.reach(function(){ A.set('boxOpen',true); A.sfx('paper'); });
+   open:async function(A){ if (A.has('postcard')) return A.m('Ich habe, was ich brauche. Der Rest gehört ihr.');
+     if (!A.S.knotOpen){ await A.reach(); return A.m(A.cycle('knot',['Das rote Band ist zu einem kleinen, harten Knoten gezogen. Mit den Fingern bekomme ich ihn nicht auf.','Zerschneiden will ich es nicht. Sie hat es so gebunden.'])); }
+     await A.reach(function(){ A.set('boxOpen',true); A.sfx('paper'); });
      await A.m('Briefe von Brač. Jeden Freitag einer, drei Jahre lang. Ganz oben eine Postkarte, die nicht zu den anderen gebündelt ist.'); A.give('postcard'); return M.readPostcard(A); },
-   take:'Den ganzen Karton? Nein. Er gehört hierher.'},
+   take:'Den ganzen Karton? Nein. Er gehört hierher.',
+   with:{ needle:async function(A){ if (A.S.knotOpen) return A.m('Der Knoten ist schon auf.'); await A.reach(); A.sfx('click'); A.set('knotOpen',true); A.take('needle'); await A.m('Mit der Spitze der Nadel lockere ich den Knoten, Schlinge für Schlinge. Das Band bleibt ganz.'); await A.m('Die Nadel lege ich zurück in den Korb.'); } }},
  {id:'calendar',name:'Kalender',look:'Ein Kalender der Apotheke, 2011. An jedem Tag ein kleiner Strich und eine Sieben. Bis zum zehnten November.',take:'Den nimmt am Freitag die Stadt mit. Oder niemand.'},
  {id:'icon',name:'Heiligenbild',look:'Der heilige Nikolaus mit einem Schiff in der Hand. Davor ein leeres Kerzenglas.'},
- {id:'basket',name:'Nähkorb',look:'Stricknadeln, graue Wolle und ein halber Pullover in Männergröße. Die Wolle ist alt. Die Nadeln nicht.',take:'Nein.'},
+ {id:'basket',name:'Nähkorb',look:'Stricknadeln, graue Wolle und ein halber Pullover in Männergröße. Die Wolle ist alt. Die Nadeln nicht.',
+   take:async function(A){ if (A.has('needle')) return A.m('Eine reicht.'); if (A.S.knotOpen) return A.m('Ich brauche nichts mehr daraus.'); await A.reach(function(){ A.give('needle'); }); await A.m('Eine Stricknadel. Ich leihe sie mir. Nur kurz.'); }},
  {id:'bed',name:'Bett',look:'Ordentlich gemacht, die Häkeldecke glattgestrichen. Als hätte sie gewusst, dass jemand kommt.'},
  {id:'coat',name:'Schwarzer Mantel',look:'Ein schwarzer Wollmantel am Haken. In den Taschen ein Taschentuch und ein Rosenkranz. Der Stoff ist an den Taschen dünn, von Händen, die sich wärmen wollten.',take:'Den lasse ich hängen.'},
  {id:'clock',name:'Wanduhr',look:'Eine Wanduhr. Sie geht noch. Jemand hat sie vor Kurzem aufgezogen. Zdenka, nehme ich an.'},

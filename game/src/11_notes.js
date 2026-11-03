@@ -33,11 +33,15 @@ M.defineNotes({
   c1_words:{c:'c1',t:'Tonćis letzte Worte im Wasser: „Halt die Tasche! Sie ist für Mama!“',s:'Tonćis letzte Worte.'},
   c1_candle:{c:'c1',t:'An Dinkos Wand: Tonćis Foto, ein Kerzenstummel. Jedes Jahr am 22. Dezember.'},
   c1_story:{c:'c1',t:'Dinko: Tonći wollte sein Versprechen halten. Sie fuhren trotz Bura mit der ANKICA los.'},
+  c1_stuck:{c:'c1',t:'Tonćis Brief: Das Salz hat die Seiten zusammengebacken. Trocken bekomme ich ihn nicht auf, ohne dass er reißt.'},
   c1_letter:{c:'c1',t:'Tonćis Brief: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen.“',s:'Tonćis Brief, ganz gelesen.'},
   c1_plaque:{c:'c1',t:'In Sustipan steht Tonćis Name auf der Tafel „Denen, die das Meer behielt“.'},
   c1_jakov:{c:'c1',t:'Jakov: „Jedes Jahr kommt ein Mann und steht vor dieser Tafel.“'},
   // Mala
-  m_find:{c:'mala',t:'Mala: „Du kannst mit ihnen reden. Ich kann sie finden.“'},
+  m_find:{c:'mala',t:'Nachts, in der Scheibe: „Du kannst mit ihnen reden. Ich kann sie finden.“'},
+  m_voice:{c:'mala',t:'Auf der Mole, hinter mir, eine Stimme: „Du siehst sie also auch.“ Hinter mir war niemand.'},
+  m_tram:{c:'mala',t:'Auf der beschlagenen Scheibe in meiner Wohnung: eine Straßenbahn mit einer Drei. Ich habe sie nicht gemalt.'},
+  m_name:{c:'mala',t:'Die Stimme hat einen Namen: Mala. „So sagt man zu kleinen Mädchen.“ – „Es reicht.“'},
   m_horn:{c:'mala',t:'Mala hält inne, wenn ein Fährenhorn tutet.'},
   m_bells:{c:'mala',t:'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“'},
   m_leash:{c:'mala',t:'Mala sieht an Ivka eine Leine aus Licht, festgemacht am Poller. „Wie ein Boot, das niemand mehr losmacht.“'},
@@ -62,6 +66,8 @@ M.defineNotes({
   c2_date:{c:'c2',t:'Für Luka ist heute der 23. August 1999.'},
   c2_guitar:{c:'c2',t:'Luka hat seine Gitarre im Kühlraum der Ledana versteckt.'},
   c2_mailbox:{c:'c2',t:'Luka und Nina lassen sich Zettel im „Briefkasten“: dem lockeren Ziegel an der Rampe.'},
+  c2_dark:{c:'c2',t:'Im Kühlraum ist es stockdunkel. Ich sehe meine eigene Hand nicht.'},
+  c2_under:{c:'c2',t:'Mala: Unter dem Schutt im Kühlraum liegt ein Koffer. Er hat ihn dort versteckt, bevor die Decke kam.'},
   c2_case:{c:'c2',t:'Mala: Im Kühlraum liegt Lukas Gitarrenkoffer. Darin zwei Tickets und eine Kassette.'},
   c2_paper:{c:'c2',t:'Mala: Hinter dem lockeren Ziegel steckt ein gefaltetes Papier.'},
   c2_thin:{c:'c2',t:'Der Ziegel sitzt fest in der Fuge. Mit dem Brecheisen käme die halbe Wand mit.'},
@@ -114,4 +120,39 @@ M.defineDeductions({
   'c3_zagreb+c3_accept':{to:'c3_hid',say:'„Dorthin, wo sie nicht mehr spielt.“ In den Klavierhocker. Er hat es ihr nie gesagt.'},
   'c3_zagreb+c3_wanted':{to:'c3_hid',if:function(GS){ return GS.notes.indexOf('c3_accept')>=0; },no:'Ich ahne es. Aber ich habe den Brief noch nicht gefunden.',say:'Sie wollte nach Zagreb. Und der Brief aus Zagreb kam nie bei ihr an.'}
 });
+// ---------------------------------------------------------------- Register: Gruppe, kurzer Titel, wann eine Notiz erledigt ist
+M.NOTE_GROUPS={ c1:['Ivka','Tonći','Das Boot','Dinko'], c2:['Luka','Nina','Die Ledana'], c3:['Bruno','Ljerka','Das Nachtbuch','Brunos Bilder'], mala:['Die Stimme','Mala'] };
+function inv(id){ return function(G){ return G.inv.indexOf(id)>=0; }; }
+function flag(k){ return function(G){ return !!G.flags[k]; }; }
+function rs(room,k){ return function(G){ return !!(G.rooms[room]&&G.rooms[room][k]); }; }
+var META={
+  pro_auftrag:['Ivka','Der Auftrag: 2.000 Zeichen',flag('pro.article')], pro_zdenka:['Ivka','Zdenka hat den Schlüssel',flag('pro.visited')], pro_riva:['Ivka','Jeden Abend zur Riva'],
+  pro_sohn:['Tonći','Der Sohn kam nicht heim'], pro_notice:['Ivka','Die Todesanzeige'],
+  c1_boat7:['Tonći','Das Boot um sieben'], c1_dinko:['Tonći','„Dinko kommt mit.“'], c1_gift:['Tonći','„Ich bringe dir etwas mit.“'], c1_ankica:['Das Boot','Foto: die ANKICA, 1984'],
+  c1_radio:['Ivka','Das Radio ging an'], c1_waits:['Ivka','Sie wartet an der Mole'], c1_date:['Ivka','Für sie ist der 22.12.1984'], c1_askoffice:['Ivka','„Fragen Sie im Hafenbüro.“',['c1_ferry']],
+  c1_years:['Ivka','Nachhall am Poller'], c1_nobook:['Das Boot','Der Band 1984 fehlt',['c1_1948','c1_ferry']], c1_1948:['Das Boot','Der Band steht bei „1948“',['c1_ferry']],
+  c1_ferry:['Das Boot','Die Fähre fiel aus'], c1_capsized:['Das Boot','21:40: die ANKICA kentert'], c1_rescued:['Das Boot','Gerettet: nur Dinko'],
+  c1_matejuska:['Dinko','Dinko an der Matejuška',['c1_brother','c1_story','c1_bag']], c1_came:['Tonći','Tonći kam mit der ANKICA'], c1_aboard:['Das Boot','Beide auf der ANKICA'],
+  c1_never:['Dinko','Dinko war nie bei Ivka'], c1_noglove:['Ivka','Ivka trug nie Handschuhe'], c1_brother:['Dinko','„Er war wie ein Bruder.“',['c1_story']], c1_bag:['Dinko','Der Seesack mit T.P.',['c1_story']],
+  c1_words:['Dinko','Tonćis letzte Worte',['c1_story']], c1_candle:['Dinko','Die Kerze am 22. Dezember',['c1_story']], c1_story:['Dinko','Dinkos Geschichte'], c1_letter:['Tonći','Tonćis Brief, ganz gelesen'],
+  c1_plaque:['Tonći','Die Tafel in Sustipan'], c1_jakov:['Tonći','Ein Mann vor der Tafel'],
+  m_find:['Die Stimme','„Ich kann sie finden.“'], m_voice:['Die Stimme','Eine Stimme hinter mir'], m_tram:['Die Stimme','Die Straßenbahn auf der Scheibe'], m_name:['Mala','Sie heißt Mala'],
+  c1_stuck:['Tonći','Der Brief klebt zusammen',flag('c1.letterOpen')], c2_dark:['Die Ledana','Der Kühlraum ist dunkel',['c2_case']], c2_under:['Luka','Unter dem Schutt: ein Koffer',['c2_case']], m_horn:['Mala','Das Fährhorn'], m_bells:['Mala','Die Glocken sind ihr zu laut'], m_leash:['Mala','Die Leine aus Licht'], m_tin:['Mala','Die Blechdose: „Meins.“'],
+  m_mother:['Mala','„Wo ist deine Mutter?“'], m_flight:['Mala','„Auch auf der Flucht?“'], m_sarajevo:['Mala','Sie kennt Sarajevo'], m_jakov:['Mala','Jakov kennt sie'], m_waited:['Mala','Sie hat gewartet'],
+  m_31:['Mala','„Die Kleine aus 31“'], m_register:['Mala','Register 1993, Zimmer 31'], m_journal:['Mala','Die Kleine auf der Treppe'], m_chalk:['Mala','Kreide: Straßenbahn 3'],
+  c2_demolish:['Die Ledana','Abriss am Montag'], c2_boy:['Die Ledana','1999 starb dort ein Junge',['c2_luka','c2_died']], c2_stairs:['Die Ledana','Die morsche Treppe'], c2_gap:['Die Ledana','Loses Zaunfeld',rs('matejuska','cratesMoved')],
+  c2_luka:['Luka','Luka oben auf der Galerie'], c2_meet:['Luka','Treffpunkt: der Kiosk'], c2_ferry:['Luka','Die Fähre um 21:00'], c2_date:['Luka','Für ihn ist der 23.8.1999'],
+  c2_guitar:['Luka','Die Gitarre im Kühlraum',['c2_case']], c2_mailbox:['Luka','Der Briefkasten-Ziegel',['c2_note']], c2_case:['Luka','Tickets und Kassette'], c2_paper:['Die Ledana','Papier hinter dem Ziegel',['c2_note']],
+  c2_thin:['Die Ledana','Der Ziegel sitzt fest',['c2_note']], c2_died:['Luka','Luka starb an der Treppe'], c2_stayed:['Nina','Nina ist geblieben'], c2_shop:['Nina','Ninas Laden „Okvir“'], c2_riva:['Nina','Nina hörte ihm zu'],
+  c2_unused:['Nina','Ninas Ticket, unbenutzt'], c2_paintings:['Nina','Ninas Bilder'], c2_echo:['Nina','Nachhall am Kiosk'], c2_waited:['Nina','Nina hat am Kiosk gewartet'],
+  c2_mira1:['Nina','Mira: das Mädchen am Kiosk'], c2_mira2:['Luka','Mira: zwei Tickets'], c2_note:['Nina','Ninas Zettel von 1999'], c2_tape:['Luka','„Sag ihr, ich hab ein Lied.“'], c2_tonight:['Nina','„Heute Abend.“'],
+  c3_job:['Ljerka','Übersetzungen bis Montag'], c3_father:['Ljerka','Bruno, der Nachtportier'], c3_salon:['Ljerka','Der Salon, seit 1993 zu'], c3_dance:['Das Nachtbuch','Sonntags Tanz im Salon'],
+  c3_danica:['Das Nachtbuch','3.3.1975: Danica stirbt'], c3_zagreb:['Das Nachtbuch','„…wo sie nicht mehr spielt.“'], c3_kids:['Das Nachtbuch','1993: Kinder im Salon'], c3_stroke:['Das Nachtbuch','Das Buch bricht ab'],
+  c3_bruno:['Bruno','Bruno in der Portiersloge'], c3_f13:['Bruno','„trinaest … Haken“',inv('keyring')], c3_fcrank:['Bruno','„nema glazbe … ručka“',rs('palma','crankFound')], c3_fletter:['Bruno','„Ljerka … pismo“'],
+  c3_img_coat:['Brunos Bilder','Ein Mantel an Haken 13',inv('keyring')], c3_img_crank:['Brunos Bilder','Die versteckte Kurbel',rs('palma','crankFound')], c3_img_hands:['Brunos Bilder','Kleine Hände am Klavier'], c3_img_env:['Brunos Bilder','Umschlag mit rotem Stempel'],
+  c3_sunday:['Bruno','„Danica. Jeden Sonntag.“'], c3_wanted:['Bruno','„Sie wollte nach Zagreb.“'], c3_bench:['Brunos Bilder','Etwas im Klavierhocker',['c3_accept']], c3_accept:['Ljerka','Die Zusage aus Zagreb'],
+  c3_unfinished:['Bruno','„Ljerka, ja sam …“'], c3_hid:['Bruno','Bruno hat sie versteckt'], c3_message:['Bruno','Brunos Botschaft']
+};
+Object.keys(META).forEach(function(id){ var n=M.NOTES[id], m=META[id]; if (!n) return; n.g=m[0]; n.s=m[1]; if (Array.isArray(m[2])) n.doneBy=m[2]; else if (typeof m[2]==='function') n.doneIf=m[2]; });
+Object.keys(M.NOTES).forEach(function(id){ if (!M.NOTES[id].g) console.warn('Notiz ohne Gruppe: '+id); });
 })(M);

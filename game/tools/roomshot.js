@@ -5,7 +5,7 @@ const path = require('path'), fs = require('fs'), os = require('os'), cp = requi
 const argv = process.argv.slice(2), arg = (k, d) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; }, has = k => argv.indexOf(k) >= 0;
 (async () => {
   const roomId = arg('--room'), phase = arg('--phase', 'c1'), out = arg('--out', 'shot.png'), who = arg('--who', 'marko'), cam = arg('--cam'), rooms = arg('--rooms');
-  let html = path.join(__dirname, '..', '..', 'web', 'index.html');
+  let html = process.env.MALA_HTML || path.join(__dirname, '..', '..', 'web', 'index.html');
   if (rooms) { const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mala-')); cp.execFileSync('node', [path.join(__dirname, '..', 'build.js'), '--out', dir, '--rooms', rooms], { stdio: 'inherit' }); html = path.join(dir, 'index.html'); }
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });

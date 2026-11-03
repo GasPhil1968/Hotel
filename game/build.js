@@ -1,7 +1,7 @@
 // Baut das Spiel zu einer einzigen HTML-Datei (web/index.html) – wie beim Original: keine Bilddateien, alles Code.
 // Aufruf: node game/build.js
 const fs = require('fs'), path = require('path');
-const SRC = path.join(__dirname, 'src');
+const SRC = (process.argv.indexOf('--src') >= 0 ? require('path').resolve(process.argv[process.argv.indexOf('--src') + 1]) : path.join(__dirname, 'src'));
 const argv = process.argv.slice(2), arg = (k) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : null; };
 const OUT = arg('--out') || path.join(__dirname, '..', 'web');
 const ONLY = arg('--rooms') ? arg('--rooms').split(',') : null;   // nur diese Räume (Kunst + Logik), Rest weglassen
