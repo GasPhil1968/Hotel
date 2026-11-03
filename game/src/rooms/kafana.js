@@ -19,6 +19,7 @@ async function talkEmina(A){ var E=A.npc('emina'), p=A.G.phase;
       s1_waited:async function(A){ await E.say('Wer hat Ihnen das erzählt?'); await A.wait(600); await E.say('Lejla. Natürlich.'); await A.wait(500); await E.say('Ich habe nichts dazu zu sagen.'); },
       s1_alaturka:'Die Kula geht richtig. Die anderen Uhren gehen falsch.', s1_married:'Das geht Sie nichts an.', s1_curfew:'Soldaten. Die mussten immer irgendwo sein.',
       s1_note:async function(A){ await E.say('…'); await A.wait(900); await E.say('„Kad kula udari sedam.“ Das habe ich geschrieben.'); await A.wait(700); await E.say('Woher wissen Sie das?'); await A.m('Er hat den Zettel noch.'); await E.say('Raus.'); return 'bye'; } },'Kaffee. Mehr gibt es hier nicht.'),
+    ...M.k2Extra('emina',A,E),
     {t:'Danke.',bye:true}
   ]; }); }
 async function eminaMissed(A,E){ if (A.flag('k2.s1.nowriteAsked')){ await E.say('Und warum hat er nie geschrieben? Sagen Sie mir das.'); return; }
@@ -60,6 +61,7 @@ async function talkLejla(A){ var L=A.npc('lejla'), p=A.G.phase;
     A.askOpt({ s1_waited:'Das hat sie gesagt? Zu mir? Ich dachte, sie redet vom Wetter. Bei Oma ist alles Wetter.', s1_tomaz:'Ein Soldat unter der Uhr? Sie sehen auch zu viele Filme.',
       s1_note:'„Wenn die Kula sieben schlägt“? Das ist so altmodisch, dass es schon wieder schön ist.', s1_twosevens:async function(A){ await L.say('Ha. Zwei Siebenen. Das ist wie bei meinen Eltern: Sie sagt sieben, er kommt um neun.'); await L.say('Wenn du wissen willst, wann damals die Sonne unterging: Der alte Kabiljo in der Passage an der Ferhadija hat alte Takvime. Er hat alles Alte. Er ist selbst alt.'); A.unlock('ferhadija'); },
       s1_nowrite:'Briefe? Oma bekommt keine Briefe. Nur Rechnungen. Und die versteckt sie.', s1_father:'Uropa Halid. Den kenne ich nur vom Foto. Er sieht auf allen Fotos aus, als würde er gleich jemanden rauswerfen.' },'Keine Ahnung. Ich bin sechzehn.'),
+    ...M.k2Extra('lejla',A,L),
     {t:'Bis später, Lejla.',bye:true,go:async function(A){ await L.say('Ciao, Übersetzer.'); }}
   ]; }); }
 async function lejlaLetter(A,L){ await L.say('Okay. Aber nicht lachen.'); A.give('lejla_letter'); await A.m('Ich lache nie über Briefe.'); return M.k2LejlaLetter(A); }
@@ -91,6 +93,7 @@ async function talkSacir(A){ var Sc=A.npc('sacir');
     {t:'(Lauter.) Wie war Halid?',once:'sc2',go:async function(A){ await Sc.say('Halid war ein Vater. Ein Vater von damals. Er hat seine Tochter mehr geliebt als sie ihn.'); await Sc.say('Das ist kein Lob, mein Sohn.'); }},
     A.askOpt({ s1_tomaz:'Unter der Uhr? Da steht keiner. Da stand nur einmal einer, lange.', s1_alaturka:'Die Kula! Ich habe nach der Kula gelebt. Bei Sonnenuntergang war Feierabend, egal was die Uhr sagte.', s1_waited:'Emina hat gewartet? Wann? Sie hat immer gewartet. Auf was, weiß keiner.',
       s1_curfew:'Halb zwölf, ja, die Soldaten. Wie Aschenputtel.', s1_missed:'Elf Minuten …? Ach, mein Sohn. Ach.', s1_hidden:'Hinter den Spiegel? Halid? Der hat da sein Geld versteckt. Und nicht nur Geld, wie es scheint.' },'WAS? Sagen Sie es lauter.'),
+    ...M.k2Extra('sacir',A,Sc),
     {t:'(Lauter.) Danke, Gospodine Šaćir.',bye:true,go:async function(A){ await Sc.say('Spielen Sie Domino? Nein? Schade. Keiner spielt mehr.'); }}
   ]; }); }
 // ---------------------------------------------------------------- Tomažs Briefe (Slowenisch)

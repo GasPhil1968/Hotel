@@ -15,6 +15,7 @@ async function talkNada(A){ var N=A.npc('nada');
     A.askOpt({ f2_memory:async function(A){ await N.say('Du erinnerst dich.'); await A.wait(800); await N.say('Ich dachte, du hast sie vergessen. Du hast nie geschrieben. Keiner von euch hat je geschrieben.'); await A.m('Ich habe sie vergessen. Und jetzt nicht mehr.'); },
       f2_postcard:'„Ich hole Mali.“ Ich habe nie verstanden, was sie damit meinte. Du warst doch in Vratnik. Was gab es da zu holen?', m2_lana:'Lana Delić. Geboren am dritten März sechsundsiebzig. Sie hat geschrien wie eine Sirene, ganze Nächte. Esad hat gesagt, das wird eine Sängerin. Es wurde eine Malerin.',
       f2_rcm:'Eine Nachricht vom Roten Kreuz? An dich? Und Ruža hat …', f2_cameback:'Sie ist losgefahren, um dich zu holen. Natürlich. Natürlich ist sie das.' },'Ich weiß nichts. Ich weiß seit siebzehn Jahren nichts.'),
+    ...M.k2Extra('nada',A,N),
     {t:'Danke, Frau Delić.',bye:true,go:async function(A){ await N.say('Nada. Du hast früher Teta Nada gesagt.'); }}
   ]; }); }
 async function openRoom(A,N){ await N.say('…'); await A.wait(1200); await N.say('Siebzehn Jahre habe ich die Tür nicht aufgemacht.'); await A.wait(900); await N.anim('sit'); await N.say('Den Schlüssel trage ich um den Hals. Wie ein Kreuz. Ich glaube nicht an Kreuze.');

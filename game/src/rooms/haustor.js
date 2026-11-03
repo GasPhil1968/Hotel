@@ -20,6 +20,7 @@ async function talkDragica(A){ var D=A.npc('dragica'), p=A.G.phase;
       m2_marko7:'Siebter Stock, links. Deine Mutter hat die besten Pita gemacht. Dein Vater hat jeden Sonntag das Auto gewaschen, obwohl es nie gefahren ist.', m2_f_ninth:'Neunter Stock. Der Aufzug ging nie. Nie! Fünfundzwanzig Jahre Aufzug, und er ging nie.',
       s3_hanka:'Hanka, Šehićs Frau. Sie hat da unten gesessen, jede Nacht, mit den Kindern. Sie hat gesungen. Sie ist vierundneunzig gestorben, im Keller, beim Singen. Herz.', s3_guilt:'Mirza? Der kleine Mirza? Der war verwundet, ja. Zora hat ihn hereingetragen. Wieso Schuld? Das war keine Schuld.',
       s3_bell:'Die Klingel! Wenn oben jemand gedrückt hat, hat es unten geläutet, und alle Kinder sind gerannt. Nach unten, nicht nach oben. Ich habe gedrückt, oft.' },'Das weiß ich nicht. Und ich weiß fast alles.'),
+    ...M.k2Extra('dragica',A,D),
     {t:'Danke, teta Dragica.',bye:true,go:async function(A){ await D.say('Komm wieder, Mali. Bring Kuchen mit.'); }}
   ]; }); }
 // ---------------------------------------------------------------- Das Hausbuch
@@ -37,6 +38,7 @@ async function talkSehic(A){ var S=A.npc('sehic');
     {t:'Wie lange sind Sie schon im Hausrat?',once:'sh1',go:async function(A){ await S.say('Seit neunundachtzig. Jemand muss die Ordnung halten. Die Treppe, die Briefkästen, das Licht. Und den Keller.'); }},
     A.askOpt({ s3_hanka:function(A){ return sehicHanka(A,S); }, s3_zora:'Zora Marić. Eine gute Lehrerin. Sie hat sich nicht an die Vorschriften gehalten. Gott sei Dank.', s3_roll:async function(A){ await S.say('Wer hat Ihnen das erzählt?'); await A.wait(700); await S.say('Unsinn. Da unten ist niemand. Da unten ist nur Feuchtigkeit.'); },
       s3_locked:'Ohne Beschluss nicht. Ich habe Vorschriften. Ohne Vorschriften bin ich nur ein alter Mann mit Schlüsseln.' },'Dazu gibt es keinen Beschluss.'),
+    ...M.k2Extra('sehic',A,S),
     {t:'Auf Wiedersehen.',bye:true,go:async function(A){ await S.say('Machen Sie das Licht aus, wenn Sie gehen. Das Licht kostet.'); }}
   ]; }); }
 async function sehicHanka(A,S){ if (A.has('key_shelter')) return S.say('Sie haben ihn schon.');
@@ -64,6 +66,7 @@ async function talkMirza(A){ var Mz=A.npc('mirza'), p=A.G.phase;
         await A.narrate('Er holt eine Blechkiste aus dem Hausmeisterraum. Schrauben, Glühbirnen, ein Kinderschuh, und darunter, in ein Tuch gewickelt, ein Rundstempel.'); A.give('pecat'); A.sfx('tin'); await Mz.say('Nehmen Sie. Er gehört ihr.'); }},
     {t:'Kommen Sie heute Abend in den Keller. Zora ruft die Namen auf.',if:A.hasNote('s3_register'),go:function(A){ return mirzaAsk(A,Mz); }},
     A.askOpt({ s3_guilt:function(A){ return mirzaGuilt(A,Mz); }, s3_truth:function(A){ return mirzaGuilt(A,Mz); }, s3_bell:'Die Klingel geht noch. Drücken Sie. Ich höre sie unten nicht mehr. Aber sie läutet.', s3_hanka:'Teta Hanka hat gesungen. Ich habe da unten schlafen gelernt, wegen ihr.' },'Ich bin Hausmeister, kein Archiv.'),
+    ...M.k2Extra('mirza',A,Mz),
     {t:'Danke.',bye:true}
   ]; }); }
 async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_rescued')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
@@ -81,6 +84,7 @@ async function talkSelma(A){ var Se=A.npc('selma');
     {t:'Waren Sie in der Kellerschule?',once:'se1',if:A.hasNote('s3_zora'),go:async function(A){ await Se.say('Erste und zweite Klasse. Ich habe da unten lesen gelernt. Bei Kerzenlicht, aus einem Buch ohne Umschlag.'); await Se.say('Ich habe nie ein Zeugnis bekommen. Die Schule danach hat mich einfach eingeschrieben.'); }},
     {t:'Kommen Sie heute Abend in den Keller? Zora ruft die Namen auf.',if:A.hasNote('s3_register'),go:async function(A){ if (!A.flag('k2.s3.selmaHelped')){ await Se.say('Heute Abend? Ich habe ein Baby und keinen Aufzug. Und Sie reden von Geistern.'); return; }
         await Se.say('Sie haben meinen Wagen getragen.'); await A.wait(600); await Se.say('Gut. Ich komme. Meine Mutter nimmt den Kleinen.'); await Se.say('Ich will das Zeugnis. Ich will es wirklich.'); A.setFlag('k2.s3.selma'); A.save(); await M.k2CheckS3Night(A); return 'bye'; }},
+    ...M.k2Extra('selma',A,Se),
     {t:'Bis später.',bye:true}
   ]; }); }
 // ---------------------------------------------------------------- Die Klingel (Synchronrätsel)

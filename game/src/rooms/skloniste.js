@@ -101,6 +101,7 @@ var HS=[
 M.room('skloniste',{ name:'Schutzraum', scape:'k2_skloniste', music:function(G){ return night(G)?'k2_duh':'k2_noc'; },
   state:function(G){ return {lit:false,cabinetOpen:false,rang:false,rollcall:false}; },
   dark:function(S,G){ return !S.lit; },
+  darkLights:function(S,G){ var f=M.ART.skloniste&&M.ART.skloniste.darkLights; return typeof f==='function'?f(S,G):(f||[]); },
   onSwitch:function(A,who){ return onSwitch(A,who); },
   actors:function(S,G){ var L=[]; S.lit=night(G); S.rollcall=pupilsHere(G);
     if (zoraHere(G)){ var z=M.apos('skloniste','zora',[150,112,'F']); L.push({id:'zora',ch:'zora',x:z[0],y:z[1],f:z[2]||'F',name:'Zora',ghost:true,reveal:!night(G),idle:'teach',speechY:46}); }

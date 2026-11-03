@@ -24,6 +24,7 @@ async function interlude(A){ if (A.flag('k2.i.done')) return A.g('Wir können ge
     {t:'Ich erzähle dir von meinem Vater.',once:'ia3',go:async function(A){ A.setFlag('k2.i.father'); await A.m('Er war Ingenieur. Er hat Brücken berechnet. Im Frühjahr dreiundneunzig ist er Wasser holen gegangen, an der Brauerei, wie alle.'); await A.wait(800); await A.m('Er ist nicht zurückgekommen. Mama und Ana waren schon in Deutschland. Ich bin zu Großmutter gezogen. Hierher.');
         await A.wait(900); await A.g('Das hast du noch nie gesagt.'); await A.m('Nein.'); await A.g('Danke.'); }},
     {t:'(Schweigen und auf die Stadt sehen.)',once:'ia4',silent:true,go:async function(A){ await A.wait(2200); A.sfx('dogFar'); await A.wait(1200); await A.g('Ein Hund. Irgendwo ist immer ein Hund.'); await A.m('Großmutter hatte einen. Er hieß Žućo und hatte vor allem Angst, außer vor Granaten.'); }},
+    ...(M.K2_INTER_EXTRA?M.K2_INTER_EXTRA(A):[]),
     {t:'Gehen wir weiter.',bye:true}
   ]; });
   await A.wait(600); await A.g('Marko.'); await A.m('Ja?'); await A.wait(900);

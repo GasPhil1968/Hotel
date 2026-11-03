@@ -16,6 +16,7 @@ async function talkMilka(A){ var Mi=A.npc('milka');
     A.askOpt({ s2_relic:'Wie eine Reliquie, ja. Er hat das Buch nie in die Hand genommen, ohne vorher die Hände zu waschen.', s2_stamp:'Leser 2204. Das stand auf seiner Tür. Er hatte die Leserkarte ans Türschild geklebt, wie einen Doktortitel.',
       s2_fire:'Ich habe das Feuer die ganze Nacht gesehen. Es war hell genug zum Lesen. Ich habe nicht gelesen.', s2_fragments:'Dann sind sie noch da. Die Seiten. Ich dachte, er hat sie verbrannt. Er war sehr ordentlich.',
       m2_f_snow:'Ein Mädchen auf der Brücke? Es waren viele Kinder auf der Brücke an dem Morgen. Sie haben die Seiten gefangen, als wäre es ein Spiel. Für sie war es eins.' },'Junger Mann, ich bin fünfundachtzig. Fragen Sie mich, was ich weiß, nicht was ich vergessen habe.'),
+    ...M.k2Extra('milka',A,Mi),
     {t:'Danke, Gospođa Milka.',bye:true,go:async function(A){ await Mi.say('Gehen Sie mit Gott. Oder mit wem Sie wollen. Aber gehen Sie warm.'); }}
   ]; }); }
 // ---------------------------------------------------------------- Amra und die Kurrent-Akte
@@ -27,6 +28,7 @@ async function talkAmra(A){ var Am=A.npc('amra');
     {t:'Ich lese Kurrent. Mit einer Tafel.',if:A.flag('k2.s2.amraAsk')&&!A.flag('k2.s2.pass'),go:function(A){ return kurrentAkte(A,Am); }},
     A.askOpt({ s2_fire:'Die Nacht zum 26. August. Ich war sieben. Mein Vater hat mich auf den Balkon getragen und gesagt: Sieh hin, damit du es weißt. Ich habe hingesehen.', s2_provenance:'Ein Buch aus der alten Bibliothek? Davon gibt es fast keine. Wenn Sie eins haben, gehört es dem Land.',
       s2_desk:'Die Ausleihtheke? Die Reste stehen noch im Lichthof. Wir haben sie nicht weggeräumt. Keiner hat es fertiggebracht.' },'Das weiß ich nicht. Ich weiß nur Stuck.'),
+    ...M.k2Extra('amra',A,Am),
     {t:'Viel Glück mit dem Stuck.',bye:true,go:async function(A){ await Am.say('Danke. Glück brauchen wir. Und Gips.'); }}
   ]; }); }
 async function kurrentAkte(A,Am){ if (!A.has('kurrent')){ await Am.say('Eine Tafel? Haben Sie eine?'); await A.m('Ich weiß, wo eine hängt.'); await Am.say('Dann holen Sie sie. Ich warte hier. Ich warte immer hier.'); return; }
@@ -52,6 +54,7 @@ async function talkIlija(A){ var I=A.npc('ilija');
         else await I.say('Natürlich kommt sie nach. Alle kommen nach.');
         A.set('gateOpen',true); A.sfx('gate'); await I.say('Zehn Minuten. Fassen Sie nichts an. Treten Sie auf nichts. Und wenn Sie etwas hören: Das ist die Plane.'); A.rebuild(); return 'bye'; }},
     {t:'Wie ist die Nachtwache?',once:'il1',go:async function(A){ await I.say('Ruhig. Ich spiele Schach gegen mich selbst. Ich gewinne immer.'); await A.wait(400); await I.say('Manchmal höre ich da drin Schritte. Und eine Glocke, wie in einer Bibliothek. Das ist die Plane.'); }},
+    ...M.k2Extra('ilija',A,I),
     {t:'Gute Nacht.',bye:true}
   ]; }); }
 // ---------------------------------------------------------------- Hotspots

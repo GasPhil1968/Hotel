@@ -18,6 +18,7 @@ async function talkNedzad(A){ var N=A.npc('nedzad'), p=A.G.phase;
     {t:'Was graviert man auf eine Džezva?',once:'nd2',go:async function(A){ await N.say('Namen. Daten. Eine Rose. Eine Brücke. Manchmal einen Satz.'); await N.say('Die Leute wollen, dass etwas bleibt. Kupfer bleibt.'); if (A.has('dzezva')){ await A.m('Auf meiner ist eine Rose und ein R.'); await N.say('Zeigen Sie mal.'); await A.wait(700); await N.say('Das ist von uns. Die Rose ist von meinem Großvater. Er hat sie immer mit sieben Blättern gemacht. Für Glück.'); } }},
     A.askOpt({ s1_name:'Zupan? Ein Slowene. Wir hatten viele Soldaten als Kunden. Die haben für Mädchen gekauft, die sie nie wiedergesehen haben.', s1_date:'Der vierzehnte November zweiundsiebzig. Großvater hat an dem Tag elf Aufträge eingetragen. Er war fleißig, wenn er verliebt war. In die Arbeit.',
       s1_father:'Halid Kadić von der Kula? Großvater hat ihm einmal einen Kupferkessel gemacht. Halid hat nie bezahlt. Großvater hat ihn trotzdem gegrüßt.', s1_bracelet:'Ein Armband mit Gravur? Dann steht es im Buch.' },'Fragen Sie mich nach Kupfer.'),
+    ...M.k2Extra('nedzad',A,N),
     {t:'Danke, Nedžad.',bye:true,go:async function(A){ await N.say('Hvala Vama.'); }}
   ]; }); }
 async function engraving(A,N){ await N.say('Der Kunde hat es am Telefon diktiert. Ich habe es aufgeschrieben, wie ich es gehört habe.'); await A.doc({style:'letter',title:'Nedžads Zettel',lines:['„Fur imer – E.“','„Zum 40. Hochzeitstag, Gruse aus Wien“']});

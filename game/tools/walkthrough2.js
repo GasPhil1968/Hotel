@@ -79,6 +79,7 @@ const SHOTS = process.argv[2] || null;
     await D.act('use', 'prop'); await D.drain(); await D.choose('auf sieben'); await D.drain(); await D.exit('arch'); await D.drain(); await at('kula');
     await D.choose('Sie war da'); await D.drain(); await flag('k2.s1.done'); await note('m2_f_clock'); await log('Tomaž ist hinüber, Splitter: Uhr');
     await D.exit('exit'); await D.drain(); await toMap(); await go('pansion'); await D.act('use', 'bed'); await D.drain(); await expect(await phase() === 'k2_s2', 'Fall 2'); await log('Zweiter Fall');
+    { await D.until(s => s.dlg && s.dlg.some(t => /Vielleicht/.test(t)), 15000, 'Vesna ruft an'); await D.choose('Diesmal schreibe ich'); await D.drain(); await log('Vesna ruft an (Kapitel-1-Figur)'); }
     // ================= MALAS SPUR I
     await toMap('door'); await go('carsija'); await talk('rade', 'Ihm das Foto zeigen', 'Auf Wiedersehen'); await note('m2_clocktower'); await note('m2_kids'); await comb('m2_f_clock', 'm2_clocktower', 'm2_building'); await log('Das Siebener');
     await toMap(); await go('neboder'); await at('neboder'); await note('m2_marko7'); await shot('neboder');
@@ -151,7 +152,9 @@ const SHOTS = process.argv[2] || null;
     // ================= EPILOG
     await D.exit('haustor_door'); await D.drain(); await D.exit('stairs'); await D.drain(); await at('stan'); await D.act('use', 'nada', 'rcm'); await D.drain(); await D.choose('Brücke'); await D.drain(); await flag('k2.epi.nada'); await log('Nada: Bring sie mir nach Hause');
     await D.exit('door'); await D.drain(); await D.exit('exit'); await D.drain(); await toMap(); await go('stanica'); await talk('fadila'); await D.choose('Hin und zurück'); await D.drain(); await inv('busticket2');
-    await D.act('use', 'bus'); await D.drain(); await D.choose('Steigen wir ein'); await D.drain(); await D.until(s => s.screen === 'credits' || s.screen === 'title', 60000, 'Abspann'); await log('Abspann');
+    await D.act('use', 'bus'); await D.drain(); await D.until(s => s.dlg, 20000, 'letztes Gespräch'); await D.ev(() => M.TA.choose('Steigen wir ein'));
+    for (let i = 0; i < 40; i++) { const s2 = await D.st(); if (s2.screen === 'credits' || s2.screen === 'title') break; if (s2.overlay) await D.ev(() => M.TA.closeOverlay()); await D.page.waitForTimeout(300); }
+    await D.until(s => s.screen === 'credits' || s.screen === 'title', 60000, 'Abspann'); await expect(await D.flag('k2.epi.done'), 'Abfahrt'); await expect(await D.ev(() => !!localStorage.getItem('mala.c2end')), 'Kapitel 2 als beendet gemerkt'); await log('Abspann');
     const errs = D.errors.filter(e => !/Kunst fehlt|Spot fehlt/.test(e)); console.log(errs.length ? 'FEHLER:\n' + errs.join('\n') : 'DURCHLAUF KAPITEL 2 OK, keine JS-Fehler');
   } catch (e) { console.error('ABBRUCH:', e.message); const s = await D.st().catch(() => null); console.error('Zustand:', JSON.stringify(s)); console.error(D.errors.slice(0, 8).join('\n')); process.exitCode = 1; }
   await D.close2();

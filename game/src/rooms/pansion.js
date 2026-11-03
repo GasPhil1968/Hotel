@@ -21,6 +21,7 @@ async function talkHajra(A){ var H=A.npc('hajra'), p=A.G.phase;
       s1_alaturka:'Die Kula geht nach der Sonne. Bei Sonnenuntergang ist zwölf. Jeden Tag ein bisschen anders. Wie ich.', s1_married:'Emina hat geheiratet, ja. Einen guten Mann. Sie hat nie gelacht auf ihrer Hochzeit. Ich war da.',
       s2_relic:'Professor Barać? Der stand jeden Morgen um sieben in der Bäckerei an der Obala. Immer ein Buch unter dem Arm, nie ein Brot.', m2_lana:'Delić … neunter Stock … ich weiß es nicht mehr, Marko. Ich war nie in den Hochhäusern. Für mich waren das Kästen.',
       s3_zora:'Die Lehrerin im Keller! Davon haben alle gesprochen. In Alipašino haben sie in den Kellern Schule gehalten, damit die Kinder nicht verrückt werden.' },'Frag mich nach Essen, Kind. Da weiß ich Bescheid.'),
+    ...M.k2Extra('hajra',A,H),
     {t:'Danke, teta Hajra.',bye:true,go:async function(A){ await H.say(A.cycle('hjBye',['Iss etwas. Du bist dünn wie ein Fahrschein.','Mačak, lass ihn in Ruhe.','Zieh dir was an. Der Nebel kriecht in die Lunge.'])); }}
   ]; }); }
 async function hajraDzezva(A,H){ await A.m('Ich habe eine mitgebracht. Ich weiß nicht, warum.'); await A.wait(500); await H.say('Zeig.'); await A.wait(900);

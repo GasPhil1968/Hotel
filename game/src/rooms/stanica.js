@@ -13,6 +13,7 @@ async function talkFikret(A){ var F=A.npc('fikret');
     {t:'Ich lese ihn Ihnen noch einmal vor.',if:A.flag('k2.p1.letterRead'),go:function(A){ return fikretLetter(A,F); }},
     {t:'Wo kann ich hier Geld wechseln?',once:'fk1',go:async function(A){ await F.say('Samstag? Die Wechselstube macht um zwei zu. Der Automat ist seit Donnerstag kaputt. Willkommen in Sarajevo.'); await F.say('Am Montag ist alles wieder offen. Am Montag.'); }},
     {t:'Wie komme ich in die Baščaršija?',once:'fk2',go:async function(A){ await F.say('Mit der Eins. Da vorne, vor dem Bahnhof. Oder zu Fuß, eine Stunde, im Nebel. Wenn Sie Ihre Lunge nicht mögen.'); }},
+    ...M.k2Extra('fikret',A,F),
     {t:'Gute Geschäfte.',bye:true,go:async function(A){ await F.say('Gute Geschäfte gibt es nicht. Es gibt Burek.'); }}
   ]; }); }
 async function fikretLetter(A,F){ if (!A.flag('k2.p1.letterRead')){ await F.anim('gesture'); await F.say('Schauen Sie sich das an! Aus Österreich! Seit zwanzig Jahren backe ich hier, und jetzt schreiben sie mir Briefe!');

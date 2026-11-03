@@ -41,6 +41,7 @@ async function talkRade(A){ var R=A.npc('rade'), p=A.G.phase;
       m2_kids:'Zwei Kinder, jeden Samstag. Ich weiß, ich bin alt. Aber ich vergesse keine Fahrgäste.', p2_rade_ruza:'Ruža hatte immer Bonbons in der Manteltasche. Für mich, sagte sie. Für den Fahrer.',
       s1_alaturka:'Die Kula? Fragen Sie mich nach der Drei.', m2_building:'Das Siebener. Das war das Haus mit der Uhr. Ich habe sie von der Haltestelle aus gesehen, wenn wir zu spät waren. Wir waren immer zu spät.',
       m2_mali:async function(A){ await R.say('Mali.'); await A.wait(800); await R.say('Das waren Sie?'); await A.m('Ich glaube, ja.'); await R.say('Dann haben Sie sich nicht verändert. Sie sitzen immer noch so, als wollten Sie aussteigen.'); } },'Dazu weiß ich nichts. Ich weiß nur Fahrpläne.'),
+    ...M.k2Extra('rade',A,R),
     {t:'Auf Wiedersehen.',bye:true,go:async function(A){ await R.say(A.cycle('rdBye',['Die nächste kommt in sieben Minuten.','Sretno.','Nicht auf die Gleise treten. Die Bahn bremst nicht für Übersetzer.'])); }}
   ]; }); }
 async function radePhoto(A,R){ A.setFlag('k2.m1.radePhoto'); await R.say('Zeigen Sie.'); await R.anim('write'); await A.wait(600); await R.say('Alipašino Polje. Die alte Haltestelle. Die ist nach dem Krieg verlegt worden, dreihundert Meter nach Westen.'); A.note('m2_stop');
@@ -60,6 +61,7 @@ async function talkDamir(A){ var D=A.npc('damir');
         if (!A.has('dnevnik')){ await A.m('…'); return; } await A.m('Darf ich Ihnen etwas zeigen?'); }},
     {t:'(Ihm das Klassenbuch zeigen.)',if:A.has('dnevnik'),go:function(A){ return damirBook(A,D); }},
     A.askOpt({ s3_guilt:'Mirza? Der hat nie darüber geredet. Ich auch nicht.', s3_rescued:'Sie ist raus. In die Splitter. Das weiß jeder aus dem Keller. Keiner hat es ihr je gesagt.', s3_zora:'Zora. Wir haben sie „Kreide“ genannt. Sie hatte immer welche an den Fingern.' },'Ich bin Straßenbahnfahrer, kein Pfarrer.'),
+    ...M.k2Extra('damir',A,D),
     {t:'Gute Fahrt.',bye:true,go:async function(A){ await D.say('Die Drei fährt immer gut. Es sind die Leute.'); }}
   ]; }); }
 async function damirBook(A,D){ await A.m('Hier. Seite drei. Unter „Likovno“, Zeichnen.'); await A.wait(700); await A.narrate('Zwischen den Seiten liegt ein Blatt: eine Straßenbahn mit Buntstift, viel zu viele Fenster. Darunter „Damir K., 3. r.“ und, in einer anderen Schrift, eine Fünf.');

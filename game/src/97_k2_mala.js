@@ -48,6 +48,7 @@ M.k2TalkToMala=async function(A){ var p=A.G.phase;
         A.give('ticket_l'); A.sfx('shimmer'); await A.g('Halt ihn fest. Er ist leichter, als er aussieht.'); await A.idleG(null); }},
     {t:'Fahren wir. Mit der Drei.',if:p==='k2_fin'&&N(A,'f2_cameback')&&!F(A,'k2.f2.night'),go:async function(A){ await M.k2FinNightOffer(A); return 'bye'; }},
     {t:'Wie geht es dir?',once:'mg13',if:F(A,'k2.f2.memory'),go:async function(A){ await A.g('Ich habe einen Namen. Eine Mutter, die im neunten Stock wartet. Einen Teddy mit einem Auge.'); await A.wait(700); await A.g('Und ich weiß immer noch nicht, wo ich gestorben bin.'); await A.m('Das finden wir heraus.'); await A.g('Wir.'); await A.m('Ja. Wir.'); }},
+    ...(M.k2MalaExtra?M.k2MalaExtra(A,p):[]),
     {t:'Komm.',bye:true,go:async function(A){ await A.g(A.cycle('gBye',['Ich komme.','Geh vor.','Ja.'])); }}
   ]; }); };
 // ---------------------------------------------------------------- Die letzte Nacht anbieten (nach der Rotkreuz-Nachricht und der Postkarte)
