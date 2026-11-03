@@ -21,7 +21,6 @@ function fbm(x,y,s,sd){ return vn(x,y,s,sd)*0.55+vn(x,y,s/2,sd+3)*0.3+vn(x,y,s/4
 // Rampe mit sparsamem Dither: gemischt wird nur im mittleren Drittel jeder Stufe
 function q(r,v,x,y,k){ var n=r.length-1, f=cl(v,0,0.9999)*n, i=Math.floor(f), t=(f-i-0.5)*(k||3)+0.5; return r[i+(t>bayer(x,y)?1:0)]; }
 // Stufen mit eigenen Schwellen: Dither nur in einem schmalen Fenster um jede Schwelle
-function qs(st,cs,v,x,y,win){ return qsb(st,cs,v,bayer(x,y),win); }
 function qsb(st,cs,v,b,win){ var n=st.length, i=0; while (i<n && v>=st[i]) i++;
   if (i<n){ var du=st[i]-v; if (du<win && b<0.5*(1-du/win)) return cs[i+1]; }
   if (i>0){ var dl=v-st[i-1]; if (dl<win && b>1-0.5*(1-dl/win)) return cs[i-1]; }
@@ -187,8 +186,8 @@ function archPaint(b,S){ var w=RW(b), x, y, X0=26, X1=84, Y0=28, Y1=119, BW=X1-X
     else { if (up<0 && !inOpen(x,y-1)) v+=0.16; else if (id(x,y-2)!==i) v+=0.08;
       if (dn<0 && !inOpen(x,y+1)) v-=0.03; if (dn>=0 && dn!==i) v-=0.05;
       if (rt<0 && !inOpen(x+1,y)) v+=0.07; if (lf<0 && !inOpen(x-1,y)) v-=0.05;
-      c=q(STONE,v,x,y); }
-    var od=openDist(x,y); if (od<7 && bayer(x,y)<(1-od/7)*0.85) c=BLUE[c];
+      c=q(STONE,v,x,y,4.5); }
+    var od=openDist(x,y), gw=1-od/5.5; if (gw>0 && ((gw-0.45)*2.4+0.5)>bayer(x,y)) c=BLUE[c];       // blauer Schein am Rand der Öffnung
     w.px(x,y,c); }
   // rechte Seitenfläche (Mauerdicke), dem Licht zugewandt
   for (y=Y0;y<=Y1;y++){ var xr=-1; for (x=X1;x>=A.x1-10;x--){ if (id(x,y)>=0){ xr=x; break; } } if (xr<0) continue;
@@ -204,6 +203,9 @@ function viewPaint(w,who){ var vw=clipW(w,inView), x, y;
     for (x=40;x<=68;x++){ var hh=Math.round(1.6+Math.sin(x*0.35)*1.1+Math.sin(x*0.13+1)*1.4); for (y=hz-hh;y<hz;y++) vw.px(x,y,y===hz-hh?P.n2:P.n1); }
     for (y=hz+2;y<108;y++){ var gx=62+Math.round(Math.sin(y*1.7)*1.2); if ((y&1)===0) vw.hl(gx-1,gx+1,y,y<102?P.x4:P.x3); }   // Spiegelung der Laterne
     for (x=40;x<=68;x++){ vw.px(x,108,P.n2); vw.px(x,109,P.n1); for (y=110;y<A.thr;y++) vw.px(x,y,(hash(x>>2,y)<0.2)?P.k2:P.n0); }   // Riva-Kante
+    // eine zweite, fernere Palme hinter der Laterne (heller, kleiner)
+    for (y=88;y<=107;y++) vw.px(Math.round(58+Math.sin((107-y)/19*1.3)*1.5),y,P.n1);
+    [[-160,6],[-125,5],[-60,5],[-25,7],[5,5]].forEach(function(f){ var a=f[0]*Math.PI/180; for (var s=0;s<=f[1];s++){ var u=s/f[1]; vw.px(Math.round(59+Math.cos(a)*s),Math.round(87+Math.sin(a)*s*0.7+u*u*f[1]*0.6),P.n1); } });
     vw.rect(53,105,3,3,P.k2); vw.hl(52,56,105,P.n1);                                                     // kleiner Poller
     vw.vl(63,86,108,P.k2); vw.vl(62,104,108,P.k2); vw.rect(61,82,5,5,P.n1); vw.rect(62,83,3,3,P.x5); vw.px(63,84,P.x6); vw.hl(61,65,81,P.k2); vw.px(63,80,P.k2);   // Laterne
     for (y=74;y<96;y++) for (x=54;x<=68;x++){ var d2=Math.hypot(x-63.5,(y-84.5)*1.1); if (d2<9 && d2>2.5 && bayer(x,y)<(1-d2/9)*0.6){ var c0=w.get(x,y); if (c0!==P.k2 && c0!==P.n1) vw.px(x,y,M.UP[c0]); } }
@@ -222,15 +224,18 @@ function viewPaint(w,who){ var vw=clipW(w,inView), x, y;
     for (x=fx0+5;x<fx0+21;x+=2){ vw.px(x,fy-8,hash(x,1)<0.75?P.l0:P.x4); vw.px(x,fy-3,hash(x,2)<0.6?P.x5:P.n2); } for (x=fx0+9;x<fx0+17;x+=2) vw.px(x,fy-12,P.x5);
     for (x=fx0+3;x<fx0+23;x+=2) for (y=fy+3;y<110;y+=2){ if (hash(x,y)<0.5-(y-fy)*0.035) vw.px(x+((y>>1)&1),y,(y<fy+6)?P.x4:P.x2); }
     for (x=40;x<=68;x++){ vw.px(x,110,P.n1); for (y=111;y<A.thr;y++) vw.px(x,y,P.k2); } vw.rect(43,107,3,3,P.k1); }
-  else if (who==='bruno'){ var vx=54, vy=86;      // warmer, dunkler Hotelflur in Fluchtpunktperspektive
-    forView(function(x,y){ var dx=x+0.5-vx, dy=y+0.5-vy, sx=Math.abs(dx)/4, sf=dy/7, sc=-dy/6, s=Math.max(sx,sf,sc), c;
+  else if (who==='bruno'){ var vx=54, vy=83;      // warmer, dunkler Hotelflur in Fluchtpunktperspektive
+    forView(function(x,y){ var dx=x+0.5-vx, dy=y+0.5-vy, sx=Math.abs(dx)/4, sf=dy/7, sc=-dy/5, s=Math.max(sx,sf,sc), c;
       if (s<1){ var lit=(Math.abs(dx)<2.5&&dy>-4&&dy<6); c=lit?q(R('w2 y1 y2 y3'),0.55+(hash(x,y)-0.5)*0.2,x,y):P.w1; vw.px(x,y,c); return; }
       var d=1/s;     // 1 hinten, -> 0 vorn
       if (s===sf){ var u=dx/s; if (Math.abs(u)<2.3){ c=(Math.abs(u)>1.9)?P.y1:q(R('r0 r1 r2'),0.35+d*0.5+(hash(Math.floor(d*30),Math.floor(u*2))-0.5)*0.15,x,y); } else c=q(R('w0 w1 w2'),0.3+d*0.5,x,y); }
-      else if (s===sc){ c=q(R('k2 w0 w1'),0.25+d*0.6,x,y); if (Math.abs(dx/s)<0.6 && (Math.floor(d*12)%4===1)) c=P.y2; }
+      else if (s===sc){ c=q(R('k2 w0 w1'),0.25+d*0.6,x,y); if (Math.abs(d*10-Math.round(d*10))<0.09*s && d<0.9) c=P.w0; if (Math.abs(dx/s)<0.7 && Math.abs(d-0.55)<0.04) c=P.y3; }   // Deckenbalken, ferne Deckenlampe
       else { var hgt=(dy/s+6)/13, seg=Math.floor(d*14); c=q(R('w0 w1 w2 e2'),0.3+d*0.45+(hgt>0.85?-0.15:0),x,y); if ((seg===3||seg===7) && hgt>0.25) c=P.w0; if ((seg===3||seg===7) && hgt>0.25 && Math.abs(d*14-seg-0.5)>0.4) c=P.w2;
         if ((seg===5||seg===9) && Math.abs(hgt-0.62)<0.07) c=P.y3; if ((seg===5||seg===9) && Math.abs(hgt-0.62)<0.18 && c!==P.y3 && bayer(x,y)<0.5) c=M.UP[c]; }
       vw.px(x,y,c); });
+    // nahe Hängelampe oben im Bogen, warm, mit weichem Hof
+    vw.vl(54,49,55,P.k2); vw.hl(52,56,56,P.w2); vw.hl(51,57,57,P.y2); vw.hl(52,56,58,P.y4); vw.px(54,58,P.y5);
+    for (y=52;y<70;y++) for (x=44;x<=64;x++){ var dl=Math.hypot(x-54,(y-59)*1.2); if (dl>2.5 && dl<9 && bayer(x,y)<(1-dl/9)*0.55){ var c1=w.get(x,y); if (c1===P.k2||c1===P.w0||c1===P.w1) vw.px(x,y,M.UP[c1]); } }
     forView(function(x,y){ var e=Math.min(x-(A.cx-A.ri+3),A.cx+A.ri-1-x,A.thr-1-y); if (e<3 && bayer(x,y)<(3-e)/3*0.55) vw.px(x,y,BLUE[w.get(x,y)]===w.get(x,y)?P.n1:BLUE[w.get(x,y)]); }); }
   else { forView(function(x,y){ var dx=(x+0.5-A.cx)/13, dy=(y+0.5-84)/30, d=Math.sqrt(dx*dx+dy*dy); vw.px(x,y,q(R('n0 n1 x1 x2 x3 x4'),0.95-d*0.75+Math.sin(x*1.3)*0.03,x,y)); }); }
   // leichte Abdunklung an den Rändern der Öffnung

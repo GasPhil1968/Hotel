@@ -84,6 +84,7 @@ var HS=[
  {id:'light',name:'Licht',reach:'none',look:async function(A){ await A.m('Es blendet nicht. Es ist nur hell. Heller als alles, was ich je gesehen habe.'); if (A.first('lightMala')){ await A.g('Nicht zu nah, Marko.'); } },
    use:'Ich gehe nicht hinein. Das ist nicht mein Licht.', g:{look:'Ich gehe bis hierher. Nie weiter.'}},
  {id:'prop',name:function(S){ var w=who(S); return w==='luka'?'Treppenstufen':(w==='bruno'?'Tresen mit Glocke':'Poller'); },
+   r:function(S){ var A=M.ART.limbo; return (A&&A.propSpot)?A.propSpot(S):M.spot('limbo','prop'); }, st:function(S){ var A=M.ART.limbo; return (A&&A.propStand)?A.propStand(S):M.stand('limbo','prop'); },
    look:function(A){ var w=who(A.S); if (w==='luka') return A.m('Drei Stufen aus Holz, wie in der Ledana. Sie führen nirgendwohin. Die siebte fehlt nicht. Es gibt keine siebte.');
      if (w==='bruno') return A.m('Ein Stück Hoteltresen, poliertes Holz, und darauf eine Messingglocke. Sie glänzt, als hätte jemand sie jeden Abend geputzt.'); return A.m('Ein Poller, wie am Ende der Mole, blank gerieben von Händen. Hier ist kein Tau daran. Und kein Wasser.'); },
    use:function(A){ var w=who(A.S); if (w==='bruno') return brunoBell(A); if (w==='luka') return A.m('Ich steige nicht hinauf. Dahinter ist nichts.'); return A.m('Er ist kalt. Wie der am Hafen.'); },
