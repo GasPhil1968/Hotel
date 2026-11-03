@@ -69,22 +69,24 @@ var SFX={
   whoosh:function(t){ noise(t,0.6,0.09,'bandpass',300,1.2,null,2400); tone('sine',880,t+0.1,0.6,0.02,null,1320); },
   shimmer:function(t){ [84,88,91,96].forEach(function(m,i){ tone('sine',nf(m),t+i*0.06,0.9,0.015); }); },
   // Erkenntnis eines Geistes (2,6 s, im Takt mit playGhostRealization): Stille, tiefer Geisterwind, ein anschwellender Sog, Resonanzen, langsamer Ausklang
-  realize:function(t){
-    var w=AC.createBufferSource(), wf=AC.createBiquadFilter(), wg=AC.createGain(); w.buffer=NOISE; w.loop=true; wf.type='bandpass'; wf.Q.value=0.9;
-    // Höhepunkt 1,3 bis 1,8 s, danach klingt alles langsam aus (bis etwa 3,4 s, über das Bild hinaus)
-    wf.frequency.setValueAtTime(150,t); wf.frequency.linearRampToValueAtTime(240,t+0.4); wf.frequency.exponentialRampToValueAtTime(720,t+1.5); wf.frequency.exponentialRampToValueAtTime(320,t+2.5); wf.frequency.exponentialRampToValueAtTime(200,t+3.4);
-    wg.gain.setValueAtTime(0.0001,t); wg.gain.linearRampToValueAtTime(0.03,t+0.35); wg.gain.linearRampToValueAtTime(0.055,t+1.3); wg.gain.linearRampToValueAtTime(0.085,t+1.7); wg.gain.linearRampToValueAtTime(0.035,t+2.4); wg.gain.exponentialRampToValueAtTime(0.0001,t+3.4);
-    w.connect(wf); wf.connect(wg); wg.connect(sfxG); w.start(t,Math.random()); w.stop(t+3.5);
+  realize:function(t){   // 5 s, synchron zum Bild: Einsatz beim Erstarren, Flattern während des Flackerns, Höhepunkt 2,6–3,6 s, langes Ausklingen
+    var w=AC.createBufferSource(), wf=AC.createBiquadFilter(), wg=AC.createGain(), md=AC.createGain(); w.buffer=NOISE; w.loop=true; wf.type='bandpass'; wf.Q.value=0.9;
+    wf.frequency.setValueAtTime(150,t); wf.frequency.linearRampToValueAtTime(240,t+0.8); wf.frequency.exponentialRampToValueAtTime(720,t+3.0); wf.frequency.exponentialRampToValueAtTime(320,t+4.4); wf.frequency.exponentialRampToValueAtTime(200,t+6.0);
+    wg.gain.setValueAtTime(0.0001,t); wg.gain.linearRampToValueAtTime(0.03,t+0.7); wg.gain.linearRampToValueAtTime(0.055,t+2.6); wg.gain.linearRampToValueAtTime(0.085,t+3.4); wg.gain.linearRampToValueAtTime(0.035,t+4.6); wg.gain.exponentialRampToValueAtTime(0.0001,t+6.2);
+    // Flattern: der Wind setzt aus wie die Gestalt, schneller und tiefer bis zum Höhepunkt, dann ruhiger
+    var lfo=AC.createOscillator(), dep=AC.createGain(); lfo.type='triangle'; lfo.frequency.setValueAtTime(5,t); lfo.frequency.linearRampToValueAtTime(5,t+0.8); lfo.frequency.linearRampToValueAtTime(12,t+3.0); lfo.frequency.linearRampToValueAtTime(6,t+4.4); lfo.frequency.linearRampToValueAtTime(3,t+5.0);
+    dep.gain.setValueAtTime(0,t); dep.gain.setValueAtTime(0,t+0.8); dep.gain.linearRampToValueAtTime(0.45,t+2.6); dep.gain.linearRampToValueAtTime(0.6,t+3.4); dep.gain.linearRampToValueAtTime(0.15,t+4.6); dep.gain.linearRampToValueAtTime(0,t+5.0);
+    md.gain.value=1; lfo.connect(dep); dep.connect(md.gain); w.connect(wf); wf.connect(wg); wg.connect(md); md.connect(sfxG); w.start(t,Math.random()); w.stop(t+6.3); lfo.start(t); lfo.stop(t+6.3);
     // der Sog: steigt an und reißt am Ende des Höhepunkts ab
     var s=AC.createBufferSource(), sf=AC.createBiquadFilter(), sg=AC.createGain(); s.buffer=NOISE; s.loop=true; sf.type='bandpass'; sf.Q.value=2.2;
-    sf.frequency.setValueAtTime(500,t+0.4); sf.frequency.exponentialRampToValueAtTime(2600,t+1.7);
-    sg.gain.setValueAtTime(0.0001,t); sg.gain.setValueAtTime(0.0001,t+0.4); sg.gain.exponentialRampToValueAtTime(0.03,t+1.65); sg.gain.exponentialRampToValueAtTime(0.0001,t+2.0);
-    s.connect(sf); sf.connect(sg); sg.connect(sfxG); s.start(t,Math.random()); s.stop(t+2.1);
+    sf.frequency.setValueAtTime(500,t+0.8); sf.frequency.exponentialRampToValueAtTime(2600,t+3.4);
+    sg.gain.setValueAtTime(0.0001,t); sg.gain.setValueAtTime(0.0001,t+0.8); sg.gain.exponentialRampToValueAtTime(0.03,t+3.3); sg.gain.exponentialRampToValueAtTime(0.0001,t+3.8);
+    s.connect(sf); sf.connect(sg); sg.connect(sfxG); s.start(t,Math.random()); s.stop(t+3.9);
     // Resonanzen: zwei leicht verstimmte tiefe Töne und eine Quinte darüber, langsam ein und aus
     [[nf(45),0.022],[nf(45)*1.007,0.018],[nf(52),0.012],[nf(57),0.008]].forEach(function(p){ var o=AC.createOscillator(), g=AC.createGain(); o.type='sine'; o.frequency.setValueAtTime(p[0],t);
-      g.gain.setValueAtTime(0.0001,t); g.gain.setValueAtTime(0.0001,t+0.5); g.gain.linearRampToValueAtTime(p[1],t+1.6); g.gain.linearRampToValueAtTime(p[1]*0.55,t+2.4); g.gain.exponentialRampToValueAtTime(0.0001,t+3.5); o.connect(g); g.connect(sfxG); o.start(t); o.stop(t+3.6); });
+      g.gain.setValueAtTime(0.0001,t); g.gain.setValueAtTime(0.0001,t+1.0); g.gain.linearRampToValueAtTime(p[1],t+3.2); g.gain.linearRampToValueAtTime(p[1]*0.55,t+4.6); g.gain.exponentialRampToValueAtTime(0.0001,t+6.2); o.connect(g); g.connect(sfxG); o.start(t); o.stop(t+6.3); });
     // Ausklang: ein heller Ton, der langsam fällt
-    tone('sine',nf(79),t+1.8,1.6,0.008,null,nf(72),0.15); },
+    tone('sine',nf(79),t+3.6,2.4,0.008,null,nf(72),0.2); },
   gust:function(t){ swell(t,2.2,0.08,'bandpass',600,2,sfxG,1500); },
   chain:function(t){ for (var i=0;i<4;i++){ noise(t+i*0.07,0.04,0.1,'highpass',3000,2); tone('sine',1700+i*80,t+i*0.07,0.05,0.03); } },
   coin:function(t){ tone('square',1976,t,0.05,0.03); tone('square',2637,t+0.06,0.2,0.03); },

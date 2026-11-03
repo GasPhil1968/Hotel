@@ -1,6 +1,6 @@
 /* ===== portraits/luka.js — Luka Radić (Geist, 20), Gitarrist, August 1999 =====
    Strubbeliges Haar, offenes Flanellhemd über weißem T-Shirt, junges Gesicht, Vorfreude in den Augen.
-   In natürlichen Farben gemalt; das Spiel färbt Geister selbst ein (M.TINT.spiritP). */
+   In natürlichen Farben gemalt; das Spiel setzt Geister selbst in ihre Geisterfarbe um (M.ghostLut). */
 (function(M){
 'use strict';
 var P=M.P;

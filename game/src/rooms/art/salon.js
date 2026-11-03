@@ -368,10 +368,11 @@ M.defineArt('salon',{
     hopscotch:[94,108,76,34]
   },
   stands:{
-    door:[64,116,'L'], piano:[178,134,'B'], sheet:[200,134,'B'], bench:[148,128,'R'], gramophone:[74,118,'B'], cabinet:[70,118,'B'],
+    // Bruno steht an der Tür (x 60): Marko stellt sich daneben, nie davor
+    door:[80,120,'L'], piano:[178,134,'B'], sheet:[200,134,'B'], bench:[148,128,'R'], gramophone:[84,118,'B'], cabinet:[82,120,'B'],
     beds:[248,124,'R'], windows:[160,112,'B'], chandelier:[150,128,'B'], chalk:[124,112,'B'], hopscotch:[96,130,'B']
   },
   actorPos:{ bruno:[60,118,'F','bruno',true,'porter'], ljerkaNight:[160,120,'R','ljerkaNight',false,'sit'] },
-  start:[66,124,'R'], entries:{ palma:[62,120,'R'] }
+  start:[92,124,'R'], entries:{ palma:[92,124,'R'] }
 });
 })(M);

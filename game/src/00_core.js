@@ -89,6 +89,19 @@ M.tintMake=function(fn){
     A[i]=n[0]; B[i]=n[1]; R[i]=Math.min(0.5,n[2]); }
   A[T]=T; B[T]=T; return {a:A,b:B,r:R};
 };
+// nächste Palettenfarbe (ohne Dither)
+function nearest1(r,g,b){ var best=0, bd=1e12; for (var i=0;i<RGB.length;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ best=i; bd=d; } } return best; }
+M.nearest=nearest1;
+// echte Mischfarben im Palettenbild: M.mix(a,b,k8) = nächste Farbe zu a*(1-k)+b*k mit k=k8/8.
+// Für Durchscheinen ohne Raster (Geister, Überblendungen). Tabellen je Stufe werden erst bei Bedarf gefüllt.
+var MIXT=[];
+M.mix=function(a,b,k8){ if (b===T||k8<=0) return a; if (a===T||k8>=8) return b; var t=MIXT[k8]; if (!t){ t=MIXT[k8]=new Uint8Array(65536); t.fill(255); }
+  var key=(a<<8)|b, v=t[key]; if (v===255){ var p=RGB[a], q=RGB[b], f=k8/8; v=t[key]=nearest1(p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f, p[2]+(q[2]-p[2])*f); } return v; };
+// Farbtabelle ohne Dither, deren Ziel nur aus einer Auswahl von Palettenfarben besteht (z. B. kühle, gedämpfte Geisterfarben)
+M.tintIn=function(fn,names){ var A=new Uint8Array(256), allow=names.map(function(n){ return P[n]; }).filter(function(i){ return i!==undefined; });
+  for (var i=0;i<256;i++){ if (i>=RGB.length){ A[i]=i; continue; } var q=RGB[i], o=fn(q[0],q[1],q[2],i), r=o[0], g=o[1], b=o[2], best=allow[0], bd=1e12;
+    for (var j=0;j<allow.length;j++){ var c=RGB[allow[j]], dr=c[0]-r, dg=c[1]-g, db=c[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ bd=d; best=allow[j]; } } A[i]=best; }
+  A[T]=T; return A; };
 M.tintPx=function(t,c,x,y){ if (c===T) return T; return (t.r[c]>0.02 && bayer(x,y)<t.r[c]) ? t.b[c] : t.a[c]; };
 M.tintApply=function(buf,t,x0,y0,w,h,mask){ x0=x0||0; y0=y0||0; w=w===undefined?buf.w:w; h=h===undefined?buf.h:h;
   for (var y=Math.max(0,y0);y<Math.min(buf.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(buf.w,x0+w);x++){
@@ -109,17 +122,10 @@ M.TINT={
   memory: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.95+30, L*0.80+18, L*0.58+6]; }),
   // gedimmt (Hintergrund hinter Menüs)
   dim: M.tintMake(function(r,g,b){ return [r*0.45, g*0.45, b*0.5]; }),
-  // Geister in Markos Blick: blass-lavendel
-  spirit: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.70+40, L*0.68+40, L*0.80+62]; }),
-  // Mala in Markos Blick: kühl, blass
+  // Mala als Schimmer im Titelbild
   mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; }),
-  // Malas Porträt: dieselbe Kühle, aber mehr eigene Farbe, damit das Gesicht lebendig bleibt
-  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; }),
-  // Mala in Markos Blick: einfarbig kalt, leuchtend (wie ein Geist, nicht wie ein Mensch)
-  malaG: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.46+26, L*0.78+44, L*0.88+70]; }),
-  // gemalte Porträts der Geister: einfarbig kalt (Mala blau-türkis, die anderen fahl-lavendel)
-  ghostP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.50+12, L*0.80+22, L*0.92+48]; }),
-  spiritP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.66+34, L*0.62+32, L*0.84+58]; })
+  // Malas Stimme, bevor Marko sie zulässt: nur ein einfarbig kaltes Flimmern (die Geister selbst: M.ghostLut in 03_cast.js)
+  malaG: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.46+26, L*0.78+44, L*0.88+70]; })
 };
 
 // ---------------------------------------------------------------- indizierter Puffer

@@ -119,19 +119,20 @@ function updateActor(a,dt){ if (a.frozen) return;
     if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow && !GS.flags['mala.lock'] && !(a.idle && /sit/.test(a.idle))){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
       if (Math.hypot(a.x-tx,a.y-ty)>34 && a.mode==='idle'){ walkActor(a,tx,ty); } } } }
 function arrive(a){ a.mode='idle'; setIdle(a); var r=a.res; a.res=null; if (r) r(true); }
-// ---------------------------------------------------------------- Erkenntnis eines Geistes: die Gestalt wird für 2,5 s instabil und fängt sich wieder
-// Phasen: 0–0,4 s Erstarren (Mund offen, kleiner Ruck), 0,4–1,3 s Flackern, 1,3–1,8 s Höhepunkt, 1,8–2,5 s Stabilisieren. Zeichnen: 06_ui.js (drawRealize).
-var REAL_MS=2500;
+// ---------------------------------------------------------------- Erkenntnis eines Geistes: die Gestalt wird für 5 s instabil und fängt sich wieder
+// Phasen: 0–0,8 s Erstarren (Augen weit, Mund offen, kleiner Ruck), 0,8–2,6 s Flackern und Wabern, 2,6–3,6 s Höhepunkt, 3,6–5 s Stabilisieren.
+// Danach blickt der Geist traurig (Stimmung 'sad'). Zeichnen: 06_ui.js (drawRealize), Klang: 04_audio.js ('realize').
+var REAL_MS=5000;
 function playGhostRealization(id,onComplete){ var a=ACT[id], fin=false;
   return new Promise(function(res){
     var end=function(){ if (fin) return; fin=true;
-      try{ if (a && ACT[id]===a && a.realize){ a.realize=null; a.frozen=a.realizePrev||null; a.realizePrev=null; if (!a.frozen) setIdle(a); a.rtUntil=gt+4000; } }catch(e){ console.error(e); }
+      try{ if (a && ACT[id]===a && a.realize){ a.realize=null; a.frozen=a.realizePrev||null; a.realizePrev=null; if (!a.frozen) setIdle(a); a.rtUntil=gt+4000; a.mood='sad'; } }catch(e){ console.error(e); }
       if (onComplete){ try{ onComplete(); }catch(e){ console.error(e); } } res(); };
     try{
       if (!a || !a.ghost || GS.flags['realized.'+id]){ end(); return; }    // nur einmal je Geist; fehlt die Figur, geht es einfach weiter
       GS.flags['realized.'+id]=true;
       if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); }
-      var pose=actorPose(a); cancelRes(a); a.realizePrev=a.frozen||null; a.frozen=Object.assign({},pose,{hd:'o'}); a.realize={t0:gt,seed:Math.floor(Math.random()*997)};
+      var pose=actorPose(a); cancelRes(a); a.realizePrev=a.frozen||null; a.frozen=Object.assign({},pose,{hd:'w'}); a.realize={t0:gt,seed:Math.floor(Math.random()*997)};
       try{ M.sfx('realize'); }catch(e){}
       timers.push({t:gt+REAL_MS,r:end});
     }catch(e){ console.error(e); end(); } }); }
@@ -154,7 +155,9 @@ function routineTick(a){ if (E.busy || E.dlg || E.overlay || E.screen!=='game' |
 // eine Figur, die gerade angesprochen wird, bleibt stehen und unterbricht ihren Ablauf eine Weile
 function holdNpc(a){ if (!a||!a.routine) return; if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); } a.rtUntil=gt+9000; }
 E.holdNpc=holdNpc;
-function actorPose(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
+var MOODHD={sad:'s',shock:'w'}, MOODC=new WeakMap();   // Posen sind Cache-Schlüssel (JSON), deshalb keine Zusatzfelder an ihnen
+function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood]; if (!m||!p||(p.hd&&p.hd!=='n')) return p; var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } return c[m]||(c[m]=Object.assign({},p,{hd:m})); }
+function actorPose0(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
     if (a.ghost){ var fl=a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); if (a.id==='mala'){ var wS=anims.walkS||A_.walkS, wF=anims.walkF||A_.walkF, wB=anims.walkB||A_.walkB; return (a.f==='F'?wF:(a.f==='B'?wB:wS))[a.fi%8]; } return fl[0][0]; }
     var wS2=anims.walkS||A_.walkS, wF2=anims.walkF||A_.walkF, wB2=anims.walkB||A_.walkB; return (a.f==='F'?wF2:(a.f==='B'?wB2:wS2))[a.fi%8]; }
   var fr=a.anim&&a.anim[a.fi]; return fr?fr[0]:A_.idleS[0][0]; }
@@ -222,12 +225,13 @@ function take(id){ var i=GS.inv.indexOf(id); if (i>=0) GS.inv.splice(i,1); if (E
 function setR(k,v){ S[k]=v; dirty=true; navDirty=true; }
 function flag(k){ return GS.flags[k]; }
 function setFlag(k,v){ GS.flags[k]=(v===undefined?true:v); dirty=true; navDirty=true; }
-function npcHandle(id){ var a=ACT[id]; if (!a){ var nop=function(){ return Promise.resolve(); }; return { x:160,y:120,f:'F',actor:null,say:function(t){ return say(t,'@'+id,{color:M.CAST_COLORS[id]||P.s5}); },walk:nop,face:nop,anim:function(n,h){ if (h) h(); return nop(); },show:function(){},hide:function(){},place:function(){},idle:function(){},freeze:function(){},set:function(){} }; }
+function npcHandle(id){ var a=ACT[id]; if (!a){ var nop=function(){ return Promise.resolve(); }; return { x:160,y:120,f:'F',actor:null,say:function(t){ return say(t,'@'+id,{color:M.CAST_COLORS[id]||P.s5}); },walk:nop,face:nop,anim:function(n,h){ if (h) h(); return nop(); },show:function(){},hide:function(){},place:function(){},idle:function(){},freeze:function(){},set:function(){},mood:function(){},agitate:function(){} }; }
   return { get x(){ return a.x; }, get y(){ return a.y; }, get f(){ return a.f; }, actor:a,
     say:function(t,opt){ return say(t,id,opt); }, walk:function(x,y){ a.rtUntil=gt+12000; return walkActor(a,x,y); }, face:function(f){ return faceOn(a,f); },
     routine:function(v){ if (v===false){ a.rtHold=true; } else { a.rtHold=false; if (v) a.routine=v; a.rtUntil=gt+3000; } }, home:function(x,y,f){ a.home=[x,y,f||a.f]; },
     anim:function(n,h,hold){ return playAnimOn(a,n,h,hold); }, show:function(){ a.visible=true; }, hide:function(){ a.visible=false; },
     place:function(x,y,f){ cancelRes(a); a.x=x; a.y=y; if (f) a.f=f; a.rtHold=true; setIdle(a); }, idle:function(n){ a.idle=n; setIdle(a); }, freeze:function(p){ a.frozen=p||null; }, set:function(k,v){ a[k]=v; },
+    mood:function(m){ a.mood=m||null; }, agitate:function(ms){ a.agit=gt+(ms||1600); },   // Geister: Gesichtsausdruck ('sad', 'shock'), aufgewühlt (stärkeres Flimmern)
     faceMe:function(){ var p=player(); if (!p) return Promise.resolve(); return faceOn(a,p.x<a.x?'L':'R'); } }; }
 
 // ---------------------------------------------------------------- Mala: Beitreten, Gehen, Wechseln

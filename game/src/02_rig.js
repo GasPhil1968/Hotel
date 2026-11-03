@@ -94,7 +94,12 @@ function headStamp(ch,v,k){ var key=v+k; if (!ch.stamps[key]){ var set=ch.heads[
 M.headSet=function(rows,skin){ skin=skin||'t'; function rep(rs,from,to){ return rs.map(function(r){ return r.split(from).join(to); }); }
   var o=rows.map(function(r){ return r; }), idx=-1; for (var i=0;i<rows.length;i++) if (rows[i].indexOf('m')>=0){ idx=i; break; }
   if (idx>=0){ o=rows.slice(); o[idx]=o[idx].split('m').join('k'); if (idx+1<o.length){ var r=o[idx+1].split(''); var mi=rows[idx].indexOf('m'); if (r[mi] && r[mi]!=='.' && r[mi]!=='k') r[mi]='m'; o[idx+1]=r.join(''); } }
-  return { n:rows, o:o, b:rep(rows,'e',skin) }; };
+  // 'w' erschrocken: Augen doppelt so hoch, Mund offen; 's' traurig: schwere Lider (Schatten über den Augen)
+  var wv=o.slice(), sv=rows.slice();
+  for (var r=1;r<rows.length;r++){ for (var c=0;c<rows[r].length;c++){ if (rows[r][c]!=='e') continue;
+    var u1=wv[r-1].split(''); if ('Sst'.indexOf(u1[c])>=0){ u1[c]='e'; wv[r-1]=u1.join(''); }
+    var u2=sv[r-1].split(''); if ('Ss'.indexOf(u2[c])>=0){ u2[c]='t'; sv[r-1]=u2.join(''); } } }
+  return { n:rows, o:o, b:rep(rows,'e',skin), w:wv, s:sv }; };
 
 // ---------------------------------------------------------------- Pose -> Puffer
 // pose: {v:'S'|'F'|'B', h:[x,y] Hüfte, ln:Vorbeugen, hd:Kopfvariante, ho:[dx,dy], nf/ff:[x,y,schuh], nh/fh:[x,y], lf/rf, lh/rh, it:Ding, sit:bool}

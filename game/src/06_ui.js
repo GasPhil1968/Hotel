@@ -5,6 +5,8 @@ var P=M.P, T=M.T, Buf=M.Buf, E=M.E, bayer=M.bayer;
 var W=320, H=200, SH=144;
 var fb=new Buf(W,H,P.k0); M.fb=fb;
 var mask=new Uint8Array(W*SH);
+// Geisterpixel dieses Bildes (gmask) und ihre Farbe (gcol): spätere Dunkel-Durchgänge lassen sie aus, solange nichts darübergemalt wurde
+var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
 E.pending=null; E.pop=null; E.invTop=0; E.menu=null; E.titleMode='main';
 function GS(){ return M.GS; }
@@ -16,7 +18,7 @@ function ui(){ return isG()?{bg:P.k0,fr:P.x1,tx:P.x3,hi:P.x5,dim:P.x1,sel:P.x0}:
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
   for (var y=0;y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var sx=x+cx-ox; fb.d[row+x]=(sx>=0&&sx<bw)?bg.d[brow+sx]:P.k0; } }
-  mask.fill(0);
+  mask.fill(0); gmask.fill(0);
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
@@ -25,23 +27,23 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   var tod=view.tod;
   list.forEach(function(l){
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
-      var spirit=a.ghost;
+      var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
       var lift=0;
-      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.ch==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||room.spiritAlpha||(isM?0.62:0.7); o.wobble=1;
-        if (isM){ lift=1+Math.round((Math.sin(tq/760)+1)*0.75); if ((tq%7300)<150) o.alpha*=0.45; if (gs.flags['mala.voice']){ var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; } } } }
+      if (spirit){
+        if (!ghostView && isM && gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; o.wobble=1; var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; lift=1; }   // nur eine Stimme: noch kein Körper, bewusst nur ein Flimmern
+        else { gst=ghostIdle(a,p,tq,isM,ghostView); lift=gst.lift; o.alpha=a.alpha||1; } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
       if (a.fadeOut){ var k=(E.gt()-a.fadeOut)/900; if (k>=1){ a.visible=false; a.fadeOut=0; return; } o.alpha=(o.alpha||1)*(1-k); }
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
-      if (spirit && !ghostView && !o.voice) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
-      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
-      if (spirit && !ghostView && a.ch==='mala') malaMotes(sx,a.y-lift,o.alpha); }
+      if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
+      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o); }
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
   if (room.front) room.front(fb,view,S,gs);
-  if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var lt=E.litAt(dx0+cx-ox,dy0), k0=dy0*W+dx0; if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
+  if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var k0=dy0*W+dx0; if (gmask[k0] && fb.d[k0]===gcol[k0]) continue; var lt=E.litAt(dx0+cx-ox,dy0); if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
     // Leinen: woran die Geister festgemacht sind (nur Mala sieht sie)
@@ -59,30 +61,62 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
-// ---------------------------------------------------------------- Erkenntnis eines Geistes (siehe playGhostRealization in 05_engine.js)
-// Nur die Figur wird verzerrt: Zeilenversatz, Wellen, Flackern, Konturdopplung, Streckung und ein Lichtimpuls. Die Szene bleibt unberührt.
+// ---------------------------------------------------------------- Geister in Markos Blick
+// Lesbarkeit vor Durchsichtigkeit: der Kern der Figur ist deckend, in der Geisterfarbe der Figur (blasse Haut, gedämpfte Kleidung,
+// leicht angehoben, siehe M.ghostLut in 03_cast.js). Nur der äußerste Umriss scheint halb durch. Außen liegt eine feine Lichtkontur,
+// deren Helligkeit sich nach dem Grund richtet: auf dunklem Grund hell, auf hellem dunkel, damit die Gestalt sich immer abhebt.
+// Ruhig: kaum merkliches Schweben, ein langsam atmender Saum, selten ein schwaches Flimmern mit einem Pixel Versatz, ab und zu ein Glanzpunkt.
+var GRIM={ g:{lo:P.v1,hi:P.v4,top:P.v5,glint:P.v5}, m:{lo:P.x1,hi:P.x4,top:P.x5,glint:P.x6} };
+function ghostSeed(a){ if (!a._gs){ var h=7; for (var i=0;i<a.id.length;i++) h=(h*31+a.id.charCodeAt(i))%9973; a._gs=1+h; } return a._gs; }
+function ghostIdle(a,p,t,isM,gv){ var sd=ghostSeed(a), sit=!!(p&&p.sit);
+  var lift=isM?1+Math.round((Math.sin(t/1150+sd)+1)*0.75):((sit||a.noFloat)?0:((Math.sin(t/1900+sd)>0.35)?1:0));
+  var rimK=2+Math.round(Math.sin(t/1600+sd*0.7)+1);
+  var cyc=6800+(sd%5)*700, ph=(t+sd*131)%cyc, fl=ph<150, band=fl?30+Math.floor(M.hash(Math.floor((t+sd*131)/cyc),sd)*44):-99, dir=(sd&1)?1:-1;
+  var gl=((t+sd*977)%2600)<260;
+  // aufgewühlt (npc.agitate): stärkerer, unruhiger Saum, kurzes Aufflackern alle 0,7 s, einzelne Zeilen verrutschen
+  if (a.agit && t<a.agit){ var aph=(t+sd*53)%700, af=aph<110, ab=30+Math.floor(M.hash(Math.floor((t+sd*53)/700),sd+2)*44);
+    return {t:t,gv:gv,alpha:af?0.72:1,rimK:Math.min(8,rimK+2+(af?1:0)),rows:function(j){ return (j>=ab&&j<ab+3)?((Math.floor(t/90)%2)?1:-1):0; },lift:lift,glint:((t%900)<300)?Math.floor(t/900)+sd:null}; }
+  return {t:t,gv:gv,alpha:fl?0.8:1,rimK:fl?rimK+1:rimK,rows:fl?function(j){ return (j>=band&&j<band+4)?dir:0; }:null,lift:lift,glint:gl?Math.floor((t+sd*977)/2600)+sd:null}; }
+// je Posenbild einmal: welche Pixel Kern (1), Umriss (2) oder Kern direkt unter dem oberen Umriss (3) sind, und wo der Saum außen liegt
+function ghostPrep(s){ if (s._g) return s._g; var w=s.w, h=s.h, d=s.d, e=new Uint8Array(w*h), rim=[];
+  function op(i,j){ return i>=0&&j>=0&&i<w&&j<h&&d[j*w+i]!==T; }
+  for (var j=0;j<h;j++) for (var i=0;i<w;i++){ if (!op(i,j)) continue; var ed=!(op(i-1,j)&&op(i+1,j)&&op(i,j-1)&&op(i,j+1)); e[j*w+i]=ed?2:((j>0&&e[(j-1)*w+i]===2&&!op(i,j-2))?3:1); }
+  for (var j2=-1;j2<=h;j2++) for (var i2=-1;i2<=w;i2++){ if (op(i2,j2)) continue; if (op(i2-1,j2)||op(i2+1,j2)||op(i2,j2-1)||op(i2,j2+1)) rim.push(i2,j2,op(i2,j2+1)?1:0); }
+  return (s._g={e:e,rim:rim}); }
+// o: {t, alpha 0..1 (echtes Durchscheinen über Mischfarben, kein Raster), rimK Saumstärke in Achteln, rows(j) Zeilenversatz, lut, gv (Geistersicht), sprite, noMask, glint}
+function drawGhost(a,p,f,x,y,o){ var s=o.sprite||M.poseBuf(p,a.ch,o.t), G=ghostPrep(s), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, w=s.w, h=s.h, d=s.d;
+  var lut=o.lut!==undefined?o.lut:(o.gv?null:M.ghostLut(a.ch)), R=a.ch==='mala'?GRIM.m:GRIM.g, A8=Math.max(0,Math.min(8,Math.round((o.alpha===undefined?1:o.alpha)*8)));
+  if (A8<=0) return; var rows=o.rows, e=G.e, gv=!!o.gv, nm=!!o.noMask, rk=Math.min(8,Math.round((o.rimK===undefined?3:o.rimK)*A8/8));
+  if (rk>0){ var rim=G.rim, gi=(o.glint!==null&&o.glint!==undefined&&rim.length)?Math.floor(M.hash(o.glint,3.1)*(rim.length/3))*3:-1;
+    for (var q=0;q<rim.length;q+=3){ var i=rim[q], j=rim[q+1], Y=by+j; if (Y<0||Y>=SH) continue; var X=bx+(fl?w-1-i:i)+(rows?rows(j):0); if (X<0||X>=W) continue;
+      var k=Y*W+X, c=fb.d[k], rc=M.lum(c)>150?R.lo:(rim[q+2]?R.top:R.hi), kk=rk; if (q===gi){ rc=R.glint; kk=Math.min(8,rk+3); }
+      var v=M.mix(c,rc,kk); fb.d[k]=v; if (!nm){ gmask[k]=1; gcol[k]=v; } if (gv) mask[k]=1; } }
+  for (var j2=0;j2<h;j2++){ var Y2=by+j2; if (Y2<0||Y2>=SH) continue; var oj=rows?rows(j2):0, row=j2*w;
+    for (var i2=0;i2<w;i2++){ var si=fl?w-1-i2:i2, c2=d[row+si]; if (c2===T) continue; var X2=bx+i2+oj; if (X2<0||X2>=W) continue;
+      var k2=Y2*W+X2, ty=e[row+si], gc=lut?lut[c2]:c2; if (ty===3 && !gv) gc=M.UP[gc];
+      var aa=(ty===2&&!gv)?Math.min(A8,5):A8, v2=aa>=8?gc:M.mix(fb.d[k2],gc,aa); fb.d[k2]=v2; if (!nm){ gmask[k2]=1; gcol[k2]=v2; } if (gv) mask[k2]=1; } } }
+var STRB=null;   // ein wiederverwendeter Puffer für die gestreckte Gestalt (weniger Speicherbereinigung während des Effekts)
+function stretched(s,sx,sy){ var OX=M.SPR.OX, OY=M.SPR.OY; if (!STRB||STRB.w!==s.w||STRB.h!==s.h) STRB=new Buf(s.w,s.h,T); var b=STRB; b.d.fill(T); b._g=null; for (var j=0;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sy); if (sj<0||sj>=s.h) continue;
+  for (var i=0;i<s.w;i++){ var si=Math.round(OX+(i-OX)/sx); if (si<0||si>=s.w) continue; b.d[j*s.w+i]=s.d[sj*s.w+si]; } } return b; }
+var IDLUT=new Uint8Array(256); for (var ii=0;ii<256;ii++) IDLUT[ii]=ii;
+function dimLut(l){ if (!l._dim){ l._dim=new Uint8Array(256); for (var i=0;i<256;i++) l._dim[i]=M.DN[l[i]]; } return l._dim; }
+// ---------------------------------------------------------------- Erkenntnis eines Geistes (siehe playGhostRealization in 05_engine.js), 5 Sekunden
+// Kein Blitz: die sonst ruhige Gestalt flackert unregelmäßig wie ein versagendes Licht (kurze Aussetzer bis auf etwa ein Drittel, nie ganz weg),
+// wabert, verzerrt sich und zeigt ein blasses, dunkleres Doppelbild. Höhepunkt 2,6 bis 3,6 s, danach fängt sie sich. Die Szene bleibt ruhig.
 function realizeCurve(t){ // Stärke 0..1 über die Zeit (s)
-  if (t<0.4) return 0; if (t<1.3){ var u=(t-0.4)/0.9; return 0.15+0.55*u*u; } if (t<1.8) return 0.7+0.3*Math.sin((t-1.3)/0.5*Math.PI); if (t<2.5){ var v=(t-1.8)/0.7; return 0.7*(1-v)*(1-v); } return 0; }
-function drawRealize(a,p,f,x,y,gv,baseA){ var R=a.realize, gt=E.gt(), t=(gt-R.t0)/1000, k=realizeCurve(t), peak=(t>=1.3&&t<1.8)?Math.sin((t-1.3)/0.5*Math.PI):0;
-  var s=M.poseBuf(p,a.ch,gt), fl=f==='L', OX=M.SPR.OX, OY=M.SPR.OY, bx=Math.round(x)-OX+(fl?1:0), by=Math.round(y)-OY, isM=a.ch==='mala';
-  var lut=gv?null:(isM?M.TINT.malaG:M.TINT.spirit).a, alt=gv?null:(isM?M.TINT.spirit:M.TINT.malaG).a, sd=R.seed;
-  var fr=Math.floor(gt/(70-35*k)), hz=M.hash;
-  // Phase 1: Erstarren mit kleinem Ruck nach oben
-  var jolt=t<0.4?Math.round(Math.sin(t/0.4*Math.PI)*2):0, trem=t<0.4&&t>0.05?((Math.floor(gt/40)%2)?1:0):0;
-  var sxs=1+0.3*peak, sys=1+0.07*peak, A=baseA*(1-0.5*k*hz(fr,sd)); if (A<0.3) A=0.3; var bright=k>0.25&&hz(fr,sd+5)>0.72;
-  var pulseY=peak>0?Math.round(OY-(t-1.3)/0.5*s.h*1.1):-99;
-  function off(j){ if (k<=0) return trem; var w=Math.sin(j*0.31+t*11)*1.6*k, slip=(hz(j>>1,fr+sd)-0.5)*5*k*k, blk=(hz(j>>2,fr*7+sd)>0.84)?Math.round((hz(j>>2,fr+3)-0.5)*8*k):0; return Math.round(w+slip)+blk+trem; }
-  function pass(dx,al,tab,echo){ for (var j=-8;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sys); if (sj<0||sj>=s.h) continue; var Y=by+j-jolt; if (Y<0||Y>=SH) continue; var o=off(j)+dx, pl=Math.abs(sj-pulseY)<=2;
-      for (var i=-12;i<s.w+12;i++){ var si=Math.round(OX+(i-OX)/sxs); if (si<0||si>=s.w) continue; var c=s.d[sj*s.w+(fl?s.w-1-si:si)]; if (c===T) continue; var X=bx+i+o; if (X<0||X>=W) continue;
-        if (al<1 && bayer(X+fr,Y+(fr>>1))>=al) continue; var cc=tab?tab[c]:c; if (bright&&!echo) cc=M.UP[cc]; if (pl) cc=echo?P.x6:(Math.abs(sj-pulseY)<1?P.l1:M.UP[M.UP[cc]]); fb.d[Y*W+X]=cc; if (gv) mask[Y*W+X]=1; } } }
-  if (!gv) ghostHalo(a,p,f,x+off(40),y-jolt,Math.min(1,A+0.25*k));
-  if (k>0.12){ var ex=(hz(fr,sd+9)>0.5?1:-1)*(2+Math.round(4*k)); pass(ex,Math.min(0.55,A*0.7)*k+0.1,alt,true); }   // Konturdopplung in verschobener Farbe
-  pass(0,A,lut,false); }
-// Geisterschein: ein weicher, kalter Rand um die Gestalt
-function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.ch==='mala', t=Math.floor(E.gt()/120);
-  var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
-  for (var j=-2;j<h+2;j++){ var yy=by+j; if (yy<0||yy>=SH) continue; for (var i=-2;i<w+2;i++){ if (at(i,j)) continue; var n1=at(i-1,j)||at(i+1,j)||at(i,j-1)||at(i,j+1), n2=!n1&&(at(i-2,j)||at(i+2,j)||at(i,j-2)||at(i,j+2));
-      if (!n1&&!n2) continue; var xx=bx+i; if (xx<0||xx>=W) continue; var th=(n1?0.55:0.22)*(al+0.3); if (bayer(xx+t,yy)>=th) continue; var k=yy*W+xx, c=fb.d[k]; fb.d[k]=M.lum(c)<70?gl[0]:(M.lum(c)<140?gl[1]:gl[2]); } } }
+  if (t<0.8) return 0; if (t<2.6){ var u=(t-0.8)/1.8; return 0.12+0.58*u*u; } if (t<3.6) return 0.7+0.3*Math.sin((t-2.6)/1.0*Math.PI); if (t<5.0){ var v=(t-3.6)/1.4; return 0.7*(1-v)*(1-v); } return 0; }
+function drawRealize(a,p,f,x,y,gv,baseA){ var R=a.realize, gt=E.gt(), t=(gt-R.t0)/1000, k=realizeCurve(t), peak=(t>=2.6&&t<3.6)?Math.sin((t-2.6)/1.0*Math.PI):0, sd=R.seed, hz=M.hash;
+  // Flackern in 45-ms-Schritten: Aussetzer werden mit der Stärke häufiger und tiefer; zwischen den Aussetzern ist die Gestalt fast ganz da
+  var tick=Math.floor(gt/45), run=Math.floor(tick/2), drop=k>0 && (hz(tick,sd)<0.05+0.30*k || hz(run,sd+4)<0.02+0.15*k), deep=drop && hz(tick,sd+1)<0.25+0.35*peak;
+  var A=drop?(deep?0.34:0.56):(1-0.14*k*hz(tick,sd+2));
+  // Phase 1: Erstarren, ein kleiner Ruck, kurzes Zittern
+  var jolt=t<0.3?Math.round(Math.sin(t/0.3*Math.PI)*1.5):0, trem=(t>0.05&&t<0.7)?((Math.floor(gt/60)%2)?1:0):0;
+  // Wabern: weiche, langsame Wellen (wie Luft über heißem Stein), nur am Höhepunkt wenige kleine Versätze
+  var amp=2.8*k, frq=5+4*k;
+  function rows(j){ if (k<=0) return trem; var wv=Math.sin(j*0.19+t*frq)*amp+Math.sin(j*0.07-t*2.1)*amp*0.7, slip=(hz(j>>1,tick+sd)-0.5)*2*peak, blk=(peak>0.4&&hz(j>>2,run*7+sd)>0.92)?Math.round((hz(j>>2,run+3)-0.5)*5*peak):0; return Math.round(wv+slip)+blk+trem; }
+  var sxs=1+0.18*peak, sys=1+0.05*peak, spr=(sxs>1.01||sys>1.01)?stretched(M.poseBuf(p,a.ch,gt),sxs,sys):null, lut=gv?IDLUT:M.ghostLut(a.ch);
+  if (k>0.1){ var ex=(hz(run>>1,sd+9)>0.5?1:-1)*(1+Math.round(3*k)); drawGhost(a,p,f,x+ex,y-jolt,{t:gt,gv:gv,alpha:(0.22+0.16*k)*baseA,rimK:0,rows:rows,lut:dimLut(lut),sprite:spr,noMask:true}); }
+  drawGhost(a,p,f,x,y-jolt,{t:gt,gv:gv,alpha:A*baseA,rimK:drop?1:(3+Math.round(2*k)),rows:rows,lut:lut,sprite:spr}); }
 // kleine Lichtpunkte, die von Mala aufsteigen
 function malaMotes(x,y,al){ var t=E.gt()/1000; for (var i=0;i<4;i++){ var ph=(t*0.32+i*0.27)%1, px=Math.round(x+Math.sin(i*2.7+t*1.3)*7), py=Math.round(y-12-ph*34); if (ph>0.85||px<0||px>=W||py<0||py>=SH) continue; if (bayer(px,py)<(1-ph)*al) fb.d[py*W+px]=P.x5; } }
 // eine Leine aus Licht von (x0,y0) nach (x1,y1), leicht durchhängend; east=true: Malas eigene, die sich im Osten verliert
@@ -137,7 +171,7 @@ function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2
   if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
     for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; if (!avail) c2=M.DN[M.DN[c2]]; fb.px(x+2+i2,y+1+j2,c2); } }
   else { var pb=portraitBuf(other,'n'), cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
-    for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.ghostP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); } }
+    for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.ghostLut('mala')[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); } }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -182,7 +216,7 @@ var FALLBACK={};
 function portraitFor(ch,variant){ if (M.hasPortrait && M.hasPortrait(ch)) return M.portrait(ch,variant); var key=ch+':'+variant; if (FALLBACK[key]) return FALLBACK[key]; if (!M.CHARS[ch]) return null;
   var hb=portraitBuf(ch,variant), b=new Buf(PW,PH,T), sc=PW/hb.w;
   for (var y=0;y<PH;y++) for (var x=0;x<PW;x++){ var sx=Math.floor(x/sc), sy=Math.floor(y/sc); if (sy<hb.h&&sx<hb.w){ var c=hb.d[sy*hb.w+sx]; if (c!==T) b.d[y*PW+x]=c; } }
-  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]){ var lut=M.TINT[gt].a; for (var i=0;i<b.d.length;i++) if (b.d[i]!==T) b.d[i]=lut[b.d[i]]; } return (FALLBACK[key]=b); }
+  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.ghostLut){ var lut=M.ghostLut(ch); for (var i=0;i<b.d.length;i++) if (b.d[i]!==T) b.d[i]=lut[b.d[i]]; } return (FALLBACK[key]=b); }
 function drawBust(ch,x0,y0,variant,mirror){ var pb=portraitFor(ch,variant); if (!pb) return false; var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch];
   if (gh){ var cx=x0+(PW>>1), cy=y0+26, aur=ch==='mala'?[P.x1,P.x2]:[P.v1,P.v2], t=Math.floor(E.gt()/150); // kalter Schein hinter Geistern
     for (var y=Math.max(0,y0-4);y<y0+PH;y++) for (var x=Math.max(0,x0-6);x<Math.min(W,x0+PW+6);x++){ var d=Math.hypot((x-cx)/34,(y-cy)/31); if (d>1) continue; if (bayer(x+t,y)<(1-d)*0.5) fb.px(x,y,d<0.55?aur[1]:aur[0]); } }

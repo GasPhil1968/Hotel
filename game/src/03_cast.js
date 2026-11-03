@@ -224,7 +224,7 @@ var ivB=[
 "...ktttk...",
 "...kssk...."];
 M.defineChar('ivka',{
-  legend:L({c:P.k2,C:P.m1,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
+  legend:L({c:P.k2,C:P.m1,S:P.p4,s:P.p3,t:P.p2,m:P.p1,e:P.n1}),
   heads:{S:HS(ivS),F:HS(ivF),B:{n:ivB}},
   torso:{w:12,len:12,col:[P.k2,P.m1,P.k1],buttons:P.m2,side:8,hunch:1},
   skirt:{c:[P.k2,P.m1,P.k1],hem:16,flare:3},
@@ -606,7 +606,7 @@ var luB=[
 "...ktttk...",
 "...kssk...."];
 M.defineChar('luka',{
-  legend:L({H:P.h2,h:P.h3,S:P.q3,s:P.q2,t:P.q1,m:P.q0}),
+  legend:L({H:P.h2,h:P.h3,S:P.q3,s:P.q2,t:P.q1,m:P.q0,e:P.n1}),
   heads:{S:HS(luS),F:HS(luF),B:{n:luB}},
   torso:{w:12,len:13,col:[P.r2,P.r3,P.r1],open:P.s5,side:8},
   cols:{trou:[P.c1,P.c2,P.c0],trouF:[P.c0,P.c1,P.k1],sleeve:[P.r2,P.r3,P.r1],sleeveF:[P.r1,P.r2,P.r0],hand:[P.q3,P.q2],handF:[P.q2,P.q1],shoe:P.s4},
@@ -645,9 +645,24 @@ var brF=[
 "...kkkkk...",
 "...ktttk...",
 "...kssk...."];
+var brB=[
+"...........",
+"..kkkkkkk..",
+".kCCCCCCCk.",
+".kyyyyyyyk.",
+"kCCCCCCCCCk",
+"kjjjjjjjjjk",
+"kjjjjjjjjjk",
+"ktjjjjjjjtk",
+".kjjjjjjjk.",
+".ktjjjjjtk.",
+"..ktttttk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
 M.defineChar('bruno',{
-  legend:L({C:P.g2,y:P.y3,j:P.m3,S:P.p4,s:P.p3,t:P.p2,m:P.p1,b:P.m4}),
-  heads:{S:HS(brS),F:HS(brF),B:{n:brF}},
+  legend:L({C:P.g2,y:P.y3,j:P.m3,S:P.p4,s:P.p3,t:P.p2,m:P.p1,b:P.m4,e:P.n1}),
+  heads:{S:HS(brS),F:HS(brF),B:{n:brB}},
   torso:{w:12,len:13,col:[P.g2,P.g3,P.g1],buttons:P.y3,collar:[P.s5,P.s4],side:8},
   coat:{c:[P.g2,P.g3,P.g1],hem:6,w:6},
   cols:{trou:[P.k2,P.m0,P.k1],trouF:[P.k1,P.k2,P.k0],sleeve:[P.g2,P.g3,P.g1],sleeveF:[P.g1,P.g2,P.g0],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.k2},
@@ -655,10 +670,55 @@ M.defineChar('bruno',{
           porterTalk:[[F({lh:[-6,-25],rh:[6,-25],hd:'o'}),140],[F({lh:[-6,-25],rh:[8,-28]}),140],[F({lh:[-6,-25],rh:[8,-28],hd:'o'}),140],[F({lh:[-6,-25],rh:[6,-25]}),160]] }
 });
 
+var jkS=[
+"............",
+"...kkkkk....",
+"..kCcCCCkk..",
+".kCCCCCCCCCk",
+".kjjSSSSSSk.",
+".kjSSSSSSSk.",
+".kjtSSSSeSk.",
+".kjtSSSSSSSk",
+"..ktSSSSSSk.",
+"..ktbSbbmk..",
+"...ktbbbk...",
+"....kkkk....",
+"....ktsk....",
+"....ktsk...."];
+var jkF=[
+"...........",
+"...kkkkk...",
+"..kCcCCCk..",
+".kCCCCCCCk.",
+"kCCCCCCCCCk",
+"kjSSSSSSSjk",
+"kjSeSSSeSjk",
+"ktSSStSSStk",
+".kSSSSSSSk.",
+".ktbbmbbtk.",
+"..ktbbbtk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+var jkB=[
+"...........",
+"...kkkkk...",
+"..kCcCCCk..",
+".kCCCCCCCk.",
+"kCCCCCCCCCk",
+"kjjjjjjjjjk",
+"kjjjjjjjjjk",
+"ktjjjjjjjtk",
+".kjjjjjjjk.",
+".ktjjjjjtk.",
+"..kttttk...",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
 // ---------------------------------------------------------------- JAKOV (Geist, Totengräber von Sustipan): Schiebermütze, Weste, Besen
 M.defineChar('jakov',{
-  legend:L({C:P.e1,j:P.m4,S:P.q4,s:P.q3,t:P.q2,m:P.q1}),
-  heads:{S:HS(stS),F:HS(stS),B:{n:stS}},
+  legend:L({C:P.e1,c:P.e2,j:P.m4,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m3,e:P.n1}),
+  heads:{S:HS(jkS),F:HS(jkF),B:{n:jkB}},
   torso:{w:12,len:12,col:[P.w1,P.w2,P.w0],collar:[P.m3,P.m2],buttons:P.y1,side:8,hunch:1},
   bones:[10,10,7,7], hipY:22,
   cols:{trou:[P.e1,P.e2,P.e0],trouF:[P.e0,P.e1,P.k1],sleeve:[P.m2,P.m3,P.m1],sleeveF:[P.m1,P.m2,P.m0],hand:[P.q4,P.q3],handF:[P.q3,P.q2],shoe:P.k2},
@@ -667,5 +727,34 @@ M.defineChar('jakov',{
 });
 
 // Marko-Porträts brauchen nichts Eigenes; Porträts werden aus der Frontansicht geschnitten.
+// ---------------------------------------------------------------- Geisterfarben: so sieht Marko die Toten (Zeichnen: drawGhost in 06_ui.js)
+// Zuerst ein Mensch, dann eine Erscheinung: Haut wird blass und kühl, Kleidung gedämpft, aber mit ihrem Farbton, alles leicht angehoben,
+// damit die Gestalt nachts nicht im Dunkel versinkt. Ziel sind nur kühle, gedämpfte Rampen (Graublau, blasses Cyan, Violett, gedämpftes Weiß).
+// Die Farben, an denen man jemanden erkennt, sind je Figur festgelegt: Ivkas Schwarz, Lukas rotes Hemd, Brunos grüne Uniform mit Messing,
+// Jakovs braune Weste, Malas Jeansjacke. Augen bleiben dunkel, damit Gesichter lesbar sind.
+var GH_ALLOW=['k1','k2','m0','m1','m2','m3','m4','c0','c1','c2','c3','c4','v2','v3','v4','v5','n1','n2','n3','n4','n5','b0','b1','b2','b3','b4','b5','s1','s2','s3','s4','s5','s6','d1','d2','e1','e4','a2','a3','x1','x2','x3'];
+var GH_ALLOW_M=['k1','k2','m0','m1','m2','m3','m4','c0','c1','c2','c3','c4','n1','n2','n3','n4','n5','b0','b1','b2','b3','b4','b5','x0','x1','x2','x3','x4','x5','x6','a2','a3','a4','a5','a6','s4','s5','v3','v4'];
+function ghostFn(mala){ return function(r,g,b,i){ var nm=M.PNAME[i]||'', sk=nm[0]==='p'||nm[0]==='q', L=r*0.3+g*0.59+b*0.11,
+    s=sk?0.22:(mala?0.5:0.62), ga=sk?0.66:0.84, k=sk?0.8:0.84, o=sk?44:26;
+    function f(v,sh){ v=L+(v-L)*s; return 255*Math.pow(Math.max(0,v)/255,ga)*k+o+sh; }
+    return mala?[f(r,-14),f(g,8),f(b,26)]:[f(r,-6),f(g,2),f(b,sk?22:18)]; }; }
+M.GHOST_OVR={
+  ivka:{ k0:'k1', n1:'c1', k2:'m0', m1:'c1', m0:'k2' },
+  luka:{ k0:'k1', n1:'c1', r0:'k2', r1:'d1', r2:'d2', r3:'v3', s5:'s5', h2:'m1', h3:'m2', w0:'m0', w1:'s1', w3:'s2', w4:'s3' },
+  bruno:{ k0:'k1', n1:'c1', g0:'k2', g1:'x1', g2:'a2', g3:'x2', y3:'e4', m3:'m3', m4:'s5' },
+  jakov:{ k0:'k1', n1:'c1', w0:'k2', w1:'s1', w2:'s2', e0:'m0', e1:'m1', e2:'m2', y1:'e1', m4:'s4', m3:'m2' },
+  mala:{ k0:'k1', n1:'c0', c0:'b0', c1:'b1', c2:'b2', c3:'b3', m2:'x2', m3:'x3', m4:'x4', h2:'c1', h3:'c2', w1:'c2', y2:'x4', s5:'x5' }
+};
+// Haut (Rampen p und q) nur über die Helligkeit auf eine einzige kühle Rampe: glatt und ohne Farbsprünge, auch in den gemalten Porträts.
+// Wer im Leben dunklere Haut hatte (Luka), bleibt etwas dunkler.
+var SKIN_G=['k2','m1','v2','m2','v3','m3','c4','m4','n5','v5'], SKIN_M=['k2','c1','b0','c2','b1','c3','b2','c4','b3','b4','b5'];
+function skinRamp(t,mala){ var ramp=(mala?SKIN_M:SKIN_G).map(function(n){ return P[n]; }), Ls=ramp.map(function(c){ return M.lum(c); });
+  M.PNAME.forEach(function(nm,i){ if (nm[0]!=='p'&&nm[0]!=='q') return; var Lt=34+0.70*255*Math.pow(M.lum(i)/255,0.7), best=0, bd=1e9;
+    for (var j=0;j<ramp.length;j++){ var d=Math.abs(Ls[j]-Lt); if (d<bd){ bd=d; best=j; } } t[i]=ramp[best]; }); }
+var GLB={}, GLC={};
+M.ghostLut=function(ch){ if (GLC[ch]) return GLC[ch]; var mala=ch==='mala', key=mala?'m':'g';
+  if (!GLB[key]){ GLB[key]=M.tintIn(ghostFn(mala),mala?GH_ALLOW_M:GH_ALLOW); skinRamp(GLB[key],mala); }
+  var t=new Uint8Array(GLB[key]), o=M.GHOST_OVR[ch]||{};
+  Object.keys(o).forEach(function(k){ if (P[k]!==undefined && P[o[k]]!==undefined) t[P[k]]=P[o[k]]; }); return (GLC[ch]=t); };
 M.CAST_COLORS={ marko:P.s6, mala:P.x5, zdenka:P.t5, ivka:P.v5, mladen:P.b4, dinko:P.a6, sanja:P.d5, stipe:P.y4, frane:P.w5, nina:P.d6, mira:P.y4, ljerka:P.p5, ljerkaNight:P.p5, luka:P.v4, bruno:P.v5, jakov:P.v4, vesna:P.y5 };
 })(M);

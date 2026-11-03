@@ -65,7 +65,7 @@ async function talkBruno(A){ var B=A.npc('bruno');
         else { await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Kroatisch, Italienisch, Deutsch. Alles durcheinander. Aber es ist ein Satz.'); } }},
     {t:'Ich versuche, Ihren Satz zu übersetzen.',if:lvl(A)>=3&&!A.flag('c3.translated'),go:function(A){ return translate(A,B); }},
     A.askOpt({ c3_dance:async function(A){ await B.say('Nedjelja … ples … Danica …'); await B.anim('porterTalk'); },
-      c3_zagreb:async function(A){ await B.say('Ne … ne još … ne još …'); A.shake(250); },
+      c3_zagreb:async function(A){ B.agitate(2400); await B.say('Ne … ne još … ne još …'); A.shake(250); },
       c3_father:'Ljerka … mala Ljerka … na stubama …', c3_salon:'Salon … zatvoreno … djeca … crtaju … neka crtaju …',
       m_31:async function(A){ await B.say('Trideset i jedan … zima … kutija … čaj …'); if (A.malaHere()) await A.g('Hör auf.'); },
       m_register:async function(A){ await B.say('Trideset i jedan … ona … ona čeka … autobus …'); if (A.malaHere()){ await A.g('Marko. Bitte.'); } },
@@ -96,7 +96,7 @@ async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übers
 async function showToBruno(A,item){ var B=A.npc('bruno');
   if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); setLvl(A,1); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.'); return; }
   if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); setLvl(A,Math.max(2,lvl(A))); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“'); return; }
-  if (item==='envelope'){ await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
+  if (item==='envelope'){ B.agitate(3200); await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
   if (item==='keyring') return B.say('Ključevi … moji … salon …');
   if (item==='crank') return B.say('Ručka … glazba … nedjelja …');
   if (item==='record') return B.say('„Večer na Rivi“ … Danica …');
@@ -123,14 +123,14 @@ async function wakeLjerka(A){ await A.anim('knock'); A.sfx('knock'); await A.wai
       if (c2==='he'){ await L.say('…'); await A.wait(1500); await L.say('Sie sind ein seltsamer Mensch, Gospodine Vuković.'); } else { await L.say('Was nicht dasteht.'); await A.wait(1300); }
       await L.say('Er hat es gewusst. Die ganzen Jahre. Jeden Morgen, wenn ich den Frühstücksraum aufgeschlossen habe.'); } }
   await A.wait(1500); await L.say('Kommen Sie.'); A.setFlag('c3.ljerkaUp');
-  await A.goto('salon',{noEnter:true}); return salonFinale(A); }
+  await A.goto('salon',{x:100,y:124,f:'L',noEnter:true}); return salonFinale(A); }
 async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.set('sheetOff',true); A.rebuild();
   var p=M.apos('salon','ljerkaNight',[160,120,'R']); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
   await A.narrate('Ljerka setzt sich an den Flügel. Lange sitzt sie nur da.'); await A.wait(1200);
   A.music('vecerPiano'); await A.wait(7000); if (B.actor){ await B.face('R'); } await A.wait(4500);
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
   await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
-  await A.wait(1600); await B.say('Koliko … godina …?'); await A.wait(1800);
+  await A.wait(1600); B.agitate(3400); await B.say('Koliko … godina …?'); await A.wait(1800);
   if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
   await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');

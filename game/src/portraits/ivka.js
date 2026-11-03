@@ -1,7 +1,7 @@
 /* ===== portraits/ivka.js — Ivka Perić (Geist, 85), wartet seit 1984 an der Mole =====
    Schwarzes Kopftuch unter dem Kinn geknotet (kühles Schwarz, Zugfalten zum Knoten), langer schwarzer Mantel
    (warmes Schwarz, eine Stufe dunkler als das Tuch), tiefe Falten, eingefallene Wangen, wache Augen.
-   Natürliche Farben: das Spiel färbt Ivka als Geist selbst ein (M.TINT.spiritP); Augen, Brauen, Mund und
+   Natürliche Farben: das Spiel setzt Ivka als Geist selbst in ihre Geisterfarbe um (M.ghostLut); Augen, Brauen, Mund und
    Kontur sind über Helligkeit getrennt und bleiben auch eingefärbt lesbar.
    Gemalt als Pixelkarte MAP (56 × 64, ein Zeichen = ein Pixel, '.' = transparent) mit Farblegende LEG;
    Varianten als kleine Flicken [y, x, zeichen] ('_' = Pixel bleibt): PATCH.mouth (spricht), PATCH.eyes (blinzelt).

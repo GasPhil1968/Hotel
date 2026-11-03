@@ -114,6 +114,19 @@ M.tintMake=function(fn){
     A[i]=n[0]; B[i]=n[1]; R[i]=Math.min(0.5,n[2]); }
   A[T]=T; B[T]=T; return {a:A,b:B,r:R};
 };
+// nächste Palettenfarbe (ohne Dither)
+function nearest1(r,g,b){ var best=0, bd=1e12; for (var i=0;i<RGB.length;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ best=i; bd=d; } } return best; }
+M.nearest=nearest1;
+// echte Mischfarben im Palettenbild: M.mix(a,b,k8) = nächste Farbe zu a*(1-k)+b*k mit k=k8/8.
+// Für Durchscheinen ohne Raster (Geister, Überblendungen). Tabellen je Stufe werden erst bei Bedarf gefüllt.
+var MIXT=[];
+M.mix=function(a,b,k8){ if (b===T||k8<=0) return a; if (a===T||k8>=8) return b; var t=MIXT[k8]; if (!t){ t=MIXT[k8]=new Uint8Array(65536); t.fill(255); }
+  var key=(a<<8)|b, v=t[key]; if (v===255){ var p=RGB[a], q=RGB[b], f=k8/8; v=t[key]=nearest1(p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f, p[2]+(q[2]-p[2])*f); } return v; };
+// Farbtabelle ohne Dither, deren Ziel nur aus einer Auswahl von Palettenfarben besteht (z. B. kühle, gedämpfte Geisterfarben)
+M.tintIn=function(fn,names){ var A=new Uint8Array(256), allow=names.map(function(n){ return P[n]; }).filter(function(i){ return i!==undefined; });
+  for (var i=0;i<256;i++){ if (i>=RGB.length){ A[i]=i; continue; } var q=RGB[i], o=fn(q[0],q[1],q[2],i), r=o[0], g=o[1], b=o[2], best=allow[0], bd=1e12;
+    for (var j=0;j<allow.length;j++){ var c=RGB[allow[j]], dr=c[0]-r, dg=c[1]-g, db=c[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ bd=d; best=allow[j]; } } A[i]=best; }
+  A[T]=T; return A; };
 M.tintPx=function(t,c,x,y){ if (c===T) return T; return (t.r[c]>0.02 && bayer(x,y)<t.r[c]) ? t.b[c] : t.a[c]; };
 M.tintApply=function(buf,t,x0,y0,w,h,mask){ x0=x0||0; y0=y0||0; w=w===undefined?buf.w:w; h=h===undefined?buf.h:h;
   for (var y=Math.max(0,y0);y<Math.min(buf.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(buf.w,x0+w);x++){
@@ -134,17 +147,10 @@ M.TINT={
   memory: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.95+30, L*0.80+18, L*0.58+6]; }),
   // gedimmt (Hintergrund hinter Menüs)
   dim: M.tintMake(function(r,g,b){ return [r*0.45, g*0.45, b*0.5]; }),
-  // Geister in Markos Blick: blass-lavendel
-  spirit: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.70+40, L*0.68+40, L*0.80+62]; }),
-  // Mala in Markos Blick: kühl, blass
+  // Mala als Schimmer im Titelbild
   mala: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.30+L*0.40+20, g*0.30+L*0.55+30, b*0.30+L*0.62+48]; }),
-  // Malas Porträt: dieselbe Kühle, aber mehr eigene Farbe, damit das Gesicht lebendig bleibt
-  malaP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [r*0.58+L*0.14+8, g*0.58+L*0.24+18, b*0.58+L*0.30+34]; }),
-  // Mala in Markos Blick: einfarbig kalt, leuchtend (wie ein Geist, nicht wie ein Mensch)
-  malaG: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.46+26, L*0.78+44, L*0.88+70]; }),
-  // gemalte Porträts der Geister: einfarbig kalt (Mala blau-türkis, die anderen fahl-lavendel)
-  ghostP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.50+12, L*0.80+22, L*0.92+48]; }),
-  spiritP: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.66+34, L*0.62+32, L*0.84+58]; })
+  // Malas Stimme, bevor Marko sie zulässt: nur ein einfarbig kaltes Flimmern (die Geister selbst: M.ghostLut in 03_cast.js)
+  malaG: M.tintMake(function(r,g,b){ var L=lumOf(r,g,b); return [L*0.46+26, L*0.78+44, L*0.88+70]; })
 };
 
 // ---------------------------------------------------------------- indizierter Puffer
@@ -628,7 +634,12 @@ function headStamp(ch,v,k){ var key=v+k; if (!ch.stamps[key]){ var set=ch.heads[
 M.headSet=function(rows,skin){ skin=skin||'t'; function rep(rs,from,to){ return rs.map(function(r){ return r.split(from).join(to); }); }
   var o=rows.map(function(r){ return r; }), idx=-1; for (var i=0;i<rows.length;i++) if (rows[i].indexOf('m')>=0){ idx=i; break; }
   if (idx>=0){ o=rows.slice(); o[idx]=o[idx].split('m').join('k'); if (idx+1<o.length){ var r=o[idx+1].split(''); var mi=rows[idx].indexOf('m'); if (r[mi] && r[mi]!=='.' && r[mi]!=='k') r[mi]='m'; o[idx+1]=r.join(''); } }
-  return { n:rows, o:o, b:rep(rows,'e',skin) }; };
+  // 'w' erschrocken: Augen doppelt so hoch, Mund offen; 's' traurig: schwere Lider (Schatten über den Augen)
+  var wv=o.slice(), sv=rows.slice();
+  for (var r=1;r<rows.length;r++){ for (var c=0;c<rows[r].length;c++){ if (rows[r][c]!=='e') continue;
+    var u1=wv[r-1].split(''); if ('Sst'.indexOf(u1[c])>=0){ u1[c]='e'; wv[r-1]=u1.join(''); }
+    var u2=sv[r-1].split(''); if ('Ss'.indexOf(u2[c])>=0){ u2[c]='t'; sv[r-1]=u2.join(''); } } }
+  return { n:rows, o:o, b:rep(rows,'e',skin), w:wv, s:sv }; };
 
 // ---------------------------------------------------------------- Pose -> Puffer
 // pose: {v:'S'|'F'|'B', h:[x,y] Hüfte, ln:Vorbeugen, hd:Kopfvariante, ho:[dx,dy], nf/ff:[x,y,schuh], nh/fh:[x,y], lf/rf, lh/rh, it:Ding, sit:bool}
@@ -990,7 +1001,7 @@ var ivB=[
 "...ktttk...",
 "...kssk...."];
 M.defineChar('ivka',{
-  legend:L({c:P.k2,C:P.m1,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
+  legend:L({c:P.k2,C:P.m1,S:P.p4,s:P.p3,t:P.p2,m:P.p1,e:P.n1}),
   heads:{S:HS(ivS),F:HS(ivF),B:{n:ivB}},
   torso:{w:12,len:12,col:[P.k2,P.m1,P.k1],buttons:P.m2,side:8,hunch:1},
   skirt:{c:[P.k2,P.m1,P.k1],hem:16,flare:3},
@@ -1372,7 +1383,7 @@ var luB=[
 "...ktttk...",
 "...kssk...."];
 M.defineChar('luka',{
-  legend:L({H:P.h2,h:P.h3,S:P.q3,s:P.q2,t:P.q1,m:P.q0}),
+  legend:L({H:P.h2,h:P.h3,S:P.q3,s:P.q2,t:P.q1,m:P.q0,e:P.n1}),
   heads:{S:HS(luS),F:HS(luF),B:{n:luB}},
   torso:{w:12,len:13,col:[P.r2,P.r3,P.r1],open:P.s5,side:8},
   cols:{trou:[P.c1,P.c2,P.c0],trouF:[P.c0,P.c1,P.k1],sleeve:[P.r2,P.r3,P.r1],sleeveF:[P.r1,P.r2,P.r0],hand:[P.q3,P.q2],handF:[P.q2,P.q1],shoe:P.s4},
@@ -1411,9 +1422,24 @@ var brF=[
 "...kkkkk...",
 "...ktttk...",
 "...kssk...."];
+var brB=[
+"...........",
+"..kkkkkkk..",
+".kCCCCCCCk.",
+".kyyyyyyyk.",
+"kCCCCCCCCCk",
+"kjjjjjjjjjk",
+"kjjjjjjjjjk",
+"ktjjjjjjjtk",
+".kjjjjjjjk.",
+".ktjjjjjtk.",
+"..ktttttk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
 M.defineChar('bruno',{
-  legend:L({C:P.g2,y:P.y3,j:P.m3,S:P.p4,s:P.p3,t:P.p2,m:P.p1,b:P.m4}),
-  heads:{S:HS(brS),F:HS(brF),B:{n:brF}},
+  legend:L({C:P.g2,y:P.y3,j:P.m3,S:P.p4,s:P.p3,t:P.p2,m:P.p1,b:P.m4,e:P.n1}),
+  heads:{S:HS(brS),F:HS(brF),B:{n:brB}},
   torso:{w:12,len:13,col:[P.g2,P.g3,P.g1],buttons:P.y3,collar:[P.s5,P.s4],side:8},
   coat:{c:[P.g2,P.g3,P.g1],hem:6,w:6},
   cols:{trou:[P.k2,P.m0,P.k1],trouF:[P.k1,P.k2,P.k0],sleeve:[P.g2,P.g3,P.g1],sleeveF:[P.g1,P.g2,P.g0],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.k2},
@@ -1421,10 +1447,55 @@ M.defineChar('bruno',{
           porterTalk:[[F({lh:[-6,-25],rh:[6,-25],hd:'o'}),140],[F({lh:[-6,-25],rh:[8,-28]}),140],[F({lh:[-6,-25],rh:[8,-28],hd:'o'}),140],[F({lh:[-6,-25],rh:[6,-25]}),160]] }
 });
 
+var jkS=[
+"............",
+"...kkkkk....",
+"..kCcCCCkk..",
+".kCCCCCCCCCk",
+".kjjSSSSSSk.",
+".kjSSSSSSSk.",
+".kjtSSSSeSk.",
+".kjtSSSSSSSk",
+"..ktSSSSSSk.",
+"..ktbSbbmk..",
+"...ktbbbk...",
+"....kkkk....",
+"....ktsk....",
+"....ktsk...."];
+var jkF=[
+"...........",
+"...kkkkk...",
+"..kCcCCCk..",
+".kCCCCCCCk.",
+"kCCCCCCCCCk",
+"kjSSSSSSSjk",
+"kjSeSSSeSjk",
+"ktSSStSSStk",
+".kSSSSSSSk.",
+".ktbbmbbtk.",
+"..ktbbbtk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+var jkB=[
+"...........",
+"...kkkkk...",
+"..kCcCCCk..",
+".kCCCCCCCk.",
+"kCCCCCCCCCk",
+"kjjjjjjjjjk",
+"kjjjjjjjjjk",
+"ktjjjjjjjtk",
+".kjjjjjjjk.",
+".ktjjjjjtk.",
+"..kttttk...",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
 // ---------------------------------------------------------------- JAKOV (Geist, Totengräber von Sustipan): Schiebermütze, Weste, Besen
 M.defineChar('jakov',{
-  legend:L({C:P.e1,j:P.m4,S:P.q4,s:P.q3,t:P.q2,m:P.q1}),
-  heads:{S:HS(stS),F:HS(stS),B:{n:stS}},
+  legend:L({C:P.e1,c:P.e2,j:P.m4,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m3,e:P.n1}),
+  heads:{S:HS(jkS),F:HS(jkF),B:{n:jkB}},
   torso:{w:12,len:12,col:[P.w1,P.w2,P.w0],collar:[P.m3,P.m2],buttons:P.y1,side:8,hunch:1},
   bones:[10,10,7,7], hipY:22,
   cols:{trou:[P.e1,P.e2,P.e0],trouF:[P.e0,P.e1,P.k1],sleeve:[P.m2,P.m3,P.m1],sleeveF:[P.m1,P.m2,P.m0],hand:[P.q4,P.q3],handF:[P.q3,P.q2],shoe:P.k2},
@@ -1433,6 +1504,35 @@ M.defineChar('jakov',{
 });
 
 // Marko-Porträts brauchen nichts Eigenes; Porträts werden aus der Frontansicht geschnitten.
+// ---------------------------------------------------------------- Geisterfarben: so sieht Marko die Toten (Zeichnen: drawGhost in 06_ui.js)
+// Zuerst ein Mensch, dann eine Erscheinung: Haut wird blass und kühl, Kleidung gedämpft, aber mit ihrem Farbton, alles leicht angehoben,
+// damit die Gestalt nachts nicht im Dunkel versinkt. Ziel sind nur kühle, gedämpfte Rampen (Graublau, blasses Cyan, Violett, gedämpftes Weiß).
+// Die Farben, an denen man jemanden erkennt, sind je Figur festgelegt: Ivkas Schwarz, Lukas rotes Hemd, Brunos grüne Uniform mit Messing,
+// Jakovs braune Weste, Malas Jeansjacke. Augen bleiben dunkel, damit Gesichter lesbar sind.
+var GH_ALLOW=['k1','k2','m0','m1','m2','m3','m4','c0','c1','c2','c3','c4','v2','v3','v4','v5','n1','n2','n3','n4','n5','b0','b1','b2','b3','b4','b5','s1','s2','s3','s4','s5','s6','d1','d2','e1','e4','a2','a3','x1','x2','x3'];
+var GH_ALLOW_M=['k1','k2','m0','m1','m2','m3','m4','c0','c1','c2','c3','c4','n1','n2','n3','n4','n5','b0','b1','b2','b3','b4','b5','x0','x1','x2','x3','x4','x5','x6','a2','a3','a4','a5','a6','s4','s5','v3','v4'];
+function ghostFn(mala){ return function(r,g,b,i){ var nm=M.PNAME[i]||'', sk=nm[0]==='p'||nm[0]==='q', L=r*0.3+g*0.59+b*0.11,
+    s=sk?0.22:(mala?0.5:0.62), ga=sk?0.66:0.84, k=sk?0.8:0.84, o=sk?44:26;
+    function f(v,sh){ v=L+(v-L)*s; return 255*Math.pow(Math.max(0,v)/255,ga)*k+o+sh; }
+    return mala?[f(r,-14),f(g,8),f(b,26)]:[f(r,-6),f(g,2),f(b,sk?22:18)]; }; }
+M.GHOST_OVR={
+  ivka:{ k0:'k1', n1:'c1', k2:'m0', m1:'c1', m0:'k2' },
+  luka:{ k0:'k1', n1:'c1', r0:'k2', r1:'d1', r2:'d2', r3:'v3', s5:'s5', h2:'m1', h3:'m2', w0:'m0', w1:'s1', w3:'s2', w4:'s3' },
+  bruno:{ k0:'k1', n1:'c1', g0:'k2', g1:'x1', g2:'a2', g3:'x2', y3:'e4', m3:'m3', m4:'s5' },
+  jakov:{ k0:'k1', n1:'c1', w0:'k2', w1:'s1', w2:'s2', e0:'m0', e1:'m1', e2:'m2', y1:'e1', m4:'s4', m3:'m2' },
+  mala:{ k0:'k1', n1:'c0', c0:'b0', c1:'b1', c2:'b2', c3:'b3', m2:'x2', m3:'x3', m4:'x4', h2:'c1', h3:'c2', w1:'c2', y2:'x4', s5:'x5' }
+};
+// Haut (Rampen p und q) nur über die Helligkeit auf eine einzige kühle Rampe: glatt und ohne Farbsprünge, auch in den gemalten Porträts.
+// Wer im Leben dunklere Haut hatte (Luka), bleibt etwas dunkler.
+var SKIN_G=['k2','m1','v2','m2','v3','m3','c4','m4','n5','v5'], SKIN_M=['k2','c1','b0','c2','b1','c3','b2','c4','b3','b4','b5'];
+function skinRamp(t,mala){ var ramp=(mala?SKIN_M:SKIN_G).map(function(n){ return P[n]; }), Ls=ramp.map(function(c){ return M.lum(c); });
+  M.PNAME.forEach(function(nm,i){ if (nm[0]!=='p'&&nm[0]!=='q') return; var Lt=34+0.70*255*Math.pow(M.lum(i)/255,0.7), best=0, bd=1e9;
+    for (var j=0;j<ramp.length;j++){ var d=Math.abs(Ls[j]-Lt); if (d<bd){ bd=d; best=j; } } t[i]=ramp[best]; }); }
+var GLB={}, GLC={};
+M.ghostLut=function(ch){ if (GLC[ch]) return GLC[ch]; var mala=ch==='mala', key=mala?'m':'g';
+  if (!GLB[key]){ GLB[key]=M.tintIn(ghostFn(mala),mala?GH_ALLOW_M:GH_ALLOW); skinRamp(GLB[key],mala); }
+  var t=new Uint8Array(GLB[key]), o=M.GHOST_OVR[ch]||{};
+  Object.keys(o).forEach(function(k){ if (P[k]!==undefined && P[o[k]]!==undefined) t[P[k]]=P[o[k]]; }); return (GLC[ch]=t); };
 M.CAST_COLORS={ marko:P.s6, mala:P.x5, zdenka:P.t5, ivka:P.v5, mladen:P.b4, dinko:P.a6, sanja:P.d5, stipe:P.y4, frane:P.w5, nina:P.d6, mira:P.y4, ljerka:P.p5, ljerkaNight:P.p5, luka:P.v4, bruno:P.v5, jakov:P.v4, vesna:P.y5 };
 })(M);
 
@@ -1508,22 +1608,24 @@ var SFX={
   whoosh:function(t){ noise(t,0.6,0.09,'bandpass',300,1.2,null,2400); tone('sine',880,t+0.1,0.6,0.02,null,1320); },
   shimmer:function(t){ [84,88,91,96].forEach(function(m,i){ tone('sine',nf(m),t+i*0.06,0.9,0.015); }); },
   // Erkenntnis eines Geistes (2,6 s, im Takt mit playGhostRealization): Stille, tiefer Geisterwind, ein anschwellender Sog, Resonanzen, langsamer Ausklang
-  realize:function(t){
-    var w=AC.createBufferSource(), wf=AC.createBiquadFilter(), wg=AC.createGain(); w.buffer=NOISE; w.loop=true; wf.type='bandpass'; wf.Q.value=0.9;
-    // Höhepunkt 1,3 bis 1,8 s, danach klingt alles langsam aus (bis etwa 3,4 s, über das Bild hinaus)
-    wf.frequency.setValueAtTime(150,t); wf.frequency.linearRampToValueAtTime(240,t+0.4); wf.frequency.exponentialRampToValueAtTime(720,t+1.5); wf.frequency.exponentialRampToValueAtTime(320,t+2.5); wf.frequency.exponentialRampToValueAtTime(200,t+3.4);
-    wg.gain.setValueAtTime(0.0001,t); wg.gain.linearRampToValueAtTime(0.03,t+0.35); wg.gain.linearRampToValueAtTime(0.055,t+1.3); wg.gain.linearRampToValueAtTime(0.085,t+1.7); wg.gain.linearRampToValueAtTime(0.035,t+2.4); wg.gain.exponentialRampToValueAtTime(0.0001,t+3.4);
-    w.connect(wf); wf.connect(wg); wg.connect(sfxG); w.start(t,Math.random()); w.stop(t+3.5);
+  realize:function(t){   // 5 s, synchron zum Bild: Einsatz beim Erstarren, Flattern während des Flackerns, Höhepunkt 2,6–3,6 s, langes Ausklingen
+    var w=AC.createBufferSource(), wf=AC.createBiquadFilter(), wg=AC.createGain(), md=AC.createGain(); w.buffer=NOISE; w.loop=true; wf.type='bandpass'; wf.Q.value=0.9;
+    wf.frequency.setValueAtTime(150,t); wf.frequency.linearRampToValueAtTime(240,t+0.8); wf.frequency.exponentialRampToValueAtTime(720,t+3.0); wf.frequency.exponentialRampToValueAtTime(320,t+4.4); wf.frequency.exponentialRampToValueAtTime(200,t+6.0);
+    wg.gain.setValueAtTime(0.0001,t); wg.gain.linearRampToValueAtTime(0.03,t+0.7); wg.gain.linearRampToValueAtTime(0.055,t+2.6); wg.gain.linearRampToValueAtTime(0.085,t+3.4); wg.gain.linearRampToValueAtTime(0.035,t+4.6); wg.gain.exponentialRampToValueAtTime(0.0001,t+6.2);
+    // Flattern: der Wind setzt aus wie die Gestalt, schneller und tiefer bis zum Höhepunkt, dann ruhiger
+    var lfo=AC.createOscillator(), dep=AC.createGain(); lfo.type='triangle'; lfo.frequency.setValueAtTime(5,t); lfo.frequency.linearRampToValueAtTime(5,t+0.8); lfo.frequency.linearRampToValueAtTime(12,t+3.0); lfo.frequency.linearRampToValueAtTime(6,t+4.4); lfo.frequency.linearRampToValueAtTime(3,t+5.0);
+    dep.gain.setValueAtTime(0,t); dep.gain.setValueAtTime(0,t+0.8); dep.gain.linearRampToValueAtTime(0.45,t+2.6); dep.gain.linearRampToValueAtTime(0.6,t+3.4); dep.gain.linearRampToValueAtTime(0.15,t+4.6); dep.gain.linearRampToValueAtTime(0,t+5.0);
+    md.gain.value=1; lfo.connect(dep); dep.connect(md.gain); w.connect(wf); wf.connect(wg); wg.connect(md); md.connect(sfxG); w.start(t,Math.random()); w.stop(t+6.3); lfo.start(t); lfo.stop(t+6.3);
     // der Sog: steigt an und reißt am Ende des Höhepunkts ab
     var s=AC.createBufferSource(), sf=AC.createBiquadFilter(), sg=AC.createGain(); s.buffer=NOISE; s.loop=true; sf.type='bandpass'; sf.Q.value=2.2;
-    sf.frequency.setValueAtTime(500,t+0.4); sf.frequency.exponentialRampToValueAtTime(2600,t+1.7);
-    sg.gain.setValueAtTime(0.0001,t); sg.gain.setValueAtTime(0.0001,t+0.4); sg.gain.exponentialRampToValueAtTime(0.03,t+1.65); sg.gain.exponentialRampToValueAtTime(0.0001,t+2.0);
-    s.connect(sf); sf.connect(sg); sg.connect(sfxG); s.start(t,Math.random()); s.stop(t+2.1);
+    sf.frequency.setValueAtTime(500,t+0.8); sf.frequency.exponentialRampToValueAtTime(2600,t+3.4);
+    sg.gain.setValueAtTime(0.0001,t); sg.gain.setValueAtTime(0.0001,t+0.8); sg.gain.exponentialRampToValueAtTime(0.03,t+3.3); sg.gain.exponentialRampToValueAtTime(0.0001,t+3.8);
+    s.connect(sf); sf.connect(sg); sg.connect(sfxG); s.start(t,Math.random()); s.stop(t+3.9);
     // Resonanzen: zwei leicht verstimmte tiefe Töne und eine Quinte darüber, langsam ein und aus
     [[nf(45),0.022],[nf(45)*1.007,0.018],[nf(52),0.012],[nf(57),0.008]].forEach(function(p){ var o=AC.createOscillator(), g=AC.createGain(); o.type='sine'; o.frequency.setValueAtTime(p[0],t);
-      g.gain.setValueAtTime(0.0001,t); g.gain.setValueAtTime(0.0001,t+0.5); g.gain.linearRampToValueAtTime(p[1],t+1.6); g.gain.linearRampToValueAtTime(p[1]*0.55,t+2.4); g.gain.exponentialRampToValueAtTime(0.0001,t+3.5); o.connect(g); g.connect(sfxG); o.start(t); o.stop(t+3.6); });
+      g.gain.setValueAtTime(0.0001,t); g.gain.setValueAtTime(0.0001,t+1.0); g.gain.linearRampToValueAtTime(p[1],t+3.2); g.gain.linearRampToValueAtTime(p[1]*0.55,t+4.6); g.gain.exponentialRampToValueAtTime(0.0001,t+6.2); o.connect(g); g.connect(sfxG); o.start(t); o.stop(t+6.3); });
     // Ausklang: ein heller Ton, der langsam fällt
-    tone('sine',nf(79),t+1.8,1.6,0.008,null,nf(72),0.15); },
+    tone('sine',nf(79),t+3.6,2.4,0.008,null,nf(72),0.2); },
   gust:function(t){ swell(t,2.2,0.08,'bandpass',600,2,sfxG,1500); },
   chain:function(t){ for (var i=0;i<4;i++){ noise(t+i*0.07,0.04,0.1,'highpass',3000,2); tone('sine',1700+i*80,t+i*0.07,0.05,0.03); } },
   coin:function(t){ tone('square',1976,t,0.05,0.03); tone('square',2637,t+0.06,0.2,0.03); },
@@ -1827,19 +1929,20 @@ function updateActor(a,dt){ if (a.frozen) return;
     if (a.id==='mala' && GS.active==='marko' && GS.malaOn && ACT.marko && !E.busy && room && !room.noFollow && !GS.flags['mala.lock'] && !(a.idle && /sit/.test(a.idle))){ var mk=ACT.marko, tx=mk.x+(mk.f==='L'?18:-18), ty=mk.y-2;
       if (Math.hypot(a.x-tx,a.y-ty)>34 && a.mode==='idle'){ walkActor(a,tx,ty); } } } }
 function arrive(a){ a.mode='idle'; setIdle(a); var r=a.res; a.res=null; if (r) r(true); }
-// ---------------------------------------------------------------- Erkenntnis eines Geistes: die Gestalt wird für 2,5 s instabil und fängt sich wieder
-// Phasen: 0–0,4 s Erstarren (Mund offen, kleiner Ruck), 0,4–1,3 s Flackern, 1,3–1,8 s Höhepunkt, 1,8–2,5 s Stabilisieren. Zeichnen: 06_ui.js (drawRealize).
-var REAL_MS=2500;
+// ---------------------------------------------------------------- Erkenntnis eines Geistes: die Gestalt wird für 5 s instabil und fängt sich wieder
+// Phasen: 0–0,8 s Erstarren (Augen weit, Mund offen, kleiner Ruck), 0,8–2,6 s Flackern und Wabern, 2,6–3,6 s Höhepunkt, 3,6–5 s Stabilisieren.
+// Danach blickt der Geist traurig (Stimmung 'sad'). Zeichnen: 06_ui.js (drawRealize), Klang: 04_audio.js ('realize').
+var REAL_MS=5000;
 function playGhostRealization(id,onComplete){ var a=ACT[id], fin=false;
   return new Promise(function(res){
     var end=function(){ if (fin) return; fin=true;
-      try{ if (a && ACT[id]===a && a.realize){ a.realize=null; a.frozen=a.realizePrev||null; a.realizePrev=null; if (!a.frozen) setIdle(a); a.rtUntil=gt+4000; } }catch(e){ console.error(e); }
+      try{ if (a && ACT[id]===a && a.realize){ a.realize=null; a.frozen=a.realizePrev||null; a.realizePrev=null; if (!a.frozen) setIdle(a); a.rtUntil=gt+4000; a.mood='sad'; } }catch(e){ console.error(e); }
       if (onComplete){ try{ onComplete(); }catch(e){ console.error(e); } } res(); };
     try{
       if (!a || !a.ghost || GS.flags['realized.'+id]){ end(); return; }    // nur einmal je Geist; fehlt die Figur, geht es einfach weiter
       GS.flags['realized.'+id]=true;
       if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); }
-      var pose=actorPose(a); cancelRes(a); a.realizePrev=a.frozen||null; a.frozen=Object.assign({},pose,{hd:'o'}); a.realize={t0:gt,seed:Math.floor(Math.random()*997)};
+      var pose=actorPose(a); cancelRes(a); a.realizePrev=a.frozen||null; a.frozen=Object.assign({},pose,{hd:'w'}); a.realize={t0:gt,seed:Math.floor(Math.random()*997)};
       try{ M.sfx('realize'); }catch(e){}
       timers.push({t:gt+REAL_MS,r:end});
     }catch(e){ console.error(e); end(); } }); }
@@ -1862,7 +1965,9 @@ function routineTick(a){ if (E.busy || E.dlg || E.overlay || E.screen!=='game' |
 // eine Figur, die gerade angesprochen wird, bleibt stehen und unterbricht ihren Ablauf eine Weile
 function holdNpc(a){ if (!a||!a.routine) return; if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); } a.rtUntil=gt+9000; }
 E.holdNpc=holdNpc;
-function actorPose(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
+var MOODHD={sad:'s',shock:'w'}, MOODC=new WeakMap();   // Posen sind Cache-Schlüssel (JSON), deshalb keine Zusatzfelder an ihnen
+function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood]; if (!m||!p||(p.hd&&p.hd!=='n')) return p; var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } return c[m]||(c[m]=Object.assign({},p,{hd:m})); }
+function actorPose0(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
     if (a.ghost){ var fl=a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); if (a.id==='mala'){ var wS=anims.walkS||A_.walkS, wF=anims.walkF||A_.walkF, wB=anims.walkB||A_.walkB; return (a.f==='F'?wF:(a.f==='B'?wB:wS))[a.fi%8]; } return fl[0][0]; }
     var wS2=anims.walkS||A_.walkS, wF2=anims.walkF||A_.walkF, wB2=anims.walkB||A_.walkB; return (a.f==='F'?wF2:(a.f==='B'?wB2:wS2))[a.fi%8]; }
   var fr=a.anim&&a.anim[a.fi]; return fr?fr[0]:A_.idleS[0][0]; }
@@ -1930,12 +2035,13 @@ function take(id){ var i=GS.inv.indexOf(id); if (i>=0) GS.inv.splice(i,1); if (E
 function setR(k,v){ S[k]=v; dirty=true; navDirty=true; }
 function flag(k){ return GS.flags[k]; }
 function setFlag(k,v){ GS.flags[k]=(v===undefined?true:v); dirty=true; navDirty=true; }
-function npcHandle(id){ var a=ACT[id]; if (!a){ var nop=function(){ return Promise.resolve(); }; return { x:160,y:120,f:'F',actor:null,say:function(t){ return say(t,'@'+id,{color:M.CAST_COLORS[id]||P.s5}); },walk:nop,face:nop,anim:function(n,h){ if (h) h(); return nop(); },show:function(){},hide:function(){},place:function(){},idle:function(){},freeze:function(){},set:function(){} }; }
+function npcHandle(id){ var a=ACT[id]; if (!a){ var nop=function(){ return Promise.resolve(); }; return { x:160,y:120,f:'F',actor:null,say:function(t){ return say(t,'@'+id,{color:M.CAST_COLORS[id]||P.s5}); },walk:nop,face:nop,anim:function(n,h){ if (h) h(); return nop(); },show:function(){},hide:function(){},place:function(){},idle:function(){},freeze:function(){},set:function(){},mood:function(){},agitate:function(){} }; }
   return { get x(){ return a.x; }, get y(){ return a.y; }, get f(){ return a.f; }, actor:a,
     say:function(t,opt){ return say(t,id,opt); }, walk:function(x,y){ a.rtUntil=gt+12000; return walkActor(a,x,y); }, face:function(f){ return faceOn(a,f); },
     routine:function(v){ if (v===false){ a.rtHold=true; } else { a.rtHold=false; if (v) a.routine=v; a.rtUntil=gt+3000; } }, home:function(x,y,f){ a.home=[x,y,f||a.f]; },
     anim:function(n,h,hold){ return playAnimOn(a,n,h,hold); }, show:function(){ a.visible=true; }, hide:function(){ a.visible=false; },
     place:function(x,y,f){ cancelRes(a); a.x=x; a.y=y; if (f) a.f=f; a.rtHold=true; setIdle(a); }, idle:function(n){ a.idle=n; setIdle(a); }, freeze:function(p){ a.frozen=p||null; }, set:function(k,v){ a[k]=v; },
+    mood:function(m){ a.mood=m||null; }, agitate:function(ms){ a.agit=gt+(ms||1600); },   // Geister: Gesichtsausdruck ('sad', 'shock'), aufgewühlt (stärkeres Flimmern)
     faceMe:function(){ var p=player(); if (!p) return Promise.resolve(); return faceOn(a,p.x<a.x?'L':'R'); } }; }
 
 // ---------------------------------------------------------------- Mala: Beitreten, Gehen, Wechseln
@@ -2244,6 +2350,8 @@ var P=M.P, T=M.T, Buf=M.Buf, E=M.E, bayer=M.bayer;
 var W=320, H=200, SH=144;
 var fb=new Buf(W,H,P.k0); M.fb=fb;
 var mask=new Uint8Array(W*SH);
+// Geisterpixel dieses Bildes (gmask) und ihre Farbe (gcol): spätere Dunkel-Durchgänge lassen sie aus, solange nichts darübergemalt wurde
+var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
 E.pending=null; E.pop=null; E.invTop=0; E.menu=null; E.titleMode='main';
 function GS(){ return M.GS; }
@@ -2255,7 +2363,7 @@ function ui(){ return isG()?{bg:P.k0,fr:P.x1,tx:P.x3,hi:P.x5,dim:P.x1,sel:P.x0}:
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
   for (var y=0;y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var sx=x+cx-ox; fb.d[row+x]=(sx>=0&&sx<bw)?bg.d[brow+sx]:P.k0; } }
-  mask.fill(0);
+  mask.fill(0); gmask.fill(0);
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
@@ -2264,23 +2372,23 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   var tod=view.tod;
   list.forEach(function(l){
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
-      var spirit=a.ghost;
+      var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
       var lift=0;
-      if (spirit){ if (ghostView){ o.mask=mask; o.mv=1; o.alpha=1; } else { var isM=a.ch==='mala', tq=E.gt(); o.lut=(isM?M.TINT.malaG:M.TINT.spirit).a; o.alpha=a.alpha||room.spiritAlpha||(isM?0.62:0.7); o.wobble=1;
-        if (isM){ lift=1+Math.round((Math.sin(tq/760)+1)*0.75); if ((tq%7300)<150) o.alpha*=0.45; if (gs.flags['mala.voice']){ var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; } } } }
+      if (spirit){
+        if (!ghostView && isM && gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; o.wobble=1; var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; lift=1; }   // nur eine Stimme: noch kein Körper, bewusst nur ein Flimmern
+        else { gst=ghostIdle(a,p,tq,isM,ghostView); lift=gst.lift; o.alpha=a.alpha||1; } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
       if (a.fadeOut){ var k=(E.gt()-a.fadeOut)/900; if (k>=1){ a.visible=false; a.fadeOut=0; return; } o.alpha=(o.alpha||1)*(1-k); }
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
-      if (spirit && !ghostView && !o.voice) ghostHalo(a,p,f,sx,a.y-lift,o.alpha);
-      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
-      if (spirit && !ghostView && a.ch==='mala') malaMotes(sx,a.y-lift,o.alpha); }
+      if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
+      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o); }
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
   if (room.front) room.front(fb,view,S,gs);
-  if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var lt=E.litAt(dx0+cx-ox,dy0), k0=dy0*W+dx0; if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
+  if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var k0=dy0*W+dx0; if (gmask[k0] && fb.d[k0]===gcol[k0]) continue; var lt=E.litAt(dx0+cx-ox,dy0); if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
     // Leinen: woran die Geister festgemacht sind (nur Mala sieht sie)
@@ -2298,30 +2406,62 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
-// ---------------------------------------------------------------- Erkenntnis eines Geistes (siehe playGhostRealization in 05_engine.js)
-// Nur die Figur wird verzerrt: Zeilenversatz, Wellen, Flackern, Konturdopplung, Streckung und ein Lichtimpuls. Die Szene bleibt unberührt.
+// ---------------------------------------------------------------- Geister in Markos Blick
+// Lesbarkeit vor Durchsichtigkeit: der Kern der Figur ist deckend, in der Geisterfarbe der Figur (blasse Haut, gedämpfte Kleidung,
+// leicht angehoben, siehe M.ghostLut in 03_cast.js). Nur der äußerste Umriss scheint halb durch. Außen liegt eine feine Lichtkontur,
+// deren Helligkeit sich nach dem Grund richtet: auf dunklem Grund hell, auf hellem dunkel, damit die Gestalt sich immer abhebt.
+// Ruhig: kaum merkliches Schweben, ein langsam atmender Saum, selten ein schwaches Flimmern mit einem Pixel Versatz, ab und zu ein Glanzpunkt.
+var GRIM={ g:{lo:P.v1,hi:P.v4,top:P.v5,glint:P.v5}, m:{lo:P.x1,hi:P.x4,top:P.x5,glint:P.x6} };
+function ghostSeed(a){ if (!a._gs){ var h=7; for (var i=0;i<a.id.length;i++) h=(h*31+a.id.charCodeAt(i))%9973; a._gs=1+h; } return a._gs; }
+function ghostIdle(a,p,t,isM,gv){ var sd=ghostSeed(a), sit=!!(p&&p.sit);
+  var lift=isM?1+Math.round((Math.sin(t/1150+sd)+1)*0.75):((sit||a.noFloat)?0:((Math.sin(t/1900+sd)>0.35)?1:0));
+  var rimK=2+Math.round(Math.sin(t/1600+sd*0.7)+1);
+  var cyc=6800+(sd%5)*700, ph=(t+sd*131)%cyc, fl=ph<150, band=fl?30+Math.floor(M.hash(Math.floor((t+sd*131)/cyc),sd)*44):-99, dir=(sd&1)?1:-1;
+  var gl=((t+sd*977)%2600)<260;
+  // aufgewühlt (npc.agitate): stärkerer, unruhiger Saum, kurzes Aufflackern alle 0,7 s, einzelne Zeilen verrutschen
+  if (a.agit && t<a.agit){ var aph=(t+sd*53)%700, af=aph<110, ab=30+Math.floor(M.hash(Math.floor((t+sd*53)/700),sd+2)*44);
+    return {t:t,gv:gv,alpha:af?0.72:1,rimK:Math.min(8,rimK+2+(af?1:0)),rows:function(j){ return (j>=ab&&j<ab+3)?((Math.floor(t/90)%2)?1:-1):0; },lift:lift,glint:((t%900)<300)?Math.floor(t/900)+sd:null}; }
+  return {t:t,gv:gv,alpha:fl?0.8:1,rimK:fl?rimK+1:rimK,rows:fl?function(j){ return (j>=band&&j<band+4)?dir:0; }:null,lift:lift,glint:gl?Math.floor((t+sd*977)/2600)+sd:null}; }
+// je Posenbild einmal: welche Pixel Kern (1), Umriss (2) oder Kern direkt unter dem oberen Umriss (3) sind, und wo der Saum außen liegt
+function ghostPrep(s){ if (s._g) return s._g; var w=s.w, h=s.h, d=s.d, e=new Uint8Array(w*h), rim=[];
+  function op(i,j){ return i>=0&&j>=0&&i<w&&j<h&&d[j*w+i]!==T; }
+  for (var j=0;j<h;j++) for (var i=0;i<w;i++){ if (!op(i,j)) continue; var ed=!(op(i-1,j)&&op(i+1,j)&&op(i,j-1)&&op(i,j+1)); e[j*w+i]=ed?2:((j>0&&e[(j-1)*w+i]===2&&!op(i,j-2))?3:1); }
+  for (var j2=-1;j2<=h;j2++) for (var i2=-1;i2<=w;i2++){ if (op(i2,j2)) continue; if (op(i2-1,j2)||op(i2+1,j2)||op(i2,j2-1)||op(i2,j2+1)) rim.push(i2,j2,op(i2,j2+1)?1:0); }
+  return (s._g={e:e,rim:rim}); }
+// o: {t, alpha 0..1 (echtes Durchscheinen über Mischfarben, kein Raster), rimK Saumstärke in Achteln, rows(j) Zeilenversatz, lut, gv (Geistersicht), sprite, noMask, glint}
+function drawGhost(a,p,f,x,y,o){ var s=o.sprite||M.poseBuf(p,a.ch,o.t), G=ghostPrep(s), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, w=s.w, h=s.h, d=s.d;
+  var lut=o.lut!==undefined?o.lut:(o.gv?null:M.ghostLut(a.ch)), R=a.ch==='mala'?GRIM.m:GRIM.g, A8=Math.max(0,Math.min(8,Math.round((o.alpha===undefined?1:o.alpha)*8)));
+  if (A8<=0) return; var rows=o.rows, e=G.e, gv=!!o.gv, nm=!!o.noMask, rk=Math.min(8,Math.round((o.rimK===undefined?3:o.rimK)*A8/8));
+  if (rk>0){ var rim=G.rim, gi=(o.glint!==null&&o.glint!==undefined&&rim.length)?Math.floor(M.hash(o.glint,3.1)*(rim.length/3))*3:-1;
+    for (var q=0;q<rim.length;q+=3){ var i=rim[q], j=rim[q+1], Y=by+j; if (Y<0||Y>=SH) continue; var X=bx+(fl?w-1-i:i)+(rows?rows(j):0); if (X<0||X>=W) continue;
+      var k=Y*W+X, c=fb.d[k], rc=M.lum(c)>150?R.lo:(rim[q+2]?R.top:R.hi), kk=rk; if (q===gi){ rc=R.glint; kk=Math.min(8,rk+3); }
+      var v=M.mix(c,rc,kk); fb.d[k]=v; if (!nm){ gmask[k]=1; gcol[k]=v; } if (gv) mask[k]=1; } }
+  for (var j2=0;j2<h;j2++){ var Y2=by+j2; if (Y2<0||Y2>=SH) continue; var oj=rows?rows(j2):0, row=j2*w;
+    for (var i2=0;i2<w;i2++){ var si=fl?w-1-i2:i2, c2=d[row+si]; if (c2===T) continue; var X2=bx+i2+oj; if (X2<0||X2>=W) continue;
+      var k2=Y2*W+X2, ty=e[row+si], gc=lut?lut[c2]:c2; if (ty===3 && !gv) gc=M.UP[gc];
+      var aa=(ty===2&&!gv)?Math.min(A8,5):A8, v2=aa>=8?gc:M.mix(fb.d[k2],gc,aa); fb.d[k2]=v2; if (!nm){ gmask[k2]=1; gcol[k2]=v2; } if (gv) mask[k2]=1; } } }
+var STRB=null;   // ein wiederverwendeter Puffer für die gestreckte Gestalt (weniger Speicherbereinigung während des Effekts)
+function stretched(s,sx,sy){ var OX=M.SPR.OX, OY=M.SPR.OY; if (!STRB||STRB.w!==s.w||STRB.h!==s.h) STRB=new Buf(s.w,s.h,T); var b=STRB; b.d.fill(T); b._g=null; for (var j=0;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sy); if (sj<0||sj>=s.h) continue;
+  for (var i=0;i<s.w;i++){ var si=Math.round(OX+(i-OX)/sx); if (si<0||si>=s.w) continue; b.d[j*s.w+i]=s.d[sj*s.w+si]; } } return b; }
+var IDLUT=new Uint8Array(256); for (var ii=0;ii<256;ii++) IDLUT[ii]=ii;
+function dimLut(l){ if (!l._dim){ l._dim=new Uint8Array(256); for (var i=0;i<256;i++) l._dim[i]=M.DN[l[i]]; } return l._dim; }
+// ---------------------------------------------------------------- Erkenntnis eines Geistes (siehe playGhostRealization in 05_engine.js), 5 Sekunden
+// Kein Blitz: die sonst ruhige Gestalt flackert unregelmäßig wie ein versagendes Licht (kurze Aussetzer bis auf etwa ein Drittel, nie ganz weg),
+// wabert, verzerrt sich und zeigt ein blasses, dunkleres Doppelbild. Höhepunkt 2,6 bis 3,6 s, danach fängt sie sich. Die Szene bleibt ruhig.
 function realizeCurve(t){ // Stärke 0..1 über die Zeit (s)
-  if (t<0.4) return 0; if (t<1.3){ var u=(t-0.4)/0.9; return 0.15+0.55*u*u; } if (t<1.8) return 0.7+0.3*Math.sin((t-1.3)/0.5*Math.PI); if (t<2.5){ var v=(t-1.8)/0.7; return 0.7*(1-v)*(1-v); } return 0; }
-function drawRealize(a,p,f,x,y,gv,baseA){ var R=a.realize, gt=E.gt(), t=(gt-R.t0)/1000, k=realizeCurve(t), peak=(t>=1.3&&t<1.8)?Math.sin((t-1.3)/0.5*Math.PI):0;
-  var s=M.poseBuf(p,a.ch,gt), fl=f==='L', OX=M.SPR.OX, OY=M.SPR.OY, bx=Math.round(x)-OX+(fl?1:0), by=Math.round(y)-OY, isM=a.ch==='mala';
-  var lut=gv?null:(isM?M.TINT.malaG:M.TINT.spirit).a, alt=gv?null:(isM?M.TINT.spirit:M.TINT.malaG).a, sd=R.seed;
-  var fr=Math.floor(gt/(70-35*k)), hz=M.hash;
-  // Phase 1: Erstarren mit kleinem Ruck nach oben
-  var jolt=t<0.4?Math.round(Math.sin(t/0.4*Math.PI)*2):0, trem=t<0.4&&t>0.05?((Math.floor(gt/40)%2)?1:0):0;
-  var sxs=1+0.3*peak, sys=1+0.07*peak, A=baseA*(1-0.5*k*hz(fr,sd)); if (A<0.3) A=0.3; var bright=k>0.25&&hz(fr,sd+5)>0.72;
-  var pulseY=peak>0?Math.round(OY-(t-1.3)/0.5*s.h*1.1):-99;
-  function off(j){ if (k<=0) return trem; var w=Math.sin(j*0.31+t*11)*1.6*k, slip=(hz(j>>1,fr+sd)-0.5)*5*k*k, blk=(hz(j>>2,fr*7+sd)>0.84)?Math.round((hz(j>>2,fr+3)-0.5)*8*k):0; return Math.round(w+slip)+blk+trem; }
-  function pass(dx,al,tab,echo){ for (var j=-8;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sys); if (sj<0||sj>=s.h) continue; var Y=by+j-jolt; if (Y<0||Y>=SH) continue; var o=off(j)+dx, pl=Math.abs(sj-pulseY)<=2;
-      for (var i=-12;i<s.w+12;i++){ var si=Math.round(OX+(i-OX)/sxs); if (si<0||si>=s.w) continue; var c=s.d[sj*s.w+(fl?s.w-1-si:si)]; if (c===T) continue; var X=bx+i+o; if (X<0||X>=W) continue;
-        if (al<1 && bayer(X+fr,Y+(fr>>1))>=al) continue; var cc=tab?tab[c]:c; if (bright&&!echo) cc=M.UP[cc]; if (pl) cc=echo?P.x6:(Math.abs(sj-pulseY)<1?P.l1:M.UP[M.UP[cc]]); fb.d[Y*W+X]=cc; if (gv) mask[Y*W+X]=1; } } }
-  if (!gv) ghostHalo(a,p,f,x+off(40),y-jolt,Math.min(1,A+0.25*k));
-  if (k>0.12){ var ex=(hz(fr,sd+9)>0.5?1:-1)*(2+Math.round(4*k)); pass(ex,Math.min(0.55,A*0.7)*k+0.1,alt,true); }   // Konturdopplung in verschobener Farbe
-  pass(0,A,lut,false); }
-// Geisterschein: ein weicher, kalter Rand um die Gestalt
-function ghostHalo(a,p,f,x,y,al){ var s=M.poseBuf(p,a.ch,E.gt()), fl=f==='L', bx=Math.round(x)-M.SPR.OX+(fl?1:0), by=Math.round(y)-M.SPR.OY, isM=a.ch==='mala', t=Math.floor(E.gt()/120);
-  var gl=isM?[P.x2,P.x3,P.x4]:[P.v2,P.v3,P.v4], w=s.w, h=s.h, at=function(i,j){ if (i<0||j<0||i>=w||j>=h) return false; return s.d[j*w+(fl?w-1-i:i)]!==T; };
-  for (var j=-2;j<h+2;j++){ var yy=by+j; if (yy<0||yy>=SH) continue; for (var i=-2;i<w+2;i++){ if (at(i,j)) continue; var n1=at(i-1,j)||at(i+1,j)||at(i,j-1)||at(i,j+1), n2=!n1&&(at(i-2,j)||at(i+2,j)||at(i,j-2)||at(i,j+2));
-      if (!n1&&!n2) continue; var xx=bx+i; if (xx<0||xx>=W) continue; var th=(n1?0.55:0.22)*(al+0.3); if (bayer(xx+t,yy)>=th) continue; var k=yy*W+xx, c=fb.d[k]; fb.d[k]=M.lum(c)<70?gl[0]:(M.lum(c)<140?gl[1]:gl[2]); } } }
+  if (t<0.8) return 0; if (t<2.6){ var u=(t-0.8)/1.8; return 0.12+0.58*u*u; } if (t<3.6) return 0.7+0.3*Math.sin((t-2.6)/1.0*Math.PI); if (t<5.0){ var v=(t-3.6)/1.4; return 0.7*(1-v)*(1-v); } return 0; }
+function drawRealize(a,p,f,x,y,gv,baseA){ var R=a.realize, gt=E.gt(), t=(gt-R.t0)/1000, k=realizeCurve(t), peak=(t>=2.6&&t<3.6)?Math.sin((t-2.6)/1.0*Math.PI):0, sd=R.seed, hz=M.hash;
+  // Flackern in 45-ms-Schritten: Aussetzer werden mit der Stärke häufiger und tiefer; zwischen den Aussetzern ist die Gestalt fast ganz da
+  var tick=Math.floor(gt/45), run=Math.floor(tick/2), drop=k>0 && (hz(tick,sd)<0.05+0.30*k || hz(run,sd+4)<0.02+0.15*k), deep=drop && hz(tick,sd+1)<0.25+0.35*peak;
+  var A=drop?(deep?0.34:0.56):(1-0.14*k*hz(tick,sd+2));
+  // Phase 1: Erstarren, ein kleiner Ruck, kurzes Zittern
+  var jolt=t<0.3?Math.round(Math.sin(t/0.3*Math.PI)*1.5):0, trem=(t>0.05&&t<0.7)?((Math.floor(gt/60)%2)?1:0):0;
+  // Wabern: weiche, langsame Wellen (wie Luft über heißem Stein), nur am Höhepunkt wenige kleine Versätze
+  var amp=2.8*k, frq=5+4*k;
+  function rows(j){ if (k<=0) return trem; var wv=Math.sin(j*0.19+t*frq)*amp+Math.sin(j*0.07-t*2.1)*amp*0.7, slip=(hz(j>>1,tick+sd)-0.5)*2*peak, blk=(peak>0.4&&hz(j>>2,run*7+sd)>0.92)?Math.round((hz(j>>2,run+3)-0.5)*5*peak):0; return Math.round(wv+slip)+blk+trem; }
+  var sxs=1+0.18*peak, sys=1+0.05*peak, spr=(sxs>1.01||sys>1.01)?stretched(M.poseBuf(p,a.ch,gt),sxs,sys):null, lut=gv?IDLUT:M.ghostLut(a.ch);
+  if (k>0.1){ var ex=(hz(run>>1,sd+9)>0.5?1:-1)*(1+Math.round(3*k)); drawGhost(a,p,f,x+ex,y-jolt,{t:gt,gv:gv,alpha:(0.22+0.16*k)*baseA,rimK:0,rows:rows,lut:dimLut(lut),sprite:spr,noMask:true}); }
+  drawGhost(a,p,f,x,y-jolt,{t:gt,gv:gv,alpha:A*baseA,rimK:drop?1:(3+Math.round(2*k)),rows:rows,lut:lut,sprite:spr}); }
 // kleine Lichtpunkte, die von Mala aufsteigen
 function malaMotes(x,y,al){ var t=E.gt()/1000; for (var i=0;i<4;i++){ var ph=(t*0.32+i*0.27)%1, px=Math.round(x+Math.sin(i*2.7+t*1.3)*7), py=Math.round(y-12-ph*34); if (ph>0.85||px<0||px>=W||py<0||py>=SH) continue; if (bayer(px,py)<(1-ph)*al) fb.d[py*W+px]=P.x5; } }
 // eine Leine aus Licht von (x0,y0) nach (x1,y1), leicht durchhängend; east=true: Malas eigene, die sich im Osten verliert
@@ -2376,7 +2516,7 @@ function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2
   if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
     for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; if (!avail) c2=M.DN[M.DN[c2]]; fb.px(x+2+i2,y+1+j2,c2); } }
   else { var pb=portraitBuf(other,'n'), cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
-    for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.TINT.ghostP.a[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); } }
+    for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.ghostLut('mala')[col]; if (!avail) col=M.DN[M.DN[col]]; fb.px(ox+i,oy+j,col); } }
   var lab=other==='mala'?'Mala':'Marko'; M.text(fb,lab,x+Math.floor((w-M.textWidth(lab))/2),y+h-10,!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
 function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
@@ -2421,7 +2561,7 @@ var FALLBACK={};
 function portraitFor(ch,variant){ if (M.hasPortrait && M.hasPortrait(ch)) return M.portrait(ch,variant); var key=ch+':'+variant; if (FALLBACK[key]) return FALLBACK[key]; if (!M.CHARS[ch]) return null;
   var hb=portraitBuf(ch,variant), b=new Buf(PW,PH,T), sc=PW/hb.w;
   for (var y=0;y<PH;y++) for (var x=0;x<PW;x++){ var sx=Math.floor(x/sc), sy=Math.floor(y/sc); if (sy<hb.h&&sx<hb.w){ var c=hb.d[sy*hb.w+sx]; if (c!==T) b.d[y*PW+x]=c; } }
-  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.TINT[gt]){ var lut=M.TINT[gt].a; for (var i=0;i<b.d.length;i++) if (b.d[i]!==T) b.d[i]=lut[b.d[i]]; } return (FALLBACK[key]=b); }
+  M.outline(b,P.k1); var gt=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch]; if (gt && M.ghostLut){ var lut=M.ghostLut(ch); for (var i=0;i<b.d.length;i++) if (b.d[i]!==T) b.d[i]=lut[b.d[i]]; } return (FALLBACK[key]=b); }
 function drawBust(ch,x0,y0,variant,mirror){ var pb=portraitFor(ch,variant); if (!pb) return false; var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[ch];
   if (gh){ var cx=x0+(PW>>1), cy=y0+26, aur=ch==='mala'?[P.x1,P.x2]:[P.v1,P.v2], t=Math.floor(E.gt()/150); // kalter Schein hinter Geistern
     for (var y=Math.max(0,y0-4);y<y0+PH;y++) for (var x=Math.max(0,x0-6);x<Math.min(W,x0+PW+6);x++){ var d=Math.hypot((x-cx)/34,(y-cy)/31); if (d>1) continue; if (bayer(x+t,y)<(1-d)*0.5) fb.px(x,y,d<0.55?aur[1]:aur[0]); } }
@@ -2765,13 +2905,13 @@ M.key=function(k){ if (k==='Escape'){ if (E.overlay) E.closeOverlay(null); else 
    Jede Figur hat eine Datei in portraits/<id>.js mit M.definePortrait(id,{paint:function(b,v){…}}).
    Varianten: 'n' ruhig, 'o' spricht (Mund offen), 'b' blinzelt (Augen zu). Gemalt wird nach rechts blickend
    auf transparentem Grund; die Oberfläche spiegelt, wenn das Porträt rechts steht. Geister werden beim
-   Zwischenspeichern eingefärbt (Mala kalt blau, die anderen fahl-lavendel). */
+   Zwischenspeichern in ihre Geisterfarbe umgesetzt (M.ghostLut in 03_cast.js: blass, kühl, aber mit erkennbarer Kleidung und Haar). */
 (function(M){
 'use strict';
 var P=M.P, T=M.T, Buf=M.Buf;
 M.PORTRAIT_W=56; M.PORTRAIT_H=64;
 M.PORTRAITS={};
-M.PORTRAIT_GHOSTS={ mala:'ghostP', ivka:'spiritP', luka:'spiritP', bruno:'spiritP', jakov:'spiritP' };
+M.PORTRAIT_GHOSTS={ mala:true, ivka:true, luka:true, bruno:true, jakov:true };   // Geister: Porträt in ihrer Geisterfarbe (M.ghostLut)
 M.definePortrait=function(id,def){ def=def||{}; def.id=id; def.cache={}; M.PORTRAITS[id]=def; };
 M.hasPortrait=function(id){ return !!M.PORTRAITS[id]; };
 // ghost: true = so, wie Marko einen Geist sieht (eingefärbt); false = ungefärbt (Malas eigene Sicht auf sich selbst, Testblatt)
@@ -2781,8 +2921,8 @@ M.portrait=function(id,variant,ghost){ var d=M.PORTRAITS[id]; if (!d) return nul
   if (!b){ b=new Buf(M.PORTRAIT_W,M.PORTRAIT_H,T); var v={mouth:variant==='o'?1:0,eyes:variant==='b'?1:0,variant:variant};
     try{ d.paint(b,v); }catch(e){ console.error('Porträt '+id,e); } d.cache[variant]=b; }
   if (!ghost) return b;
-  // ohne Dithering (ruhigere Gesichter): jede Farbe auf ihre nächste Geisterfarbe
-  var g=new Buf(b.w,b.h,T), tn=M.TINT[M.PORTRAIT_GHOSTS[id]||'spiritP']; for (var i=0;i<b.d.length;i++){ var c=b.d[i]; g.d[i]=(c===T||!tn)?c:((c===P.k0||c===P.k1)?P.k0:tn.a[c]); } return (d.cache[key]=g); }; // Kontur bleibt dunkel, damit sie sich vom Schein abhebt
+  // ohne Dithering (ruhigere Gesichter): jede Farbe auf ihre Geisterfarbe, dieselbe Tabelle wie die Figur im Bild
+  var g=new Buf(b.w,b.h,T), lut=M.ghostLut?M.ghostLut(id):null; for (var i=0;i<b.d.length;i++){ var c=b.d[i]; g.d[i]=(c===T||!lut)?c:((c===P.k0||c===P.k1)?P.k0:lut[c]); } return (d.cache[key]=g); }; // Kontur bleibt dunkel, damit sie sich vom Schein abhebt
 })(M);
 
 /* ---- 08_life.js ---- */
@@ -3454,7 +3594,7 @@ M.definePortrait('frane',{ paint:function(b,v){
 /* ===== portraits/ivka.js — Ivka Perić (Geist, 85), wartet seit 1984 an der Mole =====
    Schwarzes Kopftuch unter dem Kinn geknotet (kühles Schwarz, Zugfalten zum Knoten), langer schwarzer Mantel
    (warmes Schwarz, eine Stufe dunkler als das Tuch), tiefe Falten, eingefallene Wangen, wache Augen.
-   Natürliche Farben: das Spiel färbt Ivka als Geist selbst ein (M.TINT.spiritP); Augen, Brauen, Mund und
+   Natürliche Farben: das Spiel setzt Ivka als Geist selbst in ihre Geisterfarbe um (M.ghostLut); Augen, Brauen, Mund und
    Kontur sind über Helligkeit getrennt und bleiben auch eingefärbt lesbar.
    Gemalt als Pixelkarte MAP (56 × 64, ein Zeichen = ein Pixel, '.' = transparent) mit Farblegende LEG;
    Varianten als kleine Flicken [y, x, zeichen] ('_' = Pixel bleibt): PATCH.mouth (spricht), PATCH.eyes (blinzelt).
@@ -3822,7 +3962,7 @@ M.definePortrait('ljerkaNight',{ paint:function(b,v){
 /* ---- portraits/luka.js ---- */
 /* ===== portraits/luka.js — Luka Radić (Geist, 20), Gitarrist, August 1999 =====
    Strubbeliges Haar, offenes Flanellhemd über weißem T-Shirt, junges Gesicht, Vorfreude in den Augen.
-   In natürlichen Farben gemalt; das Spiel färbt Geister selbst ein (M.TINT.spiritP). */
+   In natürlichen Farben gemalt; das Spiel setzt Geister selbst in ihre Geisterfarbe um (M.ghostLut). */
 (function(M){
 'use strict';
 var P=M.P;
@@ -3916,7 +4056,7 @@ M.definePortrait('luka',{ paint:function(b,v){
 /* ---- portraits/mala.js ---- */
 /* Porträt: Mala (Geist, wirkt 17–18, frühe Neunziger) — dunkler lockerer Zopf über der Schulter, Strähnen im Gesicht,
    übergroße Jeansjacke mit hochgeschlagenem Kragen, handgestrickter grauer Schal, große ernste Augen.
-   In natürlichen Farben gemalt; das Spiel färbt das Bild kalt blau-türkis ein (M.TINT.ghostP). Deshalb sind die
+   In natürlichen Farben gemalt; das Spiel setzt das Bild in Malas Geisterfarbe um (M.ghostLut). Deshalb sind die
    Tonstufen nach Helligkeit gewählt: Augenweiß hell, Iris mittel, Lippenspalt und Schatten weich, nie schwarz. */
 (function(M){
 'use strict';
@@ -8426,7 +8566,8 @@ M.defineArt('palma',{
     clock:[246,8,13,52]
   },
   stands:{
-    door:[225,104,'B'], reception:[100,122,'B'], lodge:[42,116,'B'], bell:[64,122,'B'], switchboard:[42,116,'B'], pigeonholes:[80,122,'B'],
+    // Bruno sitzt nachts in der Loge (x 54): Marko steht daneben, nicht davor
+    door:[225,104,'B'], reception:[100,122,'B'], lodge:[80,118,'B'], bell:[76,122,'B'], switchboard:[34,118,'B'], pigeonholes:[80,122,'B'],
     drawer:[103,110,'L'], phonebook:[103,110,'L'], stairs:[258,120,'R'], chain:[262,120,'B'], hooks:[176,106,'B'], coat13:[HK13,106,'B'],
     photos:[84,122,'B'], photo_dance:[22,116,'B'], reading_table:[161,116,'F'], armchairs:[130,118,'F'], palms:[40,124,'L'],
     register:[138,111,'B'], private:[114,110,'B'], window:[262,122,'R'], clock:[258,120,'B']
@@ -9540,11 +9681,12 @@ M.defineArt('salon',{
     hopscotch:[94,108,76,34]
   },
   stands:{
-    door:[64,116,'L'], piano:[178,134,'B'], sheet:[200,134,'B'], bench:[148,128,'R'], gramophone:[74,118,'B'], cabinet:[70,118,'B'],
+    // Bruno steht an der Tür (x 60): Marko stellt sich daneben, nie davor
+    door:[80,120,'L'], piano:[178,134,'B'], sheet:[200,134,'B'], bench:[148,128,'R'], gramophone:[84,118,'B'], cabinet:[82,120,'B'],
     beds:[248,124,'R'], windows:[160,112,'B'], chandelier:[150,128,'B'], chalk:[124,112,'B'], hopscotch:[96,130,'B']
   },
   actorPos:{ bruno:[60,118,'F','bruno',true,'porter'], ljerkaNight:[160,120,'R','ljerkaNight',false,'sit'] },
-  start:[66,124,'R'], entries:{ palma:[62,120,'R'] }
+  start:[92,124,'R'], entries:{ palma:[92,124,'R'] }
 });
 })(M);
 
@@ -11704,7 +11846,7 @@ async function finale(A){ var N=A.npc('nina'), L=A.npc('luka'); A.setFlag('c2.fi
   await A.voice('Luka (auf Band): „Nina. Wenn du das hörst, sind wir schon auf dem Schiff. Oder du hast mich sitzen lassen.“',M.CAST_COLORS.luka);
   await A.voice('„…Nein. Das machst du nicht. Okay. Das ist für dich. Es hat noch keinen Namen. Du darfst ihm einen geben.“',M.CAST_COLORS.luka);
   await A.wait(2200); if (L.actor){ L.idle(null); await L.face('R'); }
-  await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
+  L.agitate(4200); await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
   await L.say('Warum ist sie … Sie ist älter. Sie sieht aus wie ihre Mutter.'); await A.wait(900); await L.say('Wie lange …?');
   await A.memory({title:'Nachhall – die Treppe',draw:M.mem.fall,tint:'ghost',lines:['Abend. Die Sonne steht schon tief. Ein Junge rennt die Treppe hinauf, zwei Stufen auf einmal.','Er hat es eilig. Er lacht. Er denkt an halb neun.','Die siebte Stufe gibt nach.','Dann ist es dunkel. Lange dunkel.']});
   await A.realize('luka');   // er hat seinen Sturz gesehen
@@ -12276,7 +12418,7 @@ async function talkBruno(A){ var B=A.npc('bruno');
         else { await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Kroatisch, Italienisch, Deutsch. Alles durcheinander. Aber es ist ein Satz.'); } }},
     {t:'Ich versuche, Ihren Satz zu übersetzen.',if:lvl(A)>=3&&!A.flag('c3.translated'),go:function(A){ return translate(A,B); }},
     A.askOpt({ c3_dance:async function(A){ await B.say('Nedjelja … ples … Danica …'); await B.anim('porterTalk'); },
-      c3_zagreb:async function(A){ await B.say('Ne … ne još … ne još …'); A.shake(250); },
+      c3_zagreb:async function(A){ B.agitate(2400); await B.say('Ne … ne još … ne još …'); A.shake(250); },
       c3_father:'Ljerka … mala Ljerka … na stubama …', c3_salon:'Salon … zatvoreno … djeca … crtaju … neka crtaju …',
       m_31:async function(A){ await B.say('Trideset i jedan … zima … kutija … čaj …'); if (A.malaHere()) await A.g('Hör auf.'); },
       m_register:async function(A){ await B.say('Trideset i jedan … ona … ona čeka … autobus …'); if (A.malaHere()){ await A.g('Marko. Bitte.'); } },
@@ -12307,7 +12449,7 @@ async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übers
 async function showToBruno(A,item){ var B=A.npc('bruno');
   if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); setLvl(A,1); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.'); return; }
   if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); setLvl(A,Math.max(2,lvl(A))); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“'); return; }
-  if (item==='envelope'){ await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
+  if (item==='envelope'){ B.agitate(3200); await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
   if (item==='keyring') return B.say('Ključevi … moji … salon …');
   if (item==='crank') return B.say('Ručka … glazba … nedjelja …');
   if (item==='record') return B.say('„Večer na Rivi“ … Danica …');
@@ -12334,14 +12476,14 @@ async function wakeLjerka(A){ await A.anim('knock'); A.sfx('knock'); await A.wai
       if (c2==='he'){ await L.say('…'); await A.wait(1500); await L.say('Sie sind ein seltsamer Mensch, Gospodine Vuković.'); } else { await L.say('Was nicht dasteht.'); await A.wait(1300); }
       await L.say('Er hat es gewusst. Die ganzen Jahre. Jeden Morgen, wenn ich den Frühstücksraum aufgeschlossen habe.'); } }
   await A.wait(1500); await L.say('Kommen Sie.'); A.setFlag('c3.ljerkaUp');
-  await A.goto('salon',{noEnter:true}); return salonFinale(A); }
+  await A.goto('salon',{x:100,y:124,f:'L',noEnter:true}); return salonFinale(A); }
 async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.set('sheetOff',true); A.rebuild();
   var p=M.apos('salon','ljerkaNight',[160,120,'R']); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
   await A.narrate('Ljerka setzt sich an den Flügel. Lange sitzt sie nur da.'); await A.wait(1200);
   A.music('vecerPiano'); await A.wait(7000); if (B.actor){ await B.face('R'); } await A.wait(4500);
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
   await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
-  await A.wait(1600); await B.say('Koliko … godina …?'); await A.wait(1800);
+  await A.wait(1600); B.agitate(3400); await B.say('Koliko … godina …?'); await A.wait(1800);
   if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
   await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
@@ -12572,7 +12714,7 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
     if (c==='soft') await I.say('Ich warte gern. Wer wartet, hat noch etwas vor sich.'); else await I.say('Nach Hause. Da ist es so still. Da tickt nur die Uhr.'); }
   await A.animM('give'); A.take('gloves'); await A.m('Die hat er Ihnen mitgebracht. Dinko hat sie siebenundzwanzig Jahre lang aufbewahrt.');
   await I.say('Handschuhe. Grau.'); await I.say('Er wusste doch, dass ich nie welche trage.'); await I.anim('gloveF'); await A.wait(700);
-  A.sfx('drop'); A.shake(250); await A.wait(900); A.music('silence');
+  A.sfx('drop'); A.shake(250); I.agitate(5200); await A.wait(900); A.music('silence');   // die Gestalt wird unruhig, noch vor der Erkenntnis
   await A.narrate('Die Handschuhe fallen durch ihre Finger auf die Steine der Mole.'); await A.wait(1400);
   await I.say('…'); await A.wait(900); await I.say('Ich kann sie nicht halten.'); await I.say('Warum kann ich sie nicht halten?');
   c=await A.choose([{t:'„Weil Sie nicht mehr hier sind.“',id:'here'},{t:'(Nichts sagen.)',id:'quiet',silent:true},{t:'„Sie sind letzte Woche gestorben, Gospođa Perić.“',id:'week'}],{title:'Ivka'});

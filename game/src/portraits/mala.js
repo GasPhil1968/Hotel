@@ -1,6 +1,6 @@
 /* Porträt: Mala (Geist, wirkt 17–18, frühe Neunziger) — dunkler lockerer Zopf über der Schulter, Strähnen im Gesicht,
    übergroße Jeansjacke mit hochgeschlagenem Kragen, handgestrickter grauer Schal, große ernste Augen.
-   In natürlichen Farben gemalt; das Spiel färbt das Bild kalt blau-türkis ein (M.TINT.ghostP). Deshalb sind die
+   In natürlichen Farben gemalt; das Spiel setzt das Bild in Malas Geisterfarbe um (M.ghostLut). Deshalb sind die
    Tonstufen nach Helligkeit gewählt: Augenweiß hell, Iris mittel, Lippenspalt und Schatten weich, nie schwarz. */
 (function(M){
 'use strict';

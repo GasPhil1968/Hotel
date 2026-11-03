@@ -48,7 +48,7 @@ async function finale(A){ var N=A.npc('nina'), L=A.npc('luka'); A.setFlag('c2.fi
   await A.voice('Luka (auf Band): „Nina. Wenn du das hörst, sind wir schon auf dem Schiff. Oder du hast mich sitzen lassen.“',M.CAST_COLORS.luka);
   await A.voice('„…Nein. Das machst du nicht. Okay. Das ist für dich. Es hat noch keinen Namen. Du darfst ihm einen geben.“',M.CAST_COLORS.luka);
   await A.wait(2200); if (L.actor){ L.idle(null); await L.face('R'); }
-  await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
+  L.agitate(4200); await L.say('Das ist … meine Stimme.'); await A.wait(900); await L.say('Nina?'); await A.wait(1400);
   await L.say('Warum ist sie … Sie ist älter. Sie sieht aus wie ihre Mutter.'); await A.wait(900); await L.say('Wie lange …?');
   await A.memory({title:'Nachhall – die Treppe',draw:M.mem.fall,tint:'ghost',lines:['Abend. Die Sonne steht schon tief. Ein Junge rennt die Treppe hinauf, zwei Stufen auf einmal.','Er hat es eilig. Er lacht. Er denkt an halb neun.','Die siebte Stufe gibt nach.','Dann ist es dunkel. Lange dunkel.']});
   await A.realize('luka');   // er hat seinen Sturz gesehen

@@ -95,7 +95,7 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
     if (c==='soft') await I.say('Ich warte gern. Wer wartet, hat noch etwas vor sich.'); else await I.say('Nach Hause. Da ist es so still. Da tickt nur die Uhr.'); }
   await A.animM('give'); A.take('gloves'); await A.m('Die hat er Ihnen mitgebracht. Dinko hat sie siebenundzwanzig Jahre lang aufbewahrt.');
   await I.say('Handschuhe. Grau.'); await I.say('Er wusste doch, dass ich nie welche trage.'); await I.anim('gloveF'); await A.wait(700);
-  A.sfx('drop'); A.shake(250); await A.wait(900); A.music('silence');
+  A.sfx('drop'); A.shake(250); I.agitate(5200); await A.wait(900); A.music('silence');   // die Gestalt wird unruhig, noch vor der Erkenntnis
   await A.narrate('Die Handschuhe fallen durch ihre Finger auf die Steine der Mole.'); await A.wait(1400);
   await I.say('…'); await A.wait(900); await I.say('Ich kann sie nicht halten.'); await I.say('Warum kann ich sie nicht halten?');
   c=await A.choose([{t:'„Weil Sie nicht mehr hier sind.“',id:'here'},{t:'(Nichts sagen.)',id:'quiet',silent:true},{t:'„Sie sind letzte Woche gestorben, Gospođa Perić.“',id:'week'}],{title:'Ivka'});

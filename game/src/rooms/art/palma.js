@@ -473,7 +473,8 @@ M.defineArt('palma',{
     clock:[246,8,13,52]
   },
   stands:{
-    door:[225,104,'B'], reception:[100,122,'B'], lodge:[42,116,'B'], bell:[64,122,'B'], switchboard:[42,116,'B'], pigeonholes:[80,122,'B'],
+    // Bruno sitzt nachts in der Loge (x 54): Marko steht daneben, nicht davor
+    door:[225,104,'B'], reception:[100,122,'B'], lodge:[80,118,'B'], bell:[76,122,'B'], switchboard:[34,118,'B'], pigeonholes:[80,122,'B'],
     drawer:[103,110,'L'], phonebook:[103,110,'L'], stairs:[258,120,'R'], chain:[262,120,'B'], hooks:[176,106,'B'], coat13:[HK13,106,'B'],
     photos:[84,122,'B'], photo_dance:[22,116,'B'], reading_table:[161,116,'F'], armchairs:[130,118,'F'], palms:[40,124,'L'],
     register:[138,111,'B'], private:[114,110,'B'], window:[262,122,'R'], clock:[258,120,'B']
