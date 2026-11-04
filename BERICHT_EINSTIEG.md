@@ -137,6 +137,7 @@ Die Spieluhr misst im Durchlauf den kürzesten Weg: Dialoge in normaler Geschwin
 - Die gesprochene Antwort einer Auswahl konnte nach langer Bedenkzeit in der anderen Sprachform erscheinen als im Menü. Jetzt gilt der Angesprochene vom Öffnen der Auswahl.
 - Zeitung und Kartenspiel in der „Bura“ waren nicht für jede Tageszeit gezeichnet.
 - Der Zettel hinter dem Tresen war zu blass.
+- **Nachträglich, bei der Vorbereitung des Videos gefunden:** Das Notizbuch zeigt nur Notizen aus einer festen Liste. Die Notiz der Stadt, „Strickte für die halbe Gasse“, das Strickheft und der Schluss daraus fehlten dort. Über die Oberfläche ließ sich die Pflicht-Verbindung deshalb nicht ausführen; die automatischen Tests hatten sie direkt über die Programmschnittstelle verbunden. Jetzt stehen die vier Notizen in der Liste. Der Durchlauf prüft außerdem über die Oberfläche, dass beide zum Antippen dastehen, und das Video-Skript verbindet sie durch Antippen.
 
 ## 6. Offene Punkte
 
