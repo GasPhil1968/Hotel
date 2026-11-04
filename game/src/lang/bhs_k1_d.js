@@ -470,6 +470,7 @@ M.trAdd('bhs', {
   'Die Handschuhe.': 'Rukavice.',
   'Diesmal fallen sie nicht.': 'Ovaj put ne padaju.',
   'Ich kann sie halten.': 'Mogu ih držat.',
+  '@ivka:Ich kann sie halten.': 'Moren ih držat.',   // wie vorher „Ne moren ih držat.“
   'Grau. Weich. Er hat die richtige Größe gekauft, dieser Junge.': 'Sive. Mekane. Kupija je pravu mjeru, taj mali.',
   'Sie sind warm.': 'Tople su.',
   '„Mama!“': '„Mama!“',

@@ -293,7 +293,7 @@ M.trAdd('bhs', {
   'Die Stillen. Menschen, die allein sterben, bekommen in Vesnas Zeitung zweitausend Zeichen. Mehr, als die meisten im Leben bekommen.': 'Tihi. Ljudi koji umru sami dobiju u Vesninim novinama dvije tisuće znakova. Više nego što većina dobije za života.',   // Marko
   'Auf der beschlagenen Scheibe hat jemand eine Straßenbahn gemalt. Mit dem Finger. Vorne eine Drei.': 'Netko je na zamagljenom staklu nacrtao tramvaj. Prstom. Sprijeda trojka.',   // Marko
   'Die Drei fährt bis ganz nach hinten.': 'Trojka ide skroz do kraja.',   // Mala (Stimme)
-  'Ich war es. Im Halbschlaf. Wer sonst.': 'Ja sam to bio. U polusnu. Tko bi drugi.',   // Marko (wehrt die Stimme ab: Kroatisch)
+  'Ich war es. Im Halbschlaf. Wer sonst.': { hr:'Ja sam to bio. U polusnu. Tko bi drugi.', bs:'Ja sam to bio. U polusnu. Ko bi drugi.' },   // Marko antwortet Malas Stimme (bs), wie „Niko. Naravno da niko.“
   'Wasser aufsetzen. Kein Kaffee diesmal. Nur Dampf.': 'Staviti vodu. Ovaj put bez kave. Samo para.',   // Marko
   'Wasser aufsetzen. Kaffee hinein, wenn es summt. Warten, bis er steigt. Nicht rühren.': 'Staviti vodu. Kavu unutra kad zašumi. Čekati da se digne. Ne miješati.',   // Marko
   'Unten tutet die Fähre nach Supetar. Der Kaffee ist zu stark. So muss er sein.': 'Dolje trubi trajekt za Supetar. Kava je prejaka. Takva i mora biti.',   // Marko

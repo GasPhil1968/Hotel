@@ -7,6 +7,13 @@ const SHOTS = process.argv[2] || null;
   // MALA_LANG=bhs: das ganze Kapitel in der Sprachfassung spielen und jeden noch deutschen Text melden
   const LANG = process.env.MALA_LANG || null;
   if (LANG) await D.ev((l) => { M.setLang(l); M.trLogUI = true; M.trMiss = {}; M.trOverflow = {}; }, LANG);
+  // MALA_TX=datei: jeder gesprochene Satz und jede Auswahl mit Sprecher, Angesprochenem, Original und Übersetzung (zum Gegenlesen)
+  const TX = process.env.MALA_TX || null;
+  if (TX) await D.ev(() => { window.__tx = []; const seen = new Set(), tr0 = M.tr;
+    M.tr = function (s, ctx) { const r = tr0(s, ctx);
+      try { if (s && ctx && ctx.log) { const who = String(ctx.who || '').replace(/^@/, ''), k = who + '|' + (ctx.to || '') + '|' + s;
+        if (!seen.has(k)) { seen.add(k); window.__tx.push({ cat: ctx.cat || '', who, to: ctx.to || '', de: String(s), tr: String(r) }); } } } catch (e) {}
+      return r; }; });
   const CAPS = process.env.MALA_CAPSPEECH || null;   // Ordner: erster Satz jeder Figur als Bild
   if (CAPS) await D.ev(() => { M.__caps = {}; });
   const t0 = Date.now(); let step = 0;
@@ -167,6 +174,9 @@ const SHOTS = process.argv[2] || null;
       console.log('Sprachfassung ' + LANG + ': ' + ks.length + ' angezeigte Texte ohne Übersetzung');
       ks.slice(0, 400).forEach(k => console.log('  [' + miss[k] + '] ' + k)); if (ks.length) process.exitCode = 3;
       const ov = await D.ev(() => M.trOverflow || {}); const ok2 = Object.keys(ov); console.log('Texte, die aus dem Bild laufen: ' + ok2.length); ok2.slice(0, 50).forEach(k => console.log('  [' + ov[k] + '] ' + k)); }
+    if (TX) { const tx = await D.ev(() => window.__tx || []);
+      require('fs').writeFileSync(TX, tx.map(e => `[${e.cat} ${e.who}${e.to ? '→' + e.to : ''}] ${e.tr}\n    DE: ${e.de}`).join('\n') + '\n');
+      console.log('Transkript: ' + tx.length + ' Sätze in ' + TX); }
     if (CAPS) { const caps = await D.ev(() => M.__caps || {}); const fs2 = require('fs'); fs2.mkdirSync(CAPS, { recursive: true });
       Object.keys(caps).forEach(k => { if (typeof caps[k] === 'string' && caps[k].startsWith('data:image/png;base64,')) fs2.writeFileSync(CAPS + '/' + k + '.png', Buffer.from(caps[k].split(',')[1], 'base64')); });
       console.log('Sprecherbilder: ' + Object.keys(caps).join(', ')); }

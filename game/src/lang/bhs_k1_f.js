@@ -37,7 +37,7 @@ M.trAdd('bhs', {
   'An Dinkos Wand: Tonćis Foto, ein Kerzenstummel. Jedes Jahr am 22. Dezember.': 'Na Dinkovu zidu: Tonćijeva fotografija i ogarak svijeće. Svake godine 22. prosinca.',
   'Dinko: Tonći wollte sein Versprechen halten. Sie fuhren trotz Bura mit der ANKICA los.': 'Dinko: Tonći je htio održati obećanje. Unatoč buri isplovili su ANKICOM.',
   'Tonćis Brief: Das Salz hat die Seiten zusammengebacken. Trocken bekomme ich ihn nicht auf, ohne dass er reißt.': 'Tonćijevo pismo: Sol je slijepila stranice. Ovako suho ne mogu ga otvoriti a da se ne podere.',
-  'Tonćis Brief: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen.“': 'Tonćijevo pismo: „Nemoj me više čekati na moli. Čekaj me doma, na toplom.“',
+  'Tonćis Brief: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen.“': 'Tonćijevo pismo: „Nemoj me više čekati na molu. Čekaj me doma, na toplom.“',
   'Tonćis Brief, ganz gelesen.': 'Tonćijevo pismo, pročitano do kraja.',
   'In Sustipan steht Tonćis Name auf der Tafel „Denen, die das Meer behielt“.': 'Na Sustipanu je Tonćijevo ime na ploči „Onima koje je more zadržalo“.',
   'Jakov: „Jedes Jahr kommt ein Mann und steht vor dieser Tafel.“': 'Jakov: „Svake godine dođe jedan čovjek i stoji pred ovom pločom.“',
