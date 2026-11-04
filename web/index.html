@@ -2058,7 +2058,7 @@ E.trLast=null;
 function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||((E.trLast&&gt-(E.trLastAt||0)<9000)?E.trLast:null); return null; }
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
   var src=text, w0=who||GS.active; if (M.__speechLog) M.__speechLog.push([String(w0||''),String(src)]);   // nur Tests: wer sagt was
-  if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:trTo(w0),cat:'speech',log:true}); }
+  if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:(opt&&opt.to!==undefined)?opt.to:trTo(w0),cat:'speech',log:true}); }
   if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
   if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@'){ E.trLast=String(w0).replace(/^@/,''); E.trLastAt=gt; }
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
@@ -2073,7 +2073,8 @@ function fadeTo(v,ms){ var from=E.fade, t0=gt; return new Promise(function(res){
 // Auswahl: Strings oder {t,id,silent}; liefert die id
 function choose(opts,o){ o=o||{}; opts=opts.map(function(x,i){ return typeof x==='string'?{t:x,id:i}:Object.assign({id:i},x); });
   if (o.conv!==false) convStart(null);
-  return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active); return op.id; }); }
+  var to0=trTo(GS.active);   // Sprachfassung: an wen die Antwort geht, steht fest, wenn die Auswahl aufgeht – nicht erst nach langer Bedenkzeit
+  return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free,to:to0}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active,{to:to0}); return op.id; }); }
 E.chooseDone=function(i){ var d=E.dlg; if (!d) return; E.dlg=null; d.res(d.opts[i]); };
 function convStart(npc){ if (!E.conv||E.conv.room!==room) E.conv={room:room,npc:null}; if (npc && ACT[npc]) E.conv.npc=npc; }
 E.convStart=convStart;
@@ -2665,7 +2666,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=2, w=W-4, y0=SH+1, y1
   if (d.title && !convPartner() && !E.speech){ var tw2=M.textWidth(d.title); fb.rect(x0,SH-12,tw2+12,12,P.k0); fb.hl(x0,x0+tw2+11,SH-12,fr); fb.vl(x0,SH-12,SH,fr); fb.vl(x0+tw2+11,SH-12,SH,fr); M.text(fb,d.title,x0+6,SH-9,g?P.x5:P.y4); }
   fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
   var rows=[], yy=y0+4, more=false;
-  var me=GS().active, pa0=convPartner(), to0=pa0?pa0.id:(E.trLast||null);
+  var me=GS().active, pa0=convPartner(), to0=(E.dlg&&E.dlg.to!==undefined&&E.dlg.to!==null)?E.dlg.to:(pa0?pa0.id:(E.trLast||null));   // gleich wie die gesprochene Antwort
   for (var k=d.top;k<o.length;k++){ if (o[k].lang!==M.lang){ o[k].lang=M.lang; o[k].lines=null; }
     var ls=o[k].lines||(o[k].lines=M.wrap(M.lang==='de'?o[k].t:M.tr(o[k].t,{who:me,to:me==='marko'?to0:null,cat:'option',log:true}),tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
   if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+1,ls:l1}); more=d.top<o.length-1; }
@@ -23412,9 +23413,9 @@ async function proTable(A){ var Sa=A.npc('sanja'), F=A.G.flags; await sitDown(A)
   await Sa.say('Neun Prozent. Und dafür ein Satz Entschuldigung.'); await Sa.say('Schreib ihm. Schreib: Wenn er mit neun Prozent kommt, kaufe ich ab Januar bei den Neapolitanern.');
   await A.m('So schreibe ich das nicht.'); await Sa.say('Warum nicht?'); await A.m('Weil er es so liest, wie du es meinst.');
   for (var k=0;k<6;k++){ var c=await A.choose([
-      {t:'Wörtlich: „Bei neun Prozent kaufe ich ab Januar bei den Neapolitanern.“',id:'blunt',silent:true},
-      {t:'Höflich: „Wir haben Verständnis und nehmen die Erhöhung an.“',id:'soft',silent:true},
-      {t:'Fest: „Eine Erhöhung können wir ab Januar annehmen. Sonst prüfen wir andere Angebote.“',id:'firm',silent:true}],{title:'Die Antwort nach Triest',conv:false});
+      {t:'Wörtlich: „Neun Prozent? Dann eben die Neapolitaner.“',id:'blunt',silent:true},
+      {t:'Höflich: „Wir verstehen und nehmen die Erhöhung an.“',id:'soft',silent:true},
+      {t:'Fest: „Ab Januar ja. Sonst prüfen wir andere Angebote.“',id:'firm',silent:true}],{title:'Die Antwort nach Triest',conv:false});
     if (c==='firm') break;
     if (c==='blunt'){ await Sa.say('Genau das.'); await A.m('Dann liefert er dir ab morgen gar nichts mehr. Er ist aus Triest. Die sind empfindlich, wenn es um Neapel geht.'); await Sa.say('Ich will ihn ärgern. Nicht verlieren.'); }
     else { await Sa.say('„Annehmen“? Ich nehme gar nichts an.'); await A.m('So klingt es aber.'); await Sa.say('Dann schreib es nicht.'); } }
@@ -23473,7 +23474,7 @@ async function morningTable(A){ var F=A.G.flags; await sitDown(A);
 // Mala sitzt auf dem Stuhl gegenüber: leise, klar zu sehen, ohne Schreck (nicht das Flackern der Geister, die ihren Tod erkennen)
 M.malaReturns=async function(A){ var G=A.G; delete G.flags['split.afterIvka.away']; G.flags['split.afterIvka.back']=true;
   A.malaJoin({x:OCHAIR[0],y:OCHAIR[1],f:'R',force:true}); A.idleG('sit'); G.flags['mala.lock']=true; await A.wait(2200);
-  await A.m('…'); await A.m('Der Stuhl gegenüber ist nicht mehr leer.'); await A.wait(800); await A.g('Morgen.');
+  await A.m('…'); await A.m('Der Stuhl gegenüber ist nicht mehr leer.'); await A.wait(800); await A.g('Morgen, Marko.');
   await A.m('Ich habe dich geträumt.'); await A.g('Du hast geschlafen. Das ist nicht dasselbe.');
   await A.m('Heute Morgen warst du nicht da.'); await A.g('Du hast mich nicht gesehen. Das ist auch nicht dasselbe.');
   var c=await A.choose([{t:'„Steh auf. Ich hatte einen guten Morgen. Den ersten seit einer Woche.“',id:'away'},{t:'„Dann zeig mir, dass du jetzt hier bist. Wirklich hier.“',id:'test'},{t:'(Lange ausatmen.) „Dann bin ich wenigstens nicht verrückt geworden. Oder nicht nur.“',id:'relief'}],{title:'Mala',conv:false});
@@ -30355,9 +30356,9 @@ M.trAdd('bhs', {
   'So schreibe ich das nicht.': 'Tako to neću napisati.',
   'Weil er es so liest, wie du es meinst.': 'Zato što će to pročitati onako kako ti to misliš.',
   // die drei Antwortfassungen (nur Auswahl, Marko spricht sie nicht)
-  'Wörtlich: „Bei neun Prozent kaufe ich ab Januar bei den Neapolitanern.“': 'Doslovno: „Ako bude devet posto, od siječnja kupujem kod onih iz Napulja.“',
-  'Höflich: „Wir haben Verständnis und nehmen die Erhöhung an.“': 'Uljudno: „Imamo razumijevanja i prihvaćamo poskupljenje.“',
-  'Fest: „Eine Erhöhung können wir ab Januar annehmen. Sonst prüfen wir andere Angebote.“': 'Odlučno: „Poskupljenje možemo prihvatiti od siječnja. Inače ćemo razmotriti druge ponude.“',
+  'Wörtlich: „Neun Prozent? Dann eben die Neapolitaner.“': 'Doslovno: „Devet posto? Onda kod onih iz Napulja.“',
+  'Höflich: „Wir verstehen und nehmen die Erhöhung an.“': 'Uljudno: „Razumijemo i prihvaćamo poskupljenje.“',
+  'Fest: „Ab Januar ja. Sonst prüfen wir andere Angebote.“': 'Odlučno: „Od siječnja da. Inače ćemo razmotriti druge ponude.“',
   'Die Antwort nach Triest': 'Odgovor za Trst',
   'Genau das.': 'Baš to.',
   'Dann liefert er dir ab morgen gar nichts mehr. Er ist aus Triest. Die sind empfindlich, wenn es um Neapel geht.': 'Onda ti od sutra neće isporučiti više ništa. On je iz Trsta. Oni su osjetljivi kad je riječ o Napulju.',
@@ -30402,8 +30403,8 @@ M.trAdd('bhs', {
   'Heute gut. Ausnahmsweise.': 'Danas dobro. Za promjenu.',
   'Gestern Abend warst du noch grau. Heute nur blass.': 'Sinoć si još bio siv. Danas si samo blijed.',
   'Du bist in der Zeitung. Seite vierzehn. „Die Stillen“.': 'U novinama si. Stranica četrnaest. „Tihi“.',
-  'Das mit den Mützen. Den kleinen Ante kenne ich. Der trägt sie jeden Tag.': 'Ono o kapama. Maloga Antu znam. On svoju nosi svaki dan.',
-  '„Angehörige sind nicht bekannt.“ Klingt wie die Stadt, Marko.': '„Nema poznate rodbine.“ Zvuči kao ovaj grad, Marko.',   // Zitat aus der Zeitung, wie dort (und wie Markos Auftragsnotiz)
+  'Das mit den Mützen. Den kleinen Ante kenne ich. Der trägt sie jeden Tag.': 'Ono s kapama. Maloga Antu znam. On svoju nosi svaki dan.',   // wie Vesna in bhs_k1_j.js
+  '„Angehörige sind nicht bekannt.“ Klingt wie die Stadt, Marko.': '„Nema poznate rodbine.“ Zvuči kao grad, Marko.',   // Zitat aus der Zeitung (wie Markos Auftragsnotiz); „grad“ wie in bhs_k1_j.js („Grad je napisao …“)
   'Aber der Anfang ist schön.': 'Ali početak je lijep.',
   'Setz dich. Ich bringe ihn dir. Stipe und Frane kommen erst um elf, du hast deine Ruhe.': 'Sjedni. Donijet ću ti je. Stipe i Frane dolaze tek u jedanaest, imaš mira.',
 
@@ -30447,8 +30448,8 @@ M.trAdd('bhs', {
   'Sanja stellt die Tasse hin und geht zurück hinter den Tresen. Sie weiß, wann man mich lässt.': 'Sanja spusti šalicu i vrati se za šank. Zna kad me treba pustiti na miru.',
   'Der erste Kaffee seit Tagen, den nicht ich gemacht habe.': 'Prvi put nakon više dana pijem kavu koju nisam sam skuhao.',
   'Der Stuhl gegenüber ist nicht mehr leer.': 'Stolica preko puta više nije prazna.',
-  // Malas Gruß 'Morgen.' (Z. 121) hat hier keinen eigenen Eintrag: derselbe Schlüssel mit demselben Sprecher steht in sustipan.js
-  // (Mala: „Sutra.“ = morgen). Ein '@mala:'-Eintrag würde Sustipan verfälschen; trennen lässt sich das nur im deutschen Quelltext.
+  // Malas Gruß heißt im deutschen Quelltext jetzt „Morgen, Marko.“ (vorher „Morgen.“, gleichlautend mit „morgen“ in Sustipan)
+  'Morgen, Marko.': 'Jutro, Marko.',   // Mala
   // Marko an Mala: { hr, bs }, auch wo beide Fassungen gleich lauten
   'Ich habe dich geträumt.': { hr:'Sanjao sam te.', bs:'Sanjao sam te.' },
   'Du hast geschlafen. Das ist nicht dasselbe.': 'Spavao si. To nije isto.',
@@ -30481,7 +30482,7 @@ M.trAdd('bhs', {
   'Hinter Sanjas Tresen greife ich nicht. Niemand tut das, der hier noch Kaffee will.': 'Iza Sanjina šanka ne posežem. To ne radi nitko tko ovdje još želi kavu.',
   'Zu weit weg. Und er liegt mit der Schrift zu Sanja.': 'Predaleko je. I okrenuta je tekstom prema Sanji.',
   // Mala liest Marko den (kroatischen) Zettel vor, in ihren Worten
-  '„Donnerstag. Milch, sechs Liter. Zitronen, zwei Kilo. Ivica anrufen – die Maschine pfeift schon wieder. Montag geschlossen, Inventur. Stipe und Frane sagen, mit zwei Ausrufezeichen.“': '„Četvrtak. Mlijeko, šest litara. Limun, dvije kile. Nazvati Ivicu – aparat opet pišti. Ponedjeljak zatvoreno, inventura. Reći Stipi i Frani, s dva uzvičnika.“',
+  '„Donnerstag. Milch, sechs Liter. Zitronen, zwei Kilo. Ivica anrufen – die Maschine pfeift schon wieder. Montag geschlossen, Inventur. Stipe und Frane sagen, mit zwei Ausrufezeichen.“': '„Četvrtak. Mlijeko, šest litara. Limun, dvije kile. Nazvati Ivicu – aparat opet pišti. Ponedjeljak zatvoreno – inventura. Reći Stipi i Frani, s dva uzvičnika.“',
   'Ich fasse ihn nicht an. Ich kann ihn nur lesen.': 'Ne diram je. Mogu je samo pročitati.',
 
   // ================================================================ Raum betreten

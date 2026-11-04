@@ -57,9 +57,9 @@ async function proTable(A){ var Sa=A.npc('sanja'), F=A.G.flags; await sitDown(A)
   await Sa.say('Neun Prozent. Und dafür ein Satz Entschuldigung.'); await Sa.say('Schreib ihm. Schreib: Wenn er mit neun Prozent kommt, kaufe ich ab Januar bei den Neapolitanern.');
   await A.m('So schreibe ich das nicht.'); await Sa.say('Warum nicht?'); await A.m('Weil er es so liest, wie du es meinst.');
   for (var k=0;k<6;k++){ var c=await A.choose([
-      {t:'Wörtlich: „Bei neun Prozent kaufe ich ab Januar bei den Neapolitanern.“',id:'blunt',silent:true},
-      {t:'Höflich: „Wir haben Verständnis und nehmen die Erhöhung an.“',id:'soft',silent:true},
-      {t:'Fest: „Eine Erhöhung können wir ab Januar annehmen. Sonst prüfen wir andere Angebote.“',id:'firm',silent:true}],{title:'Die Antwort nach Triest',conv:false});
+      {t:'Wörtlich: „Neun Prozent? Dann eben die Neapolitaner.“',id:'blunt',silent:true},
+      {t:'Höflich: „Wir verstehen und nehmen die Erhöhung an.“',id:'soft',silent:true},
+      {t:'Fest: „Ab Januar ja. Sonst prüfen wir andere Angebote.“',id:'firm',silent:true}],{title:'Die Antwort nach Triest',conv:false});
     if (c==='firm') break;
     if (c==='blunt'){ await Sa.say('Genau das.'); await A.m('Dann liefert er dir ab morgen gar nichts mehr. Er ist aus Triest. Die sind empfindlich, wenn es um Neapel geht.'); await Sa.say('Ich will ihn ärgern. Nicht verlieren.'); }
     else { await Sa.say('„Annehmen“? Ich nehme gar nichts an.'); await A.m('So klingt es aber.'); await Sa.say('Dann schreib es nicht.'); } }
@@ -118,7 +118,7 @@ async function morningTable(A){ var F=A.G.flags; await sitDown(A);
 // Mala sitzt auf dem Stuhl gegenüber: leise, klar zu sehen, ohne Schreck (nicht das Flackern der Geister, die ihren Tod erkennen)
 M.malaReturns=async function(A){ var G=A.G; delete G.flags['split.afterIvka.away']; G.flags['split.afterIvka.back']=true;
   A.malaJoin({x:OCHAIR[0],y:OCHAIR[1],f:'R',force:true}); A.idleG('sit'); G.flags['mala.lock']=true; await A.wait(2200);
-  await A.m('…'); await A.m('Der Stuhl gegenüber ist nicht mehr leer.'); await A.wait(800); await A.g('Morgen.');
+  await A.m('…'); await A.m('Der Stuhl gegenüber ist nicht mehr leer.'); await A.wait(800); await A.g('Morgen, Marko.');
   await A.m('Ich habe dich geträumt.'); await A.g('Du hast geschlafen. Das ist nicht dasselbe.');
   await A.m('Heute Morgen warst du nicht da.'); await A.g('Du hast mich nicht gesehen. Das ist auch nicht dasselbe.');
   var c=await A.choose([{t:'„Steh auf. Ich hatte einen guten Morgen. Den ersten seit einer Woche.“',id:'away'},{t:'„Dann zeig mir, dass du jetzt hier bist. Wirklich hier.“',id:'test'},{t:'(Lange ausatmen.) „Dann bin ich wenigstens nicht verrückt geworden. Oder nicht nur.“',id:'relief'}],{title:'Mala',conv:false});

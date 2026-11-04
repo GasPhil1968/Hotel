@@ -236,7 +236,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=2, w=W-4, y0=SH+1, y1
   if (d.title && !convPartner() && !E.speech){ var tw2=M.textWidth(d.title); fb.rect(x0,SH-12,tw2+12,12,P.k0); fb.hl(x0,x0+tw2+11,SH-12,fr); fb.vl(x0,SH-12,SH,fr); fb.vl(x0+tw2+11,SH-12,SH,fr); M.text(fb,d.title,x0+6,SH-9,g?P.x5:P.y4); }
   fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
   var rows=[], yy=y0+4, more=false;
-  var me=GS().active, pa0=convPartner(), to0=pa0?pa0.id:(E.trLast||null);
+  var me=GS().active, pa0=convPartner(), to0=(E.dlg&&E.dlg.to!==undefined&&E.dlg.to!==null)?E.dlg.to:(pa0?pa0.id:(E.trLast||null));   // gleich wie die gesprochene Antwort
   for (var k=d.top;k<o.length;k++){ if (o[k].lang!==M.lang){ o[k].lang=M.lang; o[k].lines=null; }
     var ls=o[k].lines||(o[k].lines=M.wrap(M.lang==='de'?o[k].t:M.tr(o[k].t,{who:me,to:me==='marko'?to0:null,cat:'option',log:true}),tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
   if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+1,ls:l1}); more=d.top<o.length-1; }

@@ -55,7 +55,7 @@ const T = {}, IGN = new Set(), PAT = [];
 const stub = { trAdd: (l, t) => Object.assign(T, t), trIgnore: (a) => a.forEach(x => IGN.add(x)), trPattern: (l, re, fn) => PAT.push(re) };
 const langFiles = fs.statSync(langArg).isDirectory() ? fs.readdirSync(langArg).filter(f => /^bhs_.*\.js$/.test(f)).map(f => path.join(langArg, f)) : langArg.split(',');
 for (const lf of langFiles) { try { new Function('M', fs.readFileSync(lf, 'utf8'))(stub); } catch (e) { console.log('FEHLER beim Laden ' + lf + ': ' + e.message); process.exit(1); } }
-const OK = /^[\x20-\x7E\n…„“”‚‘’–—·•✓▸☎ČĆĐŠŽčćđšžäöüÄÖÜßéèáàíìóòúùâêô]*$/;
+const OK = /^[\x20-\x7E\n…„“”‚‘’–—·•✓▸☎°ČĆĐŠŽčćđšžäöüÄÖÜßéèáàíìóòúùâêô]*$/;
 const GERMAN = /\b(der|die|das|und|ist|nicht|ich|ein|eine|mit|auf|sie|wir|aber|noch|schon)\b/i;
 let bad = 0; const out = [];
 for (const k of Object.keys(T)) {

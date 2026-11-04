@@ -185,7 +185,7 @@ E.trLast=null;
 function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||((E.trLast&&gt-(E.trLastAt||0)<9000)?E.trLast:null); return null; }
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
   var src=text, w0=who||GS.active; if (M.__speechLog) M.__speechLog.push([String(w0||''),String(src)]);   // nur Tests: wer sagt was
-  if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:trTo(w0),cat:'speech',log:true}); }
+  if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:(opt&&opt.to!==undefined)?opt.to:trTo(w0),cat:'speech',log:true}); }
   if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
   if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@'){ E.trLast=String(w0).replace(/^@/,''); E.trLastAt=gt; }
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
@@ -200,7 +200,8 @@ function fadeTo(v,ms){ var from=E.fade, t0=gt; return new Promise(function(res){
 // Auswahl: Strings oder {t,id,silent}; liefert die id
 function choose(opts,o){ o=o||{}; opts=opts.map(function(x,i){ return typeof x==='string'?{t:x,id:i}:Object.assign({id:i},x); });
   if (o.conv!==false) convStart(null);
-  return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active); return op.id; }); }
+  var to0=trTo(GS.active);   // Sprachfassung: an wen die Antwort geht, steht fest, wenn die Auswahl aufgeht – nicht erst nach langer Bedenkzeit
+  return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free,to:to0}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active,{to:to0}); return op.id; }); }
 E.chooseDone=function(i){ var d=E.dlg; if (!d) return; E.dlg=null; d.res(d.opts[i]); };
 function convStart(npc){ if (!E.conv||E.conv.room!==room) E.conv={room:room,npc:null}; if (npc && ACT[npc]) E.conv.npc=npc; }
 E.convStart=convStart;

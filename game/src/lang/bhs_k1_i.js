@@ -41,9 +41,9 @@ M.trAdd('bhs', {
   'So schreibe ich das nicht.': 'Tako to neću napisati.',
   'Weil er es so liest, wie du es meinst.': 'Zato što će to pročitati onako kako ti to misliš.',
   // die drei Antwortfassungen (nur Auswahl, Marko spricht sie nicht)
-  'Wörtlich: „Bei neun Prozent kaufe ich ab Januar bei den Neapolitanern.“': 'Doslovno: „Ako bude devet posto, od siječnja kupujem kod onih iz Napulja.“',
-  'Höflich: „Wir haben Verständnis und nehmen die Erhöhung an.“': 'Uljudno: „Imamo razumijevanja i prihvaćamo poskupljenje.“',
-  'Fest: „Eine Erhöhung können wir ab Januar annehmen. Sonst prüfen wir andere Angebote.“': 'Odlučno: „Poskupljenje možemo prihvatiti od siječnja. Inače ćemo razmotriti druge ponude.“',
+  'Wörtlich: „Neun Prozent? Dann eben die Neapolitaner.“': 'Doslovno: „Devet posto? Onda kod onih iz Napulja.“',
+  'Höflich: „Wir verstehen und nehmen die Erhöhung an.“': 'Uljudno: „Razumijemo i prihvaćamo poskupljenje.“',
+  'Fest: „Ab Januar ja. Sonst prüfen wir andere Angebote.“': 'Odlučno: „Od siječnja da. Inače ćemo razmotriti druge ponude.“',
   'Die Antwort nach Triest': 'Odgovor za Trst',
   'Genau das.': 'Baš to.',
   'Dann liefert er dir ab morgen gar nichts mehr. Er ist aus Triest. Die sind empfindlich, wenn es um Neapel geht.': 'Onda ti od sutra neće isporučiti više ništa. On je iz Trsta. Oni su osjetljivi kad je riječ o Napulju.',
@@ -88,8 +88,8 @@ M.trAdd('bhs', {
   'Heute gut. Ausnahmsweise.': 'Danas dobro. Za promjenu.',
   'Gestern Abend warst du noch grau. Heute nur blass.': 'Sinoć si još bio siv. Danas si samo blijed.',
   'Du bist in der Zeitung. Seite vierzehn. „Die Stillen“.': 'U novinama si. Stranica četrnaest. „Tihi“.',
-  'Das mit den Mützen. Den kleinen Ante kenne ich. Der trägt sie jeden Tag.': 'Ono o kapama. Maloga Antu znam. On svoju nosi svaki dan.',
-  '„Angehörige sind nicht bekannt.“ Klingt wie die Stadt, Marko.': '„Nema poznate rodbine.“ Zvuči kao ovaj grad, Marko.',   // Zitat aus der Zeitung, wie dort (und wie Markos Auftragsnotiz)
+  'Das mit den Mützen. Den kleinen Ante kenne ich. Der trägt sie jeden Tag.': 'Ono s kapama. Maloga Antu znam. On svoju nosi svaki dan.',   // wie Vesna in bhs_k1_j.js
+  '„Angehörige sind nicht bekannt.“ Klingt wie die Stadt, Marko.': '„Nema poznate rodbine.“ Zvuči kao grad, Marko.',   // Zitat aus der Zeitung (wie Markos Auftragsnotiz); „grad“ wie in bhs_k1_j.js („Grad je napisao …“)
   'Aber der Anfang ist schön.': 'Ali početak je lijep.',
   'Setz dich. Ich bringe ihn dir. Stipe und Frane kommen erst um elf, du hast deine Ruhe.': 'Sjedni. Donijet ću ti je. Stipe i Frane dolaze tek u jedanaest, imaš mira.',
 
@@ -133,8 +133,8 @@ M.trAdd('bhs', {
   'Sanja stellt die Tasse hin und geht zurück hinter den Tresen. Sie weiß, wann man mich lässt.': 'Sanja spusti šalicu i vrati se za šank. Zna kad me treba pustiti na miru.',
   'Der erste Kaffee seit Tagen, den nicht ich gemacht habe.': 'Prvi put nakon više dana pijem kavu koju nisam sam skuhao.',
   'Der Stuhl gegenüber ist nicht mehr leer.': 'Stolica preko puta više nije prazna.',
-  // Malas Gruß 'Morgen.' (Z. 121) hat hier keinen eigenen Eintrag: derselbe Schlüssel mit demselben Sprecher steht in sustipan.js
-  // (Mala: „Sutra.“ = morgen). Ein '@mala:'-Eintrag würde Sustipan verfälschen; trennen lässt sich das nur im deutschen Quelltext.
+  // Malas Gruß heißt im deutschen Quelltext jetzt „Morgen, Marko.“ (vorher „Morgen.“, gleichlautend mit „morgen“ in Sustipan)
+  'Morgen, Marko.': 'Jutro, Marko.',   // Mala
   // Marko an Mala: { hr, bs }, auch wo beide Fassungen gleich lauten
   'Ich habe dich geträumt.': { hr:'Sanjao sam te.', bs:'Sanjao sam te.' },
   'Du hast geschlafen. Das ist nicht dasselbe.': 'Spavao si. To nije isto.',
@@ -167,7 +167,7 @@ M.trAdd('bhs', {
   'Hinter Sanjas Tresen greife ich nicht. Niemand tut das, der hier noch Kaffee will.': 'Iza Sanjina šanka ne posežem. To ne radi nitko tko ovdje još želi kavu.',
   'Zu weit weg. Und er liegt mit der Schrift zu Sanja.': 'Predaleko je. I okrenuta je tekstom prema Sanji.',
   // Mala liest Marko den (kroatischen) Zettel vor, in ihren Worten
-  '„Donnerstag. Milch, sechs Liter. Zitronen, zwei Kilo. Ivica anrufen – die Maschine pfeift schon wieder. Montag geschlossen, Inventur. Stipe und Frane sagen, mit zwei Ausrufezeichen.“': '„Četvrtak. Mlijeko, šest litara. Limun, dvije kile. Nazvati Ivicu – aparat opet pišti. Ponedjeljak zatvoreno, inventura. Reći Stipi i Frani, s dva uzvičnika.“',
+  '„Donnerstag. Milch, sechs Liter. Zitronen, zwei Kilo. Ivica anrufen – die Maschine pfeift schon wieder. Montag geschlossen, Inventur. Stipe und Frane sagen, mit zwei Ausrufezeichen.“': '„Četvrtak. Mlijeko, šest litara. Limun, dvije kile. Nazvati Ivicu – aparat opet pišti. Ponedjeljak zatvoreno – inventura. Reći Stipi i Frani, s dva uzvičnika.“',
   'Ich fasse ihn nicht an. Ich kann ihn nur lesen.': 'Ne diram je. Mogu je samo pročitati.',
 
   // ================================================================ Raum betreten
