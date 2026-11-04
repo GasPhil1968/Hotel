@@ -35,10 +35,13 @@ async function cabinet(A){ var S=A.S; if (S.cabinetOpen) return A.m('Der Schrank
   await A.reach(); A.give('dnevnik'); A.give('svjedocanstva'); A.sfx('paper'); await A.m('Das Klassenbuch. Und die Zeugnisse.'); A.save(); }
 M.k2ReadDnevnik=async function(A){ await A.doc({style:'log',title:'DNEVNIK RADA · Školska godina 1993/94',lines:['Učiteljica: Zora Marić · Pomoćnica, crtanje: Lana Delić','','II r.: Karić Selma, Hodžić Mirza, Begić Amina …','III r.: Kovač Damir, Sulejmanović Edin …','VIII r.: Vuković Marko, Hadžić Ena …','','22.1.1994: Mirza H. – ranjen. Moja krivica.','22.1.1994: nastava prekinuta. Unterricht abgebrochen.']});
   var nn=['s3_register','s3_guilt','s3_helper','m2_pupil'], added=nn.filter(function(id){ return !A.hasNote(id); }); nn.forEach(function(id){ A.note(id,true); });
-  if (added.length){ A.sfx('note'); await A.m('Die Namen. Selma Karić, Mirza Hodžić, Damir Kovač. Und in der achten Klasse: Vuković, Marko.'); await A.wait(600); await A.m('Ich war hier unten. Ich erinnere mich an nichts. An gar nichts.');
+  if (added.length){ A.sfx('note'); await A.m('Die Namen. Selma Karić, Mirza Hodžić, Damir Kovač. Und in der achten Klasse: Vuković, Marko.'); await A.wait(600);
+    // passt zu dem, was er schon erinnert: am Tisch mit dem M kam die Kellerschule zurück – sonst kommt sie hier, beim eigenen Namen
+    if (A.flag('k2.mem.cellar')){ await A.m('Ich war hier unten. Das M im Tisch hinten, das Mädchen mit dem Zopf.'); await A.m('Jetzt haben die Bilder Namen.'); }
+    else { await A.m('Ich war hier unten.'); await A.wait(500); await M.k2MemCellar(A,'register'); }
     await A.wait(500); await A.m('„Pomoćnica, crtanje: Lana Delić.“ Helferin, Zeichnen.'); await A.wait(700); await A.m('Und am 22. Januar 1994, in einer zitternden Schrift: „Mirza H. – verwundet. Meine Schuld.“'); if (A.G.malaOn){ await A.wait(700); await A.g('Lana Delić. Sie hat Zeichnen unterrichtet.'); await A.g('…'); } } };
 M.k2Stamp=async function(A){ if (A.flag('k2.s3.stamped')) return A.m('Alle gestempelt. Alle zählen.'); await A.animM('reachM'); for (var i=0;i<4;i++){ A.sfx('stamp'); await A.wait(380); } A.setFlag('k2.s3.stamped'); A.take('pecat');
-  await A.m('Ich stemple jedes Zeugnis. Dreiundzwanzig Stück. „Osnovna škola Alipašino Polje“, rund, blau, ein bisschen schief.'); await A.m('Siebzehn Jahre zu spät. Und genau richtig.'); A.save(); await M.k2CheckS3Night(A); };
+  await A.m('Ich stemple jedes Zeugnis. Dreiundzwanzig Stück. „Osnovna škola Alipašino Polje“, rund, blau, ein bisschen schief.'); await A.m('Siebzehn Jahre zu spät. Und genau richtig.'); await M.k2CheckS3Night(A); if (!A.flag('k2.s3.night')) A.save(); };
 // ---------------------------------------------------------------- Die letzte Stunde
 async function rollcall(A){ if (A.flag('k2.s3.free')) return; if (!night(A.G)) return A.m('Erst wenn alle da sind.'); var Z=A.npc('zora'); A.setFlag('k2.s3.rollStart'); A.G.flags['mala.lock']=true;
   var d=M.stand('skloniste','desk')||[150,124,'B']; await A.walk(d[0],d[1]); await A.face('L'); A.music('k2_duh');
@@ -64,7 +67,7 @@ async function crossZora(A){ var Z=A.npc('zora'); A.G.flags['mala.lock']=true; v
 M.afterLimbo_zora=async function(A){ A.G.flags['mala.lock']=false; A.setFlag('k2.s3.gone'); var d=M.stand('skloniste','desk')||[150,124,'B']; await A.goto('skloniste',{x:d[0],y:d[1],f:'L',fade:false,noEnter:true}); await A.fade(0,900);
   await A.wait(700); await A.narrate('Der Keller. Die Kerzen sind heruntergebrannt. Selma hält ihr Zeugnis gegen das Licht, Damir hat seins gefaltet und in die Uniformjacke gesteckt. Mirza sitzt einfach da.');
   await A.npc('mirza').say('Sie ist weg, oder?'); await A.m('Ja.'); await A.npc('mirza').say('Gut. Ich meine … gut.'); await A.npc('selma').say('Ich habe die Glocke gehört. Ganz am Schluss. Habt ihr sie gehört?'); await A.npc('damir').say('Ich habe nichts gehört.'); await A.wait(500); await A.npc('damir').say('Doch.');
-  A.setFlag('k2.s3.done'); await A.wait(800); await A.m('Ich bringe Šehić den Schlüssel. Und dann schlafe ich. Ich glaube, heute schlafe ich.'); if (A.G.malaOn){ await A.g('Marko?'); await A.m('Ja?'); await A.g('Ich war hier. Ich habe dich gekannt.'); await A.m('Ich weiß. Ich weiß es nur noch nicht.'); } A.save(); };
+  A.setFlag('k2.s3.done'); await A.wait(800); await A.m('Heute Nacht schlafe ich. Ich glaube, heute schlafe ich wirklich.'); if (A.G.malaOn){ await A.g('Marko?'); await A.m('Ja?'); await A.g('Ich war hier. Ich habe dich gekannt.'); await A.m('Ich weiß. Ich weiß es nur noch nicht.'); } A.save(); };
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Treppe',exit:{to:'haustor',gok:true},look:'Die Treppe hinauf, zur Stahltür.',canExit:async function(A){ if (night(A.G) && A.flag('k2.s3.rollStart') && !A.flag('k2.s3.done')){ await A.m('Nicht jetzt. Die Stunde ist noch nicht aus.'); return false; } return true; }},

@@ -59,6 +59,31 @@ M.migrateSave=function(G){ var f=G.flags||(G.flags={}), inv=G.inv||(G.inv=[]);
   if (f['split.intro.v']) return;
   f['split.intro.legacy']=true; if (f['mk.test']){ f['split.intro.met']=true; delete f['mala.noSwitch']; }
   if (f['i1.done']) f['split.afterIvka.done']=true; };
+// ---------------------------------------------------------------- ausstehende Abschnittswechsel nach dem Laden
+// Ein Spielstand kann zwischen dem Ende einer Szene (Zusage, Abschied) und dem automatischen Wechsel in den nächsten Abschnitt liegen:
+// ältere Fassungen haben dort gespeichert. Beim Laden wird der Wechsel nachgeholt. Ist sein Schalter schon gesetzt, der Abschnitt aber noch der alte
+// (Unterbrechung mitten im Wechsel), wird der Schalter zurückgenommen und der Wechsel neu gestartet oder wieder auslösbar gemacht.
+var PENDING=[
+  {from:'pro_night', run:function(A){ return M.startCase1(A); }},
+  {from:'i1m', when:function(G){ return G.flags['i1.done']; }, run:function(A){ return M.startCase2(A); }},
+  {from:'c2', guard:'c2.nightStarted', when:function(G){ return G.flags['c2.tonight']; }, run:function(A){ return M.startC2Night(A); }},
+  {from:'c2_night', when:function(G){ return G.flags['c2.ninaGone']; }, run:function(A){ return M.interlude2(A); }},
+  {from:'i2', when:function(G){ return !G.flags['i2.done']; }, run:function(A){ return M.interlude2(A); }},
+  {from:'i2', when:function(G){ return G.flags['i2.done']; }, run:function(A){ return M.startCase3(A); }},
+  {from:'c3_night', when:function(G){ return G.flags['c3.done']; }, run:function(A){ return M.startEpilogue(A); }},
+  {from:'k2_pro', guard:'k2.pro.night'}, {from:'k2_pro_n', guard:'k2.s1.started'},
+  {from:'k2_s1', guard:'k2.s1.night', when:function(G){ return G.flags['k2.s1.emina']; }, run:function(A){ return M.k2StartS1Night(A); }},
+  {from:'k2_s1_n', guard:'k2.s2.started'}, {from:'k2_s2', guard:'k2.s2.night'},
+  {from:'k2_s2_n', guard:'k2.i.started', when:function(G){ return G.flags['k2.s2.gone']; }, run:function(A){ return M.k2StartInterlude(A); }},
+  {from:'k2_i', guard:'k2.s3.started'},
+  {from:'k2_s3', guard:'k2.s3.night', when:function(G){ return true; }, run:function(A){ return M.k2CheckS3Night(A); }},   // prüft selbst, ob alle zugesagt haben
+  {from:'k2_s3_n', guard:'k2.f2.started'}, {from:'k2_fin', guard:'k2.f2.night'},
+  {from:'k2_fin_n', guard:'k2.epi.started', when:function(G){ return G.notes.indexOf('f2_bridge')>=0; }, run:function(A){ return M.k2StartEpilogue(A); }} ];
+M.resumePending=async function(A){ var G=A.G;
+  for (var i=0;i<PENDING.length;i++){ var r=PENDING[i]; if (r.from!==G.phase) continue;
+    if (r.guard && G.flags[r.guard]) delete G.flags[r.guard];
+    if (r.run && r.when && r.when(G)){ var E=M.E, wb=E.busy; E.busy=true; try{ await r.run(A); } catch(e){ console.error(e); } finally{ E.busy=wb; } return r.from; } }
+  return null; };
 M.case3Call=async function(A){ if (M.case3CallImpl) return M.case3CallImpl(A); A.setFlag('c3.call'); };
 
 // ---------------------------------------------------------------- Stadtplan

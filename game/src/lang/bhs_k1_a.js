@@ -55,6 +55,9 @@ M.trAdd('bhs', {
   'Um sieben. Er hat es geschrieben. Ich habe die Karte in der Kommode.': 'U sedam. Tako je napisa. Kartolinu držin u komodi.',
   'Er bringt mir etwas mit? Dieser Junge. Das Geld soll er sparen.': 'Nešto mi donosi? Ajme, taj mali. Neka radije čuva šolde.',
   'Handschuhe. Mit Handschuhen spüre ich nicht, wann der Wind dreht.': 'Rukavice. S rukavicama ne osjećan kad vitar okrene.',
+  'Für mich? Ich trage keine.': 'Za mene? Ja ih ne nosin.',   // Ivka
+  'Graue Handschuhe. Wer schickt mir Handschuhe?': 'Sive rukavice. Ki mi šalje rukavice?',   // Ivka
+  'Sie sieht die Handschuhe nicht an. Sie sieht zu Mala.': 'Ne gleda rukavice. Gleda Malu.',   // Marko
   'Dinko? Der kommt jeden Sonntag zum Essen. Was reden Sie denn.': 'Dinko? Pa on dolazi svake nedilje na obid. Ča to govoriš?',
   'Ich weiß nicht, wovon Sie reden.': 'Ne znan ča govoriš.',
   'Mit dem kleinen Boot? Bei der Bura? Das würde er nicht tun.': 'S malon barkon? Po buri? To on ne bi napravija.',
@@ -204,7 +207,6 @@ M.trAdd('bhs', {
   'Die Leine ist los. Sie steht ganz leicht da.': 'Uzica je odvezana. Sad stoji sasvim lagano.',
   'Sie ist festgemacht. Eine Leine aus Licht, von ihr bis zum Poller. Wie ein Boot, das niemand mehr losmacht.': 'Privezana je. Uzica od svjetla, od nje do bitve. Kao čamac koji niko više ne odvezuje.',
   'Sie wartet nicht auf ein Schiff. Sie wartet auf einen Satz.': 'Ona ne čeka brod. Čeka jednu rečenicu.',
-  'Nicht so. Nicht mitten im Satz.': 'Ne ovako. Ne usred rečenice.',
   'Tonći und Dinko. Auf der ANKICA. Woher haben Sie das? Das steht bei mir zu Hause auf der Kredenz.': 'Tonći i Dinko. Na ANKICI. Odakle ti to? To mi stoji doma na kredenci.',
   'Seine Karte. „Um sieben.“ Sehen Sie? Er kommt um sieben.': 'Njegova kartolina. „U sedam.“ Vidiš? Dolazi u sedam.',
   'Palastmauer': 'Zid palače',

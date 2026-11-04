@@ -96,12 +96,12 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
   if (A.malaHere()){ await A.animG('look'); A.note('m_horn',true); }
   await I.say('Das Boot. Da ist es.'); await I.say('Siehst du ihn? Ich sehe ihn nicht.');
   // Runde 1: die Fähre
-  for (var tries=0;;tries++){ var n=await A.askNote('Was sage ich ihr?');
+  for (var tries=0;;tries++){ var n=await A.askNote('Was sage ich ihr?',{also:['c1_aboard']});
     if (n==='c1_ferry'){ await A.m('Gospođa Perić. An dem Abend, an dem er kommen wollte, fuhr keine Fähre. Die Bura war zu stark.'); await I.say('Keine Fähre …'); await I.say('Dann kommt er mit der ersten morgen früh. Dann warte ich eben bis morgen.'); break; }
     await roundMiss(A,I,n,tries,['Ich weiß, dass er kommt. Er hat es geschrieben.','Er ist immer zu spät. Aber er kommt.','Das Boot kommt doch gerade. Sehen Sie nicht?']); }
   // Runde 2: die ANKICA
   await I.say('Ich warte. Ich habe Zeit.');
-  for (tries=0;;tries++){ n=await A.askNote('Was sage ich ihr jetzt?');
+  for (tries=0;;tries++){ n=await A.askNote('Was sage ich ihr jetzt?',{also:['c1_aboard']});
     if (n==='c1_came'||n==='c1_story'||n==='c1_aboard'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
       await I.say('Mit Matićs kleinem Boot? Bei der Bura?'); await I.say('Dieser Dickkopf. Dieser …'); await A.wait(800); await I.say('Und Dinko?'); await A.m('Dinko hat es geschafft.'); await A.wait(1100); await I.say('…und Tonći nicht.'); break; }
     await roundMiss(A,I,n,tries,['Was hat das mit meinem Sohn zu tun?','Ich verstehe nicht, was Sie meinen.','Sagen Sie, was Sie sagen wollen.']); }
@@ -176,7 +176,9 @@ M.morningBench=async function(A){ var G=A.G, b=M.stand('riva','bench')||[180,122
   if (!G.flags['split.afterIvka.benchTalk']){
     await A.wait(600); A.sfx('horn'); await A.narrate('Die Bank an der Riva, am Morgen. Die Fähre nach Supetar legt ab, voller Leute, die zur Arbeit fahren.');
     await A.g('Heute Nacht hast du hier geraucht.'); await A.m('Heute Morgen nicht.'); await A.g('Das ist neu.');
-    await A.wait(900); await A.m('Ich glaube nicht an Geister.'); await A.g('Musst du nicht.');
+    // Markos Zweifel nach der Bura: nicht mehr, ob es sie gibt, sondern was es heißt, ihr zu glauben
+    await A.wait(900); await A.m('Ich glaube nicht an Geister.'); await A.wait(600); await A.m('An dich schon. Das ist schlimmer.'); await A.g('Warum?');
+    await A.m('Weil du Dinge siehst, die keiner zeigen will. Bei Sanja. Bei jedem hier.'); await A.wait(700); await A.m('Auch bei mir.'); await A.wait(900); await A.g('Auch bei dir.'); await A.wait(600); await A.g('Ich sehe weg, wenn du willst.');
     await A.m('Ich war an einem Ort, den es nicht gibt. Ich habe einer alten Frau Handschuhe gegeben, die sie nicht halten konnte. Und dort konnte sie es.'); await A.wait(1300);
     await A.m('Und heute Morgen habe ich versucht, einen Traum daraus zu machen.'); await A.g('Hat es geklappt?'); await A.m('Bis zum Kaffee.');
     await A.menuLoop(function(){ return [
@@ -206,7 +208,7 @@ M.morningBench=async function(A){ var G=A.G, b=M.stand('riva','bench')||[180,122
   if (d==='later'){ await A.g('Einen Tag hattest du. Heute Morgen.'); await A.wait(700); await A.g('Gut. Ich sitze hier, wenn du so weit bist.'); G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); return; }
   G.flags['mk.accept']=true; await A.wait(900); await A.g('Gut.'); await A.wait(700); await A.g('Das reicht mir.');
   await A.wait(800); A.sfx('gust'); await A.g('Da ist noch einer.'); await A.m('Noch einer.'); await A.g('Ein Junge. Er ist unruhig. Er wartet auf etwas, das gleich passieren soll. Seit Jahren.');
-  await A.m('Du findest sie einfach so?'); await A.g('Sie sind laut. Für mich.'); await A.m('Dann hören wir uns an, was die Stadt über ihn weiß. Die Stadt redet in der „Bura“.');
+  await A.m('Du findest sie einfach so?'); await A.g('Sie sind laut. Für mich.'); await A.m('Dann hören wir uns an, was die Stadt über ihn weiß.');
   G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i1.done'); await M.startCase2(A); };
 // ---------------------------------------------------------------- Hotspots
 var HS=[
@@ -216,7 +218,10 @@ var HS=[
    g:{look:async function(A){ if (A.flag('c1.release')) return A.g('Die Leine ist los. Sie steht ganz leicht da.'); await A.g('Sie ist festgemacht. Eine Leine aus Licht, von ihr bis zum Poller. Wie ein Boot, das niemand mehr losmacht.'); A.note('m_leash',true); },
      talk:function(A){ if (A.flag('c1.release')) return A.npc('ivka').say('Ist es weit?'); return talkIvka(A); },sense:async function(A){ await A.g('Sie wartet nicht auf ein Schiff. Sie wartet auf einen Satz.'); },
      cross:function(A){ return crossIvka(A); },crossIf:function(S,G){ return !!G.flags['c1.release'] && !G.flags['c1.done']; }},
-   give:{ gloves:async function(A){ return A.m('Nicht so. Nicht mitten im Satz.'); },
+   // Handschuhe aus der Leiste: Ivka reagiert nach ihrem Stand; ist alles beisammen, beginnt das Gespräch, in dem sie es erfährt
+   give:{ gloves:async function(A){ var I=A.npc('ivka'); if (A.flag('c1.release')) return A.m('Sie sieht die Handschuhe nicht an. Sie sieht zu Mala.');
+       if (ready(A)){ await I.say('Graue Handschuhe. Wer schickt mir Handschuhe?'); await A.m('Tonći.'); await A.wait(900); return finale(A); }
+       await I.say('Für mich? Ich trage keine.'); await I.say('Handschuhe. Mit Handschuhen spüre ich nicht, wann der Wind dreht.'); },
      letter_t:function(A){ return letterToIvka(A); },
      photo1:async function(A){ await A.npc('ivka').say('Tonći und Dinko. Auf der ANKICA. Woher haben Sie das? Das steht bei mir zu Hause auf der Kredenz.'); },
      postcard:async function(A){ await A.npc('ivka').say('Seine Karte. „Um sieben.“ Sehen Sie? Er kommt um sieben.'); } }},
@@ -225,7 +230,7 @@ var HS=[
  {id:'palms',name:'Palmen',look:'Die Palmen der Riva. Im Sommer stehen Touristen darunter, im November nur die Palmen.',g:{look:'Sie rascheln wie Papier.'}},
  {id:'bench',name:'Bank',look:function(A){ return A.m(A.G.phase==='i1m'?'Die Bank, auf der ich heute Nacht gesessen habe. Im Morgenlicht sieht sie aus wie jede andere Bank.':'Eine Bank aus Holz und Eisen, mit Blick aufs Wasser.'); },
    use:async function(A){ var G=A.G; if (G.phase==='i1m'){ if (G.flags['split.afterIvka.verified'] && A.malaHere()) return M.morningBench(A);
-       return A.m(G.flags['split.afterIvka.back']?'Gleich. Erst will ich wissen, ob ich mir das alles nur einrede.':'Hier habe ich heute Nacht gesessen. Und geraucht. Allein, wie es aussieht.'); }
+       return A.m(G.flags['split.afterIvka.back']?'Gleich. Ich will erst wissen, worauf ich mich einlasse. Mit etwas Kleinem.':'Hier habe ich heute Nacht gesessen. Und geraucht. Allein, wie es aussieht.'); }
      return A.m('Später vielleicht.'); },g:{look:'Eine Bank. Man sitzt dort mit jemandem oder gar nicht.'}},
  {id:'lamp',name:'Laterne',look:'Eine Laterne der Riva. Ihre Kugel brummt leise.',g:{look:'Sie zieht die Motten an. Mich nicht mehr.'}},
  {id:'office',name:'Hafenbüro',look:'Die Lučka kapetanija, das Hafenamt. Ein Haus mit hohen Fenstern und einem Schild, das man seit Tito nicht mehr geputzt hat.',g:{look:'Drinnen ist es warm und langweilig. Dahinter ist es kalt und voller Papier.'}},

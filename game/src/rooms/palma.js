@@ -146,12 +146,15 @@ async function ljerkaLoss(A,L){ await A.wait(1600); await L.say('Zagreb.'); awai
 async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.set('sheetOff',true); A.rebuild();
   var p=M.apos('salon','ljerkaNight',[160,120,'R']); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
   await A.narrate('Ljerka setzt sich an den Flügel. Lange sitzt sie nur da.'); await A.wait(1200);
+  // ein gegenwärtiges Zeichen für Bruno selbst (Prüfbericht): die zweite Kerze
+  A.sfx('click'); A.set('candles',1); A.rebuild(); await A.narrate('Dann zündet sie eine Kerze an und stellt sie auf den Deckel. Für ihre Mutter.'); await A.wait(1400);
+  A.sfx('click'); A.set('candles',2); A.rebuild(); await L.say('Und eine für dich, Tata.'); await A.wait(900); await L.say('Die erste. Siebzehn Jahre zu spät.'); await A.wait(1000);
   A.music('vecerPiano'); await A.wait(7000); if (B.actor){ await B.face('R'); } await A.wait(4500);
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
-  // anderer Auslöser als bei Luka (Prüfbericht): nicht das gealterte Gesicht, sondern die Frau, die nicht zum Sonntagstanz kommt, und die Kerze
-  await A.wait(2600); if (B.actor) await B.face('L'); await B.say('Danica … nedjelja … ples …'); await A.m('„Danica. Sonntag. Tanz.“');
-  await A.wait(1600); await B.say('… nema je … svijeća … svake godine …'); await A.m('„Sie ist nicht da. Eine Kerze, jedes Jahr.“');
-  await A.wait(1600); B.agitate(3400); await B.say('A meni … tko je meni …?'); await A.m('„Und mir … wer hat mir …?“'); await A.wait(1800);
+  // anderer Auslöser als bei Luka: nicht das gealterte Gesicht, sondern die zweite Kerze auf dem Flügel
+  await A.wait(2400); await B.say('Dvije svijeće …'); await A.m('„Zwei Kerzen.“'); await A.wait(1400);
+  await B.say('Jedna za Danicu … svake godine … ja sam je palio …'); await A.m('„Eine für Danica. Jedes Jahr hat er sie angezündet.“');
+  await A.wait(1600); B.agitate(3400); await B.say('A druga …?'); await A.wait(1300); await B.say('… za mene.'); await A.m('„Und die zweite … für mich.“'); await A.wait(1800);
   if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
   await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
@@ -180,7 +183,7 @@ M.afterLimbo_bruno=async function(A){ A.G.flags['mala.lock']=false; var L=A.npc(
   await L.say('Und jetzt soll ich sie nehmen.'); await A.wait(1500); await L.say('Ich weiß nicht, ob ich ihm verzeihe. Heute nicht.'); await A.wait(900); await L.say('Vielleicht, wenn ich einmal spielen kann, ohne an ihn zu denken.'); await A.wait(1300);
   await L.say('Ich weiß nicht, ob ich verkaufe. Vielleicht. Aber nicht am Montag.'); await L.say('Ihr Honorar. Nehmen Sie es, bevor ich es mir anders überlege.'); A.give('fee'); A.setFlag('c3.done');
   if (A.malaHere() && A.mala){ await A.wait(900); await A.animG('look'); await A.wait(800); A.mala.fadeOut=A.gt; await A.wait(1200); A.malaLeave(); await A.m('Mala?'); await A.wait(1500); await A.m('…'); }
-  A.save(); await A.fade(8,1600); await M.startEpilogue(A); };
+  await A.fade(8,1600); await M.startEpilogue(A); };   // der Epilog speichert selbst
 // ---------------------------------------------------------------- Hotspots Halle
 var HS=[
  {id:'door',name:'Eingangstür',exit:{to:'map'},look:'Die Drehtür zur Straße, verriegelt bis auf einen Flügel. Regen läuft am Glas herunter.',

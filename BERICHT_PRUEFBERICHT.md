@@ -97,12 +97,12 @@ Alle Läufe gehen durch das echte Spiel (`web/index.html`) in Chromium (Playwrig
 
 | Prüfung | Ergebnis |
 |---|---|
-| `pruefbericht.js` (neu): jeder Befund so nachgestellt, wie er beim Spielen entsteht | **57 von 57** bestanden, keine JS-Fehler |
-| Kapitel 1 komplett, deutsch (`walkthrough.js`) | **OK**, 61 Schritte bis zum Abspann, keine JS-Fehler. Spieltakt der Musterlösung: 85,9 min, vorher 83 min |
-| Kapitel 1 komplett, BHS (`MALA_LANG=bhs walkthrough.js`) | **OK**, 61 Schritte, kein angezeigter Text ohne Übersetzung, kein Text läuft aus dem Bild. Das Transkript hat 1.120 Sätze; die Suche nach kroatischen Wörtern bei Mala ergab einen Treffer, der Absicht ist: Marko spricht dort mit sich selbst. |
-| Kapitel 2 komplett (`walkthrough2.js`) | **OK**, 67 Schritte bis zum Abspann, keine JS-Fehler. Die neuen Rätselformen werden über ihre Trefferflächen angetippt. Spieltakt: 98,6 min, vorher 96,4 min |
+| `pruefbericht.js` (neu): jeder Befund beider Runden so nachgestellt, wie er beim Spielen entsteht | **80 von 80** bestanden, keine JS-Fehler |
+| Kapitel 1 komplett, deutsch (`walkthrough.js`) | **OK**, 61 Schritte bis zum Abspann, keine JS-Fehler. Die Notizen werden nur gewählt, wenn das Notizbuch sie anzeigt. Spieltakt der Musterlösung: 86,2 min, vorher 83 min |
+| Kapitel 1 komplett, BHS (`MALA_LANG=bhs walkthrough.js`) | **OK**, 61 Schritte, kein angezeigter Text ohne Übersetzung, kein Text läuft aus dem Bild. Das Transkript hat 1.126 Sätze; die Suche nach kroatischen Wörtern bei Mala ergab einen Treffer, der Absicht ist: Marko spricht dort mit sich selbst. |
+| Kapitel 2 komplett (`walkthrough2.js`) | **OK**, 67 Schritte bis zum Abspann, keine JS-Fehler. Die neuen Rätselformen werden über ihre Trefferflächen angetippt. Spieltakt: 99,5 min, vorher 96,4 min |
 | Spielstände und Einstieg (`einstiegtests.js`, alte Spielstände der Vorversion) | **39 von 39** |
-| Kapitel 2, Zusatztests (`k2tests.js`) | **32 von 32** |
+| Kapitel 2, Zusatztests (`k2tests.js`) | **33 von 33**. Ein Test wählte bisher eine unsichtbare Notiz über die Testschnittstelle; er wählt jetzt eine sichtbare. |
 | Geräte und Bedienung (`devicetest.js`) | **27 von 27**: iPad-Ansicht mit Touch, Hochformat, offline, Bildzeit unter 16,7 ms bei gedrosselter CPU |
 
 Was `pruefbericht.js` im Einzelnen nachstellt:
@@ -138,6 +138,22 @@ Was `pruefbericht.js` im Einzelnen nachstellt:
     - Beim Foto fehlt der schon gesehene Keller; das schwarze Blatt wird nachgeholt; die Nacht des Busses kommt noch nicht.
     - In der letzten Drei kommt die Nacht des Busses vor dem Geständnis.
 
+14. **Abschnittswechsel nach dem Laden** (zweite Runde):
+    - Eminas Zusage wie im Bericht: Gespräch bis zur Zusage, sofort „Zum Titelbild“, laden. Die Nacht beginnt; entweder wird die Szene wiederholt oder der Wechsel nachgeholt.
+    - Alte Stände mit der Zusage, auch mitten im Wechsel: Die Nacht beginnt beim Laden.
+    - Ebenso geprüft: Zoras Nacht, das Zwischenspiel nach Ivan, der Epilog von Sarajevo, Sustipan und der dritte Fall nach Nina, der Epilog nach Bruno.
+15. **Nina über die Oberfläche:** Bilder, Nachhall und Miras Aussage stehen im Notizbuch. Zweimal Antippen der Bilder überzeugt sie.
+16. **Erinnerungen an Pflichtmomenten:**
+    - Klassenbuch ohne Bank: Die Kellerschule kommt. Mit Bank: „Jetzt haben die Bilder Namen“, kein „an nichts“.
+    - Karton ohne Bastei: Das schwarze Blatt kommt.
+    - Beim Foto: nur noch zwei Erinnerungen.
+17. **Gegenstandsregel:**
+    - Eminas Zettel ist nach Tomažs Erkenntnis in der Leiste und nach der Zwischenwelt bei Emina.
+    - Die alten, widersprüchlichen Sätze sind entfernt.
+18. **Bruno:** Zwei Kerzen stehen auf dem Flügel, als er es erkennt.
+19. **Ivka:** Die Handschuhe ohne Fähre ergeben „Ich trage keine“; mit allem beginnen sie das Gespräch.
+20. **Markos Haltung:** Reisesperre und Bank nach dem Zettel enthalten keinen „einrede“-Zweifel mehr. Auf der Bank: „An dich schon. Das ist schlimmer.“
+
 ### Statische Prüfungen
 
 - Die Sprachfassung BHS hat 0 fehlende Texte bei rund 3.490 sichtbaren Texten (`i18n_check.js`). Bei den Doppelten gibt es keine neuen Widersprüche (`i18n_dupes.js`).
@@ -151,6 +167,21 @@ Was `pruefbericht.js` im Einzelnen nachstellt:
 - **Kapitel 2 ist auf BHS weiter deutsch.**
 - **Neue Texte in Kapitel 1** (Bruno, Ljerka, Nina, Sanja, Mala, Zdenka) haben KI-Übersetzer nach den Regeln in `game/STYLE_BHS.md` übertragen. Eine Durchsicht durch Muttersprachler ist empfehlenswert.
 - **Spielzeiten** sind Schätzungen aus den Testläufen: Spieltakt der Musterlösung mit Pflichtdialogen in Normaltempo.
+
+## 8. Zweite Runde: Nachprüfung der neuen Fassung
+
+| Befund der Nachprüfung | Bestätigt? | Änderung |
+|---|---|---|
+| **Eminas Zusage gespeichert, die Nacht beginnt nach dem Laden nicht** | ja | Das Skript speicherte die Zusage als sicheren Punkt vor dem Nachtwechsel. Dasselbe Muster fand sich an sechs weiteren Stellen: Zoras Nacht (drei Zusagen und der Stempel), nach Ivan, nach Ninas Abschied, nach Brunos Abschied, vor dem Epilog von Sarajevo. Diese Zwischenspeicherungen entfallen oder kommen erst nach dem Wechsel. Dazu erkennt das Spiel beim Laden **ausstehende Abschnittswechsel** und holt sie nach (`90_story.js`, `M.resumePending`). Hat ein alter Stand den Wechsel schon begonnen, aber nicht beendet, wird er neu gestartet. Das fängt auch Spielstände der Vorversionen auf. |
+| **Ninas gültige Antworten im Notizbuch nicht wählbar** | ja | Bilder, Nachhall und Miras Aussage sind Notizen, die das Notizbuch sonst ausblendet. Gespräche können jetzt Notizen nennen, die dort gültige Antworten sind; sie stehen zur Wahl, sobald man sie hat. Eine Prüfung aller Notizfragen fand nur noch eine harmlose Stelle bei Ivka, auch sie ist behoben. Die Testschnittstelle wählt künftig nur Notizen, die ein Spieler auch sieht; so fällt so etwas im Durchlauf auf. |
+| **Klassenbuch widerspricht der Kellererinnerung** | ja | Nach der Bank sagt Marko: „Jetzt haben die Bilder Namen.“ Ohne die Bank kommt die Kellerschule beim eigenen Namen im Klassenbuch zurück. |
+| **Vier Erinnerungen beim Foto, wer die frühen verpasst** | ja | Beide frühen Erinnerungen haben jetzt einen Pflichtmoment als Ersatz: das Klassenbuch und das verkohlte Blatt im Karton. Beim Foto folgen nur noch zwei: die Samstage und die Fahrscheine. |
+| **Markos Haltung springt nach der Bura zurück** | ja | Auf der Bank: „Ich glaube nicht an Geister. An dich schon. Das ist schlimmer.“ Es folgt das Gespräch darüber, dass sie Dinge sieht, die keiner zeigen will, auch bei ihm. Reisesperre und Bank sagen nach dem Zettel nicht mehr, er müsse erst wissen, ob er sich alles einrede. |
+| **Regel für Geistergegenstände widerspricht dem Foto** | ja | Eine Regel: **Wer losgelassen hat, kann etwas hergeben, und es bleibt.** „Einmal“ entfällt. Tomažs Zettel bleibt echt, und Marko gibt ihn nach der Zwischenwelt Emina, die ihn 1972 geschrieben hat. Mala lässt beim Zusammenlegen ausdrücklich ihre Fotohälfte los. Beim Fahrschein sagt sie: „Die Hälfte vom Foto war leicht. Den Fahrschein halte ich seit achtzehn Jahren fest.“ |
+| **Brunos Erkenntnis braucht ein gegenwärtiges Zeichen** | ja | Ljerka stellt vor dem Spielen zwei Kerzen auf den Flügel: eine für die Mutter und eine für den Vater („Die erste. Siebzehn Jahre zu spät.“). Bruno sieht die zweite: „A druga …? … za mene.“ Die Kerzen sind im Bild zu sehen. |
+| **Ivkas Handschuh-Reaktion** | ja | Fehlt noch etwas: „Für mich? Ich trage keine.“ Ist alles beisammen, beginnen die Handschuhe das Abschiedsgespräch wie der Brief. Nach der Erkenntnis sieht sie zu Mala. |
+| **Kula in der Zwischenwelt: „Viertel nach drei“** | ja | Bei Tomažs Ankunft um 18:55 und Sonnenuntergang 16:16 sind es zwanzig vor drei. Text und Zeiger des Zifferblatts in der Zwischenwelt zeigen das jetzt. |
+| **Wegeansagen nennen den nächsten Ort** | teilweise | Drei weitere direkte Ansagen sind ersetzt: Riva nach der Kirchentreppe, „Bura“ nach der Bank, Šehić nach Zora. Die festen Tagesabschnitte (Abend, Nacht, nächster Morgen) bleiben bewusst: Sie tragen den Rhythmus der Fälle. Gesperrte Wege nennen einen Grund, keinen nächsten Schritt. |
 
 ## Geänderte Dateien
 

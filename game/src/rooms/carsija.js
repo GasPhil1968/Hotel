@@ -66,7 +66,7 @@ async function talkDamir(A){ var D=A.npc('damir');
   ]; }); }
 async function damirBook(A,D){ await A.m('Hier. Seite drei. Unter „Likovno“, Zeichnen.'); await A.wait(700); await A.narrate('Zwischen den Seiten liegt ein Blatt: eine Straßenbahn mit Buntstift, viel zu viele Fenster. Darunter „Damir K., 3. r.“ und, in einer anderen Schrift, eine Fünf.');
   await D.say('…'); await A.wait(900); await D.say('Das ist meine.'); await D.say('Die Helferin hat uns Straßenbahnen malen lassen. Damit wir an etwas denken, das fährt.'); await A.wait(800);
-  await D.say('Ich bin Straßenbahnfahrer geworden.'); await A.wait(700); await D.say('Um neun hab ich Schluss. Ich komme.'); A.setFlag('k2.s3.damir'); A.sfx('note'); A.save(); await M.k2CheckS3Night(A); return 'bye'; }
+  await D.say('Ich bin Straßenbahnfahrer geworden.'); await A.wait(700); await D.say('Um neun hab ich Schluss. Ich komme.'); A.setFlag('k2.s3.damir'); A.sfx('note'); await M.k2CheckS3Night(A); if (!A.flag('k2.s3.night')) A.save(); return 'bye'; }
 // ---------------------------------------------------------------- Die letzte Nacht: an der Bank
 async function finalBench(A){ if (A.flag('k2.f2.ride')) return; A.setFlag('k2.f2.ride'); A.G.flags['mala.lock']=true;
   var b=M.stand('carsija','bench')||[80,124,'L']; await A.walk(b[0]+18,b[1]); await A.face('L'); var mp=M.apos('carsija','mala',[70,120,'R']); A.placeG(mp[0],mp[1],'R'); A.idleG('sit');
@@ -77,7 +77,7 @@ async function finalBench(A){ if (A.flag('k2.f2.ride')) return; A.setFlag('k2.f2
   await A.memory({title:'Splitter',tint:'ghost',draw:M.mem&&M.mem.k2_bridge,lines:['Ein Lastwagen in der Nacht. Mehlsäcke, Decken, der Geruch von Diesel.','Ein Fluss, grün und laut, tief unten.','Eine Brücke, die nicht mehr da war.','Wasser.']}); A.note('f2_bridge');
   await A.g('Dann weiß ich nichts mehr.'); await A.wait(900); await A.m('Ich finde es heraus.'); await A.g('Ich weiß.'); await A.wait(800);
   await A.g('Spürst du das?'); await A.m('Was?'); await A.g('Meine Leine. Sie zeigt nicht mehr nach Osten.'); await A.wait(600); A.sfx('shimmer'); await A.g('Sie zeigt nach Südwesten.'); await A.m('Mostar.'); await A.g('Ich glaube, ja.');
-  A.idleG(null); A.G.flags['mala.lock']=false; A.save(); await A.wait(800); await M.k2StartEpilogue(A); }
+  A.idleG(null); A.G.flags['mala.lock']=false; await A.wait(800); await M.k2StartEpilogue(A); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Zur Stadt',exit:{to:'map'},look:'Die Straße hinaus, an der Miljacka entlang.',canExit:async function(A){ if (A.G.phase==='k2_pro' && !A.flag('k2.p2.back')){ await A.m('Nicht ohne Mala.'); return false; } if (A.G.phase==='k2_fin_n' && A.flag('k2.f2.rideEnd') && !A.flag('k2.f2.ride')){ await A.g('Noch nicht. Komm zur Bank.'); return false; } return true; }},

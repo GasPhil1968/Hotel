@@ -85,7 +85,7 @@ tr2(/^Ja, Platz (\d+) überschreiben$/, function(m){ return 'Da, prebriši mjest
 tr2(/^Ja, Platz (\d+) neu beginnen$/, function(m){ return 'Da, kreni ispočetka na mjestu '+m[1]; });
 tr2(/^Auf Platz (\d+) liegt ein Spielstand\. (.+)$/, function(m,tr){ return 'Na mjestu '+m[1]+' već je spremljena igra. '+tr(m[2]); });
 M.trIgnore && M.trIgnore(['Gegenstand doppelt: ','Notiz doppelt: ','kein Raum ','unbekannte Notiz ','unbekannter Gegenstand ','keine Phase ','kein Hotspot ',' in ','kein Ausgang ','keine Auswahl offen',
-  'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
+  'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','Notiz steht im Notizbuch nicht zur Wahl: ','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
   'translate(-50%,-50%) rotate(90deg)','Neue Notiz: ','Das ist ','Benutze ',' mit ','Schlussfolgerung: ','Speichern (Platz ','Laden (Platz ','Text: ','Notizbuch: ','Musik: ','Geräusche: ','Röhrenbild: ',
   ':  leer',' Min.',' Std. ','Ja, Platz ',' überschreiben',' neu beginnen','Auf Platz ',' liegt ein Spielstand. ','Sprache: Deutsch','Sarajevo: auf welchem Platz spielen?','MALA']);
 })(M);

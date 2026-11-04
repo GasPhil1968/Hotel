@@ -65,8 +65,8 @@ async function kulaStrikes(A){ var T=A.npc('tomaz'), S=A.S; A.music('silence'); 
   A.G.flags['mala.lock']=false; await A.switchTo('mala'); await A.wait(500); await A.g('Tomaž. Die Leine ist los.'); await T.say('Ich merke es. Ich bin ganz leicht.'); await A.g('Ich kann dich hinüberbringen. Es ist nicht weit.'); await T.say('Darf ich ihr noch …'); await A.g('Sie hört dich nicht. Aber sie weiß es.');
   // ein Geist gibt etwas her, wenn er losgelassen hat – für einen Atemzug (bereitet Malas Fahrschein in der letzten Nacht vor)
   await A.wait(900); await T.say('Der Zettel. Nehmen Sie ihn. Ich brauche ihn nicht mehr.'); await A.wait(600);
-  await A.narrate('Er hält mir Eminas Zettel hin. Ich nehme ihn, ohne nachzudenken. Er ist warm. Für einen Atemzug liegt ihre Schrift in meiner Hand.'); A.sfx('shimmer'); await A.wait(1400);
-  await A.narrate('Dann ist da nur kalte Luft.'); await A.m('Ich hatte ihn. Wirklich.'); await A.g('Wer losgelassen hat, kann etwas hergeben. Einmal.'); await A.m('Und du?'); await A.wait(900); await A.g('Ich halte noch fest.'); A.setFlag('k2.s1.noteGiven');
+  await A.narrate('Er hält mir Eminas Zettel hin. Ich nehme ihn, ohne nachzudenken. Er ist warm. Ihre Schrift liegt in meiner Hand.'); A.sfx('shimmer'); A.give('note_e'); await A.wait(1400);
+  await A.narrate('Er bleibt. Gelbes Papier, eine Ecke abgerissen, neunzehnhundertzweiundsiebzig.'); await A.m('Ich halte ihn. Wirklich.'); await A.g('Wer losgelassen hat, kann etwas hergeben.'); await A.m('Und du?'); await A.wait(900); await A.g('Ich halte noch fest.'); A.setFlag('k2.s1.noteGiven');
   T.idle('wait'); A.save(); }
 async function crossTomaz(A){ var T=A.npc('tomaz'); A.G.flags['mala.lock']=true; A.music('k2_duh'); var sp=M.spot('kula','bench'), bx=sp[0]+(sp[2]>>1), by=M.apos('kula','tomaz',[150,122,'F'])[1];
   await A.g('Komm.'); await T.say('Kommt der Übersetzer mit?'); await A.g('Wenn er will.'); await A.crossOpen(bx+20,by+2,{w:18,h:74});
@@ -79,6 +79,9 @@ M.afterLimbo_tomaz=async function(A){ A.G.flags['mala.lock']=false; A.setFlag('k
   if (c==='there'){ await E.say('Sie war da.'); await A.wait(800); await E.say('Das ist gut. Das ist alles, was ich wollte, dass er weiß.'); }
   else if (c==='clock'){ await E.say('Ich auch nicht.'); await A.wait(800); await E.say('Neununddreißig Jahre habe ich unter dieser Uhr Kaffee gekocht.'); }
   else { await E.say('Gut.'); await A.wait(600); await E.say('Dann kann ich auch gehen. Nach Hause. Es ist kalt.'); }
+  // der Zettel, den Tomaž hergegeben hat, geht an die zurück, die ihn geschrieben hat
+  if (A.has('note_e')){ await A.wait(900); await A.m('Und das hier hat er mir gegeben. Für Sie.'); await A.animM('give'); A.take('note_e'); A.sfx('paper'); await A.wait(800); await E.say('„Sutra, kad kula udari sedam.“'); await A.wait(900);
+    await E.say('Den habe ich geschrieben. Mit neunzehn, auf eine Rechnung von meinem Vater.'); await A.wait(700); await E.say('Er hat ihn aufgehoben. Neununddreißig Jahre.'); }
   await A.wait(900); await E.say('Danke, Übersetzer.'); await E.say('Lejla sagt, Sie können Deutsch und Slowenisch und Kurrent und Gott weiß was. Aber das hier haben Sie nicht übersetzt. Das haben Sie gefunden.'); await A.wait(500);
   E.idle(null); await E.walk(bp[0]+200,bp[1]+4); if (E.actor) E.actor.fadeOut=A.gt; await A.wait(600); A.despawn('emina');
   A.setFlag('k2.s1.done'); await A.wait(800);

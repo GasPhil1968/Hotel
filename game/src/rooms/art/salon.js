@@ -277,6 +277,12 @@ function layers(S,GS,tod){ var base=baseOf(S,tod), out=[], t;
 function dyn(fb,v,S,GS){ WINS.forEach(function(w,i){ M.scn.windowRain(fb,w[0]+1,WY0+6,w[1]-w[0]-2,WY1-WY0-7,v.t*(0.9+i*0.1)+i*3,v.cam); });
   var col=S.dawn?P.d4:P.n3; WINS.forEach(function(w,i){ M.dust(fb,v.t*0.6+i*7,w[0]-4,WY1,w[1]-w[0]+12,30,6,col); });
   if (Math.sin(v.t*2.3)+Math.sin(v.t*5.1)>1.7){ for (var y=DOOR.Y0+2;y<FY-16;y+=2) fb.px(DOOR.X1-3,y,P.y4); } }
+// Ljerkas Kerzen auf dem Flügel, vor dem Deckel gezeichnet (S.candles: 1 = für die Mutter, 2 = auch für den Vater)
+function candlesFront(fb,v,S,GS){
+  for (var k=0;k<(S.candles||0);k++){ var c=R3.p(PIA.X0+8+k*9,PIA.Y0,PIA.Z1-6), cx=rd(c[0]), cy=rd(c[1]);
+    fb.rect(cx-1,cy-7,3,7,P.s6); fb.vl(cx+1,cy-7,cy-1,P.s4); fb.hl(cx-2,cx+2,cy,P.m1);
+    var fl=Math.sin(v.t*9+k*2)>0.2?1:0; fb.px(cx,cy-9,P.y5); fb.px(cx,cy-8-fl,P.y4); fb.px(cx,cy-10,fl?P.r4:P.y4);
+    for (var gy=-4;gy<=4;gy++) for (var gx=-4;gx<=4;gx++){ var d=gx*gx+gy*gy; if (d>4 && d<17 && M.hash(cx+gx,cy+gy+Math.floor(v.t*6))<0.18) fb.px(cx+gx,cy-9+gy,P.y3); } } }
 
 // ---------------------------------------------------------------- Geistersicht: die Kreidebilder der Kinder
 var CHALK=null;
@@ -352,7 +358,7 @@ function WALK(x,y){ if (y<106||y>140||x<6||x>304) return false; var f=fl(x,y); i
   if (Z<12 && X>220) return false;
   return true; }
 M.defineArt('salon',{
-  width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, ghost:ghost,
+  width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:candlesFront, ghost:ghost,
   actorLut:function(a,S,GS,tod){ var base=baseOf(S,tod); if (!base) return null; return levels(base)[1].a; },
   spots:{
     door:[DOOR.X0-3,DOOR.Y0-8,DOOR.X1-DOOR.X0+6,FY-DOOR.Y0+10],

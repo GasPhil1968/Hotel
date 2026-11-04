@@ -40,9 +40,17 @@ M.trAdd('bhs', {
   'Einen Tag hattest du. Heute Morgen.': 'Jedan dan si već imao. Jutros.',   // Mala
   'Gut. Ich sitze hier, wenn du so weit bist.': 'Dobro. Ja sjedim ovdje, pa kad budeš spreman.',   // Mala
   'Das reicht mir.': 'Meni je to dovoljno.',   // Mala
-  'Dann hören wir uns an, was die Stadt über ihn weiß. Die Stadt redet in der „Bura“.': { hr:'Onda da čujemo što grad zna o njemu. Grad priča u „Buri“.', bs:'Onda hajde da čujemo šta grad zna o njemu. Grad priča u „Buri“.' },   // Marko an Mala
+  'Dann hören wir uns an, was die Stadt über ihn weiß.': { hr:'Onda da čujemo što grad zna o njemu.', bs:'Onda hajde da čujemo šta grad zna o njemu.' },   // Marko an Mala
   'Die Bank, auf der ich heute Nacht gesessen habe. Im Morgenlicht sieht sie aus wie jede andere Bank.': 'Klupa na kojoj sam noćas sjedio. Na jutarnjem svjetlu izgleda kao svaka druga klupa.',   // Marko
-  'Gleich. Erst will ich wissen, ob ich mir das alles nur einrede.': 'Samo malo. Prvo hoću znati umišljam li sve to.',   // Marko (hr = bs)
+  'Gleich. Ich will erst wissen, worauf ich mich einlasse. Mit etwas Kleinem.': 'Samo malo. Prvo hoću znati u što se upuštam. S nečim malim.',   // Marko
+  'Nicht jetzt. Mala will ans Wasser. Und ich habe Fragen, die nicht in die Bar gehören.': 'Ne sad. Mala hoće do vode. A ja imam pitanja koja ne spadaju u bar.',   // Marko
+  'Nicht jetzt. Nicht, bevor ich weiß, worauf ich mich einlasse.': 'Ne sad. Ne dok ne znam u što se upuštam.',   // Marko
+  'An dich schon. Das ist schlimmer.': { hr:'U tebe da. To je gore.', bs:'U tebe da. To je gore.' },   // Marko an Mala
+  'Weil du Dinge siehst, die keiner zeigen will. Bei Sanja. Bei jedem hier.': { hr:'Zato što vidiš stvari koje nitko ne želi pokazati. Kod Sanje. Kod svakoga ovdje.', bs:'Zato što vidiš stvari koje niko neće da pokaže. Kod Sanje. Kod svakog ovdje.' },   // Marko an Mala
+  'Auch bei mir.': { hr:'I kod mene.', bs:'I kod mene.' },   // Marko an Mala
+  'Auch bei dir.': 'I kod tebe.',   // Mala
+  'Warum?': 'Zašto?',
+  'Ich sehe weg, wenn du willst.': 'Ja skrenem pogled, ako hoćeš.',   // Mala
   'Hier habe ich heute Nacht gesessen. Und geraucht. Allein, wie es aussieht.': 'Ovdje sam noćas sjedio. I pušio. Sam, po svemu sudeći.',   // Marko (allein)
   'Am Ende der Mole: niemand.': 'Na kraju mola: nikoga.',   // Marko
   'Niemand. Diesmal, weil sie gegangen ist.': 'Nikoga. Ovaj put zato što je otišla.',   // Marko
@@ -71,7 +79,7 @@ M.trAdd('bhs', {
   'Einen Moment noch.': 'Samo trenutak.',   // Marko
   'Die Stadt schreibt: keine Kontakte. In ihrem Korb liegt ein Heft voller Namen. Beides kann nicht stimmen.': 'Grad piše: bez kontakata. A u njezinoj košarici leži bilježnica puna imena. Oboje ne može biti točno.',   // Marko
   'Eine Frage habe ich noch. Dann gebe ich ihn zurück.': 'Imam još jedno pitanje. Onda vam ga vraćam.',   // Marko an Zdenka
-  'Bevor ich schreibe, will ich die Stelle sehen, an der sie jeden Abend stand. Unten an der Riva, am Ende der Mole.': 'Prije nego što počnem pisati, hoću vidjeti mjesto na kojem je stajala svake večeri. Dolje na Rivi, na kraju mola.',   // Marko
+  'Siebenundzwanzig Jahre jeden Abend an derselben Stelle. Und ich habe sie mir noch nicht einmal angesehen.': 'Dvadeset i sedam godina svake večeri na istom mjestu. A ja ga nisam ni pogledao.',   // Marko
   'Und die Mützen. Das stimmt. Das hat sonst niemand gewusst.': 'I kape. Tako je. To nitko drugi ni zna.',   // Zdenka
   'Fast.': 'Skoro.',   // Marko an Zdenka
   'Ein Heft voller Namen. Und die Stadt schreibt: keine Kontakte.': 'Bilježnica puna imena. A Grad piše: bez kontakata.',   // Marko

@@ -240,12 +240,16 @@ M.trAdd('bhs', {
   'Ljerka …': 'Ljerka …',
   '… sviraš.': '… sviraš.',
   '„Du spielst.“': '„Sviraš.“',
-  'Danica … nedjelja … ples …': 'Danica … nedjelja … ples …',   // Bruno
-  '„Danica. Sonntag. Tanz.“': 'Nedjelja. Ples s Danicom. Kao nekad.',   // Marko (fasst zusammen)
-  '… nema je … svijeća … svake godine …': '… nema je … svijeća … svake godine …',   // Bruno
-  '„Sie ist nicht da. Eine Kerze, jedes Jahr.“': 'Nje nema. Svake godine joj je palio svijeću.',   // Marko
-  'A meni … tko je meni …?': 'A meni … tko je meni …?',   // Bruno
-  '„Und mir … wer hat mir …?“': 'A njemu? Tko je njemu upalio svijeću?',   // Marko
+  'Dann zündet sie eine Kerze an und stellt sie auf den Deckel. Für ihre Mutter.': 'Onda pali svijeću i stavlja je na poklopac. Za majku.',   // Erzähler
+  'Und eine für dich, Tata.': 'I jednu za tebe, tata.',   // Ljerka
+  'Die erste. Siebzehn Jahre zu spät.': 'Prvu. Sedamnaest godina prekasno.',   // Ljerka
+  'Dvije svijeće …': 'Dvije svijeće …',   // Bruno
+  '„Zwei Kerzen.“': 'Dvije svijeće na klaviru.',   // Marko
+  'Jedna za Danicu … svake godine … ja sam je palio …': 'Jedna za Danicu … svake godine … ja sam je palio …',   // Bruno
+  '„Eine für Danica. Jedes Jahr hat er sie angezündet.“': 'Jednu je svake godine palio za Danicu.',   // Marko
+  'A druga …?': 'A druga …?',   // Bruno
+  '… za mene.': '… za mene.',   // Bruno
+  '„Und die zweite … für mich.“': 'A druga je za njega.',   // Marko
   'Ja … nisam … više … ovdje.': 'Ja … nisam … više … ovdje.',
   '„Ich bin … nicht mehr … hier.“': '„Nisam više ovdje.“',
   // sein erster ganzer Satz – im Original in der Sprache des Spielers, deshalb hier kroatisch

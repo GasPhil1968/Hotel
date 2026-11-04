@@ -43,7 +43,7 @@ async function eminaTruth(A,E){ var S=A.S; S.truth=S.truth||0;
   await A.wait(1200); await E.say('Mein Vater.'); await A.wait(900); await E.say('Er hat mich am nächsten Morgen gefunden, auf der Bank, und mich nach Hause getragen. Und er hat nie ein Wort gesagt. Neununddreißig Jahre.');
   await E.say('Er ist sechsundachtzig gestorben. Ich habe ihm den Sarg ausgesucht. Einen schönen.'); await A.wait(1000); await E.anim('wipe'); await E.say('…');
   await A.wait(900); await E.say('Was wollen Sie von mir, Übersetzer?'); await A.m('Kommen Sie heute Nacht unter die Uhr. Wenn die Kula sieben schlägt.'); await A.wait(800); await E.say('Und dann?'); await A.m('Dann wartet keiner mehr.');
-  await A.wait(1100); await E.say('Heute Nacht.'); await E.say('Wenn die Kula sieben schlägt.'); A.setFlag('k2.s1.emina'); A.sfx('note'); A.save();
+  await A.wait(1100); await E.say('Heute Nacht.'); await E.say('Wenn die Kula sieben schlägt.'); A.setFlag('k2.s1.emina'); A.sfx('note');   // gespeichert wird erst nach dem Nachtwechsel (k2StartS1Night)
   if (A.G.malaOn){ await A.wait(600); await A.g('Sie zieht das Armband an. Unter der Theke, wo sie glaubt, dass es keiner sieht.'); }
   await A.wait(600); await M.k2StartS1Night(A); }
 // ---------------------------------------------------------------- Lejla

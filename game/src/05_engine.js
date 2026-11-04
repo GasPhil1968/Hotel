@@ -225,7 +225,8 @@ async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
   addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
 E.combineNotes=combineNotes;
 // im Gespräch eine Notiz auswählen
-function pickNote(title){ if (E.nbStyle && E.nbStyle()==='think' && E.pickNoteThink) return E.pickNoteThink(title); return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?'},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
+// opt.also: Notizen, die in diesem Gespräch gültige Antworten sind; sie stehen zur Wahl, sobald man sie hat, auch wenn das Notizbuch sie sonst ausblendet
+function pickNote(title,opt){ var also=(opt&&opt.also)||null; if (E.nbStyle && E.nbStyle()==='think' && E.pickNoteThink) return E.pickNoteThink(title,also); return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?',also:also},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
 
 // ---------------------------------------------------------------- Interaktions-Helfer
 var lastClick=null;
@@ -502,7 +503,7 @@ function loadData(d){ try{ var base=validate(d); if (!base) return false;
     if (M.migrateSave) try{ M.migrateSave(base); }catch(e){ console.error(e); }   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js)
     setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
-    M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
+    M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(ch){ setGame(freshGame()); safeGS=null; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
   if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
@@ -534,7 +535,9 @@ M.TA={
   exit:function(id){ var hs=room.byId[id]; if (!hs) throw new Error('kein Ausgang '+id); E.pop=null; doVerb(hs.gexit&&GS.active==='mala'?'pass':'walk',hs); },
   item:function(verb,id,other){ doItem(verb,id,other); },
   choose:function(sub){ if (!E.dlg) throw new Error('keine Auswahl offen'); var i=E.dlg.opts.findIndex(function(o){ return o.t.indexOf(sub)>=0; }); if (i<0) throw new Error('Option nicht gefunden: '+sub+' | '+E.dlg.opts.map(function(o){ return o.t; }).join(' / ')); E.chooseDone(i); },
-  pickNote:function(id){ if (E.dlg){ var k=E.dlg.opts.findIndex(function(o){ return o.id===id; }); if (k<0) throw new Error('Gedanke nicht in der Auswahl: '+id); E.chooseDone(k); return; } if (!E.overlay||E.overlay.kind!=='notebook') throw new Error('kein Notizbuch offen'); closeOverlay(id); },
+  pickNote:function(id){ if (E.dlg){ var k=E.dlg.opts.findIndex(function(o){ return o.id===id; }); if (k<0) throw new Error('Gedanke nicht in der Auswahl: '+id); E.chooseDone(k); return; } if (!E.overlay||E.overlay.kind!=='notebook') throw new Error('kein Notizbuch offen');
+    if (id && E.nbOpen){ var L=E.nbOpen(true,E.overlay.data&&E.overlay.data.also); if (L.indexOf(id)<0) throw new Error('Notiz steht im Notizbuch nicht zur Wahl: '+id); }   // Tests wählen nur, was ein Spieler sehen kann
+    closeOverlay(id); },
   closeOverlay:function(v){ closeOverlay(v); },
   combine:function(a,b){ return combineNotes(a,b); },
   switchTo:function(w){ return switchTo(w,true); },

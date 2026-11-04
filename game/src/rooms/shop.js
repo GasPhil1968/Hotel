@@ -27,7 +27,7 @@ async function talkNina(A){ var N=A.npc('nina');
 // Ninas Bereitschaft ist das eigentliche Hindernis: an die Rampe geht sie erst, wenn Marko zeigt, dass er verstanden hat, worauf sie seit zwölf Jahren wartet
 async function ninaReady(A,N){ await N.say('Nicht hier.'); await A.wait(900);
   if (!A.S.refusedRamp){ A.S.refusedRamp=true; await N.say('Und nicht an der Rampe. Da war ich seit zwölf Jahren nicht.'); await A.wait(700); await N.say('Ich male sie. Das reicht.'); }
-  var n=await A.askNote('Was sage ich ihr?'); if (!n){ await N.say('Ich male sie. Das reicht.'); return; }
+  var n=await A.askNote('Was sage ich ihr?',{also:['c2_paintings','c2_echo','c2_waited','c2_mira1']}); if (!n){ await N.say('Ich male sie. Das reicht.'); return; }
   if (n==='c2_paintings'||n==='c2_echo') await A.m('Sie malen jedes Mal zuerst die Fähre. Die Gestalt am Kiosk malen Sie zuletzt. Manchmal gar nicht.');
   else if (n==='c2_waited'||n==='c2_mira1') await A.m('Sie haben dort gewartet, bis die Lichter klein waren. Seitdem stehen Sie jeden Abend dort. Nur auf Leinwand.');
   else { await N.say('Das ändert nichts. Gehen Sie. Bitte.'); return 'bye'; }

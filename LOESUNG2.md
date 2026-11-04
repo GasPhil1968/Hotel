@@ -118,7 +118,7 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
   - „Zwei Siebenen“.
   - Wer Lejla in der Kafana nicht nach der Kaserne gefragt hat: Sie sitzt heute Nacht auf der Stufe der Kafana und gibt die Auskunft dort. Was Tomaž schon gehört hat, zählt weiter.
 - Heute schlägt die Kula um zwölf nach elf sieben: sieben Minuten Warten (damals waren es elf). Emina kommt mit dem Armband, „um sechzehn nach elf, elf Minuten nach dir“, und Tomaž begreift.
-- Vor dem Hinübergehen gibt Tomaž Marko seinen Zettel. Für einen Atemzug ist er echt: Wer losgelassen hat, kann etwas hergeben.
+- Vor dem Hinübergehen gibt Tomaž Marko Eminas Zettel. Er bleibt echt: Wer losgelassen hat, kann etwas hergeben. Nach der Zwischenwelt gibt Marko ihn Emina, die ihn vor 39 Jahren geschrieben hat.
 - **[G]** Tomaž **hinüberbringen**, Malas Hand nehmen.
 - **Zwischenwelt:** **[M]** das Zifferblatt benutzen und den Zeiger auf **sieben** stellen. Tomaž geht ins Licht. Durch das Tor zurück.
 - Emina auf der Bank antworten (jede Antwort ist richtig). Malas Splitter: eine Uhr mit leuchtenden Ziffern.
@@ -195,7 +195,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 ## Zwischenspiel – Die Gelbe Bastei
 
 - **[M]** Die Bank benutzen. Das Gespräch nimmt die Antworten aus Split auf. Die Themen sind frei wählbar; „von meinem Vater erzählen“ ist optional.
-  - „(Zur Vijećnica hinuntersehen.)“: Marko erinnert sich an ein Mädchen mit Asche im Haar, das ihm im August 1992 ein verkohltes Blatt brachte (optional; sonst kommt die Erinnerung beim Foto).
+  - „(Zur Vijećnica hinuntersehen.)“: Marko erinnert sich an ein Mädchen mit Asche im Haar, das ihm im August 1992 ein verkohltes Blatt brachte. Wer das auslässt, bekommt die Erinnerung beim Öffnen des Kartons, am verkohlten Blatt.
 - Am Ende: „Ich lasse ihn mir schicken.“ Der Karton aus Split.
 - Pension, Bett → **Dritter Fall**.
 
@@ -251,7 +251,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - **[G]** Zora hinüberbringen.
 - **Zwischenwelt:** **[M]** die Schulbank mit der Glocke benutzen. Zora läutet: „Die Stunde ist aus.“
 - Den Schlüssel kann man Šehić am nächsten Tag zurückgeben (optional, mit schöner Antwort).
-- Im Keller die **Bänke benutzen** (der Tisch hinten mit dem eingeritzten M): Marko erinnert sich an die Kellerschule, an ein Mädchen mit Zopf und an „Die Räder, Mali“ (optional; sonst kommt die Erinnerung beim Foto).
+- Im Keller die **Bänke benutzen** (der Tisch hinten mit dem eingeritzten M): Marko erinnert sich an die Kellerschule, an ein Mädchen mit Zopf und an „Die Räder, Mali“. Wer das nicht tut, bekommt die Erinnerung beim Lesen des Klassenbuchs, an seinem eigenen Namen.
 - Pension, Bett → **Finale**.
 
 ---
@@ -268,7 +268,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 **Die zwei Hälften**
 - **[M]** Den alten Fahrschein auf Mala ziehen. Sie öffnet die Dose ganz.
 - Die zwei Hälften **zusammenlegen**: Eine Hälfte antippen dreht sie, „Tauschen“ legt sie um. Markos Hälfte (Großmutter, der Junge, die Drei) hat links einen glatten Rand und rechts den Riss; sie gehört nach links. Lanas Hälfte steht zu Beginn auf dem Kopf.
-- Erinnerungen: die Samstage, der Keller und das schwarze Blatt (falls noch nicht gesehen), die zwei Fahrscheine. **Lana.** Die Nacht des Busses kommt erst in der letzten Drei.
+- Erinnerungen: die Samstage und die zwei Fahrscheine; Keller und Blatt kamen schon vorher. **Lana.** Die Nacht des Busses kommt erst in der letzten Drei.
 
 **Nada und Lanas Zimmer**
 - **[M]** Haus 7, Treppe: Nada öffnet, wenn man das Foto unter der Tür durchschiebt.

@@ -48,7 +48,7 @@ async function returnKey(A,Z){ if (!A.hasNote('pro_people')){ await A.m('Einen M
 async function glimpse(A){ await A.wait(700); A.G.flags['found.malaGlimpse']=true; var sp=M.spot('varos','steps'), gl=A.spawn({id:'malaGlimpse',ch:'mala',x:sp[0]+38,y:sp[1]+3,f:'L',name:'',ghost:true,noAche:true});
   await A.wait(1400); if (gl.actor) gl.actor.fadeOut=A.gt; await A.wait(1000); gl.hide(); A.despawn('malaGlimpse'); delete A.G.flags['found.malaGlimpse']; A.setFlag('split.intro.glimpse');
   await A.m('…'); await A.wait(400); await A.m('Oben an der Kirchentreppe stand eben jemand.'); await A.wait(600); await A.m('Jetzt nicht mehr.');
-  await A.wait(700); await A.m('Bevor ich schreibe, will ich die Stelle sehen, an der sie jeden Abend stand. Unten an der Riva, am Ende der Mole.'); A.save(); }
+  await A.wait(700); await A.m('Siebenundzwanzig Jahre jeden Abend an derselben Stelle. Und ich habe sie mir noch nicht einmal angesehen.'); A.save(); }
 async function zdenkaC1(A,Z){
   if (A.first('zdC1')){ await Z.say('Der von der Zeitung. Steht es morgen drin?'); await A.m('Morgen, ja.'); await Z.say('Dann kaufe ich mir zwei. Eine für mich, eine für sie.'); }
   await A.menuLoop(function(){ return [

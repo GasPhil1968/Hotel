@@ -145,6 +145,8 @@ Varoš lässt Marko erst zu, wenn Sanja ihren Brief hat: „Erst Sanja. Triest r
 
 Danach folgt der erste Fall unverändert: Notizbuch „Boot um sieben“ + „Fähre fiel aus“, Matejuška, Seesack, Dinko, Brief über Dampf öffnen, Sustipan, Mala am Poller, die Wahrheit für Ivka, die Zwischenwelt, die Handschuhe.
 
+Das Abschiedsgespräch mit Ivka beginnt, wenn alles beisammen ist (Fähre, Brief, Handschuhe), mit dem Brief oder mit den Handschuhen. Fehlt noch etwas, sagt sie zu den Handschuhen nur, dass sie keine trägt.
+
 ## Nach Ivka · Mittwoch, spät
 
 34. Zurück durch das Tor: „Ich muss mich setzen.“

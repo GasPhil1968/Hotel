@@ -82,7 +82,7 @@ async function ninaTicket(A){ var N=A.npc('nina'); if (A.has('ticket_n')){ await
   await N.say('„Halb neun.“'); await A.wait(1200);
   await N.say('Das Radio …'); await A.m('Es gehörte einer alten Frau, die siebenundzwanzig Jahre auf ein Boot gewartet hat. Behalten Sie die Kassette.');
   await N.say('…Danke, Marko.'); await N.face('L'); var st=M.apos('ledana','nina',[270,124,'R']); N.walk(20,st[1]+6); await A.wait(2200); N.hide(); A.setFlag('c2.ninaGone');
-  A.give('radioB'); A.save(); await A.wait(1200); await A.fade(8,1400); await M.interlude2(A); }
+  A.give('radioB'); await A.wait(1200); await A.fade(8,1400); await M.interlude2(A); }   // gespeichert wird im Zwischenspiel
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Hinaus',exit:{to:'matejuska',gok:true},look:'Zurück durch das Loch im Zaun.',

@@ -70,7 +70,7 @@ async function talkMirza(A){ var Mz=A.npc('mirza'), p=A.G.phase;
     {t:'Danke.',bye:true}
   ]; }); }
 async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_rescued')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
-  await Mz.say('Ich komme.'); A.setFlag('k2.s3.mirza'); await Mz.say('Ich bringe Kerzen. Und ich mache das Licht nicht an. Wie damals.'); A.save(); await M.k2CheckS3Night(A); return 'bye'; }
+  await Mz.say('Ich komme.'); A.setFlag('k2.s3.mirza'); await Mz.say('Ich bringe Kerzen. Und ich mache das Licht nicht an. Wie damals.'); await M.k2CheckS3Night(A); if (!A.flag('k2.s3.night')) A.save(); return 'bye'; }
 async function mirzaGuilt(A,Mz){ if (A.hasNote('s3_rescued')) return Mz.say('Sie hat mich gerettet. Und sie hat es nie gewusst.');
   await A.m('Im Klassenbuch steht, in Zoras Schrift: „Mirza H. – verwundet. Meine Schuld.“'); await A.wait(1000); await Mz.say('Ihre Schuld?'); await A.wait(800); await Mz.say('Ich bin in der Pause hinausgerannt. Ich wollte meinen Ball holen. Sie hat es mir verboten, und ich bin trotzdem gerannt.');
   await Mz.say('Dann ist es passiert. Und sie ist hinausgelaufen, in die Splitter, ohne Mantel, und hat mich hineingetragen. Sie hat mich hineingetragen!'); await A.wait(900); await Mz.say('Ihre Schuld? Sie hat mich gerettet.'); A.note('s3_rescued');
@@ -83,7 +83,7 @@ async function talkSelma(A){ var Se=A.npc('selma');
         await A.fade(6,500); A.sfx('steps'); await A.wait(700); A.set('strollerGone',true); A.rebuild(); await A.fade(0,500); await A.m('Drei Stockwerke. Ich habe nicht geflucht. Fast nicht.'); await Se.say('Danke. Sie sind der Erste seit Jahren. Die anderen gehen vorbei und tun, als wäre ich eine Pflanze.'); A.setFlag('k2.s3.selmaHelped'); }},
     {t:'Waren Sie in der Kellerschule?',once:'se1',if:A.hasNote('s3_zora'),go:async function(A){ await Se.say('Erste und zweite Klasse. Ich habe da unten lesen gelernt. Bei Kerzenlicht, aus einem Buch ohne Umschlag.'); await Se.say('Ich habe nie ein Zeugnis bekommen. Die Schule danach hat mich einfach eingeschrieben.'); }},
     {t:'Kommen Sie heute Abend in den Keller? Zora ruft die Namen auf.',if:A.hasNote('s3_register'),go:async function(A){ if (!A.flag('k2.s3.selmaHelped')){ await Se.say('Heute Abend? Ich habe ein Baby und keinen Aufzug. Und Sie reden von Geistern.'); return; }
-        await Se.say('Sie haben meinen Wagen getragen.'); await A.wait(600); await Se.say('Gut. Ich komme. Meine Mutter nimmt den Kleinen.'); await Se.say('Ich will das Zeugnis. Ich will es wirklich.'); A.setFlag('k2.s3.selma'); A.save(); await M.k2CheckS3Night(A); return 'bye'; }},
+        await Se.say('Sie haben meinen Wagen getragen.'); await A.wait(600); await Se.say('Gut. Ich komme. Meine Mutter nimmt den Kleinen.'); await Se.say('Ich will das Zeugnis. Ich will es wirklich.'); A.setFlag('k2.s3.selma'); await M.k2CheckS3Night(A); if (!A.flag('k2.s3.night')) A.save(); return 'bye'; }},
     ...M.k2Extra('selma',A,Se),
     {t:'Bis später.',bye:true}
   ]; }); }

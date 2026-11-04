@@ -24,7 +24,7 @@ async function crossIvan(A){ var I=A.npc('ivan'); A.G.flags['mala.lock']=true; v
 M.afterLimbo_ivan=async function(A){ A.G.flags['mala.lock']=false; A.setFlag('k2.s2.gone'); var d=M.stand('vijecnica','desk')||[170,124,'B']; await A.goto('vijecnica',{x:d[0],y:d[1],f:'B',fade:false,noEnter:true}); await A.fade(0,900);
   await A.wait(700); await A.m('Der Lichthof. Der Regen. Das Buch auf der Theke, mit meiner Schrift auf dem Leihzettel.'); await A.wait(600); await A.g('Er hat gelacht, als er ging. Hast du es gehört?'); await A.m('Ja.');
   await A.wait(700); await A.m('Amra holt das Buch morgen ab. Für die Nationalbibliothek. Mit den Seiten.'); await A.g('Mit dem Himmel darin.'); await A.wait(900);
-  await A.g('Marko … ich will noch nicht schlafen. Ich will irgendwohin, wo man die Stadt sieht. Die ganze.'); await A.m('Die Gelbe Bastei. Oben in Vratnik.'); await A.g('Ja.'); await A.wait(500); A.save(); await M.k2StartInterlude(A); };
+  await A.g('Marko … ich will noch nicht schlafen. Ich will irgendwohin, wo man die Stadt sieht. Die ganze.'); await A.m('Die Gelbe Bastei. Oben in Vratnik.'); await A.g('Ja.'); await A.wait(500); await M.k2StartInterlude(A); };
 var HS=[
  {id:'exit',name:'Hinaus',exit:{to:'obala',gok:true},look:'Zurück durch das Tor, zur Uferstraße.',canExit:async function(A){ if (night(A.G) && A.flag('k2.s2.onDesk') && !A.flag('k2.s2.gone')){ if (!A.flag('k2.s2.free')){ await A.m('Nicht jetzt. Er wartet auf einen Stempel.'); return false; } } return true; }},
  {id:'ivan',npc:'ivan',name:'Professor Barać',hgt:48,vis:function(S,G){ return ivanHere(G); },

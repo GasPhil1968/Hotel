@@ -365,8 +365,8 @@ function propTomaz(b,w,S){ var x, y, x0=231, x1=259, top=77, by=122, cx=CLK.x, c
     var c2=d>CLK.r-0.6?P.n1:(d>CLK.r-1.6?P.m3:(d>CLK.r-2.2?P.m2:P.s5)); if (d<CLK.r-2.2 && (x-cx)+(y-cy)>7) c2=P.s4; w.px(x,y,c2); }               // Zifferblatt
   AR.forEach(function(g,i){ var a=(i+1)/12*Math.PI*2, gw=g[0].length, gx=Math.round(cx+Math.sin(a)*7.6-(gw-1)/2), gy=Math.round(cy-Math.cos(a)*7.6-1);
     for (var j=0;j<3;j++) for (var k=0;k<gw;k++) if (g[j][k]==='#') w.px(gx+k,gy+j,P.n0); });                                             // arabische Ziffern
-  var hr=(S&&S.clockSet)?7:3, ha=hr/12*Math.PI*2;                                                                                        // Zeiger: sieben oder drei
-  w.line(cx,cy,Math.round(cx),Math.round(cy-8),P.k1); w.line(cx,cy,Math.round(cx+Math.sin(ha)*5.4),Math.round(cy-Math.cos(ha)*5.4),P.k1); w.px(cx+Math.round(Math.sin(ha)*1.5),cy-Math.round(Math.cos(ha)*1.5),P.k1);
+  var set=!!(S&&S.clockSet), hr=set?7:2+40/60, ha=hr/12*Math.PI*2, ma=(set?0:40)/60*Math.PI*2;   // Zeiger: sieben, oder zwanzig vor drei (18:55 am 14.11.1972, Sonnenuntergang 16:16)
+  w.line(cx,cy,Math.round(cx+Math.sin(ma)*8),Math.round(cy-Math.cos(ma)*8),P.k1); w.line(cx,cy,Math.round(cx+Math.sin(ha)*5.4),Math.round(cy-Math.cos(ha)*5.4),P.k1); w.px(cx+Math.round(Math.sin(ha)*1.5),cy-Math.round(Math.cos(ha)*1.5),P.k1);
   w.px(cx,cy,P.y3); w.px(cx+1,cy,P.y2); }
 // Ivan: ein Lesetisch aus dunklem Holz mit grüner Bankerlampe und einem aufgeschlagenen Buch; S.lineDone: die Lampe leuchtet heller
 function propIvan(b,w,S){ var x, y, x0=228, x1=263, ty=105, by=122, lit=!!(S&&S.lineDone), lx=255;

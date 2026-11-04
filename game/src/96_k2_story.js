@@ -96,7 +96,7 @@ M.k2StartS1=async function(A){ if (A.flag('k2.s1.started')) return; A.setFlag('k
 M.k2StartS1Night=async function(A){ if (A.flag('k2.s1.night')) return; A.setFlag('k2.s1.night'); await A.fade(8,900); await card(A,'','Die Nacht unter der Uhr','Sonntag · kurz vor elf',3600);
   A.phase('k2_s1_n'); await A.goto('kula',{noEnter:false}); A.save(); };
 M.k2StartS2=async function(A){ if (A.flag('k2.s2.started')) return; A.setFlag('k2.s2.started'); await A.fade(8,900); await card(A,'Zweiter Fall','Die Leihfrist','Montag, 21. November · Regen');
-  A.phase('k2_s2'); clean(A,['letters_tz','bracelet','lejla_letter']); A.unlock('ferhadija'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; await A.goto('pansion',{noEnter:false}); A.save(); };
+  A.phase('k2_s2'); clean(A,['letters_tz','bracelet','lejla_letter','note_e']); A.unlock('ferhadija'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; await A.goto('pansion',{noEnter:false}); A.save(); };
 M.k2StartS2Night=async function(A){ if (A.flag('k2.s2.night')) return; A.setFlag('k2.s2.night'); await A.fade(8,900); await card(A,'','Nach sechs','Montag · Abend, Regen',3600);
   A.phase('k2_s2_n'); A.unlock('obala'); await A.goto('obala',{noEnter:false}); A.save(); };
 M.k2StartInterlude=async function(A){ if (A.flag('k2.i.started')) return; A.setFlag('k2.i.started'); await A.fade(8,900); await card(A,'Zwischenspiel','Die Gelbe Bastei','Montag · spät');

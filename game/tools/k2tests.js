@@ -77,7 +77,8 @@ function ok(c, what) { if (c) { pass++; out.push('  ok   ' + what); } else { fai
     n = findStep('SMS: Paket'); await loadDump(n); await D.travel && null;
     const kOk = await D.ev(() => M.GS.notes.indexOf('m2_lana') >= 0 && !!M.GS.flags['k2.s3.done']); ok(kOk, 'beim Paket sind Lana und Zoras Satz bekannt (Karton öffnet sich)');
     // Tomaž mit falschen Argumenten
-    n = findStep('Emina überzeugt'); await loadDump(n); await D.act('talk', 'tomaz'); await D.drain(); await D.pickNote('s1_missed'); await D.drain();
+    n = findStep('Emina überzeugt'); await loadDump(n); await D.act('talk', 'tomaz'); await D.drain(); await D.until(s => s.overlay === 'notebook', 8000, 'Notizbuch');
+    const wrong = await D.ev(() => M.E.nbOpen(true).find(id => ['s1_campus', 's1_twosevens', 's1_2316'].indexOf(id) < 0)); ok(!!wrong, 'eine sichtbare, aber falsche Notiz steht zur Wahl (' + wrong + ')'); await D.pickNote(wrong); await D.drain();
     ok(!(await D.flag('k2.s1.stay')), 'Tomaž mit falschem Argument: bleibt unruhig, geht aber nicht');
     await D.pickNote('s1_campus'); await D.drain(); await D.pickNote('s1_twosevens'); await D.drain(); ok(!!(await D.flag('k2.s1.free')), 'mit den richtigen Argumenten: die Kula schlägt sieben');
     // Hinweise an jedem Zwischenstand des Durchlaufs: nie ohne Hilfe festsitzen
