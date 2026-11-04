@@ -211,7 +211,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,144,P.k0), weather=M.scn.weather(GS)
   // ---- Kartentisch der beiden Alten: Stühle passend zu den Sitzpositionen (Stipe 214 'R', Frane 252 'L')
   thonet(b,213,111,124,'L'); thonet(b,253,111,124,'R');
   bistro(b,CT.x,CT.top,CT.y,12);
-  var ty=CT.top, regulars=(GS.phase==='c1'||GS.phase==='c2');
+  var ty=CT.top, regulars=(GS.phase==='c1'||GS.phase==='c2'||GS.phase==='pro');   // am Dienstag spielen sie auch; am Donnerstagmorgen noch nicht
   if (regulars){ b.rect(225,ty-1,4,2,P.s6); b.px(226,ty-1,P.r3); b.rect(238,ty-1,4,2,P.s6); b.px(240,ty,P.b1);       // abgelegte Stiche
     b.rect(231,ty,4,2,P.e4); b.hl(231,234,ty,P.s6); b.px(232,ty+1,P.r3); b.rect(229,ty+1,3,1,P.s5);                  // Talon + Trumpf
     b.rect(222,ty-3,2,3,P.a5); b.px(222,ty-3,P.s6); b.px(223,ty-1,P.y3); b.rect(243,ty-3,2,3,P.a5); b.px(243,ty-3,P.s6); b.px(243,ty-1,P.r2); }   // zwei Gläser
@@ -274,7 +274,7 @@ function layers(S,GS,tod){ var L=[];
   [140,146].forEach(function(xx){ w.hl(xx,xx+4,81,P.s5); w.rect(xx+1,78,3,3,P.s6); w.px(xx+4,79,P.s5); w.px(xx+1,80,P.s4); });
   [132,135].forEach(function(xx){ w.rect(xx,76,2,5,P.a5); w.px(xx,76,P.s6); w.px(xx+1,80,P.a4); });
   // Zeitung (auf dem Tresen, hängt vorne über die Kante)
-  if (!S.paperTaken && GS.phase==='c2'){ var nx=160, ny=81; w.poly([[nx,ny],[nx+15,ny-1],[nx+17,ny+1],[nx+1,ny+2]],P.s5); w.hl(nx+1,nx+15,ny,P.s6); w.rect(nx+2,ny+2,14,9,P.s5); w.hl(nx+2,nx+15,ny+2,P.s6);
+  if (!S.paperTaken && (GS.phase==='c2'||GS.phase==='i1m')){ var nx=160, ny=81; w.poly([[nx,ny],[nx+15,ny-1],[nx+17,ny+1],[nx+1,ny+2]],P.s5); w.hl(nx+1,nx+15,ny,P.s6); w.rect(nx+2,ny+2,14,9,P.s5); w.hl(nx+2,nx+15,ny+2,P.s6);
     w.rect(nx+3,ny+3,12,2,P.k2); w.px(nx+4,ny+3,P.s5); w.px(nx+8,ny+3,P.s5); for (var ln=0;ln<3;ln++) w.hl(nx+3,nx+8,ny+6+ln,P.s3); w.rect(nx+10,ny+6,5,4,P.s2); w.px(nx+12,ny+7,P.s4);
     w.vl(nx+16,ny+2,ny+10,P.s3); w.hl(nx+2,nx+16,ny+11,P.s2); }
   // Donnerstagmorgen: Sanjas Zettel, offen auf ihrer Seite des Tresens, unter der Lampe – von vorn nicht lesbar

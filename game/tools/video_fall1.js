@@ -1,7 +1,7 @@
 // Video: Kapitel 1, erster Fall „Das Boot um sieben“ (vom Ende des Prologs bis Ivka hinübergeht), in Echtzeit mit Ton.
 // Ablauf:
 //   1. node game/build.js
-//   2. MALA_LANG=bhs MALA_DUMPALL=<dumps> node game/tools/walkthrough.js       (Spielstand nach jedem Schritt; 09.json = Abend vor der Nacht)
+//   2. MALA_LANG=bhs MALA_DUMPALL=<dumps> node game/tools/walkthrough.js       (Spielstand nach jedem Schritt; 14.json = Abend vor der Nacht, Text geschrieben)
 //   3. MALA_LANG=bhs node game/tools/video_fall1.js <bilder-ordner> <dumps>     (dauert so lange wie das Video, etwa 19 Minuten)
 //      DRY=1: achtfach schneller, ohne Bilder (Probelauf); am Ende stehen noch deutsche Texte und zu breite Zeilen im Protokoll
 //   4. cd <bilder-ordner> && ffmpeg -framerate $(cat fps.txt) -i f_%05d.png -i audio.webm \
@@ -57,17 +57,19 @@ fs.mkdirSync(DIR, { recursive: true });
     await page.evaluate((g) => { M.TEST = false; M.TURBO = window.__dry ? 8 : 1; M.E.setText(1, false); M.PRESETS = M.PRESETS || {}; M.PRESETS.v = { GS: g }; M.E.loadPreset('v', 3); }, g.GS); await wait(1500); };
   await page.evaluate(() => window.__mr.start(500));
   try {
-    await load('09');                                                    // Wohnung, Abend: der Text über Ivka ist geschrieben
+    await load(process.env.MALA_DUMP || '14');                           // Wohnung, Abend: der Text über Ivka ist geschrieben
     await act('use', 'bed'); await choose('Licht machen');                // Nacht: Malas Stimme, der erste Fall beginnt
     await until(s => s.phase === 'c1' && idle(s));
     await act('look', 'window'); await act('use', 'window');              // die Straßenbahn auf der Scheibe
+    // Mittwochabend in der Wohnung: das Kennenlernen (Tür, um sie herum, ein Glas Wasser, die Fragen)
+    await exit('door'); await exit('door'); await act('look', '_mala');
+    await act('take', 'glasses'); await act('use', 'sink', 'glass'); await act('use', '_mala', 'glassW');
+    await choose('Wer bist du?'); await choose('Was kannst du'); await choose('Seit wann'); await choose('Genug für heute'); await choose('An der Riva');
     await exit('door'); await travel('riva');
-    await walkTo(560, 116); await choose('Nicht umdrehen');               // die Stimme an der Riva
+    await walkTo(560, 116); await choose('Nicht hinsehen');               // Ivka auf der Mole
     await talk('ivka', 'Welches Boot', 'Welcher Tag', 'Das Boot ist spät', 'Ich gehe ein Stück');
     await exit('office_door');
-    await talk('mladen', 'Frage zu einer Fähre', 'Für einen Text', 'Danke. Laku');
-    await act('talk', '_mala'); await choose('Weiter so tun');
-    await act('talk', '_mala'); await choose('Wenn du da bist');          // Marko lässt Mala nachsehen
+    await talk('mladen', 'Frage zu einer Fähre', 'Für einen Text', 'Dann sieh nach', 'Danke. Laku');   // der erste gemeinsame Test
     await sw('mala'); await exit('archive_door'); await act('look', 'binder_1948'); await exit('door'); await sw('marko');
     await talk('mladen', 'Schauen Sie mal', 'Danke. Laku');               // das Fahrtenbuch
     await combine('c1_boat7', 'c1_ferry');                                // Notizbuch: das Boot um sieben + die Fähre fiel aus
@@ -89,7 +91,7 @@ fs.mkdirSync(DIR, { recursive: true });
     await until(s => s.room === 'limbo' && idle(s));
     await talk('ghost', 'Was sehen Sie im Licht', '(Schweigen.)'); await act('use', 'ghost', 'gloves');
     await until(async s => (await page.evaluate(() => !!M.GS.flags['c1.done'])) && idle(s));
-    await exit('arch'); await until(s => s.room !== 'limbo' && (idle(s) || !!s.dlg)); await wait(5000);   // zurück an der Riva, Mala beginnt das Zwischenspiel: Ende
+    await exit('arch'); await until(s => s.room === 'riva'); await wait(9000);   // zurück an der Riva: „Ich muss mich setzen.“ Ende
   } catch (e) { console.log('FEHLER', e.message); process.exitCode = 1; }
   await page.evaluate(() => clearInterval(window.__grab)); rec = false; await pump; await flush(); const dur = (Date.now() - t0) / 1000;
   const b64 = await page.evaluate(() => new Promise(res => { if (window.__mr.state === 'inactive') { res(''); return; } setTimeout(() => res(''), 20000); window.__mr.onstop = async () => { const b = new Blob(window.__chunks, { type: 'audio/webm' }); const buf = await b.arrayBuffer(); let s = ''; const u = new Uint8Array(buf);

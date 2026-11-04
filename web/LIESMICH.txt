@@ -48,17 +48,23 @@ STEUERUNG
 - Leiste seitlich wischen oder die Pfeile antippen = Inventar blättern.
 
 MARKO UND MALA
-- Am Anfang hört Marko Mala nur. Er will sie nicht hören, und jeder Satz,
-  den er überhört, macht seinen Kopfschmerz schlimmer. Erst wenn er sie
-  zulässt, sieht er sie, und man kann zu ihr wechseln.
+- Am Anfang ist Marko allein: eine Übersetzung, die heute raus muss,
+  Sanjas Brief in der Bar „Bura“, die Recherche für einen Nachruf.
+  Kopfschmerz, Übelkeit und Schwindel hält er für den Jugo. Dann steht
+  oben an einer Kirchentreppe kurz jemand, nachts ein Mädchen in der
+  Scheibe, und am nächsten Abend steht sie in seiner Wohnung.
+- Wechseln kann man erst, wenn Marko sie im Hafenamt nachsehen lässt.
+- Nach dem ersten Fall wacht Marko auf, und Mala ist nicht da. Er hält
+  alles für einen Traum. Ein Stück spielt man ihn allein, bis zum Tisch
+  in der „Bura“.
 - Unten links: das Porträt der anderen Figur. Antippen = Figur wechseln.
 - Marko lebt: Er redet mit Lebenden, nimmt, öffnet, benutzt, liest.
 - Mala ist ein Geist: Sie geht durch Wände und verschlossene Türen,
   sieht Verborgenes ("Geistersicht" – das Bild wird kalt und blau),
   "Spürt" den Nachhall an Dingen und Orten, spricht mit Geistern und
   "Lauscht" Lebenden. Anfassen kann sie nichts. Ohne Marko geht sie nicht weit.
-- Pocht Markos Kopf (dunkler Rand), ist ein Geist in der Nähe, oder Marko
-  überhört gerade jemanden.
+- Pocht Markos Kopf, wird der Bildrand dunkel. Woran das liegt, findet
+  Marko selbst heraus.
 - Zieh Gegenstände auf Mala, damit sie sie ansieht. Manchmal sieht sie mehr.
 - Im Dunkeln sieht Marko nur, was in Malas kaltem Schein liegt.
 

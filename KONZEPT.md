@@ -3,6 +3,8 @@
 
 > Arbeitstitel der Reihe: **MALA**. Kapitel 1: **„Split – Was das Meer behält“**.
 > Kapitel 2 (Sarajevo) ist umgesetzt: Entwurf in [KAPITEL2.md](KAPITEL2.md), Lösung in [LOESUNG2.md](LOESUNG2.md), Testbericht in [BERICHT_K2.md](BERICHT_K2.md). Weitere Kapitel (Mostar, Dubrovnik …) sind nur angedacht.
+>
+> **Neuer Einstieg in Kapitel 1** (Soloauftakt, Kennenlernen in Markos Wohnung, der Morgen nach Ivka): Was hier in Abschnitt 6–7 über Prolog, Stimmenphase und das Zwischenspiel an der Riva steht, ist durch [EINSTIEG_PLAN.md](EINSTIEG_PLAN.md), [LOESUNG1.md](LOESUNG1.md) und [BERICHT_EINSTIEG.md](BERICHT_EINSTIEG.md) überholt.
 > Der spielbare Prototyp dieses Kapitels liegt im Ordner `web/` (siehe `README.md`).
 
 ---

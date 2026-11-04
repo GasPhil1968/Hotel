@@ -346,7 +346,7 @@ M.afterIvkaHome=async function(A){ var G=A.G;
   await A.goto('flat',{x:226,y:122,f:'L',noEnter:true}); A.music('silence'); await A.wait(500);
   await A.walk(228,119); await A.face('R'); A.placeM(232,119,'R'); A.idleM('sit');
   if (A.malaHere()){ A.placeG(196,112,'L'); G.flags['mala.lock']=true; }
-  await A.m('Die Schuhe. Den Mantel nicht mehr.'); await A.g('Du solltest schlafen.'); await A.m('Das sagt Vesna auch.'); await A.g('Ich bleibe am Fenster.'); await A.wait(800); await A.m('Mhm.');
+  await A.m('Die Schuhe. Den Mantel nicht mehr.'); await A.g('Du solltest schlafen.'); await A.m('Das sagt Vesna auch.'); await A.m('Ich lege mich hin. Nur kurz.'); await A.g('Ich bleibe am Fenster.'); await A.wait(800); await A.m('Mhm.');
   await A.wait(1200); await A.fade(4,1400); await A.g('Marko?',{voice:true,noPortrait:true}); if (A.mala) A.mala.fadeOut=A.gt; await A.wait(1700);
   await A.g('Marko …',{voice:true,noPortrait:true}); await A.fade(8,1800);
   A.malaLeave(); G.flags['mala.lock']=false; G.flags['split.afterIvka.home']=true; G.flags['split.afterIvka.away']=true; A.idleM(null);

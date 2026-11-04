@@ -10,6 +10,8 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 
 | Pfad | Was |
 |---|---|
+| [`LOESUNG1.md`](LOESUNG1.md) | Lösungsweg von Kapitel 1 vom Spielstart bis zu Lukas Fall: Soloauftakt, Kennenlernen in der Wohnung, erster Fall, der Morgen nach Ivka |
+| [`BERICHT_EINSTIEG.md`](BERICHT_EINSTIEG.md) | Bericht zum neuen Einstieg und zur Passage nach Ivka: Änderungen, ausgeführte Tests, Schätzungen, offene Punkte (Plan vorab: [`EINSTIEG_PLAN.md`](EINSTIEG_PLAN.md)) |
 | [`KAPITEL2.md`](KAPITEL2.md) | Entwurf von Kapitel 2: Umfang, Kontinuität, Phasen, Figuren, 18 Schauplätze, alle Rätselketten, Abhängigkeitsgraph, Audio |
 | [`LOESUNG2.md`](LOESUNG2.md) | Komplettlösung von Kapitel 2 |
 | [`SPRACHFASSUNG_BHS.md`](SPRACHFASSUNG_BHS.md) | Bosnisch-kroatische Sprachfassung: wer welche Sprachform spricht, Technik, Prüfungen, offene Punkte (Stilvorgaben in `game/STYLE_BHS.md`) |
@@ -34,7 +36,8 @@ Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen
 ## Prüfen
 
 ```
-node game/tools/walkthrough.js [screenshot-ordner]   # spielt Kapitel 1 automatisch durch
+node game/tools/walkthrough.js [screenshot-ordner]   # spielt Kapitel 1 automatisch durch (MALA_LANG=bhs: auf Bosnisch/Kroatisch)
+node game/tools/einstiegtests.js                    # Einstieg und Morgen nach Ivka: alte Spielstände, Laden, Malas Abwesenheit
 MALA_DUMPALL=/tmp/d node game/tools/walkthrough2.js # spielt Kapitel 2 durch (MALA_ORDER=alt: andere Reihenfolge)
 node game/tools/k2tests.js /tmp/d                   # Einzeltests für Kapitel 2
 node game/tools/devicetest.js                       # iPad-Ansicht, Touch, offline, Bildzeit
@@ -47,7 +50,8 @@ node game/tools/roomshot.js --room riva --phase c1 --cam 320 --out riva.png [--d
 - Räume prozedural in Fluchtpunktperspektive (`M.box`, `M.room3`), Figuren über ein Rig aus Kopf-Stempeln, erzeugten Torsi und IK-Gliedmaßen.
 - Engine mit Verb-Menü, Inventar zum Ziehen, A*-Wegfindung je Figur (Mala hat eigene Geisterwege), Notizbuch mit Schlussfolgerungen, drei Speicherplätzen.
 - Gespräche wie in der Blackwell-Reihe: gemaltes Brustbild (56 × 64, `game/src/portraits/`) oben, der Satz im Kasten daneben, die Antworten unten.
-- Die Stimme: Zu Beginn ist Mala für Marko nur eine Stimme. Überhören verstärkt den Kopfschmerz, erst wenn er sie zulässt, erscheint der Wechsel-Knopf.
+- Der Einstieg: Zuerst ist Marko allein: Übersetzung, die Bar „Bura“, die Recherche für den Nachruf, Kopfschmerz, Übelkeit, Schwindel. Dann ein Mädchen an der Kirchentreppe und in der Scheibe; das erste lange Gespräch findet in seiner Wohnung statt. Erst nach dem ersten gemeinsamen Test im Hafenamt erscheint der Wechsel-Knopf.
+- Nach Ivka: Am Morgen danach sieht Marko Mala nicht mehr und erklärt sich alles als Traum; sie kehrt auf dem Stuhl gegenüber in der „Bura“ zurück. Erst auf der Bank an der Riva sagt er zu.
 - Geister: Leine aus Licht in Malas Sicht, Leugnen bis zum plötzlichen Erkennen, dann bringt Mala sie über eine Licht-Schwelle in die Zwischenwelt, wohin Marko mitgeht und den letzten Schritt tut.
 - Nebenfiguren mit Tagesablauf (Tätigkeiten, kurze Wege), dunkle Orte, die nur Malas Schein erhellt.
 - WebAudio: Raumklang aus gefiltertem Rauschen und gestreuten Ereignissen, Fährenhörner, Glocken, Schritte je Bodenart, Geisterfilter, ein kleiner Sequenzer mit eigenen Stücken.
