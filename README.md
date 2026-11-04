@@ -4,7 +4,7 @@ Ein ernstes Point-and-Click-Adventure nach dem Vorbild der Blackwell-Reihe, im t
 
 Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterkommen. Mala, ein Geist in Kleidung der frühen Neunziger, kann sie finden. Drei Fälle im November 2011: eine Mutter, die seit 1984 auf das Boot um sieben wartet; ein Junge, der seit 1999 auf die Nachtfähre nach Ancona wartet; ein Nachtportier, dem die Worte fehlen.
 
-**Kapitel 2: Sarajevo.** Marko fährt mit Mala in die Stadt seiner Kindheit. Drei neue Fälle: ein junger Mann, der seit 1972 unter dem Uhrturm wartet; ein Professor, der ein Buch aus der brennenden Nationalbibliothek zurückgeben will; eine Lehrerin, die im Schutzraum eines Hochhauses noch immer Schule hält. Dazu Malas eigene Geschichte. Beide Kapitel lassen sich im Hauptmenü direkt wählen; Sarajevo startet auch ohne Split. Das Spiel läuft immer im Querformat (hochkant dreht sich das Bild mit).
+**Kapitel 2: Sarajevo.** Marko fährt mit Mala in die Stadt seiner Kindheit. Drei neue Fälle: ein junger Mann, der seit 1972 unter dem Uhrturm wartet; ein Professor, der ein Buch aus der brennenden Nationalbibliothek zurückgeben will; eine Lehrerin, die im Schutzraum eines Hochhauses noch immer Schule hält. Dazu Malas eigene Geschichte. Beide Kapitel lassen sich im Hauptmenü direkt wählen; Sarajevo startet auch ohne Split. Das Spiel läuft immer im Querformat (hochkant dreht sich das Bild mit). Sprachen: Deutsch und Bosnisch/Kroatisch (Kapitel 1 vollständig, Kapitel 2 vorerst nur Deutsch).
 
 ## Inhalt
 
@@ -12,6 +12,7 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 |---|---|
 | [`KAPITEL2.md`](KAPITEL2.md) | Entwurf von Kapitel 2: Umfang, Kontinuität, Phasen, Figuren, 18 Schauplätze, alle Rätselketten, Abhängigkeitsgraph, Audio |
 | [`LOESUNG2.md`](LOESUNG2.md) | Komplettlösung von Kapitel 2 |
+| [`SPRACHFASSUNG_BHS.md`](SPRACHFASSUNG_BHS.md) | Bosnisch-kroatische Sprachfassung: wer welche Sprachform spricht, Technik, Prüfungen, offene Punkte (Stilvorgaben in `game/STYLE_BHS.md`) |
 | [`BERICHT_K2.md`](BERICHT_K2.md) | Entwicklungs- und Testbericht von Kapitel 2 (was geprüft wurde und was nicht) |
 | [`KONZEPT.md`](KONZEPT.md) | Das vollständige Konzept: Analyse des Originals, Umsetzung der Blackwell-Mechanik, Story, Figuren, 19 Orte, die drei Fälle mit allen Rätseln und Lösungen, Spielzeit, Malas Geheimnis |
 | `web/` | **Das spielbare Spiel** (eine einzige `index.html` + Offline-Service-Worker + Icons). Ordner bei Netlify hochladen oder `index.html` im Browser öffnen. Siehe `web/LIESMICH.txt` |

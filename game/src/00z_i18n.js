@@ -30,7 +30,7 @@ function ui(s){ if (M.lang==='de'||typeof s!=='string'||s==='') return s; if (UI
   var r=UIC[s]; if (r!==undefined) return r; r=M.tr(s,null); if (++UIN>20000){ UIC={}; UIN=0; } UIC[s]=r;
   if (M.trLogUI && r===s && LOOKS_DE.test(s)) M.trMiss[s]='ui';   // nur in Tests: sichtbarer Text, der noch deutsch aussieht
   return r; }
-var LOOKS_DE=/[äöüßÄÖÜ]|\b(der|die|das|und|ist|nicht|ich|sie|wir|ein|eine|einen|mit|auf|zu|den|dem|des|von|im|ins|es|er|du|mir|mich|dich|noch|schon|hier|wie|was|wer|wo)\b/;
+var LOOKS_DE=/[äöüßÄÖÜ]|(?<!\p{L})(der|die|das|und|ist|nicht|ich|sie|wir|ein|eine|einen|auf|zu|den|dem|des|von|ins|es|er|du|mich|dich|noch|schon|hier|wie|was|wer|wo)(?!\p{L})/iu;   // Wortgrenzen auch für č ć š ž đ
 M.trFlush=function(){ UIC={}; UIN=0; };
 M.trOverflow={};
 M.text=function(buf,s,x,y,c,oc){ var t=ui(s);

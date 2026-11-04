@@ -182,12 +182,12 @@ E.textSpeed=function(){ return textSpeed; }; E.tapText=function(){ return tapTex
 E.setText=function(sp,tap){ textSpeed=sp; tapText=tap; try{ localStorage.setItem('mala.tspeed',String(sp)); localStorage.setItem('mala.tap',tap?'1':'0'); }catch(e){} };
 // Sprachfassung: wer spricht, und mit wem spricht Marko gerade? (Mit Mala spricht er Bosnisch, sonst Kroatisch)
 E.trLast=null;
-function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||E.trLast||null; return null; }
+function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||((E.trLast&&gt-(E.trLastAt||0)<9000)?E.trLast:null); return null; }
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
   var src=text, w0=who||GS.active;
   if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:trTo(w0),cat:'speech',log:true}); }
   if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
-  if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@') E.trLast=String(w0).replace(/^@/,'');
+  if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@'){ E.trLast=String(w0).replace(/^@/,''); E.trLastAt=gt; }
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
     var sa=ACT[E.speech.who]; if (sa && sa.id!==GS.active && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }
 function endSpeech(){ if (!E.speech) return; var r=E.speech.res; E.speech=null; r(); }
@@ -310,7 +310,9 @@ async function menuLoop(getOpts){
     if (o.bye) return; }
 }
 // Standard-"Frag nach"-Option für eine Person: ask-Tabelle {notizId: handler}, sonst askAny
-API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem Notizbuch fragen …',ask:async function(A,nid){ var h=table[nid]; if (h===undefined) h=fallback; if (typeof h==='function') return await h(A,nid); if (Array.isArray(h)) return await API.say(pick(h)); if (typeof h==='string') return await API.say(h); }}; };
+// Antworten als Text spricht das Gegenüber (vorher sprach sie die gespielte Figur, also mit falschem Porträt)
+API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem Notizbuch fragen …',ask:async function(A,nid){ var h=table[nid]; if (h===undefined) h=fallback; if (typeof h==='function') return await h(A,nid);
+  var line=Array.isArray(h)?pick(h):h; if (typeof line!=='string') return; var who=E.conv&&E.conv.npc; if (who && who!==GS.active && ACT[who]) return await say(line,who); return await API.say(line); }}; };
 
 // ---------------------------------------------------------------- Hotspots, Verben
 // Marko-Verben und Mala-Verben, mit Anzeige-Text
@@ -381,7 +383,9 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
     if (withItem){
       if (isG){ await say(withItem==='tin'?pick(['Nein.','Die bleibt bei mir.']):pick(DEF.g.notouch),'mala'); }
       else { var it=M.ITEMS[withItem], h=hs.with&&hs.with[withItem];
-        if (h===undefined && hs.give && hs.give[withItem]!==undefined) h=hs.give[withItem];
+        if (h===undefined && hs.give && hs.give[withItem]!==undefined){ h=hs.give[withItem];
+          // Reaktion als Text: spricht die beschenkte Figur selbst (vorher sprach sie Marko, mit seinem Porträt)
+          if (hs.npc && hs.npc!==GS.active && ACT[hs.npc] && (typeof h==='string'||Array.isArray(h))){ var gt0=h, gid=hs.npc; h=function(A,c){ return say(Array.isArray(gt0)?cycle((c&&c.key)||gid,gt0):gt0,gid); }; } }
         if (h===undefined && it.on && it.on[hs.id]!==undefined) h=it.on[hs.id];
         if (h===undefined && hs===MALA_HS){ h=it.mala!==undefined?it.mala:(M.showToMalaDefault||null); if (typeof h==='string'){ var mt=h; h=function(A){ return A.g(mt); }; }
           if (GS.flags['mala.voice'] && h){ var h0=h; h=async function(A,c){ await A.m('Ich halte einem Lichtfleck etwas hin. So weit ist es schon.'); return h0(A,c); }; } }
@@ -431,7 +435,7 @@ M.loadRoom=loadRoom;
 async function gotoRoom(id,o){ o=o||{}; var from=room?room.id:null; syncPos();
   if (from && room.leave) await room.leave(API,id);
   if (o.fade!==false && E.screen==='game') await fadeTo(8,o.fadeMs||320);
-  E.speech=null; E.pop=null; E.conv=null;
+  E.speech=null; E.pop=null; E.conv=null; E.trLast=null;
   var who=GS.active;
   var tgt=M.ROOMS[id]; if (!tgt) throw new Error('kein Raum '+id);
   var ent=o.x!==undefined?[o.x,o.y,o.f]:((tgt.entries&&tgt.entries[from])||tgt.start||[160,120,'R']);

@@ -21,6 +21,15 @@ KAPITEL WÄHLEN
   weiterzuspielen. Antworten und Hinweise aus Split (zum Beispiel, was
   Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
 
+SPRACHE / JEZIK
+- Im Titelmenü oder im Menü „Sprache: Deutsch“ antippen: Das Spiel wechselt
+  auf Bosnisch/Kroatisch („Jezik: bosanski / hrvatski“). Kapitel 1 (Split)
+  ist vollständig übersetzt, Kapitel 2 (Sarajevo) läuft vorerst auf Deutsch.
+- Jede Figur spricht ihre Sprache: Marko Standardkroatisch, mit Mala aber
+  Sarajevo-Bosnisch; Mala Bosnisch; Ivka, Zdenka und Jakov Čakavisch aus Split;
+  die übrigen Splitter Kroatisch mit einzelnen Split-Wörtern.
+- Spielstände gelten für beide Sprachen.
+
 QUERFORMAT
 - Das Spiel läuft immer im Querformat. Hält man das iPad hochkant, dreht
   sich das Spielbild um 90 Grad und füllt den Bildschirm trotzdem quer aus;

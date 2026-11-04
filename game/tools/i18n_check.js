@@ -68,7 +68,9 @@ for (const k of Object.keys(T)) {
     if (x === base && base.length > 25 && GERMAN.test(base)) { out.push('Vermutlich unübersetzt: ' + JSON.stringify(k)); bad++; } });
 }
 const missing = [];
-for (const [s, c] of cand) { if (IGN.has(s) || T[s] !== undefined) continue; if (Object.keys(T).some(k => k.endsWith(':' + s) && k[0] === '@')) continue; missing.push(`${c.f}:${c.line} [${c.hint}] ${s}`); }
+const onlySpk = [];
+for (const [s, c] of cand) { if (IGN.has(s) || T[s] !== undefined) continue; if (Object.keys(T).some(k => k.endsWith(':' + s) && k[0] === '@')) { onlySpk.push(`${c.f}:${c.line} [${c.hint}] ${s}`); continue; } missing.push(`${c.f}:${c.line} [${c.hint}] ${s}`); }
+if (process.env.STRICT) { onlySpk.forEach(m => out.push('Nur Sondereinträge, keine Standardfassung: ' + m)); bad += onlySpk.length; }
 missing.forEach(m => out.push('Fehlt: ' + m)); bad += missing.length;
 console.log(out.join('\n'));
 console.log(`\n${Object.keys(T).length} Einträge, ${cand.size} sichtbare Texte im Quelltext, ${missing.length} fehlen, ${bad} Meldungen`);

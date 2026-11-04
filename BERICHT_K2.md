@@ -199,6 +199,8 @@ Nach dem ersten Bericht kamen diese Änderungen hinzu. Alle sind von den Tests i
 - **Querformat:** Im Hochformat dreht sich das Spielbild um 90°, die Touch-Eingabe wird mitgedreht. Wo möglich, wird zusätzlich `screen.orientation.lock('landscape')` versucht. Das gelingt auf Android im Vollbild und in installierten Apps, auf iPad und iPhone nicht; dort hilft die Drehung des Bildes (siehe 5.3).
 - **Bewusste Stille:** In der Kammer, im dunklen Schutzraum am Tag und in der Vijećnica bis zur Rückgabe des Buchs spielt keine Musik, nur die Klangkulisse.
 - **Alija:** Er verschwindet nach seiner Erkenntnis nicht sofort. Er bleibt an der Haltestelle, bis die Drei abfährt, und Marko sieht durch das Rückfenster, wie er seinen Kiosk schließt.
+- **Sprecher von Antworten:** Antworten auf Notizbuch-Fragen (`askOpt`) und auf übergebene Gegenstände, die als einfacher Text hinterlegt sind, sprach bisher die gespielte Figur. Sie erschienen also mit Markos Porträt, in Kapitel 2 zum Beispiel Rades Antworten zu „Mali“ oder zum Siebener. Jetzt spricht sie das Gegenüber. Gefunden haben das die Übersetzer der bosnisch-kroatischen Fassung.
+- **Bosnisch/Kroatisch:** Es gibt eine Sprachfassung für Kapitel 1, siehe `SPRACHFASSUNG_BHS.md`.
 - **Geschichtliche Genauigkeit:**
   - Rade sagt jetzt, die erste Drei nach dem Stillstand sei im März 1994 gefahren, „mitten im Krieg, in einer Waffenruhe“. Vorher hieß es „nach dem Krieg“. Die Quellen nennen den 8. März oder den 15. April 1994; der Krieg dauerte bis Ende 1995.
   - Der Fahrpreis von 1,60 KM am Kiosk (1,80 KM beim Fahrer) deckt sich mit mehreren Reiseführern. Eine Quelle, die das Jahr 2011 ausdrücklich belegt, habe ich nicht gefunden.

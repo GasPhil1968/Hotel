@@ -47,5 +47,5 @@ M.defineScape('ivka',{beds:['rainIn','room'],step:'wood',ev:[['whisper',14,30,0.
 // Die Postkarte (vorlesen)
 M.readPostcard=async function(A){ await A.doc({style:'postcard',title:'Supetar, 18.12.1984',w:240,lines:['Draga mama,','dolazim 22. s brodom u sedam.','Dinko ide sa mnom.','Napravi fritule. Donosim ti nešto.','Tvoj Tonći']});
   await A.m('„Liebe Mama, ich komme am 22. mit dem Boot um sieben. Dinko kommt mit. Mach Fritule. Ich bringe dir etwas mit. Dein Tonći.“');
-  A.note('c1_boat7'); A.note('c1_dinko',true); A.note('c1_gift',true); if (A.first('!pcRead')) await A.m('Abgestempelt am achtzehnten Dezember vierundachtzig. Vier Tage vor Weihnachten.'); };
+  A.note('c1_boat7'); A.note('c1_dinko',true); A.note('c1_gift',true); if (A.first('!pcRead')) await A.m('Abgestempelt am achtzehnten Dezember vierundachtzig. Vier Tage vor dem Boot um sieben.'); };
 })(M);
