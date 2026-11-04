@@ -19,7 +19,7 @@ M.limboIntro=async function(A,w){ var G=A.npc(w);
   return intro0(A,w); };
 // ---------------------------------------------------------------- Tomaž: die Uhr auf sieben
 async function tomazClock(A){ var T=A.npc('tomaz'); if (A.S.given) return A.m('Sie steht auf sieben.');
-  var c=await A.choose([{t:'(Den Zeiger auf Viertel nach elf stellen.)',id:'1116',silent:true},{t:'(Den Zeiger auf zwölf stellen.)',id:'12',silent:true},{t:'(Den Zeiger auf sieben stellen.)',id:'7',silent:true},{t:'(Lassen.)',id:'no',bye:true}],{title:'Zifferblatt'});
+  var c=await A.choose([{t:'(Den Zeiger auf sechzehn nach elf stellen.)',id:'1116',silent:true},{t:'(Den Zeiger auf zwölf stellen.)',id:'12',silent:true},{t:'(Den Zeiger auf sieben stellen.)',id:'7',silent:true},{t:'(Lassen.)',id:'no',bye:true}],{title:'Zifferblatt'});
   if (c==='no'||c===null||c===undefined) return;
   if (c==='1116'){ await T.say('Nein. Das ist meine Zeit. Auf meiner Uhr. Ich will ihre.'); return; }
   if (c==='12'){ await T.say('Zwölf ist Sonnenuntergang. Da fängt es an. Da war sie noch nicht da.'); return; }

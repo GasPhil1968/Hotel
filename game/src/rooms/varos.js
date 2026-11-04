@@ -86,7 +86,9 @@ var HS=[
  {id:'zdenka',npc:'zdenka',name:'Zdenka',hgt:36,vis:function(S,GS){ return zdenkaHere(GS); },talk:talkZdenka,
    look:function(A){ return A.m(A.G.phase==='pro'?'Eine alte Frau ganz in Schwarz, auf einem Schemel vor ihrer Tür. Sie schaut mich an, als hätte sie mich schon vor Jahren erwartet und sei enttäuscht.':'Gospođa Zdenka, auf ihrem Posten. In der Gasse passiert nichts, was sie nicht sieht.'); },
    g:{look:'Sie trägt Schwarz seit ihrem Mann. Sie wird es tragen, bis jemand für sie Schwarz trägt.',listen:async function(A){ await A.g('Sie redet mit der Katze. „Jetzt sind wir nur noch zwei, Mrki.“'); }},
-   give:{ newspaper:function(A){ return giveNewspaper(A,A.npc('zdenka')); }, key_ivka:async function(A){ await A.npc('zdenka').say('Sind Sie fertig?'); await A.m('Noch nicht ganz.'); },
+   give:{ newspaper:function(A){ return giveNewspaper(A,A.npc('zdenka')); }, key_ivka:async function(A){ var Z=A.npc('zdenka');   // den Schlüssel hinhalten gilt wie die Dialogzeile „Hier ist Ihr Schlüssel.“
+       if (A.G.phase==='pro' && !A.flag('split.intro.legacy') && A.flag('pro.visited')){ await A.m('Hier ist Ihr Schlüssel.'); return returnKey(A,Z); }
+       await Z.say('Sind Sie fertig?'); await A.m('Noch nicht ganz.'); },
      photo1:async function(A){ var Z=A.npc('zdenka'); await Z.say('Tonći und der kleine Matić. Auf der ANKICA. Sie waren unzertrennlich.'); A.note('c1_ankica',true); },
      postcard:'„Napravi fritule.“ Das hat er jedes Jahr geschrieben. Und sie hat jedes Jahr Fritule gemacht. Auch danach.', gloves:async function(A){ await A.npc('zdenka').say('Graue Handschuhe … Woher haben Sie die?'); await A.m('Von jemandem, der sie siebenundzwanzig Jahre aufbewahrt hat.'); await A.npc('zdenka').say('…'); } }},
  {id:'zdenka_door',name:'Zdenkas Tür',look:'Zdenkas Tür, mit einem Fliegenvorhang aus Plastikstreifen. Im November hängt er immer noch.',open:'Das ist nicht meine Tür. Und Zdenka sitzt davor.',g:{look:'Drinnen läuft der Fernseher. Sie hört nicht hin. Sie lässt ihn nur laufen, damit jemand redet.'}},

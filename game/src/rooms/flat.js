@@ -322,7 +322,7 @@ M.meetTalk=async function(A){ var G=A.G;
   if (!A.flag('split.intro.met')) await endMeeting(A); };
 // Mala fragt nach dem ersten richtigen Anfall; sie kennt nicht jeden Ort, an dem er war – eine falsche Antwort bekommt eine Rückfrage
 async function askFirstAttack(A){ var G=A.G;
-  await A.g('Darf ich dich etwas fragen?'); await A.m('Du fragst sowieso.'); await A.g('Wann war dir zum ersten Mal richtig schwindlig? Nicht das Kopfweh. So, dass du dich festhalten musstest.');
+  await A.g('Darf ich dich etwas fragen?'); await A.m('Du fragst sowieso.'); await A.g('Wann ist dir zum ersten Mal der Boden richtig weggekippt? Nicht das Kopfweh. Nicht der halbe Schritt beim Aufstehen. Ganz weg.');
   for (var k=0;k<6;k++){ var o=[];
     if (G.flags['split.intro.dizzy']) o.push({t:'An der Riva. Am letzten Poller.',id:'riva'});
     if (G.flags['split.intro.sanja']) o.push({t:'In der Bar, bei Sanja.',id:'bar'});
@@ -333,8 +333,8 @@ async function askFirstAttack(A){ var G=A.G;
     if (c==='riva'){ G.flags['split.intro.first']='riva'; await A.g('Am Ende der Mole.'); await A.wait(700); await A.g('Ich war hinter dir. Und vor dir war auch jemand. Du hast es nur nicht gesehen.');
       await A.m('Da war niemand. Da war ein Poller.'); await A.g('Ja. Und jemand, der daneben wartet.'); A.note('m_first',true); return; }
     if (c==='bar'){ await A.g('Bei Sanja? War das der Boden? Oder der Kaffee?'); await A.m('…Der Kaffee. Und mir war schlecht. Gedreht hat sich nichts.'); continue; }
-    if (c==='desk'){ await A.g('Das Aufstehen hast du seit Tagen, hast du gesagt. Ich meine das andere. Wo du nicht mehr wusstest, wo unten ist.'); continue; }
-    if (c==='ivka'){ await A.g('Da hattest du Kopfweh. Und dir war schlecht. Aber musstest du dich festhalten?'); await A.m('Nein. Da nicht.'); continue; }
+    if (c==='desk'){ await A.g('Am Schreibtisch, ja. Da hast du dich an der Kante festgehalten.'); await A.g('Aber das war der halbe Schritt. Ich meine den Moment, in dem du nicht mehr wusstest, wo unten ist.'); continue; }
+    if (c==='ivka'){ await A.g('Da hattest du Kopfweh. Und dir war schlecht. Aber ist dir dort der Boden weggekippt?'); await A.m('Nein. Da nicht.'); continue; }
     await A.g('Denk an gestern Abend. An die Dämmerung.'); if (!G.flags['split.intro.dizzy']) break; }
   G.flags['split.intro.first']='told'; await A.g('Ich glaube, es war an der Riva. Ich war dabei. Vor dir hat jemand gewartet.'); A.note('m_first',true); }
 async function endMeeting(A){ var G=A.G; delete G.flags['mala.unknown']; delete G.flags['mala.voice']; G.flags['mala.noSwitch']=true; G.flags['mk.ache']=0; M.E.headache=0; A.note('m_name',true);

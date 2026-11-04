@@ -4,7 +4,7 @@
 var P=M.P;
 function tomazHere(G){ return ['k2_pro_n','k2_s1','k2_s1_n','k2_s2'].indexOf(G.phase)>=0 && !G.flags['k2.s1.gone'] && !(G.phase==='k2_pro_n'&&G.flags['k2.pro.tomaz']); }
 // Stellung der Kula-Zeiger (Mondzeit: zwölf bei Sonnenuntergang) und Markos Uhr je Phase
-var CLOCK={ k2_pro_n:{k:[6,40],m:'Zehn vor elf'}, k2_s1:{k:[6,50],m:'Kurz vor elf am Vormittag'}, k2_s1_n:{k:[6,47],m:'Elf Uhr'}, k2_s2:{k:[5,30],m:'Zehn Uhr'} };
+var CLOCK={ k2_pro_n:{k:[6,40],m:'Zehn vor elf'}, k2_s1:{k:[6,50],m:'Kurz vor elf am Vormittag'}, k2_s1_n:{k:[6,48],m:'Elf Uhr'}, k2_s2:{k:[5,30],m:'Zehn Uhr'} };
 // ---------------------------------------------------------------- Tomaž
 async function talkTomaz(A){ var T=A.npc('tomaz'), p=A.G.phase;
   if (p==='k2_pro_n') return tomazFirst(A,T);
@@ -18,7 +18,7 @@ async function talkTomaz(A){ var T=A.npc('tomaz'), p=A.G.phase;
     {t:'Welcher Tag ist heute?',once:'tz5',go:async function(A){ await T.say('Heute? Der Tag.'); await A.wait(600); await T.say('Der Tag, an dem sie es ihrem Vater sagt.'); await A.m('Und welches Jahr?'); await T.say('Sie fragen seltsame Sachen. Das Jahr, in dem sie es ihm sagt.'); }},
     A.askOpt({ s1_alaturka:async function(A){ await T.say('Mondzeit? Die Kula geht nach dem Mond?'); await A.wait(600); await T.say('Das ist ein Märchen für Touristen. Die Uhr geht falsch, das ist alles.'); },
       s1_twosevens:async function(A){ T.agitate(2400); await T.say('Ihre Sieben … und meine Sieben …'); await A.wait(700); await T.say('Nein. Sieben ist sieben. Sie kommt um sieben.'); },
-      s1_2316:async function(A){ await T.say('Viertel nach elf? Um Viertel nach elf bin ich auf dem Weg in die Kaserne.'); await A.wait(500); await T.say('Sie kommt um sieben.'); },
+      s1_2316:async function(A){ await T.say('Sechzehn nach elf? Da bin ich schon auf dem Weg in die Kaserne.'); await A.wait(500); await T.say('Sie kommt um sieben.'); },
       s1_campus:async function(A){ await T.say('Ein Campus? Unsinn. Da ist meine Kaserne. Ich habe heute früh noch da gefrühstückt.'); },
       s1_married:async function(A){ T.agitate(3200); A.shake(200); await T.say('Verheiratet? Emina?'); await T.say('Das ist nicht wahr. Sie sagt es ihm heute. Heute Abend.'); },
       s1_name:'Zupan. Tomaž Zupan. Woher kennen Sie meinen Namen?', s1_father:'Ihr Vater. Halid. Er mag keine Soldaten. Und keine Slowenen. Und keine Slowenen, die Soldaten sind.' },'Das verstehe ich nicht. Ich warte.'),
@@ -39,8 +39,8 @@ async function tomazFirst(A,T){ if (A.first('tzFirst')){ await T.say('Oprostite 
 async function tomazNight(A,T){ var S=A.S;
   if (!A.flag('k2.s1.emina')) return T.say('Sie kommt um sieben.');
   if (A.flag('k2.s1.stay')) return T.say('Ich bleibe. Bis sie kommt.');
-  if (A.first('tzN0')){ A.sfx('bellKula'); await A.wait(400); await T.say('Fünf nach elf.'); T.agitate(2600); await T.say('Ich muss gehen. Um halb zwölf …'); }
-  S.holdTries=S.holdTries||0; var got=S.got||{};
+  if (A.first('tzN0')){ A.sfx('bellKula'); await A.wait(400); await T.say('Fünf nach elf.'); T.agitate(2600); await T.say('Ich muss gehen. Um halb zwölf muss ich in der Kaserne sein.'); if (!A.hasNote('s1_curfew')) A.note('s1_curfew'); }
+  S.holdTries=S.holdTries||0; var got=S.got||(S.got={});   // was Tomaž schon gehört hat, bleibt, auch wenn das Gespräch abbricht
   for (var guard=0;guard<10;guard++){ if (got.campus && got.sevens) break;
     var n=await A.askNote('Was sage ich ihm?'); if (!n){ await T.say('Ich muss wirklich gehen.'); await A.wait(400); await T.say('…Aber ich bleibe noch eine Minute.'); return; }
     if (n==='s1_campus' && !got.campus){ got.campus=1; await A.m('Es gibt die Kaserne nicht mehr, Tomaž. Da ist jetzt die Universität. Studenten, Bücher, ein Café.'); await A.wait(700); await T.say('Die Universität …'); T.agitate(2000); await T.say('Dann … kommt keiner in den Bau, wenn er zu spät kommt.'); continue; }
@@ -48,7 +48,7 @@ async function tomazNight(A,T){ var S=A.S;
     S.holdTries++; T.agitate(2200); await T.say(['Das hilft mir nicht. Halb zwölf ist halb zwölf.','Was soll das? Ich muss gehen.','Sie verstehen nicht. Sie verstehen nicht, was ein Zapfenstreich ist.'][S.holdTries%3]); }
   S.got=got; if (!(got.campus&&got.sevens)) return;
   A.setFlag('k2.s1.stay'); await T.say('Gut. Ich bleibe.'); await T.say('Bis die Kula sieben schlägt.'); await A.wait(1200); await kulaStrikes(A); }
-async function kulaStrikes(A){ var T=A.npc('tomaz'), S=A.S; A.music('silence'); A.G.flags['mala.lock']=true; await A.narrate('Wir warten. Elf Minuten. Die Kafana ist dunkel, die Gasse ist leer, die Laterne summt.');
+async function kulaStrikes(A){ var T=A.npc('tomaz'), S=A.S; A.music('silence'); A.G.flags['mala.lock']=true; await A.narrate('Wir warten. Sieben Minuten, bis zwölf nach elf. Damals waren es elf. Die Kafana ist dunkel, die Gasse ist leer, die Laterne summt.');
   S.clock=[7,0]; A.rebuild(); for (var i=0;i<7;i++){ A.sfx('bellKula'); await A.wait(i<6?1050:1400); }
   await T.say('Sieben.'); await A.wait(900);
   // Emina kommt, alt, mit dem Armband
@@ -59,7 +59,7 @@ async function kulaStrikes(A){ var T=A.npc('tomaz'), S=A.S; A.music('silence'); 
   await A.realize('tomaz');
   await A.wait(600); await T.say('Neununddreißig Jahre.'); await A.wait(900); await T.say('Ich bin nach Hause gefahren. Ich habe geschrieben. Sechsmal. Dann nicht mehr. Ich habe eine Frau aus Maribor geheiratet und zwei Töchter bekommen und nie wieder eine Uhr angesehen, ohne an diese hier zu denken.');
   await A.wait(1200); await T.say('Ich bin in Ljubljana gestorben. Vor zwei Jahren. Im Februar. Es hat geschneit.'); await A.wait(900); await T.say('Und dann war ich wieder hier. Um fünf vor sieben.'); T.mood('sad');
-  await A.wait(1000); await E.say('Ich war da.'); await A.wait(600); await E.say('Ich weiß nicht, ob du da bist. Aber ich war da. Um elf Minuten nach elf. Bis es hell wurde.'); await A.wait(900); await E.say('Ich war da, Tomaž.');
+  await A.wait(1000); await E.say('Ich war da.'); await A.wait(600); await E.say('Ich weiß nicht, ob du da bist. Aber ich war da. Um sechzehn nach elf. Elf Minuten nach dir. Bis es hell wurde.'); await A.wait(900); await E.say('Ich war da, Tomaž.');
   await A.wait(1200); await T.say('Sie war da.'); await A.wait(600); A.setFlag('k2.s1.free'); A.sfx('shimmer'); A.music('k2_duh');
   if (A.malaHere() && T.actor){ await A.walkG(Math.round(T.actor.x)-26,Math.round(T.actor.y)+2); } else A.malaJoin({x:Math.round(A.marko.x)-22,y:Math.round(A.marko.y)+2,f:'R'});
   A.G.flags['mala.lock']=false; await A.switchTo('mala'); await A.wait(500); await A.g('Tomaž. Die Leine ist los.'); await T.say('Ich merke es. Ich bin ganz leicht.'); await A.g('Ich kann dich hinüberbringen. Es ist nicht weit.'); await T.say('Darf ich ihr noch …'); await A.g('Sie hört dich nicht. Aber sie weiß es.');
@@ -82,6 +82,18 @@ M.afterLimbo_tomaz=async function(A){ A.G.flags['mala.lock']=false; A.setFlag('k
   await A.g('Marko.'); await A.m('Hm?'); await A.g('Wir haben uns auch unter einer Uhr getroffen. Ich weiß nicht, wer wir.'); await A.wait(700);
   await A.memory({title:'Splitter',tint:'ghost',draw:M.mem&&M.mem.k2_clock,lines:['Eine Uhr, hoch oben, mit grün leuchtenden Ziffern. Darunter Beton und Balkone.','Zwei Kinder, die zu ihr hinaufsehen. „Es ist zehn nach elf. Wir kommen zu spät.“','Sie rennen.']});
   A.note('m2_f_clock'); await A.g('Eine Uhr mit leuchtenden Ziffern. Nicht so eine wie die Kula. Eine an einem Haus.'); await A.m('An welchem Haus?'); await A.g('Ich weiß es nicht.'); await A.wait(600); await A.m('Ich bringe dich nach Hause. Zu Hajra.'); A.save(); };
+// ---------------------------------------------------------------- Lejla in der Nacht: sie ist der Großmutter vorausgegangen und sitzt im Dunkeln auf der Stufe der Kafana
+function lejlaNightHere(G){ return G.phase==='k2_s1_n' && !!G.flags['k2.s1.emina'] && !G.flags['k2.s1.gone']; }
+async function talkLejlaNight(A){ var L=A.npc('lejla');
+  if (A.first('ljN0')){ await L.say('Psst. Nicht so laut.'); await L.say('Oma zieht seit einer Stunde ihr bestes Kleid an. Um elf in der Nacht! Ich bin vorgegangen. Ich will sehen, für wen.'); }
+  await A.menuLoop(function(){ return [
+    {t:'Was war früher die Kaserne „Maršal Tito“?',if:A.hasNote('s1_curfew')&&!A.hasNote('s1_campus'),go:async function(A){ await L.say('Die Kaserne? Das ist jetzt der Campus. Die Uni. Meine Schule ist gleich daneben.'); await L.say('Da, wo früher die Soldaten exerziert haben, sitzen jetzt Studenten und rauchen. Opa sagt, das ist auch eine Art Fortschritt.'); A.note('s1_campus'); }},
+    {t:'Solltest du nicht schlafen?',once:'ljN1',go:async function(A){ await L.say('Oma sollte auch schlafen.'); await L.say('Ich bleibe hier im Dunkeln. Ich sage nichts. Versprochen.'); }},
+    A.askOpt({ s1_campus:'Studenten, eine Mensa und ein Café, das zu teuer ist. Soldaten gibt es da keine mehr.', s1_twosevens:'Zwei Siebenen. Ich habe es verstanden. Ich bin sechzehn, nicht blöd.',
+      s1_note:'„Wenn die Kula sieben schlägt.“ Das ist heute Nacht, oder? Deshalb das Kleid.', s1_letters:'Die Briefe hat sie dreimal gelesen. Dann hat sie Kaffee gekocht. Um zehn in der Nacht.',
+      s1_curfew:'Halb zwölf? Für wen denn? Hier muss keiner mehr irgendwo sein.' },'Nicht jetzt. Ich will sehen, was passiert.'),
+    {t:'(Leise.) Bis gleich.',bye:true}
+  ]; }); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Zur Baščaršija',exit:{to:'carsija'},look:'Die Gasse zurück zur Baščaršija.',canExit:async function(A){ if (A.G.phase==='k2_s1_n' && A.flag('k2.s1.emina') && !A.flag('k2.s1.done')){ await A.m('Nicht jetzt. Heute Nacht bleibe ich hier.'); return false; } return true; }},
@@ -96,6 +108,9 @@ var HS=[
      talk:async function(A){ var T=A.npc('tomaz'); if (A.flag('k2.s1.free')) return T.say('Ist es weit?'); if (A.first('tzG')){ await T.say('Du wartest auch, Mädchen?'); await A.g('Ich weiß nicht mehr, auf wen.'); await T.say('Das ist schlimm. Ich weiß wenigstens, auf wen.'); await A.g('Sie kommt nicht um sieben, Tomaž.'); await T.say('Doch. Sie hat es geschrieben.'); return; }
        await T.say(A.cycle('tzG2',['Weißt du, wie spät es ist?','Sie kommt. Du wirst sehen.'])); },
      cross:function(A){ return crossTomaz(A); },crossIf:function(S,G){ return !!G.flags['k2.s1.free'] && !G.flags['k2.s1.gone']; }}},
+ {id:'lejla',npc:'lejla',name:'Lejla',hgt:44,vis:function(S,G){ return lejlaNightHere(G); },talk:talkLejlaNight,
+   look:'Lejla, in Jacke und Schal, auf der Stufe der Kafana. Ihr Telefon leuchtet. Sie macht es aus, als ich hinsehe.',
+   g:{look:'Sie sieht mich nicht. Sie sieht zur Uhr hinauf, genau wie ihre Großmutter.'}},
  {id:'tower',name:'Sahat-kula',look:'Die Sahat-kula, der Uhrturm. Schlank, aus hellem Stein, älter als alles hier. Oben das Zifferblatt mit Ziffern, die ich nicht lesen kann.',
    g:{look:'Sie geht nach dem Mond. Ich mag sie. Sie lügt nicht, sie zählt nur anders.'}},
  {id:'clock',name:'Zifferblatt',look:async function(A){ var c=CLOCK[A.G.phase]||{k:A.S.clock||[6,0],m:'Jetzt'}; await A.m(c.m+' auf meiner Uhr. Die Kula zeigt '+zeit(A.S.clock||c.k)+'.'); if (!A.hasNote('s1_clock') && A.hasNote('s1_tomaz')){ A.note('s1_clock'); await A.m('Sie geht nicht falsch. Sie geht ganz anders.'); } },
@@ -106,7 +121,7 @@ var HS=[
    g:{look:'Buchstaben. Er liest sie dir vor, wenn du willst. Er liest sowieso alles vor.'}},
  {id:'wall',name:'Moscheemauer',look:'Die Mauer des Moscheehofs, mit einem Bogentor. Dahinter Platanen und das Rauschen eines Brunnens.',g:{look:'Drinnen ist ein Brunnen. Man wäscht sich, bevor man betet. Ich habe zugesehen, als Kind.'}},
  {id:'bench',name:'Steinbank',look:function(A){ return A.m(A.flag('k2.s1.done')?'Die Bank unter der Uhr. Leer.':'Eine Steinbank unter der Uhr, glatt gesessen. Wer hier wartet, wird von allen gesehen.'); },use:'Ich bleibe stehen. Die Bank gehört heute jemand anderem.',
-   g:{look:'Hier hat eine junge Frau gesessen, eine ganze Nacht. Ich spüre es in den Steinen.',sense:async function(A){ A.setFlag('k2.s1.echoBench'); A.rebuild(); await A.g('Eine junge Frau mit schwarzen Haaren. Elf Minuten nach elf kommt sie gelaufen, außer Atem. Sie sitzt hier, bis es hell wird.'); await A.g('Sie hat ein Kopftuch um und darunter ihr bestes Kleid.'); }}},
+   g:{look:'Hier hat eine junge Frau gesessen, eine ganze Nacht. Ich spüre es in den Steinen.',sense:async function(A){ A.setFlag('k2.s1.echoBench'); A.rebuild(); await A.g('Eine junge Frau mit schwarzen Haaren. Um sechzehn nach elf kommt sie gelaufen, außer Atem. Sie sitzt hier, bis es hell wird.'); await A.g('Sie hat ein Kopftuch um und darunter ihr bestes Kleid.'); }}},
  {id:'terrace',name:'Terrasse',look:'Die Terrasse der Kafana „Kula“: drei Tische, Stühle, ein Vordach mit Fransen. Im Fenster Kupfertabletts.',g:{look:'Hier hat einer gesessen und jede Viertelstunde gefragt, wie spät es ist.'}},
  {id:'table',name:'Tisch',look:'Ein Blechtisch mit einem Aschenbecher und einer Zuckerdose. Jemand hat einen Würfel Zucker vergessen.',take:'Der Zucker gehört Emina.',g:{look:'Kaffeeringe. So viele Kaffeeringe.'}},
  {id:'kafana_door',name:'Kafana „Kula“',exit:{to:'kafana'},look:'„KAFANA KULA – od 1958“. Eine Holztür mit Glas, dahinter warmes Licht.',canExit:async function(A){ var p=A.G.phase; if (p==='k2_pro_n'||p==='k2_s1_n'){ await A.m('Zu. Die Stühle stehen auf den Tischen.'); return false; } return true; },
@@ -119,12 +134,13 @@ M.room('kula',{ name:'Sahat-kula', scape:'k2_kula',
   music:function(G){ return G.phase==='k2_s1_n'?(G.flags['k2.s1.free']?'k2_duh':'k2_istraga'):(G.tod==='night'?'k2_noc':'k2_istraga'); },
   state:function(G){ return {}; },
   actors:function(S,G){ var L=[]; var c=CLOCK[G.phase]; if (c && !(G.phase==='k2_s1_n'&&G.flags['k2.s1.stay'])) S.clock=c.k.slice();
+    if (lejlaNightHere(G)){ var lj=M.apos('kula','lejla',[264,114,'L']); L.push({id:'lejla',ch:'lejla',x:lj[0],y:lj[1],f:lj[2]||'L',name:'Lejla',idle:'phone',speechY:44}); }
     if (tomazHere(G)){ var t=M.apos('kula','tomaz',[150,122,'F']), sp=M.spot('kula','clock'); L.push({id:'tomaz',ch:'tomaz',x:t[0],y:t[1],f:t[2]||'F',name:'Tomaž',ghost:true,idle:'wait',speechY:46,anchor:sp[2]?[sp[0]+(sp[2]>>1),sp[1]+(sp[3]>>1)]:null}); }
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='k2_pro_n' && A.first('k2kuN')){ await A.narrate('Der Platz unter der Sahat-kula, nachts, im Nebel. Jemand summt ein Lied. Unter der Uhr steht ein junger Mann.'); }
     if (p==='k2_s1' && A.first('k2kuS1')){ await A.m('Bei Tag sieht man, wie alt der Turm ist. Unter der Uhr steht wieder der Soldat. Er ist blasser. Er wartet trotzdem.'); }
-    if (p==='k2_s1_n' && A.first('k2kuS1n')){ await A.narrate('Kurz vor elf. Die Kafana ist dunkel. Emina hat gesagt, sie kommt, wenn die Kula sieben schlägt.'); await A.m('Tomaž ist da. Er sieht auf seine Uhr.'); } }
+    if (p==='k2_s1_n' && A.first('k2kuS1n')){ await A.narrate('Kurz vor elf. Die Kafana ist dunkel. Emina hat gesagt, sie kommt, wenn die Kula sieben schlägt.'); await A.m('Tomaž ist da. Er sieht auf seine Uhr.'); await A.m('Und auf der Stufe der Kafana sitzt jemand im Dunkeln. Lejla.'); } }
 });
 })(M);

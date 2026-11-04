@@ -32,7 +32,7 @@ async function lukaMarko(A,L){
     {t:'Ich habe euren Briefkasten aufgemacht.',if:A.has('note_n')&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
     A.askOpt({ c2_guitar:'Im Kühlraum, ja. Die Tür klemmt. Mit Gefühl.', c2_meet:'Halb neun. Kiosk. Sie hat ein rotes Kleid an, du kannst sie nicht verfehlen.',
       c2_mailbox:'Der Ziegel. Wenn sie nicht kann, legt sie mir was rein. Sie kann. Heute kann sie.', c2_died:async function(A){ await L.say('Was? Wer?'); await L.say('Red keinen Mist, Mann.'); },
-      c2_stairs:'Die Treppe? Ich bin da hundertmal rauf und runter. Die hält.', c2_unused:async function(A){ await L.say('Ihr Ticket? Die hat sie doch selbst. Ich habe zwei gekauft, heute früh.'); },
+      c2_stairs:'Die Treppe? Ich bin da hundertmal rauf und runter. Die hält.', c2_unused:async function(A){ await L.say('Die Reservierung? Die habe ich ihr gegeben, damit sie die Zeit weiß. Die Tickets habe ich. Zwei, heute früh gekauft.'); },
       c2_demolish:'Abriss? Hier? Die reißen hier nie was ab. Hier passiert nie was.' },'Keine Ahnung, wovon du redest.'),
     {t:'Bis später.',bye:true,go:async function(A){ await L.say('Halb neun!'); }}
   ]; }); }
@@ -76,7 +76,7 @@ M.afterLimbo_luka=async function(A){ A.G.flags['mala.lock']=false; var st=M.apos
   await A.goto('ledana',{x:st[0]-26,y:st[1]+2,f:'R',fade:false,noEnter:true}); A.music('silence'); await A.fade(0,900);
   var N=A.npc('nina'); await A.wait(1500); await N.say('Zwölf Jahre habe ich gedacht, er ist einfach nicht gekommen.'); await A.m('Er war auf dem Weg. Die ganze Zeit.'); A.save(); };
 async function ninaTicket(A){ var N=A.npc('nina'); if (A.has('ticket_n')){ await A.animM('give'); A.take('ticket_n'); await N.say('Ein Ticket nach Ancona. Dreiundzwanzigster August neunundneunzig.'); await A.wait(900);
-  await N.say('Das ist meins. Er hatte zwei gekauft.'); await A.m('Eins hat er mitgenommen. Das hier soll ich Ihnen geben. Sie sollen selbst entscheiden, ob Sie fahren.'); await A.wait(1400);
+  await N.say('Das ist meins. Ich hatte nur die Reservierung. Die Tickets hatte er.'); await A.m('Eins hat er mitgenommen. Das hier soll ich Ihnen geben. Sie sollen selbst entscheiden, ob Sie fahren.'); await A.wait(1400);
   await N.say('Venedig.'); await A.wait(900); } else { await N.say('Ist er … fort?'); await A.m('Er war auf dem Weg. Die ganze Zeit.'); await A.wait(1200); }
   await N.say('Ich glaube, jetzt kann ich die Bilder fertig malen.'); await N.say('Und das Lied … hat es einen Namen?'); await A.m('Noch nicht. Er sagt, Sie sollen ihm einen geben.'); await A.wait(1500);
   await N.say('„Halb neun.“'); await A.wait(1200);

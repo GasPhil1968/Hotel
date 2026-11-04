@@ -82,8 +82,8 @@ M.trAdd('bhs', {
   'Sanja: Nina ist nie aus Split weggegangen.': 'Sanja: Nina nikad nije otišla iz Splita.',
   'Nina hat einen kleinen Rahmenladen in der Altstadt: „Okvir“.': 'Nina ima mali dućan s okvirima u Starom gradu: „Okvir“.',
   'Sanja: Luka spielte im Sommer an der Riva Gitarre. Nina hörte immer zu.': 'Sanja: Luka je ljeti svirao gitaru na Rivi. Nina ga je uvijek slušala.',
-  'Hinterzimmer: Ninas Fährticket vom 23.08.1999 – gerahmt, nie entwertet.': 'Stražnja soba: Ninina karta za trajekt od 23.08.1999. – uokvirena, nikad poništena.',
-  'Ninas Ticket wurde nie entwertet.': 'Ninina karta nikad nije poništena.',
+  'Hinterzimmer: Ninas gerahmte Reservierung für zwei, Fähre Split – Ancona, 23.08.1999, 21:00. Nie eingelöst.': 'Stražnja soba: Ninina uokvirena rezervacija za dvoje, trajekt Split – Ancona, 23.08.1999., 21:00. Nikad iskorištena.',
+  'Ninas Reservierung wurde nie eingelöst.': 'Ninina rezervacija nikad nije iskorištena.',
   'Nina malt seit Jahren dieselbe Fähre und eine Gestalt, die am Kiosk wartet.': 'Nina godinama slika isti trajekt i priliku koja čeka kod kioska.',
   'Nachhall: Nina wartete am Kiosk, bis die Fähre weg war. Dann auf der Bank, bis zum Morgen.': 'Odjek: Nina je čekala kod kioska dok trajekt nije otišao. Onda na klupi, do jutra.',
   'Nina ist nicht gefahren – sie hat am Kiosk auf Luka gewartet.': 'Nina nije otputovala – čekala je Luku kod kioska.',
@@ -130,10 +130,10 @@ M.trAdd('bhs', {
   'Keine Fähre, aber ein Fischerboot in der Bura. Er hat nicht gewartet.': 'Trajekt nije plovio, ali ribarska brodica jest. Po buri. Nije čekao.',   // Marko (denkt laut)
   'Das Boot auf dem Foto. Das Boot im Fahrtenbuch. Dasselbe.': 'Brod na fotografiji. Brod u dnevniku. Isti.',   // Marko (denkt laut)
   'Er wollte um sieben da sein. Die Fähre fuhr nicht. Also nahm er die ANKICA.': 'Htio je biti tu u sedam. Trajekt nije plovio. Pa je uzeo ANKICU.',   // Marko (denkt laut)
-  'Ein Ticket, nie entwertet. Ein Treffpunkt am Kiosk. Sie ist nicht gefahren. Sie hat gewartet.': 'Karta, nikad poništena. Mjesto sastanka kod kioska. Nije otputovala. Čekala je.',   // Marko (denkt laut)
+  'Eine Reservierung für zwei, nie eingelöst. Ein Treffpunkt am Kiosk. Sie ist nicht gefahren. Sie hat gewartet.': 'Rezervacija za dvoje, nikad iskorištena. Mjesto sastanka kod kioska. Nije otputovala. Čekala je.',   // Marko (denkt laut)
   'Sie stand am Kiosk, bis die Fähre weg war. Sie hat auf ihn gewartet.': 'Stajala je kod kioska dok trajekt nije otišao. Čekala ga je.',   // Marko (denkt laut)
   'Wo hätte sie warten sollen?': 'Gdje je trebala čekati?',   // Marko (denkt laut)
-  'Sie hatte ein Ticket für dieselbe Fähre und hat es nie benutzt. Sie hat auf ihn gewartet.': 'Imala je kartu za isti trajekt i nikad je nije iskoristila. Čekala ga je.',   // Marko (denkt laut)
+  'Sie hatte eine Reservierung für dieselbe Fähre und hat sie nie eingelöst. Die Tickets hatte er. Sie hat auf ihn gewartet.': 'Imala je rezervaciju za isti trajekt i nikad je nije iskoristila. Karte su bile kod njega. Čekala ga je.',   // Marko (denkt laut)
   '„Dorthin, wo sie nicht mehr spielt.“ In den Klavierhocker. Er hat es ihr nie gesagt.': '„Tamo gdje ona više ne svira.“ U stolac za klavir. Nikad joj to nije rekao.',   // Marko (denkt laut)
   'Ich ahne es. Aber ich habe den Brief noch nicht gefunden.': 'Slutim. Ali pismo još nisam našao.',   // Marko (denkt laut)
   'Sie wollte nach Zagreb. Und der Brief aus Zagreb kam nie bei ihr an.': 'Htjela je u Zagreb. A pismo iz Zagreba nikad nije stiglo do nje.',   // Marko (denkt laut)
@@ -223,7 +223,7 @@ M.trAdd('bhs', {
   'Nina ist geblieben': 'Nina je ostala',
   'Ninas Laden „Okvir“': 'Ninin dućan „Okvir“',
   'Nina hörte ihm zu': 'Nina ga je slušala',
-  'Ninas Ticket, unbenutzt': 'Ninina karta, nekorištena',
+  'Ninas Reservierung, nie eingelöst': 'Ninina rezervacija, neiskorištena',
   'Ninas Bilder': 'Ninine slike',
   'Nachhall am Kiosk': 'Odjek kod kioska',
   'Nina hat am Kiosk gewartet': 'Nina je čekala kod kioska',
@@ -462,7 +462,7 @@ M.trAdd('bhs', {
   'Hinter den Kisten pfeift der Wind durch den Zaun.': 'Iza sanduka vjetar zviždi kroz ogradu.',   // Mala (Antwort auf eine Notiz)
   'Der Koffer liegt da, wo er ihn hingelegt hat. Die Tür hält ihn fest.': 'Kofer leži tamo gdje ga je ostavio. Vrata ga drže.',   // Mala (Antwort auf eine Notiz)
   'Ein gefaltetes Papier. Es wartet auch.': 'Presavijen papir. I on čeka.',   // Mala (Antwort auf eine Notiz)
-  'Sie hat ihr Ticket aufgehoben wie einen Beweis. Nur dass sie nicht weiß, wofür.': 'Čuvala je kartu kao dokaz. Samo ne zna za šta.',   // Mala (Antwort auf eine Notiz)
+  'Sie hat den Zettel aufgehoben wie einen Beweis. Nur dass sie nicht weiß, wofür.': 'Čuvala je taj listić kao dokaz. Samo ne zna za šta.',   // Mala (Antwort auf eine Notiz)
   'Sie hat gewartet. Er weiß es nicht.': 'Ona je čekala. On to ne zna.',   // Mala (Antwort auf eine Notiz)
   'Ein Lied, das noch niemand gehört hat.': 'Pjesma koju još niko nije čuo.',   // Mala (Antwort auf eine Notiz)
   'Er sucht ein Wort. Er sucht es seit achtzehn Jahren.': 'Traži jednu riječ. Traži je osamnaest godina.',   // Mala (Antwort auf eine Notiz)

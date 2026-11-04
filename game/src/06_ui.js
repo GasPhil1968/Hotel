@@ -338,7 +338,7 @@ M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||(d.init?
 // „Liste“ (wie in Blackwell): eine Seite, große Schrift, nur offene Hinweise, zwei antippen = verbinden.
 // „Nachdenken“: kein eigener Bildschirm; Marko denkt in der gewohnten Auswahlliste nach, zwei Gedanken = verbinden.
 var NB={sel:null,page:0,msg:null};
-var NB_PER=6, NB_RH=22, NB_Y0=30;
+var NB_PER=5, NB_RH=20, NB_Y0=26;   // Zeilen 26–126, Blättern 125–138, Beschreibung und „Danach fragen“ 142–186
 var nbStyle='list'; try{ nbStyle=localStorage.getItem('mala.nbstyle')||'list'; }catch(e){}
 E.nbStyle=function(){ return nbStyle; };
 E.setNbStyle=function(v){ nbStyle=v; try{ localStorage.setItem('mala.nbstyle',v); }catch(e){} layoutBtns(); };
@@ -355,7 +355,7 @@ E.nbOpen=nbOpen;
 function notesOf(){ return nbOpen(false); }
 E.openNotes=function(){ if (M.onOpenNotes && M.onOpenNotes()) return Promise.resolve();   // ein Raum darf vorher etwas sagen (Morgen nach Ivka)
   if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; return E.showOverlay('notebook',{mode:'browse'}); };
-function nbButton(x,y,w,t,hot){ fb.rect(x,y,w,13,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+12,c); fb.vl(x,y,y+12,c); fb.vl(x+w-1,y,y+12,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+3,hot?P.r2:P.n1); return [x,y,w,13]; }
+function nbButton(x,y,w,t,hot,h){ h=h||13; fb.rect(x,y,w,h,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+h-1,c); fb.vl(x,y,y+h-1,c); fb.vl(x+w-1,y,y+h-1,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+((h-7)>>1),hot?P.r2:P.n1); return [x,y,w,h]; }
 // Variante 1: die Liste
 M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask', g=GS(), ph0=M.PHASES[g.phase]||{}, ded=nbTargets(), i;
   if (!ov.init){ ov.init=1; NB.page=0; NB.sel=null; NB.msg=null; }
@@ -372,7 +372,7 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
   if (pages>1){ M.text(fb,(NB.page+1)+' / '+pages,150,NB_Y0+NB_PER*NB_RH+1,P.s2); if (NB.page>0) lay.prev=nbButton(48,NB_Y0+NB_PER*NB_RH-1,40,'<',hoverUI==='nprev'); if (NB.page<pages-1) lay.next=nbButton(242,NB_Y0+NB_PER*NB_RH-1,40,'>',hoverUI==='nnext'); }
   var by=NB_Y0+NB_PER*NB_RH+16; fb.hl(46,284,by-3,P.s3);
   if (NB.msg){ fb.rect(46,by,238,186-by,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+3+j*9,NB.msg.ok?P.g0:P.k1); }); }
-  else if (NB.sel && M.NOTES[NB.sel]){ M.wrap(M.NOTES[NB.sel].t,ask?160:228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.n1); }); if (ask) lay.btn=nbButton(214,by+20,68,'Danach fragen',hoverUI==='nb'); }
+  else if (NB.sel && M.NOTES[NB.sel]){ M.wrap(M.NOTES[NB.sel].t,ask?156:228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.n1); }); if (ask){ var bw=Math.max(72,M.textWidth('Danach fragen')+14); lay.btn=nbButton(284-bw,by+12,bw,'Danach fragen',hoverUI==='nb',18); } }
   else M.wrap(ask?'Antippen, dann „Danach fragen“.':'Eine Notiz antippen, dann eine zweite, die dazu passt.',228).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.s2); });
   ov.lay=lay; });
 function nbAt(x,y){ var ov=E.overlay, lay=ov&&ov.lay; if (!lay) return null; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };

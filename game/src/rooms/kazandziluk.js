@@ -3,8 +3,16 @@
 'use strict';
 var P=M.P;
 function here(G){ return G.phase==='k2_s1'||G.phase==='k2_s2'||G.phase==='k2_fin'; }
+// das Stemmeisen wird zweimal gebraucht: am Spiegel in der Kammer (Fall 1) und am Wärmefach in Großmutters Küche (Finale)
+function chiselWork(G){ var k=(G.rooms&&G.rooms.kuca)||{}; return !G.flags['k2.s1.tin'] || !k.msgTaken; }
+// wer es ordentlich zurückgegeben hat, bekommt es wieder, solange noch eine Fuge offen ist
+function lendAgainOpt(A,N){ var tin=A.flag('k2.s1.tin'), need=!tin || A.flag('k2.f2.needChisel') || A.hasNote('f2_oven');
+  return {t:'Darf ich mir das Stemmeisen noch einmal leihen?',if:!A.has('chisel')&&(A.flag('k2.chisel.back')||A.flag('k2.f2.chiselBack'))&&chiselWork(A.G)&&need,go:async function(A){
+    await N.say('Noch eine Fuge?'); await A.m(tin?'Eine alte Klappe an einem Herd. Festgerostet.':'Dieselbe. Ich war zu schnell.'); await N.say('Dann nehmen Sie es. Es hängt sowieso nicht gern am Nagel.'); A.sfx('chain'); A.give('chisel'); A.setFlag('k2.chisel.again'); }}; }
 async function talkNedzad(A){ var N=A.npc('nedzad'), p=A.G.phase;
-  if (p==='k2_fin'){ if (A.has('chisel') && A.flag('k2.f2.rcmRead')){ return returnChisel(A,N); } return N.say(A.cycle('ndF',['Das Stemmeisen? Behalten Sie es, solange Sie es brauchen.','Kupfer vergisst nichts. Jeder Schlag bleibt drin.'])); }
+  if (p==='k2_fin'){ if (A.has('chisel') && A.flag('k2.f2.rcmRead')){ return returnChisel(A,N); }
+    var again=lendAgainOpt(A,N); if (again.if) return again.go(A);
+    return N.say(A.cycle('ndF',A.has('chisel')?['Das Stemmeisen? Behalten Sie es, solange Sie es brauchen.','Kupfer vergisst nichts. Jeder Schlag bleibt drin.']:['Großvaters Stemmeisen hängt wieder am Nagel. Wenn Sie es brauchen, sagen Sie es.','Kupfer vergisst nichts. Jeder Schlag bleibt drin.'])); }
   if (p==='k2_s2') return N.say(A.cycle('ndS2',['Der Wiener hat sich gefreut. Mit ß! Er hat gesagt, sonst schreiben alle „ss“.','Mein Großvater wäre stolz gewesen. Auf Sie, nicht auf mich.','Regen ist gut für Kupfer. Es wird dunkler. Ehrlicher.']));
   await A.menuLoop(function(){ return [
     {t:'Haben Sie dieses Armband gemacht?',if:A.hasNote('s1_bracelet')&&!A.hasNote('s1_date'),go:async function(A){ await N.anim('hammer'); await N.say('Ich? Ich mache keine Armbänder. Mein Großvater hat Armbänder gemacht. Für Verliebte und für Soldaten, die verliebt waren.');
@@ -12,8 +20,9 @@ async function talkNedzad(A){ var N=A.npc('nedzad'), p=A.G.phase;
         await N.say('Ich habe keine Zeit. Ein Kunde aus Wien will bis heute Abend eine Džezva mit deutscher Gravur. Ich kann die Buchstaben nicht. Wenn ich die verhaue, ist das Kupfer hin.'); A.setFlag('k2.s1.nedzadBusy'); }},
     {t:'Ich helfe Ihnen mit der deutschen Gravur.',if:A.flag('k2.s1.nedzadBusy')&&!A.flag('k2.s1.engraved'),go:function(A){ return engraving(A,N); }},
     {t:'Holen Sie das Buch von 1972?',if:A.flag('k2.s1.engraved')&&!A.hasNote('s1_date'),go:function(A){ return orderBook(A,N); }},
-    {t:'Können Sie mir etwas Schmales, Festes leihen?',if:(A.flag('k2.s1.needChisel')||A.hasNote('s1_hidden'))&&!A.has('chisel')&&!A.flag('k2.s1.tin'),go:async function(A){ if (!A.flag('k2.s1.engraved')){ await N.say('Nach der Gravur. Erst die Arbeit, dann die Freundschaft.'); return; }
+    {t:'Können Sie mir etwas Schmales, Festes leihen?',if:(A.flag('k2.s1.needChisel')||A.hasNote('s1_hidden'))&&!A.has('chisel')&&!A.flag('k2.s1.tin')&&!A.flag('k2.chisel.back')&&!A.flag('k2.f2.chiselBack'),go:async function(A){ if (!A.flag('k2.s1.engraved')){ await N.say('Nach der Gravur. Erst die Arbeit, dann die Freundschaft.'); return; }
         await N.say('Schmal und fest?'); await N.anim('engrave'); await N.say('Hier. Das Stemmeisen von meinem Großvater. Damit hat er Fugen aufgemacht, die keiner aufmachen sollte.'); A.give('chisel'); await N.say('Bringen Sie es mir zurück. Es ist das Einzige, was ich von ihm habe, außer den Büchern.'); }},
+    lendAgainOpt(A,N),
     {t:'Wie lange arbeiten Sie schon hier?',once:'nd1',go:async function(A){ await N.say('Seit ich einen Hammer halten kann. Mein Urgroßvater hat die Werkstatt 1912 aufgemacht. Wir haben zwei Kriege überlebt und den dritten auch.'); await N.say('Im dritten haben wir Granathülsen graviert. Für Journalisten. Davon haben wir gegessen.'); }},
     {t:'Was graviert man auf eine Džezva?',once:'nd2',go:async function(A){ await N.say('Namen. Daten. Eine Rose. Eine Brücke. Manchmal einen Satz.'); await N.say('Die Leute wollen, dass etwas bleibt. Kupfer bleibt.'); if (A.has('dzezva')){ await A.m('Auf meiner ist eine Rose und ein R.'); await N.say('Zeigen Sie mal.'); await A.wait(700); await N.say('Das ist von uns. Die Rose ist von meinem Großvater. Er hat sie immer mit sieben Blättern gemacht. Für Glück.'); } }},
     A.askOpt({ s1_name:'Zupan? Ein Slowene. Wir hatten viele Soldaten als Kunden. Die haben für Mädchen gekauft, die sie nie wiedergesehen haben.', s1_date:'Der vierzehnte November zweiundsiebzig. Großvater hat an dem Tag elf Aufträge eingetragen. Er war fleißig, wenn er verliebt war. In die Arbeit.',
@@ -37,7 +46,10 @@ async function readBook(A){ if (!A.S.bookOut) return A.m('Die Bücher sind oben 
   await A.doc({style:'log',title:'Narudžbe 1972 – Kazandžić',lines:['13.XI. Ibrik, gravura ruža – Begović','14.XI. Narukvica bakar, gravura „E. · 14. XI. 1972“','        – T. Zupan, vojnik, Ljubljana. Plaćeno: 3 mj. plata (!)','        – preuzeto 14.XI. u 18:40','14.XI. Tepsija, gravura most – Hadžiomerović','15.XI. Fildžani 6 kom. – Kadić, kafana Kula (neplaćeno)']});
   if (!A.hasNote('s1_date')){ A.note('s1_date'); A.note('s1_name'); await A.m('„Armband, Kupfer, Gravur: E. · 14. XI. 1972. T. Zupan, Soldat, Ljubljana. Bezahlt: drei Monatssolde. Abgeholt am 14. November um 18:40.“'); await A.m('Der vierzehnte November zweiundsiebzig. Und um 18:40 war er hier.'); }
   else await A.m('Der vierzehnte November. 18:40. Und am fünfzehnten hat Halid sechs Tassen bestellt und nicht bezahlt.'); }
-async function returnChisel(A,N){ A.take('chisel'); await A.m('Ihr Stemmeisen. Es hat zwei Fugen aufgemacht, die keiner aufmachen sollte.'); await N.say('Zwei? Dann hat es sich gelohnt.'); await N.say('Großvater hätte gesagt: Werkzeug, das nichts aufmacht, ist nur Eisen.'); A.setFlag('k2.f2.chiselBack'); }
+async function returnChisel(A,N){ A.take('chisel'); A.setFlag('k2.chisel.back');
+  if (!chiselWork(A.G)){ await A.m('Ihr Stemmeisen. Es hat zwei Fugen aufgemacht, die keiner aufmachen sollte.'); await N.say('Zwei? Dann hat es sich gelohnt.'); await N.say('Großvater hätte gesagt: Werkzeug, das nichts aufmacht, ist nur Eisen.'); A.setFlag('k2.f2.chiselBack'); return; }
+  await A.m(A.flag('k2.s1.tin')?'Ihr Stemmeisen. Es hat eine Fuge aufgemacht, die keiner aufmachen sollte.':'Ihr Stemmeisen. Danke.'); await N.say('Großvater hätte gesagt: Werkzeug, das nichts aufmacht, ist nur Eisen.');
+  await N.say('Es hängt hier am Nagel. Wenn Sie es wieder brauchen, fragen Sie.'); }
 var HS=[
  {id:'exit',name:'Zur Baščaršija',exit:{to:'carsija'},look:'Die Gasse zurück zur Baščaršija.'},
  {id:'nedzad',npc:'nedzad',name:'Nedžad',hgt:36,vis:function(S,G){ return here(G); },talk:talkNedzad,

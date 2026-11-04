@@ -136,7 +136,7 @@ M.trAdd('bhs', {
   'Das ist keine Erklärung.': { hr:'To nije objašnjenje.', bs:'To nije objašnjenje.' },   // Marko an Mala
   'Nein. Es ist das, was ich weiß.': 'Nije. To je ono što znam.',   // Mala
   'Gut. Genug für heute.': { hr:'Dobro. Dosta je za danas.', bs:'Dobro. Dosta je za danas.' },   // Marko an Mala (Option)
-  'Wann war dir zum ersten Mal richtig schwindlig? Nicht das Kopfweh. So, dass du dich festhalten musstest.': 'Kad ti se prvi put baš zavrtjelo u glavi? Ne glavobolja. Nego tako da si se morao za nešto uhvatiti.',   // Mala
+  'Wann ist dir zum ersten Mal der Boden richtig weggekippt? Nicht das Kopfweh. Nicht der halbe Schritt beim Aufstehen. Ganz weg.': 'Kad ti je prvi put pod stvarno pobjegao ispod nogu? Ne glavobolja. Ne onih pola koraka kad ustaneš. Skroz.',   // Mala
   'An der Riva. Am letzten Poller.': { hr:'Na Rivi. Kod zadnje bitve.', bs:'Na Rivi. Kod zadnje bitve.' },   // Marko an Mala (Option)
   'In der Bar, bei Sanja.': { hr:'U baru, kod Sanje.', bs:'U baru, kod Sanje.' },   // Marko an Mala (Option)
   'Hier, am Schreibtisch.': { hr:'Ovdje, za pisaćim stolom.', bs:'Ovdje, za pisaćim stolom.' },   // Marko an Mala (Option)
@@ -148,8 +148,9 @@ M.trAdd('bhs', {
   'Ja. Und jemand, der daneben wartet.': 'Jah. I neko ko čeka pored nje.',   // Mala
   'Bei Sanja? War das der Boden? Oder der Kaffee?': 'Kod Sanje? Je li to bio pod? Ili kahva?',   // Mala
   '…Der Kaffee. Und mir war schlecht. Gedreht hat sich nichts.': { hr:'…Kava. I bilo mi je loše. Ništa se nije vrtjelo.', bs:'…Kahva. I bilo mi je muka. Ništa se nije vrtjelo.' },   // Marko an Mala
-  'Das Aufstehen hast du seit Tagen, hast du gesagt. Ich meine das andere. Wo du nicht mehr wusstest, wo unten ist.': 'Ono kad ustaneš, to imaš već danima, rekao si. Ja mislim na ono drugo. Kad više nisi znao gdje je dolje.',   // Mala
-  'Da hattest du Kopfweh. Und dir war schlecht. Aber musstest du dich festhalten?': 'Tamo te boljela glava. I bilo ti je muka. Ali jesi li se morao za nešto uhvatiti?',   // Mala
+  'Am Schreibtisch, ja. Da hast du dich an der Kante festgehalten.': 'Za stolom, jeste. Tu si se uhvatio za ivicu.',   // Mala
+  'Aber das war der halbe Schritt. Ich meine den Moment, in dem du nicht mehr wusstest, wo unten ist.': 'Ali to je bilo onih pola koraka. Ja mislim na trenutak kad više nisi znao gdje je dolje.',   // Mala
+  'Da hattest du Kopfweh. Und dir war schlecht. Aber ist dir dort der Boden weggekippt?': 'Tamo te boljela glava. I bilo ti je muka. Ali da li ti je tamo pod pobjegao ispod nogu?',   // Mala
   'Nein. Da nicht.': { hr:'Ne. Ondje ne.', bs:'Ne. Tamo ne.' },   // Marko an Mala
   'Denk an gestern Abend. An die Dämmerung.': 'Sjeti se šta je bilo juče. Pred akšam.',   // Mala
   'Ich glaube, es war an der Riva. Ich war dabei. Vor dir hat jemand gewartet.': 'Mislim da je bilo na Rivi. Bila sam tamo. Ispred tebe je neko čekao.',   // Mala

@@ -174,6 +174,12 @@ E.ghostVisible=ghostVisible;
 function actorShown(a){ if (!a.visible) return false; if (a.id==='mala'){ return GS.malaOn && GS.pos.mala.room===room.id; } if (a.id==='marko') return GS.pos.marko.room===room.id && !room.noActor; return ghostVisible(a); }
 E.actorShown=actorShown;
 
+// ---------------------------------------------------------------- Sicherungspunkt für Szenen
+// Läuft eine Szene (E.busy), wird beim Speichern der Stand von ihrem Beginn geschrieben, oder vom letzten A.save() darin.
+// So landet beim Titelbild, beim App-Wechsel oder beim Schließen nie ein halber Ablauf im Spielstand (etwa: Handschuhe schon übergeben, Schluss noch nicht gesichert).
+var busyV=false, safeGS=null;
+Object.defineProperty(E,'busy',{configurable:true,enumerable:true,get:function(){ return busyV; },
+  set:function(v){ v=!!v; if (v && !busyV && GS && room && !room.noSave && E.screen==='game'){ try{ syncPos(); safeGS=JSON.parse(JSON.stringify(GS)); }catch(e){} } busyV=v; }});
 // ---------------------------------------------------------------- Sprechen, Overlays, Auswahl
 E.speech=null; E.overlay=null; E.dlg=null; E.busy=false; E.screen='title'; E.fade=0; E.shake=0; E.card=null; E.camX=0; E.conv=null; E.msg=null; E.pick=null; E.headache=0;
 var textSpeed=1, tapText=false, SPEED=[1.5,1,0.7];
@@ -289,7 +295,7 @@ var API={
   found:function(id){ if (!GS.flags['found.'+id]){ GS.flags['found.'+id]=true; M.sfx('shimmer'); } }, isFound:function(id){ return !!GS.flags['found.'+id]; },
   malaJoin:malaJoin, malaLeave:malaLeave, get active(){ return GS.active; }, switchTo:function(w){ return switchTo(w,true); }, isMala:function(){ return GS.active==='mala'; },
   malaHere:function(){ return GS.malaOn && GS.pos.mala.room===room.id; },
-  save:function(){ return saveGame(); }, rebuild:function(){ dirty=true; navDirty=true; }, busy:function(v){ E.busy=v; },
+  save:function(){ return saveGame(true); }, rebuild:function(){ dirty=true; navDirty=true; }, busy:function(v){ E.busy=v; },
   hide:function(){ var p=player(); if (p) p.visible=false; }, show:function(){ var p=player(); if (p) p.visible=true; },
   place:function(x,y,f){ var p=player(); if (!p) return; cancelRes(p); p.x=x; p.y=y; if (f) p.f=f; setIdle(p); syncPos(); },
   placeM:function(x,y,f){ GS.pos.marko.x=x; GS.pos.marko.y=y; if (f) GS.pos.marko.f=f; var a=ACT.marko; if (a){ cancelRes(a); a.x=x; a.y=y; if (f) a.f=f; setIdle(a); } },
@@ -476,7 +482,10 @@ function LS(){ return M.storage||localStorage; }
 E.slot=function(){ return slot; }; E.setSlot=function(n){ slot=n; try{ localStorage.setItem('mala.slot',String(n)); }catch(e){} };
 function slotInfo(n){ try{ var raw=LS().getItem(SAVE+n); if (!raw) return null; var d=JSON.parse(raw); return {phase:d.GS.phase,ms:d.GS.playMs||0,at:d.at||0}; }catch(e){ return null; } }
 E.slotInfo=slotInfo;
-function saveGame(){ if (!room||E.screen!=='game'||room.noSave||GS.ended) return false; syncPos(); try{ LS().setItem(SAVE+slot,JSON.stringify({GS:GS,at:Date.now()})); return true; }catch(e){ return false; } }
+// live: ein ausdrücklicher Sicherungspunkt im Skript (A.save) – sonst gilt während einer Szene der Stand von ihrem Beginn
+function saveGame(live){ if (!room||E.screen!=='game'||room.noSave||GS.ended) return false; var g=GS;
+  if (busyV && live!==true && safeGS) g=safeGS; else syncPos();
+  try{ var js=JSON.stringify({GS:g,at:Date.now()}); if (busyV && g===GS) safeGS=JSON.parse(js).GS; LS().setItem(SAVE+slot,js); return true; }catch(e){ return false; } }
 function autosave(){ if (E.busy){ E.pendingSave=true; return; } saveGame(); }
 function hasSave(n){ try{ return !!LS().getItem(SAVE+(n||slot)); }catch(e){ return false; } }
 E.hasSave=hasSave; E.saveGame=saveGame; M.saveGame=saveGame;
@@ -491,13 +500,13 @@ function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) retur
 E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return false; if (n) E.setSlot(n); var ok=loadData({GS:JSON.parse(JSON.stringify(p.GS))}); if (ok) saveGame(); return ok; };
 function loadData(d){ try{ var base=validate(d); if (!base) return false;
     if (M.migrateSave) try{ M.migrateSave(base); }catch(e){ console.error(e); }   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js)
-    setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
-    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;
+    setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
+    timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
-E.newGame=function(ch){ setGame(freshGame()); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; E.pop=null; M.setGhostAudio(false);
+E.newGame=function(ch){ setGame(freshGame()); safeGS=null; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
   if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
-E.toTitle=function(){ saveGame(); M.scapeStop(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
+E.toTitle=function(){ saveGame(); M.scapeStop(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;

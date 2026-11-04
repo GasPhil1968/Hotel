@@ -4,7 +4,7 @@
 var P=M.P;
 async function pryComp(A){ var S=A.S; if (S.msgTaken) return A.m('Das Wärmefach ist leer. Nur noch ein Rest Ruß und ein Geruch nach Grießbrei.');
   if (!A.hasNote('f2_oven')){ await A.m('Ein Wärmefach, oben am Herd, mit einer kleinen Eisenklappe. Großmutter hat darin das Brot warm gehalten. Die Klappe ist festgerostet.'); return; }
-  if (!A.has('chisel')){ await A.m('Die Klappe sitzt fest. Mit den Fingern bekomme ich sie nicht auf. Etwas Schmales, Festes … Nedžads Stemmeisen.'); return; }
+  if (!A.has('chisel')){ A.setFlag('k2.f2.needChisel'); await A.m('Die Klappe sitzt fest. Mit den Fingern bekomme ich sie nicht auf. Etwas Schmales, Festes … Nedžads Stemmeisen.'); return; }
   await A.animM('reachM'); A.sfx('creak'); A.set('compOpen',true); await A.m('Das Stemmeisen unter die Klappe. Der Rost knirscht, dann springt sie auf.'); await A.wait(600);
   await A.reach(); A.set('msgTaken',true); A.give('rcm'); A.sfx('paper'); await A.m('Darin, gefaltet, grau vom Ruß: ein Formular. Oben ein rotes Kreuz.'); A.save(); }
 M.k2ReadRCM=async function(A){ await A.doc({style:'faded',title:'Poruka Crvenog križa · Rotkreuz-Nachricht',lines:['An: Marko Vuković, bei Ruža Vuković,','Vratnik, Sarajevo','Von: Lana Delić, Hotel Palma, Split · 18.12.1993','','Mali, ich warte jeden Abend auf der Treppe','im Hotel Palma. Wenn du nicht kommst,','komme ich dich holen. Meinen Fahrschein','habe ich noch. Hast du deinen?','','Mala']});

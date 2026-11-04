@@ -53,7 +53,10 @@ M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster 
   await A.m('Sie hat recht. Die Riva. Ein bisschen Luft, ein bisschen Meer. Nichts weiter.'); A.unlock('riva'); A.unlock('bar'); A.save(); };
 // ---------------------------------------------------------------- Spielstände aus der Zeit vor dem neuen Einstieg
 // Ohne split.intro.v ist ein Stand „alt“: neue Pflichtschritte gelten für ihn nicht. Wer den Praxistest im Hafenamt schon hatte, kennt Mala.
-M.migrateSave=function(G){ var f=G.flags||(G.flags={}); if (f['split.intro.v']) return;
+M.migrateSave=function(G){ var f=G.flags||(G.flags={}), inv=G.inv||(G.inv=[]);
+  // Reparatur: Spielstände, die mitten in Ivkas Abschied gespeichert wurden (Handschuhe schon übergeben, Schluss nicht gesichert), bekommen die Handschuhe zurück
+  if (f['c1.dinkoTold'] && !f['c1.done'] && inv.indexOf('gloves')<0) inv.push('gloves');
+  if (f['split.intro.v']) return;
   f['split.intro.legacy']=true; if (f['mk.test']){ f['split.intro.met']=true; delete f['mala.noSwitch']; }
   if (f['i1.done']) f['split.afterIvka.done']=true; };
 M.case3Call=async function(A){ if (M.case3CallImpl) return M.case3CallImpl(A); A.setFlag('c3.call'); };

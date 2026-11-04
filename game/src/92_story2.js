@@ -70,7 +70,7 @@ M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.ma
       c1_words:'Er hat es nie jemandem erzählt. Niemand weiß es. Außer uns.', c1_letter:'Ein Brief, der siebenundzwanzig Jahre zu spät kommt.',
       c1_came:'Ja. Er hat nicht gewartet. Sie hat gewartet. Einer von beiden muss es ja tun.',
       c2_luka:'Er glaubt, es ist August. Er riecht nach Sommer.', c2_gap:'Hinter den Kisten pfeift der Wind durch den Zaun.', c2_case:'Der Koffer liegt da, wo er ihn hingelegt hat. Die Tür hält ihn fest.',
-      c2_paper:'Ein gefaltetes Papier. Es wartet auch.', c2_unused:'Sie hat ihr Ticket aufgehoben wie einen Beweis. Nur dass sie nicht weiß, wofür.',
+      c2_paper:'Ein gefaltetes Papier. Es wartet auch.', c2_unused:'Sie hat den Zettel aufgehoben wie einen Beweis. Nur dass sie nicht weiß, wofür.',
       c2_note:'Sie hat gewartet. Er weiß es nicht.', c2_tape:'Ein Lied, das noch niemand gehört hat.',
       c3_bruno:'Er sucht ein Wort. Er sucht es seit achtzehn Jahren.', c3_f13:'Ein Mantel. Eine Dreizehn.',
       c3_fcrank:'Eine Kurbel. Er hat sie versteckt, damit niemand ihre Platte spielt.', c3_zagreb:'„Wo sie nicht mehr spielt.“ Er hat es so geschrieben, dass nur er es versteht.',
