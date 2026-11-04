@@ -231,7 +231,7 @@ var F={
  '+':[2,'.#.|###|.#.'],'*':[1,'#.#|.#.|#.#'],'&':[0,'.#..|#.#.|#.#.|.#..|#.##|#..#|.##.'],'%':[0,'#..#|...#|..#.|..#.|.#..|#...|#..#'],
  '=':[2,'###|...|###'],'#':[1,'.#.#.|#####|.#.#.|#####|.#.#.'],'<':[1,'..#|.#.|#..|.#.|..#'],'>':[1,'#..|.#.|..#|.#.|#..'],
  '„':[6,'#.#|#.#'],'“':[0,'#.#|#.#'],'”':[0,'#.#|#.#'],'‚':[6,'#|#'],'‘':[0,'#|#'],'’':[0,'#|#'],'…':[6,'#.#.#'],'·':[3,'#'],
- '°':[0,'###|#.#|###'],'ß':[0,'.##.|#..#|#..#|###.|#..#|#..#|###.|#...'],'€':[0,'.###|#...|###.|#...|###.|#...|.###'],
+ '°':[0,'###|#.#|###'],'ß':[0,'.##.|#..#|#..#|###.|#..#|#..#|###.|#...'],'ſ':[0,'.##|#..|#..|#..|#..|#..|#..'],'€':[0,'.###|#...|###.|#...|###.|#...|.###'],
  '↔':[2,'.#...#.|#######|.#...#.'],'☎':[1,'#...#|#####|.###.|.#.#.|.###.'],'[':[0,'##|#.|#.|#.|#.|#.|##'],']':[0,'##|.#|.#|.#|.#|.#|##'],'|':[0,'#|#|#|#|#|#|#'],'~':[2,'.#.#|#.#.'],'^':[0,'.#.|#.#'],'@':[0,'.##.|#..#|#.##|#.##|#.##|#...|.###'],'$':[0,'.###|#.#.|.###|..##|#.##|.###|..#.'],'{':[0,'.##|.#.|.#.|#..|.#.|.#.|.##'],'}':[0,'##.|.#.|.#.|..#|.#.|.#.|##.'],'▸':[1,'#..|##.|###|##.|#..'],'✓':[2,'....#|...#.|#.#..|.#...']
 };
 var FONT={};
@@ -2161,7 +2161,7 @@ var API={
   set:setR, has:has, give:give, take:take, first:firstTime, cycle:cycle, pick:pick, flag:flag, setFlag:setFlag, npc:npcHandle, R:RS,
   note:function(id,q){ return addNote(id,q); }, hasNote:hasNote, askNote:pickNote,
   choose:choose, overlay:showOverlay,
-  doc:function(d){ return showOverlay('doc',d); }, memory:function(d){ M.sfx('shimmer'); return showOverlay('memory',d); }, puzzle:function(d){ return showOverlay('puzzle',d); },
+  doc:function(d){ return showOverlay('doc',d); }, memory:function(d){ M.sfx('shimmer'); return showOverlay('memory',d); }, puzzle:function(d){ return showOverlay('puzzle',d); }, arrange:function(d){ return showOverlay('arrange',d); }, halves:function(d){ return showOverlay('halves',d); }, glyphs:function(d){ return showOverlay('glyphs',d); },
   card:function(c){ return showCard(c); }, fade:function(v,ms){ return fadeTo(v,ms); }, shake:function(ms){ E.shake=ms||300; },
   goto:function(id,o){ return gotoRoom(id,o); }, unlock:function(loc){ GS.map[loc]=true; }, unlocked:function(loc){ return !!GS.map[loc]; },
   phase:function(p){ setPhase(p); }, get phaseId(){ return GS.phase; },
@@ -2766,12 +2766,70 @@ M.defineOverlay('memory',function(fb,ov,gt){ var d=ov.data, x0=44, y0=8, w=232, 
   rows.slice(-maxRows).forEach(function(r){ M.text(fb,r[0],x0,ty,r[1]?P.x5:P.x3); ty+=9; });
   if (Math.floor(gt/500)%2) M.text(fb,ov.step<lines.length-1?'▸':'✓',x0+w-6,H-10,P.x4); });
 // Satzbau-Rätsel (Übersetzung)
-M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||(d.init?d.init.slice():d.slots.map(function(){ return 0; })); paper(20,8,280,178,{lines:[30,22],margin:12});
+// Felder mit -1 sind noch leer (d.empty: alle leer); „Vorlesen“ prüft erst, wenn jedes Feld belegt ist
+M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||(d.init?d.init.slice():d.slots.map(function(){ return d.empty?-1:0; })); paper(20,8,280,178,{lines:[30,22],margin:12});
   M.text(fb,d.title||'Übersetzung',36,12,P.r2); M.wrap(d.hint||'Tippe auf eine Zeile, um eine andere Fassung zu wählen.',250).forEach(function(l,i){ M.text(fb,l,36,22+i*9,P.s2); });
-  var lay=[]; d.slots.forEach(function(sl,i){ var y=44+i*22, hot=hoverUI==='z:'+i, bad=ov.bad===i; fb.rect(32,y-2,256,18,hot?P.s6:(bad?P.r4:P.s4)); M.text(fb,(i+1)+'.',36,y+3,P.r2); M.text(fb,sl[ov.sel[i]],48,y+3,P.n0); fb.px(280,y+4,P.n2); fb.px(281,y+5,P.n2); fb.px(280,y+6,P.n2); lay.push([32,y-2,256,18]); });
+  var lay=[]; d.slots.forEach(function(sl,i){ var y=44+i*22, hot=hoverUI==='z:'+i, bad=ov.bad===i; fb.rect(32,y-2,256,18,hot?P.s6:(bad?P.r4:P.s4)); M.text(fb,(i+1)+'.',36,y+3,P.r2); if (ov.sel[i]<0) M.text(fb,'…',48,y+3,P.s2); else M.text(fb,sl[ov.sel[i]],48,y+3,P.n0); fb.px(280,y+4,P.n2); fb.px(281,y+5,P.n2); fb.px(280,y+6,P.n2); lay.push([32,y-2,256,18]); });
   var by=44+d.slots.length*22+4, hot2=hoverUI==='zgo'; fb.rect(110,by,100,14,hot2?P.n2:P.n1); M.text(fb,d.button||'Vorlesen',160-(M.textWidth(d.button||'Vorlesen')>>1),by+3,P.s6); ov.lay={rows:lay,go:[110,by,100,14],close:[262,8,38,16]};
   M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2);
   if (ov.msg) M.wrap(ov.msg,250).forEach(function(l,i){ M.text(fb,l,36,by+18+i*9,P.r2); }); });
+// ---------------------------------------------------------------- weitere Rätselformen (Prüfbericht: nicht alles als Auswahlzeilen)
+// Jede legt ov.lay.hits an ({id, r}); Antippen geht an OVTAP[kind](ov, id). Gemeinsam: Knopf unten Mitte (id 'go'), „Zurück“ oben rechts (id 'x').
+var OVTAP={};
+function ovFrame(fb,ov,d,def){ paper(20,8,280,178,{lines:[30,22],margin:12}); M.text(fb,d.title||def,36,12,P.r2); M.text(fb,'Zurück',262,12,hoverUI==='o:x'?P.r3:P.s2); return [{id:'x',r:[258,8,42,16]}]; }
+function ovGo(fb,ov,d,hits,by){ var t=d.button||'Vorlesen', w=Math.max(100,M.textWidth(t)+16), x=160-(w>>1); fb.rect(x,by,w,16,hoverUI==='o:go'?P.n2:P.n1); M.text(fb,t,160-(M.textWidth(t)>>1),by+4,P.s6); hits.push({id:'go',r:[x,by,w,16]});
+  if (ov.msg) M.wrap(ov.msg,250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,by+19+i*9,P.r2); }); }
+// 1) Ordnen: antippen, dann ein zweites antippen = die beiden tauschen. Ist etwas gewählt, steht oben, was darin steht (Markos Übersetzung).
+M.defineOverlay('arrange',function(fb,ov){ var d=ov.data, hits=ovFrame(fb,ov,d,'Ordnen'); if (!ov.ord) ov.ord=d.start.slice();
+  var pk=(ov.pick!==undefined&&ov.pick!==null)?d.items[ov.ord[ov.pick]]:null; M.wrap(pk?(pk.gloss||''):(d.hint||''),250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,22+i*9,pk?P.n1:P.s2); });
+  var n=ov.ord.length, rh=20, y0=42;
+  ov.ord.forEach(function(k,i){ var it=d.items[k], y=y0+i*rh, hot=hoverUI==='o:r'+i, sel=ov.pick===i, bad=ov.bad===i;
+    fb.rect(32,y,256,rh-3,sel?P.y4:(hot?P.s6:(bad?P.r4:P.s4))); M.text(fb,(i+1)+'.',36,y+5,P.r2); M.text(fb,it.t,48,y+5,P.n0); hits.push({id:'r'+i,r:[32,y,256,rh-3]}); });
+  ovGo(fb,ov,d,hits,y0+n*rh+1); ov.lay={hits:hits}; });
+OVTAP.arrange=function(ov,id){ var d=ov.data; if (id==='x'){ E.closeOverlay(null); return; }
+  if (id==='go'){ var ids=ov.ord.map(function(k){ return d.items[k].id; }), res=d.check?d.check(ids):{ok:true}; if (res&&res.ok){ E.closeOverlay(ids); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; ov.pick=null; M.sfx('nope'); } return; }
+  if (!id||id[0]!=='r') return; var i=+id.slice(1); ov.bad=-1; ov.msg=null;
+  if (ov.pick===undefined||ov.pick===null){ ov.pick=i; M.sfx('click'); return; } if (ov.pick===i){ ov.pick=null; return; }
+  var t=ov.ord[i]; ov.ord[i]=ov.ord[ov.pick]; ov.ord[ov.pick]=t; ov.pick=null; M.sfx('page'); };
+// 2) Zwei Hälften: eine Hälfte antippen dreht sie um 180°, „Tauschen“ legt sie um. Die Rissränder zeigen, was zusammengehört.
+//    d.make() liefert {a:{w,h,c:Uint8Array,m:Uint8Array}, b:{…}, off:Versatz der zweiten Hälfte im ganzen Bild}; richtig: a links, b rechts, beide aufrecht.
+M.defineOverlay('halves',function(fb,ov,gt){ var d=ov.data, hits=ovFrame(fb,ov,d,'Zusammenlegen');
+  if (ov.joined && gt-ov.joinAt>900 && !ov.closing){ ov.closing=true; Promise.resolve().then(function(){ if (E.overlay===ov) E.closeOverlay(true); }); } if (!ov.pc) ov.pc=d.make(); if (!ov.st) ov.st=JSON.parse(JSON.stringify(d.start));
+  M.wrap(d.hint||'',250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,22+i*9,P.s2); });
+  var pc=ov.pc, gap=ov.joined?0:6, x0=160-((pc.off+pc.b.w+gap)>>1), y0=48, slots=[x0, x0+pc.off+gap];
+  [ov.st.left,ov.st.right].forEach(function(k,si){ var p=pc[k], rot=ov.st.rot[k], ox=slots[si];
+    for (var y=0;y<p.h;y++) for (var x=0;x<p.w;x++){ var sx=rot?p.w-1-x:x, sy=rot?p.h-1-y:y, q=sy*p.w+sx; if (!p.m[q]) continue; fb.px(ox+x,y0+y,p.c[q]); }
+    if (hoverUI==='o:p'+si && !ov.joined){ fb.hl(ox,ox+p.w-1,y0+p.h+2,P.r3); }
+    hits.push({id:'p'+si,r:[ox,y0,p.w,p.h]}); });
+  var by=y0+Math.max(pc.a.h,pc.b.h)+8, sw=M.textWidth('Tauschen')+16; fb.rect(36,by,sw,16,hoverUI==='o:sw'?P.s6:P.s3); M.text(fb,'Tauschen',44,by+4,P.n0); hits.push({id:'sw',r:[36,by,sw,16]});
+  ovGo(fb,ov,d,hits,by); ov.lay={hits:hits}; });
+OVTAP.halves=function(ov,id){ var d=ov.data, st=ov.st; if (ov.joined) return; if (id==='x'){ E.closeOverlay(null); return; } ov.msg=null;
+  if (id==='sw'){ var t=st.left; st.left=st.right; st.right=t; M.sfx('paper'); return; }
+  if (id==='p0'||id==='p1'){ var k=id==='p0'?st.left:st.right; st.rot[k]=st.rot[k]?0:180; M.sfx('page'); return; }
+  if (id==='go'){ if (st.left!=='a'||st.right!=='b'){ ov.msg=d.msgSide; M.sfx('nope'); return; } if (st.rot.a||st.rot.b){ ov.msg=d.msgRot; M.sfx('nope'); return; }
+    ov.joined=true; ov.joinAt=E.gt(); M.sfx('shimmer'); } };
+// 3) Schriftvergleich: oben die gefundene Schrifttafel, darunter die Wörter. Ein unsicheres Zeichen antippen wechselt seine Lesart.
+//    Zellen: {c:'G'} fest, oder {k:'u', o:['n','u','e'], ok:'u'} ein Kurrent-Zeichen mit Lesarten.
+function kurrentGlyph(fb,k,x,y,c){ var L=function(a,b,e,f){ fb.line(x+a,y+b,x+e,y+f,c); };
+  if (k==='e'){ L(0,9,1,5); L(1,5,2,9); L(2,9,3,5); L(3,5,4,9); }   // klein, eng
+  else if (k==='n'||k==='u'){ L(0,9,1,4); L(1,4,3,9); L(3,9,4,4); L(4,4,6,9); if (k==='u'){ L(1,1,2,2); L(2,2,4,2); L(4,2,5,1); } }
+  else if (k==='s'||k==='f'){ L(2,0,4,0); L(2,0,1,3); L(1,3,1,12); L(1,12,0,13); if (k==='f') L(0,5,3,5); }
+  else if (k==='r'){ L(0,9,1,5); L(1,5,2,7); L(2,7,4,5); } }
+M.defineOverlay('glyphs',function(fb,ov){ var d=ov.data, hits=ovFrame(fb,ov,d,'Schrift lesen'); if (!ov.rd) ov.rd=d.words.map(function(w){ return w.map(function(){ return -1; }); });
+  M.wrap(d.hint||'',250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,22+i*9,P.s2); });
+  // die Tafel: Zeichen und darunter der Buchstabe
+  var tx=40, ty=42; fb.rect(32,ty-4,256,30,P.s4); M.text(fb,d.tableTitle||'Tafel',36,ty-2,P.r2); tx=110;
+  d.table.forEach(function(t,i){ var x=tx+i*28; kurrentGlyph(fb,t.k,x,ty-2,P.k1); M.text(fb,t.lat,x,ty+13,P.n1); });
+  var y=ty+34;
+  d.words.forEach(function(w,wi){ var x=48; M.text(fb,(wi+1)+'.',36,y+4,P.r2);
+    w.forEach(function(cell,ci){ if (cell.c){ M.text(fb,cell.c,x,y+4,P.n0); x+=M.textWidth(cell.c)+1; return; }
+      var hot=hoverUI==='o:g'+wi+'_'+ci, bad=ov.bad===wi, r=ov.rd[wi][ci]; fb.rect(x-1,y-3,9,26,hot?P.s6:(bad?P.r4:P.s4)); kurrentGlyph(fb,cell.k,x,y-1,P.k1); M.text(fb,r<0?'?':cell.o[r],x+1,y+14,r<0?P.s2:P.g1); hits.push({id:'g'+wi+'_'+ci,r:[x-1,y-3,9,26]}); x+=10; });
+    y+=30; });
+  ovGo(fb,ov,d,hits,y); ov.lay={hits:hits}; });
+OVTAP.glyphs=function(ov,id){ var d=ov.data; if (id==='x'){ E.closeOverlay(null); return; }
+  if (id==='go'){ for (var wi=0;wi<d.words.length;wi++) if (ov.rd[wi].some(function(v,ci){ return v<0 && !d.words[wi][ci].c; })){ ov.bad=wi; ov.msg='Da fehlt noch etwas.'; M.sfx('nope'); return; }
+    var res=d.check?d.check(ov.rd):{ok:true}; if (res&&res.ok){ E.closeOverlay(ov.rd); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; M.sfx('nope'); } return; }
+  if (!id||id[0]!=='g') return; var p=id.slice(1).split('_'), w=+p[0], c=+p[1], cell=d.words[w][c]; ov.rd[w][c]=(ov.rd[w][c]+1)%cell.o.length; ov.bad=-1; ov.msg=null; M.sfx('page'); };
 
 // ---------------------------------------------------------------- Notizbuch: zwei Arten, im Menü umschaltbar
 // „Liste“ (wie in Blackwell): eine Seite, große Schrift, nur offene Hinweise, zwei antippen = verbinden.
@@ -2939,6 +2997,7 @@ function uiAt(x,y){
   var ov=E.overlay; if (ov){ var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };
     if (ov.kind==='notebook'){ return nbAt(x,y); }
     if (ov.kind==='puzzle'&&ov.lay){ if (inR(ov.lay.go)) return 'zgo'; if (inR(ov.lay.close)) return 'zx'; for (var z=0;z<ov.lay.rows.length;z++) if (inR(ov.lay.rows[z])) return 'z:'+z; return null; }
+    if (ov.lay && ov.lay.hits){ for (var h=0;h<ov.lay.hits.length;h++) if (inR(ov.lay.hits[h].r)) return 'o:'+ov.lay.hits[h].id; return null; }
     return null; }
   if (E.pop && !E.dlg){ var pr=popAt(x,y); if (pr!==null) return pr>=0?'p:'+pr:'pop'; }
   if (E.dlg){ var L=E.dlg.lay; if (!L) return null; var inR2=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }; if (inR2(L.close)) return 'cx'; if (inR2(L.up)) return 'cu'; if (inR2(L.dn)) return 'cd'; for (var ri=0;ri<L.rows.length;ri++) if (inR2(L.rows[ri].r)) return 'c:'+L.rows[ri].k; return null; }
@@ -2972,9 +3031,10 @@ async function click(x,y){
   if (E.screen!=='game') return;
   var ov=E.overlay;
   if (ov){ if (ov.kind==='notebook'){ await notebookTap(x,y); return; }
+    if (OVTAP[ov.kind]){ var uo=uiAt(x,y); OVTAP[ov.kind](ov,uo&&uo.slice(0,2)==='o:'?uo.slice(2):null); return; }
     if (ov.kind==='memory'){ var n=(ov.data.lines||[]).length; if (ov.step<n-1){ ov.step++; M.sfx('shimmer'); } else E.closeOverlay(); return; }
-    if (ov.kind==='puzzle'){ var u2=uiAt(x,y); if (!u2) return; if (u2==='zx'){ E.closeOverlay(null); return; } if (u2==='zgo'){ var res=ov.data.check?ov.data.check(ov.sel):{ok:true}; if (res&&res.ok){ E.closeOverlay(ov.sel.slice()); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; M.sfx('nope'); } return; }
-      if (u2[0]==='z'){ var zi=+u2.slice(2); ov.sel[zi]=(ov.sel[zi]+1)%ov.data.slots[zi].length; ov.bad=-1; ov.msg=null; M.sfx('page'); } return; }
+    if (ov.kind==='puzzle'){ var u2=uiAt(x,y); if (!u2) return; if (u2==='zx'){ E.closeOverlay(null); return; } if (u2==='zgo'){ var gap=ov.sel.indexOf(-1); if (gap>=0){ ov.bad=gap; ov.msg='Da fehlt noch etwas.'; M.sfx('nope'); return; } var res=ov.data.check?ov.data.check(ov.sel):{ok:true}; if (res&&res.ok){ E.closeOverlay(ov.sel.slice()); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; M.sfx('nope'); } return; }
+      if (u2[0]==='z'){ var zi=+u2.slice(2); ov.sel[zi]=(ov.sel[zi]<0?0:(ov.sel[zi]+1)%ov.data.slots[zi].length); ov.bad=-1; ov.msg=null; M.sfx('page'); } return; }
     E.closeOverlay(); return; }
   if (E.speech && (E.busy||E.dlg)){ if (E.gt()-E.speech.at>200) E.endSpeech(); return; }
   if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
@@ -23470,8 +23530,10 @@ async function verifyNote(A,S){ var F=A.G.flags; await S.say('…'); await S.say
   await S.say('Montag zu. Inventur. Ich wollte es Stipe und Frane nachher sagen. Sie werden jammern.'); await S.say('Und jetzt sag mir, wie du das gemacht hast.');
   var c=await A.choose([{t:'„Gute Augen.“',id:'eyes'},{t:'„Jemand hat es mir vorgelesen.“',id:'true'},{t:'(Nur lächeln.)',id:'smile',silent:true}],{title:'Sanja'});
   if (c==='true') await S.say('Wer? Dein Kaffee?'); else if (c==='eyes') await S.say('Du hältst die Zeitung eine Armlänge weit weg, Marko.'); else await S.say('Lächle nicht so. Das kenne ich von dir nicht.');
-  F['split.afterIvka.verified']=true; await A.wait(500);
-  if (A.malaHere()){ await A.g('Und?'); await A.m('Da liegt ein Zettel. Und darauf steht, was du gesagt hast.'); await A.g('Das ist ein Anfang.'); await A.wait(500); await A.g('Ich will ans Wasser. Nicht weit.'); }
+  F['split.afterIvka.verified']=true; await A.wait(500); await S.say('Und sag Stipe nichts. Das ist meine Sache.');
+  if (A.malaHere()){ await A.g('Und?'); await A.m('Da liegt ein Zettel. Und darauf steht, was du gesagt hast.'); await A.wait(700); await A.m('Und jetzt weiß ich etwas, das Sanja selbst sagen wollte.');
+    await A.g('So ist es jeden Tag. Ich sehe, was keiner zeigen will.'); await A.m('Und was machst du damit?'); await A.g('Meistens nichts.'); await A.wait(700);
+    await A.m('Und über dich? Was siehst du da?'); await A.wait(1100); await A.g('…'); await A.wait(500); await A.g('Ich will ans Wasser. Nicht weit.'); }
   A.save(); }
 var NOTE_LINES=['ČETVRTAK','mlijeko 6 l, limun 2 kg','nazvati Ivicu – aparat opet pišti!','PONEDJELJAK ZATVORENO – inventura','(reći Stipi i Frani!!)'];
 async function readNote(A){ await A.doc({style:'letter',title:'Ein Zettel, mit Kugelschreiber',w:210,lines:NOTE_LINES}); }
@@ -23496,7 +23558,8 @@ M.malaReturns=async function(A){ var G=A.G; delete G.flags['split.afterIvka.away
   await A.m('Wo warst du?'); await A.g('Hier. Bei dir. Weit weg kann ich nicht, das weißt du.');
   await A.g('Seit wir durch das Tor zurück sind, ist es … dünner. Als wäre unterwegs etwas verrutscht. Ich habe gerufen. Du hast durch mich hindurchgesehen.');
   await A.m('Und jetzt?'); await A.g('Jetzt nicht mehr. Ich weiß nicht, warum. Ich weiß nicht, ob es wiederkommt.');
-  await A.wait(600); await A.m('Ich will nicht nur glauben, was du sagst. Ich will es prüfen. Hier. Jetzt.'); await A.g('Dann such dir etwas aus.');
+  // kein zweiter Wahrnehmungstest (Prüfbericht): Marko glaubt ihr. Die Frage ist, was es heißt, über die Lebenden Dinge zu wissen
+  await A.wait(600); await A.m('Ich glaube dir. Das ist ja das Problem.'); await A.m('Wenn ich dir glaube, glaube ich auch alles, was du über andere siehst. Über Sanja. Über jeden hier.'); await A.g('Dann fang mit etwas Kleinem an. Etwas, das niemandem wehtut.');
   G.flags['mala.lock']=false; A.save(); };
 async function talkRegulars(A){ var St=A.npc('stipe'), Fr=A.npc('frane');
   if (A.G.phase!=='c2'){ await St.say('Briškula. Wir reden nicht beim Spielen.'); return; }
@@ -23512,7 +23575,8 @@ var HS=[
  {id:'sanja',npc:'sanja',name:'Sanja',hgt:40,vis:function(S,GS){ return open(GS); },talk:talkSanja,r:function(S,GS,a){ return [Math.round(a.x)-9,Math.round(a.y)-50,18,30]; },
    look:'Sanja. Kurze schwarze Haare, eine Schürze, ein Blick, der seit fünfzehn Jahren Gäste sortiert.',
    g:{look:'Sie mag ihn. Sie würde es nie sagen.',listen:async function(A){ if (A.G.phase==='i1m') return A.g('Sie zählt Milchflaschen, halblaut. Bei sechs hört sie auf.'); if (!A.hasNote('c2_shop')) return A.g('Sie summt beim Spülen. Ein Lied von der Riva. Dann hört sie plötzlich auf.'); await A.g('Sie redet leise mit sich selbst: „Zwölf Jahre. Und jetzt kommt er mit den Namen.“'); }},
-   give:{ letter_t:async function(A){ if (A.flag('c1.letterOpen')) return A.npc('sanja').say('Der ist doch offen. Lies ihn.'); return M.steamLetter(A,'bar'); },
+   give:{ letter_t:async function(A){ var Sa=A.npc('sanja'); if (A.hasNote('c1_letter')) return Sa.say('Den hast du doch gelesen. Das sehe ich dir an.');   // Sanja sieht, in welchem Zustand der Brief ist
+       if (A.flag('c1.letterOpen')){ await Sa.say('Offen ist er. Lesen kann ihn so keiner mehr. Das Salz nimmt die Tinte zuerst.'); return A.m('Ich weiß.'); } return M.steamLetter(A,'bar'); },
      newspaper:'„Behalt sie. Ich habe zwei.“', tickets:async function(A){ var S=A.npc('sanja'); await S.say('Zwei Tickets nach Ancona …'); await A.wait(900); await S.say('Woher hast du die?'); await A.m('Aus der Ledana.'); return sanjaStory(A,S); } }},
  {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:'Er schummelt. Nur ein bisschen. Seit vierzig Jahren.',listen:'Er zählt die Punkte laut und falsch.'}},
  {id:'frane',npc:'frane',name:'Frane',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Frane, Glatze mit weißem Kranz, die Karten fächerförmig vor der Nase.',g:{look:'Er lässt Stipe gewinnen, wenn Stipe traurig ist. Stipe merkt es nicht.',listen:'„Meine Frau hat immer gesagt, ich spiele schlecht.“ Er lächelt dabei.'}},
@@ -23646,7 +23710,7 @@ async function finalBench(A){ if (A.flag('k2.f2.ride')) return; A.setFlag('k2.f2
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Zur Stadt',exit:{to:'map'},look:'Die Straße hinaus, an der Miljacka entlang.',canExit:async function(A){ if (A.G.phase==='k2_pro' && !A.flag('k2.p2.back')){ await A.m('Nicht ohne Mala.'); return false; } if (A.G.phase==='k2_fin_n' && A.flag('k2.f2.rideEnd') && !A.flag('k2.f2.ride')){ await A.g('Noch nicht. Komm zur Bank.'); return false; } return true; }},
- {id:'lane_kula',name:'Gasse zur Sahat-kula',exit:{to:'kula'},look:'Eine Gasse zwischen Holzläden. Über den Dächern der Uhrturm.',canExit:async function(A){ if (A.G.phase==='k2_pro' && !A.flag('k2.p2.back')){ await A.m('Erst Mala.'); return false; } if (A.G.phase==='k2_fin_n'){ await A.g('Nicht heute.'); return false; } A.unlock('carsija'); return true; },
+ {id:'lane_kula',name:'Gasse zur Sahat-kula',exit:{to:'kula'},look:'Eine Gasse zwischen Holzläden. Über den Dächern der Uhrturm.',canExit:async function(A){ if (A.G.phase==='k2_pro' && !A.flag('k2.p2.back')){ await A.m('Ohne Mala nicht. Eben war sie noch neben mir.'); return false; } if (A.G.phase==='k2_fin_n'){ await A.g('Nicht heute.'); return false; } A.unlock('carsija'); return true; },
    g:{look:'Da hinten ist ein Turm, der falsch geht. Für mich geht er richtig.'}},
  {id:'lane_kazan',name:'Kazandžiluk',exit:{to:'kazandziluk'},look:'Die Gasse der Kupferschmiede. Man hört sie, bevor man sie sieht.',canExit:async function(A){ if (A.G.phase==='k2_pro'||A.G.phase==='k2_pro_n'){ await A.m('Die Läden sind zu. Morgen.'); return false; } if (A.G.phase==='k2_fin_n'){ await A.g('Nicht heute.'); return false; } return true; },
    g:{look:'Hämmer. Wie ein Herz aus Kupfer.'}},
@@ -23917,7 +23981,7 @@ var HS=[
  {id:'door',name:'Wohnungstür',r:[278,30,30,90],st:R3.st(228,62,'R'),exit:{to:'map'},pri:2,
    canExit:async function(A){ var p=A.G.phase, fresh=!A.flag('split.intro.legacy');
      if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Ich bleibe noch. Hinter mir blinkt etwas rot.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht mit diesem Kopf. Der ist noch nicht wach.'); return false; }
-       if (fresh && !A.flag('pro.translated')){ await A.m('Erst Seite einunddreißig. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
+       if (fresh && !A.flag('pro.translated')){ await A.m('Seite einunddreißig liegt noch auf dem Schreibtisch. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
      // Mittwochabend: bevor er geht, das erste lange Kennenlernen (nur einmal; alte Spielstände in der Stimmenphase behalten den alten Weg)
      if (p==='c1' && fresh && A.flag('split.intro.v') && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
@@ -24482,15 +24546,20 @@ async function talkSacir(A){ var Sc=A.npc('sacir');
 // ---------------------------------------------------------------- Tomažs Briefe (Slowenisch)
 M.k2ReadLetters=async function(A){ if (A.hasNote('s1_letters')){ return A.m('„Ich habe bis elf gewartet. Um halb zwölf musste ich in der Kaserne sein. Ich schreibe, bis du antwortest.“ Sechs Briefe. Der letzte ist ganz kurz.'); }
   await A.doc({style:'letter',title:'Ljubljana, 20. novembra 1972',lines:['Draga Emina,','','čakal sem do enajstih. Ob pol dvanajstih sem moral','biti v vojašnici. Nisi prišla. Ne vem, zakaj.','Pisal ti bom, dokler mi ne odgovoriš.','','Tvoj Tomaž']});
-  await A.m('Slowenisch. Ich lese es. Aber ich will es richtig sagen, nicht ungefähr.');
-  var res=await A.puzzle({title:'Tomažs Brief übersetzen',hint:'Slowenisch ist nah am Bosnischen, aber nicht gleich. „Čakal“ heißt gewartet, „vojašnica“ ist die Kaserne. Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',
-    slots:[['„Ich habe bis elf gewartet.','„Ich habe bis sieben gewartet.','„Ich habe elf Jahre gewartet.'],['Um halb zwölf musste ich in der Kaserne sein.','Um halb elf musste ich nach Hause.','Um zwölf hat die Kaserne zugemacht.'],['Du bist nicht gekommen. Ich weiß nicht, warum.','Du bist zu spät gekommen, ich weiß.','Du wolltest nicht kommen.'],['Ich schreibe dir, bis du antwortest.“','Ich schreibe dir nie mehr.“','Schreib mir, wenn du willst.“']],
-    init:[1,1,1,1],
-    check:function(sel){ var ok=[0,0,0,0], msg=['„Do enajstih“ – bis elf. Nicht sieben, nicht elf Jahre.','„Ob pol dvanajstih“ ist halb zwölf, wie bei uns. Und „vojašnica“ ist die Kaserne.','„Nisi prišla. Ne vem, zakaj.“ Er weiß es nicht. Er wirft ihr nichts vor.','„Pisal ti bom, dokler mi ne odgovoriš.“ Er hört nicht auf.'];
-      for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msg[i]}; return {ok:true}; }});
-  if (!res){ await A.m('Später. Ich will es nicht falsch sagen.'); return; }
+  await A.m('Slowenisch. Sechs Briefe, der Gummi um sie herum ist zerfallen. Erst die Reihenfolge, dann weiß ich, was er ihr sagen wollte.');
+  // Ordnen statt Auswahlzeilen: Stempel, Anrede und Inhalt verraten die Reihenfolge; angetippt zeigt jeder Brief Markos Übersetzung
+  var L=[{id:'l1',t:'20.XI.72 · „Draga Emina, čakal sem do enajstih …“',gloss:'Stempel 20. November 72. „Liebe Emina, ich habe bis elf gewartet. Du bist nicht gekommen …“'},
+    {id:'l2',t:'..XII.72 · „Draga Emina, od včeraj sem doma …“',gloss:'Stempel Dezember 72, der Tag ist verwischt. „Liebe Emina, seit gestern bin ich zu Hause …“'},
+    {id:'l3',t:'– · „Draga Emina, vesel božič …“',gloss:'Kein Stempel. „Liebe Emina, frohe Weihnachten. Zu Hause ist es schön und leer …“'},
+    {id:'l4',t:'..I.73 · „Emina, si dobila moja pisma?“',gloss:'Stempel Januar 73. „Emina, hast du meine Briefe bekommen?“ Ohne „Liebe“.'},
+    {id:'l5',t:'– · „Emina, ne bom več vprašal, zakaj.“',gloss:'Kein Stempel. „Emina, ich werde nicht mehr fragen, warum.“'},
+    {id:'l6',t:'..III.73 · „E., še čakam.“',gloss:'Stempel März 73. „E., ich warte noch.“ Eine einzige Zeile.'}];
+  var WHY={l1:'Der erste ist der, in dem er erklärt, was an dem Abend war.',l2:'Erst kommt er nach Hause. Dann ist Weihnachten.',l3:'Weihnachten liegt zwischen Dezember und Januar.',l4:'Erst fragt er, ob sie seine Briefe bekommt. Dann hört er auf zu fragen.',l5:'Die Anrede wird kürzer: „Draga Emina“, dann „Emina“, dann nur noch „E.“',l6:'Der letzte hat nur eine Zeile.'};
+  var res=await A.arrange({title:'Tomažs Briefe ordnen',hint:'Einen Brief antippen zeigt, was darin steht. Einen zweiten antippen tauscht die beiden.',button:'So lesen',items:L,start:[3,0,5,2,4,1],
+    check:function(ids){ for (var i=0;i<ids.length;i++) if (ids[i]!=='l'+(i+1)) return {ok:false,bad:i,msg:WHY['l'+(i+1)]}; return {ok:true}; }});
+  if (!res){ await A.m('Später. Ich will sie in der richtigen Reihenfolge lesen.'); return; }
   await A.m('„Ich habe bis elf gewartet. Um halb zwölf musste ich in der Kaserne sein. Du bist nicht gekommen. Ich weiß nicht, warum. Ich schreibe dir, bis du antwortest.“'); A.note('s1_letters');
-  await A.wait(600); await A.m('Sechs Briefe. Der letzte, vom März dreiundsiebzig, hat nur eine Zeile: „Ich warte noch.“'); if (A.G.malaOn) await A.g('Er hat geschrieben. Und sie hat gewartet. Und dazwischen ein Spiegel.'); };
+  await A.wait(600); await A.m('Erst „Liebe Emina“, dann nur noch „Emina“, zuletzt „E.“ Der letzte, vom März dreiundsiebzig, hat eine Zeile: „Ich warte noch.“'); if (A.G.malaOn) await A.g('Er hat geschrieben. Und sie hat gewartet. Und dazwischen ein Spiegel.'); };
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'door',name:'Tür',exit:{to:'kula'},look:'Die Tür zur Kula. Draußen der Nebel, drinnen die Wärme.'},
@@ -24740,6 +24809,10 @@ async function kulaStrikes(A){ var T=A.npc('tomaz'), S=A.S; A.music('silence'); 
   await A.wait(1200); await T.say('Sie war da.'); await A.wait(600); A.setFlag('k2.s1.free'); A.sfx('shimmer'); A.music('k2_duh');
   if (A.malaHere() && T.actor){ await A.walkG(Math.round(T.actor.x)-26,Math.round(T.actor.y)+2); } else A.malaJoin({x:Math.round(A.marko.x)-22,y:Math.round(A.marko.y)+2,f:'R'});
   A.G.flags['mala.lock']=false; await A.switchTo('mala'); await A.wait(500); await A.g('Tomaž. Die Leine ist los.'); await T.say('Ich merke es. Ich bin ganz leicht.'); await A.g('Ich kann dich hinüberbringen. Es ist nicht weit.'); await T.say('Darf ich ihr noch …'); await A.g('Sie hört dich nicht. Aber sie weiß es.');
+  // ein Geist gibt etwas her, wenn er losgelassen hat – für einen Atemzug (bereitet Malas Fahrschein in der letzten Nacht vor)
+  await A.wait(900); await T.say('Der Zettel. Nehmen Sie ihn. Ich brauche ihn nicht mehr.'); await A.wait(600);
+  await A.narrate('Er hält mir Eminas Zettel hin. Ich nehme ihn, ohne nachzudenken. Er ist warm. Für einen Atemzug liegt ihre Schrift in meiner Hand.'); A.sfx('shimmer'); await A.wait(1400);
+  await A.narrate('Dann ist da nur kalte Luft.'); await A.m('Ich hatte ihn. Wirklich.'); await A.g('Wer losgelassen hat, kann etwas hergeben. Einmal.'); await A.m('Und du?'); await A.wait(900); await A.g('Ich halte noch fest.'); A.setFlag('k2.s1.noteGiven');
   T.idle('wait'); A.save(); }
 async function crossTomaz(A){ var T=A.npc('tomaz'); A.G.flags['mala.lock']=true; A.music('k2_duh'); var sp=M.spot('kula','bench'), bx=sp[0]+(sp[2]>>1), by=M.apos('kula','tomaz',[150,122,'F'])[1];
   await A.g('Komm.'); await T.say('Kommt der Übersetzer mit?'); await A.g('Wenn er will.'); await A.crossOpen(bx+20,by+2,{w:18,h:74});
@@ -25344,11 +25417,13 @@ async function talkAmra(A){ var Am=A.npc('amra');
   ]; }); }
 async function kurrentAkte(A,Am){ if (!A.has('kurrent')){ await Am.say('Eine Tafel? Haben Sie eine?'); await A.m('Ich weiß, wo eine hängt.'); await Am.say('Dann holen Sie sie. Ich warte hier. Ich warte immer hier.'); return; }
   await Am.say('Hier. Drei Wörter, die ich nicht lesen kann. Der Rest ist Zahlen.'); await A.doc({style:'faded',title:'Bauakte 1894 · Rathaus Sarajevo',lines:['… die ⟨Grnndmaner⟩ gegen die Miljacka','ist nicht tiefer als ⟨drei⟩ Meter zu führen,','da sonst das ⟨Gnnndwaſſer⟩ eindringt.','gez. Wittek, Architekt']});
-  var res=await A.puzzle({title:'Die Bauakte lesen',hint:'Laut Tafel sieht ein Kurrent-„e“ aus wie ein „n“, das „u“ trägt einen Bogen, das lange „ſ“ sieht aus wie ein „f“. Tippe auf eine Zeile, um eine Lesart zu wählen.',button:'Vorlesen',
-    slots:[['Die Grnndmaner …','Die Grundmauer …','Die Grundmaner …'],['… nicht tiefer als drei Meter …','… nicht tiefer als drn Meter …','… nicht tiefer als dnei Meter …'],['… da sonst das Grundwasser eindringt.','… da sonst das Gnnndwaffer eindringt.','… da sonst das Grundwaffer eindringt.']],
-    init:[0,1,1],
-    check:function(sel){ var ok=[1,0,0], msg=['Amra: „Grnndmaner? Das klingt wie ein Husten.“ (Kurrent: das „e“ sieht aus wie ein „n“.)','Amra: „Das ist doch eine Zahl, oder? Drn ist keine Zahl.“','Amra: „Waffer? Gibt es auf Deutsch Waffer?“ (Das lange „ſ“ sieht aus wie ein „f“.)'];
-      for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msg[i]}; return {ok:true}; }});
+  // Schriftvergleich statt Auswahlzeilen: die unsicheren Zeichen so lesen, wie Jakobs Tafel sie zeigt
+  var U=['n','u','e'];
+  var res=await A.glyphs({title:'Die Bauakte lesen',hint:'Unsichere Zeichen antippen und mit Jakobs Tafel vergleichen.',tableTitle:'Tafel',button:'Vorlesen',
+    table:[{k:'e',lat:'e'},{k:'n',lat:'n'},{k:'u',lat:'u'},{k:'r',lat:'r'},{k:'s',lat:'ſ'},{k:'f',lat:'f'}],
+    words:[[{c:'Gr'},{k:'u',o:U,ok:1},{c:'ndma'},{k:'u',o:U,ok:1},{k:'e',o:U,ok:2},{c:'r'}],[{c:'d'},{k:'r',o:['n','r'],ok:1},{k:'e',o:['n','e'],ok:1},{c:'i'}],[{c:'Gr'},{k:'u',o:U,ok:1},{c:'ndwa'},{k:'s',o:['f','ſ'],ok:1},{k:'s',o:['f','ſ'],ok:1},{c:'er'}]],
+    check:function(rd){ var msg=['Amra: „Grnndmaner? Das klingt wie ein Husten.“ Auf der Tafel trägt das „u“ einen Bogen. Das „e“ ist kleiner als das „n“.','Amra: „Das ist doch eine Zahl, oder? Drn ist keine Zahl.“','Amra: „Waffer? Gibt es auf Deutsch Waffer?“ Das „f“ hat einen Querstrich, das lange „ſ“ nicht.'], W=this.words;
+      for (var w=0;w<W.length;w++) for (var c=0;c<W[w].length;c++){ var cell=W[w][c]; if (cell.k && rd[w][c]!==cell.ok) return {ok:false,bad:w,msg:msg[w]}; } return {ok:true}; }});
   if (!res){ await Am.say('Überlegen Sie. Ich habe drei Jahre auf diese drei Wörter gewartet.'); return; }
   await A.m('„Die Grundmauer gegen die Miljacka ist nicht tiefer als drei Meter zu führen, da sonst das Grundwasser eindringt.“'); await Am.say('Drei Meter!'); await Am.say('Wir wollten fünf graben, für die Heizung. Sie haben uns gerade den Keller gerettet. Und mir die Stelle.');
   await A.wait(500); await Am.say('Was wollen Sie? Geld habe ich nicht. Ich bin Restauratorin.'); await A.m('Heute Abend in die Vijećnica. Für zehn Minuten.'); await A.wait(600);
@@ -25526,8 +25601,11 @@ M.defineScape('office',{beds:['room','neon','seaFar'],step:'tile',ev:[['radio',8
 var AH=[
  {id:'door',name:'Tür',gexit:{to:'office'},look:'Die Tür.',g:{look:'Zurück zu ihm.'}},
  {id:'shelf_40s',name:'Regal: 1946–1959',g:{look:'Neunzehnhundertsechsundvierzig, siebenundvierzig, achtundvierzig … Die Jahre nach dem Krieg sind dünn. Es fuhr nicht viel.',sense:'Hier sind die Ordner kalt wie Stein. Niemand hat sie je wieder angefasst.'}},
- {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ await A.g('Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.'); A.setFlag('c1.found1984'); A.note('c1_1948'); await A.g('Ich kann ihn nicht herausziehen.'); },
-   sense:async function(A){ await A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.'); if (!A.hasNote('c1_1948')){ A.setFlag('c1.found1984'); A.note('c1_1948'); } }}},
+ // das Rückenschild ist ausgeblichen: lesen kann Mala es nur, indem sie die Schrift spürt, die nicht mehr da ist (dieselbe Fähigkeit braucht später Tonćis Brief)
+ {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ if (A.hasNote('c1_1948')) return A.g('Neunzehnvierundachtzig, bei achtundvierzig. Ich kann ihn nicht herausziehen.'); await A.g('Ein Ordner im Fach „1948“, dicker als die anderen. Das Schild auf dem Rücken ist ausgeblichen. Lesen kann man da nichts mehr.'); },
+   sense:async function(A){ if (A.hasNote('c1_1948')) return A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.');
+     A.sfx('shimmer'); await A.g('Die Schrift auf dem Schild ist weg. Die Hand, die sie geschrieben hat, nicht.'); await A.wait(500); await A.g('Eins. Neun. Acht. Vier.'); await A.g('Neunzehnvierundachtzig. Und jemand hat ihn bei achtundvierzig einsortiert.');
+     A.setFlag('c1.found1984'); A.note('c1_1948'); await A.wait(400); await A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.'); await A.g('Ich kann ihn nicht herausziehen.'); }}},
  {id:'shelf_80s',name:'Regal: 1980–1989',g:{look:'Die Achtziger. Dicke Ordner. Damals fuhren viele.'}},
  {id:'gap_1984',name:'Lücke',g:{look:'Zwischen 1983 und 1985 ist eine Lücke. So breit wie ein Jahr.'}},
  {id:'desk',name:'Schreibtisch',g:{look:'Eine Schreibmaschine unter einer Haube aus Staub.',sense:'Hier hat jemand jahrelang Tee getrunken und Abfahrtszeiten abgeschrieben. Mladen. Er war einmal jung.'}},
@@ -25622,6 +25700,12 @@ M.room('ostava',{ name:'Kammer', scape:'k2_ostava', music:'',   // bewusst Still
 'use strict';
 var P=M.P;
 function lvl(A){ return A.G.flags['c3.lvl']||0; } function setLvl(A,n){ if (n>lvl(A)) A.G.flags['c3.lvl']=n; }
+// Brunos Satz wächst aus drei Erinnerungen, in beliebiger Reihenfolge: Danica (Foto), Ljerka am Klavier (Klavierschule), der Umschlag aus Zagreb
+var INSIGHT={ photo2:'c3.ins.danica', musicbook:'c3.ins.ljerka', envelope:'c3.ins.zagreb' };
+function insights(A){ return ['c3.ins.danica','c3.ins.ljerka','c3.ins.zagreb'].filter(function(k){ return A.G.flags[k]; }).length; }
+async function gainInsight(A,B,item){ var k=INSIGHT[item]; if (!k || A.G.flags[k]) return; A.G.flags[k]=true; var n=insights(A); setLvl(A,n);
+  if (n<3){ await A.wait(600); await B.say('… ne … još ne …'); await A.m('Da ist ein Satz in ihm. Er bekommt ihn noch nicht zusammen.'); return; }
+  await A.wait(800); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); }
 function brunoInLodge(GS){ return GS.phase==='c3_night' && !GS.flags['c3.brunoUp'] && !GS.flags['c3.done']; }
 function brunoInSalon(GS){ return GS.phase==='c3_night' && !!GS.flags['c3.brunoUp'] && !GS.flags['c3.gone']; }
 function ljerkaUp(GS){ return GS.phase==='c3'; }
@@ -25705,17 +25789,20 @@ async function brunoMala(A,B){
     {t:'Woher kennst du mich?',once:'bm2',go:async function(A){ await B.say('Trideset i jedan … zima … stube … čaj … kutija …'); await A.wait(800); await A.g('Hör auf.'); await A.g('Er ist alt, und ihm fehlen die Wörter. Er verwechselt Gesichter.'); }},
     {t:'(Gehen.)',bye:true}
   ]; }); }
-async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übersetzen',hint:'Bruno: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.“ Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',
-    slots:[['Ljerka,','Danica,','Gospodine,'],['verzeih mir.','vergiss mich.','verkauf das Hotel.'],['Ich habe deinen Brief aus Zagreb versteckt,','Ich habe deine Mutter allein gelassen,','Ich habe das Klavier verkauft,'],['weil ich Angst hatte, allein zu sein.','weil du zu jung warst.','weil das Hotel dich gebraucht hat.'],['Spiel wieder.','Geh nach Zagreb.','Schließ den Salon ab.']],
-    check:function(sel){ var msgs=['Bruno schüttelt den Kopf: „Ne … Ljerka. Ljerka.“','Bruno: „Ne … perdonami … oprosti …“ (verzeih)','Bruno: „Pismo … Zagreb … ja sam ga sakrio …“ (Ich habe ihn versteckt.)','Bruno: „Ne hotel … ne … paura … sam …“ (Angst … allein)','Bruno: „Sviraj … sviraj …“ (Spiel.)'];
-      for (var i=0;i<sel.length;i++) if (sel[i]!==0) return {ok:false,bad:i,msg:msgs[i]}; return {ok:true}; }});
+// die Felder beginnen leer; die richtige Fassung steht nicht immer an derselben Stelle
+async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übersetzen',hint:'Bruno: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.“ Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',empty:true,
+    slots:[['Danica,','Ljerka,','Gospodine,'],['vergiss mich.','verkauf das Hotel.','verzeih mir.'],['Ich habe deinen Brief aus Zagreb versteckt,','Ich habe das Klavier verkauft,','Ich habe deine Mutter allein gelassen,'],['weil das Hotel dich gebraucht hat.','weil ich Angst hatte, allein zu sein.','weil du zu jung warst.'],['Geh nach Zagreb.','Schließ den Salon ab.','Spiel wieder.']],
+    check:function(sel){ var ok=[1,2,0,1,2], msgs=['Bruno schüttelt den Kopf: „Ne … Ljerka. Ljerka.“','Bruno: „Ne … perdonami … oprosti …“ (verzeih)','Bruno: „Pismo … Zagreb … ja sam ga sakrio …“ (Ich habe ihn versteckt.)','Bruno: „Ne hotel … ne … paura … sam …“ (Angst … allein)','Bruno: „Sviraj … sviraj …“ (Spiel.)'];
+      for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msgs[i]}; return {ok:true}; }});
   if (!res) return;
   await A.m('„Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“'); await A.wait(900);
   await B.say('Da. Tako.'); await A.wait(600); await B.say('Sada. Molim.'); A.note('c3_message'); A.setFlag('c3.translated'); await A.m('„Jetzt. Bitte.“'); A.save(); }
 async function showToBruno(A,item){ var B=A.npc('bruno');
-  if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); setLvl(A,1); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.'); return; }
-  if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); setLvl(A,Math.max(2,lvl(A))); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“'); return; }
-  if (item==='envelope'){ B.agitate(3200); await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
+  if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.');
+    if (!A.G.flags['c3.ins.danica']){ await A.wait(700); await B.say('… pa je otišla … a ja … sam …'); await A.m('„Und dann ist sie gegangen. Und ich … allein.“'); } return gainInsight(A,B,'photo2'); }
+  if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“');
+    if (!A.G.flags['c3.ins.ljerka']){ await A.wait(700); await B.say('Sviraj, mala … sviraj …'); await A.m('„Spiel, Kleine.“'); } return gainInsight(A,B,'musicbook'); }
+  if (item==='envelope'){ B.agitate(3200); await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); await A.m('„Meine Schuld. Angst. Allein.“'); return gainInsight(A,B,'envelope'); }
   if (item==='keyring') return B.say('Ključevi … moji … salon …');
   if (item==='crank') return B.say('Ručka … glazba … nedjelja …');
   if (item==='record') return B.say('„Večer na Rivi“ … Danica …');
@@ -25741,15 +25828,27 @@ async function wakeLjerka(A){ await A.anim('knock'); A.sfx('knock'); await A.wai
       var c2=await A.choose([{t:'Ich bin Übersetzer. Ich habe gelesen, was da steht. Und was nicht.',id:'tr'},{t:'Er hat es mir gesagt.',id:'he'}],{title:'Ljerka'});
       if (c2==='he'){ await L.say('…'); await A.wait(1500); await L.say('Sie sind ein seltsamer Mensch, Gospodine Vuković.'); } else { await L.say('Was nicht dasteht.'); await A.wait(1300); }
       await L.say('Er hat es gewusst. Die ganzen Jahre. Jeden Morgen, wenn ich den Frühstücksraum aufgeschlossen habe.'); } }
+  await ljerkaLoss(A,L);
   await A.wait(1500); await L.say('Kommen Sie.'); A.setFlag('c3.ljerkaUp');
   await A.goto('salon',{x:100,y:124,f:'L',noEnter:true}); return salonFinale(A); }
+// was sie verloren hat, bekommt einen eigenen Moment: Brunos Abschied kann gelingen, ohne dass Ljerka ihm verzeiht
+async function ljerkaLoss(A,L){ await A.wait(1600); await L.say('Zagreb.'); await A.wait(1100);
+  await L.say('Ich hätte an der Akademie studiert. Ich hätte vielleicht in Wien gespielt. Ich hätte …'); await A.wait(1400);
+  await L.say('Sechsunddreißig Jahre habe ich Frühstück gemacht. Für Leute, die ich nie wiedergesehen habe.');
+  var c=await A.choose([{t:'„Er wollte, dass Sie wieder spielen.“',id:'want'},{t:'(Nichts sagen.)',id:'quiet',silent:true},{t:'„Sie müssen ihm nicht verzeihen.“',id:'free'}],{title:'Ljerka'});
+  if (c==='want') await L.say('Er wollte. Er hat immer etwas gewollt. Und ich habe es getan.');
+  else if (c==='quiet'){ await A.wait(2400); await L.say('Gut, dass Sie nichts sagen. Alles andere wäre jetzt falsch.'); }
+  else { await L.say('Nein. Muss ich nicht.'); await A.wait(1200); await L.say('Ich weiß nicht, ob ich es kann.'); }
+  A.G.flags['c3.ljerkaLoss']=c; await A.wait(1300); await L.say('Ich spiele. Nicht für ihn.'); await A.wait(900); await L.say('Für die, die ich gewesen wäre.'); }
 async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.set('sheetOff',true); A.rebuild();
   var p=M.apos('salon','ljerkaNight',[160,120,'R']); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
   await A.narrate('Ljerka setzt sich an den Flügel. Lange sitzt sie nur da.'); await A.wait(1200);
   A.music('vecerPiano'); await A.wait(7000); if (B.actor){ await B.face('R'); } await A.wait(4500);
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
-  await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
-  await A.wait(1600); B.agitate(3400); await B.say('Koliko … godina …?'); await A.wait(1800);
+  // anderer Auslöser als bei Luka (Prüfbericht): nicht das gealterte Gesicht, sondern die Frau, die nicht zum Sonntagstanz kommt, und die Kerze
+  await A.wait(2600); if (B.actor) await B.face('L'); await B.say('Danica … nedjelja … ples …'); await A.m('„Danica. Sonntag. Tanz.“');
+  await A.wait(1600); await B.say('… nema je … svijeća … svake godine …'); await A.m('„Sie ist nicht da. Eine Kerze, jedes Jahr.“');
+  await A.wait(1600); B.agitate(3400); await B.say('A meni … tko je meni …?'); await A.m('„Und mir … wer hat mir …?“'); await A.wait(1800);
   if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
   await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
@@ -25775,6 +25874,7 @@ M.afterLimbo_bruno=async function(A){ A.G.flags['mala.lock']=false; var L=A.npc(
   await L.say('Ich habe seit sechsunddreißig Jahren nicht gespielt.'); await A.m('Es klang wie jemand, der lange gewartet hat.');
   await A.m('Gospođa Lalić. Ihr Vater … er hat mir etwas für Sie gegeben.'); await A.animM('give'); A.take('keyring'); A.sfx('chain');
   await L.say('Seine Schlüssel.'); await A.wait(1100); await L.say('Die hatte er immer in der Hand. Auch im Krankenhaus.'); await A.m('Er hat Dienst übergeben.'); await A.wait(1200);
+  await L.say('Und jetzt soll ich sie nehmen.'); await A.wait(1500); await L.say('Ich weiß nicht, ob ich ihm verzeihe. Heute nicht.'); await A.wait(900); await L.say('Vielleicht, wenn ich einmal spielen kann, ohne an ihn zu denken.'); await A.wait(1300);
   await L.say('Ich weiß nicht, ob ich verkaufe. Vielleicht. Aber nicht am Montag.'); await L.say('Ihr Honorar. Nehmen Sie es, bevor ich es mir anders überlege.'); A.give('fee'); A.setFlag('c3.done');
   if (A.malaHere() && A.mala){ await A.wait(900); await A.animG('look'); await A.wait(800); A.mala.fadeOut=A.gt; await A.wait(1200); A.malaLeave(); await A.m('Mala?'); await A.wait(1500); await A.m('…'); }
   A.save(); await A.fade(8,1600); await M.startEpilogue(A); };
@@ -25961,10 +26061,10 @@ async function smsCheck(A){ if (!F(A,'k2.f2.charging')||F(A,'k2.f2.charged')) re
 var HS=[
  {id:'door',name:'Tür',exit:{to:'map'},look:'Die Tür zum Flur. Dahinter Hajras Küche, ihr Radio und ihre Meinung.',
    canExit:async function(A){ var p=A.G.phase;
-     if (p==='k2_pro' && !A.flag('k2.p3.hajra') && A.has('dzezva')){ await A.m('Erst sollte ich mit Hajra reden. Sie wartet mit dem Kaffee.'); return false; }
+     if (p==='k2_pro' && !A.flag('k2.p3.hajra') && A.has('dzezva')){ await A.m('Hajra wartet mit dem Kaffee. Einfach an ihr vorbeigehen kann ich nicht.'); return false; }
      if (p==='k2_pro' && A.flag('k2.p3.hajra') && !A.flag('k2.pro.night')){ await A.m('Ich bin müde. Siebzehn Jahre müde.'); await M.k2Night0(A); return false; }
      if (p==='k2_pro_n' && !A.flag('k2.pro.sing')){ await A.m('Mitten in der Nacht? Wohin?'); return false; }
-     if (p==='k2_s3' && !A.flag('k2.s3.called')){ await A.m('Erst Sanja. Sonst verliere ich den Mut.'); return false; }
+     if (p==='k2_s3' && !A.flag('k2.s3.called')){ await A.m('Nicht, bevor ich mit Sanja gesprochen habe. Sonst verliere ich den Mut.'); return false; }
      if (p==='k2_fin' && !A.hasNote('f2_parcel') && A.flag('k2.f2.charging')){ await smsCheck(A); return false; }
      return true; }},
  {id:'hajra',npc:'hajra',name:'Hajra',hgt:42,vis:function(S,G){ return ['k2_pro','k2_s1','k2_s2','k2_s3','k2_fin'].indexOf(G.phase)>=0; },talk:talkHajra,
@@ -26295,8 +26395,7 @@ async function talkNina(A){ var N=A.npc('nina');
     {t:'(Lukas Tickets zeigen.)',if:A.S.started&&A.has('tickets')&&!shown.tickets,go:async function(A){ shown.tickets=1; await A.animM('give'); await A.wait(900); await N.say('Zwei.'); await N.say('Er hatte zwei gekauft. Um vierzehn nach zehn am Vormittag.'); await A.wait(800); await N.say('Er wollte wirklich.'); await N.say('Behalten Sie sie. Ich kann sie nicht ansehen.'); await A.m('Ich bewahre sie auf.'); }},
     {t:'(Die Kassette zeigen.)',if:A.S.started&&(A.has('cassette')||A.has('radioT'))&&!shown.tape,go:async function(A){ shown.tape=1; await N.say('„Za Ninu“.'); await A.wait(800); await N.say('Er hat immer Kassetten aufgenommen, mit einem Rekorder vom Flohmarkt. Ich wusste nicht, dass es eine für mich gibt.');
         if (!A.has('radioT')) await N.say('Ich habe nichts mehr, womit ich das abspielen kann. Ich habe alles weggegeben, was Kassetten abspielt.'); }},
-    {t:'Wollen Sie es hören?',if:A.S.started&&shown.note&&shown.tickets&&shown.tape&&A.has('radioT'),go:async function(A){ await N.say('Nicht hier.'); await A.wait(900);
-        await N.say('Heute Abend. An der Rampe. Wenn die Fähre ablegt. Ich will es dort hören.'); A.note('c2_tonight'); A.setFlag('c2.tonight'); await A.m('Ich bin da.'); await N.say('Ich weiß nicht, warum ich Ihnen vertraue. Ich tue es einfach.'); return 'bye'; }},
+    {t:'Wollen Sie es hören?',if:A.S.started&&shown.note&&shown.tickets&&shown.tape&&A.has('radioT'),go:function(A){ return ninaReady(A,N); }},
     {t:'Ich suche einen Spachtel. Einen dünnen.',if:!A.has('spatula')&&!A.flag('c2.brickDone'),once:'niSp',go:async function(A){ await N.say('Für Rahmen?'); await A.m('Für eine Fuge.'); await N.say('Nehmen Sie den alten. Zwanzig Kuna. Er ist dünn, er biegt sich, aber er bricht nicht.'); A.sfx('coin'); A.give('spatula'); }},
     {t:'Die Bilder hier … malen Sie die?',once:'ni2',go:async function(A){ await N.say('Ich male, was ich sehe.'); await A.m('Immer dieselbe Fähre?'); await N.say('Ich habe nur eine gesehen.'); }},
     {t:'Was rahmen die Leute so?',once:'ni3',go:async function(A){ await N.say('Hochzeiten. Diplome. Kinder. Und Tote. Die meisten Rahmen sind für Tote, wenn man ehrlich ist.'); }},
@@ -26306,6 +26405,17 @@ async function talkNina(A){ var N=A.npc('nina');
       c2_paintings:'Ich male, was ich sehe.', c2_note:async function(A){ if (!A.has('note_n')) return N.say('Ich weiß nicht, wovon Sie reden.'); await N.say('Zeigen Sie mir das.'); } },'Dazu kann ich nichts sagen.'),
     {t:'Danke. Auf Wiedersehen.',bye:true,go:async function(A){ await N.say('Doviđenja.'); }}
   ]; }); }
+// Ninas Bereitschaft ist das eigentliche Hindernis: an die Rampe geht sie erst, wenn Marko zeigt, dass er verstanden hat, worauf sie seit zwölf Jahren wartet
+async function ninaReady(A,N){ await N.say('Nicht hier.'); await A.wait(900);
+  if (!A.S.refusedRamp){ A.S.refusedRamp=true; await N.say('Und nicht an der Rampe. Da war ich seit zwölf Jahren nicht.'); await A.wait(700); await N.say('Ich male sie. Das reicht.'); }
+  var n=await A.askNote('Was sage ich ihr?'); if (!n){ await N.say('Ich male sie. Das reicht.'); return; }
+  if (n==='c2_paintings'||n==='c2_echo') await A.m('Sie malen jedes Mal zuerst die Fähre. Die Gestalt am Kiosk malen Sie zuletzt. Manchmal gar nicht.');
+  else if (n==='c2_waited'||n==='c2_mira1') await A.m('Sie haben dort gewartet, bis die Lichter klein waren. Seitdem stehen Sie jeden Abend dort. Nur auf Leinwand.');
+  else { await N.say('Das ändert nichts. Gehen Sie. Bitte.'); return 'bye'; }
+  await A.wait(1200); await N.say('…'); await A.wait(800); await N.say('Und wenn ich hingehe, und da ist wieder nichts?');
+  var c=await A.choose([{t:'Dann bin ich da.',id:'me'},{t:'Dann wissen Sie es wenigstens.',id:'know'}],{title:'Nina'});
+  if (c==='me'){ await N.say('Sie.'); await A.wait(700); await N.say('Gut.'); } else { await N.say('Wissen.'); await A.wait(700); await N.say('Das ist mehr als zwölf Jahre Blau.'); }
+  await A.wait(700); await N.say('Heute Abend. An der Rampe. Wenn die Fähre ablegt. Ich will es dort hören.'); A.note('c2_tonight'); A.setFlag('c2.tonight'); await A.m('Ich bin da.'); await N.say('Ich weiß nicht, warum ich Ihnen vertraue. Ich tue es einfach.'); return 'bye'; }
 function hasProof(A){ return A.has('note_n')||A.has('tickets')||A.has('cassette')||A.has('radioT'); }
 async function askHow(A,N){ await N.say('Woher wussten Sie von dem Ziegel? Das wusste niemand. Nur wir zwei.');
   var c=await A.choose([{t:'Er hat es mir gesagt.',id:'truth'},{t:'Ich habe gesucht, wo ihr euch Nachrichten hinterlassen habt.',id:'half'}],{title:'Nina'});
@@ -26436,6 +26546,7 @@ var HS=[
  {id:'drawings',name:'Kinderzeichnungen',look:'Kinderzeichnungen an der Wand, vergilbt, mit Reißzwecken: Sonnen, Häuser, ein Hund, viele Straßenbahnen. Auf allen steht eine Drei.',
    g:{look:'Die Straßenbahnen. Ich habe sie ihnen gezeigt. Die Räder sind immer schief.',sense:'Kinder, die an etwas denken, das fährt. Weg von hier.'}},
  {id:'benches',name:'Bänke',look:function(A){ return A.m(pupilsHere(A.G)?'Die Bänke, mit Kerzen. Drei Erwachsene darauf, die Knie am Kinn.':'Schmale Bänke und Tische in Reihen. In einen Tisch hinten ist ein M geritzt.'); },
+   use:function(A){ if (pupilsHere(A.G)) return A.m('Die Bänke gehören heute Nacht anderen.'); return M.k2MemCellar(A); },
    g:{look:'In der letzten Reihe hat einer gesessen, der nie aufgepasst hat. Er hat aus dem Fenster gesehen. Es gab kein Fenster.',sense:'So viele Kinder. Sie sind alle groß geworden. Fast alle.'}},
  {id:'desk',name:'Pult',look:'Das Lehrerpult mit einer Schublade, die klemmt. Darauf eine Handglocke aus Messing.',use:function(A){ return night(A.G)?rollcall(A):A.m('Ein Pult. Für jemanden, der Namen aufruft.'); },
    with:{ dnevnik:function(A){ return night(A.G)?rollcall(A):M.k2ReadDnevnik(A); }, svjedocanstva:function(A){ return night(A.G)?rollcall(A):A.m('Erst, wenn alle da sind.'); }, pecat:function(A){ return A.has('svjedocanstva')?M.k2Stamp(A):A.m('Ohne Zeugnisse stemple ich nur das Pult.'); } },
@@ -26899,6 +27010,10 @@ async function rideNight(A){ A.setFlag('k2.f2.rideStart'); A.G.flags['mala.lock'
   A.set('view','yellow'); await A.wait(600); await A.narrate('Das gelbe Hotel. Davor, im Schnee, die Haltestelle, an der wir nie ausgestiegen sind.');
   A.set('view','museum'); await A.wait(700); await A.g('Die Dose.'); await A.m('Das Denkmal. Für die Hilfslieferungen. Für die Dosen, die wir gegessen haben.'); await A.g('Meine ist kleiner.'); await A.m('…'); await A.wait(500); await A.m('Darin war Fleisch. In deiner ist ein Fahrschein.'); await A.g('Und ein halbes Foto.'); await A.m('Nicht mehr.'); await A.wait(700);
   A.set('view','cathedral'); A.sfx('bellsFar'); await A.wait(400); await A.g('…'); await A.m('Sie läuten nicht für uns.'); await A.g('Ich weiß. Ich habe es nur nie geglaubt.'); await A.wait(800);
+  // die Nacht des Busses erst hier, am Höhepunkt (Prüfbericht): mit Pausen davor und danach
+  await A.wait(1500); A.set('moving',false); A.sfx('tramBrake'); await A.narrate('Die Bahn hält an einer Haltestelle, an der niemand wartet. Die Türen gehen auf. Schnee weht herein. Die Türen gehen wieder zu.'); A.sfx('tramDoor'); await A.wait(1800); A.set('moving',true);
+  await A.memory({title:'Erinnerung – die Nacht des Busses',tint:'memory',draw:M.mem&&M.mem.k2_busnight,lines:['Die Nacht darauf. Großmutter hustet, Fieber, sie kann nicht aufstehen. Ich kann sie nicht allein lassen.','Ich sage es Lana nicht. Ich traue mich nicht. Ich denke, wenn ich es nicht sage, ist es nicht wahr.','Um Mitternacht höre ich von unten, weit weg, einen Bus hupen. Zweimal.','Ich stehe am Fenster und gehe nicht hinunter.']});
+  await A.wait(1600); await A.m('…'); await A.wait(1300);
   // Geständnis: keine falsche Antwort, nur andere Worte
   await A.m('Lana.'); await A.wait(800); await A.g('Ja?');
   var c=await A.choose([{t:'Ich bin nicht gekommen. In der Nacht des Busses.',id:'came'},{t:'Großmutter war krank. Ich habe mich nicht getraut, es dir zu sagen.',id:'ruza'},{t:'Ich habe dich vergessen. Ich wollte dich vergessen.',id:'forgot'}],{title:'Lana'});
@@ -26906,7 +27021,8 @@ async function rideNight(A){ A.setFlag('k2.f2.rideStart'); A.G.flags['mala.lock'
   if (c==='came'){ await A.g('Ich weiß. Ich habe bis zum Schluss gewartet. Der Fahrer hat zweimal gehupt.'); await A.m('Ich war oben in Vratnik. Ich habe es gehört. Zweimal.'); }
   else if (c==='ruza'){ await A.g('Ich hätte es verstanden.'); await A.m('Ich war fünfzehn. Ich dachte, wenn ich es nicht sage, ist es nicht wahr.'); await A.g('Das denkst du heute noch.'); }
   else { await A.g('Ich weiß. Darum war ich so leer.'); await A.m('Es tut mir leid.'); await A.g('Ich weiß. Jetzt.'); }
-  await A.wait(900); await A.m('Ich bin gekommen. Ich habe dich in Split gesucht. Im Mai vierundneunzig. Alle Hotels.'); await A.g('Ich war schon nicht mehr dort.'); await A.m('Ich weiß das jetzt. Damals dachte ich, du hast mich vergessen.');
+  await A.wait(1400); await A.narrate('Eine Weile sagt keiner etwas. Der Schnee schlägt gegen die Scheiben, und Damir pfeift in seiner Kabine ein Lied, das es nicht mehr gibt.'); await A.wait(1800);
+  await A.m('Ich bin gekommen. Ich habe dich in Split gesucht. Im Mai vierundneunzig. Alle Hotels.'); await A.g('Ich war schon nicht mehr dort.'); await A.m('Ich weiß das jetzt. Damals dachte ich, du hast mich vergessen.');
   await A.wait(700); await A.g('Du bist gekommen.'); await A.wait(500); await A.g('Nur später.');
   A.set('view','river'); await A.wait(900); await A.narrate('Die Miljacka, schwarz unter dem Schnee. Die Brücke, das Gerüst, ein Licht im Container der Nachtwache.');
   A.set('view','bascarsija'); A.set('moving',false); A.sfx('tramBrake'); await A.wait(600); await A.voice('„Baščaršija. Zadnja stanica.“',P.s4); A.sfx('tramDoor');
@@ -27185,6 +27301,7 @@ async function interlude(A){ if (A.flag('k2.i.done')) return A.g('Wir können ge
     {t:'Erinnerst du dich an deinen Namen?',once:'ia2',go:async function(A){ await A.g('Nein.'); await A.wait(900); await A.g('Ich erinnere mich, dass jemand mich gerufen hat. Hier oben. Über die Mauer. Ein kleiner Junge mit Holz im Arm.'); await A.m('…'); }},
     {t:'Ich erzähle dir von meinem Vater.',once:'ia3',go:async function(A){ A.setFlag('k2.i.father'); await A.m('Er war Ingenieur. Er hat Brücken berechnet. Im Frühjahr dreiundneunzig ist er Wasser holen gegangen, an der Brauerei, wie alle.'); await A.wait(800); await A.m('Er ist nicht zurückgekommen. Mama und Ana waren schon in Deutschland. Ich bin zu Großmutter gezogen. Hierher.');
         await A.wait(900); await A.g('Das hast du noch nie gesagt.'); await A.m('Nein.'); await A.g('Danke.'); }},
+    {t:'(Zur Vijećnica hinuntersehen.)',once:'ia5',silent:true,if:!A.flag('k2.mem.ash'),go:function(A){ return M.k2MemAsh(A); }},
     {t:'(Schweigen und auf die Stadt sehen.)',once:'ia4',silent:true,go:async function(A){ await A.wait(2200); A.sfx('dogFar'); await A.wait(1200); await A.g('Ein Hund. Irgendwo ist immer ein Hund.'); await A.m('Großmutter hatte einen. Er hieß Žućo und hatte vor allem Angst, außer vor Granaten.'); }},
     ...(M.K2_INTER_EXTRA?M.K2_INTER_EXTRA(A):[]),
     {t:'Gehen wir weiter.',bye:true}
@@ -28190,7 +28307,11 @@ M.trAdd('bhs', {
   'Neunzehnhundertsechsundvierzig, siebenundvierzig, achtundvierzig … Die Jahre nach dem Krieg sind dünn. Es fuhr nicht viel.': 'Hiljadu devetsto četrdeset šesta, sedma, osma … Godine poslije rata su tanke. Malo se plovilo.',   // Mala
   'Hier sind die Ordner kalt wie Stein. Niemand hat sie je wieder angefasst.': 'Ovdje su registratori hladni kao kamen. Niko ih više nikad nije dirnuo.',   // Mala
   'Ordner bei „1948“': 'Registrator kod „1948“',   // Name
-  'Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.': 'Registrator u pregratku „1948“. Na hrptu piše 1984. Neko je zamijenio cifre.',   // Mala
+  'Neunzehnvierundachtzig, bei achtundvierzig. Ich kann ihn nicht herausziehen.': 'Osamdeset četvrta, kod četrdeset osme. Ne mogu ga izvući.',   // Mala
+  'Ein Ordner im Fach „1948“, dicker als die anderen. Das Schild auf dem Rücken ist ausgeblichen. Lesen kann man da nichts mehr.': 'Registrator u pregratku „1948“, deblji od ostalih. Natpis na hrptu je izblijedio. Tu se više ništa ne da pročitati.',   // Mala
+  'Die Schrift auf dem Schild ist weg. Die Hand, die sie geschrieben hat, nicht.': 'Slova na natpisu više nema. Ali ruka koja ih je napisala još je tu.',   // Mala
+  'Eins. Neun. Acht. Vier.': 'Jedan. Devet. Osam. Četiri.',   // Mala
+  'Neunzehnvierundachtzig. Und jemand hat ihn bei achtundvierzig einsortiert.': 'Hiljadu devetsto osamdeset četvrta. A neko ga je stavio kod četrdeset osme.',   // Mala
   'Ich kann ihn nicht herausziehen.': 'Ne mogu ga izvući.',   // Mala
   'Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.': 'Unutra je stranica koju je neko pisao drhtavom rukom. Noću. S dekom oko nekoga ko ne priča.',   // Mala
   'Regal: 1980–1989': 'Polica: 1980.–1989.',   // Name
@@ -28830,6 +28951,27 @@ M.trAdd('bhs', {
   'Moja krivica. Strah. Sam … hotel … sam …': 'Moja krivica. Strah. Sam … hotel … sam …',
   '„Meine Schuld. Angst. Allein.“': 'Krivnja. Strah. Samoća.',
   'Das ist sein Satz. In drei Sprachen.': 'To je njegova rečenica. Na tri jezika.',
+  '… ne … još ne …': '… ne … još ne …',   // Bruno
+  'Da ist ein Satz in ihm. Er bekommt ihn noch nicht zusammen.': 'U njemu je jedna rečenica. Još je ne može složiti.',   // Marko
+  '… pa je otišla … a ja … sam …': '… pa je otišla … a ja … sam …',   // Bruno
+  '„Und dann ist sie gegangen. Und ich … allein.“': 'Otišla je. I ostao je sam.',   // Marko (fasst Brunos Wörter zusammen)
+  'Sviraj, mala … sviraj …': 'Sviraj, mala … sviraj …',   // Bruno
+  '„Spiel, Kleine.“': 'To joj je govorio dok je bila mala.',   // Marko
+  // Ljerka: was sie verloren hat (Prüfbericht)
+  'Zagreb.': 'Zagreb.',   // Ljerka
+  'Ich hätte an der Akademie studiert. Ich hätte vielleicht in Wien gespielt. Ich hätte …': 'Studirala bih na Akademiji. Možda bih svirala u Beču. Mogla sam …',   // Ljerka
+  'Sechsunddreißig Jahre habe ich Frühstück gemacht. Für Leute, die ich nie wiedergesehen habe.': 'Trideset i šest godina pripremala sam doručak. Za ljude koje nikad više nisam vidjela.',   // Ljerka
+  '„Er wollte, dass Sie wieder spielen.“': '„Želio je da opet svirate.“',   // Marko (Option)
+  '„Sie müssen ihm nicht verzeihen.“': '„Ne morate mu oprostiti.“',   // Marko (Option)
+  'Er wollte. Er hat immer etwas gewollt. Und ich habe es getan.': 'Želio je. Uvijek je nešto želio. I ja sam to radila.',   // Ljerka
+  'Gut, dass Sie nichts sagen. Alles andere wäre jetzt falsch.': 'Dobro je što ništa ne govorite. Sve drugo sad bi bilo krivo.',   // Ljerka
+  'Nein. Muss ich nicht.': 'Ne. Ne moram.',   // Ljerka
+  'Ich weiß nicht, ob ich es kann.': 'Ne znam mogu li.',   // Ljerka
+  'Ich spiele. Nicht für ihn.': 'Svirat ću. Ne za njega.',   // Ljerka
+  'Für die, die ich gewesen wäre.': 'Za onu koja sam mogla biti.',   // Ljerka
+  'Und jetzt soll ich sie nehmen.': 'I sad bih ih ja trebala uzeti.',   // Ljerka
+  'Ich weiß nicht, ob ich ihm verzeihe. Heute nicht.': 'Ne znam hoću li mu oprostiti. Danas ne.',   // Ljerka
+  'Vielleicht, wenn ich einmal spielen kann, ohne an ihn zu denken.': 'Možda kad jednom budem mogla svirati a da ne mislim na njega.',   // Ljerka
   'Ključevi … moji … salon …': 'Ključevi … moji … salon …',
   'Ručka … glazba … nedjelja …': 'Ručka … glazba … nedjelja …',
   '„Večer na Rivi“ … Danica …': '„Večer na Rivi“ … Danica …',
@@ -28864,9 +29006,12 @@ M.trAdd('bhs', {
   'Ljerka …': 'Ljerka …',
   '… sviraš.': '… sviraš.',
   '„Du spielst.“': '„Sviraš.“',
-  'Sijeda … moja Ljerka … sijeda …': 'Sijeda … moja Ljerka … sijeda …',
-  '„Grau. Meine Ljerka ist grau.“': '„Sijeda. Moja Ljerka je sijeda.“',
-  'Koliko … godina …?': 'Koliko … godina …?',
+  'Danica … nedjelja … ples …': 'Danica … nedjelja … ples …',   // Bruno
+  '„Danica. Sonntag. Tanz.“': 'Nedjelja. Ples s Danicom. Kao nekad.',   // Marko (fasst zusammen)
+  '… nema je … svijeća … svake godine …': '… nema je … svijeća … svake godine …',   // Bruno
+  '„Sie ist nicht da. Eine Kerze, jedes Jahr.“': 'Nje nema. Svake godine joj je palio svijeću.',   // Marko
+  'A meni … tko je meni …?': 'A meni … tko je meni …?',   // Bruno
+  '„Und mir … wer hat mir …?“': 'A njemu? Tko je njemu upalio svijeću?',   // Marko
   'Ja … nisam … više … ovdje.': 'Ja … nisam … više … ovdje.',
   '„Ich bin … nicht mehr … hier.“': '„Nisam više ovdje.“',
   // sein erster ganzer Satz – im Original in der Sprache des Spielers, deshalb hier kroatisch
@@ -29314,7 +29459,8 @@ M.trAdd('bhs', {
   'Sie mag ihn. Sie würde es nie sagen.': 'Drag joj je. Nikad to ne bi rekla.',
   'Sie summt beim Spülen. Ein Lied von der Riva. Dann hört sie plötzlich auf.': 'Pjevuši dok pere suđe. Neku pjesmu s Rive. Onda odjednom prestane.',
   'Sie redet leise mit sich selbst: „Zwölf Jahre. Und jetzt kommt er mit den Namen.“': 'Tiho priča sama sa sobom: „Dvanaest godina. I sad on dođe s imenima.“',
-  'Der ist doch offen. Lies ihn.': 'Pa otvoreno je. Čitaj.',
+  'Den hast du doch gelesen. Das sehe ich dir an.': 'Pa pročita si ga. Vidi ti se na licu.',   // Sanja
+  'Offen ist er. Lesen kann ihn so keiner mehr. Das Salz nimmt die Tinte zuerst.': 'Otvoreno je. Ali ovako ga više niko ne može pročitat. Sol prvo pojede tintu.',   // Sanja
   '„Behalt sie. Ich habe zwei.“': '„Zadrži ih. Imam još jedne.“',
   'Zwei Tickets nach Ancona …': 'Dvije karte za Anconu …',
   'Woher hast du die?': 'Otkud ti one?',
@@ -29398,6 +29544,18 @@ M.trAdd('bhs', {
   'Er hat immer Kassetten aufgenommen, mit einem Rekorder vom Flohmarkt. Ich wusste nicht, dass es eine für mich gibt.': 'Stalno je snimao kasete, na kasetofonu s buvljaka. Nisam znala da postoji i jedna za mene.',
   'Ich habe nichts mehr, womit ich das abspielen kann. Ich habe alles weggegeben, was Kassetten abspielt.': 'Više nemam na čemu to pustiti. Dala sam sve što pušta kasete.',
   'Wollen Sie es hören?': 'Želite li to poslušati?',
+  // Nina zögert, an die Rampe zu gehen (Prüfbericht)
+  'Und nicht an der Rampe. Da war ich seit zwölf Jahren nicht.': 'I ne na rampi. Tamo nisam bila dvanaest godina.',   // Nina
+  'Ich male sie. Das reicht.': 'Ja je slikam. To je dosta.',   // Nina
+  'Sie malen jedes Mal zuerst die Fähre. Die Gestalt am Kiosk malen Sie zuletzt. Manchmal gar nicht.': 'Svaki put prvo naslikate trajekt. Lik kod kioska slikate zadnji. Ponekad nikako.',   // Marko
+  'Sie haben dort gewartet, bis die Lichter klein waren. Seitdem stehen Sie jeden Abend dort. Nur auf Leinwand.': 'Čekali ste tamo dok svjetla nisu postala mala. Otada svake večeri stojite tamo. Samo na platnu.',   // Marko
+  'Das ändert nichts. Gehen Sie. Bitte.': 'To ništa ne mijenja. Idite. Molim vas.',   // Nina
+  'Und wenn ich hingehe, und da ist wieder nichts?': 'A ako odem, a tamo opet ništa?',   // Nina
+  'Dann bin ich da.': 'Onda sam ja tu.',   // Marko (Option)
+  'Dann wissen Sie es wenigstens.': 'Onda barem znate.',   // Marko (Option)
+  'Sie.': 'Vi.',   // Nina
+  'Wissen.': 'Znati.',   // Nina
+  'Das ist mehr als zwölf Jahre Blau.': 'To je više od dvanaest godina plave.',   // Nina
   'Nicht hier.': 'Ne ovdje.',
   'Heute Abend. An der Rampe. Wenn die Fähre ablegt. Ich will es dort hören.': 'Večeras. Na rampi. Kad trajekt isplovi. Tamo to želim čuti.',
   'Ich bin da.': { hr:'Bit ću tamo.', bs:'Tu sam.' },     // an Nina: „Ich komme“; an Mala (stanica.js): „Ich bin bei dir“
@@ -30371,7 +30529,7 @@ M.trAdd('bhs', {
   'Leitungswasser. Mehr habe ich nicht anzubieten.': 'Voda iz slavine. Više nemam što ponuditi.',   // Marko (wie das Glas in bhs_k1_j.js)
   'Das Glas ist schon voll.': 'Čaša je već puna.',   // Marko
   'Nicht noch einmal. Ich habe zum ersten Mal seit Tagen geschlafen. Das reicht für eine Woche.': 'Ne opet. Spavao sam prvi put nakon više dana. To mi je dosta za cijeli tjedan.',   // Marko
-  'Erst Seite einunddreißig. Der Kunde will sie heute, und er zahlt nach Seiten.': 'Najprije trideset i prva stranica. Klijent je želi danas, a plaća po stranici.',   // Marko
+  'Seite einunddreißig liegt noch auf dem Schreibtisch. Der Kunde will sie heute, und er zahlt nach Seiten.': 'Trideset i prva stranica još leži na stolu. Klijent je želi danas, a plaća po stranici.',   // Marko
   'Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.': 'Ne idem nikamo dok mi u stanu stoji netko tko ne postoji.',   // Marko (Wechselsatz 1)
   'Erst will ich wissen, wer da steht.': 'Najprije hoću znati tko to tu stoji.',   // Marko (Wechselsatz 2)
   // ---------------------------------------------------------------- Anrufbeantworter: Vesna und Sanja
@@ -30661,7 +30819,12 @@ M.trAdd('bhs', {
   // danach Mala (Bosnisch) und Marko an Mala
   'Und?': 'I?',
   'Da liegt ein Zettel. Und darauf steht, was du gesagt hast.': { hr:'Ondje je ceduljica. I na njoj piše ono što si rekla.', bs:'Tamo je ceduljica. I na njoj piše ono šta si rekla.' },
-  'Das ist ein Anfang.': 'To je početak.',
+  'Und jetzt weiß ich etwas, das Sanja selbst sagen wollte.': { hr:'A sad znam nešto što je Sanja htjela sama reći.', bs:'A sad znam nešto što je Sanja htjela sama reći.' },
+  'So ist es jeden Tag. Ich sehe, was keiner zeigen will.': 'Tako je svaki dan. Vidim ono što niko neće da pokaže.',   // Mala
+  'Und was machst du damit?': { hr:'I što radiš s tim?', bs:'I šta radiš s tim?' },
+  'Meistens nichts.': 'Uglavnom ništa.',   // Mala
+  'Und über dich? Was siehst du da?': { hr:'A o sebi? Što tu vidiš?', bs:'A o sebi? Šta tu vidiš?' },
+  'Und sag Stipe nichts. Das ist meine Sache.': 'I ne govori ništa Stipi. To je moja stvar.',   // Sanja
   'Ich will ans Wasser. Nicht weit.': 'Hoću do vode. Ne daleko.',
   // Sanjas Zettel (schon kroatisch im Original)
   'ČETVRTAK': 'ČETVRTAK',
@@ -30696,8 +30859,9 @@ M.trAdd('bhs', {
   'Seit wir durch das Tor zurück sind, ist es … dünner. Als wäre unterwegs etwas verrutscht. Ich habe gerufen. Du hast durch mich hindurchgesehen.': 'Otkad smo se vratili kroz kapiju, nekako je … tanje. Kao da se usput nešto pomjerilo. Zvala sam te. Gledao si kroz mene.',
   'Und jetzt?': { hr:'A sad?', bs:'A sad?' },
   'Jetzt nicht mehr. Ich weiß nicht, warum. Ich weiß nicht, ob es wiederkommt.': 'Sad više ne. Ne znam zašto. Ne znam da li će se vratiti.',
-  'Ich will nicht nur glauben, was du sagst. Ich will es prüfen. Hier. Jetzt.': { hr:'Ne želim ti samo vjerovati na riječ. Želim to provjeriti. Ovdje. Sada.', bs:'Neću samo da ti vjerujem na riječ. Hoću da provjerim. Ovdje. Sad.' },
-  'Dann such dir etwas aus.': 'Onda izaberi nešto.',
+  'Ich glaube dir. Das ist ja das Problem.': { hr:'Vjerujem ti. To i jest problem.', bs:'Vjerujem ti. To i jeste problem.' },
+  'Wenn ich dir glaube, glaube ich auch alles, was du über andere siehst. Über Sanja. Über jeden hier.': { hr:'Ako tebi vjerujem, onda vjerujem i sve što vidiš o drugima. O Sanji. O svakome ovdje.', bs:'Ako tebi vjerujem, onda vjerujem i sve što vidiš o drugima. O Sanji. O svakom ovdje.' },
+  'Dann fang mit etwas Kleinem an. Etwas, das niemandem wehtut.': 'Onda počni s nečim malim. S nečim što nikoga ne boli.',   // Mala
 
   // ================================================================ Hotspots (Namen = Oberfläche, look/use/take/read = Marko, g = Mala)
   'Sie zählt Milchflaschen, halblaut. Bei sechs hört sie auf.': 'Broji flaše mlijeka, poluglasno. Na šestoj stane.',
@@ -30835,11 +30999,11 @@ M.trAdd('bhs', {
   '„Das mit den Mützen hat mir gefallen. Die Stadt hatte „keine Kontakte“ geschrieben. Gut, dass du gefragt hast.“': '„Ono s kapama mi se svidjelo. Grad je napisao „bez kontakata“. Dobro da si pitao.“',   // Vesna (Telefon)
   // ---------------------------------------------------------------- 92_story2.js
   'Donnerstag, 17. November · Mittag, Bura': 'Četvrtak, 17. studenoga · podne, bura',   // Zeit (Karte)
-  'Erst Sanja. Triest ruft um vier an, und sie hat niemanden, der Italienisch kann.': 'Prvo Sanja. Trst zove u četiri, a ona nema nikoga tko zna talijanski.',   // Marko
-  'Erst die Riva. Ich will die Stelle sehen, bevor ich über sie schreibe.': 'Prvo Riva. Hoću vidjeti to mjesto prije nego što počnem pisati o njoj.',   // Marko
+  'Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen.': 'Sanja me čeka. U četiri zove Trst, a ona nema nikoga tko zna talijanski. Obećao sam joj.',   // Marko
+  'Nach Hause? Nicht, bevor ich die Stelle gesehen habe, an der sie jeden Abend stand. Sonst schreibe ich über eine Frau, die ich nur aus einem Heft kenne.': 'Kući? Ne prije nego što vidim mjesto gdje je stajala svake večeri. Inače pišem o ženi koju znam samo iz jedne bilježnice.',   // Marko
   'Heute nicht mehr.': 'Danas više ne.',   // Marko
-  'Nicht jetzt. Erst will ich wissen, ob ich mir das alles nur einrede.': 'Ne sad. Prvo hoću znati umišljam li sve to.',   // Marko
-  'Heute Morgen nicht. Erst einen Kaffee.': 'Ne jutros. Prvo kava.',   // Marko (allein)
+  'Nicht jetzt. Nicht, bevor ich weiß, ob ich mir das alles nur einrede.': 'Ne sad. Ne dok ne saznam umišljam li sve to.',   // Marko
+  'Heute Morgen nicht. Ohne Kaffee komme ich nicht weit.': 'Ne jutros. Bez kave neću daleko.',   // Marko (allein)
   '(Leise:) „Dann sieh nach.“': '(Tiho:) „Onda pogledaj.“',   // Marko an Mala (Option; auch office.js)
   // ---------------------------------------------------------------- 11_notes.js
   'Vesna, aus der Notiz der Stadt: „alleinstehend, keine Kontakte zur Nachbarschaft.“': 'Vesna, iz službene bilješke Grada: „živjela sama, bez kontakata sa susjedstvom.“',   // Notiz
@@ -30934,7 +31098,7 @@ M.trAdd('bhs', {
   'Schimmer':'Odsjaj', 'Mala':'Mala', 'Marko':'Marko',
   // Überlagerungen
   'Nachhall':'Odjek', 'Übersetzung':'Prijevod', 'Tippe auf eine Zeile, um eine andere Fassung zu wählen.':'Dodirni redak da odabereš drugu inačicu.',
-  'Vorlesen':'Pročitaj naglas', 'Zurück':'Natrag',
+  'Vorlesen':'Pročitaj naglas', 'Zurück':'Natrag', 'Da fehlt noch etwas.':'Još nešto nedostaje.', 'Ordnen':'Poredaj', 'Zusammenlegen':'Spoji', 'Tauschen':'Zamijeni', 'Schrift lesen':'Čitanje rukopisa', 'Tafel':'Tablica',
   // Notizbuch
   'Notizbuch':'Bilježnica', 'Noch nichts, was zusammengehören könnte.':'Još ništa što bi moglo ići zajedno.', 'Danach fragen':'Pitaj o tome',
   'Antippen, dann „Danach fragen“.':'Dodirni, pa „Pitaj o tome“.', 'Eine Notiz antippen, dann eine zweite, die dazu passt.':'Dodirni bilješku, pa drugu koja ide uz nju.',
@@ -31266,10 +31430,10 @@ var shop=M.ROOMS.shop; if (shop) shop.check=async function(A){ if (A.flag('c2.to
 // Reisebeschränkungen
 M.canTravel=async function(A,L){ var p=A.G.phase, fresh=!A.flag('split.intro.legacy');
   if (p==='pro'){ if (L.id!=='varos' && L.id!=='flat' && L.id!=='bar'){ await A.m('Heute nicht.'); return false; }
-    if (fresh && A.flag('split.intro.v') && L.id==='varos' && !A.flag('split.intro.sanja')){ await A.m('Erst Sanja. Triest ruft um vier an, und sie hat niemanden, der Italienisch kann.'); return false; } }
-  if (p==='pro_eve'){ if (fresh && A.flag('split.intro.v') && !A.flag('split.intro.dizzy') && L.id!=='riva'){ await A.m('Erst die Riva. Ich will die Stelle sehen, bevor ich über sie schreibe.'); return false; }
+    if (fresh && A.flag('split.intro.v') && L.id==='varos' && !A.flag('split.intro.sanja')){ await A.m('Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen.'); return false; } }
+  if (p==='pro_eve'){ if (fresh && A.flag('split.intro.v') && !A.flag('split.intro.dizzy') && L.id!=='riva'){ await A.m('Nach Hause? Nicht, bevor ich die Stelle gesehen habe, an der sie jeden Abend stand. Sonst schreibe ich über eine Frau, die ich nur aus einem Heft kenne.'); return false; }
     if (L.id!=='riva' && L.id!=='flat'){ await A.m('Heute nicht mehr.'); return false; } }
-  if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.bar')?'Nicht jetzt. Erst will ich wissen, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Erst einen Kaffee.'); return false; }
+  if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.bar')?'Nicht jetzt. Nicht, bevor ich weiß, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Ohne Kaffee komme ich nicht weit.'); return false; }
   if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos' && L.id!=='bar'){ await A.m('Nicht jetzt.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };
@@ -31668,11 +31832,11 @@ M.defineScape('map2',{beds:['cityFar'],ev:[['tramBellFar',14,30,0.4,-0.8,0.8],['
 // Reisebeschränkungen in Kapitel 2 (in Kapitel 1 gilt die alte Regel)
 var travel1=M.canTravel;
 M.canTravel=async function(A,L){ if (M.chapterOf(A.G)!==2) return travel1?travel1(A,L):true; var p=A.G.phase, f=function(k){ return !!A.G.flags[k]; };
-  if (p==='k2_pro' && !f('k2.p2.back') && L.id!=='carsija' && L.id!=='stanica'){ await A.m('Erst muss ich Mala finden.'); return false; }
-  if (p==='k2_pro_n' && L.id!=='kula' && L.id!=='pansion' && L.id!=='carsija'){ await A.m('Mitten in der Nacht? Nein. Nur zur Kula, wenn überhaupt.'); return false; }
-  if (p==='k2_s3' && !f('k2.s3.called') && L.id!=='pansion'){ await A.m('Erst rufe ich Sanja an. Sonst verliere ich den Mut.'); return false; }
-  if ((p==='k2_fin_n') && L.id!=='neboder'){ await A.g('Nicht dorthin. Zur Drei.'); return false; }
-  if (p==='k2_epi' && L.id!=='stanica' && L.id!=='neboder'){ await A.m('Heute nicht mehr. Nur noch zu Nada, und dann zum Bus.'); return false; }
+  if (p==='k2_pro' && !f('k2.p2.back') && L.id!=='carsija' && L.id!=='stanica'){ await A.m('Ohne Mala gehe ich nirgends hin. Eben war sie noch neben mir.'); return false; }
+  if (p==='k2_pro_n' && L.id!=='kula' && L.id!=='pansion' && L.id!=='carsija'){ await A.m('Mitten in der Nacht? Die Stadt schläft. Nur das Lied von vorhin geht mir nicht aus dem Kopf.'); return false; }
+  if (p==='k2_s3' && !f('k2.s3.called') && L.id!=='pansion'){ await A.m('Nicht, bevor ich mit Sanja gesprochen habe. Sonst verliere ich den Mut.'); return false; }
+  if ((p==='k2_fin_n') && L.id!=='neboder'){ await A.g('Nicht dorthin. Heute Nacht fährt die Drei.'); return false; }
+  if (p==='k2_epi' && L.id!=='stanica' && L.id!=='neboder'){ await A.m('Heute nicht mehr. Nada wartet, und der Bus fährt bald.'); return false; }
   return true; };
 
 // ---------------------------------------------------------------- Mala: Gespräche (in Kapitel 2 aus 97_k2_mala.js)
@@ -31845,7 +32009,7 @@ M.k2TalkToMala=async function(A){ var p=A.G.phase;
     {t:'Zora hat gesagt, einer hat dich vergessen.',once:'mg12',if:N(A,'m2_lore'),go:async function(A){ await A.m('Ich. Ich habe dich vergessen. Deshalb weißt du nichts mehr.'); await A.wait(900); await A.g('Ja.'); await A.wait(700); await A.g('Ich war nie böse. Ich war nur leer. Und jetzt werde ich voll, Stück für Stück, wenn du dich erinnerst. Es tut weh. Es tut gut.');
         await A.m('Der Karton. Ich mache ihn auf.'); await A.g('Dann mach ihn auf.'); }},
     // Finale
-    {t:'Gib mir deinen Fahrschein. Für die Drei.',if:p==='k2_fin_n'&&!A.has('ticket_l')&&!F(A,'k2.f2.rideStart'),go:async function(A){ await A.animG('tinF'); await A.wait(800); await A.g('Ich habe noch nie etwas hergegeben. Ich konnte nichts halten.'); await A.narrate('Sie hält mir den Fahrschein hin. Ich nehme ihn. Er ist warm. Er ist echt, für einen Atemzug, und er wiegt fast nichts.');
+    {t:'Gib mir deinen Fahrschein. Für die Drei.',if:p==='k2_fin_n'&&!A.has('ticket_l')&&!F(A,'k2.f2.rideStart'),go:async function(A){ await A.animG('tinF'); await A.wait(800); await A.g('Ich habe noch nie etwas hergegeben. Ich konnte nichts halten.'); if (F(A,'k2.s1.noteGiven')){ await A.m('Tomaž hat mir seinen Zettel gegeben. Für einen Atemzug.'); await A.g('Wer losgelassen hat, kann etwas hergeben.'); await A.wait(700); await A.g('Ich glaube, ich lasse gerade los.'); } await A.narrate('Sie hält mir den Fahrschein hin. Ich nehme ihn. Er ist warm. Er ist echt, für einen Atemzug, und er wiegt fast nichts.');
         A.give('ticket_l'); A.sfx('shimmer'); await A.g('Halt ihn fest. Er ist leichter, als er aussieht.'); await A.idleG(null); }},
     {t:'Fahren wir. Mit der Drei.',if:p==='k2_fin'&&N(A,'f2_cameback')&&!F(A,'k2.f2.night'),go:async function(A){ await M.k2FinNightOffer(A); return 'bye'; }},
     {t:'Wie geht es dir?',once:'mg13',if:F(A,'k2.f2.memory'),go:async function(A){ await A.g('Ich habe einen Namen. Eine Mutter, die im neunten Stock wartet. Einen Teddy mit einem Auge.'); await A.wait(700); await A.g('Und ich weiß immer noch nicht, wo ich gestorben bin.'); await A.m('Das finden wir heraus.'); await A.g('Wir.'); await A.m('Ja. Wir.'); }},
@@ -31870,22 +32034,46 @@ M.k2OpenKarton=async function(A){ if (F(A,'k2.f2.opened')) return A.m('Der Karto
   await A.wait(900); await A.m('Hinten, in einer Schrift, die nicht meine ist: „Za prvu trojku poslije rata. 12.11.93.“'); A.save();
   if (A.G.malaOn){ await A.wait(800); await A.g('…'); await A.wait(600); await A.g('Zeig ihn mir. Bitte.'); } };
 // ---------------------------------------------------------------- Die zwei Hälften
+// das ganze Foto (Großmutter, der Junge im gestreiften Pullover, das Mädchen mit Zopf, die Drei), entlang eines Risses geteilt.
+// Der Arm des Jungen geht über den Riss: Ärmel und Hand liegen auf Lanas Hälfte. Außenränder glatt und weiß, Rissränder ausgefranst.
+function photoHalves(){ var W=200, H=78, B=new M.Buf(W,H,P.s4), b=B;
+  b.rect(0,0,W,H,P.s4); b.rect(6,12,188,36,P.s2); b.rect(6,12,188,5,P.s1); b.rect(10,19,11,9,P.s5); M.text(b,'3',13,20,P.k1); for (var i=0;i<8;i++) b.rect(26+i*21,21,14,12,P.s4); b.rect(0,48,W,3,P.s1); b.rect(0,62,W,16,P.s3);
+  b.ellipse(46,38,7,8,P.s1); b.rect(38,45,16,28,P.s1); b.ellipse(46,38,5,6,P.s5); b.rect(40,32,12,4,P.s1);
+  b.ellipse(80,48,4,5,P.s5); b.rect(74,53,13,19,P.s5); for (var y=54;y<71;y+=3) b.hl(74,86,y,P.s1); b.rect(75,72,4,6,P.s2); b.rect(82,72,4,6,P.s2);
+  b.rect(87,57,16,4,P.s5); for (var x=89;x<103;x+=3) b.vl(x,57,60,P.s1); b.ellipse(104,59,2,2,P.s5);
+  b.ellipse(120,44,5,6,P.s5); b.ellipse(120,40,5,4,P.s1); b.rect(125,42,2,16,P.s1); b.rect(113,50,15,22,P.s2); b.rect(105,57,8,3,P.s5); b.rect(115,72,4,6,P.s1); b.rect(122,72,4,6,P.s1);
+  var J=[0,2,3,1,-1,-3,-2,0,2,4,1,-2], tear=function(y){ return 96+J[(y>>1)%J.length]; };
+  function piece(left){ var x0=left?0:93, x1=left?101:W-1, w=x1-x0+1, c=new Uint8Array(w*H), m=new Uint8Array(w*H);
+    for (var y=0;y<H;y++) for (var x=0;x<w;x++){ var fx=x0+x, t=tear(y); if (left?fx>=t:fx<t) continue; var q=y*w+x; m[q]=1; c[q]=B.d[y*W+fx];
+      var edge=left?(fx>=t-1):(fx<=t), outer=(y===0||y===H-1||fx===0||fx===W-1); if (edge) c[q]=((x+y)&1)?P.s6:P.s5; else if (outer) c[q]=P.s6; }
+    return {w:w,h:H,c:c,m:m}; }
+  return {a:piece(true),b:piece(false),off:93}; }
 async function joinPhoto(A){ if (N(A,'f2_photo')) return A.g('Das Foto ist ganz.');
   await A.g('Dieselbe Zange. Derselbe Stern. Dieselbe Schrift.'); await A.wait(900); await A.animG('tinF'); await A.g('Dann zeige ich dir jetzt, was darunter liegt.');
   await A.narrate('Sie öffnet die Dose ganz. Unter ihrem Fahrschein liegt ein halbes Foto: ein Mädchen mit Zopf, ein Stück Straßenbahn, und am Rand ein gestreifter Ärmel und eine kleine Hand, die ihre hält.'); await A.wait(800); await A.m('Mein Ärmel.');
-  var res=await A.puzzle({title:'Die zwei Hälften',hint:'Die Rissränder müssen ineinandergreifen, und hinten soll der Satz einen Sinn ergeben. Tippe auf eine Zeile, um sie umzulegen.',button:'Zusammenlegen',
-    slots:[['Ihre Hälfte links, meine rechts','Meine Hälfte links, ihre rechts'],['Rückseite: „Mali · 1988 · N. R.“ und dann „Mala i“','Rückseite: „Mala i“ und dann „Mali · 1988 · N. R.“']],
-    init:[0,0],
-    check:function(sel){ if (sel[0]!==1) return {ok:false,bad:0,msg:'Der Riss passt nicht. Auf meiner Hälfte ist der Rand links glatt, rechts gerissen.'}; if (sel[1]!==1) return {ok:false,bad:1,msg:'„Mali · 1988 · N. R. Mala i“? Das ist kein Satz. Hinten ist alles spiegelverkehrt: Was vorn rechts ist, ist hinten links.'}; return {ok:true}; }});
+  // Zusammenlegen statt Auswahlzeilen: drehen und tauschen, bis die Rissränder ineinandergreifen
+  var res=await A.halves({title:'Die zwei Hälften',hint:'Eine Hälfte antippen dreht sie. „Tauschen“ legt sie um. Die Rissränder müssen ineinandergreifen.',button:'Zusammenlegen',make:photoHalves,
+    start:{left:'b',right:'a',rot:{a:0,b:180}},msgSide:'Der Riss passt nicht. Auf meiner Hälfte ist der Rand links glatt und rechts gerissen.',msgRot:'So stehen die Leute auf dem Kopf.'});
   if (!res){ await A.g('Versuch es noch einmal. Wir haben Zeit. Jetzt haben wir Zeit.'); return; }
   A.take('photo_m'); A.give('photo_full'); A.sfx('shimmer'); A.note('f2_photo'); await A.m('Die Zacken greifen ineinander. Großmutter. Ich, mit zehn, im gestreiften Pullover. Und das Mädchen mit dem Zopf, das meine Hand hält. Hinter uns die Drei.');
   await A.m('Hinten: „Mala i Mali · 1988 · N. R.“ Nana Ruža.'); await A.wait(1200); await memorySequence(A); }
+// Malas Geschichte nicht mehr in einem Block (Prüfbericht): der Keller und das schwarze Blatt kommen früher, durch eigene Handlungen;
+// die Nacht des Busses erst in der letzten Drei. Wer die frühen verpasst hat, sieht sie hier, dann mit Namen.
+M.k2MemCellar=async function(A,late){ if (A.flag('k2.mem.cellar')) return late?null:A.m('Das M. Ich weiß jetzt, wer es geritzt hat.'); A.setFlag('k2.mem.cellar');
+  if (!late){ await A.m('Ich setze mich hinten hin. An den Tisch mit dem M. Mit dem Rücken an die Wand.'); await A.wait(900); }
+  await A.memory({title:'Erinnerung – der Keller',tint:'memory',draw:M.mem&&M.mem.k2_cellar,lines:['Der Keller, Kerzenlicht, zwanzig Kinder. Vorn Zora mit Kreide. Hinten ich, achte Klasse, mit dem Rücken an der Wand.',(late?'Lana':'Ein Mädchen mit Zopf')+' geht durch die Reihen und zeigt den Kleinen, wie man Straßenbahnen zeichnet. Bei mir bleibt sie stehen.','„Die Räder, Mali. Die Räder sind rund.“ Ich mache sie eckig, damit sie wiederkommt.']});
+  if (late) return; await A.wait(700); await A.m('Mali.'); await A.wait(600); await A.m('Das M habe ich mit einem Zirkel in den Tisch geritzt. Ich war hier. In dieser Schule.');
+  if (A.G.malaOn){ await A.wait(800); await A.g('Ich habe ihnen Straßenbahnen gezeigt. Und einem, der hinten saß, die Räder.'); await A.m('Eckig.'); await A.g('Ja. Eckig.'); } A.save(); };
+M.k2MemAsh=async function(A,late){ if (A.flag('k2.mem.ash')) return; A.setFlag('k2.mem.ash');
+  if (!late){ await A.narrate('Unten am Fluss, ein dunkler Block zwischen den Lichtern: die Vijećnica. Heute Abend war dort ein Mann, der vierzig Jahre auf eine Zeile gewartet hat.'); await A.wait(900); }
+  await A.memory({title:'Erinnerung – das schwarze Blatt',tint:'memory',draw:M.mem&&M.mem.k2_snow2,lines:['August zweiundneunzig. '+(late?'Lana':'Ein Mädchen')+' kommt die Treppe hoch, außer Atem, mit Asche im Haar.','Sie gibt mir ein verkohltes Blatt. „Ein Gedicht. Von der Bibliothek. Damit du Gedichte magst.“',late?'Ich mag keine Gedichte. Ich behalte das Blatt siebzehn Jahre in einem Karton.':'Ich mag keine Gedichte. Das Blatt habe ich behalten. Irgendwo.']});
+  if (late) return; await A.wait(700); await A.m('Wer war das?'); if (A.G.malaOn){ await A.wait(900); await A.g('Ich weiß es nicht. Ich weiß nur, dass es geschneit hat. Schwarz.'); } };
 async function memorySequence(A){ A.G.flags['mala.lock']=true; A.music('k2_otkrice'); await A.m('…'); await A.wait(900);
   await A.memory({title:'Erinnerung – Samstage',tint:'memory',draw:M.mem&&M.mem.k2_saturdays,lines:['Samstag, 11:10. Sie klopft im siebten Stock, zweimal kurz, einmal lang. Ich bin nie fertig.','Sie macht mir die Jacke zu, bis oben, und rückt meine Mütze gerade. Ich ziehe sie wieder schief.','In der Drei sitze ich am Fenster und sie daneben. „Halt dich fest, Mali.“ An der Endstation wartet Großmutter mit zwei Taschen.']});
-  await A.memory({title:'Erinnerung – der Keller',tint:'memory',draw:M.mem&&M.mem.k2_cellar,lines:['Der Keller, Kerzenlicht, zwanzig Kinder. Vorn Zora mit Kreide. Hinten ich, achte Klasse, mit dem Rücken an der Wand.','Lana geht durch die Reihen und zeigt den Kleinen, wie man Straßenbahnen zeichnet. Bei mir bleibt sie stehen.','„Die Räder, Mali. Die Räder sind rund.“ Ich mache sie eckig, damit sie wiederkommt.']});
-  await A.memory({title:'Erinnerung – das schwarze Blatt',tint:'memory',draw:M.mem&&M.mem.k2_snow2,lines:['August zweiundneunzig. Sie kommt die Treppe hoch, außer Atem, mit Asche im Haar.','Sie gibt mir ein verkohltes Blatt. „Ein Gedicht. Von der Bibliothek. Damit du Gedichte magst.“','Ich mag keine Gedichte. Ich behalte das Blatt siebzehn Jahre in einem Karton.']});
+  var seenC=A.flag('k2.mem.cellar'), seenA=A.flag('k2.mem.ash');
+  if (seenC||seenA){ await A.wait(700); await A.m([seenC?'Das Mädchen im Keller.':'',seenA?'Das Mädchen mit der Asche im Haar.':''].filter(Boolean).join(' ')); await A.wait(500); await A.m('Das war sie.'); }
+  if (!seenC) await M.k2MemCellar(A,true); if (!seenA) await M.k2MemAsh(A,true);
   await A.memory({title:'Erinnerung – zwei Fahrscheine',tint:'memory',draw:M.mem&&M.mem.k2_tickets,lines:['November dreiundneunzig, Großmutters Tor. Lana mit roten Augen. Sie hat einen Platz in einem Bus, morgen Nacht. Großmutter hat einen zweiten für mich.','Sie zerreißt unser Foto, langsam, und gibt mir meine Hälfte. Und einen Fahrschein. „Für die erste Drei nach dem Krieg. Wenn wir uns wiedersehen, passen sie zusammen.“','„Kommst du?“ – „Ich komme.“']});
-  await A.memory({title:'Erinnerung – die Nacht des Busses',tint:'memory',draw:M.mem&&M.mem.k2_busnight,lines:['Die Nacht darauf. Großmutter hustet, Fieber, sie kann nicht aufstehen. Ich kann sie nicht allein lassen.','Ich sage es Lana nicht. Ich traue mich nicht. Ich denke, wenn ich es nicht sage, ist es nicht wahr.','Um Mitternacht höre ich von unten, weit weg, einen Bus hupen. Zweimal.','Ich stehe am Fenster und gehe nicht hinunter.']});
   await A.wait(800); await A.m('Lana.'); await A.wait(1200); await A.g('…'); await A.wait(900); await A.g('Ja.'); await A.wait(800);
   await A.m('Ich habe dir den Namen gegeben. Mala. Weil du mich Mali genannt hast.'); await A.g('Damit ich mich ärgere.'); await A.m('Du hast dich nie geärgert.'); await A.g('Nein. Ich habe gelacht.'); A.note('f2_memory'); A.setFlag('k2.f2.memory');
   await A.wait(1000); await A.g('Ich habe gewartet. Auf der Treppe in Split. Jeden Abend. Dann bin ich gegangen.'); await A.wait(800); await A.g('Ich weiß nicht, wohin.'); await A.m('Zu mir.'); await A.g('Woher weißt du das?'); await A.m('Ich weiß es nicht. Noch nicht.');

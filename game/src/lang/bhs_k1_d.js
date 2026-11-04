@@ -185,6 +185,27 @@ M.trAdd('bhs', {
   'Moja krivica. Strah. Sam … hotel … sam …': 'Moja krivica. Strah. Sam … hotel … sam …',
   '„Meine Schuld. Angst. Allein.“': 'Krivnja. Strah. Samoća.',
   'Das ist sein Satz. In drei Sprachen.': 'To je njegova rečenica. Na tri jezika.',
+  '… ne … još ne …': '… ne … još ne …',   // Bruno
+  'Da ist ein Satz in ihm. Er bekommt ihn noch nicht zusammen.': 'U njemu je jedna rečenica. Još je ne može složiti.',   // Marko
+  '… pa je otišla … a ja … sam …': '… pa je otišla … a ja … sam …',   // Bruno
+  '„Und dann ist sie gegangen. Und ich … allein.“': 'Otišla je. I ostao je sam.',   // Marko (fasst Brunos Wörter zusammen)
+  'Sviraj, mala … sviraj …': 'Sviraj, mala … sviraj …',   // Bruno
+  '„Spiel, Kleine.“': 'To joj je govorio dok je bila mala.',   // Marko
+  // Ljerka: was sie verloren hat (Prüfbericht)
+  'Zagreb.': 'Zagreb.',   // Ljerka
+  'Ich hätte an der Akademie studiert. Ich hätte vielleicht in Wien gespielt. Ich hätte …': 'Studirala bih na Akademiji. Možda bih svirala u Beču. Mogla sam …',   // Ljerka
+  'Sechsunddreißig Jahre habe ich Frühstück gemacht. Für Leute, die ich nie wiedergesehen habe.': 'Trideset i šest godina pripremala sam doručak. Za ljude koje nikad više nisam vidjela.',   // Ljerka
+  '„Er wollte, dass Sie wieder spielen.“': '„Želio je da opet svirate.“',   // Marko (Option)
+  '„Sie müssen ihm nicht verzeihen.“': '„Ne morate mu oprostiti.“',   // Marko (Option)
+  'Er wollte. Er hat immer etwas gewollt. Und ich habe es getan.': 'Želio je. Uvijek je nešto želio. I ja sam to radila.',   // Ljerka
+  'Gut, dass Sie nichts sagen. Alles andere wäre jetzt falsch.': 'Dobro je što ništa ne govorite. Sve drugo sad bi bilo krivo.',   // Ljerka
+  'Nein. Muss ich nicht.': 'Ne. Ne moram.',   // Ljerka
+  'Ich weiß nicht, ob ich es kann.': 'Ne znam mogu li.',   // Ljerka
+  'Ich spiele. Nicht für ihn.': 'Svirat ću. Ne za njega.',   // Ljerka
+  'Für die, die ich gewesen wäre.': 'Za onu koja sam mogla biti.',   // Ljerka
+  'Und jetzt soll ich sie nehmen.': 'I sad bih ih ja trebala uzeti.',   // Ljerka
+  'Ich weiß nicht, ob ich ihm verzeihe. Heute nicht.': 'Ne znam hoću li mu oprostiti. Danas ne.',   // Ljerka
+  'Vielleicht, wenn ich einmal spielen kann, ohne an ihn zu denken.': 'Možda kad jednom budem mogla svirati a da ne mislim na njega.',   // Ljerka
   'Ključevi … moji … salon …': 'Ključevi … moji … salon …',
   'Ručka … glazba … nedjelja …': 'Ručka … glazba … nedjelja …',
   '„Večer na Rivi“ … Danica …': '„Večer na Rivi“ … Danica …',
@@ -219,9 +240,12 @@ M.trAdd('bhs', {
   'Ljerka …': 'Ljerka …',
   '… sviraš.': '… sviraš.',
   '„Du spielst.“': '„Sviraš.“',
-  'Sijeda … moja Ljerka … sijeda …': 'Sijeda … moja Ljerka … sijeda …',
-  '„Grau. Meine Ljerka ist grau.“': '„Sijeda. Moja Ljerka je sijeda.“',
-  'Koliko … godina …?': 'Koliko … godina …?',
+  'Danica … nedjelja … ples …': 'Danica … nedjelja … ples …',   // Bruno
+  '„Danica. Sonntag. Tanz.“': 'Nedjelja. Ples s Danicom. Kao nekad.',   // Marko (fasst zusammen)
+  '… nema je … svijeća … svake godine …': '… nema je … svijeća … svake godine …',   // Bruno
+  '„Sie ist nicht da. Eine Kerze, jedes Jahr.“': 'Nje nema. Svake godine joj je palio svijeću.',   // Marko
+  'A meni … tko je meni …?': 'A meni … tko je meni …?',   // Bruno
+  '„Und mir … wer hat mir …?“': 'A njemu? Tko je njemu upalio svijeću?',   // Marko
   'Ja … nisam … više … ovdje.': 'Ja … nisam … više … ovdje.',
   '„Ich bin … nicht mehr … hier.“': '„Nisam više ovdje.“',
   // sein erster ganzer Satz – im Original in der Sprache des Spielers, deshalb hier kroatisch

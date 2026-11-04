@@ -117,7 +117,12 @@ M.trAdd('bhs', {
   // danach Mala (Bosnisch) und Marko an Mala
   'Und?': 'I?',
   'Da liegt ein Zettel. Und darauf steht, was du gesagt hast.': { hr:'Ondje je ceduljica. I na njoj piše ono što si rekla.', bs:'Tamo je ceduljica. I na njoj piše ono šta si rekla.' },
-  'Das ist ein Anfang.': 'To je početak.',
+  'Und jetzt weiß ich etwas, das Sanja selbst sagen wollte.': { hr:'A sad znam nešto što je Sanja htjela sama reći.', bs:'A sad znam nešto što je Sanja htjela sama reći.' },
+  'So ist es jeden Tag. Ich sehe, was keiner zeigen will.': 'Tako je svaki dan. Vidim ono što niko neće da pokaže.',   // Mala
+  'Und was machst du damit?': { hr:'I što radiš s tim?', bs:'I šta radiš s tim?' },
+  'Meistens nichts.': 'Uglavnom ništa.',   // Mala
+  'Und über dich? Was siehst du da?': { hr:'A o sebi? Što tu vidiš?', bs:'A o sebi? Šta tu vidiš?' },
+  'Und sag Stipe nichts. Das ist meine Sache.': 'I ne govori ništa Stipi. To je moja stvar.',   // Sanja
   'Ich will ans Wasser. Nicht weit.': 'Hoću do vode. Ne daleko.',
   // Sanjas Zettel (schon kroatisch im Original)
   'ČETVRTAK': 'ČETVRTAK',
@@ -152,8 +157,9 @@ M.trAdd('bhs', {
   'Seit wir durch das Tor zurück sind, ist es … dünner. Als wäre unterwegs etwas verrutscht. Ich habe gerufen. Du hast durch mich hindurchgesehen.': 'Otkad smo se vratili kroz kapiju, nekako je … tanje. Kao da se usput nešto pomjerilo. Zvala sam te. Gledao si kroz mene.',
   'Und jetzt?': { hr:'A sad?', bs:'A sad?' },
   'Jetzt nicht mehr. Ich weiß nicht, warum. Ich weiß nicht, ob es wiederkommt.': 'Sad više ne. Ne znam zašto. Ne znam da li će se vratiti.',
-  'Ich will nicht nur glauben, was du sagst. Ich will es prüfen. Hier. Jetzt.': { hr:'Ne želim ti samo vjerovati na riječ. Želim to provjeriti. Ovdje. Sada.', bs:'Neću samo da ti vjerujem na riječ. Hoću da provjerim. Ovdje. Sad.' },
-  'Dann such dir etwas aus.': 'Onda izaberi nešto.',
+  'Ich glaube dir. Das ist ja das Problem.': { hr:'Vjerujem ti. To i jest problem.', bs:'Vjerujem ti. To i jeste problem.' },
+  'Wenn ich dir glaube, glaube ich auch alles, was du über andere siehst. Über Sanja. Über jeden hier.': { hr:'Ako tebi vjerujem, onda vjerujem i sve što vidiš o drugima. O Sanji. O svakome ovdje.', bs:'Ako tebi vjerujem, onda vjerujem i sve što vidiš o drugima. O Sanji. O svakom ovdje.' },
+  'Dann fang mit etwas Kleinem an. Etwas, das niemandem wehtut.': 'Onda počni s nečim malim. S nečim što nikoga ne boli.',   // Mala
 
   // ================================================================ Hotspots (Namen = Oberfläche, look/use/take/read = Marko, g = Mala)
   'Sie zählt Milchflaschen, halblaut. Bei sechs hört sie auf.': 'Broji flaše mlijeka, poluglasno. Na šestoj stane.',

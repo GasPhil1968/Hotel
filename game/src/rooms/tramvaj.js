@@ -44,6 +44,10 @@ async function rideNight(A){ A.setFlag('k2.f2.rideStart'); A.G.flags['mala.lock'
   A.set('view','yellow'); await A.wait(600); await A.narrate('Das gelbe Hotel. Davor, im Schnee, die Haltestelle, an der wir nie ausgestiegen sind.');
   A.set('view','museum'); await A.wait(700); await A.g('Die Dose.'); await A.m('Das Denkmal. Für die Hilfslieferungen. Für die Dosen, die wir gegessen haben.'); await A.g('Meine ist kleiner.'); await A.m('…'); await A.wait(500); await A.m('Darin war Fleisch. In deiner ist ein Fahrschein.'); await A.g('Und ein halbes Foto.'); await A.m('Nicht mehr.'); await A.wait(700);
   A.set('view','cathedral'); A.sfx('bellsFar'); await A.wait(400); await A.g('…'); await A.m('Sie läuten nicht für uns.'); await A.g('Ich weiß. Ich habe es nur nie geglaubt.'); await A.wait(800);
+  // die Nacht des Busses erst hier, am Höhepunkt (Prüfbericht): mit Pausen davor und danach
+  await A.wait(1500); A.set('moving',false); A.sfx('tramBrake'); await A.narrate('Die Bahn hält an einer Haltestelle, an der niemand wartet. Die Türen gehen auf. Schnee weht herein. Die Türen gehen wieder zu.'); A.sfx('tramDoor'); await A.wait(1800); A.set('moving',true);
+  await A.memory({title:'Erinnerung – die Nacht des Busses',tint:'memory',draw:M.mem&&M.mem.k2_busnight,lines:['Die Nacht darauf. Großmutter hustet, Fieber, sie kann nicht aufstehen. Ich kann sie nicht allein lassen.','Ich sage es Lana nicht. Ich traue mich nicht. Ich denke, wenn ich es nicht sage, ist es nicht wahr.','Um Mitternacht höre ich von unten, weit weg, einen Bus hupen. Zweimal.','Ich stehe am Fenster und gehe nicht hinunter.']});
+  await A.wait(1600); await A.m('…'); await A.wait(1300);
   // Geständnis: keine falsche Antwort, nur andere Worte
   await A.m('Lana.'); await A.wait(800); await A.g('Ja?');
   var c=await A.choose([{t:'Ich bin nicht gekommen. In der Nacht des Busses.',id:'came'},{t:'Großmutter war krank. Ich habe mich nicht getraut, es dir zu sagen.',id:'ruza'},{t:'Ich habe dich vergessen. Ich wollte dich vergessen.',id:'forgot'}],{title:'Lana'});
@@ -51,7 +55,8 @@ async function rideNight(A){ A.setFlag('k2.f2.rideStart'); A.G.flags['mala.lock'
   if (c==='came'){ await A.g('Ich weiß. Ich habe bis zum Schluss gewartet. Der Fahrer hat zweimal gehupt.'); await A.m('Ich war oben in Vratnik. Ich habe es gehört. Zweimal.'); }
   else if (c==='ruza'){ await A.g('Ich hätte es verstanden.'); await A.m('Ich war fünfzehn. Ich dachte, wenn ich es nicht sage, ist es nicht wahr.'); await A.g('Das denkst du heute noch.'); }
   else { await A.g('Ich weiß. Darum war ich so leer.'); await A.m('Es tut mir leid.'); await A.g('Ich weiß. Jetzt.'); }
-  await A.wait(900); await A.m('Ich bin gekommen. Ich habe dich in Split gesucht. Im Mai vierundneunzig. Alle Hotels.'); await A.g('Ich war schon nicht mehr dort.'); await A.m('Ich weiß das jetzt. Damals dachte ich, du hast mich vergessen.');
+  await A.wait(1400); await A.narrate('Eine Weile sagt keiner etwas. Der Schnee schlägt gegen die Scheiben, und Damir pfeift in seiner Kabine ein Lied, das es nicht mehr gibt.'); await A.wait(1800);
+  await A.m('Ich bin gekommen. Ich habe dich in Split gesucht. Im Mai vierundneunzig. Alle Hotels.'); await A.g('Ich war schon nicht mehr dort.'); await A.m('Ich weiß das jetzt. Damals dachte ich, du hast mich vergessen.');
   await A.wait(700); await A.g('Du bist gekommen.'); await A.wait(500); await A.g('Nur später.');
   A.set('view','river'); await A.wait(900); await A.narrate('Die Miljacka, schwarz unter dem Schnee. Die Brücke, das Gerüst, ein Licht im Container der Nachtwache.');
   A.set('view','bascarsija'); A.set('moving',false); A.sfx('tramBrake'); await A.wait(600); await A.voice('„Baščaršija. Zadnja stanica.“',P.s4); A.sfx('tramDoor');

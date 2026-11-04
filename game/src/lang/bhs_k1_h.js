@@ -29,7 +29,7 @@ M.trAdd('bhs', {
   'Leitungswasser. Mehr habe ich nicht anzubieten.': 'Voda iz slavine. Više nemam što ponuditi.',   // Marko (wie das Glas in bhs_k1_j.js)
   'Das Glas ist schon voll.': 'Čaša je već puna.',   // Marko
   'Nicht noch einmal. Ich habe zum ersten Mal seit Tagen geschlafen. Das reicht für eine Woche.': 'Ne opet. Spavao sam prvi put nakon više dana. To mi je dosta za cijeli tjedan.',   // Marko
-  'Erst Seite einunddreißig. Der Kunde will sie heute, und er zahlt nach Seiten.': 'Najprije trideset i prva stranica. Klijent je želi danas, a plaća po stranici.',   // Marko
+  'Seite einunddreißig liegt noch auf dem Schreibtisch. Der Kunde will sie heute, und er zahlt nach Seiten.': 'Trideset i prva stranica još leži na stolu. Klijent je želi danas, a plaća po stranici.',   // Marko
   'Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.': 'Ne idem nikamo dok mi u stanu stoji netko tko ne postoji.',   // Marko (Wechselsatz 1)
   'Erst will ich wissen, wer da steht.': 'Najprije hoću znati tko to tu stoji.',   // Marko (Wechselsatz 2)
   // ---------------------------------------------------------------- Anrufbeantworter: Vesna und Sanja

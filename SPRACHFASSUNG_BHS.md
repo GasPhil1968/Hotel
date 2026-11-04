@@ -67,6 +67,29 @@ Die verbindlichen Stilvorgaben stehen in `game/STYLE_BHS.md`.
   - Mit anderen Leuten bleibt es Standardkroatisch.
 - **Ivka:** Im Zwischenreich sagt sie jetzt „Moren ih držat.“ Das antwortet auf ihr „Ne moren ih držat.“ an der Mole; vorher stand dort „Mogu“.
 
+## Nachträge nach dem Prüfbericht (November 2026)
+
+Neue oder geänderte Texte in Kapitel 1, alle übersetzt (statische Prüfung: 0 fehlen):
+
+- **Bruno:**
+  - drei neue Bruchstücke (*„… pa je otišla … a ja … sam …“*, *„Sviraj, mala …“*, *„… ne … još ne …“*);
+  - die neue Erkenntnis über Danica und die Kerze.
+  - Markos deutsche Übersetzungen dieser Bruchstücke sind in BHS, wie bisher, ganze Sätze von Marko.
+- **Ljerka:** der Moment nach Brunos Satz, „Studirala bih na Akademiji …“, sowie ihr „Danas ne“ am Morgen.
+- **Nina:** ihr Zögern vor der Rampe; Markos zwei Sätze über ihre Bilder und ihr Warten.
+- **Sanja:**
+  - zum geöffneten Brief: „Sol prvo pojede tintu.“;
+  - zum Zettel: „I ne govori ništa Stipi.“
+- **Mala:**
+  - die genauere Frage nach dem ersten Schwindel;
+  - das ausgeblichene Ordnerschild im Hafenamt;
+  - die Antworten in der Bura.
+- **Marko:**
+  - umformulierte Wegeansagen;
+  - die Sätze an Mala in der Bura, mit eigener bosnischer Fassung.
+- **Lukas Fahrkarten:** Bei Nina steht jetzt eine *rezervacija za dvoje*, keine *karta*.
+- **Oberfläche:** *Da fehlt noch etwas* (Još nešto nedostaje); die neuen Rätselformen (*Poredaj*, *Spoji*, *Zamijeni*, *Čitanje rukopisa*, *Tablica*).
+
 ## Grenzen und Bitte um Gegenlesen
 
 **Neue Texte (Einstieg, Morgen nach Ivka):** Die Übersetzer haben selbst als unsicher markiert:

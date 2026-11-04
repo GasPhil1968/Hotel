@@ -288,7 +288,7 @@ var API={
   set:setR, has:has, give:give, take:take, first:firstTime, cycle:cycle, pick:pick, flag:flag, setFlag:setFlag, npc:npcHandle, R:RS,
   note:function(id,q){ return addNote(id,q); }, hasNote:hasNote, askNote:pickNote,
   choose:choose, overlay:showOverlay,
-  doc:function(d){ return showOverlay('doc',d); }, memory:function(d){ M.sfx('shimmer'); return showOverlay('memory',d); }, puzzle:function(d){ return showOverlay('puzzle',d); },
+  doc:function(d){ return showOverlay('doc',d); }, memory:function(d){ M.sfx('shimmer'); return showOverlay('memory',d); }, puzzle:function(d){ return showOverlay('puzzle',d); }, arrange:function(d){ return showOverlay('arrange',d); }, halves:function(d){ return showOverlay('halves',d); }, glyphs:function(d){ return showOverlay('glyphs',d); },
   card:function(c){ return showCard(c); }, fade:function(v,ms){ return fadeTo(v,ms); }, shake:function(ms){ E.shake=ms||300; },
   goto:function(id,o){ return gotoRoom(id,o); }, unlock:function(loc){ GS.map[loc]=true; }, unlocked:function(loc){ return !!GS.map[loc]; },
   phase:function(p){ setPhase(p); }, get phaseId(){ return GS.phase; },

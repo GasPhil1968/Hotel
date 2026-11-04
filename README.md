@@ -16,6 +16,7 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 | [`LOESUNG2.md`](LOESUNG2.md) | Komplettlösung von Kapitel 2 |
 | [`SPRACHFASSUNG_BHS.md`](SPRACHFASSUNG_BHS.md) | Bosnisch-kroatische Sprachfassung: wer welche Sprachform spricht, Technik, Prüfungen, offene Punkte (Stilvorgaben in `game/STYLE_BHS.md`) |
 | [`BERICHT_K2.md`](BERICHT_K2.md) | Entwicklungs- und Testbericht von Kapitel 2 (was geprüft wurde und was nicht) |
+| [`BERICHT_PRUEFBERICHT.md`](BERICHT_PRUEFBERICHT.md) | Überarbeitung nach dem externen Prüfbericht (November 2026): blockierende Fehler, Widersprüche, neue Rätselformen, Spannungsbogen, Tests, offene Punkte |
 | [`KONZEPT.md`](KONZEPT.md) | Das vollständige Konzept: Analyse des Originals, Umsetzung der Blackwell-Mechanik, Story, Figuren, 19 Orte, die drei Fälle mit allen Rätseln und Lösungen, Spielzeit, Malas Geheimnis |
 | `web/` | **Das spielbare Spiel** (eine einzige `index.html` + Offline-Service-Worker + Icons). Ordner bei Netlify hochladen oder `index.html` im Browser öffnen. Siehe `web/LIESMICH.txt` |
 | `game/src/` | Quelltext: Engine (`00`–`06`, `99`), Porträts (`07`, `portraits/`), Tagesabläufe der Nebenfiguren (`08`), Gegenstände & Notizen (`10`, `11`), Szenerie (`20`), Räume (`rooms/` Logik, `rooms/art/` Kunst, `rooms/limbo.js` die Zwischenwelt), Story (`90`–`93`); Kapitel 2: Gegenstände, Notizen, Figuren, Hinweise, Klang (`12`–`16`), Story, Mala, Zwischenwelt, Gespräche, Erinnerungsbilder (`96`–`98`) |
@@ -41,6 +42,8 @@ node game/tools/einstiegtests.js                    # Einstieg und Morgen nach I
 MALA_DUMPALL=/tmp/d node game/tools/walkthrough2.js # spielt Kapitel 2 durch (MALA_ORDER=alt: andere Reihenfolge)
 node game/tools/k2tests.js /tmp/d                   # Einzeltests für Kapitel 2
 node game/tools/devicetest.js                       # iPad-Ansicht, Touch, offline, Bildzeit
+MALA_DUMPALL=/tmp/k1 node game/tools/walkthrough.js # Spielstände je Schritt für den nächsten Test
+node game/tools/pruefbericht.js /tmp/k1 /tmp/d [bilder]   # jeder Befund des Prüfberichts im echten Spiel nachgestellt
 node game/tools/roomshot.js --room riva --phase c1 --cam 320 --out riva.png [--debug] [--who mala]
 ```
 

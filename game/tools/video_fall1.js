@@ -70,7 +70,7 @@ fs.mkdirSync(DIR, { recursive: true });
     await talk('ivka', 'Welches Boot', 'Welcher Tag', 'Das Boot ist spät', 'Ich gehe ein Stück');
     await exit('office_door');
     await talk('mladen', 'Frage zu einer Fähre', 'Für einen Text', 'Dann sieh nach', 'Danke. Laku');   // der erste gemeinsame Test
-    await sw('mala'); await exit('archive_door'); await act('look', 'binder_1948'); await exit('door'); await sw('marko');
+    await sw('mala'); await exit('archive_door'); await act('look', 'binder_1948'); await act('sense', 'binder_1948'); await exit('door'); await sw('marko');
     await talk('mladen', 'Schauen Sie mal', 'Danke. Laku');               // das Fahrtenbuch
     await combine('c1_boat7', 'c1_ferry');                                // Notizbuch: das Boot um sieben + die Fähre fiel aus
     await exit('door'); await exit('exit'); await travel('matejuska');

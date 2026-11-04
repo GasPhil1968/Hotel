@@ -108,6 +108,76 @@ const lastWhere = (dir, pred) => { const L = dumps(dir).filter(x => pred(x.GS));
     await D.choose('am Schreibtisch'); await D.drain(); L = await said();
     ok(L.some(t => t.indexOf('Am Schreibtisch, ja. Da hast du dich an der Kante festgehalten.') >= 0) && !(await F('split.intro.first')), 'Schreibtisch: Mala bestätigt das Festhalten und fragt nach dem anderen Moment');
     await D.choose('An der Riva'); await D.drain(); ok((await F('split.intro.first')) === 'riva' && await F('split.intro.met'), 'danach die Riva: Gespräch endet wie vorgesehen');
+    // ================================================================ 7. Malas Fähigkeit vor dem Brief: das ausgeblichene Ordnerschild im Hafenamt
+    out.push('7. Hafenamt: Mala liest eine Schrift, die nicht mehr da ist (Vorbereitung für Tonćis Brief)');
+    await load(byLabel(K1, 'Praxistest: Marko lässt sie nachsehen')); await D.switchTo('mala'); await D.exit('archive_door'); await D.drain();
+    await D.act('look', 'binder_1948'); await D.drain(); ok(!(await D.hasNote('c1_1948')), 'Ansehen allein: das Schild ist ausgeblichen, keine Jahreszahl');
+    await D.ev(() => { M.__speechLog = []; }); await D.act('sense', 'binder_1948'); await D.drain(); L = await said();
+    ok(await D.hasNote('c1_1948') && L.some(t => t.indexOf('Die Hand, die sie geschrieben hat, nicht') >= 0), 'Spüren: Mala liest die verschwundene Schrift (1984 bei 1948)');
+    // ================================================================ 8. Sanja und der geöffnete Brief
+    out.push('8. Sanja erkennt, in welchem Zustand Tonćis Brief ist');
+    await load(byLabel(K1, 'Brief über Dampf geöffnet')); await D.exit('door'); await D.drain(); await D.travel('bar'); s = await st();
+    if (s.room === 'bar'){ await D.ev(() => { M.__speechLog = []; }); await D.act('use', 'sanja', 'letter_t'); await D.drain(); L = await said();
+      ok(L.some(t => t.indexOf('Lesen kann ihn so keiner mehr') >= 0) && !L.some(t => t.indexOf('Lies ihn') >= 0), 'geöffnet, aber unlesbar: Sanja sagt nicht mehr „Lies ihn“, sondern dass das Salz die Tinte genommen hat'); }
+    else ok(false, 'Bar erreichbar', s.room);
+    await load(byLabel(K1, 'Mala liest den Brief')); await D.exit('door'); await D.drain(); await D.travel('bar'); await D.ev(() => { M.__speechLog = []; }); await D.act('use', 'sanja', 'letter_t'); await D.drain(); L = await said();
+    ok(L.some(t => t.indexOf('Den hast du doch gelesen') >= 0), 'nach Malas Lesung: Sanja sieht, dass er ihn gelesen hat');
+    // ================================================================ 9. Brunos Satz: keine Abkürzung, leere Felder
+    out.push('9. Brunos Satz: erst aus drei Erinnerungen, Rätsel beginnt leer');
+    const g9 = byLabel(K1, 'Musik'); g9.flags['c3.lvl'] = 0; ['c3.ins.danica', 'c3.ins.ljerka', 'c3.ins.zagreb'].forEach(k => delete g9.flags[k]); await load(g9);
+    s = await st(); const toBruno = async () => { if ((await st()).room !== 'salon') { await D.exit('stairs'); await D.drain(); } };
+    await toBruno(); if (!(await inv('envelope'))) { await D.act('use', 'bench', 'keyring'); await D.drain(); }
+    await D.ev(() => { M.__speechLog = []; }); await D.act('use', 'bruno', 'envelope'); await D.drain(); L = await said();
+    ok((await D.ev(() => M.GS.flags['c3.lvl'] || 0)) < 3 && !L.some(t => t.indexOf('perdonami') >= 0), 'Umschlag zuerst: Bruno bekommt den Satz noch nicht zusammen (keine Abkürzung)');
+    await D.act('use', 'bruno', 'musicbook'); await D.drain(); ok((await D.ev(() => M.GS.flags['c3.lvl'] || 0)) === 2, 'Klavierschule: zweite Erinnerung');
+    await D.ev(() => { M.__speechLog = []; }); await D.act('use', 'bruno', 'photo2'); await D.drain(); L = await said();
+    ok((await D.ev(() => M.GS.flags['c3.lvl'])) === 3 && L.some(t => t.indexOf('perdonami') >= 0), 'Foto als dritte: jetzt der ganze Satz (Reihenfolge frei)');
+    await D.act('talk', 'bruno'); await D.drain(); await D.choose('übersetzen'); await D.until(x => x.overlay === 'puzzle', 8000, 'Rätsel'); for (let i = 0; i < 50 && !(await D.ev(() => !!(M.E.overlay && M.E.overlay.sel))); i++) await D.page.waitForTimeout(40);
+    ok(await D.ev(() => M.E.overlay.sel.every(v => v === -1)), 'die Antwortfelder beginnen leer');
+    await D.ev(() => { let b = null; for (let y = 0; y < 200 && !b; y++) for (let x = 0; x < 320; x++) if (M.uiHit(x, y) === 'zgo') { b = [x, y]; break; } if (b) { M.pointerDown(b[0] + 3, b[1] + 3, true); M.pointerUp(b[0] + 3, b[1] + 3, true); } });
+    await D.page.waitForTimeout(150); const gapMsg = await D.ev(() => M.E.overlay && M.E.overlay.msg);
+    ok(gapMsg === 'Da fehlt noch etwas.', '„Vorlesen“ mit leeren Feldern: „Da fehlt noch etwas.“', gapMsg);
+    ok(await D.ev(() => !M.E.overlay.data.check([0, 0, 0, 0, 0]).ok && M.E.overlay.data.check([1, 2, 0, 1, 2]).ok), 'die ersten Fassungen sind nicht die Lösung, die richtige Auswahl schon');
+    await D.close(null); await D.drain(); s = await st(); if (s.dlg) { await D.choose('Laku noć'); await D.drain(); }
+    // ================================================================ 10.–12. neue Rätselformen, nur über Antippen gelöst
+    const tapHit = async (id) => { await D.page.waitForTimeout(120); await D.ev((i) => { const h = ((M.E.overlay && M.E.overlay.lay && M.E.overlay.lay.hits) || []).find(x => x.id === i); if (!h) throw new Error('Feld fehlt: ' + i); const x = h.r[0] + (h.r[2] >> 1), y = h.r[1] + (h.r[3] >> 1); M.pointerDown(x, y, true); M.pointerUp(x, y, true); }, id); await D.page.waitForTimeout(100); };
+    const ovMsg = () => D.ev(() => M.E.overlay && M.E.overlay.msg);
+    out.push('10. Tomažs Briefe ordnen (statt Auswahlzeilen)');
+    await load(byLabel(K2, 'Hinter dem Spiegel')); await D.item('read', 'letters_tz'); await D.drain(); await D.until(x => x.overlay === 'arrange', 8000, 'Ordnen');
+    ok(await D.ev(() => { const ov = M.E.overlay; const ids = (ov.ord || ov.data.start).map(k => ov.data.items[k].id); return !ov.data.check(ids).ok; }), 'zu Beginn nicht geordnet');
+    await tapHit('r0'); ok(await D.ev(() => M.E.overlay.pick === 0), 'ein Brief ist gewählt (oben steht Markos Übersetzung)'); await shot('pb_briefe_gewaehlt');
+    await tapHit('r0'); await tapHit('go'); ok(!!(await ovMsg()), 'falsche Reihenfolge: ein Gedanke, woran es liegt', await ovMsg());
+    for (let i = 0; i < 6; i++) { const j = await D.ev((i) => M.E.overlay.ord.findIndex(k => M.E.overlay.data.items[k].id === 'l' + (i + 1)), i); if (j !== i) { await tapHit('r' + i); await tapHit('r' + j); } }
+    await shot('pb_briefe_geordnet'); await tapHit('go'); await D.drain(); ok(await D.hasNote('s1_letters'), 'durch Tauschen geordnet: die Briefe sind gelesen (s1_letters)');
+    out.push('11. Bauakte: Kurrent mit der Tafel vergleichen (statt Auswahlzeilen)');
+    await load(byLabel(K2, 'Kurrent-Tafel und Buch')); await D.exit('door'); await D.drain(); if ((await st()).room !== 'map') { await D.exit('exit'); await D.drain(); } await D.travel('obala');
+    await talk('amra', 'Ich lese Kurrent'); await D.until(x => x.overlay === 'glyphs', 8000, 'Schrift'); await shot('pb_kurrent_start');
+    await tapHit('go'); ok((await ovMsg()) === 'Da fehlt noch etwas.', 'ohne Lesarten: „Da fehlt noch etwas.“');
+    const cells = await D.ev(() => { const L = []; M.E.overlay.data.words.forEach((w, wi) => w.forEach((c, ci) => { if (c.k) L.push([wi, ci, c.ok]); })); return L; });
+    for (const [wi, ci] of cells) await tapHit('g' + wi + '_' + ci);   // jede Lesart einmal antippen: erste Lesart
+    await tapHit('go'); ok(/Grnndmaner/.test((await ovMsg()) || ''), 'erste Lesarten: Amra hört „Grnndmaner“', await ovMsg());
+    for (const [wi, ci, want] of cells) { for (let k = 0; k < 4; k++) { const cur = await D.ev(([w, c]) => M.E.overlay.rd[w][c], [wi, ci]); if (cur === want) break; await tapHit('g' + wi + '_' + ci); } }
+    await shot('pb_kurrent_richtig'); await tapHit('go'); await D.drain(); s = await st(); if (s.dlg) { await D.choose('Viel Glück'); await D.drain(); }
+    ok(await inv('pass') && await F('k2.s2.pass'), 'mit der Tafel richtig gelesen: Amra stellt den Passierschein aus');
+    out.push('12. Die zwei Hälften: drehen und tauschen (statt Auswahlzeilen)');
+    await load(byLabel(K2, 'Der Karton aus Split ist offen')); await D.act('use', '_mala', 'ticket_m'); await D.drain(); await D.until(x => x.overlay === 'halves', 8000, 'Hälften'); await shot('pb_haelften_start');
+    await tapHit('go'); ok(/Riss passt nicht/.test((await ovMsg()) || ''), 'falsche Seiten: der Riss passt nicht');
+    await tapHit('sw'); await tapHit('go'); ok(/auf dem Kopf/.test((await ovMsg()) || ''), 'getauscht, eine Hälfte noch verkehrt: „So stehen die Leute auf dem Kopf.“');
+    await tapHit('p1'); await shot('pb_haelften_richtig'); await tapHit('go'); await D.until(x => x.overlay !== 'halves', 8000, 'zusammengelegt'); await D.drain();
+    ok(await D.hasNote('f2_photo') && await inv('photo_full'), 'zusammengelegt: das ganze Foto, Malas Erinnerungen beginnen');
+    // ================================================================ 13. Malas Erinnerungen verteilt
+    out.push('13. Malas Erinnerungen: früher durch eigene Handlungen, die Nacht des Busses in der letzten Drei');
+    const memTitles = async () => { const T = []; for (let i = 0; i < 40; i++) { const s0 = await D.settle(); if (s0.overlay === 'memory') { T.push(await D.ev(() => M.E.overlay.data.title)); await D.ev(() => M.TA.closeOverlay()); await D.page.waitForTimeout(60); continue; } if (s0.overlay && ['notebook', 'puzzle', 'arrange', 'halves', 'glyphs'].indexOf(s0.overlay) < 0) { await D.ev(() => M.TA.closeOverlay()); await D.page.waitForTimeout(60); continue; } break; } return T; };
+    await load(byLabel(K2, 'Zora ist hinüber')); await D.ev(() => { M.__speechLog = []; }); await D.act('use', 'benches'); let MT = await memTitles(); L = await said();
+    ok(MT.indexOf('Erinnerung – der Keller') >= 0 && await F('k2.mem.cellar') && L.some(t => t.indexOf('Ein Mädchen mit Zopf') >= 0 || t === 'Mali.'), 'Kellerschule: am Tisch mit dem M kommt die Erinnerung, ohne Lanas Namen', JSON.stringify(MT));
+    const g13 = byLabel(K2, 'Der Karton aus Split ist offen'); g13.flags['k2.mem.cellar'] = true; await load(g13);
+    await D.act('use', '_mala', 'ticket_m'); await D.until(x => x.overlay === 'halves', 8000, 'Hälften'); await tapHit('sw'); await tapHit('p1'); await tapHit('go'); await D.until(x => x.overlay !== 'halves', 8000, 'zusammengelegt');
+    MT = await memTitles();
+    ok(MT.indexOf('Erinnerung – der Keller') < 0 && MT.indexOf('Erinnerung – das schwarze Blatt') >= 0 && MT.indexOf('Erinnerung – die Nacht des Busses') < 0 && MT.length <= 3, 'beim Foto: kein Keller (schon gesehen), das schwarze Blatt nachgeholt, die Nacht des Busses noch nicht', JSON.stringify(MT));
+    await load(byLabel(K2, 'Die letzte Fahrt')); await talk('_mala', 'Gib mir deinen Fahrschein', 'Komm.'); await D.act('use', 'tram_stop'); await D.drain();
+    await D.act('use', 'validator', 'ticket_m'); await D.drain(); await D.act('use', 'validator', 'ticket_l'); MT = await memTitles();
+    ok(MT.indexOf('Erinnerung – die Nacht des Busses') >= 0, 'in der letzten Drei: die Erinnerung an die Nacht des Busses, vor dem Geständnis', JSON.stringify(MT));
+    s = await st(); if (s.dlg) { await D.choose('Ich bin nicht gekommen'); await D.drain(); } ok(await F('k2.f2.rideEnd'), 'die Fahrt endet wie vorgesehen');
   } catch (e) { fail++; out.push('ABBRUCH ' + e.message); }
   console.log(out.join('\n')); console.log(`\n${pass} bestanden, ${fail} fehlgeschlagen`); console.log(D.errors.slice(0, 5).join('\n') || 'keine JS-Fehler');
   await D.close2(); process.exitCode = fail ? 1 : 0;

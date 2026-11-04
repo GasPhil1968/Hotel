@@ -85,7 +85,8 @@ M.trAdd('bhs', {
   'Sie mag ihn. Sie würde es nie sagen.': 'Drag joj je. Nikad to ne bi rekla.',
   'Sie summt beim Spülen. Ein Lied von der Riva. Dann hört sie plötzlich auf.': 'Pjevuši dok pere suđe. Neku pjesmu s Rive. Onda odjednom prestane.',
   'Sie redet leise mit sich selbst: „Zwölf Jahre. Und jetzt kommt er mit den Namen.“': 'Tiho priča sama sa sobom: „Dvanaest godina. I sad on dođe s imenima.“',
-  'Der ist doch offen. Lies ihn.': 'Pa otvoreno je. Čitaj.',
+  'Den hast du doch gelesen. Das sehe ich dir an.': 'Pa pročita si ga. Vidi ti se na licu.',   // Sanja
+  'Offen ist er. Lesen kann ihn so keiner mehr. Das Salz nimmt die Tinte zuerst.': 'Otvoreno je. Ali ovako ga više niko ne može pročitat. Sol prvo pojede tintu.',   // Sanja
   '„Behalt sie. Ich habe zwei.“': '„Zadrži ih. Imam još jedne.“',
   'Zwei Tickets nach Ancona …': 'Dvije karte za Anconu …',
   'Woher hast du die?': 'Otkud ti one?',
@@ -169,6 +170,18 @@ M.trAdd('bhs', {
   'Er hat immer Kassetten aufgenommen, mit einem Rekorder vom Flohmarkt. Ich wusste nicht, dass es eine für mich gibt.': 'Stalno je snimao kasete, na kasetofonu s buvljaka. Nisam znala da postoji i jedna za mene.',
   'Ich habe nichts mehr, womit ich das abspielen kann. Ich habe alles weggegeben, was Kassetten abspielt.': 'Više nemam na čemu to pustiti. Dala sam sve što pušta kasete.',
   'Wollen Sie es hören?': 'Želite li to poslušati?',
+  // Nina zögert, an die Rampe zu gehen (Prüfbericht)
+  'Und nicht an der Rampe. Da war ich seit zwölf Jahren nicht.': 'I ne na rampi. Tamo nisam bila dvanaest godina.',   // Nina
+  'Ich male sie. Das reicht.': 'Ja je slikam. To je dosta.',   // Nina
+  'Sie malen jedes Mal zuerst die Fähre. Die Gestalt am Kiosk malen Sie zuletzt. Manchmal gar nicht.': 'Svaki put prvo naslikate trajekt. Lik kod kioska slikate zadnji. Ponekad nikako.',   // Marko
+  'Sie haben dort gewartet, bis die Lichter klein waren. Seitdem stehen Sie jeden Abend dort. Nur auf Leinwand.': 'Čekali ste tamo dok svjetla nisu postala mala. Otada svake večeri stojite tamo. Samo na platnu.',   // Marko
+  'Das ändert nichts. Gehen Sie. Bitte.': 'To ništa ne mijenja. Idite. Molim vas.',   // Nina
+  'Und wenn ich hingehe, und da ist wieder nichts?': 'A ako odem, a tamo opet ništa?',   // Nina
+  'Dann bin ich da.': 'Onda sam ja tu.',   // Marko (Option)
+  'Dann wissen Sie es wenigstens.': 'Onda barem znate.',   // Marko (Option)
+  'Sie.': 'Vi.',   // Nina
+  'Wissen.': 'Znati.',   // Nina
+  'Das ist mehr als zwölf Jahre Blau.': 'To je više od dvanaest godina plave.',   // Nina
   'Nicht hier.': 'Ne ovdje.',
   'Heute Abend. An der Rampe. Wenn die Fähre ablegt. Ich will es dort hören.': 'Večeras. Na rampi. Kad trajekt isplovi. Tamo to želim čuti.',
   'Ich bin da.': { hr:'Bit ću tamo.', bs:'Tu sam.' },     // an Nina: „Ich komme“; an Mala (stanica.js): „Ich bin bei dir“

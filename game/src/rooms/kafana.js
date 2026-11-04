@@ -99,15 +99,20 @@ async function talkSacir(A){ var Sc=A.npc('sacir');
 // ---------------------------------------------------------------- Tomažs Briefe (Slowenisch)
 M.k2ReadLetters=async function(A){ if (A.hasNote('s1_letters')){ return A.m('„Ich habe bis elf gewartet. Um halb zwölf musste ich in der Kaserne sein. Ich schreibe, bis du antwortest.“ Sechs Briefe. Der letzte ist ganz kurz.'); }
   await A.doc({style:'letter',title:'Ljubljana, 20. novembra 1972',lines:['Draga Emina,','','čakal sem do enajstih. Ob pol dvanajstih sem moral','biti v vojašnici. Nisi prišla. Ne vem, zakaj.','Pisal ti bom, dokler mi ne odgovoriš.','','Tvoj Tomaž']});
-  await A.m('Slowenisch. Ich lese es. Aber ich will es richtig sagen, nicht ungefähr.');
-  var res=await A.puzzle({title:'Tomažs Brief übersetzen',hint:'Slowenisch ist nah am Bosnischen, aber nicht gleich. „Čakal“ heißt gewartet, „vojašnica“ ist die Kaserne. Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',
-    slots:[['„Ich habe bis elf gewartet.','„Ich habe bis sieben gewartet.','„Ich habe elf Jahre gewartet.'],['Um halb zwölf musste ich in der Kaserne sein.','Um halb elf musste ich nach Hause.','Um zwölf hat die Kaserne zugemacht.'],['Du bist nicht gekommen. Ich weiß nicht, warum.','Du bist zu spät gekommen, ich weiß.','Du wolltest nicht kommen.'],['Ich schreibe dir, bis du antwortest.“','Ich schreibe dir nie mehr.“','Schreib mir, wenn du willst.“']],
-    init:[1,1,1,1],
-    check:function(sel){ var ok=[0,0,0,0], msg=['„Do enajstih“ – bis elf. Nicht sieben, nicht elf Jahre.','„Ob pol dvanajstih“ ist halb zwölf, wie bei uns. Und „vojašnica“ ist die Kaserne.','„Nisi prišla. Ne vem, zakaj.“ Er weiß es nicht. Er wirft ihr nichts vor.','„Pisal ti bom, dokler mi ne odgovoriš.“ Er hört nicht auf.'];
-      for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msg[i]}; return {ok:true}; }});
-  if (!res){ await A.m('Später. Ich will es nicht falsch sagen.'); return; }
+  await A.m('Slowenisch. Sechs Briefe, der Gummi um sie herum ist zerfallen. Erst die Reihenfolge, dann weiß ich, was er ihr sagen wollte.');
+  // Ordnen statt Auswahlzeilen: Stempel, Anrede und Inhalt verraten die Reihenfolge; angetippt zeigt jeder Brief Markos Übersetzung
+  var L=[{id:'l1',t:'20.XI.72 · „Draga Emina, čakal sem do enajstih …“',gloss:'Stempel 20. November 72. „Liebe Emina, ich habe bis elf gewartet. Du bist nicht gekommen …“'},
+    {id:'l2',t:'..XII.72 · „Draga Emina, od včeraj sem doma …“',gloss:'Stempel Dezember 72, der Tag ist verwischt. „Liebe Emina, seit gestern bin ich zu Hause …“'},
+    {id:'l3',t:'– · „Draga Emina, vesel božič …“',gloss:'Kein Stempel. „Liebe Emina, frohe Weihnachten. Zu Hause ist es schön und leer …“'},
+    {id:'l4',t:'..I.73 · „Emina, si dobila moja pisma?“',gloss:'Stempel Januar 73. „Emina, hast du meine Briefe bekommen?“ Ohne „Liebe“.'},
+    {id:'l5',t:'– · „Emina, ne bom več vprašal, zakaj.“',gloss:'Kein Stempel. „Emina, ich werde nicht mehr fragen, warum.“'},
+    {id:'l6',t:'..III.73 · „E., še čakam.“',gloss:'Stempel März 73. „E., ich warte noch.“ Eine einzige Zeile.'}];
+  var WHY={l1:'Der erste ist der, in dem er erklärt, was an dem Abend war.',l2:'Erst kommt er nach Hause. Dann ist Weihnachten.',l3:'Weihnachten liegt zwischen Dezember und Januar.',l4:'Erst fragt er, ob sie seine Briefe bekommt. Dann hört er auf zu fragen.',l5:'Die Anrede wird kürzer: „Draga Emina“, dann „Emina“, dann nur noch „E.“',l6:'Der letzte hat nur eine Zeile.'};
+  var res=await A.arrange({title:'Tomažs Briefe ordnen',hint:'Einen Brief antippen zeigt, was darin steht. Einen zweiten antippen tauscht die beiden.',button:'So lesen',items:L,start:[3,0,5,2,4,1],
+    check:function(ids){ for (var i=0;i<ids.length;i++) if (ids[i]!=='l'+(i+1)) return {ok:false,bad:i,msg:WHY['l'+(i+1)]}; return {ok:true}; }});
+  if (!res){ await A.m('Später. Ich will sie in der richtigen Reihenfolge lesen.'); return; }
   await A.m('„Ich habe bis elf gewartet. Um halb zwölf musste ich in der Kaserne sein. Du bist nicht gekommen. Ich weiß nicht, warum. Ich schreibe dir, bis du antwortest.“'); A.note('s1_letters');
-  await A.wait(600); await A.m('Sechs Briefe. Der letzte, vom März dreiundsiebzig, hat nur eine Zeile: „Ich warte noch.“'); if (A.G.malaOn) await A.g('Er hat geschrieben. Und sie hat gewartet. Und dazwischen ein Spiegel.'); };
+  await A.wait(600); await A.m('Erst „Liebe Emina“, dann nur noch „Emina“, zuletzt „E.“ Der letzte, vom März dreiundsiebzig, hat eine Zeile: „Ich warte noch.“'); if (A.G.malaOn) await A.g('Er hat geschrieben. Und sie hat gewartet. Und dazwischen ein Spiegel.'); };
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'door',name:'Tür',exit:{to:'kula'},look:'Die Tür zur Kula. Draußen der Nebel, drinnen die Wärme.'},

@@ -14,8 +14,7 @@ async function talkNina(A){ var N=A.npc('nina');
     {t:'(Lukas Tickets zeigen.)',if:A.S.started&&A.has('tickets')&&!shown.tickets,go:async function(A){ shown.tickets=1; await A.animM('give'); await A.wait(900); await N.say('Zwei.'); await N.say('Er hatte zwei gekauft. Um vierzehn nach zehn am Vormittag.'); await A.wait(800); await N.say('Er wollte wirklich.'); await N.say('Behalten Sie sie. Ich kann sie nicht ansehen.'); await A.m('Ich bewahre sie auf.'); }},
     {t:'(Die Kassette zeigen.)',if:A.S.started&&(A.has('cassette')||A.has('radioT'))&&!shown.tape,go:async function(A){ shown.tape=1; await N.say('„Za Ninu“.'); await A.wait(800); await N.say('Er hat immer Kassetten aufgenommen, mit einem Rekorder vom Flohmarkt. Ich wusste nicht, dass es eine für mich gibt.');
         if (!A.has('radioT')) await N.say('Ich habe nichts mehr, womit ich das abspielen kann. Ich habe alles weggegeben, was Kassetten abspielt.'); }},
-    {t:'Wollen Sie es hören?',if:A.S.started&&shown.note&&shown.tickets&&shown.tape&&A.has('radioT'),go:async function(A){ await N.say('Nicht hier.'); await A.wait(900);
-        await N.say('Heute Abend. An der Rampe. Wenn die Fähre ablegt. Ich will es dort hören.'); A.note('c2_tonight'); A.setFlag('c2.tonight'); await A.m('Ich bin da.'); await N.say('Ich weiß nicht, warum ich Ihnen vertraue. Ich tue es einfach.'); return 'bye'; }},
+    {t:'Wollen Sie es hören?',if:A.S.started&&shown.note&&shown.tickets&&shown.tape&&A.has('radioT'),go:function(A){ return ninaReady(A,N); }},
     {t:'Ich suche einen Spachtel. Einen dünnen.',if:!A.has('spatula')&&!A.flag('c2.brickDone'),once:'niSp',go:async function(A){ await N.say('Für Rahmen?'); await A.m('Für eine Fuge.'); await N.say('Nehmen Sie den alten. Zwanzig Kuna. Er ist dünn, er biegt sich, aber er bricht nicht.'); A.sfx('coin'); A.give('spatula'); }},
     {t:'Die Bilder hier … malen Sie die?',once:'ni2',go:async function(A){ await N.say('Ich male, was ich sehe.'); await A.m('Immer dieselbe Fähre?'); await N.say('Ich habe nur eine gesehen.'); }},
     {t:'Was rahmen die Leute so?',once:'ni3',go:async function(A){ await N.say('Hochzeiten. Diplome. Kinder. Und Tote. Die meisten Rahmen sind für Tote, wenn man ehrlich ist.'); }},
@@ -25,6 +24,17 @@ async function talkNina(A){ var N=A.npc('nina');
       c2_paintings:'Ich male, was ich sehe.', c2_note:async function(A){ if (!A.has('note_n')) return N.say('Ich weiß nicht, wovon Sie reden.'); await N.say('Zeigen Sie mir das.'); } },'Dazu kann ich nichts sagen.'),
     {t:'Danke. Auf Wiedersehen.',bye:true,go:async function(A){ await N.say('Doviđenja.'); }}
   ]; }); }
+// Ninas Bereitschaft ist das eigentliche Hindernis: an die Rampe geht sie erst, wenn Marko zeigt, dass er verstanden hat, worauf sie seit zwölf Jahren wartet
+async function ninaReady(A,N){ await N.say('Nicht hier.'); await A.wait(900);
+  if (!A.S.refusedRamp){ A.S.refusedRamp=true; await N.say('Und nicht an der Rampe. Da war ich seit zwölf Jahren nicht.'); await A.wait(700); await N.say('Ich male sie. Das reicht.'); }
+  var n=await A.askNote('Was sage ich ihr?'); if (!n){ await N.say('Ich male sie. Das reicht.'); return; }
+  if (n==='c2_paintings'||n==='c2_echo') await A.m('Sie malen jedes Mal zuerst die Fähre. Die Gestalt am Kiosk malen Sie zuletzt. Manchmal gar nicht.');
+  else if (n==='c2_waited'||n==='c2_mira1') await A.m('Sie haben dort gewartet, bis die Lichter klein waren. Seitdem stehen Sie jeden Abend dort. Nur auf Leinwand.');
+  else { await N.say('Das ändert nichts. Gehen Sie. Bitte.'); return 'bye'; }
+  await A.wait(1200); await N.say('…'); await A.wait(800); await N.say('Und wenn ich hingehe, und da ist wieder nichts?');
+  var c=await A.choose([{t:'Dann bin ich da.',id:'me'},{t:'Dann wissen Sie es wenigstens.',id:'know'}],{title:'Nina'});
+  if (c==='me'){ await N.say('Sie.'); await A.wait(700); await N.say('Gut.'); } else { await N.say('Wissen.'); await A.wait(700); await N.say('Das ist mehr als zwölf Jahre Blau.'); }
+  await A.wait(700); await N.say('Heute Abend. An der Rampe. Wenn die Fähre ablegt. Ich will es dort hören.'); A.note('c2_tonight'); A.setFlag('c2.tonight'); await A.m('Ich bin da.'); await N.say('Ich weiß nicht, warum ich Ihnen vertraue. Ich tue es einfach.'); return 'bye'; }
 function hasProof(A){ return A.has('note_n')||A.has('tickets')||A.has('cassette')||A.has('radioT'); }
 async function askHow(A,N){ await N.say('Woher wussten Sie von dem Ziegel? Das wusste niemand. Nur wir zwei.');
   var c=await A.choose([{t:'Er hat es mir gesagt.',id:'truth'},{t:'Ich habe gesucht, wo ihr euch Nachrichten hinterlassen habt.',id:'half'}],{title:'Nina'});

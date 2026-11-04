@@ -82,6 +82,7 @@ var HS=[
  {id:'drawings',name:'Kinderzeichnungen',look:'Kinderzeichnungen an der Wand, vergilbt, mit Reißzwecken: Sonnen, Häuser, ein Hund, viele Straßenbahnen. Auf allen steht eine Drei.',
    g:{look:'Die Straßenbahnen. Ich habe sie ihnen gezeigt. Die Räder sind immer schief.',sense:'Kinder, die an etwas denken, das fährt. Weg von hier.'}},
  {id:'benches',name:'Bänke',look:function(A){ return A.m(pupilsHere(A.G)?'Die Bänke, mit Kerzen. Drei Erwachsene darauf, die Knie am Kinn.':'Schmale Bänke und Tische in Reihen. In einen Tisch hinten ist ein M geritzt.'); },
+   use:function(A){ if (pupilsHere(A.G)) return A.m('Die Bänke gehören heute Nacht anderen.'); return M.k2MemCellar(A); },
    g:{look:'In der letzten Reihe hat einer gesessen, der nie aufgepasst hat. Er hat aus dem Fenster gesehen. Es gab kein Fenster.',sense:'So viele Kinder. Sie sind alle groß geworden. Fast alle.'}},
  {id:'desk',name:'Pult',look:'Das Lehrerpult mit einer Schublade, die klemmt. Darauf eine Handglocke aus Messing.',use:function(A){ return night(A.G)?rollcall(A):A.m('Ein Pult. Für jemanden, der Namen aufruft.'); },
    with:{ dnevnik:function(A){ return night(A.G)?rollcall(A):M.k2ReadDnevnik(A); }, svjedocanstva:function(A){ return night(A.G)?rollcall(A):A.m('Erst, wenn alle da sind.'); }, pecat:function(A){ return A.has('svjedocanstva')?M.k2Stamp(A):A.m('Ohne Zeugnisse stemple ich nur das Pult.'); } },

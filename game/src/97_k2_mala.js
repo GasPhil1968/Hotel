@@ -44,7 +44,7 @@ M.k2TalkToMala=async function(A){ var p=A.G.phase;
     {t:'Zora hat gesagt, einer hat dich vergessen.',once:'mg12',if:N(A,'m2_lore'),go:async function(A){ await A.m('Ich. Ich habe dich vergessen. Deshalb weißt du nichts mehr.'); await A.wait(900); await A.g('Ja.'); await A.wait(700); await A.g('Ich war nie böse. Ich war nur leer. Und jetzt werde ich voll, Stück für Stück, wenn du dich erinnerst. Es tut weh. Es tut gut.');
         await A.m('Der Karton. Ich mache ihn auf.'); await A.g('Dann mach ihn auf.'); }},
     // Finale
-    {t:'Gib mir deinen Fahrschein. Für die Drei.',if:p==='k2_fin_n'&&!A.has('ticket_l')&&!F(A,'k2.f2.rideStart'),go:async function(A){ await A.animG('tinF'); await A.wait(800); await A.g('Ich habe noch nie etwas hergegeben. Ich konnte nichts halten.'); await A.narrate('Sie hält mir den Fahrschein hin. Ich nehme ihn. Er ist warm. Er ist echt, für einen Atemzug, und er wiegt fast nichts.');
+    {t:'Gib mir deinen Fahrschein. Für die Drei.',if:p==='k2_fin_n'&&!A.has('ticket_l')&&!F(A,'k2.f2.rideStart'),go:async function(A){ await A.animG('tinF'); await A.wait(800); await A.g('Ich habe noch nie etwas hergegeben. Ich konnte nichts halten.'); if (F(A,'k2.s1.noteGiven')){ await A.m('Tomaž hat mir seinen Zettel gegeben. Für einen Atemzug.'); await A.g('Wer losgelassen hat, kann etwas hergeben.'); await A.wait(700); await A.g('Ich glaube, ich lasse gerade los.'); } await A.narrate('Sie hält mir den Fahrschein hin. Ich nehme ihn. Er ist warm. Er ist echt, für einen Atemzug, und er wiegt fast nichts.');
         A.give('ticket_l'); A.sfx('shimmer'); await A.g('Halt ihn fest. Er ist leichter, als er aussieht.'); await A.idleG(null); }},
     {t:'Fahren wir. Mit der Drei.',if:p==='k2_fin'&&N(A,'f2_cameback')&&!F(A,'k2.f2.night'),go:async function(A){ await M.k2FinNightOffer(A); return 'bye'; }},
     {t:'Wie geht es dir?',once:'mg13',if:F(A,'k2.f2.memory'),go:async function(A){ await A.g('Ich habe einen Namen. Eine Mutter, die im neunten Stock wartet. Einen Teddy mit einem Auge.'); await A.wait(700); await A.g('Und ich weiß immer noch nicht, wo ich gestorben bin.'); await A.m('Das finden wir heraus.'); await A.g('Wir.'); await A.m('Ja. Wir.'); }},
@@ -69,22 +69,46 @@ M.k2OpenKarton=async function(A){ if (F(A,'k2.f2.opened')) return A.m('Der Karto
   await A.wait(900); await A.m('Hinten, in einer Schrift, die nicht meine ist: „Za prvu trojku poslije rata. 12.11.93.“'); A.save();
   if (A.G.malaOn){ await A.wait(800); await A.g('…'); await A.wait(600); await A.g('Zeig ihn mir. Bitte.'); } };
 // ---------------------------------------------------------------- Die zwei Hälften
+// das ganze Foto (Großmutter, der Junge im gestreiften Pullover, das Mädchen mit Zopf, die Drei), entlang eines Risses geteilt.
+// Der Arm des Jungen geht über den Riss: Ärmel und Hand liegen auf Lanas Hälfte. Außenränder glatt und weiß, Rissränder ausgefranst.
+function photoHalves(){ var W=200, H=78, B=new M.Buf(W,H,P.s4), b=B;
+  b.rect(0,0,W,H,P.s4); b.rect(6,12,188,36,P.s2); b.rect(6,12,188,5,P.s1); b.rect(10,19,11,9,P.s5); M.text(b,'3',13,20,P.k1); for (var i=0;i<8;i++) b.rect(26+i*21,21,14,12,P.s4); b.rect(0,48,W,3,P.s1); b.rect(0,62,W,16,P.s3);
+  b.ellipse(46,38,7,8,P.s1); b.rect(38,45,16,28,P.s1); b.ellipse(46,38,5,6,P.s5); b.rect(40,32,12,4,P.s1);
+  b.ellipse(80,48,4,5,P.s5); b.rect(74,53,13,19,P.s5); for (var y=54;y<71;y+=3) b.hl(74,86,y,P.s1); b.rect(75,72,4,6,P.s2); b.rect(82,72,4,6,P.s2);
+  b.rect(87,57,16,4,P.s5); for (var x=89;x<103;x+=3) b.vl(x,57,60,P.s1); b.ellipse(104,59,2,2,P.s5);
+  b.ellipse(120,44,5,6,P.s5); b.ellipse(120,40,5,4,P.s1); b.rect(125,42,2,16,P.s1); b.rect(113,50,15,22,P.s2); b.rect(105,57,8,3,P.s5); b.rect(115,72,4,6,P.s1); b.rect(122,72,4,6,P.s1);
+  var J=[0,2,3,1,-1,-3,-2,0,2,4,1,-2], tear=function(y){ return 96+J[(y>>1)%J.length]; };
+  function piece(left){ var x0=left?0:93, x1=left?101:W-1, w=x1-x0+1, c=new Uint8Array(w*H), m=new Uint8Array(w*H);
+    for (var y=0;y<H;y++) for (var x=0;x<w;x++){ var fx=x0+x, t=tear(y); if (left?fx>=t:fx<t) continue; var q=y*w+x; m[q]=1; c[q]=B.d[y*W+fx];
+      var edge=left?(fx>=t-1):(fx<=t), outer=(y===0||y===H-1||fx===0||fx===W-1); if (edge) c[q]=((x+y)&1)?P.s6:P.s5; else if (outer) c[q]=P.s6; }
+    return {w:w,h:H,c:c,m:m}; }
+  return {a:piece(true),b:piece(false),off:93}; }
 async function joinPhoto(A){ if (N(A,'f2_photo')) return A.g('Das Foto ist ganz.');
   await A.g('Dieselbe Zange. Derselbe Stern. Dieselbe Schrift.'); await A.wait(900); await A.animG('tinF'); await A.g('Dann zeige ich dir jetzt, was darunter liegt.');
   await A.narrate('Sie öffnet die Dose ganz. Unter ihrem Fahrschein liegt ein halbes Foto: ein Mädchen mit Zopf, ein Stück Straßenbahn, und am Rand ein gestreifter Ärmel und eine kleine Hand, die ihre hält.'); await A.wait(800); await A.m('Mein Ärmel.');
-  var res=await A.puzzle({title:'Die zwei Hälften',hint:'Die Rissränder müssen ineinandergreifen, und hinten soll der Satz einen Sinn ergeben. Tippe auf eine Zeile, um sie umzulegen.',button:'Zusammenlegen',
-    slots:[['Ihre Hälfte links, meine rechts','Meine Hälfte links, ihre rechts'],['Rückseite: „Mali · 1988 · N. R.“ und dann „Mala i“','Rückseite: „Mala i“ und dann „Mali · 1988 · N. R.“']],
-    init:[0,0],
-    check:function(sel){ if (sel[0]!==1) return {ok:false,bad:0,msg:'Der Riss passt nicht. Auf meiner Hälfte ist der Rand links glatt, rechts gerissen.'}; if (sel[1]!==1) return {ok:false,bad:1,msg:'„Mali · 1988 · N. R. Mala i“? Das ist kein Satz. Hinten ist alles spiegelverkehrt: Was vorn rechts ist, ist hinten links.'}; return {ok:true}; }});
+  // Zusammenlegen statt Auswahlzeilen: drehen und tauschen, bis die Rissränder ineinandergreifen
+  var res=await A.halves({title:'Die zwei Hälften',hint:'Eine Hälfte antippen dreht sie. „Tauschen“ legt sie um. Die Rissränder müssen ineinandergreifen.',button:'Zusammenlegen',make:photoHalves,
+    start:{left:'b',right:'a',rot:{a:0,b:180}},msgSide:'Der Riss passt nicht. Auf meiner Hälfte ist der Rand links glatt und rechts gerissen.',msgRot:'So stehen die Leute auf dem Kopf.'});
   if (!res){ await A.g('Versuch es noch einmal. Wir haben Zeit. Jetzt haben wir Zeit.'); return; }
   A.take('photo_m'); A.give('photo_full'); A.sfx('shimmer'); A.note('f2_photo'); await A.m('Die Zacken greifen ineinander. Großmutter. Ich, mit zehn, im gestreiften Pullover. Und das Mädchen mit dem Zopf, das meine Hand hält. Hinter uns die Drei.');
   await A.m('Hinten: „Mala i Mali · 1988 · N. R.“ Nana Ruža.'); await A.wait(1200); await memorySequence(A); }
+// Malas Geschichte nicht mehr in einem Block (Prüfbericht): der Keller und das schwarze Blatt kommen früher, durch eigene Handlungen;
+// die Nacht des Busses erst in der letzten Drei. Wer die frühen verpasst hat, sieht sie hier, dann mit Namen.
+M.k2MemCellar=async function(A,late){ if (A.flag('k2.mem.cellar')) return late?null:A.m('Das M. Ich weiß jetzt, wer es geritzt hat.'); A.setFlag('k2.mem.cellar');
+  if (!late){ await A.m('Ich setze mich hinten hin. An den Tisch mit dem M. Mit dem Rücken an die Wand.'); await A.wait(900); }
+  await A.memory({title:'Erinnerung – der Keller',tint:'memory',draw:M.mem&&M.mem.k2_cellar,lines:['Der Keller, Kerzenlicht, zwanzig Kinder. Vorn Zora mit Kreide. Hinten ich, achte Klasse, mit dem Rücken an der Wand.',(late?'Lana':'Ein Mädchen mit Zopf')+' geht durch die Reihen und zeigt den Kleinen, wie man Straßenbahnen zeichnet. Bei mir bleibt sie stehen.','„Die Räder, Mali. Die Räder sind rund.“ Ich mache sie eckig, damit sie wiederkommt.']});
+  if (late) return; await A.wait(700); await A.m('Mali.'); await A.wait(600); await A.m('Das M habe ich mit einem Zirkel in den Tisch geritzt. Ich war hier. In dieser Schule.');
+  if (A.G.malaOn){ await A.wait(800); await A.g('Ich habe ihnen Straßenbahnen gezeigt. Und einem, der hinten saß, die Räder.'); await A.m('Eckig.'); await A.g('Ja. Eckig.'); } A.save(); };
+M.k2MemAsh=async function(A,late){ if (A.flag('k2.mem.ash')) return; A.setFlag('k2.mem.ash');
+  if (!late){ await A.narrate('Unten am Fluss, ein dunkler Block zwischen den Lichtern: die Vijećnica. Heute Abend war dort ein Mann, der vierzig Jahre auf eine Zeile gewartet hat.'); await A.wait(900); }
+  await A.memory({title:'Erinnerung – das schwarze Blatt',tint:'memory',draw:M.mem&&M.mem.k2_snow2,lines:['August zweiundneunzig. '+(late?'Lana':'Ein Mädchen')+' kommt die Treppe hoch, außer Atem, mit Asche im Haar.','Sie gibt mir ein verkohltes Blatt. „Ein Gedicht. Von der Bibliothek. Damit du Gedichte magst.“',late?'Ich mag keine Gedichte. Ich behalte das Blatt siebzehn Jahre in einem Karton.':'Ich mag keine Gedichte. Das Blatt habe ich behalten. Irgendwo.']});
+  if (late) return; await A.wait(700); await A.m('Wer war das?'); if (A.G.malaOn){ await A.wait(900); await A.g('Ich weiß es nicht. Ich weiß nur, dass es geschneit hat. Schwarz.'); } };
 async function memorySequence(A){ A.G.flags['mala.lock']=true; A.music('k2_otkrice'); await A.m('…'); await A.wait(900);
   await A.memory({title:'Erinnerung – Samstage',tint:'memory',draw:M.mem&&M.mem.k2_saturdays,lines:['Samstag, 11:10. Sie klopft im siebten Stock, zweimal kurz, einmal lang. Ich bin nie fertig.','Sie macht mir die Jacke zu, bis oben, und rückt meine Mütze gerade. Ich ziehe sie wieder schief.','In der Drei sitze ich am Fenster und sie daneben. „Halt dich fest, Mali.“ An der Endstation wartet Großmutter mit zwei Taschen.']});
-  await A.memory({title:'Erinnerung – der Keller',tint:'memory',draw:M.mem&&M.mem.k2_cellar,lines:['Der Keller, Kerzenlicht, zwanzig Kinder. Vorn Zora mit Kreide. Hinten ich, achte Klasse, mit dem Rücken an der Wand.','Lana geht durch die Reihen und zeigt den Kleinen, wie man Straßenbahnen zeichnet. Bei mir bleibt sie stehen.','„Die Räder, Mali. Die Räder sind rund.“ Ich mache sie eckig, damit sie wiederkommt.']});
-  await A.memory({title:'Erinnerung – das schwarze Blatt',tint:'memory',draw:M.mem&&M.mem.k2_snow2,lines:['August zweiundneunzig. Sie kommt die Treppe hoch, außer Atem, mit Asche im Haar.','Sie gibt mir ein verkohltes Blatt. „Ein Gedicht. Von der Bibliothek. Damit du Gedichte magst.“','Ich mag keine Gedichte. Ich behalte das Blatt siebzehn Jahre in einem Karton.']});
+  var seenC=A.flag('k2.mem.cellar'), seenA=A.flag('k2.mem.ash');
+  if (seenC||seenA){ await A.wait(700); await A.m([seenC?'Das Mädchen im Keller.':'',seenA?'Das Mädchen mit der Asche im Haar.':''].filter(Boolean).join(' ')); await A.wait(500); await A.m('Das war sie.'); }
+  if (!seenC) await M.k2MemCellar(A,true); if (!seenA) await M.k2MemAsh(A,true);
   await A.memory({title:'Erinnerung – zwei Fahrscheine',tint:'memory',draw:M.mem&&M.mem.k2_tickets,lines:['November dreiundneunzig, Großmutters Tor. Lana mit roten Augen. Sie hat einen Platz in einem Bus, morgen Nacht. Großmutter hat einen zweiten für mich.','Sie zerreißt unser Foto, langsam, und gibt mir meine Hälfte. Und einen Fahrschein. „Für die erste Drei nach dem Krieg. Wenn wir uns wiedersehen, passen sie zusammen.“','„Kommst du?“ – „Ich komme.“']});
-  await A.memory({title:'Erinnerung – die Nacht des Busses',tint:'memory',draw:M.mem&&M.mem.k2_busnight,lines:['Die Nacht darauf. Großmutter hustet, Fieber, sie kann nicht aufstehen. Ich kann sie nicht allein lassen.','Ich sage es Lana nicht. Ich traue mich nicht. Ich denke, wenn ich es nicht sage, ist es nicht wahr.','Um Mitternacht höre ich von unten, weit weg, einen Bus hupen. Zweimal.','Ich stehe am Fenster und gehe nicht hinunter.']});
   await A.wait(800); await A.m('Lana.'); await A.wait(1200); await A.g('…'); await A.wait(900); await A.g('Ja.'); await A.wait(800);
   await A.m('Ich habe dir den Namen gegeben. Mala. Weil du mich Mali genannt hast.'); await A.g('Damit ich mich ärgere.'); await A.m('Du hast dich nie geärgert.'); await A.g('Nein. Ich habe gelacht.'); A.note('f2_memory'); A.setFlag('k2.f2.memory');
   await A.wait(1000); await A.g('Ich habe gewartet. Auf der Treppe in Split. Jeden Abend. Dann bin ich gegangen.'); await A.wait(800); await A.g('Ich weiß nicht, wohin.'); await A.m('Zu mir.'); await A.g('Woher weißt du das?'); await A.m('Ich weiß es nicht. Noch nicht.');

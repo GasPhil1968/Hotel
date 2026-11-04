@@ -80,8 +80,8 @@ Varoš lässt Marko erst zu, wenn Sanja ihren Brief hat: „Erst Sanja. Triest r
     - „Strickte für die halbe Gasse“ mit dem Heft geht ebenfalls.
     - Eine falsche Verbindung erklärt nur, was fehlt.
 16. **Pflicht:** Zdenka gezielt fragen: „In ihrem Heft stehen Namen aus der Gasse …“ Sie sagt: „Fragen Sie in der Gasse, wer nichts von ihr trägt.“
-17. **Pflicht:** „Hier ist Ihr Schlüssel.“
-    - Vorher verweigert Marko die Rückgabe selbst und sagt, was noch nicht zusammenpasst.
+17. **Pflicht:** „Hier ist Ihr Schlüssel.“ Den Schlüssel aus der Leiste auf Zdenka ziehen wirkt genauso.
+    - Vorher verweigert Marko die Rückgabe selbst und sagt, was noch nicht zusammenpasst. Das gilt für beide Wege gleich.
     - Es wird Abend. **Oben an der Kirchentreppe steht kurz jemand: die erste erkennbare Erscheinung.** Sie wird gespeichert.
 
 ### Riva · Dienstagabend
@@ -120,9 +120,10 @@ Varoš lässt Marko erst zu, wenn Sanja ihren Brief hat: „Erst Sanja. Triest r
     - „Wer bist du?“ ist Pflicht und nennt den Namen.
     - Weitere Fragen: Sehen andere sie? Warum redet sie mit ihm? Was kann sie und was nicht? Seit wann ist sie hier? Warum fühlt er sich anders?
     - „Genug für heute“ beendet das Gespräch.
-27. **Malas Frage:** Wann war dir zum ersten Mal richtig schwindlig?
+27. **Malas Frage:** Wann ist dir zum ersten Mal der Boden richtig weggekippt? Nicht das Kopfweh, nicht der halbe Schritt beim Aufstehen.
     - Richtig ist *an der Riva, am letzten Poller*.
-    - Bar, Schreibtisch und Ivkas Wohnung bekommen eine klärende Rückfrage.
+    - Bar und Ivkas Wohnung bekommen eine klärende Rückfrage.
+    - Der Schreibtisch auch: Mala bestätigt, dass er sich dort an der Kante festgehalten hat, und fragt nach dem anderen Moment.
     - Mala: „Und vor dir war auch jemand.“
 28. Den Figurenwechsel gibt es noch nicht. Jetzt geht die Tür auf.
 
@@ -137,7 +138,9 @@ Varoš lässt Marko erst zu, wenn Sanja ihren Brief hat: „Erst Sanja. Triest r
 32. Mala: „Ich kann nachsehen.“
     - **Pflicht:** „(Leise:) Dann sieh nach.“ schaltet den Wechsel frei (unten links).
     - Wer ablehnt oder schweigt, kann es später über Mala (*Rede mit*) nachholen.
-33. Als Mala ins *Archiv*; der Ordner steht bei „1948“. Zurück zu Marko: „Schauen Sie mal im Regal bei 1948“.
+33. Als Mala ins *Archiv*. Im Fach „1948“ steht ein dickerer Ordner mit ausgeblichenem Rückenschild.
+    - *Ansehen*: nichts mehr zu lesen. **Pflicht:** den Ordner *spüren*. Mala liest die verschwundene Schrift: 1984.
+    - Zurück zu Marko: „Schauen Sie mal im Regal bei 1948“.
     - Marko bleibt skeptisch: „Zufall.“
 
 Danach folgt der erste Fall unverändert: Notizbuch „Boot um sieben“ + „Fähre fiel aus“, Matejuška, Seesack, Dinko, Brief über Dampf öffnen, Sustipan, Mala am Poller, die Wahrheit für Ivka, die Zwischenwelt, die Handschuhe.
@@ -175,11 +178,12 @@ Danach folgt der erste Fall unverändert: Notizbuch „Boot um sieben“ + „F�
 40. **Pflicht:** *Markos Tisch*. Sanja bringt den Kaffee, Marko trinkt, sieht hoch, und auf dem Stuhl gegenüber sitzt Mala.
     - Drei Reaktionen: abwehrend, prüfend, erleichtert.
     - Mala erklärt die Abwesenheit nur unsicher: „dünner“, seit dem Tor.
-41. **Pflicht, das Überprüfungsrätsel:**
+    - Marko zweifelt nicht mehr, ob sie da ist: „Ich glaube dir. Das ist ja das Problem.“ Wenn er ihr glaubt, glaubt er auch, was sie über andere sieht. Mala: „Dann fang mit etwas Kleinem an.“
+41. **Pflicht, der Zettel hinter dem Tresen:**
     - Den *Zettel hinter dem Tresen* kann Marko nicht lesen.
     - Zu Mala wechseln und den Zettel ansehen; sie geht dafür hinter den Tresen. Er lautet: „Montag geschlossen – Inventur“.
-    - Zurück zu Marko, Sanja fragen: „Du machst am Montag zu?“ Sanja zeigt den Zettel.
-42. Mala: „Ich will ans Wasser.“
+    - Zurück zu Marko, Sanja fragen: „Du machst am Montag zu?“ Sanja zeigt den Zettel und sagt: „Sag Stipe nichts. Das ist meine Sache.“
+42. Marko weiß jetzt etwas, das Sanja selbst sagen wollte. Mala: „So ist es jeden Tag.“ Auf die Frage, was sie über sich selbst sieht, schweigt sie. Dann: „Ich will ans Wasser.“
 
 ### Riva, die Bank am Morgen
 

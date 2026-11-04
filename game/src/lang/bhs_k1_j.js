@@ -106,11 +106,11 @@ M.trAdd('bhs', {
   '„Das mit den Mützen hat mir gefallen. Die Stadt hatte „keine Kontakte“ geschrieben. Gut, dass du gefragt hast.“': '„Ono s kapama mi se svidjelo. Grad je napisao „bez kontakata“. Dobro da si pitao.“',   // Vesna (Telefon)
   // ---------------------------------------------------------------- 92_story2.js
   'Donnerstag, 17. November · Mittag, Bura': 'Četvrtak, 17. studenoga · podne, bura',   // Zeit (Karte)
-  'Erst Sanja. Triest ruft um vier an, und sie hat niemanden, der Italienisch kann.': 'Prvo Sanja. Trst zove u četiri, a ona nema nikoga tko zna talijanski.',   // Marko
-  'Erst die Riva. Ich will die Stelle sehen, bevor ich über sie schreibe.': 'Prvo Riva. Hoću vidjeti to mjesto prije nego što počnem pisati o njoj.',   // Marko
+  'Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen.': 'Sanja me čeka. U četiri zove Trst, a ona nema nikoga tko zna talijanski. Obećao sam joj.',   // Marko
+  'Nach Hause? Nicht, bevor ich die Stelle gesehen habe, an der sie jeden Abend stand. Sonst schreibe ich über eine Frau, die ich nur aus einem Heft kenne.': 'Kući? Ne prije nego što vidim mjesto gdje je stajala svake večeri. Inače pišem o ženi koju znam samo iz jedne bilježnice.',   // Marko
   'Heute nicht mehr.': 'Danas više ne.',   // Marko
-  'Nicht jetzt. Erst will ich wissen, ob ich mir das alles nur einrede.': 'Ne sad. Prvo hoću znati umišljam li sve to.',   // Marko
-  'Heute Morgen nicht. Erst einen Kaffee.': 'Ne jutros. Prvo kava.',   // Marko (allein)
+  'Nicht jetzt. Nicht, bevor ich weiß, ob ich mir das alles nur einrede.': 'Ne sad. Ne dok ne saznam umišljam li sve to.',   // Marko
+  'Heute Morgen nicht. Ohne Kaffee komme ich nicht weit.': 'Ne jutros. Bez kave neću daleko.',   // Marko (allein)
   '(Leise:) „Dann sieh nach.“': '(Tiho:) „Onda pogledaj.“',   // Marko an Mala (Option; auch office.js)
   // ---------------------------------------------------------------- 11_notes.js
   'Vesna, aus der Notiz der Stadt: „alleinstehend, keine Kontakte zur Nachbarschaft.“': 'Vesna, iz službene bilješke Grada: „živjela sama, bez kontakata sa susjedstvom.“',   // Notiz

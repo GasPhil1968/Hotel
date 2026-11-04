@@ -101,6 +101,9 @@ HILFE
 - In Sarajevo: „Menü“ → „Hinweis …“ zeigt die offenen Probleme. Jedes Mal,
   wenn man eines wählt, kommt eine Stufe mehr (drei Stufen: woran man
   hängt, wo man suchen kann, ein konkreter Denkanstoß). Nie ungefragt.
+- Nicht jedes Rätsel ist eine Auswahl: Manches ordnet man (Briefe), legt
+  man zusammen (ein zerrissenes Foto) oder liest man mit einer Schrifttafel.
+  Antippen genügt immer.
 - Manche Schlüsse bauen aufeinander auf: Was man verbunden hat, kann man
   wieder verbinden. Widersprüche zwischen zwei Aussagen sind auch Schlüsse.
 - Mala erinnert sich in Splittern. Sie stehen im Notizbuch wie Notizen.
@@ -120,6 +123,9 @@ SPIELSTÄNDE
 - Drei Speicherplätze für beide Kapitel. Das Spiel speichert bei jedem
   Ortswechsel selbst. Am Platz steht, in welchem Kapitel und Abschnitt man ist.
   Alte Spielstände aus Kapitel 1 laden unverändert.
+- Geht man mitten in einer Szene zum Titelbild oder wechselt die App,
+  merkt sich das Spiel den Stand vom Beginn der Szene. Man spielt sie dann
+  noch einmal, verliert aber nichts.
 - Beim Fortsetzen fragt das Spiel nach dem Platz.
 - "Mitgelieferter Spielstand" im Titelbild: lädt einen Stand kurz bevor
   Marko Ivka die Wahrheit sagt (Nacht an der Mole) auf einen Platz deiner Wahl.

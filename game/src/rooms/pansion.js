@@ -76,10 +76,10 @@ async function smsCheck(A){ if (!F(A,'k2.f2.charging')||F(A,'k2.f2.charged')) re
 var HS=[
  {id:'door',name:'Tür',exit:{to:'map'},look:'Die Tür zum Flur. Dahinter Hajras Küche, ihr Radio und ihre Meinung.',
    canExit:async function(A){ var p=A.G.phase;
-     if (p==='k2_pro' && !A.flag('k2.p3.hajra') && A.has('dzezva')){ await A.m('Erst sollte ich mit Hajra reden. Sie wartet mit dem Kaffee.'); return false; }
+     if (p==='k2_pro' && !A.flag('k2.p3.hajra') && A.has('dzezva')){ await A.m('Hajra wartet mit dem Kaffee. Einfach an ihr vorbeigehen kann ich nicht.'); return false; }
      if (p==='k2_pro' && A.flag('k2.p3.hajra') && !A.flag('k2.pro.night')){ await A.m('Ich bin müde. Siebzehn Jahre müde.'); await M.k2Night0(A); return false; }
      if (p==='k2_pro_n' && !A.flag('k2.pro.sing')){ await A.m('Mitten in der Nacht? Wohin?'); return false; }
-     if (p==='k2_s3' && !A.flag('k2.s3.called')){ await A.m('Erst Sanja. Sonst verliere ich den Mut.'); return false; }
+     if (p==='k2_s3' && !A.flag('k2.s3.called')){ await A.m('Nicht, bevor ich mit Sanja gesprochen habe. Sonst verliere ich den Mut.'); return false; }
      if (p==='k2_fin' && !A.hasNote('f2_parcel') && A.flag('k2.f2.charging')){ await smsCheck(A); return false; }
      return true; }},
  {id:'hajra',npc:'hajra',name:'Hajra',hgt:42,vis:function(S,G){ return ['k2_pro','k2_s1','k2_s2','k2_s3','k2_fin'].indexOf(G.phase)>=0; },talk:talkHajra,

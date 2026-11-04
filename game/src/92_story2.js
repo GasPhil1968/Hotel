@@ -27,10 +27,10 @@ var shop=M.ROOMS.shop; if (shop) shop.check=async function(A){ if (A.flag('c2.to
 // Reisebeschränkungen
 M.canTravel=async function(A,L){ var p=A.G.phase, fresh=!A.flag('split.intro.legacy');
   if (p==='pro'){ if (L.id!=='varos' && L.id!=='flat' && L.id!=='bar'){ await A.m('Heute nicht.'); return false; }
-    if (fresh && A.flag('split.intro.v') && L.id==='varos' && !A.flag('split.intro.sanja')){ await A.m('Erst Sanja. Triest ruft um vier an, und sie hat niemanden, der Italienisch kann.'); return false; } }
-  if (p==='pro_eve'){ if (fresh && A.flag('split.intro.v') && !A.flag('split.intro.dizzy') && L.id!=='riva'){ await A.m('Erst die Riva. Ich will die Stelle sehen, bevor ich über sie schreibe.'); return false; }
+    if (fresh && A.flag('split.intro.v') && L.id==='varos' && !A.flag('split.intro.sanja')){ await A.m('Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen.'); return false; } }
+  if (p==='pro_eve'){ if (fresh && A.flag('split.intro.v') && !A.flag('split.intro.dizzy') && L.id!=='riva'){ await A.m('Nach Hause? Nicht, bevor ich die Stelle gesehen habe, an der sie jeden Abend stand. Sonst schreibe ich über eine Frau, die ich nur aus einem Heft kenne.'); return false; }
     if (L.id!=='riva' && L.id!=='flat'){ await A.m('Heute nicht mehr.'); return false; } }
-  if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.bar')?'Nicht jetzt. Erst will ich wissen, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Erst einen Kaffee.'); return false; }
+  if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.bar')?'Nicht jetzt. Nicht, bevor ich weiß, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Ohne Kaffee komme ich nicht weit.'); return false; }
   if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos' && L.id!=='bar'){ await A.m('Nicht jetzt.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };

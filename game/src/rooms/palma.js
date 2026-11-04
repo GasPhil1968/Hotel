@@ -3,6 +3,12 @@
 'use strict';
 var P=M.P;
 function lvl(A){ return A.G.flags['c3.lvl']||0; } function setLvl(A,n){ if (n>lvl(A)) A.G.flags['c3.lvl']=n; }
+// Brunos Satz wächst aus drei Erinnerungen, in beliebiger Reihenfolge: Danica (Foto), Ljerka am Klavier (Klavierschule), der Umschlag aus Zagreb
+var INSIGHT={ photo2:'c3.ins.danica', musicbook:'c3.ins.ljerka', envelope:'c3.ins.zagreb' };
+function insights(A){ return ['c3.ins.danica','c3.ins.ljerka','c3.ins.zagreb'].filter(function(k){ return A.G.flags[k]; }).length; }
+async function gainInsight(A,B,item){ var k=INSIGHT[item]; if (!k || A.G.flags[k]) return; A.G.flags[k]=true; var n=insights(A); setLvl(A,n);
+  if (n<3){ await A.wait(600); await B.say('… ne … još ne …'); await A.m('Da ist ein Satz in ihm. Er bekommt ihn noch nicht zusammen.'); return; }
+  await A.wait(800); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); }
 function brunoInLodge(GS){ return GS.phase==='c3_night' && !GS.flags['c3.brunoUp'] && !GS.flags['c3.done']; }
 function brunoInSalon(GS){ return GS.phase==='c3_night' && !!GS.flags['c3.brunoUp'] && !GS.flags['c3.gone']; }
 function ljerkaUp(GS){ return GS.phase==='c3'; }
@@ -86,17 +92,20 @@ async function brunoMala(A,B){
     {t:'Woher kennst du mich?',once:'bm2',go:async function(A){ await B.say('Trideset i jedan … zima … stube … čaj … kutija …'); await A.wait(800); await A.g('Hör auf.'); await A.g('Er ist alt, und ihm fehlen die Wörter. Er verwechselt Gesichter.'); }},
     {t:'(Gehen.)',bye:true}
   ]; }); }
-async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übersetzen',hint:'Bruno: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.“ Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',
-    slots:[['Ljerka,','Danica,','Gospodine,'],['verzeih mir.','vergiss mich.','verkauf das Hotel.'],['Ich habe deinen Brief aus Zagreb versteckt,','Ich habe deine Mutter allein gelassen,','Ich habe das Klavier verkauft,'],['weil ich Angst hatte, allein zu sein.','weil du zu jung warst.','weil das Hotel dich gebraucht hat.'],['Spiel wieder.','Geh nach Zagreb.','Schließ den Salon ab.']],
-    check:function(sel){ var msgs=['Bruno schüttelt den Kopf: „Ne … Ljerka. Ljerka.“','Bruno: „Ne … perdonami … oprosti …“ (verzeih)','Bruno: „Pismo … Zagreb … ja sam ga sakrio …“ (Ich habe ihn versteckt.)','Bruno: „Ne hotel … ne … paura … sam …“ (Angst … allein)','Bruno: „Sviraj … sviraj …“ (Spiel.)'];
-      for (var i=0;i<sel.length;i++) if (sel[i]!==0) return {ok:false,bad:i,msg:msgs[i]}; return {ok:true}; }});
+// die Felder beginnen leer; die richtige Fassung steht nicht immer an derselben Stelle
+async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übersetzen',hint:'Bruno: „Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.“ Tippe auf eine Zeile, um eine andere Fassung zu wählen.',button:'Vorlesen',empty:true,
+    slots:[['Danica,','Ljerka,','Gospodine,'],['vergiss mich.','verkauf das Hotel.','verzeih mir.'],['Ich habe deinen Brief aus Zagreb versteckt,','Ich habe das Klavier verkauft,','Ich habe deine Mutter allein gelassen,'],['weil das Hotel dich gebraucht hat.','weil ich Angst hatte, allein zu sein.','weil du zu jung warst.'],['Geh nach Zagreb.','Schließ den Salon ab.','Spiel wieder.']],
+    check:function(sel){ var ok=[1,2,0,1,2], msgs=['Bruno schüttelt den Kopf: „Ne … Ljerka. Ljerka.“','Bruno: „Ne … perdonami … oprosti …“ (verzeih)','Bruno: „Pismo … Zagreb … ja sam ga sakrio …“ (Ich habe ihn versteckt.)','Bruno: „Ne hotel … ne … paura … sam …“ (Angst … allein)','Bruno: „Sviraj … sviraj …“ (Spiel.)'];
+      for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msgs[i]}; return {ok:true}; }});
   if (!res) return;
   await A.m('„Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“'); await A.wait(900);
   await B.say('Da. Tako.'); await A.wait(600); await B.say('Sada. Molim.'); A.note('c3_message'); A.setFlag('c3.translated'); await A.m('„Jetzt. Bitte.“'); A.save(); }
 async function showToBruno(A,item){ var B=A.npc('bruno');
-  if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); setLvl(A,1); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.'); return; }
-  if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); setLvl(A,Math.max(2,lvl(A))); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“'); return; }
-  if (item==='envelope'){ B.agitate(3200); await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); setLvl(A,3); await A.m('„Meine Schuld. Angst. Allein.“'); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); return; }
+  if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.');
+    if (!A.G.flags['c3.ins.danica']){ await A.wait(700); await B.say('… pa je otišla … a ja … sam …'); await A.m('„Und dann ist sie gegangen. Und ich … allein.“'); } return gainInsight(A,B,'photo2'); }
+  if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“');
+    if (!A.G.flags['c3.ins.ljerka']){ await A.wait(700); await B.say('Sviraj, mala … sviraj …'); await A.m('„Spiel, Kleine.“'); } return gainInsight(A,B,'musicbook'); }
+  if (item==='envelope'){ B.agitate(3200); await B.anim('porterTalk'); await B.say('Ne … ne …'); A.shake(300); await A.wait(700); await B.say('Moja krivica. Strah. Sam … hotel … sam …'); await A.m('„Meine Schuld. Angst. Allein.“'); return gainInsight(A,B,'envelope'); }
   if (item==='keyring') return B.say('Ključevi … moji … salon …');
   if (item==='crank') return B.say('Ručka … glazba … nedjelja …');
   if (item==='record') return B.say('„Večer na Rivi“ … Danica …');
@@ -122,15 +131,27 @@ async function wakeLjerka(A){ await A.anim('knock'); A.sfx('knock'); await A.wai
       var c2=await A.choose([{t:'Ich bin Übersetzer. Ich habe gelesen, was da steht. Und was nicht.',id:'tr'},{t:'Er hat es mir gesagt.',id:'he'}],{title:'Ljerka'});
       if (c2==='he'){ await L.say('…'); await A.wait(1500); await L.say('Sie sind ein seltsamer Mensch, Gospodine Vuković.'); } else { await L.say('Was nicht dasteht.'); await A.wait(1300); }
       await L.say('Er hat es gewusst. Die ganzen Jahre. Jeden Morgen, wenn ich den Frühstücksraum aufgeschlossen habe.'); } }
+  await ljerkaLoss(A,L);
   await A.wait(1500); await L.say('Kommen Sie.'); A.setFlag('c3.ljerkaUp');
   await A.goto('salon',{x:100,y:124,f:'L',noEnter:true}); return salonFinale(A); }
+// was sie verloren hat, bekommt einen eigenen Moment: Brunos Abschied kann gelingen, ohne dass Ljerka ihm verzeiht
+async function ljerkaLoss(A,L){ await A.wait(1600); await L.say('Zagreb.'); await A.wait(1100);
+  await L.say('Ich hätte an der Akademie studiert. Ich hätte vielleicht in Wien gespielt. Ich hätte …'); await A.wait(1400);
+  await L.say('Sechsunddreißig Jahre habe ich Frühstück gemacht. Für Leute, die ich nie wiedergesehen habe.');
+  var c=await A.choose([{t:'„Er wollte, dass Sie wieder spielen.“',id:'want'},{t:'(Nichts sagen.)',id:'quiet',silent:true},{t:'„Sie müssen ihm nicht verzeihen.“',id:'free'}],{title:'Ljerka'});
+  if (c==='want') await L.say('Er wollte. Er hat immer etwas gewollt. Und ich habe es getan.');
+  else if (c==='quiet'){ await A.wait(2400); await L.say('Gut, dass Sie nichts sagen. Alles andere wäre jetzt falsch.'); }
+  else { await L.say('Nein. Muss ich nicht.'); await A.wait(1200); await L.say('Ich weiß nicht, ob ich es kann.'); }
+  A.G.flags['c3.ljerkaLoss']=c; await A.wait(1300); await L.say('Ich spiele. Nicht für ihn.'); await A.wait(900); await L.say('Für die, die ich gewesen wäre.'); }
 async function salonFinale(A){ var L=A.npc('ljerkaNight'), B=A.npc('bruno'); A.set('sheetOff',true); A.rebuild();
   var p=M.apos('salon','ljerkaNight',[160,120,'R']); if (L.actor){ L.place(p[0],p[1],p[2]||'R'); L.idle('sit'); }
   await A.narrate('Ljerka setzt sich an den Flügel. Lange sitzt sie nur da.'); await A.wait(1200);
   A.music('vecerPiano'); await A.wait(7000); if (B.actor){ await B.face('R'); } await A.wait(4500);
   await B.say('Ljerka …'); await A.wait(1600); await B.say('… sviraš.'); await A.m('„Du spielst.“');
-  await A.wait(2600); await B.say('Sijeda … moja Ljerka … sijeda …'); await A.m('„Grau. Meine Ljerka ist grau.“');
-  await A.wait(1600); B.agitate(3400); await B.say('Koliko … godina …?'); await A.wait(1800);
+  // anderer Auslöser als bei Luka (Prüfbericht): nicht das gealterte Gesicht, sondern die Frau, die nicht zum Sonntagstanz kommt, und die Kerze
+  await A.wait(2600); if (B.actor) await B.face('L'); await B.say('Danica … nedjelja … ples …'); await A.m('„Danica. Sonntag. Tanz.“');
+  await A.wait(1600); await B.say('… nema je … svijeća … svake godine …'); await A.m('„Sie ist nicht da. Eine Kerze, jedes Jahr.“');
+  await A.wait(1600); B.agitate(3400); await B.say('A meni … tko je meni …?'); await A.m('„Und mir … wer hat mir …?“'); await A.wait(1800);
   if (B.actor) await B.anim('look'); await A.realize('bruno');   // er sieht auf seine Hände und begreift
   await A.wait(500); await B.say('Ja … nisam … više … ovdje.'); await A.m('„Ich bin … nicht mehr … hier.“');
   await A.wait(2200); await B.say('Ich bin … nicht mehr … im Dienst.');
@@ -156,6 +177,7 @@ M.afterLimbo_bruno=async function(A){ A.G.flags['mala.lock']=false; var L=A.npc(
   await L.say('Ich habe seit sechsunddreißig Jahren nicht gespielt.'); await A.m('Es klang wie jemand, der lange gewartet hat.');
   await A.m('Gospođa Lalić. Ihr Vater … er hat mir etwas für Sie gegeben.'); await A.animM('give'); A.take('keyring'); A.sfx('chain');
   await L.say('Seine Schlüssel.'); await A.wait(1100); await L.say('Die hatte er immer in der Hand. Auch im Krankenhaus.'); await A.m('Er hat Dienst übergeben.'); await A.wait(1200);
+  await L.say('Und jetzt soll ich sie nehmen.'); await A.wait(1500); await L.say('Ich weiß nicht, ob ich ihm verzeihe. Heute nicht.'); await A.wait(900); await L.say('Vielleicht, wenn ich einmal spielen kann, ohne an ihn zu denken.'); await A.wait(1300);
   await L.say('Ich weiß nicht, ob ich verkaufe. Vielleicht. Aber nicht am Montag.'); await L.say('Ihr Honorar. Nehmen Sie es, bevor ich es mir anders überlege.'); A.give('fee'); A.setFlag('c3.done');
   if (A.malaHere() && A.mala){ await A.wait(900); await A.animG('look'); await A.wait(800); A.mala.fadeOut=A.gt; await A.wait(1200); A.malaLeave(); await A.m('Mala?'); await A.wait(1500); await A.m('…'); }
   A.save(); await A.fade(8,1600); await M.startEpilogue(A); };

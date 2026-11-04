@@ -453,7 +453,11 @@ M.trAdd('bhs', {
   'Neunzehnhundertsechsundvierzig, siebenundvierzig, achtundvierzig … Die Jahre nach dem Krieg sind dünn. Es fuhr nicht viel.': 'Hiljadu devetsto četrdeset šesta, sedma, osma … Godine poslije rata su tanke. Malo se plovilo.',   // Mala
   'Hier sind die Ordner kalt wie Stein. Niemand hat sie je wieder angefasst.': 'Ovdje su registratori hladni kao kamen. Niko ih više nikad nije dirnuo.',   // Mala
   'Ordner bei „1948“': 'Registrator kod „1948“',   // Name
-  'Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.': 'Registrator u pregratku „1948“. Na hrptu piše 1984. Neko je zamijenio cifre.',   // Mala
+  'Neunzehnvierundachtzig, bei achtundvierzig. Ich kann ihn nicht herausziehen.': 'Osamdeset četvrta, kod četrdeset osme. Ne mogu ga izvući.',   // Mala
+  'Ein Ordner im Fach „1948“, dicker als die anderen. Das Schild auf dem Rücken ist ausgeblichen. Lesen kann man da nichts mehr.': 'Registrator u pregratku „1948“, deblji od ostalih. Natpis na hrptu je izblijedio. Tu se više ništa ne da pročitati.',   // Mala
+  'Die Schrift auf dem Schild ist weg. Die Hand, die sie geschrieben hat, nicht.': 'Slova na natpisu više nema. Ali ruka koja ih je napisala još je tu.',   // Mala
+  'Eins. Neun. Acht. Vier.': 'Jedan. Devet. Osam. Četiri.',   // Mala
+  'Neunzehnvierundachtzig. Und jemand hat ihn bei achtundvierzig einsortiert.': 'Hiljadu devetsto osamdeset četvrta. A neko ga je stavio kod četrdeset osme.',   // Mala
   'Ich kann ihn nicht herausziehen.': 'Ne mogu ga izvući.',   // Mala
   'Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.': 'Unutra je stranica koju je neko pisao drhtavom rukom. Noću. S dekom oko nekoga ko ne priča.',   // Mala
   'Regal: 1980–1989': 'Polica: 1980.–1989.',   // Name

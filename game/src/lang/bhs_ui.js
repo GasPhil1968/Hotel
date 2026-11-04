@@ -9,7 +9,7 @@ M.trAdd('bhs', {
   'Schimmer':'Odsjaj', 'Mala':'Mala', 'Marko':'Marko',
   // Überlagerungen
   'Nachhall':'Odjek', 'Übersetzung':'Prijevod', 'Tippe auf eine Zeile, um eine andere Fassung zu wählen.':'Dodirni redak da odabereš drugu inačicu.',
-  'Vorlesen':'Pročitaj naglas', 'Zurück':'Natrag',
+  'Vorlesen':'Pročitaj naglas', 'Zurück':'Natrag', 'Da fehlt noch etwas.':'Još nešto nedostaje.', 'Ordnen':'Poredaj', 'Zusammenlegen':'Spoji', 'Tauschen':'Zamijeni', 'Schrift lesen':'Čitanje rukopisa', 'Tafel':'Tablica',
   // Notizbuch
   'Notizbuch':'Bilježnica', 'Noch nichts, was zusammengehören könnte.':'Još ništa što bi moglo ići zajedno.', 'Danach fragen':'Pitaj o tome',
   'Antippen, dann „Danach fragen“.':'Dodirni, pa „Pitaj o tome“.', 'Eine Notiz antippen, dann eine zweite, die dazu passt.':'Dodirni bilješku, pa drugu koja ide uz nju.',

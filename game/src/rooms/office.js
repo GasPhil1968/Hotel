@@ -104,8 +104,11 @@ M.defineScape('office',{beds:['room','neon','seaFar'],step:'tile',ev:[['radio',8
 var AH=[
  {id:'door',name:'Tür',gexit:{to:'office'},look:'Die Tür.',g:{look:'Zurück zu ihm.'}},
  {id:'shelf_40s',name:'Regal: 1946–1959',g:{look:'Neunzehnhundertsechsundvierzig, siebenundvierzig, achtundvierzig … Die Jahre nach dem Krieg sind dünn. Es fuhr nicht viel.',sense:'Hier sind die Ordner kalt wie Stein. Niemand hat sie je wieder angefasst.'}},
- {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ await A.g('Ein Ordner im Fach „1948“. Auf dem Rücken steht 1984. Jemand hat die Ziffern vertauscht.'); A.setFlag('c1.found1984'); A.note('c1_1948'); await A.g('Ich kann ihn nicht herausziehen.'); },
-   sense:async function(A){ await A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.'); if (!A.hasNote('c1_1948')){ A.setFlag('c1.found1984'); A.note('c1_1948'); } }}},
+ // das Rückenschild ist ausgeblichen: lesen kann Mala es nur, indem sie die Schrift spürt, die nicht mehr da ist (dieselbe Fähigkeit braucht später Tonćis Brief)
+ {id:'binder_1948',name:'Ordner bei „1948“',g:{look:async function(A){ if (A.hasNote('c1_1948')) return A.g('Neunzehnvierundachtzig, bei achtundvierzig. Ich kann ihn nicht herausziehen.'); await A.g('Ein Ordner im Fach „1948“, dicker als die anderen. Das Schild auf dem Rücken ist ausgeblichen. Lesen kann man da nichts mehr.'); },
+   sense:async function(A){ if (A.hasNote('c1_1948')) return A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.');
+     A.sfx('shimmer'); await A.g('Die Schrift auf dem Schild ist weg. Die Hand, die sie geschrieben hat, nicht.'); await A.wait(500); await A.g('Eins. Neun. Acht. Vier.'); await A.g('Neunzehnvierundachtzig. Und jemand hat ihn bei achtundvierzig einsortiert.');
+     A.setFlag('c1.found1984'); A.note('c1_1948'); await A.wait(400); await A.g('Darin ist eine Seite, die jemand mit zitternder Hand geschrieben hat. Nachts. Mit einer Decke um jemanden, der nicht redet.'); await A.g('Ich kann ihn nicht herausziehen.'); }}},
  {id:'shelf_80s',name:'Regal: 1980–1989',g:{look:'Die Achtziger. Dicke Ordner. Damals fuhren viele.'}},
  {id:'gap_1984',name:'Lücke',g:{look:'Zwischen 1983 und 1985 ist eine Lücke. So breit wie ein Jahr.'}},
  {id:'desk',name:'Schreibtisch',g:{look:'Eine Schreibmaschine unter einer Haube aus Staub.',sense:'Hier hat jemand jahrelang Tee getrunken und Abfahrtszeiten abgeschrieben. Mladen. Er war einmal jung.'}},

@@ -96,11 +96,14 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - **[M]** Lejla fragen, ob sie in die Kammer kommt. Sie schließt auf, weil der Brief jetzt gut ist.
 - **[M]** Bei Nedžad nach „etwas Schmalem, Festem“ fragen → **Stemmeisen**.
 - **[M]** In der Kammer das Stemmeisen auf die Rahmenleiste ziehen → sechs **Briefe** und das **Armband**.
-- **[M]** Die Briefe lesen und übersetzen. In der Anfangsstellung ist jede Zeile falsch; man wählt:
-  - „Ich habe bis elf gewartet.“
-  - „Um halb zwölf musste ich in der Kaserne sein.“
-  - „Du bist nicht gekommen. Ich weiß nicht, warum.“
-  - „Ich schreibe dir, bis du antwortest.“
+- **[M]** Die Briefe lesen. Sie sind durcheinander; man **ordnet** die sechs Briefe: einen antippen zeigt Markos Übersetzung, einen zweiten antippen tauscht die beiden. Richtig ist:
+  1. „20.XI.72 · Draga Emina, čakal sem do enajstih …“ (der Abend selbst);
+  2. „..XII.72 · … od včeraj sem doma …“ (er ist zu Hause);
+  3. „Draga Emina, vesel božič …“ (Weihnachten, ohne Stempel);
+  4. „..I.73 · Emina, si dobila moja pisma?“ (die Anrede ohne „Draga“);
+  5. „Emina, ne bom več vprašal, zakaj.“ (er hört auf zu fragen);
+  6. „..III.73 · E., še čakam.“ (eine Zeile, nur noch „E.“).
+  - Bei einer falschen Reihenfolge nennt Marko, woran es liegt (Stempel, Anrede, Inhalt).
 - **Verbinden:** Sechs Briefe + Hinter dem Spiegel → **Halid hat sie versteckt**.
 
 **Die Wahrheit, in der richtigen Reihenfolge**
@@ -113,7 +116,9 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - **[M]** Mit Tomaž reden. Um fünf nach elf will er gehen. Man hält ihn mit zwei Notizen, in beliebiger Reihenfolge:
   - „Die Kaserne gibt es nicht mehr“;
   - „Zwei Siebenen“.
-- Die Kula schlägt sieben, Emina kommt mit dem Armband, und Tomaž begreift.
+  - Wer Lejla in der Kafana nicht nach der Kaserne gefragt hat: Sie sitzt heute Nacht auf der Stufe der Kafana und gibt die Auskunft dort. Was Tomaž schon gehört hat, zählt weiter.
+- Heute schlägt die Kula um zwölf nach elf sieben: sieben Minuten Warten (damals waren es elf). Emina kommt mit dem Armband, „um sechzehn nach elf, elf Minuten nach dir“, und Tomaž begreift.
+- Vor dem Hinübergehen gibt Tomaž Marko seinen Zettel. Für einen Atemzug ist er echt: Wer losgelassen hat, kann etwas hergeben.
 - **[G]** Tomaž **hinüberbringen**, Malas Hand nehmen.
 - **Zwischenwelt:** **[M]** das Zifferblatt benutzen und den Zeiger auf **sieben** stellen. Tomaž geht ins Licht. Durch das Tor zurück.
 - Emina auf der Bank antworten (jede Antwort ist richtig). Malas Splitter: eine Uhr mit leuchtenden Ziffern.
@@ -167,10 +172,10 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - **[M]** „Das Buch gehört der Bibliothek“ sagen. Mit beiden Begründungen gibt Jakob das **Buch** heraus.
 
 **Amra**
-- **[M]** „Ich lese Kurrent“ und die Akte lesen:
-  - „Die Grundmauer …“
-  - „… nicht tiefer als drei Meter …“
-  - „… da sonst das Grundwasser eindringt.“
+- **[M]** „Ich lese Kurrent“ und die Akte lesen: Oben steht Jakobs Tafel, darunter die drei Wörter mit den unsicheren Zeichen. Jedes antippen wechselt die Lesart; man vergleicht es mit der Tafel:
+  - „Grundmauer“: zweimal das Zeichen mit Bogen = **u**, das kleine, enge = **e**;
+  - „drei“: **r**, dann **e**;
+  - „Grundwasser“: **u**, zweimal das lange **ſ** (ohne Querstrich; das „f“ hat einen).
 - Amra gibt den **Passierschein**.
 - **[M]** Noch einmal mit Amra reden → **Abend**.
 
@@ -190,6 +195,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 ## Zwischenspiel – Die Gelbe Bastei
 
 - **[M]** Die Bank benutzen. Das Gespräch nimmt die Antworten aus Split auf. Die Themen sind frei wählbar; „von meinem Vater erzählen“ ist optional.
+  - „(Zur Vijećnica hinuntersehen.)“: Marko erinnert sich an ein Mädchen mit Asche im Haar, das ihm im August 1992 ein verkohltes Blatt brachte (optional; sonst kommt die Erinnerung beim Foto).
 - Am Ende: „Ich lasse ihn mir schicken.“ Der Karton aus Split.
 - Pension, Bett → **Dritter Fall**.
 
@@ -245,6 +251,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - **[G]** Zora hinüberbringen.
 - **Zwischenwelt:** **[M]** die Schulbank mit der Glocke benutzen. Zora läutet: „Die Stunde ist aus.“
 - Den Schlüssel kann man Šehić am nächsten Tag zurückgeben (optional, mit schöner Antwort).
+- Im Keller die **Bänke benutzen** (der Tisch hinten mit dem eingeritzten M): Marko erinnert sich an die Kellerschule, an ein Mädchen mit Zopf und an „Die Räder, Mali“ (optional; sonst kommt die Erinnerung beim Foto).
 - Pension, Bett → **Finale**.
 
 ---
@@ -260,10 +267,8 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 
 **Die zwei Hälften**
 - **[M]** Den alten Fahrschein auf Mala ziehen. Sie öffnet die Dose ganz.
-- Die zwei Hälften zusammenlegen:
-  - „Meine Hälfte links, ihre rechts“;
-  - „Rückseite: „Mala i“ und dann „Mali · 1988 · N. R.““ (hinten ist alles spiegelverkehrt).
-- Erinnerungsfolge. **Lana.**
+- Die zwei Hälften **zusammenlegen**: Eine Hälfte antippen dreht sie, „Tauschen“ legt sie um. Markos Hälfte (Großmutter, der Junge, die Drei) hat links einen glatten Rand und rechts den Riss; sie gehört nach links. Lanas Hälfte steht zu Beginn auf dem Kopf.
+- Erinnerungen: die Samstage, der Keller und das schwarze Blatt (falls noch nicht gesehen), die zwei Fahrscheine. **Lana.** Die Nacht des Busses kommt erst in der letzten Drei.
 
 **Nada und Lanas Zimmer**
 - **[M]** Haus 7, Treppe: Nada öffnet, wenn man das Foto unter der Tür durchschiebt.
@@ -275,6 +280,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - In Vratnik das Tor aufschließen.
 - **[G]** Den Herd spüren: Großmutter legt im Januar 1994 ein Formular ins Wärmefach.
 - **[M]** Das **Stemmeisen** auf das Wärmefach ziehen → **Rotkreuz-Nachricht**, lesen.
+  - Wer das Stemmeisen schon zurückgegeben hat: Nedžad leiht es noch einmal („Darf ich mir das Stemmeisen noch einmal leihen?“, im Finale sagt er es von selbst).
 - **Verbinden:**
   - Rotkreuz-Nachricht + Postkarte → **Sie kam mich holen**;
   - dann + Register → **Darum steht bei Abreise nichts**.
@@ -284,7 +290,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - **[M]** In Alipašino Polje Mala um ihren **Fahrschein** bitten.
 - **[M]** An der Haltestelle einsteigen. Bevor die Türen schließen, erkennt **Alija** seine gelochten Fahrscheine, begreift, welches Jahr es ist, und macht seinen Kiosk zu (Erkenntnis, ohne Zutun).
 - **[M]** In der Bahn **beide Fahrscheine** (den alten und Malas) auf den Entwerter ziehen.
-- Fahrt durch die Stadt. Das Geständnis hat keine falsche Antwort.
+- Fahrt durch die Stadt. An einer leeren Haltestelle die Erinnerung an die Nacht des Busses, dann das Geständnis. Es hat keine falsche Antwort.
 - **[M]** In der Baščaršija aussteigen und die Bank benutzen: Mala sagt ihren Namen, der letzte Splitter (die Brücke), die Leine zeigt nach Südwesten.
 
 ---

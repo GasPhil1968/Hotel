@@ -72,11 +72,11 @@ M.defineScape('map2',{beds:['cityFar'],ev:[['tramBellFar',14,30,0.4,-0.8,0.8],['
 // Reisebeschränkungen in Kapitel 2 (in Kapitel 1 gilt die alte Regel)
 var travel1=M.canTravel;
 M.canTravel=async function(A,L){ if (M.chapterOf(A.G)!==2) return travel1?travel1(A,L):true; var p=A.G.phase, f=function(k){ return !!A.G.flags[k]; };
-  if (p==='k2_pro' && !f('k2.p2.back') && L.id!=='carsija' && L.id!=='stanica'){ await A.m('Erst muss ich Mala finden.'); return false; }
-  if (p==='k2_pro_n' && L.id!=='kula' && L.id!=='pansion' && L.id!=='carsija'){ await A.m('Mitten in der Nacht? Nein. Nur zur Kula, wenn überhaupt.'); return false; }
-  if (p==='k2_s3' && !f('k2.s3.called') && L.id!=='pansion'){ await A.m('Erst rufe ich Sanja an. Sonst verliere ich den Mut.'); return false; }
-  if ((p==='k2_fin_n') && L.id!=='neboder'){ await A.g('Nicht dorthin. Zur Drei.'); return false; }
-  if (p==='k2_epi' && L.id!=='stanica' && L.id!=='neboder'){ await A.m('Heute nicht mehr. Nur noch zu Nada, und dann zum Bus.'); return false; }
+  if (p==='k2_pro' && !f('k2.p2.back') && L.id!=='carsija' && L.id!=='stanica'){ await A.m('Ohne Mala gehe ich nirgends hin. Eben war sie noch neben mir.'); return false; }
+  if (p==='k2_pro_n' && L.id!=='kula' && L.id!=='pansion' && L.id!=='carsija'){ await A.m('Mitten in der Nacht? Die Stadt schläft. Nur das Lied von vorhin geht mir nicht aus dem Kopf.'); return false; }
+  if (p==='k2_s3' && !f('k2.s3.called') && L.id!=='pansion'){ await A.m('Nicht, bevor ich mit Sanja gesprochen habe. Sonst verliere ich den Mut.'); return false; }
+  if ((p==='k2_fin_n') && L.id!=='neboder'){ await A.g('Nicht dorthin. Heute Nacht fährt die Drei.'); return false; }
+  if (p==='k2_epi' && L.id!=='stanica' && L.id!=='neboder'){ await A.m('Heute nicht mehr. Nada wartet, und der Bus fährt bald.'); return false; }
   return true; };
 
 // ---------------------------------------------------------------- Mala: Gespräche (in Kapitel 2 aus 97_k2_mala.js)

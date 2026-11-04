@@ -103,8 +103,10 @@ async function verifyNote(A,S){ var F=A.G.flags; await S.say('…'); await S.say
   await S.say('Montag zu. Inventur. Ich wollte es Stipe und Frane nachher sagen. Sie werden jammern.'); await S.say('Und jetzt sag mir, wie du das gemacht hast.');
   var c=await A.choose([{t:'„Gute Augen.“',id:'eyes'},{t:'„Jemand hat es mir vorgelesen.“',id:'true'},{t:'(Nur lächeln.)',id:'smile',silent:true}],{title:'Sanja'});
   if (c==='true') await S.say('Wer? Dein Kaffee?'); else if (c==='eyes') await S.say('Du hältst die Zeitung eine Armlänge weit weg, Marko.'); else await S.say('Lächle nicht so. Das kenne ich von dir nicht.');
-  F['split.afterIvka.verified']=true; await A.wait(500);
-  if (A.malaHere()){ await A.g('Und?'); await A.m('Da liegt ein Zettel. Und darauf steht, was du gesagt hast.'); await A.g('Das ist ein Anfang.'); await A.wait(500); await A.g('Ich will ans Wasser. Nicht weit.'); }
+  F['split.afterIvka.verified']=true; await A.wait(500); await S.say('Und sag Stipe nichts. Das ist meine Sache.');
+  if (A.malaHere()){ await A.g('Und?'); await A.m('Da liegt ein Zettel. Und darauf steht, was du gesagt hast.'); await A.wait(700); await A.m('Und jetzt weiß ich etwas, das Sanja selbst sagen wollte.');
+    await A.g('So ist es jeden Tag. Ich sehe, was keiner zeigen will.'); await A.m('Und was machst du damit?'); await A.g('Meistens nichts.'); await A.wait(700);
+    await A.m('Und über dich? Was siehst du da?'); await A.wait(1100); await A.g('…'); await A.wait(500); await A.g('Ich will ans Wasser. Nicht weit.'); }
   A.save(); }
 var NOTE_LINES=['ČETVRTAK','mlijeko 6 l, limun 2 kg','nazvati Ivicu – aparat opet pišti!','PONEDJELJAK ZATVORENO – inventura','(reći Stipi i Frani!!)'];
 async function readNote(A){ await A.doc({style:'letter',title:'Ein Zettel, mit Kugelschreiber',w:210,lines:NOTE_LINES}); }
@@ -129,7 +131,8 @@ M.malaReturns=async function(A){ var G=A.G; delete G.flags['split.afterIvka.away
   await A.m('Wo warst du?'); await A.g('Hier. Bei dir. Weit weg kann ich nicht, das weißt du.');
   await A.g('Seit wir durch das Tor zurück sind, ist es … dünner. Als wäre unterwegs etwas verrutscht. Ich habe gerufen. Du hast durch mich hindurchgesehen.');
   await A.m('Und jetzt?'); await A.g('Jetzt nicht mehr. Ich weiß nicht, warum. Ich weiß nicht, ob es wiederkommt.');
-  await A.wait(600); await A.m('Ich will nicht nur glauben, was du sagst. Ich will es prüfen. Hier. Jetzt.'); await A.g('Dann such dir etwas aus.');
+  // kein zweiter Wahrnehmungstest (Prüfbericht): Marko glaubt ihr. Die Frage ist, was es heißt, über die Lebenden Dinge zu wissen
+  await A.wait(600); await A.m('Ich glaube dir. Das ist ja das Problem.'); await A.m('Wenn ich dir glaube, glaube ich auch alles, was du über andere siehst. Über Sanja. Über jeden hier.'); await A.g('Dann fang mit etwas Kleinem an. Etwas, das niemandem wehtut.');
   G.flags['mala.lock']=false; A.save(); };
 async function talkRegulars(A){ var St=A.npc('stipe'), Fr=A.npc('frane');
   if (A.G.phase!=='c2'){ await St.say('Briškula. Wir reden nicht beim Spielen.'); return; }
@@ -145,7 +148,8 @@ var HS=[
  {id:'sanja',npc:'sanja',name:'Sanja',hgt:40,vis:function(S,GS){ return open(GS); },talk:talkSanja,r:function(S,GS,a){ return [Math.round(a.x)-9,Math.round(a.y)-50,18,30]; },
    look:'Sanja. Kurze schwarze Haare, eine Schürze, ein Blick, der seit fünfzehn Jahren Gäste sortiert.',
    g:{look:'Sie mag ihn. Sie würde es nie sagen.',listen:async function(A){ if (A.G.phase==='i1m') return A.g('Sie zählt Milchflaschen, halblaut. Bei sechs hört sie auf.'); if (!A.hasNote('c2_shop')) return A.g('Sie summt beim Spülen. Ein Lied von der Riva. Dann hört sie plötzlich auf.'); await A.g('Sie redet leise mit sich selbst: „Zwölf Jahre. Und jetzt kommt er mit den Namen.“'); }},
-   give:{ letter_t:async function(A){ if (A.flag('c1.letterOpen')) return A.npc('sanja').say('Der ist doch offen. Lies ihn.'); return M.steamLetter(A,'bar'); },
+   give:{ letter_t:async function(A){ var Sa=A.npc('sanja'); if (A.hasNote('c1_letter')) return Sa.say('Den hast du doch gelesen. Das sehe ich dir an.');   // Sanja sieht, in welchem Zustand der Brief ist
+       if (A.flag('c1.letterOpen')){ await Sa.say('Offen ist er. Lesen kann ihn so keiner mehr. Das Salz nimmt die Tinte zuerst.'); return A.m('Ich weiß.'); } return M.steamLetter(A,'bar'); },
      newspaper:'„Behalt sie. Ich habe zwei.“', tickets:async function(A){ var S=A.npc('sanja'); await S.say('Zwei Tickets nach Ancona …'); await A.wait(900); await S.say('Woher hast du die?'); await A.m('Aus der Ledana.'); return sanjaStory(A,S); } }},
  {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:'Er schummelt. Nur ein bisschen. Seit vierzig Jahren.',listen:'Er zählt die Punkte laut und falsch.'}},
  {id:'frane',npc:'frane',name:'Frane',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Frane, Glatze mit weißem Kranz, die Karten fächerförmig vor der Nase.',g:{look:'Er lässt Stipe gewinnen, wenn Stipe traurig ist. Stipe merkt es nicht.',listen:'„Meine Frau hat immer gesagt, ich spiele schlecht.“ Er lächelt dabei.'}},

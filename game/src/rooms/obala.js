@@ -33,11 +33,13 @@ async function talkAmra(A){ var Am=A.npc('amra');
   ]; }); }
 async function kurrentAkte(A,Am){ if (!A.has('kurrent')){ await Am.say('Eine Tafel? Haben Sie eine?'); await A.m('Ich weiß, wo eine hängt.'); await Am.say('Dann holen Sie sie. Ich warte hier. Ich warte immer hier.'); return; }
   await Am.say('Hier. Drei Wörter, die ich nicht lesen kann. Der Rest ist Zahlen.'); await A.doc({style:'faded',title:'Bauakte 1894 · Rathaus Sarajevo',lines:['… die ⟨Grnndmaner⟩ gegen die Miljacka','ist nicht tiefer als ⟨drei⟩ Meter zu führen,','da sonst das ⟨Gnnndwaſſer⟩ eindringt.','gez. Wittek, Architekt']});
-  var res=await A.puzzle({title:'Die Bauakte lesen',hint:'Laut Tafel sieht ein Kurrent-„e“ aus wie ein „n“, das „u“ trägt einen Bogen, das lange „ſ“ sieht aus wie ein „f“. Tippe auf eine Zeile, um eine Lesart zu wählen.',button:'Vorlesen',
-    slots:[['Die Grnndmaner …','Die Grundmauer …','Die Grundmaner …'],['… nicht tiefer als drei Meter …','… nicht tiefer als drn Meter …','… nicht tiefer als dnei Meter …'],['… da sonst das Grundwasser eindringt.','… da sonst das Gnnndwaffer eindringt.','… da sonst das Grundwaffer eindringt.']],
-    init:[0,1,1],
-    check:function(sel){ var ok=[1,0,0], msg=['Amra: „Grnndmaner? Das klingt wie ein Husten.“ (Kurrent: das „e“ sieht aus wie ein „n“.)','Amra: „Das ist doch eine Zahl, oder? Drn ist keine Zahl.“','Amra: „Waffer? Gibt es auf Deutsch Waffer?“ (Das lange „ſ“ sieht aus wie ein „f“.)'];
-      for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msg[i]}; return {ok:true}; }});
+  // Schriftvergleich statt Auswahlzeilen: die unsicheren Zeichen so lesen, wie Jakobs Tafel sie zeigt
+  var U=['n','u','e'];
+  var res=await A.glyphs({title:'Die Bauakte lesen',hint:'Unsichere Zeichen antippen und mit Jakobs Tafel vergleichen.',tableTitle:'Tafel',button:'Vorlesen',
+    table:[{k:'e',lat:'e'},{k:'n',lat:'n'},{k:'u',lat:'u'},{k:'r',lat:'r'},{k:'s',lat:'ſ'},{k:'f',lat:'f'}],
+    words:[[{c:'Gr'},{k:'u',o:U,ok:1},{c:'ndma'},{k:'u',o:U,ok:1},{k:'e',o:U,ok:2},{c:'r'}],[{c:'d'},{k:'r',o:['n','r'],ok:1},{k:'e',o:['n','e'],ok:1},{c:'i'}],[{c:'Gr'},{k:'u',o:U,ok:1},{c:'ndwa'},{k:'s',o:['f','ſ'],ok:1},{k:'s',o:['f','ſ'],ok:1},{c:'er'}]],
+    check:function(rd){ var msg=['Amra: „Grnndmaner? Das klingt wie ein Husten.“ Auf der Tafel trägt das „u“ einen Bogen. Das „e“ ist kleiner als das „n“.','Amra: „Das ist doch eine Zahl, oder? Drn ist keine Zahl.“','Amra: „Waffer? Gibt es auf Deutsch Waffer?“ Das „f“ hat einen Querstrich, das lange „ſ“ nicht.'], W=this.words;
+      for (var w=0;w<W.length;w++) for (var c=0;c<W[w].length;c++){ var cell=W[w][c]; if (cell.k && rd[w][c]!==cell.ok) return {ok:false,bad:w,msg:msg[w]}; } return {ok:true}; }});
   if (!res){ await Am.say('Überlegen Sie. Ich habe drei Jahre auf diese drei Wörter gewartet.'); return; }
   await A.m('„Die Grundmauer gegen die Miljacka ist nicht tiefer als drei Meter zu führen, da sonst das Grundwasser eindringt.“'); await Am.say('Drei Meter!'); await Am.say('Wir wollten fünf graben, für die Heizung. Sie haben uns gerade den Keller gerettet. Und mir die Stelle.');
   await A.wait(500); await Am.say('Was wollen Sie? Geld habe ich nicht. Ich bin Restauratorin.'); await A.m('Heute Abend in die Vijećnica. Für zehn Minuten.'); await A.wait(600);

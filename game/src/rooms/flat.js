@@ -181,7 +181,7 @@ var HS=[
  {id:'door',name:'Wohnungstür',r:[278,30,30,90],st:R3.st(228,62,'R'),exit:{to:'map'},pri:2,
    canExit:async function(A){ var p=A.G.phase, fresh=!A.flag('split.intro.legacy');
      if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Ich bleibe noch. Hinter mir blinkt etwas rot.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht mit diesem Kopf. Der ist noch nicht wach.'); return false; }
-       if (fresh && !A.flag('pro.translated')){ await A.m('Erst Seite einunddreißig. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
+       if (fresh && !A.flag('pro.translated')){ await A.m('Seite einunddreißig liegt noch auf dem Schreibtisch. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
      // Mittwochabend: bevor er geht, das erste lange Kennenlernen (nur einmal; alte Spielstände in der Stimmenphase behalten den alten Weg)
      if (p==='c1' && fresh && A.flag('split.intro.v') && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
