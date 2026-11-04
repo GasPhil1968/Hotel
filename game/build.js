@@ -48,7 +48,7 @@ ${js}
 (function(){
   if (!('serviceWorker' in navigator) || location.protocol==='file:') return;
   var note=document.getElementById('offline-note');
-  function show(t,ms){ note.textContent=t; note.style.display='block'; note.style.opacity='1'; if(ms) setTimeout(function(){ note.style.opacity='0'; setTimeout(function(){ note.style.display='none'; },700); },ms); }
+  function show(t,ms){ try{ if(window.M&&M.trUI) t=M.trUI(t); }catch(e){} note.textContent=t; note.style.display='block'; note.style.opacity='1'; if(ms) setTimeout(function(){ note.style.opacity='0'; setTimeout(function(){ note.style.display='none'; },700); },ms); }
   var shown=false;
   navigator.serviceWorker.addEventListener('message',function(e){ if(e.data==='offline-ready' && !shown){ shown=true; show('Offline bereit \\u2713',4000); } });
   // Update: Übernimmt eine neue Fassung die Seite, wird sie gleich geladen (auf dem Titelbild sofort, mitten im Spiel beim nächsten Titelbild)

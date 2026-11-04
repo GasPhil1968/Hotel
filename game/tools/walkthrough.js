@@ -4,6 +4,11 @@ const { open } = require('./driver');
 const SHOTS = process.argv[2] || null;
 (async () => {
   const D = await open({ turbo: 25 });
+  // MALA_LANG=bhs: das ganze Kapitel in der Sprachfassung spielen und jeden noch deutschen Text melden
+  const LANG = process.env.MALA_LANG || null;
+  if (LANG) await D.ev((l) => { M.setLang(l); M.trLogUI = true; M.trMiss = {}; M.trOverflow = {}; }, LANG);
+  const CAPS = process.env.MALA_CAPSPEECH || null;   // Ordner: erster Satz jeder Figur als Bild
+  if (CAPS) await D.ev(() => { M.__caps = {}; });
   const t0 = Date.now(); let step = 0;
   // MALA_DUMPALL=ordner: legt nach jedem Schritt den Spielstand ab (für Vergleichsbilder und Tests)
   const log = async (...a) => { console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] #${++step}`, ...a);
@@ -158,6 +163,13 @@ const SHOTS = process.argv[2] || null;
     await D.until(s => s.screen === 'credits' || s.screen === 'title', 60000, 'Abspann');
     await log('ENDE erreicht:', (await D.st()).screen, 'Spielzeit (Spieluhr, beschleunigt):', await D.ev(() => Math.round(M.GS.playMs / 1000)) + 's');
     console.log('Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): ' + (await D.ev(() => M.E.gt() - (M.__gt0 || 0)) / 60000).toFixed(1) + ' min');
+    if (LANG) { const miss = await D.ev(() => M.trMiss); const ks = Object.keys(miss);
+      console.log('Sprachfassung ' + LANG + ': ' + ks.length + ' angezeigte Texte ohne Übersetzung');
+      ks.slice(0, 400).forEach(k => console.log('  [' + miss[k] + '] ' + k)); if (ks.length) process.exitCode = 3;
+      const ov = await D.ev(() => M.trOverflow || {}); const ok2 = Object.keys(ov); console.log('Texte, die aus dem Bild laufen: ' + ok2.length); ok2.slice(0, 50).forEach(k => console.log('  [' + ov[k] + '] ' + k)); }
+    if (CAPS) { const caps = await D.ev(() => M.__caps || {}); const fs2 = require('fs'); fs2.mkdirSync(CAPS, { recursive: true });
+      Object.keys(caps).forEach(k => { if (typeof caps[k] === 'string' && caps[k].startsWith('data:image/png;base64,')) fs2.writeFileSync(CAPS + '/' + k + '.png', Buffer.from(caps[k].split(',')[1], 'base64')); });
+      console.log('Sprecherbilder: ' + Object.keys(caps).join(', ')); }
     console.log('DURCHLAUF OK');
   } catch (e) { console.log('FEHLER bei Schritt', step, e.message); try { await D.shot((SHOTS || '/tmp') + '/wt_error.png'); } catch (_) {} }
   console.log(D.errors.length ? 'JS-FEHLER:\n' + D.errors.slice(0, 8).join('\n') : 'keine JS-Fehler');

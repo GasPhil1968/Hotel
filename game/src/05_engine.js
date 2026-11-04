@@ -186,6 +186,7 @@ function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||E.
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
   var src=text, w0=who||GS.active;
   if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:trTo(w0),cat:'speech',log:true}); }
+  if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
   if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@') E.trLast=String(w0).replace(/^@/,'');
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
     var sa=ACT[E.speech.who]; if (sa && sa.id!==GS.active && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }

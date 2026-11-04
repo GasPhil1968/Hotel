@@ -144,7 +144,8 @@ function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.
   M.text(fb,b.t,b.x,BTN_Y+2,!on?c.dim:((hot||act)?c.hi:c.tx));
   if (b.id==='notes' && Object.keys(GS().noteNew).some(function(k){ return M.NOTES[k]&&M.NOTES[k].show; })){ fb.rect(x1-2,y0-1,3,3,P.r4); } }
 function invList(){ return isG()?['tin']:GS().inv; }
-function drawUI(){ fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
+function drawUI(){ if (BTNS.v!==M.trVer){ layoutBtns(); BTNS.v=M.trVer; }   // Knopfbreiten nach Sprache
+  fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
   if (E.dlg && E.conv) return;
   if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS.filter(function(b){ return b.id==='menu'; })[0],true); return; }
   var s=E.overlay?(pointer.touch?'(Tippen zum Schließen)':''):(E.pop||drag?'':sentence()); var sw=M.textWidth(s); M.text(fb,s,Math.max(100,Math.floor((W-sw)/2)),SH+4,c.tx);
@@ -364,7 +365,7 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
   if (!list.length) M.text(fb,'Noch nichts, was zusammengehören könnte.',54,NB_Y0+6,P.s2);
   for (i=NB.page*NB_PER;i<Math.min(list.length,(NB.page+1)*NB_PER);i++){ var id=list[i], n=M.NOTES[id], y=NB_Y0+(i-NB.page*NB_PER)*NB_RH, sel=NB.sel===id, hot=hoverUI==='n:'+id;
     if (sel) fb.rect(48,y+1,234,NB_RH-3,P.y4); else if (hot) fb.rect(48,y+1,234,NB_RH-3,P.s6);
-    var t=n.s||n.t; while (M.textWidth(t)>214 && t.length>3) t=t.slice(0,-2)+'…';
+    var t=M.trUI?M.trUI(n.s||n.t):(n.s||n.t); while (M.textWidth(t)>214 && t.length>3) t=t.slice(0,-2)+'…';   // erst übersetzen, dann kürzen
     M.text(fb,t,56,y+7,ded[id]?P.g1:P.n0); if (ded[id]){ fb.px(51,y+9,P.g3); fb.px(50,y+10,P.g3); fb.px(52,y+10,P.g3); fb.px(51,y+11,P.g3); fb.px(51,y+10,P.g2); }
     if (g.noteNew[id]) fb.rect(276,y+8,3,3,P.r4); lay.rows.push({id:id,r:[48,y,234,NB_RH-1]}); }
   if (pages>1){ M.text(fb,(NB.page+1)+' / '+pages,150,NB_Y0+NB_PER*NB_RH+1,P.s2); if (NB.page>0) lay.prev=nbButton(48,NB_Y0+NB_PER*NB_RH-1,40,'<',hoverUI==='nprev'); if (NB.page<pages-1) lay.next=nbButton(242,NB_Y0+NB_PER*NB_RH-1,40,'>',hoverUI==='nnext'); }
@@ -451,7 +452,7 @@ M.help=help;
 
 // ---------------------------------------------------------------- Titel, Karten, Abspann
 var TITLE_BG=null;
-function slotLabel(n){ var i=E.slotInfo(n); if (!i) return 'Platz '+n+':  leer'; var ph=M.PHASES[i.phase]||{}; var m=Math.max(1,Math.round(i.ms/60000)); var t='Platz '+n+':  '+(ph.short||ph.title||i.phase)+'  ('+(m<60?m+' Min.':Math.floor(m/60)+' Std. '+(m%60)+' Min.')+')'; while (M.textWidth(t)>210) t=t.slice(0,-2); return t; }
+function slotLabel(n){ var T=M.trUI||function(x){ return x; }, i=E.slotInfo(n); if (!i) return T('Platz')+' '+n+':  '+T('leer'); var ph=M.PHASES[i.phase]||{}; var m=Math.max(1,Math.round(i.ms/60000)); var t=T('Platz')+' '+n+':  '+T(ph.short||ph.title||i.phase)+'  ('+(m<60?m+' '+T('Min.'):Math.floor(m/60)+' '+T('Std.')+' '+(m%60)+' '+T('Min.'))+')'; while (M.textWidth(t)>210) t=t.slice(0,-2); return t; }
 function titleItems(){ var tm=E.titleMode;
   if (tm==='slots'){ var b=[], cont=E.titleNext==='cont'; for (var k=1;k<=3;k++){ (function(k){ var has=E.hasSave(k), pre=E.titleNext==='preset'; b.push({t:slotLabel(k),dis:cont&&!has,a:function(){ E.setSlot(k); if (cont){ E.titleMode='main'; if (!E.loadGame(k)) flash('Spielstand beschädigt.'); return; } if (has){ E.confirmSlot=k; E.titleMode='confirm'; return; } E.titleMode='main'; if (pre){ if (!E.loadPreset('ivka',k)) flash('Spielstand beschädigt.'); return; } E.newGame(E.newCh||1); }}); })(k); }
     b.push({t:'Zurück',a:function(){ E.titleMode='main'; }}); return b; }

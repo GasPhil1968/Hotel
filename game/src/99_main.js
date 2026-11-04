@@ -47,7 +47,8 @@ document.addEventListener('visibilitychange',function(){ if (document.hidden){ t
 window.addEventListener('pagehide',function(){ try{ M.saveGame(); }catch(e){} });
 var last=performance.now();
 function frame(now){ var dt=now-last; last=now;
-  try{ M.update(dt); var fb=M.renderFrame(), d=fb.d; for (var i=0;i<64000;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0); }catch(err){ console.error(err); }
+  try{ M.update(dt); var fb=M.renderFrame(), d=fb.d; for (var i=0;i<64000;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0);
+    if (M.__capNext && M.E.speech){ var ck=M.__capNext; M.__capNext=null; try{ M.__caps[ck]=cv.toDataURL(); }catch(e){} } }catch(err){ console.error(err); }
   requestAnimationFrame(frame); }
 if (M.boot) M.boot();
 M.setCRT(crt);

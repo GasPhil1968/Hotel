@@ -18,6 +18,7 @@ function visible(s) {
   if (/^[A-Za-z0-9]+_[A-Za-z0-9_]+$/.test(s)) return false;   // snake_case
   if (/^[A-Za-z0-9_]+([.:][A-Za-z0-9_]+)+$/.test(s)) return false;   // Flags wie c1.letterOpen, first:abc
   if (s === 'use strict') return false;
+  if (/[{};]/.test(s) && /:/.test(s) && !/[.!?…“]$/.test(s)) return false;   // CSS und Code
   return true;
 }
 function hint(line, idx) {
