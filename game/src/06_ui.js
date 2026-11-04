@@ -235,7 +235,9 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), x0=2, w=W-4, y0=SH+1, y1
   if (d.title && !convPartner() && !E.speech){ var tw2=M.textWidth(d.title); fb.rect(x0,SH-12,tw2+12,12,P.k0); fb.hl(x0,x0+tw2+11,SH-12,fr); fb.vl(x0,SH-12,SH,fr); fb.vl(x0+tw2+11,SH-12,SH,fr); M.text(fb,d.title,x0+6,SH-9,g?P.x5:P.y4); }
   fb.hl(x0,x0+w-1,y0,fr); fb.hl(x0,x0+w-1,y1,fr); fb.vl(x0,y0,y1,fr); fb.vl(x0+w-1,y0,y1,fr);
   var rows=[], yy=y0+4, more=false;
-  for (var k=d.top;k<o.length;k++){ var ls=o[k].lines||(o[k].lines=M.wrap(o[k].t,tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
+  var me=GS().active, pa0=convPartner(), to0=pa0?pa0.id:(E.trLast||null);
+  for (var k=d.top;k<o.length;k++){ if (o[k].lang!==M.lang){ o[k].lang=M.lang; o[k].lines=null; }
+    var ls=o[k].lines||(o[k].lines=M.wrap(M.lang==='de'?o[k].t:M.tr(o[k].t,{who:me,to:me==='marko'?to0:null,cat:'option',log:true}),tw)), h=ls.length*NB_LH+1; if (yy+h>y1-2){ more=true; break; } rows.push({k:k,y:yy,h:h,ls:ls}); yy+=h; }
   if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:l1.length*NB_LH+1,ls:l1}); more=d.top<o.length-1; }
   var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null}, talk=!!convPartner();
   rows.forEach(function(r){ var hot=pointer.show&&hoverUI==='c:'+r.k, asked=talk&&!o[r.k].bye&&!o[r.k].noGray&&GS().seen['ask:'+o[r.k].t];
@@ -424,6 +426,7 @@ function menuItems(){ var inG=E.screen==='game', sl=E.slot(); return [
   {t:'Geräusche: '+(M.soundOn()?'an':'aus'),a:function(){ M.setSound(!M.soundOn()); }},
   {t:'Röhrenbild: '+(M.crtOn&&M.crtOn()?'an':'aus'),a:function(){ if (M.setCRT) M.setCRT(!M.crtOn()); }},
   {t:'Vollbild',a:function(){ if (M.fullscreen) M.fullscreen(); }},
+  {t:langLabel(),a:nextLang},
   {t:'Hinweis …',dis:!inG||!M.hintsOpen||!M.hintsOpen().length,a:function(){ E.menu=null; E.paused(false); if (M.showHints) M.showHints(); }},
   {t:'Spielanleitung',a:function(){ E.menu=null; E.paused(false); help(); }},
   {t:'Zum Titelbild',a:function(){ E.menu=null; E.paused(false); E.toTitle(); }}]; }
@@ -454,14 +457,16 @@ function titleItems(){ var tm=E.titleMode;
     b.push({t:'Zurück',a:function(){ E.titleMode='main'; }}); return b; }
   if (tm==='confirm'){ var pre2=E.titleNext==='preset'; return [{t:pre2?'Ja, Platz '+E.confirmSlot+' überschreiben':'Ja, Platz '+E.confirmSlot+' neu beginnen',a:function(){ E.setSlot(E.confirmSlot); E.titleMode='main'; if (pre2){ if (!E.loadPreset('ivka',E.confirmSlot)) flash('Spielstand beschädigt.'); return; } E.newGame(E.newCh||1); }},{t:'Nein, behalten',a:function(){ E.titleMode='slots'; }}]; }
   if (tm==='next') return [{t:'Weiter mit Kapitel 2: Sarajevo',a:function(){ E.titleMode='main'; E.newCh=2; E.newGame(2); }},{t:'Zum Titelbild',a:function(){ E.titleMode='main'; }}];
-  var a=[]; if (E.anySave()) a.push({t:'Fortsetzen',a:function(){ E.titleNext='cont'; E.titleMode='slots'; }}); a.push({t:'Kapitel 1: Split',a:function(){ E.newCh=1; E.titleNext='new'; E.titleMode='slots'; }}); a.push({t:'Kapitel 2: Sarajevo',a:function(){ E.newCh=2; E.titleNext='new'; E.titleMode='slots'; }}); if (M.PRESETS&&M.PRESETS.ivka) a.push({t:'Mitgelieferter Spielstand',a:function(){ E.titleNext='preset'; E.titleMode='slots'; }}); a.push({t:'Über das Spiel',a:function(){ E.titleMode='about'; }}); if (E.titleMode==='about') return [{t:'Zurück',a:function(){ E.titleMode='main'; }}]; return a; }
-function titleRowY(i,n){ if (E.titleMode==='main') return n>4?144+i*11:150+i*12; var h=30+n*13, y0=Math.max(4,100-(h>>1)); return y0+24+i*13; }
+  var a=[]; if (E.anySave()) a.push({t:'Fortsetzen',a:function(){ E.titleNext='cont'; E.titleMode='slots'; }}); a.push({t:'Kapitel 1: Split',a:function(){ E.newCh=1; E.titleNext='new'; E.titleMode='slots'; }}); a.push({t:'Kapitel 2: Sarajevo',a:function(){ E.newCh=2; E.titleNext='new'; E.titleMode='slots'; }}); if (M.PRESETS&&M.PRESETS.ivka) a.push({t:'Mitgelieferter Spielstand',a:function(){ E.titleNext='preset'; E.titleMode='slots'; }}); if (M.setLang) a.push({t:langLabel(),a:nextLang}); a.push({t:'Über das Spiel',a:function(){ E.titleMode='about'; }}); if (E.titleMode==='about') return [{t:'Zurück',a:function(){ E.titleMode='main'; }}]; return a; }
+function langLabel(){ return M.lang==='de'?'Sprache: Deutsch':'Sprache: Bosanski / Hrvatski'; }
+function nextLang(){ var ks=Object.keys(M.LANGS||{de:1}), i=ks.indexOf(M.lang); M.setLang(ks[(i+1)%ks.length]); }
+function titleRowY(i,n){ if (E.titleMode==='main') return n>5?140+i*10:(n>4?144+i*11:150+i*12); var h=30+n*13, y0=Math.max(4,100-(h>>1)); return y0+24+i*13; }
 function drawTitle(){ if (!TITLE_BG && M.paintTitle) TITLE_BG=M.paintTitle(); fb.rect(0,0,W,H,P.k0); if (TITLE_BG) for (var i=0;i<W*SH;i++) fb.d[i]=TITLE_BG.d[i];
   if (M.titleDynamic) M.titleDynamic(fb,E.gt()/1000);
   M.big(fb,'MALA',160,22,P.x5,4,P.k0); centerText('Kapitel 1: Split  ·  Kapitel 2: Sarajevo',58,P.s5,P.k0);
   if (E.titleMode==='about'){ dimAll(2); var lines=['MALA – Kapitel 1: Split · Kapitel 2: Sarajevo','','Ein Point-and-Click-Adventure über Menschen,','die nicht weiterkommen, und über einen,','der mit ihnen reden kann.','','Marko lebt. Mala nicht.','Er spricht mit den Lebenden, sie geht durch Wände.','','Alle Grafik, Musik und Geräusche entstehen','im Spiel selbst. Kopfhörer lohnen sich.']; lines.forEach(function(l,i){ centerText(l,30+i*10,i===0?P.x5:P.s5); }); }
   var opts=titleItems(), boxed=['slots','confirm','next'].indexOf(E.titleMode)>=0; if (boxed){ dimAll(2); var h=30+opts.length*13, y0=Math.max(4,100-(h>>1)); fb.rect(46,y0,228,h,P.k1); fb.hl(46,273,y0,P.x2); fb.hl(46,273,y0+h-1,P.x2); fb.vl(46,y0,y0+h-1,P.x2); fb.vl(273,y0,y0+h-1,P.x2);
-    var hd=E.titleMode==='next'?'Split ist zu Ende. Weiter nach Sarajevo?':(E.titleMode==='confirm'?('Auf Platz '+E.confirmSlot+' liegt ein Spielstand. '+(E.titleNext==='preset'?'Überschreiben?':'Neu beginnen?')):(E.titleNext==='cont'?'Welchen Spielstand fortsetzen?':(E.titleNext==='preset'?'Auf welchen Platz laden?':((E.newCh===2?'Sarajevo':'Split')+': auf welchem Platz spielen?'))));
+    var hd=E.titleMode==='next'?'Split ist zu Ende. Weiter nach Sarajevo?':(E.titleMode==='confirm'?('Auf Platz '+E.confirmSlot+' liegt ein Spielstand. '+(E.titleNext==='preset'?'Überschreiben?':'Neu beginnen?')):(E.titleNext==='cont'?'Welchen Spielstand fortsetzen?':(E.titleNext==='preset'?'Auf welchen Platz laden?':(E.newCh===2?(M.lang!=='de'?'Sarajevo (bisher nur auf Deutsch): auf welchem Platz?':'Sarajevo: auf welchem Platz spielen?'):'Split: auf welchem Platz spielen?'))));
     centerText(hd,y0+8,P.x5); }
   opts.forEach(function(o,i){ var y=E.titleMode==='about'?184:titleRowY(i,opts.length), hot=hoverUI==='t:'+i; centerText(o.t,y,o.dis?P.x1:(hot?P.x6:P.x4)); }); }
 function drawCard(){ var c=E.card; fb.rect(0,0,W,H,P.k0); var t=(E.gt()-c.at)/1000, a=Math.min(1,t/0.8), ms=(c.ms||4200)/1000, b=Math.min(1,(ms-t)/0.8);
@@ -488,7 +493,7 @@ M.renderFrame=function(){
 // ---------------------------------------------------------------- Eingabe
 function uiAt(x,y){
   if (E.menu){ var items=menuItems(), y0=menuY0(); for (var i=0;i<items.length;i++){ var yy=y0+22+i*12; if (y>=yy-2&&y<yy+10&&x>=74&&x<246) return 'm:'+i; } return null; }
-  if (E.screen==='title'){ var t=titleItems(); for (i=0;i<t.length;i++){ var ty=E.titleMode==='about'?184:titleRowY(i,t.length); if (y>=ty-2&&y<ty+(E.titleMode==='main'?10:11)&&x>=46&&x<274) return 't:'+i; } return null; }
+  if (E.screen==='title'){ var t=titleItems(); for (i=0;i<t.length;i++){ var ty=E.titleMode==='about'?184:titleRowY(i,t.length); if (y>=ty-2&&y<ty+(E.titleMode==='main'?(t.length>5?8:10):11)&&x>=46&&x<274) return 't:'+i; } return null; }
   if (E.screen!=='game') return null;
   var ov=E.overlay; if (ov){ var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };
     if (ov.kind==='notebook'){ return nbAt(x,y); }

@@ -180,8 +180,14 @@ var textSpeed=1, tapText=false, SPEED=[1.5,1,0.7];
 try{ textSpeed=+(localStorage.getItem('mala.tspeed')||1); tapText=localStorage.getItem('mala.tap')==='1'; }catch(e){}
 E.textSpeed=function(){ return textSpeed; }; E.tapText=function(){ return tapText; };
 E.setText=function(sp,tap){ textSpeed=sp; tapText=tap; try{ localStorage.setItem('mala.tspeed',String(sp)); localStorage.setItem('mala.tap',tap?'1':'0'); }catch(e){} };
+// Sprachfassung: wer spricht, und mit wem spricht Marko gerade? (Mit Mala spricht er Bosnisch, sonst Kroatisch)
+E.trLast=null;
+function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||E.trLast||null; return null; }
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
-  return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
+  var src=text, w0=who||GS.active;
+  if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:trTo(w0),cat:'speech',log:true}); }
+  if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@') E.trLast=String(w0).replace(/^@/,'');
+  return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
     var sa=ACT[E.speech.who]; if (sa && sa.id!==GS.active && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }
 function endSpeech(){ if (!E.speech) return; var r=E.speech.res; E.speech=null; r(); }
 E.endSpeech=endSpeech;
@@ -488,6 +494,7 @@ M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
     for (var f=faders.length-1;f>=0;f--){ var F=faders[f]; if (F.f()){ faders.splice(f,1); F.res(); } }
     if (E.speech && gt>=E.speech.until && !(tapText && E.busy && E.screen==='game' && !M.TEST)) endSpeech();
     if (E.conv && ((!E.busy && !E.dlg) || E.conv.room!==room || E.screen!=='game')) E.conv=null;
+    if (!E.busy && !E.dlg && !E.speech) E.trLast=null;
     if (room && E.screen==='game'){ Object.keys(ACT).forEach(function(k){ updateActor(ACT[k],dt); }); updateCamera(dt); if (room.tick) room.tick(API,dt); if (M.ambientTick) M.ambientTick(API,dt); syncPos(); }
     if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); } }
   M.scheduleMusic(); };
