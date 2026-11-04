@@ -86,7 +86,7 @@ const SHOTS = process.argv[2] || null;
     await D.exit('door'); await D.drain(); await flag('split.intro.door');
     await D.act('look', '_mala'); await D.drain(); await flag('split.intro.round');
     await D.act('take', 'glasses'); await D.drain(); await inv('glass'); await D.act('use', 'sink', 'glass'); await D.drain(); await inv('glassW');
-    await D.act('use', '_mala', 'glassW'); await D.choose('Wer bist du?'); await D.choose('Was kannst du'); await D.choose('Seit wann'); await D.choose('Genug für heute'); await D.choose('In der Bar'); await D.choose('An der Riva'); await D.drain();
+    await D.act('use', '_mala', 'glassW'); await D.choose('Wer bist du?'); await expect(!(await D.ev(() => M.uiHit(20, 170) === 'sw')), 'kein Wechselknopf, solange der Wechsel gesperrt ist'); await D.choose('Was kannst du'); await D.choose('Seit wann'); await D.choose('Genug für heute'); await D.choose('In der Bar'); await D.choose('An der Riva'); await D.drain();
     await flag('split.intro.met'); await flag('split.intro.glass'); await note('m_name'); await note('m_first'); await expect(!(await D.flag('mala.unknown')), 'Name bekannt');
     await expect(!(await D.ev(() => M.E.canSwitch())), 'Wechsel erst nach dem Praxistest'); await log('Kennenlernen in der Wohnung'); await shot('c1_meet');
     await D.exit('door'); await D.drain(); await expect(await room() === 'map', 'jetzt geht er'); await D.travel('riva'); await log('Riva');

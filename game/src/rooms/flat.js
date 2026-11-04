@@ -271,7 +271,7 @@ async function goToSleep(A){ await A.walk(226,118); await A.fade(8,900); A.phase
 // Schritte: Marko prüft eine gewöhnliche Erklärung (Tür, um sie herumgehen), stellt ihr aus Gewohnheit ein Glas Wasser hin,
 // merkt, dass der Boden stillsteht – erst danach Fragen nach Namen, Wahrnehmung, Grenzen und dem ersten Anfall.
 var MEET_AT=[150,116];
-M.flatMeeting=async function(A){ var G=A.G; A.setFlag('split.intro.meet'); G.flags['mala.lock']=true;
+M.flatMeeting=async function(A){ var G=A.G; A.setFlag('split.intro.meet'); G.flags['mala.lock']=true; G.flags['mala.noSwitch']=true;   // Wechsel (und Knopf) erst nach dem Praxistest im Hafenamt
   await A.anim('dizzy'); await A.m('Ich will hinaus. Und dann zieht es. Nicht von der Tür her. Von hinten.');
   await A.faceM('L'); await A.wait(500);
   delete G.flags['mala.voice'];   // aus dem Flimmern wird eine Gestalt, die er nicht mehr überhören kann
