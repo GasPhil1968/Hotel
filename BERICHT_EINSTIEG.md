@@ -118,18 +118,30 @@ Die Spieluhr misst im Durchlauf den kürzesten Weg: Dialoge in normaler Geschwin
 | Zettel, Sanja, Bank am Morgen bis Fall 2 | 4,3 min | 6–9 min |
 | ganzes Kapitel 1 auf dem kürzesten Weg | 83,0 min (vorher 64,8 min) | – |
 
-## 5. Ergebnisse der letzten Läufe
+## 5. Ergebnisse der letzten Läufe (endgültiger Stand, alles in einem Durchgang)
 
-Stand vor der bosnisch-kroatischen Übersetzung der neuen Texte:
+| Lauf | Ergebnis |
+|---|---|
+| `walkthrough.js` Deutsch | 61 Schritte bis zum Abspann, alle Erwartungen erfüllt, keine JS-Fehler |
+| `walkthrough.js` mit `MALA_LANG=bhs` | 61 Schritte bis zum Abspann; 0 angezeigte Texte auf Deutsch, 0 Texte außerhalb des Bildes, keine JS-Fehler; Transkript mit 1.081 Sätzen |
+| `einstiegtests.js` | 39 bestanden, 0 Fehler, keine JS-Fehler |
+| `walkthrough2.js` | Kapitel 2 bis zum Abspann, keine JS-Fehler |
+| `k2tests.js` | 32 bestanden, 0 fehlgeschlagen |
+| `devicetest.js` | 27 bestanden, 0 fehlgeschlagen |
+| `i18n_check.js` (statisch) | 3.440 sichtbare Texte, 0 ohne Übersetzung |
 
-- `walkthrough.js` (Deutsch): Kapitel 1 bis zum Abspann, 61 Schritte, alle Erwartungen erfüllt, keine JS-Fehler.
-- `einstiegtests.js`: 39 bestanden, 0 Fehler, keine JS-Fehler.
-- `walkthrough2.js` und `k2tests.js`: Kapitel 2 durchgelaufen; 32 bestanden, 0 fehlgeschlagen.
-- `devicetest.js`: 27 bestanden, 0 fehlgeschlagen.
-
-Der Lauf auf Bosnisch/Kroatisch folgt, sobald die Übersetzung der neuen Texte fertig ist.
+**Während der Tests gefunden und behoben:**
+- Der Wechselknopf war während Malas Abwesenheit zwar unsichtbar, die Tippfläche reagierte aber. Ein Tippen bewirkte nichts; jetzt ist auch die Fläche weg.
+- Malas Gruß „Morgen.“ war in der Sprachfassung gleichlautend mit „Morgen.“ (= morgen) in Sustipan. Er heißt jetzt „Morgen, Marko.“.
+- Die dritte Antwort nach Triest war nur durch Blättern sichtbar. Alle drei sind gekürzt.
+- Die gesprochene Antwort einer Auswahl konnte nach langer Bedenkzeit in der anderen Sprachform erscheinen als im Menü. Jetzt gilt der Angesprochene vom Öffnen der Auswahl.
+- Zeitung und Kartenspiel in der „Bura“ waren nicht für jede Tageszeit gezeichnet.
+- Der Zettel hinter dem Tresen war zu blass.
 
 ## 6. Offene Punkte
 
 - Die Schätzungen der Spielzeit sollten mit echten Erstspielern überprüft werden.
-- Die bosnisch-kroatische Fassung der neuen Texte stammt wie die bisherige von KI-Übersetzern; Gegenlesen durch Muttersprachler ist empfehlenswert (siehe `SPRACHFASSUNG_BHS.md`).
+- Die bosnisch-kroatische Fassung der neuen Texte stammt wie die bisherige von KI-Übersetzern. Sie ist vollständig und automatisch geprüft; Gegenlesen durch Muttersprachler ist trotzdem empfehlenswert. Die unsicheren Wörter stehen in `SPRACHFASSUNG_BHS.md`.
+- Einige kurze Sätze aus den neuen Szenen kommen auch in Kapitel 2 vor. In der BHS-Fassung erscheinen sie dort übersetzt, obwohl Kapitel 2 sonst deutsch ist.
+- Das Videoskript `game/tools/video_fall1.js` ist auf den neuen Ablauf umgestellt, aber nicht erneut aufgenommen. Das Video vom ersten Fall zeigt noch den alten Mittwochabend.
+- Malas Abwesenheit hat keine eigene Tonspur. Die Stille entsteht durch die Musik der Räume am Morgen und durch das Fehlen ihrer Reaktionen auf Glocken und Fähren.
