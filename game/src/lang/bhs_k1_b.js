@@ -307,16 +307,11 @@ M.trAdd('bhs', {
   'Kalt.': 'Hladno.',   // Marko
   'Das Fenster ist offen. Ich habe es zugemacht. Ich weiß, dass ich es zugemacht habe.': 'Prozor je otvoren. Zatvorio sam ga. Znam da sam ga zatvorio.',   // Marko
   'In der dunklen Scheibe, hinter seinem eigenen Spiegelbild, steht jemand. Ein Mädchen. Ganz still.': 'U tamnom staklu, iza njegova vlastitog odraza, netko stoji. Djevojka. Sasvim mirno.',   // Erzähler
-  'Es gibt Leute, die nicht weiterkommen.': 'Ima ljudi koji ne mogu dalje.',   // Mala
-  'Du kannst mit ihnen reden.': 'Ti možeš razgovarati s njima.',   // Mala
-  'Ich kann sie finden.': 'Ja ih mogu naći.',   // Mala
   '„Wer ist da?“': { hr:'„Tko je tu?“', bs:'„Ko je tu?“' },   // Marko (Option; nach Malas Sätzen → bs; auch riva.js)
   '(Licht machen.)': '(Upaliti svjetlo.)',   // Option
-  '„Ich träume.“': '„Sanjam.“',   // Marko (Option)
   'Nachts': 'Noću',   // Titel
   'Niemand.': 'Niko.',   // Marko an die Erscheinung (bs; auch Zora in K2)
   'Niemand. Natürlich niemand.': 'Niko. Naravno da niko.',   // Marko (bs)
-  'Ja. Ich träume.': 'Da. Sanjam.',   // Marko
   'Ich schlafe zu wenig. Ich trinke zu viel Kaffee. Und ich schreibe zu viele Nachrufe.': 'Premalo spavam. Pijem previše kave. I pišem previše nekrologa.',   // Marko (erklärt es sich: wieder Kroatisch)
   'Das ist alles.': 'To je sve.',   // Marko
   'Markos Wohnung': 'Markov stan',   // Name

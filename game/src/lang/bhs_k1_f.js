@@ -46,7 +46,6 @@ M.trAdd('bhs', {
   'Nachts, in der Scheibe: „Du kannst mit ihnen reden. Ich kann sie finden.“': 'Noću, u prozorskom staklu: „Ti možeš razgovarati s njima. Ja ih mogu naći.“',
   'Auf der Mole, hinter mir, eine Stimme: „Du siehst sie also auch.“ Hinter mir war niemand.': 'Na molu, iza mene, glas: „Znači, i ti je vidiš.“ Iza mene nije bilo nikoga.',
   'Auf der beschlagenen Scheibe in meiner Wohnung: eine Straßenbahn mit einer Drei. Ich habe sie nicht gemalt.': 'Na zamagljenom staklu u mom stanu: tramvaj s brojem tri. Nisam ga ja nacrtao.',
-  'Die Stimme hat einen Namen: Mala. „So sagt man zu kleinen Mädchen.“ – „Es reicht.“': 'Glas ima ime: Mala. „Tako se kaže djevojčicama.“ – „Dovoljno je.“',
   'Mala hält inne, wenn ein Fährenhorn tutet.': 'Mala zastane kad se oglasi sirena trajekta.',
   'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“': 'Kad zazvone zvona Svetog Duje, Mala na trenutak nestane. „Preglasno.“',
   'Mala sieht an Ivka eine Leine aus Licht, festgemacht am Poller. „Wie ein Boot, das niemand mehr losmacht.“': 'Mala na Ivki vidi uzicu od svjetla, privezanu za bitvu. „Kao brod koji više nitko ne odvezuje.“',
