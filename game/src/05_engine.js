@@ -184,7 +184,7 @@ E.setText=function(sp,tap){ textSpeed=sp; tapText=tap; try{ localStorage.setItem
 E.trLast=null;
 function trTo(w){ if (w==='marko'||w==='@marko') return (E.conv&&E.conv.npc)||((E.trLast&&gt-(E.trLastAt||0)<9000)?E.trLast:null); return null; }
 function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null; prev(); }
-  var src=text, w0=who||GS.active;
+  var src=text, w0=who||GS.active; if (M.__speechLog) M.__speechLog.push([String(w0||''),String(src)]);   // nur Tests: wer sagt was
   if (M.lang!=='de' && M.tr){ text=M.tr(text,{who:w0,to:trTo(w0),cat:'speech',log:true}); }
   if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
   if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@'){ E.trLast=String(w0).replace(/^@/,''); E.trLastAt=gt; }
@@ -244,9 +244,10 @@ function npcHandle(id){ var a=ACT[id]; if (!a){ var nop=function(){ return Promi
 // ---------------------------------------------------------------- Mala: Beitreten, Gehen, Wechseln
 function malaPlaceNear(){ var mk=GS.pos.marko; var p=nearestPoint('mala',mk.x-16,mk.y-2); GS.pos.mala={room:mk.room,x:p[0],y:p[1],f:mk.f}; }
 function syncPos(){ ['marko','mala'].forEach(function(k){ var a=ACT[k]; if (a && GS.pos[k].room===room.id){ GS.pos[k].x=a.x; GS.pos[k].y=a.y; GS.pos[k].f=a.f; } }); }
-function malaJoin(o){ o=o||{}; GS.malaOn=true; if (o.x!==undefined) GS.pos.mala={room:room.id,x:o.x,y:o.y,f:o.f||'L'}; else malaPlaceNear(); placePlayers(); var a=ACT.mala; if (a && o.fadeIn!==false){ a.fadeIn=gt; } }
+// nach Ivka: Mala ist bekannt, aber für Marko vorübergehend nicht wahrnehmbar – dann kommt sie nur über die Wiederkehr in der Bar zurück (o.force)
+function malaJoin(o){ o=o||{}; if (GS.flags['split.afterIvka.away'] && !o.force){ E.gSuppressed=(E.gSuppressed||0)+1; return; } GS.malaOn=true; if (o.x!==undefined) GS.pos.mala={room:room.id,x:o.x,y:o.y,f:o.f||'L'}; else malaPlaceNear(); placePlayers(); var a=ACT.mala; if (a && o.fadeIn!==false){ a.fadeIn=gt; } }
 function malaLeave(o){ o=o||{}; if (GS.active==='mala') switchTo('marko',true); GS.malaOn=false; var a=ACT.mala; if (a){ a.fadeOut=gt; } }
-function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']||GS.flags['mala.unknown']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
+function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']||GS.flags['mala.unknown']||GS.flags['mala.noSwitch']||GS.flags['split.afterIvka.away']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
 E.canSwitch=canSwitch;
 async function switchTo(who,silent){ if (GS.active===who) return; syncPos(); GS.active=who; M.setGhostAudio(who==='mala'); if (!silent) M.sfx('whoosh');
   var target=GS.pos[who].room; if (target && target!==room.id){ await gotoRoom(target,{x:GS.pos[who].x,y:GS.pos[who].y,f:GS.pos[who].f,noEnter:true,fadeMs:250,keepPos:true}); }
@@ -261,7 +262,11 @@ E.switchTo=switchTo;
 var API={
   // Sprechen: say = gerade gespielte Figur, m = Marko, g = Mala, narrate = Erzähler
   say:function(t,o){ return say(t,GS.active,o); }, m:function(t,o){ return say(t,ACT.marko?'marko':'@marko',Object.assign({color:M.CAST_COLORS.marko},o||{})); },
-  g:function(t,o){ o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if (GS.flags['mala.voice'] && GS.active==='marko'){ o.voice=true; o.noPortrait=true; GS.flags['mk.ache']=Math.min(9,(GS.flags['mk.ache']||0)+1); E.headache=gt+1500+GS.flags['mk.ache']*120; M.sfx('static'); }
+  // Mala spricht. Solange sie nach Ivka für Marko nicht wahrnehmbar ist, kommt keine Zeile durch – auch keine aus verzögerten Abläufen (für Tests gezählt).
+  // In der Stimmenphase ist sie nur eine Stimme ohne Porträt; die steigenden Kopfschmerzen gibt es nur noch für alte Spielstände.
+  g:function(t,o){ if (GS.flags['split.afterIvka.away']){ E.gSuppressed=(E.gSuppressed||0)+1; return Promise.resolve(); }
+    o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if (GS.flags['mala.voice'] && GS.active==='marko'){ o.voice=true; o.noPortrait=true;
+      if (GS.flags['split.intro.legacy']){ GS.flags['mk.ache']=Math.min(9,(GS.flags['mk.ache']||0)+1); E.headache=gt+1500+GS.flags['mk.ache']*120; } else E.headache=Math.max(E.headache||0,gt+1200); M.sfx('static'); }
     return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',o); },
   // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
   crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
@@ -484,6 +489,7 @@ function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) retur
 // mitgelieferter Spielstand: in den gewählten Platz laden und dort gleich speichern
 E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return false; if (n) E.setSlot(n); var ok=loadData({GS:JSON.parse(JSON.stringify(p.GS))}); if (ok) saveGame(); return ok; };
 function loadData(d){ try{ var base=validate(d); if (!base) return false;
+    if (M.migrateSave) try{ M.migrateSave(base); }catch(e){ console.error(e); }   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js)
     setGame(base); Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); return true; }catch(e){ console.error(e); return false; } }

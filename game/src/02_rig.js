@@ -229,6 +229,15 @@ A.waitS=[[S({nh:[3,-19],fh:[2,-19],ln:1}),1400],[S({nh:[3,-19],fh:[2,-19],ln:1,h
 A.hugSelf=[[F({lh:[3,-28],rh:[-3,-28]}),1500],[F({lh:[3,-28],rh:[-3,-28],hd:'b'}),110]];
 A.tinF=[[F({it:'tin'}),1600],[F({it:'tin',hd:'b'}),110]];
 A.bow=[[S({}),80],[S({ln:3,h:[1,-23],nh:[2,-22],fh:[-1,-22],ho:[1,1]}),300],[S({ln:5,h:[1,-22],nh:[3,-21],fh:[0,-21],ho:[2,2],hd:'b'}),800],[S({ln:3,h:[1,-23]}),200],[S({}),100]];
+// Schwindel und Übelkeit (Marko, Kapitel 1): abstützen, die Hand an die Stirn, die Hand vor den Mund; im Sitzen eigene Fassungen
+A.steady=[[S({}),80],[S({ln:2,nh:[10,-19],fh:[8,-20]}),240],[S({ln:3,nh:[11,-17],fh:[9,-18],hd:'b',ho:[1,1]}),1500],[S({ln:2,nh:[10,-19],fh:[8,-20],ho:[0,1]}),500],[S({}),120]];
+A.dizzy=[[F({}),80],[F({h:[-1,0],rh:[4,-35],hd:'b'}),380],[F({h:[1,0],rh:[4,-35],hd:'b'}),380],[F({rh:[4,-34],ho:[0,1]}),700],[F({}),100]];
+A.nausea=[[S({}),80],[S({ln:1,nh:[5,-22],hd:'b'}),500],[S({ln:2,nh:[4,-31],hd:'b',ho:[1,1]}),1000],[S({ln:1,nh:[5,-22]}),400],[S({}),100]];
+var SIT={h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],fh:[4,-14],sit:1};
+function sitP(o){ var r={}; Object.keys(SIT).forEach(function(k){ r[k]=SIT[k]; }); Object.keys(o||{}).forEach(function(k){ r[k]=o[k]; }); if (!r.nh) r.nh=[6,-14]; return S(r); }
+A.sitSick=[[sitP({}),200],[sitP({nh:[5,-24],hd:'b',ho:[1,1]}),1400],[sitP({ho:[0,1]}),700]];
+A.sitDrink=[[sitP({}),120],[sitP({nh:[5,-24],it:'cup',hd:'b'}),900],[sitP({nh:[7,-16],it:'cup'}),500],[sitP({}),120]];
+A.sitWrite=[[sitP({nh:[9,-15]}),300],[sitP({nh:[10,-15],hd:'b'}),300],[sitP({nh:[9,-16]}),300],[sitP({nh:[10,-15]}),300]];
 M.ANIMS=A;
 // Kontaktbild: bei welchem Bild die Aktion "passiert"
 M.CONTACT={reachM:3,reachL:3,reachH:3,kneelF:2,pickup:3,reachB:3,reachBH:3,knock:2,push:2,pull:2,read:2,give:2,drink:2,smoke:2};

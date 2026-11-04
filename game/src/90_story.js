@@ -9,6 +9,7 @@ M.definePhases({
   c1:       {tod:'dusk', weather:'calm', case:'c1', title:'Erster Fall – Das Boot um sieben', short:'Erster Fall', when:'Mittwoch, 16. November · Abend'},
   c1_night: {tod:'night',weather:'bura', case:'c1', title:'Erster Fall – Das Boot um sieben', short:'Erster Fall, Nacht', when:'Mittwoch · Nacht'},
   i1:       {tod:'night',weather:'bura', case:'c1', title:'Zwischenspiel – Die Bank an der Riva', short:'Zwischenspiel', when:'Mittwoch · spät'},
+  i1m:      {tod:'day',  weather:'bura', case:'c1', title:'Zwischenspiel – Ein gewöhnlicher Morgen', short:'Zwischenspiel, Morgen', when:'Donnerstag, 17. November · Morgen'},
   c2:       {tod:'day',  weather:'bura', case:'c2', title:'Zweiter Fall – Das letzte Schiff nach Ancona', short:'Zweiter Fall', when:'Donnerstag, 17. November · Bura'},
   c2_night: {tod:'night',weather:'bura', case:'c2', title:'Zweiter Fall – Das letzte Schiff nach Ancona', short:'Zweiter Fall, Abend', when:'Donnerstag · Abend'},
   i2:       {tod:'night',weather:'calm', case:'c2', title:'Zwischenspiel – Sustipan', short:'Zwischenspiel', when:'Donnerstag · spät'},
@@ -20,29 +21,41 @@ function phaseIn(GS,list){ return list.indexOf(GS.phase)>=0; }
 M.phaseIn=phaseIn;
 
 // ---------------------------------------------------------------- Spielstart: Prolog
+// Der Prolog beginnt mit Marko allein: an der Arbeit, mit Kopfschmerzen, die er dem Jugo zuschreibt. Mala erscheint erst nach der Recherche.
 M.startGame=async function(A){ var E=M.E; E.busy=true;
-  try{ M.setPhase('pro'); M.GS.pos.marko={room:'flat',x:200,y:118,f:'L'}; A.unlock('flat');
+  try{ M.setPhase('pro'); M.GS.pos.marko={room:'flat',x:188,y:106,f:'B'}; A.unlock('flat');
+    var G=A.G; G.flags['split.intro.v']=2; ['sanja','stipe','frane'].forEach(function(k){ G.flags['met.'+k]=true; });   // die kennt er seit Jahren: keine Vorstellung
     E.screen='card'; await A.card({kicker:'Prolog',title:'Die Stillen',sub:'Split',time:'Dienstag, 15. November 2011 · Nachmittag',ms:4400});
-    await A.goto('flat',{x:200,y:118,f:'L',noEnter:true});
-    A.music('flat'); await A.wait(400);
+    await A.goto('flat',{x:188,y:106,f:'B',noEnter:true});
+    A.music('flat'); await A.wait(400); A.sfx('typing');
     await A.narrate('Seit drei Tagen Jugo. Warmer Regen, schwere Luft, und ein Kopf wie Blei.');
+    await A.m('Seite einunddreißig von achtundvierzig. Eine Espressomaschine aus Mailand, die man in Graz verkaufen will. Auf Deutsch.');
     A.headache(2200); await A.animM('headache'); await A.m('…Kopfschmerzen. Natürlich.');
     await A.m('Der Anrufbeantworter blinkt.');
   } finally { E.busy=false; } A.save(); };
 // nach Ivkas Wohnung: zurück nach Hause, Abend
-M.endProVisit=async function(A){ A.phase('pro_eve'); await A.fade(8,700); await A.goto('flat',{x:226,y:122,f:'L',noEnter:false}); };
+// alte Spielstände: wie bisher direkt nach Hause. Neu: es wird Abend in Varoš, Marko will noch zur Riva (der Anfall am Poller)
+M.endProVisit=async function(A){ A.phase('pro_eve'); if (A.flag('split.intro.legacy')){ await A.fade(8,700); await A.goto('flat',{x:226,y:122,f:'L',noEnter:false}); return; }
+  A.rebuild(); A.unlock('riva'); };
 // Fall 1 beginnt (nach der Nacht)
 // Fall 1 beginnt (nach der Nacht): Mala ist da – aber nur als Stimme und als Flimmern, das Marko überhört
+// Mittwochabend: kein Traumgespräch (das gehört nach Ivka). Nur ein Zimmer, das nicht ganz so ist, wie er es verlassen hat.
 M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster Fall',title:'Das Boot um sieben',time:'Mittwoch, 16. November · Abend',ms:4400});
   A.phase('c1'); A.setFlag('mala.voice'); A.setFlag('mala.unknown'); A.G.flags['mk.ache']=0; var F=A.R('flat'); F.tram=true; F.photoUp=true; F.winOpen=false;
   await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); A.malaJoin({x:150,y:116,f:'R',fadeIn:false}); await A.fade(0,600);
   A.headache(3500); await A.animM('headache'); await A.m('Ich habe den ganzen Tag geschlafen und bin müder als vorher.');
-  await A.m('Das Fenster ist zu. Der Riegel ist alt. Er springt manchmal auf.'); await A.wait(500); await A.m('Ich habe von einem Mädchen geträumt. Es stand hinter mir in der Scheibe.');
-  await A.wait(700); await A.g('Das war kein Traum.'); await A.wait(900); await A.m('…'); await A.m('Der Kühlschrank. Der brummt manchmal so, dass man Wörter hört.');
+  if (A.flag('split.intro.v')){ await A.wait(400); await A.animM('steady'); await A.m('Aufstehen. Langsam. Der Boden ist heute weich wie ein Bootsdeck.'); }
+  await A.m('Das Fenster ist zu. Der Riegel ist alt. Er springt manchmal auf.');
   await A.wait(800); A.sfx('phone'); await A.wait(1200); await A.m('Vesna.');
   await A.phoneVoice('„Marko. Dein Text über Ivka Perić ist gut. Er kommt morgen. Ein bisschen traurig, aber das sind sie alle.“');
+  if (A.G.flags.leadKnit===1) await A.phoneVoice('„Das mit den Mützen hat mir gefallen. Die Stadt hatte „keine Kontakte“ geschrieben. Gut, dass du gefragt hast.“');
   await A.m('Danke. Ich habe schlecht geschlafen.'); await A.phoneVoice('„Du schläfst immer schlecht. Geh raus. An die Luft. Ciao.“');
   await A.m('Sie hat recht. Die Riva. Ein bisschen Luft, ein bisschen Meer. Nichts weiter.'); A.unlock('riva'); A.unlock('bar'); A.save(); };
+// ---------------------------------------------------------------- Spielstände aus der Zeit vor dem neuen Einstieg
+// Ohne split.intro.v ist ein Stand „alt“: neue Pflichtschritte gelten für ihn nicht. Wer den Praxistest im Hafenamt schon hatte, kennt Mala.
+M.migrateSave=function(G){ var f=G.flags||(G.flags={}); if (f['split.intro.v']) return;
+  f['split.intro.legacy']=true; if (f['mk.test']){ f['split.intro.met']=true; delete f['mala.noSwitch']; }
+  if (f['i1.done']) f['split.afterIvka.done']=true; };
 M.case3Call=async function(A){ if (M.case3CallImpl) return M.case3CallImpl(A); A.setFlag('c3.call'); };
 
 // ---------------------------------------------------------------- Stadtplan

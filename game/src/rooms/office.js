@@ -35,9 +35,19 @@ async function askDay(A,Ml){ if (A.flag('c1.searched')) return Ml.say('Der Band 
   await Ml.say('Der Band 1984 ist nicht da. Irgendwer hat das Regal durcheinandergebracht. Ich suche doch nicht fünfzig Jahre durch.'); A.note('c1_nobook');
   await Ml.say('Da drin ist es immer kalt. Ich gehe nicht gern hinein.');
   if (A.malaHere()) await A.g('Da drin ist es nicht kalt. Da drin ist es still.');
-  if (A.flag('mala.voice')){ await A.wait(700); await A.g('Ich kann nachsehen.'); await A.animM('headache'); await A.m('…'); A.S.nudge=A.gt+16000; } }
+  if (A.flag('mala.voice')){ await A.wait(700); await A.g('Ich kann nachsehen.'); await A.animM('headache'); await A.m('…'); A.S.nudge=A.gt+16000; return; }
+  // neuer Ablauf: Mala ist bekannt. Das Archiv wird der erste gemeinsame Praxistest – Marko muss es nur zulassen.
+  if (A.malaHere() && !A.flag('mk.test')){ await A.wait(600); await A.g('Ich kann nachsehen.'); await M.officeOffer(A); } }
+M.officeOffer=async function(A){ var c=await A.choose([{t:'(Leise:) „Dann sieh nach.“',id:'test'},{t:'(Leise:) „Nicht hier. Er hört uns.“',id:'later'},{t:'(Nichts sagen.)',id:'quiet',silent:true}],{title:'',conv:false});
+  if (c==='test') return M.officeTest(A);
+  if (c==='later') return A.g('Er hört nur sein Kreuzworträtsel. Sag es, wenn du willst.');
+  await A.wait(1100); await A.g('Ich warte. Sag es, wenn du willst.'); };
+// der erste gemeinsame Test: kein zweites Kennenlernen – nur die Erlaubnis, und Markos Skepsis
+M.officeTest=async function(A){ if (A.flag('mk.test')) return; A.setFlag('mk.test'); delete A.G.flags['mala.noSwitch'];
+  await A.g('Bei vierundachtzig?'); await A.m('Bei vierundachtzig. Und wenn da nichts ist, bist du der Jugo, und ich gehe morgen zum Arzt.'); await A.g('Abgemacht.');
+  A.flash('Unten links kannst du jetzt zu Mala wechseln.'); A.save(); };
 // der Übergang: Marko lässt die Stimme zum ersten Mal zu – als Probe, leise, damit Mladen nichts hört
-M.voiceTest=async function(A){ if (A.flag('mk.test')) return;
+M.voiceTest=async function(A){ if (A.flag('mk.test')) return; if (A.flag('split.intro.met')) return M.officeTest(A);   // nach dem Kennenlernen in der Wohnung: nur noch der Test
   var c=await A.choose([{t:'(Leise:) „Wenn du da bist, dann sieh nach.“',id:'test'},{t:'(Leise:) „Hör auf.“',id:'stop'},{t:'(Weiter so tun, als wäre nichts.)',id:'ignore',silent:true}],{title:'',conv:false});
   if (c==='stop'){ await A.g('Ich habe noch gar nicht angefangen.'); return; }
   if (c==='ignore'){ await A.wait(1100); await A.g('Das tut weh. Ich weiß.'); await A.animM('headache'); return; }

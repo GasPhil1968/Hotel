@@ -277,6 +277,9 @@ function layers(S,GS,tod){ var L=[];
   if (!S.paperTaken && GS.phase==='c2'){ var nx=160, ny=81; w.poly([[nx,ny],[nx+15,ny-1],[nx+17,ny+1],[nx+1,ny+2]],P.s5); w.hl(nx+1,nx+15,ny,P.s6); w.rect(nx+2,ny+2,14,9,P.s5); w.hl(nx+2,nx+15,ny+2,P.s6);
     w.rect(nx+3,ny+3,12,2,P.k2); w.px(nx+4,ny+3,P.s5); w.px(nx+8,ny+3,P.s5); for (var ln=0;ln<3;ln++) w.hl(nx+3,nx+8,ny+6+ln,P.s3); w.rect(nx+10,ny+6,5,4,P.s2); w.px(nx+12,ny+7,P.s4);
     w.vl(nx+16,ny+2,ny+10,P.s3); w.hl(nx+2,nx+16,ny+11,P.s2); }
+  // Donnerstagmorgen: Sanjas Zettel, offen auf ihrer Seite des Tresens, unter der Lampe – von vorn nicht lesbar
+  if (GS.phase==='i1m'){ var zx=113, zy=77; w.poly([[zx-1,zy],[zx+8,zy-2],[zx+10,zy+2],[zx+1,zy+4]],P.k2); w.poly([[zx,zy],[zx+8,zy-1],[zx+9,zy+2],[zx+1,zy+3]],P.s6);
+    w.hl(zx+2,zx+6,zy,P.b2); w.hl(zx+2,zx+7,zy+1,P.s3); w.px(zx+3,zy+2,P.b1); w.px(zx+6,zy+2,P.r3); w.px(zx+7,zy+2,P.r3); w.line(zx+10,zy+3,zx+13,zy+2,P.b1); }
   // Trinkgeld-Schälchen, Serviettenhalter
   w.ellipse(181,81,2.5,1,P.m3); w.px(181,80,P.y4); w.rect(186,76,3,5,P.m3); w.rect(187,77,1,3,P.s6);
   if (tod!=='day') evening(lay,tod,lay.ox,lay.oy);
@@ -327,8 +330,10 @@ var WALK=function(x,y,S,GS){ if (y>140||x<6||x>314) return false;
   if (x<=50 && y>=104 && y>=95+(32-x)*0.37) return true;  // bei der Tür
   return false; };
 
+// Mala geht auch hinter den Tresen (Geister brauchen keine Klappe): Sanjas Seite, bis an die Lauffläche davor
+var WALKG=function(x,y,S,GS){ return x>=86 && x<=182 && y>=99 && y<=118; };
 M.defineArt('bar',{
-  width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn,
+  width:W, paint:paint, layers:layers, walk:WALK, walkG:WALKG, dynamic:dyn,
   actorLut:function(a,S,GS,tod){ return tod==='day'?null:WARM.a; },   // abends: warmes Lampenlicht auf den Figuren
   spots:{
     door:[0,28,30,80],

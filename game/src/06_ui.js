@@ -169,7 +169,7 @@ M.iconOf=iconOf;
 function trim(b){ var x0=b.w,y0=b.h,x1=-1,y1=-1; for (var y=0;y<b.h;y++) for (var x=0;x<b.w;x++) if (b.d[y*b.w+x]!==T){ if (x<x0)x0=x; if (y<y0)y0=y; if (x>x1)x1=x; if (y>y1)y1=y; } if (x1<0) return b; var o=new Buf(x1-x0+1,y1-y0+1,T); for (y=y0;y<=y1;y++) for (x=x0;x<=x1;x++) o.d[(y-y0)*o.w+(x-x0)]=b.d[y*b.w+x]; return o; }
 function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2, avail=g.malaOn && !(E.room&&(E.room.noMala||E.room.noSwitch));
   fb.rect(x,y,w,h,P.k1); fb.hl(x,x+w-1,y,avail?c.fr:P.k2); fb.hl(x,x+w-1,y+h-1,avail?c.fr:P.k2); fb.vl(x,y,y+h-1,avail?c.fr:P.k2); fb.vl(x+w-1,y,y+h-1,avail?c.fr:P.k2);
-  if (!g.malaOn || g.flags['mala.unknown']) return; var other=g.active==='marko'?'mala':'marko', hot=hoverUI==='sw'&&pointer.show;
+  if (!g.malaOn || g.flags['mala.unknown'] || g.flags['mala.noSwitch'] || g.flags['split.afterIvka.away']) return; var other=g.active==='marko'?'mala':'marko', hot=hoverUI==='sw'&&pointer.show;
   if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
     for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; if (!avail) c2=M.DN[M.DN[c2]]; fb.px(x+2+i2,y+1+j2,c2); } }
   else { var pb=portraitBuf(other,'n'), cw=14, chh=14, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
@@ -353,7 +353,8 @@ function nbOpen(ask){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTa
   return out; }
 E.nbOpen=nbOpen;
 function notesOf(){ return nbOpen(false); }
-E.openNotes=function(){ if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; return E.showOverlay('notebook',{mode:'browse'}); };
+E.openNotes=function(){ if (M.onOpenNotes && M.onOpenNotes()) return Promise.resolve();   // ein Raum darf vorher etwas sagen (Morgen nach Ivka)
+  if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; return E.showOverlay('notebook',{mode:'browse'}); };
 function nbButton(x,y,w,t,hot){ fb.rect(x,y,w,13,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+12,c); fb.vl(x,y,y+12,c); fb.vl(x+w-1,y,y+12,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+3,hot?P.r2:P.n1); return [x,y,w,13]; }
 // Variante 1: die Liste
 M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask', g=GS(), ph0=M.PHASES[g.phase]||{}, ded=nbTargets(), i;
@@ -443,7 +444,7 @@ M.centerText=centerText;
 async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Tippe etwas an: Ist nur etwas zu sehen, schaue ich es mir an. Kann man etwas damit tun, kommt ein kleines Menü.');
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
-  if (GS().malaOn && !GS().flags['mala.unknown']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
+  if (GS().malaOn && !GS().flags['mala.unknown'] && !GS().flags['mala.noSwitch'] && !GS().flags['mala.voice']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
   if (E.nbStyle()==='think') await M.API.m('„Nachdenken“: Ich wähle einen Gedanken und dann einen zweiten, der dazugehört. Passt es, ziehe ich einen Schluss. Im Gespräch kann ich nach jedem Gedanken fragen. Im Menü lässt sich auf ein Notizbuch umschalten.');
   else await M.API.m('„Notizen“ ist mein Notizbuch. Es steht nur drin, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.');
   await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
@@ -504,7 +505,7 @@ function uiAt(x,y){
   if (E.dlg){ var L=E.dlg.lay; if (!L) return null; var inR2=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }; if (inR2(L.close)) return 'cx'; if (inR2(L.up)) return 'cu'; if (inR2(L.dn)) return 'cd'; for (var ri=0;ri<L.rows.length;ri++) if (inR2(L.rows[ri].r)) return 'c:'+L.rows[ri].k; return null; }
   if (y>=SH&&y<SH+15){ var bt=btnAt(x,y); if (E.room&&E.room.noVerbs&&bt!=='menu') return null; return bt; }
   if (y<SH) return null; if (E.room&&E.room.noVerbs) return null;
-  if (x>=SW_X&&x<SW_X+SW_W&&y>=INV_Y-1) return 'sw';
+  if (x>=SW_X&&x<SW_X+SW_W&&y>=INV_Y-1){ var gs=GS(); if (!gs.malaOn||gs.flags['mala.unknown']||gs.flags['mala.noSwitch']||gs.flags['split.afterIvka.away']) return null; return 'sw'; }   // nur, wenn der Knopf auch gezeichnet ist
   if (y>=INV_Y-2){ if (x>=INV_X-10&&x<INV_X) return 'up'; if (x>=INV_X+INV_N*SLOT_W&&x<INV_X+INV_N*SLOT_W+12) return 'dn'; }
   if (x>=INV_X&&x<INV_X+INV_N*SLOT_W&&y>=INV_Y-2&&y<INV_Y+SLOT_H){ var c=Math.floor((x-INV_X)/SLOT_W); return 'i:'+(E.invTop*INV_N+c); }
   return null; }

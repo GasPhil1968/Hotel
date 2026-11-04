@@ -7,6 +7,13 @@ M.defineNotes({
   pro_zdenka:{c:'c1',t:'Die Nachbarin, Gospođa Zdenka, hat den Schlüssel.'},
   pro_riva:{c:'c1',t:'Zdenka: Ivka ging jeden Abend um sieben zur Riva. Seit 1984.'},
   pro_sohn:{c:'c1',t:'Zdenka: Ivkas Sohn kam 1984 nicht nach Hause. „Die Bura.“'},
+  pro_noone:{c:'c1',t:'Vesna, aus der Notiz der Stadt: „alleinstehend, keine Kontakte zur Nachbarschaft.“',s:'Laut Stadt: keine Kontakte.'},
+  pro_knit:{c:'c1',t:'Zdenka: Ivka hat für die halbe Gasse gestrickt, Socken, Mützen, alles. Nur für sich nie.'},
+  pro_list:{c:'c1',t:'Ivkas Strickheft „Za Božić 2011.“: eine Mütze für Ante, Socken für Zdenkas Enkelinnen, ein Schal, Socken für die Armen von Sv. Nikola, eine Decke für den Kater, Schals für den Chor.',s:'Ivkas Strickheft.'},
+  pro_people:{c:'c1',t:'Keine Familie heißt nicht: niemand. Ivka hatte keine Angehörigen mehr – aber eine ganze Gasse, für die sie strickte.',s:'Keine Familie heißt nicht: niemand.'},
+  pro_gasse:{c:'c1',t:'Zdenka: „Fragen Sie in der Gasse, wer nichts von ihr trägt. Da müssen Sie lange fragen.“'},
+  pro_spia:{c:'c1',t:'Seite 31: „Warten, bis die Leuchte erlischt.“ Welche? Die Maschine hat zwei. Die Zeichnung auf Seite 12 fehlt.',s:'S. 31: Welche Leuchte?'},
+  pro_red:{c:'c1',t:'Seite 30: Die rote Leuchte (5) zeigt den Druck im Kessel, die grüne (6) heißt: betriebsbereit.',s:'S. 30: Rot heißt Druck.'},
   pro_notice:{c:'c1',t:'Todesanzeige an Ivkas Tür: „Nach kurzer Krankheit verstarb im Alter von 85 Jahren Ivka Perić.“ Beerdigung am 13.11.2011.'},
   c1_boat7:{c:'c1',t:'Tonći wollte am 22.12.1984 mit dem Boot um sieben aus Supetar kommen.',s:'Tonći wollte mit dem Boot um sieben kommen.'},
   c1_dinko:{c:'c1',t:'Tonći auf der Postkarte: „Dinko kommt mit.“'},
@@ -39,9 +46,13 @@ M.defineNotes({
   c1_jakov:{c:'c1',t:'Jakov: „Jedes Jahr kommt ein Mann und steht vor dieser Tafel.“'},
   // Mala
   m_find:{c:'mala',t:'Nachts, in der Scheibe: „Du kannst mit ihnen reden. Ich kann sie finden.“'},
+  m_window:{c:'mala',t:'Nachts, in der Scheibe: ein Mädchen hinter mir. Dann mein Name.'},
+  m_first:{c:'mala',t:'Mala fragte nach meinem ersten richtigen Schwindel. Am letzten Poller. „Und vor dir war auch jemand.“'},
+  m_limits:{c:'mala',t:'Mala geht durch Türen und hört, was an Dingen hängt. Anfassen kann sie nichts, nicht einmal ein Glas Wasser. Weit weg von mir kann sie nicht.',s:'Was Mala kann und was nicht.'},
+  i1_note:{c:'mala',t:'Mala hat Sanjas Zettel hinter dem Tresen gelesen: „Montag geschlossen – Inventur. Stipe und Frane sagen!!“',s:'Sanjas Zettel.'},
   m_voice:{c:'mala',t:'Auf der Mole, hinter mir, eine Stimme: „Du siehst sie also auch.“ Hinter mir war niemand.'},
   m_tram:{c:'mala',t:'Auf der beschlagenen Scheibe in meiner Wohnung: eine Straßenbahn mit einer Drei. Ich habe sie nicht gemalt.'},
-  m_name:{c:'mala',t:'Die Stimme hat einen Namen: Mala. „So sagt man zu kleinen Mädchen.“ – „Es reicht.“'},
+  m_name:{c:'mala',t:'Sie hat einen Namen: Mala. „So sagt man zu kleinen Mädchen.“ – „Es reicht.“'},
   m_horn:{c:'mala',t:'Mala hält inne, wenn ein Fährenhorn tutet.'},
   m_bells:{c:'mala',t:'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“'},
   m_leash:{c:'mala',t:'Mala sieht an Ivka eine Leine aus Licht, festgemacht am Poller. „Wie ein Boot, das niemand mehr losmacht.“'},
@@ -110,6 +121,11 @@ M.defineNotes({
   c3_message:{c:'c3',t:'Brunos Botschaft: „Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“',s:'Brunos Botschaft, übersetzt.'}
 });
 M.defineDeductions({
+  // Prolog: die Notiz der Stadt gegen Ivkas eigenes Heft
+  'pro_noone+pro_list':{to:'pro_people',say:'Die Stadt hat Verwandte gezählt. Menschen hat sie nicht gezählt.'},
+  'pro_knit+pro_list':{to:'pro_people',if:function(GS){ return GS.notes.indexOf('pro_noone')>=0; },no:'Zdenka hatte recht. Nur: Wem widerspricht das?',say:'Zdenka hatte recht. Und die Stadt schreibt trotzdem: keine Kontakte.'},
+  'pro_noone+pro_knit':function(A){ return {ok:false,t:'Zdenka sagt das eine, die Stadt das andere. Ich brauche etwas, das Ivka selbst geschrieben hat.'}; },
+  'pro_spia+pro_red':function(A){ return {ok:false,t:'Rot heißt Druck. Beim Kesseldeckel geht es um Druck. Also die rote. So schreibe ich es.'}; },
   'c1_boat7+c1_ferry':{to:'c1_came',say:'Die Fähre fuhr nicht. Und Tonći hat trotzdem versprochen zu kommen. Er hat nicht gewartet.'},
   'c1_ferry+c1_capsized':{to:'c1_came',if:function(GS){ return GS.notes.indexOf('c1_boat7')>=0; },no:'Da fehlt noch, wer auf dem Boot war.',say:'Keine Fähre, aber ein Fischerboot in der Bura. Er hat nicht gewartet.'},
   'c1_ankica+c1_capsized':{to:'c1_aboard',say:'Das Boot auf dem Foto. Das Boot im Fahrtenbuch. Dasselbe.'},
@@ -121,13 +137,17 @@ M.defineDeductions({
   'c3_zagreb+c3_wanted':{to:'c3_hid',if:function(GS){ return GS.notes.indexOf('c3_accept')>=0; },no:'Ich ahne es. Aber ich habe den Brief noch nicht gefunden.',say:'Sie wollte nach Zagreb. Und der Brief aus Zagreb kam nie bei ihr an.'}
 });
 // ---------------------------------------------------------------- Register: Gruppe, kurzer Titel, wann eine Notiz erledigt ist
-M.NOTE_GROUPS={ c1:['Ivka','Tonći','Das Boot','Dinko'], c2:['Luka','Nina','Die Ledana'], c3:['Bruno','Ljerka','Das Nachtbuch','Brunos Bilder'], mala:['Die Stimme','Mala'] };
+M.NOTE_GROUPS={ c1:['Ivka','Tonći','Das Boot','Dinko','Arbeit'], c2:['Luka','Nina','Die Ledana'], c3:['Bruno','Ljerka','Das Nachtbuch','Brunos Bilder'], mala:['Die Stimme','Mala'] };
 function inv(id){ return function(G){ return G.inv.indexOf(id)>=0; }; }
 function flag(k){ return function(G){ return !!G.flags[k]; }; }
 function rs(room,k){ return function(G){ return !!(G.rooms[room]&&G.rooms[room][k]); }; }
 var META={
   pro_auftrag:['Ivka','Der Auftrag: 2.000 Zeichen',flag('pro.article')], pro_zdenka:['Ivka','Zdenka hat den Schlüssel',flag('pro.visited')], pro_riva:['Ivka','Jeden Abend zur Riva'],
   pro_sohn:['Tonći','Der Sohn kam nicht heim'], pro_notice:['Ivka','Die Todesanzeige'],
+  pro_noone:['Ivka','Laut Stadt: keine Kontakte',['pro_people']], pro_knit:['Ivka','Strickte für die halbe Gasse',['pro_people']], pro_list:['Ivka','Ivkas Strickheft',['pro_gasse']],
+  pro_people:['Ivka','Keine Familie heißt nicht: niemand',flag('pro.article')], pro_gasse:['Ivka','„Wer trägt nichts von ihr?“',flag('pro.article')],
+  pro_spia:['Arbeit','S. 31: Welche Leuchte?',flag('pro.translated')], pro_red:['Arbeit','S. 30: Rot heißt Druck',flag('pro.translated')],
+  m_window:['Die Stimme','Ein Mädchen in der Scheibe'], m_first:['Mala','Der erste Schwindel'], m_limits:['Mala','Was sie kann und was nicht'], i1_note:['Mala','Sanjas Zettel',flag('split.afterIvka.verified')],
   c1_boat7:['Tonći','Das Boot um sieben'], c1_dinko:['Tonći','„Dinko kommt mit.“'], c1_gift:['Tonći','„Ich bringe dir etwas mit.“'], c1_ankica:['Das Boot','Foto: die ANKICA, 1984'],
   c1_radio:['Ivka','Das Radio ging an'], c1_waits:['Ivka','Sie wartet an der Mole'], c1_date:['Ivka','Für sie ist der 22.12.1984'], c1_askoffice:['Ivka','„Fragen Sie im Hafenbüro.“',['c1_ferry']],
   c1_years:['Ivka','Nachhall am Poller'], c1_nobook:['Das Boot','Der Band 1984 fehlt',['c1_1948','c1_ferry']], c1_1948:['Das Boot','Der Band steht bei „1948“',['c1_ferry']],

@@ -11,7 +11,31 @@ async function letterToIvka(A){ var I=A.npc('ivka'); if (!A.flag('c1.letterOpen'
   if (!A.hasNote('c1_ferry')) return I.say('Ein Brief? Erst sagen Sie mir, wo das Boot bleibt.');
   return finale(A); }
 // ---------------------------------------------------------------- erste Begegnung (auf der Mole): Ivka – und eine Stimme hinter ihm, die er überhört
-async function meeting(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
+// Dienstagabend (Prolog): Marko will die Stelle sehen, an der Ivka jeden Abend stand – am letzten Poller der erste richtige Schwindel
+async function bollardAttack(A){ A.setFlag('split.intro.dizzy'); var st=M.stand('riva','bollard')||[598,112,'R'];
+  await A.walk(st[0]-6,st[1]+2); await A.face('R'); A.sfx('gust'); await A.wait(700);
+  A.headache(4200); await A.anim('steady'); await A.m('…'); await A.m('Der Boden kippt. Nicht der Wind. Der Boden.');
+  await A.wait(600); await A.m('Ich halte mich an einem Poller fest wie einer, der zu viel getrunken hat.'); await A.wait(1500);
+  await A.m('Vorbei.'); await A.m('Hier hat sie jeden Abend gestanden. Siebenundzwanzig Jahre. Mir reichen zehn Sekunden.');
+  await A.m('Nach Hause. Schreiben, solange ich noch weiß, wo oben ist.'); A.save(); }
+// Mittwoch: Ivka auf der Mole. Neuer Ablauf: Mala geht sichtbar neben ihm, er kennt sie seit dem Abend in seiner Wohnung.
+async function meeting(A){ if (A.flag('mala.voice')) return meetingVoice(A); A.setFlag('c1.met'); var I=A.npc('ivka');
+  await A.face('R'); A.headache(3000); await A.animM('headache'); await A.m('…'); A.sfx('static');
+  await A.m('Am Ende der Mole steht eine alte Frau. Schwarzer Mantel. Kein Schirm, keine Handschuhe.');
+  A.found('ivka'); if (I.actor) I.actor.fadeIn=A.gt; await A.wait(900);
+  await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.'); await A.wait(700);
+  if (A.flag('split.intro.dizzy')) await A.m('Am letzten Poller. Genau da, wo mir gestern der Boden weggekippt ist.');
+  if (A.malaHere()){ await A.g('Du siehst sie also auch.');
+    var c=await A.choose([{t:'„Eine alte Frau. Sie friert nur nicht.“',id:'deny'},{t:'(Nicht hinsehen.)',id:'no',silent:true},{t:'„Seit wann steht sie da?“',id:'ask'}],{title:'',conv:false});
+    if (c==='deny'){ await A.g('Sie friert nicht, weil ihr nicht mehr kalt sein kann.'); await A.m('Das sagst du.'); }
+    else if (c==='no'){ await A.m('Ich sehe aufs Wasser. Das Wasser ist wenigstens nass.'); await A.g('Du kannst so tun, als wäre sie nicht da. Das können die meisten gut.'); }
+    else { await A.g('Jeden Abend. Seit einer Woche schon, glaube ich. Und vorher auch.'); }
+    await A.wait(600); await A.g('Ich glaube, sie weiß nicht, dass sie es nicht mehr muss.'); }
+  await A.m('Eine alte Frau, die nicht friert. Dafür gibt es Erklärungen. Gute Mäntel zum Beispiel.');
+  await A.faceM('R'); await A.wait(600); await A.m('Ich gehe jetzt zu ihr. Dann sehe ich, dass sie lebt. Und dann gehe ich nach Hause und schlafe.');
+  var ia=I.actor; if (ia){ await A.walk(Math.round(ia.x)-24,Math.round(ia.y)); await A.face('R'); } await M.introduce(A,'ivka'); A.save(); }
+// alte Spielstände in der Stimmenphase: die Begegnung wie bisher, mit der Stimme hinter ihm
+async function meetingVoice(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
   await A.face('R'); A.headache(4500); await A.animM('headache'); await A.m('…'); A.sfx('static');
   await A.m('Am Ende der Mole steht eine alte Frau. Schwarzer Mantel. Kein Schirm, keine Handschuhe.');
   A.found('ivka'); if (I.actor) I.actor.fadeIn=A.gt; await A.wait(900);
@@ -129,39 +153,61 @@ async function crossIvka(A){ var I=A.npc('ivka'); A.G.flags['mala.lock']=true; A
   await M.enterLimbo(A,'ivka'); }
 // zurück aus der Zwischenwelt: die Bank an der Riva
 M.afterLimbo_ivka=async function(A){ A.G.flags['mala.lock']=false; var ip=M.apos('riva','ivka',[596,114,'R']); await A.goto('riva',{x:ip[0]-30,y:ip[1]+4,f:'R',fade:false,noEnter:true}); await A.fade(0,900);
-  await A.wait(700); await A.m('…'); await A.m('Die Mole. Der Poller. Die Bura.'); await A.wait(600); await A.m('Ich muss mich setzen.'); A.save(); await interlude(A); };
+  await A.wait(700); await A.m('…'); await A.m('Die Mole. Der Poller. Die Bura.'); await A.wait(600); await A.m('Ich muss mich setzen.'); A.save(); await M.afterIvkaNight(A); };
+// nach Ivka, noch in der Nacht: eine kurze Pause auf der Bank (nicht das Gespräch), dann der Heimweg
+M.afterIvkaNight=async function(A){ var G=A.G; M.E.busy=true;
+  try{ if (!G.flags['split.afterIvka.bench']){ await A.fade(8,900); A.phase('i1'); A.rebuild(); var b=M.stand('riva','bench')||[180,122,'B'];
+      A.placeM(b[0],b[1],'R'); A.idleM('sit'); if (A.malaHere()){ A.placeG(b[0]+16,b[1],'L'); A.idleG('sit'); } G.flags['mala.lock']=true;
+      await A.fade(0,1200); A.sfx('gust'); await A.narrate('Später. Die Bura ist aufgekommen. Die Riva ist leer bis auf eine Bank.');
+      await A.animM('smoke'); await A.g('Du rauchst.'); await A.m('Nur wenn ich nicht schlafen kann.'); await A.g('Also immer.');
+      await A.wait(1600); A.sfx('horn'); await A.wait(1500); await A.m('Ich will nach Hause.'); await A.wait(500); await A.g('Ich weiß.');
+      G.flags['split.afterIvka.bench']=true; A.idleM(null); A.idleG(null); }
+    await A.fade(8,900); await A.narrate('Die Riva entlang, die Gasse hinauf, drei Stockwerke. Mala geht neben ihm. Ihre Schritte hört man nicht.');
+    G.flags['mala.lock']=false; await M.afterIvkaHome(A); }
+  finally{ M.E.busy=false; } };
+// beim Laden mitten im Übergang: dort weitermachen, wo es zuletzt stabil war
+M.afterIvkaResume=function(A){ var G=A.G; if (!G.flags['c1.done'] || G.flags['i1.done'] || G.flags['split.afterIvka.home']) return false; if (['c1','c1_night','i1'].indexOf(G.phase)<0) return false;
+  Promise.resolve().then(function(){ return M.afterIvkaNight(A); }); return true; };
 async function roundMiss(A,I,n,tries,lines){ if (n===null||n===undefined){ await A.m('…'); await I.say('Sie sehen müde aus, junger Mann.'); } else await I.say(lines[tries%lines.length]); }
 // ---------------------------------------------------------------- Zwischenspiel 1: die Bank an der Riva
-async function interlude(A){ await A.fade(8,900); A.phase('i1'); A.rebuild(); var b=M.stand('riva','bench')||[180,122,'B'];
-  A.placeM(b[0],b[1],'R'); A.idleM('sit'); if (A.malaHere()){ A.placeG(b[0]+16,b[1],'L'); A.idleG('sit'); } A.G.flags['mala.lock']=true;
-  await A.fade(0,1200); A.sfx('gust'); await A.narrate('Später. Die Bura ist aufgekommen. Die Riva ist leer bis auf eine Bank.');
-  await A.animM('smoke'); await A.g('Du rauchst.'); await A.m('Nur wenn ich nicht schlafen kann.'); await A.g('Also immer.');
-  await A.wait(900); await A.m('Ich glaube nicht an Geister.'); await A.g('Musst du nicht.');
-  await A.m('Ich war gerade an einem Ort, den es nicht gibt. Ich habe einer alten Frau Handschuhe gegeben, die sie nicht halten konnte. Und dort konnte sie es.'); await A.wait(1300);
-  await A.m('Und das Schlimmste ist: Es war richtig so.'); await A.wait(700); await A.g('Ja.'); A.setFlag('mk.accept');
-  await A.menuLoop(function(){ return [
-    {t:'Wie lange machst du das schon? Leute finden, die nicht weiterkommen.',once:'i1a',go:async function(A){ await A.g('Lange. Aber du bist der Erste, der zuhört.'); await A.m('Und die anderen?'); await A.g('Die haben Kopfschmerzen bekommen. Und das Fenster zugemacht.'); }},
-    {t:'Woher kommst du?',once:'i1b',go:async function(A){ await A.g('Von irgendwo, wo es auch Brücken gibt.'); await A.m('Das ist keine Antwort.'); await A.g('Es ist die, die ich habe.'); }},
-    {t:'Was ist in der Dose, die du immer trägst?',once:'i1c',go:async function(A){ await A.animG('tinF'); await A.g('Meins.'); A.note('m_tin'); await A.idleG('sit'); }},
-    {t:'Warum ich?',once:'i1d',go:async function(A){ await A.g('Weil du zuhörst. Auch wenn du so tust, als würdest du es nicht.'); }},
-    {t:'(Schweigen.)',once:'i1e',go:async function(A){ await A.wait(1600); A.sfx('horn'); await A.wait(1500); await A.g('Hörst du das? Die letzte Fähre.'); await A.m('Ich höre sie jeden Abend.'); await A.g('Ich auch.'); }},
-    {t:'Gehen wir.',bye:true}
-  ]; });
-  await A.g('Darf ich dich etwas fragen?'); await A.m('Du fragst sowieso.'); await A.g('Warum bist du in Split geblieben?');
-  var c=await A.choose([{t:'Hier ist das Meer.',id:0},{t:'Ich bin hier hängen geblieben.',id:1},{t:'Das geht dich nichts an.',id:2}],{title:'Mala'});
-  A.G.flags['i1.answer']=c;
-  if (c===0){ await A.g('In Sarajevo gibt es kein Meer.'); await A.m('Nein. Da gibt es Berge. Man sieht von überall, wer oben ist.'); }
-  else if (c===1){ await A.g('Wie ein Boot an einer Leine.'); await A.m('Wie ein Boot ohne Motor.'); }
-  else { await A.g('Gut.'); await A.wait(900); await A.g('Ich frage später noch mal.'); }
-  await A.g('Und Sarajevo? Warum gehst du nicht zurück?');
-  c=await A.choose([{t:'Was soll ich da?',id:0},{t:'Da ist niemand mehr.',id:1},{t:'(Nichts sagen.)',id:2,silent:true}],{title:'Mala'});
-  A.G.flags['i1.sarajevo']=c;
-  if (c===0) await A.g('Nachsehen, ob es noch da ist.');
-  else if (c===1) await A.g('Da ist immer jemand.');
-  else { await A.wait(1500); await A.g('Ist gut.'); }
+// ---------------------------------------------------------------- Donnerstagmorgen: die Bank an der Riva – das Gespräch, das erst jetzt verdient ist
+M.morningBench=async function(A){ var G=A.G, b=M.stand('riva','bench')||[180,122,'B'];
+  await A.walk(b[0],b[1]); A.placeM(b[0],b[1],'R'); A.idleM('sit'); if (A.malaHere()){ A.placeG(b[0]+16,b[1],'L'); A.idleG('sit'); } G.flags['mala.lock']=true;
+  if (!G.flags['split.afterIvka.benchTalk']){
+    await A.wait(600); A.sfx('horn'); await A.narrate('Die Bank an der Riva, am Morgen. Die Fähre nach Supetar legt ab, voller Leute, die zur Arbeit fahren.');
+    await A.g('Heute Nacht hast du hier geraucht.'); await A.m('Heute Morgen nicht.'); await A.g('Das ist neu.');
+    await A.wait(900); await A.m('Ich glaube nicht an Geister.'); await A.g('Musst du nicht.');
+    await A.m('Ich war an einem Ort, den es nicht gibt. Ich habe einer alten Frau Handschuhe gegeben, die sie nicht halten konnte. Und dort konnte sie es.'); await A.wait(1300);
+    await A.m('Und heute Morgen habe ich versucht, einen Traum daraus zu machen.'); await A.g('Hat es geklappt?'); await A.m('Bis zum Kaffee.');
+    await A.menuLoop(function(){ return [
+      {t:'Wie lange machst du das schon? Leute finden, die nicht weiterkommen.',once:'i1a',go:async function(A){ await A.g('Lange. Aber du bist der Erste, der zuhört.'); await A.m('Und die anderen?'); await A.g('Die haben Kopfschmerzen bekommen. Und das Fenster zugemacht.'); }},
+      {t:'Woher kommst du?',once:'i1b',go:async function(A){ await A.g('Von irgendwo, wo es auch Brücken gibt.'); await A.m('Das ist keine Antwort.'); await A.g('Es ist die, die ich habe.'); }},
+      {t:'Was ist in der Dose, die du immer trägst?',once:'i1c',go:async function(A){ await A.animG('tinF'); await A.g('Meins.'); A.note('m_tin'); await A.idleG('sit'); }},
+      {t:'Warum ich?',once:'i1d',go:async function(A){ await A.g('Weil du zuhörst. Auch wenn du so tust, als würdest du es nicht.'); }},
+      {t:'(Schweigen.)',once:'i1e',go:async function(A){ await A.wait(1600); A.sfx('horn'); await A.wait(1500); await A.g('Hörst du das? Die Fähre nach Supetar.'); await A.m('Ich höre sie jeden Morgen.'); await A.g('Ich auch.'); }},
+      {t:'Gehen wir.',bye:true}
+    ]; });
+    await A.g('Darf ich dich etwas fragen?'); await A.m('Du fragst sowieso.'); await A.g('Warum bist du in Split geblieben?');
+    var c=await A.choose([{t:'Hier ist das Meer.',id:0},{t:'Ich bin hier hängen geblieben.',id:1},{t:'Das geht dich nichts an.',id:2}],{title:'Mala'});
+    G.flags['i1.answer']=c;
+    if (c===0){ await A.g('In Sarajevo gibt es kein Meer.'); await A.m('Nein. Da gibt es Berge. Man sieht von überall, wer oben ist.'); }
+    else if (c===1){ await A.g('Wie ein Boot an einer Leine.'); await A.m('Wie ein Boot ohne Motor.'); }
+    else { await A.g('Gut.'); await A.wait(900); await A.g('Ich frage später noch mal.'); }
+    await A.g('Und Sarajevo? Warum gehst du nicht zurück?');
+    c=await A.choose([{t:'Was soll ich da?',id:0},{t:'Da ist niemand mehr.',id:1},{t:'(Nichts sagen.)',id:2,silent:true}],{title:'Mala'});
+    G.flags['i1.sarajevo']=c;
+    if (c===0) await A.g('Nachsehen, ob es noch da ist.');
+    else if (c===1) await A.g('Da ist immer jemand.');
+    else { await A.wait(1500); await A.g('Ist gut.'); }
+    G.flags['split.afterIvka.benchTalk']=true; await A.wait(900); }
+  else { await A.wait(500); await A.g('Bist du so weit?'); }
+  // der Entschluss: zurückhaltend, aber ausgesprochen – erst damit gilt die Zusammenarbeit
+  var d=await A.choose([{t:'„Ich weiß immer noch nicht, was du bist. Aber ich höre auf, so zu tun, als wärst du nicht da.“',id:'yes'},{t:'„Gib mir noch einen Tag.“',id:'later'}],{title:'',conv:false});
+  if (d==='later'){ await A.g('Einen Tag hattest du. Heute Morgen.'); await A.wait(700); await A.g('Gut. Ich sitze hier, wenn du so weit bist.'); G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); return; }
+  G.flags['mk.accept']=true; await A.wait(900); await A.g('Gut.'); await A.wait(700); await A.g('Das reicht mir.');
   await A.wait(800); A.sfx('gust'); await A.g('Da ist noch einer.'); await A.m('Noch einer.'); await A.g('Ein Junge. Er ist unruhig. Er wartet auf etwas, das gleich passieren soll. Seit Jahren.');
-  await A.m('Du findest sie einfach so?'); await A.g('Sie sind laut. Für mich.'); await A.m('Morgen. Heute nicht mehr.');
-  A.G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i1.done'); await M.startCase2(A); }
+  await A.m('Du findest sie einfach so?'); await A.g('Sie sind laut. Für mich.'); await A.m('Dann hören wir uns an, was die Stadt über ihn weiß. Die Stadt redet in der „Bura“.');
+  G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i1.done'); await M.startCase2(A); };
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Die Riva entlang, in die Stadt.'},
@@ -177,15 +223,18 @@ var HS=[
  {id:'palace',name:'Palastmauer',look:'Die Südmauer des Diokletianpalastes. Siebzehnhundert Jahre alt. Heute sind Cafés in den Bögen. Der Kaiser hätte es verstanden, glaube ich.',g:{look:'Diese Mauer hat mehr Leute warten sehen als jeder Hafen.'}},
  {id:'belltower',name:'Glockenturm',look:'Der Glockenturm von Sveti Duje. Man sieht ihn von überall. Man hört ihn auch von überall.',g:{look:'…',sense:'Nicht der.'}},
  {id:'palms',name:'Palmen',look:'Die Palmen der Riva. Im Sommer stehen Touristen darunter, im November nur die Palmen.',g:{look:'Sie rascheln wie Papier.'}},
- {id:'bench',name:'Bank',look:'Eine Bank aus Holz und Eisen, mit Blick aufs Wasser.',use:'Später vielleicht.',g:{look:'Eine Bank. Man sitzt dort mit jemandem oder gar nicht.'}},
+ {id:'bench',name:'Bank',look:function(A){ return A.m(A.G.phase==='i1m'?'Die Bank, auf der ich heute Nacht gesessen habe. Im Morgenlicht sieht sie aus wie jede andere Bank.':'Eine Bank aus Holz und Eisen, mit Blick aufs Wasser.'); },
+   use:async function(A){ var G=A.G; if (G.phase==='i1m'){ if (G.flags['split.afterIvka.verified'] && A.malaHere()) return M.morningBench(A);
+       return A.m(G.flags['split.afterIvka.back']?'Gleich. Erst will ich wissen, ob ich mir das alles nur einrede.':'Hier habe ich heute Nacht gesessen. Und geraucht. Allein, wie es aussieht.'); }
+     return A.m('Später vielleicht.'); },g:{look:'Eine Bank. Man sitzt dort mit jemandem oder gar nicht.'}},
  {id:'lamp',name:'Laterne',look:'Eine Laterne der Riva. Ihre Kugel brummt leise.',g:{look:'Sie zieht die Motten an. Mich nicht mehr.'}},
  {id:'office',name:'Hafenbüro',look:'Die Lučka kapetanija, das Hafenamt. Ein Haus mit hohen Fenstern und einem Schild, das man seit Tito nicht mehr geputzt hat.',g:{look:'Drinnen ist es warm und langweilig. Dahinter ist es kalt und voller Papier.'}},
  {id:'office_door',name:'Tür zum Hafenbüro',exit:{to:'office'},look:'Die Tür zum Hafenbüro. Die Öffnungszeiten stehen auf einem Zettel: bis zur letzten Fähre.',g:{look:'Seine Tür. Ich komme mit, wenn er geht.'},
    canExit:async function(A){ if (['c1','c1_night'].indexOf(A.G.phase)<0){ await A.m('Geschlossen. Und ich habe dort nichts mehr verloren.'); return false; } if (!A.flag('c1.met')){ await A.m('Was soll ich im Hafenbüro?'); return false; } return true; }},
  {id:'sea',name:'Hafenbecken',look:function(A){ return A.m(A.G.weather==='bura'||M.scn.weather(A.G)==='bura'?'Die Bura reißt das Wasser auf. Kleine weiße Kämme, so weit man sieht.':'Das Hafenbecken. Dunkelgrün, still, mit den Lichtern der Stadt darin.'); },g:{look:'Das Meer erinnert sich an nichts. Darum ist es so ruhig.'}},
  {id:'ferries',name:'Fähren',look:'Die Fähren nach Brač, Hvar, Šolta. Sie kommen und gehen, als wäre es nichts.',g:{look:'…',listen:'Wenn sie tuten, will ich weg. Ich weiß nicht, wohin.'}},
- {id:'mole',name:'Mole',look:'Die Mole. Ein steinerner Finger, der ins Wasser zeigt.',g:{look:'Hier fängt das Wasser an. Für manche hört hier das Land auf.'}},
- {id:'bollard',name:'Poller',look:'Ein eiserner Poller am Ende der Mole, blank gerieben von Tauen. Und von Händen.',
+ {id:'mole',name:'Mole',look:async function(A){ if (A.G.phase==='i1m'){ await A.m('Am Ende der Mole: niemand.'); return A.m(A.flag('split.afterIvka.back')?'Niemand. Diesmal, weil sie gegangen ist.':'Natürlich niemand. Da hat nie jemand gestanden.'); } return A.m('Die Mole. Ein steinerner Finger, der ins Wasser zeigt.'); },g:{look:'Hier fängt das Wasser an. Für manche hört hier das Land auf.'}},
+ {id:'bollard',name:'Poller',look:function(A){ if (A.G.phase==='i1m') return A.m(A.flag('split.intro.dizzy')?'Ein Poller. Eisen, Rost, ein nasses Tau. Am Dienstag war mir hier schwindlig. Mehr war da nicht.':'Ein Poller. Eisen, Rost, ein nasses Tau. Mehr ist da nicht.'); return A.m('Ein eiserner Poller am Ende der Mole, blank gerieben von Tauen. Und von Händen.'); },
    g:{look:function(A){ return A.g(A.flag('c1.release')?'Der Poller ist nur noch ein Poller.':'Hier ist ihre Leine festgemacht. Siebenundzwanzig Winter lang.'); },sense:async function(A){ if (A.hasNote('c1_years')) return A.g('Siebenundzwanzig Winter. Ich will das nicht noch einmal sehen.');
      await A.memory({title:'Nachhall – der Poller',draw:M.mem&&M.mem.pier,lines:['1985. Eine Frau im offenen Mantel. Sie sieht auf die Uhr, dann aufs Wasser.','1993. Ein Schirm, den der Wind ihr aus der Hand nimmt. Sie lässt ihn fliegen.','2003. Sie geht langsamer. Sie kommt trotzdem.','2011. Sie kommt noch.']}); A.note('c1_years'); }}},
  {id:'mole_lamp',name:'Laterne am Molenende',look:'Die letzte Laterne der Mole. Danach kommt nur noch Wasser.',g:{look:'Sie hat jeden Abend unter diesem Licht gestanden.'}},
@@ -193,15 +242,19 @@ var HS=[
  {id:'islands',name:'Brač',look:'Brač, die Insel gegenüber, ein blauer Rücken über dem Wasser. Fünfzig Minuten mit der Fähre. Manchmal eine Ewigkeit.',g:{look:'Von dort sollte er kommen.'}}
 ];
 M.room('riva',{ name:'Riva', scape:'riva',
-  music:function(GS){ return (GS.phase==='c1'||GS.phase==='c1_night')?'case1':(GS.phase==='c2'?'case2':(GS.phase==='c3'?'case3':'flat')); },
+  music:function(GS){ return (GS.phase==='c1'||GS.phase==='c1_night')?'case1':(GS.phase==='pro_eve'?'silence':(GS.phase==='c2'?'case2':(GS.phase==='c3'?'case3':'flat'))); },
   actors:function(S,GS){ var L=[]; if (ivkaHere(GS)){ var p=M.apos('riva','ivka',[596,114,'R']); L.push({id:'ivka',ch:'ivka',x:p[0],y:p[1],f:p[2]||'R',name:'Ivka',ghost:true,reveal:true,idle:'waitF',speed:110,step:3,anchor:function(S,G){ if (G.flags['c1.release']) return null; var sp=M.spot('riva','bollard'); return [sp[0]+7,sp[1]+5]; }}); } return L; },
   hotspots:HS,
+  resume:function(A){ if (M.afterIvkaResume) M.afterIvkaResume(A); },
   enter:async function(A,from){ var p=A.G.phase; if (A.S.ferryAt) delete A.S.ferryAt; // die Fähre aus dem Finale liegt nur, solange man bleibt
+    if (p==='pro_eve' && A.first('rivaPro')){ await A.m('Die Riva in der Dämmerung, im Regen. Um diese Zeit gehen alle nach Hause. Ich gehe zur Mole.'); }
+    if (p==='i1m' && A.first('rivaMorning')){ await A.m('Die Riva am Morgen. Die Bura hat sie leergefegt. Die Palmen rascheln wie Zeitungspapier.'); }
     if (p==='c1' && A.first('rivaC1')){ await A.m('Die Riva am Abend. Die Lichter gehen an, eine nach der anderen, als könnten sie sich nicht entscheiden.');  }
     if (p==='c1_night' && A.first('rivaNight') && !A.flag('c1.done')){ await A.m('Die Bura ist da. Ivka steht immer noch am Ende der Mole.'); }
     if (p==='c2' && A.first('rivaC2')) await A.g('Die Mole ist leer. Das ist gut so.');
     if (p==='c3' && A.first('rivaC3')) await A.m('Regen auf der Riva. Die Palmen sehen aus, als wären sie lieber woanders.'); },
-  tick:function(A){ if (A.G.phase==='c1' && !A.flag('c1.met') && !A.isBusy && A.marko && A.marko.x>430){ A.busy(true); var a=A.marko; a.path=[]; meeting(A).then(function(){ A.busy(false); }); } }
+  tick:function(A){ if (A.G.phase==='pro_eve' && !A.flag('split.intro.dizzy') && !A.flag('split.intro.legacy') && !A.isBusy && A.marko && A.marko.x>540){ A.busy(true); var m0=A.marko; m0.path=[]; bollardAttack(A).then(function(){ A.busy(false); }); return; }
+    if (A.G.phase==='c1' && !A.flag('c1.met') && !A.isBusy && A.marko && A.marko.x>430){ A.busy(true); var a=A.marko; a.path=[]; meeting(A).then(function(){ A.busy(false); }); } }
 });
 M.defineScape('riva',function(o){ var tod=o.tod, w=M.scn.weather(o.GS); return { beds:w==='rain'?['rain','sea','city']:(w==='bura'?['bura','sea','windHigh']:['sea','city']), step:'stone',
   ev:tod==='night'?[['horn',30,70,0.7,0.3,0.9],['lap',5,10,1,-0.8,0.8],['rope',8,16,0.7,0.2,0.9],['bellFar',90,160,0.6,-0.6,-0.2],['gust',8,16,0.8,-1,1]]:[['gull',6,14,0.9,-1,1],['horn',25,55,0.7,0.3,0.9],['lap',6,12,0.8,-0.8,0.8],['scooter',18,40,0.5,-1,-0.3],['steps',15,35,0.5,-1,0.4],['bellFar',80,150,0.6,-0.6,-0.2]] }; });

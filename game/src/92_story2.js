@@ -3,9 +3,13 @@
 'use strict';
 var P=M.P;
 // ---------------------------------------------------------------- Übergänge
-M.startCase2=async function(A){ await A.fade(8,900); M.E.screen='card'; await A.card({kicker:'Zweiter Fall',title:'Das letzte Schiff nach Ancona',time:'Donnerstag, 17. November · Bura',ms:4600});
-  A.phase('c2'); A.unlock('bar'); A.unlock('matejuska'); A.G.pos.marko={room:'bar',x:60,y:124,f:'R'}; ['postcard','photo1','letter_t'].forEach(function(i){ A.take(i); });
-  await A.goto('bar',{noEnter:false}); A.save(); };
+// nach dem Morgen in der „Bura“ und dem Gespräch auf der Bank: kein zweiter Morgen, keine zweite Einführung der Bar – Marko bleibt an der Riva
+M.startCase2=async function(A){ await A.fade(8,900); var morning=!!A.flag('split.afterIvka.bar');
+  M.E.screen='card'; await A.card({kicker:'Zweiter Fall',title:'Das letzte Schiff nach Ancona',time:morning?'Donnerstag, 17. November · Mittag, Bura':'Donnerstag, 17. November · Bura',ms:4600});
+  A.phase('c2'); A.unlock('bar'); A.unlock('matejuska'); ['postcard','photo1','letter_t'].forEach(function(i){ A.take(i); });
+  if (morning){ var b=M.stand('riva','bench')||[180,122,'B']; A.G.pos.marko={room:'riva',x:b[0],y:b[1]+4,f:'R'}; await A.goto('riva',{x:b[0],y:b[1]+4,f:'R',noEnter:true}); }
+  else { A.G.pos.marko={room:'bar',x:60,y:124,f:'R'}; await A.goto('bar',{noEnter:false}); }
+  A.save(); };
 M.startC2Night=async function(A){ A.setFlag('c2.nightStarted'); await A.fade(8,900); M.E.screen='card'; await A.card({kicker:'',title:'Am Abend',time:'Donnerstag · kurz vor neun',ms:3200});
   A.phase('c2_night'); await A.goto('ledana',{noEnter:false}); A.save(); };
 M.startCase3=async function(A){ await A.fade(8,900); M.E.screen='card'; await A.card({kicker:'Dritter Fall',title:'Der Nachtportier',time:'Freitag, 18. November · Abend',ms:4600});
@@ -21,19 +25,24 @@ M.startEpilogue=async function(A){ M.E.screen='card'; await A.card({kicker:'Epil
 // Schuppen/Laden: nach Ninas „Heute Abend“ in den Abend wechseln
 var shop=M.ROOMS.shop; if (shop) shop.check=async function(A){ if (A.flag('c2.tonight') && !A.flag('c2.nightStarted')){ await A.wait(600); await M.startC2Night(A); } };
 // Reisebeschränkungen
-M.canTravel=async function(A,L){ var p=A.G.phase;
-  if (p==='pro' && L.id!=='varos' && L.id!=='flat'){ await A.m('Heute nicht.'); return false; }
+M.canTravel=async function(A,L){ var p=A.G.phase, fresh=!A.flag('split.intro.legacy');
+  if (p==='pro'){ if (L.id!=='varos' && L.id!=='flat' && L.id!=='bar'){ await A.m('Heute nicht.'); return false; }
+    if (fresh && A.flag('split.intro.v') && L.id==='varos' && !A.flag('split.intro.sanja')){ await A.m('Erst Sanja. Triest ruft um vier an, und sie hat niemanden, der Italienisch kann.'); return false; } }
+  if (p==='pro_eve'){ if (fresh && A.flag('split.intro.v') && !A.flag('split.intro.dizzy') && L.id!=='riva'){ await A.m('Erst die Riva. Ich will die Stelle sehen, bevor ich über sie schreibe.'); return false; }
+    if (L.id!=='riva' && L.id!=='flat'){ await A.m('Heute nicht mehr.'); return false; } }
+  if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.bar')?'Nicht jetzt. Erst will ich wissen, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Erst einen Kaffee.'); return false; }
   if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos' && L.id!=='bar'){ await A.m('Nicht jetzt.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
-M.lookAtMala=async function(A){ var p=A.G.phase;
+M.lookAtMala=async function(A){ var p=A.G.phase; if (A.flag('split.intro.meet') && !A.flag('split.intro.met') && M.meetLook) return M.meetLook(A);
   if (A.flag('mala.voice')) return A.m(A.cycle('mVoiceL',['Ein Flimmern in der Luft. Wie über heißem Asphalt. Im November.','Da ist nichts. Nur ein Lichtfleck, der nicht weggeht, wenn ich blinzle.','Wenn ich nicht hinsehe, ist es weg. Fast.']));
   if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.m(A.cycle('mDeny',['Ich sehe nicht hin. Wenn ich nicht hinsehe, ist da niemand.','Jeansjacke, grauer Schal. Ein Mädchen wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Ich sehe nicht hin.','Wenn das Licht von hinten kommt, sieht man durch sie hindurch. Das liegt am Licht.']));
   if (p==='c1'||p==='c1_night') return A.m('Mala. Jeansjacke, grauer Schal, weiße Turnschuhe. Kleidung wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Wenn das Licht von hinten kommt, sieht man durch sie hindurch.');
   if (p==='c3'||p==='c3_night') return A.m('Mala sieht sich nicht um. Hier sieht sie sich nicht um. Als kenne sie den Weg.');
   return A.m(A.cycle('mLook',['Mala. Sie hält die Hände in den Taschen der Jacke, eine um die Blechdose.','Sie sieht aus wie siebzehn. Sie spricht wie jemand, der sehr lange siebzehn war.','Durchscheinend, wenn das Licht von hinten kommt. Sonst fast nicht.'])); };
 M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.mala') && M.talkMalaEnd) return M.talkMalaEnd(A);
+  if (A.flag('split.intro.meet') && !A.flag('split.intro.met') && M.meetTalk) return M.meetTalk(A);
   if (A.flag('mala.voice')){ if (A.room && A.room.id==='office' && A.flag('c1.searched') && M.voiceTest) return M.voiceTest(A);
     await A.m(A.cycle('mVoiceT',['Ich rede nicht mit Lichtflecken.','Wenn ich antworte, ist es wahr. Also antworte ich nicht.','Nein.']));
     return A.g(A.cycle('mVoiceA',['Du hast trotzdem hingesehen.','Ich warte. Ich kann gut warten.','Das ist auch eine Antwort.'])); }
@@ -41,6 +50,7 @@ M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.ma
     {t:'Was willst du von mir?',once:'dn1',go:async function(A){ await A.g('Nichts. Sie braucht etwas. Nicht ich.'); await A.m('Sie braucht einen Arzt. Und ich auch.'); }},
     {t:'Du bist eine Einbildung.',once:'dn2',go:async function(A){ await A.g('Vielleicht.'); await A.wait(700); await A.g('Dann eine, die dir nichts tut.'); }},
     {t:'Woher wusstest du das mit „achtundvierzig“?',once:'dn3',if:A.flag('c1.logRead'),go:async function(A){ await A.g('Ich habe nachgesehen.'); await A.m('Zufall. Ein Praktikant mit einem Zahlendreher.'); await A.g('Ja. Zufall.'); }},
+    {t:'(Leise:) „Dann sieh nach.“',if:!!(A.room&&A.room.id==='office'&&A.flag('c1.searched')&&!A.flag('mk.test')&&M.officeTest),go:async function(A){ await M.officeTest(A); return 'bye'; }},
     {t:'Woher wusstest du, was Tonći im Wasser gesagt hat?',once:'dn4',if:A.flag('c1.dinkoTold'),go:async function(A){ await A.wait(900); await A.g('Ich habe es gehört. An dem Seesack.'); await A.m('…'); await A.m('Ich will das nicht.'); await A.g('Ich weiß.'); }},
     {t:'Geh weg.',bye:true,go:async function(A){ await A.g('Nicht weit.'); }}
   ]; });

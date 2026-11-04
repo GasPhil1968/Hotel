@@ -3,7 +3,7 @@
 'use strict';
 var P=M.P;
 function ph(GS){ return GS.phase; }
-function zdenkaHere(GS){ return ['pro','c1','c2'].indexOf(GS.phase)>=0; }
+function zdenkaHere(GS){ return ['pro','pro_eve','c1','c2'].indexOf(GS.phase)>=0; }
 // ---------------------------------------------------------------- Zdenka
 async function talkZdenka(A){ var Z=A.npc('zdenka'), p=A.G.phase;
   if (p==='pro') return zdenkaPro(A,Z);
@@ -13,9 +13,12 @@ async function talkZdenka(A){ var Z=A.npc('zdenka'), p=A.G.phase;
 async function zdenkaPro(A,Z){
   if (A.first('zdHello')){ await Z.say('Sie sind der von der Zeitung.'); await A.m('Marko Vuković. Vesna Kralj hat mich geschickt. Wegen Gospođa Perić.');
     await Z.say('Siebenundzwanzig Jahre hat niemand nach ihr gefragt. Und jetzt kommt die Zeitung.'); }
-  if (A.flag('pro.visited')){ await Z.say('Haben Sie, was Sie brauchen?'); return; }
+  var legacy=!!A.flag('split.intro.legacy');
+  if (A.flag('pro.visited') && (legacy || !A.has('key_ivka'))){ await Z.say('Haben Sie, was Sie brauchen?'); return; }
   await A.menuLoop(function(){ return [
-    {t:'Wie war sie?',once:'zd1',go:async function(A){ await Z.say('Stur. Zu Kindern freundlich, zum Wetter nicht. Sie hat für die halbe Gasse gestrickt, Socken, Mützen, alles. Nur für sich nie.'); }},
+    {t:'Wie war sie?',once:'zd1',go:async function(A){ await Z.say('Stur. Zu Kindern freundlich, zum Wetter nicht. Sie hat für die halbe Gasse gestrickt, Socken, Mützen, alles. Nur für sich nie.'); if (!legacy) A.note('pro_knit'); }},
+    {t:'In ihrem Heft stehen Namen aus der Gasse. Kennen Sie die Leute?',once:'zdK',if:!legacy&&A.hasNote('pro_people'),go:function(A){ return askKnitNames(A,Z); }},
+    {t:'Hier ist Ihr Schlüssel.',if:!legacy&&A.has('key_ivka')&&A.flag('pro.visited'),go:async function(A){ var r=await returnKey(A,Z); if (r) return 'bye'; }},
     {t:'Hatte sie wirklich niemanden mehr?',once:'zd2',go:async function(A){ await Z.say('Einen Sohn. Tonći.'); await A.wait(500); await Z.say('Vierundachtzig. Die Bura. Er kam nicht nach Hause.'); A.note('pro_sohn'); await A.m('Das tut mir leid.'); await Z.say('Ihr hat es leid getan. Siebenundzwanzig Jahre lang.'); }},
     {t:'Was hat sie den Tag über gemacht?',once:'zd3',go:async function(A){ await Z.say('Morgens die Messe bei Sveti Nikola. Mittags der Markt. Und abends die Riva.'); await Z.say('Jeden Abend um sieben. Bei Regen mit Schirm, bei Bura ohne. Seit vierundachtzig.'); A.note('pro_riva'); }},
     {t:'Warum um sieben?',once:'zd4',if:A.hasNote('pro_riva'),go:async function(A){ await Z.say('Um sieben kam früher das Boot aus Supetar. Irgendwann haben wir aufgehört zu fragen, worauf sie wartet.'); await Z.say('Man fragt ja auch nicht das Meer, warum es da ist.'); }},
@@ -25,9 +28,27 @@ async function zdenkaPro(A,Z){
         if (c==='cold'){ A.setFlag('pro.keyRefused'); await Z.say('Zweitausend Zeichen. Für fünfundachtzig Jahre.'); await Z.say('Dann schreiben Sie die mal ohne Schlüssel.'); await A.m('Das war das Falsche.'); return; }
         if (c==='honest') await Z.say('Wenigstens lügen Sie nicht.'); else await Z.say('…Gut.');
         await Z.anim('sitTalk'); A.give('key_ivka'); await Z.say('Fassen Sie nichts an, was Sie nicht brauchen. Und bringen Sie ihn mir wieder.'); A.note('pro_zdenka',true); }},
-    A.askOpt({ pro_auftrag:'Die Stillen. So heißt das in Ihrer Zeitung? Hier hieß sie einfach Ivka.', pro_sohn:'Fragen Sie mich nicht nach Tonći. Fragen Sie ihre Wohnung.', pro_riva:'Jeden Abend. Ich habe es irgendwann nicht mehr gesehen. So sieht man den Glockenturm auch nicht mehr.' },'Dazu weiß ich nichts, junger Mann.'),
+    A.askOpt({ pro_auftrag:'Die Stillen. So heißt das in Ihrer Zeitung? Hier hieß sie einfach Ivka.', pro_sohn:'Fragen Sie mich nicht nach Tonći. Fragen Sie ihre Wohnung.', pro_riva:'Jeden Abend. Ich habe es irgendwann nicht mehr gesehen. So sieht man den Glockenturm auch nicht mehr.',
+      pro_noone:'Keine Kontakte? Wer schreibt so etwas? Die Stadt. Die Stadt war nie hier oben.', pro_knit:'Socken, Mützen, Schals. Jeden Winter. Fragen Sie in der Gasse.',
+      pro_list:'Ihr Heft. Das hat sie jedes Jahr ab Oktober geführt. Mit Häkchen, wenn etwas fertig war.', pro_people:function(A){ return askKnitNames(A,A.npc('zdenka')); }, pro_gasse:'Das habe ich doch gesagt.' },'Dazu weiß ich nichts, junger Mann.'),
     {t:'Danke, Gospođa Zdenka.',bye:true,go:async function(A){ await Z.say('Hm.'); }}
   ]; }); }
+// die gezielte Rückfrage: erst die Liste und die Notiz der Stadt zusammen gedacht, dann nach den Namen gefragt
+async function askKnitNames(A,Z){ if (A.hasNote('pro_gasse')) return Z.say('Das habe ich Ihnen doch gesagt. Fragen Sie in der Gasse.');
+  await Z.say('Zeigen Sie. Ich meine: Sagen Sie.'); await A.m('Ante, ein Stockwerk tiefer. Ihre Enkelinnen. Don Petar. Und eine Decke für Mrki.'); await A.wait(500);
+  await Z.say('Ante trägt die blaue Mütze auch im Sommer. Seine Mutter hat es aufgegeben.'); await Z.say('Meine Enkelinnen, dreißig und zweiunddreißig, das stimmt. Die Kleine wächst zu schnell.');
+  await Z.say('Don Petar gibt die Socken an die Armen von Sveti Nikola. Jeden Winter zehn Paar.'); await A.wait(600); await Z.say('Und für den Kater hat sie gestrickt. Für sich selbst nie.');
+  await A.m('Die Stadt schreibt: keine Kontakte.'); await Z.say('Die Stadt.'); await A.wait(500); await Z.say('Fragen Sie in der Gasse, wer nichts von ihr trägt. Da müssen Sie lange fragen.');
+  A.note('pro_gasse'); A.setFlag('split.intro.knit'); }
+// den Schlüssel erst zurückgeben, wenn die Recherche aufgeht; danach wird es Abend – und an der Kirchentreppe steht jemand
+async function returnKey(A,Z){ if (!A.hasNote('pro_people')){ await A.m('Einen Moment noch.'); await A.m('Die Stadt schreibt: keine Kontakte. In ihrem Korb liegt ein Heft voller Namen. Beides kann nicht stimmen.'); return false; }
+  if (!A.hasNote('pro_gasse')){ await A.m('Eine Frage habe ich noch. Dann gebe ich ihn zurück.'); return false; }
+  await A.m('Mehr, als in zweitausend Zeichen passt.'); A.take('key_ivka'); A.sfx('click'); await Z.say('Das ist immer so.'); await A.m('Danke, Gospođa Zdenka.');
+  await A.wait(300); await M.endProVisit(A); await glimpse(A); return true; }
+async function glimpse(A){ await A.wait(700); A.G.flags['found.malaGlimpse']=true; var sp=M.spot('varos','steps'), gl=A.spawn({id:'malaGlimpse',ch:'mala',x:sp[0]+38,y:sp[1]+3,f:'L',name:'',ghost:true,noAche:true});
+  await A.wait(1400); if (gl.actor) gl.actor.fadeOut=A.gt; await A.wait(1000); gl.hide(); A.despawn('malaGlimpse'); delete A.G.flags['found.malaGlimpse']; A.setFlag('split.intro.glimpse');
+  await A.m('…'); await A.wait(400); await A.m('Oben an der Kirchentreppe stand eben jemand.'); await A.wait(600); await A.m('Jetzt nicht mehr.');
+  await A.wait(700); await A.m('Bevor ich schreibe, will ich die Stelle sehen, an der sie jeden Abend stand. Unten an der Riva, am Ende der Mole.'); A.save(); }
 async function zdenkaC1(A,Z){
   if (A.first('zdC1')){ await Z.say('Der von der Zeitung. Steht es morgen drin?'); await A.m('Morgen, ja.'); await Z.say('Dann kaufe ich mir zwei. Eine für mich, eine für sie.'); }
   await A.menuLoop(function(){ return [
@@ -55,6 +76,7 @@ async function zdenkaC2(A,Z){
 async function giveNewspaper(A,Z){ A.take('newspaper'); A.setFlag('c2.radioGiven');
   var lead=['„Ivka Perić hat siebenundzwanzig Jahre lang auf ein Schiff gewartet.“','„Jeden Abend um sieben ging Ivka Perić zur Riva.“','„Ivka Perić hinterlässt zwei Tassen und einen Stuhl am Fenster.“'][A.G.flags.lead||0];
   await Z.say('Zeigen Sie.'); await A.wait(800); await Z.say(lead); await A.wait(700); await Z.say('…Das hat sie verdient.');
+  if (A.G.flags.leadKnit===1){ await A.wait(500); await Z.say('Und die Mützen. Das stimmt. Das hat sonst niemand gewusst.'); }
   await Z.say('Warten Sie.'); await A.fade(6,400); A.sfx('door'); await A.wait(700); await A.fade(0,400);
   await Z.say('Nehmen Sie das Radio. Freitag kommt sowieso alles weg. Sie hat damit jeden Abend den Seewetterbericht gehört.'); A.give('radio');
   await A.m('Danke. Ich passe darauf auf.'); await Z.say('Batterien hat es keine. Die hat sie immer rausgenommen, damit sie nicht auslaufen. So war sie.'); }
@@ -93,9 +115,12 @@ M.room('varos',{ name:'Veli Varoš', scape:'varos',
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='pro' && from==='ivka' && !A.flag('pro.visited')){ A.setFlag('pro.visited'); var Z=A.npc('zdenka'); await A.walk(M.apos('varos','zdenka')[0]+30,M.apos('varos','zdenka')[1]+2); await A.face('L');
-      await Z.say('Haben Sie, was Sie brauchen?'); await A.m('Mehr, als in zweitausend Zeichen passt.'); A.take('key_ivka'); A.sfx('click'); await Z.say('Das ist immer so.'); await A.m('Danke, Gospođa Zdenka.');
+      await Z.say('Haben Sie, was Sie brauchen?');
+      if (!A.flag('split.intro.legacy')){ await A.m('Fast.'); if (!A.hasNote('pro_people')){ await A.wait(400); await A.m('Ein Heft voller Namen. Und die Stadt schreibt: keine Kontakte.'); } return; }
+      await A.m('Mehr, als in zweitausend Zeichen passt.'); A.take('key_ivka'); A.sfx('click'); await Z.say('Das ist immer so.'); await A.m('Danke, Gospođa Zdenka.');
       await A.wait(300); return M.endProVisit(A); }
     if (p==='pro' && from!=='ivka' && A.first('varosFirst')){ await A.m('Veli Varoš. Hier sind die Gassen so eng, dass sich die Nachbarn über die Straße das Salz reichen.');
+      if (!A.flag('split.intro.legacy')) return;   // die Erscheinung an der Kirchentreppe kommt erst nach der Recherche
       // ein flüchtiger Blick: oben an der Kirchentreppe steht jemand und ist gleich wieder fort
       await A.wait(500); A.G.flags['found.malaGlimpse']=true; var sp=M.spot('varos','steps'), gl=A.spawn({id:'malaGlimpse',ch:'mala',x:sp[0]+38,y:sp[1]+3,f:'L',name:'',ghost:true,noAche:true});
       await A.wait(1400); if (gl.actor) gl.actor.fadeOut=A.gt; await A.wait(1000); gl.hide(); delete A.G.flags['found.malaGlimpse'];

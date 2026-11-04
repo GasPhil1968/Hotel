@@ -50,6 +50,8 @@ function paint(S,GS,tod){ var b=new M.Buf(320,144,P.k0), weather=M.scn.weather(G
   var sk=R3.p(82,76,38); b.ellipse(sk[0],sk[1]+1,5,2,P.m2); b.ellipse(sk[0],sk[1]+1,3.6,1.2,P.m1); var tap=R3.p(74,70,38); b.line(Math.round(tap[0]),Math.round(tap[1]),Math.round(sk[0]),Math.round(sk[1])-3,P.m3);
   // Wandregal über der Kochnische
   var s0=R3.p(72,50,10), s1=R3.p(72,50,46), s2=R3.p(84,50,46), s3=R3.p(84,50,10); b.poly([s0,s1,s2,s3],P.w3); b.line(Math.round(s0[0]),Math.round(s0[1])+1,Math.round(s1[0]),Math.round(s1[1])+1,P.w1);
+  if (!S.glassTaken){ var gq=R3.p(78,50,42); for (var gi=0;gi<2;gi++){ var gx=Math.round(gq[0])-2+gi*4, gy=Math.round(gq[1]); b.rect(gx,gy-5,3,5,P.a4); b.vl(gx,gy-5,gy-1,P.s6); b.hl(gx,gx+2,gy-1,P.a3); } }   // zwei Wassergläser
+  if (S.glass){ var gw=R3.p(194,80,12), wx2=Math.round(gw[0]), wy2=Math.round(gw[1]); b.rect(wx2,wy2-6,4,6,P.a4); b.rect(wx2,wy2-4,4,4,P.a3); b.vl(wx2,wy2-6,wy2-1,P.s6); b.hl(wx2,wx2+3,wy2,P.s4); }   // das Glas Wasser auf dem Schreibtisch
   if (!S.dzezvaTaken){ var dz=R3.p(78,50,18); b.rect(Math.round(dz[0])-2,Math.round(dz[1])-5,5,5,P.y2); b.hl(Math.round(dz[0])-2,Math.round(dz[0])+2,Math.round(dz[1])-5,P.y4); b.line(Math.round(dz[0])+3,Math.round(dz[1])-3,Math.round(dz[0])+8,Math.round(dz[1])-5,P.w1); }
   var tn=R3.p(78,50,32); b.rect(Math.round(tn[0])-3,Math.round(tn[1])-7,6,7,P.r2); b.hl(Math.round(tn[0])-3,Math.round(tn[0])+2,Math.round(tn[1])-7,P.r4); b.px(Math.round(tn[0]),Math.round(tn[1])-4,P.y4);
   // ---- Tür in der rechten Wand, Haken mit Mantel
@@ -100,21 +102,37 @@ function r(X0,X1,Y0,Y1,Z0,Z1){ return R3.rect(X0,X1,Y0,Y1,Z0,Z1); }
 var HS=[
  {id:'window',name:'Fenster',r:[WIN[0]-4,WIN[1]-2,WIN[2]+8,WIN[3]+4],st:R3.st(188,20,'B'),reach:'none',
    look:function(A){ var t=A.G.tod; if (A.S.tram && !A.S.tramWiped) return lookTram(A); if (A.G.phase==='pro') return A.m('Der Hafen im Regen. Die Fähre nach Supetar legt ab, als hätte sie es nicht eilig. Seit drei Tagen Jugo. Seit drei Tagen Kopfschmerzen.');
+     if (A.G.phase==='i1m') return A.m('Die Bura hat den Himmel blank geputzt. Unten liegt die Mole, leer, wie jeden Morgen.');
      if (t==='night') return A.m('Unten liegen die Lichter der Riva im Wasser. Draußen ist alles still, nur das Meer nicht.');
      return A.m('Der Hafen. Fähren kommen, Fähren fahren. Ich habe aufgehört mitzuzählen.'); },
    use:function(A){ if (A.S.tram && !A.S.tramWiped){ A.set('tramWiped',true); A.sfx('paper'); return A.m('Ich wische die Scheibe mit dem Ärmel ab. Dahinter ist nur der Hafen.'); } return A.m('Ich lehne die Stirn an die Scheibe. Sie ist kalt. Das hilft ein bisschen.'); },
    open:function(A){ if (A.S.winOpen){ A.set('winOpen',false); A.sfx('shutter'); return A.m('Ich mache es zu.'); } return A.m('Die Läden sind offen. Das Fenster bleibt zu. Der Jugo drückt den Regen sonst bis aufs Bett.'); },
    g:{look:'Von hier sieht man die Mole. Ich stehe oft hier, wenn er schläft.',sense:'Hier hat er viele Nächte gestanden. Der Nachhall ist müde, nicht mehr.'}},
  {id:'laptop',name:'Laptop',r:[172,62,26,18],st:R3.st(188,22,'B'),reach:'M',
-   look:function(A){ if (A.G.phase==='pro_eve') return A.m('Der Text über Ivka Perić. Noch kein erster Satz. Der erste Satz ist immer der schwerste.'); return A.m('Eine italienische Bedienungsanleitung für eine Espressomaschine. Seite 31 von 48. „Die Maschine ist kein Spielzeug.“ Das glaube ich ihr.'); },
+   look:function(A){ if (A.G.phase==='pro_eve') return A.m('Der Text über Ivka Perić. Noch kein erster Satz. Der erste Satz ist immer der schwerste.');
+     if (A.G.phase==='i1m') return A.m('Der Laptop. Zwei neue Mails. Die Welt hat weitergemacht, während ich geschlafen habe.');
+     if (A.G.phase==='pro' && A.flag('pro.translated')) return A.m('Seite einunddreißig ist abgeschickt. Noch siebzehn. Die Maschine kann warten. Maschinen können das.');
+     return A.m('Eine italienische Bedienungsanleitung für eine Espressomaschine. Seite 31 von 48. „Die Maschine ist kein Spielzeug.“ Das glaube ich ihr.'); },
    use:async function(A){ if (A.G.phase==='pro_eve' && !A.flag('pro.article')) return writeArticle(A);
-     if (A.G.phase==='pro') return A.m('Die Maschine wartet. Maschinen können das.');
+     if (A.G.phase==='i1m') return morningLaptop(A);
+     if (A.G.phase==='pro'){ if (!A.flag('pro.translated')) return translatePage(A); return A.m('Die Maschine wartet. Maschinen können das.'); }
      if (A.G.phase==='c3' && !A.flag('c3.call')) return A.m('Ich übersetze zwei Sätze und lese sie dreimal. Heute wird das nichts.');
      return A.m('Ich tippe einen Satz. Ich lösche ihn wieder. Das ist mein Beruf.'); },
    g:{look:'Er schreibt fremde Sätze in seine Sprache. Seine eigenen schreibt er nicht.'}},
  {id:'papers',name:'Übersetzungsaufträge',r:[198,74,22,8],st:R3.st(206,22,'B'),
    look:'Ein Stapel Aufträge. Ein Mietvertrag aus Graz, ein Beipackzettel, ein Liebesbrief, den jemand für eine Scheidung übersetzt haben will.',
+   read:function(A){ return readClientLetter(A); },
    take:'Die bleiben hier. Sie laufen mir nicht weg. Leider.', g:{look:'Papier, das darauf wartet, in eine andere Sprache zu gehen. Wie fast alles hier.'}},
+ {id:'deskglass',name:'Glas Wasser',vis:function(S){ return !!S.glass; },r:[190,66,9,9],st:R3.st(196,22,'B'),
+   look:function(A){ if (A.G.phase==='i1m') return A.m('Ein Glas Wasser, voll. Ich habe es gestern Abend hingestellt. Für wen, weiß ich nicht mehr genau. Für mich, nehme ich an.');
+     return A.m('Das Glas, das ich ihr hingestellt habe. Voll. Sie hat es nicht genommen. Sie konnte es nicht.'); },
+   take:function(A){ return drinkGlass(A); }, use:function(A){ return drinkGlass(A); },
+   g:{look:'Sein Glas für mich. Ich lasse es stehen. Etwas anderes kann ich damit ja nicht machen.'}},
+ {id:'glasses',name:'Wassergläser',vis:function(S){ return !S.glassTaken; },r:R3.rect(74,84,41,50,38,46),st:R3.st(98,40,'L'),reach:'H',
+   look:'Zwei Wassergläser vom Markt. Sie passen nicht zusammen. Ich auch nicht zu ihnen.',
+   take:async function(A){ if (A.flag('split.intro.meet') && !A.flag('split.intro.glass')){ await A.reach(function(){ A.set('glassTaken',true); A.give('glass'); }); return A.m('Ein Glas. Das macht man so, wenn jemand in der Wohnung steht. Auch wenn er nicht da sein dürfte.'); }
+     if (A.G.phase==='i1m') return A.m('Wasser trinke ich aus dem Hahn. Wie ein Student.'); return A.m('Ich habe keinen Durst. Nur Kopfweh.'); },
+   g:{look:'Gläser. Ich weiß noch, wie sich Glas anfühlt. Kalt und glatt.'}},
  {id:'cups',name:'Kaffeetassen',r:[157,72,18,8],st:R3.st(168,20,'B'),look:'Drei Tassen. Alle leer, alle von gestern. Oder von vorgestern.',take:'Ich spüle sie morgen. Das sage ich seit Sonntag.',g:{look:'Drei Tassen. Er trinkt nie aus.'}},
  {id:'ashtray',name:'Aschenbecher',r:[210,74,10,6],st:R3.st(214,22,'B'),look:'Voll. Ich rauche nicht viel. Nur nachts, wenn ich nicht schlafen kann. Also viel.',take:'Den leere ich, wenn er überläuft. Er läuft über.',g:{look:'Er raucht, wenn er wach liegt. Dann ist der Rauch das Einzige, das sich im Zimmer bewegt. Außer mir.'}},
  {id:'lamp',name:'Schreibtischlampe',r:[216,58,14,24],st:R3.st(222,22,'B'),look:'Die Lampe hat drei Stellungen: zu hell, zu dunkel und kaputt.',use:'Ich lasse sie, wie sie ist.',g:{look:'Das Licht, unter dem er nachts die fremden Sätze schreibt.'}},
@@ -122,9 +140,12 @@ var HS=[
    look:function(A){ return A.S.ansBlink?A.m('Das rote Licht blinkt. Eine Nachricht. Wahrscheinlich Vesna. Es ist immer Vesna.'):A.m('Keine neuen Nachrichten. So ist es mir am liebsten.'); },
    use:async function(A){ if (!A.S.ansBlink) return A.m('Keine neuen Nachrichten.'); return playMessage(A); },
    g:{look:'Eine Maschine, die für ihn zuhört. Ich kenne das.'}},
- {id:'shelf',name:'Bücherregal',r:[121,28,30,52],st:R3.st(136,20,'B'),look:'Wörterbücher. Deutsch, Italienisch, Englisch. Die einzigen, die mir nie widersprechen.',take:'Ich brauche heute keine Wörter. Ich habe zu viele.',g:{look:'Bücher voller Wörter für Dinge, die man trotzdem nicht sagt.'}},
+ {id:'shelf',name:'Bücherregal',r:[121,28,30,52],st:R3.st(136,20,'B'),look:'Wörterbücher. Deutsch, Italienisch, Englisch. Die einzigen, die mir nie widersprechen.',take:'Ich brauche heute keine Wörter. Ich habe zu viele.',
+   use:async function(A){ if (A.G.phase==='pro' && A.hasNote('pro_spia') && !A.flag('pro.translated')){ await A.reach(); return A.m('„Spia“: Leuchte, Kontrolllicht. Auch: Spion. Das Wörterbuch weiß, was das Wort heißt. Welche Leuchte gemeint ist, weiß es nicht.'); } return A.m('Ich schlage nach, was ich schon weiß. Das beruhigt.'); },
+   g:{look:'Bücher voller Wörter für Dinge, die man trotzdem nicht sagt.'}},
  {id:'photo',name:'umgedrehtes Foto',r:[123,83,12,7],st:R3.st(130,20,'B'),reach:'M',
-   look:async function(A){ if (A.S.photoUp){ await A.m('Das Foto liegt mit dem Bild nach oben. Ein Junge, eine alte Frau, eine Straßenbahn.'); await A.m('Ich habe es nicht umgedreht. Ich weiß, dass ich es nicht umgedreht habe.'); if (A.malaHere()) await A.g('Der Pullover war dir zu groß.'); return; }
+   look:async function(A){ if (A.G.phase==='i1m'){ if (A.S.photoUp){ await A.m('Das Foto liegt mit dem Bild nach oben. Ein Junge, eine alte Frau, eine Straßenbahn.'); return A.m('Das war ich. Im Halbschlaf. Ich muss es gewesen sein.'); } return A.m('Das Foto liegt mit dem Bild nach unten. Wie immer.'); }
+     if (A.S.photoUp){ await A.m('Das Foto liegt mit dem Bild nach oben. Ein Junge, eine alte Frau, eine Straßenbahn.'); await A.m('Ich habe es nicht umgedreht. Ich weiß, dass ich es nicht umgedreht habe.'); if (A.malaHere()) await A.g('Der Pullover war dir zu groß.'); return; }
      if (A.first('photoLook')) return A.m('Ein Foto, mit dem Bild nach unten. Das liegt da schon lange so.'); return A.m('Es liegt richtig so.'); },
    take:async function(A){ if (A.S.photoUp){ await A.reach(); A.set('photoUp',false); A.sfx('paper'); return A.m('Ich drehe es wieder um. Mit dem Bild nach unten. So gehört es.'); }
      if (!A.first('photoTurn')) return A.m('Einmal reicht.'); await A.reach(); await A.memory({title:'Ein altes Foto',tint:'memory',draw:M.drawMarkoPhoto,lines:['Ein Junge in einem gestreiften Pullover. Neben ihm eine alte Frau mit Kopftuch.','Hinter ihnen eine Straßenbahn. Auf der Tafel: 3.','Ich lege es zurück. Mit dem Bild nach unten.']}); A.setFlag('pro.photo'); },
@@ -135,11 +156,14 @@ var HS=[
    take:'Der bleibt oben. Da gehört er hin.', open:'Nein.', g:{look:'Du hast ihn nie aufgemacht.',sense:'Da drin ist kein Nachhall. Nur Staub. Der Nachhall ist in dir.'}},
  {id:'dzezva',name:'Džezva',vis:function(S){ return !S.dzezvaTaken; },r:R3.rect(74,86,43,50,14,22),st:R3.st(98,22,'L'),reach:'H',
    look:'Die Džezva meiner Großmutter. Messing, innen verzinnt, der Griff zweimal geklebt. Das Einzige aus Sarajevo, das ich jeden Tag benutze.',
-   take:async function(A){ await A.reach(function(){ A.set('dzezvaTaken',true); A.give('dzezva'); }); await A.m('Kaffee kocht man nicht, sagte sie. Man wartet auf ihn.'); },
+   take:async function(A){ if (A.G.phase==='i1m') return A.m('Heute nicht. Heute will ich einen Kaffee, den jemand anders gemacht hat.');
+     await A.reach(function(){ A.set('dzezvaTaken',true); A.give('dzezva'); }); await A.m('Kaffee kocht man nicht, sagte sie. Man wartet auf ihn.'); },
    g:{look:'Sie riecht nach Kaffee und nach jemandem, der nicht mehr da ist.'}},
  {id:'tin',name:'Kaffeedose',r:R3.rect(74,84,41,50,28,36),st:R3.st(98,30,'L'),reach:'H',look:'Gemahlener Kaffee, fein wie Mehl. Fast leer. Für eine Kanne reicht es.',take:'Ich nehme nur, was in die Džezva passt. Wenn es so weit ist.',g:{look:'Eine Dose. Nicht meine.'}},
- {id:'sink',name:'Spüle',r:R3.rect(72,92,73,80,30,46),st:R3.st(98,36,'L'),reach:'M',look:'Eine Spüle, eine Tasse von gestern, ein tropfender Hahn. Er tropft im Takt des Regens.',use:'Ich drehe den Hahn zu. Er tropft weiter.',
-   with:{dzezva:async function(A){ await A.reach(); A.sfx('pour'); A.take('dzezva'); A.give('dzezvaW'); await A.m('Kaltes Wasser, bis knapp unter den Rand.'); }, dzezvaW:'Da ist schon Wasser drin.'},
+ {id:'sink',name:'Spüle',r:R3.rect(72,92,73,80,30,46),st:R3.st(98,36,'L'),reach:'M',look:'Eine Spüle, eine Tasse von gestern, ein tropfender Hahn. Er tropft im Takt des Regens.',
+   use:async function(A){ if (A.G.phase==='i1m'){ await A.reach(); A.sfx('pour'); A.setFlag('split.afterIvka.water'); return A.m('Ich trinke aus der hohlen Hand. Kalt. Das hilft mehr als jeder Kaffee.'); } return A.m('Ich drehe den Hahn zu. Er tropft weiter.'); },
+   with:{dzezva:async function(A){ await A.reach(); A.sfx('pour'); A.take('dzezva'); A.give('dzezvaW'); await A.m('Kaltes Wasser, bis knapp unter den Rand.'); }, dzezvaW:'Da ist schon Wasser drin.',
+     glass:async function(A){ await A.reach(); A.sfx('pour'); A.take('glass'); A.give('glassW'); await A.m('Leitungswasser. Mehr habe ich nicht anzubieten.'); }, glassW:'Das Glas ist schon voll.'},
    g:{look:'Wasser, das nirgends hinwill.'}},
  {id:'stove',name:'Herd',r:R3.rect(72,92,73,80,10,26),st:R3.st(98,24,'L'),reach:'M',look:'Zwei Platten. Eine funktioniert.',use:'Den Herd anstellen und nichts darauf? So weit bin ich noch nicht.',
    with:{dzezva:'Erst Wasser. Sonst kocht nur das Messing.', dzezvaW:function(A){ if (A.G.phase==='pro') return makeCoffee(A); return boilWater(A); },
@@ -149,13 +173,18 @@ var HS=[
  {id:'fridge',name:'Kühlschrank',r:R3.rect(72,96,54,98,56,74),st:R3.st(100,60,'L'),look:'Ein Kühlschrank, der seit 1987 brummt.',open:'Eine Zitrone, ein Glas Senf, zwei Bier. Ein Stillleben.',g:{look:'Er brummt. Für mich klingt das wie ein Lied ohne Worte.'}},
  {id:'bed',name:'Bett',r:r(236,262,86,98,12,52),st:R3.st(226,40,'R'),reach:'L',
    look:'Ungemacht. Ich schlafe schlecht, also lohnt sich das Machen nicht.',
-   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); } return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
+   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); }
+     if (A.G.phase==='i1m') return A.m('Nicht noch einmal. Ich habe zum ersten Mal seit Tagen geschlafen. Das reicht für eine Woche.');
+     return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
    g:{look:'Er schläft nicht. Er liegt nur.'}},
  {id:'coat',name:'Garderobe',r:[300,48,10,18],st:R3.st(226,62,'R'),look:'Ein Haken. Sonst hängt mein Mantel hier. Ich habe ihn an.',g:{look:'Ein Haken für einen Mantel.'}},
  {id:'door',name:'Wohnungstür',r:[278,30,30,90],st:R3.st(228,62,'R'),exit:{to:'map'},pri:2,
-   canExit:async function(A){ var p=A.G.phase;
-     if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Ich bleibe noch. Hinter mir blinkt etwas rot.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht mit diesem Kopf. Der ist noch nicht wach.'); return false; } return true; }
+   canExit:async function(A){ var p=A.G.phase, fresh=!A.flag('split.intro.legacy');
+     if (p==='pro'){ if (!A.flag('pro.msg')){ await A.m('Ich bleibe noch. Hinter mir blinkt etwas rot.'); return false; } if (!A.flag('pro.coffee')){ await A.m('Nicht mit diesem Kopf. Der ist noch nicht wach.'); return false; }
+       if (fresh && !A.flag('pro.translated')){ await A.m('Erst Seite einunddreißig. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
+     // Mittwochabend: bevor er geht, das erste lange Kennenlernen (nur einmal; alte Spielstände in der Stimmenphase behalten den alten Weg)
+     if (p==='c1' && fresh && A.flag('split.intro.v') && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
      if (p==='c3' && !A.flag('c3.call')){ await A.m('Das Telefon. Es klingelt schon wieder.'); return false; }
      return true; },
    look:'Die Tür. Drei Schlösser, von denen ich zwei benutze.', g:{look:'Seine Tür. Für mich ist sie keine.'}}
@@ -163,10 +192,43 @@ var HS=[
 // ---------------------------------------------------------------- Szenen
 async function playMessage(A){ A.set('ansBlink',false); A.sfx('beep'); await A.wait(400);
   await A.phoneVoice('„Marko, Vesna. Für die Stillen. Ivka Perić, fünfundachtzig, Veli Varoš, Hausnummer vierzehn. Keine Verwandten, jedenfalls keine bekannten.“');
-  await A.phoneVoice('„Freitag kommt die Stadt und räumt die Wohnung. Die Nachbarin, Gospođa Zdenka, hat den Schlüssel. Zweitausend Zeichen, bis morgen früh. Danke dir.“');
-  A.sfx('beep'); A.setFlag('pro.msg'); A.note('pro_auftrag'); A.note('pro_zdenka',true); A.unlock('varos');
+  var fresh=!!A.flag('split.intro.v');
+  if (fresh) await A.phoneVoice('„Von der Stadt habe ich eine Notiz: alleinstehend, keine Kontakte zur Nachbarschaft. Freitag räumen sie die Wohnung. Die Nachbarin, Gospođa Zdenka, hat den Schlüssel. Zweitausend Zeichen, bis morgen früh. Danke dir.“');
+  else await A.phoneVoice('„Freitag kommt die Stadt und räumt die Wohnung. Die Nachbarin, Gospođa Zdenka, hat den Schlüssel. Zweitausend Zeichen, bis morgen früh. Danke dir.“');
+  A.sfx('beep'); A.setFlag('pro.msg'); A.note('pro_auftrag'); A.note('pro_zdenka',true); if (fresh) A.note('pro_noone',true); A.unlock('varos');
   await A.m('Die Stillen. Menschen, die allein sterben, bekommen in Vesnas Zeitung zweitausend Zeichen. Mehr, als die meisten im Leben bekommen.');
+  if (fresh){ await A.wait(500); A.sfx('beep'); await A.wait(300);
+    await A.phoneVoice('„Marko, Sanja. Der Brief aus Triest liegt immer noch bei mir. Du hast Dienstag gesagt. Heute ist Dienstag. Die rufen um vier wieder an.“','sanja');
+    A.sfx('beep'); A.unlock('bar'); await A.m('Sanja zuerst. Die Toten haben Zeit. Lieferanten nicht.'); }
   }
+// ---------------------------------------------------------------- Prolog: Seite 31 (die Übersetzung, die heute raus muss)
+async function readClientLetter(A){ await A.doc({style:'letter',title:'Kaffee Kovač GmbH · Graz',w:236,lines:['Sehr geehrter Herr Vuković,','anbei die Seiten 1–11 und 13–48 der Bedienungsanleitung.','Seite 12 (Zeichnungen) reichen wir nach.','Wir bitten um Lieferung bis heute.','Mit freundlichen Grüßen','R. Kovač']});
+  await A.m('Seite zwölf reichen sie nach. Seit drei Wochen.'); }
+async function translatePage(A){ await A.walk(188,106); await A.face('B'); A.sfx('typing');
+  await A.menuLoop(function(){ return [
+    {t:'Der letzte Satz auf Seite 31',once:'tr1',silent:true,go:async function(A){ await A.doc({style:'letter',title:'Manuale d’uso · pagina 31',w:236,lines:['8.4  Pulizia della caldaia','','Prima di svitare il tappo della caldaia,','attendere che la spia si spenga.']});
+        await A.m('„Bevor Sie den Kesseldeckel abschrauben, warten Sie, bis die Leuchte erlischt.“'); await A.m('So steht es da. Nur hat die Maschine zwei Leuchten. Eine grüne und eine rote.');
+        await A.m('Welche gemeint ist, zeigt die Zeichnung auf Seite zwölf. Seite zwölf hat mir der Kunde nicht geschickt.'); A.note('pro_spia'); }},
+    {t:'Weiter vorn nachlesen: Seite 30',once:'tr2',silent:true,if:A.hasNote('pro_spia'),go:async function(A){ A.sfx('click'); await A.doc({style:'letter',title:'Seite 30 · meine Übersetzung von gestern',w:236,lines:['8.2  Kontrollleuchten','','Grüne Leuchte (6): Die Maschine ist betriebsbereit.','Rote Leuchte (5): Im Kessel ist noch Druck.']});
+        await A.m('Die rote Leuchte zeigt den Druck im Kessel. Und den Kesseldeckel schraubt man nur ohne Druck ab.'); A.note('pro_red'); }},
+    {t:'Den Satz fertig übersetzen und abschicken',silent:true,if:A.hasNote('pro_spia'),go:async function(A){ var c=await A.choose([
+        {t:'„… warten Sie, bis die Leuchte erlischt.“ So steht es da. Abschicken.',id:'quick',silent:true},
+        {t:'„… bis die rote Druckleuchte (5) erloschen ist.“ Dazu eine Notiz an den Kunden.',id:'careful',silent:true},
+        {t:'Noch nicht.',id:'later',silent:true}],{title:'Seite 31',conv:false});
+      if (c==='later') return;
+      if (c==='careful' && !A.hasNote('pro_red')){ await A.m('Rot oder grün? Ich rate nicht bei einem Kessel, der unter Druck steht. Erst nachsehen.'); return; }
+      A.G.flags['split.intro.translation']=c; A.sfx('typing'); await A.wait(500);
+      if (c==='careful') await A.m('Und an den Kunden: „Seite 31 nennt nur ‚die Leuchte‘. Nach Seite 30 ist die rote Druckleuchte gemeint. Bitte prüfen. Seite 12 fehlt mir noch.“');
+      else await A.m('Wörtlich ist auch richtig. Sagt man. Der Kunde will es heute.');
+      A.sfx('click'); await A.m('Abgeschickt. Seite einunddreißig von achtundvierzig.'); A.setFlag('pro.translated'); return 'bye'; }},
+    {t:'Später weitermachen',bye:true,silent:true}
+  ]; });
+  if (A.flag('pro.translated')) await standUpDizzy(A); }
+// beim Aufstehen vom Schreibtisch: nicht zum ersten Mal, und Marko nimmt es hin
+async function standUpDizzy(A){ if (A.flag('split.intro.desk')) return; A.setFlag('split.intro.desk'); await A.wait(400); await A.anim('steady'); A.sfx('creak');
+  await A.m('…'); await A.m('Aufstehen, und der Boden gibt einen halben Schritt nach. Ich halte mich an der Tischkante fest.');
+  await A.m('Das habe ich seit Sonntag. Der Jugo, sagt Vesna. In Split ist der Jugo an allem schuld.'); await A.wait(400);
+  await A.m('Wenn es bis Freitag nicht weg ist, gehe ich zum Arzt. Das sage ich auch seit Sonntag.'); }
 async function lookTram(A){ await A.m('Auf der beschlagenen Scheibe hat jemand eine Straßenbahn gemalt. Mit dem Finger. Vorne eine Drei.'); A.note('m_tram');
   if (A.malaHere()) await A.g('Die Drei fährt bis ganz nach hinten.'); await A.wait(500); await A.m('Ich war es. Im Halbschlaf. Wer sonst.'); }
 async function boilWater(A){ await A.reach(); A.take('dzezvaW'); A.set('steam',A.gt+45000); A.sfx('boil'); await A.m('Wasser aufsetzen. Kein Kaffee diesmal. Nur Dampf.'); }
@@ -179,6 +241,12 @@ async function writeArticle(A){ await A.walk(188,106); await A.face('B'); A.sfx(
   await A.m('Zweitausend Zeichen über eine Frau, die siebenundzwanzig Jahre lang zur Riva gegangen ist. Womit fange ich an?');
   var c=await A.choose([{t:'„Ivka Perić hat siebenundzwanzig Jahre lang auf ein Schiff gewartet.“',id:0,silent:true},{t:'„Jeden Abend um sieben ging Ivka Perić zur Riva.“',id:1,silent:true},{t:'„Ivka Perić hinterlässt zwei Tassen und einen Stuhl am Fenster.“',id:2,silent:true}],{title:'Der erste Satz',conv:false});
   A.G.flags.lead=c; A.sfx('typing'); await A.wait(600); A.sfx('typing');
+  // die Abwägung: sachlich wie die Stadt – oder das genaue Detail, das Zdenka bestätigt hat
+  if (A.flag('split.intro.v')){ await A.m('Und die Menschen um sie herum? Die Stadt schreibt: keine Kontakte.');
+    var opts=[{t:'„Angehörige sind nicht bekannt.“ So steht es in der Notiz.',id:0,silent:true}];
+    if (A.hasNote('pro_gasse')) opts.push({t:'„Familie hatte sie keine mehr. Aber in Veli Varoš tragen die Kinder ihre Mützen.“',id:1,silent:true});
+    var k=await A.choose(opts,{title:'Ein Satz über die anderen',conv:false}); A.G.flags.leadKnit=k; A.sfx('typing');
+    await A.m(k?'Das ist genauer als „keine Kontakte“. Und es stimmt. Zdenka hat es bestätigt.':'Sachlich, wie die Stadt. Es ist nicht falsch. Es ist nur nicht alles.'); }
   await A.m(['Der Rest kommt fast von allein. Das ist das Traurige an diesen Texten.','Danach schreibt sich der Rest. Leider.','Der Rest ist leicht. Die zwei Tassen waren das Schwerste.'][c]);
   A.sfx('click'); await A.m('Abgeschickt. Jetzt schlafen. Vielleicht.'); A.setFlag('pro.article'); }
 async function goToSleep(A){ await A.walk(226,118); await A.fade(8,900); A.phase('pro_night'); A.set('winOpen',true); A.rebuild(); A.placeM(214,120,'R');
@@ -188,18 +256,132 @@ async function goToSleep(A){ await A.walk(226,118); await A.fade(8,900); A.phase
   await A.walk(192,108); await A.face('B'); await A.wait(400); A.sfx('shutter'); A.set('winOpen',false); A.rebuild(); await A.wait(900);
   // in der Scheibe, hinter ihm: kaum mehr als ein Schimmer
   if (A.mala){ A.mala.visible=true; A.mala.fadeIn=A.gt; } A.sfx('shimmer'); A.music('ghost'); await A.wait(1600);
-  await A.narrate('In der dunklen Scheibe, hinter seinem eigenen Spiegelbild, steht jemand. Ein Mädchen. Ganz still.'); await A.wait(900);
-  await A.g('Es gibt Leute, die nicht weiterkommen.',{noPortrait:true}); await A.wait(1000);
-  await A.g('Du kannst mit ihnen reden.',{noPortrait:true}); await A.wait(1000);
-  await A.g('Ich kann sie finden.',{noPortrait:true}); A.note('m_find',true); await A.wait(700);
+  // eine beunruhigende Annäherung, keine Erklärung: ein Spiegelbild, dann sein Name
+  await A.narrate('In der dunklen Scheibe, hinter seinem eigenen Spiegelbild, steht jemand. Ein Mädchen. Ganz still.'); await A.wait(1600);
+  await A.g('Marko.',{noPortrait:true}); A.note('m_window',true); await A.wait(900);
   if (A.mala) A.mala.fadeOut=A.gt; A.sfx('horn'); await A.faceM('L'); await A.animM('surprise'); await A.wait(1300);
   A.malaLeave(); A.G.flags['mala.lock']=false; if (A.mala) A.mala.alpha=undefined;
-  var c=await A.choose([{t:'„Wer ist da?“',id:'who'},{t:'(Licht machen.)',id:'light',silent:true},{t:'„Ich träume.“',id:'dream'}],{title:'Nachts',conv:false});
+  var c=await A.choose([{t:'„Wer ist da?“',id:'who'},{t:'(Licht machen.)',id:'light',silent:true},{t:'(Zurück ins Bett. Nicht hinsehen.)',id:'stay',silent:true}],{title:'Nachts',conv:false});
   if (c==='who'){ await A.wait(1500); await A.m('Niemand.'); }
   else if (c==='light'){ A.sfx('click'); await A.wait(700); await A.m('Niemand. Natürlich niemand.'); }
-  else { await A.wait(1000); await A.m('Ja. Ich träume.'); }
-  A.music('silence'); await A.m('Ich schlafe zu wenig. Ich trinke zu viel Kaffee. Und ich schreibe zu viele Nachrufe.'); await A.wait(600); await A.m('Das ist alles.');
+  else { await A.wait(1200); await A.m('Ich lege mich wieder hin. Mit dem Gesicht zur Wand.'); }
+  A.setFlag('split.intro.night'); A.music('silence'); await A.m('Ich schlafe zu wenig. Ich trinke zu viel Kaffee. Und ich schreibe zu viele Nachrufe.'); await A.wait(600); await A.m('Das ist alles.');
   await A.fade(8,1200); await M.startCase1(A); }
+// ---------------------------------------------------------------- Mittwochabend: das erste lange Kennenlernen, in der eigenen Wohnung
+// Schritte: Marko prüft eine gewöhnliche Erklärung (Tür, um sie herumgehen), stellt ihr aus Gewohnheit ein Glas Wasser hin,
+// merkt, dass der Boden stillsteht – erst danach Fragen nach Namen, Wahrnehmung, Grenzen und dem ersten Anfall.
+var MEET_AT=[150,116];
+M.flatMeeting=async function(A){ var G=A.G; A.setFlag('split.intro.meet'); G.flags['mala.lock']=true;
+  await A.anim('dizzy'); await A.m('Ich will hinaus. Und dann zieht es. Nicht von der Tür her. Von hinten.');
+  await A.faceM('L'); await A.wait(500);
+  delete G.flags['mala.voice'];   // aus dem Flimmern wird eine Gestalt, die er nicht mehr überhören kann
+  if (!A.malaHere()) A.malaJoin({x:MEET_AT[0],y:MEET_AT[1],f:'R',fadeIn:false}); A.placeG(MEET_AT[0],MEET_AT[1],'R'); if (A.mala) A.mala.fadeIn=A.gt;
+  A.sfx('shimmer'); A.music('ghost'); await A.wait(1600);
+  await A.narrate('Vor dem Bücherregal steht ein Mädchen. Jeansjacke, grauer Schal. Sie steht da, als stünde sie dort schon eine Weile.');
+  await A.wait(600); await A.m('…'); await A.m('Wer bist du? Wie bist du hier hereingekommen?'); await A.g('Durch die Tür.');
+  await A.m('Die Tür ist zu.'); await A.wait(700); await A.g('Ja.'); A.save(); };
+async function meetDoor(A){ A.setFlag('split.intro.door'); A.sfx('lock'); await A.wait(300);
+  await A.m('Ich prüfe die Tür. Abgeschlossen. Zwei Schlösser und die Kette. Von innen.'); await A.wait(500);
+  if (A.malaHere()) await A.g('Ich sage doch: durch die Tür.'); await meetStep(A); }
+M.meetLook=async function(A){ if (A.flag('split.intro.round')) return A.m(A.flag('split.intro.glass')?'Sie sitzt nicht und sie steht nicht richtig. Sie ist einfach da.':'Gegen die Lampe sieht man durch sie hindurch.');
+  A.setFlag('split.intro.round'); var g=A.mala; if (!g) return;
+  await A.walk(Math.round(g.x)+20,Math.round(g.y)+3); await A.walk(Math.round(g.x)-18,Math.round(g.y)+6); await A.face('R');
+  await A.m('Ich gehe um sie herum. Sie dreht sich nicht mit, nur die Augen.'); await A.m('Gegen die Lampe sieht man durch sie hindurch. Durch die Jacke, den Schal, die Hand.');
+  await A.g('Fertig?'); await meetStep(A); };
+async function meetStep(A){ if (A.flag('split.intro.offer')) return; A.setFlag('split.intro.offer'); await A.wait(400);
+  await A.m('Gut. Dann steht da eben jemand. Und ich stehe hier wie ein schlechter Gastgeber.');
+  await A.m('Willst du … ein Glas Wasser?'); await A.g('Wenn du willst.'); }
+// das Glas: sie greift danach, die Finger gehen hindurch – sie bewegt es nicht
+M.meetGlass=async function(A){ if (A.flag('split.intro.glass')) return A.g('Ich kann es nicht halten. Das weißt du jetzt.');
+  A.take('glassW'); if (A.mala && A.marko) await A.faceM(A.mala.x<A.marko.x?'L':'R'); await A.animM('give'); await A.wait(400);
+  await A.narrate('Sie streckt die Hand aus. Die Finger gehen durch das Glas hindurch. Das Wasser bewegt sich nicht einmal.');
+  await A.wait(900); await A.g('…Entschuldige.'); await A.m('Ich stelle es hin. Auf den Schreibtisch. Irgendwohin muss es ja.');
+  A.set('glass',1); A.rebuild(); A.setFlag('split.intro.glass'); A.note('m_limits',true); M.E.headache=0;
+  await A.wait(1400); await A.m('…'); await A.m('Der Boden steht still.'); await A.m('Seit Sonntag schwankt er. Und jetzt steht er still.');
+  await A.g('Du siehst mich.'); await A.m('Und deshalb hört das auf?'); await A.g('Ich glaube, vorher hast du etwas gehört, ohne zu wissen, wen.'); await A.g('Davon wird einem schwindlig. Mir wäre es auch schwindlig.');
+  A.music('flat'); await M.meetTalk(A); };
+// danach: Fragen, knapp beantwortet, mit Lücken
+M.meetTalk=async function(A){ var G=A.G;
+  if (!A.flag('split.intro.glass')) return A.menuLoop(function(){ return [
+    {t:'Bist du eine Einbrecherin?',once:'mp1',go:async function(A){ await A.g('Was soll ich hier stehlen? Deine Tassen?'); }},
+    {t:'Raus aus meiner Wohnung. Bitte.',once:'mp2',go:async function(A){ await A.g('Ich kann nicht weit weg. Ich habe es versucht.'); }},
+    {t:'(Schweigen.)',silent:true,go:async function(A){ await A.wait(1500); await A.g('Ich warte. Das kann ich gut.'); return 'bye'; }}
+  ]; });
+  await A.menuLoop(function(){ return [
+    {t:'Wer bist du?',once:'mq1',go:async function(A){ await A.g('Mala.'); delete G.flags['mala.unknown']; A.note('m_name',true); await A.m('Das ist kein Name. So sagt man zu kleinen Mädchen.'); await A.g('Es reicht.'); }},
+    {t:'Kann dich außer mir jemand sehen?',once:'mq2',go:async function(A){ await A.g('Katzen. Manchmal ein Kind, das zu lange hinsieht.'); await A.m('Vesna? Sanja?'); await A.g('Die sehen durch mich durch und ziehen die Schultern hoch, weil es zieht.'); }},
+    {t:'Warum redest du mit mir?',once:'mq3',go:async function(A){ await A.g('Weil du antwortest.'); await A.m('Das tue ich nicht.'); await A.wait(700); await A.g('Jetzt schon.'); }},
+    {t:'Was kannst du? Und was nicht?',once:'mq4',go:async function(A){ await A.g('Ich gehe durch Türen. Ich höre, was an Dingen hängt, wenn sie lange bei jemandem waren.'); await A.g('Anfassen kann ich nichts. Das hast du gesehen.'); await A.g('Und weit weg von dir kann ich nicht. Ein paar Straßen, dann zieht es.'); A.note('m_limits',true); }},
+    {t:'Seit wann bist du hier?',once:'mq5',go:async function(A){ if (A.flag('split.intro.glimpse')){ await A.g('Seit gestern. Seit der Kirchentreppe in Varoš.'); await A.m('Da stand jemand. Ich dachte, ich hätte mich geirrt.'); await A.g('Hast du nicht.'); }
+        else await A.g('Seit gestern. Seit du in Ivkas Gasse warst.');
+        if (A.flag('split.intro.night')){ await A.m('Und letzte Nacht. Am Fenster.'); await A.g('Ich wollte nicht, dass du erschrickst. Es hat nicht geklappt.'); } }},
+    {t:'Warum fühle ich mich jetzt anders?',once:'mq6',go:async function(A){ await A.g('Vorher hast du an mir vorbeigehört. Ich glaube, davon wird einem schlecht.'); await A.m('Das ist keine Erklärung.'); await A.g('Nein. Es ist das, was ich weiß.'); }},
+    {t:'Gut. Genug für heute.',if:!!G.seen['dlg:mq1'],bye:true}
+  ]; });
+  if (!A.flag('split.intro.first')) await askFirstAttack(A);
+  if (!A.flag('split.intro.met')) await endMeeting(A); };
+// Mala fragt nach dem ersten richtigen Anfall; sie kennt nicht jeden Ort, an dem er war – eine falsche Antwort bekommt eine Rückfrage
+async function askFirstAttack(A){ var G=A.G;
+  await A.g('Darf ich dich etwas fragen?'); await A.m('Du fragst sowieso.'); await A.g('Wann war dir zum ersten Mal richtig schwindlig? Nicht das Kopfweh. So, dass du dich festhalten musstest.');
+  for (var k=0;k<6;k++){ var o=[];
+    if (G.flags['split.intro.dizzy']) o.push({t:'An der Riva. Am letzten Poller.',id:'riva'});
+    if (G.flags['split.intro.sanja']) o.push({t:'In der Bar, bei Sanja.',id:'bar'});
+    if (G.flags['split.intro.desk']) o.push({t:'Hier, am Schreibtisch.',id:'desk'});
+    if (G.flags['pro.visited']) o.push({t:'In Ivkas Wohnung.',id:'ivka'});
+    o.push({t:'Ich weiß es nicht mehr.',id:'none'});
+    var c=await A.choose(o,{title:'Mala'});
+    if (c==='riva'){ G.flags['split.intro.first']='riva'; await A.g('Am Ende der Mole.'); await A.wait(700); await A.g('Ich war hinter dir. Und vor dir war auch jemand. Du hast es nur nicht gesehen.');
+      await A.m('Da war niemand. Da war ein Poller.'); await A.g('Ja. Und jemand, der daneben wartet.'); A.note('m_first',true); return; }
+    if (c==='bar'){ await A.g('Bei Sanja? War das der Boden? Oder der Kaffee?'); await A.m('…Der Kaffee. Und mir war schlecht. Gedreht hat sich nichts.'); continue; }
+    if (c==='desk'){ await A.g('Das Aufstehen hast du seit Tagen, hast du gesagt. Ich meine das andere. Wo du nicht mehr wusstest, wo unten ist.'); continue; }
+    if (c==='ivka'){ await A.g('Da hattest du Kopfweh. Und dir war schlecht. Aber musstest du dich festhalten?'); await A.m('Nein. Da nicht.'); continue; }
+    await A.g('Denk an gestern Abend. An die Dämmerung.'); if (!G.flags['split.intro.dizzy']) break; }
+  G.flags['split.intro.first']='told'; await A.g('Ich glaube, es war an der Riva. Ich war dabei. Vor dir hat jemand gewartet.'); A.note('m_first',true); }
+async function endMeeting(A){ var G=A.G; delete G.flags['mala.unknown']; delete G.flags['mala.voice']; G.flags['mala.noSwitch']=true; G.flags['mk.ache']=0; M.E.headache=0; A.note('m_name',true);
+  await A.m('Damit das klar ist: Ich glaube nicht an dich.'); await A.g('Musst du nicht.');
+  await A.m('Ich gehe jetzt an die Luft. Vesna hat es verordnet.'); await A.g('Ich komme mit.'); await A.m('Und wenn ich Nein sage?'); await A.g('Dann komme ich trotzdem. Weit weg von dir kann ich nicht.');
+  A.setFlag('split.intro.met'); G.flags['mala.lock']=false; A.music('flat'); A.save(); }
+// ---------------------------------------------------------------- nach Ivka: nach Hause, zu Bett – und Mala gleitet ihm weg
+M.afterIvkaHome=async function(A){ var G=A.G;
+  await A.goto('flat',{x:226,y:122,f:'L',noEnter:true}); A.music('silence'); await A.wait(500);
+  await A.walk(228,119); await A.face('R'); A.placeM(232,119,'R'); A.idleM('sit');
+  if (A.malaHere()){ A.placeG(196,112,'L'); G.flags['mala.lock']=true; }
+  await A.m('Die Schuhe. Den Mantel nicht mehr.'); await A.g('Du solltest schlafen.'); await A.m('Das sagt Vesna auch.'); await A.g('Ich bleibe am Fenster.'); await A.wait(800); await A.m('Mhm.');
+  await A.wait(1200); await A.fade(4,1400); await A.g('Marko?',{voice:true,noPortrait:true}); if (A.mala) A.mala.fadeOut=A.gt; await A.wait(1700);
+  await A.g('Marko …',{voice:true,noPortrait:true}); await A.fade(8,1800);
+  A.malaLeave(); G.flags['mala.lock']=false; G.flags['split.afterIvka.home']=true; G.flags['split.afterIvka.away']=true; A.idleM(null);
+  M.E.screen='card'; await A.card({kicker:'Zwischenspiel',title:'Ein gewöhnlicher Morgen',time:'Donnerstag, 17. November · Morgen',ms:4400});
+  A.phase('i1m'); var F=A.R('flat'); F.winOpen=false; await A.goto('flat',{x:232,y:119,f:'R',noEnter:true,fade:false}); A.placeM(232,119,'R'); A.save();
+  await M.morningWake(A); };
+M.morningWake=async function(A){ A.idleM('sit'); await A.fade(0,1600); A.sfx('gust'); A.music('flat');
+  await A.m('Morgen. Licht. Die Bura hat den Himmel blank geputzt.'); await A.wait(600); await A.m('Kein Kopfweh. Zum ersten Mal seit einer Woche kein Kopfweh.');
+  await A.wait(800); A.idleM(null); await A.face('L'); await A.wait(700);
+  await A.m('Das Fenster ist zu. Der Riegel hält.'); await A.wait(500); await A.m('Niemand am Fenster. Keine Stimme.'); await A.wait(1000);
+  await A.m('Der Nachruf. Ivkas Wohnung. Drei Nächte ohne Schlaf. Ich habe alles mit ins Bett genommen.');
+  await A.m('Eine tote Frau auf der Mole. Ein Mädchen, das durch Türen geht. Ein Tor aus Stein, mitten im Licht.');
+  await A.wait(800); await A.m('Ein Traum. Ein langer, genauer Traum. Ich habe immer genau geträumt.');
+  A.setFlag('split.afterIvka.wake'); A.save(); };
+// am Morgen: das Glas vom Vorabend, die Antwort des Kunden, der versandte Nachruf, das Notizbuch
+async function drinkGlass(A){ if (A.G.phase!=='i1m') return A.m('Das ist nicht mein Glas. Ich weiß, wie das klingt.');
+  await A.reach(); A.sfx('pour'); A.set('glass',0); A.rebuild(); A.setFlag('split.afterIvka.glass');
+  await A.m('Ich trinke es aus. Es schmeckt nach Leitung. Nach nichts sonst.'); }
+async function morningLaptop(A){ var F=A.G.flags; await A.walk(188,106); await A.face('B'); A.sfx('typing');
+  await A.menuLoop(function(){ return [
+    {t:'Die Mail aus Graz',once:'mo1',silent:true,go:async function(A){ var t=F['split.intro.translation'];
+        if (t==='careful'){ await A.doc({style:'letter',title:'Kaffee Kovač GmbH · Graz',w:236,lines:['Sehr geehrter Herr Vuković,','danke für den Hinweis zu Seite 31 – Sie haben recht, die rote.','Seite 12 schicken wir heute.','Die nächste Anleitung hätten wir auch gern von Ihnen.','R. Kovač']});
+          await A.m('Ein Kunde, der sich bedankt. Wenigstens das habe ich nicht geträumt.'); }
+        else if (t==='quick'){ await A.doc({style:'letter',title:'Kaffee Kovač GmbH · Graz',w:236,lines:['Sehr geehrter Herr Vuković,','danke für die schnelle Lieferung.','Unser Techniker fragt zu Seite 31: welche Leuchte?','Die grüne geht nie aus, solange die Maschine läuft.','Bitte bis Montag korrigieren. R. Kovač']});
+          await A.m('Die rote. Ich wusste es am Dienstag schon. Ich hatte es nur eilig.'); A.sfx('typing'); await A.wait(500); A.sfx('click'); F['split.afterIvka.fixed']=true; await A.m('Korrigiert. Zwei Wörter. Am Dienstag hätten sie mich eine Minute gekostet.'); }
+        else await A.m('Werbung für Druckerpatronen. Und eine Mail von Vesna: „Steht drin. Seite vierzehn. Danke.“'); }},
+    {t:'Den Nachruf noch einmal lesen',once:'mo2',silent:true,go:async function(A){ await M.readNewspaper(A,true);
+        await A.m('Abgeschickt am Dienstag, kurz vor Mitternacht. Zwei Tage lang habe ich an sie gedacht. An ihre Tassen, ihren Stuhl, ihr Boot.');
+        await A.m('Natürlich träume ich dann von ihr. Der Text erklärt den Traum.'); if (F.leadKnit===1){ await A.wait(400); await A.m('Die Mützen und die Socken habe ich nicht geträumt. Die hat Zdenka bestätigt. Am Dienstag. Vor allem anderen.'); } }},
+    {t:'Zuklappen',bye:true,silent:true}
+  ]; }); }
+M.onOpenNotes=function(){ var A=M.API, G=M.GS; if (G.phase!=='i1m' || G.flags['split.afterIvka.notes'] || M.E.busy || M.E.screen!=='game') return false; G.flags['split.afterIvka.notes']=true;
+  M.E.busy=true; (async function(){ try{ await A.m('Mein Notizbuch. Ein Fahrtenbuch von 1984. Ein Seesack. Ein Brief, über Dampf geöffnet. Alles in meiner Schrift.');
+      await A.m('Ich war im Hafenamt. Ich war bei Dinko. Das war alles wirklich. Nur die Frau auf der Mole hat mein Kopf dazugeschrieben.'); }
+    finally{ M.E.busy=false; } M.E.openNotes(); })(); return true; };
 // ---------------------------------------------------------------- Raum
 M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   music:function(GS){ return GS.phase==='pro_night'?'silence':'flat'; },
