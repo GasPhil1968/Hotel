@@ -50,10 +50,11 @@ function lampAt(x,y){ var dx=(x-LAMP[0])/120, dy=(y-LAMP[1]-70)/70, d=dx*dx+dy*d
 // Lichtstrahl vom Fenster schräg nach rechts unten auf den Boden
 function beamAt(x,y){ var t=(y-WIN.y0)/((FY+18)-WIN.y0); if (t<0||t>1) return 0; var xa=lerp(WIN.x0,WIN.x0+40,t), xb=lerp(WIN.x1,WIN.x1+62,t); if (x<xa||x>xb) return 0; var e=Math.min(x-xa,xb-x)/6; return Math.min(1,e)*(1-t*0.5); }
 function winAt(x,y){ var dx=(x-WIN.x0-30)/120, dy=(y-80)/70, d=dx*dx+dy*dy; return d<1?Math.pow(1-d,1.2):0; }
+function glassAt(x,y){ var d=Math.hypot((x-296)/50,(y-40)/50); return d<1?(1-d):0; }
 function vig(x,y){ var cx=(x-190)/240, cy=(y-76)/100, v=cx*cx+cy*cy; return -Math.max(0,v-0.3)*2.0; }
 var BEAM=1;
 function shade(b,ox,oy,tod,mask){
-  if (tod==='day'){ M.light(b,function(x,y){ return -0.6+winAt(x,y)*0.7+lampAt(x,y)*0.35+beamAt(x,y)*0.9*BEAM+vig(x,y)*1.2; },ox,oy,mask); return; }
+  if (tod==='day'){ M.light(b,function(x,y){ return -0.85+winAt(x,y)*0.8+lampAt(x,y)*0.3+beamAt(x,y)*0.9*BEAM+vig(x,y)*1.5+glassAt(x,y)*0.5; },ox,oy,mask); return; }
   var L=levels(tod), n=L.length;
   for (var y2=0;y2<b.h;y2++) for (var x2=0;x2<b.w;x2++){ var k2=y2*b.w+x2, c2=b.d[k2]; if (c2===T) continue; var X2=x2+ox, Y2=y2+oy; if (mask && !mask(X2,Y2)) continue;
     var f=Math.min(1,lampAt(X2,Y2)+(tod==='night'?0:winAt(X2,Y2)*0.35))*(n-1), i=Math.floor(f); if (f-i>bayer(X2,Y2)) i++; if (i>n-1) i=n-1; b.d[k2]=M.tintPx(L[i],c2,X2,Y2); } }
@@ -72,7 +73,7 @@ function wallSide(u,v,x,y,sd){ var Y=v+RECT[1], c=sd==='L'?rollerWall(u*1.5,Y,x,
 // Parkett im Fischgrät
 function floorTex(xb,d,x,y){ var f=R3.floor(x,y); if (!f) return P.k1; var X=f.X, Z=f.Z*1.3, a=Math.floor((X+Z)/6), b=Math.floor((X-Z)/6), even=((a+b)&1)===0, u=even?(X+Z):(X-Z), fr=((u/6)%1+1)%1;
   var c=even?P.w3:P.w2; if (fr<0.1) c=P.w1; var h=hash(a,b); if (h<0.12) c=P.w2; else if (h>0.94) c=P.w4; var g=fbm(X*0.04,Z*0.06); if (g>0.64 && bayer(x,y)<(g-0.64)*4) c=M.UP[c];
-  if (f.X>SPLIT-2) c=((Math.floor(X/12)+Math.floor(f.Z/12))&1)?P.s3:P.s4;                                              // Treppenhaus: Terrazzoplatten
+  if (f.X>SPLIT-2){ var tz=hash(Math.floor(X*1.3),Math.floor(f.Z*1.7)); c=(tz<0.1)?P.s2:((tz>0.92)?P.t3:P.s3); if ((Math.floor(X)%20)===0||(Math.floor(f.Z)%20)===0) c=P.s2; }   // Treppenhaus: Terrazzo
   return c; }
 function ceilTex(xb,d,x,y){ if (xb>SPLIT) return undefined; var f=fbm(xb*0.02,d*0.06); return (f>0.62 && bayer(x,y)<(f-0.62)*3)?P.s4:P.s5; }
 
@@ -98,7 +99,7 @@ function kidsRoom(b,tod){ var x, y, K=KID, bk={x0:K.x0+10,x1:K.x1-6,y0:K.y0,y1:K
       var bc=[P.r3,P.y4,P.g4,P.b2,P.d4][(Math.floor((x-bk.x0)/11)+Math.floor((y+(Math.floor((x-bk.x0)/11)&1)*6)/12)*2)%5];
       if (d<2.4) c=(d<1)?M.UP[bc]:bc; else if (cu===5 && cv>6 && cv<11) c=P.s4; if (y>=bk.y1-3) c=(y===bk.y1-3)?P.s6:P.s4; }
     else if (y>=bk.y1){ var fx=(x-KVP[0])*(bk.y1-KVP[1])/Math.max(1,(y-KVP[1])); c=((Math.floor((fx+400)/6))&1)?P.w3:P.w4; if (hash(Math.floor(fx/6),3)<0.3) c=P.w2; }   // Dielen
-    else c=(x<bk.x0)?P.b3:P.b2;                                                                                                       // Seitenwände
+    else c=(x<bk.x0)?((x<bk.x0-5)?P.b1:P.b2):P.b1;                                                                                  // Seitenwände im Schatten
     b.px(x,y,c); }
   // kleines Fenster mit Vorhang an der Rückwand
   b.rect(bk.x0+3,6,10,10,P.s6); b.rect(bk.x0+4,7,8,8,tod==='night'?P.n1:P.b4); b.vl(bk.x0+8,7,14,P.s6); b.rect(bk.x0+1,5,3,13,P.r3); b.rect(bk.x0+12,5,3,13,P.r3);
@@ -176,13 +177,14 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // ---- Treppe aus Terrazzo mit Holzhandlauf, Absatz und die offene Tür zum Kinderzimmer
   stairs(b,tod);
   kidsRoom(b,tod); for (y=KID.y0;y<KID.y1;y++) for (x=KID.x0;x<KID.x1;x++) REG[y*W+x]=1;
-  // Türrahmen und offener Türflügel
-  for (y=KID.y0;y<KID.y1;y++){ b.px(KID.x0-1,y,P.w3); b.px(KID.x0-2,y,P.w1); b.px(KID.x1,y,P.w3); b.px(KID.x1+1,y,P.w1); }
+  // Türrahmen (Holz), Schwelle und offener Türflügel
+  for (y=KID.y0;y<KID.y1;y++){ b.px(KID.x0-1,y,P.w4); b.px(KID.x0-2,y,P.w2); b.px(KID.x0-3,y,P.w1); b.px(KID.x1,y,P.w4); b.px(KID.x1+1,y,P.w2); b.px(KID.x1+2,y,P.w1); }
+  b.hl(KID.x0-3,KID.x1+2,KID.y1,P.w3); b.hl(KID.x0-3,KID.x1+2,KID.y1+1,P.w1);
   b.poly([[KID.x0,0],[KID.x0+8,2],[KID.x0+8,KID.y1-4],[KID.x0,KID.y1]],function(xx,yy){ return ((yy%12)<1)?P.s4:P.s5; }); for (y=0;y<KID.y1;y++){ REG[y*W+KID.x0]=0; } b.rect(KID.x0+6,30,2,2,P.y3);
   // ---- Deckenlampe (Glasschale)
   var lp=R3.p(LAMP[0]-14,RECT[1],26); LAMP=[rnd(lp[0]),rnd(lp[1])+8]; b.vl(LAMP[0],rnd(lp[1]),LAMP[1]-2,P.m2); b.ellipse(LAMP[0]+0.5,LAMP[1]+1,7,2.6,P.s6); b.hl(LAMP[0]-6,LAMP[0]+6,LAMP[1]+2,P.s4);
   // ---- Licht
-  shade(b,0,0,tod,function(x,y){ return REG[y*W+x]!==2 && REG[y*W+x]!==1; });
+  shade(b,0,0,tod,function(x,y){ var g=REG[y*W+x]; return g!==2 && g!==1 && g!==3; });
   // das Kinderzimmer: still, kühler, etwas heller (eigenes Fenster)
   if (tod==='day') M.light(b,function(x,y){ return -0.25+Math.max(0,1-Math.hypot((x-KID.x0-18)/30,(y-10)/26))*0.6; },0,0,function(x,y){ return REG[y*W+x]===1; });
   else M.tintApply(b,M.TINT[tod]||M.TINT.night,KID.x0,KID.y0,KID.x1-KID.x0,KID.y1-KID.y0,function(x,y){ return REG[y*W+x]===1; });
@@ -193,16 +195,30 @@ var DRAWER=[0,0,0,0], TVR=[0,0,0,0], TVS=[0,0,0,0];
 
 function stairs(b,tod){ var S=STAIR, n=S.n, i, x, y;
   var rise=(FY-S.Y1)/n, run=(S.X1-S.X0)/n;
-  // Wangenwand unter der Treppe (verputzt) und die Stufen (Terrazzo), Absatz
+  // Treppenwange (verputzt, unter den Stufen massiv) und die Stufen: Trittflächen aus Terrazzo, Setzstufen dunkler, Kanten hell
+  var wq=[R3.p(S.X0,FY,S.Z1),R3.p(S.X1,S.Y1,S.Z1),R3.p(RECT[2],S.Y1,S.Z1),R3.p(RECT[2],FY,S.Z1)];
+  b.poly(wq,function(xx,yy){ var f=fbm(xx*0.05,yy*0.06); return (f>0.66 && bayer(xx,yy)<(f-0.66)*3)?P.s3:P.s4; });
+  // Sockel und eine kleine Abstelltür unter der Treppe
+  var sk0=R3.p(S.X0,FY,S.Z1), sk1=R3.p(RECT[2],FY,S.Z1); for (x=rnd(sk0[0]);x<rnd(sk1[0]);x++){ b.px(x,rnd(sk0[1])-1,P.s2); b.px(x,rnd(sk0[1])-2,P.s3); }
+  var ud=[R3.p(S.X0+26,FY-2,S.Z1),R3.p(S.X0+44,FY-2,S.Z1),R3.p(S.X0+44,FY-26,S.Z1),R3.p(S.X0+26,FY-22,S.Z1)];
+  b.poly(ud.map(function(q){ return [q[0]-1,q[1]+1]; }),P.w1); b.poly(ud,function(xx,yy){ return ((xx+(yy>>2))%6===0)?P.w2:P.w3; }); var uk=rp(R3.p(S.X0+41,FY-12,S.Z1)); b.px(uk[0],uk[1],P.y3); b.px(uk[0],uk[1]+1,P.y2);
   for (i=0;i<n;i++){ var X0=S.X0+i*run, X1=S.X0+(i+1)*run, Yt=FY-(i+1)*rise;
-    R3.box(b,X0,S.X1+52,Yt,Yt+rise,S.Z0,S.Z1,{top:function(xx,yy){ return (hash(xx,yy)<0.15)?P.s3:((hash(xx*2,yy)<0.08)?P.t3:P.s4); },front:function(xx,yy){ return (hash(xx,yy*2)<0.1)?P.s2:P.s3; }}); }
-  R3.box(b,S.X1,RECT[2],S.Y1,FY,S.Z0,S.Z1,{front:function(xx,yy){ return (fbm(xx*0.1,yy*0.1)>0.6)?P.s4:P.s5; },top:P.s4});            // Absatz (gemauert)
-  // Handlauf aus Holz auf schlanken Stäben, an der vorderen Kante
-  var p0=R3.p(S.X0,FY-14,S.Z1), p1=R3.p(S.X1,S.Y1-14,S.Z1), p2=R3.p(RECT[2],S.Y1-14,S.Z1);
-  b.line(rnd(p0[0]),rnd(p0[1]),rnd(p1[0]),rnd(p1[1]),P.w3); b.line(rnd(p0[0]),rnd(p0[1])+1,rnd(p1[0]),rnd(p1[1])+1,P.w1); b.line(rnd(p1[0]),rnd(p1[1]),rnd(p2[0]),rnd(p2[1]),P.w3); b.line(rnd(p1[0]),rnd(p1[1])+1,rnd(p2[0]),rnd(p2[1])+1,P.w1);
-  for (i=0;i<=n;i++){ var Xs=S.X0+i*run, Ys=FY-i*rise, a=R3.p(Xs,Ys,S.Z1), c2=R3.p(Xs,Ys-14,S.Z1); b.line(rnd(a[0]),rnd(a[1]),rnd(c2[0]),rnd(c2[1]),P.m2); }
-  for (x=S.X1+8;x<RECT[2];x+=8){ var a2=R3.p(x,S.Y1,S.Z1), c3=R3.p(x,S.Y1-14,S.Z1); b.line(rnd(a2[0]),rnd(a2[1]),rnd(c3[0]),rnd(c3[1]),P.m2); }
-  var np=R3.p(S.X0,FY,S.Z1), nt=R3.p(S.X0,FY-17,S.Z1); b.rect(rnd(np[0])-1,rnd(nt[1]),3,rnd(np[1]-nt[1]),P.w2); b.vl(rnd(np[0])-1,rnd(nt[1]),rnd(np[1])-1,P.w4); b.rect(rnd(nt[0])-2,rnd(nt[1])-2,5,2,P.w3);   // Pfosten am Antritt
+    R3.box(b,X0,X1+0.6,Yt,Yt+rise,S.Z0,S.Z1,{top:function(xx,yy){ return (hash(xx,yy)<0.15)?P.s3:((hash(xx*2,yy)<0.08)?P.t3:P.s5); },left:function(xx,yy){ return (hash(xx,yy*2)<0.1)?P.s1:P.s2; },front:P.s4});
+    var e0=R3.p(X0,Yt,S.Z1), e1=R3.p(X1,Yt,S.Z1); b.line(rnd(e0[0]),rnd(e0[1]),rnd(e1[0]),rnd(e1[1]),P.s6);
+    var r0=R3.p(X0,Yt,S.Z1), r1=R3.p(X0,Yt+rise,S.Z1); b.line(rnd(r0[0]),rnd(r0[1]),rnd(r1[0]),rnd(r1[1]),P.s2); }
+  // Absatz oben (gemauert) mit Kante
+  R3.box(b,S.X1,RECT[2],S.Y1,S.Y1+3,S.Z0,S.Z1,{front:P.s3,top:function(xx,yy){ return ((Math.floor(xx/6)+Math.floor(yy/2))&1)?P.s4:P.s5; }});
+  var ak=R3.p(S.X1,S.Y1,S.Z1), ak2=R3.p(RECT[2],S.Y1,S.Z1); b.line(rnd(ak[0]),rnd(ak[1]),rnd(ak2[0]),rnd(ak2[1]),P.s6);
+  // Handlauf aus Holz auf schlanken Eisenstäben, an der vorderen Kante
+  var p0=R3.p(S.X0,FY-16,S.Z1), p1=R3.p(S.X1,S.Y1-16,S.Z1), p2=R3.p(RECT[2],S.Y1-16,S.Z1);
+  for (i=0;i<=n;i++){ var Xs=S.X0+i*run, Ys=FY-i*rise, a=R3.p(Xs+run*0.5,Ys-rise,S.Z1), c2=R3.p(Xs+run*0.5,Ys-rise-16,S.Z1); if (i<n) b.line(rnd(a[0]),rnd(a[1]),rnd(c2[0]),rnd(c2[1]),P.m1); }
+  for (x=S.X1+6;x<RECT[2];x+=7){ var a2=R3.p(x,S.Y1,S.Z1), c3=R3.p(x,S.Y1-16,S.Z1); b.line(rnd(a2[0]),rnd(a2[1]),rnd(c3[0]),rnd(c3[1]),P.m1); }
+  b.line(rnd(p0[0]),rnd(p0[1]),rnd(p1[0]),rnd(p1[1]),P.w4); b.line(rnd(p0[0]),rnd(p0[1])+1,rnd(p1[0]),rnd(p1[1])+1,P.w2); b.line(rnd(p1[0]),rnd(p1[1]),rnd(p2[0]),rnd(p2[1]),P.w4); b.line(rnd(p1[0]),rnd(p1[1])+1,rnd(p2[0]),rnd(p2[1])+1,P.w2);
+  var np=R3.p(S.X0,FY,S.Z1), nt=R3.p(S.X0,FY-19,S.Z1); b.rect(rnd(np[0])-1,rnd(nt[1]),3,rnd(np[1]-nt[1]),P.w2); b.vl(rnd(np[0])-1,rnd(nt[1]),rnd(np[1])-1,P.w4); b.rect(rnd(nt[0])-2,rnd(nt[1])-3,5,3,P.w3); b.px(rnd(nt[0]),rnd(nt[1])-4,P.w4);   // Antrittspfosten
+  // Glasbausteinfenster im Treppenhaus (Siebziger), eine Lampe, ein Läufer auf den Stufen? nein: eine Topfpflanze auf dem Absatz
+  var gx0=286, gy0=12, gw=20, gh=34; b.rect(gx0-2,gy0-2,gw+4,gh+4,P.s3);
+  for (y=gy0;y<gy0+gh;y++) for (x=gx0;x<gx0+gw;x++){ var cu=(x-gx0)%5, cv=(y-gy0)%5; var c=(cu===0||cv===0)?P.s4:((cu===2&&cv===2)?P.b5:((cu+cv)%3===0?P.b4:P.b3)); if (tod==='night') c=(cu===0||cv===0)?P.k2:P.n1; b.px(x,y,c); REG[y*W+x]=3; }
+  var pp=rp(R3.p(RECT[2]-8,S.Y1,S.Z0+8)); b.rect(pp[0]-3,pp[1]-5,6,5,P.t3); b.hl(pp[0]-4,pp[0]+3,pp[1]-6,P.t4); for (i=0;i<9;i++){ var an=-Math.PI*0.9+i*0.22; b.line(pp[0],pp[1]-6,rnd(pp[0]+Math.cos(an)*6),rnd(pp[1]-6+Math.sin(an)*6),i%2?P.g3:P.g2); }
   STAIRR=qrect([R3.p(S.X0,FY,S.Z1),R3.p(S.X1,S.Y1-16,S.Z1),R3.p(S.X1,S.Y1-16,S.Z0),R3.p(S.X0,FY,S.Z0)]); }
 var STAIRR=[0,0,0,0];
 

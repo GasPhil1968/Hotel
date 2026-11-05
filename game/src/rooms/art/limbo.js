@@ -240,6 +240,8 @@ function viewPaint(w,who){ var vw=clipW(w,inView), x, y;
   else if (who==='tomaz') viewTomaz(w,vw);
   else if (who==='ivan') viewIvan(w,vw);
   else if (who==='zora') viewZora(w,vw);
+  else if (who==='mate') viewMate(w,vw);
+  else if (who==='bato') viewBato(w,vw);
   else { forView(function(x,y){ var dx=(x+0.5-A.cx)/13, dy=(y+0.5-84)/30, d=Math.sqrt(dx*dx+dy*dy); vw.px(x,y,q(R('n0 n1 x1 x2 x3 x4'),0.95-d*0.75+Math.sin(x*1.3)*0.03,x,y)); }); }
   // leichte Abdunklung an den Rändern der Öffnung
   forView(function(x,y){ var e=Math.min(x-(A.cx-A.ri+3),A.cx+A.ri-1-x), top=openDist(x,y-3)>0||!inOpen(x,y-2); if ((e<1||top) && bayer(x,y)<0.6) vw.px(x,y,M.DN[w.get(x,y)]); }); }
@@ -280,6 +282,39 @@ function viewZora(w,vw){ var x, y, FG=R('n1 n2 n3 x2 x3 n4');
   vw.vl(66,86,105,P.n1); vw.px(66,85,P.x4); vw.px(65,85,P.n3); vw.px(67,85,P.n3);                                                           // Laterne im Nebel
   for (y=88;y<104;y++){ var tx=46+Math.round(Math.sin(y*0.4)*0.6); vw.px(tx,y,P.n1); } [[-4,-3],[-3,-6],[3,-5],[4,-2]].forEach(function(o){ vw.line(46,92,46+o[0],92+o[1],P.n1); });   // kahler Baum
   forView(function(x,y){ var f=Math.sin(y*0.33+x*0.05)+Math.sin(y*0.12-x*0.03); if (f>1.15 && bayer(x,y)<0.55) vw.px(x,y,M.UP[w.get(x,y)]); }); }   // Nebelbänke
+// Kapitel 3 (Mostar): Mate – ein Bussteig unter einem Blechdach, ein Reisebus wartet mit hellen Fenstern
+function viewMate(w,vw){ var x, y, bx0=47, bx1=60, bt=70, bb=103;
+  forView(function(x,y){ var c; if (y<60) c=q(R('k1 k2 n0 n1'),0.12+(y-48)/12*0.6+(fbm(x,y*2,8,7)-0.5)*0.1,x,y);
+    else if (y<106) c=q(R('k1 k2 n0'),0.4+(fbm(x,y,6,3)-0.5)*0.25,x,y);
+    else { c=q(R('n1 n2 n3'),0.4+(y-106)/8*0.35+(hash(x>>1,y)-0.5)*0.2,x,y); if (y===106) c=P.x3; }                           // Bussteig mit heller Kante
+    vw.px(x,y,c); });
+  for (x=40;x<=68;x++){ vw.px(x,60,P.n2); vw.px(x,61,P.n1); vw.px(x,62,P.k1); } vw.hl(45,63,63,P.x5); vw.hl(46,62,64,P.x3);   // Blechdach mit Leuchtröhre
+  vw.vl(43,63,105,P.n1); vw.vl(44,63,105,P.k2);                                                                                // Stütze
+  // der Reisebus, die Front leicht schräg: Zielanzeige, große Scheibe, Scheinwerfer, Stoßstange; rechts die Flanke mit Fenstern
+  for (y=bt;y<=bb;y++) for (x=bx0;x<=bx1;x++){ var c=(x===bx0)?P.n4:P.n2;
+    if (y===bt) c=P.n3; else if (y===bt+2) c=(x>bx0 && x<bx1)?(((x+y)%2)?P.y4:P.y2):P.n2;                                     // Zielanzeige, ohne Namen lesbar
+    else if (y>bt+3 && y<bt+19 && x>bx0 && x<bx1){ c=P.k2; if (x-bx0===y-bt-4 || x-bx0===y-bt-3) c=P.n3; }                    // Frontscheibe mit Spiegelung
+    else if (y===bb-9 && (x===bx0+2||x===bx0+3||x===bx1-3||x===bx1-2)) c=P.x5;                                               // Scheinwerfer
+    else if (y>bb-4) c=(y===bb-3)?P.n3:P.k2;
+    vw.px(x,y,c); }
+  for (y=bt+1;y<=bb-2;y++) for (x=bx1+1;x<=68;x++){ var c2=(y<bt+3)?P.n1:P.n0; if (y>bt+4 && y<bt+15 && (x-bx1)%4!==0) c2=(y<bt+7)?P.y3:P.y2; if (y>bb-6) c2=P.k2; vw.px(x,y,c2); }   // Flanke, Fenster mit warmem Licht
+  vw.ellipse(bx1+4,bb-1,2.2,2.2,P.k1); vw.px(bx1+4,bb-1,P.n2);
+  for (y=bb+1;y<=bb+3;y++) for (x=bx0-1;x<=68;x++){ if (bayer(x,y)<0.5-(y-bb)*0.12) vw.px(x,y,P.k1); }                         // Schatten auf dem Steig
+  for (y=92;y<112;y++) for (x=bx0-4;x<=bx1+6;x++){ var d=Math.hypot(x-54,(y-100)*1.4); if (d<9 && d>4 && bayer(x,y)<(1-d/9)*0.4){ var c0=w.get(x,y); if (c0===P.n1||c0===P.n2) vw.px(x,y,M.UP[c0]); } } }
+// Kapitel 3 (Skela): Bato – ein Flussufer im Morgengrauen: Nebel überm Wasser, drüben Hügel, eine Weide, Schilf, das Fährseil quer über den Fluss
+function viewBato(w,vw){ var x, y, k, hz=91;
+  forView(function(x,y){ var c; if (y<hz){ var t=(y-48)/(hz-48); c=q(R('n0 n1 v1 v2 v3 x3 x4'),0.06+Math.pow(t,1.25)*0.86+(fbm(x*0.8,y*2.2,7,9)-0.5)*0.12,x,y); }
+    else if (y<106){ var d=(y-hz)/(106-hz), s=Math.sin(x*0.8+y*1.9)+Math.sin(x*0.27-y*0.7); c=q(R('n1 n2 v2 x2 x3 x4'),0.78-d*0.5+s*0.07,x,y); }
+    else c=q(R('k1 k2 n0 n1'),0.45+(hash(x>>1,y)-0.5)*0.4,x,y);
+    vw.px(x,y,c); });
+  for (x=40;x<=68;x++){ var hh=Math.round(2+Math.sin(x*0.23+1.3)*1.6+fbm(x,2,8,3)*3); for (y=hz-hh;y<hz;y++) vw.px(x,y,y===hz-hh?P.n2:P.n1); }   // Hügel drüben
+  forView(function(x,y){ if (y>=hz-1 && y<hz+6 && bayer(x,y)<0.4-Math.abs(y-hz-2)*0.06) vw.px(x,y,P.v3); });                               // Nebel überm Wasser
+  for (y=hz+2;y<105;y+=2){ var gx=57+Math.round(Math.sin(y*1.3)*1.5); vw.hl(gx-1,gx+1,y,y<hz+7?P.x5:P.x4); }                                  // Widerschein des hellen Himmels
+  for (x=40;x<=68;x++){ if (x%2===0) vw.px(x,Math.round(83+(x-40)*0.14),P.n1); }                                                             // das Fährseil drüben
+  vw.vl(64,84,106,P.k2); vw.vl(65,85,106,P.n0); vw.px(64,83,P.n1);                                                                           // ein Pfosten am Ufer
+  for (y=74;y<107;y++) vw.px(46+Math.round((y-74)*0.06),y,P.k2);                                                                              // Weide links
+  for (k=0;k<7;k++){ var ax=42+k*2.2; for (y=72+k%3;y<92+(k*3)%7;y++) if ((y+k)%2) vw.px(Math.round(ax+Math.sin(y*0.3)*0.6),y,k%2?P.n0:P.k2); }
+  for (x=40;x<=68;x+=2){ var rh=3+Math.floor(hash(x,7)*6); vw.vl(x,106-rh,106,hash(x,3)<0.5?P.k2:P.n0); } }                                // Schilf vorn
 
 // ---------------------------------------------------------------- Stücke der Orte, an die die Geister gebunden waren
 var PROPS={
@@ -289,7 +324,10 @@ var PROPS={
   // Kapitel 2
   tomaz:{ r:[229,75,35,49], st:[221,126,'R'], foot:[228,0,264,123] },
   ivan:{ r:[226,88,40,36], st:[219,126,'R'], foot:[226,0,265,123] },
-  zora:{ r:[227,88,38,36], st:[220,126,'R'], foot:[227,0,265,123] }
+  zora:{ r:[227,88,38,36], st:[220,126,'R'], foot:[227,0,265,123] },
+  // Kapitel 3: Mates Bank mit Feigenkübel und Schild; Batos Ponton am Seil (groß: Marko steht vorn am Ponton und fasst das Seil an der Rolle)
+  mate:{ r:[226,68,64,56], st:[220,126,'R'], foot:[228,0,286,123] },
+  bato:{ r:[224,80,76,44], st:[252,127,'R'], foot:[226,0,278,123] }
 };
 var PROP_ANY={ r:[225,75,41,49], st:[218,126,'R'] };     // Vereinigung aller Varianten, falls niemand gesetzt ist
 function castShadow(b,cx,by,rx,ry){ for (var y=by-1;y<=by+ry+1;y++) for (var x=Math.floor(cx-rx-2);x<=cx+rx+2;x++){ var k=y*W+x; if (x<0||x>=W||y>=H||SID[k]<0) continue;
@@ -399,8 +437,53 @@ function propZora(b,w,S){ var x, y, x0=230, x1=262, ty=103, by=122, rung=!!(S&&S
     [[gy-6,1],[gy-5,2],[gy-4,2],[gy-3,3],[gy-2,3],[gy-1,4]].forEach(function(r){ for (x=gx-r[1];x<=gx+1+r[1];x++){ var u=(x-(gx-r[1]))/(2*r[1]+1), c5=u<0.25?P.y4:(u<0.55?P.y3:(u<0.85?P.y2:P.y1)); if (r[0]===gy-1) c5=(u<0.5)?P.y2:P.y1; w.px(x,r[0],c5); } });
     w.px(gx-1,gy-5,P.y5); w.px(gx-2,gy-3,P.y5); w.px(gx,gy,P.y0); w.px(gx+1,gy,P.y0); }
   else { for (x=248;x<=255;x++) if (hash(x,4)<0.7) w.px(x,ty-1,P.w4); } }                                                    // nur ein heller Ring, wo sie stand
+// Kapitel 3, Mate: eine Bushaltebank mit Betonfüßen, daneben ein Kübel mit einem kleinen Feigenbaum (zwei reife Feigen), dahinter ein Haltestellenschild ohne Namen
+function propMate(b,w,S){ var x, y, k, x0=229, x1=259, sy=108, by=122, tx=269, px=282;
+  castShadow(b,257,123,28,3.5);
+  // Lehne: zwei Latten auf Eisenstützen; Sitz: Bohlen, vorn die Kante; Füße aus Beton
+  [x0+3,x1-4].forEach(function(ux){ w.vl(ux,96,sy-1,P.k2); w.vl(ux+1,96,sy-1,P.n0); });
+  [[98,99],[102,103]].forEach(function(r){ for (y=r[0];y<=r[1];y++) for (x=x0+1;x<=x1-1;x++){ var c=(y===r[0])?P.w4:P.w2; if (x===x0+1) c=P.x4; if (x===x1-1) c=P.w0; if (y===r[0] && hash(x*1.7,y)<0.1) c=P.w3; w.px(x,y,c); } });
+  for (y=sy;y<sy+4;y++) for (x=x0;x<=x1;x++){ var c2=(y===sy)?P.w5:(y===sy+1?P.w4:(y===sy+2?P.w2:P.w1)); if ((x-x0)%10===0 && y>sy) c2=P.w1; if (x===x0) c2=(y===sy)?P.w5:P.x4; if (x===x1) c2=P.k1; w.px(x,y,c2); }
+  [[x0+1,x0+6],[x1-6,x1-1]].forEach(function(f){ for (y=sy+4;y<=by;y++) for (x=f[0];x<=f[1];x++){ var c3=(x===f[0])?P.x4:(x===f[1]?P.n0:(y>by-2?P.n1:(x<f[0]+3?P.m3:P.m2))); w.px(x,y,c3); } });
+  // Feigenkübel aus Beton, Erde; ein kleiner Feigenbaum mit großen Blättern
+  for (y=110;y<=by;y++){ var ins=(y>by-2)?1:0; for (x=tx-7+ins;x<=tx+7-ins;x++){ var c4=(y===110)?P.m4:((x<=tx-6+ins)?P.x4:((x>=tx+6-ins)?P.n0:(y<113?P.m3:P.m2))); w.px(x,y,c4); } }
+  w.hl(tx-6,tx+6,111,P.w0); w.hl(tx-5,tx+5,112,P.k2);
+  w.vl(tx,92,110,P.w2); w.vl(tx+1,96,110,P.w1); w.line(tx,98,tx-5,92,P.w2); w.line(tx+1,96,tx+6,90,P.w1); w.line(tx,93,tx+2,87,P.w2);    // Stamm und Äste
+  [[tx-8,90],[tx-4,86],[tx+2,84],[tx+7,87],[tx+9,92],[tx-6,96],[tx+5,97]].forEach(function(l,i){ var lx=l[0], ly=l[1];               // Feigenblätter: drei Lappen
+    w.ellipse(lx,ly,2.6,2.2,function(xx,yy){ return (xx<lx-1)?P.g4:((yy>ly)?P.g2:P.g3); }); w.px(lx-2,ly-2,P.g3); w.px(lx+2,ly-2,P.g2); w.px(lx,ly+2,P.g2); w.px(lx,ly,P.g1); if (i%3===0) w.px(lx-3,ly,P.x4); });
+  w.ellipse(tx-3,99,1.4,1.7,P.v1); w.px(tx-4,98,P.v3); w.ellipse(tx+4,94,1.3,1.6,P.v1); w.px(tx+3,93,P.v2);                          // zwei reife Feigen
+  // Haltestellenschild: Mast, blaues Schild mit einem kleinen Bus, darunter ein leeres Namensfeld
+  w.vl(px,72,by,P.m3); w.vl(px+1,72,by,P.m1); w.px(px-1,by,P.n1); w.hl(px-1,px+2,by+1,P.k1); w.px(px,72,P.x4);
+  for (y=70;y<=81;y++) for (x=px-6;x<=px+7;x++){ var c5=(y===70||x===px-6)?P.b3:((y===81||x===px+7)?P.b0:P.b1); w.px(x,y,c5); }
+  w.rect(px-3,73,8,4,P.s6); w.hl(px-3,px+4,77,P.s4); w.px(px-2,78,P.k1); w.px(px+3,78,P.k1); w.hl(px-2,px+3,74,P.n1);            // der kleine Bus
+  for (y=83;y<=88;y++) for (x=px-5;x<=px+6;x++) w.px(x,y,(y===83||x===px-5)?P.s6:((y===88||x===px+6)?P.s3:P.s5));                  // Namensfeld, leer
+  w.px(px-6,82,P.k1); w.px(px+7,82,P.k1); }
+// Kapitel 3, Bato: ein Holzponton mit Geländer auf zwei Schwimmern; ein Stahlseil läuft vom Anker auf den Platten über eine Rolle schräg hinauf ins Licht
+var BCAB={x0:LX, y0:LY, x1:293, y1:115};                                                     // Seil: vom Licht bis zum Ring am Anker
+function cabY(x){ return BCAB.y0+(BCAB.y1-BCAB.y0)*(x-BCAB.x0)/(BCAB.x1-BCAB.x0); }
+function propBato(b,w,S){ var x, y, x0=226, x1=276, dy=109, by=122, rx=262;
+  castShadow(b,255,123,30,3.5);
+  // zwei Schwimmer aus Blech, darauf das Deck aus Bohlen
+  [[x0+2,x0+22],[x1-22,x1-2]].forEach(function(f){ for (y=dy+4;y<=by-1;y++){ var ins=(y>by-3)?2:((y>by-4)?1:0); for (x=f[0]+ins;x<=f[1]-ins;x++){ var c=(y===dy+4)?P.m2:(x===f[0]+ins?P.x4:(x===f[1]-ins?P.k1:(y<dy+7?P.m1:P.m0))); if (y===dy+8 && (x-f[0])%5===0) c=P.k2; w.px(x,y,c); } } });
+  for (y=dy;y<dy+4;y++) for (x=x0;x<=x1;x++){ var c2=(y===dy)?P.w5:(y===dy+1?P.w4:(y===dy+2?P.w3:P.w1)); if (y>dy && (x-x0)%9===0) c2=P.w1; if (x===x0) c2=(y===dy)?P.w5:P.x4; if (x===x1) c2=P.k1; if (y===dy && hash(x*1.3,3)<0.12) c2=P.w3; w.px(x,y,c2); }
+  w.hl(x0,x1,dy+4,P.k1);
+  // Geländer an der hinteren Kante: Pfosten und Handlauf
+  [x0+3,x0+19,x0+35,x1-3].forEach(function(p){ w.vl(p,dy-12,dy-1,P.w3); w.vl(p+1,dy-12,dy-1,P.w1); });
+  w.hl(x0+3,x1-2,dy-12,P.w4); w.hl(x0+3,x1-2,dy-11,P.w2); w.hl(x0+3,x1-2,dy-6,P.w2); w.px(x0+3,dy-12,P.x4);
+  // der Anker: ein Betonblock mit Eisenring rechts auf den Platten
+  for (y=112;y<=121;y++) for (x=287;x<=297;x++){ var c3=(y===112)?P.m4:(x===287?P.x4:(x===297?P.n0:(y>119?P.n1:P.m2))); if (hash(x,y*2)<0.1) c3=P.m1; w.px(x,y,c3); }
+  w.hl(286,298,122,P.k1); w.ellipse(293,114,1.6,1.6,P.k2); w.px(293,114,P.m2);
+  // das Stahlseil: vom Ring über die Rolle hinauf; vor dem Licht ein dunkler Strich mit hellem Rand, im Licht hell, bis es darin verschwindet
+  for (x=BCAB.x1;x>=LX;x--){ var yy=cabY(x), yi=Math.round(yy), I=lightI(x,yi), lo=(yy-yi>0.15);
+    if (I>0.86) break;
+    if (I<0.5){ w.px(x,yi,P.m1); w.px(x,yi-1,P.x4); if (lo) w.px(x,yi+1,P.k2); }
+    else if (I<0.72){ w.px(x,yi,P.n1); w.px(x,yi-1,P.x5); }
+    else if (bayer(x,yi)<1-(I-0.72)/0.14) w.px(x,yi,P.x6); }
+  var ry=Math.round(cabY(rx));                                                               // Rolle auf einem kurzen Pfosten, daran hängt der Ponton
+  w.vl(rx,ry+2,dy-1,P.m3); w.vl(rx+1,ry+2,dy-1,P.m1); w.ellipse(rx+0.5,ry+0.5,2.1,2.1,function(xx,yy){ return (xx<rx)?P.m3:P.m1; }); w.px(rx,ry,P.x5); w.px(rx+1,ry+1,P.k2); }
 function propPaint(b,S){ var w=RW(b), who=whoOf(S); if (who==='ivka') propIvka(b,w); else if (who==='luka') propLuka(b,w); else if (who==='bruno') propBruno(b,w);
-  else if (who==='tomaz') propTomaz(b,w,S); else if (who==='ivan') propIvan(b,w,S); else if (who==='zora') propZora(b,w,S); }
+  else if (who==='tomaz') propTomaz(b,w,S); else if (who==='ivan') propIvan(b,w,S); else if (who==='zora') propZora(b,w,S);
+  else if (who==='mate') propMate(b,w,S); else if (who==='bato') propBato(b,w,S); }
 
 // ---------------------------------------------------------------- lose, schwebende Steine (wippen in dynamic um 1 px)
 var FLOAT=[{x:8,y:113,w:12,h:7,s:1.05,p:0.4},{x:18,y:130,w:8,h:5,s:1.3,p:2.2},{x:2,y:99,w:6,h:4,s:0.9,p:4.1},{x:22,y:95,w:4,h:3,s:1.4,p:0.9},

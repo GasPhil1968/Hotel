@@ -54,8 +54,8 @@ function edgeY(x){ var e=109.5+Math.sin(x*0.13)*0.8+Math.sin(x*0.41+2)*0.5+(hash
 function inRamp(x,y){ if (y<RAMP.y1||y>RAMP.y0) return false; var t=(y-RAMP.y1)/(RAMP.y0-RAMP.y1); return x>=lerp(RAMP.xl1,RAMP.xl0,t)&&x<=lerp(RAMP.xr1,RAMP.xr0,t); }
 var HUT={x0:30,x1:104,top:70,ridge:56,by:112};
 var DOOR={x0:54,x1:69,top:80}, HWIN={x0:82,x1:91,y0:84,y1:92};
-var STUMPS=[{x:125,wl:100.5,top:86,w:12},{x:133,wl:89.5,top:80.5,w:8},{x:138.5,wl:82.6,top:78,w:5}];
-var POST={x:160,by:114,top:70}, BELL={x:173,y:75};              // Pfosten (Mitte), Aufhängung der Glocke
+var STUMPS=[{x:122,wl:101,top:84,w:14},{x:130,wl:90,top:79,w:9},{x:135.5,wl:83,top:76.5,w:6}];
+var POST={x:152,by:114,top:58}, BELL={x:167,y:62};              // Pfosten (Mitte), Aufhängung der Glocke
 var ANCH={x0:184,x1:202,y0:105,by:114,rx:199,ry:106};
 var FH={x0:150,base:74,w:40};                                    // Zlatas Haus drüben
 var SHED={x0:196,x1:224,top:62,base:76};
@@ -165,36 +165,40 @@ function quince(w,x,base){ var r=M.rng(29);
 
 // ---------------------------------------------------------------- der Fluss: Wasser, Spiegelung, Stümpfe, neue Brücke
 var WBA=new Float32Array(W*H), WK=new Float32Array(W*H), FOAM=new Uint8Array(W*H), REFL=new Uint8Array(W*H);
-function waterRamp(tod,wea){ if (wea==='grey') return R('k2 a1 a2 m1 a3 m2 a4');
-  return R('a0 a1 a2 g2 a3 g3 a4 a5'); }
+function waterRamp(tod,wea){ if (wea==='grey') return R('a1 a2 m1 a3 m2 a4 m3');
+  return R('a1 a2 g2 a3 g3 a4 a5'); }
 var WR=null, NIGHT=false, TODN='day', WEA='calm', FIN=false;
 function wcol(x,y,t){ var k=y*W+x, kk=WK[k], v=WBA[k];
-  var f=Math.sin((x+t*13*kk)*0.21/kk+y*1.3)*0.5+Math.sin((x+t*19*kk)*0.075/kk-y*0.45)*0.38+Math.sin((x+t*8*kk)*0.5/kk+y*2.1)*0.12;
-  var c=ra(WR,v+f*0.13,x,y), fo=FOAM[k];
-  if (fo){ var fl=Math.sin(t*5+x*0.9+y*1.7)+Math.sin(t*3.1-x*0.5); if (fl>1.6-fo*0.35) c=fo>2?P.s6:P.s5; else if (fl>0.9-fo*0.3) c=P.a5; }
-  else if (f>0.72 && ((x+y)&1)) c=WEA==='grey'?P.m3:P.a6;
-  if (REFL[k]!==255 && f<0.45) c=REFL[k];
+  var f=Math.sin((x+t*11*kk)/(11*kk)+y*1.25+Math.sin(x*0.013+y*0.3)*2)*0.55+Math.sin((x+t*17*kk)/(4.5*kk)-y*1.9)*0.3+Math.sin((x+t*6*kk)/(23*kk)+y*0.55)*0.15;
+  var c=ra(WR,v+f*0.09,x,y), fo=FOAM[k];
+  if (fo){ var fl=Math.sin(t*5+x*0.9+y*1.7)+Math.sin(t*3.1-x*0.5); if (fl>1.5-fo*0.4) c=fo>2?P.s6:P.s5; else if (fl>0.7-fo*0.3) c=P.a5; }
+  else if (f>0.8 && ((x+(y>>1))%3===0)) c=WEA==='grey'?P.m3:(v>0.55?P.a6:P.a5);
+  if (REFL[k]!==255 && f<0.5) c=REFL[k];
   return c; }
 function paintRiver(b,tod){ var w=RW(b,RG.water), x, y; REFL.fill(255); FOAM.fill(0);
   for (x=0;x<W;x++){ var y0=Math.ceil(farWL(x)); for (y=y0;y<H;y++){ if (y>edgeY(x)+1 && !inRamp(x,y)) break; var d=cl((y-77)/(110-77),0,1), kk=0.32+0.68*d, k=y*W+x;
-      WK[k]=kk; WBA[k]=0.46+(fbm(x*0.6/kk,y*1.5,5,3)-0.5)*0.35-d*0.08+(y<y0+2?0.08:0);
+      WK[k]=kk; WBA[k]=0.66-d*0.36+(fbm(x*0.25/kk,y*0.9,9,3)-0.5)*0.22+(y<y0+2?0.06:0)-(y>edgeY(x)-4?0.12:0);
       w.px(x,y,P.a3); } }
   // Spiegelung des anderen Ufers: dunkle, gestauchte Formen unter der Wasserlinie
   for (x=0;x<W;x++){ var wl=farWL(x), y1=Math.ceil(wl); for (y=y1;y<y1+7;y++){ var sy=Math.floor(wl-(y-wl)*1.8)-1, src=b.get(x,sy); if (src===T) continue; var r0=REG[sy*W+x]; if (r0!==RG.bank&&r0!==RG.house&&r0!==RG.glass&&r0!==RG.hill) continue;
       var c=M.DN[M.DN[src]]; if (M.lum(src)>150) c=M.DN[src]; REFL[y*W+x]=c; } }
   // Stümpfe der alten Brücke: Steinpfeiler mit abgebrochenen Zähnen, nasser Fuß, Stau und Wirbel
   STUMPS.forEach(function(s,i){ stump(b,s,i); }); }
-function stump(b,s,i){ var w=RW(b,RG.stump), hw=s.w/2, x, y, r=M.rng(41+i);
-  // gezackte Oberkante (Zähne)
-  var tops=[]; for (x=Math.floor(s.x-hw);x<=Math.ceil(s.x+hw);x++){ var u=(x-s.x)/hw, jag=Math.abs(Math.sin(x*1.7+i))*s.w*0.32+(hash(x,i*3)<0.3?s.w*0.18:0); tops.push([x,s.top+jag+Math.abs(u)*s.w*0.2]); }
-  tops.forEach(function(tp){ var x2=tp[0], u=(x2-s.x)/hw; for (y=Math.floor(tp[1]);y<s.wl+1;y++){ var wet=y>s.wl-2-s.w*0.15, c=blocks(x2*1.6,y*1.6,4+s.w*0.3,2+s.w*0.15,i*7+3,STONE,P.s1);
-      if (u>0.45) c=M.DN[c]; if (u<-0.5) c=M.UP[c]; if (wet) c=(hash(x2,y)<0.5)?P.g1:P.s1; if (y===Math.floor(tp[1])) c=P.s5; w.px(x2,y,c); } });
+function stump(b,s,i){ var w=RW(b,RG.stump), hw=s.w/2, x, y;
+  // Oberkante: zwei, drei Zähne, dazwischen tiefe Bruchstellen
+  function topAt(x){ var u=(x-(s.x-hw))/s.w, teeth=[[0.12,0.0],[0.42,0.35],[0.7,0.08],[0.95,0.5]], h=1;
+    for (var q=0;q<teeth.length;q++){ var d=Math.abs(u-teeth[q][0]); h=Math.min(h,teeth[q][1]+d*2.6); } return s.top+h*(s.wl-s.top)*0.55+(hash(x,i)<0.3?1:0); }
+  for (x=Math.floor(s.x-hw);x<=Math.ceil(s.x+hw);x++){ var u=(x-(s.x-hw))/s.w, ty=Math.floor(topAt(x));
+    for (y=ty;y<=s.wl;y++){ var c=blocks(x*1.2,(y-s.top)*1.2,3+s.w*0.35,2+s.w*0.12,i*7+3,STONE,P.s1);
+      if (u>0.62) c=M.DN[c]; if (u>0.85) c=M.DN[c]; if (u<0.18) c=M.UP[c];                                                            // vorn im Licht, Seite im Schatten
+      if (y>s.wl-1-s.w*0.18) c=(hash(x,y)<0.55)?P.g1:P.s1;                                                                             // nasser, bemooster Fuß
+      if (y===ty) c=(u>0.7)?P.s3:P.s5; w.px(x,y,c); } }
   // Bewehrungseisen ragt aus dem nahen Stumpf
-  if (i===0){ w.line(s.x+2,s.top+3,s.x+5,s.top-3,P.t1); w.line(s.x-3,s.top+2,s.x-4,s.top-2,P.t1); w.px(s.x+5,s.top-3,P.t2); }
-  // Schaum: Stau flussauf (rechts), Wirbel flussab (links)
-  for (y=Math.floor(s.wl-1);y<s.wl+3+s.w*0.3;y++) for (x=Math.floor(s.x-hw-s.w*1.6);x<=Math.ceil(s.x+hw+s.w*0.5);x++){ if (x<0||x>=W||y<0||y>=H) continue; var k=y*W+x; if (REG[k]!==RG.water) continue;
+  if (i===0){ w.line(s.x+3,s.top+5,s.x+6,s.top-2,P.t1); w.line(s.x-4,s.top+4,s.x-6,s.top-1,P.t1); w.px(s.x+6,s.top-2,P.t2); w.px(s.x-1,s.top+2,P.t1); w.px(s.x-1,s.top+1,P.t2); }
+  // Schaum: Stau flussauf (rechts), Kielwasser flussab (links)
+  for (y=Math.floor(s.wl-1);y<s.wl+3+s.w*0.3;y++) for (x=Math.floor(s.x-hw-s.w*1.8);x<=Math.ceil(s.x+hw+s.w*0.5);x++){ if (x<0||x>=W||y<0||y>=H) continue; var k=y*W+x; if (REG[k]!==RG.water) continue;
     var dxr=x-(s.x+hw), dxl=(s.x-hw)-x, dyw=Math.abs(y-s.wl-0.5), f=0;
-    if (dxr>=0 && dxr<s.w*0.5 && dyw<2) f=3; else if (dxl>=0 && dxl<s.w*1.6 && dyw<1.5+dxl*0.25) f=dxl<s.w*0.5?2:1; else if (Math.abs(x-s.x)<hw && y>=s.wl && y<s.wl+2) f=2;
+    if (dxr>=-1 && dxr<s.w*0.45 && dyw<1.6) f=3; else if (dxl>=0 && dxl<s.w*1.8 && Math.abs(dyw-dxl*0.22)<1.1) f=dxl<s.w*0.6?2:1; else if (Math.abs(x-s.x)<hw && y>=s.wl && y<s.wl+2) f=2;
     if (f) FOAM[k]=f; } }
 // neue Brücke (1998): Betonbalken auf zwei schlanken Pfeilern, Rohrgeländer, eine Laterne
 function brPt(u){ return [lerp(BR.x0,BR.x1,u), lerp(BR.y0,BR.y1,u), 1-u*0.62]; }
