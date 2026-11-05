@@ -66,7 +66,7 @@
      smsK3       Nur ein Verweis auf das vorhandene sms aus Kapitel 2.
    Vorhanden und weiter benutzt (nicht neu): typing, drawer (04), bellsFar, sms (Kapitel 2); in den Kulissen u. a. dog, pigeons, coo, flutter, cups,
      espresso, steps, door, drip, creak, shutter, radio, tv, tick, gust, crackle, bus, scooter, carHorn, kids, crow, copper, domino, construction, ezanFar
-     und die Teppiche room, rain, rainIn, bura, windHigh, city, cityFar, crowd, crowdFar, murmur, kitchen, fridge.
+     und die Teppiche room, rain, rainIn, bura, windHigh, city, cityFar, crowd, crowdFar, murmur, kitchen.
    Für Prüfwerkzeuge: M.K3A = { sfx, ev } (die eigenen Funktionen, ungefangen aufrufbar). */
 (function(M){
 'use strict';
@@ -301,11 +301,11 @@ var SFX3={
   egg:function(t){ var S=lvl(1.5); T('sine',2400,t,0.03,0.03,S); Nz(t,0.02,0.08,'bandpass',3200,2,S);
     for (var i=0;i<6;i++) Nz(t+0.005+Math.random()*0.03,0.008,0.04,'highpass',3500,1,S);
     Nz(t+0.02,0.12,0.07,'lowpass',900,1,S,300); Nz(t+0.03,0.18,0.03,'bandpass',500,2,S,220); },
-  lighter:function(t){ var S=lvl(2); [0,0.34].forEach(function(o){ Nz(t+o,0.07,0.06,'bandpass',4200,2.5,S); for (var i=0;i<5;i++) Nz(t+o+Math.random()*0.06,0.004,0.06,'highpass',5000,1,S); });
+  lighter:function(t){ var S=lvl(2); [0,0.34].forEach(function(o){ Nz(t+o,0.07,0.06,'bandpass',4200,2.5,S); for (var i=0;i<5;i++) Nz(t+o+Math.random()*0.06,0.004,0.035,'highpass',5000,1,S); });
     Nz(t+0.38,0.35,0.04,'lowpass',420,0.8,S,900,0.04); Sw(t+0.42,0.8,0.008,'bandpass',1600,0.9,S); },
   cough:function(t){ coughFx(t,2.1,K.sfx); },
   splash:function(t){ var S=K.sfx, far=filt('lowpass',5200,0.5), x=echo(S,0.16,0.28,1800); far.connect(x);
-    Nz(t,0.06,0.22,'highpass',700,0.7,far); Nz(t,0.09,0.2,'bandpass',1800,0.8,far,900);                                  // Aufschlag
+    Nz(t,0.06,0.15,'highpass',700,0.7,far); Nz(t,0.09,0.15,'bandpass',1800,0.8,far,900);                                  // Aufschlag
     T('sine',105,t+0.02,0.4,0.16,far,42); Nz(t+0.02,0.45,0.12,'lowpass',600,0.9,far,150);                                // Eintauchen
     for (var i=0;i<26;i++) Nz(t+0.12+Math.pow(Math.random(),0.7)*1.1,0.03,rnd(0.01,0.04),'bandpass',rnd(1800,6000),1.5,far);   // Gischt
     Sw(t+0.08,1.3,0.05,'bandpass',2600,0.8,far,1400);
@@ -562,12 +562,12 @@ M.defineSong('k3_duh',{ bpm:40, comp:'led', compBeats:[0], compVol:0.013, compLe
   bars:[{c:N('D3 A3 E4')},{c:N('D3 Bb3 F4')},{c:N('C3 G3 D4')},{c:N('D3 A3 F#4')}],
   lead:mel('E5:1/2 E5:1/2 E5:2/3'), leadInst:'zvono', leadVol:0.01, leadEvery:2,
   lead2:mel('@6 D5:2 @9 F#5:3 @13 E5:3'), lead2Inst:'box', lead2Vol:0.012 });
-// Zwischenwelt: die Fläche der Kapitel 1 und 2 (D–A–D, A wird As), die Glocke dreimal, das Seil spannt sich (A, dann H), Wasser tropft
+// Zwischenwelt: die Fläche der Kapitel 1 und 2 (D–A–D, A wird As), die Glocke dreimal, das Seil spannt sich (E, dann Fis), Wasser tropft
 M.defineSong('k3_limbo',{ bpm:36, comp:'pad', compBeats:[0], compVol:0.013, compLen:4, drums:'k3_voda',
   bars:[{c:N('D3 A3 D4')},{c:N('D3 G#3 D4')},{c:N('C3 G3 D4')},{c:N('Bb2 F3 D4')},{c:N('D3 A3 D4')},{c:N('D3 G#3 D4')},{c:N('A2 E3 C#4')},{c:N('D3 A3 F#4')}],
-  lead:mel('@4 A5:7 @16 B5:6 @24 A5:7'), leadInst:'seil', leadVol:0.009,
+  lead:mel('@4 E5:7 @16 F#5:6 @24 E5:7'), leadInst:'seil', leadVol:0.01,
   lead2:mel('A4:1/3 A4:1/3 A4:2/4'), lead2Inst:'zvono', lead2Vol:0.009 });
-// Finale: Takt 1–4 nur Fläche und die Glocke, 5–8 Wasser und das Cello, 9–12 Puls, 13–15 Wirbel und die Glocke höher, 16 D-Dur: das andere Ufer
+// Finale: Takt 1–4 nur Fläche und die Glocke (A), 5–8 Wasser und das Cello, 9–12 Puls, 13–15 Wirbel und die Glocke höher (F), 16 D-Dur: das andere Ufer
 var FIN_C=['D3 A3 E4','D3 A3 F4','Bb2 F3 D4','A2 E3 C#4','D3 A3 D4 F4','Bb2 G3 D4 G4','Bb2 F3 Bb3 D4','A2 E3 G3 C#4',
            'D3 A3 D4 F4','F3 A3 C4 F4','C3 G3 C4 E4','G2 D3 Bb3 D4','Bb2 F3 Bb3 D4 F4','A2 F3 A3 C4 F4','A2 E3 A3 C#4 E4','D3 A3 D4 F#4 A4'];
 var FIN_BS=['D2','D2','Bb1','A1','D2','G1','Bb1','A1','D2','F1','C2','G1','Bb1','A1','A1','D2'];
@@ -575,7 +575,7 @@ FIN_ARP=FIN_C.map(function(c){ return N(c); });
 M.defineSong('k3_fin',{ bpm:58, comp:'pad', compBeats:[0], compVol:0.009, compLen:4, bassInst:'cello', bassVol:0.022, bassLen:3.8, drums:'k3_fin',
   bars:FIN_C.map(function(c,i){ return {b:[nm(FIN_BS[i]),null,null,null], c:N(c)}; }),
   lead:mel('@16 D4:3 E4 F4:2 G4 F4 D4:3 C4 C#4:4 A4:2 F4:2 C5:3 A4 G4:2 E4 G4 Bb4:4 D5:3 C5 C5:2 A4:2 C#5:3 A4 D5:4/5'), leadInst:'cello', leadVol:0.024,
-  lead2:mel('A4:1/3 A4:1/3 A4:2/5 @48 E5:1/3 E5:1/3 E5:2/5 @60 D5:4/6'), lead2Inst:'zvono', lead2Vol:0.012 });
+  lead2:mel('A4:1/3 A4:1/3 A4:2/5 @48 F5:1/3 F5:1/3 F5:2/5 @60 D5:4/6'), lead2Inst:'zvono', lead2Vol:0.012 });
 // Am Grab: sehr leise. Malas Spieluhrmotiv aus Kapitel 1 (D–F–E–A) hier in Dur (F–A–G–C), das Klavier antwortet mit demselben Motiv: ein Faden, den beide gemacht haben
 M.defineSong('k3_grob',{ bpm:54, comp:'piano', compBeats:[0], arp:0.13, compVol:0.012, compLen:3.6, bassInst:'bass', bassVol:0.026,
   bars:[bar('F2 - - -','A3 C4 F4'),bar('E2 - - -','A3 C4 E4'),bar('D2 - - -','A3 D4 F4'),bar('C2 - - -','G3 C4 E4'),

@@ -138,7 +138,7 @@ function paintBus(b,S){ var x0=BUS.x0, x1=BUS.x1, top=BUS.top, by=BUS.base, w=x1
 function suitcase(b,x,by,w,h,col){ b.rect(x,by-h,w,h,col); b.vl(x,by-h,by-1,M.UP[col]); b.vl(x+w-1,by-h,by-1,M.DN[col]); b.hl(x,x+w-1,by-h,M.UP[col]); b.hl(x+1,x+w-2,by-h-3,P.k2); b.px(x+1,by-h-2,P.k2); b.px(x+w-2,by-h-2,P.k2); }
 
 // ---------------------------------------------------------------- Abfahrtstafel „POLASCI“ und das Schild „MÜNCHEN · subota“
-var DEPS=[['0700','SARAJEVO'],['0915','SPLIT'],['1030','DUBROVNIK'],['1240','ZAGREB'],['1500','STOLAC']];
+var DEPS=[['0700','SARAJEVO'],['0915','SPLIT'],['1030','DUBROVNIK'],['1240','ZAGREB'],['1500','BEOGRAD']];
 var TD={0:'##|##|##',1:'.#|.#|.#',2:'##|.#|#.',3:'##|.#|##',4:'#.|##|.#',5:'#.|##|.#',6:'#.|##|##',7:'##|.#|.#',8:'##|##|##',9:'##|##|.#'};
 function tinyNum(b,s,x,y,c){ for (var i=0;i<s.length;i++){ var g=TD[s[i]].split('|'); for (var r=0;r<3;r++) for (var q=0;q<2;q++) if (g[r][q]==='#') b.px(x+i*3+(i>1?1:0)+q,y+r,c); } if (s.length>2) b.px(x+6,y+1,c); }
 function paintBoard(b,lit){ var x0=BOARD.x0, x1=BOARD.x1, y0=BOARD.y0, y1=BOARD.y1;
@@ -195,7 +195,9 @@ function paintTaxi(b){ var x0=TAXI.x0, by=TAXI.base, L=46, x, y;
   b.rect(x0,by-9,2,2,P.y3); b.rect(x0+L-2,by-9,2,2,P.r3); b.hl(x0-1,x0+3,by-5,P.m4); b.hl(x0+L-3,x0+L,by-5,P.m4); b.rect(x0+2,by-11,6,2,P.m3);   // Stern-Grill nur angedeutet
   b.rect(x0+18,by-25,11,4,P.y3); b.hl(x0+18,x0+28,by-25,P.y4); M.microText(b,'TAXI',x0+18,by-25,P.k1); b.hl(x0+20,x0+26,by-21,P.k2);
   for (x=x0+2;x<x0+L-2;x++) if (bayer(x,by)<0.8) dk(b,x,by,2);
-  TAXISIGN=[x0+18,by-25]; TAXIWIN=[x0+14,by-20,6,8]; }
+  b.rect(x0+31,by-15,3,2,P.w2); b.px(x0+32,by-17,P.w2); b.px(x0+33,by-17,P.w3); b.px(x0+33,by-16,P.k1);   // Wackeldackel auf der Hutablage
+  TAXISIGN=[x0+18,by-25]; TAXIWIN=[x0+14,by-20,6,8]; DOG=[x0+32,by-17]; }
+var DOG=[0,0];
 
 // ---------------------------------------------------------------- Boden: Bussteige (Asphalt), Bordstein, Vorplatz aus Betonplatten, Pfützen
 function slab(x,y,wet){ var row=Math.floor((y-GY)/5+((y-GY)>20?0.5:0)), off=(row&1)*9, sw=18+((y-GY)>20?6:0), col=Math.floor((x+off)/sw), fx=(x+off)-col*sw, fy=(y-GY)%5;
@@ -297,6 +299,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), k=todKey(
         for (var a2=0;a2<16;a2++){ var an=a2/16*Math.PI*2, X=rd(rx+Math.cos(an)*rr)-cam, Y=rd(ry+Math.sin(an)*rr*0.35); if (X<0||X>=fb.w||Y<0||Y>=144) continue; if (!inPud(X+cam,Y)) continue; if (ph2<0.8) fb.px(X,Y,P.m3); } } }
     var wa=Math.sin(t*3.2)*0.9, tx=TAXIWIN[0]-cam+3, ty=TAXIWIN[1]+7; if (tx>-10 && tx<fb.w+10) for (var q2=0;q2<7;q2++){ var X2=rd(tx+Math.sin(wa)*q2), Y2=rd(ty-Math.cos(wa)*q2); if (X2>=0&&X2<fb.w) fb.px(X2,Y2,P.k1); }
     if (S.busIn){ var ba=-0.9+Math.abs(Math.sin(t*2.6))*1.3; for (var wi=0;wi<2;wi++){ var bx=(wi?WIPER[2]:WIPER[0])-cam, by=WIPER[1]; for (var q3=0;q3<13;q3++){ var X3=rd(bx+Math.cos(ba)*q3), Y3=rd(by-Math.sin(ba+0.9)*q3*0.5); if (X3>=0&&X3<fb.w) fb.px(X3,Y3,P.k1); } } } }
+  var dg=DOG, nod=(Math.sin(t*5)>0)?1:0, dx=dg[0]-cam; if (dx>-4 && dx<324){ fb.px(dx,dg[1]+nod-1,tint?M.tintPx(tint,P.w2,dx,dg[1]):P.w2); fb.px(dx+1,dg[1]+nod-1,tint?M.tintPx(tint,P.w3,dx,dg[1]):P.w3); }   // der Hund nickt
   if (tod!=='night') PIG.forEach(function(p,i){ var px=p[0]+rd(Math.sin(t*0.33+i*1.7)*4)-cam; if (px<-6||px>fb.w+6) return; if (w==='rain' && i%2) return; pigeon(fb,px,p[1],(Math.sin(t*0.21+i)>0)?1:-1,t,i,tint); });
   if (tod!=='day'){ var kx=KIO.x0+6-cam, fl=(Math.sin(t*17.3)+Math.sin(t*5.1+2))>1.6; if (kx>-40 && kx<fb.w){ for (x=kx;x<kx+28;x++) if (x>=0&&x<fb.w) fb.px(x,KIO.win0+1,fl?P.n4:P.l1); } }
   if (w==='bura'){ M.scn.buraDebris(fb,t,112,140,cam); } }

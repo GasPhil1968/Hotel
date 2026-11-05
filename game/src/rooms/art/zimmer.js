@@ -101,6 +101,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
   // Tür hinten links
   M.prop.door(b,DOOR.X0,DOOR.Y0,DOOR.X1-DOOR.X0,FY-DOOR.Y0,{ramp:R('w0 w1 w2 w3 w4'),frame:R('w0 w1 w2 w3'),knob:'R'});
   b.rect(DOOR.X0+3,DOOR.Y0+4,6,3,P.s5); b.px(DOOR.X0+5,DOOR.Y0+4,P.k2);                                        // Zimmernummer
+  b.rect(DOOR.X0+12,DOOR.Y0+20,7,6,P.s6); b.hl(DOOR.X0+13,DOOR.X0+17,DOOR.Y0+21,P.m2); b.hl(DOOR.X0+13,DOOR.X0+16,DOOR.Y0+23,P.m2); b.px(DOOR.X0+17,DOOR.Y0+24,P.m1); b.px(DOOR.X0+18,DOOR.Y0+24,P.m1); b.px(DOOR.X0+15,DOOR.Y0+19,P.m3);   // Zettel „Check-out 11 h. Hvala!“ mit Bleistiftherz
   b.px(DOOR.X1+7,58,P.m3); b.px(DOOR.X1+13,58,P.m3); b.rect(DOOR.X1+5,59,6,12,P.s5); b.vl(DOOR.X1+10,59,70,P.s3); b.hl(DOOR.X1+5,DOOR.X1+10,62,P.r3);   // Haken mit Handtuch
   // Fenster: Laibung, Glas mit dem Blick, Rahmen, Fensterbrett
   var vb=view(tod,w,GS); VIEWB=vb;
@@ -115,7 +116,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
   if (S.dzezva) dzezva(b,SILL[0],SILL[1]); else { b.rect(SILL[0]-10,SILL[1]-2,5,2,P.s6); b.px(SILL[0]-9,SILL[1]-2,P.k2); }   // sonst nur eine Streichholzschachtel
   // Heizkörper (alt, gerippt), Ventil, Rohr
   var h0=rp(R3.p(HEAT.X0,HEAT.Y0,1)), h1=rp(R3.p(HEAT.X1,HEAT.Y1,1)); for (y=h0[1];y<h1[1];y++) for (x=h0[0];x<h1[0];x++){ var fx=(x-h0[0])%4; b.px(x,y,fx===0?P.m1:(fx===1?P.s4:(fx===2?P.s5:P.s3))); }
-  b.hl(h0[0],h1[0]-1,h0[1],P.s6); b.hl(h0[0],h1[0]-1,h1[1]-1,P.m1); b.rect(h1[0],h1[1]-4,3,3,P.m2); b.px(h1[0]+1,h1[1]-5,P.r2); b.vl(h1[0]+1,h1[1]-1,FY+3,P.m2);
+  b.hl(h0[0],h1[0]-1,h0[1],P.s6); b.hl(h0[0],h1[0]-1,h1[1]-1,P.m1); for (y=h0[1]+3;y<h1[1]-3;y++) if (hash(y,5)<0.6) b.px(h0[0]+13,y,(y&1)?P.t1:P.m1);   // Rille mit geplatztem Lack b.rect(h1[0],h1[1]-4,3,3,P.m2); b.px(h1[0]+1,h1[1]-5,P.r2); b.vl(h1[0]+1,h1[1]-1,FY+3,P.m2);
   // kleiner Tisch mit Wasserflasche und Notizbuch
   R3.box(b,TBL.X0,TBL.X1,TBL.Y0,TBL.Y0+2,TBL.Z0,TBL.Z1,{top:P.w3,front:P.w1,left:P.w2});
   [[TBL.X0+1,TBL.Z1-1],[TBL.X1-2,TBL.Z1-1],[TBL.X0+1,TBL.Z0+1],[TBL.X1-2,TBL.Z0+1]].forEach(function(lg,li){ var p1=R3.p(lg[0],TBL.Y0+2,lg[1]), p2=R3.p(lg[0],FY,lg[1]); b.line(rd(p1[0]),rd(p1[1]),rd(p2[0]),rd(p2[1]),li<2?P.w2:P.w1); });
@@ -126,12 +127,17 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
     left:function(xx,yy){ return (yy%6===2)?P.r2:(((xx+yy)&1)?P.m2:P.m1); },front:function(xx,yy){ return ((xx>>1)+(yy>>1))&1?P.m2:P.m1; }});
   var pil=rp(R3.p(BED.X0+26,BED.Y0,BED.Z0+5)); b.ellipse(pil[0],pil[1]-1,11,3,P.s6); b.hl(pil[0]-9,pil[0]+9,pil[1]+1,P.s4);
   R3.box(b,BED.X0-2,BED.X0,BED.Y0-10,FY,BED.Z1-2,BED.Z1,{front:P.w2,left:P.w3});                                // Fußteil
+  // gerahmter alter Druck an der linken Wand: die Brücke
+  var f0=rp(R3.p(XL,40,30)), f1=rp(R3.p(XL,40,46)), f2=rp(R3.p(XL,58,46)), f3=rp(R3.p(XL,58,30));
+  b.poly([f0,f1,f2,f3],P.w1); var g0=rp(R3.p(XL,42,32)), g1=rp(R3.p(XL,42,44)), g2=rp(R3.p(XL,56,44)), g3=rp(R3.p(XL,56,32));
+  b.poly([g0,g1,g2,g3],function(xx,yy){ var h=hit(xx,yy); if (!h) return P.s5; var t=clamp((h.Z-32)/12,0,1), v=clamp((h.Y-42)/14,0,1), ar=Math.abs(t-0.5)*2;   // Wandkoordinaten: t quer, v von oben
+    if (v>0.74) return P.a3; if (v>0.42+ar*ar*0.32 && ar<0.8) return P.a4; if (v>0.3+ar*ar*0.32 && ar<0.88) return P.s5; return (v<0.3)?P.b3:P.b4; });
   // Kelim vor dem Bett, Markos Schuhe
   b.poly([rp(R3.p(178,FY,48)),rp(R3.p(236,FY,48)),rp(R3.p(236,FY,78)),rp(R3.p(178,FY,78))],function(xx,yy){ var f=R3.floor(xx,yy); if (!f) return P.r2; var u=(f.X-178)/58, v=(f.Z-48)/30, e=Math.min(u,1-u,v,1-v);
     if (e<0.05) return P.r0; if (e<0.12) return ((Math.floor(f.X/3)+Math.floor(f.Z/3))&1)?P.y2:P.r1; var d=Math.abs(u-0.5)*1.4+Math.abs(v-0.5); return d<0.22?P.b0:(d<0.3?P.y2:(((Math.floor(f.X/4)+Math.floor(f.Z/4))%3===0)?P.r1:P.r2)); });
   var sh=rp(R3.p(242,FY,60)); b.rect(sh[0],sh[1]-2,7,2,P.k1); b.rect(sh[0]+3,sh[1]-3,4,1,P.k1); b.rect(sh[0]+9,sh[1]-1,7,2,P.k1); b.rect(sh[0]+12,sh[1]-2,4,1,P.k1);
   // Stuhl mit Markos Tasche
-  var cs=rp(R3.p(CHR.X,FY,CHR.Z)); var cx=cs[0], cy=cs[1]; b.rect(cx-7,cy-15,15,3,P.w3); b.hl(cx-7,cx+7,cy-15,P.w4); b.vl(cx-6,cy-12,cy-1,P.w1); b.vl(cx+6,cy-12,cy-1,P.w1); b.vl(cx-4,cy-13,cy-3,P.w0); b.vl(cx+4,cy-13,cy-3,P.w0);
+  var cs=rp(R3.p(CHR.X,FY,CHR.Z)); var cx=cs[0], cy=cs[1]; for (var sx2=cx-7;sx2<=cx+7;sx2++) for (var sy2=cy-15;sy2<cy-12;sy2++) b.px(sx2,sy2,((sx2+sy2)&1)?P.e3:P.e2); b.hl(cx-7,cx+7,cy-15,P.e4);   // geflochtene Sitzfläche b.vl(cx-6,cy-12,cy-1,P.w1); b.vl(cx+6,cy-12,cy-1,P.w1); b.vl(cx-4,cy-13,cy-3,P.w0); b.vl(cx+4,cy-13,cy-3,P.w0);
   b.rect(cx+5,cy-34,3,20,P.w2); b.hl(cx+5,cx+7,cy-34,P.w4); b.hl(cx-6,cx+7,cy-26,P.w2); b.hl(cx-6,cx+7,cy-30,P.w2); b.rect(cx-7,cy-35,2,21,P.w2);
   bag(b,cx-10,cy-15);
   // Glühbirne: Kabel vom Balken (die Birne selbst in dynamic, sie schwingt)

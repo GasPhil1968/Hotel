@@ -234,13 +234,18 @@ function bridge(b,w){ var x, y;
   // Scheitel: Kante der Fahrbahn leicht heller (Buckel)
   for (x=AR.cx-30;x<AR.cx+30;x++){ var pt2=rd(deckY(x))-DK.par; b.px(x,pt2,P.l1); } }
 // Fels: gewachsener Kalkstein mit Schichtung und Rissen, Büsche in Spalten, nass am Wasser
-function rockPx(x,y,sd){ var st=Math.sin(y*0.55+fbm(x*0.05,y*0.02,sd)*6)*0.5+0.5, f=fbm(x*0.18,y*0.12,sd+2), c=ra(R('m0 m1 m2 s2 s3 s4'),0.3+f*0.55+(st>0.85?0.18:0)-(st<0.12?0.2:0),x,y);
-  if (fbm(x*0.6,y*0.08,sd+5)>0.72) c=P.m0; if (y>WY-3) c=M.DN[c]; return c; }
+function rockPx(x,y,sd){ var sl=y+x*0.18, st=sl-Math.floor(sl/6)*6, f=fbm(x*0.16,y*0.12,sd+2), c=ra(R('m0 m1 s1 m2 s2 s3 s4'),0.32+f*0.5,x,y);   // gewachsener Kalk: schräge Schichtbänke
+  if (st<1) c=(hash(x>>1,Math.floor(sl/6))<0.7)?P.m0:P.k2; else if (st<2) c=M.UP[M.UP[c]];                                                      // Fuge, darüber die helle Kante der Bank
+  if (fbm(x*0.55,y*0.07,sd+5)>0.74) c=P.m0;                                                                                              // senkrechte Risse
+  if (hash(x,y)<0.05) c=M.UP[c]; if (y>WY-3) c=M.DN[c]; return c; }
 function rocks(b,w){ var x, y;
   for (y=88;y<H;y++) for (x=296;x<350;x++){ if (y<rockE(x) || x<plazaEdge(y)) continue; if (y>=WY && x>=waterL(y)) continue; b.px(x,y,rockPx(x,y,3)); }
   for (y=90;y<H;y++) for (x=486;x<W;x++){ if (y<rockW(x)) continue; if (y>=WY && x<=waterR(y)) continue; b.px(x,y,rockPx(x,y,9)); }
+  // Kontur des Felsens gegen Wasser und Fernblick
+  for (y=96;y<H;y++) for (x=300;x<W;x++){ var k=y*W+x, c=b.get(x,y); if (c===T) continue; var inR=(x<AR.cx)?(y>=rockE(x) && x>=plazaEdge(y) && !(y>=WY && x>=waterL(y))):(y>=rockW(x) && !(y>=WY && x<=waterR(y)));
+    if (!inR) continue; var nb=(x<AR.cx)?!((y>=rockE(x+1)) && !(y>=WY && x+1>=waterL(y))):!((y>=rockW(x-1)) && !(y>=WY && x-1<=waterR(y))); if (nb && y>AR.sp-2) b.px(x,y,P.k2); }
   // bearbeitete Kämpferbank: der Bogen steht direkt auf dem Fels (kein Pfeiler)
-  [[SPR[0]-12,SPR[0]+5],[SPR[1]-5,SPR[1]+12]].forEach(function(q){ for (var xx=q[0];xx<q[1];xx++){ b.px(xx,AR.sp,P.s4); b.px(xx,AR.sp+1,P.s3); b.px(xx,AR.sp+2,P.m1); } });
+  [[SPR[0]-13,SPR[0]+6],[SPR[1]-6,SPR[1]+13]].forEach(function(q){ for (var xx=q[0];xx<q[1];xx++){ b.px(xx,AR.sp,P.s5); b.px(xx,AR.sp+1,P.s4); b.px(xx,AR.sp+2,P.s3); b.px(xx,AR.sp+3,P.k2); } b.px(q[0],AR.sp+1,P.s2); b.px(q[1]-1,AR.sp+1,P.s2); });
   // Büsche und Feigen in den Felsspalten
   [[318,108],[333,135],[506,112],[528,131],[548,104]].forEach(function(q,i){ var r=M.rng(i+31); for (var k=0;k<22;k++){ var bx=rd(q[0]+(r()-0.5)*9), by=rd(q[1]+(r()-0.5)*5); if (b.get(bx,by)!==T) b.px(bx,by,r()<0.4?P.g3:(r()<0.7?P.g2:P.e2)); } }); }
 
@@ -344,7 +349,7 @@ function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), 
   stage(b,6,function(){ rocks(b,w); plaza(b,wet); edgeWall(b,wet); });
   tinyPeople(b,w,tod,GS); if (S.dinoJump) tinyDino(b,AR.cx-1,rd(deckY(AR.cx))-DK.par);
   // Dunst nach Tiefe (bei Bura fast keiner: man sieht bis zu den Bergen)
-  var hz={rain:[0.9,0.7,0.5,0.25,0.12,0.06],grey:[0.6,0.45,0.3,0.14,0.08,0],calm:[0.32,0.22,0.12,0.04,0.02,0],frost:[0.28,0.18,0.1,0.03,0,0],bura:[0.08,0.05,0.02,0,0,0]}[w];
+  var hz={rain:[0.9,0.7,0.5,0.25,0.12,0.06],grey:[0.6,0.45,0.3,0.14,0.08,0],calm:[0.32,0.3,0.12,0.04,0.02,0],frost:[0.28,0.26,0.1,0.03,0,0],bura:[0.08,0.16,0.02,0,0,0]}[w];
   var fcol=(w==='rain')?(tod==='day'?P.s3:P.m1):(w==='grey'?P.s4:P.b4); if (tod==='night') fcol=P.n0;
   M.fogBake(b,function(xx,yy){ var d=DEP[yy*W+xx]; return d?hz[d-1]:0; },{col:fcol});
   var sk=new M.Buf(W,H,P.k0); paintSky(sk,tod,w,GS); SKYM.fill(0);

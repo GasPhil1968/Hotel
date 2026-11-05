@@ -15,7 +15,7 @@ var SH=[ {x0:18,x1:92,kind:'copper'},{x0:96,x1:168,kind:'carpet'},{x0:174,x1:254
 var OPEN={x0:408};                                       // hier öffnet sich die Gasse zur Brücke
 var TARA={x0:446,x1:480,top:20};                         // Turm, angeschnitten
 var STOOL=[226,116];                                     // Hocker des Händlers (Fuß)
-var BOX={x0:184,x1:206,top:100,base:114};                // Kiste mit alten Postkarten (vor dem Laden)
+var BOX={x0:182,x1:208,top:100,base:114};                // Kiste mit alten Postkarten (vor dem Laden)
 var RACK={x0:238,x1:252,top:66,base:112};                // Drehständer mit Postkarten
 var TOUR=[[418,101,0],[429,100,1]];                      // Touristen (gemalt, hinten an der Öffnung zur Brücke)
 var LAMPS=[{x:94,y:44},{x:258,y:42},{x:406,y:46}];        // Wandlaternen
@@ -66,8 +66,11 @@ function bridgeOpening(b,tod,w){ var x, y, x0=OPEN.x0;
     // Brüstung der Brücke, die nach rechts ansteigt; davor die Rampe aus Kaldrma
     var py=rd(88-t*12); for (y=py;y<py+7;y++) b.px(x,y,(y===py)?P.s6:((y===py+1)?P.s4:(((x+(y>>2)*3)%9===0)?P.s3:P.s5)));
     for (y=py+7;y<GY+2;y++) b.px(x,y,(hash(x>>1,y>>1)<0.4)?P.s3:P.s4); }
+  // ganz knapp der Anfang des Bogens: der Ring steigt unter der Brüstung aus der dunklen Schlucht
+  for (x=x0+4;x<TARA.x0;x++){ var u=(x-x0-4)/(TARA.x0-x0-4), ay=rd(GY+1-Math.pow(u,0.8)*13), py2=rd(88-((x-x0)/(TARA.x0-x0))*12)+7;
+    for (y=Math.max(py2,ay-4);y<GY+2;y++){ var c=(y<ay)?((y===ay-4)?P.s6:((y<ay-1)?P.s5:P.s3)):(y<ay+2?P.k2:(hash(x,y)<0.3?P.m1:P.m0)); b.px(x,y,c); } }
   // Licht vom Fluss her (heller Dunst in der Öffnung)
-  M.fogBake(b,function(xx,yy){ return (xx>=x0 && xx<TARA.x0 && yy<GY)?0.25+(xx-x0)/(TARA.x0-x0)*0.2:0; },{col:tod==='day'?(w==='rain'?P.s3:P.s5):P.m2}); }
+  M.fogBake(b,function(xx,yy){ return (xx>=x0 && xx<TARA.x0 && yy<80)?0.3+(xx-x0)/(TARA.x0-x0)*0.2:0; },{col:tod==='day'?(w==='rain'?P.s3:P.s5):P.m2}); }
 function taraTower(b){ var x0=TARA.x0, x1=TARA.x1, cx=x1+4, rr=x1+4-x0, x, y;
   for (x=x0;x<x1;x++){ var u=(x+0.5-cx)/rr, n=Math.sqrt(Math.max(0,1-u*u)), lit=0.6-u*0.3+n*0.1;
     for (y=TARA.top;y<GY+2;y++){ var row=Math.floor((y-TARA.top)/4), fy=(y-TARA.top)%4, col=Math.floor((Math.asin(clamp(u,-1,1))*rr*1.1+row*5.3)/7), c=ra(R('s1 s2 s3 s4 s5'),lit+(hash(col,row)-0.5)*0.3,x,y); if (fy===0) c=M.DN[c]; if (u<-0.94) c=M.DN[c]; b.px(x,y,c); } }
@@ -112,28 +115,34 @@ function shopFront(b,s,i,tod,w){ var x0=s.x0, x1=s.x1, top=68, x, y, closed=clos
 function plate(b,cx,cy,r,lit){ b.ellipse(cx+0.5,cy+0.5,r,r,function(xx,yy){ var d=Math.hypot(xx-cx,yy-cy)/r, a=Math.atan2(yy-cy,xx-cx); if (d>0.84) return P.t1; if (d>0.7) return P.t4; var c=(xx-cx<-(yy-cy)*0.4)?P.t4:P.t3; if (Math.sin(a*6+d*9)>0.6 && d<0.6) c=P.t2; if (d<0.15) c=P.t5; return c; }); b.px(cx-rd(r*0.4),cy-rd(r*0.4),P.l0); }
 function copperGoods(b,s){ var x0=s.x0, x1=s.x1;
   plate(b,x0+10,78,6); plate(b,x0+25,76,7); plate(b,x0+41,79,5); plate(b,x0+55,77,6); plate(b,x0+17,88,4); plate(b,x0+48,89,4);   // Kupferteller an der Rückwand
+  for (var ai=-4;ai<=4;ai++){ var ay=rd(77-Math.sqrt(Math.max(0,16-ai*ai))*0.8); b.px(x0+25+ai,ay+1,P.t1); } b.hl(x0+20,x0+30,77,P.t1); b.hl(x0+21,x0+29,79,P.t2);   // einer zeigt die Brücke
   plate(b,x0-6,82,5); plate(b,x1+4,84,4);                                                                                    // an den Pfosten
   for (var k=0;k<5;k++){ var dx=x0+6+k*13, by=94; dz(b,dx,by,k); }                                                          // Džezve und Kannen auf der Auslage
   b.rect(x0+50,90,10,4,P.t2); b.hl(x0+50,x0+59,90,P.t4); }
 function dz(b,cx,by,k){ var col=R('t0 t1 t2 t3 t4 t5'), rows=k%2?[4,3,4,5,5]:[3,3,4,4,5,5], h=rows.length, top=by-h; for (var j=0;j<h;j++){ var wj=rows[j], x0=cx-(wj>>1); for (var i=0;i<wj;i++){ var u=i/Math.max(1,wj-1), c=u<0.3?col[4]:(u<0.6?col[3]:(u<0.85?col[2]:col[1])); if (j===0) c=col[4]; b.px(x0+i,top+j,c); } } for (var q=0;q<4;q++) b.px(cx+2+q,top+1-(q>>1),q>2?P.k2:P.w1); }
-function carpetGoods(b,s){ var x0=s.x0, x1=s.x1, x, y, cols=[[P.r2,P.r1,P.y2,P.b0],[P.b0,P.c1,P.r2,P.s5],[P.r1,P.t2,P.y3,P.g2],[P.g2,P.g1,P.r2,P.y2]];
+function carpetGoods(b,s){ var x0=s.x0, x1=s.x1, x, y, cols=[[P.r2,P.k1,P.r3,P.b0],[P.k1,P.r1,P.r2,P.s5],[P.r2,P.r1,P.k1,P.b1],[P.r1,P.k1,P.r3,P.b0]];
   b.hl(x0-4,x1+3,70,P.k1);                                                                                                  // Stange
   [[x0+2,16],[x0+19,16],[x0+36,15],[x0+52,16]].forEach(function(q,qi){ var cs=cols[qi%cols.length], kx=q[0], kw=q[1];
     for (y=71;y<92+(qi%2)*4;y++) for (x=kx;x<kx+kw;x++){ var u=x-kx, v=y-71, e=Math.min(u,kw-1-u,v), d=Math.abs(u-kw/2+0.5)+Math.abs((v%12)-6), c=cs[0]; if (e<1) c=cs[1]; else if (e<2) c=cs[2]; else if (d<3) c=cs[3]; else if (d<4) c=cs[2]; b.px(x,y,c); }
     for (x=kx;x<kx+kw;x+=2) b.px(x,92+(qi%2)*4,P.s4); });
   for (var k=0;k<4;k++){ var ry=94-4; b.ellipse(x0+8+k*16,ry,6,3,function(xx,yy){ return ((xx+yy)%3===0)?cols[k][1]:cols[k][0]; }); b.ellipse(x0+2+k*16,ry,2,3,cols[k][2]); }   // Rollen
   for (x=x0-8;x<x0-1;x++) for (y=76;y<106;y++){ var c2=((y>>2)&1)?P.r2:P.y2; if (x===x0-8||x===x0-2) c2=P.r1; b.px(x,y,c2); } }   // Kelim am Pfosten
-function cardsGoods(b,s){ var x0=s.x0, x1=s.x1, x, y;
+function cardsGoods(b,s){ var x0=s.x0, x1=s.x1, x, y, i;
   b.rect(x0+4,70,x1-x0-8,8,P.w2); b.hl(x0+4,x1-5,70,P.w4); var sg='RAZGLEDNICE', sw=M.microWidth(sg); M.microText(b,sg,rd((x0+x1)/2-sw/2),71,P.s6);   // Schild
-  // Wand voller Postkarten (vergilbt, kleine Brückenbilder), drinnen Regale mit Kisten
-  for (var r=0;r<3;r++) for (var c=0;c<6;c++){ var px=x0+6+c*11, py=80+r*7; if (px+9>x1-4) continue; b.rect(px,py,9,6,(r+c)%3?P.s5:P.e4); b.rect(px+1,py+1,7,3,(r*3+c)%4?P.b3:P.e3); b.hl(px+1,px+7,py+4,P.a4); b.px(px+3,py+2,P.s5); b.px(px+4,py+1,P.s5); b.px(px+5,py+2,P.s5); }
-  // Kiste mit alten Postkarten auf der Auslage (vor dem Laden)
-  var bx=BOX; for (y=bx.top;y<bx.base;y++) for (x=bx.x0;x<bx.x1;x++){ var cc=((x-bx.x0)%7===0)?P.w0:(y===bx.top?P.w4:P.w2); b.px(x,y,cc); }
-  for (x=bx.x0+1;x<bx.x1-1;x+=2){ var h=2+rd(hash(x,3)*3); b.rect(x,bx.top-h,2,h,hash(x,5)<0.5?P.e4:P.s5); b.px(x,bx.top-h,P.s6); }
-  b.rect(bx.x0+2,bx.top+3,bx.x1-bx.x0-4,4,P.s5); M.microText(b,'1 KM',bx.x0+4,bx.top+3,P.k1);
+  // so schmal wie ein Schrank, alles bis unter die Decke: Kupferteller, Kaffeemühlen, Messingschalen, ein Kelim, unten Postkarten
+  plate(b,x0+9,82,4); plate(b,x0+19,81,4); plate(b,x0+54,82,4); plate(b,x0+64,81,4);
+  for (i=0;i<3;i++){ var gx=x0+28+i*7; b.rect(gx,79,4,8,P.y2); b.hl(gx,gx+3,79,P.y4); b.vl(gx,80,86,P.y3); b.line(gx+2,78,gx+4,76,P.k1); b.px(gx+4,76,P.w3); }   // Kaffeemühlen aus Messing
+  [[x0+8,89],[x0+60,89]].forEach(function(q){ b.ellipse(q[0],q[1],4,1.6,P.y3); b.hl(q[0]-3,q[0]+3,q[1]-1,P.y4); });                                     // Messingschalen
+  for (y=78;y<93;y++) for (x=x0+44;x<x0+51;x++) b.px(x,y,((y>>1)&1)?((x===x0+44||x===x0+50)?P.k1:P.r2):P.k1);                                         // kleiner Kelim
+  for (var r=0;r<1;r++) for (var c=0;c<6;c++){ var px=x0+6+c*11, py=91; if (px+9>x1-4) continue; b.rect(px,py,9,3,(c%3)?P.s5:P.e4); b.hl(px+1,px+7,py+1,(c%2)?P.b3:P.e3); }   // Postkarten am Brett
+  // Kiste mit alten Postkarten: Trennpappen „60“, „70“, „80“, nach „80“ nichts mehr
+  var bx=BOX; for (y=bx.top;y<bx.base;y++) for (x=bx.x0;x<bx.x1;x++){ var cc=((x-bx.x0)%9===0)?P.w0:(y===bx.top?P.w4:P.w2); b.px(x,y,cc); }
+  for (x=bx.x0+1;x<bx.x1-6;x+=2){ var h=2+rd(hash(x,3)*2); b.rect(x,bx.top-h,2,h,hash(x,5)<0.5?P.e4:P.s5); b.px(x,bx.top-h,P.s6); }
+  ['60','70','80'].forEach(function(t,k){ var tx=bx.x0+1+k*8; b.rect(tx,bx.top-7,7,6,P.e3); b.hl(tx,tx+6,bx.top-7,P.e4); M.microText(b,t,tx,bx.top-6,P.k1); });
+  b.rect(bx.x1-6,bx.top-1,5,1,P.w1);
   // Drehständer
   var rk=RACK, cx=rd((rk.x0+rk.x1)/2); b.vl(cx,rk.top-4,rk.base-1,P.m2); b.rect(cx-4,rk.base-2,9,2,P.m1);
-  for (var rr=0;rr<4;rr++) for (var i=0;i<3;i++){ var qx=rk.x0+i*5, qy=rk.top+rr*10, qc=[P.s5,P.e4,P.s6,P.b4][(rr+i)%4]; b.rect(qx,qy,4,7,qc); b.rect(qx,qy+1,4,3,[P.b3,P.a4,P.g4,P.e3][(rr*3+i)%4]); b.px(qx+3,qy+6,P.k2); }
+  for (var rr=0;rr<4;rr++) for (i=0;i<3;i++){ var qx=rk.x0+i*5, qy=rk.top+rr*10, qc=[P.s5,P.e4,P.s6,P.b4][(rr+i)%4]; b.rect(qx,qy,4,7,qc); b.rect(qx,qy+1,4,3,[P.b3,P.a4,P.g4,P.e3][(rr*3+i)%4]); b.px(qx+3,qy+6,P.k2); }
   // Hocker des Händlers mit Kaffeetässchen daneben
   var st=STOOL; b.rect(st[0]-5,st[1]-14,11,2,P.w3); b.hl(st[0]-5,st[0]+5,st[1]-14,P.w4); b.vl(st[0]-4,st[1]-12,st[1]-1,P.w1); b.vl(st[0]+4,st[1]-12,st[1]-1,P.w1); b.hl(st[0]-3,st[0]+3,st[1]-6,P.w1);
   b.rect(st[0]+9,st[1]-6,4,6,P.w2); b.hl(st[0]+9,st[0]+12,st[1]-6,P.w4); b.rect(st[0]+10,st[1]-9,2,2,P.s6); b.px(st[0]+12,st[1]-8,P.s5); }
@@ -167,7 +176,7 @@ function tourist(b,x,by,k,w){ var poncho=w==='rain', body=poncho?(k?P.y3:P.b2):(
   b.rect(x,by-7,1,7,leg); b.rect(x+2,by-7,1,7,M.DN[leg]);
   if (poncho) b.poly([[x-3,by-6],[x+5,by-6],[x+3,by-17],[x-1,by-17]],function(xx,yy){ return xx<x+1?M.UP[body]:body; }); else { b.rect(x-1,by-16,5,9,body); b.vl(x-1,by-16,by-8,M.UP[body]); }
   b.rect(x,by-20,3,3,P.p3); b.hl(x,x+2,by-21,poncho?M.DN[body]:(k?P.y2:P.h1));
-  if (!poncho && k===0){ b.rect(x+3,by-14,2,2,P.k1); }                                                                  // Kamera
+  b.rect(x+(k?-2:3),by-18,2,2,P.k1); b.px(x+(k?-2:4),by-18,P.m3);                                                          // beide fotografieren
   if (k===1) b.rect(x-3,by-15,2,5,P.e2); }                                                                            // Rucksack
 function lantern(b,l,lit){ var x=l.x, y=l.y; b.line(x-4,y-2,x,y-2,P.k1); b.vl(x,y-2,y,P.k1); b.poly([[x-2,y+1],[x+3,y+1],[x+2,y+7],[x-1,y+7]],lit?P.y4:P.m2); b.hl(x-2,x+3,y,P.k1); b.hl(x-1,x+2,y+8,P.k1); b.vl(x,y+1,y+7,P.k1); if (lit){ b.px(x+1,y+3,P.l1); } }
 

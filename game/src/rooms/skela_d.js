@@ -242,10 +242,10 @@ async function arriveEpi(A){ var G=A.G; if (F(G,'k3.e.mothers')) return A.narrat
   await A.wait(500); await A.narrate('Nada ist ausgestiegen, bevor der Motor ganz still war. Sie steht an der Kante und sieht auf den Fluss.');
   await A.wait(900); await Nd.say('Hier?'); await A.wait(500); await A.m('Hier hat sie geläutet.'); await A.wait(800); await A.m('Drüben liegt sie. Unter dem Quittenbaum.');
   await A.wait(900); await Nd.say('Dann gehen wir dorthin.');
-  if (A.malaHere()){ await A.wait(500); await A.g('Mama geht schnell. Wie immer.'); }
-  await A.wait(400); await A.narrate('Wir gehen über die neue Brücke. Nada vorn, ich hinter ihr. Mala neben mir, auf der Brücke, über dem Fluss. Vlado bleibt beim Lastwagen.');
-  A.despawn('nada'); var e=M.ART.skela_l&&M.ART.skela_l.entries&&M.ART.skela_l.entries.skela_most;
-  await A.goto('skela_l',e?{x:e[0],y:e[1],f:e[2]||'R',via:'skela_most'}:{via:'skela_most'}); }
+  var br=sd('to_bridge',[466,122,'R']); Nd.walk(br[0],br[1]);
+  if (A.malaHere()){ await A.wait(600); await A.g('Mama geht schnell. Wie immer.'); }
+  await A.wait(900); if (Nd.actor) Nd.actor.fadeOut=A.gt; await A.wait(900); A.despawn('nada');
+  await A.m('Sie geht voraus. Über die neue Brücke.'); await V.say('Ich bleibe beim Lastwagen. Gehen Sie.'); }
 // ---------------------------------------------------------------- Mala am rechten Ufer (Raum-Haken für das Gespräch mit ihr)
 function malaTalk(A){ var G=A.G;
   if (fin(G) && !F(G,'k3.fin.rung')) return (async function(){ await A.m('Bist du bereit?'); await A.wait(500); await A.g('Nein.'); await A.wait(500); await A.g('Läute trotzdem.'); })();

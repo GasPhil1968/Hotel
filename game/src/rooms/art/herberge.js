@@ -185,11 +185,14 @@ function chairBack(b,x,by,face,col){ col=col||R('s4 s5 s6'); var bx=face==='R'?x
 function table(b,t,cloth){ var x0=t.x0, x1=t.x1, y=t.top;
   b.rect(x0,y,x1-x0,2,cloth?P.s6:P.s5); b.hl(x0,x1-1,y,P.l1); b.hl(x0+1,x1-2,y+2,P.s3);
   b.vl(rd((x0+x1)/2),y+3,t.base-2,P.s4); b.vl(rd((x0+x1)/2)+1,y+3,t.base-2,P.s3); b.hl(rd((x0+x1)/2)-5,rd((x0+x1)/2)+6,t.base-1,P.s3); }
-function aussieStuff(b,S,tod){ var t=TBL[1], y=t.top;
-  if (S.aussies){ [[t.x0+4,P.g3],[t.x0+8,P.y2],[t.x1-7,P.g2]].forEach(function(q){ b.rect(q[0],y-7,2,7,q[1]); b.px(q[0],y-9,q[1]); b.px(q[0],y-8,q[1]); b.px(q[0],y-5,P.s6); });
-    b.rect(t.x0+12,y-2,6,2,P.r3); b.px(t.x0+13,y-2,P.s6);                                                        // Karten
-    b.ellipse(t.x1+18,t.base-6,6,6,function(xx,yy){ return xx<t.x1+16?P.y3:P.y2; }); b.rect(t.x1+14,t.base-8,8,3,P.y1); b.hl(t.x1+15,t.x1+20,t.base-11,P.k2);   // Rucksack
+function aussieStuff(b,S,tod){ var t=TBL[1], y=t.top, t0=TBL[0];
+  if (S.aussies){ [[t.x0+3,P.m4,P.r3],[t.x0+8,P.m3,P.g3],[t.x1-6,P.m4,P.b2]].forEach(function(q){ b.rect(q[0],y-4,3,4,q[1]); b.hl(q[0],q[0]+2,y-3,q[2]); b.px(q[0]+1,y-5,P.m2); });   // Bierdosen
+    b.rect(t.x0+12,y-1,10,2,P.s5); b.hl(t.x0+12,t.x0+21,y-1,P.s6); b.px(t.x0+14,y-1,P.a4); b.px(t.x0+15,y-1,P.g4); b.px(t.x0+19,y,P.e2); b.px(t.x0+18,y-1,P.e2);   // Landkarte mit Kaffeefleck
+    if (tod!=='night'){ var gx=t.x1+24; b.line(gx,RAIL.base-1,gx+5,RAIL.top+4,P.w3); b.ellipse(gx+1,RAIL.base-5,4,4,P.w4); b.ellipse(gx+1,RAIL.base-5,1.5,1.5,P.k1); b.line(gx+2,RAIL.base-8,gx+5,RAIL.top+4,P.w0); b.rect(gx+4,RAIL.top+2,3,3,P.w1); }   // Gitarre am Geländer
+    b.ellipse(t.x1+18,t.base-6,6,6,function(xx,yy){ return xx<t.x1+16?P.y3:P.y2; }); b.rect(t.x1+14,t.base-8,8,3,P.y1); b.hl(t.x1+15,t.x1+20,t.base-11,P.k2);   // Rucksäcke
     b.ellipse(t.x0-16,t.base-5,5,5,P.b1); b.hl(t.x0-19,t.x0-13,t.base-9,P.b2); }
+  else { b.px(t.x0+9,y-1,P.y3); b.px(t.x0+10,y-1,P.y2); b.ellipse(t.x1-8,y-2,4,2.2,function(xx,yy){ return yy<y-2?P.r3:P.r2; }); b.hl(t.x1-12,t.x1-4,y-1,P.r1); }   // Kronkorken, vergessene Mütze
+  if (tod==='night') { b.rect(t0.x1-9,y-4,3,4,P.m4); b.hl(t0.x1-9,t0.x1-7,y-3,P.r3); }                                                                  // die Dose Bier auf Markos Tisch
   if (S.candles){ TBL.forEach(function(tb){ var cx=rd((tb.x0+tb.x1)/2)-1; b.rect(cx,y-4,3,4,P.a5); b.px(cx,y-4,P.a6); b.px(cx+1,y-2,P.s6); CANDLES.push([cx+1,y-5]); }); } }
 var CANDLES=[];
 
@@ -239,15 +242,17 @@ function deskLayer(S,tod,w){ var x0=DESK.x0, x1=DESK.x1, L=M.layer(x0-2,DESK.top
   wr.rect(x1-8,DESK.top-1,5,1,P.s6);
   finishL(L,tod,w); return L; }
 function tableLayer(t,S,tod,w,front){ var L=M.layer(t.x0-10,t.top-12,t.x1-t.x0+20,t.base-t.top+14,t.base), wr=M.lw(L);
-  table(wr,t,false); if (t===TBL[1]) aussieStuffL(wr,S); if (S.candles){ var cx=rd((t.x0+t.x1)/2)-1; wr.rect(cx,t.top-4,3,4,P.a5); wr.px(cx,t.top-4,P.a6); wr.px(cx+1,t.top-2,P.s6); }
+  table(wr,t,false); if (t===TBL[1]) aussieStuffL(wr,S); if (t===TBL[0] && tod==='night'){ wr.rect(t.x1-9,t.top-4,3,4,P.m4); wr.hl(t.x1-9,t.x1-7,t.top-3,P.r3); }
+  if (w==='rain'){ wr.hl(t.x0+4,t.x1-6,t.top,P.m3); wr.hl(t.x0+8,t.x1-10,t.top,P.s6); }   // im Regen ein kleiner See auf dem Tisch if (S.candles){ var cx=rd((t.x0+t.x1)/2)-1; wr.rect(cx,t.top-4,3,4,P.a5); wr.px(cx,t.top-4,P.a6); wr.px(cx+1,t.top-2,P.s6); }
   finishL(L,tod,w); if (tod!=='day' && S.candles){ var cx2=rd((t.x0+t.x1)/2); wr.px(cx2,t.top-5,P.y4); } return L; }
-function aussieStuffL(wr,S){ var t=TBL[1], y=t.top; if (!S.aussies) return; [[t.x0+4,P.g3],[t.x0+8,P.y2],[t.x1-7,P.g2]].forEach(function(q){ wr.rect(q[0],y-7,2,7,q[1]); wr.px(q[0],y-9,q[1]); wr.px(q[0],y-8,q[1]); wr.px(q[0],y-5,P.s6); }); wr.rect(t.x0+12,y-2,6,2,P.r3); }
+function aussieStuffL(wr,S){ var t=TBL[1], y=t.top; if (S.aussies){ [[t.x0+3,P.m4,P.r3],[t.x0+8,P.m3,P.g3],[t.x1-6,P.m4,P.b2]].forEach(function(q){ wr.rect(q[0],y-4,3,4,q[1]); wr.hl(q[0],q[0]+2,y-3,q[2]); wr.px(q[0]+1,y-5,P.m2); }); wr.rect(t.x0+12,y-1,10,2,P.s5); wr.px(t.x0+18,y-1,P.e2); }
+  else { wr.px(t.x0+9,y-1,P.y3); wr.ellipse(t.x1-8,y-2,4,2.2,function(xx,yy){ return yy<y-2?P.r3:P.r2; }); } }
 function layers(S,GS,tod){ var w=weaOf(GS); return [deskLayer(S,tod,w),tableLayer(TBL[0],S,tod,w),tableLayer(TBL[1],S,tod,w)]; }
 var LAPSCR=[129,78];
 
 // ---------------------------------------------------------------- Bewegung: Lichterkette, Kerzen, Gitarrensaite, Glitzern unten im Fluss, Laptop
 function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), i;
-  if (tod!=='day'){ BULBS.forEach(function(q,k){ var X=q[0]-cam; if (X<0||X>=320) return; var on=Math.sin(t*(1.1+hash(k,3))+k*2.3)>-0.85; fb.px(X,q[1],on?(hash(k,7)<0.4?P.l1:q[2]):M.DN[q[2]]); if (on && hash(k,5)<0.5) fb.px(X,q[1]-1,P.y5); });
+  if (tod!=='day'){ BULBS.forEach(function(q,k){ var X=q[0]-cam; if (X<0||X>=320) return; var on=(k%3!==2) || Math.sin(t*(7.3+hash(k,3)*5)+k*2.3)+Math.sin(t*13.1+k)>-0.6; fb.px(X,q[1],on?(hash(k,7)<0.4?P.l1:q[2]):M.DN[q[2]]); if (on && hash(k,5)<0.5) fb.px(X,q[1]-1,P.y5); });
     CANDLES.forEach(function(c,k){ var X=c[0]-cam, f=Math.sin(t*9+k*3)>0; if (X<0||X>=320) return; fb.px(X,c[1],f?P.y5:P.y4); fb.px(X,c[1]-1,f?P.y3:P.l0); if (Math.sin(t*13+k)>0.6) fb.px(X+1,c[1]-1,P.y3); }); }
   else CANDLES.forEach(function(c,k){ var X=c[0]-cam; if (X>=0&&X<320 && Math.sin(t*9+k*3)>-0.3) fb.px(X,c[1],P.y4); });
   // Glitzern unten auf der Neretva
@@ -261,7 +266,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), i;
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return x+v.cam>=CORNER.x1 && y>12; }}); }
 // Geistersicht: am Geländer ein schwacher Abdruck vieler Hände
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<34;i++){ var hx=CORNER.x1+8+Math.floor(hash(i,1)*(W-CORNER.x1-16))-cam, hy=RAIL.top-1+Math.floor(hash(i,2)*2); if (hx<2||hx>316) continue;
-    var a=0.55+0.3*Math.sin(t*0.7+i); if (bayer(hx,hy)>a) continue; var c=(hash(i,3)<0.3)?P.x5:P.x3;
+    var a=0.55+0.3*Math.sin(t*0.7+i); if (bayer(hx,hy)>a) continue; var warm=hash(i,6)<0.4, c=warm?((hash(i,3)<0.4)?P.v5:P.v3):((hash(i,3)<0.3)?P.x5:P.x3);
     fb.px(hx,hy,c); fb.px(hx+1,hy,c); fb.px(hx+2,hy,c); fb.px(hx-1,hy+1,P.x2); fb.px(hx+3,hy+1,P.x2); fb.px(hx,hy-1,P.x2); fb.px(hx+2,hy-1,P.x2); if (hash(i,4)<0.5) fb.px(hx+1,hy+1,P.x4); } }
 
 // ---------------------------------------------------------------- Lauffläche
@@ -283,7 +288,7 @@ M.defineArt('herberge',{
     lights:[CORNER.x1,PERG.beam-4,W-CORNER.x1,16],
     bridge_view:[BR.cx-BR.span-18,BR.top-16,BR.span*2+34,BR.sp-BR.top+20]
   },
-  stands:{ door:[18,116,'B'], desk:[120,116,'B'], bell:[142,116,'B'], register:[108,116,'B'], stairs:[72,114,'B'], railing:[290,114,'B'], table:[227,129,'B'], guitar:[340,130,'B'], lights:[280,118,'B'], bridge_view:[362,114,'B'] },
+  stands:{ door:[18,116,'B'], desk:[120,116,'B'], bell:[142,116,'B'], register:[108,116,'B'], stairs:[72,114,'B'], railing:[290,114,'B'], table:[227,129,'B'], guitar:[340,130,'B'], lights:[280,118,'B'], bridge_view:[376,116,'B'] },
   actorPos:{ maja:[122,MAJA_Y,'R'], aussie1:[AUS[0][0],AUS[0][1],'R','aussie1',false,'sit'], aussie2:[AUS[1][0],AUS[1][1],'L','aussie2',false,'sit'], aussie3:[AUS[2][0],AUS[2][1],'L','aussie3',false,'guitar'], mala:[300,114,'R'] },
   start:[110,120,'R'], entries:{ map:[18,118,'R'], zimmer:[70,116,'R'] }
 });
