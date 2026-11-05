@@ -32,7 +32,7 @@ async function announce(A){ var Mt=A.npc('mate'); if (A.S.given) return Mt.say('
   await A.narrate('Mate lacht. Zuerst leise, dann so, dass er den Hut festhalten muss.'); await Mt.say('Dreißig Jahre habe ich das gehört.');
   await A.wait(900); await Mt.say('Bitte einsteigen. Bitte zurückbleiben. Jeden Morgen um halb sechs. Ich habe es gehasst, und dann habe ich es vermisst.');
   await intoLight(A,'mate',[async function(){ await A.wait(800); await Mt.face('L'); await Mt.say('Danke, Übersetzer.'); await A.wait(500); await Mt.say('Sagen Sie Davor … nein. Er weiß es jetzt.'); await A.wait(600); await Mt.say('Und dem Mädchen: Im August sind die Feigen reif. Sie soll sie warm essen. Von der Sonne warm.'); }]);
-  A.setFlag('k3.b.limbo'); await A.wait(700); await A.g('Er ist eingestiegen.'); await A.m('Hat er noch etwas gesagt?'); await A.g('Er hat gelacht. Das war alles.'); await A.wait(800); await A.g('Komm. Durch das Tor.'); }
+  A.setFlag('k3.b.limbo'); await A.wait(700); await A.g('Er ist eingestiegen.'); await A.m('Ohne sich umzudrehen.'); await A.g('Wer dreißig Jahre eingestiegen ist, dreht sich nicht mehr um.'); await A.wait(800); await A.g('Komm. Durch das Tor.'); }
 // ---------------------------------------------------------------- Gespräch in der Zwischenwelt
 async function talkM(A){ var Mt=A.npc('mate'); if (A.S.given) return Mt.say('Ich steige ein.');
   await A.menuLoop(function(){ return [

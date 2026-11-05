@@ -41,7 +41,7 @@ async function leashTalk(A){ var G=A.G, k=M.k3Leash?M.k3Leash(G):'down', p=G.pha
   if (k==='bond'&&F(A,'k3.fin.bond')){ await A.g('Zu dir. Aber anders.'); await A.wait(400); await A.g('Sie zieht nicht. Ich könnte sie loslassen. Ich lasse sie nicht los.'); return; }
   if (k==='none'){ await A.g('Nirgendwohin.'); await A.wait(500); await A.g('Zum ersten Mal seit vierundneunzig nirgendwohin. Ich weiß nicht, ob ich das mag.'); return; }
   if (k==='zlata'){ await A.g('Zu ihr. Über den Fluss, ins Haus. Zu '+zName(A)+'.'); if (N(A,'l3_survived')){ await A.wait(400); await A.g('Sie hält mich fest. Nicht mit den Händen. Mit dem, was sie weiß.'); } return; }
-  if (k==='city'){ await A.g('In die Stadt. Hinauf, hinter die Altstadt.'); await A.wait(400); await A.g('Sie zieht anders als gestern. Unruhiger. Als würde das, woran sie hängt, herumlaufen.'); return; }
+  if (k==='city'){ if (!N(A,'l3_city')){ A.note('l3_city'); A.setFlag('k3.d2.wake'); } await A.g('In die Stadt. Hinauf, hinter die Altstadt.'); await A.wait(400); await A.g('Sie zieht anders als gestern. Unruhiger. Als würde das, woran sie hängt, herumlaufen.'); return; }
   if (p==='k3_d2'){ await A.g('Wieder flussab. Sie ist mit ihr gegangen.'); return; }
   if (inP(A,PRO) && !N(A,'l3_down')){ await A.g('Flussab, glaube ich. Hier zwischen den Häusern sehe ich es nicht genau. An der Brücke sehe ich weit.'); return; }
   if (inP(A,NIGHTS)){ await A.g('Auch nachts. Sie schläft nicht. Ich auch nicht.'); return; }
@@ -63,7 +63,7 @@ async function nadaTalk(A){ var G=A.G, p=G.phase, sms=F(A,'k3.p.sms'), n2=F(A,'k
   if (inP(A,PRO)){ if (sms==='yes'){ await A.g('Du hast ihr geschrieben. Zwei Wörter.'); await A.g('Sie liest sie jetzt immer wieder. Ich weiß es. So ist sie.'); } else { await A.g('Du hast ihr nicht geschrieben.'); await A.m('Ich weiß.'); await A.g('Sie sitzt jetzt am Küchentisch und sieht auf das Telefon. Ich habe sie so sitzen sehen. Im Winter, bevor ich weg bin.'); } return; }
   await A.g('Jeden Tag.'); await A.wait(400); await A.g('Sie lüftet mein Zimmer. Ich frage mich, was sie mit den Bildern an der Wand macht. Mit den Bleistiftsachen.'); }
 async function markoTalk(A){ await A.g('Manchmal zieht es. Meistens nicht.'); await A.wait(400); await A.g('In Mostar darf ich weiter weg von dir als in Split. Bis zu den Stufen am Fluss. Ich weiß nicht, warum.'); await A.m('Weil die Leine woanders hängt.'); await A.g('Vielleicht. Ein paar Straßen bleiben ein paar Straßen.'); }
-async function promiseTalk(A){ var c=A.flag('k3.p.promise'); await A.m('Ich frage dich. Wie versprochen.');
+async function promiseTalk(A){ var c=A.flag('k3.p.promise');
   if (c==='a'){ await A.g('Du übst.'); await A.m('Ich übe.'); await A.g('Man merkt es. Ein bisschen.'); }
   else if (c==='b'){ await A.g('Schnell genug?'); await A.m('Noch nicht immer.'); await A.g('Für mich ist immer Zeit. Das habe ich gesagt. Ich habe nicht gesagt, dass ich gern warte.'); }
   else { await A.g('Und wenn ich falsch entscheide, ist es meins.'); await A.m('Ich weiß.'); await A.g('Du sagst es, als würdest du es glauben. Das ist neu.'); } }
@@ -73,12 +73,12 @@ async function zlataQuestion(A){ await A.m('Soll ich '+(A.flag('met.zlata')?'Zla
   await A.g('Ich will nicht, dass noch jemand siebzehn Jahre die falsche Geschichte hat.'); await A.m('Gut.'); }
 async function vladoQuestion(A){ if (room(A)==='vhof' && M.k3Talk2){ await M.k3Talk2(A); return 'bye'; }
   await A.m('Er sagt, du hast ihn weggeschickt.'); await A.wait(800); await A.g('Nicht hier.'); await A.wait(500); await A.g('Beim Lastwagen.'); }
-async function bondTalk(A){ var c=consent(A); await A.m('Bleibst du?');
+async function bondTalk(A){ var c=consent(A);
   if (c==='a'){ await A.g('Du hast Ja gesagt.'); await A.wait(400); await A.g('Nicht einfach so. Aber Ja.'); await A.m('Nicht einfach so.'); }
   else if (c==='b'){ await A.g('Bis einer von uns sagt, es ist zu schwer.'); await A.m('Beide.'); await A.g('Beide. Noch ist es nicht schwer. Nur manchmal laut.'); }
   else { await A.g('Bis München. Dann fragst du mich noch mal.'); await A.wait(400); await A.g('Oder ich dich. Das haben wir nicht ausgemacht, wer zuerst.'); await A.m('Dann wer zuerst daran denkt.'); }
   await A.wait(500); await A.g('Und wenn ich gehe, sage ich es dir vorher. Nicht wie damals.'); }
-async function headTalk(A){ await A.m('Mein Kopf tut weh.'); await A.wait(500); await A.g('Ich weiß. Das bin ich.'); await A.wait(400);
+async function headTalk(A){ await A.wait(500); await A.g('Ich weiß. Das bin ich.'); await A.wait(400);
   var c=consent(A); await A.g(c==='a'?'Du hast gesagt: Nein, aber ja. Ich halte dich daran fest. Ein bisschen.':(c==='b'?'Wenn es zu schwer wird, sagst du es. Ist es zu schwer?':'In München fragst du mich noch mal. Schreib dir auf, wie oft er wehgetan hat.')); if (c==='b'){ await A.m('Nein. Noch nicht.'); await A.g('Dann nicht.'); } }
 async function sinceTalk(A){ await A.m('Die ganze Zeit. In Vratnik und in Split. Ich habe dich nicht gesehen.'); await A.wait(600); await A.g('Ich war leer. Man sieht nichts Leeres.'); await A.wait(400); await A.g('Jetzt bin ich voll. Es ist schwer. Es ist gut.'); }
 // ---------------------------------------------------------------- Mit Mala reden
@@ -90,10 +90,10 @@ M.k3TalkToMala=async function(A){ var G=A.G, p=G.phase, r=room(A);
   await A.menuLoop(function(){ var crossedB=F(A,'k3.mala.crossed'); return [
     M.hintTalkOpt(A),
     // die Brücke, die alle kennen (Prolog)
-    {t:'Ist sie es? Deine Brücke?',if:r==='starimost'&&!N(A,'l3_mybridge'),go:async function(A){ await M.k3BridgeIsIt(A); }},
-    {t:'Im Januar vierundneunzig war die hier auch kaputt.',if:r==='starimost'&&N(A,'l3_mybridge')&&!F(A,'k3.p.objection'),go:async function(A){ await M.k3BridgeObjection(A); }},
-    {t:'Wohin zeigt die Leine?',if:r==='starimost'&&!N(A,'l3_down'),go:async function(A){ await M.k3BridgeLeash(A); }},
-    {t:'Komm mit auf die Brücke. Nur bis zur Mitte.',if:r==='starimost'&&N(A,'l3_mybridge')&&!F(A,'k3.p.nobridge')&&!inP(A,EPI),go:async function(A){ await M.k3PushBridge(A); }},
+    {t:'Ist sie es? Deine Brücke?',silent:true,if:r==='starimost'&&!N(A,'l3_mybridge'),go:async function(A){ await M.k3BridgeIsIt(A); }},
+    {t:'Im Januar vierundneunzig war die hier auch kaputt.',silent:true,if:r==='starimost'&&N(A,'l3_mybridge')&&!F(A,'k3.p.objection'),go:async function(A){ await M.k3BridgeObjection(A); }},
+    {t:'Wohin zeigt die Leine?',silent:true,if:r==='starimost'&&!N(A,'l3_down'),go:async function(A){ await M.k3BridgeLeash(A); }},
+    {t:'Komm mit auf die Brücke. Nur bis zur Mitte.',silent:true,if:r==='starimost'&&N(A,'l3_mybridge')&&!F(A,'k3.p.nobridge')&&!inP(A,EPI),go:async function(A){ await M.k3PushBridge(A); }},
     // die Peilung
     {t:'Zeig mir, wohin die Leine zeigt. Ich zeichne.',if:r==='starimost'&&inP(A,DAYS)&&!F(A,'k3.peil.bridgehead'),go:async function(A){ if (M.k3UseBridgehead) await M.k3UseBridgehead(A); return 'bye'; }},
     {t:'Zeig mir, wohin die Leine von hier oben zeigt.',if:r==='minarett'&&!F(A,'k3.peil.minaret'),go:async function(A){ if (M.k3UseMinaretView) await M.k3UseMinaretView(A); return 'bye'; }},
@@ -144,7 +144,7 @@ async function k3Phone(A){ var L=phonePick(A);
   if (c==='smsLate') return smsLate(A); if (c==='sanja') return M.k3SanjaCall(A); if (c==='vesna') return callVesna(A); if (c==='nadaEpi') return M.k3NadaCallEpi(A);
   if (c==='sanja2'){ await A.m('Sanja hat gesagt: Ljerka ruft zurück. Nicht gleich. Ljerka macht nichts gleich.'); return; }
   if (c==='nadaNo'){ await A.m(F(A,'k3.d2.nada')?'Sie hat heute angerufen. Ich rufe nicht zurück, bevor ich mehr weiß.':'Noch nicht. Nicht, bevor ich etwas weiß. Wenn ich sie jetzt anrufe, höre ich sie warten.'); return; }
-  if (c==='mother'){ if (!F(A,'k3.e.sample')){ await A.m('Mama.'); await A.wait(600); await A.m('Nicht jetzt. Erst das Amt. Erst muss ich wissen, was ich sie fragen will.'); return; }
+  if (c==='mother'){ if (!F(A,'k3.e.sample') && !F(A,'k3.e.sampleDone')){ await A.m('Mama.'); await A.wait(600); await A.m('Nicht jetzt. Erst das Amt. Erst muss ich wissen, was ich sie fragen will.'); return; }
     if (M.k3MotherCall) return M.k3MotherCall(A); A.sfx('dial'); await A.wait(1800); await A.m('Es klingelt in München. Lange. Niemand geht ran.'); return; } }
 async function smsLate(A){ A.setFlag('k3.p.sms','yes'); A.setFlag('k3.p.smsLate'); A.sfx('click');
   await A.narrate('Ich schreibe doch noch: „Stigao sam. Javim se.“ Angekommen. Ich melde mich. Ein paar Stunden zu spät.'); if (A.G.malaOn) await A.g('Besser spät. Das sagt man so.'); }

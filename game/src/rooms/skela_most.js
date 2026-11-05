@@ -24,9 +24,9 @@ async function crossView(A){ var V=A.npc('vlado'), K=A.npc('kata'); A.music('k3_
 var HS=[
  {id:'exit_d',name:'Zum rechten Ufer',exit:{to:'skela_d',gok:true,get leaveMala(){ return crossing(M.GS); }},look:'Zurück zum rechten Ufer, zur Hütte und zur Glocke.',
    canExit:async function(A){ if (crossing(A.G)){ await A.m('Nicht zurück. Sie ist auf dem Wasser. Ich gehe hinüber, wo sie ankommt.'); return false; } return true; },
-   g:{look:'Da drüben habe ich geläutet.',listen:'Die Glocke summt noch. Bis hierher.'}},
+   g:{look:'Da drüben habe ich geläutet.',sense:'Das Ufer zieht. Nicht mehr so wie früher.',listen:'Die Glocke summt noch. Bis hierher.'}},
  {id:'exit_l',name:'Zum linken Ufer',exit:{to:'skela_l',gok:true,get leaveMala(){ return crossing(M.GS); }},look:'Zum linken Ufer. Ein Hof, ein Haus, ein Schuppen am Wasser.',
-   g:{look:'Das andere Ufer. Ich hätte nicht gedacht, dass man einfach hingehen kann.',listen:'Hühner. Und jemand, der Holz hackt.'}},
+   g:{look:'Das andere Ufer. Ich hätte nicht gedacht, dass man einfach hingehen kann.',sense:'Da ist es warm. Da hat mich jemand gehalten.',listen:'Hühner. Und jemand, der Holz hackt.'}},
  {id:'plaque',name:'Spendertafel',look:'Eine Messingtafel am Brückenkopf, angelaufen, mit eingeschlagenen Buchstaben.',read:function(A){ return plaque(A); },use:function(A){ return plaque(A); },
    g:{look:'Buchstaben aus Messing. Sie sagen, wer bezahlt hat. Nicht, wer gewartet hat.',sense:'Viele Hände haben sie poliert, am Tag der Einweihung. Seitdem keiner mehr.',listen:'Nichts. Messing schweigt.'}},
  {id:'railing',name:'Geländer',look:function(A){ return A.m(night(A.G)?'Ein Rohrgeländer, eiskalt. Darunter schwarze Luft und dann der Fluss.':'Ein grün gestrichenes Rohrgeländer. Jemand hat ein Herz hineingeritzt und zwei Buchstaben, die der Rost gefressen hat.'); },
@@ -37,9 +37,9 @@ var HS=[
  {id:'lamp',name:'Laterne',look:function(A){ return A.m(night(A.G)?'Die einzige Laterne der Brücke. Ihr Licht reicht bis zur Mitte, dann hört es auf.':'Eine Laterne aus Blech, bei Tag aus.'); },
    g:{look:'Ein Licht, das an bleibt. Die ganze Nacht.',sense:'Das Licht hat viele gesehen, die drübergegangen sind. Mich nicht.',listen:'Sie summt.'}},
  {id:'vlado',npc:'vlado',name:'Vlado',hgt:48,vis:function(S,G){ return crossing(G); },talk:async function(A){ await A.npc('vlado').say('Gehen Sie. Ich komme nach. Meine Knie sind älter als die Brücke.'); },
-   look:'Vlado, eine Hand am Geländer. Er sieht flussab, wohin ich sehe, und sieht nichts.',g:{look:'Er geht über die Brücke, die es damals nicht gab.',listen:'Er sagt ihren Namen nicht. Er denkt ihn.'}},
+   look:'Vlado, eine Hand am Geländer. Er sieht flussab, wohin ich sehe, und sieht nichts.',g:{look:'Er geht über die Brücke, die es damals nicht gab.',sense:'Seine Knie tun weh. Er geht trotzdem schneller als Kata.',listen:'Er sagt ihren Namen nicht. Er denkt ihn.'}},
  {id:'kata',npc:'kata',name:'Kata',hgt:46,vis:function(S,G){ return crossing(G); },talk:async function(A){ await A.npc('kata').say('Ich glaube Ihnen nicht. Aber ich gehe mit.'); },
-   look:'Kata, die Hände in den Ärmeln. Sie sieht ihrem Vater zu, nicht dem Fluss.',g:{look:'Sie geht neben ihm. Damals saß sie am Fenster und hat ihn im Führerhaus gesehen.',listen:'Sie zählt seine Schritte.'}}
+   look:'Kata, die Hände in den Ärmeln. Sie sieht ihrem Vater zu, nicht dem Fluss.',g:{look:'Sie geht neben ihm. Damals saß sie am Fenster und hat ihn im Führerhaus gesehen.',sense:'Sie friert und sagt es nicht.',listen:'Sie zählt seine Schritte.'}}
 ];
 M.room('skela_most',{ name:'Neue Brücke', scape:'k3_skela_most',
   music:function(G){ if (fin(G)) return 'k3_fin'; if (epi(G)) return 'k3_epi'; return 'k3_skela'; },

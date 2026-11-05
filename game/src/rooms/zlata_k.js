@@ -20,11 +20,11 @@ async function order(A){ var G=A.G; if (!orderReady(G)) return A.m(N(G,'a3_light
 // ---------------------------------------------------------------- Epilog: die zwei Mütter in der Küche
 async function letter(A){ var G=A.G, Nd=A.npc('nada'), Z=A.npc('zlata'); if (F(G,'k3.e.letter')) return;
   A.take('brief1996'); await A.animM('give'); A.sfx('paper'); A.setFlag('k3.e.letter');
-  Nd.idle(null); await A.narrate('Nada steht auf, um ihn zu lesen. Sie liest im Stehen.');
+  Nd.set('talk',null); Nd.idle(null); await A.narrate('Nada steht auf, um ihn zu lesen. Sie liest im Stehen.');
   await A.doc({style:'letter',title:'Skela, 1996',lines:['An die Familie eines Mädchens, das sich Mala nannte.','MZ Alipašino Polje, Sarajevo','','Im Januar 1994 ist bei uns ein Mädchen gestorben.','Sie hat gesagt, sie heißt Mala. In ihrem Heft','sind eine Straßenbahn und ein Hochhaus mit einer Uhr.','','Sie liegt unter unserem Quittenbaum.','Wenn Sie sie suchen: Wir sind in Skela, an der Fähre.','','Zlata Brkić','','ADRESA NEDOVOLJNA']});
   await A.wait(1200); await Nd.say('Sie haben geschrieben.'); await A.wait(1200); await Z.say('Jednom. Onda sam prestala.'); await A.m('„Einmal. Dann habe ich es gelassen.“');
   await A.wait(1000); await Nd.say('„Adresse unzureichend.“'); await A.wait(1300); await Z.say('Mislila sam, to je znak.'); await A.m('„Ich habe gedacht, das ist ein Zeichen.“');
-  await A.wait(1200); Nd.idle('sit'); await A.narrate('Nada setzt sich wieder. Sie legt den Brief vor sich auf das Wachstuch und streicht ihn glatt, zweimal.');
+  await A.wait(1200); Nd.idle('sit'); Nd.set('talk','sitTalk'); await A.narrate('Nada setzt sich wieder. Sie legt den Brief vor sich auf das Wachstuch und streicht ihn glatt, zweimal.');
   await A.wait(1100); await Z.say('I ovo.'); await A.m('„Und das.“'); await A.wait(400); await A.narrate('Zlata nimmt ein kleines Heft vom Bord über dem Herd. Der Karton ist wellig, wie Wasser.');
   await Z.say('Osušila sam ga na šporetu.'); await A.m('„Ich habe es auf dem Herd getrocknet.“'); A.give('skizzenbuch'); await A.wait(500); await Z.say('Za majku.'); await A.m('„Für die Mutter.“'); }
 async function sketch(A){ var G=A.G, Nd=A.npc('nada'); if (F(G,'k3.e.sketch')) return;
@@ -70,7 +70,7 @@ function malaTalk(A){ var G=A.G; if (kitchen(G) && !F(G,'k3.e.told')) return (as
 function malaLook(A){ var G=A.G; if (epi(G)) return A.m(A.cycle('mlK',['Mala an der Tür. Sie kommt nicht näher an den Herd. Sie sieht ihn nur an.','Sie hält ihre Dose, als wäre es kalt hier. Es ist das wärmste Zimmer in ganz Skela.'])); return null; }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
- {id:'door',name:'Tür',exit:{to:'skela_l',gok:true},look:'Die Küchentür, angelehnt. Draußen der Hof und das Gackern.',g:{look:'Hinaus. Hinaus ist leichter.',listen:'Die Hühner. Und der Fluss, weit weg.'}},
+ {id:'door',name:'Tür',exit:{to:'skela_l',gok:true},look:'Die Küchentür, angelehnt. Draußen der Hof und das Gackern.',g:{look:'Hinaus. Hinaus ist leichter.',sense:'Durch diese Tür ist einer jeden Morgen hinausgegangen und hat nichts gesagt.',listen:'Die Hühner. Und der Fluss, weit weg.'}},
  {id:'stove',name:'Herd',look:function(A){ return A.m(epi(A.G)?'Der Herd brennt. Zlata hat nachgelegt, für Nada. Es riecht nach Buchenholz und nach Kaffee, der noch nicht gekocht ist.':'Ein gemauerter Holzherd mit einer Messingstange, darauf ein Wasserkessel. Es ist warm hier, warm wie nirgends in Mostar.'); },
    use:async function(A){ A.sfx('stoveFire'); await A.m('Ich halte die Hände über die Platte. Die Wärme kommt bis in die Finger.'); },
    g:{look:'Hier. Hier war es warm. Das Letzte, was ich weiß: dass es warm war.',sense:'Ein Mädchen in grauen Decken, die Füße zum Feuer. Eine Frau, die nicht schläft. Einen ganzen Vormittag lang.',listen:'Das Feuer redet. Es hat damals auch geredet. Ich habe zugehört, bis ich es nicht mehr gehört habe.'}},
@@ -101,11 +101,11 @@ var HS=[
  {id:'zlata',npc:'zlata',name:'Zlata',hgt:40,vis:function(S,G){ return kitchen(G); },talk:function(A){ return talkZlataK(A); },
    look:'Zlata am Herd. Sie rührt im Kaffee und sieht nicht auf. Sie hört jedes Wort.',
    give:{ brief1996:'Zlata: „Ne meni. Njoj.“ Nicht mir. Ihr.', skizzenbuch:'Zlata: „Njoj.“ Ihr.' },
-   g:{look:'Sie hat mich gehalten. Hier.',listen:'Sie hat Angst, dass die Mutter sie hasst. Sie hasst sie nicht.'}},
+   g:{look:'Sie hat mich gehalten. Hier.',sense:'Ihre Hände sind dieselben. Sie reiben jetzt einen Topf statt meiner Hände.',listen:'Sie hat Angst, dass die Mutter sie hasst. Sie hasst sie nicht.'}},
  {id:'nada',npc:'nada',name:'Nada',hgt:36,vis:function(S,G){ return kitchen(G); },talk:function(A){ return talkNada(A); },
    look:function(A){ return A.m(F(A.G,'k3.e.letter')?'Nada am Tisch, vor sich den Brief. Sie liest ihn nicht noch einmal. Sie hält ihn fest.':'Nada am Tisch, den Mantel noch an, die Handtasche auf den Knien. Sie sieht auf das Sofa mit den Decken.'); },
    give:{ brief1996:function(A){ return letter(A); }, skizzenbuch:function(A){ return sketch(A); }, photo_full:'Nada: „Das Foto habe ich. Ich will ihr Heft.“' },
-   g:{look:'Mama. In der Küche, in der ich gestorben bin. Sie weiß es nicht. Noch nicht.',listen:'Sie atmet, wie sie atmet, wenn sie nicht weinen will.'}}
+   g:{look:'Mama. In der Küche, in der ich gestorben bin. Sie weiß es nicht. Noch nicht.',sense:'Siebzehn Januare. Sie trägt sie alle in der Handtasche.',listen:'Sie atmet, wie sie atmet, wenn sie nicht weinen will.'}}
 ];
 var HS_BY={}; HS.forEach(function(h){ HS_BY[h.id]=h; });
 M.room('zlata_k',{ name:'Zlatas Küche', scape:'k3_zlata_k',

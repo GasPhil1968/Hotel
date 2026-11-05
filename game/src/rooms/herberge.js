@@ -35,7 +35,7 @@ async function tepaLine(A,J){ await J.say('Samstags kommen die Leute aus den Dö
   if (A.G.malaOn){ await A.wait(500); await A.g('Aus den Dörfern.'); if (N(A,'l3_city')){ await A.wait(400); await A.g('Sie zieht in die Stadt, Marko. Genau dahin, glaube ich.'); } } }
 async function talkMaja(A){ var J=A.npc('maja'), G=A.G, p=G.phase;
   await A.menuLoop(function(){ return [
-    {t:'Ich möchte mich eintragen.',if:!A.flag('k3.p.checkin'),go:async function(A){ await checkIn(A); }},
+    {t:'Ich möchte mich eintragen.',silent:true,if:!A.flag('k3.p.checkin'),go:async function(A){ await checkIn(A); }},
     {t:'Was ist heute los in der Stadt?',once:'mjT',if:p==='k3_d2'&&!N(A,'l3_tepa'),go:async function(A){ await tepaLine(A,J); }},
     {t:'Kann man hier irgendwo hoch hinauf? Über die Dächer sehen?',if:A.flag('k3.peil.bridgehead')&&!A.flag('k3.peil.minaret'),go:async function(A){ await J.say('Auf das Minarett der Koski-Moschee. Gleich flussab, im Hof gibt es Karten. Fünf Mark.');
         await J.say('Bei Bura sieht man von da oben bis zu den Bergen im Süden. Die Australier waren oben und haben „awesome“ gesagt. Was sonst.'); A.unlock('koski'); }},
@@ -63,7 +63,8 @@ async function talkAussies(A){ var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.n
     {t:'Where are you heading?',once:'au1',go:async function(A){ await J.say('Wherever the bus goes. Dubrovnik next, maybe. Or Kotor. Or Sarajevo again, Bec loved the burek.'); await B.say('I didn’t love it. I married it.'); await A.m('Sie fahren dahin, wo der Bus hinfährt. Das kenne ich.'); }},
     {t:'How do you like Mostar?',once:'au2',go:async function(A){ await B.say('The bridge is awesome. A guy wanted twenty euros to jump. Then it rained, and he said the river doesn’t like him in November.'); await J.say('Awesome, though.'); if (G.malaOn) await A.g('Das war Dino. Er sagt das jedem. Es stimmt trotzdem.'); }},
     {t:'What’s that song?',if:p!=='k3_pro',once:'au3',go:async function(A){ A.sfx('strum'); await L.say('Some old Yugoslav song. A guy in Sarajevo taught us. In a bar. We don’t know what it means.');
-        var c=await A.choose([{t:'(Übersetzen.) It’s about a girl waiting at a window. He doesn’t come.',id:'tr'},{t:'(Nicht übersetzen.) It’s a happy song.',id:'lie'}],{title:'Liam'});
+        var c=await A.choose([{t:'(Übersetzen.) It’s about a girl waiting at a window. He doesn’t come.',id:'tr',silent:true},{t:'(Nicht übersetzen.) It’s a happy song.',id:'lie',silent:true}],{title:'Liam'});
+        await A.m(c==='tr'?'It’s about a girl waiting at a window. He doesn’t come.':'It’s a happy song.');
         if (c==='tr'){ await L.say('Oh.'); await A.wait(400); await L.say('That’s … sad, man.'); await J.say('Awesome, though.'); if (G.malaOn) await A.g('Sie singen es wie ein Trinklied. Das ist auch eine Art, es auszuhalten.'); }
         else { await L.say('See? I told you, Bec.'); if (G.malaOn) await A.g('Du lügst schlecht auf Englisch.'); } }},
     {t:'Did you climb the minaret?',once:'au4',if:p!=='k3_pro'&&A.flag('k3.peil.bridgehead'),go:async function(A){ await J.say('The one by the river? Yeah! Super narrow stairs. Bec counted. How many?'); await B.say('Eighty-nine. Then I stopped counting and started praying I wouldn’t fall.'); await J.say('The view is awesome.'); }},
@@ -109,7 +110,7 @@ M.k3Talk1=async function(A){ if (A.flag('k3.p.talk1')) return; var G=A.G; G.flag
 // ---------------------------------------------------------------- Nacht 1: die Australier singen, das Vatergespräch (96_k3_story.js: M.k3StartD1Night)
 M.k3Father=async function(A){ if (A.flag('k3.d1.father')) return; var G=A.G; G.flags['mala.lock']=true;
   try{
-    var t=M.stand('herberge','table')||[300,124,'R']; A.placeM(t[0],t[1],t[2]||'R'); if (G.malaOn){ var mp=M.apos('herberge','mala',[t[0]+30,t[1]-4,'L']); A.placeG(mp[0],mp[1],'L'); }
+    var t=M.stand('herberge','table')||[300,124,'R']; A.placeM(t[0],t[1],t[2]||'R'); if (G.malaOn){ var mp=M.apos('herberge','mala',[t[0]+30,t[1]-4,'L']); A.placeG(mp[0],mp[1],mp[0]<t[0]?'R':'L'); A.faceM(mp[0]<t[0]?'L':'R'); }
     A.music('k3_aussie'); A.sfx('guitar'); await A.wait(800);
     await A.narrate('Freitag, spät. Die Australier sind wieder da und singen dasselbe Lied wie gestern. Liam hat inzwischen zwei Akkorde mehr.');
     await A.g('Sie singen wieder falsch.'); await A.m('Schön falsch?'); await A.g('Schön falsch. Immer noch.'); await A.wait(1200);
@@ -194,7 +195,7 @@ M.room('herberge',{ name:'Herberge „Neretva“', scape:'k3_herberge',
   enter:async function(A,from){ var G=A.G, p=G.phase, J=A.npc('maja');
     if (A.isMala()) return;
     if (p==='k3_pro' && A.first('hbArr')){ await A.narrate('Ein altes Steinhaus in einer Gasse der Altstadt, eine Rezeption, so groß wie ein Flur, und dahinter eine Terrasse über dem Fluss. Es riecht nach Kaffee und nassen Jacken.'); return; }
-    if (p==='k3_d1' && A.first('hbD1') && majaHere(G)){ await J.say('Dobro jutro! Bura. Haben Sie das Fenster gehört? Die ganze Nacht.'); await J.say('Bei Bura sieht man vom Minarett der Koski-Moschee bis zu den Bergen im Süden. Die Australier sind schon oben gewesen. Vor dem Frühstück!'); A.unlock('koski'); return; }
+    if (p==='k3_d1' && A.first('hbD1') && majaHere(G)){ await J.say('Dobro jutro! Bura. Haben Sie das Fenster gehört? Die ganze Nacht.'); await J.say('Bei Bura sieht man vom Minarett der Koski-Moschee bis zu den Bergen im Süden. Die Australier sind schon oben gewesen. Vor dem Frühstück!'); return; }
     if (p==='k3_d2' && !N(A,'l3_tepa') && majaHere(G) && A.first('hbD2')){ await J.say('Dobro jutro. Samstag.'); await tepaLine(A,J); return; }
     if (p==='k3_d3' && A.first('hbD3') && majaHere(G)){ await J.say('Sonntag. Frost heute Nacht, sagt das Radio. Ziehen Sie sich etwas an, Sie sehen aus, als hätten Sie in einem Auto geschlafen.'); await A.m('Fast.'); return; }
     if (p==='k3_epi_d' && A.first('hbEpiD') && majaHere(G)){ await J.say('Sie sind noch da! Ich dachte, Sie sind weg, ohne zu zahlen. Das machen nur die Australier, und die zahlen mit Liedern.'); return; }

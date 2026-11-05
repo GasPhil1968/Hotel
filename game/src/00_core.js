@@ -62,7 +62,7 @@ RAMPS.forEach(function(r){ var a=r.split(' ').map(function(n){ return P[n]; });
 UP[T]=T; DN[T]=T;
 M.UP=UP; M.DN=DN;
 M.step=function(c,n){ while(n>0){ c=UP[c]; n--; } while(n<0){ c=DN[c]; n++; } return c; };
-function lum(c){ var q=RGB[c]; return q[0]*0.3+q[1]*0.59+q[2]*0.11; }
+function lum(c){ var q=RGB[c]; if (!q) return 0; return q[0]*0.3+q[1]*0.59+q[2]*0.11; }   // durchsichtig/unbekannt: dunkel
 M.lum=lum;
 
 // ---------------------------------------------------------------- Dithering, Zufall, Hash

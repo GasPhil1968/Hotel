@@ -62,8 +62,9 @@ async function talkMateG(A){ var Mt=A.npc('mate'); if (!A.isFound('mate')) retur
 // ---------------------------------------------------------------- Zdravko
 async function coffee(A,Z){ A.sfx('cups'); await Z.anim('polish'); await Z.say(A.cycle('zdCoffee',['Domaća. Mit Zucker oder mit Geduld?','Kafa. Die Tasse ist heiß, der Kaffee heißer.','Noch eine? Sie sitzen ja gar nicht. Sie stehen nur.']));
   if (A.first('zdCoffeeM')){ await A.m('Ohne.'); await Z.say('Dann mit Geduld.'); } await A.narrate('Der Kaffee ist dick und süß und zu heiß. Zdravko nimmt keine Mark dafür. „Das nächste Mal.“'); }
-async function windowTable(A,Z){ if (A.hasNote('b3_zdravko')){ await Z.say('Der Tisch von Dida Mate. Ich räume ihn nicht ab. Man weiß ja nie.'); return; }
-  await Z.say('Am Fenster? Keiner.'); await A.wait(900); await Z.say('Das war der Tisch von Dida Mate.'); await A.wait(500);
+async function windowTable(A,Z,byName){ if (A.hasNote('b3_zdravko')){ await Z.say('Der Tisch von Dida Mate. Ich räume ihn nicht ab. Man weiß ja nie.'); return; }
+  if (byName){ await Z.anim('polish'); await Z.say('Der Tisch da am Fenster. Das war seiner.'); await A.wait(500); }
+  else { await Z.say('Am Fenster? Keiner.'); await A.wait(900); await Z.say('Das war der Tisch von Dida Mate.'); await A.wait(500); }
   await Z.say('Ein Kaffee, zwei Stunden. Das war Dida Mate.'); A.note('b3_zdravko');
   await Z.say('Er hat auf den Bus aus München gewartet. Jeden Samstag, zwanzig Jahre lang. Sein Sohn ist da unten.'); await A.wait(700);
   await Z.say('Letztes Frühjahr ist er gestorben. Im März.'); await A.wait(600); await Z.say('Ich decke den Tisch nicht ab. Die Tasse stelle ich jeden Morgen umgedreht hin, wie er es gemocht hat.');
@@ -79,7 +80,7 @@ async function talkZdravko(A){ var Z=A.npc('zdravko'), p=A.G.phase;
       v3_ljerka:async function(A){ await Z.say('Vlado, der Raucher?'); await A.wait(500); await Z.say('Vlado Rajić. Vulkanizer hinter dem Bulevar. Er kommt jeden Morgen um sieben auf einen Kaffee, steht an der Theke, zahlt und geht.'); await Z.say('Zehn Jahre, und ich weiß nicht, wie seine Stimme klingt.'); if (!A.hasNote('v3_where')) A.note('v3_where'); A.setFlag('k3.v.known'); },
       v3_mate:'Rajić? Der Vulkaniseur? Der kommt jeden Morgen. Wer hat Ihnen von ihm erzählt?',
       v3_where:'Rajić. Ja. Sieben Uhr, Kaffee, Mark auf die Theke, weg.',
-      b3_mate:async function(A){ await Z.say('Mate Zelenika?'); await A.wait(800); await Z.say('Woher kennen Sie den Namen?'); await A.wait(600); if (!A.hasNote('b3_zdravko')) await windowTable(A,Z); else await Z.say('Dida Mate. Er ist tot. Und ich decke trotzdem für ihn.'); },
+      b3_mate:async function(A){ await Z.say('Mate Zelenika?'); await A.wait(800); await Z.say('Woher kennen Sie den Namen?'); await A.wait(600); if (!A.hasNote('b3_zdravko')) await windowTable(A,Z,true); else await Z.say('Dida Mate. Er ist tot. Und ich decke trotzdem für ihn.'); },
       k3_c_bridge:'Fahrer, die im Krieg geraucht haben? Alle. Die meisten fahren heute Taxi.',
       p3_munich:'Der Bus aus München kommt samstags um sechs. Sagt der Fahrplan. Er kommt, wann er will.',
       photo_full:'Achtundachtzig? Da hatte ich noch Haare. Und das Café hatte noch keinen Fernseher.',

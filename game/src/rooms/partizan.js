@@ -14,8 +14,8 @@ async function bellsStart(A){ var S=A.S, mp=malaSpot();
   A.music(''); await A.wait(700); A.sfx('bellsFar'); await A.wait(900);
   await A.narrate('Mittag. Von der Westseite her fangen Glocken an zu läuten. Erst eine, dann mehrere, weit weg und überall zugleich.');
   if (A.mala){ await A.animG('look'); A.mala.fadeOut=A.gt; } A.sfx('whoosh'); await A.wait(1000); if (A.mala){ A.mala.visible=false; A.mala.fadeOut=0; }
-  A.setFlag('k3.bellsOut'); A.setFlag('mala.noSwitch'); S.bellBack=A.gt+OUT_MS; S.nextBell=A.gt+5200;
-  await A.m('Mala?'); await A.wait(900); await A.m('Sie ist fort. Die Glocken läuten weiter.'); await A.wait(500); await A.m('Ich warte.'); }
+  A.setFlag('k3.bellsOut'); A.setFlag('mala.noSwitch'); S.bellBack=A.gt+999999; S.nextBell=A.gt+5200;
+  await A.m('Mala?'); await A.wait(900); await A.m('Sie ist fort. Die Glocken läuten weiter.'); await A.wait(500); await A.m('Ich warte.'); S.bellBack=A.gt+OUT_MS; }
 async function bellsEnd(A){ var S=A.S, mp=malaSpot();
   if (!A.G.malaOn){ A.malaJoin({x:mp[0],y:mp[1],f:'R'}); } else { A.placeG(mp[0],mp[1],'R'); if (A.mala){ A.mala.visible=true; A.mala.fadeOut=0; A.mala.fadeIn=A.gt; } }
   A.sfx('shimmer'); await A.wait(1200);

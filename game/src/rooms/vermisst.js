@@ -3,9 +3,12 @@
    Vorgaben: K3_SPEC.md §6 (form, sample), Konzept 4.6 Epilog 5 und 6, 5.1 ===== */
 (function(M){
 'use strict';
+// „(Mala fragen.)“ ist eine Handlung, kein Satz: Marko spricht die Zeile nicht aus (das Gerüst setzt silent nicht)
+function askM(A,k){ var o=M.k3AskOpt(A,k); if (o) o.silent=true; return o; }
 var P=M.P;
 function F(G,k){ return !!G.flags[k]; }
 function epi(G){ return G.phase==='k3_epi_d'; }
+var WIN_ST=[252,121,'B'];   // vor dem Fenster, neben Frau Kolars Stuhl (nicht auf ihm)
 // ---------------------------------------------------------------- „Mala fragen“
 M.K3ASK=M.K3ASK||{};
 M.K3ASK.form=async function(A){ await A.m('Was schreibe ich?'); await A.wait(700); await A.g('Schreib nicht Nachbarin.'); await A.wait(600); await A.g('Schreib, was ich war.'); };
@@ -28,7 +31,7 @@ async function form(A){ var K=A.npc('kolar'), N=A.npc('nada'), G=A.G; if (A.flag
   await A.doc({style:'register',title:'PRIJAVA NESTALE OSOBE · Meldung einer vermissten Person',lines:['Ime i prezime: Lana Delić','Datum rođenja: 3. 3. 1976., Sarajevo','Posljednji put viđena: 15. 1. 1994., Skela (Z. Brkić)','','Odnos prema nestaloj osobi:','  ☐ srodnik   ☐ susjed/a   ☐ prijatelj/ica   ☐ ostalo','','(Beziehung zur vermissten Person: Verwandt · Nachbar/in · Freund/in · Sonstiges)']});
   await A.m('Name, Geburtsdatum, zuletzt gesehen. Das kann ich. Dann das Feld „Beziehung“. Vier Kästchen.');
   var done=false;
-  await A.menuLoop(function(){ return [ M.k3AskOpt(A,'form'),
+  await A.menuLoop(function(){ return [ askM(A,'form'),
     {t:'(Ankreuzen: „Nachbarin“.)',silent:true,go:async function(A){ await A.narrate('Ich halte den Kugelschreiber über das Kästchen „susjeda“.'); await K.say('Nachbarin. Gut. Das stimmt?'); await A.m('Es stimmt.'); await A.wait(1000); await A.m('Es ist zu klein.'); A.setFlag('k3.e.formSmall'); }},
     {t:'(Ankreuzen: „Verwandte“.)',once:'vmRel',silent:true,go:async function(A){ await A.m('Verwandt waren wir nicht. Nicht auf Papier.'); }},
     {t:'(Ankreuzen: „Freundin“.)',once:'vmFr',silent:true,go:async function(A){ await A.m('Freundin. Sie war fünf Jahre älter. Sie hat mir die Jacke zugemacht, bis oben. Das ist mehr als eine Freundin. Oder etwas anderes.'); }},
@@ -61,11 +64,11 @@ async function giveSample(A,K){ var G=A.G;
   if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Du hast ihn gesucht. Gerade eben. Das war die Sekunde.'); } }
 async function sample(A,K){ var G=A.G; if (F(G,'k3.e.sampleDone')) return;
   var c=null;
-  await A.menuLoop(function(){ return [ M.k3AskOpt(A,'sample'),
+  await A.menuLoop(function(){ return [ askM(A,'sample'),
     {t:'(Eine Probe abgeben.)',silent:true,go:async function(A){ c='yes'; return 'bye'; }},
     {t:'„Heute nicht.“',go:async function(A){ c='no'; return 'bye'; }}
   ].filter(Boolean); });
-  if (c==='yes'){ if (!M.k3Asked(A,'sample')) await M.k3Skipped(A,'sample'); await giveSample(A,K); return; }
+  if (c==='yes'){ if (!M.k3Asked(A,'sample') && !A.flag('k3.e.sampleNo')) await M.k3Skipped(A,'sample'); await giveSample(A,K); return; }
   if (c==='no'){ if (!F(G,'k3.e.sampleNo')){ A.setFlag('k3.e.sampleNo');
       if (G.malaOn){ await A.wait(1100); await A.g('Du suchst mich, damit du ihn nicht suchen musst.'); await A.wait(900); }
       await K.say('Ich frage noch einmal, Herr Vuković. Ich frage immer zweimal. Beim ersten Mal sagen fast alle nein.'); await A.wait(500); await K.say('Wollen Sie eine Probe abgeben?');
@@ -76,7 +79,7 @@ async function sample(A,K){ var G=A.G; if (F(G,'k3.e.sampleDone')) return;
   await K.say('Überlegen Sie. Ich bin hier.'); }
 // ---------------------------------------------------------------- Der letzte Pflichtschritt: der Anruf bei der Mutter (Konzept 4.6, Epilog 6)
 M.k3MotherCall=async function(A){ var G=A.G; if (F(G,'k3.e.mother')) return A.m('Ich habe sie angerufen. Weihnachten.');
-  var w=M.stand('vermisst','window'); if (w && A.room && A.room.id==='vermisst'){ await A.walk(w[0],w[1]); await A.face('B'); }
+  if (A.room && A.room.id==='vermisst'){ await A.walk(WIN_ST[0],WIN_ST[1]); await A.face('B'); }
   await A.narrate('Ich gehe ans Fenster. Die Lamellen werfen Streifen auf meine Hand. Ich wähle die Nummer, die ich auswendig kann und nie wähle.'); A.sfx('dial'); await A.wait(1800);
   await A.phoneVoice('„Marko?“','jasna'); await A.wait(900); await A.phoneVoice('„… Ist etwas passiert?“','jasna');
   await A.wait(500); await A.m('Mama. Ich komme zu Weihnachten.');
@@ -149,7 +152,7 @@ var HS=[
    g:{look:'Da drin sind mehr Namen als in jedem Klassenbuch.'}},
  {id:'chairs',name:'Besucherstühle',look:'Zwei Besucherstühle aus Stahlrohr. Auf einem sitzt Nada. Der andere ist für mich.',use:'Ich bleibe stehen. Sitzen kann ich im Bus.',
    g:{look:'Mama sitzt da. Ich stehe hinter ihr. Sie merkt es nicht.'}},
- {id:'window',name:'Fenster',look:'Ein Fenster mit Lamellen. Draußen ein grauer Montag, ein Parkplatz, ein Baum ohne Blätter.',
+ {id:'window',name:'Fenster',st:WIN_ST,look:'Ein Fenster mit Lamellen. Draußen ein grauer Montag, ein Parkplatz, ein Baum ohne Blätter.',
    use:async function(A){ if (A.hasNote('e3_mothersample') && !A.flag('k3.e.mother')) return M.k3MotherCall(A); return A.m('Ich ziehe die Lamellen ein Stück auf. Draußen bleibt es grau.'); },
    with:{ mobitel:async function(A){ if (A.hasNote('e3_mothersample') && !A.flag('k3.e.mother')) return M.k3MotherCall(A); return A.m(A.flag('k3.e.mother')?'Ich habe sie angerufen.':'Noch nicht. Erst bin ich wegen Lana hier.'); } },
    g:{look:'Draußen ist es grau. Das Grau ist gut. Es tut nicht so, als wäre alles hell.'}}

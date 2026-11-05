@@ -12,7 +12,8 @@ Object.assign(M.INTRO,{
       await A.m('Marko Vuković. Ich bräuchte ein Bett. Für ein paar Nächte.'); await J.say('Maja. Mir gehört die Herberge.'); await A.wait(400); await J.say('Mir und der Bank. Die Bank hat die Terrasse, ich habe die Schulden.'); }},
   dino:{auto:true, u:'Ein drahtiger junger Mann in roter Trainingsjacke, Badeschlappen über den Socken. Er dehnt sich, als hätte er gleich einen Auftritt.',
     m:async function(A){ var D=A.npc('dino'); eat(A,'dnHello'); await D.say('Hey, man! You want to see a jump? Twenty euro. Rain price.');
-      var c=await A.choose([{t:'(In der Landessprache.) Ne treba, hvala. Po ovoj kiši?',id:'naš'},{t:'(Auf Englisch.) No, thanks.',id:'en'}],{title:'Dino'});
+      var c=await A.choose([{t:'(In der Landessprache.) Ne treba, hvala. Po ovoj kiši?',id:'naš',silent:true},{t:'(Auf Englisch.) No, thanks.',id:'en',silent:true}],{title:'Dino'});
+      await A.m(c==='naš'?'Ne treba, hvala. Po ovoj kiši?':'No, thanks.');
       if (c==='naš'){ await D.say('A, naš si.'); await A.wait(400); await A.m('„Ah, du bist einer von uns.“ So schnell geht das hier.'); A.setFlag('k3.dino.nas'); await D.say('Dann zahlst du die Hälfte. Wenn ich springe. Ich springe heute nicht.'); }
       else { await D.say('Your loss, man. Bridge is still here tomorrow.'); }
       await D.say('Dino. Ich springe, seit ich zwölf bin. Im Sommer für Geld. Im Winter für mich.'); await A.m('Marko.'); }},

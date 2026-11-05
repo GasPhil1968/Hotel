@@ -147,7 +147,7 @@ async function tellAwake(A){ var G=A.G, Z=A.npc('zlata');
   await A.m('Das entscheide ich nicht allein. Nicht ohne Mala.'); }
 M.K3ASK=M.K3ASK||{};
 M.K3ASK.zlata_awake=async function(A){ var G=A.G;
-  if (G.pos.mala.room==='skela_d' && A.room && A.room.id==='skela_l'){ await A.narrate('Ich sehe über den Fluss. Mala steht drüben an der Glocke, klein und hell.'); await A.wait(700);
+  if (G.pos.mala.room==='skela_d' && A.room && A.room.id==='skela_l'){ await A.narrate('Soll ich ihr sagen, dass er wach war? Ich sehe über den Fluss. Mala steht drüben an der Glocke, klein und hell.'); await A.wait(700);
     await A.narrate('Zlata steht neben mir. Ich kann nicht rufen. Ich halte zwei Finger hoch: Soll ich?'); await A.wait(1700);
     await A.narrate('Drüben schüttelt Mala den Kopf. Langsam, einmal nach links, einmal nach rechts.'); await A.wait(900); await A.m('Dann nicht. Heute nicht.'); A.setFlag('k3.z.askSign'); return; }
   await A.g('Lass ihr ihren Mann.'); await A.wait(800); await A.g('Heute noch.'); A.setFlag('k3.z.askSign'); A.setFlag('k3.z.signSaid'); };
@@ -186,7 +186,7 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
       l3_onetrail:'Lana? Ich kenne keine Lana. Ich kannte eine Mala.', l3_twosearches:'Lana? Ich kenne keine Lana.', v3_mala:'Mala. Wie jede.', a3_soldier:'Soldaten? Hier waren keine Soldaten. Nur Hochwasser.',
       a3_bato:'Bato ist tot. Seit fünf Jahren liegt er oben auf dem Friedhof, bei seiner Mutter.', a3_voice:'Eine Stimme? Ich habe am Herd geschlafen. Ich habe nichts gehört.',
       a3_hut:'Die Hütte drüben. Da lag die Ware für die Dörfer. Mehl, Decken.', a3_stumps:'Die alte Brücke. Seit dem Sommer dreiundneunzig nur noch Steine.',
-      v3_part1:'Ein Lastwagen? Die kamen damals oft, mit Mehl. Am Morgen hat Bato die Ware geholt.', a3_neighbor:'Seit achtundneunzig. Seitdem läutet keiner mehr. Bis Sie kamen.' },'Das weiß ich nicht. Oder ich will es nicht wissen.'),
+      v3_part1:'Ein Lastwagen? Die kamen damals oft, mit Mehl. Am Morgen hat Bato die Ware geholt.', a3_neighbor:'Seit achtundneunzig. Seitdem läutet keiner mehr.' },'Das weiß ich nicht. Oder ich will es nicht wissen.'),
     {t:'Danke.',bye:true,go:async function(A){ await Z.say(A.cycle('zlBye',['Passen Sie auf. Die Brücke ist glatt bei Frost.','Gehen Sie. Ich habe Hühner.'])); }}
   ].filter(Boolean); }); }
 // ---------------------------------------------------------------- Finale: Ankunft der Fähre am linken Ufer (Zwischenstand 2), dann Zlata (Zwischenstand 3)
@@ -212,7 +212,7 @@ async function finZlata(A){ var G=A.G; if (!A.room || A.room.id!=='skela_l') awa
       await A.narrate('Die Haustür geht auf. Zlata, den Mantel über dem Nachthemd, die Petroleumlampe in der Hand. Sie geht zum Schuppen, schnell, wie eine Junge.');
       var sh=sl('shed',[330,120,'B']); await Z.walk(sh[0]-26,sh[1]+3); await Z.face('R');
       await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); A.setFlag('k3.fin.zvono');
-      await A.wait(1100); await Z.say('Čula sam zvono. Prvi put od tada.'); await A.m('„Ich habe die Glocke gehört. Zum ersten Mal seitdem.“');
+      await A.wait(1100); await Z.say('Čula sam zvono. Noću. Prvi put od tada.'); await A.m('„Ich habe die Glocke gehört. In der Nacht. Zum ersten Mal seitdem.“');
       await A.wait(1500); await A.narrate('Sie hebt die Lampe. Das Licht fällt auf Vlado. Er nimmt die Mütze ab.');
       await A.wait(1100); await Z.say('Vi ste je doveli.'); await A.m('„Sie haben sie gebracht.“'); await A.wait(1500);
       await V.say('Ja sam je ostavio.'); await A.m('„Ich habe sie stehen lassen.“'); await A.wait(1900); await A.narrate('Zlata sieht ihn lange an. Sie sagt nichts dazu. Sie stellt die Lampe auf den Holzstoß, damit sie beide Hände frei hat.'); }
@@ -225,8 +225,7 @@ async function finZlata(A){ var G=A.G; if (!A.room || A.room.id!=='skela_l') awa
 K3S.finZlata=finZlata;
 async function zlataStory(A){ var Z=A.npc('zlata'), V=A.npc('vlado'), G=A.G;
   await A.wait(900); await Z.say('Ich habe ihr etwas versprochen.'); await A.wait(1300); await Z.say('Heute läutet die Glocke. Dann sage ich es.'); await A.wait(1500); A.music('k3_duh');
-  await Z.say('Am Morgen habe ich sie gefunden. Im Schilf, bei der Weide. Das wissen Sie.'); await A.wait(900); await Z.say('Bato hat sie heraufgetragen. Wir haben sie an den Herd gelegt. In die Decken.');
-  await A.wait(1500); await Z.say('Am Vormittag hat sie einmal die Augen aufgemacht.'); await A.wait(1100);
+  await Z.say('Am Vormittag hat sie einmal die Augen aufgemacht.'); await A.wait(1100);
   await Z.say('Ich habe gefragt: Kako se zoveš, dušo?'); await A.m('„Wie heißt du, Liebes?“'); await A.wait(1300); await Z.say('Mala.'); await A.wait(1000); await Z.say('Sie hat gesagt: Mala.');
   await A.wait(1500); await Z.say('Sie hat gefragt, wie spät es ist. Und gesagt: Mali čeka.'); await A.m('„Mali wartet.“'); await A.wait(2000);
   await A.narrate('Ich sage nichts. Ich kann nichts sagen.'); await A.wait(1000); await Z.say('Ich habe gedacht, sie redet von sich. Mala, Mali. Sie war so müde.');
@@ -329,7 +328,7 @@ async function mothersEnd(A){ var G=A.G, Nd=A.npc('nada');
   await A.narrate('Draußen ist es grau und mild. Nada geht noch einmal zum Quittenbaum. Ich gehe mit. Zlata bleibt an der Tür.');
   var np=ap('nada',[404,126,'R']); await A.walk(np[0]-30,np[1]+2); await A.face('R'); if (A.malaHere()){ await A.walkG(np[0]-16,np[1]+1); await A.faceG('R'); }
   await A.wait(2000); await A.g('Mama.');
-  await A.wait(2200); await A.narrate('Nada sieht nicht zum Grab.'); await A.wait(1200); await A.narrate('Sie sieht auf den leeren Platz neben mir.');
+  await A.wait(1600); if (Nd.actor) await Nd.face('L'); await A.wait(800); await A.narrate('Nada sieht nicht zum Grab.'); await A.wait(1200); await A.narrate('Sie sieht auf den leeren Platz neben mir.');
   await A.wait(2400); await A.narrate('Sie sagt nichts.'); await A.wait(1800);
   A.setFlag('k3.e.mothers'); A.music('k3_epi');
   await A.wait(800); await A.m('In Mostar wartet die Vermisstenstelle.'); await A.wait(500); await Nd.say('Dann fahren wir. Vlado wartet.'); }
@@ -355,13 +354,13 @@ var HS=[
      if (epi(G) && F(G,'k3.e.skela') && !F(G,'k3.e.mothers')){ await A.m('Nicht ohne Nada. Sie ist noch hier.'); return false; }
      if (d3(G) && !A.isMala()){ if (G.flags['k3.lit']) await lightDown(A,true); if (N(G,'a3_roof') && !F(G,'k3.z.deka')) await giveDeka(A); }
      return true; },
-   g:{look:'Die Brücke. Für die Lebenden.',listen:'Ein Auto oben auf der Brücke. Ganz langsam, wegen dem Frost.'}},
+   g:{look:'Die Brücke. Für die Lebenden.',sense:'Viele Schritte, alle in den letzten dreizehn Jahren. Meine nicht.',listen:'Ein Auto oben auf der Brücke. Ganz langsam, wegen dem Frost.'}},
  {id:'house',name:'Zlatas Haus',look:function(A){ var G=A.G, l=G.flags['k3.lit']; if (d3(G) && l) return A.m('In einem der Fenster leuchtet mein Handy. Von hier unten sieht es lächerlich klein aus.');
      return A.m(night(G)?'Das Haus, weiß im Dunkeln. Unten ein breites Fenster, daneben ein schmales, oben unter dem Dach ein kleines. Alle dunkel.':'Ein weißes Haus mit Steindach. Unten das breite Küchenfenster, daneben das tiefe, schmale Stubenfenster, oben unter dem Dach ein kleines Fenster.'); },
    use:function(A){ return lightTest(A); }, with:{ mobitel:function(A){ return lightTest(A); } },
    g:{look:function(A){ return A.g(epi(A.G)?'Das Haus. Ich war drin. Ich war die ganze Zeit drin, und keiner hat es gewusst.':'Das Haus, in dem ich am Herd lag. Von hier sieht man den Rauch.'); },
      sense:'Ein Haus, in dem man wartet. Siebzehn Jahre lang dieselben Stufen.',listen:'Der Herd. Der Kessel. Und oben, in der Kammer, nichts. Seit Jahren nichts.'}},
- {id:'house_door',name:'Haustür',exit:{to:'zlata_k'},look:'Die Haustür, grün gestrichen, ein Hufeisen fehlt. Davor eine Matte aus Maisblättern.',
+ {id:'house_door',name:'Haustür',exit:{to:'zlata_k'},look:'Die Haustür, grün gestrichen, die Farbe blättert. Davor eine Matte aus Maisblättern.',
    canExit:async function(A){ var G=A.G;
      if (n2(G)){ if (!F(G,'k3.z.tomorrow') && !F(G,'k3.n2.zlataOut')){ await zlataComes(A,'knock'); return false; } await A.m('Drinnen ist das Licht aus. Morgen. Bei Tag.'); return false; }
      if (d3(G)){ if (!F(G,'k3.d3.zlata1')){ await A.m('Ich gehe nicht ungefragt in ihr Haus.'); return false; } if (A.first('!k3.sl.kIn')) await A.npc('zlata').say('Gehen Sie nur. Ich bleibe draußen bei den Hühnern.'); return true; }
@@ -404,10 +403,10 @@ var HS=[
    look:'Nada am Grab. Sie hat den Mantel zugeknöpft bis oben und die Handtasche vor dem Bauch, mit beiden Händen.',
    g:{look:'Mama.',sense:'Sie hat jeden Januar einen Brief geschrieben. Ich spüre jeden einzelnen.',listen:'Sie sagt meinen Namen. Den richtigen. Und dann, ganz leise, den anderen.'}},
  {id:'vlado',npc:'vlado',name:'Vlado',hgt:48,vis:function(S,G){ return companions(G); },talk:async function(A){ await A.npc('vlado').say(F(A.G,'k3.fin.free')?'Gehen Sie zu ihr, wenn sie da ist. Ich sehe nichts. Aber ich weiß es.':'…'); },
-   look:'Vlado am Holzstoß, ohne Mütze, ohne Zigarette, die Hände gefaltet wie in einer Kirche, in der er nie war.',
-   g:{look:'Er hat geweint. Er weiß es nicht.',listen:'Er denkt: Sie hat gesungen. Falsch.'}},
+   look:'Vlado am Holzstoß, ohne Mütze, ohne Zigarette. Er hat die Hände gefaltet, als wüsste er nicht, wohin sonst damit.',
+   g:{look:'Er hat geweint. Er weiß es nicht.',sense:'Er steht da wie einer, der zu spät gekommen ist und trotzdem bleibt.',listen:'Er denkt: Sie hat gesungen. Falsch.'}},
  {id:'kata',npc:'kata',name:'Kata',hgt:46,vis:function(S,G){ return companions(G); },talk:async function(A){ await A.npc('kata').say(A.cycle('ktL',['Papa sagt nichts. Ich lasse ihn.','Ich glaube Ihnen. Ich weiß nicht, was, aber ich glaube Ihnen.'])); },
-   look:'Kata neben ihrem Vater, die Hand an seinem Arm.',g:{look:'Sie hält ihn fest. Wie ich meine Dose.',listen:'Sie denkt an den Lastwagen. Sie will ihn behalten.'}}
+   look:'Kata neben ihrem Vater, die Hand an seinem Arm.',g:{look:'Sie hält ihn fest. Wie ich meine Dose.',sense:'Sie hat heute zum ersten Mal Angst um ihn gehabt. Und es ist gut gegangen.',listen:'Sie denkt an den Lastwagen. Sie will ihn behalten.'}}
 ];
 async function readBoard(A){ var G=A.G; await A.m('In das Brett geschnitzt, tief, mit einem Taschenmesser: MALA · 15.1.1994.');
   if (N(G,'a3_grave')) return; A.note('a3_grave'); await A.wait(1200); await A.m('Mala.'); await A.wait(900);

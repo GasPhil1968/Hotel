@@ -160,7 +160,7 @@ M.malaLeashVec=function(G,ma,mk){ if (!CH3(G)) return lv0?lv0(G,ma,mk):null; var
 // ---------------------------------------------------------------- „Mala fragen“ (ab Gespräch 1)
 M.K3ASK=M.K3ASK||{};
 M.k3AskOpt=function(A,key,label){ if (!A.flag('k3.ask')||A.flag('k3.asked.'+key)) return null;
-  return {t:label||'(Mala fragen.)',id:'ask_'+key,go:async function(A){ A.setFlag('k3.asked.'+key); A.setFlag('k3.askCount',(A.flag('k3.askCount')||0)+1); if (M.K3ASK[key]) await M.K3ASK[key](A); else await A.g('Frag mich, wenn du es wissen willst. Nicht, wenn du es schon weißt.'); }}; };
+  return {t:label||'(Mala fragen.)',id:'ask_'+key,silent:true,go:async function(A){ A.setFlag('k3.asked.'+key); A.setFlag('k3.askCount',(A.flag('k3.askCount')||0)+1); if (M.K3ASK[key]) await M.K3ASK[key](A); else await A.g('Frag mich, wenn du es wissen willst. Nicht, wenn du es schon weißt.'); }}; };
 M.k3Asked=function(A,key){ return !!A.flag('k3.asked.'+key); };
 M.k3Skipped=async function(A,key){ if (!A.flag('k3.ask')||A.flag('k3.asked.'+key)||A.flag('k3.skipped.'+key)) return; A.setFlag('k3.skipped.'+key); var n=(A.flag('k3.skips')||0)+1; A.setFlag('k3.skips',n);
   var L=['Du hast mich nicht gefragt.','Du hast mich wieder nicht gefragt.','Ich stehe hier, Marko. Du hättest fragen können.']; await A.wait(400); await A.g(L[Math.min(n-1,L.length-1)]); };
@@ -268,7 +268,7 @@ var REACT={
     if (!A.flag('k3.mala.crossed') && A.G.malaOn){ await A.g('Drüben.'); await A.wait(500); await A.g('Über den Fluss.'); await A.wait(600); await A.g('Nein.'); A.setFlag('k3.mala.refused'); }
     await A.m('Der Westhang. Der Partisanenfriedhof liegt oben über der Stadt. Von dort sieht man bis zum Meer, sagt der Plan. Fast.'); },
   'ded:l3_area':async function(A){ await A.m('Hinter dem Rand meines Plans. Mein Plan hört da auf, wo die Stadt aufhört.'); await A.m('Ich brauche eine Karte, die weiter reicht. Eine alte, mit den Dörfern.'); },
-  'ded:l3_skela':async function(A){ var G=A.G; await A.m('Skela.'); await A.wait(500); await A.m('Skela heißt Fähre.'); if (!G.malaOn) return; await A.wait(700); await A.g('Eine Fähre.'); await A.wait(900);
+  'ded:l3_skela':async function(A){ var G=A.G; if (!G.malaOn) return; await A.wait(400); await A.g('Eine Fähre.'); await A.wait(900);
     await A.g('In Split habe ich auf Boote gewartet. Jedes Mal, wenn eins getutet hat, wollte ich mit.'); await A.m('Am Terminal. Das hast du mir gesagt.'); await A.g('Ich wusste nicht, warum. Ich wollte nicht nach Ancona. Ich wollte nur auf ein Boot.'); await A.wait(600); await A.m('Morgen.'); await A.g('Ja. Nicht heute.'); },
   'ded:l3_person':async function(A){ if (!A.G.malaOn) return; await A.g('Ein Mensch.'); await A.wait(500); await A.g('Ich hänge an einem Menschen. Das war bei dir auch so.'); await A.m('Und jetzt hängst du an jemandem, der heute in die Stadt gekommen ist.'); if (!A.G.flags['k3.p.tepaKnown']) await A.m('Oben an der Altstadt ist ein Markt. Die Tepa.'); },
   'ded:l3_onetrail':async function(A){ await A.m('Alle, die sie zuletzt gesehen haben, kannten Mala. Und ich bin der Einzige, der weiß, wer Mala ist.'); if (A.G.malaOn){ await A.wait(400); await A.g('Du hast mich so genannt. Damals, im Bus. Weil ich größer war.'); } },

@@ -47,7 +47,7 @@ async function buyPlan(A){ var K=A.npc('kioskm');
 async function talkKiosk(A){ var K=A.npc('kioskm'), G=A.G, p=G.phase;
   if (p==='k3_epi_d') return kioskEpi(A,K);
   await A.menuLoop(function(){ return [
-    {t:'Einen Stadtplan, bitte.',if:!A.has('plan'),go:async function(A){ await buyPlan(A); }},
+    {t:'Einen Stadtplan, bitte.',silent:true,if:!A.has('plan'),go:async function(A){ await buyPlan(A); }},
     {t:'Haben Sie alte Postkarten? Von vor dem Krieg?',once:'km1',go:async function(A){ await K.say('Alte? Ich habe neue. Die Brücke von heute. Sieht aus wie die Brücke von früher, nur sauberer.');
         await K.say('Alte hat der Alte im Kujundžiluk. Der verkauft, was keiner will. Manchmal will es doch einer.'); }},
     {t:'Was steht heute in der Zeitung?',once:'km2',go:async function(A){ await K.say(p==='k3_pro'?'Regen. Morgen Bura. Steht da, und mein Knie sagt es auch. Mein Knie ist pünktlicher.':(p==='k3_d1'?'Bura. Dass die Bura weht. Die Zeitung schreibt, was man aus dem Fenster sieht.':'Frost für Sonntag. Und ein Minister. Es ist immer ein Minister.'));
@@ -55,6 +55,7 @@ async function talkKiosk(A){ var K=A.npc('kioskm'), G=A.G, p=G.phase;
     {t:'Wo hängt eine alte Karte? Eine mit den Dörfern südlich der Stadt.',if:N(A,'l3_area')&&!N(A,'l3_oldmap'),go:async function(A){ await K.say('Mit Dörfern? Ich verkaufe Pläne von heute. Die hören auf, wo die Stadt aufhört.');
         await K.say('Die von früher hängen bei Zdravko an der Wand. Im Café am Westbusbahnhof. Der hat nie etwas abgehängt. Nicht einmal den Kalender von neunzig.'); A.setFlag('k3.oldmap.told'); }},
     {t:'Wann fährt ein Bus nach München?',once:'km3',if:N(A,'p3_munich'),go:async function(A){ await K.say('Samstags. Von hier und von drüben. Hin voll, zurück voll. Dazwischen leer, wie die Häuser.'); }},
+    A.askOpt({ p3_munich:'München, samstags, ja. Ich verkaufe denen Zigaretten für die Fahrt. Zwei Stangen, immer zwei.', p3_sms:'Antworten Sie ihr. Wer so schreibt, wartet.', l3_area:'Das ist hinter dem Rand. Meine Pläne haben keinen Süden. Bei Zdravko hängt eine alte Karte, die hat einen.' },'Das steht in keiner Zeitung, die ich habe.'),
     {t:'Danke.',bye:true,go:async function(A){ await K.say(A.cycle('kmBye',['Bitte.','Nehmen Sie eine Zeitung. Gegen den Regen.','Gute Reise, oder gutes Bleiben.'])); }}
   ]; }); }
 async function kioskEpi(A,K){ if (A.first('kmEpi')){ await K.say('Fahren Sie?'); await A.m('Nach Sarajevo. Mit dem Bus.'); await K.say('Nehmen Sie eine Postkarte mit. Die Brücke. Damit Sie wiederkommen.'); await A.narrate('Sie schiebt mir eine Karte über die Theke. Die Brücke von heute, im Sommer, mit einem Springer in der Luft. Sie nimmt kein Geld dafür.'); return; }
@@ -67,7 +68,7 @@ async function toSkela(A){ var L=loc('skela'); if (!L||!A.G.map.skela){ await A.
 async function talkTaxi(A){ var T=A.npc('taxist'), G=A.G, p=G.phase;
   if (p==='k3_epi_d'){ if (A.first('txEpi')){ await T.say('Sarajevo? Mit dem Bus?'); await A.m('Mit dem Bus.'); await T.say('Ich hätte Sie gefahren. Nach Skela waren Sie mir lieber. Da war wenigstens Schweigen im Auto.'); return; } return T.say(A.cycle('txE2',['Sretan put.','Grüßen Sie Sarajevo. Ich war seit einundneunzig nicht da.'])); }
   await A.menuLoop(function(){ return [
-    {t:'Fahren Sie mich nach Skela?',if:!!G.map.skela,go:async function(A){ await T.say(A.first('txSk')?'Skela? Da ist nichts. Eine Brücke und Hunde.':'Skela. Steigen Sie ein.'); var ok=await toSkela(A); if (ok) return 'bye'; }},
+    {t:'Fahren Sie mich nach Skela?',if:!!G.map.skela,go:async function(A){ await T.say(A.first('txSk')?'Skela? Unten an der Biegung. Kenne ich.':'Skela. Steigen Sie ein.'); var ok=await toSkela(A); if (ok) return 'bye'; }},
     {t:'Wo ist im Januar vierundneunzig ein Mädchen ertrunken?',once:'tx1',if:!G.flags['k3.d1.skela'],go:async function(A){ await T.anim('smoke'); await T.say('Hier sind viele ertrunken, Herr.'); await A.wait(500);
         await T.say('Damals hat keiner gezählt. Und die gezählt haben, haben irgendwann aufgehört.'); if (G.malaOn){ await A.wait(400); await A.g('So kommen wir nicht weiter.'); await A.m('Nein. Nicht mit Fragen. Mit etwas, das man messen kann.'); } }},
     {t:'Kennen Sie einen Vlado? Ein Raucher. Er ist früher Mehl gefahren.',if:(N(A,'v3_ljerka')||N(A,'v3_mate'))&&!N(A,'v3_where'),go:async function(A){ await T.say('Vlado.'); await A.wait(400); await T.say('Rajić. Vulkanizer hinter dem Bulevar, drüben. Er flickt mir die Reifen, seit ich Reifen habe.');
@@ -79,6 +80,8 @@ async function talkTaxi(A){ var T=A.npc('taxist'), G=A.G, p=G.phase;
     {t:'Was läuft im Radio?',once:'tx3',go:async function(A){ await T.say('Sevdah. Und Nachrichten.'); await T.say('Ich höre nur die Musik. Die Nachrichten sind seit zwanzig Jahren dieselben, nur die Namen wechseln.'); if (G.malaOn) await A.g('Das Lied kenne ich. Meine Mutter hat es beim Bügeln gesungen. Falsch.'); }},
     {t:'Zur Herberge „Neretva“, wie weit ist das?',once:'tx4',if:p==='k3_pro',go:async function(A){ await T.say('Fünf Minuten zu Fuß. Ich fahre Sie trotzdem hin. Für zehn Mark.'); await A.m('Ich gehe zu Fuß.'); await T.say('Dann werden Sie nass. Für umsonst.'); }},
     {t:'Kennen Sie den Bus aus München?',once:'tx5',if:N(A,'p3_munich'),go:async function(A){ await T.say('Samstags kommt er. Mit Leuten, die einmal im Jahr nach Hause kommen und dann ein Taxi zum Friedhof wollen. Und dann zum Notar.'); }},
+    A.askOpt({ l3_skela:'Skela. Zehn Kilometer, dann Schotter. Da ist eine Brücke, ein paar Häuser und Hunde. Ich fahre Sie hin, wann Sie wollen. Auch nachts.', p3_munich:'München. Der kommt samstags am Westbahnhof an. Die Leute steigen aus und wollen gleich ins Dorf. Mit mir.',
+      v3_where:'Rajić, ja. Sagen Sie ihm nicht, dass ich Sie geschickt habe. Er flickt meine Reifen.', l3_area:'Südlich der Stadt? Da sind Dörfer, Pappeln und der Fluss. Auf meiner Karte ist da nichts. Auf der alten bei Zdravko schon.', l3_current:'Dino erzählt das. Der Fluss gibt alles wieder her, sagt er. Ich sage: nicht alles.' },'Davon weiß ich nichts. Ich fahre nur.'),
     {t:'Danke. Ein andermal.',bye:true,go:async function(A){ await T.say(A.cycle('txBye',['Ich bin hier.','Ich stehe hier. Das Taxi auch.','Bis später. Später fahre ich auch.'])); }}
   ]; }); }
 // ---------------------------------------------------------------- Epilog: Nada kommt (96_k3_story.js: M.k3StartEpiDay)
@@ -106,6 +109,7 @@ M.k3BusHome=async function(A){ var G=A.G; if (A.flag('k3.e.bus')) return;
   A.setFlag('k3.e.bus'); G.flags['mala.lock']=true; var N=A.npc('nada');
   await N.say('Komm, Mali. Der Fahrer wartet nicht auf Übersetzer.');
   if (A.has('rueckfahrt')){ await A.m('Die Rückfahrkarte. Das Zurück.'); A.take('rueckfahrt'); A.sfx('ticket'); await A.wait(400); }
+  var Z=G.rooms&&G.rooms.zimmer; if (Z && Z.dzezva){ Z.dzezva=false; A.give('dzezva'); await A.m('Großmutters Džezva. Maja hat sie mir vom Fensterbrett geholt und in die Hand gedrückt. „Die vergessen Sie nicht.“'); }
   if (G.malaOn){ await A.g('Hin und zurück.'); await A.m('Hin und zurück.'); }
   await A.wait(500); A.sfx('bus'); await A.fade(8,1500); A.music('k3_epi'); M.E.fade=0;
   await A.memory({title:'Im Bus nach Sarajevo',tint:'memory',draw:M.mem&&M.mem.k3_home,lines:[

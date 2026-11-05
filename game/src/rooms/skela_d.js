@@ -9,6 +9,7 @@
 var P=M.P, K3S=M.K3S=M.K3S||{};
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; }
 function n2(G){ return G.phase==='k3_d2_n'; } function d3(G){ return G.phase==='k3_d3'; } function fin(G){ return G.phase==='k3_fin_n'; } function epi(G){ return G.phase==='k3_epi_d'; }
+function night(G){ return n2(G)||fin(G); }
 function ferry(G){ return G.flags['k3.fin.ferry']||null; }
 function crossing(G){ return fin(G) && F(G,'k3.fin.boarded') && !F(G,'k3.fin.crossed'); }
 function waiting(G){ return fin(G) && F(G,'k3.fin.bato') && !F(G,'k3.fin.boarded'); }   // Bato wartet mit der Fähre, Mala entscheidet
@@ -44,13 +45,13 @@ async function arriveD3(A){
     await A.m('Ich weiß.'); await A.g('Ich sehe dich von hier. Das reicht.'); } }
 async function explainSign(A){ A.setFlag('k3.z.signSaid');
   await A.g('Ich habe den Kopf geschüttelt.'); await A.m('Ich habe es gesehen. Warum?'); await A.wait(900);
-  await A.g('Lass ihr ihren Mann.'); await A.wait(900); await A.g('Siebzehn Jahre hatte sie einen, der geschlafen hat. Der nichts gehört hat. Lass ihn ihr. Heute noch.');
+  await A.g('Lass ihr ihren Mann.'); await A.wait(900); await A.g('Siebzehn Jahre hat sie geglaubt, er hat geschlafen. Er hat nichts gehört. Lass ihn ihr. Heute noch.');
   await A.m('Und später?'); await A.g('Später weiß ich mehr. Frag mich dann.'); }
 async function backFromBridge(A){ var G=A.G; if (!A.malaHere()) return;
   if (n2(G) && F(G,'k3.z.tomorrow') && A.first('!k3.sd.n2back')){ await A.g('Sie war draußen. Mit einer Lampe.'); await A.m('Zlata. Sie hat gesagt: Sutra. Danju.'); await A.g('Morgen. Bei Tag.');
     await A.wait(700); await A.g('Sie hat nicht zu dir gesehen. Sie hat zur Glocke gesehen. Lange.'); await A.wait(500); await M.k3DayCheck(A); return; }
   if (n2(G) && F(G,'k3.n2.batoTalk') && A.first('!k3.sd.n2bato')){ await A.g('Du hast mit ihm geredet.'); await A.m('Er sagt, es war ein Soldat.'); await A.wait(800); await A.g('…'); return; }
-  if (d3(G) && F(G,'k3.z.askSign') && !F(G,'k3.z.signSaid')) return explainSign(A);
+  if (d3(G) && F(G,'k3.z.askSign') && !F(G,'k3.z.signSaid')){ await explainSign(A); await A.wait(700); }
   if (d3(G) && F(G,'k3.z.deka') && !F(G,'k3.mala.deka') && A.first('!k3.sd.dekaSeen')){ await A.g('Was trägst du da?'); await A.m('Eine Decke. Von Zlata. Sie sagt, am Wasser ist es kalt.'); await A.g('Zeig sie mir.'); return; }
   if (d3(G) && F(G,'k3.bato.uneasy') && A.first('!k3.sd.uneasy')){ await A.g('Er flackert. Drüben, im Schuppen. Ich sehe es bis hier.'); await A.m('Er sagt immer noch: ein Soldat.'); await A.g('Er weiß es. Er will es nur noch nicht.'); } }
 // ---------------------------------------------------------------- Bato finden (Mala sieht über den Fluss)
@@ -100,7 +101,7 @@ async function compare(A){ var G=A.G, lit=G.flags['k3.lit'];
   if (!lit){ if (N(G,'a3_roof')) return A.g('Das kleine Fenster unter dem Dach. Seine Kammer. Jetzt ist es dunkel.');
     return A.g(A.cycle('cmp0',['Das Haus. Bei Tag sind alle Fenster gleich.','Damals war eins davon hell. Welches, weiß ich, wenn ich es sehe.','Drei Fenster. Unten ein breites, daneben ein schmales, oben unter dem Dach ein kleines.'])); }
   if (lit==='roof'){ if (N(G,'a3_roof')) return A.g('Das ist es. Das kleine unter dem Dach.');
-    await A.g('Da.'); await A.wait(900); await A.g('Das kleine unter dem Dach.'); await A.wait(700); await A.g('Das war es.');
+    await A.g('Da.'); await A.wait(1100); await A.g('Das kleine unter dem Dach. Das war es.');
     A.setFlag('k3.lp.roof'); A.note('a3_roof'); await A.wait(800); await A.g('Dort hat damals einer Licht gemacht. Ich muss es noch einmal hören. An der Glocke.'); return; }
   var L=LP[lit]; if (!L) return; var first=!F(G,'k3.lp.'+lit); A.setFlag('k3.lp.'+lit);
   await A.g(L.t); if (first){ await A.wait(600); await A.g(L.more); } }
@@ -171,7 +172,7 @@ async function finRing(A){ var G=A.G;
     A.setFlag('k3.fin.ferry','far'); A.sfx('lantern'); resync(A); await A.narrate('Drüben im Schuppen flammt ein Licht auf. Jemand hebt eine Laterne.');
     await A.wait(700); await bato(A).say('Dolazim!'); await A.m('„Ich komme!“'); await A.wait(500); A.sfx('rope'); await A.wait(900);
     await A.narrate('Am Steg drüben bewegt sich etwas Dunkles. Ein Ponton mit einem Geländer, und vorn die Laterne.');
-    await K.say('Was ist?'); await A.m('Die Fähre.'); await K.say('Hier ist keine Fähre, Marko. Da ist nur Wasser.'); await V.say('Lass ihn.');
+    await K.say('Was ist?'); await A.m('Die Fähre.'); await K.say('Hier ist keine Fähre. Da ist nur Wasser.'); await V.say('Lass ihn.');
     A.setFlag('k3.fin.ferry','mid'); resync(A); A.sfx('ferryCreak'); await A.wait(1200);
     await A.narrate('Sie gleitet an einem Seil, das es nicht mehr gibt. Das Seil ist aus Licht, und es summt.');
     if (A.malaHere()){ await A.animG('tinF'); await A.g('…'); }
@@ -184,7 +185,7 @@ async function finRing(A){ var G=A.G;
 function batoAnchor(S,G){ if (G.flags['k3.fin.crossed']) return null; var sp=M.spot('skela_d','bell'); return sp[2]?[sp[0]+sp[2]-4,sp[1]+10]:null; }
 async function finRealize(A){ var G=A.G, B=bato(A);
   await B.say('Wer hat geläutet?'); await A.wait(1100);
-  if (A.malaHere()){ await A.narrate('Mala geht an den Anleger, ins Licht der Laterne. Sie tut es selbst. Ich sage nichts.'); var l=sd('landing',[234,110,'B']); await A.walkG(l[0]-4,l[1]); await A.faceG('R'); }
+  if (A.malaHere()){ await A.narrate('Mala geht an den Anleger, ins Licht der Laterne. Sie tut es selbst. Ich sage nichts.'); var art=M.ART.skela_d, rp=(art&&art.ferry&&art.ferry.here)||[236,99,1]; await A.walkG(rp[0]-22,rp[1]+13); await A.faceG('R'); }
   await A.wait(1000); await B.say('Ti.'); await A.wait(1500); await A.g('…');
   await B.say('Du hast geläutet. Dreimal.'); await A.wait(600); await A.g('Dreimal.');
   B.agitate(3200); await A.wait(500); await B.say('Ich habe am Fenster gestanden.'); await A.wait(800); await B.say('Und am Morgen …'); await A.wait(1300);
@@ -203,7 +204,7 @@ async function boardMenu(A){ var B=bato(A), G=A.G; if (!waiting(G)) return B.say
     {t:'(Einsteigen.)',silent:true,go:async function(A){ await board(A); return 'bye'; }},
     {t:'Du hast am Fenster gestanden.',once:'btF1',go:async function(A){ await B.say('Ja.'); await A.wait(600); await B.say('Ich habe gezählt. Eins. Zwei. Beim dritten habe ich das Licht ausgemacht.'); await A.wait(500); await A.g('Ich habe es gesehen.'); }},
     {t:'Warum bist du nicht gekommen?',once:'btF2',go:async function(A){ await A.wait(600); await B.say('Weil ich gedacht habe, ich weiß, wer nachts läutet.'); await A.wait(900); await B.say('Vierzig Jahre Fähre. Und ich habe es nicht gewusst.'); }},
-    {t:'Wohin fährst du mich?',once:'btF3',go:async function(A){ await B.say('Hinüber. Wohin sonst. Da drüben steht Zlata mit der Lampe. Sie hat die Glocke gehört.'); }},
+    {t:'Wohin fährst du mich?',once:'btF3',go:async function(A){ await B.say('Hinüber. Wohin sonst.'); await A.wait(500); await B.say('Zu Zlata.'); }},
     {t:'(Noch nicht.)',silent:true,go:async function(A){ await notYet(A); return 'bye'; }}
   ]; }); }
 async function notYet(A){ var B=bato(A), n=(A.flag('k3.fin.waits')||0)+1; A.setFlag('k3.fin.waits',n);
@@ -265,7 +266,7 @@ var HS=[
      return A.m(n2(G)?'Die Schotterstraße endet hier. Das Taxi wartet mit laufendem Motor, die Scheinwerfer auf das Gras.':'Das Taxi wartet an der Straße. Der Fahrer liest Zeitung und hat das Radio an.'); },
    canExit:async function(A){ var G=A.G; if (fin(G)){ await A.m('Heute fahre ich nicht weg. Wir sind hier, bis es vorbei ist.'); return false; }
      if (epi(G) && !F(G,'k3.e.mothers')){ await A.m('Erst zu ihr. Nada wartet nicht.'); return false; } return true; },
-   g:{look:'Die Straße nach Mostar. Zehn Kilometer, sagt er. Für mich ist nichts weit.',listen:'Der Motor. Ein Radio, das einer leiser gedreht hat. Und der Fluss, der alles andere zudeckt.'}},
+   g:{look:'Die Straße nach Mostar. Zehn Kilometer, sagt er. Für mich ist nichts weit.',sense:'Reifenspuren. Ein Lastwagen, der hier gewendet hat, schwer beladen. Und später noch einmal, leer.',listen:'Der Motor. Ein Radio, das einer leiser gedreht hat. Und der Fluss, der alles andere zudeckt.'}},
  {id:'hut',name:'Hütte',look:function(A){ var G=A.G; return A.m(night(G)?'Die Hütte, eine Ruine. Bruchsteinmauern, das halbe Dach aus Steinplatten, die andere Hälfte nur noch Sparren gegen den Himmel.':'Die Hütte bei Tag: Brennnesseln in der Tür, ein verrosteter Haken an der Wand. Hier haben sie damals das Mehl gelagert, für die Dörfer.'); },
    open:'Keine Tür mehr. Nur ein Loch in der Mauer, durch das der Wind geht.', use:'Drinnen nur Brennnesseln und ein Mehlsack, der zu Stein geworden ist.',
    g:{look:'Sie hatte ein Dach. Damals. Und es roch nach Mehl.',sense:function(A){ return hutEcho(A); },listen:'Mäuse. Und der Wind in den Sparren. Damals war es hier drin ganz still.'}},
@@ -281,7 +282,7 @@ var HS=[
  {id:'river',name:'Neretva',look:function(A){ return A.m(night(A.G)?'Die Neretva, schwarz und laut, tief unten. Man sieht sie nicht. Man hört sie.':'Die Neretva. Grün, schnell, mit weißen Strudeln an den Stümpfen. Unten am Ufer Schilf und eine Weide.'); },
    g:{look:function(A){ if (!A.isFound('bato') && night(A.G)) return findBato(A,'river'); return A.g('Grün und laut, tief unten. So habe ich ihn mir gemerkt.'); },sense:'Nein. Das spüre ich nicht. Das will ich nicht spüren.',listen:'Er ist so laut. Wie damals. Er hört nie auf.'}},
  {id:'far_house',name:'Zlatas Haus',look:function(A){ var G=A.G, l=G.flags['k3.lit']; if (d3(G) && l) return A.m('Drüben, in einem Fenster, mein Handylicht. Von hier sieht es aus wie ein Stern, der falsch hängt.');
-     return A.m(night(A.G)?'Drüben ein Haus, weiß im Dunkeln. Hinter dem Küchenfenster ein schwacher Schein.':'Ein weißes Haus mit Steindach. Unten ein breites Fenster, daneben ein tiefes, schmales, oben unter dem Dach ein kleines.'); },
+     return A.m(night(A.G)?'Drüben ein Haus, weiß im Dunkeln. Die Fenster sind dunkel. Jemand schläft dort, oder liegt wach.':'Ein weißes Haus mit Steindach. Unten ein breites Fenster, daneben ein tiefes, schmales, oben unter dem Dach ein kleines.'); },
    with:{ mobitel:'Das Licht reicht nicht über den Fluss. Ich müsste drüben sein, im Haus.' },
    g:{look:function(A){ var G=A.G; if (!A.isFound('bato') && night(G)) return findBato(A,'house'); if (d3(G)) return compare(A); if (fin(G)||epi(G)) return A.g('Das Haus, wo ich am Herd lag. Ich sehe es jetzt, und es tut nicht weh.'); return A.g('Da drüben wohnt die Frau vom Markt. Da zieht es hin.'); },
      sense:'Zu weit. Ich spüre nur, wohin es zieht. Dahin.',listen:'Hühner. Ein Radio. Und jemand, der Holz nachlegt.'}},
@@ -302,7 +303,7 @@ var HS=[
      if ((A.G.phase==='k3_d2_n'||d3(G)) && A.malaHere() && A.first('!k3.sd.brFirst')){ await A.g('Nicht hier.'); await A.wait(500); await A.g('Nicht an dieser Stelle.');
        await A.m('Es ist eine Brücke. Eine neue.'); await A.g('Es ist der Fluss. Derselbe.'); await A.wait(600); await A.m('Dann gehe ich allein. Es ist nicht weit.'); await A.g('Geh. Ich sehe dich von hier.'); }
      return true; },
-   g:{look:'Die neue Brücke. Ich sehe sie. Für mich ist da nur Wasser.',listen:'Ein Auto, ganz oben. Dann wieder der Fluss.'}},
+   g:{look:'Die neue Brücke. Ich sehe sie. Für mich ist da nur Wasser.',sense:'Beton. Er hat nichts erlebt. Er ist zu jung für diesen Fluss.',listen:'Ein Auto, ganz oben. Dann wieder der Fluss.'}},
  {id:'landing',name:'Anlegestelle',look:function(A){ var G=A.G; if (fin(G) && ferry(G)==='here') return A.m('Am Ende der Rampe liegt die Fähre. Ein Ponton aus Licht und alten Brettern. Man sieht das Wasser durch ihn hindurch.');
      return A.m('Eine Betonrampe hinunter zum Wasser. Hier hat die Fähre angelegt. Unten schwarze Bretter, Algen, ein Ring für das Tau.'); },
    use:function(A){ return A.m(waiting(A.G)?'Das ist ihre Fähre. Nicht meine.':'Ich gehe nicht ans Wasser. Nicht hier, nicht nachts.'); },
@@ -311,17 +312,17 @@ var HS=[
      sense:'Viele Füße. Kühe, Säcke, Fahrräder, Hochzeiten. Vierzig Jahre lang. Und keiner in der Nacht.',listen:'Das Wasser schlägt gegen die Rampe. Wie einer, der an eine Tür klopft.'}},
  {id:'komsija',npc:'komsija',name:'Nachbar',hgt:46,vis:function(S,G){ return n2(G) && F(G,'k3.n2.neighbor'); },talk:function(A){ return talkKomsija(A); },
    look:'Der Nachbar, Arbeitsjacke, Stirnlampe. Neben ihm sitzt ein kleiner gelber Hund und sieht zur Glocke.',
-   g:{look:'Er hat einen Hund. Der Hund sieht mich. Hunde sehen mich immer.',listen:'Er denkt an seinen Ofen. Und an seine Tochter in Linz.'}},
+   g:{look:'Er hat einen Hund. Der Hund sieht mich. Hunde sehen mich immer.',sense:'Er riecht nach Holzrauch und Hund. Er war damals nicht hier. Ich spüre es an ihm.',listen:'Er denkt an seinen Ofen. Und an seine Tochter in Linz.'}},
  {id:'vlado',npc:'vlado',name:'Vlado',hgt:48,vis:function(S,G){ return (fin(G) && !F(G,'k3.fin.crossed') && (!F(G,'k3.fin.boarded')||G.pos.marko.room==='skela_d')) || epi(G); },
    talk:async function(A){ var V=A.npc('vlado'), G=A.G; if (epi(G)) return V.say(F(G,'k3.e.mothers')?'Wohin jetzt? Ich fahre, wohin Sie wollen.':'Gehen Sie mit ihr. Ich bleibe beim Lastwagen.');
      if (!F(G,'k3.fin.rung')) return V.say(A.cycle('vlF0',['Läuten Sie. Ich kann es nicht.','Ich habe damals nicht geläutet. Ich habe nur gerufen.']));
      if (waiting(G)) return V.say('Ich sehe nichts. Aber Sie sehen etwas. Das reicht mir.'); return V.say('Gehen wir. Über die Brücke.'); },
    look:function(A){ return A.m(fin(A.G)?'Vlado, die Mütze tief im Gesicht, ohne Zigarette. Er hat die Hände in den Taschen und sieht auf das Wasser.':'Vlado am Lastwagen. Er hat sich rasiert.'); },
-   g:{look:'Er hat nicht falsch gemacht, was er falsch gemacht hat. Er hat nur nicht gewusst, wie.',listen:'Er zählt. Bis drei, immer wieder. Wie ich.'}},
+   g:{look:'Er hat nicht falsch gemacht, was er falsch gemacht hat. Er hat nur nicht gewusst, wie.',sense:'Diesel und Tabak. Unser Führerhaus. Er hat es siebzehn Jahre mit sich getragen.',listen:'Er zählt. Bis drei, immer wieder. Wie ich.'}},
  {id:'kata',npc:'kata',name:'Kata',hgt:46,vis:function(S,G){ return fin(G) && !F(G,'k3.fin.crossed') && (!F(G,'k3.fin.boarded')||G.pos.marko.room==='skela_d'); },
    talk:async function(A){ var K=A.npc('kata'); return K.say(A.cycle('ktF',['Ich verstehe nichts davon. Ich bin nur wegen ihm hier.','Papa fährt nachts. Zum ersten Mal, seit ich zwölf war.','Wenn Sie etwas sehen, sagen Sie es. Ich sehe nur Wasser.'])); },
    look:'Kata, die Arme verschränkt gegen die Kälte. Sie sieht nicht auf den Fluss. Sie sieht auf ihren Vater.',
-   g:{look:'Sie hat ihn damals im Führerhaus sitzen sehen. Bis zum Morgen. Sie war zwölf.',listen:'Sie hat Angst um ihn. Nicht vor dem Dunkel.'}},
+   g:{look:'Sie hat ihn damals im Führerhaus sitzen sehen. Bis zum Morgen. Sie war zwölf.',sense:'Öl an den Händen. Und Angst, die sie für Wut hält.',listen:'Sie hat Angst um ihn. Nicht vor dem Dunkel.'}},
  {id:'bato',npc:'bato',name:'Bato',hgt:50,vis:function(S,G){ return fin(G) && ferry(G)==='here'; },
    talk:async function(A){ var B=bato(A), G=A.G; if (!F(G,'k3.fin.bato')) return B.say('Wer hat geläutet?'); return B.say(A.cycle('btM',['Das ist ihre Fähre heute. Nicht Ihre.','Ich warte auf sie, Übersetzer. Nicht auf Sie.'])); },
    look:function(A){ return A.m(F(A.G,'k3.fin.bato')?'Bato auf seiner Fähre, die Stange in der Hand. Er sieht Mala an wie einer, der eine Schuld gefunden hat, die er lange gesucht hat.':'Ein alter Mann in Wathose auf einem Ponton aus Licht, eine Sturmlaterne in der erhobenen Hand.'); },

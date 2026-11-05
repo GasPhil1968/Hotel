@@ -8,7 +8,7 @@ var P=M.P;
 function inP(G,l){ return l.indexOf(G.phase)>=0; }
 function crossed(G){ return !!G.flags['k3.mala.crossed']; }
 var X_MID0=70, X_MID1=340, X_END=356, X_BACK=26;
-var stopT=0, followT=0, reacting=false, finishing=false, maxX=0;
+var stopT=0, followT=0, reacting=false, finishing=false, maxX=0, reacts=0;
 // Malas Blick, solange sie die Augen zu hat
 function gl(text){ return function(A){ if (A.S.crossing) return A.g(A.cycle('glEyes',['Ich habe die Augen zu.','Ich sehe nichts. Ich höre nur. Autos. Und darunter das andere.','Nicht jetzt. Erst drüben.'])); return typeof text==='function'?text(A):A.g(text); }; }
 // ---------------------------------------------------------------- der Übergang
@@ -20,11 +20,11 @@ async function crossStart(A){ var G=A.G, S=A.S; if (crossed(G)||S.crossing) retu
     else await A.g('Eine Straße mit Geländer. Noch einmal.');
     await A.g('Ich mache die Augen zu.'); await A.wait(700); await A.g('Ich halte mich an deinem Ärmel fest. Du merkst es nicht. Ich schon.');
     await A.g('Und dann gehe ich. Nicht stehen bleiben. Egal was ist.'); await A.wait(400);
-    S.crossing=true; stopT=0; followT=0; reacting=false; finishing=false; maxX=mp[0]; G.flags['mala.noSwitch']=true;
+    S.crossing=true; stopT=0; followT=0; reacting=false; finishing=false; reacts=0; maxX=mp[0]; G.flags['mala.noSwitch']=true;
     await A.switchTo('mala'); await A.narrate('Mala geht mit geschlossenen Augen. Ich gehe neben ihr, so schnell wie sie. Sie führt, und ich lasse mich führen.');
   } finally { G.flags['mala.lock']=false; } }
 M.k3CrossStart=crossStart;
-async function eyesOpen(A){ var E=M.E, G=A.G; if (reacting) return; reacting=true; var wb=E.busy; E.busy=true;
+async function eyesOpen(A){ var E=M.E, G=A.G; if (reacting) return; reacting=true; reacts++; var wb=E.busy; E.busy=true;
   try{ var ma=E.ACT.mala, n=(A.flag('k3.br.stops')||0)+1; A.setFlag('k3.br.stops',n);
     if (ma){ var pose=E.actorPose(ma); ma.frozen=Object.assign({},pose,{hd:'w'}); }
     A.sfx('heart'); A.shake(160); await A.wait(750); if (ma) ma.frozen=null;
@@ -63,7 +63,7 @@ var HS=[
    g:{look:gl(function(A){ return A.g(crossed(A.G)?'Ich sehe jetzt hin. Kurz. Er ist nur grün. Laut ist er nur, wenn man an ihn denkt.':'Ich sehe nicht hin.'); }),listen:'Er rauscht unter den Autos hindurch. Die Autos hört man nur, wenn sie über die Fugen fahren. Ihn hört man immer.'}},
  {id:'traffic',name:'Verkehr',look:'Zwei Spuren, ein Bus, ein Lieferwagen mit Brot, ein Golf, dessen Auspuff hustet. Mitten auf einer Brücke ist es so laut wie an jeder Kreuzung.',
    use:'Ich halte kein Auto an. Wir gehen zu Fuß.',
-   g:{look:gl('Autos. Laut und dumm und sicher. Ich mag Autos. Neben Autos ist es eine Straße.'),listen:'Ein Bus. Ein Auto mit Musik, Turbofolk, ganz laut. Ein Fahrrad. Und darunter, wenn alle still sind, das Wasser.'}},
+   g:{look:gl('Autos. Laut und dumm und sicher. Ich mag Autos. Neben Autos ist es eine Straße.'),listen:'Ein Bus. Ein Auto mit offenem Fenster und Musik, ganz laut. Ein Fahrrad. Und darunter, wenn alle still sind, das Wasser.'}},
  {id:'lamp',name:'Laterne',look:'Ein Laternenmast aus verzinktem Stahl, mit einer Lampe, die am Tag brennt, weil niemand sie ausgemacht hat.',
    use:'Ich lehne mich an den Mast. Er vibriert, wenn ein Bus vorbeifährt.',
    g:{look:gl('Eine Laterne mitten am Tag. Die hat jemand vergessen. Wie mich.')}}
@@ -82,7 +82,7 @@ M.room('strassenbr',{ name:'Straßenbrücke', scape:'k3_strassenbr',
     if (ma.x>=X_END){ crossDone(A); return; }
     if (maxX>X_MID0+20 && ma.x<=X_BACK){ crossAbort(A); return; }
     if (ma.mode==='walk'){ stopT=0; return; }
-    if (ma.x>X_MID0 && ma.x<X_MID1){ stopT+=dt; if (stopT>1500 && !reacting) eyesOpen(A); } },
+    if (ma.x>X_MID0 && ma.x<X_MID1 && reacts<3){ stopT+=dt; if (stopT>(reacts?4000:1500) && !reacting) eyesOpen(A); } },
   enter:async function(A,from){ var G=A.G, p=G.phase; if (A.isMala() || !A.malaHere() || G.flags['mala.lock']) return;
     if (!crossed(G)){ if (A.first('brArr')) await A.narrate('Die Straßenbrücke. Beton, ein Rohrgeländer, zwei Spuren, Autos. Keine Brücke, die man ansieht. Eine, über die man fährt.'); await crossStart(A); return; }
     if (A.first('brAgain')){ await A.g('Eine Straße mit Geländer.'); await A.wait(400); await A.g('Ich mache trotzdem die Augen zu. Sag mir, wenn wir drüben sind.'); } }

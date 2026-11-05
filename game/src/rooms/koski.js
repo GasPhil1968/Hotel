@@ -14,7 +14,7 @@ async function buyTicket(A){ var K=A.npc('kasir'); if (hasTicket(A)) return K.sa
   if (A.G.malaOn){ await A.wait(400); await A.g('Ich brauche keine.'); await A.m('Ich weiß.'); } }
 async function talkKasir(A){ var K=A.npc('kasir'), G=A.G, p=G.phase;
   await A.menuLoop(function(){ return [
-    {t:'Eine Karte fürs Minarett, bitte.',if:!hasTicket(A),go:async function(A){ await buyTicket(A); }},
+    {t:'Eine Karte fürs Minarett, bitte.',silent:true,if:!hasTicket(A),go:async function(A){ await buyTicket(A); }},
     {t:'Wie viele Stufen sind es?',once:'ks1',go:async function(A){ await K.say('Neunundachtzig, sagt der Prospekt. Die Australier haben neunzig gezählt. Einer hat eine doppelt gezählt, vor Angst.'); if (G.malaOn) await A.g('Für mich keine.'); }},
     {t:'Sieht man von oben weit?',once:'ks2',go:async function(A){ await K.say(p==='k3_d1'?'Heute? Bis zu den Bergen im Süden. Bei Bura sieht man jedes Dach und jeden Kran. Die Bura putzt die Luft.':'Weit genug. Die Brücke von oben, den Fluss nach Süden, drüben die Kräne. Und wer auf der Brücke Selfies macht.'); }},
     {t:'Ist es hier immer so still?',once:'ks3',go:async function(A){ await K.say('Im Sommer nicht. Da stehen hundert Leute im Hof und wollen dasselbe Foto. Die Brücke über der Mauer.'); await K.say('Im November komme ich zum Lesen. Ich studiere. Bauingenieur. Mein Professor sagt, an der Brücke kann man alles lernen.'); }},
@@ -38,7 +38,7 @@ var HS=[
  {id:'minaret_door',name:'Tür zum Minarett',exit:{to:'minarett'},canExit:doorCheck,
    look:'Eine niedrige Holztür am Fuß des Minaretts, mit Eisenbeschlägen. Dahinter beginnt eine Wendeltreppe, so eng, dass man sie mit den Schultern berührt.',
    gexit:function(S,G){ return {to:'minarett'}; },
-   g:{look:'Hinter der Tür geht es im Kreis nach oben. Ich brauche die Tür nicht. Und die Stufen auch nicht.',sense:'Viele, die hinaufgestiegen sind, außer Atem. Ein Mann, der jeden Tag fünfmal hinaufging, Jahre lang, bis seine Knie nicht mehr wollten. Er hat es trotzdem gemacht.'}},
+   g:{look:'Hinter der Tür geht es im Kreis nach oben. Ich brauche die Tür nicht. Und die Stufen auch nicht.',sense:'Viele, die hinaufgestiegen sind, außer Atem. Ein Mann, der jeden Tag hinaufging, Jahre lang, bis seine Knie nicht mehr wollten. Er hat es trotzdem gemacht.'}},
  {id:'ticket',name:'Kasse',look:'Ein kleines Kassenhäuschen aus Holz und Glas: „ULAZNICA / TICKET / MINARET“. Darin ein Heizlüfter, eine Thermoskanne und ein Lehrbuch.',
    use:function(A){ return kasirHere(A.G)?talkKasir(A):A.m('Zu. „Zatvoreno“, auf Pappe, mit Klebeband.'); },
    g:{look:'Ein Häuschen mit einem warmen jungen Mann darin. Er liest, wenn keiner kommt, und es kommt fast keiner.'}},

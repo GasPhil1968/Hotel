@@ -23,8 +23,10 @@ var HS=[
    use:peil2,
    g:{look:async function(A){ if (!A.flag('k3.peil.minaret') && inP(A.G,['k3_d1','k3_d2','k3_d3'])){ await A.g('Von hier oben sieht alles kleiner aus. Die Leine nicht.'); if (A.G.pos.marko.room==='minarett') await A.g('Zeichne. Ich sage dir, wo sie entlanggeht.'); return; } return A.g('So viele Dächer. Unter jedem hat jemand gewartet. Auf irgendwas.'); }}},
  {id:'tower_l',name:'Glockenturm',look:'Drüben am Westufer ein Glockenturm, schlank und hell, höher als alles um ihn herum. Eine gute Landmarke. Man verliert ihn nicht aus den Augen.',
+   use:'Ich zeige mit dem Finger hinüber, wie ein Kind. Mala sieht nicht hin.',
    g:{look:'Glocken.',listen:async function(A){ await A.g('Er ist still. Noch.'); await A.wait(400); await A.g('Ich warte immer, dass er anfängt. Ich mag es nicht, wenn sie anfangen.'); }}},
  {id:'cranes',name:'Baukräne',look:'Zwei gelbe Baukräne am Westufer, einer in der Mitte, einer weiter rechts. Die Stadt baut. Die Kräne stehen still, wegen der Bura, und zeigen in zwei Richtungen.',
+   use:'Ich zähle die Stockwerke der Häuser neben den Kränen. Sieben. Neun. Die Stadt wächst, und keiner weiß, wofür.',
    g:{look:'Zwei Kräne. Wie zwei Leute, die sich nicht einigen können, wohin.'}}
 ];
 M.room('minarett',{ name:'Minarett', scape:'k3_minarett',

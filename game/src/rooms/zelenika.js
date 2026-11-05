@@ -109,7 +109,8 @@ async function lenaSentence(A){ var G=A.G, Ln=A.npc('lena'), Mt=A.npc('mate');
 // ---------------------------------------------------------------- Der Schlüssel am Tor – die zweite Erkenntnis: der eigene Tod
 async function keyGate(A){ var G=A.G, Ln=A.npc('lena'), Mt=A.npc('mate'); if (A.flag('k3.b.dead')) return;
   await Ln.say('Wie Jela gesagt hat? Den Schlüssel kriegt der Kleinste?'); await A.m('Ja. Stell dich ans Tor.'); await Ln.say('Voll komisch.'); await A.wait(400); await Ln.say('Okay.');
-  var g=M.stand('zelenika','gate')||[124,120,'R']; await Ln.walk(g[0]-6,g[1]+1); await Ln.face('R'); await Ln.anim('hand',null,true);
+  var g=M.stand('zelenika','gate')||[124,120,'R']; await Ln.walk(g[0]-6,g[1]+1); await Ln.face('R');
+  var mp=M.apos('zelenika','mate',[150,115,'R']); await A.walkM(mp[0]+30,mp[1]+7); await A.faceM('L'); await Ln.anim('hand',null,true);
   await A.narrate('Lena steht am Tor und hält die Hand auf, die Handfläche nach oben, so wie man es kleinen Kindern zeigt.'); await A.wait(1100);
   if (!mateHere(G)){ await Ln.say('Und jetzt?'); Ln.freeze(null); return; }
   A.music('k3_duh'); Mt.agitate(2600); await Mt.say('Die Kleinste.'); await A.wait(700);
@@ -131,9 +132,9 @@ async function release(A){ var Mt=A.npc('mate'); if (A.flag('k3.b.keyFree')) ret
   await Mt.say('Er hat sie eingepackt.'); await A.wait(900); await Mt.say('Dann muss ich nicht mehr warten.');
   var fk=M.stand('zelenika','fork')||[206,118,'B']; if (Mt.actor){ Mt.idle(null); await Mt.walk(fk[0]-12,fk[1]); await Mt.face('R'); }
   await Mt.anim('key'); await A.narrate('Er legt den Schlüssel in die Astgabel des großen Feigenbaums, so behutsam, als könnte er herunterfallen.'); A.sfx('keyDrop'); A.setFlag('k3.b.keyFree'); A.rebuild(); A.sfx('shimmer');
-  await A.wait(1300); await A.narrate('Der Schlüssel bleibt liegen. Er ist kein Licht mehr. Er ist aus Eisen, und in der Kälte beschlägt er.');
+  await A.wait(1300); await A.narrate('Der Schlüssel bleibt liegen. Er ist kein Licht mehr. Er ist aus Eisen, ein Ding, das man aufheben kann.');
   if (A.G.malaOn && A.malaHere()){ await A.wait(600); await A.g('Die Leine ist los.'); await Mt.say('Ich merke es. Ich bin ganz leicht.'); }
-  await A.wait(500); await A.m('Den Schlüssel bekam der Kleinste.'); Mt.idle('wait'); A.music('k3_mate'); }
+  await A.wait(500); await A.m('Den Schlüssel bekam der Kleinste, hat Jela gesagt.'); Mt.idle('wait'); A.music('k3_mate'); }
 // ---------------------------------------------------------------- Der Schlüssel für Lena, dann die Schwelle
 async function takeKey(A){ if (A.has('kljuc_mate')) return A.m('Ich habe ihn.'); if (A.flag('k3.b.keyLena')) return A.m('Lena hat ihn.'); if (!A.flag('k3.b.keyFree')) return A.m('Eine Astgabel. Leer.');
   await A.reach(); A.give('kljuc_mate'); A.setFlag('k3.b.keyTaken'); A.rebuild(); await A.m('Der Schlüssel. Schwer, alt, mit einem Ring. Er ist warm, obwohl er in der Kälte lag.'); }
@@ -159,7 +160,7 @@ M.afterLimbo_mate=async function(A){ A.G.flags['mala.lock']=false; var st=M.stan
   await Ln.say('Für den Balkon. In München. Geht das?'); await J.say('Ako ga ne utopiš.'); await A.m('Sie sagt: Wenn du ihn nicht ertränkst.'); await Ln.say('Ich geb mir Mühe.');
   await A.wait(800); await Dv.say('Herr Vuković.'); await A.narrate('Davor gibt mir eine Visitenkarte, an den Ecken weich vom Portemonnaie.'); A.give('vizitka'); await Dv.say('Falls Sie mal in München sind.');
   A.setFlag('k3.b.done');
-  if (A.G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Er ist eingestiegen.'); await A.m('Mit dem richtigen Bus?'); await A.g('Mit dem, der immer pünktlich ist.'); }
+  if (A.G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Er hat seinen Bus gekriegt.'); await A.m('Den richtigen?'); await A.g('Den, der immer pünktlich ist.'); }
   await M.k3DayCheck(A); };
 // ---------------------------------------------------------------- Mate am Pfosten (Sonntag)
 async function talkMate(A){ var Mt=A.npc('mate'), G=A.G;

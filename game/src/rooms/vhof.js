@@ -128,7 +128,7 @@ M.room('vhof',{ name:'Hof des Vulkanizers', scape:'k3_vhof',
   hotspots:HS,
   enter:async function(A,from){ var G=A.G;
     if (A.isMala() && A.first('vhG')){ await A.g('Ein Hof. Ein Zaun. Und unter der Plane …'); await A.wait(700); await A.g('… ein Lastwagen. Ich kenne ihn. Ich weiß nicht, woher.'); return; }
-    if (!A.isMala() && A.first('vhM')){ await A.m('Der TAM. Unter der Plane, wie ein Tier, das schläft.'); if (G.malaOn && A.malaHere()) await A.g(A.flag('k3.v.cab')?'Ich war da drin.':'Ich kenne ihn.'); }
+    if (!A.isMala() && A.first('vhM')){ await A.m('Der Hof. Der TAM unter seiner Plane, die Fässer am Zaun.'); if (G.malaOn && A.malaHere()) await A.g(A.flag('k3.v.cab')?'Ich war da drin.':'Ich kenne ihn.'); }
     if (!A.isMala() && G.phase==='k3_d3' && N(G,'v3_who') && !F(G,'k3.d3.talk2') && A.first('vhTalk2')){ var mp=M.apos('vhof','mala',[100,118,'L']); if (G.malaOn && A.malaHere()){ await A.walkG(mp[0],mp[1]); await A.faceG('R'); }
       await A.narrate('Mala steht am Lastwagen. Die Hand auf dem Kotflügel, ohne ihn zu berühren.'); } }
 });

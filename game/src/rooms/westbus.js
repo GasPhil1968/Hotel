@@ -8,7 +8,7 @@ function sat(G){ return G.phase==='k3_d2'; }
 function zelHere(G){ return sat(G) && F(G,'k3.b.arrived') && !F(G,'k3.b.westLeft'); }
 // ---------------------------------------------------------------- Der Bus aus München (Samstag, erster Besuch)
 async function busArrives(A){ var G=A.G; if (F(G,'k3.b.arrived')) return; A.music('k3_mate');
-  A.set('munich',true); A.rebuild(); A.sfx('busBrake'); await A.wait(900);
+  A.set('munich',true); A.rebuild(); A.sfx('busBrake'); var bn=M.stand('westbus','bench')||[205,124,'B']; await A.walk(bn[0]-16,bn[1]+1); await A.face('R'); await A.wait(500);
   await A.narrate('Samstag. In die Busbucht rollt ein Reisebus, weiß und blau, mit einem Münchner Kennzeichen: „MÜNCHEN – MOSTAR“. Die Bremsen zischen. Die Gepäckklappe geht auf.');
   var Z=A.npc('zdravko'); await A.wait(500); await A.narrate('Zdravko steht in der Tür seines Cafés, das Geschirrtuch über der Schulter.'); await Z.say('Er hatte Verspätung. Er hat immer Verspätung.');
   // Mate kommt aus dem Café auf den Bussteig
@@ -70,6 +70,7 @@ var HS=[
    g:{look:'Zahlen. Er liest sie dir vor. Er liest sowieso alles vor.'}}
 ];
 M.room('westbus',{ name:'Westbusbahnhof', scape:'k3_westbus',
+  entries:{ map:[34,126,'R'] },   // ein Stück vom linken Bildrand weg (dort hat die Kunst zwei leere Spalten, auf denen Malas Rand das Zeichnen stört)
   music:function(G){ return (sat(G)&&!F(G,'k3.b.westLeft'))?'k3_mate':'k3_istraga'; },
   state:function(G){ return {munich:false}; },
   actors:function(S,G){ var L=[]; S.munich=sat(G) && !F(G,'k3.b.busLeft');

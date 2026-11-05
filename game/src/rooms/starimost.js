@@ -60,7 +60,7 @@ M.k3UseBridgehead=useBridgehead;
 async function talkDino(A){ var D=A.npc('dino'), G=A.G, p=G.phase;
   if (p==='k3_epi'){ if (A.first('dnEpi')){ await D.say('Training. Im November? Gerade im November. Wer im November springt, springt im Sommer schön.'); return; } return D.say(A.cycle('dnE',['Kalt. Das Wasser ist kälter als die Luft. Das ist gut für die Haut, sagt meine Oma.','Gleich. Ich springe gleich.'])); }
   await A.menuLoop(function(){ return [
-    {t:'(In der Landessprache weiterreden.)',once:'dnNas',if:!A.flag('k3.dino.nas'),go:async function(A){ await A.m('Pričaj naški. Razumijem.'); await D.say('A, naš si.'); A.setFlag('k3.dino.nas'); await D.say('Warum sagst du das nicht gleich? Jetzt habe ich dir den Touristenpreis gesagt.'); }},
+    {t:'(In der Landessprache weiterreden.)',silent:true,once:'dnNas',if:!A.flag('k3.dino.nas'),go:async function(A){ await A.m('Pričaj naški. Razumijem.'); await D.say('A, naš si.'); A.setFlag('k3.dino.nas'); await D.say('Warum sagst du das nicht gleich? Jetzt habe ich dir den Touristenpreis gesagt.'); }},
     {t:'Erzähl mir von der Brücke.',if:!N(A,'p3_history'),go:async function(A){ await D.say('Die Brücke? Fast vierhundertfünfzig Jahre alt. Im November dreiundneunzig ist sie gefallen. Ins Wasser, Stein für Stein.');
         await D.say('Danach hing eine Seilbrücke da, von spanischen Pionieren. Ich war fünf. Ich dachte, die Spanier haben die Brücke geklaut und eine aus Wäscheleinen dagelassen.');
         await D.say('Zweitausendvier haben sie sie wieder aufgebaut. Mit Steinen aus dem Fluss und neuen aus demselben Berg. Sie sieht aus wie vorher. Sagen die Alten. Ich kenne sie nur so.'); A.note('p3_history');

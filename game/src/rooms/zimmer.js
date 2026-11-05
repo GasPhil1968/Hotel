@@ -48,7 +48,7 @@ var HS=[
      if (p==='k3_pro') return A.m('Regen läuft am Fenster herunter. Darunter die Neretva, hoch und braun-grün, und sie ist so laut, dass ich das Fenster nicht öffnen muss, um sie zu hören.');
      if (p==='k3_d1') return A.m('Bura. Das Wasser unten ist wieder grün, und der Wind reißt Schaum von den Strudeln. Am Westufer stehen zwei Kräne, und weiter hinten jeder einzelne Stein des Hum.');
      if (p==='k3_epi'||p==='k3_epi_d') return A.m('Grau und mild. Der Fluss ist ruhiger als am Donnerstag. Oder ich bin es.');
-     return A.m('Unten der Fluss, grün wie Flaschenglas, oben ein kalter blauer Himmel. Drüben das Westufer, Wohnblocks, ein Kirchturm, zwei Kräne.'); },
+     return A.m('Unten der Fluss, grün wie Flaschenglas, oben ein kalter blauer Himmel. Drüben das Westufer, Wohnblocks, ein Glockenturm, zwei Kräne.'); },
    open:async function(A){ A.sfx('creak'); await A.m('Ich mache es auf. Der Fluss kommt herein, laut, und mit ihm die Kälte. Ich mache es wieder zu.'); if (A.G.malaOn) await A.g('Danke.'); },
    g:{look:async function(A){ await A.g('Nein.'); await A.wait(400); await A.g('Da gehe ich nicht hin. Der Fluss ist direkt darunter. Ich höre ihn durch das Glas.'); },
      sense:'Am Glas ist es kälter als im Zimmer. Für mich jedenfalls. Raureif, den nur ich sehe.'}},
@@ -70,7 +70,10 @@ var HS=[
    use:async function(A){ A.sfx('click'); await A.m('Ich ziehe an der Schnur. Dunkel.'); await A.wait(500); A.sfx('click'); await A.m('Und wieder hell. Das war alles, was ich wissen wollte.'); },
    g:{look:'Licht an einem Faden. Wie ich, nur heller.'}}
 ];
+// nach dem Laden: fehlen die Morgenzeilen eines Tages (Samstag: die Leine zeigt in die Stadt), kommen sie, sobald nichts anderes läuft
+M.K3REACT=M.K3REACT||{}; M.K3REACT['s1.wake']=async function(A){ var p=A.G.phase; if (A.room && A.room.id==='zimmer' && !A.flag('k3.wake.'+p)) await M.k3Wake(A,p); };
 M.room('zimmer',{ name:'Zimmer unter dem Dach', scape:'k3_zimmer', noFollow:true,
+  resume:function(A){ var p=A.G.phase; if (['k3_d1','k3_d2','k3_d3'].indexOf(p)>=0 && A.flag('k3.'+(p==='k3_d1'?'d1':(p==='k3_d2'?'d2':'d3'))+'.started') && !A.flag('k3.wake.'+p) && M.k3Queue) M.k3Queue('s1.wake'); },
   music:function(G){ if (G.phase==='k3_epi'||G.phase==='k3_epi_d') return 'k3_epi'; return G.tod==='night'?'k3_noc':'k3_mostar'; },
   state:function(G){ return {dzezva:false}; },
   actors:function(S,G){ return []; },

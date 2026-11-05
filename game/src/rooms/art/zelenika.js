@@ -31,7 +31,7 @@ function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function vn(x,y){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, a=hash(xi,yi), b=hash(xi+1,yi), c=hash(xi,yi+1), d=hash(xi+1,yi+1), u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf); return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v; }
 function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.3,y*4.1+8.1)*0.15; }
 function figsWrapped(GS){ return !!(GS && GS.flags && GS.flags['k3.b.figs']); }
-function keyFree(GS){ return !!(GS && GS.flags && GS.flags['k3.b.keyFree']); }
+function keyFree(GS){ return !!(GS && GS.flags && GS.flags['k3.b.keyFree'] && !GS.flags['k3.b.keyTaken']); }   // liegt nur da, bis Marko ihn nimmt
 // Zaunlinie (vorn): vom vorderen Pfosten zur Bildkante unten links
 function fenceFrontX(y){ return lerp(FP.x,FP.x-14,(y-FP.base)/12); }
 

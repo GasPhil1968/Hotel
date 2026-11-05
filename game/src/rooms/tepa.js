@@ -50,10 +50,15 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
     {t:'Kennen Sie Lana Delić?',once:'zl1',go:async function(A){ asked(A); await A.wait(700); await Z.say('Ne.'); await A.wait(500); await A.m('Nein. Einfach nein. Sie sieht mich dabei an, als wäre die Frage zu leicht.'); if (G.malaOn) await A.g('Sie lügt nicht. Den Namen kennt sie nicht.'); }},
     {t:'Ich suche ein Mädchen. Siebzehn. Januar vierundneunzig.',once:'zl2',go:async function(A){ asked(A); await A.wait(900); await Z.say('Svaka majka traži dijete.'); await A.m('„Jede Mutter sucht ein Kind.“'); await A.wait(500); await Z.say('Jaja? Orasi?'); await A.m('Eier oder Walnüsse. Für sie ist das Gespräch zu Ende.');
         if (G.malaOn && (A.flag('k3.z.n')||0)>=2 && !N(A,'l3_onetrail')){ await A.wait(400); await A.g('Sie wird gleich gehen. Ich sehe es an ihren Händen.'); } }},
-    {t:'Kannten Sie eine Mala?',if:N(A,'l3_onetrail'),go:function(A){ return zlataMala(A,Z); }},
+    {t:'Kannten Sie eine Mala?',silent:true,if:N(A,'l3_onetrail'),go:function(A){ return zlataMala(A,Z); }},
     {t:'Was kosten die Eier?',once:'zl3',go:async function(A){ await Z.say('Deset jaja, tri marke. Domaća. Kokoši trče po dvorištu.'); await A.m('„Zehn Eier, drei Mark. Von hier. Die Hühner laufen im Hof herum.“ Als wäre das eine Auskunft über mich.'); }},
     {t:'Woher kommen Sie?',once:'zl4',go:async function(A){ await Z.say('Odozdo. Niz rijeku.'); await A.m('„Von unten. Den Fluss hinunter.“'); if (G.malaOn){ await A.wait(400); await A.g('Flussab.'); } }},
     {t:'Hladno, da.',once:'zl5',go:async function(A){ await Z.say('Za vas nije. Vi ste mladi.'); await A.m('„Für Sie nicht. Sie sind jung.“ Ich bin dreiunddreißig. Für sie ist das jung.'); }},
+    A.askOpt({ l3_onetrail:function(A){ return zlataMala(A,Z); },
+      v3_mala:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Ne razumijem.'); await A.m('„Ich verstehe nicht.“ Ich verstehe es selbst noch nicht ganz. Mala. Wer hat sie so genannt?'); },
+      l3_ljerka_pic:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Ne razumijem.'); await A.m('„Ich verstehe nicht.“ Ein Bild, unterschrieben mit einem Namen. Ich muss erst selbst verstehen, was der Name heißt.'); },
+      k3_c_missing:async function(A){ await Z.say('Svaka majka traži dijete.'); await A.m('„Jede Mutter sucht ein Kind.“ Zum zweiten Mal. Wie eine Tür, die sie zumacht.'); },
+      l3_dreams:async function(A){ await A.wait(700); await Z.say('Jaja? Orasi?'); await A.m('Sie tut, als hätte sie nichts gehört. Ihre Hände zählen die Eier noch einmal.'); } },'Jaja? Orasi?'),
     {t:'Doviđenja.',bye:true,go:async function(A){ await Z.say('Doviđenja.'); }}
   ]; }); }
 // ---------------------------------------------------------------- die Nachbarin

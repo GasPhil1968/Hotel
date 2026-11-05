@@ -3,6 +3,8 @@
    Vorgaben: game/K3_SPEC.md, KAPITEL3_KONZEPT.md 7.2 („Zwei Fassungen“) ===== */
 (function(M){
 'use strict';
+// „(Mala fragen.)“ ist eine Handlung, kein Satz: Marko spricht die Zeile nicht aus (das Gerüst setzt silent nicht)
+function askM(A,k){ var o=M.k3AskOpt(A,k); if (o) o.silent=true; return o; }
 var P=M.P;
 function F(G,k){ return !!G.flags[k]; }
 function N(G,id){ return G.notes.indexOf(id)>=0; }
@@ -12,7 +14,11 @@ M.k3KnowsVlado=function(G){ return F(G,'k3.v.known')||N(G,'v3_mate')||N(G,'v3_wh
 // der Laden ist zu, bis Marko einmal woanders war (K3_SPEC §3: offen, wenn k3.moves > k3.v.closedAt + 1)
 function closedNow(G){ return F(G,'k3.v.angry') && !F(G,'k3.v.drawer') && (G.flags['k3.moves']||0)<=(G.flags['k3.v.closedAt']||0)+1; }
 M.k3VladoClosed=closedNow;
-function vladoHere(G){ if (!day(G) || closedNow(G)) return false;
+// beim Betreten wird k3.moves erst nach dem Aufbau des Raums hochgezählt (05_engine.js: loadRoom, dann onRoomChange); deshalb hier ein Wechsel weniger
+var LOADING=false;
+function closedOnLoad(G){ return F(G,'k3.v.angry') && !F(G,'k3.v.drawer') && (G.flags['k3.moves']||0)<=(G.flags['k3.v.closedAt']||0); }
+function closedAny(G){ return LOADING?closedOnLoad(G):closedNow(G); }
+function vladoHere(G){ if (!day(G) || closedAny(G)) return false;
   if (G.phase==='k3_d1' && F(G,'k3.v.drawer')) return false;                          // „Morgen.“ Er ist hinten.
   if (G.phase==='k3_d3' && F(G,'k3.v.part2') && !F(G,'k3.d3.talk2')) return false;     // nach Teil 2 ist er hinten
   return true; }
@@ -134,7 +140,7 @@ var PARTIAL={
 function vAsk(got){ if (!got.bell) return 'Wer hat geläutet? Sagen Sie mir, wer da geläutet hat.'; if (!got.light) return 'Und drüben? Hat einer Licht gemacht? Hat einer aufgemacht?'; if (!got.alive) return 'Und sie? Was war mit ihr?'; return null; }
 // Marko erzählt, was er in Skela weiß. Teil 2 erst mit a3_girl, a3_lightroom und l3_survived (K3_SPEC, Konzept 7.2 Schritt 8)
 async function skela(A,V){ var S=A.S, got=S.vtold||{};
-  if (A.first('vlSk')){ await A.wait(600); await V.say('Skela.'); await A.wait(800); await V.say('Was wollen Sie da? Da ist eine Brücke. Seit achtundneunzig.'); }
+  if (A.first('vlSk')){ await A.wait(600); await V.say('Skela.'); await A.wait(800); await V.say('Was wollten Sie da? Da ist eine Brücke. Seit achtundneunzig. Da fährt keiner mehr über.'); }
   else if (got.bell||got.light||got.alive){ await V.say(vAsk(got)||'Weiter.'); }
   for (var guard=0; guard<14; guard++){ if (got.bell&&got.light&&got.alive) break;
     var n=await A.askNote('Was erzähle ich ihm von Skela?',{also:SKELA_ALSO});
@@ -190,7 +196,7 @@ var WRONG={
   l3_survived:'Dass sie noch gelebt hat, weiß ich jetzt. Das macht es nicht leichter.' };
 async function message(A,V){ var res=false;
   if (A.first('vlMsg0')){ await A.wait(700); await V.say('Von ihr.'); await A.wait(1000); await V.say('Wie soll das gehen?'); await A.wait(500); await A.m('Ich weiß es. Glauben Sie mir einfach, dass ich es weiß.'); await V.say('Dann sagen Sie.'); }
-  await A.menuLoop(function(){ return [ M.k3AskOpt(A,'vlado_msg'),
+  await A.menuLoop(function(){ return [ askM(A,'vlado_msg'),
     {t:'(Ihm sagen, was nur die beiden hatten.)',silent:true,noGray:true,go:async function(A){ if (!M.k3Asked(A,'vlado_msg')) await M.k3Skipped(A,'vlado_msg'); var ok=await deliver(A,V); if (ok){ res=true; return 'bye'; } }},
     {t:'(Noch nicht.)',bye:true,silent:true,go:async function(A){ await V.say('Ich laufe nicht weg. Ich laufe nirgends mehr hin.'); }}
   ].filter(Boolean); });
@@ -352,10 +358,11 @@ var HS=[
    g:{look:'Er raucht, damit er nicht reden muss.'}}
 ];
 M.room('vulkanizer',{ name:'Vulkanizer Rajić', scape:'k3_vulkanizer',
-  music:function(G){ return closedNow(G)?'':'k3_istraga'; },
+  music:function(G){ return closedOnLoad(G)?'':'k3_istraga'; },
   state:function(G){ return {closed:false,yardOpen:false,drawerOpen:false}; },
-  actors:function(S,G){ var L=[]; S.closed=closedNow(G); S.drawerOpen=F(G,'k3.v.drawer'); S.yardOpen=yardOpen(G);
-    if (vladoHere(G)){ var v=M.apos('vulkanizer','vlado',[116,111,'L']), d2=G.phase==='k3_d2'&&!F(G,'k3.v.part1'), quiet=F(G,'k3.v.free');
+  actors:function(S,G){ var L=[]; LOADING=true; S.closed=closedOnLoad(G); S.drawerOpen=F(G,'k3.v.drawer'); S.yardOpen=yardOpen(G);
+    var here=vladoHere(G); LOADING=false;
+    if (here){ var v=M.apos('vulkanizer','vlado',[116,111,'L']), d2=G.phase==='k3_d2'&&!F(G,'k3.v.part1'), quiet=F(G,'k3.v.free');
       L.push({id:'vlado',ch:'vlado',x:v[0],y:v[1],f:v[2]||'L',name:'Vlado',idle:quiet?'quiet':(d2?'smoke':'work'),speechY:46,
         routine:quiet?[['idle','quiet',8,14],['face','R',2,4],['idle','quiet',6,10]]:(d2?[['idle','smoke',8,14],['anim','cough'],['idle','smoke',6,10]]:[['idle','work',8,14],['anim','cough'],['idle','work',6,10],['idle','smoke',4,7],['idle','work',8,12]])}); }
     if (day(G)){ var k=M.apos('vulkanizer','kata',[340,114,'L']); L.push({id:'kata',ch:'kata',x:k[0],y:k[1],f:k[2]||'L',name:'Kata',idle:'type',talk:'sitTalk',speechY:40,routine:[['idle','type',10,16],['idle','sitPhone',3,5],['idle','type',8,12]]}); }
