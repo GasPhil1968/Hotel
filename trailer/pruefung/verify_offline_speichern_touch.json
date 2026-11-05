@@ -1,0 +1,43 @@
+{
+ "offline_sw": "message",
+ "offline_reload": true,
+ "offline_newtab": true,
+ "offline_err": null,
+ "offline_cold": "startet nicht (page.goto: net::ERR_INTERNET_DISCONNECTED at http://127.0.0.)",
+ "save_before": {
+  "inv": [
+   "dzezva"
+  ],
+  "room": "flat",
+  "keys": [
+   "mala.slot",
+   "mala.save.1"
+  ]
+ },
+ "save_after_reload": {
+  "screen": "title",
+  "titleMode": "main",
+  "hasSave": [
+   "mala.save.1"
+  ]
+ },
+ "save_loaded": {
+  "inv": [
+   "dzezva"
+  ],
+  "room": "flat",
+  "screen": "game"
+ },
+ "save_errors": [],
+ "touch": {
+  "canvas": {
+   "x": 30,
+   "y": 60,
+   "w": 1120,
+   "h": 700
+  },
+  "xBefore": 188,
+  "xAfter": 76,
+  "moved": true
+ }
+}

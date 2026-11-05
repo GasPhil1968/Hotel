@@ -1,0 +1,50 @@
+{
+ "datei": "MALA_Trailer_90s_DE.mp4",
+ "groesse_mb": 22.4,
+ "dauer_s": 90.0,
+ "video": {
+  "codec": "h264",
+  "profil": "High",
+  "level": 41,
+  "pix_fmt": "yuv420p",
+  "groesse": "1920x1080",
+  "sar": "1:1",
+  "dar": "16:9",
+  "r_frame_rate": "30/1",
+  "avg_frame_rate": "30/1",
+  "bilder": 2700,
+  "dauer_s": 90.0,
+  "farbraum": "bt709",
+  "primaries": "bt709",
+  "transfer": "bt709",
+  "bereich": "tv"
+ },
+ "audio": {
+  "codec": "aac",
+  "profil": "LC",
+  "abtastrate": 48000,
+  "kanaele": 2,
+  "layout": "stereo",
+  "dauer_s": 90.0
+ },
+ "lautheit": {
+  "integriert_lufs": -15.0,
+  "lra_lu": 3.8,
+  "true_peak_dbtp": -2.0
+ },
+ "schwarz": [],
+ "stille_unter_minus50dB": [],
+ "pruefung": {
+  "dauer": true,
+  "bilder": true,
+  "h264": true,
+  "yuv420p": true,
+  "groesse": true,
+  "fps": true,
+  "aac": true,
+  "ton48k": true,
+  "stereo": true,
+  "lautheit": true,
+  "spitze": true
+ }
+}

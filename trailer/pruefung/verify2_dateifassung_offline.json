@@ -1,0 +1,28 @@
+{
+ "autosave": {
+  "slot": 2,
+  "vorher": "riva",
+  "nachher": "riva",
+  "jetzt": "riva",
+  "gespeichertUm": false
+ },
+ "file_offline": {
+  "M": true,
+  "screen": "title",
+  "title": [
+   "Kapitel 1: Split",
+   "Kapitel 2: Sarajevo",
+   "Mitgelieferter Spielstand",
+   "Sprache: Deutsch",
+   "Über das Spiel"
+  ],
+  "errors": []
+ },
+ "reveal": {
+  "knopf": [
+   252,
+   144
+  ],
+  "aktiv": false
+ }
+}

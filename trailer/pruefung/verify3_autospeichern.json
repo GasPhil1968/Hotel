@@ -1,0 +1,14 @@
+{
+ "slot": 2,
+ "ausgang": "office_door",
+ "raum_vorher": "riva",
+ "gespeichert_vorher": "riva",
+ "raum_jetzt": "office",
+ "gewechselt": true,
+ "gespeichert_nachher": "office",
+ "neuer_zeitstempel": true,
+ "andere_plaetze": [
+  false,
+  false
+ ]
+}
