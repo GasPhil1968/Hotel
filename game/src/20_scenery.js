@@ -3,11 +3,12 @@
 'use strict';
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer;
 var scn={}; M.scn=scn;
-// Wetter je Phase: 'rain' (Jugo), 'clear' (Bura, klar), 'calm'
+// Wetter je Phase: 'rain' (Jugo), 'clear' (Bura, klar), 'calm'; Kapitel 3 dazu 'bura' (klar, Wind), 'frost' (klar, Raureif), 'grey' (bedeckt)
 scn.weather=function(GS){ var ph=M.PHASES[GS.phase]||{}; return ph.weather||'calm'; };
 // Himmel bei Regen: grau verhangen
 scn.sky=function(b,x0,y0,w,h,tod,weather,seed){ if (weather==='rain'){ var ramp=M.R(tod==='day'?'m2 m3 s3 m3':(tod==='dusk'?'d0 m1 d1 m2':(tod==='dawn'?'m1 n1 m2 d2':'k0 k1 m0 k2')));
     for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var v=(y-y0)/h+Math.sin(x*0.05+y*0.2)*0.08+hash(Math.floor(x/9),Math.floor(y/4))*0.15; b.px(x,y,M.rampAt(ramp,v,x,y)); } return; }
+  if (weather==='grey'){ weather='fog'; }   // Kapitel 3: bedeckt, flaches Licht (Himmel wie Nebel, ohne Nebelbänke)
   if (weather==='fog' || weather==='snow'){ var fr=weather==='fog'?(tod==='day'?'m3 m4 s4 s5 s4':(tod==='dusk'?'d1 m2 d2 m3 d3':(tod==='dawn'?'m2 v2 m3 s4':'k1 m0 k2 m1 m0'))):(tod==='day'?'m3 m4 s4 m4':(tod==='dusk'?'d0 m1 d1 m2':(tod==='dawn'?'m2 v2 m3 v3':'k1 n0 m0 n1')));
     var rmp=M.R(fr); for (var y2=y0;y2<y0+h;y2++) for (var x2=x0;x2<x0+w;x2++){ var v2=(y2-y0)/h*0.9+Math.sin(x2*0.031+y2*0.11)*0.05+(hash(Math.floor(x2/14),Math.floor(y2/5))-0.5)*0.08; b.px(x2,y2,M.rampAt(rmp,v2,x2,y2)); } return; }
   M.sky(b,x0,y0,w,h,tod,seed); };

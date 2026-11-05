@@ -34,7 +34,7 @@ M.mapStoryUnlocks=storyUnlocks;
 M.MIGRATE=M.MIGRATE||[]; M.MIGRATE.push(function(G){ if (!G.mapKnown) G.mapKnown={}; storyUnlocks(G); M.mapRefresh(G); });
 
 // ---------------------------------------------------------------- Orte des Kapitels, Straße eines Raums
-function locs(G){ return M.chapterOf(G||M.GS)===2?(M.MAPLOCS2||[]):M.MAPLOCS; }
+function locs(G){ var ch=M.chapterOf(G||M.GS); return ch===3?(M.MAPLOCS3||[]):(ch===2?(M.MAPLOCS2||[]):M.MAPLOCS); }
 M.mapLocs=locs;
 function locById(id,G){ return locs(G).filter(function(L){ return L.id===id; })[0]||null; }
 M.mapLoc=locById;
@@ -78,6 +78,7 @@ M.mapStates=async function(){ M.mapRefresh(M.GS); return computeStates(M.GS); };
 // ok | 'mala' (Mala allein reist nicht) | 'inside' (Innenraum: erst hinaus) — beim Öffnen über einen Ausgang immer ok
 function origin(ov){ var G=M.GS; if (G.active==='mala') return {ok:false,k:'mala',why:'Ohne Marko gehe ich nirgends hin.'};
   if (ov && ov.exit) return {ok:true};
+  if (M.mapOriginWhy){ var ow=M.mapOriginWhy(G,E.room); if (ow) return {ok:false,k:'inside',why:ow}; }   // ein Kapitel kennt eigene Gründe (Skela: das Taxi wartet drüben)
   var h=mapExit(E.room,G); if (!h) return {ok:false,k:'inside',why:'Von hier drinnen nicht. Erst muss ich hinaus auf die Straße.'};
   return {ok:true,hs:h}; }
 
@@ -132,12 +133,12 @@ function baseMap(d){ var key=d.ch+'|'+JSON.stringify(d.st); if (CACHE.key===key)
 function lock(fb,x,y,c){ fb.rect(x,y+2,5,4,c); fb.px(x+1,y,c); fb.px(x+3,y,c); fb.px(x+1,y+1,c); fb.px(x+3,y+1,c); fb.px(x+2,y-1,c); fb.px(x+2,y+3,P.k0); }
 function ring(fb,x,y,r,c,dots){ for (var a=0;a<64;a++){ if (dots && a%4>1) continue; var t=a/64*Math.PI*2, px=Math.round(x+Math.cos(t)*r), py=Math.round(y+Math.sin(t)*r*0.8); if (px>=0&&px<320&&py>=0&&py<144) fb.px(px,py,c); } }
 // Namen ohne Überlappung: unter, über, rechts oder links neben dem Symbol, je nachdem, wo Platz ist
-function cyOf(L){ return M.chapterOf(M.GS)===2?L.y-1:L.y-7; }   // Mitte des Symbols (Split: über dem Punkt gezeichnet, Sarajevo: um ihn herum)
-function iconBox(L){ return M.chapterOf(M.GS)===2?[L.x-9,L.y-10,19,16]:[L.x-8,L.y-16,17,17]; }
+function cyOf(L){ return M.chapterOf(M.GS)>=2?L.y-1:L.y-7; }   // Mitte des Symbols (Split: über dem Punkt gezeichnet, Sarajevo: um ihn herum)
+function iconBox(L){ return M.chapterOf(M.GS)>=2?[L.x-9,L.y-10,19,16]:[L.x-8,L.y-16,17,17]; }
 function overlap(a,b){ return a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3]; }
 function layoutNames(d){ var vis=locs().filter(function(L){ var s=d.st[L.id]; return s&&s.st!=='unknown'; }), placed=vis.map(iconBox), out={};
   vis.slice().sort(function(a,b){ function n(L){ return vis.filter(function(o){ return o!==L && Math.hypot(o.x-L.x,o.y-L.y)<40; }).length; } return n(b)-n(a); }).forEach(function(L){ var nm=M.tr?M.tr(L.name):L.name, w=M.textWidth(nm)+2, h=9, ib=iconBox(L), cx=L.x-(w>>1);
-    var my=L.y-(M.chapterOf(M.GS)===2?4:10), bot=ib[1]+ib[3]+1, top=ib[1]-h-1, rx=ib[0]+ib[2]+2, lx=ib[0]-w-2;
+    var my=L.y-(M.chapterOf(M.GS)>=2?4:10), bot=ib[1]+ib[3]+1, top=ib[1]-h-1, rx=ib[0]+ib[2]+2, lx=ib[0]-w-2;
     var cand=[[cx,bot],[cx,top],[rx,my],[lx,my],[rx,bot-4],[lx,bot-4],[rx,top+4],[lx,top+4],[cx,bot+9],[cx,top-9],[rx,bot+6],[lx,bot+6]];
     function area(a,b){ var x=Math.max(0,Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])), y=Math.max(0,Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])); return x*y; }
     var best=null, bestA=1e9; for (var i=0;i<cand.length;i++){ var bx=[Math.max(9,Math.min(311-w,cand[i][0])),Math.max(7,Math.min(137-h,cand[i][1])),w,h], ar=0; placed.forEach(function(p){ ar+=area(p,bx); }); if (ar<bestA){ bestA=ar; best=bx; if (!ar) break; } }

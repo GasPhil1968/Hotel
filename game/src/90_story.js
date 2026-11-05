@@ -79,8 +79,9 @@ var PENDING=[
   {from:'k2_s3', guard:'k2.s3.night', when:function(G){ return true; }, run:function(A){ return M.k2CheckS3Night(A); }},   // prüft selbst, ob alle zugesagt haben
   {from:'k2_s3_n', guard:'k2.f2.started'}, {from:'k2_fin', guard:'k2.f2.night'},
   {from:'k2_fin_n', guard:'k2.epi.started', when:function(G){ return G.notes.indexOf('f2_bridge')>=0; }, run:function(A){ return M.k2StartEpilogue(A); }} ];
-M.resumePending=async function(A){ var G=A.G;
-  for (var i=0;i<PENDING.length;i++){ var r=PENDING[i]; if (r.from!==G.phase) continue;
+M.PENDING_X=M.PENDING_X||[];   // weitere Kapitel hängen ihre Regeln an (Kapitel 3: 96_k3_story.js)
+M.resumePending=async function(A){ var G=A.G, PL=PENDING.concat(M.PENDING_X);
+  for (var i=0;i<PL.length;i++){ var r=PL[i]; if (r.from!==G.phase) continue;
     if (r.guard && G.flags[r.guard]) delete G.flags[r.guard];
     if (r.run && r.when && r.when(G)){ var E=M.E, wb=E.busy; E.busy=true; try{ await r.run(A); } catch(e){ console.error(e); } finally{ E.busy=wb; } return r.from; } }
   return null; };

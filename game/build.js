@@ -22,7 +22,7 @@ const html = `<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#08070d">
-<title>Mala – Split und Sarajevo</title>
+<title>Mala – Split, Sarajevo, Mostar</title>
 <style>
 :root{ background:#08070d; }
 html,body{ margin:0; height:100%; background:#08070d; overflow:hidden; touch-action:none; overscroll-behavior:none; }
@@ -38,7 +38,7 @@ body{ display:flex; flex-direction:column; align-items:center; justify-content:c
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Mala">
 </head><body>
-<canvas id="game" width="320" height="200" aria-label="Mala – Kapitel 1: Split und Kapitel 2: Sarajevo. Ein Point-and-Click-Adventure."></canvas>
+<canvas id="game" width="320" height="200" aria-label="Mala – Kapitel 1: Split, Kapitel 2: Sarajevo, Kapitel 3: Mostar. Ein Point-and-Click-Adventure."></canvas>
 <div id="hint">Dreh das Gerät quer.</div>
 <script>
 ${js}

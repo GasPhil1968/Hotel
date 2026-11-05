@@ -472,10 +472,12 @@ async function gotoRoom(id,o){ o=o||{}; var cur=room?room.id:null, from=o.via||c
   var tgt=M.ROOMS[id]; if (!tgt) throw new Error('kein Raum '+id);
   var ent=o.x!==undefined?[o.x,o.y,o.f]:((tgt.entries&&tgt.entries[from])||tgt.start||[160,120,'R']);
   GS.pos[who]={room:id,x:ent[0],y:ent[1],f:ent[2]||'R'};
-  // Mala kommt mit, wenn Marko einen normalen Ausgang nimmt
-  if (who==='marko' && GS.malaOn && !o.keepPos && !o.leaveMala){ GS.pos.mala={room:id,x:ent[0]-14,y:ent[1]-2,f:ent[2]||'R'}; }
+  // Mala kommt mit, wenn Marko einen normalen Ausgang nimmt (außer sie bleibt: o.leaveMala oder die Geschichte will es, M.malaStays)
+  var stayM=!!o.leaveMala || !!(M.malaStays && who==='marko' && GS.malaOn && M.malaStays(GS,cur,id,o));
+  if (who==='marko' && GS.malaOn && !o.keepPos && !stayM){ GS.pos.mala={room:id,x:ent[0]-14,y:ent[1]-2,f:ent[2]||'R'}; }
   loadRoom(id);
-  if (who==='marko' && GS.malaOn && !o.keepPos && !o.leaveMala){ var p=nearestPoint('mala',ent[0]+(ent[2]==='L'?16:-16),ent[1]-2); GS.pos.mala={room:id,x:p[0],y:p[1],f:ent[2]||'R'}; placePlayers(); }
+  if (M.onRoomChange) try{ M.onRoomChange(GS,id,cur,o); }catch(e){ console.error(e); }
+  if (who==='marko' && GS.malaOn && !o.keepPos && !stayM){ var p=nearestPoint('mala',ent[0]+(ent[2]==='L'?16:-16),ent[1]-2); GS.pos.mala={room:id,x:p[0],y:p[1],f:ent[2]||'R'}; placePlayers(); }
   var pl=player(); if (pl){ cancelRes(pl); setIdle(pl); }
   snapCamera(); if (E.screen!=='game') E.screen='game';
   if (o.fade!==false) await fadeTo(0,o.fadeMs||320);
@@ -529,7 +531,7 @@ function loadData(d){ try{ var base=validate(d); if (!base) return false;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
-  if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
+  if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
 E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber
@@ -541,7 +543,9 @@ M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
     if (E.conv && ((!E.busy && !E.dlg) || E.conv.room!==room || E.screen!=='game')) E.conv=null;
     if (!E.busy && !E.dlg && !E.speech) E.trLast=null;
     if (room && E.screen==='game'){ Object.keys(ACT).forEach(function(k){ updateActor(ACT[k],dt); }); updateCamera(dt); if (room.tick) room.tick(API,dt); if (M.ambientTick) M.ambientTick(API,dt); syncPos(); }
-    if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); } }
+    if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); }
+    // Leerlauf: ein Kapitel darf hier ausstehende Szenen anstoßen (nur wenn nichts läuft)
+    if (M.idleHook && E.screen==='game' && room && !E.busy && !E.dlg && !E.overlay && !E.card && !E.speech && !E.transitioning && !E.menu && !GS.ended) M.idleHook(API); }
   M.scheduleMusic(); };
 E.gtAdd=function(ms){ gt+=ms; };
 E.rebuildIfDirty=function(){ if (dirty && room) rebuild(); return {bg:bg,layers:layers}; };
