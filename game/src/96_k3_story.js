@@ -92,6 +92,7 @@ var WEST=['bulevar','partizan','westbus','zelenika'], NIGHT_OK=['herberge','star
 function d2Missing(G){ if (!(f(G,'k3.z.mala')||f(G,'k3.z.lost'))) return has(G,'l3_city')?'Erst will ich wissen, wem die Leine heute nachgeht. Sie zeigt in die Stadt, nicht nach Skela.':'Mala sagt, die Leine zeigt heute woandershin. Erst will ich wissen, wohin.';
   if (!f(G,'k3.v.part1')) return 'Vlado hat gesagt: Kommen Sie morgen. Das ist heute.';
   if (!f(G,'k3.b.arrived')) return f(G,'k3.b.mate')?'Und Mate wartet auf den Bus aus München. Ich habe ihm gesagt, dass ich nachsehe.':'Am Westbusbahnhof kommt heute der Bus aus München. Mate wartet auf ihn.';
+  if (f(G,'k3.b.helper') && !f(G,'k3.b.jela')) return 'Ich habe Davor gesagt, ich komme mit. Haus Zelenika, am Südrand, bei den Feigen.';   // zugesagt: erst Jela und das Haus
   return null; }
 // Grund, warum eine Reise nicht geht: {t, who:'m'|'g', alone:bool} oder null
 function travelWhy(G,L){ var p=G.phase, id=L.id;
@@ -178,7 +179,7 @@ M.malaLooksAtMarko=function(A){ if (CH3(A.G) && M.k3MalaLooksAtMarko) return M.k
 function dayReady(G){ var p=G.phase;
   if (p==='k3_pro') return has(G,'l3_notbridge')&&has(G,'l3_onedir')&&f(G,'k3.p.checkin');
   if (p==='k3_d1') return has(G,'l3_skela')&&f(G,'k3.v.drawer');
-  if (p==='k3_d2') return (f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived');
+  if (p==='k3_d2') return (f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived')&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'));
   if (p==='k3_d2_n') return f(G,'k3.bato.found')&&f(G,'k3.z.tomorrow')&&G.pos.marko.room==='skela_d';
   if (p==='k3_d3') return has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.v.free')&&f(G,'k3.b.done');
   if (p==='k3_fin_n') return f(G,'k3.a.limbo');
