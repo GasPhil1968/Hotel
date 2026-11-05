@@ -2,7 +2,7 @@
    Gedrungen und sehr alt: breites, gefurchtes Gesicht, schwere Lider über kleinen, wachen Augen, die weißen Brauen gesenkt und
    zusammengezogen (eine Falte dazwischen), breite Nase, schmaler, fest geschlossener Mund mit hängenden Winkeln, kräftiges Kinn;
    weißes Haar schaut unter einem einfachen braunen Kopftuch hervor, das unter dem Kinn geknotet ist; dunkle Strickweste über
-   einer dunkelblauen, weiß getupften Bluse. Direkt und vorwurfsvoll.
+   einer grauen, klein getupften Bluse. Direkt und vorwurfsvoll.
    Aufbau: Kopftuch (prozedural: Kugel-Licht von links oben, Falten zum Knoten), Gesicht als Pixelkarte HEAD, Saum des Tuchs
    darüber, Knoten und Zipfel, Kleidung; Kontur mit M.outline.
    Legende HEAD: Ziffern Haut (1–4 q1–q4, 5 p4, 6 p5) · r Wangenröte (p3) · h H j weißes Haar (s4 s5 s6) · x y Brauen (m2 m3) ·
@@ -70,7 +70,7 @@ var OUT=[[41.5,13],[42,10],[40.5,7.5],[37,5.6],[32,4.5],[26,4.5],[20,5.6],[16,8.
   [19,46],[23,43.6],[26.5,41.8],[30,40.4],[33,40],[37,39.6],[40.5,37.6],[43,34],[44.6,28],[45,22],[44.4,16.5],[43,13.6]];
 function tone(x,y){ var nx=(x+0.5-27)/17, ny=(y+0.5-18)/19, d=1-nx*nx-ny*ny, nz=d>0?Math.sqrt(d):0; return 0.25+(-0.55*nx-0.6*ny+0.58*nz)*2.7; }
 function fold(b,x0,y0,x1,y1,w){ var dx=x1-x0, dy=y1-y0, L=Math.sqrt(dx*dx+dy*dy), nx=-dy/L*w/2, ny=dx/L*w/2;
-  b.poly([[x0+nx,y0+ny],[x1,y1],[x0-nx,y0-ny]],function(x,y){ var c=b.get(x,y); return SC.indexOf(c)>=0?M.DN[c]:c; });
+  b.poly([[x0+nx,y0+ny],[x1,y1],[x0-nx,y0-ny]],function(x,y){ var c=b.get(x,y); return SC.indexOf(c)>0?M.DN[c]:c; });
   b.line(Math.round(x0+nx*1.6),Math.round(y0+ny*1.6),Math.round(x1+nx*0.8),Math.round(y1+ny*0.8),function(x,y){ var c=b.get(x,y); return (SC.indexOf(c)<0||c===P.w4)?c:M.UP[c]; }); }
 function scarf(b){
   b.poly(OUT,function(x,y){ return SC[Math.max(0,Math.min(4,Math.round(tone(x,y))))]; });
@@ -93,22 +93,22 @@ function knot(b){
 function tail(b){
   b.poly([[11.6,40],[17,40.5],[22,43.5],[17.5,51],[13.5,48],[11.5,44]],function(x,y){ return x<15?P.w2:P.w1; }); b.line(15,43,16,49,P.w0); b.line(13,42,14,47,P.w3);
 }
-// ---- Kleidung: dunkelblaue, weiß getupfte Bluse mit rundem Kragen; dunkle Strickweste mit V-Ausschnitt
-function dot(x,y){ var k=((x*7+y*5)%13+13)%13; return k===0?P.s5:(k===6?P.n3:P.n1); }
+// ---- Kleidung (Farben wie die Spielfigur): graue, klein getupfte Bluse mit rundem Kragen; dunkle Strickweste mit V-Ausschnitt
+function dot(x,y){ var k=((x*7+y*5)%13+13)%13; return k===0?P.s4:(k===6?P.m3:P.m2); }
 function blouse(b){
-  b.poly([[2,64],[2.5,56],[5,50.5],[9,47],[15,44.5],[22,43],[34,43],[41,44.5],[47,47],[51,51],[53.5,56],[54,64]],function(x,y){ var c=dot(x,y); return (x>44&&c===P.n1)?P.n0:c; });
+  b.poly([[2,64],[2.5,56],[5,50.5],[9,47],[15,44.5],[22,43],[34,43],[41,44.5],[47,47],[51,51],[53.5,56],[54,64]],function(x,y){ var c=dot(x,y); return (x>44&&c===P.m2)?P.m1:c; });
 }
-var KN=[P.k2,P.m0,P.m1,P.m2];
+var KN=[P.e0,P.e1,P.e2,P.e3];
 function vest(b){
   var knit=function(lo){ return function(x,y){ var v=lo+((x&1)?0:1); if (x<12 && y<54) v++; if (x>41) v=Math.min(v,lo); return KN[Math.max(0,Math.min(3,v))]; }; };
   b.poly([[2.5,64],[3,56],[5.5,50.5],[9.5,47],[15,44.5],[20,43.6],[24,47],[28.5,55],[29.5,64]],knit(1));
   b.poly([[31.5,64],[32,55],[35,48],[38.5,44],[42,45],[47,47.5],[51,51.5],[53.5,56.5],[54,64]],knit(0));
-  b.line(6,52,5,63,P.k2); b.line(48,50,49,63,P.k2);
-  b.line(20,44,28,55,P.m2); b.line(38,45,33,54,P.m0);
+  b.line(6,52,5,63,P.e0); b.line(48,50,49,63,P.k2);
+  b.line(20,44,28,55,P.e3); b.line(38,45,33,54,P.e0);
 }
 function collar(b){
-  b.poly([[24,44],[27,43],[30,46],[28,48.5],[25,47]],P.n2); b.line(25,44,27,44,P.n3);
-  b.poly([[38,43.2],[40,44.4],[38.5,47],[36.5,46]],P.n1);
+  b.poly([[24,44],[27,43],[30,46],[28,48.5],[25,47]],P.m3); b.line(25,44,27,44,P.m4);
+  b.poly([[38,43.2],[40,44.4],[38.5,47],[36.5,46]],P.m2);
 }
 var MOUTH_O=[[34,32,'1'],[35,32,'1'],[36,32,'W'],[37,32,'1'],[38,32,'2'],[34,33,'2'],[35,33,'1'],[36,33,'1'],[37,33,'2'],[35,34,'l'],[36,34,'l'],[37,34,'3']];
 var EYES_B=[[29,21,'3'],[30,21,'3'],[31,21,'3'],[32,21,'3'],[33,21,'3'],[29,22,'I'],[30,22,'I'],[31,22,'I'],[32,22,'I'],[33,22,'2'],

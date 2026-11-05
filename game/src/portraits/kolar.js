@@ -92,17 +92,19 @@ function front(b){
   b.line(8,56,15,56,P.n0); b.line(8,57,15,57,P.n3);
   b.line(12,52,12,56,P.k2); b.px(12,51,P.m1); b.line(13,52,13,54,P.m4); b.px(13,52,P.s6);
 }
-// Lesebrille an der Kette: die Kette läuft vom Nacken beidseits herab, die Brille hängt zusammengeklappt und etwas schräg vor der Brust
+// Lesebrille an der Kette: die Kette läuft vom Nacken beidseits herab zu den Bügelenden; die Brille hängt offen vor der Brust,
+// die Bügel schräg nach oben, die Gläser unten nebeneinander
 function glasses(b){
-  var C1=P.y3, C2=P.y2;
-  [[22,43],[22,45],[23,47],[23,49],[24,51]].forEach(function(q,i){ b.px(q[0],q[1],i&1?C2:C1); });
-  [[35,44],[35,46],[35,48],[34,50],[34,52]].forEach(function(q,i){ b.px(q[0],q[1],i&1?C2:C1); });
+  var C1=P.m4, C2=P.m3;
+  [[22,43],[22,45],[23,47],[23,49],[23,51]].forEach(function(q,i){ b.px(q[0],q[1],i&1?C2:C1); });
+  [[36,44],[36,46],[36,48],[36,50],[36,52]].forEach(function(q,i){ b.px(q[0],q[1],i&1?C2:C1); });
   var F=P.k2, H=P.m2;
-  b.line(25,52,28,52,H); b.line(25,56,28,56,F); b.line(24,53,24,55,F); b.line(29,53,29,55,F);
-  b.line(31,53,33,53,H); b.line(31,57,33,57,F); b.line(30,54,30,56,F); b.line(34,54,34,56,F);
-  b.px(29,53,F); b.px(30,53,F);
-  b.poly([[25,53],[29,53],[29,56],[25,56]],P.b4); b.line(25,53,26,53,P.l1); b.px(28,55,P.b3);
-  b.poly([[31,54],[34,54],[34,57],[31,57]],P.b3); b.px(31,54,P.s6); b.px(33,56,P.b2);
+  b.line(23,52,25,55,F); b.line(36,53,34,56,F);
+  b.line(25,56,28,56,H); b.line(25,59,28,59,F); b.line(24,57,24,58,F); b.line(29,57,29,58,F);
+  b.line(31,57,34,57,H); b.line(31,60,34,60,F); b.line(30,58,30,59,F); b.line(35,58,35,59,F);
+  b.px(29,57,F); b.px(30,57,F);
+  b.poly([[25,57],[29,57],[29,59],[25,59]],P.b4); b.line(25,57,26,57,P.l1);
+  b.poly([[31,58],[35,58],[35,60],[31,60]],P.b3); b.px(31,58,P.s6);
 }
 var MOUTH_O=[[34,31,'3'],[35,31,'m'],[36,31,'w'],[37,31,'w'],[38,31,'m'],[35,32,'m'],[36,32,'m'],[37,32,'2'],[35,33,'l'],[36,33,'l'],[37,33,'4']];
 var EYES_B=[[28,20,'4'],[29,20,'4'],[30,20,'4'],[31,20,'4'],[32,20,'4'],[28,21,'I'],[29,21,'I'],[30,21,'I'],[31,21,'I'],[32,21,'3'],[29,22,'4'],[30,22,'4'],[31,22,'4'],

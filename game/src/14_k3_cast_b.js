@@ -124,15 +124,15 @@ M.defineChar('davor',{
       [dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,1]}),260],[dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,1],hd:'o'}),180],[dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,1]}),1100],
       [dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,2],hd:'b'}),140],[dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,2],hd:'s'}),900],[dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,1],hd:'o'}),160],
       [dvP({nh:[0,-40],fh:[-1,-21],it:'dvPhone',ho:[0,1]}),900]],
-    // sitzt am Tisch, vorgebeugt, die Unterarme auf der Tischplatte (etwa 20 px hoch); reibt sich die Stirn unter der Brille
+    // sitzt am Tisch, vorgebeugt, die Unterarme auf der Tischplatte (etwa 20 px hoch); reibt sich die Augen unter der Brille
     sit:[[dvSit({nh:[9,-19],fh:[8,-19],ho:[1,1]}),1800],[dvSit({nh:[9,-19],fh:[8,-19],ho:[1,1],hd:'b'}),110],[dvSit({nh:[9,-19],fh:[8,-19],ho:[1,1]}),1500],
       [dvSit({nh:[8,-25],fh:[8,-19],ho:[1,1]}),160],[dvSit({nh:[8,-30],fh:[8,-19],ho:[1,2],hd:'b'}),1100],[dvSit({nh:[8,-25],fh:[8,-19],ho:[1,1]}),160],
       [dvSit({nh:[9,-19],fh:[8,-19],ho:[1,2],hd:'s'}),1300],[dvSit({nh:[9,-19],fh:[8,-19],ho:[1,1]}),900]],
     sitTalk:[[dvSit({nh:[9,-19],fh:[8,-19],ho:[1,1],hd:'o'}),150],[dvSit({nh:[10,-23],fh:[8,-19],ho:[1,1]}),150],[dvSit({nh:[10,-23],fh:[8,-19],ho:[1,1],hd:'o'}),150],[dvSit({nh:[9,-19],fh:[8,-19],ho:[1,1]}),170]] }
 });
 
-// ---------------------------------------------------------------- LENA ZELENIKA (14), Münchner Teenager: langes hellbraunes Haar mit Pony, Kopfhörer um den Hals,
-// (weiß), pinker Anorak (Kapuze, Reißverschluss), Jeans, weiße Turnschuhe, Smartphone
+// ---------------------------------------------------------------- LENA ZELENIKA (14), Münchner Teenager: langes hellbraunes Haar mit Pony, weiße Kopfhörer um den Hals,
+// pinker Anorak (Kapuze, Reißverschluss), Jeans, weiße Turnschuhe, Smartphone
 var lnS=[
 "............",
 "....kkkkk...",
@@ -257,7 +257,7 @@ var jlB=[
 "...kcCck...",
 "...ktttk...",
 "...kssk...."];
-var jlP=pose({},'S'), VEST=[P.e1,P.e2,P.e0];
+var jlP=pose({},'S');
 M.defineChar('jela',{
   legend:L({c:P.w2,C:P.w3,w:P.s6,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
   heads:{S:HS(jlS),F:HS(jlF),B:{n:jlB}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
@@ -575,9 +575,9 @@ var mtB=[
 "...kccccck...",
 ".kCCCCCCCCCk.",
 "..kwwwwwwwk..",
-"..kswwwwwsk..",
-"..kswwwwwsk..",
-"...kwwwwwk...",
+"..kswDwDwsk..",
+"..kswwDwwsk..",
+"...kwDwDwk...",
 "...ktttttk...",
 "....ktttk....",
 ".....kkk.....",
@@ -745,7 +745,7 @@ if (M.PORTRAIT_GHOSTS){ M.PORTRAIT_GHOSTS.bato=true; M.PORTRAIT_GHOSTS.mate=true
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ davor:P.n4, lena:P.d5, jela:P.w5, zdravko:P.y4, kolar:P.b4, bato:P.v4, mate:P.v5, springer:P.v4 };
+(function(){ var c={ davor:P.s4, lena:P.d5, jela:P.m4, zdravko:P.a6, kolar:P.a5, bato:P.v4, mate:P.v5, springer:P.v3 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

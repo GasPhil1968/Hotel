@@ -25,7 +25,7 @@ var TER={x0:178,x1:400};                                // Terrasse
 var RAIL={top:84,base:106};                             // Geländer
 var PERG={posts:[188,394],beam:20};                     // Pergola mit Weinstock
 var TBL=[{x0:212,x1:242,top:107,base:124},{x0:326,x1:356,top:107,base:124}];   // Markos Tisch, Tisch der Australier
-var BR={cx:364,sp:90,span:20,top:70};                   // Alte Brücke in der Ferne (Bogenmitte, Kämpferlinie, halbe Spannweite, Brüstung)
+var BR={cx:362,sp:90,span:22,top:66};                   // Alte Brücke in der Ferne (Bogenmitte, Kämpferlinie, halbe Spannweite, Brüstung)
 var MAJA_Y=106;
 var AUS=[[318,124,'R'],[364,124,'L'],[341,115,'L']];    // aussie1, aussie2 (sitzend vorn), aussie3 (sitzend hinter dem Tisch, mit Gitarre)
 function rd(v){ return Math.round(v); }
@@ -95,18 +95,22 @@ function farView(b,tod,w){ var x, y, x0=CORNER.x0, r=M.rng(17);
   for (y=95;y<RAIL.base;y++) for (x=x0;x<W;x++){ var c3=ra(WR,0.36+(y-95)*0.03+(fbm(x*0.05,y*0.8,11)-0.5)*0.4,x,y); if (Math.sin(x*0.09+y*1.9)>0.9) c3=M.UP[c3]; b.px(x,y,c3); OUT[y*W+x]=2; }
   for (x=x0;x<W;x++) if (hash(x,1)<0.5) b.px(x,95,P.s4);
   bridgeSmall(b); }
-// die Alte Brücke in der Ferne: ein Bogen von Fels zu Fels, flacher Buckel, zwei Türme
-function bridgeSmall(b){ var cx=BR.cx, sp=BR.sp, a=BR.span, r=(a*a+20*20)/(2*20), cy=sp-20+r, x, y;   // Stich 20 px
-  // Felsen der Schlucht an beiden Enden
-  for (y=70;y<93;y++){ for (x=cx-a-12;x<cx-a+3;x++) b.px(x,y,ra(R('m1 s1 s2 s3'),0.5+(fbm(x*0.4,y*0.4,2)-0.5)*0.6,x,y)); for (x=cx+a-3;x<cx+a+12;x++) b.px(x,y,ra(R('m1 s1 s2 s3'),0.48+(fbm(x*0.4,y*0.4,4)-0.5)*0.6,x,y)); }
-  for (x=cx-a-8;x<=cx+a+8;x++){ var t=Math.min(1,Math.abs(x-cx)/(a+8)), dy=rd(BR.top+4*Math.pow(t,1.6)), iy=Math.abs(x-cx)<a?cy-Math.sqrt(Math.max(0,r*r-(x-cx)*(x-cx))):sp;
-    for (y=dy-2;y<Math.min(iy,sp+1);y++){ var c=(y<dy)?P.s6:((y<dy+1)?P.s4:P.s5); if (y>=iy-2 && Math.abs(x-cx)<a) c=P.s4; if (((x-cx)&3)===0 && y>dy+1 && y<iy-2) c=P.s4; b.px(x,y,c); } }
-  // Türme an den Enden
-  for (y=BR.top-10;y<BR.top+8;y++) for (x=cx-a-15;x<cx-a-7;x++) b.px(x,y,(x===cx-a-15)?P.s5:((x>=cx-a-9)?P.s3:P.s4));
-  for (x=cx-a-16;x<cx-a-6;x++) b.px(x,BR.top-11,P.m2); b.hl(cx-a-14,cx-a-8,BR.top-12,P.m2);
-  for (y=BR.top-12;y<BR.top+8;y++) for (x=cx+a+7;x<cx+a+14;x++) b.px(x,y,(x===cx+a+7)?P.s5:((x>=cx+a+12)?P.s3:P.s4));
-  for (var k=0;k<4;k++) b.hl(cx+a+6+k,cx+a+14-k,BR.top-13-k,P.m2);
-  b.px(cx-a-12,BR.top-4,P.k2); b.px(cx+a+10,BR.top-6,P.k2); }
+// die Alte Brücke in der Ferne: ein Bogen von Fels zu Fels über der dunklen Schlucht, flacher Buckel, zwei Türme
+var BRM=new Uint8Array(W*H);
+function bridgeSmall(b){ var cx=BR.cx, sp=BR.sp, a=BR.span, rise=21, r=(a*a+rise*rise)/(2*rise), cy=sp-rise+r, x, y; BRM.fill(0);
+  function bp(xx,yy,c){ b.px(xx,yy,c); BRM[yy*W+xx]=1; }
+  // Schlucht unter und neben der Brücke: dunkler Fels, unten das Wasser
+  for (y=BR.top+2;y<96;y++) for (x=cx-a-10;x<=cx+a+10;x++){ var e=Math.abs(x-cx)/(a+10), c=ra(R('k2 m0 m1 s1 s2'),0.25+e*0.5+(fbm(x*0.4,y*0.3,2)-0.5)*0.4,x,y); if (y>=sp+3 && Math.abs(x-cx)<a-2+(y-sp)) c=(y>=sp+6)?((hash(x,y)<0.3)?P.a4:P.a3):P.m1; b.px(x,y,c); }
+  // Bogen, Zwickel, Brüstung
+  for (x=cx-a-9;x<=cx+a+9;x++){ var t=Math.min(1,Math.abs(x-cx)/(a+9)), dy=rd(BR.top+5*Math.pow(t,1.5)), inS=Math.abs(x-cx)<a, iy=inS?cy-Math.sqrt(Math.max(0,r*r-(x-cx)*(x-cx))):sp+1;
+    for (y=dy-2;y<Math.min(iy,sp+2);y++){ var c2=(y<dy)?P.s6:((y===dy)?P.s3:P.s5); if (inS && y>=iy-2) c2=P.s4; if (!inS && Math.abs(x-cx)<a+3 && y>sp-6) c2=P.s4; bp(x,y,c2); }
+    if (inS) bp(x,rd(iy),P.k2); }
+  // Türme an den Enden (Tara links halbrund, Halebija rechts mit Dach)
+  for (y=BR.top-10;y<BR.top+9;y++) for (x=cx-a-17;x<cx-a-8;x++) bp(x,y,(x===cx-a-17)?P.s5:((x>=cx-a-10)?P.s3:P.s4));
+  for (x=cx-a-18;x<cx-a-7;x++) bp(x,BR.top-11,P.m2); b.hl(cx-a-16,cx-a-9,BR.top-12,P.m2);
+  for (y=BR.top-12;y<BR.top+9;y++) for (x=cx+a+8;x<cx+a+16;x++) bp(x,y,(x===cx+a+8)?P.s5:((x>=cx+a+14)?P.s3:P.s4));
+  for (var k=0;k<4;k++) for (x=cx+a+7+k;x<=cx+a+16-k;x++) bp(x,BR.top-13-k,P.m2);
+  b.px(cx-a-13,BR.top-4,P.k2); b.px(cx+a+11,BR.top-6,P.k2); b.px(cx+a+11,BR.top,P.k2); }
 
 // ---------------------------------------------------------------- Rezeption: Decke, Wand, Boden, Tür, Treppe, Rucksäcke, Schlüsselbrett, Schild
 function interior(b,tod){ var x, y;
@@ -215,7 +219,8 @@ function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), 
 function afterLights(b,tod,S){ var x, y;
   WINS.forEach(function(wn){ if (wn[4]<0.6) return; b.px(wn[0],wn[1],wn[4]<0.8?P.y3:P.y4); });
   // die angestrahlte Brücke in der Ferne
-  var cx=BR.cx, a=BR.span; for (x=cx-a-8;x<=cx+a+8;x++) for (y=BR.top-2;y<BR.sp+1;y++){ var c=BASE.get(x,y); if (c===P.s4||c===P.s5||c===P.s6) b.px(x,y,bayer(x,y)<0.5?P.y3:P.y2); }
+  for (y=0;y<H;y++) for (x=BR.cx-BR.span-20;x<=BR.cx+BR.span+20;x++){ if (!BRM[y*W+x]) continue; var c=BASE.get(x,y), tw=Math.abs(x-BR.cx)>BR.span+6;
+    if (tw){ if (bayer(x,y)<0.45) b.px(x,y,M.UP[b.get(x,y)]); continue; } b.px(x,y,(c===P.s6)?P.y4:((c===P.s5)?(bayer(x,y)<0.4?P.y3:P.y2):(c===P.k2?P.k1:(bayer(x,y)<0.5?P.y2:P.y1)))); }
   b.poly([[78,34],[90,34],[87,30],[81,30]],P.y4); b.hl(79,88,34,P.l1);
   M.text(b,'free wifi',SIGNP[2],SIGNP[3],P.y5);
   BULBS.forEach(function(q){ b.px(q[0],q[1],q[2]); b.px(q[0],q[1]+1,M.DN[q[2]]); });

@@ -476,14 +476,16 @@ M.mem.k3_cab=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1401), DY=84;
   // Sitzbank: Lehne und Polster aus grauem Kunstleder
   b.poly([[40,48],[192,48],[196,78],[36,78]],function(x,y){ var c=ra(R('k2 m0 m1 m2'),0.5-(y-48)/70+(hash(x>>3,y>>3)-0.5)*0.08,x,y); if (((x-40)%19)===0) c=P.k2; return c; }); b.hl(40,192,48,P.m2);
   // Lana, siebzehn: sitzt zu ihm gedreht, das Skizzenbuch auf den Knien, der Bleistift in der Hand
-  fig(b,70,93,S({h:[0,-13],nf:[9,-1,'f'],ff:[7,-1,'f'],nh:[11,-21],fh:[9,-17],ln:2,sit:1,ho:[1,0]}),'R','mala');
+  var LP=S({h:[0,-13],nf:[9,-1,'f'],ff:[7,-1,'f'],nh:[11,-21],fh:[9,-17],ln:2,sit:1,ho:[1,0]}), VP2=F({h:[0,-13],lf:[-3,0],rf:[3,0],lh:[-8,-21],rh:[8,-21],sit:1});
+  var FG=figMask(w,h,70,93,LP,'R','mala'), FG2=figMask(w,h,154,93,VP2,'F','k3m_vlado');
+  fig(b,70,93,LP,'R','mala');
   b.poly([[73,70],[88,65],[90,72],[75,77]],P.w1); b.poly([[74,70],[87,65.5],[88.5,71],[75.5,76]],function(x,y){ return (y<68)?P.s6:P.s5; });   // Skizzenbuch, zum Licht geneigt
   b.line(77,71,83,69,P.m2); b.line(77,73,82,71,P.m2); b.line(79,74,84,72,P.m3); b.px(85,69,P.m1);
   b.line(81,68,84,64,P.y3); b.px(84,64,P.k1);                                                                         // Bleistift
   // Schalthebel zwischen ihnen
   limb(b,[116,DY],[113,66],1.4,[P.m1,P.m2,P.k2]); b.ellipse(113,65,2.8,2.4,P.k2); b.px(112,64,P.m2);
   // Vlado, 47: von vorn, beide Hände oben am Lenkrad, die Zigarette im Mundwinkel
-  fig(b,154,93,F({h:[0,-13],lf:[-3,0],rf:[3,0],lh:[-8,-21],rh:[8,-21],sit:1}),'F','k3m_vlado');
+  fig(b,154,93,VP2,'F','k3m_vlado');
   var ember=findCol(b,144,50,168,68,P.y4);
   // Lenkrad zwischen ihm und uns: großer dünner Kranz, von hinten, mit drei Speichen
   ringE(b,154,83,30,10,0,2.2,function(x,y,u,v){ return (v<-3)?P.m0:((u<-12)?P.k2:P.k1); });
@@ -496,7 +498,11 @@ M.mem.k3_cab=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1401), DY=84;
   b.poly([[92,DY],[114,DY-3],[120,DY],[96,DY+1]],P.s4); b.line(98,DY-1,112,DY-2,P.b2); b.line(104,DY,107,DY-2,P.r3);
   ringE(b,154,83,30,10,0,2.2,function(x,y,u,v){ return (v>3 && y>=DY)?P.k1:undefined; });
   // Licht: nur die Instrumente vor ihm; ein Widerschein auf ihr und dem Blatt
-  M.light(b,M.lf.sum(M.lf.k(-0.95),M.lf.band(40,104,-0.3,0.5),M.lf.pool(154,72,64,46,2.6,2.6),M.lf.pool(80,70,46,34,1.8,2.4),M.lf.pool(116,30,40,18,0.4,2)));
+  // Licht: die Instrumente vor ihm treffen vor allem die beiden und das Blatt; auf der Rückwand nur ein schwacher Widerschein
+  function onFG(x,y){ return FG.get(x,y)!==T || FG2.get(x,y)!==T || (x>=72&&x<=90&&y>=64&&y<=77); }
+  var GL=M.lf.sum(M.lf.pool(154,74,44,34,2.6,1.6),M.lf.pool(80,72,30,24,1.9,1.4));
+  M.light(b,M.lf.sum(M.lf.k(-1.0),M.lf.band(40,104,-0.3,0.5)));
+  M.light(b,GL,0,0,onFG); M.light(b,function(x,y){ return GL(x,y)*0.3; },0,0,function(x,y){ return !onFG(x,y); });
   if (ember){ b.px(ember[0],ember[1],P.l0); b.px(ember[0]+1,ember[1],P.y5);
     for (i=0;i<34;i++){ var t3=i/34, sx=ember[0]+1+Math.sin(t3*6)*2.2+t3*6, sy=ember[1]-1-i*1.0; if (bayer(Math.round(sx),Math.round(sy))<0.75-t3*0.5) mixPx(b,Math.round(sx),Math.round(sy),P.s4,5); } }
   for (x=136;x<=172;x++) if (bayer(x,DY)<0.5) b.px(x,DY,P.y3);                                                        // der Lichtsaum der Instrumente an der Kante
@@ -855,7 +861,7 @@ M.mem.k3_vratnik=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1994), G=84;
   // das kleine Haus: weiße Wand, dunkle Holzbalken, steiles Dach unter Schnee, Fenster mit dem hellen Fleck, eine Tür
   var HX0=96, HX1=176, HT=42;
   for (y=HT;y<G;y++) for (x=HX0;x<HX1;x++){ var c=M.tex.plaster(x,y,R('s3 s4 s5'),60); if (x===HX0||x===HX1-1||(x-HX0)%26===0) c=P.w1; if (y===HT||y===HT+20) c=P.w1; b.px(x,y,c); }
-  for (y=0;y<16;y++){ for (x=HX0-6+y;x<HX1+6-y;x++){ var sn=fbm(x*0.6,y*1.4,5,21), cc=ra(R('s4 s5 s6'),0.55+sn*0.4-(y<3?0.15:0),x,HT-1-y); if (sn<0.34 && y>2) cc=(y%3===0)?P.w0:P.w1; b.px(x,HT-1-y,cc); } }   // Dach unter dickem Schnee, nur hier und da die Ziegel
+  for (y=0;y<16;y++){ for (x=HX0-6+y;x<HX1+6-y;x++){ var sn=fbm(x*0.6,y*1.4,5,21), cc=ra(R('s4 s5 s6'),0.55+sn*0.4-(y<3?0.15:0),x,HT-1-y); if (sn<0.3 && y>4 && bayer(x,y)<0.5) cc=P.s3; b.px(x,HT-1-y,cc); } }   // Dach unter dickem Schnee, nur hier und da die Ziegel
   b.hl(HX0-7,HX1+6,HT-1,P.s6); b.hl(HX0-7,HX1+6,HT,P.s3);
   b.rect(158,HT-26,4,9,P.s2); b.hl(157,162,HT-27,P.s6);
   var WX=110, WY=52; b.rect(WX-2,WY-2,22,18,P.w1); b.rect(WX,WY,18,14,P.k2); b.vl(WX+9,WY,WY+13,P.w1); b.hl(WX,WX+17,WY+6,P.w1); b.hl(WX-3,WX+20,WY+15,P.s6);   // Fenster

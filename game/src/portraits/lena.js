@@ -94,13 +94,13 @@ function front(b){
   b.poly([[33.5,44],[38.5,41.6],[39,45.6],[32.8,48.8]],P.d2); b.line(34,44,38,42,P.d3);
   b.line(31,49,31,63,P.d1); b.line(32,49,32,63,P.m2); b.px(32,50,P.s6); b.px(32,51,P.m4); b.px(32,52,P.m3);
   // Kopfhörer um den Hals: die Muscheln liegen vorn auf den Schultern (Polster zum Hals hin), der Bügel läuft hinten herum
-  stampAt(b,CUP_N,17,42); stampAt(b,CUP_F,38,41);
+  stampAt(b,CUP_N,16,42); stampAt(b,CUP_F,38,41);
   b.line(38,40,37,38,P.m1);
 }
-// Kopfhörermuscheln: B Schale, C Schale im Licht, D Glanz, K Polster
-var CUP_LEG={ B:P.m1, C:P.m2, D:P.m3, K:P.k2 };
-var CUP_N=["..BBBB..",".BCCCBB.","BCDCCBKB","BCCCBKKB","BCCBKKKB",".BBKKKB.","..BBBB.."];
-var CUP_F=[".BBB.","BCCBB","BDBKB","BCBKB","BBKKB",".BBB."];
+// Kopfhörermuscheln: B Schale, C Schale im Licht, D heller Rand, K Polster (zum Hals hin), L Logo
+var CUP_LEG={ B:P.m1, C:P.m2, D:P.m3, K:P.k2, L:P.s6 };
+var CUP_N=["..BBBBB..",".BDDCCBB.","BDCCCCBKB","BDCLCCBKB","BCCCCBKKB",".BCCBKKB.","..BBBBB.."];
+var CUP_F=[".BBB.","BDCBB","BCLBK","BCCBK","BBBKB",".BBB."];
 function stampAt(b,rows,x0,y0){ for (var y=0;y<rows.length;y++) for (var x=0;x<rows[y].length;x++){ var ch=rows[y][x]; if (ch!=='.') b.px(x0+x,y0+y,CUP_LEG[ch]); } }
 var MOUTH_O=[[35,31,'3'],[36,31,'2'],[37,31,'w'],[38,31,'2'],[39,31,'m'],[36,32,'m'],[37,32,'2'],[38,32,'m'],[36,33,'l'],[37,33,'l'],[38,33,'4']];
 var EYES_B=[[29,20,'4'],[30,20,'4'],[31,20,'4'],[32,20,'4'],[33,20,'4'],[29,21,'I'],[30,21,'I'],[31,21,'I'],[32,21,'I'],[33,21,'3'],[29,22,'5'],[30,22,'4'],[31,22,'4'],[32,22,'4'],[33,22,'4'],
