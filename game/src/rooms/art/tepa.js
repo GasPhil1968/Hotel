@@ -146,7 +146,7 @@ function paintHoney(w,we){ var h=HONEY, x, y; w.g=RG.stall;
   for (var k=0;k<10;k++) w.px(h.x0+22+k*2,h.by-19,k%2?P.w2:P.e3);
   w.rect(h.x1-6,h.by-30,6,10,P.s6); sign(w,'MED',h.x1-6+0,h.by-28,P.y1); }
 function paintNeighbor(w,we){ var n=NB, x, y; w.g=RG.stall;
-  tarp(w,n.x0-4,n.x1+4,n.top-34,n.top-27,[[P.g1,P.g2,P.g3],[P.g1,P.g2,P.g3]],false,we); }
+  tarp(w,n.x0-4,n.x1+4,n.top-43,n.top-36,[[P.g1,P.g2,P.g3],[P.g1,P.g2,P.g3]],false,we); }
 function paintZlataBack(w,we,S){ var z=ZT; w.g=RG.stall;
   tarp(w,z.x0-4,z.x1+6,z.top-36,z.top-29,[[P.r1,P.r2,P.r3],[P.s4,P.s5,P.s6]],true,we);
   // Hocker hinter dem Tisch (Zlata sitzt darauf)

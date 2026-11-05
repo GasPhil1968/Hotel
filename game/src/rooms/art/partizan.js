@@ -207,7 +207,7 @@ function paintMemorial(w,we,tod){ var x, y, wet=we==='rain', frost=we==='frost';
   // Treppe hinauf, breite Stufen, Gras in den Fugen
   for (var st=0;st<8;st++){ var sy=EDGE-2-st*4, sx0=STAIR.x0+st*3, sx1=STAIR.x1-st; for (x=sx0;x<sx1;x++){ if (wallTop(x)>sy+3) continue; w.px(x,sy,wet?P.s3:P.s5); w.px(x,sy+1,P.s3); w.px(x,sy+2,P.s1); w.px(x,sy+3,(hash(x,st)<0.3)?P.g2:P.k2); } }
   UPB.forEach(function(o){ var b2=Object.assign({},o); b2.by=rd(wallTop(o.x))+1; w.d=5; w.g=RG.stone; bloom(w,b2,true,wet); });
-  w.g=RG.plant; w.d=5; branchTree(w,TREE.x,rd(wallTop(TREE.x))+1,58,4,frost);
+  w.g=RG.plant; w.d=5; branchTree(w,TREE.x,rd(wallTop(TREE.x))+1,58,4,frost); w.d=4; branchTree(w,392,98,40,9,frost);
   // Gras, Brombeeren, Disteln
   for (var i=0;i<30;i++){ var gx=Math.floor(hash(i,31)*W), gy=EDGE+3+Math.floor(hash(i,32)*32); if (Math.abs(gx-BENCH.x0-18)<22 && gy<BENCH.by+2) continue; tuft(w,gx,gy,4+Math.floor(hash(i,33)*7),we,i); }
   for (x=WALLC.x1-4;x<W;x+=4) if (hash(x,41)<0.5) tuft(w,x,EDGE-6,3+Math.floor(hash(x,42)*4),we,x);

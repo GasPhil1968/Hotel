@@ -259,8 +259,8 @@ M.defineArt('vhof',{
     fence:[GATE[0]-4,56,GATE[1]-GATE[0]+8,48],
     barrels:[294,90,26,34]
   },
-  stands:{ door:[36,120,'L'], tam:[190,120,'B'], cab:[124,118,'B'], tarp:[200,120,'B'], fence:[272,118,'B'], barrels:[286,122,'R'] },
-  actorPos:{ mala:[100,118,'L'], vlado:[124,117,'L'], kata:[44,124,'R'] },
+  stands:{ door:[40,122,'L'], tam:[190,120,'B'], cab:[124,118,'B'], tarp:[200,120,'B'], fence:[272,118,'B'], barrels:[286,122,'R'] },
+  actorPos:{ mala:[100,118,'L'], vlado:[124,117,'L'], kata:[56,119,'R'] },
   start:[38,122,'R'], entries:{ vulkanizer:[38,122,'R'] }
 });
 })(M);

@@ -193,6 +193,10 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // ---- Reifenstapel hinten links und am Rolltor
   stackTires(b,52,95,7,7); stackTires(b,68,99,5,8); stackTires(b,262,97,6,8); stackTires(b,168,98,3,7);
   tireRing(b,84,92,8,true); tireRing(b,92,94,8,true);
+  // ---- Wasserwanne zum Abdrücken (ein Reifen halb im Wasser), Rangierwagenheber
+  var wt0=rp(R3.p(234,FY-12,32)), wt1=rp(R3.p(250,FY,32)); for (y=wt0[1];y<wt1[1];y++) for (x=wt0[0];x<wt1[0];x++){ var c=(y===wt0[1])?P.m4:((x===wt0[0]||x===wt1[0]-1)?P.m1:P.m2); if (y>wt1[1]-3) c=P.m1; b.px(x,y,c); }
+  for (x=wt0[0]+1;x<wt1[0]-1;x++){ b.px(x,wt0[1]+1,(x%3)?P.a4:P.a5); b.px(x,wt0[1]+2,P.a3); } tireRing(b,rnd((wt0[0]+wt1[0])/2),wt0[1]-2,6,true); for (x=wt0[0]+2;x<wt1[0]-2;x++) b.px(x,wt0[1]+1,(x%3)?P.a4:P.a5);
+  var jk=rp(R3.p(150,FY,38)); b.rect(jk[0]-8,jk[1]-4,14,3,P.r2); b.hl(jk[0]-8,jk[0]+5,jk[1]-4,P.r3); b.px(jk[0]-7,jk[1]-1,P.k1); b.px(jk[0]+4,jk[1]-1,P.k1); b.line(jk[0]+5,jk[1]-3,jk[0]+14,jk[1]-12,P.m2); b.rect(jk[0]-9,jk[1]-6,4,2,P.m1);
   // ---- Büro: Glaswand mit Aluminiumrahmen, Regal mit Ordnern, Fenster zum Hof
   officeBack(b,tod,weather,tOff);
   glassWall(b);

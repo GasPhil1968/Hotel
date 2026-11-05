@@ -17,8 +17,8 @@ var NEXT={x0:424,x1:480,top:28};
 var TREES=[{x:64,s:3},{x:196,s:7},{x:330,s:11},{x:452,s:5}];
 var MLAMPS=[130,262,394];
 var BENCH={x0:246,x1:290,by:119};
-var SIGN={x:438,top:84,by:124};
-var TIRES={x:458,by:126};
+var SIGN={x:428,top:84,by:124};
+var TIRES={x:444,by:124};
 
 // ---------------------------------------------------------------- kleine Helfer
 function cl(v,a,b){ return v<a?a:(v>b?b:v); }
@@ -175,7 +175,7 @@ function paintWalk(w,we){ var x, y, wet=we==='rain', r=M.rng(5); w.g=RG.walk;
   for (x=0;x<W;x++){ w.px(x,ST.curb,P.s5); w.px(x,ST.curb+1,P.s3); w.px(x,ST.curb+2,P.s2); }
   var rows=[ST.curb+3]; while (rows[rows.length-1]<H){ var lr=rows[rows.length-1]; rows.push(lr+Math.round(4+(lr-ST.curb)*0.16)); }
   for (var ri=0;ri<rows.length-1;ri++){ var y0=rows[ri], y1=rows[ri+1], sz=Math.round((y1-y0)*1.7), off=(ri%2)*Math.round(sz/2);
-    for (y=y0;y<Math.min(H,y1);y++) for (x=0;x<W;x++){ var fx=(x+off)%sz, c=hash(Math.floor((x+off)/sz),ri)<0.35?P.s3:P.s4; if (hash(Math.floor((x+off)/sz),ri+7)<0.12) c=P.m3; if (y===y0||fx===0) c=(bayer(x,y)<0.6)?P.s2:P.s3; else if (y===y0+1 && fx>1) c=M.UP[c]; if (hash(x,y)<0.03) c=P.s2;
+    for (y=y0;y<Math.min(H,y1);y++) for (x=0;x<W;x++){ var fx=(x+off)%sz, c=hash(Math.floor((x+off)/sz),ri)<0.35?P.s3:P.s4; if (hash(Math.floor((x+off)/sz),ri+7)<0.12) c=P.e3; if (y===y0||fx===0) c=(bayer(x,y)<0.6)?P.s2:P.s3; else if (y===y0+1 && fx>1) c=M.UP[c]; if (hash(x,y)<0.03) c=P.s2;
       if (wet){ c=M.DN[c]; if (fbm(x*0.2,y*0.8,5,13)>0.66) c=(bayer(x,y)<0.5)?P.m4:P.m3; } w.px(x,y,c); } }
   // Platanenlaub: groß, braun, in Haufen am Bordstein und an der Bank
   for (var i=0;i<300;i++){ var lx=Math.floor(r()*W), ly=ST.curb+3+Math.floor(Math.pow(r(),1.5)*30); var lc=r()<0.4?P.e3:(r()<0.5?P.y2:(r()<0.5?P.t3:P.e2)); if (wet) lc=M.DN[lc]; w.px(lx,ly,lc); if (r()<0.6) w.px(lx+1,ly,M.DN[lc]); if (r()<0.3) w.px(lx,ly-1,lc); }
@@ -266,12 +266,12 @@ M.defineArt('bulevar',{
   spots:{
     exit:[0,88,12,56], to_vulk:[W-22,100,22,44],
     gymnasium:[GYM.x0,GYM.top-14,GYM.x1-GYM.x0,GY-GYM.top+14],
-    bank_ruin:[BANK.x0-6,BANK.top-8,BANK.x1-BANK.x0+12,GY-BANK.top+8],
+    bank_ruin:[BANK.x0-6,0,BANK.x1-BANK.x0+12,GY],
     bench:[BENCH.x0-1,BENCH.by-20,BENCH.x1-BENCH.x0+3,21],
     holes:[OLD.x0,OLD.top-2,OLD.x1-OLD.x0,GY-OLD.top+2],
     sign:[SIGN.x-M.microWidth('VULKANIZER RAJIC')-6,SIGN.top,M.microWidth('VULKANIZER RAJIC')+16,14]
   },
-  stands:{ exit:[10,126,'L'], to_vulk:[468,126,'R'], gymnasium:[78,120,'B'], bank_ruin:[240,126,'B'], bench:[268,124,'B'], holes:[372,120,'B'], sign:[424,126,'B'] },
+  stands:{ exit:[10,126,'L'], to_vulk:[468,126,'R'], gymnasium:[78,120,'B'], bank_ruin:[240,126,'B'], bench:[268,124,'B'], holes:[372,120,'B'], sign:[414,126,'B'] },
   actorPos:{},
   start:[24,126,'R'], entries:{ map:[16,126,'R'], vulkanizer:[462,126,'L'] }
 });

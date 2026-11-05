@@ -682,6 +682,11 @@ M.mem.k3_oven=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1504);
   for (y=20;y<h;y++) for (x=0;x<60;x++){ var u=x/60, c=ra(R('s1 s2 s3 s4'),0.7-u*0.45+(hash(x>>2,y>>2)-0.5)*0.06,x,y); if (x===59) c=P.s0; b.px(x,y,c); }
   b.rect(0,16,62,4,P.k2); b.hl(0,61,16,P.m1); for (x=0;x<62;x++) b.px(x,23,(x%5===0)?P.y4:P.y3);
   b.rect(12,34,30,20,P.k2); b.rect(13,35,28,18,P.m0); b.hl(15,38,43,P.y4); b.hl(15,38,44,P.t4); b.hl(16,37,45,P.t3); b.px(39,37,P.y2);
+  b.hl(0,58,58,P.s1); b.hl(0,58,59,P.s4); b.rect(10,66,36,14,P.s2); b.hl(10,45,66,P.s4); b.rect(24,71,8,2,P.y2); b.hl(24,31,71,P.y3);   // Backrohr mit Griff
+  b.rect(10,86,36,8,P.s1); b.hl(10,45,86,P.s3); b.rect(25,89,6,1,P.y2);                                                                   // Aschelade
+  b.px(40,44,P.y3); b.px(41,44,P.y4);                                                                                                       // Knauf der Feuertür
+  for (y=24;y<42;y++){ var tw=12+Math.round(Math.sin(y*0.4)*0.6); for (x=44;x<44+tw;x++){ var c=((x+y)%5===0)?P.s3:((x<46)?P.s5:P.s4); if (y>=34 && y<36) c=P.r2; if (x===44+tw-1) c=P.s2; b.px(x,y,c); } }   // ein Handtuch über der Stange
+  b.hl(44,56,24,P.s5);
   // die Decken: grau, mit schwarzem Streifen, in Falten über der Bank
   fill(b,0,58,w,h-58,function(x,y){ var top=62+Math.round(Math.sin(x*0.045+1)*4+Math.sin(x*0.13)*1.5); if (y<top || x<56) return undefined;
     var fold=Math.sin(x*0.16+Math.sin(y*0.09)*2.4+y*0.05), v=0.5+fold*0.16-(y-top)/120+(hash(x>>1,y>>1)-0.5)*0.06, c=ra(R('m0 m1 m2 m3'),v,x,y);
@@ -934,9 +939,10 @@ M.mem.k3_sketch1=function(b){ var i, k, x, y;
   // die Treppe im Hotel Palma, von unten gesehen, mit Geländer
   for (k=0;k<8;k++){ var sx=26+k*6, sy=66-k*5; pl(b,sx,sy,sx+6,sy,2); pl(b,sx+6,sy,sx+6,sy-5,1); }
   pl(b,24,70,76,27,2); pl(b,24,66,24,70,2); hatch(b,[[24,70],[76,27],[76,34],[30,72]],3,0.8,0);
-  pl(b,25,49,74,9,2); pl(b,26,50,75,10,1); pl(b,24,66,24,47,3); pl(b,23,47,25,47,3); b.px(24,46,GR[3]);
+  pl(b,25,49,74,9,2); pl(b,26,50,75,10,1); pl(b,24,66,24,47,3); b.ellipse(24,46,1.3,1.1,GR[3]);   // Pfostenknauf (rund, kein Querbalken)
   for (k=1;k<8;k++){ var bx=27+k*6; pl(b,bx,66-k*5,bx,50-k*5+1,1); }
-  pp(b,[[76,26],[84,26],[84,12]],1); pp(b,[[80,16],[86,16]],0);                                      // oben der Treppenabsatz
+  pp(b,[[76,26],[98,26]],1); pp(b,[[86,26],[86,13],[95,13],[95,26]],1); b.px(93,20,GR[2]);                // oben der Treppenabsatz mit der Tür von 31
+  if (M.microText) M.microText(b,'31',88,15,GR[2]);
   for (i=0;i<12;i++){ var hx=80+i*2; pl(b,hx,30,hx+4,26,0); }
   // „KUĆA“, mit einem kleinen Haus daneben
   scrawl(b,'KUĆA',32,78,GR[3]); pl(b,31,87,62,86,2);
