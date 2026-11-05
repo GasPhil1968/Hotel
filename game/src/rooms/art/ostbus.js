@@ -14,13 +14,13 @@ var W=480, H=144, GY=104;
 var CAN={x0:4,x1:238,y0:30,y1:39,cols:[16,116,228]};   // Vordach (Stirn y0..y1), Stützen
 var BUS={x0:40,x1:102,top:48,base:112,side:16};         // Reisebus am Steig 1 (Front x0..x1, Seite nach rechts hinten)
 var BOARD={x0:130,x1:190,y0:46,y1:82};                  // Abfahrtstafel am Steig 2
-var MUC={x0:124,x1:198,y0:85,y1:96};                    // Emailleschild „MÜNCHEN · subota“
+var MUC={x0:122,x1:198,y0:84,y1:96};                    // Emailleschild „MÜNCHEN · subota“
 var BENCH={x0:196,x1:230,seat:108,base:117};            // Bank
 var BLD={x0:4,x1:246,top:40};                           // Gebäude des Busbahnhofs (hinter dem Vordach)
 var KIO={x0:252,x1:294,top:52,win0:60,sill:88,base:110};
 var RACK={x0:299,x1:317,top:70,base:112};               // Drehständer mit Stadtplänen
 var STA={x0:330,x1:480,roof:24,fl:30};                  // Bahnhof
-var CLK={cx:408,cy:42,r:8};
+var CLK={cx:350,cy:50,r:8};
 var TAXI={x0:410,base:112};
 var PUD=[[318,131,30,4],[196,136,22,3],[110,124,18,3],[440,128,24,3],[262,140,16,2]];   // Pfützen [x,y,rx,ry]
 var KIOSKM_Y=110;
@@ -49,7 +49,7 @@ function lightAt(Ls,x,y){ var s=0; for (var i=0;i<Ls.length;i++){ var l=Ls[i], d
 function shade(buf,ox,oy,key,Ls,skip){ if (!key) return; var L=levels(key), n=L.length;
   for (var y=0;y<buf.h;y++) for (var x=0;x<buf.w;x++){ var k=y*buf.w+x, c=buf.d[k]; if (c===T) continue; var X=x+ox, Y=y+oy; if (skip && skip(X,Y)) continue;
     var f=lightAt(Ls,X,Y)*(n-1), i=Math.floor(f); if (f-i>bayer(X,Y)) i++; if (i>n-1) i=n-1; buf.d[k]=M.tintPx(L[i],c,X,Y); } }
-function todKey(tod,w){ if (tod==='day') return w==='rain'?'rain':(w==='grey'?'grey':null); if (tod==='night') return 'night'; if (tod==='dawn') return w==='grey'?'gdawn':'dawn'; return TF[tod]?tod:'dawn'; }
+function todKey(tod,w){ if (tod==='day') return w==='grey'?'grey':null; if (tod==='night') return 'night'; if (tod==='dawn') return w==='grey'?'gdawn':'dawn'; return TF[tod]?tod:'dawn'; }
 function lightsFor(tod){ if (tod==='day') return []; var L=[];
   [40,120,200].forEach(function(x){ L.push([x,46,30,14,0.55],[x,114,32,10,0.35]); });            // Leuchtröhren unter dem Vordach
   L.push([(KIO.x0+KIO.x1)/2,74,26,22,0.85],[(KIO.x0+KIO.x1)/2,114,28,9,0.4],[(BOARD.x0+BOARD.x1)/2,64,30,22,0.5]);
@@ -99,7 +99,11 @@ function building(b){ var x, y, x0=BLD.x0, x1=BLD.x1;
   for (x=x0;x<x1;x+=18) if (hash(x,3)<0.6){ var wx=x+4; b.rect(wx,66,10,20,P.k2); b.vl(wx+5,66,85,P.m1); b.hl(wx,wx+9,66,P.m1); }    // Glastüren
   for (x=x0+8;x<x1-8;x+=36){ b.rect(x,60,6,4,P.s4); b.px(x+1,61,P.k2); b.px(x+4,61,P.k2); }        // Lautsprecher, Schilder
   for (x=x0;x<x1;x++) for (var k=0;k<8;k++) if (hash(x,k+40)<0.3-k*0.03) dk(b,x,GY-1-k,1);   // Spritzwasserspur
-  b.rect(6,88,3,16,P.m1); b.rect(10,92,6,12,P.g1); b.hl(10,15,92,P.g2); }                             // Abfalleimer
+  b.rect(6,88,3,16,P.m1); b.rect(10,92,6,12,P.g1); b.hl(10,15,92,P.g2);                              // Abfalleimer
+  // Fahrkartenschalter über der Bank, Wartesaal links
+  b.rect(200,56,34,20,P.m1); b.rect(202,60,30,14,P.k2); b.rect(203,61,28,7,P.c1); b.hl(203,230,61,P.c3); b.rect(212,70,10,4,P.w2); b.hl(200,233,75,P.s5); WINS.push([203,61,28,7,0.95]);
+  b.rect(200,48,34,7,P.b0); b.hl(200,233,48,P.b2); M.microText(b,'BLAGAJNA',201,49,P.s6);
+  b.rect(4,54,40,7,P.b0); b.hl(4,43,54,P.b2); M.microText(b,'ČEKAONICA',6,55,P.s6); }
 function canopy(b){ var x, y;
   for (y=CAN.y0;y<CAN.y1;y++) for (x=CAN.x0;x<CAN.x1;x++){ var c=(y===CAN.y0)?P.s5:((y===CAN.y1-1)?P.m1:((y===CAN.y0+1)?P.s4:P.s3)); b.px(x,y,c); }
   for (x=CAN.x0;x<CAN.x1;x++){ b.px(x,CAN.y1,P.m0); dk(b,x,CAN.y1+1,1); }
@@ -145,7 +149,7 @@ function paintBoard(b,lit){ var x0=BOARD.x0, x1=BOARD.x1, y0=BOARD.y0, y1=BOARD.
   // Emailleschild darunter: weiß, blauer Rand, gut lesbar
   var m=MUC; b.vl(rd((m.x0+m.x1)/2)-20,y1,m.y0,P.m1); b.vl(rd((m.x0+m.x1)/2)+20,y1,m.y0,P.m1);
   b.rect(m.x0,m.y0,m.x1-m.x0,m.y1-m.y0,P.b0); b.rect(m.x0+1,m.y0+1,m.x1-m.x0-2,m.y1-m.y0-2,P.s6); b.hl(m.x0+1,m.x1-2,m.y1-2,P.s4);
-  var t='MÜNCHEN · subota', tw=M.textWidth(t); M.text(b,t,rd((m.x0+m.x1)/2-tw/2),m.y0+2,P.b0); }
+  var t='MÜNCHEN · subota', tw=M.textWidth(t); M.text(b,t,rd((m.x0+m.x1)/2-tw/2),m.y0+3,P.b0); }
 
 // ---------------------------------------------------------------- Kiosk (Rückwand im Bild, Front als Ebene) und Drehständer mit Stadtplänen
 function kioskBack(b){ var x0=KIO.x0, x1=KIO.x1, x, y;
@@ -225,9 +229,10 @@ function paint(S,GS,tod){ var w=weaOf(GS), b=new M.Buf(W,H,T), sky=new M.Buf(W,H
   stage(b,4,function(){ building(b); station(b,tod); });
   stage(b,5,function(){ ground(b,w,S); });
   stage(b,5,function(){ paintTaxi(b); if (S.busIn) paintBus(b,S); canopy(b); paintBoard(b,tod!=='day'); kioskBack(b); rack(b); if (w==='rain') umbrellaMan(b); });
-  var hz={rain:[0.85,0.6,0.35,0.15,0.05],grey:[0.55,0.4,0.25,0.1,0],calm:[0.3,0.18,0.08,0.02,0],frost:[0.26,0.15,0.06,0,0],bura:[0.06,0.04,0.02,0,0]}[w];
+  var hz={rain:[0.7,0.45,0.25,0.1,0.03],grey:[0.55,0.4,0.25,0.1,0],calm:[0.3,0.18,0.08,0.02,0],frost:[0.26,0.15,0.06,0,0],bura:[0.06,0.04,0.02,0,0]}[w];
   var fcol=(w==='rain')?(tod==='day'?P.s3:P.m1):(w==='grey'?P.s4:P.b4); if (tod==='night') fcol=P.n0;
-  M.fogBake(b,function(x,y){ var d=DEP[y*W+x]; return d?hz[d-1]:0; },{col:fcol});
+  M.fogBake(b,function(x,y){ var d=DEP[y*W+x]; if (!d) return 0; var a=hz[d-1]; if (w==='rain' && d===1) a=Math.min(1,a+Math.max(0,(46-y)/30)); return a; },{col:fcol});
+  if (w==='rain') for (var y2=8;y2<50;y2++) for (var x2=0;x2<W;x2++){ var cv=fbm(x2*0.02,y2*0.09,8); if (DEP[y2*W+x2]===1 && cv>0.5 && bayer(x2,y2)<(cv-0.5)*2.6) b.px(x2,y2,(cv>0.62)?P.s4:P.m3); }
   paintSky(sky,tod,w); SKYM.fill(0); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
   puddleReflect(b,sky);
   if (w==='rain') wetReflect(b);
@@ -253,12 +258,12 @@ function afterLights(b,tod,S){ var x, y;
 function finishL(L,tod,w){ shade(L,L.ox,L.oy,todKey(tod,w),LIT); }
 function kioskLayer(S,tod,w){ var x0=KIO.x0, x1=KIO.x1, by=KIO.base, L=M.layer(x0-3,KIO.top-3,x1-x0+6,KIOSKM_Y-KIO.top+6,KIOSKM_Y+1), wr=M.lw(L), x;
   wr.rect(x0-3,KIO.top,x1-x0+6,8,P.r1); wr.hl(x0-3,x1+2,KIO.top,P.r3); wr.hl(x0-3,x1+2,KIO.top+7,P.k2); wr.hl(x0-2,x1+1,KIO.top-1,P.m3);
-  var t='NOVINE', tw=M.microWidth(t); M.microText(L,t,rd((x0+x1)/2-tw/2)-L.ox,KIO.top+2-L.oy,P.s6);
+  var t='RAZGLEDNICE', tw=M.microWidth(t); M.microText(L,t,rd((x0+x1)/2-tw/2)-L.ox,KIO.top+2-L.oy,P.s6);
   wr.rect(x0,KIO.top+8,3,by-KIO.top-8,P.g2); wr.vl(x0,KIO.top+8,by-1,P.g3); wr.rect(x1-3,KIO.top+8,3,by-KIO.top-8,P.g1); wr.vl(x1-1,KIO.top+8,by-1,P.g0);
   wr.rect(x0,KIO.sill,x1-x0,2,P.w3); wr.hl(x0,x1-1,KIO.sill,P.w4);
   wr.rect(x0+1,KIO.sill+2,x1-x0-2,KIOSKM_Y+3-KIO.sill-2,P.g2); wr.hl(x0+1,x1-2,KIO.sill+2,P.g1);
-  var sx=rd((x0+x1)/2)-16; wr.rect(sx,KIO.sill+3,33,17,P.s6); wr.hl(sx,sx+32,KIO.sill+3,P.r2); wr.hl(sx,sx+32,KIO.sill+19,P.s3);
-  M.microText(L,'RAZGLEDNICE',sx+1-L.ox,KIO.sill+5-L.oy,P.k1); M.microText(L,'PLAN GRADA',sx+2-L.ox,KIO.sill+12-L.oy,P.b0);
+  var sx=x0+1; wr.rect(sx,KIO.sill+3,x1-x0-2,17,P.s6); wr.hl(sx,x1-2,KIO.sill+3,P.r2); wr.hl(sx,x1-2,KIO.sill+19,P.s3);
+  M.microText(L,'NOVINE',sx+8-L.ox,KIO.sill+5-L.oy,P.k1); M.microText(L,'PLAN GRADA',sx+1-L.ox,KIO.sill+12-L.oy,P.b0);
   // Zeitungen in der Klammerleiste
   for (x=x0+2;x<x1-2;x+=7){ wr.rect(x,KIO.win0-1,5,7,P.s5); wr.hl(x,x+4,KIO.win0,P.r2); wr.hl(x,x+4,KIO.win0+3,P.m2); }
   if (w==='rain') for (x=x0-3;x<x1+3;x++) if (hash(x,5)<0.35) wr.px(x,KIO.top+8,P.m3);
@@ -322,7 +327,7 @@ M.defineArt('ostbus',{
     puddle:[PUD[0][0]-PUD[0][2],PUD[0][1]-PUD[0][3]-1,PUD[0][2]*2,PUD[0][3]*2+3],
     clock:[CLK.cx-CLK.r-2,CLK.cy-CLK.r-2,CLK.r*2+5,CLK.r*2+5]
   },
-  stands:{ exit:[8,124,'L'], bus:[96,118,'B'], board:[160,116,'B'], kiosk:[273,118,'B'], maps:[308,118,'B'], taxi:[402,118,'R'], bench:[213,121,'B'], station:[450,116,'B'], puddle:[300,126,'R'], clock:[408,116,'B'] },
+  stands:{ exit:[8,124,'L'], bus:[96,118,'B'], board:[160,116,'B'], kiosk:[273,118,'B'], maps:[308,118,'B'], taxi:[402,118,'R'], bench:[213,121,'B'], station:[450,116,'B'], puddle:[300,126,'R'], clock:[350,116,'B'] },
   actorPos:{ kioskm:[273,KIOSKM_Y,'F'], taxist:[404,118,'L'], nada:[BUS.x1+8,114,'R'] },
   start:[BUS.x1+18,118,'R'], entries:{ map:[14,124,'R'] }
 });

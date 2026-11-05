@@ -445,9 +445,9 @@ M.defineChar('kolar',{
 // Schiebermütze, dicker blauer Pullover, olivgrüne Wathose mit Hosenträgern, Gummistiefel; manchmal eine Sturmlaterne
 var btS=[
 ".............",
-"...kkkkkk....",
-"..kCcccCCkk..",
-".kCCCCCCCCCCk",
+"...kkkkkkk...",
+"..kCccccCCkk.",
+".kCCCCCCCCCCCk",
 ".kwwSSSSSSSk.",
 ".kwwSSSwwSSk.",
 ".kwtSSSSSeSk.",
@@ -500,31 +500,31 @@ function stormLamp(b,x,y,f){ b.px(x,y+2,P.m2); b.px(x+1,y+2,P.m2); b.line(x-1,y+
   b.hl(x-2,x+3,y+10,P.m2); b.hl(x-1,x+2,y+11,P.m1); }
 H.btLamp=function(b,x,y){ stormLamp(b,x,y,0); };
 H.btLampB=function(b,x,y){ stormLamp(b,x,y,1); };
-var btP=pose({},'S'), WADE=[P.g2,P.g3,P.g1];
+var btP=pose({},'S'), btPF=pose({},'F');
 M.defineChar('bato',{
   legend:L({C:P.m1,c:P.m2,w:P.s6,b:P.s5,S:P.q4,s:P.q3,t:P.q2,m:P.q1,r:P.d4}),
   heads:{S:HS(btS),F:HS(btF),B:{n:btB}}, neck:{S:[5,15],F:[6,15],B:[6,14]},
   torso:{w:15,len:15,col:[P.c2,P.c3,P.c1],side:10,belly:1},
   bones:[12,11,9,8], hipY:25, shoulder:7, armR:[1.7,1.4], legR:[2.0,1.8],
   cols:{trou:[P.g2,P.g3,P.g1],trouF:[P.g1,P.g2,P.g0],sleeve:[P.c2,P.c3,P.c1],sleeveF:[P.c1,P.c2,P.c0],hand:[P.q4,P.q3],handF:[P.q3,P.q2],shoe:P.k2},
-  // Gummistiefel (unten an der Wathose), die Stange ('pl': beide Hände daran), die hohle Hand hinter dem Ohr ('cu')
+  // Gummistiefel (unten an der Wathose), die Stange ('pl': beide Hände daran), die hohle Hand hinter dem Ohr ('cu', von vorn)
   post:function(b,p,X,Y,hx,hy){ var ch=M.CHARS.bato, BOOT=cmap([P.g0,P.g1,P.g2,P.g3],[P.k1,P.k2,P.m0,P.m1]);
     var feet=p.v==='S'?[p.nf,p.ff]:[p.lf,p.rf]; feet.forEach(function(f){ if (!f) return; recolor(b,X+f[0]-3,Y+f[1]-7,X+f[0]+3,Y+f[1]-1,BOOT); });
     if (p.v==='S' && p.pl){ var a=p.fh, c=p.nh, dx=c[0]-a[0], dy=c[1]-a[1]; if (Math.abs(dy)<0.5) dy=0.5; var k1=(6-a[1])/dy, k2=(-64-a[1])/dy;
       var x0=X+a[0]+dx*k1, x1=X+a[0]+dx*k2; b.line(Math.round(x0),Y+6,Math.round(x1),Y-64,P.w3); b.line(Math.round(x0)+1,Y+6,Math.round(x1)+1,Y-64,P.w2);
       armS(b,ch,p,X,Y,hx,hy); }
-    if (p.v==='S' && p.cu){ var ux=Math.round(X+p.nh[0]-0.5), uy=Math.round(Y+p.nh[1]-0.5); b.px(ux+1,uy-1,P.q4); b.px(ux+2,uy-1,P.q3); b.px(ux+2,uy,P.q3); b.px(ux+2,uy+1,P.q2); } },
+    if (p.v==='F' && p.cu){ var ux=Math.round(X+p.rh[0]-0.5), uy=Math.round(Y+p.rh[1]-0.5); b.px(ux,uy-1,P.q4); b.px(ux+1,uy-1,P.q4); b.px(ux+2,uy,P.q3); b.px(ux+2,uy+1,P.q3); b.px(ux+1,uy+2,P.q2); b.px(ux,uy+2,P.q3); } },
   anims:{
     // hält die Sturmlaterne hoch und späht über den Fluss; die Laterne schwingt ein wenig, die Flamme flackert
-    lamp:[[btP({}),80],[btP({nh:[6,-34],fh:[-1,-23]}),150],[btP({nh:[10,-49],fh:[-1,-23],it:'btLamp',ho:[1,0]}),700],[btP({nh:[10,-49],fh:[-1,-23],it:'btLampB',ho:[1,0]}),160],
-      [btP({nh:[11,-49],fh:[-1,-23],it:'btLamp',ho:[1,0],ln:1}),600],[btP({nh:[11,-49],fh:[-1,-23],it:'btLampB',ho:[1,0],ln:1,hd:'b'}),120],[btP({nh:[10,-49],fh:[-1,-23],it:'btLamp',ho:[1,0],ln:1}),500],
-      [btP({nh:[10,-48],fh:[-1,-23],it:'btLampB',ho:[1,0]}),160],[btP({nh:[10,-49],fh:[-1,-23],it:'btLamp',ho:[1,0]}),900],[btP({nh:[10,-49],fh:[-1,-23],it:'btLampB',ho:[1,1],hd:'s'}),400]],
+    lamp:[[btP({}),80],[btP({nh:[6,-34],fh:[-1,-23]}),150],[btP({nh:[12,-50],fh:[-1,-23],it:'btLamp',ho:[1,0]}),700],[btP({nh:[12,-50],fh:[-1,-23],it:'btLampB',ho:[1,0]}),160],
+      [btP({nh:[13,-50],fh:[-1,-23],it:'btLamp',ho:[1,0],ln:1}),600],[btP({nh:[13,-50],fh:[-1,-23],it:'btLampB',ho:[1,0],ln:1,hd:'b'}),120],[btP({nh:[12,-50],fh:[-1,-23],it:'btLamp',ho:[1,0],ln:1}),500],
+      [btP({nh:[12,-49],fh:[-1,-23],it:'btLampB',ho:[1,0]}),160],[btP({nh:[12,-50],fh:[-1,-23],it:'btLamp',ho:[1,0]}),900],[btP({nh:[12,-50],fh:[-1,-23],it:'btLampB',ho:[1,1],hd:'s'}),400]],
     // stößt die Fähre mit der langen Stange ab: hoch greifen, sich hineinlehnen, nachdrücken, die Stange wieder vorsetzen
     pole:[[btP({nh:[4,-36],fh:[5,-46],pl:1}),320],[btP({nh:[5,-32],fh:[7,-41],pl:1,ln:2,ff:[-4,0,'t']}),300],[btP({nh:[6,-28],fh:[8,-36],pl:1,ln:3,ff:[-7,0,'t'],nf:[3,0,'f'],hd:'b'}),340],
       [btP({nh:[6,-27],fh:[8,-35],pl:1,ln:3,ff:[-7,0,'t'],nf:[3,0,'f']}),260],[btP({nh:[5,-34],fh:[7,-43],pl:1,ln:1,ff:[-3,0,'f']}),260],[btP({nh:[4,-36],fh:[5,-46],pl:1}),400]],
-    // lauscht, die hohle Hand hinter dem Ohr, leicht vorgebeugt
-    listen:[[btP({}),80],[btP({nh:[3,-38],fh:[-1,-23]}),140],[btP({nh:[-1,-45],fh:[-1,-23],ln:1,ho:[1,0],cu:1}),1500],[btP({nh:[-1,-45],fh:[-1,-23],ln:1,ho:[1,0],cu:1,hd:'b'}),110],
-      [btP({nh:[0,-45],fh:[-1,-23],ln:2,ho:[1,1],cu:1}),1400],[btP({nh:[0,-45],fh:[-1,-23],ln:2,ho:[1,1],cu:1,hd:'s'}),700],[btP({nh:[3,-38],fh:[-1,-23]}),140],[btP({}),200]] }
+    // lauscht (von vorn): die hohle Hand hinter dem Ohr, der Ellbogen seitlich hoch, der Kopf zur Hand geneigt, der Blick zur Seite
+    listen:[[btPF({}),80],[btPF({rh:[11,-36]}),140],[btPF({rh:[8,-47],cu:1,ho:[1,0],hd:'r'}),1500],[btPF({rh:[8,-47],cu:1,ho:[1,0],hd:'b'}),110],
+      [btPF({rh:[8,-47],cu:1,ho:[1,1],hd:'r'}),1400],[btPF({rh:[8,-47],cu:1,ho:[1,1],hd:'s'}),700],[btPF({rh:[11,-36]}),140],[btPF({}),200]] }
 });
 // Wathose mit Latz und Trägern über dem Pullover, Strickmuster: einmal in die Rumpfbilder gemalt
 (function(){ var ch=M.CHARS.bato, W=cmap([P.c0,P.c1,P.c2,P.c3],[P.g0,P.g1,P.g2,P.g3]);
@@ -584,24 +584,24 @@ var mtB=[
 "....ktttk....",
 ".....ksk....."];
 // Thermoskanne der 70er: rot, Becherdeckel aus Metall; (x,y) = Hand, die sie in der Mitte hält bzw. (stehend) der Fuß
-function thermos(b,x,y){ b.rect(x,y-4,3,9,P.r2); b.vl(x,y-4,y+4,P.r3); b.vl(x+2,y-4,y+4,P.r1); b.hl(x,x+2,y-6,P.m4); b.hl(x,x+2,y-5,P.m3); b.px(x+2,y-5,P.m2); b.hl(x,x+2,y+4,P.m2); }
+function thermos(b,x,y){ b.rect(x,y-3,2,6,P.r2); b.vl(x,y-3,y+2,P.r3); b.px(x+1,y+2,P.r1); b.hl(x,x+1,y-5,P.m4); b.px(x,y-4,P.m3); b.px(x+1,y-4,P.m2); b.px(x+1,y-1,P.y3); }
 // alter Hausschlüssel (Messing), mit dem Bart nach vorn
 H.mtKey=function(b,x,y){ b.px(x+2,y,P.y3); b.px(x+2,y-1,P.y2); b.px(x+3,y-1,P.y3); b.hl(x+3,x+6,y,P.y3); b.px(x+5,y+1,P.y2); b.px(x+6,y+1,P.y3); b.px(x+4,y,P.y4); };
 var mtP=pose({},'S'), mtSit=sitter(21,{ln:1});
 M.defineChar('mate',{
   legend:L({C:P.m3,c:P.m1,D:P.m4,w:P.s6,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
-  heads:{S:HS(mtS),F:HS(mtF),B:{n:mtB}}, neck:{S:[6,14],F:[6,13],B:[6,13]},
+  heads:{S:HS(mtS),F:HS(mtF),B:{n:mtB}}, neck:{S:[5,14],F:[6,13],B:[6,13]},
   torso:{w:10,len:12,col:[P.m2,P.m3,P.m1],vneck:P.s5,lapel:P.m3,buttons:P.m1,side:7,hunch:1},
   coat:{c:[P.m2,P.m3,P.m1],hem:4,w:5},
   bones:[10,9,7,6], hipY:21, shoulder:4, armR:[1.2,1.0], legR:[1.5,1.3],
   cols:{trou:[P.m2,P.m3,P.m1],trouF:[P.m1,P.m2,P.m0],sleeve:[P.m2,P.m3,P.m1],sleeveF:[P.m1,P.m2,P.m0],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.w1},
-  // breite Krawatte; die Thermoskanne: in der nahen Hand, beim Hinhalten des Schlüssels in der fernen, hinter dem Rücken ('bk'), im Sitzen auf dem Tisch ('tt')
+  // breite Krawatte; die Thermoskanne: in der nahen Hand, beim Hinhalten des Schlüssels in der fernen ('tf'), hinter dem Rücken ('bk'), im Sitzen auf dem Tisch ('tt')
   post:function(b,p,X,Y,hx,hy){ var ch=M.CHARS.mate, g=geo(ch,p,hx,hy), t=Y+g.top;
     if (p.v==='F'){ b.px(X+hx-1,t,P.r1); b.px(X+hx,t,P.r1); b.vl(X+hx-1,t+1,t+5,P.r2); b.vl(X+hx,t+1,t+5,P.r3); b.px(X+hx-1,t+6,P.r1); }
     else if (p.v==='S'){ b.vl(X+hx+3+g.shx,t+1,t+4,P.r2); }
-    if (p.sit){ if (p.tt && p.v==='S') thermos(b,X+hx+11,Y-24); return; }
+    if (p.sit){ if (p.tt && p.v==='S') thermos(b,X+hx+12,Y-22); return; }
     if (p.v==='S'){ if (p.bk){ behind(b,function(tb){ thermos(tb,Math.round(X+p.fh[0])-3,Math.round(Y+p.fh[1])+3); }); }
-      else if (p.it){ var fx=Math.round(X+p.fh[0]-0.5), fy=Math.round(Y+p.fh[1]-0.5); behind(b,function(tb){ thermos(tb,fx-1,fy+1); }); }
+      else if (p.it||p.tf){ var fx=Math.round(X+p.fh[0]-0.5), fy=Math.round(Y+p.fh[1]-0.5); behind(b,function(tb){ thermos(tb,fx-1,fy+1); }); }
       else { var nx=Math.round(X+p.nh[0]-0.5), ny=Math.round(Y+p.nh[1]-0.5); thermos(b,nx,ny+1); hand(b,nx,ny,ch.cols.hand); } }
     else if (p.v==='F'){ var lx=Math.round(X+p.lh[0]-0.5), ly=Math.round(Y+p.lh[1]-0.5); thermos(b,lx-1,ly+1); hand(b,lx,ly,ch.cols.hand); }
     else { var rx=Math.round(X+p.rh[0]-0.5), ry=Math.round(Y+p.rh[1]-0.5); thermos(b,rx,ry+1); hand(b,rx,ry,ch.cols.hand); } },
@@ -614,8 +614,8 @@ M.defineChar('mate',{
     wait:[[mtP({nh:[-4,-20],fh:[-3,-20],ln:1,bk:1}),1800],[mtP({nh:[-4,-20],fh:[-3,-20],ln:1,bk:1,hd:'b'}),110],[mtP({nh:[-4,-20],fh:[-3,-20],ln:1,bk:1,ho:[1,0],hd:'r'}),1400],
       [mtP({nh:[-4,-21],fh:[-3,-21],ln:1,bk:1,h:[0,-24],nf:[1,-1,'t'],ff:[-2,-1,'t'],ho:[1,0],hd:'r'}),700],[mtP({nh:[-4,-20],fh:[-3,-20],ln:1,bk:1}),1500],[mtP({nh:[-4,-20],fh:[-3,-20],ln:1,bk:1,hd:'s'}),900]],
     // hält einen Schlüssel hin, der Arm ausgestreckt, ein kleines Nicken
-    key:[[mtP({}),80],[mtP({nh:[6,-24],fh:[-2,-19]}),150],[mtP({nh:[10,-27],fh:[-2,-19],it:'mtKey',ln:1}),180],[mtP({nh:[11,-28],fh:[-2,-19],it:'mtKey',ln:1}),1600],
-      [mtP({nh:[11,-28],fh:[-2,-19],it:'mtKey',ln:1,hd:'b'}),110],[mtP({nh:[11,-28],fh:[-2,-19],it:'mtKey',ln:2,ho:[1,1]}),500],[mtP({nh:[11,-28],fh:[-2,-19],it:'mtKey',ln:1}),1400]] }
+    key:[[mtP({fh:[-3,-19],tf:1}),80],[mtP({nh:[6,-24],fh:[-3,-19],tf:1}),150],[mtP({nh:[10,-27],fh:[-3,-19],it:'mtKey',ln:1}),180],[mtP({nh:[11,-28],fh:[-3,-19],it:'mtKey',ln:1}),1600],
+      [mtP({nh:[11,-28],fh:[-3,-19],it:'mtKey',ln:1,hd:'b'}),110],[mtP({nh:[11,-28],fh:[-3,-19],it:'mtKey',ln:2,ho:[1,1]}),500],[mtP({nh:[11,-28],fh:[-3,-19],it:'mtKey',ln:1}),1400]] }
 });
 
 // ---------------------------------------------------------------- DER SPRINGER (Geist, ein Brückenspringer der 1960er, wirkt 25): athletisch, Seitenscheitel mit Pomade,
@@ -690,30 +690,32 @@ M.defineChar('springer',{
   bones:[11,11,8,7], hipY:24, shoulder:6, armR:[1.3,1.0], legR:[1.6,1.3],
   cols:{trou:[P.q3,P.q4,P.q2],trouF:[P.q2,P.q3,P.q1],sleeve:[P.q3,P.q4,P.q2],sleeveF:[P.q2,P.q3,P.q1],hand:[P.q4,P.q3],handF:[P.q3,P.q2],shoe:P.q2},
   // Sprung ('jp'): 3 kippt vornüber (verkürzt, sinkt), 4 fällt (flach, tiefer), 5 nur noch ein Rest am unteren Rand, 6 fort (leer)
-  post:function(b,p,X,Y,hx,hy){ if (p.jp) jumpFrame(b,p.jp,X,Y); }
+  post:function(b,p,X,Y,hx,hy){ if (p.jp) jumpFrame(b,p.jp,X,Y,hy); }
 });
 // barfuß: Füße aus Haut statt Schuhen
 (function(){ var ch=M.CHARS.springer, leg={s:P.q3,t:P.q4,u:P.q2}, FEET={ f:['.ss..','.sst.','.uuuu'], h:['.ss.t','.sstt','uuu..'], t:['.ss..','.sst.','..sst','...uu'], F:['.st.','ssst'], B:['.ss.','uuuu'] };
   Object.keys(FEET).forEach(function(k){ ch.shoes[k]=M.stamp(FEET[k],leg); });
   // Brust und Rücken: Schlüsselbeine, Brustmuskeln, Bauchnabel, Wirbelsäule
-  paintTorso(ch.tF,function(x,y,c,w){ var m=(w-1)/2; if (y===1 && Math.abs(x-m)>1.5 && Math.abs(x-m)<4.5) return P.q4; if (y===5 && Math.abs(x-m)>0.8 && Math.abs(x-m)<4) return P.q2;
-    if (Math.abs(x-m)<0.6 && y>=3 && y<=8) return P.q2; if (y===10 && Math.abs(x-m)<0.6) return P.q1; if ((y===7||y===9) && Math.abs(x-m)>0.8 && Math.abs(x-m)<2.2) return P.q2; });
-  paintTorso(ch.tB,function(x,y,c,w){ var m=(w-1)/2; if (Math.abs(x-m)<0.6 && y>=2 && y<=11) return P.q2; if (y===4 && Math.abs(x-m)>1.5 && Math.abs(x-m)<3.5) return P.q2; });
+  paintTorso(ch.tF,function(x,y,c,w){ var m=(w-1)/2, d=Math.abs(x-m); if (y===1 && d>1.5 && d<4.5) return P.q4; if (y===5 && d>1 && d<3.6) return P.q2; if (y===10 && d<0.6) return P.q1; });
+  paintTorso(ch.tB,function(x,y,c,w){ var m=(w-1)/2, d=Math.abs(x-m); if (d<0.6 && y>=5 && y<=10) return P.q2; if (y===3 && d>2 && d<3.6) return P.q2; });
   paintTorso(ch.tS,function(x,y,c,w){ if (y===5 && x>=w-4 && x<w-1) return P.q2; }); })();
-// Bilder des Sprungs, die das Rig so nicht kann: die Gestalt verkürzt sich nach vorn, fällt und verschwindet unten aus dem Bild
-function squashRows(b,k,shift,oy){ var c=b.d.slice(), w=b.w, h=b.h; b.d.fill(T);
-  for (var y=0;y<h;y++){ var y0=oy+(y-oy-shift)/k, y1=oy+(y+1-oy-shift)/k, a=Math.max(0,Math.floor(y0)), z=Math.min(h-1,Math.ceil(y1)-1); if (z<a) continue;
-    for (var x=0;x<w;x++){ var best=T, mid=Math.round((a+z)/2); for (var q=0;q<=z-a;q++){ var sy=mid+((q&1)?-(q+1)/2:q/2); if (sy<a||sy>z) continue; var v=c[sy*w+x]; if (v!==T){ best=v; break; } } if (best!==T) b.d[y*w+x]=best; } } }
-function jumpFrame(b,jp,X,Y){
-  if (jp===3){ squashRows(b,0.72,3,Y); return; }
+// Bilder des Sprungs, die das Rig so nicht kann. 3: der Körper verkürzt sich zum Betrachter hin (gestaucht zu den Füßen), der Kopf bleibt heil
+// und sinkt mit; 4: flach im Fall, Arme weit; 5: nur noch der Rest am unteren Rand; 6: fort
+function tipRows(b,top,foot,k){ var c=b.d.slice(), w=b.w, h=b.h, dy=Math.round((foot-top)*(1-k)); b.d.fill(T);
+  for (var y=top+dy;y<=foot && y<h;y++){ var s0=foot-(foot-y+0.5)/k, s1=foot-(foot-y-0.5)/k, a=Math.max(top,Math.round(s0)), z=Math.min(foot,Math.round(s1)), mid=Math.round((s0+s1)/2);
+    for (var x=0;x<w;x++){ for (var q=0;q<=Math.max(0,z-a)+1;q++){ var sy=mid+((q&1)?-((q+1)>>1):(q>>1)); if (sy<a||sy>z) continue; var v=c[sy*w+x]; if (v!==T){ b.d[y*w+x]=v; break; } } } }
+  for (var y2=0;y2<top;y2++){ var ty=y2+dy; if (ty<0||ty>=h) continue; for (var x2=0;x2<w;x2++){ var v2=c[y2*w+x2]; if (v2!==T) b.d[ty*w+x2]=v2; } } }
+function jumpFrame(b,jp,X,Y,hy){
+  if (jp===3){ tipRows(b,Y+hy-12,Y,0.66); return; }
   b.d.fill(T); if (jp>=6) return;
-  var SK=[P.q3,P.q4,P.q2], HD=[P.q4,P.q3], cy=jp===4?Y-14:Y+1;
-  // flach im Fall, die Arme weit ausgebreitet: Kopf (Scheitel und Stirn) vorn in der Mitte, dahinter Schultern, Badehose, Füße
-  limb(b,[X-3,cy],[X-17,cy-3],1.2,SK); limb(b,[X+3,cy],[X+17,cy-3],1.2,SK); hand(b,X-18,cy-4,HD); hand(b,X+17,cy-4,HD);
-  b.ellipse(X,cy+0.5,5.5,2.2,function(x,y){ return y<cy?P.q4:P.q3; });
-  b.rect(X-3,cy-6,6,2,P.n1); b.px(X-3,cy-6,P.n2); b.hl(X-2,X-1,cy-8,P.q3); b.hl(X+1,X+2,cy-8,P.q3); b.vl(X-2,cy-7,cy-7,P.q2); b.vl(X+1,cy-7,cy-7,P.q2);
-  b.ellipse(X,cy-2.5,3.6,3.2,function(x,y){ return (y<cy-3)?((x===X-1)?P.m2:P.h1):(y<cy-1?P.h2:P.q4); });
-  if (jp===5){ for (var y=cy+3;y<cy+12;y++) for (var x=X-20;x<=X+20;x++) if (b.get(x,y-10)!==T && ((x+y)&1)) b.px(x,y,P.q2); } }
+  var SK=[P.q3,P.q4,P.q2], HD=[P.q4,P.q3], cy=jp===4?Y-13:Y+2;
+  // hinten (oben): Rücken und Badehose, verkürzt
+  b.ellipse(X,cy-2.5,4.5,2,function(x,y){ return y<cy-3?P.q3:P.q2; }); b.rect(X-2,cy-5,4,2,P.n1); b.px(X-2,cy-5,P.n2);
+  // die Arme weit ausgebreitet, die Hände leicht nach oben (Schwalbe)
+  limb(b,[X-4,cy],[X-17,cy-3],1.3,SK); limb(b,[X+4,cy],[X+17,cy-3],1.3,SK); hand(b,X-18,cy-4,HD); hand(b,X+17,cy-4,HD);
+  b.ellipse(X,cy+0.5,6,2.2,function(x,y){ return y<cy?P.q4:P.q3; });
+  // vorn: der Kopf, von oben gesehen (Scheitel, Pomadenglanz), unten ein Streifen Stirn
+  b.ellipse(X,cy+2.5,3.8,3.6,function(x,y){ return y>=cy+5?P.q3:((x===X+1&&y<cy+3)?P.m2:(x===X-1?P.h2:P.h1)); }); }
 M.CHARS.springer.anims={
   // steht auf der Brüstung, die Arme ausgebreitet (leicht erhoben, die Brust heraus), atmet, wartet auf die Laternen
   stand:[[spP({lh:[-17,-40],rh:[17,-40]}),1500],[spP({lh:[-17,-41],rh:[17,-41],ho:[0,-1]}),900],[spP({lh:[-17,-40],rh:[17,-40],hd:'b'}),110],[spP({lh:[-17,-40],rh:[17,-40]}),1300],[spP({lh:[-17,-39],rh:[17,-39],ho:[0,1]}),700]],

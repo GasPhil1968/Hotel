@@ -24,24 +24,24 @@ var HEAD=[
 "................bbcdddeeeeedddcccdccbbba................", // 9
 "................abccddeeedddccddcccdccbba...............", // 10
 "...............abbccdddeddcccdddccdddccbba..............", // 11
-"...............ttabbccdddcccddccddddcccbba..............", // 12
-"...............tttaabbbaaba4556665bccddcbba.............", // 13
-"...............ttttttttttttu4566665bccdcbba.............", // 14
-"...............tttttttttttt455666665bccdba..............", // 15
-"...............tttttttttttt456666665bccbba..............", // 16
+"...............uuabbccdddcccddccddddcccbba..............", // 12
+"...............uuuaabbbaaba4556665bccddcbba.............", // 13
+"...............uuuuuuuuuuuuu4566665bccdcbba.............", // 14
+"...............tttttttuuuuu455666665bccdba..............", // 15
+"...............tttttttttttu456666665bccbba..............", // 16
 "...............ttttttttttt45566666664bcb43..............", // 17
 "...............ttttttttttt45bbbbb5554bbbb3..............", // 18
 "...............ttttttttttt4444444456444443..............", // 19
 "...............ttttt45543t43zzzzz4564zzzz3..............", // 20
-"...............ttttt54332443wwiki3563wik33..............", // 21
-"...............ttttt5S14245445ii545645ii43..............", // 22
-"...............ttttt53143555555555565555443.............", // 23
-"...............ttttt53233556666555566555543.............", // 24
-"................tttt44323556666555566555443.............", // 25
-"................tttt3543345555554545665543..............", // 26
-".................ttt44S4345555554434555433..............", // 27
-"..................tt4443445555554443223443..............", // 28
-"...................t4434455555554344444453..............", // 29
+"...............ttttu54332443wwiki3563wik33..............", // 21
+"...............tttuu5S14245445ii545645ii43..............", // 22
+"...............ttuuu53143555555555565555443.............", // 23
+"...............tuuuu53233556666555566555543.............", // 24
+"................uuuu44323556666555566555443.............", // 25
+"................uuuu3543345555554545665543..............", // 26
+".................uuu44S4345555554434555433..............", // 27
+"..................uu4443445555554443223443..............", // 28
+"...................u4434455555554344444453..............", // 29
 "....................4334455555555343444543..............", // 30
 ".....................334455555554443222233..............", // 31
 "......................334455555555444ll443..............", // 32
@@ -54,7 +54,7 @@ var HEAD=[
 "..........................3343222222....................", // 39
 ".........................33433332222...................."  // 40
 ];
-var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, t:P.p3, u:P.e2,
+var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, t:P.q3, u:P.q2,
   a:P.e1, b:P.e2, c:P.e3, d:P.w4, e:P.e4, f:P.s4, S:P.m4, w:P.s6, i:P.c3, k:P.c0, z:P.h1, L:P.d3, l:P.d4 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
@@ -77,18 +77,21 @@ function jacket(b){
   [[40,53],[41,52],[41,54],[43,52],[43,53],[44,53],[45,52],[45,54],[46,53]].forEach(function(q){ b.px(q[0],q[1],P.s3); });
   b.px(40,52,P.s4); b.px(44,52,P.s4); b.hl(39,46,55,P.k1);
 }
-// geschorene Seiten: über die Hautpixel (t) streut sich unregelmäßig das kurze dunkelblonde Haar, zur Kante hin dichter
-function shaved(b){
-  for (var y=12;y<30;y++) for (var x=14;x<28;x++){ if (b.get(x,y)!==P.p3) continue; if (!SHV[y*56+x]) continue;
-    var h=M.hash(x*1.7+3,y*2.9+1), dens=0.38+(y<16?0.22:0)-(x>24?0.12:0); if (h<dens) b.px(x,y,(M.hash(y*1.1,x*3.3)<0.6)?P.e2:P.e3); else if (h>0.9) b.px(x,y,P.p4); }
-}
+// geschorene Seiten: Haut mit kurzem Flaum (t hell, u im Schatten), dazu eine sparsame Körnung;
+// zur Gesichtshaut hin läuft der Flaum im Schachbrett aus
 var SHV=null;
-function markShaved(){ SHV={}; for (var y=0;y<HEAD.length;y++) for (var x=0;x<HEAD[y].length;x++) if (HEAD[y][x]==='t') SHV[y*56+x]=1; }
+function shaved(b){
+  if (!SHV){ SHV=[]; for (var y=0;y<HEAD.length;y++) for (var x=0;x<HEAD[y].length;x++){ var ch=HEAD[y][x]; if (ch==='t'||ch==='u') SHV.push([x,y,ch]); } }
+  SHV.forEach(function(q){ var x=q[0], y=q[1], h=M.hash(x*1.7+3,y*2.9+1);
+    if (h<0.1) b.px(x,y,q[2]==='t'?P.e2:P.e1); else if (h>0.93 && q[2]==='t') b.px(x,y,P.q4);
+    // Übergang zur Haut vor dem Ohr und an der Schläfe
+    var right=HEAD[y][x+1]; if ((right>='3'&&right<='6') && ((x+y)&1)) b.px(x,y,P.p3); });
+}
 var MOUTH_O=[];
 var EYES_B=[];
 function paint(b,v){
   jacket(b);
-  stamp(b,HEAD,LEG); if (!SHV) markShaved(); shaved(b);
+  stamp(b,HEAD,LEG); shaved(b);
   if (v.mouth) putList(b,MOUTH_O);
   if (v.eyes) putList(b,EYES_B);
   M.outline(b,P.k1);

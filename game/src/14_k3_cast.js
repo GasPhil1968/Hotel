@@ -623,6 +623,8 @@ var zlata=M.defineChar('zlata',{
   bones:[9,9,7,6], hipY:20, shoulder:5, armR:[1.4,1.1], legR:[1.7,1.4],
   cols:{trou:[P.g2,P.g3,P.g1],trouF:[P.g1,P.g2,P.g0],sleeve:[P.m2,P.m3,P.m1],sleeveF:[P.m1,P.m2,P.m0],hand:[P.p3,P.p2],handF:[P.p2,P.p1],shoe:P.g1},
   post:function(b,p,X,Y,hx,hy){ var ch=M.CHARS.zlata;
+    // im Sitzen fällt der Rock über die Knie
+    if (p.v==='S' && p.sit) b.poly([[X+hx+3,Y+hy-2],[X+hx+11,Y+hy-2],[X+hx+12,Y+hy+6],[X+hx+7,Y+hy+6]],function(x,y){ return y>=Y+hy+5?P.r1:(x>X+hx+9?P.r3:P.r2); });
     checks(b,X,Y,hx,hy,X+hx-12,X+hx+14,Y+hy-11,Y+hy+13);
     if (p.v==='F' && !p.sit){ b.hl(X+hx-4,X+hx-3,Y+hy-3,P.m1); b.hl(X+hx+2,X+hx+3,Y+hy-3,P.m1); }
     if (p.v==='S' && p.sit && p.bk){ basket(b,X,Y,hx,hy); if (p.it!=='k3a_egg') armS(b,ch,p,X,Y,hx,hy); }
@@ -706,7 +708,7 @@ var kmB=[
 var kmHF=HS(kmF); kmHF.u=up(kmF);
 var kmP=pose({},'F');
 // Illustrierte vor der Brust (man sieht die bunte Rückseite); turn: eine Seite wird umgeblättert
-function magazine(b,p,X,Y,turn){ var x0=X+Math.round((p.lh[0]+p.rh[0])/2)-4, y0=Y+Math.min(p.lh[1],p.rh[1])-4; b.rect(x0,y0,9,7,P.b3); b.vl(x0+4,y0,y0+6,P.b1);
+function magazine(b,p,X,Y,turn){ var x0=X+p.lh[0]-1, y0=Y+p.lh[1]-4; b.rect(x0,y0,9,7,P.b3); b.vl(x0+4,y0,y0+6,P.b1);
   b.rect(x0+5,y0+1,3,3,P.d4); b.hl(x0+5,x0+7,y0+5,P.s6); b.rect(x0+1,y0+1,2,2,P.y4); b.hl(x0+1,x0+3,y0+4,P.s6); b.hl(x0+1,x0+2,y0+5,P.s5);
   if (turn){ b.rect(x0+4,y0-2,3,7,P.s6); b.vl(x0+6,y0-2,y0+4,P.s4); b.hl(x0+5,x0+6,y0,P.s3); } }
 M.defineChar('kioskm',{
@@ -922,8 +924,8 @@ M.defineChar('susjeda',{
     else if (p.v==='S' && !p.sit){ onCol(b,X+hx+2,Y+hy+2,Cc,P.w1); onCol(b,X+hx+3,Y+hy+2,Cc,P.w1); } },
   anims:{
     // wiegt ein Netz Zwiebeln an der Federwaage, liest ab, reicht es hinüber
-    sell:seq([sjP({}),300],[sjP({nh:[5,-28],it:'k3a_vagaA'}),200],[sjP({nh:[7,-37],it:'k3a_vagaB',ho:[1,-1]}),180],[sjP({nh:[7,-37],it:'k3a_vagaA',ho:[1,-1]}),160],[sjP({nh:[7,-37],it:'k3a_vagaB',ho:[1,-1]}),160],
-      [sjP({nh:[7,-37],it:'k3a_vagaA',ho:[1,-1]}),900],[sjP({nh:[7,-37],it:'k3a_vagaA',ho:[1,-1],hd:'b'}),110],[sjP({nh:[7,-37],it:'k3a_vagaA',ho:[1,0],hd:'o'}),300],
+    sell:seq([sjP({}),300],[sjP({nh:[6,-28],it:'k3a_vagaA'}),200],[sjP({nh:[10,-35],it:'k3a_vagaB',ho:[1,0]}),180],[sjP({nh:[10,-35],it:'k3a_vagaA',ho:[1,0]}),160],[sjP({nh:[10,-35],it:'k3a_vagaB',ho:[1,0]}),160],
+      [sjP({nh:[10,-35],it:'k3a_vagaA',ho:[1,0]}),900],[sjP({nh:[10,-35],it:'k3a_vagaA',ho:[1,0],hd:'b'}),110],[sjP({nh:[10,-35],it:'k3a_vagaA',ho:[1,0],hd:'o'}),300],
       [sjP({nh:[9,-29],it:'k3a_onions',ln:1}),200],[sjP({nh:[11,-28],it:'k3a_onions',ln:2,hd:'o'}),600],[sjP({nh:[11,-28],ln:2}),300],[sjP({nh:[5,-24]}),200],[sjP({}),900],
       [sjP({nh:[4,-26],fh:[3,-26]}),200],[sjP({nh:[3,-26],fh:[4,-26]}),200],[sjP({nh:[4,-26],fh:[3,-26]}),200],[sjP({}),600]) }
 });
@@ -993,7 +995,7 @@ function dogF(b,x,y,st,back){ var Y0=P.y3, Yl=P.y4, Yd=P.y2, ph=typeof st==='num
   b.rect(x,y-8,5,3,Y0); b.px(x,y-9,Yd); b.px(x+4,y-9,Yd); b.hl(x+1,x+3,y-8,Yl); b.px(x+1,y-7,P.k0); b.px(x+3,y-7,P.k0); b.px(x+2,y-6,P.k2); b.px(x+2,y-5,Yd); }
 // Brusttaschen der Arbeitsjacke
 var komsija=M.defineChar('komsija',{
-  legend:L({H:P.m2,h:P.m3,l:P.k2,g:P.m1,L:P.y5,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m2}),
+  legend:L({H:P.h2,h:P.m2,l:P.k2,g:P.m2,L:P.y5,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m2}),
   heads:{S:HS(kjS),F:HS(kjF),B:{n:kjB}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
   torso:{w:13,len:13,col:[P.e2,P.e3,P.e1],buttons:P.e1,collar:[P.e1,P.e1],side:9},
   coat:{c:[P.e2,P.e3,P.e1],hem:4,w:6},
@@ -1003,7 +1005,7 @@ var komsija=M.defineChar('komsija',{
     if (p.v==='F'){ b.hl(X+hx-4,X+hx-2,t+3,P.e1); b.hl(X+hx+2,X+hx+4,t+3,P.e1); onCol(b,X+hx-3,t+4,J,P.e1); onCol(b,X+hx+3,t+4,J,P.e1); }
     else if (p.v==='S'){ onCol(b,X+hx+2+g.shx,t+3,J,P.e1); onCol(b,X+hx+3+g.shx,t+3,J,P.e1); }
     if (p.nd) return;
-    if (p.v==='S') dogS(b,X+8,Y,p.ds?'sit':(p.dg!==undefined?p.dg:'stand'),p.dw);
+    if (p.v==='S') dogS(b,X+10,Y,p.ds?'sit':(p.dg!==undefined?p.dg:'stand'),p.dw);
     else dogF(b,X+hx+8,Y,p.dg!==undefined?p.dg:0,p.v==='B'); },
   // die Stirnlampe leuchtet (nachts in eigener Farbe)
   after:function(b,p){ var L0=inHead(M.CHARS.komsija,p,'L'); if (L0){ glow(b,L0[0],L0[1],P.l1); if (p.v!=='B' && b.get(L0[0]+1,L0[1])!==T) glow(b,L0[0]+1,L0[1],P.y5); } },

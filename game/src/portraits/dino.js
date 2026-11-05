@@ -23,30 +23,30 @@ var HEAD=[
 ".................hhhhhhhhhhhhhhhhhhhhhh.................", // 9
 "................hhhhhhhhhhhhhhhhhhhhhhhh................", // 10
 "................hhhhhhhhhhhhhhhhhhhhhhhhh...............", // 11
-"...............hhhhhhhhhhhhhhhhhh455544.................", // 12
-"...............hhhhhhhhhhhhhhh456666544.................", // 13
-"...............hhhhhhhhhhhhhh4566666554.................", // 14
-"...............hhhhhhhhhhhhh45666666554.................", // 15
-"...............hhhhhhhhhhhh4566666666yy54...............", // 16
-"...............hhhhhhhhhhhh456666655yxxxy3..............", // 17
-"...............hhhhhhhhhhhh5yxxxxy45544443..............", // 18
-"...............hhhhh454hhh444yyyy445444443..............", // 19
-"...............hhhh45543hh43zzzzz4564zzzz3..............", // 20
-"...............hhhh54332h443wLwik3563Wik33..............", // 21
-"...............hhhh53142544445ii545645ii43..............", // 22
-"...............hhhh531435554555555565555443.............", // 23
-"...............hhhh532335555666555566555543.............", // 24
-"................hhh443235556666555566555433.............", // 25
-"................hhh354334555555554456655543.............", // 26
-".................hh44543445555544434566543..............", // 27
-".................hh444433445555444345554433.............", // 28
-"..................h44334344555544343223443..............", // 29
-"...................43334445555555344444443..............", // 30
-"....................3334445555555433444443..............", // 31
-".....................334455555555434322233..............", // 32
-"......................33445555555544455443..............", // 33
+"...............hhhhhhhhhhhhhhhhhhhh45554................", // 12
+"...............hhhhhhhhhhhhhhhh4566665544...............", // 13
+"...............hhhhhhhhhhhhhhh45666665543...............", // 14
+"...............hhhhhhhhhhhhhh456666665543...............", // 15
+"...............hhhhhhhhhhhhh456666666.yy43..............", // 16
+"...............hhhhhhhhhhhh456666665yxxxy3..............", // 17
+"...............hhhhhhhhhhhh5yxxxxy455444443.............", // 18
+"...............hhhhh454hhh444yyyy4454444443.............", // 19
+"...............hhhh45543hh43zzzzz4564zzzz43.............", // 20
+"...............hhhh54332h443WwLki3563WLk343.............", // 21
+"...............hhhh53142544454iii45645ii443.............", // 22
+"...............hhhh5314355545555555665554443............", // 23
+"...............hhhh5323355566665555665555443............", // 24
+"................hhh4432355666655555665555443............", // 25
+"................hhh354334555555554456665543.............", // 26
+".................hh445434455555444345566543.............", // 27
+".................hh444433445555444334554433.............", // 28
+"..................h443343445555543432234434.............", // 29
+"...................433344455555553434444433.............", // 30
+"....................33344455555554323333443.............", // 31
+".....................334455555555444222213..............", // 32
+"......................33445555555544466543..............", // 33
 "......................33344555555544333343..............", // 34
-".......................333445555555665443...............", // 35
+".......................333445555555566543...............", // 35
 ".......................33334445555555543................", // 36
 "........................333334444444343.................", // 37
 "........................33333333333333..................", // 38
@@ -58,7 +58,7 @@ var HEAD=[
 "........................33444333333223.................."  // 44
 ];
 var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, h:P.h2, x:P.h0, y:P.h1,
-  w:P.s6, W:P.s5, L:P.l1, i:P.w2, k:P.h0, z:P.h0 };
+  w:P.s6, W:P.s5, L:P.l1, i:P.w2, k:P.h0, z:P.h0, '7':P.l0 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
 // Stoppelschnitt: dunkle, feine Körnung über dem Schädel; oben links fällt Licht darauf, an den Rändern scheint Haut durch
@@ -68,23 +68,27 @@ function hair(b){
   var TONE=[P.h0,P.h1,P.h2,P.h3,P.w1];
   HAIRMASK.forEach(function(q){ var x=q[0], y=q[1];
     var nx=(x+0.5-28)/13, ny=(y+0.5-18)/13, d=1-nx*nx-ny*ny, nz=d>0?Math.sqrt(d):0, l=-0.5*nx-0.66*ny+0.56*nz;
-    var v=0.9+l*1.8+(M.hash(x*1.9+5,y*2.3+7)-0.5)*1.0; var c=TONE[Math.max(0,Math.min(4,Math.round(v)))];
+    var v=0.9+l*1.8+(M.hash(x*1.9+5,y*2.3+7)-0.5)*0.7; var c=TONE[Math.max(0,Math.min(4,Math.round(v)))];
     // Haaransatz: einzelne Hautpixel scheinen durch
     var edge=(b.get(x+1,y)!==P.h2&&HEAD[y][x+1]!=='h'&&HEAD[y][x+1]!=='.')||(HEAD[y+1]&&HEAD[y+1][x]!=='h'&&HEAD[y+1][x]!=='.'&&HEAD[y+1][x]!==undefined);
     if (edge && M.hash(x*3.1,y*1.7)<0.5) c=P.p2;
     b.px(x,y,c); });
 }
-// Dreitagebart: über Kiefer, Kinn, Oberlippe und Wangen wird die Haut kühler und dunkler, dazu feine dunkle Körnung;
-// an Kinn und Oberlippe dichter, zu den Wangen hin lichter (nicht auf den Lippen)
-var BEARD=[[24,21],[26,25],[29.6,28.2],[33,29.4],[36,29.6],[41,29.4],[42.2,31],[41.6,35],[39.6,38.6],[35,39.8],[30,39.2],[26.6,36.6],[24,33],[22.6,28],[23,21]];
+// Dreitagebart: im Bartbereich wird die Haut eine Stufe dunkler und kühler (Kern voll, Rand im Schachbrett),
+// dazu eine sparsame dunkle Körnung; die Lippen bleiben frei
+var BEARD=[[24.2,21],[25.6,25],[29.4,28.2],[33,29.2],[36,29.4],[41,29.2],[42.4,31],[41.8,35],[39.8,38.6],[35,39.8],[30,39.2],[26.6,36.6],[24,33],[22.8,28],[23.2,21]];
 var TINT={}, GRAIN={};
 TINT[P.p5]=P.q4; TINT[P.p4]=P.q3; TINT[P.p3]=P.q2; TINT[P.p2]=P.q1; TINT[P.p1]=P.q0;
 GRAIN[P.p5]=P.q2; GRAIN[P.p4]=P.q1; GRAIN[P.p3]=P.h3; GRAIN[P.p2]=P.h2; GRAIN[P.p1]=P.h1;
-function dens(x,y){ var d=0.16; if (y>=30) d+=0.1; if (y>=34) d+=0.06; if (y<27) d-=0.08; return d; }
+var BMASK=null;
 function stubble(b){
-  b.poly(BEARD,function(x,y){ var c=b.get(x,y); if (TINT[c]===undefined) return c; if (y>=32&&y<=33&&x>=36&&x<=39) return c;
-    var d=dens(x,y), h=M.hash(x*1.37+11,y*2.41+5);
-    if (h<d) return GRAIN[c]; if (y<26&&h>0.75) return c; return TINT[c]; });
+  if (!BMASK){ BMASK=new M.Buf(56,64,M.T); BMASK.poly(BEARD,1); }
+  var inB=function(x,y){ return BMASK.get(x,y)===1; };
+  for (var y=0;y<64;y++) for (var x=0;x<56;x++){ if (!inB(x,y)) continue; var c=b.get(x,y); if (TINT[c]===undefined) continue;
+    if (y>=31&&y<=33&&x>=35&&x<=39) continue;
+    var edge=!inB(x-1,y)||!inB(x+1,y)||!inB(x,y-1)||!inB(x,y+1)||!inB(x-2,y)||!inB(x,y-2);
+    if (edge && ((x+y)&1)) continue;
+    b.px(x,y,(M.hash(x*1.37+11,y*2.41+5)<0.09)?GRAIN[c]:TINT[c]); }
 }
 // rote Trainingsjacke, offen: Stehkragen umgeschlagen, weiße Paspel an Kragen und Reißverschlusskanten, weißes Shirt
 function jacket(b){

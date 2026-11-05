@@ -22,40 +22,40 @@ var HEAD=[
  "..................bccddddddcccccbbba....................", // 5
  "................bccdddddddccccccbbbbba..................", // 6
  "..............abccddddddcdccccccbbbbbbaa................", // 7
- ".............abccdddddcdcdcccccccbbbbbbaa...............", // 8
- "............abbccddddcdcdccccccccbbbbbbbaa..............", // 9
- "............abbccdddcdcdcccccccccbbbbbbbbaa.............", // 10
- "...........abbcccddcdcccccccccccbbbbbbbbbaaa............", // 11
- "...........abbcccdcdcccccccccccbbbbbbbbbbaaaa...........", // 12
+ ".............abccdddddddddcccccccbbbbbbaa...............", // 8
+ "............abbccddddddcdccccccccbbbbbbbaa..............", // 9
+ "............abbccdddddcdcccccccccbbbbbbbbaa.............", // 10
+ "...........abbcccdddcdcccccccccccbbbbbbbbbaaa...........", // 11
+ "...........abbcccddcccccccccccccbbbbbbbbbaaaa...........", // 12
  "...........abbcccccccccccccccbbbbbbbbbbbbaaaaa..........", // 13
  "...........abbbccccccccccbbbbbbbccdddddddddcccba........", // 14
  "............abbbcccccccbbbbbbaaaaaaaaaaaaaaaaab.........", // 15
  "............aabbbbbbbbbbbaa22222222222222211............", // 16
- "............efffgfggfgfgffe2fggf333333fggff2............", // 17
- "............effgfgffefgffgf3efggfe343efgfe32............", // 18
- "............effgfgfe4553fgf32212223432122332............", // 19
- "............effgfgfe4323gfg33IIIII343IIII332............", // 20
- "............effgfgfe4313fgf233WiIW354WiI3343............", // 21
- "............effgfgfe4223gff23433344543334443............", // 22
- "............effgfgfe4323fgf365544445543444443...........", // 23
- ".............effgffe4533gfg45rr54444565434443...........", // 24
- ".............effgffe4433ggf45r5443444565434443..........", // 25
- "..............effgfe.433gggf454434444456r54443..........", // 26
- "..............effgfe.433ggfgf44334444345rr5443..........", // 27
- "...............effgfe433gghggfg33443323rr12332..........", // 28
- "................effgeefgghgggggfggggghhhgggfe...........", // 29
- ".................effeefggghgggfggffghhhhhgggf...........", // 30
- "....................eefgggggggfggeefgggggffee...........", // 31
- "....................eefgggggggfggfgf111112ffe...........", // 32
- "....................eefgggggggggfggff44fgffe............", // 33
- ".....................efgggghggggggfggggfggffe...........", // 34
- ".....................eefgggghgggggfgggfgffee............", // 35
- "......................eefggggggggfgggffgffee............", // 36
- ".......................eeffggggggfgggffgfee.............", // 37
- "........................eeffgggfggfggffffee.............", // 38
- ".........................eefffggfgffffeeee..............", // 39
- "...........................eeffffffffeeee...............", // 40
- ".............................eeeffffeee.................", // 41
+ "..............eeffefffffffe2fggf333333fggff2............", // 17
+ "..............effffeeffffgf3efggfe343efgfe32............", // 18
+ "..............efffee4553fgf32212223432122332............", // 19
+ "..............efffee4323gfg33IIIII343IIII332............", // 20
+ "..............effe3e4313fgf233WiIW354WiI3343............", // 21
+ "..............eef23e4223gff23433344543334443............", // 22
+ "...............ee23e4323fgf365544445543444443...........", // 23
+ "................e2234533ggg45rr54444565434443...........", // 24
+ "................22234433ghg45r5443444565434443..........", // 25
+ "................22223433ghgg454434444456r54443..........", // 26
+ "................12222433ghggg44334444345rr5443..........", // 27
+ "................11222433ghhgggg33443323rr12332..........", // 28
+ ".................1122efgghhggggggggghhhhhgggf...........", // 29
+ ".................1122efgghhhgggggggghhhhhhgggf..........", // 30
+ ".................112efgghhggggggggfggggggfffe...........", // 31
+ "..................11efgghggggggggggf111112ffe...........", // 32
+ "..................11efgghggggggggggff44fgffe............", // 33
+ "..................112efgghggggggggggggggffffe...........", // 34
+ "..................1122efgggggggggggggggfffe.............", // 35
+ "..................11222efgggggggggggggfffee.............", // 36
+ "..................112222effggggggggggfffeee.............", // 37
+ "..................1122222eeffggggggggfffeee.............", // 38
+ ".........................eeffggggggffffeee..............", // 39
+ "...........................eeffffgfffffee...............", // 40
+ ".............................eeefffffee.................", // 41
  "...............................eeeeee...................", // 42
  "........................................................", // 43
  "........................................................", // 44
@@ -68,7 +68,7 @@ function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for 
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]); }
 // Bartsträhnen und Mützennähte (nur auf den jeweiligen Pixeln)
 var BEARD=[P.s3,P.s4,P.s5,P.s6], CAP=[P.m0,P.m1,P.m2,P.m3];
-var STR=[[P.s4,BEARD,[[26,30],[27,36],[29,40]]],[P.s4,BEARD,[[30,31],[31,37],[32,41]]],[P.s4,BEARD,[[35,34],[35,39]]],[P.s3,BEARD,[[39,33],[38,38]]],[P.s6,BEARD,[[24,29],[24,33]]],
+var STR=[[P.s4,BEARD,[[26,32],[27,37],[29,40]]],[P.s4,BEARD,[[31,33],[32,39]]],[P.s4,BEARD,[[37,35],[36,40]]],[P.s6,BEARD,[[23,30],[23,33]]],
   [P.m1,CAP,[[20,7],[17,11],[15,15]]],[P.m1,CAP,[[29,5],[33,9],[36,13]]],[P.m3,CAP,[[24,5],[27,8]]]];
 function streaks(b){ STR.forEach(function(s){ var c=s[0], on=s[1], pts=s[2]; for (var i=0;i<pts.length-1;i++) b.line(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1],function(x,y){ var o=b.get(x,y); return on.indexOf(o)>=0?c:o; }); }); }
 // dicker Strickpullover (blau, Zopfmuster): breite Schultern bis an den Rand
