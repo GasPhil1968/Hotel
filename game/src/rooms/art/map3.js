@@ -85,7 +85,9 @@ M.paintMap3=function(S,GS){ var b=new M.Buf(320,144,P.k0), x, y, i;
 function bus(b,x,y,c,f,on){ b.rect(x-7,y-3,14,6,on?P.b2:f); b.hl(x-7,x+6,y-3,c); b.vl(x-7,y-3,y+2,c); b.vl(x+6,y-3,y+2,c); b.hl(x-7,x+6,y+2,c);
   for (var i=0;i<4;i++) b.rect(x-5+i*3,y-2,2,2,on?P.s6:c); b.rect(x-5,y+2,2,2,c); b.rect(x+3,y+2,2,2,c); b.rect(x-9,y+4,18,1,on?P.e2:c); }
 function house(b,x,y,c,f,lt){ b.rect(x-4,y-2,9,7,f); b.poly([[x-5,y-2],[x,y-7],[x+5,y-2]],c); b.px(x,y+1,lt); b.hl(x-5,x+5,y+5,c); b.vl(x+3,y-7,y-4,c); b.vl(x-4,y-2,y+4,c); b.vl(x+4,y-2,y+4,c); }
-function drawIcon3(b,id,on){ var p=M.MAP3_POS[id], x=p[0], y=p[1], c=on?P.k1:P.e3, f=on?P.r2:P.e4, lt=on?P.y4:c, i, q;
+function drawIcon3(b,id,on){ var p=M.MAP3_POS[id], x=p[0], y=p[1], c=on?P.k1:P.e2, f=on?P.r2:P.s4, lt=on?P.y4:c, i, q;
+  // Papiergrund unter dem Zeichen, weich auslaufend, damit es sich von Blöcken und Schraffur abhebt
+  if (id!=='skela'&&id!=='strassenbr'&&id!=='starimost') for (var yy=y-9;yy<=y+6;yy++) for (var xx=x-11;xx<=x+11;xx++){ var d=Math.hypot((xx-x)/11,(yy-y+1.5)/8); if (d>1) continue; if (d<0.72||bayer(xx,yy)<(1-d)*3.4) b.px(xx,yy,(hash(xx,yy)<0.85)?P.s5:P.s6); }
   switch(id){
     case 'ostbus': case 'westbus': bus(b,x,y,c,f,on); break;
     case 'vermisst': b.rect(x-5,y-5,11,10,on?P.m3:f); b.hl(x-5,x+5,y-5,c); b.vl(x-5,y-5,y+4,c); b.vl(x+5,y-5,y+4,c); b.hl(x-6,x+6,y+5,c);

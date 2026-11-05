@@ -55,6 +55,7 @@ async function useBridgehead(A){ var G=A.G;
   var was=!!G.flags['k3.peil.bridgehead'], ok=await M.k3Peil(A,'bridgehead');
   if (ok && !was){ A.unlock('koski'); await A.wait(400); await A.m('Ich brauche einen zweiten Standort. Höher, damit ich über die Dächer sehe. Das Minarett der Koski-Moschee steht gleich flussab.');
     if (A.G.malaOn){ await A.g('Ein Turm. Gut.'); await A.wait(300); await A.g('Türme sind keine Brücken.'); } } }
+M.k3UseBridgehead=useBridgehead;
 // ---------------------------------------------------------------- Dino
 async function talkDino(A){ var D=A.npc('dino'), G=A.G, p=G.phase;
   if (p==='k3_epi'){ if (A.first('dnEpi')){ await D.say('Training. Im November? Gerade im November. Wer im November springt, springt im Sommer schön.'); return; } return D.say(A.cycle('dnE',['Kalt. Das Wasser ist kälter als die Luft. Das ist gut für die Haut, sagt meine Oma.','Gleich. Ich springe gleich.'])); }

@@ -280,6 +280,7 @@ function lightFn(tod,wea){ var day=tod==='day', grey=wea==='grey';
 function frostBake(b){ for (var y=1;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x, r=REG[k]; if (r!==RG.ground&&r!==RG.wood&&r!==RG.veg&&r!==RG.roof&&r!==RG.grave) continue;
     if (REG[k-W]!==r && hash(x,y)<0.55){ b.d[k]=hash(x+1,y)<0.5?P.s4:P.s5; continue; } if (r===RG.ground && hash(x*1.3,y*2.1)<0.03) b.d[k]=P.s4; } }
 
+function frostLight(b){ for (var y=1;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x, r=REG[k]; if (r!==RG.ground&&r!==RG.veg&&r!==RG.wood) continue; if (REG[k-W]!==r && hash(x,y)<0.25) b.d[k]=hash(x+1,y)<0.5?P.s4:P.s5; } }
 // ---------------------------------------------------------------- Bild
 var LAST=null, NIGHT=false;
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0);
@@ -288,7 +289,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   paintSky(b,tod,wea); paintHills(b,tod,wea); paintFar(b,tod); paintRiver(b);
   for (var k=0;k<W*H;k++) if (REG[k]===RG.water){ b.d[k]=wcol(k%W,(k/W)|0,0); }
   paintGround(b); paintJetty(b); paintShed(b); paintYard(b); paintHouse(b); paintQuince(b); paintGrave(b);
-  if (FIN) frostBake(b);
+  if (FIN) frostBake(b); else if (GS && GS.phase==='k3_d3') frostLight(b);
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (r===RG.far) return 0.3; if (r===RG.water) return 0.12; return 0.03; },{col:P.m4});
   if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill||r===RG.far?-1.5:(r===RG.wall?-0.8:-1.05)); },0,0);
@@ -324,7 +325,9 @@ function dynamic(fb,v,S,GS){ var t=v.t, cam=v.cam, fw=fb.w, x, y;
   // die letzte Quitte schaukelt
   var qx=QFRUIT[0]+rnd(Math.sin(t*1.3)*0.6)-cam, qy=QFRUIT[1]; if (qx>-3&&qx<fw+3){ var Q=[[0,0,P.y4],[1,0,P.y3],[0,1,P.y3],[1,1,P.y2],[-1,1,P.y3],[0,2,P.y2],[0,-1,P.w1]]; Q.forEach(function(q){ var X=qx+q[0], Y=qy+q[1]; if (X>=0&&X<fw) fb.d[Y*fw+X]=tintC(q[2],X+cam,Y); }); }
   windowLight(fb,v,S,GS); lantern(fb,v,S,GS); zlataLamp(fb,v,S,GS); }
-function windowLight(fb,v,S,GS){ var lit=litOf(S,GS); if (!(lit==='kitchen'||lit==='stube'||lit==='roof')) return; var r=facRect(lit==='roof'?'roofw':lit), cam=v.cam, fw=fb.w, t=v.t, day=TODN==='day';
+function windowLight(fb,v,S,GS){ var lit=litOf(S,GS);
+  if (!lit && TODN==='night'){ var kr=facRect('kitchen'), gl=0.5+Math.sin(v.t*1.7)*0.05; for (var ky=kr[1];ky<kr[1]+kr[3];ky++) for (var kx=kr[0];kx<kr[0]+kr[2];kx++){ var sx0=kx-v.cam; if (sx0<0||sx0>=fb.w) continue; if (REG[ky*W+kx]!==RG.glass) continue; var cc=fb.d[ky*fb.w+sx0]; if (bayer(kx,ky)<gl) fb.d[ky*fb.w+sx0]=(cc===P.s5||cc===P.s4||cc===P.s3)?P.y2:P.y1; } }
+  if (!(lit==='kitchen'||lit==='stube'||lit==='roof')) return; var r=facRect(lit==='roof'?'roofw':lit), cam=v.cam, fw=fb.w, t=v.t, day=TODN==='day';
   // Markos Handylicht: ein kalter, heller Punkt hinter dem Glas, um ihn ein Schein; nachts fällt Licht nach draußen
   var cx=r[0]+r[2]*0.5, cy=r[1]+r[3]*0.45;
   for (var y=r[1]-6;y<r[1]+r[3]+(day?3:16);y++) for (var x=r[0]-6;x<r[0]+r[2]+6;x++){ var sx=x-cam; if (sx<0||sx>=fw||y<0||y>=H) continue; var k=y*fw+sx, inside=x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3];

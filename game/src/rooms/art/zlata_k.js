@@ -268,7 +268,7 @@ function ghost(fb,v,S,GS){ var t=v.t, al=0.65+0.25*Math.sin(t*0.9), xc=(BED.X0+B
 
 // ---------------------------------------------------------------- Raum
 function rr(X0,X1,Y0,Y1,Z0,Z1){ return R3.rect(X0,X1,Y0,Y1,Z0,Z1); }
-var WALK=function(x,y,S,GS){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z; if (Z<20||Z>128) return false; if (X<88||X>252) return false;
+var WALK=function(x,y,S,GS){ var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z; if (Z<20||Z>112) return false; if (X<88||X>252) return false;
   if (X>TB.X0-6&&X<TB.X1+5&&Z>TB.Z0-5&&Z<TB.Z1+6) return false;
   if (X>CA.X0-3&&X<CA.X1&&Z>CA.Z0-3&&Z<CA.Z1+4) return false;
   if (X>CB.X0&&X<CB.X1+3&&Z>CB.Z0-3&&Z<CB.Z1+4) return false;

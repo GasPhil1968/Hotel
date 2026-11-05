@@ -22,7 +22,7 @@ M.k3Talk2=async function(A){ var G=A.G;
   G.flags['mala.lock']=true; A.music('k3_duh');
   try{
     var mp=M.apos('vhof','mala',[100,118,'L']); if (A.malaHere() && A.mala){ await A.walkG(mp[0],mp[1]); await A.faceG('R'); }
-    if (!G.seen['ask:Er sagt, du hast ihn weggeschickt.']) await A.m('Er sagt, du hast ihn weggeschickt.');
+    await A.m('Er sagt, du hast ihn weggeschickt.');
     await A.wait(500); await A.g('Er sagt viel, für einen, der siebzehn Jahre nichts gesagt hat.');
     await A.m('Mala.'); await A.wait(900); await A.g('…'); await A.wait(700);
     await A.m('Gestern hast du gesagt: „Er ist gefahren.“'); await A.g('Er ist gefahren. Das stimmt.'); await A.m('Weil du ihn weggeschickt hast.');

@@ -158,6 +158,6 @@ M.defineArt('skela_most',{
   walk:function(x,y,S,GS){ return y>=118 && y<=134 && x>=6 && x<=314; }, walkG:function(){ return false; },
   spots:{ exit_d:[0,96,12,48], exit_l:[308,96,12,48], plaque:[PLQ.x0-2,PLQ.y0-2,PLQ.w+4,PLQ.h+4], railing:[70,RT-2,110,DK-RT+2], river:[60,64,124,34], lamp:[LAMP.x-3,LAMP.top-2,16,DK-LAMP.top] },
   stands:{ exit_d:[10,126,'L'], exit_l:[310,126,'R'], plaque:[40,120,'B'], railing:[120,120,'B'], river:[160,120,'B'], lamp:[200,120,'B'] },
-  actorPos:{}, start:[16,126,'R'], entries:{ skela_d:[14,126,'R'], skela_l:[306,126,'L'] }
+  actorPos:{ vlado:[104,125,'R'], kata:[128,128,'R'] }, start:[16,126,'R'], entries:{ skela_d:[14,126,'R'], skela_l:[306,126,'L'] }
 });
 })(M);

@@ -24,7 +24,7 @@ function companions(G){ return fin(G) && F(G,'k3.fin.boarded') && (F(G,'k3.fin.c
 function sync(S,G){ S.lit=d3(G)?(G.flags['k3.lit']||null):null;
   S.lantern=n2(G)||(fin(G) && G.flags['k3.fin.ferry']==='left' && !F(G,'k3.a.limbo'));
   S.zlataLamp=(n2(G) && zlataOut(G)) || (fin(G) && F(G,'k3.fin.crossed'));
-  S.ferry=(fin(G) && G.flags['k3.fin.ferry']==='left' && !F(G,'k3.a.limbo'))?'here':null; return S; }
+  var f=G.flags['k3.fin.ferry']; S.ferry=fin(G)?(F(G,'k3.a.limbo')?'gone':(f==='left'?'here':null)):(f?'gone':null); return S; }
 K3S.syncL=sync;
 function resync(A){ if (A.room && A.room.id==='skela_l') sync(A.S,A.G); A.rebuild(); }
 function batoAnchor(S,G){ if (G.flags['k3.fin.crossed']) return null; return spotC('far_bell'); }

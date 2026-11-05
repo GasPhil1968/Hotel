@@ -23,6 +23,7 @@ async function crossStart(A){ var G=A.G, S=A.S; if (crossed(G)||S.crossing) retu
     S.crossing=true; stopT=0; followT=0; reacting=false; finishing=false; maxX=mp[0]; G.flags['mala.noSwitch']=true;
     await A.switchTo('mala'); await A.narrate('Mala geht mit geschlossenen Augen. Ich gehe neben ihr, so schnell wie sie. Sie führt, und ich lasse mich führen.');
   } finally { G.flags['mala.lock']=false; } }
+M.k3CrossStart=crossStart;
 async function eyesOpen(A){ var E=M.E, G=A.G; if (reacting) return; reacting=true; var wb=E.busy; E.busy=true;
   try{ var ma=E.ACT.mala, n=(A.flag('k3.br.stops')||0)+1; A.setFlag('k3.br.stops',n);
     if (ma){ var pose=E.actorPose(ma); ma.frozen=Object.assign({},pose,{hd:'w'}); }

@@ -11,6 +11,7 @@ async function peil2(A){ var G=A.G;
   if (A.malaHere()){ var r=railSpot(); await A.walkG(r[0],r[1]); A.faceG('B'); }
   var was=!!G.flags['k3.peil.minaret'], ok=await M.k3Peil(A,'minaret');
   if (ok && !was && G.malaOn){ await A.wait(400); await A.g('Ist das schlecht?'); await A.m('Es ist ungenau. Zwei Linien von fast derselben Stelle.'); await A.g('Du bist nie ungenau.'); await A.m('Ich nicht. Die Linien.'); } }
+M.k3UseMinaretView=peil2;
 var HS=[
  {id:'stairs',name:'Treppe',exit:{to:'koski'},look:'Die kleine Spitzbogentür zur Wendeltreppe. Unten ist es dunkel und riecht nach Stein und Tauben.',
    g:{look:'Da geht es hinunter. Für dich.'}},

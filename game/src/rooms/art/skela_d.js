@@ -359,6 +359,8 @@ function frostBake(b){ for (var y=1;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x,
     if (r===RG.ground && hash(x*1.3,y*2.1)<0.03) b.d[k]=hash(x,y)<0.5?P.s4:P.s5;
     if (r===RG.bank && hash(x,y)<0.15) b.d[k]=P.s4; } }
 
+// Sonntag früh: ein wenig Raureif auf Gras und Holz, im Schatten
+function frostLight(b){ for (var y=1;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x, r=REG[k]; if (r!==RG.ground&&r!==RG.veg&&r!==RG.wood) continue; if (REG[k-W]!==r && hash(x,y)<0.28) b.d[k]=hash(x+1,y)<0.5?P.s4:P.s5; else if (r===RG.ground && y<124 && hash(x*1.3,y*2.1)<0.025) b.d[k]=P.s4; } }
 // ---------------------------------------------------------------- Bild
 var LAST=null;
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0); W_LIT.length=0;
@@ -369,7 +371,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   // Wasser einmal mit t=0 füllen (dynamic malt es jedes Bild neu)
   for (var k=0;k<W*H;k++) if (REG[k]===RG.water){ var xx=k%W, yy=(k/W)|0; b.d[k]=wcol(xx,yy,0); }
   hazeHills(b,tod,wea);
-  if (FIN) frostBake(b);
+  if (FIN) frostBake(b); else if (GS && GS.phase==='k3_d3') frostLight(b);
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (y<80) return 0.22; if (r===RG.water) return 0.12; return 0.04; },{col:P.m4});
   if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill?-1.6:(r===RG.bank?-1.3:(r===RG.glass?0:-1.15))); },0,0);                                       // Finalnacht: sehr dunkel
@@ -399,6 +401,7 @@ function dynamic(fb,v,S,GS){ var t=v.t, cam=v.cam, fw=fb.w, x, y;
   if (TODN==='night'){ var lx=LAMP[0]-cam; if (lx>-4&&lx<fw+4) for (y=LAMP[1]+14;y<LAMP[1]+34;y++){ if (y>=H) break; var wob=Math.round(Math.sin(y*0.9+t*2.4)*1.3), xx=lx+wob; if (xx<0||xx>=fw||REG[y*W+xx+cam]!==RG.water) continue; if (Math.sin(y*1.7+t*3.3)>0.1) fb.d[y*fw+xx]=y<LAMP[1]+22?P.y3:P.y1; } M.glow(fb,lx,LAMP[1]-1,6,t,0.5); }
   bell(fb,v,S,GS);
   farLights(fb,v,S,GS);
+  farLife(fb,v,S,GS,false);
   // Rauch aus Zlatas Schornstein (bei Tag)
   if (TODN==='day'){ var chx=FH.x0+Math.round(FAC.chim*FH.w)+1, chy=FH.base-Math.round(FH.w*FAC.gf)-Math.round(FH.w*FAC.knee)-Math.round(FH.w*FAC.roof)-1;
     for (var p=0;p<8;p++){ var ph=((t*0.12+p/8)%1), px=rnd(chx+ph*10+Math.sin(t*0.7+p)*1.5*ph)-cam, py=rnd(chy-ph*16); if (px<0||px>=fw) continue; if (bayer(px,py)<0.9-ph*0.7) fb.px(px,py,ph<0.4?P.s5:P.s4); }
@@ -425,9 +428,17 @@ function bell(fb,v,S,GS){ var t=v.t, cam=v.cam, ang=S.zvono?Math.sin(t*5.2)*0.42
   var h=rot(-3,0), x0=h[0], y0=h[1], x1=POST.x+2-cam, y1=97, sag=S.zvono?3+Math.sin(t*5.2)*2.5:4;
   for (var s=0;s<=30;s++){ var u2=s/30, px=lerp(x0,x1,u2)-Math.sin(u2*Math.PI)*sag*0.6, py=lerp(y0,y1,u2)+Math.sin(u2*Math.PI)*sag*0.4; put(px,py,(s%3===0)?P.e2:P.e3); }
   put(x1,y1+1,P.e2); put(x1+1,y1+2,P.e3); put(x1,y1+3,P.e2); }
+// drüben: Hühner im Hof (bei Tag); Bato klein im Schuppen mit der Laterne (Mala sieht ihn immer, Marko erst, wenn sie ihn gefunden hat)
+function farLife(fb,v,S,GS,ghostView){ var t=v.t, cam=v.cam, fw=fb.w, g=(GS&&GS.flags)||{}, ph=GS&&GS.phase;
+  if (!ghostView && TODN==='day') for (var i=0;i<4;i++){ var hx=rnd(FH.x0-14+i*9+Math.sin(t*0.3+i*2)*3)-cam, hy=FH.base+1+(i%2); if (hx<0||hx>=fw-1) continue; var c=i%2?P.t3:P.s5; fb.px(hx,hy,tintC(c,hx+cam,hy)); fb.px(hx+1,hy,tintC(c,hx+cam+1,hy)); if (Math.floor(t*2+i)%3) fb.px(hx+(i%2?2:-1),hy-1,tintC(c,hx+cam,hy-1)); }
+  if (!(ph==='k3_d2_n'||ph==='k3_d3')) return; if (!ghostView && !g['k3.bato.found']) return;
+  var bx=SHED.x0+11-cam, by=SHED.base-1; if (bx<-4||bx>fw+4) return; var al=ghostView?7:5, fl=Math.sin(t*0.8)*0.5;
+  var FIG=[[0,-10,P.x2],[1,-10,P.x2],[-1,-9,P.x3],[0,-9,P.x5],[1,-9,P.x5],[0,-8,P.x6],[1,-8,P.x5],[-1,-7,P.x3],[0,-7,P.x4],[1,-7,P.x4],[2,-7,P.x3],[-1,-6,P.x2],[0,-6,P.x3],[1,-6,P.x3],[2,-6,P.x2],[-1,-5,P.x2],[0,-5,P.x3],[1,-5,P.x3],[-1,-4,P.x2],[0,-4,P.x2],[1,-4,P.x2],[-1,-3,P.x2],[1,-3,P.x2],[-1,-2,P.x2],[1,-2,P.x2],[-1,-1,P.x1],[1,-1,P.x1],[-2,-8,P.x4],[-3,-9,P.x4]];
+  FIG.forEach(function(q){ var X=bx+q[0], Y=by+q[1]+(fl>0.45?-1:0); if (X<0||X>=fw||Y<0||Y>=H) return; var k=Y*fw+X; fb.d[k]=M.mix(fb.d[k],q[2],al); }); }
 // Fenster drüben (S.lit) und die Laterne im Schuppen (S.lantern)
 function litOf(S,GS){ return S.lit||(GS&&GS.flags&&GS.flags['k3.lit'])||null; }
 function farLights(fb,v,S,GS){ var t=v.t, cam=v.cam, fw=fb.w, lit=litOf(S,GS);
+  if (!lit && TODN==='night'){ var kr=facRect('kitchen'), gl=0.55+Math.sin(t*1.7)*0.05; for (var ky=kr[1];ky<kr[1]+kr[3];ky++) for (var kx=kr[0];kx<kr[0]+kr[2];kx++){ var sx0=kx-cam; if (sx0<0||sx0>=fw) continue; if (REG[ky*W+kx]!==RG.glass) continue; if (bayer(kx,ky)<gl) fb.d[ky*fw+sx0]=(ky>kr[1]+kr[3]-3)?P.y2:P.y1; } }
   if (lit && (lit==='kitchen'||lit==='stube'||lit==='roof')){ var r=facRect(lit==='roof'?'roofw':lit), x0=r[0]-cam, y0=r[1], day=TODN==='day', fl=0.85+Math.sin(t*2.1)*0.08;
     for (var y=y0-3;y<y0+r[3]+3;y++) for (var x=x0-3;x<x0+r[2]+3;x++){ if (x<0||x>=fw) continue; var inside=x>=x0&&x<x0+r[2]&&y>=y0&&y<y0+r[3], k=y*fw+x;
       if (inside){ var core=Math.abs(x-x0-(r[2]-1)/2)<=Math.max(0.6,r[2]*0.2)&&Math.abs(y-y0-(r[3]-1)/2)<=Math.max(0.6,r[3]*0.25); fb.d[k]=core?P.l1:(day?(bayer(x,y)<0.6?P.s6:P.b5):(bayer(x,y)<0.5?P.y5:P.y4)); }
@@ -474,7 +485,7 @@ function cableLine(fb,v,amt,dim){ var t=v.t, cam=v.cam, a=[ANCH.rx,ANCH.ry], b=[
     if (pulse<0.15 && (s&1)) continue; fb.px(px,py,pulse>0.8?P.x6:(pulse>0.4?P.x5:P.x3)); } }
 // ---------------------------------------------------------------- Malas Sicht: das Seil von 1994 aus Licht; Batos Leine von der Glocke zum Schuppen
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
-  cableLine(fb,v,1,false);
+  cableLine(fb,v,1,false); farLife(fb,v,S,GS,true);
   var g=GS&&GS.flags||{}; if (g['k3.bato.found']){ var a=[BELL.x,BELL.y+4], b=[SHED.x0+8,SHED.top+7], n=120;
     for (var s=0;s<=n;s++){ var u=s/n, x=rnd(lerp(a[0],b[0],u)-cam), y=rnd(lerp(a[1],b[1],u)-Math.sin(u*Math.PI)*10+Math.sin(t*0.9+u*5)*0.6); if (x<0||x>=fb.w||y<0||y>=H) continue;
       var pl=(Math.sin(t*1.1+u*9)+1)/2; if (pl<0.25 && (s%2)) continue; fb.px(x,y,pl>0.75?P.v5:(pl>0.4?P.v4:P.v3)); }

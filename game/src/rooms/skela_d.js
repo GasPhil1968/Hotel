@@ -16,8 +16,8 @@ function ap(id,fb){ return M.apos('skela_d',id,fb); }
 function sd(id,fb){ return M.stand('skela_d',id)||fb; }
 // ---------------------------------------------------------------- Raumzustand aus den Schaltern
 function sync(S,G){ S.lit=d3(G)?(G.flags['k3.lit']||null):null;
-  S.lantern=n2(G)||(fin(G)&&F(G,'k3.fin.rung')&&!F(G,'k3.a.limbo'));
-  var f=ferry(G); S.ferry=fin(G)?(F(G,'k3.a.limbo')?'gone':(f==='left'?'far':(f||null))):null;
+  S.lantern=n2(G)||(fin(G)&&F(G,'k3.fin.rung')&&!F(G,'k3.a.limbo')&&(ferry(G)==='far'||ferry(G)==='left'));   // auf der Fähre trägt Bato sie selbst
+  var f=ferry(G); S.ferry=fin(G)?(F(G,'k3.a.limbo')?'gone':(f==='left'?'far':(f||null))):(f?'gone':null);   // nach dem Finale bleibt der Schalter stehen: die Kunst soll keine Fähre mehr zeigen
   S.zvono=false; return S; }
 K3S.syncD=sync;
 function resync(A){ if (A.room && A.room.id==='skela_d') sync(A.S,A.G); A.rebuild(); }
@@ -168,15 +168,15 @@ async function finRing(A){ var G=A.G;
     await peal(A,1600); flinch(A); await A.m('Zweimal.'); await A.wait(1500);
     await peal(A,1800); await A.m('Dreimal.'); await A.wait(1600);
     await A.narrate('Stille. Der Fluss. Kata hält den Atem an, oder friert.'); await A.wait(1200);
-    A.sfx('lantern'); resync(A); await A.narrate('Drüben im Schuppen flammt ein Licht auf. Jemand hebt eine Laterne.');
-    await A.wait(700); await bato(A).say('Dolazim!'); await A.m('„Ich komme!“'); await A.wait(500);
-    A.setFlag('k3.fin.ferry','far'); resync(A); A.sfx('rope'); await A.wait(900);
-    await A.narrate('Vom anderen Ufer löst sich etwas Dunkles. Ein Ponton mit einem Geländer, und vorn die Laterne.');
+    A.setFlag('k3.fin.ferry','far'); A.sfx('lantern'); resync(A); await A.narrate('Drüben im Schuppen flammt ein Licht auf. Jemand hebt eine Laterne.');
+    await A.wait(700); await bato(A).say('Dolazim!'); await A.m('„Ich komme!“'); await A.wait(500); A.sfx('rope'); await A.wait(900);
+    await A.narrate('Am Steg drüben bewegt sich etwas Dunkles. Ein Ponton mit einem Geländer, und vorn die Laterne.');
     await K.say('Was ist?'); await A.m('Die Fähre.'); await K.say('Hier ist keine Fähre, Marko. Da ist nur Wasser.'); await V.say('Lass ihn.');
     A.setFlag('k3.fin.ferry','mid'); resync(A); A.sfx('ferryCreak'); await A.wait(1200);
     await A.narrate('Sie gleitet an einem Seil, das es nicht mehr gibt. Das Seil ist aus Licht, und es summt.');
     if (A.malaHere()){ await A.animG('tinF'); await A.g('…'); }
-    await A.wait(2500); A.setFlag('k3.fin.ferry','here'); resync(A); A.sfx('rope'); await A.wait(4200); A.sfx('ferryCreak'); await A.wait(800);
+    await A.wait(2500); A.setFlag('k3.fin.ferry','here'); resync(A); A.sfx('rope'); await A.wait(2600);
+    await A.narrate('Die Laterne wird größer. Man hört das Wasser am Schwimmkörper, und eine Stange, die in den Grund stößt.'); await A.wait(2200); A.sfx('ferryCreak'); await A.wait(800);
     var b=ap('bato',[236,99,'L']); A.spawn({id:'bato',ch:'bato',x:b[0],y:b[1],f:b[2]||'L',name:'Bato',ghost:true,reveal:true,idle:'lamp',speechY:50,anchor:batoAnchor});
     await A.wait(900); await A.narrate('Die Fähre legt an. Holz an Beton, ein Stoß. Auf dem Ponton steht ein alter Mann in Wathose und hält die Laterne hoch.');
     await finRealize(A);
