@@ -39,7 +39,7 @@ var HS=[
    look:'Eine niedrige Holztür am Fuß des Minaretts, mit Eisenbeschlägen. Dahinter beginnt eine Wendeltreppe, so eng, dass man sie mit den Schultern berührt.',
    gexit:function(S,G){ return {to:'minarett'}; },
    g:{look:'Hinter der Tür geht es im Kreis nach oben. Ich brauche die Tür nicht. Und die Stufen auch nicht.',sense:'Viele, die hinaufgestiegen sind, außer Atem. Ein Mann, der jeden Tag fünfmal hinaufging, Jahre lang, bis seine Knie nicht mehr wollten. Er hat es trotzdem gemacht.'}},
- {id:'ticket',name:'Kasse',look:'Ein kleines Kassenhäuschen aus Holz und Glas: „ULAZNICA / TICKET – MINARET“. Darin ein Heizlüfter, eine Thermoskanne und ein Lehrbuch.',
+ {id:'ticket',name:'Kasse',look:'Ein kleines Kassenhäuschen aus Holz und Glas: „ULAZNICA / TICKET / MINARET“. Darin ein Heizlüfter, eine Thermoskanne und ein Lehrbuch.',
    use:function(A){ return kasirHere(A.G)?talkKasir(A):A.m('Zu. „Zatvoreno“, auf Pappe, mit Klebeband.'); },
    g:{look:'Ein Häuschen mit einem warmen jungen Mann darin. Er liest, wenn keiner kommt, und es kommt fast keiner.'}},
  {id:'fountain',name:'Brunnen',look:'Ein Brunnen unter einem Holzdach, ein Šadrvan. Wasser läuft aus kleinen Hähnen in ein Steinbecken, leise und ohne Pause.',

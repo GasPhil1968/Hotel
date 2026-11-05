@@ -152,7 +152,7 @@ var HS=[
    use:async function(A){ var G=A.G; if (G.phase==='k3_pro_n' && !A.flag('k3.p.talk1')) return M.k3Talk1(A); if (G.phase==='k3_d1_n' && !A.flag('k3.d1.father')) return M.k3Father(A);
      if (G.phase==='k3_pro') return A.m('Im Regen? Später. Wenn es dunkel ist, setze ich mich hierher.'); await A.m(A.cycle('tabU',['Ich setze mich und schreibe ein paar Zeilen ins Notizbuch. Keine davon ist für mich.','Ich setze mich. Der Stuhl wackelt. Ich bleibe trotzdem sitzen.'])); },
    g:{look:'Hier hast du es aufgeschrieben. „Bring sie nach Hause.“ Mit Datum.'}},
- {id:'guitar',name:'Tisch der Australier',look:function(A){ return A.m(aussiesHere(A.G)?'Der Tisch der Australier: Bierdosen, eine Landkarte von Kroatien mit Kaffeeflecken, eine Gitarre mit drei neuen Saiten und drei alten.':'Der Tisch der Australier, leer bis auf einen Kronkorken und eine vergessene Mütze.'); },
+ {id:'guitar',name:'Tisch der Australier',look:function(A){ return A.m(aussiesHere(A.G)?'Der Tisch der Australier: Bierdosen, eine Gitarre mit drei neuen Saiten und drei alten, und eine Mütze, die keiner vermisst.':'Der Tisch der Australier. Bierdosen, eine Gitarre, eine vergessene Mütze. Die drei sind unterwegs, irgendwo, wo der Bus hinfährt.'); },
    use:function(A){ return A.m(aussiesHere(A.G)?'Das ist Liams Gitarre. Ich spiele nicht. Ich habe es einmal versucht, mit zwölf, für ein Mädchen, das gelacht hat.':'Ich lasse die Mütze, wo sie ist. Sie kommen wieder.'); },
    take:'Nicht meins.',
    g:{look:'Die Gitarre ist verstimmt. Die Leute nicht. Das ist schön.'}},

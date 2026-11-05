@@ -217,8 +217,8 @@ var HS=[
 M.room('starimost',{ name:'Alte Brücke', scape:'k3_starimost',
   music:function(G){ if (G.phase==='k3_epi'||G.phase==='k3_epi_d') return 'k3_epi'; return G.tod==='night'?'k3_noc':'k3_mostar'; },
   state:function(G){ return {walkBridge:false,dinoJump:false}; },
-  actors:function(S,G){ var L=[], p=G.phase; S.walkBridge=!!(inP(G,['k3_epi','k3_epi_d']) && G.flags['k3.e.bridgeOn']); S.dinoJump=false;
-    if (dinoHere(G)){ var d=M.apos('starimost','dino',[198,115,'R']); L.push({id:'dino',ch:'dino',x:d[0],y:d[1],f:d[2]||'R',name:'Dino',idle:p==='k3_d1'?'smoke':null,speechY:46,
+  actors:function(S,G){ var L=[], p=G.phase; S.walkBridge=!!(inP(G,['k3_epi','k3_epi_d']) && G.flags['k3.e.bridgeOn']); S.dinoJump=false;   // beim Betreten springt keiner; die Szene setzt es und blendet dann die Figur aus
+    if (dinoHere(G) && !S.dinoJump){ var d=M.apos('starimost','dino',[198,115,'R']); L.push({id:'dino',ch:'dino',x:d[0],y:d[1],f:d[2]||'R',name:'Dino',idle:p==='k3_d1'?'smoke':null,speechY:46,
       routine:p==='k3_d1'?[['idle','smoke',6,10],['face','L',2,3],['idle','smoke',5,8],['face','R',2,4]]:[['idle',null,3,6],['anim','stretch'],['idle',null,2,4],['idle','smoke',5,9],['anim','wave'],['idle',null,3,5]]}); }
     if (springerHere(G)){ var s=M.apos('starimost','springer',[299,99,'F']); L.push({id:'springer',ch:'springer',x:s[0],y:s[1],f:s[2]||'F',name:'Springer',ghost:true,reveal:true,idle:'stand',speechY:50,routine:false}); }
     return L; },

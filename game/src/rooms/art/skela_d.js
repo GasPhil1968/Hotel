@@ -373,12 +373,21 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (y<80) return 0.22; if (r===RG.water) return 0.12; return 0.04; },{col:P.m4});
   if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill||r===RG.bank?-1.1:-0.8); },0,0);                                       // Finalnacht: sehr dunkel
-  var lights=[]; if (tod!=='day'){ lights.push([LAMP[0],LAMP[1]+6,16,0.85,12]); lights.push([LAMP[0],LAMP[1]+20,10,0.4,8]); }
-  LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, lights:lights, after:function(o,tod){ if (tod==='day') return;
+  var base=b.clone(), lights=[]; if (tod!=='day'){ lights.push([LAMP[0],LAMP[1]+5,12,9,0.8]); lights.push([LAMP[0]-2,LAMP[1]+14,16,5,0.5]); }
+  LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,tod){ if (tod==='day') return; warmPass(o,base,lights);
     // Laternenkopf der Brücke, ferne Fenster des Weilers
     o.rect(LAMP[0]-1,LAMP[1]-2,3,2,P.y5); o.px(LAMP[0],LAMP[1]-1,P.l1);
     W_LIT.forEach(function(q){ if (hash(q[4],FIN?7:3)>(FIN?0.2:0.42)) return; for (var yy=q[1];yy<q[1]+q[3];yy++) for (var xx=q[0];xx<q[0]+q[2];xx++){ if (REG[yy*W+xx]!==RG.bank) continue; o.px(xx,yy,(xx===q[0]&&yy===q[1])?P.y4:P.y3); } }); } });
   return LAST; }
+
+// warme Lichtinseln in Stufen (wie in Vratnik): weich auslaufend statt grob gerastert
+var DIMW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.5+r*0.12+12, L*0.38+g*0.08+8, L*0.26+b*0.1+16]; });
+var MIDW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.45+L*0.36+16, g*0.32+L*0.26+6, b*0.16+L*0.08+4]; });
+function warmPass(o,base,L){ if (!L.length) return; var LT=M.TINT.lamp;
+  for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x; if (REG[k]===RG.sky) continue; var v=0;
+    for (var i=0;i<L.length;i++){ var l=L[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[3], f=1-dx*dx-dy*dy; if (f>0){ var q=l[4]*Math.pow(f,1.15); if (q>v) v=q; } }
+    if (v<0.03) continue; var f2=v*3.3, lv=Math.floor(f2), fr=f2-lv, t=lv===0?fr:(fr-0.5)*1.7+0.5; if (t>bayer(x,y)) lv++; if (lv<=0) continue;
+    var c=base.d[k]; o.d[k]=lv===1?M.tintPx(DIMW,c,x,y):(lv===2?M.tintPx(MIDW,c,x,y):(lv===3?M.tintPx(LT,c,x,y):M.UP[M.tintPx(LT,c,x,y)])); } }
 
 // ---------------------------------------------------------------- jedes Bild: Wasser, Glocke, Fenster, Laterne, Rauch, Vögel
 function tintC(c,x,y){ return (TODN!=='day'&&M.TINT[TODN])?M.tintPx(M.TINT[TODN],c,x,y):c; }

@@ -10,7 +10,7 @@ function haendlerHere(G){ return inP(G,['k3_pro','k3_d1','k3_d2','k3_d3','k3_epi
 function oneArch(A,src){ if (!A.flag('k3.p.src')) A.setFlag('k3.p.src',src); if (N(A,'l3_onearch')) return false; A.note('l3_onearch'); return true; }
 // ---------------------------------------------------------------- die Postkarte von 1974
 async function postcard74(A){ var H=A.npc('haendler'), had=N(A,'l3_onearch');
-  A.sfx('paper'); await A.narrate('In der Kiste, zwischen Karten von Dubrovnik und vom Meer: eine Ansichtskarte von 1974. Die Alte Brücke, von unten fotografiert, vom Ufer aus. Ein einziger Bogen, von Fels zu Fels, darunter grünes Wasser. Unter dem Bogen ein Junge im Sprung, die Arme weit.');
+  A.sfx('paper'); await A.narrate('In der Kiste, hinter der Pappe mit der „70“, zwischen Karten von Dubrovnik und vom Meer: eine Ansichtskarte von 1974. Die Alte Brücke, von unten fotografiert, vom Ufer aus. Ein einziger Bogen, von Fels zu Fels, darunter grünes Wasser. Unter dem Bogen ein Junge im Sprung, die Arme weit.');
   await A.doc({style:'postcard',title:'Mostar · 1974',lines:['Liebe Mutti,','','die Brücke ist wie im Prospekt, nur höher.','Heute ist ein Junge für fünf Dinar gesprungen.','Wir essen jeden Tag Ćevapčići.','Papa sagt, die Brücke hat keinen einzigen Pfeiler,','deshalb kann man springen.','','Gruß, Renate · Mostar, 14.8.1974']});
   var nw=oneArch(A,'card');
   if (nw){ await A.m('Ein Bogen. Von Fels zu Fels. Kein Pfeiler im Wasser, nicht einer.'); await A.m('So war sie vor dem Krieg. Und so ist sie jetzt wieder.'); }
