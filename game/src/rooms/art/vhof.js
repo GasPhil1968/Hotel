@@ -228,8 +228,11 @@ function layers(S,GS,tod){ var L=[], fin=(GS&&GS.phase==='k3_fin_n'), weather=M.
 // ---------------------------------------------------------------- jedes Bild: flatternde Planenecke (Bura), Scheinwerferkegel, Atemhauch der Kälte
 function dyn(fb,v,S,GS){ var t=v.t, weather=M.scn.weather(GS), i, lit=lightsOn(S);
   if (weather==='bura' && tarpOn(S) && TARPR){ // die hintere Ecke der Plane schlägt im Wind
-    var cx=TARPR[0]+TARPR[2]-2, cy=TARPR[1]+10, f=Math.sin(t*9)+Math.sin(t*15.3)*0.5;
-    for (var k=0;k<9;k++) for (var j=0;j<6;j++){ var x=cx+k, y=cy+j+Math.round(f*(k/9)*3-(k>5?1:0)); if (j>5-k*0.5) continue; fb.px(x,y,(j===0)?P.g4:((f>0 && k>3)?P.g3:P.g2)); } }
+    var ex=TARPR[0]+TARPR[2]-1, ey0=TARPR[1]+14, ey1=TARPR[1]+TARPR[3]-4, f=Math.sin(t*7.5)+Math.sin(t*13.1)*0.45, g=Math.sin(t*5.3+1);
+    var tip=[ex+7+Math.round(f*2.5), ey1-3-Math.round(f*5+g*2)], mid=[ex+3+Math.round(f), rnd((ey0+ey1)/2)+Math.round(g)];
+    var pts=[[ex,ey0],[mid[0],mid[1]],[tip[0],tip[1]],[ex,ey1]]; var cam=v.cam;
+    fb.poly(pts.map(function(q){ return [q[0]-cam,q[1]]; }),function(x,y){ var u=(x+cam-ex)/9; return (y>tip[1]-1)?P.g1:((u>0.5)?(f>0?P.g3:P.g2):P.g2); });
+    fb.line(ex-cam,ey1,tip[0]-cam,tip[1],P.g0); fb.line(mid[0]-cam,mid[1],tip[0]-cam,tip[1],P.e2); fb.px(tip[0]-cam,tip[1],P.e3); }
   if (lit && HL){ // Lichtkegel: Staub und Reifkristalle tanzen im Strahl
     for (i=0;i<26;i++){ var ph=(hash(i,3)+t*0.05*(0.5+hash(i,4)))%1, x2=rnd(TK.x-4-ph*96), y2=rnd(GY-31+(hash(i,5)-0.5)*(6+ph*34)+Math.sin(t*1.3+i)*1.5); if (x2>=0 && Math.sin(t*2+i*1.7)>0.1) fb.px(x2,y2,ph<0.5?P.y5:P.y4); } } }
 function front(fb,v,S,GS){ if (M.scn.weather(GS)==='bura') M.scn.buraDebris(fb,v.t,112,140,v.cam); }

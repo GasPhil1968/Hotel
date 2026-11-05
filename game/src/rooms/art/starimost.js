@@ -55,7 +55,7 @@ var TF={ night:function(r,g,b){ var L=lum(r,g,b); return [r*0.2+L*0.08, g*0.26+L
   dusk:function(r,g,b){ return [r*0.76+16, g*0.56+6, b*0.66+24]; },
   dawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.6+L*0.12+16, g*0.56+L*0.1+10, b*0.68+L*0.12+28]; },
   gdawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.2+L*0.44+10, g*0.2+L*0.44+15, b*0.2+L*0.44+27]; },
-  grey:function(r,g,b){ var L=lum(r,g,b); return [r*0.58+L*0.32+4, g*0.58+L*0.32+6, b*0.58+L*0.32+12]; },
+  grey:function(r,g,b){ var L=lum(r,g,b); return [r*0.42+L*0.5+4, g*0.42+L*0.5+5, b*0.42+L*0.5+7]; },
   rain:function(r,g,b){ var L=lum(r,g,b); return [r*0.7+L*0.16+1, g*0.7+L*0.16+2, b*0.7+L*0.16+3]; },
   lamp:function(r,g,b){ var L=lum(r,g,b); return [r*0.62+L*0.5+30, g*0.5+L*0.36+12, b*0.28+L*0.12]; } };
 var LV={};
@@ -64,7 +64,7 @@ function lightAt(Ls,x,y){ var s=0; for (var i=0;i<Ls.length;i++){ var l=Ls[i], d
 function shade(buf,ox,oy,key,Ls,skip){ if (!key) return; var L=levels(key), n=L.length;
   for (var y=0;y<buf.h;y++) for (var x=0;x<buf.w;x++){ var k=y*buf.w+x, c=buf.d[k]; if (c===T) continue; var X=x+ox, Y=y+oy; if (skip && skip(X,Y)) continue;
     var f=lightAt(Ls,X,Y)*(n-1), i=Math.floor(f); if (f-i>bayer(X,Y)) i++; if (i>n-1) i=n-1; buf.d[k]=M.tintPx(L[i],c,X,Y); } }
-function todKey(tod,w){ if (tod==='day') return w==='rain'?'rain':(w==='grey'?'grey':null); if (tod==='night') return 'night'; if (tod==='dawn') return w==='grey'?'gdawn':'dawn'; return TF[tod]?tod:'dawn'; }
+function todKey(tod,w){ if (tod==='day') return w==='grey'?'grey':null; if (tod==='night') return 'night'; if (tod==='dawn') return w==='grey'?'gdawn':'dawn'; return TF[tod]?tod:'dawn'; }
 function lightsFor(tod){ if (tod==='day') return []; var L=[];
   LAMPS.forEach(function(l){ L.push([l.x+1,l.base-l.h+3,34,30,0.95],[l.x+1,l.base+3,38,11,0.55]); });
   BLAMP.forEach(function(x){ L.push([x,deckY(x)-14,20,16,0.8]); });

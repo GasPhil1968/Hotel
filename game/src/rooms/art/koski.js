@@ -38,7 +38,7 @@ var TF={ night:function(r,g,b){ var L=lum(r,g,b); return [r*0.2+L*0.08, g*0.26+L
   dusk:function(r,g,b){ return [r*0.76+16, g*0.56+6, b*0.66+24]; },
   dawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.6+L*0.12+16, g*0.56+L*0.1+10, b*0.68+L*0.12+28]; },
   gdawn:function(r,g,b){ var L=lum(r,g,b); return [r*0.2+L*0.44+10, g*0.2+L*0.44+15, b*0.2+L*0.44+27]; },
-  grey:function(r,g,b){ var L=lum(r,g,b); return [r*0.58+L*0.32+4, g*0.58+L*0.32+6, b*0.58+L*0.32+12]; },
+  grey:function(r,g,b){ var L=lum(r,g,b); return [r*0.42+L*0.5+4, g*0.42+L*0.5+5, b*0.42+L*0.5+7]; },
   lamp:function(r,g,b){ var L=lum(r,g,b); return [r*0.62+L*0.5+30, g*0.5+L*0.36+12, b*0.28+L*0.12]; } };
 var LV={};
 function levels(k){ if (LV[k]) return LV[k]; var a=[], n=5, A=TF[k], B=TF.lamp; for (var i=0;i<n;i++) (function(t){ a.push(M.tintMake(function(r,g,b){ var p=A(r,g,b), q=B(r,g,b); return [lerp(p[0],q[0],t),lerp(p[1],q[1],t),lerp(p[2],q[2],t)]; })); })(i/(n-1)); return LV[k]=a; }
