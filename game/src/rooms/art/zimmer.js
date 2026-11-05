@@ -17,7 +17,11 @@ var DOOR={X0:70,X1:94,Y0:42};                            // Tür hinten links
 var HEAT={X0:128,X1:164,Y0:78,Y1:94};                    // Heizkörper unter dem Fenster
 var BED={X0:198,X1:252,Y0:84,Z0:2,Z1:44};                // Bett unter der Schräge
 var TBL={X0:98,X1:118,Y0:80,Z0:6,Z1:20};                 // kleiner Tisch
-var CHR={X:186,Z:56};                                    // Stuhl mit Markos Tasche (am Fußende des Betts)
+var CHR={X:110,Z:30};                                    // Kelim vor dem Bett, Markos Schuhe
+  b.poly([rp(R3.p(178,FY,48)),rp(R3.p(236,FY,48)),rp(R3.p(236,FY,78)),rp(R3.p(178,FY,78))],function(xx,yy){ var f=R3.floor(xx,yy); if (!f) return P.r2; var u=(f.X-178)/58, v=(f.Z-48)/30, e=Math.min(u,1-u,v,1-v);
+    if (e<0.05) return P.r0; if (e<0.12) return ((Math.floor(f.X/3)+Math.floor(f.Z/3))&1)?P.y2:P.r1; var d=Math.abs(u-0.5)*1.4+Math.abs(v-0.5); return d<0.22?P.b0:(d<0.3?P.y2:(((Math.floor(f.X/4)+Math.floor(f.Z/4))%3===0)?P.r1:P.r2)); });
+  var sh=rp(R3.p(242,FY,60)); b.rect(sh[0],sh[1]-2,7,2,P.k1); b.rect(sh[0]+3,sh[1]-3,4,1,P.k1); b.rect(sh[0]+9,sh[1]-1,7,2,P.k1); b.rect(sh[0]+12,sh[1]-2,4,1,P.k1);
+  // Stuhl mit Markos Tasche (vor dem Tisch)
 var BULB={X:150,Z:40,len:22};                            // Glühbirne am Kabel, hängt vom Balken
 function rd(v){ return Math.round(v); }
 function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
@@ -57,7 +61,7 @@ function shadeTOD(b,ox,oy,tod,mask){ var L=levels(tod), n=L.length; for (var y=0
     var f=lightAt(X,Y,tod)*(n-1), i=Math.floor(f); if (f-i>bayer(X,Y)) i++; if (i>n-1) i=n-1; b.d[k]=M.tintPx(L[i],c,X,Y); } }
 
 // ---------------------------------------------------------------- Texturen der Flächen
-function lime(u,v,x,y,sd){ var n=fbm(u*0.06+sd,v*0.07,sd), c=ra(R('s3 s4 s5 s6'),0.68+(n-0.5)*0.32+(hash(u>>2,v>>1)-0.5)*0.06,x,y); if (fbm(u*0.09+sd,v*0.1,sd+4)>0.7) c=tex.ashlar(u,v,R('s1 s2 s3 s4'),6,3); if (fbm(u*0.13+sd,v*0.04,sd+2)>0.73 && bayer(x,y)<0.4) c=M.DN[c]; return c; }
+function lime(u,v,x,y,sd){ var n=fbm(u*0.06+sd,v*0.07,sd), c=ra(R('s3 s4 s5 s6'),0.7+(n-0.5)*0.3+(hash(u>>2,v>>1)-0.5)*0.05,x,y); var p=fbm(u*0.07+sd,v*0.08,sd+4); if (p>0.74) c=tex.ashlar(u,v,R('s2 s3 s4 s4'),6,3); else if (p>0.71) c=P.s3; if (fbm(u*0.13+sd,v*0.04,sd+2)>0.75 && bayer(x,y)<0.3) c=M.DN[c]; return c; }
 function surf(h,x,y){ var c;
   if (h.s==='back'){ c=lime(h.X,h.Y,x,y,0); if (h.Y>FY-6) c=(h.Y>FY-1.5)?P.w0:P.w2; return c; }
   if (h.s==='left'){ c=lime(h.Z*1.6,h.Y,x,y,7); if (h.Y>FY-6) c=(h.Y>FY-1.5)?P.w0:P.w2; return M.DN[c]; }
@@ -126,6 +130,10 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
     left:function(xx,yy){ return (yy%6===2)?P.r2:(((xx+yy)&1)?P.m2:P.m1); },front:function(xx,yy){ return ((xx>>1)+(yy>>1))&1?P.m2:P.m1; }});
   var pil=rp(R3.p(BED.X0+26,BED.Y0,BED.Z0+5)); b.ellipse(pil[0],pil[1]-1,11,3,P.s6); b.hl(pil[0]-9,pil[0]+9,pil[1]+1,P.s4);
   R3.box(b,BED.X0-2,BED.X0,BED.Y0-10,FY,BED.Z1-2,BED.Z1,{front:P.w2,left:P.w3});                                // Fußteil
+  // Kelim vor dem Bett, Markos Schuhe
+  b.poly([rp(R3.p(178,FY,48)),rp(R3.p(236,FY,48)),rp(R3.p(236,FY,78)),rp(R3.p(178,FY,78))],function(xx,yy){ var f=R3.floor(xx,yy); if (!f) return P.r2; var u=(f.X-178)/58, v=(f.Z-48)/30, e=Math.min(u,1-u,v,1-v);
+    if (e<0.05) return P.r0; if (e<0.12) return ((Math.floor(f.X/3)+Math.floor(f.Z/3))&1)?P.y2:P.r1; var d=Math.abs(u-0.5)*1.4+Math.abs(v-0.5); return d<0.22?P.b0:(d<0.3?P.y2:(((Math.floor(f.X/4)+Math.floor(f.Z/4))%3===0)?P.r1:P.r2)); });
+  var sh=rp(R3.p(242,FY,60)); b.rect(sh[0],sh[1]-2,7,2,P.k1); b.rect(sh[0]+3,sh[1]-3,4,1,P.k1); b.rect(sh[0]+9,sh[1]-1,7,2,P.k1); b.rect(sh[0]+12,sh[1]-2,4,1,P.k1);
   // Stuhl mit Markos Tasche
   var cs=rp(R3.p(CHR.X,FY,CHR.Z)); var cx=cs[0], cy=cs[1]; b.rect(cx-7,cy-15,15,3,P.w3); b.hl(cx-7,cx+7,cy-15,P.w4); b.vl(cx-6,cy-12,cy-1,P.w1); b.vl(cx+6,cy-12,cy-1,P.w1); b.vl(cx-4,cy-13,cy-3,P.w0); b.vl(cx+4,cy-13,cy-3,P.w0);
   b.rect(cx+5,cy-34,3,20,P.w2); b.hl(cx+5,cx+7,cy-34,P.w4); b.hl(cx-6,cx+7,cy-26,P.w2); b.hl(cx-6,cx+7,cy-30,P.w2); b.rect(cx-7,cy-35,2,21,P.w2);
@@ -161,6 +169,7 @@ function ghost(fb,v,S,GS){ var t=v.t, x0=WIN.X0, y0=WIN.Y0, ww=WIN.X1-WIN.X0, wh
 function walk(x,y){ if (y<114||y>138||x<20||x>300) return false; var f=R3.floor(x,y); if (!f) return false; var X=f.X, Z=f.Z;
   if (X<XL+3||X>XR-3) return false;
   if (X>BED.X0-4 && Z<BED.Z1+4) return false;
+  if (X>238 && Z>54 && Z<66) return false;                                    // Schuhe
   if (X>TBL.X0-4 && X<TBL.X1+4 && Z<TBL.Z1+4) return false;
   if (Math.abs(X-CHR.X)<9 && Math.abs(Z-CHR.Z)<6) return false;
   return true; }
@@ -178,8 +187,8 @@ M.defineArt('zimmer',{
     heater:[HEATR[0]-2,HEATR[1]-1,HEATR[2]+6,HEATR[3]+4],
     lamp:(function(){ var bp=bulbPos(); return [bp[0]-6,bp[1],13,BULB.len+10]; })()
   },
-  stands:{ door:[84,116,'B'], bed:[200,122,'R'], window:[146,116,'B'], sill:[150,116,'B'], bag:[176,124,'R'], chair:[176,124,'R'], heater:[146,116,'B'], lamp:[150,120,'B'] },
+  stands:{ door:[84,116,'B'], bed:[200,122,'R'], window:[146,116,'B'], sill:[150,116,'B'], bag:[124,118,'L'], chair:[124,118,'L'], heater:[146,116,'B'], lamp:[150,120,'B'] },
   actorPos:{ mala:[92,117,'R'] },
-  start:[204,124,'L'], entries:{ herberge:[86,117,'R'] }
+  start:[196,123,'L'], entries:{ herberge:[86,117,'R'] }
 });
 })(M);

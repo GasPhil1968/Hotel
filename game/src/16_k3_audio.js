@@ -198,3 +198,125 @@ M.addDrums({
 // gezupfter Ton für das Finale (wie pluck in 04, aber in den Hall)
 function zupf(f,t,v,d,dest){ var e=t+Math.min(1.8,d)+0.15, o=osc('triangle',f,t,e), lp=filt('lowpass',f*6,0.7), g=gain(0); lp.frequency.setValueAtTime(f*6,t); lp.frequency.exponentialRampToValueAtTime(f*1.5,t+0.4);
   g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(v,t+0.003); g.gain.exponentialRampToValueAtTime(0.0001,t+Math.min(1.8,d)); chain(o,lp,g); out(g,dest,0.4,'weit'); }
+
+// ---------------------------------------------------------------- Bausteine der Geräusche (Ziel d und Lautstärke v, damit Effekte und Raumklang sie teilen)
+// Holz- oder Metallknarren: Haftgleiten als Sägezahn mit zittriger Frequenz durch einen engen Bandpass
+function creak(t,f0,f1,dur,v,bp,d,q){ var e=t+dur+0.1, o=osc('sawtooth',f0,t,e), l=osc('square',rnd(14,24),t,e), lg=gain(f0*0.22), fl=filt('bandpass',bp,q||7), g=gain(0);
+  o.frequency.linearRampToValueAtTime(f1,t+dur); l.connect(lg); lg.connect(o.frequency); adsr(g,t,v,dur*0.25,dur*0.35,dur*0.4); chain(o,fl,g,d); }
+// Anlasser: surrender Motor, die Kompressionsstöße bremsen ihn (rate je Sekunde)
+function starter(t,dur,v,d,f,rate){ var e=t+dur+0.05, o=osc('sawtooth',f||150,t,e), tm=trem(t,e,rate||11,0.75,'square'), bp=filt('bandpass',(f||150)*4.5,1.5), g=gain(0);
+  o.frequency.linearRampToValueAtTime((f||150)*1.15,t+dur); adsr(g,t,v,0.05,Math.max(0.05,dur-0.15),0.1); chain(o,bp,tm,g,d); }
+// Diesel: ein Sägezahn im Zündtakt. Tiefpass = Brummen, Hochpass = das Nageln (jeder Rücksprung ein Klick). o: {f0,f1,v,away,heavy}
+function diesel(t,dur,o,d){ var e=t+dur+0.1, f0=o.f0||26, f1=o.f1||f0*2, s=osc('sawtooth',f0,t,e), sub=osc('sine',f0/2,t,e), lp=filt('lowpass',o.heavy?140:170,1), hp=filt('highpass',1700,0.7), bp=filt('bandpass',2600,1.1), kg=gain(o.heavy?0.3:0.22), sg=gain(0.35), g=gain(0), rough=osc('sine',rnd(0.6,1.1),t,e), rg=gain(f0*0.06);
+  rough.connect(rg); rg.connect(s.frequency);
+  s.frequency.setValueAtTime(f0*0.6,t); s.frequency.linearRampToValueAtTime(f0,t+0.25); s.frequency.setValueAtTime(f0,t+dur*0.35); s.frequency.linearRampToValueAtTime(f1,t+dur*0.6); s.frequency.linearRampToValueAtTime(f1*(o.away?0.9:1),e);
+  sub.frequency.setValueAtTime(f0*0.3,t); sub.frequency.linearRampToValueAtTime(f0/2,t+0.25); sub.frequency.setValueAtTime(f0/2,t+dur*0.35); sub.frequency.linearRampToValueAtTime(f1/2,t+dur*0.6);
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(o.v,t+0.12); g.gain.setValueAtTime(o.v,t+dur*0.6); if (o.away){ g.gain.exponentialRampToValueAtTime(0.0001,e); } else { g.gain.setValueAtTime(o.v,t+dur*0.8); g.gain.exponentialRampToValueAtTime(0.0001,e); }
+  s.connect(lp); lp.connect(g); s.connect(hp); chain(hp,bp,kg,g); chain(sub,sg,g); g.connect(d);
+  if (o.heavy){ var fan=osc('sine',880,t,e), fg=gain(0); fan.frequency.linearRampToValueAtTime(1180,t+dur*0.6); adsr(fg,t,o.v*0.05,0.4,dur*0.4,dur*0.4); chain(fan,fg,d); } }   // Lüfter des luftgekühlten Motors
+// Huhn: ein „bock“ (kurz, fallend) oder das lange „baaak“ (steigend)
+function cluck(t,f,len,v,d){ var e=t+len+0.08, o=osc('sawtooth',f*1.12,t,e), bp=filt('bandpass',f*2.1,2.5), bp2=filt('bandpass',2500,3), g=gain(0), g2=gain(0.5);
+  o.frequency.exponentialRampToValueAtTime(f*(len>0.2?1.28:0.88),t+len); o.connect(bp); o.connect(bp2); chain(bp2,g2,g); bp.connect(g); adsr(g,t,v,0.006,len*0.4,len*0.6+0.02); g.connect(d); }
+function hen(t,p,d,lng,v){ var n=lng?4:3+Math.floor(Math.random()*3);
+  for (var i=0;i<n;i++){ var last=lng&&i===n-1; cluck(t+i*rnd(0.11,0.16),rnd(560,700)*p,last?0.42:0.06,(last?0.03:0.022)*(v||1),d); } }
+// Silbe einer fernen Stimme: Rauschen und Stimmton durch zwei Formanten
+var VOWL=[[730,1090],[570,840],[530,1840],[340,870],[300,2200],[660,1700]];
+function syl(t,f0,v,d,hot){ var V=VOWL[Math.floor(Math.random()*VOWL.length)], len=rnd(0.07,0.16), e=t+len+0.06, p=rnd(105,145)*f0, o=osc('sawtooth',p,t,e), s=nsrc(t,e), sg=gain(hot?0.6:0.3), b1=filt('bandpass',V[0]*f0,5), b2=filt('bandpass',V[1]*f0,7), g2=gain(0.6), g=gain(0);
+  o.frequency.linearRampToValueAtTime(p*rnd(0.82,1.1),t+len); s.connect(sg); [o,sg].forEach(function(x){ x.connect(b1); x.connect(b2); }); chain(b2,g2,g); b1.connect(g); adsr(g,t,v,0.015,len*0.5,len*0.5); g.connect(d); }
+function babble(t,n,f0,v,d){ var x=t; for (var i=0;i<n;i++){ syl(x,f0,v*rnd(0.6,1),d); x+=rnd(0.11,0.22)+(Math.random()<0.12?rnd(0.2,0.5):0); } return x; }
+// Lachen: „ha-ha-ha“, jede Silbe etwas tiefer
+function laugh(t,f0,v,d){ var n=4+Math.floor(Math.random()*4); for (var i=0;i<n;i++){ var ti=t+i*rnd(0.15,0.19), p=rnd(170,230)*f0*(1-i*0.035), e=ti+0.16, o=osc('sawtooth',p,ti,e), s=nsrc(ti,e), sg=gain(0.5), b1=filt('bandpass',760*f0,6), b2=filt('bandpass',1250*f0,7), g=gain(0);
+    o.frequency.linearRampToValueAtTime(p*0.9,ti+0.12); s.connect(sg); [o,sg].forEach(function(x){ x.connect(b1); x.connect(b2); }); b1.connect(g); b2.connect(g); adsr(g,ti,v*(1-i*0.08),0.02,0.05,0.07); g.connect(d); } }
+// Husten: Stoß durch Formanten, Brustgrollen, ein Ansatz von Stimme
+function coughOne(t,v,d){ var len=rnd(0.16,0.24), e=t+len+0.1, s=nsrc(t,e), o=osc('sawtooth',rnd(105,125),t,e), og=gain(0.35), lp=filt('lowpass',3200,0.7), f1=filt('bandpass',rnd(600,700),3), f2=filt('bandpass',rnd(1400,1700),4), g1=gain(1), g2=gain(0.6), g=gain(0);
+  o.frequency.linearRampToValueAtTime(90,t+len); s.connect(lp); chain(o,og,lp); lp.connect(f1); lp.connect(f2); chain(f1,g1,g); chain(f2,g2,g);
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(v*3,t+0.012); g.gain.exponentialRampToValueAtTime(v*0.7,t+0.07); g.gain.exponentialRampToValueAtTime(0.0001,t+len); g.connect(d);
+  Nz(t,len*0.8,v*0.7,'lowpass',260,0.8,d); }
+function coughFx(t,v,d){ [[0,1],[0.27,0.85],[0.5,0.72],[0.84,0.6]].forEach(function(c){ coughOne(t+c[0]+rnd(0,0.03),0.07*v*c[1],d); }); Sw(t+1.12,0.65,0.012*v,'bandpass',2400,1.5,d,3300); }
+// Kompressor: Relais, Motor, Kolben (Klickzug), Ventil bläst ab
+function compressorFx(t,dur,v,d){ var e=t+dur;
+  T('square',900,t,0.02,0.02*v,d); Nz(t,0.03,0.05*v,'highpass',2500,1,d);
+  var m=osc('sawtooth',28,t,e+0.6), lp=filt('lowpass',260,1), g=gain(0); m.frequency.linearRampToValueAtTime(50,t+0.5); m.frequency.setValueAtTime(50,e); m.frequency.linearRampToValueAtTime(22,e+0.5);
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.08*v,t+0.4); g.gain.setValueAtTime(0.08*v,e); g.gain.exponentialRampToValueAtTime(0.0001,e+0.55); chain(m,lp,g,d);
+  var h=osc('sine',100,t,e+0.5), hg=gain(0); adsr(hg,t,0.018*v,0.3,dur-0.2,0.4); chain(h,hg,d);
+  var k=osc('sawtooth',12,t,e+0.5), hp=filt('highpass',1200,0.7), bp=filt('bandpass',1900,2), kg=gain(0); k.frequency.linearRampToValueAtTime(24,t+0.5); k.frequency.setValueAtTime(24,e); k.frequency.linearRampToValueAtTime(9,e+0.5);
+  adsr(kg,t,0.06*v,0.4,dur-0.3,0.5); chain(k,hp,bp,kg,d);
+  Nz(e+0.2,0.7,0.06*v,'highpass',3000,0.8,d); Nz(e+0.2,0.5,0.03*v,'bandpass',1500,1,d); }
+// Schlagschrauber: Luftmotor und Schlagwerk, zwei Stöße
+function wrenchFx(t,v,d){ [[0,rnd(0.55,0.75)],[rnd(0.85,1),rnd(0.35,0.5)]].forEach(function(b){ var t0=t+b[0], du=b[1], e=t0+du+0.12, o=osc('sawtooth',300,t0,e), bp=filt('bandpass',1300,3), g=gain(0);
+    o.frequency.linearRampToValueAtTime(410,t0+0.1); adsr(g,t0,0.025*v,0.02,du-0.08,0.06); chain(o,bp,g,d);
+    for (var i=0,n=Math.floor(du*22);i<n;i++){ var ti=t0+0.03+i/22+Math.random()*0.004; Nz(ti,0.012,0.07*v,'bandpass',2600,2.5,d); if (i%2===0) T('sine',1850+Math.random()*90,ti,0.04,0.013*v,d); } });
+  Nz(t+1.45,0.25,0.025*v,'highpass',3500,0.7,d); }
+// Bus hält: Motor läuft aus, die Bremse quietscht, Druckluft, die Tür
+function brakeFx(t,v,d,door){ Lo('sawtooth',52,t,1.6,0.05*v,d,190,36);
+  var o=osc('sawtooth',2150,t+0.7,t+1.35), bp=filt('bandpass',2200,14), g=gain(0); o.frequency.linearRampToValueAtTime(1950,t+1.25); adsr(g,t+0.7,0.014*v,0.1,0.2,0.2); chain(o,bp,g,d);
+  Nz(t+1.45,0.75,0.13*v,'highpass',2200,0.7,d,null,0.008); Nz(t+1.45,0.5,0.06*v,'bandpass',1200,0.8,d);
+  if (door){ Nz(t+2.2,0.45,0.05*v,'bandpass',700,1,d); Nz(t+2.25,0.3,0.04*v,'highpass',3000,0.8,d); T('sine',120,t+2.65,0.1,0.06*v,d); } }
+// Plane: Knistern beim Ziehen, ein Schlag, wenn sie fällt
+function tarpFx(t,v,d){ Sw(t,1.3,0.05*v,'bandpass',1400,0.9,d,900);
+  for (var i=0;i<22;i++) Nz(t+Math.random()*1.25,0.02+Math.random()*0.03,rnd(0.01,0.05)*v,'bandpass',rnd(1200,4200),1.2,d);
+  Nz(t+1.3,0.25,0.12*v,'lowpass',380,0.9,d); T('sine',70,t+1.32,0.2,0.05*v,d,48); }
+// Auto fährt vorbei: Motor mit Dopplerabfall, Reifen, bei Nässe zischt es
+function carFx(t,v,d,wet,big){ var dur=rnd(2.6,4)*(big?1.3:1), mid=t+dur*0.5, f=(big?rnd(45,60):rnd(70,110)), o=osc('sawtooth',f*1.06,t,t+dur+0.1), lp=filt('lowpass',big?300:380,0.8), g=gain(0), p=K.AC.createStereoPanner?K.AC.createStereoPanner():null, dst=d;
+  if (p){ var dir=Math.random()<0.5?-1:1; p.pan.setValueAtTime(-0.85*dir,t); p.pan.linearRampToValueAtTime(0.85*dir,t+dur); p.connect(d); dst=p; }
+  o.frequency.linearRampToValueAtTime(f*1.03,mid-0.15); o.frequency.linearRampToValueAtTime(f*0.95,mid+0.15); o.frequency.linearRampToValueAtTime(f*0.93,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime((big?0.02:0.012)*v,mid); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); chain(o,lp,g,dst);
+  Sw(t,dur,(wet?0.05:0.032)*v,wet?'highpass':'bandpass',wet?1800:900,0.7,dst,wet?3200:1600); }
+
+// ---------------------------------------------------------------- Effekte
+var SFX3={
+  ferrybell:function(t){ var S=K.sfx; Nz(t,0.2,0.03,'bandpass',1300,1.2,S,700,0.05); creak(t+0.02,150,200,0.22,0.01,1200,S,6);   // Seilzug
+    shipBell(t+0.2,880,0.07,S,5.5,0.6,'wasser'); shipBell(t+0.43,880,0.014,S,3,0.6,'wasser'); },                                 // Schlag, leiser Nachschlag
+  rope:function(t){ var S=K.sfx, e=t+1.7, o=osc('sawtooth',62,t,e), o2=osc('sawtooth',94,t,e), l=osc('square',23,t,e), lg=gain(8), bp=filt('bandpass',1100,9), bp2=filt('bandpass',2300,12), g=gain(0);
+    o.frequency.linearRampToValueAtTime(96,t+1.2); o2.frequency.linearRampToValueAtTime(145,t+1.2); l.connect(lg); lg.connect(o.frequency); o.connect(bp); o2.connect(bp2); bp.connect(g); bp2.connect(g); adsr(g,t,0.05,0.25,0.65,0.45); out(g,S,0.2);
+    for (var i=0;i<9;i++) Nz(t+rnd(0.1,1.2),0.006,rnd(0.01,0.03),'highpass',4200,1,S);
+    [1830,2950,4410].forEach(function(f,i){ T('sine',f,t+1.15,0.5-i*0.1,0.012/(1+i),S); }); },
+  ferryCreak:function(t){ var S=K.sfx; creak(t,70,105,0.9,0.05,520,S,5); creak(t+0.85,95,72,0.7,0.035,460,S,5);
+    T('sine',78,t+0.1,0.5,0.06,S,58); Nz(t+0.1,0.3,0.05,'lowpass',260,0.8,S);
+    for (var i=0;i<3;i++) Nz(t+0.4+i*0.35+Math.random()*0.1,0.25,0.03,'lowpass',700,1,S); },
+  scooter:function(t){ var S=K.sfx, p=K.pan(-0.3,S);
+    [0,0.34].forEach(function(o){ T('sine',70,t+o,0.12,0.06,S,45); Nz(t+o,0.06,0.04,'lowpass',500,1,S); });
+    var t0=t+0.6, e=t0+4.2, o=osc('sawtooth',48,t0,e), o2=osc('square',96,t0,e), g2=gain(0.35), bp=filt('bandpass',1300,1.6), lp=filt('lowpass',3500,0.7), g=gain(0);
+    [o,o2].forEach(function(x,i){ var k=i?2:1; x.frequency.setValueAtTime(48*k,t0); x.frequency.linearRampToValueAtTime(52*k,t0+0.5); x.frequency.exponentialRampToValueAtTime(115*k,t0+1.4); x.frequency.linearRampToValueAtTime(108*k,t0+2.4); x.frequency.linearRampToValueAtTime(92*k,e); });
+    lp.frequency.setValueAtTime(3500,t0); lp.frequency.exponentialRampToValueAtTime(800,e); if (p.pan){ p.pan.setValueAtTime(-0.3,t0+1); p.pan.linearRampToValueAtTime(0.85,e); }
+    g.gain.setValueAtTime(0.0001,t0); g.gain.linearRampToValueAtTime(0.03,t0+0.08); g.gain.setValueAtTime(0.03,t0+0.5); g.gain.linearRampToValueAtTime(0.045,t0+1.4); g.gain.exponentialRampToValueAtTime(0.0001,e);
+    o.connect(bp); chain(o2,g2,bp); chain(bp,lp,g,p); Sw(t0+0.3,3.6,0.012,'bandpass',2400,1,p,1200); },
+  taxi:function(t){ var S=K.sfx; Nz(t,0.05,0.05,'highpass',2500,1,S); T('sine',92,t+0.04,0.25,0.14,S,58); Nz(t+0.04,0.14,0.1,'lowpass',320,1,S); T('square',820,t+0.06,0.02,0.02,S);
+    starter(t+0.6,0.7,0.03,S,150,11); var p=K.pan(0,S); if (p.pan){ p.pan.setValueAtTime(0,t+2.4); p.pan.linearRampToValueAtTime(0.8,t+5); } diesel(t+1.25,3.8,{f0:26,f1:52,v:0.05,away:true},p); },
+  truckStart:function(t){ var S=K.sfx; starter(t,1.6,0.035,S,110,3.6); T('sine',40,t+0.9,0.2,0.05,S,30); Nz(t+0.9,0.15,0.05,'lowpass',300,1,S);
+    Nz(t+1.55,0.4,0.08,'lowpass',200,0.8,S); T('sine',45,t+1.55,0.3,0.08,S,32); diesel(t+1.55,4.6,{f0:19,f1:27,v:0.075,heavy:true},S); },
+  compressor:function(t){ compressorFx(t,4.2,1,K.sfx); },
+  wrench:function(t){ wrenchFx(t,1,K.sfx); },
+  egg:function(t){ var S=K.sfx; T('sine',2400,t,0.03,0.03,S); Nz(t,0.02,0.08,'bandpass',3200,2,S);
+    for (var i=0;i<6;i++) Nz(t+0.005+Math.random()*0.03,0.008,0.04,'highpass',3500,1,S);
+    Nz(t+0.02,0.12,0.07,'lowpass',900,1,S,300); Nz(t+0.03,0.18,0.03,'bandpass',500,2,S,220); },
+  lighter:function(t){ var S=K.sfx; [0,0.34].forEach(function(o){ Nz(t+o,0.07,0.06,'bandpass',4200,2.5,S); for (var i=0;i<5;i++) Nz(t+o+Math.random()*0.06,0.004,0.06,'highpass',5000,1,S); });
+    Nz(t+0.38,0.35,0.04,'lowpass',420,0.8,S,900,0.04); Sw(t+0.42,0.8,0.008,'bandpass',1600,0.9,S); },
+  cough:function(t){ coughFx(t,1,K.sfx); },
+  splash:function(t){ var S=K.sfx, far=filt('lowpass',5200,0.5), x=echo(S,0.16,0.28,1800); far.connect(x);
+    Nz(t,0.06,0.22,'highpass',700,0.7,far); Nz(t,0.09,0.2,'bandpass',1800,0.8,far,900);                                  // Aufschlag
+    T('sine',105,t+0.02,0.4,0.16,far,42); Nz(t+0.02,0.45,0.12,'lowpass',600,0.9,far,150);                                // Eintauchen
+    for (var i=0;i<26;i++) Nz(t+0.12+Math.pow(Math.random(),0.7)*1.1,0.03,rnd(0.01,0.04),'bandpass',rnd(1800,6000),1.5,far);   // Gischt
+    Sw(t+0.08,1.3,0.05,'bandpass',2600,0.8,far,1400);
+    for (var j=0;j<10;j++){ var fb=rnd(380,1100); T('sine',fb,t+0.5+Math.random()*1.2,0.05,rnd(0.006,0.016),far,fb*1.6); }     // Blasen
+    Sw(t+0.9,1.8,0.035,'lowpass',500,0.8,far,300); },
+  guitar:function(t){ [43,47,50,55,59,67].forEach(function(m,i){ gitNote(nf(m),t+i*0.024,0.05,2.6,K.sfx,strDet(nf(m)),0.2); }); },
+  hens:function(t){ var S=K.sfx; hen(t,1,K.pan(-0.35,S),false); hen(t+0.55,1.18,K.pan(0.35,S),false); hen(t+1.3,0.92,K.pan(-0.05,S),true); },
+  lantern:function(t){ var S=K.sfx; T('sine',2900,t,0.25,0.012,S); T('sine',4300,t+0.004,0.18,0.006,S); Nz(t,0.03,0.02,'highpass',4000,1,S);
+    Nz(t+0.45,0.09,0.06,'bandpass',3000,1.8,S); Nz(t+0.5,0.3,0.05,'bandpass',1200,0.8,S,600,0.02);
+    Nz(t+0.95,0.5,0.045,'lowpass',380,0.7,S,800,0.06); T('sine',2700,t+1.4,0.2,0.01,S); Nz(t+1.4,0.02,0.02,'highpass',3500,1,S); Sw(t+1.2,1.4,0.006,'bandpass',900,0.8,S); },
+  stoveFire:function(t){ var S=K.sfx; Sw(t,1.6,0.025,'lowpass',240,0.7,S,180);
+    for (var i=0;i<14;i++) Nz(t+Math.random()*1.4,0.004+Math.random()*0.01,rnd(0.02,0.09),'highpass',rnd(1500,4500),0.8,S);
+    Nz(t+0.6,0.05,0.05,'bandpass',900,2,S); },
+  radioPips:function(t){ var S=K.sfx, rf=filt('bandpass',1300,0.6); rf.connect(S); Sw(t,4,0.006,'bandpass',2400,0.8,S);
+    [[0.1,0.1],[1.1,0.1],[2.1,0.1],[3.1,0.55]].forEach(function(p){ var o=osc('sine',1000,t+p[0],t+p[0]+p[1]+0.05), g=gain(0); adsr(g,t+p[0],0.045,0.004,p[1],0.03); chain(o,g,rf); }); },
+  busBrake:function(t){ brakeFx(t,1,K.sfx,true); },
+  windGust:function(t){ var S=K.sfx; Sw(t,3.6,0.07,'bandpass',420,1.4,S,900); Sw(t+0.2,3.2,0.03,'bandpass',1500,4,S,2600);
+    for (var i=0;i<12;i++) Nz(t+0.6+Math.random()*2.2,0.03,rnd(0.006,0.02),'highpass',3000,1,S); },
+  tarp:function(t){ tarpFx(t,1,K.sfx); },
+  keyDrop:function(t){ var S=K.sfx; [[0,1],[0.1,0.45],[0.16,0.2]].forEach(function(b){ var ti=t+b[0];
+      [3150,4720,6180,2400].forEach(function(f,i){ T('sine',f*rnd(0.99,1.01),ti,0.12-i*0.015,0.022*b[1]/(1+i*0.5),S); }); Nz(ti,0.01,0.05*b[1],'highpass',3500,1,S); });
+    Nz(t+0.02,0.03,0.05,'bandpass',800,3,S); T('sine',720,t+0.02,0.04,0.02,S); },
+  smsK3:function(){ M.sfx('sms'); }
+};
+M.addSfx(SFX3);

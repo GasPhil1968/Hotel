@@ -18,7 +18,7 @@ var ZLATA=[281,112], SUSJ=[216,110];                           // Füße: Zlata 
 var STOOL={x:281,seat:100,by:112};
 var SACK={x:244,by:113};
 var EGG=[262,127];
-var MIN={x:404,base:74,h:66};
+var MIN={x:454,base:74,h:66};
 var FOUNT={x:44,by:108};
 
 // ---------------------------------------------------------------- kleine Helfer
@@ -32,6 +32,11 @@ function fbm(x,y,s,sd){ return vn(x,y,s,sd)*0.55+vn(x,y,s/2,sd+3)*0.3+vn(x,y,s/4
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function weaOf(GS){ var w=M.scn.weather(GS); if (w==='clear') return 'bura'; if (w==='fog') return 'grey'; return (w==='rain'||w==='bura'||w==='grey'||w==='frost')?w:'calm'; }
 function full(S,GS){ return (S && S.market!==undefined)?!!S.market:(GS.phase==='k3_d2'); }
+var HZL={}, HZN=null;
+function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8;
+  return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+// Dunst: zur Dunstfarbe hin mischen, Ergebnis nur aus Landschaftsfarben (sonst wird Kalk im Blau violett)
+function haze(b,amt,col){ for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*W+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x,y)<f-i) i++; if (i>0) b.d[k]=hazeLut(col,i)[c]; } }
 var REG=new Uint8Array(W*H), RG={sky:0,far:1,bldg:2,glass:3,ground:4,stall:5,prop:6};
 function RW(b){ var o={g:0};
   o.px=function(x,y,c){ x|=0; y|=0; if (x<0||y<0||x>=W||y>=H||c===undefined||c===T) return; var k=y*W+x; b.d[k]=c; REG[k]=o.g; };
@@ -77,7 +82,10 @@ function house(w,x0,x1,sd,we){ var x, y, wet=we==='rain', top=GY-36-Math.floor(h
   // Laden: offene Holzläden (oben als Vordach, unten als Ablage) oder geschlossen
   var s0=x0+4, s1=x1-5, open=hash(sd,4)<0.65;
   if (open){ for (y=gf+3;y<GY-2;y++) for (x=s0;x<s1;x++) w.px(x,y,(y<gf+5)?P.k1:P.k2); for (x=s0-1;x<s1+1;x++){ w.px(x,gf+2,P.w3); w.px(x,gf+1,P.w2); w.px(x,GY-2,P.w4); w.px(x,GY-1,P.w2); }
-    for (x=s0+2;x<s1-2;x+=3){ var it=hash(x,sd); if (it<0.4) w.ellipse(x+1,gf+9,1.6,1.6,P.t3); else if (it<0.7) w.rect(x,gf+6,2,8,[P.r2,P.c2,P.y2,P.g2][Math.floor(it*10)%4]); } }
+    var kind=Math.floor(hash(sd,8)*3);
+    if (kind===0){ for (x=s0+3;x<s1-3;x+=6){ var cy=gf+7+((x>>2)%2)*4; w.ellipse(x+1,cy,2.4,2.4,P.t3); w.px(x,cy-1,P.t5); w.px(x+2,cy+1,P.t1); w.vl(x+1,gf+3,cy-3,P.k1); } }
+    else if (kind===1){ for (x=s0+2;x<s1-2;x+=5){ var cc=[P.r2,P.r1,P.c2,P.y1,P.r3][Math.floor(hash(x,sd)*5)]; for (y=gf+4;y<GY-3;y++) w.px(x,y,((y+x)%4===0)?M.UP[cc]:cc); for (y=gf+4;y<GY-3;y++) w.px(x+1,y,cc); w.px(x+2,gf+4,P.k2); } }
+    else { for (x=s0+2;x<s1-2;x++){ var hh=6+Math.round(Math.sin(x*0.7)*2); for (y=gf+4;y<gf+4+hh;y++) w.px(x,y,[P.s5,P.b3,P.y4,P.r4][Math.floor((x-s0)/3)%4]); } } }
   else { for (y=gf+2;y<GY;y++) for (x=s0;x<s1;x++) w.px(x,y,((y-gf)%3===0)?P.w0:(((x-s0)%7===0)?P.w1:P.w2)); w.rect(rd((s0+s1)/2)-1,GY-8,3,3,P.m2); }
   // Dach aus Steinplatten, weit vorgezogen, Holzsparren darunter, Kamin
   slabRoof(w,x0-3,x1+2,top-1,9+Math.floor(hash(sd,2)*5),sd); for (x=x0-2;x<x1+2;x+=3){ w.px(x,top,P.w1); w.px(x,top+1,P.w0); }
@@ -85,9 +93,11 @@ function house(w,x0,x1,sd,we){ var x, y, wet=we==='rain', top=GY-36-Math.floor(h
 var CHIM=[];
 function paintHouses(w,we){ w.g=RG.bldg; var x=-6, i=0; while (x<W){ var bw=48+Math.floor(hash(i,9)*30); if (x+bw>MIN.x-24 && x<MIN.x+20){ x=MIN.x+20; continue; } house(w,x,x+bw,i*13+5,we); x+=bw+2; i++; }
   // die Moschee hinter der Lücke: Kuppel, Minarett
-  w.g=RG.far; var mx=MIN.x; w.ellipse(mx-12,GY-30,14,11,function(xx,yy){ return yy<GY-34?P.m3:((xx<mx-14)?P.m4:P.m2); }); w.rect(mx-28,GY-30,32,30,P.s4); for (var yy=GY-28;yy<GY;yy+=6) w.hl(mx-28,mx+3,yy,P.s3); w.vl(mx-12,GY-44,GY-41,P.y2);
+  w.g=RG.far; var mx=MIN.x; w.ellipse(mx-14,GY-30,13,10,function(xx,yy){ return yy<GY-35?P.m4:((xx<mx-18)?P.m3:P.m2); }); w.rect(mx-30,GY-30,32,8,P.s4); w.hl(mx-30,mx+1,GY-30,P.s5); w.vl(mx-14,GY-44,GY-40,P.y2); w.px(mx-14,GY-45,P.y3);
   M.scn.minaret(w,mx,MIN.base+20,MIN.h+20,{stone:R('s3 s4 s5 s6'),cap:R('m1 m2 m3 m4')});
-  w.g=RG.bldg; for (var y2=GY-22;y2<GY;y2++) for (var x2=mx-30;x2<mx+20;x2++) w.px(x2,y2,((x2+y2)%9===0)?P.s2:P.s3); for (var x3=mx-31;x3<mx+21;x3++){ w.px(x3,GY-23,P.s5); w.px(x3,GY-24,P.t2); } }
+  w.g=RG.bldg; for (var y2=GY-22;y2<GY;y2++) for (var x2=mx-30;x2<mx+20;x2++){ var rw=Math.floor((y2-GY+22)/4), fx=(x2+(rw%2)*5)%10; w.px(x2,y2,(fx===0||(y2-GY+22)%4===0)?P.s2:(hash(Math.floor(x2/10),rw)<0.4?P.s3:P.s4)); }
+  for (var x3=mx-31;x3<mx+21;x3++){ w.px(x3,GY-23,P.s5); w.px(x3,GY-24,P.s3); w.px(x3,GY-25,P.s2); }
+  w.rect(mx-20,GY-18,10,18,P.k2); w.hl(mx-21,mx-10,GY-19,P.s5); for (var yy3=GY-17;yy3<GY;yy3+=3) w.hl(mx-19,mx-11,yy3,P.w1); }
 
 // ---------------------------------------------------------------- Pflaster: Kaldrma aus runden Flusssteinen, in Perspektive
 function kaldrma(x,y,wet){ var h0=2.4, kk=0.085, hy=h0+kk*(y-GY), v=Math.log(hy/h0)/kk, row=Math.floor(v), fv=v-row, sc=hy/h0, u=(x-240)/(3.3*sc)+hash(row,3)*0.9+(row&1)*0.5, col=Math.floor(u), fu=u-col;
@@ -172,7 +182,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), k, nigh
   if (S.eggDropped){ w.g=RG.prop; var ex=EGG[0], ey=EGG[1]; w.ellipse(ex,ey,3.5,1.2,P.s6); w.px(ex,ey,P.y4); w.px(ex+1,ey,P.y3); w.px(ex-1,ey,P.y4); w.px(ex+4,ey-1,P.s5); w.px(ex+5,ey-1,P.s4); w.px(ex-4,ey+1,P.s5); w.px(ex-5,ey,P.t5); w.px(ex+3,ey+2,P.t5); }
   // Licht
   var fk=we==='bura'?0.1:(we==='rain'?0.5:(we==='grey'?0.4:0.25)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
-  M.fogBake(b,function(xx,yy){ return REG[yy*W+xx]===RG.far?(0.4*fk+0.15):0; },{col:fc});
+  haze(b,function(xx,yy){ return REG[yy*W+xx]===RG.far?(0.4*fk+0.15):0; },fc);
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(GY,H,0,-0.25),M.lf.pool(FRUIT.x0+30,FRUIT.by-6,46,10,-0.6),M.lf.pool(ZT.x0+20,ZT.by-4,40,9,FULL?-0.5:0),M.lf.pool(HONEY.x0+25,HONEY.by-4,36,8,-0.5)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;

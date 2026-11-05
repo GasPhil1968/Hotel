@@ -528,7 +528,9 @@ function dyn(fb,view,S,GS){ var t=view.t, cam=view.cam|0, x, y, k, i;
     for (j=0;j<=f.h;j++) for (ii=0;ii<f.w;ii++) fb.px(ox+ii,f.y+j,f.bg[j*f.w+ii]);
     for (j=0;j<f.h;j++) for (ii=0;ii<f.w;ii++){ var c=f.fg[j*f.w+ii]; if (c!==T) fb.px(ox+ii,f.y+j+1,c); } }
   // Kapitel 2, Ivan: ist die Zeile übersetzt, schimmern die Seiten des Buchs
-  if (S && S.who==='ivan' && S.lineDone){ for (i=0;i<7;i++){ var px=234+Math.round(hash(i,51)*14), py=101+Math.round(hash(i,52)*3), a=Math.sin(t*(2+hash(i,53)*2)+i*1.9); if (a>0.55) fb.px(px-cam,py,a>0.85?P.l1:P.x6); } } }
+  if (S && S.who==='ivan' && S.lineDone){ for (i=0;i<7;i++){ var px=234+Math.round(hash(i,51)*14), py=101+Math.round(hash(i,52)*3), a=Math.sin(t*(2+hash(i,53)*2)+i*1.9); if (a>0.55) fb.px(px-cam,py,a>0.85?P.l1:P.x6); } }
+  // Kapitel 3, Bato: ab und zu läuft ein Glanz am Seil hinauf ins Licht
+  if (S && S.who==='bato'){ var ph=(t*0.22)%1.6; if (ph<1){ var gx=Math.round(262-ph*(262-LX-16)), gy=Math.round(cabY(gx)); k=gy*W+gx; if (gx>=0 && gx<W && LI[k]<0.86){ fb.px(gx-cam,gy,LI[k]>0.5?P.l1:P.x6); fb.px(gx+1-cam,gy,P.x5); } } } }
 
 // ---------------------------------------------------------------- Lauffläche, Hotspots
 function surfOK(x,y){ x|=0; y|=0; if (x<3||x>W-4||y<2||y>H-3) return false; var k=y*W+x; return SID[k]>=0&&SID[k-3]>=0&&SID[k+3]>=0&&SID[k-2*W]>=0&&SID[k+2*W]>=0; }

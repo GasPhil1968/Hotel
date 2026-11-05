@@ -30,6 +30,11 @@ function vn(x,y,s,sd){ var gx=Math.floor(x/s), gy=Math.floor(y/s), fx=x/s-gx, fy
 function fbm(x,y,s,sd){ return vn(x,y,s,sd)*0.55+vn(x,y,s/2,sd+3)*0.3+vn(x,y,s/4,sd+7)*0.15; }
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function weaOf(GS){ var w=M.scn.weather(GS); if (w==='clear') return 'bura'; if (w==='fog') return 'grey'; return (w==='rain'||w==='bura'||w==='grey'||w==='frost')?w:'calm'; }
+var HZL={}, HZN=null;
+function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8;
+  return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+// Dunst: zur Dunstfarbe hin mischen, Ergebnis nur aus Landschaftsfarben (sonst wird Kalk im Blau violett)
+function haze(b,amt,col){ for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*W+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x,y)<f-i) i++; if (i>0) b.d[k]=hazeLut(col,i)[c]; } }
 var REG=new Uint8Array(W*H), RG={sky:0,far:1,bldg:2,glass:3,street:4,walk:5,tree:6,prop:7};
 function RW(b){ var o={g:0};
   o.px=function(x,y,c){ x|=0; y|=0; if (x<0||y<0||x>=W||y>=H||c===undefined||c===T) return; var k=y*W+x; b.d[k]=c; REG[k]=o.g; };
@@ -219,7 +224,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   paintWalk(w,we); paintBench(w,wet); paintSign(w,wet);
   // Dunst in die Ferne, Licht je Wetter
   var fk=we==='bura'?0.1:(we==='rain'?0.6:(we==='grey'?0.45:0.28)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
-  M.fogBake(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return 0.5*fk+0.2; if (g===RG.bldg) return Math.max(0,(70-yy)/70)*0.35*fk; return 0; },{col:fc});
+  haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return 0.5*fk+0.2; if (g===RG.bldg) return Math.max(0,(70-yy)/70)*0.35*fk; return 0; },fc);
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(ST.curb,H,0,-0.35),M.lf.pool(240,GY-6,120,8,-0.35)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
