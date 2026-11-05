@@ -397,6 +397,77 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
     ok(await F('k3.b.limbo') && await F('k3.b.done'), 'Mate ist hinüber, Davors Karte: Fall B abgeschlossen');
   });
 
+
+  // ================================================================== 16.–19. Prüfbericht K3, zweite Prüfung: Wissen, Wegweisung, Bato, Nachfragen, Chronologie
+  const mapLabel = async (id) => { await D.ev(() => M.openMap()); await D.page.waitForTimeout(400);
+    const r = await D.ev((x) => { const d = M.E.overlay && M.E.overlay.data; const n = d && d.lay && d.lay[x]; return n ? n.nm : null; }, id); await D.ev(() => M.closeMap()); await D.page.waitForTimeout(120); return r; };
+  await T(16, 'Prüfbericht K3 (2): Skela und die nächsten Orte nennt das Spiel nicht vorweg', async () => {
+    await load('Schluss: der Bereich liegt hinter dem Kartenrand');
+    const l1 = await mapLabel('skela'); ok(l1 === 'Hinter dem Kartenrand', 'Stadtplan nach der dritten Peilung, vor der alten Karte: „' + l1 + '“ statt „Skela“');
+    await clearLog(); await D.ev(() => M.k3Bed(M.API)); await calm(); ok(await said('Hinter dem Rand meines Plans. Mehr nicht.'), 'Bett nach der dritten Peilung: „Ich weiß ungefähr, wo …“');
+    // isolierter Teststand: Vlado gilt als bekannt (wie nach dem Taxifahrer), Skela ist noch nicht erschlossen
+    await load('Schluss: der Bereich liegt hinter dem Kartenrand', (g) => { g.flags['k3.v.known'] = true; });
+    await go('bulevar'); await exit('to_vulk'); await at('vulkanizer'); await act('talk', 'vlado');
+    ok(await dlgHas('Von Split hierher') && !(await dlgHas('Von Split nach Skela')), 'Vlado am Freitag vor dem Schluss: „Von Split hierher“, nicht „nach Skela“');
+    await bye('(Gehen.)');
+    await load('Zdravkos Karte von 1985'); const l2 = await mapLabel('skela'); ok(l2 === 'Skela', 'nach der alten Karte trägt der Plan den Namen: „' + l2 + '“');
+    await clearLog(); await D.ev(() => M.k3Bed(M.API)); await calm(); ok(await said('Ich habe einen Namen auf einer alten Karte'), 'Bett nach der alten Karte, vor dem Schluss: „Ich habe einen Namen …“');
+    await load('Peilung 2 vom Minarett'); await clearLog(); await comb('l3_m1', 'l3_m2', 'l3_flat');
+    ok(await said('Die dritte muss quer dazu kommen') && !(await said('Partisanenfriedhof')), 'nach „zu flach geschnitten“: das Problem, aber kein Partisanenfriedhof im Dialog');
+    await load('Sanja angerufen: Ljerka ruft zurück'); await go('starimost'); await clearLog(); await act('use', 'bridgehead'); await P.peil('bridgehead');
+    ok(await F('k3.peil.bridgehead') && await said('Ich brauche einen zweiten Standort') && !(await said('Koski-Moschee')), 'nach der ersten Peilung: „Ich brauche einen zweiten Standort“, ohne das Minarett zu nennen');
+    ok(await D.ev(() => !!M.GS.map.koski), 'der Plan zeigt die Koski-Moschee als neuen Ort');
+  });
+  await T(17, 'Prüfbericht K3 (2): Bato muss beide Belege hören; danach brennt seine Laterne, erst dann kommt die Nacht', async () => {
+    await load('Widerspruch: Bato war wach'); await clearLog();
+    await talk('bato', 'Nach etwas aus dem Notizbuch', 'NOTE:a3_awake', 'Nach etwas aus dem Notizbuch', 'NOTE:a3_girl'); await bye('(Gehen.)');
+    ok(await F('k3.bato.uneasy') && await said('Ich habe ihn aufgehoben.'), 'Bato gibt den Bleistift zu: „Ich habe ihn aufgehoben.“');
+    ok(await F('k3.bato.lantern') && (await RS('skela_l')).lantern === true, 'die Laterne im Schuppen brennt am hellen Tag');
+    const last = DUMP.filter(d => d.GS.phase === 'k3_d3').pop(); const g = JSON.parse(JSON.stringify(last.GS));
+    ['l3_survived', 'a3_awake', 'a3_girl'].forEach(n => { if (g.notes.indexOf(n) < 0) g.notes.push(n); }); ['k3.v.free', 'k3.b.done', 'k3.bato.uneasy'].forEach(k => { g.flags[k] = true; });
+    const r1 = await D.ev((x) => M.k3DayReady(x), g); delete g.flags['k3.bato.uneasy']; const r2 = await D.ev((x) => M.k3DayReady(x), g);
+    ok(r1 === true && r2 === false, 'Sonntag endet nur, wenn Bato beides gehört hat (mit: ' + r1 + ', ohne: ' + r2 + ')');
+  });
+  await T(18, 'Prüfbericht K3 (2): Vlados Botschaft ohne Rüge, die Führerhaus-Phrase über das Notizbuch, Dino und Malas Rat', async () => {
+    await load('Gespräch 2 „Wie Großmutter“'); await exit('door'); await at('vulkanizer'); await clearLog();
+    await talk('vlado', 'Ich soll Ihnen etwas sagen', '(Ihm sagen', 'NOTE:v3_cab'); await calm();
+    ok(await F('k3.v.free') && !(await said('nicht gefragt')), 'Botschaft ohne „(Mala fragen.)“: Vlado fährt, keine Rüge (Mala hat den Auftrag gegeben)');
+    await load('Gespräch 2 „Wie Großmutter“'); await exit('door'); await at('vulkanizer'); await clearLog();
+    await talk('vlado', 'Nach etwas aus dem Notizbuch', 'NOTE:v3_cab'); await calm();
+    ok(await F('k3.v.free'), 'nach Gespräch 2 wirkt der Satz aus dem Führerhaus auch über das Notizbuch als Botschaft');
+    await load('Gespräch 2 „Wie Großmutter“', (g) => { g.flags['k3.v.cabHeard'] = true; }); await exit('door'); await at('vulkanizer'); await clearLog();
+    await talk('vlado', 'Ich soll Ihnen etwas sagen', '(Ihm sagen', 'NOTE:v3_cab'); await calm();
+    ok(await said('Das haben Sie schon am Freitag gesagt.'), 'am Freitag schon gehört: Vlado erinnert sich daran (isolierter Teststand)');
+    await load('Gespräch 2 „Wie Großmutter“', (g) => { g.notes = g.notes.filter(n => n !== 'v3_cab' && n !== 'v3_hewas'); delete g.flags['k3.v.cab']; }); await exit('door'); await at('vulkanizer'); await clearLog();
+    await talk('vlado', 'Ich soll Ihnen etwas sagen', '(Mala fragen.)'); await calm();
+    ok(await said('Ich zeige es dir.') && !(await said('Du warst dabei, als ich es dir gezeigt habe')), 'ohne den Nachhall im Führerhaus: Mala will es ihm erst zeigen (isolierter Teststand)');
+    await bye('(Noch nicht.)', '(Gehen.)');
+    // Dinos Roller in der zweiten Nacht, vor Malas Nachhall an der Glocke (isolierter Teststand: Dino hat die Fahrt angeboten)
+    await load('Karte „Die Glocke · Samstag · Nacht“, Herberge', (g) => { g.flags['k3.dino.ride'] = true; });
+    await travel('skela'); await waitDlg('(Mit Dino auf dem Roller.)'); await choose('(Mit Dino auf dem Roller.)'); await waitDlg('(Von der Drei');
+    ok(await dlgHas('die nachts nicht fuhr') && !(await dlgHas('Fährmann erzählen, der nicht kam')), 'Dino, vor der Glocke: Marko erzählt nur, was Vlado gesagt hat');
+    await choose('(Nichts erzählen.)');
+  });
+  await T(19, 'Prüfbericht K3 (2): Vermisstenstelle – am selben Tag, eigener Satz ohne Rüge, Probe: Kind und Mutter', async () => {
+    const toOffice = async () => { if ((await st()).room === 'zlata_k') await exit('door'); await at('skela_l'); await exit('to_bridge'); await exit('exit_d'); await at('skela_d'); await go('vermisst'); };
+    await load('die zwei Mütter: Marko erzählt alles'); await toOffice(); await clearLog();
+    await talk('kolar', 'Ich möchte ein Grab anzeigen');
+    ok(await said('noch am selben Tag gestorben') && !(await said('am Tag danach')), 'Anzeige: „Sie ist noch am selben Tag gestorben.“');
+    await choose('Das Formular'); await clearLog(); await choose('eigenen Satz');
+    ok(await F('k3.e.form') && !(await said('nicht gefragt')), 'eigener Satz ohne „(Mala fragen.)“: keine Rüge');
+    await clearLog(); await choose('„Heute nicht.“'); await choose('„Heute nicht.“');
+    ok(await said('Ihre Probe allein hilft uns wenig') && await said('Meine Schwester. Ana.') && !(await said('Auch ohne Ihre')), 'zweimal abgelehnt: die Probe der Mutter allein reicht nicht, ein Kind wird gebraucht');
+    ok(!(await said('finden wir ihn')), 'kein Versprechen, ihn sicher zu finden');
+    if (!(await dlgHas('telefonieren'))) { await bye('(Warten.)'); await act('talk', 'kolar'); }
+    await clearLog(); await choose('Ich muss telefonieren'); await calm();
+    ok(await said('Probe von Ana'), 'Anruf bei der Mutter nach der Ablehnung: „eine Probe von Ana“');
+    await load('die zwei Mütter: Marko erzählt alles'); await toOffice();
+    await talk('kolar', 'Ich möchte ein Grab anzeigen'); await choose('Das Formular'); await choose('eigenen Satz'); await clearLog();
+    await choose('(Eine Probe abgeben.)');
+    ok(await said('Das ist dein Vater.') && !(await said('nicht gefragt')), 'Probe sofort, ohne zu fragen: „Das ist dein Vater.“, keine Rüge');
+    ok(await said('Ihre Probe zusammen mit Ihrer'), 'mit Markos Probe: die Probe der Mutter macht den Abgleich sicherer');
+  });
+
   const e = errs(); if (e.length) { line('\nJS-Fehler (' + e.length + '):'); e.slice(0, 8).forEach(x => line('  ' + x.split('\n')[0])); }
   line(`\n${pass} bestanden, ${fails} fehlgeschlagen`);
   process.exitCode = fails ? 1 : 0; await D.close2();

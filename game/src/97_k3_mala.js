@@ -185,7 +185,7 @@ M.k3LjerkaCall=async function(A){ if (F(A,'k3.d1.ljerka')) return; var G=A.G; A.
     if (G.malaOn){ await A.wait(400); await A.g('Bei Abreise nichts.'); }
     await A.wait(700); await A.phoneVoice('„Wenn Sie sie finden, Gospodine …“','ljerka'); await A.wait(1100); await A.phoneVoice('„Sagen Sie mir, wo sie ist. Das Bild hängt in der Loge. Ich nehme es nicht ab.“','ljerka');
     await A.m('Ich sage es Ihnen.'); A.sfx('hangup'); await A.wait(500);
-    await A.m('Vlado. Der Raucher. Mehl für die Dörfer an der Neretva.'); if (!N(A,'v3_where') && !N(A,'v3_mate')) await A.m('Wer hier fährt, kennt ihn vielleicht. Ein Taxifahrer zum Beispiel.');
+    await A.m('Vlado. Der Raucher. Mehl für die Dörfer an der Neretva.'); if (!N(A,'v3_where') && !N(A,'v3_mate')) await A.m('Ein Fahrer. Fahrer kennen Fahrer.');
   } finally { G.flags['mala.lock']=lk; } };
 // ---------------------------------------------------------------- Nadas Anruf am Samstagabend (96_k3_story.js: M.k3StartD2Night)
 M.k3NadaCall2=async function(A){ if (F(A,'k3.d2.nada')) return; var G=A.G, lk=G.flags['mala.lock']; G.flags['mala.lock']=true;

@@ -57,6 +57,7 @@ function blit(fb,b,x0,y0){ for (var y=0;y<b.h;y++) for (var x=0;x<b.w;x++){ var 
 var MX=20, MY=20;
 M.defineOverlay('peil',function(fb,ov,gt){ var d=ov.data, p=PE(), hov=M.uiHover?M.uiHover():null, hits=[];
   M.paper(14,4,292,192,{col:d.old?P.s4:P.s5}); M.text(fb,d.title||'Peilung',22,8,P.r2); M.text(fb,'Zurück',266,8,hov==='o:x'?P.r3:P.s2); hits.push({id:'x',r:[262,4,44,14]});
+  if (d.mode==='pick') M.text(fb,'Zwei Landmarken antippen.',140,8,P.s2);
   var b=mapBuf(d); blit(fb,b,MX,MY); fb.hl(MX-1,MX+280,MY-1,P.n1); fb.hl(MX-1,MX+280,MY+150,P.n1); fb.vl(MX-1,MY-1,MY+150,P.n1); fb.vl(MX+280,MY-1,MY+150,P.n1);
   // Standorte
   ORDER.forEach(function(st){ var s=p.stations[st]; if (!s) return; var on=(d.fans||[]).indexOf(st)>=0, cur=st===d.station, X=MX+Math.round(s[0]), Y=MY+Math.round(s[1]);
@@ -91,7 +92,7 @@ M.k3Peil=async function(A,st){ var G=A.G; if (!ST[st]) throw new Error('keine St
   if (!A.has('plan')){ await A.m('Ohne Plan kann ich nichts einzeichnen. Am Kiosk am Ostbusbahnhof gibt es einen.'); return false; }
   if (!(G.malaOn && G.pos.mala.room===G.pos.marko.room)){ await A.m('Ohne Mala sehe ich keine Leine. Nur Dächer.'); return false; }
   var w=M.k3PeilWords(st); await A.g(w);
-  var cw='Mala: „'+coreWords(st)+'“ Die zwei Landmarken antippen.';
+  var cw='Mala: „'+coreWords(st)+'“';   // die Anleitung steht oben in der Titelzeile (sonst vier Zeilen, und die letzte fällt weg)
   var res=await A.overlay('peil',{mode:'pick',title:ST[st].title,station:st,words:cw,msg:cw,sel:[],fans:measured(G),doneMsg:DONE[st]});
   if (!res){ await A.m('Gleich. Ich muss erst sehen, was sie meint.'); return false; }
   A.setFlag('k3.peil.'+st); A.note(ST[st].note); if (st==='bridgehead') A.unlock('koski');
@@ -102,7 +103,7 @@ M.k3Peil=async function(A,st){ var G=A.G; if (!ST[st]) throw new Error('keine St
 // ---------------------------------------------------------------- Zdravkos alte Karte von 1985 (S2 ruft das am Spot 'oldmap' auf)
 M.k3OldMap=async function(A){ var G=A.G, area=G.notes.indexOf('l3_area')>=0, fans=measured(G);
   await A.overlay('peil',{mode:'view',old:true,skela:true,labelSkela:area,title:'Zdravkos Karte, 1985',fans:area?fans:[],area:area?areaOf(fans):null,
-    msg:area?'Ich übertrage meine drei Fächer auf die alte Karte. In dem Stück Fluss, wo sie sich schneiden, steht ein einziges Brückensymbol, an einer Biegung. Daneben ein Name.':'Eine Straßenkarte der Region, vergilbt. Die Dörfer südlich der Stadt sind noch drauf, mit Brücken und Fähren. Ohne meine Linien weiß ich nicht, wo ich suchen soll.'});
+    msg:area?'Meine drei Fächer auf der alten Karte: Wo sie sich schneiden, steht ein einziges Brückensymbol, an einer Biegung. Daneben ein Name.':'Eine vergilbte Straßenkarte, die Dörfer im Süden mit Brücken und Fähren. Ohne meine Linien weiß ich nicht, wo ich suchen soll.'});
   if (G.notes.indexOf('l3_oldmap')<0) A.note('l3_oldmap');
   if (area && A.first('!k3.oldmap.name')) await A.m('Skela.'); return true; };
 // ---------------------------------------------------------------- Die Reihenfolge der Nacht (Overlay 'arrange'), aus dem Notizbuch angestoßen

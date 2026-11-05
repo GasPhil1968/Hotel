@@ -54,7 +54,7 @@ M.startChapter3=async function(A){ var E=M.E; E.busy=true;
       'Mala zieht die Knie auf den Sitz, als könnte das Wasser bis in den Bus kommen.'];
     if (c.hajra) lines.push('Ich breche Hajras Pita in zwei Hälften und lege eine auf den leeren Sitz neben mir. Die Frau gegenüber reicht mir wortlos eine Serviette.');
     lines.push('Mala, ganz leise: „Ich habe hier auf den Fluss gesehen. Vor einer Woche. Ich wusste nicht, warum.“');
-    await A.memory({title:'Im Bus',tint:'memory',draw:M.mem&&M.mem.k3_bus,lines:lines});
+    await A.memory({title:'Im Bus',tint:'memory',blank:true,draw:M.mem&&M.mem.k3_bus,lines:lines});
     await A.goto('ostbus',{x:st[0],y:st[1],f:st[2]||'R',noEnter:true}); A.malaJoin({fadeIn:false}); A.music('k3_mostar'); await A.wait(400);
     if (M.k3Arrive) await M.k3Arrive(A); else await A.m('Mostar. Regen. Und der Fluss ist so laut, dass man ihn bis hierher hört.');
   } finally { E.busy=false; } A.save(); };
@@ -85,7 +85,10 @@ Object.defineProperty(M,'MAPLOCS3',{configurable:true,get:function(){ return LOC
       M.MAPLOCS3.forEach(function(L){ var v=M.mapIconVis?M.mapIconVis(L.id,GS):!!GS.map[L.id]; if (v===null||v===undefined) return; b.rect(L.x-3,L.y-3,7,7,v?P.r2:P.e2); }); return b; }
     return paint0(S,GS); }; })();
 // Orte, die Marko kennt, bevor er hin darf
-M.MAP_KNOW.skela={ch:3, know:function(G){ return has(G,'l3_area'); }, why:'Irgendwo da unten, hinter dem Rand meines Plans. Ohne Namen finde ich dort nichts.'};
+// Der Name „Skela“ steht erst auf dem Plan, wenn Marko ihn auf der alten Karte gelesen hat (Prüfbericht K3: nichts vorwegnehmen)
+M.MAP_KNOW.skela={ch:3, know:function(G){ return has(G,'l3_area'); },
+  label:function(G){ return has(G,'l3_oldmap')?null:'Hinter dem Kartenrand'; },
+  why:function(G){ return has(G,'l3_oldmap')?'Auf meinem Plan steht es nicht. Nur auf der alten Karte, als Name an einer Biegung.':'Irgendwo da unten, hinter dem Rand meines Plans. Ohne Namen finde ich dort nichts.'; }};
 
 // ---------------------------------------------------------------- Reisen
 var WEST=['bulevar','partizan','westbus','zelenika'], NIGHT_OK=['herberge','starimost','ostbus'];
@@ -181,7 +184,7 @@ function dayReady(G){ var p=G.phase;
   if (p==='k3_d1') return has(G,'l3_skela')&&f(G,'k3.v.drawer');
   if (p==='k3_d2') return (f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived')&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'));
   if (p==='k3_d2_n') return f(G,'k3.bato.found')&&f(G,'k3.z.tomorrow')&&G.pos.marko.room==='skela_d';
-  if (p==='k3_d3') return has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.v.free')&&f(G,'k3.b.done');
+  if (p==='k3_d3') return has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.bato.uneasy')&&f(G,'k3.v.free')&&f(G,'k3.b.done');   // Prüfbericht K3: Bato muss beides gehört haben
   if (p==='k3_fin_n') return f(G,'k3.a.limbo');
   if (p==='k3_epi') return f(G,'k3.e.bridge');
   return false; }
@@ -196,12 +199,14 @@ M.k3DayCheck=async function(A){ var G=A.G, R=M.E.room; if (!CH3(G)||G.ended||!R|
   if (p==='k3_fin_n') return await M.k3StartEpilogue(A), true;
   if (p==='k3_epi') return await M.k3StartEpiDay(A), true;
   return false; };
+M.k3DayReady=dayReady;   // für Tests: sind die Pflichtschritte des Tages erledigt?
 // das Bett im Zimmer (S1 ruft es auf)
 M.k3Bed=async function(A){ var G=A.G, p=G.phase;
   if (p==='k3_pro_n'){ if (A.flag('k3.p.talk1')) return M.k3StartD1(A); return A.m('Noch nicht. Mala steht draußen auf der Terrasse, als wartete sie auf etwas.'); }
   if (p==='k3_d1_n'){ if (A.flag('k3.d1.father')) return M.k3StartD2(A); return A.m('Noch nicht. Mala sitzt auf der Terrasse und sieht mich an, als wollte sie etwas fragen.'); }
   if (p==='k3_pro') return A.m(dayReady(G)?'Es wird gleich dunkel. Erst will ich noch nach draußen.':A.cycle('k3bed0',['Es ist Mittag. Und ich bin wegen einer Brücke hier, nicht wegen eines Betts.','Später. Erst die Brücke.']));
-  if (p==='k3_d1') return A.m(!has(G,'l3_skela')?'Am hellen Tag? Die Leine zeigt irgendwohin, und ich weiß noch nicht, wohin.':'Vlado. Erst Vlado. Und die Schublade.');
+  if (p==='k3_d1'){ if (!has(G,'l3_skela')) return A.m(has(G,'l3_oldmap')&&has(G,'l3_area')?'Am hellen Tag? Ich habe einen Namen auf einer alten Karte. Mehr noch nicht.':(has(G,'l3_area')?'Am hellen Tag? Ich weiß ungefähr, wo. Hinter dem Rand meines Plans. Mehr nicht.':'Am hellen Tag? Die Leine zeigt irgendwohin, und ich weiß noch nicht, wohin.'));
+    return A.m('Vlado. Erst Vlado. Und die Schublade.'); }
   if (p==='k3_d2'){ var w=d2Missing(G); return A.m(w||'Noch nicht.'); }
   if (p==='k3_d2_n') return A.g('Nicht jetzt. Es zieht. Nach Skela.');
   if (p==='k3_d3') return A.m(A.cycle('k3bed3',['Heute nicht. Heute Nacht schon gar nicht.','Wenn ich mich jetzt hinlege, verschlafe ich den Frost.']));
@@ -262,22 +267,28 @@ M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,i
   if (G.flags['k3.d1.sanja'] && !G.flags['k3.d1.ljerka'] && G.flags['k3.moves']>=G.flags['k3.d1.sanjaAt']+2 && G.phase==='k3_d1' && !M.ROOMS[id].noSave) M.k3Queue('ljerka'); }; })(M.onRoomChange);
 
 // ---------------------------------------------------------------- Reaktionen auf Schlüsse und andere ausstehende Szenen (laufen, sobald nichts anderes läuft)
-var Q=[], idleRun=false, idleAt=0; M.K3REACT=M.K3REACT||{};
-M.k3Queue=function(k){ if (Q.indexOf(k)<0) Q.push(k); };
+// Reaktionen auf Schlüsse und Ereignisse laufen im Leerlauf nacheinander. Die Warteschlange steht auch im Spielstand (Schalter k3.q):
+// Eine Reaktion verlässt sie erst, wenn sie fertig ist. Wird sie durch Laden oder das Titelbild unterbrochen, läuft sie danach von vorn.
+var Q=[], idleRun=false, idleAt=0, runTok=0; M.K3REACT=M.K3REACT||{};
+function qSave(){ var G=M.GS; if (G && G.flags) G.flags['k3.q']=Q.slice(); }
+M.k3Queue=function(k){ if (Q.indexOf(k)<0) Q.push(k); qSave(); };
+// nach dem Laden, beim neuen Spiel und beim Titelbild: keine Sperre aus einem abgebrochenen Ablauf, die Warteschlange kommt aus dem Spielstand
+M.k3ResetRun=function(){ idleRun=false; runTok++; var G=M.GS; Q=(G && G.flags && Array.isArray(G.flags['k3.q']))?G.flags['k3.q'].slice():[]; };
+M.RESET_HOOKS=M.RESET_HOOKS||[]; M.RESET_HOOKS.push(M.k3ResetRun);
 var REACT={
   'ded:l3_notbridge':async function(A){ if (!A.G.malaOn) return; await A.wait(300); await A.g('Dann ist es eine andere.'); await A.m('Eine mit Beinen im Wasser.'); },
   'ded:l3_flat':async function(A){ await A.m('Mein Vater hat Brücken berechnet. Er hat mir gezeigt, wie man eine Linie zieht, die nicht wackelt.'); await A.wait(500);
-    await A.m('Je weiter die Standorte auseinander liegen, desto größer der Winkel, unter dem sich die Linien schneiden. Und desto kleiner der Bereich.'); await A.m('Ich brauche einen Standort weit seitlich. Am besten drüben. Und hoch.');
-    if (!A.flag('k3.mala.crossed') && A.G.malaOn){ await A.g('Drüben.'); await A.wait(500); await A.g('Über den Fluss.'); await A.wait(600); await A.g('Nein.'); A.setFlag('k3.mala.refused'); }
-    await A.m('Der Westhang. Der Partisanenfriedhof liegt oben über der Stadt. Von dort sieht man bis zum Meer, sagt der Plan. Fast.'); },
+    // Prüfbericht K3: das Problem bleibt, den Ort sucht der Spieler selbst (Stadtplan; die Hinweise nennen ihn)
+    await A.m('Zwei Linien von fast derselben Stelle. Sie schneiden sich so flach, dass ich nur weiß: irgendwo flussab.'); await A.m('Die dritte muss quer dazu kommen. Von weit weg. Und von oben, über die Dächer.');
+    if (!A.flag('k3.mala.crossed') && A.G.malaOn){ await A.g('Weit weg.'); await A.wait(500); await A.g('Aber nicht über den Fluss.'); A.setFlag('k3.mala.refused'); } },
   'ded:l3_area':async function(A){ await A.m('Hinter dem Rand meines Plans. Mein Plan hört da auf, wo die Stadt aufhört.'); await A.m('Ich brauche eine Karte, die weiter reicht. Eine alte, mit den Dörfern.'); },
   'ded:l3_skela':async function(A){ var G=A.G; if (!G.malaOn) return; await A.wait(400); await A.g('Eine Fähre.'); await A.wait(900);
     await A.g('In Split habe ich auf Boote gewartet. Jedes Mal, wenn eins getutet hat, wollte ich mit.'); await A.m('Am Terminal. Das hast du mir gesagt.'); await A.g('Ich wusste nicht, warum. Ich wollte nicht nach Ancona. Ich wollte nur auf ein Boot.'); await A.wait(600); await A.m('Morgen.'); await A.g('Ja. Nicht heute.'); },
-  'ded:l3_person':async function(A){ if (!A.G.malaOn) return; await A.g('Ein Mensch.'); await A.wait(500); await A.g('Ich hänge an einem Menschen. Das war bei dir auch so.'); await A.m('Und jetzt hängst du an jemandem, der heute in die Stadt gekommen ist.'); if (!A.G.flags['k3.p.tepaKnown']) await A.m('Oben an der Altstadt ist ein Markt. Die Tepa.'); },
+  'ded:l3_person':async function(A){ if (!A.G.malaOn) return; await A.g('Ein Mensch.'); await A.wait(500); await A.g('Ich hänge an einem Menschen. Das war bei dir auch so.'); await A.m('Und jetzt hängst du an jemandem, der heute in die Stadt gekommen ist.'); },
   'ded:l3_onetrail':async function(A){ await A.m('Alle, die sie zuletzt gesehen haben, kannten Mala. Und ich bin der Einzige, der weiß, wer Mala ist.'); if (A.G.malaOn){ await A.wait(400); await A.g('Du hast mich so genannt. Damals, im Bus. Weil ich größer war.'); } },
   'ded:l3_twosearches':async function(A){ await A.m('Wenn ich frage, frage ich nach Mala.'); },
   'ded:l3_survived':async function(A){ await A.m('Sie hat noch gelebt. Nach dem Fluss.'); await A.wait(500); await A.m('Ich suche nicht mehr einen Ort im Wasser. Ich suche den Menschen, der bei ihr war.'); if (A.G.malaOn){ await A.g('Zlata.'); await A.wait(500); await A.g('Deshalb hängt die Leine an ihr.'); } },
-  'ded:v3_who':async function(A){ await A.m('Mala hat gesagt: „Er ist gefahren.“ Das stimmt. Aber es ist nicht alles.'); await A.m('Ich muss mit ihr reden. Beim Lastwagen.'); },
+  'ded:v3_who':async function(A){ await A.m('Mala hat gesagt: „Er ist gefahren.“ Das stimmt. Aber es ist nicht alles.'); await A.m(A.room&&A.room.id==='vulkanizer'?'Ich muss mit ihr reden. Nicht hier, vor ihm.':'Ich muss mit ihr reden.'); },
   'ded:a3_awake':async function(A){ await A.m('Er war wach. Er hat am Fenster gestanden und mitgezählt.'); },
   'ded:a3_girl':async function(A){ await A.m('Kein Soldat. Ein Mädchen mit einem Bleistift.'); },
   'ded:b3_invite':async function(A){ await A.m('Das muss Davor hören. In seiner Sprache. Und Lena in ihrer.'); },
@@ -291,7 +302,9 @@ M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH3(G)) return; if 
   if (idleRun) return; var R=M.E.room; if (!R||R.noSave) return;
   if (G.flags['k3.mala.crossed'] && !G.map.westbus) storyOpen(G);
   if (!Q.length && !dayReady(G)) return;
-  idleRun=true; idleAt=Date.now(); run(A,async function(A){ while (Q.length){ var k=Q.shift(); await react(A,k); } if (dayReady(G)) await M.k3DayCheck(A); }).then(function(){ idleRun=false; },function(){ idleRun=false; }); };
+  idleRun=true; idleAt=Date.now(); var tok=runTok;
+  run(A,async function(A){ while (Q.length && tok===runTok){ var k=Q[0]; try{ await react(A,k); } catch(e){ console.error(e); } if (tok!==runTok) return; if (Q[0]===k) Q.shift(); qSave(); }
+    if (tok===runTok && dayReady(G)) await M.k3DayCheck(A); }).then(function(){ if (tok===runTok) idleRun=false; },function(){ if (tok===runTok) idleRun=false; }); };
 
 // ---------------------------------------------------------------- Ende des Kapitels
 M.CREDITS3=['MALA','Kapitel 3: Mostar','','','Marko Vuković','Mala','','Bato Brkić, der beim dritten Läuten wach war','Mate Zelenika, der auf den Bus aus München wartete','und ein Springer, der jeden Abend springt','',

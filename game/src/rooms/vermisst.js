@@ -17,7 +17,8 @@ M.K3ASK.sample=async function(A){ await A.m('Soll ich?'); await A.wait(900); awa
 async function report(A){ var K=A.npc('kolar'), N=A.npc('nada'); if (A.flag('k3.e.report')) return;
   await A.m('In Skela, am linken Ufer, im Garten von Zlata Brkić. Unter einem Quittenbaum. Ein Brett: MALA, fünfzehnter Januar vierundneunzig.');
   await K.anim('write'); A.sfx('typing'); await A.wait(700); await K.say('Skela. Linkes Ufer. Privatgrundstück. Ein Brett.'); await A.wait(500); await K.say('Wer hat das Grab angelegt?');
-  await A.m('Bato Brkić, der Fährmann. Er ist tot. Seine Frau hat sie gefunden, am Morgen, im Schilf. Lebend. Sie ist am Tag danach gestorben. In ihrer Küche.');
+  // Prüfbericht K3: gestorben ist sie am selben Tag (Fund am Morgen, Tod nach dem Vormittag, Grab 15.1.); „im Schilf“ nur, wenn Zlata es gesagt hat
+  await A.m('Bato Brkić, der Fährmann. Er ist tot. Seine Frau hat sie gefunden, am Morgen'+((A.hasNote('a3_morning')||A.hasNote('a3_alive'))?', im Schilf':'')+'. Lebend. Sie ist noch am selben Tag gestorben. In ihrer Küche.');
   await A.wait(900); await K.say('Ein Gartengrab.'); await A.wait(500); await K.say('Das ist keine Schande, Herr Vuković. Das war Krieg. Viele haben ihre Toten im Hof begraben, weil der Weg zum Friedhof zu weit war. Oder zu gefährlich.');
   await A.wait(600); await K.say('Wir beantragen die Exhumierung. Staatsanwaltschaft, Gerichtsmedizin, dann der Abgleich. Das dauert. Wochen.');
   await A.wait(800); await N.say('Wochen.'); await A.wait(900); await N.say('Ich habe siebzehn Jahre gewartet.'); await K.say('Dann zählen Sie die Wochen nicht. Das machen wir.'); await A.wait(400); await K.say('Wir sind keine Richter. Wir zählen.');
@@ -28,15 +29,15 @@ async function report(A){ var K=A.npc('kolar'), N=A.npc('nada'); if (A.flag('k3.
 // ---------------------------------------------------------------- Das Formular: Feld „Beziehung zur vermissten Person“
 async function form(A){ var K=A.npc('kolar'), N=A.npc('nada'), G=A.G; if (A.flag('k3.e.form')) return;
   await K.say('Sie haben sie gefunden. Dann füllen Sie das aus. Was Sie wissen.'); A.give('formular'); A.sfx('paper');
-  await A.doc({style:'register',title:'PRIJAVA NESTALE OSOBE · Meldung einer vermissten Person',lines:['Ime i prezime: Lana Delić','Datum rođenja: 3. 3. 1976., Sarajevo','Posljednji put viđena: 15. 1. 1994., Skela (Z. Brkić)','','Odnos prema nestaloj osobi:','  ☐ srodnik   ☐ susjed/a   ☐ prijatelj/ica   ☐ ostalo','','(Beziehung zur vermissten Person: Verwandt · Nachbar/in · Freund/in · Sonstiges)']});
+  await A.doc({style:'register',title:'PRIJAVA NESTALE OSOBE',lines:['(Meldung einer vermissten Person)','','Ime i prezime: Lana Delić','Datum rođenja: 3. 3. 1976., Sarajevo','Posljednji put viđena: 15. 1. 1994., Skela (Z. Brkić)','','Odnos prema nestaloj osobi:','  [ ] srodnik   [ ] susjed/a   [ ] prijatelj/ica   [ ] ostalo','','(Beziehung zur vermissten Person: Verwandt · Nachbar/in · Freund/in · Sonstiges)']});
   await A.m('Name, Geburtsdatum, zuletzt gesehen. Das kann ich. Dann das Feld „Beziehung“. Vier Kästchen.');
   var done=false;
   await A.menuLoop(function(){ return [ askM(A,'form'),
     {t:'(Ankreuzen: „Nachbarin“.)',silent:true,go:async function(A){ await A.narrate('Ich halte den Kugelschreiber über das Kästchen „susjeda“.'); await K.say('Nachbarin. Gut. Das stimmt?'); await A.m('Es stimmt.'); await A.wait(1000); await A.m('Es ist zu klein.'); A.setFlag('k3.e.formSmall'); }},
     {t:'(Ankreuzen: „Verwandte“.)',once:'vmRel',silent:true,go:async function(A){ await A.m('Verwandt waren wir nicht. Nicht auf Papier.'); }},
-    {t:'(Ankreuzen: „Freundin“.)',once:'vmFr',silent:true,go:async function(A){ await A.m('Freundin. Sie war fünf Jahre älter. Sie hat mir die Jacke zugemacht, bis oben. Das ist mehr als eine Freundin. Oder etwas anderes.'); }},
+    {t:'(Ankreuzen: „Freundin“.)',once:'vmFr',silent:true,go:async function(A){ await A.m('Freundin. Sie war zwei Jahre älter. Sie hat mir die Jacke zugemacht, bis oben. Das ist mehr als eine Freundin. Oder etwas anderes.'); }},
     {t:'(Ankreuzen: „Sonstiges“.)',once:'vmEtc',silent:true,go:async function(A){ await K.say('Sonstiges kreuzen alle an, die es nicht sagen wollen.'); await A.wait(500); await A.m('Ich will es sagen.'); }},
-    {t:'(Einen eigenen Satz schreiben.)',silent:true,go:async function(A){ if (!M.k3Asked(A,'form')) await M.k3Skipped(A,'form'); await ownLine(A,K,N); done=true; return 'bye'; }}
+    {t:'(Einen eigenen Satz schreiben.)',silent:true,go:async function(A){ await ownLine(A,K,N); done=true; return 'bye'; }}   // Prüfbericht K3: keine Rüge, er schreibt, was sie war
   ].filter(Boolean); });
   if (!done){ await K.say('Lassen Sie sich Zeit. Das Feld läuft nicht weg.'); } }
 async function ownLine(A,K,N){ var G=A.G;
@@ -60,7 +61,7 @@ async function kolarAsks(A,K){ if (A.hasNote('e3_kolar')) return;
 async function giveSample(A,K){ var G=A.G;
   await K.say('Gut.'); await K.anim('write'); await A.narrate('Ein Stich in die Fingerkuppe. Ein Tropfen auf eine Karte mit vier Kreisen, oben mein Name, darunter seiner.'); A.sfx('click');
   await A.wait(900); await A.m('Achtzehn Jahre. Und es dauert eine Sekunde.'); A.setFlag('k3.e.sample'); A.setFlag('k3.e.sampleDone');
-  if (!A.hasNote('e3_mothersample')){ await A.wait(800); await K.say('Lebt Ihre Mutter?'); await A.m('Ja. In München.'); await K.say('Mit ihrer Probe geht es schneller. Wenn er irgendwo liegt, finden wir ihn.'); A.note('e3_mothersample'); }
+  if (!A.hasNote('e3_mothersample')){ await A.wait(800); await K.say('Lebt Ihre Mutter?'); await A.m('Ja. In München.'); await K.say('Ihre Probe zusammen mit Ihrer, dann wird der Abgleich sicherer.'); await A.wait(500); await K.say('Wir suchen. Wenn er gefunden wurde, können wir ihn zuordnen.'); A.note('e3_mothersample'); }
   if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Du hast ihn gesucht. Gerade eben. Das war die Sekunde.'); } }
 async function sample(A,K){ var G=A.G; if (F(G,'k3.e.sampleDone')) return;
   var c=null;
@@ -68,13 +69,15 @@ async function sample(A,K){ var G=A.G; if (F(G,'k3.e.sampleDone')) return;
     {t:'(Eine Probe abgeben.)',silent:true,go:async function(A){ c='yes'; return 'bye'; }},
     {t:'„Heute nicht.“',go:async function(A){ c='no'; return 'bye'; }}
   ].filter(Boolean); });
-  if (c==='yes'){ if (!M.k3Asked(A,'sample') && !A.flag('k3.e.sampleNo')) await M.k3Skipped(A,'sample'); await giveSample(A,K); return; }
+  if (c==='yes'){ if (!M.k3Asked(A,'sample') && G.malaOn && A.malaHere()){ await A.m('Ich mache das.'); await A.wait(700); await A.g('Gut.'); await A.wait(600); await A.m('Mehr sagst du nicht?'); await A.wait(900); await A.g('Das ist dein Vater.'); }   // Prüfbericht K3: seine Entscheidung, keine Rüge
+    await giveSample(A,K); return; }
   if (c==='no'){ if (!F(G,'k3.e.sampleNo')){ A.setFlag('k3.e.sampleNo');
       if (G.malaOn){ await A.wait(1100); await A.g('Du suchst mich, damit du ihn nicht suchen musst.'); await A.wait(900); }
       await K.say('Ich frage noch einmal, Herr Vuković. Ich frage immer zweimal. Beim ersten Mal sagen fast alle nein.'); await A.wait(500); await K.say('Wollen Sie eine Probe abgeben?');
       return sample(A,K); }
     await K.say('Gut. Ich frage nicht ein drittes Mal. Das mache ich nie. Die Karte liegt hier, bis Sie gehen.'); A.setFlag('k3.e.sampleDone');
-    await A.wait(800); await K.say('Aber lebt Ihre Mutter?'); await A.m('Ja. In München.'); await K.say('Mit ihrer Probe geht es schneller. Auch ohne Ihre. Wenn er irgendwo liegt, finden wir ihn.'); A.note('e3_mothersample');
+    await A.wait(800); await K.say('Aber lebt Ihre Mutter?'); await A.m('Ja. In München.'); await K.say('Ihre Probe allein hilft uns wenig. Sie ist mit ihm nicht verwandt. Dazu braucht es eines seiner Kinder.'); await A.wait(600); await A.m('Meine Schwester. Ana. Auch in München.');
+    await A.wait(500); await K.say('Dann fragen Sie die beiden. Ihre Mutter kann uns auch so helfen. Mit dem, was sie weiß: wann, wo, was er anhatte.'); await A.wait(500); await K.say('Wir suchen. Wenn er gefunden wurde, können wir ihn zuordnen.'); A.note('e3_mothersample'); A.setFlag('k3.e.sampleAna');
     return; }
   await K.say('Überlegen Sie. Ich bin hier.'); }
 // ---------------------------------------------------------------- Der letzte Pflichtschritt: der Anruf bei der Mutter (Konzept 4.6, Epilog 6)
@@ -84,7 +87,7 @@ M.k3MotherCall=async function(A){ var G=A.G; if (F(G,'k3.e.mother')) return A.m(
   await A.phoneVoice('„Marko?“','jasna'); await A.wait(900); await A.phoneVoice('„… Ist etwas passiert?“','jasna');
   await A.wait(500); await A.m('Mama. Ich komme zu Weihnachten.');
   await A.wait(2000); await A.narrate('Stille.'); await A.wait(600);
-  await A.m('Und sie brauchen eine Probe von dir. Für Tata.');
+  await A.m(F(G,'k3.e.sampleAna')&&!F(G,'k3.e.sample')?'Und sie brauchen eine Probe von Ana. Und alles, was du weißt. Für Tata.':'Und sie brauchen eine Probe von dir. Für Tata.');
   await A.wait(1400); await A.phoneVoice('„… Deshalb rufst du an.“','jasna');
   await A.wait(500); await A.m('Nicht nur.');
   await A.wait(1000); await A.phoneVoice('„Achtzehn Jahre reden wir nicht über ihn. Und jetzt am Telefon.“','jasna');
@@ -92,7 +95,7 @@ M.k3MotherCall=async function(A){ var G=A.G; if (F(G,'k3.e.mother')) return A.m(
   A.sfx('hangup'); A.setFlag('k3.e.mother'); await A.wait(900);
   if (A.room && A.room.id==='vermisst'){ var N=A.npc('nada'); await N.say('Deine Mutter?'); await A.m('Ich fahre zu Weihnachten nach München.'); await A.wait(600); await N.say('Gut.'); await A.wait(500); await N.say('Mütter warten nicht gern, Mali. Wir können es nur.');
     await A.wait(700); await A.npc('kolar').say('Wir rufen Sie an. Es dauert. Aber wir rufen an.'); }
-  if (G.malaOn && A.malaHere()){ await A.wait(800); await A.g('München.'); await A.wait(600); await A.g('Du hast gefragt, ob ich mitkomme. Am Grab. Ich komme mit.'); } };
+  if (G.malaOn && A.malaHere()){ await A.wait(800); await A.g('München.'); await A.wait(600); await A.g('Ich habe dich am Grab gefragt, ob du das willst. Ich komme mit.'); } };
 // ---------------------------------------------------------------- Frau Kolar
 async function talkKolar(A){ var K=A.npc('kolar'), G=A.G;
   if (F(G,'k3.e.mother')) return K.say(A.cycle('kvBye',['Wir rufen an. Versprochen ist das falsche Wort. Wir rufen an.','Gute Reise, Herr Vuković. Und grüßen Sie Ihre Mutter. Sie kennt mich nicht. Grüßen Sie sie trotzdem.']));

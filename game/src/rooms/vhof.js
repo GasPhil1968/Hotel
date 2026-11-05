@@ -60,7 +60,9 @@ M.k3Talk2=async function(A){ var G=A.G;
   } finally { G.flags['mala.lock']=false; A.music('k3_istraga'); } };
 // Malas Antwort auf „(Mala fragen.)“ vor der Botschaft: Sie nennt den Satz nicht
 M.K3ASK=M.K3ASK||{};
-M.K3ASK.vlado_msg=async function(A){ await A.m('Was soll ich ihm sagen?'); await A.wait(700); await A.g('Du weißt es. Du warst dabei, als ich es dir gezeigt habe.'); };
+M.K3ASK.vlado_msg=async function(A){ await A.m('Was soll ich ihm sagen?'); await A.wait(700);
+  if (A.hasNote('v3_cab')) await A.g('Du weißt es. Du warst dabei, als ich es dir gezeigt habe.');
+  else { await A.g('Im Führerhaus. Da ist etwas, das nur wir zwei hatten.'); await A.wait(600); await A.g('Komm mit. Ich zeige es dir.'); } };   // ohne den Nachhall im Führerhaus hat er es noch nicht gesehen
 // ---------------------------------------------------------------- Abfahrt in der Finalnacht (das Gerüst setzt danach k3.fin.drive und fährt nach Skela)
 function roadPic(b){ var w=b.w, h=b.h, x, y, HZ=34, cx=w>>1; b.rect(0,0,w,h,P.k0);
   for (y=HZ;y<h-14;y++){ var t=(y-HZ)/(h-14-HZ), half=4+t*118;

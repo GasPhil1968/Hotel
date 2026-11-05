@@ -205,6 +205,9 @@ var faders=[];
 function fadeTo(v,ms){ var from=E.fade, t0=gt; return new Promise(function(res){ faders.push({f:function(){ var k=Math.min(1,(gt-t0)/(ms||500)); E.fade=from+(v-from)*k; if (k>=1){ E.fade=v; return true; } return false; },res:res}); }); }
 // Auswahl: Strings oder {t,id,silent}; liefert die id
 function choose(opts,o){ o=o||{}; opts=opts.map(function(x,i){ return typeof x==='string'?{t:x,id:i}:Object.assign({id:i},x); });
+  // Prüfbericht K3: Eine Auswahl liegt nie unter dem Stadtplan. Fragt eine Reiseprüfung nach (z. B. „Allein gehen / Bei ihr bleiben“),
+  // schließt sich der Plan; die Auswahl bekommt die Eingaben. (Der Plan fängt sonst jeden Klick ab, solange er „unterwegs“ ist.)
+  if (E.overlay && E.overlay.kind==='map'){ if (E.overlay.data) E.overlay.data.acting=false; closeOverlay(null); E.busy=true; }   // die Szene läuft weiter gesperrt; M.mapGo gibt frei
   if (o.conv!==false) convStart(null);
   var to0=trTo(GS.active);   // Sprachfassung: an wen die Antwort geht, steht fest, wenn die Auswahl aufgeht – nicht erst nach langer Bedenkzeit
   return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free,to:to0}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active,{to:to0}); return op.id; }); }
@@ -523,16 +526,18 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
 function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; return loadData(JSON.parse(raw)); }catch(e){ console.error(e); return false; } }
 // mitgelieferter Spielstand: in den gewählten Platz laden und dort gleich speichern
 E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return false; if (n) E.setSlot(n); var ok=loadData({GS:JSON.parse(JSON.stringify(p.GS))}); if (ok) saveGame(); return ok; };
+// Kapitelmodule hängen hier ein, was beim Laden, beim neuen Spiel und beim Titelbild zurückgesetzt werden muss (z. B. Kapitel 3: Warteschlange und Leerlaufsperre)
+function gameReset(){ (M.RESET_HOOKS||[]).forEach(function(f){ try{ f(); }catch(e){ console.error(e); } }); }
 function loadData(d){ try{ var base=validate(d); if (!base) return false;
     M.migrateAll(base);   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js, dann die Nachzüge aus M.MIGRATE)
     setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
-    resetTransient();
+    resetTransient(); gameReset();
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
-E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
+E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); gameReset(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
   if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
-E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
+E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); gameReset(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;

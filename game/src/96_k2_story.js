@@ -41,7 +41,7 @@ M.startChapter2=async function(A){ var E=M.E; E.busy=true;
     ['dzezva','mobitel','olovka'].forEach(function(i){ if (!A.has(i)) A.give(i); }); A.unlock('stanica');
     E.screen='card'; await A.card({kicker:'Kapitel 2',title:'Sarajevo',sub:'Prolog – Die Linie Drei',time:'Samstag, 19. November 2011 · Nachmittag',ms:5200});
     A.music('k2_bus');
-    await A.memory({title:'Im Bus',tint:'memory',draw:M.mem&&M.mem.k2_bus,lines:['Bei Mostar hält der Bus zwanzig Minuten. Mala steigt nicht aus. Sie sieht auf den Fluss hinunter, bis wir weiterfahren.',
+    await A.memory({title:'Im Bus',tint:'memory',blank:true,draw:M.mem&&M.mem.k2_bus,lines:['Bei Mostar hält der Bus zwanzig Minuten. Mala steigt nicht aus. Sie sieht auf den Fluss hinunter, bis wir weiterfahren.',
       'Hinter Konjic kommt der Nebel. Die Berge rücken zusammen, als wollten sie die Straße festhalten.','Am Stadtrand steht ein Hochhaus neben dem anderen. Mala hat die Hand an der Scheibe.','Als der Bus in den Bahnhof einfährt, ist der Platz neben mir leer.']});
     await A.goto('stanica',{x:60,y:124,f:'R',noEnter:true}); A.music('k2_sarajevo'); await A.wait(500);
     await A.m('Mala?'); await A.wait(900); await A.m('…'); await A.wait(500);

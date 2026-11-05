@@ -22,7 +22,7 @@ function zlataOut(G){ if (n2(G)) return F(G,'k3.n2.zlataOut') && !F(G,'k3.z.tomo
 function batoHere(G){ if (n2(G)||d3(G)) return true; if (fin(G)) return !F(G,'k3.a.limbo') && (G.flags['k3.fin.ferry']==='left' || !G.flags['k3.fin.ferry']); return false; }
 function companions(G){ return fin(G) && F(G,'k3.fin.boarded') && (F(G,'k3.fin.crossed') || G.pos.marko.room==='skela_l'); }
 function sync(S,G){ S.lit=d3(G)?(G.flags['k3.lit']||null):null;
-  S.lantern=n2(G)||(fin(G) && G.flags['k3.fin.ferry']==='left' && !F(G,'k3.a.limbo'));
+  S.lantern=n2(G)||(d3(G) && F(G,'k3.bato.lantern'))||(fin(G) && G.flags['k3.fin.ferry']==='left' && !F(G,'k3.a.limbo'));
   S.zlataLamp=(n2(G) && zlataOut(G)) || (fin(G) && F(G,'k3.fin.crossed'));
   var f=G.flags['k3.fin.ferry']; S.ferry=fin(G)?(F(G,'k3.a.limbo')?'gone':(f==='left'?'here':null)):(f?'gone':null); return S; }
 K3S.syncL=sync;
@@ -60,6 +60,10 @@ async function batoPart(A,which){ var B=A.npc('bato'), G=A.G; if (F(G,'k3.n3.bat
   if (F(G,'k3.n3.bato.awake') && F(G,'k3.n3.bato.girl') && !F(G,'k3.bato.uneasy')){ await A.wait(900); A.setFlag('k3.bato.uneasy'); B.agitate(4400); A.shake(160);
     var a=B.actor; if (a) B.place(Math.round(a.x)+1,Math.round(a.y),a.f);
     await B.say('Nein.'); await A.wait(700); await B.say('Ne …'); await A.wait(1000); await B.say('Es war ein Soldat. Ein Soldat läutet so.');
+    // Prüfbericht K3: die beiden Belege verändern ihn – ein Riss im Leugnen und eine sichtbare Geste, die das Finale vorbereitet
+    await A.wait(900); await A.m('Ihren Bleistift haben Sie aufgehoben. Am Morgen, an der Glocke.'); await A.wait(1000); await B.say('…'); await A.wait(900); await B.say('Ich habe ihn aufgehoben.');
+    await A.wait(700); await A.m('Und Zlata gebracht.'); await A.wait(1200); await B.say('Ja.');
+    await A.wait(900); A.sfx('lighter'); A.setFlag('k3.bato.lantern'); resync(A); await A.narrate('Er nimmt die Laterne vom Haken und zündet sie an. Mitten am Tag. Dann hängt er sie zurück, das Glas zum Wasser hin.');
     await A.wait(900); await A.m('Er flackert wie eine Kerze im Durchzug. Aber er hält fest. Noch.'); } }
 async function batoSlip(A){ var B=A.npc('bato'), G=A.G; if (N(G,'a3_thrice')) return B.say('Ich habe gesagt, was ich gesagt habe. Dreimal. Dann war Ruhe.');
   await A.m('In Ihrer Kammer war Licht. In der Nacht. Zwischen dem ersten und dem dritten Läuten.'); await A.wait(800);
@@ -212,7 +216,9 @@ async function finZlata(A){ var G=A.G; if (!A.room || A.room.id!=='skela_l') awa
       await A.narrate('Die Haustür geht auf. Zlata, den Mantel über dem Nachthemd, die Petroleumlampe in der Hand. Sie geht zum Schuppen, schnell, wie eine Junge.');
       var sh=sl('shed',[330,120,'B']); await Z.walk(sh[0]-26,sh[1]+3); await Z.face('R');
       await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); A.setFlag('k3.fin.zvono');
-      await A.wait(1100); await Z.say('Čula sam zvono. Noću. Prvi put od tada.'); await A.m('„Ich habe die Glocke gehört. In der Nacht. Zum ersten Mal seitdem.“');
+      // Prüfbericht K3: hat Marko schon am Samstag nachts geläutet, hat Zlata das gehört – dann zählt, dass es diesmal dreimal war, wie damals
+      await A.wait(1100); if (G.flags['k3.n2.rings']){ await Z.say('Čula sam zvono. Tri puta. Kao tada.'); await A.m('„Ich habe die Glocke gehört. Dreimal. Wie damals.“'); }
+      else { await Z.say('Čula sam zvono. Noću. Prvi put od tada.'); await A.m('„Ich habe die Glocke gehört. In der Nacht. Zum ersten Mal seitdem.“'); }
       await A.wait(1500); await A.narrate('Sie hebt die Lampe. Das Licht fällt auf Vlado. Er nimmt die Mütze ab.');
       await A.wait(1100); await Z.say('Vi ste je doveli.'); await A.m('„Sie haben sie gebracht.“'); await A.wait(1500);
       await V.say('Ja sam je ostavio.'); await A.m('„Ich habe sie stehen lassen.“'); await A.wait(1900); await A.narrate('Zlata sieht ihn lange an. Sie sagt nichts dazu. Sie stellt die Lampe auf den Holzstoß, damit sie beide Hände frei hat.'); }
@@ -368,7 +374,7 @@ var HS=[
      if (epi(G)){ if (F(G,'k3.e.inKitchen') && !F(G,'k3.e.mothers')) return true; await A.m(F(G,'k3.e.mothers')?'Zlata hat die Tür angelehnt. Drinnen tickt der Herd. Ich lasse sie.':'Erst zum Baum.'); return false; }
      return true; },
    g:{look:'Durch diese Tür haben sie mich getragen.',sense:'Viele Hände an der Klinke. Zwei Paar, immer dieselben.',listen:'Der Kessel pfeift. Dann nimmt ihn jemand vom Feuer.'}},
- {id:'shed',name:'Batos Schuppen',look:function(A){ var G=A.G; if (A.isFound('bato') && batoHere(G)) return A.m(night(G)?'Der offene Schuppen am Steg. Darin der alte Mann in Wathose, die Laterne in der Hand. Von nahem sieht man durch ihn hindurch das Ruder an der Wand.':'Der Schuppen bei Tag. Ruder, ein Netz, eine Wathose am Haken. Und er, mit der Laterne, am hellen Tag.');
+ {id:'shed',name:'Batos Schuppen',look:function(A){ var G=A.G; if (A.isFound('bato') && batoHere(G)) return A.m(night(G)?'Der offene Schuppen am Steg. Darin der alte Mann in Wathose, die Laterne in der Hand. Von nahem sieht man durch ihn hindurch das Ruder an der Wand.':(F(G,'k3.bato.lantern')?'Der Schuppen bei Tag. Die Laterne brennt, mitten am Tag, das Glas zum Wasser hin. Er sitzt daneben und sieht zur Glocke.':'Der Schuppen bei Tag. Ruder, ein Netz, eine Wathose am Haken. Und er, mit der Laterne, am hellen Tag.'));
      return A.m(F(G,'k3.a.limbo')?'Der Schuppen. Die Laterne hängt am Haken, kalt. Die Wathose daneben.':'Ein offener Holzschuppen am Steg. Ruder, ein Netz, eine Wathose an einem Haken, eine Laterne.'); },
    g:{look:function(A){ return A.g(F(A.G,'k3.a.limbo')?'Leer. Endlich leer.':'Sein Schuppen. Er hat hier gesessen, siebzehn Jahre Januar.'); },sense:'Teer, Petroleum, nasse Wolle. Und Warten. Das Warten riecht nach Petroleum.',listen:'Die Laterne knistert. Und einer atmet, der nicht mehr atmen muss.'}},
  {id:'quince',name:'Quittenbaum',look:function(A){ return A.m(night(A.G)?'Ein Quittenbaum, schwarz gegen den Himmel. Eine letzte Quitte hängt noch, gelb wie eine Lampe.':'Ein alter Quittenbaum. Die Blätter sind gefallen, eine einzige Quitte hängt noch, gelb.'); },take:'Die letzte Quitte lasse ich hängen. Die gehört dem Baum.',

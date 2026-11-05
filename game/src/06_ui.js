@@ -328,25 +328,31 @@ M.defineOverlay('memory',function(fb,ov,gt){ var d=ov.data, x0=44, y0=8, w=232, 
   if (Math.floor(gt/500)%2) M.text(fb,ov.step<lines.length-1?'▸':'✓',x0+w-6,H-10,P.x4); });
 // Satzbau-Rätsel (Übersetzung)
 // Felder mit -1 sind noch leer (d.empty: alle leer); „Vorlesen“ prüft erst, wenn jedes Feld belegt ist
+// Prüfbericht K3: Knopf und Rückmeldung bleiben immer im Blatt. Die Rückmeldung steht an fester Stelle oben (statt des Hinweises),
+// die Zeilenhöhe richtet sich nach der Anzahl der Zeilen, der Knopf liegt höchstens bei y=168.
+var OV_BTN_MAX=168;
+function ovInfo(fb,ov,text,col,maxL){ maxL=maxL||2; var m=!!ov.msg, ls=M.wrap(m?ov.msg:(text||''),250).slice(0,maxL);
+  ls.forEach(function(l,i){ M.text(fb,l,36,22+i*9,m?P.r2:(col||P.s2)); }); ov.msgRect=[34,20,252,maxL*9+2]; return ls.length; }
 M.defineOverlay('puzzle',function(fb,ov){ var d=ov.data; ov.sel=ov.sel||(d.init?d.init.slice():d.slots.map(function(){ return d.empty?-1:0; })); paper(20,8,280,178,{lines:[30,22],margin:12});
-  M.text(fb,d.title||'Übersetzung',36,12,P.r2); M.wrap(d.hint||'Tippe auf eine Zeile, um eine andere Fassung zu wählen.',250).forEach(function(l,i){ M.text(fb,l,36,22+i*9,P.s2); });
-  var lay=[]; d.slots.forEach(function(sl,i){ var y=44+i*22, hot=hoverUI==='z:'+i, bad=ov.bad===i; fb.rect(32,y-2,256,18,hot?P.s6:(bad?P.r4:P.s4)); M.text(fb,(i+1)+'.',36,y+3,P.r2); if (ov.sel[i]<0) M.text(fb,'…',48,y+3,P.s2); else M.text(fb,sl[ov.sel[i]],48,y+3,P.n0); fb.px(280,y+4,P.n2); fb.px(281,y+5,P.n2); fb.px(280,y+6,P.n2); lay.push([32,y-2,256,18]); });
-  var by=44+d.slots.length*22+4, hot2=hoverUI==='zgo'; fb.rect(110,by,100,14,hot2?P.n2:P.n1); M.text(fb,d.button||'Vorlesen',160-(M.textWidth(d.button||'Vorlesen')>>1),by+3,P.s6); ov.lay={rows:lay,go:[110,by,100,14],close:[262,8,38,16]};
-  M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2);
-  if (ov.msg) M.wrap(ov.msg,250).forEach(function(l,i){ M.text(fb,l,36,by+18+i*9,P.r2); }); });
+  M.text(fb,d.title||'Übersetzung',36,12,P.r2); ovInfo(fb,ov,d.hint||'Tippe auf eine Zeile, um eine andere Fassung zu wählen.',P.s2,3);
+  var n=d.slots.length, y0=53, step=Math.max(16,Math.min(22,Math.floor((OV_BTN_MAX-2-y0)/n))), bh=step-4, ty=(bh-7)>>1, my=bh>>1;
+  var lay=[]; d.slots.forEach(function(sl,i){ var y=y0+i*step, hot=hoverUI==='z:'+i, bad=ov.bad===i; fb.rect(32,y,256,bh,hot?P.s6:(bad?P.r4:P.s4)); M.text(fb,(i+1)+'.',36,y+ty,P.r2); if (ov.sel[i]<0) M.text(fb,'…',48,y+ty,P.s2); else M.text(fb,sl[ov.sel[i]],48,y+ty,P.n0); fb.px(280,y+my-1,P.n2); fb.px(281,y+my,P.n2); fb.px(280,y+my+1,P.n2); lay.push([32,y,256,bh]); });
+  var by=Math.min(y0+n*step+2,OV_BTN_MAX), hot2=hoverUI==='zgo'; fb.rect(110,by,100,14,hot2?P.n2:P.n1); M.text(fb,d.button||'Vorlesen',160-(M.textWidth(d.button||'Vorlesen')>>1),by+3,P.s6); ov.lay={rows:lay,go:[110,by,100,14],close:[262,8,38,16],msg:ov.msg?ov.msgRect:null};
+  M.text(fb,'Zurück',262,12,hoverUI==='zx'?P.r3:P.s2); });
 // ---------------------------------------------------------------- weitere Rätselformen (Prüfbericht: nicht alles als Auswahlzeilen)
 // Jede legt ov.lay.hits an ({id, r}); Antippen geht an OVTAP[kind](ov, id). Gemeinsam: Knopf unten Mitte (id 'go'), „Zurück“ oben rechts (id 'x').
 var OVTAP={}; M.OVTAP=OVTAP;
 function ovFrame(fb,ov,d,def){ paper(20,8,280,178,{lines:[30,22],margin:12}); M.text(fb,d.title||def,36,12,P.r2); M.text(fb,'Zurück',262,12,hoverUI==='o:x'?P.r3:P.s2); return [{id:'x',r:[258,8,42,16]}]; }
-function ovGo(fb,ov,d,hits,by){ var t=d.button||'Vorlesen', w=Math.max(100,M.textWidth(t)+16), x=160-(w>>1); fb.rect(x,by,w,16,hoverUI==='o:go'?P.n2:P.n1); M.text(fb,t,160-(M.textWidth(t)>>1),by+4,P.s6); hits.push({id:'go',r:[x,by,w,16]});
-  if (ov.msg) M.wrap(ov.msg,250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,by+19+i*9,P.r2); }); }
+// Knopf unten Mitte, nie tiefer als OV_BTN_MAX (die Rückmeldung zeigt ovInfo oben im Blatt)
+function ovGo(fb,ov,d,hits,by){ by=Math.min(by,OV_BTN_MAX); var t=d.button||'Vorlesen', w=Math.max(100,M.textWidth(t)+16), x=160-(w>>1); fb.rect(x,by,w,16,hoverUI==='o:go'?P.n2:P.n1); M.text(fb,t,160-(M.textWidth(t)>>1),by+4,P.s6); hits.push({id:'go',r:[x,by,w,16]}); return by; }
 // 1) Ordnen: antippen, dann ein zweites antippen = die beiden tauschen. Ist etwas gewählt, steht oben, was darin steht (Markos Übersetzung).
+//    Die Kartenhöhe richtet sich nach der Anzahl (bis acht Karten passen mit Knopf ins Blatt).
 M.defineOverlay('arrange',function(fb,ov){ var d=ov.data, hits=ovFrame(fb,ov,d,'Ordnen'); if (!ov.ord) ov.ord=d.start.slice();
-  var pk=(ov.pick!==undefined&&ov.pick!==null)?d.items[ov.ord[ov.pick]]:null; M.wrap(pk?(pk.gloss||''):(d.hint||''),250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,22+i*9,pk?P.n1:P.s2); });
-  var n=ov.ord.length, rh=20, y0=42;
+  var pk=(ov.pick!==undefined&&ov.pick!==null)?d.items[ov.ord[ov.pick]]:null; ovInfo(fb,ov,pk?(pk.gloss||''):(d.hint||''),pk?P.n1:P.s2);
+  var n=ov.ord.length, y0=42, rh=Math.max(13,Math.min(20,Math.floor((OV_BTN_MAX-2-y0)/n))), bh=rh-3, ty=(bh-7)>>1;
   ov.ord.forEach(function(k,i){ var it=d.items[k], y=y0+i*rh, hot=hoverUI==='o:r'+i, sel=ov.pick===i, bad=ov.bad===i;
-    fb.rect(32,y,256,rh-3,sel?P.y4:(hot?P.s6:(bad?P.r4:P.s4))); M.text(fb,(i+1)+'.',36,y+5,P.r2); M.text(fb,it.t,48,y+5,P.n0); hits.push({id:'r'+i,r:[32,y,256,rh-3]}); });
-  ovGo(fb,ov,d,hits,y0+n*rh+1); ov.lay={hits:hits}; });
+    fb.rect(32,y,256,bh,sel?P.y4:(hot?P.s6:(bad?P.r4:P.s4))); M.text(fb,(i+1)+'.',36,y+ty,P.r2); M.text(fb,it.t,48,y+ty,P.n0); hits.push({id:'r'+i,r:[32,y,256,bh]}); });
+  ovGo(fb,ov,d,hits,y0+n*rh+2); ov.lay={hits:hits,msg:ov.msg?ov.msgRect:null}; });
 OVTAP.arrange=function(ov,id){ var d=ov.data; if (id==='x'){ E.closeOverlay(null); return; }
   if (id==='go'){ var ids=ov.ord.map(function(k){ return d.items[k].id; }), res=d.check?d.check(ids):{ok:true}; if (res&&res.ok){ E.closeOverlay(ids); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; ov.pick=null; M.sfx('nope'); } return; }
   if (!id||id[0]!=='r') return; var i=+id.slice(1); ov.bad=-1; ov.msg=null;
@@ -356,14 +362,14 @@ OVTAP.arrange=function(ov,id){ var d=ov.data; if (id==='x'){ E.closeOverlay(null
 //    d.make() liefert {a:{w,h,c:Uint8Array,m:Uint8Array}, b:{…}, off:Versatz der zweiten Hälfte im ganzen Bild}; richtig: a links, b rechts, beide aufrecht.
 M.defineOverlay('halves',function(fb,ov,gt){ var d=ov.data, hits=ovFrame(fb,ov,d,'Zusammenlegen');
   if (ov.joined && gt-ov.joinAt>900 && !ov.closing){ ov.closing=true; Promise.resolve().then(function(){ if (E.overlay===ov) E.closeOverlay(true); }); } if (!ov.pc) ov.pc=d.make(); if (!ov.st) ov.st=JSON.parse(JSON.stringify(d.start));
-  M.wrap(d.hint||'',250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,22+i*9,P.s2); });
+  ovInfo(fb,ov,d.hint);
   var pc=ov.pc, gap=ov.joined?0:6, x0=160-((pc.off+pc.b.w+gap)>>1), y0=48, slots=[x0, x0+pc.off+gap];
   [ov.st.left,ov.st.right].forEach(function(k,si){ var p=pc[k], rot=ov.st.rot[k], ox=slots[si];
     for (var y=0;y<p.h;y++) for (var x=0;x<p.w;x++){ var sx=rot?p.w-1-x:x, sy=rot?p.h-1-y:y, q=sy*p.w+sx; if (!p.m[q]) continue; fb.px(ox+x,y0+y,p.c[q]); }
     if (hoverUI==='o:p'+si && !ov.joined){ fb.hl(ox,ox+p.w-1,y0+p.h+2,P.r3); }
     hits.push({id:'p'+si,r:[ox,y0,p.w,p.h]}); });
-  var by=y0+Math.max(pc.a.h,pc.b.h)+8, sw=M.textWidth('Tauschen')+16; fb.rect(36,by,sw,16,hoverUI==='o:sw'?P.s6:P.s3); M.text(fb,'Tauschen',44,by+4,P.n0); hits.push({id:'sw',r:[36,by,sw,16]});
-  ovGo(fb,ov,d,hits,by); ov.lay={hits:hits}; });
+  var by=Math.min(y0+Math.max(pc.a.h,pc.b.h)+8,OV_BTN_MAX), sw=M.textWidth('Tauschen')+16; fb.rect(36,by,sw,16,hoverUI==='o:sw'?P.s6:P.s3); M.text(fb,'Tauschen',44,by+4,P.n0); hits.push({id:'sw',r:[36,by,sw,16]});
+  ovGo(fb,ov,d,hits,by); ov.lay={hits:hits,msg:ov.msg?ov.msgRect:null}; });
 OVTAP.halves=function(ov,id){ var d=ov.data, st=ov.st; if (ov.joined) return; if (id==='x'){ E.closeOverlay(null); return; } ov.msg=null;
   if (id==='sw'){ var t=st.left; st.left=st.right; st.right=t; M.sfx('paper'); return; }
   if (id==='p0'||id==='p1'){ var k=id==='p0'?st.left:st.right; st.rot[k]=st.rot[k]?0:180; M.sfx('page'); return; }
@@ -377,7 +383,7 @@ function kurrentGlyph(fb,k,x,y,c){ var L=function(a,b,e,f){ fb.line(x+a,y+b,x+e,
   else if (k==='s'||k==='f'){ L(2,0,4,0); L(2,0,1,3); L(1,3,1,12); L(1,12,0,13); if (k==='f') L(0,5,3,5); }
   else if (k==='r'){ L(0,9,1,5); L(1,5,2,7); L(2,7,4,5); } }
 M.defineOverlay('glyphs',function(fb,ov){ var d=ov.data, hits=ovFrame(fb,ov,d,'Schrift lesen'); if (!ov.rd) ov.rd=d.words.map(function(w){ return w.map(function(){ return -1; }); });
-  M.wrap(d.hint||'',250).slice(0,2).forEach(function(l,i){ M.text(fb,l,36,22+i*9,P.s2); });
+  ovInfo(fb,ov,d.hint);
   // die Tafel: Zeichen und darunter der Buchstabe
   var tx=40, ty=42; fb.rect(32,ty-4,256,30,P.s4); M.text(fb,d.tableTitle||'Tafel',36,ty-2,P.r2); tx=110;
   d.table.forEach(function(t,i){ var x=tx+i*28; kurrentGlyph(fb,t.k,x,ty-2,P.k1); M.text(fb,t.lat,x,ty+13,P.n1); });
@@ -386,7 +392,7 @@ M.defineOverlay('glyphs',function(fb,ov){ var d=ov.data, hits=ovFrame(fb,ov,d,'S
     w.forEach(function(cell,ci){ if (cell.c){ M.text(fb,cell.c,x,y+4,P.n0); x+=M.textWidth(cell.c)+1; return; }
       var hot=hoverUI==='o:g'+wi+'_'+ci, bad=ov.bad===wi, r=ov.rd[wi][ci]; fb.rect(x-1,y-3,9,26,hot?P.s6:(bad?P.r4:P.s4)); kurrentGlyph(fb,cell.k,x,y-1,P.k1); M.text(fb,r<0?'?':cell.o[r],x+1,y+14,r<0?P.s2:P.g1); hits.push({id:'g'+wi+'_'+ci,r:[x-1,y-3,9,26]}); x+=10; });
     y+=30; });
-  ovGo(fb,ov,d,hits,y); ov.lay={hits:hits}; });
+  ovGo(fb,ov,d,hits,y); ov.lay={hits:hits,msg:ov.msg?ov.msgRect:null}; });
 OVTAP.glyphs=function(ov,id){ var d=ov.data; if (id==='x'){ E.closeOverlay(null); return; }
   if (id==='go'){ for (var wi=0;wi<d.words.length;wi++) if (ov.rd[wi].some(function(v,ci){ return v<0 && !d.words[wi][ci].c; })){ ov.bad=wi; ov.msg='Da fehlt noch etwas.'; M.sfx('nope'); return; }
     var res=d.check?d.check(ov.rd):{ok:true}; if (res&&res.ok){ E.closeOverlay(ov.rd); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; M.sfx('nope'); } return; }
@@ -550,7 +556,9 @@ M.renderFrame=function(){
   if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
-  else if (E.room){ drawScene(); drawReveal(); drawUI(); drawConv(); drawOverlay(); drawSpeech(); drawPop(); drawDrag(); }
+  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); drawUI(); drawConv(); drawOverlay(); drawSpeech(); drawPop(); drawDrag(); }
+  // Prüfbericht K3: Erinnerung vor dem ersten Raum (Kapitelanfang) oder mit data.blank: auf dunklem Grund statt unsichtbar
+  else if (E.screen==='game' && (E.overlay || E.speech)){ fb.rect(0,0,W,H,P.k0); drawOverlay(); drawSpeech(); }
   applyFade(); drawMenu(); drawMsg(); drawCursor(); return fb; };
 
 // ---------------------------------------------------------------- Eingabe

@@ -38,7 +38,8 @@ async function vladoD1(A,V){
   if (!M.k3KnowsVlado(A.G)){ await V.say('Reifen?'); await A.m('Nein. Ich sehe mich nur um.'); await V.say('Hier gibt es nichts zu sehen. Nur Reifen.'); return; }
   await A.menuLoop(function(){ return [
     {t:'Sie sind früher Mehl gefahren. Im Krieg.',once:'vl1',go:async function(A){ await V.say('Mehl.'); await A.wait(500); A.sfx('cough'); await V.anim('cough'); await V.say('Mehl, Öl, Decken. Für die Dörfer am Fluss.'); await A.wait(400); await V.say('Das ist lange her.'); }},
-    {t:'Im Januar vierundneunzig. Von Split nach Skela. Ein Mädchen, siebzehn.',if:!A.hasNote('v3_denial'),go:async function(A){ await A.wait(900); await A.narrate('Vlado hört auf zu hebeln. Das Rad dreht sich noch ein Stück weiter, ohne ihn.'); await A.wait(700);
+    // Skela nennt Marko erst, wenn die Peilung es ergeben hat (Prüfbericht K3)
+    {t:A.hasNote('l3_skela')?'Im Januar vierundneunzig. Von Split nach Skela. Ein Mädchen, siebzehn.':'Im Januar vierundneunzig. Von Split hierher. Ein Mädchen, siebzehn.',if:!A.hasNote('v3_denial'),go:async function(A){ await A.wait(900); await A.narrate('Vlado hört auf zu hebeln. Das Rad dreht sich noch ein Stück weiter, ohne ihn.'); await A.wait(700);
         await V.say('Ich habe nie jemanden mitgenommen.'); await A.wait(800); await V.say('Nie.'); A.note('v3_denial'); A.setFlag('k3.v.met'); A.sfx('wrench');
         await A.wait(600); await A.npc('kata').say('Hören Sie? Nie. So redet er mit allen. Mit mir auch.');
         if (A.G.malaOn && A.malaHere()){ await A.wait(600); await A.g('Seine Hände.'); await A.wait(500); await A.g('Ich kenne die Hände. Ich weiß nicht, woher.'); } }},
@@ -52,7 +53,7 @@ async function vladoD1(A,V){
       v3_where:'Rajić. Steht draußen dran.',
       l3_skela:async function(A){ A.sfx('wrench'); await A.wait(500); await V.say('Skela.'); await A.wait(700); await V.say('Da ist eine Brücke. Seit achtundneunzig. Was wollen Sie da?'); },
       l3_key31:async function(A){ await V.say('Schlüssel?'); await A.wait(500); await V.say('Ich habe viele Schlüssel. Für Autos, die keiner abholt.'); },
-      v3_cab:async function(A){ await A.m('„Halt still.“ – „Ich fahre.“ – „Dann fahr still.“'); await A.wait(1500); await V.say('…'); await A.wait(800); await V.say('Lassen Sie das.'); await A.wait(400); await A.m('Er hat es gehört. Aber er glaubt nicht, dass es von ihr kommt. Woher auch.'); },
+      v3_cab:function(A){ return cabEarly(A,V); },
       v3_typenschein:'Typenschein. Das ist Katas Sache. Der Laster ist Katas Sache, sagt sie.' },
       ['Weiß ich nicht.','Ich bin Vulkaniseur. Fragen Sie mich nach Reifen.','…']),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ await V.say(A.cycle('vlBye1',['Reifen brauchen Sie keine. Das sehe ich.','…'])); }}
@@ -79,10 +80,16 @@ async function vladoD2(A,V){
       l3_ljerka_pic:async function(A){ await V.say('Ein Bild.'); await A.wait(600); await V.say('Sie hat immer gezeichnet. Alles. Auch das, was man nicht zeichnen soll.'); },
       v3_mala:'Mala. Wie jede. Das habe ich gesagt.',
       v3_part1:'Viertel nach elf. Das bleibt so.',
+      v3_cab:function(A){ return cabEarly(A,V); },
       k3_c_bridge:async function(A){ await V.say('Mehl und Decken.'); await A.wait(500); await V.say('Graue Decken, mit einem schwarzen Streifen. Armeedecken. Wir hatten zweihundert.'); } },
       ['…','Das weiß ich nicht mehr.','Fragen Sie Kata. Kata weiß alles, was ich vergesse.']),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ await V.say(A.cycle('vlBye2',['…','Morgen ist Sonntag. Sonntags flicke ich trotzdem.'])); }}
   ]; }); }
+// Die Phrase aus dem Führerhaus, bevor Mala sie als Botschaft freigegeben hat (Freitag, Samstag, Sonntag vor Gespräch 2).
+// Vlado hört sie, glaubt aber nicht, dass sie von ihr kommt. Das merkt sich das Spiel (k3.v.cabHeard): am Sonntag erinnert er sich daran.
+async function cabEarly(A,V){ if (A.flag('k3.v.cabHeard')){ await V.say('…'); await A.wait(600); return V.say('Das haben Sie schon einmal gesagt. Lassen Sie das.'); }
+  A.setFlag('k3.v.cabHeard'); await A.m('„Halt still.“ – „Ich fahre.“ – „Dann fahr still.“'); await A.wait(1500); await V.say('…'); await A.wait(800); await V.say('Lassen Sie das.'); await A.wait(400);
+  await A.m('Er hat es gehört. Aber er glaubt nicht, dass es von ihr kommt. Woher auch.'); }
 async function drawingSilence(A,V,back){ if (back) await A.m('Auf der Rückseite steht: „Für später. Wenn du nach Sarajevo kommst, zeichne ich dich ohne Zigarette.“');
   await A.wait(800); await A.narrate('Vlado sieht auf die Zeichnung. Er sagt nichts. Er zündet sich eine neue Zigarette an, obwohl die alte noch brennt.'); A.sfx('lighter'); await A.wait(900);
   await A.npc('kata').say('Papa. Du hast zwei.'); await A.wait(500); await V.say('Ich weiß.'); }
@@ -118,7 +125,9 @@ async function vladoD3(A,V){
     A.askOpt({
       photo_full:async function(A){ await V.say('Das ist ein Kind.'); await A.wait(700); if (A.flag('k3.v.part2')) await V.say('Mit siebzehn hatte sie denselben Zopf. Und dieselben Augen, wenn sie etwas wollte.'); },
       v3_forlater:'Für später.',
-      v3_who:'Wer wen stehen lassen hat? Ich weiß, wer gefahren ist.' },
+      v3_who:'Wer wen stehen lassen hat? Ich weiß, wer gefahren ist.',
+      // nach Gespräch 2 ist der Satz Malas Botschaft: über das Notizbuch gesagt, wirkt er wie über „Ich soll Ihnen etwas sagen“
+      v3_cab:async function(A){ if (A.flag('k3.d3.talk2') && !A.flag('k3.v.free')){ await freeVlado(A,V); return 'bye'; } return cabEarly(A,V); } },
       ['…','Das sagt mir nichts.','Kata. Was redet der Mann?']),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ if (A.flag('k3.v.part2')) await V.say('…'); }}
   ]; }); }
@@ -152,7 +161,7 @@ async function skela(A,V){ var S=A.S, got=S.vtold||{};
       await A.m('Drüben, im Haus des Fährmanns, ging Licht an. Nach dem ersten Läuten. Vor dem dritten ging es wieder aus.'); await A.wait(1000); await V.say('Licht.'); await A.wait(700); await V.say('Dann war einer wach. Drüben.');
       A.sfx('cough'); var q2=vAsk(got); if (q2){ await A.wait(500); await V.say(q2); } continue; }
     if (n==='l3_survived'||n==='a3_alive'){ if (got.alive){ await V.say('Das haben Sie gesagt.'); continue; } got.alive=1;
-      await A.m('Sie ist nicht im Fluss gestorben. Am Morgen hat eine Frau sie gefunden, unten im Schilf. Sie hat noch gelebt.'); await A.wait(1400); A.sfx('wrench'); await V.say('Gelebt.'); await A.wait(900);
+      await A.m((A.hasNote('a3_morning')||A.hasNote('a3_alive'))?'Sie ist nicht im Fluss gestorben. Am Morgen hat eine Frau sie gefunden, unten im Schilf. Sie hat noch gelebt.':'Sie ist nicht im Fluss gestorben. Eine Frau hat sie gefunden und an ihren Herd gelegt. Sie hat noch gelebt.'); await A.wait(1400); A.sfx('wrench'); await V.say('Gelebt.'); await A.wait(900);
       var q3=vAsk(got); if (q3){ await A.wait(400); await V.say(q3); } continue; }
     if (PARTIAL[n]){ await V.say(PARTIAL[n]); continue; }
     if (/^v3_/.test(n)){ await V.say('Das haben Sie von mir. Erzählen Sie mir nicht, was ich erzählt habe.'); continue; }
@@ -197,7 +206,7 @@ var WRONG={
 async function message(A,V){ var res=false;
   if (A.first('vlMsg0')){ await A.wait(700); await V.say('Von ihr.'); await A.wait(1000); await V.say('Wie soll das gehen?'); await A.wait(500); await A.m('Ich weiß es. Glauben Sie mir einfach, dass ich es weiß.'); await V.say('Dann sagen Sie.'); }
   await A.menuLoop(function(){ return [ askM(A,'vlado_msg'),
-    {t:'(Ihm sagen, was nur die beiden hatten.)',silent:true,noGray:true,go:async function(A){ if (!M.k3Asked(A,'vlado_msg')) await M.k3Skipped(A,'vlado_msg'); var ok=await deliver(A,V); if (ok){ res=true; return 'bye'; } }},
+    {t:'(Ihm sagen, was nur die beiden hatten.)',silent:true,noGray:true,go:async function(A){ var ok=await deliver(A,V); if (ok){ res=true; return 'bye'; } }},   // Prüfbericht K3: Mala hat den Auftrag selbst gegeben, keine Rüge
     {t:'(Noch nicht.)',bye:true,silent:true,go:async function(A){ await V.say('Ich laufe nicht weg. Ich laufe nirgends mehr hin.'); }}
   ].filter(Boolean); });
   return res; }
@@ -210,7 +219,9 @@ async function deliver(A,V){ var n=await A.askNote('Was sage ich ihm?',{also:MSG
   await A.wait(400); await V.say(A.cycle('vlMsgW',['Weiter. Ich höre.','Ich höre.','Ich bin noch da.'])); return false; }
 async function freeVlado(A,V){ var K=A.npc('kata'); A.music('k3_duh');
   await A.m('„Halt still.“'); await A.wait(800); await A.m('„Ich fahre.“'); await A.wait(800); await A.m('„Dann fahr still.“');
-  await A.wait(1800); await V.say('Woher …?'); await A.wait(1000); await A.m('Ich bin Übersetzer.');
+  if (A.flag('k3.v.cabHeard')){ await A.wait(1500); await V.say('Das haben Sie schon am Freitag gesagt.'); await A.wait(900); await V.say('Da wollte ich es nicht hören.'); await A.wait(1100); await V.say('Woher wissen Sie es?'); }
+  else { await A.wait(1800); await V.say('Woher …?'); }
+  await A.wait(1000); await A.m('Ich bin Übersetzer.');
   await A.wait(1500); if (V.actor) V.idle('quiet'); await A.narrate('Vlado nimmt die Zigarette aus dem Mund. Zum ersten Mal, seit ich ihn kenne. Er hält sie zwischen zwei Fingern und sieht sie an, als gehörte sie einem anderen.');
   await A.wait(900); await V.say('Dann fahr still.'); await A.wait(1000); await V.say('Das hat sie gesagt. Irgendwo im Dunkeln. Und ich habe gelacht. Das einzige Mal auf der ganzen Fahrt.');
   await V.say('Das weiß keiner. Das war im Führerhaus.'); await A.wait(1300);

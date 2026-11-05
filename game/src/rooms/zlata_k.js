@@ -49,7 +49,7 @@ async function tellAll(A){ var Nd=A.npc('nada'), Z=A.npc('zlata'), G=A.G; if (F(
   await A.wait(900); await A.m('Sie hat ihn weggeschickt. Sie hat drüben geläutet, dreimal. Hier hat einer am Fenster gestanden und ist nicht gekommen.');
   await A.wait(1400); await A.m('Dann hat sie sich an das Fährseil gehängt. Hand über Hand. In der Mitte hat sie losgelassen.');
   await A.wait(2000); await Nd.say('…'); await A.wait(1300);
-  await A.m('Am Morgen hat Zlata sie gefunden, im Schilf. Sie hat noch gelebt. Bis Samstag. Hier am Herd, in den Decken aus dem Lastwagen.');
+  await A.m('Am Morgen hat Zlata sie gefunden'+((A.hasNote('a3_morning')||A.hasNote('a3_alive'))?', im Schilf':'')+'. Sie hat noch gelebt, bis Mittag. Hier am Herd, in den Decken aus dem Lastwagen.');
   await A.wait(1200); await A.m('Einmal hat sie die Augen aufgemacht. Sie hat gesagt, sie heißt Mala. Und dann hat sie gebeten: Sagt es keinem. Ich will selbst nach Hause kommen. Nicht als Nachricht.');
   await A.wait(2400); await Nd.say('…'); await A.wait(1400); await Nd.say('Das ist sie.'); await A.wait(1000); await Nd.say('Das ist genau sie.'); A.setFlag('k3.e.told');
   await A.wait(1500); await Nd.say('Sie kommt nach Hause.'); await A.wait(800); await Nd.say('Und Sie kommen zur Beerdigung. Und danach kommen Sie mich besuchen. Jeden Fünfzehnten, wenn Sie wollen.');

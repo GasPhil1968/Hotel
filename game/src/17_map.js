@@ -68,7 +68,7 @@ async function computeStates(G){ var out={}, here=E.room?streetOf(E.room.id,G):n
   for (var i=0;i<L.length;i++){ var l=L[i], o={};
     if (here && here.id===l.id) o.st='here';
     else if (G.map[l.id]){ var d=await dryTravel(l); o.st=d.ok?'open':'blocked'; o.why=d.why; o.who=d.who; }
-    else if (G.mapKnown && G.mapKnown[l.id]){ o.st='locked'; o.why=(M.MAP_KNOW[l.id]||{}).why||'Da kann ich noch nicht hin.'; }
+    else if (G.mapKnown && G.mapKnown[l.id]){ var kk=M.MAP_KNOW[l.id]||{}; o.st='locked'; o.why=(typeof kk.why==='function'?kk.why(G):kk.why)||'Da kann ich noch nicht hin.'; }
     else o.st='unknown';
     out[l.id]=o; }
   return out; }
@@ -115,7 +115,8 @@ M.mapGo=async function(id){ var ov=E.overlay&&E.overlay.kind==='map'?E.overlay:n
     if (s.st==='here'){ M.closeMap(); return false; }
     if (s.st==='locked'){ await A.m(s.why); return false; }
     var org=origin(d); if (!org.ok){ if (org.k==='mala') await A.g(org.why); else await A.m(org.why); return false; }
-    if (s.st==='blocked'){ await M.canTravel(A,L); return false; }   // dieselbe Prüfung wie beim Aufbrechen, mit ihrem eigenen Satz
+    if (s.st==='blocked'){ try{ await M.canTravel(A,L); } finally{ if (!(E.overlay&&E.overlay.kind==='map')) E.busy=false; } return false; }   // dieselbe Prüfung wie beim Aufbrechen, mit ihrem eigenen Satz;
+    // fragt sie nach (Auswahl), schließt sich der Plan dafür (05_engine.js, choose), und die Szene bleibt bis hier gesperrt
     // aufbrechen: Plan schließen, dann die Prüfungen in der Reihenfolge eines Fußwegs (Ausgang, dann Ziel), dann ein Wechsel
     E.closeOverlay(null); E.busy=true; var go=false;
     try{ var ok=true; if (org.hs && org.hs.canExit) ok=await org.hs.canExit(A); if (ok && M.canTravel) ok=await M.canTravel(A,L); go=!!ok; }
@@ -137,7 +138,7 @@ function cyOf(L){ return M.chapterOf(M.GS)>=2?L.y-1:L.y-7; }   // Mitte des Symb
 function iconBox(L){ return M.chapterOf(M.GS)>=2?[L.x-9,L.y-10,19,16]:[L.x-8,L.y-16,17,17]; }
 function overlap(a,b){ return a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3]; }
 function layoutNames(d){ var vis=locs().filter(function(L){ var s=d.st[L.id]; return s&&s.st!=='unknown'; }), placed=vis.map(iconBox), out={};
-  vis.slice().sort(function(a,b){ function n(L){ return vis.filter(function(o){ return o!==L && Math.hypot(o.x-L.x,o.y-L.y)<40; }).length; } return n(b)-n(a); }).forEach(function(L){ var nm=M.tr?M.tr(L.name):L.name, w=M.textWidth(nm)+2, h=9, ib=iconBox(L), cx=L.x-(w>>1);
+  vis.slice().sort(function(a,b){ function n(L){ return vis.filter(function(o){ return o!==L && Math.hypot(o.x-L.x,o.y-L.y)<40; }).length; } return n(b)-n(a); }).forEach(function(L){ var nm=labelOf(L), w=M.textWidth(nm)+2, h=9, ib=iconBox(L), cx=L.x-(w>>1);
     var my=L.y-(M.chapterOf(M.GS)>=2?4:10), bot=ib[1]+ib[3]+1, top=ib[1]-h-1, rx=ib[0]+ib[2]+2, lx=ib[0]-w-2;
     var cand=[[cx,bot],[cx,top],[rx,my],[lx,my],[rx,bot-4],[lx,bot-4],[rx,top+4],[lx,top+4],[cx,bot+9],[cx,top-9],[rx,bot+6],[lx,bot+6]];
     function area(a,b){ var x=Math.max(0,Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])), y=Math.max(0,Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])); return x*y; }
@@ -145,8 +146,10 @@ function layoutNames(d){ var vis=locs().filter(function(L){ var s=d.st[L.id]; re
     placed.push(best); out[L.id]={nm:nm,x:best[0]+1,y:best[1]+1}; });
   return out; }
 function nameAt(fb,L,lay,c,oc){ var n=lay[L.id]; if (n) M.text(fb,n.nm,n.x,n.y,c,oc); }
+// Prüfbericht K3: ein bekannter, aber noch nicht erreichbarer Ort trägt seinen Namen erst, wenn Marko ihn kennt (MAP_KNOW[id].label)
+function labelOf(L){ var k=M.MAP_KNOW&&M.MAP_KNOW[L.id], G=M.GS; if (k && k.label && !(G.map&&G.map[L.id])){ var t=k.label(G); if (t) return M.tr?M.tr(t):t; } return M.tr?M.tr(L.name):L.name; }
 var LEG={here:'hier',open:'erreichbar',blocked:'gerade nicht',locked:'noch nicht'};
-function infoFor(id,d){ var L=locById(id), s=d.st[id]; if (!L||!s) return null; var nm=M.tr?M.tr(L.name):L.name;
+function infoFor(id,d){ var L=locById(id), s=d.st[id]; if (!L||!s) return null; var nm=labelOf(L);
   if (s.st==='here') return nm+' – hier bin ich.'; if (s.st==='open') return nm; return nm+': '+(M.tr?M.tr(s.why||''):(s.why||'')); }
 // nächstgelegener bekannter Ort im Umkreis: große Trefferflächen, auch wenn zwei Orte nah beieinander liegen
 function locAt(d,x,y){ var best=null, bd=1e9; locs().forEach(function(L){ var s=d.st[L.id]; if (!s||s.st==='unknown') return; var dx=x-L.x, dy=(y-cyOf(L))*1.15, q=dx*dx+dy*dy; if (q<bd){ bd=q; best=L; } }); return best&&bd<=20*20?best.id:null; }

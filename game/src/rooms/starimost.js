@@ -53,8 +53,8 @@ async function useBridgehead(A){ var G=A.G;
   var st=M.stand('starimost','bridgehead')||[286,114,'R']; await A.walk(st[0],st[1]); await A.face('R');
   if (A.malaHere()){ var mp=malaSpot(); await A.walkG(mp[0]-14,mp[1]+2); A.faceG('R'); }
   var was=!!G.flags['k3.peil.bridgehead'], ok=await M.k3Peil(A,'bridgehead');
-  if (ok && !was){ A.unlock('koski'); await A.wait(400); await A.m('Ich brauche einen zweiten Standort. Höher, damit ich über die Dächer sehe. Das Minarett der Koski-Moschee steht gleich flussab.');
-    if (A.G.malaOn){ await A.g('Ein Turm. Gut.'); await A.wait(300); await A.g('Türme sind keine Brücken.'); } } }
+  if (ok && !was){ A.unlock('koski'); await A.wait(400); await A.m('Ich brauche einen zweiten Standort. Höher, damit ich über die Dächer sehe.');   // den Ort nennt der Plan, nicht Marko
+    if (A.G.malaOn){ await A.g('Hoch ist gut.'); await A.wait(300); await A.g('Hoch ist keine Brücke.'); } } }
 M.k3UseBridgehead=useBridgehead;
 // ---------------------------------------------------------------- Dino
 async function talkDino(A){ var D=A.npc('dino'), G=A.G, p=G.phase;
@@ -95,9 +95,12 @@ M.k3DinoRide=async function(A){ var D=A.npc('dino'), G=A.G; A.sfx('scooter');
   await A.m('Was anderes?'); await D.say('Was der Fluss hergibt. Einmal ein Kühlschrank. Einmal ein Boot ohne Mann.'); await A.wait(400); await D.say('Mein Opa sagt, im Krieg auch Leute. Er sagt es nicht oft.');
   if (G.malaOn){ await A.wait(700); await A.narrate('Hinter mir ist es still. Ich spüre, wie Mala sich an meiner Jacke festhält, und das ist unmöglich.'); }
   await A.wait(500); await D.say('Jetzt du. Die Geschichte.');
-  var c=await A.choose([{t:'(Von der Drei in Sarajevo erzählen.)',id:'tram',silent:true},{t:'(Von einem Fährmann erzählen, der nicht kam.)',id:'ferry',silent:true},{t:'(Nichts erzählen.)',id:'none',silent:true}],{title:'Dino'});
+  // Die Fährmann-Geschichte setzt voraus, was Marko weiß: vor Malas Nachhall an der Glocke nur das, was Vlado erzählt hat (Prüfbericht K3)
+  var knowsNight=A.hasNote('a3_lightseq')||A.hasNote('l3_rope');
+  var c=await A.choose([{t:'(Von der Drei in Sarajevo erzählen.)',id:'tram',silent:true},{t:knowsNight?'(Von einem Fährmann erzählen, der nicht kam.)':'(Von einer Fähre erzählen, die nachts nicht fuhr.)',id:'ferry',silent:true},{t:'(Nichts erzählen.)',id:'none',silent:true}],{title:'Dino'});
   if (c==='tram'){ await A.narrate('Ich erzähle von einer Straßenbahn in Sarajevo, samstags um zehn nach elf, und von einem Mädchen, das mir bis oben die Jacke zugemacht hat.'); await D.say('Und dann?'); await A.m('Dann kam der Krieg.'); await D.say('Das ist keine Geschichte. Das ist ein Anfang.'); await A.m('Ich weiß.'); }
-  else if (c==='ferry'){ await A.narrate('Ich erzähle von einer Glocke an einem Fluss und von einem Licht in einem Fenster, das wieder ausging.'); await D.say('Das ist traurig, Mann. Für zehn Mark?'); await A.m('Für fünf.'); await D.say('Für fünf ist es in Ordnung.'); }
+  else if (c==='ferry' && knowsNight){ await A.narrate('Ich erzähle von einer Glocke an einem Fluss und von einem Licht in einem Fenster, das wieder ausging.'); await D.say('Das ist traurig, Mann. Für zehn Mark?'); await A.m('Für fünf.'); await D.say('Für fünf ist es in Ordnung.'); }
+  else if (c==='ferry'){ await A.narrate('Ich erzähle von einer Fähre, die nur bei Tag fuhr, und von einem Mädchen, das in der Nacht an den Fluss kam.'); await D.say('Und dann?'); await A.m('Das weiß ich noch nicht.'); await D.say('Dann ist sie noch nicht fertig. Erzähl sie mir, wenn sie fertig ist. Für fünf.'); A.setFlag('k3.dino.owed'); }
   else { await D.say('Dann schuldest du sie mir. Ich merk mir das. Ich merk mir alles, außer Telefonnummern.'); A.setFlag('k3.dino.owed'); }
   await A.narrate('Bei Skela hält er an, wo die Schotterstraße am Hochufer endet.'); await D.say('Ich warte nicht. Für zurück ruf das Taxi vom Ostbahnhof. Der kommt überallhin, wenn man ihm Zeit lässt.'); };
 // ---------------------------------------------------------------- Nacht: der Springer (Mala allein an den Uferstufen)

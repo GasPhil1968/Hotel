@@ -111,7 +111,7 @@ n('b3_dida','b3','Die Briefe','So wollte er heißen','„Opa“ hat Lena geschri
 n('e3_father','e3','Der Vater','Ich habe ihn nie gesucht','Mala: „Hast du deinen Vater gesucht? Damals?“ – „Nein.“ – „Warum nicht?“ – „Weil ich wusste, dass er tot ist.“ – „Woher?“ Darauf habe ich nichts gesagt.',{p:'p:mala'});
 n('e3_kolar','e3','Der Vater','„Und Sie?“','Frau Kolar: „Und Sie? Haben Sie jemanden?“',{p:'p:kolar'});
 n('e3_avoid','e3','Der Vater','Damit ich ihn nicht suchen muss','Ich suche eine Vermisste für eine Mutter, und den eigenen Vater habe ich nie gesucht. Mala: „Du suchst mich, damit du ihn nicht suchen musst.“',{p:'p:mala'});
-n('e3_mothersample','e3','Der Vater','Die Probe der Mutter','Frau Kolar: „Lebt Ihre Mutter? Mit ihrer Probe geht es schneller. Wenn er irgendwo liegt, finden wir ihn.“',{p:'p:kolar'});
+n('e3_mothersample','e3','Der Vater','Die Probe der Mutter','Frau Kolar: „Lebt Ihre Mutter?“ Ihre Probe hilft nur zusammen mit der eines Kindes, meiner oder Anas. „Wir suchen. Wenn er gefunden wurde, können wir ihn zuordnen.“',{p:'p:kolar'});
 n('e3_since','e3','Der Vater','Seit dem Winter','Mala, auf der Brücke: „Danach war ich bei dir. In Vratnik, im Winter. Dann Split. Dann hast du den Karton zugeklebt. Dann war ich leer.“',{p:'p:mala'});
 M.defineNotes(N);
 // ---------------------------------------------------------------- Gruppen und Erledigung
