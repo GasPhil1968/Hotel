@@ -1,4 +1,4 @@
-MALA – KAPITEL 1: SPLIT · KAPITEL 2: SARAJEVO
+MALA – KAPITEL 1: SPLIT · KAPITEL 2: SARAJEVO · KAPITEL 3: MOSTAR
 iPad- und Browser-Version, deutsch
 
 WORUM ES GEHT
@@ -12,19 +12,30 @@ Stadt, ein Zwischenspiel, ein Finale und ein Epilog. Etwa vier bis fünf
 Stunden. Die Frage, die alles trägt: Was verbindet Mala mit Sarajevo, und
 warum erinnert sie sich nicht?
 
+Kapitel 3 setzt am Donnerstag danach ein: Marko hat Lanas Mutter versprochen,
+ihre Tochter nach Hause zu bringen. In Mostar folgt er mit Mala ihrer Leine,
+flussab, bis zu einer Seilfähre, die niemand gezählt hat. Drei Tage und zwei
+Nächte, zwei Geisterfälle (ein Fährmann, ein alter Mann, der auf den Bus aus
+München wartet), ein Fahrer, der siebzehn Jahre geschwiegen hat, ein Finale
+und ein Epilog. Geschätzt vier bis fünf Stunden. Die Frage, die alles trägt:
+Wem gehört ein Tod?
+
 KAPITEL WÄHLEN
-- Im Hauptmenü stehen beide Kapitel direkt zur Wahl: „Kapitel 1: Split“
-  und „Kapitel 2: Sarajevo“. Ein Tippen auf Kapitel 2 und dann auf einen
-  Speicherplatz startet Sarajevo sofort, ohne Split gespielt zu haben.
-  Für die Erinnerungen aus Split gelten dann sinnvolle Vorgaben.
+- Im Hauptmenü stehen alle drei Kapitel direkt zur Wahl: „Kapitel 1: Split“,
+  „Kapitel 2: Sarajevo“ und „Kapitel 3: Mostar“. Ein Tippen auf ein Kapitel
+  und dann auf einen Speicherplatz startet es sofort, ohne die vorigen
+  gespielt zu haben. Für die Erinnerungen davor gelten sinnvolle Vorgaben.
 - Wer Split zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
   weiterzuspielen. Antworten und Hinweise aus Split (zum Beispiel, was
   Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
+  Genauso nach Sarajevo: Was Marko in der Straßenbahn gestanden hat und ob
+  er bei Hajra war, kommt mit nach Mostar.
 
 SPRACHE / JEZIK
 - Im Titelmenü oder im Menü „Sprache: Deutsch“ antippen: Das Spiel wechselt
   auf Bosnisch/Kroatisch („Jezik: bosanski / hrvatski“). Kapitel 1 (Split)
-  ist vollständig übersetzt, Kapitel 2 (Sarajevo) läuft vorerst auf Deutsch.
+  ist vollständig übersetzt, Kapitel 2 (Sarajevo) und Kapitel 3 (Mostar)
+  laufen vorerst auf Deutsch.
 - Jede Figur spricht ihre Sprache: Marko Standardkroatisch, mit Mala aber
   Sarajevo-Bosnisch; Mala Bosnisch; Ivka, Zdenka und Jakov Čakavisch aus Split;
   die übrigen Splitter Kroatisch mit einzelnen Split-Wörtern.
@@ -109,7 +120,7 @@ DAS NOTIZBUCH ("Notizen")
 HILFE
 - Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
   mit Mala nachsehen, im Notizbuch Notizen verbinden.
-- Hinweise auf Wunsch, in beiden Kapiteln: Mala ansprechen und „Ich komme
+- Hinweise auf Wunsch, in allen Kapiteln: Mala ansprechen und „Ich komme
   gerade nicht weiter.“ wählen, oder „Menü“ → „Hinweis …“. Ist Mala nicht
   da, ordnet Marko seine Gedanken allein.
   Vier Stufen je Problem: worum es geht, in welche Richtung man denken kann,
@@ -135,7 +146,7 @@ TASTATUR (am Rechner)
 - Leertaste = Satz überspringen · Esc = Menü (schließt auch Karte und Notizbuch)
 
 SPIELSTÄNDE
-- Drei Speicherplätze für beide Kapitel. Das Spiel speichert bei jedem
+- Drei Speicherplätze für alle Kapitel. Das Spiel speichert bei jedem
   Ortswechsel selbst. Am Platz steht, in welchem Kapitel und Abschnitt man ist.
   Alte Spielstände aus Kapitel 1 laden unverändert.
 - Geht man mitten in einer Szene zum Titelbild oder wechselt die App,
@@ -172,4 +183,7 @@ TON
   Regen, Fährenhörner, die Glocken von Sveti Duje, Möwen, Tassen, Karten.
   In Sarajevo: Straßenbahnglocken, die Kula, Kupferhämmer, Tauben, die
   Miljacka, Nebel, ein Keller, in dem es tropft.
+  In Mostar: die Neretva in drei Stärken, die Bura, ein Markt, zwei
+  Busbahnhöfe, eine Reifenwerkstatt, Hühner und Hunde in Skela, eine
+  Fährglocke und ein Herd, der knackt.
   Als Mala klingt die Welt dumpf und fern. Kopfhörer lohnen sich.
