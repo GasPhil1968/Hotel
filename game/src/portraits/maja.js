@@ -3,7 +3,7 @@
    ein gelber Bleistift steckt quer darin, einzelne lose Strähnen an Schläfe und Nacken; Brille mit dickem schwarzem Rand.
    Grüner Strickpullover mit Rippenkragen. Freundlich, knapp, immer beschäftigt.
    Legende HEAD: Ziffern Haut (1–6 p0–p5) · r Wangenröte (t5) · a–f Haar (h1 h2 h3 w2 w3 w4) ·
-   w Augenweiß · i Iris · k Pupille · z Wimpern und Brauen (h1) · L l m Lippen (d4 d5 p5).
+   w Augenweiß · i Iris · k Pupille · z Wimpern und Brauen (h1) · L l m Lippen (p2 d4 d5).
    Bleistift, Brille und Pullover in Code; Kontur mit M.outline. Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
@@ -59,7 +59,7 @@ var HEAD=[
 "........................................................"  // 45
 ];
 var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, r:P.t5,
-  a:P.h1, b:P.h2, c:P.h3, d:P.w2, e:P.w3, f:P.w4, w:P.s6, i:P.w2, k:P.h0, z:P.h1, L:P.d4, l:P.d5, m:P.p5 };
+  a:P.h1, b:P.h2, c:P.h3, d:P.w2, e:P.w3, f:P.w4, w:P.s6, i:P.w2, k:P.h0, z:P.h1, L:P.p2, l:P.d4, m:P.d5 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
 // grüner Strickpullover: schmale Schultern, Rippenkragen, Strickrippen

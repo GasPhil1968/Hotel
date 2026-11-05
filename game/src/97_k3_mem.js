@@ -2,9 +2,10 @@
    Wie 93_mem.js und 97_k2_mem_a/b.js: in natürlichen Farben gemalt, mit kräftigen Helligkeitsstufen; das Spiel färbt
    die Bilder danach selbst (A.memory({tint:'ghost'}) kalt-blau, {tint:'memory'} sepia). Der Rand (10 px) wird beim
    Einblenden ausgedithert, deshalb liegt nichts Wichtiges dort.
-   Lana mit siebzehn und Nada kommen aus dem Rig (M.drawPose, 'mala', 'nada'). Die Menschen von 1994 und aus den
-   Neunzigern (Vlado mit 47, Zlata mit 57, Mate am Tor, der Fährmann Bato) haben hier eigene kleine Figuren im
-   Rig-Format ('k3m_…'), die nur in diesen Bildern vorkommen. Nahaufnahmen (Führerhaus, Hände) sind von Hand gebaut.
+   Lana mit siebzehn kommt aus dem Rig (M.drawPose, 'mala'). Die Menschen von 1994 und aus den
+   Neunzigern (Vlado mit 47, Zlata mit 57, Mate am Tor, der Fährmann Bato, Marko mit fünfzehn in Vratnik) haben hier
+   eigene kleine Figuren im Rig-Format ('k3m_…'), die nur in diesen Bildern vorkommen. Von Hand gebaut sind die
+   Nahaufnahmen (die Hände am Seil und am Herd, Nadas Hinterkopf) und der Springer.
    Feinfühlig: kein Körper im Wasser, keine Gewalt; das Seil zeigen nur zwei Hände über schwarzem Wasser. */
 (function(M){
 'use strict';
@@ -38,10 +39,6 @@ function limb(b,a,c,r,col,lx,ly){ lx=lx===undefined?-1:lx; ly=ly===undefined?0:l
   var vx=c[0]-a[0], vy=c[1]-a[1], L2=vx*vx+vy*vy||1, len=Math.sqrt(L2), nx=-vy/len, ny=vx/len; if (nx*lx+ny*ly<0){ nx=-nx; ny=-ny; }
   for (var y=miny;y<=maxy;y++) for (var x=minx;x<=maxx;x++){ var px=x+0.5-a[0], py=y+0.5-a[1], t=cl((px*vx+py*vy)/L2,0,1), qx=px-t*vx, qy=py-t*vy, d=Math.sqrt(qx*qx+qy*qy);
     if (d<=r){ var s=(qx*nx+qy*ny)/r, k=s>0.4?1:(s<-0.4?2:0); b.px(x,y,typeof col==='function'?col(x,y,k):col[k]); } } }
-// Fläche, je Zeile quer schattiert: Q = [schatten, mitte, licht]; lit: Seite des Lichts (-1 links, 1 rechts)
-function shade(b,pts,Q,lit,fn){ var m=new M.Buf(b.w,b.h,0); m.poly(pts,1);
-  for (var y=0;y<b.h;y++){ var a=-1,e=-1,x; for (x=0;x<b.w;x++) if (m.d[y*b.w+x]){ if (a<0) a=x; e=x; } if (a<0) continue;
-    for (x=a;x<=e;x++){ if (!m.d[y*b.w+x]) continue; var u=e>a?(x-a)/(e-a):0.5; if (lit<0) u=1-u; var c=Q[u>0.7?2:(u<0.28?0:1)]; if (fn) c=fn(x,y,c,u); b.px(x,y,c); } } }
 // gedrehte Ellipse als Ring (Lenkrad, Glockenrand): Mitte, Halbachsen, Winkel, Stärke
 function ringE(b,cx,cy,rx,ry,ang,th,col){ var ca=Math.cos(ang), sa=Math.sin(ang), R0=Math.max(rx,ry)+th+1;
   for (var y=Math.floor(cy-R0);y<=cy+R0;y++) for (var x=Math.floor(cx-R0);x<=cx+R0;x++){ var dx=x+0.5-cx, dy=y+0.5-cy, u=dx*ca+dy*sa, v=-dx*sa+dy*ca;
@@ -52,30 +49,7 @@ function rain(b,rg,n,x0,y0,w,h,len,sl,colf){ for (var i=0;i<n;i++){ var sx=x0+rg
 // Kerzenflamme (nach dem Licht zeichnen)
 function flame(b,x,y){ b.px(x,y,P.y4); b.px(x,y-1,P.l1); b.px(x,y-2,P.y5); b.px(x,y-3,P.y4); b.px(x-1,y-1,P.y3); b.px(x+1,y-1,P.y3); }
 
-// ---------------------------------------------------------------- Köpfe von Hand (Nahaufnahmen): Profil und verlorenes Profil
-// Profil nach links (dir -1) oder rechts (1). o: skin [dunkel … hell, 5 Töne], hair [4 Töne], grey (Schläfen), stub (Bartschatten), lx/ly (Licht von)
-var PROF=[[-4.6,-6.4],[-5.7,-3.6],[-6.1,-1.7],[-5.5,-0.5],[-6.6,1.3],[-7.6,2.7],[-6.2,3.5],[-6.4,4.4],[-5.7,5.2],[-6.1,6.0],[-5.5,7.2],[-4.3,8.3],[-1.6,8.4],[1.8,6.6],[3.2,3.0],[3.6,-1.0]];
-function inPoly(px,py,pts){ var c=false; for (var i=0,j=pts.length-1;i<pts.length;j=i++){ var a=pts[i], d=pts[j]; if ((a[1]>py)!==(d[1]>py) && px<(d[0]-a[0])*(py-a[1])/(d[1]-a[1])+a[0]) c=!c; } return c; }
-function headP(b,cx,cy,s,dir,o){ var K=o.skin, H=o.hair, x0=Math.floor(cx-9*s), x1=Math.ceil(cx+9*s), y0=Math.floor(cy-10*s), y1=Math.ceil(cy+13*s), x, y, lx=o.lx===undefined?-0.8:o.lx, ly=o.ly===undefined?0.5:o.ly;
-  function loc(x,y){ return [(x+0.5-cx)/s*(dir<0?1:-1),(y+0.5-cy)/s]; }
-  function inside(u,v){ var sk=Math.pow((u-1.2)/6.6,2)+Math.pow((v+1)/7.6,2)<=1; if (sk) return 1; if (inPoly(u,v,PROF)) return 2; if (v>5 && v<13 && u>-3.4+(v-5)*0.05 && u<2.8-(v-8)*0.1) return 3; return 0; }
-  var m=new M.Buf(x1-x0+1,y1-y0+1,0);
-  for (y=y0;y<=y1;y++) for (x=x0;x<=x1;x++){ var q=loc(x,y); m.d[(y-y0)*m.w+(x-x0)]=inside(q[0],q[1]); }
-  function IN(x,y){ if (x<x0||x>x1||y<y0||y>y1) return 0; return m.d[(y-y0)*m.w+(x-x0)]; }
-  for (y=y0;y<=y1;y++) for (x=x0;x<=x1;x++){ var reg=IN(x,y); if (!reg) continue; var q2=loc(x,y), u=q2[0], v=q2[1];
-    // Licht: Abstand zur Vorderkante (zum Licht hin) und Höhe
-    var fr=0; for (var k=1;k<=6;k++){ if (!IN(x+(dir<0?-k:k)*(lx<0?1:-1),y)) break; fr++; } var lit=cl(1-fr/6,0,1)*0.75+cl(v*ly/9+0.3,0,1)*0.35;
-    var hairR=(reg===1 && (v<-4.2+u*0.12 || (u>-0.6+Math.max(0,v)*0.05 && v<5.4 && !(u<2.2 && v>-2.6 && v<3.2 && u>-1.8)) || (u>1.5 && v<6))), c;
-    if (reg===3) hairR=(u>1.4 && v<8.6);
-    if (o.hairFn) hairR=o.hairFn(u,v,reg,hairR);
-    if (hairR){ c=H[cl(Math.floor(lit*H.length*0.9),0,H.length-1)]; if (o.grey && u>-1.2 && u<1.6 && v>-3 && v<2.8 && hash(x,y*1.7)<0.6) c=o.grey; }
-    else { c=K[cl(Math.floor(lit*K.length*0.95),0,K.length-1)]; if (o.stub && v>3.6 && u<1.8 && u>-5.6 && hash(x*3.1,y*1.3)<0.45) c=M.DN[c]; }
-    b.px(x,y,c); }
-  function at(u,v,c){ var X=cx+(dir<0?u:-u)*s, Y=cy+v*s; b.px(Math.floor(X),Math.floor(Y),c); }
-  at(-3.7,-0.4,o.eye||P.k0); at(-4.6,-1.8,H[0]); at(-3.6,-1.9,H[0]); at(-2.8,-1.6,H[1]);   // Auge, Braue
-  at(-5.9,3.1,K[0]); at(-5.3,5.1,K[0]); at(-4.8,5.2,K[1]);                                // Nasenloch, Mund
-  at(1.5,0.6,K[1]); at(1.9,1.6,K[0]); at(1.4,2.4,K[1]); at(2.3,0.9,K[0]);                 // Ohr
-  return { mouth:[cx+(dir<0?-6:6)*s, cy+5.2*s], eye:[cx+(dir<0?-3.7:3.7)*s, cy-0.4*s] }; }
+// ---------------------------------------------------------------- Kopf von Hand (Nahaufnahme von hinten)
 // Hinterkopf, leicht zur Seite (verlorenes Profil): Wange und Ohr auf der Seite dir; Zopf nach unten
 function headB(b,cx,cy,rx,ry,dir,o){ var K=o.skin, H=o.hair, x, y;
   for (y=Math.floor(cy-ry-1);y<=Math.ceil(cy+ry+1);y++) for (x=Math.floor(cx-rx-1);x<=Math.ceil(cx+rx+1);x++){ var u=(x+0.5-cx)/rx*dir, v=(y+0.5-cy)/ry; if (u*u+v*v>1) continue;

@@ -184,7 +184,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(EDGE,H,0,-0.3),function(xx,yy){ return (xx>CAN.x0 && yy>CAN.y1 && yy<EDGE+30)?-0.45:0; }),0,0,function(xx,yy){ var g=REG[yy*W+xx]; return g!==RG.sky && g!==RG.glass; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ lights.push([WIN.x0+35,WIN.y0+20,50,0.9,30]); lights.push([DOOR.x0+11,DOOR.y0+25,24,0.6,30]); for (var lx=CAN.x0+27;lx<CAN.x1;lx+=58) lights.push([lx,CAN.y1+30,44,0.7,40]); }
+  var lights=[]; if (tod!=='day'){ lights.push([WIN.x0+35,WIN.y0+20,50,0.9,30]); lights.push([DOOR.x0+11,DOOR.y0+25,24,0.6,30]); for (var lx=CAN.x0+27;lx<CAN.x1;lx+=58) lights.push([lx,EDGE+8,34,0.6,24]); }
   BASE=b.clone();
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       for (var yy=WIN.y0;yy<WIN.y1;yy++) for (var xx=WIN.x0;xx<WIN.x1;xx++){ var c=inside(xx,yy,true); if (REG[yy*W+xx]===RG.glass && BASE.get(xx,yy)===inside(xx,yy,false)) o.px(xx,yy,c); }

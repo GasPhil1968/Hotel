@@ -4,7 +4,7 @@
    steht etwas höher, ein Mundwinkel zieht spöttisch nach oben. Schwarze Fleecejacke mit Stehkragen und dem gestickten
    Werkstattlogo „RAJIĆ“. Schnell, spöttisch, praktisch.
    Legende HEAD: Ziffern Haut (1–6 p0–p5) · t u geschorene Seiten (q3 q2, Körnung in Code) · a–f Deckhaar (e1 e2 e3 e4 s4 s5) ·
-   S Ohrstecker (m4) · w W Augenweiß · i Iris · k Pupille · G Glanz · z Wimpern · L l m Lippen (d4 d5 p5).
+   S Ohrstecker (m4) · w W Augenweiß · i Iris · k Pupille · G Glanz · z Wimpern · L l m Lippen (p2 d4 d5).
    Jacke und Logo in Code; Kontur mit M.outline. Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
@@ -55,7 +55,7 @@ var HEAD=[
 ".........................3343333222....................."  // 40
 ];
 var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, t:P.q3, u:P.q2,
-  a:P.e1, b:P.e2, c:P.e3, d:P.e4, e:P.s4, f:P.s5, S:P.m4, w:P.s6, W:P.s5, i:P.c3, k:P.c0, z:P.h0, L:P.d4, l:P.d5, m:P.p5, G:P.s6 };
+  a:P.e1, b:P.e2, c:P.e3, d:P.e4, e:P.s4, f:P.s5, S:P.m4, w:P.s6, W:P.s5, i:P.c3, k:P.c0, z:P.h0, L:P.p2, l:P.d4, m:P.d5, G:P.s6 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
 // schwarze Fleecejacke: weiche, matte Flächen in wenigen Stufen, Stehkragen, Reißverschluss bis unters Kinn
