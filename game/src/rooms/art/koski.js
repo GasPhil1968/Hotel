@@ -228,10 +228,17 @@ function dyn(fb,v,S,GS){ var t=v.t, tod=v.tod, w=weaOf(GS), k=todKey(tod,w), tin
   M.glints(fb,BR.cx,BR.sp+4,WALL.top,14,t,w==='rain'?P.m4:P.a6,0);
   if (w==='bura') M.scn.buraDebris(fb,t,112,140,0); }
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3}); }
-// Geistersicht: am Brunnen viele Hände, die Wasser schöpfen (blass)
-function ghost(fb,v,S,GS){ var t=v.t, cx=FOUNT.cx, by=FOUNT.base;
-  for (var i=0;i<12;i++){ var a=(i/12)*Math.PI+0.15, hx=rd(cx+Math.cos(a)*(FOUNT.r+2)*((i%2)?0.7:1)), hy=rd(by-9-Math.sin(t*0.8+i)*2+(i%3)), al=0.4+0.35*Math.sin(t*0.6+i*1.3); if (bayer(hx,hy+Math.floor(t))>al) continue;
-    var c=(i%3===0)?P.x5:P.x4; fb.px(hx,hy,c); fb.px(hx+1,hy,c); fb.px(hx+2,hy,c); fb.px(hx-1,hy-1,P.x3); fb.px(hx+3,hy-1,P.x3); fb.px(hx,hy+1,P.x3); fb.px(hx+2,hy+1,P.x3); fb.px(hx+1,hy-2,P.x2); if (Math.sin(t*2+i)>0.5) fb.px(hx+1,hy+2,P.x6); } }
+// Geistersicht: am Brunnen viele Hände, die Wasser schöpfen (blass): gewölbte Handflächen unter den Hähnen und am Beckenrand
+function hand(fb,x,y,f,c,c2){ // gewölbte Hand, f=1 rechts, -1 links
+  var pts=[[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[4,2],[-1,-1],[4,-1],[5,0]];
+  for (var i=0;i<pts.length;i++){ var X=x+pts[i][0]*f, Y=y+pts[i][1]; if (X<0||X>=320||Y<0||Y>=144) continue; fb.d[Y*320+X]=(i<4)?c2:c; } }
+function ghost(fb,v,S,GS){ var t=v.t, cx=FOUNT.cx, by=FOUNT.base, i;
+  var spots=[]; TAPS.forEach(function(q,k){ spots.push([q[0]-2,q[1]+1,k%2?1:-1,k*1.3]); });
+  [[-1,-13,1],[1,-14,-1],[-0.7,-12,1],[0.7,-12,-1]].forEach(function(q,k){ spots.push([rd(cx+q[0]*(FOUNT.r-2)),by+q[1],q[2],k*2.1+5]); });
+  spots.forEach(function(sp,k){ var ph=(t*0.35+sp[3]*0.17)%1, vis=Math.sin(ph*Math.PI); if (vis<0.25) return; var dy=rd(Math.sin(t*1.1+sp[3])*1.2);
+    var c=vis>0.7?P.x5:P.x4, c2=vis>0.7?P.x6:P.x5; hand(fb,sp[0],sp[1]+dy,sp[2],c,c2);
+    if (vis>0.6){ for (var d=1;d<4;d++) if (bayer(sp[0],sp[1]+dy+2+d+Math.floor(t*8))<0.5) fb.px(sp[0]+1,sp[1]+dy+2+d,P.x4); }   // Wasser rinnt aus den Händen
+    for (var q=0;q<6;q++){ var gx=sp[0]-2+q, gy=sp[1]+dy-2-(q&1); if (bayer(gx,gy+Math.floor(t*3))<0.25*vis) fb.px(gx,gy,P.x2); } }); }
 
 // ---------------------------------------------------------------- Lauffläche
 function WALK(x,y){ if (y<112||y>138||x<10||x>310) return false;

@@ -38,22 +38,22 @@ async function talkMaja(A){ var J=A.npc('maja'), G=A.G, p=G.phase;
     {t:'Ich möchte mich eintragen.',if:!A.flag('k3.p.checkin'),go:async function(A){ await checkIn(A); }},
     {t:'Was ist heute los in der Stadt?',once:'mjT',if:p==='k3_d2'&&!N(A,'l3_tepa'),go:async function(A){ await tepaLine(A,J); }},
     {t:'Kann man hier irgendwo hoch hinauf? Über die Dächer sehen?',if:A.flag('k3.peil.bridgehead')&&!A.flag('k3.peil.minaret'),go:async function(A){ await J.say('Auf das Minarett der Koski-Moschee. Gleich flussab, im Hof gibt es Karten. Fünf Mark.');
-        await J.say('Bei Bura sieht man von da oben bis zum Hum und zurück. Die Australier waren oben und haben „awesome“ gesagt. Was sonst.'); A.unlock('koski'); }},
+        await J.say('Bei Bura sieht man von da oben bis zu den Bergen im Süden. Die Australier waren oben und haben „awesome“ gesagt. Was sonst.'); A.unlock('koski'); }},
     {t:'Wissen Sie, wo eine alte Karte hängt? Mit den Dörfern südlich der Stadt.',if:N(A,'l3_area')&&!N(A,'l3_oldmap'),go:async function(A){ await J.say('Eine alte Landkarte?'); await A.wait(300);
         await J.say('Zdravko. Café am Westbusbahnhof, drüben. Da hängt eine an der Wand, so alt wie Zdravko und genauso vergilbt. Die Taxifahrer trinken da Kaffee und streiten, welche Straße es noch gibt.'); A.setFlag('k3.oldmap.told'); }},
     {t:'Wie lange gibt es die Herberge schon?',once:'mj1',go:async function(A){ await J.say('Zwei Jahre. Vorher war es das Haus meiner Großmutter. Sie hat Zimmer vermietet, an Leute, die keine Zimmer hatten.');
         await J.say('Ich vermiete an Leute, die keine Hotels mögen. Das ist der Fortschritt.'); }},
     {t:'Kommen viele Gäste im November?',once:'mj2',go:async function(A){ await J.say('Im November kommen drei Australier, die den Sommer verpasst haben. Und Sie.'); await A.wait(300); await J.say('Sie haben keinen Rucksack. Das ist hier verdächtig.'); }},
     {t:'Ist das Ihre Brücke da unten?',once:'mj3',go:async function(A){ await J.say('Meine? Die gehört allen und jedem Touristen ein bisschen. Auf jedem Foto ist sie. Auf meinen nicht mehr.');
-        await A.wait(400); await J.say('Ich war elf, als sie gefallen ist. Ich habe es gehört, nicht gesehen. Danach war es so still, dass meine Mutter das Radio angemacht hat. Nur damit etwas ist.'); if (G.malaOn) await A.g('…'); }},
+        await A.wait(400); await J.say('Ich war zehn, als sie gefallen ist. Ich habe es gehört, nicht gesehen. Danach war es so still, dass meine Mutter das Radio angemacht hat. Nur damit etwas ist.'); if (G.malaOn) await A.g('…'); }},
     {t:'Sie sprechen gut Englisch.',once:'mj4',if:aussiesHere(G),go:async function(A){ await J.say('Ich spreche Australisch. Das ist Englisch mit „awesome“ alle drei Wörter.'); }},
     {t:'Brauchen Sie einen Übersetzer?',once:'mjX',if:A.flag('k3.p.checkin'),go:function(A){ return twoLanguages(A,J); }},
     {t:'Frost heute Nacht?',once:'mj5',if:p==='k3_d3',go:async function(A){ await J.say('Sagt das Radio. Minus vier. Die Australier wollen trotzdem auf den Velež, mit Turnschuhen.'); await J.say('Ich habe gesagt, sie sind verrückt. Sie haben „awesome“ gesagt.'); }},
     {t:'Ich fahre heute.',once:'mjE',if:p==='k3_epi_d',go:async function(A){ await J.say('Sie fahren?'); await A.wait(300); await J.say('Dann waren Sie der älteste Gast seit August und der stillste.');
         await J.say('Sie haben auf der Terrasse geredet, jeden Abend. Ich habe niemanden gesehen.'); await A.m('Ich übe Sprachen.'); await J.say('Welche?'); await A.m('Eine, die nur zwei sprechen.');
-        await A.wait(500); await J.say('Dann kommen Sie wieder und üben weiter. Zimmer drei hält ich Ihnen frei. Mit dem Fenster.'); if (G.malaOn) await A.g('Mit dem Fenster. Nächstes Mal gehe ich hin.'); }},
+        await A.wait(500); await J.say('Dann kommen Sie wieder und üben weiter. Zimmer drei halte ich Ihnen frei. Mit dem Fenster.'); if (G.malaOn) await A.g('Mit dem Fenster. Nächstes Mal gehe ich hin.'); }},
     A.askOpt({ l3_tepa:'Die Tepa. Hinter der Altstadt, wo die Gasse breiter wird. Samstags mit allem, sonst mit Kohl.', p3_munich:'München, jeden Samstag. Mein Bruder ist mit dem gefahren. Er kommt jetzt an Weihnachten. Mit einem Auto, das größer ist als mein Zimmer.',
-      l3_onearch:'Ein Bogen, ja. Ein Steinmetz aus der Türkei hat ihn gebaut, vor vierhundert Jahren, und eine Firma aus der Türkei noch einmal. Dazwischen war er weg.', p3_history:'Dino erzählt das jedem. Er erzählt es gut. Er hat es von seinem Opa, der hat es auch gut erzählt.',
+      l3_onearch:'Ein Bogen, ja. Der Baumeister soll Angst gehabt haben, dass er einstürzt, als man das Gerüst weggenommen hat. Er hat gehalten. Vierhundert Jahre lang.', p3_history:'Dino erzählt das jedem. Er erzählt es gut. Er hat es von seinem Opa, der hat es auch gut erzählt.',
       l3_skela:'Skela? Das ist ein Dorf flussab. Da war ich nie. Da ist man, wenn man da wohnt.', l3_city:'Ihre … Leine? Ich verstehe Sie nicht. Aber heute ist Markttag, wenn Sie das meinen.' },'Da fragen Sie die Falsche. Ich kenne Betten und Australier.'),
     {t:'Danke, Maja.',bye:true,go:async function(A){ await J.say(A.cycle('mjBye',['Bitte.','Frühstück ab acht. Kaffee immer.','Der Schlüssel hängt, wenn Sie gehen. Sie sind ja nie weg.'])); }}
   ]; }); }
@@ -148,7 +148,7 @@ var HS=[
    gexit:function(S,G){ if (G.phase!=='k3_pro_n' || !G.flags['k3.p.talk1']) return null; var s=M.stand('starimost','steps')||[72,135,'L']; return {to:'starimost',x:s[0],y:s[1],f:s[2]||'L'}; },
    g:{look:async function(A){ if (A.G.phase==='k3_pro_n' && A.flag('k3.p.talk1')) return A.g('Hier unten an der Brücke sind Stufen zum Wasser. So weit reicht es. So weit gehe ich, allein.'); return A.g('Am Geländer viele Hände. Alle haben sich hier festgehalten und hinuntergesehen. Keiner ist gesprungen. Gut.'); },
      sense:'Abdrücke von Händen, viele, warm und kalt durcheinander. Liebespaare. Einer, der hier eine Zigarette geraucht und nicht gesprungen ist.'}},
- {id:'table',name:'Tisch',look:function(A){ return A.m(A.G.tod==='night'?'Markos Tisch, sagt Maja, weil ich jeden Abend daran sitze. Ein Teelicht im Glas, eine Dose Bier, die mir die Australier hingestellt haben.':'Ein Plastiktisch mit zwei Plastikstühlen. Im Regen sammelt sich auf ihm ein kleiner See.'); },
+ {id:'table',name:'Tisch',look:function(A){ return A.m(A.G.tod==='night'?'Mein Tisch, sagt Maja, weil ich jeden Abend daran sitze. Ein Teelicht im Glas, eine Dose Bier, die mir die Australier hingestellt haben.':'Ein Plastiktisch mit zwei Plastikstühlen. Im Regen sammelt sich auf ihm ein kleiner See.'); },
    use:async function(A){ var G=A.G; if (G.phase==='k3_pro_n' && !A.flag('k3.p.talk1')) return M.k3Talk1(A); if (G.phase==='k3_d1_n' && !A.flag('k3.d1.father')) return M.k3Father(A);
      if (G.phase==='k3_pro') return A.m('Im Regen? Später. Wenn es dunkel ist, setze ich mich hierher.'); await A.m(A.cycle('tabU',['Ich setze mich und schreibe ein paar Zeilen ins Notizbuch. Keine davon ist für mich.','Ich setze mich. Der Stuhl wackelt. Ich bleibe trotzdem sitzen.'])); },
    g:{look:'Hier hast du es aufgeschrieben. „Bring sie nach Hause.“ Mit Datum.'}},
@@ -194,7 +194,7 @@ M.room('herberge',{ name:'Herberge „Neretva“', scape:'k3_herberge',
   enter:async function(A,from){ var G=A.G, p=G.phase, J=A.npc('maja');
     if (A.isMala()) return;
     if (p==='k3_pro' && A.first('hbArr')){ await A.narrate('Ein altes Steinhaus in einer Gasse der Altstadt, eine Rezeption, so groß wie ein Flur, und dahinter eine Terrasse über dem Fluss. Es riecht nach Kaffee und nassen Jacken.'); return; }
-    if (p==='k3_d1' && A.first('hbD1') && majaHere(G)){ await J.say('Dobro jutro! Bura. Haben Sie das Fenster gehört? Die ganze Nacht.'); await J.say('Bei Bura sieht man vom Minarett der Koski-Moschee bis zum Hum. Die Australier sind schon oben gewesen. Vor dem Frühstück!'); A.unlock('koski'); return; }
+    if (p==='k3_d1' && A.first('hbD1') && majaHere(G)){ await J.say('Dobro jutro! Bura. Haben Sie das Fenster gehört? Die ganze Nacht.'); await J.say('Bei Bura sieht man vom Minarett der Koski-Moschee bis zu den Bergen im Süden. Die Australier sind schon oben gewesen. Vor dem Frühstück!'); A.unlock('koski'); return; }
     if (p==='k3_d2' && !N(A,'l3_tepa') && majaHere(G) && A.first('hbD2')){ await J.say('Dobro jutro. Samstag.'); await tepaLine(A,J); return; }
     if (p==='k3_d3' && A.first('hbD3') && majaHere(G)){ await J.say('Sonntag. Frost heute Nacht, sagt das Radio. Ziehen Sie sich etwas an, Sie sehen aus, als hätten Sie in einem Auto geschlafen.'); await A.m('Fast.'); return; }
     if (p==='k3_epi_d' && A.first('hbEpiD') && majaHere(G)){ await J.say('Sie sind noch da! Ich dachte, Sie sind weg, ohne zu zahlen. Das machen nur die Australier, und die zahlen mit Liedern.'); return; }

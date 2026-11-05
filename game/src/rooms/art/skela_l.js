@@ -53,15 +53,15 @@ function facRect(k){ var w=HSE.w, gf=Math.round(w*FAC.gf), kn=Math.round(w*FAC.k
   if (k==='roofw'){ var yb=HSE.base-gf; return [x0,yb-Math.round(f[3]*kn),x1-x0,Math.max(2,Math.round((f[3]-f[2])*kn))]; }
   return [x0,HSE.base-Math.round(f[3]*gf),x1-x0,Math.max(2,Math.round((f[3]-f[2])*gf))]; }
 var GF=Math.round(HSE.w*FAC.gf), KN=Math.round(HSE.w*FAC.knee), RF=Math.round(HSE.w*FAC.roof), EAVE=HSE.base-GF-KN;
-var SHED={x0:80,x1:160,top:72,base:112};                                              // Batos Schuppen
-var LANT={x:112,y:84};                                                                // Sturmlaterne (Mitte des Glases)
-var JETTY={x0:36,x1:76,yb:110,yt:90};                                                 // Holzsteg: am Ufer breit, draußen schmal
+var SHED={x0:84,x1:164,top:58,base:112};                                              // Batos Schuppen
+var LANT={x:116,y:72};                                                                // Sturmlaterne (Mitte des Glases)
+var JETTY={x0:44,x1:68,yb:109,yt:80};                                                 // Holzsteg: am Ufer breit, draußen schmal
 var QT={x:440,base:113};                                                              // Quittenbaum
 var GRAVE={x0:422,x1:452,y0:116,y1:123};                                              // das Beet
 var WOOD={x0:404,x1:426,base:112};
 var BLOCK={x:206,y:124};                                                              // Hackklotz
-var FB={bell:[159,42],anchor:[147,50],ramp:[118,138],hut:[204,244],stumps:[[182,63,4],[188,65,3],[193,66.5,2]]};   // drüben
-var FERRY={ here:[62,96,0.95], mid:[100,80,0.55], far:[128,68,0.32] };
+var FB={bell:[100,42],anchor:[88,50],ramp:[60,80],hut:[150,190],stumps:[[128,63,4],[134,65,3],[139,66.5,2]]};   // drüben
+var FERRY={ here:[60,84,0.85], mid:[66,75,0.52], far:[71,67,0.32] };
 
 // ---------------------------------------------------------------- Himmel und Berge
 function paintSky(b,tod,wea){ var w=RW(b,RG.sky), x, y;
@@ -85,16 +85,17 @@ function paintHills(b,tod,wea){ var w=RW(b,RG.hill), x, y;
 function paintFar(b,tod){ var w=RW(b,RG.far), x, y;
   for (x=0;x<W;x++){ var t0=rnd(farTop(x)), wl=farWL(x); for (y=t0;y<wl;y++){ var u=(y-t0)/(wl-t0), c;
       if (y<t0+2) c=hash(x,y)<0.5?P.e3:P.g3;                                                                           // Grasnarbe oben
-      else { var f=fbm(x*0.8,y*0.6,6,8), band=Math.floor((y-t0+Math.sin(x*0.1))/2.5); c=ra(R('s1 s2 s3 s4 s5'),0.64-u*0.42+(f-0.5)*0.3+((band%2)?0.06:-0.04),x,y);
-        if (f>0.66 && hash(x,y)<0.6) c=hash(x,y)<0.5?P.g1:P.g2; if (u>0.82) c=(hash(x,y)<0.5)?P.g1:P.s1; }
+      else { var bed=(y-t0)+Math.sin(x*0.09)*1.5, band=Math.floor(bed/2.4), f=fbm(x*0.8,y*0.6,6,8), crack=((x*5+band*3)%17===0)||(hash(Math.floor(x/3),band)<0.1);
+        c=ra(R('s0 s1 s2 s3 s4 s5'),0.7-u*0.5+(f-0.5)*0.35+((band%2)?0.06:-0.05),x,y); if (crack) c=P.s1; if ((bed%2.4)<0.6) c=M.DN[c];
+        if (f>0.64 && hash(x,y)<0.7) c=hash(x,y)<0.5?P.g1:P.g2; if (u>0.8) c=(hash(x,y)<0.5)?P.g1:P.s1; }
       w.px(x,y,c); } }
   // Gestrüpp auf der Kante
-  for (x=0;x<W;x++){ if (fbm(x,2,11,23)<0.5) continue; var ty=rnd(farTop(x)); for (var k=1;k<=1+rnd(hash(x,4)*2);k++) w.px(x,ty-k,hash(x,k)<0.5?P.g2:P.e2); }
+  for (x=0;x<W;x++){ if (fbm(x,2,11,23)<0.42) continue; var ty=rnd(farTop(x)), hh=1+rnd(fbm(x,5,5,24)*5); for (var k=1;k<=hh;k++) w.px(x,ty-k,hash(x,k)<0.5?P.g2:(hash(x,k+3)<0.5?P.g1:P.e2)); }
   // die Rampe drüben: ein heller Einschnitt hinab zum Wasser
   for (y=rnd(farTop(FB.ramp[0]));y<farWL(FB.ramp[0]);y++){ var t=(y-farTop(FB.ramp[0]))/(farWL(FB.ramp[0])-farTop(FB.ramp[0])), xa=rnd(lerp(FB.ramp[0]+6,FB.ramp[0]+1,t)), xb=rnd(lerp(FB.ramp[1]-4,FB.ramp[1],t)); for (x=xa;x<=xb;x++) w.px(x,y,(x===xa)?P.s2:(t>0.8?P.g2:P.s4)); }
   // Anker, Glockenpfosten mit Arm und Glocke, das Widerlager, die Hütte
   var ax=FB.anchor[0], ay=rnd(farTop(ax)); w.rect(ax-2,ay-2,5,2,P.s3); w.px(ax+2,ay-3,P.t2);
-  var bx=FB.bell[0], by=rnd(farTop(bx)); w.vl(bx,by-14,by,P.w1); w.hl(bx-5,bx,by-13,P.w1); w.px(bx-4,by-12,P.y2); w.px(bx-4,by-11,P.y3); w.px(bx-5,by-11,P.a4); w.px(bx-3,by-11,P.y2);
+  var bx=FB.bell[0], by=rnd(farTop(bx)); w.vl(bx,by-15,by,P.w1); w.px(bx+1,by-15,P.w2); w.hl(bx-6,bx,by-14,P.w2); w.px(bx-4,by-13,P.y1); w.hl(bx-5,bx-3,by-12,P.y3); w.hl(bx-6,bx-2,by-11,P.y2); w.px(bx-5,by-12,P.a4); w.px(bx-4,by-10,P.k2);
   for (x=170;x<200;x++){ var t1=rnd(farTop(x)); w.px(x,t1-1,P.m2); w.px(x,t1,P.s3); }
   var h0=FB.hut[0], h1=FB.hut[1]; for (x=h0;x<h1;x++){ var tt=rnd(farTop(x)), ct=tt-9+(x>h0+24?rnd((x-h0-24)*0.35):0); for (y=ct;y<tt;y++) w.px(x,y,rubble(x*2,y*2,6,4,5)); }
   for (y=0;y<5;y++){ var ins=y; for (x=h0+ins;x<h0+22-ins;x++) w.px(x,rnd(farTop(h0))-10-y,(x+y)%3?P.s2:P.m2); } w.rect(h0+10,rnd(farTop(h0))-6,3,6,P.k1);
@@ -102,10 +103,10 @@ function paintFar(b,tod){ var w=RW(b,RG.far), x, y;
   // Stümpfe drüben im Wasser
   FB.stumps.forEach(function(s,i){ for (y=rnd(s[1]-s[2]*1.6);y<=s[1];y++) for (x=rnd(s[0]-s[2]*0.6);x<=rnd(s[0]+s[2]*0.6);x++) if (!(y<s[1]-s[2]*1.2 && hash(x,i)<0.5)) w.px(x,y,x>s[0]?P.s1:P.s3); });
   // die neue Brücke: von drüben (oben links) herüber zum eigenen Ufer am linken Rand
-  var n=140; for (var i=0;i<=n;i++){ var u=i/n, px=rnd(lerp(86,-4,u)), py=lerp(50,94,u), s=0.45+u*0.75, th=Math.max(1.5,4*s), rh=Math.max(1,5*s);
+  var n=140; for (var i=0;i<=n;i++){ var u=i/n, px=rnd(lerp(36,-20,u)), py=lerp(50,94,u), s=0.45+u*0.75, th=Math.max(1.5,4*s), rh=Math.max(1,5*s);
     for (y=Math.floor(py);y<py+th;y++) w.px(px,y,y<py+1?P.s5:(y<py+th-1?P.s3:P.s2)); w.px(px,Math.floor(py-rh),P.m3); if (i%Math.max(3,rnd(8*s))===0) w.vl(px,Math.floor(py-rh),Math.floor(py),P.m2); }
-  [0.3,0.62].forEach(function(u){ var px=rnd(lerp(86,-4,u)), py=lerp(50,94,u), s=0.45+u*0.75, yb=py+4*s, wl=yb+8*s; for (y=Math.floor(yb);y<wl;y++) for (x=px-rnd(1.6*s);x<=px+rnd(1.6*s);x++) w.px(x,y,x<px?P.s4:P.s2); });
-  LAMPF=[rnd(lerp(86,-4,0.45)),rnd(lerp(50,94,0.45))-rnd(16*(0.45+0.45*0.75))]; w.vl(LAMPF[0],LAMPF[1],rnd(lerp(50,94,0.45)),P.m1); w.rect(LAMPF[0]-1,LAMPF[1]-1,3,2,P.m2); }
+  [0.3,0.62].forEach(function(u){ var px=rnd(lerp(36,-20,u)), py=lerp(50,94,u), s=0.45+u*0.75, yb=py+4*s, wl=yb+8*s; for (y=Math.floor(yb);y<wl;y++) for (x=px-rnd(1.6*s);x<=px+rnd(1.6*s);x++) w.px(x,y,x<px?P.s4:P.s2); });
+  LAMPF=[rnd(lerp(36,-20,0.45)),rnd(lerp(50,94,0.45))-rnd(16*(0.45+0.45*0.75))]; w.vl(LAMPF[0],LAMPF[1],rnd(lerp(50,94,0.45)),P.m1); w.rect(LAMPF[0]-1,LAMPF[1]-1,3,2,P.m2); }
 var LAMPF=[0,0];
 
 // ---------------------------------------------------------------- Fluss (fließt von links nach rechts)
@@ -137,13 +138,16 @@ function paintGround(b){ var w=RW(b,RG.ground), x, y;
   var tx2=24, ty2=104; for (y=ty2-30;y<ty2;y++){ var xx=rnd(tx2+Math.sin(y*0.12)*2); vg.px(xx,y,P.w1); vg.px(xx+1,y,P.w0); vg.px(xx-1,y,P.w2); }
   var rr=M.rng(5); for (var q=0;q<16;q++){ var a=-Math.PI/2+(rr()-0.5)*2.4, L=12+rr()*16, px=tx2, py=ty2-30; for (var s=0;s<L;s++){ px+=Math.cos(a)*0.9; py+=Math.sin(a)*0.9; a+=0.05; vg.px(rnd(px),rnd(py),s<4?P.w1:P.w2); }
     for (var d=0;d<10+rr()*12;d++) vg.px(rnd(px)+(d%2),rnd(py)+d,d<6?P.e2:P.e3); } }
-function paintJetty(b){ var w=RW(b,RG.wood), y, x;
-  for (y=JETTY.yt;y<=JETTY.yb;y++){ var t=(y-JETTY.yt)/(JETTY.yb-JETTY.yt), xa=rnd(lerp(JETTY.x0+12,JETTY.x0,t)), xb=rnd(lerp(JETTY.x1-10,JETTY.x1,t)), plank=Math.floor(t*9);
-    for (x=xa;x<=xb;x++){ var c=(Math.abs(t*9-plank)<0.14)?P.w0:(hash(plank,3)<0.5?P.w2:P.w3); if (hash(x,plank)<0.06) c=P.w1; if (x===xa||x===xb) c=P.w1; w.px(x,y,c); } }
-  // Pfosten im Wasser, ein Ring, ein altes Tau
-  [[JETTY.x0+12,JETTY.yt],[JETTY.x1-10,JETTY.yt],[JETTY.x0+5,JETTY.yt+10],[JETTY.x1-5,JETTY.yt+10]].forEach(function(p,i){ var s=i<2?0.6:0.85; w.vl(p[0],p[1]-rnd(4*s),p[1]+rnd(6*s),P.w1); w.px(p[0],p[1]-rnd(4*s)-1,P.w2); });
-  w.px(JETTY.x1-9,JETTY.yt+2,P.m2); for (var k=0;k<8;k++) w.px(JETTY.x1-8+k,JETTY.yt+3+rnd(Math.sin(k*0.6)*1.5),P.e3); }
-
+function paintJetty(b){ var w=RW(b,RG.wood), y, x, xa, xb;
+  function edges(y){ var t=(y-JETTY.yt)/(JETTY.yb-JETTY.yt); return [lerp(JETTY.x0+7,JETTY.x0,t),lerp(JETTY.x1-7,JETTY.x1,t),t]; }
+  // Pfähle im Wasser (unter dem Steg), dann die Bohlen quer, mit Fugen
+  for (var pi=0;pi<5;pi++){ var py=JETTY.yt+2+pi*6, e=edges(py), s=0.5+e[2]*0.5, ph=rnd(5*s); [e[0]+1,e[1]-1].forEach(function(px){ for (var yy=py;yy<py+ph;yy++){ w.px(rnd(px),yy,P.w0); } }); }
+  for (y=JETTY.yt;y<=JETTY.yb;y++){ var e2=edges(y), t=e2[2], plank=Math.floor((y-JETTY.yt)/(1.5+t*2.5)); xa=Math.round(e2[0]); xb=Math.round(e2[1]);
+    for (x=xa;x<=xb;x++){ var c=(((y-JETTY.yt)%Math.max(2,rnd(1.5+t*2.5)))===0)?P.w1:(hash(plank,3)<0.5?P.w3:P.w2); if (hash(x,plank)<0.05) c=P.w1; if (x===xa) c=P.w4; if (x===xb) c=P.w0; w.px(x,y,c); }
+    if (y>=nearWL(xb)-1){ for (x=xb+1;x<xb+3;x++) w.px(x,y,P.e1); } }
+  // Poller am Ende, ein Ring, ein altes Tau
+  var ee=edges(JETTY.yt+1); w.rect(rnd(ee[0]),JETTY.yt-3,2,4,P.w1); w.rect(rnd(ee[1])-1,JETTY.yt-3,2,4,P.w0); w.px(rnd(ee[1])-1,JETTY.yt-4,P.w2);
+  for (var k=0;k<7;k++) w.px(rnd(ee[1])+k-3,JETTY.yt+2+rnd(Math.sin(k*0.7)*1.2),k%2?P.e3:P.e4); }
 // ---------------------------------------------------------------- Batos Schuppen: Holz, offen, Laterne, Ruder, Netz, Wathose
 function paintShed(b){ var w=RW(b,RG.wood), x, y, x0=SHED.x0, x1=SHED.x1, top=SHED.top, base=SHED.base;
   // Rückwand aus senkrechten Brettern mit Spalten, dahinter Licht vom Fluss
@@ -197,6 +201,9 @@ function paintHouse(b){ var wa=RW(b,RG.wall), rf=RW(b,RG.roof), wd=RW(b,RG.wood)
   winFrame(wa,gl,wd,'kitchen'); winFrame(wa,gl,wd,'stube'); winFrame(wa,gl,wd,'roofw');
   // ein Blumentopf auf dem Küchenfensterbrett, verblüht
   var kr=facRect('kitchen'); wd.rect(kr[0]+4,kr[1]+kr[3]+1,6,4,P.t2); wd.hl(kr[0]+3,kr[0]+10,kr[1]+kr[3]+1,P.t3); for (var q=0;q<6;q++) wd.px(kr[0]+5+q,kr[1]+kr[3]-1-rnd(hash(q,3)*3),q%2?P.e2:P.g2);
+  // ein Zopf roter Paprika und ein Zwiebelzopf hängen an der Wand
+  var pz=facRect('kitchen'), px0=pz[0]+pz[2]+8; wd.px(px0,pz[1]-2,P.m2); for (var q2=0;q2<16;q2++){ var py=pz[1]+q2, ox=rnd(Math.sin(q2*0.9)*1.2); wd.px(px0+ox,py,P.e3); if (q2%2===0){ wd.px(px0+ox-1,py,P.r2); wd.px(px0+ox-2,py+1,P.r3); wd.px(px0+ox+1,py+1,P.r2); wd.px(px0+ox+2,py,P.r3); wd.px(px0+ox-1,py+1,P.r1); } }
+  wd.px(px0+5,pz[1]-1,P.m2); for (var q3=0;q3<10;q3++){ var py2=pz[1]+1+q3; if (q3%2===0){ wd.px(px0+5,py2,P.t4); wd.px(px0+4,py2+1,P.y2); wd.px(px0+6,py2+1,P.t4); } else wd.px(px0+5,py2,P.e3); }
   // Haustür: Bretter, Beschläge, Klinke, Schwelle, kleines Vordach
   var dr=facRect('door'); for (y=dr[1];y<base;y++) for (x=dr[0];x<dr[0]+dr[2];x++){ var u=x-dr[0], c3=(u%5===0)?P.w0:((hash(Math.floor(u/5),3)<0.5)?P.w2:P.w1); if (hash(x,y>>1)<0.06) c3=P.w3; wd.px(x,y,c3); }
   [dr[1]+6,base-10].forEach(function(hy){ wd.hl(dr[0]+1,dr[0]+dr[2]-2,hy,P.k1); wd.hl(dr[0]+1,dr[0]+dr[2]-2,hy+1,P.m1); });
@@ -255,7 +262,7 @@ function paintYard(b){ var w=RW(b,RG.wood), x, y;
   for (x=162;x<248;x++){ var fy=102+rnd(Math.sin(x*0.04)*1); if ((x-162)%6===0){ w.vl(x,fy-12,fy,P.w1); w.px(x,fy-13,P.w2); } if (hash(x,1)<0.92){ w.px(x,fy-9,P.w2); w.px(x,fy-4,P.w2); } }
   // Wäscheleine mit einem Tuch
   for (x=170;x<240;x++){ var ly=78+rnd(Math.sin((x-170)/70*Math.PI)*3); w.px(x,ly,P.s1); } w.vl(169,76,102,P.w1); w.vl(240,76,102,P.w1);
-  w.rect(196,81,9,11,P.s5); w.vl(196,81,91,P.s4); w.hl(196,204,81,P.s6); w.rect(214,82,7,9,P.b2); w.vl(214,82,90,P.b1);
+  w.rect(192,81,6,7,P.s5); w.vl(192,81,87,P.s4); w.hl(192,197,81,P.s6); w.rect(206,82,5,8,P.b2); w.vl(206,82,89,P.b1); w.rect(220,81,6,5,P.r2); w.hl(220,225,81,P.r3);
   // ein Brunnen? nein: ein Wasserfass unter der Dachrinne
   var fx=HSE.x0-14; for (y=96;y<112;y++) for (x=fx;x<fx+10;x++){ var u=(x-fx)/10, c=u<0.2?P.w1:(u<0.6?P.w3:P.w2); if ((y-96)%5===0) c=P.m1; w.px(x,y,c); } w.ellipse(fx+5,96,5,1.4,P.k2); }
 
@@ -282,9 +289,17 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (r===RG.far) return 0.3; if (r===RG.water) return 0.12; return 0.03; },{col:P.m4});
   if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill||r===RG.far?-1.1:-0.7); },0,0);
-  var lights=[]; if (tod!=='day'){ lights.push([LAMPF[0],LAMPF[1]+4,10,0.7,8]); if (S.lantern) lights.push([LANT.x,LANT.y+4,30,0.85,22]); if (S.zlataLamp){ var zp=ZPOS; lights.push([zp[0],zp[1]-22,46,0.95,30]); } }
-  LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, lights:lights, after:function(o,tod){ if (tod==='day') return; o.rect(LAMPF[0]-1,LAMPF[1]-1,3,2,P.y5); } });
+  var base=b.clone(), lights=[]; if (tod!=='day'){ lights.push([LAMPF[0],LAMPF[1]+4,9,7,0.7]); if (S.lantern){ lights.push([LANT.x,LANT.y+6,34,26,0.95]); lights.push([LANT.x-6,118,40,9,0.6]); } if (S.zlataLamp){ var zp=ZPOS; lights.push([zp[0]-6,zp[1]-24,44,30,0.95]); lights.push([zp[0]-6,zp[1]+2,46,10,0.7]); } }
+  LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,tod){ if (tod==='day') return; warmPass(o,base,lights); o.rect(LAMPF[0]-1,LAMPF[1]-1,3,2,P.y5); } });
   return LAST; }
+// warme Lichtinseln in Stufen (wie in Vratnik): weich auslaufend statt grob gerastert
+var DIMW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [L*0.5+r*0.12+12, L*0.38+g*0.08+8, L*0.26+b*0.1+16]; });
+var MIDW=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.45+L*0.36+16, g*0.32+L*0.26+6, b*0.16+L*0.08+4]; });
+function warmPass(o,base,L){ if (!L.length) return; var LT=M.TINT.lamp;
+  for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x; if (REG[k]===RG.sky) continue; var v=0;
+    for (var i=0;i<L.length;i++){ var l=L[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[3], f=1-dx*dx-dy*dy; if (f>0){ var q=l[4]*Math.pow(f,1.15); if (q>v) v=q; } }
+    if (v<0.03) continue; var f2=v*3.3, lv=Math.floor(f2), fr=f2-lv, t=lv===0?fr:(fr-0.5)*1.7+0.5; if (t>bayer(x,y)) lv++; if (lv<=0) continue;
+    var c=base.d[k]; o.d[k]=lv===1?M.tintPx(DIMW,c,x,y):(lv===2?M.tintPx(MIDW,c,x,y):(lv===3?M.tintPx(LT,c,x,y):M.UP[M.tintPx(LT,c,x,y)])); } }
 var ZPOS=[272,118];
 
 // ---------------------------------------------------------------- jedes Bild: Wasser, Hühner, Rauch, Laterne, Fenster, Quitte, Fähre
@@ -295,10 +310,12 @@ function dynamic(fb,v,S,GS){ var t=v.t, cam=v.cam, fw=fb.w, x, y;
   for (y=64;y<102;y++){ var row=y*fw; for (var sx=0;sx<fw;sx++){ x=sx+cam; var k=y*W+x; if (REG[k]!==RG.water) continue; var c=wcol(x,y,t); if (FIN) c=M.DN[c]; if (WEA==='grey') c=M.mix(c,P.s4,2); fb.d[row+sx]=tintC(c,x,y); } }
   if (TODN==='night'){ var lx=LAMPF[0]-cam; if (lx>-4&&lx<fw+4){ M.glow(fb,lx,LAMPF[1],5,t,0.5); for (y=LAMPF[1]+10;y<LAMPF[1]+30;y++){ var xx=lx+Math.round(Math.sin(y*0.9+t*2.4)*1.2); if (xx<0||xx>=fw||y>=H||REG[y*W+xx+cam]!==RG.water) continue; if (Math.sin(y*1.7+t*3.3)>0.15) fb.d[y*fw+xx]=P.y2; } } }
   // Hühner picken (bei Tag)
-  if (TODN==='day') HENS.forEach(function(h,i){ var hx=h[0]+rnd(Math.sin(t*0.4+i*2)*6)-cam, hy=h[1], peck=(Math.floor(t*2+i*0.7)%3)===0, f=(Math.sin(t*0.4+i*2+0.2)>Math.sin(t*0.4+i*2))?1:-1, white=i%2===0;
-    if (hx<-6||hx>fw+6) return; var B=white?P.s5:P.t3, D=white?P.s3:P.t1;
-    fb.px(hx-2,hy-3,B); fb.px(hx-1,hy-3,B); fb.px(hx,hy-3,B); fb.px(hx+1,hy-3,B); fb.px(hx-2,hy-2,D); fb.px(hx-1,hy-2,B); fb.px(hx,hy-2,B); fb.px(hx+1,hy-2,D); fb.px(hx-3,hy-4,D); fb.px(hx-2,hy-4,B);
-    var hdx=f>0?hx+2:hx-3, hdy=peck?hy-2:hy-5; fb.px(hdx,hdy,B); fb.px(hdx,hdy-1,P.r3); fb.px(hdx+f,hdy,P.y3); fb.px(hx-1,hy-1,P.y2); fb.px(hx+1,hy-1,P.y2); fb.px(hx-1,hy,P.e1); });
+  if (TODN==='day') HENS.forEach(function(h,i){ var hx=h[0]+rnd(Math.sin(t*0.4+i*2)*6)-cam, hy=h[1], peck=(Math.floor(t*2+i*0.7)%3)===0, f=(Math.cos(t*0.4+i*2)>0)?1:-1, white=i%2===0;
+    if (hx<-8||hx>fw+8) return; var B=white?P.s5:P.t3, L=white?P.s6:P.t4, D=white?P.s3:P.t1;
+    var body=[[-3,-4,D],[-2,-5,B],[-1,-5,L],[0,-5,L],[1,-5,B],[-3,-3,D],[-2,-4,B],[-1,-4,L],[0,-4,B],[1,-4,B],[2,-4,B],[-2,-3,D],[-1,-3,B],[0,-3,B],[1,-3,B],[2,-3,D],[-1,-2,D],[0,-2,D],[1,-2,D],[-4,-5,D],[-4,-6,B]];
+    body.forEach(function(q){ fb.px(hx+q[0]*f,hy+q[1],q[2]); });
+    var hd=peck?[[3,-2],[3,-1]]:[[3,-6],[3,-5],[2,-6]]; hd.forEach(function(q){ fb.px(hx+q[0]*f,hy+q[1],B); }); var top=peck?hy-3:hy-7; fb.px(hx+3*f,top,P.r3); fb.px(hx+4*f,top+1+(peck?1:0),P.y3);
+    fb.px(hx-1,hy-1,P.y2); fb.px(hx+1,hy-1,P.y2); fb.px(hx-1,hy,P.y1); fb.px(hx+1,hy,P.y1); });
   // Rauch aus dem Schornstein (bei Tag)
   if (TODN==='day') for (var p=0;p<9;p++){ var ph=((t*0.1+p/9)%1), px=rnd(CHIM[0]+ph*16+Math.sin(t*0.6+p)*2*ph)-cam, py=rnd(CHIM[1]-ph*22); if (px<0||px>=fw||py<0) continue; var r0=REG[py*W+px+cam]; if (r0!==RG.sky&&r0!==RG.hill) continue; if (bayer(px,py)<0.9-ph*0.7){ fb.px(px,py,ph<0.4?P.s5:P.s4); if (ph<0.5) fb.px(px+1,py,P.s4); } }
   // die letzte Quitte schaukelt
@@ -365,8 +382,8 @@ var dr=facRect('door');
 M.defineArt('skela_l',{
   width:W, paint:paint, layers:layers, dynamic:dynamic, front:front, ghost:ghost,
   walk:function(x,y,S,GS){ return walk(x,y,S,GS)||walkJetty(x,y,S,GS); }, walkG:function(){ return false; },
-  actorLut:function(a,S,GS,tod){ if (tod==='day'||!M.TINT[tod]) return null; var best=0; if (S.zlataLamp){ var A=M.E&&M.E.ACT&&M.E.ACT.zlata, zx=(A&&A.visible)?A.x:ZPOS[0], zy=(A&&A.visible)?A.y:ZPOS[1]; best=Math.max(best,1-Math.hypot(a.x-zx,(a.y-zy)*1.5)/70); }
-    if (S.lantern) best=Math.max(best,1-Math.hypot(a.x-LANT.x,(a.y-112)*1.5)/60); return best>0.35?M.TINT.lamp.a:null; },
+  actorLut:function(a,S,GS,tod){ if (tod==='day'||!M.TINT[tod]) return null; var best=0; if (S.zlataLamp){ var A=M.E&&M.E.ACT&&M.E.ACT.zlata, zx=(A&&A.visible)?A.x:ZPOS[0], zy=(A&&A.visible)?A.y:ZPOS[1]; best=Math.max(best,1-Math.hypot(a.x-zx+6,(a.y-zy)*1.5)/60); }
+    if (S.lantern) best=Math.max(best,1-Math.hypot(a.x-LANT.x,(a.y-112)*1.5)/50); return best>0.55?M.TINT.lamp.a:(best>0.25?MIDW.a:null); },
   spots:{ to_bridge:[0,90,16,54], house:[HSE.x0,EAVE-RF-2,HSE.w,HSE.base-EAVE+RF+2], house_door:[dr[0]-2,dr[1]-2,dr[2]+4,dr[3]+2], shed:[SHED.x0-4,SHED.top-2,SHED.x1-SHED.x0+8,SHED.base-SHED.top+2],
     quince:[QT.x-20,QT.base-60,40,46], grave:[GRAVE.x0-7,GRAVE.y0-6,GRAVE.x1-GRAVE.x0+9,GRAVE.y1-GRAVE.y0+8], board:[GRAVE.x1+1,GRAVE.y1-17,9,19], landing:[JETTY.x0-2,JETTY.yt-4,JETTY.x1-JETTY.x0+6,JETTY.yb-JETTY.yt+6],
     hens:[170,118,80,20], woodpile:[WOOD.x0-2,WOOD.base-27,WOOD.x1-WOOD.x0+5,28], far_bell:[FB.bell[0]-10,28,18,24] },

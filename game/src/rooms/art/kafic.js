@@ -206,7 +206,8 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   // Spiegelschrift auf dem Fenster (von innen gelesen), Schild an der Tür
   var tmp=new M.Buf(40,7,T); M.microText(tmp,'ZDRAVKO',0,0,P.s6); var tw=M.microWidth('ZDRAVKO');
   for (y=0;y<5;y++) for (x=0;x<tw;x++){ if (tmp.get(x,y)===T) continue; var p=rp(M.wallPt(SPEC,'R',WINU[1]-4-x*0.92,WINU[2]+7+y*1.1)); b.px(p[0],p[1],P.s6); REG[p[1]*W+p[0]]=0; }
-  var dp=rp(M.wallPt(SPEC,'R',DOORU[0]+6,DOORU[2]+30)); b.rect(dp[0],dp[1],9,5,P.r3); M.microText(b,'VUCI',dp[0]-1,dp[1],P.s6); b.rect(dp[0],dp[1],1,5,P.r3);
+  var dp=rp(M.wallPt(SPEC,'R',DOORU[0]+6,DOORU[2]+30)), dw=M.microWidth('VUCI')+3; b.rect(dp[0]-1,dp[1]-1,dw,7,P.r3); b.hl(dp[0]-1,dp[0]+dw-2,dp[1]-1,P.r4); M.microText(b,'VUCI',dp[0]+1,dp[1],P.s6);
+  for (y=dp[1]-1;y<dp[1]+6;y++) for (x=dp[0]-1;x<dp[0]+dw-1;x++) REG[y*W+x]=0;
   var hb=rp(M.wallPt(SPEC,'R',DOORU[0]+3,62)), hb2=rp(M.wallPt(SPEC,'R',DOORU[0]+3,70)); b.rect(hb[0],hb[1],2,hb2[1]-hb[1],P.m4); b.px(hb[0]+1,hb[1],P.s6);
   // Gardinenstange und kurzer Schal oben am Fenster
   var cr0=rp(M.wallPt(SPEC,'R',WINU[0]-3,WINU[2]-1)), cr1=rp(M.wallPt(SPEC,'R',WINU[1]+3,WINU[2]-1)); b.line(cr0[0],cr0[1],cr1[0],cr1[1],P.y2);

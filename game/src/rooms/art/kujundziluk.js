@@ -202,11 +202,15 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), k=todKey(
   if (tod!=='day') LAMPS.forEach(function(l,li){ var lx=l.x+1-cam; if (lx<-10||lx>330) return; M.glow(fb,lx,l.y+4,7,t+li,0.22); });
   if (w==='bura') M.scn.buraDebris(fb,t,110,140,cam); }
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:80,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3}); }
-// Geistersicht: auf den Pflastersteinen ein Strom von Schritten (blasse Fußabdrücke), zur Brücke hin
-function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
-  for (var i=0;i<70;i++){ var lane=hash(i,1), x=Math.floor(((hash(i,2)*520+t*(6+lane*5))%520))-20, y=rd(114+lane*22+Math.sin(x*0.05+i)*2), X=x-cam, step=(Math.floor((x+i*3)/7)&1);
-    if (X<1||X>317||y<108||y>141) continue; var a=0.35+0.3*Math.sin(t*0.9+i); if (bayer(X,y)>a) continue;
-    var yy=y+(step?2:0); fb.px(X,yy,P.x4); fb.px(X+1,yy,P.x3); fb.px(X,yy+1,P.x3); fb.px(X+2,yy,P.x2); } }
+// Geistersicht: auf den Pflastersteinen ein Strom von Schritten (blasse Fußabdrücke), der langsam zur Brücke zieht
+function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, x, y;
+  for (y=GY+2;y<H;y++) for (x=0;x<320;x++) if (bayer(x,y)<0.5){ var k=y*320+x; fb.d[k]=M.DN[fb.d[k]]; }          // das Pflaster tritt zurück
+  for (var lane=0;lane<7;lane++){ var ly=114+lane*4, sp=5+lane*0.7, gap=11+(lane%3)*2;
+    for (var n=0;n<48;n++){ var px=Math.floor(((n*gap+hash(lane,n)*4+t*sp)%540))-30, X=px-cam; if (X<2||X>315) continue; y=ly+((n&1)?2:0)+rd(Math.sin(px*0.03+lane)*1.5); if (y>139) continue;
+      if (hash(n,lane)<0.25) continue; var age=(px+30)/540, a=Math.sin(age*Math.PI)*(0.7+0.3*Math.sin(t*0.7+n+lane)); if (a<0.2) continue;
+      var c=a>0.65?P.x6:P.x5;
+      fb.px(X-1,y,P.x1); fb.px(X+3,y,P.x1); fb.px(X,y+1,P.x1); fb.px(X+2,y+1,P.x1);
+      fb.px(X,y,c); fb.px(X+1,y,c); fb.px(X+2,y,a>0.5?c:P.x4); fb.px(X+1,y+1,P.x4); if (a>0.75) fb.px(X+3,y-1,P.x4); } } }
 
 // ---------------------------------------------------------------- Lauffläche
 function WALK(x,y){ if (y<112||y>138||x<6||x>474) return false;

@@ -82,7 +82,7 @@ function jelaHouse(b,tod,night){ var w=RW(b,RG.wall), x, y, J=JH;
   var D=JD; w.rect(D.x0-2,D.top-2,D.x1-D.x0+4,J.base-D.top+1,P.s2); for (y=D.top;y<J.base-2;y++) for (x=D.x0;x<D.x1;x++){ var c3=((x-D.x0)%6===0)?P.w1:P.w2; if (y<D.top+12 && x>D.x0+2 && x<D.x1-3) c3=night?P.y2:P.n1; w.px(x,y,c3); }
   w.rect(D.x1-4,D.top+18,2,2,P.y3); for (x=D.x0-6;x<D.x1+6;x++){ w.px(x,D.top-4,P.t3); w.px(x,D.top-3,P.t1); } w.line(D.x0-6,D.top-3,D.x0-2,D.top+2,P.m1); w.line(D.x1+5,D.top-3,D.x1+1,D.top+2,P.m1);
   RW(b,RG.ground).rect(D.x0,J.base-1,D.x1-D.x0,2,P.r1); w.rect(D.x1+4,J.base-7,6,6,P.m2); w.hl(D.x1+4,D.x1+9,J.base-7,P.m3); w.line(D.x1+9,J.base-6,D.x1+12,J.base-9,P.m2);
-  // Wäscheleine zum Strommast? nein: ein Holzstapel an der Hauswand
+  // Holzstapel an der Hauswand
   for (i=0;i<4;i++) for (var j=0;j<3;j++){ var lx=84+j*4+(i%2)*2, ly=J.base-3-i*3; w.rect(lx,ly,4,3,P.w2); w.px(lx+1,ly+1,P.w4); } }
 
 // ---------------------------------------------------------------- Haus Zelenika (Gastarbeiterhaus der Siebziger)

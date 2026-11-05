@@ -172,8 +172,10 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   b.rect(tx,ty-19,25,19,P.w2); b.hl(tx,tx+24,ty-19,P.w4); b.vl(tx,ty-19,ty-1,P.w3); b.rect(tx+2,ty-17,17,14,P.k1); b.rect(tx+3,ty-16,15,12,P.m1); b.px(tx+4,ty-15,P.m3); b.rect(tx+20,ty-17,4,15,P.m2); b.px(tx+21,ty-15,P.k2); b.px(tx+21,ty-12,P.k2); b.hl(tx+20,tx+23,ty-8,P.k1);
   b.line(tx+9,ty-19,tx+4,ty-30,P.m3); b.line(tx+12,ty-19,tx+18,ty-29,P.m3); for (x=tx+6;x<tx+20;x+=3) b.px(x,ty-19,P.s6);
   TVR=[tx-4,ty-31,33,34]; TVS=[tx+3,ty-16,15,12];
-  // ---- Sofa an der Rückwand links neben dem Fenster? nein: ein Teppich unter dem Tisch
+  // ---- Teppich unter dem Tisch
   b.poly([R3.p(90,FY,20),R3.p(166,FY,20),R3.p(166,FY,58),R3.p(90,FY,58)],function(x,y){ var f=R3.floor(x,y); if (!f) return P.r1; var u=(f.X-90)/76, v=(f.Z-20)/38, e=Math.min(u,1-u,v,1-v); if (e<0.04) return P.y2; if (e<0.09) return ((Math.floor(f.X/3)+Math.floor(f.Z/2))&1)?P.r1:P.b0; var md=Math.abs(u-0.5)*2+Math.abs(v-0.5)*2; if (md<0.45) return md<0.2?P.y2:P.b0; return (((Math.floor(f.X/4)+Math.floor(f.Z/3))%3)===0)?P.r1:P.r2; });
+  // ---- Stuhl für Davor (Lehne links) und ein zweiter Stuhl rechts am Tisch (hinter dem Tisch und hinter den Sitzenden)
+  var tf1=rp(R3.p(TBL.X1,TBL.Y0,TBL.Z1)); chair(b,DAVOR[0]-1,DAVOR[1]-13,DAVOR[1],'L'); chair(b,tf1[0]+8,tf1[1]+6,tf1[1]+22,'R');
   // ---- Treppe aus Terrazzo mit Holzhandlauf, Absatz und die offene Tür zum Kinderzimmer
   stairs(b,tod);
   kidsRoom(b,tod); for (y=KID.y0;y<KID.y1;y++) for (x=KID.x0;x<KID.x1;x++) REG[y*W+x]=1;
@@ -215,7 +217,7 @@ function stairs(b,tod){ var S=STAIR, n=S.n, i, x, y;
   for (x=S.X1+6;x<RECT[2];x+=7){ var a2=R3.p(x,S.Y1,S.Z1), c3=R3.p(x,S.Y1-16,S.Z1); b.line(rnd(a2[0]),rnd(a2[1]),rnd(c3[0]),rnd(c3[1]),P.m1); }
   b.line(rnd(p0[0]),rnd(p0[1]),rnd(p1[0]),rnd(p1[1]),P.w4); b.line(rnd(p0[0]),rnd(p0[1])+1,rnd(p1[0]),rnd(p1[1])+1,P.w2); b.line(rnd(p1[0]),rnd(p1[1]),rnd(p2[0]),rnd(p2[1]),P.w4); b.line(rnd(p1[0]),rnd(p1[1])+1,rnd(p2[0]),rnd(p2[1])+1,P.w2);
   var np=R3.p(S.X0,FY,S.Z1), nt=R3.p(S.X0,FY-19,S.Z1); b.rect(rnd(np[0])-1,rnd(nt[1]),3,rnd(np[1]-nt[1]),P.w2); b.vl(rnd(np[0])-1,rnd(nt[1]),rnd(np[1])-1,P.w4); b.rect(rnd(nt[0])-2,rnd(nt[1])-3,5,3,P.w3); b.px(rnd(nt[0]),rnd(nt[1])-4,P.w4);   // Antrittspfosten
-  // Glasbausteinfenster im Treppenhaus (Siebziger), eine Lampe, ein Läufer auf den Stufen? nein: eine Topfpflanze auf dem Absatz
+  // Glasbausteinfenster im Treppenhaus (Siebziger), eine Topfpflanze auf dem Absatz
   var gx0=286, gy0=12, gw=20, gh=34; b.rect(gx0-2,gy0-2,gw+4,gh+4,P.s3);
   for (y=gy0;y<gy0+gh;y++) for (x=gx0;x<gx0+gw;x++){ var cu=(x-gx0)%5, cv=(y-gy0)%5; var c=(cu===0||cv===0)?P.s4:((cu===2&&cv===2)?P.b5:((cu+cv)%3===0?P.b4:P.b3)); if (tod==='night') c=(cu===0||cv===0)?P.k2:P.n1; b.px(x,y,c); REG[y*W+x]=3; }
   var pp=rp(R3.p(RECT[2]-8,S.Y1,S.Z0+8)); b.rect(pp[0]-3,pp[1]-5,6,5,P.t3); b.hl(pp[0]-4,pp[0]+3,pp[1]-6,P.t4); for (i=0;i<9;i++){ var an=-Math.PI*0.9+i*0.22; b.line(pp[0],pp[1]-6,rnd(pp[0]+Math.cos(an)*6),rnd(pp[1]-6+Math.sin(an)*6),i%2?P.g3:P.g2); }
@@ -239,8 +241,6 @@ function layers(S,GS,tod){ var L=[];
   w.poly([[bx-12,by],[bx-3,by-1],[bx-2,by+1],[bx-11,by+2]],P.s6); w.line(bx-10,by,bx-5,by,P.b1); w.px(bx-4,by-1,P.r3);
   w.ellipse(bx-17,by-0.5,1.6,1,P.k2); w.ellipse(bx-13,by-0.5,1.6,1,P.k2); w.hl(bx-16,bx-14,by-1,P.k2);
   LETTERS=[bx-2,by-12,20,13];
-  // Stuhl für Davor (Lehne links) und ein zweiter Stuhl rechts am Tisch
-  chair(w,DAVOR[0]-1,DAVOR[1]-13,DAVOR[1],'L'); chair(w,f1[0]+8,f1[1]+6,f1[1]+22,'R');
   shade(l,l.ox,l.oy,tod); L.push(l);
   return L; }
 function chair(b,x,sy,by,back){ var C=R('w0 w1 w2 w3'), s=back==='L'?-1:1, bx=x+s*5;

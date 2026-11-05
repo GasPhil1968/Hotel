@@ -292,7 +292,6 @@ function layers(S,GS,tod){ var L=[], open=!!(S&&S.drawerOpen); ST.closed=closedO
     var kx3=fpx+19; w.px(kx3,my,P.y4); w.px(kx3+1,my,P.y3); w.px(kx3+2,my,P.y3); w.px(kx3+3,my-1,P.y4); w.px(kx3+3,my+1,P.y2); w.px(kx3+4,my,P.y2); w.rect(kx3+5,my-1,4,3,P.w3); w.hl(kx3+5,kx3+8,my-1,P.w4); w.px(kx3+6,my,P.k2); w.px(kx3+7,my,P.k2); }
   DTOP=[x0,yt,x1];
   shade(dl,dl.ox,dl.oy,tod); L.push(dl);
-  // Bürostuhl hinter Kata nicht nötig (sie sitzt darauf): Stuhl als Ebene hinter dem Tisch in paint wäre verdeckt, daher hier
   // Reifenstapel vorn links (vor allen, die dahinter vorbeigehen)
   var tl=M.layer(0,96,40,48,143), tw=M.lw(tl); stackTires(tw,14,144,8,12); tireRing(tw,34,136,8,true);
   shade(tl,tl.ox,tl.oy,tod); L.push(tl);

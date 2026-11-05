@@ -71,7 +71,17 @@
 (function(M){
 'use strict';
 var K=M.AK, nf=K.nf;
-function T(){ return K.tone.apply(null,arguments); } function Nz(){ return K.noise.apply(null,arguments); } function Sw(){ return K.swell.apply(null,arguments); } function Lo(){ return K.low.apply(null,arguments); }
+// Eigene Fassungen von tone, noise, swell, low und bell aus 04_audio.js, mit einem Unterschied: die Verstärker beginnen bei 0.
+// (Dort beginnen sie beim Vorgabewert 1; fällt der Start genau auf einen Abtastwert, rutscht der erste Wert des Rauschens mit voller Lautstärke durch: ein Knacken.)
+function envZ(g,t,a,peak,dec){ g.gain.value=0; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec); }
+function T(type,f,t,dur,vol,dest,f2,att){ var AC=K.AC, o=AC.createOscillator(), g=AC.createGain(), a=att||0.004; o.type=type; o.frequency.setValueAtTime(f,t); if (f2) o.frequency.exponentialRampToValueAtTime(f2,t+dur); envZ(g,t,a,vol,dur); o.connect(g); g.connect(dest||K.sfx); o.start(t); o.stop(t+a+dur+0.1); }
+function Nz(t,dur,vol,type,freq,q,dest,f2,att){ var AC=K.AC, s=AC.createBufferSource(), f=AC.createBiquadFilter(), g=AC.createGain(), a=att||0.004; s.buffer=K.noiseBuf; f.type=type||'bandpass'; f.frequency.setValueAtTime(freq||1000,t); if (f2) f.frequency.exponentialRampToValueAtTime(f2,t+dur); f.Q.value=q||1;
+  envZ(g,t,a,vol,dur); s.connect(f); f.connect(g); g.connect(dest||K.sfx); s.start(t,Math.random()*1.5); s.stop(t+a+dur+0.1); }
+function Sw(t,dur,vol,type,f,q,dest,f2){ var AC=K.AC, s=AC.createBufferSource(), fl=AC.createBiquadFilter(), g=AC.createGain(); s.buffer=K.noiseBuf; s.loop=true; fl.type=type; fl.frequency.setValueAtTime(f,t); if (f2) fl.frequency.linearRampToValueAtTime(f2,t+dur*0.6); fl.Q.value=q||1;
+  g.gain.value=0; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*0.45); g.gain.linearRampToValueAtTime(0.0001,t+dur); s.connect(fl); fl.connect(g); g.connect(dest||K.sfx); s.start(t,Math.random()); s.stop(t+dur+0.1); }
+function Lo(type,f,t,dur,vol,dest,cut,f2,att){ var AC=K.AC, o=AC.createOscillator(), fl=AC.createBiquadFilter(), g=AC.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if (f2) o.frequency.linearRampToValueAtTime(f2,t+dur); fl.type='lowpass'; fl.frequency.value=cut||900;
+  g.gain.value=0; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+(att||Math.min(0.15,dur*0.3))); g.gain.setValueAtTime(vol,t+dur*0.7); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(fl); fl.connect(g); g.connect(dest||K.sfx); o.start(t); o.stop(t+dur+0.05); }
+function churchBell(t,f,vol,dest,len){ [[0.5,1.2],[1,1],[1.19,0.7],[1.5,0.5],[2,0.45],[2.51,0.25],[2.97,0.18]].forEach(function(p,i){ T('sine',f*p[0],t,(len||4)*(i<2?1:0.6)/(1+i*0.2),vol*p[1]/(1+i*0.4),dest,null,0.003); }); Nz(t,0.05,vol*0.6,'bandpass',f*3,2,dest); }
 // ---------------------------------------------------------------- Bausteine
 function rnd(a,b){ return a+Math.random()*(b-a); }
 function cents(c){ return Math.pow(2,c/1200); }
@@ -264,17 +274,18 @@ function carFx(t,v,d,wet,big){ var dur=rnd(2.6,4)*(big?1.3:1), mid=t+dur*0.5, f=
   Sw(t,dur,(wet?0.05:0.032)*v,wet?'highpass':'bandpass',wet?1800:900,0.7,dst,wet?3200:1600); }
 
 // ---------------------------------------------------------------- Effekte
+function lvl(x){ var g=gain(x); g.connect(K.sfx); return g; }   // Pegel eines einzelnen Effekts (abgeglichen mit Kapitel 1 und 2)
 var SFX3={
   ferrybell:function(t){ var S=K.sfx; Nz(t,0.2,0.03,'bandpass',1300,1.2,S,700,0.05); creak(t+0.02,150,200,0.22,0.01,1200,S,6);   // Seilzug
     shipBell(t+0.2,880,0.07,S,5.5,0.6,'wasser'); shipBell(t+0.43,880,0.014,S,3,0.6,'wasser'); },                                 // Schlag, leiser Nachschlag
   rope:function(t){ var S=K.sfx, e=t+1.7, o=osc('sawtooth',62,t,e), o2=osc('sawtooth',94,t,e), l=osc('square',23,t,e), lg=gain(8), bp=filt('bandpass',1100,9), bp2=filt('bandpass',2300,12), g=gain(0);
-    o.frequency.linearRampToValueAtTime(96,t+1.2); o2.frequency.linearRampToValueAtTime(145,t+1.2); l.connect(lg); lg.connect(o.frequency); o.connect(bp); o2.connect(bp2); bp.connect(g); bp2.connect(g); adsr(g,t,0.05,0.25,0.65,0.45); out(g,S,0.2);
-    for (var i=0;i<9;i++) Nz(t+rnd(0.1,1.2),0.006,rnd(0.01,0.03),'highpass',4200,1,S);
-    [1830,2950,4410].forEach(function(f,i){ T('sine',f,t+1.15,0.5-i*0.1,0.012/(1+i),S); }); },
-  ferryCreak:function(t){ var S=K.sfx; creak(t,70,105,0.9,0.05,520,S,5); creak(t+0.85,95,72,0.7,0.035,460,S,5);
+    o.frequency.linearRampToValueAtTime(96,t+1.2); o2.frequency.linearRampToValueAtTime(145,t+1.2); l.connect(lg); lg.connect(o.frequency); o.connect(bp); o2.connect(bp2); bp.connect(g); bp2.connect(g); adsr(g,t,0.15,0.25,0.65,0.45); out(g,S,0.2);
+    for (var i=0;i<9;i++) Nz(t+rnd(0.1,1.2),0.006,rnd(0.03,0.08),'highpass',4200,1,S);
+    [1830,2950,4410].forEach(function(f,i){ T('sine',f,t+1.15,0.5-i*0.1,0.035/(1+i),S); }); },
+  ferryCreak:function(t){ var S=lvl(1.6); creak(t,70,105,0.9,0.05,520,S,5); creak(t+0.85,95,72,0.7,0.035,460,S,5);
     T('sine',78,t+0.1,0.5,0.06,S,58); Nz(t+0.1,0.3,0.05,'lowpass',260,0.8,S);
     for (var i=0;i<3;i++) Nz(t+0.4+i*0.35+Math.random()*0.1,0.25,0.03,'lowpass',700,1,S); },
-  scooter:function(t){ var S=K.sfx, p=K.pan(-0.3,S);
+  scooter:function(t){ var S=lvl(3), p=K.pan(-0.3,S);
     [0,0.34].forEach(function(o){ T('sine',70,t+o,0.12,0.06,S,45); Nz(t+o,0.06,0.04,'lowpass',500,1,S); });
     var t0=t+0.6, e=t0+4.2, o=osc('sawtooth',48,t0,e), o2=osc('square',96,t0,e), g2=gain(0.35), bp=filt('bandpass',1300,1.6), lp=filt('lowpass',3500,0.7), g=gain(0);
     [o,o2].forEach(function(x,i){ var k=i?2:1; x.frequency.setValueAtTime(48*k,t0); x.frequency.linearRampToValueAtTime(52*k,t0+0.5); x.frequency.exponentialRampToValueAtTime(115*k,t0+1.4); x.frequency.linearRampToValueAtTime(108*k,t0+2.4); x.frequency.linearRampToValueAtTime(92*k,e); });
@@ -283,16 +294,16 @@ var SFX3={
     o.connect(bp); chain(o2,g2,bp); chain(bp,lp,g,p); Sw(t0+0.3,3.6,0.012,'bandpass',2400,1,p,1200); },
   taxi:function(t){ var S=K.sfx; Nz(t,0.05,0.05,'highpass',2500,1,S); T('sine',92,t+0.04,0.25,0.14,S,58); Nz(t+0.04,0.14,0.1,'lowpass',320,1,S); T('square',820,t+0.06,0.02,0.02,S);
     starter(t+0.6,0.7,0.03,S,150,11); var p=K.pan(0,S); if (p.pan){ p.pan.setValueAtTime(0,t+2.4); p.pan.linearRampToValueAtTime(0.8,t+5); } diesel(t+1.25,3.8,{f0:26,f1:52,v:0.05,away:true},p); },
-  truckStart:function(t){ var S=K.sfx; starter(t,1.6,0.035,S,110,3.6); T('sine',40,t+0.9,0.2,0.05,S,30); Nz(t+0.9,0.15,0.05,'lowpass',300,1,S);
+  truckStart:function(t){ var S=lvl(0.7); starter(t,1.6,0.035,S,110,3.6); T('sine',40,t+0.9,0.2,0.05,S,30); Nz(t+0.9,0.15,0.05,'lowpass',300,1,S);
     Nz(t+1.55,0.4,0.08,'lowpass',200,0.8,S); T('sine',45,t+1.55,0.3,0.08,S,32); diesel(t+1.55,4.6,{f0:19,f1:27,v:0.075,heavy:true},S); },
-  compressor:function(t){ compressorFx(t,4.2,1,K.sfx); },
-  wrench:function(t){ wrenchFx(t,1,K.sfx); },
-  egg:function(t){ var S=K.sfx; T('sine',2400,t,0.03,0.03,S); Nz(t,0.02,0.08,'bandpass',3200,2,S);
+  compressor:function(t){ compressorFx(t,4.2,0.56,K.sfx); },
+  wrench:function(t){ wrenchFx(t,3,K.sfx); },
+  egg:function(t){ var S=lvl(1.5); T('sine',2400,t,0.03,0.03,S); Nz(t,0.02,0.08,'bandpass',3200,2,S);
     for (var i=0;i<6;i++) Nz(t+0.005+Math.random()*0.03,0.008,0.04,'highpass',3500,1,S);
     Nz(t+0.02,0.12,0.07,'lowpass',900,1,S,300); Nz(t+0.03,0.18,0.03,'bandpass',500,2,S,220); },
-  lighter:function(t){ var S=K.sfx; [0,0.34].forEach(function(o){ Nz(t+o,0.07,0.06,'bandpass',4200,2.5,S); for (var i=0;i<5;i++) Nz(t+o+Math.random()*0.06,0.004,0.06,'highpass',5000,1,S); });
+  lighter:function(t){ var S=lvl(2); [0,0.34].forEach(function(o){ Nz(t+o,0.07,0.06,'bandpass',4200,2.5,S); for (var i=0;i<5;i++) Nz(t+o+Math.random()*0.06,0.004,0.06,'highpass',5000,1,S); });
     Nz(t+0.38,0.35,0.04,'lowpass',420,0.8,S,900,0.04); Sw(t+0.42,0.8,0.008,'bandpass',1600,0.9,S); },
-  cough:function(t){ coughFx(t,1,K.sfx); },
+  cough:function(t){ coughFx(t,2.1,K.sfx); },
   splash:function(t){ var S=K.sfx, far=filt('lowpass',5200,0.5), x=echo(S,0.16,0.28,1800); far.connect(x);
     Nz(t,0.06,0.22,'highpass',700,0.7,far); Nz(t,0.09,0.2,'bandpass',1800,0.8,far,900);                                  // Aufschlag
     T('sine',105,t+0.02,0.4,0.16,far,42); Nz(t+0.02,0.45,0.12,'lowpass',600,0.9,far,150);                                // Eintauchen
@@ -300,21 +311,21 @@ var SFX3={
     Sw(t+0.08,1.3,0.05,'bandpass',2600,0.8,far,1400);
     for (var j=0;j<10;j++){ var fb=rnd(380,1100); T('sine',fb,t+0.5+Math.random()*1.2,0.05,rnd(0.006,0.016),far,fb*1.6); }     // Blasen
     Sw(t+0.9,1.8,0.035,'lowpass',500,0.8,far,300); },
-  guitar:function(t){ [43,47,50,55,59,67].forEach(function(m,i){ gitNote(nf(m),t+i*0.024,0.05,2.6,K.sfx,strDet(nf(m)),0.2); }); },
-  hens:function(t){ var S=K.sfx; hen(t,1,K.pan(-0.35,S),false); hen(t+0.55,1.18,K.pan(0.35,S),false); hen(t+1.3,0.92,K.pan(-0.05,S),true); },
-  lantern:function(t){ var S=K.sfx; T('sine',2900,t,0.25,0.012,S); T('sine',4300,t+0.004,0.18,0.006,S); Nz(t,0.03,0.02,'highpass',4000,1,S);
+  guitar:function(t){ [43,47,50,55,59,67].forEach(function(m,i){ gitNote(nf(m),t+i*0.024,0.04,2.6,K.sfx,strDet(nf(m)),0.2); }); },
+  hens:function(t){ var S=K.sfx; hen(t,1,K.pan(-0.35,S),false,3); hen(t+0.55,1.18,K.pan(0.35,S),false,3); hen(t+1.3,0.92,K.pan(-0.05,S),true,3); },
+  lantern:function(t){ var S=lvl(2.8); T('sine',2900,t,0.25,0.012,S); T('sine',4300,t+0.004,0.18,0.006,S); Nz(t,0.03,0.02,'highpass',4000,1,S);
     Nz(t+0.45,0.09,0.06,'bandpass',3000,1.8,S); Nz(t+0.5,0.3,0.05,'bandpass',1200,0.8,S,600,0.02);
     Nz(t+0.95,0.5,0.045,'lowpass',380,0.7,S,800,0.06); T('sine',2700,t+1.4,0.2,0.01,S); Nz(t+1.4,0.02,0.02,'highpass',3500,1,S); Sw(t+1.2,1.4,0.006,'bandpass',900,0.8,S); },
-  stoveFire:function(t){ var S=K.sfx; Sw(t,1.6,0.025,'lowpass',240,0.7,S,180);
+  stoveFire:function(t){ var S=lvl(1.8); Sw(t,1.6,0.025,'lowpass',240,0.7,S,180);
     for (var i=0;i<14;i++) Nz(t+Math.random()*1.4,0.004+Math.random()*0.01,rnd(0.02,0.09),'highpass',rnd(1500,4500),0.8,S);
     Nz(t+0.6,0.05,0.05,'bandpass',900,2,S); },
   radioPips:function(t){ var S=K.sfx, rf=filt('bandpass',1300,0.6); rf.connect(S); Sw(t,4,0.006,'bandpass',2400,0.8,S);
-    [[0.1,0.1],[1.1,0.1],[2.1,0.1],[3.1,0.55]].forEach(function(p){ var o=osc('sine',1000,t+p[0],t+p[0]+p[1]+0.05), g=gain(0); adsr(g,t+p[0],0.045,0.004,p[1],0.03); chain(o,g,rf); }); },
+    [[0.1,0.1],[1.1,0.1],[2.1,0.1],[3.1,0.55]].forEach(function(p){ var o=osc('sine',1000,t+p[0],t+p[0]+p[1]+0.05), g=gain(0); adsr(g,t+p[0],0.034,0.004,p[1],0.03); chain(o,g,rf); }); },
   busBrake:function(t){ brakeFx(t,1,K.sfx,true); },
   windGust:function(t){ var S=K.sfx; Sw(t,3.6,0.07,'bandpass',420,1.4,S,900); Sw(t+0.2,3.2,0.03,'bandpass',1500,4,S,2600);
     for (var i=0;i<12;i++) Nz(t+0.6+Math.random()*2.2,0.03,rnd(0.006,0.02),'highpass',3000,1,S); },
-  tarp:function(t){ tarpFx(t,1,K.sfx); },
-  keyDrop:function(t){ var S=K.sfx; [[0,1],[0.1,0.45],[0.16,0.2]].forEach(function(b){ var ti=t+b[0];
+  tarp:function(t){ tarpFx(t,1.4,K.sfx); },
+  keyDrop:function(t){ var S=lvl(1.6); [[0,1],[0.1,0.45],[0.16,0.2]].forEach(function(b){ var ti=t+b[0];
       [3150,4720,6180,2400].forEach(function(f,i){ T('sine',f*rnd(0.99,1.01),ti,0.12-i*0.015,0.022*b[1]/(1+i*0.5),S); }); Nz(ti,0.01,0.05*b[1],'highpass',3500,1,S); });
     Nz(t+0.02,0.03,0.05,'bandpass',800,3,S); T('sine',720,t+0.02,0.04,0.02,S); },
   smsK3:function(){ M.sfx('sms'); }
@@ -325,16 +336,16 @@ M.addSfx(SFX3);
 M.addBeds({
   k3River3:{type:'lowpass',f:520,q:0.5,v:0.085,swell:0.06},    // Fluss laut: tiefes Tosen (Alte Brücke, Skela)
   k3RiverHi:{type:'bandpass',f:1500,q:0.5,v:0.036,swell:0.12}, // Fluss laut: helles Rauschen, Gischt
-  k3River2:{type:'lowpass',f:440,q:0.55,v:0.05,swell:0.09},    // Fluss mittel (Ufer, Straßenbrücke, Terrasse)
-  k3River1:{type:'lowpass',f:230,q:0.6,v:0.03,swell:0.12},     // Fluss leise (drinnen, fern)
-  k3Fountain:{type:'bandpass',f:2600,q:0.9,v:0.012,swell:0.2}, // Brunnen im Moscheehof
+  k3River2:{type:'lowpass',f:440,q:0.55,v:0.042,swell:0.09},    // Fluss mittel (Ufer, Straßenbrücke, Terrasse)
+  k3River1:{type:'lowpass',f:230,q:0.6,v:0.024,swell:0.12},     // Fluss leise (drinnen, fern)
+  k3Fountain:{type:'bandpass',f:2600,q:0.9,v:0.007,swell:0.2}, // Brunnen im Moscheehof
   k3Stove:{type:'lowpass',f:160,q:0.8,v:0.016,swell:0.25},     // Holzherd rauscht
-  k3Grass:{type:'highpass',f:3400,q:0.4,v:0.008,swell:0.5},    // Wind im Gras
-  k3Cold:{type:'highpass',f:4200,q:0.3,v:0.004,swell:0.4},     // kalte, stille Luft
+  k3Grass:{type:'highpass',f:3400,q:0.4,v:0.003,swell:0.3},    // Wind im Gras
+  k3Cold:{type:'highpass',f:4200,q:0.3,v:0.0025,swell:0.3},     // kalte, stille Luft
   k3WindIn:{type:'bandpass',f:500,q:2,v:0.012,swell:0.45},     // Bura hinter dem Fenster
   k3Hum:{osc:'sawtooth',f:50,type:'bandpass',fq:150,q:6,v:0.004}, // Leuchtstoffröhre
   k3Pc:{osc:'triangle',f:118,type:'lowpass',fq:300,q:1,v:0.003},  // Lüfter des Rechners
-  k3Idle:{osc:'sawtooth',f:24,type:'lowpass',fq:110,q:2,v:0.012}  // ein Busmotor im Leerlauf
+  k3Idle:{osc:'sawtooth',f:24,type:'lowpass',fq:110,q:2,v:0.008}  // ein Busmotor im Leerlauf
 });
 // ---------------------------------------------------------------- Raumklang: Einzelgeräusche (t, Ziel d, Lautstärke v)
 var EV3={
@@ -364,7 +375,7 @@ var EV3={
   k3Gust:function(t,d,v){ Sw(t,3.4,0.05*v,'bandpass',420,1.4,d,900); Sw(t+0.2,3,0.02*v,'bandpass',1500,4,d,2600); for (var i=0;i<8;i++) Nz(t+0.6+Math.random()*2,0.03,rnd(0.004,0.012)*v,'highpass',3000,1,d); },
   k3Flag:function(t,d,v){ var du=rnd(1.5,3), r=rnd(9,14); for (var i=0;i<du*r;i++) Nz(t+i/r+Math.random()*0.01,0.025,rnd(0.006,0.015)*v,'bandpass',rnd(900,1800),1.5,d); },
   k3Tarp:function(t,d,v){ var du=rnd(1.2,2.4), r=rnd(5,8); for (var i=0;i<du*r;i++) Nz(t+i/r+Math.random()*0.02,0.05,rnd(0.01,0.025)*v,'bandpass',rnd(400,900),1.2,d); if (Math.random()<0.4) Nz(t+du,0.06,0.04*v,'lowpass',600,1,d); },
-  k3Bells:function(t,d,v){ var F=[196,247,294], n=14+Math.floor(Math.random()*6); for (var i=0;i<n;i++) K.bell(t+i*0.72+Math.random()*0.08,F[(i+Math.floor(i/4))%3],0.012*v,d,4);
+  k3Bells:function(t,d,v){ var F=[196,247,294], n=14+Math.floor(Math.random()*6); for (var i=0;i<n;i++) churchBell(t+i*0.72+Math.random()*0.08,F[(i+Math.floor(i/4))%3],0.012*v,d,4);
     if (M.onAmbient) M.onAmbient('bellFar',pickPan(d)); },   // die Glocken der Westseite; Mala hält inne wie bei jeder Glocke
   k3Bird:function(t,d,v){ var n=2+Math.floor(Math.random()*5), f=rnd(3400,5200); for (var i=0;i<n;i++){ var ti=t+i*rnd(0.09,0.2); T('sine',f*rnd(0.95,1.05),ti,0.06,0.006*v,d,f*rnd(0.7,1.3)); } },
   k3Owl:function(t,d,v){ var x=echo(d,0.42,0.25,900); T('sine',410,t,0.55,0.012*v,x,385,0.09); [0,0.22,0.36,0.5].forEach(function(o,i){ T('sine',395,t+1.5+o,i===3?0.7:0.14,0.01*v,x,370,0.03); }); },   // Waldkauz
@@ -458,7 +469,7 @@ scape('k3_westbus',function(o){ var mu=st(o).munich;
   return { beds:['cityFar'].concat(mu?['k3Idle']:[]).concat(sky(o)), step:'stone',
     ev:[['bus',25,60,0.5,-0.4,0.8],['k3Pa',50,110,0.4,-0.3,0.6],['pigeons',10,25,0.5,-1,1],['k3Babble',10,25,0.4,-0.8,0.8],['k3Car',10,25,0.4,-1,1],['scooter',40,90,0.3,-1,1],['carHorn',40,90,0.25,-1,1]]
       .concat(mu?[['k3Suitcase',8,20,0.6,0.2,1],['k3Babble',5,12,0.5,0.2,1],['k3Brake',40,90,0.3,0.3,0.9]]:[]).concat(gusts(o,0.6)) }; });
-scape('k3_kafic',function(o){ return { beds:['room','murmur','fridge'], step:'tile',
+scape('k3_kafic',function(o){ return { beds:['room','murmur'], step:'tile',
   ev:[['cups',4,12,0.6,-0.6,0.4],['espresso',35,80,0.12,-0.8,-0.4],['k3Tv',12,30,0.5,0.6,0.9],['domino',8,20,0.5,-0.9,-0.4],['door',40,90,0.35,-1,-0.8],['k3Babble',10,25,0.35,-0.5,0.5],['k3BusOut',30,70,0.4,-1,-0.4]] }; });
 scape('k3_vulkanizer',function(o){ if (st(o).closed) return { beds:['room','cityFar'], step:'stone', ev:[['drip',8,20,0.4,-0.6,0.6],['k3Car',15,35,0.25,-1,1],['creak',30,70,0.2,-1,1]] };
   return { beds:['room','k3Hum','cityFar'], step:'stone',
@@ -500,7 +511,7 @@ function bar(b,c){ var o={b:N(b)}; if (c) o.c=N(c); return o; }
 
 // ---------------------------------------------------------------- Musik
 // Im Bus: der Bass fällt Takt für Takt wie der Fluss (D–C–B–A–G–F–E–A), darüber Gitarre und Regen; Malas Spieluhrmotiv aus Kapitel 1 von fern, dann die Klarinette
-M.defineSong('k3_bus',{ bpm:72, comp:'gitara', compBeats:[0,1,2,3], arp:0.1, compVol:0.014, compLen:1.4, bassInst:'bass', bassVol:0.04, drums:'k3_regen',
+M.defineSong('k3_bus',{ bpm:72, comp:'gitara', compBeats:[0,1,2,3], arp:0.1, compVol:0.012, compLen:1.4, bassInst:'bass', bassVol:0.035, drums:'k3_regen',
   bars:[bar('D2 - - -','D3 A3 D4 F4'),bar('C2 - - -','C3 G3 C4 E4'),bar('Bb1 - - -','Bb2 F3 Bb3 D4'),bar('A1 - - -','A2 E3 A3 C#4'),
         bar('G1 - - -','G2 D3 G3 Bb3'),bar('F1 - - -','F2 A2 D3 A3'),bar('E1 - - -','E2 Bb2 D3 G3'),bar('A1 - - -','A2 E3 G3 C#4')],
   lead:mel('@9 F4 Bb4 D5 C#5:2 A4 E4 G4 Bb4 D5 G5 F5:2 E5 D5 Bb4:2 G4 E4 A4:3/3.5'), leadInst:'clar', leadVol:0.017,
@@ -542,7 +553,7 @@ M.defineSong('k3_skela',{ bpm:44, comp:'led', compBeats:[0], compVol:0.012, comp
   lead:mel('@4 A5:6/7 -:2 G5:4/5 @20 E5:6/7 -:2 F5:4/4.5'), leadInst:'seil', leadVol:0.008,
   lead2:mel('@16 E5:1/3'), lead2Inst:'zvono', lead2Vol:0.006 });
 // Mate: ein alter Choral für Harmonium und Akkordeon, wandernder Bass, die Bahnhofsuhr (F-Dur)
-M.defineSong('k3_mate',{ bpm:66, comp:'harmonij', compBeats:[0,2], compVol:0.009, compLen:1.9, bassInst:'bass', bassVol:0.04, drums:'k3_sat',
+M.defineSong('k3_mate',{ bpm:66, comp:'harmonij', compBeats:[0,2], compVol:0.0075, compLen:1.9, bassInst:'bass', bassVol:0.04, drums:'k3_sat',
   bars:[bar('F2 - C3 -','A3 C4 F4'),bar('E2 - G2 -','G3 C4 E4'),bar('D2 - A2 -','A3 D4 F4'),bar('Bb1 - F2 -','Bb3 D4 F4'),
         bar('C2 - F2 -','A3 C4 F4'),bar('G2 - D2 -','B3 D4 F4'),bar('C2 - G2 -','Bb3 E4 G4'),bar('F2 - C2 -','A3 C4 F4')],
   lead:mel('C5:2 F5:2 E5:2 C5:2 D5 E5 F5 D5 C5:3 Bb4 A4:2 C5:2 B4:2 D5 F5 E5 D5 C5 Bb4 A4:4/3.6'), leadInst:'accord', leadVol:0.014 });
@@ -561,16 +572,16 @@ var FIN_C=['D3 A3 E4','D3 A3 F4','Bb2 F3 D4','A2 E3 C#4','D3 A3 D4 F4','Bb2 G3 D
            'D3 A3 D4 F4','F3 A3 C4 F4','C3 G3 C4 E4','G2 D3 Bb3 D4','Bb2 F3 Bb3 D4 F4','A2 F3 A3 C4 F4','A2 E3 A3 C#4 E4','D3 A3 D4 F#4 A4'];
 var FIN_BS=['D2','D2','Bb1','A1','D2','G1','Bb1','A1','D2','F1','C2','G1','Bb1','A1','A1','D2'];
 FIN_ARP=FIN_C.map(function(c){ return N(c); });
-M.defineSong('k3_fin',{ bpm:58, comp:'pad', compBeats:[0], compVol:0.01, compLen:4, bassInst:'cello', bassVol:0.022, bassLen:3.8, drums:'k3_fin',
+M.defineSong('k3_fin',{ bpm:58, comp:'pad', compBeats:[0], compVol:0.009, compLen:4, bassInst:'cello', bassVol:0.022, bassLen:3.8, drums:'k3_fin',
   bars:FIN_C.map(function(c,i){ return {b:[nm(FIN_BS[i]),null,null,null], c:N(c)}; }),
   lead:mel('@16 D4:3 E4 F4:2 G4 F4 D4:3 C4 C#4:4 A4:2 F4:2 C5:3 A4 G4:2 E4 G4 Bb4:4 D5:3 C5 C5:2 A4:2 C#5:3 A4 D5:4/5'), leadInst:'cello', leadVol:0.024,
   lead2:mel('A4:1/3 A4:1/3 A4:2/5 @48 E5:1/3 E5:1/3 E5:2/5 @60 D5:4/6'), lead2Inst:'zvono', lead2Vol:0.012 });
 // Am Grab: sehr leise. Malas Spieluhrmotiv aus Kapitel 1 (D–F–E–A) hier in Dur (F–A–G–C), das Klavier antwortet mit demselben Motiv: ein Faden, den beide gemacht haben
-M.defineSong('k3_grob',{ bpm:54, comp:'piano', compBeats:[0], arp:0.13, compVol:0.01, compLen:3.6, bassInst:'bass', bassVol:0.022,
+M.defineSong('k3_grob',{ bpm:54, comp:'piano', compBeats:[0], arp:0.13, compVol:0.012, compLen:3.6, bassInst:'bass', bassVol:0.026,
   bars:[bar('F2 - - -','A3 C4 F4'),bar('E2 - - -','A3 C4 E4'),bar('D2 - - -','A3 D4 F4'),bar('C2 - - -','G3 C4 E4'),
         bar('Bb1 - - -','Bb3 D4 F4'),bar('A1 - - -','A3 C4 F4'),bar('G1 - - -','F3 Bb3 D4'),bar('C2 - - -','F3 G3 C4')],
-  lead2:mel('F5:2 A5:2 G5:2 C5:2'), lead2Inst:'box', lead2Vol:0.011,
-  lead:mel('@16 F4:2 A4:2 G4:2 C4:2 @24 D4:2 F4:2 E4:3/4'), leadInst:'piano', leadVol:0.014 });
+  lead2:mel('F5:2 A5:2 G5:2 C5:2'), lead2Inst:'box', lead2Vol:0.013,
+  lead:mel('@16 F4:2 A4:2 G4:2 C4:2 @24 D4:2 F4:2 E4:3/4'), leadInst:'piano', leadVol:0.016 });
 // Epilog: das Mostar-Thema langsamer auf der Klarinette, nach G-Dur gewendet, mit Kadenz nach Hause
 M.defineSong('k3_epi',{ bpm:138, meter:6, comp:'gitara', compBeats:[1,4], arp:0.1, compVol:0.012, compLen:2.6, bassInst:'bass', bassVol:0.034, bassLen:2.5,
   bars:[bar('G2 - - D3 - -','G3 B3 D4 G4'),bar('D2 - - A2 - -','D3 A3 D4 F#4'),bar('C2 - - G2 - -','C3 G3 C4 E4'),bar('D2 - - A2 - -','D3 A3 D4 F#4'),

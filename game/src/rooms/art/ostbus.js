@@ -11,7 +11,7 @@
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, tex=M.tex, R=M.R;
 var W=480, H=144, GY=104;
 // ---------------------------------------------------------------- Geometrie
-var CAN={x0:4,x1:238,y0:30,y1:39,cols:[16,116,228]};   // Vordach (Stirn y0..y1), Stützen
+var CAN={x0:4,x1:242,y0:30,y1:39,cols:[16,116,238]};   // Vordach (Stirn y0..y1), Stützen
 var BUS={x0:40,x1:102,top:48,base:112,side:16};         // Reisebus am Steig 1 (Front x0..x1, Seite nach rechts hinten)
 var BOARD={x0:130,x1:190,y0:46,y1:82};                  // Abfahrtstafel am Steig 2
 var MUC={x0:122,x1:198,y0:84,y1:96};                    // Emailleschild „MÜNCHEN · subota“
