@@ -68,7 +68,7 @@ async function promiseTalk(A){ var c=A.flag('k3.p.promise');
   else if (c==='b'){ await A.g('Schnell genug?'); await A.m('Noch nicht immer.'); await A.g('Für mich ist immer Zeit. Das habe ich gesagt. Ich habe nicht gesagt, dass ich gern warte.'); }
   else { await A.g('Und wenn ich falsch entscheide, ist es meins.'); await A.m('Ich weiß.'); await A.g('Du sagst es, als würdest du es glauben. Das ist neu.'); } }
 async function zlataQuestion(A){ await A.m('Soll ich '+(A.flag('met.zlata')?'Zlata':'ihr')+' sagen, dass Bato wach war? Dass er am Fenster stand und mitgezählt hat?');
-  await A.wait(900); if (M.k3Asked && M.k3Asked(A,'zlata_awake')){ await A.g('Heute Mittag habe ich gesagt: Lass ihr ihren Mann.'); await A.wait(700); }
+  await A.wait(900); if (M.k3Asked && M.k3Asked(A,'zlata_awake')){ await A.g('Vorhin habe ich gesagt: Lass ihr ihren Mann.'); await A.wait(700); }
   await A.g('Sag es ihr.'); await A.wait(600); await A.g('Auch ihr.'); A.setFlag('k3.z.tellOk'); await A.wait(500);
   await A.g('Ich will nicht, dass noch jemand siebzehn Jahre die falsche Geschichte hat.'); await A.m('Gut.'); }
 async function vladoQuestion(A){ if (room(A)==='vhof' && M.k3Talk2){ await M.k3Talk2(A); return 'bye'; }
@@ -125,7 +125,7 @@ M.k3TalkToMala=async function(A){ var G=A.G, p=G.phase, r=room(A);
   ]; }); };
 // ---------------------------------------------------------------- „Mala fragen“: Nadas Anruf am Samstag, Vesna
 M.K3ASK=M.K3ASK||{};
-M.K3ASK.nada2=async function(A){ await A.m('(leise) Was soll ich ihr sagen?'); await A.wait(800); await A.g('Sag ihr nichts, was du nicht weißt.'); await A.wait(600); await A.g('Aber sag ihr nicht nichts.'); };
+M.K3ASK.nada2=async function(A){ await A.narrate('Ich halte das Handy an die Brust.'); await A.m('Was soll ich ihr sagen?'); await A.wait(800); await A.g('Sag ihr nichts, was du nicht weißt.'); await A.wait(600); await A.g('Aber sag ihr nicht nichts.'); };
 M.K3ASK.vesna=async function(A){ await A.m('Vesna will, dass ich schreibe. Über das hier. Über dich.'); await A.wait(700); await A.g('Über mich?'); await A.m('Über die, die warten.');
   await A.wait(600); await A.g('Dann schreib.'); await A.g('Aber schreib nicht, dass ich traurig war. Ich war wütend. Das ist besser.'); };
 // ---------------------------------------------------------------- Das Telefon (Handy benutzen)
@@ -143,7 +143,7 @@ async function k3Phone(A){ var L=phonePick(A);
   L.push({t:'Doch nicht.',id:'no',silent:true,bye:true}); var c=await A.choose(L,{title:'Anrufen'});
   if (c==='smsLate') return smsLate(A); if (c==='sanja') return M.k3SanjaCall(A); if (c==='vesna') return callVesna(A); if (c==='nadaEpi') return M.k3NadaCallEpi(A);
   if (c==='sanja2'){ await A.m('Sanja hat gesagt: Ljerka ruft zurück. Nicht gleich. Ljerka macht nichts gleich.'); return; }
-  if (c==='nadaNo'){ await A.m(F(A,'k3.d2.nada')?'Sie hat heute angerufen. Ich rufe nicht zurück, bevor ich mehr weiß.':'Noch nicht. Nicht, bevor ich etwas weiß. Wenn ich sie jetzt anrufe, höre ich sie warten.'); return; }
+  if (c==='nadaNo'){ await A.m(F(A,'k3.d2.nada')?'Sie hat am Samstag angerufen. Ich rufe sie wieder an, wenn ich mehr weiß als eine Spur.':'Noch nicht. Nicht, bevor ich etwas weiß. Wenn ich sie jetzt anrufe, höre ich sie warten.'); return; }
   if (c==='mother'){ if (!F(A,'k3.e.sample') && !F(A,'k3.e.sampleDone')){ await A.m('Mama.'); await A.wait(600); await A.m('Nicht jetzt. Erst das Amt. Erst muss ich wissen, was ich sie fragen will.'); return; }
     if (M.k3MotherCall) return M.k3MotherCall(A); A.sfx('dial'); await A.wait(1800); await A.m('Es klingelt in München. Lange. Niemand geht ran.'); return; } }
 async function smsLate(A){ A.setFlag('k3.p.sms','yes'); A.setFlag('k3.p.smsLate'); A.sfx('click');

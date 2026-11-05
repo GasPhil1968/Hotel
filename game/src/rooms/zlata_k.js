@@ -81,9 +81,9 @@ var HS=[
  {id:'radio',name:'Radio',look:'Ein altes Radio mit Holzgehäuse und einem grünen Lämpchen. Es spielt leise, Volksmusik, dann eine Männerstimme.',
    use:async function(A){ A.sfx('radioPips'); await A.m('Ich drehe am Knopf. Ein Zeitzeichen, drei kurze Töne und ein langer. Ich drehe es wieder leiser.'); },
    g:{look:'Das Radio. Da hat einer die Uhrzeit gesagt.',sense:'Es läuft seit siebzehn Jahren. Sie macht es nie aus. Damit jemand redet.',listen:'Eine Stimme, die nicht weiß, wem sie die Zeit sagt.'}},
- {id:'drawer',name:'Schublade',look:function(A){ var G=A.G; if (epi(G)) return A.m(F(G,'k3.e.letter')||A.has('brief1996')?'Die Schublade im Tisch. Darin nur noch der Bleistift.':'Die Schublade im Tisch. Zlata hat gesagt: Da ist ein Brief.');
+ {id:'drawer',name:'Schublade',look:function(A){ var G=A.G; if (epi(G)) return A.m(F(G,'k3.e.letter')||A.has('brief1996')?(F(G,'k3.e.drawer')?'Die Schublade steht offen. Darin nur noch der Bleistift.':'Die Schublade im Tisch. Darin nur noch der Bleistift.'):'Die Schublade im Tisch. Zlata hat gesagt: Da ist ein Brief.');
      return A.m(N(G,'a3_pencil')?'Die Schublade im Tisch. Darin liegt jetzt wieder der Bleistift, und darunter ein Umschlag mit einem Stempel. Ich lasse beides liegen.':'Eine Schublade im Tisch, mit einem Holzknopf. Zlatas Schublade.'); },
-   open:async function(A){ var G=A.G; if (kitchen(G) && !A.has('brief1996') && !F(G,'k3.e.letter')){ A.sfx('drawer'); A.give('brief1996'); await A.m('Ein Umschlag, vergilbt, mit zittriger Schrift. Ein Stempel quer darüber.'); await A.m('Unter dem Umschlag der Bleistift. Ich lasse ihn liegen.'); return; }
+   open:async function(A){ var G=A.G; if (kitchen(G) && !A.has('brief1996') && !F(G,'k3.e.letter')){ A.sfx('drawer'); A.setFlag('k3.e.drawer'); A.S.drawerOpen=true; A.rebuild(); await A.wait(500); A.give('brief1996'); await A.m('Ein Umschlag, vergilbt, mit zittriger Schrift. Ein Stempel quer darüber.'); await A.m('Unter dem Umschlag der Bleistift. Ich lasse ihn liegen.'); return; }
      if (epi(G)) return A.m('Nur noch der Bleistift. Der bleibt hier.'); return A.m('Das ist ihre Schublade. Ich mache sie nicht auf.'); },
    use:function(A){ return HS_BY.drawer.open(A); }, take:function(A){ return HS_BY.drawer.open(A); },
    g:{look:function(A){ return A.g(epi(A.G)?'Mein Bleistift. Er war an der Glocke. Bato hat ihn mitgebracht.':'Da drin liegt etwas von mir. Ich sehe es durch das Holz.'); },sense:'Ein Brief, der zurückgekommen ist. Er ist schwer, für so ein dünnes Papier.',listen:'Nichts. Papier schweigt.'}},
@@ -111,7 +111,7 @@ var HS_BY={}; HS.forEach(function(h){ HS_BY[h.id]=h; });
 M.room('zlata_k',{ name:'Zlatas Küche', scape:'k3_zlata_k',
   music:function(G){ return epi(G)?'k3_epi':''; },
   state:function(G){ return {}; },
-  actors:function(S,G){ var L=[]; if (kitchen(G)){ var z=ap('zlata',[210,124,'L']), n=ap('nada',[140,124,'R']);
+  actors:function(S,G){ var L=[]; S.drawerOpen=epi(G)&&F(G,'k3.e.drawer'); if (kitchen(G)){ var z=ap('zlata',[210,124,'L']), n=ap('nada',[140,124,'R']);
       L.push({id:'zlata',ch:'zlata',x:z[0],y:z[1],f:z[2]||'L',name:'Zlata',idle:'stir',speechY:42}); L.push({id:'nada',ch:'nada',x:n[0],y:n[1],f:n[2]||'R',name:'Nada',idle:'sit',talk:'sitTalk',speechY:36}); }
     return L; },
   hotspots:HS, malaTalk:malaTalk, malaLook:malaLook,

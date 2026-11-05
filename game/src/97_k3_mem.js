@@ -1046,4 +1046,76 @@ M.mem.k3_springer=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1966), RV=88;
   [48,116,184].forEach(function(lx){ var ly=Math.round(deck(lx))-1; b.rect(lx-1,ly-10,3,3,P.y5); b.px(lx,ly-9,P.l1); });
   edgeDark(b,1.8); };
 
+
+// ================================================================ 17. Unterwegs (memory): die Finalnacht, Sonntag, 27. November 2011. Der alte TAM fährt bei Nacht auf der Landstraße an der Neretva nach Süden.
+//     Aus dem Führerhaus nach vorn gesehen: Vlado mit 64 am Steuer, grau, beide Hände am Lenkrad, die Zigarette liegt unangezündet auf dem Armaturenbrett;
+//     in der Mitte Marko, am Fenster Kata. Wo Mala sitzen würde, ist in der Scheibe nur ein heller Schimmer. Kein Mond, Raureif am Straßenrand.
+M.mem.k3_drive=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2711), VP=[94,26], DY=64, BK=86;
+  b.rect(0,0,w,h,P.k1);
+  var ws=new M.Buf(w,h,0); ws.poly([[5,8],[227,8],[231,DY],[1,DY]],1);
+  function inWS(x,y){ return ws.get(x,y)===1; }
+  // draußen: Nacht ohne Mond, ein paar Sterne, die Berge kaum heller als der Himmel
+  var o=new M.Buf(w,h,P.k0);
+  fill(o,0,0,w,DY+2,function(x,y){ return ra(R('k0 k0 k1 k1'),0.15+y/90+(fbm(x,y*2,24,5)-0.5)*0.15,x,y); });
+  for (i=0;i<26;i++) o.px(Math.floor(rg()*w),9+Math.floor(rg()*9),rg()<0.25?P.n3:P.n1);
+  for (x=0;x<w;x++){ var my=14+Math.round(fbm(x,2,44,6)*9+Math.sin(x*0.02)*2); for (y=my;y<=VP[1]+1;y++) o.px(x,y,ra(R('k0 k1 k1 k2'),0.4+(fbm(x,y,6,3)-0.5)*0.4,x,y)); }
+  // die Straße: unsere Spur im Licht der Scheinwerfer, links die Mittellinie und die Gegenspur, dahinter Leitplanke und Fluss; rechts Bankett mit Raureif, Leitpfosten, Fels
+  for (y=VP[1];y<=DY;y++){ var t=(y-VP[1])/(DY-VP[1]), cxl=VP[0]-48*t, rxe=VP[0]+100*t, lxe=VP[0]-165*t;
+    for (x=0;x<w;x++){ var c=o.get(x,y), lit=sm(1-Math.abs(x-(VP[0]+30*t))/(12+66*t))*sm((t-0.05)/0.5);
+      if (x>=lxe && x<=rxe){ c=ra(R('k0 k1 m0 m1 m2 m3'),0.06+lit*0.84+(hash(x>>1,y)-0.5)*0.06,x,y);
+        if (Math.abs(x-cxl)<0.5+t*1.2 && (Math.floor(Math.pow(t,0.55)*22)%3)<2) c=lit>0.2?P.s4:P.s1;                                   // Mittellinie
+        if (Math.abs(x-(rxe-2-t*3))<0.5+t*0.8) c=lit>0.15?P.s5:P.s1; }                                                                  // Randlinie
+      else if (x>rxe && x<rxe+6+t*40){ var g=(x-rxe)/(6+t*40), lt=lit+sm(1-(x-rxe)/(10+t*30))*0.3*sm((t-0.1)/0.5); c=ra(R('k0 k1 k2 g0 g1'),0.12+lt*0.4*(1-g),x,y);
+        if (hash(x*1.7,y*2.3)<0.06+lt*0.3) c=lt>0.25?P.s6:P.s2; }                                                                        // Bankett mit Raureif, glitzert im Licht
+      else if (x>=rxe+6+t*40) c=ra(R('k0 k0 k1 k2'),0.3+(fbm(x,y,5,9)-0.5)*0.5,x,y);                                                    // Fels
+      else { var gd=lxe-x; c=(gd<3)?(hash(x,y)<0.5?P.k2:P.m0):ra(R('k0 k0 k1 n0'),0.25+(fbm(x*0.4,y*1.5,5,4)-0.5)*0.4,x,y); }          // Leitplanke, dahinter das dunkle Wasser
+      o.px(x,y,c); } }
+  [0.12,0.2,0.31,0.46,0.68,0.98].forEach(function(t){ var px=Math.round(VP[0]+100*t+3+t*8), py=Math.round(VP[1]+t*(DY-VP[1])), ph=Math.max(2,Math.round(2+t*12)), lt=sm((t-0.05)/0.5);   // Leitpfosten rechts
+    for (var j=0;j<ph;j++){ var c=(j>ph*0.72 && j<ph*0.86)?P.k1:(lt>0.3?P.s4:P.s1); o.px(px,py-j,c); if (t>0.4) o.px(px+1,py-j,c===P.k1?P.k1:P.s2); } o.px(px,py-Math.round(ph*0.8),lt>0.2?P.y4:P.y1); });
+  [0.1,0.17,0.27].forEach(function(t){ var px=Math.round(VP[0]-165*t-2), py=Math.round(VP[1]+t*(DY-VP[1])); o.px(px,py-1,P.s1); o.px(px,py-2,P.s3); });     // Pfosten drüben an der Leitplanke
+  for (y=0;y<h;y++) for (x=0;x<w;x++) if (inWS(x,y)) b.px(x,y,o.get(x,y));
+  // Raureif in den unteren Ecken der Scheibe
+  [[2,DY,1],[230,DY,-1]].forEach(function(cn){ for (y=DY-18;y<=DY;y++) for (x=cn[0]-(cn[2]<0?22:0);x<=cn[0]+(cn[2]>0?22:0);x++){ if (!inWS(x,y)) continue; var dx=(x-cn[0])*cn[2], dy=cn[1]-y, d=Math.hypot(dx,dy*1.3), a=Math.atan2(dy,dx);
+      if (d<20 && Math.sin(a*14+d*0.9)>0.55-d*0.02 && bayer(x,y)<(1-d/20)*0.9) mixPx(b,x,y,P.s4,d<8?4:2); } });
+  // wo Mala sitzen würde: nur ein heller Schimmer in der Scheibe, ohne Gesicht
+  for (y=14;y<DY;y++) for (x=78;x<104;x++){ if (!inWS(x,y)) continue; var dm=Math.hypot((x-90)/7,(y-41)/15); if (dm>1) continue; var km=Math.round(Math.pow(1-dm,1.2)*5+bayer(x,y)*0.9-0.4); if (km>0) mixPx(b,x,y,P.s6,Math.min(5,km)); }
+  // Dachhimmel mit hochgeklappten Sonnenblenden, Pfosten
+  fill(b,0,0,w,8,function(x,y){ return ra(R('k0 k1 k2'),0.35+y/20+(hash(x>>2,y)-0.5)*0.12,x,y); });
+  b.rect(16,2,70,5,P.k2); b.hl(16,85,6,P.m0); b.rect(146,2,70,5,P.k2); b.hl(146,215,6,P.m0);
+  for (y=6;y<=DY;y++){ var lp=Math.round(5-(y-6)*0.07), rp=Math.round(227+(y-6)*0.07); for (x=0;x<=lp;x++) b.px(x,y,x===lp?P.m0:P.k1); for (x=rp;x<w;x++) b.px(x,y,x===rp?P.m0:P.k1); }
+  // Armaturenbrett: dunkel; vor Vlado die Instrumente, deren Licht um ihn herum aufscheint; die Zigarette liegt da, nicht angezündet
+  fill(b,0,DY,w,BK-DY,function(x,y){ return ra(R('k0 k1 k2 m0'),0.5-(y-DY)/36+(hash(x>>3,y>>2)-0.5)*0.08,x,y); }); b.hl(0,w-1,DY,P.m1); b.hl(0,w-1,DY+1,P.k2);
+  b.rect(34,DY+1,36,8,P.k0); [[44,DY+5,3.4],[58,DY+5,3.4],[66,DY+4,1.4]].forEach(function(g){ b.ellipse(g[0],g[1],g[2],g[2],P.y3); if (g[2]>2) b.ellipse(g[0]-0.5,g[1]-0.5,g[2]-1.2,g[2]-1.2,P.y4); });
+  b.line(86,DY-1,92,DY-1,P.s6); b.line(86,DY,92,DY,P.s4); b.hl(93,94,DY-1,P.e4); b.hl(93,94,DY,P.e3); b.hl(86,94,DY+1,P.k0);        // die Zigarette
+  ringE(b,52,73,20,5.5,0,2,function(xx,yy,u,v){ return (v<-1)?P.m0:P.k2; });                                                         // Lenkrad, von hinten
+  M.light(b,M.lf.sum(M.lf.k(-0.3),M.lf.pool(52,70,46,18,1.5,1.3),M.lf.pool(140,72,84,12,0.3,1)),0,0,function(x,y){ return !inWS(x,y); });
+  // die drei, von hinten: dunkle Umrisse gegen die Straße, vom Licht der Instrumente gestreift
+  var OB=new M.Buf(w,h,T);
+  // Vlado: kurzes graues Haar, dunkelblauer Overall über dem karierten Hemd; die Arme nach vorn, beide Hände am Kranz
+  OB.poly([[28,64],[39,57],[65,57],[76,64],[80,BK+2],[24,BK+2]],function(xx,yy){ return ra(R('k2 n0 n1'),0.45+((xx-28)/48-0.5)*0.2,xx,yy); });
+  limb(OB,[31,63],[34,73],3.0,[P.n0,P.n1,P.k2],0,-1); limb(OB,[73,63],[70,73],3.0,[P.n0,P.n1,P.k2],0,-1);
+  OB.ellipse(33,73.5,2.6,1.8,P.p3); OB.px(32,73,P.p4); OB.ellipse(71,73.5,2.6,1.8,P.p3); OB.px(72,73,P.p4);
+  OB.rect(47,53,10,6,P.p2); OB.hl(47,56,56,P.p1); OB.poly([[44,57],[52,59],[60,57],[59,60],[45,60]],function(xx,yy){ return ((xx+yy)%3===0)?P.r1:P.r2; });   // Nacken, Hemdkragen
+  headB(OB,52,45,8.2,9.4,1,{skin:[P.p1,P.p2,P.p3,P.p4],hair:[P.m1,P.m2,P.m3,P.m4],lift:-0.05});
+  // Marko in der Mitte: dunkles Haar, der Wollmantel mit hochgeschlagenem Kragen
+  OB.poly([[101,66],[113,59],[139,59],[150,66],[154,BK+2],[97,BK+2]],function(xx,yy){ return ra(R('k1 k2 m0'),0.45+((xx-101)/49-0.5)*0.2,xx,yy); });
+  OB.poly([[115,59],[126,57],[137,59],[136,63],[116,63]],P.m0); OB.rect(122,55,9,5,P.p2);
+  headB(OB,126,47,8,9.2,-1,{skin:[P.p1,P.p2,P.p3,P.p4],hair:[P.h0,P.h1,P.h2,P.h3],lift:-0.05});
+  // Kata am Fenster: kurzes dunkelblondes Haar, an den Seiten ausrasiert, ein Ohrstecker; schwarze Fleecejacke mit dem Schriftzug auf dem Rücken; sie sieht zu ihrem Vater
+  OB.poly([[165,65],[176,59],[200,59],[211,65],[215,BK+2],[161,BK+2]],function(xx,yy){ return ra(R('k1 k2 m0'),0.4+((xx-165)/46-0.5)*0.2,xx,yy); });
+  OB.rect(184,55,8,5,P.p2);
+  headB(OB,188,46,7.4,8.8,-1,{skin:[P.p1,P.p2,P.p3,P.p4],hair:[P.w2,P.w3,P.w4,P.w5],lift:-0.05});
+  for (y=47;y<=53;y++) for (x=180;x<=196;x++){ var c0=OB.get(x,y); if (c0===P.w2||c0===P.w3||c0===P.w4||c0===P.w5){ if (Math.abs(x-188)>4) OB.px(x,y,(x+y)%2?P.p2:P.w1); } }   // ausrasierte Seiten
+  OB.px(181,50,P.s6);
+  M.microText(OB,'RAJIĆ',178,69,P.m1);
+  M.light(OB,M.lf.k(-0.9));
+  for (y=1;y<h-1;y++) for (x=1;x<w-1;x++){ var c1=OB.get(x,y); if (c1===T || y>BK) continue; var up=OB.get(x,y-1)===T, lf=OB.get(x-1,y)===T, rt=OB.get(x+1,y)===T; if (!(up||lf||rt)) continue;   // Säume im Gegenlicht
+    var nx=up?x:(lf?x-1:x+1), ny=up?y-1:y, lb=M.lum(b.get(nx,ny)); OB.px(x,y,lb>70?P.s3:(y>DY-4?P.w2:P.m1)); }
+  blitA(b,OB,0,0,false,1);
+  ringE(b,52,73,20,5.5,0,2,function(xx,yy,u,v){ return (Math.abs(xx-52)>16)?((v<-1)?P.m1:P.k2):undefined; });                       // die Enden des Kranzes neben ihm
+  [[33,73],[71,73]].forEach(function(p){ b.ellipse(p[0],p[1]+0.5,2.6,1.8,P.p3); b.px(p[0]+(p[0]<52?-1:1),p[1],P.p4); b.px(p[0],p[1]+1,P.p2); });   // seine Hände am Lenkrad, im Licht der Instrumente
+  // die Lehne der Sitzbank vorn: dunkles Kunstleder, Nähte
+  fill(b,0,BK,w,h-BK,function(x,y){ var c=ra(R('k0 k1 k2 m0'),0.5-(y-BK)/40+(hash(x>>3,y>>3)-0.5)*0.06,x,y); if (((x+6)%38)===0) c=P.k0; if (y===BK) c=P.m1; if (y===BK+1) c=P.m0; return c; });
+  edgeDark(b,1.8); };
+
 })(M);
