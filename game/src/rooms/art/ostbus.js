@@ -88,7 +88,7 @@ function blocks(b){ BLOCKS.forEach(function(q,i){ var x0=q[0], w=q[1], top=q[2],
       else if (fl>=2 && (u%5===1||u%5===2||u%5===3) && u<w-2){ c=(hash(x>>2,y)<0.18)?P.s5:P.m1; if (fl===2) c=P.k2; if (fl===4 && u%5===2) WINS.push([x,y-2,1,2,hash(x,y)]); }
       if (fl===1 && u%9===4 && hash(i,y)<0.4) c=P.s5;                                               // Wäsche, Schüsseln
       b.px(x,y,c); }
-    b.hl(x0,x0+w-1,top,col[2]); b.rect(x0+3,top-3,6,3,col[0]); if (i%2===0){ b.vl(x0+w-5,top-8,top-1,P.m2); b.hl(x0+w-7,x0+w-3,top-6,P.m2); }
+    b.hl(x0,x0+w-1,top,col[2]); b.rect(x0+3,top-3,6,3,col[0]); if (i%2===0){ b.vl(x0+w-5,top-8,top-1,P.m2); b.hl(x0+w-5,x0+w-1,top-7,P.m2); b.hl(x0+w-5,x0+w-2,top-5,P.m2); }   // Fernsehantenne, Stäbe nur zu einer Seite (kein Kreuz)
     for (var k=0;k<14;k++){ var sx=x0+2+Math.floor(hash(i,k)*(w-6)), sy=top+4+Math.floor(hash(k,i)*(GY-top-12)); dk(b,sx,sy,2); dk(b,sx+1,sy,1); }   // leise Einschussnarben
   }); }
 

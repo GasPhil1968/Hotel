@@ -6,6 +6,16 @@ Story, Spannung, Rätsellogik, Figurenentwicklung und Spielspaß
 - **Geprüfte Fassung:** Commit `cb26f89`, Build `web/index.html`, Service-Worker-Version `mala-split-bcbd14be46`
 - **Änderungen am Spiel:** keine. Neu ist nur dieser Bericht.
 
+> **Nachtrag nach der zweiten Prüfung (5. November 2026)**
+>
+> Dieser Bericht meldet in A.6 und in Teil E keinen Blocker (P0). Das war falsch. Ein zweiter Prüfer hat mit echten Mausklicks zwei Blocker gefunden:
+> - **Ordnen mit acht Karten:** Hat Marko Zlata nach den Hühnern gefragt, liegt „So war es“ unter dem Bildrand.
+> - **Stadtplan:** Er liegt über der Auswahl „Allein gehen / Bei ihr bleiben“ und fängt jeden Klick ab.
+>
+> **Warum dieser Bericht sie übersehen hat:** Die Spielerkonsole aus A.3 löste Auswahlen und Rätselknöpfe über die Test-API aus, nicht über einen Klick an der sichtbaren Stelle. Deshalb konnten A1 und A3 den Knopf und die Auswahl bedienen, die ein Spieler nicht erreicht. Die Einschränkung stand nicht in A.5, und das hätte sie müssen.
+>
+> **Stand jetzt:** Beide Blocker und die übrigen Befunde der zweiten Prüfung sind behoben. Neue Klicktests mit echten Mausklicks (`game/tools/klicktests.js`) prüfen sie. Einzelheiten stehen in `BERICHT_K3.md`, Abschnitt 10. Der übrige Bericht beschreibt weiter die Fassung `cb26f89`.
+
 **So sind Aussagen gekennzeichnet**
 
 | Kennzeichen | Bedeutung |

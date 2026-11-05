@@ -62,7 +62,7 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 **6. Die Karte von 1985 und Mate**
 - Westbusbahnhof → **Café „Zdravko“**. Mala sieht Mate am Fenstertisch, er wartet auf den Bus aus München.
 - **[M]** Zdravkos **alte Karte** an der Wand ansehen (Stadtplan 1985) und „Weiter“ antippen. Sie reicht weiter als der Kiosk-Plan.
-- **Verbinden:** *hinter dem Kartenrand* + *Karte 1985* → **Skela** (das Wort heißt „Fähre“). Skela steht auf dem Plan.
+- **Verbinden:** *hinter dem Kartenrand* + *Karte 1985* → **Skela** (das Wort heißt „Fähre“). Skela steht auf dem Plan. Vorher zeigt der Plan den Ort nur als „Hinter dem Kartenrand“ (bis zur alten Karte).
 - **[M]** Mit Mate reden: „Ich suche einen Fahrer …“ → „Rajić? Der Raucher?“ Zum Abschied „Auf Wiedersehen, Herr Zelenika.“ Dann „Ich sehe nach.“ Marko verspricht, am Samstag nach dem Bus zu sehen.
 
 **7. Vulkanizer Rajić**
@@ -153,14 +153,14 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
   5. Zweites Läuten
   6. Das Licht geht aus
   7. Drittes Läuten
-  8. Am Morgen: Zlata im Schilf
+  8. Am Morgen: Zlata im Schilf (nur, wenn man Zlata nach den Hühnern gefragt hat; sonst sind es sieben Karten)
 
   → „So war es.“ Zwischen dem ersten und dem dritten Läuten hat in Batos Kammer jemand Licht gemacht.
 
 **16. Bato war wach**
 - **[M]** Bato nach *Licht in Batos Kammer* fragen → „Dreimal hat er geläutet, dann war Ruhe.“
 - **Verbinden:** *dreimal* + *Er hat geschlafen* → **Bato war wach**.
-- **[M]** Bato nach *Bato war wach*, dann nach *Es war das Mädchen* fragen. Er wird unruhig: „Es war ein Soldat.“
+- **[M]** Bato nach *Bato war wach*, dann nach *Es war das Mädchen* fragen (Reihenfolge beliebig). Er wird unruhig: „Es war ein Soldat.“ Dann gibt er zu: „Ich habe ihn aufgehoben.“ (den Bleistift) und zündet mitten am Tag seine Laterne an. **Pflicht:** Ohne diese Konfrontation endet der Sonntag nicht.
 - **[M]** Zlata: „(Ihr sagen, dass Bato wach war.)“ → „(Mala fragen.)“ Mala schüttelt den Kopf, noch nicht.
 - Auf dem Weg zur Brücke gibt Zlata die Decke: „Uzmite deku. Hladno je kod vode.“
 - **[M]** Am rechten Ufer die **Decke** auf Mala ziehen: „Ich war noch da, Marko.“
@@ -171,7 +171,7 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **[M]** Im Vulkanizer Vlado: „Ich war in Skela …“, dann nacheinander *Es war das Mädchen*, *Licht in Batos Kammer*, *überlebt* zeigen. Vlado: „Sie hat mich weggeschickt.“ – „Um zwei war ich wieder da.“
 - **Verbinden:** *weggeschickt* + *„Er ist gefahren“* → **Wer hat wen stehen lassen?**
 - **[M]** Im Hof mit Mala reden: „Er sagt, du hast ihn weggeschickt …“ Gespräch 2 „Wie Großmutter“: Mala erzählt vom Seil. „Ich frage dich …“ wählen. Marko fragt sie, was er mit Vlados Fassung machen soll. Mala: „Sag Vlado, dass er nicht schuld ist. … Mit etwas, das nur wir zwei hatten. Im Führerhaus.“
-- **[M]** Vlado: „Ich soll Ihnen etwas sagen …“ → „(Mala fragen.)“ → „(Ihm sagen …)“ → Notiz **„Dann fahr still.“** (das Echo im Führerhaus).
+- **[M]** Vlado: „Ich soll Ihnen etwas sagen …“ → „(Mala fragen.)“ (freiwillig; Mala hat den Auftrag im Hof selbst gegeben) → „(Ihm sagen …)“ → Notiz **„Dann fahr still.“** (das Echo im Führerhaus). Dasselbe geht nach dem Gespräch im Hof auch über „Nach etwas aus dem Notizbuch“. Hat Marko ihm den Satz schon am Freitag gesagt, erinnert sich Vlado daran.
 - Vlado: „Woher …?“ – „Ich bin Übersetzer.“ Er fährt heute Nacht.
 
 ### Fall B: Haus Zelenika
@@ -223,8 +223,8 @@ Am Ende des Sonntags sagt Marko: „Es ist bald elf.“ Dann kommt die Karte „
   - **[M]** die **Schublade** öffnen: Zlatas Brief von 1996. Er kam zurück: „Adresse unzureichend.“ **Nada geben.**
   - **[M]** Das **Skizzenbuch** Nada geben → „(Mala fragen.)“ → „Alles. Von Anfang an.“ Die zwei Mütter.
 - **Vermisstenstelle:**
-  - **[M]** Frau Kolar: „Ich möchte ein Grab anzeigen.“ → „Das Formular“ → „(Mala fragen.)“ → „(Einen eigenen Satz schreiben.)“ Kolar: „Dann brauche ich ein größeres Feld.“
-  - „(Eine Probe abgeben.)“ für den Vater, oder zweimal „Heute nicht“; beides geht. Kolar fragt: „Lebt Ihre Mutter?“
+  - **[M]** Frau Kolar: „Ich möchte ein Grab anzeigen.“ → „Das Formular“ → „(Mala fragen.)“ (freiwillig) → „(Einen eigenen Satz schreiben.)“ Kolar: „Dann brauche ich ein größeres Feld.“
+  - „(Eine Probe abgeben.)“ für den Vater, oder zweimal „Heute nicht“; beides geht. „(Mala fragen.)“ ist hier freiwillig, Mala rügt nicht (es ist Markos Vater). Kolar fragt: „Lebt Ihre Mutter?“ Mit Markos Probe macht die der Mutter den Abgleich sicherer; ohne sie braucht es die Probe eines Kindes, also Anas.
   - „Ich muss telefonieren.“ Die Mutter in München: „Komm. Wir reden, wenn du hier bist.“
 - **Ostbusbahnhof:** den **Bus** benutzen. Das Bild „Im Bus nach Sarajevo“ folgt, dann der Abspann. „Ende des dritten Kapitels · Fortsetzung: München“.
 

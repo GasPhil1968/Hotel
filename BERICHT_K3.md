@@ -8,6 +8,7 @@ Dieser Bericht trennt streng zwischen dem, was **tatsächlich ausgeführt und ge
 
 ## 1. Ergebnis in Kürze
 
+- **Nach der zweiten Prüfung überarbeitet (5. November):** zwei Blocker (Ordnen mit acht Karten, Stadtplan über einer Auswahl) und acht weitere Befunde sind behoben, dazu Zlatas Satz zur Glocke und vier kleinere Darstellungsfehler. Neu sind Klicktests mit echten Mausklicks. Alle Prüfungen liefen danach noch einmal und bestanden. Siehe Abschnitt 10.
 - Kapitel 3 ist **vollständig spielbar**: von der Ankunft am Ostbusbahnhof (Donnerstag) bis zur Abfahrt nach Sarajevo und zum Abspann („Ende des dritten Kapitels · Fortsetzung: München“). Es gibt kein Game Over und nach allen ausgeführten Prüfungen keine Sackgasse.
 - **Zwei Geisterfälle und Malas eigene Geschichte:**
   - **Fall A, Bato, der Fährmann von Skela:** Seine Leine hängt an der Glocke. Die Nacht zum 15. Januar 1994 wird rekonstruiert: Lichtprobe, die Nacht ordnen, „Bato war wach“. Im Finale erkennt er seinen Tod: „Steig ein. Diesmal fahre ich.“ Mala bringt ihn hinüber.
@@ -37,10 +38,11 @@ Dieser Bericht trennt streng zwischen dem, was **tatsächlich ausgeführt und ge
   - Wörter: 48 383 (Kapitel 2: 37 834, +28 %).
   - Malas Zeilen: 758 (Kapitel 2: 446, +70 %).
   - Hinzu kommen **86 Hinweisthemen mit je vier Stufen**, nur auf Wunsch.
-- **Automatisch geprüft** (Abschnitt 5):
+- **Automatisch geprüft** (Abschnitt 5; nach der zweiten Prüfung alles noch einmal):
   - ein vollständiger Durchlauf von Kapitel 3 nur mit Spielerhandlungen (113 Schritte, keine JS-Fehler);
-  - 15 Zusatztests mit 157 Prüfungen: Nebenwege, falsche Versuche, alle Zwischenstände, Neuladen, Laden in jeder Phase;
-  - die Hinweisprüfung an 472 Ständen;
+  - 19 Zusatztests mit 180 Prüfungen: Nebenwege, falsche Versuche, alle Zwischenstände, Neuladen, Laden in jeder Phase und die Befunde der zweiten Prüfung;
+  - neu: 8 Klicktests mit 53 Prüfungen, nur mit Mausklicks an der Stelle, an der Knopf oder Auswahl im Bild steht;
+  - die Hinweisprüfung an 546 Ständen;
   - die Gegenprobe für Kapitel 1 und 2 (beide Durchläufe, 33 + 51 + 39 Einzeltests);
   - der Gerätetest (27/27), der einen echten Bildzeitfehler fand (behoben);
   - der Offline-Test (8/8).
@@ -136,7 +138,7 @@ Kapitel 3 hat weniger Hotspots und Beschreibungen als Kapitel 2, aber deutlich m
 
 ## 5. Tatsächlich ausgeführte Prüfungen
 
-Alle Prüfungen liefen automatisch in Chromium (Playwright), headless, in diesem Container, auf dem **letzten Bau** mit allen Änderungen dieses Berichts.
+Alle Prüfungen liefen automatisch in Chromium (Playwright), headless, in diesem Container. Nach den Korrekturen der zweiten Prüfung (Abschnitt 10) liefen alle noch einmal. Danach kamen nur zwei kleine Änderungen in Dateien von Kapitel 3: die Antennen am Ostbusbahnhof (nur Bild) und die Kästchen im Formular auf zwei Zeilen (nur Text). Auf dem **Endbau** mit beiden liefen erneut: der Durchlauf von Kapitel 3, die Klicktests, Zusatztest 19 (Vermisstenstelle mit dem Formular), die Hinweisprüfung, der Gerätetest und der Offline-Test. Der Endbau ist `web/` und `MALA_netlify.zip`.
 
 ### 5.1 Vollständige Durchläufe
 
@@ -150,16 +152,18 @@ Der Durchlauf von Kapitel 3 setzt keinen Schalter und keine Notiz. Nach jedem Sc
 
 | Prüfung | Ergebnis |
 |---|---|
-| Kapitel 3, Musterlösung (`walkthrough3.js`) | **bestanden** (auf dem letzten Bau): 113 Prüfschritte von `M.E.newGame(3)` bis zum Abspann, keine JS-Fehler, 362 s Laufzeit, Spieltakt 150,8 min. Mate erkennt erst seinen Sohn, dann seinen Tod; Bato erkennt seinen Tod; beide gehen durch die Zwischenwelt. Mala ist frei (Zustimmung b). Das Ende von Kapitel 3 ist gespeichert (`mala.c3end`). |
-| Kapitel 3, derselbe Durchlauf auf dem Bau vor der Optimierung der Geistersicht | bestanden: 113 Schritte, keine JS-Fehler, Spieltakt 152,0 min |
-| Kapitel 2 (`walkthrough2.js`) | **bestanden:** 67 Schritte bis zum Abspann, keine JS-Fehler, Spieltakt 98,5 min |
-| Kapitel 1 (`walkthrough.js`) | **bestanden:** bis zum Abspann, keine JS-Fehler, Spieltakt 85,2 min |
+| Kapitel 3, Musterlösung (`walkthrough3.js`) | **bestanden** (Endbau): 113 Prüfschritte von `M.E.newGame(3)` bis zum Abspann, keine JS-Fehler, 361 s Laufzeit, Spieltakt 150,4 min. Mate erkennt erst seinen Sohn, dann seinen Tod; Bato erkennt seinen Tod; beide gehen durch die Zwischenwelt. Mala ist frei (Zustimmung b). Das Ende von Kapitel 3 ist gespeichert (`mala.c3end`). |
+| Kapitel 3, derselbe Durchlauf vor den zwei letzten kleinen Änderungen | bestanden: 113 Schritte, keine JS-Fehler, 362 s, Spieltakt 151,0 min |
+| Kapitel 3, Erstauslieferung (`cb26f89`), zwei Läufe | bestanden: 113 Schritte, keine JS-Fehler, Spieltakt 150,8 und 152,0 min |
+| Kapitel 2 (`walkthrough2.js`) | **bestanden:** 67 Schritte bis zum Abspann, keine JS-Fehler, Spieltakt 97,9 min |
+| Kapitel 1 (`walkthrough.js`) | **bestanden:** bis zum Abspann, keine JS-Fehler, Spieltakt 85,6 min |
 
-### 5.2 Zusatztests (`k3tests.js`): 157 von 157 bestanden
+### 5.2 Zusatztests (`k3tests.js`): 180 von 180 bestanden
 
 Die Tests laden Stände aus dem Durchlauf, spielen von dort mit Spielerhandlungen weiter und prüfen gezielt. Schalter setzen sie nur dort, wo ein unterbrochener Spielstand oder das Ende von Kapitel 2 nachgebaut wird.
-- Die Tests 1–14 liefen in einem Lauf (148 Prüfungen).
-- Test 15 ist neu. Im ersten Lauf brach er an einem Fehler im Testaufbau ab: Der geladene Stand liegt in der Werkstatt, Marko muss erst hinaus. Nach der Korrektur lief er allein mit 9 Prüfungen durch. Am Spiel änderte sich dazwischen nichts.
+- Nach der zweiten Prüfung liefen alle 19 Tests in einem Lauf: 180 Prüfungen, alle bestanden.
+- Die Tests 16–19 sind neu. Sie prüfen die Befunde der zweiten Prüfung (Abschnitt 10).
+- Test 19 lief auf dem Endbau noch einmal allein (7 von 7), weil sich danach das Formular geändert hat.
 
 | Test | Prüfungen |
 |---|---:|
@@ -178,18 +182,22 @@ Die Tests laden Stände aus dem Durchlauf, spielen von dort mit Spielerhandlunge
 | 13. Die Probe für den Vater zweimal verweigert: Der Anruf bei der Mutter geht trotzdem, das Kapitel endet | 4 |
 | 14. Laden in allen 10 Phasen (neue Seite) und 9 unterbrochene Wechsel, die nach dem Laden nachgeholt werden | 31 |
 | 15. Davor abgesagt, am Samstag nie bei Jela: Am Sonntag spricht Jela Marko an; Fall B geht ohne Rückgriff auf den Samstag bis zu Davors Karte | 9 |
+| 16. Kein Wissen vorweg: Vor Zdravkos Karte heißt Skela auf dem Plan „Hinter dem Kartenrand“, danach „Skela“; das Bett am Freitag sagt nur, was Marko weiß; Vlado hört „Von Split hierher“; die Reaktion auf den flachen Schnitt nennt das Problem, nicht den Partisanenfriedhof; nach der ersten Peilung kein Minarett im Satz, der Plan zeigt die Koski-Moschee | 8 |
+| 17. Bato: Er gibt den Bleistift zu, seine Laterne brennt am Tag im Schuppen, der Sonntag endet nur nach beiden Belegen (mit: ja, ohne: nein) | 3 |
+| 18. Vlados Botschaft ohne „(Mala fragen.)“ ohne Rüge; der Satz aus dem Führerhaus wirkt auch über das Notizbuch; Vlado erinnert sich an den Freitag; ohne den Nachhall will Mala es ihm erst zeigen; Dino hört vor der Glocke nur, was Vlado gesagt hat | 5 |
+| 19. Vermisstenstelle: „noch am selben Tag gestorben“; eigener Satz ohne Rüge; zweimal abgelehnt: die Probe der Mutter allein reicht nicht, Ana wird gebraucht, kein Erfolgsversprechen, der Anruf bei der Mutter passt dazu; Probe sofort: „Das ist dein Vater.“, keine Rüge, die Probe der Mutter macht den Abgleich sicherer | 7 |
 
 ### 5.3 Hinweise (`hintcheck.js`): bestanden
 
-- **472 Stände geprüft:** 113 aus dem Durchlauf, 359 aus den Nebenwegen der Zusatztests.
+- **546 Stände geprüft** (Endbau): 113 aus dem Durchlauf, 433 aus den Nebenwegen der Zusatztests. Vor der zweiten Prüfung waren es 472.
 - **Abdeckung:** An jedem Stand ist mindestens ein Thema offen, außer am Abspann.
 - **Inhalt der Themen:**
   - Kein Stufentext ist leer, weder für Mala noch für Marko.
   - Kein offenes Thema nennt einen Ort, den Marko noch nicht kennt.
   - Keines gehört zu einem anderen Kapitel.
-  - Keines nennt einen verbrauchten Gegenstand.
+  - Keines nennt einen verbrauchten Gegenstand. Zwei Meldungen zum Sichten gab es auf dem neuen Weg von Test 19: Direkt nach der Anzeige nennt `e3f` das Formular, bevor Marko es in der Hand hat. Gesichtet: kein Fehler. Das Formular liegt dann als Gegenstand auf dem Tisch und steht in Frau Kolars Auswahl. Die Prüfung merkt sich „schon gehabt“ für alle Tests eines Ordners und schlägt an, wenn ein späterer Test vor der Übergabe neu ansetzt.
 - **Themen gesamt:** 81 der 86 Themen waren in den Läufen mindestens einmal offen. Die übrigen fünf stehen in Abschnitt 8.
-- **Kapitel 1 und 2:** Die Erweiterung des Prüfskripts für Mostar ändert dort nichts; die Ausgabe ist vorher und nachher gleich.
+- **Kapitel 1 und 2:** Die Erweiterung des Prüfskripts für Mostar ändert dort nichts; die Ausgabe ist vorher und nachher gleich. Auf dem Endbau noch einmal geprüft: 128 Stände, bestanden, mit denselben acht bekannten Fehlalarmen zu den Fahrscheinen (`BERICHT_NAVIGATION.md`).
 
 ### 5.4 Gegenprobe Kapitel 1 und 2
 
@@ -199,9 +207,11 @@ Die Tests laden Stände aus dem Durchlauf, spielen von dort mit Spielerhandlunge
 | `navtests.js` (Stadtplan, Übergänge, Doppelklick auf Ausgänge, Touch) | 51 von 51 bestanden |
 | `einstiegtests.js` (Einstieg in Split, alte Spielstände, Malas Abwesenheit) | 39 von 39 bestanden |
 
-Diese drei liefen auf dem Bau vor der Optimierung der Geistersicht. Die Optimierung betrifft nur zwei Mostar-Räume; deren Ausgabe ist Pixel für Pixel gleich geblieben (5.6).
+Alle drei liefen nach der zweiten Prüfung noch einmal, auf dem Bau vor den zwei letzten kleinen Änderungen. Beide betreffen nur Dateien von Kapitel 3.
 
 ### 5.5 Gerätetest (`devicetest.js`): 27 von 27 bestanden; Offline-Test (`offlinetest.js`): 8 von 8
+
+Beide liefen nach der zweiten Prüfung noch einmal auf dem Endbau und bestanden wieder; die Bildzeiten liegen im selben Rahmen wie unten. Der Offline-Speicher des Endbaus heißt `mala-split-542f0c32b4`.
 
 - **Gerätetest:** iPad-Ansicht in Chromium, quer und hochkant, mit Touch, dazu Offline-Betrieb, Update einer offline gespeicherten Fassung und Bildzeit.
   - Die Bildzeit wird jetzt auch für alle 22 Mostar-Räume und den Stadtplan von Mostar gemessen, je mit und ohne Geistersicht, bei vierfach gedrosselter CPU.
@@ -222,14 +232,14 @@ Diese drei liefen auf dem Bau vor der Optimierung der Geistersicht. Die Optimier
 - **Doppelte Gesprächsschlüssel:** Ein Prüfskript über alle Quelldateien sucht je Kapitel Schlüssel für einmalige Gesprächszeilen, Ersttreffer und Wechselsätze, die in zwei Dateien vorkommen. Gefunden hat es die Kollision in Kapitel 2 (Abschnitt 2, Punkt 5). Nach den Korrekturen gibt es keine mehr.
 - **Volkszugehörigkeit, Religion, Nation:** Die Texte und die Kommentare der Bildskripte von Kapitel 3 wurden nach den einschlägigen Begriffen durchsucht.
   - Treffer gibt es nur für „Rotes Kreuz“ (Suchdienst), für „Kreuzung“ und „ankreuzen“ sowie für die Sprachszene aus dem Konzept.
-  - In den Bildern sind Kreuz und Halbmond ausdrücklich weggelassen.
+  - In den Bildern sind Kreuz und Halbmond ausdrücklich weggelassen. Ausnahme bis zur zweiten Prüfung: Die Dachantennen am Ostbusbahnhof bildeten ein Kreuz. Das ist behoben (Abschnitt 10) und am vergrößerten Bildausschnitt des Endbaus geprüft.
 - **Gegenproben der Skript-Agenten:** Die Prüfskripte der drei Skriptteile (Ostufer, Westufer mit Haus Zelenika, Skela) liefen auf dem Bau des Integrationsschritts fehlerfrei.
 - **Syntaxprüfung je Quelldatei** bei jedem Bau.
 
 ## 6. Geschätzt oder nur theoretisch begründet (nicht gemessen)
 
 - **Spielzeit:** nicht mit Menschen gemessen.
-  - **Gemessen** ist nur der Spieltakt der Musterlösung: **rund 151 Minuten** für Kapitel 3 (150,8 und 152,0 in zwei Läufen), ohne Umwege, Suchen, Nachdenken und freiwillige Gespräche. Er enthält die Pflichtdialoge in Normaltempo und die kurzen Wartezeiten des Testtreibers. Zum Vergleich: Kapitel 2 98,5 Minuten, Kapitel 1 85,2 Minuten.
+  - **Gemessen** ist nur der Spieltakt der Musterlösung: **rund 151 Minuten** für Kapitel 3 (150,4 bis 152,0 in vier Läufen), ohne Umwege, Suchen, Nachdenken und freiwillige Gespräche. Er enthält die Pflichtdialoge in Normaltempo und die kurzen Wartezeiten des Testtreibers. Zum Vergleich: Kapitel 2 rund 98 Minuten, Kapitel 1 rund 85 Minuten.
   - **Hochgerechnet:** `BERICHT_K2.md` schätzte für Sarajevo bei 96 Minuten Spieltakt 4–5 Stunden. Mit demselben Verhältnis ergäben sich für Mostar etwa **6–8 Stunden** für Spieler, die erkunden. Zielstrebige Spieler brauchen eher 4½–6 Stunden.
   - Kapitel 3 ist mehr Gespräch als Suche (Abschnitt 4). Ob das für Menschen schneller oder langsamer spielt, ist nicht gemessen.
 - **Schwierigkeit und Fairness:**
@@ -246,7 +256,7 @@ Diese drei liefen auf dem Bau vor der Optimierung der Geistersicht. Die Optimier
 | Test auf einem echten iPad | kein Gerät in der Arbeitsumgebung | iPad-Ansicht in Chromium (Touch, quer und hochkant), offline, gedrosselte Bildzeit für alle Mostar-Räume |
 | Safari / WebKit | nur Chromium ist installiert | Code für iOS wie in Kapitel 1 und 2 |
 | Klang anhören | Container ohne Audioausgabe | Ton-Code läuft ohne Fehler; Stücke, Kulissen und Geräusche sind registriert und werden aufgerufen; der Knackfehler wurde im Code gefunden und behoben |
-| Spieltest mit Menschen | nicht möglich | Durchlauf, 15 Zusatztests, Hinweisprüfung an allen Ständen |
+| Spieltest mit Menschen | nicht möglich | Durchlauf, 19 Zusatztests, Klicktests mit echten Mausklicks, Hinweisprüfung an allen Ständen |
 | Alle denkbaren Reihenfolgen | zu viele Kombinationen | Hauptweg plus Nebenwege der Tests: Mala zuerst an der Schublade, Davor abgesagt, Taxi oder Roller, Laden in jeder Phase, jeder Zwischenstand, unterbrochene Wechsel |
 | Bosnisch-kroatische Fassung von Kapitel 3 | nicht beauftragt; Kapitel 3 bleibt Deutsch wie Kapitel 2 | – |
 
@@ -282,9 +292,57 @@ node game/build.js                                        # baut web/ (mit Synta
 MALA_DUMPALL=/tmp/d3 node game/tools/walkthrough3.js      # Kapitel 3 komplett, legt Zwischenstände ab
 K3T_DUMPS=/tmp/d3t node game/tools/k3tests.js /tmp/d3     # Zusatztests (legt die Stände der Nebenwege ab)
 node game/tools/hintcheck.js /tmp/d3 /tmp/d3t             # Hinweise gegen alle Stände
+node game/tools/klicktests.js /tmp/d3                     # echte Mausklicks: Stadtplan, Auswahl, Ordnen, Kapitelanfang, Laden
 node game/tools/walkthrough.js                            # Kapitel 1 komplett
 MALA_DUMPALL=/tmp/d node game/tools/walkthrough2.js       # Kapitel 2 komplett
 node game/tools/k2tests.js /tmp/d                         # Einzeltests Kapitel 2
 node game/tools/devicetest.js                             # iPad-Ansicht, Touch, offline, Bildzeit (auch Mostar)
 node game/tools/offlinetest.js                            # Offline-Betrieb
 ```
+
+## 10. Zweite Prüfung (5. November): Befunde und Korrekturen
+
+Ein zweiter Prüfbericht hat die ausgelieferte Fassung geprüft (`MALA_netlify.zip`, Prüfsumme beginnt mit `14c49055cc136fb0`, gebaut aus `cb26f89`). Dabei kamen echte Maus- und Touch-Eingaben im Browser zum Einsatz. Jeden Befund habe ich zuerst nachgestellt und dann behoben.
+
+**Neue Fassung:** `MALA_netlify.zip`, Prüfsumme (SHA-256) beginnt mit `626023f64b3697e4`, Offline-Speicher `mala-split-542f0c32b4`. Sie ist aus dem Commit gebaut, der diesen Abschnitt enthält.
+
+**Warum zwei Blocker vorher durchgerutscht sind:**
+- Der Lösungsdurchlauf, die Zusatztests und die Spielerkonsole meines eigenen Prüfberichts lösten Auswahlen und Rätselknöpfe über die Test-API aus.
+- Ein Knopf unterhalb des Bildrands oder eine Auswahl unter dem Stadtplan war für sie trotzdem erreichbar.
+- Neu ist deshalb `game/tools/klicktests.js`. Er bedient Stadtplan, Auswahl, Ordnen und die Erinnerung am Kapitelanfang nur mit Mausklicks an der Stelle, an der sie im Bild stehen.
+
+| Befund | Nachgestellt | Ursache | Korrektur | Prüfung |
+|---|---|---|---|---|
+| K3-01 (P0) Ordnen mit acht Karten nicht bestätigbar | ja: „So war es“ bei y=203, das Bild ist 200 hoch; bei sieben Karten lag die Rückmeldung unter dem Rand | feste Zeilenhöhe von 20 Bildpunkten | Die Kartenhöhe richtet sich nach der Anzahl. Der Knopf liegt höchstens bei y=168, die Rückmeldung an fester Stelle oben im Blatt. Das gilt auch für Übersetzung, Zusammenlegen und Schriftvergleich. | Klicktests `ordnen8`, `ordnen7` |
+| K3-02 (P0) Stadtplan über „Allein gehen / Bei ihr bleiben“ | ja: die Auswahl war nicht anklickbar | Die Reiseprüfung lief bei offenem, „handelndem“ Plan. | Eine Auswahl schließt den Plan. Die Szene bleibt bis zu ihrem Ende gesperrt. | `karte_bleiben`, `karte_allein` |
+| K3-03 (P1) Erinnerung „Im Bus“ beim Direkteinstieg unsichtbar | ja, in Kapitel 2 und 3 | Ohne geladenen Raum zeichnete das Bild kein Overlay. | Ohne Raum gibt es einen dunklen Grund. Die Erinnerung am Kapitelanfang steht immer auf dunklem Grund, auch nach dem Abspann von Kapitel 2. | `bus3`, `bus2`, `bus3_raum` |
+| K3-04 (P1) Bato wandelt sich ohne Konfrontation | im Code | Das Tagesende prüfte nur die Notizen. | Die Konfrontation mit beiden Belegen ist Pflicht. Danach gibt Bato den Bleistift zu („Ich habe ihn aufgehoben.“) und zündet am Tag seine Laterne an, sichtbar im Schuppen. | Zusatztest 17 |
+| K3-05 (P1) Rüge trotz Zustimmung | im Code | Die Rüge kam unabhängig vom Anlass. | Keine Rüge mehr bei der eigenen Probe, beim eigenen Satz im Formular und bei der Botschaft, die Mala selbst aufgetragen hat. Die Rüge bleibt, wo Marko Malas Geschichte ungefragt weitergibt: an Nada und an Vesna. | Zusatztests 18, 19 |
+| K3-06 (P2) Wissen aus einer anderen Reihenfolge | im Code; A1 im ersten Prüfbericht | fehlende Bedingungen | <ul><li>Skela steht erst nach der alten Karte mit Namen auf dem Plan, vorher als „Hinter dem Kartenrand“.</li><li>Vlado hört „Von Split hierher“, solange Skela nicht erschlossen ist.</li><li>Dino hört die Fährmann-Geschichte erst nach Malas Nachhall.</li><li>Malas Rat zur Botschaft passt zum Nachhall im Führerhaus.</li><li>Vlado erinnert sich am Sonntag an die Phrase vom Freitag.</li></ul> | Zusatztests 16, 18 |
+| K3-07 (P2) Wegweisung in automatischen Reaktionen | im Code | Die Reaktionen nannten den nächsten Ort. | Partisanenfriedhof, Minarett, Tepa, Lastwagen und Taxifahrer kommen in den Reaktionen nicht mehr vor. Es bleibt das Problem („Die dritte muss quer dazu kommen.“). Den Ort zeigt der Plan, und die Hinweise nennen ihn auf Wunsch. | Zusatztest 16 |
+| K3-08 (P2) Laden während einer Reaktion | ja: die Reaktion ging verloren, der Tag blieb bis zu 90 s gesperrt | Die Warteschlange stand nur im Speicher, die Sperre blieb stehen. | Die Warteschlange steht im Spielstand (`k3.q`), und beim Laden wird sie zurückgesetzt. Eine Reaktion verlässt sie erst, wenn sie fertig ist. | Klicktest `laden` |
+| K3-09 (P2) Chronologie und Alter | im Code | – | <ul><li>„noch am selben Tag gestorben“</li><li>„bis Mittag“</li><li>„zwei Jahre älter“</li><li>„im Schilf“ nur, wenn Zlata es gesagt hat</li></ul> | Zusatztest 19 |
+| K3-10 (P2) Ablehnung der DNA-Probe | im Code | – | Die Probe der Mutter hilft nur zusammen mit der Probe eines Kindes, also Markos oder Anas. Es gibt kein Erfolgsversprechen mehr („Wenn er gefunden wurde, können wir ihn zuordnen.“). Der Anruf bei der Mutter passt dazu. | Zusatztest 19 |
+
+**Außerdem:**
+- **Zlata und die Glocke:** Hat Marko am Samstag nachts geläutet, sagt Zlata im Finale „Dreimal. Wie damals.“ statt „Zum ersten Mal seitdem“. Das war ein offener Verdacht des Berichts.
+- **Peilungsblatt:** Die Anleitung steht in der Titelzeile. Die erste Peilung brauchte vier Zeilen, und die letzte fiel weg.
+- **Alte Karte:** Der Text ist kürzer und passt in drei Zeilen.
+- **Formular:** „[ ]“ statt „?“; die Schrift hatte kein Kästchen. Die vier Kästchen stehen auf zwei Zeilen, vorher brach „ostalo“ allein in die nächste Zeile um. Der Titel ist kürzer.
+- **Fernsehantennen am Ostbusbahnhof:** Ihre Stäbe zeigen nur zu einer Seite und bilden kein Kreuz mehr. Das widersprach der Vorgabe ohne religiöse Zeichen und der Aussage in 5.6.
+
+**Prüfungen nach den Korrekturen** (Einzelheiten in Abschnitt 5):
+- Durchlauf Kapitel 3: bestanden, 113 Schritte, keine JS-Fehler (Endbau).
+- Zusatztests: 180 von 180; davon sind die Tests 16–19 mit 23 Prüfungen neu.
+- Klicktests: 53 von 53 (Endbau).
+- Hinweisprüfung: 546 Stände, bestanden (Endbau).
+- Kapitel 1 und 2: beide Durchläufe bis zum Abspann, `k2tests` 33/33, `navtests` 51/51, `einstiegtests` 39/39.
+- Gerätetest 27/27 und Offline-Test 8/8 (Endbau).
+
+**Weiter offen** (aus meinem eigenen Prüfbericht `PRUEFBERICHT_K3.md`, nicht Teil dieser Prüfung):
+- falsche Sprecher, wenn Mala in ein Gespräch hineinspricht (E-08);
+- die Länge der Notizauswahl im Gespräch (E-11);
+- die Denktiefe der Peilung (E-06);
+- die langen Szenen ohne Eingabe (E-05);
+- die kleineren Punkte E-12 bis E-24;
+- der Rhythmus des ganzen Schlusses (Punkt 7 der vorgeschlagenen Reihenfolge): Er lässt sich nur mit Menschen prüfen. Die Durchläufe zeigen nur, dass Finale und Epilog in allen Zwischenständen ohne Fehler und Sackgasse bis zum Abspann laufen.

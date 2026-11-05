@@ -29,7 +29,7 @@ async function report(A){ var K=A.npc('kolar'), N=A.npc('nada'); if (A.flag('k3.
 // ---------------------------------------------------------------- Das Formular: Feld „Beziehung zur vermissten Person“
 async function form(A){ var K=A.npc('kolar'), N=A.npc('nada'), G=A.G; if (A.flag('k3.e.form')) return;
   await K.say('Sie haben sie gefunden. Dann füllen Sie das aus. Was Sie wissen.'); A.give('formular'); A.sfx('paper');
-  await A.doc({style:'register',title:'PRIJAVA NESTALE OSOBE',lines:['(Meldung einer vermissten Person)','','Ime i prezime: Lana Delić','Datum rođenja: 3. 3. 1976., Sarajevo','Posljednji put viđena: 15. 1. 1994., Skela (Z. Brkić)','','Odnos prema nestaloj osobi:','  [ ] srodnik   [ ] susjed/a   [ ] prijatelj/ica   [ ] ostalo','','(Beziehung zur vermissten Person: Verwandt · Nachbar/in · Freund/in · Sonstiges)']});
+  await A.doc({style:'register',title:'PRIJAVA NESTALE OSOBE',lines:['(Meldung einer vermissten Person)','','Ime i prezime: Lana Delić','Datum rođenja: 3. 3. 1976., Sarajevo','Posljednji put viđena: 15. 1. 1994., Skela (Z. Brkić)','','Odnos prema nestaloj osobi:','  [ ] srodnik        [ ] susjed/a','  [ ] prijatelj/ica   [ ] ostalo','','(Beziehung zur vermissten Person: Verwandt · Nachbar/in · Freund/in · Sonstiges)']});
   await A.m('Name, Geburtsdatum, zuletzt gesehen. Das kann ich. Dann das Feld „Beziehung“. Vier Kästchen.');
   var done=false;
   await A.menuLoop(function(){ return [ askM(A,'form'),

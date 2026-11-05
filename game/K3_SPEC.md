@@ -62,7 +62,7 @@ Das Gerüst wechselt die Phasen. Skripte rufen nie `A.phase(...)` selbst. Sie se
 | `k3_d1_n` → `k3_d2` | `k3.d1.father` | Bett |
 | `k3_d2` → `k3_d2_n` | (`k3.z.mala` oder `k3.z.lost`) und `k3.v.part1` und `k3.b.arrived`; hat Marko Davor „Ich komme mit.“ zugesagt (`k3.b.helper`), auch `k3.b.jela` | das Telefon: `M.k3NadaCall2(A)` (S1), Karte „Die Glocke · Samstag · Nacht“, Herberge |
 | `k3_d2_n` → `k3_d3` | `k3.bato.found` und `k3.z.tomorrow`, Marko wieder bei Mala in `skela_d` | Taxi zurück, Karte „Dritter Tag – Zwei Ufer“, `zimmer` |
-| `k3_d3` → `k3_fin_n` | Notizen `l3_survived`, `a3_awake`, `a3_girl`, Schalter `k3.v.free` und `k3.b.done` | Marko: „Es ist bald elf.“ Karte „Finale – Die letzte Fähre“, `vhof` bei Nacht, `await M.k3FinDeparture(A)` (S2). Danach Fahrt und `skela_d`, `await M.k3FinArrive(A)` (S3) |
+| `k3_d3` → `k3_fin_n` | Notizen `l3_survived`, `a3_awake`, `a3_girl`, Schalter `k3.bato.uneasy` (Bato hat beide Belege gehört), `k3.v.free` und `k3.b.done` | Marko: „Es ist bald elf.“ Karte „Finale – Die letzte Fähre“, `vhof` bei Nacht, `await M.k3FinDeparture(A)` (S2). Danach Fahrt und `skela_d`, `await M.k3FinArrive(A)` (S3) |
 | `k3_fin_n` → `k3_epi` | `k3.a.limbo` (Bato ist hinübergegangen) | Karte „Epilog – Hin und zurück“, Herberge im Morgengrauen, `await M.k3NadaCallEpi(A)` (S1) |
 | `k3_epi` → `k3_epi_d` | `k3.e.bridge` | Abblende „Gegen Mittag“, `ostbus`, `await M.k3NadaArrives(A)` (S1) |
 | Ende | `k3.e.mother` und Abfahrt (`M.k3BusHome(A)`, S1) | `M.endChapter3(A)`, Abspann |
@@ -162,6 +162,12 @@ Entscheidungspunkte (key, Agent, Malas Antwort laut Konzept):
 
 Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 
+**Gerüst, kapitelweit**
+
+| Schalter | Wer setzt | Bedeutung |
+|---|---|---|
+| `k3.q` | Gerüst | die Warteschlange der automatischen Reaktionen (Liste). Sie steht im Spielstand, damit eine Reaktion beim Laden nicht verloren geht; eine Reaktion verlässt sie erst, wenn sie fertig ist. Beim Laden, bei „Neues Spiel“ und beim Titelbild wird der Läufer zurückgesetzt (`M.RESET_HOOKS`). |
+
 **Prolog**
 
 | Schalter | Wer setzt | Bedeutung |
@@ -198,6 +204,7 @@ Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 | `k3.v.mail` | S2 | Katas E-Mail übersetzt |
 | `k3.v.which` | S2 | Kata hat „Welche?“ gefragt |
 | `k3.v.drawer` | S2 | die unterste Schublade ist offen, Vlado hat „Morgen“ gesagt |
+| `k3.v.cabHeard` | S2 | Marko hat Vlado die Führerhaus-Sätze vor der Zeit gesagt (Freitag oder Samstag). Vlado will es nicht hören; beim zweiten Mal: „Das haben Sie schon einmal gesagt.“ Am Sonntag erinnert er sich: „Das haben Sie schon am Freitag gesagt.“ |
 | `k3.d1.father` | S1 | das Vatergespräch in der Nacht |
 
 **Tag 2**
@@ -215,6 +222,7 @@ Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 | `k3.b.jelaSun` | S2 | Sonntag ohne den Samstag (Davor abgesagt, nie bei Jela gewesen): Jela hat Marko selbst vom Tor, vom Schlüssel und von den Feigen erzählt (`b3_gate`, `b3_figs`, `b3_sell`) |
 | `k3.d2.nada` | S1 | `'truth'` / `'evade'`: Nadas Anruf am Samstag |
 | `k3.dino.ride` | S1 | Dino bietet den Roller an |
+| `k3.dino.owed` | S1 | Marko hat Dino von einer Fähre erzählt, die nachts nicht fuhr, bevor er die Nacht kennt; Dino: „Dann schuldest du sie mir.“ |
 
 **Samstagnacht**
 
@@ -223,6 +231,7 @@ Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 | `k3.bato.found` | S3 | Mala hat Bato gesehen; seine Leine geht zur Glocke |
 | `k3.n2.hut`, `k3.n2.bell`, `k3.n2.anchor` | S3 | der Nachhall an der Hütte, an der Glocke, am Seilanker |
 | `k3.n2.rung` | S3 | Marko hat bei Nacht geläutet |
+| `k3.n2.rings` | S3 | wie oft er bei Nacht geläutet hat; ist es gesetzt, sagt Zlata im Finale „Čula sam zvono. Tri puta. Kao tada.“ statt „Noću. Prvi put od tada.“ |
 | `k3.n2.neighbor` | S3 | der Nachbar mit dem Hund |
 | `k3.n2.batoTalk` | S3 | mit Bato geredet („Soldat“) |
 | `k3.z.tomorrow` | S3 | Zlata: „Sutra. Danju.“ |
@@ -240,7 +249,8 @@ Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 | `k3.z.deka` | S3 | Zlata hat die Decke mitgegeben |
 | `k3.mala.deka` | S3 | Mala hat die Decke gelesen |
 | `k3.z.alive` | S3 | Zlata: „Sie hat noch gelebt.“ |
-| `k3.bato.uneasy` | S3 | Bato ist unruhig |
+| `k3.bato.uneasy` | S3 | Bato hat beide Belege gehört, den Bleistift und Zlata, und ist unruhig; Pflicht für das Tagesende |
+| `k3.bato.lantern` | S3 | Bato hat danach am Tag seine Laterne angezündet; die Kunst liest es als `S.lantern` |
 | `k3.v.part2` | S2 | Vlado, Teil 2 |
 | `k3.d3.talk2` | S2 | Gespräch 2 geführt |
 | `k3.d3.talk2v` | S2 | `'a'` / `'b'` / `'c'`, die Antwort in Gespräch 2 |
@@ -292,6 +302,7 @@ Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 | `k3.e.report` | S2 | Anzeige bei Frau Kolar |
 | `k3.e.form` | S2 | das Formular mit Markos eigenem Satz |
 | `k3.e.sample` | S2 | Marko hat eine Probe abgegeben |
+| `k3.e.sampleAna` | S2 | Marko hat die Probe zweimal abgelehnt; Frau Kolar braucht dann die Probe eines anderen Kindes (Ana), die der Mutter hilft nur zusammen damit |
 | `k3.e.mother` | S2 | Anruf bei der Mutter |
 | `k3.e.bus` | S1 | Abfahrt |
 
