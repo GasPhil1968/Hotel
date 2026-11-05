@@ -24,6 +24,12 @@ const srv = http.createServer((q, r) => { let f = decodeURIComponent(q.url.split
   check(r.k1 > 50 && r.k2 > 40 && r.map === 'function', 'Hinweisdaten (' + r.k1 + ' + ' + r.k2 + ' Themen) und Stadtplan offline vorhanden');
   check(r.hints.k2_case && r.hints.k2_case.s === 2 && r.known.terminal, 'Hinweisgeschichte und bekannte Orte nach dem Offline-Laden erhalten');
   await page.evaluate(() => M.openMap()); await page.waitForTimeout(300); check(await page.evaluate(() => M.TA.status().map), 'Stadtplan öffnet offline');
+  // Kapitel 3 (Mostar) offline: Daten da, ein neues Spiel in Mostar startet am Ostbusbahnhof
+  const r3 = await page.evaluate(() => ({ k3: (M.HINTS_K3 || []).length, map3: !!M.MAP3_POS, rooms: ['ostbus', 'skela_l', 'zelenika'].every(id => M.ROOMS[id] && M.ART[id]), song: !!(M.SONGS && M.SONGS.k3_skela) }));
+  check(r3.k3 > 80 && r3.map3 && r3.rooms && r3.song, 'Kapitel 3 offline vorhanden (' + r3.k3 + ' Hinweisthemen, Stadtplan von Mostar, Räume, Musik)');
+  await page.evaluate(() => { if (M.closeMap) M.closeMap(); M.TURBO = 25; M.E.newGame(3); });
+  let s3 = null; for (let i = 0; i < 150; i++) { s3 = await page.evaluate(() => { const ov = M.E.overlay; if (ov && ov.kind === 'memory') M.TA.closeOverlay(); return { phase: M.GS.phase, room: M.TA.status().room }; }); if (s3.phase === 'k3_pro' && s3.room === 'ostbus') break; await page.waitForTimeout(200); }
+  check(s3 && s3.phase === 'k3_pro' && s3.room === 'ostbus', 'neues Spiel in Mostar startet offline am Ostbusbahnhof (' + (s3 && s3.phase) + ', ' + (s3 && s3.room) + ')');
   check(!errs.length, 'keine JS-Fehler' + (errs.length ? ': ' + errs[0] : ''));
   await browser.close(); srv.close(); console.log(ok ? 'OFFLINETEST OK' : 'OFFLINETEST FEHLER'); process.exit(ok ? 0 : 1);
 })();

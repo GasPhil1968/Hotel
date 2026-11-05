@@ -339,7 +339,7 @@ function tinyDino(b,x,by){ b.px(x,by-1,P.p3); b.px(x+1,by-1,P.p3); b.vl(x,by-6,b
 // ---------------------------------------------------------------- Bild
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
-  DEP.fill(0); PAVE.fill(0); WATER.fill(0); WINS=[]; CHIM=[]; waterPrep(w);
+  DEP.fill(0); PAVE.fill(0); WATER.fill(0); WINS=[]; CHIM=[]; PUDM=null; waterPrep(w);
   stage(b,1,function(){ paintVelez(b,w); hillsSouth(b,w); hum(b); });
   stage(b,2,function(){ farTown(b); farRiver(b); });
   stage(b,3,function(){ oldTown(b); westBank(b); });
@@ -399,6 +399,10 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), x, y, tin
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod;
   if (w==='rain') M.rain(fb,v.t,{n:90,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,slant:0.25});
   if (w==='bura') M.scn.buraDebris(fb,v.t,108,140,v.cam); }
+// Geistersicht: Maske der kalten Pfützen. Sie hängt nur vom Pflaster ab, nicht von der Zeit, und wird nach jedem Neuzeichnen des Hintergrunds einmal berechnet
+// (vorher lief das Rauschen mit vier Oktaven in jedem Bild für jedes Pflasterpixel).
+var PUDM=null;
+function pudMask(){ if (PUDM) return PUDM; PUDM=new Uint8Array(W*H); for (var y=110;y<H;y++) for (var x=0;x<330;x++){ var k=y*W+x; if (PAVE[k] && fbm(x*0.05,y*0.25,4)>0.62) PUDM[k]=1; } return PUDM; }
 // Geistersicht: die Behelfs-Seilbrücke von 1994 als zarter Lichtstrich unter dem Bogen
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, ax=SPR[0]+3, bx=SPR[1]-3, ay=AR.sp-4, n=bx-ax;
   for (var i=0;i<=n;i++){ var u=i/n, x=ax+i-cam, y=rd(ay+Math.sin(u*Math.PI)*9); if (x<0||x>=320) continue;
@@ -406,7 +410,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, ax=SPR[0]+3, bx=SPR[1]-3, ay=AR
     if (i%14===7){ for (var yy=y-7;yy<y;yy++) if (bayer(x,yy)<0.5) fb.d[yy*320+x]=P.x2; }
     if (bayer(x,y-3)<0.3) fb.d[(y-3)*320+x]=P.x2; }
   // kalte Pfützen
-  for (var y2=110;y2<H;y2++) for (var x2=Math.max(0,cam);x2<Math.min(330,cam+320);x2++){ if (!PAVE[y2*W+x2]) continue; if (fbm(x2*0.05,y2*0.25,4)>0.62 && bayer(x2,y2+Math.floor(t))<0.2) fb.d[y2*320+(x2-cam)]=P.x3; } }
+  var PM=pudMask(); for (var y2=110;y2<H;y2++) for (var x2=Math.max(0,cam);x2<Math.min(330,cam+320);x2++){ if (PM[y2*W+x2] && bayer(x2,y2+Math.floor(t))<0.2) fb.d[y2*320+(x2-cam)]=P.x3; } }
 
 // ---------------------------------------------------------------- Lauffläche
 function onBridge(x,y){ if (x>=RAMP.x0-6 && x<DK.x0){ var ry=rampY(Math.max(RAMP.x0,x)); return y>=ry-2 && y<=ry+3; } if (x>=DK.x0 && x<=AR.cx+4){ var dy=deckY(x); return y>=dy-2 && y<=dy+2; } return false; }

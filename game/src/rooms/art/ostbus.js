@@ -33,6 +33,9 @@ function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function dk(b,x,y,n){ var c=b.get(x,y); if (c!==T) b.px(x,y,M.step(c,-(n||1))); }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='rain'||w==='bura'||w==='grey'||w==='frost')?w:'calm'; }
 function inPud(x,y){ for (var i=0;i<PUD.length;i++){ var p=PUD[i], dx=(x-p[0])/p[2], dy=(y-p[1])/p[3]; if (dx*dx+dy*dy<1+Math.sin(x*0.7+i)*0.08) return i+1; } return 0; }
+// Pfützenkarte für die Geistersicht, einmal vorberechnet (inPud hängt nur von der Lage ab)
+var PUDI=null;
+function pudIdx(){ if (PUDI) return PUDI; PUDI=new Uint8Array(W*H); for (var y=GY+2;y<H;y++) for (var x=0;x<W;x++) PUDI[y*W+x]=inPud(x,y); return PUDI; }
 
 // ---------------------------------------------------------------- Licht
 function lum(r,g,b){ return r*0.3+g*0.59+b*0.11; }
@@ -306,7 +309,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), k=todKey(
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod;
   if (w==='rain') M.rain(fb,v.t,{n:90,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return !(x+v.cam<CAN.x1 && y>CAN.y1 && y<BUS.base); }}); }
 // Geistersicht: die Pfützen spiegeln kalt
-function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var y=GY+2;y<H;y++) for (var x=0;x<320;x++){ var X=x+cam, p=inPud(X,y); if (!p) continue; var q=PUD[p-1], e=Math.abs((X-q[0])/q[2]);
+function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, PI_=pudIdx(); for (var y=GY+2;y<H;y++) for (var x=0;x<320;x++){ var X=x+cam, p=(X>=0&&X<W)?PI_[y*W+X]:inPud(X,y); if (!p) continue; var q=PUD[p-1], e=Math.abs((X-q[0])/q[2]);
     if (bayer(x,y+Math.floor(t*3))<0.32+0.2*Math.sin(t*0.8+X*0.1)) fb.d[y*320+x]=(e>0.7)?P.x2:(hash(X,y)<0.2?P.x5:P.x3); } }
 
 // ---------------------------------------------------------------- Lauffläche

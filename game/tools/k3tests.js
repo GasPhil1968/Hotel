@@ -380,7 +380,7 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
     await load('die Botschaft: „Dann fahr still.“', (g) => { ['k3.b.jela', 'k3.b.helper', 'k3.b.jelaTr', 'k3.b.tree97', 'met.jela'].forEach(k => { delete g.flags[k]; });
       g.notes = g.notes.filter(n => ['b3_gate', 'b3_lenakey', 'b3_figs', 'b3_sell'].indexOf(n) < 0); });
     ok((await st()).phase === 'k3_d3' && !(await F('k3.b.jela')) && !(await N('b3_gate')), 'Ausgangslage: Sonntag, kein Samstag bei Jela, keine Notiz b3_gate');
-    await clearLog(); await go('zelenika');
+    await exit('door'); await at('bulevar'); await clearLog(); await go('zelenika');
     ok(await F('k3.b.jelaSun') && await N('b3_gate') && await N('b3_figs') && await said('Ti si taj prevodilac') && await said('Ključ je uvik dobijo najmlađi'), 'Jela spricht Marko an: „Den Schlüssel bekam der Kleinste.“ (b3_gate, b3_figs)');
     await clearLog(); await exit('house_door'); await at('zelenika_in'); ok(await said('Sie sind doch gekommen.'), 'Davor: „Sie sind doch gekommen.“');
     await talk('davor', 'Darf ich die Briefe lesen'); await bye('(Gehen.)'); await act('use', 'stairs'); await act('open', 'drawer');
