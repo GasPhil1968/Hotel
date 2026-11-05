@@ -95,17 +95,35 @@ function ceilTex(xb,d,x,y){ var p=((xb+900)%7), c=p<3?P.m1:(p<5?P.m2:P.m0); if (
 function yardAt(x,y,tod,weather,tarpOff,base){ var c, gy=base;
   var SK=weather==='rain'?R('m2 m3 s3'):(weather==='grey'?R('m3 m4 s4'):(tod==='night'?R('k0 k1 n0'):R('b2 b3 b4 b5')));
   c=ra(SK,(y-10)/(gy-10),x,y);
-  // Wohnblock und Hügel hinter dem Zaun
+  // Wohnblock hinter dem Zaun
   if (y>gy-34 && x%90<52){ c=((y%4===1)&&(x%5===2))?P.m2:P.s4; if (x%90<1) c=P.s5; }
-  // Bretterzaun
-  if (y>gy-22){ var bi=Math.floor(x/5); c=(x%5===0)?P.w0:((hash(bi,3)<0.5)?P.w2:P.w3); if (y===gy-22+((bi*3)%2)) c=P.w1; if (y===gy-12) c=P.w1; }
-  // der TAM: unter der Plane ein olivgrüner Buckel mit Seilen, sonst Pritsche und blaue Kabine
-  var tx=(x-120), top=gy-34+Math.round(Math.abs(Math.sin(tx*0.03))*3);
-  if (x>110 && x<300 && y>top && y<gy-4){ if (!tarpOff){ var fold=Math.sin(tx*0.4+Math.sin(y*0.3)*2); c=fold>0.5?P.g3:(fold>-0.4?P.g2:P.g1); if (((tx+3)%26)<1) c=P.e1; if (y>gy-9) c=P.g1; }
-    else { c=(y<gy-24)?P.e2:((((tx)%12)<1)?P.w1:P.w3); if (y>gy-10) c=P.m1; } }
-  if (x>110 && x<300 && y>=gy-6 && y<gy){ var wx=(x-120)%54; if (wx>8&&wx<22) c=(Math.hypot(wx-15,y-gy+3)<2)?P.m2:P.k1; }
+  // grauer Bretterzaun wie im Hof
+  if (y>gy-24){ var bi=Math.floor(x/6), fx=((x%6)+6)%6; c=fx===0?P.w0:(fx===5?P.s1:((hash(bi,2)<0.5)?P.s2:P.e2)); if (y===gy-24+((bi*7)%3)) c=P.s3; if (y===gy-16) c=P.w1; }
+  // der TAM von der Seite: unter der Plane ein olivgrüner, durchhängender Buckel mit Seilen, sonst Holzbordwände
+  var tx=x-120, top=gy-38+Math.round(Math.sin(tx*0.045)*2);
+  if (x>110 && x<300 && y>top && y<gy-6){ var u=(y-top)/Math.max(1,gy-6-top);
+    if (!tarpOff){ var d=Math.abs(((tx%30)+30)%30-15)/15, fold=Math.sin(tx*0.33+Math.sin(tx*0.07)*3+u)*(0.25+u*0.75), v=0.8-u*0.5+fold*0.2-(d>0.9?0.15:0);
+      c=ra(R('g0 g1 g2 e2 g3 e3'),v,x,y); if (y===top+1) c=P.e3; if (((tx%30)+30)%30===0 && hash(x,y)<0.8) c=P.e3; }
+    else { c=(((y-top)%8)===0)?P.w1:((hash(Math.floor(tx/36),Math.floor((y-top)/8))<0.5)?P.w3:P.w2); if (((tx%25)+25)%25<2) c=P.m2; } }
+  if (x>110 && x<300 && y>=gy-6 && y<gy){ var wx=((x-120)%54+54)%54; c=(wx>8&&wx<24)?((Math.hypot(wx-16,y-gy+2)<2.5)?P.g2:P.k1):P.k2; }
   // Schotter
   if (y>=gy){ c=(hash(x,y)<0.3)?P.s2:((hash(x+1,y*2)<0.3)?P.s4:P.s3); if (weather==='rain' && hash(x*3,y)<0.1) c=P.m4; }
+  return c; }
+// Blick durch das offene Rolltor: der TAM von vorn (er steht mit der Front zur Werkstatt), die Plane auf dem Dach
+function yardFront(x,y,tod,weather,tarpOff,x0,x1,y0,gy){ var c=yardAt(x+400,y,tod,weather,true,gy), cx=(x0+x1)/2, hw=19, u=x-cx;
+  if (y>=gy) return c;
+  // Pritsche hinter der Kabine (breiter als die Kabine), darüber die Plane
+  if (Math.abs(u)<=hw+3 && y>=gy-46 && y<gy-26){ c=tarpOff?((((y-gy)%6)===0)?P.w1:P.w3):ra(R('g0 g1 g2 e2 g3'),0.75-(y-gy+46)/24*0.5+Math.sin(u*0.6)*0.1,x,y); }
+  if (!tarpOff && Math.abs(u)<=hw+4 && y>=gy-54 && y<gy-46+Math.round(Math.abs(u)*0.06)){ c=ra(R('g1 g2 e2 g3 e3'),0.8-(y-gy+54)/10*0.4+Math.sin(u*0.5)*0.12,x,y); if (y===gy-54) c=P.e3; }
+  // Kabine: Dach, zwei Scheiben, blaues Blech
+  if (Math.abs(u)<=hw-3 && y>=gy-44 && y<gy-26){ var BL=R('c1 c2 c3 c4'); c=ra(BL,0.8-(y-gy+44)/18*0.4,x,y); if (y===gy-44) c=P.c4;
+    if (y>=gy-42 && y<gy-33 && Math.abs(u)>1 && Math.abs(u)<hw-5) c=((u+y)%7===0)?P.n4:((y<gy-39)?P.n2:P.n1); }
+  // Haube und Grill, Kotflügel mit den Rundscheinwerfern, Stoßstange, Räder
+  if (Math.abs(u)<=9 && y>=gy-26 && y<gy-12){ c=(y===gy-26)?P.c4:(((x-cx+20)%2===0 && y>gy-24 && y<gy-14)?P.k1:P.m2); }
+  if (Math.abs(u)>9 && Math.abs(u)<=hw && y>=gy-22 && y<gy-12){ c=(y===gy-22)?P.c4:P.c2; var hx=cx+(u<0?-14:14), hy=gy-18; var d2=Math.hypot(x+0.5-hx,y+0.5-hy); if (d2<3.4) c=(d2<2.4)?(d2<1.2?P.s6:P.m4):P.k1; }
+  if (Math.abs(u)<=hw+1 && y>=gy-12 && y<gy-9) c=(y===gy-12)?P.m2:P.k1;
+  if (Math.abs(u)>=hw-6 && Math.abs(u)<=hw && y>=gy-9) c=(y===gy-9)?P.k2:P.k1;
+  if (Math.abs(u)<hw-6 && y>=gy-9 && y<gy-6) c=P.k2;
   return c; }
 
 // ---------------------------------------------------------------- Requisiten
@@ -164,7 +182,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   var yd=YD, ty0=rnd(R3.p(0,yd.Y0,0)[1]);
   b.rect(yd.X0-3,ty0-6,yd.X1-yd.X0+6,6,P.m1); b.hl(yd.X0-3,yd.X1+2,ty0-6,P.m3); b.hl(yd.X0-3,yd.X1+2,ty0-1,P.k2);            // Wickelkasten
   b.vl(yd.X0-2,ty0,95,P.m1); b.vl(yd.X0-1,ty0,95,P.m3); b.vl(yd.X1,ty0,95,P.m3); b.vl(yd.X1+1,ty0,95,P.m1);                     // Führungsschienen
-  if (yard){ for (y=ty0;y<96;y++) for (x=yd.X0;x<yd.X1;x++){ b.px(x,y,yardAt(x,y,tod,weather,tOff,88)); REG[y*W+x]=1; }
+  if (yard){ for (y=ty0;y<96;y++) for (x=yd.X0;x<yd.X1;x++){ b.px(x,y,yardFront(x,y,tod,weather,tOff,yd.X0,yd.X1,ty0,92)); REG[y*W+x]=1; }
     for (x=yd.X0;x<yd.X1;x++){ b.px(x,ty0,P.m2); b.px(x,ty0+1,P.m1); } }
   else { for (y=ty0;y<96;y++) for (x=yd.X0;x<yd.X1;x++){ var sl=(y-ty0)%4, c2=sl===0?P.m1:(sl===1?P.m4:(sl===2?P.m3:P.m2)); var rs=fbm(x*0.07,y*0.05)+(y-60)*0.006; if (rs>0.72 && bayer(x,y)<(rs-0.72)*2) c2=(sl<2)?P.e2:P.e1; if (y>92) c2=P.m1; b.px(x,y,c2); }
     b.rect(rnd((yd.X0+yd.X1)/2)-4,90,8,2,P.k2); }
@@ -244,9 +262,12 @@ function layers(S,GS,tod){ var L=[], open=!!(S&&S.drawerOpen); ST.closed=closedO
   // drei Schubladen untereinander, jede mit Griffleiste und Schloss
   var dh=(yb-yt-4)/3;
   for (var i=0;i<3;i++){ var ya=rnd(yt+3+i*dh), yb2=rnd(yt+3+(i+1)*dh)-1, xa=x0+1, xb=xp-1;
-    if (i===2 && open){ // unterste Schublade herausgezogen: Kasten nach vorn, oben offen
-      var ox=-2, oy=3; w.rect(xa+ox,ya+oy,xb-xa+1,yb2-ya+1,P.w3); w.hl(xa+ox,xb+ox,ya+oy,P.w4); w.rect(xa+ox+1,ya+oy-3,xb-xa-1,3,P.k2); w.hl(xa+ox+1,xb+ox-1,ya+oy-3,P.w1); w.rect(xa,ya,xb-xa+1,2,P.k1);
-      w.hl(xa+ox+4,xb+ox-4,ya+oy+3,P.m4); w.px(rnd((xa+xb)/2)+ox,ya+oy+5,P.y3); DR[i]=[xa-3,ya-3,xb-xa+6,yb2-ya+8]; continue; }
+    if (i===2 && open){ // unterste Schublade herausgezogen: die Front kommt nach vorn (tiefer und breiter), darüber der offene Kasten mit Papieren
+      var ox=-2, oy=4, fw2=xb-xa+3; w.rect(xa,ya,xb-xa+1,yb2-ya+1,P.k1);
+      w.poly([[xa+1,ya+1],[xb-1,ya+1],[xb+1,ya+oy],[xa+ox,ya+oy]],P.w1); w.rect(xa+ox+1,ya+oy-2,fw2-3,2,P.k2); w.hl(xa+ox+2,xa+ox+fw2-5,ya+oy-2,P.s5); w.px(xa+ox+4,ya+oy-3,P.s6); w.px(xa+ox+7,ya+oy-3,P.s4);
+      w.rect(xa+ox,ya+oy,fw2,yb2-ya+1,P.w3); w.hl(xa+ox,xa+ox+fw2-1,ya+oy,P.w4); w.hl(xa+ox,xa+ox+fw2-1,ya+oy+yb2-ya,P.w1); w.vl(xa+ox+fw2-1,ya+oy,ya+oy+yb2-ya,P.w2);
+      w.hl(xa+ox+4,xa+ox+fw2-5,ya+oy+3,P.m3); w.hl(xa+ox+4,xa+ox+fw2-5,ya+oy+4,P.m1); var kx2=rnd(xa+ox+fw2/2); w.rect(kx2-1,ya+oy+6,3,2,P.y2); w.px(kx2,ya+oy+7,P.k1);
+      DR[i]=[xa-3,ya-3,xb-xa+6,yb2-ya+10]; continue; }
     w.rect(xa,ya,xb-xa+1,yb2-ya+1,P.w3); w.hl(xa,xb,ya,P.w4); w.hl(xa,xb,yb2,P.w1); w.vl(xb,ya,yb2,P.w2);
     w.hl(xa+4,xb-4,ya+3,P.m3); w.hl(xa+4,xb-4,ya+4,P.m1);                                                     // Griffleiste
     var kx=rnd((xa+xb)/2), ky=ya+Math.max(6,rnd(dh*0.6)); w.rect(kx-1,ky-1,3,3,P.y2); w.px(kx,ky,P.k1); w.px(kx,ky+1,P.k1);   // Schloss
@@ -261,9 +282,10 @@ function layers(S,GS,tod){ var L=[], open=!!(S&&S.drawerOpen); ST.closed=closedO
   w.rect(x0+3,my-5,6,5,P.b1); w.vl(x0+3,my-5,my-1,P.b2); w.rect(x0+4,my-3,4,1,P.s6);                         // stehender Ordner
   var lx=x0+20; w.rect(lx-2,my-1,5,1,P.m1); w.line(lx,my-1,lx+2,my-9,P.m2); w.poly([[lx-1,my-11],[lx+6,my-12],[lx+5,my-8],[lx,my-8]],P.g2); w.hl(lx-1,lx+6,my-12,P.g4);
   DLAMP=[lx+3,my-8];
-  if (open){ // Mappe „TAM 4500“ und das gefaltete Blatt auf dem Tisch
-    var fpx=x0+32; w.poly([[fpx,my-1],[fpx+13,my-2],[fpx+14,my],[fpx+1,my+1]],P.e3); w.hl(fpx+1,fpx+12,my-1,P.e4); w.px(fpx+5,my,P.k2); w.px(fpx+7,my,P.k2); w.px(fpx+9,my,P.k2);
-    w.poly([[fpx-9,my],[fpx-2,my-1],[fpx-1,my+1],[fpx-8,my+2]],P.s6); w.line(fpx-6,my,fpx-4,my+1,P.s3); }
+  if (open){ // die Mappe „TAM 4500“, das gefaltete Blatt (die Zeichnung) und der Schlüssel mit dem Holzanhänger auf dem Tisch
+    var fpx=xp+16; w.poly([[fpx,my-1],[fpx+15,my-2],[fpx+16,my+1],[fpx+1,my+2]],P.e3); w.hl(fpx+1,fpx+14,my-1,P.e4); w.rect(fpx+4,my-1,7,2,P.s6); w.px(fpx+5,my,P.k2); w.px(fpx+7,my,P.k2); w.px(fpx+9,my,P.k2); w.hl(fpx+1,fpx+15,my+2,P.e1);
+    w.poly([[fpx-10,my],[fpx-3,my-2],[fpx-1,my+1],[fpx-8,my+2]],P.s6); w.line(fpx-8,my+1,fpx-3,my-1,P.s4); w.px(fpx-6,my,P.m2); w.px(fpx-5,my,P.m2);
+    var kx3=fpx+19; w.px(kx3,my,P.y4); w.px(kx3+1,my,P.y3); w.px(kx3+2,my,P.y3); w.px(kx3+3,my-1,P.y4); w.px(kx3+3,my+1,P.y2); w.px(kx3+4,my,P.y2); w.rect(kx3+5,my-1,4,3,P.w3); w.hl(kx3+5,kx3+8,my-1,P.w4); w.px(kx3+6,my,P.k2); w.px(kx3+7,my,P.k2); }
   DTOP=[x0,yt,x1];
   shade(dl,dl.ox,dl.oy,tod); L.push(dl);
   // Bürostuhl hinter Kata nicht nötig (sie sitzt darauf): Stuhl als Ebene hinter dem Tisch in paint wäre verdeckt, daher hier

@@ -32,8 +32,8 @@ var HEAD=[
 "...............hhhhhhhhhhhh5yxxxxy455444443.............", // 18
 "...............hhhhh454hhh444yyyy4454444443.............", // 19
 "...............hhhh45543hh43zzzzz4564zzzz43.............", // 20
-"...............hhhh54332h443WwLki3563WLk343.............", // 21
-"...............hhhh53142544454iii45645ii443.............", // 22
+"...............hhhh54332h443WwiLi3563wiL343.............", // 21
+"...............hhhh53142544454iki45645ik443.............", // 22
 "...............hhhh5314355545555555665554443............", // 23
 "...............hhhh5323355566665555665555443............", // 24
 "................hhh4432355666655555665555443............", // 25
@@ -42,8 +42,8 @@ var HEAD=[
 ".................hh444433445555444334554433.............", // 28
 "..................h443343445555543432234434.............", // 29
 "...................433344455555553434444433.............", // 30
-"....................33344455555554323333443.............", // 31
-".....................334455555555444222213..............", // 32
+"....................33344455555554323333243.............", // 31
+".....................334455555555444111133..............", // 32
 "......................33445555555544466543..............", // 33
 "......................33344555555544333343..............", // 34
 ".......................333445555555566543...............", // 35
@@ -58,19 +58,19 @@ var HEAD=[
 "........................33444333333223.................."  // 44
 ];
 var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, h:P.h2, x:P.h0, y:P.h1,
-  w:P.s6, W:P.s5, L:P.l1, i:P.w2, k:P.h0, z:P.h0, '7':P.l0 };
+  w:P.s6, W:P.s5, L:P.l1, i:P.w2, k:P.h0, z:P.h0 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
 // Stoppelschnitt: dunkle, feine Körnung über dem Schädel; oben links fällt Licht darauf, an den Rändern scheint Haut durch
 var HAIRMASK=null;
 function hair(b){
   if (!HAIRMASK){ HAIRMASK=[]; for (var y=0;y<HEAD.length;y++) for (var x=0;x<HEAD[y].length;x++) if (HEAD[y][x]==='h') HAIRMASK.push([x,y]); }
-  var TONE=[P.h0,P.h1,P.h2,P.h3,P.w1];
+  var TONE=[P.h0,P.h1,P.h2,P.h3];
   HAIRMASK.forEach(function(q){ var x=q[0], y=q[1];
     var nx=(x+0.5-28)/13, ny=(y+0.5-18)/13, d=1-nx*nx-ny*ny, nz=d>0?Math.sqrt(d):0, l=-0.5*nx-0.66*ny+0.56*nz;
-    var v=0.9+l*1.8+(M.hash(x*1.9+5,y*2.3+7)-0.5)*0.7; var c=TONE[Math.max(0,Math.min(4,Math.round(v)))];
-    // Haaransatz: einzelne Hautpixel scheinen durch
-    var edge=(b.get(x+1,y)!==P.h2&&HEAD[y][x+1]!=='h'&&HEAD[y][x+1]!=='.')||(HEAD[y+1]&&HEAD[y+1][x]!=='h'&&HEAD[y+1][x]!=='.'&&HEAD[y+1][x]!==undefined);
+    var v=0.7+l*1.7+(M.hash(x*1.9+5,y*2.3+7)-0.5)*0.8; var c=TONE[Math.max(0,Math.min(3,Math.round(v)))];
+    // Haaransatz: wo rechts oder darunter Haut anschließt, scheint hier und da die Haut durch
+    var skin=function(ch){ return ch>='1'&&ch<='6'; }, edge=skin(HEAD[y][x+1])||(HEAD[y+1]&&skin(HEAD[y+1][x]));
     if (edge && M.hash(x*3.1,y*1.7)<0.5) c=P.p2;
     b.px(x,y,c); });
 }
@@ -85,7 +85,7 @@ function stubble(b){
   if (!BMASK){ BMASK=new M.Buf(56,64,M.T); BMASK.poly(BEARD,1); }
   var inB=function(x,y){ return BMASK.get(x,y)===1; };
   for (var y=0;y<64;y++) for (var x=0;x<56;x++){ if (!inB(x,y)) continue; var c=b.get(x,y); if (TINT[c]===undefined) continue;
-    if (y>=31&&y<=33&&x>=35&&x<=39) continue;
+    if (y>=31&&y<=34&&x>=35&&x<=40) continue;
     var edge=!inB(x-1,y)||!inB(x+1,y)||!inB(x,y-1)||!inB(x,y+1)||!inB(x-2,y)||!inB(x,y-2);
     if (edge && ((x+y)&1)) continue;
     b.px(x,y,(M.hash(x*1.37+11,y*2.41+5)<0.09)?GRAIN[c]:TINT[c]); }
@@ -109,7 +109,7 @@ function jacket(b){
   // Paspel auf der Schulternaht
   b.line(3,52,8,48,P.s5); b.line(8,48,14,46,P.s5); b.line(44,46,49,48.4,P.s3);
 }
-var MOUTH_O=[[36,32,'1'],[37,32,'1'],[38,32,'W'],[39,32,'1'],[40,32,'2'],[36,33,'2'],[37,33,'1'],[38,33,'1'],[39,33,'2'],[36,34,'4'],[37,34,'6'],[38,34,'6'],[39,34,'5']];
+var MOUTH_O=[[36,32,'1'],[37,32,'W'],[38,32,'1'],[39,32,'1'],[36,33,'2'],[37,33,'1'],[38,33,'1'],[39,33,'2'],[36,34,'4'],[37,34,'6'],[38,34,'6'],[39,34,'5']];
 var EYES_B=[[28,20,'4'],[29,20,'4'],[30,20,'4'],[31,20,'4'],[32,20,'4'],[28,21,'4'],[29,21,'z'],[30,21,'z'],[31,21,'z'],[32,21,'z'],[28,22,'5'],[29,22,'5'],[30,22,'5'],[31,22,'5'],[32,22,'5'],[37,20,'4'],[38,20,'4'],[39,20,'4'],[40,20,'4'],[37,21,'z'],[38,21,'z'],[39,21,'z'],[40,21,'4'],[37,22,'5'],[38,22,'5'],[39,22,'5'],[40,22,'4']];
 function paint(b,v){
   jacket(b);

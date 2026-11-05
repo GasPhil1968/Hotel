@@ -144,7 +144,7 @@ function oldBridge(w){ var cx=141, y0=riverY(cx); for (var x=cx-5;x<=cx+5;x++){ 
   w.rect(cx-8,rd(y0)-6,3,5,P.s4); w.px(cx-8,rd(y0)-7,P.m2); w.rect(cx+6,rd(y0)-6,3,5,P.s5); w.px(cx+7,rd(y0)-7,P.m2); }
 function paintRiver(w,we){ var rain=we==='rain', x, y;
   for (x=0;x<W;x++){ var ry=riverY(x), rh=riverH(x); for (y=Math.floor(ry-rh-2);y<=Math.ceil(ry+rh+2);y++){ var d=Math.abs(y+0.5-ry);
-      if (d<=rh){ w.d=x<200?2:1; w.g=RG.water; var c=rain?ra(R('e1 e2 e3 s2'),0.5+(fbm(x*0.4,y*2,6,3)-0.5)*0.5,x,y):ra(R('a2 a3 a4'),0.6-(d/rh)*0.3+(fbm(x*0.3,y*3,8,3)-0.5)*0.15,x,y); if (Math.sin(x*0.45+y*2.5)>0.96 && d<rh*0.6) c=rain?P.s3:P.a5; w.px(x,y,c); }
+      if (d<=rh){ w.d=x<200?2:1; w.g=RG.water; var c=rain?ra(R('e1 e2 e3 s2'),0.5+(fbm(x*0.4,y*2,6,3)-0.5)*0.5,x,y):ra(R('a2 g3 a3 a4'),0.6-(d/rh)*0.3+(fbm(x*0.3,y*3,8,3)-0.5)*0.15,x,y); if (Math.sin(x*0.45+y*2.5)>0.96 && d<rh*0.6) c=rain?P.s3:P.a5; w.px(x,y,c); }
       else if (d<=rh+1.6){ w.d=2; w.g=RG.land; w.px(x,y,y<ry?P.s3:P.s5); } }
     // Uferstraße mit Bäumen am nahen Ufer
     var qy=rd(ry+rh+2); w.d=2; w.g=RG.land; w.px(x,qy,P.m3); w.px(x,qy+1,P.s2); if (hash(x,7)<0.18){ w.px(x,qy-1,P.g2); w.px(x,qy-2,P.g1); } } }
@@ -241,7 +241,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   paintRiver(w,we); paintCity(w,we);
   paintMemorial(w,we,tod);
   // Dunst über dem Tal
-  var hk=we==='bura'?[0,0.14,0.08,0.04,0.02]:(we==='rain'?[0,0.84,0.62,0.4,0.18]:(we==='grey'?[0,0.62,0.44,0.26,0.1]:[0,0.36,0.24,0.13,0.05]));
+  var hk=we==='bura'?[0,0.14,0.08,0.04,0.02]:(we==='rain'?[0,0.84,0.62,0.4,0.18]:(we==='grey'?[0,0.62,0.44,0.26,0.1]:[0,0.24,0.15,0.08,0.03]));
   var hc=night?P.m0:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
   haze(b,function(xx,yy){ var d=DEP[yy*W+xx], g=REG[yy*W+xx]; if (g===RG.sky||d>=5) return 0; var a=hk[d]||0; if (d===1) a+=Math.max(0,(HZ-yy)/HZ)*0.12; return a; },hc);
   if ((we==='rain'||we==='grey') && !night) for (y=0;y<HZ+6;y++) for (x=0;x<260;x++){ var f=fbm(x*1.2,y*2.6,18,31), lim=we==='rain'?0.42:0.5; if (REG[y*W+x]===RG.mtn && f>lim-(HZ-y)*0.012 && bayer(x,y)<(we==='rain'?0.85:0.55)) b.d[y*W+x]=we==='rain'?(f>0.6?P.s3:P.m3):(f>0.6?P.m4:P.m3); }

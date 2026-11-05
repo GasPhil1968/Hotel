@@ -264,9 +264,9 @@ var dino=M.defineChar('dino',{
   // weiße Streifen an Hose und Ärmeln, das weiße Shirt in der offenen Jacke (seitlich)
   post:function(b,p,X,Y,hx,hy){ var ch=M.CHARS.dino, TR=[P.k2,P.m0,P.k1], SL=[P.r3,P.r4,P.r2,P.r1];
     if (p.v==='S'){ var g=geo(ch,p,hx,hy), lg=legS(ch,p,hx,hy,true); lineOn(b,X+lg.hip[0],Y+hy+1,X+lg.kn[0],Y+lg.kn[1],TR,P.s5); lineOn(b,X+lg.kn[0],Y+lg.kn[1],X+lg.ank[0],Y+lg.ank[1]-1,TR,P.s5);
-      var fx=X+hx+ch.tS.w-ch.tHipS-1+g.shx; for (var y=Y+g.top+1;y<Y+hy-1;y++){ var sx=Math.round(g.shx*(Y+hy-y)/(ch.tLen-1)); onCol(b,X+hx+ch.tS.w-ch.tHipS-1+sx,y,SL,P.s6); }
+      for (var y=Y+g.top+1;y<Y+hy-1;y++){ var sx=Math.round(g.shx*(Y+hy-y)/(ch.tLen-1)); onCol(b,X+hx+ch.tS.w-ch.tHipS-1+sx,y,SL,P.s6); }
       lineOn(b,X+g.shN[0],Y+g.shN[1],X+g.eN[0],Y+g.eN[1],SL,P.s5); lineOn(b,X+g.eN[0],Y+g.eN[1],X+g.nh[0],Y+g.nh[1],SL,P.s5); }
-    else { [-1,1].forEach(function(sd){ var lg=legF(p,hx,hy,sd), o=p.v==='F'?sd:sd; lineOn(b,X+lg.hip[0]+o,Y+hy+1,X+lg.kn[0]+o,Y+lg.kn[1],TR,P.s5); lineOn(b,X+lg.kn[0]+o,Y+lg.kn[1],X+lg.ank[0]+o,Y+lg.ank[1]-1,TR,P.s5); });
+    else { [-1,1].forEach(function(sd){ var lg=legF(p,hx,hy,sd), o=sd; lineOn(b,X+lg.hip[0]+o,Y+hy+1,X+lg.kn[0]+o,Y+lg.kn[1],TR,P.s5); lineOn(b,X+lg.kn[0]+o,Y+lg.kn[1],X+lg.ank[0]+o,Y+lg.ank[1]-1,TR,P.s5); });
       var g2=geo(ch,p,hx,hy); lineOn(b,X+g2.sL[0]-1,Y+g2.sL[1],X+g2.eL[0]-1,Y+g2.eL[1],SL,P.s5); lineOn(b,X+g2.sR[0]+1,Y+g2.sR[1],X+g2.eR[0]+1,Y+g2.eR[1],SL,P.s5); } },
   after:function(b,p,t,ph){ handSmoke(M.CHARS.dino,b,p,ph); },
   afterKey:function(p,t){ return (p.it==='cig'||p.ex)?Math.floor(t/130)%12:0; },
@@ -358,6 +358,8 @@ M.defineChar('taxist',{
   after:function(b,p,t,ph){ handSmoke(M.CHARS.taxist,b,p,ph); },
   afterKey:function(p,t){ return (p.it==='cig'||p.ex)?Math.floor(t/130)%12:0; },
   anims:{
+    // geht, der Arm mit der Zeitung schwingt nicht mit
+    walkS:A.walkS.map(function(p){ return Object.assign({},p,{nh:[1,-22]}); }),
     // raucht am Taxi: die Zigarette unten in der Hand, ab und zu ein langer Zug, Asche abklopfen
     smoke:seq([txP({nh:[4,-24],fh:[-2,-21],it:'cig'}),1500],[txP({nh:[4,-31],fh:[-2,-21],it:'cig'}),140],[txP({nh:[3,-37],fh:[-2,-21],it:'cig',hd:'b'}),800],
       [txP({nh:[4,-31],fh:[-2,-21],it:'cig',ex:1,ho:[0,-1]}),160],[txP({nh:[4,-30],fh:[-2,-21],it:'cig',ex:2,hd:'o',ho:[0,-1]}),320],[txP({nh:[4,-27],fh:[-2,-21],it:'cig',ex:3}),320],
@@ -419,7 +421,8 @@ var vlB=[
 function noCig(rows){ return rows.map(function(r){ return r.replace('Z','k').replace('z','.').replace('r','.'); }); }
 function noCigF(rows){ return rows.map(function(r){ return r.replace('Z','S').replace('r','S'); }); }
 var vlHS=HS(vlS), vlHF=HS(vlF), vlXS=HS(noCig(vlS)), vlXF=HS(noCigF(vlF));
-vlHS.x=vlXS.n; vlHS.xo=vlXS.o; vlHS.xb=vlXS.b; vlHS.k=vlHS.b; vlHS.ko=rep(vlXS.o,'e','t');
+// x/xo/xb: ohne Zigarette (normal, Mund offen, Lidschlag); k: Husten (Augen zugekniffen, die Zigarette bleibt drin)
+vlHS.x=vlXS.n; vlHS.xo=vlXS.o; vlHS.xb=vlXS.b; vlHS.k=vlHS.b;
 vlHF.x=vlXF.n; vlHF.xo=vlXF.o; vlHF.xb=vlXF.b; vlHF.k=vlHF.b;
 var vlP=pose({},'S');
 // Arbeitshaltung an der Montiermaschine (das Rad liegt vor ihm, etwa 20 px hoch): tief gebeugt, die Knie leicht gebeugt
@@ -441,7 +444,7 @@ M.defineChar('vlado',{
     else if (p.v==='S'){ onCol(b,X+hx+2+g.shx,t+4,O,P.n0); onCol(b,X+hx+3+g.shx,t+4,O,P.n0); onCol(b,X+hx+g.shx,t+8,O,P.k2); onCol(b,X+hx+1,Y+hy+6,O,P.k2);
       fore(g.eN,g.nh); }
     else { fore(g.eL,g.lh); fore(g.eR,g.rh); } },
-  // Rauch aus der Zigarette im Mundwinkel (immer, wenn sie drin ist), aus der Hand, beim Ausatmen; von hinten steigt er über den Kopf
+  // Rauch aus der Zigarette im Mundwinkel (immer, wenn sie drin ist), aus der Hand, beim Ausatmen; von hinten steigt er über den Kopf (nc: ohne Zigarette)
   after:function(b,p,t,ph){ var ch=M.CHARS.vlado, r=inHead(ch,p,'r');
     if (r){ ember(b,r[0],r[1],ph); smoke(b,r[0]+(p.v==='S'?1:0),r[1]-1,ph); }
     else if (p.v==='B' && !p.nc){ var o=headAt(ch,p); smoke(b,o[0]+5,o[1]-1,ph); }
@@ -464,7 +467,9 @@ M.defineChar('vlado',{
     // hustet in die Faust, der Körper ruckt
     cough:seq([vlP({ln:1}),80],[vlP({ln:1,nh:[6,-38]}),140],[vlP({ln:3,h:[0,-24],nh:[7,-36],ho:[1,2],hd:'k'}),130],[vlP({ln:1,nh:[6,-38],ho:[0,1],hd:'k'}),120],
       [vlP({ln:3,h:[0,-24],nh:[7,-36],ho:[1,2],hd:'k'}),130],[vlP({ln:1,nh:[6,-38],ho:[0,1],hd:'k'}),140],[vlP({ln:4,h:[0,-24],nh:[8,-35],ho:[2,2],hd:'k'}),180],
-      [vlP({ln:2,nh:[6,-37],ho:[1,1],hd:'b'}),400],[vlP({ln:2,nh:[6,-37],ho:[1,1]}),300],[vlP({ln:1,nh:[4,-30]}),160],[vlP({ln:1}),300]) }
+      [vlP({ln:2,nh:[6,-37],ho:[1,1],hd:'b'}),400],[vlP({ln:2,nh:[6,-37],ho:[1,1]}),300],[vlP({ln:1,nh:[4,-30]}),160],[vlP({ln:1}),300]),
+    // zusätzlich: steht still ohne Zigarette, die Hände vor dem Bauch gefaltet, den Kopf gesenkt (für ernste Augenblicke, etwa am Grab)
+    quiet:seq([vlP({ln:1,hd:'x',nc:1,nh:[3,-22],fh:[2,-22],ho:[1,1]}),2200],[vlP({ln:1,hd:'xb',nc:1,nh:[3,-22],fh:[2,-22],ho:[1,1]}),130],[vlP({ln:1,hd:'x',nc:1,nh:[3,-22],fh:[2,-22],ho:[1,2]}),1800]) }
 });
 
 // ================================================================ KATA RAJIĆ (29), seine Tochter: schlank, kurzes dunkelblondes Haar (Undercut, seitlich länger), Ohrstecker,
@@ -985,7 +990,7 @@ function dogF(b,x,y,st,back){ var Y0=P.y3, Yl=P.y4, Yd=P.y2, ph=typeof st==='num
   b.rect(x,y-8,5,3,Y0); b.px(x,y-9,Yd); b.px(x+4,y-9,Yd); b.hl(x+1,x+3,y-8,Yl); b.px(x+1,y-7,P.k0); b.px(x+3,y-7,P.k0); b.px(x+2,y-6,P.k2); b.px(x+2,y-5,Yd); }
 // Brusttaschen der Arbeitsjacke
 var komsija=M.defineChar('komsija',{
-  legend:L({H:P.h2,h:P.m2,l:P.k2,g:P.m2,L:P.y5,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m2}),
+  legend:L({H:P.h3,h:P.m2,l:P.k1,g:P.m2,L:P.y5,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m2}),
   heads:{S:HS(kjS),F:HS(kjF),B:{n:kjB}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
   torso:{w:13,len:13,col:[P.e2,P.e3,P.e1],buttons:P.e1,collar:[P.e1,P.e1],side:9},
   coat:{c:[P.e2,P.e3,P.e1],hem:4,w:6},

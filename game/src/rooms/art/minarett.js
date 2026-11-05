@@ -240,7 +240,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   paintRiver(w,we); paintTown(w,we);
   paintShaft(w,we); paintFloor(w,we);
   // Dunst: die Ferne verblasst, je nach Wetter
-  var hk=we==='bura'?[0,0.12,0.06,0.03,0.01,0]:(we==='rain'?[0,0.82,0.58,0.34,0.16,0.08]:(we==='grey'?[0,0.62,0.42,0.24,0.1,0.04]:[0,0.34,0.22,0.12,0.04,0.02]));
+  var hk=we==='bura'?[0,0.12,0.06,0.03,0.01,0]:(we==='rain'?[0,0.82,0.58,0.34,0.16,0.08]:(we==='grey'?[0,0.62,0.42,0.24,0.1,0.04]:[0,0.22,0.14,0.07,0.03,0.01]));
   var hc=night?P.m0:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
   haze(b,function(xx,yy){ var d=DEP[yy*W+xx]; if (d===0||d>=6) return 0; var a=hk[d]||0; if (d===1 && REG[yy*W+xx]===RG.mtn) a+=Math.max(0,(HZ-yy)/HZ)*0.12; return a; },hc);
   // Regen und Grau: Wolken hängen am Velež

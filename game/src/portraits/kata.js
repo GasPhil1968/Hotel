@@ -3,8 +3,8 @@
    kurz geschoren, das Deckhaar länger und zur fernen Seite gelegt), zwei kleine Ohrstecker, graublaue Augen; die ferne Braue
    steht etwas höher, ein Mundwinkel zieht spöttisch nach oben. Schwarze Fleecejacke mit Stehkragen und dem gestickten
    Werkstattlogo „RAJIĆ“. Schnell, spöttisch, praktisch.
-   Legende HEAD: Ziffern Haut (1–6 p0–p5) · t u geschorene Seiten (p3 mit e2) · a–f Deckhaar (e1 e2 e3 e4 s4 s5) ·
-   S Ohrstecker (m4) · w Augenweiß · i Iris · k Pupille · z Wimpern · L l Lippen (d3 d4).
+   Legende HEAD: Ziffern Haut (1–6 p0–p5) · t u geschorene Seiten (q3 q2, Körnung in Code) · a–f Deckhaar (e1 e2 e3 e4 s4 s5) ·
+   S Ohrstecker (m4) · w W Augenweiß · i Iris · k Pupille · G Glanz · z Wimpern · L l m Lippen (d4 d5 p5).
    Jacke und Logo in Code; Kontur mit M.outline. Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
@@ -58,8 +58,9 @@ var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, t:P.q3, u:
   a:P.e1, b:P.e2, c:P.e3, d:P.e4, e:P.s4, f:P.s5, S:P.m4, w:P.s6, W:P.s5, i:P.c3, k:P.c0, z:P.h0, L:P.d4, l:P.d5, m:P.p5, G:P.s6 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
-// schwarze Fleecejacke: weiche, matte Fläche (leichtes Raster), Stehkragen, Reißverschluss bis unters Kinn
-function fleece(x,y,lo){ var v=lo; return [P.k1,P.k2,P.m0,P.m1,P.m2][Math.max(0,Math.min(4,v))]; }
+// schwarze Fleecejacke: weiche, matte Flächen in wenigen Stufen, Stehkragen, Reißverschluss bis unters Kinn
+var FL=[P.k1,P.k2,P.m0,P.m1,P.m2];
+function fleece(x,y,lo){ return FL[Math.max(0,Math.min(4,lo))]; }
 function jacket(b){
   b.poly([[3,64],[3.4,56],[5.6,51],[9.6,47.6],[16,45.4],[23,44.2],[37,44.2],[43,45.4],[48,47.8],[51,51.6],[52.6,57],[53,64]],function(x,y){ var lo=(x<16&&y<56)?3:((x>41)?1:2); return fleece(x,y,lo); });
   b.line(4,56,6,51,P.m2); b.line(7,50,11,47.4,P.m2); b.line(12,47,17,45.4,P.m1);

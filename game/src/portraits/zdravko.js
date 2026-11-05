@@ -1,9 +1,9 @@
 /* ===== portraits/zdravko.js — Zdravko (61), Wirt des Cafés am Westbusbahnhof (Kapitel 3, Mostar)
    Rund und kahl: glänzender Schädel, volles Gesicht mit runden, leicht geröteten Wangen und Doppelkinn,
-   buschige schwarze Brauen, knollige Nase; im Nacken ein kurz geschorener dunkler Kranz.
+   buschige schwarze Brauen, knollige Nase, ein Mundwinkel lächelt leicht.
    Weißes Hemd mit offenem Kragen, schwarze Weste, ein gestreiftes Geschirrtuch über der nahen Schulter.
-   Legende HEAD: Ziffern Haut (1–6 p0–p5, 7 l0) · r R Wangenröte (d5 d4) · f g geschorener Kranz (m1 m2) ·
-   u v y x Brauen (h3 h2 h1 h0) · w W Augenweiß · L Glanz · i Iris · k Pupille · z Lidstrich.
+   Legende HEAD: Ziffern Haut (1–6 p0–p5, 7 l0) · r Wangenröte (t5) · u v y x Brauen (h3 h2 h1 h0) ·
+   w W Augenweiß · i Iris · k Pupille · z Lidstrich.
    Kleidung und Tuch in Code; Kontur mit M.outline. Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
@@ -36,9 +36,9 @@ var HEAD=[
 "..............34454531425553Wwikw3563Wik333.............", // 22
 "..............344545314355544555445644554443............", // 23
 "..............344555323355455444555655445443............", // 24
-"..............344554432356666rr655566555r443............", // 25
-"...............3454354335666rrr6544556665443............", // 26
-"...............345444543556rrr65543455666543............", // 27
+"..............344554432356666666555665554443............", // 25
+"...............345435433566rr666544556665443............", // 26
+"...............345444543556rr665543455666543............", // 27
 "...............34444444355566655443345555443............", // 28
 "................3434433455555554434322333443............", // 29
 ".................333445555555555434455544433............", // 30
@@ -59,8 +59,8 @@ var HEAD=[
 "....................34433333332222333...................", // 45
 "....................344333333322223333.................."  // 46
 ];
-var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, '7':P.l0, r:P.d5, R:P.d4, f:P.m1, g:P.m2,
-  u:P.h3, v:P.h2, y:P.h1, x:P.h0, w:P.s5, W:P.s4, L:P.s6, i:P.w2, k:P.h0, z:P.h1 };
+var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, '7':P.l0, r:P.t5,
+  u:P.h3, v:P.h2, y:P.h1, x:P.h0, w:P.s5, W:P.s4, i:P.w2, k:P.h0, z:P.h1 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]); }
 // weißes Hemd: breite runde Schultern, Ärmel hochgekrempelt (nur die Oberarme sind zu sehen)

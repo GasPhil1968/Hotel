@@ -17,11 +17,7 @@ var DOOR={X0:70,X1:94,Y0:42};                            // Tür hinten links
 var HEAT={X0:128,X1:164,Y0:78,Y1:94};                    // Heizkörper unter dem Fenster
 var BED={X0:198,X1:252,Y0:84,Z0:2,Z1:44};                // Bett unter der Schräge
 var TBL={X0:98,X1:118,Y0:80,Z0:6,Z1:20};                 // kleiner Tisch
-var CHR={X:110,Z:30};                                    // Kelim vor dem Bett, Markos Schuhe
-  b.poly([rp(R3.p(178,FY,48)),rp(R3.p(236,FY,48)),rp(R3.p(236,FY,78)),rp(R3.p(178,FY,78))],function(xx,yy){ var f=R3.floor(xx,yy); if (!f) return P.r2; var u=(f.X-178)/58, v=(f.Z-48)/30, e=Math.min(u,1-u,v,1-v);
-    if (e<0.05) return P.r0; if (e<0.12) return ((Math.floor(f.X/3)+Math.floor(f.Z/3))&1)?P.y2:P.r1; var d=Math.abs(u-0.5)*1.4+Math.abs(v-0.5); return d<0.22?P.b0:(d<0.3?P.y2:(((Math.floor(f.X/4)+Math.floor(f.Z/4))%3===0)?P.r1:P.r2)); });
-  var sh=rp(R3.p(242,FY,60)); b.rect(sh[0],sh[1]-2,7,2,P.k1); b.rect(sh[0]+3,sh[1]-3,4,1,P.k1); b.rect(sh[0]+9,sh[1]-1,7,2,P.k1); b.rect(sh[0]+12,sh[1]-2,4,1,P.k1);
-  // Stuhl mit Markos Tasche (vor dem Tisch)
+var CHR={X:182,Z:10};                                    // Stuhl mit Markos Tasche (zwischen Heizkörper und Bett)
 var BULB={X:150,Z:40,len:22};                            // Glühbirne am Kabel, hängt vom Balken
 function rd(v){ return Math.round(v); }
 function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
@@ -119,7 +115,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
   if (S.dzezva) dzezva(b,SILL[0],SILL[1]); else { b.rect(SILL[0]-10,SILL[1]-2,5,2,P.s6); b.px(SILL[0]-9,SILL[1]-2,P.k2); }   // sonst nur eine Streichholzschachtel
   // Heizkörper (alt, gerippt), Ventil, Rohr
   var h0=rp(R3.p(HEAT.X0,HEAT.Y0,1)), h1=rp(R3.p(HEAT.X1,HEAT.Y1,1)); for (y=h0[1];y<h1[1];y++) for (x=h0[0];x<h1[0];x++){ var fx=(x-h0[0])%4; b.px(x,y,fx===0?P.m1:(fx===1?P.s4:(fx===2?P.s5:P.s3))); }
-  b.hl(h0[0],h1[0]-1,h0[1],P.s6); b.hl(h0[0],h1[0]-1,h1[1]-1,P.m1); b.rect(h1[0],h1[1]-4,3,3,P.m2); b.px(h1[0]+1,h1[1]-5,P.r2); b.vl(h1[0]+1,h1[1]-1,FY+3,P.m2); HEATR=[h0[0],h0[1],h1[0]-h0[0],h1[1]-h0[1]];
+  b.hl(h0[0],h1[0]-1,h0[1],P.s6); b.hl(h0[0],h1[0]-1,h1[1]-1,P.m1); b.rect(h1[0],h1[1]-4,3,3,P.m2); b.px(h1[0]+1,h1[1]-5,P.r2); b.vl(h1[0]+1,h1[1]-1,FY+3,P.m2);
   // kleiner Tisch mit Wasserflasche und Notizbuch
   R3.box(b,TBL.X0,TBL.X1,TBL.Y0,TBL.Y0+2,TBL.Z0,TBL.Z1,{top:P.w3,front:P.w1,left:P.w2});
   [[TBL.X0+1,TBL.Z1-1],[TBL.X1-2,TBL.Z1-1],[TBL.X0+1,TBL.Z0+1],[TBL.X1-2,TBL.Z0+1]].forEach(function(lg,li){ var p1=R3.p(lg[0],TBL.Y0+2,lg[1]), p2=R3.p(lg[0],FY,lg[1]); b.line(rd(p1[0]),rd(p1[1]),rd(p2[0]),rd(p2[1]),li<2?P.w2:P.w1); });
@@ -137,7 +133,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
   // Stuhl mit Markos Tasche
   var cs=rp(R3.p(CHR.X,FY,CHR.Z)); var cx=cs[0], cy=cs[1]; b.rect(cx-7,cy-15,15,3,P.w3); b.hl(cx-7,cx+7,cy-15,P.w4); b.vl(cx-6,cy-12,cy-1,P.w1); b.vl(cx+6,cy-12,cy-1,P.w1); b.vl(cx-4,cy-13,cy-3,P.w0); b.vl(cx+4,cy-13,cy-3,P.w0);
   b.rect(cx+5,cy-34,3,20,P.w2); b.hl(cx+5,cx+7,cy-34,P.w4); b.hl(cx-6,cx+7,cy-26,P.w2); b.hl(cx-6,cx+7,cy-30,P.w2); b.rect(cx-7,cy-35,2,21,P.w2);
-  bag(b,cx-10,cy-15); CHAIR=[cx-10,cy-36,20,36];
+  bag(b,cx-10,cy-15);
   // Glühbirne: Kabel vom Balken (die Birne selbst in dynamic, sie schwingt)
   var bp=bulbPos(); b.px(bp[0],bp[1],P.w0); b.px(bp[0]-1,bp[1],P.k1); b.px(bp[0]+1,bp[1],P.k1);
   // Licht
@@ -147,7 +143,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=weaOf(GS), dark=tod!=='da
   M.light(b,M.lf.vignette(W,144,1.2),0,0,notWin);
   BASE=b.clone(); shadeTOD(b,0,0,tod,notWin);
   return b; }
-var SILL=[160,74], HEATR=[130,78,34,16], CHAIR=[180,90,20,36];
+var SILL=[160,74];
+var HEATR=(function(){ var h0=R3.p(HEAT.X0,HEAT.Y0,1), h1=R3.p(HEAT.X1,HEAT.Y1,1); return [rd(h0[0]),rd(h0[1]),rd(h1[0])-rd(h0[0]),rd(h1[1])-rd(h0[1])]; })();
+var CHAIR=(function(){ var c=R3.p(CHR.X,FY,CHR.Z); return [rd(c[0])-10,rd(c[1])-36,20,36]; })();
 
 // ---------------------------------------------------------------- jedes Bild: Glühbirne schwingt, Regen am Fenster, Heizkörper tickt
 function dyn(fb,v,S,GS){ var t=v.t, tod=v.tod, w=weaOf(GS), bp=bulbPos(), sw=Math.sin(t*1.3)*1.6+Math.sin(t*0.53)*0.6, lit=tod!=='day'||w==='rain'||w==='grey', i;
@@ -185,9 +183,9 @@ M.defineArt('zimmer',{
     bag:[CHAIR[0],CHAIR[1]+14,22,10],
     chair:[CHAIR[0],CHAIR[1],CHAIR[2]+2,CHAIR[3]],
     heater:[HEATR[0]-2,HEATR[1]-1,HEATR[2]+6,HEATR[3]+4],
-    lamp:(function(){ var bp=bulbPos(); return [bp[0]-6,bp[1],13,BULB.len+10]; })()
+    lamp:(function(){ var bp=bulbPos(); return [bp[0]-6,Math.max(0,bp[1]),13,BULB.len+10]; })()
   },
-  stands:{ door:[84,116,'B'], bed:[200,122,'R'], window:[146,116,'B'], sill:[150,116,'B'], bag:[124,118,'L'], chair:[124,118,'L'], heater:[146,116,'B'], lamp:[150,120,'B'] },
+  stands:{ door:[84,116,'B'], bed:[200,122,'R'], window:[146,116,'B'], sill:[150,116,'B'], bag:[184,116,'B'], chair:[184,116,'B'], heater:[146,116,'B'], lamp:[150,120,'B'] },
   actorPos:{ mala:[92,117,'R'] },
   start:[196,123,'L'], entries:{ herberge:[86,117,'R'] }
 });

@@ -3,7 +3,7 @@
    eingefallene Wangen), kurz geschorenes graues Haar, graue Bartstoppeln, schwere graue Brauen über tief liegenden Augen,
    lange knochige Nase. Die Zigarette steckt im Mundwinkel (in allen Varianten, beim Sprechen hängt sie schiefer),
    ein dünner Rauchfaden steigt auf. Dunkelblauer Arbeitsoverall, oben offen, darunter ein kariertes Flanellhemd.
-   Legende HEAD: Ziffern Haut (1–5 q0–q4, 6 p4, 7 p5) · a–f Haar (m0 m1 m2 m3 m4 s5) · g h j Stoppeln (m1 m2 m3) ·
+   Legende HEAD: Ziffern Haut (1–5 q0–q4, 6 p4, 7 p5) · a–e Haar und Brauen (m0–m4) ·
    w W Augenweiß · i Iris · k Pupille · z Lidstrich.
    Kleidung, Zigarette und Rauch in Code; Kontur mit M.outline (der Rauch kommt danach, ohne Kontur).
    Varianten: MOUTH und EYES als Flicken. */
@@ -62,7 +62,7 @@ var HEAD=[
 "......................3344333333222333.................."  // 46
 ];
 var LEG={ '1':P.q0, '2':P.q1, '3':P.q2, '4':P.q3, '5':P.q4, '6':P.p4, '7':P.p5,
-  a:P.m0, b:P.m1, c:P.m2, d:P.m3, e:P.m4, f:P.s5, g:P.m1, h:P.m2, j:P.m3,
+  a:P.m0, b:P.m1, c:P.m2, d:P.m3, e:P.m4,
   w:P.s4, W:P.s3, i:P.w1, k:P.h0, z:P.h1 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
@@ -97,6 +97,12 @@ function body(b){
   // Brusttasche mit Klappe auf der fernen Seite
   b.line(37,56,43,55,P.n0); b.line(37,57,43,56,P.n2); b.line(43,56,43,62,P.n0); b.px(40,56,P.m3);
 }
+// kurz geschorenes Haar: feine Körnung (einzelne helle Pixel eine Stufe dunkler)
+var HAIRC=null;
+function crop(b){
+  if (!HAIRC){ HAIRC=[]; for (var y=0;y<HEAD.length;y++) for (var x=0;x<HEAD[y].length;x++){ var ch=HEAD[y][x]; if (ch>='d'&&ch<='e'&&y<18) HAIRC.push([x,y]); } }
+  HAIRC.forEach(function(q){ var h=M.hash(q[0]*2.3+1,q[1]*1.9+4), c=b.get(q[0],q[1]); if (h<0.12) b.px(q[0],q[1],M.DN[c]); });
+}
 // Zigarette im fernen Mundwinkel: Filter, Papier, Glut; beim Sprechen hängt sie schiefer
 var CIG_N=[[40,33,'y2'],[41,33,'y3'],[42,33,'s6'],[43,33,'s6'],[44,34,'s5'],[45,34,'s5'],[46,34,'m4'],[47,34,'t4']];
 var CIG_O=[[40,34,'y2'],[41,34,'y3'],[42,35,'s6'],[43,35,'s6'],[44,36,'s5'],[45,36,'s5'],[46,37,'m4'],[47,37,'t4']];
@@ -105,9 +111,9 @@ var SMOKE=[[48,32,'m3'],[48,31,'m4'],[49,30,'m3'],[49,28,'m4'],[50,27,'m3'],[50,
 function cig(b,list){ list.forEach(function(q){ b.px(q[0],q[1],P[q[2]]); }); }
 function smoke(b,dy){ SMOKE.forEach(function(q){ var x=q[0], y=q[1]+dy; if (b.get(x,y)===M.T) b.px(x,y,P[q[2]]); }); }
 // graue Stoppeln: im Bartbereich wird die Haut grau und matt (gleiche Helligkeit, Kern voll, Rand im Schachbrett),
-// dazu einzelne helle und dunkle Härchen; die Lippen bleiben frei
+// dazu einzelne helle Härchen; nicht jeder Pixel wird grau, damit Haut durchscheint; die Lippen bleiben frei
 var BEARD=[[23.5,22],[25.5,24.5],[28,28.6],[31,30.4],[34.5,30.6],[37,30.2],[40,30.4],[42,31],[41.6,36],[40.2,39.4],[37,41.4],[33,41.6],[29,39.6],[25,35.6],[22.6,31]];
-var GREY={}, LITE={}, DARK={};
+var GREY={}, LITE={};
 GREY[P.q1]=P.s0; GREY[P.q2]=P.s1; GREY[P.q3]=P.s2; GREY[P.q4]=P.s3; GREY[P.p4]=P.s3; GREY[P.p5]=P.s4;
 LITE[P.q1]=P.s2; LITE[P.q2]=P.s3; LITE[P.q3]=P.s4; LITE[P.q4]=P.s4; LITE[P.p4]=P.s5; LITE[P.p5]=P.s5;
 var BMASK=null;
@@ -125,7 +131,7 @@ var EYES_B=[[28,21,'4'],[29,21,'4'],[30,21,'4'],[31,21,'4'],[32,21,'4'],[28,22,'
   [37,21,'4'],[38,21,'4'],[39,21,'4'],[40,21,'4'],[37,22,'z'],[38,22,'z'],[39,22,'z'],[40,22,'3'],[37,23,'4'],[38,23,'4'],[39,23,'4'],[40,23,'4']];
 function paint(b,v){
   body(b);
-  stamp(b,HEAD,LEG); stubble(b);
+  stamp(b,HEAD,LEG); crop(b); stubble(b);
   if (v.mouth) putList(b,MOUTH_O);
   if (v.eyes) putList(b,EYES_B);
   cig(b,v.mouth?CIG_O:CIG_N);

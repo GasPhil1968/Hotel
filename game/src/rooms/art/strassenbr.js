@@ -72,13 +72,15 @@ function bl(y){ return lerp(VP[0]-2,-60,cl((y-VP[1])/(WY+8-VP[1]),0,1)); } // Ob
 function ltop(x){ return VP[1]+(VP[0]-x)/(VP[0]+40)*14; }      // Felskante links: von VP nach links unten
 function rtop(x){ return VP[1]+(x-VP[0])/(W-VP[0]+40)*16; }    // Ufermauer rechts
 var WA=new Float32Array(W*H);
-function paintRiver(w,we){ var x, y, rain=we==='rain', rp=rain?R('e0 e1 e2 e3 s2 e4'):(we==='grey'?R('a1 a2 a3 a4'):R('a1 a2 a3 a4 a5'));
+// smaragdgrünes Wasser: Türkis mit etwas Olivgrün gerastert, in klaren Stufen statt Rauschen
+function emer(v,x,y){ var b=bayer(x,y); if (v<0.28) return b<0.5?P.g1:P.a2; if (v<0.5) return (b<(v-0.28)/0.22*0.6)?P.a4:P.a3; if (v<0.74) return (b<0.22)?P.g4:P.a4; return (b<(v-0.74)/0.26)?P.a5:P.a4; }
+function paintRiver(w,we){ var x, y, rain=we==='rain', rp=rain?R('e0 e1 e2 e3 s2 e4'):(we==='grey'?R('a1 a2 g3 a3 a4'):R('a1 a2 g3 a3 g4 a4 a5'));
   for (y=VP[1]+1;y<WY+2;y++){ var x0=wl(y), x1=wr(y), d=(y-VP[1])/(WY-VP[1]), z=1/Math.max(0.05,d);
     for (x=Math.floor(x0);x<=Math.ceil(x1);x++){ var u=(x+0.5-VP[0])/Math.max(1,(x1-x0)/2), au=Math.abs(u);
       // Strömungslinien laufen zum Fluchtpunkt, die Ufer spiegeln sich dunkel, hinten der Himmel hell
       var rip=Math.sin(z*7.5+fbm(u*4,z*0.8,1.5,4)*5), v=0.5+rip*0.13+Math.sin(u*9+fbm(z*0.9,u*3,2,4)*4)*0.05+(fbm(u*6+40,z*1.2,1.4,5)-0.5)*0.14;
       if (au>0.66) v-=(au-0.66)*0.9; if (d<0.35) v+=(0.35-d)*0.7; if (au<0.2 && d>0.5) v-=0.08;
-      WA[y*W+x]=v; var c=ra(rp,v,x,y);
+      WA[y*W+x]=v; var c=(!rain && we!=='grey')?emer(v,x,y):ra(rp,v,x,y);
       if (rain && fbm(u*9,z*4,1.2,9)>0.64) c=(hash(x,y)<0.5)?P.s4:P.s3;                       // Hochwasser: Schaum und Treibgut
       if (!rain && rip>0.93 && hash(x,y)<0.5 && d>0.25) c=we==='grey'?P.a4:P.a5;                // Kräusel
       w.d=d<0.4?2:3; w.g=RG.water; w.px(x,y,c); } }
@@ -155,7 +157,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   w.g=RG.town; w.d=2; for (y=HZ;y<WY+2;y++) for (x=0;x<W;x++){ if (REG[y*W+x]!==RG.sky) continue; w.px(x,y,ra(R('e1 g1 e2 s2 g2 e3'),0.5+(fbm(x*1.1,y*1.9,6,7)-0.5)*0.7,x,y)); }
   paintRiver(w,we); paintBanks(w,we); paintTown(w);
   paintBridge(w,we);
-  var hk=we==='bura'?[0,0.12,0.06,0.03]:(we==='rain'?[0,0.82,0.55,0.3]:(we==='grey'?[0,0.6,0.4,0.2]:[0,0.34,0.2,0.1]));
+  var hk=we==='bura'?[0,0.12,0.06,0.03]:(we==='rain'?[0,0.82,0.55,0.3]:(we==='grey'?[0,0.6,0.4,0.2]:[0,0.22,0.13,0.06]));
   var hc=night?P.m0:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
   haze(b,function(xx,yy){ var d=DEP[yy*W+xx]; if (REG[yy*W+xx]===RG.sky||d>=4) return 0; return hk[d]||0; },hc);
   var amb=we==='rain'?-0.55:(we==='grey'?-0.3:(we==='bura'?0.1:0));

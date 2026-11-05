@@ -5,7 +5,7 @@
    einer grauen, klein getupften Bluse. Direkt und vorwurfsvoll.
    Aufbau: Kopftuch (prozedural: Kugel-Licht von links oben, Falten zum Knoten), Gesicht als Pixelkarte HEAD, Saum des Tuchs
    darüber, Knoten und Zipfel, Kleidung; Kontur mit M.outline.
-   Legende HEAD: Ziffern Haut (1–4 q1–q4, 5 p4, 6 p5) · r Wangenröte (p3) · h H j weißes Haar (s4 s5 s6) · x y Brauen (m2 m3) ·
+   Legende HEAD: Ziffern Haut (1–4 q1–q4, 5 p4, 6 p5) · r Wangenröte (p3) · h H j weißes Haar (s4 s5 s6) · x y z Brauen (s2 s3 s1) ·
    w W Augenweiß · i Iris · I Wimpern · m Mundspalt · l Unterlippe. Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
@@ -30,14 +30,14 @@ var HEAD=[
  "..........................h445444544454433..............", // 16
  "..........................3455565534555443..............", // 17
  "..........................34yxx5553554xxy43.............", // 18
- "..........................34444xxx34xx44443.............", // 19
+ "..........................34444xzz34zx44443.............", // 19
  "..........................3443333444333443..............", // 20
  "..........................34IIIIII44IIII43..............", // 21
  "..........................343WwiIW44wiI343..............", // 22
  "..........................34443i34544344433.............", // 23
  "..........................34654334554334443.............", // 24
  "..........................34555544455444443.............", // 25
- "..........................3455r5444456544433............", // 26
+ "..........................345555444456544433............", // 26
  "..........................3455544444456rr443............", // 27
  "..........................3444444444324rr343............", // 28
  "..........................34444444433321233.............", // 29
@@ -59,7 +59,7 @@ var HEAD=[
  "........................................................", // 45
  "........................................................", // 46
 ];
-var LEG={ '1':P.q1, '2':P.q2, '3':P.q3, '4':P.q4, '5':P.p4, '6':P.p5, r:P.p3, h:P.s4, H:P.s5, j:P.s6, x:P.m2, y:P.m3,
+var LEG={ '1':P.q1, '2':P.q2, '3':P.q3, '4':P.q4, '5':P.p4, '6':P.p5, r:P.p3, h:P.s4, H:P.s5, j:P.s6, x:P.s2, y:P.s3, z:P.s1,
   w:P.s4, W:P.s3, i:P.w1, I:P.h1, m:P.q1, l:P.p3 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' ') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]); }

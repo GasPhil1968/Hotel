@@ -1,6 +1,6 @@
 /* ===== portraits/taxist.js — der Taxifahrer am Ostbusbahnhof (um 60) (Kapitel 3, Mostar)
    Kräftig: breiter Schädel mit Glatze und kurzem grauem Haarkranz, schwere graue Brauen über kleinen, zusammengekniffenen
-   Augen, fleischige, gerötete Nase, dicker grauer Schnauzbart über dem Mund, breites Kinn, kurzer Stiernacken.
+   Augen, fleischige Nase, gerötete Wangen, dicker grauer Schnauzbart über dem Mund, breites Kinn, kurzer Stiernacken.
    Braune Lederjacke mit großem Kragen, darunter ein hellblaues Hemd. Knapp.
    Legende HEAD: Ziffern Haut (1–6 p0–p5, 7 l0) · r Röte (t5) · a–e Haarkranz, Brauen und Bart (s1–s5, warmes Grau) ·
    w W Augenweiß · i Iris · k Pupille · z Lidstrich. Jacke und Hemd in Code; Kontur mit M.outline.

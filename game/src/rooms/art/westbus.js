@@ -67,7 +67,7 @@ function paintFar(w){ var x, y; w.g=RG.far;
   // der Hum dahinter (ohne Kreuz), davor Wohnblöcke des Westufers mit Loggien und Satellitenschüsseln
   for (x=0;x<W;x++){ var hy=rd(36-16*Math.exp(-Math.pow((x-300)/110,2))+Math.sin(x*0.07)*1.2); for (y=hy;y<GY;y++) w.px(x,y,(fbm(x*1.2,y*1.4,6,12)>0.55)?P.g2:((y===hy)?P.g3:P.e2)); }
   w.g=RG.bldg;
-  [[140,196,30,R('s3 s4 s5')],[196,240,42,R('e3 t4 t5')],[238,300,24,R('m2 m3 m4')],[300,352,36,R('s4 s5 s6')],[350,400,18,R('e3 e4 s5')]].forEach(function(bl,i){
+  [[140,196,30,R('s3 s4 s5')],[196,240,42,R('e3 e4 t5')],[238,300,24,R('m2 m3 m4')],[300,352,36,R('s4 s5 s6')],[350,400,18,R('e3 e4 s5')]].forEach(function(bl,i){
     for (y=bl[2];y<GY;y++) for (x=bl[0];x<bl[1];x++){ var fy=(y-bl[2])%7, fx=(x-bl[0])%9, c=bl[3][1]; if (x===bl[0]) c=bl[3][2]; if (x===bl[1]-1) c=bl[3][0];
         if (fy>=2 && fy<=4 && fx>=2 && fx<=6){ c=(fy===2)?P.k1:P.n0; if (fx===4) c=bl[3][0]; if (fy===4 && fx<4 && hash(x,y*i)<0.4) c=P.r3; LITW.push([x,y]); }
         if (fy===5 && fx>=1 && fx<=7) c=bl[3][2]; w.px(x,y,c); }
@@ -157,7 +157,7 @@ function paintBus(w,we,tod){ var b=BUS, x, y, wet=we==='rain'; w.g=RG.bus;
   for (y=b.base-6;y<b.base-2;y++) w.hl(dx+1,dx+12,y,(y%2)?P.m3:P.m1);
   w.vl(b.x1+1,winT-2,winT+8,P.k1); w.rect(b.x1,winT+6,3,5,P.k1); w.rect(b.x1-4,b.base-12,4,3,P.s6); w.px(b.x1-2,b.base-11,P.y4);
   // Zielanzeige an der Seite neben der Tür: schwarze Leiste, orange Leuchtschrift
-  var zx=b.x1-128, zy=winT+1; w.rect(zx,zy,86,9,P.k1); M.text(w,'MÜNCHEN – MOSTAR',zx+3,zy+1,P.y3);
+  var zx=b.x1-128, zy=winT+1; w.rect(zx,zy-3,86,12,P.k1); w.hl(zx,zx+85,zy-3,P.m1); M.text(w,'MÜNCHEN – MOSTAR',zx+3,zy+1,P.y3);
   // Räder, Radkästen
   [b.x0+30,b.x1-62].forEach(function(cx){ w.ellipse(cx,b.base-5,9,6,P.k1); for (var a=-6;a<=6;a++) for (var q=-6;q<=6;q++){ var d=a*a+q*q; if (d>36) continue; w.px(cx+a,b.base-4+q*0.7,d<9?P.m3:(d<20?P.m1:P.k0)); } w.px(cx-1,b.base-5,P.m4); });
   // Gepäckklappe offen: hochgeklappt, darunter der dunkle Gepäckraum mit Koffern
@@ -179,7 +179,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   paintCafe(w,we,tod); paintStation(w,we,tod); paintWalk(w,we);
   // ein Koffer auf dem Bussteig, wenn der Bus da ist
   if (MUN){ w.g=RG.prop; var kx=302, ky=EDGE+12; w.rect(kx,ky-11,9,11,P.v2); w.hl(kx,kx+8,ky-11,P.v3); w.vl(kx+8,ky-11,ky-1,P.v1); w.rect(kx+3,ky-14,3,3,P.k2); w.px(kx+4,ky-13,P.v2); w.hl(kx,kx+8,ky,P.k2); w.px(kx+1,ky,P.k1); w.px(kx+7,ky,P.k1); }
-  var fk=we==='bura'?0.1:(we==='rain'?0.55:(we==='grey'?0.42:0.25)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
+  var fk=we==='bura'?0.1:(we==='rain'?0.55:(we==='grey'?0.42:0.18)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
   haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return 0.45*fk+0.18; return 0; },fc);
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(EDGE,H,0,-0.3),function(xx,yy){ return (xx>CAN.x0 && yy>CAN.y1 && yy<EDGE+30)?-0.45:0; }),0,0,function(xx,yy){ var g=REG[yy*W+xx]; return g!==RG.sky && g!==RG.glass; });

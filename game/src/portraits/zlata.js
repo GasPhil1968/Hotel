@@ -4,8 +4,8 @@
    im Nacken gebunden, darunter an der Schläfe ein wenig graues Haar. Graue Strickjacke über einem karierten Kleid.
    Aufbau: Kopftuch prozedural (Kugel-Licht von links oben, Falten zum Knoten), Gesicht als Pixelkarte FACE,
    Saum des Tuchs darüber, Knoten, Kleidung, Kontur mit M.outline.
-   Legende FACE: Ziffern Haut (p-Rampe 1–6 = p0–p5) · T Wangenröte (t5) · h H graues Haar (s4 s5) · S s Brauen (s2 s3) ·
-   w W Augenweiß · i Iris · I Wimpern und Pupille · r Unterlippe. Varianten: MOUTH und EYES als Flicken. */
+   Legende FACE: Ziffern Haut (1–5 p1–p5, 6 l0) · T Wangenröte (t5) · h H graues Haar (s4 s5) · S s Brauen (s2 s3) ·
+   w W Augenweiß · i Iris · I Wimpern und Pupille (h0) · r Unterlippe (d4). Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
 var P=M.P;

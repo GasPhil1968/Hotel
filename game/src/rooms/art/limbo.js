@@ -329,7 +329,7 @@ var PROPS={
   mate:{ r:[226,68,64,56], st:[220,126,'R'], foot:[228,0,286,123] },
   bato:{ r:[224,80,76,44], st:[252,127,'R'], foot:[226,0,278,123] }
 };
-var PROP_ANY={ r:[225,75,41,49], st:[218,126,'R'] };     // Vereinigung aller Varianten, falls niemand gesetzt ist
+var PROP_ANY={ r:[224,68,76,56], st:[218,126,'R'] };     // Vereinigung aller Varianten, falls niemand gesetzt ist
 function castShadow(b,cx,by,rx,ry){ for (var y=by-1;y<=by+ry+1;y++) for (var x=Math.floor(cx-rx-2);x<=cx+rx+2;x++){ var k=y*W+x; if (x<0||x>=W||y>=H||SID[k]<0) continue;
   var dx=(x-cx)/rx, dy=(y-by)/ry, d=dx*dx+dy*dy; if (d<1 && bayer(x,y)<(1-d)*1.2) b.d[k]=M.DN[b.d[k]]; } }
 // Ivka: zwei Kaisteine der Riva mit einem gusseisernen Poller, die Kappe von Händen blank gerieben; kein Tau mehr daran

@@ -69,9 +69,9 @@ function paintSky(b,tod,we){ var x, y, h=GY;
     var r2=M.rng(49); for (var s=0;s<170;s++){ var sx=Math.floor(r2()*W), sy=Math.floor(Math.pow(r2(),1.4)*50), q2=r2(); b.px(sx,sy,q2<0.08?P.n5:(q2<0.4?P.n4:P.n3)); } return; }
   M.sky(b,0,0,W,h,tod,27); }
 // hinter den Häusern: der Hum (ohne Kreuz) und ferne Blöcke, im Dunst
-function paintFar(w){ w.g=RG.far; var x, y;
-  for (x=0;x<W;x++){ var hy=rd(44-18*Math.exp(-Math.pow((x-120)/150,2))+Math.sin(x*0.05)*1.5); for (y=hy;y<GY;y++) w.px(x,y,(y===hy)?P.b3:((bayer(x,y)<0.4)?P.b2:P.b3)); }
-  [[150,10,26],[164,8,30],[312,12,22],[408,9,18]].forEach(function(t){ for (y=GY-t[2];y<GY;y++) for (x=t[0];x<t[0]+t[1];x++) w.px(x,y,((y%3)===1&&(x%2)===0)?P.b2:P.b4); }); }
+function paintFar(w,we,tod){ w.g=RG.far; var x, y, dull=(we==='rain'||we==='grey'), C1=tod==='night'?P.k2:(dull?P.m3:P.b3), C2=tod==='night'?P.n0:(dull?P.m2:P.b2), C3=tod==='night'?P.n1:(dull?P.m4:P.b4);
+  for (x=0;x<W;x++){ var hy=rd(44-18*Math.exp(-Math.pow((x-120)/150,2))+Math.sin(x*0.05)*1.5); for (y=hy;y<GY;y++) w.px(x,y,(y===hy)?C1:((bayer(x,y)<0.4)?C2:C1)); }
+  [[150,10,26],[164,8,30],[312,12,22],[408,9,18]].forEach(function(t){ for (y=GY-t[2];y<GY;y++) for (x=t[0];x<t[0]+t[1];x++) w.px(x,y,((y%3)===1&&(x%2)===0)?C2:C3); }); }
 
 // ---------------------------------------------------------------- das Gymnasium: gelb und ocker, maurische Fenster, Mittelrisalit
 function hsArch(w,wx,wy,ww,wh,lit){ var cx=wx+(ww-1)/2, r=ww/2+0.6, x, y;
@@ -174,8 +174,8 @@ function paintStreet(w,we){ var x, y, wet=we==='rain'; w.g=RG.street;
 function paintWalk(w,we){ var x, y, wet=we==='rain', r=M.rng(5); w.g=RG.walk;
   for (x=0;x<W;x++){ w.px(x,ST.curb,P.s5); w.px(x,ST.curb+1,P.s3); w.px(x,ST.curb+2,P.s2); }
   var rows=[ST.curb+3]; while (rows[rows.length-1]<H){ var lr=rows[rows.length-1]; rows.push(lr+Math.round(4+(lr-ST.curb)*0.16)); }
-  for (var ri=0;ri<rows.length-1;ri++){ var y0=rows[ri], y1=rows[ri+1], sz=Math.round((y1-y0)*2.2), off=(ri%2)*Math.round(sz/2);
-    for (y=y0;y<Math.min(H,y1);y++) for (x=0;x<W;x++){ var fx=(x+off)%sz, c=hash(Math.floor((x+off)/sz),ri)<0.35?P.s3:P.s4; if (y===y0||fx===0) c=P.s2; else if (y===y0+1 && fx>1) c=M.UP[c]; if (hash(x,y)<0.03) c=P.s2;
+  for (var ri=0;ri<rows.length-1;ri++){ var y0=rows[ri], y1=rows[ri+1], sz=Math.round((y1-y0)*1.7), off=(ri%2)*Math.round(sz/2);
+    for (y=y0;y<Math.min(H,y1);y++) for (x=0;x<W;x++){ var fx=(x+off)%sz, c=hash(Math.floor((x+off)/sz),ri)<0.35?P.s3:P.s4; if (hash(Math.floor((x+off)/sz),ri+7)<0.12) c=P.m3; if (y===y0||fx===0) c=(bayer(x,y)<0.6)?P.s2:P.s3; else if (y===y0+1 && fx>1) c=M.UP[c]; if (hash(x,y)<0.03) c=P.s2;
       if (wet){ c=M.DN[c]; if (fbm(x*0.2,y*0.8,5,13)>0.66) c=(bayer(x,y)<0.5)?P.m4:P.m3; } w.px(x,y,c); } }
   // Platanenlaub: groß, braun, in Haufen am Bordstein und an der Bank
   for (var i=0;i<300;i++){ var lx=Math.floor(r()*W), ly=ST.curb+3+Math.floor(Math.pow(r(),1.5)*30); var lc=r()<0.4?P.e3:(r()<0.5?P.y2:(r()<0.5?P.t3:P.e2)); if (wet) lc=M.DN[lc]; w.px(lx,ly,lc); if (r()<0.6) w.px(lx+1,ly,M.DN[lc]); if (r()<0.3) w.px(lx,ly-1,lc); }
@@ -216,14 +216,14 @@ function paintSign(w,wet){ var s=SIGN, x, y; w.g=RG.prop;
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, SKYB=null;
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night', wet=we==='rain';
   WE=we; REG.fill(0); LITW.length=0;
-  paintSky(b,tod,we); SKYB=b.clone(); paintFar(w);
+  paintSky(b,tod,we); SKYB=b.clone(); paintFar(w,we,tod);
   paintGym(w,wet); paintBank(w,wet); paintOld(w,wet);
   paintStreet(w,we);
   TREES.forEach(function(t){ plane(w,t.x,ST.med[0]+2,92,t.s); });
   MLAMPS.forEach(function(lx){ medianLamp(w,lx); });
   paintWalk(w,we); paintBench(w,wet); paintSign(w,wet);
   // Dunst in die Ferne, Licht je Wetter
-  var fk=we==='bura'?0.1:(we==='rain'?0.6:(we==='grey'?0.45:0.28)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
+  var fk=we==='bura'?0.1:(we==='rain'?0.6:(we==='grey'?0.45:0.18)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
   haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return 0.5*fk+0.2; if (g===RG.bldg) return Math.max(0,(70-yy)/70)*0.35*fk; return 0; },fc);
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(ST.curb,H,0,-0.35),M.lf.pool(240,GY-6,120,8,-0.35)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });

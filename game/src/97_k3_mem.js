@@ -675,15 +675,15 @@ M.mem.k3_blanket=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1503), G=80;
   for (i=0;i<22;i++){ var t=i/22, sx=64+Math.sin(t*5)*2+t*6, sy=38-i*1.2; if (bayer(Math.round(sx),Math.round(sy))<0.7-t*0.5) mixPx(b,Math.round(sx),Math.round(sy),P.s6,4); }   // Dampf
   // ein Schemel, darauf das Mädchen, in die graue Decke gewickelt; Zlata kniet vor ihr und reibt ihr die Hände
   b.rect(88,80,20,3,P.w3); b.hl(88,107,80,P.w4); b.vl(90,83,88,P.w1); b.vl(105,83,88,P.w1);
-  fig(b,97,88,S({h:[0,-14],nf:[8,0,'f'],ff:[6,0,'f'],nh:[11,-18],fh:[10,-17],ln:2,sit:1,ho:[1,1],hd:'b'}),'R','mala');
-  var BL=[[93,59],[101,58],[105,62],[108,70],[110,80],[108,88],[86,88],[84,78],[87,64]];
-  b.poly(BL,function(x,y){ var u=(x-82)/30, v=(y-57)/31, fold=Math.sin(x*0.55+y*0.12+Math.sin(y*0.2)*2), c=ra(R('m0 m1 m2 m3'),0.48+(u-0.4)*0.3-v*0.15+(fold>0.6?0.14:(fold<-0.6?-0.12:0)),x,y);
-    var st=(y-57)-(x-82)*0.45; if (st>13 && st<16) c=(fold>0)?P.k2:P.k1; return c; });
-  b.line(94,58,86,64,P.m3); b.line(101,57,106,62,P.m3); b.px(96,57,P.m3); b.px(99,57,P.m3);
-  b.ellipse(108,71,2.4,1.8,P.p4); b.px(110,70,P.p5); b.px(107,72,P.p3);                                                        // ihre Hände, aus der Decke heraus
-  var bm=new M.Buf(w,h,0); bm.poly(BL,1); for (y=56;y<88;y++) for (x=80;x<114;x++){ if (bm.get(x,y)) continue; var nb=bm.get(x+1,y)||bm.get(x-1,y); if (nb && ((x+y)&1) && bayer(x,y)<0.7) mixPx(b,x,y,P.s5,3); }   // der Umriss zittert
-  fig(b,128,89,S({h:[2,-15],ln:5,nf:[8,0,'f'],ff:[-5,0,'t'],nh:[14,-19],fh:[13,-17],ho:[1,1]}),'L','k3m_zlata');
-  b.ellipse(113,70,2.6,2.2,P.q3); b.px(112,69,P.q4); b.ellipse(115,71.5,2.2,1.8,P.q2);                                          // Zlatas Hände um ihre
+  fig(b,96,88,F({h:[0,-14],lf:[-3,0],rf:[3,0],lh:[2,-17],rh:[5,-17],sit:1,hd:'b'}),'F','mala');
+  var BL=[[89,61],[103,61],[107,66],[110,76],[111,88],[81,88],[82,76],[85,66]];
+  b.poly(BL,function(x,y){ var u=(x-81)/30, v=(y-61)/27, fold=Math.sin(x*0.6+y*0.1+Math.sin(y*0.22)*2), c=ra(R('m0 m1 m2 m3'),0.5+(u-0.35)*0.3-v*0.12+(fold>0.6?0.14:(fold<-0.6?-0.12:0)),x,y);
+    var st=(y-61)-Math.abs(x-96)*0.25; if (st>15 && st<18) c=(fold>0)?P.k2:P.k1; if (Math.abs(x-97-(y-61)*0.08)<0.6 && y>66) c=P.m0; return c; });
+  b.line(89,61,85,66,P.m3); b.line(103,61,107,66,P.m3); b.hl(90,102,61,P.m3);
+  b.ellipse(100,71,2.6,1.8,P.p4); b.px(99,70,P.p5); b.px(101,72,P.p3);                                                         // ihre Hände, aus der Decke heraus
+  var bm=new M.Buf(w,h,0); bm.poly(BL,1); for (y=58;y<88;y++) for (x=78;x<114;x++){ if (bm.get(x,y)) continue; var nb=bm.get(x+1,y)||bm.get(x-1,y); if (nb && ((x+y)&1) && bayer(x,y)<0.7) mixPx(b,x,y,P.s5,3); }   // der Umriss zittert
+  fig(b,124,89,S({h:[2,-15],ln:5,nf:[8,0,'f'],ff:[-5,0,'t'],nh:[19,-19],fh:[18,-17],ho:[1,1]}),'L','k3m_zlata');
+  b.ellipse(103,70.5,2.4,2,P.q3); b.px(102,69,P.q4); b.ellipse(105,72,2.2,1.7,P.q2);                                          // Zlatas Hände um ihre
   // Licht: Glut aus dem Herd von links, graues Morgenlicht vom Fenster
   M.light(b,M.lf.sum(M.lf.k(-0.9),M.lf.pool(fire[0]+30,fire[1],70,40,1.5,1.2),M.lf.pool(WX+16,WY+12,40,24,1.2,1),M.lf.beam(WX+8,WY+26,104,88,8,26,1.3)));
   b.hl(18,32,fire[1],P.y4); b.hl(19,31,fire[1]+1,P.t4); b.px(24,fire[1],P.y5);
@@ -919,13 +919,15 @@ M.mem.k3_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2811);
   // die Reihe direkt vor uns: Nada am Fenster, daneben der Sitz, auf dem nur ein heller Fleck ist
   seatBack(66,60,76,46,true); seatBack(148,60,74,46,true);
   // Nada: Schultern im dunklen Mantel, graues Haar, zum Fenster geneigt; im Glas ein blasser Widerschein ihres Gesichts
-  b.poly([[44,58],[52,50],[64,47],[78,49],[88,56],[90,62],[42,62]],function(x,y){ return ra(R('k0 k1 k2 m0'),0.35+(x-42)/120+(y-47)/60,x,y); });
-  b.poly([[58,49],[70,48],[71,52],[57,53]],P.m2);
-  headB(b,64,38,8.5,9.5,-1,{skin:[P.p1,P.p2,P.p3,P.p4],hair:[P.m1,P.m2,P.m3,P.m4],lift:0.08});
-  b.ellipse(70,30,3.4,2.8,function(x,y){ return (x+y)%2?P.m3:P.m2; });                                                             // Haarknoten
+  var NB=new M.Buf(w,h,T);
+  NB.poly([[44,62],[50,52],[64,48],[78,50],[88,57],[90,62]],function(x,y){ return ra(R('k0 k1 k2'),0.4+(x-44)/90,x,y); }); NB.poly([[57,50],[71,49],[72,53],[56,54]],P.m1);   // Schultern, Kragen
+  headB(NB,64,38,8.5,9.5,-1,{skin:[P.p0,P.p1,P.p1,P.p2],hair:[P.k2,P.m0,P.m1,P.m2],lift:0});
+  NB.ellipse(70,30,3.4,2.8,function(x,y){ return (x+y)%2?P.m1:P.m0; });                                                               // Haarknoten
+  for (y=0;y<h;y++) for (x=1;x<w;x++){ var c=NB.get(x,y); if (c===T) continue; if (NB.get(x-1,y)===T || (NB.get(x,y-1)===T && x<64)) NB.px(x,y,(y<46)?P.s4:P.s3); }   // Gegenlicht: heller Saum zum Fenster
+  blitA(b,NB,0,0,false,1);
   for (y=30;y<48;y++) for (x=24;x<38;x++){ var d=Math.hypot((x-31)/5,(y-39)/7); if (d<1 && wm.get(x,y) && bayer(x,y)<0.3*(1-d)+0.12) mixPx(b,x,y,P.p3,2); }
   // Mala: nur ein heller Fleck über dem Sitz
-  for (y=22;y<72;y++) for (x=124;x<172;x++){ var d2=Math.hypot((x-148)/19,(y-47)/22); if (d2>1) continue; var k2=Math.round(Math.pow(1-d2,1.3)*7+bayer(x,y)*0.9-0.3); if (k2>0) mixPx(b,x,y,P.l1,Math.min(6,k2)); }
+  for (y=20;y<76;y++) for (x=122;x<174;x++){ var d2=Math.hypot((x-148)/20,(y-48)/(y<48?20:25)); if (d2>1) continue; var k2=Math.round(Math.pow(1-d2,1.1)*7.5+bayer(x,y)*0.9-0.3); if (k2>0) mixPx(b,x,y,P.l1,Math.min(7,k2)); }
   M.light(b,M.lf.sum(M.lf.xband(0,232,0.25,-0.55),M.lf.pool(50,34,70,40,0.5,1)));
   edgeDark(b,1.8); };
 

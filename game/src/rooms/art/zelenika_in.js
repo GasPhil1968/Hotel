@@ -13,14 +13,14 @@ var W=400, H=144, VP=[150,56], RECT=[30,18,384,98], F=100, FY=98;
 var R3=M.room3(VP,F,FY), SPEC={vp:VP,rect:RECT};
 var SPLIT=262;                                         // ab hier Treppenhaus (offen nach oben)
 var DOORU=[4,26,36,98];                                // Tür zum Hof in der linken Wand
-var WIN={x0:40,x1:78,y0:30,y1:68};                     // Fenster der Stube
-var KOM={X0:92,X1:142,Y0:72,Z0:1,Z1:11};               // Kommode
-var PH={x0:94,y0:32};                                  // Fotos über der Kommode
-var CAL={x0:148,y0:36,w:12,h:20};                      // Kalender 2010
-var CLK={x:178,y:30};                                  // Pendeluhr
-var TVC={X0:200,X1:232,Y0:82,Z0:2,Z1:12};              // Fernsehschränkchen
-var TBL={X0:110,X1:156,Y0:80,Z0:24,Z1:44};             // Tisch mit Wachstuch
-var DAVOR=[88,113];                                    // Davor sitzt: Hüfte x, Füße y
+var WIN={x0:36,x1:74,y0:30,y1:68};                     // Fenster der Stube
+var KOM={X0:160,X1:208,Y0:72,Z0:1,Z1:11};              // Kommode
+var PH={x0:162,y0:32};                                 // Fotos über der Kommode
+var CAL={x0:84,y0:36,w:12,h:20};                       // Kalender 2010
+var CLK={x:112,y:30};                                  // Pendeluhr
+var TVC={X0:218,X1:250,Y0:82,Z0:2,Z1:12};              // Fernsehschränkchen
+var TBL={X0:104,X1:150,Y0:80,Z0:24,Z1:44};             // Tisch mit Wachstuch
+var DAVOR=[78,113];                                    // Davor sitzt: Hüfte x, Füße y
 var STAIR={X0:266,X1:322,Y1:60,Z0:0,Z1:20,n:8};        // Treppe hinauf zum Absatz (Y1 = Absatzhöhe)
 var KID={x0:330,x1:374,y0:0,y1:58};                    // Türöffnung zum Kinderzimmer (Bildschirm)
 function rnd(v){ return Math.round(v); }
@@ -45,7 +45,7 @@ var LV={};
 function levels(tod){ if (LV[tod]) return LV[tod]; var a=[], n=7, A=TF[tod]||TF.night, B=TF.lamp;
   for (var i=0;i<n;i++){ (function(t){ a.push(M.tintMake(function(r,g,b){ var p=A(r,g,b), q=B(r,g,b); return [lerp(p[0],q[0],t),lerp(p[1],q[1],t),lerp(p[2],q[2],t)]; })); })(Math.pow(i/(n-1),1.2)); }
   return LV[tod]=a; }
-var LAMP=[136,20];
+var LAMP=[142,20];
 function lampAt(x,y){ var dx=(x-LAMP[0])/120, dy=(y-LAMP[1]-70)/70, d=dx*dx+dy*dy; var a=d<1?Math.pow(1-d,0.9)*0.75:0; var g=Math.hypot((x-LAMP[0])/12,(y-LAMP[1]-4)/6); if (g<1) a=Math.max(a,1-g*0.3); return a; }
 // Lichtstrahl vom Fenster schräg nach rechts unten auf den Boden
 function beamAt(x,y){ var t=(y-WIN.y0)/((FY+18)-WIN.y0); if (t<0||t>1) return 0; var xa=lerp(WIN.x0,WIN.x0+40,t), xb=lerp(WIN.x1,WIN.x1+62,t); if (x<xa||x>xb) return 0; var e=Math.min(x-xa,xb-x)/6; return Math.min(1,e)*(1-t*0.5); }
@@ -173,7 +173,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   b.line(tx+9,ty-19,tx+4,ty-30,P.m3); b.line(tx+12,ty-19,tx+18,ty-29,P.m3); for (x=tx+6;x<tx+20;x+=3) b.px(x,ty-19,P.s6);
   TVR=[tx-4,ty-31,33,34]; TVS=[tx+3,ty-16,15,12];
   // ---- Sofa an der Rückwand links neben dem Fenster? nein: ein Teppich unter dem Tisch
-  b.poly([R3.p(96,FY,20),R3.p(172,FY,20),R3.p(172,FY,58),R3.p(96,FY,58)],function(x,y){ var f=R3.floor(x,y); if (!f) return P.r1; var u=(f.X-96)/76, v=(f.Z-20)/38, e=Math.min(u,1-u,v,1-v); if (e<0.04) return P.y2; if (e<0.09) return ((Math.floor(f.X/3)+Math.floor(f.Z/2))&1)?P.r1:P.b0; var md=Math.abs(u-0.5)*2+Math.abs(v-0.5)*2; if (md<0.45) return md<0.2?P.y2:P.b0; return (((Math.floor(f.X/4)+Math.floor(f.Z/3))%3)===0)?P.r1:P.r2; });
+  b.poly([R3.p(90,FY,20),R3.p(166,FY,20),R3.p(166,FY,58),R3.p(90,FY,58)],function(x,y){ var f=R3.floor(x,y); if (!f) return P.r1; var u=(f.X-90)/76, v=(f.Z-20)/38, e=Math.min(u,1-u,v,1-v); if (e<0.04) return P.y2; if (e<0.09) return ((Math.floor(f.X/3)+Math.floor(f.Z/2))&1)?P.r1:P.b0; var md=Math.abs(u-0.5)*2+Math.abs(v-0.5)*2; if (md<0.45) return md<0.2?P.y2:P.b0; return (((Math.floor(f.X/4)+Math.floor(f.Z/3))%3)===0)?P.r1:P.r2; });
   // ---- Treppe aus Terrazzo mit Holzhandlauf, Absatz und die offene Tür zum Kinderzimmer
   stairs(b,tod);
   kidsRoom(b,tod); for (y=KID.y0;y<KID.y1;y++) for (x=KID.x0;x<KID.x1;x++) REG[y*W+x]=1;
@@ -284,7 +284,7 @@ M.defineArt('zelenika_in',{
     kidsbook:[BOOK[0]-1,BOOK[1]-1,BOOK[2]+2,BOOK[3]+2],
     kidsbed:BED.slice()
   },
-  stands:{ door:[24,120,'L'], letters:[128,118,'B'], drawer:[110,116,'B'], photos:[118,116,'B'], tv:[214,116,'B'], calendar:[154,116,'B'],
+  stands:{ door:[24,120,'L'], letters:[122,118,'B'], drawer:[180,116,'B'], photos:[188,116,'B'], tv:[232,116,'B'], calendar:[90,117,'B'],
     stairs:[258,124,'R'], kidsroom:[258,122,'R'], kidsbook:[258,122,'R'], kidsbed:[258,122,'R'] },
   actorPos:{ davor:[DAVOR[0],DAVOR[1],'R'], lena:[282,124,'L'] },
   start:[26,121,'R'], entries:{ zelenika:[26,121,'R'] }

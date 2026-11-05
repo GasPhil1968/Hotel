@@ -91,7 +91,7 @@ function house(w,x0,x1,sd,we){ var x, y, wet=we==='rain', top=GY-36-Math.floor(h
   slabRoof(w,x0-3,x1+2,top-1,9+Math.floor(hash(sd,2)*5),sd); for (x=x0-2;x<x1+2;x+=3){ w.px(x,top,P.w1); w.px(x,top+1,P.w0); }
   if (hash(sd,6)<0.6){ var cx=x0+6+Math.floor(hash(sd,7)*(x1-x0-12)); w.rect(cx,top-16,4,8,P.s3); w.vl(cx+3,top-16,top-9,P.s1); w.rect(cx-1,top-17,6,2,P.s2); CHIM.push([cx+1,top-18]); } }
 var CHIM=[];
-function paintHouses(w,we){ w.g=RG.bldg; var x=-6, i=0; while (x<W){ var bw=48+Math.floor(hash(i,9)*30); if (x+bw>MIN.x-24 && x<MIN.x+20){ x=MIN.x+20; continue; } house(w,x,x+bw,i*13+5,we); x+=bw+2; i++; }
+function paintHouses(w,we){ w.g=RG.bldg; var x=-6, i=0; while (x<W){ var bw=48+Math.floor(hash(i,9)*30); if (x>=MIN.x-30 && x<MIN.x+20){ x=MIN.x+20; continue; } if (x<MIN.x-30 && x+bw>MIN.x-30) bw=MIN.x-30-x; if (bw>=24) house(w,x,x+bw,i*13+5,we); x+=bw+2; i++; }
   // die Moschee hinter der Lücke: Kuppel, Minarett
   w.g=RG.far; var mx=MIN.x; w.ellipse(mx-14,GY-30,13,10,function(xx,yy){ return yy<GY-35?P.m4:((xx<mx-18)?P.m3:P.m2); }); w.rect(mx-30,GY-30,32,8,P.s4); w.hl(mx-30,mx+1,GY-30,P.s5); w.vl(mx-14,GY-44,GY-40,P.y2); w.px(mx-14,GY-45,P.y3);
   M.scn.minaret(w,mx,MIN.base+20,MIN.h+20,{stone:R('s3 s4 s5 s6'),cap:R('m1 m2 m3 m4')});
@@ -163,10 +163,23 @@ function figure(w,x,by,h,coat,hat,bag,face){ var y, hw; w.g=RG.prop;
   w.ellipse(x+0.5,hy,2.2,2.4,face?P.p3:P.h2); if (face) w.px(x+(face>0?2:-1),hy,P.p2);
   if (hat) w.rect(x-2,hy-3,5,2,hat); else w.hl(x-1,x+1,hy-2,P.h1);
   if (bag){ w.rect(x+3,by-leg-2,4,5,bag); w.px(x+3,by-leg-3,P.k2); } }
-function paintCrowd(w){ figure(w,92,104,34,[P.w0,P.w1,P.w2],P.k2,P.c2,0); figure(w,104,105,32,[P.r0,P.r1,P.r2],null,null,1); figure(w,312,103,33,[P.c0,P.c1,P.c2],P.m1,P.y2,-1); figure(w,432,104,30,[P.g0,P.g1,P.g2],null,P.r2,1);
+function umbrella(w,ux,y0,rw,cols,we){ var x, y; w.g=RG.stall; for (y=y0;y<y0+9;y++){ var hw=(y-y0)*rw/9+3; for (x=rd(ux-hw);x<=rd(ux+hw);x++){ var c=(Math.floor((x-ux)/7+20)%2)?cols[1]:cols[2]; if (y===y0+8) c=cols[0]; if (we==='rain') c=M.DN[c]; w.px(x,y,c); } }
+  VAL.push({x0:rd(ux-rw-3),x1:rd(ux+rw+3),y:y0+9,cols:[cols,cols],stripe:false,small:1}); w.vl(rd(ux),y0+9,112,P.w1); w.vl(rd(ux)+1,y0+9,112,P.w0); }
+function paintCrowd(w,we){ var x, y, k;
+  // Käse und Kajmak links unter einem blauen Schirm
+  umbrella(w,82,62,24,[P.c1,P.c2,P.c3],we); w.g=RG.stall;
+  for (x=62;x<104;x++){ w.px(x,96,P.w4); w.px(x,97,P.w2); w.px(x,98,P.w0); } w.vl(64,99,110,P.w1); w.vl(101,99,110,P.w1);
+  [[68,92],[78,91],[88,92]].forEach(function(c){ w.ellipse(c[0],c[1],4,2.2,P.s6); w.hl(c[0]-3,c[0]+3,c[1]+2,P.s4); w.px(c[0]-1,c[1]-1,P.l1); });
+  for (k=0;k<2;k++){ var bx=94+k*6; w.rect(bx,89,5,7,P.s5); w.hl(bx,bx+4,89,P.s6); w.vl(bx+4,89,95,P.s3); }
+  // Säcke mit Kartoffeln, Zwiebeln und Bohnen rechts, offen
+  w.g=RG.stall; [[396,P.e3,P.e2],[408,P.t4,P.t3],[420,P.s5,P.s4],[402,P.w3,P.w2]].forEach(function(sk,i){ var sx=sk[0], by=i===3?112:108; for (y=by-12;y<by;y++){ var hw=4+Math.sin((y-by+12)/12*Math.PI)*1.6; for (x=rd(sx-hw);x<=rd(sx+hw);x++) w.px(x,y,(x>sx+hw-1.2)?P.e1:(((x+y)%3===0)?P.e2:P.e3)); }
+    for (var q=0;q<10;q++) w.px(sx-3+Math.floor(hash(q,i)*7),by-13+Math.floor(hash(i,q)*2),hash(q,i+3)<0.5?sk[1]:sk[2]); w.hl(sx-3,sx+3,by-12,P.e1); });
+  // Marktleute (gemalt): Käuferinnen mit Taschen, ein Mann mit Mütze, Bauern hinter den Tischen
+  figure(w,82,95,30,[P.w0,P.w1,P.w2],null,null,1); figure(w,112,104,33,[P.c0,P.c1,P.c2],P.k2,null,-1); figure(w,188,104,34,[P.r0,P.r1,P.r2],null,P.c2,0); figure(w,236,103,32,[P.e0,P.e1,P.e2],P.m1,null,0);
+  figure(w,312,103,33,[P.c0,P.c1,P.c2],P.m1,P.y2,-1); figure(w,326,105,31,[P.v0,P.v1,P.v2],null,P.r2,1); figure(w,392,96,30,[P.g0,P.g1,P.g2],P.k2,null,-1); figure(w,436,104,30,[P.g0,P.g1,P.g2],null,P.r2,1);
   // weitere Tische und Säcke der Bauern
-  w.g=RG.stall; for (var x=300;x<330;x++){ w.px(x,98,P.w4); w.px(x,99,P.w2); } w.vl(302,100,108,P.w1); w.vl(327,100,108,P.w1);
-  for (var k=0;k<3;k++){ var sx=301+k*10; for (var y=86;y<98;y++){ var hw=3+Math.sin((y-86)/12*Math.PI)*1.5; for (var xx=rd(sx+4-hw);xx<=rd(sx+4+hw);xx++) w.px(xx,y,(k===1)?P.s5:P.e3); } w.ellipse(sx+4,86,3,1.2,[P.w2,P.s6,P.t3][k]); } }
+  w.g=RG.stall; for (x=300;x<330;x++){ w.px(x,98,P.w4); w.px(x,99,P.w2); } w.vl(302,100,108,P.w1); w.vl(327,100,108,P.w1);
+  for (k=0;k<3;k++){ var sx2=301+k*10; for (y=86;y<98;y++){ var hw2=3+Math.sin((y-86)/12*Math.PI)*1.5; for (var xx=rd(sx2+4-hw2);xx<=rd(sx2+4+hw2);xx++) w.px(xx,y,(k===1)?P.s5:P.e3); } w.ellipse(sx2+4,86,3,1.2,[P.w2,P.s6,P.t3][k]); } }
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, FULL=false;
@@ -178,10 +191,10 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), k, nigh
   w.g=RG.prop; var fx=FOUNT.x, fy=FOUNT.by; w.rect(fx-6,fy-26,12,26,P.s5); w.vl(fx-6,fy-26,fy-1,P.s6); w.vl(fx+5,fy-26,fy-1,P.s3); w.rect(fx-3,fy-22,6,9,P.s3); w.hl(fx-1,fx+2,fy-14,P.t3); w.px(fx+2,fy-13,P.t2);
   w.rect(fx-10,fy-6,20,6,P.s4); w.hl(fx-10,fx+9,fy-6,P.s6); w.hl(fx-9,fx+8,fy-5,P.a3);
   paintFruit(w,we); paintHoney(w,we);
-  if (FULL){ paintCrowd(w); paintNeighbor(w,we); paintZlataBack(w,we,S); }
-  if (S.eggDropped){ w.g=RG.prop; var ex=EGG[0], ey=EGG[1]; w.ellipse(ex,ey,3.5,1.2,P.s6); w.px(ex,ey,P.y4); w.px(ex+1,ey,P.y3); w.px(ex-1,ey,P.y4); w.px(ex+4,ey-1,P.s5); w.px(ex+5,ey-1,P.s4); w.px(ex-4,ey+1,P.s5); w.px(ex-5,ey,P.t5); w.px(ex+3,ey+2,P.t5); }
+  if (FULL){ paintCrowd(w,we); paintNeighbor(w,we); paintZlataBack(w,we,S); }
+  if (S.eggDropped){ w.g=RG.prop; var ex=EGG[0], ey=EGG[1]; w.ellipse(ex,ey,5,1.8,P.s6); w.ellipse(ex+0.5,ey,1.8,1,P.y4); w.px(ex+1,ey,P.y3); w.px(ex-1,ey-1,P.y5); w.hl(ex-4,ex+4,ey+2,P.s3); w.px(ex+4,ey-1,P.s5); w.px(ex+5,ey-1,P.s4); w.px(ex-4,ey+1,P.s5); w.px(ex-5,ey,P.t5); w.px(ex+3,ey+2,P.t5); }
   // Licht
-  var fk=we==='bura'?0.1:(we==='rain'?0.5:(we==='grey'?0.4:0.25)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
+  var fk=we==='bura'?0.1:(we==='rain'?0.5:(we==='grey'?0.4:0.18)), fc=night?P.m1:(we==='rain'?P.m3:(we==='grey'?P.m4:P.b4));
   haze(b,function(xx,yy){ return REG[yy*W+xx]===RG.far?(0.4*fk+0.15):0; },fc);
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(GY,H,0,-0.25),M.lf.pool(FRUIT.x0+30,FRUIT.by-6,46,10,-0.6),M.lf.pool(ZT.x0+20,ZT.by-4,40,9,FULL?-0.5:0),M.lf.pool(HONEY.x0+25,HONEY.by-4,36,8,-0.5)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
@@ -252,7 +265,7 @@ M.defineArt('tepa',{
     neighbor_stand:[NB.x0-2,NB.top-20,NB.x1-NB.x0+4,NB.by-NB.top+21],
     honey:[HONEY.x0-2,HONEY.by-32,HONEY.x1-HONEY.x0+4,33],
     fruit:[FRUIT.x0-2,FRUIT.by-34,FRUIT.x1-FRUIT.x0+4,35],
-    crowd:[84,68,32,38]
+    crowd:[96,66,38,40]
   },
   stands:{ exit:[8,126,'L'], zlata_stand:[262,124,'B'], eggs:[258,124,'B'], walnuts:[240,122,'B'], neighbor_stand:[214,124,'B'], honey:[362,120,'B'], fruit:[146,120,'B'], crowd:[100,120,'B'] },
   actorPos:{ zlata:[ZLATA[0],ZLATA[1],'L','zlata',false,'sit'], susjeda:[SUSJ[0],SUSJ[1],'R'] },
