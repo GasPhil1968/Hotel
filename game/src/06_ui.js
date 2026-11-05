@@ -135,11 +135,11 @@ function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ i
 
 // ---------------------------------------------------------------- Leiste
 var BTN_Y=SH+2, INV_Y=161, SLOT_W=40, SLOT_H=36, INV_X=51, INV_N=6, SW_X=2, SW_W=38;
-var BTNS=[{id:'notes',t:'Notizen',x:4},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
+var BTNS=[{id:'notes',t:'Notizen',x:4},{id:'map',t:'Karte',x:0,right:true},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
 function layoutBtns(){ BTNS[0].t=(E.nbStyle&&E.nbStyle()==='think')?'Nachdenken':'Notizen'; var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); }
 layoutBtns();
 function btnAt(x,y){ if (y<SH||y>=SH+15) return null; for (var i=0;i<BTNS.length;i++){ var b=BTNS[i]; if (x>=b.x-5&&x<b.x+b.w+5) return b.id; } return null; }
-function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
+function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); if (b.id==='map' && M.mapBlocked && M.mapBlocked()) on=false; var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
   fb.rect(x0+1,y0+1,x1-x0-1,y1-y0-1,act?c.sel:P.k1); fb.hl(x0+1,x1-1,y0,c.fr); fb.hl(x0+1,x1-1,y1,c.fr); fb.vl(x0,y0+1,y1-1,c.fr); fb.vl(x1,y0+1,y1-1,c.fr);
   M.text(fb,b.t,b.x,BTN_Y+2,!on?c.dim:((hot||act)?c.hi:c.tx));
   if (b.id==='notes' && Object.keys(GS().noteNew).some(function(k){ return M.NOTES[k]&&M.NOTES[k].show; })){ fb.rect(x1-2,y0-1,3,3,P.r4); } }
@@ -148,7 +148,7 @@ function drawUI(){ if (BTNS.v!==M.trVer){ layoutBtns(); BTNS.v=M.trVer; }   // K
   fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
   if (E.dlg && E.conv) return;
   if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS.filter(function(b){ return b.id==='menu'; })[0],true); return; }
-  var s=E.overlay?(pointer.touch?'(Tippen zum Schließen)':''):(E.pop||drag?'':sentence()); var sw=M.textWidth(s); M.text(fb,s,Math.max(100,Math.floor((W-sw)/2)),SH+4,c.tx);
+  var s=E.overlay?(pointer.touch?'(Tippen zum Schließen)':''):(E.pop||drag?'':sentence()); var sx1=BTNS[1].x-8, sx0=BTNS[0].x+BTNS[0].w+10; while (s.length>1 && M.textWidth(s)>sx1-sx0) s=s.slice(0,-2)+'…'; var sw=M.textWidth(s); M.text(fb,s,Math.max(sx0,Math.min(sx1-sw,Math.floor((W-sw)/2))),SH+4,c.tx);
   BTNS.forEach(function(b){ drawButton(b,true); });
   // Wechsel-Knopf
   drawSwitch();
@@ -189,7 +189,7 @@ function hsOpts(hs){ var room=E.room; if (room.noVerbs) return null; var o=[], g
     if (hs.npc && !gv.talk && E.ACT[hs.npc] && E.ACT[hs.npc].ghost) o.push({t:'Sprich mit',v:'talk'}); }
   else { ['talk','take','open','use','push','read'].forEach(function(v){ if (hs[v]!==undefined) o.push({t:E.VLABEL[v],v:v}); }); if (hs.npc && hs.talk===undefined) o.unshift({t:'Rede mit',v:'talk'}); }
   if (!ex && o.length===0) return null;
-  if (ex && o.length===1 && !(g?(hs.g&&hs.g.look):hs.look)) return null;
+  if (ex && o.length===1) return null;   // reiner Ausgang: der erste Klick geht los, ein zweiter schneller Klick überspringt den Weg
   o.push({t:'Schau an',v:'look'}); return o; }
 function itemOpts(id){ if (isG()) return [{t:'Schau an',v:'look'}]; var it=M.ITEMS[id], o=[{t:'Benutze',pend:true}]; ['read','open','use2'].forEach(function(v){ if (it[v]!==undefined) o.push({t:v==='read'?'Lies':(v==='open'?'Öffne':it.use2Label||'Benutze'),v:v}); }); o.push({t:'Schau an',v:'look'}); return o; }
 function openPop(p){ p.room=E.room; var w=M.textWidth(p.title); p.opts.forEach(function(o){ w=Math.max(w,M.textWidth(o.t)); }); w=Math.max(66,w+14);
@@ -487,7 +487,7 @@ function menuItems(){ var inG=E.screen==='game', sl=E.slot(); return [
   {t:'Röhrenbild: '+(M.crtOn&&M.crtOn()?'an':'aus'),a:function(){ if (M.setCRT) M.setCRT(!M.crtOn()); }},
   {t:'Vollbild',a:function(){ if (M.fullscreen) M.fullscreen(); }},
   {t:langLabel(),a:nextLang},
-  {t:'Hinweis …',dis:!inG||!M.hintsOpen||!M.hintsOpen().length,a:function(){ E.menu=null; E.paused(false); if (M.showHints) M.showHints(); }},
+  {t:'Hinweis …',dis:!inG||E.busy||!M.showHints,a:function(){ E.menu=null; E.paused(false); if (M.showHints) M.showHints('menu'); }},
   {t:'Spielanleitung',a:function(){ E.menu=null; E.paused(false); help(); }},
   {t:'Zum Titelbild',a:function(){ E.menu=null; E.paused(false); E.toTitle(); }}]; }
 function flash(t){ E.msg={t:t,until:E.gt()+1800}; }
@@ -495,7 +495,7 @@ M.flash=flash;
 function menuY0(){ var h=34+menuItems().length*12; return Math.max(4,100-(h>>1)); }
 function drawMenu(){ if (!E.menu) return; dimAll(2); var items=menuItems(), h=34+items.length*12, y0=menuY0(), c=ui();
   fb.rect(70,y0,180,h,P.k1); fb.hl(70,249,y0,c.fr); fb.hl(70,249,y0+h-1,c.fr); fb.vl(70,y0,y0+h-1,c.fr); fb.vl(249,y0,y0+h-1,c.fr);
-  centerText('MALA – Kapitel 1: Split',y0+7,c.hi);
+  centerText(M.chapterOf&&M.chapterOf(GS())===2?'MALA – Kapitel 2: Sarajevo':'MALA – Kapitel 1: Split',y0+7,c.hi);
   items.forEach(function(it,i){ var y=y0+22+i*12, hot=hoverUI==='m:'+i; centerText(it.t,y,it.dis?c.dim:(hot?c.hi:c.tx)); }); }
 function centerText(s,y,c,oc){ M.text(fb,s,160-(M.textWidth(s)>>1),y,c,oc); }
 M.centerText=centerText;
@@ -505,7 +505,10 @@ async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   if (GS().malaOn && !GS().flags['mala.unknown'] && !GS().flags['mala.noSwitch'] && !GS().flags['mala.voice']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
   if (E.nbStyle()==='think') await M.API.m('„Nachdenken“: Ich wähle einen Gedanken und dann einen zweiten, der dazugehört. Passt es, ziehe ich einen Schluss. Im Gespräch kann ich nach jedem Gedanken fragen. Im Menü lässt sich auf ein Notizbuch umschalten.');
   else await M.API.m('„Notizen“ ist mein Notizbuch. Es steht nur drin, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.');
-  await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.');
+  await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann.');
+  await M.API.m('Ein Tipp auf einen Ausgang, und ich gehe hin. Ein zweiter schneller Tipp, ein Doppelklick mit der Maus, und ich bin sofort draußen.');
+  await M.API.m('„Karte“ öffnet den Stadtplan, mit der Maus auch die Taste K. Ein Tipp auf einen Ort, und ich gehe hin. „Schließen“ oder Esc, und ich bleibe.');
+  await M.API.m(GS().malaOn&&!GS().flags['mala.unknown']?'Komme ich nicht weiter, frage ich Mala: „Ich komme gerade nicht weiter.“ Oder im Menü: „Hinweis …“. Sie verrät erst den Weg, dann den Schritt, und nur, wenn ich will.':'Komme ich nicht weiter, ordne ich meine Gedanken: im Menü unter „Hinweis …“. Erst der Weg, dann der Schritt, und nur, wenn ich will.');
  } finally { E.busy=false; } }
 M.help=help;
 
@@ -558,6 +561,7 @@ function uiAt(x,y){
   var ov=E.overlay; if (ov){ var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };
     if (ov.kind==='notebook'){ return nbAt(x,y); }
     if (ov.kind==='puzzle'&&ov.lay){ if (inR(ov.lay.go)) return 'zgo'; if (inR(ov.lay.close)) return 'zx'; for (var z=0;z<ov.lay.rows.length;z++) if (inR(ov.lay.rows[z])) return 'z:'+z; return null; }
+    if (ov.lay && ov.lay.at){ var aid=ov.lay.at(x,y); return aid?'o:'+aid:null; }
     if (ov.lay && ov.lay.hits){ for (var h=0;h<ov.lay.hits.length;h++) if (inR(ov.lay.hits[h].r)) return 'o:'+ov.lay.hits[h].id; return null; }
     return null; }
   if (E.pop && !E.dlg){ var pr=popAt(x,y); if (pr!==null) return pr>=0?'p:'+pr:'pop'; }
@@ -572,10 +576,12 @@ function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay
   if (pointer.y<SH&&pointer.show) hover=E.hotspotAt(pointer.x+Math.round(E.camX),pointer.y); else if (hoverUI&&hoverUI[0]==='i'){ var id=invList()[+hoverUI.slice(2)]; hover=id?{item:id}:null; } else hover=null; }
 M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 // Testhilfe (Touch-Test): welches Bedienelement liegt an x,y; Beschriftungen der Titelzeilen
-M.uiHit=function(x,y){ return uiAt(x,y); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
+M.uiHit=function(x,y){ return uiAt(x,y); }; M.uiHover=function(){ return pointer.show?hoverUI:null; }; M.uiColors=function(){ return ui(); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
 M.pointerDown=function(x,y,touch){ M.audioInit(); pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt()}; M.pointerMove(x,y,touch); };
 M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
-  var pr=press; press=null; if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return; click(x,y); };
+  var pr=press; press=null; if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return;
+  if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
+  click(x,y); };
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
 function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; var id=invList()[+u.slice(2)], dx=x-press.x, dy=y-press.y;
   if (id && !press.swiped && y<INV_Y-6){ E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }
@@ -583,27 +589,30 @@ function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return;
 function dropDrag(id,x,y){ if (!canDrag()||invList().indexOf(id)<0) return; E.pop=null;
   if (y<SH){ var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y); if (!hs) return; E.pending=null; E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,id); return; }
   var u=uiAt(x,y); if (u&&u[0]==='i'){ var other=invList()[+u.slice(2)]; if (other&&other!==id){ E.pending=null; E.doItem('use',id,other); } } }
-var lastExit=null;
-async function click(x,y){
+var lastExit=null, lastTapT=-1e9;
+M.DBL_MS=M.DBL_MS||350;   // Doppelklick-Fenster in ms (300–400 sinnvoll)
+async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (E.menu){ var u=uiAt(x,y); if (u&&u[0]==='m'){ var it=menuItems()[+u.slice(2)]; if (!it.dis){ M.sfx('click'); it.a(); } } else { E.menu=null; E.paused(false); } return; }
   if (E.screen==='title'){ var ut=uiAt(x,y); if (ut&&ut[0]==='t'){ var o=titleItems()[+ut.slice(2)]; if (o&&!o.dis){ M.sfx('click'); o.a(); } } else if (E.titleMode==='about') E.titleMode='main'; return; }
   if (E.screen==='card'){ if (!E.card.noSkip) E.closeCard(); return; }
   if (E.screen==='credits'){ if (E.gt()-E.creditsAt>3000) creditsDone(); return; }
   if (E.screen!=='game') return;
   var ov=E.overlay;
-  if (ov){ if (ov.kind==='notebook'){ await notebookTap(x,y); return; }
+  if (ov){ if (ov.kind==='map'){ var um=uiAt(x,y); M.mapTap(ov,um&&um.slice(0,2)==='o:'?um.slice(2):null); return; }
+    if (ov.kind==='notebook'){ await notebookTap(x,y); return; }
     if (OVTAP[ov.kind]){ var uo=uiAt(x,y); OVTAP[ov.kind](ov,uo&&uo.slice(0,2)==='o:'?uo.slice(2):null); return; }
     if (ov.kind==='memory'){ var n=(ov.data.lines||[]).length; if (ov.step<n-1){ ov.step++; M.sfx('shimmer'); } else E.closeOverlay(); return; }
     if (ov.kind==='puzzle'){ var u2=uiAt(x,y); if (!u2) return; if (u2==='zx'){ E.closeOverlay(null); return; } if (u2==='zgo'){ var gap=ov.sel.indexOf(-1); if (gap>=0){ ov.bad=gap; ov.msg='Da fehlt noch etwas.'; M.sfx('nope'); return; } var res=ov.data.check?ov.data.check(ov.sel):{ok:true}; if (res&&res.ok){ E.closeOverlay(ov.sel.slice()); } else { ov.bad=res?res.bad:-1; ov.msg=res&&res.msg; M.sfx('nope'); } return; }
       if (u2[0]==='z'){ var zi=+u2.slice(2); ov.sel[zi]=(ov.sel[zi]<0?0:(ov.sel[zi]+1)%ov.data.slots[zi].length); ov.bad=-1; ov.msg=null; M.sfx('page'); } return; }
     E.closeOverlay(); return; }
-  if (E.speech && (E.busy||E.dlg)){ if (E.gt()-E.speech.at>200) E.endSpeech(); return; }
+  if (E.speech && (E.busy||E.dlg)){ if (E.gt()-E.speech.at>200 && now0-prevTap>M.DBL_MS) E.endSpeech(); return; }   // der zweite Tipp eines Doppeltipps überspringt keinen Satz
   if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
   var uiH=uiAt(x,y);
   if (E.pop){ var pr=popAt(x,y); if (pr!==null){ if (pr>=0){ M.sfx('click'); popPick(E.pop,E.pop.opts[pr]); } return; } E.pop=null; if (!uiH || y<SH) { if (y<SH) return; } }
   if (uiH==='notes'){ if (!E.busy) E.openNotes(); return; }
   if (uiH==='reveal'){ reveal={at:E.gt()}; M.sfx('click'); return; }
   if (uiH==='menu'){ E.menu=true; E.paused(true); return; }
+  if (uiH==='map'){ M.sfx('click'); if (M.toggleMap) M.toggleMap(); return; }
   if (uiH==='sw'){ E.switchChar(); return; }
   if (uiH==='up'){ if (E.invTop>0){ E.invTop--; M.sfx('page'); } return; }
   if (uiH==='dn'){ var pages=Math.ceil(invList().length/INV_N); if (E.invTop<pages-1){ E.invTop++; M.sfx('page'); } return; }
@@ -613,18 +622,25 @@ async function click(x,y){
     if (E.pending===id){ E.pending=null; return; }
     var opts=itemOpts(id); var sx=INV_X+((+uiH.slice(2))%INV_N)*SLOT_W+SLOT_W/2; openPop({title:M.ITEMS[id].name,opts:opts,item:id,x:sx,y:INV_Y}); return; }
   if (y>=SH) return;
+  if (now0<(E.sceneBlockUntil||0)) return;   // gleich nach einem Ortswechsel: ein nachgereichter Klick wirkt nicht im neuen Raum
   var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y);
   if (E.pending){ var pid=E.pending; E.pending=null; if (hs){ E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,pid); } return; }
   if (!hs){ E.actionTok(); E.walkPlayerTo(wx,y); return; }
   E.setLastClick([wx,y]);
   var ex=isG()?(hs.gexit||(hs.exit&&hs.exit.gok?hs.exit:null)):hs.exit; if (typeof ex==='function') ex=ex(M.RS(E.room.id),GS());
   var opts2=hsOpts(hs);
-  if (!opts2){ if (ex){ var now=E.gt(); if (lastExit&&lastExit.hs===hs&&now-lastExit.t<700){ fastExit(hs,ex); return; } lastExit={hs:hs,t:now}; E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); return; }
+  if (!opts2){ if (ex){ var key=E.exitKey(hs);
+      if (lastExit&&lastExit.key===key&&now0-lastExit.t<=M.DBL_MS){ lastExit=null; E.skipExitWalk(key); return; }   // Doppelklick: Rest des Weges überspringen, keine zweite Prüfung
+      lastExit={key:key,t:now0}; dblTip(hs); E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); return; }
     // reiner Blickfang: einfach ansehen
     E.actionTok(); E.doVerb('look',hs); return; }
   openPop({title:E.nameOf(hs),opts:opts2,hs:hs,x:x,y:y}); }
-function fastExit(hs,ex){ var p=E.player(); if (!p) return; var st=hs.st; if (typeof st==='function') st=st(M.RS(E.room.id),GS()); if (st){ p.x=st[0]; p.y=st[1]; } E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); }
-M.key=function(k){ if (k==='Escape'){ if (E.overlay) E.closeOverlay(null); else if (E.menu){ E.menu=null; E.paused(false); } else if (E.screen==='game'){ E.menu=true; E.paused(true); } return; }
+// einmalige Erklärung, beim ersten längeren Weg zu einem Ausgang (pro Gerät, nicht im Spielstand)
+function dblTip(hs){ var seen=false; try{ seen=localStorage.getItem('mala.dblTip')==='1'; }catch(e){} if (seen||M.TEST) return; var p=E.player(), st=E.hsStand?E.hsStand(hs):null; if (!p||!st||Math.abs(p.x-st[0])+Math.abs(p.y-st[1])<50) return;
+  try{ localStorage.setItem('mala.dblTip','1'); }catch(e){} E.msg={t:pointer.touch?'Zweimal schnell auf einen Ausgang tippen: Ich gehe sofort hinaus.':'Doppelklick auf einen Ausgang: Ich gehe sofort hinaus.',until:E.gt()+4200}; }
+M.key=function(k){ var kl0=String(k).toLowerCase(); if (k==='Escape'){ if (E.overlay&&E.overlay.kind==='map'){ if (!E.overlay.data.acting) M.closeMap(); return; } if (E.overlay) E.closeOverlay(null); else if (E.menu){ E.menu=null; E.paused(false); } else if (E.screen==='game'){ E.menu=true; E.paused(true); } return; }
   if (E.screen!=='game'||E.menu) return; if (k===' '||k==='Enter'){ if (E.speech) E.endSpeech(); return; }
+  if (kl0==='k' && E.overlay && E.overlay.kind==='map'){ M.toggleMap(); return; }
+  if (kl0==='k' && !E.overlay && !E.dlg){ M.toggleMap(); return; }   // K: Karte (meldet selbst, wenn sie gerade nicht geht)
   if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ E.switchChar(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
 })(M);

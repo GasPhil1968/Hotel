@@ -40,8 +40,19 @@ STEUERUNG
 - Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit
   wirklich etwas tun, erscheint stattdessen ein kleines Menü mit genau
   diesen Aktionen ("Nimm", "Öffne", "Benutze", "Rede mit", "Lies" …).
-- Boden antippen: hingehen. Ausgang antippen: hinausgehen.
-  Zweimal schnell auf einen Ausgang tippen = sofort da.
+- Boden antippen: hingehen. Ausgang antippen: Marko geht sofort los.
+  Zweimal schnell auf denselben Ausgang tippen (mit der Maus: Doppelklick)
+  = der Rest des Weges entfällt, er ist gleich draußen. Gesperrte Ausgänge
+  bleiben gesperrt; die Absage kommt nur einmal.
+- „Karte“ (unten rechts, am Rechner auch Taste K): der Stadtplan.
+  Ein Tipp auf einen Ort, und Marko geht hin. „Schließen“ oder Esc: er bleibt.
+  Auf dem Plan stehen nur Orte, die Marko kennt:
+    · Ring = hier ist er gerade
+    · gestrichelter Ring = gerade nicht (Uhrzeit, Begleitung, etwas steht an);
+      ein Tipp sagt, warum
+    · Schloss = bekannt, aber noch nicht erreichbar; ein Tipp sagt, warum
+  Aus Innenräumen (Hafenbüro, Kafana, Ivkas Wohnung …) zeigt der Plan nur,
+  wo man ist. Reisen geht von der Straße aus.
 - Gegenstand aus der Leiste mit dem Finger auf ein Ziel ziehen = benutzen
   oder geben (auch auf einen anderen Gegenstand oder auf Mala).
   Oder: Gegenstand antippen, "Benutze", dann das Ziel antippen.
@@ -98,9 +109,13 @@ DAS NOTIZBUCH ("Notizen")
 HILFE
 - Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
   mit Mala nachsehen, im Notizbuch Notizen verbinden.
-- In Sarajevo: „Menü“ → „Hinweis …“ zeigt die offenen Probleme. Jedes Mal,
-  wenn man eines wählt, kommt eine Stufe mehr (drei Stufen: woran man
-  hängt, wo man suchen kann, ein konkreter Denkanstoß). Nie ungefragt.
+- Hinweise auf Wunsch, in beiden Kapiteln: Mala ansprechen und „Ich komme
+  gerade nicht weiter.“ wählen, oder „Menü“ → „Hinweis …“. Ist Mala nicht
+  da, ordnet Marko seine Gedanken allein.
+  Vier Stufen je Problem: worum es geht, in welche Richtung man denken kann,
+  ein konkreter Ansatz, und erst nach einer Rückfrage der nächste Schritt.
+  Jede Stufe lässt sich wiederholen. Nie ungefragt, und ein Hinweis
+  erledigt nichts: Tun muss man es selbst.
 - Nicht jedes Rätsel ist eine Auswahl: Manches ordnet man (Briefe), legt
   man zusammen (ein zerrissenes Foto) oder liest man mit einer Schrifttafel.
   Antippen genügt immer.
@@ -116,8 +131,8 @@ HILFE
 - Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
 
 TASTATUR (am Rechner)
-- Tab oder M = Figur wechseln · N = Notizbuch · Z = Zeigen
-- Leertaste = Satz überspringen · Esc = Menü
+- Tab oder M = Figur wechseln · N = Notizbuch · Z = Zeigen · K = Karte
+- Leertaste = Satz überspringen · Esc = Menü (schließt auch Karte und Notizbuch)
 
 SPIELSTÄNDE
 - Drei Speicherplätze für beide Kapitel. Das Spiel speichert bei jedem

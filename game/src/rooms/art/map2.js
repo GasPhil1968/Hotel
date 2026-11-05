@@ -66,7 +66,7 @@ M.paintMap2=function(S,GS){ var b=new M.Buf(320,144,P.k0), x, y, i;
   M.microText(b,'SARAJEVO',22,115,P.e0); M.microText(b,'2011',30,122,P.r2);
   var cx=30, cy=28; b.line(cx,cy-9,cx,cy+9,P.e1); b.line(cx-9,cy,cx+9,cy,P.e1); b.poly([[cx,cy-10],[cx+2,cy],[cx,cy+10],[cx-2,cy]],P.r2); b.poly([[cx,cy],[cx+2,cy],[cx,cy+10],[cx-2,cy]],P.e1); M.text(b,'N',cx-2,cy-19,P.e1);
   // Symbole und Namen
-  ORDER.forEach(function(id){ drawIcon2(b,id,known(id)); });
+  ORDER.forEach(function(id){ var v=M.mapIconVis?M.mapIconVis(id,GS):known(id); if (v!==null) drawIcon2(b,id,v); });   // unbekannte Orte erscheinen nicht
   M.light(b,M.lf.sum(M.lf.pool(176,72,210,110,1.1),M.lf.vignette(320,144,2.2),M.lf.k(-0.3)));
   return b; };
 
@@ -87,5 +87,5 @@ function drawIcon2(b,id,on){ var p=M.MAP2_POS[id], x=p[0], y=p[1], c=on?P.k1:P.e
     case 'pansion': b.rect(x-4,y-2,9,7,f); b.poly([[x-5,y-2],[x,y-7],[x+5,y-2]],c); b.px(x,y+1,lt); b.hl(x-5,x+5,y+5,c); b.vl(x+3,y-7,y-4,c); break;
     case 'vratnik': for (var yy=y-3;yy<=y+5;yy++) for (var xx=x-7;xx<=x+7;xx++){ var dx=(xx+0.5-x)/7.5; if (yy>y+5-Math.sqrt(Math.max(0,1-dx*dx))*3) continue; b.px(xx,yy,(xx===x-7||xx===x+7||yy===y-3)?c:(on?(((xx+yy)%4===0)?P.e3:P.y2):f)); }
       for (i=-7;i<=6;i+=3) b.rect(x+i,y-5,2,2,c); b.hl(x-7,x+7,y-3,c); for (var q2=-6;q2<=6;q2++) b.px(x+q2,rnd(y+5-Math.sqrt(Math.max(0,1-q2*q2/56))*3)+1,c); b.vl(x+3,y-10,y-6,c); b.rect(x+4,y-10,3,2,on?P.r3:c); break; }
-  if (on){ var nm=NAMES[id], w=M.textWidth(nm); M.text(b,nm,Math.max(10,Math.min(306-w,x-(w>>1))),y+8,P.k1,P.s5); } }
+  if (on && !M.mapNoNames){ var nm=NAMES[id], w=M.textWidth(nm); M.text(b,nm,Math.max(10,Math.min(306-w,x-(w>>1))),y+8,P.k1,P.s5); } }
 })(M);

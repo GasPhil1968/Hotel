@@ -94,7 +94,7 @@ function check(ok, what, info) { if (ok) { pass++; out.push('  ok   ' + what); }
       await D.ev((h) => { M.GS.flags['split.intro.health'] = h; delete M.GS.flags['split.afterIvka.bar']; M.GS.seen['bar:barC1'] = 1; M.__speechLog = []; }, h);
       await D.travel('bar'); await D.drain(); const l = await D.ev(() => (M.__speechLog || []).filter(x => /sanja/.test(x[0])).map(x => x[1]));
       check(re.test(l[0] || '') && l.some(t => /Gestern Abend warst du noch grau/.test(t)), 'Antwort „' + h + '“ → passende Begrüßung', JSON.stringify(l.slice(0, 2)));
-      await D.exit('door'); await D.drain(); }
+      await D.exit('door'); await D.drain(); await D.travel('flat'); await D.drain(); }   // wieder hinein: erst weg (der aktuelle Ort auf dem Plan betritt den Raum nicht neu)
     // ---------------------------------------------------------------- 7. der neue mitgelieferte Stand (mit dem neuen Einstieg erzeugt)
     out.push('7. Neuer mitgelieferter Ivka-Stand');
     await D.ev(() => { M.E.loadPreset('ivka', 2); }); await D.drain();

@@ -35,10 +35,14 @@ window.addEventListener('resize',fit); window.addEventListener('orientationchang
 function toLogical(e){ var r=cv.getBoundingClientRect();
   if (rot) return [(e.clientY-r.top)/r.height*320,(r.right-e.clientX)/r.width*200];   // im Uhrzeigersinn gedreht: x läuft nach unten, y nach links
   return [(e.clientX-r.left)/r.width*320,(e.clientY-r.top)/r.height*200]; }
-var locked=false; cv.addEventListener('pointerdown',function(e){ e.preventDefault(); if (!locked){ locked=true; lockLandscape(); } try{ cv.setPointerCapture(e.pointerId); }catch(_){} var p=toLogical(e); M.pointerDown(p[0],p[1],e.pointerType!=='mouse'); });
-cv.addEventListener('pointermove',function(e){ var p=toLogical(e); M.pointerMove(p[0],p[1],e.pointerType!=='mouse'); });
-cv.addEventListener('pointerup',function(e){ e.preventDefault(); var p=toLogical(e); M.pointerUp(p[0],p[1],e.pointerType!=='mouse'); });
+// nur der erste Finger zählt: ein zweiter Finger oder eine nachgereichte Mausnachbildung löst keine zweite Aktion aus
+var locked=false; cv.addEventListener('pointerdown',function(e){ e.preventDefault(); if (e.isPrimary===false) return; if (!locked){ locked=true; lockLandscape(); } try{ cv.setPointerCapture(e.pointerId); }catch(_){} var p=toLogical(e); M.pointerDown(p[0],p[1],e.pointerType!=='mouse'); });
+cv.addEventListener('pointermove',function(e){ if (e.isPrimary===false) return; var p=toLogical(e); M.pointerMove(p[0],p[1],e.pointerType!=='mouse'); });
+cv.addEventListener('pointerup',function(e){ e.preventDefault(); if (e.isPrimary===false) return; var p=toLogical(e); M.pointerUp(p[0],p[1],e.pointerType!=='mouse'); });
 cv.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+// Doppeltipp auf dem Spielbild zoomt nicht (nur auf dem Canvas; das Spiel wertet Doppeltipps selbst über pointerup aus)
+cv.addEventListener('dblclick',function(e){ e.preventDefault(); });
+var lastTouchEnd=0; cv.addEventListener('touchend',function(e){ var t=Date.now(); if (t-lastTouchEnd<450) e.preventDefault(); lastTouchEnd=t; },{passive:false});
 document.addEventListener('keydown',function(e){ if (e.key===' '||e.key==='Tab') e.preventDefault(); M.key(e.key); });
 document.addEventListener('touchmove',function(e){ if (e.target===cv) e.preventDefault(); },{passive:false});
 document.addEventListener('touchend',function(){ try{ M.audioInit(); }catch(_){} },{passive:true});

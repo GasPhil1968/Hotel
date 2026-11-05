@@ -36,7 +36,7 @@ async function talkIvanG(A){ var I=A.npc('ivan'), p=A.G.phase;
   await A.menuLoop(function(){ return [
     {t:'Was lesen Sie?',once:'iv1',go:async function(A){ await I.say('Rilke. Durch das Glas. Es ist nicht ideal, aber es ist mein Exemplar. Das heißt, das der Bibliothek.'); await I.say('Ich muss es zurückgeben. Die Frist läuft ab.'); A.note('s2_due'); }},
     {t:'Wann läuft die Frist ab?',once:'iv2',if:A.hasNote('s2_due'),go:async function(A){ await I.say('Am siebten September. Ich habe noch zwei Wochen. Und eine Zeile.'); await I.say('Ich übersetze die Elegien. Seit vierzig Jahren. Eine Zeile fehlt mir noch.'); }},
-    {t:'Wer sind Sie?',once:'iv3',go:async function(A){ await I.say('Barać. Ivan. Germanist, pensioniert. Ich wohne an der Obala, Nummer vierzehn, zweiter Stock. Meine Leserkarte ist 2204.'); }},
+    {t:'Wer sind Sie?',once:'iv3',go:async function(A){ await I.say('Barać. Ivan. Germanist, pensioniert. Ich wohne an der Obala, Nummer vierzehn, zweiter Stock. Meine Leserkarte ist 2204.'); A.unlock('obala'); }},
     {t:'Die Bibliothek ist geschlossen, Professor.',if:A.hasNote('s2_fire')||A.hasNote('s2_noreturn'),go:async function(A){ I.agitate(2600); await I.say('Geschlossen. Ja. Wieder geschlossen. Heute auch.'); await A.wait(700); await I.say('Ich gehe jeden Tag hin. Ich lege das Buch auf die Theke. Und keiner nimmt es.'); A.setFlag('k2.s2.ivanDesk'); }},
     {t:'(Schweigen.)',bye:true}
   ]; }); }
@@ -54,7 +54,7 @@ M.k2PhotoStopMala=async function(A){ if (A.hasNote('m2_f_voice')) return A.g('Ha
   A.note('m2_f_voice'); await A.g('Halt dich fest, Mali.'); await A.wait(700); await A.g('Das war meine Stimme. Ich habe das gerufen.'); await A.m('Mali.'); await A.g('Kennst du das Wort?'); await A.m('Jeder kennt es. „Kleiner.“'); await A.g('Nein. Ich meine: Kennst du es?'); await A.m('…'); };
 async function readLedger(A){ if (!A.flag('k2.s2.ledgerOk')) return A.m('Jakobs Ankaufbuch. Ohne seine Erlaubnis lese ich nicht darin. Ich kenne Leute, die für so etwas aus Läden geworfen werden. Mich zum Beispiel.');
   await A.doc({style:'log',title:'Knjiga otkupa 2004',lines:['12.III. Ostavština prof. I. B., Obala 14/II','        – 212 knjiga, njemačka i austrijska književnost','        – prodavač: P. Barać, Beč, tel. +43 1 …','        – među njima: Rilke, Duineser Elegien, Insel 1923','          (pečat NUB BiH, NE PRODAVATI?)']});
-  await A.m('Nachlass Professor I. B., Obala 14. Verkauft von P. Barać, Wien, mit Telefonnummer.'); await A.m('Und neben dem Rilke, mit Bleistift, in Jakobs Schrift: „Stempel NUB BiH. Nicht verkaufen?“'); A.note('s2_ledger'); }
+  await A.m('Nachlass Professor I. B., Obala 14. Verkauft von P. Barać, Wien, mit Telefonnummer.'); await A.m('Und neben dem Rilke, mit Bleistift, in Jakobs Schrift: „Stempel NUB BiH. Nicht verkaufen?“'); A.note('s2_ledger'); A.unlock('obala'); }   // die Adresse bringt die Obala auf den Stadtplan (vorher fehlte sie am Tag)
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'door',name:'Tür',exit:{to:'ferhadija'},look:'Die Ladentür zur Passage. Die Glocke darüber hängt still.'},

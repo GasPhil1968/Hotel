@@ -22,6 +22,7 @@ M.k2MalaToMarko=async function(A){ if (F(A,'k2.f2.memory')) return A.g('Ich bin 
 M.k2TalkToMala=async function(A){ var p=A.G.phase;
   if (await M.k2FragNinth(A)) return;
   await A.menuLoop(function(){ return [
+    M.hintTalkOpt(A),   // Hinweise in vier Stufen (15_hints.js)
     // Prolog
     {t:'Warum bist du aus dem Bus gestiegen?',once:'mg1',if:p==='k2_pro'||p==='k2_pro_n',go:async function(A){ await A.g('Ich bin nicht ausgestiegen. Ich war plötzlich draußen. Bei den Hochhäusern. Und dann bin ich gelaufen, die ganze Strecke, an den Gleisen entlang.'); await A.m('Den ganzen Weg?'); await A.g('Für mich ist es nicht weit. Für mich ist nichts weit, außer dir.'); }},
     {t:'Kennst du Sarajevo?',once:'mg2',if:p==='k2_pro'||p==='k2_pro_n'||p==='k2_s1',go:async function(A){ await A.g('Ich kenne die Gerüche. Kohle, Kaffee, Ćevapi, nasse Mäntel. Ich kenne, wie die Straßenbahn in der Kurve quietscht.'); await A.g('Die Straßen kenne ich nicht. Als hätte jemand den Stadtplan aus meinem Kopf geschnitten und nur die Gerüche übrig gelassen.'); }},

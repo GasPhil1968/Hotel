@@ -93,7 +93,7 @@ M.MAPLOCS=[
   {id:'riva',    name:'Riva',                  x:200,y:84, to:'riva',     at:null, icon:'palm'},
   {id:'matejuska',name:'Matejuška',            x:146,y:86, to:'matejuska',at:null, icon:'boat'},
   {id:'sustipan',name:'Sustipan',              x:116,y:112,to:'sustipan', at:null, icon:'pine'},
-  {id:'bar',     name:'Bar „Bura“',            x:166,y:62, to:'bar',      at:null, icon:'cup'},
+  {id:'bar',     name:'Bar „Bura“',            x:158,y:57, to:'bar',      at:null, icon:'cup'},   // etwas abgerückt: eigene Tippfläche neben der Wohnung
   {id:'oldtown', name:'Altstadt – Peristil',   x:214,y:62, to:'oldtown',  at:null, icon:'tower'},
   {id:'terminal',name:'Fährhafen & Busbahnhof',x:262,y:94, to:'terminal', at:null, icon:'ferry'},
   {id:'palma',   name:'Hotel Palma',           x:70, y:104,to:'palma',    at:null, icon:'hotel'}
@@ -140,7 +140,7 @@ function paintMap(S,GS){ var b=new M.Buf(320,144,P.k0);
   b.rect(16,118,58,16,P.s5); b.hl(16,73,118,P.e1); b.hl(16,73,133,P.e1); b.vl(16,118,133,P.e1); b.vl(73,118,133,P.e1); M.microText(b,'SPLIT',30,121,P.e0); M.microText(b,'2011',34,127,P.e2);
   var cx=290,cy=24; b.line(cx,cy-9,cx,cy+9,P.e1); b.line(cx-9,cy,cx+9,cy,P.e1); b.poly([[cx,cy-10],[cx+2,cy],[cx,cy+10],[cx-2,cy]],P.r2); M.text(b,'N',cx-2,cy-19,P.e1);
   M.microText(b,'MARJAN',37,53,P.g5); M.microText(b,'MARJAN',36,52,P.g0); M.microText(b,'LUKA',190,100,P.a1); M.microText(b,'KANAL BRAČ',196,128,P.a2);
-  M.MAPLOCS.forEach(function(L){ drawIcon(b,L,!!GS.map[L.id]); });
+  M.MAPLOCS.forEach(function(L){ var v=M.mapIconVis?M.mapIconVis(L.id,GS):!!GS.map[L.id]; if (v!==null) drawIcon(b,L,v); });   // unbekannte Orte erscheinen nicht
   M.light(b,M.lf.sum(M.lf.pool(170,64,200,110,1.1),M.lf.vignette(320,144,2.2),M.lf.k(-0.3)));
   return b; }
 function drawIcon(b,L,on){ var x=L.x, y=L.y, c=on?P.k1:P.e3, f=on?P.r2:P.e4;
@@ -154,7 +154,7 @@ function drawIcon(b,L,on){ var x=L.x, y=L.y, c=on?P.k1:P.e3, f=on?P.r2:P.e4;
     case 'tower': b.rect(x-2,y-12,5,13,f); b.poly([[x-2,y-12],[x,y-16],[x+2,y-12]],c); b.px(x,y-8,on?P.y4:c); break;
     case 'ferry': b.poly([[x-8,y-3],[x+8,y-3],[x+6,y],[x-6,y]],on?P.s6:f); b.rect(x-4,y-6,8,3,on?P.s5:f); b.rect(x+2,y-8,2,2,on?P.r3:c); break;
     case 'hotel': b.rect(x-5,y-9,11,10,f); for (var i=0;i<3;i++){ b.px(x-3+i*3,y-6,on?P.y4:c); b.px(x-3+i*3,y-3,on?P.y4:c); } b.hl(x-6,x+6,y-10,c); break; }
-  if (on) M.text(b,L.name,Math.max(10,Math.min(306-M.textWidth(L.name),x-(M.textWidth(L.name)>>1))),y+3,P.k1,P.s5); }
+  if (on && !M.mapNoNames) M.text(b,L.name,Math.max(10,Math.min(306-M.textWidth(L.name),x-(M.textWidth(L.name)>>1))),y+3,P.k1,P.s5); }   // im Stadtplan setzt 17_map.js die Namen selbst (ohne Überlappung)
 M.defineRoom({ id:'map', name:'Stadtplan', width:320, noActor:true, noVerbs:true, noSave:true, noSwitch:true, noGhostView:true, prompt:'Wohin?', verbText:'Gehe zu',
   paint:function(S,GS){ return paintMap(S,GS); }, walk:function(){ return false; }, scape:'map',
   hotspots:M.MAPLOCS.map(function(L){ return {id:'loc_'+L.id,name:L.name,vis:function(S,GS){ return !!GS.map[L.id]; },r:[L.x-16,L.y-16,32,30],

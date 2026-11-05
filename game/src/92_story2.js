@@ -47,6 +47,7 @@ M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.ma
     await A.m(A.cycle('mVoiceT',['Ich rede nicht mit Lichtflecken.','Wenn ich antworte, ist es wahr. Also antworte ich nicht.','Nein.']));
     return A.g(A.cycle('mVoiceA',['Du hast trotzdem hingesehen.','Ich warte. Ich kann gut warten.','Das ist auch eine Antwort.'])); }
   if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.menuLoop(function(){ return [
+    M.hintTalkOpt(A),   // Hinweise in vier Stufen (15_hints.js)
     {t:'Was willst du von mir?',once:'dn1',go:async function(A){ await A.g('Nichts. Sie braucht etwas. Nicht ich.'); await A.m('Sie braucht einen Arzt. Und ich auch.'); }},
     {t:'Du bist eine Einbildung.',once:'dn2',go:async function(A){ await A.g('Vielleicht.'); await A.wait(700); await A.g('Dann eine, die dir nichts tut.'); }},
     {t:'Woher wusstest du das mit „achtundvierzig“?',once:'dn3',if:A.flag('c1.logRead'),go:async function(A){ await A.g('Ich habe nachgesehen.'); await A.m('Zufall. Ein Praktikant mit einem Zahlendreher.'); await A.g('Ja. Zufall.'); }},
@@ -55,6 +56,7 @@ M.talkToMala=async function(A){ var p=A.G.phase; if (p==='epi' && A.flag('epi.ma
     {t:'Geh weg.',bye:true,go:async function(A){ await A.g('Nicht weit.'); }}
   ]; });
   await A.menuLoop(function(){ return [
+    M.hintTalkOpt(A),
     {t:'Wie lange bist du schon in meiner Nähe?',once:'mt1',if:p!=='epi',go:async function(A){ await A.g('Lange genug, um zu wissen, dass du deinen Kaffee zu stark machst.'); await A.m('Das ist keine Antwort.'); await A.g('Nein.'); }},
     {t:'Wo bist du, wenn ich dich nicht sehe?',once:'mt2',if:p!=='pro_night',go:async function(A){ await A.g('In der Nähe. Am Wasser, meistens.'); await A.g('Ich mag die Fähren nicht. Ich gehe trotzdem hin.'); A.note('m_horn',true); }},
     {t:'Warum zuckst du bei den Glocken zusammen?',once:'mt3',if:A.hasNote('m_bells')||A.hasNote('m_horn'),go:async function(A){ await A.wait(900); await A.g('Weil sie laut sind.'); await A.m('Das ist nicht der Grund.'); await A.g('Für heute schon.'); }},

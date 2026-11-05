@@ -95,7 +95,7 @@ var HS=[
    talk:async function(A){ var St=A.npc('student'); await St.say(A.cycle('stT',['Was? Sorry. Was?','Nein, die fährt bis zur Baščaršija. Endstation.','Splićanin? Hajduk? Hmm. Željo.'])); },
    g:{look:'Er hört Musik von damals. Er weiß es nicht.'}}
 ];
-M.room('tramvaj',{ name:'Straßenbahn', scape:'k2_tram', noSave:false,
+M.room('tramvaj',{ name:'Straßenbahn', noMap:'Nicht während der Fahrt.', scape:'k2_tram', noSave:false,
   music:function(G){ return night(G)?'k2_finale':'k2_sarajevo'; },
   state:function(G){ return {line:'1',moving:true,view:'city'}; },
   actors:function(S,G){ var L=[]; if (!night(G)){ var b=M.apos('tramvaj','babica',[90,120,'R']); L.push({id:'babica',ch:'babica',x:b[0],y:b[1],f:b[2]||'R',name:'Alte Frau',idle:'sit',speechY:38});

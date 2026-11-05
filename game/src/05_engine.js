@@ -18,7 +18,7 @@ M.definePhases=function(o){ Object.keys(o).forEach(function(k){ M.PHASES[k]=o[k]
 
 // ---------------------------------------------------------------- Spielstand
 function freshGame(){ return { v:1, phase:'pro', tod:'day', active:'marko', malaOn:false, pos:{marko:{room:null,x:160,y:120,f:'R'},mala:{room:null,x:150,y:120,f:'R'}},
-  flags:{}, inv:[], notes:[], noteNew:{}, rooms:{}, seen:{}, cyc:{}, playMs:0, map:{}, ended:false }; }
+  flags:{}, inv:[], notes:[], noteNew:{}, rooms:{}, seen:{}, cyc:{}, playMs:0, map:{}, mapKnown:{}, hints:{}, ended:false }; }
 M.freshGame=freshGame;
 var GS=freshGame(); M.GS=GS;
 var room=null, S={};
@@ -316,7 +316,7 @@ async function menuLoop(getOpts){
   for (var guard=0;guard<80;guard++){
     var opts=getOpts().filter(function(o){ return o && !(('if' in o) && !o.if) && !(o.once && GS.seen['dlg:'+o.once]); });
     if (!opts.length) return;
-    var i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!o.ask}; }));
+    var i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!(o.ask||o.noGray)}; }));
     var o=opts[i]; if (o.once) GS.seen['dlg:'+o.once]=1;
     if (o.ask){ var nid=await pickNote(o.askTitle); if (nid){ var r0=await o.ask(API,nid); if (r0==='bye') return; } continue; }
     if (o.go){ var r=await o.go(API); if (r==='bye') return; }
@@ -335,7 +335,7 @@ E.VLABEL=VLABEL;
 var M_VERBS=['talk','take','open','use','push','read'], G_VERBS=['talk','sense','listen'];
 function hsRect(h){ if (h.npc){ var a=ACT[h.npc]; if (!a||!actorShown(a)) return null; if (h.r) return typeof h.r==='function'?h.r(S,GS,a):h.r; var hh=h.hgt||48; return [Math.round(a.x)-8,Math.round(a.y)-hh,16,hh]; }
   return typeof h.r==='function'?h.r(S,GS):h.r; }
-E.hsRect=hsRect;
+E.hsRect=hsRect; E.hsStand=function(h){ return hsStand(h); };
 function hsVisible(h){ if (h.vis && !h.vis(S,GS)) return false; if (h.who==='m' && GS.active!=='marko') return false; if (h.who==='g' && GS.active!=='mala') return false; if (h.exit && GS.active==='mala' && !h.exit.gok && !h.g && !h.glook) { /* Mala sieht Ausgänge trotzdem */ } return true; }
 function hsStand(h){ var isG=GS.active==='mala'; var st=isG&&h.gst!==undefined?h.gst:h.st; st=typeof st==='function'?st(S,GS):st; if (st) return st;
   if (h.npc){ var a=ACT[h.npc], p=player(); if (!a||!p) return null; var side=p.x<a.x?-1:1; return [a.x+side*(h.talkDist||24),a.y,side<0?'R':'L']; }
@@ -415,9 +415,28 @@ E.doVerb=doVerb;
 function reachFor(hs){ var mode=hs.reach||'M'; if (mode==='none') return null; var r=hsRect(hs), st=hsStand(hs); if (!r||!st) return 'reachM';
   var h=st[1]-(r[1]+r[3]/2); if (r[1]>st[1]-30) h=Math.min(h,st[1]-r[1]-2); var back=st[2]==='B';
   if (mode==='floor'||h<10) return 'kneelF'; if (back) return h<38?'reachB':'reachBH'; return h<22?'reachL':(h<37?'reachM':'reachH'); }
-async function takeExit(hs,ex){ if (!ex) return; if (hs.canExit){ E.busy=true; var ok; try{ ok=await hs.canExit(API); } finally{ E.busy=false; } if (!ok) return; }
-  var st=hsStand(hs); if (st){ var tok=actionTok; var ok2=await walkActor(player(),st[0],st[1]); if (!ok2) return; }
-  E.busy=true; try{ await gotoRoom(ex.to,ex); } finally{ E.busy=false; } }
+// ---------------------------------------------------------------- Ortswechsel: ein Weg für Ausgang, Doppelklick und Stadtplan
+// Jeder Wechsel endet in transition(): höchstens einer zur Zeit, kein direktes Setzen des Raums. Ein neuer Klick, ein anderer Raum oder
+// ein schon laufender Wechsel machen einen älteren Auftrag ungültig (exitTok), sein Rückruf tut dann nichts mehr.
+var exitTok=0; E.exitWalk=null; E.transitioning=false; E.sceneBlockUntil=0; M.DBL_MS=M.DBL_MS||350;
+async function transition(to,o){ if (E.transitioning||!M.ROOMS[to]) return false; E.transitioning=true; ++exitTok; E.exitWalk=null; E.pop=null; E.pending=null;
+  E.busy=true; try{ await gotoRoom(to,o||{}); } finally{ E.busy=false; E.transitioning=false; E.sceneBlockUntil=gt+M.DBL_MS; E.transitions=(E.transitions||0)+1; } return true; }
+E.transition=transition; M.transition=transition;
+// Laden, neues Spiel, Titelbild: „Übergang läuft“ und „zweiter Klick erwartet“ gelten nur in der laufenden Szene (nie im Spielstand, nie als Dauersperre)
+function resetTransient(){ ++exitTok; E.transitioning=false; E.exitWalk=null; E.sceneBlockUntil=0; }
+E.resetTransient=resetTransient;
+async function takeExit(hs,ex,opt){ opt=opt||{}; if (!ex||E.transitioning) return false; var my=++exitTok, rid=room.id, key=rid+'/'+hs.id;
+  if (hs.canExit){ E.busy=true; var ok; try{ ok=await hs.canExit(API); } finally{ E.busy=false; } if (!ok){ E.exitDenied={key:key,t:gt}; return false; } }
+  if (my!==exitTok||!room||room.id!==rid) return false;
+  var st=hsStand(hs), p=player();
+  if (st && p){ E.exitWalk={key:key,tok:my,st:st}; var ok2=await walkActor(p,st[0],st[1]); var skipped=E.exitWalk&&E.exitWalk.tok===my&&E.exitWalk.skipped; if (E.exitWalk&&E.exitWalk.tok===my) E.exitWalk=null; if (!ok2&&!skipped) return false; }
+  if (my!==exitTok||!room||room.id!==rid||E.transitioning) return false;
+  if (ex.to==='map' && M.openMap){ M.openMap({exit:hs.id,room:rid}); return true; }   // Stadtplan: keine Fahrt in einen eigenen Raum, erst die Wahl löst den einen Wechsel aus
+  return transition(ex.to,ex); }
+// Doppelklick: den Rest des Weges zum schon gewählten Ausgang überspringen. Die Prüfungen (canExit) sind dann schon gelaufen, sie laufen nicht noch einmal.
+E.skipExitWalk=function(key){ var w=E.exitWalk, p=player(); if (!w||w.key!==key||!p||p.mode!=='walk'||!p.res||E.transitioning) return false;
+  w.skipped=true; p.path=[]; p.x=w.st[0]; p.y=w.st[1]; if (w.st[2]) p.f=w.st[2]; var r=p.res; p.res=null; setIdle(p); syncPos(); r(true); return true; };
+E.exitKey=function(hs){ return (room?room.id:'')+'/'+hs.id; };
 async function doItem(v,id,other){ E.acting=(E.acting||0)+1; try{ return await doItem0(v,id,other); } finally { E.acting--; } }
 async function doItem0(v,id,other){ E.busy=true;
   try{ var it=M.ITEMS[id], ctx={key:'inv:'+id+':'+v,item:id}; API.reach=function(fn){ if (fn) fn(); return Promise.resolve(); };
@@ -445,8 +464,8 @@ function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new E
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }
 M.loadRoom=loadRoom;
-async function gotoRoom(id,o){ o=o||{}; var from=room?room.id:null; syncPos();
-  if (from && room.leave) await room.leave(API,id);
+async function gotoRoom(id,o){ o=o||{}; var cur=room?room.id:null, from=o.via||cur; syncPos();   // via: Herkunft für Eingänge und enter (Stadtplan = 'map')
+  if (cur && room.leave) await room.leave(API,id);
   if (o.fade!==false && E.screen==='game') await fadeTo(8,o.fadeMs||320);
   E.speech=null; E.pop=null; E.conv=null; E.trLast=null;
   var who=GS.active;
@@ -492,6 +511,9 @@ function hasSave(n){ try{ return !!LS().getItem(SAVE+(n||slot)); }catch(e){ retu
 E.hasSave=hasSave; E.saveGame=saveGame; M.saveGame=saveGame;
 E.anySave=function(){ for (var n=1;n<=SLOTS;n++) if (hasSave(n)) return true; return false; };
 function setGame(ns){ GS=ns; M.GS=ns; }
+// Nachzüge für ältere Spielstände: eine Liste, unabhängig davon, wer M.migrateSave zuletzt gesetzt hat (Karte, Hinweise …)
+M.MIGRATE=M.MIGRATE||[];
+M.migrateAll=function(G){ if (M.migrateSave) try{ M.migrateSave(G); }catch(e){ console.error(e); } M.MIGRATE.forEach(function(fn){ try{ fn(G); }catch(e){ console.error(e); } }); };
 function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k){ if (d.GS[k]!==undefined) base[k]=d.GS[k]; });
   base.inv=(base.inv||[]).filter(function(id,i,a){ return M.ITEMS[id] && a.indexOf(id)===i; }); base.notes=(base.notes||[]).filter(function(id){ return M.NOTES[id]; });
   if (!M.PHASES[base.phase]) return null; ['marko','mala'].forEach(function(k){ if (!base.pos[k]||!M.ROOMS[base.pos[k].room]) base.pos[k]={room:base.pos.marko&&M.ROOMS[base.pos.marko.room]?base.pos.marko.room:'flat',x:160,y:120,f:'R'}; });
@@ -500,14 +522,15 @@ function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) retur
 // mitgelieferter Spielstand: in den gewählten Platz laden und dort gleich speichern
 E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return false; if (n) E.setSlot(n); var ok=loadData({GS:JSON.parse(JSON.stringify(p.GS))}); if (ok) saveGame(); return ok; };
 function loadData(d){ try{ var base=validate(d); if (!base) return false;
-    if (M.migrateSave) try{ M.migrateSave(base); }catch(e){ console.error(e); }   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js)
+    M.migrateAll(base);   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js, dann die Nachzüge aus M.MIGRATE)
     setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
+    resetTransient();
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
-E.newGame=function(ch){ setGame(freshGame()); safeGS=null; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
+E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
   if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
-E.toTitle=function(){ saveGame(); M.scapeStop(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
+E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;
@@ -529,9 +552,9 @@ E.paused=function(v){ if (v!==undefined) paused=v; return paused; };
 
 // ---------------------------------------------------------------- Testzugang (für den automatischen Durchlauf)
 M.TA={
-  status:function(){ var pl=player(); return {acting:E.acting||0,walk:!!(pl&&pl.mode==='walk'),screen:E.screen,room:room&&room.id,busy:E.busy,dlg:E.dlg?E.dlg.opts.map(function(o){ return o.t; }):null,overlay:E.overlay?E.overlay.kind:null,speech:!!E.speech,card:!!E.card,active:GS.active,phase:GS.phase,inv:GS.inv.slice(),notes:GS.notes.slice()}; },
+  status:function(){ var pl=player(); return {trn:!!E.transitioning,map:!!(E.overlay&&E.overlay.kind==='map'),mapActing:!!(E.overlay&&E.overlay.kind==='map'&&E.overlay.data.acting),transitions:E.transitions||0,acting:E.acting||0,walk:!!(pl&&pl.mode==='walk'),screen:E.screen,room:room&&room.id,busy:E.busy,dlg:E.dlg?E.dlg.opts.map(function(o){ return o.t; }):null,overlay:E.overlay?E.overlay.kind:null,speech:!!E.speech,card:!!E.card,active:GS.active,phase:GS.phase,inv:GS.inv.slice(),notes:GS.notes.slice()}; },
   hs:function(id){ return room.byId[id]; },
-  act:function(verb,id,item){ var hs=id==='_mala'?MALA_HS:(id==='_marko'?MARKO_HS:room.byId[id]); if (!hs) throw new Error('kein Hotspot '+id+' in '+room.id); E.pop=null; doVerb(verb,hs,item); },
+  act:function(verb,id,item){ if (E.overlay && E.overlay.kind==='map' && /^loc2?_/.test(id)){ M.mapGo(id.replace(/^loc2?_/,'')); return; } var hs=id==='_mala'?MALA_HS:(id==='_marko'?MARKO_HS:room.byId[id]); if (!hs) throw new Error('kein Hotspot '+id+' in '+room.id); E.pop=null; doVerb(verb,hs,item); },
   exit:function(id){ var hs=room.byId[id]; if (!hs) throw new Error('kein Ausgang '+id); E.pop=null; doVerb(hs.gexit&&GS.active==='mala'?'pass':'walk',hs); },
   item:function(verb,id,other){ doItem(verb,id,other); },
   choose:function(sub){ if (!E.dlg) throw new Error('keine Auswahl offen'); var i=E.dlg.opts.findIndex(function(o){ return o.t.indexOf(sub)>=0; }); if (i<0) throw new Error('Option nicht gefunden: '+sub+' | '+E.dlg.opts.map(function(o){ return o.t; }).join(' / ')); E.chooseDone(i); },
@@ -542,7 +565,9 @@ M.TA={
   combine:function(a,b){ return combineNotes(a,b); },
   switchTo:function(w){ return switchTo(w,true); },
   skip:function(){ if (E.speech) endSpeech(); if (E.card) closeCard(); },
-  travel:function(loc){ var L=M.MAPLOCS.concat(M.MAPLOCS2||[]).filter(function(l){ return l.id===loc; })[0]; if (!L) throw new Error('kein Ort '+loc); return gotoRoom(L.to,{x:L.at?L.at[0]:undefined,y:L.at?L.at[1]:undefined,f:L.at?L.at[2]:undefined}); },
+  // Reisen wie ein Spieler: über den Stadtplan (öffnet ihn bei Bedarf wie der Knopf „Karte“), mit allen Prüfungen. Kein Teleport.
+  travel:function(loc){ if (!M.mapLoc(loc)) throw new Error('kein Ort '+loc+' in diesem Kapitel'); M.mapGo(loc); return true; },
+  map:function(){ M.openMap(); return true; }, mapStates:function(){ return E.overlay&&E.overlay.kind==='map'?E.overlay.data.st:null; },
   get GS(){ return GS; }
 };
 })(M);

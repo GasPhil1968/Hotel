@@ -40,7 +40,7 @@ function ok(c, what) { if (c) { pass++; out.push('  ok   ' + what); } else { fai
     // alter Spielstand aus Kapitel 1 (mitgelieferter Stand)
     await D.ev(() => { M.E.loadPreset('ivka', 1); }); await D.page.waitForTimeout(400); await D.drain(); s = await st(); ok(s.phase && s.phase.indexOf('k2') < 0 && !!s.room, 'mitgelieferter Spielstand aus Split lädt (' + s.phase + ', ' + s.room + ')');
     ok(await D.ev(() => M.chapterOf(M.GS) === 1), 'alter Stand gilt als Kapitel 1');
-    ok(await D.ev(() => M.hintsOpen().length === 0), 'in Kapitel 1 gibt es keine Hinweise (wie bisher)');
+    ok(await D.ev(() => M.hintsOpen().length > 0 && M.hintsOpen().every(h => M.HINTS_K1.indexOf(h) >= 0)), 'in Kapitel 1 gibt es jetzt Hinweise, und nur solche aus Kapitel 1');
     if (!DUMPS) throw new Error('kein Dump-Ordner angegeben; Tests mitten im Kapitel übersprungen');
     // ---------------- Speichern/Laden mitten in Kapitel 2
     out.push('Speichern und Laden mitten im Kapitel');
@@ -68,8 +68,9 @@ function ok(c, what) { if (c) { pass++; out.push('  ok   ' + what); } else { fai
     ok(r3 && /schon versucht|Noch einmal/.test(r3.t), 'dieselbe falsche Verbindung noch einmal: „' + (r3 && r3.t) + '“');
     // Hinweise auf Wunsch
     const h = await D.ev(() => M.hintsOpen().map(x => x.id)); ok(h.length > 0, 'Hinweise offen: ' + h.join(', '));
-    await D.ev(() => { M.showHints(); }); await D.until(s => s.dlg, 20000, 'Hinweisliste'); await D.choose(await D.ev(() => M.hintsOpen()[0].t)); await D.drain();
-    ok(await D.ev(() => (M.GS.flags['hint.' + M.hintsOpen()[0].id] || 0) === 1), 'erste Hinweisstufe gezeigt');
+    await D.ev(() => { M.showHints('menu'); }); await D.until(s => s.dlg, 20000, 'Hinweisliste'); const h0 = await D.ev(() => M.hintsOpen()[0]); await D.choose(h0.t); await D.drain();
+    ok(await D.ev((id) => ((M.GS.hints[id] || {}).s || 0) === 1 && !M.GS.flags['hint.' + id], h0.id), 'erste Hinweisstufe gezeigt (Hinweisgeschichte getrennt in GS.hints)');
+    await D.ev(() => { if (M.E.dlg) M.E.chooseDone(M.E.dlg.opts.findIndex(o => o.bye)); }); await D.drain();
     // Glocke ohne Mala unten
     n = findStep('Šehićs Schlüssel'); await loadDump(n); await D.act('open', 'shelter_door'); await D.drain(); await D.act('push', 'bell_button'); await D.drain();
     ok(!(await D.flag('k2.s3.rang')) && !!(await D.flag('k2.s3.bellTried')), 'Klingel ohne Mala unten: „gehört hat es keiner“, kein Fortschritt, wiederholbar');
@@ -85,10 +86,10 @@ function ok(c, what) { if (c) { pass++; out.push('  ok   ' + what); } else { fai
     out.push('Hinweise an jedem Zwischenstand des Durchlaufs');
     { const fsx = fs.readdirSync(DUMPS).filter(f => f.endsWith('.json')).sort(); const empty = [], bad = []; const used = new Set();
       for (const f of fsx) { const d = JSON.parse(fs.readFileSync(path.join(DUMPS, f), 'utf8'));
-        const r = await D.ev((g) => { const old = M.GS; M.GS = JSON.parse(JSON.stringify(g)); try { return M.hintsOpen().map(h => [h.id, h.h.length]); } finally { M.GS = old; } }, d.GS);
-        if (!r.length) empty.push(d.step + ' „' + d.label + '“'); r.forEach(x => { used.add(x[0]); if (x[1] !== 3) bad.push(x[0]); }); }
-      const all = await D.ev(() => M.K2HINTS.map(h => h.id)); const never = all.filter(id => !used.has(id));
-      ok(!bad.length, 'jeder offene Hinweis hat drei Stufen' + (bad.length ? ' (nicht: ' + [...new Set(bad)].join(', ') + ')' : ''));
+        const r = await D.ev((g) => { const old = M.GS; M.GS = JSON.parse(JSON.stringify(g)); try { return M.hintsOpen().map(h => [h.id, h.s.length]); } finally { M.GS = old; } }, d.GS);
+        if (!r.length) empty.push(d.step + ' „' + d.label + '“'); r.forEach(x => { used.add(x[0]); if (x[1] !== 4) bad.push(x[0]); }); }
+      const all = await D.ev(() => M.HINTS_K2.map(h => h.id)); const never = all.filter(id => !used.has(id));
+      ok(!bad.length, 'jeder offene Hinweis hat vier Stufen' + (bad.length ? ' (nicht: ' + [...new Set(bad)].join(', ') + ')' : ''));
       ok(empty.length <= 1, 'an ' + (fsx.length - empty.length) + ' von ' + fsx.length + ' Zwischenständen ist mindestens ein Hinweis offen' + (empty.length ? ' (ohne Hinweis: ' + empty.join(' · ') + ')' : ''));
       out.push('  info ' + used.size + ' von ' + all.length + ' Hinweisthemen kommen im Durchlauf vor' + (never.length ? '; nicht berührt: ' + never.join(', ') : '')); }
   } catch (e) { fail++; out.push('ABBRUCH: ' + e.message); }

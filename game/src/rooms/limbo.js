@@ -98,7 +98,7 @@ var HS=[
  {id:'ghost_b',npc:'bruno',name:'Bruno',hgt:46,vis:function(S){ return !S.gone && who(S)==='bruno'; },talk:talkBruno,look:'Bruno Lalić in seiner grünen Uniform. Er steht, als warte er auf einen Gast. Oder auf eine Ablösung.',
    give:{ keyring:'„Ne … Ljerki.“ Für Ljerka.', fee:'„Ne … ne …“' }}
 ];
-M.room('limbo',{ name:'Zwischenwelt', scape:'limbo', music:'ghost', noSave:true, noSwitch:true, noGhostView:true, noMalaLeash:true, noFollow:true,
+M.room('limbo',{ name:'Zwischenwelt', noMap:'Hier gibt es keinen Stadtplan. Hier gibt es keine Stadt.', scape:'limbo', music:'ghost', noSave:true, noSwitch:true, noGhostView:true, noMalaLeash:true, noFollow:true,
   actors:function(S,GS){ if (S.gone) return []; var w=who(S), g=GHOST[w], p=M.apos('limbo','ghost',[214,116,'L']); return [{id:w,ch:w,x:p[0],y:p[1],f:p[2]||'L',name:g.name,ghost:true,idle:g.idle,noAche:true,routine:false}]; },
   hotspots:HS
 });

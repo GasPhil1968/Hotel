@@ -1,0 +1,1595 @@
+[
+ {
+  "ok": true,
+  "area": "Neues Spiel",
+  "what": "Nur die Wohnung ist bekannt (aktueller Ort), alle anderen Orte unbekannt",
+  "extra": {
+   "flat": {
+    "st": "here"
+   },
+   "varos": {
+    "st": "unknown"
+   },
+   "riva": {
+    "st": "unknown"
+   },
+   "matejuska": {
+    "st": "unknown"
+   },
+   "sustipan": {
+    "st": "unknown"
+   },
+   "bar": {
+    "st": "unknown"
+   },
+   "oldtown": {
+    "st": "unknown"
+   },
+   "terminal": {
+    "st": "unknown"
+   },
+   "palma": {
+    "st": "unknown"
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Neues Spiel",
+  "what": "Unbekannte Orte haben keinen Marker und keinen Namen (Zeichnung nur für bekannte Orte, siehe mapIconVis)"
+ },
+ {
+  "ok": true,
+  "area": "Neu bekanntes Ziel",
+  "what": "Nach dem Anrufbeantworter: Bar erreichbar, Varoš bekannt, aber „gerade nicht“ mit Grund",
+  "extra": {
+   "flat": {
+    "st": "here"
+   },
+   "varos": {
+    "st": "blocked",
+    "why": "Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen."
+   },
+   "riva": {
+    "st": "unknown"
+   },
+   "matejuska": {
+    "st": "unknown"
+   },
+   "sustipan": {
+    "st": "unknown"
+   },
+   "bar": {
+    "st": "open"
+   },
+   "oldtown": {
+    "st": "unknown"
+   },
+   "terminal": {
+    "st": "unknown"
+   },
+   "palma": {
+    "st": "unknown"
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Neu bekanntes Ziel",
+  "what": "Tipp auf gesperrtes Varoš: ein Satz mit Grund, Karte bleibt offen, kein Ortswechsel",
+  "extra": {
+   "s": {
+    "trn": false,
+    "map": true,
+    "mapActing": false,
+    "transitions": 0,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "flat",
+    "busy": true,
+    "dlg": null,
+    "overlay": "map",
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "pro",
+    "inv": [],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone"
+    ]
+   },
+   "sp": [
+    {
+     "who": "marko",
+     "src": "Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen.",
+     "t": "Sanja wartet auf mich. Um vier ruft Triest an, und sie hat niemanden, der Italienisch kann. Ich habe es ihr versprochen."
+    }
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Karte",
+  "what": "„Schließen“ schließt die Karte, die Figur bewegt sich nicht (kein Klick in die Szene)",
+  "extra": {
+   "s": {
+    "trn": false,
+    "map": false,
+    "mapActing": false,
+    "transitions": 0,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "overlay": null,
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "pro",
+    "inv": [],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone"
+    ]
+   },
+   "px0": 247,
+   "px1": 247
+  }
+ },
+ {
+  "ok": true,
+  "area": "Karte",
+  "what": "Taste K öffnet die Karte"
+ },
+ {
+  "ok": true,
+  "area": "Karte",
+  "what": "Escape schließt nur die Karte (öffnet nicht zusätzlich das Menü)"
+ },
+ {
+  "ok": true,
+  "area": "Karte",
+  "what": "Tipp auf leere Kartenfläche: nichts passiert, kein Durchklicken",
+  "extra": {
+   "trn": false,
+   "map": true,
+   "mapActing": false,
+   "transitions": 0,
+   "acting": 0,
+   "walk": false,
+   "screen": "game",
+   "room": "flat",
+   "busy": true,
+   "dlg": null,
+   "overlay": "map",
+   "speech": false,
+   "card": false,
+   "active": "marko",
+   "phase": "pro",
+   "inv": [],
+   "notes": [
+    "pro_auftrag",
+    "pro_zdenka",
+    "pro_noone"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Touch-Ziele",
+  "what": "kleinster halber Ortsabstand 37 CSS-px Radius (≥ 22), „Schließen“ 234×72 CSS-px (iPad-Querformat 3 CSS-px je Spielpixel, gerechnet)",
+  "extra": {
+   "min": 24.970032038425582,
+   "min2": 35.56810368855781
+  }
+ },
+ {
+  "ok": true,
+  "area": "Verschlossener Innenraum",
+  "what": "Doppelklick auf das geschlossene Hafenbüro: kein Übergang, die Absage genau einmal",
+  "extra": {
+   "s": {
+    "trn": false,
+    "map": false,
+    "mapActing": false,
+    "transitions": 0,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "riva",
+    "busy": false,
+    "dlg": null,
+    "overlay": null,
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "c2",
+    "inv": [],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone",
+     "pro_spia",
+     "pro_red",
+     "pro_knit",
+     "pro_sohn",
+     "pro_riva",
+     "c1_boat7",
+     "c1_dinko",
+     "c1_gift",
+     "c1_ankica",
+     "c1_radio",
+     "pro_list",
+     "pro_people",
+     "pro_gasse",
+     "m_window",
+     "m_tram",
+     "m_limits",
+     "m_name",
+     "m_first",
+     "c1_waits",
+     "c1_date",
+     "c1_askoffice",
+     "c1_nobook",
+     "c1_1948",
+     "c1_ferry",
+     "c1_capsized",
+     "c1_rescued",
+     "c1_matejuska",
+     "c1_came",
+     "c1_brother",
+     "c1_bag",
+     "c1_words",
+     "c1_story",
+     "c1_stuck",
+     "c1_letter",
+     "c1_plaque",
+     "c1_years",
+     "m_mother",
+     "m_horn",
+     "i1_note",
+     "m_tin"
+    ]
+   },
+   "sp": [
+    {
+     "who": "marko",
+     "src": "Geschlossen. Und ich habe dort nichts mehr verloren.",
+     "t": "Geschlossen. Und ich habe dort nichts mehr verloren."
+    }
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Verschlossener Innenraum",
+  "what": "Die Karte hat keinen Punkt für Innenräume; die Riva ist „hier“",
+  "extra": {
+   "flat": {
+    "st": "open"
+   },
+   "varos": {
+    "st": "open"
+   },
+   "riva": {
+    "st": "here"
+   },
+   "matejuska": {
+    "st": "open"
+   },
+   "sustipan": {
+    "st": "open"
+   },
+   "bar": {
+    "st": "open"
+   },
+   "oldtown": {
+    "st": "unknown"
+   },
+   "terminal": {
+    "st": "unknown"
+   },
+   "palma": {
+    "st": "unknown"
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Aktueller Ort",
+  "what": "Tipp auf den aktuellen Ort schließt die Karte ohne Raumneustart",
+  "extra": {
+   "trn": false,
+   "map": false,
+   "mapActing": false,
+   "transitions": 0,
+   "acting": 0,
+   "walk": false,
+   "screen": "game",
+   "room": "riva",
+   "busy": false,
+   "dlg": null,
+   "overlay": null,
+   "speech": false,
+   "card": false,
+   "active": "marko",
+   "phase": "c2",
+   "inv": [],
+   "notes": [
+    "pro_auftrag",
+    "pro_zdenka",
+    "pro_noone",
+    "pro_spia",
+    "pro_red",
+    "pro_knit",
+    "pro_sohn",
+    "pro_riva",
+    "c1_boat7",
+    "c1_dinko",
+    "c1_gift",
+    "c1_ankica",
+    "c1_radio",
+    "pro_list",
+    "pro_people",
+    "pro_gasse",
+    "m_window",
+    "m_tram",
+    "m_limits",
+    "m_name",
+    "m_first",
+    "c1_waits",
+    "c1_date",
+    "c1_askoffice",
+    "c1_nobook",
+    "c1_1948",
+    "c1_ferry",
+    "c1_capsized",
+    "c1_rescued",
+    "c1_matejuska",
+    "c1_came",
+    "c1_brother",
+    "c1_bag",
+    "c1_words",
+    "c1_story",
+    "c1_stuck",
+    "c1_letter",
+    "c1_plaque",
+    "c1_years",
+    "m_mother",
+    "m_horn",
+    "i1_note",
+    "m_tin"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Doppelklick nahe am Ausgang",
+  "what": "genau ein Übergang je Weg (Gehen 1, Doppelklick 1, Dreifachklick 1, nah am Ausgang 1)"
+ },
+ {
+  "ok": true,
+  "area": "Doppelklick",
+  "what": "Doppelklick spart den Rest des Weges (3314 ms zu 368 ms bis zum Wechsel)"
+ },
+ {
+  "ok": true,
+  "area": "Doppelklick nahe am Ausgang",
+  "what": "Der dritte Klick wirkt nicht im neuen Raum (keine Bewegung, keine Handlung im Laden)",
+  "extra": {
+   "c": {
+    "trn": false,
+    "map": false,
+    "mapActing": false,
+    "transitions": 3,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "shop",
+    "busy": false,
+    "dlg": null,
+    "overlay": null,
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "c2",
+    "inv": [
+     "newspaper",
+     "crowbar",
+     "tickets",
+     "cassette"
+    ],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone",
+     "pro_spia",
+     "pro_red",
+     "pro_knit",
+     "pro_sohn",
+     "pro_riva",
+     "c1_boat7",
+     "c1_dinko",
+     "c1_gift",
+     "c1_ankica",
+     "c1_radio",
+     "pro_list",
+     "pro_people",
+     "pro_gasse",
+     "m_window",
+     "m_tram",
+     "m_limits",
+     "m_name",
+     "m_first",
+     "c1_waits",
+     "c1_date",
+     "c1_askoffice",
+     "c1_nobook",
+     "c1_1948",
+     "c1_ferry",
+     "c1_capsized",
+     "c1_rescued",
+     "c1_matejuska",
+     "c1_came",
+     "c1_brother",
+     "c1_bag",
+     "c1_words",
+     "c1_story",
+     "c1_stuck",
+     "c1_letter",
+     "c1_plaque",
+     "c1_years",
+     "m_mother",
+     "m_horn",
+     "i1_note",
+     "m_tin",
+     "c2_demolish",
+     "c2_boy",
+     "c2_stairs",
+     "c2_gap",
+     "c2_luka",
+     "m_flight",
+     "c2_meet",
+     "c2_ferry",
+     "c2_date",
+     "c2_guitar",
+     "c2_mailbox",
+     "c2_paper",
+     "c2_under",
+     "c2_dark",
+     "c2_thin",
+     "c2_riva",
+     "c2_died",
+     "c2_stayed",
+     "c2_shop",
+     "m_bells"
+    ]
+   },
+   "d": {
+    "trn": false,
+    "map": false,
+    "mapActing": false,
+    "transitions": 4,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "shop",
+    "busy": false,
+    "dlg": null,
+    "overlay": null,
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "c2",
+    "inv": [
+     "newspaper",
+     "crowbar",
+     "tickets",
+     "cassette"
+    ],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone",
+     "pro_spia",
+     "pro_red",
+     "pro_knit",
+     "pro_sohn",
+     "pro_riva",
+     "c1_boat7",
+     "c1_dinko",
+     "c1_gift",
+     "c1_ankica",
+     "c1_radio",
+     "pro_list",
+     "pro_people",
+     "pro_gasse",
+     "m_window",
+     "m_tram",
+     "m_limits",
+     "m_name",
+     "m_first",
+     "c1_waits",
+     "c1_date",
+     "c1_askoffice",
+     "c1_nobook",
+     "c1_1948",
+     "c1_ferry",
+     "c1_capsized",
+     "c1_rescued",
+     "c1_matejuska",
+     "c1_came",
+     "c1_brother",
+     "c1_bag",
+     "c1_words",
+     "c1_story",
+     "c1_stuck",
+     "c1_letter",
+     "c1_plaque",
+     "c1_years",
+     "m_mother",
+     "m_horn",
+     "i1_note",
+     "m_tin",
+     "c2_demolish",
+     "c2_boy",
+     "c2_stairs",
+     "c2_gap",
+     "c2_luka",
+     "m_flight",
+     "c2_meet",
+     "c2_ferry",
+     "c2_date",
+     "c2_guitar",
+     "c2_mailbox",
+     "c2_paper",
+     "c2_under",
+     "c2_dark",
+     "c2_thin",
+     "c2_riva",
+     "c2_died",
+     "c2_stayed",
+     "c2_shop",
+     "m_bells"
+    ]
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Zustandsvergleich",
+  "what": "Gehen, Doppelklick und Dreifachklick zum Laden ergeben denselben Spielstand (Raum, Schalter, Notizen, Inventar, Karte, Begleitung)",
+  "extra": []
+ },
+ {
+  "ok": true,
+  "area": "Kartenreise",
+  "what": "genau ein Ortswechsel (Ausgang+Karte 1, Doppelklick+Karte 1, Knopf+Karte 1)"
+ },
+ {
+  "ok": true,
+  "area": "Speichern",
+  "what": "Automatisches Speichern nach jeder Kartenreise (Platz zeigt die Riva)"
+ },
+ {
+  "ok": true,
+  "area": "Zustandsvergleich",
+  "what": "Ausgang+Karte, Doppelklick+Karte und Knopf „Karte“ ergeben denselben Spielstand an der Riva, Mala kommt mit",
+  "extra": "riva"
+ },
+ {
+  "ok": true,
+  "area": "Wichtiger Übergang",
+  "what": "Tür, Doppelklick und Karte lösen dasselbe Pflichtereignis aus (Kennenlernen), keiner verlässt die Wohnung",
+  "extra": {
+   "m1": {
+    "s": {
+     "trn": false,
+     "map": false,
+     "mapActing": false,
+     "transitions": 7,
+     "acting": 0,
+     "walk": false,
+     "screen": "game",
+     "room": "flat",
+     "busy": false,
+     "dlg": null,
+     "overlay": null,
+     "speech": false,
+     "card": false,
+     "active": "marko",
+     "phase": "c1",
+     "inv": [
+      "postcard",
+      "photo1"
+     ],
+     "notes": [
+      "pro_auftrag",
+      "pro_zdenka",
+      "pro_noone",
+      "pro_spia",
+      "pro_red",
+      "pro_knit",
+      "pro_sohn",
+      "pro_riva",
+      "c1_boat7",
+      "c1_dinko",
+      "c1_gift",
+      "c1_ankica",
+      "c1_radio",
+      "pro_list",
+      "pro_people",
+      "pro_gasse",
+      "m_window"
+     ]
+    },
+    "n": 0,
+    "meet": true
+   },
+   "m2": {
+    "s": {
+     "trn": false,
+     "map": false,
+     "mapActing": false,
+     "transitions": 7,
+     "acting": 0,
+     "walk": false,
+     "screen": "game",
+     "room": "flat",
+     "busy": false,
+     "dlg": null,
+     "overlay": null,
+     "speech": false,
+     "card": false,
+     "active": "marko",
+     "phase": "c1",
+     "inv": [
+      "postcard",
+      "photo1"
+     ],
+     "notes": [
+      "pro_auftrag",
+      "pro_zdenka",
+      "pro_noone",
+      "pro_spia",
+      "pro_red",
+      "pro_knit",
+      "pro_sohn",
+      "pro_riva",
+      "c1_boat7",
+      "c1_dinko",
+      "c1_gift",
+      "c1_ankica",
+      "c1_radio",
+      "pro_list",
+      "pro_people",
+      "pro_gasse",
+      "m_window"
+     ]
+    },
+    "n": 0,
+    "meet": true
+   },
+   "m3": {
+    "s": {
+     "trn": false,
+     "map": false,
+     "mapActing": false,
+     "transitions": 7,
+     "acting": 0,
+     "walk": false,
+     "screen": "game",
+     "room": "flat",
+     "busy": false,
+     "dlg": null,
+     "overlay": null,
+     "speech": false,
+     "card": false,
+     "active": "marko",
+     "phase": "c1",
+     "inv": [
+      "postcard",
+      "photo1"
+     ],
+     "notes": [
+      "pro_auftrag",
+      "pro_zdenka",
+      "pro_noone",
+      "pro_spia",
+      "pro_red",
+      "pro_knit",
+      "pro_sohn",
+      "pro_riva",
+      "c1_boat7",
+      "c1_dinko",
+      "c1_gift",
+      "c1_ankica",
+      "c1_radio",
+      "pro_list",
+      "pro_people",
+      "pro_gasse",
+      "m_window"
+     ]
+    },
+    "n": 0,
+    "meet": true
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Mala nicht verfügbar",
+  "what": "Hilfe allein: „Gedanken ordnen“, nur Markos Stimme",
+  "extra": {
+   "title": "Gedanken ordnen: Woran hänge ich?",
+   "sp": [
+    {
+     "who": "marko",
+     "src": "Kein Kopfweh, kein Mädchen, keine Stimme. Ein gewöhnlicher Morgen.",
+     "t": "Kein Kopfweh, kein Mädchen, keine Stimme. Ein gewöhnlicher Morgen."
+    }
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Mala nicht verfügbar",
+  "what": "Kartenreise allein: keine Erscheinung, keine Stimme, kein Wechsel",
+  "extra": {
+   "on": false,
+   "act": false,
+   "sw": false,
+   "sup": 0
+  }
+ },
+ {
+  "ok": true,
+  "area": "Mala",
+  "what": "Mala allein reist nicht über die Karte: ihr Satz, kein Ortswechsel",
+  "extra": {
+   "s": {
+    "trn": false,
+    "map": true,
+    "mapActing": false,
+    "transitions": 8,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "office",
+    "busy": true,
+    "dlg": null,
+    "overlay": "map",
+    "speech": false,
+    "card": false,
+    "active": "mala",
+    "phase": "c1",
+    "inv": [
+     "postcard",
+     "photo1"
+    ],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone",
+     "pro_spia",
+     "pro_red",
+     "pro_knit",
+     "pro_sohn",
+     "pro_riva",
+     "c1_boat7",
+     "c1_dinko",
+     "c1_gift",
+     "c1_ankica",
+     "c1_radio",
+     "pro_list",
+     "pro_people",
+     "pro_gasse",
+     "m_window",
+     "m_tram",
+     "m_limits",
+     "m_name",
+     "m_first",
+     "c1_waits",
+     "c1_date",
+     "c1_askoffice",
+     "c1_nobook"
+    ]
+   },
+   "sp": [
+    {
+     "who": "mala",
+     "src": "Ohne Marko gehe ich nirgends hin.",
+     "t": "Ohne Marko gehe ich nirgends hin."
+    }
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Verschlossener Innenraum",
+  "what": "Aus dem Hafenbüro (Innenraum): Riva ist „hier“, Reisen erst von der Straße aus, mit Grund",
+  "extra": {
+   "st": {
+    "st": "here"
+   },
+   "sp": [
+    {
+     "who": "marko",
+     "src": "Von hier drinnen nicht. Erst muss ich hinaus auf die Straße.",
+     "t": "Von hier drinnen nicht. Erst muss ich hinaus auf die Straße."
+    }
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Sperre",
+  "what": "Zwischenwelt: Karte geht nicht auf, mit Meldung",
+  "extra": {
+   "s": {
+    "trn": false,
+    "map": false,
+    "mapActing": false,
+    "transitions": 8,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "limbo",
+    "busy": false,
+    "dlg": null,
+    "overlay": null,
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "c1_night",
+    "inv": [
+     "postcard",
+     "photo1",
+     "letter_t",
+     "gloves"
+    ],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone",
+     "pro_spia",
+     "pro_red",
+     "pro_knit",
+     "pro_sohn",
+     "pro_riva",
+     "c1_boat7",
+     "c1_dinko",
+     "c1_gift",
+     "c1_ankica",
+     "c1_radio",
+     "pro_list",
+     "pro_people",
+     "pro_gasse",
+     "m_window",
+     "m_tram",
+     "m_limits",
+     "m_name",
+     "m_first",
+     "c1_waits",
+     "c1_date",
+     "c1_askoffice",
+     "c1_nobook",
+     "c1_1948",
+     "c1_ferry",
+     "c1_capsized",
+     "c1_rescued",
+     "c1_matejuska",
+     "c1_came",
+     "c1_brother",
+     "c1_bag",
+     "c1_words",
+     "c1_story",
+     "c1_stuck",
+     "c1_letter",
+     "c1_plaque",
+     "c1_years",
+     "m_mother",
+     "m_horn"
+    ]
+   },
+   "msg": "Hier gibt es keinen Stadtplan. Hier gibt es keine Stadt."
+  }
+ },
+ {
+  "ok": true,
+  "area": "Sperre",
+  "what": "Während einer Auswahl im Gespräch geht die Karte nicht auf",
+  "extra": {
+   "trn": false,
+   "map": false,
+   "mapActing": false,
+   "transitions": 8,
+   "acting": 1,
+   "walk": false,
+   "screen": "game",
+   "room": "riva",
+   "busy": true,
+   "dlg": [
+    "Ich komme gerade nicht weiter.",
+    "Wie lange bist du schon in meiner Nähe?",
+    "Wo bist du, wenn ich dich nicht sehe?",
+    "Warum zuckst du bei den Glocken zusammen?",
+    "Die Dose …",
+    "Was weißt du über den Karton auf meinem Schrank?",
+    "Nach etwas aus dem Notizbuch fragen …",
+    "Komm."
+   ],
+   "overlay": null,
+   "speech": false,
+   "card": false,
+   "active": "marko",
+   "phase": "c2",
+   "inv": [],
+   "notes": [
+    "pro_auftrag",
+    "pro_zdenka",
+    "pro_noone",
+    "pro_spia",
+    "pro_red",
+    "pro_knit",
+    "pro_sohn",
+    "pro_riva",
+    "c1_boat7",
+    "c1_dinko",
+    "c1_gift",
+    "c1_ankica",
+    "c1_radio",
+    "pro_list",
+    "pro_people",
+    "pro_gasse",
+    "m_window",
+    "m_tram",
+    "m_limits",
+    "m_name",
+    "m_first",
+    "c1_waits",
+    "c1_date",
+    "c1_askoffice",
+    "c1_nobook",
+    "c1_1948",
+    "c1_ferry",
+    "c1_capsized",
+    "c1_rescued",
+    "c1_matejuska",
+    "c1_came",
+    "c1_brother",
+    "c1_bag",
+    "c1_words",
+    "c1_story",
+    "c1_stuck",
+    "c1_letter",
+    "c1_plaque",
+    "c1_years",
+    "m_mother",
+    "m_horn",
+    "i1_note",
+    "m_tin"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Hinweisstufen (Inventar)",
+  "what": "vier verschiedene Stufen für „Der verschnürte Schuhkarton“ (Marko allein)",
+  "extra": [
+   "Ein Schuhkarton, mit einem festen Knoten verschnürt. Schneiden würde zerstören, was Ivka so sorgfältig verschnürt hat.",
+   "Einen festen Knoten löst man mit etwas Dünnem, Spitzem, nicht mit Gewalt. In einer Wohnung, in der gestrickt wurde, liegt so etwas herum.",
+   "Im Nähkorb liegen Stricknadeln.",
+   "Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen."
+  ]
+ },
+ {
+  "ok": true,
+  "area": "Hinweisstufen (Inventar)",
+  "what": "Stufe 4 erst nach der Rückfrage: „Nein“ bleibt bei 3, „Ja“ gibt den Schritt",
+  "extra": {
+   "stageNo": 3,
+   "stageYes": 4,
+   "ask": {
+    "t": "Will ich den nächsten Schritt wirklich schon wissen?",
+    "o": [
+     "(Ja.)",
+     "(Nein, noch nicht.)"
+    ]
+   },
+   "askSp": []
+  }
+ },
+ {
+  "ok": true,
+  "area": "Hinweis ohne Handlung",
+  "what": "„Der verschnürte Schuhkarton“: nur die Hinweisgeschichte ändert sich (kein Schalter, keine Notiz, kein Gegenstand, kein „gesehen“-Vermerk)",
+  "extra": []
+ },
+ {
+  "ok": true,
+  "area": "Hinweisstufen (Notizbuch)",
+  "what": "vier verschiedene Stufen für „Keine Kontakte?“ (Marko allein)",
+  "extra": [
+   "Die Stadt schreibt: alleinstehend, keine Kontakte. Das Strickheft erzählt etwas anderes.",
+   "Zwei Aussagen über Ivka, die nicht zusammenpassen. Das Notizbuch kann sie gegeneinander halten.",
+   "Die Notiz der Stadt und Ivkas Strickheft gehören zusammen.",
+   "Im Notizbuch „Laut Stadt: keine Kontakte“ mit „Ivkas Strickheft“ verbinden."
+  ]
+ },
+ {
+  "ok": true,
+  "area": "Hinweisstufen (Notizbuch)",
+  "what": "Stufe 4 erst nach der Rückfrage: „Nein“ bleibt bei 3, „Ja“ gibt den Schritt",
+  "extra": {
+   "stageNo": 3,
+   "stageYes": 4,
+   "ask": {
+    "t": "Will ich den nächsten Schritt wirklich schon wissen?",
+    "o": [
+     "(Ja.)",
+     "(Nein, noch nicht.)"
+    ]
+   },
+   "askSp": []
+  }
+ },
+ {
+  "ok": true,
+  "area": "Hinweis ohne Handlung",
+  "what": "„Keine Kontakte?“: nur die Hinweisgeschichte ändert sich (kein Schalter, keine Notiz, kein Gegenstand, kein „gesehen“-Vermerk)",
+  "extra": []
+ },
+ {
+  "ok": true,
+  "area": "Hinweisstufen (Kooperation)",
+  "what": "vier verschiedene Stufen für „Wo steht der Band 1984?“ (Mala)",
+  "extra": [
+   "Irgendwo im Archiv steht der Band 1984. Nur nicht da, wo er hingehört.",
+   "Ein ausgeblichenes Rückenschild verrät mit Augen nichts mehr. Es braucht ein anderes Gespür.",
+   "Ich gehe durch die Tür „SAMO OSOBLJE“. Bei einem ausgeblichenen Ordner reicht Ansehen nicht.",
+   "Zu mir wechseln, ins Archiv gehen und den Ordner im Fach „1948“ spüren."
+  ]
+ },
+ {
+  "ok": true,
+  "area": "Hinweisstufen (Kooperation)",
+  "what": "Stufe 4 erst nach der Rückfrage: „Nein“ bleibt bei 3, „Ja“ gibt den Schritt",
+  "extra": {
+   "stageNo": 3,
+   "stageYes": 4,
+   "ask": {
+    "t": null,
+    "o": [
+     "Ja. Sag es mir.",
+     "Nein, noch nicht."
+    ]
+   },
+   "askSp": [
+    "Soll ich dir den konkreten nächsten Schritt verraten?"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Hinweis ohne Handlung",
+  "what": "„Wo steht der Band 1984?“: nur die Hinweisgeschichte ändert sich (kein Schalter, keine Notiz, kein Gegenstand, kein „gesehen“-Vermerk)",
+  "extra": []
+ },
+ {
+  "ok": true,
+  "area": "Gelöster Teilschritt",
+  "what": "Gelöstes Thema verschwindet, das nächste beginnt bei Stufe 1",
+  "extra": [
+   {
+    "id": "k1_gasse",
+    "s": 0
+   }
+  ]
+ },
+ {
+  "ok": true,
+  "area": "Gelöster Teilschritt",
+  "what": "Stand wird vor jeder Ausgabe neu geprüft: „Das hat sich erledigt.“",
+  "extra": [
+   {
+    "who": "marko",
+    "src": "Das hat sich erledigt.",
+    "t": "Das hat sich erledigt."
+   }
+  ]
+ },
+ {
+  "ok": true,
+  "area": "Abweichende Reihenfolge",
+  "what": "Nächster Schritt richtet sich nach Inventar und bekannten Orten (Zeitung, Rekorder, Batterien, Kiosk)",
+  "extra": {
+   "v1": [
+    "k2_radio1: In der Bar die Zeitung vom Tresen nehmen und sie Zdenka in Veli Varoš bringen."
+   ],
+   "v2": [
+    "k2_radio1: Zdenka in Veli Varoš die Zeitung geben."
+   ],
+   "v3": [
+    "k2_radio2: Sanja fragen, wer damals noch am Hafen war."
+   ],
+   "v4": [
+    "k2_radio2: Bei Mira am Kiosk Batterien kaufen und in den Rekorder legen."
+   ],
+   "v5": [
+    "k2_radio3: Die Kassette mit dem Rekorder benutzen."
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Speichern und Laden",
+  "what": "Hinweisstufe übersteht Speichern, Neuladen der Seite und Laden",
+  "extra": {
+   "hints": {
+    "k1_people": {
+     "s": 2,
+     "n": 2
+    }
+   },
+   "known": {}
+  }
+ },
+ {
+  "ok": true,
+  "area": "Speichern und Laden",
+  "what": "Neues Spiel beginnt mit leerer Hinweisgeschichte",
+  "extra": {}
+ },
+ {
+  "ok": true,
+  "area": "Speichern und Laden",
+  "what": "Laden eines anderen Platzes bringt dessen Hinweisgeschichte, nicht die zuletzt im Speicher",
+  "extra": {
+   "k1_people": {
+    "s": 2,
+    "n": 2
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Migration",
+  "what": "Alter Stand: Hinweisstufen übernommen (3 → 4), keine Orte pauschal freigeschaltet, bekannte Orte abgeleitet (Fährhafen aus Lukas Treffpunkt)",
+  "extra": {
+   "hints": {
+    "k2_case": {
+     "s": 4,
+     "n": 3
+    },
+    "s1a": {
+     "s": 1,
+     "n": 1
+    }
+   },
+   "known": {
+    "terminal": true
+   },
+   "map": {
+    "flat": true,
+    "varos": true,
+    "bar": true,
+    "riva": true,
+    "matejuska": true,
+    "sustipan": true
+   },
+   "flags": []
+  }
+ },
+ {
+  "ok": true,
+  "area": "Speichern",
+  "what": "Vorübergehende Zustände (Übergang läuft, zweiter Klick erwartet, Karte offen) stehen nicht im Spielstand"
+ },
+ {
+  "ok": true,
+  "area": "Allgemein",
+  "what": "keine JS-Fehler (Mausseite)",
+  "extra": []
+ },
+ {
+  "ok": true,
+  "area": "Touch",
+  "what": "Doppeltipp: genau ein Übergang, zwei Tipps = zwei Eingaben (kein zusätzliches Mausereignis)",
+  "extra": {
+   "n": 1,
+   "ups": 2,
+   "ts": {
+    "trn": false,
+    "map": false,
+    "mapActing": false,
+    "transitions": 1,
+    "acting": 0,
+    "walk": false,
+    "screen": "game",
+    "room": "shop",
+    "busy": false,
+    "dlg": null,
+    "overlay": null,
+    "speech": false,
+    "card": false,
+    "active": "marko",
+    "phase": "c2",
+    "inv": [
+     "newspaper",
+     "crowbar",
+     "tickets",
+     "cassette"
+    ],
+    "notes": [
+     "pro_auftrag",
+     "pro_zdenka",
+     "pro_noone",
+     "pro_spia",
+     "pro_red",
+     "pro_knit",
+     "pro_sohn",
+     "pro_riva",
+     "c1_boat7",
+     "c1_dinko",
+     "c1_gift",
+     "c1_ankica",
+     "c1_radio",
+     "pro_list",
+     "pro_people",
+     "pro_gasse",
+     "m_window",
+     "m_tram",
+     "m_limits",
+     "m_name",
+     "m_first",
+     "c1_waits",
+     "c1_date",
+     "c1_askoffice",
+     "c1_nobook",
+     "c1_1948",
+     "c1_ferry",
+     "c1_capsized",
+     "c1_rescued",
+     "c1_matejuska",
+     "c1_came",
+     "c1_brother",
+     "c1_bag",
+     "c1_words",
+     "c1_story",
+     "c1_stuck",
+     "c1_letter",
+     "c1_plaque",
+     "c1_years",
+     "m_mother",
+     "m_horn",
+     "i1_note",
+     "m_tin",
+     "c2_demolish",
+     "c2_boy",
+     "c2_stairs",
+     "c2_gap",
+     "c2_luka",
+     "m_flight",
+     "c2_meet",
+     "c2_ferry",
+     "c2_date",
+     "c2_guitar",
+     "c2_mailbox",
+     "c2_paper",
+     "c2_under",
+     "c2_dark",
+     "c2_thin",
+     "c2_riva",
+     "c2_died",
+     "c2_stayed",
+     "c2_shop",
+     "m_bells"
+    ]
+   }
+  }
+ },
+ {
+  "ok": true,
+  "area": "Touch und Inventarziehen",
+  "what": "Wischen über das Bild löst weder Gehen noch Ausgang aus",
+  "extra": {
+   "trn": false,
+   "map": false,
+   "mapActing": false,
+   "transitions": 1,
+   "acting": 0,
+   "walk": false,
+   "screen": "game",
+   "room": "oldtown",
+   "busy": false,
+   "dlg": null,
+   "overlay": null,
+   "speech": false,
+   "card": false,
+   "active": "marko",
+   "phase": "c2",
+   "inv": [
+    "newspaper",
+    "crowbar",
+    "tickets",
+    "cassette"
+   ],
+   "notes": [
+    "pro_auftrag",
+    "pro_zdenka",
+    "pro_noone",
+    "pro_spia",
+    "pro_red",
+    "pro_knit",
+    "pro_sohn",
+    "pro_riva",
+    "c1_boat7",
+    "c1_dinko",
+    "c1_gift",
+    "c1_ankica",
+    "c1_radio",
+    "pro_list",
+    "pro_people",
+    "pro_gasse",
+    "m_window",
+    "m_tram",
+    "m_limits",
+    "m_name",
+    "m_first",
+    "c1_waits",
+    "c1_date",
+    "c1_askoffice",
+    "c1_nobook",
+    "c1_1948",
+    "c1_ferry",
+    "c1_capsized",
+    "c1_rescued",
+    "c1_matejuska",
+    "c1_came",
+    "c1_brother",
+    "c1_bag",
+    "c1_words",
+    "c1_story",
+    "c1_stuck",
+    "c1_letter",
+    "c1_plaque",
+    "c1_years",
+    "m_mother",
+    "m_horn",
+    "i1_note",
+    "m_tin",
+    "c2_demolish",
+    "c2_boy",
+    "c2_stairs",
+    "c2_gap",
+    "c2_luka",
+    "m_flight",
+    "c2_meet",
+    "c2_ferry",
+    "c2_date",
+    "c2_guitar",
+    "c2_mailbox",
+    "c2_paper",
+    "c2_under",
+    "c2_dark",
+    "c2_thin",
+    "c2_riva",
+    "c2_died",
+    "c2_stayed",
+    "c2_shop",
+    "m_bells"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Touch und Inventarziehen",
+  "what": "Gegenstand auf den Ausgang gezogen: Benutzen-Antwort, kein Verlassen, kein Doppeltipp",
+  "extra": {
+   "trn": false,
+   "map": false,
+   "mapActing": false,
+   "transitions": 1,
+   "acting": 0,
+   "walk": false,
+   "screen": "game",
+   "room": "oldtown",
+   "busy": false,
+   "dlg": null,
+   "overlay": null,
+   "speech": false,
+   "card": false,
+   "active": "marko",
+   "phase": "c2",
+   "inv": [
+    "spatula",
+    "newspaper",
+    "crowbar",
+    "tickets",
+    "cassette"
+   ],
+   "notes": [
+    "pro_auftrag",
+    "pro_zdenka",
+    "pro_noone",
+    "pro_spia",
+    "pro_red",
+    "pro_knit",
+    "pro_sohn",
+    "pro_riva",
+    "c1_boat7",
+    "c1_dinko",
+    "c1_gift",
+    "c1_ankica",
+    "c1_radio",
+    "pro_list",
+    "pro_people",
+    "pro_gasse",
+    "m_window",
+    "m_tram",
+    "m_limits",
+    "m_name",
+    "m_first",
+    "c1_waits",
+    "c1_date",
+    "c1_askoffice",
+    "c1_nobook",
+    "c1_1948",
+    "c1_ferry",
+    "c1_capsized",
+    "c1_rescued",
+    "c1_matejuska",
+    "c1_came",
+    "c1_brother",
+    "c1_bag",
+    "c1_words",
+    "c1_story",
+    "c1_stuck",
+    "c1_letter",
+    "c1_plaque",
+    "c1_years",
+    "m_mother",
+    "m_horn",
+    "i1_note",
+    "m_tin",
+    "c2_demolish",
+    "c2_boy",
+    "c2_stairs",
+    "c2_gap",
+    "c2_luka",
+    "m_flight",
+    "c2_meet",
+    "c2_ferry",
+    "c2_date",
+    "c2_guitar",
+    "c2_mailbox",
+    "c2_paper",
+    "c2_under",
+    "c2_dark",
+    "c2_thin",
+    "c2_riva",
+    "c2_died",
+    "c2_stayed",
+    "c2_shop",
+    "m_bells"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Touch",
+  "what": "Zweiter Finger löst keine zweite Eingabe aus"
+ },
+ {
+  "ok": true,
+  "area": "Touch",
+  "what": "Nach Doppeltipps kein Zoom (visualViewport.scale = 1)",
+  "extra": 1
+ },
+ {
+  "ok": true,
+  "area": "Touch",
+  "what": "Tipp 12 Spielpixel neben dem Symbol trifft den Ort (große Trefferfläche)",
+  "extra": {
+   "trn": false,
+   "map": false,
+   "mapActing": false,
+   "transitions": 2,
+   "acting": 0,
+   "walk": false,
+   "screen": "game",
+   "room": "riva",
+   "busy": false,
+   "dlg": null,
+   "overlay": null,
+   "speech": false,
+   "card": false,
+   "active": "marko",
+   "phase": "c2",
+   "inv": [
+    "newspaper",
+    "crowbar",
+    "tickets",
+    "cassette"
+   ],
+   "notes": [
+    "pro_auftrag",
+    "pro_zdenka",
+    "pro_noone",
+    "pro_spia",
+    "pro_red",
+    "pro_knit",
+    "pro_sohn",
+    "pro_riva",
+    "c1_boat7",
+    "c1_dinko",
+    "c1_gift",
+    "c1_ankica",
+    "c1_radio",
+    "pro_list",
+    "pro_people",
+    "pro_gasse",
+    "m_window",
+    "m_tram",
+    "m_limits",
+    "m_name",
+    "m_first",
+    "c1_waits",
+    "c1_date",
+    "c1_askoffice",
+    "c1_nobook",
+    "c1_1948",
+    "c1_ferry",
+    "c1_capsized",
+    "c1_rescued",
+    "c1_matejuska",
+    "c1_came",
+    "c1_brother",
+    "c1_bag",
+    "c1_words",
+    "c1_story",
+    "c1_stuck",
+    "c1_letter",
+    "c1_plaque",
+    "c1_years",
+    "m_mother",
+    "m_horn",
+    "i1_note",
+    "m_tin",
+    "c2_demolish",
+    "c2_boy",
+    "c2_stairs",
+    "c2_gap",
+    "c2_luka",
+    "m_flight",
+    "c2_meet",
+    "c2_ferry",
+    "c2_date",
+    "c2_guitar",
+    "c2_mailbox",
+    "c2_paper",
+    "c2_under",
+    "c2_dark",
+    "c2_thin",
+    "c2_riva",
+    "c2_died",
+    "c2_stayed",
+    "c2_shop",
+    "m_bells"
+   ]
+  }
+ },
+ {
+  "ok": true,
+  "area": "Allgemein",
+  "what": "keine JS-Fehler (Touch-Seite)",
+  "extra": []
+ }
+]
