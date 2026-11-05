@@ -919,7 +919,7 @@ M.mem.k3_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2811);
   b.ellipse(70,30,3.4,2.8,function(x,y){ return (x+y)%2?P.m3:P.m2; });                                                             // Haarknoten
   for (y=30;y<48;y++) for (x=24;x<38;x++){ var d=Math.hypot((x-31)/5,(y-39)/7); if (d<1 && wm.get(x,y) && bayer(x,y)<0.3*(1-d)+0.12) mixPx(b,x,y,P.p3,2); }
   // Mala: nur ein heller Fleck über dem Sitz
-  for (y=24;y<62;y++) for (x=122;x<172;x++){ var d2=Math.hypot((x-146)/14,(y-42)/15); if (d2>1) continue; var k2=Math.round(Math.pow(1-d2,1.6)*7+bayer(x,y)*0.9-0.3); if (k2>0) mixPx(b,x,y,P.l1,Math.min(6,k2)); }
+  for (y=22;y<72;y++) for (x=124;x<172;x++){ var d2=Math.hypot((x-148)/19,(y-47)/22); if (d2>1) continue; var k2=Math.round(Math.pow(1-d2,1.3)*7+bayer(x,y)*0.9-0.3); if (k2>0) mixPx(b,x,y,P.l1,Math.min(6,k2)); }
   M.light(b,M.lf.sum(M.lf.xband(0,232,0.25,-0.55),M.lf.pool(50,34,70,40,0.5,1)));
   edgeDark(b,1.8); };
 

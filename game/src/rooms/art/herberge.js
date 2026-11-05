@@ -25,7 +25,7 @@ var TER={x0:178,x1:400};                                // Terrasse
 var RAIL={top:84,base:106};                             // Geländer
 var PERG={posts:[188,394],beam:20};                     // Pergola mit Weinstock
 var TBL=[{x0:212,x1:242,top:107,base:124},{x0:326,x1:356,top:107,base:124}];   // Markos Tisch, Tisch der Australier
-var BR={cx:364,sp:84,span:22,top:64};                   // Alte Brücke in der Ferne (Bogenmitte, Kämpferlinie, halbe Spannweite, Brüstung)
+var BR={cx:364,sp:90,span:20,top:70};                   // Alte Brücke in der Ferne (Bogenmitte, Kämpferlinie, halbe Spannweite, Brüstung)
 var MAJA_Y=106;
 var AUS=[[318,124,'R'],[364,124,'L'],[341,115,'L']];    // aussie1, aussie2 (sitzend vorn), aussie3 (sitzend hinter dem Tisch, mit Gitarre)
 function rd(v){ return Math.round(v); }
@@ -66,7 +66,7 @@ function lightsFor(tod,S){ if (tod==='day') return []; var L=[[84,40,96,56,0.95]
 var SKYM=new Uint8Array(W*H), OUT=new Uint8Array(W*H), WINS=[];
 
 // ---------------------------------------------------------------- Draußen: Himmel, Hum, Westufer, Fluss, die Alte Brücke klein
-function paintSky(b,tod,w,GS){ var x, y, i, r=M.rng(5), x0=CORNER.x1-2;
+function paintSky(b,tod,w,GS){ var x, y, i, r=M.rng(5), x0=CORNER.x0;
   if (w==='grey' && tod==='dawn'){ var GD=R('k2 m0 m1 m2 m3'); for (y=0;y<96;y++) for (x=x0;x<W;x++) b.px(x,y,ra(GD,0.25+Math.pow(y/80,1.2)*0.6+(fbm(x*0.02,y*0.08,3)-0.5)*0.16,x,y)); return; }
   if (w==='rain'||w==='grey'){ M.scn.sky(b,x0,0,W-x0,96,tod,w,13); return; }
   if (tod==='day'){ var D=R('b0 b1 b2 b3 b4 b5'); for (y=0;y<96;y++) for (x=x0;x<W;x++) b.px(x,y,ra(D,(w==='bura'?0.05:0.15)+Math.pow(y/72,1.1)*0.82,x,y));
@@ -80,20 +80,20 @@ function paintSky(b,tod,w,GS){ var x, y, i, r=M.rng(5), x0=CORNER.x1-2;
 function miniHouse(b,x,base,w,h,sd,tile){ var y, xx; for (y=base-h;y<base;y++) for (xx=x;xx<x+w;xx++) b.px(xx,y,(xx===x+w-1)?P.s3:((hash(xx,y+sd)<0.08)?P.s4:P.s5));
   for (var k=0;k<3;k++) for (xx=x-1+k;xx<x+w+1-k;xx++) b.px(xx,base-h-1-k,tile?(k===2?P.t4:((xx+k)%3?P.t3:P.t2)):(k===2?P.s3:((xx+k)%3?P.s2:P.m2)));
   for (xx=x+1;xx<x+w-1;xx+=3) if (hash(xx,sd)<0.7){ b.px(xx,base-h+2,P.k2); WINS.push([xx,base-h+2,1,1,hash(xx,sd+1)]); if (h>6){ b.px(xx,base-h+5,P.k2); WINS.push([xx,base-h+5,1,1,hash(xx,sd+2)]); } } }
-function farView(b,tod,w){ var x, y, x0=CORNER.x1-2, r=M.rng(17);
+function farView(b,tod,w){ var x, y, x0=CORNER.x0, r=M.rng(17);
   // Hum (Westen): runder Hügel mit Macchia, ohne Zeichen
-  for (x=x0;x<W;x++){ var top=rd(36+Math.sin(x*0.018+1.2)*7+Math.sin(x*0.07)*1.5); for (y=top;y<80;y++){ var v=0.5-(y-top)*0.01+(fbm(x*0.2,y*0.3,12)-0.5)*0.6+(y===top?0.25:0), c=ra(R('g0 e1 g1 e2 g2 e3'),v,x,y); if (hash(x,y)<0.04) c=P.s3; b.px(x,y,c); } }
-  // Westufer: oben Wohnblocks und Ziegeldächer, unten alte Steinhäuser auf dem Fels
-  x=x0; while (x<W){ var w2=6+Math.floor(r()*8), h2=8+Math.floor(r()*10), base=66-Math.floor(r()*6); miniHouse(b,x,base,w2,h2,rd(x),r()<0.6); x+=w2+1+Math.floor(r()*3); }
-  [[196,20,38],[262,14,30],[300,18,34]].forEach(function(q){ for (y=q[2];y<66;y++) for (x=q[0];x<q[0]+q[1];x++){ var u=x-q[0], fl=(y-q[2])%4, c=(fl===0)?P.s5:((u%4===1||u%4===2)?((hash(x>>2,y)<0.2)?P.s5:P.m2):P.s4); if (u===q[1]-1) c=P.s2; b.px(x,y,c); if (fl===2 && u%4===1) WINS.push([x,y,1,1,hash(x,y)]); } });
-  x=x0; while (x<W){ var w3=8+Math.floor(r()*10), h3=7+Math.floor(r()*6), base3=80+Math.floor(r()*3); miniHouse(b,x,base3,w3,h3,rd(x)+5,false); x+=w3+2+Math.floor(r()*3); }
-  for (var i=0;i<10;i++){ var tx=x0+Math.floor(r()*(W-x0)), ty=78+Math.floor(r()*4); for (y=ty-8;y<ty;y++) b.px(tx,y,P.g1); b.px(tx+1,ty-3,P.g0); }   // Zypressen
-  // Fels am Wasser
-  for (y=80;y<92;y++) for (x=x0;x<W;x++){ var c2=ra(R('m0 m1 s1 s2 s3'),0.55+(fbm(x*0.25,y*0.4,3)-0.5)*0.7-(y-80)*0.02,x,y); if (fbm(x*0.4,y*0.5,9)>0.62) c2=(hash(x,y)<0.5)?P.g1:P.g2; b.px(x,y,c2); }
+  for (x=x0;x<W;x++){ var top=rd(40+Math.sin(x*0.018+1.2)*6+Math.sin(x*0.07)*1.5); for (y=top;y<84;y++){ var v=0.5-(y-top)*0.01+(fbm(x*0.2,y*0.3,12)-0.5)*0.6+(y===top?0.25:0), c=ra(R('g0 e1 g1 e2 g2 e3'),v,x,y); if (hash(x,y)<0.04) c=P.s3; b.px(x,y,c); } }
+  // Westufer: hinten am Hang wenige Wohnblocks und Ziegeldächer, vorn alte Steinhäuser auf dem Fels
+  [[214,10,48],[300,12,46],[246,8,52]].forEach(function(q){ for (y=q[2];y<70;y++) for (x=q[0];x<q[0]+q[1];x++){ var u=x-q[0], fl=(y-q[2])%3, c=(fl===0)?P.s5:((u%3===1)?((hash(x>>2,y)<0.2)?P.s5:P.m2):P.s4); if (u===q[1]-1) c=P.s2; b.px(x,y,c); if (fl===2 && u%3===1) WINS.push([x,y,1,1,hash(x,y)]); } });
+  x=x0; while (x<W){ var w2=5+Math.floor(r()*7), h2=5+Math.floor(r()*6), base=70-Math.floor(r()*4); miniHouse(b,x,base,w2,h2,rd(x),r()<0.55); x+=w2+1+Math.floor(r()*4); }
+  x=x0; while (x<W){ var w3=7+Math.floor(r()*9), h3=6+Math.floor(r()*5), base3=82+Math.floor(r()*2); miniHouse(b,x,base3,w3,h3,rd(x)+5,false); x+=w3+2+Math.floor(r()*4); }
+  for (var i=0;i<12;i++){ var tx=x0+Math.floor(r()*(W-x0)), ty=80+Math.floor(r()*3); for (y=ty-7;y<ty;y++) b.px(tx,y,P.g1); b.px(tx+1,ty-3,P.g0); }   // Zypressen
+  // Fels am Wasser, tief unten
+  for (y=82;y<95;y++) for (x=x0;x<W;x++){ var c2=ra(R('m0 m1 s1 s2 s3'),0.55+(fbm(x*0.25,y*0.4,3)-0.5)*0.7-(y-82)*0.02,x,y); if (fbm(x*0.4,y*0.5,9)>0.62) c2=(hash(x,y)<0.5)?P.g1:P.g2; b.px(x,y,c2); }
   // Fluss tief unten (nur der ferne Teil zu sehen): grün, mit hellen Strömungsstreifen
   var WR=w==='rain'?R('e1 a2 e2 a3 m3 s3'):(w==='grey'?R('a1 a2 m2 a3 m3 a4'):R('a1 a2 a3 a4 a5 a6'));
-  for (y=92;y<RAIL.base;y++) for (x=x0;x<W;x++){ var c3=ra(WR,0.38+(y-92)*0.025+(fbm(x*0.05,y*0.8,11)-0.5)*0.4,x,y); if (Math.sin(x*0.09+y*1.9)>0.9) c3=M.UP[c3]; b.px(x,y,c3); OUT[y*W+x]=2; }
-  for (x=x0;x<W;x++) if (hash(x,1)<0.5) b.px(x,92,P.s4);
+  for (y=95;y<RAIL.base;y++) for (x=x0;x<W;x++){ var c3=ra(WR,0.36+(y-95)*0.03+(fbm(x*0.05,y*0.8,11)-0.5)*0.4,x,y); if (Math.sin(x*0.09+y*1.9)>0.9) c3=M.UP[c3]; b.px(x,y,c3); OUT[y*W+x]=2; }
+  for (x=x0;x<W;x++) if (hash(x,1)<0.5) b.px(x,95,P.s4);
   bridgeSmall(b); }
 // die Alte Brücke in der Ferne: ein Bogen von Fels zu Fels, flacher Buckel, zwei Türme
 function bridgeSmall(b){ var cx=BR.cx, sp=BR.sp, a=BR.span, r=(a*a+20*20)/(2*20), cy=sp-20+r, x, y;   // Stich 20 px
@@ -148,7 +148,7 @@ function interior(b,tod){ var x, y;
   for (x=0;x<CORNER.x1;x++) dk(b,x,FY,2); }
 var SIGNP=[100,25,108,29];
 function corner(b){ var x, y, x0=CORNER.x0, x1=CORNER.x1;
-  for (y=0;y<FY+2;y++) for (x=x0;x<x1;x++){ var archY=CORNER.arch+Math.round(Math.pow(Math.abs(x-(x0+x1)/2)/7,2)*3); if (y>archY && x>x0+2 && x<x1-3) continue;
+  for (y=0;y<FY+2;y++) for (x=x0;x<x1;x++){ var archY=CORNER.arch+Math.round(Math.pow(Math.abs(x-(x0+x1)/2)/5,2)*4); if (y>archY && x>x0+2 && x<x1-3) continue;
     var c=tex.ashlar(x*1.3,y,R('s1 s2 s3 s4 s5'),6,4); if (x>=x1-2) c=M.DN[c]; if (x<=x0+1) c=M.UP[c]; b.px(x,y,c); }
   for (y=0;y<10;y++) for (x=x0-4;x<x1+10;x++){ var t=y/10; b.px(x,y,(y===9)?P.m1:((x+y)%4===0?P.s1:(y<3?P.m2:P.s2))); }           // Traufe des Steinplattendachs
   for (x=x0-4;x<x1+10;x++) dk(b,x,10,2); }
@@ -197,9 +197,9 @@ function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), 
   farView(b,tod,w);
   // Dunst über dem Westufer (bei Bura fast keiner)
   var hz={rain:0.55,grey:0.38,calm:0.18,frost:0.15,bura:0.04}[w], fcol=(w==='rain')?(tod==='day'?P.s3:P.m1):(w==='grey'?P.s4:P.b4); if (tod==='night') fcol=P.n0;
-  M.fogBake(b,function(xx,yy){ return (xx>=CORNER.x1-2 && yy<92)?hz*(1-yy/140):0; },{col:fcol});
+  M.fogBake(b,function(xx,yy){ return (xx>=CORNER.x0 && yy<95)?hz*(1.1-yy/140):0; },{col:fcol});
   for (var q=0;q<W*H;q++) if (b.d[q]===T && sky.d[q]!==T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
-  for (y=0;y<RAIL.base;y++) for (x=CORNER.x1-2;x<W;x++) if (!OUT[y*W+x]) OUT[y*W+x]=1;
+  for (y=0;y<RAIL.base;y++) for (x=CORNER.x0;x<W;x++) if (!OUT[y*W+x]) OUT[y*W+x]=1;
   pergola(b,w); railing(b); deck(b,wet); chain(b);
   interior(b,tod); corner(b);
   table(b,TBL[0],false); chairBack(b,TBL[0].x0-6,124,'R'); chairBack(b,TBL[0].x1+6,124,'L');
@@ -279,7 +279,7 @@ M.defineArt('herberge',{
     bridge_view:[BR.cx-BR.span-18,BR.top-16,BR.span*2+34,BR.sp-BR.top+20]
   },
   stands:{ door:[18,116,'B'], desk:[120,116,'B'], bell:[142,116,'B'], register:[108,116,'B'], stairs:[72,114,'B'], railing:[290,114,'B'], table:[227,129,'B'], guitar:[340,130,'B'], lights:[280,118,'B'], bridge_view:[362,114,'B'] },
-  actorPos:{ maja:[122,MAJA_Y,'R'], aussie1:AUS[0], aussie2:AUS[1], aussie3:AUS[2], mala:[300,114,'R'] },
+  actorPos:{ maja:[122,MAJA_Y,'R'], aussie1:[AUS[0][0],AUS[0][1],'R','aussie1',false,'sit'], aussie2:[AUS[1][0],AUS[1][1],'L','aussie2',false,'sit'], aussie3:[AUS[2][0],AUS[2][1],'L','aussie3',false,'guitar'], mala:[300,114,'R'] },
   start:[110,120,'R'], entries:{ map:[18,118,'R'], zimmer:[70,116,'R'] }
 });
 })(M);

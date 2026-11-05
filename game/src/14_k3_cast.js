@@ -186,21 +186,18 @@ var mjB=[
 "...ktttk...",
 "...kssk...."];
 var mjP=pose({},'S');
-// Laptop auf dem Tresen (Seitenansicht: Tastatur flach, der Deckel steht vorn auf)
-function laptop(b,X,Y){ b.hl(X+7,X+13,Y-27,P.m2); b.hl(X+8,X+12,Y-28,P.m1); b.px(X+9,Y-28,P.m3); b.px(X+11,Y-28,P.m3); b.vl(X+13,Y-33,Y-28,P.m2); b.vl(X+14,Y-33,Y-28,P.m1); b.px(X+13,Y-33,P.m3); }
 M.defineChar('maja',{
   legend:L({H:P.h2,h:P.h3,y:P.y3,S:P.p4,s:P.p3,t:P.p2,m:P.d3,g:P.k2,G:P.b4}),
   heads:{S:HS(mjS),F:HS(mjF),B:{n:mjB}}, neck:{S:[6,13],F:[5,14],B:[5,14]},
   torso:{w:10,len:12,col:[P.g3,P.g4,P.g2],belt:P.g2,collar:[P.g2,P.g2],side:7},
   bones:[10,10,7,7], hipY:22, shoulder:4, armR:[1.3,1.1],
   cols:{trou:[P.c2,P.c3,P.c1],trouF:[P.c1,P.c2,P.c0],sleeve:[P.g3,P.g4,P.g2],sleeveF:[P.g2,P.g3,P.g1],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.w1},
-  // Maschen im Strick (versetzte dunkle Punkte); der Laptop beim Tippen
+  // Maschen im Strick (versetzte dunkle Punkte)
   post:function(b,p,X,Y,hx,hy){ var G=[P.g3,P.g4], t=Y+hy-11;
-    for (var y=t+2;y<Y+hy-1;y+=2) for (var x=X+hx-6;x<=X+hx+6;x+=4) onCol(b,x+((y>>1)&1)*2,y,G,P.g2);
-    if (p.v==='S' && p.lt){ laptop(b,X,Y); armS(b,M.CHARS.maja,p,X,Y,hx,hy); } },
+    for (var y=t+2;y<Y+hy-1;y+=2) for (var x=X+hx-6;x<=X+hx+6;x+=4) onCol(b,x+((y>>1)&1)*2,y,G,P.g2); },
   anims:{
-    // tippt am Laptop hinter dem Tresen, sieht ab und zu auf
-    type:(function(){ var T0=function(o){ return mjP(Object.assign({ln:1,ho:[1,1],lt:1,nh:[9,-28],fh:[11,-28]},o||{})); };
+    // tippt am Laptop hinter dem Tresen (Tresen und Laptop malt der Raum, die Hände liegen etwa 28 px hoch), sieht ab und zu auf
+    type:(function(){ var T0=function(o){ return mjP(Object.assign({ln:1,ho:[1,1],nh:[9,-28],fh:[11,-28]},o||{})); };
       return seq([T0({}),140],[T0({nh:[9,-29]}),110],[T0({fh:[11,-29]}),120],[T0({nh:[8,-29]}),110],[T0({fh:[12,-29]}),120],[T0({nh:[9,-29],fh:[11,-29]}),100],[T0({}),420],
         [T0({hd:'b'}),110],[T0({nh:[10,-29]}),110],[T0({fh:[11,-29]}),120],[T0({nh:[9,-29]}),110],[T0({}),130],[T0({nh:[10,-31]}),150],[T0({nh:[10,-28]}),260],
         [T0({ho:[0,0]}),1100],[T0({ho:[0,0],hd:'b'}),110],[T0({ho:[0,0]}),500]); })(),
@@ -518,9 +515,6 @@ var ktB=[
 "...ktttk...",
 "...kssk...."];
 var ktHS=HS(ktS); ktHS.u=up(ktS);
-// Tastatur auf dem Schreibtisch (etwa 20 px hoch) und ein flacher Bildschirm dahinter (Seitenansicht)
-function keyboard(b,X,Y){ b.hl(X+8,X+14,Y-20,P.m1); b.hl(X+9,X+13,Y-21,P.m2); b.px(X+10,Y-21,P.m3); b.px(X+12,Y-21,P.m3);
-  b.rect(X+17,Y-32,2,10,P.m1); b.vl(X+17,Y-31,Y-24,P.m0); b.px(X+18,Y-32,P.m2); b.vl(X+18,Y-22,Y-21,P.m1); b.hl(X+16,X+19,Y-20,P.m1); }
 var ktP=pose({},'S'), ktSit=sitter(22,{ln:1});
 M.defineChar('kata',{
   legend:L({H:P.w4,h:P.w5,j:P.d6,u:P.w2,y:P.m4,S:P.p4,s:P.p3,t:P.p2,m:P.d3}),
@@ -533,10 +527,11 @@ M.defineChar('kata',{
     if (p.v==='F'){ for (var y=t+1;y<Y+hy-1;y++) onCol(b,X+hx,y,Fl,P.k2); onCol(b,X+hx+2,t+3,Fl,P.s5); onCol(b,X+hx+3,t+3,Fl,P.r3); if (!p.sit){ [-1,1].forEach(function(sd){ var lg=legF(p,hx,hy,sd); onCol(b,X+Math.round(lg.kn[0]),Y+Math.round(lg.kn[1]),Tr,P.m1); }); } }
     else if (p.v==='B'){ b.hl(X+hx-2,X+hx+2,t+3,P.s4); b.px(X+hx-2,t+4,P.r3); b.hl(X+hx-1,X+hx+2,t+4,P.s3); }
     else { onCol(b,X+hx+3+g.shx,t+3,Fl,P.s5); if (!p.sit){ var lg2=legS(ch,p,hx,hy,true); onCol(b,X+Math.round(lg2.kn[0]),Y+Math.round(lg2.kn[1]),Tr,P.m1); onCol(b,X+Math.round(lg2.kn[0])+1,Y+Math.round(lg2.kn[1]),Tr,P.m1); }
-      if (p.it==='k3a_phone') armS(b,ch,p,X,Y,hx,hy); if (p.kb){ keyboard(b,X,Y); armS(b,ch,p,X,Y,hx,hy); } } },
+      if (p.it==='k3a_phone') armS(b,ch,p,X,Y,hx,hy); } },
   anims:{
     // tippt am PC (sitzend), schnell; die Maus; lehnt sich kurz zurück
-    type:(function(){ var K=function(o){ return ktSit(Object.assign({kb:1,nh:[10,-21],fh:[12,-21],ho:[1,0]},o||{})); };
+    // (Schreibtisch, Bildschirm und Tastatur malt der Raum; die Hände liegen etwa 21 px hoch)
+    type:(function(){ var K=function(o){ return ktSit(Object.assign({nh:[10,-21],fh:[12,-21],ho:[1,0]},o||{})); };
       return seq([K({}),100],[K({nh:[10,-22]}),90],[K({fh:[12,-22]}),90],[K({nh:[9,-22]}),90],[K({fh:[13,-22]}),90],[K({nh:[11,-22]}),90],[K({}),90],[K({fh:[12,-22]}),90],[K({nh:[10,-22]}),90],[K({}),300],
         [K({nh:[13,-21]}),200],[K({nh:[14,-21]}),260],[K({nh:[14,-20]}),90],[K({nh:[14,-21]}),400],[K({nh:[14,-20]}),90],[K({nh:[14,-21],hd:'b'}),110],[K({}),120],
         [K({nh:[10,-22]}),90],[K({fh:[12,-22]}),90],[K({nh:[9,-22]}),90],[K({fh:[13,-22]}),90],[K({}),90],[K({ln:0,ho:[0,0],nh:[6,-15],fh:[5,-15]}),900],[K({ln:0,ho:[0,0],nh:[6,-15],fh:[5,-15],hd:'u'}),400],[K({}),200]); })(),
@@ -605,9 +600,8 @@ var zlP=pose({},'S'), zlSit=sitter(20,{ln:1});
 var DRESS=[P.r2,P.r3,P.r1];
 // Karomuster im Kleid (Rock und der Streifen in der offenen Strickjacke)
 function checks(b,X,Y,hx,hy,x0,x1,y0,y1){ for (var y=y0;y<=y1;y++) for (var x=x0;x<=x1;x++){ var u=(x-hx-X+30)%3===0, v=(y-hy-Y+30)%3===0; if (u&&v) onCol(b,x,y,DRESS,P.r0); else if (u||v) onCol(b,x,y,DRESS,P.r1); } }
-// Korb mit Eiern auf dem Schoß (sitzend) und der Eierkarton auf dem Tisch vor ihr (ec: wie viele Eier schon drin sind)
+// Korb mit Eiern auf dem Schoß (sitzend); die Kartons stehen auf ihrem Tisch (malt der Raum, etwa 20 px hoch)
 function basket(b,X,Y,hx,hy){ var x=X+hx+2, y=Y+hy-4; b.rect(x,y+1,6,3,P.w3); b.hl(x,x+5,y,P.w4); b.px(x+1,y+2,P.w2); b.px(x+3,y+2,P.w2); b.px(x+5,y+2,P.w2); b.px(x+2,y-1,P.s6); b.px(x+3,y-1,P.s5); b.px(x+4,y,P.s6); }
-function carton(b,X,Y,n){ var x=X+9, y=Y-21; b.rect(x,y,7,2,P.s3); b.hl(x,x+6,y,P.s4); for (var i=0;i<3;i++) b.px(x+1+i*2,y+1,P.s2); for (var j=0;j<Math.min(6,n||0);j++) b.px(x+1+(j%3)*2,y-1-((j/3)|0)*0,j<3?P.s6:P.s5); if ((n||0)>3) b.hl(x+1,x+5,y-1,P.s6); }
 // Topf auf dem Herd (der Löffel steckt darin)
 function pot(b,X,Y){ b.rect(X+10,Y-25,7,4,P.m1); b.hl(X+10,X+16,Y-26,P.m3); b.hl(X+11,X+15,Y-26,P.m2); b.px(X+9,Y-25,P.m2); b.px(X+17,Y-25,P.m2); b.hl(X+10,X+16,Y-22,P.m0); b.px(X+11,Y-24,P.m2); }
 var zlata=M.defineChar('zlata',{
@@ -623,7 +617,6 @@ var zlata=M.defineChar('zlata',{
     checks(b,X,Y,hx,hy,X+hx-12,X+hx+14,Y+hy-11,Y+hy+13);
     if (p.v==='F' && !p.sit){ b.hl(X+hx-4,X+hx-3,Y+hy-3,P.m1); b.hl(X+hx+2,X+hx+3,Y+hy-3,P.m1); }
     if (p.v==='S' && p.sit && p.bk){ basket(b,X,Y,hx,hy); if (p.it!=='k3a_egg') armS(b,ch,p,X,Y,hx,hy); }
-    if (p.v==='S' && p.ct!==undefined) carton(b,X,Y,p.ct);
     if (p.v==='S' && p.pot) pot(b,X,Y); },
   // Flamme der Petroleumlampe (flackert, leuchtet nachts), Dampf aus dem Topf
   after:function(b,p,t,ph){ var OX=M.SPR.OX, OY=M.SPR.OY;
@@ -636,9 +629,9 @@ var zlata=M.defineChar('zlata',{
   anims:{
     // legt im Sitzen Eier aus dem Korb in den Karton auf dem Tisch
     sell:(function(){ var E=function(o){ return zlSit(Object.assign({bk:1,nh:[5,-15],fh:[12,-21]},o||{})); };
-      return seq([E({ct:2}),500],[E({ct:2,it:'k3a_egg'}),160],[E({ct:2,it:'k3a_egg',nh:[8,-19]}),200],[E({ct:2,it:'k3a_egg',nh:[11,-23],ln:2,ho:[1,1]}),260],[E({ct:3,nh:[11,-23],ln:2,ho:[1,1]}),200],
-        [E({ct:3,nh:[8,-18]}),220],[E({ct:3}),300],[E({ct:3,it:'k3a_egg'}),160],[E({ct:3,it:'k3a_egg',nh:[8,-19]}),200],[E({ct:3,it:'k3a_egg',nh:[12,-23],ln:2,ho:[1,1]}),260],[E({ct:4,nh:[12,-23],ln:2,ho:[1,1]}),200],
-        [E({ct:4,nh:[8,-18]}),220],[E({ct:4,ho:[-1,0]}),900],[E({ct:4,ho:[-1,0],hd:'b'}),110],[E({ct:4}),700]); })(),
+      return seq([E({}),500],[E({it:'k3a_egg'}),160],[E({it:'k3a_egg',nh:[8,-19]}),200],[E({it:'k3a_egg',nh:[11,-23],ln:2,ho:[1,1]}),260],[E({nh:[11,-23],ln:2,ho:[1,1]}),200],
+        [E({nh:[8,-18]}),220],[E({}),300],[E({it:'k3a_egg'}),160],[E({it:'k3a_egg',nh:[8,-19]}),200],[E({it:'k3a_egg',nh:[12,-23],ln:2,ho:[1,1]}),260],[E({nh:[12,-23],ln:2,ho:[1,1]}),200],
+        [E({nh:[8,-18]}),220],[E({ho:[-1,0]}),900],[E({ho:[-1,0],hd:'b'}),110],[E({}),700]); })(),
     // hält die Petroleumlampe hoch und späht ins Dunkel
     lamp:seq([zlP({nh:[4,-22],it:'k3a_petrol'}),300],[zlP({nh:[6,-30],it:'k3a_petrol'}),160],[zlP({nh:[8,-37],it:'k3a_petrol',ln:-1,ho:[0,-1]}),900],[zlP({nh:[8,-37],it:'k3a_petrol',ln:-1,ho:[1,-1],hd:'r'}),700],
       [zlP({nh:[8,-37],it:'k3a_petrol',ln:-1,ho:[0,-1],hd:'b'}),110],[zlP({nh:[8,-37],it:'k3a_petrol',ln:-1,ho:[0,-1]}),900],[zlP({nh:[7,-34],it:'k3a_petrol'}),600],[zlP({nh:[8,-37],it:'k3a_petrol',ln:-1,ho:[0,-1]}),1000]),
