@@ -114,7 +114,7 @@ var travel0=M.canTravel;
 M.canTravel=async function(A,L){ var G=A.G; if (!CH3(G)) return travel0?travel0(A,L):true;
   var w=travelWhy(G,L);
   if (w){ if (w.who==='g') await A.g(w.t); else await A.m(w.t);
-    if (w.alone){ var c=await A.choose([{t:'(Allein gehen.)',id:'alone'},{t:'(Bei ihr bleiben.)',id:'stay',bye:true}],{title:'Über den Fluss'});
+    if (w.alone){ var c=await A.choose([{t:'(Allein gehen.)',id:'alone',silent:true},{t:'(Bei ihr bleiben.)',id:'stay',bye:true,silent:true}],{title:'Über den Fluss'});
       A.setFlag('k3.mala.refused');
       if (c==='alone'){ await A.narrate('Ich gehe los, zur Straße hinunter. Nach ein paar Straßen zieht es hinter meiner Stirn, als hätte jemand einen Faden um meine Schläfen gelegt und zöge daran.'); A.headache&&A.headache(1600);
         await A.wait(500); await A.m('…'); await A.narrate('Ich bleibe stehen. Ich gehe zurück. Mala steht noch da, wo ich sie gelassen habe.'); await A.g('Ich habe gesagt: nicht ohne mich. Und ich gehe über keine Brücke.'); } }
@@ -122,14 +122,16 @@ M.canTravel=async function(A,L){ var G=A.G; if (!CH3(G)) return travel0?travel0(
   // Skela: mit dem Taxi vom Ostbusbahnhof (oder Dinos Roller); zurück steht das Taxi wartend an der Straße
   var from=M.E.room?M.E.room.id:'';
   if (L.id==='skela' && !/^skela_|^zlata_k$/.test(from)){ var ride='taxi';
-    if (G.flags['k3.dino.ride'] && G.phase!=='k3_epi_d'){ ride=await A.choose([{t:'(Mit dem Taxi.)',id:'taxi'},{t:'(Mit Dino auf dem Roller.)',id:'dino'}],{title:'Nach Skela'})||'taxi'; }
+    if (G.flags['k3.dino.ride'] && G.phase!=='k3_epi_d'){ ride=await A.choose([{t:'(Mit dem Taxi.)',id:'taxi',silent:true},{t:'(Mit Dino auf dem Roller.)',id:'dino',silent:true}],{title:'Nach Skela'})||'taxi'; }
     A.setFlag('k3.ride',ride);
     if (G.phase==='k3_epi_d'){ await A.narrate('Vlado fährt. Nada sitzt neben ihm im Führerhaus und sieht geradeaus. Ich sitze außen, Mala zwischen uns, und keiner sagt etwas.'); return true; }
     if (ride==='dino' && M.k3DinoRide) await M.k3DinoRide(A);
     else if (A.first('!k3.taxi1')){ A.sfx('taxi'); await A.narrate('Am Ostbusbahnhof lehnt der Taxifahrer an seinem Mercedes. „Skela? Da ist nichts. Eine Brücke und Hunde.“ Er fährt trotzdem, das Radio laut.'); }
     else { A.sfx('taxi'); await A.narrate(A.cycle('k3taxi',['Der Taxifahrer fragt nicht mehr. Er dreht das Radio leiser, als wir aus der Stadt sind.','Dasselbe Taxi, dasselbe Radio. „Skela“, sage ich, und er nickt.'])); }
     return true; }
-  if (/^skela_d$/.test(from) && L.id!=='skela'){ if (G.phase!=='k3_epi_d'){ A.sfx('taxi'); await A.narrate(A.cycle('k3taxiB',['Das Taxi hat an der Straße gewartet. Der Fahrer schläft fast. Er fährt uns zurück in die Stadt.','Zurück nach Mostar. Der Fahrer sagt nichts, und ich sage auch nichts.'])); } }
+  if (/^skela_d$/.test(from) && L.id!=='skela'){ if (G.phase!=='k3_epi_d'){ A.sfx('taxi');
+      if (G.flags['k3.ride']==='dino'){ A.setFlag('k3.ride','taxi'); await A.narrate('Dino ist längst weg. Ich rufe das Taxi vom Ostbusbahnhof an. Es kommt nach zwanzig Minuten, mit demselben Radio.'); }
+      else await A.narrate(A.cycle('k3taxiB',['Das Taxi hat an der Straße gewartet. Der Fahrer schläft fast. Er fährt uns zurück in die Stadt.','Zurück nach Mostar. Der Fahrer sagt nichts, und ich sage auch nichts.'])); } }
   return true; };
 // Aus Skela weg geht es nur von der Straße am rechten Ufer
 M.mapOriginWhy=function(G,R){ if (!CH3(G)||!R) return null; if (R.id==='skela_l'||R.id==='skela_most'||R.id==='zlata_k') return G.phase==='k3_epi_d'?'Vlado wartet drüben an der Straße. Erst zurück über die Brücke.':'Das Taxi wartet drüben an der Straße. Erst zurück über die Brücke.'; return null; };
