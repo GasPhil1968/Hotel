@@ -6,7 +6,7 @@
      k3_mostar     Mostar bei Tag: wiegender 6/8 wie eine Barkarole, Gitarre und Saz, leise Rahmentrommel (e-Moll, dann G-Dur).
      k3_istraga    Ermittlung am Westufer: ruhiger Puls, kreisendes Gitarrenmuster auf Fis, Cello, Klavier (h-Moll).
      k3_noc        Nacht in der Herberge: gebrochene Klavierakkorde, eine spärliche Melodie (F-Dur), sehr leise.
-     k3_aussie     Die Australier singen „Auld Lang Syne“ (schottisch, gemeinfrei) zu einer verstimmten Gitarre: zwei Stimmen, ein Wackelkandidat, ein paar schiefe Töne.
+     k3_aussie     Die Australier singen ein altes Lied von hier, die Sevdalinka „Kad ja pođoh na Bembašu“ (Volkslied, gemeinfrei), zur verstimmten Gitarre: zwei Stimmen, ein Wackelkandidat, ein paar schiefe Töne.
      k3_skela      Skela, das Hochufer: kalte offene Quinten, ein tiefer Cellogrund, ein singendes Seil, unruhiges Wasser, eine ferne Glocke (D).
      k3_mate       Mates Thema: Harmonium und Akkordeon, ein würdevoller, alter Choral mit wanderndem Bass und leiser Bahnhofsuhr (F-Dur).
      k3_duh        Geister und Erkenntnis: kalte Fläche, die Schiffsglocke dreimal leise, hohe Spieluhr, am Ende nach Dur.
@@ -54,7 +54,7 @@
      lighter     Feuerzeug: das Reibrad zweimal, dann die Flamme.
      cough       Raucherhusten: vier Stöße, dann ein pfeifendes Einatmen.
      splash      Sprung ins tiefe Wasser von hoch oben: Aufschlag, Eintauchen, Gischt, Blasen, Echo der Felswand (ersetzt den alten, nirgends benutzten splash).
-     guitar      Ein Akkord (G-Dur) auf der leicht verstimmten Gitarre der Australier.
+     guitar      Ein Akkord (a-Moll, die Tonart ihres Liedes) auf der leicht verstimmten Gitarre der Australier.
      hens        Drei Hühner gackern.
      lantern     Petroleumlampe: Glaszylinder, Streichholz, der Docht fängt, die Flamme flackert.
      stoveFire   Holzfeuer im Herd: Glutrauschen, Knistern, ein Scheit knackt.
@@ -311,7 +311,7 @@ var SFX3={
     Sw(t+0.08,1.3,0.05,'bandpass',2600,0.8,far,1400);
     for (var j=0;j<10;j++){ var fb=rnd(380,1100); T('sine',fb,t+0.5+Math.random()*1.2,0.05,rnd(0.006,0.016),far,fb*1.6); }     // Blasen
     Sw(t+0.9,1.8,0.035,'lowpass',500,0.8,far,300); },
-  guitar:function(t){ [43,47,50,55,59,67].forEach(function(m,i){ gitNote(nf(m),t+i*0.024,0.04,2.6,K.sfx,strDet(nf(m)),0.2); }); },
+  guitar:function(t){ [45,52,57,60,64].forEach(function(m,i){ gitNote(nf(m),t+i*0.024,0.04,2.6,K.sfx,strDet(nf(m)),0.2); }); },
   hens:function(t){ var S=K.sfx; hen(t,1,K.pan(-0.35,S),false,3); hen(t+0.55,1.18,K.pan(0.35,S),false,3); hen(t+1.3,0.92,K.pan(-0.05,S),true,3); },
   lantern:function(t){ var S=lvl(2.8); T('sine',2900,t,0.25,0.012,S); T('sine',4300,t+0.004,0.18,0.006,S); Nz(t,0.03,0.02,'highpass',4000,1,S);
     Nz(t+0.45,0.09,0.06,'bandpass',3000,1.8,S); Nz(t+0.5,0.3,0.05,'bandpass',1200,0.8,S,600,0.02);
@@ -536,16 +536,24 @@ M.defineSong('k3_noc',{ bpm:50, comp:'piano', compBeats:[0,2], arp:0.16, compVol
   bars:[bar('F2 - - -','A3 C4 E4'),bar('D2 - - -','A3 C4 F4'),bar('Bb1 - - -','A3 D4 F4'),bar('C2 - - -','G3 Bb3 E4'),
         bar('A1 - - -','G3 C4 E4'),bar('D2 - - -','F3 A3 E4'),bar('Bb1 - - -','G3 D4 F4'),bar('C2 - - -','F3 G3 C4')],
   lead:mel('C5:3 A4 D5:4 F5:2 E5 D5 E5:4 E5:3 C5 D5:2 A4:2 D5:2 G4:2 G4:4'), leadInst:'piano', leadVol:0.016, leadEvery:2 });
-// Die Australier: „Auld Lang Syne“ (gemeinfrei), Achtel als Schlag. Ein Vorspieltakt, zwei Strophen. Die Gitarre ist verstimmt (G-Saite zu tief),
-// der Mann singt eine Oktave tiefer und etwas zu tief, der dritte wackelt: er verpasst den Auftakt, landet einmal einen Halbton zu hoch (Dis), kommt
-// nicht gleich auf das hohe E, singt einmal C statt H und einmal F statt E. In der zweiten Strophe wechselt der Gitarrist einmal zu spät nach C.
-var AU_G=bar('G2 - - - D3 - - -','D3 G3 B3 G4'), AU_D=bar('D3 - - - A2 - - -','D3 A3 D4 F#4'), AU_C=bar('C3 - - - G2 - - -','E3 G3 C4 E4'), AU_CL=bar('G2 - - - C3 - - -','E3 G3 C4 E4');
-var AU_V='G4:3 G4 G4:2 B4:2 A4:3 G4 A4:2 B4:2 G4:3 G4 B4:2 D5:2 E5:6 E5:2 D5:3 B4 B4:2 G4:2 A4:3 G4 A4:2 B4:2 G4:3 E4 E4:2 D4:2 ';
-M.defineSong('k3_aussie',{ bpm:152, meter:8, comp:'gitaraK', compBeats:[2,6], arp:0.022, compVol:0.016, compLen:1.8, bassInst:'gitaraK', bassVol:0.022, bassLen:2.6,
-  bars:[AU_G, AU_G,AU_D,AU_G,AU_C,AU_G,AU_D,AU_C,AU_G, AU_G,AU_D,AU_G,AU_CL,AU_G,AU_D,AU_C,AU_G],
-  lead:mel('@6 D4:2 '+AU_V+'G4:6 D4:2 '+AU_V+'G4:6/7'), leadInst:'glas', leadVol:0.022,
-  lead2:mel('@8 G4:3 G4 G4:2 B4:2 A4:3 G4 A4:2 B4:2 G4:3 G4 B4:2 D#5:2 D5:2 E5:4 E5:2 D5:3 B4 B4:2 G4:2 A4:3 G4 A4:2 B4:2 G4:3 E4 E4:2 D4:2 G4:6 D4:2 '+
-    'G4:3 G4 G4:2 B4:2 A4:3 G4 A4:2 C5:2 G4:3 G4 B4:2 D5:2 E5:6 E5:2 D5:3 B4 B4:2 G4:2 A4:3 G4 A4:2 B4:2 G4:3 F4 F4:2 D4:2 A4:2 G4:4/5'), lead2Inst:'glas1', lead2Vol:0.016 });
+// Die Australier: ein altes Lied von hier, die Sevdalinka „Kad ja pođoh na Bembašu“ (traditionell, ohne bekannten Komponisten), nur die schlichte
+// Melodielinie in a-Moll, im Dreihalbetakt; die Begleitung ist eigene, einfache Gitarre. Ein Takt der Maschine ist hier eine halbe Note (vier Achtel):
+// Bass auf 1, Anschlag auf der zweiten Viertel. Ablauf: zwei halbe Takte Vorspiel, die erste Zeile, dann die zweite Zeile zweimal.
+// Die Gitarre ist verstimmt (G-Saite zu tief, H-Saite zu hoch), der Mann singt eine Oktave tiefer und etwas zu tief. Der dritte verpasst den Anfang
+// („Kad ja“) und kommt immer etwas zu spät; er singt vier falsche Töne: G statt des hohen A, Fis statt F, H statt A am Zeilenende und Cis statt C.
+// In der Wiederholung wechselt der Gitarrist einmal zu spät nach C (der Bass bleibt einen halben Takt auf G).
+function auB(bs,ch){ return bar(bs+' - - -',ch); }
+var AU_AM='E3 A3 C4 E4', AU_E7='E3 G#3 B3 D4', AU_GG='D3 G3 B3 G4', AU_G7='D3 G3 B3 F4', AU_DM='D3 A3 D4 F4', AU_CC='E3 G3 C4 E4';
+var AU_Z1=[auB('A2',AU_AM),auB('E2',AU_AM),auB('E2',AU_E7), auB('A2',AU_AM),auB('E2',AU_AM),auB('G2',AU_GG),auB('D3',AU_GG), auB('D3',AU_DM),auB('A2',AU_DM),auB('D3',AU_DM), auB('G2',AU_G7),auB('C3',AU_CC),auB('G2',AU_CC)];
+function auZ2(late){ return [auB('D3',AU_DM),auB('A2',AU_DM),auB('G2',AU_G7), auB(late?'G2':'C3',AU_CC),auB(late?'C3':'G2',AU_CC),auB('A2',AU_AM), auB('E2',AU_E7),auB('D3',AU_DM),auB('E2',AU_E7), auB('B2',AU_E7),auB('A2',AU_AM),auB('E2',AU_AM)]; }
+var AU_M1='C5:2 B4:2 A4:4 B4:4 C5:2 B4:2 A4:4 G4:4 -:4 D5:3 E5 F5:4 A5:4 G5:2 F5:2 E5:4/5.5 -:4 ';                 // Kad ja pođoh na Bembašu, na Bembašu, na vodu
+var AU_M2='D5:3 E5 F5 G5 F5 E5 D5:4 C5:3 D5 E5 F5 E5 D5 C5 B4 A4:2 B4:3 C5 D5:4 E5:4 C5:2 B4:2 A4:4/6 -:4 ';     // ja povedoh b'jelo janje, b'jelo janje sa sobom
+M.defineSong('k3_aussie',{ bpm:160, meter:4, comp:'gitaraK', compBeats:[2], arp:0.022, compVol:0.016, compLen:1.8, bassInst:'gitaraK', bassVol:0.022, bassLen:2.6,
+  bars:[auB('A2',AU_AM),auB('E2',AU_AM)].concat(AU_Z1,auZ2(false),auZ2(true)),
+  lead:mel('@8 '+AU_M1+AU_M2+AU_M2), leadInst:'glas', leadVol:0.022,
+  lead2:mel('@12 A4:4 B4:4 C5:2 B4:2 A4:4 G4:4 -:4 D5:3 E5 F5:4 G5:4 G5:2 F#5:2 E5:4/5 -:4 '+
+    'D5:3 E5 F5 G5 F5 E5 D5:4 C5:3 D5 E5 F5 E5 D5 C5 B4 B4:2 B4:3 C5 D5:4 E5:4 C5:2 B4:2 A4:4 -:4 '+
+    'D5:3 E5 F5 G5 F5 E5 D5:4 C5:3 D5 E5 F5 E5 D5 C5 B4 A4:2 B4:3 C#5 D5:4 E5:4 C5:2 B4:2 A4:4/6'), lead2Inst:'glas1', lead2Vol:0.016 });
 // Skela: kalt und weit. Offene Quinten, ein tiefes Cello, ein Seilton hoch oben, das Wasser unruhig, einmal eine ferne Glocke
 M.defineSong('k3_skela',{ bpm:44, comp:'led', compBeats:[0], compVol:0.012, compLen:4.2, bassInst:'cello', bassVol:0.018, bassLen:3.9, drums:'k3_unruh',
   bars:[bar('D2 - - -','D3 A3 E4'),bar('- - - -','D3 A3 D4'),bar('Eb2 - - -','Eb3 Bb3 F4'),bar('D2 - - -','D3 A3 E4'),

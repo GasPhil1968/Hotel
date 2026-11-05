@@ -92,7 +92,7 @@ function paintSky(b,tod,wea){ var w=RW(b,RG.sky), x, y;
 function ridgeFar(x){ return 24+Math.sin(x*0.011+0.4)*6+Math.sin(x*0.037+1)*2.2+Math.sin(x*0.09)*0.8; }
 function ridgeNear(x){ return 40+Math.sin(x*0.016+2.1)*7+Math.sin(x*0.05+0.3)*2.4+Math.sin(x*0.13)*1; }
 function paintHills(b,tod){ var w=RW(b,RG.hill), x, y;
-  for (x=0;x<W;x++){ var rf=rnd(ridgeFar(x)); for (y=rf;y<62;y++){ var v=0.62-(y-rf)/70+(fbm(x,y,14,5)-0.5)*0.12; if (y===rf) v+=0.12; w.px(x,y,ra(R('b2 b3 m3 b4'),v,x,y)); } }
+  for (x=0;x<W;x++){ var rf=rnd(ridgeFar(x)); for (y=rf;y<62;y++){ var v=0.62-(y-rf)/70+(fbm(x,y,14,5)-0.5)*0.12; if (y===rf) v+=0.12; w.px(x,y,ra(GREY?R('m2 m3 s3 m4'):R('b2 b3 m3 b4'),v,x,y)); } }
   for (x=0;x<W;x++){ var rn=rnd(ridgeNear(x)); for (y=rn;y<72;y++){ var sh=fbm(x*0.4,y*0.8,22,7), v2=0.5+(sh-0.5)*0.5-(y-rn)*0.006+(y===rn?0.22:0)+(y===rn+1?0.1:0), c=ra(R('e1 e2 s2 e3 s3 s4'),v2,x,y);
       var scrub=puff(x,y,2.6,2,11); if (scrub>0.42 && fbm(x,y,8,13)>0.45) c=scrub>0.55?P.g2:P.g1;                                   // Macchia
       if (fbm(x*0.6,y*1.2,6,9)>0.72 && hash(x,y)<0.7) c=P.s4;                                                                           // Kalkfelsen
@@ -173,7 +173,7 @@ function quince(w,x,base){ var r=M.rng(29);
 var WBA=new Float32Array(W*H), WK=new Float32Array(W*H), FOAM=new Uint8Array(W*H), REFL=new Uint8Array(W*H);
 function waterRamp(tod,wea){ if (wea==='grey') return R('a1 a2 m1 a3 m2 a4 m3');
   return R('a1 a2 g2 a3 g3 a4 a5'); }
-var WR=null, NIGHT=false, TODN='day', WEA='calm', FIN=false;
+var WR=null, NIGHT=false, TODN='day', WEA='calm', FIN=false, GREY=false;
 function wcol(x,y,t){ var k=y*W+x, kk=WK[k], v=WBA[k];
   var f=Math.sin((x+t*11*kk)/(11*kk)+y*1.25+Math.sin(x*0.013+y*0.3)*2)*0.55+Math.sin((x+t*17*kk)/(4.5*kk)-y*1.9)*0.3+Math.sin((x+t*6*kk)/(23*kk)+y*0.55)*0.15;
   var c=ra(WR,v+f*0.09,x,y), fo=FOAM[k];
@@ -363,7 +363,7 @@ function frostBake(b){ for (var y=1;y<H;y++) for (var x=0;x<W;x++){ var k=y*W+x,
 var LAST=null;
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0); W_LIT.length=0;
   if (tod!=='night' && tod!=='day') tod=tod==='dusk'||tod==='dawn'?tod:'day';
-  NIGHT=tod==='night'; TODN=tod; WEA=wea; FIN=(wea==='frost'); WR=waterRamp(tod,wea);
+  NIGHT=tod==='night'; TODN=tod; WEA=wea; FIN=(wea==='frost'); GREY=(wea==='grey'); WR=waterRamp(tod,wea);
   paintSky(b,tod,wea); paintHills(b,tod); paintFarBank(b,tod,S); paintRiver(b,tod); paintCliff(b); paintBridge(b);
   paintGround(b); paintRamp(b); paintHut(b); paintAbutment(b); paintPost(b); paintAnchor(b); paintVeg(b);
   // Wasser einmal mit t=0 füllen (dynamic malt es jedes Bild neu)
@@ -372,7 +372,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   if (FIN) frostBake(b);
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (y<80) return 0.22; if (r===RG.water) return 0.12; return 0.04; },{col:P.m4});
-  if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill||r===RG.bank?-1.1:-0.8); },0,0);                                       // Finalnacht: sehr dunkel
+  if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill?-1.6:(r===RG.bank?-1.3:(r===RG.glass?0:-1.15))); },0,0);                                       // Finalnacht: sehr dunkel
   var base=b.clone(), lights=[]; if (tod!=='day'){ lights.push([LAMP[0],LAMP[1]+5,12,9,0.8]); lights.push([LAMP[0]-2,LAMP[1]+14,16,5,0.5]); }
   LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,tod){ if (tod==='day') return; warmPass(o,base,lights);
     // Laternenkopf der Brücke, ferne Fenster des Weilers

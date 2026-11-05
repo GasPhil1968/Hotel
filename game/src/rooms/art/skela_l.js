@@ -55,13 +55,13 @@ function facRect(k){ var w=HSE.w, gf=Math.round(w*FAC.gf), kn=Math.round(w*FAC.k
 var GF=Math.round(HSE.w*FAC.gf), KN=Math.round(HSE.w*FAC.knee), RF=Math.round(HSE.w*FAC.roof), EAVE=HSE.base-GF-KN;
 var SHED={x0:84,x1:164,top:58,base:112};                                              // Batos Schuppen
 var LANT={x:116,y:72};                                                                // Sturmlaterne (Mitte des Glases)
-var JETTY={x0:44,x1:68,yb:109,yt:80};                                                 // Holzsteg: am Ufer breit, draußen schmal
+var JETTY={x0:44,x1:68,yb:109,yt:86};                                                 // Holzsteg: am Ufer breit, draußen schmal
 var QT={x:440,base:113};                                                              // Quittenbaum
 var GRAVE={x0:422,x1:452,y0:116,y1:123};                                              // das Beet
 var WOOD={x0:404,x1:426,base:112};
 var BLOCK={x:206,y:124};                                                              // Hackklotz
 var FB={bell:[100,42],anchor:[88,50],ramp:[60,80],hut:[150,190],stumps:[[128,63,4],[134,65,3],[139,66.5,2]]};   // drüben
-var FERRY={ here:[60,84,0.85], mid:[66,75,0.52], far:[71,67,0.32] };
+var FERRY={ here:[58,89,0.85], mid:[66,77,0.52], far:[71,67,0.32] };
 
 // ---------------------------------------------------------------- Himmel und Berge
 function paintSky(b,tod,wea){ var w=RW(b,RG.sky), x, y;
@@ -76,7 +76,7 @@ function paintSky(b,tod,wea){ var w=RW(b,RG.sky), x, y;
 function ridgeFar(x){ return 20+Math.sin(x*0.012+2)*5+Math.sin(x*0.04)*2; }
 function ridgeNear(x){ return 32+Math.sin(x*0.018+0.6)*6+Math.sin(x*0.06+1.7)*2; }
 function paintHills(b,tod,wea){ var w=RW(b,RG.hill), x, y;
-  for (x=0;x<W;x++){ var rf=rnd(ridgeFar(x)); for (y=rf;y<52;y++){ var v=0.62-(y-rf)/60+(fbm(x,y,14,5)-0.5)*0.12; if (y===rf) v+=0.12; w.px(x,y,ra(R('b2 b3 m3 b4'),v,x,y)); } }
+  for (x=0;x<W;x++){ var rf=rnd(ridgeFar(x)); for (y=rf;y<52;y++){ var v=0.62-(y-rf)/60+(fbm(x,y,14,5)-0.5)*0.12; if (y===rf) v+=0.12; w.px(x,y,ra(wea==='grey'?R('m2 m3 s3 m4'):R('b2 b3 m3 b4'),v,x,y)); } }
   for (x=0;x<W;x++){ var rn=rnd(ridgeNear(x)); for (y=rn;y<56;y++){ var sh=fbm(x*0.4,y*0.8,22,7), v2=0.5+(sh-0.5)*0.5-(y-rn)*0.006+(y===rn?0.22:0), c=ra(R('e1 e2 s2 e3 s3 s4'),v2,x,y);
       var sc=puff(x,y,2.6,2,15); if (sc>0.42 && fbm(x,y,8,17)>0.45) c=sc>0.55?P.g2:P.g1; if (fbm(x*0.6,y*1.2,6,19)>0.72 && hash(x,y)<0.7) c=P.s4; w.px(x,y,c); } }
   if (tod!=='night') M.fogBake(b,function(x,y){ return REG[y*W+x]===RG.hill?(y<ridgeNear(x)?0.5:0.22):0; },{col:wea==='grey'?P.m4:P.b5}); }
@@ -139,12 +139,15 @@ function paintGround(b){ var w=RW(b,RG.ground), x, y;
   var rr=M.rng(5); for (var q=0;q<16;q++){ var a=-Math.PI/2+(rr()-0.5)*2.4, L=12+rr()*16, px=tx2, py=ty2-30; for (var s=0;s<L;s++){ px+=Math.cos(a)*0.9; py+=Math.sin(a)*0.9; a+=0.05; vg.px(rnd(px),rnd(py),s<4?P.w1:P.w2); }
     for (var d=0;d<10+rr()*12;d++) vg.px(rnd(px)+(d%2),rnd(py)+d,d<6?P.e2:P.e3); } }
 function paintJetty(b){ var w=RW(b,RG.wood), y, x, xa, xb;
-  function edges(y){ var t=(y-JETTY.yt)/(JETTY.yb-JETTY.yt); return [lerp(JETTY.x0+7,JETTY.x0,t),lerp(JETTY.x1-7,JETTY.x1,t),t]; }
+  function edges(y){ var t=(y-JETTY.yt)/(JETTY.yb-JETTY.yt); return [lerp(JETTY.x0+3,JETTY.x0,t),lerp(JETTY.x1-3,JETTY.x1,t),t]; }
   // Pfähle im Wasser (unter dem Steg), dann die Bohlen quer, mit Fugen
-  for (var pi=0;pi<5;pi++){ var py=JETTY.yt+2+pi*6, e=edges(py), s=0.5+e[2]*0.5, ph=rnd(5*s); [e[0]+1,e[1]-1].forEach(function(px){ for (var yy=py;yy<py+ph;yy++){ w.px(rnd(px),yy,P.w0); } }); }
+  for (var pi=0;pi<4;pi++){ var py=JETTY.yt+1+pi*4, e=edges(py), s=0.5+e[2]*0.5, ph=rnd(5*s); [e[0]+1,e[1]-1].forEach(function(px){ for (var yy=py;yy<py+ph;yy++){ w.px(rnd(px),yy,P.w0); } }); }
   for (y=JETTY.yt;y<=JETTY.yb;y++){ var e2=edges(y), t=e2[2], plank=Math.floor((y-JETTY.yt)/(1.5+t*2.5)); xa=Math.round(e2[0]); xb=Math.round(e2[1]);
-    for (x=xa;x<=xb;x++){ var c=(((y-JETTY.yt)%Math.max(2,rnd(1.5+t*2.5)))===0)?P.w1:(hash(plank,3)<0.5?P.w3:P.w2); if (hash(x,plank)<0.05) c=P.w1; if (x===xa) c=P.w4; if (x===xb) c=P.w0; w.px(x,y,c); }
+    for (x=xa;x<=xb;x++){ var c=(((y-JETTY.yt)%Math.max(2,rnd(1.5+t*2.5)))===0)?P.w2:(hash(plank,3)<0.5?P.w3:P.w4); if (hash(x,plank)<0.05) c=P.w2; if (Math.abs(x-(xa+xb)/2)<0.6 && hash(plank,9)<0.5) c=P.w2; if (x===xa) c=P.w4; if (x===xb) c=P.w1; w.px(x,y,c); }
+    if (y===JETTY.yt){ for (x=xa;x<=xb;x++) w.px(x,y-1,P.w5); }
     if (y>=nearWL(xb)-1){ for (x=xb+1;x<xb+3;x++) w.px(x,y,P.e1); } }
+  // dunkle Spiegelung der Bohlen im Wasser daneben
+  for (y=JETTY.yt;y<nearWL(56);y++){ var e3=edges(y); [rnd(e3[0])-1,rnd(e3[1])+1].forEach(function(xx,si){ var k=y*W+xx; if (REG[k]===RG.water){ REFL[k]=si?P.a1:P.a2; } }); }
   // Poller am Ende, ein Ring, ein altes Tau
   var ee=edges(JETTY.yt+1); w.rect(rnd(ee[0]),JETTY.yt-3,2,4,P.w1); w.rect(rnd(ee[1])-1,JETTY.yt-3,2,4,P.w0); w.px(rnd(ee[1])-1,JETTY.yt-4,P.w2);
   for (var k=0;k<7;k++) w.px(rnd(ee[1])+k-3,JETTY.yt+2+rnd(Math.sin(k*0.7)*1.2),k%2?P.e3:P.e4); }
@@ -288,7 +291,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   if (FIN) frostBake(b);
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (r===RG.far) return 0.3; if (r===RG.water) return 0.12; return 0.03; },{col:P.m4});
-  if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill||r===RG.far?-1.1:-0.7); },0,0);
+  if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:(r===RG.hill||r===RG.far?-1.5:(r===RG.wall?-0.8:-1.05)); },0,0);
   var base=b.clone(), lights=[]; if (tod!=='day'){ lights.push([LAMPF[0],LAMPF[1]+4,9,7,0.7]); if (S.lantern){ lights.push([LANT.x,LANT.y+6,34,26,0.95]); lights.push([LANT.x-6,118,40,9,0.6]); } if (S.zlataLamp){ var zp=ZPOS; lights.push([zp[0]-6,zp[1]-24,44,30,0.95]); lights.push([zp[0]-6,zp[1]+2,46,10,0.7]); } }
   LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,tod){ if (tod==='day') return; warmPass(o,base,lights); o.rect(LAMPF[0]-1,LAMPF[1]-1,3,2,P.y5); } });
   return LAST; }

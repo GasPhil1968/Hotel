@@ -81,7 +81,7 @@ function paintRoom(b){
   M.box(b,{vp:VP,rect:RECT,
     back:function(u,v,x,y){ var k=y*W+x; REG[k]=RG.wall; DEPTH[k]=0; return wallC(u+58,v,x,y,1); },
     side:function(u,v,x,y,sd){ var k=y*W+x; REG[k]=RG.wall; DEPTH[k]=u; return wallC(u*1.5+(sd==='L'?0:300),v,x,y,sd==='L'?3:5); },
-    floor:function(xb,d,x,y){ var k=y*W+x, f=R3.floor(x+0.5,y+0.5); REG[k]=RG.floor; DEPTH[k]=f?f.Z:0; var c=tex.planks(xb,y,VP[1],FY,R('w0 w1 w2 w2'),10); if (f && hash(Math.floor(f.X/10),Math.floor(f.Z/30))<0.25 && c!==P.w0) c=M.DN[c]; return c; },
+    floor:function(xb,d,x,y){ var k=y*W+x, f=R3.floor(x+0.5,y+0.5); REG[k]=RG.floor; DEPTH[k]=f?f.Z:0; var c=tex.planks(xb,y,VP[1],FY,R('w1 w2 w2 w3'),10); if (f && hash(Math.floor(f.X/10),Math.floor(f.Z/30))<0.25 && c!==P.w0) c=M.DN[c]; return c; },
     ceil:function(xb,d,x,y){ return ceilPx(xb,x,y); } });
   var bw=PW(b,RG.wall,0); bw.hl(58,261,95,P.w1); bw.hl(58,261,94,P.w0);
   bw.line(96,40,100,47,P.s3); bw.line(100,47,98,52,P.s3); }

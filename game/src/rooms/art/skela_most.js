@@ -49,7 +49,7 @@ function paintSky(b,tod,wea){ var w=RW(b,RG.sky), x, y;
   var DR=R('b0 b1 b2 b3 b4 b5'); for (y=0;y<60;y++) for (x=0;x<W;x++) w.px(x,y,ra(DR,0.14+Math.pow(y/60,1.3)*0.82,x,y));
   var r2=M.rng(53); for (var i=0;i<4;i++){ var cx=r2()*W, cy=4+r2()*20, L=40+r2()*70; for (var k=0;k<L;k++){ var xx=rnd(cx+k), yy=rnd(cy+k*0.05+Math.sin(k*0.08)*1.2); if (bayer(xx,yy)<0.38*(1-Math.abs(k/L-0.5)*2)) w.px(xx,yy,yy<14?P.b3:P.b4); } } }
 function paintHills(b,tod,wea){ var w=RW(b,RG.hill), x, y;
-  for (x=0;x<W;x++){ var rf=rnd(30+Math.sin(x*0.02+1)*6+Math.sin(x*0.07)*2); for (y=rf;y<64;y++) w.px(x,y,ra(R('m2 b2 m3 b3'),0.62-(y-rf)/60+(fbm(x,y,14,5)-0.5)*0.12+(y===rf?0.12:0),x,y)); }
+  for (x=0;x<W;x++){ var rf=rnd(30+Math.sin(x*0.02+1)*6+Math.sin(x*0.07)*2); for (y=rf;y<64;y++) w.px(x,y,ra(wea==='grey'?R('m2 m3 s3 m4'):R('m2 b2 m3 b3'),0.62-(y-rf)/60+(fbm(x,y,14,5)-0.5)*0.12+(y===rf?0.12:0),x,y)); }
   for (x=0;x<W;x++){ var rn=rnd(44+Math.sin(x*0.03+2)*5+Math.sin(x*0.09)*1.5); for (y=rn;y<66;y++){ var v2=0.5+(fbm(x*0.4,y*0.8,22,7)-0.5)*0.5-(y-rn)*0.006+(y===rn?0.2:0), c=ra(R('e1 e2 s2 e3 s3 s4'),v2,x,y);
       var sc=puff(x,y,2.6,2,15); if (sc>0.42 && fbm(x,y,8,17)>0.45) c=sc>0.55?P.g2:P.g1; w.px(x,y,c); } }
   if (tod!=='night') M.fogBake(b,function(x,y){ return REG[y*W+x]===RG.hill?0.3:0; },{col:wea==='grey'?P.m4:P.b4}); }
@@ -156,7 +156,7 @@ function layers(S,GS,tod){ if (!LAST) return []; var l=M.layer(0,H-7,W,7,H+4), w
 M.defineArt('skela_most',{
   width:W, paint:paint, layers:layers, dynamic:dynamic, front:front,
   walk:function(x,y,S,GS){ return y>=118 && y<=134 && x>=6 && x<=314; }, walkG:function(){ return false; },
-  spots:{ exit_d:[0,96,12,48], exit_l:[308,96,12,48], plaque:[PLQ.x0-2,PLQ.y0-2,PLQ.w+4,PLQ.h+4], railing:[70,RT-2,110,DK-RT+2], river:[96,62,140,34], lamp:[LAMP.x-3,LAMP.top-2,16,DK-LAMP.top] },
+  spots:{ exit_d:[0,96,12,48], exit_l:[308,96,12,48], plaque:[PLQ.x0-2,PLQ.y0-2,PLQ.w+4,PLQ.h+4], railing:[70,RT-2,110,DK-RT+2], river:[60,64,124,34], lamp:[LAMP.x-3,LAMP.top-2,16,DK-LAMP.top] },
   stands:{ exit_d:[10,126,'L'], exit_l:[310,126,'R'], plaque:[40,120,'B'], railing:[120,120,'B'], river:[160,120,'B'], lamp:[200,120,'B'] },
   actorPos:{}, start:[16,126,'R'], entries:{ skela_d:[14,126,'R'], skela_l:[306,126,'L'] }
 });
