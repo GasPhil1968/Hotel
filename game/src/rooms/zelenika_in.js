@@ -62,9 +62,9 @@ async function talkDavor(A){ var Dv=A.npc('davor'), G=A.G;
   await A.menuLoop(function(){ return [
     {t:'Darf ich die Briefe lesen?',if:!A.hasNote('b3_letters'),go:function(A){ return letters(A); }},
     {t:'„Kad ćete doći?“',if:A.hasNote('b3_invite')&&!A.flag('k3.b.invite'),go:async function(A){ await invite(A); return 'bye'; }},
-    {t:'Wer hat oben das Kinderzimmer eingerichtet?',once:'zd1',if:A.hasNote('b3_kidsroom'),go:async function(A){ await Dv.say('Er.'); await A.wait(700); await Dv.say('Ich war nie oben. Ich wusste nicht, dass es das gibt. Er hat nie davon geschrieben.'); }},
-    {t:'Warum verkaufen Sie?',once:'zd2',go:async function(A){ await Dv.say('Weil ich in München lebe. Weil Lena in München lebt. Weil ein Haus, in dem keiner wohnt, verfällt.'); await A.wait(600); await Dv.say('Weil ich zu spät zu seiner Beerdigung gekommen bin. Der Bus. Ich habe nur noch den Sarg gesehen, von hinten.'); }},
-    {t:'Sie haben ihn Dida genannt?',once:'zd3',if:A.hasNote('b3_dida'),go:async function(A){ await Dv.say('Als ich klein war. Alle sagten Djed, ich sagte Dida. Ich konnte das J nicht.'); await A.wait(500); await Dv.say('Später habe ich Vater gesagt. Und dann gar nichts mehr.'); }},
+    {t:'Wer hat oben das Kinderzimmer eingerichtet?',once:'dvI1',if:A.hasNote('b3_kidsroom'),go:async function(A){ await Dv.say('Er.'); await A.wait(700); await Dv.say('Ich war nie oben. Ich wusste nicht, dass es das gibt. Er hat nie davon geschrieben.'); }},
+    {t:'Warum verkaufen Sie?',once:'dvI2',go:async function(A){ await Dv.say('Weil ich in München lebe. Weil Lena in München lebt. Weil ein Haus, in dem keiner wohnt, verfällt.'); await A.wait(600); await Dv.say('Weil ich zu spät zu seiner Beerdigung gekommen bin. Der Bus. Ich habe nur noch den Sarg gesehen, von hinten.'); }},
+    {t:'Sie haben ihn Dida genannt?',once:'dvI3',if:A.hasNote('b3_dida'),go:async function(A){ await Dv.say('Als ich klein war. Alle sagten Djed, ich sagte Dida. Ich konnte das J nicht.'); await A.wait(500); await Dv.say('Später habe ich Vater gesagt. Und dann gar nichts mehr.'); }},
     A.askOpt({
       b3_letters:'Jedes Jahr. Ich habe zweimal geantwortet. Einmal zu Weihnachten und einmal, als Lena in die Schule kam.',
       b3_kidsroom:'Ein Kinderzimmer. Für Lena. Achtundneunzig.',
@@ -79,8 +79,8 @@ async function talkDavor(A){ var Dv=A.npc('davor'), G=A.G;
 async function talkLena(A){ var Ln=A.npc('lena'), G=A.G;
   if (sat(G)) return Ln.say('Hier gibt es kein WLAN. Nur einen Fernseher, der aussieht wie ein Aquarium.');
   await A.menuLoop(function(){ return [
-    {t:'Warst du schon oben?',once:'zl1',go:async function(A){ await Ln.say('Nein. Papa sagt, das ist nur ein Abstellraum.'); await A.wait(500); await Ln.say('Abstellräume haben keine Luftballons an der Wand. Ich hab durch die Tür geschaut.'); }},
-    {t:'Wie findest du das Haus?',once:'zl2',go:async function(A){ await Ln.say('Es riecht nach alten Leuten. Aber nett alt.'); await A.wait(400); await Ln.say('Und da ist eine Uhr, die tickt so laut, dass man nicht denken kann. Opa konnte bestimmt gut nicht denken.'); }},
+    {t:'Warst du schon oben?',once:'lnI1',go:async function(A){ await Ln.say('Nein. Papa sagt, das ist nur ein Abstellraum.'); await A.wait(500); await Ln.say('Abstellräume haben keine Luftballons an der Wand. Ich hab durch die Tür geschaut.'); }},
+    {t:'Wie findest du das Haus?',once:'lnI2',go:async function(A){ await Ln.say('Es riecht nach alten Leuten. Aber nett alt.'); await A.wait(400); await Ln.say('Und da ist eine Uhr, die tickt so laut, dass man nicht denken kann. Opa konnte bestimmt gut nicht denken.'); }},
     A.askOpt({
       b3_kidsroom:'Das ist für mich gewesen? Mit Ballons? Ich bin vierzehn.',
       b3_cards:'Er hat meine Karten aufgehoben? Alle? Ich hab gedacht, die liest keiner.',
@@ -129,6 +129,6 @@ M.room('zelenika_in',{ name:'Haus Zelenika, Stube', scape:'k3_zelenika_in',
   hotspots:HS,
   enter:async function(A,from){ var G=A.G;
     if (sun(G) && A.first('ziD3')){ await A.narrate('Die Stube. Wachstuch auf dem Tisch, eine Pendeluhr, die zu laut tickt, ein Kalender von 2010. Es riecht nach kaltem Ofen und nach Lavendel aus einem Schrank.');
-      if (inside(G)) await A.npc('davor').say('Kommen Sie rein. Ziehen Sie die Schuhe nicht aus. Hier hat seit einem Jahr keiner mehr geputzt.'); } }
+      if (inside(G)) await A.npc('davor').say((F(G,'k3.b.jela')?'':'Sie sind doch gekommen. ')+'Kommen Sie rein. Ziehen Sie die Schuhe nicht aus. Hier hat seit einem Jahr keiner mehr geputzt.'); } }
 });
 })(M);

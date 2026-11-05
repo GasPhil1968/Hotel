@@ -7,69 +7,19 @@
 //   MALA_HINTLOG=<datei>           offene Hinweisthemen nach jeder Aktion (über den Treiber)
 //   MALA_SNAP=<ordner>             Stand zu Beginn jedes Abschnitts; MALA_FROM=<abschnitt> spielt ab dort weiter (nur Fehlersuche)
 const { open } = require('./driver');
+const { play } = require('./k3play');
 const fs = require('fs'), path = require('path');
 const SHOTS = process.argv[2] || null;
 const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || null, FROM = process.env.MALA_FROM || null;
 (async () => {
   const D = await open({ turbo: 25 });
   const t0 = Date.now(); let step = 0, section = '';
-  const st = () => D.st();
   const log = async (...a) => { step++; console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] #${step} ${section ? section + ': ' : ''}${a.join(' ')}`);
     if (DUMP) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); fs.writeFileSync(path.join(DUMP, String(step).padStart(3, '0') + '.json'), JSON.stringify({ step, section, label: a.join(' '), GS: g })); } };
-  const fail = async (what) => { const s = await st(); const last = await D.ev(() => (M.__speechLog || []).slice(-6).map(x => x[0] + ': ' + x[1])).catch(() => []);
-    throw new Error(what + '\n  Zustand: ' + JSON.stringify({ room: s.room, phase: s.phase, active: s.active, busy: s.busy, dlg: s.dlg, overlay: s.overlay, inv: s.inv }) + '\n  zuletzt gesagt: ' + JSON.stringify(last)); };
-  const expect = async (cond, what) => { if (!cond) await fail('Erwartung verfehlt: ' + what); };
-  const note = async (id) => expect(await D.hasNote(id), 'Notiz ' + id);
-  const flag = async (k, v) => { const x = await D.flag(k); await expect(v === undefined ? !!x : x === v, 'Schalter ' + k + (v !== undefined ? '=' + JSON.stringify(v) : '') + ' (ist ' + JSON.stringify(x) + ')'); };
-  const inv = async (id) => expect((await st()).inv.indexOf(id) >= 0, 'Gegenstand ' + id);
-  const room = async () => (await st()).room;
-  const phase = async () => (await st()).phase;
-  const at = async (r) => { const s = await st(); await expect(s.room === r || s.realRoom === r, 'Raum ' + r + ' (ist ' + s.room + ')'); };
-  const inPhase = async (p) => { const x = await phase(); await expect(x === p, 'Phase ' + p + ' (ist ' + x + ')'); };
+  // Spielerhandlungen (gemeinsam mit k3tests.js); Anrufe, die von selbst kommen, werden als eigener Schritt protokolliert
+  const P = play(D, { onStep: (t) => log(t) });
+  const { st, fail, expect, note, flag, inv, room, phase, at, inPhase, said, expectSaid, calm, act, exit, choose, pick, dlgHas, waitDlg, talk, ask, bye, comb, mala, marko, travel, go, peil, solve, arrange } = P;
   const shot = async (n) => { if (SHOTS) await D.shot(`${SHOTS}/w3_${String(step).padStart(3, '0')}_${n}.png`); };
-  const said = async (sub) => D.ev((x) => (M.__speechLog || []).some(l => l[1].indexOf(x) >= 0), sub);
-  const expectSaid = async (sub) => expect(await said(sub), 'gesagt: „' + sub + '“');
-  // Anrufe, die von selbst kommen: ihre Auswahl wird wie vom Spieler beantwortet und als eigener Schritt protokolliert
-  const AUTO = [[/Wie hieß er weiter/, 'Wie hieß er weiter', 'Ljerka ruft zurück: Vlado, der Raucher; Brunos Bild; Schlüssel 31; „Abreise“ leer'],
-    [/Sie hat daran gerochen/, 'Sie hat daran gerochen', 'Hajra ruft an: die Pita']];
-  // warten, bis das Spiel wieder auf den Spieler wartet und auch der Leerlauf (Reaktionen auf Schlüsse, Tageswechsel) nichts mehr anstößt
-  const calm = async (maxMs = 120000) => { const tA = Date.now();
-    for (;;) { const s = await D.drain(20);
-      if (s.dlg) { const hit = AUTO.find(a => s.dlg.some(t => a[0].test(t))); if (hit) { await D.ev((x) => M.TA.choose(x), hit[1]); await D.page.waitForTimeout(60); await log('(Anruf) ' + hit[2]); continue; } return s; }
-      if (s.overlay || s.screen !== 'game') return s;
-      await D.page.waitForTimeout(140); const s2 = await st();
-      if (!s2.busy && !s2.speech && !s2.card && !s2.dlg && !s2.overlay && !s2.walk && !s2.acting && s2.screen === 'game') { await D.page.waitForTimeout(140); const s3 = await st(); if (!s3.busy && !s3.speech && !s3.card && !s3.dlg && !s3.overlay && !s3.walk) return s3; }
-      if (Date.now() - tA > maxMs) await fail('Das Spiel kommt nicht zur Ruhe'); } };
-  const act = async (v, id, item) => { await D.act(v, id, item); return calm(); };
-  const exit = async (id) => { await D.exit(id); return calm(); };
-  const choose = async (sub) => { await D.choose(sub); return calm(); };
-  const pick = async (id) => { await D.pickNote(id); return calm(); };
-  const dlgHas = async (sub) => { const s = await st(); return !!(s.dlg && s.dlg.some(t => t.indexOf(sub) >= 0)); };
-  const waitDlg = async (sub, ms = 60000) => { await D.until(s => s.dlg && s.dlg.some(t => t.indexOf(sub) >= 0), ms, 'Auswahl „' + sub + '“'); };
-  const talk = async (id, ...choices) => { await act('talk', id); for (const c of choices) { if (c.startsWith('NOTE:')) await pick(c.slice(5)); else await choose(c); } };
-  const ask = async (id, noteId, ...more) => talk(id, 'Nach etwas aus dem Notizbuch', 'NOTE:' + noteId, ...more);
-  const bye = async (...subs) => { for (let i = 0; i < 6; i++) { const s = await st(); if (!s.dlg) return; const b = subs.find(x => s.dlg.some(t => t.indexOf(x) >= 0)); if (!b) await fail('kein Ausgang aus der Auswahl (' + subs.join(' / ') + ')'); await choose(b); } };
-  const comb = async (a, b, to) => { const r = await D.combine(a, b); await expect(r && r.ok, 'Schluss ' + a + ' + ' + b + ' → ' + to + ' | ' + JSON.stringify(r)); await note(to); await D.page.waitForTimeout(250); return calm(); };
-  const mala = async () => { await D.switchTo('mala'); const s = await calm(); await expect(s.active === 'mala', 'Mala gespielt'); };
-  const marko = async () => { await D.switchTo('marko'); const s = await calm(); await expect(s.active === 'marko', 'Marko gespielt'); };
-  const travel = async (loc) => { await D.ev((l) => M.TA.travel(l), loc); await D.page.waitForTimeout(80); return calm(); };
-  const go = async (loc, r) => { await travel(loc); await at(r || loc); };
-  // Peilung: Malas zwei Landmarken antippen, einzeichnen, weiter (falsche zuerst, wenn verlangt)
-  const peil = async (station) => { await D.until(s => s.overlay === 'peil', 30000, 'Peilung ' + station);
-    await D.ev((stn) => { const a = M.PEIL.answer[stn]; M.k3PeilTap(a[0]); M.k3PeilTap(a[1]); M.k3PeilTap('go'); }, station); await D.page.waitForTimeout(150);
-    const done = await D.ev(() => M.E.overlay && M.E.overlay.kind === 'peil' && M.E.overlay.data.mode === 'done'); await expect(done, 'Peilung eingezeichnet');
-    await D.ev(() => M.k3PeilTap('go')); await D.page.waitForTimeout(80); return calm(); };
-  // Rätsel-Overlays wie in walkthrough2.js: Auswahl setzen, check des Spiels laufen lassen, schließen
-  const solve = async (sel) => { await D.until(s => s.overlay === 'puzzle', 20000, 'Rätsel');
-    await D.ev((v) => { const ov = M.E.overlay; ov.sel = v.slice(); const r = ov.data.check ? ov.data.check(ov.sel) : { ok: true }; if (!r.ok) throw new Error('Rätsel falsch gelöst: ' + JSON.stringify(r)); M.TA.closeOverlay(v.slice()); }, sel);
-    await D.page.waitForTimeout(60); return calm(); };
-  const tapHit = async (id) => { await D.page.waitForTimeout(120); await D.ev((i) => { const h = ((M.E.overlay && M.E.overlay.lay && M.E.overlay.lay.hits) || []).find(x => x.id === i); if (!h) throw new Error('Feld fehlt: ' + i); const x = h.r[0] + (h.r[2] >> 1), y = h.r[1] + (h.r[3] >> 1); M.pointerDown(x, y, true); M.pointerUp(x, y, true); }, id); await D.page.waitForTimeout(80); };
-  // Ordnen: Karten antippen und tauschen wie ein Spieler, bis die Reihenfolge stimmt, dann „So war es“
-  const arrange = async () => { await D.until(s => s.overlay === 'arrange', 30000, 'Ordnen'); await D.page.waitForTimeout(150);
-    for (let guard = 0; guard < 12; guard++) { const sw = await D.ev(() => { const ov = M.E.overlay, ord = ov.ord || ov.data.start;   // die Karten stehen in data.items in der richtigen Folge
-        for (let i = 0; i < ord.length; i++) if (ord[i] !== i) return [i, ord.indexOf(i)]; return null; });
-      if (!sw) break; await tapHit('r' + sw[0]); await tapHit('r' + sw[1]); }
-    await tapHit('go'); return calm(); };
   const snapSave = async (name) => { if (!SNAP) return; fs.mkdirSync(SNAP, { recursive: true }); const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); fs.writeFileSync(path.join(SNAP, name + '.json'), JSON.stringify({ step, GS: g })); };
   const snapLoad = async (name) => { const d = JSON.parse(fs.readFileSync(path.join(SNAP, name + '.json'), 'utf8')); step = d.step;
     await D.ev((g) => { M.__speechLog = []; M.PRESETS = M.PRESETS || {}; M.PRESETS.__wt = { GS: g }; M.E.loadPreset('__wt', 1); }, d.GS); await D.page.waitForTimeout(400); await calm(); };
@@ -203,7 +153,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await flag('k3.d3.talk2'); await flag('k3.d3.talk2v', 'a'); await note('l3_rope'); await note('v3_message'); await log('Gespräch 2 „Wie Großmutter“: das Seil; „Ich frage dich, was ich damit machen soll.“');
     await exit('door'); await at('vulkanizer'); await talk('vlado', 'Ich soll Ihnen etwas sagen', '(Mala fragen.)', '(Ihm sagen', 'NOTE:v3_cab'); await calm();
     await flag('k3.v.free'); await note('v3_tonight'); await log('die Botschaft: „Dann fahr still.“ – „Woher …?“ – „Ich bin Übersetzer.“ Vlado fährt heute Nacht');
-    await go('zelenika'); await log('Haus Zelenika am Sonntag: Mate am Pfosten');
+    await exit('door'); await go('zelenika'); await log('Haus Zelenika am Sonntag: Mate am Pfosten');
     await exit('house_door'); await at('zelenika_in'); await talk('davor', 'Darf ich die Briefe lesen'); await bye('(Gehen.)'); await note('b3_letters');
     await act('use', 'stairs'); await note('b3_kidsroom'); await act('open', 'drawer'); await note('b3_cards'); await note('b3_pencil'); await log('Mates Briefe, das Kinderzimmer von 1998, Lenas Postkarten mit „Dragi dida“');
     await comb('b3_letters', 'b3_kidsroom', 'b3_invite'); await comb('b3_cards', 'b3_pencil', 'b3_dida'); await log('Schlüsse: eine Einladung, die sich nicht traut; so wollte er heißen');
@@ -241,16 +191,18 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await go('skela', 'skela_d'); await exit('to_bridge'); await exit('exit_l'); await at('skela_l'); await log('mit Vlado und Nada nach Skela; „Sedamnaest godina. Svakog petnaestog.“');
     await exit('house_door'); await at('zlata_k'); await act('open', 'drawer'); await inv('brief1996'); await act('give', 'nada', 'brief1996'); await expectSaid('Sie haben geschrieben.'); await inv('skizzenbuch'); await log('Zlatas Brief von 1996 für Nada, das Skizzenbuch');
     await act('give', 'nada', 'skizzenbuch'); await waitDlg('(Mala fragen.)'); await choose('(Mala fragen.)'); await choose('Alles. Von Anfang an.'); await calm(); await flag('k3.e.mothers'); await log('die zwei Mütter: Marko erzählt alles; „Mama.“');
-    await exit('to_bridge').catch(() => null); const s0 = await st(); if (s0.room === 'zlata_k') await exit('door');
-    await exit('to_bridge'); await exit('exit_d'); await at('skela_d');
+    if ((await room()) === 'zlata_k') await exit('door');
+    await at('skela_l'); await exit('to_bridge'); await exit('exit_d'); await at('skela_d');
     await go('vermisst'); await talk('kolar', 'Ich möchte ein Grab anzeigen'); await flag('k3.e.report'); await log('Vermisstenstelle: Frau Kolar nimmt die Anzeige auf');
     await choose('Das Formular'); await inv('formular'); await choose('(Mala fragen.)'); await choose('eigenen Satz'); await flag('k3.e.form'); await note('e3_kolar'); await log('das Formular: „Dann brauche ich ein größeres Feld.“');
     await choose('(Eine Probe abgeben.)'); await flag('k3.e.sample'); await note('e3_mothersample'); await log('Probe für den Vater abgegeben; „Lebt Ihre Mutter?“');
-    await waitDlg('telefonieren'); await choose('telefonieren'); await calm(); await flag('k3.e.mother'); await log('der Anruf bei der Mutter: „Komm. Wir reden, wenn du hier bist.“');
-    await bye('(Gehen', '(Warten', 'Auf Wiedersehen');
-    await go('ostbus'); await act('use', 'bus'); await log('Abfahrt: der Bus nach Sarajevo');
-    for (let i = 0; i < 80; i++) { const s = await st(); if (s.screen === 'credits' || s.screen === 'title') break; if (s.overlay) await D.ev(() => M.TA.closeOverlay()); if (s.dlg) await D.ev(() => M.E.chooseDone(0)); await D.page.waitForTimeout(300); }
-    await D.until(s => s.screen === 'credits' || s.screen === 'title', 90000, 'Abspann'); await flag('k3.e.bus'); await expect(await D.ev(() => !!localStorage.getItem('mala.c3end')), 'Kapitel 3 als beendet gemerkt');
+    if (!(await dlgHas('telefonieren'))) { await bye('(Warten.)'); await act('talk', 'kolar'); }
+    await choose('Ich muss telefonieren'); await calm(); await flag('k3.e.mother'); await log('der Anruf bei der Mutter: „Komm. Wir reden, wenn du hier bist.“');
+    await bye('(Warten.)');
+    await go('ostbus'); await D.ev(() => M.TA.act('use', 'bus')); await D.page.waitForTimeout(200);   // die Abfahrt endet im Abspann: hier nicht auf das Spiel warten
+    for (let i = 0; i < 200; i++) { const s = await st(); if (s.screen === 'credits' || s.screen === 'title') break; if (s.dlg) await fail('unerwartete Auswahl bei der Abfahrt'); if (s.overlay === 'memory') { await D.ev(() => M.TA.closeOverlay()); await log('Erinnerungsbild „Im Bus nach Sarajevo“: Nada am Fenster, Mala neben ihr, Marko dahinter'); } await D.page.waitForTimeout(150); }
+    await D.until(s => s.screen === 'credits' || s.screen === 'title', 90000, 'Abspann'); await flag('k3.e.bus'); await flag('k3.e.mother');
+    await expect(await D.ev(() => M.GS.ended === true && !!localStorage.getItem('mala.c3end')), 'M.endChapter3: Kapitel beendet und gemerkt');
     await log('Ende des dritten Kapitels · Fortsetzung: München; Abspann');
   });
 

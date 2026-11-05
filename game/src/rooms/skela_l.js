@@ -171,7 +171,7 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
   if (fin(G)) return Z.say(F(G,'k3.fin.free')?'Ich habe alles gesagt. Jetzt bin ich leer. Gehen Sie zum Baum, wenn Sie wollen. Ich bleibe an der Tür.':'…');
   if (epi(G)) return Z.say(F(G,'k3.e.mothers')?'Kommen Sie wieder. Im Sommer, wenn die Quitten gelb sind.':'Gehen Sie zu ihr. Zu der Mutter.');
   await A.menuLoop(function(){ return [
-    {t:'Gab es hier eine Mala?',once:'zl1',go:async function(A){ await A.wait(1000); await Z.say('…'); await A.wait(1200); await Z.say('Ja. Es gab eine Mala.'); A.setFlag('k3.z.yes'); }},
+    {t:'Gab es hier eine Mala?',once:'zlS1',go:async function(A){ await A.wait(1000); await Z.say('…'); await A.wait(1200); await Z.say('Ja. Es gab eine Mala.'); A.setFlag('k3.z.yes'); }},
     {t:'Was ist mit ihr geschehen?',if:F(G,'k3.z.yes')&&!F(G,'k3.z.alive'),go:function(A){ return girlRefusal(A); }},
     {t:'Und Ihr Mann? Hat er in der Nacht etwas gehört?',if:!N(G,'a3_slept'),go:function(A){ return slept(A); }},
     {t:'(Nach den Hühnern fragen.)',if:!N(G,'a3_morning'),go:function(A){ return hens(A); }},

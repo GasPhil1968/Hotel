@@ -116,7 +116,11 @@ let pass = 0, fail = 0; const ok = (c, w) => { console.log((c ? '  ok   ' : '  F
   const cdp = await ctx.newCDPSession(p); await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
   const ROOMS = [['stanica', 'k2_pro'], ['tramvaj', 'k2_pro'], ['carsija', 'k2_pro'], ['kula', 'k2_s1_n'], ['kafana', 'k2_s1'], ['kazandziluk', 'k2_s1'], ['pansion', 'k2_s2'], ['ferhadija', 'k2_s2_n'],
     ['antikvarijat', 'k2_s2'], ['obala', 'k2_s2_n'], ['vijecnica', 'k2_s2_n'], ['neboder', 'k2_fin_n'], ['haustor', 'k2_s3'], ['skloniste', 'k2_s3_n'], ['stan', 'k2_fin'], ['vratnik', 'k2_i'], ['kuca', 'k2_fin'], ['map', 'k2_fin'],
-    ['riva', 'c1_night'], ['palma', 'pro']];
+    ['riva', 'c1_night'], ['palma', 'pro'],
+    // Kapitel 3 (Mostar)
+    ['ostbus', 'k3_pro'], ['herberge', 'k3_pro_n'], ['zimmer', 'k3_d1'], ['kujundziluk', 'k3_d1'], ['starimost', 'k3_pro'], ['koski', 'k3_d1'], ['minarett', 'k3_d1'], ['strassenbr', 'k3_d1'],
+    ['bulevar', 'k3_d1'], ['partizan', 'k3_d1'], ['westbus', 'k3_d2'], ['kafic', 'k3_d1'], ['vulkanizer', 'k3_d1'], ['vhof', 'k3_fin_n'], ['tepa', 'k3_d2'], ['zelenika', 'k3_d3'], ['zelenika_in', 'k3_d3'],
+    ['vermisst', 'k3_epi_d'], ['skela_d', 'k3_d2_n'], ['skela_most', 'k3_d3'], ['skela_l', 'k3_fin_n'], ['zlata_k', 'k3_d3'], ['map', 'k3_d3']];
   const rows = [];
   for (const [room, phase] of ROOMS) {
     const r = await p.evaluate(async ({ room, phase }) => {

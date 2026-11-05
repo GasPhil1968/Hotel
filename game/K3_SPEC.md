@@ -60,7 +60,7 @@ Das Gerüst wechselt die Phasen. Skripte rufen nie `A.phase(...)` selbst. Sie se
 | `k3_pro_n` → `k3_d1` | `k3.p.talk1` | im `zimmer` das Bett (S1 ruft `M.k3Bed(A)`) |
 | `k3_d1` → `k3_d1_n` | Notiz `l3_skela` und `k3.v.drawer` | Karte „Freitag · Nacht“, Herberge. Ist `k3.d1.sanja` gesetzt und `k3.d1.ljerka` noch nicht, kommt zuerst `M.k3LjerkaCall(A)`. Die Australier sind da, `M.k3Father(A)` startet auf der Terrasse (S1) |
 | `k3_d1_n` → `k3_d2` | `k3.d1.father` | Bett |
-| `k3_d2` → `k3_d2_n` | (`k3.z.mala` oder `k3.z.lost`) und `k3.v.part1` und `k3.b.arrived` | das Telefon: `M.k3NadaCall2(A)` (S1), Karte „Die Glocke · Samstag · Nacht“, Herberge |
+| `k3_d2` → `k3_d2_n` | (`k3.z.mala` oder `k3.z.lost`) und `k3.v.part1` und `k3.b.arrived`; hat Marko Davor „Ich komme mit.“ zugesagt (`k3.b.helper`), auch `k3.b.jela` | das Telefon: `M.k3NadaCall2(A)` (S1), Karte „Die Glocke · Samstag · Nacht“, Herberge |
 | `k3_d2_n` → `k3_d3` | `k3.bato.found` und `k3.z.tomorrow`, Marko wieder bei Mala in `skela_d` | Taxi zurück, Karte „Dritter Tag – Zwei Ufer“, `zimmer` |
 | `k3_d3` → `k3_fin_n` | Notizen `l3_survived`, `a3_awake`, `a3_girl`, Schalter `k3.v.free` und `k3.b.done` | Marko: „Es ist bald elf.“ Karte „Finale – Die letzte Fähre“, `vhof` bei Nacht, `await M.k3FinDeparture(A)` (S2). Danach Fahrt und `skela_d`, `await M.k3FinArrive(A)` (S3) |
 | `k3_fin_n` → `k3_epi` | `k3.a.limbo` (Bato ist hinübergegangen) | Karte „Epilog – Hin und zurück“, Herberge im Morgengrauen, `await M.k3NadaCallEpi(A)` (S1) |
@@ -212,6 +212,7 @@ Alle mit `k3.`. Wer setzt sie, wer braucht sie:
 | `k3.v.part1` | S2 | Vlado, Teil 1 |
 | `k3.b.arrived` | S2 | der Bus aus München ist da |
 | `k3.b.jela` | S2 | Jela getroffen und übersetzt |
+| `k3.b.jelaSun` | S2 | Sonntag ohne den Samstag (Davor abgesagt, nie bei Jela gewesen): Jela hat Marko selbst vom Tor, vom Schlüssel und von den Feigen erzählt (`b3_gate`, `b3_figs`, `b3_sell`) |
 | `k3.d2.nada` | S1 | `'truth'` / `'evade'`: Nadas Anruf am Samstag |
 | `k3.dino.ride` | S1 | Dino bietet den Roller an |
 

@@ -1,6 +1,6 @@
 # MALA – Hinweistexte (Entwicklerübersicht)
 
-Erzeugt mit `node game/tools/hintdoc.js` aus `game/src/15_hints_k1.js` und `game/src/15_hints_k2.js`. Enthält Lösungen.
+Erzeugt mit `node game/tools/hintdoc.js` aus `game/src/15_hints_k1.js`, `game/src/15_hints_k2.js` und `game/src/15_hints_k3.js`. Enthält Lösungen.
 
 Jedes Thema ist ein Rätselabschnitt. „Offen, wenn“ ist die Bedingung im Quelltext (F = Schalter, N = Notiz, I = Inventar). Die Stufen: 1 Problem einordnen · 2 Denkrichtung · 3 Konkreter Ansatz · 4 Nächster Schritt. Stufe 4 kommt nur nach der Rückfrage.
 
@@ -1150,3 +1150,779 @@ Offen, wenn: `G.phase==='k2_epi' && F(G,'k2.epi.nada') && !F(G,'k2.epi.done')`
 2. **Denkrichtung:** Busse fahren vom Busbahnhof.
 3. **Konkreter Ansatz:** Bei Fadila am Busbahnhof gibt es Fahrkarten nach Mostar.
 4. **Nächster Schritt:** Bei Fadila eine Fahrkarte nach Mostar kaufen und in den Bus steigen.
+
+## Kapitel 3: Mostar (86 Themen)
+
+### Ankommen `p3a`
+
+Offen, wenn: `G.phase==='k3_pro' && !I(G,'plan')`
+
+1. **Problem einordnen:** Mostar, Regen, kein Plan. Hinter dem Busbahnhof fängt eine Stadt an, die Marko nicht kennt.
+2. **Denkrichtung:** Zum Ankommen braucht es zwei Dinge: einen Plan und ein Bett.
+3. **Konkreter Ansatz:** Am Kiosk am Ostbusbahnhof stehen Stadtpläne im Drehständer.
+4. **Nächster Schritt:** Am Kiosk einen Stadtplan kaufen.
+
+### Ein Bett `p3b`
+
+Offen, wenn: `G.phase==='k3_pro' && I(G,'plan') && !F(G,'k3.p.checkin')`
+
+1. **Problem einordnen:** Für die Nacht fehlt noch ein Zimmer.
+2. **Denkrichtung:** Die Altstadt liegt am Fluss. Dort gibt es Herbergen.
+3. **Konkreter Ansatz:** Die Herberge „Neretva“ steht auf dem Stadtplan.
+4. **Nächster Schritt:** Zur Herberge gehen und sich bei Maja eintragen.
+
+### Die Brücke, die alle kennen `p3c`
+
+Offen, wenn: `G.phase==='k3_pro' && I(G,'plan') && !N(G,'l3_mybridge')`
+
+1. **Problem einordnen:** Mala erinnert sich an eine Brücke, die nicht mehr da war. Die berühmteste Brücke der Stadt war im Krieg auch nicht mehr da.
+2. **Denkrichtung:** Ob es diese Brücke war, kann nur Mala sagen. Sie muss sie sehen.
+3. **Konkreter Ansatz:** Die Alte Brücke liegt am Ende des Kujundžiluk.
+4. **Nächster Schritt:** An der Alten Brücke mit Mala über die Brücke reden.
+
+### Was sich an einer Brücke nie ändert `p3d`
+
+Offen, wenn: `P(G,['k3_pro','k3_pro_n']) && N(G,'l3_mybridge') && !N(G,'l3_onearch')`
+
+1. **Problem einordnen:** Malas Brücke stand im Wasser. Die Alte Brücke war im Januar 1994 kaputt. Zerstört oder nicht: Was an einer Brücke ändert sich nie?
+2. **Denkrichtung:** Ob eine Brücke Pfeiler im Fluss hat, ändert weder ein Krieg noch ein Wiederaufbau.
+3. **Konkreter Ansatz:** Man sieht es vom Ufer aus, dort, wo die Brücke aufsitzt. Dino, der Springer, weiß es auch. Und im Kujundžiluk gibt es alte Postkarten.
+4. **Nächster Schritt:** Am Brückenkopf das Widerlager ansehen. Oder Dino fragen, oder im Laden im Kujundžiluk die alten Postkarten ansehen.
+
+### Zwei Brücken `p3e`
+
+Offen, wenn: `N(G,'l3_mybridge') && N(G,'l3_onearch') && !N(G,'l3_notbridge')`
+
+1. **Problem einordnen:** Zwei Dinge über Brücken stehen im Notizbuch.
+2. **Denkrichtung:** Malas Brücke und die Alte Brücke: Passt das zusammen?
+3. **Konkreter Ansatz:** Im Notizbuch „Malas Brücke stand im Wasser“ und „Ein einziger Bogen“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen im Notizbuch verbinden.
+
+### Wohin die Leine zeigt `p3f`
+
+Offen, wenn: `P(G,['k3_pro','k3_pro_n']) && N(G,'l3_mybridge') && !N(G,'l3_down')`
+
+1. **Problem einordnen:** Wenn es nicht die Alte Brücke ist: Woran hängt Mala dann?
+2. **Denkrichtung:** Mala sieht ihre Leine. Marko nicht. *(Mala: Ich sehe meine Leine. Du nicht.)*
+3. **Konkreter Ansatz:** Am Brückenkopf Mala nach ihrer Leine fragen. *(Mala: Frag mich am Brückenkopf nach der Leine.)*
+4. **Nächster Schritt:** Mit Mala am Brückenkopf über die Leine reden.
+
+### Der Leine nach `p3g`
+
+Offen, wenn: `N(G,'l3_down') && !N(G,'l3_onedir')`
+
+1. **Problem einordnen:** Die Leine zeigt flussab, aus der Stadt hinaus.
+2. **Denkrichtung:** Eine Richtung kann man ausprobieren: ihr ein Stück folgen.
+3. **Konkreter Ansatz:** Unten an der Alten Brücke führen Stufen ans Wasser. Dort geht es am Ufer nach Süden.
+4. **Nächster Schritt:** An den Uferstufen der Alten Brücke der Leine folgen.
+
+### Der Abend `p3h`
+
+Offen, wenn: `G.phase==='k3_pro_n' && !F(G,'k3.p.talk1')`
+
+1. **Problem einordnen:** Es ist Abend. Mala hat etwas auf dem Herzen.
+2. **Denkrichtung:** Sie wartet darauf, dass Marko zuhört. *(Mala: Ich will mit dir reden.)*
+3. **Konkreter Ansatz:** Auf der Terrasse der Herberge.
+4. **Nächster Schritt:** Auf der Terrasse mit Mala reden.
+
+### Schlafen `p3i`
+
+Offen, wenn: `G.phase==='k3_pro_n' && F(G,'k3.p.talk1')`
+
+1. **Problem einordnen:** Der erste Tag in Mostar ist vorbei.
+2. **Denkrichtung:** Mala kann noch an die Uferstufen, wenn sie will. Dann ist Schlafenszeit. *(Mala: Ich gehe vielleicht noch ans Wasser. Du musst schlafen.)*
+3. **Konkreter Ansatz:** Das Zimmer ist oben in der Herberge.
+4. **Nächster Schritt:** Im Zimmer ins Bett gehen.
+
+### Eine Richtung reicht nicht `d1a`
+
+Offen, wenn: `G.phase==='k3_d1' && !F(G,'k3.peil.bridgehead')`
+
+1. **Problem einordnen:** Die Leine zeigt eine Richtung. Aber nicht, wie weit.
+2. **Denkrichtung:** Wer eine Richtung von einem Ort kennt und eine zweite von einem anderen, findet die Stelle, wo sie sich kreuzen. Messen, auf dem Plan.
+3. **Konkreter Ansatz:** Am Brückenkopf beschreibt Mala die Richtung über Dinge, die man sieht. Marko zeichnet sie ein. *(Mala: Am Brückenkopf sage ich dir, woran die Leine vorbeigeht. Du zeichnest.)*
+4. **Nächster Schritt:** Am Brückenkopf der Alten Brücke peilen: Mala nennt zwei Landmarken, die auf der Karte wählen.
+
+### Von oben `d1b`
+
+Offen, wenn: `F(G,'k3.peil.bridgehead') && !F(G,'k3.peil.minaret')`
+
+1. **Problem einordnen:** Eine Linie ist eingezeichnet. Für einen Schnitt braucht es eine zweite.
+2. **Denkrichtung:** Von oben sieht man weiter, und die Dinge liegen anders.
+3. **Konkreter Ansatz:** Das Minarett der Koski-Moschee darf man besteigen. Die Kasse ist im Hof.
+4. **Nächster Schritt:** Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.
+
+### Zwei Linien `d1c`
+
+Offen, wenn: `F(G,'k3.peil.minaret') && !N(G,'l3_flat')`
+
+1. **Problem einordnen:** Zwei Linien sind eingezeichnet.
+2. **Denkrichtung:** Was ergeben die beiden Messungen zusammen?
+3. **Konkreter Ansatz:** Im Notizbuch die erste und die zweite Messung zusammen ansehen.
+4. **Nächster Schritt:** „Erste Messung“ und „Zweite Messung“ im Notizbuch verbinden.
+
+### Über den Fluss `d1d`
+
+Offen, wenn: `N(G,'l3_flat') && !F(G,'k3.mala.crossed')`
+
+1. **Problem einordnen:** Für die dritte Linie muss es auf die andere Seite gehen. Mala geht nicht über den Fluss, und allein kommt Marko nicht weit. *(Mala: Ich gehe nicht über den Fluss. Und ohne mich kommst du nicht weit.)*
+2. **Denkrichtung:** Sie geht über keine Brücke. Aber ist für sie jede Brücke eine Brücke? *(Mala: Ich gehe über keine Brücke. Über eine richtige.)*
+3. **Konkreter Ansatz:** Die Straßenbrücke im Zentrum: Beton, Geländer, Autos. Keine Brücke, die man anschaut.
+4. **Nächster Schritt:** Mit Mala zur Straßenbrücke gehen und sie hinüberführen, ohne stehen zu bleiben.
+
+### Ein Standort weit seitlich `d1e`
+
+Offen, wenn: `N(G,'l3_flat') && F(G,'k3.mala.crossed') && !F(G,'k3.peil.partizan')`
+
+1. **Problem einordnen:** Die beiden Linien schneiden sich zu flach. Es bleibt ein Streifen bis zum Meer.
+2. **Denkrichtung:** Ein Standort weit seitlich, auf dem anderen Ufer und höher, schneidet in einem größeren Winkel.
+3. **Konkreter Ansatz:** Der Partisanenfriedhof liegt hoch am Westhang.
+4. **Nächster Schritt:** Zum Partisanenfriedhof gehen und dort mit Mala peilen. Wenn die Glocken läuten, auf Mala warten.
+
+### Drei Linien `d1f`
+
+Offen, wenn: `F(G,'k3.peil.partizan') && !N(G,'l3_area')`
+
+1. **Problem einordnen:** Drei Linien sind eingezeichnet.
+2. **Denkrichtung:** Wo schneiden sich alle drei?
+3. **Konkreter Ansatz:** Im Notizbuch „Zu flach geschnitten“ und die dritte Messung zusammen ansehen.
+4. **Nächster Schritt:** „Zu flach geschnitten“ und „Dritte Messung“ verbinden.
+
+### Hinter dem Kartenrand `d1g`
+
+Offen, wenn: `N(G,'l3_area') && !N(G,'l3_oldmap')`
+
+1. **Problem einordnen:** Der Bereich liegt hinter dem Rand des Stadtplans.
+2. **Denkrichtung:** Nötig ist eine Karte, die weiter reicht. Eine alte, mit den Dörfern.
+3. **Konkreter Ansatz:** Maja, die Kioskfrau, der Taxifahrer oder Dino wissen, wo eine solche Karte hängt.
+4. **Nächster Schritt:** Im Café von Zdravko am Westbusbahnhof die alte Karte an der Wand ansehen.
+
+### Ein Name auf der alten Karte `d1h`
+
+Offen, wenn: `N(G,'l3_area') && N(G,'l3_oldmap') && !N(G,'l3_skela')`
+
+1. **Problem einordnen:** Die alte Karte und der eingegrenzte Bereich.
+2. **Denkrichtung:** Was zeigt die alte Karte genau dort, wo sich die Linien schneiden?
+3. **Konkreter Ansatz:** Im Notizbuch „Hinter dem Kartenrand“ und „Zdravkos Karte von 1985“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Der Fahrer, der rauchte `d1i`
+
+Offen, wenn: `G.phase==='k3_d1' && !N(G,'v3_mate') && !N(G,'v3_where') && !N(G,'v3_ljerka')`
+
+1. **Problem einordnen:** Mala erinnert sich an einen Lastwagen und einen Fahrer, der rauchte und nichts sagte. Wer war das?
+2. **Denkrichtung:** Wer wusste damals, mit wem Lana fuhr? In Split jemand. In Mostar jemand, der jeden kennt.
+3. **Konkreter Ansatz:** *je nach Stand:* „Ljerka hat in Split das Hotel geführt, und Sanja kennt sie. Im Café am Westbusbahnhof sitzt ein alter Mann am Fenster, der jeden kennt.“ / „Ljerka hat in Split das Hotel geführt, und Sanja kennt sie.“
+4. **Nächster Schritt:** *je nach Stand:* „Mit dem Handy Sanja anrufen. Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.“ / „Mit dem Handy Sanja anrufen.“
+
+### Vlado, der Raucher `d1j`
+
+Offen, wenn: `N(G,'v3_ljerka') && !N(G,'v3_mate') && !N(G,'v3_where') && !F(G,'k3.v.met')`
+
+1. **Problem einordnen:** Ljerka kennt nur einen Vornamen: Vlado, der Raucher. Er fuhr Mehl in die Dörfer.
+2. **Denkrichtung:** Wer in Mostar kennt einen Vlado, der früher Mehl gefahren ist? Jemand, der selbst fährt.
+3. **Konkreter Ansatz:** *je nach Stand:* „Der Taxifahrer am Ostbusbahnhof. Oder Zdravko im Café am Westbusbahnhof.“ / „Der Taxifahrer am Ostbusbahnhof.“
+4. **Nächster Schritt:** Den Taxifahrer nach Vlado, dem Raucher, fragen.
+
+### Vlados Werkstatt `d1o`
+
+Offen, wenn: `G.phase==='k3_d1' && (N(G,'v3_mate')\|\|N(G,'v3_where')) && !F(G,'k3.v.met')`
+
+1. **Problem einordnen:** Vlado Rajić, der Raucher, hat eine Werkstatt für Reifen.
+2. **Denkrichtung:** *je nach Stand:* „Die Werkstatt heißt Vulkanizer Rajić. Sie liegt hinter dem Bulevar.“ / „Die Werkstatt liegt drüben, auf dem anderen Ufer. Mala geht nicht über den Fluss.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Vom Bulevar geht eine Seitengasse ab, mit einem Schild.“ / „Erst muss Mala über den Fluss. Dann geht es zu Vlado.“
+4. **Nächster Schritt:** *je nach Stand:* „Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.“ / „Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.“
+
+### Vlado leugnet `d1k`
+
+Offen, wenn: `F(G,'k3.v.met') && !N(G,'v3_cab') && !vClosed(G)`
+
+1. **Problem einordnen:** Vlado redet nicht. „Nie.“
+2. **Denkrichtung:** Vlado redet nicht mit Marko. Vielleicht redet sein Hof. *(Mala: Er redet nicht mit dir. Vielleicht redet sein Hof.)*
+3. **Konkreter Ansatz:** Hinter dem Rolltor steht ein alter Lastwagen unter einer Plane. Mala geht durch Zäune.
+4. **Nächster Schritt:** Als Mala in den Hof gehen und im Führerhaus des Lastwagens spüren.
+
+### Katas E-Mail `d1l`
+
+Offen, wenn: `F(G,'k3.v.met') && !F(G,'k3.v.mail') && !vClosed(G)`
+
+1. **Problem einordnen:** Kata will etwas verkaufen und hat eine E-Mail, die sie nicht ganz versteht.
+2. **Denkrichtung:** Die E-Mail ist auf Deutsch, aus Graz. Marko ist Übersetzer.
+3. **Konkreter Ansatz:** Österreichisch ist nicht ganz Deutsch: Ein Typenschein ist kein Typenschild.
+4. **Nächster Schritt:** Mit Kata über die E-Mail reden und sie übersetzen.
+
+### Welche Schublade? `d1m`
+
+Offen, wenn: `F(G,'k3.v.which') && !F(G,'k3.v.drawer') && !vClosed(G)`
+
+1. **Problem einordnen:** Kata braucht den Schlüssel zu genau einer von drei Schubladen. Raten lässt sie nicht.
+2. **Denkrichtung:** Drei abgeschlossene Schubladen. Wer sieht durch Holz?
+3. **Konkreter Ansatz:** Mala kann hineinsehen. *(Mala: Ich kann hineinsehen.)*
+4. **Nächster Schritt:** *je nach Stand:* „Kata sagen: die unterste.“ / „Als Mala die drei Schubladen im Büro ansehen, dann Kata antworten.“
+
+### Der Laden ist zu `d1n`
+
+Offen, wenn: `vClosed(G)`
+
+1. **Problem einordnen:** Vlado hat den Laden zugemacht.
+2. **Denkrichtung:** Kata hat gesagt: in einer Stunde. Er beruhigt sich beim Flicken.
+3. **Konkreter Ansatz:** Woanders hingehen und wiederkommen.
+4. **Nächster Schritt:** Einen anderen Ort besuchen, dann zum Vulkanizer zurück.
+
+### Die Nacht `n1a`
+
+Offen, wenn: `G.phase==='k3_d1_n' && !F(G,'k3.d1.father')`
+
+1. **Problem einordnen:** Auf der Terrasse singen die Australier.
+2. **Denkrichtung:** Mala will etwas fragen. *(Mala: Ich will dich etwas fragen.)*
+3. **Konkreter Ansatz:** Auf der Terrasse, bei Mala.
+4. **Nächster Schritt:** Auf der Terrasse mit Mala reden.
+
+### Schlafen `n1b`
+
+Offen, wenn: `G.phase==='k3_d1_n' && F(G,'k3.d1.father')`
+
+1. **Problem einordnen:** Der Freitag ist vorbei.
+2. **Denkrichtung:** Morgen ist Samstag.
+3. **Konkreter Ansatz:** Das Zimmer ist oben.
+4. **Nächster Schritt:** Im Zimmer ins Bett gehen.
+
+### Ein Ort, der wandert `d2a`
+
+Offen, wenn: `N(G,'l3_city') && !N(G,'l3_person')`
+
+1. **Problem einordnen:** Gestern zeigte die Leine nach Skela, heute in die Stadt. Ein Ort wandert nicht.
+2. **Denkrichtung:** Was an einer Leine hängt, muss kein Ort sein.
+3. **Konkreter Ansatz:** Im Notizbuch „Skela heißt Fähre“ und „Die Leine zeigt in die Stadt“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Wer kommt samstags in die Stadt? `d2b`
+
+Offen, wenn: `G.phase==='k3_d2' && N(G,'l3_person') && !F(G,'k3.z.asked') && !F(G,'k3.z.mala') && !F(G,'k3.z.lost')`
+
+1. **Problem einordnen:** Die Leine hängt an jemandem, der heute in der Stadt ist.
+2. **Denkrichtung:** Wer kommt samstags aus den Dörfern in die Stadt?
+3. **Konkreter Ansatz:** Maja in der Herberge weiß, was samstags los ist. Der Markt heißt Tepa.
+4. **Nächster Schritt:** Zur Tepa gehen und der Leine bis zu ihrem Ende folgen.
+
+### Die Eierfrau `d2c`
+
+Offen, wenn: `G.phase==='k3_d2' && F(G,'k3.z.asked') && !F(G,'k3.z.mala') && !F(G,'k3.z.lost')`
+
+1. **Problem einordnen:** Die alte Frau am Eierstand sagt „Ne“.
+2. **Denkrichtung:** Unter welchem Namen hätten die Leute damals Lana gekannt?
+3. **Konkreter Ansatz:** Lana nannte sich unterwegs nicht Lana. Im Notizbuch stehen Spuren dazu.
+4. **Nächster Schritt:** *je nach Stand:* „Die Eierfrau nach „Mala“ fragen.“ / „Im Notizbuch „Sie hat gesagt, sie heißt Mala“ oder Ljerkas Bild mit „Ich habe ihr den Namen gegeben“ verbinden. Dann nach „Mala“ fragen.“
+
+### Zwei Namen `d2d`
+
+Offen, wenn: `(N(G,'v3_mala')\|\|N(G,'l3_ljerka_pic')) && !N(G,'l3_onetrail')`
+
+1. **Problem einordnen:** Lana hat sich unterwegs Mala genannt.
+2. **Denkrichtung:** Wer hat ihr diesen Namen gegeben?
+3. **Konkreter Ansatz:** Im Notizbuch Vlados oder Ljerkas Satz und „Ich habe ihr den Namen gegeben“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Warum man sie nie fand `d2e`
+
+Offen, wenn: `N(G,'l3_onetrail') && !N(G,'l3_twosearches')`
+
+1. **Problem einordnen:** Nada sucht seit siebzehn Jahren. Warum hat sie nichts gefunden?
+2. **Denkrichtung:** Unter welchem Namen hat sie gesucht, und unter welchem lagen die Spuren?
+3. **Konkreter Ansatz:** „Mala und Lana sind eine Spur“ und „Vermisst“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Vlado, Teil 1 `d2f`
+
+Offen, wenn: `G.phase==='k3_d2' && F(G,'k3.v.drawer') && !F(G,'k3.v.part1')`
+
+1. **Problem einordnen:** Vlado hat gesagt: Kommen Sie morgen. Heute ist morgen.
+2. **Denkrichtung:** Die Zeichnung und der Schlüssel liegen jetzt auf seinem Tisch.
+3. **Konkreter Ansatz:** Zum Vulkanizer gehen.
+4. **Nächster Schritt:** Mit Vlado über den Schlüssel von 31 und die Zeichnung reden.
+
+### Der Bus aus München `d2g`
+
+Offen, wenn: `G.phase==='k3_d2' && !F(G,'k3.b.arrived')`
+
+1. **Problem einordnen:** Mate wartet auf seinen Sohn.
+2. **Denkrichtung:** Der Bus aus München kommt samstags.
+3. **Konkreter Ansatz:** Am Westbusbahnhof.
+4. **Nächster Schritt:** Zum Westbusbahnhof gehen.
+
+### Das Haus Zelenika `d2h`
+
+Offen, wenn: `G.phase==='k3_d2' && F(G,'k3.b.arrived') && !!G.map.zelenika && !F(G,'k3.b.jela')`
+
+1. **Problem einordnen:** Davor und Lena fahren zum Haus des Vaters.
+2. **Denkrichtung:** Dort wartet jemand mit dem Schlüssel, der nur Herzegowinisch spricht. Lena spricht nur Deutsch.
+3. **Konkreter Ansatz:** Das Haus Zelenika steht auf dem Plan.
+4. **Nächster Schritt:** Zum Haus Zelenika gehen und zwischen Jela und Lena übersetzen.
+
+### Nach Skela `n2a`
+
+Offen, wenn: `G.phase==='k3_d2_n' && !inSkela(G) && !(F(G,'k3.z.tomorrow') && F(G,'k3.bato.found'))`
+
+1. **Problem einordnen:** Die Leine zieht nach Skela.
+2. **Denkrichtung:** Skela liegt zehn Kilometer südlich, hinter dem Rand des Plans.
+3. **Konkreter Ansatz:** Vom Ostbusbahnhof fährt ein Taxi, jederzeit.
+4. **Nächster Schritt:** Auf dem Stadtplan Skela wählen.
+
+### Am rechten Ufer `n2b`
+
+Offen, wenn: `G.phase==='k3_d2_n' && inSkela(G) && !F(G,'k3.bato.found')`
+
+1. **Problem einordnen:** Eine Hütte, eine Glocke, ein Anker, Stümpfe im Fluss. Drüben ein Licht.
+2. **Denkrichtung:** Mala sieht mehr als Marko. *(Mala: Ich sehe mehr als du.)*
+3. **Konkreter Ansatz:** Über den Fluss sehen, zum anderen Ufer.
+4. **Nächster Schritt:** Als Mala das andere Ufer ansehen.
+
+### Was die Dinge behalten `n2c`
+
+Offen, wenn: `P(G,['k3_d2_n','k3_d3']) && F(G,'k3.bato.found') && !(N(G,'a3_hut')&&N(G,'a3_bell3'))`
+
+1. **Problem einordnen:** Hier ist etwas geschehen. Dinge erinnern sich.
+2. **Denkrichtung:** Mala kann spüren, was an Dingen hängt. *(Mala: Ich kann spüren, was an Dingen hängt.)*
+3. **Konkreter Ansatz:** Die Hütte. Die Glocke.
+4. **Nächster Schritt:** Als Mala an der Hütte und an der Glocke spüren.
+
+### Das andere Ufer `n2d`
+
+Offen, wenn: `G.phase==='k3_d2_n' && F(G,'k3.bato.found') && !F(G,'k3.n2.batoTalk')`
+
+1. **Problem einordnen:** Der Fährmann ist drüben. Mala geht nicht hinüber.
+2. **Denkrichtung:** Flussauf steht eine neue Brücke.
+3. **Konkreter Ansatz:** Marko kann allein hinübergehen. Der Weg ist kurz.
+4. **Nächster Schritt:** Über die neue Brücke gehen und mit dem Fährmann im Schuppen reden.
+
+### Die Frau mit der Lampe `n2e`
+
+Offen, wenn: `G.phase==='k3_d2_n' && F(G,'k3.n2.batoTalk') && !F(G,'k3.z.tomorrow')`
+
+1. **Problem einordnen:** Im Haus am linken Ufer brennt Licht.
+2. **Denkrichtung:** Jemand wohnt hier noch.
+3. **Konkreter Ansatz:** Vor dem Haus.
+4. **Nächster Schritt:** Mit der Frau vor dem Haus reden.
+
+### Zurück zu Mala `n2f`
+
+Offen, wenn: `G.phase==='k3_d2_n' && F(G,'k3.z.tomorrow') && inSkela(G)`
+
+1. **Problem einordnen:** Morgen. Bei Tag.
+2. **Denkrichtung:** Mala wartet am rechten Ufer.
+3. **Konkreter Ansatz:** Über die neue Brücke zurück.
+4. **Nächster Schritt:** Zu Mala ans rechte Ufer gehen.
+
+### Bei Tag `d3a`
+
+Offen, wenn: `G.phase==='k3_d3' && !N(G,'a3_slept')`
+
+1. **Problem einordnen:** Die Frau in Skela hat gesagt: Morgen. Bei Tag.
+2. **Denkrichtung:** Heute ist bei Tag.
+3. **Konkreter Ansatz:** Mit dem Taxi nach Skela, dann über die neue Brücke.
+4. **Nächster Schritt:** In Skela mit der Frau am linken Ufer reden.
+
+### Nach Dingen fragen `d3b`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_slept') && !N(G,'a3_pencil')`
+
+1. **Problem einordnen:** Nach dem Mädchen fragt man Zlata vergeblich. „Sie gehört niemandem mehr.“
+2. **Denkrichtung:** Menschen schweigen. Dinge nicht.
+3. **Konkreter Ansatz:** Was lag am Morgen an der Glocke?
+4. **Nächster Schritt:** Zlata fragen, was am Morgen an der Glocke lag.
+
+### Das Licht drüben `d3c`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_slept') && !N(G,'a3_roof')`
+
+1. **Problem einordnen:** Malas Nachhall liegt am einen Ufer, Zlatas Haus steht am anderen. Wer hat damals was gesehen?
+2. **Denkrichtung:** In Malas Erinnerung an die Glocke brannte drüben ein Licht. Aber in welchem Fenster?
+3. **Konkreter Ansatz:** Ein Licht in einem Fenster kann man auch heute zeigen. Das Handy hat eine Lampe.
+4. **Nächster Schritt:** Das Handy in ein Fenster von Zlatas Haus halten, dann zu Mala wechseln und sie vergleichen lassen. So lange, bis es passt.
+
+### Dunkel, hell, dunkel `d3d`
+
+Offen, wenn: `N(G,'a3_roof') && !N(G,'a3_lightseq')`
+
+1. **Problem einordnen:** Es war das Dachfenster. Aber wann war es hell?
+2. **Denkrichtung:** Mala hat dreimal läuten hören. Und das Licht? *(Mala: Ich habe dreimal läuten hören. Und das Licht?)*
+3. **Konkreter Ansatz:** An der Glocke noch einmal spüren.
+4. **Nächster Schritt:** Als Mala an der Glocke spüren.
+
+### Die Nacht ordnen `d3e`
+
+Offen, wenn: `N(G,'a3_lightseq') && !N(G,'a3_lightroom')`
+
+1. **Problem einordnen:** Läuten, Licht, Läuten. Und davor Vlados Zeiten.
+2. **Denkrichtung:** Die Reihenfolge reicht. Minuten braucht es nicht.
+3. **Konkreter Ansatz:** *je nach Stand:* „Im Notizbuch „Dunkel, hell, dunkel“ und „Ankunft und Abfahrt“ zusammen ansehen.“ / „Vlados Zeiten fehlen noch: Ankunft und Abfahrt. Er hat sie am Samstag genannt.“
+4. **Nächster Schritt:** Die beiden Notizen verbinden und die Karten der Reihe nach legen.
+
+### Batos Licht `d3f`
+
+Offen, wenn: `N(G,'a3_lightroom') && !N(G,'a3_thrice')`
+
+1. **Problem einordnen:** In Batos Kammer hat jemand Licht gemacht. Das beweist noch nicht, dass er wach war.
+2. **Denkrichtung:** Was sagt Bato selbst über diese Nacht? Für ihn ist es noch dieselbe Nacht.
+3. **Konkreter Ansatz:** Bato im Schuppen auf das Licht ansprechen.
+4. **Nächster Schritt:** Bato die Notiz „Licht in Batos Kammer“ zeigen.
+
+### Geschlafen? `d3g`
+
+Offen, wenn: `N(G,'a3_thrice') && !N(G,'a3_awake')`
+
+1. **Problem einordnen:** Zlata sagt: Er hat geschlafen. Bato sagt: Dreimal hat er geläutet.
+2. **Denkrichtung:** Wer mitzählt, schläft nicht.
+3. **Konkreter Ansatz:** Im Notizbuch „Dreimal hat er geläutet“ und „Er hat geschlafen“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Wer hat geläutet? `d3h`
+
+Offen, wenn: `N(G,'a3_voice') && N(G,'a3_pencil') && !N(G,'a3_girl')`
+
+1. **Problem einordnen:** Bato sagt: ein Soldat.
+2. **Denkrichtung:** Eine Stimme an der Glocke, und am Morgen lag dort etwas.
+3. **Konkreter Ansatz:** Im Notizbuch „Eine Mädchenstimme“ und „Der Bleistift“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Zurück zu Mala `d3i0`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_roof') && !F(G,'k3.z.deka')`
+
+1. **Problem einordnen:** Mala hat das Fenster erkannt. Sie wartet drüben an der Glocke.
+2. **Denkrichtung:** Auf dem linken Ufer ist Marko. Auf dem rechten ist Mala.
+3. **Konkreter Ansatz:** Über die neue Brücke zurück ans rechte Ufer.
+4. **Nächster Schritt:** Über die neue Brücke zu Mala gehen.
+
+### Eine graue Decke `d3i`
+
+Offen, wenn: `F(G,'k3.z.deka') && !F(G,'k3.mala.deka')`
+
+1. **Problem einordnen:** Zlata hat eine Decke mitgegeben.
+2. **Denkrichtung:** Mala kann lesen, was Dinge erlebt haben. *(Mala: Ich kann lesen, was Dinge erlebt haben.)*
+3. **Konkreter Ansatz:** Mala wartet am rechten Ufer.
+4. **Nächster Schritt:** Zu Mala gehen und ihr die Decke zeigen.
+
+### Nach dem Fluss `d3j`
+
+Offen, wenn: `N(G,'a3_blanket') && !N(G,'l3_survived')`
+
+1. **Problem einordnen:** Mala hat in der Decke etwas gesehen.
+2. **Denkrichtung:** Woher stammt die Decke, und was hat Mala in ihr gesehen?
+3. **Konkreter Ansatz:** Im Notizbuch „Nachhall der Decke“ und „Zlatas Decke“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Was Zlata versprochen hat `d3k`
+
+Offen, wenn: `N(G,'l3_survived') && !F(G,'k3.z.alive')`
+
+1. **Problem einordnen:** Lana hat den Fluss überlebt. Zlata hat sie gefunden.
+2. **Denkrichtung:** Zlata weiß mehr, als sie sagt.
+3. **Konkreter Ansatz:** Zlata darauf ansprechen.
+4. **Nächster Schritt:** Zlata die Notiz „Sie hat den Fluss überlebt“ zeigen.
+
+### Der Soldat `d3l`
+
+Offen, wenn: `N(G,'a3_awake') && N(G,'a3_girl') && !F(G,'k3.bato.uneasy')`
+
+1. **Problem einordnen:** Bato hält am Soldaten fest.
+2. **Denkrichtung:** Zwei Dinge sprechen dagegen.
+3. **Konkreter Ansatz:** Bato mit „Bato war wach“ und „Es war das Mädchen“ ansprechen.
+4. **Nächster Schritt:** Bato beide Notizen zeigen.
+
+### Vlado, Teil 2 `d3m`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_girl') && N(G,'a3_lightroom') && N(G,'l3_survived') && !F(G,'k3.v.part2')`
+
+1. **Problem einordnen:** Vlado hat am Samstag nicht alles gesagt.
+2. **Denkrichtung:** Jetzt gibt es etwas, das er nicht wegschieben kann: die Glocke, das Licht, den Bleistift, und dass Lana den Fluss überlebt hat.
+3. **Konkreter Ansatz:** Zum Vulkanizer.
+4. **Nächster Schritt:** Mit Vlado über Glocke, Licht, Bleistift und Lanas Überleben reden.
+
+### Zwei Fassungen `d3n`
+
+Offen, wenn: `N(G,'v3_sent') && N(G,'v3_mala_left') && !N(G,'v3_who')`
+
+1. **Problem einordnen:** Vlado und Mala erzählen dieselbe Nacht. Nicht gleich.
+2. **Denkrichtung:** Was sagt Vlado, was hat Mala gesagt?
+3. **Konkreter Ansatz:** Im Notizbuch „Sie hat mich weggeschickt“ und „Er ist gefahren“ zusammen ansehen.
+4. **Nächster Schritt:** Die beiden Notizen verbinden.
+
+### Mit Mala reden `d3o`
+
+Offen, wenn: `N(G,'v3_who') && !F(G,'k3.d3.talk2')`
+
+1. **Problem einordnen:** Mala hat etwas für sich behalten. *(Mala: Ich habe dir etwas nicht gesagt.)*
+2. **Denkrichtung:** Sie hat gesagt: „Er ist gefahren.“ Vlado sagt etwas anderes. *(Mala: Ich habe gesagt: Er ist gefahren.)*
+3. **Konkreter Ansatz:** Im Hof des Vulkanizers, beim Lastwagen.
+4. **Nächster Schritt:** Im Hof mit Mala reden: „Er sagt, du hast ihn weggeschickt.“
+
+### Eine Botschaft für Vlado `d3p`
+
+Offen, wenn: `F(G,'k3.d3.talk2') && !F(G,'k3.v.free')`
+
+1. **Problem einordnen:** Vlado soll erfahren, dass er nicht schuld ist. Und von wem es kommt.
+2. **Denkrichtung:** Kein Papier überzeugt ihn. Nichts, was er gelesen oder selbst erzählt hat.
+3. **Konkreter Ansatz:** Etwas, das im Führerhaus geblieben ist, zwischen den beiden.
+4. **Nächster Schritt:** Was hat Mala im Führerhaus gespürt? Vlado diese Notiz zeigen.
+
+### Die Briefe `d3q`
+
+Offen, wenn: `G.phase==='k3_d3' && F(G,'k3.b.arrived') && !N(G,'b3_invite')`
+
+1. **Problem einordnen:** Mate schrieb jedes Jahr dieselbe Frage. Davor las darin einen Vorwurf.
+2. **Denkrichtung:** Was hat Mate gemeint? Das Haus erzählt mehr als die Briefe.
+3. **Konkreter Ansatz:** In der Stube die Briefe, oben das Kinderzimmer.
+4. **Nächster Schritt:** *je nach Stand:* „„Mates Briefe“ und „Das Kinderzimmer“ verbinden.“ / „Im Haus die Briefe lesen und oben das Kinderzimmer ansehen.“
+
+### Was Mate gemeint hat `d3q2`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'b3_invite') && !F(G,'k3.b.invite')`
+
+1. **Problem einordnen:** Davor liest in Mates Briefen einen Vorwurf.
+2. **Denkrichtung:** Er muss hören, was „Kad ćete doći?“ gemeint war. In seiner Sprache.
+3. **Konkreter Ansatz:** Davor ist im Haus, bei den Briefen.
+4. **Nächster Schritt:** Mit Davor über „Kad ćete doći?“ reden.
+
+### Wie wollte er heißen? `d3r`
+
+Offen, wenn: `N(G,'b3_invite') && !N(G,'b3_dida')`
+
+1. **Problem einordnen:** Lena will Mate etwas sagen, in seiner Sprache. Aber wie redet man ihn an?
+2. **Denkrichtung:** Kein Wörterbuch. Mates eigene Schrift.
+3. **Konkreter Ansatz:** In Mates Schublade in der Stube liegen Lenas Postkarten.
+4. **Nächster Schritt:** *je nach Stand:* „„Lenas Postkarten“ und „Dragi dida“ verbinden.“ / „Die Schublade in der Stube öffnen und die Postkarten ansehen.“
+
+### Lenas Satz `d3s`
+
+Offen, wenn: `N(G,'b3_invite') && N(G,'b3_dida') && F(G,'k3.b.invite') && !F(G,'k3.b.son')`
+
+1. **Problem einordnen:** Lena will Mate antworten, auf „Kad ćete doći?“
+2. **Denkrichtung:** Die Antwort auf „Wann kommt ihr?“ ist kurz.
+3. **Konkreter Ansatz:** „Došli smo“ heißt: Wir sind gekommen. Die Anrede steht in Mates Schrift.
+4. **Nächster Schritt:** Mit Lena am Tor den Satz bauen: „Došli smo, dida.“
+
+### Der Schlüssel am Tor `d3t`
+
+Offen, wenn: `F(G,'k3.b.son') && !F(G,'k3.b.dead')`
+
+1. **Problem einordnen:** Mate erkennt seinen Sohn. Aber nicht, dass er selbst nicht mehr da ist.
+2. **Denkrichtung:** *je nach Stand:* „Jela hat erzählt: Mate stand am Tor, und den Schlüssel bekam der Kleinste.“ / „Mate stand am Tor, wenn ein Bus kam. Und den Schlüssel bekam der Kleinste. Lena weiß es von Jela.“
+3. **Konkreter Ansatz:** Lena ist die Kleinste.
+4. **Nächster Schritt:** Lena bitten, sich ans Tor zu stellen und die Hand aufzuhalten.
+
+### Die Feigen `d3u`
+
+Offen, wenn: `F(G,'k3.b.dead') && !F(G,'k3.b.figs')`
+
+1. **Problem einordnen:** Für heute Nacht ist Frost angesagt.
+2. **Denkrichtung:** Jela weiß, wie man Feigen einpackt. Davor kann es lernen.
+3. **Konkreter Ansatz:** Mit Jela über die Feigen reden und übersetzen.
+4. **Nächster Schritt:** Jela fragen, und übersetzen, während Davor einpackt.
+
+### Für den Kleinsten `d3v`
+
+Offen, wenn: `F(G,'k3.b.keyFree') && !F(G,'k3.b.keyLena')`
+
+1. **Problem einordnen:** In der Astgabel liegt ein Schlüssel.
+2. **Denkrichtung:** Für wen war er immer?
+3. **Konkreter Ansatz:** Für den Kleinsten.
+4. **Nächster Schritt:** *je nach Stand:* „k3.b.keyTaken“ / „Lena den Schlüssel geben.“ / „Den Schlüssel aus der Astgabel nehmen und Lena geben.“
+
+### Mate `d3w`
+
+Offen, wenn: `F(G,'k3.b.keyLena') && !F(G,'k3.b.limbo')`
+
+1. **Problem einordnen:** Mate ist bereit.
+2. **Denkrichtung:** Mala kann die Schwelle öffnen. *(Mala: Ich kann ihn hinüberbringen.)*
+3. **Konkreter Ansatz:** Mit Mala bei Mate.
+4. **Nächster Schritt:** Mala bitten, Mate hinüberzubringen.
+
+### Zurück `d3w2`
+
+Offen, wenn: `G.phase==='k3_d3' && F(G,'k3.b.limbo') && !F(G,'k3.b.done')`
+
+1. **Problem einordnen:** Mate ist hinübergegangen.
+2. **Denkrichtung:** Mala bleibt am Rand. Für Marko geht es zurück. *(Mala: Ich bleibe am Rand. Du gehst zurück.)*
+3. **Konkreter Ansatz:** Das Tor.
+4. **Nächster Schritt:** Durch das Tor zurückgehen.
+
+### Bis elf `d3x`
+
+Offen, wenn: `G.phase==='k3_d3' && F(G,'k3.v.free') && !F(G,'k3.b.done')`
+
+1. **Problem einordnen:** Vlado holt um elf ab. Vorher noch die Feigen.
+2. **Denkrichtung:** Die Zelenikas.
+3. **Konkreter Ansatz:** Haus Zelenika.
+4. **Nächster Schritt:** Den Fall der Zelenikas zu Ende bringen.
+
+### Soll Zlata es erfahren? `d3y`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_awake') && !F(G,'k3.z.tellOk') && !F(G,'k3.asked.zlata_awake')`
+
+1. **Problem einordnen:** Soll Zlata erfahren, dass ihr Mann wach war?
+2. **Denkrichtung:** Das ist nicht nur Markos Entscheidung.
+3. **Konkreter Ansatz:** Mala fragen. *(Mala: Frag mich.)*
+4. **Nächster Schritt:** Mala fragen, ob Zlata es erfahren soll.
+
+### Die Glocke `f3a`
+
+Offen, wenn: `G.phase==='k3_fin_n' && !F(G,'k3.fin.bato')`
+
+1. **Problem einordnen:** Heute Nacht weiß Bato, wer geläutet hat.
+2. **Denkrichtung:** Die Glocke am rechten Ufer.
+3. **Konkreter Ansatz:** Läuten.
+4. **Nächster Schritt:** An der Glocke läuten.
+
+### Einsteigen `f3b`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.fin.bato') && !F(G,'k3.fin.boarded')`
+
+1. **Problem einordnen:** Bato wartet mit der Fähre. Das ist Malas Entscheidung. *(Mala: Er wartet. Das ist meine Entscheidung.)*
+2. **Denkrichtung:** Nur Mala kann einsteigen.
+3. **Konkreter Ansatz:** Zu Mala wechseln.
+4. **Nächster Schritt:** Als Mala zur Fähre gehen und einsteigen.
+
+### Über die Brücke `f3b2`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.fin.boarded') && !F(G,'k3.fin.crossed')`
+
+1. **Problem einordnen:** Mala ist auf der Fähre. Bato setzt über.
+2. **Denkrichtung:** Marko, Vlado und Kata müssen auch ans andere Ufer.
+3. **Konkreter Ansatz:** Flussauf steht die neue Brücke.
+4. **Nächster Schritt:** Über die neue Brücke zum linken Ufer gehen.
+
+### Am linken Ufer `f3c`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.fin.crossed') && !F(G,'k3.fin.story')`
+
+1. **Problem einordnen:** Zlata steht mit der Lampe am Schuppen.
+2. **Denkrichtung:** Sie hat die Glocke gehört.
+3. **Konkreter Ansatz:** Zu Zlata gehen.
+4. **Nächster Schritt:** Mit Zlata reden.
+
+### Was Zlata nicht weiß `f3c2`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.fin.story') && !F(G,'k3.fin.free')`
+
+1. **Problem einordnen:** Zlata hat gesagt, was sie siebzehn Jahre verschwiegen hat.
+2. **Denkrichtung:** Etwas weiß sie nicht. Über ihren Mann.
+3. **Konkreter Ansatz:** Mala weiß, ob jetzt die Zeit dafür ist. *(Mala: Sieh mich an. Ich sage dir, ob jetzt die Zeit ist.)*
+4. **Nächster Schritt:** *je nach Stand:* „Zuhören. Es geht von selbst weiter.“ / „Zlata sagen, dass Bato wach war.“
+
+### Das Grab `f3d`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.fin.free') && !F(G,'k3.fin.bond')`
+
+1. **Problem einordnen:** Mala steht am Grab unter dem Quittenbaum. *(Mala: Ich stehe an meinem Grab.)*
+2. **Denkrichtung:** Was will Mala?
+3. **Konkreter Ansatz:** Nicht versprechen. Fragen.
+4. **Nächster Schritt:** Am Grab mit Mala reden und sie fragen, was sie will.
+
+### Bei Hochwasser `f3e`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.fin.bond') && !F(G,'k3.a.limbo')`
+
+1. **Problem einordnen:** Bato wartet.
+2. **Denkrichtung:** Das Seil.
+3. **Konkreter Ansatz:** Bei Hochwasser braucht es zwei.
+4. **Nächster Schritt:** Das Seil nehmen und mit Bato ziehen.
+
+### Zurück `f3f`
+
+Offen, wenn: `G.phase==='k3_fin_n' && F(G,'k3.a.limbo')`
+
+1. **Problem einordnen:** Bato ist hinübergegangen.
+2. **Denkrichtung:** Mala bleibt am Rand. Für Marko geht es zurück. *(Mala: Ich bleibe am Rand. Du gehst zurück.)*
+3. **Konkreter Ansatz:** Das Tor.
+4. **Nächster Schritt:** Durch das Tor zurückgehen.
+
+### Nada `e3a`
+
+Offen, wenn: `G.phase==='k3_epi' && !F(G,'k3.e.call')`
+
+1. **Problem einordnen:** Nada wartet seit siebzehn Jahren.
+2. **Denkrichtung:** Das Handy.
+3. **Konkreter Ansatz:** Nada anrufen.
+4. **Nächster Schritt:** Mit dem Handy Nada anrufen.
+
+### Die Brücke `e3b`
+
+Offen, wenn: `G.phase==='k3_epi' && F(G,'k3.e.call') && !F(G,'k3.e.bridge')`
+
+1. **Problem einordnen:** Mala will etwas sehen, bevor Nada kommt. *(Mala: Ich will noch etwas sehen.)*
+2. **Denkrichtung:** Die Alte Brücke.
+3. **Konkreter Ansatz:** Mit Mala zur Alten Brücke gehen.
+4. **Nächster Schritt:** An der Alten Brücke mit Mala über die Brücke gehen.
+
+### Nada kommt `e3c`
+
+Offen, wenn: `G.phase==='k3_epi_d' && !F(G,'k3.e.nada')`
+
+1. **Problem einordnen:** Nada kommt mit dem ersten Bus.
+2. **Denkrichtung:** Aus Sarajevo kommen die Busse am Ostbusbahnhof an.
+3. **Konkreter Ansatz:** Ostbusbahnhof.
+4. **Nächster Schritt:** Zum Ostbusbahnhof gehen.
+
+### Zwei Mütter `e3d`
+
+Offen, wenn: `G.phase==='k3_epi_d' && F(G,'k3.e.nada') && !F(G,'k3.e.mothers')`
+
+1. **Problem einordnen:** Nada will zu ihr.
+2. **Denkrichtung:** Skela.
+3. **Konkreter Ansatz:** Vlado fährt.
+4. **Nächster Schritt:** Nach Skela fahren und mit Nada und Zlata reden.
+
+### Das Amt `e3e`
+
+Offen, wenn: `G.phase==='k3_epi_d' && F(G,'k3.e.mothers') && !F(G,'k3.e.report')`
+
+1. **Problem einordnen:** Lana muss amtlich gefunden werden, bevor sie heimkommt.
+2. **Denkrichtung:** Die Vermisstenstelle.
+3. **Konkreter Ansatz:** Frau Kolar wartet.
+4. **Nächster Schritt:** Zur Vermisstenstelle gehen und mit Frau Kolar reden.
+
+### Ein Feld, das zu klein ist `e3f`
+
+Offen, wenn: `G.phase==='k3_epi_d' && F(G,'k3.e.report') && !F(G,'k3.e.form')`
+
+1. **Problem einordnen:** Das Formular fragt nach der Beziehung zur vermissten Person.
+2. **Denkrichtung:** Die amtliche Antwort stimmt. Aber sie ist zu klein.
+3. **Konkreter Ansatz:** Was war Lana für Marko? In seinen eigenen Worten.
+4. **Nächster Schritt:** Ins Feld einen eigenen Satz schreiben.
+
+### „Und Sie?“ `e3g`
+
+Offen, wenn: `G.phase==='k3_epi_d' && N(G,'e3_kolar') && !F(G,'k3.e.sample') && !F(G,'k3.e.sampleDone')`
+
+1. **Problem einordnen:** Frau Kolar hat Marko etwas gefragt.
+2. **Denkrichtung:** Marko hat selbst einen Vermissten.
+3. **Konkreter Ansatz:** Seinen Vater.
+4. **Nächster Schritt:** Frau Kolar sagen, wen Marko vermisst, und eine Probe abgeben.
+
+### Die Mutter `e3h`
+
+Offen, wenn: `G.phase==='k3_epi_d' && (F(G,'k3.e.sample')\|\|F(G,'k3.e.sampleDone')) && !F(G,'k3.e.mother')`
+
+1. **Problem einordnen:** Mit der Probe der Mutter geht es schneller.
+2. **Denkrichtung:** Achtzehn Jahre haben die beiden nicht über ihn geredet.
+3. **Konkreter Ansatz:** Das Handy.
+4. **Nächster Schritt:** Die Mutter anrufen.
+
+### Zurück `e3i`
+
+Offen, wenn: `G.phase==='k3_epi_d' && F(G,'k3.e.mother') && !F(G,'k3.e.bus')`
+
+1. **Problem einordnen:** Die Rückfahrkarte.
+2. **Denkrichtung:** Der Bus nach Sarajevo.
+3. **Konkreter Ansatz:** Ostbusbahnhof.
+4. **Nächster Schritt:** Zum Ostbusbahnhof gehen.
+
+### Der Tag geht zu Ende `x3day`
+
+Offen, wenn: `P(G,['k3_pro','k3_d1','k3_d2','k3_d2_n','k3_d3','k3_epi']) && !!(M.k3DayReady && M.k3DayReady(G))`
+
+1. **Problem einordnen:** *je nach Stand:* „Die Brücke ist geklärt, das Zimmer genommen. Es wird Abend.“ / „Skela steht auf dem Plan, die Schublade ist offen. Für heute reicht es.“ / „Für den Samstag ist alles getan.“ / „Morgen. Bei Tag.“ / „Alles ist bereit. Um elf kommt Vlado.“ / „Mala war auf der Brücke. Gegen Mittag kommt Nada.“ / „Für heute ist alles getan.“
+2. **Denkrichtung:** Der Rest des Tages kommt von selbst.
+3. **Konkreter Ansatz:** Nichts mehr suchen.
+4. **Nächster Schritt:** Einen Moment warten: Der nächste Abschnitt beginnt von selbst.
