@@ -259,7 +259,7 @@ M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,i
   if (G.flags['k3.d1.sanja'] && !G.flags['k3.d1.ljerka'] && G.flags['k3.moves']>=G.flags['k3.d1.sanjaAt']+2 && G.phase==='k3_d1' && !M.ROOMS[id].noSave) M.k3Queue('ljerka'); }; })(M.onRoomChange);
 
 // ---------------------------------------------------------------- Reaktionen auf Schlüsse und andere ausstehende Szenen (laufen, sobald nichts anderes läuft)
-var Q=[], idleRun=false; M.K3REACT=M.K3REACT||{};
+var Q=[], idleRun=false, idleAt=0; M.K3REACT=M.K3REACT||{};
 M.k3Queue=function(k){ if (Q.indexOf(k)<0) Q.push(k); };
 var REACT={
   'ded:l3_notbridge':async function(A){ if (!A.G.malaOn) return; await A.wait(300); await A.g('Dann ist es eine andere.'); await A.m('Eine mit Beinen im Wasser.'); },
@@ -284,10 +284,11 @@ var REACT={
 };
 async function react(A,k){ var fn=M.K3REACT[k]||REACT[k]; if (fn) await fn(A); if (k==='ded:l3_skela' || k==='ded:l3_flat') await M.k3DayCheck(A); }
 var idle0=M.idleHook;
-M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH3(G)||idleRun) return; var R=M.E.room; if (!R||R.noSave) return;
+M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH3(G)) return; if (idleRun && Date.now()-idleAt>90000) idleRun=false;   // Sicherung: eine abgebrochene Szene blockiert nicht für immer
+  if (idleRun) return; var R=M.E.room; if (!R||R.noSave) return;
   if (G.flags['k3.mala.crossed'] && !G.map.westbus) storyOpen(G);
   if (!Q.length && !dayReady(G)) return;
-  idleRun=true; run(A,async function(A){ while (Q.length){ var k=Q.shift(); await react(A,k); } if (dayReady(G)) await M.k3DayCheck(A); }).then(function(){ idleRun=false; },function(){ idleRun=false; }); };
+  idleRun=true; idleAt=Date.now(); run(A,async function(A){ while (Q.length){ var k=Q.shift(); await react(A,k); } if (dayReady(G)) await M.k3DayCheck(A); }).then(function(){ idleRun=false; },function(){ idleRun=false; }); };
 
 // ---------------------------------------------------------------- Ende des Kapitels
 M.CREDITS3=['MALA','Kapitel 3: Mostar','','','Marko Vuković','Mala','','Bato Brkić, der beim dritten Läuten wach war','Mate Zelenika, der auf den Bus aus München wartete','und ein Springer, der jeden Abend springt','',

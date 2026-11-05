@@ -486,7 +486,7 @@ function cableLine(fb,v,amt,dim){ var t=v.t, cam=v.cam, a=[ANCH.rx,ANCH.ry], b=[
 // ---------------------------------------------------------------- Malas Sicht: das Seil von 1994 aus Licht; Batos Leine von der Glocke zum Schuppen
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
   cableLine(fb,v,1,false); farLife(fb,v,S,GS,true);
-  var g=GS&&GS.flags||{}; if (g['k3.bato.found']){ var a=[BELL.x,BELL.y+4], b=[SHED.x0+8,SHED.top+7], n=120;
+  var g=GS&&GS.flags||{}; if (g['k3.bato.found'] && !g['k3.a.limbo'] && GS.phase!=='k3_epi_d'){ var a=[BELL.x,BELL.y+4], b=[SHED.x0+8,SHED.top+7], n=120;
     for (var s=0;s<=n;s++){ var u=s/n, x=rnd(lerp(a[0],b[0],u)-cam), y=rnd(lerp(a[1],b[1],u)-Math.sin(u*Math.PI)*10+Math.sin(t*0.9+u*5)*0.6); if (x<0||x>=fb.w||y<0||y>=H) continue;
       var pl=(Math.sin(t*1.1+u*9)+1)/2; if (pl<0.25 && (s%2)) continue; fb.px(x,y,pl>0.75?P.v5:(pl>0.4?P.v4:P.v3)); }
     var bx=a[0]-cam; if (bx>=0&&bx<fb.w){ fb.px(bx,a[1],P.v5); } }

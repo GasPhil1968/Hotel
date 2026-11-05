@@ -467,7 +467,7 @@ M.loadRoom=loadRoom;
 async function gotoRoom(id,o){ o=o||{}; var cur=room?room.id:null, from=o.via||cur; syncPos();   // via: Herkunft für Eingänge und enter (Stadtplan = 'map')
   if (cur && room.leave) await room.leave(API,id);
   if (o.fade!==false && E.screen==='game') await fadeTo(8,o.fadeMs||320);
-  E.speech=null; E.pop=null; E.conv=null; E.trLast=null;
+  if (E.speech) endSpeech(); E.speech=null; E.pop=null; E.conv=null; E.trLast=null;
   var who=GS.active;
   var tgt=M.ROOMS[id]; if (!tgt) throw new Error('kein Raum '+id);
   var ent=o.x!==undefined?[o.x,o.y,o.f]:((tgt.entries&&tgt.entries[from])||tgt.start||[160,120,'R']);

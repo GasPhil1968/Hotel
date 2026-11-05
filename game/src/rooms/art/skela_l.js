@@ -369,7 +369,7 @@ function front(fb,v,S,GS){ var wea=M.scn.weather(GS); if (wea==='grey') M.fogDri
 // ---------------------------------------------------------------- Malas Sicht: das Ende ihrer Leine am Grab, Batos Leine zur Glocke
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, fw=fb.w;
   // Batos Leine: vom Schuppen über den Fluss zur Glocke drüben
-  var a=[LANT.x,LANT.y+8], b=[FB.bell[0]-4,rnd(farTop(FB.bell[0]))-11], n=120;
+  var a=[LANT.x,LANT.y+8], b=[FB.bell[0]-4,rnd(farTop(FB.bell[0]))-11], n=(GS&&GS.flags&&(GS.flags['k3.a.limbo']||GS.phase==='k3_epi_d'))?-1:120;   // nach der Zwischenwelt keine Leine mehr
   for (var s=0;s<=n;s++){ var u=s/n, x=rnd(lerp(a[0],b[0],u)-cam), y=rnd(lerp(a[1],b[1],u)-Math.sin(u*Math.PI)*8+Math.sin(t*0.9+u*5)*0.6); if (x<0||x>=fw||y<0||y>=H) continue; var pl=(Math.sin(t*1.1+u*9)+1)/2; if (pl<0.25&&(s%2)) continue; fb.px(x,y,pl>0.75?P.v5:(pl>0.4?P.v4:P.v3)); }
   // am Grab: ein warmer Knoten, das Ende von Malas Leine; ein zarter Faden zur Haustür (zu Zlata), bis die Leine sich löst
   if (GS && GS.phase==='k3_epi_d') return; if (GS && GS.flags && GS.flags['k3.fin.free']) return;
