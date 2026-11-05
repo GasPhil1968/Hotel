@@ -80,11 +80,17 @@ function vest(b){
   b.poly([[24.5,46.6],[28,45.2],[34,45.2],[37.8,45.6],[34.5,52.5],[31.5,58.5],[28.5,53]],P.s5);
   b.poly([[31.6,46],[37.8,45.6],[34.5,52.5],[31.5,58.5]],P.s4);
   b.line(31,48,31,57,P.s3); b.px(31,51,P.s2); b.px(31,55,P.s2);
-  // offener Kragen
-  b.poly([[21.5,43.2],[25,44.4],[29,49.4],[27,50.6],[22.4,47.2]],P.s6); b.line(22,47,27,50,P.s4);
-  b.poly([[37.6,43],[39,45.6],[35.4,50],[33.4,49.2],[35.6,45.2]],P.s5); b.line(38,45,35,49,P.s3);
   // Knöpfe der Weste
   [[32,60],[32,63]].forEach(function(q){ b.px(q[0],q[1],P.m3); b.px(q[0]+1,q[1],P.m1); });
+}
+// offener Hemdkragen: das Band steht hinter dem Hals (vor dem Kopf gemalt), die Spitzen liegen auf der Brust
+function collarBack(b){
+  b.poly([[19.6,45],[20.4,41.8],[23,41.4],[23,45]],P.s5); b.line(20,42,20,44,P.s6);
+  b.poly([[35.6,45],[36,41.6],[38.6,42.2],[40.2,45.2]],P.s4); b.line(38,42,39,44,P.s3);
+}
+function collarFront(b){
+  b.poly([[20.6,44],[24.6,44.6],[28.8,49.4],[26.8,50.6],[22.2,47.4]],P.s6); b.line(22,47,27,50,P.s4);
+  b.poly([[39.6,44.6],[39.4,46],[35.4,50],[33.4,49.2],[36,45]],P.s5); b.line(38,46,35,49,P.s3);
 }
 // Geschirrtuch über der nahen Schulter: liegt oben auf und hängt vorn über die Weste; weiß mit roten Querstreifen
 function towel(b){
@@ -98,11 +104,11 @@ function towel(b){
   b.line(15,50,16,57,P.s4); b.line(12,57,13,63,P.s4); b.line(18,48,19,52,P.s3);
   b.line(10,49,18,47,P.s3);
 }
-var MOUTH_O=[];
-var EYES_B=[];
+var MOUTH_O=[[35,33,'1'],[36,33,'1'],[37,33,'w'],[38,33,'1'],[39,33,'2'],[35,34,'2'],[36,34,'1'],[37,34,'1'],[38,34,'1'],[36,35,'4'],[37,35,'6'],[38,35,'6'],[39,35,'5']];
+var EYES_B=[[28,21,'4'],[29,21,'4'],[30,21,'4'],[31,21,'4'],[32,21,'4'],[28,22,'3'],[29,22,'z'],[30,22,'z'],[31,22,'z'],[32,22,'z'],[28,23,'5'],[29,23,'5'],[30,23,'5'],[31,23,'5'],[32,23,'5'],[37,21,'4'],[38,21,'4'],[39,21,'4'],[40,21,'4'],[37,22,'z'],[38,22,'z'],[39,22,'z'],[40,22,'3'],[37,23,'4'],[38,23,'5'],[39,23,'5'],[40,23,'4']];
 function paint(b,v){
-  shirt(b); vest(b);
-  stamp(b,HEAD,LEG);
+  shirt(b); vest(b); collarBack(b);
+  stamp(b,HEAD,LEG); collarFront(b);
   if (v.mouth) putList(b,MOUTH_O);
   if (v.eyes) putList(b,EYES_B);
   towel(b);

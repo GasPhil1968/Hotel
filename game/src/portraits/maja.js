@@ -3,7 +3,7 @@
    ein gelber Bleistift steckt quer darin, einzelne lose Strähnen an Schläfe und Nacken; Brille mit dickem schwarzem Rand.
    Grüner Strickpullover mit Rippenkragen. Freundlich, knapp, immer beschäftigt.
    Legende HEAD: Ziffern Haut (2–6 p1–p5, 7 l0) · r Wangenröte (t5) · a–f Haar (h1 h2 h3 w2 w3 w4) ·
-   w Augenweiß · i Iris · k Pupille · z Wimpern und Brauen (h1) · L l Lippen (d3 d4).
+   w Augenweiß · i Iris · k Pupille · z Wimpern und Brauen (h1) · L l m Lippen (d4 d5 p5).
    Bleistift, Brille und Pullover in Code; Kontur mit M.outline. Varianten: MOUTH und EYES als Flicken. */
 (function(M){
 'use strict';
@@ -59,7 +59,7 @@ var HEAD=[
 "........................................................"  // 45
 ];
 var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, '7':P.l0, r:P.t5,
-  a:P.h1, b:P.h2, c:P.h3, d:P.w2, e:P.w3, f:P.w4, w:P.s6, i:P.w2, k:P.h0, z:P.h1, L:P.d3, l:P.d4, m:P.d5 };
+  a:P.h1, b:P.h2, c:P.h3, d:P.w2, e:P.w3, f:P.w4, w:P.s6, i:P.w2, k:P.h0, z:P.h1, L:P.d4, l:P.d5, m:P.p5 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]||P[list[i][2]]); }
 // grüner Strickpullover: schmale Schultern, Rippenkragen, Strickrippen
@@ -88,8 +88,8 @@ function glasses(b){
   b.line(28,19,31,19,H); b.px(38,19,H);
   b.px(28,20,P.n5); b.px(37,20,P.n4);
 }
-var MOUTH_O=[];
-var EYES_B=[];
+var MOUTH_O=[[35,32,'2'],[36,32,'1'],[37,32,'w'],[38,32,'1'],[39,32,'2'],[35,33,'l'],[36,33,'m'],[37,33,'l'],[38,33,'l'],[35,34,'4'],[36,34,'3'],[37,34,'3'],[38,34,'4']];
+var EYES_B=[[28,21,'5'],[29,21,'5'],[30,21,'5'],[31,21,'5'],[32,21,'5'],[28,22,'4'],[29,22,'z'],[30,22,'z'],[31,22,'z'],[32,22,'z'],[28,23,'5'],[29,23,'5'],[30,23,'5'],[31,23,'5'],[32,23,'5'],[37,21,'5'],[38,21,'5'],[39,21,'5'],[40,21,'5'],[37,22,'z'],[38,22,'z'],[39,22,'z'],[40,22,'4'],[37,23,'5'],[38,23,'5'],[39,23,'5'],[40,23,'4']];
 function paint(b,v){
   sweater(b);
   stamp(b,HEAD,LEG);

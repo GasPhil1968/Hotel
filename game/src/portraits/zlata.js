@@ -74,8 +74,8 @@ function scarf(b){
 }
 // Saum um das Gesicht: umgeschlagene Kante, tief in der Stirn; darunter ein Hauch graues Haar
 function hem(b){
-  b.line(31,14,41,14,P.n3); b.line(29,15,30,15,P.n3); b.px(28,15,P.n2); b.line(27,16,26,17,P.n3); b.line(26,18,25,19,P.n2); b.line(25,20,25,25,P.n2); b.line(25,26,25,31,P.n1);
-  b.line(32,13,40,13,P.n4); b.px(42,14,P.n2); b.px(41,13,P.n3);
+  b.line(31,14,41,14,P.n2); b.line(29,15,30,15,P.n2); b.px(28,15,P.n2); b.line(27,16,26,17,P.n3); b.line(26,18,25,19,P.n2); b.line(25,20,25,25,P.n2); b.line(25,26,25,31,P.n1);
+  b.line(32,13,40,13,P.n3); b.px(42,14,P.n2); b.px(41,13,P.n2);
 }
 // Knoten im Nacken; darunter hängt die dritte Ecke des gefalteten Tuchs über den Rücken
 function knot(b){
@@ -85,7 +85,7 @@ function knot(b){
   b.ellipse(16.6,37.2,2.9,2.4,function(x,y){ return (x+y<53)?P.n3:P.n1; }); b.px(15,36,P.n4); b.line(17,39,19,37,P.n0);
 }
 // ---- Kleidung: kariertes Kleid (Kragen im Ausschnitt), graue Strickjacke mit V-Ausschnitt und Knöpfen
-function dress(x,y){ var h=(y%3===0), v=(x%3===0); if (h&&v) return P.w1; if (h||v) return P.w3; return P.s4; }
+function dress(x,y){ var h=(y%3===0), v=(x%3===0); if (h&&v) return P.w2; if (h||v) return P.w3; return P.s3; }
 var KN=[P.s0,P.s1,P.s2,P.s3];
 function cardigan(b){
   var knit=function(lo){ return function(x,y){ var v=lo+((x&1)?0:1); if (x<12 && y<53) v++; if (x>42) v=Math.min(v,lo); return KN[Math.max(0,Math.min(3,v))]; }; };
@@ -98,8 +98,8 @@ function cardigan(b){
   // Kleidkragen: runder Ausschnitt mit Paspel
   b.line(25,44,29,45,P.w2); b.line(30,45,35,44,P.w2);
 }
-var MOUTH_O=[];
-var EYES_B=[];
+var MOUTH_O=[[34,31,'2'],[35,31,'1'],[36,31,'W'],[37,31,'1'],[38,31,'1'],[39,31,'2'],[35,32,'1'],[36,32,'1'],[37,32,'2'],[35,33,'r'],[36,33,'r'],[37,33,'r']];
+var EYES_B=[[28,20,'4'],[29,20,'4'],[30,20,'4'],[31,20,'4'],[28,21,'3'],[29,21,'I'],[30,21,'I'],[31,21,'I'],[28,22,'4'],[29,22,'3'],[30,22,'3'],[31,22,'4'],[36,20,'4'],[37,20,'4'],[38,20,'4'],[36,21,'I'],[37,21,'I'],[38,21,'I'],[36,22,'4'],[37,22,'3'],[38,22,'3']];
 function paint(b,v){
   cardigan(b); knot(b);
   scarf(b);

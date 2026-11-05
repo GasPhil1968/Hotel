@@ -131,9 +131,9 @@ H.k3a_beerUp=function(b,x,y){ b.line(x+1,y-1,x+3,y-3,P.w1); b.line(x+2,y-1,x+5,y
 // Becher Tee (rot, Henkel vorn)
 H.k3a_mug=function(b,x,y){ b.rect(x+1,y-3,3,3,P.r3); b.hl(x+1,x+3,y-3,P.r4); b.px(x+4,y-2,P.r3); b.px(x+2,y-3,P.w2); };
 // Gitarre (hell, Schallloch dunkel); der Hals zeigt schräg nach vorn oben zur Greifhand
-function gitara(b,x,y,s){ b.ellipse(x+3,y+4,4.6,4.4,P.w4); b.ellipse(x+5.5,y+0.5,3.2,3,P.w4); b.ellipse(x+3,y+4,3.4,3.2,P.w5); b.ellipse(x+4,y+2,1.1,1.1,P.k1);
-  b.hl(x+1,x+3,y+6,P.w1); b.line(x+6,y-2,x+15,y-10,P.w1); b.line(x+7,y-2,x+16,y-10,P.w2); b.rect(x+16,y-13,2,3,P.w1); b.px(x+16,y-13,P.m4); b.px(x+17,y-11,P.m4);
-  if (s) { b.px(x+5,y+1,P.s5); b.px(x+4,y+3,P.s4); } }
+function gitara(b,x,y,s){ b.ellipse(x+3,y+3,4.5,4,P.w4); b.ellipse(x+6.5,y+0.5,3,2.7,P.w4); b.ellipse(x+3,y+3,3.3,2.8,P.w5); b.ellipse(x+5.5,y+1,1.1,1.1,P.k1);
+  b.hl(x+1,x+3,y+5,P.w2); b.px(x+2,y+3,P.w1); b.line(x+8,y-1,x+14,y-5,P.w1); b.line(x+8,y-2,x+14,y-6,P.w2); b.rect(x+15,y-8,2,3,P.w1); b.px(x+15,y-8,P.m4); b.px(x+16,y-6,P.m4);
+  if (s) { b.line(x+5,y+1,x+9,y-1,P.s5); b.px(x+4,y+2,P.s4); } }
 H.k3a_guitar=function(b,x,y){ gitara(b,x,y,0); };
 H.k3a_guitarS=function(b,x,y){ gitara(b,x,y,1); };
 
@@ -425,20 +425,15 @@ var vlHS=HS(vlS), vlHF=HS(vlF), vlXS=HS(noCig(vlS)), vlXF=HS(noCigF(vlF));
 vlHS.x=vlXS.n; vlHS.xo=vlXS.o; vlHS.xb=vlXS.b; vlHS.k=vlHS.b; vlHS.ko=rep(vlXS.o,'e','t');
 vlHF.x=vlXF.n; vlHF.xo=vlXF.o; vlHF.xb=vlXF.b; vlHF.k=vlHF.b;
 var vlP=pose({},'S');
-// Arbeitshaltung an der Montiermaschine: tief gebeugt, die Knie leicht gebeugt
-var vlW=pose({h:[-2,-19],ln:6,ho:[2,3],nf:[3,0,'f'],ff:[-4,0,'f'],ty:1},'S');
-// Reifen flach auf dem Drehteller der Maschine (vor ihm), der Montierhebel von der Hand zur Wulst; tr: der Reifen dreht sich
-function tyre(b,X,Y,p){ var cx=X+15, cy=Y-18; b.ellipse(cx,cy,6.6,2.6,P.k2); b.hl(cx-5,cx+5,cy-2,P.m1); b.ellipse(cx,cy-0.5,3.6,1.3,P.m4); b.hl(cx-2,cx+2,cy-1,P.s5); b.px(cx,cy,P.m2); b.px(cx+1,cy,P.m2);
-  var r=p.tr||0; [-4,0,4].forEach(function(d){ var x=cx+((d+r*2+18)%12)-6; b.px(x,cy+2,P.m1); }); }
-// Montierhebel: steckt an der Wulst (vorn am Reifen) und geht durch die Hand ein Stück darüber hinaus; ohne Hand (lv 2) bleibt er schräg stecken
-function lever(b,X,Y,p){ var px=X+12, py=Y-18, hx=p.lv===2?X+9:X+p.nh[0]+1, hy=p.lv===2?Y-24:Y+p.nh[1]+1, ex=Math.round(hx+(hx-px)*0.3), ey=Math.round(hy+(hy-py)*0.3); b.line(px,py,ex,ey,P.m4); b.line(px+1,py,ex+1,ey,P.m2); }
+// Arbeitshaltung an der Montiermaschine (das Rad liegt vor ihm, etwa 20 px hoch): tief gebeugt, die Knie leicht gebeugt
+var vlW=pose({h:[-2,-19],ln:6,ho:[2,3],nf:[3,0,'f'],ff:[-4,0,'f']},'S');
 M.defineChar('vlado',{
   legend:L({h:P.m3,j:P.m4,S:P.q4,s:P.q3,t:P.q2,u:P.q1,b:P.s3,m:P.q1,Z:P.s6,z:P.s6,r:P.t4}),
   heads:{S:vlHS,F:vlHF,B:{n:vlB}}, neck:{S:[5,12],F:[5,13],B:[5,13]},
   torso:{w:11,len:14,col:[P.n1,P.n2,P.n0],vneck:P.r2,collar:[P.n0,P.n0],side:7,hunch:1},
   bones:[12,11,9,8], hipY:25, shoulder:5, armR:[1.2,1.0], legR:[1.5,1.2],
   cols:{trou:[P.n1,P.n2,P.n0],trouF:[P.n0,P.n1,P.k1],sleeve:[P.n1,P.n2,P.n0],sleeveF:[P.n0,P.n1,P.k1],arm:[P.r1,P.r2,P.r0],armF:[P.r0,P.r1,P.k1],hand:[P.q2,P.m1],handF:[P.q1,P.m0],shoe:P.k2},
-  // Overall: Brusttasche, Reißverschluss, Ölflecken; Karos am Unterarm; Reifen und Hebel bei der Arbeit
+  // Overall: Brusttasche, Reißverschluss, Ölflecken; Karos am Unterarm (Rad und Montiereisen malt der Raum an der Maschine)
   post:function(b,p,X,Y,hx,hy){ var ch=M.CHARS.vlado, g=geo(ch,p,hx,hy), t=Y+g.top, O=[P.n1,P.n2,P.n0], R=[P.r2,P.r3,P.r1,P.r0];
     // Unterarm: helle Karofäden; am Ellbogen der aufgekrempelte Ärmel (helleres Blau)
     var fore=function(e,h){ var ex=Math.round(e[0]), ey=Math.round(e[1]), mx=Math.round((e[0]+h[0])/2), my=Math.round((e[1]+h[1])/2); onCol(b,X+mx,Y+my,R,P.s2); onCol(b,X+Math.round((e[0]+3*h[0])/4),Y+Math.round((e[1]+3*h[1])/4),R,P.r3);
@@ -447,7 +442,7 @@ M.defineChar('vlado',{
       onCol(b,X+hx+3,t+9,O,P.k2); onCol(b,X+hx-2,Y+hy+5,O,P.k2); onCol(b,X+hx+2,Y+hy+9,O,P.n0); onCol(b,X+hx,t+1,R,P.s3); onCol(b,X+hx-1,t+2,R,P.r0);
       fore(g.eL,g.lh); fore(g.eR,g.rh); }
     else if (p.v==='S'){ onCol(b,X+hx+2+g.shx,t+4,O,P.n0); onCol(b,X+hx+3+g.shx,t+4,O,P.n0); onCol(b,X+hx+g.shx,t+8,O,P.k2); onCol(b,X+hx+1,Y+hy+6,O,P.k2);
-      if (p.ty){ tyre(b,X,Y,p); if (p.lv) lever(b,X,Y,p); armS(b,ch,p,X,Y,hx,hy); } fore(g.eN,g.nh); }
+      fore(g.eN,g.nh); }
     else { fore(g.eL,g.lh); fore(g.eR,g.rh); } },
   // Rauch aus der Zigarette im Mundwinkel (immer, wenn sie drin ist), aus der Hand, beim Ausatmen; von hinten steigt er über den Kopf
   after:function(b,p,t,ph){ var ch=M.CHARS.vlado, r=inHead(ch,p,'r');
@@ -460,10 +455,10 @@ M.defineChar('vlado',{
     walkF:A.walkF.map(function(p){ return Object.assign({},p,{ho:[0,1]}); }),
     walkB:A.walkB.map(function(p){ return Object.assign({},p,{ho:[0,1]}); }),
     // montiert einen Reifen: tief über die Maschine gebeugt, drückt den Hebel herunter, dreht den Reifen weiter
-    work:seq([vlW({lv:1,nh:[9,-26],fh:[14,-20]}),320],[vlW({lv:1,nh:[8,-24],fh:[14,-20]}),170],[vlW({lv:1,nh:[6,-21],fh:[14,-20],ho:[2,4]}),260],[vlW({lv:1,nh:[6,-21],fh:[14,-20],ho:[2,4],hd:'b'}),240],
-      [vlW({lv:1,nh:[8,-24],fh:[14,-20]}),170],[vlW({lv:2,nh:[12,-20],fh:[16,-20],tr:1}),260],[vlW({lv:2,nh:[13,-20],fh:[16,-21],tr:2}),260],[vlW({lv:2,nh:[12,-20],fh:[16,-20],tr:3}),260],
-      [vlW({lv:1,nh:[9,-26],fh:[14,-20],tr:3}),320],[vlW({lv:1,nh:[8,-24],fh:[14,-20],tr:3}),170],[vlW({lv:1,nh:[6,-21],fh:[14,-20],ho:[2,4],tr:3}),300],[vlW({lv:1,nh:[8,-24],fh:[14,-20],tr:3}),170],
-      [vlW({lv:2,h:[-1,-21],ln:4,ho:[1,2],nh:[11,-21],fh:[15,-20],tr:3}),900],[vlW({lv:2,h:[-1,-21],ln:4,ho:[1,2],nh:[11,-21],fh:[15,-20],tr:3,hd:'b'}),110],[vlW({lv:2,h:[-1,-21],ln:4,ho:[1,2],nh:[11,-21],fh:[15,-20],tr:3}),500]),
+    work:seq([vlW({nh:[9,-26],fh:[14,-21]}),320],[vlW({nh:[8,-24],fh:[14,-21]}),170],[vlW({nh:[6,-21],fh:[14,-21],ho:[2,4]}),260],[vlW({nh:[6,-21],fh:[14,-21],ho:[2,4],hd:'b'}),240],
+      [vlW({nh:[8,-24],fh:[14,-21]}),170],[vlW({nh:[12,-21],fh:[16,-21]}),260],[vlW({nh:[13,-21],fh:[16,-22]}),260],[vlW({nh:[12,-21],fh:[15,-21]}),260],
+      [vlW({nh:[9,-26],fh:[14,-21]}),320],[vlW({nh:[8,-24],fh:[14,-21]}),170],[vlW({nh:[6,-21],fh:[14,-21],ho:[2,4]}),300],[vlW({nh:[8,-24],fh:[14,-21]}),170],
+      [vlW({h:[-1,-21],ln:4,ho:[1,2],nh:[11,-22],fh:[15,-21]}),900],[vlW({h:[-1,-21],ln:4,ho:[1,2],nh:[11,-22],fh:[15,-21],hd:'b'}),110],[vlW({h:[-1,-21],ln:4,ho:[1,2],nh:[11,-22],fh:[15,-21]}),500]),
     // nimmt die Zigarette aus dem Mund, ein Zug, Rauch, steckt sie zurück
     smoke:seq([vlP({ln:1}),300],[vlP({ln:1,nh:[4,-35]}),140],[vlP({ln:1,nh:[6,-39]}),200],[vlP({ln:1,nh:[6,-38],it:'cig',hd:'xb'}),500],
       [vlP({ln:1,nh:[5,-33],it:'cig',hd:'x',ex:1,ho:[0,-1]}),160],[vlP({ln:1,nh:[5,-32],it:'cig',hd:'xo',ex:2,ho:[0,-1]}),340],[vlP({ln:1,nh:[4,-30],it:'cig',hd:'x',ex:3}),340],
@@ -632,8 +627,10 @@ var zlata=M.defineChar('zlata',{
     if (p.v==='S' && p.pot) pot(b,X,Y); },
   // Flamme der Petroleumlampe (flackert, leuchtet nachts), Dampf aus dem Topf
   after:function(b,p,t,ph){ var OX=M.SPR.OX, OY=M.SPR.OY;
-    if (p.v==='S' && p.it==='k3a_petrol'){ var c=OX+p.nh[0]+1, y=OY+p.nh[1]; glow(b,c,y+5,[P.y5,P.l1,P.y5,P.l0][ph%4]); glow(b,c+1,y+5,P.l1); glow(b,c+1,y+4,[P.y4,P.y5,P.l0,P.y5][ph%4]); if (ph%2) glow(b,c,y+4,P.y4);
-      glow(b,c-1,y+4,P.y3); glow(b,c+2,y+4,P.y3); glow(b,c-1,y+5,P.y3); glow(b,c+2,y+5,P.y3); }
+    if (p.v==='S' && p.it==='k3a_petrol'){ var c=OX+p.nh[0]+1, y=OY+p.nh[1], gx, gy;
+      for (gy=y+3;gy<=y+6;gy++) for (gx=c-1;gx<=c+2;gx++) glow(b,gx,gy,(gx===c-1||gx===c+2)?P.y3:P.y4);
+      glow(b,c,y+5,[P.y5,P.l1,P.y5,P.l0][ph%4]); glow(b,c+1,y+5,P.l1); glow(b,c+1,y+4,[P.y4,P.y5,P.l0,P.y5][ph%4]); if (ph%2) glow(b,c,y+4,P.y5); glow(b,c,y+6,P.y5); glow(b,c+1,y+6,P.y5);
+      for (gx=c-2;gx<=c+3;gx++) glow(b,gx,y+7,P.y2); }
     if (p.v==='S' && p.pot){ smoke(b,OX+12,OY-27,ph,0.8); smoke(b,OX+15,OY-27,(ph+5)%12,0.7); } },
   afterKey:function(p,t){ return (p.it==='k3a_petrol'||p.pot)?Math.floor(t/120)%12:0; },
   anims:{
@@ -1059,14 +1056,14 @@ var a1B=[
 "...........",
 "...kkkkk...",
 "..kcCccck..",
-".kccccccck.",
+".kcccCccck.",
+"kccccccccck",
+"kcccCcccCck",
+"kccccccccck",
 "kdddddddddk",
-"kHHhHHHhHHk",
-"HhHHHhHHHhH",
-"kHHhHHHHhHk",
-".kHHHHhHHk.",
+"HhHHhHHhHhH",
+".kHHhHHhHk.",
 ".ktHHHHHtk.",
-"..ktttttk..",
 "...kkkkk...",
 "...ktttk...",
 "...kssk...."];
@@ -1201,7 +1198,7 @@ var a3B=[
 "...ktttk...",
 "...kssk...."];
 var a3Sit=sitter(23,{});
-function a3G(o){ return a3Sit(Object.assign({nh:[4,-17],fh:[13,-22],it:'k3a_guitar'},o||{})); }
+function a3G(o){ return a3Sit(Object.assign({nh:[4,-17],fh:[14,-21],it:'k3a_guitar'},o||{})); }
 M.defineChar('aussie3',{
   legend:L({c:P.m2,C:P.s4,d:P.m1,H:P.h3,h:P.w2,b:P.h3,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
   heads:{S:HS(a3S),F:HS(a3F),B:{n:a3B}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
@@ -1211,8 +1208,8 @@ M.defineChar('aussie3',{
   anims:{
     // spielt im Sitzen Gitarre: schlägt die Saiten, greift um, nickt im Takt, singt mit
     guitar:seq([a3G({}),140],[a3G({nh:[4,-15],it:'k3a_guitarS'}),120],[a3G({ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[0,1]}),120],[a3G({}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',hd:'o'}),120],
-      [a3G({fh:[14,-23],ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[14,-23],ho:[0,1],hd:'o'}),120],[a3G({fh:[14,-23]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[14,-23]}),120],
-      [a3G({fh:[14,-23],ho:[0,1],hd:'b'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[14,-23],ho:[0,1]}),120],[a3G({}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',hd:'o'}),120],[a3G({ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[0,1]}),120]),
+      [a3G({fh:[15,-22],ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22],ho:[0,1],hd:'o'}),120],[a3G({fh:[15,-22]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22]}),120],
+      [a3G({fh:[15,-22],ho:[0,1],hd:'b'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22],ho:[0,1]}),120],[a3G({}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',hd:'o'}),120],[a3G({ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[0,1]}),120]),
     // sitzt, die Gitarre ruht auf dem Knie
     sit:seq([a3G({nh:[5,-16]}),1700],[a3G({nh:[5,-16],hd:'b'}),110],[a3G({nh:[5,-16],ho:[1,0]}),1200],[a3G({nh:[4,-15],it:'k3a_guitarS'}),160],[a3G({nh:[5,-16]}),1400]),
     sitTalk:seq([a3G({nh:[5,-16],hd:'o'}),140],[a3G({nh:[5,-16]}),140],[a3G({nh:[5,-16],hd:'o',ho:[1,0]}),140],[a3G({nh:[5,-16]}),160]),
@@ -1224,7 +1221,8 @@ var IDS=['maja','dino','taxist','vlado','kata','zlata','kioskm','haendler','kasi
 IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.post=function(b,p,X,Y,hx,hy){ f(b,full(ch,p,hx,hy),X,Y,hx,hy); }; });
 
 // ---------------------------------------------------------------- Kontaktbild der neuen Animationen (wann die Handlung „passiert“, für npc.anim(name,hook)); vorhandene bleiben
-(function(){ var c={ type:1, phone:2, stretch:3, work:2, cough:2, arms:2, lamp:2, stir:1, ticket:2, stand:0, walk:0, guitar:1 };
+// nur Namen, die allein diese Figuren haben (phone, lamp, sit, stand … teilen sie mit anderen)
+(function(){ var c={ type:1, stretch:3, work:2, cough:2, arms:2, stir:1, ticket:2, guitar:1 };
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze

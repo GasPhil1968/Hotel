@@ -2,7 +2,7 @@
    Kräftig: breiter Schädel mit Glatze und kurzem grauem Haarkranz, schwere graue Brauen über kleinen, zusammengekniffenen
    Augen, fleischige, gerötete Nase, dicker grauer Schnauzbart über dem Mund, breites Kinn, kurzer Stiernacken.
    Braune Lederjacke mit großem Kragen, darunter ein hellblaues Hemd. Knapp.
-   Legende HEAD: Ziffern Haut (1–6 p0–p5, 7 l0) · r Röte (d4) · a–e Haarkranz, Brauen und Bart (m1 m2 m3 m4 s5) ·
+   Legende HEAD: Ziffern Haut (1–6 p0–p5, 7 l0) · r Röte (t5) · a–e Haarkranz, Brauen und Bart (s1–s5, warmes Grau) ·
    w W Augenweiß · i Iris · k Pupille · z Lidstrich. Jacke und Hemd in Code; Kontur mit M.outline.
    Varianten: MOUTH und EYES als Flicken. */
 (function(M){
@@ -59,8 +59,8 @@ var HEAD=[
 ".....................3443333333222222223333.............", // 45
 ".....................34433333333222222233333............"  // 46
 ];
-var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, '7':P.l0, r:P.d4,
-  a:P.m1, b:P.m2, c:P.m3, d:P.m4, e:P.s5, w:P.s5, W:P.s4, i:P.w1, k:P.h0, z:P.h1 };
+var LEG={ '1':P.p0, '2':P.p1, '3':P.p2, '4':P.p3, '5':P.p4, '6':P.p5, '7':P.l0, r:P.t5,
+  a:P.s1, b:P.s2, c:P.s3, d:P.s4, e:P.s5, w:P.s5, W:P.s4, i:P.w1, k:P.h0, z:P.h1 };
 function stamp(b,rows,leg){ for (var y=0;y<rows.length;y++){ var r=rows[y]; for (var x=0;x<r.length;x++){ var ch=r[x]; if (ch==='.'||ch===' '||ch==='_') continue; var c=leg[ch]; if (c===undefined) throw new Error('Legende ohne '+ch); b.px(x,y,c); } } }
 function putList(b,list){ for (var i=0;i<list.length;i++) b.px(list[i][0],list[i][1],LEG[list[i][2]]); }
 // Lederjacke (braun): breite Schultern, großer Kragen, Glanzkanten auf dem Leder
@@ -85,8 +85,8 @@ function jacket(b){
   b.line(30,58,30,64,P.w1); b.line(32,57,32,64,P.w0);
   for (var y=58;y<64;y+=2) b.px(31,y,P.m3);
 }
-var MOUTH_O=[];
-var EYES_B=[];
+var MOUTH_O=[[35,33,'1'],[36,33,'1'],[37,33,'1'],[38,33,'1'],[39,33,'1'],[35,34,'2'],[36,34,'1'],[37,34,'w'],[38,34,'1'],[39,34,'2'],[35,35,'4'],[36,35,'5'],[37,35,'6'],[38,35,'6'],[39,35,'5']];
+var EYES_B=[[28,21,'4'],[29,21,'4'],[30,21,'4'],[31,21,'4'],[32,21,'4'],[28,22,'3'],[29,22,'z'],[30,22,'z'],[31,22,'z'],[32,22,'z'],[28,23,'4'],[29,23,'5'],[30,23,'5'],[31,23,'5'],[32,23,'4'],[37,21,'4'],[38,21,'4'],[39,21,'4'],[40,21,'4'],[37,22,'z'],[38,22,'z'],[39,22,'z'],[40,22,'3'],[37,23,'4'],[38,23,'5'],[39,23,'5'],[40,23,'4']];
 function paint(b,v){
   jacket(b);
   stamp(b,HEAD,LEG);

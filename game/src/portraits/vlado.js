@@ -104,20 +104,28 @@ var CIG_O=[[40,34,'y2'],[41,34,'y3'],[42,35,'s6'],[43,35,'s6'],[44,36,'s5'],[45,
 var SMOKE=[[48,32,'m3'],[48,31,'m4'],[49,30,'m3'],[49,28,'m4'],[50,27,'m3'],[50,26,'m4'],[49,24,'m3'],[49,23,'m4'],[50,21,'m3'],[51,20,'m3'],[51,18,'m2'],[50,16,'m2']];
 function cig(b,list){ list.forEach(function(q){ b.px(q[0],q[1],P[q[2]]); }); }
 function smoke(b,dy){ SMOKE.forEach(function(q){ var x=q[0], y=q[1]+dy; if (b.get(x,y)===M.T) b.px(x,y,P[q[2]]); }); }
-// graue Stoppeln: unregelmäßig gestreut über Kiefer, Kinn, Oberlippe und untere Wangen (nicht auf den Lippen);
-// die Farbe richtet sich nach dem Hautton darunter (im Schatten dunkler, im Licht heller)
+// graue Stoppeln: im Bartbereich wird die Haut grau und matt (gleiche Helligkeit, Kern voll, Rand im Schachbrett),
+// dazu einzelne helle und dunkle Härchen; die Lippen bleiben frei
 var BEARD=[[23.5,22],[25.5,24.5],[28,28.6],[31,30.4],[34.5,30.6],[37,30.2],[40,30.4],[42,31],[41.6,36],[40.2,39.4],[37,41.4],[33,41.6],[29,39.6],[25,35.6],[22.6,31]];
-var STUB={}; STUB[P.q1]=[P.s0,P.s1]; STUB[P.q2]=[P.s1,P.s2]; STUB[P.q3]=[P.s2,P.s3]; STUB[P.q4]=[P.s3,P.s4]; STUB[P.p4]=[P.s3,P.s4];
-function stubble(b,dens){
-  b.poly(BEARD,function(x,y){ var c=b.get(x,y), s=STUB[c]; if (!s) return c; if (y>=33&&y<=34&&x>=35&&x<=40) return c;
-    var h=M.hash(x*1.31+7,y*2.17+3); if (h>dens) return c; return s[M.hash(y*3.7,x*0.9)<0.55?0:1]; });
+var GREY={}, LITE={}, DARK={};
+GREY[P.q1]=P.s0; GREY[P.q2]=P.s1; GREY[P.q3]=P.s2; GREY[P.q4]=P.s3; GREY[P.p4]=P.s3; GREY[P.p5]=P.s4;
+LITE[P.q1]=P.s2; LITE[P.q2]=P.s3; LITE[P.q3]=P.s4; LITE[P.q4]=P.s4; LITE[P.p4]=P.s5; LITE[P.p5]=P.s5;
+var BMASK=null;
+function stubble(b){
+  if (!BMASK){ BMASK=new M.Buf(56,64,M.T); BMASK.poly(BEARD,1); }
+  var inB=function(x,y){ return BMASK.get(x,y)===1; };
+  for (var y=0;y<64;y++) for (var x=0;x<56;x++){ if (!inB(x,y)) continue; var c=b.get(x,y); if (GREY[c]===undefined) continue;
+    if (y>=33&&y<=34&&x>=35&&x<=40) continue;
+    var edge=!inB(x-1,y)||!inB(x+1,y)||!inB(x,y-1)||!inB(x,y+1)||!inB(x-2,y)||!inB(x,y-2);
+    if (edge && ((x+y)&1)) continue;
+    var h=M.hash(x*1.31+7,y*2.17+3); if (h>0.72) continue; b.px(x,y,h<0.12?LITE[c]:GREY[c]); }
 }
 var MOUTH_O=[[35,33,'2'],[36,33,'1'],[37,33,'s3'],[38,33,'1'],[39,33,'1'],[40,33,'2'],[35,34,'3'],[36,34,'1'],[37,34,'1'],[38,34,'1'],[39,34,'2'],[36,35,'4'],[37,35,'5'],[38,35,'5'],[39,35,'4'],[36,36,'3'],[37,36,'3'],[38,36,'4']];
 var EYES_B=[[28,21,'4'],[29,21,'4'],[30,21,'4'],[31,21,'4'],[32,21,'4'],[28,22,'3'],[29,22,'z'],[30,22,'z'],[31,22,'z'],[32,22,'z'],[28,23,'4'],[29,23,'4'],[30,23,'4'],[31,23,'4'],[32,23,'4'],
   [37,21,'4'],[38,21,'4'],[39,21,'4'],[40,21,'4'],[37,22,'z'],[38,22,'z'],[39,22,'z'],[40,22,'3'],[37,23,'4'],[38,23,'4'],[39,23,'4'],[40,23,'4']];
 function paint(b,v){
   body(b);
-  stamp(b,HEAD,LEG); stubble(b,0.42);
+  stamp(b,HEAD,LEG); stubble(b);
   if (v.mouth) putList(b,MOUTH_O);
   if (v.eyes) putList(b,EYES_B);
   cig(b,v.mouth?CIG_O:CIG_N);
