@@ -23,7 +23,7 @@ M.defineItems({
     mala:'Sie hat sie hergegeben. Wer losgelassen hat, kann etwas hergeben.'},
   pantoffeln:{name:'Papas Pantoffeln',icon:function(w){ w.rect(4,12,11,6,P.d2); w.rect(4,12,11,2,P.d3); w.hl(5,13,17,P.d1); w.rect(17,10,11,6,P.d2); w.rect(17,10,11,2,P.d3); w.hl(18,26,15,P.d1); w.px(6,14,P.s5); w.px(19,12,P.s5); },
     look:'Papas Pantoffeln, Größe 44. Achtzehn Jahre an der Tür, die Spitzen nach draußen. Jetzt hat Mama sie mir gegeben.',
-    mala:'Sie passen dir nicht. Noch nicht.'},
+    mala:'Natürlich passen sie. Du hast seine Füße.'},
   dose_voll:{name:'Mamas Plätzchendose',icon:function(w){ tin(w,P.r2,P.r3,5); w.rect(11,11,10,5,P.y3); w.hl(12,19,12,P.y4); w.px(14,14,P.d2); w.px(17,13,P.d2); },
     look:'Nadas Dose, wieder voll. Mamas Vanilice, noch warm. „Bring sie ihr zurück. Voll.“',
     mala:'Jetzt riecht sie nach beiden Küchen.'}
