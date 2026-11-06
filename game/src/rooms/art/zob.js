@@ -19,13 +19,13 @@ var PIL={x0:14,x1:40,base:117};                           // Betonpfeiler (Ebene
 var PATCH={x0:42,x1:82,y0:115,y1:127};                    // heller Fleck im Pflaster
 var BOOTH={x0:40,x1:84,top:78,base:118};                  // Umriss der Bude (nur Geistersicht)
 var BUS={x0:50,x1:230,top:50,base:109,door:206,wf:192,wr:98};
-var STELE={x:236,top:62,base:112};
-var BOARD={x0:244,x1:292,y0:60,y1:88,base:112};
-var BENCH={x0:298,x1:326,by:116};
-var PILE={x0:328,x1:352,by:117};
-var TAXI={x0:356,x1:412,base:110};
-var LAMP={x:416,base:112,top:34};
-var STAIR={x0:422,x1:480,y0:112,y1:52};
+var STELE={x:241,top:62,base:112};
+var BOARD={x0:254,x1:302,y0:60,y1:88,base:112};
+var BENCH={x0:308,x1:336,by:116};
+var PILE={x0:338,x1:360,by:117};
+var TAXI={x0:364,x1:420,base:110};
+var LAMP={x:423,base:112,top:34};
+var STAIR={x0:428,x1:480,y0:112,y1:52};
 var COLS=[96,182,268,346];                                 // Stützen unter dem Vordach
 // ---------------------------------------------------------------- kleine Helfer
 function rd(v){ return Math.round(v); }
@@ -61,7 +61,7 @@ var TF={ night:function(r,g,b){ var L=lum(r,g,b); return [r*0.2+L*0.08, g*0.25+L
   lamp:function(r,g,b){ var L=lum(r,g,b); return [r*0.62+L*0.5+30, g*0.5+L*0.36+12, b*0.28+L*0.12]; } };
 var LV={};
 function levels(k){ if (LV[k]) return LV[k]; var a=[], n=6, A=TF[k]||TF.night, B=TF.lamp; for (var i=0;i<n;i++) (function(t){ a.push(M.tintMake(function(r,g,b){ var p=A(r,g,b), q=B(r,g,b); return [lerp(p[0],q[0],t),lerp(p[1],q[1],t),lerp(p[2],q[2],t)]; })); })(Math.pow(i/(n-1),1.15)); return LV[k]=a; }
-function lightAt(Ls,x,y){ var s=0; for (var i=0;i<Ls.length;i++){ var l=Ls[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[3], d=dx*dx+dy*dy; if (d<1) s+=l[4]*Math.pow(1-d,1.3); } return s>1?1:s; }
+function lightAt(Ls,x,y){ var s=0; for (var i=0;i<Ls.length;i++){ var l=Ls[i], dx=(x-l[0])/l[2], dy=(y-l[1])/l[3], d=dx*dx+dy*dy; if (d<1 && !(l[5] && !l[5](x,y))) s+=l[4]*Math.pow(1-d,1.3); } return s>1?1:s; }
 function nkey(tod){ return tod==='night'?'night':(TF[tod]?tod:null); }
 function shade(buf,ox,oy,tod,Ls,useSnow){ var key=nkey(tod); if (!key) return; var L=levels(key), LS=levels(tod==='night'?'nsnow':key), n=L.length;
   for (var y=0;y<buf.h;y++) for (var x=0;x<buf.w;x++){ var k=y*buf.w+x, c=buf.d[k]; if (c===T) continue; var X=x+ox, Y=y+oy, gk=Y*W+X;
@@ -73,11 +73,11 @@ function halo(b,cx,cy,r,amt){ for (var y=Math.floor(cy-r);y<=cy+r;y++) for (var 
 function paintSky(w,tod,we){ var x, y, i, r=M.rng(23); w.g=RG.sky; w.s=0;
   if (tod!=='night'){
     if (we==='snow'){ var S1=R('m3 m4 s4 s5'); for (y=0;y<H;y++) for (x=0;x<W;x++) w.px(x,y,ra(S1,0.18+y/120*0.8+(fbm(x*0.018,y*0.06,3)-0.5)*0.22,x,y)); return; }
-    if (we==='fog'){ var F1=R('m4 s4 s5'); for (y=0;y<H;y++) for (x=0;x<W;x++) w.px(x,y,ra(F1,0.42+y/150+(fbm(x*0.01,y*0.04,5)-0.5)*0.12,x,y)); return; }
+    if (we==='fog'){ var F1=R('m3 m4 n5 b5'); for (y=0;y<H;y++) for (x=0;x<W;x++) w.px(x,y,ra(F1,0.4+y/170+(fbm(x*0.01,y*0.04,5)-0.5)*0.14,x,y)); return; }
     if (we==='thaw'){ var G1=R('m2 m3 m4 s4'); for (y=0;y<H;y++) for (x=0;x<W;x++){ var cv=fbm(x*0.012+3,y*0.07,6); w.px(x,y,ra(G1,0.2+y/120*0.6+(cv-0.5)*0.5,x,y)); } return; }
     var D=we==='sun'?R('b1 b2 b3 b4 b5'):R('b2 b3 b4 b5');
     for (y=0;y<H;y++) for (x=0;x<W;x++) w.px(x,y,ra(D,(we==='sun'?0.08:0.18)+Math.pow(y/92,1.15)*0.8,x,y));
-    for (i=0;i<5;i++){ var cx=r()*W, cy=4+r()*22, L=40+r()*90; for (var k=0;k<L;k++){ var xx=rd(cx+k), yy=rd(cy+Math.sin(k*0.07+i)*1.3+k*0.03), a=0.5-Math.abs(k/L-0.5); if (bayer(xx,yy)<a*0.8) w.px(xx,yy,P.b5); } }
+    if (we!=='sun') for (i=0;i<4;i++){ var cx=r()*W, cy=6+r()*18, L=50+r()*90; for (var k=0;k<L;k++){ var xx=rd(cx+k), a=0.5-Math.abs(k/L-0.5); for (var q=0;q<3;q++){ var yy=rd(cy+Math.sin(k*0.05+i)*1.2+k*0.02)+q; if (bayer(xx,yy)<a*(q===1?0.7:0.3)) w.px(xx,yy,P.b4); } } }
     return; }
   if (we==='thaw'||we==='snow'){ var N1=R('k1 m0 d0 m1 d1'); for (y=0;y<H;y++) for (x=0;x<W;x++) w.px(x,y,ra(N1,0.12+Math.pow(y/96,1.3)*0.7+(fbm(x*0.015,y*0.06,4)-0.5)*0.25,x,y)); return; }
   if (we==='fog'){ var N2=R('k1 m0 m1 m1'); for (y=0;y<H;y++) for (x=0;x<W;x++) w.px(x,y,ra(N2,0.3+y/150+(fbm(x*0.012,y*0.05,7)-0.5)*0.15,x,y)); return; }
@@ -167,7 +167,7 @@ function ground(w,we,S){ var x, y, c, wet=we==='thaw', SN=R('n4 n5 b5 s6 l1'), S
   for (y=PLAT;y<H;y++) for (x=0;x<W;x++){ var row=Math.floor((y-PLAT)/4), off=(row&1)*6, fx=(x+off)%12, fy=(y-PLAT)%4, pave=(fx===0||fy===0)?P.m1:((hash(Math.floor((x+off)/12),row)<0.4)?P.m2:P.m3);
     var tr=trodden(x,y), patch=(x>=PATCH.x0&&x<PATCH.x1&&y>=PATCH.y0&&y<PATCH.y1), shelter=x<PATCH.x1+6 && y<PATCH.y1+4;
     if (patch){ pave=(fx===0||fy===0)?P.s3:((hash(Math.floor((x+off)/12),row)<0.4)?P.s4:P.s5); }
-    if (wet){ w.s=0; c=M.DN[pave]; if (tr<0.35 && fbm(x*0.05,y*0.3,8)>0.5){ c=ra(R('m3 s3 m4 s4'),0.5+(fbm(x*0.2,y*0.4,2)-0.5)*0.6,x,y); w.s=1; } if (patch) c=pave; }
+    if (wet){ w.s=0; c=(fy===0||(fx===0&&bayer(x,y)<0.6))?P.m1:(fbm(x*0.05,y*0.2,21)>0.6&&bayer(x,y)<0.35?P.m3:P.m2); if (tr<0.35 && fbm(x*0.05,y*0.3,8)>0.52){ c=ra(R('m2 m3 s3 m4'),0.5+(fbm(x*0.2,y*0.4,2)-0.5)*0.6,x,y); w.s=1; } if (patch) c=(fx===0||fy===0)?P.s2:P.s3; }
     else { var cov=(shelter?0.3:0.95)-tr*0.8+(fbm(x*0.03,y*0.12,14)-0.5)*0.3; if (cov>0.5+(bayer(x,y)-0.5)*0.12){ w.s=1; var sv=0.66+(fbm(x*0.022,y*0.09,4)-0.5)*0.34+(cov-0.5)*0.25-(y<PLAT+3?0.18:0); c=ra(SN,sv,x,y); }
       else { w.s=0; c=(tr>0.5 && !patch)?ra(SL,0.5+(fbm(x*0.12,y*0.3,6)-0.5)*0.5,x,y):pave; if (tr>0.5 && !patch && hash(x>>1,y)<0.05) c=P.m1; } }
     w.px(x,y,c); }
@@ -179,6 +179,8 @@ function ground(w,we,S){ var x, y, c, wet=we==='thaw', SN=R('n4 n5 b5 s6 l1'), S
       for (var st=0;st<5;st++){ var qx=fx2+st*5*dir, qy=fy2+((st&1)?2:0); if (trodden(qx,qy)>0.35) break; w.px(qx,qy,P.n4); w.px(qx+1,qy,P.n4); w.px(qx+2,qy,P.n5); } }
   // Pfützen (Tauwetter)
   if (wet) for (y=PLAT+2;y<H;y++) for (x=0;x<W;x++) if (inPud(x,y)){ w.s=0; w.px(x,y,P.m1); } }
+function wetReflect(b){ var src=b.clone(); for (var y=PLAT+1;y<H;y++){ var d=y-PLAT, k=0.55-d/60, sy=PLAT-2-Math.floor(d*1.6); if (k<=0.05||sy<0) continue;
+    for (var x=0;x<W;x++){ var i=y*W+x; if (REG[i]!==RG.plat||SNW[i]||inPud(x,y)) continue; var f=fbm(x*0.06,y*0.25,4); if (f<0.48) continue; var sc=src.d[sy*W+x]; if (bayer(x,y)<k*(f-0.4)*2.4) b.d[i]=M.DN[sc]; } } }
 function puddleReflect(b){ var src=b.clone();
   for (var y=PLAT+2;y<H;y++) for (var x=0;x<W;x++){ var p=inPud(x,y); if (!p) continue; var q=PUD[p-1], my=q[1]-q[3]-1, sy=my-(y-my)*4-10, c=sy>=0?src.get(x+((y&1)?1:0),sy):P.m2; if (c===T) c=P.m2; c=M.DN[c]; if (Math.abs((x-q[0])/q[2])>0.88) c=P.m1; b.px(x,y,c); } }
 
@@ -220,9 +222,9 @@ function paintBus(w,we,tod){ var b=BUS, x, y, c; w.g=RG.bus; w.s=0; BUSWIN=[];
     w.ellipse(cx,cy,10,9,function(xx,yy){ return yy<cy-1?P.k0:T; });
     w.ellipse(cx,cy,7,7,P.k1); w.ellipse(cx,cy,4.4,4.4,P.m3); w.ellipse(cx,cy,3,3,P.m2); w.px(cx,cy,P.m4); w.px(cx-1,cy-1,P.m4);
     for (var a=0;a<5;a++){ var an=a/5*Math.PI*2; w.px(cx+rd(Math.cos(an)*3.6),cy+rd(Math.sin(an)*3.6),P.m1); }
-    w.s=1; for (var k=0;k<10;k++){ var sx=cx-9+Math.floor(hash(k,cx)*18), sy=cy-8+Math.floor(hash(cx,k)*3); if (Math.hypot(sx-cx,sy-cy)>7.5) w.px(sx,sy,hash(k,1)<0.5?P.m4:P.s4); } w.s=0; });
+    for (var k=-9;k<=9;k++){ var ay=cy-rd(Math.sqrt(Math.max(0,81-k*k))*0.95); w.px(cx+k,ay-1,P.m3); } });
   // Spritzmatsch an der Flanke, dichter hinter den Rädern
-  for (x=b.x0;x<b.x1;x++) for (y=skirt-8;y<skirt+1;y++){ var nearW=Math.max(0,1-Math.min(Math.abs(x-b.wr+12),Math.abs(x-b.wf+12))/20), sp=fbm(x*0.35,y*0.9,12)+(y-skirt+8)*0.035+nearW*0.15; if (sp>0.66 && bayer(x,y)<0.55) w.px(x,y,(hash(x,y)<0.5)?P.e3:P.m3); }
+  for (x=b.x0;x<b.x1;x++) for (y=skirt-5;y<skirt;y++){ var nearW=Math.max(0,1-Math.min(Math.abs(x-b.wr+14),Math.abs(x-b.wf+14))/22), sp=fbm(x*0.3,y*0.7,12)+(y-skirt+5)*0.05+nearW*0.2; if (sp>0.72 && bayer(x,y)<0.5) w.px(x,y,(hash(x,y)<0.3)?P.e4:P.s4); }
   for (x=b.x0+2;x<b.x1-2;x++){ w.px(x,b.base,P.k1); if (bayer(x,b.base+1)<0.5) w.px(x,b.base+1,P.k2); }
   for (var i=0;i<12;i++){ var wx=b.x0+10+i*14; if (wx>dx-6) break; BUSWIN.push([wx,winT+8]); } }
 function busSignText(w,lit){ var s=BUSSIGN, txt='SARAJEVO - MÜNCHEN', tw=signW(txt); w.rect(s[0],s[1],s[2],s[3],P.k1); sign(w,txt,s[0]+rd((s[2]-tw)/2),s[1]+1,lit?P.y4:P.y3); }
@@ -310,8 +312,9 @@ function traveler(w,x,by,coat,hat,dir){ w.g=RG.prop; w.s=0; var f=dir||1;
 var BASE=null, LIT=[], WE='snowlie', BUSIN=false;
 function lightsFor(tod,S){ if (tod==='day') return []; var L=[];
   for (var x=20;x<BX1-12;x+=26) L.push([x+6,70,22,22,0.5]);
-  L.push([70,86,30,18,0.7],[LAMP.x-9,LAMP.top+8,40,60,0.75],[LAMP.x-9,124,46,14,0.45],[468,24,26,30,0.6],[(BOARD.x0+BOARD.x1)/2,74,24,20,0.45],[TAXI.x0+29,82,10,8,0.4]);
-  if (S.busIn) L.push([150,68,80,12,0.25]);
+  var notBus=function(X,Y){ var g=REG[Y*W+X]; return g!==RG.bus; };
+  L.push([70,90,30,16,0.7,notBus],[LAMP.x-9,LAMP.top+8,40,60,0.75],[LAMP.x-9,124,46,14,0.45],[468,24,26,30,0.6],[(BOARD.x0+BOARD.x1)/2,74,24,20,0.45],[TAXI.x0+29,82,10,8,0.4]);
+  if (S.busIn) L.push([140,66,84,10,0.3,function(X,Y){ return REG[Y*W+X]===RG.bus; }]);
   return L; }
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k;
   WE=we; BUSIN=!!S.busIn; REG.fill(0); SNW.fill(0); WINS=[]; LAMPS=[];
@@ -321,14 +324,14 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   ground(w,we,S);
   bridge(w,we);
   traveler(w,334,GB+2,P.c2,P.k2,-1); traveler(w,442,93,P.g2,P.r2,1);
-  props(w,we,tod); bench(w,we); pile(w,we);
   paintTaxi(w,we);
   if (BUSIN){ paintBus(w,we,tod); busSignText(w,false); }
+  props(w,we,tod); bench(w,we); pile(w,we);
   // Dunst: Ferne verschwindet bei Schneefall und Nebel
   var fk={snow:[0.55,0.4,0.22,0.08,0.05],fog:[0.9,0.75,0.5,0.32,0.22],thaw:[0.4,0.28,0.12,0.05,0.04],snowlie:[0.22,0.12,0.04,0,0],sun:[0.16,0.08,0.02,0,0],frost:[0.18,0.1,0.03,0,0]}[we];
-  var fc=tod==='night'?(we==='fog'?P.m1:P.n0):(we==='fog'?P.s4:(we==='thaw'?P.m3:(we==='snow'?P.m4:P.b4)));
+  var fc=tod==='night'?(we==='fog'?P.m1:P.n0):(we==='fog'?P.m4:(we==='thaw'?P.m3:(we==='snow'?P.m4:P.b4)));
   M.fogBake(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return fk[0]; if (g===RG.mid) return fk[1]; if (g===RG.bld||g===RG.glass) return fk[2]+(GB-yy)*0.002; if (g===RG.bridge) return fk[3]; if (g===RG.road||g===RG.bus||g===RG.prop) return fk[4]*0.6; return 0; },{col:fc});
-  if (we==='thaw') puddleReflect(b);
+  if (we==='thaw'){ puddleReflect(b); wetReflect(b); }
   // Kontaktschatten und Tageslicht
   M.light(b,M.lf.sum(M.lf.pool((BUS.x0+BUS.x1)/2,BUS.base+1,96,4,BUSIN?-1:0),M.lf.pool(TAXI.x0+28,TAXI.base+1,30,3,-0.9),M.lf.pool(PIL.x0+13,PIL.base+1,18,3,-0.8),
     function(xx,yy){ return (yy>58 && yy<GB+2 && xx<BX1)?-0.35:0; },M.lf.k(we==='thaw'?-0.2:(we==='sun'?0.15:0))),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
@@ -360,7 +363,7 @@ function pillarLayer(S,GS,tod){ var we=weaOf(GS), x0=PIL.x0, x1=PIL.x1, by=PIL.b
   wr.px(x1-2,70,P.t1); wr.px(x1-2,76,P.t1);
   if (we!=='thaw'){ for (x=x0-2;x<x1+2;x++){ var hh=Math.floor(hash(x,2)*3); for (y=by-hh;y<by;y++) wr.px(x,y,P.s6); } }
   if (tod!=='day') shadeL(L,tod);
-  else if (we==='fog'||we==='snow') M.fogBake(L,function(){ return we==='fog'?0.18:0.06; },{col:we==='fog'?P.s4:P.m4});
+  else if (we==='fog'||we==='snow') M.fogBake(L,function(){ return we==='fog'?0.18:0.06; },{col:P.m4});
   return L; }
 function shadeL(L,tod){ var key=nkey(tod); if (!key) return; var Lv=levels(key), n=Lv.length;
   for (var y=0;y<L.h;y++) for (var x=0;x<L.w;x++){ var k=y*L.w+x, c=L.d[k]; if (c===T) continue; var X=x+L.ox, Y=y+L.oy, f=lightAt(LIT,X,Y)*(n-1), i=Math.floor(f); if (f-i>bayer(X,Y)) i++; if (i>n-1) i=n-1; L.d[k]=M.tintPx(Lv[i],c,X,Y); } }
@@ -396,7 +399,7 @@ function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, tod=v.tod, we=WE, i, x, y;
   if (fwOn(S,GS)) fireworks(fb,t,cam,BX1+6,6,W-6,46,3,11,function(X,Y){ var k=Y*W+X; return X>=0&&X<W&&REG[k]===RG.sky; }); }
 function front(fb,v,S,GS){ var we=WE, tod=v.tod;
   if (we==='snow') M.snow(fb,v.t,{n:110,cam:v.cam,wind:5,col:tod==='day'?P.s6:P.s5,col2:tod==='day'?P.s5:P.n4});
-  else if (we==='fog') M.fogDrift(fb,v.t,{y0:20,y1:144,amt:0.32,k:2,col:tod==='day'?P.s4:P.m1,cam:v.cam,speed:4}); }
+  else if (we==='fog') M.fogDrift(fb,v.t,{y0:20,y1:144,amt:0.32,k:2,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:4}); }
 // Geistersicht: die Bude am Pfeiler mit Schalterfenster und „FAHRKARTEN“
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, b=BOOTH, x, y;
   function gp(X,Y,c,a){ var sx=X-cam; if (sx<0||sx>=320||Y<0||Y>=144) return; if (a!==undefined && bayer(sx,Y+Math.floor(t*2))>a) return; fb.d[Y*320+sx]=c; }
@@ -433,8 +436,8 @@ M.defineArt('zob',{
     hbf_view:[BX1+2,40,66,48],
     snow:[PILE.x0-2,PILE.by-16,PILE.x1-PILE.x0+4,18]
   },
-  stands:{ exit:[8,126,'L'], to_bridge:[456,120,'R'], bus:[150,120,'B'], board:[268,120,'B'], pillar:[88,126,'L'], taxi:[392,120,'B'], bench:[312,123,'B'], shops:[330,124,'B'], hbf_view:[400,122,'B'], snow:[340,124,'B'] },
-  actorPos:{ wastl:[364,120,'L','wastl'], hansi:[60,121,'F','hansi',true], mala:[BUS.door+4,117,'R'] },
+  stands:{ exit:[8,126,'L'], to_bridge:[458,120,'R'], bus:[150,120,'B'], board:[278,120,'B'], pillar:[88,126,'L'], taxi:[398,120,'B'], bench:[322,123,'B'], shops:[300,126,'B'], hbf_view:[404,124,'B'], snow:[349,124,'B'] },
+  actorPos:{ wastl:[372,120,'L','wastl'], hansi:[60,121,'F','hansi',true], mala:[BUS.door+4,117,'R'] },
   start:[BUS.door+24,121,'R'], entries:{ map:[16,124,'R'], hacker:[462,122,'L'] }
 });
 var FL=null; function FOGLUT(){ if (FL) return FL; FL=M.tintMake(function(r,g,b){ var q=M.RGB[P.s4]; return [r+(q[0]-r)*0.18,g+(q[1]-g)*0.18,b+(q[2]-b)*0.18]; }).a; return FL; }
