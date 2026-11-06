@@ -25,6 +25,14 @@ function vn(x,y,s){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, o=
 function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*4.1+2.3,y*4.1+8.1,s)*0.15; }
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun'||w==='frost')?w:'snowlie'; }
+// Dunst und Nebel: nur zu Landschaftsfarben mischen (keine Lavendel-, Geister- oder Hauttöne)
+var HZN=null, HZL={};
+function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+function haze(b,amt,opt){ opt=opt||{}; var col=opt.col, x0=opt.x||0, y0=opt.y||0, w=opt.w||b.w, h=opt.h||b.h, ox=b.ox||0, oy=b.oy||0;
+  for (var y=Math.max(0,y0);y<Math.min(b.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(b.w,x0+w);x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*b.w+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x+ox,y+oy)<f-i) i++; if (i>0) b.d[k]=(i>=8)?col:hazeLut(col,i)[c]; } }
+function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2);
+  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue;
+    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*Math.sin(wx*0.031+t*sp*0.05+y*0.11)+0.22*Math.sin(wx*0.012-t*sp*0.03+y*0.047), d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
 function fwOn(S,GS){ return !!(S&&S.fireworks) || !!(M.k4Fireworks && M.k4Fireworks(GS)); }
 var REG=new Uint8Array(W*H), SNW=new Uint8Array(W*H), RG={sky:0,far:1,roofs:2,wall:3,glass:4,rail:5,floor:6,prop:7};
 function RW(b){ var o={g:0,s:0,w:W,h:H};
@@ -90,10 +98,10 @@ function wall(w,tod,we){ var x, y; w.g=RG.wall; w.s=0;
   for (y=0;y<6;y++) for (x=0;x<WALLX+8;x++) w.px(x,y,(y===5)?P.k2:(y===4?P.s2:P.s3)); w.s=1; for (x=WALLX-2;x<WALLX+8;x++) w.px(x,6,P.s6); w.s=0;
   // Balkontür (Glas) und Fenster
   var d=DOOR; w.rect(d.x0-3,d.y0-3,d.x1-d.x0+6,FY-d.y0+3,P.s6); w.rect(d.x0-1,d.y0-1,d.x1-d.x0+2,FY-d.y0+1,P.m4);
-  w.g=RG.glass; for (y=d.y0+2;y<FY-14;y++) for (x=d.x0+2;x<d.x1-2;x++){ var c2=inside(x+40,y,false); if (((x-d.x0)*0.7+y)%17<1.6) c2=P.s4; w.px(x,y,c2); GLASS.push([x,y]); }
+  w.g=RG.glass; for (y=d.y0+2;y<FY-14;y++) for (x=d.x0+2;x<d.x1-2;x++){ var c2=inside(x+40,y,false); if (((x-d.x0)*0.7+y)%31<1.2) c2=M.UP[c2]; w.px(x,y,c2); GLASS.push([x,y]); }
   w.g=RG.wall; w.rect(d.x0+2,FY-14,d.x1-d.x0-4,12,P.s5); w.hl(d.x0+2,d.x1-3,FY-14,P.s6); w.rect(d.x1-6,d.y0+36,2,6,P.m2);
   var wn=WIN; w.rect(wn.x0-3,wn.y0-3,wn.x1-wn.x0+6,wn.y1-wn.y0+6,P.s6); w.g=RG.glass;
-  for (y=wn.y0;y<wn.y1;y++) for (x=wn.x0;x<wn.x1;x++){ var c3=inside(x,y,false); if (((x-wn.x0)*0.7+y)%23<2) c3=M.UP[M.UP[c3]]; w.px(x,y,c3); GLASS.push([x,y]); }
+  for (y=wn.y0;y<wn.y1;y++) for (x=wn.x0;x<wn.x1;x++){ var c3=inside(x,y,false); if (((x-wn.x0)*0.7+y)%37<1.4) c3=M.UP[c3]; w.px(x,y,c3); GLASS.push([x,y]); }
   w.g=RG.wall; w.rect(rd((wn.x0+wn.x1)/2)-1,wn.y0,2,wn.y1-wn.y0,P.s6); w.hl(wn.x0,wn.x1-1,wn.y0+16,P.s6);
   w.rect(wn.x0-5,wn.y1+2,wn.x1-wn.x0+10,3,P.s5); w.s=1; w.hl(wn.x0-5,wn.x1+4,wn.y1+1,P.s6); w.hl(wn.x0-3,wn.x1+2,wn.y1,hash(1,2)<2?P.b5:P.s6); w.s=0;
   // Rollladenkästen
@@ -140,7 +148,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   paintSky(w,tod,we); paintRoofs(w,we);
   var fk={snow:[0.55,0.3],fog:[0.92,0.7],thaw:[0.4,0.2],snowlie:[0.22,0.08],sun:[0.15,0.05],frost:[0.18,0.06]}[we];
   var fc=tod==='night'?(we==='fog'?P.m1:P.n0):(we==='fog'?P.m4:(we==='thaw'?P.m3:(we==='snow'?P.m4:P.b4)));
-  M.fogBake(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return fk[0]; if (g===RG.roofs) return fk[1]; return 0; },{col:fc});
+  haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return fk[0]; if (g===RG.roofs) return fk[1]; return 0; },{col:fc});
   wall(w,tod,we); floor(w,we); railing(w,we); pot(w,we); can(w,we); chair(w,we);
   M.light(b,M.lf.sum(M.lf.pool(POT.x,POT.by+1,10,2,-0.8),M.lf.pool(CAN.x,CAN.by+1,9,2,-0.7),M.lf.pool(CHAIR.x,CHAIR.by+1,10,2,-0.7),M.lf.band(FY,FY+4,-0.5,0),M.lf.k(we==='thaw'?-0.2:(we==='sun'?0.12:0))),0,0,function(xx,yy){ var g=REG[yy*W+xx]; return g===RG.floor; });
   M.light(b,M.lf.sum(M.lf.xband(0,WALLX,-0.25,0),M.lf.k(we==='thaw'||we==='fog'?-0.2:0)),0,0,function(xx,yy){ return REG[yy*W+xx]===RG.wall; });
@@ -169,7 +177,7 @@ function dyn(fb,v,S,GS){ var t=v.t, tod=v.tod, we=WE, i;
   if (fwOn(S,GS)) fireworks(fb,t,0,WALLX+10,8,W-10,60,2,10,function(X,Y){ return REG[Y*W+X]===RG.sky; }); }
 function front(fb,v,S,GS){ var we=WE, tod=v.tod;
   if (we==='snow') M.snow(fb,v.t,{n:80,wind:5,col:tod==='day'?P.s6:P.s5,col2:tod==='day'?P.s5:P.n4,mask:function(x,y){ return y>6; }});
-  else if (we==='fog') M.fogDrift(fb,v.t,{y0:10,y1:144,amt:0.3,k:2,col:tod==='day'?P.m4:P.m1,speed:4}); }
+  else if (we==='fog') fogFront(fb,v.t,{y0:10,y1:144,amt:0.3,k:2,col:tod==='day'?P.m4:P.m1,speed:4}); }
 // Geistersicht: am Zweig ein Schimmer wie ein Ast in einem anderen Sommer
 function ghost(fb,v,S,GS){ var t=v.t, x0=POT.x, y0=POT.by-22, al=0.55+0.25*Math.sin(t*0.8);
   function gp(X,Y,c,a){ X=rd(X); Y=rd(Y); if (X<0||X>=320||Y<0||Y>=144) return; if (a!==undefined && bayer(X,Y+Math.floor(t*2))>a) return; fb.d[Y*320+X]=c; }

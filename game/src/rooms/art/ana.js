@@ -30,6 +30,14 @@ function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function rp(p){ return [rd(p[0]),rd(p[1])]; }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun'||w==='frost')?w:'snowlie'; }
+// Dunst und Nebel: nur zu Landschaftsfarben mischen (keine Lavendel-, Geister- oder Hauttöne)
+var HZN=null, HZL={};
+function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+function haze(b,amt,opt){ opt=opt||{}; var col=opt.col, x0=opt.x||0, y0=opt.y||0, w=opt.w||b.w, h=opt.h||b.h, ox=b.ox||0, oy=b.oy||0;
+  for (var y=Math.max(0,y0);y<Math.min(b.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(b.w,x0+w);x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*b.w+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x+ox,y+oy)<f-i) i++; if (i>0) b.d[k]=(i>=8)?col:hazeLut(col,i)[c]; } }
+function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2);
+  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue;
+    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*Math.sin(wx*0.031+t*sp*0.05+y*0.11)+0.22*Math.sin(wx*0.012-t*sp*0.03+y*0.047), d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
 function fwOn(S,GS){ return !!(S&&S.fireworks) || !!(M.k4Fireworks && M.k4Fireworks(GS)); }
 function hit(x,y){ var k, X, Y;
   if (x>=XL && x<=XR && y>=CY && y<=FY) return {s:'back',X:x,Y:y,Z:0};
@@ -101,7 +109,7 @@ function outside(b,tod,we){ var night=tod!=='day', x, y, x0=BDOOR.x0, x1=WIN.x1,
     if (r()<0.7){ var cx=x+3+Math.floor(r()*(w-6)); o.rect(cx,ft-rh-3,2,4,night?P.k2:P.t2); o.hl(cx-1,cx+2,ft-rh-4,night?P.n4:P.s6); }
     for (var fy=ft+3;fy<y1-2;fy+=5) for (var fx=x+2;fx<x+w-2;fx+=4){ o.rect(fx,fy,2,2,night?P.k1:P.k2); ROOFW.push([fx,fy,r()]); }
     x+=w+(r()<0.3?2:0); }
-  if (we==='fog') M.fogBake(o,function(xx,yy){ return 0.55; },{col:night?P.m1:P.m4,x:x0,y:0,w:x1-x0,h:H});
+  if (we==='fog') haze(o,function(xx,yy){ return 0.55; },{col:night?P.m1:P.m4,x:x0,y:0,w:x1-x0,h:H});
   // Balkongitter mit Schnee (vor den Dächern)
   for (x=x0;x<x1;x++){ for (y=80;y<FY;y++){ if (x%5===0) o.px(x,y,P.k1); } o.px(x,80,P.m2); o.px(x,81,P.k1); o.px(x,79,we==='thaw'?P.m3:P.s6); if (we!=='thaw' && hash(x,2)<0.5) o.px(x,78,P.s6); }
   for (x=x0;x<x1;x++) for (y=FY-4;y<FY;y++) o.px(x,y,we==='thaw'?P.m2:P.s5);

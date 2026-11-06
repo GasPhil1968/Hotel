@@ -25,6 +25,14 @@ function vn(x,y,s){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, o=
 function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*4.1+2.3,y*4.1+8.1,s)*0.15; }
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun'||w==='frost')?w:'snowlie'; }
+// Dunst und Nebel: nur zu Landschaftsfarben mischen (keine Lavendel-, Geister- oder Hauttöne)
+var HZN=null, HZL={};
+function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+function haze(b,amt,opt){ opt=opt||{}; var col=opt.col, x0=opt.x||0, y0=opt.y||0, w=opt.w||b.w, h=opt.h||b.h, ox=b.ox||0, oy=b.oy||0;
+  for (var y=Math.max(0,y0);y<Math.min(b.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(b.w,x0+w);x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*b.w+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x+ox,y+oy)<f-i) i++; if (i>0) b.d[k]=(i>=8)?col:hazeLut(col,i)[c]; } }
+function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2);
+  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue;
+    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*Math.sin(wx*0.031+t*sp*0.05+y*0.11)+0.22*Math.sin(wx*0.012-t*sp*0.03+y*0.047), d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
 function fwOn(S,GS){ return !!(S&&S.fireworks) || !!(M.k4Fireworks && M.k4Fireworks(GS)); }
 var REG=new Uint8Array(W*H), SNW=new Uint8Array(W*H), RG={sky:0,far:1,field:2,arch:3,rail:4,walk:5,prop:6,train:7,hbf:8};
 function RW(b){ var o={g:0,s:0,w:W,h:H};
@@ -103,9 +111,9 @@ function paintField(w,we){ var x, y, c, wet=we==='thaw';
       if (wet && d>6 && fbm(u*0.015,z*2,8)>0.6){ cc=ra(R('m2 m3 s3'),0.5,x,y); w.s=1; }                       // Reste von grauem Schnee
       if (snow && d<5.5 && fbm(u*0.1,z*8,6)<0.5) { cc=ra(DIRT,0.5,x,y); w.s=0; }                           // vom Zug freigeblasen
       // Schwellen (nur nah sichtbar)
-      if (z<3 && d<4.2 && (Math.floor(z*40)%3===0)) { cc=wet?P.w1:(snow?P.m3:P.w1); w.s=0; }
+      if (z<3 && d<4.2 && (Math.floor(z*40)%3===0)) { cc=wet?P.e1:(snow?P.m3:P.w1); w.s=0; }
       // Schienen
-      if (z<4.5 && Math.abs(d-3.2)<Math.max(0.5,px1*0.55)){ cc=(z<2.5)?P.m4:P.m2; if (wet && z<2 && hash(x,y)<0.15) cc=P.s5; w.s=0; }
+      if (z<4.5 && Math.abs(d-3.2)<Math.max(0.5,px1*0.55)){ cc=wet?((z<2.5)?P.m3:P.m2):((z<2.5)?P.m4:P.m2); w.s=0; }
       w.px(x,y,cc); } }
   // Masten der Oberleitung mit Quertragwerken, Fahrdrähte zum Fluchtpunkt
   w.s=0;
@@ -194,7 +202,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   // Nebel und Dunst nach Tiefe: das Gleisfeld verschwindet zur Ferne
   var fogA={fog:1.25,snow:0.75,thaw:0.5,snowlie:0.32,sun:0.22,frost:0.22}[we];
   var fc=tod==='night'?(we==='fog'?P.m1:P.n0):(we==='fog'?P.m4:(we==='thaw'?P.m3:(we==='snow'?P.m4:P.b4)));
-  M.fogBake(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.sky) return 0; if (g===RG.far) return fogA*0.75; if (g===RG.hbf) return fogA*0.7; if (g===RG.field||g===RG.train){ var z=(RAIL.base-HY)/Math.max(0.5,yy-HY); return cl(fogA*(1-1/Math.pow(z,we==='fog'?1.6:1))*1.05,0,1); } if (g===RG.arch) return fogA*0.18; if (g===RG.rail||g===RG.prop) return fogA*0.06; return 0; },{col:fc});
+  haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.sky) return 0; if (g===RG.far) return fogA*0.75; if (g===RG.hbf) return fogA*0.7; if (g===RG.field||g===RG.train){ var z=(RAIL.base-HY)/Math.max(0.5,yy-HY); return cl(fogA*(1-1/Math.pow(z,we==='fog'?1.6:1))*1.05,0,1); } if (g===RG.arch) return fogA*0.18; if (g===RG.rail||g===RG.prop) return fogA*0.06; return 0; },{col:fc});
   M.light(b,M.lf.sum(M.lf.band(RAIL.plinth,RAIL.plinth+6,-0.6,0),M.lf.k(we==='thaw'?-0.2:(we==='sun'?0.15:0))),0,0,function(xx,yy){ return REG[yy*W+xx]===RG.walk; });
   if (we==='sun') for (k=0;k<W*H;k++){ if (SNW[k] && REG[k]===RG.walk && hash(k%W,(k/W)|0)<0.012) b.d[k]=P.l1; }
   BASE=b.clone(); LIT=lightsFor(tod);
@@ -203,7 +211,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   return b; }
 function afterLights(b,tod,we){ var fog=we==='fog';
   WINS.forEach(function(q){ if (REG[q[1]*W+q[0]]===RG.sky) return; if (fog){ if (q[2]>0.9 && REG[q[1]*W+q[0]]!==RG.far) b.px(q[0],q[1],P.y2); else if (q[2]>0.93) b.px(q[0],q[1],P.d2); return; } if (q[2]>0.6) b.px(q[0],q[1],q[2]>0.9?P.y4:P.y3); });
-  if (!fog) HBFL.forEach(function(p){ if (hash(p[0],p[1])<0.55) b.px(p[0],p[1],hash(p[1],p[0])<0.5?P.y3:P.y2); });
+  if (!fog) HBFL.forEach(function(p){ var h2=hash(Math.floor(p[0]/6),Math.floor(p[1]/3)); if (h2<0.45 && hash(p[0],p[1])<0.7) b.px(p[0],p[1],h2<0.15?P.y3:P.y2); });
   TRAINWIN.forEach(function(p){ if (fog && p[2]>2.2) return; b.px(p[0],p[1],P.y3); });
   SIG.forEach(function(s){ b.px(s[0],s[1],s[2]%2?P.r4:P.g5); });
   LAMPH.forEach(function(l){ b.rect(l[0]-2,l[1]-3,4,6,P.y4); b.px(l[0]-1,l[1]-1,P.l1); b.px(l[0],l[1],P.l1); });
@@ -219,7 +227,7 @@ function frontArch(S,GS,tod){ var we=weaOf(GS), L=M.layer(350,0,50,H,H+1), wr=M.
     if (we!=='thaw' && y%26===0){ wr.px(xo,y-1,P.s6); wr.px(xo+1,y-1,P.s6); } }
   for (y=4;y<H;y+=16){ var a0=rd(fo(y))+6, a1=rd(fo(y+16))+15; wr.line(a0,y,a1,y+16,P.k2); wr.line(a0+1,y,a1+1,y+16,P.k1); wr.line(rd(fo(y))+6,y,rd(fo(y))+15,y,P.k2); }
   if (tod!=='day'){ var key=nkey(tod); if (key) M.tintApply(L,levels(key)[0]); }
-  else if (we==='fog') M.fogBake(L,function(){ return 0.1; },{col:P.m4});
+  else if (we==='fog') haze(L,function(){ return 0.1; },{col:P.m4});
   return L; }
 function layers(S,GS,tod){ return [frontArch(S,GS,tod)]; }
 
@@ -251,7 +259,7 @@ function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, tod=v.tod, we=WE;
   if (fwOn(S,GS)) fireworks(fb,t,cam,30,4,W-30,40,3,11,function(X,Y){ return X>=0&&X<W&&REG[Y*W+X]===RG.sky; }); }
 function front(fb,v,S,GS){ var we=WE, tod=v.tod;
   if (we==='snow') M.snow(fb,v.t,{n:110,cam:v.cam,wind:6,col:tod==='day'?P.s6:P.s5,col2:tod==='day'?P.s5:P.n4});
-  else if (we==='fog'){ M.fogDrift(fb,v.t,{y0:30,y1:110,amt:tod==='night'?0.42:0.36,k:2,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:5}); M.fogDrift(fb,v.t*0.6+40,{y0:90,y1:144,amt:0.22,k:1,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:3}); } }
+  else if (we==='fog'){ fogFront(fb,v.t,{y0:30,y1:110,amt:tod==='night'?0.42:0.36,k:2,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:5}); fogFront(fb,v.t*0.6+40,{y0:90,y1:144,amt:0.22,k:1,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:3}); } }
 // Geistersicht: am Geländer viele blasse Hände (Leute, die hier gesessen und geschaut haben)
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<30;i++){ var hx=6+Math.floor(hash(i,1)*(W-12))-cam, hy=RAIL.top-1; if (hx<2||hx>316) continue;
     var a=0.5+0.3*Math.sin(t*0.6+i); if (bayer(hx,hy)>a) continue; var c=hash(i,3)<0.35?P.v4:P.x4; fb.px(hx,hy,c); fb.px(hx+1,hy,c); fb.px(hx+2,hy,P.x3); fb.px(hx,hy+1,P.x2); fb.px(hx+2,hy+1,P.x2); } }

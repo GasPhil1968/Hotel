@@ -28,6 +28,14 @@ function vn(x,y,s){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, o=
 function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*4.1+2.3,y*4.1+8.1,s)*0.15; }
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun'||w==='frost')?w:'snowlie'; }
+// Dunst und Nebel: nur zu Landschaftsfarben mischen (keine Lavendel-, Geister- oder Hauttöne)
+var HZN=null, HZL={};
+function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+function haze(b,amt,opt){ opt=opt||{}; var col=opt.col, x0=opt.x||0, y0=opt.y||0, w=opt.w||b.w, h=opt.h||b.h, ox=b.ox||0, oy=b.oy||0;
+  for (var y=Math.max(0,y0);y<Math.min(b.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(b.w,x0+w);x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*b.w+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x+ox,y+oy)<f-i) i++; if (i>0) b.d[k]=(i>=8)?col:hazeLut(col,i)[c]; } }
+function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2);
+  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue;
+    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*Math.sin(wx*0.031+t*sp*0.05+y*0.11)+0.22*Math.sin(wx*0.012-t*sp*0.03+y*0.047), d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
 function fwOn(S,GS){ return !!(S&&S.fireworks) || !!(M.k4Fireworks && M.k4Fireworks(GS)); }
 var REG=new Uint8Array(W*H), SNW=new Uint8Array(W*H), RG={sky:0,city:1,hall:2,bav:3,tree:4,slope:5,field:6,path:7,prop:8};
 function RW(b){ var o={g:0,s:0,w:W,h:H};
@@ -173,7 +181,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   // Dunst: die Ferne verschwindet bei Schnee und Nebel
   var fk={snow:[0.6,0.45,0.25],fog:[0.95,0.8,0.55],thaw:[0.42,0.3,0.15],snowlie:[0.25,0.15,0.05],sun:[0.18,0.1,0.03],frost:[0.2,0.12,0.04]}[we];
   var fc=tod==='night'?(we==='fog'?P.m1:P.n0):(we==='fog'?P.m4:(we==='thaw'?P.m3:(we==='snow'?P.m4:P.b4)));
-  M.fogBake(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.city) return fk[0]; if (g===RG.hall||g===RG.bav) return fk[1]; if (g===RG.tree) return yy<HY+4?fk[1]:fk[2]; if (g===RG.slope) return fk[2]*0.8; if (g===RG.field) return fk[2]*cl(1-(yy-HY)/(PATH0-HY),0,1); return 0; },{col:fc});
+  haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.city) return fk[0]; if (g===RG.hall||g===RG.bav) return fk[1]; if (g===RG.tree) return yy<HY+4?fk[1]:fk[2]; if (g===RG.slope) return fk[2]*0.8; if (g===RG.field) return fk[2]*cl(1-(yy-HY)/(PATH0-HY),0,1); return 0; },{col:fc});
   M.light(b,M.lf.sum(M.lf.band(PATH0,PATH0+5,-0.4,0),M.lf.k(we==='thaw'?-0.2:(we==='sun'?0.15:0))),0,0,function(xx,yy){ return REG[yy*W+xx]===RG.path; });
   if (we==='sun'||we==='snowlie'||we==='frost') for (k=0;k<W*H;k++){ if (SNW[k] && (REG[k]===RG.field||REG[k]===RG.slope) && hash(k%W,(k/W)|0)<(we==='sun'?0.012:0.004)) b.d[k]=P.l1; }
   BASE=b.clone(); LIT=lightsFor(tod);
@@ -204,7 +212,7 @@ function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, tod=v.tod, we=WE, i;
   if (fwOn(S,GS)) fireworks(fb,t,cam,260,6,W-20,52,3,11,function(X,Y){ return X>=0&&X<W&&REG[Y*W+X]===RG.sky; }); }
 function front(fb,v,S,GS){ var we=WE, tod=v.tod;
   if (we==='snow') M.snow(fb,v.t,{n:110,cam:v.cam,wind:6,col:tod==='day'?P.s6:P.s5,col2:tod==='day'?P.s5:P.n4});
-  else if (we==='fog') M.fogDrift(fb,v.t,{y0:20,y1:144,amt:0.34,k:2,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:4}); }
+  else if (we==='fog') fogFront(fb,v.t,{y0:20,y1:144,amt:0.34,k:2,col:tod==='day'?P.m4:P.m1,cam:v.cam,speed:4}); }
 // Geistersicht: ein verblasster Jahrmarkt auf der leeren Wiese
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
   function gp(X,Y,c,a){ var sx=rd(X)-cam; Y=rd(Y); if (sx<0||sx>=320||Y<0||Y>=144) return; if (a!==undefined && bayer(sx,Y+Math.floor(t*2))>a) return; fb.d[Y*320+sx]=c; }
