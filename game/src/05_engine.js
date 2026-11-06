@@ -74,7 +74,7 @@ E.gt=function(){ return gt; };
 // ---------------------------------------------------------------- Figuren
 function Actor(id,o){ this.id=id; this.ch=o.ch||id; this.x=o.x===undefined?160:o.x; this.y=o.y===undefined?120:o.y; this.f=o.f||'R'; this.mode='idle'; this.anim=null; this.fi=0; this.ft=0; this.path=[]; this.res=null; this.hooks=null;
   this.idleT=0; this.visible=o.visible!==false; this.idle=o.idle||null; this.talk=o.talk||null; this.color=o.color===undefined?(M.CAST_COLORS[this.ch]||P.s6):o.color; this.name=o.name||id;
-  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; this.reveal=!!(o.reveal && M.chapterOf && M.chapterOf(GS)>=4);   // Kapitel 4: ungefundene Geister sieht Marko erst nach A.found (in Kapitel 1–3 bleibt es, wie es war) this.anchor=o.anchor||null; }
+  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; this.reveal=!!(o.reveal && M.chapterOf && M.chapterOf(GS)>=4); this.anchor=o.anchor||null; }   // reveal: in Kapitel 4 sieht Marko ungefundene Geister erst nach A.found (Kapitel 1–3 unverändert)
 var ACT={}; M.ACT=ACT;
 function player(){ return ACT[GS.active]; }
 E.player=player;

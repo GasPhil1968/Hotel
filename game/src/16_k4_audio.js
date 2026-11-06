@@ -1,5 +1,79 @@
 /* ===== 16_k4_audio.js — Kapitel 4: Klänge von München, Weihnachten bis Neujahr 2011. Instrumente, Hall, Effekte, Raumklang, siebzehn Stücke =====
-   (Kopf wird am Ende ergänzt) */
+   Alles live synthetisiert über M.AK (siehe 04_audio.js). AC existiert erst nach dem ersten Tippen, deshalb holen die Funktionen K.AC erst beim Abspielen.
+   Keine Kirchenmusik: keine Choräle, keine Kirchenlieder, keine Glocken als Kirchenmotiv. Weihnachten ist ein Familienfest. Alle Melodien sind eigene.
+
+   MOTIVE
+     „nije se vratio“ (NI-je se VRA-tio): A–B–A–F–E. Es bleibt auf dem zweiten Ton stehen und kommt nicht nach Hause; erst am Neujahrsmorgen geht es nach D.
+     Jasnas Blick zurück aus dem Busfenster: E–C (Sexte hinauf), H–A–H, offen. Malas Spieluhrmotiv aus Kapitel 1 (D–F–E–A), im Abspann in Dur.
+
+   STÜCKE (A.music)
+     k4_bus        Busfahrt: d-Moll, das Klavier wiegt wie der Bus, Fugen der Straße, Schneeflocken (Celesta); das Cello singt das Motiv, Malas Spieluhr antwortet von fern.
+     k4_muenchen   Die Stadt bei Tag im Schnee: G-Dur, gehend, Flöte über Pizzicato und Streichern, der c-Moll-Akkord ist der Schnee darin; im zweiten Teil ein Hackbrett.
+     k4_wohnung    Jasnas Wohnung: a-Moll, still und gespannt. Die Küchenuhr, ein Cello hält den Grund, Klavier mit Reibungen; Jasnas Motiv, dann das Kapitelmotiv, der Leitton bleibt offen.
+     k4_ana        Ana und die Kinder: F-Dur im Sechsachtel, das Klavier wiegt, die Celesta spielt ein Kinderlied, das es nicht gibt, dann die Flöte.
+     k4_bahnhof    Hauptbahnhof, Gleis 11: h-Moll, Räder im Dreier-Dreier-Zweier, das Klavier pulst, eine lange Bratschenlinie, dann die Flöte (Ankommen, 1962 und 1992).
+     k4_sepp       Sepps Thema, ein langsames Lied aus dem Süden: a-Moll mit dem neapolitanischen B-Dur, dann A-Dur mit d-Moll darin. Mandoline im Tremolo über der Gitarre,
+                   im Dur-Teil eine zweite Mandoline in Terzen und eine Musette.
+     k4_heim       Das Altenheim: Es-Dur, die Zeit steht. Klavier, eine Uhr weiter weg, eine Bratsche; im zweiten Durchgang spielt die Spieluhr Gerdas Walzer im Vierertakt.
+     k4_gerda      Gerdas Thema, ein alter Münchner Walzer (eigene Melodie): F-Dur, leise, Bass auf eins, Akkordeon auf zwei und drei; Teil A Akkordeon, Teil B Spieluhr.
+     k4_duh        Geister, Erkenntnis: eine kalte Fläche, das Kapitelmotiv hoch auf der Celesta, Malas Motiv auf der Spieluhr, am Ende D-Dur.
+     k4_limbo      Zwischenwelt: die Fläche der Kapitel 1 bis 3 (D, A wird As), Schnee, ferne Schienenstöße (Bahnsteig, Depot), zweimal die Trambahnglocke (Abfahrt).
+     k4_nacht      Nacht, Schnee, allein: As-Dur und c-Moll, ein hohes Klavier mit langen Pausen, eine Fläche ganz unten, selten ein Eiskristall.
+     k4_streit     Nach dem Streit, Freitag im Nebel: e-Moll mit phrygischem F, ein Cello allein über tiefem Grund, ein leiser Herzschlag.
+     k4_bruecke    Hackerbrücke, Schlüsseldialog 2: d-Moll nach B-Dur. Unten die Züge, das Cello erzählt (Kapitelmotiv), Malas Motiv antwortet; ab Takt 9 Puls und Streicher, leise unter dem Gespräch.
+     k4_silvester  Silvesterabend: C-Dur an der Oberfläche (die Celesta perlt wie Sekt, die Flöte), darunter kriecht der Bass chromatisch, eine Uhr tickt in Achteln, die Pauke.
+     k4_fin        Zimmer 214: fast nur Flächen (B-Dur, g-Moll, Es-Dur, F), sehr leise; selten ein hoher Ton, jede zweite Runde Jasnas Motiv am Klavier.
+     k4_epi        Neujahrsmorgen: D-Dur, das Kapitelmotiv geht endlich nach Hause (E nach D), erst die Bratsche, dann die Flöte.
+     k4_end        Abspann, 2:40 je Runde (48 Takte, wiederholt): Malas Motiv in Dur auf der Spieluhr, das Neujahrsthema am Klavier, dann mit Flöte und Celesta, Jasnas Teil im Cello,
+                   die Stadt auf dem Hackbrett, noch einmal das Thema, zum Schluss Spieluhr und Trambahnglocke.
+
+   KLANGKULISSEN (scape:'k4_<raumid>'; Wetter aus der Phase: snow, snowlie, thaw, fog, frost, sun; Tageszeit day, night)
+     Schnee dämpft die Stadt: tiefe, leise Teppiche, wenig Verkehr (an Heiligabend, Christtag und Neujahr fast keiner), Schritte im Schnee; bei Tauwetter nasse Reifen, Matsch, Tropfen.
+     Silvester (k4_fin_n, k4_fin_a nach k4.fin.late): Feuerwerk in drei Stufen, draußen hell (k4FwOut), durchs Fenster dumpfer (k4FwIn), hinter geschlossenem Fenster nur Schläge
+     und die Scheibe (k4FwWin, Zimmer 214, Flur). Die Ereignisse fragen beim Abspielen, ob es gerade knallt; vorher am Abend einzelne Knaller.
+     k4_zob          ZOB: Busse, Druckluft, Durchsagen mit Gong, Rollkoffer im Matsch, Wastls Taxi im Leerlauf, eine S-Bahn, jemand schaufelt Schnee.
+     k4_hacker       Hackerbrücke: unten die Züge, die Oberleitung (selten ein Funke), die Trambahn; nachts im Nebel fast still: ein Zug, Tropfen vom Stahlbogen.
+     k4_jhaus        Treppenhaus: Türen, Schritte auf der Holztreppe, Frau Hubers Fernseher, das Minutenlicht tickt, Mucki miaut oder schnurrt, Heizung, Rohre.
+     k4_jwohnung     Jasnas Wohnung: Küchenuhr, Kühlschrank, Heizung, Schritte oben, die Straße hinter dem Fenster; Neujahr: Spatzen, jemand kehrt Raketenreste.
+     k4_jschlaf      Schlafzimmer: der Wecker, ein Knacken im Holz, selten ein Auto.
+     k4_ana          Anas Wohnung: Heiligabend (Besteck, Gläser, Familie, Kinder, Holzeisenbahn), Dienstag mittags allein, Silvester (Raclette, Fernsehen, Knaller, Feuerwerk).
+     k4_wiesn        Theresienwiese: weit und still; Kinder am Rodelhang mit Echo, Kufen, Krähen, Wind über dem Feld, ein Hund, ganz fern ein Zug.
+     k4_gleis11      Gleis 11: die Halle, Durchsagen mit Gong, Stimmen, Rollkoffer, Schritte, Tauben, Züge kommen und gehen, ein Pfiff, die Fallblattanzeige, der Kiosk.
+     k4_bmission     Bahnhofsmission: der Teekessel siedet, Tassen, leise Gäste, Husten, Zeitung, gedämpfte Durchsagen; am Donnerstag (S.farewell) still.
+     k4_bunker       Bunker (nur Mala): Beton, Lüftung, Tropfen, oben rollt ein Zug, die Lampe sirrt; Nachhall: Flüstern und ein Stempel von 1962.
+     k4_barsport     Bar Sport: Mühle, Siebträger, Dampf, Tassen, Italienisch an der Theke, Fußball im italienischen Fernsehen, die Zeitung.
+     k4_friedamt     Friedhofsverwaltung: Uhr, Neonröhre, Tastatur, Stempel, Papier, ein Telefon nebenan, Schritte im Flur.
+     k4_heim         Heim, Eingang: Schiebetür, Aufzug im Schacht, Rollator, Telefon am Empfang, Stimmen; Silvesternacht: Notlicht, Feuerwerk hinter der Glastür.
+     k4_heim_flur    Flur: die Wanduhr, Wagen, Rufanlage (elektronisch), Rollator, jemand ruft „Hallo?“, Fernseher, Aufzug; mit S.three Kaffee aus dem Gemeinschaftsraum.
+     k4_heim_raum    Gemeinschaftsraum: Fernseher, die Alten, Tassen (mit S.three mehr, Kaffee wird eingeschenkt), Husten, ein paar Töne auf dem alten Klavier, Krähen im Park.
+     k4_heim214      Zimmer 214: Alois atmet, Heizung, Fernseher nebenan, Krähen; Silvesternacht: das Feuerwerk gedämpft hinter dem Fenster, die Scheibe zittert.
+     k4_balkon       Davors Balkon: die Straße unten, eine Trambahn, Krähen und Tauben, Kinder im Hof, jemand schaufelt Schnee.
+     k4_konsulat     Konsulat: Nummernanzeige (elektronisch), Sprechanlage am Schalter, Wartende, Stühle, ein Kind, Papier, Stempel.
+     map4            Stadtplan München (wie map3).
+
+   NEUE GERÄUSCHE (A.sfx)
+     annBus       Durchsage am ZOB: Gong in zwei Tönen, dann eine Stimme ohne Worte (Satzmelodie, Lautsprecher), Echo von den Fassaden.
+     annTrain     Bahnsteigdurchsage: der Gong in drei Tönen, dann die Stimme in der großen Halle.
+     trainIn      Zug fährt in den Kopfbahnhof ein: Rumpeln, der Fahrmotor sinkt, Schienenstöße werden langsamer, die Bremsen kreischen, Halt, Druckluft.
+     chime        Aufzuggong: ein heller, kurzer Ton (E6), klar über allem. Er kommt in keiner Kulisse vor, damit er im Rätsel eindeutig bleibt.
+     elevator     Aufzug hält und öffnet, ohne Gong (Motor läuft aus, Halt, Relais, Türen gleiten auf, etwa 2 s); mit abgestelltem Gong also nur elevator, sonst dazu chime.
+     kettle       Wasserkocher: das Rauschen schwillt an, es brodelt, der Schalter springt (nach 3,7 s).
+     snowStep     Vier Schritte im Schnee (bei Frost härter, mit Quietschen).
+     doorbellDE   Klingel einer Altbauwohnung: ein Rasselwecker, gut eine Sekunde, hinter der Tür.
+     firework     Eine Rakete: Abschuss, Pfeifen im Steigen, Knall, Glitzern.
+     fireworks    Knattern in der Ferne: Knaller, Batterien, Glitzern, manchmal ein Pfeifen (6,5 s).
+     cork         Sektkorken: er quietscht im Hals, Plopp, Perlen.
+     suitcase     Schnappschloss: zwei Verschlüsse springen auf, der Deckel hebt sich.
+     cat          Mucki miaut.
+     cardShuffle  Eine Kartei wird durchgeblättert, zuletzt wird eine Karte gezogen.
+     tramBell     gibt es seit Kapitel 2 (16_k2_audio.js) und wird nicht überschrieben: A.sfx('tramBell') spielt die vorhandene Glocke.
+     hiss, cups, engine  rufen die Skripte schon auf (Bleigießen bei Ana; Tassen in der Bar, in der Bahnhofsmission und in kafic.js aus Kapitel 3; Davors Auto);
+                  es gab sie noch nicht, deshalb stehen sie hier (zischendes Blei, Tasse mit Löffel, Anlasser und Wegfahren).
+   Schritte: neue Bodenarten 'snow' (bei frost, snowlie und sun härter), 'slush' (Tauwetter) und 'lino' (Heim, Amt); M.footstep reicht alle anderen an 04_audio.js weiter.
+   Vorhanden und weiter benutzt: phone, dial, hangup, paper, page, shimmer, click, door, steps, cups (Kapitel 1 bis 3); in den Kulissen bus, creak, drip, whisper, door (04),
+     k3Brake, k3Diesel, k3DogFar (Kapitel 3) und die Teppiche fridge (04), cellar (Kapitel 2), k3Idle, k3Hum (Kapitel 3).
+   Pegel: offline gemessen und mit Kapitel 3 abgeglichen (Stücke, Geräusche, Kulissen; München im Schnee bleibt etwas leiser als Mostar am Fluss).
+   Für Prüfwerkzeuge: M.K4A = { sfx, ev, songs, scapes } (die eigenen Funktionen, ungefangen aufrufbar; ev mit Pegel wie im Spiel). */
 (function(M){
 'use strict';
 var K=M.AK, nf=K.nf;
@@ -34,9 +108,9 @@ function lv(d,v){ var g=gain(v); g.connect(d); return mk(g,tgOf(d)); }          
 function pn(p,d){ if (!K.AC.createStereoPanner) return d; var n=K.AC.createStereoPanner(); n.pan.value=Math.max(-1,Math.min(1,p)); n.connect(d); return mk(n,tgOf(d)); }
 
 // ---------------------------------------------------------------- Hall: ein Faltungshall je Bus (Musik, Effekte, Raumklang) und Art, gebaut beim ersten Gebrauch
-//   'r' Zimmer (1,4 s), 'treppe' Altbau-Treppenhaus (2,4 s), 'halle' Bahnhofshalle (3,6 s, späte Echos vom Glasdach),
-//   'weit' Schnee und Zwischenwelt (4,2 s), 'fern' Häuserschluchten in der Nacht (Echos von den Fassaden)
-var HK={ r:[1.4,0.26,0.012,0], treppe:[2.4,0.55,0.02,1], halle:[3.6,0.85,0.035,2], weit:[4.2,0.85,0.03,0], fern:[2.6,0.45,0.05,3] };
+//   'r' Zimmer (1,2 s), 'treppe' Altbau-Treppenhaus (2 s), 'halle' Bahnhofshalle (3 s, späte Echos vom Glasdach),
+//   'weit' Schnee und Zwischenwelt (3,4 s), 'fern' Häuserschluchten in der Nacht (2,2 s, Echos von den Fassaden). Kurz gehalten: die Rechenlast wächst mit der Länge.
+var HK={ r:[1.2,0.26,0.012,0], treppe:[2,0.5,0.02,1], halle:[3,0.8,0.035,2], weit:[3.4,0.8,0.03,0], fern:[2.2,0.45,0.05,3] };
 var ER={1:[[0.021,0.5],[0.043,0.35],[0.067,0.25],[0.11,0.18]], 2:[[0.06,0.4],[0.13,0.3],[0.21,0.22],[0.34,0.15],[0.52,0.1]], 3:[[0.17,0.45],[0.31,0.3],[0.55,0.18],[0.9,0.1]]};
 var HALL={ac:null}, AMB={ac:null,d:null};
 function irBuf(AC,kind){ var p=HK[kind]||HK.r, sr=AC.sampleRate, n=Math.floor(sr*p[0]), b=AC.createBuffer(2,n,sr);
@@ -242,8 +316,20 @@ var SFX4={
     Nz(t+0.85,0.4,0.02,'bandpass',700,0.9,S,450,0.05); },                                                                                       // der Deckel hebt sich
   cat:function(t){ meow(t,0.09,bus(1,0.15,'r'),rnd(560,640)); },
   cardShuffle:function(t){ var S=bus(2,0.15,'r'), x=t, n=14+Math.floor(Math.random()*6); for (var i=0;i<n;i++){ flick(x,0.05*(0.7+0.3*Math.random()),S); x+=0.05+0.14*Math.pow(Math.abs(i/n-0.4),1.2); }
-    Nz(x+0.15,0.08,0.03,'bandpass',2000,1,S,1200); }                                                                                            // eine Karte wird gezogen
+    Nz(x+0.15,0.08,0.03,'bandpass',2000,1,S,1200); },                                                                                           // eine Karte wird gezogen
+  // Namen, die die Skripte von Kapitel 4 (und kafic.js in Kapitel 3) schon aufrufen und die es bisher nicht gab:
+  hiss:function(t){ var S=bus(1,0.12,'r'); Nz(t,0.7,0.05,'highpass',3200,0.6,S,5500,0.01); Sw(t,0.9,0.02,'bandpass',1800,0.8,S,900);              // Bleigießen: das heiße Blei zischt ins Wasser
+    for (var i=0;i<18;i++) Nz(t+Math.random()*0.6,0.006,rnd(0.01,0.04),'highpass',rnd(2500,6000),1,S); T('sine',rnd(160,220),t+0.02,0.12,0.02,S,90); },
+  cups:function(t){ var S=bus(1.6,0.15,'r'), f=rnd(2100,2700); T('sine',f,t,0.3,0.03,S); T('sine',f*1.41,t+0.004,0.18,0.012,S); Nz(t,0.012,0.02,'bandpass',2600,2,S);   // Tasse auf die Untertasse, ein Löffel
+    T('sine',f*0.82,t+0.32,0.25,0.02,S); for (var i=0;i<4;i++) T('sine',rnd(3900,4500),t+0.6+i*0.1,0.05,0.008,S); },
+  engine:function(t){ var S=bus(1,0.1,'fern'), p=pn(0,S); starter(t,0.8,0.035,S); Nz(t+0.85,0.12,0.04,'lowpass',300,1,S); T('sine',48,t+0.85,0.25,0.05,S,34);   // Auto: Anlasser, springt an, fährt weg
+    var t0=t+0.85, e=t0+4.4, o=osc('sawtooth',26,t0,e), s2=osc('sine',13,t0,e), lp=filt('lowpass',220,0.9), g=gain(0), g2=gain(0.4);
+    o.frequency.setValueAtTime(30,t0); o.frequency.linearRampToValueAtTime(24,t0+0.5); o.frequency.setValueAtTime(24,t0+1.6); o.frequency.linearRampToValueAtTime(48,t0+2.6); o.frequency.linearRampToValueAtTime(40,e); s2.frequency.linearRampToValueAtTime(24,t0+2.6);
+    g.gain.setValueAtTime(0.0001,t0); g.gain.linearRampToValueAtTime(0.07,t0+0.15); g.gain.setValueAtTime(0.06,t0+1.6); g.gain.linearRampToValueAtTime(0.08,t0+2.6); g.gain.exponentialRampToValueAtTime(0.0001,e);
+    if (p.pan){ p.pan.setValueAtTime(0,t0+1.8); p.pan.linearRampToValueAtTime(0.8,e); } o.connect(lp); chain(s2,g2,lp); chain(lp,g,p); Sw(t0+1.7,2.6,0.02,'bandpass',900,0.8,p,600); }   // Reifen im Schnee
 };
+// Anlasser: surrender Motor, die Kompressionsstöße bremsen ihn
+function starter(t,dur,v,d){ var e=t+dur+0.05, o=osc('sawtooth',150,t,e), tm=trem(t,e,11,0.75,'square'), bp=filt('bandpass',650,1.5), g=gain(0); o.frequency.linearRampToValueAtTime(170,t+dur); adsr(g,t,v,0.05,Math.max(0.05,dur-0.15),0.1); chain(o,bp,tm,g,d); }
 M.addSfx(SFX4);
 // Schritte: Schnee (bei Frost härter), Matsch und Linoleum sind neue Bodenarten; alle anderen gehen an 04_audio.js
 var baseFoot=M.footstep;
@@ -604,8 +690,8 @@ M.addDrums({
     Nz(t,0.02,acc?0.006:0.003,'bandpass',acc?700:1100,1.6,dest); if (beat===0) T('sine',62,t,0.12,0.015,dest,45); feltN(nf(c[c.length-1]+12),t,acc?0.0034:0.0024,spb*0.9,dest); },
   // Sepps Lied: die Gitarre zerlegt den Akkord in Achteln; im Dur-Teil hält eine Musette den Akkord
   k4_sepp:function(t,beat,spb,dest){ var bi=cnt('sepp',t,spb), br=Math.floor(bi/6)%SE_B.length, c=SE_B[br].c, P=[null,1,2,3,2,1];
-    if (P[beat]!==null) gitN(nf(c[P[beat]]),t,beat===3?0.011:0.009,spb*2.2,dest,0.2);
-    if (br>=8&&beat===0) c.slice(1).forEach(function(m){ akkN(nf(m),t,0.0032,spb*5.7,dest,14,true,0.25); }); },
+    if (P[beat]!==null) gitN(nf(c[P[beat]]),t,beat===3?0.013:0.0107,spb*2.2,dest,0.2);
+    if (br>=8&&beat===0) c.slice(1).forEach(function(m){ akkN(nf(m),t,0.0038,spb*5.7,dest,14,true,0.25); }); },
   // Heim: eine leise Streicherfläche und eine Uhr, weiter weg als in der Wohnung
   k4_heim:function(t,beat,spb,dest){ var bi=cnt('heim',t,spb), c=HE_B[Math.floor(bi/4)%HE_B.length].c; if (beat===0) c.slice(0,3).forEach(function(m){ strN(nf(m),t,0.0022,spb*3.9,dest); }); Nz(t,0.008,0.0035,'bandpass',beat%2?2300:2700,5,dest); },
   // Zwischenwelt: Schnee rieselt, jeden zweiten Takt von fern zwei Schienenstöße (der Bahnsteig, das Depot)
@@ -638,9 +724,9 @@ M.addDrums({
 // Malas Spieluhrmotiv aus Kapitel 1 (D–F–E–A) kommt im Bus, auf der Brücke, bei den Geistern und im Abspann (dort in Dur).
 
 // Busfahrt: d-Moll, nachts, Schnee ab Salzburg. Klavier wiegt wie der Bus, Fugen der Straße, Schneeflocken; das Cello singt das Motiv, Malas Spieluhr antwortet
-M.defineSong('k4_bus',{ bpm:72, comp:'k4felt', compBeats:[0,2], arp:0.14, compVol:0.009, compLen:2.4, bassInst:'k4kb', bassVol:0.028, bassLen:1.5, drums:'k4_bus', bars:BUS_B,
-  lead:mel('@2 A3:2 Bb3 A3 F3:2 E3:6 @16 D4:2 C4 Bb3 A3:2 G3 F3 E3:6'), leadInst:'k4vc', leadVol:0.02,
-  lead2:mel('@40 D5:2 F5:2 E5:2 A4:2 @56 D5:2 F5:2 E5:4'), lead2Inst:'k4box', lead2Vol:0.009 });
+M.defineSong('k4_bus',{ bpm:72, comp:'k4felt', compBeats:[0,2], arp:0.14, compVol:0.0107, compLen:2.4, bassInst:'k4kb', bassVol:0.033, bassLen:1.5, drums:'k4_bus', bars:BUS_B,
+  lead:mel('@2 A3:2 Bb3 A3 F3:2 E3:6 @16 D4:2 C4 Bb3 A3:2 G3 F3 E3:6'), leadInst:'k4vc', leadVol:0.024,
+  lead2:mel('@40 D5:2 F5:2 E5:2 A4:2 @56 D5:2 F5:2 E5:4'), lead2Inst:'k4box', lead2Vol:0.0107 });
 // München bei Tag: G-Dur, gehend, die Flöte über Pizzicato und Streichern; der Moll-Akkord der vierten Stufe (c-Moll) ist der Schnee darin. Im zweiten Teil ein Hackbrett
 var MU_MEL='G4:2 B4:2 D5:3 C5 B4:2 A4:2 D5:4 E4:2 G4:2 B4:3 A4 G4:2 E4:2 B4:4 D5:2 G5:2 F#5:3 E5 Eb5:2 D5:2 C5:2 A4:2 B4:3 C5 D5:2 G4:2 A4:6 -:2 '+
   'F#5:3 E5 D5:2 B4:2 G5:3 F#5 E5:2 B4:2 C5:2 E5:2 A5:3 G5 F#5:4 D5:2 E5:2 D5:2 B4:2 G4:2 B4:2 Bb4:3 G4 Eb5:4 C5:2 B4:2 A4:2 E5:2 D5:3 C5 A4:2 F#4:2';
@@ -662,10 +748,10 @@ M.defineSong('k4_bahnhof',{ bpm:200, meter:8, comp:'k4str', compBeats:[0], compV
   lead2:mel('@64 D5:4 F#5:4 E5:6 D5:2 C#5:4 A4:4 E5:8 F#5:4 D5:4 G5:6 F#5:2 E5:4 C#5:4 A#4:8'), lead2Inst:'k4fl', lead2Vol:0.011 });
 // Sepp: ein Lied aus dem Süden, langsam. a-Moll mit dem neapolitanischen B-Dur, dann A-Dur mit dem d-Moll darin (die Wendung zurück).
 // Mandoline im Tremolo über der Gitarre, im Dur-Teil eine zweite Mandoline in Terzen und eine Musette
-M.defineSong('k4_sepp',{ bpm:112, meter:6, bassInst:'k4kb', bassVol:0.03, bassLen:2, drums:'k4_sepp', bars:SE_B,
+M.defineSong('k4_sepp',{ bpm:112, meter:6, bassInst:'k4kb', bassVol:0.036, bassLen:2, drums:'k4_sepp', bars:SE_B,
   lead:mel('E5:3 D5 C5:2 B4:3 A4 G#4:2 A4:2 C5 E5:2 A5 G5:3 F5 E5:2 F5:3 E5 D5:2 D5:2 C5 Bb4:3 B4:2 C5 D5:2 G#4 A4:6 '+
-           'C#5:3 E5 A5:2 G#5:3 F#5 E5:2 E5:2 F#5 A5:2 C#6 B5:3 A5 G5:2 F#5:3 E5 D5:2 F5:3 E5 D5:2 B4:2 C#5 D5:2 B4 A4:6'), leadInst:'k4mand', leadVol:0.02,
-  lead2:mel('@48 A4:3 C#5 F#5:2 E5:3 D5 C#5:2 C#5:2 D5 F#5:2 A5 G5:3 F#5 E5:2 D5:3 C#5 B4:2 D5:3 C5 B4:2 G#4:2 A4 B4:2 G#4 C#5:6'), lead2Inst:'k4mand', lead2Vol:0.012 });
+           'C#5:3 E5 A5:2 G#5:3 F#5 E5:2 E5:2 F#5 A5:2 C#6 B5:3 A5 G5:2 F#5:3 E5 D5:2 F5:3 E5 D5:2 B4:2 C#5 D5:2 B4 A4:6'), leadInst:'k4mand', leadVol:0.024,
+  lead2:mel('@48 A4:3 C#5 F#5:2 E5:3 D5 C#5:2 C#5:2 D5 F#5:2 A5 G5:3 F#5 E5:2 D5:3 C#5 B4:2 D5:3 C5 B4:2 G#4:2 A4 B4:2 G#4 C#5:6'), lead2Inst:'k4mand', lead2Vol:0.014 });
 // Das Altenheim: Es-Dur, die Zeit steht. Klavier, eine Uhr weiter weg, eine Bratsche; im zweiten Durchgang spielt die Spieluhr Gerdas Walzer, gerade gezogen in den Vierertakt
 M.defineSong('k4_heim',{ bpm:66, comp:'k4felt', compBeats:[0,2], arp:0.12, compVol:0.008, compLen:1.8, bassInst:'k4kb', bassVol:0.024, bassLen:1.6, drums:'k4_heim', bars:HE_B,
   lead:mel('Bb4:3 G4 C5:2 Bb4:2 Eb5:3 C5 Bb4:4 G4:3 Eb4 Ab4:2 C5:2 Bb4:2 Ab4 G4 F4:4'), leadInst:'k4vc', leadVol:0.016,
@@ -691,8 +777,8 @@ M.defineSong('k4_limbo',{ bpm:36, comp:'pad', compBeats:[0], compVol:0.013, comp
 M.defineSong('k4_nacht',{ bpm:48, comp:'k4str', compBeats:[0], compVol:0.0022, compLen:3.9, bassInst:'k4felt', bassVol:0.012, bassLen:3.5, drums:'k4_schnee', bars:NA_B,
   lead:mel('@2 Eb5:2 G5 C6:4/5 Bb5:2 @16 Ab5:2 G5 Eb5:3 F5:2 D5:6'), leadInst:'k4felt', leadVol:0.012 });
 // Nach dem Streit, Freitag im Nebel: e-Moll mit phrygischem F, ein Cello allein über einem tiefen Grund, ein Herzschlag, Klavierakkorde wie Nebel
-M.defineSong('k4_streit',{ bpm:52, comp:'k4felt', compBeats:[0], arp:0.25, compVol:0.008, compLen:3.5, bassInst:'k4vc', bassVol:0.008, bassLen:3.9, drums:'k4_nebel', bars:ST_B,
-  lead:mel('B3:3 C4 B3:2 G3:2 E4:3 D4 D#4:4 E4:2 G4:2 G4:3 E4 F4:2 E4:2 E4:2 D#4:2'), leadInst:'k4vc', leadVol:0.018 });
+M.defineSong('k4_streit',{ bpm:52, comp:'k4felt', compBeats:[0], arp:0.25, compVol:0.0064, compLen:3.5, bassInst:'k4vc', bassVol:0.0064, bassLen:3.9, drums:'k4_nebel', bars:ST_B,
+  lead:mel('B3:3 C4 B3:2 G3:2 E4:3 D4 D#4:4 E4:2 G4:2 G4:3 E4 F4:2 E4:2 E4:2 D#4:2'), leadInst:'k4vc', leadVol:0.0144 });
 // Hackerbrücke, Schlüsseldialog 2: d-Moll nach B-Dur. Unten die Züge, das Cello erzählt (das Kapitelmotiv), Malas Motiv antwortet; ab Takt 9 ein Puls und Streicher, leise genug für das Gespräch
 M.defineSong('k4_bruecke',{ bpm:56, comp:'k4felt', compBeats:[0,2], arp:0.15, compVol:0.007, compLen:1.9, bassInst:'k4str', bassVol:0.005, bassLen:3.9, drums:'k4_bruecke', bars:BR_B,
   lead:mel('@2 A3:2 Bb3 A3 F3:2 E3:6 @34 F4:2 G4 A4 D5:4 C5:2 Bb4:2 A4:6'), leadInst:'k4vc', leadVol:0.018,
