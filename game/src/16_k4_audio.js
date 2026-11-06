@@ -435,8 +435,8 @@ function wetEv(o,v,p1,p2){ return wth(o)==='thaw'?[['k4Drip',4,12,v,p1,p2]]:[]; 
 // Silvester: das Feuerwerk (kind = draußen, durchs Fenster, hinter geschlossenem Fenster); am Abend vorher einzelne Knaller
 function fireworks(o,kind,a,b,v,p1,p2){ var ph=phase(o); if (ph!=='k4_fin_n'&&ph!=='k4_fin_a') return []; var ev=[[kind,a,b,v,p1,p2],[kind,a*1.7,b*1.7,v*0.7,p1,p2]]; if (ph==='k4_fin_a') ev.push(['k4Boeller',20,60,v*0.8,p1,p2]); return ev; }
 // Pegel und Dichte der Ereignisse je Ort [Lautstärke, Dichte] (abgeglichen mit den Kulissen aus Kapitel 3; München im Schnee bleibt etwas leiser)
-var SG={ k4_zob:[1.6,1.5], k4_hacker:[1.4,1.3], k4_jhaus:[1.4,1.3], k4_jschlaf:[2.2,1], k4_ana:[2.5,1.8], k4_wiesn:[1.2,1], k4_gleis11:[1.5,1.2], k4_bmission:[1.8,1.5], k4_barsport:[1.5,1.4],
-  k4_friedamt:[2.6,1.5], k4_heim:[2.6,1.8], k4_heim_flur:[3.2,1.8], k4_heim_raum:[2.5,1.6], k4_heim214:[3,1.2], k4_balkon:[1.5,1.3], k4_konsulat:[1.8,1.5] };
+var SG={ k4_zob:[1.6,1.5], k4_hacker:[1.4,1.3], k4_jhaus:[1.4,1.3], k4_jschlaf:[2.8,1], k4_ana:[3.2,1.8], k4_wiesn:[1.2,1], k4_gleis11:[1.5,1.2], k4_bmission:[1.8,1.5], k4_barsport:[1.5,1.4],
+  k4_friedamt:[3.4,1.5], k4_heim:[3.2,1.8], k4_heim_flur:[3.8,1.8], k4_heim_raum:[3.2,1.6], k4_heim214:[3.8,1.2], k4_balkon:[2,1.3], k4_konsulat:[2.6,1.5] };
 function scape(id,f){ M.defineScape(id,function(o){ var s=f(o||{}), gk=SG[id]||[1,1]; s.beds=uniq(s.beds||[]); s.ev=(s.ev||[]).map(function(e){ return /^k4(Fw|Boeller)/.test(e[0])?e:[e[0],e[1]/gk[1],e[2]/gk[1],e[3]*gk[0],e[4],e[5]]; }); return s; }); }   // das Feuerwerk hat seinen Pegel je Raum
 
 // ZOB: Busse, Druckluft, Durchsagen, Rollkoffer im Matsch, Wastls Taxi im Leerlauf, eine S-Bahn hinter der Halle; Heiligabend, wenig los
@@ -470,7 +470,7 @@ scape('k4_ana',function(o){ var ph=phase(o), ev;
   else if (ph==='k4_fin_n') ev=[['k4TvShow',15,35,0.25,0.6,0.9],['k4Radiator',30,70,0.25,-1,1]];
   else if (ph==='k4_d2') ev=[['k4Cups',20,50,0.5,-0.8,-0.4],['k4Kitchen',30,70,0.3,-0.9,-0.5],tr(o,'k4CarOut',20,50,0.25,0.6,1),['k4Neighbor',60,140,0.2,-1,1]];
   else ev=[['k4Kid',10,25,0.45,-0.8,0.8],['k4Toy',15,40,0.4,0.3,0.9],['k4Kitchen',25,60,0.35,-0.9,-0.5],['k4Cups',25,60,0.4,-0.8,-0.4],tr(o,'k4CarOut',25,60,0.25,0.6,1)];
-  return { beds:['k4Room'].concat(ph==='k4_pro_n'||ph==='k4_fin_a'?['k4Murmur']:[]), step:'wood', fixed:ph==='k4_fin_n'?[['k4Clock',1,0.18,-0.3]]:[], ev:ev.concat(fireworks(o,'k4FwIn',3,8,0.85,0.4,1)) }; });
+  return { beds:['k4Room'].concat(ph==='k4_pro_n'||ph==='k4_fin_a'?['k4Murmur']:[]), step:'wood', fixed:ph==='k4_fin_n'?[['k4Clock',1,0.18,-0.3]]:[], ev:ev.concat(fireworks(o,'k4FwIn',3,8,ph==='k4_fin_n'?1.3:0.85,0.4,1)) }; });
 // Theresienwiese: weit und still. Kinder am Rodelhang (mit Echo), Kufen, Krähen, Wind über dem Feld, ein Hund, ganz fern ein Zug
 scape('k4_wiesn',function(o){ var w=st(o).walk!==false; return { beds:['k4Wind','k4CityFar'].concat(sky(o)), step:ground(o),
   ev:[['k4Kids',w?8:15,w?20:35,0.5,-1,-0.3],['k4Sled',w?10:20,w?25:45,0.4,-1,-0.2],['k4Crow',20,50,0.4,-1,1],['k4Steps',25,60,0.3,-1,1],['k3DogFar',40,90,0.3,-1,1],['k4TrainFar',60,140,0.25,0.4,1],['k4Gust',25,60,0.4,-1,1]].concat(wetEv(o,0.2,-1,1)) }; });
@@ -505,7 +505,7 @@ scape('k4_heim_flur',function(o){ var S=st(o);
 scape('k4_heim_raum',function(o){ var th=st(o).three; return { beds:['k4Room','k4Window','k4Murmur','k4Vent'], step:'lino', fixed:[['k4Clock',1,0.14,0.6]],
   ev:[['k4TvShow',20,45,0.3,0.5,0.9],['k4Old',10,25,0.4,-1,1],['k4Cups',th?4:12,th?10:30,0.45,-0.8,0.8],['k4Cough',40,90,0.3,-1,1],['k4Piano',90,220,0.25,-0.8,-0.3],['k4CrowOut',40,90,0.2,0.6,1]].concat(th?[['k4Pour',20,45,0.4,-0.6,0.6],['k4Cutlery',8,20,0.35,-0.8,0.8]]:[]) }; });
 // Zimmer 214: Alois atmet, die Heizung, Fernseher nebenan, Krähen draußen; in der Silvesternacht das Feuerwerk gedämpft hinter dem Fenster, die Scheibe zittert
-scape('k4_heim214',function(o){ if (night(o)) return { beds:['k4Room'], step:'lino', ev:[['k4Breath',7,13,0.3,-0.3,0.1],['k4Radiator',40,90,0.2,0.6,1]].concat(fireworks(o,'k4FwWin',2.5,7,0.8,0.5,1)) };
+scape('k4_heim214',function(o){ if (night(o)) return { beds:['k4Room'], step:'lino', ev:[['k4Breath',7,13,0.3,-0.3,0.1],['k4Radiator',40,90,0.2,0.6,1]].concat(fireworks(o,'k4FwWin',2.5,7,1,0.5,1)) };
   return { beds:['k4Room','k4Window'], step:'lino', ev:[['k4Breath',8,16,0.25,-0.3,0.1],['k4TvFar',40,90,0.15,-1,-0.6],['k4CrowOut',40,100,0.15,0.6,1],['k4Trolley',60,140,0.15,-1,-0.6],['k4Radiator',30,70,0.25,0.6,1]] }; });
 // Davors Balkon in Sendling: die Straße unten, eine Trambahn, Krähen und Tauben auf den Kaminen, Kinder im Hof, jemand schaufelt Schnee
 scape('k4_balkon',function(o){ return { beds:['k4City'].concat(sky(o)), step:ground(o),

@@ -37,7 +37,7 @@ async function photo(A,An){ var G=A.G; A.setFlag('k4.d1.anaLana');
 async function tram(A,An){ A.setFlag('k4.d1.drawing');
   await A.m('Lana hat dir eine Straßenbahn gemalt. Damit du nicht weinst. In jedem Fenster ein Gesicht.'); await A.wait(1300);
   await An.say('…'); await A.wait(800); await An.say('Die habe ich noch.'); await A.wait(600);
-  await An.say('In meinem Schuhkarton. Mit meinen Zeugnissen und dem Zahn, den Niko verschluckt hätte.'); await A.wait(700);
+  await An.say('In meinem Schuhkarton. Mit meinen Zeugnissen und Mias erstem Zahn.'); await A.wait(700);
   await An.say('Woher weißt du das? Das habe ich nie jemandem erzählt. Nicht mal Tobias.');
   var c=await A.choose([{t:'Ich weiß es eben.',id:'just'},{t:'Von jemandem, der dabei war.',id:'there'}],{title:'Ana'});
   if (c==='just') await An.say('Du weißt es eben. Wie Mama. Bei euch weiß man immer alles und sagt nie, woher.');
@@ -67,7 +67,7 @@ async function talkAna(A){ var An=A.npc('anaC'), G=A.G;
     {t:'Ich muss dir etwas sagen. Über Lana.',if:F(A,'k4.d1.anaLana')&&!F(A,'k4.d1.walk'),go:function(A){ return tellAna(A,An); }},
     {t:'Du wolltest reden. Gestern, in der Küche.',once:'wnTalk',go:async function(A){ await An.say('Nicht hier.'); await A.wait(400); await An.say('Nicht vor den Kindern. Und nicht heute, heute ist Weihnachten.'); await A.wait(700); await An.say('Ja. Ich weiß, wie das klingt. Wie Mama.'); }},
     {t:'Du hast das Foto heimlich abfotografiert?',once:'wnHeim',if:F(A,'k4.d1.anaLana'),go:async function(A){ await An.say('Mama hat nur das eine. Wenn ich sie frage, ob ich es scannen darf, sagt sie: Was willst du damit?'); await A.wait(400); await An.say('Ich will meinen Vater auf dem Handy haben. Das will ich damit.'); }},
-    {t:'Wie geht es dir? Wirklich.',once:'wnHow',go:async function(A){ await An.say('Wirklich? Ich habe zwei Kinder, einen Mann, der Bosnisch lernt, und eine Mutter, die an Silvester arbeitet, damit sie das Knallen nicht hören muss.'); await A.wait(400); await An.say('Mir geht es gut. Danke der Nachfrage. Nach elf Jahren.'); }},
+    {t:'Wie geht es dir? Wirklich.',once:'wnHow',go:async function(A){ await An.say('Wirklich? Ich habe zwei Kinder, einen Mann, der Bosnisch lernt, und eine Mutter, die an Silvester arbeitet, damit sie das Knallen nicht hören muss.'); await A.wait(400); await An.say('Mir geht es gut. Danke der Nachfrage. Sie kommt selten.'); }},
     {t:'Ich gehe noch ein Stück.',bye:true,go:async function(A){ await An.say(A.cycle('wnBye',['Geh. Wir sind bis Mittag da. Danach will Niko schlafen und schreit vorher.','Bis später. Und sag Mama nicht, dass ich ihr Foto abfotografiert habe.'])); }}
   ]; }); }
 // ---------------------------------------------------------------- die Kinder

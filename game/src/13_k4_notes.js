@@ -30,7 +30,7 @@ n('z4_passierschein','z4','Die Kiste','Passierschein, Mai 1992','In der Kiste (M
 n('z4_kolar','z4','Der Anruf','Die Brauerei','Frau Kolar am Telefon: In einem Grab an der Brauerei, April 1993, lag ein Rechenschieber mit den Buchstaben „Z. V.“. Die Proben werden verglichen.',{p:'p:kolar'});
 n('z4_kode','z4','Der Anruf','Was „nije se vratio“ heißt','Frau Kolar: „In den Akten von dreiundneunzig steht oft ‚nije se vratio‘. Das schreiben Familien, die es wissen und es nicht schreiben können.“',{p:'p:kolar'});
 n('z4_ana2004','z4','Der Anruf','Ana, 2004','Ana hat 2004 in München heimlich eine Probe gegeben. Für Papa. Mama weiß es nicht.',{p:'p:ana'});
-n('z4_ankunft','z4','Zu Hause','„Polako, gospođo“','Mama erkennt Sepp auf dem Aushang: Juni 1992, Hauptbahnhof, sie mit mir an der Hand, eine Tasche, kein Deutsch. Ein Gepäckträger trug die Tasche bis zur Tram. „Polako, gospođo.“ Langsam, gnädige Frau.',{p:'p:jasna'});
+n('z4_ankunft','z4','Zu Hause','„Polako, gospođo“','Mama erkennt Sepp auf dem Aushang: Juni 1992, Hauptbahnhof, sie mit Ana an der Hand, eine Tasche, kein Deutsch. Ein Gepäckträger trug die Tasche bis zur Tram. „Polako, gospođo.“ Langsam, gnädige Frau.',{p:'p:jasna'});
 n('z4_riss','z4','Zwei Städte','Keine Beerdigung seit 1992','Mama nach Sepps Abschied: „Ich war auf keiner Beerdigung seit zweiundneunzig. Ich wusste nicht, für wen.“',{p:'p:jasna'});
 n('z4_kurve_ana','z4','Die Kurve','„Bis zur Kurve“','Ana: „Mama stand bis zur Kurve am Fenster. Danach hat sie nie wieder am Fenster gesessen. Nicht im Bus, nicht im Zug, nirgends.“',{p:'p:ana'});
 // Schlüsse
@@ -90,8 +90,8 @@ by('s4_bunker',['s4_name']); by('s4_umschlag',['s4_name']); by('s4_brief79',['s4
 by('g4_versuch1',['g4_beides']); by('g4_versuch2',['g4_beides']); by('g4_beides',['g4_worte']); by('g4_depot',['g4_worte']);
 done('u4_sms',after('k4.p.key')); done('u4_nichtheute',after('k4.p.talk1')); done('u4_kiste',after('k4.d1.box'));
 done('s4_genommen',function(G){ return has(G,'s4_name'); }); done('s4_termin',after('k4.s.farewell')); done('s4_bitte',after('k4.s.crossed'));
-done('g4_gerda',after('k4.g.decided')); done('g4_drei',after('k4.g.obs')); done('g4_gong',function(G){ return has(G,'g4_beides'); }); done('g4_kalt',function(G){ return has(G,'g4_beides'); });
-done('g4_spaeter',after('k4.g.ertl')); done('g4_doku',after('k4.g.ertl')); done('g4_worte',after('k4.g.decided'));
+done('g4_gerda',after('k4.g.decided')); done('g4_drei',function(G){ return has(G,'g4_beides'); }); done('g4_gong',function(G){ return has(G,'g4_beides'); }); done('g4_kalt',function(G){ return has(G,'g4_beides'); });
+done('g4_spaeter',after('k4.g.ertl')); done('g4_doku',after('k4.g.ertl')); done('g4_worte',after('k4.g.goodbye'));
 done('k4_c_lana',after('k4.p.lana')); done('k4_c_vater',function(G){ return has(G,'z4_dabei'); });
 done('r4_kopf',function(G){ return has(G,'r4_ursache'); }); done('z4_dabei',after('k4.fin.done')); done('z4_zweistaedte',after('k4.d5.bridge'));
 
