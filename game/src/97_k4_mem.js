@@ -327,6 +327,7 @@ M.mem.k4_depot=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1954), FL=82, LMX
   b.poly([[TX,TT+6],[TX+4,TT+1],[TX+10,TT],[w+10,TT],[w+10,TB],[TX+1,TB]],function(xx,yy){ var c=(yy<TT+16)?P.s5:P.b1; if (yy>=TT+16&&yy<TT+18) c=P.s6; if (yy<TT+2) c=P.m3; if (yy>TB-4) c=P.b0; if (xx<TX+4) c=M.DN[c]; return c; });
   for (x=TX+14;x<w;x+=11){ b.rect(x,TT+4,8,9,P.y3); b.hl(x,x+7,TT+4,P.y4); b.vl(x+7,TT+5,TT+12,P.y2); }
   b.rect(TX+3,TT+4,8,9,P.y2); b.vl(TX+7,TT+4,TT+12,P.m1); b.rect(TX+4,TT-5,9,5,P.k1); M.microText(b,'19',TX+5,TT-5,P.y4);
+  b.ellipse(TX+10,TT+9,1.8,2,P.p3); b.rect(TX+8,TT+6,5,2,P.n1); b.px(TX+8,TT+8,P.n1); b.rect(TX+9,TT+11,4,2,P.n1); b.vl(TX+6,TT+5,TT+9,P.p3); b.px(TX+5,TT+5,P.p4);   // der junge Fahrer winkt
   b.line(TX+26,TT,TX+38,TT-16,P.k1); b.hl(TX+33,TX+43,TT-16,P.k1); b.vl(TX+44,TT-17,TT-16,P.k2);
   b.ellipse(TX+5,TB-7,2,2,P.l1); for (i=0;i<30;i++) for (var j=-1-Math.floor(i/6);j<=1+Math.floor(i/6);j++) if (bayer(TX+3-i,TB-7+j)<0.75-i*0.023) mixPx(b,TX+3-i,TB-7+j,P.s6,4);
   // Gerda, jung: Kopftuch, Mantel, die grüne Kanne in beiden Händen, im Licht der Lampe
