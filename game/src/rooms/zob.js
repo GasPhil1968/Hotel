@@ -65,7 +65,7 @@ async function talkHansi(A){ var H=A.npc('hansi');
     {t:'Worauf warten Sie?',silent:true,if:!F(A,'k4.h.relief'),go:function(A){ return relief(A,H); }},
     {t:'Feierabend, Herr Kirchmaier.',silent:true,if:F(A,'k4.h.relief')&&!F(A,'k4.h.try1'),go:function(A){ return try1(A,H); }},
     {t:'Ihre Schicht ist vorbei.',silent:true,if:F(A,'k4.h.relief')&&!F(A,'k4.h.try2'),go:function(A){ return try2(A,H); }},
-    {t:'Wer darf Sie denn ablösen?',silent:true,if:F(A,'k4.h.relief'),go:function(A){ return whoRelieves(A,H); }},
+    {t:'Wer darf Sie denn ablösen?',silent:true,if:F(A,'k4.h.relief')&&!F(A,'k4.h.local'),go:function(A){ return whoRelieves(A,H); }},
     {t:'Was kostet eine Fahrkarte nach Sarajevo?',once:'hsFare',go:async function(A){ await H.say('Hundertzwanzig Mark, hin und zruck. Oafach achtzge.'); await H.say('De meisten nehman oafach. Und dann kemman’s doch wieder, jeds Jahr, mit am Kofferraum voller Kaffee.');
         await A.m('Die Mark gibt es nicht mehr.'); await H.say('Freilich gibt’s d’ Mark. I hab’s doch in der Taschn.'); await A.narrate('Er klopft auf die Ledertasche. Es klimpert. Für ihn.'); }},
     {t:'Haben Sie viele verkauft? Nach Sarajevo?',once:'hsMany',if:F(A,'k4.h.relief'),go:async function(A){ await H.say('Tausende. Im Sommer san’s glaufn, im Winter san’s gstandn. Mit Kindern, mit Kartons, mit am Fernseher fürn Onkel.');

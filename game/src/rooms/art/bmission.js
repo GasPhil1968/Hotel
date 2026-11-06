@@ -1,8 +1,9 @@
 /* ===== rooms/art/bmission.js — Bahnhofsmission am Gleis 11: ein heller, einfacher Aufenthaltsraum.
-   Weiß-gelbe Wände über einem hellen Holzsockel, grüngrauer Linoleumboden, Leuchtstoffröhren. Links in der Seitenwand die
-   Tür zum Lager (Schild „LAGER“), Garderobenhaken mit Jacken, darüber ein schmales Oberlicht zur Straße (Wetter). Hinten links
-   die Pinnwand mit Zetteln (S.notice: der Aushang „Wer kannte diesen Mann?“ mit Foto), daneben ein Gummibaum. In der Mitte
-   das große Fenster zum Bahnsteig: Bahnsteig 11, die Wagen des Zuges, darüber das Hallendach (Licht je nach Wetter).
+   Weiß-gelbe Wände über einem hellen Holzsockel, heller Linoleumboden, Leuchtstoffröhren. Links in der Seitenwand die
+   Tür zum Lager (Schild „LAGER“), Garderobenhaken mit Jacken, ein Feuerlöscher. Hinten links die Pinnwand mit Zetteln
+   (S.notice: der Aushang „Wer kannte diesen Mann?“ mit Foto), daneben ein Gummibaum. In der Mitte das große Fenster zum
+   Bahnsteig: Bahnsteig 11, die Wagen des Zuges, darüber das Glasdach der Halle (Wetter: Schnee auf dem Glas, grau und nass
+   bei Tauwetter, Dunst bei Nebel, rutschende Flocken bei Schneefall).
    Rechts hinten die Theke mit dem großen Teekessel aus Edelstahl, Tassen, einem Korb Semmeln; Frau Wimmer dahinter.
    Rechts in der Seitenwand die Glastür zum Bahnsteig (Schrift von innen spiegelverkehrt). Links vorn ein Tisch mit
    Wachstuch (hier steht Sepps Pappkoffer, S.suitcaseOut), in der Mitte der lange Tisch, an dem die Gäste sitzen.
@@ -34,6 +35,7 @@ function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.
 function qrect(q){ var xs=q.map(function(p){ return p[0]; }), ys=q.map(function(p){ return p[1]; }), x0=Math.floor(Math.min.apply(null,xs)), y0=Math.floor(Math.min.apply(null,ys)); return [x0,y0,Math.ceil(Math.max.apply(null,xs))-x0,Math.ceil(Math.max.apply(null,ys))-y0]; }
 function wallUV(sd,x,y){ var ex=sd==='L'?RECT[0]:RECT[2], t=(ex-VP[0])/(x-VP[0]); if (t<=0) return null; var D=sd==='L'?(VP[0]-RECT[0]):(RECT[2]-VP[0]); return {u:(1/t-1)*D, v:VP[1]+(y-VP[1])*t}; }
 function inUV(w,U){ return w && w.u>=U[0] && w.u<U[1] && w.v>=U[2] && w.v<U[3]; }
+function haze(b,amt,col,col2,x0,y0,w,h){ for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var a=amt(x,y); if (!(a>0.01)) continue; if (bayer(x,y)<a) b.px(x,y,(col2!==undefined && bayer(x+1,y+2)<0.5)?col2:col); } }   // Dunst als Raster (keine Mischfarben)
 function wea(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun')?w:'snowlie'; }
 function mt(b,s,x,y,c){ var cx=x; for (var i=0;i<s.length;i++){ var ch=s[i], base={'Ä':'A','Ö':'O','Ü':'U'}[ch]||ch; M.microText(b,base,cx,y,c); if (base!==ch){ b.px(cx,y-2,c); b.px(cx+2,y-2,c); } cx+=M.microWidth(base)+1; } }
 
@@ -73,8 +75,8 @@ function floorTex(xb,d,x,y){ var f=R3.floor(x,y); if (!f) return P.k1; var X=f.X
   var wear=Math.exp(-Math.pow((Z-62)/14,2))*Math.exp(-Math.pow((X-200)/70,2)); if (wear>0.35 && bayer(x,y)<(wear-0.35)*0.5) c=P.s5; return c; }
 function ceilTex(xb,d,x,y){ var c=P.s5; if ((Math.floor(xb+600)%28)<1) c=P.s4; if ((d%9)===0) c=P.s4; return c; }
 
-// ---------------------------------------------------------------- Blick zum Bahnsteig (Halle) und Oberlicht zur Straße
-var WM=new Uint8Array(W*H);       // 1 = Fenster zur Halle, 2 = Oberlicht/Tür nach draußen
+// ---------------------------------------------------------------- Blick zum Bahnsteig (Halle)
+var WM=new Uint8Array(W*H);       // 1 = Glas zur Halle (Fenster, Tür)
 function hallAt(x,y,w,tod){ var lx=x-WIN.x0, ly=y-WIN.y0, night=tod==='night', c;
   // oben das Glasdach der Halle mit Bindern, je nach Wetter hell oder grau, Schnee darauf
   var gl={snowlie:'s4 s5 s6',sun:'s5 s6 l1',thaw:'m3 m4 s4',snow:'s3 s4 s5',fog:'s4 s4 s5'}[w]; if (night) gl='k2 n0 n1';
@@ -86,10 +88,6 @@ function hallAt(x,y,w,tod){ var lx=x-WIN.x0, ly=y-WIN.y0, night=tod==='night', c
   if (ly>=29){ c=(ly===29)?P.s6:(((lx>>3)+(ly>>1))%2?P.m3:P.s3); if (ly===30) c=P.s2; }
   // Säule der Halle
   if (lx>=56 && lx<59 && ly<30){ c=(lx===56)?P.m3:P.m1; }
-  return c; }
-function outsideAt(x,y,w,tod,ly){ var night=tod==='night', c, SK={snowlie:'b2 b3 b4',sun:'b3 b4 b5',thaw:'m3 m4 s4',snow:'m4 s4 s5',fog:'s4 s5 s5'}[w];
-  c=ra(R(night?'k1 n0 n1':SK),0.2+ly/12,x,y);
-  if (ly>6){ c=(w==='thaw')?P.m2:((ly===7)?P.s6:P.e3); if (night && hash(x,y)<0.2) c=P.y3; }    // Hausdach gegenüber mit Schnee
   return c; }
 
 // ---------------------------------------------------------------- Pinnwand mit Zetteln, Aushang
@@ -121,7 +119,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   b.hl(RECT[0],RECT[2]-1,RECT[1],P.s4);
   // Leuchtstoffröhren
   [[104,34],[216,34]].forEach(function(n){ var a=R3.p(n[0]-18,RECT[1],n[1]), c=R3.p(n[0]+18,RECT[1],n[1]), y0=rnd(a[1])+1; b.rect(rnd(a[0]),y0,rnd(c[0]-a[0]),3,P.s3); b.hl(rnd(a[0])+1,rnd(c[0])-2,y0+1,P.l1); b.hl(rnd(a[0]),rnd(c[0]),y0+3,P.m3); });
-  // ---- linke Wand: Lagertür, Haken mit Jacken, Oberlicht, Feuerlöscher
+  // ---- linke Wand: Lagertür, Haken mit Jacken, Feuerlöscher
   var dq=M.wallQuad(SPEC,'L',DOORL[0],DOORL[1],DOORL[2],DOORL[3]), dq2=M.wallQuad(SPEC,'L',DOORL[0]-2,DOORL[1]+2,DOORL[2]-3,DOORL[3]);
   b.poly(dq2,P.s4); b.poly(dq,function(xx,yy){ var wv=wallUV('L',xx,yy); if (!wv) return P.w3; var lu=(wv.u-DOORL[0])/(DOORL[1]-DOORL[0]); return ((xx+(yy>>3))%7===0)?P.w3:((lu>0.85)?P.w2:P.w4); });
   var ls=rp(M.wallPt(SPEC,'L',DOORL[0]+8,42)); b.rect(ls[0]-1,ls[1],13,7,P.s6); b.hl(ls[0]-1,ls[0]+11,ls[1]+6,P.m2); M.microText(b,'LAGER',ls[0],ls[1]+1,P.k1);
@@ -140,7 +138,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   // ---- Rückwand: Pinnwand, Gummibaum, Fenster, Theke mit Wandbord
   pinboard(b,S);
   for (y=WIN.y0;y<WIN.y1;y++) for (x=WIN.x0;x<WIN.x1;x++){ b.px(x,y,hallAt(x,y,w,tod)); WM[y*W+x]=1; }
-  var fa={fog:0.55,snow:0.18,thaw:0.1}[w]||0; if (fa && tod==='day') M.fogBake(b,function(xx,yy){ return WM[yy*W+xx]===1?fa*(0.7+0.3*(1-(yy-WIN.y0)/(WIN.y1-WIN.y0))):0; },{col:P.m4,x:WIN.x0,y:WIN.y0,w:WIN.x1-WIN.x0,h:WIN.y1-WIN.y0});
+  var fa={fog:0.55,snow:0.18,thaw:0.1}[w]||0; if (fa && tod==='day') haze(b,function(xx,yy){ return WM[yy*W+xx]===1?fa*(0.7+0.3*(1-(yy-WIN.y0)/(WIN.y1-WIN.y0))):0; },P.m4,P.s4,WIN.x0,WIN.y0,WIN.x1-WIN.x0,WIN.y1-WIN.y0);
   b.rect(WIN.x0-3,WIN.y0-3,WIN.x1-WIN.x0+6,3,P.s4); b.rect(WIN.x0-3,WIN.y1,WIN.x1-WIN.x0+6,3,P.s4); b.rect(WIN.x0-3,WIN.y0,3,WIN.y1-WIN.y0,P.s4); b.rect(WIN.x1,WIN.y0,3,WIN.y1-WIN.y0,P.s4);
   b.hl(WIN.x0-3,WIN.x1+2,WIN.y0-3,P.s6); b.hl(WIN.x0-5,WIN.x1+4,WIN.y1+3,P.s6); b.hl(WIN.x0-5,WIN.x1+4,WIN.y1+4,P.s3);
   for (y=WIN.y0;y<WIN.y1;y++){ var mx=rnd((WIN.x0+WIN.x1)/2); b.px(mx,y,P.s4); b.px(mx+1,y,P.s3); WM[y*W+mx]=0; WM[y*W+mx+1]=0; }
@@ -156,12 +154,10 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   var sh0=rp(R3.p(CNT.X0+4,48,0)); b.hl(sh0[0],RECT[2]-4,sh0[1],P.w4); b.hl(sh0[0],RECT[2]-4,sh0[1]+1,P.w2);
   for (x=sh0[0]+2;x<RECT[2]-8;x+=5){ var col=[P.s6,P.r3,P.b3,P.s6,P.y3,P.g4][Math.floor(hash(x,9)*6)]; b.rect(x,sh0[1]-4,3,4,col); b.px(x+3,sh0[1]-3,col); }
   var stw=M.microWidth('TEE KAFFEE'); b.rect(sh0[0]+2,sh0[1]-14,stw+6,8,P.w1); b.rect(sh0[0]+3,sh0[1]-13,stw+4,6,P.k2); M.microText(b,'TEE KAFFEE',sh0[0]+5,sh0[1]-13,P.s6);
-  var kal=rp(M.wallPt(SPEC,'L',DOORL[1]+6,30)); b.rect(kal[0],kal[1]-10,12,16,P.s6); b.rect(kal[0]+1,kal[1]-9,10,6,P.g4); b.hl(kal[0]+1,kal[0]+10,kal[1]-5,P.s4); for (y=kal[1]-2;y<kal[1]+5;y+=2) for (x=kal[0]+1;x<kal[0]+11;x+=2) b.px(x,y,P.m3);
   // ---- Tisch links: Stühle (hinten)
   chairL(b,TA,'back');
   // ---- Licht
   shade(b,0,0,tod,function(x,y){ return !WM[y*W+x]; });
-  if (tod!=='day') M.tintApply(b,M.TINT[tod]||M.TINT.night,0,0,W,H,function(x,y){ return WM[y*W+x]===2; });
   return b; }
 // Stuhl hinter einem Tisch (Lehne sichtbar über der Tischplatte)
 function chairL(b,t,mode){ var X=(t.X0+t.X1)/2, p=rp(R3.p(X,FY,t.Z0-3)), sy=rnd(R3.p(0,80,t.Z0-3)[1]);

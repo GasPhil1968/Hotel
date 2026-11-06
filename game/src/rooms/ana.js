@@ -140,7 +140,7 @@ M.k4TrailStart=trailStart;
 // die Spur (Konzept 7.3, C1): Mala geht als Aktive durch die Wohnungstür und folgt dem Zählen
 async function trail(A){ var G=A.G; if (F(A,'k4.fin.trail')) return; G.flags['mala.lock']=true;
   try{
-    var Ni=A.npc('niko'); if (!Ni.actor){ var dn=M.stand('ana','door')||[40,124,'L']; Ni=A.spawn({id:'niko',ch:'niko',x:dn[0]+44,y:dn[1]+1,f:'L',name:'Niko',idle:'stare',speechY:24}); }
+    var Ni=A.npc('niko'); if (!Ni.actor){ var dn=M.stand('ana','door')||[40,124,'L']; Ni=A.spawn({id:'niko',ch:'niko',x:dn[0]+44,y:dn[1]+1,f:'L',name:'Niko',idle:'stare',speechY:30}); }
     await Ni.say('Das Mädchen geht weg.'); if (Ni.actor) Ni.anim('wave'); await A.wait(300); await A.npc('ana').say('Niko! Ins Bett. Es ist mitten in der Nacht.');
     A.music('k4_duh'); await A.narrate('Mala geht durch die Wohnungstür. Im Treppenhaus hängt etwas in der Luft, das nur sie sieht.');
     await A.g('Zahlen.'); await A.wait(500); await A.g('Jedan, dva, tri …'); await A.wait(400); await A.g('Sie zählt zwischen dem Blitz und dem Knall. Wie man es zweiundneunzig gemacht hat. Damit man weiß, wie weit weg es ist.');
@@ -281,8 +281,8 @@ M.room('ana',{ name:'Anas Wohnung', scape:'k4_ana',
     function add(id,pos,fb,o){ var a=M.apos('ana',pos,fb); L.push(Object.assign({id:id,ch:id,x:a[0],y:a[1],f:a[2]||fb[2]},o)); }
     if (w.ana) add('ana','ana',[120,122,'L'],{name:'Ana',idle:'cook',speechY:42});
     if (w.tobias) add('tobias','tobias',[230,122,'R'],{name:'Tobias',idle:(p==='k4_d1'||p==='k4_d3'||p==='k4_d4')?'read':'sit',talk:'sitTalk',speechY:38});
-    if (w.mia) add('mia','mia',[330,126,'R'],{name:'Mia',idle:'play',speechY:30,scale:1});
-    if (w.niko) add('niko','niko',[380,126,'L'],{name:'Niko',idle:'play',speechY:24});
+    if (w.mia) add('mia','mia',[330,126,'R'],{name:'Mia',idle:'play',speechY:38});
+    if (w.niko) add('niko','niko',[380,126,'L'],{name:'Niko',idle:'play',speechY:30});
     if (w.jasna) add('jasna','jasna_ana',[260,122,'L'],{name:'Mama',idle:'sit',talk:'sitTalk',speechY:36});
     return L; },
   hotspots:HS,

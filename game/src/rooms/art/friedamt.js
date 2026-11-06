@@ -30,6 +30,7 @@ function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.
 function qrect(q){ var xs=q.map(function(p){ return p[0]; }), ys=q.map(function(p){ return p[1]; }), x0=Math.floor(Math.min.apply(null,xs)), y0=Math.floor(Math.min.apply(null,ys)); return [x0,y0,Math.ceil(Math.max.apply(null,xs))-x0,Math.ceil(Math.max.apply(null,ys))-y0]; }
 function wallUV(sd,x,y){ var ex=sd==='L'?RECT[0]:RECT[2], t=(ex-VP[0])/(x-VP[0]); if (t<=0) return null; var D=sd==='L'?(VP[0]-RECT[0]):(RECT[2]-VP[0]); return {u:(1/t-1)*D, v:VP[1]+(y-VP[1])*t}; }
 // Wetter: unbekannte Schlüssel wie 'snowlie'
+function haze(b,amt,col,col2,x0,y0,w,h){ for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var a=amt(x,y); if (!(a>0.01)) continue; if (bayer(x,y)<a) b.px(x,y,(col2!==undefined && bayer(x+1,y+2)<0.5)?col2:col); } }   // Dunst als Raster (keine Mischfarben)
 function wea(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun')?w:'snowlie'; }
 // Mikroschrift mit Umlautpunkten
 function mt(b,s,x,y,c){ var cx=x; for (var i=0;i<s.length;i++){ var ch=s[i], base={'Ä':'A','Ö':'O','Ü':'U'}[ch]||ch; M.microText(b,base,cx,y,c); if (base!==ch){ b.px(cx,y-2,c); b.px(cx+2,y-2,c); } cx+=M.microWidth(base)+1; } }
@@ -112,7 +113,7 @@ function paintWindow(b,w,tod){ var x, y, x0=WIN.x0, x1=WIN.x1, y0=WIN.y0, y1=WIN
   for (y=y0-4;y<y1+2;y++){ b.px(x0-6,y,P.s3); b.px(x0-5,y,P.s4); b.px(x1+5,y,P.s3); }
   for (y=y0;y<y1;y++) for (x=x0;x<x1;x++){ var o=outside(x,y,w,tod); b.px(x,y,o); WM[y*W+x]=1; }
   // Dunst: Nebel verschluckt das Haus gegenüber fast ganz, Schneefall macht es weich
-  var fa={fog:0.8,snow:0.34,thaw:0.12}[w]||0; if (fa && tod==='day') M.fogBake(b,function(xx,yy){ return WM[yy*W+xx]?fa*(0.85+0.15*Math.sin(xx*0.2+yy*0.07)):0; },{col:w==='fog'?P.s4:P.s5,x:x0,y:y0,w:x1-x0,h:y1-y0});
+  var fa={fog:0.78,snow:0.3,thaw:0.12}[w]||0; if (fa && tod==='day') haze(b,function(xx,yy){ return WM[yy*W+xx]?fa*(0.88+0.12*Math.sin(xx*0.2+yy*0.07)):0; },w==='fog'?P.s4:P.s5,w==='fog'?P.m4:P.s6,x0,y0,x1-x0,y1-y0);
   var fx=[x0,x0+1,rnd((x0+x1)/2)-1,rnd((x0+x1)/2),x1-2,x1-1], ty=y0+15;
   for (y=y0-2;y<y1+1;y++){ fx.forEach(function(q,i){ b.px(q,y,(i%2)?P.s4:P.s6); WM[y*W+q]=0; }); }
   for (x=x0-2;x<x1+2;x++){ [y0-2,y0-1,ty,ty+1,y1-1,y1].forEach(function(q,i){ b.px(x,q,(i%2)?P.s4:P.s6); WM[q*W+x]=0; }); }

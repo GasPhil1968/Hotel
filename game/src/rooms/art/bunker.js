@@ -31,9 +31,9 @@ function wea(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='
 // ---------------------------------------------------------------- Licht: eine Lampe, der Schacht links
 var LM=new Uint8Array(W*H);    // 1 = Licht aus dem Schacht (Himmel)
 var SF=1;                      // Stärke des Schachtlichts (Wetter)
-function lampAt(x,y){ var dx=(x-LAMP[0])/120, dy=(y-LAMP[1]-90)/80, d=dx*dx+dy*dy, a=d<1?Math.pow(1-d,1.2):0; var g=Math.hypot((x-LAMP[0])/26,(y-LAMP[1]-8)/20); if (g<1) a=Math.max(a,(1-g)*0.9); return a; }
+function lampAt(x,y){ var dx=(x-LAMP[0]-10)/110, dy=(y-LAMP[1]-88)/70, d=dx*dx+dy*dy, a=d<1?Math.pow(1-d,1.1):0; var g=Math.hypot((x-LAMP[0])/26,(y-LAMP[1]-8)/20); if (g<1) a=Math.max(a,(1-g)*0.9); return a; }
 function shaftAt(x,y){ if (y<STAIR.top-4) return 0; var u=(x-8-(y-30)*0.18)/30; if (u<0||u>1) return 0; var v=1-Math.min(1,(y-20)/120); return (1-Math.abs(u-0.5)*2)*v*SF; }
-function lgt(x,y){ return -0.9+lampAt(x,y)*1.45+shaftAt(x,y)*0.9; }
+function lgt(x,y){ var e=Math.abs(x-160)/160; return -1.0-e*e*0.5+lampAt(x,y)*1.7+shaftAt(x,y)*1.1; }
 var COLD=M.tintMake(function(r,g,b){ var L=r*0.3+g*0.59+b*0.11; return [r*0.8+L*0.1, g*0.9+L*0.1+4, b*0.96+L*0.12+14]; });
 
 // ---------------------------------------------------------------- Strahl auf Gewölbe, Rückwand, Boden
@@ -102,7 +102,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   var tw=stencilBig(b,'WEITERLEITUNGSSTELLE',150,50,P.k2,P.m1); SIGNS=[70,48,150+tw-70+4,26];
   arrow(b,232,64,'R',P.k2); stencil(b,'NR.',238,62,P.m1,P.m2); stencil(b,'1',252,62,P.k2,P.m1);
   // rostige Stahltür
-  var d=DOOR; for (y=d.top;y<FY-1;y++) for (x=d.x0;x<d.x1;x++){ var u=x-d.x0, v=y-d.top, c2=M.tex.rust(u,v); if (u<2||u>d.x1-d.x0-3||v<2) c2=P.m1; if (hash(x,y)<0.3) c2=P.t1; b.px(x,y,c2); }
+  var d=DOOR; for (y=d.top;y<FY-1;y++) for (x=d.x0;x<d.x1;x++){ var u=x-d.x0, v=y-d.top, c2=((v%14)<1)?P.m1:P.m2; var rs=fbm(x*0.25,y*0.12); if (rs>0.58) c2=(rs>0.68)?P.t2:P.t1; var st=fbm(x*0.9,3.1); if (st>0.62 && v>8 && bayer(x,y)<(st-0.62)*3) c2=P.t1; if (u<2||u>d.x1-d.x0-3||v<2) c2=P.m1; if (u===2||v===2) c2=P.m3; b.px(x,y,c2); }
   b.rect(d.x0-2,d.top-2,d.x1-d.x0+4,2,P.m3); b.rect(d.x0-2,d.top,2,FY-d.top-1,P.m3); b.rect(d.x1,d.top,2,FY-d.top-1,P.m3);
   [d.top+8,FY-12].forEach(function(hy){ b.rect(d.x0-3,hy,5,4,P.k2); }); b.rect(d.x1-9,d.top+18,6,2,P.k2); b.rect(d.x1-6,d.top+18,2,8,P.k2); b.px(d.x1-6,d.top+19,P.m3);
   for (i=0;i<6;i++){ b.px(d.x0+4+i*4,d.top+4,P.m3); b.px(d.x0+4+i*4,FY-5,P.m3); }
@@ -207,7 +207,7 @@ function official(up,sc){ GM.fill(0); var ox=20, oy=56;
 function drawMask(fb,X,FYs,a,t,face){ var ox=18, oy=56;
   for (var y=0;y<60;y++) for (var x=0;x<40;x++){ var v=GM[y*40+x]; if (!v) continue; var sx=rnd(X)+(face<0?(ox-x):(x-ox)), sy=FYs+(y-oy); if (sx<0||sx>=fb.w||sy<0||sy>=144) continue;
     var e=!GM[y*40+x-1]||!GM[y*40+x+1]||!GM[(y-1)*40+x]||!GM[(y+1)*40+x], top=!GM[(y-1)*40+x], c, p;
-    if (e){ c=top?P.x5:((v===3)?P.x5:P.x4); p=Math.min(1,a+0.3); } else { c=(v===2)?P.x3:((v===3)?P.x2:((v===4)?P.x3:((v===5)?P.v3:P.x1))); p=a*0.45; if (v===3 && (x%4===0||y===oy-14)) { c=P.x4; p=a; } }
+    if (e){ c=top?P.x5:((v===3)?P.x5:P.x4); p=Math.min(1,a+0.3); } else { c=(v===2)?P.x3:((v===3)?P.x2:((v===4)?P.x3:((v===5)?P.v3:((y>oy-14)?P.x1:P.x2)))); p=a*0.6; if (v===3 && (x%4===0||y===oy-14)) { c=P.x4; p=a; } }
     if (bayer(sx,sy+Math.floor(t*2))<p) fb.px(sx,sy,c); } }
 function ghost(fb,v,S,GS){ var t=v.t, i;
   // die Schlange: junge Männer mit Pappkoffern und Bündeln, Blick zum Tisch (nach rechts), leise schwankend

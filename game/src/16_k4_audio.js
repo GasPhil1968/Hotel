@@ -102,7 +102,7 @@ function vcN(f,t,v,d,dest){ var len=Math.max(0.3,d), e=t+len+0.6, o=osc('sawtoot
   g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(v*0.85,t+Math.min(0.25,len*0.3)); g.gain.linearRampToValueAtTime(v,t+len*0.6); g.gain.setValueAtTime(v,t+len*0.85); g.gain.exponentialRampToValueAtTime(0.0001,t+len+0.45);
   o.connect(lp); chain(lp,b1,b2,g); out(g,dest,0.3,'weit'); }
 // Klavier mit Filz: gedämpfter Anschlag, warm, die Mechanik leise hörbar
-function feltN(f,t,v,d,dest){ var L=Math.max(0.6,Math.min(4,d*1.2)), lp=filt('lowpass',Math.min(2400,f*3.5),0.5), g=gain(1);
+function feltN(f,t,v,d,dest){ var L=Math.max(0.6,Math.min(4,d*1.2)), lp=filt('lowpass',Math.min(2800,f*4),0.5), g=gain(1);
   [[1,1],[2,0.32],[3,0.1],[4.02,0.05]].forEach(function(p,i){ var e=t+L*1.6/(1+i*0.5), o=osc('sine',f*p[0]*(1+i*0.0009),t,e+0.1), og=gain(0); og.gain.setValueAtTime(0.0001,t); og.gain.linearRampToValueAtTime(v*p[1],t+0.012); og.gain.exponentialRampToValueAtTime(v*p[1]*0.35,t+0.35); og.gain.exponentialRampToValueAtTime(0.0001,e); chain(o,og,lp); });
   Nz(t,0.03,v*0.12,'lowpass',500,0.7,lp); chain(lp,g); out(g,dest,0.28,'r'); }
 // Flöte aus Holz: Grundton, wenig Obertöne, Atem, spätes Vibrato
@@ -158,10 +158,10 @@ function paBus(d,kind,wet,hp){ var sh=K.AC.createWaveShaper(); sh.curve=CURVE; v
 // Gong der Durchsage: Metallophon mit leichtem Motor-Vibrato
 function gongT(t,f,v,d,len){ var b=gain(1), tm=trem(t,t+len+0.3,5.5,0.12); chain(b,tm,d);
   [[1,1,1],[4,0.2,0.25],[2,0.05,0.5],[10.1,0.03,0.08]].forEach(function(p){ var o=osc('sine',f*p[0],t,t+len*p[2]+0.1), g=gain(0); adsr(g,t,v*p[1],0.003,0.02,len*p[2]); chain(o,g,b); }); }
-function annTrainFx(t,v,d,kind,wet){ var pa=paBus(d,kind,wet); [523.25,659.26,783.99].forEach(function(f,i){ gongT(t+i*0.32,f,0.06*v,pa,1.8); });
-  talk(t+1.6,{f0:rnd(180,215),v:0.075*v,phr:phr(6,9,3),fs:1.1},pa); }
-function annBusFx(t,v,d,kind,wet){ var pa=paBus(d,kind,wet); gongT(t,880,0.055*v,pa,1.4); gongT(t+0.45,698.46,0.055*v,pa,1.8);
-  talk(t+1.4,{f0:rnd(195,225),v:0.075*v,phr:phr(5,8,3),fs:1.12,rate:1.05},pa); }
+function annTrainFx(t,v,d,kind,wet){ var pa=paBus(d,kind,wet); [523.25,659.26,783.99].forEach(function(f,i){ gongT(t+i*0.32,f,0.02*v,pa,1.8); });
+  talk(t+1.6,{f0:rnd(180,215),v:0.025*v,phr:phr(6,9,3),fs:1.1},pa); }
+function annBusFx(t,v,d,kind,wet){ var pa=paBus(d,kind,wet); gongT(t,880,0.019*v,pa,1.4); gongT(t+0.45,698.46,0.019*v,pa,1.8);
+  talk(t+1.4,{f0:rnd(195,225),v:0.025*v,phr:phr(5,8,3),fs:1.12,rate:1.05},pa); }
 
 // ---------------------------------------------------------------- Bausteine der Geräusche (Ziel d und Lautstärke v, damit Effekte und Raumklang sie teilen)
 // Ein Schritt im Schnee: der Tritt, dann das Knirschen vieler winziger Brüche; bei Frost härter, manchmal quietscht es
@@ -227,21 +227,21 @@ var SFX4={
   annTrain:function(t){ annTrainFx(t,1,bus(1),'halle',0.55); },           // Bahnsteigdurchsage: drei Töne, dann die Stimme in der Halle
   trainIn:function(t){ trainInFx(t,1,bus(1,0.5,'halle')); },
   chime:function(t){ var S=bus(1,0.22,'r'), f=1318.5;                      // Aufzuggong: ein heller, kurzer Ton (E6), sonst nirgends verwendet
-    [[1,0.085,1.1],[2.0,0.02,0.5],[3.0,0.008,0.25],[4.16,0.01,0.12]].forEach(function(p){ var o=osc('sine',f*p[0],t,t+p[2]+0.1), g=gain(0); adsr(g,t,p[1],0.002,0.015,p[2]); chain(o,g,S); }); Nz(t,0.006,0.03,'highpass',6000,0.7,S); },
+    [[1,0.1,1.1],[2.0,0.024,0.5],[3.0,0.01,0.25],[4.16,0.012,0.12]].forEach(function(p){ var o=osc('sine',f*p[0],t,t+p[2]+0.1), g=gain(0); adsr(g,t,p[1],0.002,0.015,p[2]); chain(o,g,S); }); Nz(t,0.006,0.035,'highpass',6000,0.7,S); },
   elevator:function(t){ liftFx(t,1,bus(1,0.2,'r')); },
   kettle:function(t){ kettleFx(t,1,bus(1,0.15,'r')); },
-  snowStep:function(t){ var S=K.sfx, h=frosty(); for (var i=0;i<4;i++) crunch(t+i*rnd(0.48,0.56),0.07*(i%2?0.85:1),S,h); },
+  snowStep:function(t){ var S=K.sfx, h=frosty(); for (var i=0;i<4;i++) crunch(t+i*rnd(0.48,0.56),0.14*(i%2?0.85:1),S,h); },
   doorbellDE:function(t){ ringFx(t,1.05,0.03,sub(bus(1,0.25,'r'),'lowpass',5200,0.7)); },
   firework:function(t){ var S=bus(1,0.45,'fern'); T('sine',90,t,0.12,0.06,S,50); Nz(t,0.35,0.06,'bandpass',1800,0.8,S,3500,0.005);   // Abschuss
     whistleUp(t+0.15,1.5,0.02,S,1300,2900); bang(t+1.8,0.12,S); crackle(t+2.0,1.6,0.05,S,60); },                            // Pfeifen, Knall, Glitzern
-  fireworks:function(t){ fwFar(t,6.5,0.05,bus(1,0.6,'fern'),1600); },
+  fireworks:function(t){ fwFar(t,6.5,0.08,bus(1,0.6,'fern'),1600); },
   cork:function(t){ var S=bus(1,0.2,'r'), p=t+0.32; [0,0.12,0.22].forEach(function(o){ T('sine',rnd(900,1300),t+o,0.04,0.006,S,rnd(700,900)); });   // der Korken quietscht im Hals
     T('sine',rnd(520,620),p,0.06,0.14,S,180); Nz(p,0.012,0.12,'bandpass',1500,1.5,S); Nz(p,0.04,0.06,'lowpass',800,1,S);                        // Plopp
     Sw(p+0.03,1.6,0.025,'highpass',4000,0.6,S,6000); for (var i=0;i<30;i++) Nz(p+0.05+Math.random()*1.5,0.004,rnd(0.005,0.02),'highpass',rnd(4000,7000),1,S); },   // Perlen
-  suitcase:function(t){ var S=bus(1,0.18,'r'); Nz(t,0.05,0.02,'bandpass',2200,2,S); snap(t+0.08,0.09,pn(-0.25,S)); Nz(t+0.42,0.05,0.02,'bandpass',2200,2,S); snap(t+0.5,0.085,pn(0.25,S));
+  suitcase:function(t){ var S=bus(1.5,0.18,'r'); Nz(t,0.05,0.02,'bandpass',2200,2,S); snap(t+0.08,0.09,pn(-0.25,S)); Nz(t+0.42,0.05,0.02,'bandpass',2200,2,S); snap(t+0.5,0.085,pn(0.25,S));
     Nz(t+0.85,0.4,0.02,'bandpass',700,0.9,S,450,0.05); },                                                                                       // der Deckel hebt sich
   cat:function(t){ meow(t,0.09,bus(1,0.15,'r'),rnd(560,640)); },
-  cardShuffle:function(t){ var S=bus(1,0.15,'r'), x=t, n=14+Math.floor(Math.random()*6); for (var i=0;i<n;i++){ flick(x,0.05*(0.7+0.3*Math.random()),S); x+=0.05+0.14*Math.pow(Math.abs(i/n-0.4),1.2); }
+  cardShuffle:function(t){ var S=bus(2,0.15,'r'), x=t, n=14+Math.floor(Math.random()*6); for (var i=0;i<n;i++){ flick(x,0.05*(0.7+0.3*Math.random()),S); x+=0.05+0.14*Math.pow(Math.abs(i/n-0.4),1.2); }
     Nz(x+0.15,0.08,0.03,'bandpass',2000,1,S,1200); }                                                                                            // eine Karte wird gezogen
 };
 M.addSfx(SFX4);
@@ -583,14 +583,14 @@ M.addDrums({
     if (beat===0){ [0,0.13].forEach(function(o,i){ Nz(t+o,0.05,i?0.016:0.022,'lowpass',260,0.9,dest); T('sine',i?58:66,t+o,0.09,i?0.012:0.016,dest,44); }); B.c.slice(0,3).forEach(function(m){ strN(nf(m),t,0.0022,spb*3.9,dest); }); }
     if (Math.random()<0.14) celN(nf(pick(B.c)+24),t+Math.random()*spb*0.8,0.0035,0.4,dest); },
   // Stadt: Celesta auf den unbetonten Achteln, gebrochene Akkordtöne wie fallender Schnee
-  k4_stadt:function(t,beat,spb,dest){ var bi=cnt('stadt',t,spb), br=Math.floor(bi/8), c=MU_B[br%MU_B.length].c; if (beat%2===1) celN(nf(c[((beat-1)/2+br)%c.length]+12),t,0.0035,spb*2,dest); },
+  k4_stadt:function(t,beat,spb,dest){ var bi=cnt('stadt',t,spb), br=Math.floor(bi/8), c=MU_B[br%MU_B.length].c; if (beat%2===1) celN(nf(c[((beat-1)/2+br)%c.length]+12),t,0.003,spb*2,dest); },
   // die Küchenuhr: leise, gleichmäßig
   k4_tick:function(t,beat,spb,dest){ Nz(t,0.008,beat%2?0.005:0.0065,'bandpass',beat%2?2500:2950,5,dest); },
   // Anas Wohnung: das Klavier wiegt (gebrochene Akkorde auf zwei, drei, fünf und sechs)
   k4_ana:function(t,beat,spb,dest){ var bi=cnt('ana',t,spb), c=ANA_B[Math.floor(bi/6)%ANA_B.length].c, P={1:[1,12],2:[2,12],4:[0,24],5:[2,12]}[beat]; if (P) feltN(nf(c[P[0]]+P[1]),t,0.0045,spb*2.5,dest); },
   // Bahnhof: Räder im Dreier-Dreier-Zweier, das Klavier pulst auf dem obersten Akkordton
   k4_zug:function(t,beat,spb,dest){ var bi=cnt('zug',t,spb), c=BA_B[Math.floor(bi/8)%BA_B.length].c, acc=beat===0||beat===3||beat===6;
-    Nz(t,0.02,acc?0.007:0.0035,'bandpass',acc?700:1100,1.6,dest); if (beat===0) T('sine',62,t,0.12,0.018,dest,45); feltN(nf(c[c.length-1]+12),t,acc?0.004:0.0028,spb*0.9,dest); },
+    Nz(t,0.02,acc?0.006:0.003,'bandpass',acc?700:1100,1.6,dest); if (beat===0) T('sine',62,t,0.12,0.015,dest,45); feltN(nf(c[c.length-1]+12),t,acc?0.0034:0.0024,spb*0.9,dest); },
   // Sepps Lied: die Gitarre zerlegt den Akkord in Achteln; im Dur-Teil hält eine Musette den Akkord
   k4_sepp:function(t,beat,spb,dest){ var bi=cnt('sepp',t,spb), br=Math.floor(bi/6)%SE_B.length, c=SE_B[br].c, P=[null,1,2,3,2,1];
     if (P[beat]!==null) gitN(nf(c[P[beat]]),t,beat===3?0.011:0.009,spb*2.2,dest,0.2);
@@ -633,9 +633,9 @@ M.defineSong('k4_bus',{ bpm:72, comp:'k4felt', compBeats:[0,2], arp:0.14, compVo
 // München bei Tag: G-Dur, gehend, die Flöte über Pizzicato und Streichern; der Moll-Akkord der vierten Stufe (c-Moll) ist der Schnee darin. Im zweiten Teil ein Hackbrett
 var MU_MEL='G4:2 B4:2 D5:3 C5 B4:2 A4:2 D5:4 E4:2 G4:2 B4:3 A4 G4:2 E4:2 B4:4 D5:2 G5:2 F#5:3 E5 Eb5:2 D5:2 C5:2 A4:2 B4:3 C5 D5:2 G4:2 A4:6 -:2 '+
   'F#5:3 E5 D5:2 B4:2 G5:3 F#5 E5:2 B4:2 C5:2 E5:2 A5:3 G5 F#5:4 D5:2 E5:2 D5:2 B4:2 G4:2 B4:2 Bb4:3 G4 Eb5:4 C5:2 B4:2 A4:2 E5:2 D5:3 C5 A4:2 F#4:2';
-M.defineSong('k4_muenchen',{ bpm:184, meter:8, comp:'k4str', compBeats:[0], compVol:0.0028, compLen:7.6, bassInst:'k4kb', bassVol:0.03, bassLen:3, drums:'k4_stadt', bars:MU_B,
-  lead:mel(MU_MEL), leadInst:'k4fl', leadVol:0.016,
-  lead2:mel('@64 D5:8 B4:8 C5:8 A4:8 B4:8 G4:8 A4:8 F#4:8'), lead2Inst:'k4hack', lead2Vol:0.006 });
+M.defineSong('k4_muenchen',{ bpm:184, meter:8, comp:'k4str', compBeats:[0], compVol:0.0024, compLen:7.6, bassInst:'k4kb', bassVol:0.026, bassLen:3, drums:'k4_stadt', bars:MU_B,
+  lead:mel(MU_MEL), leadInst:'k4fl', leadVol:0.0135,
+  lead2:mel('@64 D5:8 B4:8 C5:8 A4:8 B4:8 G4:8 A4:8 F#4:8'), lead2Inst:'k4hack', lead2Vol:0.005 });
 // Jasnas Wohnung: a-Moll, still und gespannt. Die Küchenuhr, ein Cello hält den Grund, Klavierakkorde mit Reibungen (H gegen C, E gegen F);
 // erst Jasnas Motiv am Klavier, dann das Kapitelmotiv im Cello, am Ende der Leitton, der nicht aufgelöst wird
 M.defineSong('k4_wohnung',{ bpm:60, comp:'k4felt', compBeats:[0], arp:0.22, compVol:0.009, compLen:3.6, bassInst:'k4vc', bassVol:0.009, bassLen:3.9, drums:'k4_tick', bars:WO_B,
@@ -646,9 +646,9 @@ M.defineSong('k4_ana',{ bpm:168, meter:6, comp:'k4str', compBeats:[0], compVol:0
   lead:mel('A5:2 C6 A5:2 F5 G5:3 E5:3 F5:2 A5 D6:2 C6 Bb5:3 F5:3 A5:2 G5 F5:2 A5 Bb5:2 A5 G5:2 F5 E5:2 G5 Bb5:2 E5 F5:6'), leadInst:'k4cel', leadVol:0.008,
   lead2:mel('@48 F5:2 D5 Bb4:2 D5 E5:2 G5 C6:3 C6:2 B5 A5:2 E5 F5:2 A5 D5:3 Bb5:2 A5 G5:2 D5 E5:2 F5 G5:3 A5:2 Bb5 C6:2 A5 G5:3 E5:3'), lead2Inst:'k4fl', lead2Vol:0.014 });
 // Hauptbahnhof, Gleis 11: h-Moll, die Räder im Dreier-Dreier-Zweier, das Klavier pulst; die Bratsche zieht eine lange Linie, dann die Flöte (Ankommen, 1962 und 1992)
-M.defineSong('k4_bahnhof',{ bpm:200, meter:8, comp:'k4str', compBeats:[0], compVol:0.0026, compLen:7.6, bassInst:'k4kb', bassVol:0.026, bassLen:2, drums:'k4_zug', bars:BA_B,
-  lead:mel('F#4:6 G4:2 B4:8 A4:4 F#4:4 E4:6 C#4:2 D4:4 F#4:4 B4:6 A4:2 G4:4 B4:4 A#4:8'), leadInst:'k4vc', leadVol:0.018,
-  lead2:mel('@64 D5:4 F#5:4 E5:6 D5:2 C#5:4 A4:4 E5:8 F#5:4 D5:4 G5:6 F#5:2 E5:4 C#5:4 A#4:8'), lead2Inst:'k4fl', lead2Vol:0.013 });
+M.defineSong('k4_bahnhof',{ bpm:200, meter:8, comp:'k4str', compBeats:[0], compVol:0.0022, compLen:7.6, bassInst:'k4kb', bassVol:0.022, bassLen:2, drums:'k4_zug', bars:BA_B,
+  lead:mel('F#4:6 G4:2 B4:8 A4:4 F#4:4 E4:6 C#4:2 D4:4 F#4:4 B4:6 A4:2 G4:4 B4:4 A#4:8'), leadInst:'k4vc', leadVol:0.015,
+  lead2:mel('@64 D5:4 F#5:4 E5:6 D5:2 C#5:4 A4:4 E5:8 F#5:4 D5:4 G5:6 F#5:2 E5:4 C#5:4 A#4:8'), lead2Inst:'k4fl', lead2Vol:0.011 });
 // Sepp: ein Lied aus dem Süden, langsam. a-Moll mit dem neapolitanischen B-Dur, dann A-Dur mit dem d-Moll darin (die Wendung zurück).
 // Mandoline im Tremolo über der Gitarre, im Dur-Teil eine zweite Mandoline in Terzen und eine Musette
 M.defineSong('k4_sepp',{ bpm:112, meter:6, bassInst:'k4kb', bassVol:0.03, bassLen:2, drums:'k4_sepp', bars:SE_B,
@@ -667,10 +667,10 @@ M.defineSong('k4_gerda',{ bpm:252, meter:6, comp:'k4akk', compBeats:[2,4], arp:0
   lead2:mel('@96 D5:2 F5:2 Bb5:2 D6:4 C6:2 C6:3 A5 F5:2 A5:4 G5:2 G5:3 E5 C5:2 Bb5:4 A5:2 A5:3 F5 C5:2 F5:6 '+
             'F5:2 Bb5:2 D6:2 F6:4 D6:2 C6:3 A5 F5:2 F#5:2 A5:2 C6:2 Bb5:3 A5 G5:2 E5:2 G5:2 Bb5:2 A5:2 G5:2 C5:2 F5:6'), lead2Inst:'k4box', lead2Vol:0.011 });
 // Geister und Erkenntnis: eine kalte Fläche, das Kapitelmotiv hoch auf der Celesta (jede zweite Runde), Malas Motiv auf der Spieluhr, am Ende D-Dur
-M.defineSong('k4_duh',{ bpm:40, comp:'k4eis', compBeats:[0], compVol:0.006, compLen:3.8,
+M.defineSong('k4_duh',{ bpm:40, comp:'k4eis', compBeats:[0], compVol:0.0085, compLen:3.8,
   bars:[{c:N('D3 A3 E4')},{c:N('Bb2 F3 D4 A4')},{c:N('C3 G3 D4 E4')},{c:N('D3 A3 F#4')}],
-  lead:mel('@1 A5:2 Bb5 A5 F5:2 E5:4/6'), leadInst:'k4cel', leadVol:0.008, leadEvery:2,
-  lead2:mel('@8 D6:2 F#6:2 E6:2 A5:2'), lead2Inst:'k4box', lead2Vol:0.007 });
+  lead:mel('@1 A5:2 Bb5 A5 F5:2 E5:4/6'), leadInst:'k4cel', leadVol:0.011, leadEvery:2,
+  lead2:mel('@8 D6:2 F#6:2 E6:2 A5:2'), lead2Inst:'k4box', lead2Vol:0.01 });
 // Zwischenwelt: dieselbe Fläche wie in den Kapiteln 1 bis 3 (D, A wird As), Schnee, ferne Schienenstöße, zweimal die Trambahnglocke (Abfahrt)
 M.defineSong('k4_limbo',{ bpm:36, comp:'pad', compBeats:[0], compVol:0.013, compLen:4, drums:'k4_limbo',
   bars:[{c:N('D3 A3 D4')},{c:N('D3 G#3 D4')},{c:N('C3 G3 D4')},{c:N('Bb2 F3 D4')},{c:N('D3 A3 D4')},{c:N('D3 G#3 D4')},{c:N('A2 E3 C#4')},{c:N('D3 A3 F#4')}],

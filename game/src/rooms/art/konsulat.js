@@ -29,6 +29,7 @@ function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.
 function qrect(q){ var xs=q.map(function(p){ return p[0]; }), ys=q.map(function(p){ return p[1]; }), x0=Math.floor(Math.min.apply(null,xs)), y0=Math.floor(Math.min.apply(null,ys)); return [x0,y0,Math.ceil(Math.max.apply(null,xs))-x0,Math.ceil(Math.max.apply(null,ys))-y0]; }
 function wallUV(sd,x,y){ var ex=sd==='L'?RECT[0]:RECT[2], t=(ex-VP[0])/(x-VP[0]); if (t<=0) return null; var D=sd==='L'?(VP[0]-RECT[0]):(RECT[2]-VP[0]); return {u:(1/t-1)*D, v:VP[1]+(y-VP[1])*t}; }
 function inUV(w,U){ return w && w.u>=U[0] && w.u<U[1] && w.v>=U[2] && w.v<U[3]; }
+function haze(b,amt,col,col2,x0,y0,w,h){ for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var a=amt(x,y); if (!(a>0.01)) continue; if (bayer(x,y)<a) b.px(x,y,(col2!==undefined && bayer(x+1,y+2)<0.5)?col2:col); } }   // Dunst als Raster (keine Mischfarben)
 function wea(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun')?w:'snowlie'; }
 function mt(b,s,x,y,c){ var cx=x; for (var i=0;i<s.length;i++){ var ch=s[i], base={'Ä':'A','Ö':'O','Ü':'U'}[ch]||ch; M.microText(b,base,cx,y,c); if (base!==ch){ b.px(cx,y-2,c); b.px(cx+2,y-2,c); } cx+=M.microWidth(base)+1; } }
 function mw(s){ return M.microWidth(s.replace(/Ä/g,'A').replace(/Ö/g,'O').replace(/Ü/g,'U')); }
@@ -100,7 +101,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   var nw=M.microWidth('NR'); b.rect(na[0]-5,na[1]-46,11,8,P.b0); M.microText(b,'NR',na[0]-nw/2|0,na[1]-45,P.s6); b.vl(na[0],na[1]-38,na[1]-37,P.m1);
   // ---- Rückwand: Fenster mit Lamellen, Plakate, Topfpflanze
   for (y=WIN.y0;y<WIN.y1;y++) for (x=WIN.x0;x<WIN.x1;x++){ var lam=((x-WIN.x0)%6), c; if (lam<3){ c=(lam===0)?P.s3:((lam===1)?P.s5:P.s4); if (y>WIN.y1-8 && lam===2) c=P.s3; } else { c=street(x,y,w,tod); WM[y*W+x]=1; } b.px(x,y,c); }
-  var fa={fog:0.75,snow:0.3,thaw:0.12}[w]||0; if (fa && tod==='day') M.fogBake(b,function(xx,yy){ return WM[yy*W+xx]?fa:0; },{col:w==='fog'?P.s4:P.s5,x:WIN.x0,y:WIN.y0,w:WIN.x1-WIN.x0,h:WIN.y1-WIN.y0});
+  var fa={fog:0.75,snow:0.3,thaw:0.12}[w]||0; if (fa && tod==='day') haze(b,function(xx,yy){ return WM[yy*W+xx]?fa:0; },w==='fog'?P.s4:P.s5,w==='fog'?P.m4:P.s6,WIN.x0,WIN.y0,WIN.x1-WIN.x0,WIN.y1-WIN.y0);
   b.rect(WIN.x0-2,WIN.y0-4,WIN.x1-WIN.x0+4,3,P.m3); b.hl(WIN.x0-2,WIN.x1+1,WIN.y0-4,P.m4); b.rect(WIN.x0-3,WIN.y1,WIN.x1-WIN.x0+6,3,P.s6); b.hl(WIN.x0-3,WIN.x1+2,WIN.y1+2,P.s3);
   for (x=WIN.x0;x<WIN.x1;x+=6) b.px(x+1,WIN.y1-1,P.m2);
   POS.forEach(function(p,j){ b.rect(p.x+1,p.y+1,p.w,p.h,P.s3); b.rect(p.x,p.y,p.w,p.h,P.s6); b.rect(p.x,p.y,p.w,7,j?P.c1:P.b0);

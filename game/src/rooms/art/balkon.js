@@ -25,14 +25,15 @@ function vn(x,y,s){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, o=
 function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*4.1+2.3,y*4.1+8.1,s)*0.15; }
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun'||w==='frost')?w:'snowlie'; }
-// Dunst und Nebel: nur zu Landschaftsfarben mischen (keine Lavendel-, Geister- oder Hauttöne)
-var HZN=null, HZL={};
-function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+// Dunst und Nebel: nur zu kühlen Grau- und Blautönen mischen (Nebel entsättigt; keine Lavendel-, Geister- oder Hauttöne)
+var HZN=null, HZW=null, HZL={}, HZWIDE=false;                 // bei klarem Wetter behält der Dunst die Farbtöne
+function hazeLut(col,k){ var key=col+'_'+k+(HZWIDE?'w':''); if (HZL[key]) return HZL[key]; if (!HZN){ HZN=M.PNAME.filter(function(n){ return /^[kmnbc]/.test(n) || n==='s5' || n==='s6'; }); HZW=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); } var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZWIDE?HZW:HZN); }
 function haze(b,amt,opt){ opt=opt||{}; var col=opt.col, x0=opt.x||0, y0=opt.y||0, w=opt.w||b.w, h=opt.h||b.h, ox=b.ox||0, oy=b.oy||0;
   for (var y=Math.max(0,y0);y<Math.min(b.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(b.w,x0+w);x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*b.w+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x+ox,y+oy)<f-i) i++; if (i>0) b.d[k]=(i>=8)?col:hazeLut(col,i)[c]; } }
-function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2);
-  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue;
-    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*Math.sin(wx*0.031+t*sp*0.05+y*0.11)+0.22*Math.sin(wx*0.012-t*sp*0.03+y*0.047), d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
+var SINT=null; function sinT(){ if (SINT) return SINT; SINT=new Float32Array(1024); for (var i=0;i<1024;i++) SINT[i]=Math.sin(i*Math.PI*2/1024); return SINT; }
+function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2), S=sinT(), K=1024/(Math.PI*2);
+  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue; var o1=(t*sp*0.05+y*0.11)*K, o2=(-t*sp*0.03+y*0.047)*K;
+    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*S[((wx*0.031*K+o1)|0)&1023]+0.22*S[((wx*0.012*K+o2)|0)&1023], d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
 function fwOn(S,GS){ return !!(S&&S.fireworks) || !!(M.k4Fireworks && M.k4Fireworks(GS)); }
 var REG=new Uint8Array(W*H), SNW=new Uint8Array(W*H), RG={sky:0,far:1,roofs:2,wall:3,glass:4,rail:5,floor:6,prop:7};
 function RW(b){ var o={g:0,s:0,w:W,h:H};
@@ -124,13 +125,15 @@ function railing(w,we){ var x, y; w.g=RG.rail; w.s=0;
   w.g=RG.prop; w.rect(WALLX+66,RAIL.top-5,30,5,P.t2); w.hl(WALLX+66,WALLX+95,RAIL.top-5,P.t3); if (we!=='thaw'){ w.s=1; w.hl(WALLX+66,WALLX+95,RAIL.top-6,P.s6); w.hl(WALLX+68,WALLX+93,RAIL.top-7,P.s6); w.s=0; } }
 
 // ---------------------------------------------------------------- Topf mit Feigenzweig unter der Tüte, Gießkanne, Klappstuhl
-function pot(w,we){ var x=POT.x, by=POT.by, y; w.g=RG.prop; w.s=0;
+function pot(w,we,dry){ var x=POT.x, by=POT.by, y; w.g=RG.prop; w.s=0;
   w.poly([[x-7,by-12],[x+7,by-12],[x+5,by],[x-5,by]],function(xx,yy){ return (xx<x-3)?P.t4:((xx>x+3)?P.t2:P.t3); }); w.hl(x-8,x+7,by-13,P.t4); w.hl(x-8,x+7,by-12,P.t2);
-  w.hl(x-6,x+5,by-14,P.k2); w.hl(x-5,x+4,by-15,P.w0); w.px(x-3,by-15,P.m3); w.px(x+2,by-14,P.m2);                         // nasse dunkle Erde mit Glanz
+  if (!dry){ w.hl(x-6,x+5,by-14,P.k2); w.hl(x-5,x+4,by-15,P.w0); w.px(x-3,by-15,P.m3); w.px(x+2,by-14,P.m2); }               // nasse dunkle Erde mit Glanz
+  else { w.hl(x-6,x+5,by-14,P.w2); w.hl(x-5,x+4,by-15,P.w3); w.px(x-3,by-15,P.e3); w.px(x+2,by-14,P.w1); }                    // S.dry: die Erde trocknet
   // der kurze Zweig unter der Plastiktüte
   w.vl(x,by-24,by-15,P.w1); w.px(x+1,by-20,P.w1); w.px(x+2,by-21,P.w2); w.px(x-1,by-22,P.w2);
-  w.ellipse(x+0.5,by-21,5.5,8,function(xx,yy){ var e=Math.pow((xx-x-0.5)/5.5,2)+Math.pow((yy-by+21)/8,2); if (e<0.62 && bayer(xx,yy)<0.7) return T; return (e>0.86)?P.s4:((xx<x)?P.s6:P.s5); });
-  w.hl(x-3,x+3,by-14,P.s5); w.px(x-4,by-26,P.l1); w.px(x+3,by-18,P.l1); w.line(x+1,by-13,x+4,by-11,P.r3); w.px(x+5,by-11,P.r3);   // Knoten, rotes Band
+  if (!dry){ w.ellipse(x+0.5,by-21,5.5,8,function(xx,yy){ var e=Math.pow((xx-x-0.5)/5.5,2)+Math.pow((yy-by+21)/8,2); if (e<0.62 && bayer(xx,yy)<0.7) return T; return (e>0.86)?P.s4:((xx<x)?P.s6:P.s5); });
+    w.hl(x-3,x+3,by-14,P.s5); w.px(x-4,by-26,P.l1); w.px(x+3,by-18,P.l1); w.line(x+1,by-13,x+4,by-11,P.r3); w.px(x+5,by-11,P.r3); }   // Plastiktüte mit Knoten, rotes Band
+  else { var bx2=x+9, bby=by; w.poly([[bx2-3,bby],[bx2+4,bby],[bx2+5,bby-4],[bx2-4,bby-3]],P.s5); w.px(bx2,bby-3,P.s6); w.line(bx2+4,bby-2,bx2+7,bby-1,P.r3); }   // S.dry: die Tüte liegt gefaltet neben dem Topf
   if (we!=='thaw'){ w.s=1; w.px(x-1,by-29,P.s6); w.px(x,by-29,P.s6); w.s=0; } }
 function can(w,we){ var x=CAN.x, by=CAN.by; w.g=RG.prop; w.s=0;
   w.rect(x-6,by-10,11,10,P.g2); w.vl(x-6,by-10,by-1,P.g3); w.vl(x+4,by-10,by-1,P.g1); w.hl(x-6,x+4,by-10,P.g4); w.ellipse(x-1,by-11,5,1.4,P.g3);
@@ -144,12 +147,12 @@ function chair(w,we){ var x=CHAIR.x, by=CHAIR.by; w.g=RG.prop; w.s=0;
 // ---------------------------------------------------------------- Bild
 var BASE=null, LIT=[], WE='snowlie';
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k;
-  WE=we; REG.fill(0); SNW.fill(0); WINS=[]; GLASS=[];
+  WE=we; HZWIDE=(we==='snowlie'||we==='sun'||we==='frost'); REG.fill(0); SNW.fill(0); WINS=[]; GLASS=[];
   paintSky(w,tod,we); paintRoofs(w,we);
   var fk={snow:[0.55,0.3],fog:[0.92,0.7],thaw:[0.4,0.2],snowlie:[0.22,0.08],sun:[0.15,0.05],frost:[0.18,0.06]}[we];
   var fc=tod==='night'?(we==='fog'?P.m1:P.n0):(we==='fog'?P.m4:(we==='thaw'?P.m3:(we==='snow'?P.m4:P.b4)));
   haze(b,function(xx,yy){ var g=REG[yy*W+xx]; if (g===RG.far) return fk[0]; if (g===RG.roofs) return fk[1]; return 0; },{col:fc});
-  wall(w,tod,we); floor(w,we); railing(w,we); pot(w,we); can(w,we); chair(w,we);
+  wall(w,tod,we); floor(w,we); railing(w,we); pot(w,we,!!S.dry); can(w,we); chair(w,we);
   M.light(b,M.lf.sum(M.lf.pool(POT.x,POT.by+1,10,2,-0.8),M.lf.pool(CAN.x,CAN.by+1,9,2,-0.7),M.lf.pool(CHAIR.x,CHAIR.by+1,10,2,-0.7),M.lf.band(FY,FY+4,-0.5,0),M.lf.k(we==='thaw'?-0.2:(we==='sun'?0.12:0))),0,0,function(xx,yy){ var g=REG[yy*W+xx]; return g===RG.floor; });
   M.light(b,M.lf.sum(M.lf.xband(0,WALLX,-0.25,0),M.lf.k(we==='thaw'||we==='fog'?-0.2:0)),0,0,function(xx,yy){ return REG[yy*W+xx]===RG.wall; });
   if (we==='sun') for (k=0;k<W*H;k++){ if (SNW[k] && hash(k%W,(k/W)|0)<0.012) b.d[k]=P.l1; }

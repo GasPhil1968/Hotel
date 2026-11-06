@@ -37,14 +37,15 @@ function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*
 function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
 function rp(p){ return [rd(p[0]),rd(p[1])]; }
 function weaOf(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun'||w==='frost')?w:'snowlie'; }
-// Dunst und Nebel: nur zu Landschaftsfarben mischen (keine Lavendel-, Geister- oder Hauttöne)
-var HZN=null, HZL={};
-function hazeLut(col,k){ var key=col+'_'+k; if (HZL[key]) return HZL[key]; if (!HZN) HZN=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZN); }
+// Dunst und Nebel: nur zu kühlen Grau- und Blautönen mischen (Nebel entsättigt; keine Lavendel-, Geister- oder Hauttöne)
+var HZN=null, HZW=null, HZL={}, HZWIDE=false;                 // bei klarem Wetter behält der Dunst die Farbtöne
+function hazeLut(col,k){ var key=col+'_'+k+(HZWIDE?'w':''); if (HZL[key]) return HZL[key]; if (!HZN){ HZN=M.PNAME.filter(function(n){ return /^[kmnbc]/.test(n) || n==='s5' || n==='s6'; }); HZW=M.PNAME.filter(function(n){ return !/^[vxdpqhl]/.test(n); }); } var q=M.RGB[col], f=k/8; return HZL[key]=M.tintIn(function(r,g,b){ return [r+(q[0]-r)*f, g+(q[1]-g)*f, b+(q[2]-b)*f]; },HZWIDE?HZW:HZN); }
 function haze(b,amt,opt){ opt=opt||{}; var col=opt.col, x0=opt.x||0, y0=opt.y||0, w=opt.w||b.w, h=opt.h||b.h, ox=b.ox||0, oy=b.oy||0;
   for (var y=Math.max(0,y0);y<Math.min(b.h,y0+h);y++) for (var x=Math.max(0,x0);x<Math.min(b.w,x0+w);x++){ var a=amt(x,y); if (!(a>0.01)) continue; var k=y*b.w+x, c=b.d[k]; if (c===T||c>=M.NCOL) continue; var f=Math.min(8,a*8), i=Math.floor(f); if (i<8 && bayer(x+ox,y+oy)<f-i) i++; if (i>0) b.d[k]=(i>=8)?col:hazeLut(col,i)[c]; } }
-function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2);
-  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue;
-    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*Math.sin(wx*0.031+t*sp*0.05+y*0.11)+0.22*Math.sin(wx*0.012-t*sp*0.03+y*0.047), d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
+var SINT=null; function sinT(){ if (SINT) return SINT; SINT=new Float32Array(1024); for (var i=0;i<1024;i++) SINT[i]=Math.sin(i*Math.PI*2/1024); return SINT; }
+function fogFront(fb,t,opt){ var y0=opt.y0||0, y1=Math.min(opt.y1||144,144), amt=opt.amt, cam=opt.cam||0, sp=opt.speed||5, L=hazeLut(opt.col,opt.k||2), S=sinT(), K=1024/(Math.PI*2);
+  for (var y=y0;y<y1;y++){ var ry=(y-y0)/Math.max(1,y1-y0), band=Math.sin(ry*Math.PI)*amt; if (band<0.03) continue; var o1=(t*sp*0.05+y*0.11)*K, o2=(-t*sp*0.03+y*0.047)*K;
+    for (var x=0;x<fb.w;x++){ var wx=x+cam, n=0.5+0.28*S[((wx*0.031*K+o1)|0)&1023]+0.22*S[((wx*0.012*K+o2)|0)&1023], d=band*(n*1.25-0.2); if (d>0.04 && bayer(x,y)<d){ var k=y*fb.w+x, c=fb.d[k]; if (c!==T && c<M.NCOL) fb.d[k]=L[c]; } } } }
 function hit(x,y){ var k, X, Y;
   if (x>=XL && x<=XR && y>=CY && y<=FY) return {s:'back',X:x,Y:y,Z:0};
   if (y>FY){ k=(y-VP[1])/(FY-VP[1]); X=VP[0]+(x-VP[0])/k; if (X>=XL-0.5 && X<=XR+0.5) return {s:'floor',X:X,Y:FY,Z:(k-1)*F}; }
@@ -132,7 +133,7 @@ function kitchen(b,S,tod){ var x, y;
   // Dinge auf der Arbeitsplatte: Kaffeedose, Brotkorb, Tassen
   var a=rp(R3.p(KIT.X0+4,KIT.Y0,5)); b.rect(a[0],a[1]-6,5,6,P.r2); b.hl(a[0],a[0]+4,a[1]-6,P.r3); b.rect(a[0]+7,a[1]-3,9,3,P.w3); b.hl(a[0]+7,a[0]+15,a[1]-4,P.w4);
   var cp=rp(R3.p(SINK.X1+10,KIT.Y0,6)); b.rect(cp[0],cp[1]-3,3,3,P.s6); b.rect(cp[0]+5,cp[1]-3,3,3,P.b3); b.px(cp[0]+3,cp[1]-2,P.s5);
-  if (S.dzezva){ var dz=PLATES[2]; dzezva(b,dz[0],dz[1]); } }
+  if (S.dzezva){ var dz=PLATES[1]; dzezva(b,dz[0],dz[1]); } }                                   // auf der hinteren Platte
 var PLATES=[];
 function dzezva(b,cx,by){ var col=R('t0 t1 t2 t3 t4 t5'), rows=[5,3,4,5,6,6], h=rows.length, top=by-h; for (var j=0;j<h;j++){ var wj=rows[j], x0=cx-(wj>>1); for (var i=0;i<wj;i++){ var u=i/Math.max(1,wj-1), c=u<0.3?col[4]:(u<0.6?col[3]:(u<0.85?col[2]:col[1])); if (j===0) c=col[4]; if (j===h-1) c=col[1]; b.px(x0+i,top+j,c); } }
   b.px(cx-3,top,col[4]); for (var k=0;k<6;k++) b.px(cx+2+k,top+1-Math.floor(k/3),k>4?P.k2:P.w1); }
@@ -200,7 +201,7 @@ var TVS=[0,0,0,0], FOLD=[0,0,0,0], FLAMP=[0,0], FLAMPW=(function(){ var q=R3.p(S
 // ---------------------------------------------------------------- Bild
 var BASE=null, WE='snowlie';
 function inWin(x,y){ return x>=WIN.x0&&x<WIN.x1&&y>=WIN.y0&&y<WIN.y1; }
-function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), we=weaOf(GS), dark=tod!=='day', x, y; WE=we; TVON=!!S.tv;
+function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), we=weaOf(GS), dark=tod!=='day', x, y; WE=we; HZWIDE=(we==='snowlie'||we==='sun'||we==='frost'); TVON=!!S.tv;
   for (y=0;y<H;y++) for (x=0;x<W;x++){ var h=hit(x,y); if (h) b.px(x,y,surf(h,x,y)); }
   // Wandvorsprung zwischen Flur und Küche
   R3.box(b,STUB.X0,STUB.X1,CY,FY,0,STUB.Z1,{front:P.s4,right:P.s5});
@@ -255,8 +256,9 @@ function layers(S,GS,tod){ return [tableLayer(S,GS,tod)]; }
 // ---------------------------------------------------------------- jedes Bild: Herdplatte glüht, Fernseher flimmert, Lichter am Baum, Schnee vor dem Fenster, Dampf
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, tod=v.tod, we=WE, i;
   function px(X,Y,c){ X=X-cam; if (X<0||X>=320||Y<0||Y>=144) return; fb.px(X,Y,c); }
-  if (S.cook || (S.dzezva && S.cook!==false && S.jasnaHome)){ var pl=PLATES[2]; if (pl){ var gl=Math.sin(t*2.1)>-0.3; px(pl[0]-2,pl[1],gl?P.r4:P.r3); px(pl[0]+2,pl[1],P.r3); px(pl[0]-1,pl[1]+1,P.r3); px(pl[0]+1,pl[1]+1,gl?P.d5:P.r4); }
-    if (S.dzezva) for (i=0;i<4;i++){ var ph=(t*0.5+i/4)%1; if (Math.sin(t*0.9+i)>0.2) px(pl[0]+4+rd(Math.sin(t+i*2)*1.5),pl[1]-8-rd(ph*10),ph<0.5?P.s5:P.s4); } }
+  var J=M.ACT&&M.ACT.jasna, cooking=S.cook || (J && J.visible!==false && J.idle==='cook');                        // es wird gekocht: S.cook oder Jasna steht kochend am Herd
+  if (cooking){ var pl=PLATES[2]; if (pl){ var gl=Math.sin(t*2.1)>-0.3; px(pl[0]-2,pl[1],gl?P.r4:P.r3); px(pl[0]+2,pl[1],P.r3); px(pl[0]-1,pl[1]+1,P.r3); px(pl[0]+1,pl[1]+1,gl?P.d5:P.r4); }
+    var dzp=S.dzezva?PLATES[1]:pl; for (i=0;i<4;i++){ var ph=(t*0.5+i/4)%1; if (Math.sin(t*0.9+i)>0.2) px(dzp[0]+3+rd(Math.sin(t+i*2)*1.5),dzp[1]-8-rd(ph*10),ph<0.5?P.s5:P.s4); } }
   if (S.tv){ var s=TVS; for (var y=s[1];y<s[1]+s[3];y++) for (var x=s[0];x<s[0]+s[2];x++){ var n=Math.sin(x*0.7+t*9)+Math.sin(y*1.3-t*13)+hash(x,(y+Math.floor(t*12))); px(x,y,n>1.6?P.b5:(n>0.4?P.b3:(n>-0.6?P.b2:P.c2))); } }
   if (tod!=='day' || true) TREEL.forEach(function(q,k){ var on=Math.sin(t*1.7+k*1.9)>-0.2; px(q[0],q[1],on?(k%2?P.y5:P.y4):P.y2); });
   if (we==='snow') M.snow(fb,t,{n:26,cam:cam,mask:function(X,Y){ return inWin(X,Y); },col:P.s6,col2:P.s5,wind:5}); }

@@ -82,7 +82,7 @@ M.room('jhaus',{ name:'Treppenhaus', scape:'k4_jhaus',
   state:function(G){ return {hubOpen:false}; },
   actors:function(S,G){ var L=[]; S.hubOpen=huberHere(G);
     if (huberHere(G)){ var h=M.apos('jhaus','huber',[250,120,'L']); L.push({id:'huber',ch:'huber',x:h[0],y:h[1],f:h[2]||'L',name:'Frau Huber',idle:'talk',speechY:40,routine:[['idle',null,6,10],['anim','pet'],['idle',null,5,9],['anim','talk']]}); }
-    var c=M.apos('jhaus','mucki',[150,112,'F']); L.push({id:'mucki',ch:'mucki',x:c[0],y:c[1],f:c[2]||'F',name:G.flags['k4.p.mucki']?'Mucki':'Katze',idle:'sit',speechY:18,routine:[['idle','sit',6,14],['anim','watch'],['idle','sit',5,10]]});
+    var c=M.apos('jhaus','mucki',[150,112,'F']); L.push({id:'mucki',ch:'mucki',x:c[0],y:c[1],f:c[2]||'F',name:G.flags['k4.p.mucki']?'Mucki':'Katze',idle:'sit',speechY:16,routine:[['idle','sit',6,14],['anim','watch'],['idle','sit',5,10]]});
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G, p=G.phase;

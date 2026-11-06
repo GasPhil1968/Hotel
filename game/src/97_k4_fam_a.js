@@ -146,9 +146,9 @@ M.k4Dzezva=async function(A){ var G=A.G; if (F(A,'k4.d1.dzezva')) return;
     await J.say('Mir hat sie es gesagt, als ich sieben war. Ich habe den Kaffee überkochen lassen. Sie hat den Herd geputzt, eine Stunde lang, und kein Wort gesagt.');
     A.sfx('pour'); await A.wait(400); var t=M.stand('jwohnung','table')||[200,124,'B']; await A.walkM(t[0],t[1]); await A.faceM('L'); A.sfx('cup'); });
   await A.menuLoop(function(){ if (F(A,'k4.d1.dzezva')) return []; return [
-    {t:'Danke, dass du das Brot nicht vergessen hast. Ich meine: dass du es vergessen hast.',once:'dzBr',if:F(A,'k4.g.bread'),go:async function(A){ await J.say('Du hast es mir zur Arbeit gebracht. Die Kolleginnen wollten wissen, wer der Mann ist.'); await A.wait(400); await J.say('Ich habe gesagt: mein Sohn. Sie haben gesagt: Du hast einen Sohn?'); await A.wait(800); await J.say('Iss die Vanilice. Sonst esse ich sie.'); }},
+    {t:'Du hast heute dein Brot vergessen.',once:'dzBr',if:F(A,'k4.g.bread'),go:async function(A){ await J.say('Du hast es mir zur Arbeit gebracht. Die Kolleginnen wollten wissen, wer der Mann ist.'); await A.wait(400); await J.say('Ich habe gesagt: mein Sohn. Sie haben gesagt: Du hast einen Sohn?'); await A.wait(800); await J.say('Iss die Vanilice. Sonst esse ich sie.'); }},
     {t:'Ana hat mich mitgenommen. Zum Rodeln.',once:'dzWa',if:F(A,'k4.d1.walk'),go:async function(A){ await J.say('Sie hat geschrieben. Du bist hingefallen. Mit Absicht, sagt Mia.'); await A.wait(300); await J.say('Mia lügt nicht. Sie ist sieben.'); }},
-    {t:'Wie war der Dienst?',once:'dzDi',go:async function(A){ await J.say('Weihnachten im Heim. Kartoffelsalat, ein Pfarrer vom Band, den keiner hören will, und ein Bewohner, der den ganzen Nachmittag am Aufzug steht.'); await A.wait(400); await J.say('Wie jeden Tag.'); }},
+    {t:'Wie war der Dienst?',once:'dzDi',go:async function(A){ await J.say('Weihnachten im Heim. Kartoffelsalat, Musik vom Band, die keiner hören will, und ein Bewohner, der den ganzen Nachmittag am Aufzug steht.'); await A.wait(400); await J.say('Wie jeden Tag.'); }},
     {t:'Erzähl mir von Baka.',silent:true,if:!F(A,'k4.d1.baka'),go:function(A){ return dzBaka(A,J); }},
     {t:'Was hat Baka dir damals geschrieben? Dreiundneunzig.',silent:true,if:F(A,'k4.d1.baka'),go:async function(A){ await dzLesart(A,J); return 'bye'; }}
   ]; });
@@ -226,7 +226,7 @@ M.k4JasnaNotice=async function(A){ var G=A.G; if (N(A,'z4_ankunft')) return; var
     if (gHere(A)){ await A.wait(900); await A.g('Sie erzählt von der Ankunft.'); await A.wait(500); await A.g('Nicht von der Abfahrt.'); }
     var d=await A.choose([{t:'Und die Abfahrt? In Sarajevo?',id:'ab'},{t:'(Nicht fragen.)',id:'no',silent:true}],{title:'Mama'});
     if (d==='ab'){ await A.wait(1000); await J.say('Iss. Es wird kalt.'); } else { await A.wait(900); await J.say('Die Kartoffeln sind für morgen. Iss trotzdem eine.'); }
-    await A.wait(600); await J.say('Wann wird er beerdigt?'); await A.m('Am Donnerstag.'); await A.wait(700); await J.say('Ich komme mit.'); await A.wait(500); await J.say('Ich will ihm danke sagen. Zwanzig Jahre zu spät. Er wird es mir nicht übel nehmen.');
+    await A.wait(600); await J.say('Wann wird er beerdigt?'); if (N(A,'s4_termin')) await A.m('Am Donnerstag.'); else { await A.m('Das weiß ich noch nicht. Bald.'); await J.say('Sag es mir, wenn du es weißt.'); } await A.wait(700); await J.say('Ich komme mit.'); await A.wait(500); await J.say('Ich will ihm danke sagen. Zwanzig Jahre zu spät. Er wird es mir nicht übel nehmen.');
     A.setFlag('k4.d2.jasnaComes');
     if (A.has('aushang')){ await A.wait(300); await J.say('Gib den Zettel der Frau zurück. Sie braucht ihn noch. Für die anderen, die ihn kannten.'); } });
   await M.k4TalkJasna(A); };
@@ -244,7 +244,8 @@ var TELL_ALSO=['z4_vermisst','z4_kolar','z4_lesart','z4_ana2004'];
 async function tooEarly(A,J){ var n=await A.askNote('Was sage ich ihr?',{also:TELL_ALSO});
   if (!n){ await A.m('Nichts. Noch nicht.'); await J.say('Dann iss.'); return false; }
   if (n==='z4_ana2004'){ await A.m('…'); await A.wait(700); await A.m('Nein. Das ist Anas. Das sagt Ana selbst.'); return false; }
-  if (n==='z4_vermisst'||n==='z4_lesart'){ await A.m('Ruža hat geschrieben, er ist nicht zurückgekommen. Du hast vermisst daraus gemacht.'); await A.wait(1100);
+  if (n==='z4_lesart'){ await A.m('Du sagst, Ruža hat nicht geschrieben, dass er tot ist.'); await A.wait(1000); await J.say('Hat sie nicht. Ich kann lesen.'); await A.wait(800); await A.narrate('Sie steht auf.'); await J.say('Ich muss morgen früh zum Dienst.'); return true; }
+  if (n==='z4_vermisst'){ await A.m('Ruža hat geschrieben, er ist nicht zurückgekommen. Du hast vermisst daraus gemacht.'); await A.wait(1100);
     await J.say('Ich kann lesen, Marko. Da stand nicht „tot“.'); await A.wait(900); await A.narrate('Sie steht auf. Die Kartoffelschalen bleiben liegen.'); await J.say('Ich muss morgen früh zum Dienst.'); return true; }
   if (n==='z4_kolar'){ await A.m('Frau Kolar hat angerufen. Aus Mostar. Ein Grab an der Brauerei. Ein Rechenschieber.'); await A.wait(1500);
     await J.say('Wer sagt das?'); await A.m('Frau Kolar.'); await A.wait(900); await J.say('Ich habe keine Probe gegeben.'); await A.wait(700); await A.narrate('Sie steht auf.'); await J.say('Ich muss morgen früh zum Dienst.'); return true; }

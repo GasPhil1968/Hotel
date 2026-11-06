@@ -242,6 +242,8 @@ function viewPaint(w,who){ var vw=clipW(w,inView), x, y;
   else if (who==='zora') viewZora(w,vw);
   else if (who==='mate') viewMate(w,vw);
   else if (who==='bato') viewBato(w,vw);
+  else if (who==='sepp') viewSepp(w,vw);
+  else if (who==='gerda') viewGerda(w,vw);
   else { forView(function(x,y){ var dx=(x+0.5-A.cx)/13, dy=(y+0.5-84)/30, d=Math.sqrt(dx*dx+dy*dy); vw.px(x,y,q(R('n0 n1 x1 x2 x3 x4'),0.95-d*0.75+Math.sin(x*1.3)*0.03,x,y)); }); }
   // leichte Abdunklung an den Rändern der Öffnung
   forView(function(x,y){ var e=Math.min(x-(A.cx-A.ri+3),A.cx+A.ri-1-x), top=openDist(x,y-3)>0||!inOpen(x,y-2); if ((e<1||top) && bayer(x,y)<0.6) vw.px(x,y,M.DN[w.get(x,y)]); }); }
@@ -316,6 +318,36 @@ function viewBato(w,vw){ var x, y, k, hz=91;
   for (k=0;k<7;k++){ var ax=42+k*2.2; for (y=72+k%3;y<92+(k*3)%7;y++) if ((y+k)%2) vw.px(Math.round(ax+Math.sin(y*0.3)*0.6),y,k%2?P.n0:P.k2); }
   for (x=40;x<=68;x+=2){ var rh=3+Math.floor(hash(x,7)*6); vw.vl(x,106-rh,106,hash(x,3)<0.5?P.k2:P.n0); } }                                // Schilf vorn
 
+// Kapitel 4 (München): Sepp – ein Bahnsteig von 1962 unter dem Hallendach, ein grüner Personenwagen mit warmen Fenstern, Dampf
+function viewSepp(w,vw){ var x, y, wt=72, wb=97;
+  forView(function(x,y){ var c;
+    if (y<59) c=q(R('k1 k2 n0 n1'),0.12+(y-48)/11*0.55,x,y);                                                            // Hallendach
+    else if (y<100) c=q(R('n0 n1 n2 x2 x3'),0.45+(y-59)/41*0.35+(fbm(x,y,6,3)-0.5)*0.16,x,y);                            // Licht der Halle, Dunst
+    else c=q(R('n1 n2 n3'),0.35+(y-100)/14*0.4+(hash(x>>1,y)-0.5)*0.2,x,y);                                             // Bahnsteig
+    vw.px(x,y,c); });
+  for (x=40;x<=68;x++){ vw.px(x,59,P.n2); vw.px(x,60,P.k2); } for (x=38;x<=68;x+=6) vw.line(x,48,x+5,59,P.k1);           // Träger
+  for (y=wt;y<=wb;y++) for (x=40;x<=68;x++){ var c=(y<wt+2)?P.n2:P.g1; if (y>wt+4 && y<wt+12 && ((x-40)%7)<5) c=(y<wt+6)?P.y3:P.y2; if (y===wt+14) c=P.g2; if (y>wb-3) c=P.k2; vw.px(x,y,c); }   // der grüne Wagen
+  vw.rect(46,wt+16,17,7,P.n3); M.microText(vw,'ROMA',47,wt+17,P.k1);                                                     // Zuglaufschild
+  for (x=41;x<=68;x+=9) vw.ellipse(x,wb+1,2,1.5,P.k1);
+  for (x=40;x<=68;x++){ vw.px(x,100,P.x3); vw.px(x,101,P.n1); }                                                          // Bahnsteigkante
+  vw.vl(64,62,100,P.k2); vw.rect(62,62,5,3,P.n1); vw.px(64,64,P.y3);                                                      // Lampe
+  forView(function(x,y){ var f=fbm(x*1.2,y*0.9,5,21)+(100-y)/80; if (y>66 && y<104 && x<58 && f>0.95 && bayer(x,y)<0.6) vw.px(x,y,f>1.15?P.x5:P.x4); });   // Dampf
+}
+// Kapitel 4 (München): Gerda – das Trambahn-Depot bei Nacht: Tor mit Lampe, Gleise im Schnee, eine Bank am Tor
+function viewGerda(w,vw){ var x, y;
+  forView(function(x,y){ var c;
+    if (y<70) c=q(R('k1 k2 n0 n1'),0.12+(y-48)/22*0.6+(fbm(x,y*2,8,4)-0.5)*0.1,x,y);
+    else if (y<100) c=q(R('k1 k2 t0 n0'),0.4+(hash(x>>2,y>>1)-0.5)*0.3,x,y);                                           // Ziegelwand des Depots
+    else c=q(R('n2 n3 x3 n4'),0.35+(y-100)/14*0.4+(fbm(x,y,4,7)-0.5)*0.3,x,y);                                          // Schnee
+    vw.px(x,y,c); });
+  for (y=70;y<100;y++) for (x=40;x<=68;x++){ if ((y-70)%4===0) vw.px(x,y,P.k2); }
+  for (y=78;y<100;y++) for (x=46;x<=62;x++){ var dy=y-82, inA=dy>=0 || Math.hypot((x-54)/8,dy/5)<1; if (inA) vw.px(x,y,(x===46||x===62)?P.n1:P.k0); }   // Bogentor, innen dunkel
+  vw.rect(52,73,5,2,P.n1); vw.px(54,75,P.y4); vw.px(53,75,P.y3); vw.px(55,75,P.y3);                                      // Lampe über dem Tor
+  for (y=74;y<96;y++) for (x=44;x<=64;x++){ var d=Math.hypot(x-54,(y-76)*1.3); if (d>2 && d<10 && bayer(x,y)<(1-d/10)*0.5){ var c0=w.get(x,y); if (c0!==P.k0) vw.px(x,y,M.UP[c0]); } }
+  for (y=100;y<113;y++){ var t=(y-100)/13, a=Math.round(52-t*7), bq=Math.round(56+t*7); vw.px(a,y,P.n1); vw.px(bq,y,P.n1); }   // Gleise ins Tor
+  vw.hl(41,47,98,P.n3); vw.vl(42,99,101,P.k2); vw.vl(46,99,101,P.k2); vw.hl(41,47,97,P.x4);                               // Bank mit Schnee
+  forView(function(x,y){ if (hash(x*3.1,y*1.7)<0.02 && y<100) vw.px(x,y,P.x5); }); }
+
 // ---------------------------------------------------------------- Stücke der Orte, an die die Geister gebunden waren
 var PROPS={
   ivka:{ r:[230,95,30,29], st:[222,126,'R'], foot:[228,0,260,123] },
@@ -327,7 +359,10 @@ var PROPS={
   zora:{ r:[227,88,38,36], st:[220,126,'R'], foot:[227,0,265,123] },
   // Kapitel 3: Mates Bank mit Feigenkübel und Schild; Batos Ponton am Seil (groß: Marko steht vorn am Ponton und fasst das Seil an der Rolle)
   mate:{ r:[226,68,64,56], st:[220,126,'R'], foot:[228,0,286,123] },
-  bato:{ r:[224,80,76,44], st:[252,127,'R'], foot:[226,0,278,123] }
+  bato:{ r:[224,80,76,44], st:[252,127,'R'], foot:[226,0,278,123] },
+  // Kapitel 4: Sepps Pappkoffer abseits vom Gepäckkarren (dahinter die Tür eines grünen Wagens mit Trittstufen); Gerdas hohe Einstiegsstufe der Neunzehn
+  sepp:{ r:[220,104,22,20], st:[226,127,'R'], foot:[220,0,304,122] },
+  gerda:{ r:[240,94,28,28], st:[236,127,'R'], foot:[242,0,304,122] }
 };
 var PROP_ANY={ r:[224,68,76,56], st:[218,126,'R'] };     // Vereinigung aller Varianten, falls niemand gesetzt ist
 function castShadow(b,cx,by,rx,ry){ for (var y=by-1;y<=by+ry+1;y++) for (var x=Math.floor(cx-rx-2);x<=cx+rx+2;x++){ var k=y*W+x; if (x<0||x>=W||y>=H||SID[k]<0) continue;
@@ -481,9 +516,63 @@ function propBato(b,w,S){ var x, y, x0=226, x1=276, dy=109, by=122, rx=262;
     else if (bayer(x,yi)<1-(I-0.72)/0.14) w.px(x,yi,P.x6); }
   var ry=Math.round(cabY(rx));                                                               // Rolle auf einem kurzen Pfosten, daran hängt der Ponton
   w.vl(rx,ry+2,dy-1,P.m3); w.vl(rx+1,ry+2,dy-1,P.m1); w.ellipse(rx+0.5,ry+0.5,2.1,2.1,function(xx,yy){ return (xx<rx)?P.m3:P.m1; }); w.px(rx,ry,P.x5); w.px(rx+1,ry+1,P.k2); }
+// Kapitel 4, Sepp: die Tür eines alten grünen Personenwagens mit zwei Trittstufen und dem Schild ROMA, oben ausgebrochen ins Nichts;
+// davor ein Gepäckkarren mit alten Koffern; abseits, allein, ein Pappkoffer mit Schnur (das Requisit)
+var SEPPDOOR={x0:270,x1:303,top:58,by:121};
+function propSepp(b,w,S){ var x, y, i, D=SEPPDOOR, cx0=240, cx1=266, cy=112;
+  castShadow(b,272,123,32,3.5);
+  // der Wagen: grün, die Tür mit Fenster, ein Griff; die Oberkante gebrochen wie die Steine
+  for (y=D.top;y<=D.by-10;y++) for (x=D.x0;x<=D.x1;x++){ var brk=D.top+Math.round(Math.abs(Math.sin(x*0.8+0.6))*3+(hash(x,33)<0.3?2:0)); if (y<brk) continue;
+    var c=(x<D.x0+2)?P.x4:((x>D.x1-2)?P.k1:P.g2); if (y===brk) c=P.g4; if (x>=D.x0+5 && x<=D.x0+20){ c=(x===D.x0+5||x===D.x0+20)?P.k1:P.g1; if (y>D.top+10 && y<D.top+24 && x>D.x0+7 && x<D.x0+18) c=(y<D.top+13)?P.y3:((x+y)%5===0?P.y3:P.y2); }
+    if (y===D.top+28 && x>D.x0+20) c=P.g4; if (y>D.by-14) c=(x<D.x0+2)?P.x3:P.g1; if (hash(x*1.3,y*0.7)<0.05 && c===P.g2) c=P.g1; w.px(x,y,c); }
+  w.vl(D.x0+3,D.top+12,D.by-12,P.m4); w.vl(D.x0+22,D.top+12,D.by-12,P.m3);                                                  // Griffstangen
+  w.rect(D.x0+23,D.top+14,9,5,P.s5); M.microText(w,'ROMA',D.x0+16,D.top+32,P.s5); w.hl(D.x0+15,D.x0+31,D.top+38,P.g3);        // Wagennummer, Laufschild
+  w.px(D.x0+25,D.top+16,P.k2); w.px(D.x0+28,D.top+16,P.k2);
+  // zwei Trittstufen aus Blech, nach links vorstehend
+  [[D.by-9,D.x0-6],[D.by-2,D.x0-9]].forEach(function(st,k){ var sy=st[0], sx=st[1]; for (y=sy;y<sy+3;y++) for (x=sx;x<=D.x0+16;x++){ var c2=(y===sy)?P.m4:(y===sy+1?P.m2:P.k2); if (x===sx) c2=(y===sy)?P.x5:P.x4; w.px(x,y,c2); }
+    w.vl(sx+1,sy+3,sy+6-k,P.k2); });
+  // Dampf, der unter dem Wagen hervorquillt (ruhend gemalt; dynamic lässt weiteren aufsteigen)
+  for (i=0;i<70;i++){ var px=D.x0-4+Math.floor(hash(i,61)*34), py=D.by-1-Math.floor(Math.pow(hash(i,62),1.5)*16); if (bayer(px,py)<0.55) w.px(px,py,hash(i,63)<0.5?P.x5:P.x4); }
+  // Gepäckkarren: Holzplatte auf zwei Rädern, langer Griff nach links oben; alte Koffer gestapelt
+  for (x=cx0;x<=cx1;x++){ w.px(x,cy,P.w4); w.px(x,cy+1,P.w2); w.px(x,cy+2,P.w0); } w.px(cx0,cy,P.x4);
+  w.line(cx0,cy,cx0-8,cy-14,P.m3); w.line(cx0+1,cy,cx0-7,cy-14,P.m1); w.hl(cx0-11,cx0-6,cy-15,P.m3);
+  [cx0+5,cx1-4].forEach(function(wx){ w.ellipse(wx+0.5,cy+5.5,3,3,P.k1); w.ellipse(wx+0.5,cy+5.5,1.6,1.6,P.m2); w.px(wx,cy+5,P.m4); });
+  [[cx0+2,cy-7,12,7,P.w2,P.y2],[cx0+15,cy-6,11,6,P.e2,P.m4],[cx0+4,cy-13,10,6,P.r1,P.y3],[cx0+15,cy-11,9,5,P.w1,P.m3]].forEach(function(k){ var kx=k[0], ky=k[1], kw=k[2], kh=k[3];
+    for (y=ky;y<ky+kh;y++) for (x=kx;x<kx+kw;x++){ var c3=k[4]; if (y===ky) c3=M.UP[k[4]]; if (x===kx) c3=(y===ky)?P.x4:M.UP[k[4]]; if (x===kx+kw-1) c3=P.k1; w.px(x,y,c3); }
+    w.px(kx,ky,k[5]); w.px(kx+kw-1,ky,k[5]); w.vl(kx+(kw>>1),ky,ky+kh-1,M.DN[k[4]]); w.rect(kx+(kw>>1)-1,ky-1,3,1,P.k2); });
+  // der Pappkoffer abseits: braune Pappe, eine Schnur kreuzweise, Griff, ein Anhänger
+  var px0=222, py0=110; castShadow(b,231,123,9,2.5);
+  for (y=py0;y<=py0+11;y++) for (x=px0;x<=px0+16;x++){ var c4=P.e3; if (y===py0) c4=P.e4; if (x===px0) c4=(y===py0)?P.x5:P.x4; if (x===px0+16) c4=P.e1; if (y===py0+11) c4=P.e1; if (hash(x*1.9,y*1.3)<0.06) c4=P.e2; w.px(x,y,c4); }
+  w.hl(px0+1,px0+15,py0+3,P.e2); w.vl(px0+5,py0,py0+11,P.s4); w.vl(px0+11,py0,py0+11,P.s4); w.hl(px0,px0+16,py0+6,P.s4);             // Schnur
+  w.rect(px0+6,py0-3,5,3,P.e1); w.px(px0+7,py0-2,P.k1); w.px(px0+8,py0-2,P.k1); w.px(px0+15,py0+2,P.s6); w.px(px0+16,py0+3,P.s5); }      // Griff, Anhänger
+// Kapitel 4, Gerda: die Stirn der alten Neunzehn (blau, weißes Band, warme Fenster), die Tür offen, die hohe Einstiegsstufe davor;
+// auf dem Dach das Liniensschild „19“, Schnee an der Kante
+var GTRAM={x0:250,x1:304,roof:58,by:109};
+function propGerda(b,w,S){ var x, y, i, T=GTRAM, fw=T.roof+5, fwb=T.roof+18, band=T.roof+20, low=T.roof+24;
+  castShadow(b,277,123,30,3.5);
+  for (y=T.roof;y<=T.by;y++) for (x=T.x0;x<=T.x1;x++){ var dx=x-T.x0, dy=y-T.roof; if (dx<5 && dy<5 && Math.hypot(5-dx,5-dy)>5.3) continue;      // runde Stirnecke
+    var c; if (y<fw-1) c=(y===T.roof)?P.s6:(y<T.roof+2?P.m4:P.m3); else if (y<fwb) c=P.s5; else if (y<band) c=P.s5; else if (y<low) c=P.s6; else c=(y>T.by-3)?P.b0:(y<low+2?P.b2:P.b1);
+    if (y>=fw && y<fwb){ if (dx<14) c=(dx<2)?P.s5:((dx===13)?P.s4:P.k2); else if (((dx-14)%10)<7) c=(y<fw+3)?P.y3:P.y2; }                         // Stirnfenster, Seitenfenster
+    if (dx>=3 && dx<=13 && y>=low && y<T.by) c=(y<low+6)?P.y2:(y<T.by-4?P.w1:P.w0);                                                               // offene Tür, innen warm
+    if (dx===0) c=(y<band)?P.x4:P.x3; if (x>T.x1-2) c=M.DN[c]; w.px(x,y,c); }
+  for (x=T.x0+3;x<T.x0+12;x++) if ((x+T.roof)%3===0) w.px(x,fw+2,P.x4);                                                                        // Spiegelung im Stirnfenster
+  w.hl(T.x0+14,T.x1,low-1,P.s4); w.hl(T.x0+1,T.x1,band,P.s6);
+  w.rect(T.x0+3,T.roof-7,13,7,P.k1); w.hl(T.x0+3,T.x0+15,T.roof-7,P.m2); M.microText(w,'19',T.x0+6,T.roof-6,P.y4);                                // Linienschild
+  w.line(T.x0+30,T.roof,T.x0+46,T.roof-30,P.k2); w.line(T.x0+31,T.roof,T.x0+47,T.roof-30,P.k1);                                                 // Stromabnehmer, verliert sich im Dunkel
+  for (x=T.x0+3;x<=T.x1;x++) if (hash(x,71)<0.7) w.px(x,T.roof-1,hash(x,72)<0.5?P.s6:P.x5);                                                    // Schnee auf dem Dach
+  w.vl(T.x0+2,low,T.by-1,P.m4); w.vl(T.x0+14,low,T.by-1,P.m3);                                                                                    // Haltestangen
+  w.ellipse(T.x0+1.5,low+6,1.8,1.8,P.l1); w.px(T.x0+1,low+6,P.y5);                                                                               // Scheinwerfer
+  // die hohe Einstiegsstufe: ein Blechtritt weit über den Platten; darunter das Fahrgestell mit Rädern
+  var sx0=T.x0-8, sy=T.by+1; for (y=sy;y<sy+3;y++) for (x=sx0;x<=T.x0+14;x++){ var c2=(y===sy)?P.m4:(y===sy+1?P.m2:P.k2); if (x===sx0) c2=(y===sy)?P.x5:P.x4; w.px(x,y,c2); }
+  w.line(sx0+1,sy+3,sx0+5,sy+6,P.k2); w.vl(T.x0+13,sy+3,sy+7,P.k1);
+  for (y=T.by+1;y<=T.by+9;y++) for (x=T.x0+16;x<=T.x1;x++){ var c3=(y===T.by+1)?P.m1:P.k1; if ((x-T.x0)%9===0) c3=P.k2; w.px(x,y,c3); }
+  [T.x0+24,T.x0+44].forEach(function(wx){ w.ellipse(wx+0.5,T.by+9.5,3.4,3,P.k2); w.ellipse(wx+0.5,T.by+9.5,1.8,1.6,P.m1); w.px(wx,T.by+8,P.m3); });
+  // Schnee auf den Platten um den Tritt
+  for (i=0;i<70;i++){ var gx=T.x0-16+Math.floor(hash(i,81)*64), gy=T.by+9+Math.floor(hash(i,82)*6); if (gy>122) continue; var k=gy*W+gx; if (SID[k]<0) continue; w.px(gx,gy,hash(i,83)<0.5?P.s6:P.s5); } }
 function propPaint(b,S){ var w=RW(b), who=whoOf(S); if (who==='ivka') propIvka(b,w); else if (who==='luka') propLuka(b,w); else if (who==='bruno') propBruno(b,w);
   else if (who==='tomaz') propTomaz(b,w,S); else if (who==='ivan') propIvan(b,w,S); else if (who==='zora') propZora(b,w,S);
-  else if (who==='mate') propMate(b,w,S); else if (who==='bato') propBato(b,w,S); }
+  else if (who==='mate') propMate(b,w,S); else if (who==='bato') propBato(b,w,S);
+  else if (who==='sepp') propSepp(b,w,S); else if (who==='gerda') propGerda(b,w,S); }
 
 // ---------------------------------------------------------------- lose, schwebende Steine (wippen in dynamic um 1 px)
 var FLOAT=[{x:8,y:113,w:12,h:7,s:1.05,p:0.4},{x:18,y:130,w:8,h:5,s:1.3,p:2.2},{x:2,y:99,w:6,h:4,s:0.9,p:4.1},{x:22,y:95,w:4,h:3,s:1.4,p:0.9},
@@ -530,7 +619,13 @@ function dyn(fb,view,S,GS){ var t=view.t, cam=view.cam|0, x, y, k, i;
   // Kapitel 2, Ivan: ist die Zeile übersetzt, schimmern die Seiten des Buchs
   if (S && S.who==='ivan' && S.lineDone){ for (i=0;i<7;i++){ var px=234+Math.round(hash(i,51)*14), py=101+Math.round(hash(i,52)*3), a=Math.sin(t*(2+hash(i,53)*2)+i*1.9); if (a>0.55) fb.px(px-cam,py,a>0.85?P.l1:P.x6); } }
   // Kapitel 3, Bato: ab und zu läuft ein Glanz am Seil hinauf ins Licht
-  if (S && S.who==='bato'){ var ph=(t*0.22)%1.6; if (ph<1){ var gx=Math.round(262-ph*(262-LX-16)), gy=Math.round(cabY(gx)); k=gy*W+gx; if (gx>=0 && gx<W && LI[k]<0.86){ fb.px(gx-cam,gy,LI[k]>0.5?P.l1:P.x6); fb.px(gx+1-cam,gy,P.x5); } } } }
+  if (S && S.who==='bato'){ var ph=(t*0.22)%1.6; if (ph<1){ var gx=Math.round(262-ph*(262-LX-16)), gy=Math.round(cabY(gx)); k=gy*W+gx; if (gx>=0 && gx<W && LI[k]<0.86){ fb.px(gx-cam,gy,LI[k]>0.5?P.l1:P.x6); fb.px(gx+1-cam,gy,P.x5); } } }
+  // Kapitel 4, Sepp: Dampf steigt unter dem Wagen auf und vergeht
+  if (S && S.who==='sepp'){ for (i=0;i<16;i++){ var sp=(t*(0.18+hash(i,64)*0.12)+hash(i,65))%1, sx=Math.round(SEPPDOOR.x0-6+hash(i,66)*36+Math.sin(t*0.9+i)*2+sp*6), sy=Math.round(SEPPDOOR.by-2-sp*34);
+      if (bayer(sx,sy)<0.7-sp*0.6){ fb.px(sx-cam,sy,sp<0.4?P.x6:P.x5); if (sp<0.5) fb.px(sx+1-cam,sy,P.x4); } } }
+  // Kapitel 4, Gerda: Schnee fällt um die Trambahn, der Scheinwerfer flackert kaum merklich
+  if (S && S.who==='gerda'){ for (i=0;i<14;i++){ var fy=Math.round((t*(6+hash(i,74)*5)+hash(i,75)*80)%80)+42, fx=Math.round(230+hash(i,76)*76+Math.sin(t*0.7+i*1.3)*3); k=fy*W+fx; if (fx<0||fx>=W||fy>=H) continue; if (bayer(fx,fy)<0.8) fb.px(fx-cam,fy,fy>100?P.s5:P.s6); }
+    if (Math.sin(t*1.7)+Math.sin(t*4.1)*0.4>1.1) fb.px(GTRAM.x0+3-cam,GTRAM.roof+39,P.l1); } }
 
 // ---------------------------------------------------------------- Lauffläche, Hotspots
 function surfOK(x,y){ x|=0; y|=0; if (x<3||x>W-4||y<2||y>H-3) return false; var k=y*W+x; return SID[k]>=0&&SID[k-3]>=0&&SID[k+3]>=0&&SID[k-2*W]>=0&&SID[k+2*W]>=0; }

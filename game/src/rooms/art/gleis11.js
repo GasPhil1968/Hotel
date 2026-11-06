@@ -165,8 +165,6 @@ function trainSide(b,Xs,Y0,Z0,Z1,fn){ // Seitenfläche bei X=Xs von Z0 (fern) bi
   var a=pk(Xs,Y0,Z0), c=pk(Xs,Y0,Z1), xa=rnd(Math.min(a[0],c[0])), xc=rnd(Math.max(a[0],c[0]));
   for (var x=Math.max(0,xa);x<=Math.min(W-1,xc);x++){ var k=(x-VP[0])/(Xs-VP[0]); if (k<1+Z0/F||k>1+Z1/F) continue; var Z=(k-1)*F, yt=VP[1]+(Y0-VP[1])*k, yb=VP[1]+(FL-VP[1])*k;
     for (var y=Math.max(0,Math.floor(yt));y<=Math.min(H-1,Math.ceil(yb));y++){ var Y=VP[1]+(y-VP[1])/k; if (Y<Y0||Y>FL) continue; zpx(b,x,y,fn(Z,Y,k,x,y),k); } } }
-function trainTop(b,X0,X1,Yt,Z0,Z1,col){ // Dachfläche (nur sichtbar, wenn über Augenhöhe? nein: Dach liegt über dem Horizont, unsichtbar) – Platzhalter
-}
 function trainFace(b,X0,X1,Ytop,Z,kind){ // Stirnseite (parallel zur Bildebene)
   var k=1+Z/F, a=pk(X0,Ytop,Z), z=pk(X1,FL,Z), x0=rnd(a[0]), x1=rnd(z[0]), y0=rnd(a[1]), y1=rnd(z[1]), w=x1-x0, h=y1-y0, x, y;
   if (kind==='ec'){
@@ -372,11 +370,14 @@ function paint(S,GS,tod){ var w=wea(GS), b=new M.Buf(W,H,P.k0), x, y, i;
   // ---- Dunst und Nebel nach Tiefe
   var hz=WX.haze, hc=WX.hazeCol; if (tod!=='day') hc=P.n0;
   M.fogBake(b,function(xx,yy){ var i3=yy*W+xx, k=KB[i3]; if (k<=0) return 0; if (OPEN[i3]===1 || OPEN[i3]===2 && k<1.5) return Math.min(1,hz*1.15+0.05); var f=Math.max(0,(KF-k)/(KF-1)); return Math.min(0.95,hz*Math.pow(f,1.4)*(w==='fog'?1.05:1)); },{col:hc});
+  // Mischfarben des Dunstes, die ins Lavendel kippen, auf die graue Rampe zurücklegen
+  var VFIX={}; VFIX[P.v2]=P.m2; VFIX[P.v3]=P.m3; VFIX[P.v4]=P.m4; VFIX[P.v5]=P.s5; VFIX[P.d3]=P.r3; VFIX[P.d2]=P.r2;
+  for (var q=0;q<W*H;q++){ var cq=b.d[q]; if (VFIX[cq]!==undefined && KB[q]<KF) b.d[q]=VFIX[cq]; }
   // ---- Licht
   M.light(b,function(xx,yy){ var i4=yy*W+xx; if (OPEN[i4]) return 0; var a=-0.25+lgt(xx,yy); if (yy>FRONTY && xx>FAC.x1-10 && xx<FAC.x1+50) a-=0.15; return a; });
   if (w==='snowlie'||w==='sun') sunBeams(b);
   LASTB=b.clone();
-  if (tod!=='day') b=M.finishTOD(b,tod,{sky:function(xx,yy){ return OPEN[yy*W+xx]>0; },lights:[[110,80,40,0.8],[300,100,60,0.6],[410,90,40,0.8],[510,80,50,0.7]]});
+  if (tod!=='day') b=M.finishTOD(b,tod,{sky:function(xx,yy){ return OPEN[yy*W+xx]>0; },lights:[[136,80,14,0.55,10],[300,104,70,0.35,12],[408,84,26,0.5,20],[456,30,40,0.35,16]]});
   return b; }
 // schräge Lichtbahnen durch das Glasdach (klare Tage)
 function sunBeams(b){ for (var y=8;y<FRONTY;y++) for (var x=FAC.x1;x<W;x++){ var i=y*W+x; if (OPEN[i]===1) continue; var u=(x-y*0.55-180)%58; if (u<0) u+=58; if (u<9 && bayer(x,y)<0.22*(1-Math.abs(u-4.5)/4.5)*(1-y/FRONTY*0.6)) b.d[i]=M.UP[b.d[i]]; } }
@@ -419,7 +420,8 @@ function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, w=wea(GS), i, x, y;
   // Tauben
   if (v.tod!=='night') PIG.forEach(function(p,j){ var px=p[0]+rnd(Math.sin(t*0.33+j*1.7)*5); pigeon({w:fb.w,px:function(X,Y,c){ P2(X+cam,Y,c); }},px-cam,p[1],(Math.sin(t*0.21+j)>0)?1:-1,t,j); });
   // Schnee im Freien (Hallenende, Ausgang, Bogenfenster)
-  if (w==='snow'){ for (i=0;i<70;i++){ var sp=8+hash(i,41)*12, X2=rnd(240+((hash(i,43)*240+t*4+Math.sin(t*0.7+i)*5)%240+240)%240), Y2=rnd(((t*sp+hash(i,42)*80)%80)+4); var ii=Y2*W+X2; if (Y2<H && OPEN[ii]) P2(X2,Y2,hash(i,44)<0.3?P.s6:P.s5); }
+  if (w==='snow'){ for (i=0;i<130;i++){ var sp=5+hash(i,41)*8, X2=rnd(XL+((hash(i,43)*(XR-XL)+t*3+Math.sin(t*0.7+i)*4)%(XR-XL)+(XR-XL))%(XR-XL)), Y2=rnd(((t*sp+hash(i,42)*70)%70)+2); var ii=Y2*W+X2; if (Y2<H && OPEN[ii]){ P2(X2,Y2,hash(i,44)<0.4?P.s6:P.s5); if (hash(i,45)<0.25 && OPEN[ii+1]) P2(X2+1,Y2,P.s5); } }
+    for (i=0;i<40;i++){ var X5=rnd(FAC.x1+((hash(i,63)*120+t*2)%120)), Y5=rnd(((t*(6+hash(i,62)*6)+hash(i,64)*110)%110)); var i5=Y5*W+X5; if (Y5<H && OPEN[i5]===2 && X5<XL) P2(X5,Y5,P.s6); }
     for (i=0;i<20;i++){ var X3=rnd(6+((hash(i,53)*38+t*3)%38)), Y3=rnd(64+((t*(9+hash(i,52)*6)+hash(i,54)*26)%26)); if (OPEN[Y3*W+X3]) P2(X3,Y3,P.s6); } }
   // Tauwetter: Tropfen an der Kante der Glasschürze
   if (w==='thaw'){ for (i=0;i<10;i++){ var X4=XL+6+rnd(hash(i,61)*140), ph2=(t*0.9+hash(i,62))%1, Y4=YOPEN+rnd(ph2*14); if (OPEN[Y4*W+X4]) P2(X4,Y4,P.s5); } }
@@ -438,8 +440,9 @@ function suitcaseShape(fb,cx,by,s,kind,a,cam){ var w=Math.max(4,rnd(s*(kind===2?
   return [x0,y0,w,h]; }
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam, i, T11=TRAIN11;
   // Strom alter Koffer: kommen vom Bahnsteig 11 hinter der Lok hervor und ziehen über den Querbahnsteig zum Ausgang, getragen von niemandem
-  for (i=0;i<9;i++){ var ph=(t*0.035+i/9)%1, lane=((i*5)%3)-1, fx=lerp(208,24,ph)+lane*3, fy=lerp(103,124+lane*5,Math.min(1,ph*1.3)), step=Math.abs(Math.sin(t*3.4+i*1.9));
-    var s=(fy-VP[1])/50, a=Math.min(1,Math.min(ph*7,(1-ph)*3.5))*0.95; if (a<=0.03) continue;
+  var NS=(S && S.sepp===false)?4:9, FA=(S && S.sepp===false)?0.6:1;
+  for (i=0;i<NS;i++){ var ph=(t*0.035+i/NS)%1, lane=((i*5)%3)-1, fx=lerp(208,24,ph)+lane*3, fy=lerp(103,124+lane*5,Math.min(1,ph*1.3)), step=Math.abs(Math.sin(t*3.4+i*1.9));
+    var s=(fy-VP[1])/50, a=Math.min(1,Math.min(ph*7,(1-ph)*3.5))*0.95*FA; if (a<=0.03) continue;
     var r=suitcaseShape(fb,fx,rnd(fy-16*s-step*1.2),s,i%3,a,cam);
     // Hauch eines Trägers: ein paar kalte Pixel über dem Koffer
     var hx=r[0]+((i%2)?r[2]+1:-2), ht=rnd(30*s); for (var q=0;q<ht;q++){ var Y=r[1]+r[3]-q-2; if (hx>=0&&hx<fb.w&&Y>=0&&bayer(hx,Y+Math.floor(t*5))<a*0.25*(1-q/ht)) fb.px(hx,Y,P.x2); } }

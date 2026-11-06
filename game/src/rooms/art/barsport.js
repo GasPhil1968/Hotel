@@ -18,7 +18,7 @@ var PH={x0:116,x1:178,y0:24,y1:68};                     // Fotowand
 var P62={x:124,y:28,w:28,h:20};                         // das Foto von 1962
 var MIR={x0:188,x1:266,y0:24,y1:58};                    // Spiegel hinter der Theke
 var CNT={X0:186,X1:268,Y0:72,Z0:16,Z1:30};              // Theke
-var FRZ={X0:246,X1:268,Y0:82,Z0:38,Z1:62};              // Kühltruhe an der rechten Wand
+var FRZ={X0:238,X1:268,Y0:82,Z0:38,Z1:62};              // Kühltruhe an der rechten Wand
 var TV={u:30,v:34};                                     // Fernseher an der rechten Wand
 var T1={X:104,Z:42}, T2={X:146,Z:56};                   // Marmortische (Mitte)
 var GAST3=[63,113], ENZO=[244,100];
@@ -32,6 +32,7 @@ function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.
 function qrect(q){ var xs=q.map(function(p){ return p[0]; }), ys=q.map(function(p){ return p[1]; }), x0=Math.floor(Math.min.apply(null,xs)), y0=Math.floor(Math.min.apply(null,ys)); return [x0,y0,Math.ceil(Math.max.apply(null,xs))-x0,Math.ceil(Math.max.apply(null,ys))-y0]; }
 function wallUV(sd,x,y){ var ex=sd==='L'?RECT[0]:RECT[2], t=(ex-VP[0])/(x-VP[0]); if (t<=0) return null; var D=sd==='L'?(VP[0]-RECT[0]):(RECT[2]-VP[0]); return {u:(1/t-1)*D, v:VP[1]+(y-VP[1])*t}; }
 function inUV(w,U){ return w && w.u>=U[0] && w.u<U[1] && w.v>=U[2] && w.v<U[3]; }
+function haze(b,amt,col,col2,x0,y0,w,h){ for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var a=amt(x,y); if (!(a>0.01)) continue; if (bayer(x,y)<a) b.px(x,y,(col2!==undefined && bayer(x+1,y+2)<0.5)?col2:col); } }   // Dunst als Raster (keine Mischfarben)
 function wea(GS){ var w=M.scn.weather(GS); return (w==='snow'||w==='thaw'||w==='fog'||w==='sun')?w:'snowlie'; }
 
 // ---------------------------------------------------------------- Licht: warme Hängelampen, Tageslicht durch Fenster und Tür
@@ -123,7 +124,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   b.ellipse(cr[0]+2,cr[1]-50,4,1.4,P.k2); b.rect(cr[0],cr[1]-54,5,4,P.k2); b.hl(cr[0],cr[0]+4,cr[1]-54,P.m1);                                                        // Hut
   // ---- Rückwand: Fenster, Fotowand, Spiegel mit Schriftzug und Flaschen
   for (y=WIN.y0;y<WIN.y1;y++) for (x=WIN.x0;x<WIN.x1;x++){ b.px(x,y,street(x,y,w,tod,x-WIN.x0,y-WIN.y0)); WM[y*W+x]=1; }
-  var fa={fog:0.75,snow:0.3,thaw:0.12}[w]||0; if (fa && tod==='day') M.fogBake(b,function(xx,yy){ return WM[yy*W+xx]?fa*(yy<WIN.y0+40||xx<WIN.x0?1:0.7):0; },{col:w==='fog'?P.s4:P.s5});
+  var fa={fog:0.75,snow:0.3,thaw:0.12}[w]||0; if (fa && tod==='day') haze(b,function(xx,yy){ return WM[yy*W+xx]?fa*(yy<WIN.y0+40||xx<WIN.x0?1:0.7):0; },w==='fog'?P.s4:P.s5,w==='fog'?P.m4:P.s6,0,0,W,H);
   b.rect(WIN.x0-3,WIN.y0-3,WIN.x1-WIN.x0+6,3,P.w2); b.rect(WIN.x0-3,WIN.y1,WIN.x1-WIN.x0+6,4,P.w2); b.rect(WIN.x0-3,WIN.y0,3,WIN.y1-WIN.y0,P.w2); b.rect(WIN.x1,WIN.y0,3,WIN.y1-WIN.y0,P.w2);
   b.hl(WIN.x0-3,WIN.x1+2,WIN.y0-3,P.w4); b.hl(WIN.x0-4,WIN.x1+3,WIN.y1+4,P.w4); b.hl(WIN.x0-4,WIN.x1+3,WIN.y1+5,P.w1);
   for (y=WIN.y0;y<WIN.y1;y++){ var mx=rnd((WIN.x0+WIN.x1)/2); b.px(mx,y,P.w2); WM[y*W+mx]=0; } for (x=WIN.x0;x<WIN.x1;x++){ b.px(x,WIN.y0+14,P.w2); WM[(WIN.y0+14)*W+x]=0; }
@@ -131,7 +132,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   for (y=WIN.y0+25;y<WIN.y1;y++) for (x=WIN.x0;x<WIN.x1;x++){ var cu=(y===WIN.y0+25)?P.y2:(((x+(y>>1))%6===0||(x-(y>>1)+60)%6===0)?P.s4:P.s5); if (y===WIN.y1-1) cu=P.s4; if (y===WIN.y0+26 && x%3===0) cu=P.y3; b.px(x,y,cu); WM[y*W+x]=0; }
   // Fotowand
   photo(b,P62.x,P62.y,P62.w,P62.h,'1962',P.w1); b.rect(P62.x,P62.y+P62.h+2,P62.w,3,P.s5); M.microText(b,'1962',P62.x+7,P62.y+P62.h+2,P.k1);
-  photo(b,156,26,14,11,'couple',P.y2); photo(b,158,42,16,12,'team',P.k2); photo(b,124,54,13,11,'village',P.w1); photo(b,141,54,11,12,'man',P.k2); photo(b,174,44,0,0,'man');
+  photo(b,156,26,14,11,'couple',P.y2); photo(b,158,42,16,12,'team',P.k2); photo(b,124,54,13,11,'village',P.w1); photo(b,141,54,11,12,'man',P.k2);
   pennant(b,162,58,14,9);
   // Spiegel mit „BAR SPORT“, Glasborde mit Flaschen
   var m=MIR; b.rect(m.x0-2,m.y0-2,m.x1-m.x0+4,m.y1-m.y0+4,P.w1); b.hl(m.x0-2,m.x1+1,m.y0-2,P.w3);
@@ -139,8 +140,6 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   var tw=M.textWidth('BAR SPORT'), tx=rnd((m.x0+m.x1)/2-tw/2); M.text(b,'BAR SPORT',tx+1,m.y0+4,P.y1); M.text(b,'BAR SPORT',tx,m.y0+3,P.y4); SIGN=[tx-2,m.y0+1,tw+4,11];
   [[m.y0+26,3],[m.y1-2,5]].forEach(function(sh,j){ var yb=sh[0], r=M.rng(11+j*7); b.hl(m.x0,m.x1-1,yb,P.s5); b.hl(m.x0,m.x1-1,yb+1,P.m1);
     var xx=m.x0+3; while (xx<m.x1-5){ var k=Math.floor(r()*6), hgt=9+Math.floor(r()*4), col=[P.r3,P.t4,P.g2,P.k1,P.y3,P.s5][k]; b.rect(xx,yb-hgt+3,4,hgt-3,col); b.vl(xx,yb-hgt+3,yb-1,M.UP[col]); b.rect(xx+1,yb-hgt,2,3,col); b.px(xx+1,yb-hgt,P.k2); if (k!==5){ b.rect(xx,yb-hgt+5,4,3,P.s6); b.px(xx+1,yb-hgt+6,P.r2); } b.px(xx+1,yb-hgt+4,P.l0); xx+=5+(r()<0.3?1:0); } });
-  // Preistafel neben dem Spiegel
-  var pb={x:244,y:62,w:0}; // (bewusst ohne: die Theke verdeckt den unteren Rand)
   // ---- rechte Wand: Fernseher auf Wandarm, darunter Kalender eines Fußballvereins (nur Farben)
   var tv=rp(M.wallPt(SPEC,'R',TV.u,TV.v)); TVP=[tv[0]-12,tv[1]-8];
   b.line(tv[0]+6,tv[1]+10,tv[0]+12,tv[1]+14,P.k2); b.rect(tv[0]-14,tv[1]-10,22,17,P.k1); b.hl(tv[0]-14,tv[0]+7,tv[1]-10,P.m2); b.rect(tv[0]-13,tv[1]-9,20,15,P.m1); b.rect(tv[0]-12,tv[1]-8,16,12,P.n1); b.rect(tv[0]+5,tv[1]-8,1,12,P.m2);

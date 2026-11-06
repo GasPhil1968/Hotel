@@ -123,8 +123,8 @@ M.room('wiesn',{ name:'Theresienwiese', scape:'k4_wiesn',
   actors:function(S,G){ var L=[]; S.walk=walkHere(G);
     if (S.walk){ var a=M.apos('wiesn','ana',[400,124,'L']), m=M.apos('wiesn','mia',[180,118,'R']), n=M.apos('wiesn','niko',[424,126,'L']);
       L.push({id:'anaC',ch:'anaC',x:a[0],y:a[1],f:a[2]||'L',name:'Ana',idle:'arms',speechY:44});
-      L.push({id:'miaC',ch:'miaC',x:m[0],y:m[1],f:m[2]||'R',name:'Mia',idle:'sled',speechY:32,routine:[['idle','sled',5,9],['anim','jump'],['idle','sled',6,10]]});
-      L.push({id:'nikoC',ch:'nikoC',x:n[0],y:n[1],f:n[2]||'L',name:'Niko',idle:'play',speechY:26,routine:[['idle','play',5,9],['anim','point'],['idle','play',4,8]]}); }
+      L.push({id:'miaC',ch:'miaC',x:m[0],y:m[1],f:m[2]||'R',name:'Mia',idle:'sled',speechY:38,routine:[['idle','sled',5,9],['anim','jump'],['idle','sled',6,10]]});
+      L.push({id:'nikoC',ch:'nikoC',x:n[0],y:n[1],f:n[2]||'L',name:'Niko',idle:'play',speechY:30,routine:[['idle','play',5,9],['anim','point'],['idle','play',4,8]]}); }
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G;
