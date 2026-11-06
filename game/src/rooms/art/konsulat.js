@@ -11,8 +11,8 @@ var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, R=M.R;
 var W=320, H=144, VP=[164,54], RECT=[42,18,272,96], F=100, FY=96;
 var R3=M.room3(VP,F,FY), SPEC={vp:VP,rect:RECT};
 var DOOR=[8,36,28,96];                                   // Tür in der linken Wand
-var WIN={x0:50,x1:88,y0:28,y1:66};                       // Fenster mit Lamellen
-var POS=[{x:94,y:30,w:30,h:36,t:'PASS',s:'PASOŠ'},{x:128,y:32,w:28,h:32,t:'ANTRAG',s:'ZAHTJEV'}];
+var WIN={x0:48,x1:80,y0:28,y1:66};                       // Fenster mit Lamellen
+var POS=[{x:98,y:30,w:28,h:36,t:'PASS',s:'PASOŠ'},{x:130,y:32,w:28,h:32,t:'ANTRAG',s:'ZAHTJEV'}];
 var PART={X0:168,X1:272,Z:12};                           // Schalterwand (Vorderseite bei Z)
 var G1={X0:176,X1:218}, G2={X0:226,X1:266};              // Schalterfenster (in Rückwand-X)
 var GLY0=40, GLY1=74;                                    // Glas oben/unten (Höhe Y)
@@ -94,8 +94,10 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), w=wea(GS), x, y, i;
   var dq=M.wallQuad(SPEC,'L',DOOR[0],DOOR[1],DOOR[2],DOOR[3]), dq2=M.wallQuad(SPEC,'L',DOOR[0]-2,DOOR[1]+2,DOOR[2]-3,DOOR[3]);
   b.poly(dq2,P.m2); b.poly(dq,function(xx,yy){ var wv=wallUV('L',xx,yy); if (!wv) return P.s4; var lu=(wv.u-DOOR[0])/(DOOR[1]-DOOR[0]); return (lu>0.88)?P.s3:(((xx+yy)%11===0)?P.s3:P.s4); });
   var kn=rp(M.wallPt(SPEC,'L',DOOR[1]-4,64)); b.rect(kn[0]-2,kn[1],4,1,P.m4); b.px(kn[0],kn[1]+1,P.m3);
-  var na=rp(M.wallPt(SPEC,'L',DOOR[1]+8,FY)); b.rect(na[0]-4,na[1]-34,9,34,P.m3); b.vl(na[0]-4,na[1]-34,na[1]-1,P.m4); b.vl(na[0]+4,na[1]-34,na[1]-1,P.m1); b.rect(na[0]-3,na[1]-30,7,6,P.k2); b.px(na[0],na[1]-21,P.r3); b.px(na[0]+1,na[1]-21,P.r4); b.rect(na[0]-2,na[1]-18,5,1,P.k1); b.px(na[0],na[1]-17,P.s6);
-  var ns=rp(M.wallPt(SPEC,'L',DOOR[1]+8,46)); b.rect(ns[0]-12,ns[1],25,19,P.s6); b.hl(ns[0]-12,ns[0]+12,ns[1]+18,P.s3); mt(b,'BITTE',ns[0]-9,ns[1]+1,P.b0); mt(b,'NUMMER',ns[0]-11,ns[1]+7,P.b0); mt(b,'ZIEHEN',ns[0]-11,ns[1]+13,P.b0);
+  // Nummernautomat auf einer Säule vor der Rückwand, Schild darüber
+  var na=rp(R3.p(89,FY,6)); b.rect(na[0]-1,na[1]-24,3,24,P.m2); b.vl(na[0]-1,na[1]-24,na[1]-1,P.m3); b.rect(na[0]-4,na[1]-1,9,1,P.k2);
+  b.rect(na[0]-4,na[1]-36,9,13,P.m3); b.vl(na[0]-4,na[1]-36,na[1]-24,P.m4); b.vl(na[0]+4,na[1]-36,na[1]-24,P.m1); b.rect(na[0]-3,na[1]-34,7,4,P.k2); b.px(na[0]-1,na[1]-33,P.y4); b.px(na[0],na[1]-28,P.r3); b.px(na[0]+1,na[1]-28,P.r4); b.rect(na[0]-2,na[1]-26,5,1,P.k1); b.px(na[0],na[1]-25,P.s6);
+  var nw=M.microWidth('NR'); b.rect(na[0]-5,na[1]-46,11,8,P.b0); M.microText(b,'NR',na[0]-nw/2|0,na[1]-45,P.s6); b.vl(na[0],na[1]-38,na[1]-37,P.m1);
   // ---- Rückwand: Fenster mit Lamellen, Plakate, Topfpflanze
   for (y=WIN.y0;y<WIN.y1;y++) for (x=WIN.x0;x<WIN.x1;x++){ var lam=((x-WIN.x0)%6), c; if (lam<3){ c=(lam===0)?P.s3:((lam===1)?P.s5:P.s4); if (y>WIN.y1-8 && lam===2) c=P.s3; } else { c=street(x,y,w,tod); WM[y*W+x]=1; } b.px(x,y,c); }
   var fa={fog:0.75,snow:0.3,thaw:0.12}[w]||0; if (fa && tod==='day') M.fogBake(b,function(xx,yy){ return WM[yy*W+xx]?fa:0; },{col:w==='fog'?P.s4:P.s5,x:WIN.x0,y:WIN.y0,w:WIN.x1-WIN.x0,h:WIN.y1-WIN.y0});
