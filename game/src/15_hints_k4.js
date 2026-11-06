@@ -103,9 +103,9 @@ M.HINTS_K4=[
  {id:'s4h',t:'Was Carmela wusste',open:function(G){ return N(G,'s4_brief79') && N(G,'s4_carmela_hall') && !N(G,'s4_wusste'); },
   s:['Ein Brief von 1979. Und eine Frau, die beim Schreiben weint.','Was sagt das über Carmela?','Im Notizbuch „Carmela, 1979“ und „Eine Frau, die weint“.','Die beiden Notizen verbinden.']},
  {id:'s4i',t:'Er kann gehen',open:function(G){ return F(G,'k4.s.call') && !F(G,'k4.s.crossed'); },
-  s:['Carmela hat es die ganze Zeit gewusst.','Das muss er hören.','An Gleis 11.','Ihm sagen, was Carmela gesagt hat.']},
+  s:['Carmela hat es die ganze Zeit gewusst. Jetzt kann er gehen.',{m:'Hinübergehen kann er nur mit Mala.',g:'Ich kann ihn hinüberbringen.'},'An Gleis 11, bei ihm.','Als Mala Peppino hinüberbringen.']},
  {id:'s4j',t:'Sepps Donnerstag',open:function(G){ return G.phase==='k4_d4' && !F(G,'k4.s.farewell'); },
-  s:['Heute ist Donnerstag.','Frau Wimmer richtet einen Abschied aus.','In der Bahnhofsmission.','In die Bahnhofsmission gehen.']},
+  s:['Heute ist Donnerstag.','Frau Wimmer richtet einen Abschied aus. Die Stadt will ihn heute von Amts wegen bestatten.',function(G){ return F(G,'k4.s.amtOff')?'In der Bahnhofsmission.':'Herr Obermaier muss den Termin absagen, unter dem richtigen Namen.'; },function(G){ return F(G,'k4.s.amtOff')?'In die Bahnhofsmission gehen.':'Bei Herrn Obermaier die Bestattung absagen lassen, dann in die Bahnhofsmission gehen.'; }]},
  // ---------------- Gerda (Fall B)
  {id:'g4a',t:'Drei Uhr',open:function(G){ return P(G,['k4_d2','k4_d3']) && N(G,'g4_gerda') && !N(G,'g4_drei'); },
   s:['Gerda kommt jeden Tag. Aber wann?','„Bis ich da bin“, sagt sie. Am Nachmittag.','Im Flur am Aufzug kann man warten.','Im Heim im Flur bis drei warten und zusehen.']},

@@ -153,7 +153,8 @@ async function smsLate(A){ A.setFlag('k3.p.sms','yes'); A.setFlag('k3.p.smsLate'
     var p=A.G.phase; if (p==='k3_epi'||p==='k3_epi_d') return A.m(F(A,'k3.e.call')?'Mein Handy. Ganz oben Nadas Nummer. Darunter Ljerka, Sanja, Hajra. Sarajevo, Split, Sarajevo.':'Mein Handy. Ein Balken Empfang. Nadas Nummer ist die erste in der Liste.');
     if (F(A,'k3.d1.ljerka')) return A.m('Mein Handy. Ljerka hat meine Nummer jetzt. Sanja hat sie ihr gegeben, ohne zu fragen. So ist Sanja.');
     return A.m(F(A,'k3.p.sms')==='yes'?'Mein Handy. Nadas SMS, „Jesi li stigao? N.“, und darunter meine Antwort. Zwei Zeilen, die nach mehr aussehen.':(F(A,'k3.p.sms')==='no'?'Mein Handy. Nadas SMS: „Jesi li stigao? N.“ Darunter nichts.':'Mein Handy. Ein Balken Empfang. „Dobrodošli u BiH“, schreibt die Telekom.')); };
-  Object.defineProperty(it,'use2',{configurable:true,enumerable:true,get:function(){ return M.chapterOf(M.GS)===3?k3Phone:undefined; }});
+  var d0=Object.getOwnPropertyDescriptor(it,'use2'), prev=function(){ return d0?(d0.get?d0.get.call(it):d0.value):undefined; };   // andere Kapitel (München) behalten ihr Anrufen
+  Object.defineProperty(it,'use2',{configurable:true,enumerable:true,get:function(){ return M.chapterOf(M.GS)===3?k3Phone:prev(); }});
   it.use2Label='Anrufen'; })();
 // ---------------------------------------------------------------- Sanja (Freitag)
 M.k3SanjaCall=async function(A){ if (F(A,'k3.d1.sanja')) return; var G=A.G; A.sfx('dial'); await A.wait(1500);
