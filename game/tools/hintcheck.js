@@ -1,5 +1,5 @@
 // Hinweise gegen echte Spielstände prüfen (statisch, ohne Spielablauf):
-//   node game/tools/hintcheck.js <dumps Kapitel 1> <dumps Kapitel 2> [<dumps Kapitel 3>]
+//   node game/tools/hintcheck.js <dumps Kapitel 1> <dumps Kapitel 2> [<dumps Kapitel 3>] [<dumps Kapitel 4>]
 // Die Ordner stammen aus MALA_DUMPALL=… node game/tools/walkthrough.js, walkthrough2.js bzw. walkthrough3.js (ein Stand nach jedem Schritt).
 // Geprüft wird je Stand:
 //  1. Abdeckung: mindestens ein offenes Hinweisthema, solange das Kapitel läuft.
@@ -27,7 +27,10 @@ const fs = require('fs'), path = require('path');
           neboder: ['Alipašino'], stanica: ['Busbahnhof'], ferhadija: ['Ferhadija'], obala: ['Obala', 'Miljacka'], carsija: ['Baščaršija', 'Čaršija'], pansion: ['Kovači', 'Pension'], vratnik: ['Vratnik'],
           // Kapitel 3 (Mostar)
           ostbus: ['Ostbusbahnhof'], herberge: ['Herberge'], kujundziluk: ['Kujundžiluk'], starimost: ['Alte Brücke', 'Alten Brücke'], koski: ['Koski', 'Minarett'], tepa: ['Tepa'],
-          strassenbr: ['Straßenbrücke'], bulevar: ['Bulevar', 'Vulkanizer'], partizan: ['Partisanenfriedhof', 'Westhang'], westbus: ['Westbusbahnhof', 'Zdravko'], zelenika: ['Haus Zelenika'], vermisst: ['Vermisstenstelle'], skela: ['Skela'] };
+          strassenbr: ['Straßenbrücke'], bulevar: ['Bulevar', 'Vulkanizer'], partizan: ['Partisanenfriedhof', 'Westhang'], westbus: ['Westbusbahnhof', 'Zdravko'], zelenika: ['Haus Zelenika'], vermisst: ['Vermisstenstelle'], skela: ['Skela'],
+          // Kapitel 4 (München)
+          zob: ['ZOB'], westend: ['Westend'], giesing: ['Giesing'], wiesn: ['Theresienwiese'], heim: ['Bavariapark'], hbf: ['Hauptbahnhof'], bhfviertel: ['Bahnhofsviertel', 'Bar Sport'],
+          friedhof: ['Städtische Friedhöfe', 'Friedhofsverwaltung'], moosach: ['Moosach'], konsulat: ['Generalkonsulat', 'Konsulat'] };
         const locs = M.mapLocs(G).map(l => l.id);
         openT.forEach(h => {
           const texts = []; for (let i = 0; i < 4; i++) ['mala', 'marko'].forEach(w => { const t = M.hintText(h, i, G, w); texts.push(t); if (typeof t !== 'string' || t.trim().length < 4) out.bad.push(h.id + ' Stufe ' + (i + 1) + ' (' + w + ') leer'); });
@@ -38,6 +41,7 @@ const fs = require('fs'), path = require('path');
         });
         if ((ch === 2) !== (M.HINTS_K2 === M.hintTopics(G))) out.bad.push('falsches Kapitel');
         if ((ch === 3) !== (M.HINTS_K3 === M.hintTopics(G))) out.bad.push('falsches Kapitel (Mostar)');
+        if ((ch === 4) !== (M.HINTS_K4 === M.hintTopics(G))) out.bad.push('falsches Kapitel (München)');
         out.items = Object.keys(M.ITEMS).map(id => ({ id, n: M.ITEMS[id].name }));
         return out;
       }, d);
@@ -54,7 +58,8 @@ const fs = require('fs'), path = require('path');
     }
   }
   // Themen der geprüften Kapitel (ohne Mostar-Stände wie bisher: Split und Sarajevo)
-  const all = await D.ev((c3) => (c3 === 'only' ? [] : (M.HINTS_K1 || []).concat(M.HINTS_K2 || [])).concat(c3 ? (M.HINTS_K3 || []) : []).map(h => h.id), chapters.has(3) ? (chapters.has(1) || chapters.has(2) ? 'also' : 'only') : null);
+  // Themen der Kapitel, deren Stände geprüft wurden
+  const all = await D.ev((chs) => { let L = []; if (chs.indexOf(1) >= 0 || chs.indexOf(2) >= 0) L = L.concat(M.HINTS_K1 || [], M.HINTS_K2 || []); if (chs.indexOf(3) >= 0) L = L.concat(M.HINTS_K3 || []); if (chs.indexOf(4) >= 0) L = L.concat(M.HINTS_K4 || []); return L.map(h => h.id); }, Array.from(chapters));
   const never = all.filter(id => !topicsSeen.has(id));
   console.log(`\n${states} Spielstände geprüft, ${all.length} Hinweisthemen, ${topicsSeen.size} davon in den Durchläufen offen gewesen.`);
   if (never.length) console.log('Nie offen (Nebenwege, alte Spielstände oder Fehler in open): ' + never.join(', '));
