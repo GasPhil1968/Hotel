@@ -30,6 +30,12 @@ const srv = http.createServer((q, r) => { let f = decodeURIComponent(q.url.split
   await page.evaluate(() => { if (M.closeMap) M.closeMap(); M.TURBO = 25; M.E.newGame(3); });
   let s3 = null; for (let i = 0; i < 150; i++) { s3 = await page.evaluate(() => { const ov = M.E.overlay; if (ov && ov.kind === 'memory') M.TA.closeOverlay(); return { phase: M.GS.phase, room: M.TA.status().room }; }); if (s3.phase === 'k3_pro' && s3.room === 'ostbus') break; await page.waitForTimeout(200); }
   check(s3 && s3.phase === 'k3_pro' && s3.room === 'ostbus', 'neues Spiel in Mostar startet offline am Ostbusbahnhof (' + (s3 && s3.phase) + ', ' + (s3 && s3.room) + ')');
+  // Kapitel 4 (München) offline: Daten da, ein neues Spiel in München startet am ZOB
+  const r4 = await page.evaluate(() => ({ k4: (M.HINTS_K4 || []).length, map4: typeof M.paintMap4 === 'function', rooms: ['zob', 'jwohnung', 'gleis11', 'heim214'].every(id => M.ROOMS[id] && M.ART[id]), song: !!(M.SONGS && M.SONGS.k4_gerda) }));
+  check(r4.k4 > 40 && r4.map4 && r4.rooms && r4.song, 'Kapitel 4 offline vorhanden (' + r4.k4 + ' Hinweisthemen, Stadtplan von München, Räume, Musik)');
+  await page.evaluate(() => { if (M.closeMap) M.closeMap(); M.TURBO = 25; M.E.newGame(4); });
+  let s4 = null; for (let i = 0; i < 150; i++) { s4 = await page.evaluate(() => { const ov = M.E.overlay; if (ov && ov.kind === 'memory') M.TA.closeOverlay(); return { phase: M.GS.phase, room: M.TA.status().room }; }); if (s4.phase === 'k4_pro' && s4.room === 'zob') break; await page.waitForTimeout(200); }
+  check(s4 && s4.phase === 'k4_pro' && s4.room === 'zob', 'neues Spiel in München startet offline am ZOB (' + (s4 && s4.phase) + ', ' + (s4 && s4.room) + ')');
   check(!errs.length, 'keine JS-Fehler' + (errs.length ? ': ' + errs[0] : ''));
   await browser.close(); srv.close(); console.log(ok ? 'OFFLINETEST OK' : 'OFFLINETEST FEHLER'); process.exit(ok ? 0 : 1);
 })();

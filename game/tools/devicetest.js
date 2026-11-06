@@ -120,7 +120,10 @@ let pass = 0, fail = 0; const ok = (c, w) => { console.log((c ? '  ok   ' : '  F
     // Kapitel 3 (Mostar)
     ['ostbus', 'k3_pro'], ['herberge', 'k3_pro_n'], ['zimmer', 'k3_d1'], ['kujundziluk', 'k3_d1'], ['starimost', 'k3_pro'], ['koski', 'k3_d1'], ['minarett', 'k3_d1'], ['strassenbr', 'k3_d1'],
     ['bulevar', 'k3_d1'], ['partizan', 'k3_d1'], ['westbus', 'k3_d2'], ['kafic', 'k3_d1'], ['vulkanizer', 'k3_d1'], ['vhof', 'k3_fin_n'], ['tepa', 'k3_d2'], ['zelenika', 'k3_d3'], ['zelenika_in', 'k3_d3'],
-    ['vermisst', 'k3_epi_d'], ['skela_d', 'k3_d2_n'], ['skela_most', 'k3_d3'], ['skela_l', 'k3_fin_n'], ['zlata_k', 'k3_d3'], ['map', 'k3_d3']];
+    ['vermisst', 'k3_epi_d'], ['skela_d', 'k3_d2_n'], ['skela_most', 'k3_d3'], ['skela_l', 'k3_fin_n'], ['zlata_k', 'k3_d3'], ['map', 'k3_d3'],
+    // Kapitel 4 (München)
+    ['zob', 'k4_pro'], ['hacker', 'k4_d5_n'], ['jhaus', 'k4_d1'], ['jwohnung', 'k4_pro_n'], ['jschlaf', 'k4_d1_n'], ['ana', 'k4_fin_n'], ['wiesn', 'k4_d1'], ['gleis11', 'k4_d3'], ['bmission', 'k4_d4'],
+    ['bunker', 'k4_d2'], ['barsport', 'k4_d2'], ['friedamt', 'k4_d2'], ['heim', 'k4_fin_n'], ['heim_flur', 'k4_d3'], ['heim_raum', 'k4_d2'], ['heim214', 'k4_fin_n'], ['balkon', 'k4_d3'], ['konsulat', 'k4_d3'], ['map', 'k4_d2']];
   const rows = [];
   for (const [room, phase] of ROOMS) {
     const r = await p.evaluate(async ({ room, phase }) => {
