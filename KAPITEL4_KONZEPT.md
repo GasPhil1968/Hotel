@@ -561,7 +561,7 @@ Mala trennt sich nicht über weite Strecken. Sie geht nur zeitweise allein.
 | **„Bar Sport“ im Bahnhofsviertel** | Signor Enzo kam 1962 im selben Zug wie Peppino. Er ist der Zeuge für den Widerspruch Bairisch gegen Italienisch. | Enzo (78) | – |
 | **Städtische Friedhöfe, Verwaltung** | Die Bestattung von Amts wegen, Termin Donnerstag. Die Akte „Josef Rugiero“. | Herr Obermaier | Mit dem richtigen Namen wird der Termin abgesagt. |
 | **Haus am Bavariapark** (Altenheim: Eingang, Aufzug mit Flur, Gemeinschaftsraum, Zimmer 214, Dienstzimmer) | Fall B: Gerda und Alois, drei Uhr, der Versuch. Jasnas Arbeitswelt. Silvesternacht. | Jasna, Pflegedienstleiterin Frau Ertl, Pfleger Kevin, Hausmeister Kraus; Alois Lechner (89); Geist Gerda | Um drei kein Warten mehr am Aufzug, Alois hält die Kanne. In der Silvesternacht der Höhepunkt. |
-| **Davors Balkon in Sendling** (freiwillig) | Lenas Feigenzweig, ertränkt. Anruf bei Jela in Mostar. Davors Angebot zu fahren. | Davor, Lena | – |
+| **Davors Balkon in Moosach** (freiwillig) | Lenas Feigenzweig, ertränkt. Anruf bei Jela in Mostar. Davors Angebot zu fahren. | Davor, Lena | – |
 | **Zwischenwelten** | Sepp: Bahnsteig 1962. Gerda: Trambahn-Depot bei Nacht. | – | – |
 
 ### 4.5 Die Handlung
@@ -669,7 +669,7 @@ Am Vormittag gibt es drei Spuren, frei in der Reihenfolge.
   - Sie will, dass er nach Hause kommt, als Urne.
   - Sepp hört zu, denn Mala ist bei ihm am Gleis. Er ist erlöst und geht in die Zwischenwelt, auf den Bahnsteig von 1962: Marko trägt *seinen* Koffer in den Zug.
 - **Fall B:** Versuch am zweiten Nachmittag, dann Malas schweres Gespräch mit Gerda (7.2).
-- **Freiwillig: Davor und Lena** auf dem Balkon in Sendling.
+- **Freiwillig: Davor und Lena** auf dem Balkon in Moosach.
   - Der Feigenzweig ist ertränkt. Marko ruft Jela in Mostar an: „Pusti ga. Zimi spava. Ne zalijevaj.“ Lena: „Also nichts tun?“ Marko: „Nichts tun. Bis August.“
   - Davor über seinen Vater: „Er hat dreißig Jahre ‚Bitte einsteigen‘ gehört und nie gesagt, dass er es hasst.“
   - Davor bietet an: „Wenn Sie was brauchen. Ich habe ein Auto. Und ich trinke nicht, Lena passt auf.“
@@ -1135,7 +1135,7 @@ Statt nach jedem Fund alle Themen neu anzuklicken, spricht der Spieler gezielt e
 
 ### 6.8 Stadtplan, Hinweise, Doppelklick, Wege
 
-- **Stadtplan von München:** ZOB/Hackerbrücke, Hauptbahnhof (Gleis 11), Bahnhofsviertel, Westend (Jasna), Theresienwiese, Haus am Bavariapark, Giesing (Ana), Sendling (Davor, nach dem Anruf), Städtische Friedhöfe (nach dem Hinweis auf die Bestattung), Generalkonsulat (nur Fassung „Probe nein“).
+- **Stadtplan von München:** ZOB/Hackerbrücke, Hauptbahnhof (Gleis 11), Bahnhofsviertel, Westend (Jasna), Theresienwiese, Haus am Bavariapark, Giesing (Ana), Moosach (Davor, nach dem Anruf), Städtische Friedhöfe (nach dem Hinweis auf die Bestattung), Generalkonsulat (nur Fassung „Probe nein“).
   - Fahrten werden erzählt (Tram 19, S-Bahn).
   - **Kein Rätsel hängt an Laufzeit oder Wegwahl.**
   - Gesperrte Orte nennen den Grund, ohne den Weg zu verraten (Lehre aus E-15).

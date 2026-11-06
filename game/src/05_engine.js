@@ -223,7 +223,7 @@ E.hasNote=hasNote; E.addNote=addNote;
 async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
   if (!d){ M.sfx('nope'); return {ok:false,t:M.noCombo?M.noCombo(a,b,GS):'Das hängt nicht zusammen.'}; }
   if (typeof d==='function'){ return await d(API)||{ok:true}; }
-  if (d.if && !d.if(GS)) { M.sfx('nope'); return {ok:false,t:d.no||'Da fehlt noch etwas.'}; }
+  if (d.if && !d.if(GS)) { M.sfx('nope'); return {ok:false,t:(typeof d.no==='function'?d.no(GS):d.no)||'Da fehlt noch etwas.'}; }
   if (hasNote(d.to)) return {ok:false,t:'Das habe ich schon verstanden.'};
   addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
 E.combineNotes=combineNotes;
@@ -382,7 +382,7 @@ M.DEF=DEF;
 async function doVerb(v,hs,withItem){ E.acting=(E.acting||0)+1; try{ return await doVerb0(v,hs,withItem); } finally { E.acting--; } }
 async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mala';
   if (room.noActor){ E.busy=true; try{ if (hs.go) await hs.go(API); else await respond(verbHandler(hs,v==='walk'?'look':v),{key:hs.id+':'+v,hs:hs}); } finally { E.busy=false; } return; }
-  var ex=isG?(hs.gexit||(hs.exit&&hs.exit.gok?hs.exit:null)):hs.exit; if (typeof ex==='function') ex=ex(S,GS);
+  var ex=isG?(hs.gexit||(hs.exit&&(hs.exit.gok||(M.malaFree&&M.malaFree(GS,hs)))?hs.exit:null)):hs.exit; if (typeof ex==='function') ex=ex(S,GS);   // M.malaFree: ein Kapitel lässt Mala allein durch Ausgänge (Kapitel 4)
   if (v==='walk' && ex) return takeExit(hs,ex);
   if (v==='pass' && hs.gexit) return takeExit(hs,typeof hs.gexit==='function'?hs.gexit(S,GS):hs.gexit);
   if (v==='walk' && isG && hs.exit && !ex){ E.busy=true; try{ await say(pick(['Ohne Marko komme ich nicht weit.','Dorthin gehe ich nicht ohne ihn.']),'mala'); } finally{ E.busy=false; } return; }
@@ -536,7 +536,7 @@ function loadData(d){ try{ var base=validate(d); if (!base) return false;
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); gameReset(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
-  if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
+  if (ch===4 && M.startChapter4) M.startChapter4(API); else if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
 E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); gameReset(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber

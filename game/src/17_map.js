@@ -34,7 +34,7 @@ M.mapStoryUnlocks=storyUnlocks;
 M.MIGRATE=M.MIGRATE||[]; M.MIGRATE.push(function(G){ if (!G.mapKnown) G.mapKnown={}; storyUnlocks(G); M.mapRefresh(G); });
 
 // ---------------------------------------------------------------- Orte des Kapitels, Straße eines Raums
-function locs(G){ var ch=M.chapterOf(G||M.GS); return ch===3?(M.MAPLOCS3||[]):(ch===2?(M.MAPLOCS2||[]):M.MAPLOCS); }
+function locs(G){ var ch=M.chapterOf(G||M.GS); return ch===4?(M.MAPLOCS4||[]):(ch===3?(M.MAPLOCS3||[]):(ch===2?(M.MAPLOCS2||[]):M.MAPLOCS)); }
 M.mapLocs=locs;
 function locById(id,G){ return locs(G).filter(function(L){ return L.id===id; })[0]||null; }
 M.mapLoc=locById;
@@ -76,7 +76,7 @@ M.mapStates=async function(){ M.mapRefresh(M.GS); return computeStates(M.GS); };
 
 // ---------------------------------------------------------------- Von wo aus kann Marko gerade aufbrechen?
 // ok | 'mala' (Mala allein reist nicht) | 'inside' (Innenraum: erst hinaus) — beim Öffnen über einen Ausgang immer ok
-function origin(ov){ var G=M.GS; if (G.active==='mala') return {ok:false,k:'mala',why:'Ohne Marko gehe ich nirgends hin.'};
+function origin(ov){ var G=M.GS; if (G.active==='mala' && !(M.malaMayTravel && M.malaMayTravel(G))) return {ok:false,k:'mala',why:'Ohne Marko gehe ich nirgends hin.'};   // Kapitel 4: Mala reist auch allein
   if (ov && ov.exit) return {ok:true};
   if (M.mapOriginWhy){ var ow=M.mapOriginWhy(G,E.room); if (ow) return {ok:false,k:'inside',why:ow}; }   // ein Kapitel kennt eigene Gründe (Skela: das Taxi wartet drüben)
   var h=mapExit(E.room,G); if (!h) return {ok:false,k:'inside',why:'Von hier drinnen nicht. Erst muss ich hinaus auf die Straße.'};
