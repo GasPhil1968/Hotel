@@ -392,7 +392,7 @@ async function threeScene(A){ var G=A.G, mk=inFlur(G,'marko'), ml=inFlur(G,'mala
     if (mk && K.actor && !N(G,'g4_gong')) await K.say('Da laufen manche hin, als hätt einer geklingelt.'); }
   else { await A.wait(600); await A.narrate('Der Aufzug hält. Kein Gong. Kraus hat die Hand am Schlüssel. Herr Lechner bleibt sitzen.'); }
   await A.narrate('Die Tür geht auf. Moni holt den Kuchenwagen heraus.');
-  if (!hall && Gd.actor){ Gd.place(l[0]-6,l[1],'R'); Gd.show(); Gd.actor.fadeIn=A.gt;
+  if (!hall && Gd.actor){ Gd.place(l[0]-6,l[1],'R'); Gd.show(); Gd.actor.fadeOut=null; Gd.actor.fadeIn=A.gt;
     if (seeG) await A.narrate(chime?'Mit dem Wagen steigt Gerda aus, die grüne Kanne im Arm.':'Mit dem Wagen steigt Gerda aus. Ohne Gong. Sie sieht sich um, als hätte sie etwas vergessen.');
     await Gd.walk(seat(gb)[0],seat(gb)[1]); Gd.place(gb[0],gb[1],gb[2]||'L'); Gd.idle('sit'); }
   if (mode==='norm'){ await A.narrate('Er sieht in den Aufzug. Die Tür geht wieder zu. Er dreht sich um und setzt sich auf die Bank, neben sie.'); Al.idle(null); await Al.walk(seat(b)[0],seat(b)[1]); Al.place(b[0],b[1],b[2]||'R'); Al.idle('sit'); }
@@ -447,7 +447,7 @@ async function goodbye(A){ var G=A.G, Gd=A.npc('gerda'), J=A.npc('jasnaW'), b=po
     await Gd.say('Ein letztes Mal, Fräulein.'); if (Gd.actor){ await Gd.walk(l[0]-6,l[1]); Gd.actor.fadeOut=A.gt; await A.wait(700); Gd.hide(); }
     A.set('lift',Math.max(1001,A.gt)); A.sfx('elevator'); await A.wait(2400); A.sfx('chime'); await A.wait(300);
     Al.idle(null); await Al.walk(l[0],l[1]); await Al.face('L'); Al.idle('wait'); await A.wait(800);
-    if (Gd.actor){ Gd.place(l[0]+14,l[1]+2,'L'); Gd.show(); Gd.actor.fadeIn=A.gt; Gd.idle('wait'); }
+    if (Gd.actor){ Gd.place(l[0]+14,l[1]+2,'L'); Gd.show(); Gd.actor.fadeOut=null; Gd.actor.fadeIn=A.gt; Gd.idle('wait'); }
     await A.narrate('Die Tür geht auf. Gerda steigt aus. Sie setzt sich nicht. Sie bleibt neben ihm stehen.'); await Gd.say('Heute nehm ich deine Hand nicht, Alois.');
     A.set('lift',false); await A.faceM('L');
     for (var i=0;i<8;i++){ var c=await A.choose([

@@ -8,7 +8,7 @@
    Rechts in der Seitenwand die Glastür zum Bahnsteig (Schrift von innen spiegelverkehrt). Links vorn ein Tisch mit
    Wachstuch (hier steht Sepps Pappkoffer, S.suitcaseOut), in der Mitte der lange Tisch, an dem die Gäste sitzen.
    S.farewell (Donnerstag): auf dem mittleren Tisch ein weißes Tuch, eine schlichte Urne aus Ton, daneben das Foto (Sepp mit
-   Mütze) und eine Tasse Tee; davor Stühle im Halbkreis. Nichts Religiöses.
+   Mütze) und eine Tasse Tee (Spot „urn“); davor Stühle im Halbkreis. Nichts Religiöses.
    Geistersicht: am Koffer ein dichter Nachhall von Briefen (fliegende Umschläge). ===== */
 (function(M){
 'use strict';
@@ -221,6 +221,11 @@ function layers(S,GS,tod){ var L=[], far=!!S.farewell;
   var c2=M.layer(G2[0]-10,G2[1]-32,20,34,G2[1]-1), c2w=M.lw(c2); chairSide(c2w,G2[0],G2[1],'L');
   // Rucksack der Reisenden neben ihrem Stuhl
   c2w.rect(G2[0]+9,G2[1]-12,7,12,P.g2); c2w.hl(G2[0]+9,G2[0]+15,G2[1]-12,P.g3); c2w.rect(G2[0]+10,G2[1]-8,5,4,P.g1); c2w.vl(G2[0]+15,G2[1]-11,G2[1]-1,P.g1); c2w.rect(G2[0]+11,G2[1]-15,3,3,P.r2); fin(c2);
+  // Abschied ohne herausgeholten Koffer: der Pappkoffer steht mit Schnur zugebunden neben dem Tisch
+  if (far && !S.suitcaseOut){ var fx=bmx+9, fy=rnd(R3.p(0,FY,TB.Z1+5)[1]), fl=M.layer(fx-2,fy-16,20,18,fy), fwr=M.lw(fl);
+    fwr.rect(fx,fy-11,15,11,P.e2); fwr.hl(fx,fx+14,fy-11,P.e4); fwr.vl(fx,fy-11,fy-1,P.e3); fwr.vl(fx+14,fy-11,fy-1,P.e1); fwr.hl(fx,fx+14,fy-1,P.e1);
+    for (var yy2=fy-10;yy2<fy-1;yy2++) fwr.px(fx+7,yy2,P.s4); fwr.hl(fx,fx+14,fy-6,P.s4); fwr.hl(fx+5,fx+9,fy-14,P.k2); fwr.px(fx+5,fy-13,P.k2); fwr.px(fx+9,fy-13,P.k2); fwr.px(fx+5,fy-12,P.k2); fwr.px(fx+9,fy-12,P.k2);
+    fin(fl); }
   // Halbkreis der Stühle (Abschied)
   if (far) ARC.forEach(function(a){ var p=rp(R3.st(a[0],a[1],'B')), l=M.layer(p[0]-10,p[1]-32,21,34,p[1]), lw=M.lw(l); if (a[2]==='B') chairBack(lw,p[0],p[1]); else chairSide(lw,p[0],p[1],a[2]); fin(l); });
   return L; }
@@ -236,12 +241,12 @@ function dyn(fb,v,S,GS){ var t=v.t, w=wea(GS), i;
 // ---------------------------------------------------------------- Geistersicht: Nachhall von Briefen am Koffer
 function envelope(fb,x,y,a,ang,c){ var w=9, h=6, ca=Math.cos(ang), sa=Math.sin(ang);
   for (var j=0;j<h;j++) for (var i=0;i<w;i++){ var e=(i===0||j===0||i===w-1||j===h-1), d=(j===Math.round(i*0.6)&&i<4)||(j===Math.round((w-1-i)*0.6)&&i>2);
-    if (!e && !d) continue; var X=rnd(x+(i-w/2)*ca-(j-h/2)*sa), Y=rnd(y+(i-w/2)*sa+(j-h/2)*ca); if (X<0||X>=fb.w||Y<0||Y>=144) continue; if (bayer(X,Y)<a) fb.px(X,Y,d?P.x3:c); } }
+    var X=rnd(x+(i-w/2)*ca-(j-h/2)*sa), Y=rnd(y+(i-w/2)*sa+(j-h/2)*ca); if (X<0||X>=fb.w||Y<0||Y>=144) continue; if (!e && !d){ if (bayer(X,Y)<a*0.35) fb.px(X,Y,P.x2); continue; } if (bayer(X,Y)<a) fb.px(X,Y,d?P.x4:c); } }
 function ghost(fb,v,S,GS){ var t=v.t, i;
   if (S.suitcaseOut){ var cx=SUIT[0]+SUIT[2]/2, cy=SUIT[1]+8;
     for (var yy=cy-30;yy<cy+12;yy++) for (var xx=cx-26;xx<cx+26;xx++){ var d=Math.hypot((xx-cx)/26,(yy-cy+6)/22); if (d<1 && bayer(xx,yy+Math.floor(t*4))<(1-d)*0.4){ var k=yy*fb.w+xx; fb.d[k]=M.UP[fb.d[k]]; } }
-    for (i=0;i<22;i++){ var ph=(t*0.12+i/22)%1, ang=i*2.4+t*0.4, r=6+ph*22, ex=cx+Math.cos(ang)*r*1.1, ey=cy-ph*34+Math.sin(ang)*r*0.35, a=Math.min(1,ph*5)*(1-ph)*1.2;
-      envelope(fb,ex,ey,a,Math.sin(t*1.3+i)*0.6,(i%3===0)?P.v4:P.x5); }
+    for (i=0;i<14;i++){ var ph=(t*0.1+i/14)%1, ang=i*2.4+t*0.35, r=4+ph*20, ex=cx+8+Math.cos(ang)*r*1.2+ph*10, ey=cy-4-ph*40+Math.sin(ang)*r*0.3, a=Math.min(1,ph*4)*(1-ph)*1.4;
+      envelope(fb,ex,ey,Math.min(1,a),Math.sin(t*1.1+i)*0.5,(i%3===0)?P.v5:P.x6); }
     for (i=0;i<4;i++) envelope(fb,SUIT[0]+4+i*5,SUIT[1]+2-i*0.5,0.85,0.1*i,P.x6); }
   else { // ohne Koffer: ein schwacher Schein von Briefen unter der Lagertür
     var dq=M.wallQuad(SPEC,'L',DOORL[0],DOORL[1],DOORL[3]-2,DOORL[3]); var r0=qrect(dq);
@@ -256,14 +261,14 @@ function actorLut(a,S,GS,tod){ if (tod==='day') return null; var L=levels(tod), 
 var DQL=qrect(M.wallQuad(SPEC,'L',DOORL[0]-2,DOORL[1]+2,DOORL[2]-3,DOORL[3])), DQR=qrect(M.wallQuad(SPEC,'R',DOORR[0]-2,DOORR[1]+2,DOORR[2]-2,DOORR[3]));
 var CR=R3.rect(CNT.X0,CNT.X1,CNT.Y0,FY,CNT.Z0,CNT.Z1), TAR=R3.rect(TA.X0,TA.X1,TA.Y0,FY,TA.Z0,TA.Z1), TBR=R3.rect(TB.X0,TB.X1,TB.Y0,FY,TB.Z0,TB.Z1);
 var SP=(function(){ var ct=rp(R3.p(CNT.X0,CNT.Y0,CNT.Z1)), a0=rp(R3.p(TA.X0,TA.Y0,TA.Z1)), a1=rp(R3.p(TA.X1,TA.Y0,TA.Z1)), b0=rp(R3.p(TB.X0,TB.Y0,TB.Z1)), b1=rp(R3.p(TB.X1,TB.Y0,TB.Z1)), bmx=rnd((b0[0]+b1[0])/2);
-  return { door:[DQR[0],DQR[1],Math.min(W-DQR[0],DQR[2]),DQR[3]], counter:[CR[0],CR[1]-12,CR[2],CR[3]+12], urn:[ct[0]+3,ct[1]-24,18,24], board:[PIN.x0-3,PIN.y0-3,PIN.x1-PIN.x0+6,PIN.y1-PIN.y0+6],
+  return { door:[DQR[0],DQR[1],Math.min(W-DQR[0],DQR[2]),DQR[3]], counter:[CR[0],CR[1]-12,CR[2],CR[3]+12], board:[PIN.x0-3,PIN.y0-3,PIN.x1-PIN.x0+6,PIN.y1-PIN.y0+6],
     storage:DQL, tables:[TAR[0],TAR[1]-6,TBR[0]+TBR[2]-TAR[0],TBR[3]+6], window:[WIN.x0-4,WIN.y0-4,WIN.x1-WIN.x0+8,WIN.y1-WIN.y0+8], guests:[G1[0]-12,G1[1]-50,G2[0]-G1[0]+24,52],
-    suitcase:[rnd((a0[0]+a1[0])/2)-13,a0[1]-17,26,17], farewell:[bmx-26,b0[1]-20,46,21] }; })();
+    suitcase:[rnd((a0[0]+a1[0])/2)-13,a0[1]-17,26,17], urn:[bmx-26,b0[1]-21,46,22] }; })();   // urn: Tonurne mit Foto und Tasse auf dem Abschiedstisch (nur bei S.farewell)
 M.defineArt('bmission',{
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, ghost:ghost, actorLut:actorLut,
   spots:SP,
-  stands:{ door:[296,124,'R'], counter:[236,118,'B'], urn:[226,118,'B'], board:[78,118,'B'], storage:[30,122,'L'], tables:[160,124,'B'], window:[154,118,'B'], guests:[160,124,'B'], suitcase:[80,120,'B'], farewell:[158,126,'B'] },
-  actorPos:{ wimmer:[WIMMER[0],WIMMER[1],'L'], gast1:[G1[0],G1[1],'R'], gast2:[G2[0],G2[1],'L'], mala:[120,126,'R'] },
+  stands:{ door:[296,124,'R'], counter:[236,118,'B'], urn:[166,129,'B'], board:[78,118,'B'], storage:[30,122,'L'], tables:[160,124,'B'], window:[154,118,'B'], guests:[160,124,'B'], suitcase:[80,120,'B'] },
+  actorPos:{ wimmer:[WIMMER[0],WIMMER[1],'L'], gast1:[G1[0],G1[1],'R'], gast2:[G2[0],G2[1],'L'], mala:[120,126,'R'], enzo:[234,128,'L'], jasnaC:[98,129,'R'] },
   start:[292,124,'L'], entries:{ gleis11:[292,124,'L'] }
 });
 })(M);

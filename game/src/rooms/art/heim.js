@@ -15,7 +15,7 @@ var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, R=M.R;
 var W=320, H=144, VP=[160,50], F=100, FY=96, RECT=[40,14,280,96];
 var R3=M.room3(VP,F,FY), SPEC={vp:VP,rect:RECT};
 var GL={x0:44,x1:96,y0:28};                              // Glastür (Rückwand): Seitenlicht, zwei Flügel, Oberlicht
-var DESK={X0:110,X1:174,Y0:72,Z0:8,Z1:28};               // Empfangstheke
+var DESK={X0:110,X1:174,Y0:75,Z0:8,Z1:28};               // Empfangstheke
 var BRD={x0:186,x1:236,y0:33,y1:66};                     // Pinnwand
 var BEN={X0:188,X1:232,Z0:3,Z1:11,Y:84};                 // Bank (Sitzfläche)
 var LIFT={x0:244,x1:272,y0:40};                          // Aufzugtür
@@ -106,7 +106,7 @@ function outside(tod,wea,night){ var o=new M.Buf(W,H,P.k0), x, y, i, rg=M.rng(31
   // Laterne am Weg
   var LX=78; for (y=33;y<HZ+12;y++){ o.px(LX,y,night?P.k2:P.m1); } o.rect(LX-2,31,5,2,night?P.k2:P.m1); o.hl(LX-1,LX+1,33,night?P.y4:P.s5); if (sn) o.hl(LX-2,LX+2,30,sn);
   if (wea==='fog') M.fogBake(o,function(x,y){ return y<HZ+3?0.66:Math.max(0,0.6-(y-HZ)/60); },{col:P.s4});
-  if (night){ for (y=HZ;y<H;y++) for (x=LX-26;x<LX+28;x++){ var dl=Math.hypot((x-LX)/24,(y-HZ-13)/8); if (dl<1 && bayer(x,y)<(1-dl)*0.9) o.px(x,y,dl<0.45?P.y2:P.w2); }   // warmer Lichtkreis im Schnee
+  if (night){ for (y=HZ;y<H;y++) for (x=LX-16;x<LX+18;x++){ var dl=Math.hypot((x-LX)/15,(y-HZ-12)/5); if (dl<1 && bayer(x,y)<(1-dl)*0.8) o.px(x,y,dl<0.45?P.y2:P.w1); }   // warmer Lichtkreis im Schnee
     for (y=28;y<40;y++) for (x=LX-8;x<=LX+8;x++){ var dg=Math.hypot(x-LX,(y-33)*1.2); if (dg>1.5 && dg<7 && bayer(x,y)<(1-dg/7)*0.5) o.px(x,y,M.UP[o.get(x,y)]); }
     o.hl(LX-1,LX+1,33,P.y5); o.px(LX,34,P.y3); }
   return o; }

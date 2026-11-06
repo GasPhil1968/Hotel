@@ -71,7 +71,7 @@ function parkView(tod,wea){ var o=new M.Buf(W,H,P.k0), x, y, i, rg=M.rng(404), H
     for (y=by-th;y<=by;y++){ o.px(bx,y,tc); if (th>20) o.px(bx+1,y,tc); }
     branch(o,bx+0.5,by-th+2,th*0.35,-1.57,t[3],tc,sn,M.rng(70+k)); branch(o,bx+0.5,by-th*0.55,th*0.3,-0.75,t[3]-1,tc,sn,M.rng(80+k)); branch(o,bx+0.5,by-th*0.5,th*0.28,-2.4,t[3]-1,tc,sn,M.rng(90+k)); });
   [[150,66],[236,67],[306,66]].forEach(function(l){ for (y=l[1]-13;y<=l[1];y++) o.px(l[0],y,P.m1); o.rect(l[0]-1,l[1]-15,3,2,P.m1); if (sn) o.hl(l[0]-1,l[0]+1,l[1]-16,sn); });   // Laternen
-  if (wea==='fog') M.fogBake(o,function(xx,yy){ return yy<HZ+2?0.7:Math.max(0,0.62-(yy-HZ)/50); },{col:P.s4});
+  if (wea==='fog') M.fogBake(o,function(xx,yy){ return yy<HZ+2?0.55:Math.max(0,0.5-(yy-HZ)/50); },{col:P.s4});
   return o; }
 function windows(b,tod,wea){ var o=parkView(tod,wea), x, y; WM.fill(0);
   WINS.forEach(function(wn,i){ var x0=wn[0], x1=wn[1];

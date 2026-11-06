@@ -23,10 +23,10 @@ var PLAT=[[276,284],[295,308],[319,332],[343,356],[367,380],[391,404],[415,430]]
 var TRK=[[284,295],[308,319],[332,343],[356,367],[380,391],[404,415]];
 var FAC={x1:150};                                       // Kopfbau links (Fassade bis x1)
 var MIS={x0:96,x1:124,top:66};                          // Tür der Bahnhofsmission
-var KIO={x0:384,x1:432,top:62,sill:90,base:110};        // Kiosk „PRESSE“
+var KIO={x0:362,x1:410,top:48,sill:90,base:110};        // Kiosk „PRESSE“
 var KIOSKG_Y=108;
 var TREE={cx:510,base:110,h:84};
-var BENCH={x0:300,x1:340,seat:104,base:113};
+var BENCH={x0:312,x1:350,seat:104,base:113};
 var BOARD={x0:410,x1:504,y0:8,y1:54};
 var SIGN11={x0:166,x1:198,y0:40,y1:60};
 var HATCH={x0:158,x1:190,y0:117,y1:125};
@@ -286,7 +286,7 @@ function kioskLayer(S,tod,w){ var k=KIO, L=M.layer(k.x0-4,k.top-4,k.x1-k.x0+8,KI
   wr.rect(k.x0+1,k.sill+2,k.x1-k.x0-2,KIOSKG_Y+3-k.sill-2,P.g2); wr.hl(k.x0+1,k.x1-2,k.sill+2,P.g1);
   // Zeitungsständer vorn mit Schlagzeilen
   for (x=k.x0+3;x<k.x1-4;x+=9){ wr.rect(x,k.sill+5,8,11,P.s6); wr.hl(x,x+7,k.sill+5,P.k2); wr.hl(x+1,x+6,k.sill+7,P.k1); wr.hl(x+1,x+5,k.sill+9,P.m3); wr.rect(x+1,k.sill+11,3,3,P.m2); wr.hl(x+5,x+6,k.sill+12,P.m3); wr.hl(x,x+7,k.sill+16,P.m1); }
-  for (x=k.x0+2;x<k.x1-2;x+=7){ wr.rect(x,k.top+10,5,7,P.s5); wr.hl(x,x+4,k.top+11,P.r2); wr.hl(x,x+4,k.top+14,P.m2); }
+  [k.x0+3,k.x0+9,k.x1-14,k.x1-8].forEach(function(x){ wr.rect(x,k.top+11,5,8,P.s5); wr.hl(x,x+4,k.top+12,P.r2); wr.hl(x,x+4,k.top+15,P.m2); wr.hl(x,x+3,k.top+17,P.m3); });   // Zeitungen an der Klammerleiste (Mitte frei für die Kioskfrau)
   finish(L,tod,w); return L; }
 
 // ---------------------------------------------------------------- Weihnachtsbaum, Bank
@@ -358,7 +358,7 @@ function paint(S,GS,tod){ var w=wea(GS), b=new M.Buf(W,H,P.k0), x, y, i;
   platIndicator(b,303,FRONTY,'11 VERONA'); platIndicator(b,455,FRONTY,'13 NÜRNBERG');
   // ---- Gleisschilder unter dem Dach
   hangSign(b,SIGN11.x0,SIGN11.y0,SIGN11.x1-SIGN11.x0,SIGN11.y1-SIGN11.y0,'11',0);
-  hangSign(b,372,48,16,9,'12',0); hangSign(b,522,44,18,9,'13',0);
+  hangSign(b,378,32,16,9,'12',0); hangSign(b,522,44,18,9,'13',0);
   // ---- Kopfbau links
   facade(b,w,tod);
   // ---- Abfahrtstafel, Kiosk-Rückwand
@@ -478,9 +478,9 @@ M.defineArt('gleis11',{
     tree:[TREE.cx-34,TREE.base-TREE.h-2,68,TREE.h+2],
     hatch:[HATCH.x0-6,HATCH.y0-2,HATCH.x1-HATCH.x0+12,HATCH.y1-HATCH.y0+4]
   },
-  stands:{ exit:[8,126,'L'], platform:[178,114,'B'], sign11:[184,115,'B'], mission:[110,114,'B'], kiosk:[408,117,'B'], board:[456,118,'B'], train:[236,114,'B'],
+  stands:{ exit:[8,126,'L'], platform:[178,114,'B'], sign11:[184,115,'B'], mission:[110,114,'B'], kiosk:[386,117,'B'], board:[456,118,'B'], train:[236,114,'B'],
     buffer:[226,114,'B'], bench:[320,117,'B'], tree:[510,117,'B'], hatch:[176,128,'B'] },
-  actorPos:{ sepp:[202,113,'L'], kioskg:[408,KIOSKG_Y,'F'], mala:[160,122,'R'] },
+  actorPos:{ sepp:[202,113,'L'], kioskg:[386,KIOSKG_Y,'F'], mala:[160,122,'R'] },
   start:[22,124,'R'], entries:{ map:[14,124,'R'], bmission:[110,115,'R'], bunker:[176,128,'R'] }
 });
 })(M);

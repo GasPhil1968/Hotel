@@ -14,7 +14,7 @@
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, R=M.R, S=M.poseS, F=M.poseF;
 M.mem=M.mem||{};
 // Empfohlene Färbung je Bild (die Skripte geben sie beim Aufruf selbst an)
-M.K4_MEM_TINT=M.K4_MEM_TINT||{ k4_bus:'memory', k4_stiefel:'ghost', k4_kiste:'ghost', k4_kurve:'ghost', k4_bunker:'ghost', k4_april:'memory', k4_depot:'ghost', k4_home:'memory' };
+M.K4_MEM_TINT=M.K4_MEM_TINT||{ k4_bus:'memory', k4_stiefel:'memory', k4_kiste:'ghost', k4_kurve:'ghost', k4_bunker:'ghost', k4_april:'memory', k4_depot:'ghost', k4_home:'memory' };
 
 // ---------------------------------------------------------------- kleine Helfer (wie in 97_k3_mem.js)
 function fill(b,x0,y0,w,h,fn){ for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var c=fn(x,y); if (c!==undefined) b.px(x,y,c); } }
@@ -124,7 +124,8 @@ M.mem.k4_bus=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2412), WX0=18, WX1=
   M.light(b,function(x,y){ if (inPane(x,y)) return 0.05; var v=-0.95+Math.max(0,1-Math.hypot((x-128)/58,(y-44)/26))*0.95; return v; });
   edgeDark(b,1.8); };
 
-// ================================================================ 2. Die gelben Stiefel (ghost): 1990, Haltestelle der Drei im Regen. Ana mit sechs weint; Lana sitzt auf der Bank und malt ihr eine Straßenbahn
+// ================================================================ 2. Die gelben Stiefel (memory, Lanas Erinnerung): 1990, Samstag, Haltestelle der Drei nach dem Regen. Ana mit sechs sitzt auf dem
+//    Bordstein und weint, in gelben Gummistiefeln, zwei Nummern zu groß; Lana sitzt neben ihr und malt ihr eine Straßenbahn, in jedem Fenster ein Gesicht
 M.mem.k4_stiefel=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1990), G=78;
   fill(b,0,0,w,24,function(x,y){ return ra(R('m2 m3 s3 m3'),0.3+y/30+(fbm(x,y*2,18,2)-0.5)*0.3,x,y); });
   var fac=[[0,40,'s3'],[40,92,'t3'],[92,140,'s2'],[140,190,'e3'],[190,232,'s3']];
@@ -146,22 +147,24 @@ M.mem.k4_stiefel=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1990), G=78;
   [SX0,SX0+52,SX1-1].forEach(function(px){ b.vl(px,ST,SB,P.m1); b.vl(px+1,ST,SB,P.k2); });
   b.rect(SX0+10,SB-13,74,3,P.w3); b.hl(SX0+10,SX0+83,SB-13,P.w4); b.vl(SX0+14,SB-10,SB,P.m1); b.vl(SX0+78,SB-10,SB,P.m1);
   var PX=212; b.vl(PX,G-12,SB,P.m2); b.vl(PX+1,G-12,SB,P.m1); b.ellipse(PX+0.5,G-18,6,6,P.y4); b.ellipse(PX+0.5,G-18,4.6,4.6,P.s6); M.microText(b,'3',PX-1,G-20,P.k1);
-  // Lana auf der Bank, zu Ana gebeugt, den Block auf dem Knie; Ana steht vor ihr und weint
-  var LX=136, LY=SB;
-  if (!fig(b,LX,LY,S({h:[0,-13],ln:2,nf:[9,0,'f'],ff:[7,0,'f'],nh:[11,-18],fh:[8,-17],sit:1,ho:[1,1]}),'R','mala')){ b.ellipse(LX,LY-40,4,5,P.h1); b.rect(LX-4,LY-33,9,18,P.c2); }
-  var BX=LX+6, BY=LY-24; b.rect(BX,BY,14,9,P.s6); b.hl(BX,BX+13,BY+9,P.s4); b.vl(BX+14,BY+1,BY+9,P.s3);                      // der Block: eine Straßenbahn, rot, mit Fenstern
-  b.rect(BX+2,BY+3,10,4,P.r3); b.hl(BX+2,BX+11,BY+3,P.r4); for (x=BX+3;x<BX+11;x+=2) b.px(x,BY+4,P.s6); b.px(BX+3,BY+7,P.k1); b.px(BX+10,BY+7,P.k1); b.line(BX+6,BY+3,BX+8,BY+1,P.k1);
-  b.line(BX+15,BY+2,BX+18,BY-2,P.y3); b.px(BX+15,BY+3,P.k1);
-  var aid=cAna(), AX=164, AY=SB+1, ai=charInfo(aid||'mala'), fy=-(ai.hipY+ai.tLen)-2;
-  if (!fig(b,AX,AY,S({nh:[-3,fy],fh:[-1,fy+1],hd:'b',ho:[-1,1]}),'L',aid)){ fig(b,AX,AY,S({nh:[-2,-30],fh:[-1,-29],hd:'b'}),'L','mala',{scale:0.64}); }
-  for (y=AY-7;y<=AY;y++){ b.hl(AX-4,AX-1,y,y<AY-5?P.y5:(y===AY?P.y2:P.y4)); b.hl(AX+1,AX+4,y,y<AY-5?P.y4:(y===AY?P.y1:P.y3)); }   // gelbe Gummistiefel
-  b.px(AX-4,AY-24,P.x5); b.px(AX-5,AY-22,P.x4);
-  for (i=0;i<200;i++){ var rx=rg()*w, ry=rg()*h, L=3+rg()*4; for (var k=0;k<L;k++){ var px=rnd(rx+k*0.25), py=rnd(ry+k); if (py>=h) break; if (bayer(px,py)<0.45) b.px(px,py,M.UP[b.get(px,py)]); } }
+  // der Bordstein vorn am Wartehäuschen: Lana sitzt darauf, das Heft auf den Knien; Ana sitzt neben ihr und weint, die Fäuste an den Augen
+  var CY=SB-2; for (x=SX0-6;x<SX1+8;x++){ b.px(x,CY-3,P.s5); b.px(x,CY-2,P.s4); b.px(x,CY-1,P.s3); b.px(x,CY,P.m2); if (x%11===0){ b.px(x,CY-3,P.s3); b.px(x,CY-2,P.s3); } }
+  var LX=134, LY=CY+5;
+  if (!fig(b,LX,LY,S({h:[0,-9],ln:2,nf:[8,0,'f'],ff:[6,0,'f'],nh:[10,-15],fh:[8,-14],sit:1,ho:[1,1]}),'R','mala')){ b.ellipse(LX,LY-36,4,5,P.h1); b.rect(LX-4,LY-29,9,16,P.c2); }
+  var BX=LX+5, BY=LY-24; b.rect(BX,BY,15,10,P.s6); b.hl(BX,BX+14,BY+10,P.s4); b.vl(BX+15,BY+1,BY+10,P.s3);                     // das Blatt: eine Straßenbahn, in jedem Fenster ein Gesicht
+  b.rect(BX+2,BY+3,11,5,P.r3); b.hl(BX+2,BX+12,BY+3,P.r4); for (x=BX+3;x<BX+12;x+=3){ b.px(x,BY+4,P.p4); b.px(x+1,BY+4,P.s6); b.px(x,BY+5,P.s6); } b.px(BX+3,BY+8,P.k1); b.px(BX+11,BY+8,P.k1); b.line(BX+7,BY+3,BX+9,BY+1,P.k1);
+  b.line(BX+16,BY+2,BX+19,BY-2,P.y3); b.px(BX+16,BY+3,P.k1);
+  var aid=cAna(), AX=162, AY=LY, ai=charInfo(aid||'mala'), fy=-(ai.hipY+ai.tLen)+2;
+  if (!fig(b,AX,AY,S({h:[0,-14],nf:[-6,0,'f'],ff:[-4,0,'f'],nh:[-3,fy],fh:[-1,fy+1],sit:1,hd:'b',ho:[-1,1]}),'L',aid)){ fig(b,AX,AY,S({h:[0,-9],nh:[-2,-26],fh:[-1,-25],sit:1,hd:'b'}),'L','mala',{scale:0.64}); }
+  for (y=AY-7;y<=AY;y++){ b.hl(AX-11,AX-7,y,y<AY-5?P.y5:(y===AY?P.y2:P.y4)); b.hl(AX-6,AX-2,y,y<AY-5?P.y4:(y===AY?P.y1:P.y3)); }   // gelbe Gummistiefel, zu groß
+  b.px(AX-5,AY-22,P.x5); b.px(AX-6,AY-20,P.x4);
+  for (i=0;i<12;i++){ var rx=SX0+rg()*(SX1-SX0), ry=ST+rg()*30; b.px(rnd(rx),rnd(ry),P.s5); b.px(rnd(rx),rnd(ry)+1,P.s4); }   // Tropfen von der Dachkante
   for (i=0;i<9;i++){ var cx=10+rg()*212, cy=G+6+rg()*20; b.ellipse(cx,cy,2.5,0.9,function(xx,yy){ return bayer(xx,yy)<0.5?M.UP[b.get(xx,yy)]:undefined; }); }
   M.light(b,M.lf.sum(M.lf.k(-0.15),M.lf.pool(150,80,70,40,0.6,1),M.lf.band(0,24,0.2,0)));
   edgeDark(b,1.9); };
 
-// ================================================================ 3. Die Kiste (ghost, Nachhall): Mai 1993. Ruža schreibt am Küchentisch die Nachricht, der Junge steht daneben.
+// ================================================================ 3. Die Kiste (ghost, Nachhall): Mai 1993, Vratnik, kein Strom. Ruža schreibt bei einer Kerze am Küchentisch die Nachricht,
+//    der Junge steht daneben; neben der Tür zwei volle blaue Kanister mit roter Schrift.
 //    In der Luft der Nachhall: das Wort „poginuo“, durchgestrichen, darunter „nije se vratio“.
 M.mem.k4_kiste=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1993), FL=96;
   fill(b,0,0,w,FL,function(x,y){ if (y>FL-8) return ra(R('w1 w2'),0.5,x,y); return ra(R('s2 s3 s4 s5'),0.62-y/FL*0.2+(fbm(x,y,12,3)-0.5)*0.12,x,y); });
@@ -175,10 +178,9 @@ M.mem.k4_kiste=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1993), FL=96;
   // Kalender, Regal mit Gläsern, Kohleherd mit Glut
   b.rect(80,18,16,20,P.s6); b.rect(80,18,16,6,P.r2); M.microText(b,'MAJ',82,19,P.s6); for (y=26;y<34;y+=2) for (x=82;x<95;x+=3) b.px(x,y,P.s2); M.microText(b,'1993',81,33,P.k2); b.px(88,16,P.k2);
   b.rect(150,24,36,2,P.w3); for (i=0;i<4;i++){ b.rect(153+i*8,18,5,6,i%2?P.e3:P.s4); b.hl(153+i*8,157+i*8,18,P.m3); }
-  var HX0=192, HX1=222, HY=66; b.rect(HX0,HY,HX1-HX0,FL-HY-3,P.k2); b.hl(HX0-1,HX1,HY,P.m4); b.hl(HX0-1,HX1,HY+1,P.m3); b.rect(HX0+3,HY+5,10,7,P.k1); b.rect(HX0+4,HY+6,8,5,P.t2); fill(b,HX0+5,HY+7,6,3,function(x,y){ return (x+y)%2?P.t4:P.y3; });
-  b.rect(HX0+16,HY+4,12,12,P.k1); b.hl(HX0+16,HX0+27,HY+4,P.m3); b.rect(HX0+4,26,4,HY-26,P.k2); b.vl(HX0+4,26,HY-1,P.m1); b.rect(HX0+3,FL-3,3,3,P.k2); b.rect(HX1-5,FL-3,3,3,P.k2);
-  b.rect(HX0+6,HY-6,9,6,P.m2); b.hl(HX0+5,HX0+15,HY-6,P.m4);
-  canister(b,180,FL,10,14,[P.b0,P.b1,P.b2]);                                                                                 // ein Wasserkanister am Herd
+  var DX0=192, DX1=216; b.rect(DX0-3,30,DX1-DX0+6,FL-30,P.w1); b.rect(DX0,33,DX1-DX0,FL-33,P.w2); b.vl(DX0,33,FL-1,P.w3); for (y=40;y<FL-4;y+=18) b.rect(DX0+3,y,DX1-DX0-6,12,P.w1);   // die Tür
+  b.rect(DX0+3,62,3,2,P.m3);
+  [[172,0],[184,1]].forEach(function(c){ var cx=c[0], cw=11, ch=15, x0=cx-5, y0=FL-ch; canister(b,cx,FL,cw,ch,[P.b1,P.b2,P.b3]); M.microText(b,'VUK',x0+1,y0+5,P.r2); });   // zwei Kanister, blau, rote Schrift, voll
   // Ruža am Tisch, schreibt; der Junge steht daneben, eine Hand auf der Tischkante
   var rz=cRuza(), RX=94, mi=cMali(), MX=150, TX0=100, TX1=142, TY=FL-24;
   b.rect(RX-8,FL-34,2,20,P.w2); b.rect(RX-8,FL-15,12,2,P.w3); b.vl(RX-7,FL-13,FL-1,P.w1); b.vl(RX+2,FL-13,FL-1,P.w1);
@@ -188,7 +190,9 @@ M.mem.k4_kiste=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1993), FL=96;
   fill(b,TX0-1,TY-1,TX1-TX0+2,6,function(x,y){ var u=x-TX0, v=y-TY+1; if (v>=4 && ((u+40)%5)>2) return undefined; return ((u>>1)+(v>>1))%2?P.s5:P.b3; });
   var FX=112, FY=TY-3; b.poly([[FX,FY],[FX+13,FY-1],[FX+14,FY+2],[FX+1,FY+3]],P.s6); b.hl(FX+1,FX+12,FY,P.r3); for (i=0;i<2;i++) b.hl(FX+2,FX+10-i*2,FY+1+i,P.s2);
   b.line(FX+10,FY,FX+13,FY-4,P.k1); b.rect(TX1-8,TY-4,4,4,P.s5); b.hl(TX1-8,TX1-5,TY-4,P.w1);
-  M.light(b,M.lf.sum(M.lf.k(-0.85),M.lf.pool(44,40,74,64,1.3,0.9),M.lf.pool(HX0+8,HY+8,30,22,1.4,0.9),M.lf.pool(118,72,40,30,1.15,0.8)));
+  var KX=TX0+6, KY=TY-1; b.ellipse(KX+0.5,KY+0.5,4,1.2,P.s5); b.rect(KX-1,KY-5,3,5,P.s6); b.vl(KX+1,KY-5,KY-1,P.s4);                  // Kerze in einer Untertasse
+  M.light(b,M.lf.sum(M.lf.k(-1.0),M.lf.pool(44,40,74,64,1.0,0.9),M.lf.pool(KX,KY-10,62,40,1.9,1.0)));
+  b.px(KX,KY-6,P.y4); b.px(KX,KY-7,P.l1); b.px(KX,KY-8,P.y5); b.px(KX-1,KY-7,P.y3); b.px(KX+1,KY-7,P.y3);
   // Nachhall in der Luft: dunkler Hof, darin leuchtende Schrift
   function glowText(t,x0,y0,col){ var tw=M.microWidth(t); for (var yy=y0-3;yy<y0+8;yy++) for (var xx=x0-4;xx<x0+tw+4;xx++){ var d=Math.max(Math.abs(xx-(x0+tw/2))/(tw/2+4),Math.abs(yy-(y0+2))/5.5); if (d<1 && bayer(xx,yy)<(1-d)*0.9) b.px(xx,yy,M.DN[M.DN[b.get(xx,yy)]]); } M.microText(b,t,x0,y0,col); }
   glowText('POGINUO',104,38,P.s6); b.hl(102,132,40,P.r4); glowText('NIJE SE VRATIO',92,48,P.l1);
@@ -269,7 +273,9 @@ M.mem.k4_april=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(419), WT=22, FL=7
   fill(b,0,0,w,WT,function(x,y){ return ra(R('b3 b4 b5 s6'),0.4+y/34+(fbm(x,y*2,26,2)-0.5)*0.2,x,y); });
   for (i=0;i<4;i++){ var cx=rg()*w, cy=3+rg()*10; b.ellipse(cx,cy,14+rg()*16,2.2,function(xx,yy){ return bayer(xx,yy)<0.6?P.s6:P.b5; }); }
   // die Mauer: heller Putz, darunter stellenweise Ziegel; ein Eisentor; rechts das Rohr mit den Hähnen
-  fill(b,0,WT,w,FL-WT,function(x,y){ var f=fbm(x,y,14,3), c; if (f>0.7 && y>WT+6) c=M.tex.bricks(x,y,R('t2 t3 t3 t4'),9,4); else c=ra(R('s3 s4 s4 s5'),0.58+(f-0.5)*0.4+(hash(x>>2,y>>1)-0.5)*0.06,x,y); if (y>FL-6) c=M.DN[c]; return c; });
+  fill(b,0,WT,w,FL-WT,function(x,y){ var f=fbm(x,y,14,3), c; if (x<34) return (y<54)?ra(R('b4 b5 s6'),0.5+(y-WT)/60,x,y):((y<58)?P.s3:(y<62?P.s4:ra(R('s2 s3'),0.5,x,y))); if (f>0.7 && y>WT+6) c=M.tex.bricks(x,y,R('t2 t3 t3 t4'),9,4); else c=ra(R('s3 s4 s4 s5'),0.58+(f-0.5)*0.4+(hash(x>>2,y>>1)-0.5)*0.06,x,y); if (y>FL-6) c=M.DN[c]; return c; });
+  for (x=0;x<34;x+=4){ b.vl(x,54,57,P.s5); } for (i=0;i<5;i++){ var bx2=3+i*6; b.rect(bx2,47,2,7,[P.c1,P.e1,P.m1,P.g1,P.r1][i]); b.px(bx2,46,P.p3); }   // die Brücke, die Schlange geht weiter
+  b.vl(34,WT,FL,P.s2); b.vl(35,WT,FL,P.s5);
   b.rect(0,WT,w,3,P.s5); b.hl(0,w-1,WT,P.s6); b.hl(0,w-1,WT+3,P.s2);
   for (y=34;y<FL;y++) for (x=56;x<74;x++){ var c4=((x-56)%4===0||(y-34)%8===0)?P.k2:P.t1; b.px(x,y,c4); } b.hl(55,74,33,P.m2);   // Eisentor, rostig
   var PX=206; b.rect(PX,38,4,FL-38,P.m2); b.vl(PX,38,FL-1,P.m3); b.rect(PX-14,46,18,3,P.m2); b.hl(PX-14,PX+3,46,P.m3); b.rect(PX-14,49,2,4,P.m1); b.px(PX-14,54,P.b3); b.rect(PX-6,49,2,3,P.m1);
@@ -279,12 +285,17 @@ M.mem.k4_april=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(419), WT=22, FL=7
   fill(b,0,FL,w,h-FL,function(x,y){ return M.tex.cobble(x,y,R('s2 s3 s3 s4'),7); }); b.hl(0,w-1,FL,P.s2);
   // die Schlange: vom Hahn nach links; Menschen in Frühlingsjacken, jeder mit Kanistern; zwei sitzen auf ihren, zwei reden miteinander
   var CANS=[[P.e1,P.e2,P.e3],[P.g1,P.g2,P.g3],[P.m2,P.m3,P.m4],[P.s2,P.s3,P.s4],[P.r1,P.r2,P.r3]];
-  var Q=[[192,'komsija','R',0],[176,'kioskm','R',0],[160,'taxist','R',1],[143,'kasir','L',0],[128,'milka','R',0],[112,'ilija','R',2],[94,'haendler','R',0],[78,'jakob','R',1],[44,'kioskm','L',0]];
+  var Q=[[192,'komsija','L',3],[176,'kioskm','R',0],[160,'taxist','R',1],[143,'kasir','L',0],[128,'milka','R',0],[112,'ilija','R',2],[94,'haendler','R',0],[78,'jakob','R',1],[44,'kioskm','L',0]];
   Q.forEach(function(q,k){ var px=q[0], id=q[1], f=q[2], mode=q[3], dir=f==='R'?1:-1;
     for (var sx=0;sx<16;sx++) for (var sy=0;sy<2;sy++) if (bayer(px+sx,FL+1+sy)<0.55) b.px(px+sx,FL+1+sy,M.DN[b.get(px+sx,FL+1+sy)]);   // Schatten nach rechts
     if (mode===1){ canister(b,px,FL+1,9,11,CANS[k%5]); if (!fig(b,px,FL-9,S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1}),f,id)) person(b,px,FL-10,28,{dir:dir,coat:[P.c1,P.c2,P.c0]}); canister(b,px+dir*12,FL+1,7,9,CANS[(k+1)%5],{cap:P.k2}); return; }
+    if (mode===3){ if (!fig(b,px,FL+1,S({nh:[4,-38],fh:[-1,-14],ho:[1,0]}),f,id)) person(b,px,FL+1,40,{dir:dir,coat:[P.c1,P.c2,P.c0]}); canister(b,px+8,FL+1,7,10,CANS[1],{cap:P.k2}); return; }   // vorn: er dreht sich um und hebt die Hand
     if (!fig(b,px,FL+1,S({nh:[3,-13],fh:[-1,-14],ho:[mode===2?1:0,0]}),f,id)) person(b,px,FL+1,40,{dir:dir,coat:[P.c1,P.c2,P.c0],reach:1});
     canister(b,px+dir*4,FL+1,7,10,CANS[k%5],{cap:P.k2}); if (k%3===0) canister(b,px-dir*8,FL+1,8,10,CANS[(k+2)%5],{cap:P.k2}); });
+  // ein Kinderwagen ohne Kind, voller Kanister; Flaschen am Boden
+  var KWX=60; b.ellipse(KWX+0.5,FL-12,8,5,P.k2); b.rect(KWX-8,FL-12,17,5,P.m1); b.hl(KWX-8,KWX+8,FL-12,P.m2); b.line(KWX+8,FL-12,KWX+14,FL-20,P.m2); b.hl(KWX+13,KWX+16,FL-20,P.m2);
+  [KWX-6,KWX+6].forEach(function(wx){ b.ellipse(wx+0.5,FL-2.5,2.6,2.6,P.k1); b.px(wx,FL-3,P.m3); }); canister(b,KWX-3,FL-14,6,7,CANS[2],{cap:P.k2}); canister(b,KWX+3,FL-14,6,7,CANS[0],{cap:P.k2});
+  [[84,0],[150,1],[170,0]].forEach(function(bt){ var bx3=bt[0]; b.rect(bx3,FL-6,2,6,bt[1]?P.g3:P.s4); b.px(bx3,FL-7,P.s5); b.px(bx3,FL-4,P.s6); });
   // vorn: die zwei blauen Kanister, groß, in der Sonne; die rote Schrift
   [[70,101],[108,103]].forEach(function(c,k){ var cx=c[0], cy=c[1], cw=34, ch=27, x0=cx-cw/2, y0=cy-ch;
     for (y=cy+1;y<cy+4;y++) for (x=x0+4;x<x0+cw+16;x++) if (bayer(x,y)<0.6) b.px(x,y,M.DN[M.DN[b.get(x,y)]]);
@@ -328,7 +339,7 @@ M.mem.k4_depot=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(1954), FL=82, LMX
   edgeDark(b,1.9); };
 
 // ================================================================ 8. Neujahr (memory, letztes Bild): Jasnas Küche in der Morgensonne. Drei Tassen, die Džezva, Vanilice, die offene Kiste;
-//    unten in einem Sonnenfleck Zorans Pantoffeln, gerade nebeneinander. An der Wand der neue Kalender.
+//    unter dem Tisch, in einem Sonnenfleck, Zorans Pantoffeln an Markos Füßen. An der Wand der neue Kalender.
 M.mem.k4_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2012), WB=58, WX0=10, WX1=56, WY0=6, WY1=44;
   fill(b,0,0,w,WB,function(x,y){ if (y>WB-5) return ra(R('w1 w2'),0.5,x,y); return ra(R('s3 s4 s5 y5'),0.5-y/WB*0.16+(fbm(x,y,14,2)-0.5)*0.1,x,y); });
   b.hl(0,w-1,WB-5,P.w3); fill(b,0,WB,w,h-WB,function(x,y){ var d=(y-WB)/(h-WB), u=(x-116)/(0.6+d*0.8); return ((Math.floor(u/12)+Math.floor((y-WB)/(4+d*6)))%2)?P.s4:P.s3; });
@@ -363,8 +374,10 @@ M.mem.k4_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2012), WB=58, WX0=
   var KX=204, KY=66; b.rect(KX,KY-8,24,8,P.w3); b.hl(KX,KX+23,KY-8,P.w4); b.vl(KX+23,KY-7,KY-1,P.w1); b.hl(KX,KX+23,KY,P.w1);
   b.poly([[KX,KY-8],[KX+24,KY-8],[KX+26,KY-24],[KX+2,KY-24]],function(xx,yy){ return (yy<KY-22)?P.w4:((xx<KX+5)?P.w2:P.w3); }); b.hl(KX+3,KX+24,KY-20,P.w2);
   b.rect(KX+3,KY-11,11,4,P.s6); b.hl(KX+3,KX+13,KY-11,P.r3); b.rect(KX+13,KY-10,8,3,P.s5);
-  // die Pantoffeln: ordentlich nebeneinander, in der Sonne
-  [[118,98],[138,99]].forEach(function(s2){ var sx=s2[0], sy=s2[1];
+  // Markos Beine unter dem Tisch: Jeans bis zu den Pantoffeln
+  [[112,78],[132,79]].forEach(function(l){ for (y=l[1];y<l[1]+18;y++){ var lx=l[0]+rnd((y-l[1])*0.28); b.hl(lx-3,lx+3,y,(y%5===0)?P.c1:P.c2); b.px(lx-3,y,P.c3); b.px(lx+3,y,P.c0); } });
+  // die Pantoffeln an seinen Füßen, in der Sonne
+  [[120,98],[140,99]].forEach(function(s2){ var sx=s2[0], sy=s2[1];
     b.ellipse(sx,sy,10,3.4,P.k2); b.ellipse(sx,sy-0.8,9,2.8,P.w1);                                                                 // Sohle, Innenseite
     b.ellipse(sx+3,sy-1.4,6,2.6,function(xx,yy){ return ((xx+yy)%3===0)?P.w1:(((xx>>1)+(yy>>1))%2?P.w2:P.r1); }); b.hl(sx-2,sx+8,sy-4,P.w3); b.hl(sx-3,sx-3,sy-3,P.w2); });
   // Licht: schräge Sonnenstrahlen aus dem Fenster über Tisch und Boden

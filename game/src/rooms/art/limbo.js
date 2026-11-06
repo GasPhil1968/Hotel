@@ -523,7 +523,7 @@ function propSepp(b,w,S){ var x, y, i, D=SEPPDOOR, cx0=240, cx1=266, cy=112;
   castShadow(b,272,123,32,3.5);
   // der Wagen: grün, die Tür mit Fenster, ein Griff; die Oberkante gebrochen wie die Steine
   for (y=D.top;y<=D.by-10;y++) for (x=D.x0;x<=D.x1;x++){ var brk=D.top+Math.round(Math.abs(Math.sin(x*0.8+0.6))*3+(hash(x,33)<0.3?2:0)); if (y<brk) continue;
-    var c=(x<D.x0+2)?P.x4:((x>D.x1-2)?P.k1:P.g2); if (y===brk) c=P.g4; if (x>=D.x0+5 && x<=D.x0+20){ c=(x===D.x0+5||x===D.x0+20)?P.k1:P.g1; if (y>D.top+10 && y<D.top+24 && x>D.x0+7 && x<D.x0+18) c=(y<D.top+13)?P.y3:((x+y)%5===0?P.y3:P.y2); }
+    var c=(x<D.x0+2)?P.x4:((x>D.x1-2)?P.k1:P.g2); if (y===brk) c=P.g4; if (x>=D.x0+5 && x<=D.x0+20 && y>D.top+8){ c=(x===D.x0+5||x===D.x0+20)?P.k1:((y<D.top+20)?P.y2:((x+y)%7===0?P.w2:P.w1)); if (x>D.x0+16) c=(x===D.x0+20)?P.k1:P.g1; }   // offene Tür: innen warmes Licht, der Flügel zur Seite geklappt
     if (y===D.top+28 && x>D.x0+20) c=P.g4; if (y>D.by-14) c=(x<D.x0+2)?P.x3:P.g1; if (hash(x*1.3,y*0.7)<0.05 && c===P.g2) c=P.g1; w.px(x,y,c); }
   w.vl(D.x0+3,D.top+12,D.by-12,P.m4); w.vl(D.x0+22,D.top+12,D.by-12,P.m3);                                                  // Griffstangen
   w.rect(D.x0+23,D.top+14,9,5,P.s5); M.microText(w,'ROMA',D.x0+16,D.top+32,P.s5); w.hl(D.x0+15,D.x0+31,D.top+38,P.g3);        // Wagennummer, Laufschild

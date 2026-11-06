@@ -54,7 +54,7 @@ function levels(k){ if (LV[k]) return LV[k]; var a=[], n=6, A=TF.night, B=TF[k];
   return LV[k]=a; }
 var LAMP=(function(){ var p=R3.p(NS.X0+4,NS.Y0,NS.Z0+5); return [Math.round(p[0]),Math.round(p[1])-10]; })();   // Lampenschirm des Nachtlichts
 function warmAt(x,y){ if (!LAMP) return 0; var dx=(x-LAMP[0]-8)/54, dy=(y-LAMP[1]-12)/36, a=1-dx*dx-dy*dy; return a>0?Math.pow(a,1.2)*0.95:0; }
-function coldAt(x,y){ var dx=(x-226)/84, dy=(y-98)/52, a=1-dx*dx-dy*dy; return a>0?Math.pow(a,1.2)*0.68:0; }
+function coldAt(x,y){ var dx=(x-226)/84, dy=(y-98)/52, a=1-dx*dx-dy*dy; return a>0?Math.pow(a,1.2)*0.76:0; }
 function shadeNight(b,ox,oy,mask){ var LW=levels('warm'), LC=levels('cold'), n=LW.length;
   for (var y=0;y<b.h;y++) for (var x=0;x<b.w;x++){ var k=y*b.w+x, c=b.d[k]; if (c===T) continue; var X=x+ox, Y=y+oy; if (mask && !mask(X,Y)) continue;
     var w=warmAt(X,Y), g=coldAt(X,Y), Ls=w>=g?LW:LC, f=Math.max(w,g)*(n-1), i=Math.floor(f); if (f-i>bayer(X,Y)) i++; if (i>n-1) i=n-1; b.d[k]=M.tintPx(Ls[i],c,X,Y); } }

@@ -249,27 +249,30 @@ M.addSfx(SFX4);
 var baseFoot=M.footstep;
 M.footstep=function(p,kind){ var k=kind||(M.stepKind&&M.stepKind()); if (k!=='snow'&&k!=='slush'&&k!=='lino') return baseFoot.apply(this,arguments);
   if (!K.AC||!M.soundOn()) return; var d=pn((p||0)*0.6,K.sfx), t=K.AC.currentTime, v=0.8+Math.random()*0.4;
-  if (k==='snow') crunch(t,0.042*v,d,frosty()); else if (k==='slush') slosh(t,0.04*v,d); else { Nz(t,0.05,0.03*v,'lowpass',900,0.7,d); if (Math.random()<0.18) T('sine',rnd(1900,2600),t+0.02,0.04,0.004*v,d,rnd(1700,2300)); } };
+  if (k==='snow') crunch(t,0.055*v,d,frosty()); else if (k==='slush') slosh(t,0.065*v,d); else { Nz(t,0.05,0.03*v,'lowpass',900,0.7,d); if (Math.random()<0.18) T('sine',rnd(1900,2600),t+0.02,0.04,0.004*v,d,rnd(1700,2300)); } };
 // ---------------------------------------------------------------- Raumklang: Teppiche
 M.addBeds({
-  k4City:{type:'lowpass',f:240,q:0.7,v:0.016,swell:0.2},          // Stadt unter Schnee: tief und gedämpft
-  k4CityFar:{type:'lowpass',f:170,q:0.7,v:0.01,swell:0.25},
+  k4City:{type:'lowpass',f:380,q:0.7,v:0.02,swell:0.2},          // Stadt unter Schnee: tief und gedämpft
+  k4CityFar:{type:'lowpass',f:260,q:0.7,v:0.014,swell:0.25},
   k4Slush:{type:'bandpass',f:1700,q:0.45,v:0.005,swell:0.35},     // Tauwetter: nasse Reifen in der Ferne
   k4Flakes:{type:'highpass',f:5200,q:0.3,v:0.0022,swell:0.45},    // Schneefall: kaum hörbare Luft
-  k4Fog:{type:'lowpass',f:150,q:0.6,v:0.012,swell:0.25},          // Nebel: alles weit weg
+  k4Fog:{type:'lowpass',f:220,q:0.6,v:0.014,swell:0.25},          // Nebel: alles weit weg
   k4Frost:{type:'highpass',f:6000,q:0.3,v:0.0014,swell:0.3},      // klare Frostnacht
-  k4Hall:{type:'bandpass',f:420,q:0.7,v:0.022,swell:0.08},        // die große Bahnhofshalle
-  k4HallHi:{type:'bandpass',f:2400,q:0.5,v:0.006,swell:0.12},
+  k4Hall:{type:'bandpass',f:420,q:0.7,v:0.028,swell:0.08},        // die große Bahnhofshalle
+  k4HallHi:{type:'bandpass',f:2400,q:0.5,v:0.008,swell:0.12},
   k4Loco:{osc:'sawtooth',f:100,type:'bandpass',fq:200,q:6,v:0.0025}, // ein stehender Zug brummt
   k4Wire:{osc:'sawtooth',f:50,type:'bandpass',fq:150,q:8,v:0.002},   // Oberleitung
-  k4Room:{type:'lowpass',f:180,q:0.7,v:0.012},
-  k4Stair:{type:'bandpass',f:300,q:2.5,v:0.007,swell:0.35},       // Altbau-Treppenhaus
+  k4Room:{type:'lowpass',f:240,q:0.7,v:0.014},
+  k4Stair:{type:'bandpass',f:300,q:2.5,v:0.011,swell:0.35},       // Altbau-Treppenhaus
   k4Urn:{type:'bandpass',f:1300,q:1.6,v:0.0035,swell:0.5},        // der große Teekessel siedet
   k4Steam:{type:'highpass',f:3200,q:0.5,v:0.0025,swell:0.4},      // Kessel der Espressomaschine
-  k4Vent:{type:'bandpass',f:280,q:1.2,v:0.009,swell:0.15},        // Lüftung
+  k4Vent:{type:'bandpass',f:320,q:1,v:0.013,swell:0.12},          // Lüftung
+  k4Murmur:{type:'bandpass',f:650,q:0.9,v:0.012,swell:0.2},      // Stimmen im Raum, nicht zu verstehen
+  k4Crowd:{type:'bandpass',f:850,q:0.7,v:0.016,swell:0.12},      // Menschen in der Bahnhofshalle
+  k4Traffic:{type:'bandpass',f:480,q:0.5,v:0.009,swell:0.3},     // Verkehr in der Nähe, im Schnee gedämpft
   k4Tunnel:{osc:'sine',f:38,type:'lowpass',fq:90,q:1.5,v:0.012},  // Beton, tief
-  k4Wind:{type:'bandpass',f:520,q:0.8,v:0.008,swell:0.5},         // Wind über der offenen Wiese
-  k4Window:{type:'lowpass',f:320,q:0.7,v:0.008,swell:0.25},       // die Stadt hinter dem Fenster
+  k4Wind:{type:'bandpass',f:520,q:0.8,v:0.011,swell:0.5},         // Wind über der offenen Wiese
+  k4Window:{type:'lowpass',f:420,q:0.7,v:0.01,swell:0.25},       // die Stadt hinter dem Fenster
   k4Hum:{osc:'sawtooth',f:50,type:'bandpass',fq:100,q:6,v:0.003}  // Notlicht, Automat
 });
 // ---------------------------------------------------------------- Raumklang: Bausteine
@@ -314,11 +317,11 @@ function tvFx(t,v,d,lp){ var tv=sub(d,'bandpass',1500,0.7), m=lp?sub(tv,'lowpass
   if (Math.random()<0.3){ var x=t+rnd(1,3); [0,4,7,12,7,4].forEach(function(s,i){ T('square',nf(67+s),x+i*0.18,0.16,0.0025*v,m); }); } }
 function coo(t,v,d){ T('sine',420,t,0.35,0.02*v,d,380,0.05); T('sine',360,t+0.45,0.35,0.018*v,d,320,0.05); if (Math.random()<0.4) for (var i=0;i<10;i++) Nz(t+1+i*0.045,0.03,0.03*v,'bandpass',700,1.5,d); }
 // Feuerwerk aus dem Raumklang: spielt nur, solange es draußen knallt (Silvesternacht, Silvesterabend nach k4.fin.late); win = hinter Glas, die Scheibe zittert
-function fwEv(t,d,v,lp,win){ if (!fwNow()) return; var b=hb(d,win?0.15:0.5,'fern'), r=Math.random(), m=sub(b,'lowpass',lp,0.6);
-  if (r<0.4) bang(t,0.05*v,m); else if (r<0.65) battery(t,0.035*v,m); else if (r<0.85){ whistleUp(t,1.2,0.004*v,m,1400,2600); bang(t+1.3,0.045*v,m); crackle(t+1.4,1.2,0.012*v,m,40); } else crackle(t,1.5,0.015*v,m,50);
-  if (win&&r<0.4) Nz(t+0.01,0.25,0.004*v,'bandpass',rnd(180,260),8,d); }
+function fwEv(t,d,v,lp,win){ if (!fwNow()) return; var b=hb(d,win?0.2:0.5,'fern'), r=Math.random(), m=sub(b,'lowpass',lp,0.6);
+  if (win){ if (r<0.6){ bang(t,0.06*v,m); if (r<0.3) Nz(t+0.015,0.3,0.006*v,'bandpass',rnd(420,560),6,d); } else battery(t,0.05*v,m); return; }   // hinter dem Fenster: dumpfe Schläge, die Scheibe schwingt mit
+  if (r<0.4) bang(t,0.05*v,m); else if (r<0.65) battery(t,0.035*v,m); else if (r<0.85){ whistleUp(t,1.2,0.004*v,m,1400,2600); bang(t+1.3,0.045*v,m); crackle(t+1.4,1.2,0.012*v,m,40); } else crackle(t,1.5,0.015*v,m,50); }
 // ---------------------------------------------------------------- Raumklang: Einzelgeräusche (t, Ziel d, Lautstärke v; bei festen Takten n = Zähler)
-var EV4={
+var RAW={
   k4Cap:function(t,d){ AMB.ac=K.AC; AMB.d=d; },                                                       // nur für den Hall des Raumklangs
   k4Car:function(t,d,v){ carSnow(t,v,d); }, k4CarOut:function(t,d,v){ carSnow(t,v*0.7,sub(d,'lowpass',380,0.7)); },
   k4Tram:function(t,d,v){ tramPass(t,v,d); }, k4TramOut:function(t,d,v){ tramPass(t,v*0.6,sub(d,'lowpass',500,0.7)); },
@@ -332,10 +335,10 @@ var EV4={
   k4RollHall:function(t,d,v){ rollFx(t,v,hb(d,0.45,'halle'),false); }, k4RollSlush:function(t,d,v){ rollFx(t,v,d,true); },
   k4Crow:function(t,d,v){ var b=hb(d,0.35,'weit'), n=1+Math.floor(Math.random()*3); for (var i=0;i<n;i++){ var ti=t+i*rnd(0.4,0.6), f=rnd(480,620), o=osc('sawtooth',f,ti,ti+0.4), tm=trem(ti,ti+0.4,rnd(60,90),0.6,'square'), bp=filt('bandpass',1300,3), bp2=filt('bandpass',2600,4), g=gain(0), g2=gain(0.5);
     o.frequency.linearRampToValueAtTime(f*0.85,ti+0.3); adsr(g,ti,0.012*v,0.03,0.12,0.15); chain(o,tm); tm.connect(bp); tm.connect(bp2); chain(bp2,g2,g); chain(bp,g,b); } },
-  k4CrowOut:function(t,d,v){ EV4.k4Crow(t,sub(d,'lowpass',900,0.7),v*0.7); },
+  k4CrowOut:function(t,d,v){ RAW.k4Crow(t,sub(d,'lowpass',900,0.7),v*0.7); },
   k4Kids:function(t,d,v){ var m=sub(hb(d,0.4,'weit'),'lowpass',2600,0.7), x=t, n=1+Math.floor(Math.random()*3); for (var i=0;i<n;i++) x=talk(x,{f0:rnd(300,380),v:0.03*v,phr:[2+Math.floor(Math.random()*3)],fs:1.28,mel:0.3,rate:1.2,cons:0.4},m)+rnd(0.2,0.8); if (Math.random()<0.5) kidLaugh(x,v*0.8,m); },
-  k4KidsYard:function(t,d,v){ EV4.k4Kids(t,sub(hb(d,0.4,'fern'),'lowpass',1800,0.7),v*0.8); },
-  k4KidsIn:function(t,d,v){ EV4.k4Kid(t,sub(hb(d,0.4,'treppe'),'lowpass',900,0.7),v); },
+  k4KidsYard:function(t,d,v){ RAW.k4Kids(t,sub(hb(d,0.4,'fern'),'lowpass',1800,0.7),v*0.8); },
+  k4KidsIn:function(t,d,v){ RAW.k4Kid(t,sub(hb(d,0.4,'treppe'),'lowpass',900,0.7),v); },
   k4Sled:function(t,d,v){ Sw(t,rnd(1.2,2),0.012*v,'bandpass',2600,0.8,hb(d,0.3,'weit'),1600); },
   k4Gust:function(t,d,v){ Sw(t,rnd(2.5,4),0.03*v,'bandpass',450,1.2,d,900); Sw(t+0.3,2.5,0.008*v,'bandpass',1800,3,d,2600); },
   k4Drip:function(t,d,v){ var n=2+Math.floor(Math.random()*4), x=t; for (var i=0;i<n;i++){ var f=rnd(1500,2600); T('sine',f,x,0.05,0.01*v,d,f*0.55); Nz(x,0.01,0.008*v,'bandpass',3000,2,d); x+=rnd(0.4,1.2); } },   // Schmelzwasser aufs Fensterblech
@@ -352,14 +355,14 @@ var EV4={
   k4Pigeons:function(t,d,v){ coo(t,v,hb(d,0.4,'halle')); },
   k4Murmur:function(t,d,v){ murmur(t,v,d); }, k4MurmurHall:function(t,d,v){ murmur(t,v,hb(d,0.5,'halle')); },
   k4Italian:function(t,d,v){ murmur(t,v,d,{f0:pick([110,125,140]),mel:0.32,cons:0.42,rate:1.15}); },
-  k4Old:function(t,d,v){ murmur(t,v,d,{f0:pick([105,120,170,185]),rate:0.8,mel:0.12}); }, k4OldFar:function(t,d,v){ EV4.k4Old(t,sub(d,'lowpass',1000,0.7),v); },
+  k4Old:function(t,d,v){ murmur(t,v,d,{f0:pick([105,120,170,185]),rate:0.8,mel:0.12}); }, k4OldFar:function(t,d,v){ RAW.k4Old(t,sub(d,'lowpass',1000,0.7),v); },
   k4Kid:function(t,d,v){ var x=talk(t,{f0:rnd(290,360),v:0.025*v,phr:phr(2,5,1+Math.floor(Math.random()*2)),fs:1.28,mel:0.3,rate:1.2,cons:0.5,rise:true},d); if (Math.random()<0.35) kidLaugh(x+0.1,v,d); },
   k4Child:function(t,d,v){ var f=rnd(330,400); [0,0.45].forEach(function(o,i){ syl(t+o,f*(i?1.05:1),f*(i?0.85:1.08),0.35,0.02*v,d,1.3,false); }); },   // ein Kind quengelt
   k4Call:function(t,d,v){ var m=sub(hb(d,0.35,'r'),'lowpass',1800,0.7), f=pick([150,175,190]); syl(t,f,f*1.2,0.25,0.03*v,m,1,true); syl(t+0.32,f*1.15,f*1.35,0.35,0.028*v,m,1,false); },   // „Hallo?“ hinter einer Tür
   k4Tv:function(t,d,v){ tvFx(t,v,d); }, k4TvShow:function(t,d,v){ tvFx(t,v,d,2400); }, k4TvFar:function(t,d,v){ tvFx(t,v,d,700); },
   k4TvIt:function(t,d,v){ var tv=sub(d,'bandpass',1500,0.7); talk(t,{f0:rnd(130,160),v:0.03*v,phr:phr(5,10,2),rate:1.4,mel:0.35,cons:0.45},tv); if (Math.random()<0.35) Sw(t+rnd(1,3),3,0.01*v,'bandpass',900,0.7,tv,1400); },   // Fußball, italienisch
   k4Cups:function(t,d,v){ var f=rnd(2000,2900); T('sine',f,t,0.25,0.012*v,d); T('sine',f*1.41,t+0.005,0.15,0.005*v,d); if (Math.random()<0.5) for (var i=0;i<5;i++) T('sine',rnd(3800,4600),t+0.4+i*0.11,0.05,0.004*v,d); },
-  k4CupsFar:function(t,d,v){ EV4.k4Cups(t,sub(d,'lowpass',1800,0.7),v); },
+  k4CupsFar:function(t,d,v){ RAW.k4Cups(t,sub(d,'lowpass',1800,0.7),v); },
   k4Spoon:function(t,d,v){ for (var i=0;i<6;i++) T('sine',rnd(3800,4600),t+i*0.1,0.05,0.004*v,d); T('sine',rnd(2200,2600),t+0.7,0.2,0.006*v,d); },
   k4Cutlery:function(t,d,v){ var n=2+Math.floor(Math.random()*4); for (var i=0;i<n;i++){ var ti=t+i*rnd(0.15,0.5), f=rnd(2600,4200); T('sine',f,ti,0.08,0.006*v,d); T('sine',f*1.37,ti,0.05,0.003*v,d); Nz(ti,0.01,0.006*v,'highpass',4000,1,d); }
     if (Math.random()<0.4){ T('sine',rnd(900,1300),t+0.2,0.2,0.006*v,d); Nz(t+0.2,0.02,0.008*v,'bandpass',1500,2,d); } },
@@ -399,11 +402,16 @@ var EV4={
   k4Number:function(t,d,v){ T('sine',988,t,0.15,0.008*v,d); T('sine',784,t+0.18,0.3,0.008*v,d); },   // Nummernanzeige (elektronisch, kein Gong)
   k4Intercom:function(t,d,v){ talk(t,{f0:rnd(180,210),v:0.04*v,phr:phr(4,7,2),fs:1.1,rate:1.1},paBus(sub(d,'lowpass',2800,0.7),'r',0.1,500)); },
   k4Chair:function(t,d,v){ creakW(t,0.008*v,d); if (Math.random()<0.4) Nz(t+0.3,0.25,0.008*v,'bandpass',700,1.2,d,400); },
-  k4FwOut:function(t,d,v){ fwEv(t,d,v,2400,false); }, k4FwIn:function(t,d,v){ fwEv(t,d,v*0.7,1200,true); }, k4FwWin:function(t,d,v){ fwEv(t,d,v*0.55,650,true); },
+  k4FwOut:function(t,d,v){ fwEv(t,d,v,3000,false); }, k4FwIn:function(t,d,v){ fwEv(t,d,v*0.7,1500,false); }, k4FwWin:function(t,d,v){ fwEv(t,d,v*0.6,900,true); },
   k4Boeller:function(t,d,v){ bang(t,0.03*v,sub(hb(d,0.55,'fern'),'lowpass',1000,0.6)); },
   k4BroomOut:function(t,d,v){ var m=sub(d,'lowpass',1500,0.7); for (var i=0;i<5;i++) Nz(t+i*rnd(0.5,0.7),0.35,0.01*v,'bandpass',rnd(2600,3600),0.9,m,1800,0.12); },   // Neujahr: jemand kehrt die Raketenreste zusammen
   k4BirdOut:function(t,d,v){ var m=sub(d,'lowpass',3500,0.7), n=2+Math.floor(Math.random()*5), f=rnd(3400,5200); for (var i=0;i<n;i++) T('sine',f*rnd(0.95,1.05),t+i*rnd(0.09,0.2),0.06,0.005*v,m,f*rnd(0.7,1.3)); }   // Spatzen in der Sonne
 };
+// Pegel: alle Einzelgeräusche gemeinsam angehoben (abgeglichen mit den Einzelgeräuschen aus Kapitel 1 bis 3), dazu ein Faktor je Geräusch
+var EVG=2.5, EVK={ k4PaBus:0.3, k4PaTrain:0.25, k4PaTrainFar:0.35, k4PaMuffled:0.4, k4Intercom:0.4, k4Cough:2, k4PhoneFar:1.5, k4Tram:1.6, k4TramOut:1.6, k4TrainPass:1.6, k4TrainFar:1.6,
+  k4Crow:1.5, k4CrowOut:1.5, k4FwOut:2.2, k4FwIn:1.4, k4Chair:2, k4Rollator:2, k4Simmer:1.5, k4Flap:2, k4DoorFar:0.6, k4Piano:0.6, k4Cat:0.6, k4Car:0.5, k4Shovel:0.7, k4Pigeons:0.5,
+  k4Whistle:0.7, k4Call:0.7, k4BirdOut:2, k4Toy:1.4, k4RollHall:1.5, k4Cap:0 };
+var EV4={}; Object.keys(RAW).forEach(function(k){ var f=RAW[k], g=EVK[k]===0?1:EVG*(EVK[k]||1); EV4[k]=function(t,d,v,n){ return f(t,d,(v===undefined?1:v)*g,n); }; });
 M.addEvents(EV4);
 M.K4A={sfx:SFX4, ev:EV4};
 // ---------------------------------------------------------------- Klangkulissen je Ort
@@ -426,10 +434,13 @@ function ground(o){ return wth(o)==='thaw'?'slush':'snow'; }
 function wetEv(o,v,p1,p2){ return wth(o)==='thaw'?[['k4Drip',4,12,v,p1,p2]]:[]; }
 // Silvester: das Feuerwerk (kind = draußen, durchs Fenster, hinter geschlossenem Fenster); am Abend vorher einzelne Knaller
 function fireworks(o,kind,a,b,v,p1,p2){ var ph=phase(o); if (ph!=='k4_fin_n'&&ph!=='k4_fin_a') return []; var ev=[[kind,a,b,v,p1,p2],[kind,a*1.7,b*1.7,v*0.7,p1,p2]]; if (ph==='k4_fin_a') ev.push(['k4Boeller',20,60,v*0.8,p1,p2]); return ev; }
-function scape(id,f){ M.defineScape(id,function(o){ var s=f(o||{}); s.beds=uniq(s.beds||[]); return s; }); }
+// Pegel und Dichte der Ereignisse je Ort [Lautstärke, Dichte] (abgeglichen mit den Kulissen aus Kapitel 3; München im Schnee bleibt etwas leiser)
+var SG={ k4_zob:[1.6,1.5], k4_hacker:[1.4,1.3], k4_jhaus:[1.4,1.3], k4_jschlaf:[1.3,1], k4_ana:[2.5,1.8], k4_wiesn:[1.2,1], k4_gleis11:[1.5,1.2], k4_bmission:[1.8,1.5], k4_barsport:[1.5,1.4],
+  k4_friedamt:[1.8,1.5], k4_heim:[1.8,1.5], k4_heim_flur:[2.5,1.8], k4_heim_raum:[2.5,1.6], k4_heim214:[2,1.2], k4_balkon:[1.5,1.3], k4_konsulat:[1.8,1.5] };
+function scape(id,f){ M.defineScape(id,function(o){ var s=f(o||{}), gk=SG[id]||[1,1]; s.beds=uniq(s.beds||[]); s.ev=(s.ev||[]).map(function(e){ return [e[0],e[1]/gk[1],e[2]/gk[1],e[3]*gk[0],e[4],e[5]]; }); return s; }); }
 
 // ZOB: Busse, Druckluft, Durchsagen, Rollkoffer im Matsch, Wastls Taxi im Leerlauf, eine S-Bahn hinter der Halle; Heiligabend, wenig los
-scape('k4_zob',function(o){ var S=st(o); return { beds:['k4City'].concat(S.busIn===false?[]:['k3Idle']).concat(sky(o)), step:ground(o),
+scape('k4_zob',function(o){ var S=st(o); return { beds:['k4City','k4Traffic'].concat(S.busIn===false?[]:['k3Idle']).concat(sky(o)), step:ground(o),
   ev:[tr(o,'bus',20,45,0.5,-0.6,0.6),['k4PaBus',45,100,0.5,-0.3,0.4],tr(o,'k3Brake',35,80,0.4,-0.5,0.8),tr(o,'k4RollSlush',14,35,0.5,-0.9,0.9),['k4Steps',12,30,0.4,-1,1],['k4Murmur',15,40,0.3,-0.8,0.8],
       ['k4TrainPass',40,90,0.4,0.5,1],['k3Diesel',40,90,0.25,0.6,0.9],tr(o,'k4Car',12,30,0.4,-1,1),['k4Crow',40,90,0.3,-1,1],['k4Shovel',50,120,0.3,-1,1]].concat(wetEv(o,0.3,-1,1),fireworks(o,'k4FwOut',3,8,0.9,-1,1)) }; });
 // Hackerbrücke: unten die Züge, die Oberleitung, die Trambahn über die Brücke; nachts im Nebel fast nichts: ein Zug, Tropfen vom Stahl, ein Funke
@@ -459,23 +470,23 @@ scape('k4_ana',function(o){ var ph=phase(o), ev;
   else if (ph==='k4_fin_n') ev=[['k4TvShow',15,35,0.25,0.6,0.9],['k4Radiator',30,70,0.25,-1,1]];
   else if (ph==='k4_d2') ev=[['k4Cups',20,50,0.5,-0.8,-0.4],['k4Kitchen',30,70,0.3,-0.9,-0.5],tr(o,'k4CarOut',20,50,0.25,0.6,1),['k4Neighbor',60,140,0.2,-1,1]];
   else ev=[['k4Kid',10,25,0.45,-0.8,0.8],['k4Toy',15,40,0.4,0.3,0.9],['k4Kitchen',25,60,0.35,-0.9,-0.5],['k4Cups',25,60,0.4,-0.8,-0.4],tr(o,'k4CarOut',25,60,0.25,0.6,1)];
-  return { beds:['k4Room'], step:'wood', fixed:ph==='k4_fin_n'?[['k4Clock',1,0.18,-0.3]]:[], ev:ev.concat(fireworks(o,'k4FwIn',3,8,0.85,0.4,1)) }; });
+  return { beds:['k4Room'].concat(ph==='k4_pro_n'||ph==='k4_fin_a'?['k4Murmur']:[]), step:'wood', fixed:ph==='k4_fin_n'?[['k4Clock',1,0.18,-0.3]]:[], ev:ev.concat(fireworks(o,'k4FwIn',3,8,0.85,0.4,1)) }; });
 // Theresienwiese: weit und still. Kinder am Rodelhang (mit Echo), Kufen, Krähen, Wind über dem Feld, ein Hund, ganz fern ein Zug
 scape('k4_wiesn',function(o){ var w=st(o).walk!==false; return { beds:['k4Wind','k4CityFar'].concat(sky(o)), step:ground(o),
   ev:[['k4Kids',w?8:15,w?20:35,0.5,-1,-0.3],['k4Sled',w?10:20,w?25:45,0.4,-1,-0.2],['k4Crow',20,50,0.4,-1,1],['k4Steps',25,60,0.3,-1,1],['k3DogFar',40,90,0.3,-1,1],['k4TrainFar',60,140,0.25,0.4,1],['k4Gust',25,60,0.4,-1,1]].concat(wetEv(o,0.2,-1,1)) }; });
 // Gleis 11: die Halle, Durchsagen mit Gong, Stimmen, Rollkoffer, Schritte, Tauben, Züge kommen und gehen, ein Pfiff, die Anzeige blättert, der Kiosk
-scape('k4_gleis11',function(o){ var k=Math.max(0.35,traffic(o)); return { beds:['k4Hall','k4HallHi','k4Loco'], step:'stone',
+scape('k4_gleis11',function(o){ var k=Math.max(0.35,traffic(o)); return { beds:['k4Hall','k4HallHi','k4Loco','k4Crowd'], step:'stone',
   ev:[['k4PaTrain',35,80,0.6,-0.3,0.5],['k4MurmurHall',6/k,15/k,0.4,-1,1],['k4RollHall',10/k,25/k,0.5,-1,1],['k4StepsHall',8/k,20/k,0.4,-1,1],['k4Pigeons',20,50,0.4,-0.5,0.8],['k4TrainIn',70,160,0.5,-1,-0.4],
       ['k4TrainOut',70,160,0.4,-1,-0.4],['k4Whistle',60,140,0.3,-1,0],['k4Flap',40,100,0.3,0.2,0.8],['k4Kiosk',30,70,0.3,0.3,0.8],['k4Compressor',30,70,0.3,-1,-0.5]] }; });
 // Bahnhofsmission: der Teekessel siedet, Tassen, leise Gäste, ein Husten, die Zeitung, Durchsagen gedämpft durchs Fenster; am Donnerstag (S.farewell) still
-scape('k4_bmission',function(o){ var fw=st(o).farewell; return { beds:['k4Room','k4Urn'], step:'tile', fixed:[['k4Clock',1,0.16,0.4]],
+scape('k4_bmission',function(o){ var fw=st(o).farewell; return { beds:['k4Room','k4Urn'].concat(fw?[]:['k4Murmur']), step:'tile', fixed:[['k4Clock',1,0.16,0.4]],
   ev:fw?[['k4Cups',20,50,0.3,-0.5,0.3],['k4Cough',40,100,0.25,-0.6,0.6],['k4PaMuffled',60,140,0.2,0.6,1],['k4Simmer',15,30,0.3,-0.8,-0.4]]
     :[['k4Cups',8,20,0.5,-0.5,0.3],['k4Old',15,35,0.3,-0.6,0.6],['k4Cough',30,80,0.35,-0.6,0.6],['k4Paper',25,60,0.3,-0.6,0.6],['k4PaMuffled',40,90,0.3,0.6,1],['door',40,100,0.25,-1,-0.7],['k4Pour',40,90,0.3,-0.4,0],['k4Simmer',12,25,0.35,-0.8,-0.4]] }; });
 // Bunker (nur Mala): Beton, Lüftung, Tropfen, oben rollt ein Zug, die Lampe sirrt; Nachhall: Flüstern und ein Stempel von 1962
 scape('k4_bunker',function(o){ return { beds:['cellar','k4Vent','k4Tunnel'], step:'stone',
   ev:[['drip',4,10,0.5,-0.6,0.6],['k4Rumble',20,45,0.6,-0.3,0.3],['k4Lamp',15,40,0.3,0,0.3],['whisper',40,90,0.15,-0.6,0.6],['k4Stamp1962',60,140,0.2,-0.4,0.2]] }; });
 // Bar Sport: Mühle, Siebträger, Dampf, Tassen, Löffel, Italienisch an der Theke, Fußball im Fernsehen, die Zeitung, draußen der Schnee
-scape('k4_barsport',function(o){ return { beds:['k4Room','k4Steam','fridge'], step:'tile',
+scape('k4_barsport',function(o){ return { beds:['k4Room','k4Steam','fridge','k4Murmur'], step:'tile',
   ev:[['k4Espresso',25,60,0.5,-0.7,-0.3],['k4Cups',5,14,0.6,-0.6,0.3],['k4Italian',8,20,0.45,-0.6,0.6],['k4TvIt',15,35,0.4,0.5,0.9],['k4Spoon',10,25,0.4,-0.6,0.2],['k4Paper',30,70,0.3,0.3,0.8],['door',60,150,0.25,-1,-0.8],tr(o,'k4CarOut',25,60,0.2,-1,-0.6)] }; });
 // Friedhofsverwaltung: Uhr, Neonröhre, Tastatur, Stempel, Papier, ein Telefon nebenan, Schritte im Flur
 scape('k4_friedamt',function(o){ return { beds:['k4Room','k3Hum'], step:'lino', fixed:[['k4Clock',1,0.15,0.5]],
@@ -489,9 +500,9 @@ scape('k4_heim_flur',function(o){ var S=st(o);
   if (night(o)) return { beds:['k4Room','k4Hum'], step:'lino', fixed:[['k4Clock',1,0.26,-0.1]], ev:[['k4Beep',80,160,0.15,-1,1]].concat(fireworks(o,'k4FwWin',3,8,0.9,0.6,1)) };
   var ev=[['k4Trolley',30,70,0.4,-0.6,0.8],['k4Beep',40,100,0.3,-1,1],['k4Rollator',25,60,0.35,-1,1],['k4Call',60,150,0.25,0.4,1],['k4TvFar',30,70,0.25,0.3,1],['k4Lift',40,100,0.3,-1,-0.6],['k4DoorFar',40,90,0.2,-1,1]];
   if (S.three) ev=ev.concat([['k4CupsFar',4,10,0.5,0.4,0.9],['k4OldFar',8,18,0.35,0.4,0.9]]);
-  return { beds:['k4Room'], step:'lino', fixed:[['k4Clock',1,0.26,-0.1]], ev:ev }; });
+  return { beds:['k4Room','k4Vent'], step:'lino', fixed:[['k4Clock',1,0.26,-0.1]], ev:ev }; });
 // Gemeinschaftsraum: Fernseher, die Alten, Tassen (um drei mehr, Kaffee wird eingeschenkt), ein Husten, manchmal ein paar Töne auf dem Klavier, Krähen im Park
-scape('k4_heim_raum',function(o){ var th=st(o).three; return { beds:['k4Room','k4Window'], step:'lino', fixed:[['k4Clock',1,0.14,0.6]],
+scape('k4_heim_raum',function(o){ var th=st(o).three; return { beds:['k4Room','k4Window','k4Murmur','k4Vent'], step:'lino', fixed:[['k4Clock',1,0.14,0.6]],
   ev:[['k4TvShow',20,45,0.3,0.5,0.9],['k4Old',10,25,0.4,-1,1],['k4Cups',th?4:12,th?10:30,0.45,-0.8,0.8],['k4Cough',40,90,0.3,-1,1],['k4Piano',90,220,0.25,-0.8,-0.3],['k4CrowOut',40,90,0.2,0.6,1]].concat(th?[['k4Pour',20,45,0.4,-0.6,0.6],['k4Cutlery',8,20,0.35,-0.8,0.8]]:[]) }; });
 // Zimmer 214: Alois atmet, die Heizung, Fernseher nebenan, Krähen draußen; in der Silvesternacht das Feuerwerk gedämpft hinter dem Fenster, die Scheibe zittert
 scape('k4_heim214',function(o){ if (night(o)) return { beds:['k4Room'], step:'lino', ev:[['k4Breath',7,13,0.3,-0.3,0.1],['k4Radiator',40,90,0.2,0.6,1]].concat(fireworks(o,'k4FwWin',2.5,7,1,0.5,1)) };
@@ -500,7 +511,7 @@ scape('k4_heim214',function(o){ if (night(o)) return { beds:['k4Room'], step:'li
 scape('k4_balkon',function(o){ return { beds:['k4City'].concat(sky(o)), step:ground(o),
   ev:[tr(o,'k4Car',8,20,0.4,-1,1),tr(o,'k4Tram',40,90,0.3,-1,1),['k4Crow',25,60,0.35,-1,1],['k4Pigeons',30,60,0.3,-1,1],['k4KidsYard',40,90,0.3,-1,1],['k4DoorFar',60,140,0.15,-1,1],['k4Shovel',60,140,0.25,-1,1],['k4Gust',30,70,0.3,-1,1]].concat(wetEv(o,0.5,-0.6,0.6),fireworks(o,'k4FwOut',3,8,0.9,-1,1)) }; });
 // Konsulat: Nummernanzeige, Stimme durch die Sprechanlage am Schalter, Wartende, Stühle, ein Kind, Papier, Stempel hinter dem Glas
-scape('k4_konsulat',function(o){ return { beds:['k4Room','k3Hum'], step:'tile',
+scape('k4_konsulat',function(o){ return { beds:['k4Room','k3Hum','k4Murmur'], step:'tile',
   ev:[['k4Number',30,70,0.45,0.4,0.8],['k4Intercom',35,80,0.35,0.5,0.9],['k4Murmur',10,25,0.3,-1,0.5],['k4Chair',20,50,0.35,-1,0.5],['k4Child',60,140,0.25,-1,0],['k4Paper',20,50,0.35,-0.5,0.5],['k4Cough',40,90,0.25,-1,1],['k4Stamp',50,110,0.3,0.4,0.9],['door',50,110,0.25,-1,-0.6]] }; });
 // Stadtplan
 scape('map4',function(o){ return { beds:['k4CityFar'], step:'none', ev:[tr(o,'k4Tram',30,70,0.25,-1,1),['k4Crow',40,90,0.2,-1,1]] }; });
