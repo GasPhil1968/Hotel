@@ -50,7 +50,7 @@
    "dpr": 1,
    "rot": false
   },
-  "wallS": 2.965
+  "wallS": 2.597
  },
  {
   "id": "F02",
@@ -91,7 +91,7 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "155.0",
-  "wallS": 8.565
+  "wallS": 8.398
  },
  {
   "id": "F03",
@@ -221,7 +221,7 @@
    "Rede mit",
    "Schau an"
   ],
-  "wallS": 25.591
+  "wallS": 24.37
  },
  {
   "id": "F04",
@@ -262,7 +262,7 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "155.0",
-  "wallS": 4.189
+  "wallS": 4.179
  },
  {
   "id": "F05",
@@ -350,7 +350,7 @@
     }
    }
   },
-  "wallS": 4.079
+  "wallS": 4.09
  },
  {
   "id": "F06",
@@ -399,7 +399,7 @@
    "vizitka",
    "aushang"
   ],
-  "wallS": 4.479
+  "wallS": 4.536
  },
  {
   "id": "F07",
@@ -510,7 +510,7 @@
     "sw": 500
    }
   ],
-  "wallS": 4.387
+  "wallS": 4.42
  },
  {
   "id": "F08",
@@ -553,7 +553,7 @@
   "failedReq": [],
   "browserVersion": "155.0",
   "compare": "gleich",
-  "wallS": 7.844
+  "wallS": 7.528
  },
  {
   "id": "F09",
@@ -595,7 +595,7 @@
   "failedReq": [],
   "browserVersion": "155.0",
   "after": "haustor",
-  "wallS": 5.683
+  "wallS": 5.609
  },
  {
   "id": "F10",
@@ -610,7 +610,7 @@
    },
    {
     "ok": true,
-    "what": "Geistersicht kühl/blau (B 568745 > R 241004)"
+    "what": "Geistersicht kühl/blau (B 569355 > R 240151)"
    },
    {
     "ok": true,
@@ -630,14 +630,14 @@
   "failedReq": [],
   "browserVersion": "155.0",
   "tint": {
-   "r": 241004,
-   "g": 438091,
-   "b": 568745
+   "r": 240151,
+   "g": 438057,
+   "b": 569355
   },
   "ghosts": [
    "luka"
   ],
-  "wallS": 4.818
+  "wallS": 4.334
  },
  {
   "id": "F11",
@@ -676,6 +676,6 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "155.0",
-  "wallS": 23.202
+  "wallS": 22.991
  }
 ]
