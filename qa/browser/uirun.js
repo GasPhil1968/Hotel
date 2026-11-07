@@ -9,7 +9,7 @@ const ENGINE = arg('--engine', 'chromium'), DEVICE = arg('--device', 'desktop');
 const OUT = path.resolve(arg('--out', path.join(__dirname, '..', 'results', 'browser', 'ui_' + ENGINE + '_' + DEVICE)));
 const REC = JSON.parse(fs.readFileSync(arg('--rec', path.join(__dirname, '..', 'results', 'browser', 'recording.json')), 'utf8'));
 const URL = arg('--url', 'file://' + path.join(__dirname, '..', '..', 'web', 'index.html'));
-const LIMIT = +arg('--limit', 1e9), TURBO = +arg('--turbo', 25);
+const TAPGAP = +arg('--tapgap', 40), LIMIT = +arg('--limit', 1e9), TURBO = +arg('--turbo', 25);
 const pw = require('playwright');
 const { launch, contextOpts } = require('./engines');
 
@@ -29,7 +29,7 @@ const { launch, contextOpts } = require('./engines');
   await page.evaluate((t) => { M.TURBO = t; M.__speechLog = []; try { localStorage.clear(); } catch (e) {} }, TURBO);   // Sprachprotokoll nur lesend: erkennt, ob ein Tipp eine Reaktion auslöste
   const touch = DEVICE !== 'desktop';
   const vp = page.viewportSize();
-  L('Gerät', DEVICE, ENGINE, JSON.stringify(vp), 'touch=' + touch, 'TURBO', TURBO);
+  L('Gerät', DEVICE, ENGINE, JSON.stringify(vp), 'touch=' + touch, 'TURBO', TURBO, 'Tippabstand', TAPGAP + ' ms');
 
   // ---------------------------------------------------------------- Seitenhelfer (nur lesend)
   await page.addScriptTag({ content: `window.__qa = {
@@ -50,7 +50,7 @@ const { launch, contextOpts } = require('./engines');
   };` });
   const st = () => page.evaluate(() => window.__qa.st());
   const sleep = (ms) => page.waitForTimeout(ms);
-  async function tapL(x, y) { const c = await page.evaluate(([x, y]) => window.__qa.toClient(x, y), [x, y]); if (touch) await page.touchscreen.tap(c[0], c[1]); else { await page.mouse.move(c[0], c[1]); await page.mouse.down(); await page.mouse.up(); } await sleep(40); }
+  async function tapL(x, y) { const c = await page.evaluate(([x, y]) => window.__qa.toClient(x, y), [x, y]); if (touch) await page.touchscreen.tap(c[0], c[1]); else { await page.mouse.move(c[0], c[1]); await page.mouse.down(); await page.mouse.up(); } await sleep(TAPGAP); }
   async function until(pred, ms, what) { const t = Date.now(); let s; while (Date.now() - t < ms) { s = await st(); if (pred(s)) return s; await sleep(30); } const e = new Error('Zeitüberschreitung: ' + what + ' | ' + JSON.stringify(s)); throw e; }
   const idle = (s) => s.scr === 'game' && !s.busy && !s.speech && !s.dlg && !s.ov && !s.card && !s.acting && !s.walk && !s.trn && !s.menu;
   async function tapCode(code, what) { const p = await page.evaluate((c) => window.__qa.scan(c), code); if (!p) throw new Error('Bedienelement nicht sichtbar: ' + code + ' (' + (what || '') + ')'); await tapL(p[0], p[1]); return p; }
