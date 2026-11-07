@@ -24,7 +24,7 @@ M.trAdd('bhs', {
   'Vollbild':'Cijeli zaslon', 'Hinweis …':'Savjet …', 'Spielanleitung':'Upute', 'Zum Titelbild':'Na naslovnu stranu', 'MALA – Kapitel 1: Split':'MALA – Poglavlje 1: Split',
   'Sprache: Bosanski / Hrvatski':'Jezik: bosanski / hrvatski',
   // Titel
-  'Fortsetzen':'Nastavi', 'Kapitel 1: Split':'Poglavlje 1: Split', 'Kapitel 2: Sarajevo':'Poglavlje 2: Sarajevo', 'Mitgelieferter Spielstand':'Priložena spremljena igra',
+  'Fortsetzen':'Nastavi', 'Kapitel 1: Split':'Poglavlje 1: Split', 'Kapitel 2: Sarajevo':'Poglavlje 2: Sarajevo', 'Mitgelieferter Spielstand':'Priložena spremljena igra', 'Mitgelieferte Spielstände':'Priložene spremljene igre', 'Welchen Spielstand laden?':'Koju igru učitati?', 'Split: kurz vor Ivkas Wahrheit':'Split: tik prije Ivkine istine', 'Sarajevo: vor dem Ankaufbuch':'Sarajevo: prije knjige otkupa',
   'Über das Spiel':'O igri', 'Kapitel 1: Split  ·  Kapitel 2: Sarajevo':'Poglavlje 1: Split  ·  Poglavlje 2: Sarajevo',
   'MALA – Kapitel 1: Split · Kapitel 2: Sarajevo':'MALA – Poglavlje 1: Split · Poglavlje 2: Sarajevo',
   'Ein Point-and-Click-Adventure über Menschen,':'Avantura o ljudima',
