@@ -82,7 +82,7 @@ const { launch, contextOpts } = require('./engines');
     uiNotes.push({ kind: 'Boden verdeckt (Scrollen)', room: (await st()).room, dir, via: h.id });
     const p = await page.evaluate((i) => window.__qa.hsPoint(i), h.id); await tapL(p.x, p.y);
     const sp = await until(s => s.pop || s.walk || s.busy || s.speech, 3000, 'Reaktion').catch(() => null); if (sp && sp.pop) { const k = sp.pop.indexOf('Schau an'); if (k >= 0) await tapCode('p:' + k, 'Schau an'); }
-    await until(s => !s.walk && !s.busy && !s.speech && !s.acting && !s.pop, 60000, 'Blickfang ' + h.id); await sleep(60); }
+    await until(s => s.dlg || s.ov || (!s.walk && !s.busy && !s.speech && !s.acting && !s.pop), 60000, 'Blickfang ' + h.id); await sleep(60); }
   // Dunkler Hotspot: wie ein Spieler Mala danebenstellen (zu ihr wechseln, Boden neben dem Hotspot antippen, zurückwechseln)
   async function lightWithMala(id, rect) {
     // Spielerweg: Marko geht im Dunkeln selbst zum Hotspot, Mala folgt ihm (05_engine: „Mala folgt Marko, wenn sie nicht gespielt wird“)
@@ -219,7 +219,8 @@ const { launch, contextOpts } = require('./engines');
         for (let g = 0; g < 14 && !p; g++) { p = await page.evaluate(([x, y]) => window.__qa.freePointNear(x, y), e.a); if (p) break;
           // kein freier Boden am Ziel im Bild: Blickfang nahe dem Ziel (Figur geht zu dessen Standpunkt), sonst in Zielrichtung scrollen
           const h = await page.evaluate(([x, y]) => { const E = M.E, R = E.room, S = M.RS(R.id); let best = null; R.hotspots.forEach(h => { if (h.exit || h.npc) return; try { if (h.vis && !h.vis(S, M.GS)) return; } catch (e) { return; } if (['talk','take','open','use','push','read'].some(v => h[v] !== undefined)) return; const st = E.hsStand(h); if (!st) return; const d = Math.abs(st[0] - x) + Math.abs(st[1] - y); if (!best || d < best.d) best = { id: h.id, d, st }; }); return best; }, e.a);
-          if (h && h.d < 80 && !used[h.id]) { used[h.id] = 1; L('Gehen über Blickfang', h.id, JSON.stringify(h.st), 'statt freiem Boden bei', JSON.stringify(e.a)); uiNotes.push({ kind: 'Boden verdeckt', room: (await st()).room, target: e.a, via: h.id }); await tapHotspot(h.id); await until(s => !s.walk && !s.busy && !s.speech, 60000, 'Blickfang'); await sleep(60);
+          if (h && h.d < 80 && !used[h.id]) { used[h.id] = 1; L('Gehen über Blickfang', h.id, JSON.stringify(h.st), 'statt freiem Boden bei', JSON.stringify(e.a)); uiNotes.push({ kind: 'Boden verdeckt', room: (await st()).room, target: e.a, via: h.id }); await tapHotspot(h.id); const sb = await until(s => s.dlg || s.ov || (!s.walk && !s.busy && !s.speech), 60000, 'Blickfang'); await sleep(60);
+            if (sb.dlg || sb.ov) { p = 'erreicht'; break; }   // unterwegs ausgelöste Szene: der Rest folgt in den nächsten Einträgen
             const dd = await page.evaluate((x) => Math.abs(M.E.player().x - x), e.a[0]); if (dd < 12) { p = 'erreicht'; break; } continue; }
           const dir = await page.evaluate((x) => (x > Math.round(M.E.camX) + 160 ? 'R' : 'L'), e.a[0]); try { await scrollToward(dir); } catch (err) { break; } }
         if (!p) throw new Error('kein freier Punkt für Gehen zu ' + e.a + ' ' + JSON.stringify(await page.evaluate(() => [window.__qa.dbg(), window.__qa.floorPoint('R'), window.__qa.floorPoint('L')])));
