@@ -146,7 +146,8 @@ const { launch, contextOpts } = require('./engines');
     for (const id of [x, y]) { let p = null; for (let k = 0; k < 6 && !p; k++) { p = await page.evaluate((i) => window.__qa.scan('n:' + i), id); if (!p) { const nx = await page.evaluate(() => window.__qa.scan('nnext')); if (!nx) break; await tapL(nx[0], nx[1]); } } if (!p) throw new Error('Notiz zum Verbinden nicht sichtbar: ' + id); await tapL(p[0], p[1]); await sleep(80); }
     await sleep(200); const s = await st(); if (s.ov === 'notebook') await tapCode('nx', 'Notizbuch schließen'); }
   async function closeOv(kind, v) {
-    const s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay ' + kind);
+    let s; try { s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay ' + kind); }
+    catch (err) { const s0 = await st(); if (!lastAct || !idle(s0)) throw err; uiNotes.push({ kind: 'Overlay blieb aus, Aktion neu angetippt', act: lastAct.a, room: s0.room }); L('Overlay blieb aus, erneut', JSON.stringify(lastAct.a)); await doAct(lastAct.a[0], lastAct.a[1], lastAct.a[2]); s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay (2. Versuch) ' + kind); }
     if (kind === 'puzzle' && Array.isArray(v)) { for (let i = 0; i < v.length; i++) { for (let k = 0; k < 12; k++) { const cur = await page.evaluate((j) => { if (!M.E.overlay.sel) M.renderFrame(); return M.E.overlay.sel[j]; }, i); if (cur === v[i]) break; await tapCode('z:' + i, 'Rätselzeile ' + i); } } await tapCode('zgo', 'Rätsel prüfen'); return; }
     if (kind === 'puzzle') { await tapCode('zx', 'Rätsel schließen'); return; }
     if (kind === 'map') { await tapCode('o:x', 'Karte schließen'); return; }
