@@ -74,7 +74,7 @@ E.gt=function(){ return gt; };
 // ---------------------------------------------------------------- Figuren
 function Actor(id,o){ this.id=id; this.ch=o.ch||id; this.x=o.x===undefined?160:o.x; this.y=o.y===undefined?120:o.y; this.f=o.f||'R'; this.mode='idle'; this.anim=null; this.fi=0; this.ft=0; this.path=[]; this.res=null; this.hooks=null;
   this.idleT=0; this.visible=o.visible!==false; this.idle=o.idle||null; this.talk=o.talk||null; this.color=o.color===undefined?(M.CAST_COLORS[this.ch]||P.s6):o.color; this.name=o.name||id;
-  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; this.reveal=!!(o.reveal && M.chapterOf && M.chapterOf(GS)>=4); this.anchor=o.anchor||null; }   // reveal: in Kapitel 4 sieht Marko ungefundene Geister erst nach A.found (Kapitel 1–3 unverändert)
+  this.step=o.step||4; this.speed=o.speed||85; this.frozen=null; this.base=o.base||0; this.ghost=!!o.ghost; this.player=!!o.player; this.speechY=o.speechY||null; this.scale=o.scale||1; this.noShadow=!!o.noShadow||this.ghost; this.alpha=o.alpha; this.who=o.who||null; this.reveal=!!o.reveal; this.anchor=o.anchor||null; }   // reveal: Marko sieht einen Geist erst, wenn Mala ihn gefunden hat (A.found)
 var ACT={}; M.ACT=ACT;
 function player(){ return ACT[GS.active]; }
 E.player=player;
@@ -355,7 +355,8 @@ function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h
 E.hotspotAt=hotspotAt;
 function unmetNpc(o){ return !!(o && o.npc && o.npc!=='mala' && o.npc!=='marko' && M.INTRO && M.isMet && M.INTRO[(M.METKEY&&M.METKEY[o.npc])||o.npc] && !M.isMet(GS,o.npc)); }
 E.unmetNpc=unmetNpc;
-function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; if (unmetNpc(o)) return '???'; var n=(GS.active==='mala'&&o.gname)?o.gname:o.name; return typeof n==='function'?n(S,GS):n; }
+function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; var ga=o.npc&&ACT[o.npc]; if (ga && ga.ghost && GS.active!=='mala' && !ghostVisible(ga)) return o.uname||'Leere Stelle';   // ungefundener Geist: Marko sieht nur die Stelle
+  if (unmetNpc(o)) return '???'; var n=(GS.active==='mala'&&o.gname)?o.gname:o.name; return typeof n==='function'?n(S,GS):n; }
 E.nameOf=nameOf;
 // Mala und Marko als Gesprächsziele
 var MALA_HS={id:'_mala',name:function(S,G){ return G.flags['mala.unknown']?'Schimmer':'Mala'; },npc:'mala',hgt:46,talk:function(A){ return M.talkToMala?M.talkToMala(A):A.g('…'); },look:function(A){ return M.lookAtMala?M.lookAtMala(A):A.m('Mala. Durchscheinend, wenn das Licht von hinten kommt.'); }};

@@ -18,7 +18,7 @@ Kapitel 4 („Nicht zurückgekommen“, 24.12.2011 bis 1.1.2012) ist gebaut, dur
 - **Malas Geheimnis:** Was sie in der Kiste liest, kennt Marko im Gespräch erst nach dem Streit. Auch Schlüsse damit gehen erst dann. Als Mala darf man ihren eigenen Schluss früher ziehen.
 - **Titelmenü und Abspann:** „Kapitel 4: München“ steht im Titelmenü. Nach dem Abspann von Mostar geht es weiter nach München. Kostüme einer Figur teilen sich ein Porträt.
 - **Übernahmen aus Mostar:** Zustimmung a, b oder c, die Probe ja oder nein (eigene Szenen: Konsulat, Kolars Anruf, Silvester-Zug 8), die Nachfragen, Kapitel 2. Ohne Stand gelten b und ja.
-- **Sichtbarkeit der Geister:** In Kapitel 4 sieht Marko einen Geist erst, wenn Mala ihn gefunden hat. Die Engine hat diese Einstellung bisher nicht übernommen. In Kapitel 1 bis 3 bleibt es bewusst, wie es war.
+- **Sichtbarkeit der Geister:** Marko sieht einen Geist erst, wenn Mala ihn gefunden hat, jetzt in allen vier Kapiteln. Die Engine hatte diese Einstellung nie übernommen: In Kapitel 2 sah Marko etwa Alija oder Professor Barać als „???“, konnte aber nicht mit ihnen reden (Spielerbericht). Bis zum Fund heißt die Stelle für Marko „Leere Stelle“.
 - **Handy:** In München ruft das Handy wieder an. Eine Stelle aus Kapitel 3 hatte das Anrufen in allen anderen Kapiteln abgeschaltet.
 
 ## Prüfungen (Endbau `web/`)
