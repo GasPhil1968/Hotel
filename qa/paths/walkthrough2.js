@@ -2,7 +2,7 @@
 // Automatischer Komplett-Durchlauf von Kapitel 2 (Sarajevo): spielt die Musterlösung und prüft, ob es lösbar ist.
 // node game/tools/walkthrough2.js [screenshot-ordner]      MALA_HTML=… für einen anderen Build, MALA_DUMPALL=ordner für Spielstände je Schritt
 const { open } = require('./driver');
-const SHOTS = process.argv[2] || null;
+const SHOTS = process.env.QA_SHOTS || null;   // Screenshot-Ordner nur auf ausdrücklichen Wunsch (früher argv[2])
 module.exports = async function (__ctx) { const process = __ctx.proc, console = __ctx.console;
   const D = __ctx.D;
   const t0 = Date.now(); let step = 0;

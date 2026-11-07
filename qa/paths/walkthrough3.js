@@ -10,7 +10,7 @@
 const { open } = require('./driver');
 const { play } = require('./k3play');
 const fs = require('fs'), path = require('path');
-const SHOTS = process.argv[2] || null;
+const SHOTS = process.env.QA_SHOTS || null;   // QA: nicht aus der Kommandozeile (sonst Bildordner aus fremden Argumenten)
 const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || null, FROM = process.env.MALA_FROM || null;
 module.exports = async function (__ctx) { const process = __ctx.proc, console = __ctx.console;
   const D = __ctx.D;

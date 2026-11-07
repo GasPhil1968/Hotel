@@ -37,6 +37,8 @@ function makeSpec(cat, i, salt) {
 // Spielstand für Save/Load-Vergleiche: abgeleitete Raumschlüssel (in actors() bei jedem Betreten aus dem Spielzustand berechnet)
 // und die Kartenbekanntheit (beim Öffnen der Karte neu berechnet) werden vor dem Vergleich auf dieselbe Weise neu abgeleitet bzw. entfernt.
 const NORM_GS = function () { const g = JSON.parse(JSON.stringify(M.GS)); M.mapRefresh(g);
+  /* Sitzungsstempel der laufenden Spielzeit werden beim Laden absichtlich entfernt (loadData, seit BUG-004 auch steam/nudge): nicht vergleichen */
+  Object.keys(g.rooms || {}).forEach(id => { ['ferryAt', 'ferryGo', 'radioT', 'steam', 'nudge'].forEach(k => { if (g.rooms[id]) delete g.rooms[id][k]; }); });
   Object.keys(g.rooms || {}).forEach(id => { const R = M.ROOMS[id]; if (!R || !R.actors) return; const rec = {};
     const px = new Proxy(Object.assign({}, g.rooms[id]), { set(t, k, v) { rec[k] = 1; t[k] = v; return true; } });
     try { R.actors(px, g); } catch (e) {} Object.keys(rec).forEach(k => { delete g.rooms[id][k]; }); });
@@ -47,7 +49,7 @@ async function runOne(spec, opt = {}) {
   const { mulberry32 } = require('./vmdriver');
   const t0 = Date.now();
   const rnd = mulberry32(spec.seed ^ 0x2f6b9a13);
-  const S = new Session({ seed: spec.seed, render: opt.render, deadline: t0 + spec.wallLimitMs, vlimit: spec.vLimitMs });
+  const S = new Session({ seed: spec.seed, render: opt.render, html: opt.html, deadline: t0 + spec.wallLimitMs, vlimit: spec.vLimitMs });
   const res = { runId: spec.runId, cat: spec.cat, seed: spec.seed, startCh: spec.startCh, variant: spec.variant, goal: spec.goal, stepLimit: spec.stepLimit, wallLimitMs: spec.wallLimitMs,
     start: spec.startCh === 1 ? 'Neues Spiel über das Titelmenü (Kapitel 1: Split, Platz 1), leerer localStorage' : 'Neues Spiel über das Titelmenü (' + CH_TITLE[spec.startCh] + ', Platz 1), leerer localStorage, Vorgaben für frühere Kapitel',
     chapters: [], events: [], perturb: [], saveload: [], result: null, reason: null };
@@ -87,6 +89,16 @@ async function runOne(spec, opt = {}) {
     const back = await X.returnTo(I, rnd, rec, a); p.returned = back.ok; p.end = back.end; p.actions = rec.length; p.rec = rec.slice(0, 400);
     res.perturb.push(p); S.tolerant = true; perturbedCh = true;
   };
+  // Bekannte, beabsichtigte Rücksetzungen beim Laden (QA-Triage Erstlauf D-0379/D-0223/D-0376):
+  //  - Straßenbrücke: rooms/strassenbr.js load() setzt crossing/noSwitch zurück → die Überquerung beginnt neu; Spieler tippt erneut das Westende an.
+  //  - Partisanenfriedhof: resume() holt Mala nach 3 s zurück (bellsEnd) → bells1 gesetzt, Zeitstempel neu.
+  const SCENE_RESETS = [
+    { why: 'Straßenbrücke: Laden setzt die geführte Überquerung zurück (strassenbr.load), sie beginnt neu', keys: ['GS.rooms.strassenbr.crossing', 'GS.flags.mala.noSwitch'],
+      when: d => d.some(x => /^GS\.rooms\.strassenbr\.crossing: true ≠ false/.test(x)),
+      recover: { label: 'zu Marko wechseln, Westufer antippen (Überquerung beginnt neu)', run: async (J) => { if (await J.ev(() => M.GS.active) !== 'marko') { await J.ev(() => M.TA.switchTo('marko')); await J.page.waitForTimeout(600); await J.settle(30000).catch(() => {}); } await J.ev(() => M.TA.exit('exit_w')); await J.page.waitForTimeout(400); } } },
+    { why: 'Partisanenfriedhof: Glocken-Szene läuft nach dem Laden weiter, Mala kehrt nach 3 s zurück (partizan.resume/bellsEnd)', keys: ['GS.flags.k3.bellsOut', 'GS.flags.mala.noSwitch', 'GS.flags.k3.bells1', 'GS.rooms.partizan.bellBack', 'GS.rooms.partizan.nextBell'],
+      when: d => d.some(x => /^GS\.flags\.k3\.bellsOut: true ≠ false/.test(x)) }
+  ];
   // Kategorie D: Speichern im Menü, Laden im frischen Kontext / im selben Kontext / zweimal
   let dIdx = 0;
   const saveLoadPoint = async (p) => {
@@ -101,8 +113,13 @@ async function runOne(spec, opt = {}) {
       await C.tapTitle(I, 'Fortsetzen'); await C.tapTitle(I, 'Platz ' + (stored ? 1 : 1)); await I.settle(60000);
       if (mode === 'double') { const l2 = await menuTap(I, 2); p.load2 = l2.msg; await I.settle(60000); }
     } else { const l = await menuTap(I, 2); p.load = l.msg; await I.settle(60000); }
-    const after = C.relevant(await I.ev(NORM_GS));
-    const diff = C.diffRelevant(before, after);
+    let after = C.relevant(await I.ev(NORM_GS));
+    let diff = C.diffRelevant(before, after);
+    // Im Spiel vorgesehene Szenen-Rücksetzungen beim Laden (siehe Raumcode load/resume) – protokolliert, aber kein Fehler:
+    const exp = SCENE_RESETS.filter(r => r.when(diff)); if (exp.length) {
+      p.expectedReset = exp.map(r => r.why); const keys = exp.reduce((a, r) => a.concat(r.keys), []);
+      p.diffAll = diff.slice(0, 30); diff = diff.filter(d => !keys.some(k => d.indexOf(k + ':') === 0));
+      for (const r of exp) if (r.recover) { p.recover = r.recover.label; await r.recover.run(I); await I.settle(60000).catch(() => {}); p.recoverState = await I.ev(() => ({ crossing: M.RS('strassenbr').crossing, active: M.GS.active, busy: M.E.busy, ma: M.ACT.mala && Math.round(M.ACT.mala.x), said: (M.__speechLog || []).slice(-2).map(x => String(x[1]).slice(0, 50)) })).catch(e => String(e)); } }
     p.diff = diff.slice(0, 30); p.equal = diff.length === 0; res.saveload.push(p);
     if (!p.equal) failBag.push('Save/Load-Abweichung (' + mode + ', K' + curCh + ' Schritt ' + p.step + '): ' + diff.slice(0, 5).join(' | '));
   };
@@ -151,16 +168,55 @@ async function runOne(spec, opt = {}) {
   res.coverage = cov; res.phaseSeq = S.monitor.phaseSeq; res.roomSeqLen = S.monitor.roomSeq.length;
   res.sha = S.inner ? S.inner.sha12 : null;
   const perturbedFail = res.chapters.some(c => !c.ok && c.perturbed);
-  if (errs.length || inv.length || failBag.length) { res.result = 'fail'; res.reason = (errs[0] || inv[0] || failBag[0]).split('\n')[0]; }
+  res.illegalSwitch = (fin.illegal || []).slice(0, 10);
+  if (res.illegalSwitch.length) { res.result = 'infra'; res.reason = 'Harness: Figurenwechsel, den die Oberfläche nicht zuließe (canSwitch=false): ' + JSON.stringify(res.illegalSwitch[0]); }
+  else if (errs.length || inv.length || failBag.length) { res.result = 'fail'; res.reason = (errs[0] || inv[0] || failBag[0]).split('\n')[0]; }
   else if (finalOk) { res.result = 'pass'; res.endpoint = ENDPOINT; }
   else if (lastErr && /^LIMIT/.test(lastErr)) { res.result = 'undecided'; res.reason = lastErr; }
   else if (lastErr && /^EXC/.test(lastErr) && !/Zeitüberschreitung|Erwartung|Option nicht|Gedanke|kein Hotspot|kein Ausgang|Auswahl/.test(lastErr)) { res.result = 'infra'; res.reason = lastErr; }
   else if (perturbedFail) { res.result = 'undecided'; res.reason = 'Fortsetzung nach Störung gescheitert: ' + lastErr; }
   else { res.result = 'fail'; res.reason = 'Regulärer Pfad gescheitert: ' + lastErr; }
   res.endpointReached = finalOk ? ENDPOINT : null;
+  // Sackgassen-Sonde: Bei „unentschieden“ (Skript fand nach der Störung nicht weiter) prüft eine begrenzte Suche mit regulären Spielerhandlungen
+  // (zufällige Aktionen, bevorzugt die im Lösungsweg dieses Kapitels vorkommenden Hotspot-Aktionen, Notizkombinationen, Reisen), ob die
+  // Geschichte von diesem Zustand aus noch vorankommt. Keine Flags, kein Teleport. Ergebnis: kein Softlock / Fortschritt möglich / Verdacht.
+  if (res.result === 'undecided' && !opt.noProbe) { try { res.softlock = await probe(I, spec, canon, curCh, chStep); } catch (e) { res.softlock = { cls: 'Sonde gescheitert', err: String(e.message || e).slice(0, 200) }; } }
   if (opt.evidenceDir && res.result !== 'pass') { try { fs.mkdirSync(opt.evidenceDir, { recursive: true }); S.inner.page.screenshot({ path: path.join(opt.evidenceDir, spec.runId + '.png') }); fs.writeFileSync(path.join(opt.evidenceDir, spec.runId + '.state.json'), JSON.stringify(await S.inner.ev(() => JSON.parse(JSON.stringify(M.GS))))); fs.writeFileSync(path.join(opt.evidenceDir, spec.runId + '.storage.json'), JSON.stringify(S.inner.exportStorage())); } catch (e) {} }
+  if (opt.onEnd) { try { await opt.onEnd(S.inner, res); } catch (e) { res.onEndErr = String(e.message || e); } }
   try { await S.inner.close2(); } catch (e) {}
   return res;
+}
+
+const PROBE_SNAP = function () { const G = M.GS; return { phase: G.phase, notes: (G.notes || []).slice(), inv: (G.inv || []).slice(), map: Object.keys(G.map || {}).filter(k => G.map[k]), ended: !!G.ended, screen: M.E.screen, room: M.E.room && M.E.room.id }; };
+async function probe(I, spec, canon, stuckCh, stuckStep) { const X = require("./lib/explore");
+  const t0 = Date.now(); const rnd = require('./vmdriver').mulberry32((spec.seed ^ 0x5eed) >>> 0); const rec = [];
+  const s0 = await I.ev(PROBE_SNAP); if (s0.screen !== 'game') return { cls: 'kein Spielbildschirm', start: s0 };
+  const ch = /^k4/.test(s0.phase) ? 4 : /^k3/.test(s0.phase) ? 3 : /^k2/.test(s0.phase) ? 2 : 1; const all = (canon && canon[ch]) || []; let can = (ch === stuckCh && stuckStep) ? all.filter(c => c.step >= stuckStep - 2 && c.step <= stuckStep + 15) : all; if (!can.length) can = all; can = can.slice().sort((a, b) => a.step - b.step);   // frühe Schritte bevorzugt (Gewicht rnd³)
+  let best = null, n = 0; const MAX = 260, WALL = 120000; const tried = new Map();
+  for (; n < MAX && Date.now() - t0 < WALL; n++) {
+    const A = await I.ev(X.LIST_ACTIONS).catch(() => ({ none: true }));
+    const HO = { dlgDepth: 6, solvePuzzles: true }, RW = { hint: 0, notes: 0.1, combine: 2.5, travel: 2 };
+    const fits = (c) => c.kind === 'exit' ? A.acts.some(z => z[0] === 'exit' && z[1] === c.id) : (A.acts.some(z => z[0] === 'act' && z[1] === c.verb && z[2] === c.id) || (c.item && A.inv.indexOf(c.item) >= 0 && A.hsIds.indexOf(c.id) >= 0) || (c.verb === 'talk' && A.hsIds.indexOf(c.id) >= 0));
+    const fresh = (c) => (tried.get(c) || 0) < 3;
+    const avail = (c) => fresh(c) && c.room === A.room && c.active === A.active && fits(c);
+    const u = rnd();
+    if (!A.none && u < 0.45) { const ok = can.filter(avail);
+      const other = !ok.length && A.acts.some(z => z[0] === 'switch') ? can.filter(c => fresh(c) && c.room === A.room && c.active !== A.active) : [];
+      if (ok.length) { const c = ok[Math.floor(ok.length * Math.pow(rnd(), 3))]; tried.set(c, (tried.get(c) || 0) + 1);
+        if (c.kind === 'exit') { rec.push(['canon-exit', c.id]); await I.ev((x) => M.TA.exit(x), c.id).catch(() => {}); }
+        else { rec.push(['canon', c.verb, c.id, c.item]); await I.ev((x) => M.TA.act(x[0], x[1], x[2] || undefined), [c.verb, c.id, c.item]).catch(() => {}); }
+        await I.page.waitForTimeout(60); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); }
+      else if (other.length) { rec.push(['canon-switch', other[0].active]); await I.ev(() => { if (M.E.canSwitch()) M.TA.switchTo(M.GS.active === 'marko' ? 'mala' : 'marko'); }); await I.page.waitForTimeout(200); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); }
+      else if (rnd() < 0.5) { const far = can.filter(c => c.active === A.active && c.room !== A.room); if (far.length) { const c = far[Math.floor(far.length * Math.pow(rnd(), 3))]; rec.push(['canon-goto', c.room]); await X.navigate(I, rnd, rec, c.room, 8).catch(() => {}); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); } }
+      else await X.randomAction(I, rnd, rec, RW).catch(() => {}); }
+    else { await X.randomAction(I, rnd, rec, RW).catch(() => {}); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); }
+    const s = await I.ev(PROBE_SNAP).catch(() => null); if (!s) continue;
+    const prog = { phase: s.phase !== s0.phase, end: s.ended || s.screen !== 'game', notes: s.notes.filter(x => s0.notes.indexOf(x) < 0), inv: s.inv.filter(x => s0.inv.indexOf(x) < 0), map: s.map.filter(x => s0.map.indexOf(x) < 0) };
+    if (prog.phase || prog.end) { best = Object.assign(prog, { at: n + 1, phaseTo: s.phase }); break; }
+    if (!best && (prog.notes.length || prog.inv.length || prog.map.length)) best = Object.assign(prog, { at: n + 1 });
+  }
+  const cls = best && (best.phase || best.end) ? 'kein Softlock (Phase/Kapitel geht weiter)' : best ? 'kein Softlock nachgewiesen bis Phasenwechsel, aber Fortschritt möglich' : 'Verdacht (kein Fortschritt in ' + n + ' Aktionen)';
+  return { cls, start: { phase: s0.phase, room: s0.room }, progress: best, actions: n, wallMs: Date.now() - t0, rec: best ? rec.slice(-14) : rec.slice(0, 40).concat([['…']], rec.slice(-30)) };
 }
 
 // ---------------------------------------------------------------- kanonische Aktionsfolge (für verfrühte Versuche in C)
@@ -170,9 +226,9 @@ async function makeCanon(out) {
   const canon = {}; let ch = 1, st = 0;
   await C.tapTitle(I, CH_TITLE[1]); await C.tapTitle(I, 'Platz 1');
   for (ch = 1; ch <= 4; ch++) { st = 0; canon[ch] = []; const startLen = (I.M.__qaTrace || []).length;
-    const hookTrace = async () => { st++; const T = I.M.__qaTrace; for (let i = hookTrace.last || startLen; i < T.length; i++) { const t = T[i]; if (t[1] === 'act') canon[ch].push({ step: st, kind: 'act', verb: t[2], id: t[3], item: t[4], room: t[5], active: t[6] }); } hookTrace.last = T.length; };
+    const hookTrace = async () => { st++; const T = I.M.__qaTrace; for (let i = hookTrace.last || startLen; i < T.length; i++) { const t = T[i]; if (t[1] === 'act') canon[ch].push({ step: st, kind: 'act', verb: t[2], id: t[3], item: t[4], room: t[5], active: t[6] }); else if (t[1] === 'exit') canon[ch].push({ step: st, kind: 'exit', id: t[2], room: t[3], active: t[4] }); } hookTrace.last = T.length; };
     const fn = C.loadPath(CH_PATH[ch]); void fn;
-    const r = await C.runPath(CH_PATH[ch], S.D, {}, null); void r;
+    const r = await C.runPath(CH_PATH[ch], S.D, {}, null, { afterStep: hookTrace }); if (!r.ok) throw new Error("Kanon K" + ch + ": " + r.err);   // QA-Korrektur: Schrittzähler je Skriptschritt (vorher alle Einträge Schritt 1)
     await hookTrace(); await C.waitTitleNext(I); if (ch < 4) await C.tapTitle(I, 'Weiter mit Kapitel ' + (ch + 1)); }
   fs.mkdirSync(out, { recursive: true }); fs.writeFileSync(path.join(out, 'canon.json'), JSON.stringify(canon));
   console.log('canon', Object.keys(canon).map(k => k + ':' + canon[k].length).join(' '));

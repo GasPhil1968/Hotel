@@ -2,7 +2,7 @@
 // Automatischer Komplett-Durchlauf: spielt das ganze Kapitel mit der Musterlösung durch und prüft, ob es lösbar ist.
 // node game/tools/walkthrough.js [screenshot-ordner]
 const { open } = require('./driver');
-const SHOTS = process.argv[2] || null;
+const SHOTS = process.env.QA_SHOTS || null;   // Screenshot-Ordner nur auf ausdrücklichen Wunsch (früher argv[2])
 module.exports = async function (__ctx) { const process = __ctx.proc, console = __ctx.console;
   const D = __ctx.D;
   // MALA_LANG=bhs: das ganze Kapitel in der Sprachfassung spielen und jeden noch deutschen Text melden

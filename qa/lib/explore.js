@@ -7,11 +7,14 @@ const { mulberry32 } = require('../vmdriver');
 const LIST_ACTIONS = function () {
   const E = M.E, G = M.GS, R = E.room; if (!R || E.screen !== 'game') return { none: true };
   const isG = G.active === 'mala', S = M.RS(R.id), out = [];
-  const vis = (h) => { try { if (h.vis && !h.vis(S, G)) return false; } catch (e) { return false; } if (h.who === 'm' && isG) return false; if (h.who === 'g' && !isG) return false; if (h.npc) { const a = E.ACT && E.ACT[h.npc]; if (!a || a.visible === false) return false; } return true; };
+  // antippbar wie in der Oberfläche: E.hotspotAt muss den Hotspot an mindestens einem Punkt liefern (sichtbar, beleuchtet, nicht ganz überdeckt)
+  const tapC = {}; const tappable = (h) => { if (tapC[h.id] !== undefined) return tapC[h.id]; let ok = false; try { const r = E.hsRect(h); if (r) { for (let y = Math.max(0, r[1]); y < Math.min(144, r[1] + r[3]) && !ok; y += 3) for (let x = r[0]; x < r[0] + r[2] && !ok; x += 3) if (E.hotspotAt(x, y) === h) ok = true;
+      if (!ok) for (let y = Math.max(0, r[1]); y < Math.min(144, r[1] + r[3]) && !ok; y++) for (let x = r[0]; x < r[0] + r[2] && !ok; x++) if (E.hotspotAt(x, y) === h) ok = true; } } catch (e) { ok = true; } return (tapC[h.id] = ok); };
+  const vis = (h) => { try { if (h.vis && !h.vis(S, G)) return false; } catch (e) { return false; } if (h.who === 'm' && isG) return false; if (h.who === 'g' && !isG) return false; if (h.npc) { const a = E.ACT && E.ACT[h.npc]; if (!a || a.visible === false) return false; } return tappable(h); };
   R.hotspots.forEach(h => { if (!vis(h)) return; let ex = null; try { ex = isG ? (h.gexit || (h.exit && (h.exit.gok || (M.malaFree && M.malaFree(G, h))) ? h.exit : null)) : h.exit; if (typeof ex === 'function') ex = ex(S, G); } catch (e) { ex = null; }
     if (ex || (isG && h.gexit)) out.push(['exit', h.id]);
     if (R.noVerbs) return;
-    if (isG) { const gv = h.g || {}; ['talk', 'sense', 'listen', 'cross'].forEach(v => { if (gv[v] !== undefined) out.push(['act', v, h.id]); }); if (h.npc && !gv.talk && E.ACT[h.npc] && E.ACT[h.npc].ghost) out.push(['act', 'talk', h.id]); }
+    if (isG) { const gv = h.g || {}; ['talk', 'sense', 'listen', 'cross'].forEach(v => { if (gv[v] === undefined) return; if (v === 'cross' && gv.crossIf) { let ok = false; try { ok = !!gv.crossIf(S, G); } catch (e) {} if (!ok) return; } out.push(['act', v, h.id]); }); /* wie hsOpts der Oberfläche: „Hinüberbringen“ nur, wenn crossIf gilt */ if (h.npc && !gv.talk && E.ACT[h.npc] && E.ACT[h.npc].ghost) out.push(['act', 'talk', h.id]); }
     else { ['talk', 'take', 'open', 'use', 'push', 'read'].forEach(v => { if (h[v] !== undefined) out.push(['act', v, h.id]); }); if (h.npc && h.talk === undefined) out.push(['act', 'talk', h.id]); }
     out.push(['act', 'look', h.id]); });
   const inv = (G.inv || []).slice();
@@ -40,6 +43,8 @@ async function handleOpen(I, rnd, rec, opts = {}) {
     }
     if (s.overlay) {
       const kind = s.overlay;
+      if (kind === 'puzzle' && opts.solvePuzzles) { await solvePuzzleUI(I, rnd, rec); n++; continue; }
+      if (kind === 'arrange' && opts.solvePuzzles) { await solveArrangeUI(I, rnd, rec); n++; continue; }
       if (kind === 'notebook') { const L = await I.ev(() => { const d = M.E.overlay.data || {}; return d.mode === 'ask' ? M.E.nbOpen(true, d.also) : []; }); /* nur im Fragemodus wird gewählt; dieselbe Liste wie in der Oberfläche */ if (L.length && rnd() < 0.7) { const id = L[Math.floor(rnd() * L.length)]; rec.push(['note', id]); try { await I.ev((x) => M.TA.pickNote(x), id); } catch (e) { rec.push(['note-EXC', String(e.message).slice(0, 100)]); await I.ev(() => { if (M.E.overlay) M.TA.closeOverlay(null); }); } } else { rec.push(['close', kind]); await I.ev(() => M.TA.closeOverlay(null)); } }
       else if (kind === 'map') { rec.push(['close', 'map']); await I.ev(() => M.closeMap ? M.closeMap() : M.TA.closeOverlay(null)); }
       else { rec.push(['close', kind]); await I.ev(() => M.TA.closeOverlay(null)); }
@@ -70,7 +75,7 @@ async function randomAction(I, rnd, rec, weights = {}) {
       case 'useOn': { const it = pick(rnd, A.inv), h = rnd() < 0.15 && A.inv.length > 1 ? null : pick(rnd, A.hsIds);
         if (h) { label = ['use', h, it, A.room]; await I.ev((x) => M.TA.act('use', x[0], x[1]), [h, it]); } else { const o = pick(rnd, A.inv.filter(x => x !== it)); label = ['itemitem', it, o]; await I.ev((x) => M.TA.item('use', x[0], x[1]), [it, o]); } break; }
       case 'mala': { if (rnd() < 0.5 && A.inv.length) { const it = pick(rnd, A.inv); label = ['use', '_mala', it]; await I.ev((x) => M.TA.act('use', '_mala', x), it); } else { label = ['act', 'talk', '_mala']; await I.ev(() => M.TA.act('talk', '_mala')); } break; }
-      case 'switch': { label = ['switch']; await I.ev(() => M.TA.switchTo(M.GS.active === 'marko' ? 'mala' : 'marko')); break; }
+      case 'switch': { label = ['switch']; await I.ev(() => { if (M.E.canSwitch()) M.TA.switchTo(M.GS.active === 'marko' ? 'mala' : 'marko'); }); break; }
       case 'travel': { const l = pick(rnd, A.locs); label = ['travel', l, A.room]; await I.ev((x) => M.TA.travel(x), l); break; }
       case 'combine': { const a = pick(rnd, A.notes); let b = pick(rnd, A.notes); if (b === a) b = A.notes[(A.notes.indexOf(a) + 1) % A.notes.length]; label = ['combine', a, b]; await I.ev((x) => M.TA.combine(x[0], x[1]), [a, b]); break; }
       case 'wait': { label = ['wait']; await I.page.waitForTimeout(400 + Math.floor(rnd() * 1600)); break; }
@@ -147,17 +152,50 @@ async function navigate(I, rnd, rec, target, budget = 14) {
 async function anchor(I) { return I.ev(() => ({ room: M.E.room && M.E.room.id, active: M.GS.active, mala: M.GS.pos.mala.room, malaOn: M.GS.malaOn, phase: M.GS.phase })); }
 async function returnTo(I, rnd, rec, a) {
   await handleOpen(I, rnd, rec, { dlgDepth: 0 });
-  let s = await I.st(); if (s.active !== 'marko') { rec.push(['nav-switch', 'marko']); await I.ev(() => M.TA.switchTo('marko')); await I.page.waitForTimeout(100); await handleOpen(I, rnd, rec, { dlgDepth: 0 }); }
+  let s = await I.st(); if (s.active !== 'marko' && await I.ev(() => M.E.canSwitch())) { rec.push(['nav-switch', 'marko']); await I.ev(() => M.TA.switchTo('marko')); await I.page.waitForTimeout(100); await handleOpen(I, rnd, rec, { dlgDepth: 0 }); }
   // Marko zum Raum, in dem der Anker gespielt wurde (Anker mit Mala: Markos Raum zum Ankerzeitpunkt ist unbekannt → Malas Raum)
   const target = a.active === 'marko' ? a.room : a.room;
   let ok = await navigate(I, rnd, rec, target);
   // Mala zurück an ihren Ankerplatz (Kapitel 4: sie bleibt, wo sie ist, wenn Marko geht)
   const m = await I.ev(() => ({ on: M.GS.malaOn, room: M.GS.pos.mala.room, can: M.E.canSwitch() }));
-  if (a.malaOn && m.on && m.room !== a.mala && m.can) { rec.push(['nav-switch', 'mala']); await I.ev(() => M.TA.switchTo('mala')); await I.page.waitForTimeout(100); await navigate(I, rnd, rec, a.mala); rec.push(['nav-switch', 'marko']); await I.ev(() => M.TA.switchTo('marko')); await I.page.waitForTimeout(100); }
-  if (a.active === 'mala') { await I.ev(() => M.TA.switchTo('mala')); await I.page.waitForTimeout(100); }
+  if (a.malaOn && m.on && m.room !== a.mala && m.can) { rec.push(['nav-switch', 'mala']); await I.ev(() => M.TA.switchTo('mala')); await I.page.waitForTimeout(100); await navigate(I, rnd, rec, a.mala); if (await I.ev(() => M.E.canSwitch())) { rec.push(['nav-switch', 'marko']); await I.ev(() => M.TA.switchTo('marko')); } await I.page.waitForTimeout(100); }
+  if (a.active === 'mala' && await I.ev(() => M.GS.active !== 'mala' && M.E.canSwitch())) { rec.push(['nav-switch', 'mala']); await I.ev(() => M.TA.switchTo('mala')); await I.page.waitForTimeout(100); }
   await handleOpen(I, rnd, rec, { dlgDepth: 0 });
   const end = await anchor(I);
   return { ok: ok && end.room === a.room && end.active === a.active, end };
 }
 
 module.exports = { LIST_ACTIONS, handleOpen, randomAction, stressBurst, navigate, anchor, returnTo, mulberry32 };
+
+// Rätsel-Overlay „puzzle“ wie ein Spieler über die sichtbaren Bedienelemente lösen: „Vorlesen“ tippen, die Rückmeldung zeigt die falsche Zeile,
+// diese Zeile weiterschalten (Tipp auf die Zeile). Ohne Zeilenhinweis wird eine zufällige Zeile weitergeschaltet. Nur für die Sackgassen-Sonde.
+async function solvePuzzleUI(I, rnd, rec, maxTries = 80) {
+  for (let k = 0; k < maxTries; k++) {
+    const st = await I.ev(() => { const ov = M.E.overlay; if (!ov || ov.kind !== 'puzzle') return null; M.renderFrame(); return { bad: ov.bad, rows: ov.data.slots.length }; });
+    if (!st) { rec.push(['puzzle-solved', k]); return true; }
+    let code = 'zgo'; if (k > 0) { const b = st.bad; code = b >= 0 ? 'z:' + b : (rnd() < 0.5 ? 'zgo' : 'z:' + Math.floor(rnd() * st.rows)); }
+    const p = await I.ev((c) => { for (let y = 1; y < 200; y += 2) for (let x = 1; x < 320; x += 2) if (M.uiHit(x, y) === c) return { x, y }; return null; }, code);
+    if (!p) { rec.push(['puzzle-noctl', code]); return false; }
+    await I.ev((q) => { M.pointerDown(q.x, q.y, true); M.pointerUp(q.x, q.y, true); }, p); await I.page.waitForTimeout(120);
+    if (code !== 'zgo') { const p2 = await I.ev(() => { for (let y = 1; y < 200; y += 2) for (let x = 1; x < 320; x += 2) if (M.uiHit(x, y) === 'zgo') return { x, y }; return null; }); if (p2) { await I.ev((q) => { M.pointerDown(q.x, q.y, true); M.pointerUp(q.x, q.y, true); }, p2); await I.page.waitForTimeout(120); } }
+  }
+  rec.push(['puzzle-gaveup']); return false;
+}
+module.exports.solvePuzzleUI = solvePuzzleUI;
+
+// Rätsel-Overlay „arrange“ (Reihenfolge) wie ein Spieler: „Ordnen“ tippen; die Rückmeldung markiert die erste falsche Zeile; diese Zeile
+// antippen und mit einer späteren Zeile tauschen (zwei Tipps). Nur sichtbare Bedienelemente (M.uiHit-Codes o:go, o:rN).
+async function solveArrangeUI(I, rnd, rec, maxTries = 200) {
+  const find = (c) => I.ev((code) => { M.renderFrame(); for (let y = 1; y < 200; y += 2) for (let x = 1; x < 320; x += 2) if (M.uiHit(x, y) === code) return { x, y }; return null; }, c);
+  const tap = (q) => I.ev((p) => { M.pointerDown(p.x, p.y, true); M.pointerUp(p.x, p.y, true); }, q);
+  for (let k = 0; k < maxTries; k++) {
+    const st = await I.ev(() => { const ov = M.E.overlay; if (!ov || ov.kind !== 'arrange') return null; return { bad: ov.bad, n: (ov.ord || ov.data.start).length, pick: ov.pick }; });
+    if (!st) { rec.push(['arrange-solved', k]); return true; }
+    if (st.bad === undefined || st.bad === null || st.bad < 0 || k === 0) { const g = await find('o:go'); if (!g) { rec.push(['arrange-noctl']); return false; } await tap(g); await I.page.waitForTimeout(120); continue; }
+    const j = st.bad + 1 + Math.floor(rnd() * Math.max(1, st.n - st.bad - 1)); const a = await find('o:r' + st.bad), b = await find('o:r' + Math.min(st.n - 1, j));
+    if (!a || !b) { rec.push(['arrange-noctl']); return false; } await tap(a); await I.page.waitForTimeout(60); await tap(b); await I.page.waitForTimeout(60);
+    const g = await find('o:go'); if (g) { await tap(g); await I.page.waitForTimeout(120); }
+  }
+  rec.push(['arrange-gaveup']); return false;
+}
+module.exports.solveArrangeUI = solveArrangeUI;

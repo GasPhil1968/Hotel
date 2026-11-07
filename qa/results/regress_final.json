@@ -1,0 +1,60 @@
+{
+ "html": "/home/user/Hotel/web/index.html",
+ "sha256": "5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115",
+ "results": [
+  {
+   "id": "BUG-001",
+   "title": "Laden eines K2–K4-Stands verändert keine Kapitel-1-Marken",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "id": "BUG-002",
+   "title": "Figurenwechsel während eines Wegs lässt keine Aktion hängen (E.acting)",
+   "ok": true,
+   "detail": "Mala in gleis11 geht zu „tree“, Wechsel zu Marko (wiesn): E.acting=0; Kapitel danach bis zum Ende gespielt"
+  },
+  {
+   "id": "BUG-003",
+   "title": "Verkochtes Wasser: Džezva bleibt verfügbar, Brief über Dampf weiter lösbar",
+   "ok": true,
+   "detail": "nach Verfall: Brief offen=false, Džezva sichtbar=true, zweiter Versuch öffnet den Brief=true"
+  },
+  {
+   "id": "BUG-004",
+   "title": "Laden in frischem Kontext macht alten Dampf nicht wieder wirksam",
+   "ok": true,
+   "detail": "nach Laden (frischer Kontext) Brief am Herd ohne Dampf: geöffnet=false („Direkt über die Flamme? Dann habe ich Asche statt eines Briefs.“)"
+  },
+  {
+   "id": "BUG-005",
+   "title": "Emina ist nach ihrer angekündigten Rückkehr sichtbar und antippbar",
+   "ok": true,
+   "detail": "nach „Emina. Zurück von Tante Sabira. Früher als gedacht.“: Figur=true, sichtbar=true, antippbar=true"
+  },
+  {
+   "id": "BUG-006",
+   "title": "K2-Finale: „Darum steht bei Abreise nichts“ ist mit sichtbaren Notizen ziehbar",
+   "ok": true,
+   "detail": "im Finale sichtbar: Weg 1 (cameback+register)=true, Weg 2 (rcm+journal)=false; Kapitel bis zum Ende gespielt"
+  },
+  {
+   "id": "BUG-007",
+   "title": "Straßenbrücke: Mala lässt sich durch Tippen auf den Weg bis ans Westende führen",
+   "ok": true,
+   "detail": "Tipps auf den Gehweg (x=290, links der Laterne): Mala-Positionen 40 → [Boden] → 290 → [Boden] → 370; drüben=true"
+  },
+  {
+   "id": "BUG-008",
+   "title": "Figurenwechsel während des Zudrehens zu einer Person wirft keinen TypeError (Wiederholung E-0159)",
+   "ok": true,
+   "detail": "E-0159 (Salz erstlauf): Ergebnis pass; doVerb0-Fehler: 0; Kapitel 4✓"
+  },
+  {
+   "id": "BUG-009",
+   "title": "Figurenwechsel auf dem Weg zu einem Geisterausgang bringt Marko nicht in einen Mala-Raum (Softlock)",
+   "ok": true,
+   "detail": "k=0 Bilder: Marko in office, Mala in office; k=3 Bilder: Marko in office, Mala in office; k=8 Bilder: Marko in office, Mala in office"
+  }
+ ]
+}

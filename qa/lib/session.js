@@ -12,7 +12,7 @@ const TRACE_INSTALL = function () {
   wrap(M.TA, 'act', 'act', (v, id, it) => { cov.hs[room() + '.' + id + '.' + v + (it ? '+' + it : '') + (M.GS.active === 'mala' ? '@g' : '')] = 1; return [v, id, it || null, room(), M.GS.active]; });
   wrap(M.TA, 'exit', 'exit', (id) => { cov.hs[room() + '.' + id + '.exit' + (M.GS.active === 'mala' ? '@g' : '')] = 1; return [id, room(), M.GS.active]; });
   wrap(M.TA, 'item', 'item', (v, a, b) => [v, a, b || null]);
-  wrap(M.TA, 'switchTo', 'switch', (w) => [w]);
+  wrap(M.TA, 'switchTo', 'switch', (w) => { let legal = true; try { legal = M.GS.active === w || M.E.canSwitch(); } catch (e) {} if (!legal) { (M.__qaIllegal = M.__qaIllegal || []).push([now(), 'switch', w, room(), M.GS.phase]); } return [w, legal ? 1 : 'UNERLAUBT']; });   // Figurenwechsel, den die Oberfläche nicht zuließe (canSwitch)
   wrap(M.TA, 'travel', 'travel', (l) => [l, room()]);
   wrap(M.TA, 'closeOverlay', 'close', (v) => [M.E.overlay ? M.E.overlay.kind : null]);
   wrap(M.TA, 'pickNote', 'note', (id) => [id]);
@@ -56,11 +56,12 @@ class Session {
         if ((this.frameN = (this.frameN || 0) + 1) % 10 === 0) { const v = checkInvariants(M); if (v.length) v.forEach(x => { if (mon.invariant.indexOf(x) < 0) mon.invariant.push(x); }); } } });
     mon.lastRoom = null; mon.lastInv = '';
     this.inner.M.TA && (await this.inner.ev(TRACE_INSTALL));
+    if (process.env.QA_DEBUG_INSTALL) await this.inner.ev(new Function(process.env.QA_DEBUG_INSTALL));   // nur zur Fehlersuche
     await this.inner.ev(() => { if (!M.__speechLog) M.__speechLog = []; });   // Sprachprotokoll der Testskripte (expectSaid) auch im frischen Kontext
     return this.inner;
   }
-  collect() { try { this.traceAll.push(this.inner.M.__qaTrace || []); this.covAll.push(this.inner.M.__qaCov || {}); this.errorsAll = (this.errorsAll || []).concat(this.inner.errors); } catch (e) {} try { this.inner.close2(); } catch (e) {} }
-  finish() { this.collect(); const errors = this.errorsAll || []; return { trace: [].concat(...this.traceAll), cov: this.covAll, errors }; }
+  collect() { try { this.traceAll.push(this.inner.M.__qaTrace || []); this.covAll.push(this.inner.M.__qaCov || {}); this.errorsAll = (this.errorsAll || []).concat(this.inner.errors); this.illegalAll = (this.illegalAll || []).concat(this.inner.M.__qaIllegal || []); } catch (e) {} try { this.inner.close2(); } catch (e) {} }
+  finish() { this.collect(); const errors = this.errorsAll || []; return { trace: [].concat(...this.traceAll), cov: this.covAll, errors, illegal: this.illegalAll || [] }; }
   get M() { return this.inner.M; }
   makeProxy() {
     const S = this;

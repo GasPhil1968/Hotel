@@ -98,6 +98,34 @@
   ]
  },
  {
+  "id": "BUG-008",
+  "severity": "niedrig",
+  "status": "behoben",
+  "title": "Figurenwechsel im selben Moment, in dem die Figur eine Person erreicht: unbehandelter TypeError in doVerb0",
+  "cause": "doVerb0 (game/src/05_engine.js) liest nach await approach()/faceOn() player().x. Läuft ein Figurenwechsel (Überblendung/Raumwechsel) im selben Mikrotask-Durchlauf zu Ende, ist player() nicht mehr im Raum (undefined). Der Wechsel erhöht actionTok nicht, E.busy ist in diesem Abschnitt noch nicht gesetzt.",
+  "effect": "Unbehandelte Ausnahme (Konsolenfehler), die Aktion bricht ab. Das Spiel lief im Erstlauf weiter (Kapitel 4 bis zum Ende), kein Zustandsschaden gefunden.",
+  "fix": "Nach jedem await in diesem Abschnitt prüfen, ob die Aktion noch gilt (gleicher actionTok, Spielerfigur vorhanden, aktive Figur unverändert), sonst verwerfen.",
+  "repro": "Deterministisch: Erstlauf-Lauf E-0159 (Salz erstlauf; Kapitel 4, Stress über Zeigerereignisse: Person antippen, dann Porträt). node qa/regress/run.js --only BUG-008 --html qa/originals/index_original.html",
+  "evidence": [
+   "qa/regress/bug_008_switch_race.js",
+   "Erstlauf E-0159 (UNHANDLED TypeError … at doVerb0)"
+  ]
+ },
+ {
+  "id": "BUG-009",
+  "severity": "hoch",
+  "status": "behoben",
+  "title": "Softlock: Figurenwechsel auf dem Weg zu einem Geisterausgang bringt Marko in einen Raum, den nur Mala betreten kann (K1 Archiv)",
+  "cause": "takeExit() (game/src/05_engine.js) wartet, bis die gehende Figur den Ausgang erreicht, und ruft dann transition() für die AKTIVE Figur auf. Wechselt der Spieler unterwegs per Porträt (canSwitch erlaubt es, E.busy ist beim Gehen nicht gesetzt), geht die andere Figur durch den Ausgang.",
+  "effect": "K1 Hafenbüro: Mala soll im Archiv nachsehen. Tippt man als Mala auf die Archivtür und sofort auf das Porträt, steht Marko im Archiv; der Raum hat für ihn keinen Ausgang (nur gexit). Kein Weiterkommen außer Laden eines früheren Stands. Umgekehrt kann Mala so durch einen Ausgang gehen, den sie ohne Marko nicht nehmen darf.",
+  "fix": "takeExit merkt sich die Figur, die den Ausgang gewählt hat; hat die aktive Figur bis zum Übergang gewechselt, wird der Ausgang verworfen (die Figur bleibt im Raum).",
+  "repro": "Kapitel 1 bis „1948 gefunden“ (Marko und Mala im Hafenbüro). Porträt → Mala, auf die Archivtür tippen, innerhalb von ca. 8 Bildern (≈ ¼ s) auf das Porträt tippen → Marko im Archiv, keine Ausgänge.",
+  "evidence": [
+   "qa/regress/bug_009_ghost_exit_switch.js",
+   "Erstlauf E-0026 (Sackgassen-Sonde: Verdacht → bestätigt)"
+  ]
+ },
+ {
   "id": "UI-001",
   "severity": "niedrig",
   "status": "offen (Designentscheidung)",

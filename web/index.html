@@ -2262,9 +2262,12 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
   if (v==='walk' && isG && hs.exit && !ex){ E.busy=true; try{ await say(pick(['Ohne Marko komme ich nicht weit.','Dorthin gehe ich nicht ohne ihn.']),'mala'); } finally{ E.busy=false; } return; }
   if (v==='walk'){ if (lastClick && !hs.st && !hs.npc){ await walkActor(player(),lastClick[0],lastClick[1]); return; } if (hsStand(hs)) await approach(hs); return; }
   if (hs.npc && ACT[hs.npc]) holdNpc(ACT[hs.npc]);
-  var ok=await approach(hs); if (!ok||tok!==actionTok) return;
+  // QA BUG-008: während des Zudrehens (E.busy noch nicht gesetzt) kann ein Tipp aufs Porträt die Figur wechseln → Aktion verwerfen
+  var gone=function(){ return tok!==actionTok || !player() || GS.active!==(isG?'mala':'marko'); };
+  var ok=await approach(hs); if (!ok||gone()) return;
   if (hs.npc && ACT[hs.npc]) holdNpc(ACT[hs.npc]);
-  if (hs.npc && ACT[hs.npc] && hs.npc!=='mala' && hs.npc!=='marko'){ var na=ACT[hs.npc]; if (!hs.noTurn && na.mode!=='anim' && !na.frozen && !na.idle) await faceOn(na,na.x<player().x?'R':'L'); var tf=player().x<na.x?'R':'L'; if (player().f!==tf && !(isG&&hs.noTurn)) await faceOn(player(),tf); }
+  if (hs.npc && ACT[hs.npc] && hs.npc!=='mala' && hs.npc!=='marko'){ var na=ACT[hs.npc]; if (!hs.noTurn && na.mode!=='anim' && !na.frozen && !na.idle) await faceOn(na,na.x<player().x?'R':'L'); if (gone()) return; var tf=player().x<na.x?'R':'L'; if (player().f!==tf && !(isG&&hs.noTurn)) await faceOn(player(),tf); }
+  if (gone()) return;
   E.busy=true;
   if ((v==='talk') && hs.npc) convStart(hs.npc);
   try{ var ctx={key:hs.id+':'+v+(withItem?':'+withItem:'')+(isG?':g':''),hs:hs,item:withItem};
@@ -2302,12 +2305,13 @@ E.transition=transition; M.transition=transition;
 // Laden, neues Spiel, Titelbild: „Übergang läuft“ und „zweiter Klick erwartet“ gelten nur in der laufenden Szene (nie im Spielstand, nie als Dauersperre)
 function resetTransient(){ ++exitTok; E.transitioning=false; E.exitWalk=null; E.sceneBlockUntil=0; }
 E.resetTransient=resetTransient;
-async function takeExit(hs,ex,opt){ opt=opt||{}; if (!ex||E.transitioning) return false; var my=++exitTok, rid=room.id, key=rid+'/'+hs.id;
+// QA BUG-009: wer den Ausgang gewählt hat, geht auch hindurch – wechselt die Figur unterwegs (Porträt), wird der Ausgang verworfen
+async function takeExit(hs,ex,opt){ opt=opt||{}; if (!ex||E.transitioning) return false; var my=++exitTok, rid=room.id, key=rid+'/'+hs.id, who=GS.active;
   if (hs.canExit){ E.busy=true; var ok; try{ ok=await hs.canExit(API); } finally{ E.busy=false; } if (!ok){ E.exitDenied={key:key,t:gt}; return false; } }
-  if (my!==exitTok||!room||room.id!==rid) return false;
+  if (my!==exitTok||!room||room.id!==rid||GS.active!==who) return false;
   var st=hsStand(hs), p=player();
   if (st && p){ E.exitWalk={key:key,tok:my,st:st}; var ok2=await walkActor(p,st[0],st[1]); var skipped=E.exitWalk&&E.exitWalk.tok===my&&E.exitWalk.skipped; if (E.exitWalk&&E.exitWalk.tok===my) E.exitWalk=null; if (!ok2&&!skipped) return false; }
-  if (my!==exitTok||!room||room.id!==rid||E.transitioning) return false;
+  if (my!==exitTok||!room||room.id!==rid||E.transitioning||GS.active!==who) return false;
   if (ex.to==='map' && M.openMap){ M.openMap({exit:hs.id,room:rid}); return true; }   // Stadtplan: keine Fahrt in einen eigenen Raum, erst die Wahl löst den einen Wechsel aus
   return transition(ex.to,ex); }
 // Doppelklick: den Rest des Weges zum schon gewählten Ausgang überspringen. Die Prüfungen (canExit) sind dann schon gelaufen, sie laufen nicht noch einmal.
