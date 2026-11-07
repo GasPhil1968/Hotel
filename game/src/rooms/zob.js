@@ -15,7 +15,7 @@ M.k4Arrive=async function(A){ var G=A.G; if (A.flag('k4.p.arriveDone')) return; 
     await A.narrate('Zentraler Omnibusbahnhof an der Hackerbrücke. Sieben Uhr vierzig. Es schneit, als hätte München es für uns bestellt.');
     if (G.malaOn){ await A.wait(300); await A.g('Schnee.'); await A.wait(400); await A.g('In Sarajevo war er nie so sauber.'); }
     A.sfx('sms'); await A.wait(700); await A.m('Mein Handy. Ana.');
-    await A.doc({style:'letter',title:'SMS · Ana',lines:['Mama arbeitet bis 14 Uhr. Schlüssel bei Frau Huber, 2. Stock. Ich hol dich NICHT ab, ich muss Plätzchen backen. A.']});
+    await A.doc({style:'letter',title:'SMS · Ana',lines:['Mama arbeitet bis 14 Uhr. Schlüssel bei Frau Huber, unten links. Ich hol dich NICHT ab, ich muss Plätzchen backen. A.']});
     A.note('u4_sms');
     await A.m('„NICHT“ in Großbuchstaben. Ana schreibt, wie sie redet.');
     var c=await A.choose([{t:'(Antworten: „Bin da.“)',id:'yes',silent:true},{t:'(Nicht antworten.)',id:'no',silent:true}],{title:'Ana'});
@@ -25,7 +25,7 @@ M.k4Arrive=async function(A){ var G=A.G; if (A.flag('k4.p.arriveDone')) return; 
     if (G.malaOn){ await A.wait(400); await A.g('A. Wer ist A.?'); await A.m('Ana. Meine Schwester.'); await A.g('Die kleine Ana? Die immer hinter dir her war, wie ein Entchen?');
       await A.m('Sie ist siebenundzwanzig. Sie hat zwei Kinder und einen Mann, der Bosnisch aus einem Buch lernt.'); await A.wait(300); await A.g('Das Entchen hat Kinder.'); }
     await A.wait(700); A.headache(2600); await A.animM('headache'); await A.wait(300); await A.m('…');
-    if (G.malaOn){ await A.g('Dein Kopf.'); await A.m('Zehn Stunden Bus.'); await A.wait(500); await A.g('Nein. Hier wartet einer. Ich spüre ihn auch.'); await A.g('Lass mich nachsehen.'); }
+    if (G.malaOn){ await A.g('Dein Kopf.'); await A.m('Zehn Stunden Bus.'); await A.wait(500); await A.g('Nein. Hier wartet einer. Ich spüre ihn auch. Dort hinten links, beim Pfeiler.'); await A.g('Lass mich nachsehen.'); }
     else await A.m('Mein Kopf. Hier am Bussteig ist etwas. Ich weiß, was das heißt.');
   } finally { G.flags['mala.lock']=false; A.setFlag('k4.p.arriveDone'); } };
 // ---------------------------------------------------------------- Mala findet Hansi
@@ -108,7 +108,7 @@ async function talkWastl(A){ var W=A.npc('wastl'), G=A.G, p=G.phase;
     {t:'Fahren Sie mich ins Westend?',once:'ws1',if:pro(G),go:async function(A){ await W.say('Ins Westend? Über d’ Bruckn san des zehn Minutn z’Fuaß.'); await W.say('Do fahr i Eana ned. Do lacht mi mei Frau aus.'); }},
     {t:'Viel los an Heiligabend?',once:'ws2',if:pro(G),go:async function(A){ await W.say('Um d’ Zeit? D’ Busse aus’m Süden, dann is a Ruah.'); await W.say('Heit Abend fahr i d’ Leit zu ihre Familien. Und um zehne zu ihre andern Familien. Des is mei Weihnachten.'); }},
     {t:'Wie war es am alten Busbahnhof?',once:'ws3',go:async function(A){ await W.say('Drüben am Bahnhof, an der Arnulfstraß’. Freitags hundert Busse nach Jugoslawien. Kartons am Dach, Kinder am Fenster, Hendl in Alufolie.');
-        await W.say('D’ Kartn hat’s an oaner Budn gebn. Do drüben, wo jetzt der Fleck is.'); if (G.malaOn && A.malaHere()){ await A.wait(300); await A.g('Er zeigt auf den Pfeiler.'); } }},
+        await W.say('D’ Kartn hat’s an oaner Budn gebn. Do drüben, wo jetzt der Fleck is.'); if (G.malaOn && A.malaHere()){ await A.wait(300); await A.g('Er zeigt auf den Pfeiler. Ganz links.'); } }},
     {t:'Frohe Weihnachten.',once:'ws4',if:p==='k4_d1',go:async function(A){ await W.say('Frohe Weihnacht. Heit fahr i bloß Omas. Zur Familie, von der Familie, und zwischendrin a Wurstsemmel.'); }},
     {t:'Was für ein Wetter.',once:'ws5',if:p==='k4_d2',go:async function(A){ await W.say('Batzwetter, sagt ma do. Der Schnee is grau, d’ Leit san grau, und mei Taxi is aa grau. Des war amoi weiß.'); }},
     {t:'Denken Sie noch an Hansi?',once:'ws6',if:F(A,'k4.p.hansi')&&p!=='k4_pro',go:async function(A){ await W.say('Seit Heiligabend schau i jeden Tag zu dem Pfeiler.'); await A.wait(400); await W.say('Bläd, gell? I bin zweiasiebzge. Do derf ma bläd sei.'); }},

@@ -23,7 +23,7 @@ M.HINTS_K4=[
      'Den Taxifahrer am Taxistand bitten, „Feierabend“ zu dem Mann am Pfeiler zu sagen.']},
  {id:'h4c',t:'Der Schlüssel',open:function(G){ return G.phase==='k4_pro' && N(G,'u4_sms') && !F(G,'k4.p.key'); },
   s:['Mama arbeitet bis zwei. Den Schlüssel hat die Nachbarin.',
-     'Anas SMS: „Schlüssel bei Frau Huber, 2. Stock.“',
+     'Anas SMS: „Schlüssel bei Frau Huber, unten links.“',
      'Im Westend, in Mamas Haus.',
      'Im Treppenhaus bei Frau Huber klingeln.']},
  {id:'h4d',t:'Warten auf Mama',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.key') && !F(G,'k4.p.jasna') && !F(G,'k4.p.coffee'); },

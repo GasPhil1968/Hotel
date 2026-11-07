@@ -251,7 +251,7 @@ async function nadaCall(A,J){ var G=A.G; if (F(A,'k4.e.nada')) return;
   await A.wait(900); if (J.actor) J.anim('giveTin'); await J.say('Die Dose. Ich habe sie gefüllt. Mit meinen.'); A.give('dose_voll'); await J.say('Bring sie ihr zurück. Voll.'); A.setFlag('k4.e.nada');
   if (gHere(A)){ await A.wait(700); await A.g('Mama.'); await A.wait(600); await A.g('Sie hat gelacht. Am Telefon. Ich habe es gehört.'); } }
 M.k4EpiRoof=async function(A){ var J=A.npc('jasna');
-  await A.doc({style:'register',title:'VRATNIK – KROV',lines:['Überweisung · Sparkasse München → Sarajevo','Verwendungszweck: krov · Dach','','03.1994 · 200 DM','… jeden Monat …','12.2011 · 100 €']});
+  await A.doc({style:'register',title:'VRATNIK – KROV',lines:['Überweisung · Sparkasse München nach Sarajevo','Verwendungszweck: krov · Dach','','03.1994 · 200 DM','… jeden Monat …','12.2011 · 100 €']});
   await J.say('Das Dach in Vratnik.'); await A.wait(600); await J.say('Achtzehn Jahre bezahlt. Damit er reinkann, wenn er kommt.'); await A.wait(1100);
   await A.m('Wir können im März drunter sitzen.'); await A.wait(800); await J.say('Im März.'); A.setFlag('k4.e.roof'); };
 async function obit(A){ var G=A.G, y=yes(A); if (F(A,'k4.e.obit')) return;

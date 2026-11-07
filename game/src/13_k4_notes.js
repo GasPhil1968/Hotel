@@ -12,7 +12,7 @@ function shared(G){ return !!G.flags['k4.r.shared']; }
 n('k4_c_lana','z4','Aus Mostar','Lana ist gefunden','Aus Mostar: Lana liegt unter dem Quittenbaum in Skela, bei Zlata. Nada holt sie nach Hause. Ich habe es ihr versprochen, und ich habe es gehalten.',{p:'p:mala'});
 n('k4_c_vater','z4','Aus Mostar','Mein Vater','Aus Mostar: Frau Kolar hat gefragt: „Und Sie? Haben Sie jemanden?“ Ich habe gesagt, ich wusste, dass er tot ist. Woher, habe ich nicht gesagt.',{p:'p:kolar'});
 // ---------------------------------------------------------------- Ankunft
-n('u4_sms','h4','Ankunft','Anas SMS','SMS von Ana: „Mama arbeitet bis 14 Uhr. Schlüssel bei Frau Huber, 2. Stock. Ich hol dich NICHT ab, ich muss Plätzchen backen. A.“',{p:'i:mobitel'});
+n('u4_sms','h4','Ankunft','Anas SMS','SMS von Ana: „Mama arbeitet bis 14 Uhr. Schlüssel bei Frau Huber, unten links. Ich hol dich NICHT ab, ich muss Plätzchen backen. A.“',{p:'i:mobitel'});
 // ---------------------------------------------------------------- Zu Hause
 n('u4_pantoffeln','z4','Zu Hause','Pantoffeln, Größe 44','An Mamas Wohnungstür stehen Herrenpantoffeln, Größe 44, gerade nebeneinander, die Spitzen zur Tür. Frau Huber: „Die stehen da, seit sie eingezogen ist. Ich hab nie gefragt.“',{p:'p:huber'});
 n('u4_dach','z4','Zu Hause','„Vratnik – krov“','Im Regal eine Mappe: „Vratnik – krov“. Überweisungen nach Sarajevo, achtzehn Jahre lang, für Großmutters Dach. Das Haus steht seit 2003 leer.',{p:null});

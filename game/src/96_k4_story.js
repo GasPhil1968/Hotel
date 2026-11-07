@@ -182,7 +182,7 @@ M.k4DayCheck=async function(A){ var G=A.G, R=M.E.room; if (!CH4(G)||G.ended||!R|
   return false; };
 // was fehlt (ohne zu sagen, wo): für das Bett am Tag und für die Hinweise
 function missing(G){ var p=G.phase;
-  if (p==='k4_pro'){ if (!f(G,'k4.p.hansi')) return 'Am Busbahnhof war noch etwas. Mein Kopf weiß es besser als ich.'; return 'Erst Mama. Sie kommt um zwei.'; }
+  if (p==='k4_pro'){ if (!f(G,'k4.p.hansi')) return 'Am Busbahnhof war noch etwas. Mein Kopf weiß es besser als ich.'; return f(G,'k4.p.coffee')?'Erst Mama. Sie kommt um zwei.':'Erst Mama. Sie kommt um zwei. Bis dahin könnte ich Kaffee kochen, in Großmutters Džezva. Mama soll sie auf dem Herd sehen.'; }
   if (p==='k4_d1'){ if (!has(G,'z4_stiefel')) return 'Ana wollte heute mit den Kindern raus. Mit uns.'; if (!has(G,'s4_peppino')) return 'Mein Kopf pocht. Irgendwo in der Stadt wartet einer.'; if (!has(G,'g4_gerda')) return 'Mama ist bei der Arbeit. Und ich habe den Tag noch nicht zu Ende gedacht.'; }
   if (p==='k4_d2'){ if (!has(G,'z4_ana2004')) return 'Ana. Ich muss mit Ana reden. Nicht am Telefon.'; if (!has(G,'s4_name')) return 'Sepp hat einen Namen. Ich habe ihn noch nicht.'; if (!has(G,'g4_drei')) return 'Und um drei geht im Heim ein alter Mann zum Aufzug. Warum, weiß ich nicht.'; }
   if (p==='k4_d3'){ if (!f(G,'k4.s.crossed')) return 'Sepp wartet noch auf seinen Brief.'; if (!f(G,'k4.g.decided')) return 'Gerda kommt jeden Tag um drei. Noch.'; if (M.k4Variant(G)==='no' && !f(G,'k4.e.sample2')) return 'Die Probenkarte von Frau Kolar. Heute.'; }

@@ -481,8 +481,11 @@ function drawReveal(){ if (!reveal) return; if (E.gt()-reveal.at>REVEAL_MS||E.bu
   list.sort(function(a,b){ return a.a-b.a; }); var pulse=(Math.sin(E.gt()/160)+1)/2, placed=[];
   list.forEach(function(m){ var ex=g?m.h.gexit:m.h.exit, col=ex?P.g5:(m.h.npc?P.r4:(g?P.x5:P.y4)), R=2+Math.round(pulse); if (g && (m.h.g&&m.h.g.sense)) col=P.x6;
     for (var dy=-R-1;dy<=R+1;dy++) for (var dx=-R-1;dx<=R+1;dx++){ var d2=dx*dx+dy*dy; if (d2<=(R+1)*(R+1)) fb.px(m.x+dx,m.y+dy,d2<=R*R?col:P.k0); } fb.px(m.x,m.y,P.l1); });
-  list.forEach(function(m){ var t=E.nameOf(m.h); if (!t) return; var w=M.textWidth(t), lx=Math.max(1,Math.min(W-1-w,m.x-(w>>1))), ly=m.y+6; if (ly+8>SH) ly=m.y-14; var box=[lx-2,ly-2,w+4,12];
-    if (placed.some(function(b){ return box[0]<b[0]+b[2]&&b[0]<box[0]+box[2]&&box[1]<b[1]+b[3]&&b[1]<box[1]+box[3]; })) return; placed.push(box); M.text(fb,t,lx,ly,(g?m.h.gexit:m.h.exit)?P.g5:(g?P.x5:P.s6),P.k0); }); }
+  // Namen: Figuren zuerst; stößt ein Schild an ein anderes, wird es darüber oder weiter unten versucht, statt wegzufallen
+  list.slice().sort(function(a,b){ return (b.h.npc?1:0)-(a.h.npc?1:0) || a.a-b.a; }).forEach(function(m){ var t=E.nameOf(m.h); if (!t) return; var w=M.textWidth(t), lx=Math.max(1,Math.min(W-1-w,m.x-(w>>1)));
+    var hit=function(box){ return placed.some(function(b){ return box[0]<b[0]+b[2]&&b[0]<box[0]+box[2]&&box[1]<b[1]+b[3]&&b[1]<box[1]+box[3]; }); }, box=null;
+    [6,-14,18,-26,30].some(function(o){ var ly=m.y+o; if (ly<1||ly+8>SH) return false; var bx=[lx-2,ly-2,w+4,12]; if (hit(bx)) return false; box=bx; return true; });
+    if (!box) return; placed.push(box); M.text(fb,t,box[0]+2,box[1]+2,(g?m.h.gexit:m.h.exit)?P.g5:(g?P.x5:P.s6),P.k0); }); }
 
 // ---------------------------------------------------------------- Menü
 function menuItems(){ var inG=E.screen==='game', sl=E.slot(); return [

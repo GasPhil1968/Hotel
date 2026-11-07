@@ -111,7 +111,7 @@ async function talkJasnaPro(A){ var J=A.npc('jasna');
     {t:'Mama. Wegen der Probe.',silent:true,if:!p,go:function(A){ return probe(A); }},
     {t:'Wie war die Arbeit?',once:'jpW',go:async function(A){ await J.say('Wie immer. Frau Obermüller hat mich für ihre Tochter gehalten.'); await A.wait(300); await J.say('Ich habe nicht widersprochen. An Heiligabend widerspricht man nicht.'); }},
     {t:'Arbeitest du an Silvester?',once:'jpS',if:F(A,'k4.p.silvester'),go:async function(A){ await J.say('Dieses Jahr nicht.'); await A.wait(700); await J.say('Ich habe getauscht.'); await A.m('Wegen mir?'); await J.say('Wegen einer Kollegin. Sie hat Kinder.'); if (gHere(A)){ await A.wait(400); await A.g('Sie lügt wie du. Kurz.'); } }},
-    {t:'Die Pantoffeln an der Tür …',once:'jpP',if:N(A,'u4_pantoffeln'),go:async function(A){ await A.m('Die Pantoffeln an der Tür …'); await A.wait(600); await J.say('Was ist mit ihnen?'); await A.wait(900); await A.m('Nichts.'); await J.say('Dann lass sie stehen.'); }},
+    {t:'Die Pantoffeln an der Tür …',once:'jpP',if:N(A,'u4_pantoffeln'),go:async function(A){ await A.wait(600); await J.say('Was ist mit ihnen?'); await A.wait(900); await A.m('Nichts.'); await J.say('Dann lass sie stehen.'); }},
     {t:p?'(Ein Hemd anziehen.)':'(Später.)',silent:true,bye:true,go:async function(A){ if (p){ await A.m('Ein Hemd.'); await A.wait(300); await J.say('Das blaue. Ich habe es dir gebügelt. Es liegt auf dem Sofa.'); if (gHere(A)) await A.g('Sie hat dir ein Hemd gebügelt, bevor du da warst.'); } else await J.say('Ich laufe nicht weg. Ich wohne hier.'); }}
   ]; });
   if (F(A,'k4.p.jasna')) await M.k4DayCheck(A); }
@@ -172,7 +172,8 @@ var HS=[
    use:sofaUse,
    g:{look:function(A){ return A.g(night(A.G)?'Du schläfst mit den Füßen in der Luft.':'Ich kann mich überall hinlegen. Auch hierhin. Nur zu kurz ist sie für mich nicht.'); }}},
  {id:'tv',name:'Fernseher',look:function(A){ return A.m(A.S.tv?'Der Fernseher läuft. Eine Talkshow ohne Ton.':'Ein Fernseher mit einer Häkeldecke obendrauf. Auf der Häkeldecke eine Porzellankatze.'); },
-   use:function(A){ var on=!A.S.tv; A.set('tv',on); A.sfx(on?'tv':'click'); return A.m(on?A.cycle('jwTv',['Weihnachtsprogramm. Ein Mann im Glitzeranzug singt vor einem Kamin aus Pappe. Ich schalte nicht um, ich schalte gleich wieder aus.','Nachrichten. Schneechaos, Feiertagsverkehr, ein Eisbär im Zoo.']):'Aus. Die Porzellankatze sieht mich an, als hätte ich etwas Wichtiges verpasst.'); },
+   use:async function(A){ A.set('tv',true); A.sfx('tv'); await A.m(A.cycle('jwTv',['Weihnachtsprogramm. Ein Mann im Glitzeranzug singt vor einem Kamin aus Pappe. Ich schalte nicht um, ich schalte gleich wieder aus.','Nachrichten. Schneechaos, Feiertagsverkehr, ein Eisbär im Zoo.']));
+     A.set('tv',false); A.sfx('click'); return A.m('Aus. Die Porzellankatze sieht mich an, als hätte ich etwas Wichtiges verpasst.'); },
    g:{look:'Sie macht ihn an, damit jemand redet. Dann hört sie nicht zu.'}},
  {id:'calendar',name:'Kalender',look:function(A){ return calendarLook(A); },read:function(A){ return calendarLook(A); },
    g:{look:'Kinderzeichnungen. Eine Sonne mit Brille. Ein Hund, der aussieht wie ein Sofa. Der Junge zeichnet wie ich.'}},
@@ -210,7 +211,7 @@ var HS=[
    g:{look:'Sie liest. Sie hat Lanas Straßenbahn in ihrer Tasche. Sie hat es mir nicht gesagt, aber ich weiß es.'}}
 ];
 async function folderRead(A){ if (A.G.phase==='k4_epi' && M.k4EpiRoof) return M.k4EpiRoof(A);
-  await A.doc({style:'register',title:'VRATNIK – KROV',lines:['Überweisung · Sparkasse München → Sarajevo','Empfänger: Ruža, Vratnik, Kuća 12','Verwendungszweck: krov · Dach','','03.1994 · 200 DM','… jeden Monat …','12.2011 · 100 €']});
+  await A.doc({style:'register',title:'VRATNIK – KROV',lines:['Überweisung · Sparkasse München nach Sarajevo','Empfänger: Ruža, Vratnik, Kuća 12','Verwendungszweck: krov · Dach','','03.1994 · 200 DM','… jeden Monat …','12.2011 · 100 €']});
   if (!N(A,'u4_dach')){ A.note('u4_dach'); await A.m('Jeden Monat. Achtzehn Jahre. Für Bakas Dach.'); await A.wait(500); await A.m('Baka ist 2003 gestorben. Seitdem steht das Haus leer.');
     if (gHere(A)){ await A.wait(600); await A.g('Ein Dach über einem leeren Haus.'); await A.wait(400); await A.g('Damit er reinkann, wenn er kommt.'); await A.m('Mala.'); await A.g('Ich sage nur, was ich sehe.'); } }
   else await A.m('Achtzehn Jahre, jeden Monat. Die Beträge werden kleiner, als die Mark zum Euro wird. Der Verwendungszweck nie.'); }
