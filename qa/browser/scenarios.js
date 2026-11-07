@@ -155,7 +155,7 @@ const DEV = { chromium: ['desktop', 'tablet'], firefox: ['desktop', 'tablet'], w
 
   // Engine-spezifische Zusatzszenarien
   if (ENGINE === 'chromium') {
-    await scenario('C11', 'Trefferflächen-Prüfung: jeder sichtbare Hotspot in 15 erspielten Ständen hat einen antippbaren Punkt', 'desktop', async ({ mk, ck, r }) => { r.audit = [];
+    await scenario('C11', 'Trefferflächen-Prüfung: jeder sichtbare Hotspot in ' + STATES.length + ' erspielten Ständen hat einen antippbaren Punkt', 'desktop', async ({ mk, ck, r }) => { r.audit = [];
       for (const S of STATES) { const P = await mk({ storage: S.storage }); await P.cont(); await P.idle().catch(() => {});
         const a = await P.page.evaluate(() => { const E = M.E, R = E.room, S = M.RS(R.id), out = { room: R.id, active: M.GS.active, total: 0, covered: [], none: [] };
           for (const who of [M.GS.active]) { R.hotspots.forEach(h => { try { if (h.vis && !h.vis(S, M.GS)) return; } catch (e) { return; } if (h.who === 'm' && who !== 'marko') return; if (h.who === 'g' && who !== 'mala') return; const rr = E.hsRect(h); if (!rr || rr[2] * rr[3] === 0) return; out.total++;

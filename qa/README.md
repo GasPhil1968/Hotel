@@ -13,6 +13,7 @@ Alles hier prüft die **Produktionsdatei** `web/index.html` (bzw. eine angegeben
 | `paths/walkthrough*.js` | Kopien der Durchläufe aus `game/tools/` als ladbare Module mit Variantenschaltern (Zustimmung a/b/c, Probe ja/nein, Konsulat früh, Notizbuch „Nachdenken“, K2-Reihenfolge). Kapitelstart im verketteten Lauf über „Weiter mit Kapitel N“. |
 | `sim.js` | Orchestrierung der Kategorien A–E, Grenzen (Schritte, Wanduhr, Spielzeit), Klassifizierung, JSONL-Protokoll, Kindprozesse. |
 | `report.js` | Erzeugt `REPORT.md`/`summary.json` automatisch aus `runs.jsonl` (+ `BUGS.json`, Browser-Ergebnisse, Regressionstests, `HARNESS_KORREKTUREN.json`). |
+| `resume_check.js` | Stichprobe für „Fortschritt möglich“: Lauf wiederholen, vom erreichten Zustand die aufgezeichnete Lösungsfolge des Kapitels der Reihe nach weiterspielen (Figurenwechsel nur bei `canSwitch`), Erfolg = Phasen-/Kapitelwechsel. |
 | `triage.js` | Ordnet nicht bestandene Läufe per Signatur einer Ursache zu (Fehler-ID, Harness, beabsichtigt) → `TRIAGE.md`. |
 | `HARNESS_KORREKTUREN.json` | Mängel des eigenen Prüfwerkzeugs, die während der Prüfung gefunden und korrigiert wurden (Auswirkung auf den Erstlauf). |
 | `regress/` | Gezielte Regressionstests je behobenem Fehler (`bug_00N_*.js`). |
@@ -44,7 +45,9 @@ node qa/report.js qa/results/final --title "MALA – Abschlusslauf"             
 node qa/peek.js qa/results/final 1                                               # nicht bestandene Läufe ansehen
 node qa/regress/run.js --json qa/results/regress_final.json                      # Regressionstests auf der korrigierten Fassung
 node qa/regress/run.js --html qa/originals/index_original.html --json qa/results/regress_original.json   # gegen das Original: alle rot
-node qa/triage.js qa/results/final --title "Abschlusslauf – Triage"            # Zuordnung nicht bestandener Läufe
+node qa/triage.js qa/results/final --title "Abschlusslauf – Triage" --notes qa/results/final/TRIAGE_NOTIZEN.md   # Zuordnung nicht bestandener Läufe
+node qa/resume_check.js final E-0097 C-0072                                      # Stichprobe: geht es von dort mit der Lösungsfolge weiter?
+bash qa/package.sh                                                               # ZIP der korrigierten Fassung, Prüfsummen, gepackte Logs
 node qa/validate_driver.js 11                                                    # Treiber: Determinismus, smart vs. full
 # Browser (Chromium vorinstalliert; Firefox/WebKit: PLAYWRIGHT_BROWSERS_PATH=~/pwb npx playwright install firefox webkit, WebKit braucht install-deps)
 node qa/browser/statepack.js                                                     # regulär erspielte Stände

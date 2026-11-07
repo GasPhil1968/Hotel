@@ -78,7 +78,7 @@
   "| C08 | chromium | desktop | Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand | bestanden | 6/6 | 2 |",
   "| C09 | chromium | tablet | Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar | bestanden | 6/6 | 1 |",
   "| C10 | chromium | desktop | Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar | bestanden | 4/4 | 2 |",
-  "| C11 | chromium | desktop | Trefferflächen-Prüfung: jeder sichtbare Hotspot in 15 erspielten Ständen hat einen antippbaren Punkt | bestanden | 4/4 | 0 |",
+  "| C11 | chromium | desktop | Trefferflächen-Prüfung: jeder sichtbare Hotspot in 16 erspielten Ständen hat einen antippbaren Punkt | bestanden | 4/4 | 0 |",
   "| C12 | chromium | desktop | PWA: Service Worker registriert, offline nach Caching neu starten, Update wird beim Titelbild übernommen | bestanden | 9/9 | 1 |",
   "| C13a | chromium | desktop | BUG-002 per Klick (Originalfassung): Figurenwechsel während Mala geht | Fehler BUG-002 reproduziert (erwartet) | 4/5 | 1 |",
   "| C13b | chromium | desktop | BUG-002 per Klick (korrigierte Fassung): Figurenwechsel während Mala geht | bestanden | 5/5 | 1 |",
@@ -165,7 +165,7 @@
     "dpr": 1,
     "rot": false
    },
-   "wallS": 0.926
+   "wallS": 0.669
   },
   {
    "id": "C02",
@@ -206,7 +206,7 @@
    "consoleErr": [],
    "failedReq": [],
    "browserVersion": "153.0.8010.12",
-   "wallS": 6.458
+   "wallS": 6.241
   },
   {
    "id": "C03",
@@ -336,7 +336,7 @@
     "Rede mit",
     "Schau an"
    ],
-   "wallS": 22.877
+   "wallS": 22.593
   },
   {
    "id": "C04",
@@ -377,7 +377,7 @@
    "consoleErr": [],
    "failedReq": [],
    "browserVersion": "153.0.8010.12",
-   "wallS": 2.161
+   "wallS": 1.95
   },
   {
    "id": "C05",
@@ -465,7 +465,7 @@
      }
     }
    },
-   "wallS": 2.473
+   "wallS": 1.955
   },
   {
    "id": "C06",
@@ -514,7 +514,7 @@
     "vizitka",
     "aushang"
    ],
-   "wallS": 2.557
+   "wallS": 2.156
   },
   {
    "id": "C07",
@@ -625,7 +625,7 @@
      "sw": 500
     }
    ],
-   "wallS": 2.317
+   "wallS": 2.115
   },
   {
    "id": "C08",
@@ -668,7 +668,7 @@
    "failedReq": [],
    "browserVersion": "153.0.8010.12",
    "compare": "gleich",
-   "wallS": 4.902
+   "wallS": 4.34
   },
   {
    "id": "C09",
@@ -710,7 +710,7 @@
    "failedReq": [],
    "browserVersion": "153.0.8010.12",
    "after": "haustor",
-   "wallS": 3.575
+   "wallS": 3.388
   },
   {
    "id": "C10",
@@ -725,7 +725,7 @@
     },
     {
      "ok": true,
-     "what": "Geistersicht kühl/blau (B 568912 > R 239269)"
+     "what": "Geistersicht kühl/blau (B 568810 > R 240678)"
     },
     {
      "ok": true,
@@ -745,20 +745,20 @@
    "failedReq": [],
    "browserVersion": "153.0.8010.12",
    "tint": {
-    "r": 239269,
-    "g": 438558,
-    "b": 568912
+    "r": 240678,
+    "g": 437957,
+    "b": 568810
    },
    "ghosts": [
     "luka"
    ],
-   "wallS": 2.712
+   "wallS": 2.61
   },
   {
    "id": "C11",
    "engine": "chromium",
    "device": "desktop",
-   "title": "Trefferflächen-Prüfung: jeder sichtbare Hotspot in 15 erspielten Ständen hat einen antippbaren Punkt",
+   "title": "Trefferflächen-Prüfung: jeder sichtbare Hotspot in 16 erspielten Ständen hat einen antippbaren Punkt",
    "ok": true,
    "checks": [
     {
@@ -914,7 +914,7 @@
     }
    ],
    "unreachable": [],
-   "wallS": 26.918
+   "wallS": 23.294
   },
   {
    "id": "C12",
@@ -977,7 +977,7 @@
    "cacheAfter": [
     "mala-split-373d1ccb53-qa2"
    ],
-   "wallS": 66.83
+   "wallS": 65.939
   },
   {
    "id": "C13a",
@@ -1031,7 +1031,7 @@
     "room": "wiesn"
    },
    "bugReproduced": true,
-   "wallS": 4.946
+   "wallS": 4.881
   },
   {
    "id": "C13b",
@@ -1083,7 +1083,7 @@
     "active": "marko",
     "room": "wiesn"
    },
-   "wallS": 5.045
+   "wallS": 4.836
   },
   {
    "id": "C14a",
@@ -1130,7 +1130,7 @@
     "markoExits": 0
    },
    "bugReproduced": true,
-   "wallS": 5.341
+   "wallS": 5.253
   },
   {
    "id": "C14b",
@@ -1175,7 +1175,7 @@
     "mala": "office",
     "markoExits": 1
    },
-   "wallS": 5.38
+   "wallS": 5.174
   },
   {
    "id": "F01",

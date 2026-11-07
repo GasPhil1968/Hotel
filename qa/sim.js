@@ -196,7 +196,7 @@ async function probe(I, spec, canon, stuckCh, stuckStep) { const X = require("./
   const notePool = win.filter(c => c.kind === 'note'), choosePool = win.filter(c => c.kind === 'choose'), combPool = win.filter(c => c.kind === 'combine');
   const usedN = new Map(); const preferNote = (L) => { const c = notePool.find(x => L.indexOf(x.id) >= 0 && (usedN.get(x) || 0) < 2); if (!c || rnd() < 0.25) return null; usedN.set(c, (usedN.get(c) || 0) + 1); return c.id; };
   const preferChoice = (opts) => { if (rnd() < 0.25) return -1; for (const c of choosePool) { const k = opts.indexOf(c.t); if (k >= 0 && (usedN.get(c) || 0) < 2) { usedN.set(c, (usedN.get(c) || 0) + 1); return k; } } return -1; };
-  let best = null, n = 0; const MAX = 600, WALL = 180000; const tried = new Map();
+  let best = null, n = 0; const MAX = +(process.env.QA_PROBE_MAX || 600), WALL = +(process.env.QA_PROBE_WALL || 180000);   /* Stichproben: größeres Budget per Umgebungsvariable */ const tried = new Map();
   for (; n < MAX && Date.now() - t0 < WALL; n++) {
     const A = await I.ev(X.LIST_ACTIONS).catch(() => ({ none: true }));
     const HO = { dlgDepth: 6, solvePuzzles: true, preferNote, preferChoice }, RW = { hint: 0, notes: 0.1, combine: 2.5, travel: 2 };
