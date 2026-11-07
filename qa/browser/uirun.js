@@ -113,12 +113,18 @@ const { launch, contextOpts } = require('./engines');
       if (r || item || /^loc2?_/.test(id)) return; const s0 = await st(); if (s0.pop) { await tapL(160, 60); await sleep(100); }
       uiNotes.push({ kind: 'Aktion ohne Reaktion, erneut angetippt', v, id, room: s0.room }); L('Aktion ohne Reaktion, erneut', v, id); }
     throw new Error('Aktion ' + v + ' ' + id + ' bewirkt über die Oberfläche nichts'); }
+  async function waitStill(id) { const actor = id === '_mala' ? 'mala' : id === '_marko' ? 'marko' : await page.evaluate((i) => { const h = M.E.room.byId[i]; return h && h.npc ? h.npc : null; }, id); if (!actor) return;
+    const t = Date.now(); while (Date.now() - t < 8000) { const m = await page.evaluate((a) => M.ACT[a] ? M.ACT[a].mode : null, actor); if (m !== 'walk') return; await sleep(60); } }
   async function doAct0(v, id, item) {
     VL = VL || await verbLabels();
     if (/^loc2?_/.test(id)) { await travel(id.replace(/^loc2?_/, '')); return; }
-    if (item) { await useItemOn(item, id); return; }
-    await tapHotspot(id);
-    const s = await until(s => s.pop || s.busy || s.speech || s.dlg || s.ov || s.walk || s.acting, 3000, 'Reaktion auf Tipp').catch(() => null);
+    if (item) { await waitStill(id); await useItemOn(item, id); return; }
+    let s = null;
+    for (let k = 0; k < 3; k++) { await waitStill(id); await tapHotspot(id);
+      s = await until(s => s.pop || s.busy || s.speech || s.dlg || s.ov || s.walk || s.acting, 3000, 'Reaktion auf Tipp').catch(() => null);
+      const popHs = s && s.pop ? await page.evaluate(() => { const p = M.E.pop; if (!p || !p.hs) return null; return p.hs === M.E.MALA_HS ? '_mala' : p.hs === M.E.MARKO_HS ? '_marko' : p.hs.id; }) : null;
+      if (!s || !s.pop || popHs === id) break;
+      uiNotes.push({ kind: 'Tipp traf anderen Hotspot (Figur bewegte sich)', want: id, got: popHs }); L('Tipp traf', popHs, 'statt', id); await tapL(160, 60); await sleep(150); await until(idle, 30000, 'ruhig'); }
     if (s && s.pop) { const lab = [VL[v], VL['g' + v], ...(VLAB[v] || [])].filter(Boolean); const i = s.pop.findIndex(t => lab.indexOf(t) >= 0); if (i < 0) throw new Error('Verb ' + v + ' nicht im Popup ' + JSON.stringify(s.pop)); await tapCode('p:' + i, 'Verb ' + v); }
   }
   async function doExit(id) { await tapHotspot(id); const s = await until(s => s.pop || s.busy || s.walk || s.trn || s.speech || s.ov, 3000, 'Ausgang').catch(() => null); if (s && s.pop) { const i = s.pop.findIndex(t => t === 'Hingehen' || t === 'Hindurchgehen'); if (i >= 0) await tapCode('p:' + i, 'Hingehen'); } }
