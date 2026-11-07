@@ -153,8 +153,8 @@ const { launch, contextOpts } = require('./engines');
     if (want && !(await page.evaluate((t) => M.GS.notes.indexOf(t) >= 0, want))) { uiNotes.push({ kind: 'Verbinden wiederholt', a: x, b: y }); L('Verbinden wiederholt', x, y); await sleep(300); await combineUI0(x, y);
       if (!(await page.evaluate((t) => M.GS.notes.indexOf(t) >= 0, want))) throw new Error('Schluss ' + x + '+' + y + ' kam über die Oberfläche nicht zustande'); } }
   async function combineUI0(x, y) { await until(idle, 60000, 'ruhig vor Notizbuch'); await tapCode('notes', 'Notizen'); await until(s => s.ov === 'notebook', 5000, 'Notizbuch');
-    for (let k = 0; k < 6; k++) { const pv = await page.evaluate(() => window.__qa.scan('nprev')); if (!pv) break; await tapL(pv[0], pv[1]); }   // erste Seite
-    for (const id of [x, y]) { let p = null; for (let k = 0; k < 6 && !p; k++) { p = await page.evaluate((i) => window.__qa.scan('n:' + i), id); if (!p) { const nx = await page.evaluate(() => window.__qa.scan('nnext')); if (!nx) break; await tapL(nx[0], nx[1]); } } if (!p) throw new Error('Notiz zum Verbinden nicht sichtbar: ' + id); await tapL(p[0], p[1]); await sleep(80); }
+    for (const id of [x, y]) { for (let k = 0; k < 8; k++) { const pv = await page.evaluate(() => window.__qa.scan('nprev')); if (!pv) break; await tapL(pv[0], pv[1]); }   // je Notiz von Seite 1 an suchen
+      let p = null; for (let k = 0; k < 8 && !p; k++) { p = await page.evaluate((i) => window.__qa.scan('n:' + i), id); if (!p) { const nx = await page.evaluate(() => window.__qa.scan('nnext')); if (!nx) break; await tapL(nx[0], nx[1]); } } if (!p) throw new Error('Notiz zum Verbinden nicht sichtbar: ' + id); await tapL(p[0], p[1]); await sleep(80); }
     await sleep(200); const s = await st(); if (s.ov === 'notebook') await tapCode('nx', 'Notizbuch schließen'); }
   async function closeOv(kind, v) {
     let s; try { s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay ' + kind); }
