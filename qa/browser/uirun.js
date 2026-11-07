@@ -140,15 +140,15 @@ const { launch, contextOpts } = require('./engines');
     await sleep(200); const s = await st(); if (s.ov === 'notebook') await tapCode('nx', 'Notizbuch schließen'); }
   async function closeOv(kind, v) {
     const s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay ' + kind);
-    if (kind === 'puzzle' && Array.isArray(v)) { for (let i = 0; i < v.length; i++) { for (let k = 0; k < 12; k++) { const cur = await page.evaluate((j) => M.E.overlay.sel[j], i); if (cur === v[i]) break; await tapCode('z:' + i, 'Rätselzeile ' + i); } } await tapCode('zgo', 'Rätsel prüfen'); return; }
+    if (kind === 'puzzle' && Array.isArray(v)) { for (let i = 0; i < v.length; i++) { for (let k = 0; k < 12; k++) { const cur = await page.evaluate((j) => { if (!M.E.overlay.sel) M.renderFrame(); return M.E.overlay.sel[j]; }, i); if (cur === v[i]) break; await tapCode('z:' + i, 'Rätselzeile ' + i); } } await tapCode('zgo', 'Rätsel prüfen'); return; }
     if (kind === 'puzzle') { await tapCode('zx', 'Rätsel schließen'); return; }
     if (kind === 'map') { await tapCode('o:x', 'Karte schließen'); return; }
     if (kind === 'notebook') { await tapCode('nx', 'Notizbuch schließen'); return; }
     for (let k = 0; k < 20; k++) { const s2 = await st(); if (s2.ov !== s.ov) return; const xh = await page.evaluate(() => window.__qa.scan('o:x')); if (xh && kind !== 'memory' && kind !== 'doc') await tapL(xh[0], xh[1]); else await tapL(160, 60); await sleep(80); }
     throw new Error('Overlay lässt sich nicht schließen: ' + kind);
   }
-  async function arrangeGoal(goal) { for (let g = 0; g < 14; g++) { const ord = await page.evaluate(() => M.E.overlay.ord.slice()); const i = ord.findIndex((k, j) => k !== goal[j]); if (i < 0) return; await tapCode('o:r' + i, 'Karte ' + i); await tapCode('o:r' + ord.indexOf(goal[i]), 'tauschen'); } }
-  async function glyphGoal(goal) { for (let w = 0; w < goal.length; w++) for (let c = 0; c < goal[w].length; c++) { if (goal[w][c] < 0) continue; for (let k = 0; k < 30; k++) { const cur = await page.evaluate(([w, c]) => M.E.overlay.rd[w][c], [w, c]); if (cur === goal[w][c]) break; await tapCode('o:g' + w + '_' + c, 'Zeichen'); } } }
+  async function arrangeGoal(goal) { for (let g = 0; g < 14; g++) { const ord = await page.evaluate(() => { if (!M.E.overlay.ord) M.renderFrame(); return M.E.overlay.ord.slice(); }); const i = ord.findIndex((k, j) => k !== goal[j]); if (i < 0) return; await tapCode('o:r' + i, 'Karte ' + i); await tapCode('o:r' + ord.indexOf(goal[i]), 'tauschen'); } }
+  async function glyphGoal(goal) { for (let w = 0; w < goal.length; w++) for (let c = 0; c < goal[w].length; c++) { if (goal[w][c] < 0) continue; for (let k = 0; k < 30; k++) { const cur = await page.evaluate(([w, c]) => { if (!M.E.overlay.rd) M.renderFrame(); return M.E.overlay.rd[w][c]; }, [w, c]); if (cur === goal[w][c]) break; await tapCode('o:g' + w + '_' + c, 'Zeichen'); } } }
 
   // ---------------------------------------------------------------- Wiedergabe
   const acts = REC.actions; let i = 0, done = 0; const per = { ok: 0 }; let pendingGoal = null; let curCh = 0; const chEnds = [];
