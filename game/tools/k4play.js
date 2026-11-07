@@ -61,16 +61,21 @@ function play(D, opts = {}) {
   P.trace = [];
   P.BYE = /^(Servus|Auf Wiedersehen|Bis später|Bis heute Abend|Ich gehe|Später|Schönen Tag|Komm\.|\(Warten\.\)|\(Gehen\.\)|Ich lasse dich|Danke|Arrivederci|Wiederschauen|Pfiat|Ich muss los|Gute Nacht|Bis morgen|\(Doch nichts\.\))/;
   P.dlgOpts = () => D.ev(() => M.E.dlg ? M.E.dlg.opts.map(o => ({ t: o.t, id: o.id })) : null);
-  P.drive = async (prefs, until, o = {}) => { const notes = (o.notes || []).slice(), max = o.max || 120, strict = o.strict !== false;
+  P.drive = async (prefs, until, o = {}) => { const notes = (o.notes || []).slice(), max = o.max || 120, strict = o.strict !== false, used = [];
     for (let i = 0; i < max; i++) {
-      if (await D.ev(() => !!M.GS.ended)) return D.st();
-      const s = await P.calm();
+      // Kapitelende: Abspann oder Titelbild (danach ist M.GS schon ein neuer Stand)
+      const endNow = async () => { const x = await D.st(); return (x.screen === 'credits' || x.screen === 'title' || await D.ev(() => !!M.GS.ended)) ? x : null; };
+      let e0 = await endNow(); if (e0) return e0;
+      let s; try { s = await P.calm(); } catch (err) { e0 = await endNow(); if (e0) return e0; throw err; }
       const done = await until(Object.assign({}, s));
       if (done) { if (!s.dlg) return s; const k = s.dlg.findIndex(t => P.BYE.test(t)); if (k < 0) return s; await D.ev((x) => M.E.chooseDone(x), k); P.trace.push('  > ' + s.dlg[k]); await D.page.waitForTimeout(40); continue; }
       if (s.dlg) { const opts = await P.dlgOpts(); if (!opts) continue;
         const nk = opts.findIndex(x => notes.indexOf(x.id) >= 0);
         if (nk >= 0) { notes.splice(notes.indexOf(opts[nk].id), 1); P.trace.push('  > [Notiz] ' + opts[nk].t); await D.ev((x) => M.E.chooseDone(x), nk); await D.page.waitForTimeout(40); continue; }
-        let pick = -1; for (const p of prefs) { pick = opts.findIndex(x => x.t.indexOf(p) >= 0); if (pick >= 0) break; }
+        // Zeilen, die in diesem Gespräch schon gewählt wurden, kommen zuletzt dran (Menüs, die sich wiederholen)
+        let pick = -1; for (const p of prefs) { pick = opts.findIndex(x => x.t.indexOf(p) >= 0 && used.indexOf(x.t) < 0); if (pick >= 0) break; }
+        if (pick < 0) for (const p of prefs) { pick = opts.findIndex(x => x.t.indexOf(p) >= 0 && (!o.once || used.indexOf(x.t) < 0)); if (pick >= 0) break; }
+        if (pick >= 0) used.push(opts[pick].t);
         if (pick < 0) { if (strict && opts.length > 1) await P.fail('drive' + (o.label ? ' (' + o.label + ')' : '') + ': keine passende Zeile in ' + JSON.stringify(opts.map(x => x.t)));
           pick = opts.findIndex(x => !/hintTalk|nicht weiter|^Komm\.$/.test(x.t)); if (pick < 0) pick = 0; }
         P.trace.push('  > ' + opts[pick].t); await D.ev((k) => M.E.chooseDone(k), pick); await D.page.waitForTimeout(40); continue; }
@@ -86,7 +91,7 @@ function play(D, opts = {}) {
   P.flagIs = (k, v) => async () => { const x = await D.flag(k); return v === undefined ? !!x : x === v; };
   P.noteIs = (id) => async () => D.hasNote(id);
   P.phaseIs = (p) => async (s) => s.phase === p && !s.busy;
-  P.noDlg = async (s) => !s.dlg;
+  P.noDlg = async (s) => !s.dlg && !s.overlay;
   return P;
 }
 module.exports = { play };

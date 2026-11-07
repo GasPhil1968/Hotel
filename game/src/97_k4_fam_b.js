@@ -112,6 +112,8 @@ M.k4Ride=async function(A){ var G=A.G, r=A.flag('k4.fin.ride')||'tram'; G.flags[
 function late(A){ return A.flag('k4.fin.ride')==='walk'; }
 // ---------------------------------------------------------------- Das Silvestergespräch, Zimmer 214 (S3 ruft es beim Betreten auf; Konzept 7.3 C3)
 var finRun=false;
+// Laden oder Neustart mitten in der Brücke oder im Silvestergespräch: die alte Szene wartet auf eine Auswahl, die nie kommt. Ihre Riegel fallen mit dem Spielstand.
+M.RESET_HOOKS=M.RESET_HOOKS||[]; M.RESET_HOOKS.push(function(){ bridgeRun=false; finRun=false; });
 function jasnaH(A){ var ids=['jasnaC','jasna','jasnaW']; for (var i=0;i<ids.length;i++){ var h=A.npc(ids[i]); if (h.actor) return h; }
   var p=M.apos('heim214','jasna_window',[262,118,'L']); return A.spawn({id:'jasnaC',ch:'jasnaC',x:p[0],y:p[1],f:p[2]||'L',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36,fadeIn:false}); }
 async function setup(A){ var G=A.G, c=M.apos('heim214','marko_chair',[150,124,'R']); A.placeM(c[0],c[1],c[2]||'R'); A.idleM('sit');

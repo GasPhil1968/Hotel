@@ -63,7 +63,7 @@ M.startChapter4=async function(A){ var E=M.E; E.busy=true;
     lines.push({a:'Am Grab habe ich „Ja“ gesagt. „Einfach so?“, hat sie gefragt. Seitdem frage ich mich, ob es einfach war.',b:'„Wenn es zu schwer wird, sagen wir es.“ Bisher hat keiner von uns etwas gesagt.',c:'„Frag mich in München noch mal.“ Ab Salzburg sieht sie mich an, als wäre München ein Datum.'}[c.consent]);
     lines.push(c.sample?'In der Jackentasche die Quittung aus Mostar: vier Kreise, oben mein Name, darunter seiner.':'In der Jackentasche nichts aus Mostar. „Heute nicht“, habe ich gesagt. Zweimal.');
     lines.push('Auf meinem Schoß eine Blechdose. Nada hat sie mir am Busbahnhof in die Hand gedrückt: „Vanilice. Für deine Mutter. Sag ihr: von Nada, vom Neunten.“');
-    if (c.asks>=3) lines.push('Kurz vor München sagt Mala: „Du hast in Mostar oft gefragt. Das war gut.“'); else if (c.fromSave) lines.push('Kurz vor München sagt Mala: „Du hast in Mostar selten gefragt. Hier fragst du mehr.“ Es klingt nicht wie eine Bitte.');
+    if (c.fromSave && c.asks>=3) lines.push('Kurz vor München sagt Mala: „Du hast in Mostar oft gefragt. Das war gut.“'); else if (c.fromSave) lines.push('Kurz vor München sagt Mala: „Du hast in Mostar selten gefragt. Hier fragst du mehr.“ Es klingt nicht wie eine Bitte.');
     await A.memory({title:'Im Bus nach München',tint:'memory',blank:true,draw:M.mem&&M.mem.k4_bus,lines:lines});
     await A.goto('zob',{x:st[0],y:st[1],f:st[2]||'R',noEnter:true}); A.malaJoin({fadeIn:false}); A.music('k4_muenchen'); await A.wait(400);
     A.setFlag('k4.p.arrived');

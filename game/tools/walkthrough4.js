@@ -41,16 +41,16 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await log('Kapitelstart: Karte „München“, Bild „Im Bus nach München“, Ankunft am ZOB, Anas SMS');
     await choose('(Antworten: „Bin da.“)'); await calm(); await flag('k4.p.arriveDone'); await log('Ana geantwortet: „Bin da.“; Markos Kopf pocht');
     await mala(); await act('look', 'pillar'); await flag('k4.h.found'); await marko(); await log('Mala findet Hansi am Pfeiler: „Kirchmaier. Hansi.“');
-    await act('talk', 'hansi'); await drive(['Worauf warten', 'Feierabend, Herr', 'Ihre Schicht', 'Wer darf', 'Servus'], async s => !s.dlg && await F('k4.h.local'), { label: 'Hansi' });
+    await act('talk', 'hansi'); await drive(['Worauf warten', 'Feierabend, Herr', 'Ihre Schicht', 'Wer darf', 'Servus'], async s => !s.dlg && !s.overlay && await F('k4.h.local'), { label: 'Hansi' });
     await log('Hansi wartet auf seine Ablösung; Marko klingt „wia d’ Zeitung“; „Der Wastl, der wo do drüben lehnt“');
-    await act('talk', 'wastl'); await drive(['Kannten Sie', 'Würden Sie etwas', 'Er hat gesagt'], async s => !s.dlg && await F('k4.p.hansi'), { label: 'Wastl' });
+    await act('talk', 'wastl'); await drive(['Kannten Sie', 'Würden Sie etwas', 'Er hat gesagt'], async s => !s.dlg && !s.overlay && await F('k4.p.hansi'), { label: 'Wastl' });
     await flag('k4.p.hansi'); await log('Wastl löst Hansi ab: „Feierabend, Hansi.“');
     await exit('to_bridge'); await at('hacker'); await log('auf der Hackerbrücke');
     await exit('exit'); await go('westend', 'jhaus'); await log('Westend, Mamas Haus');
-    await act('talk', 'huber'); await drive(['Ana schreibt', 'Wie heißt Ihre Katze', 'Arbeitet meine', 'Auf Wiedersehen'], async s => !s.dlg && await F('k4.p.key'), { label: 'Huber' });
+    await act('talk', 'huber'); await drive(['Ana schreibt', 'Wie heißt Ihre Katze', 'Arbeitet meine', 'Auf Wiedersehen'], async s => !s.dlg && !s.overlay && await F('k4.p.key'), { label: 'Huber' });
     await flag('k4.p.key'); await log('Frau Huber gibt den Schlüssel; Mucki');
     await exit('up'); await at('jwohnung'); await act('look', 'slippers'); await note('u4_pantoffeln'); await act('look', 'photo'); await act('read', 'folder'); await note('u4_dach'); await log('Mamas Wohnung: Pantoffeln Größe 44, das Foto, die Mappe „Vratnik – krov“');
-    await drive(['Ich war nie fertig'], async s => !s.dlg && await F('k4.p.knock'), { label: 'Klopfen' }); await log('11:10, Malas Klopfen');
+    await drive(['Ich war nie fertig'], async s => !s.dlg && !s.overlay && await F('k4.p.knock'), { label: 'Klopfen' }); await log('11:10, Malas Klopfen');
     await exit('bedroom'); await at('jschlaf'); await act('look', 'box'); await note('u4_kiste'); await exit('door'); await at('jwohnung'); await log('im Schlafzimmer die verschlossene Kiste');
     await act('use', 'stove'); await flag('k4.p.coffee'); await log('Kaffee in Großmutters Džezva');
     await drive(['Nadas Dose', 'Ich muss dir etwas erzählen', 'Mala fragen', 'Ich habe Lana gefunden', 'Wegen der Probe', 'Ein Hemd'], async s => s.phase === 'k4_pro_n', { label: 'Jasna' });
@@ -68,7 +68,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
   part('christtag', async () => {
     await act('take', 'table'); await inv('brot'); await flag('k4.d1.bread'); await expect(await mapHas('heim'), 'Heim auf dem Plan'); await log('Mamas vergessene Brotdose');
     await exit('door'); await exit('exit'); await go('wiesn'); await log('Theresienwiese');
-    await act('talk', 'ana'); await drive(['Zeigst du mir', 'Lana hat dir eine Straßenbahn', 'Ich weiß es eben', 'Ich muss dir etwas sagen', 'Mala fragen', 'Lana ist tot', 'Schweigen', 'Ich gehe noch'], async s => !s.dlg && await F('k4.d1.walk'), { label: 'Spaziergang' });
+    await act('talk', 'ana'); await drive(['Zeigst du mir', 'Lana hat dir eine Straßenbahn', 'Ich weiß es eben', 'Ich muss dir etwas sagen', 'Mala fragen', 'Lana ist tot', 'Schweigen', 'Ich gehe noch'], async s => !s.dlg && !s.overlay && await F('k4.d1.walk'), { label: 'Spaziergang' });
     await note('z4_stiefel'); await log('Spaziergang mit Ana: die gelben Stiefel; Lana ist tot');
     await mala(); await travel('hbf'); await at('gleis11'); await flag('k4.s.found'); await log('Mala fährt allein zum Hauptbahnhof und findet den Gepäckträger an Gleis 11: „Siebzehn. Wie ich, als ich aufgehört habe.“');
     await marko(); await travel('hbf'); await at('gleis11'); await flag('k4.s.told'); await log('Marko kommt nach; Mala zeigt ihm den Gepäckträger');
@@ -87,7 +87,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
   part('christtag_abend', async () => {
     await drive(['Du hast heute dein Brot', 'Erzähl mir von Baka', 'Was hat Baka', 'Mama …'], async s => s.phase === 'k4_d1_n' && s.active === 'mala' && !s.busy && !s.dlg, { label: 'Džezva-Abend' });
     await note('z4_lesart'); await flag('k4.d1.dzezva'); await log('Karte „Christtag · Abend“; Mama und die Džezva: „Ich kann lesen.“ Mala ist wach');
-    await exit('bedroom'); await at('jschlaf'); await act('look', 'box'); await drive(['(Lesen.)'], async s => !s.dlg && await F('k4.d1.box'), { label: 'Kiste' });
+    await exit('bedroom'); await at('jschlaf'); await act('look', 'box'); await drive(['(Lesen.)'], async s => !s.dlg && !s.overlay && await F('k4.d1.box'), { label: 'Kiste' });
     await note('z4_nachricht'); await note('z4_antrag'); await note('z4_passierschein'); await log('Mala liest die Kiste: Rotkreuz-Nachricht 1993, Suchantrag 1994, Passierschein 1992 (bleibt ihr Geheimnis)');
     await marko(); await act('use', 'sofa'); await untilPhase('k4_d2', 'Dienstag'); await log('Schlaf; Karte „Zweiter Feiertag“, Karte „Zweiter Tag · Der Anruf“');
   });
@@ -98,7 +98,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await note('z4_kolar'); await note('z4_kode'); await note('z4_ana2004'); await log('Frau Kolar ruft an: die Brauerei, April 1993, der Rechenschieber „Z. V.“; Anas Probe von 2004; „nije se vratio“ in den Akten');
     await mala(); await comb('z4_nachricht', 'z4_kode', 'z4_tot'); await marko(); await log('Mala zieht ihren eigenen Schluss: In Sarajevo hieß es tot (bleibt ihr Geheimnis)');
     await exit('door'); await exit('exit'); await go('giesing', 'ana');
-    await act('talk', 'ana'); await drive(['Ana. Zweitausendvier', 'Warum nicht', 'Gut. Nach Neujahr', 'Ich gehe'], async s => !s.dlg && await F('k4.d2.wait'), { label: 'Ana 2004' });
+    await act('talk', 'ana'); await drive(['Ana. Zweitausendvier', 'Warum nicht', 'Gut. Nach Neujahr', 'Ich gehe'], async s => !s.dlg && !s.overlay && await F('k4.d2.wait'), { label: 'Ana 2004' });
     await flag('k4.d2.ana'); await log('Ana gibt zu: 2004 hat sie in München eine Probe gegeben; die Geschwister warten bis nach Neujahr');
     await go('friedhof', 'friedamt'); await act('talk', 'obermaier'); await drive(['Es geht um den Gepäckträger', 'Was passiert jetzt mit ihm', 'Auf Wiedersehen'], noDlg, { label: 'Obermaier' });
     await note('s4_ausweis'); await note('s4_termin'); await log('Herr Obermaier: Gepäckträgerausweis „Josef Rugiero, Nr. 17“; Bestattung von Amts wegen am Donnerstag');
@@ -113,7 +113,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await mala(); await act('sense', 'suitcase'); await note('s4_carmela_hall'); await marko(); await log('Mala am Brief von 1979: eine Frau, die beim Schreiben weint');
     await comb('s4_brief79', 's4_carmela_hall', 's4_wusste'); await log('Schluss: Carmela wusste es seit 1979');
     await exit('door'); await go('heim'); await exit('elevator'); await at('heim_flur');
-    await act('use', 'clock'); await drive(['(Bis drei warten.)'], async s => !s.dlg && await N('g4_drei'), { label: 'drei Uhr' });
+    await act('use', 'clock'); await drive(['(Bis drei warten.)'], async () => await N('g4_drei'), { label: 'drei Uhr' });   // mit g4_drei endet der Dienstag von selbst
     for (const n of ['g4_drei', 'g4_gong', 'g4_kalt', 'g4_spaeter']) await note(n); await log('um drei: Alois steht auf, der Gong, Gerda nimmt seine Hand und er friert, „Ihre Gerda kommt später“');
   });
   // ----------------------------------------------------------------------- Dienstagabend: Mama erkennt Sepp
@@ -122,6 +122,93 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await drive(['Erzähl weiter', 'Und die Abfahrt', 'Hast du ihn je', 'Danke, dass du', 'Gute Nacht'], async s => s.phase === 'k4_d2_n' && !s.dlg && !s.busy && await N('z4_ankunft'), { label: 'Jasna erkennt Sepp' });
     await flag('k4.d2.notice'); await note('z4_ankunft'); await log('Karte „Dienstag · Abend“; Mama sieht den Aushang: Juni 1992, „Polako, gospođo.“');
     await act('use', 'sofa'); await untilPhase('k4_d3', 'Mittwoch'); await log('Schlaf; Karte „Dritter Tag · Namen“');
+  });
+
+  // ----------------------------------------------------------------------- Mittwoch: Davor und Lena, Carmela, Sepps Zwischenwelt, die Versuche um drei, Gerdas Entschluss
+  part('mittwoch', async () => {
+    await D.item('use2', 'vizitka'); await calm(); await drive(['Bei meiner Mutter', 'Ich bin kein Gärtner'], async s => !s.dlg && !s.overlay && await F('k4.v.called'), { label: 'Anruf bei Davor' });
+    await expect(await mapHas('moosach'), 'Moosach auf dem Plan'); await log('Davors Karte: Anruf; „Ich bin kein Gärtner.“ – er lädt ein nach Moosach');
+    await exit('door'); await exit('exit'); await go('moosach', 'balkon'); await flag('k4.v.visit'); await log('Moosach: Davors Balkon, Lena und der Feigenzweig');
+    await mala(); await act('sense', 'pot'); await flag('k4.v.sleeps'); await marko(); await log('Mala: Der Zweig schläft nur');
+    await act('talk', 'lena'); await drive(['Er schläft nur', 'Wir rufen Jela an', 'Sie sagt, du hast es gut gemeint', 'Vielleicht an Silvester', '(Gehen.)'], async s => !s.dlg && !s.overlay && await F('k4.v.car'), { label: 'Lena und Jela' });
+    await flag('k4.v.jela'); await log('Jela am Telefon: „Pusti ga. Zimi spava. Ne zalijevaj.“; Davor bietet an, an Silvester zu fahren');
+    await go('hbf', 'gleis11'); await act('talk', 'sepp');
+    await drive(['Ich rufe Carmela an', 'Ich habe seine Briefe gelesen', 'Seit neunzehnhundertneunundsiebzig', 'Er ist tot.', 'Er hört zu'], async s => await F('k4.s.call') && !s.dlg && !s.busy, { label: 'Carmela' });
+    await expect((await st()).active === 'mala', 'Mala am Zug'); await log('Anruf in Pietrafonda Nuova: Carmela, „Lo sapevo. Da trent’anni.“');
+    await act('cross', 'sepp'); await choose('(Ihre Hand nehmen.)'); await at('limbo'); await shot('limbo_sepp');
+    await act('talk', 'ghost_s'); await drive(['(Den Koffer tragen.)'], async s => !s.dlg && !s.overlay && await F('k4.s.crossed'), { label: 'Zwischenwelt Sepp' }); await expectSaid('Facchino!'); await log('Zwischenwelt: Marko trägt den Koffer in den Zug, „Facchino!“');
+    await exit('arch'); await at('gleis11'); await log('zurück an Gleis 11');
+    await exit('mission'); await act('talk', 'wimmer'); await drive(['Ich habe seine Schwester angerufen', 'Danke, Frau Wimmer'], noDlg, { label: 'Wimmer Abschied' }); await flag('k4.s.wimmerFw'); await log('Frau Wimmer plant den Abschied am Donnerstag');
+    await exit('door'); await go('bhfviertel', 'barsport'); await act('talk', 'enzo'); await drive(['Am Donnerstag verabschieden wir ihn', 'Arrivederci'], noDlg, { label: 'Enzo' }); await flag('k4.s.enzoInv'); await log('Enzo kommt zum Abschied');
+    await go('friedhof', 'friedamt'); await act('talk', 'obermaier'); await drive(['Seine Schwester will ihn heimholen', 'Auf Wiedersehen'], noDlg, { label: 'Obermaier' }); await flag('k4.s.amtOff'); await log('Herr Obermaier sagt die Bestattung von Amts wegen ab');
+    await go('heim'); await exit('elevator'); await at('heim_flur');
+    await act('talk', 'kraus'); await drive(['Können Sie den Gong abstellen', 'Herr Lechner erschrickt', 'Danke'], noDlg, { label: 'Kraus' }); await flag('k4.g.chimeOff'); await log('Herr Kraus stellt den Gong für heute um drei ab');
+    await act('use', 'clock'); await drive(['(Bis drei warten.)'], async s => !s.dlg && !s.overlay && await N('g4_versuch1'), { label: 'Versuch 1' }); await log('Versuch 1 (ohne Gong, Gerda bei ihm): Er steht nicht auf, aber er friert');
+    await mala(); await exit('door214'); await at('heim214'); await act('sense', 'depot_photo'); await note('g4_depot'); await exit('door'); await at('heim_flur'); await marko(); await log('Mala an den Fotos in Zimmer 214: Gerda am Depottor, fünfunddreißig Jahre');
+    await exit('elevator'); await at('heim'); await exit('door'); await travel('westend'); await go('heim'); await exit('elevator'); await at('heim_flur'); await log('hinaus und wieder herein: ein neuer Nachmittag');
+    await mala(); await act('talk', 'gerda'); await drive(['Sie haben immer draußen gewartet', '(Gehen.)'], noDlg, { label: 'Gerda am Fenster' }); await flag('k4.g.hall'); await marko(); await log('Mala bittet Gerda, heute am Fenster zu warten: „Am Fenster. Einmal.“');
+    await act('use', 'bench'); await drive(['(Bis drei warten.)'], async s => !s.dlg && !s.overlay && await N('g4_versuch2'), { label: 'Versuch 2' }); await log('Versuch 2 (mit Gong, Gerda am Fenster): Er steht auf, aber er friert nicht');
+    await comb('g4_versuch1', 'g4_versuch2', 'g4_beides'); await comb('g4_beides', 'g4_depot', 'g4_worte'); await log('Schlüsse: Gong und Hand; in seiner Sprache: Feierabend, sie wartet am Depot');
+    await exit('door_raum'); await act('talk', 'ertl'); await drive(['Nach etwas aus dem Notizbuch', 'Danke'], noDlg, { label: 'Frau Ertl', notes: ['g4_worte'] }); await flag('k4.g.ertl'); await exit('door'); await at('heim_flur'); await log('Frau Ertl erlaubt einen Versuch mit der Wahrheit');
+    await mala(); await act('talk', 'gerda');
+    await drive(['(Ihr sagen, was die Versuche', '(Die Versuche erzählen.)', 'Hat er früher gefroren'], async () => await F('k4.g.decided'), { label: 'Gerdas Entschluss', notes: ['g4_beides'] });
+    await log('Mala sagt es Gerda: „Hat er früher gefroren, wenn Sie da waren?“ – Gerda geht, am Donnerstag');
+  });
+  // ----------------------------------------------------------------------- Donnerstag: Sepps Abschied mit Mama, Gerdas Abschied, die Kanne
+  part('donnerstag', async () => {
+    await untilPhase('k4_d4', 'Donnerstag'); await at('jwohnung'); await log('„Morgen ist Donnerstag.“ Karte „Vierter Tag · Abschiede“; Mamas Zettel: „Ich komme mit“');
+    await exit('door'); await exit('exit'); await go('hbf', 'gleis11'); await exit('mission');
+    await drive(['(Mit seinem Namen anfangen.)', '(Neben sie treten.)'], async s => !s.dlg && !s.busy && await F('k4.s.farewell'), { label: 'Sepps Abschied' });
+    await flag('k4.s.jasna'); await note('z4_riss'); await log('Abschied in der Bahnhofsmission, Mama ist dabei: „Ich war auf keiner Beerdigung seit 1992. Ich wusste nicht, für wen.“');
+    await exit('door'); await go('heim'); await exit('elevator'); await at('heim_flur');
+    await act('use', 'clock'); await drive(['(Bis drei warten.)', 'Endstation, Herr Lechner', '(Ihre Hand nehmen.)'], async s => s.room === 'limbo' && !s.dlg, { label: 'Endstation' });
+    await flag('k4.g.goodbye'); await shot('limbo_gerda'); await log('um drei: „Endstation, Herr Lechner.“ – Gerda: „Dann fahr i ei.“ Zwischenwelt');
+    await act('talk', 'ghost_gd'); await drive(['Was sehen Sie im Licht', '(Ihr die Stufe hinaufhelfen.)'], async s => !s.dlg && !s.overlay && await said('Wer losgelassen hat'), { label: 'Zwischenwelt Gerda' });
+    await exit('arch'); await at('heim_flur'); await inv('kanne'); await log('Zwischenwelt: Marko hilft Gerda die hohe Stufe hinauf; die Kanne wird stofflich');
+    await act('give', 'alois', 'kanne'); await flag('k4.g.thermos'); await log('Alois bekommt die Kanne; Mama hat es gesehen');
+  });
+  // ----------------------------------------------------------------------- Donnerstagabend: der Streit
+  part('streit', async () => {
+    await untilPhase('k4_d4_n', 'Donnerstag · Abend');
+    await drive(['Woher weißt du', 'Du hast in meinem Leben'], async s => s.phase === 'k4_d4_n' && !s.busy && !s.dlg && await F('k4.d4.fight'), { label: 'Streit' });
+    await flag('k4.r.shared'); await flag('k4.d4.slip'); await expect(!(await D.ev(() => M.GS.malaOn)), 'Mala ist fort'); await log('Karte „Donnerstag · Abend“; der Streit: „Du hast in meinem Leben gelesen.“ – die Kanister; Mala ist fort');
+    await act('use', 'sofa'); await untilPhase('k4_d5', 'Freitag'); await log('Schlaf; Karte „Fünfter Tag · Ohne Mala“');
+  });
+  // ----------------------------------------------------------------------- Freitag: Ana, ein Satz in zwei Städten
+  part('freitag', async () => {
+    await exit('door'); await exit('exit'); await go('giesing', 'ana');
+    await act('talk', 'ana'); await drive(['Was weißt du noch', 'Ich gehe'], async s => !s.dlg && !s.overlay && await F('k4.d5.ana'), { label: 'Ana Freitag' }); await note('z4_kurve_ana'); await log('Ana: „Mama stand bis zur Kurve am Fenster.“');
+    await comb('z4_lesart', 'z4_antrag', 'z4_vermisst'); await comb('z4_passierschein', 'z4_kurve_ana', 'z4_kurve'); await log('Schlüsse: Mama hat „vermisst“ gelesen; sie hat zurückgesehen');
+    await comb('z4_vermisst', 'z4_tot', 'z4_zweistaedte'); await log('Schluss: derselbe Satz, zwei Städte');
+  });
+  // ----------------------------------------------------------------------- Freitagnacht: die Hackerbrücke
+  part('bruecke', async () => {
+    await untilPhase('k4_d5_n', 'Freitag · Nacht'); await at('hacker'); await shot('bruecke');
+    await drive(['Ich habe dich gesucht', 'Das war gemein', '(Erzählen.)', 'Und ich habe gesagt', 'Fünf Tage', 'Ich nicht. Morgen', 'Und wenn ich nicht mehr kann', '(Zum Käse.)'], async s => s.phase === 'k4_fin_a' && !s.busy && !s.dlg && await F('k4.fin.eve'), { label: 'Brücke', max: 200 });
+    await note('z4_dabei'); await flag('k4.d5.bridge'); await log('Karte „Freitag · Nacht“; Schlüsseldialog 2 auf der Hackerbrücke: „Ich war dabei.“ Erinnerung „April 1993“');
+  });
+  // ----------------------------------------------------------------------- Silvester: Bleigießen, Mama ist fort, die Spur, die Fahrt mit Davor, Zimmer 214
+  part('silvester', async () => {
+    await at('ana'); await log('Karte „Finale · Silvester“, bei Ana');
+    await act('use', 'table'); await drive(['(Blei gießen.)'], async s => s.phase === 'k4_fin_n' && s.active === 'mala' && !s.busy && !s.dlg, { label: 'Bleigießen' });
+    await flag('k4.fin.gone'); await log('Bleigießen um elf; 23:15: Mama ist fort');
+    await exit('door'); await flag('k4.fin.trail'); await expect((await st()).active === 'marko', 'zurück bei Marko'); await log('Mala liest die Spur im Treppenhaus: „Jedan, dva, tri …“; Ana: „Sonst arbeitet sie Silvester.“');
+    await exit('door'); await D.ev(() => M.TA.travel('heim')); await drive(['(Davor anrufen.)'], async s => s.room === 'heim' && !s.busy && !s.dlg, { label: 'Fahrt' });
+    await flag('k4.fin.ride', 'davor'); await log('Davor fährt: „Diesmal ist keiner zu spät.“');
+    await act('talk', 'kevin'); await drive(['Wie jedes Jahr', 'Danke, Kevin'], noDlg, { label: 'Kevin' }); await log('Kevin an der Tür');
+    await exit('stairs'); await at('heim_flur'); await exit('door214'); await at('heim214'); await shot('zimmer214');
+    await drive(['Erzählen. Nur', 'Warten', 'Etwas aus dem Notizbuch', 'Sie haben ihn', 'Weil er weiß', 'Ich komme mit'], async s => s.phase === 'k4_epi' && !s.busy, { label: 'Silvestergespräch', notes: ['z4_dabei', 'z4_zweistaedte', 'z4_kurve'], max: 200 });
+    await flag('k4.fin.done'); await flag('k4.fin.decide'); await flag('k4.fin.ana'); await flag('k4.fin.kurve'); await log('Zimmer 214: das Silvestergespräch in acht Zügen; „Ich fahre hin.“ Ana kommt um 00:40');
+  });
+  // ----------------------------------------------------------------------- Epilog: Neujahr
+  part('epilog', async () => {
+    await at('jwohnung'); await log('Karte „Epilog · Neujahr“, Mamas Küche');
+    await act('talk', 'jasna'); await drive(['Nada wartet', 'Woran denkst', 'Wie geht es dir', '(Den Nachruf schreiben.)', 'Das Dach in Vratnik', 'Bist du wütend', 'Ja. Und wenn'], async () => false, { label: 'Epilog', max: 200 });   // läuft bis zum Abspann
+    const c4 = await D.ev(() => JSON.parse(localStorage.getItem('mala.c4end') || 'null'));
+    for (let i = 0; i < 200; i++) { const s = await st(); if (s.screen === 'credits' || s.screen === 'title') break; if (s.overlay === 'memory' || s.overlay === 'doc') await D.ev(() => M.TA.closeOverlay()); await D.page.waitForTimeout(150); }
+    await D.until(s => s.screen === 'credits' || s.screen === 'title', 90000, 'Abspann');
+    await expect(c4 && c4.slippers && c4.nada && c4.kurve && c4.davor, 'M.endChapter4: Kapitel beendet und in mala.c4end gemerkt (' + JSON.stringify(c4) + ')');
+    await log('Pantoffeln, Nada, der Nachruf, Malas Frage; Ende des vierten Kapitels · Fortsetzung: Sarajevo; Abspann');
   });
 
   // ======================================================================= Ablauf
