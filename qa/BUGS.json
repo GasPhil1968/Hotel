@@ -87,11 +87,11 @@
   "id": "UI-001",
   "severity": "niedrig",
   "status": "offen (Designentscheidung)",
-  "title": "Riva: Die Hotspots „Meer“ und „Mole“ überdecken die gesamte begehbare Promenade östlich von x≈338",
-  "cause": "Rechteck von 'sea' (338–640 × 76–144) reicht über den Gehweg; Tipps dorthin lösen „Schau an: Meer/Mole“ aus, nie reines Gehen.",
-  "effect": "„Boden antippen: hingehen“ (Anleitung) gilt dort nicht. Die Figur erreicht den Poller trotzdem (Gehen zum Standpunkt des Blickfangs), Spiel bleibt lösbar.",
-  "fix": "Nicht geändert: berührt die Kunstdefinition und das Gefühl der Szene. Vorschlag: Meer-Rechteck oberhalb y≈106 enden lassen.",
-  "repro": "Kapitel 1, Dienstagabend, Riva: rechts der Bildmitte auf den Weg tippen.",
+  "title": "Riva (K1) und Straßenbrücke (K3): Hotspots überdecken den gesamten begehbaren Weg",
+  "cause": "Riva: 'sea' (338–640 × 76–144) und 'mole' über dem Gehweg östlich von x≈338. Straßenbrücke: 'railing' (30–370 × 107–142) über dem ganzen Brückengehweg.",
+  "effect": "„Boden antippen: hingehen“ (Anleitung) gilt dort nicht; ein Tipp auf den Weg ist „Schau an“. Die Figur erreicht ihr Ziel trotzdem über den Standpunkt des Blickfangs (Poller/Laterne) bzw. freien Boden am Ende, das Spiel bleibt lösbar. Auf der Brücke, wo man Mala „bis ans Westende führt“, ist das besonders spürbar.",
+  "fix": "Nicht geändert (Kunstdefinition/Raumgefühl). Vorschlag: Rechtecke oberhalb der Lauffläche enden lassen.",
+  "repro": "K1 Dienstagabend Riva: rechts auf den Weg tippen. K3 Freitag Straßenbrücke: als Mala auf den Gehweg tippen → „Ein Geländer wie an jeder Straße.“",
   "evidence": [
    "UI-Volldurchlauf uiNotes „Boden verdeckt“"
   ]
