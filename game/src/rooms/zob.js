@@ -181,7 +181,7 @@ M.room('zob',{ name:'ZOB an der Hackerbrücke', scape:'k4_zob',
   hotspots:HS,
   enter:async function(A,from){ var G=A.G, p=G.phase;
     if (A.isMala()){ if (A.first('gZob')) await A.g('Der Busbahnhof. Ohne Marko ist er größer.'); return; }
-    if (p==='k4_d5'){ if (A.first('zbD5')) await A.m('Nebel. Die Busse kommen aus dem Weißen und fahren ins Weiße. Kein Mädchen mit Schal.'); return; }
+    if (p==='k4_d5'){ if (A.first('zbD5')) await A.m('Nebel. Die Busse kommen aus dem Weißen und fahren ins Weiße. Kein Mädchen mit Schal.'); if (A.first('zbD5s') && M.k4D5Search) await M.k4D5Search(A); return; }
     if (!A.malaHere() || G.flags['mala.lock']) return;
     if (p==='k4_d1' && A.first('zbD1')){ await A.g('Gestern standen wir hier. Mit Hansi.'); await A.m('Heute steht hier keiner.'); await A.g('Doch. Wastl.'); } }
 });

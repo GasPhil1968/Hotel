@@ -303,7 +303,7 @@ M.k4Fight=async function(A){ var G=A.G; if (F(A,'k4.d4.fight')) return;
 var DAYS=['k4_pro','k4_d1','k4_d2','k4_d3','k4_d4','k4_d5'];
 M.K4PHONE=M.K4PHONE||{};
 M.K4PHONE.jasna=async function(A){ var G=A.G, p=G.phase; A.sfx('dial'); await A.wait(900);
-  if (DAYS.indexOf(p)<0){ await A.m('Sie ist im Zimmer nebenan. Oder sie schläft. Ich rufe nicht an.'); A.sfx('hangup'); return; }
+  if (DAYS.indexOf(p)<0){ await A.m(p==='k4_epi'?'Sie sitzt mir gegenüber. Ich rufe nicht an.':'Sie ist im Zimmer nebenan. Oder sie schläft. Ich rufe nicht an.'); A.sfx('hangup'); return; }
   if (p==='k4_d1' && !F(A,'k4.d1.bread')){ await A.phoneVoice('„Marko? Ich bin bei der Arbeit. Ist was passiert?“','jasna'); await A.m('Nein. Ich wollte nur …'); await A.phoneVoice('„Ich habe mein Brot vergessen. Egal. Frau Obermüller hat Kuchen. Ich esse Kuchen.“','jasna'); }
   else if (p==='k4_d1' && !F(A,'k4.g.bread')){ await A.phoneVoice('„Du hast meine Brotdose? Dann bring sie. Oder iss sie selbst. Nein. Bring sie.“','jasna'); }
   else if (p==='k4_d4'){ await A.phoneVoice('„Um zehn am Bahnhof. Ich bin schon unterwegs. Zieh das blaue Hemd an.“','jasna'); }
@@ -319,7 +319,7 @@ M.K4PHONE.ana=async function(A){ var G=A.G, p=G.phase; A.sfx('dial'); await A.wa
   else await A.phoneVoice('„Ich hab gerade beide Hände voll Kind. Schreib mir.“','ana');
   A.sfx('hangup'); };
 M.K4PHONE.nada=async function(A){ var G=A.G, p=G.phase; A.sfx('dial'); await A.wait(1300);
-  if (p==='k4_epi'){ await A.m('Mama hat sie angerufen. Heute rede ich nicht dazwischen.'); A.sfx('hangup'); return; }
+  if (p==='k4_epi'){ await A.m(A.flag('k4.e.nada')?'Mama hat sie angerufen. Heute rede ich nicht dazwischen.':'Nicht ich. Nada wartet seit neunzehn Jahren auf einen Anruf aus dem siebten Stock. Von Mama.'); A.sfx('hangup'); return; }
   if (A.first('!k4.nada1')){ await A.phoneVoice('„Mali? Bist du angekommen?“','nada'); await A.m('Ja. In München.');
     await A.phoneVoice(F(A,'k4.p.vanilice')?'„Hat sie die Dose bekommen?“':'„Hast du ihr die Dose gegeben?“','nada');
     if (F(A,'k4.p.vanilice')){ await A.m('Sie hat eins gegessen. Sie sagt, du nimmst zu viel Zucker.'); await A.wait(900); await A.phoneVoice('„Immer noch?“','nada'); await A.m('Immer noch.'); await A.wait(700); await A.phoneVoice('„Gut.“','nada'); }

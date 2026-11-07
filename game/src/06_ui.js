@@ -438,8 +438,10 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
     if (g.noteNew[id]) fb.rect(276,y+8,3,3,P.r4); lay.rows.push({id:id,r:[48,y,234,NB_RH-1]}); }
   if (pages>1){ M.text(fb,(NB.page+1)+' / '+pages,150,NB_Y0+NB_PER*NB_RH+1,P.s2); if (NB.page>0) lay.prev=nbButton(48,NB_Y0+NB_PER*NB_RH-1,40,'<',hoverUI==='nprev'); if (NB.page<pages-1) lay.next=nbButton(242,NB_Y0+NB_PER*NB_RH-1,40,'>',hoverUI==='nnext'); }
   var by=NB_Y0+NB_PER*NB_RH+16; fb.hl(46,284,by-3,P.s3);
-  if (NB.msg){ fb.rect(46,by,238,186-by,NB.msg.ok?P.g5:P.s4); M.wrap(NB.msg.t,228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+3+j*9,NB.msg.ok?P.g0:P.k1); }); }
-  else if (NB.sel && M.NOTES[NB.sel]){ M.wrap(M.NOTES[NB.sel].t,ask?156:228).slice(0,4).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.n1); }); if (ask){ var bw=Math.max(72,M.textWidth('Danach fragen')+14); lay.btn=nbButton(284-bw,by+12,bw,'Danach fragen',hoverUI==='nb',18); } }
+  // Text im unteren Feld: so viele Zeilen, wie Platz ist; wird es eng, rücken die Zeilen zusammen (Blindtest K4: letztes Wort fehlte)
+  var fit=function(t,w,y0){ var L=M.wrap(t,w), room=186-y0-1, lh=9; if (L.length*lh>room) lh=8; var n=Math.floor(room/lh); if (L.length>n){ L=L.slice(0,n); L[n-1]=L[n-1].replace(/\s*\S*$/,'')+' …'; } return {L:L,lh:lh}; };
+  if (NB.msg){ fb.rect(46,by,238,186-by,NB.msg.ok?P.g5:P.s4); var fm=fit(NB.msg.t,228,by+3); fm.L.forEach(function(l,j){ M.text(fb,l,50,by+3+j*fm.lh,NB.msg.ok?P.g0:P.k1); }); }
+  else if (NB.sel && M.NOTES[NB.sel]){ var fs=fit(M.NOTES[NB.sel].t,ask?156:228,by+2); fs.L.forEach(function(l,j){ M.text(fb,l,50,by+2+j*fs.lh,P.n1); }); if (ask){ var bw=Math.max(72,M.textWidth('Danach fragen')+14); lay.btn=nbButton(284-bw,by+12,bw,'Danach fragen',hoverUI==='nb',18); } }
   else M.wrap(ask?'Antippen, dann „Danach fragen“.':'Eine Notiz antippen, dann eine zweite, die dazu passt.',228).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.s2); });
   ov.lay=lay; });
 function nbAt(x,y){ var ov=E.overlay, lay=ov&&ov.lay; if (!lay) return null; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };

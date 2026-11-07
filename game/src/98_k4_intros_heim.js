@@ -12,7 +12,7 @@ Object.assign(M.INTRO,{
   kraus:{auto:false,u:'Ein untersetzter Mann im graublauen Kittel, die Brille auf der Stirn, ein Schlüsselbund am Gürtel. Er schimpft leise in das Bedienfeld neben dem Aufzug.',
     m:async function(A){ var K=A.npc('kraus'); await K.say('Ja?'); await A.m('Marko Vuković. Der Sohn von Jasna Vuković.'); await A.wait(400); await K.say('Kraus. Hausmeister.'); await A.wait(300); await K.say(A.G.phase==='k4_d1'?'Feiertagsdienst, weil der Aufzug spinnt. Der hat auch Weihnachten.':'Der Aufzug spinnt. Seit Weihnachten.'); }},
   pflege1:{auto:false,u:'Eine Pflegerin um die vierzig, dunkler Pferdeschwanz, hellblauer Kasack. Sie hat keine Hand frei und keine Zeit.',
-    m:async function(A){ var Mo=A.npc('pflege1'); await Mo.say('Sie sind der Sohn von der Jasna, gell? Moni. Ich mach heut den Gang mit Ihrer Mama.'); await A.m('Marko.'); await Mo.say('Wenn Sie was brauchen: fragen Sie sie. Ich weiß nur, wo die Tassen stehen.'); }},
+    m:async function(A){ var Mo=A.npc('pflege1'); await Mo.say(A.G.phase==='k4_d5'?'Sie sind der Sohn von der Jasna, gell? Moni. Ihre Mama hat heut frei, ich mach den Gang allein.':'Sie sind der Sohn von der Jasna, gell? Moni. Ich mach heut den Gang mit Ihrer Mama.'); await A.m('Marko.'); await Mo.say('Wenn Sie was brauchen: fragen Sie sie. Ich weiß nur, wo die Tassen stehen.'); }},
   kevin:{auto:false,u:'Ein großer junger Pfleger in hellgrünem Kasack, eine Brezel in der Hand.',
     m:async function(A){ var K=A.npc('kevin'); await K.say('Kevin. Nachtdienst.'); await A.m('Marko Vuković.'); await K.say('Der Sohn von der Jasna. Dacht i mir.'); }},
   alois:{auto:false,u:'Ein großer, hagerer alter Mann in beiger Strickjacke, die großen Hände auf den Knien. Er sieht hinaus, als käme gleich eine Trambahn.',

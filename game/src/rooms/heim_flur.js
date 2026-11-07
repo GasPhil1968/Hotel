@@ -562,7 +562,7 @@ var R=M.room('heim_flur',{ name:'Wohnbereich 2', scape:'k4_heim_flur',
   load:function(A){ var a=M.ACT.gerda; if (a) a.reveal=true; },
   enter:async function(A,from){ var G=A.G; norm(G);
     if (night(G)){ if (A.isMala()) return; if (A.first('!k4.g.flurN')){ await A.narrate('Der Flur bei Nacht. Notlicht, die Handläufe glänzen. Hinter einer Tür läuft ein Fernseher ohne Ton.'); if (A.malaHere()){ await A.wait(600); await A.g('Die Bank ist leer.'); await A.wait(500); await A.m('Ja.'); } } return; }
-    if (fri(G)){ if (A.isMala()) return; if (A.first('!k4.g.flurF')){ await A.narrate('Freitag. Der Flur, die Bank, die Uhr. Auf der Bank sitzt keiner.'); await A.wait(500); await A.m('Mala?'); await A.wait(900); await A.m('Nichts. Kein Kopfweh, kein Schimmer. Nur der Flur.'); } return; }
+    if (fri(G)){ if (A.isMala()) return; if (A.first('!k4.g.flurF')){ await A.narrate('Freitag. Der Flur, die Bank, die Uhr. Auf der Bank sitzt keiner.'); await A.wait(500); await A.m('Mala?'); await A.wait(900); await A.m('Nichts. Kein Kopfweh, kein Schimmer. Nur der Flur.'); if (M.k4D5Search) await M.k4D5Search(A); } return; }
     if (!work(G)) return;
     if (A.isMala()){ if (A.first('!k4.g.flurM1')){ await A.g('Ein langer Flur. Es riecht nach Kaffee und nach etwas Scharfem, Sauberem.'); if (!found(G) && gerdaAt(G)){ await A.wait(400); await A.g('Auf der Bank am Aufzug sitzt jemand. Eine, die keiner sieht.'); } } return; }
     if (A.first('!k4.g.flur1')){ await A.narrate('Wohnbereich zwei. Ein langer Flur, Linoleum, Handläufe an beiden Wänden. Es riecht nach Kaffee und Desinfektion.');

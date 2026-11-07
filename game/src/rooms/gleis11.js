@@ -370,6 +370,6 @@ M.room('gleis11',{ name:'Hauptbahnhof, Gleis 11', scape:'k4_gleis11',
     if (seppHere(G) && A.isFound('sepp') && here(A) && !F(G,'k4.s.told')) await toldHere(A);
     if (F(G,'k4.s.call') && !F(G,'k4.s.crossed') && A.first('g11wait')){ if (here(A)) await A.g('Er wartet. Auf mich.'); else await A.m('Peppino wartet am Prellbock, den unsichtbaren Koffer in der Hand. Er wartet auf Mala.'); }
     if (p==='k4_d4' && F(G,'k4.s.crossed') && A.first('g11d4')) await A.m('Gleis 11. Am Prellbock steht keiner. Ich sehe trotzdem hin.');
-    if (p==='k4_d5' && A.first('g11d5')){ await A.m('Gleis 11. Am Prellbock steht keiner mehr.'); await A.wait(500); await A.m('Und Mala ist auch nicht hier.'); } }
+    if (p==='k4_d5' && A.first('g11d5')){ await A.m('Gleis 11. Am Prellbock steht keiner mehr.'); await A.wait(500); await A.m('Und Mala ist auch nicht hier.'); if (M.k4D5Search) await M.k4D5Search(A); } }
 });
 })(M);

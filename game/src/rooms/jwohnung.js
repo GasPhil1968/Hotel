@@ -150,7 +150,7 @@ var HS=[
    take:'Das Foto bleibt, wo es ist. Der Nagel ist rostig. Es hängt seit vierundneunzig da.',
    g:{look:function(A){ return A.g(N(A,'z4_stiefel')?'Die gelben Stiefel. Auf dem Foto sieht man sie nicht. Ich sehe sie trotzdem.':'Die kleine Ana. Sie hatte Stiefel, die zu groß waren. Gelb, glaube ich. Mehr weiß ich nicht.'); },
      sense:'Sie hat es abgestaubt, mit dem Ärmel. Jeden Tag. Den Mann zuerst, dann das Auto, dann das Kind.'}},
- {id:'coats',name:'Garderobe',look:function(A){ var G=A.G; return A.m(jasnaHere(G)||G.phase==='k4_pro_n'?'Die Garderobe. Mamas dunkelblauer Mantel, ein Schirm, den sie nie mitnimmt, meine Jacke daneben.':'Die Garderobe. Ein Schirm, den sie nie mitnimmt. Ihr Mantel fehlt. Sie ist bei der Arbeit.'); },
+ {id:'coats',name:'Garderobe',look:function(A){ var G=A.G; return A.m(jasnaHere(G)||G.phase==='k4_pro_n'?'Die Garderobe. Mamas dunkelblauer Mantel, ein Schirm, den sie nie mitnimmt, meine Jacke daneben.':(G.phase==='k4_d5'?'Die Garderobe. Ein Schirm, den sie nie mitnimmt. Ihr Mantel fehlt. Heute hat sie frei und ist trotzdem früh weg. Zu Ana, vermutlich.':'Die Garderobe. Ein Schirm, den sie nie mitnimmt. Ihr Mantel fehlt. Sie ist bei der Arbeit.')); },
    take:'Ich nehme nichts von der Garderobe. Auch nicht den Schirm. Es schneit, es regnet nicht.',
    g:{look:'Kein Männermantel. Nur die Pantoffeln. Als wäre er nur kurz hinuntergegangen.'}},
  {id:'stove',name:'Herd',look:function(A){ return A.m(A.S.dzezva?'Großmutters Džezva auf der hinteren Platte. Sie sieht aus, als stünde sie hier seit Jahren.':'Ein Elektroherd mit vier Platten, blitzblank. Darüber ein Brett mit Gewürzen, alphabetisch.'); },

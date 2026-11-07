@@ -144,7 +144,7 @@ async function trail(A){ var G=A.G; if (F(A,'k4.fin.trail')) return; G.flags['ma
     await Ni.say('Das Mädchen geht weg.'); if (Ni.actor) Ni.anim('wave'); await A.wait(300); await A.npc('ana').say('Niko! Ins Bett. Es ist mitten in der Nacht.');
     A.music('k4_duh'); await A.narrate('Mala geht durch die Wohnungstür. Im Treppenhaus hängt etwas in der Luft, das nur sie sieht.');
     await A.g('Zahlen.'); await A.wait(500); await A.g('Jedan, dva, tri …'); await A.wait(400); await A.g('Sie zählt zwischen dem Blitz und dem Knall. Wie man es zweiundneunzig gemacht hat. Damit man weiß, wie weit weg es ist.');
-    await A.memory({title:'Nachhall – das Zählen',tint:'ghost',draw:null,lines:[
+    await A.memory({title:'Nachhall – das Zählen',tint:'ghost',draw:M.mem&&M.mem.k4_zaehlen,lines:[
       'Das Treppenhaus. „Jedan, dva, tri.“ Ein Knall. Sie bleibt stehen, die Hand am Geländer.',
       'Die Straße. An jeder Ecke hängt eine Zahl, noch warm. „Četiri. Pet.“',
       'Sie geht nicht nach Hause. Sie geht nach Westen, über die Isar, an der großen Wiese vorbei.',

@@ -95,6 +95,26 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
     const id = await D.ev(() => { const h = M.E.hotspotAt(30, 72); return h && h.id; });
     ok(id === 'exit', 'Treffer mitten auf der Tür: ' + id);
   });
+  // ---------------------------------------------------------------- Kapitel 4, Freitag bis Neujahr
+  await T('K4D-1', 'Freitag: Mala in der Stadt suchen führt zum Nachdenken', async () => {
+    const g = find(K4, 'Fünfter Tag · Ohne Mala'); g.notes = g.notes.filter(n => n !== 'z4_zweistaedte'); await load(g);
+    const out = async () => { for (let k = 0; k < 4; k++) { const id = await D.ev(() => { const R = M.E.room, S = M.RS(R.id); const h = R.hotspots.find(h => { let e = h.exit; if (typeof e === 'function') e = e(S, M.GS); return e && e.to === 'map'; }); if (h) return 'MAP:' + h.id; const d = R.hotspots.find(h => { let e = h.exit; if (typeof e === 'function') e = e(S, M.GS); return e && e.to; }); return d ? d.id : null; });
+        if (!id) return; if (id.startsWith('MAP:')) return; await D.exit(id); await D.drain(); } };   // durch die Türen hinaus, bis ein Ausgang zum Stadtplan da ist
+    await out(); await D.travel('hbf'); await D.drain(); await out(); await D.travel('zob'); await D.drain();
+    ok(await said('Im Notizbuch, nicht auf der Straße'), 'Fingerzeig nach zwei leeren Orten (' + JSON.stringify(await D.ev(() => [M.TA.status().room, M.GS.flags['k4.d5.searched'], (M.__speechLog || []).slice(-3).map(l => l[1].slice(0, 40))])) + ')');
+    const h = await D.ev(() => { const t = M.hintsOpen(M.GS).find(h => h.id === 'z4d'); return t ? t.t + ': ' + M.hintText(t, 0, M.GS, 'marko') : ''; });
+    ok(/Wo ist Mala/.test(h) && /keinem Ort/.test(h), 'Hinweis: ' + h.slice(0, 80));
+  });
+  await T('K4D-7', 'Neujahr: Nada anrufen vor Mamas Anruf führt nicht in die Irre', async () => {
+    await load(find(K4, 'Karte „Epilog · Neujahr“'));
+    await D.item('use2', 'mobitel'); await D.choose('Nada anrufen'); await D.drain();
+    ok(!(await said('Mama hat sie angerufen')) && await said('Von Mama'), 'Marko verweist auf Mama');
+  });
+  await T('K4D-10', 'Nachhall „das Zählen“ hat ein Bild', async () => {
+    ok(await D.ev(() => typeof (M.mem && M.mem.k4_zaehlen) === 'function'), 'M.mem.k4_zaehlen');
+    const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'rooms', 'ana.js'), 'utf8');
+    ok(!/Nachhall – das Zählen',tint:'ghost',draw:null/.test(src), 'Szene nutzt das Bild');
+  });
   // ---------------------------------------------------------------- Kapitel 2
   // Gegenstand aus der Leiste ins Bild ziehen, wie mit dem Finger (schräg, mehr waagrecht als senkrecht)
   const dragItem = async (item, tx, ty) => {

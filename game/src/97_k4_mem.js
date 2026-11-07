@@ -386,3 +386,20 @@ M.mem.k4_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2012), WB=58, WX0=
   M.light(b,function(x,y){ var v=-0.32; if (sun(x,y)) v+=0.6; var d=Math.hypot((x-110)/150,(y-74)/60); v+=Math.max(0,0.32-d*0.32); return v; });
   edgeDark(b,1.6); };
 })(M);
+// ================================================================ k4_zaehlen — Malas Nachhall: die Zahlen von Anas Treppenhaus bis zum Park am Heim (Nacht, Nebel)
+(function(M){ var P=M.P;
+M.mem=M.mem||{};
+M.mem.k4_zaehlen=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(3112);
+  for (y=0;y<h;y++) for (x=0;x<w;x++){ var t=y/h; b.px(x,y,(((x*7+y*13)%11)/11<0.5-t*0.3)?P.b1:(t<0.6?P.b0:P.k1)); }   // Nachthimmel, unten dunkler
+  // links: das Treppenhaus, ein Geländer in Stufen
+  for (i=0;i<6;i++){ var sx=6+i*8, sy=h-14-i*7; b.rect(sx,sy,10,2,P.s3); b.vl(sx+1,sy-9,sy,P.s2); } b.line(7,h-23,49,h-65,P.s4);
+  // die Straße nach Westen, mit Laternen
+  b.rect(0,h-10,w,10,P.k2); b.hl(0,w-1,h-10,P.s2); for (x=60;x<w-70;x+=34){ b.vl(x,h-38,h-10,P.s2); b.ellipse(x,h-39,2,1.5,P.y4); for (i=0;i<14;i++) b.px(x-6+Math.floor(rg()*13),h-36+Math.floor(rg()*12),P.y2); }
+  // rechts: kahle Bäume eines Parks und ein Haus mit hellem Eingang
+  for (i=0;i<4;i++){ var tx=w-78+i*16, th=26+(i%2)*6; b.vl(tx,h-10-th,h-10,P.k2); b.line(tx,h-10-th+6,tx-6,h-10-th,P.k2); b.line(tx,h-10-th+10,tx+7,h-10-th+2,P.k2); }
+  b.rect(w-44,h-46,36,36,P.s2); b.rect(w-32,h-26,12,16,P.l1); b.rect(w-30,h-24,8,14,P.y5); for (y=h-42;y<h-30;y+=6) for (x=w-40;x<w-12;x+=8) b.rect(x,y,4,3,P.y2);
+  // die Zahlen in der Luft, dichter zum Park hin, als helle Ziffern (Geisterlicht)
+  var Z=['1','2','3','4','5','6','7','8','9'];
+  for (i=0;i<26;i++){ var u=Math.pow(rg(),0.6), zx=Math.floor(20+u*(w-70)), zy=Math.floor(8+rg()*(h-50)); M.microText(b,Z[Math.min(8,Math.floor(u*9))],zx,zy,u>0.75?P.l1:P.x5); }
+};
+})(M);

@@ -89,7 +89,7 @@ var HS=[
    take:'Das Foto nehme ich nicht. Das sieht sie jeden Abend als Letztes.',
    g:{look:'Sie lachen. Über den Fotografen, glaube ich. Er hatte einen Hut auf, der ihm zu groß war.'}},
  {id:'smock',name:'Pflegekittel',look:'Auf dem Stuhl ein hellblauer Kittel mit Namensschild: „Jasna V., Pflege“. Sorgfältig gefaltet.',
-   take:'Den braucht sie morgen.',
+   take:'Den braucht sie für die Arbeit.',
    g:{look:'Ihr Kittel. Er riecht nach anderen Leuten, die sie wäscht und füttert und anlügt, wenn es sein muss.'}},
  {id:'window',name:'Fenster',look:function(A){ return A.m(night(A.G)?'Hinter dem Vorhang fällt Schnee im Laternenlicht.':'Ein Fenster zum Hof, mit einem Vorhang, den sie tagsüber nicht aufzieht.'); },
    open:'Nein. Es ist ihr Zimmer.',

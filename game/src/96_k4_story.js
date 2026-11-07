@@ -190,6 +190,9 @@ function missing(G){ var p=G.phase;
   if (p==='k4_d5'){ if (!f(G,'k4.d5.ana')) return 'Ana hat geschrieben: „Komm vorbei.“'; if (!has(G,'z4_zweistaedte')) return 'Ein Satz. Zwei Städte. Ich muss ihn einmal ganz zu Ende denken.'; }
   return null; }
 M.k4Missing=missing;
+// Freitag: wer Mala in der Stadt sucht, bekommt nach dem zweiten leeren Ort einen Fingerzeig aufs Nachdenken (Blindtest K4 D)
+M.k4D5Search=async function(A){ var G=A.G; if (G.phase!=='k4_d5' || has(G,'z4_zweistaedte')) return; G.flags['k4.d5.searched']=(G.flags['k4.d5.searched']||0)+1;
+  if (G.flags['k4.d5.searched']>=2 && A.first('k4d5think')){ await A.wait(500); await A.m('Ich suche sie in der Stadt. Aber sie ist nicht in der Stadt verschwunden. Sie ist gegangen, als wir uns gestritten haben.'); await A.m('Ich muss den Satz zu Ende denken, den alle über Papa sagen. Im Notizbuch, nicht auf der Straße.'); } };
 // die Couch in Mamas Wohnung (S1 ruft es auf)
 M.k4Bed=async function(A){ var G=A.G, p=G.phase;
   if (p==='k4_pro_n'){ if (f(G,'k4.p.eve')&&f(G,'k4.p.talk1')) return M.k4StartD1(A); return A.m(f(G,'k4.p.eve')?'Noch nicht. Mala steht am Fenster und sieht mich an, als wollte sie etwas fragen.':'Erst Heiligabend.'); }
