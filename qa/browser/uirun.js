@@ -56,11 +56,11 @@ const { launch, contextOpts } = require('./engines');
   async function tapCode(code, what) { const p = await page.evaluate((c) => window.__qa.scan(c), code); if (!p) throw new Error('Bedienelement nicht sichtbar: ' + code + ' (' + (what || '') + ')'); await tapL(p[0], p[1]); return p; }
   const hsIssues = [], uiNotes = [];
   // Hotspot antippen (mit Gehen, falls er außerhalb des Bildausschnitts liegt)
-  async function tapHotspot(id) {
+  async function tapHotspot(id, prepareOnly) {
     let litTried = false;
     for (let k = 0; k < 14; k++) {
       const p = await page.evaluate((i) => window.__qa.hsPoint(i), id);
-      if (p.x !== undefined) { await tapL(p.x, p.y); return p; }
+      if (p.x !== undefined) { if (!prepareOnly) await tapL(p.x, p.y); return p; }
       if (p.err) throw new Error('Hotspot ' + id + ': ' + p.err);
       if (p.off === 'covered' && !litTried) { const dk = await page.evaluate((i) => { const E = M.E, h = E.room.byId[i]; const r = h && E.hsRect(h); return h && h.dark && r ? { lit: E.hsLit(h, r), rect: r } : null; }, id);
         if (dk && !dk.lit) { litTried = true; await lightWithMala(id, dk.rect); continue; } }
@@ -88,7 +88,10 @@ const { launch, contextOpts } = require('./engines');
     if ((await st()).active === 'marko') {
       const tgtM = await page.evaluate((r) => { const E = M.E, cam = Math.round(E.camX), cx = r[0] + r[2] / 2, cy = Math.min(140, r[1] + r[3] + 6); let best = null;
         for (let dy = -6; dy <= 30; dy += 3) for (let dx = -50; dx <= 50; dx += 4) { const x = Math.round(cx + dx), y = Math.round(cy + dy), sx = x - cam; if (sx < 2 || sx > 317 || y < 60 || y > 143) continue; if (E.hotspotAt(x, y)) continue; const np = M.nearestPoint('marko', x, y); if (Math.abs(np[0] - x) > 3 || Math.abs(np[1] - y) > 3) continue; const d = Math.abs(dx) + Math.abs(dy); if (!best || d < best.d) best = { sx, y, d }; } return best; }, rect);
-      if (tgtM) { await until(idle, 60000, 'ruhig vor Gehen'); await tapL(tgtM.sx, tgtM.y); await sleep(200); await until(s => !s.walk, 30000, 'Marko geht'); await sleep(1500); await until(idle, 30000, 'Mala folgt');
+      if (tgtM) { for (let g = 0; g < 4; g++) { await until(idle, 60000, 'ruhig vor Gehen'); const x0 = await page.evaluate(() => M.ACT.marko.x); await tapL(tgtM.sx, tgtM.y); await sleep(250); await until(s => !s.walk, 30000, 'Marko geht');
+          const d = await page.evaluate(() => ({ mk: [Math.round(M.ACT.marko.x), Math.round(M.ACT.marko.y)], ma: M.ACT.mala && [Math.round(M.ACT.mala.x), Math.round(M.ACT.mala.y)], gt: M.E.gt(), block: M.E.sceneBlockUntil, pop: !!M.E.pop }));
+          L('Marko-Tipp', g, JSON.stringify(tgtM), JSON.stringify(d)); if (Math.abs(d.mk[0] - x0) > 6) break; }
+        await sleep(1500); await until(idle, 30000, 'Mala folgt');
         const lit0 = await page.evaluate(([i, r]) => M.E.hsLit(M.E.room.byId[i], r), [id, rect]); uiNotes.push({ kind: 'Dunkler Hotspot: Marko geht hin, Mala folgt', id, lit: lit0 }); L('Marko geht zu dunklem', id, 'lit=' + lit0); if (lit0) return; } }
     const can = await page.evaluate(() => M.GS.malaOn && M.E.canSwitch()); if (!can) throw new Error('dunkler Hotspot ' + id + ', Mala kann nicht leuchten (nicht da/kein Wechsel)');
     const back = (await st()).active; if (back !== 'mala') { await tapCode('sw', 'zu Mala'); await until(s => s.active === 'mala' && !s.trn, 8000, 'Mala'); await sleep(100); }
@@ -113,7 +116,7 @@ const { launch, contextOpts } = require('./engines');
   }
   async function doExit(id) { await tapHotspot(id); const s = await until(s => s.pop || s.busy || s.walk || s.trn || s.speech || s.ov, 3000, 'Ausgang').catch(() => null); if (s && s.pop) { const i = s.pop.findIndex(t => t === 'Hingehen' || t === 'Hindurchgehen'); if (i >= 0) await tapCode('p:' + i, 'Hingehen'); } }
   async function invTap(id) { for (let k = 0; k < 8; k++) { const info = await page.evaluate((x) => { const inv = M.GS.inv, i = inv.indexOf(x); return { i, top: M.E.invTop, pages: Math.ceil(inv.length / 6) }; }, id); if (info.i < 0) throw new Error('nicht im Inventar: ' + id); const pg = Math.floor(info.i / 6); if (pg === info.top) { await tapCode('i:' + info.i, 'Inventar ' + id); return; } await tapCode(pg < info.top ? 'up' : 'dn', 'Inventar blättern'); await sleep(40); } throw new Error('Inventar nicht erreichbar: ' + id); }
-  async function useItemOn(item, target) { await until(idle, 60000, 'ruhig vor Gegenstand'); await invTap(item); await popPick('Benutze'); if (target === '_mala' || target === '_marko') await tapHotspot(target); else await tapHotspot(target); }
+  async function useItemOn(item, target) { await until(idle, 60000, 'ruhig vor Gegenstand'); await tapHotspot(target, true); await until(idle, 60000, 'ruhig nach Vorbereitung'); await invTap(item); await popPick('Benutze'); if (target === '_mala' || target === '_marko') await tapHotspot(target); else await tapHotspot(target); }
   async function doItem(v, x, y) { await until(idle, 60000, 'ruhig vor Gegenstand'); await invTap(x); const s = await until(s => s.pop, 3000, 'Gegenstands-Popup'); const it = await page.evaluate((i) => { const t = M.ITEMS[i]; return { read: t.read !== undefined, open: t.open !== undefined, use2: t.use2 !== undefined, l: t.use2Label || 'Benutze' }; }, x);
     const rows = ['Benutze*']; if (it.read) rows.push('read'); if (it.open) rows.push('open'); if (it.use2) rows.push('use2'); rows.push('look');
     const idx = v === 'use' ? 0 : rows.indexOf(v); if (idx < 0) throw new Error('Gegenstandsverb ' + v + ' fehlt bei ' + x + ' ' + JSON.stringify(s.pop)); await tapCode('p:' + idx, 'Gegenstand ' + v); if (v === 'use' && y) await invTap(y); }
