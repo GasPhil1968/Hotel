@@ -67,5 +67,30 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
       M.key('z'); M.E.camX = 0; return new Promise(r => setTimeout(() => { M.text = t0; r(L); }, 400)); });
     ok(n.indexOf('Pfeiler') >= 0 && n.some(t => /Hansi|Leere Stelle|\?\?\?/.test(t)), 'Schilder: ' + [...new Set(n)].filter(t => /Pfeiler|Hansi|Leere|\?\?\?/.test(t)).join(', '));
   });
+  // ---------------------------------------------------------------- Kapitel 2
+  // Gegenstand aus der Leiste ins Bild ziehen, wie mit dem Finger (schräg, mehr waagrecht als senkrecht)
+  const dragItem = async (item, tx, ty) => {
+    for (let k = 0; k < 6; k++) { const at = await D.ev((it) => { const i = M.GS.inv.indexOf(it); for (let y = 150; y < 200; y++) for (let x = 0; x < 320; x++) if (M.uiHit(x, y) === 'i:' + i) return [x + 4, y + 4]; return null; }, item);
+      if (at) { const b = await box(); const S = (x, y) => [b.x + (x + 0.5) * b.w / 320, b.y + (y + 0.5) * b.h / 200]; const [a1, a2] = S(at[0], at[1]), [c1, c2] = S(tx, ty);
+        await page.mouse.move(a1, a2); await page.mouse.down(); for (let i = 1; i <= 12; i++) { await page.mouse.move(a1 + (c1 - a1) * i / 12, a2 + (c2 - a2) * i / 12); await page.waitForTimeout(25); } await page.mouse.up(); await page.waitForTimeout(200); return D.drain(); }
+      const dn = await D.ev(() => { for (let y = 150; y < 200; y++) for (let x = 0; x < 320; x++) if (M.uiHit(x, y) === 'dn') return [x + 1, y + 1]; return null; }); if (!dn) break; await tap(dn[0], dn[1]); }
+    throw new Error('Gegenstand nicht in der Leiste: ' + item); };
+  const spot = (id) => D.ev((i) => { const h = M.E.room.hotspots.find(x => x.id === i), r = M.E.hsRect(h); return [Math.round(r[0] + r[2] / 2 - M.E.camX), Math.round(r[1] + r[3] / 2)]; }, id);
+  if (K2.length) {
+    const kuca = () => { const g = find(K2, 'Lanas Zimmer, die Postkarte'); g.inv.push('key_kuca'); g.flags['k2.f2.kuca'] = true; g.notes = g.notes.filter(n => n !== 'f2_oven');
+      g.pos.marko = { room: 'kuca', x: 150, y: 150, f: 'R' }; g.pos.mala = { room: 'kuca', x: 110, y: 150, f: 'R' }; g.active = 'marko'; return g; };
+    await T('K2D-1', 'Wärmefach ohne Malas Nachhall: Fingerzeig statt Sackgasse (schräges Ziehen benutzt)', async () => {
+      await load(kuca()); const [x, y] = await spot('compartment'); await dragItem('chisel', x, y);
+      ok(await said('Sie soll den Herd spüren'), 'Marko nennt den nächsten Schritt');
+      const h = await D.ev(() => { const t = M.hintsOpen(M.GS).find(h => h.id === 'f4'); return t ? M.hintText(t, 3, M.GS, 'marko') : ''; });
+      ok(/spüren/.test(h), 'Hinweis Stufe 4: „' + h + '“');
+    });
+    await T('K2D-2', 'Mala spürt am Wärmefach, dann öffnet das Stemmeisen am Herd', async () => {
+      await load(kuca()); await D.switchTo('mala'); await D.act('sense', 'compartment'); await D.drain();
+      ok(await D.hasNote('f2_oven'), 'Notiz „Am Ofen“');
+      await D.switchTo('marko'); const [x, y] = await spot('stove'); await dragItem('chisel', x, y);
+      ok((await D.st()).inv.indexOf('rcm') >= 0, 'Rotkreuz-Nachricht im Inventar');
+    });
+  }
   console.log('\nblindfix: ' + pass + ' ok, ' + fails + ' Fehler'); await D.close2(); process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

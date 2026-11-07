@@ -598,9 +598,11 @@ M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); i
   if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
   click(x,y); };
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
-function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; var id=invList()[+u.slice(2)], dx=x-press.x, dy=y-press.y;
-  if (id && !press.swiped && y<INV_Y-6){ E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }
-  if (!press.swiped && Math.abs(dx)>22 && Math.abs(dx)>Math.abs(dy)*1.5){ var pages=Math.ceil(invList().length/INV_N); press.swiped=true; if (dx<0&&E.invTop<pages-1){ E.invTop++; M.sfx('page'); } else if (dx>0&&E.invTop>0){ E.invTop--; M.sfx('page'); } } }
+function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; if (press.item===undefined){ press.item=invList()[+u.slice(2)]||null; press.top0=E.invTop; }
+  var id=press.item, dx=x-press.x, dy=y-press.y, pages=Math.ceil(invList().length/INV_N);
+  // aus der Leiste ins Bild gezogen: immer Benutzen, auch schräg (ein schon ausgelöstes Blättern wird zurückgenommen)
+  if (id && y<INV_Y-6){ if (press.swiped){ E.invTop=press.top0; press.swiped=false; } E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }
+  if (!press.swiped && pages>1 && Math.abs(dx)>22 && Math.abs(dx)>Math.abs(dy)*1.5){ press.swiped=true; if (dx<0&&E.invTop<pages-1){ E.invTop++; M.sfx('page'); } else if (dx>0&&E.invTop>0){ E.invTop--; M.sfx('page'); } } }
 function dropDrag(id,x,y){ if (!canDrag()||invList().indexOf(id)<0) return; E.pop=null;
   if (y<SH){ var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y); if (!hs) return; E.pending=null; E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,id); return; }
   var u=uiAt(x,y); if (u&&u[0]==='i'){ var other=invList()[+u.slice(2)]; if (other&&other!==id){ E.pending=null; E.doItem('use',id,other); } } }

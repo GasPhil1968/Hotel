@@ -348,9 +348,9 @@ function hsLit(h,r){ if (!h.dark || !darkOn()) return true; return litAt(r[0]+r[
 E.hsLit=hsLit;
 function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h){ if (!hsVisible(h)) return; var r=hsRect(h); if (!r) return; if (!hsLit(h,r)) return;
   if (x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]){ var a=r[2]*r[3]*(h.pri||1); if (a<ba){ ba=a; best=h; } } });
-  // Mala als Ziel (für Marko: Gegenstände zeigen, mit ihr reden). Steht sie auf einer anderen Figur, geht die andere Figur vor.
-  var ml=ACT.mala; if (GS.active==='marko' && ml && actorShown(ml)){ var r2=[Math.round(ml.x)-8,Math.round(ml.y)-46,16,46]; if (x>=r2[0]&&x<r2[0]+r2[2]&&y>=r2[1]&&y<r2[1]+r2[3]){ var a2=r2[2]*r2[3]; if (a2<ba && !(best&&best.npc)) best=MALA_HS; } }
-  var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var r3=[Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]; if (x>=r3[0]&&x<r3[0]+r3[2]&&y>=r3[1]&&y<r3[1]+r3[3]){ var a3=r3[2]*r3[3]; if (a3<ba && !(best&&best.npc)) best=MARKO_HS; } }
+  // Mala als Ziel (für Marko: Gegenstände zeigen, mit ihr reden). Steht sie auf einer anderen Figur oder einem Ausgang, gehen diese vor.
+  var ml=ACT.mala; if (GS.active==='marko' && ml && actorShown(ml)){ var r2=[Math.round(ml.x)-8,Math.round(ml.y)-46,16,46]; if (x>=r2[0]&&x<r2[0]+r2[2]&&y>=r2[1]&&y<r2[1]+r2[3]){ var a2=r2[2]*r2[3]; if (a2<ba && !(best&&(best.npc||best.exit||best.gexit))) best=MALA_HS; } }
+  var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var r3=[Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]; if (x>=r3[0]&&x<r3[0]+r3[2]&&y>=r3[1]&&y<r3[1]+r3[3]){ var a3=r3[2]*r3[3]; if (a3<ba && !(best&&(best.npc||best.exit||best.gexit))) best=MARKO_HS; } }
   return best; }
 E.hotspotAt=hotspotAt;
 function unmetNpc(o){ return !!(o && o.npc && o.npc!=='mala' && o.npc!=='marko' && M.INTRO && M.isMet && M.INTRO[(M.METKEY&&M.METKEY[o.npc])||o.npc] && !M.isMet(GS,o.npc)); }

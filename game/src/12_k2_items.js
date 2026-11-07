@@ -22,7 +22,7 @@ M.defineItems({
     mala:function(A){ return M.k2PhotoStopMala?M.k2PhotoStopMala(A):A.g('…'); }},
   chisel:{name:'Stemmeisen',icon:function(w){ w.rect(4,10,11,5,P.w3); w.hl(4,14,10,P.w4); w.hl(4,14,14,P.w1); w.rect(15,11,12,3,P.m3); w.hl(15,26,11,P.m4); w.poly([[27,11],[30,12],[27,13]],P.m4); },
     look:'Nedžads Stemmeisen. Schmal, scharf, mit einem Griff, der schwarz ist von hundert Jahren Händen.',
-    mala:'Er hat es dir geliehen, nicht geschenkt. Bring es zurück.'},
+    mala:function(A){ return A.g(A.G.phase==='k2_fin'?'Nedžad hat es dir noch einmal gegeben. Er weiß, wofür.':'Er hat es dir geliehen, nicht geschenkt. Bring es zurück.'); }},
   note_e:{name:'Eminas Zettel',icon:function(w){ paper(w,8,7,16,12,P.s5,3); w.rect(10,15,6,2,P.k2); },
     look:'„Sutra, kad kula udari sedam, pod satom. – E.“ Eminas Schrift, 1972. Tomaž hat ihn mir gegeben, als er losgelassen hatte. Er ist geblieben.'},
   letters_tz:{name:'Tomažs Briefe',icon:function(w){ paper(w,6,8,18,12,P.s4,3); paper(w,8,6,18,12,P.s5,3); w.rect(20,8,4,4,P.b2); w.px(21,9,P.r3); },

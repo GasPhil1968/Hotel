@@ -170,7 +170,7 @@ M.onDeduce=function(to,G){ if (to==='m2_building'){ G.map.neboder=true; } if (to
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen: je nach Figur, Fall und Wiederholung
 var POOL={
   same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Das passt nicht. Noch nicht, oder gar nicht.','Nein. Da ziehe ich einen Faden, der nirgends festgemacht ist.','Klingt gut, stimmt aber nicht. Das kenne ich vom Übersetzen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Die eine weiß nichts von der anderen.','Zwei Fälle, zwei Tote. Ich sollte sie nicht vermischen.','Nein. Jeder wartet auf etwas Eigenes.'],
+  cross:['Das sind zwei verschiedene Geschichten. Die eine weiß nichts von der anderen.','Zwei Fälle. Ich sollte sie nicht vermischen.','Nein. Jeder wartet auf etwas Eigenes.'],
   mala:['Mala würde sagen: „Du denkst zu viel.“ Vielleicht hat sie recht.','Mit Mala hat das nichts zu tun. Oder ich will es nicht sehen.','Ich suche überall nach ihr. Hier ist sie nicht.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };

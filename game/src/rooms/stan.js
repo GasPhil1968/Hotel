@@ -14,6 +14,7 @@ async function talkNada(A){ var N=A.npc('nada');
     {t:'Haben Sie nie das Zimmer aufgemacht?',once:'naS2',if:A.S.lanaOpen,go:async function(A){ await N.say('Wozu? Damit es nach mir riecht statt nach ihr?'); await A.wait(700); await N.say('Jeden Tag stehe ich vor der Tür. Jeden Tag gehe ich wieder in die Küche.'); }},
     A.askOpt({ f2_memory:async function(A){ await N.say('Du erinnerst dich.'); await A.wait(800); await N.say('Ich dachte, du hast sie vergessen. Du hast nie geschrieben. Keiner von euch hat je geschrieben.'); await A.m('Ich habe sie vergessen. Und jetzt nicht mehr.'); },
       f2_postcard:'„Ich hole Mali.“ Ich habe nie verstanden, was sie damit meinte. Du warst doch in Vratnik. Was gab es da zu holen?', m2_lana:'Lana Delić. Geboren am dritten März sechsundsiebzig. Sie hat geschrien wie eine Sirene, ganze Nächte. Esad hat gesagt, das wird eine Sängerin. Es wurde eine Malerin.',
+      f2_photo:'Mala i Mali. Ruža hat das Foto gemacht, auf der Treppe in Vratnik. Lana hat es überall herumgezeigt. Dann war es weg.', f2_missing:'Vermisst. Das Wort sagen sie beim Roten Kreuz. Ich sage: Sie kommt nicht heim.',
       f2_rcm:'Eine Nachricht vom Roten Kreuz? An dich? Und Ruža hat …', f2_cameback:'Sie ist losgefahren, um dich zu holen. Natürlich. Natürlich ist sie das.' },'Ich weiß nichts. Ich weiß seit siebzehn Jahren nichts.'),
     ...M.k2Extra('nada',A,N),
     {t:'Danke, Frau Delić.',bye:true,go:async function(A){ await N.say('Nada. Du hast früher Teta Nada gesagt.'); }}
@@ -60,7 +61,7 @@ var HS=[
        await A.wait(500); await A.g('Mama.'); await A.wait(700); await A.narrate('In der Küche dreht Nada sich um, zur offenen Tür. Sie sieht nichts. Sie sieht lange nichts.'); }}},
  {id:'drawings_l',name:'Zeichnungen',look:'Zeichnungen an der Wand: Straßenbahnen, Gesichter, ein Hund, die Brücke von Mostar, und ein Junge mit Ohren wie ein Pokal.',
    g:{look:'Das bist du. Mit zwölf. Ich habe deine Ohren übertrieben. Nicht sehr.'}},
- {id:'posters',name:'Poster',look:'Ein Konzertplakat von 1991, „Koncert – Skenderija“, und ein Filmplakat mit einem Paar auf einem Motorrad. Beide mit Reißzwecken, beide verblasst.',g:{look:'Ich war bei dem Konzert. Mit Freundinnen. Ich habe mitgesungen und nie wieder so laut.'}},
+ {id:'posters',name:'Poster',look:'Ein Konzertplakat von 1991, „Plavi Tramvaj“, und ein Filmplakat: „Obala“, ein Gesicht vor dem Abendmeer. Beide mit Reißzwecken, beide verblasst.',g:{look:'Ich war bei dem Konzert. Mit Freundinnen. Ich habe mitgesungen und nie wieder so laut.'}},
  {id:'wardrobe_l',name:'Schrank',look:'Ein Kleiderschrank, halb offen. Pullover, ein Kleid, Turnschuhe. Ein leerer Bügel, auf dem früher eine Jeansjacke hing.',g:{look:'Die Jacke habe ich an. Seit siebzehn Jahren.'}},
  {id:'lana_window',name:'Fenster',look:'Lanas Fenster. Man sieht die Haltestelle und die Stelle, an der der Kiosk stand.',g:{look:'Von hier habe ich gesehen, ob die Drei kommt. Und ob du kommst.'}},
  {id:'postcard',name:'Postkarte',look:'Eine Postkarte an der Wand, mit einer Reißzwecke: Palmen, Meer, ein Hafen. „Pozdrav iz Splita.“',read:function(A){ return postcard(A); },take:function(A){ return postcard(A); },
