@@ -19,7 +19,8 @@ function play(D, opts = {}) {
   P.said = (sub) => D.ev((x) => (M.__speechLog || []).some(l => l[1].indexOf(x) >= 0), sub);
   P.expectSaid = async (sub) => P.expect(await P.said(sub), 'gesagt: „' + sub + '“');
   // Anrufe, die von selbst kommen: ihre Auswahl wird wie vom Spieler beantwortet
-  P.AUTO = [];   // Anrufe, die von selbst kommen und eine Auswahl öffnen: [Muster, Auswahl, Text]
+  // In München kommen keine Anrufe mit Auswahl von selbst (Frau Kolars Anruf am Dienstagmorgen ist Teil der Szene); die Liste bleibt für spätere Fassungen.
+  P.AUTO = [];   // [Muster der Auswahl, gewählte Zeile, Text für das Protokoll]
   // warten, bis das Spiel wieder auf den Spieler wartet und auch der Leerlauf (Reaktionen auf Schlüsse, Tageswechsel) nichts mehr anstößt
   P.calm = async (maxMs = 120000) => { const tA = Date.now();
     for (;;) { const s = await D.drain(20);
@@ -54,6 +55,38 @@ function play(D, opts = {}) {
     for (let guard = 0; guard < 12; guard++) { const ord = await P.arrangeOrder(); const i = ord.findIndex((k, j) => k !== j); if (i < 0) break;   // die Karten stehen in data.items in der richtigen Folge
       await P.tapHit('r' + i); await P.tapHit('r' + ord.indexOf(i)); }
     await P.tapHit('go'); return P.calm(); };
+  // Gespräch führen wie ein Spieler: bei jeder Auswahl die erste passende Zeile aus prefs (Reihenfolge der Liste zählt), bei jeder Frage nach dem Notizbuch
+  // die erste passende Notiz aus notes; bis until(s) gilt. Steht am Ende noch eine Auswahl offen, wird sie mit einer Abschiedszeile geschlossen.
+  // Ohne passende Zeile bricht der Lauf ab (strict, Vorgabe) oder nimmt die erste Zeile, die kein Hinweis ist (strict:false). Jede Wahl landet in P.trace.
+  P.trace = [];
+  P.BYE = /^(Servus|Auf Wiedersehen|Bis später|Bis heute Abend|Ich gehe|Später|Schönen Tag|Komm\.|\(Warten\.\)|\(Gehen\.\)|Ich lasse dich|Danke|Arrivederci|Wiederschauen|Pfiat|Ich muss los|Gute Nacht|Bis morgen|\(Doch nichts\.\))/;
+  P.dlgOpts = () => D.ev(() => M.E.dlg ? M.E.dlg.opts.map(o => ({ t: o.t, id: o.id })) : null);
+  P.drive = async (prefs, until, o = {}) => { const notes = (o.notes || []).slice(), max = o.max || 120, strict = o.strict !== false;
+    for (let i = 0; i < max; i++) {
+      if (await D.ev(() => !!M.GS.ended)) return D.st();
+      const s = await P.calm();
+      const done = await until(Object.assign({}, s));
+      if (done) { if (!s.dlg) return s; const k = s.dlg.findIndex(t => P.BYE.test(t)); if (k < 0) return s; await D.ev((x) => M.E.chooseDone(x), k); P.trace.push('  > ' + s.dlg[k]); await D.page.waitForTimeout(40); continue; }
+      if (s.dlg) { const opts = await P.dlgOpts(); if (!opts) continue;
+        const nk = opts.findIndex(x => notes.indexOf(x.id) >= 0);
+        if (nk >= 0) { notes.splice(notes.indexOf(opts[nk].id), 1); P.trace.push('  > [Notiz] ' + opts[nk].t); await D.ev((x) => M.E.chooseDone(x), nk); await D.page.waitForTimeout(40); continue; }
+        let pick = -1; for (const p of prefs) { pick = opts.findIndex(x => x.t.indexOf(p) >= 0); if (pick >= 0) break; }
+        if (pick < 0) { if (strict && opts.length > 1) await P.fail('drive' + (o.label ? ' (' + o.label + ')' : '') + ': keine passende Zeile in ' + JSON.stringify(opts.map(x => x.t)));
+          pick = opts.findIndex(x => !/hintTalk|nicht weiter|^Komm\.$/.test(x.t)); if (pick < 0) pick = 0; }
+        P.trace.push('  > ' + opts[pick].t); await D.ev((k) => M.E.chooseDone(k), pick); await D.page.waitForTimeout(40); continue; }
+      if (s.overlay === 'notebook') { const avail = await D.ev(() => M.E.nbOpen(true, M.E.overlay.data && M.E.overlay.data.also));
+        const id = notes.find(n => avail.indexOf(n) >= 0); if (id) notes.splice(notes.indexOf(id), 1); else if (strict) await P.fail('drive' + (o.label ? ' (' + o.label + ')' : '') + ': keine passende Notiz in ' + JSON.stringify(avail));
+        P.trace.push('  > [Notiz] ' + (id || '(nichts)')); await D.ev((x) => M.TA.pickNote(x || null), id || null); await D.page.waitForTimeout(40); continue; }
+      if (s.screen !== 'game' || s.card || s.busy) { await D.page.waitForTimeout(150); continue; }
+      await P.fail('drive' + (o.label ? ' (' + o.label + ')' : '') + ': das Spiel wartet, aber die Bedingung ist nicht erfüllt');
+    }
+    await P.fail('drive' + (o.label ? ' (' + o.label + ')' : '') + ': zu viele Schritte'); };
+  // Bedingungen für drive
+  P.F = (k) => D.flag(k); P.N = (id) => D.hasNote(id);
+  P.flagIs = (k, v) => async () => { const x = await D.flag(k); return v === undefined ? !!x : x === v; };
+  P.noteIs = (id) => async () => D.hasNote(id);
+  P.phaseIs = (p) => async (s) => s.phase === p && !s.busy;
+  P.noDlg = async (s) => !s.dlg;
   return P;
 }
 module.exports = { play };
