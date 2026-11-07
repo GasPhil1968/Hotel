@@ -55,6 +55,35 @@
   ]
  },
  {
+  "id": "BUG-005",
+  "severity": "mittel",
+  "status": "behoben",
+  "title": "Kapitel 2: Emina wird bei ihrer Rückkehr angekündigt, ist aber unsichtbar und nicht ansprechbar",
+  "cause": "Die Rückkehr-Szene in kafana.enter setzt k2.s1.eminaBack erst nach dem Aufbau der Figurenliste; A.rebuild() zeichnet nur den Hintergrund neu.",
+  "effect": "Nach „Emina. Zurück von Tante Sabira.“ steht niemand an der Theke; der nächste Pflichtschritt (Briefe geben) ist erst nach Verlassen und erneutem Betreten der Kafana möglich. Die Test-API sprach die unsichtbare Figur trotzdem an – nur der Klick-Durchlauf deckte es auf.",
+  "fix": "In der Szene Emina erzeugen, wie actors() es tut (A.spawn), falls sie noch fehlt.",
+  "repro": "Kapitel 2, Fall 1: im Lager mit dem Meißel die Briefe holen, in die Kafana zurück → Emina nicht sichtbar.",
+  "evidence": [
+   "qa/regress/bug_005_emina_invisible.js",
+   "qa/uireach.js (results/uireach_original.json)",
+   "UI-Volldurchlauf Chromium/Desktop (Abbruch Eintrag 650 vor der Korrektur)"
+  ]
+ },
+ {
+  "id": "BUG-006",
+  "severity": "niedrig",
+  "status": "behoben",
+  "title": "Kapitel 2, Finale: Der Schluss „Darum steht bei Abreise nichts“ ist über die Oberfläche nicht ziehbar",
+  "cause": "m2_split_register gilt als erledigt, sobald m2_lana vorliegt (Fall 3); f2_rcm gilt als erledigt, sobald f2_cameback vorliegt. Beide Wege zu f2_whyabreise brauchen eine dieser ausgeblendeten Notizen.",
+  "effect": "Ein vorgesehener Erzählmoment („Sie ist nicht abgereist. Sie ist aufgebrochen. Zu mir.“) ist für Spieler unerreichbar; optional, kein Softlock.",
+  "fix": "m2_split_register bleibt sichtbar, bis f2_whyabreise gezogen ist oder das Kapitel endet (k2.f2.ride).",
+  "repro": "Kapitel 2 bis zum Finale (Rote-Kreuz-Nachricht gelesen, f2_cameback gezogen): Notizbuch → das Register fehlt.",
+  "evidence": [
+   "qa/regress/bug_006_whyabreise_hidden.js",
+   "qa/uireach.js"
+  ]
+ },
+ {
   "id": "UI-001",
   "severity": "niedrig",
   "status": "offen (Designentscheidung)",
