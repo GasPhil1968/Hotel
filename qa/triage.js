@@ -11,6 +11,7 @@ const RULES = [
   [/doVerb0/, 'BUG-008 (Spielfehler, behoben)'],
   [/at rollcall/, 'Harness: verfrühtes Hinüberbringen ohne crossIf (korrigiert) – kein Spielfehler'],
   [/strassenbr\.crossing|Zeitüberschreitung: drüben/, 'beabsichtigte Rücksetzung beim Laden (Straßenbrücke); Harness setzt jetzt wie ein Spieler fort', 'D'],
+  [/^Save\/Load-Abweichung[^|]*: (GS\.rooms\.partizan\.(bellBack|nextBell): \d+ ≠ \d+( \| )?)+\s*$/, 'Harness-Vergleich: Spielzeit-Stempel der Glocken-Szene, beim Laden von partizan.resume neu gesetzt (beabsichtigt); Lauf danach bis zum Endpunkt', 'D'],
   [/k3\.bellsOut|partizan\.bellBack/, 'beabsichtigt: Glocken-Szene läuft nach dem Laden weiter (Mala kehrt zurück)', 'D'],
   [/rooms\.\w+\.(steam|nudge|ferryAt|ferryGo|radioT)/, 'Harness-Vergleich: Sitzungsstempel (absichtlich nicht gespeichert)'],
   [/GS\.flags\.[\w.]+: (false|undefined|null|0) ≠ (false|undefined|null|0)/, 'Harness-Vergleich: Flag false/undefined gleichbedeutend'],
