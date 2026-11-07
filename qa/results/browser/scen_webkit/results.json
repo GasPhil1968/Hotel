@@ -50,7 +50,7 @@
    "dpr": 3,
    "rot": false
   },
-  "wallS": 1.239
+  "wallS": 1.568
  },
  {
   "id": "W02",
@@ -91,7 +91,7 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "26.6",
-  "wallS": 7.01
+  "wallS": 7.27
  },
  {
   "id": "W03",
@@ -221,7 +221,7 @@
    "Rede mit",
    "Schau an"
   ],
-  "wallS": 23.011
+  "wallS": 23.047
  },
  {
   "id": "W04",
@@ -254,7 +254,7 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "26.6",
-  "wallS": 2.266
+  "wallS": 2.323
  },
  {
   "id": "W05",
@@ -342,7 +342,7 @@
     }
    }
   },
-  "wallS": 2.457
+  "wallS": 2.768
  },
  {
   "id": "W06",
@@ -391,7 +391,7 @@
    "vizitka",
    "aushang"
   ],
-  "wallS": 2.948
+  "wallS": 2.869
  },
  {
   "id": "W07",
@@ -502,7 +502,7 @@
     "sw": 500
    }
   ],
-  "wallS": 2.712
+  "wallS": 2.532
  },
  {
   "id": "W08",
@@ -545,7 +545,7 @@
   "failedReq": [],
   "browserVersion": "26.6",
   "compare": "gleich",
-  "wallS": 7.023
+  "wallS": 6.912
  },
  {
   "id": "W09",
@@ -587,7 +587,7 @@
   "failedReq": [],
   "browserVersion": "26.6",
   "after": "haustor",
-  "wallS": 4.226
+  "wallS": 3.994
  },
  {
   "id": "W10",
@@ -602,7 +602,7 @@
    },
    {
     "ok": true,
-    "what": "Geistersicht kühl/blau (B 566540 > R 239027)"
+    "what": "Geistersicht kühl/blau (B 566782 > R 238914)"
    },
    {
     "ok": true,
@@ -622,14 +622,14 @@
   "failedReq": [],
   "browserVersion": "26.6",
   "tint": {
-   "r": 239027,
-   "g": 436250,
-   "b": 566540
+   "r": 238914,
+   "g": 436298,
+   "b": 566782
   },
   "ghosts": [
    "luka"
   ],
-  "wallS": 3.554
+  "wallS": 3.247
  },
  {
   "id": "W13a",
@@ -683,7 +683,7 @@
    "room": "wiesn"
   },
   "bugReproduced": true,
-  "wallS": 5.543
+  "wallS": 5.465
  },
  {
   "id": "W13b",
@@ -735,7 +735,99 @@
    "active": "marko",
    "room": "wiesn"
   },
-  "wallS": 5.476
+  "wallS": 5.466
+ },
+ {
+  "id": "W14a",
+  "engine": "webkit",
+  "device": "phone",
+  "title": "BUG-009 per Klick (Originalfassung): Wechsel auf dem Weg zur Archivtür",
+  "ok": true,
+  "checks": [
+   {
+    "ok": true,
+    "what": "Hafenbüro geladen (office)"
+   },
+   {
+    "ok": true,
+    "what": "Archivtür im Bild antippbar"
+   },
+   {
+    "ok": false,
+    "what": "Marko nicht im Archiv (Marko: archive, Mala: archive, Ausgänge für Marko: 0) – in der Originalfassung erwartet: Archiv"
+   },
+   {
+    "ok": true,
+    "what": "keine Seitenfehler/Promise-Rejections (0)"
+   },
+   {
+    "ok": true,
+    "what": "keine fehlgeschlagenen Anfragen (0)"
+   }
+  ],
+  "shots": [
+   "browser/scen_webkit/W14orig.png"
+  ],
+  "errors": [],
+  "consoleErr": [],
+  "failedReq": [],
+  "browserVersion": "26.6",
+  "reproduces": "BUG-009",
+  "walking": true,
+  "end": {
+   "active": "marko",
+   "room": "archive",
+   "marko": "archive",
+   "mala": "archive",
+   "markoExits": 0
+  },
+  "bugReproduced": true,
+  "wallS": 6.07
+ },
+ {
+  "id": "W14b",
+  "engine": "webkit",
+  "device": "phone",
+  "title": "BUG-009 per Klick (korrigierte Fassung): Wechsel auf dem Weg zur Archivtür",
+  "ok": true,
+  "checks": [
+   {
+    "ok": true,
+    "what": "Hafenbüro geladen (office)"
+   },
+   {
+    "ok": true,
+    "what": "Archivtür im Bild antippbar"
+   },
+   {
+    "ok": true,
+    "what": "Marko nicht im Archiv (Marko: office, Mala: office)"
+   },
+   {
+    "ok": true,
+    "what": "keine Seitenfehler/Promise-Rejections (0)"
+   },
+   {
+    "ok": true,
+    "what": "keine fehlgeschlagenen Anfragen (0)"
+   }
+  ],
+  "shots": [
+   "browser/scen_webkit/W14neu.png"
+  ],
+  "errors": [],
+  "consoleErr": [],
+  "failedReq": [],
+  "browserVersion": "26.6",
+  "walking": true,
+  "end": {
+   "active": "marko",
+   "room": "office",
+   "marko": "office",
+   "mala": "office",
+   "markoExits": 1
+  },
+  "wallS": 5.869
  },
  {
   "id": "W11",
@@ -773,6 +865,6 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "26.6",
-  "wallS": 4.207
+  "wallS": 4.379
  }
 ]
