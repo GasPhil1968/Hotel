@@ -1,0 +1,60 @@
+{
+ "html": "/home/user/Hotel/qa/originals/index_original.html",
+ "sha256": "e380ec8b8c796301b2adba8f4a0a06bb3b5ef3168ca9f606a1b28fc7975320d3",
+ "results": [
+  {
+   "id": "BUG-001",
+   "title": "Laden eines K2–K4-Stands verändert keine Kapitel-1-Marken",
+   "ok": false,
+   "detail": "K2 (k2_pro): vor dem Laden [], danach [\"split.intro.legacy\"] | K3 (k3_pro): vor dem Laden [], danach [\"split.intro.legacy\"] | K4 (k4_pro): vor dem Laden [], danach [\"split.intro.legacy\"]"
+  },
+  {
+   "id": "BUG-002",
+   "title": "Figurenwechsel während eines Wegs lässt keine Aktion hängen (E.acting)",
+   "ok": false,
+   "detail": "Mala in gleis11 geht zu „tree“, Wechsel zu Marko (wiesn): E.acting=1; Kapitel danach abgebrochen: ABBRUCH in Abschnitt „christtag“ nach Schritt 20: Zeitüberschreitung: settle | {\"trn\":false,\"map\":false,\"mapActing\":false,\"transitions\":8,\"acting\":1,\"walk\":false,\"screen\":\"game\",\"room\":\"wiesn\",\"busy\":false,\"dlg\":null,\"overlay\":null,\"speech\":false,\"card\":false,\"active\":\"marko\",\"phase\":\"k4_d1\",\"inv\":[\"dzezva\",\"mobitel\",\"olovka\",\"photo_full\",\"vizitka\",\"brot\"],\"notes\":[\"k4_c_lana\",\"k4_c_vater\",\"u4_sms\",\"u4_pantoffeln\",\"u4_dach\",\"u4_kiste\",\"u4_klopfen\",\"u4_nichtheute\",\"r4_kopf\",\"z4_stiefel\"],\"realRoom\":\"wiesn\"}"
+  },
+  {
+   "id": "BUG-003",
+   "title": "Verkochtes Wasser: Džezva bleibt verfügbar, Brief über Dampf weiter lösbar",
+   "ok": false,
+   "detail": "nach Verfall: Brief offen=false, Džezva sichtbar=false, zweiter Versuch öffnet den Brief=false"
+  },
+  {
+   "id": "BUG-004",
+   "title": "Laden in frischem Kontext macht alten Dampf nicht wieder wirksam",
+   "ok": false,
+   "detail": "nach Laden (frischer Kontext) Brief am Herd ohne Dampf: geöffnet=true („Das Salz hat die Hälfte der Wörter gefressen. Die Hälfte, auf die es ankommt.“)"
+  },
+  {
+   "id": "BUG-005",
+   "title": "Emina ist nach ihrer angekündigten Rückkehr sichtbar und antippbar",
+   "ok": false,
+   "detail": "nach „Emina. Zurück von Tante Sabira. Früher als gedacht.“: Figur=false, sichtbar=false, antippbar=false"
+  },
+  {
+   "id": "BUG-006",
+   "title": "K2-Finale: „Darum steht bei Abreise nichts“ ist mit sichtbaren Notizen ziehbar",
+   "ok": false,
+   "detail": "im Finale sichtbar: Weg 1 (cameback+register)=false, Weg 2 (rcm+journal)=false; Kapitel bis zum Ende gespielt"
+  },
+  {
+   "id": "BUG-007",
+   "title": "Straßenbrücke: Mala lässt sich durch Tippen auf den Weg bis ans Westende führen",
+   "ok": false,
+   "detail": "Tipps auf den Gehweg (x=290, links der Laterne): Mala-Positionen 40 → [railing] → 200 → [railing] → 200 → [railing] → 200 → [railing] → 200 → [railing] → 200 → [railing] → 200 → [railing] → 200 → [railing]; drüben=false"
+  },
+  {
+   "id": "BUG-008",
+   "title": "Figurenwechsel während des Zudrehens zu einer Person wirft keinen TypeError (Wiederholung E-0159)",
+   "ok": false,
+   "detail": "E-0159 (Salz erstlauf): Ergebnis fail – UNHANDLED TypeError: Cannot read properties of undefined (reading 'x'); doVerb0-Fehler: 1; Kapitel 4✗"
+  },
+  {
+   "id": "BUG-009",
+   "title": "Figurenwechsel auf dem Weg zu einem Geisterausgang bringt Marko nicht in einen Mala-Raum (Softlock)",
+   "ok": false,
+   "detail": "k=0 Bilder: Marko in archive, Mala in archive (Ausgänge für Marko: 0); k=3 Bilder: Marko in archive, Mala in archive (Ausgänge für Marko: 0); k=8 Bilder: Marko in archive, Mala in archive (Ausgänge für Marko: 0)"
+  }
+ ]
+}

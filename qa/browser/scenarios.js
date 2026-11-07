@@ -197,6 +197,18 @@ const DEV = { chromium: ['desktop', 'tablet'], firefox: ['desktop', 'tablet'], w
         ck(end.acting === 0, 'kein hängender Aktionszähler (E.acting=' + end.acting + ')' + (tag === 'orig' ? ' – in der Originalfassung erwartet: 1' : '')); });
     }
   }
+  if (ENGINE === 'chromium' || ENGINE === 'webkit') {
+    // BUG-009 über die Oberfläche: als Mala auf die Archivtür (Geisterausgang) tippen, gleich danach aufs Porträt → Marko darf nicht ins Archiv
+    for (const [tag, file] of [['orig', path.join(ROOT, 'qa', 'originals', 'web_original', 'index.html')], ['neu', path.join(WEB, 'index.html')]]) {
+      await scenario(ENG + '14' + (tag === 'orig' ? 'a' : 'b'), 'BUG-009 per Klick (' + (tag === 'orig' ? 'Originalfassung' : 'korrigierte Fassung') + '): Wechsel auf dem Weg zur Archivtür', ENGINE === 'webkit' ? 'phone' : 'desktop', async ({ mk, ck, r }) => { if (tag === 'orig') r.reproduces = 'BUG-009';
+        const srvB = await serve(() => path.dirname(file), 8150 + ['chromium', 'firefox', 'webkit'].indexOf(ENGINE) * 2 + (tag === 'orig' ? 0 : 1)); const P = await mk({ storage: ST('k1_amt').storage, url: 'http://127.0.0.1:' + srvB.address().port + '/' + path.basename(file) }); r.cleanup = () => srvB.close(); await P.cont(); await P.idle();
+        let s = await P.st(); ck(s.room === 'office', 'Hafenbüro geladen (' + s.room + ')'); if (s.active !== 'mala') { await P.tapCode('sw'); s = await P.until(x => x.active === 'mala', 5000, 'Mala'); } await P.page.waitForTimeout(400);
+        const pt = await P.page.evaluate(() => { const E = M.E, h = E.room.byId.archive_door, rr = E.hsRect(h), cam = Math.round(E.camX); for (let y = rr[1] + 2; y < rr[1] + rr[3]; y += 2) for (let x = rr[0] + 2; x < rr[0] + rr[2]; x += 2) { if (x - cam < 0 || x - cam >= 320) continue; if (E.hotspotAt(x, y) === h) return { x: x - cam, y }; } return null; });
+        ck(!!pt, 'Archivtür im Bild antippbar'); await P.tap(pt.x, pt.y); await P.page.waitForTimeout(60); const w = await P.st(); r.walking = w.walk; await P.tapCode('sw'); await P.page.waitForTimeout(3000); await P.idle().catch(() => {});
+        const end = await P.page.evaluate(() => ({ active: M.GS.active, room: M.E.room.id, marko: M.GS.pos.marko.room, mala: M.GS.pos.mala.room, markoExits: M.E.room.hotspots.filter(h => { const ex = typeof h.exit === 'function' ? null : h.exit; return !!ex; }).length })); r.end = end; r.shots.push(await P.shot(ENG + '14' + tag));
+        ck(end.marko !== 'archive', 'Marko nicht im Archiv (Marko: ' + end.marko + ', Mala: ' + end.mala + (end.marko === 'archive' ? ', Ausgänge für Marko: ' + end.markoExits : '') + ')' + (tag === 'orig' ? ' – in der Originalfassung erwartet: Archiv' : '')); });
+    }
+  }
   if (ENGINE === 'webkit') {
     await scenario('W11', 'iPhone hochkant (emuliert): Bild dreht sich, Tipps treffen trotzdem', 'phonePortrait', async ({ mk, ck, r }) => { const P = await mk();
       const rot = await P.page.evaluate(() => M.isRotated()); ck(rot, 'Spielbild um 90° gedreht'); r.shots.push(await P.shot('W11_hochkant'));

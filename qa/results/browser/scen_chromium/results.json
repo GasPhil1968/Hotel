@@ -50,7 +50,7 @@
    "dpr": 1,
    "rot": false
   },
-  "wallS": 0.839
+  "wallS": 0.926
  },
  {
   "id": "C02",
@@ -91,7 +91,7 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "153.0.8010.12",
-  "wallS": 6.384
+  "wallS": 6.458
  },
  {
   "id": "C03",
@@ -221,7 +221,7 @@
    "Rede mit",
    "Schau an"
   ],
-  "wallS": 22.779
+  "wallS": 22.877
  },
  {
   "id": "C04",
@@ -262,7 +262,7 @@
   "consoleErr": [],
   "failedReq": [],
   "browserVersion": "153.0.8010.12",
-  "wallS": 2.106
+  "wallS": 2.161
  },
  {
   "id": "C05",
@@ -350,7 +350,7 @@
     }
    }
   },
-  "wallS": 2.351
+  "wallS": 2.473
  },
  {
   "id": "C06",
@@ -399,7 +399,7 @@
    "vizitka",
    "aushang"
   ],
-  "wallS": 2.477
+  "wallS": 2.557
  },
  {
   "id": "C07",
@@ -510,7 +510,7 @@
     "sw": 500
    }
   ],
-  "wallS": 2.432
+  "wallS": 2.317
  },
  {
   "id": "C08",
@@ -553,7 +553,7 @@
   "failedReq": [],
   "browserVersion": "153.0.8010.12",
   "compare": "gleich",
-  "wallS": 5.082
+  "wallS": 4.902
  },
  {
   "id": "C09",
@@ -595,7 +595,7 @@
   "failedReq": [],
   "browserVersion": "153.0.8010.12",
   "after": "haustor",
-  "wallS": 3.532
+  "wallS": 3.575
  },
  {
   "id": "C10",
@@ -610,7 +610,7 @@
    },
    {
     "ok": true,
-    "what": "Geistersicht kühl/blau (B 568121 > R 240125)"
+    "what": "Geistersicht kühl/blau (B 568912 > R 239269)"
    },
    {
     "ok": true,
@@ -630,14 +630,14 @@
   "failedReq": [],
   "browserVersion": "153.0.8010.12",
   "tint": {
-   "r": 240125,
-   "g": 437332,
-   "b": 568121
+   "r": 239269,
+   "g": 438558,
+   "b": 568912
   },
   "ghosts": [
    "luka"
   ],
-  "wallS": 2.684
+  "wallS": 2.712
  },
  {
   "id": "C11",
@@ -648,7 +648,7 @@
   "checks": [
    {
     "ok": true,
-    "what": "geprüft: 221 Hotspots in 15 Ständen; ohne antippbaren Punkt: 0"
+    "what": "geprüft: 231 Hotspots in 16 Ständen; ohne antippbaren Punkt: 0"
    },
    {
     "ok": true,
@@ -682,6 +682,14 @@
     "room": "ivka",
     "active": "marko",
     "total": 17,
+    "covered": [],
+    "none": []
+   },
+   {
+    "state": "k1_amt",
+    "room": "office",
+    "active": "marko",
+    "total": 10,
     "covered": [],
     "none": []
    },
@@ -791,7 +799,7 @@
    }
   ],
   "unreachable": [],
-  "wallS": 25.328
+  "wallS": 26.918
  },
  {
   "id": "C12",
@@ -822,7 +830,7 @@
    },
    {
     "ok": true,
-    "what": "neuer Cache [\"mala-split-ce13af7e74-qa2\"]"
+    "what": "neuer Cache [\"mala-split-373d1ccb53-qa2\"]"
    },
    {
     "ok": true,
@@ -846,15 +854,15 @@
   "browserVersion": "153.0.8010.12",
   "cache": {
    "ks": [
-    "mala-split-ce13af7e74"
+    "mala-split-373d1ccb53"
    ],
    "n": 6
   },
   "saveMsg": "Gespeichert.",
   "cacheAfter": [
-   "mala-split-ce13af7e74-qa2"
+   "mala-split-373d1ccb53-qa2"
   ],
-  "wallS": 66.861
+  "wallS": 66.83
  },
  {
   "id": "C13a",
@@ -908,7 +916,7 @@
    "room": "wiesn"
   },
   "bugReproduced": true,
-  "wallS": 5.073
+  "wallS": 4.946
  },
  {
   "id": "C13b",
@@ -960,6 +968,98 @@
    "active": "marko",
    "room": "wiesn"
   },
-  "wallS": 5.052
+  "wallS": 5.045
+ },
+ {
+  "id": "C14a",
+  "engine": "chromium",
+  "device": "desktop",
+  "title": "BUG-009 per Klick (Originalfassung): Wechsel auf dem Weg zur Archivtür",
+  "ok": true,
+  "checks": [
+   {
+    "ok": true,
+    "what": "Hafenbüro geladen (office)"
+   },
+   {
+    "ok": true,
+    "what": "Archivtür im Bild antippbar"
+   },
+   {
+    "ok": false,
+    "what": "Marko nicht im Archiv (Marko: archive, Mala: archive, Ausgänge für Marko: 0) – in der Originalfassung erwartet: Archiv"
+   },
+   {
+    "ok": true,
+    "what": "keine Seitenfehler/Promise-Rejections (0)"
+   },
+   {
+    "ok": true,
+    "what": "keine fehlgeschlagenen Anfragen (0)"
+   }
+  ],
+  "shots": [
+   "browser/scen_chromium/C14orig.png"
+  ],
+  "errors": [],
+  "consoleErr": [],
+  "failedReq": [],
+  "browserVersion": "153.0.8010.12",
+  "reproduces": "BUG-009",
+  "walking": true,
+  "end": {
+   "active": "marko",
+   "room": "archive",
+   "marko": "archive",
+   "mala": "archive",
+   "markoExits": 0
+  },
+  "bugReproduced": true,
+  "wallS": 5.341
+ },
+ {
+  "id": "C14b",
+  "engine": "chromium",
+  "device": "desktop",
+  "title": "BUG-009 per Klick (korrigierte Fassung): Wechsel auf dem Weg zur Archivtür",
+  "ok": true,
+  "checks": [
+   {
+    "ok": true,
+    "what": "Hafenbüro geladen (office)"
+   },
+   {
+    "ok": true,
+    "what": "Archivtür im Bild antippbar"
+   },
+   {
+    "ok": true,
+    "what": "Marko nicht im Archiv (Marko: office, Mala: office)"
+   },
+   {
+    "ok": true,
+    "what": "keine Seitenfehler/Promise-Rejections (0)"
+   },
+   {
+    "ok": true,
+    "what": "keine fehlgeschlagenen Anfragen (0)"
+   }
+  ],
+  "shots": [
+   "browser/scen_chromium/C14neu.png"
+  ],
+  "errors": [],
+  "consoleErr": [],
+  "failedReq": [],
+  "browserVersion": "153.0.8010.12",
+  "walking": true,
+  "end": {
+   "active": "marko",
+   "room": "office",
+   "marko": "office",
+   "mala": "office",
+   "markoExits": 1
+  },
+  "wallS": 5.38
  }
 ]

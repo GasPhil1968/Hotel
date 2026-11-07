@@ -1,0 +1,17 @@
+{
+ "started": "2026-11-07T16:39:06.700Z",
+ "sha256": "5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115",
+ "html": "web/index.html",
+ "planned": 4000,
+ "plan": {
+  "A": 1000,
+  "B": 1000,
+  "C": 800,
+  "D": 600,
+  "E": 600
+ },
+ "salt": "final",
+ "node": "v22.23.4",
+ "workers": 3,
+ "endpoint": "K4 Abspann → Titelbild ohne „Weiter mit Kapitel 5“ (Ende des implementierten Umfangs)"
+}

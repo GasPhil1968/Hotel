@@ -73,6 +73,19 @@ const chOfPhase = (ph) => (/^k4/.test(ph) ? 4 : /^k3/.test(ph) ? 3 : /^k2/.test(
   // Gegenstände, die verschwanden (Verbrauch), nach Gegenstand und Phase – zur Prüfung gegen das Design
   const lost = {}; runs.forEach(r => (r.lostItems || []).forEach(c => c[3].forEach(it => { const k = it + ' @' + c[0]; lost[k] = (lost[k] || 0) + 1; })));
   S.itemRemovals = Object.entries(lost).sort((x, y) => y[1] - x[1]).slice(0, 80);
+  // Sackgassen-Sonde und Softlock-Einordnung
+  const probed = runs.filter(r => r.softlock); const slc = {}; probed.forEach(r => { const k = String(r.softlock.cls).replace(/\d+ Aktionen/, 'N Aktionen'); slc[k] = (slc[k] || 0) + 1; });
+  S.softlock = { probed: probed.length, classes: slc, suspicions: probed.filter(r => /^Verdacht|gescheitert/.test(r.softlock.cls)).map(r => ({ run: r.runId, cls: r.softlock.cls, start: r.softlock.start, reason: (r.reason || '').split('\n')[0].slice(0, 160) })) };
+  // verfrühte Versuche (C), beabsichtigte Szenen-Rücksetzungen (D), Harness-Eingriffe
+  let pre = 0, preNone = 0, preEff = 0; runs.forEach(r => (r.perturb || []).forEach(p => (p.rec || []).forEach(x => { if (x[0] === 'premature') pre++; if (x[0] === 'premature-none') preNone++; if (x[0] === 'premature-effect') { const b = x[1] || {}, c = x[2] || {}; if (b.n !== c.n || b.inv !== c.inv || b.ph !== c.ph || b.f !== c.f) preEff++; } })));
+  S.premature = { attempts: pre, noCandidate: preNone, withStateChange: preEff };
+  const resets = {}; sl.filter(p => p.expectedReset).forEach(p => p.expectedReset.forEach(w => { resets[w] = (resets[w] || 0) + 1; }));
+  S.saveLoad.expectedResets = resets; S.saveLoad.recovered = sl.filter(p => p.recover).length;
+  S.illegalSwitch = runs.filter(r => (r.illegalSwitch || []).length).map(r => r.runId);
+  S.limits = { stepLimit: [Math.min(...runs.map(r => r.stepLimit || 0)), Math.max(...runs.map(r => r.stepLimit || 0))], wallLimitS: [Math.min(...runs.map(r => (r.wallLimitMs || 0) / 1000)), Math.max(...runs.map(r => (r.wallLimitMs || 0) / 1000))], harness: Array.from(new Set(runs.map(r => r.harness))).filter(Boolean) };
+  const regress = (() => { try { return JSON.parse(fs.readFileSync(arg('--regress', path.join(__dirname, 'results', 'regress_final.json')), 'utf8')); } catch (e) { return null; } })();
+  const regressOrig = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'results', 'regress_original.json'), 'utf8')); } catch (e) { return null; } })();
+  const harnessFixes = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'HARNESS_KORREKTUREN.json'), 'utf8')); } catch (e) { return []; } })();
   S.bugs = bugs; S.browser = browser ? browser.summary || null : null;
   fs.writeFileSync(path.join(dir, 'summary.json'), JSON.stringify(S, null, 1));
 
@@ -85,7 +98,9 @@ const chOfPhase = (ph) => (/^k4/.test(ph) ? 4 : /^k3/.test(ph) ? 3 : /^k2/.test(
   L.push('- Geprüfte Datei: `' + meta.html + '`, SHA-256 `' + meta.sha256 + '`');
   L.push('- Start ' + meta.started + ', Ende ' + (meta.finished || '–') + ', ' + meta.workers + ' parallele Prozesse, Node ' + meta.node);
   L.push('- Endpunkt des implementierten Umfangs: **' + meta.endpoint + '**');
-  L.push('- Simulationsart: Produktionsskript in Node-VM, virtuelle Uhr, Zufall mit Seed, eigener localStorage je Lauf (siehe `qa/README.md`).', '');
+  L.push('- Simulationsart: Produktionsskript in Node-VM, virtuelle Uhr, Zufall mit Seed, eigener localStorage je Lauf (siehe `qa/README.md`).');
+  L.push(`- Jeder Lauf in \`runs.jsonl\`: Lauf-ID, Kategorie, deterministischer Seed (aus Salz \`${meta.salt}\` und Lauf-ID), Startkapitel, Variante, Ziel, Schrittlimit (${S.limits.stepLimit.join('–')}), Zeitrahmen (${S.limits.wallLimitS.join('–')} s Rechenzeit), Aktionsfolge (trace), Ergebnis mit Grund, geprüfter Endzustand (Kapitelenden, Titelbild), Harness-Prüfsumme (${S.limits.harness.join(', ') || '–'}).`);
+  L.push('- Spielerhandlungen laufen über die Test-API des Spiels (dieselben Funktionen wie die Oberfläche) bzw. bei Belastung über Zeigerereignisse; es werden keine Flags gesetzt, keine Gegenstände eingefügt, nicht teleportiert. Zufällige Handlungen nutzen nur Hotspots, die an dieser Stelle antippbar sind, Hinüberbringen nur, wenn das Spiel es anbietet, Figurenwechsel nur, wenn der Wechselknopf es erlaubt (Verstöße würden als Infrastruktur gezählt: ' + S.illegalSwitch.length + ').', '');
   L.push('## Läufe', '');
   L.push('| | geplant | gestartet | abgeschlossen | bestanden | fehlgeschlagen | unentschieden | abgebrochen/Infrastruktur |', '|---|---|---|---|---|---|---|---|');
   L.push(`| **Gesamt** | ${S.planned} | ${S.started} | ${S.completed} | ${S.totals.pass} | ${S.totals.fail} | ${S.totals.undecided} | ${(S.totals.aborted || 0) + (S.totals.infra || 0)} |`);
@@ -117,6 +132,8 @@ const chOfPhase = (ph) => (/^k4/.test(ph) ? 4 : /^k3/.test(ph) ? 3 : /^k2/.test(
   L.push('## Störungen und Speichern/Laden', '');
   L.push(`- Störstellen (B/C/E): ${S.perturbations.total}, davon ${S.perturbations.skippedNotCalm} übersprungen (Spiel nicht ruhig), Rückkehr zum Anker ${S.perturbations.returnedToAnchor}, ohne Rückkehr ${S.perturbations.notReturned}; zufällige/gestörte Aktionen insgesamt ${S.perturbations.actions}`);
   L.push(`- Speicherpunkte (D): ${S.saveLoad.points}; gespeichert ${S.saveLoad.saved}; abgelehnt ${S.saveLoad.refused}; verglichen ${S.saveLoad.compared}; identisch ${S.saveLoad.equal}; Modi ${JSON.stringify(S.saveLoad.byMode)}`);
+  if (Object.keys(S.saveLoad.expectedResets).length) { L.push('- Im Spiel vorgesehene Rücksetzungen beim Laden (protokolliert, kein Fehler): ' + Object.entries(S.saveLoad.expectedResets).map(([k, v]) => v + '× ' + k).join('; ') + `; danach wie ein Spieler fortgesetzt: ${S.saveLoad.recovered}×`); }
+  L.push(`- Verfrühte Versuche (C): ${S.premature.attempts} Lösungsschritte vor ihrer Zeit ausgeführt, davon ${S.premature.withStateChange} mit Zustandsänderung (Notiz/Inventar/Phase/Flag); ${S.premature.noCandidate} Störstellen ohne passenden verfrühten Schritt`);
   if (S.saveLoad.mismatches.length) { L.push('', 'Abweichungen nach dem Laden:'); S.saveLoad.mismatches.forEach(m => L.push(`- ${m.run} (${m.mode}, K${m.ch} Schritt ${m.step}): ${m.diff.slice(0, 4).join('; ')}`)); }
   L.push('', '## Fehlschläge, Ausnahmen, Invarianten', '');
   if (!S.failures.length) L.push('- keine fehlgeschlagenen Läufe');
@@ -129,6 +146,20 @@ const chOfPhase = (ph) => (/^k4/.test(ph) ? 4 : /^k3/.test(ph) ? 3 : /^k2/.test(
   S.exceptions.slice(0, 10).forEach(e => L.push(`  - ${e.run}: ${e.err}`));
   S.invariants.slice(0, 10).forEach(e => L.push(`  - ${e.run}: ${e.inv.join('; ')}`));
   L.push('', '### Gegenstände, die aus dem Inventar verschwanden (Gegenstand @Phase → Läufe)', '', S.itemRemovals.slice(0, 40).map(([k, v]) => '`' + k + '` ' + v).join(' · ') || '–', '');
+  L.push('## Softlocks (Sackgassen)', '');
+  L.push(`Jeder unentschiedene Lauf (das Lösungsskript fand nach der Störung nicht weiter) wurde vom erreichten Zustand aus mit einer begrenzten Suche über reguläre Spielerhandlungen weitergespielt (Lösungsschritte des Kapitels in der Nähe der Abbruchstelle, Notizen, Dialogwahlen, Kombinationen, Reisen, Rätsel über die sichtbaren Bedienelemente; höchstens 600 Aktionen). Geprüfte Läufe: ${S.softlock.probed}.`, '');
+  L.push('| Einordnung der Sonde | Läufe |', '|---|---|'); Object.entries(S.softlock.classes).sort((x, y) => y[1] - x[1]).forEach(([k, v]) => L.push(`| ${k} | ${v} |`));
+  L.push('', '„kein Softlock“ = von dort aus wurde ein Phasen- oder Kapitelwechsel erreicht. „Fortschritt möglich“ = neue Notiz, neuer Gegenstand, neuer Ort oder neues Story-Flag, aber kein Phasenwechsel im Budget (kein Beweis, Stichproben von Hand geprüft). „Verdacht“ = kein Fortschritt; jeder Verdacht wird einzeln von Hand untersucht.', '');
+  if (S.softlock.suspicions.length) { L.push('Verdachtsfälle (von Hand zu prüfen, Ergebnis in `qa/results/final/TRIAGE.md`):'); S.softlock.suspicions.slice(0, 40).forEach(x => L.push(`- ${x.run}: ${x.cls}, ${JSON.stringify(x.start)} – ${x.reason}`)); L.push(''); }
+  const conf = bugs.filter(b => /Softlock/i.test(b.title)), det = bugs.filter(b => /Umweg|Ausweg|Alternative|nicht angedeutete|kein endgültiger Softlock/i.test((b.effect || '') + ' ' + (b.title || '')));
+  L.push('Einordnung bekannter Stellen:', '');
+  conf.forEach(b => L.push(`- **bestätigter Softlock** – ${b.id} (${b.status}): ${b.title}`));
+  det.forEach(b => L.push(`- **Umweg** – ${b.id} (${b.status}): ${b.title}`));
+  L.push('- **kein Softlock (beabsichtigt)** – Laden während der Überquerung der Straßenbrücke setzt sie zurück; Marko tippt das Westufer erneut an (strassenbr.load).');
+  L.push('- **kein Softlock (beabsichtigt)** – Kühlraum (K1) ist nur in Malas Schein zu sehen („Bleib bei mir“); dunkle Hotspots werden erst im Licht antippbar.', '');
+  if (regress) { L.push('## Regressionstests (`qa/regress/run.js`)', '', `Fassung \`${path.relative(path.join(__dirname, '..'), regress.html)}\`, SHA-256 \`${regress.sha256}\`` + (regressOrig ? `; zum Vergleich gegen die Originalfassung \`${regressOrig.sha256.slice(0, 12)}…\`` : ''), '', '| Test | korrigierte Fassung | Originalfassung | Ergebnis |', '|---|---|---|---|');
+    regress.results.forEach(t => { const o = regressOrig && regressOrig.results.find(x => x.id === t.id); L.push(`| ${t.id} ${t.title} | ${t.ok ? 'bestanden' : '**nicht bestanden**'} | ${o ? (o.ok ? 'bestanden' : 'schlägt fehl (Fehler vorhanden)') : '–'} | ${String(t.detail || '').replace(/\|/g, '/').slice(0, 220)} |`); }); L.push(''); }
+  if (harnessFixes.length) { L.push('## Korrekturen am eigenen Prüfwerkzeug (während der Prüfung gefunden)', ''); harnessFixes.forEach(h => L.push(`- **${h.title}** – ${h.effect} Korrektur: ${h.fix}`)); L.push(''); }
   if (browser) { L.push('## Browser- und Geräteprüfungen', ''); (browser.summaryLines || []).forEach(l => L.push(l)); L.push(''); }
   L.push('## Gefundene Fehler', '');
   if (!bugs.length) L.push('- keine erfasst');

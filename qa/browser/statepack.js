@@ -7,7 +7,7 @@ const { open } = require('../vmdriver'); const C = require('../lib/common'); con
 const out = process.argv[2] || path.join(__dirname, '..', 'results', 'browser', 'states.json');
 // gewünschte Stellen (Teilstring der Schrittbeschriftung) → Name
 const WANT = [
-  [1, /^Start/, 'k1_start'], [1, /Knoten gelöst|Strickheft/, 'k1_ivka'], [1, /Brief klebt/, 'k1_brief'], [1, /Luka bittet um das Lied/, 'k1_luka'], [1, /Bruno|Nachtportier|Palma/, 'k1_bruno'],
+  [1, /^Start/, 'k1_start'], [1, /Knoten gelöst|Strickheft/, 'k1_ivka'], [1, /Brief klebt/, 'k1_brief'], [1, /Luka bittet um das Lied/, 'k1_luka'], [1, /Bruno|Nachtportier|Palma/, 'k1_bruno'], [1, /1948 gefunden/, 'k1_amt'],
   [2, /Prolog|Ankunft|Busbahnhof/, 'k2_start'], [2, /Rätsel|Brief|Fikret/, 'k2_fikret'], [2, /Zwischenwelt|Ivan|Barać/, 'k2_limbo'], [2, /Schutzraum|Zora|Lehrerin/, 'k2_skloniste'],
   [3, /Ankunft|Ostbus/, 'k3_start'], [3, /Peilung 1/, 'k3_peil'], [3, /Glocke|Bato/, 'k3_bato'], [3, /Zwischenwelt/, 'k3_limbo'],
   [4, /Kapitelstart|ZOB/, 'k4_start'], [4, /Mamas Wohnung/, 'k4_wohnung'], [4, /Gleis 11|Gepäckträger/, 'k4_gleis'], [4, /Heim|Gerda/, 'k4_heim'], [4, /Silvester/, 'k4_silvester']

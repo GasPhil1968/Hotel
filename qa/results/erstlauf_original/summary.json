@@ -1,0 +1,2302 @@
+{
+ "meta": {
+  "started": "2026-11-07T12:10:00.137Z",
+  "sha256": "e380ec8b8c796301b2adba8f4a0a06bb3b5ef3168ca9f606a1b28fc7975320d3",
+  "html": "qa/originals/index_original.html",
+  "planned": 4000,
+  "plan": {
+   "A": 1000,
+   "B": 1000,
+   "C": 800,
+   "D": 600,
+   "E": 600
+  },
+  "salt": "erstlauf",
+  "node": "v22.23.4",
+  "workers": 3,
+  "endpoint": "K4 Abspann → Titelbild ohne „Weiter mit Kapitel 5“ (Ende des implementierten Umfangs)",
+  "finished": "2026-11-07T15:42:37.007Z",
+  "started_runs": 4000,
+  "completed": 4000,
+  "counts": {
+   "pass": 3026,
+   "fail": 584,
+   "undecided": 390
+  }
+ },
+ "totals": {
+  "total": 4000,
+  "pass": 3026,
+  "fail": 584,
+  "undecided": 390,
+  "aborted": 0,
+  "infra": 0
+ },
+ "planned": 4000,
+ "started": 4000,
+ "completed": 4000,
+ "byCat": {
+  "A": {
+   "total": 1000,
+   "pass": 1000,
+   "fail": 0,
+   "undecided": 0,
+   "aborted": 0,
+   "infra": 0,
+   "planned": 1000
+  },
+  "B": {
+   "total": 1000,
+   "pass": 729,
+   "fail": 0,
+   "undecided": 271,
+   "aborted": 0,
+   "infra": 0,
+   "planned": 1000
+  },
+  "C": {
+   "total": 800,
+   "pass": 761,
+   "fail": 0,
+   "undecided": 39,
+   "aborted": 0,
+   "infra": 0,
+   "planned": 800
+  },
+  "D": {
+   "total": 600,
+   "pass": 36,
+   "fail": 564,
+   "undecided": 0,
+   "aborted": 0,
+   "infra": 0,
+   "planned": 600
+  },
+  "E": {
+   "total": 600,
+   "pass": 500,
+   "fail": 20,
+   "undecided": 80,
+   "aborted": 0,
+   "infra": 0,
+   "planned": 600
+  }
+ },
+ "byStartCh": {
+  "1": {
+   "total": 1761,
+   "pass": 1511,
+   "fail": 144,
+   "undecided": 106,
+   "aborted": 0,
+   "infra": 0
+  },
+  "2": {
+   "total": 722,
+   "pass": 499,
+   "fail": 133,
+   "undecided": 90,
+   "aborted": 0,
+   "infra": 0
+  },
+  "3": {
+   "total": 743,
+   "pass": 475,
+   "fail": 150,
+   "undecided": 118,
+   "aborted": 0,
+   "infra": 0
+  },
+  "4": {
+   "total": 774,
+   "pass": 541,
+   "fail": 157,
+   "undecided": 76,
+   "aborted": 0,
+   "infra": 0
+  }
+ },
+ "byChapter": {
+  "1": {
+   "played": 1761,
+   "ended": 1651,
+   "failed": 110,
+   "perturbed": 596
+  },
+  "2": {
+   "played": 2373,
+   "ended": 2281,
+   "failed": 92,
+   "perturbed": 583
+  },
+  "3": {
+   "played": 3024,
+   "ended": 2895,
+   "failed": 129,
+   "perturbed": 571
+  },
+  "4": {
+   "played": 3669,
+   "ended": 3583,
+   "failed": 86,
+   "perturbed": 603
+  }
+ },
+ "byVersion": {
+  "e380ec8b8c79": {
+   "total": 4000,
+   "pass": 3026,
+   "fail": 584,
+   "undecided": 390,
+   "aborted": 0,
+   "infra": 0
+  }
+ },
+ "fullFromStart": {
+  "runs": 1761,
+  "reachedEndpoint": 1511,
+  "endpoint": "K4 Abspann → Titelbild ohne „Weiter mit Kapitel 5“ (Ende des implementierten Umfangs)",
+  "avgActions": 1458,
+  "avgScriptSteps": 327,
+  "avgGameMinutes": 480.8,
+  "avgWallS": 11.8
+ },
+ "reachedEndpointAll": 3583,
+ "diversity": {
+  "distinctActionPaths": 2758,
+  "distinctPhaseRoomPaths": 1512,
+  "distinctVariants": 1684,
+  "distinctSeeds": 4000
+ },
+ "coverage": {
+  "rooms": {
+   "covered": 77,
+   "total": 78,
+   "missing": [
+    "map"
+   ]
+  },
+  "roomTransitions": 559,
+  "phases": {
+   "covered": 49,
+   "total": 49,
+   "missing": []
+  },
+  "phaseTransitions": 129,
+  "deductions": {
+   "covered": 47,
+   "total": 91,
+   "missing": [
+    "pro_noone+pro_knit",
+    "pro_spia+pro_red",
+    "c1_ferry+c1_capsized",
+    "c1_ankica+c1_capsized",
+    "c1_aboard+c1_boat7",
+    "c2_echo+c2_meet",
+    "c2_unused+c2_ferry",
+    "c3_zagreb+c3_wanted",
+    "s1_note+s1_clock",
+    "s1_letters+s1_gave",
+    "s2_stamp+s2_fire",
+    "m2_f_clock+m2_photo",
+    "m2_alija+m2_notrams",
+    "m2_f_ninth+m2_housebook",
+    "f2_rcm+m2_split_journal",
+    "l3_m1+l3_m3",
+    "l3_area+l3_current",
+    "l3_down+l3_city",
+    "v3_mala+k3_c_name",
+    "a3_lightroom+a3_slept",
+    "a3_voice+a3_soldier",
+    "b3_zdravko+b3_pencil",
+    "e3_father+e3_kolar",
+    "a3_lightseq+v3_part1",
+    "a3_lightseq+a3_bell3",
+    "s4_derselbe+s4_umschlag",
+    "s4_bunker+s4_umschlag",
+    "s4_bunker+s4_ausweis",
+    "s4_peppino+s4_fluch",
+    "s4_peppino+s4_bairisch",
+    "s4_peppino+s4_enzo",
+    "s4_genommen+s4_ausweis",
+    "s4_genommen+s4_peppino",
+    "g4_drei+g4_gong",
+    "g4_drei+g4_kalt",
+    "g4_gong+g4_kalt",
+    "g4_spaeter+g4_doku",
+    "g4_versuch1+g4_depot",
+    "g4_versuch2+g4_depot",
+    "z4_lesart+z4_kode",
+    "z4_kolar+z4_kode",
+    "z4_ana2004+z4_kolar",
+    "u4_pantoffeln+z4_lesart",
+    "u4_dach+z4_lesart"
+   ]
+  },
+  "hotspots": {
+   "covered": 905,
+   "total": 951
+  },
+  "hotspotVerbs": 6392,
+  "dialogOptions": 2876,
+  "ghostRealizations": {
+   "k4:gerda": 3601,
+   "c1:ivka": 1684,
+   "c2:luka": 1664,
+   "c3:bruno": 1656,
+   "k2:tomaz": 2317,
+   "k2:ivan": 2314,
+   "k2:zora": 2283,
+   "k2:alija": 2283,
+   "k3:mate": 2919,
+   "k3:bato": 2915
+  },
+  "crossings": {
+   "gleis11": 3628,
+   "limbo": 3711,
+   "heim_flur": 3601,
+   "riva": 1688,
+   "ledana": 1670,
+   "salon": 1658,
+   "kula": 2331,
+   "vijecnica": 2316,
+   "skloniste": 2290,
+   "zelenika": 2920,
+   "skela_l": 2899
+  }
+ },
+ "failures": [
+  {
+   "signature": "Save/Load-Abweichung (fresh, K# Schritt #): GS.flags.split.intro.legacy: undefined ≠ true",
+   "count": 288,
+   "examples": [
+    "D-0003",
+    "D-0004",
+    "D-0005",
+    "D-0006",
+    "D-0007",
+    "D-0008"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (same, K# Schritt #): GS.flags.split.intro.legacy: undefined ≠ true",
+   "count": 141,
+   "examples": [
+    "D-0001",
+    "D-0002",
+    "D-0021",
+    "D-0029",
+    "D-0032",
+    "D-0038"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (double, K# Schritt #): GS.flags.split.intro.legacy: undefined ≠ true",
+   "count": 124,
+   "examples": [
+    "D-0000",
+    "D-0014",
+    "D-0015",
+    "D-0016",
+    "D-0023",
+    "D-0033"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum skela_d, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 5,
+   "examples": [
+    "E-0019",
+    "E-0075",
+    "E-0196",
+    "E-0259",
+    "E-0570"
+   ]
+  },
+  {
+   "signature": "Regulärer Pfad gescheitert: FEHLER bei Schritt # Erwartung verfehlt: nicht über der Flamme | ",
+   "count": 4,
+   "examples": [
+    "D-0077",
+    "D-0175",
+    "D-0331",
+    "D-0534"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum gleis#, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 3,
+   "examples": [
+    "E-0239",
+    "E-0386",
+    "E-0418"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum wiesn, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 2,
+   "examples": [
+    "E-0008",
+    "E-0392"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum vulkanizer, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 2,
+   "examples": [
+    "E-0054",
+    "E-0429"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (double, K# Schritt #): GS.flags.mala.noSwitch: true ≠ false | GS.flags.split.intro.legacy: undefined ≠ true | GS.rooms.strassenbr.crossing",
+   "count": 2,
+   "examples": [
+    "D-0379",
+    "D-0594"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (same, K# Schritt #): GS.flags.mala.noSwitch: false ≠ undefined | GS.flags.split.intro.legacy: undefined ≠ true",
+   "count": 2,
+   "examples": [
+    "D-0507",
+    "D-0561"
+   ]
+  },
+  {
+   "signature": "UNHANDLED TypeError: Cannot read properties of undefined (reading 'x')",
+   "count": 1,
+   "examples": [
+    "E-0159"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum kafana, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0205"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum starimost, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0209"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum jwohnung, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0221"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (same, K# Schritt #): GS.flags.mala.noSwitch: true ≠ false | GS.flags.split.intro.legacy: undefined ≠ true | GS.rooms.strassenbr.crossing: ",
+   "count": 1,
+   "examples": [
+    "D-0223"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum heim_flur, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0303"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum heim#, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0323"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum bmission, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0332"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (fresh, K# Schritt #): GS.flags.mala.noSwitch: false ≠ undefined | GS.flags.split.intro.legacy: undefined ≠ true",
+   "count": 1,
+   "examples": [
+    "D-0335"
+   ]
+  },
+  {
+   "signature": "Save/Load-Abweichung (fresh, K# Schritt #): GS.flags.k#.bellsOut: true ≠ false | GS.flags.mala.noSwitch: true ≠ false | GS.flags.k#.bells#: undefined ≠ true | G",
+   "count": 1,
+   "examples": [
+    "D-0376"
+   ]
+  },
+  {
+   "signature": "Aktion hängt: E.acting=# seit # s Spielzeit ohne Szene (Raum skloniste, nach Aktion [#,\"tap\",#,#,\"game\"])",
+   "count": 1,
+   "examples": [
+    "E-0573"
+   ]
+  }
+ ],
+ "undecided": [
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag mala.voice | ",
+   "count": 26,
+   "examples": [
+    "B-0012",
+    "B-0023",
+    "B-0071",
+    "C-0077",
+    "C-0125",
+    "E-0158"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „abend“ nach Schritt #: Erwartung verfehlt: Raum herberge (ist starimost)\n  Zustand: {\"room\":\"starimo",
+   "count": 19,
+   "examples": [
+    "E-0001",
+    "E-0120",
+    "E-0143",
+    "B-0146",
+    "E-0166",
+    "B-0173"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „freitag“ nach Schritt #: Erwartung verfehlt: Raum vulkanizer (ist bulevar)\n  Zustand: {\"room\":\"bulev",
+   "count": 15,
+   "examples": [
+    "B-0074",
+    "E-0116",
+    "B-0163",
+    "C-0221",
+    "E-0237",
+    "B-0242"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum kafana (ist carsija) | ",
+   "count": 12,
+   "examples": [
+    "C-0010",
+    "C-0067",
+    "C-0089",
+    "B-0209",
+    "E-0335",
+    "C-0342"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Zeitüberschreitung: Rätsel | ",
+   "count": 11,
+   "examples": [
+    "B-0007",
+    "B-0027",
+    "B-0032",
+    "B-0108",
+    "B-0245",
+    "B-0424"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Tür: noch nichts, das von ihr erzählt | ",
+   "count": 11,
+   "examples": [
+    "B-0059",
+    "B-0125",
+    "B-0298",
+    "B-0362",
+    "B-0398",
+    "B-0482"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Raum skela_l (ist skela_d)\n  Zustand: {\"room\":\"skela_d\"",
+   "count": 10,
+   "examples": [
+    "B-0057",
+    "E-0071",
+    "E-0139",
+    "C-0153",
+    "E-0395",
+    "E-0458"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „finale“ nach Schritt #: Erwartung verfehlt: Mala gespielt\n  Zustand: {\"room\":\"skela_d\",\"phase\":\"k#_f",
+   "count": 10,
+   "examples": [
+    "E-0226",
+    "B-0252",
+    "B-0413",
+    "B-0558",
+    "E-0580",
+    "B-0633"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum map (ist pansion) | ",
+   "count": 9,
+   "examples": [
+    "C-0028",
+    "B-0122",
+    "C-0355",
+    "B-0443",
+    "E-0447",
+    "C-0481"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum haustor (ist map) | ",
+   "count": 9,
+   "examples": [
+    "B-0058",
+    "E-0269",
+    "C-0302",
+    "C-0331",
+    "B-0437",
+    "B-0519"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „samstag_nacht“ nach Schritt #: Erwartung verfehlt: Raum zimmer (ist skela_d)\n  Zustand: {\"room\":\"ske",
+   "count": 8,
+   "examples": [
+    "C-0042",
+    "C-0050",
+    "E-0265",
+    "B-0488",
+    "C-0614",
+    "B-0615"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum skloniste (ist neboder) | ",
+   "count": 8,
+   "examples": [
+    "B-0050",
+    "E-0289",
+    "E-0298",
+    "E-0407",
+    "E-0508",
+    "E-0591"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Sanja ist beschäftigt | ",
+   "count": 7,
+   "examples": [
+    "B-0140",
+    "B-0249",
+    "B-0436",
+    "B-0457",
+    "E-0544",
+    "B-0630"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „samstag“ nach Schritt #: Zeitüberschreitung: Auswahl „Ich komme mit“ | ",
+   "count": 6,
+   "examples": [
+    "E-0084",
+    "E-0288",
+    "B-0313",
+    "B-0316",
+    "B-0369",
+    "B-0692"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Notizbuch zeigt die Notiz der Stadt und das Strickheft zum Verbinden: n:pro_peopl",
+   "count": 6,
+   "examples": [
+    "B-0119",
+    "B-0132",
+    "B-0239",
+    "B-0284",
+    "B-0310",
+    "B-0582"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „donnerstag“ nach Schritt #: Erwartung verfehlt: Raum heim_flur (ist heim)\n  Zustand: {\"room\":\"heim\",",
+   "count": 5,
+   "examples": [
+    "E-0009",
+    "B-0201",
+    "B-0312",
+    "B-0597",
+    "B-0752"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Raum vulkanizer (ist bulevar)\n  Zustand: {\"room\":\"bulev",
+   "count": 5,
+   "examples": [
+    "B-0029",
+    "B-0181",
+    "C-0189",
+    "C-0500",
+    "C-0530"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.done | ",
+   "count": 5,
+   "examples": [
+    "B-0038",
+    "B-0089",
+    "E-0231",
+    "B-0375",
+    "B-0821"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Zeitüberschreitung: Morgen | ",
+   "count": 5,
+   "examples": [
+    "B-0044",
+    "E-0132",
+    "E-0236",
+    "B-0267",
+    "B-0805"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum tramvaj (ist carsija) | ",
+   "count": 5,
+   "examples": [
+    "B-0193",
+    "B-0238",
+    "B-0319",
+    "B-0648",
+    "B-0758"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „finale“ nach Schritt #: Erwartung verfehlt: Raum skela_most (ist skela_l)\n  Zustand: {\"room\":\"skela_",
+   "count": 5,
+   "examples": [
+    "B-0273",
+    "B-0571",
+    "B-0572",
+    "B-0624",
+    "B-0994"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Flag k#.s#.selma | ",
+   "count": 5,
+   "examples": [
+    "B-0315",
+    "B-0380",
+    "B-0456",
+    "B-0589",
+    "B-0881"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Notiz s#_deskkey | ",
+   "count": 5,
+   "examples": [
+    "B-0378",
+    "B-0430",
+    "B-0845",
+    "B-0900",
+    "B-0973"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.tonight | ",
+   "count": 4,
+   "examples": [
+    "B-0001",
+    "B-0004",
+    "B-0266",
+    "B-0808"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Notiz s#_bitte\n  Zustand: {\"room\":\"gleis#\",\"phase\":\"k#",
+   "count": 4,
+   "examples": [
+    "B-0005",
+    "B-0031",
+    "B-0265",
+    "B-0727"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „silvester“ nach Schritt #: Erwartung verfehlt: Raum heim_flur (ist jhaus)\n  Zustand: {\"room\":\"jhaus\"",
+   "count": 4,
+   "examples": [
+    "E-0031",
+    "B-0474",
+    "E-0514",
+    "B-0827"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „silvester“ nach Schritt #: Erwartung verfehlt: zurück bei Marko\n  Zustand: {\"room\":\"ana\",\"phase\":\"k#",
+   "count": 4,
+   "examples": [
+    "B-0043",
+    "E-0380",
+    "B-0434",
+    "B-0607"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Gegenstand aushang\n  Zustand: {\"room\":\"jwohnung\",\"phas",
+   "count": 4,
+   "examples": [
+    "B-0060",
+    "B-0388",
+    "B-0529",
+    "B-0618"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.release | ",
+   "count": 4,
+   "examples": [
+    "B-0073",
+    "B-0077",
+    "B-0353",
+    "B-0629"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum kafana (ist limbo) | ",
+   "count": 4,
+   "examples": [
+    "B-0110",
+    "B-0387",
+    "B-0611",
+    "B-0649"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „prolog“ nach Schritt #: Erwartung verfehlt: Schalter k#.p.src=\"dino\" (ist \"abutment\")\n  Zustand: {\"r",
+   "count": 4,
+   "examples": [
+    "B-0340",
+    "E-0480",
+    "B-0530",
+    "B-0834"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „heiligabend“ nach Schritt #: Erwartung verfehlt: Raum jwohnung (ist ana)\n  Zustand: {\"room\":\"ana\",\"p",
+   "count": 4,
+   "examples": [
+    "B-0491",
+    "E-0500",
+    "B-0531",
+    "B-0972"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „prolog“ nach Schritt #: drive (Klopfen): das Spiel wartet, aber die Bedingung ist nicht erfüllt\n  Zu",
+   "count": 3,
+   "examples": [
+    "E-0025",
+    "B-0063",
+    "B-0854"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Notiz s#_carmela_hall\n  Zustand: {\"room\":\"bunker\",\"pha",
+   "count": 3,
+   "examples": [
+    "B-0053",
+    "E-0168",
+    "E-0572"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: zurück an der Rampe | ",
+   "count": 3,
+   "examples": [
+    "B-0083",
+    "B-0408",
+    "B-0626"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum map (ist limbo) | ",
+   "count": 3,
+   "examples": [
+    "B-0120",
+    "B-0229",
+    "B-0296"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Flag k#.p#.back | ",
+   "count": 3,
+   "examples": [
+    "B-0175",
+    "B-0199",
+    "B-0780"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Schalter k#.g.hall (ist undefined)\n  Zustand: {\"room\":",
+   "count": 3,
+   "examples": [
+    "B-0241",
+    "E-0342",
+    "B-0463"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „samstag“ nach Schritt #: Erwartung verfehlt: Raum westbus (ist bulevar)\n  Zustand: {\"room\":\"bulevar\"",
+   "count": 3,
+   "examples": [
+    "B-0259",
+    "B-0260",
+    "B-0595"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Notiz p#_rade_ruza | ",
+   "count": 3,
+   "examples": [
+    "C-0265",
+    "C-0303",
+    "E-0490"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „freitag“ nach Schritt #: Zeitüberschreitung: drüben | ",
+   "count": 3,
+   "examples": [
+    "B-0276",
+    "B-0547",
+    "B-0785"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „freitag“ nach Schritt #: Erwartung verfehlt: Schalter k#.b.promise (ist undefined)\n  Zustand: {\"room",
+   "count": 3,
+   "examples": [
+    "B-0341",
+    "B-0400",
+    "B-0883"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: drive (Versuch #): das Spiel wartet, aber die Bedingung ist nicht erfüllt\n",
+   "count": 3,
+   "examples": [
+    "B-0394",
+    "B-0538",
+    "B-0539"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Notiz c#_askoffice | ",
+   "count": 3,
+   "examples": [
+    "B-0512",
+    "B-0700",
+    "B-0803"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Schalter k#.b.invite (ist undefined)\n  Zustand: {\"room\"",
+   "count": 2,
+   "examples": [
+    "B-0003",
+    "B-0258"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „freitag“ nach Schritt #: Erwartung verfehlt: Schalter k#.bellsOut (ist false)\n  Zustand: {\"room\":\"pa",
+   "count": 2,
+   "examples": [
+    "C-0017",
+    "B-0580"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.logRead | ",
+   "count": 2,
+   "examples": [
+    "E-0026",
+    "E-0522"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum ostava (ist limbo) | ",
+   "count": 2,
+   "examples": [
+    "B-0041",
+    "B-0620"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Flag k#.s#.free | ",
+   "count": 2,
+   "examples": [
+    "B-0046",
+    "B-0112"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: erst Sanja, dann Varoš | ",
+   "count": 2,
+   "examples": [
+    "B-0048",
+    "B-0406"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Gegenstand key_ivka | ",
+   "count": 2,
+   "examples": [
+    "B-0054",
+    "B-0475"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum bunker (ist jschlaf)\n  Zustand: {\"room\":\"jschlaf\"",
+   "count": 2,
+   "examples": [
+    "B-0076",
+    "B-0986"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist zob)\n  Zustand: {\"room\":\"zob\",\"phase\"",
+   "count": 2,
+   "examples": [
+    "B-0080",
+    "B-0801"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist friedamt)\n  Zustand: {\"room\":\"friedam",
+   "count": 2,
+   "examples": [
+    "E-0095",
+    "E-0176"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Mala übernimmt\n  Zustand: {\"room\":\"zelenika\",\"phase\":\"k",
+   "count": 2,
+   "examples": [
+    "E-0103",
+    "E-0217"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „freitag“ nach Schritt #: Erwartung verfehlt: Notiz v#_drawer\n  Zustand: {\"room\":\"bulevar\",\"phase\":\"k",
+   "count": 2,
+   "examples": [
+    "E-0110",
+    "E-0485"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Notiz g#_gerda\n  Zustand: {\"room\":\"bunker\",\"phase\":\"k",
+   "count": 2,
+   "examples": [
+    "E-0122",
+    "B-0338"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „epilog“ nach Schritt #: Erwartung verfehlt: Raum skela_l (ist vermisst)\n  Zustand: {\"room\":\"vermisst",
+   "count": 2,
+   "examples": [
+    "B-0128",
+    "C-0328"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Zeitüberschreitung: settle | ",
+   "count": 2,
+   "examples": [
+    "B-0166",
+    "B-0453"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.gone | ",
+   "count": 2,
+   "examples": [
+    "E-0220",
+    "E-0320"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag_abend“ nach Schritt #: Erwartung verfehlt: Raum jschlaf (ist jhaus)\n  Zustand: {\"room\":\"jh",
+   "count": 2,
+   "examples": [
+    "B-0231",
+    "B-0939"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum carsija (ist neboder) | ",
+   "count": 2,
+   "examples": [
+    "B-0240",
+    "B-0756"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „silvester“ nach Schritt #: Erwartung verfehlt: Schalter k#.fin.ride=\"davor\" (ist \"walk\")\n  Zustand: ",
+   "count": 2,
+   "examples": [
+    "C-0274",
+    "B-0536"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Archiv | ",
+   "count": 2,
+   "examples": [
+    "E-0299",
+    "E-0409"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „prolog“ nach Schritt #: Erwartung verfehlt: Schalter k#.p.objection (ist undefined)\n  Zustand: {\"roo",
+   "count": 2,
+   "examples": [
+    "B-0348",
+    "B-0477"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum vijecnica (ist limbo) | ",
+   "count": 2,
+   "examples": [
+    "B-0379",
+    "B-0472"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist wiesn)\n  Zustand: {\"room\":\"wiesn\",\"ph",
+   "count": 2,
+   "examples": [
+    "E-0440",
+    "B-0934"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Gegenstand nicht im Inventar: brot",
+   "count": 2,
+   "examples": [
+    "B-0499",
+    "B-0862"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „finale“ nach Schritt #: Erwartung verfehlt: Raum herberge (ist starimost)\n  Zustand: {\"room\":\"starim",
+   "count": 2,
+   "examples": [
+    "E-0539",
+    "C-0729"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: erst die Riva | ",
+   "count": 2,
+   "examples": [
+    "B-0694",
+    "B-0744"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Mala abwesend: Aufwachen ",
+   "count": 2,
+   "examples": [
+    "B-0712",
+    "B-0895"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag pro.translated | ",
+   "count": 1,
+   "examples": [
+    "B-0035"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum ana (ist limbo)\n  Zustand: {\"room\":\"limbo\",\"phase",
+   "count": 1,
+   "examples": [
+    "B-0037"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Mala aktiv | ",
+   "count": 1,
+   "examples": [
+    "B-0084"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Raum bmission (ist jwohnung)\n  Zustand: {\"room\":\"jwoh",
+   "count": 1,
+   "examples": [
+    "B-0091"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Notiz c#_brother | ",
+   "count": 1,
+   "examples": [
+    "B-0092"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „freitag“ nach Schritt #: Erwartung verfehlt: Raum vhof (ist herberge)\n  Zustand: {\"room\":\"herberge\",",
+   "count": 1,
+   "examples": [
+    "B-0100"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist wiesn)\n  Zustand: {\"room\":\"wiesn\",\"ph",
+   "count": 1,
+   "examples": [
+    "B-0116"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „prolog“ nach Schritt #: Erwartung verfehlt: Raum jschlaf (ist jwohnung)\n  Zustand: {\"room\":\"jwohnung",
+   "count": 1,
+   "examples": [
+    "B-0137"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum heim# (ist bunker)\n  Zustand: {\"room\":\"bunker\",\"p",
+   "count": 1,
+   "examples": [
+    "B-0155"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum limbo (ist bunker)\n  Zustand: {\"room\":\"bunker\",\"p",
+   "count": 1,
+   "examples": [
+    "E-0186"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Notiz pro_red | ",
+   "count": 1,
+   "examples": [
+    "B-0196"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „silvester“ nach Schritt #: Erwartung verfehlt: zurück bei Marko\n  Zustand: {\"room\":\"heim\",\"phase\":\"k",
+   "count": 1,
+   "examples": [
+    "B-0211"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Wohnung | ",
+   "count": 1,
+   "examples": [
+    "E-0211"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „samstag_nacht“ nach Schritt #: Erwartung verfehlt: Raum skela_d (ist herberge)\n  Zustand: {\"room\":\"h",
+   "count": 1,
+   "examples": [
+    "B-0212"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist ana)\n  Zustand: {\"room\":\"ana\",\"phase\"",
+   "count": 1,
+   "examples": [
+    "E-0283"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag_abend“ nach Schritt #: Zeitüberschreitung: Dienstag | ",
+   "count": 1,
+   "examples": [
+    "E-0305"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist heim)\n  Zustand: {\"room\":\"heim\",\"phas",
+   "count": 1,
+   "examples": [
+    "B-0309"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum gleis# (ist heim)\n  Zustand: {\"room\":\"heim\",\"phas",
+   "count": 1,
+   "examples": [
+    "B-0323"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Notiz a#_pencil\n  Zustand: {\"room\":\"skela_l\",\"phase\":\"k",
+   "count": 1,
+   "examples": [
+    "B-0363"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Notiz c#_meet | ",
+   "count": 1,
+   "examples": [
+    "B-0381"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Nacht | ",
+   "count": 1,
+   "examples": [
+    "B-0417"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Raum bmission (ist limbo)\n  Zustand: {\"room\":\"limbo\",",
+   "count": 1,
+   "examples": [
+    "B-0419"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Gegenstand kljuc_mate\n  Zustand: {\"room\":\"zelenika\",\"ph",
+   "count": 1,
+   "examples": [
+    "B-0444"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Raum heim (ist map)\n  Zustand: {\"room\":\"map\",\"phase\":",
+   "count": 1,
+   "examples": [
+    "B-0490"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Schalter k#.b.son (ist undefined)\n  Zustand: {\"room\":\"l",
+   "count": 1,
+   "examples": [
+    "B-0503"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: genaues Detail im Nachruf | ",
+   "count": 1,
+   "examples": [
+    "B-0540"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „abend“ nach Schritt #: Zeitüberschreitung: Auswahl „Versprochen.“ | ",
+   "count": 1,
+   "examples": [
+    "B-0550"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „samstag_nacht“ nach Schritt #: Erwartung verfehlt: Schalter k#.n#.rung (ist undefined)\n  Zustand: {\"",
+   "count": 1,
+   "examples": [
+    "B-0555"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Zwischenwelt (Bruno) | ",
+   "count": 1,
+   "examples": [
+    "B-0556"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Halle | ",
+   "count": 1,
+   "examples": [
+    "B-0561"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Gegenstand nicht im Inventar: letters_tz",
+   "count": 1,
+   "examples": [
+    "B-0563"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Notiz s#_bairisch\n  Zustand: {\"room\":\"limbo\",\"phase\":",
+   "count": 1,
+   "examples": [
+    "B-0587"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Gegenstand aushang\n  Zustand: {\"room\":\"heim\",\"phase\":\"",
+   "count": 1,
+   "examples": [
+    "B-0590"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum heim (ist map)\n  Zustand: {\"room\":\"map\",\"phase\":\"",
+   "count": 1,
+   "examples": [
+    "B-0592"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum carsija (ist stanica) | ",
+   "count": 1,
+   "examples": [
+    "E-0594"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „abend“ nach Schritt #: Erwartung verfehlt: Schalter k#.p.springer (ist undefined)\n  Zustand: {\"room\"",
+   "count": 1,
+   "examples": [
+    "E-0595"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Schalter k#.b.limbo (ist undefined)\n  Zustand: {\"room\":",
+   "count": 1,
+   "examples": [
+    "B-0598"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „finale“ nach Schritt #: Erwartung verfehlt: Marko gespielt\n  Zustand: {\"room\":\"skela_l\",\"phase\":\"k#_",
+   "count": 1,
+   "examples": [
+    "B-0666"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Raum kula (ist limbo) | ",
+   "count": 1,
+   "examples": [
+    "B-0674"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Gegenstand nicht im Inventar: keyring",
+   "count": 1,
+   "examples": [
+    "B-0702"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.lukaKnows | ",
+   "count": 1,
+   "examples": [
+    "B-0714"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „sonntag“ nach Schritt #: Erwartung verfehlt: Raum zelenika (ist limbo)\n  Zustand: {\"room\":\"limbo\",\"p",
+   "count": 1,
+   "examples": [
+    "B-0719"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum ana (ist map)\n  Zustand: {\"room\":\"map\",\"phase\":\"k",
+   "count": 1,
+   "examples": [
+    "B-0721"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH: Erwartung verfehlt: Flag k#.s#.ostavaOpen | ",
+   "count": 1,
+   "examples": [
+    "B-0724"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „mittwoch“ nach Schritt #: drive (Carmela): das Spiel wartet, aber die Bedingung ist nicht erfüllt\n  ",
+   "count": 1,
+   "examples": [
+    "B-0792"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Notiz s#_peppino\n  Zustand: {\"room\":\"gleis#\",\"phase\":",
+   "count": 1,
+   "examples": [
+    "B-0799"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „samstag“ nach Schritt #: Erwartung verfehlt: Raum zelenika (ist map)\n  Zustand: {\"room\":\"map\",\"phase",
+   "count": 1,
+   "examples": [
+    "B-0863"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „christtag“ nach Schritt #: Erwartung verfehlt: Notiz s#_genommen\n  Zustand: {\"room\":\"jwohnung\",\"phas",
+   "count": 1,
+   "examples": [
+    "B-0864"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „silvester“ nach Schritt #: drive (Bleigießen): das Spiel wartet, aber die Bedingung ist nicht erfüll",
+   "count": 1,
+   "examples": [
+    "B-0875"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „prolog“ nach Schritt #: Erwartung verfehlt: Notiz l#_onearch\n  Zustand: {\"room\":\"starimost\",\"phase\":",
+   "count": 1,
+   "examples": [
+    "B-0907"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag c#.dinkoTold | ",
+   "count": 1,
+   "examples": [
+    "B-0921"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Flag mk.test | ",
+   "count": 1,
+   "examples": [
+    "B-0928"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Notiz c#_gap | ",
+   "count": 1,
+   "examples": [
+    "B-0945"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Notiz g#_kalt\n  Zustand: {\"room\":\"jwohnung\",\"phase\":\"k",
+   "count": 1,
+   "examples": [
+    "B-0957"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Erwartung verfehlt: Kühlraum (Mala) | ",
+   "count": 1,
+   "examples": [
+    "B-0974"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: ABBRUCH in Abschnitt „dienstag“ nach Schritt #: Erwartung verfehlt: Raum bmission (ist limbo)\n  Zustand: {\"room\":\"limbo\",\"",
+   "count": 1,
+   "examples": [
+    "B-0977"
+   ]
+  },
+  {
+   "signature": "Fortsetzung nach Störung gescheitert: FEHLER bei Schritt # Gegenstand nicht im Inventar: tickets",
+   "count": 1,
+   "examples": [
+    "B-0978"
+   ]
+  }
+ ],
+ "infra": [],
+ "exceptions": [
+  {
+   "run": "E-0159",
+   "err": "UNHANDLED TypeError: Cannot read properties of undefined (reading 'x')"
+  }
+ ],
+ "invariants": [
+  {
+   "run": "E-0008",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum wiesn, nach Aktion [1931200,\"tap\",283,15,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0019",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum skela_d, nach Aktion [4803200,\"tap\",1,97,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0054",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum vulkanizer, nach Aktion [5275200,\"tap\",11,25,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0075",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum skela_d, nach Aktion [4518000,\"tap\",301,37,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0196",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum skela_d, nach Aktion [3824000,\"tap\",1,91,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0205",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum kafana, nach Aktion [1380800,\"tap\",69,38,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0209",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum starimost, nach Aktion [772800,\"tap\",0,13,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0221",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum jwohnung, nach Aktion [1597200,\"tap\",19,28,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0239",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum gleis11, nach Aktion [3990800,\"tap\",283,15,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0259",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum skela_d, nach Aktion [3775200,\"tap\",1,91,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0303",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum heim_flur, nach Aktion [5562400,\"tap\",287,35,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0323",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum heim214, nach Aktion [5683600,\"tap\",171,41,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0332",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum bmission, nach Aktion [3640000,\"tap\",1,57,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0386",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum gleis11, nach Aktion [3554400,\"tap\",1,1,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0392",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum wiesn, nach Aktion [1942000,\"tap\",1,57,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0418",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum gleis11, nach Aktion [3607200,\"tap\",283,15,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0429",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum vulkanizer, nach Aktion [5669200,\"tap\",11,25,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0570",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum skela_d, nach Aktion [3857600,\"tap\",1,91,\"game\"])"
+   ]
+  },
+  {
+   "run": "E-0573",
+   "inv": [
+    "Aktion hängt: E.acting=1 seit 120 s Spielzeit ohne Szene (Raum skloniste, nach Aktion [3781600,\"tap\",1,7,\"game\"])"
+   ]
+  }
+ ],
+ "saveLoad": {
+  "points": 1333,
+  "saved": 1300,
+  "refused": 33,
+  "compared": 1300,
+  "equal": 497,
+  "mismatches": [
+   {
+    "run": "D-0000",
+    "mode": "double",
+    "ch": 4,
+    "step": 58,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0001",
+    "mode": "same",
+    "ch": 2,
+    "step": 48,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0001",
+    "mode": "same",
+    "ch": 3,
+    "step": 39,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0001",
+    "mode": "same",
+    "ch": 4,
+    "step": 82,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0002",
+    "mode": "same",
+    "ch": 2,
+    "step": 30,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0002",
+    "mode": "double",
+    "ch": 3,
+    "step": 89,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0002",
+    "mode": "double",
+    "ch": 4,
+    "step": 58,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0003",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 6,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0004",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 58,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0005",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 37,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0006",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 34,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0007",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 44,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0008",
+    "mode": "fresh",
+    "ch": 2,
+    "step": 24,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0008",
+    "mode": "same",
+    "ch": 4,
+    "step": 6,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0009",
+    "mode": "fresh",
+    "ch": 3,
+    "step": 47,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0010",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 38,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0011",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 6,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0012",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 15,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0013",
+    "mode": "fresh",
+    "ch": 4,
+    "step": 29,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   },
+   {
+    "run": "D-0014",
+    "mode": "double",
+    "ch": 3,
+    "step": 28,
+    "diff": [
+     "GS.flags.split.intro.legacy: undefined ≠ true"
+    ]
+   }
+  ],
+  "byMode": {
+   "double": 321,
+   "same": 314,
+   "fresh": 698
+  }
+ },
+ "perturbations": {
+  "total": 6381,
+  "skippedNotCalm": 457,
+  "returnedToAnchor": 4227,
+  "notReturned": 343,
+  "actions": 131062
+ },
+ "itemRemovals": [
+  [
+   "vanilice @k4_pro",
+   3666
+  ],
+  [
+   "brot @k4_d1",
+   3652
+  ],
+  [
+   "kanne @k4_d4",
+   3596
+  ],
+  [
+   "gloves @c1_night",
+   3365
+  ],
+  [
+   "kljuc_mate @k3_d3",
+   2919
+  ],
+  [
+   "ulaznica @k3_fin_n",
+   2915
+  ],
+  [
+   "deka @k3_fin_n",
+   2915
+  ],
+  [
+   "brief1996 @k3_epi_d",
+   2897
+  ],
+  [
+   "skizzenbuch @k3_epi_d",
+   2897
+  ],
+  [
+   "formular @k3_epi_d",
+   2895
+  ],
+  [
+   "rueckfahrt @k3_epi_d",
+   2895
+  ],
+  [
+   "km @k4_pro",
+   2895
+  ],
+  [
+   "plan @k4_pro",
+   2895
+  ],
+  [
+   "tramkarta @k2_pro",
+   2366
+  ],
+  [
+   "lejla_letter @k2_s1",
+   2338
+  ],
+  [
+   "letters_tz @k2_s1",
+   2320
+  ],
+  [
+   "bracelet @k2_s1",
+   2320
+  ],
+  [
+   "note_e @k2_s1_n",
+   2316
+  ],
+  [
+   "rilke @k2_s2_n",
+   2314
+  ],
+  [
+   "kurrent @k2_i",
+   2312
+  ],
+  [
+   "pass @k2_i",
+   2312
+  ],
+  [
+   "deskkey @k2_s3",
+   2297
+  ],
+  [
+   "pecat @k2_s3",
+   2283
+  ],
+  [
+   "svjedocanstva @k2_s3_n",
+   2283
+  ],
+  [
+   "dnevnik @k2_fin",
+   2283
+  ],
+  [
+   "karton @k2_fin",
+   2283
+  ],
+  [
+   "photo_m @k2_fin",
+   2283
+  ],
+  [
+   "ticket_m @k2_fin_n",
+   2283
+  ],
+  [
+   "ticket_l @k2_fin_n",
+   2283
+  ],
+  [
+   "olovka @k2_epi",
+   2283
+  ],
+  [
+   "km @k2_epi",
+   2283
+  ],
+  [
+   "tramkarta_v @k2_epi",
+   2283
+  ],
+  [
+   "photo_stop @k2_epi",
+   2283
+  ],
+  [
+   "chisel @k2_epi",
+   2283
+  ],
+  [
+   "key_shelter @k2_epi",
+   2283
+  ],
+  [
+   "sweater @k2_epi",
+   2283
+  ],
+  [
+   "ashpage @k2_epi",
+   2283
+  ],
+  [
+   "drawing @k2_epi",
+   2283
+  ],
+  [
+   "key_kuca @k2_epi",
+   2283
+  ],
+  [
+   "rcm @k2_epi",
+   2281
+  ],
+  [
+   "busticket2 @k3_pro",
+   2281
+  ],
+  [
+   "dzezva @pro",
+   1760
+  ],
+  [
+   "dzezvaW @pro",
+   1760
+  ],
+  [
+   "needle @pro",
+   1749
+  ],
+  [
+   "key_ivka @pro",
+   1732
+  ],
+  [
+   "glass @c1",
+   1702
+  ],
+  [
+   "glassW @c1",
+   1702
+  ],
+  [
+   "dzezva @c1_night",
+   1687
+  ],
+  [
+   "dzezvaW @c1_night",
+   1687
+  ],
+  [
+   "postcard @c2",
+   1673
+  ],
+  [
+   "photo1 @c2",
+   1673
+  ],
+  [
+   "letter_t @c2",
+   1673
+  ],
+  [
+   "newspaper @c2",
+   1670
+  ],
+  [
+   "radio @c2",
+   1670
+  ],
+  [
+   "batteries @c2",
+   1670
+  ],
+  [
+   "cassette @c2",
+   1670
+  ],
+  [
+   "radioB @c2",
+   1670
+  ],
+  [
+   "spatula @c2",
+   1670
+  ],
+  [
+   "note_n @c2",
+   1668
+  ],
+  [
+   "radioT @c2_night",
+   1664
+  ],
+  [
+   "tickets @c2_night",
+   1662
+  ],
+  [
+   "ticket_n @c2_night",
+   1661
+  ],
+  [
+   "crowbar @c3",
+   1661
+  ],
+  [
+   "radioB @c3",
+   1661
+  ],
+  [
+   "crank @c3_night",
+   1658
+  ],
+  [
+   "record @c3_night",
+   1658
+  ],
+  [
+   "envelope @c3_night",
+   1656
+  ],
+  [
+   "brunoletter @c3_night",
+   1656
+  ],
+  [
+   "keyring @c3_night",
+   1656
+  ],
+  [
+   "documents @epi",
+   1656
+  ],
+  [
+   "photo2 @epi",
+   1656
+  ],
+  [
+   "musicbook @epi",
+   1656
+  ],
+  [
+   "fee @epi",
+   1655
+  ],
+  [
+   "busticket @k2_pro",
+   1651
+  ],
+  [
+   "dzezva @k3_d2_n",
+   3
+  ],
+  [
+   "dzezva @k3_epi",
+   2
+  ],
+  [
+   "zvono @k2_fin",
+   2
+  ],
+  [
+   "zvono @k2_s3_n",
+   2
+  ],
+  [
+   "tickets @c2",
+   1
+  ],
+  [
+   "dzezva @k3_d1_n",
+   1
+  ]
+ ],
+ "bugs": [
+  {
+   "id": "BUG-001",
+   "severity": "niedrig",
+   "status": "behoben",
+   "title": "Laden eines Stands aus Kapitel 2–4 setzt die Kapitel-1-Altstandsmarke split.intro.legacy",
+   "cause": "M.migrateSave (game/src/90_story.js) wertet jeden Stand ohne split.intro.v als alten Kapitel-1-Stand. Kapitel 2–4 setzen split.intro.v nie.",
+   "effect": "Zustandsverfälschung bei jedem Laden in K2–K4 (bei i1.done zusätzlich split.afterIvka.done). Alle Leser der Marke sind an K1-Phasen gebunden; eine sichtbare Folge wurde nicht gefunden.",
+   "fix": "Migration nur für Stände aus Kapitel 1 (M.chapterOf(G) > 1 → zurück).",
+   "repro": "Kapitel 2, 3 oder 4 neu beginnen, Menü → Speichern, Spiel neu starten, Fortsetzen: GS.flags['split.intro.legacy'] === true.",
+   "evidence": [
+    "qa/regress/bug_001_legacy_flag.js",
+    "Erstlauf Kategorie D (Save/Load-Abweichung)"
+   ]
+  },
+  {
+   "id": "BUG-002",
+   "severity": "niedrig",
+   "status": "behoben",
+   "title": "Figurenwechsel, während die Figur zu einem Hotspot geht und der Wechsel einen anderen Raum lädt, lässt die Aktion ewig offen",
+   "cause": "placeActors()/placePlayers() (game/src/05_engine.js) entfernen Spielerfiguren aus ACT, ohne deren laufendes Weg-Versprechen (a.res) aufzulösen; approach() wartet für immer, doVerb() endet nie, E.acting bleibt > 0.",
+   "effect": "Hängender Aktionszähler und nie endende asynchrone Aktion. Im Spiel wirkt E.acting nur in der Kapitel-1-Stimmenphase (Umgebungssätze, Hinweis im Hafenamt werden unterdrückt). Über die Oberfläche erreichbar (Tipp auf Hotspot, dann auf das Porträt).",
+   "fix": "Beim Entfernen einer gehenden Spielerfigur cancelRes(a) aufrufen (der Weg endet als abgebrochen, wie bei einem neuen Klick).",
+   "repro": "Kapitel 4, Christtag: Mala allein am Gleis 11, Marko auf der Wiesn. Als Mala den Baum antippen → „Schau an“, sofort auf Markos Porträt tippen → E.acting bleibt 1.",
+   "evidence": [
+    "qa/regress/bug_002_dangling_walk.js",
+    "Browser C13a (Original, per Klick reproduziert) / C13b (korrigiert)"
+   ]
+  },
+  {
+   "id": "BUG-003",
+   "severity": "mittel",
+   "status": "behoben",
+   "title": "Verkochtes Wasser: Die Džezva verschwindet, der Herdweg zum verklebten Brief ist zu, alle Hinweise verweisen weiter darauf",
+   "cause": "boilWater() verbraucht 'dzezvaW', die Džezva bleibt als 'genommen' markiert, der Dampf hält 45 s Spielzeit. Läuft er ab, ohne dass der Brief darübergehalten wurde, kehrt die Džezva nie zurück (game/src/rooms/flat.js).",
+   "effect": "Unbeabsichtigter Gegenstandsverlust. Der Fall bleibt nur über die nicht angedeutete Alternative (Sanjas Espressomaschine) lösbar; die vier Hinweisstufen nennen ausschließlich den verschlossenen Weg. Kein endgültiger Softlock.",
+   "fix": "Raum-Tick: Ist der Dampf vorbei und die Džezva weder im Inventar noch gefüllt, steht sie leer wieder auf dem Herd.",
+   "repro": "Kapitel 1, nach „Brief klebt“: Wohnung, Džezva nehmen, an der Spüle füllen, auf den Herd; mehr als 45 s Spielzeit anderes tun; Brief am Herd → „Direkt über die Flamme?“, Džezva nirgends.",
+   "evidence": [
+    "qa/regress/bug_003_dzezva_lost.js"
+   ]
+  },
+  {
+   "id": "BUG-004",
+   "severity": "mittel",
+   "status": "behoben",
+   "title": "Spielzeit-Stempel im Spielstand: Nach Laden in einem frischen Kontext gilt alter Dampf als frisch – der verklebte Brief öffnet sich am kalten Herd",
+   "cause": "S.steam (und S.nudge) sind Zeitpunkte der laufenden Spielzeit gt, werden aber mitgespeichert. gt beginnt nach einem Neustart bei 0; loadData löschte nur ferryAt/ferryGo/radioT.",
+   "effect": "Rätsel „Dampf“ wird nach Neustart/Laden übersprungen (Stempel vom Prolog-Kaffee), Stimmen-Hinweis im Hafenamt bleibt nach Neustart lange stumm.",
+   "fix": "steam und nudge zu den Sitzungsstempeln, die beim Laden entfernt werden (game/src/05_engine.js).",
+   "repro": "Kapitel 1 bis „Brief klebt“ spielen, Menü → Speichern, neuer Browserkontext → Fortsetzen, Wohnung, Brief am Herd benutzen → geöffnet, ohne Wasser aufzusetzen.",
+   "evidence": [
+    "qa/regress/bug_004_stale_steam.js",
+    "Erstlauf D-Lauf mit Abbruch „nicht über der Flamme“"
+   ]
+  },
+  {
+   "id": "BUG-005",
+   "severity": "mittel",
+   "status": "behoben",
+   "title": "Kapitel 2: Emina wird bei ihrer Rückkehr angekündigt, ist aber unsichtbar und nicht ansprechbar",
+   "cause": "Die Rückkehr-Szene in kafana.enter setzt k2.s1.eminaBack erst nach dem Aufbau der Figurenliste; A.rebuild() zeichnet nur den Hintergrund neu.",
+   "effect": "Nach „Emina. Zurück von Tante Sabira.“ steht niemand an der Theke; der nächste Pflichtschritt (Briefe geben) ist erst nach Verlassen und erneutem Betreten der Kafana möglich. Die Test-API sprach die unsichtbare Figur trotzdem an – nur der Klick-Durchlauf deckte es auf.",
+   "fix": "In der Szene Emina erzeugen, wie actors() es tut (A.spawn), falls sie noch fehlt.",
+   "repro": "Kapitel 2, Fall 1: im Lager mit dem Meißel die Briefe holen, in die Kafana zurück → Emina nicht sichtbar.",
+   "evidence": [
+    "qa/regress/bug_005_emina_invisible.js",
+    "qa/uireach.js (results/uireach_original.json)",
+    "UI-Volldurchlauf Chromium/Desktop (Abbruch Eintrag 650 vor der Korrektur)"
+   ]
+  },
+  {
+   "id": "BUG-006",
+   "severity": "niedrig",
+   "status": "behoben",
+   "title": "Kapitel 2, Finale: Der Schluss „Darum steht bei Abreise nichts“ ist über die Oberfläche nicht ziehbar",
+   "cause": "m2_split_register gilt als erledigt, sobald m2_lana vorliegt (Fall 3); f2_rcm gilt als erledigt, sobald f2_cameback vorliegt. Beide Wege zu f2_whyabreise brauchen eine dieser ausgeblendeten Notizen.",
+   "effect": "Ein vorgesehener Erzählmoment („Sie ist nicht abgereist. Sie ist aufgebrochen. Zu mir.“) ist für Spieler unerreichbar; optional, kein Softlock.",
+   "fix": "m2_split_register bleibt sichtbar, bis f2_whyabreise gezogen ist oder das Kapitel endet (k2.f2.ride).",
+   "repro": "Kapitel 2 bis zum Finale (Rote-Kreuz-Nachricht gelesen, f2_cameback gezogen): Notizbuch → das Register fehlt.",
+   "evidence": [
+    "qa/regress/bug_006_whyabreise_hidden.js",
+    "qa/uireach.js"
+   ]
+  },
+  {
+   "id": "BUG-007",
+   "severity": "mittel",
+   "status": "behoben",
+   "title": "Kapitel 3, Straßenbrücke: Mala lässt sich nicht durch Tippen auf den Weg ans Westende führen",
+   "cause": "Die Trefferfläche des vorderen Geländers ('railing', 30–370 × 107–142) überdeckt den gesamten Gehweg. Während der Überquerung (Mala gespielt) wird jeder Tipp zu „Schau an: Geländer“ mit Gang zum festen Standpunkt x=200; dort rückt die Kamera nicht weiter (Totzone), das freie Westende bleibt außerhalb des Bildes.",
+   "effect": "Die zentrale geführte Handlung („Man führt Mala bis ans Westende“, LOESUNG3) gelingt nur über einen unscheinbaren Ausweg (Laterne antippen). Kein endgültiger Softlock, aber eine wahrscheinliche Hängestelle. Die Lösungsskripte umgingen sie mit walkPlayerTo.",
+   "fix": "Während der Überquerung als Mala ist das Geländer kein Tippziel (vis); Tipps auf den Weg führen Mala. Außerhalb der Überquerung unverändert.",
+   "repro": "Kapitel 3, Freitag, nach „zu flach geschnitten“ zur Straßenbrücke; als Mala wiederholt auf den Gehweg links der Laterne tippen → Mala bleibt in der Mitte stehen.",
+   "evidence": [
+    "qa/regress/bug_007_bridge_lead.js",
+    "UI-Volldurchlauf Chromium/Desktop und Firefox/Tablet (Abbruch an Eintrag 1085 vor der Korrektur)"
+   ]
+  },
+  {
+   "id": "UI-001",
+   "severity": "niedrig",
+   "status": "offen (Designentscheidung)",
+   "title": "Riva (K1) und Straßenbrücke (K3): Hotspots überdecken den gesamten begehbaren Weg",
+   "cause": "Riva: 'sea' (338–640 × 76–144) und 'mole' über dem Gehweg östlich von x≈338. Straßenbrücke: 'railing' (30–370 × 107–142) über dem ganzen Brückengehweg.",
+   "effect": "„Boden antippen: hingehen“ (Anleitung) gilt dort nicht; ein Tipp auf den Weg ist „Schau an“. Die Figur erreicht ihr Ziel trotzdem über den Standpunkt des Blickfangs (Poller/Laterne) bzw. freien Boden am Ende, das Spiel bleibt lösbar. Auf der Brücke, wo man Mala „bis ans Westende führt“, ist das besonders spürbar.",
+   "fix": "Nicht geändert (Kunstdefinition/Raumgefühl). Vorschlag: Rechtecke oberhalb der Lauffläche enden lassen.",
+   "repro": "K1 Dienstagabend Riva: rechts auf den Weg tippen. K3 Freitag Straßenbrücke: als Mala auf den Gehweg tippen → „Ein Geländer wie an jeder Straße.“",
+   "evidence": [
+    "UI-Volldurchlauf uiNotes „Boden verdeckt“"
+   ]
+  },
+  {
+   "id": "UI-002",
+   "severity": "niedrig",
+   "status": "offen (kosmetisch)",
+   "title": "Meldung „Offline bereit ✓“ überdeckt beim ersten Start 4 s lang die Inventarleiste und dreht sich hochkant nicht mit",
+   "cause": "#offline-note ist ein HTML-Element unten mittig über dem Canvas (pointer-events:none).",
+   "effect": "Kurz verdeckte Inventarfelder; Tipps werden durchgereicht, keine Bedienungsfolge.",
+   "fix": "Nicht geändert. Vorschlag: Meldung oben anzeigen oder bei gedrehtem Bild mitdrehen.",
+   "repro": "Erster Aufruf über http(s), iPhone quer: unten erscheint die Meldung über den Inventarfeldern.",
+   "evidence": [
+    "qa/results/browser/scen_webkit/W06_inventar.png",
+    "qa/results/browser/scen_webkit/W11_spiel.png"
+   ]
+  }
+ ],
+ "browser": null
+}
