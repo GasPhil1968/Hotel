@@ -47350,6 +47350,8 @@ M.k2PhotoStopMala=async function(A){ if (A.hasNote('m2_f_voice')) return A.g('Ha
 async function readLedger(A){ if (!A.flag('k2.s2.ledgerOk')) return A.m(A.hasNote('s2_stamp')?'Jakobs Ankaufbuch. Ohne seine Erlaubnis lese ich nicht darin. Ich frage ihn, woher er das Buch mit dem Stempel hat.':'Jakobs Ankaufbuch. Ohne seine Erlaubnis lese ich nicht darin. Und ich wüsste nicht einmal, wonach ich suche.');
   await A.doc({style:'log',title:'Knjiga otkupa 2004',lines:['12.III. Ostavština prof. I. B., Obala 14/II','        – 212 knjiga, njemačka i austrijska književnost','        – prodavač: P. Barać, Beč, tel. +43 1 …','        – među njima: Rilke, Duineser Elegien, Insel 1923','          (pečat NUB BiH, NE PRODAVATI?)']});
   await A.m('Nachlass Professor I. B., Obala 14. Verkauft von P. Barać, Wien, mit Telefonnummer.'); await A.m('Und neben dem Rilke, mit Bleistift, in Jakobs Schrift: „Stempel NUB BiH. Nicht verkaufen?“'); A.note('s2_ledger'); A.unlock('obala'); }   // die Adresse bringt die Obala auf den Stadtplan (vorher fehlte sie am Tag)
+// Mala liest den Leihzettel durch das Glas (über das Buch oder die Vitrine)
+async function readStampG(A){ if (A.hasNote('s2_stamp')) return A.g('Leser 2204. Rückgabe 7. September 1992.'); await A.g('Ich kann durch das Glas lesen. Und durch den Deckel.'); await A.g('Ein Stempel: „Narodna i univerzitetska biblioteka BiH“. Ein Leihzettel: „Leser 2204 – Rückgabe 7. IX 1992“.'); A.note('s2_stamp'); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'door',name:'Tür',exit:{to:'ferhadija'},look:'Die Ladentür zur Passage. Die Glocke darüber hängt still.'},
@@ -47366,9 +47368,9 @@ var HS=[
  {id:'almanacs',name:'Takvime',look:'Ein Regal mit alten Kalendern und Takvimen, nach Jahren geordnet. Die Lücken sind die Kriege.',read:function(A){ return readTakvim(A); },use:function(A){ return readTakvim(A); },
    g:{look:'Sonnenuntergänge. Jemand hat sie alle aufgeschrieben, damit man weiß, wann man beten darf. Und wann man sich treffen kann.'}},
  {id:'vitrine',name:'Vitrine',look:function(A){ return A.m(A.S.bookOut?'Die Vitrine ist leer. Der rote Samt hat noch die Form des Buches.':'Eine Glasvitrine mit Messingbeschlägen. Darin, auf rotem Samt, ein altes Buch. „900 KM“.'); },open:'Abgeschlossen. Jakob trägt den Schlüssel an der Uhrkette.',
-   g:{look:function(A){ return A.g(A.S.bookOut?'Leer. Endlich leer.':'Eine Leine aus Licht geht vom Sessel zum Buch. Er ist an das Buch gebunden.'); }}},
+   g:{look:async function(A){ if (A.S.bookOut) return A.g('Leer. Endlich leer.'); await A.g('Eine Leine aus Licht geht vom Sessel zum Buch. Er ist an das Buch gebunden.'); if (!A.hasNote('s2_stamp')){ await A.wait(400); return readStampG(A); } }}},
  {id:'book',name:'Buch',vis:function(S){ return !S.bookOut; },look:'Halbleder, an den Kanten abgestoßen. Auf dem Rücken ein Bibliotheksschild mit einer Nummer. Neunhundert Mark.',take:'Hinter Glas. Und es gehört nicht mir.',
-   g:{look:async function(A){ if (A.hasNote('s2_stamp')) return A.g('Leser 2204. Rückgabe 7. September 1992.'); await A.g('Ich kann durch das Glas lesen. Und durch den Deckel.'); await A.g('Ein Stempel: „Narodna i univerzitetska biblioteka BiH“. Ein Leihzettel: „Leser 2204 – Rückgabe 7. IX 1992“.'); A.note('s2_stamp'); },
+   g:{look:function(A){ return readStampG(A); },
      sense:'Rauch. Ein Morgen voller Rauch, und zwei Hände, die etwas sehr Leichtes auffangen.'}},
  {id:'photobox',name:'Fotokiste',look:'Eine Holzkiste voller Fotos, Abzüge in allen Größen, Ecken abgegriffen. „1 KM“ auf einem Zettel.',use:function(A){ return photoBox(A); },open:function(A){ return photoBox(A); },take:function(A){ return photoBox(A); },
    g:{look:'So viele Gesichter. Sie sehen alle in die Kamera, als würde sie sie behalten.'}},
