@@ -187,15 +187,22 @@ async function runOne(spec, opt = {}) {
   return res;
 }
 
-const PROBE_SNAP = function () { const G = M.GS; return { phase: G.phase, notes: (G.notes || []).slice(), inv: (G.inv || []).slice(), map: Object.keys(G.map || {}).filter(k => G.map[k]), ended: !!G.ended, screen: M.E.screen, room: M.E.room && M.E.room.id }; };
+const PROBE_SNAP = function () { const G = M.GS; return { phase: G.phase, notes: (G.notes || []).slice(), inv: (G.inv || []).slice(), map: Object.keys(G.map || {}).filter(k => G.map[k]), flags: Object.keys(G.flags || {}).filter(k => G.flags[k] && !/^mala\.(lock|noSwitch|voice)$/.test(k)), ended: !!G.ended, screen: M.E.screen, room: M.E.room && M.E.room.id }; };
 async function probe(I, spec, canon, stuckCh, stuckStep) { const X = require("./lib/explore");
   const t0 = Date.now(); const rnd = require('./vmdriver').mulberry32((spec.seed ^ 0x5eed) >>> 0); const rec = [];
   const s0 = await I.ev(PROBE_SNAP); if (s0.screen !== 'game') return { cls: 'kein Spielbildschirm', start: s0 };
-  const ch = /^k4/.test(s0.phase) ? 4 : /^k3/.test(s0.phase) ? 3 : /^k2/.test(s0.phase) ? 2 : 1; const all = (canon && canon[ch]) || []; let can = (ch === stuckCh && stuckStep) ? all.filter(c => c.step >= stuckStep - 2 && c.step <= stuckStep + 15) : all; if (!can.length) can = all; can = can.slice().sort((a, b) => a.step - b.step);   // frühe Schritte bevorzugt (Gewicht rnd³)
-  let best = null, n = 0; const MAX = 260, WALL = 120000; const tried = new Map();
+  const ch = /^k4/.test(s0.phase) ? 4 : /^k3/.test(s0.phase) ? 3 : /^k2/.test(s0.phase) ? 2 : 1; const all0 = (canon && canon[ch]) || []; let win = (ch === stuckCh && stuckStep) ? all0.filter(c => c.step >= stuckStep - 2 && c.step <= stuckStep + 15) : all0; if (!win.length) win = all0; win = win.slice().sort((a, b) => a.step - b.step);   // frühe Schritte bevorzugt (Gewicht rnd³)
+  const can = win.filter(c => c.kind === 'act' || c.kind === 'exit');
+  const notePool = win.filter(c => c.kind === 'note'), choosePool = win.filter(c => c.kind === 'choose'), combPool = win.filter(c => c.kind === 'combine');
+  const usedN = new Map(); const preferNote = (L) => { const c = notePool.find(x => L.indexOf(x.id) >= 0 && (usedN.get(x) || 0) < 2); if (!c || rnd() < 0.25) return null; usedN.set(c, (usedN.get(c) || 0) + 1); return c.id; };
+  const preferChoice = (opts) => { if (rnd() < 0.25) return -1; for (const c of choosePool) { const k = opts.indexOf(c.t); if (k >= 0 && (usedN.get(c) || 0) < 2) { usedN.set(c, (usedN.get(c) || 0) + 1); return k; } } return -1; };
+  let best = null, n = 0; const MAX = 600, WALL = 180000; const tried = new Map();
   for (; n < MAX && Date.now() - t0 < WALL; n++) {
     const A = await I.ev(X.LIST_ACTIONS).catch(() => ({ none: true }));
-    const HO = { dlgDepth: 6, solvePuzzles: true }, RW = { hint: 0, notes: 0.1, combine: 2.5, travel: 2 };
+    const HO = { dlgDepth: 6, solvePuzzles: true, preferNote, preferChoice }, RW = { hint: 0, notes: 0.1, combine: 2.5, travel: 2 };
+    const cb = !A.none && combPool.find(c => (usedN.get(c) || 0) < 1 && A.notes.indexOf(c.a) >= 0 && A.notes.indexOf(c.b) >= 0);
+    if (cb && rnd() < 0.5) { usedN.set(cb, 1); rec.push(['canon-combine', cb.a, cb.b]); await I.ev((x) => M.TA.combine(x[0], x[1]), [cb.a, cb.b]).catch(() => {}); await I.page.waitForTimeout(60); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); }
+    else {
     const fits = (c) => c.kind === 'exit' ? A.acts.some(z => z[0] === 'exit' && z[1] === c.id) : (A.acts.some(z => z[0] === 'act' && z[1] === c.verb && z[2] === c.id) || (c.item && A.inv.indexOf(c.item) >= 0 && A.hsIds.indexOf(c.id) >= 0) || (c.verb === 'talk' && A.hsIds.indexOf(c.id) >= 0));
     const fresh = (c) => (tried.get(c) || 0) < 3;
     const avail = (c) => fresh(c) && c.room === A.room && c.active === A.active && fits(c);
@@ -210,12 +217,13 @@ async function probe(I, spec, canon, stuckCh, stuckStep) { const X = require("./
       else if (rnd() < 0.5) { const far = can.filter(c => c.active === A.active && c.room !== A.room); if (far.length) { const c = far[Math.floor(far.length * Math.pow(rnd(), 3))]; rec.push(['canon-goto', c.room]); await X.navigate(I, rnd, rec, c.room, 8).catch(() => {}); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); } }
       else await X.randomAction(I, rnd, rec, RW).catch(() => {}); }
     else { await X.randomAction(I, rnd, rec, RW).catch(() => {}); await X.handleOpen(I, rnd, rec, HO).catch(() => {}); }
+    }
     const s = await I.ev(PROBE_SNAP).catch(() => null); if (!s) continue;
-    const prog = { phase: s.phase !== s0.phase, end: s.ended || s.screen !== 'game', notes: s.notes.filter(x => s0.notes.indexOf(x) < 0), inv: s.inv.filter(x => s0.inv.indexOf(x) < 0), map: s.map.filter(x => s0.map.indexOf(x) < 0) };
+    const prog = { phase: s.phase !== s0.phase, end: s.ended || s.screen !== 'game', notes: s.notes.filter(x => s0.notes.indexOf(x) < 0), inv: s.inv.filter(x => s0.inv.indexOf(x) < 0), map: s.map.filter(x => s0.map.indexOf(x) < 0), flags: s.flags.filter(x => s0.flags.indexOf(x) < 0) };
     if (prog.phase || prog.end) { best = Object.assign(prog, { at: n + 1, phaseTo: s.phase }); break; }
-    if (!best && (prog.notes.length || prog.inv.length || prog.map.length)) best = Object.assign(prog, { at: n + 1 });
+    if (!best && (prog.notes.length || prog.inv.length || prog.map.length || prog.flags.length)) best = Object.assign(prog, { at: n + 1 });
   }
-  const cls = best && (best.phase || best.end) ? 'kein Softlock (Phase/Kapitel geht weiter)' : best ? 'kein Softlock nachgewiesen bis Phasenwechsel, aber Fortschritt möglich' : 'Verdacht (kein Fortschritt in ' + n + ' Aktionen)';
+  const cls = best && (best.phase || best.end) ? 'kein Softlock (Phase/Kapitel geht weiter)' : best ? 'Fortschritt möglich (kein Phasenwechsel in ' + n + ' Aktionen)' : 'Verdacht (kein Fortschritt in ' + n + ' Aktionen)';
   return { cls, start: { phase: s0.phase, room: s0.room }, progress: best, actions: n, wallMs: Date.now() - t0, rec: best ? rec.slice(-14) : rec.slice(0, 40).concat([['…']], rec.slice(-30)) };
 }
 
@@ -226,7 +234,7 @@ async function makeCanon(out) {
   const canon = {}; let ch = 1, st = 0;
   await C.tapTitle(I, CH_TITLE[1]); await C.tapTitle(I, 'Platz 1');
   for (ch = 1; ch <= 4; ch++) { st = 0; canon[ch] = []; const startLen = (I.M.__qaTrace || []).length;
-    const hookTrace = async () => { st++; const T = I.M.__qaTrace; for (let i = hookTrace.last || startLen; i < T.length; i++) { const t = T[i]; if (t[1] === 'act') canon[ch].push({ step: st, kind: 'act', verb: t[2], id: t[3], item: t[4], room: t[5], active: t[6] }); else if (t[1] === 'exit') canon[ch].push({ step: st, kind: 'exit', id: t[2], room: t[3], active: t[4] }); } hookTrace.last = T.length; };
+    const hookTrace = async () => { st++; const T = I.M.__qaTrace; for (let i = hookTrace.last || startLen; i < T.length; i++) { const t = T[i]; if (t[1] === 'act') canon[ch].push({ step: st, kind: 'act', verb: t[2], id: t[3], item: t[4], room: t[5], active: t[6] }); else if (t[1] === 'exit') canon[ch].push({ step: st, kind: 'exit', id: t[2], room: t[3], active: t[4] }); else if (t[1] === 'note') canon[ch].push({ step: st, kind: 'note', id: t[2] }); else if (t[1] === 'combine') canon[ch].push({ step: st, kind: 'combine', a: t[2], b: t[3] }); else if (t[1] === 'choose') canon[ch].push({ step: st, kind: 'choose', t: t[2] }); } hookTrace.last = T.length; };
     const fn = C.loadPath(CH_PATH[ch]); void fn;
     const r = await C.runPath(CH_PATH[ch], S.D, {}, null, { afterStep: hookTrace }); if (!r.ok) throw new Error("Kanon K" + ch + ": " + r.err);   // QA-Korrektur: Schrittzähler je Skriptschritt (vorher alle Einträge Schritt 1)
     await hookTrace(); await C.waitTitleNext(I); if (ch < 4) await C.tapTitle(I, 'Weiter mit Kapitel ' + (ch + 1)); }

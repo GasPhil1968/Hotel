@@ -39,13 +39,14 @@ async function handleOpen(I, rnd, rec, opts = {}) {
       const byeIdx = o.map((x, i) => (x.bye || /^\((Gehen|Doch nichts|Nicht mehr|Warten)|^(Danke|Auf Wiedersehen|Bis |Servus|Später|Ich gehe|Gute Nacht)/.test(x.t)) ? i : -1).filter(i => i >= 0);
       if (inDlg > (opts.dlgDepth || 8) && byeIdx.length) k = byeIdx[0];
       else { const cand = o.map((x, i) => i).filter(i => !/nicht weiter/.test(o[i].t) || rnd() < 0.15); k = cand[Math.floor(rnd() * cand.length)]; if (k === undefined) k = 0; }
+      if (opts.preferChoice) { const pk = opts.preferChoice(o.map(x => x.t)); if (pk >= 0) k = pk; }
       rec.push(['choose', o[k].t]); await I.ev((x) => M.E.chooseDone(x), k); await I.page.waitForTimeout(60); n++; continue;
     }
     if (s.overlay) {
       const kind = s.overlay;
       if (kind === 'puzzle' && opts.solvePuzzles) { await solvePuzzleUI(I, rnd, rec); n++; continue; }
       if (kind === 'arrange' && opts.solvePuzzles) { await solveArrangeUI(I, rnd, rec); n++; continue; }
-      if (kind === 'notebook') { const L = await I.ev(() => { const d = M.E.overlay.data || {}; return d.mode === 'ask' ? M.E.nbOpen(true, d.also) : []; }); /* nur im Fragemodus wird gewählt; dieselbe Liste wie in der Oberfläche */ if (L.length && rnd() < 0.7) { const id = L[Math.floor(rnd() * L.length)]; rec.push(['note', id]); try { await I.ev((x) => M.TA.pickNote(x), id); } catch (e) { rec.push(['note-EXC', String(e.message).slice(0, 100)]); await I.ev(() => { if (M.E.overlay) M.TA.closeOverlay(null); }); } } else { rec.push(['close', kind]); await I.ev(() => M.TA.closeOverlay(null)); } }
+      if (kind === 'notebook') { const L = await I.ev(() => { const d = M.E.overlay.data || {}; return d.mode === 'ask' ? M.E.nbOpen(true, d.also) : []; }); /* nur im Fragemodus wird gewählt; dieselbe Liste wie in der Oberfläche */ const pref = (L.length && opts.preferNote) ? opts.preferNote(L) : null; if (L.length && (pref || rnd() < 0.7)) { const id = pref || L[Math.floor(rnd() * L.length)]; rec.push(['note', id]); try { await I.ev((x) => M.TA.pickNote(x), id); } catch (e) { rec.push(['note-EXC', String(e.message).slice(0, 100)]); await I.ev(() => { if (M.E.overlay) M.TA.closeOverlay(null); }); } } else { rec.push(['close', kind]); await I.ev(() => M.TA.closeOverlay(null)); } }
       else if (kind === 'map') { rec.push(['close', 'map']); await I.ev(() => M.closeMap ? M.closeMap() : M.TA.closeOverlay(null)); }
       else { rec.push(['close', kind]); await I.ev(() => M.TA.closeOverlay(null)); }
       await I.page.waitForTimeout(60); n++; continue;
@@ -141,6 +142,8 @@ async function navigate(I, rnd, rec, target, budget = 14) {
   for (let i = 0; i < budget; i++) {
     await handleOpen(I, rnd, rec, { dlgDepth: 0 });
     const p = await I.ev(PLAN, target); if (!p) return false; if (p.done) return true;
+    /* Wege plant PLAN über Markos Ausgänge: ist Mala aktiv, erst (wie über das Porträt) zu Marko wechseln, sofern erlaubt */
+    if (await I.ev(() => M.GS.active === 'mala' && M.E.canSwitch())) { rec.push(['nav-switch', 'marko']); await I.ev(() => M.TA.switchTo('marko')); await I.page.waitForTimeout(100); continue; }
     if (p.exit) { rec.push(['nav-exit', p.exit]); await I.ev((x) => M.TA.exit(x), p.exit); }
     else if (p.travel) { rec.push(['nav-travel', p.travel]); await I.ev((x) => M.TA.travel(x), p.travel); }
     await I.page.waitForTimeout(60);
