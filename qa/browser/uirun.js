@@ -171,10 +171,14 @@ const { launch, contextOpts } = require('./engines');
   async function glyphGoal(goal) { for (let w = 0; w < goal.length; w++) for (let c = 0; c < goal[w].length; c++) { if (goal[w][c] < 0) continue; for (let k = 0; k < 30; k++) { const cur = await page.evaluate(([w, c]) => { if (!M.E.overlay.rd) M.renderFrame(); return M.E.overlay.rd[w][c]; }, [w, c]); if (cur === goal[w][c]) break; await tapCode('o:g' + w + '_' + c, 'Zeichen'); } } }
 
   // ---------------------------------------------------------------- Wiedergabe
-  const acts = REC.actions; let i = 0, done = 0; const per = { ok: 0 }; let pendingGoal = null; let curCh = 0; const chEnds = [];
+  let acts = REC.actions.slice(); let i = 0, done = 0; const per = { ok: 0 }; let pendingGoal = null; let curCh = 0; const chEnds = [];
   const shot = async (name) => { const f = path.join(OUT, String(shots.length).padStart(3, '0') + '_' + name + '.png'); await page.screenshot({ path: f }); shots.push(f); };
   const shotAt = new Set(['chapter']);
   let failure = null; let lastAct = null;
+  const FROMCH = +arg('--from-chapter', 0);   // nur Fehlersuche: Start über „Kapitel N“ im Titelmenü, Aufnahme ab diesem Kapitel (kein Volldurchlauf)
+  if (FROMCH > 1) { const ci = acts.findIndex(x => x.k === 'chapter' && x.a[0] === FROMCH); const labels = { 2: 'Kapitel 2: Sarajevo', 3: 'Kapitel 3: Mostar', 4: 'Kapitel 4: München' };
+    const tapT = async (lab) => { const p = await page.evaluate((l) => { M.renderFrame(); const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(l) >= 0); return i < 0 ? null : window.__qa.scan('t:' + i); }, lab); await tapL(p[0], p[1]); await sleep(200); };
+    await tapT(labels[FROMCH]); await tapT('Platz 1'); i = ci; acts.splice(0, ci); L('DEBUG-Start ab Kapitel', FROMCH); }
   try {
     for (i = 0; i < acts.length && done < LIMIT; i++) {
       const e = acts[i]; const k = e.k;
