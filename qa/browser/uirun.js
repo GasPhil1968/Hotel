@@ -202,7 +202,8 @@ const { launch, contextOpts } = require('./engines');
       if (k === 'skip') { const s = await st(); if (s.speech) await tapL(160, 60); continue; }
       // Handlungen in der Spielwelt: warten, bis das Spiel ruhig ist und Raum/Figur stimmen
       const mapAct = k === 'travel' || (k === 'act' && /^loc2?_/.test(e.a[1] || ''));
-      const ready = (s) => (mapAct && s.ov === 'map' && !s.speech) || (idle(s) && (!e.room || s.room === e.room));
+      const actOk = (s) => !e.active || k === 'switch' || k === 'switchChar' || s.active === e.active;   // Szenen wechseln die Figur manchmal selbst (z. B. Straßenbrücke)
+      const ready = (s) => ((mapAct && s.ov === 'map' && !s.speech) || (idle(s) && (!e.room || s.room === e.room))) && actOk(s);
       let s = await until(s => ready(s) || (idle(s) && s.room !== e.room), 300000, 'bereit für ' + k + ' ' + JSON.stringify(e.a) + ' in ' + e.room);
       if (!ready(s)) { s = await until(ready, 60000, 'Raum ' + e.room + ' für ' + k + ' ' + JSON.stringify(e.a)); }
       if (e.active && s.active !== e.active && k !== 'switch' && k !== 'switchChar') throw new Error('falsche Figur: ' + s.active + ' statt ' + e.active + ' vor ' + k);
