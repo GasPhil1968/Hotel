@@ -1,0 +1,28 @@
+Quellen: 297 Dateien unter game/src/ (mit rooms/, lang/, portraits/)
+Spieltexte: 146 verschiedene Zeichen, davon 53 außerhalb ASCII:
+  ° · Ä È Ö Ü ß à á â ä è é ê ì í ò ó ô ö ù ú ü Ć ć Č č Đ đ Š š Ž ž ſ – — ‘ ’ ‚ “ ” „ … € → ↓ ↔ ▸ ☎ ✓ ✝ ⟨ ⟩
+Atkinson Hyperlegible Next 400: 10 fehlen, davon Buchstaben: ſ
+    U+017F "ſ" ×7 (00_core.js, rooms/obala.js)
+    U+2192 "→" ×9 (00_core.js, rooms/bulevar.js, rooms/haustor.js, …)
+    U+2193 "↓" ×2 (00_core.js, rooms/ferhadija.js)
+    U+2194 "↔" ×1 (00_core.js)
+    U+25B8 "▸" ×3 (00_core.js, 06_ui.js, lang/bhs_ui.js)
+    U+260E "☎" ×2 (00_core.js, 06_ui.js)
+    U+2713 "✓" ×16 (00_core.js, 06_ui.js, lang/bhs_k1_j.js, …)
+    U+271D "✝" ×3 (00_core.js, lang/bhs_k1_b.js, rooms/varos.js)
+    U+27E8 "⟨" ×4 (00_core.js, rooms/obala.js)
+    U+27E9 "⟩" ×4 (00_core.js, rooms/obala.js)
+Atkinson Hyperlegible Next 700: 10 fehlen, davon Buchstaben: ſ
+    U+017F "ſ" ×7 (00_core.js, rooms/obala.js)
+    U+2192 "→" ×9 (00_core.js, rooms/bulevar.js, rooms/haustor.js, …)
+    U+2193 "↓" ×2 (00_core.js, rooms/ferhadija.js)
+    U+2194 "↔" ×1 (00_core.js)
+    U+25B8 "▸" ×3 (00_core.js, 06_ui.js, lang/bhs_ui.js)
+    U+260E "☎" ×2 (00_core.js, 06_ui.js)
+    U+2713 "✓" ×16 (00_core.js, 06_ui.js, lang/bhs_k1_j.js, …)
+    U+271D "✝" ×3 (00_core.js, lang/bhs_k1_b.js, rooms/varos.js)
+    U+27E8 "⟨" ×4 (00_core.js, rooms/obala.js)
+    U+27E9 "⟩" ×4 (00_core.js, rooms/obala.js)
+Spieltexte, weder in der Leseschrift noch in MALA Pixel: keine
+Pflichtzeichen Deutsch/BHS (ÄÖÜäöüßČčĆćŠšŽžĐđ„“‚‘…–): alle enthalten
+Nur Information – im Entwurf aus der Systemschrift: U+2191 "↑" ×2 (prototype/src.html), U+2265 "≥" ×6 (prototype/src.html), U+25B2 "▲" ×1 (prototype/src.html), U+25BC "▼" ×4 (prototype/src.html), U+25C2 "◂" ×2 (prototype/src.html), U+2715 "✕" ×2 (prototype/src.html)

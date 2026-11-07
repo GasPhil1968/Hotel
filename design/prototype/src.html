@@ -1,12 +1,14 @@
 <title>MALA Oberflächenentwurf</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Seite: links Bildschirmliste, Mitte ein virtueller Geräte-Bildschirm (echte CSS-Maße, verkleinert), rechts Erläuterungen.
    Bewusst nur dunkel: MALA spielt nachts; alle Farben stammen aus der Spielpalette (game/src/00_core.js). */
 @font-face { font-family: 'MALA Pixel'; src: url(data:font/otf;base64,__FONT__) format('opentype'); font-display: block; }
+/* Leseschrift: Atkinson Hyperlegible Next (OFL 1.1), lokal eingebettet; fehlende Symbole (→ ↓ ↔ ▸ ✓ ☎ ✝ ⟨ ⟩, ſ) kommen aus MALA Pixel – design/tools/fontcheck.js */
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 400; font-style: normal; font-display: swap; src: url(data:font/woff2;base64,__ATK400L__) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 400; font-style: normal; font-display: swap; src: url(data:font/woff2;base64,__ATK400E__) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 700; font-style: normal; font-display: swap; src: url(data:font/woff2;base64,__ATK700L__) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 700; font-style: normal; font-display: swap; src: url(data:font/woff2;base64,__ATK700E__) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
 :root {
   color-scheme: dark;
   --ink0: #08070d; --ink1: #13111c; --ink2: #1e1b2a; --ink3: #2a2638;
@@ -16,7 +18,7 @@
   --seal: #cc5f68; --seal2: #79212e; --exit: #8b9a55; --text: #e3d9c0; --muted: #a39882; --dis: #7d7364;
   --page: #0c0b14; --line: #2a2638; --chrome: #e3d9c0; --chrome-muted: #a39882;
   --pix: 'MALA Pixel', ui-monospace, monospace;
-  --read: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --read: 'Atkinson Hyperlegible Next', 'MALA Pixel', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 html, body { background: var(--page); color: var(--chrome); }
 body { font-family: var(--read); font-size: 15px; line-height: 1.55; }
@@ -57,6 +59,7 @@ aside.notes ul { margin: 0; padding-left: 18px; display: flex; flex-direction: c
 aside.notes li { text-wrap: pretty; }
 aside.notes code { font-size: 12.5px; color: var(--ghost4); background: var(--ink1); padding: 0 3px; border-radius: 2px; }
 aside.notes .kind { display: inline-block; font: 700 11px/1 var(--read); letter-spacing: .06em; text-transform: uppercase; padding: 3px 6px; border-radius: 2px; margin-right: 4px; vertical-align: 1px; }
+.k-ents { background: #2a4022; color: #dfe8c4; }
 .k-beob { background: #1a3a4c; color: var(--ghost5); } .k-code { background: #3a2307; color: var(--lamp4); } .k-vor { background: #2a2638; color: var(--paper); } .k-offen { background: #4e141e; color: #f0b3b8; }
 footer.foot { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 12px; color: var(--chrome-muted); font-size: 13px; }
 
@@ -107,6 +110,13 @@ footer.foot { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-to
 .paper { position: absolute; color: var(--pink); background: var(--paper); border: calc(var(--u) * 1px) solid #a39882; box-shadow: calc(var(--u) * 2px) calc(var(--u) * 2px) 0 0 rgba(0,0,0,.6); padding: calc(var(--u) * 6px) calc(var(--u) * 8px) calc(var(--u) * 6px) calc(var(--u) * 14px); display: flex; flex-direction: column; gap: calc(var(--u) * 4px); max-height: calc(100% - 16px);
   background-image: linear-gradient(90deg, transparent calc(var(--u) * 9px), var(--margin) calc(var(--u) * 9px), var(--margin) calc(var(--u) * 10px), transparent calc(var(--u) * 10px)); }
 .paper h3 { margin: 0; font-weight: 400; color: var(--seal2); }
+/* Mittelteil scrollt, Überschrift und Knöpfe bleiben stehen (Telefon quer, große Schrift) */
+.pmid { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 4px); }
+.paper.wide .card .ph { aspect-ratio: 320 / 112; }
+.paper.wide .card { position: relative; }
+.paper.wide .card .kindb { position: absolute; top: calc(var(--u) * 5px); left: calc(var(--u) * 5px); z-index: 1; }
+.paper.wide .card .ph.empty { padding-top: calc(var(--u) * 8px); box-sizing: border-box; }
+.paper.wide .btnrow.topback { position: absolute; top: calc(var(--u) * 5px); right: calc(var(--u) * 6px); }
 .paper .ctx { color: var(--pmuted); }
 .paper .mi { color: var(--pink); } .paper .mi::before { color: var(--seal2); }
 .paper .mi:hover, .paper .mi:focus-visible, .paper .mi.sel { background: var(--paper2); color: var(--pink); }
@@ -138,6 +148,7 @@ footer.foot { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-to
 .segp button + button { border-left: calc(var(--u) * 1px) solid var(--lamp1); }
 .segp button[aria-pressed="true"] { background: var(--lamp1); color: var(--lamp5); }
 .segp button:focus-visible { outline: calc(var(--u) * 1px) solid var(--lamp4); outline-offset: calc(var(--u) * -2px); }
+.rd, .rd button { font-family: var(--read); -webkit-font-smoothing: auto; }
 .preview { border: calc(var(--u) * 1px) dashed var(--ghost2); padding: calc(var(--u) * 3px) calc(var(--u) * 4px); color: var(--text); min-height: calc(var(--u) * 26px); }
 .preview .who { color: var(--lamp3); }
 /* Spielansicht: Bedienleiste im Spielraster (wie bisher im Canvas gezeichnet) */
@@ -175,6 +186,11 @@ footer.foot { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-to
 .dlg .more { position: absolute; right: calc(var(--s) * 3px); bottom: calc(var(--s) * 2px); color: var(--lamp3); }
 .dlg .x { position: absolute; right: calc(var(--s) * 3px); top: calc(var(--s) * 2px); color: #c8bb9f; }
 /* Karten (Kapitel) */
+.wb { position: absolute; z-index: 0; border: calc(var(--s) * 1px) solid var(--lamp1); background: var(--ink1); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.wb .dot { position: absolute; right: calc(var(--s) * -2px); top: calc(var(--s) * -2px); width: calc(var(--s) * 3px); height: calc(var(--s) * 3px); background: var(--seal); }
+.wslot { position: absolute; border: calc(var(--s) * 1px) solid #271810; background-repeat: no-repeat; image-rendering: pixelated; }
+.wport { position: absolute; border: calc(var(--s) * 1px) solid var(--lamp1); background: var(--ink1); overflow: hidden; cursor: pointer; }
+.wport img { position: absolute; image-rendering: pixelated; }
 .cardstage { position: absolute; inset: 0; background: var(--ink0); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .lockicon { image-rendering: pixelated; }
 .ruler { position: absolute; border: 1px solid #ff5c8a; color: #ff5c8a; font: 700 11px/1 var(--read); pointer-events: none; z-index: 60; }
@@ -219,7 +235,7 @@ const DEV = {
   portrait: { w: 390, h: 664, s: 5 / 3, u: 2, label: 'Hochkant', portrait: true, info: '390 × 664 CSS-px (iPhone 13 hochkant) · das Spiel dreht das Bild' }
 };
 const HOT = __HOTSPOTS__;
-const st = { screen: 'titel-neu', dev: 'desktop', mode: 'neu', full: false, rulers: false, zeigen: 'neu', mala: false, saved2: false, pauseScene: false, set: { mus: 70, sfx: 80, amb: 60, speed: 1, tap: false, size: 0, font: 'pix', motion: false, crt: false, nb: 'list', lang: 'de' } };
+const st = { screen: 'titel-neu', dev: 'desktop', mode: 'neu', full: false, rulers: false, zeigen: 'neu', mala: false, wide: 'marko', saved2: false, pauseScene: false, set: { mus: 70, sfx: 80, amb: 60, speed: 1, tap: false, size: 0, font: 'pix', motion: false, crt: false, nb: 'list', lang: 'de' } };
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const LOCK = '<svg class="lock lockicon" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M2 0h3v1h1v3h1v4H0V4h1V1h1zM2 1v3h3V1z"/></svg>';
 
@@ -269,18 +285,18 @@ S['kapitel'] = { title: 'Neues Spiel – Kapitel', group: 'Einstieg', back: 'tit
   render(d) { const rows = mi('Kapitel 1 · Split', { go: 'spiel', sub: 'von vorn', cls: 'sel' }) + mi('Kapitel 2 · Sarajevo', { go: 'spiel', sub: 'mit deinem Ende von Kapitel 1' }) + mi('Kapitel 3', { dis: true, lock: true, why: 'nach Kapitel 2' }) + mi('Kapitel 4', { dis: true, lock: true, why: 'nach Kapitel 3' }) + mi('Kapitel 5', { dis: true, lock: true, why: 'noch nicht erschienen' });
     return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + centered(d, `<h3 class="ui big">Neues Spiel</h3><div class="ctx ui">Startet auf Platz 2 (frei). Deine anderen Spielstände bleiben.</div><nav class="menu ui ${d.wide ? 'scroll' : ''}">${rows}</nav><div class="btnrow ui"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.62 : 0.5); } };
 function centered(d, inner, wf, cls) { const w = Math.round(d.w * (wf || 0.5)); return `<div class="panel ${cls || ''}" role="dialog" style="left:${Math.round((d.w - w) / 2)}px;top:50%;transform:translateY(-50%);width:${w}px">${inner}</div>`; }
-function paperPage(d, inner, wf) { const w = Math.round(d.w * (wf || 0.78)); return `<div class="paper ui" role="dialog" style="left:${Math.round((d.w - w) / 2)}px;top:50%;transform:translateY(-50%);width:${w}px">${inner}</div>`; }
-S['laden'] = { title: 'Spiel laden', group: 'Spielstände', back: 'titel', ist: { desktop: 'titel_fortsetzen', tablet: 'titel_fortsetzen' },
+function paperPage(d, inner, wf) { const w = Math.round(d.w * (wf || 0.78)); return `<div class="paper ui${d.wide ? ' wide' : ''}" role="dialog" style="left:${Math.round((d.w - w) / 2)}px;top:50%;transform:translateY(-50%);width:${w}px">${inner}</div>`; }
+S['laden'] = { title: 'Spiel laden', group: 'Spielstände', back: 'titel', badgeLow: (d) => !!d.wide, ist: { desktop: 'titel_fortsetzen', tablet: 'titel_fortsetzen' },
   render(d) {
     const c1 = `<button type="button" class="card sel" data-go="spiel"><span class="kindb auto">Automatisch</span><span class="ph" style="background-image:url(img/thumb_busbahnhof.png)"></span><b style="font-weight:400">Platz 1 · Kapitel 2</b><span class="meta">Busbahnhof · heute 19:42</span><span class="meta">1 Std. 12 Min.</span>${d.wide ? '' : `<span class="bm"><span class="mini" style="background-image:url(img/thumb_office.png)"></span><span>Lesezeichen 1<br><i>Hafenbüro · gestern</i></span></span>`}</button>`;
     const c2 = `<button type="button" class="card" data-go="kapitelende"><span class="kindb end">Kapitelende</span><span class="ph" style="background-image:url(img/thumb_k1_riva.png)"></span><b style="font-weight:400">Platz 2 · Kapitel 1 fertig</b><span class="meta">Weiter mit Kapitel 2</span><span class="meta">3 Std. 40 Min.</span></button>`;
     const c3 = `<div class="card bad" role="group" aria-label="Platz 3, beschädigt"><span class="kindb" style="background:var(--seal2)">Beschädigt</span><span class="ph empty"><span class="seal ui">!</span></span><b style="font-weight:400">Platz 3</b><span class="meta">Lässt sich nicht lesen.</span><button type="button" class="btn danger ui" style="min-height:max(44px,calc(var(--u)*14px))" data-act="del3">Löschen …</button></div>`;
-    return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Spiel laden</h3><div class="ctx">Spielstände · Beispielstände (mit Handlung aus Kapitel 1–2)</div><div class="cards ${d.wide ? '' : ''}">${c1}${c2}${c3}</div><div class="ctx">Spielstände liegen nur in diesem Browser auf diesem Gerät.</div><div class="btnrow"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.96 : 0.86); } };
-S['speichern'] = { title: 'Speichern (Lesezeichen)', group: 'Spielstände', back: 'pause', ist: { desktop: 'pause_gespeichert', tablet: 'pause_gespeichert' },
+    return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Spiel laden</h3><div class="pmid scroll"><div class="ctx">Spielstände · Beispielstände (nur für erreichte Kapitel)</div><div class="cards">${c1}${c2}${c3}</div><div class="ctx">Spielstände liegen nur in diesem Browser auf diesem Gerät.</div></div><div class="btnrow topback"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.96 : 0.86); } };
+S['speichern'] = { title: 'Speichern (Lesezeichen)', group: 'Spielstände', back: 'pause', badgeLow: (d) => !!d.wide, ist: { desktop: 'pause_gespeichert', tablet: 'pause_gespeichert' },
   render(d) { const used = `<button type="button" class="card" data-go="ueberschreiben"><span class="kindb mark">Lesezeichen 1</span><span class="ph" style="background-image:url(img/thumb_office.png)"></span><span>Hafenbüro</span><span class="meta">gestern 22:10 · 48 Min.</span></button>`;
     const e2 = st.saved2 ? `<button type="button" class="card sel" data-go="ueberschreiben"><span class="kindb mark">Lesezeichen 2</span><span class="ph" style="background-image:url(img/thumb_vratnik.png)"></span><span>Vratnik</span><span class="meta">jetzt · 1 Std. 13 Min.</span></button>` : `<button type="button" class="card" data-act="save2"><span class="kindb">Lesezeichen 2</span><span class="ph empty">leer</span><span>Hier speichern</span><span class="meta">Vratnik · jetzt</span></button>`;
     const e3 = `<button type="button" class="card" data-act="save2x"><span class="kindb">Lesezeichen 3</span><span class="ph empty">leer</span><span>Hier speichern</span><span class="meta">&nbsp;</span></button>`;
-    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Speichern</h3><div class="ctx">Platz 1 · Kapitel 2 · Vratnik</div><div class="ctx">Automatisch gespeichert vor 1 Min. – bei jedem Ortswechsel neu. Lesezeichen bleiben, bis du sie überschreibst.</div><div class="cards">${used}${e2}${e3}</div><div class="btnrow"><button type="button" class="btn" data-go="pause">Zurück</button></div>`, d.wide ? 0.96 : 0.8) + (st.saved2 ? `<div class="toast ui" style="top:12px">Gespeichert ✓ Lesezeichen 2</div>` : ''); } };
+    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Speichern</h3><div class="pmid scroll"><div class="ctx">Platz 1 · Kapitel 2 · Vratnik</div><div class="ctx">Automatisch gespeichert vor 1 Min. – bei jedem Ortswechsel neu. Lesezeichen bleiben, bis du sie überschreibst.</div><div class="cards">${used}${e2}${e3}</div></div><div class="btnrow topback"><button type="button" class="btn" data-go="pause">Zurück</button></div>`, d.wide ? 0.96 : 0.8) + (st.saved2 ? `<div class="toast ui" style="top:12px">Gespeichert ✓ Lesezeichen 2</div>` : ''); } };
 S['ueberschreiben'] = { title: 'Überschreiben bestätigen', group: 'Spielstände', back: 'speichern', ist: { desktop: 'titel_ueberschreiben', tablet: 'titel_ueberschreiben' },
   render(d) { const box = (img, h, m) => `<div class="card" style="cursor:default"><span class="ph" style="background-image:url(img/${img}.png)"></span><span>${h}</span><span class="meta">${m}</span></div>`;
     return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Lesezeichen 1 überschreiben?</h3><div class="ctx">Das bisherige Lesezeichen geht verloren.</div><div class="cards" style="grid-template-columns:1fr auto 1fr;align-items:center">${box('thumb_office', 'Bisher: Hafenbüro', 'gestern 22:10')}<span style="font-size:calc(var(--u)*20px)">→</span>${box('thumb_vratnik', 'Neu: Vratnik', 'jetzt')}</div><div class="btnrow"><button type="button" class="btn danger" data-act="over">Überschreiben</button><button type="button" class="btn" data-go="speichern" data-autofocus>Abbrechen</button></div>`, d.wide ? 0.8 : 0.62); } };
@@ -297,7 +313,7 @@ S['einstellungen'] = { title: 'Einstellungen', group: 'Im Spiel', back: 'pause',
       <h4>Text</h4><span class="lbl">Tempo</span>${seg('speed', [[0, 'langsam'], [1, 'normal'], [2, 'schnell']])}
       <span class="lbl">Weiter erst nach Tippen<small>Zeilen bleiben, bis du tippst</small></span>${seg('tap', [['false', 'aus'], ['true', 'an']])}
       <span class="lbl">Textgröße</span>${seg('size', [[0, 'normal'], [1, 'groß']])}
-      <span class="lbl">Schrift</span>${seg('font', [['pix', 'Pixel'], ['read', 'klar']])}
+      <span class="lbl">Schrift</span>${seg('font', [['pix', 'Pixel'], ['read', 'Lesbar']])}
       <div class="preview" id="preview" style="grid-column:1/-1"><span class="who">Marko: </span><span id="ptext">${esc(sample)}</span></div>
       <h4>Darstellung</h4><span class="lbl">Bewegung reduzieren<small>kein Wackeln, Pulsieren, Flackern</small></span>${seg('motion', [['false', 'aus'], ['true', 'an']])}
       <span class="lbl">Röhrenbild</span>${seg('crt', [['false', 'aus'], ['true', 'an']])}
@@ -305,7 +321,7 @@ S['einstellungen'] = { title: 'Einstellungen', group: 'Im Spiel', back: 'pause',
       <h4>Notizbuch</h4><span class="lbl">Ansicht<small>${s.nb === 'list' ? 'Liste: alle offenen Notizen auf einer Seite' : 'Nachdenken: Marko fragt sich durch'}</small></span>${seg('nb', [['list', 'Liste'], ['think', 'Nachdenken']])}
       <h4>Sprache</h4><span class="lbl">Sprache<small>Bosanski / Hrvatski: Kapitel 3–4 bisher nur Deutsch</small></span>${seg('lang', [['de', 'Deutsch'], ['bhs', 'Bos./Hrv.']])}
     </div>`;
-    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + centered(d, `<h3 class="ui big">Einstellungen</h3><div class="ui scroll" style="min-height:0;flex:1 1 auto">${body}</div><div class="btnrow ui"><button type="button" class="btn" data-go="pause">Zurück</button></div>`, d.wide ? 0.9 : 0.62); } };
+    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + centered(d, `<h3 class="ui big">Einstellungen</h3><div class="ui scroll${s.font === 'read' ? ' rd' : ''}" style="min-height:0;flex:1 1 auto">${body}</div><div class="btnrow ui${s.font === 'read' ? ' rd' : ''}"><button type="button" class="btn" data-go="pause">Zurück</button></div>`, d.wide ? 0.9 : 0.62); } };
 S['spiel'] = { title: 'Spielansicht · Zeigen', group: 'Im Spiel', ist: { desktop: 'zeigen', tablet: 'zeigen' }, istFor: () => (st.zeigen === 'aus' ? 'hud_marko' : 'zeigen'),
   render(d) { return gameView(d, { scene: 'flat', port: 'portrait_marko', portLabel: 'Marko', portColor: 'var(--lamp3)', mapOff: true, name: st.zeigen === 'neu' ? '' : 'Fenster', reveal: st.zeigen === 'neu' ? 'flat' : null }); } };
 S['mala'] = { title: 'Marko und Mala', group: 'Im Spiel', ist: { desktop: 'hud_marko', tablet: 'hud_marko' }, istFor: () => (st.mala ? 'hud_mala' : 'hud_marko'),
@@ -317,6 +333,31 @@ S['dialog'] = { title: 'Gespräch', group: 'Im Spiel', ist: { desktop: 'dialog',
     for (let i = 0; i < n; i++) rows += `<div class="opt g ${i === 0 ? 'sel' : ''} ${i === 1 ? 'done' : ''}" data-act="opt" style="height:calc(var(--s)*${rh}px)">${touch ? '' : `<span class="num">${i + 1}</span>`}<span>${esc(opts[i])}</span></div>`;
     const dlg = `<div class="dlg">${rows}<span class="x g">✕</span><span class="more g">▼ noch ${opts.length - n}</span></div>`;
     return canvas(d, `<img class="scene" src="img/scene_busbahnhof.png" alt=""><img class="abs" src="img/bust_fikret.png" alt="" style="${gpos(260, 8)};width:calc(var(--s)*57px);height:calc(var(--s)*66px)">${dlg}`); } };
+S['breitbild'] = { title: 'Breitbild-Leiste', group: 'Im Spiel', forceDev: 'phone', badgeLeft: (d) => (d.w - 640) / 2 + 8,ist: { phone: 'phone_hud' }, istFor: () => ({ marko: 'phone_hud', mala: 'phone_hud_mala', gespraech: 'phone_dialog' }[st.wide]),
+  render(d) { return wideView(d, st.wide); } };
+/* Breitbild (Seitenverhältnis ≥ 1,9): Szene 6 Gerätepixel je Spielpixel (2 CSS-px), Leiste bleibt bei 5 (1,67 CSS-px, Schrift wie heute).
+   Links Figurenknopf und Notizen, rechts Menü, Karte, Zeigen, unten Name und Inventar. Maße in CSS-px am iPhone 13 quer. */
+function wideView(d, mode) {
+  const s6 = 2, h = 5 / 3, sw = 320 * s6, sh = 144 * s6, rail = (d.w - sw) / 2; const cold = mode === 'mala', talk = mode === 'gespraech';
+  const fr = cold ? 'var(--ghost2)' : 'var(--lamp1)', tx = cold ? 'var(--ghost3)' : 'var(--lamp3)', ist = cold ? 'hud_mala' : 'hud_marko';
+  const scene = talk ? 'busbahnhof' : (cold ? 'vratnik_mala' : 'vratnik');
+  const btn = (label, x, y, act, extra) => `<div class="wb g" data-act="${act || ''}" style="left:${x}px;top:${y}px;width:${33 * h}px;height:${27 * h}px;border-color:${fr};color:${tx}">${label}${extra || ''}</div>`;
+  let inv = ''; const ix = rail + sw - (30 * h + 6 * 36 * h) - 6, iy = sh + 2;
+  inv += `<div class="wb g arr2" style="left:${ix}px;top:${iy}px;width:${15 * h}px;height:${30 * h}px;border:0;background:transparent;color:${tx}">◂</div>`;
+  for (let i = 0; i < 6; i++) inv += `<div class="wslot" style="left:${ix + 15 * h + i * 36 * h}px;top:${iy}px;width:${36 * h - 2}px;height:${30 * h}px;border-color:${cold ? 'var(--ghost1)' : '#271810'};background-image:url(ist/${ist}.png);background-size:${320 * h}px ${200 * h}px;background-position:${-(51 + i * 40 + 2) * h}px ${-163 * h}px"></div>`;
+  inv += `<div class="wb g arr2" style="left:${ix + 15 * h + 6 * 36 * h}px;top:${iy}px;width:${15 * h}px;height:${30 * h}px;border:0;background:transparent;color:${cold ? 'var(--ghost4)' : 'var(--lamp4)'}">▸</div>`;
+  const port = `<div class="wport" data-act="wswitch" style="left:0;top:4px;width:${33 * h}px;height:${40 * h}px;border-color:${fr}"><img src="img/${cold ? 'portrait_marko' : 'portrait_mala'}.png" alt="" style="left:${-1.5 * h}px;top:0;width:${36 * h}px;height:${27 * h}px"><span class="g" style="position:absolute;left:0;right:0;bottom:${2 * h}px;text-align:center;color:${cold ? 'var(--lamp3)' : 'var(--ghost4)'}">${cold ? '↔ Marko' : '↔ Mala'}</span></div>`;
+  const rails = `<div class="abs" style="left:0;top:0;width:${rail}px;height:100%;${talk ? 'opacity:.35' : ''}">${port}${btn('Notizen', 0, 4 + 40 * h + 6, '', '<i class="dot"></i>')}</div>
+    <div class="abs" style="left:${d.w - rail}px;top:0;width:${rail}px;height:100%;${talk ? 'opacity:.35' : ''}">${btn('Menü', 0, 4, 'wmenu')}${btn('Karte', 0, 4 + 27 * h + 6)}${btn('Zeigen', 0, 4 + 2 * (27 * h + 6))}</div>
+    <div class="abs" style="left:${rail}px;top:${sh}px;width:${sw}px;height:${d.h - sh}px;background:var(--ink0);${talk ? 'opacity:.35' : ''}"><span class="g abs" style="left:6px;top:${(d.h - sh - 10 * h) / 2}px;color:${tx}">${talk ? '' : 'Laterne'}</span></div>${talk ? '' : inv}`;
+  let over = '';
+  if (talk) { const opts = ['Was ist das für ein Brief?', 'Wo kann ich hier Geld wechseln?', 'Wie komme ich in die Baščaršija?', 'Sind Sie für Željo oder für Sarajevo?', 'Was ist der Unterschied zwischen Burek und Pita?', 'Gute Geschäfte.'];
+    over = `<img class="abs" src="img/bust_fikret.png" alt="" style="left:${rail + 260 * s6}px;top:${8 * s6}px;width:${57 * s6}px;height:${66 * s6}px">
+      <div class="abs" style="left:${rail + 2 * s6}px;top:${sh - 47 * s6}px;width:${sw - 4 * s6}px;height:${45 * s6}px;background:rgba(8,7,13,.94);border:${s6}px solid #c8bb9f;padding:${2 * s6}px ${4 * s6}px">
+      ${opts.slice(0, 3).map((o, i) => `<div class="g" style="font-size:${10 * s6}px;line-height:${13 * s6}px;height:${13 * s6}px;color:${i === 1 ? '#a39882' : (i === 0 ? '#fffdf4' : 'var(--paper)')};${i === 0 ? 'background:var(--ink2)' : ''}">${esc(o)}</div>`).join('')}
+      <span class="g abs" style="right:${3 * s6}px;bottom:${1 * s6}px;font-size:${10 * s6}px;line-height:${10 * s6}px;color:var(--lamp3)">▼ noch 3</span><span class="g abs" style="right:${3 * s6}px;top:${1 * s6}px;font-size:${10 * s6}px;line-height:${10 * s6}px;color:#c8bb9f">✕</span></div>`; }
+  return `<div class="abs" style="left:${rail}px;top:0;width:${sw}px;height:${sh}px;overflow:hidden"><img src="img/scene_${scene}.png" alt="" style="width:${sw}px;height:${sh}px;display:block"></div>${over}${rails}`;
+}
 S['kapitelende'] = { title: 'Kapitelende', group: 'Übergänge', ist: { desktop: 'kapitelende', tablet: 'kapitelende' },
   render(d) { return `<div class="cardstage">
     <div class="g" style="color:var(--ghost4)">Ende des ersten Kapitels</div>
@@ -326,7 +367,7 @@ S['kapitelende'] = { title: 'Kapitelende', group: 'Übergänge', ist: { desktop:
     <div class="btnrow ui" style="justify-content:center;margin-top:calc(var(--s)*14px)"><button type="button" class="btn primary" data-go="spiel">Weiter mit Kapitel 2</button><button type="button" class="btn" data-go="titel">Zum Titelbild</button></div>
     <div class="ui ctx" style="color:var(--muted);margin-top:calc(var(--u)*6px);white-space:normal;max-width:90%">Dein Stand bleibt auf Platz 2. „Fortsetzen“ führt hierher zurück.</div></div>`; } };
 S['ueber'] = { title: 'Über MALA', group: 'Einstieg', back: 'titel', ist: { desktop: 'titel_ueber', tablet: 'titel_ueber' },
-  render(d) { return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Über MALA</h3><div class="scroll" style="white-space:normal">Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.<br><br>Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.<br><br>Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.</div><nav class="menu">${mi('Abspann Kapitel 1', { sub: 'nach dem Ende von Kapitel 1' })}${mi('Mitwirkende', { dis: true, why: 'Inhalt fehlt noch' })}</nav><div class="btnrow"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.7 : 0.56); } };
+  render(d) { return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Über MALA</h3><div class="scroll" style="white-space:normal">Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.<br><br>Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.<br><br>Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.</div><nav class="menu">${mi('Abspann Kapitel 1', { sub: 'nach dem Ende von Kapitel 1' })}</nav><div class="btnrow"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.7 : 0.56); } };
 S['hochformat'] = { title: 'Hochformat', group: 'Übergänge', ist: { portrait: 'hochformat' }, forceDev: 'portrait',
   render(d) { return `<img class="abs" src="ist/hochformat.png" alt="" style="left:0;top:0;width:100%;height:100%;opacity:.35">` + `<div class="panel" role="dialog" style="left:16px;right:16px;top:50%;transform:translateY(-50%);align-items:center;text-align:center"><div class="ui big" style="color:var(--ghost5);white-space:normal">MALA wird quer gespielt</div><div class="ui" style="white-space:normal">Dreh dein Gerät ins Querformat.</div><div class="ui ctx" style="white-space:normal">Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.</div><div class="btnrow ui" style="justify-content:center"><button type="button" class="btn primary" data-act="ok">Gedreht weiterspielen</button></div></div>`; } };
 
@@ -345,9 +386,12 @@ const N = {
     ['V', 'Ohne gültigen, lesbaren Stand fehlt „Fortsetzen“. Beschädigte oder inkompatible Stände erscheinen nur unter „Spiel laden“ mit Erklärung.'] ] },
   'kapitel': { lead: 'Nur erreichte Kapitel sind startbar; gesperrte bleiben ohne Ortsnamen.', items: [
     ['C', 'Heute sind alle vier Kapitel ab dem ersten Start wählbar (06_ui.js:542). Kapitel 4 übernimmt dann Vorgaben statt der Entscheidung vom Ende von Kapitel 3 (c3end).'],
-    ['O', 'BERICHT_K2.md:14 hält „Kapitelwahl ohne Sperre“ als Absicht fest – das widerspricht dem neuen Auftrag. Bitte entscheiden.'],
+    ['E', 'Entschieden: Kapitelsperre. Ein Kapitel ist erst nach dem Ende des vorigen startbar; das ersetzt „ohne Sperre“ aus BERICHT_K2.md:14.'],
     ['V', 'Freischaltung über die vorhandenen Abschluss-Marken mala.c1end … c3end. „Neues Spiel“ nimmt den ersten freien Platz ohne Rückfrage; sind alle belegt, folgt die Platzwahl mit Bestätigung.'],
-    ['V', 'Kapitel 5 als „noch nicht erschienen“, ohne Ort.'] ] },
+    ['V', 'Beispielstände folgen derselben Regel: „Sarajevo: vor dem Ankaufbuch“ erst nach dem Ende von Kapitel 1.'],
+    ['V', 'Kapitel 5 zunächst nur „noch nicht erschienen“; nach dem Ende von Kapitel 4 „Kapitel 5 · Sarajevo – noch nicht erschienen“, passend zur Ankündigung im Abspann.'],
+    ['V', 'Vorhandene Spielstände bleiben immer ladbar, auch aus Kapiteln, die nach der neuen Regel noch gesperrt wären.'],
+    ['V', 'Für Tests gibt der URL-Parameter ?kapitel=alle alle Kapitel frei, ohne Marken zu schreiben; er erscheint nicht im Menü. Die QA-Werkzeuge starten Kapitel bisher über das Titelmenü und setzen ihn künftig selbst.'] ] },
   'laden': { lead: 'Je Platz ein automatischer Stand und eigene Lesezeichen; Zustände sind beschriftet.', items: [
     ['C', 'Heute schreiben alle Speicherwege (jeder Raumwechsel, 103 Skriptstellen, Titel, Tab-Wechsel, Menü) in denselben Schlüssel mala.save.N (05_engine.js:495, 510–546). Ein manueller Stand hält nur bis zum nächsten Raumwechsel.'],
     ['C', 'Am Kapitelende wird der Stand gelöscht (90_story.js:211–212); ein beschädigter Stand erscheint als „leer“ und ist trotzdem wählbar.'],
@@ -371,7 +415,10 @@ const N = {
     ['C', 'Vorhanden: Textgeschwindigkeit inkl. „wartet auf Tippen“, Notizbuch-Ansicht, Musik an/aus, Geräusche an/aus, Röhrenbild, Vollbild, Sprache. Die Audio-Verstärkungen für Musik, Geräusche und Umgebung existieren (04_audio.js:9–21), nur ohne Regler.'],
     ['V', 'Tempo und „Weiter erst nach Tippen“ als zwei Schalter (heute eine Zeile mit vier Zuständen). Vorschau zeigt die Zeile in gewähltem Tempo, Größe und Schrift.'],
     ['V', '„Bewegung reduzieren“: kein Bildwackeln, kein pulsierender Rand, ruhigeres Wasser; folgt auch der Systemeinstellung.'],
-    ['V', '„Schrift: klar“ ist eine optionale Leseschrift für Menüs und – später – Gesprächstexte.'] ] },
+    ['E', 'Leseschrift: Atkinson Hyperlegible Next (OFL 1.1), 19–20 KB je Schnitt (woff2), lokal eingebettet – auch offline.'],
+    ['B', 'Abdeckung geprüft gegen jedes Zeichen der 297 Quelldateien des Spiels, auch rooms/ und die Übersetzungen in lang/: alle Buchstaben vorhanden, auch đ/Đ und die Akzente. Es fehlen nur Symbole (→ ↓ ↔ ▸ ✓ ☎ ✝ ⟨ ⟩) und das lange ſ; alle stehen in MALA Pixel (design/evidence/fontcheck.txt).'],
+    ['C', 'Rätsel, deren Lösung an Buchstabenformen hängt, bleiben auch bei „Lesbar“ in MALA Pixel – etwa die Bauakte 1894 in Kapitel 2 (ſ gegen f, n gegen u; rooms/obala.js:35–41).'],
+    ['V', '„Schrift: Lesbar“ gilt für Menüs und – mit der Untertitelschicht – für Gesprächstexte. Im Entwurf stellt die Wahl diese Karte und die Vorschau um; Überschriften bleiben in MALA Pixel. Die Erläuterungen am Rand sind bereits in ihr gesetzt.'] ] },
   'spiel': { lead: '„Zeigen“ markiert alles, beschriftet aber nur Ausgänge und Personen.', items: [
     ['B', 'Heute zeigt „Zeigen“ in Markos Wohnung 20 Namen gleichzeitig; sie überlagern sich und Marko (Umschalter „Ist“).'],
     ['V', 'Punkte für alle Hotspots, Namen für Ausgänge (grün) und Personen; weitere Namen beim Antippen eines Punkts. Positionen hier sind die echten Hotspot-Mittelpunkte aus dem Spiel.'],
@@ -386,22 +433,31 @@ const N = {
     ['B', 'Heute: Zeilen 11 Spielpixel (am Smartphone 18 CSS-px), vier sichtbar, weitere nur über ▲/▼ ohne Anzahl; kein Mausrad, keine Tastatur.'],
     ['V', 'Touch: drei Zeilen à 15 Spielpixel (25 CSS-px) und „▼ noch 3“. Desktop: vier Zeilen, Ziffern 1–9 und Mausrad.'],
     ['V', 'Schon gewählte Zeilen grau mit ≥ 4,5:1 (heute 4,3:1).'] ] },
+  'breitbild': { lead: 'Auf breiten Telefonen wird die Szene eine Stufe größer; die Leiste rückt an die Seiten.', items: [
+    ['E', 'Entschieden: kommt. Gilt, wenn die Szene dadurch eine ganze Maßstabsstufe gewinnt – in der Praxis Telefone quer (Seitenverhältnis ab etwa 1,9). Tablets und Desktop-Fenster behalten die heutige Leiste.'],
+    ['B', 'Heute am iPhone 13 quer: Szene 533 × 240 CSS-px, 31 % der Fläche schwarz; Knöpfe 25 CSS-px hoch (geometry.md). Umschalter „Ist“.'],
+    ['V', 'Szene 640 × 288 CSS-px (+44 % Fläche, 6 statt 5 Gerätepixel). Seitenleisten je 55 CSS-px innerhalb der Safe-Area: links Figurenknopf und Notizen (linker Daumen), rechts Menü, Karte, Zeigen (rechter Daumen); unten Name und Inventar.'],
+    ['V', 'Die Leiste bleibt bei 5 Gerätepixeln: Schrift so groß wie heute (Versalhöhe 11,7 CSS-px). Knöpfe 55 × 45 CSS-px, Felder 60 × 50, Pfeile 25 breit – Knöpfe und Felder über 44 CSS-px.'],
+    ['V', 'Gespräche bleiben im Breitbild: drei Antwortzeilen à 26 CSS-px über dem unteren Szenendrittel, die Leiste ruht abgedunkelt (Umschalter „Gespräch“). Notizbuch, Karte, Dokumente, Rätsel, Pause und Titel wechseln mit kurzer Überblendung ins gewohnte 320 × 200-Bild.'],
+    ['V', 'Umsetzung: zweite Zeichenfläche für die Leiste mit eigenem Puffer; dieselben Zeichenroutinen mit Layout-Objekt statt fester Konstanten (06_ui.js:5, 137–138), Trefferprüfung je Fläche (06_ui.js:578–600, 99_main.js:35).'],
+    ['C', 'Safe-Area: Nur die Artefakt-Fassung rückt heute seitlich ein (build.js:83, 90); die Netlify-Fassung setzt viewport-fit=cover, wertet die Ränder aber nicht aus. Die Breitbild-Leiste braucht sie in beiden Fassungen.'],
+    ['N', 'Wirkung auf echten Geräten (Notch, Safari-Leisten) ist nur emuliert geprüft.'] ] },
   'kapitelende': { lead: 'Kapitelende im Stil der Kapitelanfänge, danach direkt weiter.', items: [
     ['C', 'Heute: Endkarte, Abspann (Tippen erst nach 3 s), dann ein Kasten im Titelbild. Der Spielstand wird dabei gelöscht; „Fortsetzen“ verschwindet, wenn es der einzige war.'],
     ['V', 'Stand bleibt als „Kapitelende“ erhalten; „Fortsetzen“ landet auf dieser Karte. Abspann überspringbar mit sichtbarem Hinweis.'],
-    ['O', 'Nach Kapitel 4 nennt der Abspann schon „Kapitel 5: Sarajevo“ (96_k4_story.js:315–318). Ob das so bleiben soll, entscheidet der Autor.'] ] },
+    ['E', 'Entschieden: Die Ankündigung „FORTSETZUNG / Kapitel 5: Sarajevo“ am Ende des Abspanns von Kapitel 4 bleibt (96_k4_story.js:318).'] ] },
   'ueber': { lead: 'Text auf einer Karte statt über dem Titelbild.', items: [
     ['B', 'Heute liegt der Text ohne Fläche über dem abgedunkelten Logo; Zeilen kollidieren mit „MALA“ und der Unterzeile (ist/titel_ueber).'],
     ['V', 'Abspann bereits beendeter Kapitel abrufbar.'],
-    ['O', 'Eine Liste der Mitwirkenden gibt es im Spiel bisher nicht; der Abspann nennt nur die Figuren. Inhalt kommt vom Autor.'] ] },
+    ['E', 'Entschieden: kein Eintrag „Mitwirkende“.'] ] },
   'hochformat': { lead: 'Einmal erklären, dann gedreht weiterspielen lassen.', items: [
     ['B', 'Heute dreht das Spiel im Hochformat das Bild um 90°, ohne Erklärung. Der vorbereitete Hinweis „Dreh das Gerät quer.“ ist immer verborgen (build.js:31, 99_main.js:30).'],
     ['V', 'Hinweis mit „Gedreht weiterspielen“; die Wahl wird gemerkt. Tippflächen bleiben dieselben wie im Querformat.'] ] }
 };
-const KIND = { B: ['k-beob', 'beobachtet'], C: ['k-code', 'im Code'], V: ['k-vor', 'Vorschlag'], O: ['k-offen', 'offen'] };
+const KIND = { B: ['k-beob', 'beobachtet'], C: ['k-code', 'im Code'], V: ['k-vor', 'Vorschlag'], O: ['k-offen', 'offen'], E: ['k-ents', 'entschieden'], N: ['k-offen', 'nicht prüfbar'] };
 
 /* ---------- Ablauf ---------- */
-const ORDER = ['titel-neu', 'titel', 'kapitel', 'ueber', 'laden', 'speichern', 'ueberschreiben', 'pause', 'einstellungen', 'spiel', 'mala', 'dialog', 'kapitelende', 'hochformat'];
+const ORDER = ['titel-neu', 'titel', 'kapitel', 'ueber', 'laden', 'speichern', 'ueberschreiben', 'pause', 'einstellungen', 'spiel', 'mala', 'dialog', 'breitbild', 'kapitelende', 'hochformat'];
 const stage = document.getElementById('stage');
 function buildNav() { const groups = {}; ORDER.forEach(id => { const g = S[id].group; (groups[g] = groups[g] || []).push(id); });
   document.getElementById('nav').innerHTML = Object.entries(groups).map(([g, ids]) => `<div class="grp"><h2>${g}</h2>${ids.map(id => `<button type="button" data-screen="${id}" aria-current="${id === st.screen}">${esc(S[id].title)}</button>`).join('')}</div>`).join('');
@@ -411,12 +467,15 @@ function render() {
   let inner;
   if (devKey === 'portrait' && st.screen !== 'hochformat') inner = S['hochformat'].render(d);
   else if (st.mode === 'ist') { const name = (sc.istFor ? sc.istFor() : null) || (sc.ist && (sc.ist[devKey] || sc.ist.desktop));
-    inner = name ? (devKey === 'phone' && name === 'phone_titel' || devKey === 'portrait' ? `<img class="abs" src="ist/${name}.png" alt="Ist-Zustand" style="left:0;top:0;width:100%;height:100%">` : canvas(d, `<img class="full" src="ist/${name}.png" alt="Ist-Zustand">`))
+    inner = name ? (/^phone_/.test(name) || devKey === 'portrait' ? `<img class="abs" src="ist/${name}.png" alt="Ist-Zustand" style="left:0;top:0;width:100%;height:100%">` : canvas(d, `<img class="full" src="ist/${name}.png" alt="Ist-Zustand">`))
       : `<div class="cardstage ui" style="color:var(--muted)">Kein Ist-Bild für dieses Gerät</div>`; }
   else inner = sc.render(d);
   const k = st.full ? 1 : Math.min(1, (stage.clientWidth || d.w) / d.w);
   stage.classList.toggle('full', st.full);
-  stage.innerHTML = `<div class="vp" id="vp" style="width:${d.w}px;height:${d.h}px;--s:${d.s};--u:${d.u};transform:scale(${k})">${inner}</div><span class="badge-mode ${st.mode}">${st.mode === 'ist' ? 'Ist · Bildschirmfoto' : 'Entwurf'}</span>`;
+  // Schild „Entwurf/Ist“: oben rechts am Rahmen; wo dort Bedienelemente liegen, oben links in der Szene (Breitbild: Menü-Knopf) bzw. unten rechts (Telefon: „Zurück“ in der Kopfzeile)
+  const inVp = sc.badgeLeft && st.mode !== 'ist' && devKey === sc.forceDev, low = !inVp && st.mode !== 'ist' && sc.badgeLow && sc.badgeLow(d);
+  const badge = `<span class="badge-mode ${st.mode}"${inVp ? ` style="left:${sc.badgeLeft(d)}px;right:auto"` : low ? ' style="top:auto;bottom:8px"' : ''}>${st.mode === 'ist' ? 'Ist · Bildschirmfoto' : 'Entwurf'}</span>`;
+  stage.innerHTML = `<div class="vp" id="vp" style="width:${d.w}px;height:${d.h}px;--s:${d.s};--u:${d.u};transform:scale(${k})">${inner}${inVp ? badge : ''}</div>${inVp ? '' : badge}`;
   stage.style.height = st.full ? Math.min(d.h + 2, window.innerHeight * 0.82) + 'px' : Math.round(d.h * k) + 2 + 'px';
   document.getElementById('devinfo').textContent = d.label + ': ' + d.info + (k < 1 ? ` · verkleinert auf ${Math.round(k * 100)} %` : '');
   document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.screen === st.screen)));
@@ -428,11 +487,12 @@ function render() {
 function renderNotes() { const n = N[st.screen]; const sc = S[st.screen];
   const extra = st.screen === 'spiel' ? `<div class="seg" role="group" aria-label="Zeigen" style="margin-top:4px">${[['neu', 'Zeigen: Entwurf'], ['ist', 'Zeigen: Ist'], ['aus', 'ohne']].map(([v, l]) => `<button type="button" data-zeigen="${v}" aria-pressed="${st.zeigen === v}">${l}</button>`).join('')}</div>`
     : st.screen === 'mala' ? `<div class="seg" style="margin-top:4px"><button type="button" data-act="switch" aria-pressed="${!st.mala}">Marko aktiv</button><button type="button" data-act="switch" aria-pressed="${st.mala}">Mala aktiv</button></div>`
+    : st.screen === 'breitbild' ? `<div class="seg" style="margin-top:4px">${[['marko', 'Marko'], ['mala', 'Mala'], ['gespraech', 'Gespräch']].map(([v, l]) => `<button type="button" data-wide="${v}" aria-pressed="${st.wide === v}">${l}</button>`).join('')}</div>`
     : st.screen === 'pause' ? `<div class="seg" style="margin-top:4px"><button type="button" data-pscene="0" aria-pressed="${!st.pauseScene}">ruhig</button><button type="button" data-pscene="1" aria-pressed="${st.pauseScene}">während einer Szene</button></div>` : '';
   document.getElementById('notes').innerHTML = `<h2>${esc(sc.title)}</h2><div>${esc(n.lead)}</div>${extra}<h3>Befund und Vorschlag</h3><ul>${n.items.map(([k, t]) => `<li><span class="kind ${KIND[k][0]}">${KIND[k][1]}</span>${esc(t).replace(/([\w./-]+\.(js|md|json|png)(:[\d–-]+)?)/g, '<code>$1</code>')}</li>`).join('')}</ul>`; }
 function drawRulers() { const vp = document.getElementById('vp'); if (!vp) return; const r0 = vp.getBoundingClientRect(); const k = r0.width / vp.offsetWidth;
   const top = vp.querySelector('[role="dialog"], .cardstage') || vp;   /* nur die oberste, bedienbare Ebene messen */
-  top.querySelectorAll('.mi, .btn, .card, .segp button, .hb, .opt, .arr, .port').forEach(el => { const r = el.getBoundingClientRect(); const h = Math.round(r.height / k), w = Math.round(r.width / k); const m = document.createElement('div'); m.className = 'ruler';
+  top.querySelectorAll('.mi, .btn, .card, .segp button, .hb, .opt, .arr, .port, .wb, .wslot, .wport').forEach(el => { const r = el.getBoundingClientRect(); const h = Math.round(r.height / k), w = Math.round(r.width / k); const m = document.createElement('div'); m.className = 'ruler';
     m.style.cssText = `left:${(r.left - r0.left) / k}px;top:${(r.top - r0.top) / k}px;width:${w}px;height:${h}px;border-color:${Math.min(w, h) >= 44 ? '#5ce08a' : Math.min(w, h) >= 24 ? '#ffd166' : '#ff5c8a'}`; m.innerHTML = `<span style="color:${Math.min(w, h) >= 44 ? '#5ce08a' : Math.min(w, h) >= 24 ? '#ffd166' : '#ff5c8a'}">${h}</span>`; vp.appendChild(m); }); }
 let ptimer = null;
 function preview() { const el = document.getElementById('ptext'), box = document.getElementById('preview'); if (!el || !box) return; const s = st.set; const full = 'Der Anrufbeantworter blinkt. Zwei neue Nachrichten.';
@@ -445,12 +505,15 @@ document.addEventListener('click', (e) => { const t = e.target.closest('button, 
   if (t.dataset.dev) { st.dev = t.dataset.dev; if (st.dev === 'portrait') st.screen = 'hochformat'; else if (st.screen === 'hochformat') st.screen = 'titel-neu'; render(); return; }
   if (t.dataset.mode) { st.mode = t.dataset.mode; render(); return; }
   if (t.dataset.zeigen) { st.zeigen = t.dataset.zeigen; if (st.zeigen === 'ist') st.mode = 'ist'; else st.mode = 'neu'; render(); return; }
+  if (t.dataset.wide) { st.wide = t.dataset.wide; render(); return; }
   if (t.dataset.pscene !== undefined) { st.pauseScene = t.dataset.pscene === '1'; render(); return; }
   if (t.dataset.set) { const v = t.dataset.val; st.set[t.dataset.set] = (v === 'true' ? true : v === 'false' ? false : isNaN(+v) ? v : +v); render(); return; }
   if (!stage.contains(t) && t.dataset.act !== 'switch') return;
   if (t.getAttribute('aria-disabled') === 'true') return;
   const act = t.dataset.act;
   if (act === 'switch') { st.mala = !st.mala; render(); return; }
+  if (act === 'wswitch') { st.wide = st.wide === 'mala' ? 'marko' : 'mala'; render(); return; }
+  if (act === 'wmenu') { st.dev = 'phone'; go('pause'); return; }
   if (act === 'zeigen') { st.zeigen = st.zeigen === 'neu' ? 'aus' : 'neu'; render(); return; }
   if (act === 'save2') { st.saved2 = true; render(); return; }
   if (act === 'over') { go('speichern'); return; }

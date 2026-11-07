@@ -2,11 +2,25 @@
 
 Geprüfte Fassung: `web/index.html`, SHA-256 `5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115` (identisch mit `dist/MALA_netlify_korrigiert.zip`). Klickbarer Entwurf: https://claude.ai/artifact/W8o3QnYDp8TEz9ayPLmVcP (Quelle `design/prototype/`).
 
+Stand 7. November 2026: Die sechs Entscheidungen des Autors sind eingearbeitet (Abschnitt „Entscheidungen“). Es sind keine Entscheidungsfragen mehr offen.
+
 Kennzeichnung der Aussagen:
 - **[B]** im laufenden Spiel beobachtet (Browser, Bildschirmfoto oder Messung unter `design/evidence/`)
 - **[C]** im Code oder in Assets festgestellt (Fundstelle `datei:zeile`, relativ zu `game/src/`, sofern nicht anders angegeben)
 - **[V]** gestalterischer Vorschlag
+- **[E]** Entscheidung des Autors
 - **[N]** mangels Zugriff nicht überprüfbar
+
+## Entscheidungen
+
+| Nr. | Frage | Entscheidung **[E]** | Folgen im Entwurf |
+|---|---|---|---|
+| 1 | Kapitelsperre | **Ja.** Ein Kapitel ist erst nach dem Ende des vorigen startbar. Das ersetzt „ohne Sperre und ohne Rückfrage“ aus `BERICHT_K2.md:14`. | D1 (Kapitelwahl, Beispielstände, Kapitel 5), E Phase 2 (Testschalter, QA-Werkzeuge), F20 |
+| 2 | Ankündigung „Kapitel 5: Sarajevo“ im Abspann von Kapitel 4 | **Bleibt** (`96_k4_story.js:318`). | D3; die Kapitelwahl nennt Sarajevo als Ort von Kapitel 5 erst nach diesem Abspann (D1) |
+| 3 | Liste der Mitwirkenden | **Entfällt.** Kein Eintrag „Mitwirkende“. | D1, D16 |
+| 4 | Leseschrift | Wahl dem Entwurf überlassen → **Atkinson Hyperlegible Next** (OFL 1.1), Abdeckung gegen alle Spieltexte geprüft. | C „Schrift“, D5, E Phase 2, F21 |
+| 5 | Breitbild-Leiste | **Kommt.** | B2-11, D17, E Phase 3, F22–F25 |
+| 6 | Malas Stimme-Zeilen im Hafenbüro, alle 24 s (`rooms/office.js:38, 95–98`) | **Bleiben wiederkehrend**, keine Änderung. | – |
 
 ---
 
@@ -55,7 +69,7 @@ Priorität: **1** = vor der nächsten Veröffentlichung beheben, **2** = gehört
 |---|---|---|---|---|---|
 | 1 | Speichern | **[C]** Jeder Raumwechsel (`05_engine.js:495`), 103 Skriptstellen `A.save()`, „Zum Titelbild“ und Tab-Wechsel (`99_main.js:50–51`) schreiben in denselben Schlüssel `mala.save.N` wie „Speichern“ im Menü (`05_engine.js:510–546`). | Ein manueller Stand hält nur bis zum nächsten Raumwechsel; man kann keinen Punkt vor einer Entscheidung festhalten (etwa die Zustimmung am Ende von Kapitel 3, die Kapitel 4 prägt). „Speichern“ ist praktisch wirkungslos. | Je Platz ein automatischer Stand und drei Lesezeichen mit eigenen Schlüsseln (D6/D7). | 1 |
 | 2 | Kapitelende | **[C]** Am Kapitelende wird der Stand gelöscht (`90_story.js:211–212`, ebenso K2–K4). „Weiter mit Kapitel N“ gibt es nur direkt nach dem Abspann (`06_ui.js:541, 557`). | Wer nach dem Abspann „Zum Titelbild“ wählt oder den Tab schließt, findet kein „Fortsetzen“ mehr und muss das Kapitel selbst suchen. | Stand bleibt als „Kapitelende“ erhalten; „Fortsetzen“ führt zur Weiter-Karte (D3). | 1 |
-| 3 | Kapitelwahl | **[B][C]** Kapitel 1–4 sind ab dem ersten Start wählbar, mit Ortsnamen (`06_ui.js:542`); Kapitel 4 startet dann mit Vorgaben statt der Entscheidung vom Ende von Kapitel 3. | Spoiler vor dem ersten Klick; Ausgangszustand wird umgangen. **Widerspruch:** `BERICHT_K2.md:14` (Repository-Wurzel) hält „ohne Sperre und ohne Rückfrage“ als Absicht fest. | Nur erreichte Kapitel startbar, über die vorhandenen Marken `mala.c1end…c3end` (D1). Entscheidung des Autors nötig. | 1 |
+| 3 | Kapitelwahl | **[B][C]** Kapitel 1–4 sind ab dem ersten Start wählbar, mit Ortsnamen (`06_ui.js:542`); Kapitel 4 startet dann mit Vorgaben statt der Entscheidung vom Ende von Kapitel 3. | Spoiler vor dem ersten Klick; Ausgangszustand wird umgangen. `BERICHT_K2.md:14` (Repository-Wurzel) hielt „ohne Sperre und ohne Rückfrage“ als Absicht fest; **[E]** jetzt entschieden: Sperre. **[C]** Eine Abfrage `M.ch2Unlocked` gibt es schon (`96_k2_story.js:27`), sie wird nirgends benutzt. | Nur erreichte Kapitel startbar, über die vorhandenen Marken `mala.c1end…c3end` (D1); Testschalter für die QA-Werkzeuge (E). | 1 |
 | 4 | Touch | **[B]** Smartphone quer, kleinste Seite der Tippfläche: Titelzeilen **15 CSS-px**, Platz-/Bestätigungszeilen 21,7, Pausenmenü 20, Dialogzeilen 18,3, Verb-Popup 21,7, „X“ und ▲/▼ 23,3, Inventarpfeile 16,7 breit, „Vorlesen“ 23,3 (`design/evidence/geometry.md`). | Unter dem WCAG-2.2-Minimum von 24 CSS-px (SC 2.5.8); Fehltipps, besonders im Pausenmenü und bei Antworten. | Mindestens 24 CSS-px sofort im Canvas (Zeilenhöhen auf 15 Spielpixel bei Touch); Menüs in der HTML-Schicht mit ≥ 44 CSS-px (D1–D7). | 1 |
 | 5 | Escape | **[B]** Verb-Popup offen + Esc: Popup schließt **und** das Pausenmenü öffnet sich. Gegenstand gewählt („Benutze Džezva mit …“) + Esc: Menü öffnet sich, die Auswahl bleibt (`capture.json` → `esc`). | Esc tut zwei Dinge oder das falsche; man landet unerwartet im Menü. | Ebenen-Stapel: Esc schließt nur die oberste Ebene (Popup → Gegenstandswahl → Overlay → Menü); erst ohne offene Ebene öffnet Esc die Pause. | 1 |
 | 6 | Tastatur | **[C]** Titel, Menüs und Antwortlisten sind nicht per Tastatur bedienbar; Esc wirkt im Titel nicht; Tasten entsperren kein Audio (`06_ui.js:668–672`, `99_main.js:46–48`). | Desktop-Spieler ohne Maus kommen nicht ins Spiel; Ton startet erst mit dem ersten Klick. | Pfeile/Enter/Esc in allen Menüs; Ziffern 1–9 in Antwortlisten; Audio-Freigabe auch bei `keydown`. | 2 |
@@ -83,15 +97,15 @@ Priorität: **1** = vor der nächsten Veröffentlichung beheben, **2** = gehört
 | 8 | Figurenwechsel | **[B][C]** Der Knopf zeigt die andere Figur nur mit ihrem Namen („Mala“ bzw. „Marko“, `06_ui.js:172–177`); solange Mala fehlt, ein leerer Rahmen. | „Mala“ unter dem Porträt liest sich leicht als „du bist Mala“. | Beschriftung „↔ Mala“; ohne Mala Markos Porträt (D9). | 2 |
 | 9 | Inventar | **[C]** Der neueste Gegenstand blinkt dauerhaft (`E.invNew` wird nie gelöscht, `05_engine.js:241`, `06_ui.js:163`). | Dauerreiz am Bildrand. | Blinken bis zum ersten Ansehen. | 3 |
 | 10 | Anleitung | **[B]** „Spielanleitung“ spielt lange Sprechblasen von Marko ab (`evidence/desktop/37_k2_anleitung.png`). | Nicht nachlesbar, nicht überspringbar im Einzelnen. | Seite „Steuerung“ im Pausenmenü (D4). | 3 |
-| 11 | Bildfläche | **[B]** Smartphone quer: 31 % der Fläche bleiben schwarz; Szene 533×240 CSS-px. Tablet quer: 34 % ungenutzt (`geometry.md`). | Kleine Figuren und Hotspots am Telefon. | Optional „Breitbild-Leiste“ (B3). | 3 |
+| 11 | Bildfläche | **[B]** Smartphone quer: 31 % der Fläche bleiben schwarz; Szene 533×240 CSS-px. Tablet quer: 34 % ungenutzt (`geometry.md`). | Kleine Figuren und Hotspots am Telefon. | Breitbild-Leiste, **[E]** entschieden (D17). | 2 |
 | 12 | Kapitelende | **[B]** Nach dem Abspann ein Kasten über dem Titelbild („Split ist zu Ende. Weiter nach Sarajevo?“, `evidence/vm/k1_ende_01_title.png`); Überspringen des Abspanns ist nicht sichtbar. | Wirkt technisch, bricht den Kartenstil. | D3. | 3 |
 
 ### B3. Optionale Erweiterungen
 
 | Nr. | Erweiterung | Nutzen | Prio |
 |---|---|---|---|
-| 1 | **Breitbild-Leiste** für Seitenverhältnis ≥ 1,9: Szene in 6 statt 5 Gerätepixeln je Spielpixel (iPhone 13 quer: 640×288 statt 533×240 CSS-px, **+44 % Fläche**), Knöpfe in den Seitenrändern, Inventar als Streifen darunter. Overlays bleiben im 320×200-Raster. | Deutlich größere Szene am Telefon. | 3 |
-| 2 | **Leseschrift und große Texte für Gespräche** über eine HTML-Untertitelschicht, deckungsgleich mit dem Canvas. | Textgröße wählbar, ohne die Szenen neu zu zeichnen. | 3 |
+| 1 | ~~Breitbild-Leiste~~ – **[E]** entschieden, nicht mehr optional: D17, Phase 3. | – | – |
+| 2 | **Leseschrift und große Texte auch in Gesprächen** über eine HTML-Untertitelschicht, deckungsgleich mit dem Canvas. Die Leseschrift selbst ist entschieden (C „Schrift“); für Menüs kommt sie mit Phase 2. | Textgröße wählbar, ohne die Szenen neu zu zeichnen. | 3 |
 | 3 | **Sicherung als Datei** (Export/Import, JSON mit Versionsnummer und Prüfsumme). Ausdrücklich ohne Cloud-Versprechen. | Schutz vor gelöschten Browserdaten, Gerätewechsel von Hand. | 3 |
 | 4 | **„Zuletzt“-Karte beim Fortsetzen**: Ort, Kapitel, die drei zuletzt notierten Notizen (Wortlaut aus dem Notizbuch, keine Lösung). | Wiedereinstieg nach Pausen. | 3 |
 | 5 | **Schnellvorlauf für gesehene Szenen** (Esc gedrückt halten), technisch als beschleunigter Ablauf, nicht als Sprung. | Wiederholungen, Tests. | 3 |
@@ -140,7 +154,13 @@ Regeln: Information nie nur über Farbe – Auswahl trägt zusätzlich den Marke
 - **„MALA Pixel“** für alle Oberflächen: aus der Bitmap-Schrift des Spiels erzeugt (`design/tools/makefont.js`, 145 Glyphen, 19,8 KB, inkl. ä ö ü ß č ć š ž đ „ “ … ▸ ↔ ✓). Eine Quelle für Canvas und HTML; pixelgenau bei 10 px × n. **[B]** Probedruck im Browser deckungsgleich mit der Canvas-Schrift.
 - Größen in Vielfachen von u (CSS-px je Schriftpixel): Text `10u` (Versalhöhe 7u), Überschrift `20u`, Logo bleibt `M.big` ×4 im Canvas. Zeilenhöhe `12u`.
 - u: Smartphone 2 (Versalhöhe 14 CSS-px; heute 11,7), Tablet 3, Desktop 3 (heute 4 – das Menü wird ruhiger, bleibt groß).
-- Optional **Leseschrift** (z. B. Atkinson Hyperlegible, OFL, lokal eingebettet) für Menüs und – mit der Untertitelschicht – Gespräche. **[N]** Abdeckung von đ/Đ vor dem Einbau prüfen.
+- **Leseschrift „Atkinson Hyperlegible Next“** **[E]** als Einstellung „Schrift: Lesbar“ (D5). Sie gilt für Menüs (Phase 2) und mit der Untertitelschicht für Gespräche (B3-2). Überschriften und das Logo bleiben in MALA Pixel.
+  - Herkunft: „The Atkinson Hyperlegible Next Project Authors“, SIL Open Font License 1.1 (`design/assets/AtkinsonHyperlegibleNext-OFL.txt`); Dateien aus `@fontsource/atkinson-hyperlegible-next` 5.3.0.
+  - Umfang: Schnitte 400 und 700, je Untermenge latin und latin-ext als woff2 (`design/assets/`). Das sind 19,0 KB (400) und 19,8 KB (700); die Dateien werden lokal eingebettet und funktionieren offline.
+  - **[B]** Abdeckung geprüft (`design/tools/fontcheck.js`, Ergebnis `design/evidence/fontcheck.txt`), und zwar gegen jedes Zeichen in den Zeichenketten aller 297 Quelldateien unter `game/src/`, einschließlich `rooms/` und der Übersetzungen in `lang/`. Ergebnis:
+    - Alle Buchstaben der deutschen und bosnisch-kroatischen Texte sind enthalten, auch đ/Đ, č ć š ž, à á â è é ê ì í ò ó ô ù ú und „ “ ‚ ‘ … – —.
+    - Es fehlen nur die Symbole → ↓ ↔ ▸ ☎ ✓ ✝ ⟨ ⟩ sowie das lange ſ. Alle stehen in MALA Pixel und kommen über die Schriftenfolge (`font-family: 'Atkinson Hyperlegible Next', 'MALA Pixel'`).
+  - **Regel:** Rätsel und Dokumente, deren Lösung an Buchstabenformen hängt, bleiben immer in MALA Pixel. **[C]** Beispiel ist die Bauakte 1894 in Kapitel 2: ſ gegen f, n gegen u, Wörter in ⟨ ⟩ (`rooms/obala.js:35–41`).
 
 ### Raster, Flächen, Zustände
 - Abstände in u: 1 · 2 · 4 · 6 · 8 · 12 · 16. Panel-Innenabstand 6u, Kartenabstand 5u.
@@ -160,11 +180,18 @@ Alle Entwürfe sind im Prototyp anklickbar (https://claude.ai/artifact/W8o3QnYDp
 - **Bild:** das vorhandene Titelbild, unverändert animiert. **[V]** neues Asset: das Wasser bis zum unteren Rand verlängern (heute Zeilen 144–199 schwarz; das Wasser wird prozedural gezeichnet, der Aufwand ist klein).
 - **Titel:** „MALA“ wie heute (×4, Eisblau, Schatten). Die **Unterzeile wächst mit der Reise:** erster Start „Split“, nach Kapitel 1 „Split · Sarajevo“ usw.
 - **Einträge mit Spielstand:** Karte „**Fortsetzen**“ (Vorschaubild, „Kapitel 2 · Busbahnhof“, „heute 19:42 · 1 Std. 12 Min.“), dann *Neues Spiel*, *Spiel laden*, *Einstellungen*, *Über MALA*. **Ohne Spielstand:** *Neues Spiel* (hervorgehoben), *Spiel laden* (zeigt dann die Beispielstände), *Einstellungen*, *Über MALA*. Sprache steht unter Einstellungen; beim allerersten Start wird sie aus der Browsersprache vorbelegt (hr/bs/sr → Bosanski/Hrvatski).
-- **Begründung der Struktur:** „Mitwirkende“ wird Teil von „Über MALA“ (das Spiel enthält bisher keine Namensliste, nur den Abspann mit Figuren). Kapitelwahl ist keine eigene Zeile, sondern Teil von „Neues Spiel“, sobald mehr als ein Kapitel erreicht ist.
+- **Begründung der Struktur:** Vier Einträge statt sieben bis acht. Einen Eintrag „Mitwirkende“ gibt es nicht (**[E]**); „Über MALA“ enthält Beschreibung und Abspann beendeter Kapitel (D16). Die Kapitelwahl ist keine eigene Zeile, sondern Teil von „Neues Spiel“, sobald mehr als ein Kapitel erreicht ist.
 - **Lage:** Standard unten mittig über einem Verlauf (Text ≥ 9:1). Smartphone quer: Spalte links über dem dunklen Marjan-Hang und dem Seitenrand – Mala und die Laternen bleiben frei.
 - **Bedienung:** Maus: Hover = Fokus. Tastatur: ↑/↓, Enter, Esc (zurück aus Unterseiten); Fokus startet auf dem Hauptweg. Touch: ganze Zeile tippbar, ≥ 44 CSS-px. Ton: Titelmusik startet mit der ersten Eingabe (auch Taste); kleine Ton-Marke oben rechts.
 - **Fortsetzen:** jüngster Stand nach `at` über alle Plätze, nur wenn er lesbar und kompatibel ist (Phase bekannt, `v` ≤ unterstützt). Sonst fehlt der Eintrag.
-- **Neues Spiel:** nimmt den ersten freien Platz ohne Rückfrage („Startet auf Platz 2“). Sind alle drei belegt, folgt die Platzwahl mit Überschreiben-Bestätigung (D8). Sind mehrere Kapitel erreicht, erscheint die Kapitelwahl: „Kapitel 1 · Split – von vorn“, „Kapitel 2 · Sarajevo – mit deinem Ende von Kapitel 1“; gesperrte Kapitel nur als „Kapitel 3 – nach Kapitel 2“, Kapitel 5 „noch nicht erschienen“.
+- **Neues Spiel:** nimmt den ersten freien Platz ohne Rückfrage („Startet auf Platz 2“). Sind alle drei belegt, folgt die Platzwahl mit Überschreiben-Bestätigung (D8). Sind mehrere Kapitel erreicht, erscheint die Kapitelwahl.
+- **Kapitelwahl mit Sperre [E]:** Kapitel N ist startbar, sobald `mala.c(N−1)end` existiert. Die Marken schreibt das Spiel schon heute am Kapitelende: `90_story.js:211` → `96_k2_story.js:25–26` (K1), `96_k2_story.js:120` (K2), `96_k3_story.js:315` (K3), `96_k4_story.js:320` (K4).
+  - Erreichte Kapitel erscheinen mit Ort und Herkunft: „Kapitel 1 · Split – von vorn“, „Kapitel 2 · Sarajevo – mit deinem Ende von Kapitel 1“.
+  - Gesperrte Kapitel erscheinen ohne Ortsnamen und ausgegraut mit Grund: „Kapitel 3 – nach Kapitel 2“.
+  - Kapitel 5 erscheint als „Kapitel 5 – noch nicht erschienen“. Erst nach dem Abspann von Kapitel 4 (`mala.c4end`) heißt es „Kapitel 5 · Sarajevo – noch nicht erschienen“, passend zur Ankündigung dort (D3).
+  - **Beispielstände** folgen derselben Regel. „Split: kurz vor Ivkas Wahrheit“ ist immer verfügbar; „Sarajevo: vor dem Ankaufbuch“ erst nach `mala.c1end` (`95_preset.js:5–6`).
+  - **Laden ist nie gesperrt:** Vorhandene Spielstände bleiben ladbar, auch aus Kapiteln, die nach der neuen Regel noch gesperrt wären. Das betrifft etwa Spieler, die heute direkt in Kapitel 3 gesprungen sind.
+  - **Testschalter:** Der URL-Parameter `?kapitel=alle` gibt alle Kapitel frei, ohne Marken zu schreiben. Kapitel 2–4 starten dann wie heute mit Vorgaben. Er erscheint nicht im Menü. Die QA-Werkzeuge starten Kapitel bisher über das Titelmenü und setzen den Schalter künftig selbst (E, Phase 2).
 
 **Drei Einstiege**
 1. *Erster Start / neues Spiel:* Titel → Neues Spiel → (freier Platz automatisch) → Kapitelkarte → Intro.
@@ -181,7 +208,7 @@ Alle Entwürfe sind im Prototyp anklickbar (https://claude.ai/artifact/W8o3QnYDp
 ### D3. Kapitelübergänge
 - **Anfang:** vorhandene Karten und Erinnerungsbild bleiben. **[V]** Kartentexte umbrechen (B2-3); Erinnerungsbild mit derselben Schriftstaffel wie die Karte.
 - **Ende:** **[V]** Karte im Stil der Anfangskarten: „Ende des ersten Kapitels“ / „Split“ / „Fortsetzung: Sarajevo“ / „Spielzeit 3 Std. 40 Min.“. Danach Abspann mit sichtbarem „Überspringen ▸“ ab 3 s, dann dieselbe Karte mit *Weiter mit Kapitel 2* (Hauptweg) und *Zum Titelbild*. Der Stand bleibt als „Kapitelende“ auf dem Platz.
-- **Kapitel 4:** Der Abspann nennt heute „Kapitel 5: Sarajevo“; die Kapitelwahl zeigt Kapitel 5 nur als „noch nicht erschienen“. **[O]** Ob die Ankündigung bleibt, entscheidet der Autor.
+- **Kapitel 4:** Der Abspann endet mit „FORTSETZUNG / Kapitel 5: Sarajevo“ (`96_k4_story.js:318`). **[E]** Das bleibt so. **[V]** Die Endkarte von Kapitel 4 („Ende“, oben) nennt entsprechend „Fortsetzung: Sarajevo“, aber ohne „Weiter mit …“, weil Kapitel 5 nicht enthalten ist. Danach erscheint das Titelbild, und die Kapitelwahl zeigt „Kapitel 5 · Sarajevo – noch nicht erschienen“ (D1).
 - **Wiederholung gesehener Intros:** nur als „Abspann Kapitel N“ unter „Über MALA“ (technisch einfach). Intros erneut abzuspielen bräuchte einen eigenen Abspielmodus ohne Spielzustand – nicht empfohlen.
 
 ### D4. Pause
@@ -199,7 +226,7 @@ Eigene Seite aus Titel und Pause. Speicherung je Gerät in `localStorage` wie he
 | Ton | Musik, Geräusche, Umgebung | an/aus | Regler 0–100 auf die vorhandenen Verstärkungen (`04_audio.js:9–21`); Probeklang beim Loslassen |
 | Text | Tempo | eine Zeile mit 4 Zuständen | langsam/normal/schnell |
 | Text | Weiter erst nach Tippen | in „Tempo“ versteckt | eigener Schalter |
-| Text | Textgröße, Schrift | – | normal/groß; Pixel/klar (HTML-Schicht; Gespräche mit B3-2) |
+| Text | Textgröße, Schrift | – | normal/groß; Pixel/Lesbar (Atkinson Hyperlegible Next, C „Schrift“; HTML-Schicht; Gespräche mit B3-2) |
 | Darstellung | Bewegung reduzieren | – | Schalter, folgt `prefers-reduced-motion` |
 | Darstellung | Röhrenbild, Vollbild | vorhanden | bleibt |
 | Notizbuch | Liste/Nachdenken | vorhanden | mit Erklärung in einer Zeile |
@@ -210,6 +237,7 @@ Vorschau: Beispielzeile im gewählten Tempo, Größe und Schrift. „Untertitel�
 ### D6. Speichern (Lesezeichen)
 - Notizbuchseite: „Speichern · Platz 1 · Kapitel 2 · Vratnik“, darunter eine Infozeile zum automatischen Stand und **drei Lesezeichen** als Karten (Vorschaubild, Ort, Datum, Spielzeit, optional Name).
 - Leere Karte antippen = speichern. Rückmeldung **erst nach erfolgreichem Schreiben** („Gespeichert ✓ Lesezeichen 2“). Belegte Karte → Bestätigung (D8).
+- **Smartphone quer** (gilt auch für D7): „Zurück“ in der Kopfzeile, flachere Vorschaubilder (320:112), die Art-Marke liegt auf dem Bild. Wird der Mittelteil bei großer Schrift zu hoch, scrollt er; Überschrift und „Zurück“ bleiben stehen.
 - Nicht möglich (Szene, Zwischenwelt, Stadtplan): Karten gesperrt, Satz mit Grund. Fehler: „Hier geht Speichern nicht.“ (Ort) bzw. „Speichern fehlgeschlagen: Der Browser-Speicher ist voll.“ (Quota).
 
 **Datenmodell [V]**
@@ -245,6 +273,7 @@ Die Leiste bleibt im Canvas und behält ihre Ordnung (Notizen links, Name in der
 - **Zeigen:** Punkte für alle Hotspots (Farbe nach Art: Ausgang grün, Person rot, Ding gelb, Malas „Spüre“-Stellen eisblau), Namen nur für Ausgänge und Personen; Tipp auf einen Punkt zeigt dessen Namen. Dauer 4,5 s wie heute; bei „Bewegung reduzieren“ ohne Pulsieren.
 - **Verb-Popup:** bleibt; bei Touch Zeilen 15 Spielpixel; Abstand ≥ 12 Spielpixel zum Tippunkt, damit das Ziel sichtbar bleibt.
 - **Ständig sichtbar:** Notizen, Karte, Zeigen, Menü, Porträt, Inventar. Nichts davon wird ausgeblendet – die Leiste verdeckt keine Szene (sie liegt unter der Szene).
+- Auf breiten Telefonen ordnet die Breitbild-Leiste dieselben Elemente an den Seiten an (D17). Alles in diesem Abschnitt gilt dort ebenso.
 
 ### D10. Gespräche
 - Brustbild und Antwortliste unten bleiben. Touch: drei Zeilen à 15 Spielpixel und „▼ noch 3“; Desktop: vier Zeilen, Ziffern 1–9, Mausrad, ↑/↓/Enter. Schon gewählte Zeilen in `muted` (≥ 4,5:1). Lange Antworten umbrechen wie heute (nie abgeschnitten).
@@ -263,7 +292,47 @@ Die Leiste bleibt im Canvas und behält ihre Ordnung (Notizen links, Name in der
 Beim ersten Aufruf im Hochformat: Karte „MALA wird quer gespielt“ – „Dreh dein Gerät ins Querformat.“ – „Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.“ – *Gedreht weiterspielen*. Die Wahl wird gemerkt; die gedrehte Darstellung bleibt technisch wie heute.
 
 ### D16. Über MALA
-Text auf Papierkarte statt über dem Titelbild; *Abspann Kapitel N* für beendete Kapitel; *Mitwirkende* erst, wenn der Autor Inhalte liefert.
+Text auf Papierkarte statt über dem Titelbild; *Abspann Kapitel N* für beendete Kapitel. **[E]** Keine Liste der Mitwirkenden und kein Eintrag dafür.
+
+### D17. Breitbild-Leiste (Telefone quer) [E]
+**[B]** Heute bleiben am iPhone 13 quer (Emulation 750 × 342 CSS-px) 31 % der Fläche schwarz; die Szene misst 533 × 240 CSS-px (`geometry.md`). Im Prototyp: Bildschirm „Breitbild-Leiste“ mit den Umschaltern Marko, Mala und Gespräch, jeweils mit „Ist“.
+
+**Wann sie gilt.** Sei n der heutige Maßstab in Gerätepixeln je Spielpixel (`99_main.js:25`). Die Breitbild-Leiste gilt, wenn die Szene eine Stufe größer (n+1) passt, während die Leiste bei n bleibt. In Gerätepixeln innerhalb der Safe-Area heißt das: `320·(n+1) + 2·33·n ≤ Breite` und `144·(n+1) + 32·n ≤ Höhe`. Sonst bleibt alles wie heute.
+- iPhone 13 quer: n = 5; 2250 ≤ 2250 und 1024 ≤ 1026 → Breitbild.
+- iPad quer (1080 × 810, Faktor 2) und Desktop 1280 × 800 → heutige Leiste.
+- In der Praxis trifft das Telefone quer, ab einem Seitenverhältnis von etwa 1,9. Ein sehr breites Desktopfenster kann ebenfalls darunter fallen.
+- Im gedrehten Hochformat gilt dieselbe Regel. Beim iPhone 13 (664 × 390 nutzbar) reicht die Breite nicht.
+
+**Aufteilung** (Rechenbeispiel iPhone 13 quer, 750 × 342 CSS-px, Faktor 3; Prototyp „Breitbild-Leiste“):
+- **Szene:** 6 Gerätepixel je Spielpixel, also 640 × 288 CSS-px (+44 % Fläche); oben bündig, waagerecht mittig.
+- **Leiste:** bleibt bei 5 Gerätepixeln (5/3 CSS-px je Spielpixel); die Schrift bleibt so groß wie heute (Versalhöhe 11,7 CSS-px).
+- **Links (55 CSS-px), linker Daumen:** Figurenknopf mit Porträt und „↔ Mala“ (55 × 67), darunter Notizen (55 × 45).
+- **Rechts (55 CSS-px), rechter Daumen:** Menü, Karte, Zeigen, je 55 × 45 CSS-px.
+- **Unten (54 CSS-px, unter der Szene):** links der Name des Hotspots, rechts das Inventar.
+  - Sechs Felder 36 × 30 Spielpixel, also 60 × 50 CSS-px (heute 40 × 36 Spielpixel; die Symbole messen 32 × 24 und passen, `06_ui.js:137, 167`).
+  - Pfeile 15 × 30 Spielpixel, also 25 × 50 CSS-px.
+- **Tippflächen:** Knöpfe und Felder ≥ 44 CSS-px, Pfeile ≥ 24 CSS-px.
+
+**Gespräche, Sprechzeilen, Popup.**
+- **Antwortliste:** ein Kasten über dem unteren Szenendrittel, 45 Spielpixel hoch. Drei Zeilen à 13 Spielpixel (26 CSS-px), dazu „▼ noch N“.
+- **Brustbild:** oben rechts in der Szene.
+- **Leiste:** während des Gesprächs auf 35 % abgedunkelt; sie nimmt keine Eingaben an.
+- **Sprechzeilen, Verb-Popup und „Zeigen“:** liegen in der Szene und werden mit ihr 20 % größer.
+
+**Andere Bildschirme.**
+- Notizbuch, Karte, Dokumente, Rätsel, Kapitelkarten und Abspann sind auf 320 × 200 gezeichnet. Sie wechseln mit 150 ms Überblendung ins gewohnte Bild und nach dem Schließen zurück.
+- Pause, Einstellungen, Speichern, Laden und Titel liegen nach Phase 2 in der HTML-Schicht und passen sich ohnehin an. Vor Phase 2 nutzen sie ebenfalls das 320 × 200-Bild.
+
+**Umschalten.** Bei Drehung und Größenänderung wird neu entschieden (Ereignisse `resize` und `orientationchange`, `99_main.js:34`). Nur die Darstellung wechselt, der Spielzustand bleibt unberührt.
+
+**Technik** (Vorschlag mit Fundstellen):
+- **Layout-Objekt:** Lage von Porträt, Notizen, Karte, Zeigen, Menü, Name, Inventar und Pfeilen kommt aus einem Layout-Objekt statt aus festen Konstanten (`06_ui.js:5, 137–138`). Die Zeichenroutinen der Leiste bleiben dieselben (`06_ui.js:139–178`). Das Standard-Layout entspricht den heutigen Werten und muss pixelgleich bleiben.
+- **Zweite Zeichenfläche:** eine eigene Fläche für die Leiste mit eigenem Puffer. Die Szene bleibt auf `#game` (Ausschnitt 320 × 144).
+- **Trefferprüfung je Fläche:** betrifft `uiAt` (`06_ui.js:578–600`) und `toLogical` (`99_main.js:35`); Letzteres rechnet heute nur ein Rechteck um.
+- **Safe-Area:** `fit()` (`99_main.js:23–34`) wählt Standard oder Breitbild und zieht die Safe-Area-Ränder (`env(safe-area-inset-*)`) ab. **[C]** Heute rückt nur die Artefakt-Fassung seitlich ein (`game/build.js:83, 90`, `MALA_FIT`). Die Netlify-Fassung (`web/index.html`) setzt `viewport-fit=cover` (`game/build.js:23`), wertet die Ränder aber nicht aus. Heute schadet das nicht, weil das Bild mittig weit vom Rand liegt; die Breitbild-Leiste reicht dagegen bis an die Safe-Area.
+- **Röhrenbild:** muss beide Flächen abdecken (`placeCRT`, `99_main.js:30`).
+
+**[N] Nicht geprüft:** Safe-Area-Werte und Safari-Leisten echter iPhones. Die Rechnung oben nutzt die Emulation, die keine Ränder kennt.
 
 ---
 
@@ -290,27 +359,43 @@ Aufwand: **S** ≤ ½ Tag, **M** 1–3 Tage, **L** ≥ 1 Woche.
 ### Phase 2 – Systemoberflächen als HTML-Schicht und Spielstand-Modell
 | Schritt | Dateien | Aufwand |
 |---|---|---|
-| Schrift einbetten: `makefont.js` in den Build, `@font-face` als data-URI (≈ 27 KB) | `game/build.js`, `design/tools/makefont.js` (opentype.js nur als Build-Werkzeug) | S |
+| Schriften einbetten: `makefont.js` in den Build, MALA Pixel als data-URI (≈ 27 KB); Leseschrift Atkinson Hyperlegible Next, vier woff2 mit zusammen 39 KB (als data-URI ≈ 53 KB); `fontcheck.js` als Prüfschritt | `game/build.js`, `design/tools/makefont.js`, `design/tools/fontcheck.js`, `design/assets/` (opentype.js nur als Build-Werkzeug) | S |
 | HTML-Schicht über dem Canvas, deckungsgleich skaliert; Fokusverwaltung, Esc, Zurück-Taste (`popstate`) | neu `game/src/07_shell.js` + CSS im Build | M |
 | Titel, Kapitelwahl, Über MALA, Pause, Einstellungen, Speichern, Laden, Bestätigungen in der Schicht; Canvas-Fassungen entfernen | `07_shell.js`, `06_ui.js:497–560` | L |
 | Spielstand-Modell: `meta`, Vorschaubild, Lesezeichen, Kapitelende-Stand, `v`-Prüfung, Sicherung vor dem Laden, getrennte Fehlertexte | `05_engine.js:505–546`, `90_story.js:211–212`, `96_k2_story.js:120–121`, `96_k3_story.js:28–32, 314–318`, `96_k4_story.js:319–324` | M |
-| Kapitel-Freischaltung über `mala.cNend` | `06_ui.js:542` → `07_shell.js` | S |
-| Einstellungen: Lautstärkeregler, Textgröße/Schrift (HTML), Bewegung reduzieren | `04_audio.js:9–21`, `05_engine.js:185–188`, `06_ui.js:47–63`, `99_main.js:10–17` | M |
+| Kapitelsperre **[E]** über `mala.cNend`: Kapitelwahl, Beispielstände, Kapitel 5 mit Ort erst nach `mala.c4end`; Laden bleibt ungesperrt; Testschalter `?kapitel=alle` (Abfrage verträgt fehlendes `location`) | `06_ui.js:540–542` → `07_shell.js`; vorhandene, ungenutzte Abfrage `96_k2_story.js:27` | S |
+| QA-Werkzeuge auf den Testschalter umstellen, sonst starten Kapitel 2–4 nicht mehr: Node-VM-Sandbox ohne `location` (`qa/vmdriver.js:56–70`), Kapitelstart über das Titelmenü in `qa/sim.js:14`, `qa/browser/scenarios.js:175, 215, 219`, `qa/browser/uirun.js:180`; neuer Test der Sperre selbst | `qa/` | S |
+| Einstellungen: Lautstärkeregler, Textgröße, Schrift Pixel/Lesbar (`mala.font`), Bewegung reduzieren | `04_audio.js:9–21`, `05_engine.js:185–188`, `06_ui.js:47–63`, `99_main.js:10–17` | M |
 | Pause hält Musik (gedämpft) und Overlays an | `05_engine.js:551–560`, `04_audio.js:221–223` | S |
 | Tests: Abnahmekriterien F als Playwright-Szenarien (vier Geräte) | `qa/browser/` | M |
 
-### Phase 3 – optional
-Breitbild-Leiste (L; Layout-Konstanten `06_ui.js:5, 137–138`, Hit-Tests, Overlays im 320×200-Modus), Untertitelschicht für Gespräche (M–L), Export/Import (S), „Zuletzt“-Karte (S), Schnellvorlauf (M), Abspann-Archiv (S).
+### Phase 3 – Breitbild-Leiste [E] (zusammen L)
+| Schritt | Dateien | Aufwand |
+|---|---|---|
+| Layout-Objekt für die Leiste; Standard-Layout pixelgleich zu heute (Bildvergleich vorher/nachher auf allen vier Geräten) | `06_ui.js:5, 137–178` | M |
+| Zweite Zeichenfläche für die Leiste, Szene im eigenen Maßstab; Röhrenbild über beide Flächen | `99_main.js:23–34`, `game/build.js` (Canvas, CSS) | M |
+| Wahl Standard/Breitbild in `fit()` nach der Regel aus D17, mit Safe-Area-Rändern in beiden Fassungen | `99_main.js:23–34`, `game/build.js:23, 83, 90` | S |
+| Trefferprüfung je Fläche | `06_ui.js:578–600`, `99_main.js:35` | S |
+| Gespräche im Breitbild (Antwortkasten über dem unteren Szenendrittel, Leiste abgedunkelt); Overlays, Karten und Abspann im 320 × 200-Bild mit Überblendung | `06_ui.js:181–258`, Overlay-Zeichnung in `06_ui.js` | M |
+| Tests F22–F25: `geometry.js` mit Breitbild-Gerät, Bildvergleich der Standard-Leiste, Wechsel Breitbild ↔ Overlay ↔ zurück, Drehung im Gespräch | `qa/browser/`, `design/tools/geometry.js` | M |
+
+### Phase 4 – optional
+Untertitelschicht mit Leseschrift und großer Schrift für Gespräche (B3-2, M–L), Export/Import (S), „Zuletzt“-Karte (S), Schnellvorlauf (M), Abspann-Archiv (S).
 
 ### Benötigte Assets
 | Asset | Zweck | Herstellung |
 |---|---|---|
 | Wasserfläche bis zum Bildrand im Titelbild | Menüuntergrund (D1) | prozedural im vorhandenen Titelcode (`90_story.js:170–205`) |
 | Kleine Pixel-Symbole: Schloss, Siegel „!“, Lautsprecher, Lesezeichen, Drehen (je 7×8 bis 10×10) | Zustände ohne Farbe allein | als Glyphen in der Spielschrift ergänzen (Tabelle `F`, `00_core.js:171–200`) – erscheinen dann in Canvas und Webfont |
+| Bediensymbole ◂ ▲ ▼ ✕ als Glyphen | Pfeile, Mehr-Anzeige und Schließen in der HTML-Schicht. Das Spiel zeichnet sie heute als Formen (`arrowH` `06_ui.js:178`, `tri` `06_ui.js:257`); der Prototyp nimmt sie noch aus der Systemschrift (`evidence/fontcheck.txt`) | wie oben, in der Spielschrift |
+| Leseschrift Atkinson Hyperlegible Next 400/700, latin + latin-ext | „Schrift: Lesbar“ (C, D5) | vorhanden: `design/assets/*.woff2` mit Lizenztext (OFL 1.1); keine Herstellung |
 | Vorschaubild-Ersatz für alte Stände | Laden (D7) | Kapitelkarte verkleinert, keine neue Grafik |
 | Keine neuen Szenen, Figuren oder Illustrationen | – | – |
 
-**Abhängigkeiten:** Phase 2 setzt die Schrift (Phase 2, Schritt 1) und das Spielstand-Modell vor dem Lade-Bildschirm voraus. Phase 1 ist unabhängig und sofort umsetzbar. Die Kapitelsperre braucht die Entscheidung zu `BERICHT_K2.md:14`.
+**Abhängigkeiten:**
+- **Phase 1** ist unabhängig und sofort umsetzbar.
+- **Phase 2** setzt die Schriften (Schritt 1) und das Spielstand-Modell vor dem Lade-Bildschirm voraus. Kapitelsperre, Testschalter und die Umstellung der QA-Werkzeuge gehören in denselben Schritt, sonst starten die Kampagnen für Kapitel 2–4 nicht mehr.
+- **Phase 3** baut auf den Touch-Zeilenhöhen und dem Figurenknopf aus Phase 1 auf und ist von Phase 2 unabhängig. Vor Phase 2 nutzen Pause und Titel im Breitbild das 320 × 200-Bild.
 
 ---
 
@@ -338,24 +423,29 @@ Breitbild-Leiste (L; Layout-Konstanten `06_ui.js:5, 137–138`, Hit-Tests, Overl
 | F17 | Kontraste | Text ≥ 4,5:1, große Schrift ≥ 3:1, Fokusrahmen ≥ 3:1 gegen Nachbarfarbe. |
 | F18 | Hochformat | Hinweis einmal; „Gedreht weiterspielen“ merkt sich die Wahl; Eingaben treffen. |
 | F19 | Offline | Nach dem ersten Laden ohne Netz startbar (wie heute, Szenario C12); Schrift ist eingebettet. |
-| F20 | Kapitelwahl | Gesperrte Kapitel nicht startbar, ohne Ortsnamen; Freischaltung genau nach `mala.cNend`. |
+| F20 | Kapitelsperre | Bei leerem Speicher ist nur Kapitel 1 startbar. Kapitel 2–4 erscheinen ohne Ortsnamen mit Grund; Kapitel 5 erscheint als „noch nicht erschienen“ ohne Ort. Jedes Kapitel wird genau nach `mala.cNend` frei. „Sarajevo“ bei Kapitel 5 erscheint erst nach `mala.c4end`, der Beispielstand aus Kapitel 2 erst nach `mala.c1end`. Vorhandene Stände aus gesperrten Kapiteln bleiben ladbar. `?kapitel=alle` gibt alles frei, ohne Marken zu schreiben, und die QA-Kampagnen für Kapitel 2–4 laufen damit wie bisher. |
+| F21 | Leseschrift | „Schrift: Lesbar“ stellt Menütexte auf Atkinson Hyperlegible Next um; Überschriften bleiben in MALA Pixel. `fontcheck.js` läuft ohne Fehler, und bei Sichtprüfung mit đ/Đ, č ć š ž und „ “ erscheint kein Ersatzkästchen. Die Bauakte 1894 bleibt in MALA Pixel. Die Schrift ist auch offline verfügbar. |
+| F22 | Breitbild: Auswahl | Emulation iPhone 13 quer: Szene 640 × 288 CSS-px, Leiste an den Seiten und darunter. iPad quer und Desktop 1280 × 800: Leiste wie heute und pixelgleich zum Bild vor der Änderung. |
+| F23 | Breitbild: Bedienung | Alle Teile der Leiste sind erreichbar: Figur, Notizen, Menü, Karte, Zeigen, Inventar blättern und wählen, „Benutze … mit“. Knöpfe und Felder ≥ 44 CSS-px, Pfeile ≥ 24 CSS-px (`geometry.js`). |
+| F24 | Breitbild: Wechsel | Gespräch, Notizbuch, Karte, Dokument, Rätsel und Pause öffnen und schließen: jeweils die richtige Darstellung, danach wieder Breitbild. `GS` bleibt unverändert, keine Eingabe geht verloren. |
+| F25 | Breitbild: Drehung, Größe | Drehen oder Fenstergröße ändern mitten im Gespräch und mit gewähltem Gegenstand: Die Darstellung wechselt, Gespräch und Auswahl bleiben. Kein Bedienelement liegt in den Safe-Area-Rändern (**[N]** nur auf echtem Gerät prüfbar). |
 
 ### In dieser Analyse ausgeführt (Ist-Zustand, keine Abnahme)
 - Bildschirmaufnahmen aller oben genannten Zustände auf vier Geräten (Chromium, WebKit-Emulation), 0 Seitenfehler.
 - Vermessung aller Tippflächen (`geometry.md`), Kontrastberechnung, Escape-Protokoll, Intro-Zeitmessung.
 - Kapitelübergänge K1/K2 im VM-Rendering.
 - Erzeugung der Webfont „MALA Pixel“ und Probedruck im Browser (deckungsgleich mit der Canvas-Schrift).
-- Prototyp einmal im Browser geprüft (Chromium): acht Bildschirmzustände auf Desktop, Tablet, Smartphone quer und schmaler Seite ohne Skriptfehler; danach Korrekturen ohne erneute Gesamtprüfung.
+- Erste Prüfung des Prototyps (Chromium): acht Bildschirmzustände auf Desktop, Tablet, Smartphone quer und schmaler Seite ohne Skriptfehler.
+- Abdeckung der Leseschrift gegen alle Zeichen der 297 Quelldateien (`design/tools/fontcheck.js` → `evidence/fontcheck.txt`): alle Buchstaben vorhanden, fehlende Symbole stehen in MALA Pixel.
+- Gesamtprüfung des Prototyps nach dem Einarbeiten der Entscheidungen (`design/tools/protosweep.js`, Chromium): alle 15 Bildschirme auf jedem passenden Gerät, je als Entwurf und Ist, dazu die Umschalter der Spielansicht, Marko/Mala und Breitbild, zusammen 136 Zustände.
+  - Ergebnis: keine Skriptfehler, keine fehlenden Bilder, kein Bedienelement außerhalb des Bildes. Was nicht ins Bild passt, liegt in Scrollbereichen: Einstellungen auf allen Geräten, „Kapitel 5“ in der Kapitelwahl am Telefon.
+  - Dabei gefunden und behoben: Am Telefon liefen „Spiel laden“ und „Speichern“ unten aus dem Bild, „Zurück“ war nicht erreichbar. Jetzt steht „Zurück“ in der Kopfzeile, die Vorschaubilder sind flacher, und der Mittelteil kann scrollen.
+- Sichtprüfung der Breitbild-Leiste (Marko, Gespräch), der Einstellungen mit „Lesbar“ sowie von Laden und Speichern am Telefon.
 
-Nichts davon ist eine Abnahme der vorgeschlagenen Oberfläche – die gibt es erst nach der Umsetzung (F1–F20).
+Nichts davon ist eine Abnahme der vorgeschlagenen Oberfläche – die gibt es erst nach der Umsetzung (F1–F25).
 
-### Offene Punkte (Entscheidung des Autors)
-1. Kapitelsperre ja/nein (`BERICHT_K2.md:14` sagt „ohne Sperre“).
-2. Ankündigung „Kapitel 5: Sarajevo“ im Abspann von Kapitel 4 behalten?
-3. Mitwirkende: Gibt es eine Namensliste?
-4. Leseschrift: welche Schrift (Abdeckung von đ/Đ prüfen) und ob sie auch Gespräche umfasst (Phase 3).
-5. Breitbild-Leiste: gewünscht, obwohl sie die Leistengestaltung auf Telefonen verändert?
-6. Die wiederkehrenden Stimmen-Zeilen in Kapitel 1 (Mala im Hafenbüro alle 24 s, `rooms/office.js:38, 95–98`) sind Erzählung, wirken aber wie ein Zeitdruck-Hinweis. Begrenzen (z. B. nach vier Wiederholungen still)?
+### Offene Punkte
+Keine Entscheidungsfragen mehr. Alle sechs sind beantwortet (Abschnitt „Entscheidungen“ am Anfang); Malas Stimme-Zeilen im Hafenbüro bleiben unverändert.
 
-### Ungewiss
-Wirkung auf echten Geräten (Safari/iOS-Eigenheiten bei Vollbild, Ausrichtung, Audio), Hörbild der Musikdämpfung, Bildschirmleser-Tauglichkeit der HTML-Schicht (geplant: `button`-Elemente mit Beschriftung, `aria-live` für Meldungen) – alles erst nach der Umsetzung prüfbar.
+### Erst nach der Umsetzung prüfbar
+Wirkung auf echten Geräten (Safari/iOS-Eigenheiten bei Vollbild, Ausrichtung, Audio, Safe-Area-Ränder der Breitbild-Leiste), Hörbild der Musikdämpfung, Bildschirmleser-Tauglichkeit der HTML-Schicht (geplant: `button`-Elemente mit Beschriftung, `aria-live` für Meldungen).
