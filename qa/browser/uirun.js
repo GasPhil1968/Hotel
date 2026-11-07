@@ -197,7 +197,7 @@ const { launch, contextOpts } = require('./engines');
         await chooseText(e.a[0]); done++; continue; }
       if (k === 'note') { await pickNoteUI(e.a[0]); done++; continue; }
       if (k === 'close') { await closeOv(e.a[0], e.a[1]); done++; continue; }
-      if (k === 'peil') { await until(s => s.ov === 'peil', 30000, 'Peilung'); await tapCode('o:' + e.a[0], 'Peilung ' + e.a[0]); done++; continue; }
+      if (k === 'peil') { try { await until(s => s.ov === 'peil', 60000, 'Peilung'); } catch (err) { const s0 = await st(); if (!lastAct || !idle(s0)) throw err; uiNotes.push({ kind: 'Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene)', act: lastAct.a, room: s0.room }); L('Peilung blieb aus, erneut', JSON.stringify(lastAct.a)); await doAct(lastAct.a[0], lastAct.a[1], lastAct.a[2]); await until(s => s.ov === 'peil', 60000, 'Peilung (2. Versuch)'); } await tapCode('o:' + e.a[0], 'Peilung ' + e.a[0]); done++; continue; }
       if (k === 'openNotes') { const s0 = await until(s => idle(s) || s.ov === 'notebook' || (s.dlg && !s.speech), 120000, 'Notizbuch-Knopf'); if (s0.ov === 'notebook' || s0.dlg) { continue; } }
       if (k === 'skip') { const s = await st(); if (s.speech) await tapL(160, 60); continue; }
       // Handlungen in der Spielwelt: warten, bis das Spiel ruhig ist und Raum/Figur stimmen
