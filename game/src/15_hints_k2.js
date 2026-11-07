@@ -124,7 +124,7 @@ M.HINTS_K2=[
      {m:'Mala sieht ihn im Lesesessel. Und sie kann lesen, was in einem verschlossenen Buch steht.',g:'Ich sehe ihn im Lesesessel. Und ich kann lesen, was in einem verschlossenen Buch steht.'},
      {m:'Zu Mala wechseln und das Buch in der Vitrine ansehen.',g:'Zu mir wechseln und das Buch in der Vitrine ansehen.'}]},
  {id:'s2b',t:'Wem gehört das Buch?',open:function(G){ return ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_stamp') && !N(G,'s2_provenance'); },
-  s:['Wer war Leser 2204?','Woher kam das Buch in den Laden?','Jakob schreibt in sein Ankaufbuch, von wem er kauft. Hineinschauen darf man, wenn man ihn fragt, woher er das Buch hat.',
+  s:[function(G){ return N(G,'s2_ledger')?'Leser 2204 und der Nachlass im Ankaufbuch: Dass beides derselbe Mann ist, weißt du. Im Notizbuch wird es erst ein Schluss.':'Wer war Leser 2204?'; },'Woher kam das Buch in den Laden?','Jakob schreibt in sein Ankaufbuch, von wem er kauft. Hineinschauen darf man, wenn man ihn fragt, woher er das Buch hat.',
      function(G){ return N(G,'s2_ledger')?'Im Notizbuch den Leihzettel mit dem Eintrag im Ankaufbuch verbinden.':'Jakob fragen, woher er das Buch hat, dann das Ankaufbuch auf seinem Schreibtisch lesen.'; }]},
  {id:'s2c',t:'Warum gab er es nie zurück?',open:function(G){ return ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_due') && !N(G,'s2_noreturn'); },
   s:['Für ihn läuft die Frist ab. Seit Jahren.','Was ist im August 1992 mit der Bibliothek geschehen?',

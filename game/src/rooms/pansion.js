@@ -43,9 +43,11 @@ async function callPetar(A){ A.sfx('dial'); await A.wait(1600); await A.phoneVoi
   await A.phoneVoice('„Ein Buch.“ Eine Pause. „Ich habe alles verkauft. 2004. An einen Antiquar.“','petar'); await A.m('Rilke. Die „Duineser Elegien“, mit einem Stempel der Nationalbibliothek.');
   await A.phoneVoice('„…Das Buch.“ Er atmet. „Vater hat es gehütet wie eine Reliquie. Niemand durfte es anfassen. Er sagte immer, er müsse es zurückgeben.“','petar');
   await A.phoneVoice('„Ich habe nie verstanden, wem. Die Bibliothek gab es nicht mehr. Ich dachte, er ist alt geworden.“','petar'); A.note('s2_relic');
-  var c=await A.choose([{t:'Er war nicht alt. Er war genau.',id:'exact'},{t:'Wussten Sie, was zwischen den Seiten liegt?',id:'pages'},{t:'Danke. Das hilft mir.',id:'thanks'}],{title:'Petar'});
-  if (c==='exact'){ await A.phoneVoice('„Genau.“ Er lacht, kurz. „Ja. Das war er. Genau bis zum Schluss.“','petar'); }
-  else if (c==='pages'){ await A.phoneVoice('„Asche. Er nannte es „was der Himmel mir gegeben hat“. Ich habe das Buch nie aufgemacht. Ich hatte Angst davor.“','petar'); }
+  var asked={};   // beide Fragen sind möglich, erst „Danke“ beendet das Gespräch
+  for (var k=0;k<3;k++){ var L=[{t:'Er war nicht alt. Er war genau.',id:'exact'},{t:'Wussten Sie, was zwischen den Seiten liegt?',id:'pages'}].filter(function(o){ return !asked[o.id]; }).concat([{t:'Danke. Das hilft mir.',id:'thanks'}]);
+    var c=await A.choose(L,{title:'Petar'}); if (!c||c==='thanks') break; asked[c]=1;
+    if (c==='exact'){ await A.phoneVoice('„Genau.“ Er lacht, kurz. „Ja. Das war er. Genau bis zum Schluss.“','petar'); }
+    else if (c==='pages'){ await A.phoneVoice('„Asche. Er nannte es „was der Himmel mir gegeben hat“. Ich habe das Buch nie aufgemacht. Ich hatte Angst davor.“','petar'); } }
   await A.phoneVoice('„Herr Vuković. Wenn Sie es zurückgeben können … geben Sie es zurück. Von mir aus. Ich hätte es nie verkaufen dürfen.“','petar'); await A.m('Ich versuche es.'); A.sfx('hangup'); A.save(); }
 async function callSanja(A){ A.sfx('dial'); await A.wait(1500); await A.phoneVoice('„Marko! Lebst du? Tante Hajra sagt, du isst nicht.“','sanja'); await A.m('Ich esse. Sie sagt das zu allen.'); await A.phoneVoice('„Zu allen, die nicht essen. Was ist?“','sanja');
   await A.m('Sanja. In meiner Wohnung, auf dem Schrank, steht ein Karton. „SARAJEVO“.'); await A.phoneVoice('„Der zugeklebte. Ich weiß. Du hast ihn mal gegen mich verteidigt, als ich ihn als Blumenständer wollte.“','sanja');

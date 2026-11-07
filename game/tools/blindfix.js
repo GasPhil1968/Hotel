@@ -126,5 +126,21 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
       ok(await D.ev(() => (M.__speechLog || []).length > 0), 'eine Reaktion auf Stempel + Zeugnisse');
     });
   }
+  if (K2.length) {
+    await T('K2B-1', 'Jakob antwortet auf sein Ankaufbuch mit einem Fingerzeig', async () => {
+      const g = find(K2, 'Leser 2204'); g.notes = g.notes.filter(n => n !== 's2_provenance'); g.active = 'marko'; await load(g);
+      await D.act('talk', 'jakob'); await D.choose('Nach etwas aus dem Notizbuch'); await D.pickNote('s2_ledger'); await D.drain();
+      ok(await said('Dann hat er es geliehen'), 'Jakob verknüpft Nachlass und Stempel');
+      await D.ev(() => { const D0 = M.E.dlg; if (D0) M.E.chooseDone(D0.opts.length - 1); }); await D.drain();
+    });
+    await T('K2B-8', 'Petar: beide Fragen erreichbar', async () => {
+      const g = find(K2, 'Leser 2204'); g.active = 'marko'; g.pos.marko = { room: 'pansion', x: 200, y: 122, f: 'L' }; g.pos.mala = { room: 'pansion', x: 160, y: 122, f: 'R' }; await load(g);
+      await D.act('use', 'phone'); await D.choose('Petar'); await D.until(s => s.dlg, 30000, 'Petar');
+      await D.choose('Er war nicht alt'); const s1 = await D.settle();
+      ok(s1.dlg && s1.dlg.some(t => t.indexOf('zwischen den Seiten') >= 0), 'zweite Frage noch da');
+      await D.choose('zwischen den Seiten'); await D.choose('Danke'); await D.drain();
+      ok(await said('Asche. Er nannte es'), 'Antwort auf die zweite Frage');
+    });
+  }
   console.log('\nblindfix: ' + pass + ' ok, ' + fails + ' Fehler'); await D.close2(); process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });
