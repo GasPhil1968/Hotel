@@ -76,12 +76,13 @@ const { launch, contextOpts } = require('./engines');
     const f = await page.evaluate((d) => window.__qa.floorPoint(d), dir);
     if (f) { await tapL(f[0], f[1]); await until(s => !s.walk, 30000, 'Gehen'); await sleep(60); if (Math.abs((await page.evaluate(() => M.E.player().x)) - x0) > 8) return; }
     const h = await page.evaluate(([d, x0]) => { const E = M.E, R = E.room, S = M.RS(R.id), cam = Math.round(E.camX); let best = null;
-      R.hotspots.forEach(h => { if (h.exit || h.npc) return; try { if (h.vis && !h.vis(S, M.GS)) return; } catch (e) { return; } if (['talk','take','open','use','push','read'].some(v => h[v] !== undefined)) return; const st = E.hsStand(h); if (!st) return; const gain = d === 'R' ? st[0] - x0 : x0 - st[0]; if (gain < 20) return;
-        const p = window.__qa.hsPoint(h.id); if (p.x === undefined) return; if (!best || gain > best.gain) best = { id: h.id, gain }; }); return best; }, [dir, x0]);
+      R.hotspots.forEach(h => { if (h.exit || h.npc) return; try { if (h.vis && !h.vis(S, M.GS)) return; } catch (e) { return; } const verbs = ['talk','take','open','use','push','read'].some(v => h[v] !== undefined); const st = E.hsStand(h); if (!st) return; const gain = d === 'R' ? st[0] - x0 : x0 - st[0]; if (gain < 20) return;
+        const p = window.__qa.hsPoint(h.id); if (p.x === undefined) return; const score = gain - (verbs ? 1000 : 0); if (!best || score > best.score) best = { id: h.id, gain, score, verbs }; }); return best; }, [dir, x0]);
     if (!h) throw new Error('kein Weg Richtung ' + dir + ' (weder freier Boden noch Blickfang)');
     uiNotes.push({ kind: 'Boden verdeckt (Scrollen)', room: (await st()).room, dir, via: h.id });
     const p = await page.evaluate((i) => window.__qa.hsPoint(i), h.id); await tapL(p.x, p.y);
-    await until(s => !s.walk && !s.busy && !s.speech && !s.acting, 60000, 'Blickfang ' + h.id); await sleep(60); }
+    const sp = await until(s => s.pop || s.walk || s.busy || s.speech, 3000, 'Reaktion').catch(() => null); if (sp && sp.pop) { const k = sp.pop.indexOf('Schau an'); if (k >= 0) await tapCode('p:' + k, 'Schau an'); }
+    await until(s => !s.walk && !s.busy && !s.speech && !s.acting && !s.pop, 60000, 'Blickfang ' + h.id); await sleep(60); }
   // Dunkler Hotspot: wie ein Spieler Mala danebenstellen (zu ihr wechseln, Boden neben dem Hotspot antippen, zurückwechseln)
   async function lightWithMala(id, rect) {
     // Spielerweg: Marko geht im Dunkeln selbst zum Hotspot, Mala folgt ihm (05_engine: „Mala folgt Marko, wenn sie nicht gespielt wird“)
@@ -210,7 +211,7 @@ const { launch, contextOpts } = require('./engines');
       else if (k === 'combine') await combineUI(e.a[0], e.a[1]);
       else if (k === 'openNotes') await tapCode('notes', 'Notizen');
       else if (k === 'walkTo') { let p = null; for (let g = 0; g < 12 && !p; g++) { p = await page.evaluate(([x, y]) => window.__qa.freePointNear(x, y), e.a); if (p) break;
-          const dir = await page.evaluate((x) => (x > Math.round(M.E.camX) + 160 ? 'R' : 'L'), e.a[0]); const f = await page.evaluate((d) => window.__qa.floorPoint(d), dir); if (!f) break; await tapL(f[0], f[1]); await until(s => !s.walk, 30000, 'Gehen'); await sleep(60); }
+          const dir = await page.evaluate((x) => (x > Math.round(M.E.camX) + 160 ? 'R' : 'L'), e.a[0]); const near = await page.evaluate((x) => Math.abs(M.E.player().x - x), e.a[0]); if (near < 40) break; try { await scrollToward(dir); } catch (err) { break; } }
         if (!p) { // kein freier Boden (Hotspots überdecken den Weg): wie ein Spieler einen Blickfang nahe dem Ziel antippen – die Figur geht zu dessen Standpunkt
           const h = await page.evaluate(([x, y]) => { const E = M.E, R = E.room, S = M.RS(R.id); let best = null; R.hotspots.forEach(h => { if (h.exit || h.npc) return; try { if (h.vis && !h.vis(S, M.GS)) return; } catch (e) { return; } if (['talk','take','open','use','push','read'].some(v => h[v] !== undefined)) return; const st = E.hsStand(h); if (!st) return; const d = Math.abs(st[0] - x) + Math.abs(st[1] - y); if (!best || d < best.d) best = { id: h.id, d, st }; }); return best; }, e.a);
           if (h && h.d < 80) { L('Gehen über Blickfang', h.id, JSON.stringify(h.st), 'statt freiem Boden bei', JSON.stringify(e.a)); uiNotes.push({ kind: 'Boden verdeckt', room: (await st()).room, target: e.a, via: h.id }); await tapHotspot(h.id); done++; continue; } }
