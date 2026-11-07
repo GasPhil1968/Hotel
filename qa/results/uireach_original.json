@@ -55,6 +55,14 @@
      "why": "Figur nicht sichtbar/nicht da",
      "dark": false,
      "npc": "emina"
+    },
+    {
+     "kind": "combine",
+     "id": "f2_cameback+m2_split_register",
+     "room": "kuca",
+     "phase": "k2_fin",
+     "active": "marko",
+     "why": "Notiz nicht im Notizbuch sichtbar: m2_split_register"
     }
    ]
   },
@@ -112,6 +120,14 @@
      "why": "Figur nicht sichtbar/nicht da",
      "dark": false,
      "npc": "emina"
+    },
+    {
+     "kind": "combine",
+     "id": "f2_cameback+m2_split_register",
+     "room": "kuca",
+     "phase": "k2_fin",
+     "active": "marko",
+     "why": "Notiz nicht im Notizbuch sichtbar: m2_split_register"
     }
    ]
   },
@@ -169,6 +185,14 @@
      "why": "Figur nicht sichtbar/nicht da",
      "dark": false,
      "npc": "emina"
+    },
+    {
+     "kind": "combine",
+     "id": "f2_cameback+m2_split_register",
+     "room": "kuca",
+     "phase": "k2_fin",
+     "active": "marko",
+     "why": "Notiz nicht im Notizbuch sichtbar: m2_split_register"
     }
    ]
   }

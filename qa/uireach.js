@@ -18,6 +18,7 @@ const INSTALL = function () {
       if (why) R.push({ kind, id, room: room.id, phase: M.GS.phase, active: M.GS.active, why, dark: !!h.dark, npc: h.npc || null });
     } catch (e) { R.push({ kind, id, why: 'Fehler ' + e.message }); } };
   const act = M.TA.act; M.TA.act = function (v, id, it) { if (!(M.E.overlay && M.E.overlay.kind === 'map')) check('act:' + v + (it ? '+' + it : ''), id); return act.apply(this, arguments); };
+  const cb = M.TA.combine; M.TA.combine = function (x, y) { try { const L = M.E.nbOpen(false); const miss = [x, y].filter(i => L.indexOf(i) < 0); if (miss.length) R.push({ kind: 'combine', id: x + '+' + y, room: M.E.room && M.E.room.id, phase: M.GS.phase, active: M.GS.active, why: 'Notiz nicht im Notizbuch sichtbar: ' + miss.join(', ') }); } catch (e) {} return cb.apply(this, arguments); };
   const ex = M.TA.exit; M.TA.exit = function (id) { check('exit', id); return ex.apply(this, arguments); };
 };
 const VARIANTS = [

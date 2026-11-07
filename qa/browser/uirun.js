@@ -9,7 +9,7 @@ const ENGINE = arg('--engine', 'chromium'), DEVICE = arg('--device', 'desktop');
 const OUT = path.resolve(arg('--out', path.join(__dirname, '..', 'results', 'browser', 'ui_' + ENGINE + '_' + DEVICE)));
 const REC = JSON.parse(fs.readFileSync(arg('--rec', path.join(__dirname, '..', 'results', 'browser', 'recording.json')), 'utf8'));
 const URL = arg('--url', 'file://' + path.join(__dirname, '..', '..', 'web', 'index.html'));
-const LIMIT = +arg('--limit', 1e9), TURBO = +arg('--turbo', 50);
+const LIMIT = +arg('--limit', 1e9), TURBO = +arg('--turbo', 25);
 const pw = require('playwright');
 const { launch, contextOpts } = require('./engines');
 
@@ -26,7 +26,7 @@ const { launch, contextOpts } = require('./engines');
   page.on('console', m => { if (m.type() === 'error') consoleErr.push(m.text()); });
   page.on('requestfailed', r => failedReq.push(r.url() + ' ' + (r.failure() && r.failure().errorText)));
   await page.goto(URL); await page.waitForFunction(() => window.M && M.E && M.E.screen === 'title');
-  await page.evaluate((t) => { M.TURBO = t; try { localStorage.clear(); } catch (e) {} }, TURBO);
+  await page.evaluate((t) => { M.TURBO = t; M.__speechLog = []; try { localStorage.clear(); } catch (e) {} }, TURBO);   // Sprachprotokoll nur lesend: erkennt, ob ein Tipp eine Reaktion auslöste
   const touch = DEVICE !== 'desktop';
   const vp = page.viewportSize();
   L('Gerät', DEVICE, ENGINE, JSON.stringify(vp), 'touch=' + touch, 'TURBO', TURBO);
@@ -107,9 +107,9 @@ const { launch, contextOpts } = require('./engines');
   async function verbLabels() { return page.evaluate(() => M.E.VLABEL); }
   let VL = null;
   async function doAct(v, id, item) {
-    for (let tries = 0; tries < 3; tries++) { const before = await page.evaluate(() => ({ t: (M.__qaTapN = (M.__qaTapN || 0)), gt: M.E.gt() }));
+    for (let tries = 0; tries < 3; tries++) { const before = await mark();
       await doAct0(v, id, item);
-      const r = await until(s => s.busy || s.speech || s.dlg || s.ov || s.walk || s.acting || s.trn || s.scr !== 'game', 4000, 'Reaktion').then(() => true).catch(() => false);
+      const r = await reacted(before, 4000);
       if (r || item || /^loc2?_/.test(id)) return; const s0 = await st(); if (s0.pop) { await tapL(160, 60); await sleep(100); }
       uiNotes.push({ kind: 'Aktion ohne Reaktion, erneut angetippt', v, id, room: s0.room }); L('Aktion ohne Reaktion, erneut', v, id); }
     throw new Error('Aktion ' + v + ' ' + id + ' bewirkt über die Oberfläche nichts'); }
@@ -127,7 +127,11 @@ const { launch, contextOpts } = require('./engines');
       uiNotes.push({ kind: 'Tipp traf anderen Hotspot (Figur bewegte sich)', want: id, got: popHs }); L('Tipp traf', popHs, 'statt', id); await tapL(160, 60); await sleep(150); await until(idle, 30000, 'ruhig'); }
     if (s && s.pop) { const lab = [VL[v], VL['g' + v], ...(VLAB[v] || [])].filter(Boolean); const i = s.pop.findIndex(t => lab.indexOf(t) >= 0); if (i < 0) throw new Error('Verb ' + v + ' nicht im Popup ' + JSON.stringify(s.pop)); await tapCode('p:' + i, 'Verb ' + v); }
   }
-  async function doExit(id) { await tapHotspot(id); const s = await until(s => s.pop || s.busy || s.walk || s.trn || s.speech || s.ov, 3000, 'Ausgang').catch(() => null); if (s && s.pop) { const i = s.pop.findIndex(t => t === 'Hingehen' || t === 'Hindurchgehen'); if (i >= 0) await tapCode('p:' + i, 'Hingehen'); } }
+  const mark = () => page.evaluate(() => ({ said: (M.__speechLog || []).length, trn: M.E.transitions || 0, room: M.E.room && M.E.room.id, inv: M.GS.inv.length, notes: M.GS.notes.length }));
+  async function reacted(b, ms) { const t = Date.now(); while (Date.now() - t < ms) { const s = await st(); if (s.busy || s.speech || s.dlg || s.ov || s.walk || s.acting || s.trn || s.scr !== 'game') return true;
+      const m = await mark(); if (m.said !== b.said || m.trn !== b.trn || m.room !== b.room || m.inv !== b.inv || m.notes !== b.notes) return true; await sleep(30); } return false; }
+  async function doExit(id) { for (let tries = 0; tries < 3; tries++) { const b = await mark(); await doExit0(id); if (await reacted(b, 4000)) return; uiNotes.push({ kind: 'Ausgang ohne Reaktion, erneut angetippt', id, room: b.room }); L('Ausgang ohne Reaktion, erneut', id); const s0 = await st(); if (s0.pop) { await tapL(160, 60); await sleep(100); } } throw new Error('Ausgang ' + id + ' bewirkt über die Oberfläche nichts'); }
+  async function doExit0(id) { await tapHotspot(id); const s = await until(s => s.pop || s.busy || s.walk || s.trn || s.speech || s.ov, 3000, 'Ausgang').catch(() => null); if (s && s.pop) { const i = s.pop.findIndex(t => t === 'Hingehen' || t === 'Hindurchgehen'); if (i >= 0) await tapCode('p:' + i, 'Hingehen'); } }
   async function invTap(id) { for (let k = 0; k < 8; k++) { const info = await page.evaluate((x) => { const inv = M.GS.inv, i = inv.indexOf(x); return { i, top: M.E.invTop, pages: Math.ceil(inv.length / 6) }; }, id); if (info.i < 0) throw new Error('nicht im Inventar: ' + id); const pg = Math.floor(info.i / 6); if (pg === info.top) { await tapCode('i:' + info.i, 'Inventar ' + id); return; } await tapCode(pg < info.top ? 'up' : 'dn', 'Inventar blättern'); await sleep(40); } throw new Error('Inventar nicht erreichbar: ' + id); }
   async function useItemOn(item, target) { await until(idle, 60000, 'ruhig vor Gegenstand'); await tapHotspot(target, true); await until(idle, 60000, 'ruhig nach Vorbereitung'); await invTap(item); await popPick('Benutze'); if (target === '_mala' || target === '_marko') await tapHotspot(target); else await tapHotspot(target); }
   async function doItem(v, x, y) { await until(idle, 60000, 'ruhig vor Gegenstand'); await invTap(x); const s = await until(s => s.pop, 3000, 'Gegenstands-Popup'); const it = await page.evaluate((i) => { const t = M.ITEMS[i]; return { read: t.read !== undefined, open: t.open !== undefined, use2: t.use2 !== undefined, l: t.use2Label || 'Benutze' }; }, x);
@@ -149,6 +153,7 @@ const { launch, contextOpts } = require('./engines');
     if (want && !(await page.evaluate((t) => M.GS.notes.indexOf(t) >= 0, want))) { uiNotes.push({ kind: 'Verbinden wiederholt', a: x, b: y }); L('Verbinden wiederholt', x, y); await sleep(300); await combineUI0(x, y);
       if (!(await page.evaluate((t) => M.GS.notes.indexOf(t) >= 0, want))) throw new Error('Schluss ' + x + '+' + y + ' kam über die Oberfläche nicht zustande'); } }
   async function combineUI0(x, y) { await until(idle, 60000, 'ruhig vor Notizbuch'); await tapCode('notes', 'Notizen'); await until(s => s.ov === 'notebook', 5000, 'Notizbuch');
+    for (let k = 0; k < 6; k++) { const pv = await page.evaluate(() => window.__qa.scan('nprev')); if (!pv) break; await tapL(pv[0], pv[1]); }   // erste Seite
     for (const id of [x, y]) { let p = null; for (let k = 0; k < 6 && !p; k++) { p = await page.evaluate((i) => window.__qa.scan('n:' + i), id); if (!p) { const nx = await page.evaluate(() => window.__qa.scan('nnext')); if (!nx) break; await tapL(nx[0], nx[1]); } } if (!p) throw new Error('Notiz zum Verbinden nicht sichtbar: ' + id); await tapL(p[0], p[1]); await sleep(80); }
     await sleep(200); const s = await st(); if (s.ov === 'notebook') await tapCode('nx', 'Notizbuch schließen'); }
   async function closeOv(kind, v) {
