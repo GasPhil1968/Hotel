@@ -159,12 +159,13 @@ const { launch, contextOpts } = require('./engines');
     await sleep(200); const s = await st(); if (s.ov === 'notebook') await tapCode('nx', 'Notizbuch schließen'); }
   async function closeOv(kind, v) {
     let s; try { s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay ' + kind); }
-    catch (err) { const s0 = await st(); if (!lastAct || !idle(s0)) throw err; uiNotes.push({ kind: 'Overlay blieb aus, Aktion neu angetippt', act: lastAct.a, room: s0.room }); L('Overlay blieb aus, erneut', JSON.stringify(lastAct.a)); await doAct(lastAct.a[0], lastAct.a[1], lastAct.a[2]); s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay (2. Versuch) ' + kind); }
+    catch (err) { const s0 = await st(); if (s0.dlg && !s0.ov) { uiNotes.push({ kind: 'Overlay schon geschlossen, Auswahl offen – Eintrag übersprungen', ov: kind, room: s0.room }); L('Overlay', kind, 'übersprungen (Auswahl offen)'); return; } if (!lastAct || !idle(s0)) throw err; uiNotes.push({ kind: 'Overlay blieb aus, Aktion neu angetippt', act: lastAct.a, room: s0.room }); L('Overlay blieb aus, erneut', JSON.stringify(lastAct.a)); await doAct(lastAct.a[0], lastAct.a[1], lastAct.a[2]); s = await until(s => s.ov === kind || (kind === null && s.ov), 30000, 'Overlay (2. Versuch) ' + kind); }
     if (kind === 'puzzle' && Array.isArray(v)) { for (let i = 0; i < v.length; i++) { for (let k = 0; k < 12; k++) { const cur = await page.evaluate((j) => { if (!M.E.overlay.sel) M.renderFrame(); return M.E.overlay.sel[j]; }, i); if (cur === v[i]) break; await tapCode('z:' + i, 'Rätselzeile ' + i); } } await tapCode('zgo', 'Rätsel prüfen'); return; }
     if (kind === 'puzzle') { await tapCode('zx', 'Rätsel schließen'); return; }
     if (kind === 'map') { await tapCode('o:x', 'Karte schließen'); return; }
     if (kind === 'notebook') { await tapCode('nx', 'Notizbuch schließen'); return; }
-    for (let k = 0; k < 20; k++) { const s2 = await st(); if (s2.ov !== s.ov) return; const xh = await page.evaluate(() => window.__qa.scan('o:x')); if (xh && kind !== 'memory' && kind !== 'doc') await tapL(xh[0], xh[1]); else await tapL(160, 60); await sleep(80); }
+    const tag0 = await page.evaluate(() => { const o = M.E.overlay; if (!o) return null; if (!o.__qaT) o.__qaT = Math.random().toString(36).slice(2); return o.__qaT; });
+    for (let k = 0; k < 20; k++) { const s2 = await st(); const tg = await page.evaluate(() => M.E.overlay ? (M.E.overlay.__qaT || 'neu') : null); if (s2.ov !== s.ov || tg !== tag0) return; const xh = await page.evaluate(() => window.__qa.scan('o:x')); if (xh && kind !== 'memory' && kind !== 'doc') await tapL(xh[0], xh[1]); else await tapL(160, 60); await sleep(80); }
     throw new Error('Overlay lässt sich nicht schließen: ' + kind);
   }
   async function arrangeGoal(goal) { for (let g = 0; g < 14; g++) { const ord = await page.evaluate(() => { if (!M.E.overlay.ord) M.renderFrame(); return M.E.overlay.ord.slice(); }); const i = ord.findIndex((k, j) => k !== goal[j]); if (i < 0) return; await tapCode('o:r' + i, 'Karte ' + i); await tapCode('o:r' + ord.indexOf(goal[i]), 'tauschen'); } }
