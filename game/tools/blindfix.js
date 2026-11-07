@@ -67,6 +67,34 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
       M.key('z'); M.E.camX = 0; return new Promise(r => setTimeout(() => { M.text = t0; r(L); }, 400)); });
     ok(n.indexOf('Pfeiler') >= 0 && n.some(t => /Hansi|Leere Stelle|\?\?\?/.test(t)), 'Schilder: ' + [...new Set(n)].filter(t => /Pfeiler|Hansi|Leere|\?\?\?/.test(t)).join(', '));
   });
+  // ---------------------------------------------------------------- Kapitel 4, Mittwoch/Donnerstag
+  const closeDlg = async () => { await D.ev(() => { const D0 = M.E.dlg; if (D0) M.E.chooseDone(D0.opts.length - 1); }); await D.drain(); };
+  await T('K4C-2', 'Kraus lehnt den Geist ab: Marko nennt den richtigen Grund', async () => {
+    const g = find(K4, 'Herr Kraus stellt den Gong'); delete g.flags['k4.g.chimeOff']; g.active = 'marko'; await load(g);
+    await D.act('talk', 'kraus'); await D.choose('Können Sie den Gong abstellen'); await D.choose('Wegen eines Geistes'); await D.drain();
+    ok(await said('Falscher Grund'), 'Fingerzeig nach der Absage'); await closeDlg();
+  });
+  await T('K4C-1', 'Gerda „woanders warten“: Fingerzeig auf die Fotos in 214', async () => {
+    const g = find(K4, 'Herr Kraus stellt den Gong'); g.active = 'mala'; await load(g);   // mit Gerda redet Mala
+    await D.act('talk', 'gerda'); const s0 = await D.settle();
+    if (!(s0.dlg || []).some(t => t.indexOf('woanders warten') >= 0)) { ok(false, 'Option fehlt: ' + JSON.stringify(s0.dlg)); return; }
+    await D.choose('woanders warten'); await D.drain();
+    ok(await said('Fotos'), 'Fotos in seinem Zimmer werden genannt'); await closeDlg();
+  });
+  await T('K4C-3', 'Stadtplan: die Beschriftung eines Ortes trifft den Ort', async () => {
+    await load(find(K4, 'Herr Obermaier sagt die Bestattung'));
+    await D.ev(() => M.toggleMap()); await page.waitForTimeout(400);
+    const r = await D.ev(() => { const ov = M.E.overlay, d = ov.data; const bad = []; let n = 0;
+      Object.keys(d.lay || {}).forEach(id => { const L = d.lay[id], w = M.textWidth(L.nm); n++; const got = ov.lay.at(L.x + (w >> 1), L.y + 3); if (got !== id) bad.push(L.nm + '→' + got); }); return { n, bad }; });
+    ok(r.n > 3 && !r.bad.length, r.n + ' Beschriftungen, daneben: ' + r.bad.join(', '));
+    await D.ev(() => { if (M.E.overlay && M.E.overlay.kind === 'map') M.closeMap(); }); await D.drain();
+  });
+  await T('K4C-5', 'Gleis 11: die AUSGANG-Tür ist der Ausgang', async () => {
+    const g = find(K4, 'zurück an Gleis 11'); g.active = 'marko'; await load(g);
+    await D.ev(() => { M.ACT.marko.x = 60; }); await page.waitForTimeout(1500);
+    const id = await D.ev(() => { const h = M.E.hotspotAt(30, 72); return h && h.id; });
+    ok(id === 'exit', 'Treffer mitten auf der Tür: ' + id);
+  });
   // ---------------------------------------------------------------- Kapitel 2
   // Gegenstand aus der Leiste ins Bild ziehen, wie mit dem Finger (schräg, mehr waagrecht als senkrecht)
   const dragItem = async (item, tx, ty) => {

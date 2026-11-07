@@ -102,7 +102,8 @@ async function gerdaMala(A){ var G=A.G, Gd=A.npc('gerda');
     {t:'Er sieht Sie nicht.',once:'h4g4',go:async function(A){ await Gd.say('Sehen.'); await A.wait(500); await Gd.say('Er spürt mich. Das ist mehr.'); }},
     {t:'Sie haben drüben getanzt. Im Sommer.',once:'h4g5',if:F(G,'k4.g.waltz'),go:async function(A){ await Gd.say('Beim Sommerfest. Er ist mir auf die Füße getreten.'); await A.wait(600); await Gd.say('Vierundsechzig Jahre lang ist er mir auf die Füße getreten.'); await A.wait(700); await Gd.say('Ich hab nie was gesagt.'); }},
     {t:'Die Pflegerinnen sagen ihm: Sie kommt später.',once:'h4g6',if:N(G,'g4_spaeter'),go:async function(A){ await Gd.say('Später!'); await A.wait(500); await Gd.say('Ich war nie später. Nicht ein einziges Mal.'); await A.wait(700); await Gd.say('Wenn sie wenigstens sagen täten: Sie ist schon da.'); }},
-    {t:'Können Sie heute woanders warten?',if:canPersuade(G)&&!N(G,'g4_depot'),go:async function(A){ await Gd.say('Woanders? Wo denn?'); await A.wait(500); await Gd.say('Um drei bin ich bei ihm. So war das immer.'); }},
+    {t:'Können Sie heute woanders warten?',if:canPersuade(G)&&!N(G,'g4_depot'),go:async function(A){ await Gd.say('Woanders? Wo denn?'); await A.wait(500); await Gd.say('Um drei bin ich bei ihm. So war das immer.'); await A.wait(500);
+      if (A.G.malaOn && A.malaHere()) await A.g('Immer? Früher hat sie woanders gewartet. Bevor er hier drin war. In seinem Zimmer hängen Fotos. Vor drei sitzt er dort im Sessel.'); else await A.m('So war das immer? Früher war er nicht hier drin. Wo hat sie da gewartet? In seinem Zimmer hängen Fotos.'); }},
     {t:'Sie haben immer draußen gewartet. Am Depot.',if:canPersuade(G)&&N(G,'g4_depot'),silent:true,go:function(A){ return persuade(A); }},
     {t:'Sie müssen gehen.',if:!N(G,'g4_beides'),go:async function(A){ await Gd.say('Sie wollen mir meinen Mann wegnehmen?'); await A.wait(800); await A.narrate('Sie rückt auf der Bank ein Stück zur Seite. Dahin, wo um drei sein Platz ist.'); }},
     {t:'(Ihr sagen, was die Versuche gezeigt haben.)',if:N(G,'g4_beides'),silent:true,go:async function(A){ await hardTalk(A); return 'bye'; }},
@@ -223,7 +224,7 @@ var KRAUS_ASK={ g4_gong:'Hab i doch gsagt. Vorschrift.', g4_drei:'Der Lechner. J
   g4_versuch1:'Und? Hat’s was bracht?', g4_versuch2:'Mit Gong is er aufgstanden. Des hätt i Eana a so sagn können.', g4_beides:'Wenn S’ meinen.',
   g4_gerda:'D’Frau Lechner. Die hat ma jeden Tag an Gruß gsagt. Auch wenn i unterm Aufzug glegn bin.' };
 async function krausAsk(A){ var G=A.G, K=A.npc('kraus'); norm(G);
-  if (F(G,'k4.g.krausNo')) return K.say('Heut nimmer. Hab i gsagt.');
+  if (F(G,'k4.g.krausNo')){ await K.say('Heut nimmer. Hab i gsagt.'); return A.m('Heute nicht mehr. Ein anderes Mal, mit einem Grund, den er versteht: Herr Lechner, nicht ein Geist.'); }
   if (used(G)) return K.say('Heut is eh scho rum. Drei war scho.');
   await K.say('Abstelln. Warum?');
   for (var i=0;i<6;i++){ var c=await A.choose([
@@ -235,7 +236,7 @@ async function krausAsk(A){ var G=A.G, K=A.npc('kraus'); norm(G);
     if (c==='no'||c===null||c===undefined) return;
     if (c==='test'){ await K.say('A Versuch. Im Altenheim.'); await A.wait(500); await K.say('Sie san doch ned vom Fernsehn?'); continue; }
     if (c==='please'){ await K.say('Bitten kann a jeder. Warum?'); continue; }
-    if (c==='ghost'){ await A.narrate('Kraus schiebt die Brille von der Stirn auf die Nase und sieht mich an. Lange.'); await A.wait(900); await K.say('Wegen am Geist.'); await A.wait(800); await K.say('Wissen S’ was. Heut stell i gar nix ab.'); A.setFlag('k4.g.krausNo'); return; }
+    if (c==='ghost'){ await A.narrate('Kraus schiebt die Brille von der Stirn auf die Nase und sieht mich an. Lange.'); await A.wait(900); await K.say('Wegen am Geist.'); await A.wait(800); await K.say('Wissen S’ was. Heut stell i gar nix ab.'); A.setFlag('k4.g.krausNo'); await A.wait(500); await A.m('Falscher Grund. Kraus glaubt an Brandschutz, nicht an Geister. An Herrn Lechner vielleicht. Ein anderes Mal.'); return; }
     break; }
   await K.say('Der Lechner.'); await A.wait(600); await K.say('Ja. Der rennt jedes Mal hin, der arme Kerl.'); await A.wait(700);
   await K.say('Um drei dreh i’n ab.'); await K.anim('key'); await K.say('Aber ned lang. Brandschutz.');
@@ -330,7 +331,7 @@ async function blunt(A){ var G=A.G, Al=A.npc('alois'), rid=A.room&&A.room.id;
   if (rid==='heim214') await A.goto('heim_flur',{noEnter:true});
   else { var dp=doorPt(); await A.narrate('Sie bringt ihn in sein Zimmer und kommt allein zurück, langsamer als sonst.'); if (Al.actor){ Al.routine(false); await Al.walk(dp[0],dp[1]); A.despawn('alois'); } }
   J=A.npc('jasnaW'); await A.wait(500); await J.say('Das habe ich auch einmal gemacht. Im ersten Jahr.'); await A.wait(900); await J.say('Nie wieder.');
-  await A.wait(700); await J.say('Jetzt ist er eine Stunde für niemanden zu sprechen. Für heute ist es vorbei, Marko.');
+  await A.wait(700); await J.say('Jetzt ist er eine Stunde für niemanden zu sprechen. Für heute ist es vorbei, Marko.'); await A.wait(500); await A.m('Um drei ist jeden Tag drei. Ich komme wieder, wenn ich weiß, was ich anders mache.');
   if (A.malaHere()){ await A.wait(600); await A.g('Er hat es gehört. Und gleich wieder verloren.'); } resync(A); }
 H.blunt=blunt;
 // ---------------------------------------------------------------- Donnerstag: die Kanne
@@ -514,7 +515,7 @@ var HS=[
    canExit:async function(A){ var G=A.G; if (A.isMala() || night(G) || fri(G)) return true; var at=aloisAt(G);
      if (at==='chair'){ if (A.first('!k4.g.knock')){ A.sfx('knock'); await A.narrate('Ich klopfe.'); await A.wait(500); await A.npc('alois').say('Herein! Wenn’s ned der Kontrolleur is.'); } return true; }
      if (at==='bed'){ await A.m('Mama hat ihn hingelegt. Ich lasse ihn.'); return false; }
-     await A.m('Nicht ohne ihn. Das ist sein Zimmer.'); return false; },
+     await A.m(A.S.three?'Nicht ohne ihn. Das ist sein Zimmer. Vor drei sitzt er drin, in seinem Sessel.':'Nicht ohne ihn. Das ist sein Zimmer.'); return false; },
    g:{look:'Sein Zimmer. Ich gehe durch die Tür, wenn ich will. Ich will nicht immer.'}},
  {id:'door_raum',name:'Gemeinschaftsraum',exit:{to:'heim_raum'},look:function(A){ return A.m(night(A.G)?'Die Doppeltür zum Gemeinschaftsraum. Dahinter ist es dunkel.':'Die Doppeltür zum Gemeinschaftsraum. Drinnen klappern Tassen.'); },
    g:{look:'Drinnen sitzen sie und warten auf den Kuchen. Die meisten wissen nicht mehr, worauf sonst.'}},

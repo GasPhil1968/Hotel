@@ -19,7 +19,7 @@ M.limboIntro=async function(A,w){ if (w!=='sepp') return intro0(A,w); var Sp=A.n
   await Sp.say('Binario undici. Sessantadue.'); await A.wait(500); await Sp.say('Qui sono sceso. E da qui partiva il treno per il sud, ogni sera alle nove.');
   await A.m('Gleis elf, zweiundsechzig. Hier ist er ausgestiegen. Und von hier fuhr jeden Abend um neun der Zug nach Süden.');
   await A.wait(600); await A.narrate('Er trägt einen Koffer, der nicht seiner ist. Er hält ihn, wie man ein Kind hält, das schläft.');
-  await Sp.say('Quarantanove anni ho portato le valigie di tutti. Tutti tornavano a casa per Natale. Io no.');
+  await Sp.say('Ventiquattro anni ho portato le valigie di tutti. Tutti tornavano a casa per Natale. Io no.');
   await A.g('Er steigt nicht ein, Marko.'); await A.wait(400); await Sp.anim('point'); await Sp.say('La mia valigia. Quella non l’ho mai portata.');
   await A.m('Seinen eigenen Koffer hat er nie getragen.'); };
 // ---------------------------------------------------------------- Marko trägt den Koffer: „Facchino!“

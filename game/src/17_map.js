@@ -152,7 +152,11 @@ var LEG={here:'hier',open:'erreichbar',blocked:'gerade nicht',locked:'noch nicht
 function infoFor(id,d){ var L=locById(id), s=d.st[id]; if (!L||!s) return null; var nm=labelOf(L);
   if (s.st==='here') return nm+' – hier bin ich.'; if (s.st==='open') return nm; return nm+': '+(M.tr?M.tr(s.why||''):(s.why||'')); }
 // nächstgelegener bekannter Ort im Umkreis: große Trefferflächen, auch wenn zwei Orte nah beieinander liegen
-function locAt(d,x,y){ var best=null, bd=1e9; locs().forEach(function(L){ var s=d.st[L.id]; if (!s||s.st==='unknown') return; var dx=x-L.x, dy=(y-cyOf(L))*1.15, q=dx*dx+dy*dy; if (q<bd){ bd=q; best=L; } }); return best&&bd<=20*20?best.id:null; }
+function locAt(d,x,y){ var lab=labelAt(d,x,y); if (lab) return lab; return locNear(d,x,y); }
+// auch die Beschriftung eines Ortes trifft ihn (Blindtest K4: „Städtische Friedhöfe“ nur neben dem Namen antippbar)
+function labelAt(d,x,y){ if (!d.lay||d.layKey!==CACHE.key){ d.lay=layoutNames(d); d.layKey=CACHE.key; } var hit=null;
+  Object.keys(d.lay).forEach(function(id){ var n=d.lay[id], w=M.textWidth(n.nm)+2; if (x>=n.x-2&&x<n.x+w+1&&y>=n.y-2&&y<n.y+9) hit=id; }); return hit; }
+function locNear(d,x,y){ var best=null, bd=1e9; locs().forEach(function(L){ var s=d.st[L.id]; if (!s||s.st==='unknown') return; var dx=x-L.x, dy=(y-cyOf(L))*1.15, q=dx*dx+dy*dy; if (q<bd){ bd=q; best=L; } }); return best&&bd<=20*20?best.id:null; }
 var CLOSE_R=[4,149,78,24];
 // Trefferflächen stehen ab dem Öffnen fest (nicht erst nach dem ersten gezeichneten Bild): auch ein sehr schneller Tipp trifft
 function mapLay(d){ var cr=CLOSE_R; return {at:function(x,y){ if (x>=cr[0]&&x<cr[0]+cr[2]&&y>=cr[1]-2&&y<cr[1]+cr[3]+4) return 'x'; if (y<144) return locAt(d,x,y); return null; }}; }

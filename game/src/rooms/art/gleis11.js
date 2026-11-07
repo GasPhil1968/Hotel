@@ -466,7 +466,7 @@ function actorLut(a,S,GS,tod){ if (tod==='day') return null; return M.TINT[tod]?
 M.defineArt('gleis11',{
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost, actorLut:actorLut,
   spots:{
-    exit:[0,60,10,84],
+    exit:[0,56,48,88],   // die ganze AUSGANG-Tür (Blindtest K4: vorher nur ein Streifen am Rand)
     platform:[150,64,52,44],
     sign11:[SIGN11.x0-1,SIGN11.y0-1,SIGN11.x1-SIGN11.x0+2,SIGN11.y1-SIGN11.y0+2],
     mission:[MIS.x0-4,MIS.top-13,MIS.x1-MIS.x0+8,FRONTY-MIS.top+14],
