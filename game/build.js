@@ -43,12 +43,17 @@ body{ display:flex; flex-direction:column; align-items:center; justify-content:c
 <script>
 ${js}
 </script>
-<div id="offline-note" style="display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;padding:8px 14px;border-radius:6px;background:#13111c;color:#82c1c9;font:14px/1.3 -apple-system,Helvetica,sans-serif;pointer-events:none;transition:opacity .6s"></div>
+<div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>
 <script>
 (function(){
   if (!('serviceWorker' in navigator) || location.protocol==='file:') return;
   var note=document.getElementById('offline-note');
-  function show(t,ms){ try{ if(window.M&&M.trUI) t=M.trUI(t); }catch(e){} note.textContent=t; note.style.display='block'; note.style.opacity='1'; if(ms) setTimeout(function(){ note.style.opacity='0'; setTimeout(function(){ note.style.display='none'; },700); },ms); }
+  // Systemmeldungen als kleine Marke oben rechts im Bild (in der Szene), nie über Menüzeilen oder Inventar (UI-Konzept D14)
+  function place(){ var c=(window.M&&M.sceneRect)?M.sceneRect():document.getElementById('game'), r=c&&(c.getBoundingClientRect?c.getBoundingClientRect():c);
+    if (!r||!r.width||document.documentElement.classList.contains('mala-rot')){ note.style.top='8px'; note.style.right='8px'; return; }
+    note.style.top=Math.max(4,r.top+6)+'px'; note.style.right=Math.max(4,window.innerWidth-r.right+6)+'px'; }
+  window.addEventListener('resize',function(){ if(note.style.display==='block') place(); });
+  function show(t,ms){ try{ if(window.M&&M.trUI) t=M.trUI(t); }catch(e){} note.textContent=t; place(); note.style.display='block'; note.style.opacity='1'; if(ms) setTimeout(function(){ note.style.opacity='0'; setTimeout(function(){ note.style.display='none'; },700); },ms); }
   var shown=false;
   navigator.serviceWorker.addEventListener('message',function(e){ if(e.data==='offline-ready' && !shown){ shown=true; show('Offline bereit \\u2713',4000); } });
   // Update: Übernimmt eine neue Fassung die Seite, wird sie gleich geladen (auf dem Titelbild sofort, mitten im Spiel beim nächsten Titelbild)

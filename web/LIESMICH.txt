@@ -146,14 +146,21 @@ HILFE
 - Manches geht nur zu zweit und gleichzeitig: Mala bleibt in einem Raum,
   Marko löst anderswo etwas aus, dann zu Mala wechseln. Klappt es nicht,
   passiert nichts Schlimmes; man versucht es einfach noch einmal.
-- "Zeigen": alle anklickbaren Stellen blinken kurz auf.
+- "Zeigen": alle anklickbaren Stellen werden kurz markiert; Ausgänge (grün)
+  und Personen (rot) mit Namen. Den Namen jeder anderen Stelle zeigt ein Tipp.
 - "Menü": Speichern, Laden (drei Plätze), Textgeschwindigkeit
   (oder "wartet auf Tippen"), Musik, Geräusche, Röhrenbild, Vollbild, Anleitung.
 - Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
 
-TASTATUR (am Rechner)
+TASTATUR UND MAUS (am Rechner)
 - Tab oder M = Figur wechseln · N = Notizbuch · Z = Zeigen · K = Karte
-- Leertaste = Satz überspringen · Esc = Menü (schließt auch Karte und Notizbuch)
+- Leertaste oder Enter = Satz überspringen; auch Kapitelkarten überspringen
+- Esc schließt immer nur das Oberste: Verb-Menü, gewählten Gegenstand,
+  Karte, Notizbuch. Ist nichts mehr offen, öffnet Esc das Menü.
+- Antworten im Gespräch: Ziffern 1–9 wählen eine sichtbare Zeile,
+  Pfeiltasten und Enter gehen auch; das Mausrad blättert.
+- Rechtsklick = "Schau an" (hebt auch einen gewählten Gegenstand auf).
+- Das Mausrad blättert außerdem im Notizbuch und im Inventar.
 
 SPIELSTÄNDE
 - Drei Speicherplätze für alle Kapitel. Das Spiel speichert bei jedem

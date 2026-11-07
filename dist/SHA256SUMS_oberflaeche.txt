@@ -1,0 +1,2 @@
+57eb83cdfce183cd41dd59ff9b3710145b48c36f872f3983a77718aae193fd8b  web/index.html
+69ca7e2e9c6179abd622b773e7dc8c3dcb5337b896c079cf386887f6126984dd  dist/MALA_netlify_oberflaeche.zip

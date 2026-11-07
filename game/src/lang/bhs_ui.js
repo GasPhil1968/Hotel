@@ -84,6 +84,12 @@ tr2(/^Röhrenbild: (an|aus)$/, function(m,tr){ return 'Stari ekran: '+tr(m[1]); 
 tr2(/^Ja, Platz (\d+) überschreiben$/, function(m){ return 'Da, prebriši mjesto '+m[1]; });
 tr2(/^Ja, Platz (\d+) neu beginnen$/, function(m){ return 'Da, kreni ispočetka na mjestu '+m[1]; });
 tr2(/^Auf Platz (\d+) liegt ein Spielstand\. (.+)$/, function(m,tr){ return 'Na mjestu '+m[1]+' već je spremljena igra. '+tr(m[2]); });
+// Oberfläche nach dem UI-Konzept (Phase 1)
+M.trAdd('bhs', {
+  'MALA wird quer gespielt':'MALA se igra vodoravno', 'Dreh dein Gerät ins Querformat.':'Okreni uređaj vodoravno.',
+  'Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.':'Je li uključeno zaključavanje rotacije? Onda igraj ovdje: slika je ispravna čim okreneš uređaj.',
+  'Gedreht weiterspielen':'Nastavi igrati okrenuto'
+});
 M.trIgnore && M.trIgnore(['Gegenstand doppelt: ','Notiz doppelt: ','kein Raum ','unbekannte Notiz ','unbekannter Gegenstand ','keine Phase ','kein Hotspot ',' in ','kein Ausgang ','keine Auswahl offen',
   'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','Notiz steht im Notizbuch nicht zur Wahl: ','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
   'translate(-50%,-50%) rotate(90deg)','Neue Notiz: ','Das ist ','Benutze ',' mit ','Schlussfolgerung: ','Speichern (Platz ','Laden (Platz ','Text: ','Notizbuch: ','Musik: ','Geräusche: ','Röhrenbild: ',

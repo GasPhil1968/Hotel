@@ -7,7 +7,7 @@ const path = require('path'), fs = require('fs'), http = require('http');
 const a = process.argv.slice(2), arg = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
 const ENGINE = arg('--engine', 'chromium'); const ONLY = (arg('--only', '') || '').split(',').filter(Boolean);
 const ROOT = path.join(__dirname, '..', '..'); const WEB = path.join(ROOT, 'web');
-const OUT = path.join(__dirname, '..', 'results', 'browser', 'scen_' + ENGINE); fs.mkdirSync(OUT, { recursive: true });
+const OUT = arg('--out', null) ? path.resolve(arg('--out')) : path.join(__dirname, '..', 'results', 'browser', 'scen_' + ENGINE); fs.mkdirSync(OUT, { recursive: true });   // --out: eigener Ordner, damit archivierte Ergebnisse bleiben
 const STATES = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'results', 'browser', 'states.json'), 'utf8')).states;
 const ST = (n) => STATES.find(s => s.name === n);
 const pw = require('playwright'); const { launch, contextOpts } = require('./engines');

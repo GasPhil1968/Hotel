@@ -548,7 +548,8 @@ E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); gameReset(); 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;
 M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
-  if (!paused){ gt+=dt; if (E.screen==='game' && !GS.ended) GS.playMs+=dt/M.TURBO; if (E.shake>0) E.shake-=dt; tickTimers();
+  // Spielzeit steht beim Lesen (Notizbuch, Karte, Dokumente; UI-Konzept B1-14)
+  if (!paused){ gt+=dt; if (E.screen==='game' && !GS.ended && !E.overlay) GS.playMs+=dt/M.TURBO; if (E.shake>0) E.shake-=dt; tickTimers();
     for (var f=faders.length-1;f>=0;f--){ var F=faders[f]; if (F.f()){ faders.splice(f,1); F.res(); } }
     if (E.speech && gt>=E.speech.until && !(tapText && E.busy && E.screen==='game' && !M.TEST)) endSpeech();
     if (E.conv && ((!E.busy && !E.dlg) || E.conv.room!==room || E.screen!=='game')) E.conv=null;
