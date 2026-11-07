@@ -14,7 +14,7 @@ const pw = require('playwright');
 const { launch, contextOpts } = require('./engines');
 
 (async () => {
-  fs.mkdirSync(OUT, { recursive: true });
+  fs.mkdirSync(OUT, { recursive: true }); for (const f of fs.readdirSync(OUT)) if (/\.(png|json|zip)$/.test(f)) fs.unlinkSync(path.join(OUT, f));   // keine Reste früherer Versuche
   const t0 = Date.now(); const log = []; const shots = [];
   const L = (...x) => { const s = `[${((Date.now() - t0) / 1000).toFixed(1)}s] ` + x.join(' '); log.push(s); if (process.env.UIRUN_VERBOSE) console.log(s); };
   const browser = await launch(pw, ENGINE);

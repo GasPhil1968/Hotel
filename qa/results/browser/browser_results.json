@@ -1,0 +1,3162 @@
+{
+ "summary": {
+  "scenarios": 38,
+  "scenariosOk": 38,
+  "byEngine": {
+   "chromium": {
+    "total": 14,
+    "ok": 14
+   },
+   "firefox": {
+    "total": 11,
+    "ok": 11
+   },
+   "webkit": {
+    "total": 13,
+    "ok": 13
+   }
+  },
+  "uiRuns": [
+   {
+    "engine": "chromium",
+    "device": "desktop",
+    "ok": true,
+    "actions": 1420,
+    "wallS": 1294.172
+   },
+   {
+    "engine": "firefox",
+    "device": "tablet",
+    "ok": false,
+    "actions": 902,
+    "wallS": 733.821
+   },
+   {
+    "engine": "webkit",
+    "device": "phone",
+    "ok": false,
+    "actions": 643,
+    "wallS": 733.937
+   }
+  ],
+  "versions": {
+   "chromium": "153.0.8010.12",
+   "firefox": "155.0",
+   "webkit": "26.6"
+  }
+ },
+ "summaryLines": [
+  "Engines: chromium 153.0.8010.12, firefox 155.0, webkit 26.6. Geräte sind Playwright-Emulationen (iPhone 13 quer/hochkant, iPad gen 7 quer), keine echten Geräte.",
+  "",
+  "### Vollständige UI-Durchläufe (nur sichtbare Bedienelemente, Kapitel 1 → K4-Abspann)",
+  "",
+  "| Engine | Gerät | Ergebnis | Aktionen | Dauer | Kapitelenden (s) | Seitenfehler | Konsolenfehler | fehlgeschl. Anfragen | Bedienhinweise |",
+  "|---|---|---|---|---|---|---|---|---|---|",
+  "| chromium 153.0.8010.12 | desktop 1280×800 Maus | **bestanden** | 1420 | 1294 s | K1 245, K2 541, K3 964, K4 1294 | 0 | 0 | 0 | Boden verdeckt ×3; Boden verdeckt (Scrollen) ×1; Wechsel nicht angeboten (Skript prüft Sperre) ×1; Dunkler Hotspot: Marko geht hin, Mala folgt ×1; Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene) ×1 |",
+  "| firefox 155.0 | tablet 1080×810 Touch | nicht bestanden: page.evaluate: Target page, context or browser has been closed | 902 | 734 s | K1 253, K2 545 | 0 | 0 | 0 | Boden verdeckt ×3; Boden verdeckt (Scrollen) ×1; Wechsel nicht angeboten (Skript prüft Sperre) ×1; Tipp traf anderen Hotspot (Figur bewegte sich) ×1; Dunkler Hotspot: Marko geht hin, Mala folgt ×1; Aktion ohne Reaktion, erneut angetippt ×1; Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene) ×1 |",
+  "| webkit 26.6 | phone 750×342 Touch | nicht bestanden: page.evaluate: Target page, context or browser has been closed\nBrowser logs:\n\n<l | 643 | 734 s | K1 355 | 0 | 2 | 1 | Aktion ohne Reaktion, erneut angetippt ×26; Boden verdeckt ×3; Boden verdeckt (Scrollen) ×10; Wechsel nicht angeboten (Skript prüft Sperre) ×1; Dunkler Hotspot: Marko geht hin, Mala folgt ×1; Ausgang ohne Reaktion, erneut angetippt ×7 |",
+  "",
+  "### Einzelszenarien",
+  "",
+  "| ID | Engine | Gerät | Szenario | Ergebnis | Prüfungen | Screenshots |",
+  "|---|---|---|---|---|---|---|",
+  "| C01 | chromium | desktop | Start: Titelbild, ganzzahlige Skalierung, kein Überlauf | bestanden | 6/6 | 1 |",
+  "| C02 | chromium | desktop | Neues Spiel Kapitel 1 per Tippen, „Zeigen“, Boden antippen = gehen | bestanden | 6/6 | 1 |",
+  "| C03 | chromium | tablet | Dialog: alle Antwortzeilen im Bild, lesbar, antippbar, Gespräch verlassen und fortsetzen | bestanden | 11/11 | 1 |",
+  "| C04 | chromium | desktop | Notizbuch per Knopf und Taste N: Zeilen im Bild, Auswahl, Schließen | bestanden | 6/6 | 1 |",
+  "| C05 | chromium | tablet | Stadtplan: Orte antippbar, gesperrte Orte mit Begründung, Schließen | bestanden | 5/5 | 1 |",
+  "| C06 | chromium | desktop | Inventarleiste: blättern, Gegenstand antippen → Verben, auf Mala ziehen | bestanden | 6/6 | 1 |",
+  "| C07 | chromium | desktop | Größenänderung: Spielbild passt sich an, bleibt vollständig sichtbar | bestanden | 8/8 | 1 |",
+  "| C08 | chromium | desktop | Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand | bestanden | 6/6 | 2 |",
+  "| C09 | chromium | tablet | Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar | bestanden | 6/6 | 1 |",
+  "| C10 | chromium | desktop | Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar | bestanden | 4/4 | 2 |",
+  "| C11 | chromium | desktop | Trefferflächen-Prüfung: jeder sichtbare Hotspot in 15 erspielten Ständen hat einen antippbaren Punkt | bestanden | 4/4 | 0 |",
+  "| C12 | chromium | desktop | PWA: Service Worker registriert, offline nach Caching neu starten, Update wird beim Titelbild übernommen | bestanden | 9/9 | 1 |",
+  "| C13a | chromium | desktop | BUG-002 per Klick (Originalfassung): Figurenwechsel während Mala geht | Fehler BUG-002 reproduziert (erwartet) | 4/5 | 1 |",
+  "| C13b | chromium | desktop | BUG-002 per Klick (korrigierte Fassung): Figurenwechsel während Mala geht | bestanden | 5/5 | 1 |",
+  "| F01 | firefox | desktop | Start: Titelbild, ganzzahlige Skalierung, kein Überlauf | bestanden | 6/6 | 1 |",
+  "| F02 | firefox | desktop | Neues Spiel Kapitel 1 per Tippen, „Zeigen“, Boden antippen = gehen | bestanden | 6/6 | 1 |",
+  "| F03 | firefox | tablet | Dialog: alle Antwortzeilen im Bild, lesbar, antippbar, Gespräch verlassen und fortsetzen | bestanden | 11/11 | 1 |",
+  "| F04 | firefox | desktop | Notizbuch per Knopf und Taste N: Zeilen im Bild, Auswahl, Schließen | bestanden | 6/6 | 1 |",
+  "| F05 | firefox | tablet | Stadtplan: Orte antippbar, gesperrte Orte mit Begründung, Schließen | bestanden | 5/5 | 1 |",
+  "| F06 | firefox | desktop | Inventarleiste: blättern, Gegenstand antippen → Verben, auf Mala ziehen | bestanden | 6/6 | 1 |",
+  "| F07 | firefox | desktop | Größenänderung: Spielbild passt sich an, bleibt vollständig sichtbar | bestanden | 8/8 | 1 |",
+  "| F08 | firefox | desktop | Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand | bestanden | 6/6 | 2 |",
+  "| F09 | firefox | tablet | Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar | bestanden | 6/6 | 1 |",
+  "| F10 | firefox | desktop | Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar | bestanden | 4/4 | 2 |",
+  "| F11 | firefox | desktop | Neues Spiel Kapitel 3 und 4 per Tippen: Erinnerungsbild, erste Szene, Hinweis-Menü | bestanden | 5/5 | 3 |",
+  "| W01 | webkit | phone | Start: Titelbild, ganzzahlige Skalierung, kein Überlauf | bestanden | 6/6 | 1 |",
+  "| W02 | webkit | phone | Neues Spiel Kapitel 1 per Tippen, „Zeigen“, Boden antippen = gehen | bestanden | 6/6 | 1 |",
+  "| W03 | webkit | tablet | Dialog: alle Antwortzeilen im Bild, lesbar, antippbar, Gespräch verlassen und fortsetzen | bestanden | 11/11 | 1 |",
+  "| W04 | webkit | phone | Notizbuch per Knopf und Taste N: Zeilen im Bild, Auswahl, Schließen | bestanden | 4/4 | 1 |",
+  "| W05 | webkit | tablet | Stadtplan: Orte antippbar, gesperrte Orte mit Begründung, Schließen | bestanden | 5/5 | 1 |",
+  "| W06 | webkit | phone | Inventarleiste: blättern, Gegenstand antippen → Verben, auf Mala ziehen | bestanden | 6/6 | 1 |",
+  "| W07 | webkit | desktop | Größenänderung: Spielbild passt sich an, bleibt vollständig sichtbar | bestanden | 8/8 | 1 |",
+  "| W08 | webkit | phone | Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand | bestanden | 6/6 | 2 |",
+  "| W09 | webkit | tablet | Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar | bestanden | 6/6 | 1 |",
+  "| W10 | webkit | phone | Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar | bestanden | 4/4 | 2 |",
+  "| W13a | webkit | phone | BUG-002 per Klick (Originalfassung): Figurenwechsel während Mala geht | Fehler BUG-002 reproduziert (erwartet) | 4/5 | 1 |",
+  "| W13b | webkit | phone | BUG-002 per Klick (korrigierte Fassung): Figurenwechsel während Mala geht | bestanden | 5/5 | 1 |",
+  "| W11 | webkit | phonePortrait | iPhone hochkant (emuliert): Bild dreht sich, Tipps treffen trotzdem | bestanden | 5/5 | 2 |",
+  "",
+  "Summe: 38 Einzelszenarien (38 wie erwartet) und 3 UI-Volldurchläufe (1 bestanden)."
+ ],
+ "scenarios": [
+  {
+   "id": "C01",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Start: Titelbild, ganzzahlige Skalierung, kein Überlauf",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Titelmenü mit 7 Zeilen"
+    },
+    {
+     "ok": true,
+     "what": "Spielbild vollständig im Fenster {\"w\":1280,\"h\":800,\"l\":0,\"t\":0,\"vw\":1280,\"vh\":800,\"sw\":1280,\"sh\":800,\"dpr\":1,\"rot\":false}"
+    },
+    {
+     "ok": true,
+     "what": "keine Scrollbalken"
+    },
+    {
+     "ok": true,
+     "what": "Seitenverhältnis 16:10"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C01_titel.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "geometry": {
+    "w": 1280,
+    "h": 800,
+    "l": 0,
+    "t": 0,
+    "vw": 1280,
+    "vh": 800,
+    "sw": 1280,
+    "sh": 800,
+    "dpr": 1,
+    "rot": false
+   },
+   "wallS": 0.839
+  },
+  {
+   "id": "C02",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Neues Spiel Kapitel 1 per Tippen, „Zeigen“, Boden antippen = gehen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "erster Raum Markos Wohnung (flat)"
+    },
+    {
+     "ok": true,
+     "what": "„Zeigen“ verändert das Bild (Hotspots blinken)"
+    },
+    {
+     "ok": true,
+     "what": "freier Bodenpunkt gefunden"
+    },
+    {
+     "ok": true,
+     "what": "Marko geht nach Tipp auf den Boden (188→39)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C02_zeigen.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "wallS": 6.384
+  },
+  {
+   "id": "C03",
+   "engine": "chromium",
+   "device": "tablet",
+   "title": "Dialog: alle Antwortzeilen im Bild, lesbar, antippbar, Gespräch verlassen und fortsetzen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Gesprächspartner im Raum stanica: fikret"
+    },
+    {
+     "ok": true,
+     "what": "ein Gespräch mit Auswahl geöffnet (senada)"
+    },
+    {
+     "ok": true,
+     "what": "alle sichtbaren Zeilen im Bild (4/5)"
+    },
+    {
+     "ok": true,
+     "what": "mehr Zeilen als Platz → Blätterpfeil vorhanden"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch lässt sich verlassen (Abschiedszeile oder Schließen-Feld)"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch verlassen, Eingabe frei"
+    },
+    {
+     "ok": true,
+     "what": "Gesprächspartner weiter antippbar"
+    },
+    {
+     "ok": true,
+     "what": "Popup beim zweiten Antippen bietet „Rede mit“ [\"Rede mit\",\"Schau an\"]"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch lässt sich erneut beginnen"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C03_dialog.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "state": "k2_fikret",
+   "partner": "senada",
+   "dialog": {
+    "n": 5,
+    "rows": [
+     {
+      "k": 0,
+      "r": [
+       5,
+       148,
+       292,
+       11
+      ],
+      "w": 97,
+      "t": "Einen Fahrschein, bitte."
+     },
+     {
+      "k": 1,
+      "r": [
+       5,
+       159,
+       292,
+       11
+      ],
+      "w": 135,
+      "t": "Fährt die Eins in die Baščaršija?"
+     },
+     {
+      "k": 2,
+      "r": [
+       5,
+       170,
+       292,
+       11
+      ],
+      "w": 144,
+      "t": "Wie lange arbeiten Sie schon hier?"
+     },
+     {
+      "k": 3,
+      "r": [
+       5,
+       181,
+       292,
+       11
+      ],
+      "w": 132,
+      "t": "Was verkaufen Sie am meisten?"
+     }
+    ],
+    "up": null,
+    "dn": [
+     299,
+     183,
+     18,
+     14
+    ],
+    "close": [
+     299,
+     146,
+     18,
+     14
+    ]
+   },
+   "byeVia": "Zeile (nach Blättern)",
+   "popup2": [
+    "Rede mit",
+    "Schau an"
+   ],
+   "wallS": 22.779
+  },
+  {
+   "id": "C04",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Notizbuch per Knopf und Taste N: Zeilen im Bild, Auswahl, Schließen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Notizen sichtbar und im Bild {\"rows\":4,\"close\":[269,6,15,14],\"inside\":true}"
+    },
+    {
+     "ok": true,
+     "what": "Schließen per Tipp"
+    },
+    {
+     "ok": true,
+     "what": "Taste N öffnet"
+    },
+    {
+     "ok": true,
+     "what": "Esc schließt"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C04_notizbuch.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "wallS": 2.106
+  },
+  {
+   "id": "C05",
+   "engine": "chromium",
+   "device": "tablet",
+   "title": "Stadtplan: Orte antippbar, gesperrte Orte mit Begründung, Schließen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "jeder bekannte Ort antippbar (5)"
+    },
+    {
+     "ok": true,
+     "what": "Schließen-Feld vorhanden"
+    },
+    {
+     "ok": true,
+     "what": "Karte schließt per Tipp"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C05_karte.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "map": {
+    "codes": [
+     "o:ostbus",
+     "o:koski",
+     "o:starimost",
+     "o:kujundziluk",
+     "o:herberge",
+     "o:x"
+    ],
+    "st": {
+     "ostbus": {
+      "st": "open"
+     },
+     "herberge": {
+      "st": "open"
+     },
+     "kujundziluk": {
+      "st": "open"
+     },
+     "starimost": {
+      "st": "here"
+     },
+     "koski": {
+      "st": "open"
+     },
+     "tepa": {
+      "st": "unknown"
+     },
+     "strassenbr": {
+      "st": "unknown"
+     },
+     "bulevar": {
+      "st": "unknown"
+     },
+     "partizan": {
+      "st": "unknown"
+     },
+     "westbus": {
+      "st": "unknown"
+     },
+     "zelenika": {
+      "st": "unknown"
+     },
+     "vermisst": {
+      "st": "unknown"
+     },
+     "skela": {
+      "st": "unknown"
+     }
+    }
+   },
+   "wallS": 2.351
+  },
+  {
+   "id": "C06",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Inventarleiste: blättern, Gegenstand antippen → Verben, auf Mala ziehen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Gegenstände: 6"
+    },
+    {
+     "ok": true,
+     "what": "sichtbare Felder 6"
+    },
+    {
+     "ok": true,
+     "what": "Gegenstands-Popup [\"Benutze\",\"Schau an\"]"
+    },
+    {
+     "ok": true,
+     "what": "danach Eingabe frei"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C06_inventar.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "inv": [
+    "dzezva",
+    "mobitel",
+    "olovka",
+    "photo_full",
+    "vizitka",
+    "aushang"
+   ],
+   "wallS": 2.477
+  },
+  {
+   "id": "C07",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Größenänderung: Spielbild passt sich an, bleibt vollständig sichtbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Fenster 800×500: Bild 640×400"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1024×768: Bild 960×600"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1366×768: Bild 960×600"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1920×1080: Bild 1600×1000"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 640×900: Bild 640×400"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 500×320: Bild 320×200"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C07_klein.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "sizes": [
+    {
+     "ok": true,
+     "w": 640,
+     "h": 400,
+     "l": 80,
+     "t": 50,
+     "vw": 800,
+     "vh": 500,
+     "sw": 800
+    },
+    {
+     "ok": true,
+     "w": 960,
+     "h": 600,
+     "l": 32,
+     "t": 84,
+     "vw": 1024,
+     "vh": 768,
+     "sw": 1024
+    },
+    {
+     "ok": true,
+     "w": 960,
+     "h": 600,
+     "l": 203,
+     "t": 84,
+     "vw": 1366,
+     "vh": 768,
+     "sw": 1366
+    },
+    {
+     "ok": true,
+     "w": 1600,
+     "h": 1000,
+     "l": 160,
+     "t": 40,
+     "vw": 1920,
+     "vh": 1080,
+     "sw": 1920
+    },
+    {
+     "ok": true,
+     "w": 640,
+     "h": 400,
+     "l": 0,
+     "t": 250,
+     "vw": 640,
+     "vh": 900,
+     "sw": 640
+    },
+    {
+     "ok": true,
+     "w": 320,
+     "h": 200,
+     "l": 90,
+     "t": 60,
+     "vw": 500,
+     "vh": 320,
+     "sw": 500
+    }
+   ],
+   "wallS": 2.432
+  },
+  {
+   "id": "C08",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Meldung „Gespeichert.“"
+    },
+    {
+     "ok": true,
+     "what": "neuer Kontext bietet „Fortsetzen“"
+    },
+    {
+     "ok": true,
+     "what": "Phase, Ort, Figur, Inventar, Notizen und Schalter gleich"
+    },
+    {
+     "ok": true,
+     "what": "neuer Kontext ohne Fehler"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C08_menu.png",
+    "browser/scen_chromium/C08_geladen.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "compare": "gleich",
+   "wallS": 5.082
+  },
+  {
+   "id": "C09",
+   "engine": "chromium",
+   "device": "tablet",
+   "title": "Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Ausgang im Bild"
+    },
+    {
+     "ok": true,
+     "what": "nach Dreifachtipp im Spiel (haustor→haustor)"
+    },
+    {
+     "ok": true,
+     "what": "Spiel kommt wieder zur Ruhe (keine hängende Sperre)"
+    },
+    {
+     "ok": true,
+     "what": "kein hängender Aktionszähler"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C09_nach_stress.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "after": "haustor",
+   "wallS": 3.532
+  },
+  {
+   "id": "C10",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Wechsel möglich"
+    },
+    {
+     "ok": true,
+     "what": "Geistersicht kühl/blau (B 568121 > R 240125)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C10_marko.png",
+    "browser/scen_chromium/C10_mala.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "tint": {
+    "r": 240125,
+    "g": 437332,
+    "b": 568121
+   },
+   "ghosts": [
+    "luka"
+   ],
+   "wallS": 2.684
+  },
+  {
+   "id": "C11",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "Trefferflächen-Prüfung: jeder sichtbare Hotspot in 15 erspielten Ständen hat einen antippbaren Punkt",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "geprüft: 221 Hotspots in 15 Ständen; ohne antippbaren Punkt: 0"
+    },
+    {
+     "ok": true,
+     "what": "jeder sichtbare Hotspot antippbar"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "audit": [
+    {
+     "state": "k1_start",
+     "room": "flat",
+     "active": "marko",
+     "total": 20,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k1_ivka",
+     "room": "ivka",
+     "active": "marko",
+     "total": 17,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k1_brief",
+     "room": "matejuska",
+     "active": "marko",
+     "total": 14,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k1_luka",
+     "room": "ledana",
+     "active": "marko",
+     "total": 14,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k1_bruno",
+     "room": "palma",
+     "active": "marko",
+     "total": 22,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k2_start",
+     "room": "stanica",
+     "active": "marko",
+     "total": 18,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k2_fikret",
+     "room": "stanica",
+     "active": "marko",
+     "total": 18,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k2_limbo",
+     "room": "vratnik",
+     "active": "marko",
+     "total": 14,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k2_skloniste",
+     "room": "haustor",
+     "active": "mala",
+     "total": 20,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k3_peil",
+     "room": "starimost",
+     "active": "marko",
+     "total": 9,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k3_bato",
+     "room": "partizan",
+     "active": "marko",
+     "total": 6,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k3_start",
+     "room": "skela_d",
+     "active": "marko",
+     "total": 13,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k4_gleis",
+     "room": "gleis11",
+     "active": "mala",
+     "total": 13,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k4_silvester",
+     "room": "balkon",
+     "active": "marko",
+     "total": 8,
+     "covered": [],
+     "none": []
+    },
+    {
+     "state": "k4_heim",
+     "room": "heim_flur",
+     "active": "marko",
+     "total": 15,
+     "covered": [],
+     "none": []
+    }
+   ],
+   "unreachable": [],
+   "wallS": 25.328
+  },
+  {
+   "id": "C12",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "PWA: Service Worker registriert, offline nach Caching neu starten, Update wird beim Titelbild übernommen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Meldung „Offline bereit ✓“"
+    },
+    {
+     "ok": true,
+     "what": "Dateien im Cache: 6"
+    },
+    {
+     "ok": true,
+     "what": "offline neu geladen: Titelbild erscheint"
+    },
+    {
+     "ok": true,
+     "what": "offline: Kapitel 4 startet"
+    },
+    {
+     "ok": true,
+     "what": "neue Fassung: Seite lädt auf dem Titelbild von selbst neu"
+    },
+    {
+     "ok": true,
+     "what": "neuer Cache [\"mala-split-ce13af7e74-qa2\"]"
+    },
+    {
+     "ok": true,
+     "what": "Spielstand nach Update erhalten"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C12_offline.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "cache": {
+    "ks": [
+     "mala-split-ce13af7e74"
+    ],
+    "n": 6
+   },
+   "saveMsg": "Gespeichert.",
+   "cacheAfter": [
+    "mala-split-ce13af7e74-qa2"
+   ],
+   "wallS": 66.861
+  },
+  {
+   "id": "C13a",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "BUG-002 per Klick (Originalfassung): Figurenwechsel während Mala geht",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Mala in gleis11, Marko in wiesn, Ziel bench"
+    },
+    {
+     "ok": true,
+     "what": "Wechsel zu Marko in wiesn (während Mala ging: true)"
+    },
+    {
+     "ok": false,
+     "what": "kein hängender Aktionszähler (E.acting=1) – in der Originalfassung erwartet: 1"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C13orig.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "reproduces": "BUG-002",
+   "info": {
+    "room": "gleis11",
+    "mk": "wiesn",
+    "best": {
+     "id": "bench",
+     "x": 311,
+     "y": 91
+    }
+   },
+   "walking": true,
+   "end": {
+    "acting": 1,
+    "active": "marko",
+    "room": "wiesn"
+   },
+   "bugReproduced": true,
+   "wallS": 5.073
+  },
+  {
+   "id": "C13b",
+   "engine": "chromium",
+   "device": "desktop",
+   "title": "BUG-002 per Klick (korrigierte Fassung): Figurenwechsel während Mala geht",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Mala in gleis11, Marko in wiesn, Ziel bench"
+    },
+    {
+     "ok": true,
+     "what": "Wechsel zu Marko in wiesn (während Mala ging: true)"
+    },
+    {
+     "ok": true,
+     "what": "kein hängender Aktionszähler (E.acting=0)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_chromium/C13neu.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "153.0.8010.12",
+   "info": {
+    "room": "gleis11",
+    "mk": "wiesn",
+    "best": {
+     "id": "bench",
+     "x": 311,
+     "y": 91
+    }
+   },
+   "walking": true,
+   "end": {
+    "acting": 0,
+    "active": "marko",
+    "room": "wiesn"
+   },
+   "wallS": 5.052
+  },
+  {
+   "id": "F01",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Start: Titelbild, ganzzahlige Skalierung, kein Überlauf",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Titelmenü mit 7 Zeilen"
+    },
+    {
+     "ok": true,
+     "what": "Spielbild vollständig im Fenster {\"w\":1280,\"h\":800,\"l\":0,\"t\":0,\"vw\":1280,\"vh\":800,\"sw\":1280,\"sh\":800,\"dpr\":1,\"rot\":false}"
+    },
+    {
+     "ok": true,
+     "what": "keine Scrollbalken"
+    },
+    {
+     "ok": true,
+     "what": "Seitenverhältnis 16:10"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F01_titel.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "geometry": {
+    "w": 1280,
+    "h": 800,
+    "l": 0,
+    "t": 0,
+    "vw": 1280,
+    "vh": 800,
+    "sw": 1280,
+    "sh": 800,
+    "dpr": 1,
+    "rot": false
+   },
+   "wallS": 2.965
+  },
+  {
+   "id": "F02",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Neues Spiel Kapitel 1 per Tippen, „Zeigen“, Boden antippen = gehen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "erster Raum Markos Wohnung (flat)"
+    },
+    {
+     "ok": true,
+     "what": "„Zeigen“ verändert das Bild (Hotspots blinken)"
+    },
+    {
+     "ok": true,
+     "what": "freier Bodenpunkt gefunden"
+    },
+    {
+     "ok": true,
+     "what": "Marko geht nach Tipp auf den Boden (188→39)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F02_zeigen.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "wallS": 8.565
+  },
+  {
+   "id": "F03",
+   "engine": "firefox",
+   "device": "tablet",
+   "title": "Dialog: alle Antwortzeilen im Bild, lesbar, antippbar, Gespräch verlassen und fortsetzen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Gesprächspartner im Raum stanica: fikret"
+    },
+    {
+     "ok": true,
+     "what": "ein Gespräch mit Auswahl geöffnet (senada)"
+    },
+    {
+     "ok": true,
+     "what": "alle sichtbaren Zeilen im Bild (4/5)"
+    },
+    {
+     "ok": true,
+     "what": "mehr Zeilen als Platz → Blätterpfeil vorhanden"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch lässt sich verlassen (Abschiedszeile oder Schließen-Feld)"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch verlassen, Eingabe frei"
+    },
+    {
+     "ok": true,
+     "what": "Gesprächspartner weiter antippbar"
+    },
+    {
+     "ok": true,
+     "what": "Popup beim zweiten Antippen bietet „Rede mit“ [\"Rede mit\",\"Schau an\"]"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch lässt sich erneut beginnen"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F03_dialog.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "state": "k2_fikret",
+   "partner": "senada",
+   "dialog": {
+    "n": 5,
+    "rows": [
+     {
+      "k": 0,
+      "r": [
+       5,
+       148,
+       292,
+       11
+      ],
+      "w": 97,
+      "t": "Einen Fahrschein, bitte."
+     },
+     {
+      "k": 1,
+      "r": [
+       5,
+       159,
+       292,
+       11
+      ],
+      "w": 135,
+      "t": "Fährt die Eins in die Baščaršija?"
+     },
+     {
+      "k": 2,
+      "r": [
+       5,
+       170,
+       292,
+       11
+      ],
+      "w": 144,
+      "t": "Wie lange arbeiten Sie schon hier?"
+     },
+     {
+      "k": 3,
+      "r": [
+       5,
+       181,
+       292,
+       11
+      ],
+      "w": 132,
+      "t": "Was verkaufen Sie am meisten?"
+     }
+    ],
+    "up": null,
+    "dn": [
+     299,
+     183,
+     18,
+     14
+    ],
+    "close": [
+     299,
+     146,
+     18,
+     14
+    ]
+   },
+   "byeVia": "Zeile (nach Blättern)",
+   "popup2": [
+    "Rede mit",
+    "Schau an"
+   ],
+   "wallS": 25.591
+  },
+  {
+   "id": "F04",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Notizbuch per Knopf und Taste N: Zeilen im Bild, Auswahl, Schließen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Notizen sichtbar und im Bild {\"rows\":4,\"close\":[269,6,15,14],\"inside\":true}"
+    },
+    {
+     "ok": true,
+     "what": "Schließen per Tipp"
+    },
+    {
+     "ok": true,
+     "what": "Taste N öffnet"
+    },
+    {
+     "ok": true,
+     "what": "Esc schließt"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F04_notizbuch.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "wallS": 4.189
+  },
+  {
+   "id": "F05",
+   "engine": "firefox",
+   "device": "tablet",
+   "title": "Stadtplan: Orte antippbar, gesperrte Orte mit Begründung, Schließen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "jeder bekannte Ort antippbar (5)"
+    },
+    {
+     "ok": true,
+     "what": "Schließen-Feld vorhanden"
+    },
+    {
+     "ok": true,
+     "what": "Karte schließt per Tipp"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F05_karte.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "map": {
+    "codes": [
+     "o:ostbus",
+     "o:koski",
+     "o:starimost",
+     "o:kujundziluk",
+     "o:herberge",
+     "o:x"
+    ],
+    "st": {
+     "ostbus": {
+      "st": "open"
+     },
+     "herberge": {
+      "st": "open"
+     },
+     "kujundziluk": {
+      "st": "open"
+     },
+     "starimost": {
+      "st": "here"
+     },
+     "koski": {
+      "st": "open"
+     },
+     "tepa": {
+      "st": "unknown"
+     },
+     "strassenbr": {
+      "st": "unknown"
+     },
+     "bulevar": {
+      "st": "unknown"
+     },
+     "partizan": {
+      "st": "unknown"
+     },
+     "westbus": {
+      "st": "unknown"
+     },
+     "zelenika": {
+      "st": "unknown"
+     },
+     "vermisst": {
+      "st": "unknown"
+     },
+     "skela": {
+      "st": "unknown"
+     }
+    }
+   },
+   "wallS": 4.079
+  },
+  {
+   "id": "F06",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Inventarleiste: blättern, Gegenstand antippen → Verben, auf Mala ziehen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Gegenstände: 6"
+    },
+    {
+     "ok": true,
+     "what": "sichtbare Felder 6"
+    },
+    {
+     "ok": true,
+     "what": "Gegenstands-Popup [\"Benutze\",\"Schau an\"]"
+    },
+    {
+     "ok": true,
+     "what": "danach Eingabe frei"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F06_inventar.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "inv": [
+    "dzezva",
+    "mobitel",
+    "olovka",
+    "photo_full",
+    "vizitka",
+    "aushang"
+   ],
+   "wallS": 4.479
+  },
+  {
+   "id": "F07",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Größenänderung: Spielbild passt sich an, bleibt vollständig sichtbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Fenster 800×500: Bild 640×400"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1024×768: Bild 960×600"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1366×768: Bild 960×600"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1920×1080: Bild 1600×1000"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 640×900: Bild 640×400"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 500×320: Bild 320×200"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F07_klein.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "sizes": [
+    {
+     "ok": true,
+     "w": 640,
+     "h": 400,
+     "l": 80,
+     "t": 50,
+     "vw": 800,
+     "vh": 500,
+     "sw": 800
+    },
+    {
+     "ok": true,
+     "w": 960,
+     "h": 600,
+     "l": 32,
+     "t": 84,
+     "vw": 1024,
+     "vh": 768,
+     "sw": 1024
+    },
+    {
+     "ok": true,
+     "w": 960,
+     "h": 600,
+     "l": 203,
+     "t": 84,
+     "vw": 1366,
+     "vh": 768,
+     "sw": 1366
+    },
+    {
+     "ok": true,
+     "w": 1600,
+     "h": 1000,
+     "l": 160,
+     "t": 40,
+     "vw": 1920,
+     "vh": 1080,
+     "sw": 1920
+    },
+    {
+     "ok": true,
+     "w": 640,
+     "h": 400,
+     "l": 0,
+     "t": 250,
+     "vw": 640,
+     "vh": 900,
+     "sw": 640
+    },
+    {
+     "ok": true,
+     "w": 320,
+     "h": 200,
+     "l": 90,
+     "t": 60,
+     "vw": 500,
+     "vh": 320,
+     "sw": 500
+    }
+   ],
+   "wallS": 4.387
+  },
+  {
+   "id": "F08",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Meldung „Gespeichert.“"
+    },
+    {
+     "ok": true,
+     "what": "neuer Kontext bietet „Fortsetzen“"
+    },
+    {
+     "ok": true,
+     "what": "Phase, Ort, Figur, Inventar, Notizen und Schalter gleich"
+    },
+    {
+     "ok": true,
+     "what": "neuer Kontext ohne Fehler"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F08_menu.png",
+    "browser/scen_firefox/F08_geladen.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "compare": "gleich",
+   "wallS": 7.844
+  },
+  {
+   "id": "F09",
+   "engine": "firefox",
+   "device": "tablet",
+   "title": "Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Ausgang im Bild"
+    },
+    {
+     "ok": true,
+     "what": "nach Dreifachtipp im Spiel (haustor→haustor)"
+    },
+    {
+     "ok": true,
+     "what": "Spiel kommt wieder zur Ruhe (keine hängende Sperre)"
+    },
+    {
+     "ok": true,
+     "what": "kein hängender Aktionszähler"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F09_nach_stress.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "after": "haustor",
+   "wallS": 5.683
+  },
+  {
+   "id": "F10",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Wechsel möglich"
+    },
+    {
+     "ok": true,
+     "what": "Geistersicht kühl/blau (B 568745 > R 241004)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F10_marko.png",
+    "browser/scen_firefox/F10_mala.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "tint": {
+    "r": 241004,
+    "g": 438091,
+    "b": 568745
+   },
+   "ghosts": [
+    "luka"
+   ],
+   "wallS": 4.818
+  },
+  {
+   "id": "F11",
+   "engine": "firefox",
+   "device": "desktop",
+   "title": "Neues Spiel Kapitel 3 und 4 per Tippen: Erinnerungsbild, erste Szene, Hinweis-Menü",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Kapitel 3: Mostar startet: ostbus"
+    },
+    {
+     "ok": true,
+     "what": "Kapitel 4: München startet: zob"
+    },
+    {
+     "ok": true,
+     "what": "Menüzeilen"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_firefox/F11_3.png",
+    "browser/scen_firefox/F11_4.png",
+    "browser/scen_firefox/F11_menu.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "155.0",
+   "wallS": 23.202
+  },
+  {
+   "id": "W01",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "Start: Titelbild, ganzzahlige Skalierung, kein Überlauf",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Titelmenü mit 7 Zeilen"
+    },
+    {
+     "ok": true,
+     "what": "Spielbild vollständig im Fenster {\"w\":533.328125,\"h\":333.328125,\"l\":108.328125,\"t\":4.328125,\"vw\":750,\"vh\":342,\"sw\":750,\"sh\":342,\"dpr\":3,\"rot\":false}"
+    },
+    {
+     "ok": true,
+     "what": "keine Scrollbalken"
+    },
+    {
+     "ok": true,
+     "what": "Seitenverhältnis 16:10"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W01_titel.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "geometry": {
+    "w": 533.328125,
+    "h": 333.328125,
+    "l": 108.328125,
+    "t": 4.328125,
+    "vw": 750,
+    "vh": 342,
+    "sw": 750,
+    "sh": 342,
+    "dpr": 3,
+    "rot": false
+   },
+   "wallS": 1.239
+  },
+  {
+   "id": "W02",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "Neues Spiel Kapitel 1 per Tippen, „Zeigen“, Boden antippen = gehen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "erster Raum Markos Wohnung (flat)"
+    },
+    {
+     "ok": true,
+     "what": "„Zeigen“ verändert das Bild (Hotspots blinken)"
+    },
+    {
+     "ok": true,
+     "what": "freier Bodenpunkt gefunden"
+    },
+    {
+     "ok": true,
+     "what": "Marko geht nach Tipp auf den Boden (188→39)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W02_zeigen.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "wallS": 7.01
+  },
+  {
+   "id": "W03",
+   "engine": "webkit",
+   "device": "tablet",
+   "title": "Dialog: alle Antwortzeilen im Bild, lesbar, antippbar, Gespräch verlassen und fortsetzen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Gesprächspartner im Raum stanica: fikret"
+    },
+    {
+     "ok": true,
+     "what": "ein Gespräch mit Auswahl geöffnet (senada)"
+    },
+    {
+     "ok": true,
+     "what": "alle sichtbaren Zeilen im Bild (4/5)"
+    },
+    {
+     "ok": true,
+     "what": "mehr Zeilen als Platz → Blätterpfeil vorhanden"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch lässt sich verlassen (Abschiedszeile oder Schließen-Feld)"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch verlassen, Eingabe frei"
+    },
+    {
+     "ok": true,
+     "what": "Gesprächspartner weiter antippbar"
+    },
+    {
+     "ok": true,
+     "what": "Popup beim zweiten Antippen bietet „Rede mit“ [\"Rede mit\",\"Schau an\"]"
+    },
+    {
+     "ok": true,
+     "what": "Gespräch lässt sich erneut beginnen"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W03_dialog.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "state": "k2_fikret",
+   "partner": "senada",
+   "dialog": {
+    "n": 5,
+    "rows": [
+     {
+      "k": 0,
+      "r": [
+       5,
+       148,
+       292,
+       11
+      ],
+      "w": 97,
+      "t": "Einen Fahrschein, bitte."
+     },
+     {
+      "k": 1,
+      "r": [
+       5,
+       159,
+       292,
+       11
+      ],
+      "w": 135,
+      "t": "Fährt die Eins in die Baščaršija?"
+     },
+     {
+      "k": 2,
+      "r": [
+       5,
+       170,
+       292,
+       11
+      ],
+      "w": 144,
+      "t": "Wie lange arbeiten Sie schon hier?"
+     },
+     {
+      "k": 3,
+      "r": [
+       5,
+       181,
+       292,
+       11
+      ],
+      "w": 132,
+      "t": "Was verkaufen Sie am meisten?"
+     }
+    ],
+    "up": null,
+    "dn": [
+     299,
+     183,
+     18,
+     14
+    ],
+    "close": [
+     299,
+     146,
+     18,
+     14
+    ]
+   },
+   "byeVia": "Zeile (nach Blättern)",
+   "popup2": [
+    "Rede mit",
+    "Schau an"
+   ],
+   "wallS": 23.011
+  },
+  {
+   "id": "W04",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "Notizbuch per Knopf und Taste N: Zeilen im Bild, Auswahl, Schließen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Notizen sichtbar und im Bild {\"rows\":4,\"close\":[269,6,15,14],\"inside\":true}"
+    },
+    {
+     "ok": true,
+     "what": "Schließen per Tipp"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W04_notizbuch.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "wallS": 2.266
+  },
+  {
+   "id": "W05",
+   "engine": "webkit",
+   "device": "tablet",
+   "title": "Stadtplan: Orte antippbar, gesperrte Orte mit Begründung, Schließen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "jeder bekannte Ort antippbar (5)"
+    },
+    {
+     "ok": true,
+     "what": "Schließen-Feld vorhanden"
+    },
+    {
+     "ok": true,
+     "what": "Karte schließt per Tipp"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W05_karte.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "map": {
+    "codes": [
+     "o:ostbus",
+     "o:koski",
+     "o:starimost",
+     "o:kujundziluk",
+     "o:herberge",
+     "o:x"
+    ],
+    "st": {
+     "ostbus": {
+      "st": "open"
+     },
+     "herberge": {
+      "st": "open"
+     },
+     "kujundziluk": {
+      "st": "open"
+     },
+     "starimost": {
+      "st": "here"
+     },
+     "koski": {
+      "st": "open"
+     },
+     "tepa": {
+      "st": "unknown"
+     },
+     "strassenbr": {
+      "st": "unknown"
+     },
+     "bulevar": {
+      "st": "unknown"
+     },
+     "partizan": {
+      "st": "unknown"
+     },
+     "westbus": {
+      "st": "unknown"
+     },
+     "zelenika": {
+      "st": "unknown"
+     },
+     "vermisst": {
+      "st": "unknown"
+     },
+     "skela": {
+      "st": "unknown"
+     }
+    }
+   },
+   "wallS": 2.457
+  },
+  {
+   "id": "W06",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "Inventarleiste: blättern, Gegenstand antippen → Verben, auf Mala ziehen",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Gegenstände: 6"
+    },
+    {
+     "ok": true,
+     "what": "sichtbare Felder 6"
+    },
+    {
+     "ok": true,
+     "what": "Gegenstands-Popup [\"Benutze\",\"Schau an\"]"
+    },
+    {
+     "ok": true,
+     "what": "danach Eingabe frei"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W06_inventar.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "inv": [
+    "dzezva",
+    "mobitel",
+    "olovka",
+    "photo_full",
+    "vizitka",
+    "aushang"
+   ],
+   "wallS": 2.948
+  },
+  {
+   "id": "W07",
+   "engine": "webkit",
+   "device": "desktop",
+   "title": "Größenänderung: Spielbild passt sich an, bleibt vollständig sichtbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Fenster 800×500: Bild 640×400"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1024×768: Bild 960×600"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1366×768: Bild 960×600"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 1920×1080: Bild 1600×1000"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 640×900: Bild 640×400"
+    },
+    {
+     "ok": true,
+     "what": "Fenster 500×320: Bild 320×200"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W07_klein.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "sizes": [
+    {
+     "ok": true,
+     "w": 640,
+     "h": 400,
+     "l": 80,
+     "t": 50,
+     "vw": 800,
+     "vh": 500,
+     "sw": 800
+    },
+    {
+     "ok": true,
+     "w": 960,
+     "h": 600,
+     "l": 32,
+     "t": 84,
+     "vw": 1024,
+     "vh": 768,
+     "sw": 1024
+    },
+    {
+     "ok": true,
+     "w": 960,
+     "h": 600,
+     "l": 203,
+     "t": 84,
+     "vw": 1366,
+     "vh": 768,
+     "sw": 1366
+    },
+    {
+     "ok": true,
+     "w": 1600,
+     "h": 1000,
+     "l": 160,
+     "t": 40,
+     "vw": 1920,
+     "vh": 1080,
+     "sw": 1920
+    },
+    {
+     "ok": true,
+     "w": 640,
+     "h": 400,
+     "l": 0,
+     "t": 250,
+     "vw": 640,
+     "vh": 900,
+     "sw": 640
+    },
+    {
+     "ok": true,
+     "w": 320,
+     "h": 200,
+     "l": 90,
+     "t": 60,
+     "vw": 500,
+     "vh": 320,
+     "sw": 500
+    }
+   ],
+   "wallS": 2.712
+  },
+  {
+   "id": "W08",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Meldung „Gespeichert.“"
+    },
+    {
+     "ok": true,
+     "what": "neuer Kontext bietet „Fortsetzen“"
+    },
+    {
+     "ok": true,
+     "what": "Phase, Ort, Figur, Inventar, Notizen und Schalter gleich"
+    },
+    {
+     "ok": true,
+     "what": "neuer Kontext ohne Fehler"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W08_menu.png",
+    "browser/scen_webkit/W08_geladen.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "compare": "gleich",
+   "wallS": 7.023
+  },
+  {
+   "id": "W09",
+   "engine": "webkit",
+   "device": "tablet",
+   "title": "Fehlbedienung: Doppeltipps auf Ausgänge, Tastenfeuer, Figurenwechsel im Gehen – Spiel bleibt bedienbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Ausgang im Bild"
+    },
+    {
+     "ok": true,
+     "what": "nach Dreifachtipp im Spiel (haustor→haustor)"
+    },
+    {
+     "ok": true,
+     "what": "Spiel kommt wieder zur Ruhe (keine hängende Sperre)"
+    },
+    {
+     "ok": true,
+     "what": "kein hängender Aktionszähler"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W09_nach_stress.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "after": "haustor",
+   "wallS": 4.226
+  },
+  {
+   "id": "W10",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "Mala: Wechsel per Porträt, kalte Geistersicht, Geist sichtbar",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Wechsel möglich"
+    },
+    {
+     "ok": true,
+     "what": "Geistersicht kühl/blau (B 566540 > R 239027)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W10_marko.png",
+    "browser/scen_webkit/W10_mala.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "tint": {
+    "r": 239027,
+    "g": 436250,
+    "b": 566540
+   },
+   "ghosts": [
+    "luka"
+   ],
+   "wallS": 3.554
+  },
+  {
+   "id": "W13a",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "BUG-002 per Klick (Originalfassung): Figurenwechsel während Mala geht",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Mala in gleis11, Marko in wiesn, Ziel bench"
+    },
+    {
+     "ok": true,
+     "what": "Wechsel zu Marko in wiesn (während Mala ging: true)"
+    },
+    {
+     "ok": false,
+     "what": "kein hängender Aktionszähler (E.acting=1) – in der Originalfassung erwartet: 1"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W13orig.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "reproduces": "BUG-002",
+   "info": {
+    "room": "gleis11",
+    "mk": "wiesn",
+    "best": {
+     "id": "bench",
+     "x": 311,
+     "y": 91
+    }
+   },
+   "walking": true,
+   "end": {
+    "acting": 1,
+    "active": "marko",
+    "room": "wiesn"
+   },
+   "bugReproduced": true,
+   "wallS": 5.543
+  },
+  {
+   "id": "W13b",
+   "engine": "webkit",
+   "device": "phone",
+   "title": "BUG-002 per Klick (korrigierte Fassung): Figurenwechsel während Mala geht",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Mala in gleis11, Marko in wiesn, Ziel bench"
+    },
+    {
+     "ok": true,
+     "what": "Wechsel zu Marko in wiesn (während Mala ging: true)"
+    },
+    {
+     "ok": true,
+     "what": "kein hängender Aktionszähler (E.acting=0)"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W13neu.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "info": {
+    "room": "gleis11",
+    "mk": "wiesn",
+    "best": {
+     "id": "bench",
+     "x": 311,
+     "y": 91
+    }
+   },
+   "walking": true,
+   "end": {
+    "acting": 0,
+    "active": "marko",
+    "room": "wiesn"
+   },
+   "wallS": 5.476
+  },
+  {
+   "id": "W11",
+   "engine": "webkit",
+   "device": "phonePortrait",
+   "title": "iPhone hochkant (emuliert): Bild dreht sich, Tipps treffen trotzdem",
+   "ok": true,
+   "checks": [
+    {
+     "ok": true,
+     "what": "Spielbild um 90° gedreht"
+    },
+    {
+     "ok": true,
+     "what": "Tipp auf Titelzeile trifft (Platzwahl offen)"
+    },
+    {
+     "ok": true,
+     "what": "Spiel startet hochkant"
+    },
+    {
+     "ok": true,
+     "what": "keine Seitenfehler/Promise-Rejections (0)"
+    },
+    {
+     "ok": true,
+     "what": "keine fehlgeschlagenen Anfragen (0)"
+    }
+   ],
+   "shots": [
+    "browser/scen_webkit/W11_hochkant.png",
+    "browser/scen_webkit/W11_spiel.png"
+   ],
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "browserVersion": "26.6",
+   "wallS": 4.207
+  }
+ ],
+ "uiRuns": [
+  {
+   "dir": "ui_chromium_desktop",
+   "engine": "chromium",
+   "browserVersion": "153.0.8010.12",
+   "device": "desktop",
+   "viewport": {
+    "width": 1280,
+    "height": 800
+   },
+   "touch": false,
+   "url": "file:///home/user/Hotel/web/index.html",
+   "recording": {
+    "seed": 1,
+    "sha": "ab860784d819d3343752f21e52b849c33313b56e71f195ced20b742a94e6a7c9",
+    "entries": 1753
+   },
+   "ok": true,
+   "actionsDone": 1420,
+   "chapterEnds": [
+    {
+     "ch": 1,
+     "at": 245.119,
+     "title": [
+      "Weiter mit Kapitel 2: Sarajevo",
+      "Zum Titelbild"
+     ]
+    },
+    {
+     "ch": 2,
+     "at": 541.485,
+     "title": [
+      "Weiter mit Kapitel 3: Mostar",
+      "Zum Titelbild"
+     ]
+    },
+    {
+     "ch": 3,
+     "at": 963.7,
+     "title": [
+      "Weiter mit Kapitel 4: München",
+      "Zum Titelbild"
+     ]
+    },
+    {
+     "ch": 4,
+     "at": 1294.074,
+     "title": [
+      "Kapitel 1: Split",
+      "Kapitel 2: Sarajevo",
+      "Kapitel 3: Mostar",
+      "Kapitel 4: München",
+      "Mitgelieferte Spielstände",
+      "Sprache: Deutsch",
+      "Über das Spiel"
+     ]
+    }
+   ],
+   "end": {
+    "c4": true,
+    "c1": true,
+    "c2": true,
+    "c3": true,
+    "scr": "title",
+    "title": [
+     "Kapitel 1: Split",
+     "Kapitel 2: Sarajevo",
+     "Kapitel 3: Mostar",
+     "Kapitel 4: München",
+     "Mitgelieferte Spielstände",
+     "Sprache: Deutsch",
+     "Über das Spiel"
+    ]
+   },
+   "failure": null,
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "hotspotIssues": [],
+   "uiNotes": [
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      600,
+      116
+     ],
+     "via": "bollard"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "riva",
+     "dir": "R",
+     "via": "islands"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      560,
+      116
+     ],
+     "via": "islands"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      560,
+      116
+     ],
+     "via": "islands"
+    },
+    {
+     "kind": "Wechsel nicht angeboten (Skript prüft Sperre)",
+     "room": "flat",
+     "phase": "i1m"
+    },
+    {
+     "kind": "Dunkler Hotspot: Marko geht hin, Mala folgt",
+     "id": "debris",
+     "lit": true
+    },
+    {
+     "kind": "Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene)",
+     "act": [
+      "use",
+      "view",
+      null
+     ],
+     "room": "partizan"
+    }
+   ],
+   "wallS": 1294.172,
+   "shots": [
+    "000_start_Platz_1_leer.png",
+    "001_K1_ende_titel.png",
+    "002_start_Weiter_mit_Kapitel_2_Sarajevo.png",
+    "003_K2_a450.png",
+    "004_K2_a600.png",
+    "005_K2_a750.png",
+    "006_K2_ende_titel.png",
+    "007_start_Weiter_mit_Kapitel_3_Mostar.png",
+    "008_K3_a1050.png",
+    "009_K3_ende_titel.png",
+    "010_start_Weiter_mit_Kapitel_4_M_nchen.png",
+    "011_K4_ende_titel.png"
+   ]
+  },
+  {
+   "dir": "ui_firefox_tablet",
+   "engine": "firefox",
+   "browserVersion": "155.0",
+   "device": "tablet",
+   "viewport": {
+    "width": 1080,
+    "height": 810
+   },
+   "touch": true,
+   "url": "file:///home/user/Hotel/web/index.html",
+   "recording": {
+    "seed": 1,
+    "sha": "ab860784d819d3343752f21e52b849c33313b56e71f195ced20b742a94e6a7c9",
+    "entries": 1753
+   },
+   "ok": false,
+   "actionsDone": 902,
+   "chapterEnds": [
+    {
+     "ch": 1,
+     "at": 253.418,
+     "title": [
+      "Weiter mit Kapitel 2: Sarajevo",
+      "Zum Titelbild"
+     ]
+    },
+    {
+     "ch": 2,
+     "at": 544.603,
+     "title": [
+      "Weiter mit Kapitel 3: Mostar",
+      "Zum Titelbild"
+     ]
+    }
+   ],
+   "end": null,
+   "failure": {
+    "at": 1175,
+    "entry": {
+     "k": "choose",
+     "a": [
+      "(Mala fragen.)",
+      0
+     ],
+     "room": "zelenika",
+     "active": "marko",
+     "phase": "k3_d2",
+     "scr": "game"
+    },
+    "msg": "page.evaluate: Target page, context or browser has been closed",
+    "state": null
+   },
+   "errors": [],
+   "consoleErr": [],
+   "failedReq": [],
+   "hotspotIssues": [],
+   "uiNotes": [
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      600,
+      116
+     ],
+     "via": "bollard"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "riva",
+     "dir": "R",
+     "via": "islands"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      560,
+      116
+     ],
+     "via": "islands"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      560,
+      116
+     ],
+     "via": "islands"
+    },
+    {
+     "kind": "Wechsel nicht angeboten (Skript prüft Sperre)",
+     "room": "flat",
+     "phase": "i1m"
+    },
+    {
+     "kind": "Tipp traf anderen Hotspot (Figur bewegte sich)",
+     "want": "bench",
+     "got": "_mala"
+    },
+    {
+     "kind": "Dunkler Hotspot: Marko geht hin, Mala folgt",
+     "id": "debris",
+     "lit": true
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "nina",
+     "room": "shop"
+    },
+    {
+     "kind": "Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene)",
+     "act": [
+      "use",
+      "view",
+      null
+     ],
+     "room": "partizan"
+    }
+   ],
+   "wallS": 733.821,
+   "shots": [
+    "000_start_Platz_1_leer.png",
+    "001_K1_ende_titel.png",
+    "002_start_Weiter_mit_Kapitel_2_Sarajevo.png",
+    "003_K2_a450.png",
+    "004_K2_a600.png",
+    "005_K2_a750.png",
+    "006_K2_ende_titel.png",
+    "007_start_Weiter_mit_Kapitel_3_Mostar.png"
+   ]
+  },
+  {
+   "dir": "ui_webkit_phone",
+   "engine": "webkit",
+   "browserVersion": "26.6",
+   "device": "phone",
+   "viewport": {
+    "width": 750,
+    "height": 342
+   },
+   "touch": true,
+   "url": "file:///home/user/Hotel/web/index.html",
+   "recording": {
+    "seed": 1,
+    "sha": "ab860784d819d3343752f21e52b849c33313b56e71f195ced20b742a94e6a7c9",
+    "entries": 1753
+   },
+   "ok": false,
+   "actionsDone": 643,
+   "chapterEnds": [
+    {
+     "ch": 1,
+     "at": 355.476,
+     "title": [
+      "Weiter mit Kapitel 2: Sarajevo",
+      "Zum Titelbild"
+     ]
+    }
+   ],
+   "end": null,
+   "failure": {
+    "at": 845,
+    "entry": {
+     "k": "act",
+     "a": [
+      "listen",
+      "sehic_door",
+      null
+     ],
+     "room": "haustor",
+     "active": "mala",
+     "phase": "k2_s3",
+     "scr": "game"
+    },
+    "msg": "page.evaluate: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /root/pwb/webkit-2359/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=32300\n[pid=32300][err] \n[pid=32300][err] ** (MiniBrowser:32338): CRITICAL **: 14:37:14.502: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.\n[pid=32300][err] \n[pid=32300][err] ** (WPEWebProcess:32425): WARNING **: 14:37:16.058: Unable to get session D-Bus address: Cannot autolaunch D-Bus without X11 $DISPLAY\n[pid=32300][err] [W][14618.656303] pw.conf      | [          conf.c: 1031 try_load_conf()] can't load config client-rt.conf: No such file or directory\n[pid=32300][err] [E][14618.656322] pw.conf      | [          conf.c: 1060 pw_conf_load_conf_for_context()] can't load config client-rt.conf: No such file or directory\n[pid=32300][err] [ALSOFT] (EE) Failed to create PipeWire event context (errno: 2)\n[pid=32300][err] ALSA lib confmisc.c:855:(parse_card) cannot find card '0'\n[pid=32300][err] ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory\n[pid=32300][err] ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings\n[pid=32300][err] ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory\n[pid=32300][err] ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name\n[pid=32300][err] ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory\n[pid=32300][err] ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory\n[pid=32300][err] ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default\n[pid=32300] <gracefully close start>",
+    "state": null
+   },
+   "errors": [],
+   "consoleErr": [
+    "Origin null is not allowed by Access-Control-Allow-Origin. Status code: 0",
+    "Failed to load resource: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 0"
+   ],
+   "failedReq": [
+    "file:///home/user/Hotel/web/manifest.webmanifest Origin null is not allowed by Access-Control-Allow-Origin. Status code: 0"
+   ],
+   "hotspotIssues": [],
+   "uiNotes": [
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "sanja",
+     "room": "bar"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "zdenka",
+     "room": "varos"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      600,
+      116
+     ],
+     "via": "bollard"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "riva",
+     "dir": "R",
+     "via": "islands"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "use",
+     "id": "laptop",
+     "room": "flat"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      560,
+      116
+     ],
+     "via": "islands"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "riva",
+     "dir": "R",
+     "via": "office"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "mladen",
+     "room": "office"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "riva",
+     "dir": "L",
+     "via": "palace"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "sense",
+     "id": "seabag",
+     "room": "shed"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "look",
+     "id": "plaque",
+     "room": "sustipan"
+    },
+    {
+     "kind": "Boden verdeckt",
+     "room": "riva",
+     "target": [
+      560,
+      116
+     ],
+     "via": "islands"
+    },
+    {
+     "kind": "Wechsel nicht angeboten (Skript prüft Sperre)",
+     "room": "flat",
+     "phase": "i1m"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "riva",
+     "dir": "R",
+     "via": "office"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "use",
+     "id": "marko_table",
+     "room": "bar"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "sanja",
+     "room": "bar"
+    },
+    {
+     "kind": "Dunkler Hotspot: Marko geht hin, Mala folgt",
+     "id": "debris",
+     "lit": true
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "matejuska",
+     "dir": "L",
+     "via": "sea"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "nina",
+     "room": "shop"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "oldtown",
+     "dir": "L",
+     "via": "columns"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "zdenka",
+     "room": "varos"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "matejuska",
+     "dir": "R",
+     "via": "lamp"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "use",
+     "id": "private",
+     "room": "palma"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "hajra",
+     "room": "pansion"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "tomaz",
+     "room": "kula"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "look",
+     "id": "clock",
+     "room": "kula"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "emina",
+     "room": "kafana"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "lane_kazan",
+     "room": "carsija"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "nedzad",
+     "room": "kazandziluk"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "read",
+     "id": "almanacs",
+     "room": "antikvarijat"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "ferhadija",
+     "dir": "L",
+     "via": "cafe"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "kafana_door",
+     "room": "kula"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "listen",
+     "id": "emina",
+     "room": "kafana"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "exit",
+     "room": "kula"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "lane_kazan",
+     "room": "carsija"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "nedzad",
+     "room": "kazandziluk"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "lane_kula",
+     "room": "carsija"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "carsija",
+     "dir": "L",
+     "via": "mosque"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "rade",
+     "room": "carsija"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "rade",
+     "room": "carsija"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "use",
+     "id": "phone",
+     "room": "pansion"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "milka",
+     "room": "obala"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "passage",
+     "room": "ferhadija"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "jakob",
+     "room": "antikvarijat"
+    },
+    {
+     "kind": "Boden verdeckt (Scrollen)",
+     "room": "ferhadija",
+     "dir": "L",
+     "via": "cafe"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "use",
+     "id": "bed",
+     "room": "pansion"
+    },
+    {
+     "kind": "Ausgang ohne Reaktion, erneut angetippt",
+     "id": "haustor_door",
+     "room": "neboder"
+    },
+    {
+     "kind": "Aktion ohne Reaktion, erneut angetippt",
+     "v": "talk",
+     "id": "zora",
+     "room": "skloniste"
+    }
+   ],
+   "wallS": 733.937,
+   "shots": [
+    "000_start_Platz_1_leer.png",
+    "001_K1_ende_titel.png",
+    "002_start_Weiter_mit_Kapitel_2_Sarajevo.png",
+    "003_K2_a450.png",
+    "004_K2_a600.png"
+   ]
+  }
+ ]
+}
