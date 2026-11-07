@@ -91,7 +91,7 @@ var HS=[
    g:{look:'Das Foto ist sein Vater. Er hat Bücher aus dem Feuer getragen.'}},
  {id:'ledger',name:'Ankaufbuch',look:'Ein dickes Buch: „Knjiga otkupa“. Was Jakob kauft, von wem, wann.',read:function(A){ return readLedger(A); },use:function(A){ return readLedger(A); },
    g:{look:'Er schreibt alles auf. Auch das, was er bereut.'}},
- {id:'bell',name:'Türglocke',look:'Eine Messingglocke an einer Feder über der Tür. Sie schwingt leicht, obwohl die Tür zu ist.',use:'Sie läutet. Jakob sieht nicht einmal auf.',
+ {id:'bell',name:'Türglocke',look:'Eine Messingglocke an einer Feder über der Tür. Sie schwingt leicht, obwohl die Tür zu ist.',use:'Sie läutet. Jakob, wenn er da ist, sieht nicht einmal auf.',
    g:{look:'Er läutet sie, wenn er geht. Jede Nacht. Damit jemand merkt, dass er geht.'}},
  {id:'kurrent',name:'Kurrent-Tafel',look:function(A){ return A.m(A.S.kurrentOff?'Ein heller Fleck an der Wand, wo die Kurrent-Tafel hing.':'Eine gerahmte Schrifttafel: „Deutsche Kurrentschrift“. Ein Alphabet, das aussieht wie Wellen.'); },take:'Jakob würde sie mir leihen, wenn ich einen Grund hätte.',
    g:{look:'Diese Schrift hat er auch geschrieben. Der Professor. Er hat sie geliebt.'}},

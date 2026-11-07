@@ -44,7 +44,7 @@ async function ivanLine(A){ var I=A.npc('ivan'); if (A.S.given) return I.say('Je
 // ---------------------------------------------------------------- Zora: die Glocke
 async function zoraBell(A){ var Z=A.npc('zora'); if (A.S.given) return Z.say('Die Stunde ist aus.');
   A.S.given=true; A.S.rung=true; A.rebuild(); await A.reach(); if (A.has('zvono')) A.take('zvono');
-  await A.m('Ich gebe ihr die Glocke.'); await A.wait(600); await Z.say('Du bist zuletzt gekommen, Vuković. Wie immer.'); await A.wait(500); A.sfx('schoolBell'); await A.wait(1300); await Z.say('Die Stunde ist aus.'); await A.wait(800);
+  await A.m('Ich läute nicht. Ich gebe ihr die Glocke.'); await A.wait(600); await Z.say('Du bist zuletzt gekommen, Vuković. Wie immer.'); await A.wait(500); A.sfx('schoolBell'); await A.wait(1300); await Z.say('Die Stunde ist aus.'); await A.wait(800);
   await Z.say('Lana.'); await A.g('Ja?'); await Z.say('Er erinnert sich jetzt. Langsam, wie einer, der lange gelegen hat und aufsteht. Lass ihm Zeit. Aber nicht zu viel.'); await A.wait(700);
   await intoLight(A,'zora',[async function(){ await A.wait(900); await A.voice('Aus dem Licht, viele Kinderstimmen, durcheinander: „Učiteljice! Učiteljice!“',P.l0,M.spot('limbo','light')[0]+40,26); await A.wait(600); await Z.say('Ruhe, bitte.'); await A.wait(500); await Z.say('Wir beginnen.'); }]);
   A.setFlag('k2.s3.limbo'); await A.wait(800); await A.g('Sie hat Schule. Da drüben.'); await A.m('Natürlich hat sie das.'); await A.wait(800); await A.g('Komm. Durch das Tor.'); }

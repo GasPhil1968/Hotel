@@ -13,7 +13,7 @@ async function talkDragica(A){ var D=A.npc('dragica'), p=A.G.phase;
         await D.say('Die anderen sind in Schweden, in Amerika, auf dem Friedhof. Wie überall.'); }},
     {t:'Was war im Keller?',once:'dr2',go:async function(A){ await D.say('Im Schutzraum? Schule!'); await D.say('Die Lehrerin Zora, vom Vierten, hat da unten drei Jahre lang Schule gehalten. Bei Kerzenlicht, mit einem Ofen aus einem Ölfass. Alle Kinder aus dem Haus. Und aus den Nachbarhäusern.'); A.note('s3_zora');
         await D.say('Du warst auch da unten, Mali. Achte Klasse. Du hast immer hinten gesessen und Straßenbahnen gemalt. Oder malen lassen.'); await A.m('Ich erinnere mich nicht.'); await D.say('Ich schon. Ich erinnere mich für alle. Das ist mein Beruf.'); }},
-    {t:'Kann ich das Hausbuch sehen?',once:'dr3',go:async function(A){ await D.say('Das im Glaskasten? Das ist von einundneunzig. Šehić hat es nie ausgetauscht. „Damit man weiß, wer hier gewohnt hat“, sagt er.'); await D.say('Schauen Sie. Es beißt nicht. Šehić schon.'); }},
+    {t:'Kann ich das Hausbuch sehen?',once:'dr3',go:async function(A){ await D.say('Das im Glaskasten? Das ist von einundneunzig. Šehić hat es nie ausgetauscht. „Damit man weiß, wer hier gewohnt hat“, sagt er.'); await D.say('Schau. Es beißt nicht. Šehić schon.'); }},
     {t:'Was ist mit Zora passiert?',once:'dr4',if:A.hasNote('s3_zora'),go:async function(A){ await D.say('Gestorben, achtundneunzig. Herz. Sie war nicht alt.'); await A.wait(600); await D.say('Sie hat nach dem Krieg nie wieder unterrichtet. Sie hat gesagt, sie hat ein Kind nicht beschützt. Mehr hat sie nicht gesagt.'); }},
     A.askOpt({ m2_lana:async function(A){ await D.say('Lana Delić. Vom Neunten.'); await A.wait(900); await D.say('Das Mädchen mit dem Zopf. Sie hat dich jeden Samstag zur Drei gebracht. Wie eine große Schwester, die du nicht hattest. Ana war ja noch klein.'); await A.wait(700);
         await D.say('Dreiundneunzig ist sie mit einem Bus weg. Und im Januar ist sie zurück. Und nie angekommen.'); await A.wait(600); await D.say('Frag Nada nicht. Frag sie nie. Sie wird dich die Treppe hinunterwerfen, neun Stockwerke.'); },
@@ -34,7 +34,8 @@ async function talkSehic(A){ var S=A.npc('sehic');
   if (A.has('key_shelter')) return S.say('Heute Abend will ich ihn zurück. Und Sie erzählen mir, was unten ist.');
   await A.menuLoop(function(){ return [
     {t:'Ich brauche den Schlüssel zum Schutzraum.',if:!A.flag('k2.s3.inShelter'),go:async function(A){ await S.anim('keys'); await S.say('Den Schlüssel? Zum Schutzraum? Wozu?'); await A.m('Ich will mir die alte Schule ansehen.');
-        await S.say('Der Schutzraum ist seit achtundneunzig geschlossen. Beschluss des Hausrats, einstimmig. Ich bin der Hausrat.'); await S.say('Nur mit Beschluss. Und es gibt keinen Beschluss.'); A.note('s3_locked'); }},
+        await S.say('Der Schutzraum ist seit achtundneunzig geschlossen. Beschluss des Hausrats, einstimmig. Ich bin der Hausrat.'); await S.say('Nur mit Beschluss. Und es gibt keinen Beschluss.'); A.note('s3_locked');
+        if (A.G.malaOn && A.malaHere() && !A.hasNote('s3_hanka')){ await A.wait(500); await A.g('Mit dir redet er nicht. Aber hinter seiner Tür hängt noch seine Stimme. Jeden Abend redet er dort mit jemandem.'); await A.g('Ich könnte an seiner Tür lauschen.'); } }},
     {t:'Wie lange sind Sie schon im Hausrat?',once:'sh1',go:async function(A){ await S.say('Seit neunundachtzig. Jemand muss die Ordnung halten. Die Treppe, die Briefkästen, das Licht. Und den Keller.'); }},
     A.askOpt({ s3_hanka:function(A){ return sehicHanka(A,S); }, s3_zora:'Zora Marić. Eine gute Lehrerin. Sie hat sich nicht an die Vorschriften gehalten. Gott sei Dank.', s3_roll:async function(A){ await S.say('Wer hat Ihnen das erzählt?'); await A.wait(700); await S.say('Unsinn. Da unten ist niemand. Da unten ist nur Feuchtigkeit.'); },
       s3_locked:'Ohne Beschluss nicht. Ich habe Vorschriften. Ohne Vorschriften bin ich nur ein alter Mann mit Schlüsseln.' },'Dazu gibt es keinen Beschluss.'),
@@ -110,7 +111,7 @@ var HS=[
    give:{ key_shelter:function(A){ return A.flag('k2.s3.done')?returnKey(A,A.npc('sehic')):A.m('Noch nicht. Erst heute Nacht.'); } },
    g:{look:'Er hat so viele Schlüssel und schließt nichts mehr auf.'}},
  {id:'sehic_door',name:'Šehićs Tür',look:'Eine Wohnungstür mit Messingschild „ŠEHIĆ“ und einem Fußabtreter, auf dem „DOBRO DOŠLI“ steht. Willkommen. Ironisch oder nicht.',
-   open:'Ich klopfe nicht an fremde Türen, wenn der Besitzer davor steht.',
+   open:function(A){ return A.m(M.ACT.sehic?'Ich klopfe nicht an fremde Türen, wenn der Besitzer davor steht.':'Ich klopfe nicht an fremde Türen. Schon gar nicht nachts.'); },
    g:{look:'Drinnen ist ein Foto, mit dem er redet.',listen:async function(A){ if (A.hasNote('s3_hanka')) return A.g('Er sagt „Hanka“, sonst nichts. Hanka, Hanka. Wie ein Gebet.');
        await A.memory({title:'Lauschen – an Šehićs Tür',tint:'ghost',draw:M.mem&&M.mem.k2_sehic,lines:['Drinnen, leise, Šehićs Stimme. Er spricht mit einem Foto auf der Kommode.','„Ich habe den Keller zugesperrt, Hanka. Damit keiner mehr da unten sitzen muss.“','„Damit du nicht mehr da unten singen musst.“','„Das war richtig, oder? Sag, dass es richtig war.“']}); A.note('s3_hanka'); }}},
  {id:'mirza',npc:'mirza',name:'Mirza',hgt:46,vis:function(S,G){ return s3(G)||G.phase==='k2_fin'||(G.phase==='k2_s3_n'&&!G.flags['k2.s3.down']); },talk:talkMirza,

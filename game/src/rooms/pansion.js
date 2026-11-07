@@ -59,7 +59,8 @@ async function callSanja(A){ A.sfx('dial'); await A.wait(1500); await A.phoneVoi
   if (d==='yes'){ await A.phoneVoice('„Gut. Dann bist du nicht allein.“','sanja'); if (A.G.malaOn) await A.g('…Sie ist nett.'); }
   else if (d==='no') await A.phoneVoice('„Natürlich nicht.“ Sie lacht. „Pass auf dich auf.“','sanja');
   else await A.phoneVoice('„Schon gut. Ich habe nichts gefragt.“','sanja');
-  A.sfx('hangup'); A.setFlag('k2.s3.called'); A.setFlag('k2.i.box'); A.unlock('neboder'); await A.m('Morgen um zwei.'); A.save(); }
+  A.sfx('hangup'); A.setFlag('k2.s3.called'); A.setFlag('k2.i.box'); A.unlock('neboder'); await A.m('Morgen um zwei.');
+  await A.wait(600); if (A.G.malaOn){ await A.g('Bis morgen um zwei ist lang.'); await A.g('Alipašino Polje. Haus sieben. Du bist immer nur davor gestanden.'); } else await A.m('Bis dahin: Alipašino Polje. Haus sieben. Ich bin immer nur davor gestanden.'); A.save(); }
 async function callAna(A){ A.setFlag('k2.f2.ana'); A.sfx('dial'); await A.wait(1800); await A.phoneVoice('„Vuković? Hallo?“','ana'); await A.m('Ana. Ich bin es. Marko.'); await A.phoneVoice('„Marko?“ Eine lange Stille. „Ist etwas passiert? Mit Mama?“','ana');
   await A.m('Nein. Ich bin in Sarajevo.'); await A.phoneVoice('„In Sarajevo.“ Sie atmet. „Du warst siebzehn Jahre nicht in Sarajevo.“','ana'); await A.m('Ich weiß.');
   var c=await A.choose([{t:'Erinnerst du dich an Lana? Vom neunten Stock?',id:'lana'},{t:'Ich wollte nur deine Stimme hören.',id:'voice'},{t:'Ich habe Großmutters Küche gesehen.',id:'ruza'}],{title:'Ana'});

@@ -92,5 +92,39 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
       ok((await D.st()).inv.indexOf('rcm') >= 0, 'Rotkreuz-Nachricht im Inventar');
     });
   }
+  if (K2.length) {
+    // Auswahlen eines Gesprächs der Reihe nach mit der ersten Zeile beantworten, bis keine mehr offen ist
+    const runThrough = async () => { for (let i = 0; i < 20; i++) { const s0 = await D.drain(); if (!s0.dlg) return; await D.ev(() => M.E.chooseDone(0)); await page.waitForTimeout(80); } };
+    await T('K2C-1', 'Nach Sanjas Anruf: Fingerzeig auf Haus sieben', async () => {
+      await load(find(K2, 'Dritter Fall')); await D.act('use', 'phone'); await D.choose('Sanja'); await runThrough();
+      ok(await said('Haus sieben'), 'Alipašino Polje, Haus sieben wird genannt');
+    });
+    await T('K2C-2', 'Šehić verweigert den Schlüssel: Mala schlägt Lauschen vor', async () => {
+      const g = find(K2, 'Zora im Dunkeln'); g.notes = g.notes.filter(n => n !== 's3_hanka' && n !== 's3_locked'); g.pos.mala = { room: 'haustor', x: g.pos.marko.x + 30, y: g.pos.marko.y, f: 'L' }; g.active = 'marko';
+      await load(g); await D.act('talk', 'sehic'); await D.choose('Ich brauche den Schlüssel'); 
+      ok(await said('an seiner Tür lauschen'), 'Mala nennt das Lauschen');
+      await D.ev(() => { const D0 = M.E.dlg; if (D0) M.E.chooseDone(D0.opts.length - 1); }); await D.drain();
+    });
+    await T('K2C-5', 'Doppeltipp auf die offene Stahltür führt hinunter', async () => {
+      const g = find(K2, 'Šehićs Schlüssel'); g.active = 'marko'; await load(g);
+      await D.ev(() => { M.RS('haustor').shelterOpen = true; M.E.rebuild && M.E.rebuild(); });
+      await D.ev(() => { const h = M.E.room.hotspots.find(x => x.id === 'shelter_door'), r = M.E.hsRect(h); M.ACT.marko.x = r[0] + r[2] / 2 - 40; }); await page.waitForTimeout(1500);
+      const [x, y] = await spot('shelter_door'); await D.ev(() => { M.TURBO = 1; });   // Doppeltipp-Fenster läuft in Spielzeit: in Echtzeit tippen
+      const b = await box(); const sx = b.x + (x + 0.5) * b.w / 320, sy = b.y + (y + 0.5) * b.h / 200;
+      await page.mouse.click(sx, sy); await page.waitForTimeout(90); await page.mouse.click(sx, sy); await D.ev(() => { M.TURBO = 25; });
+      await D.until(s => s.room === 'skloniste' || s.dlg, 20000, 'Schutzraum').catch(() => null); await D.drain();
+      ok((await D.st()).room === 'skloniste', 'im Schutzraum (ist ' + (await D.st()).room + ')');
+    });
+    await T('K2C-4', 'Gegenstand in der Leiste auf einen anderen ziehen', async () => {
+      const g = find(K2, 'Selmas Kinderwagen'); const keep = ['pecat', 'svjedocanstva']; g.inv = keep.concat(g.inv.filter(i => keep.indexOf(i) < 0)); g.active = 'marko'; await load(g); await D.ev(() => { M.E.invTop = 0; });
+      const slot = (it) => D.ev((t) => { const i = M.GS.inv.indexOf(t); for (let y = 150; y < 200; y++) for (let x = 0; x < 320; x++) if (M.uiHit(x, y) === 'i:' + i) return [x + 8, y + 12]; return null; }, it);
+      const a = await slot('pecat'), c = await slot('svjedocanstva'); const bx = await box(); const S = (x, y) => [bx.x + (x + 0.5) * bx.w / 320, bx.y + (y + 0.5) * bx.h / 200];
+      const [a1, a2] = S(a[0], a[1]), [c1, c2] = S(c[0], c[1]); await page.mouse.move(a1, a2); await page.mouse.down();
+      for (let i = 1; i <= 4; i++) { await page.mouse.move(a1, a2 - i * 8); await page.waitForTimeout(25); }
+      for (let i = 1; i <= 10; i++) { await page.mouse.move(a1 + (c1 - a1) * i / 10, a2 - 32 + (c2 - a2 + 32) * i / 10); await page.waitForTimeout(25); }
+      await page.mouse.up(); await page.waitForTimeout(300); await D.drain();
+      ok(await D.ev(() => (M.__speechLog || []).length > 0), 'eine Reaktion auf Stempel + Zeugnisse');
+    });
+  }
   console.log('\nblindfix: ' + pass + ' ok, ' + fails + ' Fehler'); await D.close2(); process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

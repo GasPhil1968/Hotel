@@ -602,6 +602,8 @@ function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return;
   var id=press.item, dx=x-press.x, dy=y-press.y, pages=Math.ceil(invList().length/INV_N);
   // aus der Leiste ins Bild gezogen: immer Benutzen, auch schräg (ein schon ausgelöstes Blättern wird zurückgenommen)
   if (id && y<INV_Y-6){ if (press.swiped){ E.invTop=press.top0; press.swiped=false; } E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }
+  // in der Leiste auf einen anderen Gegenstand ziehen: bei einer Seite sofort, sonst nach einem kleinen Anheben (nach oben ziehen)
+  if (id && !press.swiped && (dy<-5 || (pages<=1 && Math.abs(dx)>10))){ E.pop=null; drag={id:id,on:true}; M.sfx('click'); return; }
   if (!press.swiped && pages>1 && Math.abs(dx)>22 && Math.abs(dx)>Math.abs(dy)*1.5){ press.swiped=true; if (dx<0&&E.invTop<pages-1){ E.invTop++; M.sfx('page'); } else if (dx>0&&E.invTop>0){ E.invTop--; M.sfx('page'); } } }
 function dropDrag(id,x,y){ if (!canDrag()||invList().indexOf(id)<0) return; E.pop=null;
   if (y<SH){ var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y); if (!hs) return; E.pending=null; E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,id); return; }
@@ -625,6 +627,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (E.speech && (E.busy||E.dlg)){ if (E.gt()-E.speech.at>200 && now0-prevTap>M.DBL_MS) E.endSpeech(); return; }   // der zweite Tipp eines Doppeltipps überspringt keinen Satz
   if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
   var uiH=uiAt(x,y);
+  if (E.pop && E.pop.hs && lastExit && now0-lastExit.t<=M.DBL_MS && lastExit.key===E.exitKey(E.pop.hs) && !E.busy){ var hp=E.pop.hs; lastExit=null; E.pop=null; E.actionTok(); E.doVerb(isG()&&hp.gexit?'pass':'walk',hp); return; }   // zweiter Tipp eines Doppeltipps auf einen Ausgang mit Menü
   if (E.pop){ var pr=popAt(x,y); if (pr!==null){ if (pr>=0){ M.sfx('click'); popPick(E.pop,E.pop.opts[pr]); } return; } E.pop=null; if (!uiH || y<SH) { if (y<SH) return; } }
   if (uiH==='notes'){ if (!E.busy) E.openNotes(); return; }
   if (uiH==='reveal'){ reveal={at:E.gt()}; M.sfx('click'); return; }
@@ -651,6 +654,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
       lastExit={key:key,t:now0}; dblTip(hs); E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); return; }
     // reiner Blickfang: einfach ansehen
     E.actionTok(); E.doVerb('look',hs); return; }
+  if (ex){ var key2=E.exitKey(hs); if (lastExit&&lastExit.key===key2&&now0-lastExit.t<=M.DBL_MS){ lastExit=null; E.pop=null; E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); return; } lastExit={key:key2,t:now0}; }   // Doppeltipp auf einen Ausgang mit Menü: hindurch
   openPop({title:E.nameOf(hs),opts:opts2,hs:hs,x:x,y:y}); }
 // einmalige Erklärung, beim ersten längeren Weg zu einem Ausgang (pro Gerät, nicht im Spielstand)
 function dblTip(hs){ var seen=false; try{ seen=localStorage.getItem('mala.dblTip')==='1'; }catch(e){} if (seen||M.TEST) return; var p=E.player(), st=E.hsStand?E.hsStand(hs):null; if (!p||!st||Math.abs(p.x-st[0])+Math.abs(p.y-st[1])<50) return;

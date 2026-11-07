@@ -88,7 +88,7 @@ var X={
   ]; },
   selma:function(A,Se){ return [
     o('xsl1','Wie heißt Ihr Kind?',true,async function(A){ await Se.say('Amar. Acht Monate. Er schläft nur, wenn der Kinderwagen fährt. Ich fahre ihn manchmal die ganze Nacht durch den Flur.'); await Se.say('Wie ein Kind, das Straßenbahn spielt. Das bin dann ich.'); }),
-    o('xsl2','Wie alt ist Amar?',true,async function(A){ await Se.say('Neun Monate. Er schläft nur, wenn man ihn trägt, und am liebsten auf der Treppe. Er hat den Aufzug nie fahren sehen.'); await Se.say('Vielleicht glaubt er, Häuser haben gar keine Aufzüge. Nur Treppen und Nachbarn.'); })
+    o('xsl2','Wie alt ist Amar?',!!A.G.seen['dlg:xsl1'],async function(A){ await Se.say('Acht Monate. Wenn der Kinderwagen nicht fährt, trage ich ihn. Am liebsten auf der Treppe. Er hat den Aufzug nie fahren sehen.'); await Se.say('Vielleicht glaubt er, Häuser haben gar keine Aufzüge. Nur Treppen und Nachbarn.'); })
   ]; },
   nada:function(A,N){ return [
     o('xna1','Was hat Lana gern gemacht?',A.G.flags['k2.f2.lanaOpen'],async function(A){ await N.say('Gezeichnet. Immer. Auf Servietten, auf Zeitungen, auf meinen Einkaufszetteln. Ich habe Brot gekauft, auf dem eine Straßenbahn war.'); await N.say('Und gesungen. Falsch und laut. Sevdah, wie eine alte Frau. Sie war siebzehn und sang wie siebzig.'); }),
