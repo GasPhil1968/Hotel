@@ -103,7 +103,7 @@ const SHOTS = process.argv[2] || null;
     await mala(); await D.act('look', 'book'); await D.drain(); await note('s2_stamp'); await talk('ivan', 'Was lesen Sie', '(Schweigen.)'); await note('s2_due'); await marko(); await log('Der Leser im Sessel');
     await talk('jakob', 'Was wissen Sie über die Nationalbibliothek', 'Woher haben Sie das Buch', 'Danke, Gospodine'); await note('s2_fire'); await D.act('read', 'ledger'); await D.drain(); await note('s2_ledger');
     await comb('s2_stamp', 's2_ledger', 's2_provenance'); await comb('s2_due', 's2_fire', 's2_noreturn'); await log('Leser 2204');
-    await D.exit('door'); await D.drain(); await toMap(); await go('pansion'); await D.act('use', 'phone'); await D.drain(); await D.choose('Petar'); await D.drain(); await D.choose('Er war nicht alt'); await D.drain(); await note('s2_relic'); await log('Petar in Wien');
+    await D.exit('door'); await D.drain(); await toMap(); await go('pansion'); await D.act('use', 'phone'); await D.drain(); await D.choose('Petar'); await D.drain(); await D.choose('Er war nicht alt'); await D.drain(); await D.choose('Danke'); await D.drain(); await note('s2_relic'); await log('Petar in Wien');
     await toMap('door'); await go('obala'); await at('obala'); await shot('obala');
     await talk('milka', 'Kannten Sie Professor', 'Erinnern Sie sich an den August', 'Danke, Gospođa'); await note('s2_ash'); await comb('s2_ash', 's2_relic', 's2_fragments');
     await mala(); await D.act('sense', 'bridge_mid'); await D.drain(); await note('m2_f_snow'); await marko(); await log('Schwarzer Schnee');
