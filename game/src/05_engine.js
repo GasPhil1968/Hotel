@@ -461,8 +461,9 @@ E.actionTok=function(){ return ++actionTok; };
 function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]; var here=pos.room===room.id && (k==='marko'||GS.malaOn);
     if (here){ var a=ACT[k]; if (!a){ a=new Actor(k,{ch:k,x:pos.x,y:pos.y,f:pos.f,player:true,ghost:k==='mala',name:k==='mala'?'Mala':'Marko',speed:k==='mala'?78:85,step:k==='mala'?3.5:4}); ACT[k]=a; setIdle(a); }
       else { a.x=pos.x; a.y=pos.y; a.f=pos.f; } a.visible=!(k==='marko'&&room.noActor); }
-    else if (ACT[k]) delete ACT[k]; }); }
-function placeActors(){ Object.keys(ACT).forEach(function(k){ delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
+    else if (ACT[k]){ if (ACT[k].mode==='walk') cancelRes(ACT[k]); delete ACT[k]; } }); }   // QA BUG-002: ein laufender Weg endet als abgebrochen, statt ewig offen zu bleiben
+// QA BUG-002: Spielerfiguren, die beim Raumwechsel noch unterwegs sind, beenden ihren Weg als abgebrochen (sonst bliebe die Aktion ewig offen)
+function placeActors(){ Object.keys(ACT).forEach(function(k){ var a=ACT[k]; if (a && a.player && a.mode==='walk') cancelRes(a); delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
   list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); a.home=[a.x,a.y,a.f]; if (o.routine!==false){ var rt=o.routine||(M.ROUTINES&&M.ROUTINES[o.id]); if (rt) a.routine=rt; } a.rtUntil=gt+1500+Math.random()*4000; ACT[o.id]=a; setIdle(a); }); placePlayers(); }
 function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
@@ -531,7 +532,7 @@ E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return 
 function gameReset(){ (M.RESET_HOOKS||[]).forEach(function(f){ try{ f(); }catch(e){ console.error(e); } }); }
 function loadData(d){ try{ var base=validate(d); if (!base) return false;
     M.migrateAll(base);   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js, dann die Nachzüge aus M.MIGRATE)
-    setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung
+    setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT','steam','nudge'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung (QA BUG-004: auch Dampf und Stimmen-Takt)
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
     resetTransient(); gameReset();
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }

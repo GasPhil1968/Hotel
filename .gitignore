@@ -3,3 +3,7 @@ node_modules/
 .DS_Store
 game/tools/sheet.html
 game/tools/sheet.png
+# QA: unkomprimierte Laufprotokolle (komprimiert als runs.jsonl.gz abgelegt), Browser-Traces
+qa/results/**/runs.jsonl
+qa/results/**/trace.zip
+qa/results/probe*/

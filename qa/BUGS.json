@@ -1,0 +1,84 @@
+[
+ {
+  "id": "BUG-001",
+  "severity": "niedrig",
+  "status": "behoben",
+  "title": "Laden eines Stands aus Kapitel 2–4 setzt die Kapitel-1-Altstandsmarke split.intro.legacy",
+  "cause": "M.migrateSave (game/src/90_story.js) wertet jeden Stand ohne split.intro.v als alten Kapitel-1-Stand. Kapitel 2–4 setzen split.intro.v nie.",
+  "effect": "Zustandsverfälschung bei jedem Laden in K2–K4 (bei i1.done zusätzlich split.afterIvka.done). Alle Leser der Marke sind an K1-Phasen gebunden; eine sichtbare Folge wurde nicht gefunden.",
+  "fix": "Migration nur für Stände aus Kapitel 1 (M.chapterOf(G) > 1 → zurück).",
+  "repro": "Kapitel 2, 3 oder 4 neu beginnen, Menü → Speichern, Spiel neu starten, Fortsetzen: GS.flags['split.intro.legacy'] === true.",
+  "evidence": [
+   "qa/regress/bug_001_legacy_flag.js",
+   "Erstlauf Kategorie D (Save/Load-Abweichung)"
+  ]
+ },
+ {
+  "id": "BUG-002",
+  "severity": "niedrig",
+  "status": "behoben",
+  "title": "Figurenwechsel, während die Figur zu einem Hotspot geht und der Wechsel einen anderen Raum lädt, lässt die Aktion ewig offen",
+  "cause": "placeActors()/placePlayers() (game/src/05_engine.js) entfernen Spielerfiguren aus ACT, ohne deren laufendes Weg-Versprechen (a.res) aufzulösen; approach() wartet für immer, doVerb() endet nie, E.acting bleibt > 0.",
+  "effect": "Hängender Aktionszähler und nie endende asynchrone Aktion. Im Spiel wirkt E.acting nur in der Kapitel-1-Stimmenphase (Umgebungssätze, Hinweis im Hafenamt werden unterdrückt). Über die Oberfläche erreichbar (Tipp auf Hotspot, dann auf das Porträt).",
+  "fix": "Beim Entfernen einer gehenden Spielerfigur cancelRes(a) aufrufen (der Weg endet als abgebrochen, wie bei einem neuen Klick).",
+  "repro": "Kapitel 4, Christtag: Mala allein am Gleis 11, Marko auf der Wiesn. Als Mala den Baum antippen → „Schau an“, sofort auf Markos Porträt tippen → E.acting bleibt 1.",
+  "evidence": [
+   "qa/regress/bug_002_dangling_walk.js",
+   "Browser C13a (Original, per Klick reproduziert) / C13b (korrigiert)"
+  ]
+ },
+ {
+  "id": "BUG-003",
+  "severity": "mittel",
+  "status": "behoben",
+  "title": "Verkochtes Wasser: Die Džezva verschwindet, der Herdweg zum verklebten Brief ist zu, alle Hinweise verweisen weiter darauf",
+  "cause": "boilWater() verbraucht 'dzezvaW', die Džezva bleibt als 'genommen' markiert, der Dampf hält 45 s Spielzeit. Läuft er ab, ohne dass der Brief darübergehalten wurde, kehrt die Džezva nie zurück (game/src/rooms/flat.js).",
+  "effect": "Unbeabsichtigter Gegenstandsverlust. Der Fall bleibt nur über die nicht angedeutete Alternative (Sanjas Espressomaschine) lösbar; die vier Hinweisstufen nennen ausschließlich den verschlossenen Weg. Kein endgültiger Softlock.",
+  "fix": "Raum-Tick: Ist der Dampf vorbei und die Džezva weder im Inventar noch gefüllt, steht sie leer wieder auf dem Herd.",
+  "repro": "Kapitel 1, nach „Brief klebt“: Wohnung, Džezva nehmen, an der Spüle füllen, auf den Herd; mehr als 45 s Spielzeit anderes tun; Brief am Herd → „Direkt über die Flamme?“, Džezva nirgends.",
+  "evidence": [
+   "qa/regress/bug_003_dzezva_lost.js"
+  ]
+ },
+ {
+  "id": "BUG-004",
+  "severity": "mittel",
+  "status": "behoben",
+  "title": "Spielzeit-Stempel im Spielstand: Nach Laden in einem frischen Kontext gilt alter Dampf als frisch – der verklebte Brief öffnet sich am kalten Herd",
+  "cause": "S.steam (und S.nudge) sind Zeitpunkte der laufenden Spielzeit gt, werden aber mitgespeichert. gt beginnt nach einem Neustart bei 0; loadData löschte nur ferryAt/ferryGo/radioT.",
+  "effect": "Rätsel „Dampf“ wird nach Neustart/Laden übersprungen (Stempel vom Prolog-Kaffee), Stimmen-Hinweis im Hafenamt bleibt nach Neustart lange stumm.",
+  "fix": "steam und nudge zu den Sitzungsstempeln, die beim Laden entfernt werden (game/src/05_engine.js).",
+  "repro": "Kapitel 1 bis „Brief klebt“ spielen, Menü → Speichern, neuer Browserkontext → Fortsetzen, Wohnung, Brief am Herd benutzen → geöffnet, ohne Wasser aufzusetzen.",
+  "evidence": [
+   "qa/regress/bug_004_stale_steam.js",
+   "Erstlauf D-Lauf mit Abbruch „nicht über der Flamme“"
+  ]
+ },
+ {
+  "id": "UI-001",
+  "severity": "niedrig",
+  "status": "offen (Designentscheidung)",
+  "title": "Riva: Die Hotspots „Meer“ und „Mole“ überdecken die gesamte begehbare Promenade östlich von x≈338",
+  "cause": "Rechteck von 'sea' (338–640 × 76–144) reicht über den Gehweg; Tipps dorthin lösen „Schau an: Meer/Mole“ aus, nie reines Gehen.",
+  "effect": "„Boden antippen: hingehen“ (Anleitung) gilt dort nicht. Die Figur erreicht den Poller trotzdem (Gehen zum Standpunkt des Blickfangs), Spiel bleibt lösbar.",
+  "fix": "Nicht geändert: berührt die Kunstdefinition und das Gefühl der Szene. Vorschlag: Meer-Rechteck oberhalb y≈106 enden lassen.",
+  "repro": "Kapitel 1, Dienstagabend, Riva: rechts der Bildmitte auf den Weg tippen.",
+  "evidence": [
+   "UI-Volldurchlauf uiNotes „Boden verdeckt“"
+  ]
+ },
+ {
+  "id": "UI-002",
+  "severity": "niedrig",
+  "status": "offen (kosmetisch)",
+  "title": "Meldung „Offline bereit ✓“ überdeckt beim ersten Start 4 s lang die Inventarleiste und dreht sich hochkant nicht mit",
+  "cause": "#offline-note ist ein HTML-Element unten mittig über dem Canvas (pointer-events:none).",
+  "effect": "Kurz verdeckte Inventarfelder; Tipps werden durchgereicht, keine Bedienungsfolge.",
+  "fix": "Nicht geändert. Vorschlag: Meldung oben anzeigen oder bei gedrehtem Bild mitdrehen.",
+  "repro": "Erster Aufruf über http(s), iPhone quer: unten erscheint die Meldung über den Inventarfeldern.",
+  "evidence": [
+   "qa/results/browser/scen_webkit/W06_inventar.png",
+   "qa/results/browser/scen_webkit/W11_spiel.png"
+  ]
+ }
+]

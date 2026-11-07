@@ -389,6 +389,9 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   paint:paint, layers:layers, walk:WALK, dynamic:dyn, hotspots:HS,
   start:[200,118,'L'], entries:{map:[226,122,'L']},
   noMala:false,
+  // QA BUG-003: Ist das Wasser verkocht (Dampf abgelaufen) und die Džezva weder im Inventar noch voll, steht sie leer wieder auf dem Herd.
+  // Vorher blieb sie verschwunden: der Weg über den Herd war zu, und die Hinweise schickten weiter an die Spüle.
+  tick:function(A){ var S=A.S; if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     if (p==='c3' && !A.flag('c3.call') && A.first('c3call')){ await M.case3Call(A); } }

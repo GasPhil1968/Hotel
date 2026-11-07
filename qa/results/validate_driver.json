@@ -1,0 +1,171 @@
+{
+ "seed": 11,
+ "sha": "e380ec8b8c79",
+ "runs": [
+  {
+   "render": "smart",
+   "wall": 59696,
+   "errors": 0,
+   "chapters": [
+    {
+     "ch": 1,
+     "ok": true,
+     "hash": "41cb5d021336",
+     "vtime": 203408,
+     "frames": 12713
+    },
+    {
+     "ch": 2,
+     "ok": true,
+     "hash": "7fc90d3fafa2",
+     "vtime": 434736,
+     "frames": 27171
+    },
+    {
+     "ch": 3,
+     "ok": true,
+     "hash": "e9f7d8e90d35",
+     "vtime": 789008,
+     "frames": 49313
+    },
+    {
+     "ch": 4,
+     "ok": true,
+     "hash": "f7da13a7baca",
+     "vtime": 1147648,
+     "frames": 71728
+    }
+   ]
+  },
+  {
+   "render": "smart",
+   "wall": 59332,
+   "errors": 0,
+   "chapters": [
+    {
+     "ch": 1,
+     "ok": true,
+     "hash": "41cb5d021336",
+     "vtime": 203408,
+     "frames": 12713
+    },
+    {
+     "ch": 2,
+     "ok": true,
+     "hash": "7fc90d3fafa2",
+     "vtime": 434736,
+     "frames": 27171
+    },
+    {
+     "ch": 3,
+     "ok": true,
+     "hash": "e9f7d8e90d35",
+     "vtime": 789008,
+     "frames": 49313
+    },
+    {
+     "ch": 4,
+     "ok": true,
+     "hash": "f7da13a7baca",
+     "vtime": 1147648,
+     "frames": 71728
+    }
+   ]
+  },
+  {
+   "render": "full",
+   "wall": 1136721,
+   "errors": 0,
+   "chapters": [
+    {
+     "ch": 1,
+     "ok": true,
+     "hash": "41cb5d021336",
+     "vtime": 203408,
+     "frames": 12713
+    },
+    {
+     "ch": 2,
+     "ok": true,
+     "hash": "bd8e7207636f",
+     "vtime": 434688,
+     "frames": 27168
+    },
+    {
+     "ch": 3,
+     "ok": true,
+     "hash": "c3d7b3fc3872",
+     "vtime": 788960,
+     "frames": 49310
+    },
+    {
+     "ch": 4,
+     "ok": true,
+     "hash": "60328bb67018",
+     "vtime": 1147552,
+     "frames": 71722
+    }
+   ]
+  }
+ ],
+ "determinism": [
+  {
+   "ch": 1,
+   "sameHash": true,
+   "sameVtime": true,
+   "sameLog": true
+  },
+  {
+   "ch": 2,
+   "sameHash": true,
+   "sameVtime": true,
+   "sameLog": true
+  },
+  {
+   "ch": 3,
+   "sameHash": true,
+   "sameVtime": true,
+   "sameLog": false
+  },
+  {
+   "ch": 4,
+   "sameHash": true,
+   "sameVtime": true,
+   "sameLog": false
+  }
+ ],
+ "smartVsFull": [
+  {
+   "ch": 1,
+   "sameHash": true,
+   "sameVtime": true,
+   "diff": []
+  },
+  {
+   "ch": 2,
+   "sameHash": false,
+   "sameVtime": false,
+   "diff": [
+    "GS.rooms.terminal: undefined ≠ {}"
+   ]
+  },
+  {
+   "ch": 3,
+   "sameHash": false,
+   "sameVtime": false,
+   "diff": [
+    "GS.rooms.partizan.nextBell: 12432800 ≠ 12431600",
+    "GS.rooms.stanica: undefined ≠ {\"busTo\":\"split\",\"tramIn\":false}"
+   ]
+  },
+  {
+   "ch": 4,
+   "sameHash": false,
+   "sameVtime": false,
+   "diff": [
+    "GS.rooms.ostbus: undefined ≠ {\"busIn\":false,\"busTo\":null}"
+   ]
+  }
+ ],
+ "fullErrors": []
+}

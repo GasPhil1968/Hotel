@@ -1,0 +1,199 @@
+MALA – KAPITEL 1: SPLIT · KAPITEL 2: SARAJEVO · KAPITEL 3: MOSTAR · KAPITEL 4: MÜNCHEN
+iPad- und Browser-Version, deutsch
+
+WORUM ES GEHT
+Split, November 2011. Marko Vuković, Übersetzer, kann mit Menschen reden,
+die nicht weiterkommen. Mala, ein Geist, kann sie finden. Drei Fälle,
+ein Prolog, zwei Zwischenspiele und ein Epilog. Etwa zwei bis drei Stunden.
+
+Kapitel 2 setzt direkt danach ein: Der Bus aus Split kommt in Sarajevo an,
+und Mala ist verschwunden. Drei neue Fälle, Malas eigene Spur durch die
+Stadt, ein Zwischenspiel, ein Finale und ein Epilog. Etwa vier bis fünf
+Stunden. Die Frage, die alles trägt: Was verbindet Mala mit Sarajevo, und
+warum erinnert sie sich nicht?
+
+Kapitel 3 setzt am Donnerstag danach ein: Marko hat Lanas Mutter versprochen,
+ihre Tochter nach Hause zu bringen. In Mostar folgt er mit Mala ihrer Leine,
+flussab, bis zu einer Seilfähre, die niemand gezählt hat. Drei Tage und zwei
+Nächte, zwei Geisterfälle (ein Fährmann, ein alter Mann, der auf den Bus aus
+München wartet), ein Fahrer, der siebzehn Jahre geschwiegen hat, ein Finale
+und ein Epilog. Geschätzt vier bis fünf Stunden. Die Frage, die alles trägt:
+Wem gehört ein Tod?
+
+Kapitel 4 spielt zwischen Heiligabend 2011 und Neujahr 2012 in München. Marko
+besucht seine Mutter Jasna, die seit achtzehn Jahren auf seinen Vater wartet.
+Mala geht jetzt auch allein durch die Stadt. Zwei Geisterfälle (ein
+Gepäckträger an Gleis 11, eine Frau, die jeden Tag um drei ins Altenheim
+kommt), ein kleiner Auftakt am Busbahnhof, die Familie, ein Streit, eine
+Nacht auf der Hackerbrücke und ein Gespräch in der Silvesternacht. Geschätzt
+vier bis fünf Stunden. Die Frage, die alles trägt: Was heißt „nicht
+zurückgekommen“?
+
+KAPITEL WÄHLEN
+- Im Hauptmenü stehen alle vier Kapitel direkt zur Wahl: „Kapitel 1: Split“,
+  „Kapitel 2: Sarajevo“, „Kapitel 3: Mostar“ und „Kapitel 4: München“. Ein Tippen auf ein Kapitel
+  und dann auf einen Speicherplatz startet es sofort, ohne die vorigen
+  gespielt zu haben. Für die Erinnerungen davor gelten sinnvolle Vorgaben.
+- Wer Split zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
+  weiterzuspielen. Antworten und Hinweise aus Split (zum Beispiel, was
+  Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
+  Genauso nach Sarajevo: Was Marko in der Straßenbahn gestanden hat und ob
+  er bei Hajra war, kommt mit nach Mostar. Und aus Mostar nach München: was
+  Marko und Mala am Grab ausgemacht haben und ob Marko seine Probe gegeben hat.
+
+SPRACHE / JEZIK
+- Im Titelmenü oder im Menü „Sprache: Deutsch“ antippen: Das Spiel wechselt
+  auf Bosnisch/Kroatisch („Jezik: bosanski / hrvatski“). Kapitel 1 (Split)
+  ist vollständig übersetzt, Kapitel 2 bis 4 (Sarajevo, Mostar,
+  München) laufen vorerst auf Deutsch.
+- Jede Figur spricht ihre Sprache: Marko Standardkroatisch, mit Mala aber
+  Sarajevo-Bosnisch; Mala Bosnisch; Ivka, Zdenka und Jakov Čakavisch aus Split;
+  die übrigen Splitter Kroatisch mit einzelnen Split-Wörtern.
+- Spielstände gelten für beide Sprachen.
+
+QUERFORMAT
+- Das Spiel läuft immer im Querformat. Hält man das iPad hochkant, dreht
+  sich das Spielbild um 90 Grad und füllt den Bildschirm trotzdem quer aus;
+  dann das Gerät einfach drehen. Das klappt auch mit gesperrter
+  Bildschirmdrehung.
+
+STEUERUNG
+- Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit
+  wirklich etwas tun, erscheint stattdessen ein kleines Menü mit genau
+  diesen Aktionen ("Nimm", "Öffne", "Benutze", "Rede mit", "Lies" …).
+- Boden antippen: hingehen. Ausgang antippen: Marko geht sofort los.
+  Zweimal schnell auf denselben Ausgang tippen (mit der Maus: Doppelklick)
+  = der Rest des Weges entfällt, er ist gleich draußen. Gesperrte Ausgänge
+  bleiben gesperrt; die Absage kommt nur einmal.
+- „Karte“ (unten rechts, am Rechner auch Taste K): der Stadtplan.
+  Ein Tipp auf einen Ort, und Marko geht hin. „Schließen“ oder Esc: er bleibt.
+  Auf dem Plan stehen nur Orte, die Marko kennt:
+    · Ring = hier ist er gerade
+    · gestrichelter Ring = gerade nicht (Uhrzeit, Begleitung, etwas steht an);
+      ein Tipp sagt, warum
+    · Schloss = bekannt, aber noch nicht erreichbar; ein Tipp sagt, warum
+  Aus Innenräumen (Hafenbüro, Kafana, Ivkas Wohnung …) zeigt der Plan nur,
+  wo man ist. Reisen geht von der Straße aus.
+- Gegenstand aus der Leiste mit dem Finger auf ein Ziel ziehen = benutzen
+  oder geben (auch auf einen anderen Gegenstand oder auf Mala).
+  Oder: Gegenstand antippen, "Benutze", dann das Ziel antippen.
+- Leiste seitlich wischen oder die Pfeile antippen = Inventar blättern.
+
+MARKO UND MALA
+- Am Anfang ist Marko allein: eine Übersetzung, die heute raus muss,
+  Sanjas Brief in der Bar „Bura“, die Recherche für einen Nachruf.
+  Kopfschmerz, Übelkeit und Schwindel hält er für den Jugo. Dann steht
+  oben an einer Kirchentreppe kurz jemand, nachts ein Mädchen in der
+  Scheibe, und am nächsten Abend steht sie in seiner Wohnung.
+- Wechseln kann man erst, wenn Marko sie im Hafenamt nachsehen lässt.
+- Nach dem ersten Fall wacht Marko auf, und Mala ist nicht da. Er hält
+  alles für einen Traum. Ein Stück spielt man ihn allein, bis zum Tisch
+  in der „Bura“.
+- Unten links: das Porträt der anderen Figur. Antippen = Figur wechseln.
+- Marko lebt: Er redet mit Lebenden, nimmt, öffnet, benutzt, liest.
+- Mala ist ein Geist: Sie geht durch Wände und verschlossene Türen,
+  sieht Verborgenes ("Geistersicht" – das Bild wird kalt und blau),
+  "Spürt" den Nachhall an Dingen und Orten, spricht mit Geistern und
+  "Lauscht" Lebenden. Anfassen kann sie nichts. Ohne Marko geht sie nicht weit.
+- Pocht Markos Kopf, wird der Bildrand dunkel. Woran das liegt, findet
+  Marko selbst heraus.
+- Zieh Gegenstände auf Mala, damit sie sie ansieht. Manchmal sieht sie mehr.
+- Im Dunkeln sieht Marko nur, was in Malas kaltem Schein liegt.
+
+DIE GEISTER
+- Die Toten wissen meist nicht, dass sie tot sind. Sie leugnen es oder
+  übergehen es. Sagt man es ihnen einfach, hören sie es nicht.
+- In Malas Sicht sieht man ihre Leine: einen Faden aus Licht zu dem Ort
+  oder Ding, an dem sie festgemacht sind.
+- Erst wenn ein Geist selbst begreift, was geschehen ist, lässt er los.
+  In diesem Moment flackert seine sonst ruhige Gestalt fünf Sekunden lang,
+  wabert und fängt sich wieder, und ein leiser Geisterwind kommt auf.
+  Dann kann Mala ihn hinüberbringen ("Hinüberbringen"). Marko geht mit,
+  in eine Zwischenwelt aus schwebenden Steinen und Licht. Dort muss er
+  noch etwas tun, bevor der Geist gehen kann. Durch das steinerne Tor
+  geht es danach zurück.
+
+DAS NOTIZBUCH ("Notizen")
+- Im Notizbuch steht nur, was man wirklich braucht: Hinweise, die sich
+  verbinden lassen, und was man am Ende eines Falls sagen muss. Meist sind
+  es nur drei bis fünf Einträge.
+- Im Menü umschaltbar: "Notizbuch: Liste" oder "Notizbuch: Nachdenken".
+- Liste: eine Seite, nur was noch offen ist. Eine Notiz antippen, dann
+  eine zweite, die dazu passt = verbinden. Unten steht der ganze Satz.
+- Nachdenken: Der Knopf heißt dann "Nachdenken". Marko wählt einen
+  Gedanken und dann einen zweiten, der dazugehört. Passt es, zieht er
+  einen Schluss.
+- Was erledigt ist, verschwindet in beiden Arten von selbst.
+- Im Gespräch: "Nach etwas aus dem Notizbuch fragen …", dann den Eintrag
+  wählen. Einträge zur Person, mit der man redet, stehen vorn.
+
+HILFE
+- Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
+  mit Mala nachsehen, im Notizbuch Notizen verbinden.
+- Hinweise auf Wunsch, in allen Kapiteln: Mala ansprechen und „Ich komme
+  gerade nicht weiter.“ wählen, oder „Menü“ → „Hinweis …“. Ist Mala nicht
+  da, ordnet Marko seine Gedanken allein.
+  Vier Stufen je Problem: worum es geht, in welche Richtung man denken kann,
+  ein konkreter Ansatz, und erst nach einer Rückfrage der nächste Schritt.
+  Jede Stufe lässt sich wiederholen. Nie ungefragt, und ein Hinweis
+  erledigt nichts: Tun muss man es selbst.
+- Nicht jedes Rätsel ist eine Auswahl: Manches ordnet man (Briefe), legt
+  man zusammen (ein zerrissenes Foto) oder liest man mit einer Schrifttafel.
+  Antippen genügt immer.
+- Manche Schlüsse bauen aufeinander auf: Was man verbunden hat, kann man
+  wieder verbinden. Widersprüche zwischen zwei Aussagen sind auch Schlüsse.
+- Mala erinnert sich in Splittern. Sie stehen im Notizbuch wie Notizen.
+- Manches geht nur zu zweit und gleichzeitig: Mala bleibt in einem Raum,
+  Marko löst anderswo etwas aus, dann zu Mala wechseln. Klappt es nicht,
+  passiert nichts Schlimmes; man versucht es einfach noch einmal.
+- "Zeigen": alle anklickbaren Stellen blinken kurz auf.
+- "Menü": Speichern, Laden (drei Plätze), Textgeschwindigkeit
+  (oder "wartet auf Tippen"), Musik, Geräusche, Röhrenbild, Vollbild, Anleitung.
+- Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
+
+TASTATUR (am Rechner)
+- Tab oder M = Figur wechseln · N = Notizbuch · Z = Zeigen · K = Karte
+- Leertaste = Satz überspringen · Esc = Menü (schließt auch Karte und Notizbuch)
+
+SPIELSTÄNDE
+- Drei Speicherplätze für alle Kapitel. Das Spiel speichert bei jedem
+  Ortswechsel selbst. Am Platz steht, in welchem Kapitel und Abschnitt man ist.
+  Alte Spielstände aus Kapitel 1 laden unverändert.
+- Geht man mitten in einer Szene zum Titelbild oder wechselt die App,
+  merkt sich das Spiel den Stand vom Beginn der Szene. Man spielt sie dann
+  noch einmal, verliert aber nichts.
+- Beim Fortsetzen fragt das Spiel nach dem Platz.
+- "Mitgelieferter Spielstand" im Titelbild: lädt einen Stand kurz bevor
+  Marko Ivka die Wahrheit sagt (Nacht an der Mole) auf einen Platz deiner Wahl.
+
+FREMDE
+- Wen Marko noch nicht kennt, heißt "???". Jedes erste Gespräch beginnt
+  mit einer Vorstellung. Wer einen Ort zum ersten Mal betritt, wird von den
+  Leuten dort angesprochen.
+- Marko sieht auch die anderen Geister: blass und kühl, mit einem feinen
+  Lichtsaum, aber deutlich als die Menschen, die sie waren.
+
+INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
+1. Den Inhalt dieses Ordners bei Netlify hochladen: app.netlify.com/drop
+   öffnen und den Ordner hineinziehen. Netlify zeigt eine https-Adresse.
+2. Auf dem iPad mit Internet diese Adresse in Safari öffnen und warten,
+   bis unten "Offline bereit ✓" erscheint (einige Sekunden).
+3. Teilen-Knopf -> "Zum Home-Bildschirm". Das Spiel startet dann vom
+   Home-Bildschirm aus im Vollbild, auch im Flugmodus.
+4. Neue Version: Ordner erneut bei derselben Netlify-Seite hochladen und
+   das Spiel einmal mit Internet starten. Es holt sich die neue Fassung
+   und lädt sie auf dem Titelbild von selbst neu (mitten im Spiel erst
+   beim nächsten Titelbild; der Spielstand bleibt erhalten).
+Hinweis: Eine direkt geöffnete index.html (Dateien-App) oder der
+claude.ai-Link können nicht offline gespeichert werden; dafür braucht
+Safari eine https-Adresse.
+
+TON
+- Jeder Ort hat eine eigene, live erzeugte Geräuschkulisse: Meer, Bura,
+  Regen, Fährenhörner, die Glocken von Sveti Duje, Möwen, Tassen, Karten.
+  In Sarajevo: Straßenbahnglocken, die Kula, Kupferhämmer, Tauben, die
+  Miljacka, Nebel, ein Keller, in dem es tropft.
+  In Mostar: die Neretva in drei Stärken, die Bura, ein Markt, zwei
+  Busbahnhöfe, eine Reifenwerkstatt, Hühner und Hunde in Skela, eine
+  Fährglocke und ein Herd, der knackt.
+  Als Mala klingt die Welt dumpf und fern. Kopfhörer lohnen sich.

@@ -57,6 +57,8 @@ M.migrateSave=function(G){ var f=G.flags||(G.flags={}), inv=G.inv||(G.inv=[]);
   // Reparatur: Spielstände, die mitten in Ivkas Abschied gespeichert wurden (Handschuhe schon übergeben, Schluss nicht gesichert), bekommen die Handschuhe zurück
   if (f['c1.dinkoTold'] && !f['c1.done'] && inv.indexOf('gloves')<0) inv.push('gloves');
   if (f['split.intro.v']) return;
+  // nur Stände aus Kapitel 1 können aus der Zeit vor dem neuen Einstieg stammen; Kapitel 2–4 setzen split.intro.v nie (QA BUG-001)
+  if (M.chapterOf && M.chapterOf(G)>1) return;
   f['split.intro.legacy']=true; if (f['mk.test']){ f['split.intro.met']=true; delete f['mala.noSwitch']; }
   if (f['i1.done']) f['split.afterIvka.done']=true; };
 // ---------------------------------------------------------------- ausstehende Abschnittswechsel nach dem Laden
