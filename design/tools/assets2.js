@@ -1,0 +1,36 @@
+// Ergänzendes Material für den Entwurfs-Prototyp: echte Hotspot-Positionen/-Namen ausgewählter Szenen (für „Zeigen“ und
+// Beschriftungen), Ist-Bilder 1:1 (Desktop-Aufnahmen 1280×800 → 320×200, nächster Nachbar) und das Brustbild aus dem Dialog.
+//   node design/tools/assets2.js
+'use strict';
+const path = require('path'), fs = require('fs');
+const ROOT = path.join(__dirname, '..', '..'); const P = path.join(ROOT, 'design', 'prototype'); const IMG = path.join(P, 'img'), IST = path.join(P, 'ist'); fs.mkdirSync(IST, { recursive: true });
+const STATES = JSON.parse(fs.readFileSync(path.join(ROOT, 'qa', 'results', 'browser', 'states.json'), 'utf8')).states;
+const pw = require('playwright');
+(async () => {
+  const b = await pw.chromium.launch(); const url = 'file://' + path.join(ROOT, 'web', 'index.html'); const out = {};
+  const page0 = async (storage) => { const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } }); if (storage) await ctx.addInitScript((s) => { if (!sessionStorage.getItem('__i')) { sessionStorage.setItem('__i', '1'); localStorage.clear(); Object.entries(s).forEach(([k, v]) => localStorage.setItem(k, v)); } }, storage); const p = await ctx.newPage(); await p.goto(url); await p.waitForFunction(() => window.M && M.E && M.E.screen === 'title'); return p; };
+  const tapT = async (p, lab) => { const c = await p.evaluate((lab) => { M.renderFrame(); const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lab) >= 0); for (let y = 1; y < 200; y += 2) for (let x = 1; x < 320; x += 2) if (M.uiHit(x, y) === 't:' + i) { const r = document.getElementById('game').getBoundingClientRect(); return [r.left + (x + .5) / 320 * r.width, r.top + (y + .5) / 200 * r.height]; } return null; }, lab); if (c) { await p.mouse.click(c[0], c[1]); await p.waitForTimeout(250); } };
+  // Hotspots: Name, sichtbares Rechteck (Bildschirmkoordinaten 320×144), Art; nur antippbare (hotspotAt liefert sie)
+  for (const [st, name] of [['k1_start', 'flat'], ['k2_start', 'busbahnhof'], ['k2_limbo', 'vratnik']]) {
+    const S = STATES.find(s => s.name === st); const p = await page0(S.storage); await p.evaluate(() => { M.TURBO = 20; }); await tapT(p, 'Fortsetzen'); await tapT(p, 'Platz 1'); await p.waitForTimeout(2500);
+    for (let i = 0; i < 40; i++) { const s = await p.evaluate(() => ({ scr: M.E.screen, busy: M.E.busy, sp: !!M.E.speech, ov: !!M.E.overlay, dlg: !!M.E.dlg })); if (s.scr === 'game' && !s.busy && !s.sp && !s.ov && !s.dlg) break; if (s.scr === 'card' || s.ov) await p.mouse.click(640, 300); await p.waitForTimeout(250); }
+    out[name] = await p.evaluate(() => { const E = M.E, R = E.room, cam = Math.round(E.camX), list = []; R.hotspots.forEach(h => { const r = E.hsRect(h); if (!r) return; let hit = 0, sx = 0, sy = 0; for (let y = Math.max(0, r[1]); y < Math.min(144, r[1] + r[3]); y += 2) for (let x = r[0]; x < r[0] + r[2]; x += 2) { if (x - cam < 0 || x - cam >= 320) continue; if (E.hotspotAt(x, y) === h) { hit++; sx += x - cam; sy += y; } } if (!hit) return;
+      let nm = h.name; try { if (typeof nm === 'function') nm = nm(M.RS(R.id), M.GS); } catch (e) { nm = h.id; } list.push({ id: h.id, name: typeof nm === 'string' ? nm : h.id, x: Math.round(sx / hit), y: Math.round(sy / hit), rect: [r[0] - cam, r[1], r[2], r[3]], exit: !!(h.exit || h.gexit), npc: h.npc || null, area: r[2] * r[3] }); });
+      return { room: R.id, roomName: R.name, active: M.GS.active, phase: M.GS.phase, hotspots: list }; });
+    console.log('  ' + name + ': ' + out[name].hotspots.length + ' Hotspots'); await p.context().close(); }
+  fs.writeFileSync(path.join(P, 'hotspots.json'), JSON.stringify(out, null, 1));
+  // Ist-Bilder 1:1 aus den Desktop-Aufnahmen (4×) und Brustbild Fikret aus dem Dialog
+  const p = await (await b.newContext({ viewport: { width: 400, height: 300 } })).newPage(); await p.goto('about:blank');
+  const down = async (src, dst, crop) => { const data = 'data:image/png;base64,' + fs.readFileSync(src).toString('base64');
+    const u = await p.evaluate(async ([d, crop]) => { const im = new Image(); im.src = d; await im.decode(); const k = crop ? crop.k : 4; const sx = crop ? crop.x * k : 0, sy = crop ? crop.y * k : 0, sw = crop ? crop.w * k : im.width, sh = crop ? crop.h * k : im.height; const c = document.createElement('canvas'); c.width = Math.round(sw / k); c.height = Math.round(sh / k); const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(im, sx + k / 2 - 0.5, sy + k / 2 - 0.5, sw, sh, 0, 0, c.width, c.height); return c.toDataURL('image/png'); }, [data, crop]);
+    fs.writeFileSync(dst, Buffer.from(u.split(',')[1], 'base64')); console.log('  ' + path.relative(P, dst)); };
+  const D = path.join(ROOT, 'design', 'evidence', 'desktop'); const f = (n) => path.join(D, fs.readdirSync(D).find(x => x.indexOf(n) > 0 && x.endsWith('.png')));
+  const map = { titel_erststart: 'titel_erststart', titel_mit_spielstand: 'titel_mit_spielstand', titel_platzwahl: 'titel_platzwahl', titel_fortsetzen_platz: 'titel_fortsetzen', titel_ueberschreiben: 'titel_ueberschreiben', titel_ueber: 'titel_ueber', _menue: 'pause', menue_speichern: 'pause_gespeichert', _zeigen: 'zeigen', dialog_optionen: 'dialog', k2_limbo_szene: 'hud_marko', k2_limbo_mala_aktiv: 'hud_mala', dokument_brief: 'dokument', raetsel_puzzle: 'raetsel', k2_notizbuch: 'notizbuch', karte: 'karte', k2_anleitung: 'anleitung', intro_01s: 'intro_karte' };
+  for (const [k, v] of Object.entries(map)) { try { await down(f(k), path.join(IST, v + '.png')); } catch (e) { console.log('  ! ' + k + ': ' + e.message); } }
+  await down(f('dialog_optionen'), path.join(IMG, 'bust_fikret.png'), { x: 260, y: 8, w: 57, h: 66, k: 4 });
+  // Hochformat (WebKit, 3× Gerätepixel): 1170×1992 → 390×664
+  const PP = path.join(ROOT, 'design', 'evidence', 'phonePortrait'); const pf = fs.readdirSync(PP).find(x => /erste_kontrolle/.test(x)); if (pf) { const data = 'data:image/png;base64,' + fs.readFileSync(path.join(PP, pf)).toString('base64'); const u = await p.evaluate(async (d) => { const im = new Image(); im.src = d; await im.decode(); const c = document.createElement('canvas'); c.width = im.width / 3; c.height = im.height / 3; const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.drawImage(im, 0, 0, c.width, c.height); return c.toDataURL('image/png'); }, data); fs.writeFileSync(path.join(IST, 'hochformat.png'), Buffer.from(u.split(',')[1], 'base64')); console.log('  ist/hochformat.png'); }
+  // Smartphone quer: Titel mit verdeckender Meldung (2250×1026 → 750×342)
+  const PH = path.join(ROOT, 'design', 'evidence', 'phone'); const ph = fs.readdirSync(PH).find(x => /titel_erststart/.test(x)); if (ph) { const data = 'data:image/png;base64,' + fs.readFileSync(path.join(PH, ph)).toString('base64'); const u = await p.evaluate(async (d) => { const im = new Image(); im.src = d; await im.decode(); const c = document.createElement('canvas'); c.width = im.width / 3; c.height = im.height / 3; const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.drawImage(im, 0, 0, c.width, c.height); return c.toDataURL('image/png'); }, data); fs.writeFileSync(path.join(IST, 'phone_titel.png'), Buffer.from(u.split(',')[1], 'base64')); console.log('  ist/phone_titel.png'); }
+  await b.close();
+})().catch(e => { console.error(e); process.exit(1); });

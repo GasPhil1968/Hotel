@@ -1,0 +1,1051 @@
+<title>MALA Oberflächenentwurf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Seite: links Bildschirmliste, Mitte ein virtueller Geräte-Bildschirm (echte CSS-Maße, verkleinert), rechts Erläuterungen.
+   Bewusst nur dunkel: MALA spielt nachts; alle Farben stammen aus der Spielpalette (game/src/00_core.js). */
+@font-face { font-family: 'MALA Pixel'; src: url(data:font/otf;base64,T1RUTwAJAIAAAwAQQ0ZGIAHOVmkAAAjAAABEOE9TLzJKQgxkAAABAAAAAGBjbWFwbPORegAAA/QAAASsaGVhZC/92/wAAACcAAAANmhoZWEDhgLrAAAA1AAAACRobXR4BIwAAAAATPgAAAJIbWF4cACSUAAAAAD4AAAABm5hbWVU0e5/AAABYAAAApRwb3N0AAMAAAAACKAAAAAgAAEAAAABAABZ5RaFXw889QADA+gAAAAA5xVL/gAAAADnFUv+AAD/nAK8A4QAAAADAAIAAAAAAAAAAQAAA4T/OAAAAyAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAJIAAFAAAJIAAAADAckB9AAFAAACigK7AAAAjAKKArsAAAHfADEBAgAAAAAAAAAAAAAAAIAAAAcAAOAiAAAAAAAAAABYWFhYAEAAICfpA4T/OAAAA4QAZAAAAAEAAAAAAfQCvAAgACAAAAAAACIBngABAAAAAAAAAAEABAABAAAAAAABAAoAAAABAAAAAAACAAcAHgABAAAAAAADABQAugABAAAAAAAEABIAMwABAAAAAAAFAAsAmQABAAAAAAAGABAAaQABAAAAAAAHAAEABAABAAAAAAAIAAEABAABAAAAAAAJAAEABAABAAAAAAAKAAEABAABAAAAAAALAAEABAABAAAAAAAMAAEABAABAAAAAAANAAEABAABAAAAAAAOAAEABAABAAAAAAAQAAoAAAABAAAAAAARAAcAHgADAAEECQAAAAIAEgADAAEECQABABQACgADAAEECQACAA4AJQADAAEECQADACgAzgADAAEECQAEACQARQADAAEECQAFABYApAADAAEECQAGACAAeQADAAEECQAHAAIAEgADAAEECQAIAAIAEgADAAEECQAJAAIAEgADAAEECQAKAAIAEgADAAEECQALAAIAEgADAAEECQAMAAIAEgADAAEECQANAAIAEgADAAEECQAOAAIAEgADAAEECQAQABQACgADAAEECQARAA4AJU1BTEEgUGl4ZWwATQBBAEwAQQAgAFAAaQB4AGUAbFJlZ3VsYXIAUgBlAGcAdQBsAGEAck1BTEEgUGl4ZWwgUmVndWxhcgBNAEEATABBACAAUABpAHgAZQBsACAAUgBlAGcAdQBsAGEAck1BTEFQaXhlbFJlZ3VsYXIATQBBAEwAQQBQAGkAeABlAGwAUgBlAGcAdQBsAGEAclZlcnNpb24gMC4xAFYAZQByAHMAaQBvAG4AIAAwAC4AMSA6TUFMQSBQaXhlbCBSZWd1bGFyACAAOgBNAEEATABBACAAUABpAHgAZQBsACAAUgBlAGcAdQBsAGEAcgAAAAEAAwABAAAADAAEBKAAAAEkAQAABwAkACAAIQAiACMAJAAlACYAJwAoACkAKgArACwALQAuAC8AMAAxADIAMwA0ADUANgA3ADgAOQA6ADsAPAA9AD4APwBAAEEAQgBDAEQARQBGAEcASABJAEoASwBMAE0ATgBPAFAAUQBSAFMAVABVAFYAVwBYAFkAWgBbAF0AXgBfAGEAYgBjAGQAZQBmAGcAaABpAGoAawBsAG0AbgBvAHAAcQByAHMAdAB1AHYAdwB4AHkAegB7AHwAfQB+ALAAtwDEANYA3ADfAOAA4QDiAOQA6ADpAOoA7ADtAPIA8wD0APYA+QD6APwBBgEHAQwBDQEQAREBYAFhAX0BfgF/IBMgFCAYIBkgGiAcIB0gHiAmIKwhkiGTIZQluCYOJxMnHSfoJ+n//wAAACAAIQAiACMAJAAlACYAJwAoACkAKgArACwALQAuAC8AMAAxADIAMwA0ADUANgA3ADgAOQA6ADsAPAA9AD4APwBAAEEAQgBDAEQARQBGAEcASABJAEoASwBMAE0ATgBPAFAAUQBSAFMAVABVAFYAVwBYAFkAWgBbAF0AXgBfAGEAYgBjAGQAZQBmAGcAaABpAGoAawBsAG0AbgBvAHAAcQByAHMAdAB1AHYAdwB4AHkAegB7AHwAfQB+ALAAtwDEANYA3ADfAOAA4QDiAOQA6ADpAOoA7ADtAPIA8wD0APYA+QD6APwBBgEHAQwBDQEQAREBYAFhAX0BfgF/IBMgFCAYIBkgGiAcIB0gHiAmIKwhkiGTIZQluCYOJxMnHSfoJ+n////h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/h/+H/4f/g/+D/4P/f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3/+u/6j/nP+L/4b/hP+E/4T/hP+D/4D/gP+A/3//f/97/3v/e/96/3j/eP93/27/bv9q/2r/aP9o/xr/Gv7//v/+/+Bs4GzgaeBp4GngaOBo4GjgYd/c3vfe99732tTaf9l72XLYqNioAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAQBAAEBARFNQUxBUGl4ZWxSZWd1bGFyAAEBASf4GwD4HAL4HQP4HgSLJ/oY+bQFHQAABHgPHQAABZsRix0AAEQ4EgCVAgABAAwAHgAoAC8ANAA5AD4AQwBIAE0AUgBXAFwAYQBmAGsAcAB1AHoAfwCEAIkAjgCTAJgAnQCiAKcArACxALYAuwDAAMUAygDPANQA2QDeAOMA6ADtAPIA9wD8AQEBBgELARABFQEaAR8BJAEpAS4BMwE4AT0BQgFHAUwBUQFWAVsBYAFlAWoBbwF0AXkBfgGDAYgBjQGSAZcBnAGhAaYBqwGwAbUBugG/AcQByQHOAdMB2AHdAeIB5wHsAfEB9gH7AgACBQIKAg8CFAIZAh4CIwIoAi0CMgI3AjwCQQJGAksCUAJVAloCXwJkAmkCbgJzAngCfQKCAocCjAKRApYCmwKgAqUCqgKvArQCuQK+AsMCyALNAtIC1wLcAuEC5gLrAvAC9QL6Av8DBFZlcnNpb24gMC4xTUFMQSBQaXhlbCBSZWd1bGFyTUFMQSBQaXhlbFJlZ3VsYXJ1MDAyMHUwMDIxdTAwMjJ1MDAyM3UwMDI0dTAwMjV1MDAyNnUwMDI3dTAwMjh1MDAyOXUwMDJBdTAwMkJ1MDAyQ3UwMDJEdTAwMkV1MDAyRnUwMDMwdTAwMzF1MDAzMnUwMDMzdTAwMzR1MDAzNXUwMDM2dTAwMzd1MDAzOHUwMDM5dTAwM0F1MDAzQnUwMDNDdTAwM0R1MDAzRXUwMDNGdTAwNDB1MDA0MXUwMDQydTAwNDN1MDA0NHUwMDQ1dTAwNDZ1MDA0N3UwMDQ4dTAwNDl1MDA0QXUwMDRCdTAwNEN1MDA0RHUwMDRFdTAwNEZ1MDA1MHUwMDUxdTAwNTJ1MDA1M3UwMDU0dTAwNTV1MDA1NnUwMDU3dTAwNTh1MDA1OXUwMDVBdTAwNUJ1MDA1RHUwMDVFdTAwNUZ1MDA2MXUwMDYydTAwNjN1MDA2NHUwMDY1dTAwNjZ1MDA2N3UwMDY4dTAwNjl1MDA2QXUwMDZCdTAwNkN1MDA2RHUwMDZFdTAwNkZ1MDA3MHUwMDcxdTAwNzJ1MDA3M3UwMDc0dTAwNzV1MDA3NnUwMDc3dTAwNzh1MDA3OXUwMDdBdTAwN0J1MDA3Q3UwMDdEdTAwN0V1MDBCMHUwMEI3dTAwQzR1MDBENnUwMERDdTAwREZ1MDBFMHUwMEUxdTAwRTJ1MDBFNHUwMEU4dTAwRTl1MDBFQXUwMEVDdTAwRUR1MDBGMnUwMEYzdTAwRjR1MDBGNnUwMEY5dTAwRkF1MDBGQ3UwMTA2dTAxMDd1MDEwQ3UwMTBEdTAxMTB1MDExMXUwMTYwdTAxNjF1MDE3RHUwMTdFdTAxN0Z1MjAxM3UyMDE0dTIwMTh1MjAxOXUyMDFBdTIwMUN1MjAxRHUyMDFFdTIwMjZ1MjBBQ3UyMTkydTIxOTN1MjE5NHUyNUI4dTI2MEV1MjcxM3UyNzFEdTI3RTh1MjdFOQAAAAGLAYwBjQGOAY8BkAGRAZIBkwGUAZUBlgGXAZgBmQGaAZsBnAGdAZ4BnwGgAaEBogGjAaQBpQGmAacBqAGpAaoBqwGsAa0BrgGvAbABsQGyAbMBtAG1AbYBtwG4AbkBugG7AbwBvQG+Ab8BwAHBAcIBwwHEAcUBxgHHAcgByQHKAcsBzAHNAc4BzwHQAdEB0gHTAdQB1QHWAdcB2AHZAdoB2wHcAd0B3gHfAeAB4QHiAeMB5AHlAeYB5wHoAekB6gHrAewB7QHuAe8B8AHxAfIB8wH0AfUB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+Ij3XPjsFfdciwWL7wX7XIsF7/tcFe+LBYvvBSeLBYv7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBftc+1wV91yLBYvvBftciwUO+IiL+OwV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBftc+1wV91yLBYvvBftciwWL+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBftc+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBQ74iIv47BXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBYv7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBYv7XBX4JIsFi+8F/CSLBQ747Iv47BXviwWL7wUniwX4JCcV74sFi+8FJ4sF/CT7XBX3XIsFi+8F+1yLBffAJxX3XIsFi+8F+1yLBfvA+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBfdcJxXviwWL7wUniwX8JPtcFe+LBYvvBSeLBfdcJxXviwWL7wUniwX3XCcV74sFi+8FJ4sF/CT7XBXviwWL7wUniwX4JCcV74sFi+8FJ4sF/CT7XBXviwWL7wUniwX4JCcV74sFi+8FJ4sF/CT7XBXviwWL7wUniwX4JCcV74sFi+8FJ4sFDviIi/jsFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFfdciwWL7wX7XIsF98AnFe+LBYvvBSeLBfvA+1wV91yLBYvvBftciwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3XCcV91yLBYvvBftciwX7XPtcFe+LBYvvBSeLBfdcJxX3XIsFi+8F+1yLBftc+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBQ74iO/47BX3XIsFi+8F+1yLBSf7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+1z7XBX3XIsFi+8F+1yLBQ74iIv47BX3wIsFi+8F+8CLBYv7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBX3wIsFi+8F+8CLBYv7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBQ74iO/47BX3XIsFi+8F+1yLBSf7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3XCcV91yLBYvvBftciwUn+1wV98CLBYvvBfvAiwUO+IiL+OwV98CLBYvvBfvAiwWL+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV98CLBYvvBfvAiwWL+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBftc+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBQ74iO/47BX3wIsFi+8F+8CLBSf7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sF7/tcFfdciwWL7wX7XIsF91z7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sF+8D7XBX3wIsFi+8F+8CLBQ747Iv47BX4iIsFi+8F/IiLBfdc+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBYv7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBYv7XBXviwWL7wUniwUO+IiL+OwV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF98AnFe+LBYvvBSeLBftc+1wV91yLBYvvBftciwUO+OyL+OwV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBfwk+1wV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBfwk+1wV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBfvA+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBftc+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBftc+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBSf7XBXviwWL7wUniwUO+OyL+OwV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBfwk+1wV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBfwk+1wV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBfwk+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBfdcJxXviwWL7wUniwX8JPtcFe+LBYvvBSeLBfdcJxXviwWL7wUniwX3XCcV74sFi+8FJ4sF/CT7XBX3XIsFi+8F+1yLBffAJxX3XIsFi+8F+1yLBfvA+1wV74sFi+8FJ4sF+CQnFe+LBYvvBSeLBQ747Iv47BXviwWL7wUniwX4JCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3XCcV74sFi+8FJ4sF+1z7XBXviwWL7wUniwX3XCcV74sFi+8FJ4sFJ/tcFe+LBYvvBSeLBSf7XBXviwWL7wUniwX3XCcV74sFi+8FJ4sF+1z7XBXviwWL7wUniwX3XCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX4JCcV74sFi+8FJ4sFDvjsi/jsFe+LBYvvBSeLBfgkJxXviwWL7wUniwX8JPtcFe+LBYvvBSeLBfgkJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBfdcJxXviwWL7wUniwUn+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBYv7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFDviIi/jsFfgkiwWL7wX8JIsF98D7XBXviwWL7wUniwUn+1wV74sFi+8FJ4sFJ/tcFe+LBYvvBSeLBSf7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFfgkiwWL7wX8JIsFDvfAi/jsFfdciwWL7wX7XIsFi/tcFe+LBYvvBSeLBYv7XBXviwWL7wUniwWL+1wV74sFi+8FJ4sFi/tcFe+LBYvvBSeLBYv7XBXv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J4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+1z7XBX3XIsFi+8F+1yLBQ74iPdc+OwV74sFi+8FJ4sFJ/tcFe+LBYvvBSeLBYv7XBX3XIsFi+8F+1yLBSf7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+1z7XBX3XIsFi+8F+1yLBQ74iO/47BXviwWL7wUniwUn+1wV74sFi+8FJ4sF91wnFe+LBYvvBSeLBSf7XBX3XIsFi+8F+1yLBSf7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+1z7XBX3XIsFi+8F+1yLBQ74iIv47BXviwWL7wUniwX3wCcV74sFi+8FJ4sF+1z7wBX3XIsFi+8F+1yLBSf7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+8D7XBXviwWL7wUniwX3wCcV74sFi+8FJ4sF+1z7XBX3XIsFi+8F+1yLBQ74iIv47BXviwWL7wUniwXv+1wV74sFi+8FJ4sFJ/tcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7XPtcFffAiwWL7wX7wIsFDviI91z47BXviwWL7wUniwUn+1wV74sFi+8FJ4sFJ/tcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7XPtcFffAiwWL7wX7wIsFDviIi/jsFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPvAFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtcFe+LBYvvBSeLBffAJxXviwWL7wUniwX7wPtc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AfQAAAH0AAAB9AAAAMgAAAEsAAABkAAAAZAAAAGQAAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAAB9AAAAZAAAAH0AAAB9AAAAfQAAAJYAAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAACWAAAAfQAAAJYAAACWAAAAlgAAAJYAAAB9AAAASwAAAEsAAABkAAAAfQAAAH0AAAB9AAAAZAAAAH0AAAB9AAAAZAAAAH0AAAB9AAAAMgAAAEsAAAB9AAAASwAAAJYAAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAABkAAAAfQAAAJYAAACWAAAAfQAAAH0AAAB9AAAAZAAAADIAAABkAAAAfQAAAGQAAAAyAAAAfQAAAH0AAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAABLAAAASwAAAH0AAAB9AAAAfQAAAH0AAAB9AAAAfQAAAH0AAAB9AAAAZAAAAH0AAABkAAAAlgAAAJYAAAB9AAAAfQAAAH0AAAB9AAAAZAAAAH0AAACWAAAAMgAAADIAAAAyAAAAZAAAAGQAAABkAAAAlgAAAH0AAACWAAAAZAAAAMgAAABkAAAAlgAAAJYAAABkAAAASwAAAEsAAA=) format('opentype'); font-display: block; }
+:root {
+  color-scheme: dark;
+  --ink0: #08070d; --ink1: #13111c; --ink2: #1e1b2a; --ink3: #2a2638;
+  --lamp1: #6a400e; --lamp2: #a4681b; --lamp3: #d99a33; --lamp4: #f3c75c; --lamp5: #fff0a6;
+  --ghost1: #1a3a4c; --ghost2: #2c6074; --ghost3: #4b8f9f; --ghost4: #82c1c9; --ghost5: #c3ecee;
+  --paper: #e3d9c0; --paper2: #f5efe0; --pink: #08070d; --pmuted: #5a5248; --rule: #afc8e4; --margin: #cc5f68;
+  --seal: #cc5f68; --seal2: #79212e; --exit: #8b9a55; --text: #e3d9c0; --muted: #a39882; --dis: #7d7364;
+  --page: #0c0b14; --line: #2a2638; --chrome: #e3d9c0; --chrome-muted: #a39882;
+  --pix: 'MALA Pixel', ui-monospace, monospace;
+  --read: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+html, body { background: var(--page); color: var(--chrome); }
+body { font-family: var(--read); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1520px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 48px;
+  display: grid; gap: 22px; grid-template-columns: 220px minmax(0, 1fr) 340px; grid-template-areas: "head head head" "nav stage notes"; align-items: start; }
+@media (max-width: 1220px) { .wrap { grid-template-columns: 210px minmax(0, 1fr); grid-template-areas: "head head" "nav stage" "notes notes"; } }
+@media (max-width: 780px) { .wrap { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "nav" "stage" "notes"; } }
+header.head { grid-area: head; display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+header.head h1 { font-family: var(--pix); font-weight: 400; font-size: 30px; line-height: 30px; margin: 0; color: var(--ghost5); -webkit-font-smoothing: none; letter-spacing: 0; }
+header.head p { margin: 0; max-width: 72ch; color: var(--chrome-muted); text-wrap: pretty; }
+header.head .tag { font-family: var(--pix); font-size: 20px; line-height: 20px; color: var(--lamp4); border: 2px solid var(--lamp1); padding: 4px 8px; -webkit-font-smoothing: none; }
+nav.screens { grid-area: nav; display: flex; flex-direction: column; gap: 14px; }
+nav.screens h2 { font: 700 12px/1.2 var(--read); letter-spacing: .08em; text-transform: uppercase; color: var(--chrome-muted); margin: 0 0 4px; }
+nav.screens .grp { display: flex; flex-direction: column; gap: 2px; }
+nav.screens button { appearance: none; border: 1px solid transparent; background: transparent; color: var(--chrome); text-align: left; font: 15px/1.3 var(--read); padding: 7px 10px; border-radius: 3px; cursor: pointer; }
+nav.screens button:hover { background: var(--ink2); }
+nav.screens button[aria-current="true"] { background: var(--ink2); border-color: var(--lamp1); color: var(--lamp5); }
+nav.screens button:focus-visible, .tool button:focus-visible, .tool label:focus-within { outline: 2px solid var(--lamp4); outline-offset: 2px; }
+@media (max-width: 780px) { nav.screens { flex-direction: row; overflow-x: auto; gap: 18px; padding-bottom: 6px; } nav.screens .grp { flex-direction: row; } nav.screens button { white-space: nowrap; } nav.screens h2 { display: none; } }
+section.stage { grid-area: stage; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.tool { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.seg button { appearance: none; border: 0; background: transparent; color: var(--chrome); font: 14px/1 var(--read); padding: 8px 11px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink2); color: var(--lamp5); box-shadow: inset 0 -2px 0 var(--lamp3); }
+.tool label { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; color: var(--chrome-muted); cursor: pointer; }
+.devinfo { font-size: 13px; color: var(--chrome-muted); }
+.stagebox { position: relative; background: #000; border: 1px solid var(--line); overflow: hidden; }
+.stagebox.full { overflow: auto; max-height: 82vh; }
+.stagebox:focus-visible { outline: 2px solid var(--lamp4); outline-offset: 2px; }
+.badge-mode { position: absolute; z-index: 50; top: 8px; right: 8px; font: 700 12px/1 var(--read); letter-spacing: .06em; text-transform: uppercase; padding: 5px 8px; border-radius: 2px; background: rgba(8,7,13,.85); border: 1px solid var(--lamp2); color: var(--lamp4); pointer-events: none; }
+.badge-mode.ist { border-color: var(--ghost2); color: var(--ghost4); }
+.hint-keys { font-size: 13px; color: var(--chrome-muted); }
+aside.notes { grid-area: notes; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+aside.notes h2 { font-family: var(--pix); font-weight: 400; font-size: 20px; line-height: 22px; margin: 0; color: var(--lamp4); -webkit-font-smoothing: none; }
+aside.notes h3 { font: 700 12px/1.2 var(--read); letter-spacing: .08em; text-transform: uppercase; color: var(--chrome-muted); margin: 10px 0 4px; }
+aside.notes ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+aside.notes li { text-wrap: pretty; }
+aside.notes code { font-size: 12.5px; color: var(--ghost4); background: var(--ink1); padding: 0 3px; border-radius: 2px; }
+aside.notes .kind { display: inline-block; font: 700 11px/1 var(--read); letter-spacing: .06em; text-transform: uppercase; padding: 3px 6px; border-radius: 2px; margin-right: 4px; vertical-align: 1px; }
+.k-beob { background: #1a3a4c; color: var(--ghost5); } .k-code { background: #3a2307; color: var(--lamp4); } .k-vor { background: #2a2638; color: var(--paper); } .k-offen { background: #4e141e; color: #f0b3b8; }
+footer.foot { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 12px; color: var(--chrome-muted); font-size: 13px; }
+
+/* ---------- virtueller Bildschirm ---------- */
+.vp { position: absolute; left: 0; top: 0; background: #000; overflow: hidden; transform-origin: 0 0; --u: 3; --s: 4; color: var(--text); font-family: var(--pix); -webkit-font-smoothing: none; font-smooth: never; }
+.vp * { box-sizing: border-box; }
+.vp img, .pix { image-rendering: pixelated; image-rendering: crisp-edges; }
+.vp .abs { position: absolute; }
+.cv { position: absolute; overflow: hidden; background: var(--ink0); }
+.cv > img.scene { position: absolute; left: 0; top: 0; width: calc(var(--s) * 320px); height: calc(var(--s) * 144px); }
+.cv > img.full { position: absolute; left: 0; top: 0; width: calc(var(--s) * 320px); height: calc(var(--s) * 200px); }
+.g { font-family: var(--pix); font-size: calc(var(--s) * 10px); line-height: calc(var(--s) * 10px); white-space: nowrap; letter-spacing: 0; }
+.ui { font-family: var(--pix); font-size: calc(var(--u) * 10px); line-height: calc(var(--u) * 12px); letter-spacing: 0; }
+.ui.big { font-size: calc(var(--u) * 20px); line-height: calc(var(--u) * 22px); }
+.out { text-shadow: calc(var(--s)*1px) 0 0 var(--ink0), calc(var(--s)*-1px) 0 0 var(--ink0), 0 calc(var(--s)*1px) 0 var(--ink0), 0 calc(var(--s)*-1px) 0 var(--ink0), calc(var(--s)*1px) calc(var(--s)*1px) 0 var(--ink0), calc(var(--s)*-1px) calc(var(--s)*-1px) 0 var(--ink0), calc(var(--s)*1px) calc(var(--s)*-1px) 0 var(--ink0), calc(var(--s)*-1px) calc(var(--s)*1px) 0 var(--ink0); }
+.dim { position: absolute; inset: 0; background: rgba(8, 7, 13, .74); }
+.panel { position: absolute; background: rgba(19, 17, 28, .97); border: calc(var(--u) * 1px) solid var(--lamp1); box-shadow: 0 0 0 calc(var(--u) * 1px) var(--ink0), calc(var(--u) * 2px) calc(var(--u) * 2px) 0 calc(var(--u) * 1px) rgba(0,0,0,.55); padding: calc(var(--u) * 6px); color: var(--text); display: flex; flex-direction: column; gap: calc(var(--u) * 4px); max-height: calc(100% - 16px); }
+.panel.cold { border-color: var(--ghost2); }
+.panel h3 { margin: 0; font-weight: 400; color: var(--lamp5); }
+.panel .ctx { color: var(--muted); }
+.panel .status { color: var(--ghost4); }
+.scroll { overflow: auto; scrollbar-color: var(--lamp1) transparent; }
+.menu { display: flex; flex-direction: column; gap: calc(var(--u) * 1px); }
+.menu.two { display: grid; grid-template-columns: 1fr 1fr; column-gap: calc(var(--u) * 4px); }
+.mi { appearance: none; border: 0; background: transparent; color: var(--text); font: inherit; text-align: left; display: flex; align-items: center; gap: calc(var(--u) * 3px);
+  min-height: max(44px, calc(var(--u) * 16px)); padding: 0 calc(var(--u) * 5px) 0 calc(var(--u) * 3px); cursor: pointer; position: relative; width: 100%; }
+.mi::before { content: ''; flex: 0 0 calc(var(--u) * 5px); color: var(--lamp4); }
+.mi:hover, .mi:focus-visible, .mi.sel { color: var(--lamp5); background: var(--ink2); }
+.mi:hover::before, .mi:focus-visible::before, .mi.sel::before { content: '▸'; }
+.mi:focus-visible { outline: calc(var(--u) * 1px) solid var(--lamp4); outline-offset: calc(var(--u) * -1px); }
+.mi[aria-disabled="true"] { color: var(--dis); cursor: default; background: transparent; }
+.mi[aria-disabled="true"]::before { content: ''; }
+.mi .why { color: var(--muted); margin-left: auto; padding-left: calc(var(--u) * 4px); white-space: nowrap; }
+.mi .sub { display: block; color: var(--muted); }
+.mi.primary { align-items: stretch; padding-block: calc(var(--u) * 3px); color: var(--lamp4); }
+.mi.primary .thumb { flex: 0 0 auto; width: calc(var(--u) * 48px); height: calc(var(--u) * 21.6px); border: calc(var(--u) * 1px) solid var(--lamp1); background: var(--ink0) center / cover no-repeat; image-rendering: pixelated; }
+.mi.primary .txt { display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 1px); min-width: 0; }
+.mi .lock { width: calc(var(--u) * 7px); height: calc(var(--u) * 8px); flex: 0 0 auto; }
+.btnrow { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 4px); justify-content: flex-end; }
+.btn { appearance: none; font: inherit; cursor: pointer; min-height: max(44px, calc(var(--u) * 16px)); padding: 0 calc(var(--u) * 8px); background: var(--ink1); color: var(--lamp4); border: calc(var(--u) * 1px) solid var(--lamp1); }
+.btn:hover, .btn:focus-visible { background: var(--ink2); color: var(--lamp5); outline: none; box-shadow: 0 0 0 calc(var(--u) * 1px) var(--lamp4); }
+.btn.danger { color: #f0b3b8; border-color: var(--seal2); }
+.btn.danger:hover, .btn.danger:focus-visible { box-shadow: 0 0 0 calc(var(--u) * 1px) var(--seal); }
+.btn.primary { background: var(--lamp1); color: var(--lamp5); border-color: var(--lamp3); }
+.toast { position: absolute; left: 50%; transform: translateX(-50%); background: var(--ink1); border: calc(var(--u) * 1px) solid var(--ghost2); color: var(--ghost5); padding: calc(var(--u) * 3px) calc(var(--u) * 6px); white-space: nowrap; z-index: 20; }
+.chip { position: absolute; background: rgba(8,7,13,.85); border: calc(var(--u) * 1px) solid var(--ghost1); color: var(--ghost4); padding: calc(var(--u) * 1px) calc(var(--u) * 4px); }
+/* Papier (Notizbuch-Seiten wie im Spiel): Linien, roter Rand */
+.paper { position: absolute; color: var(--pink); background: var(--paper); border: calc(var(--u) * 1px) solid #a39882; box-shadow: calc(var(--u) * 2px) calc(var(--u) * 2px) 0 0 rgba(0,0,0,.6); padding: calc(var(--u) * 6px) calc(var(--u) * 8px) calc(var(--u) * 6px) calc(var(--u) * 14px); display: flex; flex-direction: column; gap: calc(var(--u) * 4px); max-height: calc(100% - 16px);
+  background-image: linear-gradient(90deg, transparent calc(var(--u) * 9px), var(--margin) calc(var(--u) * 9px), var(--margin) calc(var(--u) * 10px), transparent calc(var(--u) * 10px)); }
+.paper h3 { margin: 0; font-weight: 400; color: var(--seal2); }
+.paper .ctx { color: var(--pmuted); }
+.paper .mi { color: var(--pink); } .paper .mi::before { color: var(--seal2); }
+.paper .mi:hover, .paper .mi:focus-visible, .paper .mi.sel { background: var(--paper2); color: var(--pink); }
+.paper .mi:focus-visible { outline-color: var(--seal2); }
+.paper .btn { background: #1f2c50; color: var(--paper2); border-color: #2f4274; }
+.paper .btn:hover, .paper .btn:focus-visible { box-shadow: 0 0 0 calc(var(--u) * 1px) var(--seal2); color: #fff; }
+.paper .btn.danger { background: var(--paper2); color: var(--seal2); border-color: var(--seal2); }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--u) * 5px); }
+.card { appearance: none; text-align: left; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: calc(var(--u) * 2px); padding: calc(var(--u) * 3px); background: var(--paper2); color: var(--pink); border: calc(var(--u) * 1px) solid #c8bb9f; min-width: 0; }
+.card:hover, .card:focus-visible, .card.sel { border-color: var(--seal2); box-shadow: 0 0 0 calc(var(--u) * 1px) var(--seal2); outline: none; }
+.card .ph { width: 100%; aspect-ratio: 320 / 144; background: #c8bb9f center / cover no-repeat; image-rendering: pixelated; border: calc(var(--u) * 1px) solid #a39882; }
+.card .ph.empty { background: repeating-linear-gradient(135deg, transparent 0 calc(var(--u) * 3px), rgba(90,82,72,.18) calc(var(--u) * 3px) calc(var(--u) * 4px)); display: grid; place-items: center; color: var(--pmuted); }
+.card .meta { color: var(--pmuted); }
+.card .kindb { align-self: flex-start; color: var(--paper2); background: var(--pmuted); padding: 0 calc(var(--u) * 2px); }
+.card .kindb.auto { background: #1f2c50; } .card .kindb.mark { background: var(--seal2); } .card .kindb.end { background: #3f5a2e; }
+.card.bad { background: #f3e1df; border-color: var(--seal); }
+.card .bm { display: flex; gap: calc(var(--u) * 2px); align-items: center; border-top: calc(var(--u) * 1px) solid #c8bb9f; padding-top: calc(var(--u) * 2px); color: var(--pink); }
+.card .bm i { font-style: normal; color: var(--pmuted); }
+.card .mini { width: calc(var(--u) * 16px); height: calc(var(--u) * 7.2px); background: #c8bb9f center / cover no-repeat; image-rendering: pixelated; flex: 0 0 auto; border: calc(var(--u) * 1px) solid #a39882; }
+.seal { display: inline-grid; place-items: center; width: calc(var(--u) * 9px); height: calc(var(--u) * 9px); background: var(--seal); color: var(--paper2); border-radius: 50%; }
+/* Einstellungen */
+.set { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: calc(var(--u) * 2px) calc(var(--u) * 6px); align-items: center; }
+.set h4 { grid-column: 1 / -1; margin: calc(var(--u) * 3px) 0 0; font-weight: 400; color: var(--ghost4); }
+.set .lbl small { display: block; color: var(--muted); font-size: inherit; }
+.set > .segp, .set > input[type=range] { justify-self: end; }
+.set input[type=range] { width: calc(var(--u) * 70px); accent-color: var(--lamp3); height: max(44px, calc(var(--u) * 14px)); }
+.segp { display: inline-flex; border: calc(var(--u) * 1px) solid var(--lamp1); }
+.segp button { appearance: none; font: inherit; color: var(--text); background: transparent; border: 0; min-height: max(44px, calc(var(--u) * 14px)); padding: 0 calc(var(--u) * 4px); cursor: pointer; }
+.segp button + button { border-left: calc(var(--u) * 1px) solid var(--lamp1); }
+.segp button[aria-pressed="true"] { background: var(--lamp1); color: var(--lamp5); }
+.segp button:focus-visible { outline: calc(var(--u) * 1px) solid var(--lamp4); outline-offset: calc(var(--u) * -2px); }
+.preview { border: calc(var(--u) * 1px) dashed var(--ghost2); padding: calc(var(--u) * 3px) calc(var(--u) * 4px); color: var(--text); min-height: calc(var(--u) * 26px); }
+.preview .who { color: var(--lamp3); }
+/* Spielansicht: Bedienleiste im Spielraster (wie bisher im Canvas gezeichnet) */
+.hud { position: absolute; left: 0; top: calc(var(--s) * 144px); width: calc(var(--s) * 320px); height: calc(var(--s) * 56px); background: var(--ink0); }
+/* Knopf = Tippfläche 15 Spielpixel hoch (wie btnAt), der sichtbare Rahmen liegt darin */
+.hb { position: absolute; top: 0; height: calc(var(--s) * 15px); z-index: 0; color: var(--lamp3); display: flex; align-items: center; justify-content: center; cursor: pointer; padding-top: calc(var(--s) * 1px); }
+.hb::before { content: ''; position: absolute; z-index: -1; left: 0; right: 0; top: calc(var(--s) * 2px); height: calc(var(--s) * 12px); border: calc(var(--s) * 1px) solid var(--lamp1); background: var(--ink1); }
+.hb.on { color: var(--lamp5); } .hb.on::before { background: #271810; }
+.hb.off { color: var(--dis); } .hb.off::before { border-style: dashed; border-color: #3a2307; }
+.hb .dot { position: absolute; right: calc(var(--s) * -2px); top: calc(var(--s) * -2px); width: calc(var(--s) * 3px); height: calc(var(--s) * 3px); background: var(--seal); }
+.cold .hb { color: var(--ghost3); } .cold .hb::before { border-color: var(--ghost1); }
+.nameline { position: absolute; top: calc(var(--s) * 4px); left: calc(var(--s) * 44px); width: calc(var(--s) * 167px); text-align: center; color: var(--lamp3); }
+.cold .nameline { color: var(--ghost4); }
+.port { position: absolute; left: calc(var(--s) * 2px); top: calc(var(--s) * 16px); width: calc(var(--s) * 38px); height: calc(var(--s) * 38px); border: calc(var(--s) * 1px) solid var(--lamp1); background: var(--ink1); cursor: pointer; }
+.port img { position: absolute; left: 0; top: 0; width: calc(var(--s) * 36px); height: calc(var(--s) * 27px); }
+.port .pl { position: absolute; left: 0; right: 0; bottom: calc(var(--s) * 1px); text-align: center; }
+.inv { position: absolute; left: calc(var(--s) * 51px); top: calc(var(--s) * 17px); width: calc(var(--s) * 240px); height: calc(var(--s) * 36px); background-repeat: no-repeat; }
+.slot { position: absolute; top: 0; width: calc(var(--s) * 39px); height: calc(var(--s) * 36px); border: calc(var(--s) * 1px) solid #271810; }
+.cold .slot { border-color: var(--ghost1); }
+.arr { position: absolute; top: calc(var(--s) * 17px); height: calc(var(--s) * 36px); display: grid; place-items: center; color: var(--lamp3); }
+.arr.hit { outline: calc(var(--s) * 0.5px) dashed rgba(243, 199, 92, .55); }
+.pdots { position: absolute; top: calc(var(--s) * 54px); left: calc(var(--s) * 152px); display: flex; gap: calc(var(--s) * 3px); }
+.pdots i { width: calc(var(--s) * 6px); height: calc(var(--s) * 1px); background: var(--lamp1); } .pdots i.on { background: var(--lamp3); }
+.rv-dot { position: absolute; width: calc(var(--s) * 3px); height: calc(var(--s) * 3px); margin: calc(var(--s) * -1.5px) 0 0 calc(var(--s) * -1.5px); background: var(--lamp4); box-shadow: 0 0 0 calc(var(--s) * 1px) var(--ink0); }
+.rv-dot.exit { background: var(--exit); } .rv-dot.npc { background: var(--seal); }
+.rv-lab { position: absolute; transform: translate(-50%, calc(var(--s) * -12px)); }
+@media (prefers-reduced-motion: no-preference) { .rv-dot { animation: puls 1.6s ease-in-out infinite; } }
+@keyframes puls { 50% { transform: scale(1.35); } }
+/* Dialog */
+.dlg { position: absolute; left: calc(var(--s) * 2px); top: calc(var(--s) * 142px); width: calc(var(--s) * 316px); height: calc(var(--s) * 57px); background: var(--ink0); border: calc(var(--s) * 1px) solid #c8bb9f; padding: calc(var(--s) * 2px) calc(var(--s) * 14px) 0 calc(var(--s) * 4px); }
+.dlg .opt { display: flex; gap: calc(var(--s) * 3px); align-items: center; color: var(--paper); cursor: pointer; }
+.dlg .opt.sel { color: #fffdf4; background: var(--ink2); }
+.dlg .opt.done { color: #a39882; }
+.dlg .num { color: var(--lamp2); }
+.dlg .more { position: absolute; right: calc(var(--s) * 3px); bottom: calc(var(--s) * 2px); color: var(--lamp3); }
+.dlg .x { position: absolute; right: calc(var(--s) * 3px); top: calc(var(--s) * 2px); color: #c8bb9f; }
+/* Karten (Kapitel) */
+.cardstage { position: absolute; inset: 0; background: var(--ink0); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.lockicon { image-rendering: pixelated; }
+.ruler { position: absolute; border: 1px solid #ff5c8a; color: #ff5c8a; font: 700 11px/1 var(--read); pointer-events: none; z-index: 60; }
+.ruler span { position: absolute; left: 100%; top: 0; margin-left: 4px; white-space: nowrap; background: rgba(0,0,0,.7); padding: 2px 3px; }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <h1>MALA · Oberfläche</h1>
+    <span class="tag">Entwurf</span>
+    <p>Klickbarer Gestaltungsentwurf für Hauptmenü, Spielstände, Pause, Einstellungen und Spieloberfläche. Kein lauffähiges Spiel: Szenen, Porträts und Gegenstände sind unveränderte Ausschnitte der aktuellen Fassung (5ddc4f3c); Menüs, Karten und Leiste sind Vorschläge. „Ist“ zeigt das Bildschirmfoto des heutigen Zustands.</p>
+  </header>
+
+  <nav class="screens" aria-label="Bildschirme" id="nav"></nav>
+
+  <section class="stage" aria-label="Vorschau">
+    <div class="tool">
+      <div class="seg" role="group" aria-label="Gerät" id="devs"></div>
+      <div class="seg" role="group" aria-label="Fassung" id="modes">
+        <button type="button" data-mode="neu" aria-pressed="true">Entwurf</button>
+        <button type="button" data-mode="ist" aria-pressed="false">Ist</button>
+      </div>
+      <label><input type="checkbox" id="full"> Originalgröße</label>
+      <label><input type="checkbox" id="rulers"> Tippflächen messen</label>
+    </div>
+    <div class="devinfo" id="devinfo"></div>
+    <div class="stagebox" id="stage" tabindex="0" aria-label="Virtueller Bildschirm. Pfeiltasten wählen, Enter bestätigt, Esc geht zurück."></div>
+    <div class="hint-keys">Im Bild bedienbar: Klick oder Tipp, Pfeiltasten ↑ ↓, Enter, Esc. „Tippflächen messen“ zeichnet die Höhe jeder Zeile in CSS-Pixeln ein.</div>
+  </section>
+
+  <aside class="notes" id="notes" aria-live="polite"></aside>
+
+  <footer class="foot">Belege im Repository: <code>design/evidence/</code> (Bildschirmfotos aus Chromium, WebKit- und Tablet-Emulation, gemessene Tippflächen in <code>geometry.md</code>), <code>design/UI_KONZEPT.md</code> (Analyse und Umsetzungsplan). Schrift „MALA Pixel“ ist aus der Bitmap-Schrift des Spiels erzeugt (<code>design/tools/makefont.js</code>).</footer>
+</div>
+
+<script>
+'use strict';
+const DEV = {
+  desktop: { w: 1280, h: 800, s: 4, u: 3, label: 'Desktop', info: '1280 × 800 CSS-px, Maus · Spielbild 4-fach, Bedienschrift 3-fach (Versalhöhe 21 px)' },
+  tablet: { w: 1080, h: 810, s: 3, u: 3, label: 'Tablet quer', info: '1080 × 810 CSS-px (iPad-Emulation), Touch · Spielbild 3-fach, Bedienschrift 3-fach' },
+  phone: { w: 750, h: 342, s: 5 / 3, u: 2, label: 'Smartphone quer', wide: true, info: '750 × 342 CSS-px (iPhone-13-Emulation), Touch · Spielbild 1,67-fach, Bedienschrift 2-fach (Versalhöhe 14 px)' },
+  portrait: { w: 390, h: 664, s: 5 / 3, u: 2, label: 'Hochkant', portrait: true, info: '390 × 664 CSS-px (iPhone 13 hochkant) · das Spiel dreht das Bild' }
+};
+const HOT = {
+ "flat": {
+  "room": "flat",
+  "roomName": "Markos Wohnung",
+  "active": "marko",
+  "phase": "pro",
+  "hotspots": [
+   {
+    "id": "window",
+    "name": "Fenster",
+    "x": 186,
+    "y": 45,
+    "rect": [
+     154,
+     24,
+     66,
+     50
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 3300
+   },
+   {
+    "id": "laptop",
+    "name": "Laptop",
+    "x": 185,
+    "y": 70,
+    "rect": [
+     172,
+     62,
+     26,
+     18
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 468
+   },
+   {
+    "id": "papers",
+    "name": "Übersetzungsaufträge",
+    "x": 205,
+    "y": 78,
+    "rect": [
+     198,
+     74,
+     22,
+     8
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 176
+   },
+   {
+    "id": "glasses",
+    "name": "Wassergläser",
+    "x": 34,
+    "y": 38,
+    "rect": [
+     28,
+     32,
+     23,
+     15
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 345
+   },
+   {
+    "id": "cups",
+    "name": "Kaffeetassen",
+    "x": 165,
+    "y": 75,
+    "rect": [
+     157,
+     72,
+     18,
+     8
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 144
+   },
+   {
+    "id": "ashtray",
+    "name": "Aschenbecher",
+    "x": 214,
+    "y": 76,
+    "rect": [
+     210,
+     74,
+     10,
+     6
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 60
+   },
+   {
+    "id": "lamp",
+    "name": "Schreibtischlampe",
+    "x": 223,
+    "y": 68,
+    "rect": [
+     216,
+     58,
+     14,
+     24
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 336
+   },
+   {
+    "id": "answer",
+    "name": "Anrufbeantworter",
+    "x": 242,
+    "y": 79,
+    "rect": [
+     236,
+     74,
+     14,
+     12
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 168
+   },
+   {
+    "id": "shelf",
+    "name": "Bücherregal",
+    "x": 135,
+    "y": 53,
+    "rect": [
+     121,
+     28,
+     30,
+     52
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 1560
+   },
+   {
+    "id": "photo",
+    "name": "umgedrehtes Foto",
+    "x": 128,
+    "y": 86,
+    "rect": [
+     123,
+     83,
+     12,
+     7
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 84
+   },
+   {
+    "id": "wardrobe",
+    "name": "Schrank",
+    "x": 90,
+    "y": 60,
+    "rect": [
+     62,
+     16,
+     54,
+     88
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 4752
+   },
+   {
+    "id": "box",
+    "name": "Karton „SARAJEVO“",
+    "x": 88,
+    "y": 13,
+    "rect": [
+     71,
+     6,
+     36,
+     15
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 540
+   },
+   {
+    "id": "dzezva",
+    "name": "Džezva",
+    "x": 63,
+    "y": 43,
+    "rect": [
+     52,
+     39,
+     23,
+     10
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 230
+   },
+   {
+    "id": "tin",
+    "name": "Kaffeedose",
+    "x": 46,
+    "y": 39,
+    "rect": [
+     38,
+     34,
+     22,
+     14
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 308
+   },
+   {
+    "id": "sink",
+    "name": "Spüle",
+    "x": 41,
+    "y": 84,
+    "rect": [
+     26,
+     77,
+     43,
+     14
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 602
+   },
+   {
+    "id": "stove",
+    "name": "Herd",
+    "x": 65,
+    "y": 80,
+    "rect": [
+     46,
+     74,
+     39,
+     13
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 507
+   },
+   {
+    "id": "fridge",
+    "name": "Kühlschrank",
+    "x": 25,
+    "y": 90,
+    "rect": [
+     -2,
+     50,
+     57,
+     80
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 4560
+   },
+   {
+    "id": "bed",
+    "name": "Bett",
+    "x": 279,
+    "y": 104,
+    "rect": [
+     244,
+     89,
+     72,
+     32
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 2304
+   },
+   {
+    "id": "coat",
+    "name": "Garderobe",
+    "x": 304,
+    "y": 56,
+    "rect": [
+     300,
+     48,
+     10,
+     18
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 180
+   },
+   {
+    "id": "door",
+    "name": "Wohnungstür",
+    "x": 291,
+    "y": 59,
+    "rect": [
+     278,
+     30,
+     30,
+     90
+    ],
+    "exit": true,
+    "npc": null,
+    "area": 2700
+   }
+  ]
+ },
+ "busbahnhof": {
+  "room": "stanica",
+  "roomName": "Busbahnhof",
+  "active": "marko",
+  "phase": "k2_pro",
+  "hotspots": [
+   {
+    "id": "exit",
+    "name": "Zur Stadt",
+    "x": 4,
+    "y": 117,
+    "rect": [
+     0,
+     96,
+     10,
+     44
+    ],
+    "exit": true,
+    "npc": null,
+    "area": 440
+   },
+   {
+    "id": "fikret",
+    "name": "Fikret",
+    "x": 268,
+    "y": 89,
+    "rect": [
+     261,
+     67,
+     16,
+     46
+    ],
+    "exit": false,
+    "npc": "fikret",
+    "area": 736
+   },
+   {
+    "id": "senada",
+    "name": "Senada",
+    "x": 173,
+    "y": 94,
+    "rect": [
+     166,
+     80,
+     16,
+     30
+    ],
+    "exit": false,
+    "npc": "senada",
+    "area": 480
+   },
+   {
+    "id": "bus",
+    "name": "Bus aus Split",
+    "x": 73,
+    "y": 81,
+    "rect": [
+     36,
+     48,
+     80,
+     66
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 5280
+   },
+   {
+    "id": "timetable",
+    "name": "Abfahrtstafel",
+    "x": 125,
+    "y": 62,
+    "rect": [
+     107,
+     45,
+     38,
+     36
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 1368
+   },
+   {
+    "id": "kiosk",
+    "name": "Kiosk",
+    "x": 173,
+    "y": 75,
+    "rect": [
+     151,
+     49,
+     46,
+     60
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 2760
+   },
+   {
+    "id": "newspapers",
+    "name": "Zeitungen",
+    "x": 208,
+    "y": 84,
+    "rect": [
+     196,
+     62,
+     26,
+     46
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 1196
+   },
+   {
+    "id": "burek",
+    "name": "Buregdžinica",
+    "x": 246,
+    "y": 75,
+    "rect": [
+     226,
+     56,
+     52,
+     44
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 2288
+   },
+   {
+    "id": "exchange",
+    "name": "Wechselstube",
+    "x": 299,
+    "y": 77,
+    "rect": [
+     280,
+     56,
+     48,
+     44
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 2112
+   },
+   {
+    "id": "pigeons",
+    "name": "Tauben",
+    "x": 234,
+    "y": 122,
+    "rect": [
+     156,
+     110,
+     160,
+     26
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 4160
+   }
+  ]
+ },
+ "vratnik": {
+  "room": "vratnik",
+  "roomName": "Vratnik",
+  "active": "marko",
+  "phase": "k2_i",
+  "hotspots": [
+   {
+    "id": "wall",
+    "name": "Stadtmauer",
+    "x": 30,
+    "y": 54,
+    "rect": [
+     -10,
+     12,
+     74,
+     98
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 7252
+   },
+   {
+    "id": "tabija",
+    "name": "Gelbe Bastei",
+    "x": 200,
+    "y": 96,
+    "rect": [
+     56,
+     86,
+     274,
+     22
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 6028
+   },
+   {
+    "id": "bench",
+    "name": "Bank",
+    "x": 176,
+    "y": 99,
+    "rect": [
+     150,
+     86,
+     52,
+     27
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 1404
+   },
+   {
+    "id": "cannon",
+    "name": "Kanonenplatz",
+    "x": 257,
+    "y": 114,
+    "rect": [
+     243,
+     105,
+     30,
+     19
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 570
+   },
+   {
+    "id": "view",
+    "name": "Blick über die Stadt",
+    "x": 197,
+    "y": 41,
+    "rect": [
+     68,
+     0,
+     262,
+     86
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 22532
+   },
+   {
+    "id": "lamp",
+    "name": "Laterne",
+    "x": 110,
+    "y": 66,
+    "rect": [
+     103,
+     20,
+     15,
+     94
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 1410
+   },
+   {
+    "id": "dog",
+    "name": "Hund",
+    "x": 29,
+    "y": 107,
+    "rect": [
+     -4,
+     100,
+     64,
+     16
+    ],
+    "exit": false,
+    "npc": null,
+    "area": 1024
+   }
+  ]
+ }
+};
+const st = { screen: 'titel-neu', dev: 'desktop', mode: 'neu', full: false, rulers: false, zeigen: 'neu', mala: false, saved2: false, pauseScene: false, set: { mus: 70, sfx: 80, amb: 60, speed: 1, tap: false, size: 0, font: 'pix', motion: false, crt: false, nb: 'list', lang: 'de' } };
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const LOCK = '<svg class="lock lockicon" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M2 0h3v1h1v3h1v4H0V4h1V1h1zM2 1v3h3V1z"/></svg>';
+
+/* ---------- Bausteine ---------- */
+function canvas(d, inner, extraCls) { const ox = (d.w - 320 * d.s) / 2, oy = (d.h - 200 * d.s) / 2; return `<div class="cv ${extraCls || ''}" style="left:${ox}px;top:${oy}px;width:${320 * d.s}px;height:${200 * d.s}px">${inner}</div>`; }
+function gpos(x, y) { return `left:calc(var(--s)*${x}px);top:calc(var(--s)*${y}px)`; }
+function mi(label, opts = {}) { const a = opts.go ? ` data-go="${opts.go}"` : ''; const act = opts.act ? ` data-act="${opts.act}"` : ''; const dis = opts.dis ? ' aria-disabled="true"' : '';
+  return `<button type="button" class="mi ${opts.cls || ''}"${a}${act}${dis}>${opts.lock ? LOCK : ''}<span>${esc(label)}${opts.sub ? `<span class="sub">${esc(opts.sub)}</span>` : ''}</span>${opts.why ? `<span class="why">${esc(opts.why)}</span>` : ''}</button>`; }
+function titleArt(d, subtitle) { return canvas(d, `<img class="full" src="img/title_clean.png" alt="">
+  <div class="abs g" style="left:0;width:100%;text-align:center;top:calc(var(--s)*19px);font-size:calc(var(--s)*40px);line-height:calc(var(--s)*40px);color:var(--ghost5);text-shadow:calc(var(--s)*1px) calc(var(--s)*1px) 0 var(--ink0)">MALA</div>
+  <div class="abs g out" style="left:0;width:100%;text-align:center;top:calc(var(--s)*58px);color:var(--paper)">${esc(subtitle)}</div>`); }
+function gameView(d, o = {}) {   // Szene + Bedienleiste (Entwurf) im Spielraster
+  const cold = !!o.mala; const scene = o.scene || 'flat';
+  let rv = '';
+  if (o.reveal && HOT[o.reveal]) { HOT[o.reveal].hotspots.filter(h => h.area < 320 * 144 * 0.25).forEach(h => { const cls = h.exit ? 'exit' : (h.npc ? 'npc' : ''); rv += `<i class="rv-dot ${cls}" style="${gpos(h.x, h.y)}"></i>`; if (h.exit || h.npc) rv += `<span class="abs g out rv-lab" style="${gpos(h.x, h.y)};color:${h.exit ? 'var(--exit)' : 'var(--paper)'}">${esc(h.name)}</span>`; }); }
+  const port = o.port === 'none' ? '' : `<div class="port" data-act="${o.portAct || ''}" title="${o.portTitle || ''}" style="border-color:${cold ? 'var(--ghost2)' : 'var(--lamp1)'}"><img src="img/${o.port || 'portrait_marko'}.png" alt=""><span class="pl g" style="color:${o.portColor || 'var(--lamp3)'}">${esc(o.portLabel || 'Marko')}</span></div>`;
+  let slots = ''; for (let i = 0; i < 6; i++) slots += `<i class="slot" style="left:calc(var(--s)*${i * 40}px)"></i>`;
+  const invBg = o.invImg ? `background-image:url(ist/${o.invImg}.png);background-size:calc(var(--s)*320px) calc(var(--s)*200px);background-position:calc(var(--s)*-51px) calc(var(--s)*-161px);` : '';
+  return canvas(d, `<img class="scene" src="img/scene_${scene}.png" alt="">${rv}${o.overScene || ''}
+    <div class="hud ${cold ? 'cold' : ''}">
+      <div class="hb g" data-act="${o.notesAct || ''}" style="left:calc(var(--s)*0px);width:calc(var(--s)*39px)">Notizen${o.newNotes ? '<i class="dot"></i>' : ''}</div>
+      <div class="nameline g">${esc(o.name || '')}</div>
+      <div class="hb g ${o.mapOff ? 'off' : ''}" style="left:calc(var(--s)*213px);width:calc(var(--s)*34px)" title="${o.mapOff ? 'Gerade nicht: Hier gibt es noch keinen Stadtplan.' : ''}">Karte</div>
+      <div class="hb g ${o.reveal ? 'on' : ''}" data-act="zeigen" style="left:calc(var(--s)*250px);width:calc(var(--s)*37px)">Zeigen</div>
+      <div class="hb g" data-go="${o.menuGo || 'pause'}" style="left:calc(var(--s)*290px);width:calc(var(--s)*30px)">Menü</div>
+      ${port}
+      <div class="arr g ${st.rulers ? 'hit' : ''}" style="left:calc(var(--s)*40px);width:calc(var(--s)*16px)">◂</div>
+      <div class="inv" style="${invBg}">${slots}</div>
+      <div class="arr g ${st.rulers ? 'hit' : ''}" style="left:calc(var(--s)*289px);width:calc(var(--s)*16px);color:var(--lamp4)">▸</div>
+      <div class="pdots"><i class="on"></i><i></i></div>
+    </div>${o.overAll || ''}`, cold ? 'cold' : '');
+}
+/* ---------- Bildschirme ---------- */
+const S = {};
+S['titel-neu'] = { title: 'Hauptmenü – erster Start', group: 'Einstieg', ist: { desktop: 'titel_erststart', tablet: 'titel_erststart', phone: 'phone_titel' },
+  render(d) { const menu = `<nav class="menu ui" aria-label="Hauptmenü">${mi('Neues Spiel', { go: 'kapitel', cls: 'sel' })}${mi('Spiel laden', { go: 'laden', sub: d.wide ? '' : 'Beispielstände' })}${mi('Einstellungen', { go: 'einstellungen' })}${mi('Über MALA', { go: 'ueber' })}</nav>`;
+    return titleArt(d, 'Split') + menuBand(d, menu) + `<div class="chip ui" style="right:calc(var(--u)*4px);top:calc(var(--u)*4px)">Offline bereit ✓</div>`; } };
+S['titel'] = { title: 'Hauptmenü – mit Spielstand', group: 'Einstieg', ist: { desktop: 'titel_mit_spielstand', tablet: 'titel_mit_spielstand' },
+  render(d) { const card = `<button type="button" class="mi primary sel" data-go="spiel"><span class="thumb" style="background-image:url(img/thumb_busbahnhof.png)"></span><span class="txt"><span>Fortsetzen</span><span class="sub">Kapitel 2 · Busbahnhof</span>${d.wide ? '' : '<span class="sub">heute 19:42 · 1 Std. 12 Min.</span>'}</span></button>`;
+    const menu = `<nav class="menu ui" aria-label="Hauptmenü">${card}${mi('Neues Spiel', { go: 'kapitel' })}${mi('Spiel laden', { go: 'laden' })}${mi('Einstellungen', { go: 'einstellungen' })}${mi('Über MALA', { go: 'ueber' })}</nav>`;
+    return titleArt(d, 'Split · Sarajevo') + menuBand(d, menu); } };
+function menuBand(d, menu) {
+  if (d.wide) return `<div class="abs" style="left:0;top:0;bottom:0;width:${Math.round(d.w * 0.36)}px;background:linear-gradient(90deg,rgba(8,7,13,.92) 55%,rgba(8,7,13,0))"></div><div class="abs" style="left:14px;top:50%;transform:translateY(-50%);width:${Math.round(d.w * 0.3)}px">${menu}</div>`;
+  const oy = (d.h - 200 * d.s) / 2, top = oy + 108 * d.s; const w = Math.round(Math.min(d.w * 0.42, 150 * d.s));
+  return `<div class="abs" style="left:0;right:0;top:${top - 30}px;bottom:0;background:linear-gradient(180deg,rgba(8,7,13,0),rgba(8,7,13,.86) 34%)"></div><div class="abs" style="left:50%;transform:translateX(-50%);bottom:${Math.max(16, oy + 6 * d.s)}px;width:${w}px">${menu}</div>`; }
+S['kapitel'] = { title: 'Neues Spiel – Kapitel', group: 'Einstieg', back: 'titel', ist: { desktop: 'titel_platzwahl', tablet: 'titel_platzwahl' },
+  render(d) { const rows = mi('Kapitel 1 · Split', { go: 'spiel', sub: 'von vorn', cls: 'sel' }) + mi('Kapitel 2 · Sarajevo', { go: 'spiel', sub: 'mit deinem Ende von Kapitel 1' }) + mi('Kapitel 3', { dis: true, lock: true, why: 'nach Kapitel 2' }) + mi('Kapitel 4', { dis: true, lock: true, why: 'nach Kapitel 3' }) + mi('Kapitel 5', { dis: true, lock: true, why: 'noch nicht erschienen' });
+    return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + centered(d, `<h3 class="ui big">Neues Spiel</h3><div class="ctx ui">Startet auf Platz 2 (frei). Deine anderen Spielstände bleiben.</div><nav class="menu ui ${d.wide ? 'scroll' : ''}">${rows}</nav><div class="btnrow ui"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.62 : 0.5); } };
+function centered(d, inner, wf, cls) { const w = Math.round(d.w * (wf || 0.5)); return `<div class="panel ${cls || ''}" role="dialog" style="left:${Math.round((d.w - w) / 2)}px;top:50%;transform:translateY(-50%);width:${w}px">${inner}</div>`; }
+function paperPage(d, inner, wf) { const w = Math.round(d.w * (wf || 0.78)); return `<div class="paper ui" role="dialog" style="left:${Math.round((d.w - w) / 2)}px;top:50%;transform:translateY(-50%);width:${w}px">${inner}</div>`; }
+S['laden'] = { title: 'Spiel laden', group: 'Spielstände', back: 'titel', ist: { desktop: 'titel_fortsetzen', tablet: 'titel_fortsetzen' },
+  render(d) {
+    const c1 = `<button type="button" class="card sel" data-go="spiel"><span class="kindb auto">Automatisch</span><span class="ph" style="background-image:url(img/thumb_busbahnhof.png)"></span><b style="font-weight:400">Platz 1 · Kapitel 2</b><span class="meta">Busbahnhof · heute 19:42</span><span class="meta">1 Std. 12 Min.</span>${d.wide ? '' : `<span class="bm"><span class="mini" style="background-image:url(img/thumb_office.png)"></span><span>Lesezeichen 1<br><i>Hafenbüro · gestern</i></span></span>`}</button>`;
+    const c2 = `<button type="button" class="card" data-go="kapitelende"><span class="kindb end">Kapitelende</span><span class="ph" style="background-image:url(img/thumb_k1_riva.png)"></span><b style="font-weight:400">Platz 2 · Kapitel 1 fertig</b><span class="meta">Weiter mit Kapitel 2</span><span class="meta">3 Std. 40 Min.</span></button>`;
+    const c3 = `<div class="card bad" role="group" aria-label="Platz 3, beschädigt"><span class="kindb" style="background:var(--seal2)">Beschädigt</span><span class="ph empty"><span class="seal ui">!</span></span><b style="font-weight:400">Platz 3</b><span class="meta">Lässt sich nicht lesen.</span><button type="button" class="btn danger ui" style="min-height:max(44px,calc(var(--u)*14px))" data-act="del3">Löschen …</button></div>`;
+    return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Spiel laden</h3><div class="ctx">Spielstände · Beispielstände (mit Handlung aus Kapitel 1–2)</div><div class="cards ${d.wide ? '' : ''}">${c1}${c2}${c3}</div><div class="ctx">Spielstände liegen nur in diesem Browser auf diesem Gerät.</div><div class="btnrow"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.96 : 0.86); } };
+S['speichern'] = { title: 'Speichern (Lesezeichen)', group: 'Spielstände', back: 'pause', ist: { desktop: 'pause_gespeichert', tablet: 'pause_gespeichert' },
+  render(d) { const used = `<button type="button" class="card" data-go="ueberschreiben"><span class="kindb mark">Lesezeichen 1</span><span class="ph" style="background-image:url(img/thumb_office.png)"></span><span>Hafenbüro</span><span class="meta">gestern 22:10 · 48 Min.</span></button>`;
+    const e2 = st.saved2 ? `<button type="button" class="card sel" data-go="ueberschreiben"><span class="kindb mark">Lesezeichen 2</span><span class="ph" style="background-image:url(img/thumb_vratnik.png)"></span><span>Vratnik</span><span class="meta">jetzt · 1 Std. 13 Min.</span></button>` : `<button type="button" class="card" data-act="save2"><span class="kindb">Lesezeichen 2</span><span class="ph empty">leer</span><span>Hier speichern</span><span class="meta">Vratnik · jetzt</span></button>`;
+    const e3 = `<button type="button" class="card" data-act="save2x"><span class="kindb">Lesezeichen 3</span><span class="ph empty">leer</span><span>Hier speichern</span><span class="meta">&nbsp;</span></button>`;
+    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Speichern</h3><div class="ctx">Platz 1 · Kapitel 2 · Vratnik</div><div class="ctx">Automatisch gespeichert vor 1 Min. – bei jedem Ortswechsel neu. Lesezeichen bleiben, bis du sie überschreibst.</div><div class="cards">${used}${e2}${e3}</div><div class="btnrow"><button type="button" class="btn" data-go="pause">Zurück</button></div>`, d.wide ? 0.96 : 0.8) + (st.saved2 ? `<div class="toast ui" style="top:12px">Gespeichert ✓ Lesezeichen 2</div>` : ''); } };
+S['ueberschreiben'] = { title: 'Überschreiben bestätigen', group: 'Spielstände', back: 'speichern', ist: { desktop: 'titel_ueberschreiben', tablet: 'titel_ueberschreiben' },
+  render(d) { const box = (img, h, m) => `<div class="card" style="cursor:default"><span class="ph" style="background-image:url(img/${img}.png)"></span><span>${h}</span><span class="meta">${m}</span></div>`;
+    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Lesezeichen 1 überschreiben?</h3><div class="ctx">Das bisherige Lesezeichen geht verloren.</div><div class="cards" style="grid-template-columns:1fr auto 1fr;align-items:center">${box('thumb_office', 'Bisher: Hafenbüro', 'gestern 22:10')}<span style="font-size:calc(var(--u)*20px)">→</span>${box('thumb_vratnik', 'Neu: Vratnik', 'jetzt')}</div><div class="btnrow"><button type="button" class="btn danger" data-act="over">Überschreiben</button><button type="button" class="btn" data-go="speichern" data-autofocus>Abbrechen</button></div>`, d.wide ? 0.8 : 0.62); } };
+S['pause'] = { title: 'Pause', group: 'Im Spiel', back: 'mala', ist: { desktop: 'pause', tablet: 'pause' },
+  render(d) { const busy = st.pauseScene;
+    const rows = mi('Weiterspielen', { go: 'mala', cls: 'sel' }) + mi('Speichern', busy ? { dis: true, why: 'nach der Szene' } : { go: 'speichern' }) + mi('Laden', { go: 'laden' }) + mi('Einstellungen', { go: 'einstellungen' }) + mi('Hinweise …', busy ? { dis: true, why: 'nach der Szene' } : {}) + mi('Steuerung', {}) + mi('Zum Titelbild', { go: 'titel', sub: d.wide ? '' : 'speichert automatisch' });
+    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + centered(d, `<h3 class="ui big">Pause</h3><div class="ctx ui">Kapitel 2 · Vratnik</div><div class="status ui">Automatisch gespeichert vor 1 Min. ✓</div><nav class="menu ui ${d.wide ? 'two' : ''}" aria-label="Pausenmenü">${rows}</nav>`, d.wide ? 0.7 : 0.4); } };
+S['einstellungen'] = { title: 'Einstellungen', group: 'Im Spiel', back: 'pause', ist: { desktop: 'pause', tablet: 'pause' },
+  render(d) { const s = st.set; const seg = (k, vals) => `<span class="segp">${vals.map(([v, l]) => `<button type="button" data-set="${k}" data-val="${v}" aria-pressed="${String(s[k]) === String(v)}">${l}</button>`).join('')}</span>`;
+    const rng = (k, l) => `<span class="lbl">${l} <small id="v-${k}">${s[k]} %</small></span><input type="range" id="r-${k}" min="0" max="100" step="5" value="${s[k]}" data-range="${k}" aria-label="${l}">`;
+    const sample = 'Der Anrufbeantworter blinkt. Zwei neue Nachrichten.';
+    const body = `<div class="set">
+      <h4>Ton</h4>${rng('mus', 'Musik')}${rng('sfx', 'Geräusche')}${rng('amb', 'Umgebung')}
+      <h4>Text</h4><span class="lbl">Tempo</span>${seg('speed', [[0, 'langsam'], [1, 'normal'], [2, 'schnell']])}
+      <span class="lbl">Weiter erst nach Tippen<small>Zeilen bleiben, bis du tippst</small></span>${seg('tap', [['false', 'aus'], ['true', 'an']])}
+      <span class="lbl">Textgröße</span>${seg('size', [[0, 'normal'], [1, 'groß']])}
+      <span class="lbl">Schrift</span>${seg('font', [['pix', 'Pixel'], ['read', 'klar']])}
+      <div class="preview" id="preview" style="grid-column:1/-1"><span class="who">Marko: </span><span id="ptext">${esc(sample)}</span></div>
+      <h4>Darstellung</h4><span class="lbl">Bewegung reduzieren<small>kein Wackeln, Pulsieren, Flackern</small></span>${seg('motion', [['false', 'aus'], ['true', 'an']])}
+      <span class="lbl">Röhrenbild</span>${seg('crt', [['false', 'aus'], ['true', 'an']])}
+      <span class="lbl">Vollbild</span><span class="segp"><button type="button">umschalten</button></span>
+      <h4>Notizbuch</h4><span class="lbl">Ansicht<small>${s.nb === 'list' ? 'Liste: alle offenen Notizen auf einer Seite' : 'Nachdenken: Marko fragt sich durch'}</small></span>${seg('nb', [['list', 'Liste'], ['think', 'Nachdenken']])}
+      <h4>Sprache</h4><span class="lbl">Sprache<small>Bosanski / Hrvatski: Kapitel 3–4 bisher nur Deutsch</small></span>${seg('lang', [['de', 'Deutsch'], ['bhs', 'Bos./Hrv.']])}
+    </div>`;
+    return gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', invImg: 'hud_marko' }) + `<div class="dim"></div>` + centered(d, `<h3 class="ui big">Einstellungen</h3><div class="ui scroll" style="min-height:0;flex:1 1 auto">${body}</div><div class="btnrow ui"><button type="button" class="btn" data-go="pause">Zurück</button></div>`, d.wide ? 0.9 : 0.62); } };
+S['spiel'] = { title: 'Spielansicht · Zeigen', group: 'Im Spiel', ist: { desktop: 'zeigen', tablet: 'zeigen' }, istFor: () => (st.zeigen === 'aus' ? 'hud_marko' : 'zeigen'),
+  render(d) { return gameView(d, { scene: 'flat', port: 'portrait_marko', portLabel: 'Marko', portColor: 'var(--lamp3)', mapOff: true, name: st.zeigen === 'neu' ? '' : 'Fenster', reveal: st.zeigen === 'neu' ? 'flat' : null }); } };
+S['mala'] = { title: 'Marko und Mala', group: 'Im Spiel', ist: { desktop: 'hud_marko', tablet: 'hud_marko' }, istFor: () => (st.mala ? 'hud_mala' : 'hud_marko'),
+  render(d) { return st.mala ? gameView(d, { scene: 'vratnik_mala', mala: true, port: 'portrait_marko', portLabel: '↔ Marko', portColor: 'var(--lamp3)', portAct: 'switch', portTitle: 'Zu Marko wechseln', invImg: 'hud_mala', name: 'Laterne', newNotes: true })
+    : gameView(d, { scene: 'vratnik', port: 'portrait_mala', portLabel: '↔ Mala', portColor: 'var(--ghost4)', portAct: 'switch', portTitle: 'Zu Mala wechseln', invImg: 'hud_marko', name: 'Laterne', newNotes: true }); } };
+S['dialog'] = { title: 'Gespräch', group: 'Im Spiel', ist: { desktop: 'dialog', tablet: 'dialog' },
+  render(d) { const touch = d.label !== 'Desktop'; const opts = ['Was ist das für ein Brief?', 'Wo kann ich hier Geld wechseln?', 'Wie komme ich in die Baščaršija?', 'Sind Sie für Željo oder für Sarajevo?', 'Was ist der Unterschied zwischen Burek und Pita?', 'Gute Geschäfte.'];
+    const n = touch ? 3 : 4, rh = touch ? 15 : 13; let rows = '';
+    for (let i = 0; i < n; i++) rows += `<div class="opt g ${i === 0 ? 'sel' : ''} ${i === 1 ? 'done' : ''}" data-act="opt" style="height:calc(var(--s)*${rh}px)">${touch ? '' : `<span class="num">${i + 1}</span>`}<span>${esc(opts[i])}</span></div>`;
+    const dlg = `<div class="dlg">${rows}<span class="x g">✕</span><span class="more g">▼ noch ${opts.length - n}</span></div>`;
+    return canvas(d, `<img class="scene" src="img/scene_busbahnhof.png" alt=""><img class="abs" src="img/bust_fikret.png" alt="" style="${gpos(260, 8)};width:calc(var(--s)*57px);height:calc(var(--s)*66px)">${dlg}`); } };
+S['kapitelende'] = { title: 'Kapitelende', group: 'Übergänge', ist: { desktop: 'kapitelende', tablet: 'kapitelende' },
+  render(d) { return `<div class="cardstage">
+    <div class="g" style="color:var(--ghost4)">Ende des ersten Kapitels</div>
+    <div class="g" style="font-size:calc(var(--s)*20px);line-height:calc(var(--s)*24px);color:var(--paper2);margin-top:calc(var(--s)*6px)">Split</div>
+    <div class="g" style="color:#c8bb9f;margin-top:calc(var(--s)*4px)">Fortsetzung: Sarajevo</div>
+    <div class="g" style="color:var(--ghost3);margin-top:calc(var(--s)*8px)">Spielzeit 3 Std. 40 Min.</div>
+    <div class="btnrow ui" style="justify-content:center;margin-top:calc(var(--s)*14px)"><button type="button" class="btn primary" data-go="spiel">Weiter mit Kapitel 2</button><button type="button" class="btn" data-go="titel">Zum Titelbild</button></div>
+    <div class="ui ctx" style="color:var(--muted);margin-top:calc(var(--u)*6px);white-space:normal;max-width:90%">Dein Stand bleibt auf Platz 2. „Fortsetzen“ führt hierher zurück.</div></div>`; } };
+S['ueber'] = { title: 'Über MALA', group: 'Einstieg', back: 'titel', ist: { desktop: 'titel_ueber', tablet: 'titel_ueber' },
+  render(d) { return titleArt(d, 'Split · Sarajevo') + `<div class="dim"></div>` + paperPage(d, `<h3 class="ui big">Über MALA</h3><div class="scroll" style="white-space:normal">Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.<br><br>Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.<br><br>Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.</div><nav class="menu">${mi('Abspann Kapitel 1', { sub: 'nach dem Ende von Kapitel 1' })}${mi('Mitwirkende', { dis: true, why: 'Inhalt fehlt noch' })}</nav><div class="btnrow"><button type="button" class="btn" data-go="titel">Zurück</button></div>`, d.wide ? 0.7 : 0.56); } };
+S['hochformat'] = { title: 'Hochformat', group: 'Übergänge', ist: { portrait: 'hochformat' }, forceDev: 'portrait',
+  render(d) { return `<img class="abs" src="ist/hochformat.png" alt="" style="left:0;top:0;width:100%;height:100%;opacity:.35">` + `<div class="panel" role="dialog" style="left:16px;right:16px;top:50%;transform:translateY(-50%);align-items:center;text-align:center"><div class="ui big" style="color:var(--ghost5);white-space:normal">MALA wird quer gespielt</div><div class="ui" style="white-space:normal">Dreh dein Gerät ins Querformat.</div><div class="ui ctx" style="white-space:normal">Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.</div><div class="btnrow ui" style="justify-content:center"><button type="button" class="btn primary" data-act="ok">Gedreht weiterspielen</button></div></div>`; } };
+
+/* ---------- Erläuterungen (Belege: B = beobachtet, C = Code, V = Vorschlag, O = offen) ---------- */
+const N = {
+  'titel-neu': { lead: 'Vier Einträge statt sieben; der wichtigste Weg ist hervorgehoben.', items: [
+    ['V', 'Neues Spiel · Spiel laden · Einstellungen · Über MALA. Kapitelwahl, Sprache und Beispielstände wandern in die Unterseiten.'],
+    ['B', 'Heute: sieben gleich gewichtete Zeilen, Kapitel 1–4 sofort wählbar, Unterzeile nennt schon vor dem ersten Klick alle vier Städte.'],
+    ['V', 'Unterzeile wächst mit der Reise: beim ersten Start nur „Split“.'],
+    ['B', 'Zeilen über dem Wasser: Kontrast bis 3,7:1; am Smartphone 15 CSS-px hohe Tippflächen; die Meldung „Offline bereit ✓“ verdeckt die unteren Zeilen (Smartphone: zwei Zeilen).'],
+    ['V', 'Dunkler Verlauf hinter dem Menü (Text ≥ 9:1), Zeilen ≥ 44 CSS-px, Tastatur ↑ ↓ Enter Esc. Im Querformat am Smartphone steht das Menü links über dem dunklen Hang; Mala und die Laternen bleiben frei.'],
+    ['V', '„Offline bereit“ als kleine Marke oben rechts, nie über Bedienelementen.'] ] },
+  'titel': { lead: '„Fortsetzen“ führt mit einem Tipp in den zuletzt gespeicherten Stand.', items: [
+    ['C', 'Heute öffnet „Fortsetzen“ eine Platzwahl, auch wenn nur ein Stand existiert (06_ui.js:535–537). Der Zeitstempel „at“ wird schon gespeichert, aber nirgends gezeigt (05_engine.js:519).'],
+    ['V', 'Karte mit Vorschaubild, Kapitel, Ort, Datum und Spielzeit. Ort = Raumname des gespeicherten Stands (bereits bekannt, kein Vorgriff).'],
+    ['V', 'Ohne gültigen, lesbaren Stand fehlt „Fortsetzen“. Beschädigte oder inkompatible Stände erscheinen nur unter „Spiel laden“ mit Erklärung.'] ] },
+  'kapitel': { lead: 'Nur erreichte Kapitel sind startbar; gesperrte bleiben ohne Ortsnamen.', items: [
+    ['C', 'Heute sind alle vier Kapitel ab dem ersten Start wählbar (06_ui.js:542). Kapitel 4 übernimmt dann Vorgaben statt der Entscheidung vom Ende von Kapitel 3 (c3end).'],
+    ['O', 'BERICHT_K2.md:14 hält „Kapitelwahl ohne Sperre“ als Absicht fest – das widerspricht dem neuen Auftrag. Bitte entscheiden.'],
+    ['V', 'Freischaltung über die vorhandenen Abschluss-Marken mala.c1end … c3end. „Neues Spiel“ nimmt den ersten freien Platz ohne Rückfrage; sind alle belegt, folgt die Platzwahl mit Bestätigung.'],
+    ['V', 'Kapitel 5 als „noch nicht erschienen“, ohne Ort.'] ] },
+  'laden': { lead: 'Je Platz ein automatischer Stand und eigene Lesezeichen; Zustände sind beschriftet.', items: [
+    ['C', 'Heute schreiben alle Speicherwege (jeder Raumwechsel, 103 Skriptstellen, Titel, Tab-Wechsel, Menü) in denselben Schlüssel mala.save.N (05_engine.js:495, 510–546). Ein manueller Stand hält nur bis zum nächsten Raumwechsel.'],
+    ['C', 'Am Kapitelende wird der Stand gelöscht (90_story.js:211–212); ein beschädigter Stand erscheint als „leer“ und ist trotzdem wählbar.'],
+    ['V', 'Zustände: Automatisch, Lesezeichen, Kapitelende („Weiter mit Kapitel 2“), beschädigt (Löschen mit Rückfrage), inkompatibel (neuere Fassung), leer.'],
+    ['V', 'Laden ohne Rückfrage, aber sicher: der aktuelle Stand wird vorher als „Vor dem Laden“ gesichert, 10 s „Rückgängig“.'],
+    ['V', 'Beispielstände (bisher „Mitgelieferte Spielstände“) mit Inhaltshinweis. Optional: Sicherung als Datei exportieren/importieren. Kein Versprechen von Cloud oder Gerätewechsel.'] ] },
+  'speichern': { lead: 'Lesezeichen sind die manuellen Stände; der automatische Stand läuft daneben weiter.', items: [
+    ['B', 'Heute erscheint „Gespeichert.“ mitten im Menü über der Zeile „Vollbild“ und bleibt, solange das Menü offen ist (ist/pause_gespeichert).'],
+    ['V', 'Leeres Lesezeichen antippen = speichern. Die Bestätigung kommt erst nach erfolgreichem Schreiben; Fehler nennen den Grund („Hier geht Speichern nicht“ vs. „Browser-Speicher voll“).'],
+    ['V', 'Vorschaubild 160 × 72 aus dem aktuellen Szenenbild (keine späteren Inhalte). Ein Spielstand ist 7,5–10,4 KB groß; mit Vorschaubild passen 12 Stände weit unter jede Speichergrenze.'] ] },
+  'ueberschreiben': { lead: 'Bisher und neu nebeneinander; der Fokus liegt auf „Abbrechen“.', items: [
+    ['B', 'Heute steht „Ja, Platz 1 neu beginnen“ oben und ist hervorgehoben (ist/titel_ueberschreiben). Eine Tastaturbedienung gibt es im Titel nicht.'],
+    ['V', 'Das zerstörerische Verb steht ausgeschrieben auf dem Knopf; Esc und Klick daneben brechen ab.'] ] },
+  'pause': { lead: 'Sieben Einträge statt dreizehn; Einstellungen haben eine eigene Seite.', items: [
+    ['B', 'Heute 13 gleich gewichtete Zeilen; Einstellungen, Aktionen und „Zum Titelbild“ gemischt (06_ui.js:497–510). Smartphone: Zeilen 20 CSS-px.'],
+    ['V', 'Kopf mit Ort und Autosave-Zeit. Im Querformat am Smartphone zweispaltig: alle Zeilen ≥ 44 CSS-px ohne Scrollen.'],
+    ['V', 'Während einer Szene bleibt „Speichern“ sichtbar, mit Grund. Heute nur ausgegraut, ohne Erklärung.'],
+    ['C', 'Das Menü hält Spielzeit und Abläufe an, die Musik läuft weiter (05_engine.js:551–560). Vorschlag: Musik dämpfen; Notizbuch, Karte und Dokumente halten die Spielzeit ebenfalls an.'],
+    ['V', '„Zum Titelbild“ speichert schon heute automatisch – das wird jetzt gesagt.'] ] },
+  'einstellungen': { lead: 'Bestehende Schalter plus Lautstärke, Textgröße und weniger Bewegung, mit Vorschau.', items: [
+    ['C', 'Vorhanden: Textgeschwindigkeit inkl. „wartet auf Tippen“, Notizbuch-Ansicht, Musik an/aus, Geräusche an/aus, Röhrenbild, Vollbild, Sprache. Die Audio-Verstärkungen für Musik, Geräusche und Umgebung existieren (04_audio.js:9–21), nur ohne Regler.'],
+    ['V', 'Tempo und „Weiter erst nach Tippen“ als zwei Schalter (heute eine Zeile mit vier Zuständen). Vorschau zeigt die Zeile in gewähltem Tempo, Größe und Schrift.'],
+    ['V', '„Bewegung reduzieren“: kein Bildwackeln, kein pulsierender Rand, ruhigeres Wasser; folgt auch der Systemeinstellung.'],
+    ['V', '„Schrift: klar“ ist eine optionale Leseschrift für Menüs und – später – Gesprächstexte.'] ] },
+  'spiel': { lead: '„Zeigen“ markiert alles, beschriftet aber nur Ausgänge und Personen.', items: [
+    ['B', 'Heute zeigt „Zeigen“ in Markos Wohnung 20 Namen gleichzeitig; sie überlagern sich und Marko (Umschalter „Ist“).'],
+    ['V', 'Punkte für alle Hotspots, Namen für Ausgänge (grün) und Personen; weitere Namen beim Antippen eines Punkts. Positionen hier sind die echten Hotspot-Mittelpunkte aus dem Spiel.'],
+    ['V', '„Karte“ gesperrt: gestrichelter Rahmen und ein Grund beim Antippen (heute 1,36:1 Kontrast, kaum zu sehen).'],
+    ['V', 'Inventarpfeile 16 statt 10 Spielpixel breit (am Smartphone 27 statt 17 CSS-px); die Fläche ragt in den leeren Rand des ersten/letzten Felds. Neue Gegenstände blinken nur bis zum ersten Ansehen (heute dauerhaft).'],
+    ['V', 'Ohne Mala zeigt der Figurenknopf Marko statt eines leeren Rahmens: Man sieht immer, wen man spielt.'] ] },
+  'mala': { lead: 'Der Figurenknopf nennt das Ziel mit Pfeil; die kühle Sicht zeigt, dass Mala aktiv ist.', items: [
+    ['C', 'Heute zeigt der Knopf die andere Figur nur mit ihrem Namen, „Mala“ oder „Marko“ (06_ui.js:172–177). Das liest sich leicht als „du bist Mala“.'],
+    ['V', 'Beschriftung „↔ Mala“ / „↔ Marko“ (Glyphe ↔ gibt es schon in der Spielschrift). Klick aufs Porträt im Bild wechselt.'],
+    ['B', 'Als Mala färbt sich die Szene kühl, die Leiste wird türkis, Mala bleibt warm gezeichnet – das ist eindeutig und bleibt so.'] ] },
+  'dialog': { lead: 'Größere Antwortzeilen auf Touch-Geräten, sichtbare Zahl weiterer Antworten.', items: [
+    ['B', 'Heute: Zeilen 11 Spielpixel (am Smartphone 18 CSS-px), vier sichtbar, weitere nur über ▲/▼ ohne Anzahl; kein Mausrad, keine Tastatur.'],
+    ['V', 'Touch: drei Zeilen à 15 Spielpixel (25 CSS-px) und „▼ noch 3“. Desktop: vier Zeilen, Ziffern 1–9 und Mausrad.'],
+    ['V', 'Schon gewählte Zeilen grau mit ≥ 4,5:1 (heute 4,3:1).'] ] },
+  'kapitelende': { lead: 'Kapitelende im Stil der Kapitelanfänge, danach direkt weiter.', items: [
+    ['C', 'Heute: Endkarte, Abspann (Tippen erst nach 3 s), dann ein Kasten im Titelbild. Der Spielstand wird dabei gelöscht; „Fortsetzen“ verschwindet, wenn es der einzige war.'],
+    ['V', 'Stand bleibt als „Kapitelende“ erhalten; „Fortsetzen“ landet auf dieser Karte. Abspann überspringbar mit sichtbarem Hinweis.'],
+    ['O', 'Nach Kapitel 4 nennt der Abspann schon „Kapitel 5: Sarajevo“ (96_k4_story.js:315–318). Ob das so bleiben soll, entscheidet der Autor.'] ] },
+  'ueber': { lead: 'Text auf einer Karte statt über dem Titelbild.', items: [
+    ['B', 'Heute liegt der Text ohne Fläche über dem abgedunkelten Logo; Zeilen kollidieren mit „MALA“ und der Unterzeile (ist/titel_ueber).'],
+    ['V', 'Abspann bereits beendeter Kapitel abrufbar.'],
+    ['O', 'Eine Liste der Mitwirkenden gibt es im Spiel bisher nicht; der Abspann nennt nur die Figuren. Inhalt kommt vom Autor.'] ] },
+  'hochformat': { lead: 'Einmal erklären, dann gedreht weiterspielen lassen.', items: [
+    ['B', 'Heute dreht das Spiel im Hochformat das Bild um 90°, ohne Erklärung. Der vorbereitete Hinweis „Dreh das Gerät quer.“ ist immer verborgen (build.js:31, 99_main.js:30).'],
+    ['V', 'Hinweis mit „Gedreht weiterspielen“; die Wahl wird gemerkt. Tippflächen bleiben dieselben wie im Querformat.'] ] }
+};
+const KIND = { B: ['k-beob', 'beobachtet'], C: ['k-code', 'im Code'], V: ['k-vor', 'Vorschlag'], O: ['k-offen', 'offen'] };
+
+/* ---------- Ablauf ---------- */
+const ORDER = ['titel-neu', 'titel', 'kapitel', 'ueber', 'laden', 'speichern', 'ueberschreiben', 'pause', 'einstellungen', 'spiel', 'mala', 'dialog', 'kapitelende', 'hochformat'];
+const stage = document.getElementById('stage');
+function buildNav() { const groups = {}; ORDER.forEach(id => { const g = S[id].group; (groups[g] = groups[g] || []).push(id); });
+  document.getElementById('nav').innerHTML = Object.entries(groups).map(([g, ids]) => `<div class="grp"><h2>${g}</h2>${ids.map(id => `<button type="button" data-screen="${id}" aria-current="${id === st.screen}">${esc(S[id].title)}</button>`).join('')}</div>`).join('');
+  document.getElementById('devs').innerHTML = Object.entries(DEV).map(([k, d]) => `<button type="button" data-dev="${k}" aria-pressed="${k === st.dev}">${d.label}</button>`).join(''); }
+function render() {
+  const sc = S[st.screen]; const devKey = sc.forceDev || (st.dev === 'portrait' ? 'portrait' : st.dev); const d = DEV[devKey];
+  let inner;
+  if (devKey === 'portrait' && st.screen !== 'hochformat') inner = S['hochformat'].render(d);
+  else if (st.mode === 'ist') { const name = (sc.istFor ? sc.istFor() : null) || (sc.ist && (sc.ist[devKey] || sc.ist.desktop));
+    inner = name ? (devKey === 'phone' && name === 'phone_titel' || devKey === 'portrait' ? `<img class="abs" src="ist/${name}.png" alt="Ist-Zustand" style="left:0;top:0;width:100%;height:100%">` : canvas(d, `<img class="full" src="ist/${name}.png" alt="Ist-Zustand">`))
+      : `<div class="cardstage ui" style="color:var(--muted)">Kein Ist-Bild für dieses Gerät</div>`; }
+  else inner = sc.render(d);
+  const k = st.full ? 1 : Math.min(1, (stage.clientWidth || d.w) / d.w);
+  stage.classList.toggle('full', st.full);
+  stage.innerHTML = `<div class="vp" id="vp" style="width:${d.w}px;height:${d.h}px;--s:${d.s};--u:${d.u};transform:scale(${k})">${inner}</div><span class="badge-mode ${st.mode}">${st.mode === 'ist' ? 'Ist · Bildschirmfoto' : 'Entwurf'}</span>`;
+  stage.style.height = st.full ? Math.min(d.h + 2, window.innerHeight * 0.82) + 'px' : Math.round(d.h * k) + 2 + 'px';
+  document.getElementById('devinfo').textContent = d.label + ': ' + d.info + (k < 1 ? ` · verkleinert auf ${Math.round(k * 100)} %` : '');
+  document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.screen === st.screen)));
+  document.querySelectorAll('#devs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dev === st.dev)));
+  document.querySelectorAll('#modes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === st.mode)));
+  renderNotes(); if (st.rulers) drawRulers(); if (st.screen === 'einstellungen' && st.mode === 'neu') preview();
+  const af = stage.querySelector('[data-autofocus]'); if (af && document.activeElement && stage.contains(document.activeElement)) af.focus();
+}
+function renderNotes() { const n = N[st.screen]; const sc = S[st.screen];
+  const extra = st.screen === 'spiel' ? `<div class="seg" role="group" aria-label="Zeigen" style="margin-top:4px">${[['neu', 'Zeigen: Entwurf'], ['ist', 'Zeigen: Ist'], ['aus', 'ohne']].map(([v, l]) => `<button type="button" data-zeigen="${v}" aria-pressed="${st.zeigen === v}">${l}</button>`).join('')}</div>`
+    : st.screen === 'mala' ? `<div class="seg" style="margin-top:4px"><button type="button" data-act="switch" aria-pressed="${!st.mala}">Marko aktiv</button><button type="button" data-act="switch" aria-pressed="${st.mala}">Mala aktiv</button></div>`
+    : st.screen === 'pause' ? `<div class="seg" style="margin-top:4px"><button type="button" data-pscene="0" aria-pressed="${!st.pauseScene}">ruhig</button><button type="button" data-pscene="1" aria-pressed="${st.pauseScene}">während einer Szene</button></div>` : '';
+  document.getElementById('notes').innerHTML = `<h2>${esc(sc.title)}</h2><div>${esc(n.lead)}</div>${extra}<h3>Befund und Vorschlag</h3><ul>${n.items.map(([k, t]) => `<li><span class="kind ${KIND[k][0]}">${KIND[k][1]}</span>${esc(t).replace(/([\w./-]+\.(js|md|json|png)(:[\d–-]+)?)/g, '<code>$1</code>')}</li>`).join('')}</ul>`; }
+function drawRulers() { const vp = document.getElementById('vp'); if (!vp) return; const r0 = vp.getBoundingClientRect(); const k = r0.width / vp.offsetWidth;
+  const top = vp.querySelector('[role="dialog"], .cardstage') || vp;   /* nur die oberste, bedienbare Ebene messen */
+  top.querySelectorAll('.mi, .btn, .card, .segp button, .hb, .opt, .arr, .port').forEach(el => { const r = el.getBoundingClientRect(); const h = Math.round(r.height / k), w = Math.round(r.width / k); const m = document.createElement('div'); m.className = 'ruler';
+    m.style.cssText = `left:${(r.left - r0.left) / k}px;top:${(r.top - r0.top) / k}px;width:${w}px;height:${h}px;border-color:${Math.min(w, h) >= 44 ? '#5ce08a' : Math.min(w, h) >= 24 ? '#ffd166' : '#ff5c8a'}`; m.innerHTML = `<span style="color:${Math.min(w, h) >= 44 ? '#5ce08a' : Math.min(w, h) >= 24 ? '#ffd166' : '#ff5c8a'}">${h}</span>`; vp.appendChild(m); }); }
+let ptimer = null;
+function preview() { const el = document.getElementById('ptext'), box = document.getElementById('preview'); if (!el || !box) return; const s = st.set; const full = 'Der Anrufbeantworter blinkt. Zwei neue Nachrichten.';
+  box.style.fontFamily = s.font === 'read' ? 'var(--read)' : 'var(--pix)'; box.style.fontSize = `calc(var(--u) * ${s.size ? 13 : 10}px)`; box.style.lineHeight = `calc(var(--u) * ${s.size ? 15 : 12}px)`;
+  clearInterval(ptimer); let i = 0; const dur = Math.max(1400, 800 + full.length * 52) * [1.5, 1, 0.7][s.speed]; const step = Math.max(16, dur / 2 / full.length);
+  ptimer = setInterval(() => { i++; el.textContent = full.slice(0, i); if (i >= full.length) { clearInterval(ptimer); if (s.tap) el.textContent = full + ' ▸'; } }, step); }
+function go(id) { if (!S[id]) return; st.screen = id; render(); const f = stage.querySelector('.mi:not([aria-disabled="true"]), .card, .btn'); if (f && stage.contains(document.activeElement)) f.focus(); }
+document.addEventListener('click', (e) => { const t = e.target.closest('button, [data-act], [data-go]'); if (!t) return;
+  if (t.dataset.screen) { st.screen = t.dataset.screen; if (S[st.screen].forceDev) st.dev = S[st.screen].forceDev; else if (st.dev === 'portrait') st.dev = 'phone'; render(); return; }
+  if (t.dataset.dev) { st.dev = t.dataset.dev; if (st.dev === 'portrait') st.screen = 'hochformat'; else if (st.screen === 'hochformat') st.screen = 'titel-neu'; render(); return; }
+  if (t.dataset.mode) { st.mode = t.dataset.mode; render(); return; }
+  if (t.dataset.zeigen) { st.zeigen = t.dataset.zeigen; if (st.zeigen === 'ist') st.mode = 'ist'; else st.mode = 'neu'; render(); return; }
+  if (t.dataset.pscene !== undefined) { st.pauseScene = t.dataset.pscene === '1'; render(); return; }
+  if (t.dataset.set) { const v = t.dataset.val; st.set[t.dataset.set] = (v === 'true' ? true : v === 'false' ? false : isNaN(+v) ? v : +v); render(); return; }
+  if (!stage.contains(t) && t.dataset.act !== 'switch') return;
+  if (t.getAttribute('aria-disabled') === 'true') return;
+  const act = t.dataset.act;
+  if (act === 'switch') { st.mala = !st.mala; render(); return; }
+  if (act === 'zeigen') { st.zeigen = st.zeigen === 'neu' ? 'aus' : 'neu'; render(); return; }
+  if (act === 'save2') { st.saved2 = true; render(); return; }
+  if (act === 'over') { go('speichern'); return; }
+  if (act === 'ok') { st.dev = 'phone'; st.screen = 'mala'; render(); return; }
+  if (t.dataset.go) { go(t.dataset.go); } });
+document.addEventListener('input', (e) => { const k = e.target.dataset && e.target.dataset.range; if (!k) return; st.set[k] = +e.target.value; const v = document.getElementById('v-' + k); if (v) v.textContent = st.set[k] + ' %'; });
+stage.addEventListener('keydown', (e) => { const items = Array.from(stage.querySelectorAll('.mi:not([aria-disabled="true"]), .card, .btn, .segp button, input[type=range]')); if (!items.length) return;
+  const i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const n = i < 0 ? 0 : (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length; items[n].focus(); }
+  else if (e.key === 'Escape') { e.preventDefault(); const b = S[st.screen].back; if (b) { go(b); const f = stage.querySelector('.mi:not([aria-disabled="true"]), .card, .btn'); if (f) f.focus(); } }
+  else if (e.key === 'Enter' && i < 0 && items[0]) { e.preventDefault(); items[0].focus(); } });
+document.getElementById('full').addEventListener('change', (e) => { st.full = e.target.checked; render(); });
+document.getElementById('rulers').addEventListener('change', (e) => { st.rulers = e.target.checked; render(); });
+window.addEventListener('resize', () => { clearTimeout(window.__rt); window.__rt = setTimeout(render, 120); });
+try { const h = (location.hash || '').slice(1); if (S[h]) st.screen = h; } catch (e) {}
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (S[h]) { st.screen = h; render(); } });
+buildNav(); render(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+</script>

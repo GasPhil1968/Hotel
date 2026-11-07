@@ -1,0 +1,1520 @@
+{
+ "devices": {
+  "desktop": {
+   "scaleInfo": {
+    "scale": 4,
+    "canvas": [
+     1280,
+     800
+    ],
+    "viewport": [
+     1280,
+     800
+    ],
+    "dpr": 1,
+    "rotated": false
+   },
+   "controls": {
+    "Titel: Hauptmenüzeile": {
+     "n": 45,
+     "minSide": 36,
+     "ex": {
+      "file": "01_titel_erststart.png",
+      "code": "t:1",
+      "logical": [
+       228,
+       9
+      ],
+      "css": [
+       912,
+       36
+      ]
+     },
+     "wMin": 912,
+     "hMin": 36
+    },
+    "Titel: Platz-/Bestätigungszeile": {
+     "n": 17,
+     "minSide": 52,
+     "ex": {
+      "file": "04_titel_platzwahl.png",
+      "code": "t:0",
+      "logical": [
+       228,
+       13
+      ],
+      "css": [
+       912,
+       52
+      ]
+     },
+     "wMin": 912,
+     "hMin": 52
+    },
+    "HUD: „Notizen“": {
+     "n": 20,
+     "minSide": 60,
+     "ex": {
+      "file": "07_intro_08s.png",
+      "code": "notes",
+      "logical": [
+       39,
+       15
+      ],
+      "css": [
+       156,
+       60
+      ]
+     },
+     "wMin": 156,
+     "hMin": 60
+    },
+    "HUD: „Karte“": {
+     "n": 20,
+     "minSide": 60,
+     "ex": {
+      "file": "07_intro_08s.png",
+      "code": "map",
+      "logical": [
+       33,
+       15
+      ],
+      "css": [
+       132,
+       60
+      ]
+     },
+     "wMin": 132,
+     "hMin": 60
+    },
+    "HUD: „Zeigen“": {
+     "n": 20,
+     "minSide": 60,
+     "ex": {
+      "file": "07_intro_08s.png",
+      "code": "reveal",
+      "logical": [
+       36,
+       15
+      ],
+      "css": [
+       144,
+       60
+      ]
+     },
+     "wMin": 144,
+     "hMin": 60
+    },
+    "HUD: „Menü“": {
+     "n": 20,
+     "minSide": 60,
+     "ex": {
+      "file": "07_intro_08s.png",
+      "code": "menu",
+      "logical": [
+       29,
+       15
+      ],
+      "css": [
+       116,
+       60
+      ]
+     },
+     "wMin": 116,
+     "hMin": 60
+    },
+    "HUD: Blätterpfeil Inventar": {
+     "n": 40,
+     "minSide": 40,
+     "ex": {
+      "file": "07_intro_08s.png",
+      "code": "up",
+      "logical": [
+       10,
+       41
+      ],
+      "css": [
+       40,
+       164
+      ]
+     },
+     "wMin": 40,
+     "hMin": 164
+    },
+    "HUD: Inventarfeld": {
+     "n": 120,
+     "minSide": 152,
+     "ex": {
+      "file": "07_intro_08s.png",
+      "code": "i:0",
+      "logical": [
+       40,
+       38
+      ],
+      "css": [
+       160,
+       152
+      ]
+     },
+     "wMin": 160,
+     "hMin": 152
+    },
+    "Verb-Popup: Zeile": {
+     "n": 7,
+     "minSide": 52,
+     "ex": {
+      "file": "12_verb_popup.png",
+      "code": "p:0",
+      "logical": [
+       66,
+       13
+      ],
+      "css": [
+       264,
+       52
+      ]
+     },
+     "wMin": 264,
+     "hMin": 52
+    },
+    "Notizbuch: Schließen „X“": {
+     "n": 2,
+     "minSide": 56,
+     "ex": {
+      "file": "15_notizbuch.png",
+      "code": "nx",
+      "logical": [
+       15,
+       14
+      ],
+      "css": [
+       60,
+       56
+      ]
+     },
+     "wMin": 60,
+     "hMin": 56
+    },
+    "Pausenmenü: Zeile": {
+     "n": 39,
+     "minSide": 48,
+     "ex": {
+      "file": "16_menue.png",
+      "code": "m:0",
+      "logical": [
+       172,
+       12
+      ],
+      "css": [
+       688,
+       48
+      ]
+     },
+     "wMin": 688,
+     "hMin": 48
+    },
+    "Dialog: Schließen „X“": {
+     "n": 3,
+     "minSide": 56,
+     "ex": {
+      "file": "29_dialog_optionen.png",
+      "code": "cx",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       72,
+       56
+      ]
+     },
+     "wMin": 72,
+     "hMin": 56
+    },
+    "Dialog: Antwortzeile": {
+     "n": 10,
+     "minSide": 44,
+     "ex": {
+      "file": "29_dialog_optionen.png",
+      "code": "c:0",
+      "logical": [
+       292,
+       11
+      ],
+      "css": [
+       1168,
+       44
+      ]
+     },
+     "wMin": 1168,
+     "hMin": 44
+    },
+    "Dialog: Blättern ▲/▼": {
+     "n": 1,
+     "minSide": 56,
+     "ex": {
+      "file": "29_dialog_optionen.png",
+      "code": "cd",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       72,
+       56
+      ]
+     },
+     "wMin": 72,
+     "hMin": 56
+    },
+    "Rätsel: „Zurück“": {
+     "n": 2,
+     "minSide": 64,
+     "ex": {
+      "file": "31_raetsel_puzzle.png",
+      "code": "zx",
+      "logical": [
+       38,
+       16
+      ],
+      "css": [
+       152,
+       64
+      ]
+     },
+     "wMin": 152,
+     "hMin": 64
+    },
+    "Rätsel: Zeile": {
+     "n": 10,
+     "minSide": 72,
+     "ex": {
+      "file": "31_raetsel_puzzle.png",
+      "code": "z:0",
+      "logical": [
+       256,
+       18
+      ],
+      "css": [
+       1024,
+       72
+      ]
+     },
+     "wMin": 1024,
+     "hMin": 72
+    },
+    "Rätsel: „Vorlesen“": {
+     "n": 2,
+     "minSide": 56,
+     "ex": {
+      "file": "31_raetsel_puzzle.png",
+      "code": "zgo",
+      "logical": [
+       100,
+       14
+      ],
+      "css": [
+       400,
+       56
+      ]
+     },
+     "wMin": 400,
+     "hMin": 56
+    },
+    "Notizbuch: Zeile": {
+     "n": 4,
+     "minSide": 76,
+     "ex": {
+      "file": "33_k2_notizbuch.png",
+      "code": "n:p2_mala_gone",
+      "logical": [
+       234,
+       19
+      ],
+      "css": [
+       936,
+       76
+      ]
+     },
+     "wMin": 936,
+     "hMin": 76
+    },
+    "Karte/Overlay: Element": {
+     "n": 3,
+     "minSide": 120,
+     "ex": {
+      "file": "40_karte.png",
+      "code": "o:x",
+      "logical": [
+       78,
+       30
+      ],
+      "css": [
+       312,
+       120
+      ]
+     },
+     "wMin": 212,
+     "hMin": 120
+    },
+    "HUD: Figurenwechsel (Porträt)": {
+     "n": 6,
+     "minSide": 152,
+     "ex": {
+      "file": "41_k3_szene.png",
+      "code": "sw",
+      "logical": [
+       38,
+       40
+      ],
+      "css": [
+       152,
+       160
+      ]
+     },
+     "wMin": 152,
+     "hMin": 160
+    }
+   },
+   "engine": "chromium",
+   "version": "153.0.8010.12"
+  },
+  "tablet": {
+   "scaleInfo": {
+    "scale": 3,
+    "canvas": [
+     960,
+     600
+    ],
+    "viewport": [
+     1080,
+     810
+    ],
+    "dpr": 2,
+    "rotated": false
+   },
+   "controls": {
+    "Titel: Hauptmenüzeile": {
+     "n": 38,
+     "minSide": 27,
+     "ex": {
+      "file": "01_titel_erststart.png",
+      "code": "t:1",
+      "logical": [
+       228,
+       9
+      ],
+      "css": [
+       684,
+       27
+      ]
+     },
+     "wMin": 684,
+     "hMin": 27
+    },
+    "Titel: Platz-/Bestätigungszeile": {
+     "n": 17,
+     "minSide": 39,
+     "ex": {
+      "file": "03_titel_platzwahl.png",
+      "code": "t:0",
+      "logical": [
+       228,
+       13
+      ],
+      "css": [
+       684,
+       39
+      ]
+     },
+     "wMin": 684,
+     "hMin": 39
+    },
+    "HUD: „Notizen“": {
+     "n": 17,
+     "minSide": 45,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "notes",
+      "logical": [
+       39,
+       15
+      ],
+      "css": [
+       117,
+       45
+      ]
+     },
+     "wMin": 117,
+     "hMin": 45
+    },
+    "HUD: „Karte“": {
+     "n": 17,
+     "minSide": 45,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "map",
+      "logical": [
+       33,
+       15
+      ],
+      "css": [
+       99,
+       45
+      ]
+     },
+     "wMin": 99,
+     "hMin": 45
+    },
+    "HUD: „Zeigen“": {
+     "n": 17,
+     "minSide": 45,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "reveal",
+      "logical": [
+       36,
+       15
+      ],
+      "css": [
+       108,
+       45
+      ]
+     },
+     "wMin": 108,
+     "hMin": 45
+    },
+    "HUD: „Menü“": {
+     "n": 17,
+     "minSide": 45,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "menu",
+      "logical": [
+       29,
+       15
+      ],
+      "css": [
+       87,
+       45
+      ]
+     },
+     "wMin": 87,
+     "hMin": 45
+    },
+    "HUD: Blätterpfeil Inventar": {
+     "n": 34,
+     "minSide": 30,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "up",
+      "logical": [
+       10,
+       41
+      ],
+      "css": [
+       30,
+       123
+      ]
+     },
+     "wMin": 30,
+     "hMin": 123
+    },
+    "HUD: Inventarfeld": {
+     "n": 102,
+     "minSide": 114,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "i:0",
+      "logical": [
+       40,
+       38
+      ],
+      "css": [
+       120,
+       114
+      ]
+     },
+     "wMin": 120,
+     "hMin": 114
+    },
+    "Verb-Popup: Zeile": {
+     "n": 7,
+     "minSide": 39,
+     "ex": {
+      "file": "07_verb_popup.png",
+      "code": "p:0",
+      "logical": [
+       66,
+       13
+      ],
+      "css": [
+       198,
+       39
+      ]
+     },
+     "wMin": 198,
+     "hMin": 39
+    },
+    "Notizbuch: Schließen „X“": {
+     "n": 2,
+     "minSide": 42,
+     "ex": {
+      "file": "10_notizbuch.png",
+      "code": "nx",
+      "logical": [
+       15,
+       14
+      ],
+      "css": [
+       45,
+       42
+      ]
+     },
+     "wMin": 45,
+     "hMin": 42
+    },
+    "Pausenmenü: Zeile": {
+     "n": 39,
+     "minSide": 36,
+     "ex": {
+      "file": "11_menue.png",
+      "code": "m:0",
+      "logical": [
+       172,
+       12
+      ],
+      "css": [
+       516,
+       36
+      ]
+     },
+     "wMin": 516,
+     "hMin": 36
+    },
+    "Dialog: Schließen „X“": {
+     "n": 3,
+     "minSide": 42,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "cx",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       54,
+       42
+      ]
+     },
+     "wMin": 54,
+     "hMin": 42
+    },
+    "Dialog: Antwortzeile": {
+     "n": 10,
+     "minSide": 33,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "c:0",
+      "logical": [
+       292,
+       11
+      ],
+      "css": [
+       876,
+       33
+      ]
+     },
+     "wMin": 876,
+     "hMin": 33
+    },
+    "Dialog: Blättern ▲/▼": {
+     "n": 1,
+     "minSide": 42,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "cd",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       54,
+       42
+      ]
+     },
+     "wMin": 54,
+     "hMin": 42
+    },
+    "Rätsel: „Zurück“": {
+     "n": 2,
+     "minSide": 48,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "zx",
+      "logical": [
+       38,
+       16
+      ],
+      "css": [
+       114,
+       48
+      ]
+     },
+     "wMin": 114,
+     "hMin": 48
+    },
+    "Rätsel: Zeile": {
+     "n": 10,
+     "minSide": 54,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "z:0",
+      "logical": [
+       256,
+       18
+      ],
+      "css": [
+       768,
+       54
+      ]
+     },
+     "wMin": 768,
+     "hMin": 54
+    },
+    "Rätsel: „Vorlesen“": {
+     "n": 2,
+     "minSide": 42,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "zgo",
+      "logical": [
+       100,
+       14
+      ],
+      "css": [
+       300,
+       42
+      ]
+     },
+     "wMin": 300,
+     "hMin": 42
+    },
+    "Notizbuch: Zeile": {
+     "n": 4,
+     "minSide": 57,
+     "ex": {
+      "file": "28_k2_notizbuch.png",
+      "code": "n:p2_mala_gone",
+      "logical": [
+       234,
+       19
+      ],
+      "css": [
+       702,
+       57
+      ]
+     },
+     "wMin": 702,
+     "hMin": 57
+    },
+    "Karte/Overlay: Element": {
+     "n": 3,
+     "minSide": 90,
+     "ex": {
+      "file": "35_karte.png",
+      "code": "o:x",
+      "logical": [
+       78,
+       30
+      ],
+      "css": [
+       234,
+       90
+      ]
+     },
+     "wMin": 159,
+     "hMin": 90
+    },
+    "HUD: Figurenwechsel (Porträt)": {
+     "n": 6,
+     "minSide": 114,
+     "ex": {
+      "file": "36_k3_szene.png",
+      "code": "sw",
+      "logical": [
+       38,
+       40
+      ],
+      "css": [
+       114,
+       120
+      ]
+     },
+     "wMin": 114,
+     "hMin": 120
+    }
+   },
+   "engine": "chromium",
+   "version": "153.0.8010.12"
+  },
+  "phone": {
+   "scaleInfo": {
+    "scale": 1.667,
+    "canvas": [
+     533,
+     333
+    ],
+    "viewport": [
+     750,
+     342
+    ],
+    "dpr": 3,
+    "rotated": false
+   },
+   "controls": {
+    "Titel: Hauptmenüzeile": {
+     "n": 38,
+     "minSide": 14.999853515625,
+     "ex": {
+      "file": "01_titel_erststart.png",
+      "code": "t:1",
+      "logical": [
+       228,
+       9
+      ],
+      "css": [
+       380,
+       15
+      ]
+     },
+     "wMin": 379.9962890625,
+     "hMin": 14.999853515625
+    },
+    "Titel: Platz-/Bestätigungszeile": {
+     "n": 17,
+     "minSide": 21.666455078125,
+     "ex": {
+      "file": "03_titel_platzwahl.png",
+      "code": "t:0",
+      "logical": [
+       228,
+       13
+      ],
+      "css": [
+       380,
+       21.7
+      ]
+     },
+     "wMin": 379.9962890625,
+     "hMin": 21.666455078125
+    },
+    "HUD: „Notizen“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "notes",
+      "logical": [
+       39,
+       15
+      ],
+      "css": [
+       65,
+       25
+      ]
+     },
+     "wMin": 64.999365234375,
+     "hMin": 24.999755859375
+    },
+    "HUD: „Karte“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "map",
+      "logical": [
+       33,
+       15
+      ],
+      "css": [
+       55,
+       25
+      ]
+     },
+     "wMin": 54.999462890625004,
+     "hMin": 24.999755859375
+    },
+    "HUD: „Zeigen“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "reveal",
+      "logical": [
+       36,
+       15
+      ],
+      "css": [
+       60,
+       25
+      ]
+     },
+     "wMin": 59.9994140625,
+     "hMin": 24.999755859375
+    },
+    "HUD: „Menü“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "menu",
+      "logical": [
+       29,
+       15
+      ],
+      "css": [
+       48.3,
+       25
+      ]
+     },
+     "wMin": 48.332861328125006,
+     "hMin": 24.999755859375
+    },
+    "HUD: Blätterpfeil Inventar": {
+     "n": 34,
+     "minSide": 16.66650390625,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "up",
+      "logical": [
+       10,
+       41
+      ],
+      "css": [
+       16.7,
+       68.3
+      ]
+     },
+     "wMin": 16.66650390625,
+     "hMin": 68.33266601562501
+    },
+    "HUD: Inventarfeld": {
+     "n": 102,
+     "minSide": 63.332714843750004,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "i:0",
+      "logical": [
+       40,
+       38
+      ],
+      "css": [
+       66.7,
+       63.3
+      ]
+     },
+     "wMin": 66.666015625,
+     "hMin": 63.332714843750004
+    },
+    "Verb-Popup: Zeile": {
+     "n": 7,
+     "minSide": 21.666455078125,
+     "ex": {
+      "file": "07_verb_popup.png",
+      "code": "p:0",
+      "logical": [
+       66,
+       13
+      ],
+      "css": [
+       110,
+       21.7
+      ]
+     },
+     "wMin": 109.99892578125001,
+     "hMin": 21.666455078125
+    },
+    "Notizbuch: Schließen „X“": {
+     "n": 2,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "10_notizbuch.png",
+      "code": "nx",
+      "logical": [
+       15,
+       14
+      ],
+      "css": [
+       25,
+       23.3
+      ]
+     },
+     "wMin": 24.999755859375,
+     "hMin": 23.333105468750002
+    },
+    "Pausenmenü: Zeile": {
+     "n": 39,
+     "minSide": 19.999804687500003,
+     "ex": {
+      "file": "11_menue.png",
+      "code": "m:0",
+      "logical": [
+       172,
+       12
+      ],
+      "css": [
+       286.7,
+       20
+      ]
+     },
+     "wMin": 286.6638671875,
+     "hMin": 19.999804687500003
+    },
+    "Dialog: Schließen „X“": {
+     "n": 3,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "cx",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       30,
+       23.3
+      ]
+     },
+     "wMin": 29.99970703125,
+     "hMin": 23.333105468750002
+    },
+    "Dialog: Antwortzeile": {
+     "n": 10,
+     "minSide": 18.333154296875,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "c:0",
+      "logical": [
+       292,
+       11
+      ],
+      "css": [
+       486.7,
+       18.3
+      ]
+     },
+     "wMin": 486.66191406250005,
+     "hMin": 18.333154296875
+    },
+    "Dialog: Blättern ▲/▼": {
+     "n": 1,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "cd",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       30,
+       23.3
+      ]
+     },
+     "wMin": 29.99970703125,
+     "hMin": 23.333105468750002
+    },
+    "Rätsel: „Zurück“": {
+     "n": 2,
+     "minSide": 26.66640625,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "zx",
+      "logical": [
+       38,
+       16
+      ],
+      "css": [
+       63.3,
+       26.7
+      ]
+     },
+     "wMin": 63.332714843750004,
+     "hMin": 26.66640625
+    },
+    "Rätsel: Zeile": {
+     "n": 10,
+     "minSide": 29.99970703125,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "z:0",
+      "logical": [
+       256,
+       18
+      ],
+      "css": [
+       426.7,
+       30
+      ]
+     },
+     "wMin": 426.6625,
+     "hMin": 29.99970703125
+    },
+    "Rätsel: „Vorlesen“": {
+     "n": 2,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "zgo",
+      "logical": [
+       100,
+       14
+      ],
+      "css": [
+       166.7,
+       23.3
+      ]
+     },
+     "wMin": 166.6650390625,
+     "hMin": 23.333105468750002
+    },
+    "Notizbuch: Zeile": {
+     "n": 4,
+     "minSide": 31.666357421875002,
+     "ex": {
+      "file": "28_k2_notizbuch.png",
+      "code": "n:p2_mala_gone",
+      "logical": [
+       234,
+       19
+      ],
+      "css": [
+       390,
+       31.7
+      ]
+     },
+     "wMin": 389.99619140625003,
+     "hMin": 31.666357421875002
+    },
+    "Karte/Overlay: Element": {
+     "n": 3,
+     "minSide": 49.99951171875,
+     "ex": {
+      "file": "35_karte.png",
+      "code": "o:x",
+      "logical": [
+       78,
+       30
+      ],
+      "css": [
+       130,
+       50
+      ]
+     },
+     "wMin": 88.33247070312501,
+     "hMin": 49.99951171875
+    },
+    "HUD: Figurenwechsel (Porträt)": {
+     "n": 6,
+     "minSide": 63.332714843750004,
+     "ex": {
+      "file": "36_k3_szene.png",
+      "code": "sw",
+      "logical": [
+       38,
+       40
+      ],
+      "css": [
+       63.3,
+       66.7
+      ]
+     },
+     "wMin": 63.332714843750004,
+     "hMin": 66.666015625
+    }
+   },
+   "engine": "webkit",
+   "version": "26.6"
+  },
+  "phonePortrait": {
+   "scaleInfo": {
+    "scale": 1.667,
+    "canvas": [
+     533,
+     333
+    ],
+    "viewport": [
+     390,
+     664
+    ],
+    "dpr": 3,
+    "rotated": true
+   },
+   "controls": {
+    "Titel: Hauptmenüzeile": {
+     "n": 38,
+     "minSide": 14.999853515625,
+     "ex": {
+      "file": "01_titel_erststart.png",
+      "code": "t:1",
+      "logical": [
+       228,
+       9
+      ],
+      "css": [
+       380,
+       15
+      ]
+     },
+     "wMin": 379.9962890625,
+     "hMin": 14.999853515625
+    },
+    "Titel: Platz-/Bestätigungszeile": {
+     "n": 17,
+     "minSide": 21.666455078125,
+     "ex": {
+      "file": "03_titel_platzwahl.png",
+      "code": "t:0",
+      "logical": [
+       228,
+       13
+      ],
+      "css": [
+       380,
+       21.7
+      ]
+     },
+     "wMin": 379.9962890625,
+     "hMin": 21.666455078125
+    },
+    "HUD: „Notizen“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "notes",
+      "logical": [
+       39,
+       15
+      ],
+      "css": [
+       65,
+       25
+      ]
+     },
+     "wMin": 64.999365234375,
+     "hMin": 24.999755859375
+    },
+    "HUD: „Karte“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "map",
+      "logical": [
+       33,
+       15
+      ],
+      "css": [
+       55,
+       25
+      ]
+     },
+     "wMin": 54.999462890625004,
+     "hMin": 24.999755859375
+    },
+    "HUD: „Zeigen“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "reveal",
+      "logical": [
+       36,
+       15
+      ],
+      "css": [
+       60,
+       25
+      ]
+     },
+     "wMin": 59.9994140625,
+     "hMin": 24.999755859375
+    },
+    "HUD: „Menü“": {
+     "n": 17,
+     "minSide": 24.999755859375,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "menu",
+      "logical": [
+       29,
+       15
+      ],
+      "css": [
+       48.3,
+       25
+      ]
+     },
+     "wMin": 48.332861328125006,
+     "hMin": 24.999755859375
+    },
+    "HUD: Blätterpfeil Inventar": {
+     "n": 34,
+     "minSide": 16.66650390625,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "up",
+      "logical": [
+       10,
+       41
+      ],
+      "css": [
+       16.7,
+       68.3
+      ]
+     },
+     "wMin": 16.66650390625,
+     "hMin": 68.33266601562501
+    },
+    "HUD: Inventarfeld": {
+     "n": 102,
+     "minSide": 63.332714843750004,
+     "ex": {
+      "file": "05_intro_erzaehlung.png",
+      "code": "i:0",
+      "logical": [
+       40,
+       38
+      ],
+      "css": [
+       66.7,
+       63.3
+      ]
+     },
+     "wMin": 66.666015625,
+     "hMin": 63.332714843750004
+    },
+    "Verb-Popup: Zeile": {
+     "n": 7,
+     "minSide": 21.666455078125,
+     "ex": {
+      "file": "07_verb_popup.png",
+      "code": "p:0",
+      "logical": [
+       66,
+       13
+      ],
+      "css": [
+       110,
+       21.7
+      ]
+     },
+     "wMin": 109.99892578125001,
+     "hMin": 21.666455078125
+    },
+    "Notizbuch: Schließen „X“": {
+     "n": 2,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "10_notizbuch.png",
+      "code": "nx",
+      "logical": [
+       15,
+       14
+      ],
+      "css": [
+       25,
+       23.3
+      ]
+     },
+     "wMin": 24.999755859375,
+     "hMin": 23.333105468750002
+    },
+    "Pausenmenü: Zeile": {
+     "n": 39,
+     "minSide": 19.999804687500003,
+     "ex": {
+      "file": "11_menue.png",
+      "code": "m:0",
+      "logical": [
+       172,
+       12
+      ],
+      "css": [
+       286.7,
+       20
+      ]
+     },
+     "wMin": 286.6638671875,
+     "hMin": 19.999804687500003
+    },
+    "Dialog: Schließen „X“": {
+     "n": 3,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "cx",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       30,
+       23.3
+      ]
+     },
+     "wMin": 29.99970703125,
+     "hMin": 23.333105468750002
+    },
+    "Dialog: Antwortzeile": {
+     "n": 10,
+     "minSide": 18.333154296875,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "c:0",
+      "logical": [
+       292,
+       11
+      ],
+      "css": [
+       486.7,
+       18.3
+      ]
+     },
+     "wMin": 486.66191406250005,
+     "hMin": 18.333154296875
+    },
+    "Dialog: Blättern ▲/▼": {
+     "n": 1,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "24_dialog_optionen.png",
+      "code": "cd",
+      "logical": [
+       18,
+       14
+      ],
+      "css": [
+       30,
+       23.3
+      ]
+     },
+     "wMin": 29.99970703125,
+     "hMin": 23.333105468750002
+    },
+    "Rätsel: „Zurück“": {
+     "n": 2,
+     "minSide": 26.66640625,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "zx",
+      "logical": [
+       38,
+       16
+      ],
+      "css": [
+       63.3,
+       26.7
+      ]
+     },
+     "wMin": 63.332714843750004,
+     "hMin": 26.66640625
+    },
+    "Rätsel: Zeile": {
+     "n": 10,
+     "minSide": 29.99970703125,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "z:0",
+      "logical": [
+       256,
+       18
+      ],
+      "css": [
+       426.7,
+       30
+      ]
+     },
+     "wMin": 426.6625,
+     "hMin": 29.99970703125
+    },
+    "Rätsel: „Vorlesen“": {
+     "n": 2,
+     "minSide": 23.333105468750002,
+     "ex": {
+      "file": "26_raetsel_puzzle.png",
+      "code": "zgo",
+      "logical": [
+       100,
+       14
+      ],
+      "css": [
+       166.7,
+       23.3
+      ]
+     },
+     "wMin": 166.6650390625,
+     "hMin": 23.333105468750002
+    },
+    "Notizbuch: Zeile": {
+     "n": 4,
+     "minSide": 31.666357421875002,
+     "ex": {
+      "file": "28_k2_notizbuch.png",
+      "code": "n:p2_mala_gone",
+      "logical": [
+       234,
+       19
+      ],
+      "css": [
+       390,
+       31.7
+      ]
+     },
+     "wMin": 389.99619140625003,
+     "hMin": 31.666357421875002
+    },
+    "Karte/Overlay: Element": {
+     "n": 3,
+     "minSide": 49.99951171875,
+     "ex": {
+      "file": "35_karte.png",
+      "code": "o:x",
+      "logical": [
+       78,
+       30
+      ],
+      "css": [
+       130,
+       50
+      ]
+     },
+     "wMin": 88.33247070312501,
+     "hMin": 49.99951171875
+    },
+    "HUD: Figurenwechsel (Porträt)": {
+     "n": 6,
+     "minSide": 63.332714843750004,
+     "ex": {
+      "file": "36_k3_szene.png",
+      "code": "sw",
+      "logical": [
+       38,
+       40
+      ],
+      "css": [
+       63.3,
+       66.7
+      ]
+     },
+     "wMin": 63.332714843750004,
+     "hMin": 66.666015625
+    }
+   },
+   "engine": "webkit",
+   "version": "26.6"
+  }
+ }
+}

@@ -1,0 +1,4083 @@
+{
+ "device": "phone",
+ "engine": "webkit",
+ "version": "26.6",
+ "shots": [
+  {
+   "file": "01_titel_erststart.png",
+   "note": "Erster Aufruf über http, leerer Speicher"
+  },
+  {
+   "file": "02_titel_ohne_meldung.png",
+   "note": ""
+  },
+  {
+   "file": "03_titel_platzwahl.png",
+   "note": "nach Tipp auf „Kapitel 1: Split“"
+  },
+  {
+   "file": "04_intro_karte.png",
+   "note": "Kapitelkarte 1,5 s nach Spielbeginn"
+  },
+  {
+   "file": "05_intro_erzaehlung.png",
+   "note": "Erzählzeile im Raum (6,5 s)"
+  },
+  {
+   "file": "06_erste_kontrolle.png",
+   "note": ""
+  },
+  {
+   "file": "07_verb_popup.png",
+   "note": "Tipp auf Hotspot „window“"
+  },
+  {
+   "file": "08_zeigen.png",
+   "note": "Knopf „Zeigen“ (normale Geschwindigkeit, 0,5 s danach)"
+  },
+  {
+   "file": "09_zeigen_spaeter.png",
+   "note": "4 s nach „Zeigen“"
+  },
+  {
+   "file": "10_notizbuch.png",
+   "note": "Knopf „Notizen“"
+  },
+  {
+   "file": "11_menue.png",
+   "note": "Knopf „Menü“"
+  },
+  {
+   "file": "12_menue_speichern.png",
+   "note": "„Speichern (Platz 1)“ angetippt (normale Geschwindigkeit)"
+  },
+  {
+   "file": "13_menue_zum_titelbild.png",
+   "note": "„Zum Titelbild“ angetippt (ohne Rückfrage?)"
+  },
+  {
+   "file": "14_titel_mit_spielstand.png",
+   "note": "Spielstand Kapitel 2 im Speicher"
+  },
+  {
+   "file": "15_titel_fortsetzen_platz.png",
+   "note": "nach „Fortsetzen“"
+  },
+  {
+   "file": "16_titel_neu_platzwahl_belegt.png",
+   "note": "„Kapitel 1“ bei belegtem Platz 1"
+  },
+  {
+   "file": "17_titel_ueberschreiben.png",
+   "note": "„Platz 1“ (belegt) angetippt"
+  },
+  {
+   "file": "18_titel_mitgelieferte.png",
+   "note": "„Mitgelieferte Spielstände“"
+  },
+  {
+   "file": "19_titel_ueber.png",
+   "note": "„Über das Spiel“"
+  },
+  {
+   "file": "20_titel_sprache.png",
+   "note": "„Sprache: …“ angetippt"
+  },
+  {
+   "file": "21_k2_start_hud.png",
+   "note": "Spielstand Kapitel 2 geladen"
+  },
+  {
+   "file": "22_npc_popup.png",
+   "note": "Tipp auf Fikret"
+  },
+  {
+   "file": "23_npc_rede.png",
+   "note": "Fikret spricht"
+  },
+  {
+   "file": "24_dialog_optionen.png",
+   "note": "Antwortoptionen Fikret"
+  },
+  {
+   "file": "25_dokument_brief.png",
+   "note": "Brief als Dokument"
+  },
+  {
+   "file": "26_raetsel_puzzle.png",
+   "note": "Übersetzungsrätsel"
+  },
+  {
+   "file": "27_raetsel_rueckmeldung.png",
+   "note": "nach „Vorlesen“ mit falscher Fassung"
+  },
+  {
+   "file": "28_k2_notizbuch.png",
+   "note": "Notizbuch in Kapitel 2"
+  },
+  {
+   "file": "29_k2_menue.png",
+   "note": "Pausenmenü in Kapitel 2"
+  },
+  {
+   "file": "30_k2_hinweis.png",
+   "note": "„Hinweis …“"
+  },
+  {
+   "file": "31_k2_hinweis_stufe1.png",
+   "note": "erste Hinweiszeile gewählt"
+  },
+  {
+   "file": "32_k2_anleitung.png",
+   "note": "„Spielanleitung“"
+  },
+  {
+   "file": "33_inventar_popup.png",
+   "note": "Tipp auf ersten Gegenstand"
+  },
+  {
+   "file": "34_inventar_benutze.png",
+   "note": "„Benutze“ gewählt (Gegenstand hängt am Zeiger/Finger)"
+  },
+  {
+   "file": "35_karte.png",
+   "note": "Knopf „Karte“"
+  },
+  {
+   "file": "36_k3_szene.png",
+   "note": "Stand k3_peil"
+  },
+  {
+   "file": "37_k3_mala_aktiv.png",
+   "note": "Figurenwechsel zu Mala (Porträtknopf)"
+  },
+  {
+   "file": "38_k4_szene.png",
+   "note": "Stand k4_silvester"
+  },
+  {
+   "file": "39_k4_mala_aktiv.png",
+   "note": "Figurenwechsel zu Mala (Porträtknopf)"
+  },
+  {
+   "file": "40_k2_limbo_szene.png",
+   "note": "Stand k2_limbo"
+  },
+  {
+   "file": "41_k2_limbo_mala_aktiv.png",
+   "note": "Figurenwechsel zu Mala (Porträtknopf)"
+  }
+ ],
+ "geometry": {
+  "01_titel_erststart.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 132,
+     "x1": 273,
+     "y1": 141,
+     "n": 2280
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 142,
+     "x1": 273,
+     "y1": 150,
+     "n": 2052
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 151,
+     "x1": 273,
+     "y1": 159,
+     "n": 2052
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 160,
+     "x1": 273,
+     "y1": 168,
+     "n": 2052
+    },
+    "t:4": {
+     "x0": 46,
+     "y0": 169,
+     "x1": 273,
+     "y1": 177,
+     "n": 2052
+    },
+    "t:5": {
+     "x0": 46,
+     "y0": 178,
+     "x1": 273,
+     "y1": 186,
+     "n": 2052
+    },
+    "t:6": {
+     "x0": 46,
+     "y0": 187,
+     "x1": 273,
+     "y1": 195,
+     "n": 2052
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Kapitel 1: Split",
+     "Kapitel 2: Sarajevo",
+     "Kapitel 3: Mostar",
+     "Kapitel 4: München",
+     "Mitgelieferte Spielstände",
+     "Sprache: Deutsch",
+     "Über das Spiel"
+    ],
+    "msg": null
+   }
+  },
+  "02_titel_ohne_meldung.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 132,
+     "x1": 273,
+     "y1": 141,
+     "n": 2280
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 142,
+     "x1": 273,
+     "y1": 150,
+     "n": 2052
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 151,
+     "x1": 273,
+     "y1": 159,
+     "n": 2052
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 160,
+     "x1": 273,
+     "y1": 168,
+     "n": 2052
+    },
+    "t:4": {
+     "x0": 46,
+     "y0": 169,
+     "x1": 273,
+     "y1": 177,
+     "n": 2052
+    },
+    "t:5": {
+     "x0": 46,
+     "y0": 178,
+     "x1": 273,
+     "y1": 186,
+     "n": 2052
+    },
+    "t:6": {
+     "x0": 46,
+     "y0": 187,
+     "x1": 273,
+     "y1": 195,
+     "n": 2052
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Kapitel 1: Split",
+     "Kapitel 2: Sarajevo",
+     "Kapitel 3: Mostar",
+     "Kapitel 4: München",
+     "Mitgelieferte Spielstände",
+     "Sprache: Deutsch",
+     "Über das Spiel"
+    ],
+    "msg": null
+   }
+  },
+  "03_titel_platzwahl.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 81,
+     "x1": 273,
+     "y1": 93,
+     "n": 2964
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 94,
+     "x1": 273,
+     "y1": 106,
+     "n": 2964
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 107,
+     "x1": 273,
+     "y1": 119,
+     "n": 2964
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 120,
+     "x1": 273,
+     "y1": 132,
+     "n": 2964
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Platz 1:  leer",
+     "Platz 2:  leer",
+     "Platz 3:  leer",
+     "Zurück"
+    ],
+    "msg": null
+   }
+  },
+  "04_intro_karte.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {},
+   "st": {
+    "scr": "card",
+    "room": null,
+    "busy": true,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "05_intro_erzaehlung.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": true,
+    "dlg": null,
+    "ov": null,
+    "speech": {
+     "t": "Seit drei Tagen Jugo. Warmer Regen, schwere Luft, und ein Kopf wie Blei.",
+     "who": "#"
+    },
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "06_erste_kontrolle.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "07_verb_popup.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "pop": {
+     "x0": 166,
+     "y0": 2,
+     "x1": 231,
+     "y1": 57,
+     "n": 1122
+    },
+    "p:0": {
+     "x0": 166,
+     "y0": 17,
+     "x1": 231,
+     "y1": 29,
+     "n": 858
+    },
+    "p:1": {
+     "x0": 166,
+     "y0": 30,
+     "x1": 231,
+     "y1": 42,
+     "n": 858
+    },
+    "p:2": {
+     "x0": 166,
+     "y0": 43,
+     "x1": 231,
+     "y1": 55,
+     "n": 858
+    },
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": [
+     "Öffne",
+     "Benutze",
+     "Schau an"
+    ],
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "08_zeigen.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "09_zeigen_spaeter.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "10_notizbuch.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "nx": {
+     "x0": 269,
+     "y0": 6,
+     "x1": 283,
+     "y1": 19,
+     "n": 210
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": "notebook",
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "11_menue.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "m:0": {
+     "x0": 74,
+     "y0": 25,
+     "x1": 245,
+     "y1": 36,
+     "n": 2064
+    },
+    "m:1": {
+     "x0": 74,
+     "y0": 37,
+     "x1": 245,
+     "y1": 48,
+     "n": 2064
+    },
+    "m:2": {
+     "x0": 74,
+     "y0": 49,
+     "x1": 245,
+     "y1": 60,
+     "n": 2064
+    },
+    "m:3": {
+     "x0": 74,
+     "y0": 61,
+     "x1": 245,
+     "y1": 72,
+     "n": 2064
+    },
+    "m:4": {
+     "x0": 74,
+     "y0": 73,
+     "x1": 245,
+     "y1": 84,
+     "n": 2064
+    },
+    "m:5": {
+     "x0": 74,
+     "y0": 85,
+     "x1": 245,
+     "y1": 96,
+     "n": 2064
+    },
+    "m:6": {
+     "x0": 74,
+     "y0": 97,
+     "x1": 245,
+     "y1": 108,
+     "n": 2064
+    },
+    "m:7": {
+     "x0": 74,
+     "y0": 109,
+     "x1": 245,
+     "y1": 120,
+     "n": 2064
+    },
+    "m:8": {
+     "x0": 74,
+     "y0": 121,
+     "x1": 245,
+     "y1": 132,
+     "n": 2064
+    },
+    "m:9": {
+     "x0": 74,
+     "y0": 133,
+     "x1": 245,
+     "y1": 144,
+     "n": 2064
+    },
+    "m:10": {
+     "x0": 74,
+     "y0": 145,
+     "x1": 245,
+     "y1": 156,
+     "n": 2064
+    },
+    "m:11": {
+     "x0": 74,
+     "y0": 157,
+     "x1": 245,
+     "y1": 168,
+     "n": 2064
+    },
+    "m:12": {
+     "x0": 74,
+     "y0": 169,
+     "x1": 245,
+     "y1": 180,
+     "n": 2064
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": true,
+    "title": null,
+    "msg": null
+   }
+  },
+  "12_menue_speichern.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "m:0": {
+     "x0": 74,
+     "y0": 25,
+     "x1": 245,
+     "y1": 36,
+     "n": 2064
+    },
+    "m:1": {
+     "x0": 74,
+     "y0": 37,
+     "x1": 245,
+     "y1": 48,
+     "n": 2064
+    },
+    "m:2": {
+     "x0": 74,
+     "y0": 49,
+     "x1": 245,
+     "y1": 60,
+     "n": 2064
+    },
+    "m:3": {
+     "x0": 74,
+     "y0": 61,
+     "x1": 245,
+     "y1": 72,
+     "n": 2064
+    },
+    "m:4": {
+     "x0": 74,
+     "y0": 73,
+     "x1": 245,
+     "y1": 84,
+     "n": 2064
+    },
+    "m:5": {
+     "x0": 74,
+     "y0": 85,
+     "x1": 245,
+     "y1": 96,
+     "n": 2064
+    },
+    "m:6": {
+     "x0": 74,
+     "y0": 97,
+     "x1": 245,
+     "y1": 108,
+     "n": 2064
+    },
+    "m:7": {
+     "x0": 74,
+     "y0": 109,
+     "x1": 245,
+     "y1": 120,
+     "n": 2064
+    },
+    "m:8": {
+     "x0": 74,
+     "y0": 121,
+     "x1": 245,
+     "y1": 132,
+     "n": 2064
+    },
+    "m:9": {
+     "x0": 74,
+     "y0": 133,
+     "x1": 245,
+     "y1": 144,
+     "n": 2064
+    },
+    "m:10": {
+     "x0": 74,
+     "y0": 145,
+     "x1": 245,
+     "y1": 156,
+     "n": 2064
+    },
+    "m:11": {
+     "x0": 74,
+     "y0": 157,
+     "x1": 245,
+     "y1": 168,
+     "n": 2064
+    },
+    "m:12": {
+     "x0": 74,
+     "y0": 169,
+     "x1": 245,
+     "y1": 180,
+     "n": 2064
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": true,
+    "title": null,
+    "msg": "Gespeichert."
+   }
+  },
+  "13_menue_zum_titelbild.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 124,
+     "x1": 273,
+     "y1": 133,
+     "n": 2280
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 134,
+     "x1": 273,
+     "y1": 142,
+     "n": 2052
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 143,
+     "x1": 273,
+     "y1": 151,
+     "n": 2052
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 152,
+     "x1": 273,
+     "y1": 160,
+     "n": 2052
+    },
+    "t:4": {
+     "x0": 46,
+     "y0": 161,
+     "x1": 273,
+     "y1": 169,
+     "n": 2052
+    },
+    "t:5": {
+     "x0": 46,
+     "y0": 170,
+     "x1": 273,
+     "y1": 178,
+     "n": 2052
+    },
+    "t:6": {
+     "x0": 46,
+     "y0": 179,
+     "x1": 273,
+     "y1": 187,
+     "n": 2052
+    },
+    "t:7": {
+     "x0": 46,
+     "y0": 188,
+     "x1": 273,
+     "y1": 196,
+     "n": 2052
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": "flat",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Fortsetzen",
+     "Kapitel 1: Split",
+     "Kapitel 2: Sarajevo",
+     "Kapitel 3: Mostar",
+     "Kapitel 4: München",
+     "Mitgelieferte Spielstände",
+     "Sprache: Deutsch",
+     "Über das Spiel"
+    ],
+    "msg": "Gespeichert."
+   }
+  },
+  "14_titel_mit_spielstand.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 124,
+     "x1": 273,
+     "y1": 133,
+     "n": 2280
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 134,
+     "x1": 273,
+     "y1": 142,
+     "n": 2052
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 143,
+     "x1": 273,
+     "y1": 151,
+     "n": 2052
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 152,
+     "x1": 273,
+     "y1": 160,
+     "n": 2052
+    },
+    "t:4": {
+     "x0": 46,
+     "y0": 161,
+     "x1": 273,
+     "y1": 169,
+     "n": 2052
+    },
+    "t:5": {
+     "x0": 46,
+     "y0": 170,
+     "x1": 273,
+     "y1": 178,
+     "n": 2052
+    },
+    "t:6": {
+     "x0": 46,
+     "y0": 179,
+     "x1": 273,
+     "y1": 187,
+     "n": 2052
+    },
+    "t:7": {
+     "x0": 46,
+     "y0": 188,
+     "x1": 273,
+     "y1": 196,
+     "n": 2052
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Fortsetzen",
+     "Kapitel 1: Split",
+     "Kapitel 2: Sarajevo",
+     "Kapitel 3: Mostar",
+     "Kapitel 4: München",
+     "Mitgelieferte Spielstände",
+     "Sprache: Deutsch",
+     "Über das Spiel"
+    ],
+    "msg": null
+   }
+  },
+  "15_titel_fortsetzen_platz.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 81,
+     "x1": 273,
+     "y1": 93,
+     "n": 2964
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 94,
+     "x1": 273,
+     "y1": 106,
+     "n": 2964
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 107,
+     "x1": 273,
+     "y1": 119,
+     "n": 2964
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 120,
+     "x1": 273,
+     "y1": 132,
+     "n": 2964
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Platz 1:  Sarajevo: Prolog  (1 Min.)",
+     "Platz 2:  leer",
+     "Platz 3:  leer",
+     "Zurück"
+    ],
+    "msg": null
+   }
+  },
+  "16_titel_neu_platzwahl_belegt.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 81,
+     "x1": 273,
+     "y1": 93,
+     "n": 2964
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 94,
+     "x1": 273,
+     "y1": 106,
+     "n": 2964
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 107,
+     "x1": 273,
+     "y1": 119,
+     "n": 2964
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 120,
+     "x1": 273,
+     "y1": 132,
+     "n": 2964
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Platz 1:  Sarajevo: Prolog  (1 Min.)",
+     "Platz 2:  leer",
+     "Platz 3:  leer",
+     "Zurück"
+    ],
+    "msg": null
+   }
+  },
+  "17_titel_ueberschreiben.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 94,
+     "x1": 273,
+     "y1": 106,
+     "n": 2964
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 107,
+     "x1": 273,
+     "y1": 119,
+     "n": 2964
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Ja, Platz 1 neu beginnen",
+     "Nein, behalten"
+    ],
+    "msg": null
+   }
+  },
+  "18_titel_mitgelieferte.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 88,
+     "x1": 273,
+     "y1": 100,
+     "n": 2964
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 101,
+     "x1": 273,
+     "y1": 113,
+     "n": 2964
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 114,
+     "x1": 273,
+     "y1": 126,
+     "n": 2964
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Split: kurz vor Ivkas Wahrheit",
+     "Sarajevo: vor dem Ankaufbuch",
+     "Zurück"
+    ],
+    "msg": null
+   }
+  },
+  "19_titel_ueber.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 182,
+     "x1": 273,
+     "y1": 194,
+     "n": 2964
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Zurück"
+    ],
+    "msg": null
+   }
+  },
+  "20_titel_sprache.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "t:0": {
+     "x0": 46,
+     "y0": 124,
+     "x1": 273,
+     "y1": 133,
+     "n": 2280
+    },
+    "t:1": {
+     "x0": 46,
+     "y0": 134,
+     "x1": 273,
+     "y1": 142,
+     "n": 2052
+    },
+    "t:2": {
+     "x0": 46,
+     "y0": 143,
+     "x1": 273,
+     "y1": 151,
+     "n": 2052
+    },
+    "t:3": {
+     "x0": 46,
+     "y0": 152,
+     "x1": 273,
+     "y1": 160,
+     "n": 2052
+    },
+    "t:4": {
+     "x0": 46,
+     "y0": 161,
+     "x1": 273,
+     "y1": 169,
+     "n": 2052
+    },
+    "t:5": {
+     "x0": 46,
+     "y0": 170,
+     "x1": 273,
+     "y1": 178,
+     "n": 2052
+    },
+    "t:6": {
+     "x0": 46,
+     "y0": 179,
+     "x1": 273,
+     "y1": 187,
+     "n": 2052
+    },
+    "t:7": {
+     "x0": 46,
+     "y0": 188,
+     "x1": 273,
+     "y1": 196,
+     "n": 2052
+    }
+   },
+   "st": {
+    "scr": "title",
+    "room": null,
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "pro",
+    "pop": null,
+    "menu": false,
+    "title": [
+     "Fortsetzen",
+     "Kapitel 1: Split",
+     "Kapitel 2: Sarajevo",
+     "Kapitel 3: Mostar",
+     "Kapitel 4: München",
+     "Mitgelieferte Spielstände",
+     "Sprache: Bosanski / Hrvatski",
+     "Über das Spiel"
+    ],
+    "msg": null
+   }
+  },
+  "21_k2_start_hud.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "22_npc_popup.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "pop": {
+     "x0": 187,
+     "y0": 48,
+     "x1": 252,
+     "y1": 90,
+     "n": 1122
+    },
+    "p:0": {
+     "x0": 187,
+     "y0": 63,
+     "x1": 252,
+     "y1": 75,
+     "n": 858
+    },
+    "p:1": {
+     "x0": 187,
+     "y0": 76,
+     "x1": 252,
+     "y1": 88,
+     "n": 858
+    },
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": [
+     "Rede mit",
+     "Schau an"
+    ],
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "23_npc_rede.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": null,
+    "ov": null,
+    "speech": {
+     "t": "Fikret Hadžić. Buregdžinica „Saraj“, seit einundneunzig, auch im Krieg. Sie sehen aus, als könnten Sie lesen.",
+     "who": "fikret"
+    },
+    "acting": 1,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "24_dialog_optionen.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "cx": {
+     "x0": 299,
+     "y0": 146,
+     "x1": 316,
+     "y1": 159,
+     "n": 252
+    },
+    "c:0": {
+     "x0": 5,
+     "y0": 148,
+     "x1": 296,
+     "y1": 158,
+     "n": 3212
+    },
+    "c:1": {
+     "x0": 5,
+     "y0": 159,
+     "x1": 296,
+     "y1": 169,
+     "n": 3212
+    },
+    "c:2": {
+     "x0": 5,
+     "y0": 170,
+     "x1": 296,
+     "y1": 180,
+     "n": 3212
+    },
+    "c:3": {
+     "x0": 5,
+     "y0": 181,
+     "x1": 296,
+     "y1": 191,
+     "n": 3212
+    },
+    "cd": {
+     "x0": 299,
+     "y0": 183,
+     "x1": 316,
+     "y1": 196,
+     "n": 252
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": [
+     "Was ist das für ein Brief?",
+     "Wo kann ich hier Geld wechseln?",
+     "Wie komme ich in die Baščaršija?",
+     "Sind Sie für Željo oder für Sarajevo?",
+     "Was ist der Unterschied zwischen Burek und Pita?",
+     "Gute Geschäfte."
+    ],
+    "ov": null,
+    "speech": null,
+    "acting": 1,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "25_dokument_brief.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {},
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": null,
+    "ov": "doc",
+    "speech": null,
+    "acting": 1,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "26_raetsel_puzzle.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "zx": {
+     "x0": 262,
+     "y0": 8,
+     "x1": 299,
+     "y1": 23,
+     "n": 608
+    },
+    "z:0": {
+     "x0": 32,
+     "y0": 53,
+     "x1": 287,
+     "y1": 70,
+     "n": 4608
+    },
+    "z:1": {
+     "x0": 32,
+     "y0": 75,
+     "x1": 287,
+     "y1": 92,
+     "n": 4608
+    },
+    "z:2": {
+     "x0": 32,
+     "y0": 97,
+     "x1": 287,
+     "y1": 114,
+     "n": 4608
+    },
+    "z:3": {
+     "x0": 32,
+     "y0": 119,
+     "x1": 287,
+     "y1": 136,
+     "n": 4608
+    },
+    "z:4": {
+     "x0": 32,
+     "y0": 141,
+     "x1": 287,
+     "y1": 158,
+     "n": 4608
+    },
+    "zgo": {
+     "x0": 110,
+     "y0": 165,
+     "x1": 209,
+     "y1": 178,
+     "n": 1400
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": null,
+    "ov": "puzzle",
+    "speech": null,
+    "acting": 1,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "27_raetsel_rueckmeldung.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "zx": {
+     "x0": 262,
+     "y0": 8,
+     "x1": 299,
+     "y1": 23,
+     "n": 608
+    },
+    "z:0": {
+     "x0": 32,
+     "y0": 53,
+     "x1": 287,
+     "y1": 70,
+     "n": 4608
+    },
+    "z:1": {
+     "x0": 32,
+     "y0": 75,
+     "x1": 287,
+     "y1": 92,
+     "n": 4608
+    },
+    "z:2": {
+     "x0": 32,
+     "y0": 97,
+     "x1": 287,
+     "y1": 114,
+     "n": 4608
+    },
+    "z:3": {
+     "x0": 32,
+     "y0": 119,
+     "x1": 287,
+     "y1": 136,
+     "n": 4608
+    },
+    "z:4": {
+     "x0": 32,
+     "y0": 141,
+     "x1": 287,
+     "y1": 158,
+     "n": 4608
+    },
+    "zgo": {
+     "x0": 110,
+     "y0": 165,
+     "x1": 209,
+     "y1": 178,
+     "n": 1400
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": null,
+    "ov": "puzzle",
+    "speech": null,
+    "acting": 1,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "28_k2_notizbuch.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "nx": {
+     "x0": 269,
+     "y0": 6,
+     "x1": 283,
+     "y1": 19,
+     "n": 210
+    },
+    "n:p2_mala_gone": {
+     "x0": 48,
+     "y0": 26,
+     "x1": 281,
+     "y1": 44,
+     "n": 4446
+    },
+    "n:m2_split_chalk": {
+     "x0": 48,
+     "y0": 46,
+     "x1": 281,
+     "y1": 64,
+     "n": 4446
+    },
+    "n:m2_split_register": {
+     "x0": 48,
+     "y0": 66,
+     "x1": 281,
+     "y1": 84,
+     "n": 4446
+    },
+    "n:m2_split_journal": {
+     "x0": 48,
+     "y0": 86,
+     "x1": 281,
+     "y1": 104,
+     "n": 4446
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": false,
+    "dlg": null,
+    "ov": "notebook",
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "29_k2_menue.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "m:0": {
+     "x0": 74,
+     "y0": 25,
+     "x1": 245,
+     "y1": 36,
+     "n": 2064
+    },
+    "m:1": {
+     "x0": 74,
+     "y0": 37,
+     "x1": 245,
+     "y1": 48,
+     "n": 2064
+    },
+    "m:2": {
+     "x0": 74,
+     "y0": 49,
+     "x1": 245,
+     "y1": 60,
+     "n": 2064
+    },
+    "m:3": {
+     "x0": 74,
+     "y0": 61,
+     "x1": 245,
+     "y1": 72,
+     "n": 2064
+    },
+    "m:4": {
+     "x0": 74,
+     "y0": 73,
+     "x1": 245,
+     "y1": 84,
+     "n": 2064
+    },
+    "m:5": {
+     "x0": 74,
+     "y0": 85,
+     "x1": 245,
+     "y1": 96,
+     "n": 2064
+    },
+    "m:6": {
+     "x0": 74,
+     "y0": 97,
+     "x1": 245,
+     "y1": 108,
+     "n": 2064
+    },
+    "m:7": {
+     "x0": 74,
+     "y0": 109,
+     "x1": 245,
+     "y1": 120,
+     "n": 2064
+    },
+    "m:8": {
+     "x0": 74,
+     "y0": 121,
+     "x1": 245,
+     "y1": 132,
+     "n": 2064
+    },
+    "m:9": {
+     "x0": 74,
+     "y0": 133,
+     "x1": 245,
+     "y1": 144,
+     "n": 2064
+    },
+    "m:10": {
+     "x0": 74,
+     "y0": 145,
+     "x1": 245,
+     "y1": 156,
+     "n": 2064
+    },
+    "m:11": {
+     "x0": 74,
+     "y0": 157,
+     "x1": 245,
+     "y1": 168,
+     "n": 2064
+    },
+    "m:12": {
+     "x0": 74,
+     "y0": 169,
+     "x1": 245,
+     "y1": 180,
+     "n": 2064
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": true,
+    "title": null,
+    "msg": null
+   }
+  },
+  "30_k2_hinweis.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "cx": {
+     "x0": 299,
+     "y0": 146,
+     "x1": 316,
+     "y1": 159,
+     "n": 252
+    },
+    "c:0": {
+     "x0": 5,
+     "y0": 148,
+     "x1": 296,
+     "y1": 158,
+     "n": 3212
+    },
+    "c:1": {
+     "x0": 5,
+     "y0": 159,
+     "x1": 296,
+     "y1": 169,
+     "n": 3212
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": [
+     "Ohne Mark",
+     "(Genug nachgedacht.)"
+    ],
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "31_k2_hinweis_stufe1.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "cx": {
+     "x0": 299,
+     "y0": 146,
+     "x1": 316,
+     "y1": 159,
+     "n": 252
+    },
+    "c:0": {
+     "x0": 5,
+     "y0": 148,
+     "x1": 296,
+     "y1": 158,
+     "n": 3212
+    },
+    "c:1": {
+     "x0": 5,
+     "y0": 159,
+     "x1": 296,
+     "y1": 169,
+     "n": 3212
+    },
+    "c:2": {
+     "x0": 5,
+     "y0": 170,
+     "x1": 296,
+     "y1": 180,
+     "n": 3212
+    },
+    "c:3": {
+     "x0": 5,
+     "y0": 181,
+     "x1": 296,
+     "y1": 191,
+     "n": 3212
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": [
+     "(Noch einmal von vorn.)",
+     "(In welche Richtung muss ich denken?)",
+     "Etwas anderes.",
+     "(Genug nachgedacht.)"
+    ],
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "32_k2_anleitung.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": null,
+    "ov": null,
+    "speech": {
+     "t": "Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.",
+     "who": "marko"
+    },
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "33_inventar_popup.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "pop": {
+     "x0": 38,
+     "y0": 115,
+     "x1": 103,
+     "y1": 157,
+     "n": 1122
+    },
+    "p:0": {
+     "x0": 38,
+     "y0": 130,
+     "x1": 103,
+     "y1": 142,
+     "n": 858
+    },
+    "p:1": {
+     "x0": 38,
+     "y0": 143,
+     "x1": 103,
+     "y1": 155,
+     "n": 858
+    },
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 571
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": [
+     "Benutze",
+     "Schau an"
+    ],
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "34_inventar_benutze.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "35_karte.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "o:pansion": {
+     "x0": 232,
+     "y0": 32,
+     "x1": 305,
+     "y1": 66,
+     "n": 1614
+    },
+    "o:stanica": {
+     "x0": 90,
+     "y0": 45,
+     "x1": 142,
+     "y1": 79,
+     "n": 1383
+    },
+    "o:x": {
+     "x0": 4,
+     "y0": 147,
+     "x1": 81,
+     "y1": 176,
+     "n": 2340
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "stanica",
+    "busy": true,
+    "dlg": null,
+    "ov": "map",
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_pro",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "36_k3_szene.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    },
+    "sw": {
+     "x0": 2,
+     "y0": 160,
+     "x1": 39,
+     "y1": 199,
+     "n": 1520
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "starimost",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k3_d1",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "37_k3_mala_aktiv.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    },
+    "sw": {
+     "x0": 2,
+     "y0": 160,
+     "x1": 39,
+     "y1": 199,
+     "n": 1520
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "starimost",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "mala",
+    "phase": "k3_d1",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "38_k4_szene.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    },
+    "sw": {
+     "x0": 2,
+     "y0": 160,
+     "x1": 39,
+     "y1": 199,
+     "n": 1520
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "balkon",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k4_d3",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "39_k4_mala_aktiv.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    },
+    "sw": {
+     "x0": 2,
+     "y0": 160,
+     "x1": 39,
+     "y1": 199,
+     "n": 1520
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "balkon",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "mala",
+    "phase": "k4_d3",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "40_k2_limbo_szene.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    },
+    "sw": {
+     "x0": 2,
+     "y0": 160,
+     "x1": 39,
+     "y1": 199,
+     "n": 1520
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "vratnik",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "marko",
+    "phase": "k2_i",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  },
+  "41_k2_limbo_mala_aktiv.png": {
+   "rect": {
+    "left": 108.328125,
+    "top": 4.328125,
+    "width": 533.328125,
+    "height": 333.328125,
+    "rot": false,
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3
+   },
+   "boxes": {
+    "notes": {
+     "x0": 0,
+     "y0": 144,
+     "x1": 38,
+     "y1": 158,
+     "n": 585
+    },
+    "map": {
+     "x0": 214,
+     "y0": 144,
+     "x1": 246,
+     "y1": 158,
+     "n": 495
+    },
+    "reveal": {
+     "x0": 251,
+     "y0": 144,
+     "x1": 286,
+     "y1": 158,
+     "n": 540
+    },
+    "menu": {
+     "x0": 291,
+     "y0": 144,
+     "x1": 319,
+     "y1": 158,
+     "n": 435
+    },
+    "up": {
+     "x0": 41,
+     "y0": 159,
+     "x1": 50,
+     "y1": 199,
+     "n": 410
+    },
+    "i:0": {
+     "x0": 51,
+     "y0": 159,
+     "x1": 90,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:1": {
+     "x0": 91,
+     "y0": 159,
+     "x1": 130,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:2": {
+     "x0": 131,
+     "y0": 159,
+     "x1": 170,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:3": {
+     "x0": 171,
+     "y0": 159,
+     "x1": 210,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:4": {
+     "x0": 211,
+     "y0": 159,
+     "x1": 250,
+     "y1": 196,
+     "n": 1520
+    },
+    "i:5": {
+     "x0": 251,
+     "y0": 159,
+     "x1": 290,
+     "y1": 196,
+     "n": 1520
+    },
+    "dn": {
+     "x0": 291,
+     "y0": 159,
+     "x1": 302,
+     "y1": 199,
+     "n": 492
+    },
+    "sw": {
+     "x0": 2,
+     "y0": 160,
+     "x1": 39,
+     "y1": 199,
+     "n": 1520
+    }
+   },
+   "st": {
+    "scr": "game",
+    "room": "vratnik",
+    "busy": false,
+    "dlg": null,
+    "ov": null,
+    "speech": null,
+    "acting": 0,
+    "walk": false,
+    "active": "mala",
+    "phase": "k2_i",
+    "pop": null,
+    "menu": false,
+    "title": null,
+    "msg": null
+   }
+  }
+ },
+ "notes": [
+  "Escape im ruhigen Spiel: menu=true",
+  "Zum Titelbild: scr=title title=[\"Fortsetzen\",\"Kapitel 1: Split\",\"Kapitel 2: Sarajevo\",\"Kapitel 3: Mostar\",\"Kapitel 4: München\",\"Mitgelieferte Spielstände\",\"Sprache: Deutsch\",\"Über das Spiel\"]",
+  "Platzwahl bei belegtem Platz: [\"Platz 1:  Sarajevo: Prolog  (1 Min.)\",\"Platz 2:  leer\",\"Platz 3:  leer\",\"Zurück\"]",
+  "Nach Tipp auf belegten Platz: [\"Ja, Platz 1 neu beginnen\",\"Nein, behalten\"] scr=title",
+  "Mitgelieferte: [\"Split: kurz vor Ivkas Wahrheit\",\"Sarajevo: vor dem Ankaufbuch\",\"Zurück\"]",
+  "Über: scr=title ov=null title=[\"Zurück\"]",
+  "Sprache vorher [\"Fortsetzen\",\"Kapitel 1: Split\",\"Kapitel 2: Sarajevo\",\"Kapitel 3: Mostar\",\"Kapitel 4: München\",\"Mitgelieferte Spielstände\",\"Sprache: Deutsch\",\"Über das Spiel\"] nachher [\"Fortsetzen\",\"Kapitel 1: Split\",\"Kapitel 2: Sarajevo\",\"Kapitel 3: Mostar\",\"Kapitel 4: München\",\"Mitgelieferte Spielstände\",\"Sprache: Bosanski / Hrvatski\",\"Über das Spiel\"]",
+  "Notizbuch-Codes: nx,n:p2_mala_gone,n:m2_split_chalk,n:m2_split_register,n:m2_split_journal",
+  "Hinweis: ov=null dlg=[\"Ohne Mark\",\"(Genug nachgedacht.)\"] speech=null",
+  "Hinweis 1: [\"(Noch einmal von vorn.)\",\"(In welche Richtung muss ich denken?)\",\"Etwas anderes.\",\"(Genug nachgedacht.)\"]",
+  "Anleitung: ov=null speech={\"t\":\"Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.\",\"who\":\"marko\"}",
+  "Inventar-Codes: i:0,i:1,i:2,i:3,i:4,i:5",
+  "mala: nicht sichtbar: sw"
+ ],
+ "errors": [],
+ "esc": [
+  {
+   "wo": "Verb-Popup offen",
+   "vorher": {
+    "pop": true,
+    "ov": null,
+    "menu": false,
+    "dlg": false
+   },
+   "nachher": {
+    "pop": false,
+    "ov": null,
+    "menu": true,
+    "dlg": false
+   }
+  },
+  {
+   "wo": "Notizbuch offen",
+   "vorher": {
+    "pop": false,
+    "ov": "notebook",
+    "menu": false,
+    "dlg": false
+   },
+   "nachher": {
+    "pop": false,
+    "ov": null,
+    "menu": false,
+    "dlg": false
+   }
+  },
+  {
+   "wo": "Pausenmenü offen",
+   "vorher": {
+    "pop": false,
+    "ov": null,
+    "menu": true,
+    "dlg": false
+   },
+   "nachher": {
+    "pop": false,
+    "ov": null,
+    "menu": false,
+    "dlg": false
+   }
+  },
+  {
+   "wo": "Gegenstand ausgewählt",
+   "vorher": {
+    "pop": false,
+    "ov": null,
+    "menu": false,
+    "dlg": false
+   },
+   "nachher": {
+    "pop": false,
+    "ov": null,
+    "menu": true,
+    "dlg": false
+   }
+  },
+  {
+   "wo": "Karte offen",
+   "vorher": {
+    "pop": false,
+    "ov": "map",
+    "menu": false,
+    "dlg": false
+   },
+   "nachher": {
+    "pop": false,
+    "ov": null,
+    "menu": false,
+    "dlg": false
+   }
+  }
+ ],
+ "menuCodes": [
+  "m:0",
+  "m:1",
+  "m:2",
+  "m:3",
+  "m:4",
+  "m:5",
+  "m:6",
+  "m:7",
+  "m:8",
+  "m:9",
+  "m:10",
+  "m:11",
+  "m:12"
+ ],
+ "dialogOptions": [
+  "Was ist das für ein Brief?",
+  "Wo kann ich hier Geld wechseln?",
+  "Wie komme ich in die Baščaršija?",
+  "Sind Sie für Željo oder für Sarajevo?",
+  "Was ist der Unterschied zwischen Burek und Pita?",
+  "Gute Geschäfte."
+ ],
+ "menuRows": 13
+}
