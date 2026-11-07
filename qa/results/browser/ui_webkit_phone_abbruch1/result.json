@@ -1,0 +1,642 @@
+{
+ "engine": "webkit",
+ "browserVersion": "26.6",
+ "device": "phone",
+ "viewport": {
+  "width": 750,
+  "height": 342
+ },
+ "touch": true,
+ "url": "file:///home/user/Hotel/web/index.html",
+ "recording": {
+  "seed": 1,
+  "sha": "5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115",
+  "entries": 1753
+ },
+ "ok": false,
+ "actionsDone": 1351,
+ "chapterEnds": [
+  {
+   "ch": 1,
+   "at": 421.065,
+   "title": [
+    "Weiter mit Kapitel 2: Sarajevo",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 2,
+   "at": 1047.609,
+   "title": [
+    "Weiter mit Kapitel 3: Mostar",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 3,
+   "at": 1730.001,
+   "title": [
+    "Weiter mit Kapitel 4: München",
+    "Zum Titelbild"
+   ]
+  }
+ ],
+ "end": null,
+ "failure": {
+  "at": 1683,
+  "entry": {
+   "k": "exit",
+   "a": [
+    "door"
+   ],
+   "room": "bmission",
+   "active": "marko",
+   "phase": "k4_d4",
+   "scr": "game"
+  },
+  "msg": "page.evaluate: Target crashed ",
+  "state": null
+ },
+ "errors": [],
+ "consoleErr": [
+  "Origin null is not allowed by Access-Control-Allow-Origin. Status code: 0",
+  "Failed to load resource: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 0"
+ ],
+ "failedReq": [
+  "file:///home/user/Hotel/web/manifest.webmanifest Origin null is not allowed by Access-Control-Allow-Origin. Status code: 0"
+ ],
+ "hotspotIssues": [],
+ "uiNotes": [
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "sanja",
+   "room": "bar"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "zdenka",
+   "room": "varos"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    600,
+    116
+   ],
+   "via": "bollard"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "riva",
+   "dir": "R",
+   "via": "office"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "riva",
+   "dir": "R",
+   "via": "islands"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    560,
+    116
+   ],
+   "via": "islands"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "riva",
+   "dir": "R",
+   "via": "office"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "mladen",
+   "room": "office"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "binder_1948",
+   "room": "archive"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "seabag",
+   "room": "shed"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    560,
+    116
+   ],
+   "via": "islands"
+  },
+  {
+   "kind": "Wechsel nicht angeboten (Skript prüft Sperre)",
+   "room": "flat",
+   "phase": "i1m"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "dinko",
+   "room": "matejuska"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "debris",
+   "room": "coldroom"
+  },
+  {
+   "kind": "Dunkler Hotspot: Marko geht hin, Mala folgt",
+   "id": "debris",
+   "lit": true
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "oldtown",
+   "dir": "R",
+   "via": "belltower"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "nina",
+   "room": "shop"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "mira",
+   "room": "terminal"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "take",
+   "id": "sheet",
+   "room": "salon"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "tomaz",
+   "room": "kula"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "clock",
+   "room": "kula"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "nedzad",
+   "room": "kazandziluk"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "passage",
+   "room": "ferhadija"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "read",
+   "id": "almanacs",
+   "room": "antikvarijat"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "sacir",
+   "room": "kafana"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "frame",
+   "room": "ostava"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "lane_kazan",
+   "room": "carsija"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "ostava_door",
+   "room": "kafana"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "emina",
+   "room": "kafana"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "passage",
+   "room": "ferhadija"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "jakob",
+   "room": "antikvarijat"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "jakob",
+   "room": "antikvarijat"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "dragica",
+   "room": "haustor"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "zora",
+   "room": "skloniste"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "use",
+   "id": "under_desk",
+   "room": "skloniste"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "mirza",
+   "room": "haustor"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "neboder",
+   "dir": "L",
+   "via": "kiosk_spot"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "damir",
+   "room": "carsija"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "stanica",
+   "dir": "R",
+   "via": "exchange"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "haustor_door",
+   "room": "neboder"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "nada",
+   "room": "stan"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "open",
+   "id": "ruza_gate",
+   "room": "vratnik"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "stanica",
+   "dir": "R",
+   "via": "exchange"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "springer",
+   "room": "starimost"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "use",
+   "id": "bed",
+   "room": "zimmer"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "use",
+   "id": "bridgehead",
+   "room": "starimost"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "use",
+   "id": "view",
+   "room": "minarett"
+  },
+  {
+   "kind": "Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene)",
+   "act": [
+    "use",
+    "view",
+    null
+   ],
+   "room": "partizan"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "bulevar",
+   "dir": "R",
+   "via": "bench"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "vlado",
+   "room": "vulkanizer"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "cab",
+   "room": "vhof"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "zlata",
+   "room": "tepa"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "bato",
+   "room": "skela_l"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "door",
+   "room": "zimmer"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "skela_d",
+   "dir": "R",
+   "via": "river"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "zlata",
+   "room": "skela_l"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "zlata",
+   "room": "skela_l"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "vlado",
+   "room": "vulkanizer"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "_mala",
+   "room": "vhof"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "vlado",
+   "room": "vulkanizer"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "house_door",
+   "room": "zelenika"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "davor",
+   "room": "zelenika_in"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "skela_d",
+   "dir": "R",
+   "via": "river"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "house_door",
+   "room": "skela_l"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "open",
+   "id": "drawer",
+   "room": "zlata_k"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "kolar",
+   "room": "vermisst"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "use",
+   "id": "bus",
+   "room": "ostbus"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "exit",
+   "room": "hacker"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "slippers",
+   "room": "jwohnung"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "box",
+   "room": "jschlaf"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "sepp",
+   "room": "gleis11"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "wimmer",
+   "room": "bmission"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "enzo",
+   "room": "barsport"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "elevator",
+   "room": "heim"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "box",
+   "room": "jschlaf"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "desk",
+   "room": "bunker"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "depot_photo",
+   "room": "heim214"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "ertl",
+   "room": "heim_raum"
+  }
+ ],
+ "wallS": 2151.203,
+ "shots": [
+  "000_start_Platz_1_leer.png",
+  "001_K1_ende_titel.png",
+  "002_start_Weiter_mit_Kapitel_2_Sarajevo.png",
+  "003_K2_a450.png",
+  "004_K2_a600.png",
+  "005_K2_a750.png",
+  "006_K2_ende_titel.png",
+  "007_start_Weiter_mit_Kapitel_3_Mostar.png",
+  "008_K3_a1050.png",
+  "009_K3_ende_titel.png",
+  "010_start_Weiter_mit_Kapitel_4_M_nchen.png"
+ ],
+ "log": [
+  "[0.9s] Gerät phone webkit {\"width\":750,\"height\":342} touch=true TURBO 25 Tippabstand 250 ms",
+  "[1.3s] Titel Kapitel 1: Split",
+  "[1.8s] Titel Platz 1:  leer",
+  "[2.4s] Kapitel 1",
+  "[25.4s] Aktion ohne Reaktion, erneut talk sanja",
+  "[40.4s] Aktion ohne Reaktion, erneut talk zdenka",
+  "[64.2s] Gehen über Blickfang bollard [598,112,\"R\"] statt freiem Boden bei [600,116]",
+  "[88.7s] Gehen über Blickfang islands [560,112,\"B\"] statt freiem Boden bei [560,116]",
+  "[104.5s] Aktion ohne Reaktion, erneut talk mladen",
+  "[108.4s] Fortschritt 100 Aktionen; Kapitel 1 c1",
+  "[116.0s] Aktion ohne Reaktion, erneut look binder_1948",
+  "[138.4s] Aktion ohne Reaktion, erneut sense seabag",
+  "[158.5s] Gehen über Blickfang islands [560,112,\"B\"] statt freiem Boden bei [560,116]",
+  "[190.7s] Figurenwechsel gesperrt, Knopf nicht da – wie vorgesehen",
+  "[223.1s] Aktion ohne Reaktion, erneut talk dinko",
+  "[242.4s] Aktion ohne Reaktion, erneut sense debris",
+  "[248.9s] Marko-Tipp 0 {\"sx\":241,\"y\":124,\"d\":2} {\"mk\":[241,124],\"ma\":[223,122],\"gt\":6145178,\"block\":6131728,\"pop\":false}",
+  "[250.4s] Marko geht zu dunklem debris lit=true",
+  "[275.9s] Aktion ohne Reaktion, erneut talk nina",
+  "[301.3s] Aktion ohne Reaktion, erneut talk mira",
+  "[376.5s] Aktion ohne Reaktion, erneut take sheet",
+  "[421.5s] Titel Weiter mit Kapitel 2: Sarajevo",
+  "[422.1s] Kapitel 2",
+  "[462.2s] Aktion ohne Reaktion, erneut talk tomaz",
+  "[470.3s] Fortschritt 400 Aktionen; Kapitel 2 k2_pro_n",
+  "[480.4s] Aktion ohne Reaktion, erneut look clock",
+  "[509.7s] Aktion ohne Reaktion, erneut talk nedzad",
+  "[530.0s] Ausgang ohne Reaktion, erneut passage",
+  "[538.6s] Aktion ohne Reaktion, erneut read almanacs",
+  "[561.2s] Aktion ohne Reaktion, erneut talk sacir",
+  "[583.7s] Aktion ohne Reaktion, erneut sense frame",
+  "[599.9s] Ausgang ohne Reaktion, erneut lane_kazan",
+  "[619.4s] Ausgang ohne Reaktion, erneut ostava_door",
+  "[635.6s] Aktion ohne Reaktion, erneut talk emina",
+  "[695.9s] Ausgang ohne Reaktion, erneut passage",
+  "[703.9s] Aktion ohne Reaktion, erneut talk jakob",
+  "[748.3s] Aktion ohne Reaktion, erneut talk jakob",
+  "[766.0s] Fortschritt 600 Aktionen; Kapitel 2 k2_s2",
+  "[809.2s] Aktion ohne Reaktion, erneut talk dragica",
+  "[824.0s] Aktion ohne Reaktion, erneut talk zora",
+  "[857.9s] Aktion ohne Reaktion, erneut use under_desk",
+  "[870.9s] Aktion ohne Reaktion, erneut talk mirza",
+  "[895.1s] Aktion ohne Reaktion, erneut talk damir",
+  "[924.9s] Fortschritt 700 Aktionen; Kapitel 2 k2_fin",
+  "[948.4s] Ausgang ohne Reaktion, erneut haustor_door",
+  "[958.0s] Aktion ohne Reaktion, erneut talk nada",
+  "[985.1s] Aktion ohne Reaktion, erneut open ruza_gate",
+  "[1048.0s] Titel Weiter mit Kapitel 3: Mostar",
+  "[1048.8s] Kapitel 3",
+  "[1098.2s] Aktion ohne Reaktion, erneut talk springer",
+  "[1108.5s] Aktion ohne Reaktion, erneut use bed",
+  "[1123.8s] Aktion ohne Reaktion, erneut use bridgehead",
+  "[1143.9s] Aktion ohne Reaktion, erneut use view",
+  "[1155.3s] Gehen: noch nicht am Ziel 85",
+  "[1219.5s] Peilung blieb aus, erneut [\"use\",\"view\",null]",
+  "[1249.3s] Aktion ohne Reaktion, erneut talk vlado",
+  "[1267.3s] Aktion ohne Reaktion, erneut sense cab",
+  "[1300.7s] Aktion ohne Reaktion, erneut talk zlata",
+  "[1364.3s] Aktion ohne Reaktion, erneut talk bato",
+  "[1384.7s] Ausgang ohne Reaktion, erneut door",
+  "[1400.4s] Aktion ohne Reaktion, erneut talk zlata",
+  "[1462.5s] Aktion ohne Reaktion, erneut talk zlata",
+  "[1478.9s] Aktion ohne Reaktion, erneut talk vlado",
+  "[1499.4s] Aktion ohne Reaktion, erneut talk _mala",
+  "[1516.5s] Aktion ohne Reaktion, erneut talk vlado",
+  "[1534.2s] Ausgang ohne Reaktion, erneut house_door",
+  "[1542.6s] Aktion ohne Reaktion, erneut talk davor",
+  "[1666.2s] Ausgang ohne Reaktion, erneut house_door",
+  "[1674.8s] Aktion ohne Reaktion, erneut open drawer",
+  "[1702.2s] Aktion ohne Reaktion, erneut talk kolar",
+  "[1725.8s] Aktion ohne Reaktion, erneut use bus",
+  "[1730.4s] Titel Weiter mit Kapitel 4: München",
+  "[1731.1s] Kapitel 4",
+  "[1744.8s] Fortschritt 1100 Aktionen; Kapitel 4 k4_pro",
+  "[1759.5s] Ausgang ohne Reaktion, erneut exit",
+  "[1774.3s] Aktion ohne Reaktion, erneut look slippers",
+  "[1787.1s] Aktion ohne Reaktion, erneut look box",
+  "[1853.8s] Aktion ohne Reaktion, erneut talk sepp",
+  "[1873.4s] Aktion ohne Reaktion, erneut talk wimmer",
+  "[1892.9s] Aktion ohne Reaktion, erneut talk enzo",
+  "[1907.1s] Ausgang ohne Reaktion, erneut elevator",
+  "[1929.3s] Aktion ohne Reaktion, erneut look box",
+  "[1972.2s] Aktion ohne Reaktion, erneut sense desk",
+  "[2074.8s] Fortschritt 1300 Aktionen; Kapitel 4 k4_d3",
+  "[2096.3s] Aktion ohne Reaktion, erneut sense depot_photo",
+  "[2122.9s] Aktion ohne Reaktion, erneut talk ertl",
+  "[2151.2s] ABBRUCH bei Eintrag 1683 page.evaluate: Target crashed "
+ ]
+}
