@@ -107,6 +107,13 @@ const { launch, contextOpts } = require('./engines');
   async function verbLabels() { return page.evaluate(() => M.E.VLABEL); }
   let VL = null;
   async function doAct(v, id, item) {
+    for (let tries = 0; tries < 3; tries++) { const before = await page.evaluate(() => ({ t: (M.__qaTapN = (M.__qaTapN || 0)), gt: M.E.gt() }));
+      await doAct0(v, id, item);
+      const r = await until(s => s.busy || s.speech || s.dlg || s.ov || s.walk || s.acting || s.trn || s.scr !== 'game', 4000, 'Reaktion').then(() => true).catch(() => false);
+      if (r || item || /^loc2?_/.test(id)) return; const s0 = await st(); if (s0.pop) { await tapL(160, 60); await sleep(100); }
+      uiNotes.push({ kind: 'Aktion ohne Reaktion, erneut angetippt', v, id, room: s0.room }); L('Aktion ohne Reaktion, erneut', v, id); }
+    throw new Error('Aktion ' + v + ' ' + id + ' bewirkt über die Oberfläche nichts'); }
+  async function doAct0(v, id, item) {
     VL = VL || await verbLabels();
     if (/^loc2?_/.test(id)) { await travel(id.replace(/^loc2?_/, '')); return; }
     if (item) { await useItemOn(item, id); return; }

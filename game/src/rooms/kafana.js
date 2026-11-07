@@ -159,6 +159,8 @@ M.room('kafana',{ name:'Kafana „Kula“', scape:'k2_kafana',
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='k2_s1' && from==='ostava' && A.has('letters_tz') && !A.flag('k2.s1.eminaBack')){ A.setFlag('k2.s1.eminaBack'); A.rebuild(); await A.wait(500); A.sfx('door');
+      // QA BUG-005: die Figurenliste stand schon vor der Szene; Emina kommt jetzt auch sichtbar zurück (wie in actors())
+      if (!A.npc('emina').actor && eminaHere(A.G)){ var e=M.apos('kafana','emina',[190,104,'F']); A.spawn({id:'emina',ch:'emina',x:e[0],y:e[1],f:e[2]||'F',name:'Emina',idle:'pour',speechY:34}); }
       await A.voice('Von der Tür: „Lejla! Wer war in der Kammer?“',P.s5); await A.wait(600); await A.m('Emina. Zurück von Tante Sabira. Früher als gedacht.'); if (A.malaHere()) await A.g('Jetzt.'); }
     if (p==='k2_s1' && A.first('k2kfS1')){ await A.m('Warm, dunkel, Kupfer an allen Wänden. Es riecht nach Kaffee und nach etwas, das man früher Tabak nannte.'); } }
 });

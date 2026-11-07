@@ -1,0 +1,146 @@
+{
+ "html": "4692c9cb6a3a",
+ "variants": [
+  {
+   "name": "Standard",
+   "chapters": [
+    {
+     "ch": 1,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 2,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 3,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 4,
+     "ok": true,
+     "err": null
+    }
+   ],
+   "problems": [
+    {
+     "kind": "act:use+crowbar",
+     "id": "debris",
+     "room": "coldroom",
+     "phase": "c2",
+     "active": "marko",
+     "why": "dunkel (nicht in Malas Schein)",
+     "dark": true,
+     "npc": null
+    },
+    {
+     "kind": "act:open",
+     "id": "case",
+     "room": "coldroom",
+     "phase": "c2",
+     "active": "marko",
+     "why": "dunkel (nicht in Malas Schein)",
+     "dark": true,
+     "npc": null
+    }
+   ]
+  },
+  {
+   "name": "K2 andere Reihenfolge, Notizbuch Nachdenken, Zustimmung c, keine Probe",
+   "chapters": [
+    {
+     "ch": 1,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 2,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 3,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 4,
+     "ok": true,
+     "err": null
+    }
+   ],
+   "problems": [
+    {
+     "kind": "act:use+crowbar",
+     "id": "debris",
+     "room": "coldroom",
+     "phase": "c2",
+     "active": "marko",
+     "why": "dunkel (nicht in Malas Schein)",
+     "dark": true,
+     "npc": null
+    },
+    {
+     "kind": "act:open",
+     "id": "case",
+     "room": "coldroom",
+     "phase": "c2",
+     "active": "marko",
+     "why": "dunkel (nicht in Malas Schein)",
+     "dark": true,
+     "npc": null
+    }
+   ]
+  },
+  {
+   "name": "Zustimmung a",
+   "chapters": [
+    {
+     "ch": 1,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 2,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 3,
+     "ok": true,
+     "err": null
+    },
+    {
+     "ch": 4,
+     "ok": true,
+     "err": null
+    }
+   ],
+   "problems": [
+    {
+     "kind": "act:use+crowbar",
+     "id": "debris",
+     "room": "coldroom",
+     "phase": "c2",
+     "active": "marko",
+     "why": "dunkel (nicht in Malas Schein)",
+     "dark": true,
+     "npc": null
+    },
+    {
+     "kind": "act:open",
+     "id": "case",
+     "room": "coldroom",
+     "phase": "c2",
+     "active": "marko",
+     "why": "dunkel (nicht in Malas Schein)",
+     "dark": true,
+     "npc": null
+    }
+   ]
+  }
+ ]
+}
