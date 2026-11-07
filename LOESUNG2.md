@@ -153,7 +153,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - **[G]** Mit dem alten Mann im Sessel reden, „Was lesen Sie?“ → Professor Barać, „die Frist läuft ab“.
 - **[M]** Jakob fragen:
   - nach der Nationalbibliothek → Brand am 26.8.1992;
-  - woher er das Buch hat. Dann das **Ankaufbuch** lesen.
+  - woher er das Buch hat (oder: „Darf ich in Ihr Ankaufbuch schauen?“). Beides geht erst, wenn Mala den Stempel im Buch gelesen hat. Dann das **Ankaufbuch** auf Jakobs Schreibtisch lesen.
 - **Verbinden:**
   - Leihzettel + Ankaufbuch → **Das Buch gehört der Bibliothek**;
   - Frist + Brand → **Er konnte es nicht zurückgeben**.
