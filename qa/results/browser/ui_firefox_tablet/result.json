@@ -1,0 +1,336 @@
+{
+ "engine": "firefox",
+ "browserVersion": "155.0",
+ "device": "tablet",
+ "viewport": {
+  "width": 1080,
+  "height": 810
+ },
+ "touch": true,
+ "url": "file:///home/user/Hotel/web/index.html",
+ "recording": {
+  "seed": 1,
+  "sha": "5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115",
+  "entries": 1753
+ },
+ "ok": true,
+ "actionsDone": 1420,
+ "chapterEnds": [
+  {
+   "ch": 1,
+   "at": 306.158,
+   "title": [
+    "Weiter mit Kapitel 2: Sarajevo",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 2,
+   "at": 606.187,
+   "title": [
+    "Weiter mit Kapitel 3: Mostar",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 3,
+   "at": 1055.187,
+   "title": [
+    "Weiter mit Kapitel 4: München",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 4,
+   "at": 1403.902,
+   "title": [
+    "Kapitel 1: Split",
+    "Kapitel 2: Sarajevo",
+    "Kapitel 3: Mostar",
+    "Kapitel 4: München",
+    "Mitgelieferte Spielstände",
+    "Sprache: Deutsch",
+    "Über das Spiel"
+   ]
+  }
+ ],
+ "end": {
+  "c4": true,
+  "c1": true,
+  "c2": true,
+  "c3": true,
+  "scr": "title",
+  "title": [
+   "Kapitel 1: Split",
+   "Kapitel 2: Sarajevo",
+   "Kapitel 3: Mostar",
+   "Kapitel 4: München",
+   "Mitgelieferte Spielstände",
+   "Sprache: Deutsch",
+   "Über das Spiel"
+  ]
+ },
+ "failure": null,
+ "errors": [],
+ "consoleErr": [],
+ "failedReq": [],
+ "hotspotIssues": [],
+ "uiNotes": [
+  {
+   "kind": "Overlay blieb aus, Aktion neu angetippt",
+   "act": [
+    "read",
+    "basket",
+    null
+   ],
+   "room": "ivka"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    600,
+    116
+   ],
+   "via": "bollard"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "riva",
+   "dir": "R",
+   "via": "islands"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "use",
+   "id": "laptop",
+   "room": "flat"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    560,
+    116
+   ],
+   "via": "islands"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "binder_1948",
+   "room": "archive"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "sense",
+   "id": "seabag",
+   "room": "shed"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "plaque",
+   "room": "sustipan"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    560,
+    116
+   ],
+   "via": "islands"
+  },
+  {
+   "kind": "Wechsel nicht angeboten (Skript prüft Sperre)",
+   "room": "flat",
+   "phase": "i1m"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "riva",
+   "dir": "R",
+   "via": "office"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "sanja",
+   "room": "bar"
+  },
+  {
+   "kind": "Dunkler Hotspot: Marko geht hin, Mala folgt",
+   "id": "debris",
+   "lit": true
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "oldtown",
+   "dir": "R",
+   "via": "belltower"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "ticket",
+   "room": "backroom"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "tomaz",
+   "room": "kula"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "milka",
+   "room": "obala"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "haustor_door",
+   "room": "neboder"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "_mala",
+   "room": "starimost"
+  },
+  {
+   "kind": "Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene)",
+   "act": [
+    "use",
+    "view",
+    null
+   ],
+   "room": "partizan"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "cafe_door",
+   "room": "westbus"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "vlado",
+   "room": "vulkanizer"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "_mala",
+   "room": "vhof"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "house_door",
+   "room": "zelenika"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "exit_l",
+   "room": "skela_most"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "exit_l",
+   "room": "skela_most"
+  },
+  {
+   "kind": "Ausgang ohne Reaktion, erneut angetippt",
+   "id": "exit",
+   "room": "hacker"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "wimmer",
+   "room": "bmission"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "look",
+   "id": "box",
+   "room": "jschlaf"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "obermaier",
+   "room": "friedamt"
+  },
+  {
+   "kind": "Aktion ohne Reaktion, erneut angetippt",
+   "v": "talk",
+   "id": "jasna",
+   "room": "jwohnung"
+  }
+ ],
+ "wallS": 1403.978,
+ "shots": [
+  "000_start_Platz_1_leer.png",
+  "001_K1_ende_titel.png",
+  "002_start_Weiter_mit_Kapitel_2_Sarajevo.png",
+  "003_K2_a450.png",
+  "004_K2_a600.png",
+  "005_K2_a750.png",
+  "006_K2_ende_titel.png",
+  "007_start_Weiter_mit_Kapitel_3_Mostar.png",
+  "008_K3_a1050.png",
+  "009_K3_ende_titel.png",
+  "010_start_Weiter_mit_Kapitel_4_M_nchen.png",
+  "011_K4_ende_titel.png"
+ ],
+ "log": [
+  "[2.1s] Gerät tablet firefox {\"width\":1080,\"height\":810} touch=true TURBO 25 Tippabstand 40 ms",
+  "[2.2s] Titel Kapitel 1: Split",
+  "[2.5s] Titel Platz 1:  leer",
+  "[3.1s] Kapitel 1",
+  "[56.2s] Overlay blieb aus, erneut [\"read\",\"basket\",null]",
+  "[64.3s] Gehen über Blickfang bollard [598,112,\"R\"] statt freiem Boden bei [600,116]",
+  "[74.7s] Aktion ohne Reaktion, erneut use laptop",
+  "[90.2s] Gehen über Blickfang islands [560,112,\"B\"] statt freiem Boden bei [560,116]",
+  "[100.1s] Fortschritt 100 Aktionen; Kapitel 1 c1",
+  "[107.5s] Aktion ohne Reaktion, erneut look binder_1948",
+  "[122.9s] Aktion ohne Reaktion, erneut sense seabag",
+  "[141.9s] Aktion ohne Reaktion, erneut look plaque",
+  "[142.8s] Gehen über Blickfang islands [560,112,\"B\"] statt freiem Boden bei [560,116]",
+  "[164.8s] Figurenwechsel gesperrt, Knopf nicht da – wie vorgesehen",
+  "[189.9s] Aktion ohne Reaktion, erneut talk sanja",
+  "[203.4s] Marko-Tipp 0 {\"sx\":241,\"y\":124,\"d\":2} {\"mk\":[241,124],\"ma\":[218,122],\"gt\":5015557.8600000525,\"block\":5007160.3600000525,\"pop\":false}",
+  "[204.9s] Marko geht zu dunklem debris lit=true",
+  "[222.5s] Aktion ohne Reaktion, erneut look ticket",
+  "[306.3s] Titel Weiter mit Kapitel 2: Sarajevo",
+  "[306.9s] Kapitel 2",
+  "[337.2s] Aktion ohne Reaktion, erneut talk tomaz",
+  "[340.8s] Fortschritt 400 Aktionen; Kapitel 2 k2_pro_n",
+  "[445.2s] Aktion ohne Reaktion, erneut talk milka",
+  "[461.8s] Fortschritt 600 Aktionen; Kapitel 2 k2_s2",
+  "[495.2s] Ausgang ohne Reaktion, erneut haustor_door",
+  "[546.0s] Fortschritt 700 Aktionen; Kapitel 2 k2_fin",
+  "[606.3s] Titel Weiter mit Kapitel 3: Mostar",
+  "[606.9s] Kapitel 3",
+  "[626.2s] Aktion ohne Reaktion, erneut talk _mala",
+  "[668.9s] Gehen: noch nicht am Ziel 85",
+  "[732.3s] Peilung blieb aus, erneut [\"use\",\"view\",null]",
+  "[742.8s] Ausgang ohne Reaktion, erneut cafe_door",
+  "[875.7s] Aktion ohne Reaktion, erneut talk vlado",
+  "[892.0s] Aktion ohne Reaktion, erneut talk _mala",
+  "[912.8s] Ausgang ohne Reaktion, erneut house_door",
+  "[971.1s] Ausgang ohne Reaktion, erneut exit_l",
+  "[1020.8s] Ausgang ohne Reaktion, erneut exit_l",
+  "[1055.3s] Titel Weiter mit Kapitel 4: München",
+  "[1055.9s] Kapitel 4",
+  "[1066.4s] Fortschritt 1100 Aktionen; Kapitel 4 k4_pro",
+  "[1080.4s] Ausgang ohne Reaktion, erneut exit",
+  "[1153.9s] Aktion ohne Reaktion, erneut talk wimmer",
+  "[1186.0s] Aktion ohne Reaktion, erneut look box",
+  "[1211.2s] Aktion ohne Reaktion, erneut talk obermaier",
+  "[1281.0s] Fortschritt 1300 Aktionen; Kapitel 4 k4_d3",
+  "[1393.9s] Aktion ohne Reaktion, erneut talk jasna"
+ ]
+}
