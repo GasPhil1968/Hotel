@@ -9,3 +9,4 @@ qa/results/**/trace.zip
 qa/results/probe*/
 /w*_abbruch.png
 /wt_error.png
+/--*/
