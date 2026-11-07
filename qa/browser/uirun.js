@@ -216,7 +216,10 @@ const { launch, contextOpts } = require('./engines');
       else if (k === 'combine') await combineUI(e.a[0], e.a[1]);
       else if (k === 'openNotes') await tapCode('notes', 'Notizen');
       else if (k === 'walkTo') { let p = null; const used = {};
-        for (let g = 0; g < 14 && !p; g++) { p = await page.evaluate(([x, y]) => window.__qa.freePointNear(x, y), e.a); if (p) break;
+        for (let g = 0; g < 14 && p !== 'erreicht'; g++) { p = await page.evaluate(([x, y]) => window.__qa.freePointNear(x, y), e.a);
+          if (p) { await tapL(p[0], p[1]); const sw = await until(s => s.dlg || s.ov || (!s.walk && !s.busy && !s.speech), 60000, 'Gehen').catch(() => null); await sleep(60);
+            const dd = await page.evaluate((x) => Math.abs(M.E.player().x - x), e.a[0]); if (!sw || sw.dlg || sw.ov || dd < 12 || (await st()).active !== e.active) { p = 'erreicht'; break; }
+            L('Gehen: noch nicht am Ziel', dd); continue; }
           // kein freier Boden am Ziel im Bild: Blickfang nahe dem Ziel (Figur geht zu dessen Standpunkt), sonst in Zielrichtung scrollen
           const h = await page.evaluate(([x, y]) => { const E = M.E, R = E.room, S = M.RS(R.id); let best = null; R.hotspots.forEach(h => { if (h.exit || h.npc) return; try { if (h.vis && !h.vis(S, M.GS)) return; } catch (e) { return; } if (['talk','take','open','use','push','read'].some(v => h[v] !== undefined)) return; const st = E.hsStand(h); if (!st) return; const d = Math.abs(st[0] - x) + Math.abs(st[1] - y); if (!best || d < best.d) best = { id: h.id, d, st }; }); return best; }, e.a);
           if (h && h.d < 80 && !used[h.id]) { used[h.id] = 1; L('Gehen über Blickfang', h.id, JSON.stringify(h.st), 'statt freiem Boden bei', JSON.stringify(e.a)); uiNotes.push({ kind: 'Boden verdeckt', room: (await st()).room, target: e.a, via: h.id }); await tapHotspot(h.id); const sb = await until(s => s.dlg || s.ov || (!s.walk && !s.busy && !s.speech), 60000, 'Blickfang'); await sleep(60);
@@ -224,7 +227,7 @@ const { launch, contextOpts } = require('./engines');
             const dd = await page.evaluate((x) => Math.abs(M.E.player().x - x), e.a[0]); if (dd < 12) { p = 'erreicht'; break; } continue; }
           const dir = await page.evaluate((x) => (x > Math.round(M.E.camX) + 160 ? 'R' : 'L'), e.a[0]); try { await scrollToward(dir); } catch (err) { break; } }
         if (!p) throw new Error('kein freier Punkt für Gehen zu ' + e.a + ' ' + JSON.stringify(await page.evaluate(() => [window.__qa.dbg(), window.__qa.floorPoint('R'), window.__qa.floorPoint('L')])));
-        if (p !== 'erreicht') await tapL(p[0], p[1]); }
+      }
       else if (k === 'nbStyle') { L('Notizbuchstil (übersprungen, Aufnahme im Listenmodus):', e.a[0]); }
       else throw new Error('unbekannter Eintrag ' + k);
       done++;
