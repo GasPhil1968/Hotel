@@ -144,7 +144,7 @@ M.defineDeductions({
   's1_note+s1_clock':{to:'s1_twosevens',if:function(G){ return has(G,'s1_alaturka'); },no:'Die Uhr geht anders. Aber nach welcher Regel?',say:'Ihre Sieben war die Sieben der Kula. Er hat nach seiner Uhr gewartet.'},
   's1_twosevens+s1_sunset':{to:'s1_2316',say:'Sonnenuntergang 16:16, dazu sieben Stunden: 23:16. Da hat die Kula sieben geschlagen.'},
   's1_closed+s1_curfew':{to:'s1_left',say:'Die Kafana war um elf zu, und um halb zwölf musste er in der Kaserne sein. Er ist gegangen, weil er musste.'},
-  's1_left+s1_2316':{to:'s1_missed',say:'Er ging kurz nach elf. Sie kam um 23:16. Elf Minuten.'},
+  's1_left+s1_2316':{to:'s1_missed',say:'Er ging kurz nach elf. Sie kam um 23:16. Elf Minuten. Emina weiß das nicht. Sie glaubt bis heute, er sei nicht gekommen.'},
   's1_soldier+s1_waited':{to:'s1_both',say:'Sie sagt, er kam nicht. Šaćir sagt, er saß den ganzen Abend in der Kafana. Beide haben gewartet. Nur nicht zur selben Zeit.'},
   's1_letters+s1_hidden':{to:'s1_betrayal',say:'Er hat geschrieben. Sechsmal. Und Halid hat jeden Brief hinter den Spiegel gesteckt.'},
   's1_letters+s1_gave':{to:'s1_betrayal',if:function(G){ return has(G,'s1_hidden'); },no:'Halid hat etwas bekommen. Aber wo ist es geblieben?',say:'Šaćir gab es Halid, und Halid gab es nie weiter. Die Briefe lagen hinter dem Spiegel.'},

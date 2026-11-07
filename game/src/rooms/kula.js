@@ -21,6 +21,7 @@ async function talkTomaz(A){ var T=A.npc('tomaz'), p=A.G.phase;
       s1_2316:async function(A){ await T.say('Sechzehn nach elf? Da bin ich schon auf dem Weg in die Kaserne.'); await A.wait(500); await T.say('Sie kommt um sieben.'); },
       s1_campus:async function(A){ await T.say('Ein Campus? Unsinn. Da ist meine Kaserne. Ich habe heute früh noch da gefrühstückt.'); },
       s1_married:async function(A){ T.agitate(3200); A.shake(200); await T.say('Verheiratet? Emina?'); await T.say('Das ist nicht wahr. Sie sagt es ihm heute. Heute Abend.'); },
+      s1_missed:async function(A){ await T.say('Elf Minuten?'); await A.wait(700); await T.say('Nein. Sie kommt noch. Sie kommt immer noch.'); if (A.G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Er glaubt es nicht. Aber Emina weiß es auch nicht. Sie hat nie gehört, dass er da war.'); } else await A.m('Er glaubt es nicht. Und Emina weiß nicht einmal, dass er da war.'); },
       s1_name:'Zupan. Tomaž Zupan. Woher kennen Sie meinen Namen?', s1_father:'Ihr Vater. Halid. Er mag keine Soldaten. Und keine Slowenen. Und keine Slowenen, die Soldaten sind.' },'Das verstehe ich nicht. Ich warte.'),
     {t:'Viel Glück.',bye:true,go:async function(A){ await T.say('Danke. Brauche ich nicht. Sie kommt.'); }}
   ]; }); }
@@ -137,7 +138,7 @@ var HS=[
 ];
 function zeit(k){ var h=k[0]%12||12, m=k[1]; var W=['','eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun','zehn','elf','zwölf'];
   if (m<8) return W[h]+' Uhr'; if (m<23) return 'Viertel nach '+W[h]; if (m<38) return 'halb '+W[h%12+1]; if (m<53) return 'Viertel vor '+W[h%12+1]; return 'kurz vor '+W[h%12+1]; }
-M.room('kula',{ name:'Sahat-kula', scape:'k2_kula',
+M.room('kula',{ name:'Sahat-kula', scape:'k2_kula', mapWhy:'Erst zurück auf die Baščaršija. Von dort komme ich überall hin.',
   music:function(G){ return G.phase==='k2_s1_n'?(G.flags['k2.s1.free']?'k2_duh':'k2_istraga'):(G.tod==='night'?'k2_noc':'k2_istraga'); },
   state:function(G){ return {}; },
   actors:function(S,G){ var L=[]; var c=CLOCK[G.phase]; if (c && !(G.phase==='k2_s1_n'&&G.flags['k2.s1.stay'])) S.clock=c.k.slice();

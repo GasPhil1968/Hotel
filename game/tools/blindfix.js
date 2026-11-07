@@ -199,6 +199,24 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
     });
   }
   if (K2.length) {
+    const elf = () => { const g = find(K2, 'Elf Minuten, beide haben gewartet'); g.notes = g.notes.filter(n => n !== 's1_nowrite'); delete g.flags['k2.s1.nowriteAsked']; return g; };
+    await T('K2A-1', 'Nach „Elf Minuten“: Hinweisthema und Fingerzeig auf Emina', async () => {
+      await load(elf());
+      const h = await D.ev(() => { const t = M.hintsOpen(M.GS).find(h => h.id === 's1k'); return t ? M.hintText(t, 3, M.GS, 'marko') : ''; });
+      ok(/Emina/.test(h), 'Hinweis Stufe 4: ' + h);
+      const g = elf(); g.pos.marko = { room: 'kula', x: 120, y: 150, f: 'R' }; g.pos.mala = { room: 'kula', x: 90, y: 150, f: 'R' }; g.active = 'marko'; await load(g);
+      await D.act('talk', 'tomaz'); await D.choose('Nach etwas aus dem Notizbuch'); await D.pickNote('s1_missed'); await D.drain();
+      ok(await said('Emina weiß'), 'Tomaž-Antwort führt zu Emina');
+      await D.ev(() => { const D0 = M.E.dlg; if (D0) M.E.chooseDone(D0.opts.length - 1); }); await D.drain();
+    });
+    await T('K2A-E', 'Stadtplan an der Sahat-kula: kein „drinnen“ auf offener Straße', async () => {
+      const g = elf(); g.pos.marko = { room: 'kula', x: 120, y: 150, f: 'R' }; g.pos.mala = { room: 'kula', x: 90, y: 150, f: 'R' }; g.active = 'marko'; await load(g);
+      await D.ev(() => { try { M.TA.travel('pansion'); } catch (e) {} }); await page.waitForTimeout(600); await D.drain();
+      ok(!(await said('Von hier drinnen nicht')) && await said('Baščaršija'), 'Begründung nennt die Baščaršija');
+      await D.ev(() => { if (M.E.overlay && M.E.overlay.kind === 'map') M.closeMap(); }); await D.drain();
+    });
+  }
+  if (K2.length) {
     await T('K2B-1', 'Jakob antwortet auf sein Ankaufbuch mit einem Fingerzeig', async () => {
       const g = find(K2, 'Leser 2204'); g.notes = g.notes.filter(n => n !== 's2_provenance'); g.active = 'marko'; await load(g);
       await D.act('talk', 'jakob'); await D.choose('Nach etwas aus dem Notizbuch'); await D.pickNote('s2_ledger'); await D.drain();

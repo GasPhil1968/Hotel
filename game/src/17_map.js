@@ -79,7 +79,8 @@ M.mapStates=async function(){ M.mapRefresh(M.GS); return computeStates(M.GS); };
 function origin(ov){ var G=M.GS; if (G.active==='mala' && !(M.malaMayTravel && M.malaMayTravel(G))) return {ok:false,k:'mala',why:'Ohne Marko gehe ich nirgends hin.'};   // Kapitel 4: Mala reist auch allein
   if (ov && ov.exit) return {ok:true};
   if (M.mapOriginWhy){ var ow=M.mapOriginWhy(G,E.room); if (ow) return {ok:false,k:'inside',why:ow}; }   // ein Kapitel kennt eigene Gründe (Skela: das Taxi wartet drüben)
-  var h=mapExit(E.room,G); if (!h) return {ok:false,k:'inside',why:'Von hier drinnen nicht. Erst muss ich hinaus auf die Straße.'};
+  var h=mapExit(E.room,G); if (!h && E.room.mapWhy) return {ok:false,k:'inside',why:E.room.mapWhy};   // draußen, aber ohne eigenen Weg zum Stadtplan (Blindtest K2: „drinnen“ auf offener Straße)
+  if (!h) return {ok:false,k:'inside',why:'Von hier drinnen nicht. Erst muss ich hinaus auf die Straße.'};
   return {ok:true,hs:h}; }
 
 // Warum die Karte gerade nicht aufgeht (null = sie geht auf)

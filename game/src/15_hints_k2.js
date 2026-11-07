@@ -69,6 +69,8 @@ M.HINTS_K2=[
      'Mit jemandem aus der Familie redet sie anders. Und zuhören kann auch, wen sie nicht sieht.',
      {m:'Emina spricht mit ihrer Enkelin hinter der Theke. Mala kann dort unbemerkt stehen.',g:'Emina spricht mit ihrer Enkelin hinter der Theke. Dort kann ich stehen, ohne dass sie mich sieht.'},
      {m:'Zu Mala wechseln und hinter der Theke lauschen.',g:'Zu mir wechseln und hinter der Theke lauschen.'}]},
+ {id:'s1k',t:'Was Emina nicht weiß',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_missed') && !N(G,'s1_nowrite'); },   // Blindtest K2: nach „Elf Minuten“ gab es kein Thema
+  s:['Emina glaubt bis heute, Tomaž sei nicht gekommen.','Sie muss die elf Minuten von Marko hören.','Emina sitzt in der Kafana. Mit ihr über etwas aus dem Notizbuch reden.','Emina in der Kafana nach „Elf Minuten“ fragen.']},
  {id:'s1f',t:'Wo sind die Briefe?',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_nowrite') && !I(G,'letters_tz') && !F(G,'k2.s1.tin'); },
   s:['Emina fragt, warum er nie geschrieben hat. Vielleicht hat er geschrieben.',
      'Briefe gehen durch Hände. Wer hat damals etwas angenommen und weitergegeben?',

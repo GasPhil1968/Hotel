@@ -23,7 +23,7 @@ async function talkNedzad(A){ var N=A.npc('nedzad'), p=A.G.phase;
     {t:'Können Sie mir etwas Schmales, Festes leihen?',if:(A.flag('k2.s1.needChisel')||A.hasNote('s1_hidden'))&&!A.has('chisel')&&!A.flag('k2.s1.tin')&&!A.flag('k2.chisel.back')&&!A.flag('k2.f2.chiselBack'),go:async function(A){ if (!A.flag('k2.s1.engraved')){ await N.say('Nach der Gravur. Erst die Arbeit, dann die Freundschaft.'); return; }
         await N.say('Schmal und fest?'); await N.anim('engrave'); await N.say('Hier. Das Stemmeisen von meinem Großvater. Damit hat er Fugen aufgemacht, die keiner aufmachen sollte.'); A.give('chisel'); await N.say('Bringen Sie es mir zurück. Es ist das Einzige, was ich von ihm habe, außer den Büchern.'); }},
     lendAgainOpt(A,N),
-    {t:'Wie lange arbeiten Sie schon hier?',once:'nd1',go:async function(A){ await N.say('Seit ich einen Hammer halten kann. Mein Urgroßvater hat die Werkstatt 1912 aufgemacht. Wir haben zwei Kriege überlebt und den dritten auch.'); await N.say('Im dritten haben wir Granathülsen graviert. Für Journalisten. Davon haben wir gegessen.'); }},
+    {t:'Seit wann gibt es die Werkstatt?',once:'nd1',go:async function(A){ await N.say('Seit ich einen Hammer halten kann. Mein Urgroßvater hat die Werkstatt 1912 aufgemacht. Wir haben zwei Kriege überlebt und den dritten auch.'); await N.say('Im dritten haben wir Granathülsen graviert. Für Journalisten. Davon haben wir gegessen.'); }},
     {t:'Was graviert man auf eine Džezva?',once:'nd2',go:async function(A){ await N.say('Namen. Daten. Eine Rose. Eine Brücke. Manchmal einen Satz.'); await N.say('Die Leute wollen, dass etwas bleibt. Kupfer bleibt.'); if (A.has('dzezva')){ await A.m('Auf meiner ist eine Rose und ein R.'); await N.say('Zeigen Sie mal.'); await A.wait(700); await N.say('Das ist von uns. Die Rose ist von meinem Großvater. Er hat sie immer mit sieben Blättern gemacht. Für Glück.'); } }},
     A.askOpt({ s1_name:'Zupan? Ein Slowene. Wir hatten viele Soldaten als Kunden. Die haben für Mädchen gekauft, die sie nie wiedergesehen haben.', s1_date:'Der vierzehnte November zweiundsiebzig. Großvater hat an dem Tag elf Aufträge eingetragen. Er war fleißig, wenn er verliebt war. In die Arbeit.',
       s1_father:'Halid Kadić von der Kula? Großvater hat ihm einmal einen Kupferkessel gemacht. Halid hat nie bezahlt. Großvater hat ihn trotzdem gegrüßt.', s1_bracelet:'Ein Armband mit Gravur? Dann steht es im Buch.' },'Fragen Sie mich nach Kupfer.'),
@@ -74,7 +74,7 @@ var HS=[
  {id:'neighbor',name:'Nachbarladen',look:'Der Nachbarladen ist zu. Ein Zettel: „Na hadžiluku. Vraćam se u decembru.“ Auf Pilgerfahrt, zurück im Dezember.',g:{look:'Er kommt zurück. Er hat es aufgeschrieben.'}},
  {id:'lantern',name:'Laterne',look:'Eine Kupferlaterne mit ausgestanzten Sternen. Wenn sie brennt, liegt die Gasse voller kleiner Lichter.',g:{look:'Sterne aus Kupfer. Die hat mir jemand gezeigt. Er hat gesagt, die gehen nie aus.'}}
 ];
-M.room('kazandziluk',{ name:'Kazandžiluk', scape:'k2_kazan', music:'k2_istraga',
+M.room('kazandziluk',{ name:'Kazandžiluk', scape:'k2_kazan', mapWhy:'Erst zurück auf die Baščaršija. Von dort komme ich überall hin.', music:'k2_istraga',
   state:function(G){ return {ladderUp:false,bookOut:false}; },
   actors:function(S,G){ var L=[]; if (here(G)){ var n=M.apos('kazandziluk','nedzad',[150,122,'R']); L.push({id:'nedzad',ch:'nedzad',x:n[0],y:n[1],f:n[2]||'R',name:'Nedžad',idle:'hammer',talk:'sitTalk',speechY:38}); } return L; },
   hotspots:HS,
