@@ -182,7 +182,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 **Abend an der Vijećnica**
 - **[M]** Ilija den Schein zeigen (jede Antwort geht) und durch das Tor gehen.
 - **[M]** Das **Buch** auf die verkohlte **Ausleihtheke** ziehen. Mala liest die erste Zeile vom verkohlten Blatt vor.
-- **[M]** Den **Kugelschreiber** auf die Theke ziehen: „Vraćeno, 21.11.2011“. Der Professor begreift.
+- Der Professor sagt „Bitte. Stempeln Sie.“ Einen Stempel gibt es nicht. **[M]** Den **Kugelschreiber** auf die Theke ziehen (oder die Theke benutzen) und die Rückgabe eintragen: „Vraćeno, 21.11.2011“. Der Professor begreift.
 - **[G]** Ihn hinüberbringen.
 - **Zwischenwelt:** **[M]** den Lesetisch benutzen und die erste Zeile setzen:
   - „Wer, wenn ich schriee,“
