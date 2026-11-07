@@ -1,0 +1,57 @@
+{
+ "engine": "chromium",
+ "browserVersion": "153.0.8010.12",
+ "device": "desktop",
+ "viewport": {
+  "width": 1280,
+  "height": 800
+ },
+ "touch": false,
+ "url": "file:///home/user/Hotel/web/index.html",
+ "recording": {
+  "seed": 1,
+  "sha": "ab860784d819d3343752f21e52b849c33313b56e71f195ced20b742a94e6a7c9",
+  "entries": 1753
+ },
+ "ok": false,
+ "actionsDone": 62,
+ "chapterEnds": [],
+ "end": {
+  "c4": false,
+  "c1": false,
+  "c2": false,
+  "c3": false,
+  "scr": "game",
+  "title": null
+ },
+ "failure": null,
+ "errors": [],
+ "consoleErr": [],
+ "failedReq": [],
+ "hotspotIssues": [],
+ "uiNotes": [],
+ "wallS": 24.615,
+ "shots": [
+  "000_start_Platz_1_leer.png",
+  "001_dbg_70_openNotes.png",
+  "002_dbg_72_combine.png",
+  "003_dbg_73_combine.png",
+  "004_dbg_74_act.png",
+  "005_dbg_79_exit.png",
+  "006_dbg_80_act.png",
+  "007_dbg_81_travel.png"
+ ],
+ "log": [
+  "[0.7s] Gerät desktop chromium {\"width\":1280,\"height\":800} touch=false TURBO 50",
+  "[0.8s] Titel Kapitel 1: Split",
+  "[1.1s] Titel Platz 1:  leer",
+  "[1.7s] Kapitel 1",
+  "[18.2s] nach 70 openNotes [] {\"scr\":\"game\",\"room\":\"varos\",\"busy\":false,\"dlg\":null,\"ov\":\"notebook\",\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_gift\",\"c1_ankica\",\"c1_radio\",\"pro_list\"],\"said\":[]}",
+  "[19.4s] nach 72 combine [\"pro_noone\",\"pro_knit\"] {\"scr\":\"game\",\"room\":\"varos\",\"busy\":false,\"dlg\":null,\"ov\":null,\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_gift\",\"c1_ankica\",\"c1_radio\",\"pro_list\"],\"said\":[]}",
+  "[20.5s] nach 73 combine [\"pro_noone\",\"pro_list\"] {\"scr\":\"game\",\"room\":\"varos\",\"busy\":false,\"dlg\":null,\"ov\":null,\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_ankica\",\"c1_radio\",\"pro_list\",\"pro_people\"],\"said\":[]}",
+  "[21.1s] nach 74 act [\"talk\",\"zdenka\",null] {\"scr\":\"game\",\"room\":\"varos\",\"busy\":true,\"dlg\":[\"In ihrem Heft stehen Namen aus der Gasse. Kennen Sie die Leute?\",\"Hier ist Ihr Schlüssel.\",\"Warum um sieben?\",\"Nach etwas aus dem Notizbuch fragen …\",\"Danke, Gospođa Zdenka.\"],\"ov\":null,\"speech\":false,\"card\":false,\"acting\":1,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_ankica\",\"c1_radio\",\"pro_list\",\"pro_people\"],\"said\":[]}",
+  "[23.5s] nach 79 exit [\"exit\"] {\"scr\":\"game\",\"room\":\"varos\",\"busy\":true,\"dlg\":null,\"ov\":\"map\",\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro_eve\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_radio\",\"pro_list\",\"pro_people\",\"pro_gasse\"],\"said\":[]}",
+  "[24.0s] nach 80 act [\"walk\",\"loc_flat\",null] {\"scr\":\"game\",\"room\":\"varos\",\"busy\":true,\"dlg\":null,\"ov\":\"map\",\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro_eve\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_radio\",\"pro_list\",\"pro_people\",\"pro_gasse\"],\"said\":[]}",
+  "[24.6s] nach 81 travel [\"riva\"] {\"scr\":\"game\",\"room\":\"riva\",\"busy\":false,\"dlg\":null,\"ov\":null,\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro_eve\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null} {\"notes\":[\"c1_radio\",\"pro_list\",\"pro_people\",\"pro_gasse\"],\"said\":[]}"
+ ]
+}

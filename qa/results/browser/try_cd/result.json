@@ -1,0 +1,76 @@
+{
+ "engine": "chromium",
+ "browserVersion": "153.0.8010.12",
+ "device": "desktop",
+ "viewport": {
+  "width": 1280,
+  "height": 800
+ },
+ "touch": false,
+ "url": "file:///home/user/Hotel/web/index.html",
+ "recording": {
+  "seed": 1,
+  "sha": "ab860784d819d3343752f21e52b849c33313b56e71f195ced20b742a94e6a7c9",
+  "entries": 1753
+ },
+ "ok": false,
+ "actionsDone": 57,
+ "chapterEnds": [],
+ "end": {
+  "c4": false,
+  "c1": false,
+  "c2": false,
+  "c3": false,
+  "scr": "game",
+  "title": null
+ },
+ "failure": {
+  "at": 76,
+  "entry": {
+   "k": "choose",
+   "a": [
+    "In ihrem Heft stehen Namen aus der Gasse. Kennen Sie die Leute?",
+    0
+   ],
+   "room": "varos",
+   "active": "marko",
+   "phase": "pro",
+   "scr": "game"
+  },
+  "msg": "Zeitüberschreitung: Dialogzeile „In ihrem Heft stehen Namen aus der Gasse. Kennen Sie die Leute?“ | {\"scr\":\"game\",\"room\":\"varos\",\"busy\":false,\"dlg\":null,\"ov\":null,\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null}",
+  "state": {
+   "scr": "game",
+   "room": "varos",
+   "busy": false,
+   "dlg": null,
+   "ov": null,
+   "speech": false,
+   "card": false,
+   "acting": 0,
+   "walk": false,
+   "active": "marko",
+   "phase": "pro",
+   "pop": null,
+   "menu": false,
+   "trn": false,
+   "title": null
+  }
+ },
+ "errors": [],
+ "consoleErr": [],
+ "failedReq": [],
+ "hotspotIssues": [],
+ "uiNotes": [],
+ "wallS": 202.396,
+ "shots": [
+  "000_start_Platz_1_leer.png",
+  "001_abbruch.png"
+ ],
+ "log": [
+  "[0.7s] Gerät desktop chromium {\"width\":1280,\"height\":800} touch=false TURBO 50",
+  "[0.9s] Titel Kapitel 1: Split",
+  "[1.1s] Titel Platz 1:  leer",
+  "[1.7s] Kapitel 1",
+  "[202.3s] ABBRUCH bei Eintrag 76 Zeitüberschreitung: Dialogzeile „In ihrem Heft stehen Namen aus der Gasse. Kennen Sie die Leute?“ | {\"scr\":\"game\",\"room\":\"varos\",\"busy\":false,\"dlg\":null,\"ov\":null,\"speech\":false,\"card\":false,\"acting\":0,\"walk\":false,\"active\":\"marko\",\"phase\":\"pro\",\"pop\":null,\"menu\":false,\"trn\":false,\"title\":null}"
+ ]
+}
