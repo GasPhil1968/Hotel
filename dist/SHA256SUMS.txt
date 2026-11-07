@@ -1,0 +1,2 @@
+5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115  web/index.html
+8fbbc024ce2fb42b249bb3f28ae8362863e9455d7ecd4e926b033ef5f7bc580d  dist/MALA_netlify_korrigiert.zip
