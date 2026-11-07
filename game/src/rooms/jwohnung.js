@@ -179,7 +179,7 @@ var HS=[
    g:{look:'Kinderzeichnungen. Eine Sonne mit Brille. Ein Hund, der aussieht wie ein Sofa. Der Junge zeichnet wie ich.'}},
  {id:'bedroom',name:'Schlafzimmer',exit:{to:'jschlaf'},look:'Die Tür zu Mamas Schlafzimmer. Angelehnt, nie ganz zu.',
    canExit:async function(A){ var G=A.G, p=G.phase; if (A.isMala()) return true;
-     if (night(G)){ await A.m('Mama schläft. Die Tür ist angelehnt, und dahinter atmet sie.'); return false; }
+     if (night(G)){ await A.m(G.phase==='k4_d1_n'&&F(A,'k4.d1.dzezva')?'Mama ist im Nachtdienst. Ihr Schlafzimmer ist trotzdem ihres. Ich gehe da nicht hinein.':'Mama schläft. Die Tür ist angelehnt, und dahinter atmet sie.'); return false; }
      if (p==='k4_pro' && F(A,'k4.p.jasnaHome')){ await A.m('Mama zieht sich um. Das Schlafzimmer ist ihres.'); return false; }
      if (p==='k4_epi'){ await A.m('Heute nicht. Die Kiste steht ja auf dem Tisch.'); return false; }
      if (A.first('jwBedIn')) await A.m('Ich gehe nicht gern in ihr Schlafzimmer. Ich gehe trotzdem.'); return true; },

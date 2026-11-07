@@ -154,7 +154,7 @@ M.k4Dzezva=async function(A){ var G=A.G; if (F(A,'k4.d1.dzezva')) return;
   ]; });
   if (!F(A,'k4.d1.dzezva')) return;
   await lock(A,async function(){
-    await A.wait(700); await J.say('Ich habe heute Nachtdienst. Um zehn fängt er an.'); await A.m('An Weihnachten?'); await J.say('Die Kollegin hat Kinder.');
+    await A.wait(700); await J.say('Ich springe heute Nacht noch ein. Um zehn fängt der Dienst an.'); await A.m('Nach dem Frühdienst? An Weihnachten?'); await J.say('Die Kollegin hat Kinder.');
     A.sfx('steps'); await A.wait(500); await A.narrate('Sie zieht den Mantel an, prüft den Herd, das Bügeleisen, das Fenster. An der Tür bleibt sie stehen und sieht auf die Pantoffeln. Sie rückt sie nicht gerade. Sie stehen gerade.');
     A.sfx('door'); if (J.actor){ J.actor.fadeOut=A.gt; } gone=true; await A.wait(900); if (J.actor) J.hide();
     var s=M.stand('jwohnung','sofa')||[300,126,'L']; await A.walkM(s[0],s[1]); A.idleM('sit');

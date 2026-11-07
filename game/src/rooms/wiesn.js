@@ -61,10 +61,11 @@ async function lanaDead(A,An){ var G=A.G;
   await M.k4DayCheck(A); }
 async function talkAna(A){ var An=A.npc('anaC'), G=A.G;
   if (A.first('wnHello')){ await An.say(F(A,'k4.d1.bread')?'Da seid ihr. Mama hat geschrieben, du hast ihr Brot gebracht. Mit drei Ausrufezeichen. Mama schreibt keine Ausrufezeichen.':'Da bist du ja. Mia fährt seit einer Stunde und will, dass du zuschaust.'); }
-  await A.menuLoop(function(){ return [
+  var ph0=G.phase; await A.menuLoop(function(){ if (G.phase!==ph0) return [];   // der Tag ist inzwischen zu Ende (lanaDead → Tageswechsel): das Gespräch nicht in die Nacht weiterführen
+    return [
     {t:'Zeigst du mir das Foto? Von Papa und dem Auto.',if:!F(A,'k4.d1.anaLana'),go:function(A){ return photo(A,An); }},
     {t:'Lana hat dir eine Straßenbahn gemalt.',silent:true,if:N(A,'z4_stiefel')&&!F(A,'k4.d1.drawing'),go:function(A){ return tram(A,An); }},
-    {t:'Ich muss dir etwas sagen. Über Lana.',if:F(A,'k4.d1.anaLana')&&!F(A,'k4.d1.walk'),go:function(A){ return tellAna(A,An); }},
+    {t:'Ich muss dir etwas sagen. Über Lana.',if:F(A,'k4.d1.anaLana')&&!F(A,'k4.d1.walk'),go:async function(A){ await tellAna(A,An); if (F(A,'k4.d1.walk')) return 'bye'; }},
     {t:'Du wolltest reden. Gestern, in der Küche.',once:'wnTalk',go:async function(A){ await An.say('Nicht hier.'); await A.wait(400); await An.say('Nicht vor den Kindern. Und nicht heute, heute ist Weihnachten.'); await A.wait(700); await An.say('Ja. Ich weiß, wie das klingt. Wie Mama.'); }},
     {t:'Du hast das Foto heimlich abfotografiert?',once:'wnHeim',if:F(A,'k4.d1.anaLana'),go:async function(A){ await An.say('Mama hat nur das eine. Wenn ich sie frage, ob ich es scannen darf, sagt sie: Was willst du damit?'); await A.wait(400); await An.say('Ich will meinen Vater auf dem Handy haben. Das will ich damit.'); }},
     {t:'Wie geht es dir? Wirklich.',once:'wnHow',go:async function(A){ await An.say('Wirklich? Ich habe zwei Kinder, einen Mann, der Bosnisch lernt, und eine Mutter, die an Silvester arbeitet, damit sie das Knallen nicht hören muss.'); await A.wait(400); await An.say('Mir geht es gut. Danke der Nachfrage. Sie kommt selten.'); }},

@@ -17,6 +17,7 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
   // echter Klick: Spielkoordinaten (320×200) → Bildschirm über das Rechteck der Leinwand
   const box = async () => page.evaluate(() => { const r = document.getElementById('game').getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
   const tap = async (x, y) => { const b = await box(); const sx = b.x + (x + 0.5) * b.w / 320, sy = b.y + (y + 0.5) * b.h / 200; await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(120); };
+  const spot = (id) => D.ev((i) => { const h = M.E.room.hotspots.find(x => x.id === i), r = M.E.hsRect(h); return [Math.round(r[0] + r[2] / 2 - M.E.camX), Math.round(r[1] + r[3] / 2)]; }, id);
   const said = (sub) => D.ev((x) => (M.__speechLog || []).some(l => l[1].indexOf(x) >= 0), sub);
   const T = async (id, name, fn) => { console.log('\n' + id + ' ' + name); const e0 = D.errors.length; try { await fn(); } catch (e) { fails++; console.log('  FEHL Abbruch: ' + e.message.split('\n')[0]); }
     if (D.errors.length > e0) { fails++; console.log('  FEHL JS-Fehler: ' + D.errors[e0].split('\n')[0]); } };
@@ -66,6 +67,30 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
     const n = await D.ev(() => { const L = []; const t0 = M.text; M.text = function (fb, t, x, y, c, bg) { L.push(t); return t0.apply(this, arguments); };
       M.key('z'); M.E.camX = 0; return new Promise(r => setTimeout(() => { M.text = t0; r(L); }, 400)); });
     ok(n.indexOf('Pfeiler') >= 0 && n.some(t => /Hansi|Leere Stelle|\?\?\?/.test(t)), 'Schilder: ' + [...new Set(n)].filter(t => /Pfeiler|Hansi|Leere|\?\?\?/.test(t)).join(', '));
+  });
+  // ---------------------------------------------------------------- Kapitel 4, Christtag bis Dienstag
+  await T('K4B-1', 'Christtag-Nacht: Mala geht per Doppeltipp ins Schlafzimmer', async () => {
+    const g = find(K4, 'Karte „Christtag · Abend“'); g.active = 'mala'; await load(g);
+    const ex = await D.ev(() => { const h = M.E.room.hotspots.find(x => x.id === 'bedroom'); return !!M.E.uiExit(h); });
+    ok(ex, 'für Mala ist die Schlafzimmertür ein Ausgang');
+    const [x, y] = await spot('bedroom'); await D.ev(() => { M.TURBO = 1; }); const b = await box(); const sx = b.x + (x + 0.5) * b.w / 320, sy = b.y + (y + 0.5) * b.h / 200;
+    await page.mouse.click(sx, sy); await page.waitForTimeout(90); await page.mouse.click(sx, sy); await D.ev(() => { M.TURBO = 25; });
+    await D.until(s => s.room === 'jschlaf', 20000, 'Schlafzimmer').catch(() => null); await D.drain();
+    ok((await D.st()).room === 'jschlaf', 'im Schlafzimmer (ist ' + (await D.st()).room + ')');
+  });
+  await T('K4B-2', 'Peppinos Name: Briefe + Nachhall im Bunker ergibt den Schluss', async () => {
+    const g = find(K4, 'Mala durch die Luke in den Bunker'); g.notes = g.notes.filter(n => n !== 's4_ausweis' && n !== 's4_derselbe' && n !== 's4_name'); if (g.notes.indexOf('s4_umschlag') < 0) g.notes.push('s4_umschlag'); await load(g);
+    const r = await D.combine('s4_umschlag', 's4_bunker'); ok(r && r.ok && r.to === 's4_name', 'Schluss: ' + JSON.stringify(r).slice(0, 80));
+  });
+  await T('K4B-3', 'Theresienwiese: Anas Gespräch endet mit dem Tageswechsel', async () => {
+    const g = find(K4, 'Theresienwiese'); g.active = 'marko'; await load(g);
+    const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'rooms', 'wiesn.js'), 'utf8');
+    ok(/if \(G\.phase!==ph0\) return \[\];/.test(src), 'Gesprächsschleife prüft den Tageswechsel');
+  });
+  await T('K4B-4', 'Christtag-Nacht: Marko am Schlafzimmer sagt nicht, Mama schlafe', async () => {
+    const g = find(K4, 'Karte „Christtag · Abend“'); g.active = 'marko'; await load(g);
+    await D.act('walk', 'bedroom'); await D.drain();
+    ok(await said('Mama ist im Nachtdienst') && !(await said('dahinter atmet sie')), 'passend zum Nachtdienst');
   });
   // ---------------------------------------------------------------- Kapitel 4, Mittwoch/Donnerstag
   const closeDlg = async () => { await D.ev(() => { const D0 = M.E.dlg; if (D0) M.E.chooseDone(D0.opts.length - 1); }); await D.drain(); };
@@ -123,7 +148,6 @@ const dumps = (dir) => dir ? fs.readdirSync(dir).filter(f => /^\d+\.json$/.test(
         await page.mouse.move(a1, a2); await page.mouse.down(); for (let i = 1; i <= 12; i++) { await page.mouse.move(a1 + (c1 - a1) * i / 12, a2 + (c2 - a2) * i / 12); await page.waitForTimeout(25); } await page.mouse.up(); await page.waitForTimeout(200); return D.drain(); }
       const dn = await D.ev(() => { for (let y = 150; y < 200; y++) for (let x = 0; x < 320; x++) if (M.uiHit(x, y) === 'dn') return [x + 1, y + 1]; return null; }); if (!dn) break; await tap(dn[0], dn[1]); }
     throw new Error('Gegenstand nicht in der Leiste: ' + item); };
-  const spot = (id) => D.ev((i) => { const h = M.E.room.hotspots.find(x => x.id === i), r = M.E.hsRect(h); return [Math.round(r[0] + r[2] / 2 - M.E.camX), Math.round(r[1] + r[3] / 2)]; }, id);
   if (K2.length) {
     const kuca = () => { const g = find(K2, 'Lanas Zimmer, die Postkarte'); g.inv.push('key_kuca'); g.flags['k2.f2.kuca'] = true; g.notes = g.notes.filter(n => n !== 'f2_oven');
       g.pos.marko = { room: 'kuca', x: 150, y: 150, f: 'R' }; g.pos.mala = { room: 'kuca', x: 110, y: 150, f: 'R' }; g.active = 'marko'; return g; };

@@ -180,8 +180,12 @@ function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):
 
 // ---------------------------------------------------------------- Verb-Menü (nur Verben, die etwas bewirken)
 var POP_RH=13;
+// Ausgang für die gerade gespielte Figur: dieselbe Regel wie die Engine (doVerb0), mit M.malaFree (Kapitel 4: Mala darf allein durch Türen)
+// Blindtest K4: Tippen, Menü und „Zeigen“ kannten M.malaFree nicht, Mala kam nachts nicht ins Schlafzimmer
+function uiExit(hs){ var g=isG(), ex=g?(hs.gexit||(hs.exit&&(hs.exit.gok||(M.malaFree&&M.malaFree(GS(),hs)))?hs.exit:null)):hs.exit; if (typeof ex==='function') ex=ex(M.RS(E.room.id),GS()); return ex||null; }
+E.uiExit=uiExit;
 function hsOpts(hs){ var room=E.room; if (room.noVerbs) return null; var o=[], g=isG();
-  var ex=g?(hs.gexit||(hs.exit&&hs.exit.gok?hs.exit:null)):hs.exit; if (typeof ex==='function') ex=ex(M.RS(room.id),GS());
+  var ex=uiExit(hs);
   if (hs===E.MALA_HS){ return [{t:'Rede mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (hs===E.MARKO_HS){ return [{t:'Sprich mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (ex) o.push({t:g&&hs.gexit?'Hindurchgehen':'Hingehen',v:g&&hs.gexit?'pass':'walk'});
@@ -481,13 +485,13 @@ function drawReveal(){ if (!reveal) return; if (E.gt()-reveal.at>REVEAL_MS||E.bu
   E.room.hotspots.forEach(function(h){ if (h.vis&&!h.vis(S,GS())) return; if (h.who==='m'&&g) return; if (h.who==='g'&&!g) return; var r=E.hsRect(h); if (!r) return; if (!E.hsLit(h,r)) return; if (r[2]*r[3]>W*SH*0.25||h.noReveal) return;
     var x=Math.round(r[0]+r[2]/2-cx0), y=Math.round(r[1]+r[3]/2); if (x<-4||x>W+4) return; list.push({h:h,x:Math.max(4,Math.min(W-5,x)),y:Math.max(4,Math.min(SH-5,y)),a:r[2]*r[3]}); });
   list.sort(function(a,b){ return a.a-b.a; }); var pulse=(Math.sin(E.gt()/160)+1)/2, placed=[];
-  list.forEach(function(m){ var ex=g?m.h.gexit:m.h.exit, col=ex?P.g5:(m.h.npc?P.r4:(g?P.x5:P.y4)), R=2+Math.round(pulse); if (g && (m.h.g&&m.h.g.sense)) col=P.x6;
+  list.forEach(function(m){ var ex=uiExit(m.h), col=ex?P.g5:(m.h.npc?P.r4:(g?P.x5:P.y4)), R=2+Math.round(pulse); if (g && (m.h.g&&m.h.g.sense)) col=P.x6;
     for (var dy=-R-1;dy<=R+1;dy++) for (var dx=-R-1;dx<=R+1;dx++){ var d2=dx*dx+dy*dy; if (d2<=(R+1)*(R+1)) fb.px(m.x+dx,m.y+dy,d2<=R*R?col:P.k0); } fb.px(m.x,m.y,P.l1); });
   // Namen: Figuren zuerst; stößt ein Schild an ein anderes, wird es darüber oder weiter unten versucht, statt wegzufallen
   list.slice().sort(function(a,b){ return (b.h.npc?1:0)-(a.h.npc?1:0) || a.a-b.a; }).forEach(function(m){ var t=E.nameOf(m.h); if (!t) return; var w=M.textWidth(t), lx=Math.max(1,Math.min(W-1-w,m.x-(w>>1)));
     var hit=function(box){ return placed.some(function(b){ return box[0]<b[0]+b[2]&&b[0]<box[0]+box[2]&&box[1]<b[1]+b[3]&&b[1]<box[1]+box[3]; }); }, box=null;
     [6,-14,18,-26,30].some(function(o){ var ly=m.y+o; if (ly<1||ly+8>SH) return false; var bx=[lx-2,ly-2,w+4,12]; if (hit(bx)) return false; box=bx; return true; });
-    if (!box) return; placed.push(box); M.text(fb,t,box[0]+2,box[1]+2,(g?m.h.gexit:m.h.exit)?P.g5:(g?P.x5:P.s6),P.k0); }); }
+    if (!box) return; placed.push(box); M.text(fb,t,box[0]+2,box[1]+2,uiExit(m.h)?P.g5:(g?P.x5:P.s6),P.k0); }); }
 
 // ---------------------------------------------------------------- Menü
 function menuItems(){ var inG=E.screen==='game', sl=E.slot(); return [
@@ -649,7 +653,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (E.pending){ var pid=E.pending; E.pending=null; if (hs){ E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,pid); } return; }
   if (!hs){ E.actionTok(); E.walkPlayerTo(wx,y); return; }
   E.setLastClick([wx,y]);
-  var ex=isG()?(hs.gexit||(hs.exit&&hs.exit.gok?hs.exit:null)):hs.exit; if (typeof ex==='function') ex=ex(M.RS(E.room.id),GS());
+  var ex=uiExit(hs);
   var opts2=hsOpts(hs);
   if (!opts2){ if (ex){ var key=E.exitKey(hs);
       if (lastExit&&lastExit.key===key&&now0-lastExit.t<=M.DBL_MS){ lastExit=null; E.skipExitWalk(key); return; }   // Doppelklick: Rest des Weges überspringen, keine zweite Prüfung

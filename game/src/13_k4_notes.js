@@ -116,6 +116,7 @@ M.defineDeductions({
   's4_peppino+s4_ausweis':{to:'s4_derselbe',say:'Nummer 17 auf der Mütze, Nummer 17 in der Akte. Peppino an Gleis 11, Josef Rugiero beim Amt. Derselbe Mann? Es wäre zu einfach, wenn eine Nummer reicht.'},
   's4_derselbe+s4_bunker':{to:'s4_name',say:'„Giuseppe? Das schreibt keiner.“ Ein Beamter, ein Stempel, ein junger Mann, der „Sì“ sagt. Josef Rugiero ist Giuseppe Ruggiero.'},
   's4_derselbe+s4_umschlag':{to:'s4_name',say:'Die Briefe gehen an Giuseppe Ruggiero, Gleis 11. Der Ausweis sagt Josef Rugiero, Gleis 11, Nummer 17. Derselbe Mann, zwei Namen.'},
+  's4_bunker+s4_umschlag':{to:'s4_name',say:'Die Briefe gehen an Giuseppe Ruggiero. Im Bunker macht ein Beamter daraus Josef Rugiero, und er sagt „Sì“. Derselbe Mann. Den Namen hat man ihm hier genommen.'},   // Blindtest K4: der Hinweis nannte dieses Paar
   's4_bunker+s4_ausweis':{to:'s4_name',say:'Im Bunker wird aus Giuseppe ein Josef, aus Ruggiero ein Rugiero. Im Ausweis steht genau das. Josef Rugiero ist Giuseppe Ruggiero.'},
   's4_brief79+s4_carmela_hall':{to:'s4_wusste',say:'„Ich habe dich mit den Koffern gesehen.“ Und eine Frau, die beim Schreiben weint und lächelt. Carmela wusste es. Seit 1979.'},
   'g4_versuch1+g4_versuch2':{to:'g4_beides',say:'Ohne Gong steht er nicht auf, aber er friert, wenn sie bei ihm ist. Mit Gong steht er auf, aber ohne sie friert er nicht. Der Gong holt ihn. Ihre Hand hält ihn fest.'},

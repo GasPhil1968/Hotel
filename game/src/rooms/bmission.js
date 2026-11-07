@@ -59,7 +59,7 @@ async function openSuitcase(A,W,byName){ var G=A.G;
   if (!byName && !N(G,'s4_name')) await W.say('Lesen tun ma s’ ned. Erst, wenn i weiß, wem s’ g’hören.');
   if (here(A)){ await A.wait(400); await A.g('Um den Koffer fliegen Briefe. Für mich jedenfalls.'); } }
 async function lettersAsk(A,W){ if (N(A.G,'s4_name')) return lettersByName(A,W);
-  await W.say('Die Briefe? Lesen?'); await A.wait(400); await W.say('Die san für an Giuseppe. Der Sepp hieß Josef, des hat mir der Herr von der Stadt g’sagt. Josef, wie Sepp.');
+  await W.say('Die Briefe? Lesen?'); await A.wait(400); await W.say('Die san für an Giuseppe. Der Sepp hieß Josef, des hat mir der Herr von der Stadt g’sagt. Josef, wie Sepp.'); await W.say('Die Akte hat die Friedhofsverwaltung. Städtische Friedhöfe, am Altstadtring.');
   await W.say('Fremde Briefe les i ned. Und Sie a ned.'); }
 async function lettersByName(A,W){ var G=A.G;
   if (F(G,'k4.s.letters')){ await W.say('Giuseppe Ruggiero. I schreib’s ihm hinten auf’s Foto. Damit’s oaner weiß.'); return; }

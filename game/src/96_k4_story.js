@@ -219,7 +219,7 @@ M.k4StartEve=async function(A){ if (A.flag('k4.eve.started')) return; A.setFlag(
   if (M.k4Eve) await M.k4Eve(A); else { A.setFlag('k4.p.eve'); A.setFlag('k4.p.talk1'); A.note('r4_kopf',true); await bring(A,'jwohnung',{at:standOf('jwohnung','sofa')}); } };
 M.k4StartD1=async function(A){ if (A.flag('k4.d1.started')) return; A.setFlag('k4.d1.started'); await A.fade(8,900);
   await card(A,'Erster Tag','Christtag','Sonntag, 25. Dezember · klar'); await wake(A,'k4_d1'); };
-M.k4StartD1Night=async function(A){ if (A.flag('k4.d1n.started')) return; A.setFlag('k4.d1n.started'); await A.m('Es wird früh dunkel. Mama hat Spätdienst gehabt und ist jetzt zu Hause.'); await A.fade(8,900);
+M.k4StartD1Night=async function(A){ if (A.flag('k4.d1n.started')) return; A.setFlag('k4.d1n.started'); await A.m('Es wird früh dunkel. Mama ist vom Frühdienst zurück. Für ein paar Stunden.'); await A.fade(8,900);
   await card(A,'','Christtag · Abend','Sonntag · Mamas Küche',3400);
   A.phase('k4_d1_n'); await bring(A,'jwohnung',{at:standOf('jwohnung','table')}); A.music('k4_wohnung'); A.save();
   if (M.k4Dzezva) await M.k4Dzezva(A); };
