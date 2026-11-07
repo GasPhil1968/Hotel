@@ -1,0 +1,179 @@
+{
+ "engine": "chromium",
+ "browserVersion": "153.0.8010.12",
+ "device": "desktop",
+ "viewport": {
+  "width": 1280,
+  "height": 800
+ },
+ "touch": false,
+ "url": "file:///home/user/Hotel/web/index.html",
+ "recording": {
+  "seed": 1,
+  "sha": "5ddc4f3c29d8d46332504bc8cea2ecc78b406729f93e77a7bad572c9df2be115",
+  "entries": 1753
+ },
+ "ok": true,
+ "actionsDone": 1420,
+ "chapterEnds": [
+  {
+   "ch": 1,
+   "at": 238.012,
+   "title": [
+    "Weiter mit Kapitel 2: Sarajevo",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 2,
+   "at": 524.309,
+   "title": [
+    "Weiter mit Kapitel 3: Mostar",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 3,
+   "at": 938.1,
+   "title": [
+    "Weiter mit Kapitel 4: München",
+    "Zum Titelbild"
+   ]
+  },
+  {
+   "ch": 4,
+   "at": 1261.022,
+   "title": [
+    "Kapitel 1: Split",
+    "Kapitel 2: Sarajevo",
+    "Kapitel 3: Mostar",
+    "Kapitel 4: München",
+    "Mitgelieferte Spielstände",
+    "Sprache: Deutsch",
+    "Über das Spiel"
+   ]
+  }
+ ],
+ "end": {
+  "c4": true,
+  "c1": true,
+  "c2": true,
+  "c3": true,
+  "scr": "title",
+  "title": [
+   "Kapitel 1: Split",
+   "Kapitel 2: Sarajevo",
+   "Kapitel 3: Mostar",
+   "Kapitel 4: München",
+   "Mitgelieferte Spielstände",
+   "Sprache: Deutsch",
+   "Über das Spiel"
+  ]
+ },
+ "failure": null,
+ "errors": [],
+ "consoleErr": [],
+ "failedReq": [],
+ "hotspotIssues": [],
+ "uiNotes": [
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    600,
+    116
+   ],
+   "via": "bollard"
+  },
+  {
+   "kind": "Boden verdeckt (Scrollen)",
+   "room": "riva",
+   "dir": "R",
+   "via": "islands"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    560,
+    116
+   ],
+   "via": "islands"
+  },
+  {
+   "kind": "Boden verdeckt",
+   "room": "riva",
+   "target": [
+    560,
+    116
+   ],
+   "via": "islands"
+  },
+  {
+   "kind": "Wechsel nicht angeboten (Skript prüft Sperre)",
+   "room": "flat",
+   "phase": "i1m"
+  },
+  {
+   "kind": "Tipp traf anderen Hotspot (Figur bewegte sich)",
+   "want": "bench",
+   "got": "_mala"
+  },
+  {
+   "kind": "Dunkler Hotspot: Marko geht hin, Mala folgt",
+   "id": "debris",
+   "lit": true
+  },
+  {
+   "kind": "Peilung blieb aus, Aktion neu angetippt (z. B. nach der Glockenszene)",
+   "act": [
+    "use",
+    "view",
+    null
+   ],
+   "room": "partizan"
+  }
+ ],
+ "wallS": 1261.087,
+ "shots": [
+  "000_start_Platz_1_leer.png",
+  "001_K1_ende_titel.png",
+  "002_start_Weiter_mit_Kapitel_2_Sarajevo.png",
+  "003_K2_a450.png",
+  "004_K2_a600.png",
+  "005_K2_a750.png",
+  "006_K2_ende_titel.png",
+  "007_start_Weiter_mit_Kapitel_3_Mostar.png",
+  "008_K3_a1050.png",
+  "009_K3_ende_titel.png",
+  "010_start_Weiter_mit_Kapitel_4_M_nchen.png",
+  "011_K4_ende_titel.png"
+ ],
+ "log": [
+  "[0.7s] Gerät desktop chromium {\"width\":1280,\"height\":800} touch=false TURBO 25 Tippabstand 40 ms",
+  "[0.8s] Titel Kapitel 1: Split",
+  "[1.1s] Titel Platz 1:  leer",
+  "[1.8s] Kapitel 1",
+  "[34.4s] Gehen über Blickfang bollard [598,112,\"R\"] statt freiem Boden bei [600,116]",
+  "[54.1s] Gehen über Blickfang islands [560,112,\"B\"] statt freiem Boden bei [560,116]",
+  "[64.2s] Fortschritt 100 Aktionen; Kapitel 1 c1",
+  "[86.5s] Gehen über Blickfang islands [560,112,\"B\"] statt freiem Boden bei [560,116]",
+  "[109.0s] Figurenwechsel gesperrt, Knopf nicht da – wie vorgesehen",
+  "[126.8s] Tipp traf _mala statt bench",
+  "[143.4s] Marko-Tipp 0 {\"sx\":241,\"y\":124,\"d\":2} {\"mk\":[242,125],\"ma\":[218,122],\"gt\":3507259.3000001786,\"block\":3498859.3000001786,\"pop\":false}",
+  "[144.9s] Marko geht zu dunklem debris lit=true",
+  "[238.1s] Titel Weiter mit Kapitel 2: Sarajevo",
+  "[238.7s] Kapitel 2",
+  "[266.8s] Fortschritt 400 Aktionen; Kapitel 2 k2_pro_n",
+  "[385.5s] Fortschritt 600 Aktionen; Kapitel 2 k2_s2",
+  "[465.0s] Fortschritt 700 Aktionen; Kapitel 2 k2_fin",
+  "[524.4s] Titel Weiter mit Kapitel 3: Mostar",
+  "[525.0s] Kapitel 3",
+  "[583.3s] Gehen: noch nicht am Ziel 85",
+  "[646.8s] Peilung blieb aus, erneut [\"use\",\"view\",null]",
+  "[938.2s] Titel Weiter mit Kapitel 4: München",
+  "[938.9s] Kapitel 4",
+  "[949.8s] Fortschritt 1100 Aktionen; Kapitel 4 k4_pro",
+  "[1139.8s] Fortschritt 1300 Aktionen; Kapitel 4 k4_d3"
+ ]
+}
