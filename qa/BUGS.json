@@ -84,6 +84,20 @@
   ]
  },
  {
+  "id": "BUG-007",
+  "severity": "mittel",
+  "status": "behoben",
+  "title": "Kapitel 3, Straßenbrücke: Mala lässt sich nicht durch Tippen auf den Weg ans Westende führen",
+  "cause": "Die Trefferfläche des vorderen Geländers ('railing', 30–370 × 107–142) überdeckt den gesamten Gehweg. Während der Überquerung (Mala gespielt) wird jeder Tipp zu „Schau an: Geländer“ mit Gang zum festen Standpunkt x=200; dort rückt die Kamera nicht weiter (Totzone), das freie Westende bleibt außerhalb des Bildes.",
+  "effect": "Die zentrale geführte Handlung („Man führt Mala bis ans Westende“, LOESUNG3) gelingt nur über einen unscheinbaren Ausweg (Laterne antippen). Kein endgültiger Softlock, aber eine wahrscheinliche Hängestelle. Die Lösungsskripte umgingen sie mit walkPlayerTo.",
+  "fix": "Während der Überquerung als Mala ist das Geländer kein Tippziel (vis); Tipps auf den Weg führen Mala. Außerhalb der Überquerung unverändert.",
+  "repro": "Kapitel 3, Freitag, nach „zu flach geschnitten“ zur Straßenbrücke; als Mala wiederholt auf den Gehweg links der Laterne tippen → Mala bleibt in der Mitte stehen.",
+  "evidence": [
+   "qa/regress/bug_007_bridge_lead.js",
+   "UI-Volldurchlauf Chromium/Desktop und Firefox/Tablet (Abbruch an Eintrag 1085 vor der Korrektur)"
+  ]
+ },
+ {
   "id": "UI-001",
   "severity": "niedrig",
   "status": "offen (Designentscheidung)",

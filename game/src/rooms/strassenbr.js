@@ -55,7 +55,8 @@ var HS=[
      if (!crossed(G)){ if (A.malaHere()){ await crossStart(A); return false; } await A.m('Ohne Mala gehe ich nicht hinüber. Allein komme ich nur ein paar Straßen weit.'); return false; }
      return true; },
    g:{look:gl('Drüben. Ich war noch nie drüben. Glaube ich.')}},
- {id:'railing',name:'Geländer',look:'Ein Rohrgeländer auf einem Betonsockel, grau gestrichen, an einigen Stellen rostig. Jemand hat einen Aufkleber daraufgeklebt, abgerissen, unlesbar.',
+ {id:'railing',name:'Geländer',vis:function(S,G){ return !(S.crossing && G.active==='mala'); },   // QA BUG-007: während der geführten Überquerung führt ein Tipp auf den Weg Mala, statt das Geländer anzusehen
+  look:'Ein Rohrgeländer auf einem Betonsockel, grau gestrichen, an einigen Stellen rostig. Jemand hat einen Aufkleber daraufgeklebt, abgerissen, unlesbar.',
    use:'Ich halte mich am Geländer fest und sehe hinunter. Das Wasser ist grün und weit weg. Hier ist es nur ein Fluss unter einer Straße.',
    g:{look:gl(function(A){ return A.g(crossed(A.G)?'Ein Geländer. Daran habe ich mich nicht festgehalten. Ich hatte deinen Ärmel.':'Ein Geländer wie an jeder Straße. Gut. Das ist eine Straße.'); })}},
  {id:'river',name:'Neretva',look:function(A){ return A.m(A.G.phase==='k3_d1'?'Tief unten die Neretva, grün, mit weißem Schaum, wo die Bura in die Strudel greift. Von hier ist sie breit und ruhig, als hätte sie nichts damit zu tun.':'Unten der Fluss. Grün, kalt, schnell. Von einer Straßenbrücke aus sieht er harmloser aus als von der alten.'); },
