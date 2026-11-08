@@ -2,6 +2,8 @@
 
 | Pfad | Inhalt |
 |---|---|
+| `TOUCH_KONZEPT.md` | Touch-Steuerung auf iPhone und iPad: Grundlage, Gesamturteil, Problemliste T01–T24, Bedienmodell, Layoutentwurf, Umsetzungsplan, Testprotokoll und Abnahmekriterien |
+| `touch/` | Messwerkzeuge und Belege dazu (siehe `touch/README.md`) |
 | `UMSETZUNG.md` | Stand der Umsetzung (Phase 1–4): was umgesetzt ist, Abnahme F1–F25 mit Nachweis, Abweichungen, Tests |
 | `UI_KONZEPT.md` | Analyse und Entwurf (A–F): Entscheidungen des Autors, Bestandsaufnahme, Problemliste, Gestaltungsrichtung, Entwurf je Bildschirm (D1–D17, inkl. Breitbild-Leiste), Umsetzungsplan, Abnahme (F1–F25) |
 | `prototype/` | Klickbarer Entwurf (`src.html` → `index.html`), Bilder aus dem Spiel (`img/`), Ist-Bilder (`ist/`), echte Hotspot-Daten (`hotspots.json`). Veröffentlicht: https://claude.ai/artifact/W8o3QnYDp8TEz9ayPLmVcP |

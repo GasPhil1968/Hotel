@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>iPad quer · Antworten unter dem Bild</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&amp;display=swap">
+<style>
+@font-face{font-family:"MALA Pixel";src:url(/_blob/1e2e758f97b621656cd4e545faf67fcc) format("opentype");font-display:block}
+body{margin:0}
+.ans{box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;min-height:44px;padding:0 14px;margin:0;background:transparent;border:0;color:#e3d9c0;font-family:"MALA Pixel",ui-monospace,monospace;font-size:20px;line-height:22px;text-align:left;cursor:pointer}
+.ans .n{color:#d99a33;flex:0 0 auto}
+.ann{position:absolute;box-sizing:border-box;border:1.5px dashed #ff5fa2;pointer-events:none}
+.tag{position:absolute;background:#ff5fa2;color:#24060f;font-family:"IBM Plex Sans Condensed",system-ui,sans-serif;font-weight:600;font-size:13px;line-height:1.25;padding:2px 6px;border-radius:2px;white-space:nowrap;pointer-events:none}
+</style>
+</helmet>
+<div style="position: relative; width: 1080px; height: 810px; overflow: hidden; background: #08070d; font-family: 'MALA Pixel', ui-monospace, monospace; color: #e3d9c0">
+<img src="/_blob/92ac91c9f783a2540adf3420feac6728" alt="Spielbild mit Leiste: Hotel Palma" style="position: absolute; left: 60px; top: 12px; width: 960px; height: 600px; image-rendering: pixelated">
+<img src="/_blob/012a4121956ec9470515d8aa07f9d191" alt="Szene mit Brustbild der sprechenden Figur" style="position: absolute; left: 60px; top: 12px; width: 960px; height: 432px; image-rendering: pixelated">
+<div role="status" style="position: absolute; left: 96px; top: 382px; max-width: 700px; box-sizing: border-box; padding: 8px 16px; background: rgba(8, 7, 13, 0.88); border: 2px solid #5a5248; font-size: 20px; line-height: 24px"><span style="color: #c3ecee">Bruno Lalić: Signore … ?</span></div>
+<div role="listbox" aria-label="Antworten" style="position: absolute; left: 60px; top: 622px; width: 960px; height: 184px; box-sizing: border-box; padding: 2px; display: flex; flex-direction: column; gap: 1px; background: rgba(8, 7, 13, 0.96); border: 2px solid #c8bb9f; overflow: hidden">
+<button type="button" class="ans"><span class="n">1</span><span>Gospodine Lalić, Ihr Dienst ist vorbei.</span></button>
+<button type="button" class="ans"><span class="n">2</span><span>Das Hotel wird am Montag verkauft.</span></button>
+<button type="button" class="ans" style="background: #1e1b2a; color: #fffdf4"><span class="n">3</span><span>Welches Jahr ist heute?</span></button>
+<button type="button" class="ans" style="color: #a39882"><span class="n">4</span><span>Haben Sie den Schlüssel für den Salon?</span></button>
+<div aria-hidden="true" style="position: absolute; right: 4px; top: 8px; width: 5px; height: 84px; background: #6a400e"></div>
+</div>
+<sc-if value="{{showNotes}}" hint-placeholder-val="{{ true }}">
+<div class="ann" style="left: 60px; top: 12px; width: 960px; height: 600px"></div>
+<div class="tag" style="left: 68px; top: 20px">Bild bleibt 960 × 600 · 3 CSS-px je Spielpixel · Leiste 45 hoch genügt</div>
+<div class="tag" style="left: 68px; top: 42px">Bild 12 px vom oberen Rand statt mittig: darunter 198 px frei</div>
+<div class="ann" style="left: 60px; top: 622px; width: 960px; height: 184px"></div>
+<div class="tag" style="left: 760px; top: 630px">4 Zeilen à 44 · wischen scrollt</div>
+<div class="tag" style="left: 760px; top: 654px">Szene und Leiste bleiben sichtbar</div>
+<div class="tag" style="left: 760px; top: 678px">Trackpad: Menü am Zeiger, Finger: Aktionsleiste</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showNotes":{"editor":"boolean","default":true,"section":"Entwurf"},"$preview":{"width":1080,"height":810}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { showNotes: this.props.showNotes ?? true };
+  }
+}
+</script>
+</body>
+</html>

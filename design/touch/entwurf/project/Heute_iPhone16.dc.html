@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>iPhone 16 quer · heute</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&amp;display=swap">
+<style>
+body{margin:0}
+.ann{position:absolute;box-sizing:border-box;border:1.5px dashed #ff5fa2;pointer-events:none}
+.tag{position:absolute;background:#ff5fa2;color:#24060f;font-family:"IBM Plex Sans Condensed",system-ui,sans-serif;font-weight:600;font-size:11px;line-height:1.25;padding:1px 5px;border-radius:2px;white-space:nowrap;pointer-events:none}
+</style>
+</helmet>
+<div style="position: relative; width: 734px; height: 343px; overflow: hidden; background: #08070d">
+<img src="/_blob/41dc3809a425c35b3906e202e86addbf" alt="Bildschirmfoto der heutigen Fassung im Profil iPhone 16 quer: Bild 533 × 333 mittig, links und rechts schwarz" style="position: absolute; left: 0; top: 0; width: 734px; height: 343px">
+<sc-if value="{{showNotes}}" hint-placeholder-val="{{ true }}">
+<div class="ann" style="left: 100px; top: 5px; width: 534px; height: 333px"></div>
+<div class="tag" style="left: 106px; top: 11px">Bild 533 × 333 · Szene 533 × 240 · 1,67 CSS-px je Spielpixel</div>
+<div class="tag" style="left: 106px; top: 29px">Szene: 50,8 % des Bildschirms</div>
+<div class="tag" style="left: 6px; top: 160px; white-space: normal; width: 80px">100 px ungenutzt</div>
+<div class="tag" style="left: 640px; top: 160px; white-space: normal; width: 80px">100 px ungenutzt</div>
+<div class="ann" style="left: 103px; top: 244px; width: 532px; height: 26px"></div>
+<div class="tag" style="left: 330px; top: 225px">Knöpfe 25 hoch (Ziel ≥ 44)</div>
+<div class="tag" style="left: 106px; top: 318px">Breitbild greift nicht: 734 px sind 16 px zu schmal</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showNotes":{"editor":"boolean","default":true,"section":"Entwurf"},"$preview":{"width":734,"height":343}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { showNotes: this.props.showNotes ?? true };
+  }
+}
+</script>
+</body>
+</html>

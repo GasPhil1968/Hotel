@@ -1,0 +1,20 @@
+{"v":3,"createdOnFiles":{"v":1,"at":"2026-11-08T10:30:00Z"},"title":"MALA Touch-Layout","launch":{"view":"canvas"},"pages":[],
+"boards":{
+"Heute_iPhone16.dc.html":{"x":0,"y":0,"w":734,"h":343,"title":"iPhone 16 quer · heute (Emulation)"},
+"Main.dc.html":{"x":814,"y":0,"w":734,"h":343,"title":"iPhone 16 quer · Entwurf: Telefon-Layout"},
+"iPhone16_Aktionsleiste.dc.html":{"x":1628,"y":0,"w":734,"h":343,"title":"iPhone 16 · Entwurf: Aktionsleiste"},
+"iPhone16_Auswahl.dc.html":{"x":2442,"y":0,"w":734,"h":343,"title":"iPhone 16 · Entwurf: Auswahl bei zwei Dingen"},
+"iPhone16_Gespraech.dc.html":{"x":0,"y":700,"w":734,"h":343,"title":"iPhone 16 · Entwurf: Gespräch"},
+"iPhoneSE.dc.html":{"x":814,"y":700,"w":667,"h":375,"title":"iPhone SE quer · Entwurf: Leiste nur unten"},
+"iPad_Gespraech.dc.html":{"x":0,"y":1440,"w":1080,"h":810,"title":"iPad (7. Gen.) quer · Entwurf: Antworten unter dem Bild"}
+},
+"order":["Heute_iPhone16.dc.html","Main.dc.html","iPhone16_Aktionsleiste.dc.html","iPhone16_Auswahl.dc.html","iPhone16_Gespraech.dc.html","iPhoneSE.dc.html","iPad_Gespraech.dc.html"],
+"notes":{
+"t1":{"x":0,"y":-300,"text":"iPhone quer: Telefon-Layout (Entwurf)","kind":"title1","maxW":3176},
+"t2":{"x":0,"y":400,"text":"Gespräch · kleinstes iPhone (Entwurf)","kind":"title1","maxW":1481},
+"t3":{"x":0,"y":1140,"text":"iPad quer (Entwurf)","kind":"title1","maxW":1080},
+"s1":{"x":3256,"y":0,"w":380,"fill":"orange","text":"Telefon-Layout: Die Szene läuft im größten ganzzahligen Maßstab m, für den gilt: 320·m ≤ sichere Breite und 144·m + 48 CSS-px Leiste ≤ sichere Höhe. Bleiben links und rechts ≥ 44 px frei, stehen dort Figur, Notizen, Menü, Karte und Zeigen; sonst alles in der unteren Leiste. Umschalten erst bei 8 px Unterschied (Hysterese).\n\nAktionsleiste: Hat ein Ding mehrere Handlungen, erscheinen die Verben unten statt eines Menüs am Finger.\n\nFangradius: Trifft ein Tipp nichts, gilt das nächste Ding im Umkreis von 10 Spielpixeln. Liegen zwei fast gleich nah, fragt die Leiste nach. Der Rahmen zeigt nur das Berührte, nie das Richtige."},
+"s2":{"x":1561,"y":700,"w":380,"fill":"orange","text":"Gespräch: Die Antwortliste ist bei Touch immer HTML. Zeilen ≥ 44 px, bis 5 gleichzeitig sichtbar, sonst wird gescrollt. Nach dem Erscheinen nimmt die Liste 450 ms lang keinen Tipp an: Ein Doppeltipp am Satzende wählt so nichts Ungelesenes.\n\niPhone SE: 13 px Rand reichen nicht für Seitenknöpfe. Alles liegt in der Leiste unten, die Satzzeile auf der Unterkante der Szene."},
+"s3":{"x":1160,"y":1440,"w":380,"fill":"orange","text":"iPad: Das Bild bleibt bei 3 CSS-px je Spielpixel (960 × 600); die Leiste mit 45 px hohen Knöpfen genügt. Im Gespräch stehen Untertitel und Antworten im freien Raum unter dem Bild. Szene und Leiste bleiben sichtbar.\n\nMit Trackpad oder Maus bleibt das Menü am Zeiger, mit dem Finger kommt die Aktionsleiste. Gewechselt wird je nach letzter Eingabeart."}
+},
+"designSystems":[]}
