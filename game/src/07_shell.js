@@ -14,6 +14,7 @@ function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ ret
 function pad(n){ return (n<10?'0':'')+n; }
 function iosDev(){ try{ return DOM && (/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && (navigator.maxTouchPoints||0)>1)); }catch(e){ return false; } }
 function standalone(){ try{ return DOM && (navigator.standalone===true || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches); }catch(e){ return false; } }
+function touchCap(){ try{ return DOM && ((navigator.maxTouchPoints||0)>0 || matchMedia('(pointer: coarse)').matches); }catch(e){ return false; } }
 function fsApi(){ try{ var d=DOM&&document.documentElement; return !!(d && (d.requestFullscreen||d.webkitRequestFullscreen)); }catch(e){ return false; } }
 M.iosDev=iosDev; M.standalone=standalone;
 function entries(n){ return n+' '+(n===1?'Eintrag':'Einträge'); }
@@ -101,13 +102,20 @@ function presets(){ return Object.keys(M.PRESETS||{}).filter(function(k){ return
 // ---------------------------------------------------------------- Bildschirme: Modell (Titel, Einträge, Aktionen)
 // Eintrag: {type:'btn'|'card'|'state'|'seg'|'range'|'note'|'group'|'preview', label, sub, why, dis, primary, danger, act, value, options}
 var SCR={};
+// Touch-Konzept T14: einmaliger Hinweis auf iPhone/iPad – in Safari der Weg auf den Home-Bildschirm (ohne Leisten, ohne 7-Tage-Löschung),
+// in der Home-Bildschirm-App der getrennte Speicher (Spielstände aus Safari kommen über die Sicherung als Datei herüber)
+function platformNote(){ if (!iosDev()) return null;
+  if (standalone()) return lsGet('mala.hint.app')?null:{key:'mala.hint.app',t:'Als App vom Home-Bildschirm hat MALA einen eigenen Speicher. Spielstände aus Safari holst du mit „Sicherung exportieren …“ in Safari und „Sicherung importieren …“ hier herüber (Spiel laden).'};
+  return lsGet('mala.hint.home')?null:{key:'mala.hint.home',t:'Tipp für iPhone und iPad: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten, und Safaris Löschung nach sieben Tagen ohne Besuch gilt dort nicht.'}; }
+// Speicher möglichst dauerhaft anfordern, wo der Browser es ohne Rückfrage entscheidet (WebKit); einmal, beim ersten Tipp
+if (DOM && navigator.storage && navigator.storage.persist && (iosDev()||standalone())) document.addEventListener('pointerdown',function(){ try{ navigator.storage.persisted().then(function(p){ if (!p) return navigator.storage.persist(); }).catch(function(){}); }catch(e){} },{once:true,capture:true});
 SCR.main=function(){ var s=latest(), it=[];
   if (s) it.push({type:'card',label:'Fortsetzen',sub:placeOf(s),meta:(s.kind==='chapterEnd'?T('Weiter mit Kapitel')+' '+s.next:fmtAt(s.at)+' · '+fmtDur((s.meta&&s.meta.playMs)||0)),thumb:s.thumb||null,primary:true,act:continueLatest});
   it.push({type:'btn',label:'Neues Spiel',primary:!s,act:newGameFlow});
   it.push({type:'btn',label:'Spiel laden',sub:anyState()?'':'Beispielstände',act:function(){ push('load',{scope:'title'}); }});
   it.push({type:'btn',label:'Einstellungen',act:function(){ push('settings'); }});
   it.push({type:'btn',label:'Über MALA',act:function(){ push('about'); }});
-  return {layout:'title',items:it,sound:!(M.audioRunning&&M.audioRunning())}; };
+  return {layout:'title',items:it,sound:!(M.audioRunning&&M.audioRunning()),note:platformNote()}; };
 SCR.chapters=function(){ var n=firstFree(), it=[];
   for (var c=1;c<=4;c++){ (function(c){ if (!chExists(c)) return; var open=chOpen(c);
     var sub=c===1?'von vorn':(chDone(c-1)?'mit deinem Ende von Kapitel '+(c-1):'mit Vorgaben');
@@ -157,10 +165,16 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'preview'});
   it.push({type:'head',label:'Darstellung'});
   it.push({type:'seg',label:'Bewegung reduzieren',sub:'kein Wackeln, Pulsieren, Flackern',value:M.reduceMotion()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ setPref('motion',+v===1); }});
+  if (M.fineOn && touchCap()) it.push({type:'seg',label:'Feinwahl',sub:'Finger kurz ruhig halten: Fadenkreuz über dem Finger, Loslassen wählt',value:M.fineOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.fineOn(+v===1); }});   // Touch-Konzept T21, Ergänzung
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
   // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm
   if (fsApi()) it.push({type:'seg',label:'Vollbild',sub:iosDev()?'Wischen nach unten beendet es wieder':'',value:-1,options:[[1,'umschalten']],act:function(){ if (M.fullscreen) M.fullscreen(); }});
   else it.push({type:'hint',label:'Vollbild',sub:standalone()?'MALA läuft schon als App vom Home-Bildschirm.':'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten.'});
+  // Touch-Konzept T12/T14: was iOS anders macht – als Hinweis, ohne etwas vorauszusetzen
+  if (iosDev()){ it.push({type:'head',label:'iPhone und iPad'});
+    it.push({type:'hint',label:'Ton',sub:'Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder Kontrollzentrum), bleibt auch MALA stumm.'});
+    if (!standalone()) it.push({type:'hint',label:'Spielstände',sub:'Safari kann sie löschen, wenn MALA sieben Tage nicht geöffnet wird. Sicher sind sie in der App vom Home-Bildschirm oder als Datei („Sicherung exportieren …“ unter „Spiel laden“).'});
+    else it.push({type:'hint',label:'Spielstände',sub:'Die App vom Home-Bildschirm speichert getrennt von Safari. Übertragen: „Sicherung exportieren …“ und „… importieren“ unter „Spiel laden“.'}); }
   it.push({type:'head',label:'Notizbuch'});
   it.push({type:'seg',label:'Ansicht',sub:E.nbStyle()==='think'?'Nachdenken: Marko fragt sich durch':'Liste: alle offenen Notizen auf einer Seite',value:E.nbStyle(),options:[['list','Liste'],['think','Nachdenken']],act:function(v){ E.setNbStyle(v); }});
   it.push({type:'head',label:'Sprache'});
@@ -267,6 +281,8 @@ function geom(){ if (!root) return; var cv=document.getElementById('game'); if (
   var cw=parseFloat(cv.style.width)||cv.clientWidth||vw, ch=parseFloat(cv.style.height)||cv.clientHeight||vh, s=cw/320, u=Math.max(2,Math.min(4,Math.ceil(s*0.75)));
   var W=rot?vh:vw, H=rot?vw:vh, cx=(W-cw)/2, cy=(H-ch)/2; if (!rot){ var r=cv.getBoundingClientRect(); cx=r.left; cy=r.top; }
   [stage,topEl].forEach(function(el){ if (!el) return; el.style.width=W+'px'; el.style.height=H+'px'; el.style.transform=rot?'translate(-50%,-50%) rotate(90deg)':''; el.style.left=rot?'50%':'0'; el.style.top=rot?'50%':'0'; });   // Meldungen drehen im gedrehten Hochformat mit
+  // Touch-Konzept T18: Solange das Namensfeld den Fokus hat und die Bildschirmtastatur Platz nimmt, steht das Fenster mittig in der sichtbaren Fläche
+  var vv=window.visualViewport, ae=document.activeElement; if (!rot && stage && vv && ae && ae.id==='shname' && vv.height<H-60){ stage.style.top=vv.offsetTop+'px'; stage.style.height=vv.height+'px'; }
   root.style.setProperty('--u',u); root.style.setProperty('--s',s); root.style.setProperty('--cx',cx+'px'); root.style.setProperty('--cy',cy+'px'); root.style.setProperty('--cw',cw+'px'); root.style.setProperty('--ch',ch+'px');
   root.classList.toggle('narrow',ch<420||W<700); root.classList.toggle('short',H<560); SH.geo={u:u,s:s,W:W,H:H,cx:cx,cy:cy,cw:cw,ch:ch,rot:rot}; }
 M.onFit=function(){ geom(); };
@@ -282,7 +298,8 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
   var backBtn=v.back?'<div class="btnrow"><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div>':'';
   if (v.layout==='title'){ h+='<div class="band"></div><nav class="menu tmenu" aria-label="'+esc(T('Hauptmenü'))+'">';
     v.items.forEach(function(x){ if (x.type==='card') h+='<button type="button" class="mi cont primary" data-i="'+idx(x)+'" data-focus="1">'+(x.thumb?'<span class="thumb" style="background-image:url('+esc(x.thumb)+')"></span>':'')+'<span class="t"><span>'+esc(T(x.label))+'</span><span class="sub">'+esc(x.sub)+'</span><span class="sub">'+esc(x.meta)+'</span></span></button>'; else h+=btnHTML(x,idx(x)); });
-    h+='</nav>'; if (v.sound) h+='<div class="chip">'+esc(T('Ton startet mit dem ersten Tipp'))+'</div>'; return h; }
+    h+='</nav>'; if (v.note) h+='<div class="pnote" role="note"><span>'+esc(T(v.note.t))+'</span><button type="button" class="btn" data-pnote="'+esc(v.note.key)+'">'+esc(T('Verstanden'))+'</button></div>';
+    if (v.sound) h+='<div class="chip">'+esc(T('Ton startet mit dem ersten Tipp'))+'</div>'; return h; }
   if (v.layout==='endcard') return '<div class="endcard" role="dialog" aria-label="'+esc(T(v.kicker))+'"><div class="kick">'+esc(T(v.kicker))+'</div><h2>'+esc(T(v.title))+'</h2>'+(v.sub?'<div class="sub">'+esc(T(v.sub))+'</div>':'')+(v.time?'<div class="time">'+esc(v.time)+'</div>':'')+'<nav class="menu">'+v.items.map(function(x){ return btnHTML(x,idx(x)); }).join('')+'</nav></div>';
   if (v.layout==='paper'){ h+='<div class="paper" role="dialog" aria-label="'+esc(T(v.title))+'"><div class="phead"><h3>'+esc(T(v.title))+'</h3><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div><div class="pmid scroll">';
     if (v.ctx) h+='<div class="ctx">'+esc(v.ctx)+'</div>'; if (v.info) h+='<div class="ctx">'+esc(v.info)+'</div>';
@@ -334,6 +351,7 @@ function onClick(e){ var b=e.target.closest('button');
   if (!b){ var cs=SH.current(); if ((cs==='confirm'||cs==='rename') && stage.contains(e.target) && !e.target.closest('.paper,.panel,.endcard')){ if (M.sfx) M.sfx('click'); back(); } return; }   // D8: Tipp neben das Fenster = Abbrechen
   if (!root.contains(b)) return; if (M.audioInit) M.audioInit();
   if (b.dataset.toast){ var t=SH.toastNow(); SH.toast=null; renderToast(); if (t&&t.act) t.act.fn(); return; }
+  if (b.dataset.pnote){ lsSet(b.dataset.pnote,'1'); if (M.sfx) M.sfx('click'); render(true); return; }
   if (b.getAttribute('aria-disabled')==='true'){ var xs0=vEl(), x0=xs0[+b.dataset.i]; if (x0&&x0.why) toast(T(x0.label)+': '+T(x0.why)); if (M.sfx) M.sfx('nope'); return; }
   if (b.dataset.back){ if (M.sfx) M.sfx('click'); back(); return; }
   var xs=vEl();
@@ -361,6 +379,8 @@ function build(){ root=document.createElement('div'); root.id='shell'; root.setA
   root.addEventListener('click',onClick); root.addEventListener('input',onInput); root.addEventListener('change',onChange);
   // Namensfeld: Enter speichert (die übrigen Tasten bleiben im Feld, Esc bricht über SH.key ab)
   root.addEventListener('keydown',function(e){ if (e.target && e.target.id==='shname' && e.key==='Enter'){ e.preventDefault(); var v=cur(); if (v&&v.ok) v.ok(); } });
+  root.addEventListener('focusin',function(e){ if (e.target && e.target.id==='shname') setTimeout(geom,0); }); root.addEventListener('focusout',function(e){ if (e.target && e.target.id==='shname') setTimeout(geom,0); });
+  if (window.visualViewport){ var kbT=null, kbF=function(){ var ae=document.activeElement; if (ae && ae.id==='shname'){ clearTimeout(kbT); kbT=setTimeout(geom,60); } }; window.visualViewport.addEventListener('resize',kbF); window.visualViewport.addEventListener('scroll',kbF); }
   root.addEventListener('pointerdown',function(e){ e.stopPropagation(); }); root.addEventListener('contextmenu',function(e){ e.preventDefault(); });
   toastEl.addEventListener('click',onClick);
   window.addEventListener('resize',function(){ if (SH.ctx||SH.toastNow()||SH.recapNow()) geom(); });
@@ -411,6 +431,7 @@ var CSS='#shell{position:fixed;inset:0;z-index:12;display:none;--ink0:#08070d;--
 +'#shell .preview{grid-column:1/-1;border:calc(var(--u)*1px) dashed var(--ghost2);padding:calc(var(--u)*3px) calc(var(--u)*4px);min-height:calc(var(--lh)*2.2)}#shell .preview .who{color:var(--lamp3)}'
 +'#shell .endcard{width:min(calc(var(--u)*200px),calc(100% - 16px));text-align:center;align-items:center;background:transparent}#shell .endcard .kick{color:var(--ghost4)}#shell .endcard h2{font-size:calc(var(--fs)*3);line-height:calc(var(--lh)*2.6);color:var(--paper2)}#shell .endcard .sub{color:var(--paper)}#shell .endcard .time{color:var(--ghost4)}#shell .endcard .menu{width:100%}'
 +'#shell .sh-toast{position:absolute;left:50%;top:max(10px,calc(var(--cy) + var(--u)*4px));transform:translateX(-50%);display:none;align-items:center;gap:calc(var(--u)*4px);background:var(--ink1);border:calc(var(--u)*1px) solid var(--ghost2);color:var(--ghost5);padding:calc(var(--u)*2px) calc(var(--u)*6px);z-index:3;max-width:calc(100% - 20px)}'
++'#shell .pnote{position:absolute;left:calc(var(--cx) + var(--u)*6px);right:calc(100% - var(--cx) - var(--cw) + var(--u)*6px);top:max(10px,calc(var(--cy) + var(--u)*4px));display:flex;gap:calc(var(--u)*6px);align-items:center;background:rgba(8,7,13,.94);border:calc(var(--u)*1px) solid var(--ghost2);color:var(--ghost5);padding:calc(var(--u)*3px) calc(var(--u)*5px);pointer-events:auto;max-width:calc(var(--u)*300px)}#shell .pnote span{flex:1 1 auto;min-width:0}#shell .pnote .btn{flex:0 0 auto;min-height:44px}#shell.titlemode .pnote~.chip{display:none}#shell.narrow .pnote{left:calc(36% + 10px);right:max(10px,env(safe-area-inset-right));flex-direction:column;align-items:flex-start}'
 +'#shell .chip{position:absolute;right:max(10px,calc(100% - var(--cx) - var(--cw) + var(--u)*4px));top:max(10px,calc(var(--cy) + var(--u)*4px));background:rgba(8,7,13,.85);border:calc(var(--u)*1px) solid var(--ghost1);color:var(--ghost4);padding:calc(var(--u)*1px) calc(var(--u)*4px);pointer-events:none}'
 +'#shell .sh-top{position:absolute;pointer-events:none;z-index:3}#shell .sh-toast.on{pointer-events:auto}'
 +'#shell .sh-recap{position:absolute;left:50%;top:max(10px,calc(var(--cy) + var(--u)*6px));transform:translateX(-50%);display:none;width:max-content;max-width:min(calc(var(--u)*200px),calc(100% - 20px));background:rgba(19,17,28,.96);border:calc(var(--u)*1px) solid var(--lamp1);padding:calc(var(--u)*3px) calc(var(--u)*6px);pointer-events:none}'

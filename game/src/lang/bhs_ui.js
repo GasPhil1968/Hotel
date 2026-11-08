@@ -156,6 +156,19 @@ M.trAdd('bhs', {
 var unosa=function(n){ n=+n; return (n%10===1&&n%100!==11)?'unos':'unosa'; };
 tr2(/^Alle Spielstände und Einstellungen in diesem Browser werden durch die Sicherung ersetzt: (\d+) (?:Eintrag|Einträge), gespeichert (.+)\.$/, function(m,tr){ return 'Sve spremljene igre i postavke u ovom pregledniku zamijenit će sigurnosna kopija: '+m[1]+' '+unosa(m[1])+', spremljeno '+tr(m[2])+'.'; });
 tr2(/^Sicherung als Datei gespeichert \((\d+) (?:Eintrag|Einträge)\)\.$/, function(m){ return 'Sigurnosna kopija spremljena je kao datoteka ('+m[1]+' '+unosa(m[1])+').'; });
+// Touch-Umsetzung (Touch-Konzept E1–E6): Gründe beim Figurenwechsel, Nachfrage, Aktionsleiste, Hinweise für iPhone und iPad, Feinwahl
+M.trAdd('bhs', {
+  'Gerade nicht – die Szene läuft.':'Ne sada – scena je u tijeku.', 'Erst das Gespräch beenden.':'Najprije završi razgovor.', 'Erst schließen.':'Najprije zatvori.', 'Hier geht das gerade nicht.':'Ovdje to sada ne ide.',
+  'Welches?':'Koje od ovoga?', 'Schließen':'Zatvori', 'Verstanden':'Razumijem', 'iPhone und iPad':'iPhone i iPad', 'Spielstände':'Spremljene igre',
+  'Wischen nach unten beendet es wieder':'Povuci prema dolje za izlaz', 'MALA läuft schon als App vom Home-Bildschirm.':'MALA već radi kao aplikacija s početnog zaslona.',
+  'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten.':'Na iPhoneu: Dijeli → „Dodaj na početni zaslon“. Tada se MALA pokreće bez traka preglednika.',
+  'Tipp für iPhone und iPad: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten, und Safaris Löschung nach sieben Tagen ohne Besuch gilt dort nicht.':'Savjet za iPhone i iPad: Dijeli → „Dodaj na početni zaslon“. Tada se MALA pokreće bez traka preglednika, a Safarijevo brisanje nakon sedam dana bez posjeta tamo ne vrijedi.',
+  'Als App vom Home-Bildschirm hat MALA einen eigenen Speicher. Spielstände aus Safari holst du mit „Sicherung exportieren …“ in Safari und „Sicherung importieren …“ hier herüber (Spiel laden).':'Kao aplikacija s početnog zaslona MALA ima vlastitu memoriju. Spremljene igre iz Safarija preneseš s „Izvezi sigurnosnu kopiju …“ u Safariju i „Uvezi sigurnosnu kopiju …“ ovdje (Učitaj igru).',
+  'Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder Kontrollzentrum), bleibt auch MALA stumm.':'Ako je iPhone utišan (prekidač, tipka Radnja ili Kontrolni centar), i MALA ostaje bez zvuka.',
+  'Safari kann sie löschen, wenn MALA sieben Tage nicht geöffnet wird. Sicher sind sie in der App vom Home-Bildschirm oder als Datei („Sicherung exportieren …“ unter „Spiel laden“).':'Safari ih može izbrisati ako MALA sedam dana nije otvorena. Sigurne su u aplikaciji s početnog zaslona ili kao datoteka („Izvezi sigurnosnu kopiju …“ pod „Učitaj igru“).',
+  'Die App vom Home-Bildschirm speichert getrennt von Safari. Übertragen: „Sicherung exportieren …“ und „… importieren“ unter „Spiel laden“.':'Aplikacija s početnog zaslona sprema odvojeno od Safarija. Prijenos: „Izvezi sigurnosnu kopiju …“ i „Uvezi sigurnosnu kopiju …“ pod „Učitaj igru“.',
+  'Feinwahl':'Precizan odabir', 'Finger kurz ruhig halten: Fadenkreuz über dem Finger, Loslassen wählt':'Kratko zadrži prst: križić iznad prsta, otpuštanje odabire'
+});
 M.trIgnore && M.trIgnore(['Gegenstand doppelt: ','Notiz doppelt: ','kein Raum ','unbekannte Notiz ','unbekannter Gegenstand ','keine Phase ','kein Hotspot ',' in ','kein Ausgang ','keine Auswahl offen',
   'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','Notiz steht im Notizbuch nicht zur Wahl: ','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
   'translate(-50%,-50%) rotate(90deg)','Neue Notiz: ','Das ist ','Benutze ',' mit ','Schlussfolgerung: ','Speichern (Platz ','Laden (Platz ','Text: ','Notizbuch: ','Musik: ','Geräusche: ','Röhrenbild: ',

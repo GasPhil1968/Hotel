@@ -57,6 +57,7 @@ function wideGeo(){ if (rot || M.WIDE_OFF){ lastG=null; return null; } var dpr=w
 function setSize(h){ if (cv.height===h) return; cv.width=320; cv.height=h; img=ctx.createImageData(320,h); u32=new Uint32Array(img.data.buffer); ctx.imageSmoothingEnabled=false; }
 function applyStd(){ setSize(200); hudCv.style.display='none'; cv.style.zIndex=''; cv.style.width=STD.w+'px'; cv.style.height=STD.h+'px';
   if (rot){ cv.style.position='fixed'; cv.style.left='50%'; cv.style.top='50%'; cv.style.transform='translate(-50%,-50%) rotate(90deg)'; }
+  else if (STD.top!=null){ cv.style.position='fixed'; cv.style.left=Math.round((window.innerWidth-STD.w)/2)+'px'; cv.style.top=STD.top+'px'; cv.style.transform=''; }   // T22: Tablet, Bild oben
   else { cv.style.position=''; cv.style.left=''; cv.style.top=''; cv.style.transform=''; }
   if (M.setWideLayout) M.setWideLayout(null); }
 function applyWide(on){ if (!on||!WG){ wideOn=false; applyStd(); setTimeout(placeCRT,0); if (M.onFit) try{ M.onFit(); }catch(e){} return; }
@@ -71,11 +72,16 @@ function fadeSwap(){ if (M.reduceMotion && M.reduceMotion()) return; [cv,hudCv].
 M.sceneScale=function(){ var r=cv.getBoundingClientRect(); return wideOn?r.width/320:(rot?r.height/320:r.width/320); };
 M.isWide=function(){ return wideOn; }; M.wideGeo=function(){ return WG; }; M.sceneRect=function(){ return cv; };
 function touchDev(){ try{ return (navigator.maxTouchPoints||0)>0 || (window.matchMedia&&matchMedia('(pointer: coarse)').matches); }catch(e){ return false; } }   // nur Tablets und Telefone drehen, kein hohes Desktopfenster
-function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1];
+function fit(){ if (zoomed()) return;   // gezoomt (Menü, T16): Bild nicht verkleinern; nach dem Zurückzoomen folgt ein resize
+  var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1];
   rot=touchDev()&&vh>vw*1.05; var lw=rot?vh:vw, lh=rot?vw:vh;   // verfügbare Breite und Höhe im Querformat
+  if (rot && !window.MALA_FIT){ var sb=safeBox(), it=Math.max(0,sb.y), ib=Math.max(0,vh-sb.y-sb.h), il=Math.max(0,sb.x), ir=Math.max(0,vw-sb.x-sb.w); lw=vh-2*Math.max(it,ib); lh=vw-2*Math.max(il,ir); }   // T20: gedrehtes Bild innerhalb der Safe Area (mittig, daher der größere Rand beidseitig)
   var s=Math.floor(Math.min(lw*dpr/320,lh*dpr/200)), css;
   if (s>=1) css=320*s/dpr; else css=lw; if (css*200/320>lh) css=lh*320/200; if (css>lw) css=lw;
-  STD.w=css; STD.h=css*200/320; WG=wideGeo(); if (wideOn && WG) applyWide(true); else { wideOn=false; applyStd(); }
+  STD.w=css; STD.h=css*200/320;
+  // T22: Tablet mit viel Platz unter dem Bild (≥ 132 CSS-px, wenn das Bild 6 px unter den oberen Rand rückt): Bild oben, Antwortliste darunter (07_subs.js)
+  STD.top=null; if (!rot && !window.MALA_FIT && touchDev()){ var sb2=safeBox(); if (sb2.h-6-STD.h>=132) STD.top=Math.round(sb2.y+6); }
+  WG=wideGeo(); if (wideOn && WG) applyWide(true); else { wideOn=false; applyStd(); }
   document.documentElement.classList.toggle('mala-rot',rot); if (hint) hint.style.display='none'; showRot(rot); setTimeout(placeCRT,0); if (M.onFit) try{ M.onFit(); }catch(e){} }
 M.isRotated=function(){ return rot; };
 // Wo der Browser es kann (Android, Vollbild, installierte App), zusätzlich die Ausrichtung auf quer sperren
@@ -84,7 +90,7 @@ function lockLandscape(){ try{ var o=screen.orientation; if (o&&o.lock){ var r=o
 var fitLater=0; function onResize(){ if (M.pointerActive && M.pointerActive()){ if (!fitLater) fitLater=setTimeout(fitNow,1500); return; } fit(); }
 function fitNow(){ if (!fitLater) return; clearTimeout(fitLater); fitLater=0; fit(); }
 window.addEventListener('resize',onResize); window.addEventListener('orientationchange',function(){ setTimeout(onResize,250); });
-if (window.visualViewport){ var vvT=null; window.visualViewport.addEventListener('resize',function(){ clearTimeout(vvT); vvT=setTimeout(onResize,150); }); }
+if (window.visualViewport){ var vvT=null; window.visualViewport.addEventListener('resize',function(){ zoomTouch(); clearTimeout(vvT); vvT=setTimeout(onResize,150); }); }
 fit();
 function toLogical(e){ var r=cv.getBoundingClientRect();
   if (wideOn){ if (e.clientX>=r.left&&e.clientX<r.right&&e.clientY>=r.top&&e.clientY<r.bottom) return [(e.clientX-r.left)/r.width*320,Math.min(143.99,(e.clientY-r.top)/r.height*144)];
@@ -119,7 +125,11 @@ document.addEventListener('keyup',function(e){ if (e.key==='Escape') ffEnd(true)
 window.addEventListener('blur',function(){ ffEnd(false); });
 document.addEventListener('touchmove',function(e){ if (e.target===cv||e.target===hudCv) e.preventDefault(); },{passive:false});
 document.addEventListener('touchend',function(){ try{ M.audioInit(); }catch(_){} },{passive:true});
-document.addEventListener('gesturestart',function(e){ e.preventDefault(); });
+// Touch-Konzept T16: keine globale Gestensperre. Menüs und Ränder dürfen gezoomt werden; auf Szene und Leiste sind Tipp, Ziehen und Doppeltipp
+// Spielaktionen und bleiben ohne Zoom – außer die Seite ist schon gezoomt: dann geht das Zurückzoomen auch dort (sonst säße man in der Vergrößerung fest)
+function zoomed(){ return !!(window.visualViewport && window.visualViewport.scale>1.01); }
+document.addEventListener('gesturestart',function(e){ if ((e.target===cv||e.target===hudCv) && !zoomed()) e.preventDefault(); });
+function zoomTouch(){ var t=zoomed()?'pinch-zoom':'none'; if (cv.style.touchAction!==t){ cv.style.touchAction=t; hudCv.style.touchAction=t; } }
 document.addEventListener('visibilitychange',function(){ if (document.hidden){ try{ M.saveGame(); }catch(e){} } else { try{ if (M.audioResume) M.audioResume(); }catch(e){} } });   // zurück aus dem Hintergrund: Ton fortsetzen, sonst beim nächsten Tipp
 window.addEventListener('pagehide',function(){ try{ M.saveGame(); }catch(e){} });
 var last=performance.now();

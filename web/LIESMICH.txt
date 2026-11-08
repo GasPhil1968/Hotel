@@ -62,15 +62,28 @@ QUERFORMAT
   ein kurzer Hinweis, dass MALA quer gespielt wird. "Gedreht weiterspielen"
   merkt sich die Wahl: Das Spielbild liegt dann um 90 Grad gedreht und füllt
   den Bildschirm quer aus – das klappt auch mit gesperrter Bildschirmdrehung.
-- Auf breiten Telefonen im Querformat (etwa einem iPhone) wird die Szene eine
-  Stufe größer. Die Knöpfe rücken dann an die Seiten: links Figur und
-  Notizen, rechts Menü, Karte und Zeigen, das Inventar unter dem Bild.
-  Notizbuch, Karte, Briefe und Rätsel erscheinen wie gewohnt.
+- Der Drehhinweis hält das Spiel an; danach geht es an derselben Stelle
+  weiter.
+- Auf Telefonen im Querformat wird die Szene so groß wie möglich (auf allen
+  iPhones mindestens zwei Bildpunkte je Spielpixel). Ist links und rechts
+  genug Platz, rücken die Knöpfe an die Seiten: links Figur und Notizen,
+  rechts Menü, Karte und Zeigen, das Inventar unter dem Bild. Sonst stehen
+  alle Knöpfe in einer Reihe unter dem Bild. Jeder Knopf ist mindestens
+  44 Bildpunkte groß. Notizbuch, Karte, Briefe und Rätsel erscheinen wie
+  gewohnt; "✕" oben rechts schließt sie.
+- Auf dem iPad steht das Bild oben; die Antworten in Gesprächen erscheinen
+  darunter, Szene und Leiste bleiben dabei frei.
 
 STEUERUNG
 - Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit
-  wirklich etwas tun, erscheint stattdessen ein kleines Menü mit genau
-  diesen Aktionen ("Nimm", "Öffne", "Benutze", "Rede mit", "Lies" …).
+  wirklich etwas tun, erscheinen stattdessen genau diese Aktionen ("Nimm",
+  "Öffne", "Benutze", "Rede mit", "Lies" …) als große Knöpfe in der Leiste
+  unter dem Bild; das Objekt ist im Bild gerahmt. "✕" oder ein Tipp ins
+  Bild schließt die Leiste, ohne dass Marko losgeht. Mit Maus oder Trackpad
+  erscheint stattdessen ein kleines Menü am Zeiger.
+- Ein Tipp knapp neben ein kleines Ding gilt diesem Ding. Liegen zwei oder
+  drei Dinge gleich nah, fragt das Spiel "Welches?" und nennt sie. Der
+  Rahmen zeigt nur, was berührt wurde – er verrät nichts über Lösungen.
 - Boden antippen: hingehen. Ausgang antippen: Marko geht sofort los.
   Zweimal schnell auf denselben Ausgang tippen (mit der Maus: Doppelklick)
   = der Rest des Weges entfällt, er ist gleich draußen. Gesperrte Ausgänge
@@ -84,9 +97,20 @@ STEUERUNG
     · Schloss = bekannt, aber noch nicht erreichbar; ein Tipp sagt, warum
   Aus Innenräumen (Hafenbüro, Kafana, Ivkas Wohnung …) zeigt der Plan nur,
   wo man ist. Reisen geht von der Straße aus.
+- Gegenstand antippen = gewählt, in der Leiste steht "Benutze … mit …".
+  Dann das Ziel antippen (ein Objekt, eine Person, Mala oder einen anderen
+  Gegenstand). "Schau an" und, wo es sie gibt, "Lies" oder "Öffne" stehen
+  in der kleinen Leiste über dem Gegenstand. "✕", ein zweiter Tipp auf den
+  Gegenstand oder ein Tipp auf freien Boden heben die Wahl auf.
+  Mit der Maus: Gegenstand anklicken, "Benutze", dann das Ziel.
 - Gegenstand aus der Leiste mit dem Finger auf ein Ziel ziehen = benutzen
-  oder geben (auch auf einen anderen Gegenstand oder auf Mala).
-  Oder: Gegenstand antippen, "Benutze", dann das Ziel antippen.
+  oder geben, in einem Zug.
+- Antworten in Gesprächen: große Zeilen, Wischen blättert. Eine gerade
+  erschienene Liste nimmt einen Augenblick lang keinen Tipp an, damit ein
+  Doppeltipp nicht versehentlich antwortet (Ziffern gehen sofort).
+- Feinwahl (Einstellungen → Darstellung, nur mit Touch): Finger kurz ruhig
+  auf dem Bild halten, dann erscheint ein Fadenkreuz über dem Finger;
+  Loslassen wählt genau diese Stelle. Ohne Halten bleibt alles wie gewohnt.
 - Leiste seitlich wischen oder die Pfeile antippen = Inventar blättern.
 
 MARKO UND MALA
@@ -221,6 +245,24 @@ FREMDE
   Leuten dort angesprochen.
 - Marko sieht auch die anderen Geister: blass und kühl, mit einem feinen
   Lichtsaum, aber deutlich als die Menschen, die sie waren.
+
+IPHONE UND IPAD
+- Am schönsten läuft MALA vom Home-Bildschirm: In Safari Teilen ->
+  "Zum Home-Bildschirm". Dann startet es ohne Browserleisten.
+- Die App vom Home-Bildschirm hat einen eigenen Speicher. Spielstände aus
+  Safari kommen mit "Sicherung exportieren …" (in Safari) und "Sicherung
+  importieren …" (in der App, Titelbild → Spiel laden) herüber.
+- Safari darf Daten einer Seite löschen, die sieben Tage lang nicht geöffnet
+  wurde. Für die App vom Home-Bildschirm gilt das nicht. Wer in Safari
+  spielt, sichert ab und zu als Datei.
+- Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder
+  Kontrollzentrum), bleibt auch MALA stumm. Nach einem Anruf oder einem
+  App-Wechsel kommt der Ton mit dem nächsten Tipp zurück.
+- Menüs lassen sich mit zwei Fingern vergrößern; auf dem Spielbild sind Tipp,
+  Ziehen und Doppeltipp Spielaktionen und vergrößern nichts.
+- Ein Vollbild für Webseiten bietet das iPhone nicht an; der Weg über den
+  Home-Bildschirm ersetzt es. Die Ausrichtung lässt sich nicht sperren,
+  dafür gibt es "Gedreht weiterspielen".
 
 INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
 1. Den Inhalt dieses Ordners bei Netlify hochladen: app.netlify.com/drop

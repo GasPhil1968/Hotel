@@ -35,12 +35,12 @@ if (fs.existsSync(path.join(FONTDIR, 'MALAPixel.otf'))) {
   if (m && fs.existsSync(fp)) { const h = require('crypto').createHash('sha1').update(m[0]).digest('hex'); if (h !== fs.readFileSync(fp, 'utf8').trim()) console.warn('Hinweis: Schrifttabelle in 00_core.js geändert – design/tools/makefont.js neu ausführen (game/fonts/MALAPixel.otf)'); } }
 const html = `<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#08070d">
 <title>Mala – Split, Sarajevo, Mostar, München</title>
 <style>
 ${FONTS}:root{ background:#08070d; }
-html,body{ margin:0; height:100%; background:#08070d; overflow:hidden; touch-action:none; overscroll-behavior:none; }
+html,body{ margin:0; height:100%; background:#08070d; overflow:hidden; touch-action:manipulation; overscroll-behavior:none; }
 body{ display:flex; flex-direction:column; align-items:center; justify-content:center; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
 #game{ display:block; image-rendering:pixelated; image-rendering:crisp-edges; touch-action:none; cursor:none; background:#08070d; }
 #hint{ display:none; color:#82c1c9; font:13px/1.4 "Courier New",monospace; text-align:center; padding:14px 18px 0; max-width:30em; }

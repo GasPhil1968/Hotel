@@ -7,7 +7,7 @@ var fb=new Buf(W,H,P.k0); M.fb=fb;
 var mask=new Uint8Array(W*SH);
 // Geisterpixel dieses Bildes (gmask) und ihre Farbe (gcol): spätere Dunkel-Durchgänge lassen sie aus, solange nichts darübergemalt wurde
 var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
-var tapMark=null, snapFx=null;   // Touch-Konzept T01: Tippmarke und Rahmen um das erkannte Ding
+var tapMark=null, snapFx=null, noFang=false;   // Touch-Konzept T01: Tippmarke und Rahmen um das erkannte Ding
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
 // Touch-Layout: größere Zeilen für Antworten und Verb-Menü, sobald mit dem Finger bedient wird (UI-Konzept D9/D10)
 var touchUI=false; try{ touchUI=!!(typeof matchMedia!=='undefined' && matchMedia('(pointer: coarse)').matches); }catch(e){}
@@ -635,7 +635,7 @@ M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); LISTH=SUBS||!!(M.listHt
   if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
-  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawFocus(); drawTapMark(); drawPop(); drawDrag(); }
+  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawFocus(); drawFine(); drawTapMark(); drawPop(); drawDrag(); }
   // Prüfbericht K3: Erinnerung vor dem ersten Raum (Kapitelanfang) oder mit data.blank: auf dunklem Grund statt unsichtbar
   else if (E.screen==='game' && (E.overlay || E.speech)){ fb.rect(0,0,W,H,P.k0); drawOverlay(); drawSpeech(); }
   applyFade(); drawFF(); drawMenu(); drawMsg(); drawCursor(); return fb; };
@@ -743,17 +743,31 @@ function uiAt(x,y){
   if (y>=INV_Y-2){ if (x>=INV_X-11&&x<INV_X+5) return 'up'; if (x>=INV_X+INV_N*SLOT_W-4&&x<INV_X+INV_N*SLOT_W+12) return 'dn'; }   // Pfeile 16 Spielpixel breit (UI-Konzept D9)
   if (x>=INV_X&&x<INV_X+INV_N*SLOT_W&&y>=INV_Y-2&&y<INV_Y+SLOT_H){ var c=Math.floor((x-INV_X)/SLOT_W); return 'i:'+(E.invTop*INV_N+c); }
   return null; }
+// Feinwahl (Touch-Konzept T21, Ergänzung, in den Einstellungen einschaltbar): Finger 0,4 s ruhig auf der Szene halten → Fadenkreuz 40 CSS-px über
+// dem Finger, Rahmen und Name des Dings darunter; Loslassen = Tipp genau dort (ohne Fangradius). Ohne Halten bleibt alles wie gewohnt.
+var fine=null, fineT=null, FINE=false; try{ FINE=typeof localStorage!=='undefined' && localStorage.getItem('mala.fine')==='1'; }catch(e){}
+M.fineOn=function(v){ if (v!==undefined){ FINE=!!v; try{ localStorage.setItem('mala.fine',FINE?'1':'0'); }catch(e){} } return FINE; };
+function fineOff(){ if (fineT){ clearTimeout(fineT); fineT=null; } fine=null; }
+function fineAt(x,y){ var s=(M.sceneScale&&M.sceneScale())||2; return [x,Math.max(0,y-Math.round(40/s))]; }
+function fineArm(x,y){ fineOff(); if (!FINE||E.screen!=='game'||!E.room||E.overlay||E.dlg||E.menu||E.busy||E.pop||y>=SH||E.room.noVerbs) return;
+  fineT=setTimeout(function(){ fineT=null; if (pointer.down&&press&&!drag&&!E.busy&&!E.dlg&&!E.overlay){ fine={at:E.gt()}; updateHover(); } },400); }
+function drawFine(){ if (!fine||!pointer.down) return; var q=fineAt(pointer.x,pointer.y), cx=Math.round(q[0]), cy=Math.round(q[1]), col=isG()?P.x6:P.l1, fx=Math.round(pointer.x), fy=Math.round(pointer.y);
+  for (var y=cy+8;y<fy-2;y+=3) if (y>=0&&y<SH) fb.px(fx,y,P.s3);
+  for (var t=2;t<=6;t++){ [[cx-t,cy],[cx+t,cy],[cx,cy-t],[cx,cy+t]].forEach(function(p){ if (p[0]>=0&&p[0]<W&&p[1]>=0&&p[1]<SH){ fb.px(p[0],p[1],col); } }); }
+  [[cx-1,cy],[cx+1,cy],[cx,cy-1],[cx,cy+1]].forEach(function(p){ if (p[0]>=0&&p[0]<W&&p[1]>=0&&p[1]<SH) fb.px(p[0],p[1],P.k0); }); }
 function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay||E.dlg||!E.room){ hover=null; return; }
+  if (fine){ var fq=fineAt(pointer.x,pointer.y); hover=E.hotspotAt(fq[0]+Math.round(E.camX),fq[1]); hoverUI=null; return; }
   if (pointer.y<SH&&pointer.show) hover=E.hotspotAt(pointer.x+Math.round(E.camX),pointer.y); else if (hoverUI&&hoverUI[0]==='i'){ var id=invList()[+hoverUI.slice(2)]; hover=id?{item:id}:null; if (id&&id===E.invNew&&!pointer.touch) E.invNew=null; } else hover=null; }
-M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
+M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (fineT&&press&&Math.abs(x-press.x)+Math.abs(y-press.y)>6){ clearTimeout(fineT); fineT=null; } if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 // Testhilfe (Touch-Test): welches Bedienelement liegt an x,y; Beschriftungen der Titelzeilen
 M.uiHit=function(x,y){ return uiAt(x,y); }; M.revealOn=function(){ return !!reveal; }; M.uiHover=function(){ return pointer.show?hoverUI:null; }; M.uiColors=function(){ return ui(); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
-M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); };
-M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
+M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); if (touch&&!press.ui) fineArm(x,y); else fineOff(); };
+M.pointerUp=function(x,y,touch){ if (fine){ var fq=fineAt(x,y); fineOff(); pointer.down=false; press=null; pointer.show=false; tapStartR=nowR(); hover=null; noFang=true; try{ click(fq[0],fq[1]); } finally { noFang=false; } return; } fineOff();
+  pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
   var pr=press; press=null; tapStartR=pr?pr.tr:nowR(); if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return;
   if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
   click(x,y); };
-M.pointerCancel=function(){ if (!pointer.down && !press && !drag) return; pointer.down=false; press=null; drag=null; pointer.show=false; updateHover(); };
+M.pointerCancel=function(){ fineOff(); if (!pointer.down && !press && !drag) return; pointer.down=false; press=null; drag=null; pointer.show=false; updateHover(); };
 M.pointerActive=function(){ return !!(pointer.down||drag); };   // 99_main.js: Layoutwechsel erst nach dem Loslassen (T17)
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
 function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; if (press.item===undefined){ press.item=invList()[+u.slice(2)]||null; press.top0=E.invTop; }
@@ -814,7 +828,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
     openPop({title:M.ITEMS[id].name,opts:opts,item:id,x:sx,y:INV_Y}); return; }
   if (y>=SH) return;
   if (now0<(E.sceneBlockUntil||0)) return;   // gleich nach einem Ortswechsel: ein nachgereichter Klick wirkt nicht im neuen Raum
-  var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y), fing=pointer.touch;
+  var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y), fing=pointer.touch&&!noFang;
   // Touch-Konzept T01: Ein Fingertipp knapp neben ein Ding gilt diesem Ding (Fangradius ≈ 20 CSS-px); liegen zwei fast gleich nah, fragt das Spiel nach
   if (!hs && fing){ var nr=E.hotspotNear(wx,y,fangR());
     if (nr.length===1 || (nr.length>1 && nr[1].d-nr[0].d>=3)){ hs=nr[0].hs; snapFx={hs:hs,at:E.gt()}; }
