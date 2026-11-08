@@ -1,5 +1,5 @@
 {
- "made": "2026-11-08T12:15:07.399Z",
+ "made": "2026-11-08T12:18:57.828Z",
  "method": "Playwright 1.63.0 – WebKit/Chromium-Emulation unter Linux, kein iOS",
  "devices": {
   "iphoneSE": {
@@ -781,93 +781,6 @@
   },
   {
    "id": "F4",
-   "dev": "iphone16",
-   "device": "iPhone 16 quer",
-   "engine": "webkit",
-   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
-   "steps": [
-    "info „Standuhr“ (13 Spielpx ≈ 22 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
-    "info „Portiersloge“ (12 Spielpx ≈ 20 CSS-px): Mitte → lodge; ±5 px → lodge, lodge, lodge, lodge",
-    "info „Telefonbuch“ (6 Spielpx ≈ 10 CSS-px): Mitte → phonebook; ±5 px → phonebook, lodge, drawer, pigeonholes",
-    "info „Schublade“ (13 Spielpx ≈ 22 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
-    "info „Portiersglocke“ (9 Spielpx ≈ 15 CSS-px): Mitte → bell; ±5 px → bell, bruno, bell, lodge",
-    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
-    "ok   Tipp 5 Spielpixel daneben (≈ 8 CSS-px, normale Fingerungenauigkeit) trifft noch 15/20"
-   ],
-   "result": "bestanden",
-   "evidence": [
-    "design/touch/evidence/F4_iphone16_palma.png"
-   ],
-   "data": [
-    {
-     "id": "clock",
-     "name": "Standuhr",
-     "sqGame": 13,
-     "sqCss": 21.7,
-     "center": "clock",
-     "offsets": [
-      "clock",
-      "clock",
-      "clock",
-      "clock"
-     ]
-    },
-    {
-     "id": "lodge",
-     "name": "Portiersloge",
-     "sqGame": 12,
-     "sqCss": 20,
-     "center": "lodge",
-     "offsets": [
-      "lodge",
-      "lodge",
-      "lodge",
-      "lodge"
-     ]
-    },
-    {
-     "id": "phonebook",
-     "name": "Telefonbuch",
-     "sqGame": 6,
-     "sqCss": 10,
-     "center": "phonebook",
-     "offsets": [
-      "phonebook",
-      "lodge",
-      "drawer",
-      "pigeonholes"
-     ]
-    },
-    {
-     "id": "drawer",
-     "name": "Schublade",
-     "sqGame": 13,
-     "sqCss": 21.7,
-     "center": "drawer",
-     "offsets": [
-      "drawer",
-      "drawer",
-      "drawer",
-      "drawer"
-     ]
-    },
-    {
-     "id": "bell",
-     "name": "Portiersglocke",
-     "sqGame": 9,
-     "sqCss": 15,
-     "center": "bell",
-     "offsets": [
-      "bell",
-      "bruno",
-      "bell",
-      "lodge"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "F4",
    "dev": "iphone13",
    "device": "iPhone 13 quer",
    "engine": "webkit",
@@ -1030,93 +943,6 @@
      "name": "Portiersglocke",
      "sqGame": 9,
      "sqCss": 27,
-     "center": "bell",
-     "offsets": [
-      "bell",
-      "bruno",
-      "reception",
-      "lodge"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "F4",
-   "dev": "desktop",
-   "device": "Desktop 1280 × 800, Maus",
-   "engine": "chromium",
-   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
-   "steps": [
-    "info „Standuhr“ (13 Spielpx ≈ 52 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
-    "info „Portiersloge“ (12 Spielpx ≈ 48 CSS-px): Mitte → lodge; ±5 px → lodge, lodge, lodge, lodge",
-    "info „Telefonbuch“ (6 Spielpx ≈ 24 CSS-px): Mitte → phonebook; ±5 px → phonebook, lodge, drawer, pigeonholes",
-    "info „Schublade“ (13 Spielpx ≈ 52 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
-    "info „Portiersglocke“ (9 Spielpx ≈ 36 CSS-px): Mitte → bell; ±5 px → bell, bruno, reception, lodge",
-    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
-    "FEHL Tipp 5 Spielpixel daneben (≈ 20 CSS-px, normale Fingerungenauigkeit) trifft noch 14/20"
-   ],
-   "result": "Befund",
-   "evidence": [
-    "design/touch/evidence/F4_desktop_palma.png"
-   ],
-   "data": [
-    {
-     "id": "clock",
-     "name": "Standuhr",
-     "sqGame": 13,
-     "sqCss": 52,
-     "center": "clock",
-     "offsets": [
-      "clock",
-      "clock",
-      "clock",
-      "clock"
-     ]
-    },
-    {
-     "id": "lodge",
-     "name": "Portiersloge",
-     "sqGame": 12,
-     "sqCss": 48,
-     "center": "lodge",
-     "offsets": [
-      "lodge",
-      "lodge",
-      "lodge",
-      "lodge"
-     ]
-    },
-    {
-     "id": "phonebook",
-     "name": "Telefonbuch",
-     "sqGame": 6,
-     "sqCss": 24,
-     "center": "phonebook",
-     "offsets": [
-      "phonebook",
-      "lodge",
-      "drawer",
-      "pigeonholes"
-     ]
-    },
-    {
-     "id": "drawer",
-     "name": "Schublade",
-     "sqGame": 13,
-     "sqCss": 52,
-     "center": "drawer",
-     "offsets": [
-      "drawer",
-      "drawer",
-      "drawer",
-      "drawer"
-     ]
-    },
-    {
-     "id": "bell",
-     "name": "Portiersglocke",
-     "sqGame": 9,
-     "sqCss": 36,
      "center": "bell",
      "offsets": [
       "bell",
@@ -1775,6 +1601,180 @@
    "result": "bestanden",
    "evidence": [
     "design/touch/evidence/F3b_iphone16cr_abgebrochen.png"
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 22 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 20 CSS-px): Mitte → Auswahl:lodge/bell/bruno; ±5 px → Auswahl:lodge/drawer/phonebook, Auswahl:lodge/bruno/bell, Auswahl:lodge/bell/bruno, Auswahl:lodge/bruno/drawer",
+    "info „Telefonbuch“ (6 Spielpx ≈ 10 CSS-px): Mitte → phonebook; ±5 px → phonebook, Auswahl:lodge/phonebook/drawer, drawer, Auswahl:pigeonholes/phonebook/drawer",
+    "info „Schublade“ (13 Spielpx ≈ 22 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 15 CSS-px): Mitte → bell; ±5 px → bell, Auswahl:bruno/bell, bell, Auswahl:lodge/bell/bruno",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "ok   Tipp 5 Spielpixel daneben (≈ 8 CSS-px, normale Fingerungenauigkeit) trifft das Ding oder bietet es an: 19/20"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/evidence/F4_iphone16_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 21.7,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 20,
+     "center": "Auswahl:lodge/bell/bruno",
+     "offsets": [
+      "Auswahl:lodge/drawer/phonebook",
+      "Auswahl:lodge/bruno/bell",
+      "Auswahl:lodge/bell/bruno",
+      "Auswahl:lodge/bruno/drawer"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 10,
+     "center": "phonebook",
+     "offsets": [
+      "phonebook",
+      "Auswahl:lodge/phonebook/drawer",
+      "drawer",
+      "Auswahl:pigeonholes/phonebook/drawer"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 21.7,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 15,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "Auswahl:bruno/bell",
+      "bell",
+      "Auswahl:lodge/bell/bruno"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 52 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 48 CSS-px): Mitte → lodge; ±5 px → lodge, lodge, lodge, lodge",
+    "info „Telefonbuch“ (6 Spielpx ≈ 24 CSS-px): Mitte → phonebook; ±5 px → phonebook, lodge, drawer, pigeonholes",
+    "info „Schublade“ (13 Spielpx ≈ 52 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 36 CSS-px): Mitte → bell; ±5 px → bell, bruno, reception, lodge",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "FEHL Tipp 5 Spielpixel daneben (≈ 20 CSS-px, normale Fingerungenauigkeit) trifft das Ding oder bietet es an: 14/20"
+   ],
+   "result": "Befund",
+   "evidence": [
+    "design/touch/evidence/F4_desktop_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 52,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 48,
+     "center": "lodge",
+     "offsets": [
+      "lodge",
+      "lodge",
+      "lodge",
+      "lodge"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 24,
+     "center": "phonebook",
+     "offsets": [
+      "phonebook",
+      "lodge",
+      "drawer",
+      "pigeonholes"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 52,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 36,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "bruno",
+      "reception",
+      "lodge"
+     ]
+    }
    ]
   }
  ]

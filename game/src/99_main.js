@@ -59,6 +59,8 @@ function applyWide(on){ if (!on||!WG){ wideOn=false; applyStd(); setTimeout(plac
 // Wechsel zwischen Breitbild und gewohntem Bild (Overlay, Karte, Pause zurück): 150 ms Überblendung aus dem Dunkel, ohne bei „Bewegung reduzieren“
 function fadeSwap(){ if (M.reduceMotion && M.reduceMotion()) return; [cv,hudCv].forEach(function(el){ el.style.transition='none'; el.style.opacity='0'; });
   requestAnimationFrame(function(){ [cv,hudCv].forEach(function(el){ el.style.transition='opacity 150ms linear'; el.style.opacity='1'; }); }); }
+// CSS-Pixel je Spielpixel der Szene (für den Fangradius bei Touch, Touch-Konzept T01)
+M.sceneScale=function(){ var r=cv.getBoundingClientRect(); return wideOn?r.width/320:(rot?r.height/320:r.width/320); };
 M.isWide=function(){ return wideOn; }; M.wideGeo=function(){ return WG; }; M.sceneRect=function(){ return cv; };
 function touchDev(){ try{ return (navigator.maxTouchPoints||0)>0 || (window.matchMedia&&matchMedia('(pointer: coarse)').matches); }catch(e){ return false; } }   // nur Tablets und Telefone drehen, kein hohes Desktopfenster
 function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1];

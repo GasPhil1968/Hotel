@@ -171,12 +171,14 @@ async function F4(b, dev) { const F = flow('F4', dev, 'Benachbarte kleine Hotspo
   const q = await p.evaluate(HSQ); const L = await p.evaluate(LAYOUT); const small = q.hs.filter(h => h.sq < 15 && !h.npc).slice(0, 8); const rows = [];
   for (const h of small) { const res = [];
     for (const [dx, dy] of [[0, 0], [5, 0], [-5, 0], [0, 5], [0, -5]]) { await p.evaluate(() => { window.__hit = []; M.E.pop = null; }); await tapAt(p, dev, [h.c[0] + dx, h.c[1] + dy]); await sleep(p, 380);
-      const r = await p.evaluate(() => { const P = M.E.pop; const h0 = window.__hit[0]; const id = P && P.hs ? P.hs.id : (h0 ? (h0.v === 'walk' ? '(Boden)' : h0.id) : '(nichts)'); M.E.pop = null; return id; }); res.push(r); }
+      const r = await p.evaluate(() => { const P = M.E.pop; const h0 = window.__hit[0]; const id = P && P.pickFrom ? 'Auswahl:' + P.opts.map(o => o.pick.id).join('/') : (P && P.hs ? P.hs.id : (h0 ? (h0.v === 'walk' ? '(Boden)' : h0.id) : '(nichts)')); M.E.pop = null; return id; }); res.push(r); }
     rows.push({ id: h.id, name: h.name, sqGame: h.sq, sqCss: +(h.sq * L.scenePx).toFixed(1), center: res[0], offsets: res.slice(1) });
     F.note('„' + h.name + '“ (' + h.sq + ' Spielpx ≈ ' + (h.sq * L.scenePx).toFixed(0) + ' CSS-px): Mitte → ' + res[0] + '; ±5 px → ' + res.slice(1).join(', ')); }
-  const centerOk = rows.filter(r => r.center === r.id).length, offOk = rows.reduce((s, r) => s + r.offsets.filter(o => o === r.id).length, 0), offN = rows.length * 4;
+  const hitOrAsk = (o, id) => o === id || (/^Auswahl:/.test(o) && o.slice(8).split('/').indexOf(id) >= 0);   // getroffen oder in der Nachfrage angeboten (T01)
+  const centerOk = rows.filter(r => hitOrAsk(r.center, r.id)).length, offOk = rows.reduce((s, r) => s + r.offsets.filter(o => hitOrAsk(o, r.id)).length, 0), offN = rows.length * 4;
   F.ok(centerOk === rows.length, 'Tipp genau in die Mitte trifft ' + centerOk + '/' + rows.length + ' kleine Hotspots');
-  F.ok(offOk / offN >= 0.75, 'Tipp 5 Spielpixel daneben (≈ ' + (5 * L.scenePx).toFixed(0) + ' CSS-px, normale Fingerungenauigkeit) trifft noch ' + offOk + '/' + offN);
+  const offMsg = 'Tipp 5 Spielpixel daneben (≈ ' + (5 * L.scenePx).toFixed(0) + ' CSS-px) trifft das Ding oder bietet es an: ' + offOk + '/' + offN;
+  if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) F.note(offMsg + ' (Maus: Fangradius und Nachfrage gelten nur für den Finger)'); else F.ok(offOk / offN >= 0.95, offMsg);
   F.data = rows; F.evidence.push(await shot(p, 'F4_' + dev + '_palma')); finish(F); await p.context().close(); }
 
 // F5: langer Dialog, Antwort nahe am unteren Rand (echtes Gespräch)

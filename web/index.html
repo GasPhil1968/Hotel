@@ -2248,6 +2248,15 @@ function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h
   var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var r3=[Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]; if (x>=r3[0]&&x<r3[0]+r3[2]&&y>=r3[1]&&y<r3[1]+r3[3]){ var a3=r3[2]*r3[3]; if (a3<ba && !(best&&(best.npc||best.exit||best.gexit))) best=MARKO_HS; } }
   return best; }
 E.hotspotAt=hotspotAt;
+// Touch-Konzept T01 (Fangradius): Hotspots, deren Rechteck höchstens r Spielpixel vom Punkt entfernt ist – mit denselben Filtern wie hotspotAt
+// (sichtbar, Rechteck vorhanden, im Licht) und den Figuren als Ziel; nach Abstand sortiert. Nur für Fingertipps, die nichts direkt treffen.
+function hotspotNear(x,y,r){ var out=[];
+  var dist=function(R){ var dx=Math.max(R[0]-x,0,x-(R[0]+R[2]-1)), dy=Math.max(R[1]-y,0,y-(R[1]+R[3]-1)); return Math.sqrt(dx*dx+dy*dy); };
+  room.hotspots.forEach(function(h){ if (!hsVisible(h)) return; var R=hsRect(h); if (!R||!hsLit(h,R)) return; var d=dist(R); if (d<=r) out.push({hs:h,d:d}); });
+  var ml=ACT.mala; if (GS.active==='marko' && ml && actorShown(ml)){ var d2=dist([Math.round(ml.x)-8,Math.round(ml.y)-46,16,46]); if (d2<=r) out.push({hs:MALA_HS,d:d2}); }
+  var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var d3=dist([Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]); if (d3<=r) out.push({hs:MARKO_HS,d:d3}); }
+  out.sort(function(a,b){ return a.d-b.d; }); return out; }
+E.hotspotNear=hotspotNear;
 function unmetNpc(o){ return !!(o && o.npc && o.npc!=='mala' && o.npc!=='marko' && M.INTRO && M.isMet && M.INTRO[(M.METKEY&&M.METKEY[o.npc])||o.npc] && !M.isMet(GS,o.npc)); }
 E.unmetNpc=unmetNpc;
 function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; var ga=o.npc&&ACT[o.npc]; if (ga && ga.ghost && GS.active!=='mala' && !ghostVisible(ga)) return o.uname||'Leere Stelle';   // ungefundener Geist: Marko sieht nur die Stelle
@@ -2555,6 +2564,7 @@ var fb=new Buf(W,H,P.k0); M.fb=fb;
 var mask=new Uint8Array(W*SH);
 // Geisterpixel dieses Bildes (gmask) und ihre Farbe (gcol): spätere Dunkel-Durchgänge lassen sie aus, solange nichts darübergemalt wurde
 var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
+var tapMark=null, snapFx=null;   // Touch-Konzept T01: Tippmarke und Rahmen um das erkannte Ding
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
 // Touch-Layout: größere Zeilen für Antworten und Verb-Menü, sobald mit dem Finger bedient wird (UI-Konzept D9/D10)
 var touchUI=false; try{ touchUI=!!(typeof matchMedia!=='undefined' && matchMedia('(pointer: coarse)').matches); }catch(e){}
@@ -2756,8 +2766,22 @@ function itemOpts(id){ if (isG()) return [{t:'Schau an',v:'look'}]; var it=M.ITE
 function openPop(p){ p.room=E.room; p.rh=touchUI?15:POP_RH; var w=M.textWidth(p.title); p.opts.forEach(function(o){ w=Math.max(w,M.textWidth(o.t)); }); w=Math.max(66,w+14);
   var h=(p.opts.length+1)*p.rh+4, x0, y0; if (p.item){ x0=p.x-(w>>1); y0=(WIDE?SH:INV_Y)-h-3; } else { x0=p.x+14; if (x0+w>W-2) x0=p.x-14-w; y0=p.y-(h>>1); }   // ≥ 12 Spielpixel Abstand: das Ziel bleibt sichtbar (UI-Konzept D9)
   p.bx=Math.max(2,Math.min(W-2-w,x0)); p.by=Math.max(2,Math.min(H-2-h,y0)); p.bw=w; p.bh=h; E.pop=p; }
+// Rahmen um das erkannte Ding (nur bei Touch): solange der Finger liegt, solange Verb-Menü oder Aktionsleiste offen sind, kurz nach einem Fangradius-Treffer.
+// Er zeigt nur, was berührt wurde – keine Reihenfolge, keine „passenden“ Ziele (Bedienhilfe, keine Lösungshilfe).
+function hsFrame(h,col){ var r=E.hsRect(h); if (!r) return; var cam=Math.round(E.camX), x0=Math.max(0,r[0]-cam-1), y0=Math.max(0,r[1]-1), x1=Math.min(W-1,r[0]-cam+r[2]), y1=Math.min(SH-1,r[1]+r[3]);
+  if (x1<=x0||y1<=y0) return; fb.hl(x0-1,x1+1,y0-1,P.k0); fb.hl(x0-1,x1+1,y1+1,P.k0); fb.vl(x0-1,y0-1,y1+1,P.k0); fb.vl(x1+1,y0-1,y1+1,P.k0);
+  fb.hl(x0,x1,y0,col); fb.hl(x0,x1,y1,col); fb.vl(x0,y0,y1,col); fb.vl(x1,y0,y1,col); }
+function drawFocus(){ if (!touchUI||E.overlay||E.menu||E.dlg||E.screen!=='game'||!E.room) return; var col=isG()?P.x6:P.l1;
+  if (E.pop&&E.pop.pickFrom){ E.pop.opts.forEach(function(o){ hsFrame(o.pick,col); }); return; }
+  if (E.pop&&E.pop.hs){ hsFrame(E.pop.hs,col); return; }
+  if (pointer.down&&pointer.touch&&hover&&!hover.item&&pointer.y<SH){ hsFrame(hover,col); return; }
+  if (snapFx){ if (E.gt()-snapFx.at>450) snapFx=null; else hsFrame(snapFx.hs,col); } }
+// Tippmarke: wo der Finger erkannt wurde (300 ms, ein sich weitender Ring)
+function drawTapMark(){ if (!tapMark) return; var t=E.gt()-tapMark.at; if (t>300||E.overlay||E.menu||E.screen!=='game'){ tapMark=null; return; } if (tapMark.y>=SH) return;
+  var r=3+Math.round(t/75), cx=Math.round(tapMark.x), cy=Math.round(tapMark.y), col=isG()?P.x5:P.l1;
+  for (var a=0;a<24;a++){ var px=cx+Math.round(Math.cos(a/24*Math.PI*2)*r), py=cy+Math.round(Math.sin(a/24*Math.PI*2)*r); if (px>=0&&px<W&&py>=0&&py<SH) fb.px(px,py,col); } }
 function popAt(x,y){ var p=E.pop; if (!p||x<p.bx||x>=p.bx+p.bw||y<p.by||y>=p.by+p.bh) return null; var r=Math.floor((y-p.by-2)/(p.rh||POP_RH))-1; return (r>=0&&r<p.opts.length)?r:-1; }
-function popPick(po,opt){ E.pop=null; E.pending=null; if (po.hs){ E.actionTok(); E.doVerb(opt.v,po.hs); return; } if (opt.pend){ E.pending=po.item; return; } E.doItem(opt.v==='use2'?'use2':opt.v,po.item); }
+function popPick(po,opt){ if (opt.pick){ E.pop=null; E.pending=null; pickHs(opt.pick,po); return; } E.pop=null; E.pending=null; if (po.hs){ E.actionTok(); E.doVerb(opt.v,po.hs); return; } if (opt.pend){ E.pending=po.item; return; } E.doItem(opt.v==='use2'?'use2':opt.v,po.item); }
 function drawPop(){ var p=E.pop; if (!p) return; if (p.room!==E.room||E.busy||E.speech||E.dlg||E.overlay||E.menu||E.screen!=='game'){ E.pop=null; return; } var c=ui();
   var rh=p.rh||POP_RH, tp=(rh-9)>>1;
   fb.rect(p.bx,p.by,p.bw,p.bh,P.k1); fb.rect(p.bx+1,p.by+1,p.bw-2,rh,P.k2); fb.hl(p.bx,p.bx+p.bw-1,p.by,c.fr); fb.hl(p.bx,p.bx+p.bw-1,p.by+p.bh-1,c.fr); fb.vl(p.bx,p.by,p.by+p.bh-1,c.fr); fb.vl(p.bx+p.bw-1,p.by,p.by+p.bh-1,c.fr);
@@ -3164,7 +3188,7 @@ M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); SUBW.sp=null; SUBW.dlg=
   if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
-  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawPop(); drawDrag(); }
+  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawFocus(); drawTapMark(); drawPop(); drawDrag(); }
   // Prüfbericht K3: Erinnerung vor dem ersten Raum (Kapitelanfang) oder mit data.blank: auf dunklem Grund statt unsichtbar
   else if (E.screen==='game' && (E.overlay || E.speech)){ fb.rect(0,0,W,H,P.k0); drawOverlay(); drawSpeech(); }
   applyFade(); drawFF(); drawMenu(); drawMsg(); drawCursor(); return fb; };
@@ -3322,7 +3346,22 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
     openPop({title:M.ITEMS[id].name,opts:opts,item:id,x:sx,y:INV_Y}); return; }
   if (y>=SH) return;
   if (now0<(E.sceneBlockUntil||0)) return;   // gleich nach einem Ortswechsel: ein nachgereichter Klick wirkt nicht im neuen Raum
-  var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y);
+  var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y), fing=pointer.touch;
+  // Touch-Konzept T01: Ein Fingertipp knapp neben ein Ding gilt diesem Ding (Fangradius ≈ 20 CSS-px); liegen zwei fast gleich nah, fragt das Spiel nach
+  if (!hs && fing){ var nr=E.hotspotNear(wx,y,fangR());
+    if (nr.length===1 || (nr.length>1 && nr[1].d-nr[0].d>=3)){ hs=nr[0].hs; snapFx={hs:hs,at:E.gt()}; }
+    else if (nr.length>1){ tapMark={x:x,y:y,at:E.gt()}; openPop({title:'Welches?',opts:nr.slice(0,3).map(function(c){ return {t:E.nameOf(c.hs),pick:c.hs}; }),pickFrom:true,x:x,y:y,pend:E.pending}); return; } }
+  // dichte Stellen: Liegt ein viel kleineres Ding im Fangradius des getroffenen, fragt das Spiel nach (sonst verdeckt ein großes Ding die kleinen daneben)
+  if (hs && fing){ var aH=hsArea(hs), nb=E.hotspotNear(wx,y,fangR()).filter(function(c){ return c.hs!==hs && c.d>0 && hsArea(c.hs)*4<=aH; });
+    if (nb.length){ tapMark={x:x,y:y,at:E.gt()}; openPop({title:'Welches?',opts:[hs].concat(nb.slice(0,2).map(function(c){ return c.hs; })).map(function(h){ return {t:E.nameOf(h),pick:h}; }),pickFrom:true,x:x,y:y,pend:E.pending}); return; } }
+  if (fing) tapMark={x:x,y:y,at:E.gt()};
+  actOnHs(hs,x,y,wx,now0,null); }
+function hsArea(h){ var r=E.hsRect(h); return r?r[2]*r[3]:1e9; }
+// Fangradius in Spielpixeln: etwa 20 CSS-px, je nach Maßstab 4–12 Spielpixel
+function fangR(){ var s=(M.sceneScale&&M.sceneScale())||2; return Math.max(4,Math.min(12,20/s)); }
+// Kandidat aus der Nachfrage gewählt: wie ein Tipp auf dieses Ding (mit einer gewählten Gegenstand: benutzen)
+function pickHs(hs,po){ var wx=po.x+Math.round(E.camX); if (po.pend){ E.actionTok(); E.setLastClick([wx,po.y]); E.doVerb('use',hs,po.pend); return; } actOnHs(hs,po.x,po.y,wx,E.gt(),null,true); }
+function actOnHs(hs,x,y,wx,now0,unused,picked){
   if (E.pending){ var pid=E.pending; E.pending=null; if (hs){ E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,pid); } return; }
   if (!hs){ E.actionTok(); E.walkPlayerTo(wx,y); return; }
   E.setLastClick([wx,y]);
@@ -69587,6 +69626,8 @@ function applyWide(on){ if (!on||!WG){ wideOn=false; applyStd(); setTimeout(plac
 // Wechsel zwischen Breitbild und gewohntem Bild (Overlay, Karte, Pause zurück): 150 ms Überblendung aus dem Dunkel, ohne bei „Bewegung reduzieren“
 function fadeSwap(){ if (M.reduceMotion && M.reduceMotion()) return; [cv,hudCv].forEach(function(el){ el.style.transition='none'; el.style.opacity='0'; });
   requestAnimationFrame(function(){ [cv,hudCv].forEach(function(el){ el.style.transition='opacity 150ms linear'; el.style.opacity='1'; }); }); }
+// CSS-Pixel je Spielpixel der Szene (für den Fangradius bei Touch, Touch-Konzept T01)
+M.sceneScale=function(){ var r=cv.getBoundingClientRect(); return wideOn?r.width/320:(rot?r.height/320:r.width/320); };
 M.isWide=function(){ return wideOn; }; M.wideGeo=function(){ return WG; }; M.sceneRect=function(){ return cv; };
 function touchDev(){ try{ return (navigator.maxTouchPoints||0)>0 || (window.matchMedia&&matchMedia('(pointer: coarse)').matches); }catch(e){ return false; } }   // nur Tablets und Telefone drehen, kein hohes Desktopfenster
 function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1];

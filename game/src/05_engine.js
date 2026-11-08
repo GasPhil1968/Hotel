@@ -354,6 +354,15 @@ function hotspotAt(x,y){ var best=null, ba=1e9; room.hotspots.forEach(function(h
   var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var r3=[Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]; if (x>=r3[0]&&x<r3[0]+r3[2]&&y>=r3[1]&&y<r3[1]+r3[3]){ var a3=r3[2]*r3[3]; if (a3<ba && !(best&&(best.npc||best.exit||best.gexit))) best=MARKO_HS; } }
   return best; }
 E.hotspotAt=hotspotAt;
+// Touch-Konzept T01 (Fangradius): Hotspots, deren Rechteck höchstens r Spielpixel vom Punkt entfernt ist – mit denselben Filtern wie hotspotAt
+// (sichtbar, Rechteck vorhanden, im Licht) und den Figuren als Ziel; nach Abstand sortiert. Nur für Fingertipps, die nichts direkt treffen.
+function hotspotNear(x,y,r){ var out=[];
+  var dist=function(R){ var dx=Math.max(R[0]-x,0,x-(R[0]+R[2]-1)), dy=Math.max(R[1]-y,0,y-(R[1]+R[3]-1)); return Math.sqrt(dx*dx+dy*dy); };
+  room.hotspots.forEach(function(h){ if (!hsVisible(h)) return; var R=hsRect(h); if (!R||!hsLit(h,R)) return; var d=dist(R); if (d<=r) out.push({hs:h,d:d}); });
+  var ml=ACT.mala; if (GS.active==='marko' && ml && actorShown(ml)){ var d2=dist([Math.round(ml.x)-8,Math.round(ml.y)-46,16,46]); if (d2<=r) out.push({hs:MALA_HS,d:d2}); }
+  var mk=ACT.marko; if (GS.active==='mala' && mk && actorShown(mk)){ var d3=dist([Math.round(mk.x)-8,Math.round(mk.y)-48,16,48]); if (d3<=r) out.push({hs:MARKO_HS,d:d3}); }
+  out.sort(function(a,b){ return a.d-b.d; }); return out; }
+E.hotspotNear=hotspotNear;
 function unmetNpc(o){ return !!(o && o.npc && o.npc!=='mala' && o.npc!=='marko' && M.INTRO && M.isMet && M.INTRO[(M.METKEY&&M.METKEY[o.npc])||o.npc] && !M.isMet(GS,o.npc)); }
 E.unmetNpc=unmetNpc;
 function nameOf(o){ if (!o) return ''; if (o.item) return M.ITEMS[o.item].name; var ga=o.npc&&ACT[o.npc]; if (ga && ga.ghost && GS.active!=='mala' && !ghostVisible(ga)) return o.uname||'Leere Stelle';   // ungefundener Geist: Marko sieht nur die Stelle
