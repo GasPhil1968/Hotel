@@ -3,7 +3,8 @@
 | Pfad | Inhalt |
 |---|---|
 | `TOUCH_KONZEPT.md` | Touch-Steuerung auf iPhone und iPad: Grundlage, Gesamturteil, Problemliste T01–T24, Bedienmodell, Layoutentwurf, Umsetzungsplan, Testprotokoll und Abnahmekriterien |
-| `touch/` | Messwerkzeuge und Belege dazu (siehe `touch/README.md`) |
+| `TOUCH_UMSETZUNG.md` | Umsetzung des Touch-Konzepts (E1–E7): Änderungen, Abnahme K1–K14 mit Nachweis, Tests, offene Prüfungen auf echten Geräten |
+| `touch/` | Messwerkzeuge und Belege dazu (siehe `touch/README.md`), Prüfliste für echte Geräte (`touch/GERAETEPRUEFUNG.md`) |
 | `UMSETZUNG.md` | Stand der Umsetzung (Phase 1–4): was umgesetzt ist, Abnahme F1–F25 mit Nachweis, Abweichungen, Tests |
 | `UI_KONZEPT.md` | Analyse und Entwurf (A–F): Entscheidungen des Autors, Bestandsaufnahme, Problemliste, Gestaltungsrichtung, Entwurf je Bildschirm (D1–D17, inkl. Breitbild-Leiste), Umsetzungsplan, Abnahme (F1–F25) |
 | `prototype/` | Klickbarer Entwurf (`src.html` → `index.html`), Bilder aus dem Spiel (`img/`), Ist-Bilder (`ist/`), echte Hotspot-Daten (`hotspots.json`). Veröffentlicht: https://claude.ai/artifact/W8o3QnYDp8TEz9ayPLmVcP |
@@ -33,6 +34,8 @@ node qa/ui/phase1.js [--shots <ordner>]    # Phase 1: Esc-Stapel, Antwortlisten,
 node qa/ui/phase2.js [--shots <ordner>]    # Phase 2: HTML-Schicht, Spielstände, Kapitelsperre, Einstellungen, Schriften
 node qa/ui/phase3.js [--shots <ordner>]    # Phase 3: Breitbild-Leiste (iPhone quer), Wechsel, Drehung
 node qa/ui/phase4.js [--shots <ordner>]    # Phase 4: Untertitel, Schnellvorlauf, Sicherung, „Zuletzt“, Lesezeichen-Namen
+node qa/ui/phase5.js [--shots <ordner>]    # Touch-Umsetzung: Aktionsleiste, HTML-Antworten, iPad, Gesten, Feinwahl, iOS-Hinweise, Tastatur
+node qa/ui/savecompat.js                   # alle erspielten Stände laden (iPhone/Finger und Desktop/Maus), vergleichen, speichern, neu laden
 node qa/ui/hudcmp.js <alt/index.html>      # gewohnte Leiste pixelgleich zu einer früheren Fassung (Desktop, Tablet)
 bash design/tools/package_ui.sh            # bauen und dist/MALA_netlify_oberflaeche.zip packen
 ```

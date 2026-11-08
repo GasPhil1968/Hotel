@@ -834,11 +834,15 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
     if (nr.length===1 || (nr.length>1 && nr[1].d-nr[0].d>=3)){ hs=nr[0].hs; snapFx={hs:hs,at:E.gt()}; }
     else if (nr.length>1){ tapMark={x:x,y:y,at:E.gt()}; openPop({title:'Welches?',opts:nr.slice(0,3).map(function(c){ return {t:E.nameOf(c.hs),pick:c.hs}; }),pickFrom:true,x:x,y:y,pend:E.pending}); return; } }
   // dichte Stellen: Liegt ein viel kleineres Ding im Fangradius des getroffenen, fragt das Spiel nach (sonst verdeckt ein großes Ding die kleinen daneben)
+  // schmale Dinge (eine Seite < 8 Spielpixel, etwa gestapelte Schubladen): liegt ein anderes Ding höchstens 3 Spielpixel neben dem Finger, fragt das Spiel ebenfalls
+  if (hs && fing && hsThin(hs)){ var nt=E.hotspotNear(wx,y,3).filter(function(c){ return c.hs!==hs; });
+    if (nt.length){ tapMark={x:x,y:y,at:E.gt()}; openPop({title:'Welches?',opts:[hs].concat(nt.slice(0,2).map(function(c){ return c.hs; })).map(function(h){ return {t:E.nameOf(h),pick:h}; }),pickFrom:true,x:x,y:y,pend:E.pending}); return; } }
   if (hs && fing){ var aH=hsArea(hs), nb=E.hotspotNear(wx,y,fangR()).filter(function(c){ return c.hs!==hs && c.d>0 && hsArea(c.hs)*4<=aH; });
     if (nb.length){ tapMark={x:x,y:y,at:E.gt()}; openPop({title:'Welches?',opts:[hs].concat(nb.slice(0,2).map(function(c){ return c.hs; })).map(function(h){ return {t:E.nameOf(h),pick:h}; }),pickFrom:true,x:x,y:y,pend:E.pending}); return; } }
   if (fing) tapMark={x:x,y:y,at:E.gt()};
   actOnHs(hs,x,y,wx,now0,null); }
 function hsArea(h){ var r=E.hsRect(h); return r?r[2]*r[3]:1e9; }
+function hsThin(h){ var r=E.hsRect(h); return !!r && Math.min(r[2],r[3])<8; }
 // Fangradius in Spielpixeln: etwa 20 CSS-px, je nach Maßstab 4–12 Spielpixel
 function fangR(){ var s=(M.sceneScale&&M.sceneScale())||2; return Math.max(4,Math.min(12,20/s)); }
 // Kandidat aus der Nachfrage gewählt: wie ein Tipp auf dieses Ding (mit einer gewählten Gegenstand: benutzen)

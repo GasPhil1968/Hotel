@@ -2,13 +2,16 @@
 // Spielt Kapitel 1–4 mit den Musterlösungen der QA (qa/paths/walkthrough*.js) in der Node-VM durch (Produktionsdatei web/index.html)
 // und vermisst in jedem neuen Zustand eines Raums die Gewinnerkarte von E.hotspotAt (dieselbe Funktion wie beim Antippen):
 // welche Stelle trifft welchen Hotspot. Je Hotspot: Fläche, größtes Quadrat, in dem jeder Punkt ihn trifft, Nachbarn.
-//   node design/touch/hotspotscan.js [--out design/touch/hotspots.json] [--ch 1,2,3,4]
+// Mit --fang <r> (nach der Umsetzung, Touch-Konzept K6) zusätzlich je Stelle, was ein Fingertipp dort auslöst – dieselbe Regel wie
+// 06_ui.js click(): Treffer, Fangradius r (nächstes Ding, wenn eindeutig), „Welches?“ bei zwei fast gleich nahen oder einem viel kleineren
+// Ding daneben oder neben einem schmalen Ding (Seite < 8). Je Hotspot dann das größte Quadrat, in dem jeder Tipp ihn trifft oder anbietet (fsq, Spielpixel).
+//   node design/touch/hotspotscan.js [--out design/touch/hotspots.json] [--ch 1,2,3,4] [--fang 10]
 'use strict';
 const path = require('path'), fs = require('fs');
 const C = require('../../qa/lib/common.js'), VMD = require('../../qa/vmdriver.js');
 const a = process.argv.slice(2), arg = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
 const OUT = path.resolve(arg('--out', path.join(__dirname, 'hotspots.json')));
-const CHS = arg('--ch', '1,2,3,4').split(',').map(Number);
+const CHS = arg('--ch', '1,2,3,4').split(',').map(Number), FANG = +arg('--fang', 0);
 const CH_PATH = { 1: 'walkthrough', 2: 'walkthrough2', 3: 'walkthrough3', 4: 'walkthrough4' };
 const CH_TITLE = { 1: 'Kapitel 1: Split', 2: 'Kapitel 2: Sarajevo', 3: 'Kapitel 3: Mostar', 4: 'Kapitel 4: München' };
 
@@ -33,6 +36,17 @@ const INSTALL = () => {
     const near = ids.map(() => new Set());
     st.forEach((s, k) => { if (!s.sqAt) return; const cx = s.sqAt[0] + s.sq / 2, cy = s.sqAt[1] + s.sq / 2, rr = s.sq / 2 + 6;
       for (let y = Math.max(0, Math.floor(cy - rr)); y < Math.min(144, Math.ceil(cy + rr)); y++) for (let x = Math.max(0, Math.floor(cx - rr)); x < Math.min(W, Math.ceil(cx + rr)); x++) { const o = win[y * W + x]; if (o >= 0 && o !== k) near[k].add(ids[o].id); } });
+    // Fingertipp-Simulation (--fang): je Stelle bis zu drei erreichbare Hotspots (Treffer oder Angebot in der Nachfrage)
+    if (window.__fang){ const r0 = window.__fang, reach = new Int16Array(W * 144 * 3).fill(-1), area = (h) => { const q = E.hsRect(h); return q ? q[2] * q[3] : 1e9; }, kOf = (h) => { const id = h.id || h.name; return idx[id] === undefined ? -1 : idx[id]; };
+      for (let y = 0; y < 144; y++) for (let x = 0; x < W; x++) { let hs = E.hotspotAt(x, y), out = null;
+        if (!hs){ const nr = E.hotspotNear(x, y, r0); if (nr.length === 1 || (nr.length > 1 && nr[1].d - nr[0].d >= 3)) out = [nr[0].hs]; else if (nr.length > 1) out = nr.slice(0, 3).map(c => c.hs); }
+        else { const q = E.hsRect(hs), thin = !!q && Math.min(q[2], q[3]) < 8, nt = thin ? E.hotspotNear(x, y, 3).filter(c => c.hs !== hs) : [];
+          if (nt.length) out = [hs].concat(nt.slice(0, 2).map(c => c.hs));
+          else { const aH = area(hs), nb = E.hotspotNear(x, y, r0).filter(c => c.hs !== hs && c.d > 0 && area(c.hs) * 4 <= aH); out = nb.length ? [hs].concat(nb.slice(0, 2).map(c => c.hs)) : [hs]; } }
+        if (out) out.forEach((h, j) => { reach[(y * W + x) * 3 + j] = kOf(h); }); }
+      ids.forEach((h, k) => { let best = 0; const d2 = new Int16Array(W * 144);
+        for (let y = 0; y < 144; y++) for (let x = 0; x < W; x++) { const o = (y * W + x) * 3; if (reach[o] !== k && reach[o + 1] !== k && reach[o + 2] !== k) continue; let v = 1; if (x > 0 && y > 0 && d2[y * W + x - 1] && d2[(y - 1) * W + x] && d2[(y - 1) * W + x - 1]) v = 1 + Math.min(d2[y * W + x - 1], d2[(y - 1) * W + x], d2[(y - 1) * W + x - 1]); d2[y * W + x] = v; if (v > best) best = v; }
+        h.fsq = best; }); }
     window.__scan.maps[sig] = { room: R.id, active: act, phase: M.GS.phase, cam: Math.round(E.camX), W, hs: ids.map((h, k) => Object.assign({}, h, { area: st[k].area, box: [st[k].x0, st[k].y0, st[k].x1 - st[k].x0 + 1, st[k].y1 - st[k].y0 + 1], sq: st[k].sq, sqAt: st[k].sqAt, near: [...near[k]] })) };
     window.__scan.n++;
   }
@@ -44,7 +58,7 @@ const INSTALL = () => {
   for (const ch of CHS) {
     const D = await VMD.open({ seed: 1 });
     await C.tapTitle(D, CH_TITLE[ch]); await C.tapTitle(D, 'Platz 1');
-    await D.ev(INSTALL);
+    await D.ev(INSTALL); if (FANG) await D.ev((r) => { window.__fang = r; }, FANG);
     const r = await C.runPath(CH_PATH[ch], D, {}, null, {});
     const res = await D.ev(() => ({ maps: window.__scan.maps, n: window.__scan.n, err: window.__scanErr || [], ended: !!M.GS.ended }));
     Object.assign(all, res.maps);
@@ -55,9 +69,13 @@ const INSTALL = () => {
   const per = {};
   for (const m of Object.values(all)) for (const h of m.hs) { const key = m.room + '/' + h.id + (m.active === 'mala' ? ' (Mala)' : '');
     const p = per[key] || (per[key] = { room: m.room, id: h.id, name: h.name, type: h.type, active: m.active, sqMin: 1e9, sqMax: 0, areaMin: 1e9, near: new Set(), states: 0, ex: null });
+    if (h.fsq !== undefined){ if (p.fsqMin === undefined || h.fsq < p.fsqMin){ p.fsqMin = h.fsq; p.fex = { phase: m.phase, box: h.box }; } }
     p.states++; if (h.sq < p.sqMin) { p.sqMin = h.sq; p.ex = { phase: m.phase, box: h.box, sqAt: h.sqAt, cam: m.cam }; } p.sqMax = Math.max(p.sqMax, h.sq); p.areaMin = Math.min(p.areaMin, h.area); h.near.forEach(n => p.near.add(n)); }
   const list = Object.values(per).map(p => Object.assign(p, { near: [...p.near] })).sort((x, y) => x.sqMin - y.sqMin);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify({ build: VMD.loadScript().sha12, made: new Date().toISOString(), chapters: log, hotspots: list, states: Object.keys(all).length }, null, 1));
+  fs.writeFileSync(OUT, JSON.stringify({ build: VMD.loadScript().sha12, made: new Date().toISOString(), fang: FANG || null, chapters: log, hotspots: list, states: Object.keys(all).length }, null, 1));
+  if (FANG){ const n12 = list.filter(p => p.fsqMin < 12).length, n22 = list.filter(p => p.fsqMin < 22).length, s12 = list.filter(p => p.sqMin < 12).length, s22 = list.filter(p => p.sqMin < 22).length;
+    console.log('Fangradius ' + FANG + ' Spielpx (iPhone 16 quer, 2,0 CSS-px je Spielpixel): Hotspots mit sicherem Feld < 12 Spielpx (24 CSS-px): ' + n12 + ' (ohne Fangradius ' + s12 + '); < 22 Spielpx (44 CSS-px): ' + n22 + ' (ohne ' + s22 + ')');
+    list.filter(p => p.fsqMin < 12).slice(0, 25).forEach(p => console.log('  ' + p.room + '/' + p.id + ' „' + p.name + '“: ' + p.fsqMin + ' (ohne ' + p.sqMin + ')')); }
   console.log(list.length + ' Hotspots in ' + Object.keys(all).length + ' Raumzuständen → ' + OUT);
 })().catch(e => { console.error(e); process.exit(1); });
