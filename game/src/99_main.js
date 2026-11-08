@@ -34,18 +34,26 @@ M.fullscreen=function(){ var d=document.documentElement; try{ var r=(d.requestFu
 // Querformat: Steht das Gerät hochkant, wird das Spielbild um 90° gedreht und füllt die lange Seite.
 // So spielt man immer quer, auch mit gesperrter Bildschirmdrehung (iPad/iPhone können die Ausrichtung nicht per Skript sperren).
 var rot=false;
-// ---------------------------------------------------------------- Breitbild-Leiste (UI-Konzept D17)
-// Passt die Szene eine Maßstabsstufe größer (n+1 Gerätepixel je Spielpixel), während die Leiste bei n bleibt, liegt die Szene auf #game
-// (320×144) und die Leiste mit eigenem Puffer auf #hud: 320·(n+1) + 2·33·n ≤ Breite und ⌈144·(n+1)/n⌉·n + 32·n ≤ Höhe, innerhalb der Safe-Area.
+// ---------------------------------------------------------------- Breitbild-Leiste (UI-Konzept D17) und Telefon-Layout (Touch-Konzept D1, T02/T17)
+// Die Szene liegt im größten ganzzahligen Maßstab m (Gerätepixel je Spielpixel) auf #game (320×144), der mit der Leiste in die Safe-Area passt;
+// die Leiste hat einen eigenen Puffer auf #hud im Maßstab n des gewohnten 320×200-Bildes. Seitenknöpfe neben der Szene nur, wenn links und
+// rechts genug Platz bleibt (bei Touch ≥ 44 CSS-px), sonst stehen alle Knöpfe in der unteren Leiste. Bei Touch sind Knöpfe, Felder und Pfeile ≥ 44 CSS-px.
 var hudCv=document.createElement('canvas'); hudCv.id='hud'; hudCv.setAttribute('aria-hidden','true'); document.body.appendChild(hudCv);
-var hctx=hudCv.getContext('2d',{alpha:false}), himg=null, hu32=null, WG=null, wideOn=false, STD={w:320,h:200};
+var hctx=hudCv.getContext('2d',{alpha:false}), himg=null, hu32=null, WG=null, wideOn=false, STD={w:320,h:200}, lastG=null;
 var probe=document.createElement('div'); probe.style.cssText='position:fixed;left:env(safe-area-inset-left,0px);right:env(safe-area-inset-right,0px);top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none;z-index:-1'; document.body.appendChild(probe);
-function wideGeo(){ if (rot || M.WIDE_OFF) return null; var dpr=window.devicePixelRatio||1, B;
-  if (window.MALA_FIT){ var f=window.MALA_FIT(); B={x:(window.innerWidth-f[0])/2,y:(window.innerHeight-f[1])/2,w:f[0],h:f[1]}; } else { var r=probe.getBoundingClientRect(); B={x:r.left,y:r.top,w:r.width,h:r.height}; }
-  var Wd=B.w*dpr, Hd=B.h*dpr, n=Math.floor(Math.min(Wd/320,Hd/200)); if (n<1) return null;
-  var m=n+1, S0=Math.ceil(144*m/n), Wh=Math.round(320*m/n)+66, Hh=S0+32; if (320*m+66*n>Wd+0.5 || Hh*n>Hd+0.5) return null;
-  var cssW=Wh*n/dpr, cssH=Hh*n/dpr, x0=Math.round(B.x+(B.w-cssW)/2), y0=Math.round(B.y+(B.h-cssH)/2);
-  return {n:n,m:m,dpr:dpr,S0:S0,Wh:Wh,Hh:Hh,x0:x0,y0:y0,cssW:cssW,cssH:cssH,scene:{x:x0+33*n/dpr,y:y0,w:320*m/dpr,h:144*m/dpr}}; }
+function safeBox(){ if (window.MALA_FIT){ var f=window.MALA_FIT(); return {x:(window.innerWidth-f[0])/2,y:(window.innerHeight-f[1])/2,w:f[0],h:f[1]}; } var r=probe.getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height}; }
+function wideGeo(){ if (rot || M.WIDE_OFF){ lastG=null; return null; } var dpr=window.devicePixelRatio||1, B=safeBox();
+  var Wd=B.w*dpr, Hd=B.h*dpr, n=Math.floor(Math.min(Wd/320,Hd/200)); if (n<1){ lastG=null; return null; }
+  var k=touchDev()?Math.ceil(44*dpr/n-0.01):0, bh=Math.max(32,k+2), rMin=Math.max(26,k), aw=Math.max(15,k), bw=Math.max(30,k), slot=k?34:36;
+  function rails(m){ var r=Math.min(33,Math.floor((Wd-320*m)/2/n)), S0=Math.ceil(144*m/n); if (r<rMin || (S0+bh)*n>Hd+0.5) return null; return {mode:'rails',m:m,S0:S0,rail:r,Wh:Math.round(320*m/n)+2*r,Hh:S0+bh}; }
+  function bottom(m){ var S0=Math.ceil(144*m/n), Wh=Math.floor(Wd/n), need=2+40+2+bw+4+2*aw+6*slot+4+3*bw+4+2; if (Wh<need || (S0+12+bh)*n>Hd+0.5) return null; return {mode:'bottom',m:m,S0:S0,rail:0,Wh:Wh,Hh:S0+12+bh}; }
+  // Hysterese (T17): Ändert sich die Fläche um weniger als 8 CSS-px, bleibt es bei der bisherigen Aufteilung, solange sie passt
+  var c=null, near=lastG && lastG.n===n && lastG.k===k && Math.abs(B.w-lastG.box[0])<8 && Math.abs(B.h-lastG.box[1])<8;
+  if (near){ if (!lastG.c) return null; c=lastG.c.mode==='rails'?rails(lastG.c.m):bottom(lastG.c.m); }
+  if (!c){ for (var m=Math.floor(Wd/320); !c && m>n; m--) c=rails(m)||bottom(m); lastG={n:n,k:k,box:[B.w,B.h],c:c}; }
+  if (!c) return null;
+  var cssW=c.Wh*n/dpr, cssH=c.Hh*n/dpr, x0=Math.round(B.x+(B.w-cssW)/2), y0=Math.round(B.y+(B.h-cssH)/2), sxd=c.mode==='rails'?c.rail*n:Math.round((c.Wh*n-320*c.m)/2);
+  return {n:n,m:c.m,dpr:dpr,k:k,bh:bh,mode:c.mode,rail:c.rail,sx:sxd/n,S0:c.S0,Wh:c.Wh,Hh:c.Hh,x0:x0,y0:y0,cssW:cssW,cssH:cssH,scene:{x:x0+sxd/dpr,y:y0,w:320*c.m/dpr,h:144*c.m/dpr}}; }
 function setSize(h){ if (cv.height===h) return; cv.width=320; cv.height=h; img=ctx.createImageData(320,h); u32=new Uint32Array(img.data.buffer); ctx.imageSmoothingEnabled=false; }
 function applyStd(){ setSize(200); hudCv.style.display='none'; cv.style.zIndex=''; cv.style.width=STD.w+'px'; cv.style.height=STD.h+'px';
   if (rot){ cv.style.position='fixed'; cv.style.left='50%'; cv.style.top='50%'; cv.style.transform='translate(-50%,-50%) rotate(90deg)'; }
@@ -72,7 +80,12 @@ function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.M
 M.isRotated=function(){ return rot; };
 // Wo der Browser es kann (Android, Vollbild, installierte App), zusätzlich die Ausrichtung auf quer sperren
 function lockLandscape(){ try{ var o=screen.orientation; if (o&&o.lock){ var r=o.lock('landscape'); if (r&&r.catch) r.catch(function(){}); } }catch(e){} }
-window.addEventListener('resize',fit); window.addEventListener('orientationchange',function(){ setTimeout(fit,250); }); fit();
+// Größenwechsel (T17): auch visualViewport (Safari-Leisten), entprellt; während ein Finger oder ein gezogener Gegenstand unterwegs ist, erst danach
+var fitLater=0; function onResize(){ if (M.pointerActive && M.pointerActive()){ if (!fitLater) fitLater=setTimeout(fitNow,1500); return; } fit(); }
+function fitNow(){ if (!fitLater) return; clearTimeout(fitLater); fitLater=0; fit(); }
+window.addEventListener('resize',onResize); window.addEventListener('orientationchange',function(){ setTimeout(onResize,250); });
+if (window.visualViewport){ var vvT=null; window.visualViewport.addEventListener('resize',function(){ clearTimeout(vvT); vvT=setTimeout(onResize,150); }); }
+fit();
 function toLogical(e){ var r=cv.getBoundingClientRect();
   if (wideOn){ if (e.clientX>=r.left&&e.clientX<r.right&&e.clientY>=r.top&&e.clientY<r.bottom) return [(e.clientX-r.left)/r.width*320,Math.min(143.99,(e.clientY-r.top)/r.height*144)];
     var h=hudCv.getBoundingClientRect(); return [(e.clientX-h.left)/h.width*WG.Wh,1000+(e.clientY-h.top)/h.height*WG.Hh]; }   // Leiste: eigene Koordinaten ab y=1000
@@ -85,13 +98,13 @@ function onDown(e){ e.preventDefault(); if (e.isPrimary===false) return;
   if (e.pointerType==='mouse' && e.button>0){ if (e.button===2){ var q=toLogical(e); M.rightClick(q[0],q[1]); } return; }   // Rechtsklick: Auswahl aufheben oder „Schau an“ (UI-Konzept B1-15)
   if (!locked){ locked=true; lockLandscape(); } try{ e.currentTarget.setPointerCapture(e.pointerId); }catch(_){} var p=toLogical(e); M.pointerDown(p[0],p[1],e.pointerType!=='mouse'); }
 function onMove(e){ if (e.isPrimary===false) return; var p=toLogical(e); M.pointerMove(p[0],p[1],e.pointerType!=='mouse'); }
-function onUp(e){ e.preventDefault(); if (e.isPrimary===false) return; if (e.pointerType==='mouse' && e.button>0) return; var p=toLogical(e); M.pointerUp(p[0],p[1],e.pointerType!=='mouse'); }
+function onUp(e){ e.preventDefault(); if (e.isPrimary===false) return; if (e.pointerType==='mouse' && e.button>0) return; var p=toLogical(e); M.pointerUp(p[0],p[1],e.pointerType!=='mouse'); if (fitLater) setTimeout(fitNow,0); }
 // Mausrad: blättert Antwortlisten, Notizbuch und Inventar (gesammelt, damit ein Trackpad nicht rast)
 function onWheel(e){ e.preventDefault(); wAcc+=e.deltaMode===1?e.deltaY*16:e.deltaY; if (Math.abs(wAcc)>=40){ M.wheel(wAcc); wAcc=0; } }
 // Doppeltipp auf dem Spielbild zoomt nicht (das Spiel wertet Doppeltipps selbst über pointerup aus)
 function onTouchEnd(e){ var t=Date.now(); if (t-lastTouchEnd<450) e.preventDefault(); lastTouchEnd=t; }
 [cv,hudCv].forEach(function(el){ el.addEventListener('pointerdown',onDown); el.addEventListener('pointermove',onMove); el.addEventListener('pointerup',onUp);
-  el.addEventListener('pointercancel',function(e){ if (e.isPrimary!==false) M.pointerCancel(); }); el.addEventListener('lostpointercapture',function(e){ if (e.isPrimary!==false) M.pointerCancel(); });   // Touch-Konzept T10
+  el.addEventListener('pointercancel',function(e){ if (e.isPrimary!==false){ M.pointerCancel(); if (fitLater) setTimeout(fitNow,0); } }); el.addEventListener('lostpointercapture',function(e){ if (e.isPrimary!==false) M.pointerCancel(); });   // Touch-Konzept T10
   el.addEventListener('contextmenu',function(e){ e.preventDefault(); }); el.addEventListener('wheel',onWheel,{passive:false}); el.addEventListener('dblclick',function(e){ e.preventDefault(); }); el.addEventListener('touchend',onTouchEnd,{passive:false}); });
 document.addEventListener('keydown',function(e){ if (rotNote.classList.contains('on')) return;
   if (M.shell && M.shell.ctx){ if (M.audioInit) M.audioInit(); if (e.key==='Escape'||!(e.target&&e.target.closest&&e.target.closest('input'))) { if (M.shell.key(e)) return; } else return; }   // Titel und Pause: Tasten gehören der HTML-Schicht

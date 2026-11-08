@@ -639,13 +639,22 @@ M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); SUBW.sp=null; SUBW.dlg=
 function drawFF(){ if (!(M.ffActive&&M.ffActive())) return; var t='▸▸', w=M.textWidth(t); fb.rect(W-w-8,2,w+6,11,P.k0); M.text(fb,t,W-w-5,4,isG()?P.x5:P.y4); }
 
 // ---------------------------------------------------------------- Breitbild-Leiste (UI-Konzept D17)
-// Auf breiten Telefonen zeigt 99_main.js die Szene eine Maßstabsstufe größer auf eigener Zeichenfläche; die Leiste liegt in einem eigenen
-// Puffer (HB, Leistenpixel): links Figurenknopf und Notizen, rechts Menü, Karte, Zeigen, unten Name und Inventar. Leistenkoordinaten
+// Auf Telefonen und breiten Fenstern zeigt 99_main.js die Szene größer auf eigener Zeichenfläche; die Leiste liegt in einem eigenen
+// Puffer (HB, Leistenpixel), Aufteilung siehe wideLayout. Leistenkoordinaten
 // kommen als y ≥ 1000 an (99_main.js, toLogical). Overlays, Karten, Abspann und Titel nutzen weiter das gewohnte 320×200-Bild.
 var WIDE=null, HB=null;
-function wideLayout(g){ var r=33, Wh=g.Wh, S0=g.S0; return { n:g.n, m:g.m, rail:r, W:Wh, H:g.Hh, S0:S0,
-  sw:[0,2,r,40], notes:[0,46,r,27], menu:[Wh-r,2,r,27], map:[Wh-r,33,r,27], reveal:[Wh-r,64,r,27],
-  inv:{x:Wh-r-2-15-6*36-15, y:S0+1, sw:36, sh:30, n:6}, text:[r+3, S0+12, Wh-r-2-15-6*36-15-4] }; }
+// Aufteilung (Touch-Konzept D1): „rails“ = Figurenknopf und Notizen links, Menü, Karte, Zeigen rechts neben der Szene, unten Satz und Inventar;
+// „bottom“ = unter der Szene eine Satzzeile, darunter alle Knöpfe in einer Reihe (Figur, Notizen | Inventar | Menü, Karte, Zeigen).
+// g.k: Mindestmaß eines Bedienelements in Leistenpixeln (44 CSS-px bei Touch, sonst 0: gewohnte Maße für die Maus).
+function wideLayout(g){ var Wh=g.Wh, S0=g.S0, k=g.k||0, bh=g.bh||32, aw=Math.max(15,k), sw=k?34:36, mode=g.mode||'rails';
+  var L={ n:g.n, m:g.m, W:Wh, H:g.Hh, S0:S0, mode:mode, rail:mode==='rails'?(g.rail||33):0, sx:g.sx!=null?g.sx:33, bh:bh };
+  if (mode==='rails'){ var r=L.rail, bH=Math.max(27,k), ix=Wh-r-2-2*aw-6*sw;
+    L.sw=[0,2,r,40]; L.notes=[0,46,r,bH]; L.menu=[Wh-r,2,r,bH]; L.map=[Wh-r,6+bH,r,bH]; L.reveal=[Wh-r,10+2*bH,r,bH];
+    L.inv={x:ix,y:S0+1,aw:aw,sw:sw,sh:bh-2,n:6}; L.text=[r+3,S0+12,ix-4-(r+3)]; L.lines=2; }
+  else { var y=S0+13, h=bh-2, bw=Math.max(30,k), xr=Wh-2, a0, z0, iw=2*aw+6*sw;
+    L.sw=[2,y,40,h]; L.notes=[44,y,bw,h]; L.reveal=[xr-bw,y,bw,h]; L.map=[xr-2*bw-2,y,bw,h]; L.menu=[xr-3*bw-4,y,bw,h];
+    a0=44+bw+4; z0=L.menu[0]-4; L.inv={x:Math.round(a0+(z0-a0-iw)/2),y:y,aw:aw,sw:sw,sh:h,n:6}; L.text=[4,S0+6,Wh-8]; L.lines=1; }
+  return L; }
 M.setWideLayout=function(g){ WIDE=g?wideLayout(g):null; HB=g?new Buf(g.Wh,g.Hh,P.k0):null; };
 M.wideWanted=function(){ return E.screen==='game' && !!E.room && !E.overlay && !E.card; };
 M.wide=function(){ return WIDE; };
@@ -654,12 +663,18 @@ function uiAtWide(x,y){ var L=WIDE; if (!L) return null; if (E.dlg) return null;
   if (inR4(L.menu,x,y)) return 'menu'; if (E.room&&E.room.noVerbs) return null;
   if (inR4(L.notes,x,y)) return 'notes'; if (inR4(L.map,x,y)) return 'map'; if (inR4(L.reveal,x,y)) return 'reveal';
   if (inR4(L.sw,x,y)){ var gs=GS(); if (!switchShown(gs)) return null; return 'sw'; }
-  var I=L.inv; if (y>=I.y-1 && y<I.y+I.sh+1){ if (x>=I.x && x<I.x+15) return 'up'; if (x>=I.x+15+I.n*I.sw && x<I.x+30+I.n*I.sw) return 'dn';
-    if (x>=I.x+15 && x<I.x+15+I.n*I.sw){ return 'i:'+(E.invTop*INV_N+Math.floor((x-I.x-15)/I.sw)); } }
+  var I=L.inv, A=I.aw, N=I.n*I.sw; if (y>=I.y-1 && y<I.y+I.sh+1){ if (x>=I.x && x<I.x+A) return 'up'; if (x>=I.x+A+N && x<I.x+2*A+N) return 'dn';
+    if (x>=I.x+A && x<I.x+A+N){ return 'i:'+(E.invTop*INV_N+Math.floor((x-I.x-A)/I.sw)); } }
   return null; }
 // Beschriftung in einer schmalen Fläche: eine Zeile, sonst zwei (an Leerzeichen oder mit Trennstrich in der Wortmitte)
 function fitLines(t,w){ if (M.textWidth(t)<=w) return [t]; var sp=t.indexOf(' '); if (sp>0 && M.textWidth(t.slice(0,sp))<=w && M.textWidth(t.slice(sp+1))<=w) return [t.slice(0,sp),t.slice(sp+1)];
-  var u=M.trUI?M.trUI(t):t; for (var k=Math.ceil(u.length/2);k>1;k--){ var a=u.slice(0,k)+'-', b=u.slice(k); if (M.textWidth(a)<=w && M.textWidth(b)<=w) return [a,b]; } return [u]; }
+  // schmale Seitenknöpfe (Telefon-Layout): Trennstrich bevorzugt an einer Silbengrenze (Vokal|Konsonant+Vokal oder Vokal+Konsonant|Konsonant+Vokal), sonst möglichst mittig
+  var u=M.trUI?M.trUI(t):t, V=/[aeiouyäöüAEIOUYÄÖÜ]/, best=null;
+  for (var k=2;k<u.length-1;k++){ var a=u.slice(0,k)+'-', b=u.slice(k); if (M.textWidth(a)>w || M.textWidth(b)>w) continue;
+    if (/^(lj|nj|dž)$/i.test(u.slice(k-1,k+1))) continue;   // BHS: lj, nj, dž sind ein Laut und werden nicht getrennt
+    var c2=(/^(lj|nj|dž)/i.test(u.slice(k))?u[k+2]:u[k+1])||'', syl=!V.test(u[k]) && V.test(c2) && (V.test(u[k-1]) || V.test(u[k-2]||'')), sc=(syl?0:100)+Math.abs(u.length-2*k);
+    if (!best || sc<best.sc) best={sc:sc,l:[a,b]}; }
+  return best?best.l:[u]; }
 function wideButton(b,r,label,on,hot,act){ var c=ui(), x=r[0], y=r[1], w=r[2], h=r[3];
   b.rect(x+1,y+1,w-2,h-2,act?c.sel:(hot?P.k2:P.k1));
   if (on){ b.hl(x+1,x+w-2,y,c.fr); b.hl(x+1,x+w-2,y+h-1,c.fr); b.vl(x,y+1,y+h-2,c.fr); b.vl(x+w-1,y+1,y+h-2,c.fr); }
@@ -668,8 +683,8 @@ function wideButton(b,r,label,on,hot,act){ var c=ui(), x=r[0], y=r[1], w=r[2], h
 function wideSwitch(b,r){ var g=GS(), c=ui(), x=r[0], y=r[1], w=r[2], h=r[3], shown=switchShown(g), avail=shown && g.malaOn && !(E.room&&(E.room.noMala||E.room.noSwitch));
   b.rect(x,y,w,h,P.k1); var fc=avail?c.fr:P.k2; b.hl(x,x+w-1,y,fc); b.hl(x,x+w-1,y+h-1,fc); b.vl(x,y,y+h-1,fc); b.vl(x+w-1,y,y+h-1,fc);
   var other=shown?(g.active==='marko'?'mala':'marko'):g.active, hot=shown&&hoverUI==='sw'&&pointer.show, dim=function(c0){ return !shown?M.DN[c0]:(!avail?M.DN[M.DN[c0]]:c0); };
-  if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12;
-    for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=2+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; b.px(x+2+i2,y+1+j2,dim(c2)); } }
+  if (M.hasPortrait && M.hasPortrait(other)){ var pp=M.portrait(other,((E.gt()+900)%4300)<120?'b':'n'), cx1=Math.max(0,Math.floor((pp.w-(w-4))/2)), ch1=h-12, cy1=2+Math.max(0,(28-ch1)>>1);   // flacher Knopf (untere Leiste): Ausschnitt um die Augen
+    for (var j2=0;j2<ch1;j2++) for (var i2=0;i2<w-4;i2++){ var sx2=cx1+i2, sy2=cy1+j2; if (sx2>=pp.w||sy2>=pp.h) continue; var c2=pp.d[sy2*pp.w+sx2]; if (c2===T) continue; b.px(x+2+i2,y+1+j2,dim(c2)); } }
   else { var pb=portraitBuf(other,'n'), cw=14, chh=13, cx0=Math.floor((pb.w-cw)/2), ox=x+Math.floor((w-cw*2)/2), oy=y+1;
     for (var j=0;j<chh*2;j++) for (var i=0;i<cw*2;i++){ var sx=cx0+(i>>1), sy=(j>>1); if (sx<0||sx>=pb.w||sy>=pb.h) continue; var col=pb.d[sy*pb.w+sx]; if (col===T) continue; if (other==='mala') col=M.ghostLut('mala')[col]; b.px(ox+i,oy+j,dim(col)); } }
   var lab=other==='mala'?'Mala':'Marko', col2=!shown?P.s3:(!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3))), lw=M.textWidth(lab), ly=y+h-10;
@@ -678,14 +693,16 @@ function wideSwitch(b,r){ var g=GS(), c=ui(), x=r[0], y=r[1], w=r[2], h=r[3], sh
 function wideArrow(b,x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; b.vl(xx,y-i,y+i,col); } }
 function drawUIWide(){ var b=HB, L=WIDE; if (!b||!L) return; b.d.fill(P.k0); var room=E.room, c=ui(); if (!room) return b;
   if (room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(b,s0,L.text[0],L.text[1]-3,c.tx); wideButton(b,L.menu,'Menü',true,hoverUI==='menu'&&pointer.show,false); return b; }
-  var s=E.pop||drag?'':sentence(), mw=L.text[2]; while (s.length>1 && M.textWidth(s)>mw) s=s.slice(0,-2)+'…'; M.text(b,s,L.text[0],L.text[1]-3,c.tx);
+  // Satz: im Telefon-Layout mit Seitenknöpfen bis zwei Zeilen neben dem Inventar, sonst eine Zeile über den Knöpfen; zu lang: gekürzt mit „…“
+  var s=E.pop||drag?'':sentence(), mw=L.text[2], ls=s?M.wrap(s,mw):[]; if (ls.length>L.lines){ ls=ls.slice(0,L.lines); var lt=ls[L.lines-1]+'…'; while (lt.length>1 && M.textWidth(lt)>mw) lt=lt.slice(0,-2)+'…'; ls[L.lines-1]=lt; }
+  ls.forEach(function(l,i){ M.text(b,l,L.text[0],L.text[1]-(ls.length>1?7:3)+i*10,c.tx); });
   var nbNew=Object.keys(GS().noteNew).some(function(k){ return M.NOTES[k]&&M.NOTES[k].show; }), mapOn=!(M.mapBlocked&&M.mapBlocked());
   wideButton(b,L.notes,BTNS[0].t,true,hoverUI==='notes'&&pointer.show,false); if (nbNew) b.rect(L.notes[0]+L.notes[2]-4,L.notes[1]+1,3,3,P.r4);
   wideButton(b,L.menu,'Menü',true,hoverUI==='menu'&&pointer.show,false); wideButton(b,L.map,'Karte',mapOn,hoverUI==='map'&&pointer.show,false); wideButton(b,L.reveal,'Zeigen',true,hoverUI==='reveal'&&pointer.show,!!reveal);
   wideSwitch(b,L.sw);
   var I=L.inv, inv=invList(), pages=Math.max(1,Math.ceil(inv.length/INV_N)); if (E.invTop>=pages) E.invTop=pages-1;
-  wideArrow(b,I.x+5,I.y+(I.sh>>1),true,E.invTop>0,hoverUI==='up'); wideArrow(b,I.x+30+I.n*I.sw-6,I.y+(I.sh>>1),false,E.invTop<pages-1,hoverUI==='dn');
-  for (var i=0;i<I.n;i++){ var x=I.x+15+i*I.sw, y=I.y, idx=E.invTop*INV_N+i;
+  var ao=(I.aw-15)>>1; wideArrow(b,I.x+5+ao,I.y+(I.sh>>1),true,E.invTop>0,hoverUI==='up'); wideArrow(b,I.x+2*I.aw+I.n*I.sw-6-ao,I.y+(I.sh>>1),false,E.invTop<pages-1,hoverUI==='dn');
+  for (var i=0;i<I.n;i++){ var x=I.x+I.aw+i*I.sw, y=I.y, idx=E.invTop*INV_N+i;
     b.rect(x,y,I.sw-2,I.sh,P.k0); b.hl(x,x+I.sw-3,y,c.dim); b.vl(x,y,y+I.sh-1,c.dim); b.hl(x,x+I.sw-3,y+I.sh-1,P.k2); b.vl(x+I.sw-3,y,y+I.sh-1,P.k2);
     var id=inv[idx]; if (!id) continue; var ic=iconOf(id), sel=E.pending===id||(E.pop&&E.pop.item===id)||(drag&&drag.id===id), hot=hoverUI==='i:'+idx&&pointer.show;
     if (sel||hot) b.rect(x+1,y+1,I.sw-4,I.sh-2,sel?c.sel:P.k2); if (E.invNew===id && (M.reduceMotion()||E.gt()%600<300)) b.rect(x+1,y+1,I.sw-4,2,c.hi);
@@ -733,6 +750,7 @@ M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); i
   if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
   click(x,y); };
 M.pointerCancel=function(){ if (!pointer.down && !press && !drag) return; pointer.down=false; press=null; drag=null; pointer.show=false; updateHover(); };
+M.pointerActive=function(){ return !!(pointer.down||drag); };   // 99_main.js: Layoutwechsel erst nach dem Loslassen (T17)
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
 function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; if (press.item===undefined){ press.item=invList()[+u.slice(2)]||null; press.top0=E.invTop; }
   var id=press.item, dx=x-press.x, dy=y-press.y, pages=Math.ceil(invList().length/INV_N);
@@ -785,7 +803,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (uiH && uiH[0]==='i'){ var id=invList()[+uiH.slice(2)]; if (!id) return; if (E.invNew===id) E.invNew=null;
     if (E.pending && E.pending!==id){ var p0=E.pending; E.pending=null; E.doItem('use',p0,id); return; }
     if (E.pending===id){ E.pending=null; return; }
-    var opts=itemOpts(id), sx=INV_X+((+uiH.slice(2))%INV_N)*SLOT_W+SLOT_W/2; if (WIDE) sx=Math.round((WIDE.inv.x+15+((+uiH.slice(2))%INV_N)*WIDE.inv.sw+WIDE.inv.sw/2-WIDE.rail)*WIDE.n/WIDE.m);
+    var opts=itemOpts(id), sx=INV_X+((+uiH.slice(2))%INV_N)*SLOT_W+SLOT_W/2; if (WIDE) sx=Math.round((WIDE.inv.x+WIDE.inv.aw+((+uiH.slice(2))%INV_N)*WIDE.inv.sw+WIDE.inv.sw/2-WIDE.sx)*WIDE.n/WIDE.m);
     openPop({title:M.ITEMS[id].name,opts:opts,item:id,x:sx,y:INV_Y}); return; }
   if (y>=SH) return;
   if (now0<(E.sceneBlockUntil||0)) return;   // gleich nach einem Ortswechsel: ein nachgereichter Klick wirkt nicht im neuen Raum

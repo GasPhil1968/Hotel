@@ -7,8 +7,9 @@
 const path = require('path'), fs = require('fs');
 const { pw, open, settle, loadSlot } = require('../../qa/ui/lib.js');
 const ENG = require('../../qa/browser/engines.js');
-const OUT = path.join(__dirname, 'evidence'); fs.mkdirSync(OUT, { recursive: true });
 const a = process.argv.slice(2), arg = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
+// --out <ordner>: Ergebnis und Bilder dorthin (Standard: design/touch = Stand der Analyse; nach der Umsetzung: design/touch/nachher)
+const BASE = path.resolve(arg('--out', __dirname)), OUT = path.join(BASE, 'evidence'); fs.mkdirSync(OUT, { recursive: true });
 const ONLY = (arg('--only', '') || '').split(',').filter(Boolean), DEVS = (arg('--dev', '') || '').split(',').filter(Boolean);
 const want = (k) => !ONLY.length || ONLY.indexOf(k) >= 0;
 const DEV = {
@@ -338,7 +339,7 @@ async function F10(b, dev) { const F = flow('F10', dev, 'Mehrfachtipps, Overlays
   if (want('F3b')) { DEV.iphone16cr = { name: 'iPhone 16 quer (Chromium-Emulation, CDP-Touch)', d: 'iPhone 16 landscape', engine: 'chromium' }; await run('F3b', F3b, 'iphone16cr'); }
   if (want('F10cr')) { DEV.iphone16cr = DEV.iphone16cr || { name: 'iPhone 16 quer (Chromium-Emulation, CDP-Touch)', d: 'iPhone 16 landscape', engine: 'chromium' }; await run('F10', F10, 'iphone16cr'); }
   await wk.close(); await cr.close();
-  const file = path.join(__dirname, 'devicetests.json'); let prev = {}; try { prev = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) {}
+  const file = path.join(BASE, 'devicetests.json'); let prev = {}; try { prev = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) {}
   const merged = { made: R.made, method: R.method, devices: Object.assign({}, prev.devices || {}, R.devices), flows: (prev.flows || []).filter(f => !R.flows.some(g => g.id === f.id && g.dev === f.dev)).concat(R.flows.map(f => { const o = Object.assign({}, f); delete o.ok; delete o.note; return o; })) };
   fs.writeFileSync(file, JSON.stringify(merged, null, 1)); log('\n' + R.flows.length + ' Abläufe → ' + path.relative(process.cwd(), file));
 })().catch(e => { console.error(e); process.exit(1); });
