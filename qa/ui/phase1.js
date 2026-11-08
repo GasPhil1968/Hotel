@@ -102,8 +102,10 @@ const { pw, checker, open, settle, loadSlot, CAPTURE, toPage, HS_POINT } = requi
     T.ck(await p.evaluate(() => document.getElementById('rotnote').classList.contains('on')), 'Hinweis „MALA wird quer gespielt“ erscheint');
     const btn = await p.$('#rotnote button'); const bb = btn && await btn.boundingBox(); T.ck(bb && bb.height >= 44, 'Knopf „Gedreht weiterspielen“ ≥ 44 CSS-px hoch (' + (bb && bb.height) + ')');
     if (btn) await btn.tap(); T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on') && localStorage.getItem('mala.rotOk') === '1'), 'nach dem Tipp verborgen und gemerkt');
-    await p.reload(); await p.waitForFunction(() => window.M && M.E && M.E.screen === 'title' && document.getElementById('rotnote'), null, { timeout: 20000 }); await p.waitForTimeout(300);
-    T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on') && localStorage.getItem('mala.rotOk') === '1'), 'nach dem Neuladen nicht erneut');
+    // Chromium schreibt localStorage in einem frischen Kontext verzögert weg: ein Neuladen wenige ms nach dem Schreiben kann den Eintrag verlieren (Testumgebung, nicht das Spiel)
+    await p.waitForTimeout(800); await p.reload(); await p.waitForFunction(() => window.M && M.E && M.E.screen === 'title' && document.getElementById('rotnote'), null, { timeout: 20000 }); await p.waitForTimeout(300);
+    const rl = await p.evaluate(() => ({ on: document.getElementById('rotnote').classList.contains('on'), ok: localStorage.getItem('mala.rotOk'), keys: Object.keys(localStorage).join(','), ss: sessionStorage.getItem('__i') }));
+    T.ck(!rl.on && rl.ok === '1', 'nach dem Neuladen nicht erneut' + (rl.on || rl.ok !== '1' ? ' – ' + JSON.stringify(rl) : ''));
     errs.push(...p.errs); await p.context().close();
   } catch (e) { T.ck(false, 'Ausnahme: ' + (e.stack || e).toString().split('\n').slice(0, 3).join(' | ')); }
   T.ck(errs.length === 0, 'keine Skriptfehler in der Seite' + (errs.length ? ': ' + [...new Set(errs)].slice(0, 3).join(' | ') : ''));

@@ -19,9 +19,9 @@ function serve(dir, port) { const types = { '.html': 'text/html; charset=utf-8',
   return new Promise(r => srv.listen(port, '127.0.0.1', () => r(srv))); }
 
 const HELPERS = `window.__qa = {
-  toClient: function(x,y){ var cv=document.getElementById('game'), r=cv.getBoundingClientRect(); if (M.isRotated && M.isRotated()) return [r.right - (y+0.5)/200*r.width, r.top + (x+0.5)/320*r.height]; return [r.left+(x+0.5)/320*r.width, r.top+(y+0.5)/200*r.height]; },
-  scan: function(code){ M.renderFrame(); for (var y=1;y<200;y+=2) for (var x=1;x<320;x+=2){ if (M.uiHit(x,y)===code) return [x,y]; } return null; },
-  codes: function(){ M.renderFrame(); var s={}; for (var y=1;y<200;y+=2) for (var x=1;x<320;x+=2){ var h=M.uiHit(x,y); if (h) s[h]=(s[h]||0)+1; } return s; },
+  toClient: function(x,y){ if (M.isWide && M.isWide() && y>=1000){ var hh=document.getElementById('hud').getBoundingClientRect(), gg=M.wideGeo(); return [hh.left+(x+0.5)/gg.Wh*hh.width, hh.top+(y-1000+0.5)/gg.Hh*hh.height]; } var cv=document.getElementById('game'), r=cv.getBoundingClientRect(); if (M.isRotated && M.isRotated()) return [r.right - (y+0.5)/200*r.width, r.top + (x+0.5)/320*r.height]; return [r.left+(x+0.5)/320*r.width, r.top+(y+0.5)/cv.height*r.height]; },
+  scan: function(code){ M.renderFrame(); for (var y=1;y<200;y+=2) for (var x=1;x<320;x+=2){ if (M.uiHit(x,y)===code) return [x,y]; } if (M.isWide && M.isWide()){ var g=M.wideGeo(); for (var y2=1;y2<g.Hh;y2+=2) for (var x2=1;x2<g.Wh;x2+=2){ if (M.uiHit(x2,1000+y2)===code) return [x2,1000+y2]; } } return null; },
+  codes: function(){ M.renderFrame(); var s={}; for (var y=1;y<200;y+=2) for (var x=1;x<320;x+=2){ var h=M.uiHit(x,y); if (h) s[h]=(s[h]||0)+1; } if (M.isWide && M.isWide()){ var g=M.wideGeo(); for (var y2=1;y2<g.Hh;y2+=2) for (var x2=1;x2<g.Wh;x2+=2){ var h2=M.uiHit(x2,1000+y2); if (h2) s[h2]=(s[h2]||0)+1; } } return s; },
   st: function(){ var E=M.E, p=E.player&&E.player(); return { scr:E.screen, room:E.room&&E.room.id, busy:!!E.busy, dlg:E.dlg?E.dlg.opts.map(function(o){return o.t;}):null, ov:E.overlay?E.overlay.kind:null, speech:!!E.speech, acting:E.acting||0, walk:!!(p&&p.mode==='walk'), active:M.GS.active, phase:M.GS.phase, pop:E.pop?E.pop.opts.map(function(o){return o.t;}):null, menu:!!E.menu, trn:!!E.transitioning, title:E.screen==='title'?M.titleLabels():null, inv:M.GS.inv.slice(), notes:M.GS.notes.length }; }
 };`;
 

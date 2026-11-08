@@ -58,10 +58,14 @@ SPRACHE / JEZIK
 - Spielstände gelten für beide Sprachen.
 
 QUERFORMAT
-- Das Spiel läuft immer im Querformat. Hält man das iPad hochkant, dreht
-  sich das Spielbild um 90 Grad und füllt den Bildschirm trotzdem quer aus;
-  dann das Gerät einfach drehen. Das klappt auch mit gesperrter
-  Bildschirmdrehung.
+- Das Spiel läuft immer im Querformat. Hält man das Gerät hochkant, erklärt
+  ein kurzer Hinweis, dass MALA quer gespielt wird. "Gedreht weiterspielen"
+  merkt sich die Wahl: Das Spielbild liegt dann um 90 Grad gedreht und füllt
+  den Bildschirm quer aus – das klappt auch mit gesperrter Bildschirmdrehung.
+- Auf breiten Telefonen im Querformat (etwa einem iPhone) wird die Szene eine
+  Stufe größer. Die Knöpfe rücken dann an die Seiten: links Figur und
+  Notizen, rechts Menü, Karte und Zeigen, das Inventar unter dem Bild.
+  Notizbuch, Karte, Briefe und Rätsel erscheinen wie gewohnt.
 
 STEUERUNG
 - Objekt antippen: Marko (oder Mala) schaut es sich an. Kann man damit

@@ -33,9 +33,9 @@ const { launch, contextOpts } = require('./engines');
 
   // ---------------------------------------------------------------- Seitenhelfer (nur lesend)
   await page.addScriptTag({ content: `window.__qa = {
-    toClient: function(x,y){ var cv=document.getElementById('game'), r=cv.getBoundingClientRect(); if (M.isRotated && M.isRotated()) return [r.right - (y+0.5)/200*r.width, r.top + (x+0.5)/320*r.height]; return [r.left+(x+0.5)/320*r.width, r.top+(y+0.5)/200*r.height]; },
-    scan: function(code, step){ step=step||2; M.renderFrame(); for (var y=1;y<200;y+=step) for (var x=1;x<320;x+=step){ if (M.uiHit(x,y)===code) return [x,y]; } return null; },
-    scanAll: function(prefix){ M.renderFrame(); var s={}; for (var y=1;y<200;y+=2) for (var x=1;x<320;x+=2){ var h=M.uiHit(x,y); if (h && h.indexOf(prefix)===0 && !s[h]) s[h]=[x,y]; } return s; },
+    toClient: function(x,y){ if (M.isWide && M.isWide() && y>=1000){ var hh=document.getElementById('hud').getBoundingClientRect(), gg=M.wideGeo(); return [hh.left+(x+0.5)/gg.Wh*hh.width, hh.top+(y-1000+0.5)/gg.Hh*hh.height]; } var cv=document.getElementById('game'), r=cv.getBoundingClientRect(); if (M.isRotated && M.isRotated()) return [r.right - (y+0.5)/200*r.width, r.top + (x+0.5)/320*r.height]; return [r.left+(x+0.5)/320*r.width, r.top+(y+0.5)/cv.height*r.height]; },
+    scan: function(code, step){ step=step||2; M.renderFrame(); for (var y=1;y<200;y+=step) for (var x=1;x<320;x+=step){ if (M.uiHit(x,y)===code) return [x,y]; } if (M.isWide && M.isWide()){ var g=M.wideGeo(); for (var y2=1;y2<g.Hh;y2+=step) for (var x2=1;x2<g.Wh;x2+=step){ if (M.uiHit(x2,1000+y2)===code) return [x2,1000+y2]; } } return null; },
+    scanAll: function(prefix){ M.renderFrame(); var s={}; for (var y=1;y<200;y+=2) for (var x=1;x<320;x+=2){ var h=M.uiHit(x,y); if (h && h.indexOf(prefix)===0 && !s[h]) s[h]=[x,y]; } if (M.isWide && M.isWide()){ var g=M.wideGeo(); for (var y2=1;y2<g.Hh;y2+=2) for (var x2=1;x2<g.Wh;x2+=2){ var h2=M.uiHit(x2,1000+y2); if (h2 && h2.indexOf(prefix)===0 && !s[h2]) s[h2]=[x2,1000+y2]; } } return s; },
     hsPoint: function(id){ var E=M.E, R=E.room; if (!R) return {err:'kein Raum'}; var h = id==='_mala'?E.MALA_HS:(id==='_marko'?E.MARKO_HS:R.byId[id]); if (!h) return {err:'kein Hotspot '+id};
       var cam=Math.round(E.camX), r=null;
       if (id==='_mala'||id==='_marko'){ var a=M.ACT[id.slice(1)]; if (!a) return {err:'Figur fehlt'}; r=[Math.round(a.x)-8,Math.round(a.y)-48,16,48]; } else r=E.hsRect(h);
