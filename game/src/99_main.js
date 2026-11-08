@@ -17,7 +17,11 @@ function fillRot(){ rotNote.setAttribute('aria-label',trU('MALA wird quer gespie
   rotNote.querySelector('h2').textContent=trU('MALA wird quer gespielt'); rotNote.querySelector('.a').textContent=trU('Dreh dein Gerät ins Querformat.');
   rotNote.querySelector('.b').textContent=trU('Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.');
   var b=rotNote.querySelector('button'); b.textContent=trU('Gedreht weiterspielen'); b.addEventListener('click',function(){ rotOk=true; try{ localStorage.setItem('mala.rotOk','1'); }catch(e){} showRot(false); try{ M.audioInit(); }catch(_){} }); }
-function showRot(on){ var v=!!(on&&!rotOk); if (v&&!rotNote.firstChild) fillRot(); rotNote.classList.toggle('on',v); if (v){ var b=rotNote.querySelector('button'); if (b) try{ b.focus({preventScroll:true}); }catch(e){} } }
+// Touch-Konzept T11: Solange der Hinweis die Fläche verdeckt, steht das Spiel still (wie in der Pause); danach geht es an derselben Stelle weiter
+var rotPausedByUs=false;
+function showRot(on){ var v=!!(on&&!rotOk); if (v&&!rotNote.firstChild) fillRot(); rotNote.classList.toggle('on',v); if (v){ var b=rotNote.querySelector('button'); if (b) try{ b.focus({preventScroll:true}); }catch(e){} }
+  try{ var E=M.E; if (v && !rotPausedByUs && E && !E.paused()){ rotPausedByUs=true; E.paused(true); if (M.duckMusic) M.duckMusic(true); }
+    else if (!v && rotPausedByUs){ rotPausedByUs=false; if (E && !E.menu){ E.paused(false); if (M.duckMusic) M.duckMusic(false); } } }catch(e){} }
 // Röhrenbild (Menüpunkt): Scanlines + Vignette
 var crtEl=document.createElement('div'); crtEl.id='crt'; document.body.appendChild(crtEl);
 var st=document.createElement('style'); st.textContent='#crt{position:fixed;pointer-events:none;display:none;z-index:5}#crt.on{display:block;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 60%,rgba(0,0,0,.5) 100%),repeating-linear-gradient(var(--dir,to bottom),rgba(0,0,0,.3) 0,rgba(0,0,0,.3) var(--a),rgba(0,0,0,0) var(--a),rgba(0,0,0,0) var(--b));border-radius:16px}#game.crt,#hud.crt{filter:saturate(1.15) contrast(1.06) brightness(1.1)}#game.crt{border-radius:16px}#hud{display:none;position:fixed;z-index:1;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:none;background:#08070d}';
@@ -85,6 +89,7 @@ function onWheel(e){ e.preventDefault(); wAcc+=e.deltaMode===1?e.deltaY*16:e.del
 // Doppeltipp auf dem Spielbild zoomt nicht (das Spiel wertet Doppeltipps selbst über pointerup aus)
 function onTouchEnd(e){ var t=Date.now(); if (t-lastTouchEnd<450) e.preventDefault(); lastTouchEnd=t; }
 [cv,hudCv].forEach(function(el){ el.addEventListener('pointerdown',onDown); el.addEventListener('pointermove',onMove); el.addEventListener('pointerup',onUp);
+  el.addEventListener('pointercancel',function(e){ if (e.isPrimary!==false) M.pointerCancel(); }); el.addEventListener('lostpointercapture',function(e){ if (e.isPrimary!==false) M.pointerCancel(); });   // Touch-Konzept T10
   el.addEventListener('contextmenu',function(e){ e.preventDefault(); }); el.addEventListener('wheel',onWheel,{passive:false}); el.addEventListener('dblclick',function(e){ e.preventDefault(); }); el.addEventListener('touchend',onTouchEnd,{passive:false}); });
 document.addEventListener('keydown',function(e){ if (rotNote.classList.contains('on')) return;
   if (M.shell && M.shell.ctx){ if (M.audioInit) M.audioInit(); if (e.key==='Escape'||!(e.target&&e.target.closest&&e.target.closest('input'))) { if (M.shell.key(e)) return; } else return; }   // Titel und Pause: Tasten gehören der HTML-Schicht
@@ -100,7 +105,7 @@ window.addEventListener('blur',function(){ ffEnd(false); });
 document.addEventListener('touchmove',function(e){ if (e.target===cv||e.target===hudCv) e.preventDefault(); },{passive:false});
 document.addEventListener('touchend',function(){ try{ M.audioInit(); }catch(_){} },{passive:true});
 document.addEventListener('gesturestart',function(e){ e.preventDefault(); });
-document.addEventListener('visibilitychange',function(){ if (document.hidden){ try{ M.saveGame(); }catch(e){} } });
+document.addEventListener('visibilitychange',function(){ if (document.hidden){ try{ M.saveGame(); }catch(e){} } else { try{ if (M.audioResume) M.audioResume(); }catch(e){} } });   // zurück aus dem Hintergrund: Ton fortsetzen, sonst beim nächsten Tipp
 window.addEventListener('pagehide',function(){ try{ M.saveGame(); }catch(e){} });
 var last=performance.now();
 function frame(now){ var dt=now-last; last=now;

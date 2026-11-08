@@ -51,7 +51,8 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     await p.evaluate(() => { M.E.busy = false; });
 
     T.section('Untertitelschicht: Antwortlisten (Klick, Ziffern, Pfeile)');
-    await p.evaluate(DLG, LABS); await p.waitForTimeout(150); s = await p.evaluate(SUBS);
+    await p.evaluate(DLG, LABS); await p.waitForTimeout(550);   // Liste nimmt 450 ms nach dem Erscheinen noch keinen Tipp an (Touch-Konzept T04)
+    s = await p.evaluate(SUBS);
     T.ck(s.opts.length === 7 && s.opts[0].t === 'Erste Antwort' && s.opts[6].t === '(Gehen.)', 'alle sieben Antworten als Liste (' + s.opts.length + ')');
     T.ck(await p.evaluate(() => M.E.dlg.lay === null), 'keine Canvas-Trefferflächen hinter der Liste (dlg.lay leer)');
     T.ck(await p.evaluate(capTexts).then(t => t.indexOf('Erste Antwort') < 0), 'der Canvas zeichnet die Antwortzeilen nicht');
@@ -94,7 +95,8 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     T.ck(/sz1/.test(s.cls) && /MALA Pixel/.test(s.lineFont), 'große Schrift in MALA Pixel (' + s.lineSize + ' px)');
     T.ck(s.lineBox && s.lineBox.b <= wg.b + 0.5 && s.lineBox.x >= 0 && s.lineBox.r <= vp.width && s.lineBox.y >= 0, 'Satz innerhalb von Bild und Bildschirm');
     await shot(p, 'b32_breitbild_gross'); await p.evaluate(() => { M.E.endSpeech(); });
-    await p.evaluate(DLG, LABS); await p.waitForTimeout(150); s = await p.evaluate(SUBS);
+    await p.evaluate(DLG, LABS); await p.waitForTimeout(550);   // Liste nimmt 450 ms nach dem Erscheinen noch keinen Tipp an (Touch-Konzept T04)
+    s = await p.evaluate(SUBS);
     T.ck(s.choBox && s.choBox.b <= wg.b + 0.5 && s.choBox.y >= 0 && s.choBox.r <= vp.width, 'Liste innerhalb von Bild und Bildschirm (scrollt bei Bedarf)');
     T.ck(s.opts.every(o => o.h >= 44), 'Antworten ≥ 44 CSS-px hoch');
     await shot(p, 'b32_breitbild_liste');
@@ -113,7 +115,8 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     p = await open(b, 'k2_fikret', PHONE); await loadSlot(p); await settle(p); await p.waitForFunction(() => M.isWide(), null, { timeout: 3000 }).catch(() => {});
     const FADE = () => { const c = document.getElementById('game'); return { wide: M.isWide(), ov: !!M.E.overlay, tr: c.style.transition, op: parseFloat(getComputedStyle(c).opacity) }; };
     await p.keyboard.press('n'); await p.waitForFunction(() => !M.isWide(), null, { timeout: 2000, polling: 'raf' }).catch(() => {}); let f = await p.evaluate(FADE);
-    T.ck(f.ov && !f.wide && /opacity 150ms/.test(f.tr) && f.op < 1, 'Notizbuch öffnet im gewohnten Bild mit Überblendung (Deckkraft gerade ' + f.op.toFixed(2) + ')');
+    const f0 = f; await p.waitForTimeout(40); f = await p.evaluate(FADE);   // im Wechselbild steht die Deckkraft auf 0, ein Bild später läuft der Übergang
+    T.ck(f.ov && !f.wide && f0.op < 1 && /opacity 150ms/.test(f.tr) && f.op < 1, 'Notizbuch öffnet im gewohnten Bild mit Überblendung (Deckkraft ' + f0.op.toFixed(2) + ' → ' + f.op.toFixed(2) + ')');
     await p.waitForTimeout(300); T.ck((await p.evaluate(FADE)).op === 1, 'nach 150 ms voll sichtbar');
     await p.keyboard.press('Escape'); await p.waitForFunction(() => M.isWide(), null, { timeout: 2000, polling: 'raf' }).catch(() => {}); f = await p.evaluate(FADE);
     T.ck(f.wide && f.op < 1, 'zurück ins Breitbild ebenfalls mit Überblendung (' + f.op.toFixed(2) + ')');

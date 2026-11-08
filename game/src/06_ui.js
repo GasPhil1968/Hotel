@@ -265,9 +265,9 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
   if (!rows.length && d.top<o.length){ var l1=o[d.top].lines; rows.push({k:d.top,y:yy,h:Math.max(minH,l1.length*NB_LH+1),ls:l1}); more=d.top<o.length-1; }
   d.vis=rows.map(function(r){ return r.k; }); d.visTop=d.top;   // sichtbare Zeilen: Ziffern 1–9 und Pfeiltasten (UI-Konzept D10)
   var kbOn=d.kf!==undefined&&d.kf!==null&&!(pointer.show&&!pointer.touch&&hoverUI&&hoverUI[0]==='c');
-  var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null}, talk=!!convPartner();
+  var bye=dlgBye(), lay={rows:[],close:null,up:null,dn:null}, talk=!!convPartner(), fresh=d.atR!==undefined && nowR()-d.atR<150 && !(M.reduceMotion&&M.reduceMotion());   // Liste blendet kurz auf: sie ist bereit, sobald sie hell ist
   rows.forEach(function(r){ var hot=(pointer.show&&hoverUI==='c:'+r.k)||(kbOn&&d.kf===r.k), asked=talk&&!o[r.k].bye&&!o[r.k].noGray&&GS().seen['ask:'+o[r.k].t];
-    var col=g?(hot?P.x6:(asked?P.x3:P.x4)):(hot?P.l1:(asked?P.s3:P.s5)), my=r.y+((r.h-(r.ls.length*NB_LH+1))>>1);   // gewählte Zeilen ≥ 4,5:1 (s3 7,0:1, x3 5,5:1)
+    var col=g?(hot?P.x6:(asked?P.x3:P.x4)):(hot?P.l1:(asked?P.s3:P.s5)), my=r.y+((r.h-(r.ls.length*NB_LH+1))>>1); if (fresh) col=M.DN[col];   // gewählte Zeilen ≥ 4,5:1 (s3 7,0:1, x3 5,5:1)
     if (hot) fb.rect(x0+3,r.y-1,w-24,r.h,g?P.x0:P.k2);
     if (o[r.k].ask){ fb.px(tx-6,my+2,col); fb.px(tx-5,my+3,col); fb.px(tx-6,my+4,col); } else { fb.px(tx-6,my+3,g?P.x1:P.s1); fb.px(tx-5,my+3,g?P.x1:P.s1); }
     r.ls.forEach(function(l,j){ M.text(fb,l,tx,my+j*NB_LH,col); }); lay.rows.push({k:r.k,r:[x0+3,r.y-1,w-24,r.h]}); });
@@ -712,11 +712,12 @@ function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay
 M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 // Testhilfe (Touch-Test): welches Bedienelement liegt an x,y; Beschriftungen der Titelzeilen
 M.uiHit=function(x,y){ return uiAt(x,y); }; M.revealOn=function(){ return !!reveal; }; M.uiHover=function(){ return pointer.show?hoverUI:null; }; M.uiColors=function(){ return ui(); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
-M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt()}; M.pointerMove(x,y,touch); };
+M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); };
 M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
-  var pr=press; press=null; if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return;
+  var pr=press; press=null; tapStartR=pr?pr.tr:nowR(); if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return;
   if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
   click(x,y); };
+M.pointerCancel=function(){ if (!pointer.down && !press && !drag) return; pointer.down=false; press=null; drag=null; pointer.show=false; updateHover(); };
 function canDrag(){ return E.screen==='game'&&!E.busy&&!E.dlg&&!E.overlay&&!E.menu&&!(E.room&&E.room.noVerbs)&&!isG(); }
 function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return; if (press.item===undefined){ press.item=invList()[+u.slice(2)]||null; press.top0=E.invTop; }
   var id=press.item, dx=x-press.x, dy=y-press.y, pages=Math.ceil(invList().length/INV_N);
@@ -728,7 +729,15 @@ function dragCheck(x,y){ var u=press.ui; if (!u||u[0]!=='i'||!canDrag()) return;
 function dropDrag(id,x,y){ if (!canDrag()||invList().indexOf(id)<0) return; E.pop=null;
   if (y<SH){ var wx=x+Math.round(E.camX), hs=E.hotspotAt(wx,y); if (!hs) return; E.pending=null; E.actionTok(); E.setLastClick([wx,y]); E.doVerb('use',hs,id); return; }
   var u=uiAt(x,y); if (u&&u[0]==='i'){ var other=invList()[+u.slice(2)]; if (other&&other!==id){ E.pending=null; E.doItem('use',id,other); } } }
-var lastExit=null, lastTapT=-1e9;
+var lastExit=null, lastTapT=-1e9, tapStartR=0;
+function nowR(){ try{ return performance.now(); }catch(e){ return Date.now(); } }
+// Antwortliste (Touch-Konzept T04): Ein Tipp, der vor oder bis 450 ms nach dem Erscheinen der Liste beginnt, wählt nichts – kein Doppeltipp wählt ungelesen
+var DLG_LOCK=450; function dlgLocked(){ var D=E.dlg; return !!(D && D.atR!==undefined && tapStartR < D.atR + DLG_LOCK); }
+M.dlgLocked=function(startR){ var D=E.dlg; return !!(D && D.atR!==undefined && (startR===undefined?nowR():startR) < D.atR + DLG_LOCK); };
+// Figurenwechsel gesperrt (Touch-Konzept T08): kurz sagen, warum – ohne Hinweis auf die Geschichte
+function switchWhy(){ if (E.busy||E.transitioning) return 'Gerade nicht – die Szene läuft.'; if (E.dlg) return 'Erst das Gespräch beenden.'; if (E.overlay) return 'Erst schließen.'; return 'Hier geht das gerade nicht.'; }
+function swOffered(){ var gs=GS(); return !!(gs.malaOn && !gs.flags['mala.unknown'] && !gs.flags['mala.noSwitch'] && !gs.flags['split.afterIvka.away']); }
+function trySwitch(){ if (E.canSwitch()){ E.switchChar(); return true; } E.msg={t:switchWhy(),until:E.gt()+2400}; M.sfx('nope'); return false; }
 M.DBL_MS=M.DBL_MS||350;   // Doppelklick-Fenster in ms (300–400 sinnvoll)
 async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (M.shell && (E.menu || E.screen==='title')) return;
@@ -746,7 +755,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
       if (u2[0]==='z'){ var zi=+u2.slice(2); ov.sel[zi]=(ov.sel[zi]<0?0:(ov.sel[zi]+1)%ov.data.slots[zi].length); ov.bad=-1; ov.msg=null; M.sfx('page'); } return; }
     E.closeOverlay(); return; }
   if (E.speech && (E.busy||E.dlg)){ if (E.gt()-E.speech.at>200 && now0-prevTap>M.DBL_MS) E.endSpeech(); return; }   // der zweite Tipp eines Doppeltipps überspringt keinen Satz
-  if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
+  if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if ((ud==='cx'||ud[0]==='c'&&ud[1]===':') && dlgLocked()) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
   var uiH=uiAt(x,y);
   if (E.pop && E.pop.hs && lastExit && now0-lastExit.t<=M.DBL_MS && lastExit.key===E.exitKey(E.pop.hs) && !E.busy){ var hp=E.pop.hs; lastExit=null; E.pop=null; E.actionTok(); E.doVerb(isG()&&hp.gexit?'pass':'walk',hp); return; }   // zweiter Tipp eines Doppeltipps auf einen Ausgang mit Menü
   if (E.pop){ var pr=popAt(x,y); if (pr!==null){ if (pr>=0){ M.sfx('click'); popPick(E.pop,E.pop.opts[pr]); } return; } E.pop=null; if (!uiH || y<SH) { if (y<SH) return; } }
@@ -754,7 +763,7 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (uiH==='reveal'){ reveal={at:E.gt()}; M.sfx('click'); return; }
   if (uiH==='menu'){ E.menu=true; E.paused(true); if (M.shellSync) M.shellSync(); return; }
   if (uiH==='map'){ M.sfx('click'); if (M.toggleMap) M.toggleMap(); return; }
-  if (uiH==='sw'){ E.switchChar(); return; }
+  if (uiH==='sw'){ trySwitch(); return; }
   if (uiH==='up'){ if (E.invTop>0){ E.invTop--; M.sfx('page'); } return; }
   if (uiH==='dn'){ var pages=Math.ceil(invList().length/INV_N); if (E.invTop<pages-1){ E.invTop++; M.sfx('page'); } return; }
   if (E.busy) return;
@@ -820,5 +829,5 @@ M.key=function(k){ var kl0=String(k).toLowerCase(); if (M.audioInit) M.audioInit
   if (E.screen!=='game'||E.menu) return; if (E.dlg && dlgKey(k)) return; if (k===' '||k==='Enter'){ if (E.speech) E.endSpeech(); return; }
   if (kl0==='k' && E.overlay && E.overlay.kind==='map'){ M.toggleMap(); return; }
   if (kl0==='k' && !E.overlay && !E.dlg){ M.toggleMap(); return; }   // K: Karte (meldet selbst, wenn sie gerade nicht geht)
-  if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ E.switchChar(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
+  if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ if (swOffered()) trySwitch(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
 })(M);

@@ -210,7 +210,7 @@ function choose(opts,o){ o=o||{}; opts=opts.map(function(x,i){ return typeof x==
   if (E.overlay && E.overlay.kind==='map'){ if (E.overlay.data) E.overlay.data.acting=false; closeOverlay(null); E.busy=true; }   // die Szene läuft weiter gesperrt; M.mapGo gibt frei
   if (o.conv!==false) convStart(null);
   var to0=trTo(GS.active);   // Sprachfassung: an wen die Antwort geht, steht fest, wenn die Auswahl aufgeht – nicht erst nach langer Bedenkzeit
-  return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free,to:to0}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active,{to:to0}); return op.id; }); }
+  return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free,to:to0,atR:nowR()}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active,{to:to0}); return op.id; }); }
 E.chooseDone=function(i){ var d=E.dlg; if (!d) return; E.dlg=null; d.res(d.opts[i]); };
 function convStart(npc){ if (!E.conv||E.conv.room!==room) E.conv={room:room,npc:null}; if (npc && ACT[npc]) E.conv.npc=npc; }
 E.convStart=convStart;
@@ -260,7 +260,8 @@ function malaJoin(o){ o=o||{}; if (GS.flags['split.afterIvka.away'] && !o.force)
 function malaLeave(o){ o=o||{}; if (GS.active==='mala') switchTo('marko',true); GS.malaOn=false; var a=ACT.mala; if (a){ a.fadeOut=gt; } }
 function canSwitch(){ if (!GS.malaOn||E.busy||E.dlg||E.overlay||E.screen!=='game'||GS.flags['mala.lock']||GS.flags['mala.unknown']||GS.flags['mala.noSwitch']||GS.flags['split.afterIvka.away']) return false; if (room && (room.noMala||room.noSwitch)) return false; return true; }
 E.canSwitch=canSwitch;
-async function switchTo(who,silent){ if (GS.active===who) return; syncPos(); GS.active=who; M.setGhostAudio(who==='mala'); if (!silent) M.sfx('whoosh');
+async function switchTo(who,silent){ if (GS.active===who) return; E.pending=null; E.pop=null;   // Touch-Konzept T09: eine Gegenstandswahl oder ein offenes Verb-Menü gehört der vorigen Figur
+  syncPos(); GS.active=who; M.setGhostAudio(who==='mala'); if (!silent) M.sfx('whoosh');
   var target=GS.pos[who].room; if (target && target!==room.id){ await gotoRoom(target,{x:GS.pos[who].x,y:GS.pos[who].y,f:GS.pos[who].f,noEnter:true,fadeMs:250,keepPos:true}); }
   else { placePlayers(); E.switchFx=gt; }
   snapCamera();
@@ -577,6 +578,11 @@ E.toTitle=function(){ E.lastSaveOk=saveGame(); M.scapeStop(); resetTransient(); 
 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;
+function nowR(){ try{ return performance.now(); }catch(e){ return Date.now(); } }
+// Touch-Konzept T13: zusätzlich speichern, sobald nach einer Handlung wieder Ruhe ist (höchstens alle 10 s, nie mitten in einer Szene):
+// iOS meldet einen App-Wechsel nicht immer (visibilitychange fehlt manchmal, pagehide nie), und ein beendeter Prozess bekommt nichts
+var wasBusy=false, idleSaveAt=0;
+function idleSave(){ var b=!!(E.busy||E.dlg||E.overlay||E.transitioning||E.screen!=='game'||E.menu||E.acting); if (wasBusy && !b && room && !GS.ended && !room.noSave){ var t=Date.now(); if (t-idleSaveAt>=10000){ idleSaveAt=t; saveGame(); } } wasBusy=b; }
 // Schnellvorlauf (UI-Konzept D2, B3-5): Solange er gehalten wird (99_main.js: Esc gedrückt halten), enden Sätze sofort, Wartezeiten, Wege
 // und Blenden laufen zehnmal so schnell. Derselbe Ablauf mit allen Sätzen, Flags und Speicherpunkten – kein Sprung. Wirkt nur, während eine
 // Szene läuft und keine Auswahl offen ist.
@@ -592,6 +598,7 @@ M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; var ffk=M.ffActive()?FF_K:1;
     if (!E.busy && !E.dlg && !E.speech) E.trLast=null;
     if (room && E.screen==='game'){ Object.keys(ACT).forEach(function(k){ updateActor(ACT[k],dt); }); updateCamera(dt); if (room.tick) room.tick(API,dt); if (M.ambientTick) M.ambientTick(API,dt); syncPos(); }
     if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); }
+    idleSave();
     // Leerlauf: ein Kapitel darf hier ausstehende Szenen anstoßen (nur wenn nichts läuft)
     if (M.idleHook && E.screen==='game' && room && !E.busy && !E.dlg && !E.overlay && !E.card && !E.speech && !E.transitioning && !E.menu && !GS.ended) M.idleHook(API); }
   if (M.shellSync) M.shellSync();   // HTML-Schicht (Titel, Pause) folgt dem Spielzustand

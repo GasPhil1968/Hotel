@@ -12,6 +12,10 @@ function lsSet(k,v){ try{ var L=LS(); if (L) L.setItem(k,v); return true; }catch
 function lsDel(k){ try{ var L=LS(); if (L) L.removeItem(k); }catch(e){} }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function pad(n){ return (n<10?'0':'')+n; }
+function iosDev(){ try{ return DOM && (/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && (navigator.maxTouchPoints||0)>1)); }catch(e){ return false; } }
+function standalone(){ try{ return DOM && (navigator.standalone===true || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches); }catch(e){ return false; } }
+function fsApi(){ try{ var d=DOM&&document.documentElement; return !!(d && (d.requestFullscreen||d.webkitRequestFullscreen)); }catch(e){ return false; } }
+M.iosDev=iosDev; M.standalone=standalone;
 function entries(n){ return n+' '+(n===1?'Eintrag':'Einträge'); }
 var PLACES=['Split','Sarajevo','Mostar','München'], ORD=['ersten','zweiten','dritten','vierten'];
 
@@ -154,7 +158,9 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'head',label:'Darstellung'});
   it.push({type:'seg',label:'Bewegung reduzieren',sub:'kein Wackeln, Pulsieren, Flackern',value:M.reduceMotion()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ setPref('motion',+v===1); }});
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
-  it.push({type:'seg',label:'Vollbild',value:-1,options:[[1,'umschalten']],act:function(){ if (M.fullscreen) M.fullscreen(); }});
+  // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm
+  if (fsApi()) it.push({type:'seg',label:'Vollbild',sub:iosDev()?'Wischen nach unten beendet es wieder':'',value:-1,options:[[1,'umschalten']],act:function(){ if (M.fullscreen) M.fullscreen(); }});
+  else it.push({type:'hint',label:'Vollbild',sub:standalone()?'MALA läuft schon als App vom Home-Bildschirm.':'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten.'});
   it.push({type:'head',label:'Notizbuch'});
   it.push({type:'seg',label:'Ansicht',sub:E.nbStyle()==='think'?'Nachdenken: Marko fragt sich durch':'Liste: alle offenen Notizen auf einer Seite',value:E.nbStyle(),options:[['list','Liste'],['think','Nachdenken']],act:function(v){ E.setNbStyle(v); }});
   it.push({type:'head',label:'Sprache'});
@@ -287,7 +293,8 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
     v.items.forEach(function(x){ var i=idx(x); if (x.type==='head') h+='<h4>'+esc(T(x.label))+'</h4>';
       else if (x.type==='range') h+='<label class="lbl" for="r'+i+'">'+esc(T(x.label))+' <small id="v'+i+'">'+x.value+' %</small></label><input type="range" id="r'+i+'" min="0" max="100" step="5" value="'+x.value+'" data-r="'+i+'">';
       else if (x.type==='seg') h+='<span class="lbl">'+esc(T(x.label))+(x.sub?'<small>'+esc(T(x.sub))+'</small>':'')+'</span><span class="segp" role="group" aria-label="'+esc(T(x.label))+'">'+x.options.map(function(o){ return '<button type="button" data-s="'+i+'" data-v="'+esc(o[0])+'" aria-pressed="'+(String(o[0])===String(x.value))+'">'+esc(T(o[1]))+'</button>'; }).join('')+'</span>';
-      else if (x.type==='preview') h+='<div class="preview" id="shprev"><span class="who">Marko: </span><span class="pt"></span></div>'; });
+      else if (x.type==='preview') h+='<div class="preview" id="shprev"><span class="who">Marko: </span><span class="pt"></span></div>';
+      else if (x.type==='hint') h+='<span class="lbl" style="grid-column:1/-1">'+(x.label?esc(T(x.label)):'')+'<small>'+esc(T(x.sub||''))+'</small></span>'; });
     return h+'</div>'+backBtn+'</div>'; }
   if (v.layout==='about'){ h+='<div class="paper about" role="dialog" aria-label="'+esc(T(v.title))+'"><div class="phead"><h3>'+esc(T(v.title))+'</h3><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div><div class="pmid scroll">';
     if (v.places) h+='<div class="ctx">MALA – '+esc(v.places)+'</div>'; (v.text||[]).forEach(function(t){ h+='<p>'+esc(T(t))+'</p>'; });

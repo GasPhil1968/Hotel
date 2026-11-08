@@ -12,7 +12,9 @@ M.volume=function(k,v){ if (v===undefined) return VOL[k]; VOL[k]=Math.max(0,Math
 M.duckMusic=function(on){ duck=on?0.35:1; gains(); };
 M.SONGS={};
 M.defineSong=function(n,d){ M.SONGS[n]=d; };
-M.audioInit=function(){ if (typeof window==='undefined') return; if (AC){ if (AC.state==='suspended') AC.resume(); return; }
+// Touch-Konzept T12: Safari kennt neben 'suspended' auch 'interrupted' (Anruf, Siri, App-Wechsel): jeder Zustand außer 'running' wird fortgesetzt
+M.audioResume=function(){ if (!AC || AC.state==='running' || AC.state==='closed') return; try{ var r=AC.resume(); if (r&&r.catch) r.catch(function(){}); }catch(e){} };
+M.audioInit=function(){ if (typeof window==='undefined') return; if (AC){ M.audioResume(); return; }
   try{ AC=new (window.AudioContext||window.webkitAudioContext)();
     master=AC.createGain(); master.gain.value=0.9; master.connect(AC.destination);
     sfxG=AC.createGain(); sfxG.gain.value=soundOn?0.8*VOL.sfx:0; sfxG.connect(master);

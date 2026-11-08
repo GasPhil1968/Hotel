@@ -1,5 +1,5 @@
 {
- "made": "2026-11-08T10:22:40.639Z",
+ "made": "2026-11-08T12:15:07.399Z",
  "method": "Playwright 1.63.0 – WebKit/Chromium-Emulation unter Linux, kein iOS",
  "devices": {
   "iphoneSE": {
@@ -1264,44 +1264,6 @@
    "evidence": []
   },
   {
-   "id": "F3b",
-   "dev": "iphone16cr",
-   "device": "iPhone 16 quer (Chromium-Emulation, CDP-Touch)",
-   "engine": "chromium",
-   "title": "Ziehen, Wischen, abgebrochene Berührung (k2_limbo, Chromium-Touch über CDP)",
-   "steps": [
-    "ok   Ziehen ins Bild: Satz „Benutze … mit …“ über dem Finger",
-    "ok   Loslassen auf „Blick über die Stadt“ benutzt den Gegenstand",
-    "ok   Wischen im Inventar blättert, ohne etwas zu benutzen",
-    "FEHL nach abgebrochener Berührung hängt kein gezogener Gegenstand – Gegenstand bleibt am letzten Fingerpunkt stehen"
-   ],
-   "result": "Befund",
-   "evidence": [
-    "design/touch/evidence/F3b_iphone16cr_abgebrochen.png"
-   ]
-  },
-  {
-   "id": "F2",
-   "dev": "iphone16",
-   "device": "iPhone 16 quer",
-   "engine": "webkit",
-   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
-   "steps": [
-    "ok   Figurenknopf vorhanden (38×40 Leistenpx)",
-    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
-    "info Mala an „Funkgerät“: Lausche · Schau an",
-    "ok   Fähigkeit „Lausche“ ausgeführt",
-    "ok   während einer Szene: Wechsel gesperrt",
-    "FEHL gesperrter Wechsel meldet einen Grund – keine Rückmeldung",
-    "ok   Gegenstand „Benutze“ gewählt (postcard)",
-    "FEHL Wechsel zu Mala hebt die Gegenstandswahl auf – Wahl bleibt bestehen (postcard)"
-   ],
-   "result": "Befund",
-   "evidence": [
-    "design/touch/evidence/F2_iphone16_mala.png"
-   ]
-  },
-  {
    "id": "F2",
    "dev": "iphone13",
    "device": "iPhone 13 quer",
@@ -1438,20 +1400,6 @@
   },
   {
    "id": "F5b",
-   "dev": "iphone16",
-   "device": "iPhone 16 quer",
-   "engine": "webkit",
-   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
-   "steps": [
-    "FEHL zweiter Tipp 120 ms nach dem ersten: Antwort „Erste Antwort“ ungelesen gewählt",
-    "FEHL zweiter Tipp 250 ms nach dem ersten: Antwort „Erste Antwort“ ungelesen gewählt",
-    "FEHL zweiter Tipp 420 ms nach dem ersten: Antwort „Erste Antwort“ ungelesen gewählt"
-   ],
-   "result": "Befund",
-   "evidence": []
-  },
-  {
-   "id": "F5b",
    "dev": "iphone13",
    "device": "iPhone 13 quer",
    "engine": "webkit",
@@ -1551,26 +1499,6 @@
    ],
    "result": "bestanden",
    "evidence": []
-  },
-  {
-   "id": "F8",
-   "dev": "iphone16",
-   "device": "iPhone 16 quer",
-   "engine": "webkit",
-   "title": "Drehen während Gespräch und Pause (k1_bruno)",
-   "steps": [
-    "ok   Hochformat: Bild gedreht, Gespräch bleibt offen",
-    "info Drehhinweis sichtbar: true, Spiel angehalten: false",
-    "FEHL während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter (Δ 611 ms Spielzeit in 600 ms)",
-    "ok   im gedrehten Bild trifft der Tipp die richtige Antwort",
-    "ok   zurück ins Querformat mit offener Pause: Pause bleibt, alle Einträge im Bild",
-    "ok   nach dem Zurückdrehen stimmen Bild und Trefferfläche überein („Fenster“)"
-   ],
-   "result": "Befund",
-   "evidence": [
-    "design/touch/evidence/F8_iphone16_hoch_hinweis.png",
-    "design/touch/evidence/F8_iphone16_hoch_gedreht.png"
-   ]
   },
   {
    "id": "F8",
@@ -1776,6 +1704,78 @@
    ],
    "result": "bestanden",
    "evidence": []
+  },
+  {
+   "id": "F2",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
+   "steps": [
+    "ok   Figurenknopf vorhanden (38×40 Leistenpx)",
+    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
+    "info Mala an „Funkgerät“: Lausche · Schau an",
+    "ok   Fähigkeit „Lausche“ ausgeführt",
+    "ok   während einer Szene: Wechsel gesperrt",
+    "ok   gesperrter Wechsel meldet einen Grund („Gerade nicht – die Szene läuft.“)",
+    "ok   Gegenstand „Benutze“ gewählt (postcard)",
+    "ok   Wechsel zu Mala hebt die Gegenstandswahl auf"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/evidence/F2_iphone16_mala.png"
+   ]
+  },
+  {
+   "id": "F5b",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
+   "steps": [
+    "ok   zweiter Tipp 120 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 250 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 420 ms nach dem ersten: keine Antwort gewählt, Liste offen"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F8",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Drehen während Gespräch und Pause (k1_bruno)",
+   "steps": [
+    "ok   Hochformat: Bild gedreht, Gespräch bleibt offen",
+    "info Drehhinweis sichtbar: true, Spiel angehalten: true",
+    "ok   während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter (Δ 0 ms Spielzeit in 600 ms)",
+    "ok   im gedrehten Bild trifft der Tipp die richtige Antwort",
+    "ok   zurück ins Querformat mit offener Pause: Pause bleibt, alle Einträge im Bild",
+    "ok   nach dem Zurückdrehen stimmen Bild und Trefferfläche überein („Fenster“)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/evidence/F8_iphone16_hoch_hinweis.png",
+    "design/touch/evidence/F8_iphone16_hoch_gedreht.png"
+   ]
+  },
+  {
+   "id": "F3b",
+   "dev": "iphone16cr",
+   "device": "iPhone 16 quer (Chromium-Emulation, CDP-Touch)",
+   "engine": "chromium",
+   "title": "Ziehen, Wischen, abgebrochene Berührung (k2_limbo, Chromium-Touch über CDP)",
+   "steps": [
+    "ok   Ziehen ins Bild: Satz „Benutze … mit …“ über dem Finger",
+    "ok   Loslassen auf „Blick über die Stadt“ benutzt den Gegenstand",
+    "ok   Wischen im Inventar blättert, ohne etwas zu benutzen",
+    "ok   nach abgebrochener Berührung hängt kein gezogener Gegenstand"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/evidence/F3b_iphone16cr_abgebrochen.png"
+   ]
   }
  ]
 }

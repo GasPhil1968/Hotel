@@ -185,7 +185,8 @@ async function F5(b, dev) { const F = flow('F5', dev, 'Gespräch mit vielen Antw
   const npc = await p.evaluate(() => { const q = M.E.room.hotspots.filter(h => h.npc && M.E.hsRect(h)); return q.map(h => h.id); }); F.note('Figuren im Raum: ' + npc.join(', '));
   let got = false; for (const id of npc) { await p.evaluate((id) => M.TA.act('talk', id), id); const ok = await p.waitForFunction(() => { const E = M.E; if (E.speech && E.gt() - E.speech.at > 250) E.endSpeech(); return !!E.dlg; }, null, { timeout: 15000, polling: 60 }).then(() => true, () => false); if (ok) { got = id; break; } await settle(p); }
   if (!got) { F.note('kein Gespräch mit Auswahl erreicht'); finish(F); await p.context().close(); return; }
-  await sleep(p, 200); const L = await p.evaluate(LAYOUT); const d = await p.evaluate(() => { M.renderFrame(); const D = M.E.dlg; return { n: D.opts.length, rows: D.lay.rows.map(r => ({ k: r.k, r: r.r })), dn: D.lay.dn }; });
+  await sleep(p, 550);   // die Liste nimmt 450 ms nach dem Erscheinen keinen Tipp an (T04)
+  const L = await p.evaluate(LAYOUT); const d = await p.evaluate(() => { M.renderFrame(); const D = M.E.dlg; return { n: D.opts.length, rows: D.lay.rows.map(r => ({ k: r.k, r: r.r })), dn: D.lay.dn }; });
   const last = d.rows[d.rows.length - 1], pt = await p.evaluate(PT, [last.r[0] + last.r[2] / 2, last.r[1] + last.r[3] / 2]);
   F.note('Gespräch mit „' + got + '“: ' + d.n + ' Antworten, sichtbar ' + d.rows.length + (d.dn ? ', weitere über ▼' : '') + '; unterste Zeile ' + (L.vh - pt[1]).toFixed(0) + ' CSS-px über dem unteren Bildschirmrand, Zeilenhöhe ' + (last.r[3] * L.scenePx).toFixed(0) + ' CSS-px');
   F.evidence.push(await shot(p, 'F5_' + dev + '_gespraech'));

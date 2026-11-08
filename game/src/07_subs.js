@@ -18,8 +18,10 @@ function build(){ root=document.createElement('div'); root.id='subs'; root.setAt
   // Antworten: Klick wählt wie ein Tipp auf die Canvas-Zeile; läuft noch ein Satz, beendet der Tipp erst den Satz (wie im Canvas)
   choEl.addEventListener('mousedown',function(e){ e.preventDefault(); });   // kein Fokus auf den Knöpfen: Tasten laufen weiter über M.key
   choEl.addEventListener('pointerdown',function(e){ e.stopPropagation(); });
+  var downR=0; choEl.addEventListener('pointerdown',function(){ try{ downR=performance.now(); }catch(e){ downR=Date.now(); } },true);
   choEl.addEventListener('click',function(e){ var b=e.target.closest('button'); if (!b||!E.dlg) return; if (M.audioInit) M.audioInit();
     if (E.speech){ if (E.gt()-E.speech.at>200) E.endSpeech(); return; }
+    if (M.dlgLocked && M.dlgLocked(downR)) return;   // Touch-Konzept T04: gerade erschienene Liste nimmt noch keinen Tipp an
     var k=+b.dataset.k; if (!(k>=0&&k<E.dlg.opts.length)) return; if (M.sfx) M.sfx('click'); E.chooseDone(k); }); }
 // Lage im logischen Querformat-Raum: gewohntes Bild (Canvas) oder Breitbild (Szene + Leiste); im gedrehten Hochformat dreht die Schicht mit
 function geo(){ var cv=document.getElementById('game'); if (!cv) return null; var rot=!!(M.isRotated&&M.isRotated()), wide=!!(M.isWide&&M.isWide()), WG=wide&&M.wideGeo?M.wideGeo():null, vw=window.innerWidth, vh=window.innerHeight;
