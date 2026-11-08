@@ -1,0 +1,2075 @@
+{
+ "made": "2026-11-08T13:38:28.829Z",
+ "method": "Playwright 1.63.0 – WebKit/Chromium-Emulation unter Linux, kein iOS",
+ "devices": {
+  "iphoneSE": {
+   "name": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "layout": {
+    "vw": 667,
+    "vh": 375,
+    "dpr": 2,
+    "wide": true,
+    "rot": false,
+    "game": {
+     "x": 14,
+     "y": 11,
+     "w": 640,
+     "h": 288
+    },
+    "hud": {
+     "x": 1,
+     "y": 11,
+     "w": 666,
+     "h": 354
+    },
+    "wg": {
+     "n": 3,
+     "m": 4,
+     "Wh": 444,
+     "Hh": 236
+    },
+    "scenePx": 2,
+    "hudPx": 1.5
+   },
+   "sceneShare": 73.7,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "map",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "reveal",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "menu",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "sw",
+     "w": 60,
+     "h": 45
+    },
+    {
+     "code": "up",
+     "w": 45,
+     "h": 48
+    },
+    {
+     "code": "dn",
+     "w": 45,
+     "h": 48
+    },
+    {
+     "code": "i:0",
+     "w": 51,
+     "h": 48
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_iphoneSE_szene.png",
+   "pop": {
+    "target": "_mala",
+    "html": true,
+    "rowCss": 44,
+    "wCss": 44,
+    "rows": 2,
+    "where": "Aktionsleiste unten (HTML)"
+   },
+   "popFile": "design/touch/nachher/evidence/messung_iphoneSE_verbmenue.png",
+   "dialog": {
+    "html": true,
+    "visible": 5,
+    "of": 7,
+    "rowHCss": [
+     44,
+     52,
+     44,
+     44,
+     44
+    ],
+    "closeCss": null,
+    "lowestRowBottomToScreenCss": 30.9
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_iphoneSE_antworten.png",
+   "pause": [
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    52
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_iphoneSE_pause.png",
+   "capHeightCss": 14
+  },
+  "iphone16": {
+   "name": "iPhone 16 quer",
+   "engine": "webkit",
+   "layout": {
+    "vw": 734,
+    "vh": 343,
+    "dpr": 3,
+    "wide": true,
+    "rot": false,
+    "game": {
+     "x": 46.7,
+     "y": 1,
+     "w": 640,
+     "h": 288
+    },
+    "hud": {
+     "x": 0,
+     "y": 1,
+     "w": 733.3,
+     "h": 341.7
+    },
+    "wg": {
+     "n": 5,
+     "m": 6,
+     "Wh": 440,
+     "Hh": 205
+    },
+    "scenePx": 2,
+    "hudPx": 1.666590909090909
+   },
+   "sceneShare": 73.2,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 46.7,
+     "h": 45
+    },
+    {
+     "code": "map",
+     "w": 46.7,
+     "h": 45
+    },
+    {
+     "code": "reveal",
+     "w": 46.7,
+     "h": 45
+    },
+    {
+     "code": "menu",
+     "w": 46.7,
+     "h": 45
+    },
+    {
+     "code": "sw",
+     "w": 46.7,
+     "h": 66.7
+    },
+    {
+     "code": "up",
+     "w": 45,
+     "h": 53.3
+    },
+    {
+     "code": "dn",
+     "w": 45,
+     "h": 53.3
+    },
+    {
+     "code": "i:0",
+     "w": 56.7,
+     "h": 53.3
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_iphone16_szene.png",
+   "pop": {
+    "target": "_mala",
+    "html": true,
+    "rowCss": 44,
+    "wCss": 44,
+    "rows": 2,
+    "where": "Aktionsleiste unten (HTML)"
+   },
+   "popFile": "design/touch/nachher/evidence/messung_iphone16_verbmenue.png",
+   "dialog": {
+    "html": true,
+    "visible": 5,
+    "of": 7,
+    "rowHCss": [
+     44,
+     52,
+     44,
+     44,
+     44
+    ],
+    "closeCss": null,
+    "lowestRowBottomToScreenCss": 12.3
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_iphone16_antworten.png",
+   "pause": [
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    45.8
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_iphone16_pause.png",
+   "capHeightCss": 14
+  },
+  "iphone13": {
+   "name": "iPhone 13 quer",
+   "engine": "webkit",
+   "layout": {
+    "vw": 750,
+    "vh": 342,
+    "dpr": 3,
+    "wide": true,
+    "rot": false,
+    "game": {
+     "x": 55,
+     "y": 0,
+     "w": 640,
+     "h": 288
+    },
+    "hud": {
+     "x": 0,
+     "y": 0,
+     "w": 750,
+     "h": 341.7
+    },
+    "wg": {
+     "n": 5,
+     "m": 6,
+     "Wh": 450,
+     "Hh": 205
+    },
+    "scenePx": 2,
+    "hudPx": 1.6666666666666667
+   },
+   "sceneShare": 71.9,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 55,
+     "h": 45
+    },
+    {
+     "code": "map",
+     "w": 55,
+     "h": 45
+    },
+    {
+     "code": "reveal",
+     "w": 55,
+     "h": 45
+    },
+    {
+     "code": "menu",
+     "w": 55,
+     "h": 45
+    },
+    {
+     "code": "sw",
+     "w": 55,
+     "h": 66.7
+    },
+    {
+     "code": "up",
+     "w": 45,
+     "h": 53.3
+    },
+    {
+     "code": "dn",
+     "w": 45,
+     "h": 53.3
+    },
+    {
+     "code": "i:0",
+     "w": 56.7,
+     "h": 53.3
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_iphone13_szene.png",
+   "pop": {
+    "target": "_mala",
+    "html": true,
+    "rowCss": 44,
+    "wCss": 44,
+    "rows": 2,
+    "where": "Aktionsleiste unten (HTML)"
+   },
+   "popFile": "design/touch/nachher/evidence/messung_iphone13_verbmenue.png",
+   "dialog": {
+    "html": true,
+    "visible": 5,
+    "of": 7,
+    "rowHCss": [
+     44,
+     52,
+     44,
+     44,
+     44
+    ],
+    "closeCss": null,
+    "lowestRowBottomToScreenCss": 12.3
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_iphone13_antworten.png",
+   "pause": [
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    44.8
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_iphone13_pause.png",
+   "capHeightCss": 14
+  },
+  "iphone17pm": {
+   "name": "iPhone 17 Pro Max quer",
+   "engine": "webkit",
+   "layout": {
+    "vw": 838,
+    "vh": 390,
+    "dpr": 3,
+    "wide": true,
+    "rot": false,
+    "game": {
+     "x": 46,
+     "y": 0,
+     "w": 746.7,
+     "h": 336
+    },
+    "hud": {
+     "x": 1,
+     "y": 0,
+     "w": 836.7,
+     "h": 390
+    },
+    "wg": {
+     "n": 5,
+     "m": 7,
+     "Wh": 502,
+     "Hh": 234
+    },
+    "scenePx": 2.3334375,
+    "hudPx": 1.6667330677290837
+   },
+   "sceneShare": 76.8,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "map",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "reveal",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "menu",
+     "w": 45,
+     "h": 45
+    },
+    {
+     "code": "sw",
+     "w": 45,
+     "h": 66.7
+    },
+    {
+     "code": "up",
+     "w": 45,
+     "h": 53.3
+    },
+    {
+     "code": "dn",
+     "w": 45,
+     "h": 53.3
+    },
+    {
+     "code": "i:0",
+     "w": 56.7,
+     "h": 53.3
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_iphone17pm_szene.png",
+   "pop": {
+    "target": "_mala",
+    "html": true,
+    "rowCss": 44,
+    "wCss": 44,
+    "rows": 2,
+    "where": "Aktionsleiste unten (HTML)"
+   },
+   "popFile": "design/touch/nachher/evidence/messung_iphone17pm_verbmenue.png",
+   "dialog": {
+    "html": true,
+    "visible": 6,
+    "of": 7,
+    "rowHCss": [
+     44,
+     44,
+     44,
+     44,
+     44,
+     44
+    ],
+    "closeCss": null,
+    "lowestRowBottomToScreenCss": 8.8
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_iphone17pm_antworten.png",
+   "pause": [
+    44,
+    44,
+    44,
+    44,
+    44,
+    44,
+    52
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_iphone17pm_pause.png",
+   "capHeightCss": 16.3
+  },
+  "ipad": {
+   "name": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "layout": {
+    "vw": 1080,
+    "vh": 810,
+    "dpr": 2,
+    "wide": false,
+    "rot": false,
+    "game": {
+     "x": 60,
+     "y": 6,
+     "w": 960,
+     "h": 600
+    },
+    "hud": null,
+    "wg": null,
+    "scenePx": 3,
+    "hudPx": 3
+   },
+   "sceneShare": 47.4,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 117,
+     "h": 45
+    },
+    {
+     "code": "map",
+     "w": 99,
+     "h": 45
+    },
+    {
+     "code": "reveal",
+     "w": 108,
+     "h": 45
+    },
+    {
+     "code": "menu",
+     "w": 87,
+     "h": 45
+    },
+    {
+     "code": "sw",
+     "w": 114,
+     "h": 120
+    },
+    {
+     "code": "up",
+     "w": 48,
+     "h": 123
+    },
+    {
+     "code": "dn",
+     "w": 48,
+     "h": 123
+    },
+    {
+     "code": "i:0",
+     "w": 105,
+     "h": 114
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_ipad_szene.png",
+   "pop": {
+    "target": "_mala",
+    "html": true,
+    "rowCss": 44,
+    "wCss": 44,
+    "rows": 2,
+    "where": "Aktionsleiste unten (HTML)"
+   },
+   "popFile": "design/touch/nachher/evidence/messung_ipad_verbmenue.png",
+   "dialog": {
+    "html": true,
+    "visible": 3,
+    "of": 7,
+    "rowHCss": [
+     44,
+     78,
+     44
+    ],
+    "closeCss": null,
+    "lowestRowBottomToScreenCss": 24
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_ipad_antworten.png",
+   "pause": [
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    78
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_ipad_pause.png",
+   "capHeightCss": 21
+  },
+  "ipadpro": {
+   "name": "iPad Pro 11 quer",
+   "engine": "webkit",
+   "layout": {
+    "vw": 1194,
+    "vh": 834,
+    "dpr": 2,
+    "wide": false,
+    "rot": false,
+    "game": {
+     "x": 37,
+     "y": 67,
+     "w": 1120,
+     "h": 700
+    },
+    "hud": null,
+    "wg": null,
+    "scenePx": 3.5,
+    "hudPx": 3.5
+   },
+   "sceneShare": 56.7,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 136.5,
+     "h": 52.5
+    },
+    {
+     "code": "map",
+     "w": 115.5,
+     "h": 52.5
+    },
+    {
+     "code": "reveal",
+     "w": 126,
+     "h": 52.5
+    },
+    {
+     "code": "menu",
+     "w": 101.5,
+     "h": 52.5
+    },
+    {
+     "code": "sw",
+     "w": 133,
+     "h": 140
+    },
+    {
+     "code": "up",
+     "w": 56,
+     "h": 143.5
+    },
+    {
+     "code": "dn",
+     "w": 56,
+     "h": 143.5
+    },
+    {
+     "code": "i:0",
+     "w": 122.5,
+     "h": 133
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_ipadpro_szene.png",
+   "pop": {
+    "target": "tabija",
+    "html": true,
+    "rowCss": 44,
+    "wCss": 44,
+    "rows": 2,
+    "where": "Aktionsleiste unten (HTML)"
+   },
+   "popFile": "design/touch/nachher/evidence/messung_ipadpro_verbmenue.png",
+   "dialog": {
+    "html": true,
+    "visible": 7,
+    "of": 7,
+    "rowHCss": [
+     48,
+     48,
+     48,
+     48,
+     48,
+     48,
+     48
+    ],
+    "closeCss": null,
+    "lowestRowBottomToScreenCss": 84
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_ipadpro_antworten.png",
+   "pause": [
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    78
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_ipadpro_pause.png",
+   "capHeightCss": 24.5
+  },
+  "desktop": {
+   "name": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "layout": {
+    "vw": 1280,
+    "vh": 800,
+    "dpr": 1,
+    "wide": false,
+    "rot": false,
+    "game": {
+     "x": 0,
+     "y": 0,
+     "w": 1280,
+     "h": 800
+    },
+    "hud": null,
+    "wg": null,
+    "scenePx": 4,
+    "hudPx": 4
+   },
+   "sceneShare": 72,
+   "hud": [
+    {
+     "code": "notes",
+     "w": 156,
+     "h": 60
+    },
+    {
+     "code": "map",
+     "w": 132,
+     "h": 60
+    },
+    {
+     "code": "reveal",
+     "w": 144,
+     "h": 60
+    },
+    {
+     "code": "menu",
+     "w": 116,
+     "h": 60
+    },
+    {
+     "code": "sw",
+     "w": 152,
+     "h": 160
+    },
+    {
+     "code": "up",
+     "w": 64,
+     "h": 164
+    },
+    {
+     "code": "dn",
+     "w": 64,
+     "h": 164
+    },
+    {
+     "code": "i:0",
+     "w": 140,
+     "h": 152
+    }
+   ],
+   "file": "design/touch/nachher/evidence/messung_desktop_szene.png",
+   "pop": {
+    "target": "tabija",
+    "rowCss": 52,
+    "wCss": 264,
+    "rows": 2,
+    "gapToFingerCss": 58
+   },
+   "popFile": "design/touch/nachher/evidence/messung_desktop_verbmenue.png",
+   "dialog": {
+    "html": false,
+    "visible": 3,
+    "of": 7,
+    "rowHCss": [
+     44,
+     84,
+     44
+    ],
+    "closeCss": [
+     72,
+     64
+    ],
+    "lowestRowBottomToScreenCss": 36
+   },
+   "dialogFile": "design/touch/nachher/evidence/messung_desktop_antworten.png",
+   "pause": [
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    78
+   ],
+   "pauseFile": "design/touch/nachher/evidence/messung_desktop_pause.png",
+   "capHeightCss": 28
+  }
+ },
+ "flows": [
+  {
+   "id": "F1",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Fortsetzen, bewegen, untersuchen (k1_amt, Hafenamt)",
+   "steps": [
+    "ok   „Fortsetzen“ per Tipp lädt den Stand",
+    "ok   Tipp auf freien Boden: Marko geht hin (x 123 → 83)",
+    "info Tipp auf „Fahrpläne“ öffnet die Aktionsleiste: Lies · Schau an",
+    "ok   Untersuchen: Marko sagt etwas zu „Fahrpläne“ nach 2 Tipps"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F1_iphoneSE_untersuchen.png"
+   ]
+  },
+  {
+   "id": "F1",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Fortsetzen, bewegen, untersuchen (k1_amt, Hafenamt)",
+   "steps": [
+    "ok   „Fortsetzen“ per Tipp lädt den Stand",
+    "ok   Tipp auf freien Boden: Marko geht hin (x 123 → 79)",
+    "info Tipp auf „Fahrpläne“ öffnet die Aktionsleiste: Lies · Schau an",
+    "ok   Untersuchen: Marko sagt etwas zu „Fahrpläne“ nach 2 Tipps"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F1_iphone16_untersuchen.png"
+   ]
+  },
+  {
+   "id": "F1",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Fortsetzen, bewegen, untersuchen (k1_amt, Hafenamt)",
+   "steps": [
+    "ok   „Fortsetzen“ per Tipp lädt den Stand",
+    "ok   Tipp auf freien Boden: Marko geht hin (x 123 → 83)",
+    "info Tipp auf „Fahrpläne“ öffnet die Aktionsleiste: Lies · Schau an",
+    "ok   Untersuchen: Marko sagt etwas zu „Fahrpläne“ nach 2 Tipps"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F1_iphone13_untersuchen.png"
+   ]
+  },
+  {
+   "id": "F1",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Fortsetzen, bewegen, untersuchen (k1_amt, Hafenamt)",
+   "steps": [
+    "ok   „Fortsetzen“ per Tipp lädt den Stand",
+    "ok   Tipp auf freien Boden: Marko geht hin (x 123 → 83)",
+    "info Tipp auf „Fahrpläne“ öffnet die Aktionsleiste: Lies · Schau an",
+    "ok   Untersuchen: Marko sagt etwas zu „Fahrpläne“ nach 2 Tipps"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F1_ipad_untersuchen.png"
+   ]
+  },
+  {
+   "id": "F1",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Fortsetzen, bewegen, untersuchen (k1_amt, Hafenamt)",
+   "steps": [
+    "ok   „Fortsetzen“ per Tipp lädt den Stand",
+    "ok   Tipp auf freien Boden: Marko geht hin (x 123 → 83)",
+    "info Tipp auf „Fahrpläne“ öffnet das Verb-Menü: Lies · Schau an",
+    "ok   Untersuchen: Marko sagt etwas zu „Fahrpläne“ nach 2 Tipps"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F1_desktop_untersuchen.png"
+   ]
+  },
+  {
+   "id": "F2",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
+   "steps": [
+    "ok   Figurenknopf vorhanden (40×30 Leistenpx)",
+    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
+    "info Mala an „Funkgerät“: Lausche · Schau an",
+    "ok   Fähigkeit „Lausche“ ausgeführt",
+    "ok   während einer Szene: Wechsel gesperrt",
+    "ok   gesperrter Wechsel meldet einen Grund („Gerade nicht – die Szene läuft.“)",
+    "ok   Gegenstand „Benutze“ gewählt (postcard)",
+    "ok   Wechsel zu Mala hebt die Gegenstandswahl auf"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F2_iphoneSE_mala.png"
+   ]
+  },
+  {
+   "id": "F2",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
+   "steps": [
+    "ok   Figurenknopf vorhanden (28×40 Leistenpx)",
+    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
+    "info Mala an „Funkgerät“: Lausche · Schau an",
+    "ok   Fähigkeit „Lausche“ ausgeführt",
+    "ok   während einer Szene: Wechsel gesperrt",
+    "ok   gesperrter Wechsel meldet einen Grund („Gerade nicht – die Szene läuft.“)",
+    "ok   Gegenstand „Benutze“ gewählt (postcard)",
+    "ok   Wechsel zu Mala hebt die Gegenstandswahl auf"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F2_iphone16_mala.png"
+   ]
+  },
+  {
+   "id": "F2",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
+   "steps": [
+    "ok   Figurenknopf vorhanden (33×40 Leistenpx)",
+    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
+    "info Mala an „Funkgerät“: Lausche · Schau an",
+    "ok   Fähigkeit „Lausche“ ausgeführt",
+    "ok   während einer Szene: Wechsel gesperrt",
+    "ok   gesperrter Wechsel meldet einen Grund („Gerade nicht – die Szene läuft.“)",
+    "ok   Gegenstand „Benutze“ gewählt (postcard)",
+    "ok   Wechsel zu Mala hebt die Gegenstandswahl auf"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F2_iphone13_mala.png"
+   ]
+  },
+  {
+   "id": "F2",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
+   "steps": [
+    "ok   Figurenknopf vorhanden (38×40 Leistenpx)",
+    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
+    "info Mala an „Funkgerät“: Lausche · Schau an",
+    "ok   Fähigkeit „Lausche“ ausgeführt",
+    "ok   während einer Szene: Wechsel gesperrt",
+    "ok   gesperrter Wechsel meldet einen Grund („Gerade nicht – die Szene läuft.“)",
+    "ok   Gegenstand „Benutze“ gewählt (postcard)",
+    "ok   Wechsel zu Mala hebt die Gegenstandswahl auf"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F2_ipad_mala.png"
+   ]
+  },
+  {
+   "id": "F2",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Figurenwechsel, Fähigkeit, Sperre, gewählter Gegenstand (k1_amt)",
+   "steps": [
+    "ok   Figurenknopf vorhanden (38×40 Leistenpx)",
+    "ok   Tipp auf den Figurenknopf: Mala ist aktiv",
+    "info Mala an „Funkgerät“: Lausche · Schau an",
+    "ok   Fähigkeit „Lausche“ ausgeführt",
+    "ok   während einer Szene: Wechsel gesperrt",
+    "ok   gesperrter Wechsel meldet einen Grund („Gerade nicht – die Szene läuft.“)",
+    "ok   Gegenstand „Benutze“ gewählt (postcard)",
+    "ok   Wechsel zu Mala hebt die Gegenstandswahl auf"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F2_desktop_mala.png"
+   ]
+  },
+  {
+   "id": "F3",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Gegenstand wählen, benutzen, abbrechen (k2_limbo, Vratnik)",
+   "steps": [
+    "ok   Tipp auf Gegenstand: gewählt, Aktionsleiste Schau an · ✕ (2 Tipps bis zum Ziel)",
+    "ok   Leiste zeigt den Satz „Benutze Džezva mit …“",
+    "ok   erneuter Tipp auf den Gegenstand hebt die Wahl auf",
+    "ok   Tipp auf freien Boden hebt die Wahl auf, ohne loszugehen",
+    "ok   Gegenstand auf „Blick über die Stadt“ angewendet (Antwort des Spiels)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F3_iphoneSE_benutzen.png"
+   ]
+  },
+  {
+   "id": "F3",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Gegenstand wählen, benutzen, abbrechen (k2_limbo, Vratnik)",
+   "steps": [
+    "ok   Tipp auf Gegenstand: gewählt, Aktionsleiste Schau an · ✕ (2 Tipps bis zum Ziel)",
+    "ok   Leiste zeigt den Satz „Benutze Džezva mit …“",
+    "ok   erneuter Tipp auf den Gegenstand hebt die Wahl auf",
+    "ok   Tipp auf freien Boden hebt die Wahl auf, ohne loszugehen",
+    "ok   Gegenstand auf „Blick über die Stadt“ angewendet (Antwort des Spiels)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F3_iphone16_benutzen.png"
+   ]
+  },
+  {
+   "id": "F3",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Gegenstand wählen, benutzen, abbrechen (k2_limbo, Vratnik)",
+   "steps": [
+    "ok   Tipp auf Gegenstand: gewählt, Aktionsleiste Schau an · ✕ (2 Tipps bis zum Ziel)",
+    "ok   Leiste zeigt den Satz „Benutze Džezva mit …“",
+    "ok   erneuter Tipp auf den Gegenstand hebt die Wahl auf",
+    "ok   Tipp auf freien Boden hebt die Wahl auf, ohne loszugehen",
+    "ok   Gegenstand auf „Blick über die Stadt“ angewendet (Antwort des Spiels)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F3_iphone13_benutzen.png"
+   ]
+  },
+  {
+   "id": "F3",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Gegenstand wählen, benutzen, abbrechen (k2_limbo, Vratnik)",
+   "steps": [
+    "ok   Tipp auf Gegenstand: gewählt, Aktionsleiste Schau an · ✕ (2 Tipps bis zum Ziel)",
+    "ok   Leiste zeigt den Satz „Benutze Džezva mit …“",
+    "ok   erneuter Tipp auf den Gegenstand hebt die Wahl auf",
+    "ok   Tipp auf freien Boden hebt die Wahl auf, ohne loszugehen",
+    "ok   Gegenstand auf „Blick über die Stadt“ angewendet (Antwort des Spiels)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F3_ipad_benutzen.png"
+   ]
+  },
+  {
+   "id": "F3",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Gegenstand wählen, benutzen, abbrechen (k2_limbo, Vratnik)",
+   "steps": [
+    "ok   Tipp auf Gegenstand → Menü (Benutze · Schau an) → „Benutze“: Gegenstand gewählt (3 Tipps bis zum Ziel)",
+    "ok   Leiste zeigt den Satz „Benutze Džezva mit …“",
+    "ok   erneuter Tipp auf den Gegenstand hebt die Wahl auf",
+    "ok   Tipp auf freien Boden hebt die Wahl auf, ohne loszugehen",
+    "ok   Gegenstand auf „Blick über die Stadt“ angewendet (Antwort des Spiels)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F3_desktop_benutzen.png"
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 26 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 24 CSS-px): Mitte → Auswahl:lodge/bell/bruno; ±5 px → Auswahl:lodge/drawer/phonebook, Auswahl:lodge/bruno/bell, Auswahl:lodge/bell/bruno, Auswahl:lodge/bruno/drawer",
+    "info „Telefonbuch“ (6 Spielpx ≈ 12 CSS-px): Mitte → Auswahl:phonebook/lodge/pigeonholes; ±5 px → Auswahl:phonebook/lodge/pigeonholes, Auswahl:lodge/phonebook/drawer, drawer, Auswahl:pigeonholes/phonebook/drawer",
+    "info „Schublade“ (13 Spielpx ≈ 26 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 18 CSS-px): Mitte → bell; ±5 px → bell, Auswahl:bruno/bell, Auswahl:reception/bruno/bell, Auswahl:lodge/bell/bruno",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "ok   Tipp 5 Spielpixel daneben (≈ 10 CSS-px) trifft das Ding oder bietet es an: 19/20"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F4_iphoneSE_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 26,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 24,
+     "center": "Auswahl:lodge/bell/bruno",
+     "offsets": [
+      "Auswahl:lodge/drawer/phonebook",
+      "Auswahl:lodge/bruno/bell",
+      "Auswahl:lodge/bell/bruno",
+      "Auswahl:lodge/bruno/drawer"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 12,
+     "center": "Auswahl:phonebook/lodge/pigeonholes",
+     "offsets": [
+      "Auswahl:phonebook/lodge/pigeonholes",
+      "Auswahl:lodge/phonebook/drawer",
+      "drawer",
+      "Auswahl:pigeonholes/phonebook/drawer"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 26,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 18,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "Auswahl:bruno/bell",
+      "Auswahl:reception/bruno/bell",
+      "Auswahl:lodge/bell/bruno"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 26 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 24 CSS-px): Mitte → Auswahl:lodge/bell/bruno; ±5 px → Auswahl:lodge/drawer/phonebook, Auswahl:lodge/bruno/bell, Auswahl:lodge/bell/bruno, Auswahl:lodge/bruno/drawer",
+    "info „Telefonbuch“ (6 Spielpx ≈ 12 CSS-px): Mitte → Auswahl:phonebook/lodge/pigeonholes; ±5 px → Auswahl:phonebook/lodge/pigeonholes, Auswahl:lodge/phonebook/drawer, drawer, Auswahl:pigeonholes/phonebook/drawer",
+    "info „Schublade“ (13 Spielpx ≈ 26 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 18 CSS-px): Mitte → bell; ±5 px → bell, Auswahl:bruno/bell, Auswahl:reception/bruno/bell, Auswahl:lodge/bell/bruno",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "ok   Tipp 5 Spielpixel daneben (≈ 10 CSS-px) trifft das Ding oder bietet es an: 19/20"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F4_iphone16_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 26,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 24,
+     "center": "Auswahl:lodge/bell/bruno",
+     "offsets": [
+      "Auswahl:lodge/drawer/phonebook",
+      "Auswahl:lodge/bruno/bell",
+      "Auswahl:lodge/bell/bruno",
+      "Auswahl:lodge/bruno/drawer"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 12,
+     "center": "Auswahl:phonebook/lodge/pigeonholes",
+     "offsets": [
+      "Auswahl:phonebook/lodge/pigeonholes",
+      "Auswahl:lodge/phonebook/drawer",
+      "drawer",
+      "Auswahl:pigeonholes/phonebook/drawer"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 26,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 18,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "Auswahl:bruno/bell",
+      "Auswahl:reception/bruno/bell",
+      "Auswahl:lodge/bell/bruno"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 26 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 24 CSS-px): Mitte → Auswahl:lodge/bell/bruno; ±5 px → Auswahl:lodge/drawer/phonebook, Auswahl:lodge/bruno/bell, Auswahl:lodge/bell/bruno, Auswahl:lodge/bruno/drawer",
+    "info „Telefonbuch“ (6 Spielpx ≈ 12 CSS-px): Mitte → Auswahl:phonebook/lodge/pigeonholes; ±5 px → Auswahl:phonebook/lodge/pigeonholes, Auswahl:lodge/phonebook/drawer, drawer, Auswahl:pigeonholes/phonebook/drawer",
+    "info „Schublade“ (13 Spielpx ≈ 26 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 18 CSS-px): Mitte → bell; ±5 px → bell, Auswahl:bruno/bell, Auswahl:reception/bruno/bell, Auswahl:lodge/bell/bruno",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "ok   Tipp 5 Spielpixel daneben (≈ 10 CSS-px) trifft das Ding oder bietet es an: 19/20"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F4_iphone13_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 26,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 24,
+     "center": "Auswahl:lodge/bell/bruno",
+     "offsets": [
+      "Auswahl:lodge/drawer/phonebook",
+      "Auswahl:lodge/bruno/bell",
+      "Auswahl:lodge/bell/bruno",
+      "Auswahl:lodge/bruno/drawer"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 12,
+     "center": "Auswahl:phonebook/lodge/pigeonholes",
+     "offsets": [
+      "Auswahl:phonebook/lodge/pigeonholes",
+      "Auswahl:lodge/phonebook/drawer",
+      "drawer",
+      "Auswahl:pigeonholes/phonebook/drawer"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 26,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 18,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "Auswahl:bruno/bell",
+      "Auswahl:reception/bruno/bell",
+      "Auswahl:lodge/bell/bruno"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 39 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 36 CSS-px): Mitte → Auswahl:lodge/bell; ±5 px → Auswahl:lodge/drawer/phonebook, Auswahl:lodge/bruno/bell, Auswahl:lodge/bell, lodge",
+    "info „Telefonbuch“ (6 Spielpx ≈ 18 CSS-px): Mitte → Auswahl:phonebook/lodge/pigeonholes; ±5 px → Auswahl:phonebook/lodge/pigeonholes, Auswahl:lodge/phonebook/drawer, drawer, Auswahl:pigeonholes/phonebook",
+    "info „Schublade“ (13 Spielpx ≈ 39 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 27 CSS-px): Mitte → bell; ±5 px → bell, Auswahl:bruno/bell, Auswahl:reception/bell/bruno, Auswahl:lodge/bell/bruno",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "ok   Tipp 5 Spielpixel daneben (≈ 15 CSS-px) trifft das Ding oder bietet es an: 19/20"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F4_ipad_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 39,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 36,
+     "center": "Auswahl:lodge/bell",
+     "offsets": [
+      "Auswahl:lodge/drawer/phonebook",
+      "Auswahl:lodge/bruno/bell",
+      "Auswahl:lodge/bell",
+      "lodge"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 18,
+     "center": "Auswahl:phonebook/lodge/pigeonholes",
+     "offsets": [
+      "Auswahl:phonebook/lodge/pigeonholes",
+      "Auswahl:lodge/phonebook/drawer",
+      "drawer",
+      "Auswahl:pigeonholes/phonebook"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 39,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 27,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "Auswahl:bruno/bell",
+      "Auswahl:reception/bell/bruno",
+      "Auswahl:lodge/bell/bruno"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F4",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Benachbarte kleine Hotspots (k1_bruno, Rezeption Hotel Palma)",
+   "steps": [
+    "info „Standuhr“ (13 Spielpx ≈ 52 CSS-px): Mitte → clock; ±5 px → clock, clock, clock, clock",
+    "info „Portiersloge“ (12 Spielpx ≈ 48 CSS-px): Mitte → lodge; ±5 px → lodge, lodge, lodge, lodge",
+    "info „Telefonbuch“ (6 Spielpx ≈ 24 CSS-px): Mitte → phonebook; ±5 px → phonebook, lodge, drawer, pigeonholes",
+    "info „Schublade“ (13 Spielpx ≈ 52 CSS-px): Mitte → drawer; ±5 px → drawer, drawer, drawer, drawer",
+    "info „Portiersglocke“ (9 Spielpx ≈ 36 CSS-px): Mitte → bell; ±5 px → bell, bruno, reception, lodge",
+    "ok   Tipp genau in die Mitte trifft 5/5 kleine Hotspots",
+    "info Tipp 5 Spielpixel daneben (≈ 20 CSS-px) trifft das Ding oder bietet es an: 14/20 (Maus: Fangradius und Nachfrage gelten nur für den Finger)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F4_desktop_palma.png"
+   ],
+   "data": [
+    {
+     "id": "clock",
+     "name": "Standuhr",
+     "sqGame": 13,
+     "sqCss": 52,
+     "center": "clock",
+     "offsets": [
+      "clock",
+      "clock",
+      "clock",
+      "clock"
+     ]
+    },
+    {
+     "id": "lodge",
+     "name": "Portiersloge",
+     "sqGame": 12,
+     "sqCss": 48,
+     "center": "lodge",
+     "offsets": [
+      "lodge",
+      "lodge",
+      "lodge",
+      "lodge"
+     ]
+    },
+    {
+     "id": "phonebook",
+     "name": "Telefonbuch",
+     "sqGame": 6,
+     "sqCss": 24,
+     "center": "phonebook",
+     "offsets": [
+      "phonebook",
+      "lodge",
+      "drawer",
+      "pigeonholes"
+     ]
+    },
+    {
+     "id": "drawer",
+     "name": "Schublade",
+     "sqGame": 13,
+     "sqCss": 52,
+     "center": "drawer",
+     "offsets": [
+      "drawer",
+      "drawer",
+      "drawer",
+      "drawer"
+     ]
+    },
+    {
+     "id": "bell",
+     "name": "Portiersglocke",
+     "sqGame": 9,
+     "sqCss": 36,
+     "center": "bell",
+     "offsets": [
+      "bell",
+      "bruno",
+      "reception",
+      "lodge"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F5",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Gespräch mit vielen Antworten, unterste Zeile wählen (k1_bruno)",
+   "steps": [
+    "info Figuren im Raum: bruno",
+    "info Gespräch mit „bruno“: 8 Antworten (HTML-Liste), sichtbar 5, weitere durch Wischen; unterste Zeile 39 CSS-px über dem unteren Bildschirmrand, Zeilenhöhe 44 CSS-px",
+    "ok   Tipp auf die unterste sichtbare Antwort wählt sie (Antwort läuft)",
+    "info 5 schnelle Tipps während der Antwort: 1 Satzwechsel",
+    "ok   schnelle Mehrfachtipps überspringen nicht jeden Satz (Doppeltipp-Sperre 350 ms)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F5_iphoneSE_gespraech.png"
+   ]
+  },
+  {
+   "id": "F5",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Gespräch mit vielen Antworten, unterste Zeile wählen (k1_bruno)",
+   "steps": [
+    "info Figuren im Raum: bruno",
+    "info Gespräch mit „bruno“: 8 Antworten (HTML-Liste), sichtbar 5, weitere durch Wischen; unterste Zeile 20 CSS-px über dem unteren Bildschirmrand, Zeilenhöhe 44 CSS-px",
+    "ok   Tipp auf die unterste sichtbare Antwort wählt sie (Antwort läuft)",
+    "info 5 schnelle Tipps während der Antwort: 1 Satzwechsel",
+    "ok   schnelle Mehrfachtipps überspringen nicht jeden Satz (Doppeltipp-Sperre 350 ms)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F5_iphone16_gespraech.png"
+   ]
+  },
+  {
+   "id": "F5",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Gespräch mit vielen Antworten, unterste Zeile wählen (k1_bruno)",
+   "steps": [
+    "info Figuren im Raum: bruno",
+    "info Gespräch mit „bruno“: 8 Antworten (HTML-Liste), sichtbar 5, weitere durch Wischen; unterste Zeile 20 CSS-px über dem unteren Bildschirmrand, Zeilenhöhe 44 CSS-px",
+    "ok   Tipp auf die unterste sichtbare Antwort wählt sie (Antwort läuft)",
+    "info 5 schnelle Tipps während der Antwort: 1 Satzwechsel",
+    "ok   schnelle Mehrfachtipps überspringen nicht jeden Satz (Doppeltipp-Sperre 350 ms)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F5_iphone13_gespraech.png"
+   ]
+  },
+  {
+   "id": "F5",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Gespräch mit vielen Antworten, unterste Zeile wählen (k1_bruno)",
+   "steps": [
+    "info Figuren im Raum: bruno",
+    "info Gespräch mit „bruno“: 8 Antworten (HTML-Liste), sichtbar 4, weitere durch Wischen; unterste Zeile 12 CSS-px über dem unteren Bildschirmrand, Zeilenhöhe 44 CSS-px",
+    "ok   Tipp auf die unterste sichtbare Antwort wählt sie (Antwort läuft)",
+    "info 5 schnelle Tipps während der Antwort: 1 Satzwechsel",
+    "ok   schnelle Mehrfachtipps überspringen nicht jeden Satz (Doppeltipp-Sperre 350 ms)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F5_ipad_gespraech.png"
+   ]
+  },
+  {
+   "id": "F5",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Gespräch mit vielen Antworten, unterste Zeile wählen (k1_bruno)",
+   "steps": [
+    "info Figuren im Raum: bruno",
+    "info Gespräch mit „bruno“: 8 Antworten, sichtbar 4, weitere über ▼; unterste Zeile 32 CSS-px über dem unteren Bildschirmrand, Zeilenhöhe 44 CSS-px",
+    "ok   Tipp auf die unterste sichtbare Antwort wählt sie (Antwort läuft)",
+    "info 5 schnelle Tipps während der Antwort: 1 Satzwechsel",
+    "ok   schnelle Mehrfachtipps überspringen nicht jeden Satz (Doppeltipp-Sperre 350 ms)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F5_desktop_gespraech.png"
+   ]
+  },
+  {
+   "id": "F6",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Karte, Ortswechsel, Doppeltipp auf den Ort (k1_brief)",
+   "steps": [
+    "ok   Tipp auf „Karte“ öffnet den Stadtplan",
+    "info Orte auf dem Plan: varos(open, 74×54 CSS-px), bar(open, 113×39 CSS-px), flat(open, 150×53 CSS-px), matejuska(here, 71×57 CSS-px), riva(open, 60×54 CSS-px), sustipan(open, 62×54 CSS-px), x(?, 117×45 CSS-px)",
+    "ok   Doppeltipp auf „varos“: genau ein Ortswechsel (1), jetzt in „varos“",
+    "ok   Szene nach dem Ortswechsel wieder bedienbar (Tipp auf den Boden: Figur geht)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F6_iphoneSE_karte.png"
+   ]
+  },
+  {
+   "id": "F6",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Karte, Ortswechsel, Doppeltipp auf den Ort (k1_brief)",
+   "steps": [
+    "ok   Tipp auf „Karte“ öffnet den Stadtplan",
+    "info Orte auf dem Plan: varos(open, 82×60 CSS-px), bar(open, 125×43 CSS-px), flat(open, 167×58 CSS-px), matejuska(here, 78×63 CSS-px), riva(open, 67×60 CSS-px), sustipan(open, 68×60 CSS-px), x(?, 130×50 CSS-px)",
+    "ok   Doppeltipp auf „varos“: genau ein Ortswechsel (1), jetzt in „varos“",
+    "ok   Szene nach dem Ortswechsel wieder bedienbar (Tipp auf den Boden: Figur geht)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F6_iphone16_karte.png"
+   ]
+  },
+  {
+   "id": "F6",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Karte, Ortswechsel, Doppeltipp auf den Ort (k1_brief)",
+   "steps": [
+    "ok   Tipp auf „Karte“ öffnet den Stadtplan",
+    "info Orte auf dem Plan: varos(open, 82×60 CSS-px), bar(open, 125×43 CSS-px), flat(open, 167×58 CSS-px), matejuska(here, 78×63 CSS-px), riva(open, 67×60 CSS-px), sustipan(open, 68×60 CSS-px), x(?, 130×50 CSS-px)",
+    "ok   Doppeltipp auf „varos“: genau ein Ortswechsel (1), jetzt in „varos“",
+    "ok   Szene nach dem Ortswechsel wieder bedienbar (Tipp auf den Boden: Figur geht)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F6_iphone13_karte.png"
+   ]
+  },
+  {
+   "id": "F6",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Karte, Ortswechsel, Doppeltipp auf den Ort (k1_brief)",
+   "steps": [
+    "ok   Tipp auf „Karte“ öffnet den Stadtplan",
+    "info Orte auf dem Plan: varos(open, 147×108 CSS-px), bar(open, 225×78 CSS-px), flat(open, 300×105 CSS-px), matejuska(here, 141×114 CSS-px), riva(open, 120×108 CSS-px), sustipan(open, 123×108 CSS-px), x(?, 234×90 CSS-px)",
+    "ok   Doppeltipp auf „varos“: genau ein Ortswechsel (1), jetzt in „varos“",
+    "ok   Szene nach dem Ortswechsel wieder bedienbar (Tipp auf den Boden: Figur geht)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F6_ipad_karte.png"
+   ]
+  },
+  {
+   "id": "F6",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Karte, Ortswechsel, Doppeltipp auf den Ort (k1_brief)",
+   "steps": [
+    "ok   Tipp auf „Karte“ öffnet den Stadtplan",
+    "info Orte auf dem Plan: varos(open, 196×144 CSS-px), bar(open, 300×104 CSS-px), flat(open, 400×140 CSS-px), matejuska(here, 188×152 CSS-px), riva(open, 160×144 CSS-px), sustipan(open, 164×144 CSS-px), x(?, 312×120 CSS-px)",
+    "ok   Doppeltipp auf „varos“: genau ein Ortswechsel (1), jetzt in „varos“",
+    "ok   Szene nach dem Ortswechsel wieder bedienbar (Tipp auf den Boden: Figur geht)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F6_desktop_karte.png"
+   ]
+  },
+  {
+   "id": "F7",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Speichern, laden, weiterspielen (k2_limbo)",
+   "steps": [
+    "ok   Tipp auf „Menü“ öffnet die Pause",
+    "ok   Lesezeichen 1 gespeichert (Bestätigung erst nach dem Schreiben)",
+    "ok   Laden stellt Ort, Position, Inventar und Notizen her ({\"room\":\"vratnik\",\"x\":470,\"inv\":7,\"notes\":66,\"toast\":\"Geladen: Kapitel 2 · Vratn)",
+    "ok   „Rückgängig“ angeboten"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F7",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Speichern, laden, weiterspielen (k2_limbo)",
+   "steps": [
+    "ok   Tipp auf „Menü“ öffnet die Pause",
+    "ok   Lesezeichen 1 gespeichert (Bestätigung erst nach dem Schreiben)",
+    "ok   Laden stellt Ort, Position, Inventar und Notizen her ({\"room\":\"vratnik\",\"x\":470,\"inv\":7,\"notes\":66,\"toast\":\"Geladen: Kapitel 2 · Vratn)",
+    "ok   „Rückgängig“ angeboten"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F7",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Speichern, laden, weiterspielen (k2_limbo)",
+   "steps": [
+    "ok   Tipp auf „Menü“ öffnet die Pause",
+    "ok   Lesezeichen 1 gespeichert (Bestätigung erst nach dem Schreiben)",
+    "ok   Laden stellt Ort, Position, Inventar und Notizen her ({\"room\":\"vratnik\",\"x\":470,\"inv\":7,\"notes\":66,\"toast\":\"Geladen: Kapitel 2 · Vratn)",
+    "ok   „Rückgängig“ angeboten"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F7",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Speichern, laden, weiterspielen (k2_limbo)",
+   "steps": [
+    "ok   Tipp auf „Menü“ öffnet die Pause",
+    "ok   Lesezeichen 1 gespeichert (Bestätigung erst nach dem Schreiben)",
+    "ok   Laden stellt Ort, Position, Inventar und Notizen her ({\"room\":\"vratnik\",\"x\":470,\"inv\":7,\"notes\":66,\"toast\":\"Geladen: Kapitel 2 · Vratn)",
+    "ok   „Rückgängig“ angeboten"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F7",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Speichern, laden, weiterspielen (k2_limbo)",
+   "steps": [
+    "ok   Tipp auf „Menü“ öffnet die Pause",
+    "ok   Lesezeichen 1 gespeichert (Bestätigung erst nach dem Schreiben)",
+    "ok   Laden stellt Ort, Position, Inventar und Notizen her ({\"room\":\"vratnik\",\"x\":470,\"inv\":7,\"notes\":66,\"toast\":\"Geladen: Kapitel 2 · Vratn)",
+    "ok   „Rückgängig“ angeboten"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F8",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Drehen während Gespräch und Pause (k1_bruno)",
+   "steps": [
+    "ok   Hochformat: Bild gedreht, Gespräch bleibt offen",
+    "info Drehhinweis sichtbar: true, Spiel angehalten: true",
+    "ok   während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter (Δ 0 ms Spielzeit in 600 ms)",
+    "ok   im gedrehten Bild trifft der Tipp die richtige Antwort",
+    "ok   zurück ins Querformat mit offener Pause: Pause bleibt, alle Einträge im Bild",
+    "ok   nach dem Zurückdrehen stimmen Bild und Trefferfläche überein („Fenster“)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F8_iphoneSE_hoch_hinweis.png",
+    "design/touch/nachher/evidence/F8_iphoneSE_hoch_gedreht.png"
+   ]
+  },
+  {
+   "id": "F8",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Drehen während Gespräch und Pause (k1_bruno)",
+   "steps": [
+    "ok   Hochformat: Bild gedreht, Gespräch bleibt offen",
+    "info Drehhinweis sichtbar: true, Spiel angehalten: true",
+    "ok   während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter (Δ 0 ms Spielzeit in 600 ms)",
+    "ok   im gedrehten Bild trifft der Tipp die richtige Antwort",
+    "ok   zurück ins Querformat mit offener Pause: Pause bleibt, alle Einträge im Bild",
+    "ok   nach dem Zurückdrehen stimmen Bild und Trefferfläche überein („Fenster“)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F8_iphone16_hoch_hinweis.png",
+    "design/touch/nachher/evidence/F8_iphone16_hoch_gedreht.png"
+   ]
+  },
+  {
+   "id": "F8",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Drehen während Gespräch und Pause (k1_bruno)",
+   "steps": [
+    "ok   Hochformat: Bild gedreht, Gespräch bleibt offen",
+    "info Drehhinweis sichtbar: true, Spiel angehalten: true",
+    "ok   während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter (Δ 0 ms Spielzeit in 600 ms)",
+    "ok   im gedrehten Bild trifft der Tipp die richtige Antwort",
+    "ok   zurück ins Querformat mit offener Pause: Pause bleibt, alle Einträge im Bild",
+    "ok   nach dem Zurückdrehen stimmen Bild und Trefferfläche überein („Fenster“)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F8_iphone13_hoch_hinweis.png",
+    "design/touch/nachher/evidence/F8_iphone13_hoch_gedreht.png"
+   ]
+  },
+  {
+   "id": "F8",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Drehen während Gespräch und Pause (k1_bruno)",
+   "steps": [
+    "ok   Hochformat: Bild gedreht, Gespräch bleibt offen",
+    "info Drehhinweis sichtbar: true, Spiel angehalten: true",
+    "ok   während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter (Δ 0 ms Spielzeit in 600 ms)",
+    "ok   im gedrehten Bild trifft der Tipp die richtige Antwort",
+    "ok   zurück ins Querformat mit offener Pause: Pause bleibt, alle Einträge im Bild",
+    "ok   nach dem Zurückdrehen stimmen Bild und Trefferfläche überein („Fenster“)"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F8_ipad_hoch_hinweis.png",
+    "design/touch/nachher/evidence/F8_ipad_hoch_gedreht.png"
+   ]
+  },
+  {
+   "id": "F8",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Drehen während Gespräch und Pause (k1_bruno)",
+   "steps": [
+    "info Desktop dreht das Bild absichtlich nicht (nur Geräte mit Touch, 99_main.js touchDev)"
+   ],
+   "result": "offen",
+   "evidence": []
+  },
+  {
+   "id": "F9",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "App verlassen, zurückkehren, neu laden (k2_limbo)",
+   "steps": [
+    "ok   beim Verlassen (visibilitychange/pagehide) wird gespeichert, mit aktueller Position",
+    "info Rückkehr: Bildschirm „game“, Pause offen: false (Ton im Test nicht prüfbar)",
+    "ok   Verlassen mitten in einer Szene speichert ebenfalls (Stand vom Szenenbeginn, safeGS)",
+    "ok   nach dem Neuladen: „Fortsetzen“ führt in denselben Raum",
+    "info fehlende Pagehide-/Visibility-Abdeckung echter iOS-Wechsel: nur synthetische Ereignisse geprüft"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F9",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "App verlassen, zurückkehren, neu laden (k2_limbo)",
+   "steps": [
+    "ok   beim Verlassen (visibilitychange/pagehide) wird gespeichert, mit aktueller Position",
+    "info Rückkehr: Bildschirm „game“, Pause offen: false (Ton im Test nicht prüfbar)",
+    "ok   Verlassen mitten in einer Szene speichert ebenfalls (Stand vom Szenenbeginn, safeGS)",
+    "ok   nach dem Neuladen: „Fortsetzen“ führt in denselben Raum",
+    "info fehlende Pagehide-/Visibility-Abdeckung echter iOS-Wechsel: nur synthetische Ereignisse geprüft"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F9",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "App verlassen, zurückkehren, neu laden (k2_limbo)",
+   "steps": [
+    "ok   beim Verlassen (visibilitychange/pagehide) wird gespeichert, mit aktueller Position",
+    "info Rückkehr: Bildschirm „game“, Pause offen: false (Ton im Test nicht prüfbar)",
+    "ok   Verlassen mitten in einer Szene speichert ebenfalls (Stand vom Szenenbeginn, safeGS)",
+    "ok   nach dem Neuladen: „Fortsetzen“ führt in denselben Raum",
+    "info fehlende Pagehide-/Visibility-Abdeckung echter iOS-Wechsel: nur synthetische Ereignisse geprüft"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F9",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "App verlassen, zurückkehren, neu laden (k2_limbo)",
+   "steps": [
+    "ok   beim Verlassen (visibilitychange/pagehide) wird gespeichert, mit aktueller Position",
+    "info Rückkehr: Bildschirm „game“, Pause offen: false (Ton im Test nicht prüfbar)",
+    "ok   Verlassen mitten in einer Szene speichert ebenfalls (Stand vom Szenenbeginn, safeGS)",
+    "ok   nach dem Neuladen: „Fortsetzen“ führt in denselben Raum",
+    "info fehlende Pagehide-/Visibility-Abdeckung echter iOS-Wechsel: nur synthetische Ereignisse geprüft"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F9",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "App verlassen, zurückkehren, neu laden (k2_limbo)",
+   "steps": [
+    "ok   beim Verlassen (visibilitychange/pagehide) wird gespeichert, mit aktueller Position",
+    "info Rückkehr: Bildschirm „game“, Pause offen: false (Ton im Test nicht prüfbar)",
+    "ok   Verlassen mitten in einer Szene speichert ebenfalls (Stand vom Szenenbeginn, safeGS)",
+    "ok   nach dem Neuladen: „Fortsetzen“ führt in denselben Raum",
+    "info fehlende Pagehide-/Visibility-Abdeckung echter iOS-Wechsel: nur synthetische Ereignisse geprüft"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F10",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Mehrfachtipps, Overlays, Scrollen im Menü (k1_amt)",
+   "steps": [
+    "ok   5 schnelle Tipps auf den Ausgang „Tür zur Riva“: 1 Ortswechsel",
+    "info jetzt in „riva“",
+    "info Doppeltipp auf „Glockenturm“: Aufrufe look:belltower, look:belltower; gesagte Sätze: 1",
+    "ok   Doppeltipp auf „Glockenturm“ führt die Handlung höchstens einmal aus (1 Antwortsatz/-sätze)",
+    "info 4 schnelle Tipps auf „Notizen“: Overlay notebook",
+    "ok   Wischen im Menü „Laden“ wirkt nicht auf die Szene (gescrollt 0 px von 329)"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F10",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Mehrfachtipps, Overlays, Scrollen im Menü (k1_amt)",
+   "steps": [
+    "ok   5 schnelle Tipps auf den Ausgang „Tür zur Riva“: 1 Ortswechsel",
+    "info jetzt in „riva“",
+    "info Doppeltipp auf „Glockenturm“: Aufrufe look:belltower, look:belltower; gesagte Sätze: 1",
+    "ok   Doppeltipp auf „Glockenturm“ führt die Handlung höchstens einmal aus (1 Antwortsatz/-sätze)",
+    "info 4 schnelle Tipps auf „Notizen“: Overlay notebook",
+    "ok   Wischen im Menü „Laden“ wirkt nicht auf die Szene (gescrollt 0 px von 361)"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F10",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Mehrfachtipps, Overlays, Scrollen im Menü (k1_amt)",
+   "steps": [
+    "ok   5 schnelle Tipps auf den Ausgang „Tür zur Riva“: 1 Ortswechsel",
+    "info jetzt in „riva“",
+    "info Doppeltipp auf „Glockenturm“: Aufrufe look:belltower, look:belltower; gesagte Sätze: 1",
+    "ok   Doppeltipp auf „Glockenturm“ führt die Handlung höchstens einmal aus (1 Antwortsatz/-sätze)",
+    "info 4 schnelle Tipps auf „Notizen“: Overlay notebook",
+    "ok   Wischen im Menü „Laden“ wirkt nicht auf die Szene (gescrollt 0 px von 362)"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F10",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Mehrfachtipps, Overlays, Scrollen im Menü (k1_amt)",
+   "steps": [
+    "ok   5 schnelle Tipps auf den Ausgang „Tür zur Riva“: 1 Ortswechsel",
+    "info jetzt in „riva“",
+    "info Doppeltipp auf „Glockenturm“: Aufrufe look:belltower, look:belltower; gesagte Sätze: 1",
+    "ok   Doppeltipp auf „Glockenturm“ führt die Handlung höchstens einmal aus (1 Antwortsatz/-sätze)",
+    "info 4 schnelle Tipps auf „Notizen“: Overlay notebook",
+    "ok   Wischen im Menü „Laden“ wirkt nicht auf die Szene (gescrollt 0 px von 289)"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F10",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Mehrfachtipps, Overlays, Scrollen im Menü (k1_amt)",
+   "steps": [
+    "ok   5 schnelle Tipps auf den Ausgang „Tür zur Riva“: 1 Ortswechsel",
+    "info jetzt in „riva“",
+    "info Doppeltipp auf „Glockenturm“: Aufrufe look:belltower, look:belltower; gesagte Sätze: 1",
+    "ok   Doppeltipp auf „Glockenturm“ führt die Handlung höchstens einmal aus (1 Antwortsatz/-sätze)",
+    "info 4 schnelle Tipps auf „Notizen“: Overlay notebook",
+    "ok   Wischen im Menü „Laden“ wirkt nicht auf die Szene (gescrollt 105 px von 299)"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F3b",
+   "dev": "iphone16cr",
+   "device": "iPhone 16 quer (Chromium-Emulation, CDP-Touch)",
+   "engine": "chromium",
+   "title": "Ziehen, Wischen, abgebrochene Berührung (k2_limbo, Chromium-Touch über CDP)",
+   "steps": [
+    "ok   Ziehen ins Bild: Satz „Benutze … mit …“ über dem Finger",
+    "ok   Loslassen auf „Blick über die Stadt“ benutzt den Gegenstand",
+    "ok   Wischen im Inventar blättert, ohne etwas zu benutzen",
+    "ok   nach abgebrochener Berührung hängt kein gezogener Gegenstand"
+   ],
+   "result": "bestanden",
+   "evidence": [
+    "design/touch/nachher/evidence/F3b_iphone16cr_abgebrochen.png"
+   ]
+  },
+  {
+   "id": "F10",
+   "dev": "iphone16cr",
+   "device": "iPhone 16 quer (Chromium-Emulation, CDP-Touch)",
+   "engine": "chromium",
+   "title": "Mehrfachtipps, Overlays, Scrollen im Menü (k1_amt)",
+   "steps": [
+    "ok   5 schnelle Tipps auf den Ausgang „Tür zur Riva“: 1 Ortswechsel",
+    "info jetzt in „riva“",
+    "info Doppeltipp auf „Glockenturm“: Aufrufe look:belltower, look:belltower; gesagte Sätze: 1",
+    "ok   Doppeltipp auf „Glockenturm“ führt die Handlung höchstens einmal aus (1 Antwortsatz/-sätze)",
+    "info 4 schnelle Tipps auf „Notizen“: Overlay notebook",
+    "ok   Wischen im Menü „Laden“ wirkt nicht auf die Szene (gescrollt 105 px von 361)"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F5b",
+   "dev": "iphoneSE",
+   "device": "iPhone SE (3. Gen.) quer",
+   "engine": "webkit",
+   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
+   "steps": [
+    "ok   zweiter Tipp 120 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 250 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 420 ms nach dem ersten: keine Antwort gewählt, Liste offen"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F5b",
+   "dev": "iphone16",
+   "device": "iPhone 16 quer",
+   "engine": "webkit",
+   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
+   "steps": [
+    "ok   zweiter Tipp 120 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 250 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 420 ms nach dem ersten: keine Antwort gewählt, Liste offen"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F5b",
+   "dev": "iphone13",
+   "device": "iPhone 13 quer",
+   "engine": "webkit",
+   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
+   "steps": [
+    "ok   zweiter Tipp 120 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 250 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 420 ms nach dem ersten: keine Antwort gewählt, Liste offen"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F5b",
+   "dev": "ipad",
+   "device": "iPad (7. Gen.) quer",
+   "engine": "webkit",
+   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
+   "steps": [
+    "ok   zweiter Tipp 120 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 250 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 420 ms nach dem ersten: keine Antwort gewählt, Liste offen"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  },
+  {
+   "id": "F5b",
+   "dev": "desktop",
+   "device": "Desktop 1280 × 800, Maus",
+   "engine": "chromium",
+   "title": "Doppeltipp beim Übergang Satz → Antwortliste (k1_bruno)",
+   "steps": [
+    "ok   zweiter Tipp 120 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 250 ms nach dem ersten: keine Antwort gewählt, Liste offen",
+    "ok   zweiter Tipp 420 ms nach dem ersten: keine Antwort gewählt, Liste offen"
+   ],
+   "result": "bestanden",
+   "evidence": []
+  }
+ ]
+}

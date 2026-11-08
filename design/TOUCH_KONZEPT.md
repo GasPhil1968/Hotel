@@ -1,5 +1,7 @@
 # MALA auf iPhone und iPad: Touch-Steuerung und Oberfläche
 
+> **Stand:** Der Umsetzungsplan E1–E7 ist inzwischen umgesetzt. Änderungen, Abnahme K1–K14 und Tests stehen in `design/TOUCH_UMSETZUNG.md`. Dieses Dokument beschreibt den Stand **vor** der Umsetzung (Commit `346bff6`).
+
 **Untersuchter Stand**
 - Branch `claude/gifted-keller-rsg4ye`, Commit `346bff6`.
 - `web/index.html`, SHA-256 `4e41283c…`. Das ist dieselbe Datei wie im ZIP `dist/MALA_netlify_oberflaeche.zip`, also der Stand nach Phase 4.
@@ -292,7 +294,7 @@ Das Verhalten bleibt wie heute: HTML-Schicht, Zeilen ≥ 44 CSS-px, Bestätigung
 
 ---
 
-## D. Layoutentwurf (Entwurf, nicht umgesetzt)
+## D. Layoutentwurf (inzwischen umgesetzt; Abweichungen in `TOUCH_UMSETZUNG.md`, Abschnitt 3)
 
 Beschriftete Entwürfe mit echten Szenenbildern aus dem Spiel stehen als Zeichenfläche unter https://claude.ai/artifact/4LGo76UBHuwvrLEjfMunXb (privat). Es sind sieben Zeichenbretter: iPhone 16 heute und im Entwurf, Aktionsleiste, Auswahl bei zwei Dingen, Gespräch, iPhone SE und iPad. Die Beschriftungen lassen sich je Zeichenbrett ausblenden. Quellen und Bilder liegen in `design/touch/entwurf/`. Maße in CSS-Pixeln.
 

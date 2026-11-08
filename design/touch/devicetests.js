@@ -231,10 +231,12 @@ async function F5b(b, dev) { const F = flow('F5b', dev, 'Doppeltipp beim Überga
   for (const gap of [120, 250, 420]) {
     await p.evaluate((L) => { window.__ch = undefined; M.E.busy = true; (async () => { await M.API.m('Das ist der letzte Satz vor der Auswahl.'); const id = await M.API.choose(L.map((t, i) => ({ t, silent: true, bye: i === 3 })), { conv: false }); window.__ch = id; M.E.busy = false; })(); }, LABS);
     await sleep(p, 600); const xy = row;
-    const tap = async () => { if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) await p.mouse.click(xy[0], xy[1]); else await p.touchscreen.tap(xy[0], xy[1]); };
-    await tap(); await sleep(p, gap); await tap(); await sleep(p, 250);
+    // liegt die Liste außerhalb des Spielbilds (iPad: unter dem Bild, T22), beendet der erste Tipp den Satz im Bild und der zweite trifft die Liste
+    const inPic = await p.evaluate(([x, y]) => { const r = document.getElementById('game').getBoundingClientRect(); return x >= r.left && x < r.right && y >= r.top && y < r.bottom; }, xy), xy1 = inPic ? xy : await p.evaluate(PT, [160, 120]);
+    const tap = async (q) => { if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) await p.mouse.click(q[0], q[1]); else await p.touchscreen.tap(q[0], q[1]); };
+    await tap(xy1); await sleep(p, gap); await tap(xy); await sleep(p, 250);
     const r = await p.evaluate(() => ({ ch: window.__ch, dlg: !!M.E.dlg })); F.ok(r.ch === undefined, 'zweiter Tipp ' + gap + ' ms nach dem ersten: ' + (r.ch === undefined ? 'keine Antwort gewählt, Liste offen' : 'Antwort „' + ['Erste Antwort', 'Zweite Antwort', 'Dritte Antwort', '(Gehen.)'][r.ch] + '“ ungelesen gewählt'));
-    await p.evaluate(() => { if (M.E.dlg) M.E.chooseDone(3); }); await sleep(p, 150); await settle(p); }
+    await p.waitForFunction(() => !!M.E.dlg || window.__ch !== undefined, null, { timeout: 8000 }).catch(() => {}); await p.evaluate(() => { if (M.E.dlg) M.E.chooseDone(3); }); await sleep(p, 150); await settle(p); }
   finish(F); await p.context().close(); }
 
 // F6: Karte, Ortswechsel, Doppeltipp auf einen Ort, Rückkehr in die Szene
@@ -353,7 +355,7 @@ async function F10(b, dev) { const F = flow('F10', dev, 'Mehrfachtipps, Overlays
   const run = async (name, fn, dev) => { try { await fn(B(dev), dev); } catch (e) { const F = flow(name, dev, 'Ausnahme'); F.ok(false, 'Ausnahme: ' + String(e && e.message || e).split('\n')[0]); finish(F); } };
   if (want('messung')) for (const d of pick(['iphoneSE', 'iphone16', 'iphone13', 'iphone17pm', 'ipad', 'ipadpro', 'desktop'])) await run('messung', measure, d);
   const FL = { F1, F2, F3, F4, F5, F5b, F6, F7, F8, F9, F10 };
-  for (const [k, fn] of Object.entries(FL)) if (want(k)) for (const d of pick(['iphone16', 'iphone13', 'ipad', 'desktop'])) await run(k, fn, d);
+  for (const [k, fn] of Object.entries(FL)) if (want(k)) for (const d of pick(['iphoneSE', 'iphone16', 'iphone13', 'ipad', 'desktop'])) await run(k, fn, d);   // iPhone SE seit der Umsetzung (K1: Abläufe auf SE und iPhone 16)
   if (want('F3b')) { DEV.iphone16cr = { name: 'iPhone 16 quer (Chromium-Emulation, CDP-Touch)', d: 'iPhone 16 landscape', engine: 'chromium' }; await run('F3b', F3b, 'iphone16cr'); }
   if (want('F10cr')) { DEV.iphone16cr = DEV.iphone16cr || { name: 'iPhone 16 quer (Chromium-Emulation, CDP-Touch)', d: 'iPhone 16 landscape', engine: 'chromium' }; await run('F10', F10, 'iphone16cr'); }
   await wk.close(); await cr.close();

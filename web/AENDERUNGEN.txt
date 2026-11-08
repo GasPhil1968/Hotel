@@ -1,0 +1,49 @@
+MALA – ÄNDERUNGEN FÜR IPHONE UND IPAD (Touch-Umsetzung E1–E7)
+Stand: Cache-Version mala-split-3ff65a6a92. Ausführlich: design/TOUCH_UMSETZUNG.md im Repository.
+
+WAS SICH ÄNDERT
+- Größeres Bild auf dem iPhone: Die Szene steht so groß wie möglich (auf allen
+  iPhones mindestens 2 Bildpunkte je Spielpixel, vorher 1,5 bis 1,67). Die Knöpfe
+  stehen neben der Szene oder, wenn dort kein Platz ist (iPhone SE), in einer
+  Reihe darunter. Jeder Knopf ist mindestens 44 × 44 Bildpunkte groß.
+- Aktionsleiste: Mit dem Finger erscheinen die Handlungen eines Dings als große
+  Knöpfe unter dem Bild statt als kleines Menü am Finger. "✕" oder ein Tipp ins
+  Bild schließt sie. Mit Maus oder Trackpad bleibt das Menü am Zeiger.
+- Gegenstand mit einem Tipp wählen ("Benutze … mit …"), dann das Ziel antippen.
+  "Schau an", "Lies" und "Öffne" stehen in einer kleinen Leiste über dem Feld.
+- Treffsicherheit: Ein Tipp knapp neben ein kleines Ding gilt diesem Ding. Liegen
+  mehrere dicht beieinander, fragt das Spiel "Welches?". Rahmen und Tippmarke
+  zeigen nur, was berührt wurde – keine Lösungshinweise.
+- Antworten in Gesprächen: große Zeilen, Wischen blättert. Eine gerade erschienene
+  Liste nimmt einen Augenblick lang keinen Tipp an (kein versehentliches
+  Antworten per Doppeltipp). Auf dem iPad stehen die Antworten unter dem Bild.
+- "✕" oben rechts schließt Notizbuch, Karte, Briefe und Rätsel.
+- Der Drehhinweis hält das Spiel an. Ein gesperrter Figurenwechsel nennt den
+  Grund. Abgebrochene Berührungen (Systemgesten) hinterlassen nichts Hängendes.
+- Ton kommt nach Unterbrechungen mit dem nächsten Tipp zurück. Gespeichert wird
+  zusätzlich nach jeder abgeschlossenen Handlung.
+- Menüs lassen sich mit zwei Fingern vergrößern; das Spielbild nicht.
+- Hinweise für iPhone/iPad: Home-Bildschirm, eigener Speicher der App, Löschung
+  nach sieben Tagen in Safari, Stummschalter. Feinwahl (Einstellungen, aus):
+  Finger halten zeigt ein Fadenkreuz über dem Finger.
+- Geschichte, Rätsel und Spielstände bleiben unverändert; alte Spielstände laden.
+
+GETESTET (Emulation unter Linux, kein echtes Gerät)
+- Oberflächentests phase1–phase5: 33/33, 64/64, 52/52, 92/92, 31/31
+  (phase1 im ersten Durchgang 32/33 durch eine Verzögerung der Testumgebung,
+  Wiederholung 33/33).
+- Spielstände: 16 erspielte Stände auf iPhone (Finger) und Desktop (Maus)
+  geladen, verglichen, gespeichert, neu geladen: 33/33.
+- Desktop- und iPad-Leiste pixelgleich zur Fassung davor; Regressionen 9/9.
+- Browser-Szenarien: Chromium 16/16, WebKit 15/15, Firefox 11/11.
+- Bedienabläufe auf iPhone SE, 16, 13, iPad, Desktop: 57 Abläufe ohne Befund.
+- Erreichbarkeit der Hotspots mit dem Finger (iPhone 16, Kapitel 1–4):
+  1455 von 1472 aus einem Feld von mindestens 24 Bildpunkten; 17 dichte Stellen
+  liegen bei 16–22 Bildpunkten (vorher 177 unter 24).
+- Simulationskampagne A–E: wie in der Fassung davor, kein Fehlschlag.
+
+NICHT GETESTET – BITTE AUF ECHTEN GERÄTEN PRÜFEN
+Safe-Area-Ränder und Home-Indikator, Safari-Leisten, Systemgesten, Ton nach
+Anruf/Sperre und Stummschalter, App-Wechsel, Bildschirmtastatur, Home-Bildschirm
+(Speicher, offline, Aktualisierung), iPad mit Trackpad, kleinstes iPhone, Lupe bei
+langem Druck. Prüfliste: design/touch/GERAETEPRUEFUNG.md im Repository.
