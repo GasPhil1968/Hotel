@@ -127,7 +127,7 @@ function frame(now){ var dt=now-last; last=now;
   try{ M.update(dt); var want=!!WG && !!(M.wideWanted&&M.wideWanted()); if (want!==wideOn){ applyWide(want); fadeSwap(); }   // Overlays, Karten, Titel: gewohntes 320×200-Bild
     var fb=M.renderFrame(), d=fb.d, N=wideOn?46080:64000; for (var i=0;i<N;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0);
     if (wideOn && himg){ var hb=M.renderHud&&M.renderHud(); if (hb){ var hd=hb.d, nn=Math.min(hd.length,hu32.length); for (var j=0;j<nn;j++) hu32[j]=PAL[hd[j]]; hctx.putImageData(himg,0,0); } }
-    if (M.subsSync) M.subsSync();
+    if (M.subsSync) M.subsSync(); if (M.barSync) M.barSync();
     if (M.__capNext && M.E.speech){ var ck=M.__capNext; M.__capNext=null; try{ M.__caps[ck]=cv.toDataURL(); }catch(e){} } }catch(err){ console.error(err); }
   requestAnimationFrame(frame); }
 if (M.boot) M.boot();

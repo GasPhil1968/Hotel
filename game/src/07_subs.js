@@ -6,6 +6,9 @@
 'use strict';
 var E=M.E, DOM=(typeof document!=='undefined' && typeof window!=='undefined' && !!document.createElement);
 M.subsOn=function(){ if (!DOM) return false; var p=M.uiPrefs?M.uiPrefs():null; return !!(p && (p.font==='read' || p.size===1)); };
+// Touch-Konzept T05: War die letzte Eingabe ein Finger, steht die Antwortliste immer als HTML (Zeilen ≥ 44 CSS-px, Wischen scrollt), auch in der Pixelschrift;
+// die Sätze zeichnet dann weiter der Canvas (nur mit „Lesbar“ oder „groß“ wandern auch sie in diese Schicht)
+M.listHtml=function(){ return DOM && !!(M.lastTouch && M.lastTouch()); };
 if (!DOM) return;
 function T(s){ try{ return M.trUI?M.trUI(s):s; }catch(e){ return s; } }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -37,8 +40,8 @@ function speakerName(sp){ var w=String(sp.who||''); if (!w||w==='#'||w==='@') re
 function speakerColor(sp){ var o=sp.opt||{}, w=String(sp.who||''), id=w.replace(/^@/,''), a=E.ACT[w]||E.ACT[id];
   if (o.color!==undefined) return css(o.color); if (o.voice) return css(M.P.x4); if (w==='#') return css(M.P.l0);
   if (a && a.color!==undefined) return css(a.color); if (M.CAST_COLORS[id]!==undefined) return css(M.CAST_COLORS[id]); return css(M.P.l0); }
-M.subsSync=function(){ if (!root) build(); var F=M.subsFrame?M.subsFrame():null, on=!!(F && M.subsOn() && E.screen==='game' && !E.menu);
-  var sp=on&&F.sp===E.speech?F.sp:null, d=on&&F.dlg===E.dlg?F.dlg:null, g=(sp||d)?geo():null; if (!g){ sp=null; d=null; }
+M.subsSync=function(){ if (!root) build(); var full=M.subsOn(), F=M.subsFrame?M.subsFrame():null, on=!!(F && (full || M.listHtml()) && E.screen==='game' && !E.menu);
+  var sp=on&&full&&F.sp===E.speech?F.sp:null, d=on&&F.dlg===E.dlg?F.dlg:null, g=(sp||d)?geo():null; if (!g){ sp=null; d=null; }
   if (d && !d._sid) d._sid=++sidN;
   var waiting=!!(sp && E.tapText() && E.busy && E.gt()>=sp.until), P=M.uiPrefs(), ghost=M.GS.active==='mala';
   var k=(sp||d)?JSON.stringify([sp?[sp.text,sp.who,sp.at,waiting]:0, d?[d._sid,d.opts.length,d.kf==null?-1:d.kf,!!E.speech,M.lang]:0, [g.rot,g.wide,g.W,g.H,Math.round(g.cx),Math.round(g.cy),Math.round(g.cw),Math.round(g.picB),g.u], P.font, P.size, P.motion, ghost]):'off';
@@ -47,7 +50,7 @@ M.subsSync=function(){ if (!root) build(); var F=M.subsFrame?M.subsFrame():null,
   if (!sp&&!d){ root.className=''; lineEl.innerHTML=''; choEl.innerHTML=''; return; }
   root.className='on'+(P.font==='read'?' rd':'')+(P.size===1?' sz1':'')+(P.motion?' rm':'')+(ghost?' g':'');
   root.style.setProperty('--u',g.u); root.style.width=g.W+'px'; root.style.height=g.H+'px'; root.style.left=g.rot?'50%':'0'; root.style.top=g.rot?'50%':'0'; root.style.transform=g.rot?'translate(-50%,-50%) rotate(90deg)':'';
-  var side=g.cx+g.cw*0.04, w=g.cw*0.92, bot=g.H-g.picB+Math.max(4,g.u*2);
+  var side=g.cx+g.cw*0.04, w=g.cw*0.92, bot=g.H-g.picB+Math.max(8,g.u*2);   // ≥ 8 CSS-px über der Unterkante (Safe Area, T05)
   // Antwortliste: unten im Bild über der (abgedunkelten) Leiste; schon gefragte Zeilen gedämpft, Tastaturauswahl hervorgehoben
   if (d){ var v=M.dlgView(), h='';
     if (v.title) h+='<div class="sb-title">'+esc(v.title)+'</div>';

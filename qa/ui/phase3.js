@@ -37,12 +37,16 @@ const REL = () => { const g = JSON.parse(JSON.stringify(M.GS)); delete g.playMs;
     await tap(p, await hudXY(p, 'reveal')); T.ck(await p.evaluate(() => M.revealOn()), '„Zeigen“ markiert die Szene');
     // Inventar blättern und Gegenstand wählen
     const pages = await p.evaluate(() => Math.ceil(M.GS.inv.length / 6)); if (pages > 1) { await tap(p, await hudXY(p, 'dn')); T.ck(await p.evaluate(() => M.E.invTop === 1), 'Pfeil rechts blättert das Inventar'); await tap(p, await hudXY(p, 'up')); T.ck(await p.evaluate(() => M.E.invTop === 0), 'Pfeil links blättert zurück'); }
-    await tap(p, await hudXY(p, 'slot0')); const pop = await p.evaluate(() => M.E.pop && { item: M.E.pop.item, by: M.E.pop.by, bh: M.E.pop.bh, opts: M.E.pop.opts.map(o => o.t) });
-    T.ck(pop && pop.item && pop.by + pop.bh <= 144, 'Gegenstand antippen: Verb-Menü über dem unteren Szenenrand (' + (pop && pop.opts.join(', ')) + ')');
-    // Benutze … mit: „Benutze“ wählen, dann einen Hotspot antippen
-    if (pop) { const ui = await p.evaluate(() => { const p0 = M.E.pop; const i = p0.opts.findIndex(o => o.pend); for (let y = p0.by; y < p0.by + p0.bh; y++) for (let x = p0.bx; x < p0.bx + p0.bw; x++) if (M.uiHit(x, y) === 'p:' + i) return { x, y }; return null; });
-      if (ui) { await tap(p, await sceneXY(p, ui.x, ui.y)); const pend = await p.evaluate(() => M.E.pending); T.ck(!!pend, '„Benutze“ wählt den Gegenstand (Satz „Benutze … mit …“)');
-        const hs = (await p.evaluate(HS_POINT)).find(q => !q.exit && !q.npc); if (hs) { await tap(p, await sceneXY(p, hs.x, hs.y)); await p.waitForFunction(() => M.E.busy || M.E.speech || !M.E.pending, null, { timeout: 4000 }).catch(() => {}); T.ck(await p.evaluate(() => !M.E.pending), '„Benutze … mit“ auf einen Hotspot ausgeführt'); await settle(p); } } }
+    // Touch-Konzept T07: ein Tipp wählt den Gegenstand („Benutze … mit …“); Ansehen und ✕ stehen in der Aktionsleiste über dem Feld, das Inventar bleibt frei
+    await tap(p, await hudXY(p, 'slot0')); const sel = await p.evaluate(() => { const e = document.querySelector('#abar .ab-item'), r = e && e.getBoundingClientRect(), h = document.getElementById('hud').getBoundingClientRect(), L = M.wide(), k = h.width / M.wideGeo().Wh;
+      return { pend: M.E.pending, bar: r ? [r.left, r.top, r.width, r.height] : null, invTop: h.top + L.inv.y * k, btns: [...document.querySelectorAll('#abar .ab-item button')].map(b => { const q = b.getBoundingClientRect(); return [b.textContent, Math.round(q.width), Math.round(q.height)]; }) }; });
+    T.ck(!!sel.pend && !!sel.bar && sel.bar[1] + sel.bar[3] <= sel.invTop + 0.5 && sel.btns.length >= 2 && sel.btns.every(q => q[1] >= 44 && q[2] >= 44), 'Gegenstand antippen wählt ihn, Aktionsleiste über dem Inventar (' + sel.btns.map(q => q[0] + ' ' + q[1] + '×' + q[2]).join(', ') + ')');
+    T.ck(await p.evaluate(() => { const L = M.wide(); M.renderFrame(); const t = []; const t0 = M.text; M.text = function (b, s) { t.push(String(s)); return t0.apply(this, arguments); }; M.renderHud(); M.text = t0; return t.some(s => /^Benutze .+ mit/.test(s) && !/mit (.+)$/.test(s.replace('…', '')) || /mit …$/.test(s)); }), 'Satzzeile „Benutze … mit …“ (nicht „mit“ sich selbst)');
+    const hs = (await p.evaluate(HS_POINT)).find(q => !q.exit && !q.npc); if (hs) { await tap(p, await sceneXY(p, hs.x, hs.y)); await p.waitForFunction(() => M.E.busy || M.E.speech || !M.E.pending, null, { timeout: 4000 }).catch(() => {}); T.ck(await p.evaluate(() => !M.E.pending), '„Benutze … mit“ auf einen Hotspot ausgeführt (zwei Tipps)'); await settle(p); }
+    // Ansehen über die Aktionsleiste; ✕ hebt die Wahl auf
+    await tap(p, await hudXY(p, 'slot0')); await p.locator('#abar .ab-item button', { hasText: 'Schau an' }).first().tap(); await p.waitForFunction(() => !!M.E.speech, null, { timeout: 4000 }).catch(() => {});
+    T.ck(await p.evaluate(() => !M.E.pending && !!M.E.speech), '„Schau an“ in der Aktionsleiste: Gegenstand angesehen, Wahl aufgehoben'); await settle(p);
+    await tap(p, await hudXY(p, 'slot0')); await p.locator('#abar .ab-item .ab-c').tap(); await p.waitForTimeout(120); T.ck(await p.evaluate(() => !M.E.pending && !document.querySelector('#abar.on')), '„✕“ hebt die Gegenstandswahl auf');
     // Notizen (Overlay → gewohntes Bild), danach wieder Breitbild (F24)
     const rel0 = await p.evaluate(REL);
     await tap(p, await hudXY(p, 'notes')); await p.waitForTimeout(150); T.ck(await p.evaluate(() => (M.E.overlay && !M.isWide()) || M.E.dlg), 'Notizen: Notizbuch im gewohnten 320 × 200-Bild');
@@ -58,8 +62,9 @@ const REL = () => { const g = JSON.parse(JSON.stringify(M.GS)); delete g.playMs;
 
     T.section('Gespräch im Breitbild');
     await p.evaluate(() => { M.E.busy = true; M.API.choose(['Was ist das für ein Brief?', 'Wo kann ich hier Geld wechseln?', 'Wie komme ich in die Baščaršija?', 'Sind Sie für Željo oder für Sarajevo?', '(Gehen.)'].map((t, i) => ({ t, silent: true, bye: i === 4 })), { conv: false }).then(() => { M.E.busy = false; }); M.renderFrame(); });
-    const dl = await p.evaluate(() => { const L = M.E.dlg.lay, r = document.getElementById('game').getBoundingClientRect(), k = r.width / 320; return { rows: L.rows.map(x => x.r), k, ymin: Math.min(...L.rows.map(x => x.r[1])) }; });
-    T.ck(dl.rows.length === 3 && dl.rows.every(r => r[3] * dl.k >= 24) && dl.ymin >= 90, 'drei Antwortzeilen à ≥ 24 CSS-px über dem unteren Szenendrittel (' + dl.rows.map(r => Math.round(r[3] * dl.k)).join(', ') + ' CSS-px)');
+    await p.waitForTimeout(250); const dl = await p.evaluate(() => { const c = document.querySelector('#subs .sb-cho'), r = c && c.getBoundingClientRect(), h = document.getElementById('hud').getBoundingClientRect();
+      return { lay: !!(M.E.dlg && M.E.dlg.lay), r: r ? [r.left, r.top, r.width, r.height] : null, bot: h.bottom, rows: [...document.querySelectorAll('#subs .sb-o')].map(b => Math.round(b.getBoundingClientRect().height)) }; });
+    T.ck(!dl.lay && !!dl.r && dl.rows.length === 5 && dl.rows.every(h => h >= 44) && dl.bot - (dl.r[1] + dl.r[3]) >= 7.5, 'Finger: Antwortliste als HTML, 5 Zeilen à ≥ 44 CSS-px, ≥ 8 CSS-px über der Unterkante (' + dl.rows.join(', ') + '; Abstand ' + (dl.r ? (dl.bot - dl.r[1] - dl.r[3]).toFixed(2) : '–') + ', lay ' + dl.lay + ')');
     T.ck(await p.evaluate(() => { const r = M.wide().menu; return M.uiHit(r[0] + 5, 1000 + r[1] + 5) === null; }), 'Leiste nimmt während des Gesprächs keine Eingaben an');
     await shot(p, 'd17_gespraech');
     // F25: Größe ändern mitten im Gespräch → gewohnte Leiste, Gespräch bleibt; zurück → Breitbild
@@ -95,8 +100,8 @@ const REL = () => { const g = JSON.parse(JSON.stringify(M.GS)); delete g.playMs;
         await tap(q, await hudXY(q, 'reveal')); T.ck(await q.evaluate(() => M.revealOn()), name + ': „Zeigen“ markiert die Szene'); await tap(q, await hudXY(q, 'reveal')); await q.waitForTimeout(150);
         await tap(q, await hudXY(q, 'menu')); await q.waitForTimeout(120); T.ck(await q.evaluate(() => M.shell.ctx === 'pause'), name + ': „Menü“ öffnet die Pause');
         await q.locator('#shell button', { hasText: 'Weiterspielen' }).tap(); await q.waitForTimeout(200);
-        await tap(q, await hudXY(q, 'slot0')); await q.waitForTimeout(150); const pop = await q.evaluate(() => M.E.pop && { item: M.E.pop.item, by: M.E.pop.by, bh: M.E.pop.bh });
-        T.ck(!!(pop && pop.item && pop.by + pop.bh <= 144), name + ': Gegenstand antippen öffnet seine Handlungen über dem unteren Szenenrand'); await q.keyboard.press('Escape'); await q.waitForTimeout(120);
+        await tap(q, await hudXY(q, 'slot0')); await q.waitForTimeout(150); const sb = await q.evaluate(() => { const e = document.querySelector('#abar .ab-item'), r = e && e.getBoundingClientRect(), c = document.getElementById('game').getBoundingClientRect(); return { pend: M.E.pending, bar: r ? [r.left, r.top, r.width, r.height] : null, scB: c.bottom }; });
+        T.ck(!!sb.pend && !!sb.bar && sb.bar[1] + sb.bar[3] <= sb.scB + 0.5, name + ': Gegenstand antippen wählt ihn, Aktionsleiste über dem unteren Szenenrand'); await q.keyboard.press('Escape'); await q.waitForTimeout(120);
         await shot(q, 'e3_se_unten'); }
       if (name === 'iPhone 16 quer') {
         await shot(q, 'e3_iphone16');

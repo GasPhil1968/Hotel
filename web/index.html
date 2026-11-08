@@ -2569,6 +2569,8 @@ var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI
 // Touch-Layout: größere Zeilen für Antworten und Verb-Menü, sobald mit dem Finger bedient wird (UI-Konzept D9/D10)
 var touchUI=false; try{ touchUI=!!(typeof matchMedia!=='undefined' && matchMedia('(pointer: coarse)').matches); }catch(e){}
 M.touchUI=function(v){ if (v!==undefined) touchUI=!!v; return touchUI; };
+// letzte Eingabeart (Touch-Konzept C): Finger → Aktionsleiste und Antwortliste als HTML (07_bar.js, 07_subs.js); Maus/Trackpad → Menü am Zeiger im Canvas
+var lastIn=touchUI?'touch':'mouse'; M.lastTouch=function(){ return lastIn==='touch'; };
 M.reduceMotion=M.reduceMotion||function(){ return false; };
 E.pending=null; E.pop=null; E.invTop=0; E.menu=null; E.titleMode='main';
 function GS(){ return M.GS; }
@@ -2743,7 +2745,8 @@ function drawSwitch(){ var g=GS(), c=ui(), x=SW_X, y=INV_Y-1, w=SW_W, h=SLOT_H+2
   var lab=other==='mala'?'Mala':'Marko', lab2=shown?'↔ '+lab:lab; if (M.textWidth(lab2)>w-2) lab2=shown?'↔'+lab:lab;
   M.text(fb,lab2,x+Math.floor((w-M.textWidth(lab2))/2),y+h-10,!shown?P.s3:(!avail?P.k2:(hot?c.hi:(other==='mala'?P.x4:P.y3)))); }
 function arrowH(x,y,left,on,hot){ var c=ui(), col=on?(hot?c.hi:c.tx):c.dim; for (var i=0;i<6;i++){ var xx=left?x+i:x-i; fb.vl(xx,y-i,y+i,col); } }
-function sentence(){ var v=E.pending?'Benutze':''; var hn=hover?E.nameOf(hover):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
+// Satzzeile: mit dem Finger steht der Name nur, solange er liegt; nie „Benutze X mit X“
+function sentence(){ var v=E.pending?'Benutze':'', h=hover; if (h && ((pointer.touch&&!pointer.down) || (h.item&&h.item===E.pending))) h=null; var hn=h?E.nameOf(h):''; if (E.pending){ var pn=M.ITEMS[E.pending].name; return 'Benutze '+pn+' mit '+(hn||'…'); } return hn; }
 
 // ---------------------------------------------------------------- Verb-Menü (nur Verben, die etwas bewirken)
 var POP_RH=13;
@@ -2763,7 +2766,8 @@ function hsOpts(hs){ var room=E.room; if (room.noVerbs) return null; var o=[], g
   if (ex && o.length===1) return null;   // reiner Ausgang: der erste Klick geht los, ein zweiter schneller Klick überspringt den Weg
   o.push({t:'Schau an',v:'look'}); return o; }
 function itemOpts(id){ if (isG()) return [{t:'Schau an',v:'look'}]; var it=M.ITEMS[id], o=[{t:'Benutze',pend:true}]; ['read','open','use2'].forEach(function(v){ if (it[v]!==undefined) o.push({t:v==='read'?'Lies':(v==='open'?'Öffne':it.use2Label||'Benutze'),v:v}); }); o.push({t:'Schau an',v:'look'}); return o; }
-function openPop(p){ p.room=E.room; p.rh=touchUI?15:POP_RH; var w=M.textWidth(p.title); p.opts.forEach(function(o){ w=Math.max(w,M.textWidth(o.t)); }); w=Math.max(66,w+14);
+function openPop(p){ p.room=E.room; p.rh=touchUI?15:POP_RH; p.html=!!(pointer.touch && M.barOn && M.barOn());   // Finger: Aktionsleiste (07_bar.js) statt Menü am Finger (T06)
+  var w=M.textWidth(p.title); p.opts.forEach(function(o){ w=Math.max(w,M.textWidth(o.t)); }); w=Math.max(66,w+14);
   var h=(p.opts.length+1)*p.rh+4, x0, y0; if (p.item){ x0=p.x-(w>>1); y0=(WIDE?SH:INV_Y)-h-3; } else { x0=p.x+14; if (x0+w>W-2) x0=p.x-14-w; y0=p.y-(h>>1); }   // ≥ 12 Spielpixel Abstand: das Ziel bleibt sichtbar (UI-Konzept D9)
   p.bx=Math.max(2,Math.min(W-2-w,x0)); p.by=Math.max(2,Math.min(H-2-h,y0)); p.bw=w; p.bh=h; E.pop=p; }
 // Rahmen um das erkannte Ding (nur bei Touch): solange der Finger liegt, solange Verb-Menü oder Aktionsleiste offen sind, kurz nach einem Fangradius-Treffer.
@@ -2780,9 +2784,9 @@ function drawFocus(){ if (!touchUI||E.overlay||E.menu||E.dlg||E.screen!=='game'|
 function drawTapMark(){ if (!tapMark) return; var t=E.gt()-tapMark.at; if (t>300||E.overlay||E.menu||E.screen!=='game'){ tapMark=null; return; } if (tapMark.y>=SH) return;
   var r=3+Math.round(t/75), cx=Math.round(tapMark.x), cy=Math.round(tapMark.y), col=isG()?P.x5:P.l1;
   for (var a=0;a<24;a++){ var px=cx+Math.round(Math.cos(a/24*Math.PI*2)*r), py=cy+Math.round(Math.sin(a/24*Math.PI*2)*r); if (px>=0&&px<W&&py>=0&&py<SH) fb.px(px,py,col); } }
-function popAt(x,y){ var p=E.pop; if (!p||x<p.bx||x>=p.bx+p.bw||y<p.by||y>=p.by+p.bh) return null; var r=Math.floor((y-p.by-2)/(p.rh||POP_RH))-1; return (r>=0&&r<p.opts.length)?r:-1; }
+function popAt(x,y){ var p=E.pop; if (!p||p.html||x<p.bx||x>=p.bx+p.bw||y<p.by||y>=p.by+p.bh) return null; var r=Math.floor((y-p.by-2)/(p.rh||POP_RH))-1; return (r>=0&&r<p.opts.length)?r:-1; }
 function popPick(po,opt){ if (opt.pick){ E.pop=null; E.pending=null; pickHs(opt.pick,po); return; } E.pop=null; E.pending=null; if (po.hs){ E.actionTok(); E.doVerb(opt.v,po.hs); return; } if (opt.pend){ E.pending=po.item; return; } E.doItem(opt.v==='use2'?'use2':opt.v,po.item); }
-function drawPop(){ var p=E.pop; if (!p) return; if (p.room!==E.room||E.busy||E.speech||E.dlg||E.overlay||E.menu||E.screen!=='game'){ E.pop=null; return; } var c=ui();
+function drawPop(){ var p=E.pop; if (!p) return; if (p.room!==E.room||E.busy||E.speech||E.dlg||E.overlay||E.menu||E.screen!=='game'){ E.pop=null; return; } if (p.html) return; var c=ui();
   var rh=p.rh||POP_RH, tp=(rh-9)>>1;
   fb.rect(p.bx,p.by,p.bw,p.bh,P.k1); fb.rect(p.bx+1,p.by+1,p.bw-2,rh,P.k2); fb.hl(p.bx,p.bx+p.bw-1,p.by,c.fr); fb.hl(p.bx,p.bx+p.bw-1,p.by+p.bh-1,c.fr); fb.vl(p.bx,p.by,p.by+p.bh-1,c.fr); fb.vl(p.bx+p.bw-1,p.by,p.by+p.bh-1,c.fr);
   M.text(fb,p.title,p.bx+7,p.by+2+tp,c.hi);
@@ -2815,11 +2819,11 @@ function dlgBye(){ if (!E.dlg) return -1; for (var i=E.dlg.opts.length-1;i>=0;i-
 // während der Auswahl: oben das Gegenüber, unten die Liste der Sätze
 function drawConv(){ if (!convOn()) return; if (!E.dlg) return; var pa=convPartner();
   if (pa && !E.speech){ var right=true, me=E.ACT[GS().active]; if (me) right=pa.x>=me.x; drawBust(pa.ch,right?W-4-PW:4,4,idleVariant(1700),right); }
-  if (SUBS){ SUBW.dlg=E.dlg; E.dlg.lay=null; if (!WIDE) fb.rect(0,SH,W,H-SH,P.k0); return; }   // Untertitelschicht: Liste als HTML (07_subs.js), Leiste darunter dunkel
+  if (LISTH){ SUBW.dlg=E.dlg; E.dlg.lay=null; if (!WIDE) fb.rect(0,SH,W,H-SH,P.k0); return; }   // Liste als HTML (07_subs.js): Untertitelschicht oder Fingereingabe (T05); Leiste darunter dunkel
   drawChoices(); }
 // Untertitelschicht (UI-Konzept B3-2, 07_subs.js): Mit „Schrift: Lesbar“ oder „Textgröße: groß“ zeichnet der Canvas Sätze und Antwortlisten
 // nicht selbst. Er merkt sich nur, was in diesem Bild zu sehen wäre (SUBW); die HTML-Schicht zeigt genau das. Brustbilder bleiben im Canvas.
-var SUBS=false, SUBW={sp:null,dlg:null};
+var SUBS=false, LISTH=false, SUBW={sp:null,dlg:null};
 M.subsFrame=function(){ return SUBW; };
 // dieselben Antworttexte und Zustände wie in drawChoices (Übersetzung mit Sprecher und Gegenüber, schon gefragte Zeilen)
 M.dlgView=function(){ var d=E.dlg; if (!d) return null; var me=GS().active, pa0=convPartner(), to0=(d.to!==undefined&&d.to!==null)?d.to:(pa0?pa0.id:(E.trLast||null));
@@ -3184,7 +3188,7 @@ function drawMsg(){ if (!E.msg||E.gt()>E.msg.until||E.menu) return; var t=E.msg.
 function drawDrag(){ if (!drag||!drag.on||(WIDE&&pointer.y>=1000)) return; var it=M.ITEMS[drag.id], ic=iconOf(drag.id); var x=Math.round(pointer.x), y=Math.round(pointer.y), ix=x-(ic.w>>1), iy=y-ic.h-8; fb.blit(ic,ix,iy);
   var tgt=null; if (pointer.y<SH && hover && !hover.item) tgt=E.nameOf(hover); else { var u=uiAt(pointer.x,pointer.y); if (u&&u[0]==='i'){ var o=invList()[+u.slice(2)]; if (o&&o!==drag.id) tgt=M.ITEMS[o].name; } }
   var lab=tgt?('Benutze '+it.name+' mit '+tgt):it.name, lw=M.textWidth(lab), lx=Math.max(2,Math.min(W-2-lw,x-(lw>>1))), ly=Math.max(2,iy-11); M.text(fb,lab,lx,ly,tgt?P.l0:P.s4,P.k0); }
-M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); SUBW.sp=null; SUBW.dlg=null;
+M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); LISTH=SUBS||!!(M.listHtml&&M.listHtml()); SUBW.sp=null; SUBW.dlg=null;
   if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
@@ -3301,7 +3305,7 @@ function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay
 M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 // Testhilfe (Touch-Test): welches Bedienelement liegt an x,y; Beschriftungen der Titelzeilen
 M.uiHit=function(x,y){ return uiAt(x,y); }; M.revealOn=function(){ return !!reveal; }; M.uiHover=function(){ return pointer.show?hoverUI:null; }; M.uiColors=function(){ return ui(); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
-M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); };
+M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); };
 M.pointerUp=function(x,y,touch){ pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
   var pr=press; press=null; tapStartR=pr?pr.tr:nowR(); if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return;
   if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
@@ -3360,7 +3364,10 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
   if (uiH && uiH[0]==='i'){ var id=invList()[+uiH.slice(2)]; if (!id) return; if (E.invNew===id) E.invNew=null;
     if (E.pending && E.pending!==id){ var p0=E.pending; E.pending=null; E.doItem('use',p0,id); return; }
     if (E.pending===id){ E.pending=null; return; }
-    var opts=itemOpts(id), sx=INV_X+((+uiH.slice(2))%INV_N)*SLOT_W+SLOT_W/2; if (WIDE) sx=Math.round((WIDE.inv.x+WIDE.inv.aw+((+uiH.slice(2))%INV_N)*WIDE.inv.sw+WIDE.inv.sw/2-WIDE.sx)*WIDE.n/WIDE.m);
+    var opts=itemOpts(id);
+    // Finger (T07): ein Tipp wählt den Gegenstand („Benutze … mit …“), Ansehen und die übrigen Handlungen stehen in der Aktionsleiste; nur eine Handlung: gleich ausführen
+    if (pointer.touch && M.barOn && M.barOn()){ if (opts[0].pend){ E.pending=id; E.pendTouch=id; M.sfx('click'); return; } if (opts.length===1){ E.doItem(opts[0].v,id); return; } }
+    var sx=INV_X+((+uiH.slice(2))%INV_N)*SLOT_W+SLOT_W/2; if (WIDE) sx=Math.round((WIDE.inv.x+WIDE.inv.aw+((+uiH.slice(2))%INV_N)*WIDE.inv.sw+WIDE.inv.sw/2-WIDE.sx)*WIDE.n/WIDE.m);
     openPop({title:M.ITEMS[id].name,opts:opts,item:id,x:sx,y:INV_Y}); return; }
   if (y>=SH) return;
   if (now0<(E.sceneBlockUntil||0)) return;   // gleich nach einem Ortswechsel: ein nachgereichter Klick wirkt nicht im neuen Raum
@@ -3392,6 +3399,20 @@ function actOnHs(hs,x,y,wx,now0,unused,picked){
     E.actionTok(); E.doVerb('look',hs); return; }
   if (ex){ var key2=E.exitKey(hs); if (lastExit&&lastExit.key===key2&&now0-lastExit.t<=M.DBL_MS){ lastExit=null; E.pop=null; E.actionTok(); E.doVerb(isG()&&hs.gexit?'pass':'walk',hs); return; } lastExit={key:key2,t:now0}; }   // Doppeltipp auf einen Ausgang mit Menü: hindurch
   openPop({title:E.nameOf(hs),opts:opts2,hs:hs,x:x,y:y}); }
+// Aktionsleiste (07_bar.js, Touch-Konzept C2/C3/D1): was die HTML-Leiste zeigen soll und was ihre Knöpfe tun. Dieselben Handlungen wie im Menü am Zeiger.
+function barGeo(){ if (WIDE){ var L=WIDE, I=L.inv; return {wide:true, row:L.mode==='rails'?[L.rail,L.S0,L.W-2*L.rail,L.H-L.S0]:[0,L.S0+12,L.W,L.H-L.S0-12], scB:L.S0, slot:function(i){ return [I.x+I.aw+i*I.sw,I.y,I.sw-2,I.sh]; }}; }
+  return {wide:false, row:[0,SH,W,H-SH], scB:SH, slot:function(i){ return [INV_X+i*SLOT_W,INV_Y,SLOT_W-2,SLOT_H]; }}; }
+M.barView=function(){ if (E.screen!=='game'||E.menu||!E.room&&!E.overlay) return null;
+  if (E.overlay){ var ov=E.overlay; if (!M.lastTouch()||ov.kind==='memory'||(ov.data&&(ov.data.blank||ov.data.acting))) return null; return {kind:'ovx'}; }   // „✕“ wie Esc
+  var p=E.pop, g=barGeo(); if (p&&p.html){ if (p.room!==E.room||E.busy||E.speech||E.dlg) return null; return {kind:'pop',title:p.title,opts:p.opts.map(function(o){ return o.t; }),pick:!!p.pickFrom,geo:g}; }
+  if (E.pending&&E.pendTouch===E.pending&&!E.busy&&!E.dlg&&!E.speech&&!drag){ var id=E.pending, idx=invList().indexOf(id), sl=idx-E.invTop*INV_N; if (idx<0) return null;
+    return {kind:'item',item:id,opts:itemOpts(id).filter(function(o){ return !o.pend; }).map(function(o){ return o.t; }),slot:(sl>=0&&sl<INV_N)?g.slot(sl):null,geo:g}; }
+  return null; };
+M.barAct=function(a,k){ if (a==='ovx'){ if (E.overlay) escape(); return; }
+  if (a==='pop'){ var p=E.pop; if (!p||!p.html||!p.opts[k]) return; M.sfx('click'); popPick(p,p.opts[k]); return; }
+  if (a==='popx'){ E.pop=null; return; }
+  if (a==='item'){ var id=E.pending; if (!id||E.busy) return; var o=itemOpts(id).filter(function(x){ return !x.pend; })[k]; if (!o) return; E.pending=null; M.sfx('click'); E.doItem(o.v==='use2'?'use2':o.v,id); return; }
+  if (a==='itemx'){ E.pending=null; return; } };
 // Rechtsklick (UI-Konzept B1-15): hebt Ziehen, Verb-Menü oder Gegenstandswahl auf, sonst „Schau an“ – zusätzlich zum Antippen, nie als einziger Weg
 M.rightClick=function(x,y){ if (M.audioInit) M.audioInit(); if (E.screen!=='game'||E.menu||E.overlay) return; if (drag){ drag=null; return; } if (E.pop){ E.pop=null; return; } if (E.pending){ E.pending=null; return; }
   if (E.busy||E.dlg||(E.room&&E.room.noVerbs)) return;
@@ -3435,6 +3456,72 @@ M.key=function(k){ var kl0=String(k).toLowerCase(); if (M.audioInit) M.audioInit
   if (kl0==='k' && E.overlay && E.overlay.kind==='map'){ M.toggleMap(); return; }
   if (kl0==='k' && !E.overlay && !E.dlg){ M.toggleMap(); return; }   // K: Karte (meldet selbst, wenn sie gerade nicht geht)
   if (E.overlay||E.dlg||E.busy) return; var kl=k.toLowerCase(); if (k==='Tab'||kl==='m'){ if (swOffered()) trySwitch(); } else if (kl==='n'){ E.openNotes(); } else if (kl==='z'||kl==='r'){ reveal={at:E.gt()}; } };
+})(M);
+
+/* ---- 07_bar.js ---- */
+/* ===== 07_bar.js — Aktionsleiste für Fingereingabe (Touch-Konzept C2, C3, D1; T03, T06, T07): die Handlungen eines Dings, die Auswahl
+   zwischen nahen Dingen, die übrigen Handlungen eines gewählten Gegenstands und „✕“ der Overlays als HTML-Knöpfe ≥ 44 CSS-px.
+   Was zu sehen ist und was ein Knopf tut, bestimmt 06_ui.js (M.barView, M.barAct) mit denselben Handlungen wie das Menü am Zeiger;
+   hier steht nur die Darstellung. Mit Maus oder Trackpad bleibt das Menü am Zeiger im Canvas. In der Node-VM (ohne DOM) gibt es diese
+   Schicht nicht. ===== */
+(function(M){
+'use strict';
+var E=M.E, DOM=(typeof document!=='undefined' && typeof window!=='undefined' && !!document.createElement);
+M.barOn=function(){ return DOM; };
+if (!DOM) return;
+function T(s){ try{ return M.trUI?M.trUI(s):s; }catch(e){ return s; } }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var root=null, barEl=null, xEl=null, key='';
+function build(){ root=document.createElement('div'); root.id='abar';
+  root.innerHTML='<div class="ab-bar" role="toolbar"></div><button type="button" class="ab-x" tabindex="-1">✕</button>'; document.body.appendChild(root);
+  barEl=root.querySelector('.ab-bar'); xEl=root.querySelector('.ab-x');
+  var st=document.createElement('style'); st.textContent=CSS; document.head.appendChild(st);
+  [barEl,xEl].forEach(function(el){ el.addEventListener('mousedown',function(e){ e.preventDefault(); }); el.addEventListener('pointerdown',function(e){ e.stopPropagation(); }); });   // kein Fokus, kein Tipp in die Szene darunter
+  barEl.addEventListener('click',function(e){ var b=e.target.closest('button'); if (!b) return; if (M.audioInit) M.audioInit(); M.barAct(b.dataset.a,+b.dataset.k); M.barSync(); });
+  xEl.addEventListener('click',function(){ if (M.audioInit) M.audioInit(); M.barAct('ovx'); M.barSync(); }); }
+// Lage im logischen Querformat-Raum wie die Untertitelschicht: im gedrehten Hochformat dreht die ganze Schicht mit
+function geo(){ var cv=document.getElementById('game'); if (!cv) return null; var rot=!!(M.isRotated&&M.isRotated()), wide=!!(M.isWide&&M.isWide()), vw=window.innerWidth, vh=window.innerHeight;
+  var W=rot?vh:vw, H=rot?vw:vh, cw=parseFloat(cv.style.width)||cv.clientWidth, ch=parseFloat(cv.style.height)||cv.clientHeight, cx, cy;
+  if (rot){ cx=(W-cw)/2; cy=(H-ch)/2; } else { var r=cv.getBoundingClientRect(); cx=r.left; cy=r.top; }
+  var g={rot:rot,W:W,H:H,cx:cx,cy:cy,cw:cw,ch:ch,s:cw/320};
+  if (wide){ var h=document.getElementById('hud').getBoundingClientRect(), WG=M.wideGeo(); g.hx=h.left; g.hy=h.top; g.k=h.width/WG.Wh; }
+  return g; }
+// Rechteck der Leiste bzw. des Spielbilds (Leistenpixel im Breitbild, sonst Spielpixel) → CSS-Pixel
+function rectCss(g,v,r){ if (v.geo.wide) return [g.hx+r[0]*g.k,g.hy+r[1]*g.k,r[2]*g.k,r[3]*g.k]; return [g.cx+r[0]*g.s,g.cy+r[1]*g.s,r[2]*g.s,r[3]*g.s]; }
+function yCss(g,v,y){ return v.geo.wide?g.hy+y*g.k:g.cy+y*g.s; }
+M.barSync=function(){ if (!root) build(); var v=M.barView?M.barView():null, g=v?geo():null; if (!g) v=null;
+  var ghost=M.GS&&M.GS.active==='mala', u=g?Math.max(2,Math.min(4,Math.ceil(g.s*0.75))):2;
+  var k=v?JSON.stringify([v.kind,v.title,v.opts,v.item,v.slot,g.rot,g.W,g.H,Math.round(g.cx),Math.round(g.cy),Math.round(g.cw),Math.round(g.hx||0),Math.round(g.hy||0),g.k||0,ghost,M.lang]):'off';
+  if (k===key) return; key=k;
+  if (!v){ root.className=''; barEl.innerHTML=''; return; }
+  root.className='on'+(ghost?' g':'')+(v.kind==='ovx'?' ov':''); root.style.setProperty('--u',u);
+  root.style.width=g.W+'px'; root.style.height=g.H+'px'; root.style.left=g.rot?'50%':'0'; root.style.top=g.rot?'50%':'0'; root.style.transform=g.rot?'translate(-50%,-50%) rotate(90deg)':'';
+  xEl.setAttribute('aria-label',T('Schließen'));
+  if (v.kind==='ovx'){ barEl.innerHTML=''; xEl.style.left=(g.cx+g.cw-48)+'px'; xEl.style.top=(g.cy+4)+'px'; return; }   // „✕“ oben rechts im Bild, wie Esc
+  var h='';
+  if (v.kind==='pop'){   // Handlungen eines Dings bzw. „Welches?“: statt Inventarzeile, das Ding bleibt im Bild gerahmt
+    h+='<span class="ab-t">'+esc(T(v.title))+'</span>';
+    v.opts.forEach(function(t,i){ h+='<button type="button" tabindex="-1" class="ab-b" data-a="pop" data-k="'+i+'">'+esc(T(t))+'</button>'; });
+    h+='<button type="button" tabindex="-1" class="ab-b ab-c" data-a="popx" data-k="0" aria-label="'+esc(T('Schließen'))+'">✕</button>';
+    barEl.innerHTML=h; var R=rectCss(g,v,v.geo.row);
+    barEl.className='ab-bar ab-row'; barEl.style.left=R[0]+'px'; barEl.style.width=R[2]+'px'; barEl.style.top=''; barEl.style.bottom=(g.H-(R[1]+R[3]))+'px'; barEl.style.minHeight=R[3]+'px'; return; }
+  // gewählter Gegenstand: „Benutze … mit …“ steht in der Satzzeile; hier Ansehen und die übrigen Handlungen, über dem Feld, ohne das Inventar zu verdecken
+  v.opts.forEach(function(t,i){ h+='<button type="button" tabindex="-1" class="ab-b" data-a="item" data-k="'+i+'">'+esc(T(t))+'</button>'; });
+  h+='<button type="button" tabindex="-1" class="ab-b ab-c" data-a="itemx" data-k="0" aria-label="'+esc(T('Abbrechen'))+'">✕</button>';
+  barEl.innerHTML=h; barEl.className='ab-bar ab-item'; barEl.style.minHeight=''; barEl.style.width=''; barEl.style.top='';
+  var bw=barEl.getBoundingClientRect().width, sc=v.geo.wide?[g.hx,g.hx+(M.wideGeo().Wh*g.k)]:[g.cx,g.cx+g.cw], cxs;
+  if (v.slot){ var S=rectCss(g,v,v.slot); cxs=S[0]+S[2]/2; } else { var R2=rectCss(g,v,v.geo.row); cxs=R2[0]+R2[2]/2; }
+  barEl.style.left=Math.max(sc[0]+4,Math.min(sc[1]-4-bw,cxs-bw/2))+'px'; barEl.style.bottom=(g.H-yCss(g,v,v.geo.scB)+4)+'px'; };
+var CSS='#abar{position:fixed;left:0;top:0;z-index:12;pointer-events:none;display:none;font-family:"MALA Pixel",ui-monospace,monospace;font-size:calc(var(--u)*10px);line-height:1.2;-webkit-font-smoothing:none;color:#e3d9c0;-webkit-user-select:none;user-select:none}'
++'#abar *{box-sizing:border-box}#abar.on{display:block}#abar .ab-x{display:none}#abar.ov .ab-x{display:flex}#abar.ov .ab-bar{display:none}'
++'#abar .ab-bar{position:absolute;display:flex;flex-wrap:wrap-reverse;align-items:center;gap:6px;pointer-events:auto;background:#08070d;border:2px solid #c8bb9f;padding:4px 6px;touch-action:manipulation}'
++'#abar .ab-row{justify-content:flex-start}#abar .ab-t{color:#f3c75c;margin-right:auto;padding:0 6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40%}'
++'#abar .ab-item{flex-wrap:nowrap}'
++'#abar .ab-b,#abar .ab-x{appearance:none;font:inherit;color:inherit;background:#1e1b2a;border:2px solid #5a5248;min-height:44px;min-width:96px;padding:2px 10px;cursor:pointer;touch-action:manipulation;align-items:center;justify-content:center}'
++'#abar .ab-b:active,#abar .ab-x:active{background:#3a3346;color:#fffdf4}#abar .ab-c{min-width:44px;color:#f3c75c}'
++'#abar .ab-x{position:absolute;pointer-events:auto;width:44px;height:44px;min-width:44px;padding:0;background:rgba(8,7,13,.92);border-color:#c8bb9f;color:#f3c75c;font-size:22px}'
+// spielt man Mala: die kalten Töne wie im Canvas
++'#abar.g .ab-bar{border-color:#2c6074}#abar.g .ab-b{background:#0d202d;border-color:#2c6074;color:#82c1c9}#abar.g .ab-t,#abar.g .ab-c{color:#c3ecee}#abar.g .ab-x{border-color:#2c6074;color:#c3ecee}';
 })(M);
 
 /* ---- 07_portraits.js ---- */
@@ -3898,6 +3985,9 @@ if (DOM){ var tst=document.createElement('style'); tst.textContent='#shell:not(.
 'use strict';
 var E=M.E, DOM=(typeof document!=='undefined' && typeof window!=='undefined' && !!document.createElement);
 M.subsOn=function(){ if (!DOM) return false; var p=M.uiPrefs?M.uiPrefs():null; return !!(p && (p.font==='read' || p.size===1)); };
+// Touch-Konzept T05: War die letzte Eingabe ein Finger, steht die Antwortliste immer als HTML (Zeilen ≥ 44 CSS-px, Wischen scrollt), auch in der Pixelschrift;
+// die Sätze zeichnet dann weiter der Canvas (nur mit „Lesbar“ oder „groß“ wandern auch sie in diese Schicht)
+M.listHtml=function(){ return DOM && !!(M.lastTouch && M.lastTouch()); };
 if (!DOM) return;
 function T(s){ try{ return M.trUI?M.trUI(s):s; }catch(e){ return s; } }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -3929,8 +4019,8 @@ function speakerName(sp){ var w=String(sp.who||''); if (!w||w==='#'||w==='@') re
 function speakerColor(sp){ var o=sp.opt||{}, w=String(sp.who||''), id=w.replace(/^@/,''), a=E.ACT[w]||E.ACT[id];
   if (o.color!==undefined) return css(o.color); if (o.voice) return css(M.P.x4); if (w==='#') return css(M.P.l0);
   if (a && a.color!==undefined) return css(a.color); if (M.CAST_COLORS[id]!==undefined) return css(M.CAST_COLORS[id]); return css(M.P.l0); }
-M.subsSync=function(){ if (!root) build(); var F=M.subsFrame?M.subsFrame():null, on=!!(F && M.subsOn() && E.screen==='game' && !E.menu);
-  var sp=on&&F.sp===E.speech?F.sp:null, d=on&&F.dlg===E.dlg?F.dlg:null, g=(sp||d)?geo():null; if (!g){ sp=null; d=null; }
+M.subsSync=function(){ if (!root) build(); var full=M.subsOn(), F=M.subsFrame?M.subsFrame():null, on=!!(F && (full || M.listHtml()) && E.screen==='game' && !E.menu);
+  var sp=on&&full&&F.sp===E.speech?F.sp:null, d=on&&F.dlg===E.dlg?F.dlg:null, g=(sp||d)?geo():null; if (!g){ sp=null; d=null; }
   if (d && !d._sid) d._sid=++sidN;
   var waiting=!!(sp && E.tapText() && E.busy && E.gt()>=sp.until), P=M.uiPrefs(), ghost=M.GS.active==='mala';
   var k=(sp||d)?JSON.stringify([sp?[sp.text,sp.who,sp.at,waiting]:0, d?[d._sid,d.opts.length,d.kf==null?-1:d.kf,!!E.speech,M.lang]:0, [g.rot,g.wide,g.W,g.H,Math.round(g.cx),Math.round(g.cy),Math.round(g.cw),Math.round(g.picB),g.u], P.font, P.size, P.motion, ghost]):'off';
@@ -3939,7 +4029,7 @@ M.subsSync=function(){ if (!root) build(); var F=M.subsFrame?M.subsFrame():null,
   if (!sp&&!d){ root.className=''; lineEl.innerHTML=''; choEl.innerHTML=''; return; }
   root.className='on'+(P.font==='read'?' rd':'')+(P.size===1?' sz1':'')+(P.motion?' rm':'')+(ghost?' g':'');
   root.style.setProperty('--u',g.u); root.style.width=g.W+'px'; root.style.height=g.H+'px'; root.style.left=g.rot?'50%':'0'; root.style.top=g.rot?'50%':'0'; root.style.transform=g.rot?'translate(-50%,-50%) rotate(90deg)':'';
-  var side=g.cx+g.cw*0.04, w=g.cw*0.92, bot=g.H-g.picB+Math.max(4,g.u*2);
+  var side=g.cx+g.cw*0.04, w=g.cw*0.92, bot=g.H-g.picB+Math.max(8,g.u*2);   // ≥ 8 CSS-px über der Unterkante (Safe Area, T05)
   // Antwortliste: unten im Bild über der (abgedunkelten) Leiste; schon gefragte Zeilen gedämpft, Tastaturauswahl hervorgehoben
   if (d){ var v=M.dlgView(), h='';
     if (v.title) h+='<div class="sb-title">'+esc(v.title)+'</div>';
@@ -69712,7 +69802,7 @@ function frame(now){ var dt=now-last; last=now;
   try{ M.update(dt); var want=!!WG && !!(M.wideWanted&&M.wideWanted()); if (want!==wideOn){ applyWide(want); fadeSwap(); }   // Overlays, Karten, Titel: gewohntes 320×200-Bild
     var fb=M.renderFrame(), d=fb.d, N=wideOn?46080:64000; for (var i=0;i<N;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0);
     if (wideOn && himg){ var hb=M.renderHud&&M.renderHud(); if (hb){ var hd=hb.d, nn=Math.min(hd.length,hu32.length); for (var j=0;j<nn;j++) hu32[j]=PAL[hd[j]]; hctx.putImageData(himg,0,0); } }
-    if (M.subsSync) M.subsSync();
+    if (M.subsSync) M.subsSync(); if (M.barSync) M.barSync();
     if (M.__capNext && M.E.speech){ var ck=M.__capNext; M.__capNext=null; try{ M.__caps[ck]=cv.toDataURL(); }catch(e){} } }catch(err){ console.error(err); }
   requestAnimationFrame(frame); }
 if (M.boot) M.boot();

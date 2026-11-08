@@ -52,6 +52,24 @@ async function tapEl(p, dev, sel, text) { const loc = text ? p.locator(sel, { ha
   const x = b.x + b.width / 2, y = b.y + b.height / 2; if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) await p.mouse.click(x, y); else await p.touchscreen.tap(x, y); await sleep(p, 120); return b; }
 // direkt geladener Stand: Titelschicht schließt erst im nächsten Bild (M.shellSync); erst danach tippen
 async function ready(p) { await settle(p); await p.waitForFunction(() => !M.shell.ctx && !document.getElementById('shell').classList.contains('on'), null, { timeout: 5000 }).catch(() => {}); await sleep(p, 120); }
+// Verb-Menü bzw. Aktionsleiste (Touch-Konzept E4): bei Fingereingabe HTML-Knöpfe (#abar), mit der Maus das Menü im Canvas
+const POPV = () => { const P = M.E.pop; if (!P) return null; return { html: !!P.html, title: P.title, item: P.item || null, opts: P.opts.map((o, i) => ({ t: o.t, v: o.v, pend: !!o.pend, xy: P.html ? null : [P.bx + P.bw / 2, P.by + 2 + (i + 1) * P.rh + P.rh / 2] })) }; };
+async function tapPage(p, dev, x, y) { if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) await p.mouse.click(x, y); else await p.touchscreen.tap(x, y); }
+async function popTap(p, dev, k) { const v = await p.evaluate(POPV); if (!v || !v.opts[k]) return false;
+  if (v.html) { const r = await p.evaluate((k) => { const b = document.querySelectorAll('#abar .ab-row button[data-a="pop"]')[k]; if (!b) return null; const q = b.getBoundingClientRect(); return [q.left + q.width / 2, q.top + q.height / 2]; }, k); if (!r) return false; await tapPage(p, dev, r[0], r[1]); }
+  else await tapAt(p, dev, v.opts[k].xy);
+  await sleep(p, 120); return true; }
+// Antwortzeilen in Seitenkoordinaten: Canvas-Liste (d.lay) oder HTML-Liste (#subs); h = Zeilenhöhe in CSS-Pixeln, sichtbar = ganz im Bildlaufbereich
+const DLGROWS = () => { const D = M.E.dlg; if (!D) return null; M.renderFrame(); if (D.lay) { const cv = document.getElementById('game'), r = cv.getBoundingClientRect(), wide = M.isWide(), rot = M.isRotated(), Hh = wide ? 144 : 200;
+    const P = ([x, y]) => rot ? [r.right - y / 200 * r.width, r.top + x / 320 * r.height] : [r.left + x / 320 * r.width, r.top + y / Hh * r.height], sc = rot ? r.height / 320 : r.width / 320;
+    return { html: false, n: D.opts.length, more: !!D.lay.dn, close: D.lay.close ? [D.lay.close[2] * sc, D.lay.close[3] * sc] : null, rows: D.lay.rows.map(q => { const c = P([q.r[0] + q.r[2] / 2, q.r[1] + q.r[3] / 2]), b = P([q.r[0], q.r[1] + q.r[3]]); return { k: q.k, x: c[0], y: c[1], h: q.r[3] * sc, bottom: rot ? null : b[1] }; }) }; }
+  const box = document.querySelector('#subs .sb-cho'); if (!box || getComputedStyle(box).display === 'none') return { html: true, n: D.opts.length, rows: [] }; const bb = box.getBoundingClientRect();
+  const rows = [...box.querySelectorAll('.sb-o')].map(b => { const q = b.getBoundingClientRect(); return { k: +b.dataset.k, x: q.left + q.width / 2, y: q.top + q.height / 2, h: b.offsetHeight, bottom: q.bottom, vis: q.top >= bb.top - 0.5 && q.bottom <= bb.bottom + 0.5 }; });
+  return { html: true, n: D.opts.length, more: box.scrollHeight > box.clientHeight + 1, close: null, rows: rows.filter(q => q.vis) }; };
+// Gegenstand wählen: mit dem Finger ein Tipp (T07), mit der Maus Menü → „Benutze“
+async function selectItem(p, dev, H) { await tapAt(p, dev, [H['i:0'].cx, H['i:0'].cy]); await sleep(p, 250);
+  const one = await p.evaluate(() => M.E.pending ? { item: M.E.pending, opts: [...document.querySelectorAll('#abar .ab-item button')].map(b => b.textContent) } : null); if (one) return Object.assign(one, { taps: 1 });
+  const v = await p.evaluate(POPV); if (!v) return null; const k = v.opts.findIndex(o => o.pend); if (k < 0) return null; await popTap(p, dev, k); return { item: v.item, opts: v.opts.map(o => o.t), taps: 2 }; }
 async function shot(p, name) { const f = path.join(OUT, name + '.png'); await p.screenshot({ path: f }); return path.relative(path.join(__dirname, '..', '..'), f); }
 async function browserFor(engine) { return ENG.launch(pw, engine); }
 const flow = (id, dev, title) => { const F = { id, dev, device: DEV[dev].name, engine: DEV[dev].engine, title, steps: [], result: 'offen', evidence: [] }; R.flows.push(F);
@@ -69,16 +87,18 @@ async function measure(b, dev) {
   const M1 = { layout: L, sceneShare: +(area * 100).toFixed(1), hud, file: await shot(p, 'messung_' + dev + '_szene') };
   // Verb-Menü an einem Hotspot mit Auswahl (über echten Tipp)
   const q = await p.evaluate(HSQ); let pop = null;
-  for (const h of q.hs.filter(h => !h.exit && h.sq >= 6)) { await tapAt(p, dev, h.c); await sleep(p, 250); pop = await p.evaluate(() => { const P = M.E.pop; return P ? { title: P.title, bx: P.bx, by: P.by, bw: P.bw, bh: P.bh, rh: P.rh, n: P.opts.length, x: P.x, y: P.y } : null; });
+  for (const h of q.hs.filter(h => !h.exit && h.sq >= 6)) { await tapAt(p, dev, h.c); await sleep(p, 250); pop = await p.evaluate(() => { const P = M.E.pop; if (!P) return null; if (P.html) { const bs = [...document.querySelectorAll('#abar .ab-row button')].map(b => b.getBoundingClientRect()); return { html: true, title: P.title, n: P.opts.length, hCss: Math.min(...bs.map(q => q.height)), wCss: Math.min(...bs.map(q => q.width)) }; } return { title: P.title, bx: P.bx, by: P.by, bw: P.bw, bh: P.bh, rh: P.rh, n: P.opts.length, x: P.x, y: P.y }; });
     if (pop) { pop.target = h.id; pop.tap = h.c; break; } await settle(p); }
-  if (pop) { const sc = L.scenePx; M1.pop = { target: pop.target, rowCss: +(pop.rh * sc).toFixed(1), wCss: +(pop.bw * sc).toFixed(1), rows: pop.n, gapToFingerCss: +(Math.max(0, pop.bx - pop.tap[0], pop.tap[0] - (pop.bx + pop.bw), pop.by - pop.tap[1], pop.tap[1] - (pop.by + pop.bh)) * sc).toFixed(1) };
+  if (pop && pop.html) M1.pop = { target: pop.target, html: true, rowCss: +pop.hCss.toFixed(1), wCss: +pop.wCss.toFixed(1), rows: pop.n, where: 'Aktionsleiste unten (HTML)' };
+  else if (pop) { const sc = L.scenePx; M1.pop = { target: pop.target, rowCss: +(pop.rh * sc).toFixed(1), wCss: +(pop.bw * sc).toFixed(1), rows: pop.n, gapToFingerCss: +(Math.max(0, pop.bx - pop.tap[0], pop.tap[0] - (pop.bx + pop.bw), pop.by - pop.tap[1], pop.tap[1] - (pop.by + pop.bh)) * sc).toFixed(1) }; }
+  if (pop) {
     M1.popFile = await shot(p, 'messung_' + dev + '_verbmenue'); await p.evaluate(() => { M.E.pop = null; }); }
   // Antwortliste (Canvas, Pixelschrift): synthetische Liste mit sieben Zeilen wie qa/ui/phase1.js
   await settle(p); await p.evaluate(() => { window.__ch = undefined; M.E.busy = true; const labs = ['Erste Antwort', 'Zweite Antwort, etwas länger, damit sie umbricht und zwei Zeilen braucht', 'Dritte Antwort', 'Vierte Antwort', 'Fünfte Antwort', 'Sechste Antwort', '(Gehen.)'];
     M.API.choose(labs.map((t, i) => ({ t, silent: true, bye: i === 6 })), { conv: false }).then(id => { window.__ch = id; M.E.busy = false; }); }); await sleep(p, 250);
-  const dl = await p.evaluate(() => { M.renderFrame(); const d = M.E.dlg, L = d.lay; return { rows: L.rows.map(r => r.r), close: L.close, up: L.up, dn: L.dn, n: d.opts.length }; });
-  const sc = L.scenePx; M1.dialog = { visible: dl.rows.length, of: dl.n, rowHCss: dl.rows.map(r => +(r[3] * sc).toFixed(1)), closeCss: dl.close ? [+(dl.close[2] * sc).toFixed(1), +(dl.close[3] * sc).toFixed(1)] : null,
-    lowestRowBottomToScreenCss: +((L.vh - (await p.evaluate(PT, [0, dl.rows[dl.rows.length - 1][1] + dl.rows[dl.rows.length - 1][3]]))[1])).toFixed(1) };
+  await sleep(p, 300); const dl = await p.evaluate(DLGROWS), sc = L.scenePx;
+  M1.dialog = { html: dl.html, visible: dl.rows.length, of: dl.n, rowHCss: dl.rows.map(r => +r.h.toFixed(1)), closeCss: dl.close ? dl.close.map(v => +v.toFixed(1)) : null,
+    lowestRowBottomToScreenCss: dl.rows.length ? +(L.vh - dl.rows[dl.rows.length - 1].bottom).toFixed(1) : null };
   M1.dialogFile = await shot(p, 'messung_' + dev + '_antworten'); await p.evaluate(() => M.E.chooseDone(6)); await sleep(p, 100);
   // Pausenmenü (HTML-Schicht)
   await settle(p); await p.evaluate(() => M.shell.openPause()); await sleep(p, 200);
@@ -87,7 +107,7 @@ async function measure(b, dev) {
   // Schriftgröße im Bild: Versalhöhe 7 Spielpixel
   M1.capHeightCss = +(7 * sc).toFixed(1);
   R.devices[dev] = Object.assign({ name: DEV[dev].name, engine: DEV[dev].engine }, M1);
-  log(DEV[dev].name + ': ' + (L.wide ? 'Breitbild' : 'gewohnt') + ', Szene ' + sc.toFixed(2) + ' CSS-px/Spielpx, Leiste ' + px.toFixed(2) + ', Szenenanteil ' + M1.sceneShare + ' %, Leistenknöpfe ' + hud.map(h => h.code + ' ' + h.w + '×' + h.h).join(', ') + (M1.pop ? ', Verb-Zeile ' + M1.pop.rowCss : '') + ', Antwortzeilen ' + M1.dialog.rowHCss.join('/') + ', Pause ' + Math.min(...M1.pause));
+  log(DEV[dev].name + ': ' + (L.wide ? 'Breitbild' : 'gewohnt') + ', Szene ' + sc.toFixed(2) + ' CSS-px/Spielpx, Leiste ' + px.toFixed(2) + ', Szenenanteil ' + M1.sceneShare + ' %, Leistenknöpfe ' + hud.map(h => h.code + ' ' + h.w + '×' + h.h).join(', ') + (M1.pop ? (M1.pop.html ? ', Aktionsleiste ' + M1.pop.wCss + '×' + M1.pop.rowCss : ', Verb-Zeile ' + M1.pop.rowCss) : '') + ', Antwortzeilen ' + (M1.dialog.html ? 'HTML ' : '') + M1.dialog.rowHCss.join('/') + ', Pause ' + Math.min(...M1.pause));
   await p.context().close(); }
 
 // ---------------------------------------------------------------- Abläufe
@@ -99,9 +119,8 @@ async function F1(b, dev) { const F = flow('F1', dev, 'Fortsetzen, bewegen, unte
   const x0 = await p.evaluate(() => M.E.ACT.marko.x); await tapAt(p, dev, fl); await sleep(p, 900); const x1 = await p.evaluate(() => M.E.ACT.marko.x);
   F.ok(Math.abs(x1 - x0) > 3, 'Tipp auf freien Boden: Marko geht hin (x ' + Math.round(x0) + ' → ' + Math.round(x1) + ')'); await settle(p);
   const obj = q.hs.filter(h => !h.exit && !h.npc && h.sq >= 8).sort((m, n) => n.sq - m.sq)[0];
-  await tapAt(p, dev, obj.c); await sleep(p, 300); let pop = await p.evaluate(() => M.E.pop ? M.E.pop.opts.map(o => o.t) : null), taps = 1;
-  if (pop) { F.note('Tipp auf „' + obj.name + '“ öffnet das Verb-Menü: ' + pop.join(' · ')); const rows = await p.evaluate(() => { const P = M.E.pop; return P.opts.map((o, i) => ({ t: o.t, v: o.v, xy: [P.bx + P.bw / 2, P.by + 2 + (i + 1) * P.rh + P.rh / 2] })); });
-    const look = rows.find(r => r.v === 'look') || rows[0]; await tapAt(p, dev, look.xy); taps = 2; }
+  await tapAt(p, dev, obj.c); await sleep(p, 300); let pop = await p.evaluate(POPV), taps = 1;
+  if (pop) { F.note('Tipp auf „' + obj.name + '“ öffnet ' + (pop.html ? 'die Aktionsleiste' : 'das Verb-Menü') + ': ' + pop.opts.map(o => o.t).join(' · ')); const k = Math.max(0, pop.opts.findIndex(o => o.v === 'look')); await popTap(p, dev, k); taps = 2; }
   const said = await p.waitForFunction(() => !!M.E.speech, null, { timeout: 6000 }).then(() => true, () => false);
   F.ok(said, 'Untersuchen: Marko sagt etwas zu „' + obj.name + '“ nach ' + taps + ' Tipp' + (taps > 1 ? 's' : ''));
   F.evidence.push(await shot(p, 'F1_' + dev + '_untersuchen')); await settle(p); finish(F); await p.context().close(); }
@@ -114,8 +133,8 @@ async function F2(b, dev) { const F = flow('F2', dev, 'Figurenwechsel, Fähigkei
   F.ok(await p.evaluate(() => M.GS.active === 'mala'), 'Tipp auf den Figurenknopf: Mala ist aktiv'); F.evidence.push(await shot(p, 'F2_' + dev + '_mala')); await settle(p);
   const q = await p.evaluate(HSQ); let verbs = null, used = null;
   for (const h of q.hs.filter(h => !h.exit && h.sq >= 6)) { await tapAt(p, dev, h.c); await sleep(p, 250); verbs = await p.evaluate(() => M.E.pop ? M.E.pop.opts.map(o => ({ t: o.t, v: o.v })) : null); if (verbs) { used = h; break; } await settle(p); }
-  if (verbs) { F.note('Mala an „' + used.name + '“: ' + verbs.map(v => v.t).join(' · ')); const k = Math.max(0, verbs.findIndex(v => v.v !== 'look')); const xy = await p.evaluate((k) => { const P = M.E.pop; return [P.bx + P.bw / 2, P.by + 2 + (k + 1) * P.rh + P.rh / 2]; }, k);
-    await tapAt(p, dev, xy); F.ok(await p.waitForFunction(() => !!M.E.speech || M.E.busy, null, { timeout: 5000 }).then(() => true, () => false), 'Fähigkeit „' + verbs[k].t + '“ ausgeführt'); await settle(p); }
+  if (verbs) { F.note('Mala an „' + used.name + '“: ' + verbs.map(v => v.t).join(' · ')); const k = Math.max(0, verbs.findIndex(v => v.v !== 'look'));
+    await popTap(p, dev, k); F.ok(await p.waitForFunction(() => !!M.E.speech || M.E.busy, null, { timeout: 5000 }).then(() => true, () => false), 'Fähigkeit „' + verbs[k].t + '“ ausgeführt'); await settle(p); }
   else F.note('kein Hotspot mit Verb-Menü für Mala gefunden');
   // gesperrt: während einer Szene
   await p.evaluate(() => { M.E.busy = true; window.__msg0 = M.E.msg; }); await tapAt(p, dev, [H.sw.cx, H.sw.cy]); await sleep(p, 300);
@@ -124,9 +143,8 @@ async function F2(b, dev) { const F = flow('F2', dev, 'Figurenwechsel, Fähigkei
   F.ok(!!blocked.msg, 'gesperrter Wechsel meldet einen Grund' + (blocked.msg ? ' („' + blocked.msg + '“)' : ' – keine Rückmeldung'));
   await p.evaluate(() => { M.E.busy = false; }); await tapAt(p, dev, [H.sw.cx, H.sw.cy]); await p.waitForFunction(() => M.GS.active === 'marko', null, { timeout: 4000 }).catch(() => {}); await settle(p);
   // gewählter Gegenstand und Wechsel
-  const H2 = await p.evaluate(HUDBOX); if (H2['i:0']) { await tapAt(p, dev, [H2['i:0'].cx, H2['i:0'].cy]); await sleep(p, 250);
-    const r = await p.evaluate(() => { const P = M.E.pop; if (!P) return null; const k = P.opts.findIndex(o => o.pend); return k < 0 ? null : [P.bx + P.bw / 2, P.by + 2 + (k + 1) * P.rh + P.rh / 2]; });
-    if (r) { await tapAt(p, dev, r); await sleep(p, 150); const pend0 = await p.evaluate(() => M.E.pending); await tapAt(p, dev, [H2.sw.cx, H2.sw.cy]); await sleep(p, 500);
+  const H2 = await p.evaluate(HUDBOX); if (H2['i:0']) { const r = await selectItem(p, dev, H2);
+    if (r) { const pend0 = await p.evaluate(() => M.E.pending); await tapAt(p, dev, [H2.sw.cx, H2.sw.cy]); await sleep(p, 500);
       const after = await p.evaluate(() => ({ active: M.GS.active, pending: M.E.pending }));
       F.ok(!!pend0, 'Gegenstand „Benutze“ gewählt (' + pend0 + ')'); F.ok(after.active === 'mala' && !after.pending, 'Wechsel zu Mala hebt die Gegenstandswahl auf' + (after.pending ? ' – Wahl bleibt bestehen (' + after.pending + ')' : '')); } }
   finish(F); await p.context().close(); }
@@ -134,8 +152,8 @@ async function F2(b, dev) { const F = flow('F2', dev, 'Figurenwechsel, Fähigkei
 // F3: Gegenstand wählen, anwenden, Wahl aufheben (k2_limbo)
 async function F3(b, dev) { const F = flow('F3', dev, 'Gegenstand wählen, benutzen, abbrechen (k2_limbo, Vratnik)');
   const p = await open(b, 'k2_limbo', ctxOf(dev)); await loadSlot(p); await ready(p); const H = await p.evaluate(HUDBOX);
-  const selItem = async () => { await tapAt(p, dev, [H['i:0'].cx, H['i:0'].cy]); await sleep(p, 250); const r = await p.evaluate(() => { const P = M.E.pop; if (!P) return null; const k = P.opts.findIndex(o => o.pend); return k < 0 ? null : { xy: [P.bx + P.bw / 2, P.by + 2 + (k + 1) * P.rh + P.rh / 2], opts: P.opts.map(o => o.t), item: P.item }; }); if (r) { await tapAt(p, dev, r.xy); await sleep(p, 150); } return r; };
-  const s1 = await selItem(); F.ok(s1 && await p.evaluate(() => !!M.E.pending), 'Tipp auf Gegenstand → Menü (' + (s1 ? s1.opts.join(' · ') : '–') + ') → „Benutze“: Gegenstand gewählt (3 Tipps bis zum Ziel)');
+  const selItem = () => selectItem(p, dev, H);
+  const s1 = await selItem(); F.ok(s1 && await p.evaluate(() => !!M.E.pending), s1 && s1.taps === 1 ? 'Tipp auf Gegenstand: gewählt, Aktionsleiste ' + s1.opts.join(' · ') + ' (2 Tipps bis zum Ziel)' : 'Tipp auf Gegenstand → Menü (' + (s1 ? s1.opts.join(' · ') : '–') + ') → „Benutze“: Gegenstand gewählt (3 Tipps bis zum Ziel)');
   const sent = await p.evaluate(() => { const L = []; const t0 = M.text; M.text = function (b, s) { L.push(String(s)); return t0.apply(this, arguments); }; M.renderFrame(); if (M.isWide() && M.renderHud) M.renderHud(); M.text = t0; return L.find(s => /^Benutze /.test(s)) || ''; });   // Breitbild: Satz steht in der Leiste (renderHud)
   F.ok(/^Benutze .+ mit/.test(sent), 'Leiste zeigt den Satz „' + sent + '“');
   await tapAt(p, dev, [H['i:0'].cx, H['i:0'].cy]); await sleep(p, 150); F.ok(await p.evaluate(() => !M.E.pending), 'erneuter Tipp auf den Gegenstand hebt die Wahl auf');
@@ -189,9 +207,9 @@ async function F5(b, dev) { const F = flow('F5', dev, 'Gespräch mit vielen Antw
   let got = false; for (const id of npc) { await p.evaluate((id) => M.TA.act('talk', id), id); const ok = await p.waitForFunction(() => { const E = M.E; if (E.speech && E.gt() - E.speech.at > 250) E.endSpeech(); return !!E.dlg; }, null, { timeout: 15000, polling: 60 }).then(() => true, () => false); if (ok) { got = id; break; } await settle(p); }
   if (!got) { F.note('kein Gespräch mit Auswahl erreicht'); finish(F); await p.context().close(); return; }
   await sleep(p, 550);   // die Liste nimmt 450 ms nach dem Erscheinen keinen Tipp an (T04)
-  const L = await p.evaluate(LAYOUT); const d = await p.evaluate(() => { M.renderFrame(); const D = M.E.dlg; return { n: D.opts.length, rows: D.lay.rows.map(r => ({ k: r.k, r: r.r })), dn: D.lay.dn }; });
-  const last = d.rows[d.rows.length - 1], pt = await p.evaluate(PT, [last.r[0] + last.r[2] / 2, last.r[1] + last.r[3] / 2]);
-  F.note('Gespräch mit „' + got + '“: ' + d.n + ' Antworten, sichtbar ' + d.rows.length + (d.dn ? ', weitere über ▼' : '') + '; unterste Zeile ' + (L.vh - pt[1]).toFixed(0) + ' CSS-px über dem unteren Bildschirmrand, Zeilenhöhe ' + (last.r[3] * L.scenePx).toFixed(0) + ' CSS-px');
+  const L = await p.evaluate(LAYOUT); const d = await p.evaluate(DLGROWS);
+  const last = d.rows[d.rows.length - 1], pt = [last.x, last.y];
+  F.note('Gespräch mit „' + got + '“: ' + d.n + ' Antworten' + (d.html ? ' (HTML-Liste)' : '') + ', sichtbar ' + d.rows.length + (d.more ? ', weitere ' + (d.html ? 'durch Wischen' : 'über ▼') : '') + '; unterste Zeile ' + (L.vh - last.bottom).toFixed(0) + ' CSS-px über dem unteren Bildschirmrand, Zeilenhöhe ' + last.h.toFixed(0) + ' CSS-px');
   F.evidence.push(await shot(p, 'F5_' + dev + '_gespraech'));
   await p.evaluate(() => { window.__said = []; const s0 = M.API; const say0 = M.E.endSpeech; window.__sp = null; window.__spN = 0; window.__spT = setInterval(() => { if (M.E.speech && M.E.speech !== window.__sp) { window.__sp = M.E.speech; window.__spN++; } }, 5); });
   if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) await p.mouse.click(pt[0], pt[1]); else await p.touchscreen.tap(pt[0], pt[1]); await sleep(p, 400);
@@ -209,10 +227,10 @@ async function F5b(b, dev) { const F = flow('F5b', dev, 'Doppeltipp beim Überga
   const p = await open(b, 'k1_bruno', ctxOf(dev)); await loadSlot(p); await ready(p);
   const LABS = ['Erste Antwort', 'Zweite Antwort', 'Dritte Antwort', '(Gehen.)'];
   await p.evaluate((L) => { window.__ch = undefined; M.E.busy = true; M.API.choose(L.map((t, i) => ({ t, silent: true, bye: i === 3 })), { conv: false }).then(id => { window.__ch = id; M.E.busy = false; }); }, LABS); await sleep(p, 200);
-  const row = await p.evaluate(() => { M.renderFrame(); const r = M.E.dlg.lay.rows[0].r; return [r[0] + r[2] / 2, r[1] + r[3] / 2]; }); await p.evaluate(() => M.E.chooseDone(3)); await sleep(p, 150); await settle(p);
+  await sleep(p, 250); const row0 = (await p.evaluate(DLGROWS)).rows[0], row = [row0.x, row0.y]; await p.evaluate(() => M.E.chooseDone(3)); await sleep(p, 150); await settle(p);
   for (const gap of [120, 250, 420]) {
     await p.evaluate((L) => { window.__ch = undefined; M.E.busy = true; (async () => { await M.API.m('Das ist der letzte Satz vor der Auswahl.'); const id = await M.API.choose(L.map((t, i) => ({ t, silent: true, bye: i === 3 })), { conv: false }); window.__ch = id; M.E.busy = false; })(); }, LABS);
-    await sleep(p, 600); const xy = await p.evaluate(PT, row);
+    await sleep(p, 600); const xy = row;
     const tap = async () => { if (DEV[dev].engine === 'chromium' && !ctxOf(dev).hasTouch) await p.mouse.click(xy[0], xy[1]); else await p.touchscreen.tap(xy[0], xy[1]); };
     await tap(); await sleep(p, gap); await tap(); await sleep(p, 250);
     const r = await p.evaluate(() => ({ ch: window.__ch, dlg: !!M.E.dlg })); F.ok(r.ch === undefined, 'zweiter Tipp ' + gap + ' ms nach dem ersten: ' + (r.ch === undefined ? 'keine Antwort gewählt, Liste offen' : 'Antwort „' + ['Erste Antwort', 'Zweite Antwort', 'Dritte Antwort', '(Gehen.)'][r.ch] + '“ ungelesen gewählt'));
@@ -265,8 +283,8 @@ async function F8(b, dev) { const F = flow('F8', dev, 'Drehen während Gespräch
   await sleep(p, 600); const gt2 = await p.evaluate(() => M.E.gt()); F.ok(!s1.note || gt2 - s1.gt < 50, 'während der Drehhinweis die Fläche verdeckt, läuft die Spielzeit nicht weiter' + (s1.note ? ' (Δ ' + Math.round(gt2 - s1.gt) + ' ms Spielzeit in 600 ms)' : ''));
   F.evidence.push(await shot(p, 'F8_' + dev + '_hoch_hinweis'));
   if (s1.note) await tapEl(p, dev, '#rotnote button'); await sleep(p, 200);
-  const rows = await p.evaluate(() => { M.renderFrame(); return M.E.dlg.lay.rows.map(r => ({ k: r.k, c: [r.r[0] + r.r[2] / 2, r.r[1] + r.r[3] / 2] })); });
-  await tapAt(p, dev, rows[1].c); await p.waitForFunction(() => window.__ch !== undefined, null, { timeout: 3000 }).catch(() => {});
+  await sleep(p, 300); const rows = (await p.evaluate(DLGROWS)).rows;
+  await tapPage(p, dev, rows[1].x, rows[1].y); await p.waitForFunction(() => window.__ch !== undefined, null, { timeout: 3000 }).catch(() => {});
   F.ok(await p.evaluate(() => window.__ch === 'Zweite Antwort'), 'im gedrehten Bild trifft der Tipp die richtige Antwort'); F.evidence.push(await shot(p, 'F8_' + dev + '_hoch_gedreht'));
   await settle(p); await p.evaluate(() => M.shell.openPause()); await sleep(p, 200); await p.setViewportSize({ width: vp.width, height: vp.height }); await sleep(p, 500);
   const s2 = await p.evaluate(() => ({ rot: M.isRotated(), ctx: M.shell.ctx, btn: [...document.querySelectorAll('#shell .mi')].every(b => { const r = b.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth; }) }));
