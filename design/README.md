@@ -2,6 +2,7 @@
 
 | Pfad | Inhalt |
 |---|---|
+| `UMSETZUNG.md` | Stand der Umsetzung (Phase 1–4): was umgesetzt ist, Abnahme F1–F25 mit Nachweis, Abweichungen, Tests |
 | `UI_KONZEPT.md` | Analyse und Entwurf (A–F): Entscheidungen des Autors, Bestandsaufnahme, Problemliste, Gestaltungsrichtung, Entwurf je Bildschirm (D1–D17, inkl. Breitbild-Leiste), Umsetzungsplan, Abnahme (F1–F25) |
 | `prototype/` | Klickbarer Entwurf (`src.html` → `index.html`), Bilder aus dem Spiel (`img/`), Ist-Bilder (`ist/`), echte Hotspot-Daten (`hotspots.json`). Veröffentlicht: https://claude.ai/artifact/W8o3QnYDp8TEz9ayPLmVcP |
 | `evidence/` | Belege: Bildschirmfotos je Gerät (`desktop/`, `tablet/`, `phone/`, `phonePortrait/`) mit `capture.json` (Zustände, Trefferflächen, Escape-Protokoll, Intro-Zeitleiste), `geometry.md` (Tippflächen in CSS-px), `vm/` (Kapitelübergänge, Produktionscode in der Node-VM gerendert), `fontcheck.txt` (Abdeckung der Leseschrift) |
@@ -21,6 +22,17 @@ node design/tools/buildproto.js                                            # pro
 node design/tools/protosweep.js                                            # Gesamtprüfung des Prototyps (136 Zustände, Chromium)
 FONTSOURCE=<pfad>/node_modules/@fontsource/atkinson-hyperlegible-next \
 OPENTYPE=<pfad>/node_modules/opentype.js node design/tools/fontcheck.js    # Leseschrift gegen alle Zeichen der Spieltexte → evidence/fontcheck.txt
+```
+
+## Tests der Umsetzung (siehe `UMSETZUNG.md`)
+
+```bash
+node qa/ui/phase1.js [--shots <ordner>]    # Phase 1: Esc-Stapel, Antwortlisten, Figurenknopf, Fließtext, Hochformat
+node qa/ui/phase2.js [--shots <ordner>]    # Phase 2: HTML-Schicht, Spielstände, Kapitelsperre, Einstellungen, Schriften
+node qa/ui/phase3.js [--shots <ordner>]    # Phase 3: Breitbild-Leiste (iPhone quer), Wechsel, Drehung
+node qa/ui/phase4.js [--shots <ordner>]    # Phase 4: Untertitel, Schnellvorlauf, Sicherung, „Zuletzt“, Lesezeichen-Namen
+node qa/ui/hudcmp.js <alt/index.html>      # gewohnte Leiste pixelgleich zu einer früheren Fassung (Desktop, Tablet)
+bash design/tools/package_ui.sh            # bauen und dist/MALA_netlify_oberflaeche.zip packen
 ```
 
 Geräte sind Playwright-Emulationen (Chromium, WebKit), keine echten Telefone oder Tablets.

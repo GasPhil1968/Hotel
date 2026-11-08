@@ -52,6 +52,9 @@ function applyWide(on){ if (!on||!WG){ wideOn=false; applyStd(); setTimeout(plac
   if (hudCv.width!==g.Wh||hudCv.height!==g.Hh||!himg){ hudCv.width=g.Wh; hudCv.height=g.Hh; himg=hctx.createImageData(g.Wh,g.Hh); hu32=new Uint32Array(himg.data.buffer); hctx.imageSmoothingEnabled=false; }
   hudCv.style.left=g.x0+'px'; hudCv.style.top=g.y0+'px'; hudCv.style.width=g.cssW+'px'; hudCv.style.height=g.cssH+'px'; hudCv.style.display='block';
   if (M.setWideLayout) M.setWideLayout(g); setTimeout(placeCRT,0); if (M.onFit) try{ M.onFit(); }catch(e){} }
+// Wechsel zwischen Breitbild und gewohntem Bild (Overlay, Karte, Pause zurück): 150 ms Überblendung aus dem Dunkel, ohne bei „Bewegung reduzieren“
+function fadeSwap(){ if (M.reduceMotion && M.reduceMotion()) return; [cv,hudCv].forEach(function(el){ el.style.transition='none'; el.style.opacity='0'; });
+  requestAnimationFrame(function(){ [cv,hudCv].forEach(function(el){ el.style.transition='opacity 150ms linear'; el.style.opacity='1'; }); }); }
 M.isWide=function(){ return wideOn; }; M.wideGeo=function(){ return WG; }; M.sceneRect=function(){ return cv; };
 function touchDev(){ try{ return (navigator.maxTouchPoints||0)>0 || (window.matchMedia&&matchMedia('(pointer: coarse)').matches); }catch(e){ return false; } }   // nur Tablets und Telefone drehen, kein hohes Desktopfenster
 function fit(){ var dpr=window.devicePixelRatio||1, box=window.MALA_FIT?window.MALA_FIT():[window.innerWidth,window.innerHeight], vw=box[0], vh=box[1];
@@ -86,7 +89,14 @@ function onTouchEnd(e){ var t=Date.now(); if (t-lastTouchEnd<450) e.preventDefau
 document.addEventListener('keydown',function(e){ if (rotNote.classList.contains('on')) return;
   if (M.shell && M.shell.ctx){ if (M.audioInit) M.audioInit(); if (e.key==='Escape'||!(e.target&&e.target.closest&&e.target.closest('input'))) { if (M.shell.key(e)) return; } else return; }   // Titel und Pause: Tasten gehören der HTML-Schicht
   if (e.target&&e.target.closest&&e.target.closest('input,textarea,select')) return;
+  // Schnellvorlauf (UI-Konzept B3-5): Läuft eine Szene und ist nichts geöffnet, öffnet Esc die Pause erst beim Loslassen; gehalten (≥ 350 ms) läuft die Szene schneller ab
+  if (e.key==='Escape'){ if (ffDown){ e.preventDefault(); return; }
+    if (!e.repeat && M.E.busy && !M.E.dlg && M.escWouldPause && M.escWouldPause()){ e.preventDefault(); if (M.audioInit) M.audioInit(); ffDown=1; clearTimeout(ffT); ffT=setTimeout(function(){ ffT=null; if (ffDown) M.fastForward(true); },350); return; } }
   if (e.key===' '||e.key==='Tab'||e.key==='ArrowUp'||e.key==='ArrowDown') e.preventDefault(); M.key(e.key); });   // Tasten geben auch den Ton frei (M.key → audioInit)
+var ffDown=0, ffT=null;
+function ffEnd(openPause){ if (!ffDown) return; var was=M.E.ff; ffDown=0; clearTimeout(ffT); ffT=null; M.fastForward(false); if (openPause && !was) M.key('Escape'); }   // kurz gedrückt: wie gewohnt Esc
+document.addEventListener('keyup',function(e){ if (e.key==='Escape') ffEnd(true); });
+window.addEventListener('blur',function(){ ffEnd(false); });
 document.addEventListener('touchmove',function(e){ if (e.target===cv||e.target===hudCv) e.preventDefault(); },{passive:false});
 document.addEventListener('touchend',function(){ try{ M.audioInit(); }catch(_){} },{passive:true});
 document.addEventListener('gesturestart',function(e){ e.preventDefault(); });
@@ -94,9 +104,10 @@ document.addEventListener('visibilitychange',function(){ if (document.hidden){ t
 window.addEventListener('pagehide',function(){ try{ M.saveGame(); }catch(e){} });
 var last=performance.now();
 function frame(now){ var dt=now-last; last=now;
-  try{ M.update(dt); var want=!!WG && !!(M.wideWanted&&M.wideWanted()); if (want!==wideOn) applyWide(want);   // Overlays, Karten, Titel: gewohntes 320×200-Bild
+  try{ M.update(dt); var want=!!WG && !!(M.wideWanted&&M.wideWanted()); if (want!==wideOn){ applyWide(want); fadeSwap(); }   // Overlays, Karten, Titel: gewohntes 320×200-Bild
     var fb=M.renderFrame(), d=fb.d, N=wideOn?46080:64000; for (var i=0;i<N;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0);
     if (wideOn && himg){ var hb=M.renderHud&&M.renderHud(); if (hb){ var hd=hb.d, nn=Math.min(hd.length,hu32.length); for (var j=0;j<nn;j++) hu32[j]=PAL[hd[j]]; hctx.putImageData(himg,0,0); } }
+    if (M.subsSync) M.subsSync();
     if (M.__capNext && M.E.speech){ var ck=M.__capNext; M.__capNext=null; try{ M.__caps[ck]=cv.toDataURL(); }catch(e){} } }catch(err){ console.error(err); }
   requestAnimationFrame(frame); }
 if (M.boot) M.boot();

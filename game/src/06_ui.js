@@ -243,7 +243,16 @@ function dlgBye(){ if (!E.dlg) return -1; for (var i=E.dlg.opts.length-1;i>=0;i-
 // während der Auswahl: oben das Gegenüber, unten die Liste der Sätze
 function drawConv(){ if (!convOn()) return; if (!E.dlg) return; var pa=convPartner();
   if (pa && !E.speech){ var right=true, me=E.ACT[GS().active]; if (me) right=pa.x>=me.x; drawBust(pa.ch,right?W-4-PW:4,4,idleVariant(1700),right); }
+  if (SUBS){ SUBW.dlg=E.dlg; E.dlg.lay=null; if (!WIDE) fb.rect(0,SH,W,H-SH,P.k0); return; }   // Untertitelschicht: Liste als HTML (07_subs.js), Leiste darunter dunkel
   drawChoices(); }
+// Untertitelschicht (UI-Konzept B3-2, 07_subs.js): Mit „Schrift: Lesbar“ oder „Textgröße: groß“ zeichnet der Canvas Sätze und Antwortlisten
+// nicht selbst. Er merkt sich nur, was in diesem Bild zu sehen wäre (SUBW); die HTML-Schicht zeigt genau das. Brustbilder bleiben im Canvas.
+var SUBS=false, SUBW={sp:null,dlg:null};
+M.subsFrame=function(){ return SUBW; };
+// dieselben Antworttexte und Zustände wie in drawChoices (Übersetzung mit Sprecher und Gegenüber, schon gefragte Zeilen)
+M.dlgView=function(){ var d=E.dlg; if (!d) return null; var me=GS().active, pa0=convPartner(), to0=(d.to!==undefined&&d.to!==null)?d.to:(pa0?pa0.id:(E.trLast||null));
+  return {title:(d.title&&!pa0&&!E.speech)?M.trUI(d.title):'', opts:d.opts.map(function(o){ var t=M.lang==='de'?o.t:M.tr(o.t,{who:me,to:me==='marko'?to0:null,cat:'option',log:true});
+    return {t:M.trUI(t), asked:!!(pa0&&!o.bye&&!o.noGray&&GS().seen['ask:'+o.t]), ask:!!o.ask, bye:!!o.bye}; })}; };
 function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, y0=WD?SH-47:SH+1, y1=WD?SH-2:H-1, tx=x0+12, tw=w-34, i;   // Breitbild: Kasten über dem unteren Szenendrittel (UI-Konzept D17)
   if (d.top>=o.length) d.top=Math.max(0,o.length-1);
   if (WD) fb.rect(x0,y0,w,y1-y0+1,P.k0); else fb.rect(0,SH,W,H-SH,P.k0); var fr=g?P.x2:P.s4;
@@ -273,7 +282,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
 function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phone||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
-function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
+function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
   if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me;
     if (!other || other===a){ other=null; var best=1e9, pick=function(npcOnly){ Object.keys(E.ACT).forEach(function(k){ var b=E.ACT[k]; if (b===a||!E.actorShown(b)) return; if (npcOnly && (b.id==='marko'||b.id==='mala')) return; var dd=Math.abs(b.x-a.x); if (dd<best){ best=dd; other=b; } }); };
@@ -282,7 +291,7 @@ function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefine
   var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
-  drawBust(pr.ch,px,4,variant,right);
+  drawBust(pr.ch,px,4,variant,right); if (noText) return;
   var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
   fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
   lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
@@ -290,7 +299,9 @@ function drawSpeechBust(sp,pr){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefine
 
 // ---------------------------------------------------------------- Sprechtext
 function speakerPos(who){ var a=E.ACT[who]; if (a && E.actorShown(a) && E.room){ return [Math.round(a.x)-Math.round(E.camX), Math.round(a.y)-(a.speechY||(a.idle&&/sit|mend|cards|guitar/.test(a.idle)?40:54))]; } return null; }
-function drawSpeech(){ var sp=E.speech; if (!sp) return; if (sp.opt&&sp.opt.voice) return drawSpeechVoice(sp); var pr=speechPortrait(sp); if (pr) return drawSpeechBust(sp,pr); return drawSpeechPlain(sp); }
+function drawSpeech(){ var sp=E.speech; if (!sp) return;
+  if (SUBS && !E.overlay){ SUBW.sp=sp; var pr0=(sp.opt&&sp.opt.voice)?null:speechPortrait(sp); if (pr0) drawSpeechBust(sp,pr0,true); return; }   // Satz in der Untertitelschicht
+  if (sp.opt&&sp.opt.voice) return drawSpeechVoice(sp); var pr=speechPortrait(sp); if (pr) return drawSpeechBust(sp,pr); return drawSpeechPlain(sp); }
 function drawSpeechVoice(sp){ var lines=M.wrap(sp.text,230), lh=10, top=12, t=E.gt(), bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); });
   var x0=160-(bw>>1)-8, x1=160+(bw>>1)+8, y0=top-5, y1=top+lines.length*lh+3;
   for (var y=Math.max(0,y0);y<=Math.min(SH-1,y1);y++) for (var x=Math.max(0,x0);x<=Math.min(W-1,x1);x++){ var e=Math.min(x-x0,x1-x,y-y0,y1-y); if (e<0) continue; if (bayer(x,y)<Math.min(1,e/5)*0.85){ var k=y*W+x; fb.d[k]=M.DN[M.DN[M.DN[fb.d[k]]]]; } }
@@ -347,8 +358,9 @@ M.defineOverlay('memory',function(fb,ov,gt){ var d=ov.data, x0=44, y0=8, w=232, 
   if (d.anim) d.anim(fb,x0,y0,w,h,(gt-ov.at)/1000);
   // dunkler Grund unter dem Text (deckt die Leiste ab), weiche Kanten
   for (var yy=y0+h+1;yy<H;yy++) for (var xx=x0-10;xx<x0+w+10;xx++){ var ed=Math.min(xx-(x0-10),(x0+w+9)-xx); if (ed<8 && bayer(xx,yy)>ed/8) continue; fb.px(xx,yy,P.k0); }
-  M.text(fb,d.title||'Nachhall',x0,y0+h+4,P.x4);
-  var lines=d.lines||[], rows=[], ty=y0+h+15, maxRows=Math.floor((H-ty-1)/9);
+  if (d.blank) M.big(fb,d.title||'',x0+(w>>1),y0+h+4,P.x5,2,P.k0);   // Kapitelanfang: Titel in der Schriftstaffel der Kapitelkarte (UI-Konzept D3)
+  else M.text(fb,d.title||'Nachhall',x0,y0+h+4,P.x4);
+  var lines=d.lines||[], rows=[], ty=y0+h+(d.blank?24:15), maxRows=Math.floor((H-ty-1)/9);
   lines.slice(0,ov.step+1).forEach(function(l,i){ M.wrap(l,w-8).forEach(function(q){ rows.push([q,i===ov.step]); }); });
   rows.slice(-maxRows).forEach(function(r){ M.text(fb,r[0],x0,ty,r[1]?P.x5:P.x3); ty+=9; });
   if (Math.floor(gt/500)%2) M.text(fb,ov.step<lines.length-1?'▸':'✓',x0+w-6,H-10,P.x4); });
@@ -600,14 +612,16 @@ function drawMsg(){ if (!E.msg||E.gt()>E.msg.until||E.menu) return; var t=E.msg.
 function drawDrag(){ if (!drag||!drag.on||(WIDE&&pointer.y>=1000)) return; var it=M.ITEMS[drag.id], ic=iconOf(drag.id); var x=Math.round(pointer.x), y=Math.round(pointer.y), ix=x-(ic.w>>1), iy=y-ic.h-8; fb.blit(ic,ix,iy);
   var tgt=null; if (pointer.y<SH && hover && !hover.item) tgt=E.nameOf(hover); else { var u=uiAt(pointer.x,pointer.y); if (u&&u[0]==='i'){ var o=invList()[+u.slice(2)]; if (o&&o!==drag.id) tgt=M.ITEMS[o].name; } }
   var lab=tgt?('Benutze '+it.name+' mit '+tgt):it.name, lw=M.textWidth(lab), lx=Math.max(2,Math.min(W-2-lw,x-(lw>>1))), ly=Math.max(2,iy-11); M.text(fb,lab,lx,ly,tgt?P.l0:P.s4,P.k0); }
-M.renderFrame=function(){
+M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); SUBW.sp=null; SUBW.dlg=null;
   if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
   else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawPop(); drawDrag(); }
   // Prüfbericht K3: Erinnerung vor dem ersten Raum (Kapitelanfang) oder mit data.blank: auf dunklem Grund statt unsichtbar
   else if (E.screen==='game' && (E.overlay || E.speech)){ fb.rect(0,0,W,H,P.k0); drawOverlay(); drawSpeech(); }
-  applyFade(); drawMenu(); drawMsg(); drawCursor(); return fb; };
+  applyFade(); drawFF(); drawMenu(); drawMsg(); drawCursor(); return fb; };
+// Schnellvorlauf läuft (UI-Konzept B3-5): kleines „▸▸“ oben rechts in der Szene
+function drawFF(){ if (!(M.ffActive&&M.ffActive())) return; var t='▸▸', w=M.textWidth(t); fb.rect(W-w-8,2,w+6,11,P.k0); M.text(fb,t,W-w-5,4,isG()?P.x5:P.y4); }
 
 // ---------------------------------------------------------------- Breitbild-Leiste (UI-Konzept D17)
 // Auf breiten Telefonen zeigt 99_main.js die Szene eine Maßstabsstufe größer auf eigener Zeichenfläche; die Leiste liegt in einem eigenen
@@ -787,6 +801,8 @@ function escape(){ if (drag){ drag=null; return; }
   if (E.pending){ E.pending=null; return; }
   if (E.screen==='game'){ E.menu=true; E.paused(true); if (M.shellSync) M.shellSync(); } }
 M.escape=escape;
+// Würde Esc jetzt die Pause öffnen (nichts anderes offen)? Nur dann darf gehaltenes Esc den Schnellvorlauf starten (99_main.js)
+M.escWouldPause=function(){ return !drag && !E.overlay && !E.menu && !E.pop && !E.pending && E.screen==='game'; };
 // Antwortlisten per Tastatur (UI-Konzept D10): Ziffern 1–9 wählen eine sichtbare Zeile, ↑/↓ bewegen die Auswahl, Enter bestätigt
 function dlgKey(k){ var d=E.dlg; if (!d||E.speech) return false; if (d.visTop!==d.top) M.renderFrame();   // nach dem Blättern erst neu auslegen
   var vis=d.vis||[], n=d.opts.length;

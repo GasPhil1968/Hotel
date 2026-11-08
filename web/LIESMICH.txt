@@ -162,8 +162,12 @@ HILFE
   Hinweise, Steuerung, Zum Titelbild. Das Spiel hält an, die Musik wird leiser.
 - "Einstellungen": Lautstärke für Musik, Geräusche und Umgebung; Tempo der
   Sätze und "Weiter erst nach Tippen"; Textgröße und Schrift (Pixel oder eine
-  besonders lesbare Schrift) für die Menüs; Bewegung reduzieren; Röhrenbild;
-  Vollbild; Notizbuch als Liste oder "Nachdenken"; Sprache.
+  besonders lesbare Schrift); Bewegung reduzieren; Röhrenbild; Vollbild;
+  Notizbuch als Liste oder "Nachdenken"; Sprache.
+- Textgröße "groß" oder Schrift "Lesbar" gelten für die Menüs und für die
+  Gespräche: Sätze und Antworten stehen dann als Untertitel unten im Bild,
+  mit dem Namen der Figur davor. Antippen wie gewohnt; die Brustbilder
+  bleiben oben. Notizbuch, Briefe, Karte und Rätsel bleiben in Pixelschrift.
 - Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
 
 TASTATUR UND MAUS (am Rechner)
@@ -171,6 +175,11 @@ TASTATUR UND MAUS (am Rechner)
 - Leertaste oder Enter = Satz überspringen; auch Kapitelkarten überspringen
 - Esc schließt immer nur das Oberste: Verb-Menü, gewählten Gegenstand,
   Karte, Notizbuch. Ist nichts mehr offen, öffnet Esc das Menü.
+- Schnellvorlauf: Esc gedrückt halten, während eine Szene läuft. Sätze
+  enden dann sofort, Wege und Pausen laufen zehnmal so schnell (oben rechts
+  steht "▸▸"). Es passiert alles wie sonst, nur schneller – nichts wird
+  übersprungen. Loslassen, und es geht normal weiter. Kurz gedrückt öffnet
+  Esc wie immer das Menü. Bei einer Auswahl wartet das Spiel auf dich.
 - Antworten im Gespräch: Ziffern 1–9 wählen eine sichtbare Zeile,
   Pfeiltasten und Enter gehen auch; das Mausrad blättert.
 - Rechtsklick = "Schau an" (hebt auch einen gewählten Gegenstand auf).
@@ -181,7 +190,12 @@ SPIELSTÄNDE
   selbst ("Automatisch"). Dazu kommen je Platz drei Lesezeichen: Menü →
   Speichern → Lesezeichen antippen. Lesezeichen bleiben, bis du sie selbst
   überschreibst – so lässt sich ein Punkt vor einer Entscheidung festhalten.
+  "Benennen …" unter einem Lesezeichen gibt ihm einen eigenen Namen (bis 24
+  Zeichen), leer gelassen steht wieder der Ort da.
 - Jeder Stand zeigt ein kleines Bild, Kapitel, Ort, Datum und Spielzeit.
+- Wer vom Titelbild aus weiterspielt, sieht kurz eine Karte "Zuletzt": Ort
+  und die drei zuletzt notierten offenen Notizen, im Wortlaut des Notizbuchs.
+  Ein Tipp oder eine Taste schließt sie, sonst verschwindet sie von selbst.
 - Menü → Laden: die Stände dieses Platzes, über "Andere Plätze …" alle.
   Nach dem Laden bietet das Spiel zehn Sekunden lang "Rückgängig" an.
 - Am Kapitelende bleibt der Platz belegt ("Kapitelende"); "Fortsetzen"
@@ -194,7 +208,12 @@ SPIELSTÄNDE
 - "Beispielstände" unter "Spiel laden": ein Stand kurz bevor Marko Ivka die
   Wahrheit sagt (Kapitel 1) und, nach dem Ende von Kapitel 1, einer aus
   Sarajevo – jeweils auf einen Platz deiner Wahl.
-- Spielstände liegen nur in diesem Browser auf diesem Gerät.
+- Spielstände liegen nur in diesem Browser auf diesem Gerät. "Spiel laden"
+  → "Sicherung exportieren …" speichert alle Stände, Lesezeichen und
+  Einstellungen in eine Datei (mit Prüfsumme). "Sicherung importieren …" im
+  Titelbild spielt eine solche Datei nach Rückfrage wieder ein und ersetzt
+  dabei alles, was in diesem Browser liegt. Die Datei bewahrst du selbst auf;
+  eine Cloud gibt es nicht.
 
 FREMDE
 - Wen Marko noch nicht kennt, heißt "???". Jedes erste Gespräch beginnt

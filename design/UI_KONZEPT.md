@@ -4,6 +4,8 @@ Geprüfte Fassung: `web/index.html`, SHA-256 `5ddc4f3c29d8d46332504bc8cea2ecc78b
 
 Stand 7. November 2026: Die sechs Entscheidungen des Autors sind eingearbeitet (Abschnitt „Entscheidungen“). Es sind keine Entscheidungsfragen mehr offen.
 
+Stand 8. November 2026: Alle vier Phasen sind umgesetzt. Was wie umgesetzt und geprüft ist und wo die Umsetzung abweicht, steht in `design/UMSETZUNG.md`.
+
 Kennzeichnung der Aussagen:
 - **[B]** im laufenden Spiel beobachtet (Browser, Bildschirmfoto oder Messung unter `design/evidence/`)
 - **[C]** im Code oder in Assets festgestellt (Fundstelle `datei:zeile`, relativ zu `game/src/`, sofern nicht anders angegeben)

@@ -145,6 +145,17 @@ tr2(/^Weiter mit Kapitel (\d): (.+)$/, function(m){ return 'Dalje s poglavljem '
 tr2(/^Ende des (ersten|zweiten|dritten|vierten) Kapitels$/, function(m){ return 'Kraj '+{ersten:'prvog',zweiten:'drugog',dritten:'trećeg',vierten:'četvrtog'}[m[1]]+' poglavlja'; });
 tr2(/^Fortsetzung: (.+)$/, function(m){ return 'Nastavak: '+m[1]; });
 tr2(/^Abspann Kapitel (\d)$/, function(m){ return 'Odjavna špica, poglavlje '+m[1]; });
+// Phase 4: Sicherung als Datei, „Zuletzt“-Karte, Namen für Lesezeichen, Schnellvorlauf
+M.trAdd('bhs', {
+  'Diese Datei ist keine MALA-Sicherung.':'Ova datoteka nije sigurnosna kopija igre MALA.', 'Die Sicherung ist beschädigt (Prüfsumme stimmt nicht).':'Sigurnosna kopija je oštećena (kontrolni zbroj se ne slaže).',
+  'Sicherung einspielen?':'Vratiti sigurnosnu kopiju?', 'Einspielen':'Vrati', 'Sicherung eingespielt. Einstellungen gelten ab dem nächsten Start.':'Sigurnosna kopija je vraćena. Postavke vrijede od sljedećeg pokretanja.',
+  'Sicherung fehlgeschlagen.':'Sigurnosna kopija nije uspjela.', 'Zuletzt':'Prethodno',
+  'Lesezeichen benennen':'Imenuj oznaku', 'Name (leer lassen für den Ort):':'Ime (ostavi prazno za mjesto):', 'Benennen …':'Imenuj …', 'Benannt.':'Imenovano.', 'Name entfernt.':'Ime je uklonjeno.',
+  'Esc gedrückt halten, während eine Szene läuft: Sie läuft schneller ab.':'Drži Esc dok traje scena: odvija se brže.'
+});
+var unosa=function(n){ n=+n; return (n%10===1&&n%100!==11)?'unos':'unosa'; };
+tr2(/^Alle Spielstände und Einstellungen in diesem Browser werden durch die Sicherung ersetzt: (\d+) (?:Eintrag|Einträge), gespeichert (.+)\.$/, function(m,tr){ return 'Sve spremljene igre i postavke u ovom pregledniku zamijenit će sigurnosna kopija: '+m[1]+' '+unosa(m[1])+', spremljeno '+tr(m[2])+'.'; });
+tr2(/^Sicherung als Datei gespeichert \((\d+) (?:Eintrag|Einträge)\)\.$/, function(m){ return 'Sigurnosna kopija spremljena je kao datoteka ('+m[1]+' '+unosa(m[1])+').'; });
 M.trIgnore && M.trIgnore(['Gegenstand doppelt: ','Notiz doppelt: ','kein Raum ','unbekannte Notiz ','unbekannter Gegenstand ','keine Phase ','kein Hotspot ',' in ','kein Ausgang ','keine Auswahl offen',
   'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','Notiz steht im Notizbuch nicht zur Wahl: ','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
   'translate(-50%,-50%) rotate(90deg)','Neue Notiz: ','Das ist ','Benutze ',' mit ','Schlussfolgerung: ','Speichern (Platz ','Laden (Platz ','Text: ','Notizbuch: ','Musik: ','Geräusche: ','Röhrenbild: ',

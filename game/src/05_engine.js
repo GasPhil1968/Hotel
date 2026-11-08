@@ -537,7 +537,7 @@ E.readEnv=function(key){ var raw=null; try{ raw=LS().getItem(key); }catch(e){ re
   if (d.sv && d.sv>SV) return {kind:'incompatible',key:key,at:d.at||0,meta:d.meta||null};
   if (d.kind==='chapterEnd') return {kind:'chapterEnd',key:key,at:d.at||0,chapter:d.chapter||1,next:d.next||null,meta:d.meta||{chapter:d.chapter||1,playMs:d.playMs||0}};
   if (!d.GS||typeof d.GS!=='object'||!M.PHASES[d.GS.phase]) return {kind:'damaged',key:key,at:d.at||0};
-  var meta=d.meta||metaOf(d.GS); return {kind:key.indexOf(MARK)===0?'mark':'auto',key:key,at:d.at||0,meta:meta,thumb:d.thumb||null}; };
+  var meta=d.meta||metaOf(d.GS); return {kind:key.indexOf(MARK)===0?'mark':'auto',key:key,at:d.at||0,meta:meta,thumb:(typeof d.thumb==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(d.thumb))?d.thumb:null,name:(typeof d.name==='string'&&d.name)?d.name.slice(0,24):null}; };
 // Kapitelende: der Platz bleibt belegt, „Fortsetzen“ führt zur Weiter-Karte (UI-Konzept D3)
 E.markChapterEnd=function(ch){ try{ var ms=Math.round(GS.playMs||0); LS().setItem(SAVE+slot,JSON.stringify({sv:SV,kind:'chapterEnd',chapter:ch,next:ch<4?ch+1:null,at:Date.now(),playMs:ms,meta:{chapter:ch,kind:'chapterEnd',playMs:ms,roomName:'',phaseShort:''}})); }catch(e){} };
 function autosave(){ if (E.busy){ E.pendingSave=true; return; } saveGame(); }
@@ -577,11 +577,17 @@ E.toTitle=function(){ E.lastSaveOk=saveGame(); M.scapeStop(); resetTransient(); 
 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;
-M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
-  // Spielzeit steht beim Lesen (Notizbuch, Karte, Dokumente; UI-Konzept B1-14)
-  if (!paused){ gt+=dt; if (E.screen==='game' && !GS.ended && !E.overlay) GS.playMs+=dt/M.TURBO; if (E.shake>0) E.shake-=dt; tickTimers();
+// Schnellvorlauf (UI-Konzept D2, B3-5): Solange er gehalten wird (99_main.js: Esc gedrückt halten), enden Sätze sofort, Wartezeiten, Wege
+// und Blenden laufen zehnmal so schnell. Derselbe Ablauf mit allen Sätzen, Flags und Speicherpunkten – kein Sprung. Wirkt nur, während eine
+// Szene läuft und keine Auswahl offen ist.
+var FF_K=10; E.ff=false;
+M.fastForward=function(on){ E.ff=!!on; };
+M.ffActive=function(){ return !!(E.ff && E.busy && !E.dlg && !E.overlay && !paused && E.screen==='game'); };
+M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; var ffk=M.ffActive()?FF_K:1; dt*=M.TURBO*ffk;
+  // Spielzeit steht beim Lesen (Notizbuch, Karte, Dokumente; UI-Konzept B1-14); der Schnellvorlauf zählt als Echtzeit
+  if (!paused){ gt+=dt; if (E.screen==='game' && !GS.ended && !E.overlay) GS.playMs+=dt/(M.TURBO*ffk); if (E.shake>0) E.shake-=dt; tickTimers();
     for (var f=faders.length-1;f>=0;f--){ var F=faders[f]; if (F.f()){ faders.splice(f,1); F.res(); } }
-    if (E.speech && gt>=E.speech.until && !(tapText && E.busy && E.screen==='game' && !M.TEST)) endSpeech();
+    if (E.speech && (gt>=E.speech.until || (ffk>1 && gt>E.speech.at)) && !(tapText && E.busy && E.screen==='game' && !M.TEST && ffk===1)) endSpeech();   // Schnellvorlauf: Satz endet sofort, auch bei „Weiter erst nach Tippen“
     if (E.conv && ((!E.busy && !E.dlg) || E.conv.room!==room || E.screen!=='game')) E.conv=null;
     if (!E.busy && !E.dlg && !E.speech) E.trLast=null;
     if (room && E.screen==='game'){ Object.keys(ACT).forEach(function(k){ updateActor(ACT[k],dt); }); updateCamera(dt); if (room.tick) room.tick(API,dt); if (M.ambientTick) M.ambientTick(API,dt); syncPos(); }
