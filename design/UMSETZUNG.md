@@ -157,5 +157,5 @@ Ausgeführt auf diesem Stand (`web/index.html` wie im ZIP, nacheinander in einem
 | `qa/ui/phase4.js` | 92/92 (Schnellvorlauf: Spielzeit ×10,0, Spielstand-Uhr 1,00 ms je ms, 8 Sätze in 471 ms) |
 | `qa/ui/hudcmp.js` gegen Phase 3 | 8/8 gleich (gewohnte Leiste, Desktop und Tablet, vier Spielstände) |
 | `qa/regress/run.js` | 9/9 |
-| Browser-Szenarien Chromium, WebKit, Firefox | läuft noch (Ergebnis folgt im nächsten Commit) |
-| Simulationskampagne (Node-VM, A–E, 2 Worker) | läuft noch (Ergebnis folgt im nächsten Commit) |
+| Browser-Szenarien (`qa/browser/scenarios.js`) | Chromium 16/16, WebKit 15/15, Firefox 11/11 (je alle für die Engine vorgesehenen Szenarien) |
+| Simulationskampagne (Node-VM, `qa/sim.js`, 2 Worker) | A 4/4, B 19 + 5 offen, C 11 + 1 offen, D 24/24 (Speichern/Laden ohne Abweichung), E 18 + 6 offen; kein Fehlschlag. „Offen“ heißt: Nach einer zufälligen Störung wurde die Fortsetzung innerhalb der Grenze nicht gefunden. Die Sackgassen-Sonde fand in keinem dieser Läufe einen Softlock. Die Zahlen sind dieselben wie in Phase 3. |
