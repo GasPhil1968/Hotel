@@ -117,6 +117,6 @@ M.CREDITS2=['MALA','Kapitel 2: Sarajevo','','','Marko Vuković','Mala','','Toma�
   'Fikret · Senada · Hajra · Rade','Emina · Lejla · Šaćir · Nedžad','Jakob · Amra · Ilija · Milka','Dragica · Nada · Mirza · Sulejman','Selma · Damir · Fadila','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Sarajevo nachempfunden.','Alle Figuren sind erfunden.','','',
   'Für alle, die in Kellern Schule hielten,','und für alle, die noch gesucht werden.','','','FORTSETZUNG','Kapitel 3: Mostar','','',''];
-M.endChapter2=async function(A){ M.GS.ended=true; try{ localStorage.setItem('mala.c2end',JSON.stringify({at:Date.now()})); localStorage.removeItem('mala.save.'+M.E.slot()); }catch(e){}
+M.endChapter2=async function(A){ M.GS.ended=true; try{ localStorage.setItem('mala.c2end',JSON.stringify({at:Date.now()})); }catch(e){} M.E.markChapterEnd(2);
   await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS2; M.E.creditMusic='k2_end'; M.E.afterCredits=null; M.E.startCredits(); };
 })(M);

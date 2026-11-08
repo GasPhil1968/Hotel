@@ -8,7 +8,8 @@
 'use strict';
 function LS(){ try{ return window.localStorage; }catch(e){ return null; } }
 M.LANGS={ de:'Deutsch', bhs:'Bosanski / Hrvatski' };
-M.lang='de'; try{ var l0=LS()&&LS().getItem('mala.lang'); if (l0&&M.LANGS[l0]) M.lang=l0; }catch(e){}
+M.lang='de'; try{ var l0=LS()&&LS().getItem('mala.lang'); if (l0&&M.LANGS[l0]) M.lang=l0;
+  else if (!l0 && typeof navigator!=='undefined' && /^(hr|bs|sr|sh)\b/i.test(String(navigator.language||''))) M.lang='bhs'; }catch(e){}   // erster Start: Browsersprache (UI-Konzept D1)
 M.I18N={}; M.I18N_RE={}; M.trMiss={}; M.trVer=0;   // trVer steigt bei jeder Änderung (Sprache, Tabellen)
 M.trAdd=function(lang,table){ var T=M.I18N[lang]||(M.I18N[lang]={}); for (var k in table) if (Object.prototype.hasOwnProperty.call(table,k)) T[k]=table[k]; M.trVer++; if (M.trFlush) M.trFlush(); };
 M.I18N_IGN={}; M.trIgnore=function(a){ (a||[]).forEach(function(x){ M.I18N_IGN[x]=1; }); };   // nur für die Prüfung: Texte, die nie angezeigt werden

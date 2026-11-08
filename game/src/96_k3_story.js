@@ -313,7 +313,7 @@ M.CREDITS3=['MALA','Kapitel 3: Mostar','','','Marko Vuković','Mala','','Bato Br
   'Für alle, die noch gesucht werden,','und für alle, die nicht aufhören zu suchen.','','','FORTSETZUNG','Kapitel 4: München','','',''];
 M.endChapter3=async function(A){ var G=A.G; G.ended=true;
   try{ localStorage.setItem('mala.c3end',JSON.stringify({at:Date.now(),consent:G.flags['k3.fin.consent'],promise:G.flags['k3.p.promise'],talk2:G.flags['k3.d3.talk2v'],sample:!!G.flags['k3.e.sample'],asks:G.flags['k3.askCount']||0,skips:G.flags['k3.skips']||0}));
-    localStorage.removeItem('mala.save.'+M.E.slot()); }catch(e){}
+  }catch(e){} M.E.markChapterEnd(3);
   await card(A,'','Ende des dritten Kapitels','',5200,'Fortsetzung: München');
   await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS3; M.E.creditMusic='k3_end'; M.E.afterCredits=M.startChapter4?'ch4':null; M.E.startCredits(); };
 })(M);

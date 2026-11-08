@@ -30,10 +30,15 @@ vier bis fünf Stunden. Die Frage, die alles trägt: Was heißt „nicht
 zurückgekommen“?
 
 KAPITEL WÄHLEN
-- Im Hauptmenü stehen alle vier Kapitel direkt zur Wahl: „Kapitel 1: Split“,
-  „Kapitel 2: Sarajevo“, „Kapitel 3: Mostar“ und „Kapitel 4: München“. Ein Tippen auf ein Kapitel
-  und dann auf einen Speicherplatz startet es sofort, ohne die vorigen
-  gespielt zu haben. Für die Erinnerungen davor gelten sinnvolle Vorgaben.
+- Das Hauptmenü hat vier Einträge: Neues Spiel, Spiel laden, Einstellungen,
+  Über MALA – mit Spielstand oben zusätzlich "Fortsetzen" (der jüngste Stand,
+  mit einem Tipp).
+- Ein Kapitel ist spielbar, sobald das vorige zu Ende gespielt ist. "Neues
+  Spiel" zeigt dann die Kapitelwahl; noch gesperrte Kapitel stehen ohne
+  Ortsnamen und mit Grund darin. Kapitel 5 ist noch nicht erschienen.
+  Vorhandene Spielstände lassen sich immer laden.
+- "Neues Spiel" beginnt auf dem ersten freien Speicherplatz, ohne Rückfrage.
+  Sind alle drei belegt, fragt das Spiel, welcher überschrieben wird.
 - Wer Split zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
   weiterzuspielen. Antworten und Hinweise aus Split (zum Beispiel, was
   Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
@@ -42,8 +47,9 @@ KAPITEL WÄHLEN
   Marko und Mala am Grab ausgemacht haben und ob Marko seine Probe gegeben hat.
 
 SPRACHE / JEZIK
-- Im Titelmenü oder im Menü „Sprache: Deutsch“ antippen: Das Spiel wechselt
-  auf Bosnisch/Kroatisch („Jezik: bosanski / hrvatski“). Kapitel 1 (Split)
+- Unter "Einstellungen" → "Sprache" auf "Bos./Hrv." tippen: Das Spiel wechselt
+  auf Bosnisch/Kroatisch. Ist das Gerät auf Bosnisch, Kroatisch oder Serbisch
+  eingestellt, beginnt es gleich so. Kapitel 1 (Split)
   ist vollständig übersetzt, Kapitel 2 bis 4 (Sarajevo, Mostar,
   München) laufen vorerst auf Deutsch.
 - Jede Figur spricht ihre Sprache: Marko Standardkroatisch, mit Mala aber
@@ -148,8 +154,12 @@ HILFE
   passiert nichts Schlimmes; man versucht es einfach noch einmal.
 - "Zeigen": alle anklickbaren Stellen werden kurz markiert; Ausgänge (grün)
   und Personen (rot) mit Namen. Den Namen jeder anderen Stelle zeigt ein Tipp.
-- "Menü": Speichern, Laden (drei Plätze), Textgeschwindigkeit
-  (oder "wartet auf Tippen"), Musik, Geräusche, Röhrenbild, Vollbild, Anleitung.
+- "Menü" (oder Esc): Weiterspielen, Speichern, Laden, Einstellungen,
+  Hinweise, Steuerung, Zum Titelbild. Das Spiel hält an, die Musik wird leiser.
+- "Einstellungen": Lautstärke für Musik, Geräusche und Umgebung; Tempo der
+  Sätze und "Weiter erst nach Tippen"; Textgröße und Schrift (Pixel oder eine
+  besonders lesbare Schrift) für die Menüs; Bewegung reduzieren; Röhrenbild;
+  Vollbild; Notizbuch als Liste oder "Nachdenken"; Sprache.
 - Es gibt kein Game Over. Falsche Antworten kann man immer wiederholen.
 
 TASTATUR UND MAUS (am Rechner)
@@ -163,15 +173,24 @@ TASTATUR UND MAUS (am Rechner)
 - Das Mausrad blättert außerdem im Notizbuch und im Inventar.
 
 SPIELSTÄNDE
-- Drei Speicherplätze für alle Kapitel. Das Spiel speichert bei jedem
-  Ortswechsel selbst. Am Platz steht, in welchem Kapitel und Abschnitt man ist.
-  Alte Spielstände aus Kapitel 1 laden unverändert.
+- Drei Speicherplätze. Auf jedem speichert das Spiel bei jedem Ortswechsel
+  selbst ("Automatisch"). Dazu kommen je Platz drei Lesezeichen: Menü →
+  Speichern → Lesezeichen antippen. Lesezeichen bleiben, bis du sie selbst
+  überschreibst – so lässt sich ein Punkt vor einer Entscheidung festhalten.
+- Jeder Stand zeigt ein kleines Bild, Kapitel, Ort, Datum und Spielzeit.
+- Menü → Laden: die Stände dieses Platzes, über "Andere Plätze …" alle.
+  Nach dem Laden bietet das Spiel zehn Sekunden lang "Rückgängig" an.
+- Am Kapitelende bleibt der Platz belegt ("Kapitelende"); "Fortsetzen"
+  führt dann zur Karte "Weiter mit Kapitel …".
+- Löschen geht im Titelbild unter "Spiel laden" (mit Rückfrage). Ein
+  beschädigter Stand ist als solcher beschriftet und lässt sich nur löschen.
 - Geht man mitten in einer Szene zum Titelbild oder wechselt die App,
   merkt sich das Spiel den Stand vom Beginn der Szene. Man spielt sie dann
-  noch einmal, verliert aber nichts.
-- Beim Fortsetzen fragt das Spiel nach dem Platz.
-- "Mitgelieferter Spielstand" im Titelbild: lädt einen Stand kurz bevor
-  Marko Ivka die Wahrheit sagt (Nacht an der Mole) auf einen Platz deiner Wahl.
+  noch einmal, verliert aber nichts. Alte Spielstände laden unverändert.
+- "Beispielstände" unter "Spiel laden": ein Stand kurz bevor Marko Ivka die
+  Wahrheit sagt (Kapitel 1) und, nach dem Ende von Kapitel 1, einer aus
+  Sarajevo – jeweils auf einen Platz deiner Wahl.
+- Spielstände liegen nur in diesem Browser auf diesem Gerät.
 
 FREMDE
 - Wen Marko noch nicht kennt, heißt "???". Jedes erste Gespräch beginnt
@@ -184,7 +203,7 @@ INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
 1. Den Inhalt dieses Ordners bei Netlify hochladen: app.netlify.com/drop
    öffnen und den Ordner hineinziehen. Netlify zeigt eine https-Adresse.
 2. Auf dem iPad mit Internet diese Adresse in Safari öffnen und warten,
-   bis unten "Offline bereit ✓" erscheint (einige Sekunden).
+   bis oben rechts "Offline bereit ✓" erscheint (einige Sekunden).
 3. Teilen-Knopf -> "Zum Home-Bildschirm". Das Spiel startet dann vom
    Home-Bildschirm aus im Vollbild, auch im Flugmodus.
 4. Neue Version: Ordner erneut bei derselben Netlify-Seite hochladen und

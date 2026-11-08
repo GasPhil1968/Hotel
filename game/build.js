@@ -18,13 +18,28 @@ for (const f of files.filter(keep)) js += `/* ---- ${path.relative(SRC, f).repla
 // Syntaxprüfung je Datei: ein Tippfehler bricht den Bau mit Dateiname und Zeile ab, statt eine leere Seite zu liefern
 for (const f of files.filter(keep)) { try { new (require('vm').Script)(fs.readFileSync(f, 'utf8'), { filename: path.relative(SRC, f) }); } catch (e) { console.error('Syntaxfehler: ' + (e.stack || e).toString().split('\n').slice(0, 4).join('\n')); process.exit(1); } }
 if (js.includes('</script')) throw new Error('</script im Quelltext');
+// Schriften für die HTML-Schicht (07_shell.js): „MALA Pixel“ aus der Spielschrift (design/tools/makefont.js) und die Leseschrift
+// Atkinson Hyperlegible Next (SIL OFL 1.1, game/fonts/AtkinsonHyperlegibleNext-OFL.txt), lokal eingebettet – auch offline.
+const FONTDIR = path.join(__dirname, 'fonts'), b64 = (f) => fs.readFileSync(path.join(FONTDIR, f)).toString('base64');
+const UR_LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+const UR_EXT = 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF';
+let FONTS = '';
+if (fs.existsSync(path.join(FONTDIR, 'MALAPixel.otf'))) {
+  FONTS += `@font-face{font-family:"MALA Pixel";src:url(data:font/otf;base64,${b64('MALAPixel.otf')}) format("opentype");font-display:block}\n`;
+  for (const w of [400, 700]) for (const [sub, ur] of [['latin', UR_LATIN], ['latin-ext', UR_EXT]])
+    FONTS += `@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:${w};font-style:normal;font-display:swap;src:url(data:font/woff2;base64,${b64('atkinson-hyperlegible-next-' + sub + '-' + w + '-normal.woff2')}) format("woff2");unicode-range:${ur}}\n`;
+  FONTS += ':root{--mala-read:"Atkinson Hyperlegible Next",system-ui,-apple-system,"Segoe UI",sans-serif}\n';
+}
+// Passt die eingebettete Pixelschrift noch zur Schrifttabelle im Code? (makefont.js schreibt den Fingerabdruck daneben)
+{ const core = fs.readFileSync(path.join(SRC, '00_core.js'), 'utf8'), m = core.match(/var F\s*=\s*\{[\s\S]*?\n\};/), fp = path.join(FONTDIR, 'MALAPixel.src.sha1');
+  if (m && fs.existsSync(fp)) { const h = require('crypto').createHash('sha1').update(m[0]).digest('hex'); if (h !== fs.readFileSync(fp, 'utf8').trim()) console.warn('Hinweis: Schrifttabelle in 00_core.js geändert – design/tools/makefont.js neu ausführen (game/fonts/MALAPixel.otf)'); } }
 const html = `<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#08070d">
 <title>Mala – Split, Sarajevo, Mostar, München</title>
 <style>
-:root{ background:#08070d; }
+${FONTS}:root{ background:#08070d; }
 html,body{ margin:0; height:100%; background:#08070d; overflow:hidden; touch-action:none; overscroll-behavior:none; }
 body{ display:flex; flex-direction:column; align-items:center; justify-content:center; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
 #game{ display:block; image-rendering:pixelated; image-rendering:crisp-edges; touch-action:none; cursor:none; background:#08070d; }
@@ -83,7 +98,7 @@ if (ai >= 0) {
   const page = `<title>Mala in Sarajevo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-:root{ color-scheme:dark; background:#08070d; }
+${FONTS}:root{ color-scheme:dark; background:#08070d; }
 html,body{ height:100%; margin:0; background:#08070d; overflow:hidden; touch-action:none; overscroll-behavior:none; }
 body{ box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:0; color:#82c1c9; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
 #game{ display:block; image-rendering:pixelated; image-rendering:crisp-edges; touch-action:none; cursor:none; background:#08070d; }

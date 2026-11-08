@@ -4,15 +4,21 @@
 var AC=null, master=null, sfxG=null, musG=null, ambG=null, ambF=null, ghostG=null, NOISE=null, musicOn=true, soundOn=true;
 var song=null, songName=null, nextBeat=0, beatN=0, ghostOn=false, droneNodes=null;
 try{ musicOn=localStorage.getItem('mala.music')!=='0'; soundOn=localStorage.getItem('mala.sound')!=='0'; }catch(e){}
+// Lautstärke je Gruppe (0–1) auf die vorhandenen Verstärkungen (UI-Konzept D5); in der Pause wird die Musik gedämpft
+var VOL={mus:1,sfx:1,amb:1}, duck=1; try{ ['mus','sfx','amb'].forEach(function(k){ var v=localStorage.getItem('mala.vol.'+k); if (v!==null&&v!=='') VOL[k]=Math.max(0,Math.min(1,+v)); }); }catch(e){}
+function gains(){ if (!AC) return; var t=AC.currentTime; try{ musG.gain.setTargetAtTime(musicOn?0.5*VOL.mus*duck:0,t,0.08); sfxG.gain.setTargetAtTime(soundOn?0.8*VOL.sfx:0,t,0.02); ambG.gain.setTargetAtTime(soundOn?0.55*VOL.amb*(duck<1?0.6:1):0,t,0.08); }catch(e){} }
+M.volume=function(k,v){ if (v===undefined) return VOL[k]; VOL[k]=Math.max(0,Math.min(1,+v||0)); try{ localStorage.setItem('mala.vol.'+k,String(VOL[k])); }catch(e){}
+  if (k==='mus'){ if (VOL.mus>0&&!musicOn) M.setMusic(true); else if (VOL.mus===0&&musicOn) M.setMusic(false); } if ((k==='sfx'||k==='amb')&&VOL[k]>0&&!soundOn) M.setSound(true); gains(); };
+M.duckMusic=function(on){ duck=on?0.35:1; gains(); };
 M.SONGS={};
 M.defineSong=function(n,d){ M.SONGS[n]=d; };
 M.audioInit=function(){ if (typeof window==='undefined') return; if (AC){ if (AC.state==='suspended') AC.resume(); return; }
   try{ AC=new (window.AudioContext||window.webkitAudioContext)();
     master=AC.createGain(); master.gain.value=0.9; master.connect(AC.destination);
-    sfxG=AC.createGain(); sfxG.gain.value=soundOn?0.8:0; sfxG.connect(master);
-    musG=AC.createGain(); musG.gain.value=musicOn?0.5:0; musG.connect(master);
+    sfxG=AC.createGain(); sfxG.gain.value=soundOn?0.8*VOL.sfx:0; sfxG.connect(master);
+    musG=AC.createGain(); musG.gain.value=musicOn?0.5*VOL.mus*duck:0; musG.connect(master);
     ambF=AC.createBiquadFilter(); ambF.type='lowpass'; ambF.frequency.value=18000; ambF.Q.value=0.5; ambF.connect(master);
-    ambG=AC.createGain(); ambG.gain.value=soundOn?0.55:0; ambG.connect(ambF);
+    ambG=AC.createGain(); ambG.gain.value=soundOn?0.55*VOL.amb:0; ambG.connect(ambF);
     ghostG=AC.createGain(); ghostG.gain.value=0; ghostG.connect(master);
     NOISE=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate); var d=NOISE.getChannelData(0), b0=0,b1=0,b2=0; for (var i=0;i<d.length;i++){ var w=Math.random()*2-1; d[i]=w; }
     nextBeat=AC.currentTime+0.3; startDrone();
@@ -218,7 +224,13 @@ M.addEvents=function(o){ Object.keys(o).forEach(function(k){ EV[k]=o[k]; }); };
 M.addInstruments=function(o){ Object.keys(o).forEach(function(k){ INST[k]=o[k]; }); };
 M.addDrums=function(o){ Object.keys(o).forEach(function(k){ DRUMS[k]=o[k]; }); };
 // Lied: {bpm, meter, bars:[{b:[bass je Schlag], c:[Akkord]}], bassInst, bassVol, comp, compBeats, compVol, compLen, lead:[[schlag,midi,länge],...], leadInst, leadVol, leadEvery, drums, loop, lead2...}
-M.music=function(name){ if (name===songName) return; songName=name; song=M.SONGS[name]||null; beatN=0; if (AC) nextBeat=Math.max(AC.currentTime+0.2,nextBeat); };
+// Aus der Titelmusik heraus wird weich ausgeblendet, statt hart zu schneiden (UI-Konzept D2); Regen und Wind (Raumklang) setzen davon unabhängig ein
+var musicTm=null;
+M.music=function(name){ if (name===songName) return; var from=songName; songName=name; if (musicTm){ clearTimeout(musicTm); musicTm=null; }
+  var go=function(){ musicTm=null; song=M.SONGS[songName]||null; beatN=0; if (AC) nextBeat=Math.max(AC.currentTime+0.2,nextBeat); gains(); };
+  if (AC && from==='title' && musicOn && typeof setTimeout!=='undefined'){ try{ var t=AC.currentTime; musG.gain.cancelScheduledValues(t); musG.gain.setValueAtTime(musG.gain.value,t); musG.gain.linearRampToValueAtTime(0.0001,t+1.6); }catch(e){} song=null; musicTm=setTimeout(go,1700); return; }
+  go(); };
+M.audioRunning=function(){ return !!(AC && AC.state==='running'); };
 M.currentSong=function(){ return songName; };
 M.scheduleMusic=function(){ ambientTick(); if (!AC||!musicOn||!song) return; var s=song, spb=60/s.bpm, meter=s.meter||4, total=s.bars.length*meter;
   while (nextBeat<AC.currentTime+0.25){ var t=nextBeat, bi=beatN%total, bar=Math.floor(bi/meter), beat=bi%meter, B=s.bars[bar], loop=Math.floor(beatN/total);
@@ -229,8 +241,8 @@ M.scheduleMusic=function(){ ambientTick(); if (!AC||!musicOn||!song) return; var
     if (s.lead && (!s.leadEvery || loop%s.leadEvery===(s.leadOffset||0))) s.lead.forEach(function(L){ if (L[0]===bi) INST[s.leadInst||'box'](nf(L[1]),t,s.leadVol||0.03,L[2]*spb,musG); });
     if (s.lead2) s.lead2.forEach(function(L){ if (L[0]===bi) INST[s.lead2Inst||'pluck'](nf(L[1]),t,s.lead2Vol||0.02,L[2]*spb,musG); });
     nextBeat+=spb; beatN++; } };
-M.setMusic=function(on){ musicOn=on; try{ localStorage.setItem('mala.music',on?'1':'0'); }catch(e){} if (musG) musG.gain.value=on?0.5:0; if (AC) nextBeat=Math.max(nextBeat,AC.currentTime+0.1); };
-M.setSound=function(on){ soundOn=on; try{ localStorage.setItem('mala.sound',on?'1':'0'); }catch(e){} if (sfxG) sfxG.gain.value=on?0.8:0; if (ambG) ambG.gain.value=on?0.55:0; if (ghostG) ghostG.gain.value=(on&&ghostOn)?1:0; };
+M.setMusic=function(on){ musicOn=on; try{ localStorage.setItem('mala.music',on?'1':'0'); }catch(e){} gains(); if (AC) nextBeat=Math.max(nextBeat,AC.currentTime+0.1); };
+M.setSound=function(on){ soundOn=on; try{ localStorage.setItem('mala.sound',on?'1':'0'); }catch(e){} gains(); if (ghostG) ghostG.gain.value=(on&&ghostOn)?1:0; };
 M.musicOn=function(){ return musicOn; }; M.soundOn=function(){ return soundOn; };
 
 // ---------------------------------------------------------------- Musik (eigene Stücke)

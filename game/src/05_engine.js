@@ -507,16 +507,39 @@ function closeCard(){ if (!E.card) return; var r=E.card.res, p=E.card.prev; E.ca
 E.closeCard=closeCard;
 
 // ---------------------------------------------------------------- Speichern / Laden
-var SAVE='mala.save.', SLOTS=3, slot=1;
+// Modell (UI-Konzept D6/D7): je Platz N ein automatischer Stand (mala.save.N, jeder Ortswechsel, A.save, Titelbild, App-Wechsel) und drei
+// Lesezeichen (mala.mark.N.k), die nur der Spieler schreibt. Hülle: {GS, at, sv:2, meta:{chapter, phase, phaseShort, room, roomName, playMs, kind}, thumb}.
+// Ältere Stände ohne sv laden unverändert. Am Kapitelende bleibt der Platz belegt: {sv:2, kind:'chapterEnd', chapter, next, at, meta}.
+var SAVE='mala.save.', MARK='mala.mark.', SLOTS=3, MARKS=3, SV=2, slot=1;
 try{ slot=Math.max(1,Math.min(SLOTS,+localStorage.getItem('mala.slot')||1)); }catch(e){}
 function LS(){ return M.storage||localStorage; }
+E.SLOTS=SLOTS; E.MARKS=MARKS; E.SV=SV;
 E.slot=function(){ return slot; }; E.setSlot=function(n){ slot=n; try{ localStorage.setItem('mala.slot',String(n)); }catch(e){} };
-function slotInfo(n){ try{ var raw=LS().getItem(SAVE+n); if (!raw) return null; var d=JSON.parse(raw); return {phase:d.GS.phase,ms:d.GS.playMs||0,at:d.at||0}; }catch(e){ return null; } }
+E.keyAuto=function(n){ return SAVE+(n||slot); }; E.keyMark=function(n,k){ return MARK+(n||slot)+'.'+k; };
+function slotInfo(n){ try{ var raw=LS().getItem(SAVE+n); if (!raw) return null; var d=JSON.parse(raw); if (d.kind==='chapterEnd') return {phase:null,ms:d.playMs||0,at:d.at||0,chapterEnd:d.chapter}; return {phase:d.GS.phase,ms:d.GS.playMs||0,at:d.at||0}; }catch(e){ return null; } }
 E.slotInfo=slotInfo;
+function roomNameOf(id){ var R=id&&M.ROOMS[id]; if (!R) return id||''; var n=R.name; if (typeof n==='function'){ try{ n=n(RS(id),GS); }catch(e){ n=id; } } return typeof n==='string'?n:id; }
+function metaOf(g){ var ph=M.PHASES[g.phase]||{}, rid=g.pos&&g.pos[g.active]&&g.pos[g.active].room; return {chapter:M.chapterOf?M.chapterOf(g):1, phase:g.phase, phaseShort:ph.short||ph.title||g.phase, room:rid||null, roomName:roomNameOf(rid), playMs:Math.round(g.playMs||0)}; }
+E.metaOf=metaOf;
+function envOf(g,kind){ var e={GS:g,at:Date.now(),sv:SV,meta:metaOf(g)}; e.meta.kind=kind; if (M.makeThumb && room && E.screen==='game'){ try{ var t=M.makeThumb(); if (t) e.thumb=t; }catch(err){} } return e; }
+function quota(e){ return !!(e && (e.name==='QuotaExceededError' || e.code===22 || e.code===1014 || /quota/i.test(String(e.message||'')))); }
 // live: ein ausdrücklicher Sicherungspunkt im Skript (A.save) – sonst gilt während einer Szene der Stand von ihrem Beginn
-function saveGame(live){ if (!room||E.screen!=='game'||room.noSave||GS.ended) return false; var g=GS;
+function saveGame(live){ E.saveReason=null; if (!room||E.screen!=='game'){ E.saveReason='screen'; return false; } if (room.noSave){ E.saveReason='nosave'; return false; } if (GS.ended){ E.saveReason='ended'; return false; } var g=GS;
   if (busyV && live!==true && safeGS) g=safeGS; else syncPos();
-  try{ var js=JSON.stringify({GS:g,at:Date.now()}); if (busyV && g===GS) safeGS=JSON.parse(js).GS; LS().setItem(SAVE+slot,js); return true; }catch(e){ return false; } }
+  try{ var js=JSON.stringify(envOf(g,'auto')); if (busyV && g===GS) safeGS=JSON.parse(JSON.stringify(g)); LS().setItem(SAVE+slot,js); return true; }catch(e){ E.saveReason=quota(e)?'quota':'error'; return false; } }
+// Lesezeichen: nur, wenn nichts läuft (keine Szene, kein Gespräch, kein Overlay, kein Ortswechsel); Rückmeldung erst nach erfolgreichem Schreiben
+E.saveMark=function(k){ E.saveReason=null; if (!room||E.screen!=='game'){ E.saveReason='screen'; return false; } if (room.noSave){ E.saveReason='nosave'; return false; } if (GS.ended){ E.saveReason='ended'; return false; }
+  if (busyV||E.dlg||E.overlay||E.transitioning){ E.saveReason='busy'; return false; }
+  syncPos(); try{ LS().setItem(MARK+slot+'.'+k,JSON.stringify(envOf(GS,'mark'))); return true; }catch(e){ E.saveReason=quota(e)?'quota':'error'; return false; } };
+// Stand lesen, ohne zu laden: Art (auto, mark, chapterEnd, damaged, incompatible), Metadaten, Vorschaubild
+E.readEnv=function(key){ var raw=null; try{ raw=LS().getItem(key); }catch(e){ return {kind:'damaged',key:key,at:0}; } if (!raw) return null;
+  var d; try{ d=JSON.parse(raw); }catch(e){ return {kind:'damaged',key:key,at:0}; } if (!d||typeof d!=='object') return {kind:'damaged',key:key,at:0};
+  if (d.sv && d.sv>SV) return {kind:'incompatible',key:key,at:d.at||0,meta:d.meta||null};
+  if (d.kind==='chapterEnd') return {kind:'chapterEnd',key:key,at:d.at||0,chapter:d.chapter||1,next:d.next||null,meta:d.meta||{chapter:d.chapter||1,playMs:d.playMs||0}};
+  if (!d.GS||typeof d.GS!=='object'||!M.PHASES[d.GS.phase]) return {kind:'damaged',key:key,at:d.at||0};
+  var meta=d.meta||metaOf(d.GS); return {kind:key.indexOf(MARK)===0?'mark':'auto',key:key,at:d.at||0,meta:meta,thumb:d.thumb||null}; };
+// Kapitelende: der Platz bleibt belegt, „Fortsetzen“ führt zur Weiter-Karte (UI-Konzept D3)
+E.markChapterEnd=function(ch){ try{ var ms=Math.round(GS.playMs||0); LS().setItem(SAVE+slot,JSON.stringify({sv:SV,kind:'chapterEnd',chapter:ch,next:ch<4?ch+1:null,at:Date.now(),playMs:ms,meta:{chapter:ch,kind:'chapterEnd',playMs:ms,roomName:'',phaseShort:''}})); }catch(e){} };
 function autosave(){ if (E.busy){ E.pendingSave=true; return; } saveGame(); }
 function hasSave(n){ try{ return !!LS().getItem(SAVE+(n||slot)); }catch(e){ return false; } }
 E.hasSave=hasSave; E.saveGame=saveGame; M.saveGame=saveGame;
@@ -529,21 +552,28 @@ function validate(d){ var base=freshGame(); Object.keys(base).forEach(function(k
   base.inv=(base.inv||[]).filter(function(id,i,a){ return M.ITEMS[id] && a.indexOf(id)===i; }); base.notes=(base.notes||[]).filter(function(id){ return M.NOTES[id]; });
   if (!M.PHASES[base.phase]) return null; ['marko','mala'].forEach(function(k){ if (!base.pos[k]||!M.ROOMS[base.pos[k].room]) base.pos[k]={room:base.pos.marko&&M.ROOMS[base.pos.marko.room]?base.pos.marko.room:'flat',x:160,y:120,f:'R'}; });
   if (M.ROOMS[base.pos[base.active].room].noSave) return null; return base; }
-function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; return loadData(JSON.parse(raw)); }catch(e){ console.error(e); return false; } }
+function loadGame(n){ try{ var raw=LS().getItem(SAVE+(n||slot)); if (!raw) return false; var d=JSON.parse(raw); if (d.kind==='chapterEnd'||(d.sv&&d.sv>SV)) return false; return loadData(d); }catch(e){ console.error(e); return false; } }
+// beliebigen Stand laden (automatisch, Lesezeichen, Sicherung); opt.undo: vorher den laufenden Stand als mala.undo sichern (10 s „Rückgängig“)
+E.loadKey=function(key,opt){ opt=opt||{}; E.loadReason=null; var raw; try{ raw=LS().getItem(key); }catch(e){ E.loadReason='read'; return false; } if (!raw){ E.loadReason='empty'; return false; }
+  var d; try{ d=JSON.parse(raw); }catch(e){ E.loadReason='damaged'; return false; } if (!d||!d.GS){ E.loadReason=d&&d.kind==='chapterEnd'?'chapterEnd':'damaged'; return false; } if (d.sv&&d.sv>SV){ E.loadReason='incompatible'; return false; }
+  if (opt.undo && room && E.screen==='game' && !GS.ended && !room.noSave){ try{ syncPos(); LS().setItem('mala.undo',JSON.stringify({GS:busyV&&safeGS?safeGS:GS,at:Date.now(),sv:SV,slot:slot})); }catch(e){} }
+  var ok=loadData(d); if (!ok) E.loadReason='damaged'; return ok; };
 // mitgelieferter Spielstand: in den gewählten Platz laden und dort gleich speichern
 E.loadPreset=function(name,n){ var p=M.PRESETS&&M.PRESETS[name]; if (!p) return false; if (n) E.setSlot(n); var ok=loadData({GS:JSON.parse(JSON.stringify(p.GS))}); if (ok) saveGame(); return ok; };
 // Kapitelmodule hängen hier ein, was beim Laden, beim neuen Spiel und beim Titelbild zurückgesetzt werden muss (z. B. Kapitel 3: Warteschlange und Leerlaufsperre)
 function gameReset(){ (M.RESET_HOOKS||[]).forEach(function(f){ try{ f(); }catch(e){ console.error(e); } }); }
-function loadData(d){ try{ var base=validate(d); if (!base) return false;
-    M.migrateAll(base);   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js, dann die Nachzüge aus M.MIGRATE)
+// Schlägt das Laden nach dem Austausch des Zustands fehl, kehrt das laufende Spiel unverändert zurück (UI-Konzept B1-11)
+function loadData(d){ var prevGS=GS, prevRoom=room&&room.id, prevScreen=E.screen, swapped=false; try{ var base=validate(d); if (!base) return false;
+    M.migrateAll(base); swapped=true;   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js, dann die Nachzüge aus M.MIGRATE)
     setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT','steam','nudge'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung (QA BUG-004: auch Dampf und Stimmen-Takt)
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
     resetTransient(); gameReset();
-    M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }catch(e){ console.error(e); return false; } }
+    M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }
+  catch(e){ console.error(e); if (swapped){ try{ setGame(prevGS); safeGS=null; if (prevScreen==='game' && prevRoom){ loadRoom(prevRoom); var p2=player(); if (p2) setIdle(p2); snapCamera(); E.screen='game'; } else E.screen=prevScreen; }catch(e2){ console.error(e2); } } return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); gameReset(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
   if (ch===4 && M.startChapter4) M.startChapter4(API); else if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
-E.toTitle=function(){ saveGame(); M.scapeStop(); resetTransient(); gameReset(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
+E.toTitle=function(){ E.lastSaveOk=saveGame(); M.scapeStop(); resetTransient(); gameReset(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber
 M.TURBO=1;
@@ -558,6 +588,7 @@ M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; dt*=M.TURBO;
     if (E.pendingSave && !E.busy){ E.pendingSave=false; saveGame(); }
     // Leerlauf: ein Kapitel darf hier ausstehende Szenen anstoßen (nur wenn nichts läuft)
     if (M.idleHook && E.screen==='game' && room && !E.busy && !E.dlg && !E.overlay && !E.card && !E.speech && !E.transitioning && !E.menu && !GS.ended) M.idleHook(API); }
+  if (M.shellSync) M.shellSync();   // HTML-Schicht (Titel, Pause) folgt dem Spielzustand
   M.scheduleMusic(); };
 E.gtAdd=function(ms){ gt+=ms; };
 E.rebuildIfDirty=function(){ if (dirty && room) rebuild(); return {bg:bg,layers:layers}; };

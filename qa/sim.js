@@ -106,11 +106,11 @@ async function runOne(spec, opt = {}) {
     const sv = await menuTap(I, 1); p.save = sv.msg;
     if (!/Gespeichert/.test(sv.msg || '')) { p.note = 'Speichern abgelehnt: ' + sv.msg; res.saveload.push(p); return; }
     const before = C.relevant(await I.ev(NORM_GS));
-    const stored = JSON.parse(I.exportStorage()['mala.save.' + (await I.ev(() => M.E.slot()))] || 'null');
+    const stored = JSON.parse(I.exportStorage()[(await I.ev(() => !!M.shell)) ? 'mala.mark.' + (await I.ev(() => M.E.slot())) + '.1' : 'mala.save.' + (await I.ev(() => M.E.slot()))] || 'null');   // Speichern = Lesezeichen 1
     p.storedOk = !!(stored && stored.GS);
     if (mode === 'fresh' || mode === 'double') {
       const st = I.exportStorage(); S.loads++; I = await S.open(st); await I.ev(() => { window.__QA_CHAINED = true; });
-      await C.tapTitle(I, 'Fortsetzen'); await C.tapTitle(I, 'Platz ' + (stored ? 1 : 1)); await I.settle(60000);
+      if (await I.ev(() => !!M.shell)) await I.ev(() => M.shell.testLoadMark(1)); else { await C.tapTitle(I, 'Fortsetzen'); await C.tapTitle(I, 'Platz ' + (stored ? 1 : 1)); } await I.settle(60000);
       if (mode === 'double') { const l2 = await menuTap(I, 2); p.load2 = l2.msg; await I.settle(60000); }
     } else { const l = await menuTap(I, 2); p.load = l.msg; await I.settle(60000); }
     let after = C.relevant(await I.ev(NORM_GS));

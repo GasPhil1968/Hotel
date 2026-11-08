@@ -80,6 +80,7 @@ async function open(opts = {}) {
   const M = sandbox.M || vm.runInContext('M', ctx);
   if (M.boot) M.boot();
   M.TEST = true; M.TURBO = opts.turbo || 25;
+  if (!opts.lockChapters) M.DEV_ALL_CHAPTERS = true;   // Kapitelsperre: die Läufe starten Kapitel 2–4 direkt (wie ?kapitel=alle im Browser)
   // 'smart': gezeichnet wird nur, wo Spiellogik an der Zeichnung hängt (Abspann-Ende, Overlay-Trefferflächen, Auto-Schließen).
   // Dabei wird der Raum für die Dauer der Zeichnung ausgeblendet (M.E.room=null), sodass renderFrame den vorhandenen Zweig
   // „Overlay/Sprechtext ohne Szene“ nimmt. Die Szene selbst (Hintergrundmalerei, Figuren) zeichnen nur 'full'-Läufe und die Browsertests.

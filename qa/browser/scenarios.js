@@ -25,6 +25,18 @@ const HELPERS = `window.__qa = {
   st: function(){ var E=M.E, p=E.player&&E.player(); return { scr:E.screen, room:E.room&&E.room.id, busy:!!E.busy, dlg:E.dlg?E.dlg.opts.map(function(o){return o.t;}):null, ov:E.overlay?E.overlay.kind:null, speech:!!E.speech, acting:E.acting||0, walk:!!(p&&p.mode==='walk'), active:M.GS.active, phase:M.GS.phase, pop:E.pop?E.pop.opts.map(function(o){return o.t;}):null, menu:!!E.menu, trn:!!E.transitioning, title:E.screen==='title'?M.titleLabels():null, inv:M.GS.inv.slice(), notes:M.GS.notes.length }; }
 };`;
 
+// HTML-Schicht (07_shell.js): Knopf mit passender Beschriftung echt antippen/anklicken
+async function shellClick(page, touch, text) { const loc = page.locator('#shell button:visible', { hasText: text }).first(); await loc.waitFor({ timeout: 6000 }); if (touch) await loc.tap(); else await loc.click(); await page.waitForTimeout(120); }
+// frühere Titelzeilen auf die neuen Wege abbilden: „Kapitel N: Ort“ → Neues Spiel (→ Kapitelwahl), „Platz N“ → Platzwahl (→ Überschreiben), „Fortsetzen“
+async function shellTitle(page, touch, label) { const cur = () => page.evaluate(() => M.shell.current()); const m = String(label).match(/^Kapitel (\d)/);
+  if (m) { await shellClick(page, touch, 'Neues Spiel'); if ((await cur()) === 'chapters') await shellClick(page, touch, 'Kapitel ' + m[1] + ' ·'); return; }
+  if (/^Platz/.test(label)) { if ((await cur()) === 'slots') { await shellClick(page, touch, label); if ((await cur()) === 'confirm') await shellClick(page, touch, 'Überschreiben'); } return; }
+  if (/^Ja/.test(label)) { if ((await cur()) === 'confirm') await shellClick(page, touch, 'Überschreiben'); return; }
+  return shellClick(page, touch, label); }
+// Pause → Speichern → Lesezeichen (erstes freies, sonst 1 mit Bestätigung) → zurück ins Spiel; liefert die Rückmeldung
+async function shellSave(P) { await shellClick(P.page, P.touch, 'Speichern'); const free = await P.page.locator('#shell button:visible', { hasText: 'Hier speichern' }).count();
+  if (free) await shellClick(P.page, P.touch, 'Hier speichern'); else { await P.page.locator('#shell .cardmain').first().click(); await shellClick(P.page, P.touch, 'Überschreiben'); }
+  const msg = await P.page.evaluate(() => (M.shell.toastNow() || {}).t || null); await P.page.keyboard.press('Escape'); await shellClick(P.page, P.touch, 'Weiterspielen'); return msg; }
 async function newPage(browser, device, opts = {}) {
   const ctx = await browser.newContext(Object.assign(contextOpts(pw, ENGINE, device), opts.ctx || {}));
   const page = await ctx.newPage(); const errors = [], consoleErr = [], failedReq = [];
@@ -32,7 +44,7 @@ async function newPage(browser, device, opts = {}) {
   page.on('console', m => { if (m.type() === 'error') consoleErr.push(m.text()); });
   page.on('requestfailed', r => failedReq.push(r.url().slice(0, 120) + ' ' + ((r.failure() || {}).errorText || '')));
   if (opts.storage) await ctx.addInitScript((s) => { if (!sessionStorage.getItem('__qaInit')) { sessionStorage.setItem('__qaInit', '1'); localStorage.clear(); Object.entries(s).forEach(([k, v]) => localStorage.setItem(k, v)); } }, opts.storage);
-  await page.goto(opts.url || FILE_URL); await page.waitForFunction(() => window.M && M.E && M.E.screen === 'title', null, { timeout: 30000 });
+  const u0 = opts.url || FILE_URL; await page.goto(u0 + (opts.lock || u0.indexOf('?') >= 0 ? '' : '?kapitel=alle')); await page.waitForFunction(() => window.M && M.E && M.E.screen === 'title', null, { timeout: 30000 });   // Testschalter: alle Kapitel startbar
   await page.addScriptTag({ content: HELPERS });
   if (opts.turbo !== false) await page.evaluate((t) => { M.TURBO = t; }, opts.turbo || 20);
   const touch = device !== 'desktop';
@@ -40,7 +52,8 @@ async function newPage(browser, device, opts = {}) {
     st: () => page.evaluate(() => window.__qa.st()),
     async tap(x, y) { const c = await page.evaluate(([x, y]) => window.__qa.toClient(x, y), [x, y]); if (touch) await page.touchscreen.tap(c[0], c[1]); else await page.mouse.click(c[0], c[1]); await page.waitForTimeout(60); },
     async tapCode(code) { const p = await page.evaluate((c) => window.__qa.scan(c), code); if (!p) throw new Error('nicht sichtbar: ' + code); await P.tap(p[0], p[1]); return p; },
-    async title(label) { const p = await page.evaluate((lab) => { M.renderFrame(); const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lab) >= 0); if (i < 0) return { miss: L }; return window.__qa.scan('t:' + i); }, label); if (!p || p.miss) throw new Error('Titelzeile fehlt: ' + label + ' ' + JSON.stringify(p)); await P.tap(p[0], p[1]); await page.waitForTimeout(150); },
+    async title(label) { if (await page.evaluate(() => !!M.shell)) return shellTitle(page, touch, label);
+      const p = await page.evaluate((lab) => { M.renderFrame(); const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lab) >= 0); if (i < 0) return { miss: L }; return window.__qa.scan('t:' + i); }, label); if (!p || p.miss) throw new Error('Titelzeile fehlt: ' + label + ' ' + JSON.stringify(p)); await P.tap(p[0], p[1]); await page.waitForTimeout(150); },
     async until(pred, ms, what) { const t = Date.now(); let s; while (Date.now() - t < ms) { s = await P.st(); if (pred(s)) return s; await page.waitForTimeout(40); } throw new Error('Zeitüberschreitung ' + what + ' ' + JSON.stringify(s)); },
     async idle(ms = 60000) { return P.until(s => s.scr === 'game' && !s.busy && !s.speech && !s.dlg && !s.ov && !s.acting && !s.walk && !s.trn, ms, 'ruhig'); },
     async drainUI(max = 40) { for (let i = 0; i < max; i++) { const s = await P.st(); if (s.scr === 'card') { await P.tap(160, 100); continue; } if (s.speech) { await page.waitForTimeout(150); continue; } if (s.ov === 'memory' || s.ov === 'doc') { await P.tap(160, 60); await page.waitForTimeout(100); continue; } if (s.scr === 'game' && !s.busy && !s.ov && !s.dlg && !s.walk && !s.acting) return s; await page.waitForTimeout(120); } return P.st(); },
@@ -73,7 +86,7 @@ const DEV = { chromium: ['desktop', 'tablet'], firefox: ['desktop', 'tablet'], w
   const MAIN = await serve(() => WEB, 8130 + ['chromium', 'firefox', 'webkit'].indexOf(ENGINE)); FILE_URL = 'http://127.0.0.1:' + MAIN.address().port + '/';
   // S01 Laden, Titelbild, Skalierung
   await scenario(ENG + '01', 'Start: Titelbild, ganzzahlige Skalierung, kein Überlauf', DEV[0], async ({ mk, ck, r }) => { const P = await mk();
-    const s = await P.st(); ck(s.scr === 'title' && s.title.length >= 5, 'Titelmenü mit ' + (s.title || []).length + ' Zeilen');
+    const s = await P.st(); ck(s.scr === 'title' && (s.title.length >= 5 || (s.title.length === 4 && s.title[0] === 'Neues Spiel')), 'Titelmenü mit ' + (s.title || []).length + ' Zeilen (' + (s.title || []).join(', ') + ')');   // HTML-Schicht: Erststart mit vier Einträgen
     const g = await P.page.evaluate(() => { const c = document.getElementById('game').getBoundingClientRect(); return { w: c.width, h: c.height, l: c.left, t: c.top, vw: innerWidth, vh: innerHeight, sw: document.documentElement.scrollWidth, sh: document.documentElement.scrollHeight, dpr: devicePixelRatio, rot: M.isRotated() }; });
     r.geometry = g; ck(g.l >= -0.5 && g.t >= -0.5 && g.l + g.w <= g.vw + 0.5 && g.t + g.h <= g.vh + 0.5, 'Spielbild vollständig im Fenster ' + JSON.stringify(g)); ck(g.sw <= g.vw && g.sh <= g.vh, 'keine Scrollbalken');
     ck(Math.abs(g.w / g.h - 1.6) < 0.01, 'Seitenverhältnis 16:10'); r.shots.push(await P.shot(ENG + '01_titel')); });
@@ -128,13 +141,13 @@ const DEV = { chromium: ['desktop', 'tablet'], firefox: ['desktop', 'tablet'], w
     r.shots.push(await P.shot(ENG + '07_klein')); });
   // S08 Speichern → neuer Kontext → Fortsetzen
   await scenario(ENG + '08', 'Speichern im Menü, neuer Browserkontext mit gespeicherten Daten, Fortsetzen: gleicher Stand', DEV[0], async ({ mk, ck, r, browser }) => { const srv = await serve(() => WEB, 8124 + ['chromium', 'firefox', 'webkit'].indexOf(ENGINE)); const URL8 = 'http://127.0.0.1:' + srv.address().port + '/'; try { const P = await mk({ storage: ST('k3_bato').storage, url: URL8 }); await P.cont(); await P.idle();
-    if (!(await P.st()).menu) await P.tapCode('menu'); await P.until(s => s.menu, 3000, 'Menü'); r.shots.push(await P.shot(ENG + '08_menu')); await P.tapCode('m:1'); await P.page.waitForTimeout(200);
-    const msg = await P.page.evaluate(() => M.E.msg && M.E.msg.t); ck(/Gespeichert/.test(msg || ''), 'Meldung „' + msg + '“'); await P.tapCode('m:0');
+    if (!(await P.st()).menu) await P.tapCode('menu'); await P.until(s => s.menu, 3000, 'Menü'); r.shots.push(await P.shot(ENG + '08_menu'));
+    const msg = await shellSave(P); ck(/Gespeichert/.test(msg || ''), 'Meldung „' + msg + '“');
     const g1 = await P.page.evaluate(() => ({ phase: M.GS.phase, room: M.GS.pos[M.GS.active].room, active: M.GS.active, inv: M.GS.inv, notes: M.GS.notes.slice().sort(), flags: Object.keys(M.GS.flags).filter(k => M.GS.flags[k]).sort() }));
     const state = await P.ctx.storageState(); const ctx2 = await browser.newContext(Object.assign(contextOpts(pw, ENGINE, DEV[0]), { storageState: state }));
-    const p2 = await ctx2.newPage(); const err2 = []; p2.on('pageerror', e => err2.push(String(e.message))); await p2.goto(URL8); await p2.waitForFunction(() => window.M && M.E && M.E.screen === 'title'); await p2.addScriptTag({ content: HELPERS });
+    const p2 = await ctx2.newPage(); const err2 = []; p2.on('pageerror', e => err2.push(String(e.message))); await p2.goto(URL8 + '?kapitel=alle'); await p2.waitForFunction(() => window.M && M.E && M.E.screen === 'title'); await p2.addScriptTag({ content: HELPERS });
     const Q = Object.assign({}, P, { page: p2, ctx: ctx2, st: () => p2.evaluate(() => window.__qa.st()) }); Q.tap = async (x, y) => { const c = await p2.evaluate(([x, y]) => window.__qa.toClient(x, y), [x, y]); if (P.touch) await p2.touchscreen.tap(c[0], c[1]); else await p2.mouse.click(c[0], c[1]); await p2.waitForTimeout(60); };
-    const lab = await p2.evaluate(() => M.titleLabels()); ck(lab[0] === 'Fortsetzen', 'neuer Kontext bietet „Fortsetzen“'); let p = await p2.evaluate(() => window.__qa.scan('t:0')); await Q.tap(p[0], p[1]); await p2.waitForTimeout(150); p = await p2.evaluate(() => window.__qa.scan('t:0')); await Q.tap(p[0], p[1]); await p2.waitForTimeout(800);
+    const lab = await p2.evaluate(() => M.titleLabels()); ck(lab[0] === 'Fortsetzen', 'neuer Kontext bietet „Fortsetzen“'); await shellClick(p2, P.touch, 'Fortsetzen'); await p2.waitForTimeout(800);
     const g2 = await p2.evaluate(() => ({ phase: M.GS.phase, room: M.GS.pos[M.GS.active].room, active: M.GS.active, inv: M.GS.inv, notes: M.GS.notes.slice().sort(), flags: Object.keys(M.GS.flags).filter(k => M.GS.flags[k]).sort() }));
     const same = JSON.stringify(g1) === JSON.stringify(g2); r.compare = same ? 'gleich' : { vorher: g1, nachher: g2 }; ck(same, 'Phase, Ort, Figur, Inventar, Notizen und Schalter gleich'); ck(!err2.length, 'neuer Kontext ohne Fehler'); r.shots.push(path.relative(path.join(__dirname, '..', 'results'), path.join(OUT, ENG + '08_geladen.png'))); await p2.screenshot({ path: path.join(OUT, ENG + '08_geladen.png') }); await ctx2.close(); } finally { srv.close(); } });
   // S09 Fehlbedienung
@@ -173,7 +186,7 @@ const DEV = { chromium: ['desktop', 'tablet'], firefox: ['desktop', 'tablet'], w
         const cached = await P.page.evaluate(async () => { const ks = await caches.keys(); let n = 0; for (const k of ks) { const c = await caches.open(k); n += (await c.keys()).length; } return { ks, n }; }); r.cache = cached; ck(cached.n >= 3, 'Dateien im Cache: ' + cached.n);
         await P.ctx.setOffline(true); await P.page.reload(); const ok = await P.page.waitForFunction(() => window.M && M.E && M.E.screen === 'title', null, { timeout: 20000 }).then(() => true).catch(() => false); ck(ok, 'offline neu geladen: Titelbild erscheint'); r.shots.push(await P.shot('C12_offline'));
         await P.page.addScriptTag({ content: HELPERS }); await P.title('Kapitel 4: München'); await P.title('Platz 1'); const s = await P.until(s => s.scr === 'game', 20000, 'offline Spielstart'); ck(s.scr === 'game', 'offline: Kapitel 4 startet');
-        await P.playIdle(); await P.tapCode('menu'); await P.until(s => s.menu, 3000, 'Menü'); await P.tapCode('m:1'); const smsg = await P.page.evaluate(() => M.E.msg && M.E.msg.t); r.saveMsg = smsg; await P.tapCode('m:0');
+        await P.playIdle(); await P.tapCode('menu'); await P.until(s => s.menu, 3000, 'Menü'); const smsg = await shellSave(P); r.saveMsg = smsg;
         await P.ctx.setOffline(false); fs.writeFileSync(path.join(tmp, 'sw.js'), fs.readFileSync(path.join(tmp, 'sw.js'), 'utf8').replace(/var VERSION = '([^']*)';/, "var VERSION = '$1-qa2';"));
         const before = await P.page.evaluate(() => performance.timeOrigin); await P.page.evaluate(() => M.E.toTitle());
         await P.page.evaluate(() => navigator.serviceWorker.getRegistration().then(r => r && r.update())).catch(() => {});
@@ -212,12 +225,14 @@ const DEV = { chromium: ['desktop', 'tablet'], firefox: ['desktop', 'tablet'], w
   if (ENGINE === 'webkit') {
     await scenario('W11', 'iPhone hochkant (emuliert): Bild dreht sich, Tipps treffen trotzdem', 'phonePortrait', async ({ mk, ck, r }) => { const P = await mk();
       const rot = await P.page.evaluate(() => M.isRotated()); ck(rot, 'Spielbild um 90° gedreht'); r.shots.push(await P.shot('W11_hochkant'));
-      await P.title('Kapitel 2: Sarajevo'); const s = await P.st(); ck(s.title && s.title.some(t => /Platz/.test(t)), 'Tipp auf Titelzeile trifft (Platzwahl offen)'); await P.title('Platz 1'); const s2 = await P.until(s => s.scr === 'game', 20000, 'Start'); ck(s2.scr === 'game', 'Spiel startet hochkant'); await P.drainUI(); r.shots.push(await P.shot('W11_spiel')); });
+      const hint = await P.page.evaluate(() => { const n = document.getElementById('rotnote'); return !!(n && n.classList.contains('on')); }); ck(hint, 'Hinweis „MALA wird quer gespielt“ erscheint (UI-Konzept D15)');
+      if (hint) { await P.page.locator('#rotnote button').tap(); await P.page.waitForTimeout(150); ck(await P.page.evaluate(() => !document.getElementById('rotnote').classList.contains('on')), '„Gedreht weiterspielen“ schließt den Hinweis'); }
+      await P.title('Kapitel 2: Sarajevo'); await P.title('Platz 1'); const s2 = await P.until(s => s.scr === 'game', 20000, 'Start'); ck(s2.scr === 'game', 'Tipps auf die gedrehte Menüschicht treffen: Spiel startet hochkant'); await P.drainUI(); r.shots.push(await P.shot('W11_spiel')); });
   }
   if (ENGINE === 'firefox') {
     await scenario('F11', 'Neues Spiel Kapitel 3 und 4 per Tippen: Erinnerungsbild, erste Szene, Hinweis-Menü', 'desktop', async ({ mk, ck, r }) => { const P = await mk();
       for (const ch of ['Kapitel 3: Mostar', 'Kapitel 4: München']) { await P.page.evaluate(() => M.E.toTitle()); await P.title(ch); await P.title('Platz'); const lab = await P.page.evaluate(() => M.E.titleMode === 'confirm'); if (lab) await P.title('Ja'); await P.until(s => s.scr === 'game', 20000, 'Start ' + ch); const s = await P.drainUI(60); ck(s.scr === 'game', ch + ' startet: ' + s.room); r.shots.push(await P.shot('F11_' + ch.slice(8, 9))); }
-      await P.playIdle(); await P.tapCode('menu'); await P.until(s => s.menu, 3000, 'Menü'); const codes = await P.page.evaluate(() => window.__qa.codes()); ck(Object.keys(codes).filter(c => /^m:/.test(c)).length >= 10, 'Menüzeilen'); r.shots.push(await P.shot('F11_menu')); await P.tapCode('m:0'); });
+      await P.playIdle(); await P.tapCode('menu'); await P.until(s => s.menu, 3000, 'Menü'); const nItems = await P.page.evaluate(() => M.shell.items().length); ck(nItems === 7, 'Pausenmenü mit ' + nItems + ' Einträgen'); r.shots.push(await P.shot('F11_menu')); await shellClick(P.page, P.touch, 'Weiterspielen'); });
   }
   MAIN.close();
   const file = path.join(OUT, 'results.json'); fs.writeFileSync(file, JSON.stringify(results, null, 1));

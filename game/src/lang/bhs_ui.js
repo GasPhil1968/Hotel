@@ -90,6 +90,61 @@ M.trAdd('bhs', {
   'Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.':'Je li uključeno zaključavanje rotacije? Onda igraj ovdje: slika je ispravna čim okreneš uređaj.',
   'Gedreht weiterspielen':'Nastavi igrati okrenuto'
 });
+// Oberfläche nach dem UI-Konzept (Phase 2): HTML-Schicht für Titel, Spielstände, Einstellungen, Pause
+M.trAdd('bhs', {
+  'Fortsetzen':'Nastavi', 'Neues Spiel':'Nova igra', 'Spiel laden':'Učitaj igru', 'Einstellungen':'Postavke', 'Über MALA':'O igri MALA', 'Hauptmenü':'Glavni izbornik',
+  'Beispielstände':'Ogledne igre', 'Beispiel':'Primjer', 'Kapitel':'Poglavlje', 'von vorn':'ispočetka', 'mit Vorgaben':'s pretpostavkama', 'bisher nur auf Deutsch':'zasad samo na njemačkom',
+  'noch nicht erschienen':'još nije objavljeno', 'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.':'Sva tri mjesta su zauzeta: odmah biraš koje će se prebrisati.',
+  'Auf welchem Platz?':'Na kojem mjestu?', 'Der Beispielstand wird auf diesen Platz geladen.':'Ogledna igra učitava se na ovo mjesto.', 'Das neue Spiel beginnt auf diesem Platz.':'Nova igra počinje na ovom mjestu.',
+  'Der automatische Stand auf diesem Platz geht verloren. Lesezeichen bleiben.':'Automatski spremljena igra na ovom mjestu bit će izgubljena. Oznake ostaju.',
+  'Überschreiben':'Prebriši', 'Abbrechen':'Odustani', 'Bisher':'Dosad', 'Neu':'Novo', 'Lesezeichen':'Oznaka', 'Automatisch':'Automatski', 'Kapitelende':'Kraj poglavlja',
+  'Beschädigt':'Oštećeno', 'Inkompatibel':'Nekompatibilno', 'Lässt sich nicht lesen':'Ne može se pročitati', 'Lässt sich nicht lesen.':'Ne može se pročitati.', 'Aus einer neueren Fassung':'Iz novije verzije',
+  'Aus einer neueren Fassung – bitte aktualisieren.':'Iz novije verzije – molimo ažuriraj igru.', 'Fortsetzung folgt':'Nastavak slijedi', 'Weiter mit Kapitel':'Dalje s poglavljem', 'fertig':'završeno',
+  'Neues Spiel hier':'Nova igra ovdje', 'dieses Spiel':'ova igra', 'Andere Plätze …':'Ostala mjesta …', 'Enthalten Handlung aus den genannten Kapiteln.':'Sadrže radnju iz navedenih poglavlja.',
+  'Spielstände liegen nur in diesem Browser auf diesem Gerät.':'Spremljene igre postoje samo u ovom pregledniku na ovom uređaju.',
+  'Sicherung exportieren …':'Izvezi sigurnosnu kopiju …', 'Sicherung importieren …':'Uvezi sigurnosnu kopiju …',
+  'Speichern':'Spremi', 'Laden':'Učitaj', 'Hier speichern':'Spremi ovdje', 'jetzt':'sada', 'Das bisherige Lesezeichen geht verloren.':'Dosadašnja oznaka bit će izgubljena.',
+  'Automatisch gespeichert':'Automatski spremljeno', 'bei jedem Ortswechsel neu. Lesezeichen bleiben, bis du sie überschreibst.':'iznova pri svakoj promjeni mjesta. Oznake ostaju dok ih ne prebrišeš.',
+  'Rückgängig':'Poništi', 'Zurückgeholt.':'Vraćeno.', 'Rückgängig ging nicht.':'Poništavanje nije uspjelo.', 'Laden fehlgeschlagen. Das laufende Spiel ist unverändert.':'Učitavanje nije uspjelo. Igra u tijeku ostaje nepromijenjena.',
+  'Spielstand löschen?':'Izbrisati spremljenu igru?', 'Löschen':'Izbriši', 'Löschen …':'Izbriši …', 'Gelöscht.':'Izbrisano.', 'Zum Titelbild.':'Na naslovnu stranu.',
+  'Nach der Szene wieder möglich.':'Ponovno moguće nakon scene.', 'Speichern fehlgeschlagen: Der Browser-Speicher ist voll.':'Spremanje nije uspjelo: memorija preglednika je puna.',
+  'Gerade nicht möglich.':'Trenutno nije moguće.', 'Das Kapitel ist zu Ende.':'Poglavlje je završilo.', 'Speichern fehlgeschlagen.':'Spremanje nije uspjelo.',
+  'Dieser Spielstand lässt sich nicht lesen.':'Ova spremljena igra ne može se pročitati.', 'Dieser Spielstand stammt aus einer neueren Fassung. Bitte das Spiel aktualisieren.':'Ova spremljena igra potječe iz novije verzije. Molimo ažuriraj igru.',
+  'Der Browser-Speicher ist nicht lesbar.':'Memorija preglednika nije čitljiva.',
+  'Ton':'Zvuk', 'Musik':'Glazba', 'Geräusche':'Zvukovi', 'Umgebung':'Okolina', 'Text':'Tekst', 'Tempo':'Brzina', 'Weiter erst nach Tippen':'Dalje tek nakon dodira', 'Zeilen bleiben, bis du tippst':'Retci ostaju dok ne dodirneš',
+  'Textgröße':'Veličina teksta', 'groß':'veliko', 'Schrift':'Pismo', 'Pixel':'Piksel', 'Lesbar':'Čitko', 'Darstellung':'Prikaz', 'Bewegung reduzieren':'Smanji pokrete', 'kein Wackeln, Pulsieren, Flackern':'bez drmanja, pulsiranja i treperenja',
+  'Röhrenbild':'Stari ekran', 'umschalten':'prebaci', 'Ansicht':'Prikaz', 'Nachdenken: Marko fragt sich durch':'Razmišljanje: Marko se propituje', 'Liste: alle offenen Notizen auf einer Seite':'Popis: sve otvorene bilješke na jednoj stranici',
+  'Sprache':'Jezik', 'Deutsch':'Njemački', 'Bos./Hrv.':'Bos./Hrv.', 'Bosanski / Hrvatski: Kapitel 2–4 bisher nur auf Deutsch':'Bosanski / Hrvatski: poglavlja 2–4 zasad samo na njemačkom',
+  'Der Anrufbeantworter blinkt. Zwei neue Nachrichten.':'Telefonska sekretarica trepće. Dvije nove poruke.',
+  'Abspann':'Odjavna špica', 'Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.':'Point-and-click avantura o ljudima koji ne mogu dalje i o jednome koji može razgovarati s njima.',
+  'Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.':'Marko je živ. Mala nije. On razgovara sa živima, ona prolazi kroz zidove.',
+  'Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.':'Sva grafika, glazba i zvukovi nastaju u samoj igri. Slušalice se isplate.',
+  'Steuerung':'Upravljanje', 'Etwas antippen: Ist nur etwas zu sehen, schaut Marko es an. Kann man etwas damit tun, kommt ein kleines Menü.':'Dodirni nešto: ako se samo ima što vidjeti, Marko to pogleda. Ako se s tim može nešto učiniti, pojavi se mali izbornik.',
+  'Gegenstände aus der Leiste auf ihr Ziel ziehen – auch auf Mala, wenn sie sich etwas ansehen soll.':'Predmete iz trake povuci na cilj – i na Malu, ako treba nešto pogledati.',
+  'Unten links wechselst du zwischen Marko und Mala (Tab oder M).':'Dolje lijevo mijenjaš između Marka i Male (Tab ili M).',
+  '„Notizen“: zwei Notizen nacheinander antippen verbindet sie (N).':'„Bilješke“: dodirni dvije bilješke jednu za drugom i povežeš ih (N).',
+  '„Zeigen“ markiert kurz alles, was man hier anfassen kann (Z).':'„Pokaži“ nakratko označi sve što se ovdje može dirati (Z).',
+  '„Karte“ öffnet den Stadtplan (K). Ein Tipp auf einen Ort, und Marko geht hin.':'„Karta“ otvara plan grada (K). Dodir na mjesto, i Marko ide onamo.',
+  'Ein Tipp auf einen Ausgang, und Marko geht hin; zweimal schnell, und er ist sofort draußen.':'Dodir na izlaz, i Marko ide onamo; dvaput brzo, i odmah je vani.',
+  'Antworten: Ziffern 1–9, Pfeiltasten und Enter; das Mausrad blättert.':'Odgovori: znamenke 1–9, strelice i Enter; kotačić miša lista.',
+  'Esc schließt immer nur das Oberste; ist nichts offen, öffnet Esc dieses Menü.':'Esc uvijek zatvara samo ono najgornje; ako ništa nije otvoreno, Esc otvara ovaj izbornik.',
+  'Rechtsklick: Schau an. Leertaste oder Enter: Satz überspringen.':'Desni klik: pogledaj. Razmak ili Enter: preskoči rečenicu.',
+  'Pause':'Pauza', 'Hinweise …':'Savjeti …', 'speichert automatisch':'sprema automatski', 'nach der Szene':'nakon scene', 'hier nicht':'ovdje ne',
+  'Spielzeit':'Vrijeme igre', 'Ton startet mit dem ersten Tipp':'Zvuk počinje prvim dodirom', 'Überspringen ▸':'Preskoči ▸', 'heute':'danas', 'gestern':'jučer', 'gerade eben':'upravo', 'vor':'prije', 'Kein Spielstand.':'Nema spremljene igre.'
+});
+tr2(/^Startet auf Platz (\d) \(frei\)\. Deine anderen Spielstände bleiben\.$/, function(m){ return 'Počinje na mjestu '+m[1]+' (slobodno). Ostale spremljene igre ostaju.'; });
+tr2(/^Startet auf Platz (\d)\.$/, function(m){ return 'Počinje na mjestu '+m[1]+'.'; });
+tr2(/^nach Kapitel (\d)$/, function(m){ return 'nakon poglavlja '+m[1]; });
+tr2(/^mit deinem Ende von Kapitel (\d)$/, function(m){ return 's tvojim krajem poglavlja '+m[1]; });
+tr2(/^Platz (\d) überschreiben\?$/, function(m){ return 'Prebrisati mjesto '+m[1]+'?'; });
+tr2(/^Lesezeichen (\d) überschreiben\?$/, function(m){ return 'Prebrisati oznaku '+m[1]+'?'; });
+tr2(/^Gespeichert ✓ Lesezeichen (\d)$/, function(m){ return 'Spremljeno ✓ oznaka '+m[1]; });
+tr2(/^Gespeichert – Platz (\d)$/, function(m){ return 'Spremljeno – mjesto '+m[1]; });
+tr2(/^Geladen: (.+)$/, function(m){ return 'Učitano: '+m[1]; });
+tr2(/^Weiter mit Kapitel (\d): (.+)$/, function(m){ return 'Dalje s poglavljem '+m[1]+': '+m[2]; });
+tr2(/^Ende des (ersten|zweiten|dritten|vierten) Kapitels$/, function(m){ return 'Kraj '+{ersten:'prvog',zweiten:'drugog',dritten:'trećeg',vierten:'četvrtog'}[m[1]]+' poglavlja'; });
+tr2(/^Fortsetzung: (.+)$/, function(m){ return 'Nastavak: '+m[1]; });
+tr2(/^Abspann Kapitel (\d)$/, function(m){ return 'Odjavna špica, poglavlje '+m[1]; });
 M.trIgnore && M.trIgnore(['Gegenstand doppelt: ','Notiz doppelt: ','kein Raum ','unbekannte Notiz ','unbekannter Gegenstand ','keine Phase ','kein Hotspot ',' in ','kein Ausgang ','keine Auswahl offen',
   'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','Notiz steht im Notizbuch nicht zur Wahl: ','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
   'translate(-50%,-50%) rotate(90deg)','Neue Notiz: ','Das ist ','Benutze ',' mit ','Schlussfolgerung: ','Speichern (Platz ','Laden (Platz ','Text: ','Notizbuch: ','Musik: ','Geräusche: ','Röhrenbild: ',

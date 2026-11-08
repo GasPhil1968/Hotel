@@ -25,7 +25,7 @@ const { launch, contextOpts } = require('./engines');
   page.on('pageerror', e => errors.push(String(e.message || e)));
   page.on('console', m => { if (m.type() === 'error') consoleErr.push(m.text()); });
   page.on('requestfailed', r => failedReq.push(r.url() + ' ' + (r.failure() && r.failure().errorText)));
-  await page.goto(URL); await page.waitForFunction(() => window.M && M.E && M.E.screen === 'title');
+  await page.goto(URL + (URL.indexOf('?') >= 0 ? '' : '?kapitel=alle')); await page.waitForFunction(() => window.M && M.E && M.E.screen === 'title');
   await page.evaluate((t) => { M.TURBO = t; M.__speechLog = []; try { localStorage.clear(); } catch (e) {} }, TURBO);   // Sprachprotokoll nur lesend: erkennt, ob ein Tipp eine Reaktion auslöste
   const touch = DEVICE !== 'desktop';
   const vp = page.viewportSize();
@@ -188,6 +188,12 @@ const { launch, contextOpts } = require('./engines');
       if (k === 'chapterEnd') { await until(s => s.scr === 'title', 600000, 'Titelbild nach Abspann K' + e.a[0]); chEnds.push({ ch: e.a[0], at: (Date.now() - t0) / 1000, title: (await st()).title }); await shot('K' + e.a[0] + '_ende_titel'); continue; }
       if (k === 'ovgoal') { pendingGoal = e; continue; }
       if (k === 'tap') {
+        if (e.scr === 'title' && await page.evaluate(() => !!M.shell)) {   // HTML-Schicht: aufgezeichnete Titeltipps auf die neuen Wege abbilden
+          if ((await st()).scr !== 'title') { done++; continue; }   // zweiter Tipp der alten Folge („Platz 1“): Spiel läuft schon
+          await until(s => s.scr === 'title' && s.title && s.title.length, 600000, 'Titelbild'); const labs = await page.evaluate(() => M.shell.labels()); const w = labs.find(l => /^Weiter mit Kapitel/.test(l));
+          const clickT = async (t) => { const loc = page.locator('#shell button:visible', { hasText: t }).first(); await loc.waitFor({ timeout: 8000 }); await loc.click(); await sleep(200); };
+          if (w) await clickT(w); else { await clickT('Neues Spiel'); if (await page.evaluate(() => M.shell.current() === 'chapters')) await clickT('Kapitel 1 ·'); }
+          L('Titel', w || 'Neues Spiel'); await until(s => s.scr !== 'title', 20000, 'Spielstart'); await sleep(300); done++; continue; }
         if (e.scr === 'title') { await until(s => s.scr === 'title' && s.title && s.title.length, 600000, 'Titelbild'); const lab = await page.evaluate((h) => { const i2 = +String(h || '').slice(2); return M.titleLabels()[i2]; }, e.hit); await tapL(e.a[0], e.a[1]); L('Titel', lab); await sleep(200); if (/Platz|Weiter mit/.test(lab || '')) { await until(s => s.scr !== 'title', 20000, 'Spielstart'); await sleep(300); await shot('start_' + (lab || '').replace(/\W+/g, '_').slice(0, 30)); } done++; continue; }
         if (e.ov) { await until(s => s.ov === e.ov, 30000, 'Overlay ' + e.ov + ' für Tipp');
           if (pendingGoal && /o:go$/.test(e.hit || '')) { if (pendingGoal.kind === 'arrange') await arrangeGoal(pendingGoal.ord); if (pendingGoal.kind === 'glyphs') await glyphGoal(pendingGoal.rd); pendingGoal = null; }

@@ -40,7 +40,8 @@ async function runPath(name, D, env, onLine, hooks) {
 async function tapTitle(D, label, timeoutMs = 20000) {
   const t0 = D.vtime();
   for (;;) {
-    const hit = await D.ev((lab) => { if (M.E.screen !== 'title') return null; M.renderFrame(); const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lab) >= 0); if (i < 0) return { miss: L };
+    const hit = await D.ev((lab) => { if (M.E.screen !== 'title') return null; if (M.shell && M.shell.legacyPick) { const r = M.shell.legacyPick(lab); return r && r.label ? { label: r.label } : { miss: r }; }   // HTML-Schicht (07_shell.js)
+      M.renderFrame(); const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lab) >= 0); if (i < 0) return { miss: L };
       for (let y = 0; y < 200; y++) { if (M.uiHit(160, y) === 't:' + i) { M.pointerDown(160, y + 2, true); M.pointerUp(160, y + 2, true); return { y: y + 2, label: L[i] }; } } return { noRow: i, L }; }, label);
     if (hit && hit.label) { await D.page.waitForTimeout(120); return hit; }
     if (D.vtime() - t0 > timeoutMs) throw new Error('Titelmenü: „' + label + '“ nicht antippbar: ' + JSON.stringify(hit));

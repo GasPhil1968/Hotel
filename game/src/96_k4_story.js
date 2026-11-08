@@ -319,7 +319,7 @@ M.CREDITS4=['MALA','Kapitel 4: München','','','Marko Vuković','Mala','','Hansi
 M.endChapter4=async function(A){ var G=A.G; if (G.ended) return; G.ended=true;
   try{ localStorage.setItem('mala.c4end',JSON.stringify({at:Date.now(),sample:G.flags['k4.c3.sample']!==false,sample2:!!G.flags['k4.e.sample2'],kurve:has(G,'z4_kurve'),slippers:!!G.flags['k4.e.slippers'],
       nada:!!G.flags['k4.e.nada'],fake:G.inv.indexOf('brief_falsch')>=0||!!G.flags['k4.s.fake'],davor:!!G.flags['k4.v.car'],consent2:G.flags['k4.e.consent2']||null,playMs:G.playMs||0}));
-    localStorage.removeItem('mala.save.'+M.E.slot()); }catch(e){}
+  }catch(e){} M.E.markChapterEnd(4);
   await card(A,'','Ende des vierten Kapitels','',5200,'Fortsetzung: Sarajevo');
   await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS4; M.E.creditMusic='k4_end'; M.E.afterCredits=null; M.E.startCredits(); };
 })(M);

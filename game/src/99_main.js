@@ -58,7 +58,9 @@ var wAcc=0; cv.addEventListener('wheel',function(e){ e.preventDefault(); wAcc+=e
 // Doppeltipp auf dem Spielbild zoomt nicht (nur auf dem Canvas; das Spiel wertet Doppeltipps selbst über pointerup aus)
 cv.addEventListener('dblclick',function(e){ e.preventDefault(); });
 var lastTouchEnd=0; cv.addEventListener('touchend',function(e){ var t=Date.now(); if (t-lastTouchEnd<450) e.preventDefault(); lastTouchEnd=t; },{passive:false});
-document.addEventListener('keydown',function(e){ if (rotNote.classList.contains('on')) return; if (e.target&&e.target.closest&&e.target.closest('input,textarea,select')) return;
+document.addEventListener('keydown',function(e){ if (rotNote.classList.contains('on')) return;
+  if (M.shell && M.shell.ctx){ if (M.audioInit) M.audioInit(); if (e.key==='Escape'||!(e.target&&e.target.closest&&e.target.closest('input'))) { if (M.shell.key(e)) return; } else return; }   // Titel und Pause: Tasten gehören der HTML-Schicht
+  if (e.target&&e.target.closest&&e.target.closest('input,textarea,select')) return;
   if (e.key===' '||e.key==='Tab'||e.key==='ArrowUp'||e.key==='ArrowDown') e.preventDefault(); M.key(e.key); });   // Tasten geben auch den Ton frei (M.key → audioInit)
 document.addEventListener('touchmove',function(e){ if (e.target===cv) e.preventDefault(); },{passive:false});
 document.addEventListener('touchend',function(){ try{ M.audioInit(); }catch(_){} },{passive:true});

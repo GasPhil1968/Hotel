@@ -29,5 +29,9 @@ const { open } = require(path.join(ROOT, 'qa', 'vmdriver'));
   const font = new opentype.Font({ familyName: 'MALA Pixel', styleName: 'Regular', unitsPerEm: 1000, ascender: 900, descender: -200, glyphs });
   fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, Buffer.from(font.toArrayBuffer()));
   console.log('MALA Pixel: ' + n + ' Glyphen → ' + path.relative(ROOT, OUT) + ' (' + (fs.statSync(OUT).size / 1024).toFixed(1) + ' KB)');
+  // auch für den Spiel-Build (game/build.js bettet game/fonts/MALAPixel.otf ein) samt Fingerabdruck der Schrifttabelle aus 00_core.js
+  const GF = path.join(ROOT, 'game', 'fonts'); fs.mkdirSync(GF, { recursive: true }); fs.copyFileSync(OUT, path.join(GF, 'MALAPixel.otf'));
+  const core = fs.readFileSync(path.join(ROOT, 'game', 'src', '00_core.js'), 'utf8'), tm = core.match(/var F\s*=\s*\{[\s\S]*?\n\};/);
+  if (tm) fs.writeFileSync(path.join(GF, 'MALAPixel.src.sha1'), require('crypto').createHash('sha1').update(tm[0]).digest('hex') + '\n');
   console.log('Zeichen: ' + Object.keys(FONT).sort().join(''));
 })().catch(e => { console.error(e); process.exit(1); });

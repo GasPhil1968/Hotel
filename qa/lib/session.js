@@ -79,8 +79,14 @@ class Session {
   }
 }
 
-// Menü über die Tastatur (Esc, wie am Rechner) öffnen und Zeile i über pointerDown/Up antippen; 1 = Speichern, 2 = Laden
+// Speichern/Laden wie der Spieler: Pause → Speichern → Lesezeichen 1 bzw. Pause → Laden → Lesezeichen 1 (HTML-Schicht, 07_shell.js);
+// ohne Schicht wie früher: Menü über Esc öffnen und Zeile i antippen; 1 = Speichern, 2 = Laden
 async function menuTap(I, index) {
+  if (await I.ev(() => !!(M.shell && M.shell.testSaveMark))) {
+    await I.ev(() => { for (let i = 0; i < 4 && !M.E.menu; i++) M.key('Escape'); }); await I.page.waitForTimeout(60);
+    const r = await I.ev((ix) => { if (!M.E.menu) return { err: 'Menü nicht offen' }; return ix === 1 ? M.shell.testSaveMark(1) : M.shell.testLoadMark(1); }, index);
+    await I.page.waitForTimeout(60); await I.ev(() => { if (M.E.menu) M.key('Escape'); }); await I.page.waitForTimeout(40);
+    return Object.assign({}, r, { msg: r.msg }); }
   await I.ev(() => { if (!M.E.menu) M.key('Escape'); });
   await I.page.waitForTimeout(60);
   const r = await I.ev((ix) => { if (!M.E.menu) return { err: 'Menü nicht offen' }; M.renderFrame(); for (let y = 0; y < 200; y++) { if (M.uiHit(160, y) === 'm:' + ix) { M.pointerDown(160, y + 2, true); M.pointerUp(160, y + 2, true); return { y: y + 2, msg: M.E.msg && M.E.msg.t }; } } return { err: 'Zeile nicht gefunden' }; }, index);

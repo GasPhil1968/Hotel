@@ -19,9 +19,10 @@ const { pw, checker, open, settle, loadSlot, CAPTURE, toPage, HS_POINT } = requi
     if (inv0.length) { await p.evaluate((id) => { M.E.pending = id; }, inv0[0]); await p.evaluate(() => M.key('Escape'));
       const s = await p.evaluate(() => ({ pend: M.E.pending, menu: !!M.E.menu })); T.ck(!s.pend && !s.menu, 'Esc bei gewähltem Gegenstand hebt nur die Wahl auf'); }
     await p.evaluate(() => M.key('Escape')); T.ck(await p.evaluate(() => !!M.E.menu), 'Esc ohne offene Ebene öffnet die Pause');
-    await p.evaluate(() => { M.E.flash ? 0 : 0; M.flash('Gespeichert.'); });
-    const capM = await p.evaluate(CAPTURE); const msg = capM.find(e => e.s === 'Gespeichert.');
-    T.ck(msg && msg.y < 40, 'Meldung im offenen Menü steht in der Kopfzeile (y=' + (msg && msg.y) + '), nicht über einer Menüzeile');
+    if (await p.evaluate(() => !!M.shell)) T.ck(await p.evaluate(() => M.shell.ctx === 'pause' && !M.E.msg), 'Pause liegt in der HTML-Schicht (Meldungen als eigene Marke, nie über Menüzeilen)');
+    else { await p.evaluate(() => { M.flash('Gespeichert.'); });
+      const capM = await p.evaluate(CAPTURE); const msg = capM.find(e => e.s === 'Gespeichert.');
+      T.ck(msg && msg.y < 40, 'Meldung im offenen Menü steht in der Kopfzeile (y=' + (msg && msg.y) + '), nicht über einer Menüzeile'); }
     await p.evaluate(() => M.key('Escape')); T.ck(await p.evaluate(() => !M.E.menu), 'Esc schließt die Pause wieder');
     // Rechtsklick über echte Maus: „Schau an“
     const look = pts.find(q => !q.exit) || pts[0];
@@ -101,7 +102,8 @@ const { pw, checker, open, settle, loadSlot, CAPTURE, toPage, HS_POINT } = requi
     T.ck(await p.evaluate(() => document.getElementById('rotnote').classList.contains('on')), 'Hinweis „MALA wird quer gespielt“ erscheint');
     const btn = await p.$('#rotnote button'); const bb = btn && await btn.boundingBox(); T.ck(bb && bb.height >= 44, 'Knopf „Gedreht weiterspielen“ ≥ 44 CSS-px hoch (' + (bb && bb.height) + ')');
     if (btn) await btn.tap(); T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on') && localStorage.getItem('mala.rotOk') === '1'), 'nach dem Tipp verborgen und gemerkt');
-    await p.reload(); await p.waitForFunction(() => window.M && M.E); T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on')), 'nach dem Neuladen nicht erneut');
+    await p.reload(); await p.waitForFunction(() => window.M && M.E && M.E.screen === 'title' && document.getElementById('rotnote'), null, { timeout: 20000 }); await p.waitForTimeout(300);
+    T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on') && localStorage.getItem('mala.rotOk') === '1'), 'nach dem Neuladen nicht erneut');
     errs.push(...p.errs); await p.context().close();
   } catch (e) { T.ck(false, 'Ausnahme: ' + (e.stack || e).toString().split('\n').slice(0, 3).join(' | ')); }
   T.ck(errs.length === 0, 'keine Skriptfehler in der Seite' + (errs.length ? ': ' + [...new Set(errs)].slice(0, 3).join(' | ') : ''));
