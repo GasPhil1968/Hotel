@@ -31,7 +31,7 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 | [`KAPITEL5_KONZEPT.md`](KAPITEL5_KONZEPT.md) | Konzept des Finales (Kapitel 5): Ende von Kapitel 4, drei Finalrichtungen, Handlung, Rätsel, Schlüsseldialoge, Epilog; Abschnitt 13 nennt die Abweichungen der Umsetzung |
 | [`LOESUNG5.md`](LOESUNG5.md) | Komplettlösung von Kapitel 5 mit Variante |
 | [`BERICHT_K5.md`](BERICHT_K5.md) | Entwicklungs- und Testbericht von Kapitel 5 (was geprüft wurde und was nicht) |
-| [`ANALYSE_GILBERT.md`](ANALYSE_GILBERT.md) | Rätseldesign, Geschichte und Figuren aller fünf Kapitel nach Ron Gilberts „Why Adventure Games Suck“ (1989): Prüfraster, Rätselinventar je Kapitel, belegte Befunde mit Schwere, fünf Vorher-nachher-Entwürfe, Umsetzungs- und Prüfplan. Mess- und Nachstellskripte in `qa/analyse/` |
+| [`ANALYSE_GILBERT.md`](ANALYSE_GILBERT.md) | Rätseldesign, Geschichte und Figuren aller fünf Kapitel nach Ron Gilberts „Why Adventure Games Suck“ (1989): Prüfraster, Rätselinventar je Kapitel, belegte Befunde mit Schwere, fünf Vorher-nachher-Entwürfe, Umsetzungs- und Prüfplan; Abschnitt J: Umsetzung der Muss-Liste P01–P12. Mess- und Nachstellskripte in `qa/analyse/`, Hinweisprobe in `qa/hints/` |
 | [`HINWEISE.md`](HINWEISE.md) | Alle Hinweistexte der fünf Kapitel mit ihren Bedingungen (Entwicklerübersicht, enthält Lösungen) |
 | [`BERICHT_PRUEFBERICHT.md`](BERICHT_PRUEFBERICHT.md) | Überarbeitung nach dem externen Prüfbericht (November 2026): blockierende Fehler, Widersprüche, neue Rätselformen, Spannungsbogen, Tests, offene Punkte |
 | [`KONZEPT.md`](KONZEPT.md) | Das vollständige Konzept: Analyse des Originals, Umsetzung der Blackwell-Mechanik, Story, Figuren, 19 Orte, die drei Fälle mit allen Rätseln und Lösungen, Spielzeit, Malas Geheimnis |
@@ -65,6 +65,7 @@ node game/tools/walkthrough4.js                     # spielt Kapitel 4 durch
 MALA_DUMPALL=/tmp/d5 node game/tools/walkthrough5.js   # spielt Kapitel 5 durch (MALA_K5VAR=1: Variante mit Übernahmen und anderen Antworten)
 node game/tools/hintcheck.js /tmp/d5                # Hinweise von Kapitel 5 gegen die Stände prüfen
 node game/tools/hintdoc.js > HINWEISE.md            # Übersicht aller Hinweistexte
+node qa/hints/hintprobe.js --dumps /tmp/d5 --varianten   # Stufe 4 jedes offenen Hinweises im Stand ausführen (auch --states aus qa/sim.js; siehe qa/README.md)
 node game/tools/devicetest.js                       # iPad-Ansicht, Touch, offline, Bildzeit
 MALA_DUMPALL=/tmp/k1 node game/tools/walkthrough.js # Spielstände je Schritt für den nächsten Test
 node game/tools/pruefbericht.js /tmp/k1 /tmp/d [bilder]   # jeder Befund des Prüfberichts im echten Spiel nachgestellt

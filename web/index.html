@@ -12227,6 +12227,8 @@ function ph(G,list){ return list.indexOf(G.phase)>=0; }
 function fresh(G){ return !F(G,'split.intro.legacy'); }
 function inLimbo(G){ return G.pos && G.pos[G.active] && G.pos[G.active].room==='limbo'; }
 function seen(G,r){ return !!(G.rooms&&G.rooms[r]); }
+function knotOpen(G){ return !!(G.rooms&&G.rooms.ivka&&G.rooms.ivka.knotOpen); }
+function ninaShown(G,k){ return !!(G.rooms&&G.rooms.shop&&G.rooms.shop.shown&&G.rooms.shop.shown[k]); }
 function lvl(G){ return G.flags['c3.lvl']||0; }
 M.HINTS_K1=[
  // ================= Prolog · Dienstag
@@ -12254,8 +12256,9 @@ M.HINTS_K1=[
  {id:'k1_knot',t:'Der verschnürte Schuhkarton',open:function(G){ return G.phase==='pro' && I(G,'key_ivka') && !I(G,'postcard') && seen(G,'ivka'); },
   s:['Ein Schuhkarton, mit einem festen Knoten verschnürt. Schneiden würde zerstören, was Ivka so sorgfältig verschnürt hat.',
      'Einen festen Knoten löst man mit etwas Dünnem, Spitzem, nicht mit Gewalt. In einer Wohnung, in der gestrickt wurde, liegt so etwas herum.',
-     'Im Nähkorb liegen Stricknadeln.',
-     function(G){ return I(G,'needle')?'Den Schuhkarton mit der Stricknadel benutzen, dann öffnen.':'Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen.'; }]},
+     function(G){ return knotOpen(G)?'Der Knoten ist offen.':'Im Nähkorb liegen Stricknadeln.'; },
+     // Hinweisprobe (P12): Ist der Knoten schon offen, riet Stufe 4 weiter zur Nadel; jetzt fehlt nur das Öffnen
+     function(G){ return knotOpen(G)?'Den Schuhkarton öffnen.':(I(G,'needle')?'Den Schuhkarton mit der Stricknadel benutzen, dann öffnen.':'Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen.'); }]},
  {id:'k1_photo',t:'Das Foto im Regal',open:function(G){ return G.phase==='pro' && I(G,'postcard') && !I(G,'photo1'); },
   s:['Die Postkarte nennt ein Boot und einen Freund. Ein Bild fehlt noch dazu.','Ivka hat aufgehoben, was ihr wichtig war. Nicht nur im Karton.','Ein Foto: zwei Männer im Boot.','Das Foto mit den zwei Männern im Boot nehmen.']},
  {id:'k1_list',t:'Wofür hat Ivka gelebt?',open:function(G){ return G.phase==='pro' && I(G,'key_ivka') && seen(G,'ivka') && !N(G,'pro_list'); },
@@ -12298,7 +12301,7 @@ M.HINTS_K1=[
   s:['Der Band ist gefunden. Herausziehen kann ihn nur einer, der lebt.','Mladen holt ihn, wenn er weiß, wo er suchen soll.','Ein Zahlendreher: 1984 steht bei 1948.','Als Marko Mladen sagen: „Schauen Sie mal im Regal bei 1948.“']},
  {id:'k1_came',t:'Die Fähre fiel aus',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_ferry') && N(G,'c1_boat7') && !N(G,'c1_came'); },
   s:['Die Fähre fuhr an dem Abend nicht. Und doch wollte Tonći um sieben kommen.','Zwei Notizen, die zusammen etwas Neues ergeben.','Tonćis Versprechen auf der Postkarte und der Eintrag im Fahrtenbuch.','Im Notizbuch „Boot um sieben“ mit „Fähre fiel aus“ verbinden.']},
- {id:'k1_dinko1',t:'Dinko an der Matejuška',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother'); },
+ {id:'k1_dinko1',t:'Dinko an der Matejuška',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother') && !F(G,'c1.dinkoTold'); },   // Analyse K1-B14: nach dem Geständnis nicht mehr offen
   s:['Dinko Matić war dabei. Er flickt seine Netze an der Matejuška und will nicht reden.','Fragen helfen bei ihm nicht. Etwas aus der Zeit von damals vielleicht.','Das Foto aus Ivkas Wohnung zeigt Tonći und Dinko auf der ANKICA.','An der Matejuška Dinko das Foto mit den zwei Männern im Boot zeigen.']},
  {id:'k1_shed',t:'Dinkos Schweigen',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_brother') && !N(G,'c1_words'); },
   s:['Dinko wird weicher, aber über die Nacht schweigt er.','Was er nicht sagt, hat er vielleicht aufgehoben. Hinter einer Tür, die zu bleibt.',
@@ -12337,7 +12340,7 @@ M.HINTS_K1=[
  {id:'k2_tool',t:'Werkzeug für die Ledana',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !I(G,'crowbar') && !I(G,'tickets'); },
   s:['Die alte Ledana ist verfallen. Mit bloßen Händen kommt man da nicht weit.','Wer am Hafen hat Werkzeug und hat Hilfe angeboten?','Dinko an der Matejuška: „Wenn du was brauchst, ich bin hier.“','Dinko nach einem Brecheisen fragen, für die alte Ledana.']},
  {id:'k2_fence',t:'Der Bauzaun',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,'ledana'); },
-  s:['Die Ledana ist eingezäunt.','Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.',{m:'Mala sieht hinter die Fischkisten an der Matejuška.',g:'Ich sehe hinter die Fischkisten an der Matejuška.'},{m:'Zu Mala wechseln und die Fischkisten ansehen.',g:'Zu mir wechseln und die Fischkisten ansehen.'}]},
+  s:['Die Ledana ist eingezäunt.','Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.',{m:'Mala sieht hinter die Fischkisten am Zaun.',g:'Ich sehe hinter die Fischkisten am Zaun.'},{m:'Zu Mala wechseln und die Fischkisten am Zaun ansehen.',g:'Zu mir wechseln und die Fischkisten am Zaun ansehen.'}]},
  {id:'k2_crawl',t:'Durch den Zaun',open:function(G){ return G.phase==='c2' && N(G,'c2_gap') && !seen(G,'ledana'); },
   s:['Hinter den Kisten ist ein loses Zaunfeld.','Mala kann nichts bewegen. Marko schon.','Die Kisten müssen weg, dann geht es durch die Lücke.','Als Marko die Fischkisten schieben und durch die Lücke kriechen.']},
  {id:'k2_luka',t:'Oben in der Ledana',open:function(G){ return G.phase==='c2' && seen(G,'ledana') && !F(G,'found.luka'); },
@@ -12354,7 +12357,7 @@ M.HINTS_K1=[
   s:['Nina redet nicht über Luka. Was bewahrt sie auf?','Hinter dem Laden ist ein Zimmer, das Kunden nicht betreten.',{m:'Mala geht durch die Tür „Privat“.',g:'Ich gehe durch die Tür „Privat“.'},{m:'Zu Mala wechseln, ins Hinterzimmer gehen und die gerahmte Reservierung ansehen und spüren.',g:'Zu mir wechseln, ins Hinterzimmer gehen und die gerahmte Reservierung ansehen und spüren.'}]},
  {id:'k2_waited',t:'Ist Nina gefahren?',open:function(G){ return G.phase==='c2' && N(G,'c2_unused') && !N(G,'c2_waited'); },
   s:['Ninas Reservierung wurde nie eingelöst.','Wo hätte sie an dem Abend sein sollen?','Luka wollte sie am Kiosk treffen.','Im Notizbuch die nie eingelöste Reservierung mit dem Treffpunkt am Kiosk verbinden.']},
- {id:'k2_brick',t:'Der Briefkasten',open:function(G){ return G.phase==='c2' && N(G,'c2_paper') && !I(G,'note_n'); },
+ {id:'k2_brick',t:'Der Briefkasten',open:function(G){ return G.phase==='c2' && N(G,'c2_paper') && !I(G,'note_n') && !F(G,'c2.brickDone'); },   // Analyse K1-B05: Hat Nina den Zettel, öffnete das Thema wieder und riet zum Spachtel
   s:['Hinter dem lockeren Ziegel an der Rampe steckt ein Papier.',
      function(G){ return N(G,'c2_thin')?'Mit dem Brecheisen käme die halbe Wand mit. Es braucht etwas Dünnes, Flaches.':'Der Ziegel sitzt fest in der Fuge. Gewalt reißt die Wand ein.'; },
      function(G){ return I(G,'spatula')?'Der Spachtel ist dünn genug.':'Etwas Dünnes, Flaches. So etwas verkauft ein Laden, der Bilder rahmt.'; },
@@ -12370,10 +12373,15 @@ M.HINTS_K1=[
   s:['Der Rekorder läuft, die Kassette ist da.','Zwei Dinge, die zusammengehören.','Die Kassette gehört in den Rekorder.','Die Kassette mit dem Rekorder benutzen.']},
  {id:'k2_luka2',t:'Ninas Zettel',open:function(G){ return G.phase==='c2' && I(G,'note_n') && !F(G,'c2.lukaKnows'); },
   s:['Ninas Zettel von 1999 ist gefunden. Er war für Luka.','Wer einen Brief nie bekommen hat, sollte ihn jetzt hören.','Luka sitzt noch oben in der Ledana.','In der Ledana mit Luka reden und vom Briefkasten erzählen.']},
- {id:'k2_nina2',t:'Nina überzeugen',open:function(G){ return G.phase==='c2' && F(G,'c2.lukaKnows') && I(G,'note_n') && I(G,'radioT') && !F(G,'c2.tonight'); },
+ // Analyse K1-B05: Nina behält den Zettel, sobald Marko ihn zeigt. Offen bleibt das Thema darum mit dem gezeigten Zettel, und Lukas Bitte ist keine Bedingung mehr
+ {id:'k2_nina2',t:'Nina überzeugen',open:function(G){ return G.phase==='c2' && (I(G,'note_n')||ninaShown(G,'note')) && I(G,'tickets') && I(G,'radioT') && !F(G,'c2.tonight'); },
   s:['Nina muss es hören: den Zettel, die Tickets, das Lied.','Sie will nicht an die Rampe, seit Jahren nicht. Sie kommt nur, wenn sie merkt, dass jemand verstanden hat, worauf sie wartet.',
      'Erst die Ledana, dann ihr eigener Zettel, Lukas Tickets, die Kassette. Und wenn sie zögert, etwas über ihr Warten: was Mira gesehen hat, oder was ihre Bilder zeigen.',
-     'Mit Nina reden: „Ich war in der Ledana“, ihr Zettel, die Tickets, die Kassette, „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.']},
+     // Hinweisprobe (P12): nach einem abgebrochenen Gespräch nennt Stufe 4, was Nina noch nicht gesehen hat
+     function(G){ var S=(G.rooms&&G.rooms.shop)||{}, sh=S.shown||{}, o=[];
+       if (!S.started) return 'Mit Nina reden: „Ich war in der Ledana“, ihr Zettel, die Tickets, die Kassette, „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.';
+       if (!sh.note) o.push('ihren Zettel'); if (!sh.tickets) o.push('Lukas Tickets'); if (!sh.tape) o.push('die Kassette');
+       return o.length?'Mit Nina reden und ihr zeigen: '+o.join(', ')+'. Dann „Wollen Sie es hören?“':'Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.'; }]},
  {id:'k2_ramp',t:'An der Rampe',open:function(G){ return G.phase==='c2_night' && !F(G,'c2.release'); },
   s:['Nina ist gekommen. Die Fähre legt bald ab.','Luka hat ein Lied für sie.','Der Rekorder mit der Kassette.','Nina den Rekorder mit der Kassette geben.']},
  {id:'k2_cross',t:'Luka kann gehen',open:function(G){ return F(G,'c2.release') && !F(G,'c2.done') && !inLimbo(G); },
@@ -12408,8 +12416,8 @@ M.HINTS_K1=[
   s:['Bruno bekommt seinen Satz nicht zusammen. Ihm fehlen Erinnerungen.','Drei Dinge rufen sie zurück: woran er jeden Sonntag dachte, wie seine Tochter spielte, und was er versteckt hat.',
      function(G){ var o=[]; if (!F(G,'c3.ins.danica')) o.push('das Tanzfoto in der Halle'); if (!F(G,'c3.ins.ljerka')) o.push('Ljerkas Klavierschule im Salon'); if (!F(G,'c3.ins.zagreb')) o.push('der Umschlag aus Zagreb im Klavierhocker'); return 'Noch fehlt: '+o.join(', ')+'.'; },
      function(G){ if (!F(G,'c3.ins.danica')) return I(G,'photo2')?'Bruno das Tanzfoto zeigen.':'Das Tanzfoto von der Wand in der Halle nehmen und Bruno zeigen.';
-       if (!F(G,'c3.brunoUp')) return 'Erst Bruno mit Musik in den Salon holen.';
-       if (!F(G,'c3.ins.ljerka')) return I(G,'musicbook')?'Bruno im Salon die Klavierschule zeigen.':'Im Salon das Tuch vom Flügel nehmen, die Klavierschule nehmen und Bruno zeigen.';
+       // Analyse K1-B14: Bruno nimmt die Dinge auch in der Loge an; „erst mit Musik in den Salon holen“ war keine Bedingung
+       if (!F(G,'c3.ins.ljerka')) return I(G,'musicbook')?'Bruno die Klavierschule zeigen.':(seen(G,'salon')?'Im Salon das Tuch vom Flügel nehmen, die Klavierschule nehmen und Bruno zeigen.':(I(G,'keyring')?'Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.':'Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.'));
        return I(G,'envelope')?'Bruno den Umschlag aus Zagreb zeigen.':'Den Klavierhocker mit dem Schlüsselring öffnen und Bruno den Umschlag zeigen.'; }]},
  {id:'k3_translate',t:'Brunos Satz',open:function(G){ return G.phase==='c3_night' && lvl(G)>=3 && !F(G,'c3.translated'); },
   s:['Bruno kann seinen Satz jetzt sagen, als Wortsalat aus drei Sprachen.','Fünf Teile, je drei Fassungen. Bruno schüttelt den Kopf genau dort, wo es nicht stimmt.',
@@ -12441,6 +12449,13 @@ M.HINTS_K1=[
 (function(M){
 'use strict';
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; } function I(G,id){ return G.inv.indexOf(id)>=0; }
+// Rade steht nur tagsüber an der Haltestelle (rooms/carsija.js); das Auftragsbuch liegt nach der Gravur auf Nedžads Werkbank
+function radeAway(G){ return ['k2_pro','k2_s1','k2_s2','k2_s3','k2_fin','k2_fin_n'].indexOf(G.phase)<0; }
+function bookOut(G){ return !!(G.rooms&&G.rooms.kazandziluk&&G.rooms.kazandziluk.bookOut); }
+// der nächste Schritt zum Datum von 1972 (s1b, s1c, s1d): Armband spüren → Nedžad helfen → Buch holen lassen → Buch lesen
+function dateStep(G){ if (!N(G,'s1_bracelet')) return {m:'Zu Mala wechseln und Tomaž spüren: Er hält ein graviertes Armband.',g:'Zu mir wechseln und Tomaž spüren: Er hält ein graviertes Armband.'};
+  if (bookOut(G)) return 'In Kazandžiluk das Auftragsbuch auf Nedžads Werkbank lesen.'; if (F(G,'k2.s1.engraved')) return 'Nedžad bitten, das Auftragsbuch von 1972 zu holen.';
+  return 'Nedžad nach dem Armband fragen und ihm bei der deutschen Gravur helfen. Dann schlägt er das Auftragsbuch von 1972 auf.'; }
 function ph(G,list){ return list.indexOf(G.phase)>=0; }
 M.HINTS_K2=[
  // ---------------- Prolog
@@ -12483,28 +12498,37 @@ M.HINTS_K2=[
  {id:'s1a',t:'Wann ist „sieben“?',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && !N(G,'s1_twosevens'); },
   s:['Tomaž wartet auf „sieben“. Die Uhr am Turm zeigt etwas ganz anderes als jede Armbanduhr.',
      'Die Kula geht nach einer alten Zeit. Wer hier lebt, weiß, wie.',
-     'Lejla auf der Terrasse der Kafana kennt die Kula.',
-     'Lejla nach Tomažs Zettel fragen, dem „Wenn die Kula sieben schlägt“, und hören, was sie über die Mondzeit sagt.']},
+     // Hinweisprobe (P12): Stufe 4 riet zu Lejla, auch wenn die Mondzeit schon von der Tafel am Turm bekannt war
+     function(G){ if (!N(G,'s1_alaturka')) return 'Lejla auf der Terrasse der Kafana kennt die Kula. Am Turm hängt auch eine Tafel.'; if (!N(G,'s1_note')) return {m:'Tomaž hält einen Zettel. Mala kann ihn lesen.',g:'Tomaž hält einen Zettel. Ich kann ihn lesen.'}; return 'Sein Zettel und die Mondzeit gehören zusammen.'; },
+     function(G){ if (!N(G,'s1_alaturka')) return 'Lejla fragen, warum die Uhr an der Kula falsch geht, oder an der Kula die Tafel lesen.'; if (!N(G,'s1_note')) return {m:'Zu Mala wechseln und Tomaž unter der Uhr ansehen.',g:'Zu mir wechseln und Tomaž unter der Uhr ansehen.'}; return 'Im Notizbuch „Kad kula udari sedam“ mit „Mondzeit“ verbinden.'; }]},
  {id:'s1b',t:'Sieben nach der Kula, aber wann genau?',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_twosevens') && !N(G,'s1_2316'); },
   s:['Die Kula zählt ab Sonnenuntergang. Ohne den Sonnenuntergang an jenem Tag bleibt „sieben“ ungenau.',
      'Zwei Dinge fehlen: das genaue Datum und ein Kalender, der den Sonnenuntergang für dieses Datum nennt.',
-     'Das Datum steht in einem Auftragsbuch in der Čaršija. Alte Kalender, auch Takvime, hat das Antiquariat an der Ferhadija.',
-     'Mit dem Datum aus Nedžads Auftragsbuch den Takvim von 1972 bei Jakob lesen, dann beides im Notizbuch verbinden.']},
+     // Analyse K2-B05: Ohne Malas Spüren an Tomaž hat Nedžad keinen Einstieg; Stufe 3 und 4 nennen jetzt den nächsten möglichen Schritt
+     function(G){ if (!N(G,'s1_bracelet')) return {m:'Das Datum steht in einem Auftragsbuch in der Čaršija. Tomaž trägt etwas Graviertes; Mala kann spüren, was.',g:'Das Datum steht in einem Auftragsbuch in der Čaršija. Tomaž trägt etwas Graviertes; ich kann spüren, was.'};
+       if (!N(G,'s1_date')) return 'Das Datum steht in Nedžads Auftragsbuch: Dort ist das Armband graviert worden.'; if (!N(G,'s1_sunset')) return 'Alte Kalender, auch Takvime, hat das Antiquariat an der Ferhadija.'; return 'Datum und Sonnenuntergang sind beisammen.'; },
+     function(G){ if (!N(G,'s1_bracelet')) return {m:'Zu Mala wechseln und Tomaž spüren: Er hält ein graviertes Armband.',g:'Zu mir wechseln und Tomaž spüren: Er hält ein graviertes Armband.'};
+       if (!N(G,'s1_date')) return dateStep(G);
+       if (!N(G,'s1_sunset')) return 'Bei Jakob im Antiquariat nach Takvimen von 1972 fragen und den Takvim lesen.'; return 'Im Notizbuch „Zwei Siebenen“ mit „Takvim 1972“ verbinden.'; }]},
  {id:'s1c',t:'Woher stammt das Armband?',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_bracelet') && !N(G,'s1_date'); },
   s:['Tomaž trägt ein graviertes Armband aus der Čaršija. Wer hat es graviert, und wann?',
      'Graveure führen Bücher über ihre Aufträge. Die alten Werkstätten sind in einer Gasse.',
      'In Kazandžiluk graviert die Familie Kazandžić seit hundert Jahren. Nedžad hat die alten Bücher, aber keine Zeit.',
-     'Nedžad bei seiner deutschen Gravur helfen. Dann schlägt er das Buch auf.']},
+     function(G){ return dateStep(G); }]},   // Hinweisprobe (P12): nach der Gravur holt Nedžad das Buch, dann liegt es auf der Werkbank
  {id:'s1d',t:'Was war an jenem Abend?',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && !N(G,'s1_left'); },
   s:['Jemand muss an jenem Abend in der Kafana gewesen sein.',
      'Zwei Seiten fehlen: was die Kafana damals erlebt hat, und was Tomaž selbst von seiner Nacht weiß.',
      'Šaćir am Fenstertisch war damals Kellner. Tomaž erinnert sich an seinen Zapfenstreich.',
-     'Šaćir nach dem Soldaten fragen, Tomaž nach seiner Nacht, und dann im Notizbuch verbinden, wann die Kafana zumachte und wann er zurück musste.']},
+     // Hinweisprobe (P12): Šaćir erinnert sich erst mit dem Datum; danach nennt Stufe 4 nur, was noch fehlt
+     function(G){ if (!N(G,'s1_closed')){ if (N(G,'s1_date')||N(G,'s1_name')) return 'Šaćir laut nach dem jungen Soldaten von 1972 fragen. Dann im Notizbuch verbinden, wann die Kafana zumachte und wann Tomaž zurück musste.';
+         var d=dateStep(G); return typeof d==='string'?'Šaćir erinnert sich erst mit dem Datum. '+d:{m:'Šaćir erinnert sich erst mit dem Datum. '+d.m,g:'Šaćir erinnert sich erst mit dem Datum. '+d.g}; }
+       if (!N(G,'s1_curfew')) return 'Tomaž nach seiner Nacht fragen: Wann musste er zurück in die Kaserne?'; return 'Im Notizbuch „Halid sperrte um elf zu“ mit „Zapfenstreich“ verbinden.'; }]},
  {id:'s1e',t:'Emina schweigt',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && !N(G,'s1_waited'); },
   s:['Emina will über 1972 nicht reden. Nicht mit einem Fremden.',
      'Mit jemandem aus der Familie redet sie anders. Und zuhören kann auch, wen sie nicht sieht.',
      {m:'Emina spricht mit ihrer Enkelin hinter der Theke. Mala kann dort unbemerkt stehen.',g:'Emina spricht mit ihrer Enkelin hinter der Theke. Dort kann ich stehen, ohne dass sie mich sieht.'},
-     {m:'Zu Mala wechseln und hinter der Theke lauschen.',g:'Zu mir wechseln und hinter der Theke lauschen.'}]},
+     // Hinweisprobe (P12): Lauschen an der Theke selbst bringt nichts, bei Emina schon, und erst, wenn Marko sie nach 1972 gefragt hat
+     function(G){ return F(G,'k2.s1.eminaAsked')?{m:'Zu Mala wechseln und bei Emina hinter der Theke lauschen.',g:'Zu mir wechseln und bei Emina hinter der Theke lauschen.'}:{m:'Erst Emina nach dem November 1972 fragen. Danach zu Mala wechseln und bei Emina hinter der Theke lauschen.',g:'Frag Emina erst nach dem November 1972. Danach lausche ich bei ihr hinter der Theke.'}; }]},
  {id:'s1k',t:'Was Emina nicht weiß',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_missed') && !N(G,'s1_nowrite'); },   // Blindtest K2: nach „Elf Minuten“ gab es kein Thema
   s:['Emina glaubt bis heute, Tomaž sei nicht gekommen.','Sie muss die elf Minuten von Marko hören.','Emina sitzt in der Kafana. Mit ihr über etwas aus dem Notizbuch reden.','Emina in der Kafana nach „Elf Minuten“ fragen.']},
  {id:'s1f',t:'Wo sind die Briefe?',open:function(G){ return ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_nowrite') && !I(G,'letters_tz') && !F(G,'k2.s1.tin'); },
@@ -12512,6 +12536,9 @@ M.HINTS_K2=[
      'Briefe gehen durch Hände. Wer hat damals etwas angenommen und weitergegeben?',
      {m:'Šaćir hat etwas weitergegeben. Mala sieht in der verschlossenen Kammer, wohin. Hinein geht es erst, wenn Emina nicht da ist.',g:'Šaćir hat etwas weitergegeben. Ich sehe in der verschlossenen Kammer nach, wohin. Hinein geht es erst, wenn Emina nicht da ist.'},
      function(G){ if (F(G,'k2.s1.letterFixed') && N(G,'s1_hidden') && !F(G,'k2.s1.eminaAway')) return 'Emina geht nachher zu Tante Sabira: die Kafana einmal verlassen und wieder hineingehen (oder als Mala hinter der Theke lauschen). Dann öffnet Lejla die Kammer.';
+       // Hinweisprobe (P12): Lejla ist schon geholfen, aber in der Kammer war noch niemand
+       if (F(G,'k2.s1.letterFixed') && !N(G,'s1_hidden')) return {m:'Zu Mala wechseln und durch die Tür der Kammer gehen: Dort sieht sie, wohin die Briefe kamen.',g:'Zu mir wechseln und durch die Tür der Kammer gehen: Dort sehe ich, wohin die Briefe kamen.'};
+       if (F(G,'k2.s1.eminaAway') && !F(G,'k2.s1.eminaBack')) return I(G,'chisel')?'In die Kammer gehen und am Spiegel das Stemmeisen ansetzen.':'Nedžad um sein Stemmeisen bitten, dann in der Kammer am Spiegel ansetzen.';   // Emina ist fort, Lejla öffnet
        return I(G,'chisel')?'Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.':'Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.'; }]},
  {id:'s1g',t:'Emina die Wahrheit sagen',open:function(G){ return ph(G,['k2_s1']) && N(G,'s1_missed') && N(G,'s1_betrayal') && !F(G,'k2.s1.emina'); },
   s:['Alles ist beisammen. Emina muss es hören.',
@@ -12535,12 +12562,20 @@ M.HINTS_K2=[
   s:['Auf Jakobs Foto steht ein Hochhaus mit einer Uhr auf dem Dach. Welches?',
      'Wer kennt die Haltestellen und Hochhäuser von damals?',
      'Rade an der Baščaršija kennt jede Haltestelle.',
-     'Rade das Foto zeigen.']},
+     function(G){ return radeAway(G)?'Morgen, wenn Rade wieder an der Haltestelle steht, ihm das Foto zeigen.':'Rade das Foto zeigen.'; }]},   // Hinweisprobe (P12): nachts und im Zwischenspiel ist Rade nicht da
  {id:'m1b',t:'Die leuchtende Uhr',open:function(G){ return N(G,'m2_f_clock') && !N(G,'m2_building'); },
   s:[{m:'Mala erinnert sich an eine Uhr mit leuchtenden Ziffern.',g:'Ich erinnere mich an eine Uhr mit leuchtenden Ziffern.'},
      'Eine Erinnerung und ein Foto. Passen sie zusammen?',
      'Rade weiß, welches Hochhaus eine Uhr hatte.',
-     {m:'Im Notizbuch Malas Splitter mit dem verbinden, was Rade über das Siebener sagt.',g:'Im Notizbuch meinen Splitter mit dem verbinden, was Rade über das Siebener sagt.'}]},
+     // Analyse K2-B06: Ohne Rades Auskunft gab es keinen Schluss; Rade antwortet jetzt auch auf den Splitter selbst
+     function(G){ if (!N(G,'m2_clocktower')) return radeAway(G)?{m:'Morgen Rade nach Malas Splitter mit der leuchtenden Uhr fragen.',g:'Morgen Rade nach meinem Splitter mit der leuchtenden Uhr fragen.'}:{m:'Rade nach Malas Splitter mit der leuchtenden Uhr fragen (oder ihm Jakobs Foto zeigen).',g:'Rade nach meinem Splitter mit der leuchtenden Uhr fragen (oder ihm Jakobs Foto zeigen).'};
+       return {m:'Im Notizbuch Malas Splitter mit „Das Hochhaus mit der Uhr“ verbinden.',g:'Im Notizbuch meinen Splitter mit „Das Hochhaus mit der Uhr“ verbinden.'}; }]},
+ // Analyse K2-B06: Lücke in Malas Spur zwischen „Das Siebener“ und Alija
+ {id:'m1b2',t:'Das Siebener',open:function(G){ return N(G,'m2_building') && !N(G,'m2_alija') && !ph(G,['k2_fin_n','k2_epi']); },
+  s:[{m:'Mala hat am Siebener jemanden getroffen. Wen?',g:'Ich habe am Siebener jemanden getroffen. Wen?'},
+     'Das Siebener steht in Alipašino Polje, an der alten Haltestelle der Drei.',
+     {m:'Neben der Haltestelle stand ein Kiosk. Wer dort noch wartet, sieht nur Mala.',g:'Neben der Haltestelle stand ein Kiosk. Wer dort noch wartet, sehe nur ich.'},
+     function(G){ var later=['k2_s2','k2_s3','k2_s3_n','k2_fin'].indexOf(G.phase)<0; return later?{m:'Ab morgen: in Alipašino Polje als Mala mit dem Mann am Kiosk reden.',g:'Ab morgen: in Alipašino Polje mit dem Mann am Kiosk reden.'}:{m:'Nach Alipašino Polje gehen, zu Mala wechseln und mit dem Mann am Kiosk reden.',g:'Nach Alipašino Polje gehen und mit dem Mann am Kiosk reden.'}; }]},
  {id:'m1c',t:'Zwei Fahrscheine',open:function(G){ return N(G,'m2_alija') && !N(G,'m2_ticket'); },
   s:['Alija sagt, die Kleine habe zwei Fahrscheine gekauft.',
      'Wo bewahrt jemand einen alten Fahrschein auf?',
@@ -12550,7 +12585,14 @@ M.HINTS_K2=[
   s:['Der Fahrschein ist am 12.11.1993 entwertet. Im Krieg.',
      'Welche Bahnen fuhren im November 1993 überhaupt?',
      'Rade weiß, welche Bahnen damals fuhren.',
-     'Im Notizbuch den Fahrschein mit dem verbinden, was Rade über November dreiundneunzig sagt.']},
+     function(G){ if (!N(G,'m2_notrams')) return radeAway(G)?'Morgen Rade fragen, ob im November dreiundneunzig Straßenbahnen fuhren.':'Rade fragen, ob im November dreiundneunzig Straßenbahnen fuhren.';   // Hinweisprobe (P12): erst Rades Auskunft
+       return 'Im Notizbuch „Malas Fahrschein“ mit „Keine Bahn im November 1993“ verbinden.'; }]},
+ // Analyse K2-B06: Lücke in Malas Spur zwischen „Ein Versprechen“ und dem neunten Stock
+ {id:'m1f',t:'Ein Versprechen',open:function(G){ return N(G,'m2_promise') && !N(G,'m2_f_ninth') && !ph(G,['k2_fin_n','k2_epi']); },
+  s:[{m:'Malas Fahrschein war ein Versprechen. An wen?',g:'Mein Fahrschein war ein Versprechen. An wen?'},
+     {m:'Mala erinnert sich in Splittern. Ein Versprechen ist ein Ort, zu dem man zurückwollte.',g:'Ich erinnere mich in Splittern. Ein Versprechen ist ein Ort, zu dem man zurückwollte.'},
+     {m:'Wenn Marko sie danach fragt, kommt vielleicht der nächste Splitter.',g:'Wenn du mich danach fragst, kommt vielleicht der nächste Splitter.'},
+     {m:'Mit Mala reden.',g:'Mit mir reden.'}]},
  {id:'m1e',t:'Zwei Kinder in der Drei',open:function(G){ return N(G,'m2_kids') && N(G,'m2_marko7') && !N(G,'m2_mali'); },
   s:['Rade erinnert sich an zwei Kinder, samstags um 11:10.',
      'Ein Mädchen und ein kleiner Junge, aus Alipašino Polje. Wer wohnte damals dort?',
@@ -12567,7 +12609,8 @@ M.HINTS_K2=[
      function(G){ return N(G,'s2_ledger')?'Im Notizbuch den Leihzettel mit dem Eintrag im Ankaufbuch verbinden.':'Jakob fragen, woher er das Buch hat, dann das Ankaufbuch auf seinem Schreibtisch lesen.'; }]},
  {id:'s2c',t:'Warum gab er es nie zurück?',open:function(G){ return ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_due') && !N(G,'s2_noreturn'); },
   s:['Für ihn läuft die Frist ab. Seit Jahren.','Was ist im August 1992 mit der Bibliothek geschehen?',
-     'Jakob erzählt es, wenn man ihn nach der Bibliothek fragt.','Im Notizbuch die Frist mit dem Brand verbinden.']},
+     'Jakob erzählt es, wenn man ihn nach der Bibliothek fragt.',
+     function(G){ return N(G,'s2_fire')?'Im Notizbuch „Die Frist läuft ab“ mit „Die Bibliothek brannte“ verbinden.':'Jakob nach der Nationalbibliothek fragen. Dann im Notizbuch die Frist mit dem Brand verbinden.'; }]},   // Hinweisprobe (P12)
  {id:'s2d',t:'Was ist im Buch?',open:function(G){ return ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_provenance') && !N(G,'s2_fragments'); },
   s:['Warum war ihm gerade dieses Buch so wichtig?','Menschen, die ihn kannten, erinnern sich an Bruchstücke.',
      'Sein Sohn in Wien, und eine alte Nachbarin an der Obala.',
@@ -12575,12 +12618,14 @@ M.HINTS_K2=[
  {id:'s2e',t:'In die Vijećnica',open:function(G){ return ph(G,['k2_s2']) && !I(G,'pass'); },
   s:['Nachts kommt niemand in die Vijećnica.','Wer darf hinein? Und was braucht diese Person gerade?',
      'Die Restauratorin am Bauzaun braucht jemanden, der alte deutsche Schrift lesen kann.',
-     'Bei Jakob die Tafel mit der Kurrentschrift holen und der Restauratorin damit helfen.']},
+     // Hinweisprobe (P12): Jakob gibt die Tafel erst, wenn die Restauratorin gesagt hat, was sie braucht
+     function(G){ if (!F(G,'k2.s2.amraAsk')) return 'Die Restauratorin am Bauzaun der Vijećnica fragen, was sie dort macht.'; if (!I(G,'kurrent')) return 'Bei Jakob nach seiner Kurrent-Tafel fragen.'; return 'Der Restauratorin sagen: „Ich lese Kurrent.“ Und mit der Tafel die Schrift lesen.'; }]},
  {id:'s2f',t:'Das Buch zurückgeben',open:function(G){ return ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_fragments') && N(G,'s2_provenance') && !F(G,'k2.s2.free'); },
   s:['Das Buch muss dorthin, wo es ausgeliehen wurde.',
      'Jakob gibt es nur her, wenn er weiß, wem es gehört und warum.',
      function(G){ if (F(G,'k2.s2.onDesk')) return 'Er will einen Stempel. Einen Stempel gibt es nicht mehr. Aber der Leihzettel hat ein Feld für die Rückgabe.'; return I(G,'pass')?'Mit dem Passierschein geht es abends in die Vijećnica, zur alten Ausleihe.':'Abends geht es nur mit einem Passierschein in die Vijećnica.'; },
-     function(G){ return F(G,'k2.s2.onDesk')?'Den Kugelschreiber auf die Ausleihtheke ziehen und die Rückgabe eintragen.':'Das Buch in der Vijećnica auf die Ausleihtheke legen, dann mit dem Kugelschreiber die Rückgabe eintragen.'; }]},
+     function(G){ if (F(G,'k2.s2.onDesk')) return 'Den Kugelschreiber auf die Ausleihtheke ziehen und die Rückgabe eintragen.'; if (!I(G,'rilke')) return 'Jakob sagen: „Das Buch gehört der Bibliothek.“ Dann gibt er es her.';   // Hinweisprobe (P12)
+       return I(G,'pass')?'Das Buch in der Vijećnica auf die Ausleihtheke legen, dann mit dem Kugelschreiber die Rückgabe eintragen.':'Mit dem Passierschein der Restauratorin abends in die Vijećnica, das Buch auf die Ausleihtheke legen und mit dem Kugelschreiber die Rückgabe eintragen.'; }]},
  {id:'s2g',t:'Ivan kann gehen',open:function(G){ return G.phase==='k2_s2_n' && F(G,'k2.s2.free') && !F(G,'k2.s2.gone'); },
   s:['Das Buch liegt wieder auf der Ausleihtheke. Ivan hat es gesehen.','Er steht noch da, als wüsste er nicht, wohin.',
      {m:'Mala kann ihn hinüberführen.',g:'Ich kann ihn hinüberführen.'},
@@ -12599,11 +12644,11 @@ M.HINTS_K2=[
   s:['In Split stand im Register „…ić, L.“. Wer verbirgt sich dahinter?',
      'Ein Haus führt Buch über seine Mieter.',
      {m:'In Haus 7 stehen im Hausbuch die alten Mieter. Malas Splitter sagt: neunter Stock.',g:'In Haus 7 stehen im Hausbuch die alten Mieter. Mein Splitter sagt: neunter Stock.'},
-     'Im Notizbuch das Register aus Split mit dem Hausbuch verbinden.']},
+     function(G){ return N(G,'m2_housebook')?'Im Notizbuch das Register aus Split mit dem Hausbuch verbinden.':'Im Hausflur von Haus 7 das Hausbuch lesen. Dann im Notizbuch das Register aus Split mit dem Hausbuch verbinden.'; }]},   // Hinweisprobe (P12)
  {id:'s3b',t:'In den Schutzraum',open:function(G){ return ph(G,['k2_s3']) && !I(G,'key_shelter') && !F(G,'k2.s3.inShelter'); },
   s:['Šehić gibt den Schlüssel nicht her.','Was bewegt ihn? Er redet, wenn er sich allein glaubt.',
      {m:'Mala kann an seiner Tür lauschen.',g:'Ich kann an seiner Tür lauschen.'},
-     'Mit Šehić vorsichtig über das reden, was an seiner Tür zu hören war.']},
+     function(G){ return N(G,'s3_hanka')?'Mit Šehić reden und ihn nach „Hanka“ fragen, vorsichtig: nach dem, was an seiner Tür zu hören war.':{m:'Zu Mala wechseln und an Šehićs Tür lauschen.',g:'Zu mir wechseln und an Šehićs Tür lauschen.'}; }]},   // Hinweisprobe (P12)
  {id:'s3b2',t:'Die Stahltür',open:function(G){ return G.phase==='k2_s3' && I(G,'key_shelter') && !F(G,'k2.s3.inShelter'); },
   s:['Šehićs Schlüssel ist in der Tasche.','Es gibt nur eine Tür, für die er passt.','Die Stahltür zum Schutzraum, hinten im Hausflur.','Die Stahltür mit Šehićs Schlüssel öffnen.']},
  {id:'s3c',t:'Der Schrank im Keller',open:function(G){ return ph(G,['k2_s3','k2_s3_n']) && F(G,'k2.s3.inShelter') && !F(G,'k2.s3.cabinet'); },
@@ -12613,12 +12658,14 @@ M.HINTS_K2=[
      {m:'Mala im Schutzraum lassen, mit Marko oben in der Halle den Klingelknopf drücken, dann zu Mala wechseln.',g:'Mich im Schutzraum lassen, oben in der Halle den Klingelknopf drücken, dann zu mir wechseln.'}]},
  {id:'s3d',t:'Die Zeugnisse',open:function(G){ return ph(G,['k2_s3']) && I(G,'svjedocanstva') && !F(G,'k2.s3.stamped'); },
   s:['Zora hat versprochen: Zeugnisse mit Stempel.','Die Schule gibt es nicht mehr. Ihr Stempel vielleicht schon.',
-     'Mirza hat Dinge aus der Schule aufgehoben. Sie liegen im Schutzraum.','Den Stempel im Schutzraum auf die Zeugnisse drücken.']},
+     // Analyse K2-B07: Den Stempel hat Mirza, nicht der Schutzraum; gestempelt wird an Zoras Pult
+     function(G){ return I(G,'pecat')?'Der Stempel ist da. Die Zeugnisse gehören auf Zoras Pult im Schutzraum.':'Mirza hat den alten Schulstempel aufgehoben.'; },
+     function(G){ return I(G,'pecat')?'Im Schutzraum den Stempel auf Zoras Pult benutzen.':'Mirza sagen: „Zora wollte Zeugnisse mit Stempel verteilen.“ Er hat den Stempel.'; }]},
  {id:'s3e',t:'Wer kommt zur letzten Stunde?',open:function(G){ return ph(G,['k2_s3']) && N(G,'s3_register') && !(F(G,'k2.s3.mirza') && F(G,'k2.s3.selma') && F(G,'k2.s3.damir')); },
   s:['Zora will, dass alle da sind. Drei aus dem Klassenbuch leben noch hier.',
      'Mirza, Selma und Damir. Jeder braucht einen anderen Grund, zu kommen.',
-     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza muss erfahren, was Zora über ihn geschrieben hat'); if (!F(G,'k2.s3.selma')) o.push('Selma braucht eine Hand'); if (!F(G,'k2.s3.damir')) o.push('Damir braucht seine eigene Zeichnung'); return o.join('. ')+'.'; },
-     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza zeigen, was im Klassenbuch über ihn steht'); if (!F(G,'k2.s3.selma')) o.push('Selma Hilfe anbieten'); if (!F(G,'k2.s3.damir')) o.push('Damir seine Zeichnung geben'); return o.join('. ')+'.'; }]},
+     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza muss erfahren, was Zora über ihn geschrieben hat'); if (!F(G,'k2.s3.selma')) o.push('Selma braucht eine Hand'); if (!F(G,'k2.s3.damir')) o.push('Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch'); return o.join('. ')+'.'; },
+     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza zeigen, was im Klassenbuch über ihn steht'); if (!F(G,'k2.s3.selma')) o.push('Selma Hilfe anbieten'); if (!F(G,'k2.s3.damir')) o.push('Damir das Klassenbuch zeigen'); return o.join('. ')+'.'; }]},   // Analyse K2-B07: eine „Zeichnung“ als Gegenstand gibt es nicht
  {id:'s3g',t:'Die letzte Stunde',open:function(G){ return G.phase==='k2_s3_n' && !F(G,'k2.s3.free'); },
   s:['Mirza, Selma und Damir sind gekommen. Zora wartet unten auf ihre Klasse.','Wie beginnt eine Lehrerin ihre Stunde?',
      'Mit dem Klassenbuch auf dem Pult.','Im Schutzraum das Klassenbuch auf Zoras Pult legen.']},
@@ -12642,7 +12689,8 @@ M.HINTS_K2=[
      {m:'Vielleicht zeigt sie es, wenn sie etwas Gleiches sieht. Im Karton lag ein alter Fahrschein.',g:'Vielleicht zeige ich es, wenn ich etwas Gleiches sehe. Im Karton lag ein alter Fahrschein.'},
      {m:'Mala den alten Fahrschein aus dem Karton zeigen.',g:'Mir den alten Fahrschein aus dem Karton zeigen.'}]},
  {id:'f3',t:'Der neunte Stock',open:function(G){ return G.phase==='k2_fin' && N(G,'f2_photo') && !N(G,'f2_postcard'); },
-  s:['Nada im neunten Stock öffnet keinem.','Sie öffnet vielleicht, wenn sie sieht, wer vor der Tür steht.','Das ganze Foto zeigt, wer das ist.','Nada das ganze Foto zeigen.']},
+  s:['Nada im neunten Stock öffnet keinem.','Sie öffnet vielleicht, wenn sie sieht, wer vor der Tür steht.','Das ganze Foto zeigt, wer das ist. Mit ihm öffnet sie.',
+     'In Haus 7 die Treppe hinauf zu Nada, sie nach Lanas Zimmer fragen und dort die Postkarte lesen.']},   // Hinweisprobe (P12): das Foto zeigen allein öffnet Lanas Zimmer nicht
  {id:'f4',t:'Großmutters Haus',open:function(G){ return G.phase==='k2_fin' && N(G,'f2_postcard') && !N(G,'f2_rcm'); },
   s:['Lana wollte jemanden holen. Damals war das Ziel Großmutters Haus in Vratnik.',
      function(G){ return I(G,'key_kuca')||F(G,'k2.f2.kuca')?'Der Schlüssel zu Großmutters Haus ist da. In der Küche ist etwas zu spüren.':'Wer hat einen Schlüssel zu Großmutters Haus? Jemand, der dreißig Jahre gegenüber wohnte.'; },
@@ -12659,7 +12707,10 @@ M.HINTS_K2=[
   s:['Zwei Fahrscheine für die erste Drei nach dem Krieg.',
      {m:'Einer ist in der Tasche, den anderen hat Mala.',g:'Einen hast du, den anderen habe ich.'},
      'Entwertet werden beide in der Bahn.',
-     {m:'Mala um ihren Fahrschein bitten und in der Drei beide am Entwerter entwerten.',g:'Mich um meinen Fahrschein bitten und in der Drei beide am Entwerter entwerten.'}]},
+     // Hinweisprobe (P12): nach dem Entwerten nennt Stufe 4 den letzten Schritt, nicht wieder den ersten
+     function(G){ if (F(G,'k2.f2.rideEnd')) return {m:'An der Baščaršija aussteigen und sich mit Mala auf die Bank setzen.',g:'An der Baščaršija aussteigen und dich mit mir auf die Bank setzen.'};
+       if (I(G,'ticket_l')) return 'An der Haltestelle in die Drei steigen und beide Fahrscheine am Entwerter entwerten.';
+       return {m:'Mala um ihren Fahrschein bitten und in der Drei beide am Entwerter entwerten.',g:'Mich um meinen Fahrschein bitten und in der Drei beide am Entwerter entwerten.'}; }]},
  // ---------------- Epilog
  {id:'e1',t:'Lanas Nachricht',open:function(G){ return G.phase==='k2_epi' && I(G,'rcm') && !F(G,'k2.epi.nada'); },
   s:['Lanas Nachricht vom Roten Kreuz lag siebzehn Jahre versteckt. Sie gehört nicht einem allein.','Wer wartet seit siebzehn Jahren auf ein Wort von Lana?',
@@ -12737,7 +12788,7 @@ M.HINTS_K3=[
   s:['Eine Linie ist eingezeichnet. Für einen Schnitt braucht es eine zweite.',
      'Von oben sieht man weiter, und die Dinge liegen anders.',
      'Das Minarett der Koski-Moschee darf man besteigen. Die Kasse ist im Hof.',
-     'Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.']},
+     function(G){ return I(G,'ulaznica')?'Mit der Karte durch die Tür im Hof aufs Minarett steigen und oben peilen.':'Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.'; }]},   // Hinweisprobe (P12)
  {id:'d1c',t:'Zwei Linien',open:function(G){ return F(G,'k3.peil.minaret') && !N(G,'l3_flat'); },
   s:['Zwei Linien sind eingezeichnet.',
      'Was ergeben die beiden Messungen zusammen?',
@@ -12772,7 +12823,8 @@ M.HINTS_K3=[
   s:['Mala erinnert sich an einen Lastwagen und einen Fahrer, der rauchte und nichts sagte. Wer war das?',
      'Wer wusste damals, mit wem Lana fuhr? In Split jemand. In Mostar jemand, der jeden kennt.',
      function(G){ return F(G,'k3.mala.crossed')?'Ljerka hat in Split das Hotel geführt, und Sanja kennt sie. Im Café am Westbusbahnhof sitzt ein alter Mann am Fenster, der jeden kennt.':'Ljerka hat in Split das Hotel geführt, und Sanja kennt sie.'; },
-     function(G){ return F(G,'k3.mala.crossed')?'Mit dem Handy Sanja anrufen. Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.':'Mit dem Handy Sanja anrufen.'; }]},
+     // Hinweisprobe (P12): nach dem Anruf riet Stufe 4 wieder zum Anruf; Ljerkas Rückruf kommt nach zwei Ortswechseln
+     function(G){ var alt=F(G,'k3.mala.crossed')?' Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.':''; return F(G,'k3.d1.sanja')?'Ljerka ruft zurück, sobald ich zweimal den Ort gewechselt habe. Bis dahin weiter peilen.'+alt:'Mit dem Handy Sanja anrufen.'+alt; }]},
  {id:'d1j',t:'Vlado, der Raucher',open:function(G){ return N(G,'v3_ljerka') && !N(G,'v3_mate') && !N(G,'v3_where') && !F(G,'k3.v.met'); },
   s:['Ljerka kennt nur einen Vornamen: Vlado, der Raucher. Er fuhr Mehl in die Dörfer.',
      'Wer in Mostar kennt einen Vlado, der früher Mehl gefahren ist? Jemand, der selbst fährt.',
@@ -12782,7 +12834,7 @@ M.HINTS_K3=[
   s:['Vlado Rajić, der Raucher, hat eine Werkstatt für Reifen.',
      function(G){ return F(G,'k3.mala.crossed')?'Die Werkstatt heißt Vulkanizer Rajić. Sie liegt hinter dem Bulevar.':'Die Werkstatt liegt drüben, auf dem anderen Ufer. Mala geht nicht über den Fluss.'; },
      function(G){ return F(G,'k3.mala.crossed')?'Vom Bulevar geht eine Seitengasse ab, mit einem Schild.':'Erst muss Mala über den Fluss. Dann geht es zu Vlado.'; },
-     function(G){ return F(G,'k3.mala.crossed')?'Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.':'Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.'; }]},
+     function(G){ if (G.rooms&&G.rooms.vulkanizer) return 'Im Vulkanizer mit Vlado reden.'; return F(G,'k3.mala.crossed')?'Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.':'Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.'; }]},   // Hinweisprobe (P12)
  {id:'d1k',t:'Vlado leugnet',open:function(G){ return F(G,'k3.v.met') && !N(G,'v3_cab') && !vClosed(G); },
   s:['Vlado redet nicht. „Nie.“',
      {m:'Vlado redet nicht mit Marko. Vielleicht redet sein Hof.',g:'Er redet nicht mit dir. Vielleicht redet sein Hof.'},
@@ -12792,7 +12844,7 @@ M.HINTS_K3=[
   s:['Kata will etwas verkaufen und hat eine E-Mail, die sie nicht ganz versteht.',
      'Die E-Mail ist auf Deutsch, aus Graz. Marko ist Übersetzer.',
      'Österreichisch ist nicht ganz Deutsch: Ein Typenschein ist kein Typenschild.',
-     'Mit Kata über die E-Mail reden und sie übersetzen.']},
+     'Kata fragen, was da hinten unter der Plane steht, und ihr die E-Mail übersetzen („Ich bin Übersetzer“).']},   // Hinweisprobe (P12): eine Option „E-Mail“ gibt es nicht
  {id:'d1m',t:'Welche Schublade?',open:function(G){ return F(G,'k3.v.which') && !F(G,'k3.v.drawer') && !vClosed(G); },
   s:['Kata braucht den Schlüssel zu genau einer von drei Schubladen. Raten lässt sie nicht.',
      'Drei abgeschlossene Schubladen. Wer sieht durch Holz?',
@@ -12940,7 +12992,7 @@ M.HINTS_K3=[
   s:['Mate schrieb jedes Jahr dieselbe Frage. Davor las darin einen Vorwurf.',
      'Was hat Mate gemeint? Das Haus erzählt mehr als die Briefe.',
      'In der Stube die Briefe, oben das Kinderzimmer.',
-     function(G){ return (N(G,'b3_letters')&&N(G,'b3_kidsroom'))?'„Mates Briefe“ und „Das Kinderzimmer“ verbinden.':'Im Haus die Briefe lesen und oben das Kinderzimmer ansehen.'; }]},
+     function(G){ if (N(G,'b3_letters')&&N(G,'b3_kidsroom')) return '„Mates Briefe“ und „Das Kinderzimmer“ verbinden.'; return N(G,'b3_letters')?'Im Haus über die Treppe hinauf und das Kinderzimmer ansehen.':'Im Haus Davor fragen, ob ich Mates Briefe lesen darf; oben ist das Kinderzimmer.'; }]},   // Hinweisprobe (P12): die Briefe gibt Davor
  {id:'d3q2',t:'Was Mate gemeint hat',open:function(G){ return G.phase==='k3_d3' && N(G,'b3_invite') && !F(G,'k3.b.invite'); },
   s:['Davor liest in Mates Briefen einen Vorwurf.',
      'Er muss hören, was „Kad ćete doći?“ gemeint war. In seiner Sprache.',
@@ -12966,13 +13018,15 @@ M.HINTS_K3=[
  {id:'d3v',t:'Für den Kleinsten',open:function(G){ return F(G,'k3.b.keyFree') && !F(G,'k3.b.keyLena'); },
   s:['In der Astgabel liegt ein Schlüssel.','Für wen war er immer?','Für den Kleinsten.',function(G){ return F(G,'k3.b.keyTaken')?'Lena den Schlüssel geben.':'Den Schlüssel aus der Astgabel nehmen und Lena geben.'; }]},
  {id:'d3w',t:'Mate',open:function(G){ return F(G,'k3.b.keyLena') && !F(G,'k3.b.limbo'); },
-  s:['Mate ist bereit.',{m:'Mala kann die Schwelle öffnen.',g:'Ich kann ihn hinüberbringen.'},'Mit Mala bei Mate.','Mala bitten, Mate hinüberzubringen.']},
+  s:['Mate ist bereit.',{m:'Mala kann die Schwelle öffnen.',g:'Ich kann ihn hinüberbringen.'},'Mit Mala bei Mate.',{m:'Zu Mala wechseln und bei Mate „Hinüberbringen“ wählen.',g:'Zu mir wechseln und bei Mate „Hinüberbringen“ wählen.'}]},   // Hinweisprobe (P12): wie bei den anderen Geistern
  {id:'d3w2',t:'Zurück',open:function(G){ return G.phase==='k3_d3' && F(G,'k3.b.limbo') && !F(G,'k3.b.done'); },
   s:['Mate ist hinübergegangen.',{m:'Mala bleibt am Rand. Für Marko geht es zurück.',g:'Ich bleibe am Rand. Du gehst zurück.'},'Das Tor.','Durch das Tor zurückgehen.']},
  {id:'d3x',t:'Bis elf',open:function(G){ return G.phase==='k3_d3' && F(G,'k3.v.free') && !F(G,'k3.b.done'); },
   s:['Vlado holt um elf ab. Vorher noch die Feigen.','Die Zelenikas.','Haus Zelenika.','Den Fall der Zelenikas zu Ende bringen.']},
  {id:'d3y',t:'Soll Zlata es erfahren?',open:function(G){ return G.phase==='k3_d3' && N(G,'a3_awake') && !F(G,'k3.z.tellOk') && !F(G,'k3.asked.zlata_awake'); },
-  s:['Soll Zlata erfahren, dass ihr Mann wach war?','Das ist nicht nur Markos Entscheidung.',{m:'Mala fragen.',g:'Frag mich.'},'Mala fragen, ob Zlata es erfahren soll.']},
+  s:['Soll Zlata erfahren, dass ihr Mann wach war?','Das ist nicht nur Markos Entscheidung.',{m:'Mala fragen, bevor Marko es Zlata sagt.',g:'Frag mich, bevor du es ihr sagst.'},
+     // Hinweisprobe (P12): gefragt wird Mala im Gespräch mit Zlata, nicht in einem eigenen Gespräch
+     'Bei Zlata „Ihr sagen, dass Bato wach war“ wählen und dann Mala fragen.']},
  // ---------------- Finale
  {id:'f3a',t:'Die Glocke',open:function(G){ return G.phase==='k3_fin_n' && !F(G,'k3.fin.bato'); },
   s:['Heute Nacht weiß Bato, wer geläutet hat.','Die Glocke am rechten Ufer.','Läuten.','An der Glocke läuten.']},
@@ -13001,7 +13055,8 @@ M.HINTS_K3=[
  {id:'e3c',t:'Nada kommt',open:function(G){ return G.phase==='k3_epi_d' && !F(G,'k3.e.nada'); },
   s:['Nada kommt mit dem ersten Bus.','Aus Sarajevo kommen die Busse am Ostbusbahnhof an.','Ostbusbahnhof.','Zum Ostbusbahnhof gehen.']},
  {id:'e3d',t:'Zwei Mütter',open:function(G){ return G.phase==='k3_epi_d' && F(G,'k3.e.nada') && !F(G,'k3.e.mothers'); },
-  s:['Nada will zu ihr.','Skela.','Vlado fährt.','Nach Skela fahren und mit Nada und Zlata reden.']},
+  s:['Nada will zu ihr.','Skela.','Vlado fährt. In Zlatas Küche liegt etwas für Nada.',
+     function(G){ if (I(G,'skizzenbuch')) return 'Nada das Skizzenbuch geben.'; if (I(G,'brief1996')) return 'Nada Zlatas Brief von 1996 geben, dann das Skizzenbuch.'; return 'Nach Skela fahren, in Zlatas Küche die Schublade öffnen und Nada Zlatas Brief von 1996 geben, dann das Skizzenbuch.'; }]},   // Hinweisprobe (P12)   // Hinweisprobe (P12): Reden allein führt nicht weiter
  {id:'e3e',t:'Das Amt',open:function(G){ return G.phase==='k3_epi_d' && F(G,'k3.e.mothers') && !F(G,'k3.e.report'); },
   s:['Lana muss amtlich gefunden werden, bevor sie heimkommt.','Die Vermisstenstelle.','Frau Kolar wartet.','Zur Vermisstenstelle gehen und mit Frau Kolar reden.']},
  {id:'e3f',t:'Ein Feld, das zu klein ist',open:function(G){ return G.phase==='k3_epi_d' && F(G,'k3.e.report') && !F(G,'k3.e.form'); },
@@ -13031,6 +13086,10 @@ M.HINTS_K3=[
 'use strict';
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; } function I(G,id){ return G.inv.indexOf(id)>=0; }
 function P(G,list){ return list.indexOf(G.phase)>=0; }
+// abends geht Marko nicht mehr aus dem Haus (96_k4_story.js, travelWhy): Schritte an anderen Orten erst morgen (Hinweisprobe, P12)
+function later(G){ return ['k4_pro_n','k4_d1_n','k4_d2_n','k4_d4_n','k4_d5_n'].indexOf(G.phase)>=0; }
+// Nachmittag im Heim schon verbraucht (wie rooms/heim_flur.js: gilt nur im selben Abschnitt)
+function pmUsed(G){ return G.flags['k4.g.pmPhase']===G.phase && (F(G,'k4.g.pmUsed')||F(G,'k4.g.pmBlunt')); }
 function room(G){ return (G.pos&&G.pos.marko&&G.pos.marko.room)||''; }
 function no(G){ return M.k4Variant && M.k4Variant(G)==='no'; }
 M.HINTS_K4=[
@@ -13044,7 +13103,8 @@ M.HINTS_K4=[
   s:['Der alte Mann am Pfeiler wartet auf seine Ablösung.',
      'Markos Hochdeutsch nimmt er nicht an: „Sie san ned vo do.“ Es fehlt nicht der richtige Satz. Es fehlt die richtige Stimme.',
      'Jemand von hier, der ihn kannte. Am Taxistand lehnt ein alter Münchner.',
-     'Den Taxifahrer am Taxistand bitten, „Feierabend“ zu dem Mann am Pfeiler zu sagen.']},
+     // Analyse K4-B11: die nötige Vorfrage an Wastl fehlte; Wastl hilft erst, wenn Marko von Hansi weiß, worauf er wartet
+     function(G){ return F(G,'k4.h.local')?'Den Taxifahrer am Taxistand fragen, ob er Hansi kannte, und ihn bitten, etwas für ihn zu tun: „Feierabend“ zum Mann am Pfeiler sagen.':'Mit dem Mann am Pfeiler reden: worauf er wartet und wer ihn ablösen darf.'; }]},
  {id:'h4c',t:'Der Schlüssel',open:function(G){ return G.phase==='k4_pro' && N(G,'u4_sms') && !F(G,'k4.p.key'); },
   s:['Mama arbeitet bis zwei. Den Schlüssel hat die Nachbarin.',
      'Anas SMS: „Schlüssel bei Frau Huber, unten links.“',
@@ -13054,7 +13114,7 @@ M.HINTS_K4=[
   s:['Mama kommt um zwei. Bis dahin ist Zeit.',
      'Die Wohnung erzählt einiges. Und man kann Kaffee kochen.',
      'Großmutters Džezva ist im Gepäck. In der Küche steht ein Herd.',
-     'In der Küche die Džezva benutzen und Kaffee kochen.']},
+     'In der Küche den Herd benutzen und in Großmutters Džezva Kaffee kochen.']},   // Hinweisprobe (P12): die Džezva ist keine Stelle im Raum, gekocht wird am Herd
  {id:'h4e',t:'Mama',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.coffee') && !F(G,'k4.p.jasna'); },
   s:['Mama ist da. Marko hat ihr einiges mitgebracht.',
      'Nadas Gruß. Und eine Nachricht aus Mostar.',
@@ -13080,7 +13140,8 @@ M.HINTS_K4=[
   s:['Markos Kopf pocht. Irgendwo in der Stadt wartet einer, den Mala noch nicht gefunden hat.',
      'Wo kommen in München Menschen an und fahren ab?',
      {m:'Der Hauptbahnhof. Mala kann sich dort umsehen.',g:'Am Bahnhof. Ich sehe mich um.'},
-     'Als Mala zum Hauptbahnhof gehen und sich an Gleis 11 umsehen. Dann mit Marko hin und mit dem Mann reden.']},
+     // Hinweisprobe (P12): nach Malas Fund nennt Stufe 4 die nächsten Schritte, nicht wieder den ersten
+     function(G){ if (F(G,'k4.s.told')) return 'An Gleis 11 mit dem Mann reden: Wie heißt er weiter?'; if (F(G,'k4.s.found')) return 'Als Marko zum Hauptbahnhof fahren: Mala zeigt ihm den Mann an Gleis 11.'; return 'Als Mala zum Hauptbahnhof gehen und sich an Gleis 11 umsehen. Dann mit Marko hin und mit dem Mann reden.'; }]},
  {id:'d4c',t:'Mamas Brot',open:function(G){ return G.phase==='k4_d1' && !F(G,'k4.d1.bread'); },
   s:['Mama ist bei der Arbeit. Sie war heute Morgen in Eile.',
      'In der Küche liegt etwas, das sie vergessen hat.',
@@ -13108,7 +13169,7 @@ M.HINTS_K4=[
      'Frau Wimmer in der Bahnhofsmission und die Kioskfrau nach dem Gepäckträger fragen.']},
  {id:'s4b',t:'Bairisch oder Italienisch',open:function(G){ return N(G,'s4_fluch') && N(G,'s4_bairisch') && !N(G,'s4_tarnung'); },
   s:['Die Kioskfrau sagt: ein Urmünchner. Frau Wimmer sagt: Er hat italienisch geflucht.','Einer von beiden irrt. Oder keiner.','Im Notizbuch beide Aussagen nebeneinanderlegen.','„A Urmünchner“ und „Italienisch geflucht“ verbinden.']},
- {id:'s4c',t:'Die Akte',open:function(G){ return P(G,['k4_d2','k4_d3']) && F(G,'k4.s.wimmer') && !N(G,'s4_ausweis'); },   // am Christtag hat kein Amt offen
+ {id:'s4c',t:'Die Akte',open:function(G){ return P(G,['k4_d2','k4_d3']) && F(G,'k4.s.wimmer') && !N(G,'s4_ausweis') && !N(G,'s4_name'); },   // am Christtag hat kein Amt offen; Analyse K4-B11: mit dem Namen erledigt
   s:['Wer ohne Angehörige stirbt, wird von Amts wegen bestattet.','Dafür hat die Stadt eine Akte.','Städtische Friedhöfe, die Verwaltung.','Bei Herrn Obermaier nach der Akte zum Gepäckträger fragen.']},
  {id:'s4d',t:'Nummer 17',open:function(G){ return N(G,'s4_peppino') && N(G,'s4_ausweis') && !N(G,'s4_derselbe') && !N(G,'s4_name'); },
   s:['Peppino an Gleis 11. Josef Rugiero in der Akte.','Beide tragen dieselbe Nummer.','Im Notizbuch „Mi chiamo Peppino“ und „Josef Rugiero“.','Die beiden Notizen verbinden.']},
@@ -13116,14 +13177,16 @@ M.HINTS_K4=[
   s:['Peppino und Josef Rugiero: derselbe Mann? Eine Nummer allein ist noch kein Name.',
      '„Me l\'hanno preso qui.“ Den Namen hat man ihm hier genommen, an Gleis 11.',
      {m:'Unter Gleis 11 liegt etwas, wo nur Mala hinkommt. Oder in seinem Koffer liegt Post.',g:'Unter dem Gleis ist etwas. Ich komme da hin, du nicht. Oder du liest seine Post.'},
-     'Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.']},
+     // Hinweisprobe (P12): Ist der Bunker schon gesehen, fehlt nur der Schluss
+     function(G){ if (N(G,'s4_bunker') && N(G,'s4_derselbe')) return 'Im Notizbuch „Peppino ist der Sepp (?)“ mit Malas Nachhall aus dem Bunker verbinden.'; return 'Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.'; }]},
  {id:'s4f',t:'Sein Name',open:function(G){ return N(G,'s4_name') && !N(G,'s4_bitte') && !F(G,'k4.s.crossed'); },
   s:['Wir kennen jetzt seinen Namen.','Das muss er hören. In seiner Sprache.','An Gleis 11.','Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.']},
  {id:'s4g',t:'Peppinos Bitte',open:function(G){ return N(G,'s4_bitte') && !F(G,'k4.s.call'); },
   s:['Er will, dass Marko für ihn schreibt: „Cara Carmela, sto bene.“',
      'Was hat Carmela ihm all die Jahre geschrieben? Und was wusste sie?',
      'Die Briefe im Koffer, besonders einer von 1979. Frau Wimmer gibt sie nur heraus, wenn sie weiß, dass sie ihm gehören. Mala liest mehr darin als Marko.',
-     function(G){ if (!F(G,'k4.s.letters')) return 'Frau Wimmer nach „Josef Rugiero ist Giuseppe Ruggiero“ fragen und die Briefe lesen.'; if (!N(G,'s4_carmela_hall')) return 'Als Mala in der Bahnhofsmission den Koffer mit den Briefen spüren.'; if (!N(G,'s4_wusste')) return '„Carmela, 1979“ und „Eine Frau, die weint“ verbinden.'; return 'An Gleis 11 mit Peppino reden: „Ich rufe Carmela an.“'; }]},
+     // Hinweisprobe (P12): Frau Wimmer hat keine Notizfrage; abends geht Marko nicht mehr aus dem Haus
+     function(G){ var m=later(G)?'Morgen: ':''; if (!F(G,'k4.s.letters')) return m+'Frau Wimmer fragen, ob ich den Koffer sehen kann, und die Briefe lesen.'; if (!N(G,'s4_carmela_hall')) return m+'Als Mala in der Bahnhofsmission den Koffer mit den Briefen spüren.'; if (!N(G,'s4_wusste')) return '„Carmela, 1979“ und „Eine Frau, die weint“ verbinden.'; return m+'An Gleis 11 mit Peppino reden: „Ich rufe Carmela an.“'; }]},
  {id:'s4h',t:'Was Carmela wusste',open:function(G){ return N(G,'s4_brief79') && N(G,'s4_carmela_hall') && !N(G,'s4_wusste'); },
   s:['Ein Brief von 1979. Und eine Frau, die beim Schreiben weint.','Was sagt das über Carmela?','Im Notizbuch „Carmela, 1979“ und „Eine Frau, die weint“.','Die beiden Notizen verbinden.']},
  {id:'s4i',t:'Er kann gehen',open:function(G){ return F(G,'k4.s.call') && !F(G,'k4.s.crossed'); },
@@ -13137,22 +13200,29 @@ M.HINTS_K4=[
   s:['Um drei: der Gong, Gerda, das „später“, der Kaffee. Was davon macht Alois unruhig?',
      'Zuschauen reicht nicht. Man muss eins weglassen und sehen, was passiert.',
      {m:'Herr Kraus kann den Gong abstellen. Und Mala kann Gerda bitten, woanders zu warten.',g:'Kraus kann den Gong abstellen. Und ich kann Gerda bitten, woanders zu warten.'},
-     function(G){ return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+(N(G,'g4_depot')?' Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.':' Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.'); }]},
+     // Hinweisprobe (P12): abends, nach drei und mit abgestelltem Gong nennt Stufe 4, was jetzt geht
+     function(G){ var alt=(N(G,'g4_depot')?' Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.':' Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.');
+       if (later(G)) return 'Morgen: Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; if (F(G,'k4.g.chimeOff')&&!pmUsed(G)) return 'Bis drei warten: die Uhr im Flur benutzen.';
+       if (pmUsed(G)) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt;
+       return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; }]},
  {id:'g4c',t:'Der zweite Versuch',open:function(G){ return N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2')); },
   s:['Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.','Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.',
      function(G){ return N(G,'g4_versuch1')?{m:'Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?',g:'Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.'}:'Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.'; },
-     function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.';
+     function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren. Dann als Mala Gerda an das Depot erinnern.';
+       if (F(G,'k4.g.hall')) return 'Bis drei warten: die Uhr im Flur benutzen.';   // Hinweisprobe (P12): Gerda wartet schon am Fenster
        return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
  {id:'g4d',t:'Gong und Hand',open:function(G){ return N(G,'g4_versuch1') && N(G,'g4_versuch2') && !N(G,'g4_beides'); },
   s:['Zwei Versuche, zwei Ergebnisse.','Was hat jeder Versuch gezeigt?','Im Notizbuch beide Versuche.','Die beiden Versuche verbinden.']},
  {id:'g4e',t:'Sein Leben',open:function(G){ return N(G,'g4_drei') && !N(G,'g4_depot') && (N(G,'g4_versuch1') || F(G,'k4.g.blunt')); },
-  s:['„Tot“ vergisst er. Jeden Tag neu.','Was war sein Leben? Welche Wörter hat er? Und wo hat Gerda auf ihn gewartet?','Die Fotos in seinem Zimmer, Nummer 214.','In Zimmer 214 die Fotos ansehen; nach drei, wenn er im Flur ist, als Mala.']},
+  s:['„Tot“ vergisst er. Jeden Tag neu.','Was war sein Leben? Welche Wörter hat er? Und wo hat Gerda auf ihn gewartet?','Die Fotos in seinem Zimmer, Nummer 214. Ansehen allein sagt wenig; Mala kann sie spüren, wenn er nicht im Zimmer ist.',
+     'Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren.']},   // Hinweisprobe (P12): Ansehen als Marko bringt nichts
  {id:'g4f',t:'Wie man es ihm sagt',open:function(G){ return N(G,'g4_beides') && N(G,'g4_depot') && !N(G,'g4_worte'); },
   s:['Der Gong holt ihn, ihre Hand hält ihn. Und auf den Fotos wartet sie am Depot.','Feierabend, Endstation.','Im Notizbuch „Gong und Nähe“ und „Am Depot“.','Die beiden Notizen verbinden.']},
  {id:'g4g',t:'Gerda',open:function(G){ return N(G,'g4_beides') && !F(G,'k4.g.decided'); },
   s:['Gerda glaubt, sie beruhigt ihn.',{m:'Das muss ihr jemand sagen. Jemand, den sie hört.',g:'Das muss ihr jemand sagen. Mich hört sie.'},{m:'Mala.',g:'Ich.'},'Als Mala mit Gerda reden.']},
  {id:'g4h',t:'Endstation',open:function(G){ return G.phase==='k4_d4' && F(G,'k4.g.decided') && !F(G,'k4.g.thermos') && !I(G,'kanne'); },
-  s:['Gerda geht heute. Alois muss es hören.','In seiner Sprache: Endstation, Feierabend, das Depot.','Um drei, im Flur.','Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.']},
+  s:['Gerda geht heute. Alois muss es hören.','In seiner Sprache: Endstation, Feierabend, das Depot.','Um drei, im Flur.',
+     function(G){ return F(G,'k4.g.goodbye')?'In der Zwischenwelt mit Gerda reden und ihr die hohe Stufe hinaufhelfen.':'Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.'; }]},   // Hinweisprobe (P12): nach „Endstation“ geht es in der Zwischenwelt weiter
  {id:'g4i',t:'Die Kanne',open:function(G){ return I(G,'kanne') && !F(G,'k4.g.thermos'); },
   s:['Gerda hat ihre Kanne hergegeben.','Für wen?','Alois.','Alois die Kanne geben.']},
  // ---------------- Familie: Dienstag bis Freitag
@@ -13233,17 +13303,20 @@ M.HINTS_K5=[
   s:['Um neun bei Frau Kolar.','In der Gerichtsmedizin.','Mama kommt mit. Sie will ihn sehen.','Mit dem Stadtplan zur Gerichtsmedizin fahren.']},
  {id:'h5i',t:'Zwei Namen',open:function(G){ return P(G,['k5_d2','k5_n1']) && N(G,'s5_brett') && !N(G,'s5_beide'); },
   s:['Nada und Zlata müssen sich einigen. Mala entscheidet nicht für sie, ich auch nicht.','Warum hat jede diesen Namen geschrieben? Das Brett weiß es. Und Nadas Briefe.',
-     {m:'Mala soll das Brett im Flur spüren. Und die Mappe in Lanas Zimmer.',g:'Ich spüre das Brett. Und Mamas Mappe.'},'Die beiden Nachhall-Notizen im Notizbuch verbinden.']},
+     {m:'Mala soll das Brett im Flur spüren. Und die Mappe in Lanas Zimmer.',g:'Ich spüre das Brett. Und Mamas Mappe.'},
+     // Hinweisprobe (P12): Stufe 4 riet zum Verbinden, solange ein Nachhall noch fehlte
+     function(G){ if (!N(G,'s5_nh_brett')) return {m:'Als Mala das Brett im Flur spüren.',g:'Als Mala das Brett im Flur spüren.'}; if (!N(G,'s5_nh_mappe')) return {m:'Als Mala die Mappe in Lanas Zimmer spüren.',g:'Als Mala die Mappe in Lanas Zimmer spüren.'}; return 'Die beiden Nachhall-Notizen im Notizbuch verbinden.'; }]},
  {id:'h5j',t:'Die Tafel',open:function(G){ return G.phase==='k5_d2' && N(G,'s5_beide') && !F(G,'k5.s.mounted'); },
   s:[function(G){ return F(G,'k5.s.agreed')?'Sie haben sich geeinigt. Jetzt muss es graviert werden.':'Beide haben recht. Jede muss hören, was die andere wollte.'; },
      function(G){ return F(G,'k5.s.agreed')?'Was steht schon auf dem Brett?':'Was hat Zlata gewollt, was Nada? Und was steht schon auf dem Brett?'; },
      function(G){ if (!F(G,'k5.s.toZlata')) return 'Zlata sagen, warum Nada siebzehn Jahre geschrieben hat.'; if (!F(G,'k5.s.toNada')) return 'Nada sagen, warum Zlata „Mala“ geschrieben hat.'; if (!F(G,'k5.s.agreed') && !N(G,'s5_teile')) return 'Was steht schon auf dem Brett, und was hat nur Nada? Das muss ich erst selbst zusammenlegen.'; if (!F(G,'k5.s.agreed')) return 'Beiden die zwei Hälften vorschlagen: oben die Tafel, unten das Brett.'; return 'Zu Nedžad: Name und Geburt aufs Messing. Der Tod steht schon auf dem Brett.'; },
      function(G){ if (!F(G,'k5.s.agreed') && !N(G,'s5_teile')) return 'Im Notizbuch „Damit man sie findet“ und „Zlatas Brett“ verbinden.'; if (!F(G,'k5.s.agreed')) return 'Mit Nada und Zlata reden, jeder sagen, was die andere wollte, dann die zwei Hälften vorschlagen.'; if (!F(G,'k5.s.engraved')) return 'Bei Nedžad gravieren lassen: „LANA DELIĆ“, „3. 3. 1976“, keine dritte Zeile.'; return 'Zurück zu Nada: Vlado montiert Tafel und Brett.'; }]},
+ // Hinweisprobe (P12): nach „Otvori.“ nennt Stufe 4 das Öffnen des Kastens, nicht wieder das Gespräch
  {id:'h5k',t:'Hamdija',open:function(G){ return G.phase==='k5_d2' && N(G,'b5_hamdija') && !F(G,'k5.b.gone'); },
   s:[function(G){ if (!N(G,'b5_kasten')) return 'Er lässt mich nicht an den Kasten hinter dem Hahn.'; if (!N(G,'b5_tag')) return 'Er glaubt mir nicht, dass ich der Junge bin.'; if (!N(G,'b5_drei')) return 'Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Er muss mich erkennen.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste muss zu Frau Kolar.'; if (!F(G,'k5.b.ready')) return 'Er muss hören, was aus den sieben geworden ist.'; return 'Er ist bereit zu gehen.'; },
      function(G){ if (!N(G,'b5_kasten')) return 'Was ist im Kasten?'; if (!N(G,'b5_tag')) return 'Was weiß nur der Junge von damals?'; if (!N(G,'b5_drei')) return 'Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Die gefüllten Kanister. Und der Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Drei Tote haben noch keinen Namen.'; if (!F(G,'k5.b.ready')) return 'Sie sind gefunden. Alle sieben.'; return 'Er kann jetzt gehen.'; },
      function(G){ if (!N(G,'b5_kasten')) return {m:'Mala geht durch Wände. Auch in einen Blechkasten.',g:'Ich gehe durch den Kasten.'}; if (!N(G,'b5_tag')) return {m:'Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.',g:'Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.'}; if (!N(G,'b5_drei')) return 'In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Ihm beides sagen: die Kanister und den Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste in die Gerichtsmedizin bringen.'; if (!F(G,'k5.b.ready')) return 'Zu Hamdija an den Hahn.'; return {m:'Mala öffnet die Schwelle. Am Hahn.',g:'Ich mache ihm Licht. Am Hahn.'}; },
-     function(G){ if (!N(G,'b5_kasten')) return 'Als Mala den Kasten hinter dem Hahn ansehen.'; if (!N(G,'b5_tag')) return 'Als Mala den Hahn, die Mitte und die Brücke spüren.'; if (!N(G,'b5_drei')) return 'Frau Kolar nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Mit Hamdija reden und die Kanister und den Rechenschieber nennen.'; if (!F(G,'k5.b.listKolar')) return 'Frau Kolar die Liste geben.'; if (!F(G,'k5.b.ready')) return 'Mit Hamdija reden: Sie sind gefunden.'; return 'Als Mala Hamdija hinüberbringen.'; }]},
+     function(G){ if (!N(G,'b5_kasten')) return 'Als Mala den Kasten hinter dem Hahn ansehen.'; if (!N(G,'b5_tag')) return 'Als Mala den Hahn, die Mitte und die Brücke spüren.'; if (!N(G,'b5_drei')) return 'Frau Kolar nach dem Grab an der Brauerei fragen.'; if (F(G,'k5.b.trust')&&!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Den Blechkasten hinter dem Hahn öffnen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Mit Hamdija reden und die Kanister und den Rechenschieber nennen.'; if (!F(G,'k5.b.listKolar')) return 'Frau Kolar die Liste geben.'; if (!F(G,'k5.b.ready')) return 'Mit Hamdija reden: Sie sind gefunden.'; return 'Als Mala Hamdija hinüberbringen.'; }]},
  {id:'h5fun',t:'Lanas Begräbnis',open:function(G){ return G.phase==='k5_fun' && !F(G,'k5.fun.done'); },
   s:['Heute wird Lana begraben.','Alle sind gekommen. Nada und Zlata stehen am Pfosten.','Am Grab gibt es nichts zu lösen.','Eine Wahl am Grab treffen. Beide sind richtig.']},
  // ---------------- Freitagabend
@@ -13262,8 +13335,9 @@ M.HINTS_K5=[
  {id:'h5m',t:'Zehn nach elf',open:function(G){ return G.phase==='k5_sat' && !F(G,'k5.sat.tickets'); },
   s:['Heute ist ihr Samstag.','Wo hat Mama Lana die Tür aufgemacht?','Um elf in den siebten Stock. Šehić sperrt auf.','Im siebten Stock Mama an der alten Tür Malas Dose geben. Dann nichts mehr tun.']},
  {id:'h5n',t:'Nadas Küche',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.knock') && !F(G,'k5.sat.drawn'); },
-  s:['Nada muss es selbst sehen.',{m:'Was kann Mala, wenn ich dabei bin?',g:'Was kann ich, wenn er dabei ist?'},'Die Glastür zum Balkon. Nada steht in der Küche.',
-     function(G){ var s=G.flags['k5.sat.draw']||0; return s>=4?'Als Marko die Räder zeichnen: die Glastür benutzen.':(s%2===0?'Als Marko die Glastür anhauchen.':'Als Mala auf die beschlagene Scheibe zeichnen.'); }]},
+  s:['Nada muss es selbst sehen.',{m:'Was kann Mala, wenn ich dabei bin?',g:'Was kann ich, wenn er dabei ist?'},'Die Balkontür aus Glas. Nada steht in der Küche.',
+     // Hinweisprobe (P12): die Stelle heißt im Spiel „Balkontür“
+     function(G){ var s=G.flags['k5.sat.draw']||0; return s>=4?'Als Marko die Räder zeichnen: die Balkontür benutzen.':(s%2===0?'Als Marko die Balkontür anhauchen (benutzen).':'Als Mala auf die beschlagene Balkontür zeichnen.'); }]},
  {id:'h5q',t:'Hinauf zu Ruža',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.rode') && !F(G,'k5.sat.gate'); },
   s:['Jeder Samstag hat oben aufgehört. Bei Großmutter, in Vratnik.','Mala will hinauf. Zu Fuß, wie früher.','Die Gasse nach Vratnik, am oberen Ende des Platzes.','Die Gasse nach Vratnik benutzen.']},
  {id:'h5r',t:'Unter Ružas Dach',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.gate') && !F(G,'k5.sat.done'); },
@@ -49948,18 +50022,23 @@ async function talkRade(A){ var R=A.npc('rade'), p=A.G.phase;
         await R.say('Wie heißen Sie eigentlich?'); await A.m('Vuković. Marko.'); await A.wait(600); await R.say('Vuković.'); await R.say('Ich hatte eine Ruža Vuković, aus Vratnik. Jeden Samstag mit der Drei, und dann zu Fuß den Berg hinauf, mit zwei Taschen. Ihr Enkel …');
         await A.wait(700); await R.say('Ihr Enkel war ein kleiner Kerl. Er wollte immer vorn sitzen.'); await A.m('…'); await A.m('Das war meine Großmutter.'); await R.say('Dann grüßen Sie sie.'); await A.m('Sie ist vierundneunzig gestorben.'); await R.say('Ah.'); await A.wait(700); await R.say('Dann grüßen Sie sie trotzdem.'); A.note('p2_rade_ruza'); }},
     {t:'Wie geht die Uhr an der Sahat-kula?',once:'rd3',if:A.hasNote('s1_clock')&&!A.hasNote('s1_alaturka'),go:async function(A){ await R.say('Nach dem Mond. Nach der Sonne. Nach Gott, was weiß ich. Ich habe Fahrpläne, ich brauche keine Kula.'); await R.say('Fragen Sie in der Kafana daneben. Die leben unter der Uhr.'); }},
-    {t:'(Ihm das Foto zeigen.)',if:A.has('photo_stop')&&!A.hasNote('m2_clocktower'),go:function(A){ return radePhoto(A,R); }},
+    {t:'(Ihm das Foto zeigen.)',if:A.has('photo_stop')&&!A.hasNote('m2_kids'),go:function(A){ return radePhoto(A,R); }},   // bleibt, bis Rade von den zwei Kindern erzählt hat (auch wenn er die Uhr schon über Malas Splitter erkannt hat)
     {t:'Fuhren im November dreiundneunzig Straßenbahnen?',if:A.hasNote('m2_ticket')&&!A.hasNote('m2_notrams'),go:function(A){ return radeNoTrams(A,R); }},
     {t:'Kannten Sie Alija, den Kiosk in Alipašino?',once:'rd5',if:A.hasNote('m2_alija'),go:async function(A){ await R.say('Alija Hodžić? Jeder kannte Alija. Er hat die Fahrscheine mit einer Sternzange gelocht, damit man sie nicht zweimal verkaufen konnte. Mit einem Stern!'); await R.say('Fünfundneunzig. Im Sommer. Vor seinem Kiosk.'); await A.wait(800); await R.say('Danach hat keiner mehr den Kiosk aufgemacht.'); }},
-    A.askOpt({ m2_photo:function(A){ return radePhoto(A,R); }, m2_ticket:function(A){ return radeNoTrams(A,R); }, m2_f_voice:async function(A){ await R.say('„Halt dich fest“? Das hat jede Mutter in meiner Bahn gerufen. Und jede große Schwester.'); },
+    A.askOpt({ m2_photo:function(A){ return radePhoto(A,R); }, m2_ticket:function(A){ return radeNoTrams(A,R); }, m2_f_clock:function(A){ return radeClock(A,R); }, m2_f_voice:async function(A){ await R.say('„Halt dich fest“? Das hat jede Mutter in meiner Bahn gerufen. Und jede große Schwester.'); },
       m2_kids:'Zwei Kinder, jeden Samstag. Ich weiß, ich bin alt. Aber ich vergesse keine Fahrgäste.', p2_rade_ruza:'Ruža hatte immer Bonbons in der Manteltasche. Für mich, sagte sie. Für den Fahrer.',
       s1_alaturka:'Die Kula? Fragen Sie mich nach der Drei.', m2_building:'Das Siebener. Das war das Haus mit der Uhr. Ich habe sie von der Haltestelle aus gesehen, wenn wir zu spät waren. Wir waren immer zu spät.',
       m2_mali:async function(A){ await R.say('Mali.'); await A.wait(800); await R.say('Das waren Sie?'); await A.m('Ich glaube, ja.'); await R.say('Dann haben Sie sich nicht verändert. Sie sitzen immer noch so, als wollten Sie aussteigen.'); } },'Dazu weiß ich nichts. Ich weiß nur Fahrpläne.'),
     ...M.k2Extra('rade',A,R),
     {t:'Auf Wiedersehen.',bye:true,go:async function(A){ await R.say(A.cycle('rdBye',['Die nächste kommt in sieben Minuten.','Sretno.','Nicht auf die Gleise treten. Die Bahn bremst nicht für Übersetzer.'])); }}
   ]; }); }
+// Analyse K2-B06: Rade kannte keine Antwort auf Malas Splitter mit der leuchtenden Uhr; der Hinweis behauptete es aber
+async function radeClock(A,R){ if (A.hasNote('m2_clocktower')) return R.say('Das Siebener. Grüne Ziffern. Seit zweiundneunzig steht sie.');
+  await R.say('Leuchtende Ziffern? Auf einem Dach?'); await A.wait(600); await R.say('Nur ein Hochhaus hatte so eine. Das Siebener, in Alipašino, in der B-Phase. Grün. Man sah sie von der ganzen Strecke.');
+  await R.say('Zweiundneunzig ist sie ausgebrannt. Seitdem steht sie.'); A.note('m2_clocktower'); }
 async function radePhoto(A,R){ A.setFlag('k2.m1.radePhoto'); await R.say('Zeigen Sie.'); await R.anim('write'); await A.wait(600); await R.say('Alipašino Polje. Die alte Haltestelle. Die ist nach dem Krieg verlegt worden, dreihundert Meter nach Westen.'); A.note('m2_stop');
-  await R.say('Und das hier, die Uhr auf dem Dach … nur ein Hochhaus hatte so eine. Das Siebener, in der B-Phase. Leuchtende Ziffern, grün. Man sah sie von der ganzen Strecke.'); await R.say('Zweiundneunzig ist sie ausgebrannt. Seitdem steht sie.'); A.note('m2_clocktower');
+  if (A.hasNote('m2_clocktower')) await R.say('Und da oben die Uhr vom Siebener. Sie wissen es ja schon.');
+  else { await R.say('Und das hier, die Uhr auf dem Dach … nur ein Hochhaus hatte so eine. Das Siebener, in der B-Phase. Leuchtende Ziffern, grün. Man sah sie von der ganzen Strecke.'); await R.say('Zweiundneunzig ist sie ausgebrannt. Seitdem steht sie.'); A.note('m2_clocktower'); }
   await A.wait(700); await R.say('Samstags um 11:10 bin ich da jahrelang gefahren. Da stiegen immer zwei Kinder ein. Ein Mädchen und ein kleiner Junge. Sie hat ihn „Mali“ genannt, und er sie „Mala“, damit sie sich ärgert.'); A.note('m2_kids');
   await R.say('Sie hat sich nie geärgert. Sie hat gelacht.'); if (A.G.malaOn){ await A.wait(800); await A.g('…'); } }
 async function radeNoTrams(A,R){ await R.say('Im November dreiundneunzig?'); await A.wait(700); await R.say('Mein Herr. Im November dreiundneunzig fuhr keine einzige Straßenbahn. Nicht eine. Die Wagen standen ausgebrannt im Depot, die Leitungen lagen auf der Straße.');
@@ -64504,7 +64583,24 @@ M.trAdd('bhs', {
   'Der Bus wartet nicht ewig.': 'Autobus ne čeka vječno.',
   'Mala sitzt auf der Bank. Ein letztes Gespräch.': 'Mala sjedi na klupi. Još jedan, posljednji razgovor.',   // m
   'Ich sitze auf der Bank. Ein letztes Gespräch.': 'Sjedim na klupi. Još jedan, zadnji razgovor.',   // g
-  'Den Bus benutzen.': 'Upotrijebiti autobus.'
+  'Den Bus benutzen.': 'Upotrijebiti autobus.',
+  // Hinweisprobe (ANALYSE_GILBERT.md, P12): neue und geänderte Stufentexte in Kapitel 1
+  'Der Knoten ist offen.': 'Čvor je otvoren.',
+  'Den Schuhkarton öffnen.': 'Otvoriti kutiju za cipele.',
+  'Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.': 'Razgovarati s Ninom: „Želite li to poslušati?“, a onda pitati o njezinu čekanju.',
+  '@mala:Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.': 'Razgovarati s Ninom: „Želite li to poslušati?“, a onda pitati o njenom čekanju.',
+  'ihren Zettel': 'njezinu ceduljicu', '@mala:ihren Zettel': 'njenu ceduljicu',   // Teil von „Mit Nina reden und ihr zeigen: …“ (Muster unten)
+  'Lukas Tickets': 'Lukine karte',
+  'die Kassette': 'kasetu',
+  'Bruno die Klavierschule zeigen.': 'Pokazati Brunu školu za klavir.',
+  'Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.': 'Sa svežnjem ključeva popeti se stubištem do salona. Na klaviru leži Ljerkina škola za klavir.',
+  '@mala:Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.': 'Sa svežnjem ključeva popeti se stepenicama do salona. Na klaviru leži Ljerkina škola za klavir.',
+  'Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.': 'Najprije uzeti svežanj ključeva iz kaputa na kuki 13. Onda u salon, do Ljerkine škole za klavir.',
+  '@mala:Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.': 'Prvo uzeti svežanj ključeva iz kaputa na kuki 13. Onda u salon, do Ljerkine škole za klavir.',
+  'Mala sieht hinter die Fischkisten am Zaun.': 'Mala pogleda iza gajbi za ribu kod ograde.',   // m
+  'Ich sehe hinter die Fischkisten am Zaun.': 'Ja pogledam iza gajbi za ribu kod ograde.',   // g
+  'Zu Mala wechseln und die Fischkisten am Zaun ansehen.': 'Prebaciti na Malu i pogledati gajbe za ribu kod ograde.',   // m
+  'Zu mir wechseln und die Fischkisten am Zaun ansehen.': 'Prebaciti na mene i pogledati gajbe za ribu kod ograde.'   // g
 });
 // Zusammengesetzte Texte
 var tr2=function(re,fn){ M.trPattern('bhs',re,fn); };
@@ -64514,7 +64610,9 @@ tr2(/^([\s\S]+) – hier bin ich\.$/, function(m,tr){ return tr(m[1])+' – ovdj
 tr2(/^Noch fehlt: ([\s\S]+)\.$/, function(m,tr){ return 'Još nedostaje: '+m[1].split(', ').map(function(x){ return tr(x); }).join(', ')+'.'; });
 // 15_hints.js showHints(): Thementitel + Stufe ('  ·2/4')
 tr2(/^([\s\S]+)  ·([1-4])\/4$/, function(m,tr){ return tr(m[1])+'  ·'+m[2]+'/4'; });
-M.trIgnore && M.trIgnore([' – hier bin ich.','Noch fehlt: ']);
+// 15_hints_k1.js k2_nina2, Stufe 4 nach einem abgebrochenen Gespräch: 'Mit Nina reden und ihr zeigen: '+Liste+'. Dann „Wollen Sie es hören?“'
+tr2(/^Mit Nina reden und ihr zeigen: ([\s\S]+)\. Dann „Wollen Sie es hören\?“$/, function(m,tr){ return 'Razgovarati s Ninom i pokazati joj: '+m[1].split(', ').map(function(x){ return tr(x); }).join(', ')+'. Onda „Želite li to poslušati?“'; });
+M.trIgnore && M.trIgnore([' – hier bin ich.','Noch fehlt: ','Mit Nina reden und ihr zeigen: ','. Dann „Wollen Sie es hören?“']);
 })(M);
 
 /* ---- lang/bhs_ui.js ---- */

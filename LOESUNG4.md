@@ -127,7 +127,7 @@ Pflicht: Sepp geht hinüber, Gerda entscheidet sich. In Fassung „Probe nein“
 - **[M]** Heim, Flur: Herr Kraus: „Können Sie den Gong abstellen?“ → „Herr Lechner erschrickt jedes Mal.“ → „Danke.“
 - **[M]** Die **Uhr** → „(Bis drei warten.)“. **Versuch 1** (ohne Gong, Gerda bei ihm): Er steht nicht auf, aber er friert.
 - **[G]** In **Zimmer 214** die **Fotos** spüren (nach drei sitzt Alois im Flur; vor drei kann Marko sie auch ansehen): Gerda am Depottor, Linie 19, fünfunddreißig Jahre.
-- **[M]** Einmal hinaus und wieder herein (Aufzug, Haustür, über den Plan nach Westend und zurück): ein neuer Nachmittag.
+- **[M]** Ein neuer Nachmittag: an der **Uhr** „(Später wiederkommen.)“ wählen, oder einmal hinaus und wieder herein (Aufzug, Haustür, über den Plan nach Westend und zurück). Es zählt auch, wenn Mala dabei in Zimmer 214 bleibt.
 - **[G]** Mit Gerda: „Sie haben immer draußen gewartet. Am Depot.“ – „Am Fenster. Einmal.“ (Ohne die Fotos wartet sie nicht woanders.)
 - **[M]** Die **Bank** → „(Bis drei warten.)“. **Versuch 2** (mit Gong, Gerda am Fenster): Er steht auf, aber er friert nicht.
 - Verbinden: *Versuch 1* + *Versuch 2* → **Gong und Hand**. Dann *Gong und Hand* + *Am Depot* → **In seiner Sprache**.
@@ -202,7 +202,7 @@ Pflicht: Sepp geht hinüber, Gerda entscheidet sich. In Fassung „Probe nein“
   - *Peppino ist der Sepp (?)* + *Unter Gleis 11* (Bunker);
   - *Peppino ist der Sepp (?)* + *die Umschläge im Koffer* (Frau Wimmer: „Kann ich den Koffer sehen?“);
   - *Unter Gleis 11* + *Josef Rugiero*, ohne den Zwischenschluss.
-- **Die Versuche um drei** gehen in beiden Reihenfolgen. Für Gerda am Fenster braucht Mala die Fotos aus Zimmer 214. Zwischen zwei Versuchen muss ein neuer Nachmittag beginnen (hinaus und wieder herein). Ist Mala um drei nicht im Flur, sagt Marko: „Mala ist nicht hier.“ Die Beobachtung am Dienstag und Versuch 2 brauchen beide im Flur; sonst „(Noch nicht.)“ wählen und Mala holen.
+- **Die Versuche um drei** gehen in beiden Reihenfolgen. Für Gerda am Fenster braucht Mala die Fotos aus Zimmer 214. Zwischen zwei Versuchen muss ein neuer Nachmittag beginnen (an der Uhr „(Später wiederkommen.)“ oder hinaus und wieder herein; Mala darf dabei in Zimmer 214 bleiben). Ist Mala um drei nicht im Flur, sagt Marko: „Mala ist nicht hier.“ Die Beobachtung am Dienstag und Versuch 2 brauchen beide im Flur; sonst „(Noch nicht.)“ wählen und Mala holen.
 - **Davor:** Abends ruft Marko nicht an („Jetzt nicht mehr. Morgen.“). Das Angebot für Silvester macht Davor auch ohne Jela, beim Abschied („Ich muss los.“). Ohne Angebot gibt es an Silvester nur Nachttram und zu Fuß.
 - **Laden:** An jedem Tageswechsel, auch mitten darin, holt das Spiel den Wechsel nach. Auf der Brücke beginnt Dialog 2 neu, am Silvesterabend geht es weiter bis „Mama ist fort“, in der Silvesternacht vor der Spur steht man bei Ana. Im Gespräch wird an drei Zwischenständen gespeichert; wer dort lädt, macht genau ab dort weiter.
 

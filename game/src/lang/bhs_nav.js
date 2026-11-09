@@ -588,7 +588,24 @@ M.trAdd('bhs', {
   'Der Bus wartet nicht ewig.': 'Autobus ne čeka vječno.',
   'Mala sitzt auf der Bank. Ein letztes Gespräch.': 'Mala sjedi na klupi. Još jedan, posljednji razgovor.',   // m
   'Ich sitze auf der Bank. Ein letztes Gespräch.': 'Sjedim na klupi. Još jedan, zadnji razgovor.',   // g
-  'Den Bus benutzen.': 'Upotrijebiti autobus.'
+  'Den Bus benutzen.': 'Upotrijebiti autobus.',
+  // Hinweisprobe (ANALYSE_GILBERT.md, P12): neue und geänderte Stufentexte in Kapitel 1
+  'Der Knoten ist offen.': 'Čvor je otvoren.',
+  'Den Schuhkarton öffnen.': 'Otvoriti kutiju za cipele.',
+  'Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.': 'Razgovarati s Ninom: „Želite li to poslušati?“, a onda pitati o njezinu čekanju.',
+  '@mala:Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.': 'Razgovarati s Ninom: „Želite li to poslušati?“, a onda pitati o njenom čekanju.',
+  'ihren Zettel': 'njezinu ceduljicu', '@mala:ihren Zettel': 'njenu ceduljicu',   // Teil von „Mit Nina reden und ihr zeigen: …“ (Muster unten)
+  'Lukas Tickets': 'Lukine karte',
+  'die Kassette': 'kasetu',
+  'Bruno die Klavierschule zeigen.': 'Pokazati Brunu školu za klavir.',
+  'Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.': 'Sa svežnjem ključeva popeti se stubištem do salona. Na klaviru leži Ljerkina škola za klavir.',
+  '@mala:Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.': 'Sa svežnjem ključeva popeti se stepenicama do salona. Na klaviru leži Ljerkina škola za klavir.',
+  'Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.': 'Najprije uzeti svežanj ključeva iz kaputa na kuki 13. Onda u salon, do Ljerkine škole za klavir.',
+  '@mala:Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.': 'Prvo uzeti svežanj ključeva iz kaputa na kuki 13. Onda u salon, do Ljerkine škole za klavir.',
+  'Mala sieht hinter die Fischkisten am Zaun.': 'Mala pogleda iza gajbi za ribu kod ograde.',   // m
+  'Ich sehe hinter die Fischkisten am Zaun.': 'Ja pogledam iza gajbi za ribu kod ograde.',   // g
+  'Zu Mala wechseln und die Fischkisten am Zaun ansehen.': 'Prebaciti na Malu i pogledati gajbe za ribu kod ograde.',   // m
+  'Zu mir wechseln und die Fischkisten am Zaun ansehen.': 'Prebaciti na mene i pogledati gajbe za ribu kod ograde.'   // g
 });
 // Zusammengesetzte Texte
 var tr2=function(re,fn){ M.trPattern('bhs',re,fn); };
@@ -598,5 +615,7 @@ tr2(/^([\s\S]+) – hier bin ich\.$/, function(m,tr){ return tr(m[1])+' – ovdj
 tr2(/^Noch fehlt: ([\s\S]+)\.$/, function(m,tr){ return 'Još nedostaje: '+m[1].split(', ').map(function(x){ return tr(x); }).join(', ')+'.'; });
 // 15_hints.js showHints(): Thementitel + Stufe ('  ·2/4')
 tr2(/^([\s\S]+)  ·([1-4])\/4$/, function(m,tr){ return tr(m[1])+'  ·'+m[2]+'/4'; });
-M.trIgnore && M.trIgnore([' – hier bin ich.','Noch fehlt: ']);
+// 15_hints_k1.js k2_nina2, Stufe 4 nach einem abgebrochenen Gespräch: 'Mit Nina reden und ihr zeigen: '+Liste+'. Dann „Wollen Sie es hören?“'
+tr2(/^Mit Nina reden und ihr zeigen: ([\s\S]+)\. Dann „Wollen Sie es hören\?“$/, function(m,tr){ return 'Razgovarati s Ninom i pokazati joj: '+m[1].split(', ').map(function(x){ return tr(x); }).join(', ')+'. Onda „Želite li to poslušati?“'; });
+M.trIgnore && M.trIgnore([' – hier bin ich.','Noch fehlt: ','Mit Nina reden und ihr zeigen: ','. Dann „Wollen Sie es hören?“']);
 })(M);

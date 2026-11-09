@@ -65,7 +65,7 @@ M.HINTS_K3=[
   s:['Eine Linie ist eingezeichnet. Für einen Schnitt braucht es eine zweite.',
      'Von oben sieht man weiter, und die Dinge liegen anders.',
      'Das Minarett der Koski-Moschee darf man besteigen. Die Kasse ist im Hof.',
-     'Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.']},
+     function(G){ return I(G,'ulaznica')?'Mit der Karte durch die Tür im Hof aufs Minarett steigen und oben peilen.':'Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.'; }]},   // Hinweisprobe (P12)
  {id:'d1c',t:'Zwei Linien',open:function(G){ return F(G,'k3.peil.minaret') && !N(G,'l3_flat'); },
   s:['Zwei Linien sind eingezeichnet.',
      'Was ergeben die beiden Messungen zusammen?',
@@ -100,7 +100,8 @@ M.HINTS_K3=[
   s:['Mala erinnert sich an einen Lastwagen und einen Fahrer, der rauchte und nichts sagte. Wer war das?',
      'Wer wusste damals, mit wem Lana fuhr? In Split jemand. In Mostar jemand, der jeden kennt.',
      function(G){ return F(G,'k3.mala.crossed')?'Ljerka hat in Split das Hotel geführt, und Sanja kennt sie. Im Café am Westbusbahnhof sitzt ein alter Mann am Fenster, der jeden kennt.':'Ljerka hat in Split das Hotel geführt, und Sanja kennt sie.'; },
-     function(G){ return F(G,'k3.mala.crossed')?'Mit dem Handy Sanja anrufen. Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.':'Mit dem Handy Sanja anrufen.'; }]},
+     // Hinweisprobe (P12): nach dem Anruf riet Stufe 4 wieder zum Anruf; Ljerkas Rückruf kommt nach zwei Ortswechseln
+     function(G){ var alt=F(G,'k3.mala.crossed')?' Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.':''; return F(G,'k3.d1.sanja')?'Ljerka ruft zurück, sobald ich zweimal den Ort gewechselt habe. Bis dahin weiter peilen.'+alt:'Mit dem Handy Sanja anrufen.'+alt; }]},
  {id:'d1j',t:'Vlado, der Raucher',open:function(G){ return N(G,'v3_ljerka') && !N(G,'v3_mate') && !N(G,'v3_where') && !F(G,'k3.v.met'); },
   s:['Ljerka kennt nur einen Vornamen: Vlado, der Raucher. Er fuhr Mehl in die Dörfer.',
      'Wer in Mostar kennt einen Vlado, der früher Mehl gefahren ist? Jemand, der selbst fährt.',
@@ -110,7 +111,7 @@ M.HINTS_K3=[
   s:['Vlado Rajić, der Raucher, hat eine Werkstatt für Reifen.',
      function(G){ return F(G,'k3.mala.crossed')?'Die Werkstatt heißt Vulkanizer Rajić. Sie liegt hinter dem Bulevar.':'Die Werkstatt liegt drüben, auf dem anderen Ufer. Mala geht nicht über den Fluss.'; },
      function(G){ return F(G,'k3.mala.crossed')?'Vom Bulevar geht eine Seitengasse ab, mit einem Schild.':'Erst muss Mala über den Fluss. Dann geht es zu Vlado.'; },
-     function(G){ return F(G,'k3.mala.crossed')?'Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.':'Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.'; }]},
+     function(G){ if (G.rooms&&G.rooms.vulkanizer) return 'Im Vulkanizer mit Vlado reden.'; return F(G,'k3.mala.crossed')?'Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.':'Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.'; }]},   // Hinweisprobe (P12)
  {id:'d1k',t:'Vlado leugnet',open:function(G){ return F(G,'k3.v.met') && !N(G,'v3_cab') && !vClosed(G); },
   s:['Vlado redet nicht. „Nie.“',
      {m:'Vlado redet nicht mit Marko. Vielleicht redet sein Hof.',g:'Er redet nicht mit dir. Vielleicht redet sein Hof.'},
@@ -120,7 +121,7 @@ M.HINTS_K3=[
   s:['Kata will etwas verkaufen und hat eine E-Mail, die sie nicht ganz versteht.',
      'Die E-Mail ist auf Deutsch, aus Graz. Marko ist Übersetzer.',
      'Österreichisch ist nicht ganz Deutsch: Ein Typenschein ist kein Typenschild.',
-     'Mit Kata über die E-Mail reden und sie übersetzen.']},
+     'Kata fragen, was da hinten unter der Plane steht, und ihr die E-Mail übersetzen („Ich bin Übersetzer“).']},   // Hinweisprobe (P12): eine Option „E-Mail“ gibt es nicht
  {id:'d1m',t:'Welche Schublade?',open:function(G){ return F(G,'k3.v.which') && !F(G,'k3.v.drawer') && !vClosed(G); },
   s:['Kata braucht den Schlüssel zu genau einer von drei Schubladen. Raten lässt sie nicht.',
      'Drei abgeschlossene Schubladen. Wer sieht durch Holz?',
@@ -268,7 +269,7 @@ M.HINTS_K3=[
   s:['Mate schrieb jedes Jahr dieselbe Frage. Davor las darin einen Vorwurf.',
      'Was hat Mate gemeint? Das Haus erzählt mehr als die Briefe.',
      'In der Stube die Briefe, oben das Kinderzimmer.',
-     function(G){ return (N(G,'b3_letters')&&N(G,'b3_kidsroom'))?'„Mates Briefe“ und „Das Kinderzimmer“ verbinden.':'Im Haus die Briefe lesen und oben das Kinderzimmer ansehen.'; }]},
+     function(G){ if (N(G,'b3_letters')&&N(G,'b3_kidsroom')) return '„Mates Briefe“ und „Das Kinderzimmer“ verbinden.'; return N(G,'b3_letters')?'Im Haus über die Treppe hinauf und das Kinderzimmer ansehen.':'Im Haus Davor fragen, ob ich Mates Briefe lesen darf; oben ist das Kinderzimmer.'; }]},   // Hinweisprobe (P12): die Briefe gibt Davor
  {id:'d3q2',t:'Was Mate gemeint hat',open:function(G){ return G.phase==='k3_d3' && N(G,'b3_invite') && !F(G,'k3.b.invite'); },
   s:['Davor liest in Mates Briefen einen Vorwurf.',
      'Er muss hören, was „Kad ćete doći?“ gemeint war. In seiner Sprache.',
@@ -294,13 +295,15 @@ M.HINTS_K3=[
  {id:'d3v',t:'Für den Kleinsten',open:function(G){ return F(G,'k3.b.keyFree') && !F(G,'k3.b.keyLena'); },
   s:['In der Astgabel liegt ein Schlüssel.','Für wen war er immer?','Für den Kleinsten.',function(G){ return F(G,'k3.b.keyTaken')?'Lena den Schlüssel geben.':'Den Schlüssel aus der Astgabel nehmen und Lena geben.'; }]},
  {id:'d3w',t:'Mate',open:function(G){ return F(G,'k3.b.keyLena') && !F(G,'k3.b.limbo'); },
-  s:['Mate ist bereit.',{m:'Mala kann die Schwelle öffnen.',g:'Ich kann ihn hinüberbringen.'},'Mit Mala bei Mate.','Mala bitten, Mate hinüberzubringen.']},
+  s:['Mate ist bereit.',{m:'Mala kann die Schwelle öffnen.',g:'Ich kann ihn hinüberbringen.'},'Mit Mala bei Mate.',{m:'Zu Mala wechseln und bei Mate „Hinüberbringen“ wählen.',g:'Zu mir wechseln und bei Mate „Hinüberbringen“ wählen.'}]},   // Hinweisprobe (P12): wie bei den anderen Geistern
  {id:'d3w2',t:'Zurück',open:function(G){ return G.phase==='k3_d3' && F(G,'k3.b.limbo') && !F(G,'k3.b.done'); },
   s:['Mate ist hinübergegangen.',{m:'Mala bleibt am Rand. Für Marko geht es zurück.',g:'Ich bleibe am Rand. Du gehst zurück.'},'Das Tor.','Durch das Tor zurückgehen.']},
  {id:'d3x',t:'Bis elf',open:function(G){ return G.phase==='k3_d3' && F(G,'k3.v.free') && !F(G,'k3.b.done'); },
   s:['Vlado holt um elf ab. Vorher noch die Feigen.','Die Zelenikas.','Haus Zelenika.','Den Fall der Zelenikas zu Ende bringen.']},
  {id:'d3y',t:'Soll Zlata es erfahren?',open:function(G){ return G.phase==='k3_d3' && N(G,'a3_awake') && !F(G,'k3.z.tellOk') && !F(G,'k3.asked.zlata_awake'); },
-  s:['Soll Zlata erfahren, dass ihr Mann wach war?','Das ist nicht nur Markos Entscheidung.',{m:'Mala fragen.',g:'Frag mich.'},'Mala fragen, ob Zlata es erfahren soll.']},
+  s:['Soll Zlata erfahren, dass ihr Mann wach war?','Das ist nicht nur Markos Entscheidung.',{m:'Mala fragen, bevor Marko es Zlata sagt.',g:'Frag mich, bevor du es ihr sagst.'},
+     // Hinweisprobe (P12): gefragt wird Mala im Gespräch mit Zlata, nicht in einem eigenen Gespräch
+     'Bei Zlata „Ihr sagen, dass Bato wach war“ wählen und dann Mala fragen.']},
  // ---------------- Finale
  {id:'f3a',t:'Die Glocke',open:function(G){ return G.phase==='k3_fin_n' && !F(G,'k3.fin.bato'); },
   s:['Heute Nacht weiß Bato, wer geläutet hat.','Die Glocke am rechten Ufer.','Läuten.','An der Glocke läuten.']},
@@ -329,7 +332,8 @@ M.HINTS_K3=[
  {id:'e3c',t:'Nada kommt',open:function(G){ return G.phase==='k3_epi_d' && !F(G,'k3.e.nada'); },
   s:['Nada kommt mit dem ersten Bus.','Aus Sarajevo kommen die Busse am Ostbusbahnhof an.','Ostbusbahnhof.','Zum Ostbusbahnhof gehen.']},
  {id:'e3d',t:'Zwei Mütter',open:function(G){ return G.phase==='k3_epi_d' && F(G,'k3.e.nada') && !F(G,'k3.e.mothers'); },
-  s:['Nada will zu ihr.','Skela.','Vlado fährt.','Nach Skela fahren und mit Nada und Zlata reden.']},
+  s:['Nada will zu ihr.','Skela.','Vlado fährt. In Zlatas Küche liegt etwas für Nada.',
+     function(G){ if (I(G,'skizzenbuch')) return 'Nada das Skizzenbuch geben.'; if (I(G,'brief1996')) return 'Nada Zlatas Brief von 1996 geben, dann das Skizzenbuch.'; return 'Nach Skela fahren, in Zlatas Küche die Schublade öffnen und Nada Zlatas Brief von 1996 geben, dann das Skizzenbuch.'; }]},   // Hinweisprobe (P12)   // Hinweisprobe (P12): Reden allein führt nicht weiter
  {id:'e3e',t:'Das Amt',open:function(G){ return G.phase==='k3_epi_d' && F(G,'k3.e.mothers') && !F(G,'k3.e.report'); },
   s:['Lana muss amtlich gefunden werden, bevor sie heimkommt.','Die Vermisstenstelle.','Frau Kolar wartet.','Zur Vermisstenstelle gehen und mit Frau Kolar reden.']},
  {id:'e3f',t:'Ein Feld, das zu klein ist',open:function(G){ return G.phase==='k3_epi_d' && F(G,'k3.e.report') && !F(G,'k3.e.form'); },

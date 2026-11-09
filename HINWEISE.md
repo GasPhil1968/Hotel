@@ -84,8 +84,8 @@ Offen, wenn: `G.phase==='pro' && I(G,'key_ivka') && !I(G,'postcard') && seen(G,'
 
 1. **Problem einordnen:** Ein Schuhkarton, mit einem festen Knoten verschnürt. Schneiden würde zerstören, was Ivka so sorgfältig verschnürt hat.
 2. **Denkrichtung:** Einen festen Knoten löst man mit etwas Dünnem, Spitzem, nicht mit Gewalt. In einer Wohnung, in der gestrickt wurde, liegt so etwas herum.
-3. **Konkreter Ansatz:** Im Nähkorb liegen Stricknadeln.
-4. **Nächster Schritt:** *je nach Stand:* „Den Schuhkarton mit der Stricknadel benutzen, dann öffnen.“ / „Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Der Knoten ist offen.“ / „Im Nähkorb liegen Stricknadeln.“
+4. **Nächster Schritt:** *je nach Stand:* „Den Schuhkarton öffnen.“ / „Den Schuhkarton mit der Stricknadel benutzen, dann öffnen.“ / „Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen.“
 
 ### Das Foto im Regal `k1_photo`
 
@@ -233,7 +233,7 @@ Offen, wenn: `ph(G,['c1','c1_night']) && N(G,'c1_ferry') && N(G,'c1_boat7') && !
 
 ### Dinko an der Matejuška `k1_dinko1`
 
-Offen, wenn: `ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother')`
+Offen, wenn: `ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother') && !F(G,'c1.dinkoTold')`
 
 1. **Problem einordnen:** Dinko Matić war dabei. Er flickt seine Netze an der Matejuška und will nicht reden.
 2. **Denkrichtung:** Fragen helfen bei ihm nicht. Etwas aus der Zeit von damals vielleicht.
@@ -363,8 +363,8 @@ Offen, wenn: `G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,
 
 1. **Problem einordnen:** Die Ledana ist eingezäunt.
 2. **Denkrichtung:** Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.
-3. **Konkreter Ansatz:** Mala sieht hinter die Fischkisten an der Matejuška. *(Mala: Ich sehe hinter die Fischkisten an der Matejuška.)*
-4. **Nächster Schritt:** Zu Mala wechseln und die Fischkisten ansehen. *(Mala: Zu mir wechseln und die Fischkisten ansehen.)*
+3. **Konkreter Ansatz:** Mala sieht hinter die Fischkisten am Zaun. *(Mala: Ich sehe hinter die Fischkisten am Zaun.)*
+4. **Nächster Schritt:** Zu Mala wechseln und die Fischkisten am Zaun ansehen. *(Mala: Zu mir wechseln und die Fischkisten am Zaun ansehen.)*
 
 ### Durch den Zaun `k2_crawl`
 
@@ -431,7 +431,7 @@ Offen, wenn: `G.phase==='c2' && N(G,'c2_unused') && !N(G,'c2_waited')`
 
 ### Der Briefkasten `k2_brick`
 
-Offen, wenn: `G.phase==='c2' && N(G,'c2_paper') && !I(G,'note_n')`
+Offen, wenn: `G.phase==='c2' && N(G,'c2_paper') && !I(G,'note_n') && !F(G,'c2.brickDone')`
 
 1. **Problem einordnen:** Hinter dem lockeren Ziegel an der Rampe steckt ein Papier.
 2. **Denkrichtung:** *je nach Stand:* „Mit dem Brecheisen käme die halbe Wand mit. Es braucht etwas Dünnes, Flaches.“ / „Der Ziegel sitzt fest in der Fuge. Gewalt reißt die Wand ein.“
@@ -476,12 +476,12 @@ Offen, wenn: `G.phase==='c2' && I(G,'note_n') && !F(G,'c2.lukaKnows')`
 
 ### Nina überzeugen `k2_nina2`
 
-Offen, wenn: `G.phase==='c2' && F(G,'c2.lukaKnows') && I(G,'note_n') && I(G,'radioT') && !F(G,'c2.tonight')`
+Offen, wenn: `G.phase==='c2' && (I(G,'note_n')\|\|ninaShown(G,'note')) && I(G,'tickets') && I(G,'radioT') && !F(G,'c2.tonight')`
 
 1. **Problem einordnen:** Nina muss es hören: den Zettel, die Tickets, das Lied.
 2. **Denkrichtung:** Sie will nicht an die Rampe, seit Jahren nicht. Sie kommt nur, wenn sie merkt, dass jemand verstanden hat, worauf sie wartet.
 3. **Konkreter Ansatz:** Erst die Ledana, dann ihr eigener Zettel, Lukas Tickets, die Kassette. Und wenn sie zögert, etwas über ihr Warten: was Mira gesehen hat, oder was ihre Bilder zeigen.
-4. **Nächster Schritt:** Mit Nina reden: „Ich war in der Ledana“, ihr Zettel, die Tickets, die Kassette, „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.
+4. **Nächster Schritt:** *je nach Stand:* „Mit Nina reden: „Ich war in der Ledana“, ihr Zettel, die Tickets, die Kassette, „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.“ / „Lukas Tickets“ / „Mit Nina reden und ihr zeigen: “ / „. Dann „Wollen Sie es hören?““ / „Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.“
 
 ### An der Rampe `k2_ramp`
 
@@ -616,7 +616,7 @@ Offen, wenn: `G.phase==='c3_night' && F(G,'found.bruno') && lvl(G)<3`
 1. **Problem einordnen:** Bruno bekommt seinen Satz nicht zusammen. Ihm fehlen Erinnerungen.
 2. **Denkrichtung:** Drei Dinge rufen sie zurück: woran er jeden Sonntag dachte, wie seine Tochter spielte, und was er versteckt hat.
 3. **Konkreter Ansatz:** *je nach Stand:* „das Tanzfoto in der Halle“ / „Ljerkas Klavierschule im Salon“ / „der Umschlag aus Zagreb im Klavierhocker“
-4. **Nächster Schritt:** *je nach Stand:* „Bruno das Tanzfoto zeigen.“ / „Das Tanzfoto von der Wand in der Halle nehmen und Bruno zeigen.“ / „Erst Bruno mit Musik in den Salon holen.“ / „Bruno im Salon die Klavierschule zeigen.“ / „Im Salon das Tuch vom Flügel nehmen, die Klavierschule nehmen und Bruno zeigen.“ / „Bruno den Umschlag aus Zagreb zeigen.“ / „Den Klavierhocker mit dem Schlüsselring öffnen und Bruno den Umschlag zeigen.“
+4. **Nächster Schritt:** *je nach Stand:* „Bruno das Tanzfoto zeigen.“ / „Das Tanzfoto von der Wand in der Halle nehmen und Bruno zeigen.“ / „Bruno die Klavierschule zeigen.“ / „Im Salon das Tuch vom Flügel nehmen, die Klavierschule nehmen und Bruno zeigen.“ / „Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.“ / „Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.“ / „Bruno den Umschlag aus Zagreb zeigen.“ / „Den Klavierhocker mit dem Schlüsselring öffnen und Bruno den Umschlag zeigen.“
 
 ### Brunos Satz `k3_translate`
 
@@ -690,7 +690,7 @@ Offen, wenn: `G.phase==='epi' && I(G,'busticket') && !G.ended`
 3. **Konkreter Ansatz:** Mala sitzt auf der Bank. Ein letztes Gespräch. *(Mala: Ich sitze auf der Bank. Ein letztes Gespräch.)*
 4. **Nächster Schritt:** Den Bus benutzen.
 
-## Kapitel 2: Sarajevo (52 Themen)
+## Kapitel 2: Sarajevo (54 Themen)
 
 ### Ohne Mark `p1`
 
@@ -761,8 +761,8 @@ Offen, wenn: `ph(G,['k2_s1','k2_s1_n']) && !N(G,'s1_twosevens')`
 
 1. **Problem einordnen:** Tomaž wartet auf „sieben“. Die Uhr am Turm zeigt etwas ganz anderes als jede Armbanduhr.
 2. **Denkrichtung:** Die Kula geht nach einer alten Zeit. Wer hier lebt, weiß, wie.
-3. **Konkreter Ansatz:** Lejla auf der Terrasse der Kafana kennt die Kula.
-4. **Nächster Schritt:** Lejla nach Tomažs Zettel fragen, dem „Wenn die Kula sieben schlägt“, und hören, was sie über die Mondzeit sagt.
+3. **Konkreter Ansatz:** *je nach Stand:* „Lejla auf der Terrasse der Kafana kennt die Kula. Am Turm hängt auch eine Tafel.“ / „Tomaž hält einen Zettel. Mala kann ihn lesen.“ / „Tomaž hält einen Zettel. Ich kann ihn lesen.“ / „Sein Zettel und die Mondzeit gehören zusammen.“
+4. **Nächster Schritt:** *je nach Stand:* „Lejla fragen, warum die Uhr an der Kula falsch geht, oder an der Kula die Tafel lesen.“ / „Zu Mala wechseln und Tomaž unter der Uhr ansehen.“ / „Zu mir wechseln und Tomaž unter der Uhr ansehen.“ / „Im Notizbuch „Kad kula udari sedam“ mit „Mondzeit“ verbinden.“
 
 ### Sieben nach der Kula, aber wann genau? `s1b`
 
@@ -770,8 +770,8 @@ Offen, wenn: `ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_twosevens') && !N(G,'s1_2316'
 
 1. **Problem einordnen:** Die Kula zählt ab Sonnenuntergang. Ohne den Sonnenuntergang an jenem Tag bleibt „sieben“ ungenau.
 2. **Denkrichtung:** Zwei Dinge fehlen: das genaue Datum und ein Kalender, der den Sonnenuntergang für dieses Datum nennt.
-3. **Konkreter Ansatz:** Das Datum steht in einem Auftragsbuch in der Čaršija. Alte Kalender, auch Takvime, hat das Antiquariat an der Ferhadija.
-4. **Nächster Schritt:** Mit dem Datum aus Nedžads Auftragsbuch den Takvim von 1972 bei Jakob lesen, dann beides im Notizbuch verbinden.
+3. **Konkreter Ansatz:** *je nach Stand:* „Das Datum steht in einem Auftragsbuch in der Čaršija. Tomaž trägt etwas Graviertes; Mala kann spüren, was.“ / „Das Datum steht in einem Auftragsbuch in der Čaršija. Tomaž trägt etwas Graviertes; ich kann spüren, was.“ / „Das Datum steht in Nedžads Auftragsbuch: Dort ist das Armband graviert worden.“ / „Alte Kalender, auch Takvime, hat das Antiquariat an der Ferhadija.“ / „Datum und Sonnenuntergang sind beisammen.“
+4. **Nächster Schritt:** *je nach Stand:* „Zu Mala wechseln und Tomaž spüren: Er hält ein graviertes Armband.“ / „Zu mir wechseln und Tomaž spüren: Er hält ein graviertes Armband.“ / „Bei Jakob im Antiquariat nach Takvimen von 1972 fragen und den Takvim lesen.“ / „Im Notizbuch „Zwei Siebenen“ mit „Takvim 1972“ verbinden.“
 
 ### Woher stammt das Armband? `s1c`
 
@@ -780,7 +780,7 @@ Offen, wenn: `ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_bracelet') && !N(G,'s1_date')
 1. **Problem einordnen:** Tomaž trägt ein graviertes Armband aus der Čaršija. Wer hat es graviert, und wann?
 2. **Denkrichtung:** Graveure führen Bücher über ihre Aufträge. Die alten Werkstätten sind in einer Gasse.
 3. **Konkreter Ansatz:** In Kazandžiluk graviert die Familie Kazandžić seit hundert Jahren. Nedžad hat die alten Bücher, aber keine Zeit.
-4. **Nächster Schritt:** Nedžad bei seiner deutschen Gravur helfen. Dann schlägt er das Buch auf.
+4. **Nächster Schritt:** *je nach Stand:* 
 
 ### Was war an jenem Abend? `s1d`
 
@@ -789,7 +789,7 @@ Offen, wenn: `ph(G,['k2_s1','k2_s1_n']) && !N(G,'s1_left')`
 1. **Problem einordnen:** Jemand muss an jenem Abend in der Kafana gewesen sein.
 2. **Denkrichtung:** Zwei Seiten fehlen: was die Kafana damals erlebt hat, und was Tomaž selbst von seiner Nacht weiß.
 3. **Konkreter Ansatz:** Šaćir am Fenstertisch war damals Kellner. Tomaž erinnert sich an seinen Zapfenstreich.
-4. **Nächster Schritt:** Šaćir nach dem Soldaten fragen, Tomaž nach seiner Nacht, und dann im Notizbuch verbinden, wann die Kafana zumachte und wann er zurück musste.
+4. **Nächster Schritt:** *je nach Stand:* „Šaćir laut nach dem jungen Soldaten von 1972 fragen. Dann im Notizbuch verbinden, wann die Kafana zumachte und wann Tomaž zurück musste.“ / „Šaćir erinnert sich erst mit dem Datum. “ / „Šaćir erinnert sich erst mit dem Datum. “ / „Šaćir erinnert sich erst mit dem Datum. “ / „Tomaž nach seiner Nacht fragen: Wann musste er zurück in die Kaserne?“ / „Im Notizbuch „Halid sperrte um elf zu“ mit „Zapfenstreich“ verbinden.“
 
 ### Emina schweigt `s1e`
 
@@ -798,7 +798,7 @@ Offen, wenn: `ph(G,['k2_s1','k2_s1_n']) && !N(G,'s1_waited')`
 1. **Problem einordnen:** Emina will über 1972 nicht reden. Nicht mit einem Fremden.
 2. **Denkrichtung:** Mit jemandem aus der Familie redet sie anders. Und zuhören kann auch, wen sie nicht sieht.
 3. **Konkreter Ansatz:** Emina spricht mit ihrer Enkelin hinter der Theke. Mala kann dort unbemerkt stehen. *(Mala: Emina spricht mit ihrer Enkelin hinter der Theke. Dort kann ich stehen, ohne dass sie mich sieht.)*
-4. **Nächster Schritt:** Zu Mala wechseln und hinter der Theke lauschen. *(Mala: Zu mir wechseln und hinter der Theke lauschen.)*
+4. **Nächster Schritt:** *je nach Stand:* „k2.s1.eminaAsked“ / „Zu Mala wechseln und bei Emina hinter der Theke lauschen.“ / „Zu mir wechseln und bei Emina hinter der Theke lauschen.“ / „Erst Emina nach dem November 1972 fragen. Danach zu Mala wechseln und bei Emina hinter der Theke lauschen.“ / „Frag Emina erst nach dem November 1972. Danach lausche ich bei ihr hinter der Theke.“
 
 ### Was Emina nicht weiß `s1k`
 
@@ -816,7 +816,7 @@ Offen, wenn: `ph(G,['k2_s1','k2_s1_n']) && N(G,'s1_nowrite') && !I(G,'letters_tz
 1. **Problem einordnen:** Emina fragt, warum er nie geschrieben hat. Vielleicht hat er geschrieben.
 2. **Denkrichtung:** Briefe gehen durch Hände. Wer hat damals etwas angenommen und weitergegeben?
 3. **Konkreter Ansatz:** Šaćir hat etwas weitergegeben. Mala sieht in der verschlossenen Kammer, wohin. Hinein geht es erst, wenn Emina nicht da ist. *(Mala: Šaćir hat etwas weitergegeben. Ich sehe in der verschlossenen Kammer nach, wohin. Hinein geht es erst, wenn Emina nicht da ist.)*
-4. **Nächster Schritt:** *je nach Stand:* „Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.“ / „Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.“
+4. **Nächster Schritt:** *je nach Stand:* „k2.s1.letterFixed“ / „k2.s1.eminaAway“ / „Emina geht nachher zu Tante Sabira: die Kafana einmal verlassen und wieder hineingehen (oder als Mala hinter der Theke lauschen). Dann öffnet Lejla die Kammer.“ / „k2.s1.letterFixed“ / „Zu Mala wechseln und durch die Tür der Kammer gehen: Dort sieht sie, wohin die Briefe kamen.“ / „Zu mir wechseln und durch die Tür der Kammer gehen: Dort sehe ich, wohin die Briefe kamen.“ / „k2.s1.eminaAway“ / „k2.s1.eminaBack“ / „In die Kammer gehen und am Spiegel das Stemmeisen ansetzen.“ / „Nedžad um sein Stemmeisen bitten, dann in der Kammer am Spiegel ansetzen.“ / „Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.“ / „Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.“
 
 ### Emina die Wahrheit sagen `s1g`
 
@@ -861,7 +861,7 @@ Offen, wenn: `N(G,'m2_photo') && !N(G,'m2_clocktower') && !ph(G,['k2_fin_n','k2_
 1. **Problem einordnen:** Auf Jakobs Foto steht ein Hochhaus mit einer Uhr auf dem Dach. Welches?
 2. **Denkrichtung:** Wer kennt die Haltestellen und Hochhäuser von damals?
 3. **Konkreter Ansatz:** Rade an der Baščaršija kennt jede Haltestelle.
-4. **Nächster Schritt:** Rade das Foto zeigen.
+4. **Nächster Schritt:** *je nach Stand:* „Morgen, wenn Rade wieder an der Haltestelle steht, ihm das Foto zeigen.“ / „Rade das Foto zeigen.“
 
 ### Die leuchtende Uhr `m1b`
 
@@ -870,7 +870,16 @@ Offen, wenn: `N(G,'m2_f_clock') && !N(G,'m2_building')`
 1. **Problem einordnen:** Mala erinnert sich an eine Uhr mit leuchtenden Ziffern. *(Mala: Ich erinnere mich an eine Uhr mit leuchtenden Ziffern.)*
 2. **Denkrichtung:** Eine Erinnerung und ein Foto. Passen sie zusammen?
 3. **Konkreter Ansatz:** Rade weiß, welches Hochhaus eine Uhr hatte.
-4. **Nächster Schritt:** Im Notizbuch Malas Splitter mit dem verbinden, was Rade über das Siebener sagt. *(Mala: Im Notizbuch meinen Splitter mit dem verbinden, was Rade über das Siebener sagt.)*
+4. **Nächster Schritt:** *je nach Stand:* „Morgen Rade nach Malas Splitter mit der leuchtenden Uhr fragen.“ / „Morgen Rade nach meinem Splitter mit der leuchtenden Uhr fragen.“ / „Rade nach Malas Splitter mit der leuchtenden Uhr fragen (oder ihm Jakobs Foto zeigen).“ / „Rade nach meinem Splitter mit der leuchtenden Uhr fragen (oder ihm Jakobs Foto zeigen).“ / „Im Notizbuch Malas Splitter mit „Das Hochhaus mit der Uhr“ verbinden.“ / „Im Notizbuch meinen Splitter mit „Das Hochhaus mit der Uhr“ verbinden.“
+
+### Das Siebener `m1b2`
+
+Offen, wenn: `N(G,'m2_building') && !N(G,'m2_alija') && !ph(G,['k2_fin_n','k2_epi'])`
+
+1. **Problem einordnen:** Mala hat am Siebener jemanden getroffen. Wen? *(Mala: Ich habe am Siebener jemanden getroffen. Wen?)*
+2. **Denkrichtung:** Das Siebener steht in Alipašino Polje, an der alten Haltestelle der Drei.
+3. **Konkreter Ansatz:** Neben der Haltestelle stand ein Kiosk. Wer dort noch wartet, sieht nur Mala. *(Mala: Neben der Haltestelle stand ein Kiosk. Wer dort noch wartet, sehe nur ich.)*
+4. **Nächster Schritt:** *je nach Stand:* „Ab morgen: in Alipašino Polje als Mala mit dem Mann am Kiosk reden.“ / „Ab morgen: in Alipašino Polje mit dem Mann am Kiosk reden.“ / „Nach Alipašino Polje gehen, zu Mala wechseln und mit dem Mann am Kiosk reden.“ / „Nach Alipašino Polje gehen und mit dem Mann am Kiosk reden.“
 
 ### Zwei Fahrscheine `m1c`
 
@@ -888,7 +897,16 @@ Offen, wenn: `N(G,'m2_ticket') && !N(G,'m2_promise')`
 1. **Problem einordnen:** Der Fahrschein ist am 12.11.1993 entwertet. Im Krieg.
 2. **Denkrichtung:** Welche Bahnen fuhren im November 1993 überhaupt?
 3. **Konkreter Ansatz:** Rade weiß, welche Bahnen damals fuhren.
-4. **Nächster Schritt:** Im Notizbuch den Fahrschein mit dem verbinden, was Rade über November dreiundneunzig sagt.
+4. **Nächster Schritt:** *je nach Stand:* „Morgen Rade fragen, ob im November dreiundneunzig Straßenbahnen fuhren.“ / „Rade fragen, ob im November dreiundneunzig Straßenbahnen fuhren.“ / „Im Notizbuch „Malas Fahrschein“ mit „Keine Bahn im November 1993“ verbinden.“
+
+### Ein Versprechen `m1f`
+
+Offen, wenn: `N(G,'m2_promise') && !N(G,'m2_f_ninth') && !ph(G,['k2_fin_n','k2_epi'])`
+
+1. **Problem einordnen:** Malas Fahrschein war ein Versprechen. An wen? *(Mala: Mein Fahrschein war ein Versprechen. An wen?)*
+2. **Denkrichtung:** Mala erinnert sich in Splittern. Ein Versprechen ist ein Ort, zu dem man zurückwollte. *(Mala: Ich erinnere mich in Splittern. Ein Versprechen ist ein Ort, zu dem man zurückwollte.)*
+3. **Konkreter Ansatz:** Wenn Marko sie danach fragt, kommt vielleicht der nächste Splitter. *(Mala: Wenn du mich danach fragst, kommt vielleicht der nächste Splitter.)*
+4. **Nächster Schritt:** Mit Mala reden. *(Mala: Mit mir reden.)*
 
 ### Zwei Kinder in der Drei `m1e`
 
@@ -924,7 +942,7 @@ Offen, wenn: `ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_due') && !N(G,'s2_noreturn')`
 1. **Problem einordnen:** Für ihn läuft die Frist ab. Seit Jahren.
 2. **Denkrichtung:** Was ist im August 1992 mit der Bibliothek geschehen?
 3. **Konkreter Ansatz:** Jakob erzählt es, wenn man ihn nach der Bibliothek fragt.
-4. **Nächster Schritt:** Im Notizbuch die Frist mit dem Brand verbinden.
+4. **Nächster Schritt:** *je nach Stand:* „Im Notizbuch „Die Frist läuft ab“ mit „Die Bibliothek brannte“ verbinden.“ / „Jakob nach der Nationalbibliothek fragen. Dann im Notizbuch die Frist mit dem Brand verbinden.“
 
 ### Was ist im Buch? `s2d`
 
@@ -942,7 +960,7 @@ Offen, wenn: `ph(G,['k2_s2']) && !I(G,'pass')`
 1. **Problem einordnen:** Nachts kommt niemand in die Vijećnica.
 2. **Denkrichtung:** Wer darf hinein? Und was braucht diese Person gerade?
 3. **Konkreter Ansatz:** Die Restauratorin am Bauzaun braucht jemanden, der alte deutsche Schrift lesen kann.
-4. **Nächster Schritt:** Bei Jakob die Tafel mit der Kurrentschrift holen und der Restauratorin damit helfen.
+4. **Nächster Schritt:** *je nach Stand:* „k2.s2.amraAsk“ / „Die Restauratorin am Bauzaun der Vijećnica fragen, was sie dort macht.“ / „Bei Jakob nach seiner Kurrent-Tafel fragen.“ / „Der Restauratorin sagen: „Ich lese Kurrent.“ Und mit der Tafel die Schrift lesen.“
 
 ### Das Buch zurückgeben `s2f`
 
@@ -951,7 +969,7 @@ Offen, wenn: `ph(G,['k2_s2','k2_s2_n']) && N(G,'s2_fragments') && N(G,'s2_proven
 1. **Problem einordnen:** Das Buch muss dorthin, wo es ausgeliehen wurde.
 2. **Denkrichtung:** Jakob gibt es nur her, wenn er weiß, wem es gehört und warum.
 3. **Konkreter Ansatz:** *je nach Stand:* „Er will einen Stempel. Einen Stempel gibt es nicht mehr. Aber der Leihzettel hat ein Feld für die Rückgabe.“ / „Mit dem Passierschein geht es abends in die Vijećnica, zur alten Ausleihe.“ / „Abends geht es nur mit einem Passierschein in die Vijećnica.“
-4. **Nächster Schritt:** *je nach Stand:* „Den Kugelschreiber auf die Ausleihtheke ziehen und die Rückgabe eintragen.“ / „Das Buch in der Vijećnica auf die Ausleihtheke legen, dann mit dem Kugelschreiber die Rückgabe eintragen.“
+4. **Nächster Schritt:** *je nach Stand:* „Den Kugelschreiber auf die Ausleihtheke ziehen und die Rückgabe eintragen.“ / „Jakob sagen: „Das Buch gehört der Bibliothek.“ Dann gibt er es her.“ / „Das Buch in der Vijećnica auf die Ausleihtheke legen, dann mit dem Kugelschreiber die Rückgabe eintragen.“ / „Mit dem Passierschein der Restauratorin abends in die Vijećnica, das Buch auf die Ausleihtheke legen und mit dem Kugelschreiber die Rückgabe eintragen.“
 
 ### Ivan kann gehen `s2g`
 
@@ -996,7 +1014,7 @@ Offen, wenn: `ph(G,['k2_s3','k2_s3_n']) && !N(G,'m2_lana')`
 1. **Problem einordnen:** In Split stand im Register „…ić, L.“. Wer verbirgt sich dahinter?
 2. **Denkrichtung:** Ein Haus führt Buch über seine Mieter.
 3. **Konkreter Ansatz:** In Haus 7 stehen im Hausbuch die alten Mieter. Malas Splitter sagt: neunter Stock. *(Mala: In Haus 7 stehen im Hausbuch die alten Mieter. Mein Splitter sagt: neunter Stock.)*
-4. **Nächster Schritt:** Im Notizbuch das Register aus Split mit dem Hausbuch verbinden.
+4. **Nächster Schritt:** *je nach Stand:* „Im Notizbuch das Register aus Split mit dem Hausbuch verbinden.“ / „Im Hausflur von Haus 7 das Hausbuch lesen. Dann im Notizbuch das Register aus Split mit dem Hausbuch verbinden.“
 
 ### In den Schutzraum `s3b`
 
@@ -1005,7 +1023,7 @@ Offen, wenn: `ph(G,['k2_s3']) && !I(G,'key_shelter') && !F(G,'k2.s3.inShelter')`
 1. **Problem einordnen:** Šehić gibt den Schlüssel nicht her.
 2. **Denkrichtung:** Was bewegt ihn? Er redet, wenn er sich allein glaubt.
 3. **Konkreter Ansatz:** Mala kann an seiner Tür lauschen. *(Mala: Ich kann an seiner Tür lauschen.)*
-4. **Nächster Schritt:** Mit Šehić vorsichtig über das reden, was an seiner Tür zu hören war.
+4. **Nächster Schritt:** *je nach Stand:* „Mit Šehić reden und ihn nach „Hanka“ fragen, vorsichtig: nach dem, was an seiner Tür zu hören war.“ / „Zu Mala wechseln und an Šehićs Tür lauschen.“ / „Zu mir wechseln und an Šehićs Tür lauschen.“
 
 ### Die Stahltür `s3b2`
 
@@ -1031,8 +1049,8 @@ Offen, wenn: `ph(G,['k2_s3']) && I(G,'svjedocanstva') && !F(G,'k2.s3.stamped')`
 
 1. **Problem einordnen:** Zora hat versprochen: Zeugnisse mit Stempel.
 2. **Denkrichtung:** Die Schule gibt es nicht mehr. Ihr Stempel vielleicht schon.
-3. **Konkreter Ansatz:** Mirza hat Dinge aus der Schule aufgehoben. Sie liegen im Schutzraum.
-4. **Nächster Schritt:** Den Stempel im Schutzraum auf die Zeugnisse drücken.
+3. **Konkreter Ansatz:** *je nach Stand:* „Der Stempel ist da. Die Zeugnisse gehören auf Zoras Pult im Schutzraum.“ / „Mirza hat den alten Schulstempel aufgehoben.“
+4. **Nächster Schritt:** *je nach Stand:* „Im Schutzraum den Stempel auf Zoras Pult benutzen.“ / „Mirza sagen: „Zora wollte Zeugnisse mit Stempel verteilen.“ Er hat den Stempel.“
 
 ### Wer kommt zur letzten Stunde? `s3e`
 
@@ -1040,8 +1058,8 @@ Offen, wenn: `ph(G,['k2_s3']) && N(G,'s3_register') && !(F(G,'k2.s3.mirza') && F
 
 1. **Problem einordnen:** Zora will, dass alle da sind. Drei aus dem Klassenbuch leben noch hier.
 2. **Denkrichtung:** Mirza, Selma und Damir. Jeder braucht einen anderen Grund, zu kommen.
-3. **Konkreter Ansatz:** *je nach Stand:* „Mirza muss erfahren, was Zora über ihn geschrieben hat“ / „Selma braucht eine Hand“ / „Damir braucht seine eigene Zeichnung“
-4. **Nächster Schritt:** *je nach Stand:* „Mirza zeigen, was im Klassenbuch über ihn steht“ / „Selma Hilfe anbieten“ / „Damir seine Zeichnung geben“
+3. **Konkreter Ansatz:** *je nach Stand:* „Mirza muss erfahren, was Zora über ihn geschrieben hat“ / „Selma braucht eine Hand“ / „Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch“
+4. **Nächster Schritt:** *je nach Stand:* „Mirza zeigen, was im Klassenbuch über ihn steht“ / „Selma Hilfe anbieten“ / „Damir das Klassenbuch zeigen“
 
 ### Die letzte Stunde `s3g`
 
@@ -1103,8 +1121,8 @@ Offen, wenn: `G.phase==='k2_fin' && N(G,'f2_photo') && !N(G,'f2_postcard')`
 
 1. **Problem einordnen:** Nada im neunten Stock öffnet keinem.
 2. **Denkrichtung:** Sie öffnet vielleicht, wenn sie sieht, wer vor der Tür steht.
-3. **Konkreter Ansatz:** Das ganze Foto zeigt, wer das ist.
-4. **Nächster Schritt:** Nada das ganze Foto zeigen.
+3. **Konkreter Ansatz:** Das ganze Foto zeigt, wer das ist. Mit ihm öffnet sie.
+4. **Nächster Schritt:** In Haus 7 die Treppe hinauf zu Nada, sie nach Lanas Zimmer fragen und dort die Postkarte lesen.
 
 ### Großmutters Haus `f4`
 
@@ -1112,8 +1130,8 @@ Offen, wenn: `G.phase==='k2_fin' && N(G,'f2_postcard') && !N(G,'f2_rcm')`
 
 1. **Problem einordnen:** Lana wollte jemanden holen. Damals war das Ziel Großmutters Haus in Vratnik.
 2. **Denkrichtung:** *je nach Stand:* „Der Schlüssel zu Großmutters Haus ist da. In der Küche ist etwas zu spüren.“ / „Wer hat einen Schlüssel zu Großmutters Haus? Jemand, der dreißig Jahre gegenüber wohnte.“
-3. **Konkreter Ansatz:** *je nach Stand:* „Hajra hat den Schlüssel.“ / „Mala soll in Großmutters Küche den Kohleherd spüren.“ / „Ich soll in Großmutters Küche den Kohleherd spüren.“ / „Das Wärmefach am Herd klemmt. Es braucht einen Hebel.“
-4. **Nächster Schritt:** *je nach Stand:* „Hajra nach Großmutters Haus fragen.“ / „Als Mala den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.“ / „Den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.“ / „Das Wärmefach mit dem Stemmeisen öffnen.“ / „Nedžads Stemmeisen holen. Wer es zurückgegeben hat, leiht es noch einmal. Dann das Wärmefach öffnen.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Hajra hat den Schlüssel.“ / „Mala soll in Großmutters Küche den Kohleherd spüren.“ / „Ich soll in Großmutters Küche den Kohleherd spüren.“ / „Die Nachricht aus dem Wärmefach ist da. Ich habe sie noch nicht gelesen.“ / „Die Nachricht liegt jetzt bei Nada.“ / „Das Wärmefach am Herd klemmt. Es braucht einen Hebel.“
+4. **Nächster Schritt:** *je nach Stand:* „Hajra nach Großmutters Haus fragen.“ / „Als Mala den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.“ / „Den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.“ / „Die Nachricht vom Roten Kreuz lesen.“ / „Nada hat die Nachricht. Sie mit Nada besprechen.“ / „Das Wärmefach mit dem Stemmeisen öffnen.“ / „Nedžads Stemmeisen holen. Wer es zurückgegeben hat, leiht es noch einmal. Dann das Wärmefach öffnen.“
 
 ### Zwei Nachrichten `f5`
 
@@ -1140,7 +1158,7 @@ Offen, wenn: `ph(G,['k2_fin_n']) && !F(G,'k2.f2.ride')`
 1. **Problem einordnen:** Zwei Fahrscheine für die erste Drei nach dem Krieg.
 2. **Denkrichtung:** Einer ist in der Tasche, den anderen hat Mala. *(Mala: Einen hast du, den anderen habe ich.)*
 3. **Konkreter Ansatz:** Entwertet werden beide in der Bahn.
-4. **Nächster Schritt:** Mala um ihren Fahrschein bitten und in der Drei beide am Entwerter entwerten. *(Mala: Mich um meinen Fahrschein bitten und in der Drei beide am Entwerter entwerten.)*
+4. **Nächster Schritt:** *je nach Stand:* „k2.f2.rideEnd“ / „An der Baščaršija aussteigen und sich mit Mala auf die Bank setzen.“ / „An der Baščaršija aussteigen und dich mit mir auf die Bank setzen.“ / „An der Haltestelle in die Drei steigen und beide Fahrscheine am Entwerter entwerten.“ / „Mala um ihren Fahrschein bitten und in der Drei beide am Entwerter entwerten.“ / „Mich um meinen Fahrschein bitten und in der Drei beide am Entwerter entwerten.“
 
 ### Lanas Nachricht `e1`
 
@@ -1259,7 +1277,7 @@ Offen, wenn: `F(G,'k3.peil.bridgehead') && !F(G,'k3.peil.minaret')`
 1. **Problem einordnen:** Eine Linie ist eingezeichnet. Für einen Schnitt braucht es eine zweite.
 2. **Denkrichtung:** Von oben sieht man weiter, und die Dinge liegen anders.
 3. **Konkreter Ansatz:** Das Minarett der Koski-Moschee darf man besteigen. Die Kasse ist im Hof.
-4. **Nächster Schritt:** Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.
+4. **Nächster Schritt:** *je nach Stand:* „Mit der Karte durch die Tür im Hof aufs Minarett steigen und oben peilen.“ / „Im Hof der Koski-Moschee ein Ticket kaufen, hinaufsteigen und oben peilen.“
 
 ### Zwei Linien `d1c`
 
@@ -1322,7 +1340,7 @@ Offen, wenn: `G.phase==='k3_d1' && !N(G,'v3_mate') && !N(G,'v3_where') && !N(G,'
 1. **Problem einordnen:** Mala erinnert sich an einen Lastwagen und einen Fahrer, der rauchte und nichts sagte. Wer war das?
 2. **Denkrichtung:** Wer wusste damals, mit wem Lana fuhr? In Split jemand. In Mostar jemand, der jeden kennt.
 3. **Konkreter Ansatz:** *je nach Stand:* „Ljerka hat in Split das Hotel geführt, und Sanja kennt sie. Im Café am Westbusbahnhof sitzt ein alter Mann am Fenster, der jeden kennt.“ / „Ljerka hat in Split das Hotel geführt, und Sanja kennt sie.“
-4. **Nächster Schritt:** *je nach Stand:* „Mit dem Handy Sanja anrufen. Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.“ / „Mit dem Handy Sanja anrufen.“
+4. **Nächster Schritt:** *je nach Stand:* „ Oder im Café am Westbusbahnhof den alten Mann nach dem Fahrer fragen.“ / „Ljerka ruft zurück, sobald ich zweimal den Ort gewechselt habe. Bis dahin weiter peilen.“ / „Mit dem Handy Sanja anrufen.“
 
 ### Vlado, der Raucher `d1j`
 
@@ -1340,7 +1358,7 @@ Offen, wenn: `G.phase==='k3_d1' && (N(G,'v3_mate')\|\|N(G,'v3_where')) && !F(G,'
 1. **Problem einordnen:** Vlado Rajić, der Raucher, hat eine Werkstatt für Reifen.
 2. **Denkrichtung:** *je nach Stand:* „Die Werkstatt heißt Vulkanizer Rajić. Sie liegt hinter dem Bulevar.“ / „Die Werkstatt liegt drüben, auf dem anderen Ufer. Mala geht nicht über den Fluss.“
 3. **Konkreter Ansatz:** *je nach Stand:* „Vom Bulevar geht eine Seitengasse ab, mit einem Schild.“ / „Erst muss Mala über den Fluss. Dann geht es zu Vlado.“
-4. **Nächster Schritt:** *je nach Stand:* „Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.“ / „Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.“
+4. **Nächster Schritt:** *je nach Stand:* „Im Vulkanizer mit Vlado reden.“ / „Zum Bulevar gehen und in die Seitengasse zum Vulkanizer.“ / „Erst mit Mala über den Fluss, dann zu Vlados Werkstatt.“
 
 ### Vlado leugnet `d1k`
 
@@ -1358,7 +1376,7 @@ Offen, wenn: `F(G,'k3.v.met') && !F(G,'k3.v.mail') && !vClosed(G)`
 1. **Problem einordnen:** Kata will etwas verkaufen und hat eine E-Mail, die sie nicht ganz versteht.
 2. **Denkrichtung:** Die E-Mail ist auf Deutsch, aus Graz. Marko ist Übersetzer.
 3. **Konkreter Ansatz:** Österreichisch ist nicht ganz Deutsch: Ein Typenschein ist kein Typenschild.
-4. **Nächster Schritt:** Mit Kata über die E-Mail reden und sie übersetzen.
+4. **Nächster Schritt:** Kata fragen, was da hinten unter der Plane steht, und ihr die E-Mail übersetzen („Ich bin Übersetzer“).
 
 ### Welche Schublade? `d1m`
 
@@ -1560,7 +1578,7 @@ Offen, wenn: `N(G,'a3_roof') && !N(G,'a3_lightseq')`
 
 ### Die Nacht ordnen `d3e`
 
-Offen, wenn: `N(G,'a3_lightseq') && !N(G,'a3_lightroom')`
+Offen, wenn: `false`
 
 1. **Problem einordnen:** Läuten, Licht, Läuten. Und davor Vlados Zeiten.
 2. **Denkrichtung:** Die Reihenfolge reicht. Minuten braucht es nicht.
@@ -1569,12 +1587,12 @@ Offen, wenn: `N(G,'a3_lightseq') && !N(G,'a3_lightroom')`
 
 ### Batos Licht `d3f`
 
-Offen, wenn: `N(G,'a3_lightroom') && !N(G,'a3_thrice')`
+Offen, wenn: `(N(G,'a3_lightroom')\|\|(N(G,'a3_roof')&&N(G,'a3_lightseq'))) && !N(G,'a3_thrice')`
 
-1. **Problem einordnen:** In Batos Kammer hat jemand Licht gemacht. Das beweist noch nicht, dass er wach war.
+1. **Problem einordnen:** In Batos Kammer hat jemand Licht gemacht, während Lana läutete. Das beweist noch nicht, dass er wach war.
 2. **Denkrichtung:** Was sagt Bato selbst über diese Nacht? Für ihn ist es noch dieselbe Nacht.
 3. **Konkreter Ansatz:** Bato im Schuppen auf das Licht ansprechen.
-4. **Nächster Schritt:** Bato die Notiz „Licht in Batos Kammer“ zeigen.
+4. **Nächster Schritt:** *je nach Stand:* „Bato die Notiz „Licht in Batos Kammer“ zeigen.“ / „Bato „Das Dachfenster“ oder „Dunkel, hell, dunkel“ zeigen.“
 
 ### Geschlafen? `d3g`
 
@@ -1641,7 +1659,7 @@ Offen, wenn: `N(G,'a3_awake') && N(G,'a3_girl') && !F(G,'k3.bato.uneasy')`
 
 ### Vlado, Teil 2 `d3m`
 
-Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_girl') && N(G,'a3_lightroom') && N(G,'l3_survived') && !F(G,'k3.v.part2')`
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_girl') && (N(G,'a3_lightroom')\|\|N(G,'a3_awake')) && N(G,'l3_survived') && !F(G,'k3.v.part2')`
 
 1. **Problem einordnen:** Vlado hat am Samstag nicht alles gesagt.
 2. **Denkrichtung:** Jetzt gibt es etwas, das er nicht wegschieben kann: die Glocke, das Licht, den Bleistift, und dass Lana den Fluss überlebt hat.
@@ -1682,7 +1700,7 @@ Offen, wenn: `G.phase==='k3_d3' && F(G,'k3.b.arrived') && !N(G,'b3_invite')`
 1. **Problem einordnen:** Mate schrieb jedes Jahr dieselbe Frage. Davor las darin einen Vorwurf.
 2. **Denkrichtung:** Was hat Mate gemeint? Das Haus erzählt mehr als die Briefe.
 3. **Konkreter Ansatz:** In der Stube die Briefe, oben das Kinderzimmer.
-4. **Nächster Schritt:** *je nach Stand:* „„Mates Briefe“ und „Das Kinderzimmer“ verbinden.“ / „Im Haus die Briefe lesen und oben das Kinderzimmer ansehen.“
+4. **Nächster Schritt:** *je nach Stand:* „„Mates Briefe“ und „Das Kinderzimmer“ verbinden.“ / „Im Haus über die Treppe hinauf und das Kinderzimmer ansehen.“ / „Im Haus Davor fragen, ob ich Mates Briefe lesen darf; oben ist das Kinderzimmer.“
 
 ### Was Mate gemeint hat `d3q2`
 
@@ -1745,7 +1763,7 @@ Offen, wenn: `F(G,'k3.b.keyLena') && !F(G,'k3.b.limbo')`
 1. **Problem einordnen:** Mate ist bereit.
 2. **Denkrichtung:** Mala kann die Schwelle öffnen. *(Mala: Ich kann ihn hinüberbringen.)*
 3. **Konkreter Ansatz:** Mit Mala bei Mate.
-4. **Nächster Schritt:** Mala bitten, Mate hinüberzubringen.
+4. **Nächster Schritt:** Zu Mala wechseln und bei Mate „Hinüberbringen“ wählen. *(Mala: Zu mir wechseln und bei Mate „Hinüberbringen“ wählen.)*
 
 ### Zurück `d3w2`
 
@@ -1771,8 +1789,8 @@ Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_awake') && !F(G,'k3.z.tellOk') && !F(
 
 1. **Problem einordnen:** Soll Zlata erfahren, dass ihr Mann wach war?
 2. **Denkrichtung:** Das ist nicht nur Markos Entscheidung.
-3. **Konkreter Ansatz:** Mala fragen. *(Mala: Frag mich.)*
-4. **Nächster Schritt:** Mala fragen, ob Zlata es erfahren soll.
+3. **Konkreter Ansatz:** Mala fragen, bevor Marko es Zlata sagt. *(Mala: Frag mich, bevor du es ihr sagst.)*
+4. **Nächster Schritt:** Bei Zlata „Ihr sagen, dass Bato wach war“ wählen und dann Mala fragen.
 
 ### Die Glocke `f3a`
 
@@ -1879,8 +1897,8 @@ Offen, wenn: `G.phase==='k3_epi_d' && F(G,'k3.e.nada') && !F(G,'k3.e.mothers')`
 
 1. **Problem einordnen:** Nada will zu ihr.
 2. **Denkrichtung:** Skela.
-3. **Konkreter Ansatz:** Vlado fährt.
-4. **Nächster Schritt:** Nach Skela fahren und mit Nada und Zlata reden.
+3. **Konkreter Ansatz:** Vlado fährt. In Zlatas Küche liegt etwas für Nada.
+4. **Nächster Schritt:** *je nach Stand:* „Nada das Skizzenbuch geben.“ / „Nada Zlatas Brief von 1996 geben, dann das Skizzenbuch.“ / „Nach Skela fahren, in Zlatas Küche die Schublade öffnen und Nada Zlatas Brief von 1996 geben, dann das Skizzenbuch.“
 
 ### Das Amt `e3e`
 
@@ -1954,7 +1972,7 @@ Offen, wenn: `G.phase==='k4_pro' && F(G,'k4.h.found') && !F(G,'k4.p.hansi')`
 1. **Problem einordnen:** Der alte Mann am Pfeiler wartet auf seine Ablösung.
 2. **Denkrichtung:** Markos Hochdeutsch nimmt er nicht an: „Sie san ned vo do.“ Es fehlt nicht der richtige Satz. Es fehlt die richtige Stimme.
 3. **Konkreter Ansatz:** Jemand von hier, der ihn kannte. Am Taxistand lehnt ein alter Münchner.
-4. **Nächster Schritt:** Den Taxifahrer am Taxistand bitten, „Feierabend“ zu dem Mann am Pfeiler zu sagen.
+4. **Nächster Schritt:** *je nach Stand:* „Den Taxifahrer am Taxistand fragen, ob er Hansi kannte, und ihn bitten, etwas für ihn zu tun: „Feierabend“ zum Mann am Pfeiler sagen.“ / „Mit dem Mann am Pfeiler reden: worauf er wartet und wer ihn ablösen darf.“
 
 ### Der Schlüssel `h4c`
 
@@ -1972,7 +1990,7 @@ Offen, wenn: `G.phase==='k4_pro' && F(G,'k4.p.key') && !F(G,'k4.p.jasna') && !F(
 1. **Problem einordnen:** Mama kommt um zwei. Bis dahin ist Zeit.
 2. **Denkrichtung:** Die Wohnung erzählt einiges. Und man kann Kaffee kochen.
 3. **Konkreter Ansatz:** Großmutters Džezva ist im Gepäck. In der Küche steht ein Herd.
-4. **Nächster Schritt:** In der Küche die Džezva benutzen und Kaffee kochen.
+4. **Nächster Schritt:** In der Küche den Herd benutzen und in Großmutters Džezva Kaffee kochen.
 
 ### Mama `h4e`
 
@@ -2026,7 +2044,7 @@ Offen, wenn: `G.phase==='k4_d1' && !N(G,'s4_peppino')`
 1. **Problem einordnen:** Markos Kopf pocht. Irgendwo in der Stadt wartet einer, den Mala noch nicht gefunden hat.
 2. **Denkrichtung:** Wo kommen in München Menschen an und fahren ab?
 3. **Konkreter Ansatz:** Der Hauptbahnhof. Mala kann sich dort umsehen. *(Mala: Am Bahnhof. Ich sehe mich um.)*
-4. **Nächster Schritt:** Als Mala zum Hauptbahnhof gehen und sich an Gleis 11 umsehen. Dann mit Marko hin und mit dem Mann reden.
+4. **Nächster Schritt:** *je nach Stand:* „An Gleis 11 mit dem Mann reden: Wie heißt er weiter?“ / „Als Marko zum Hauptbahnhof fahren: Mala zeigt ihm den Mann an Gleis 11.“ / „Als Mala zum Hauptbahnhof gehen und sich an Gleis 11 umsehen. Dann mit Marko hin und mit dem Mann reden.“
 
 ### Mamas Brot `d4c`
 
@@ -2102,7 +2120,7 @@ Offen, wenn: `N(G,'s4_fluch') && N(G,'s4_bairisch') && !N(G,'s4_tarnung')`
 
 ### Die Akte `s4c`
 
-Offen, wenn: `P(G,['k4_d2','k4_d3']) && F(G,'k4.s.wimmer') && !N(G,'s4_ausweis')`
+Offen, wenn: `P(G,['k4_d2','k4_d3']) && F(G,'k4.s.wimmer') && !N(G,'s4_ausweis') && !N(G,'s4_name')`
 
 1. **Problem einordnen:** Wer ohne Angehörige stirbt, wird von Amts wegen bestattet.
 2. **Denkrichtung:** Dafür hat die Stadt eine Akte.
@@ -2125,7 +2143,7 @@ Offen, wenn: `N(G,'s4_peppino') && !N(G,'s4_name') && (N(G,'s4_derselbe')\|\|N(G
 1. **Problem einordnen:** Peppino und Josef Rugiero: derselbe Mann? Eine Nummer allein ist noch kein Name.
 2. **Denkrichtung:** „Me l'hanno preso qui.“ Den Namen hat man ihm hier genommen, an Gleis 11.
 3. **Konkreter Ansatz:** Unter Gleis 11 liegt etwas, wo nur Mala hinkommt. Oder in seinem Koffer liegt Post. *(Mala: Unter dem Gleis ist etwas. Ich komme da hin, du nicht. Oder du liest seine Post.)*
-4. **Nächster Schritt:** Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.
+4. **Nächster Schritt:** *je nach Stand:* „Im Notizbuch „Peppino ist der Sepp (?)“ mit Malas Nachhall aus dem Bunker verbinden.“ / „Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.“
 
 ### Sein Name `s4f`
 
@@ -2143,7 +2161,7 @@ Offen, wenn: `N(G,'s4_bitte') && !F(G,'k4.s.call')`
 1. **Problem einordnen:** Er will, dass Marko für ihn schreibt: „Cara Carmela, sto bene.“
 2. **Denkrichtung:** Was hat Carmela ihm all die Jahre geschrieben? Und was wusste sie?
 3. **Konkreter Ansatz:** Die Briefe im Koffer, besonders einer von 1979. Frau Wimmer gibt sie nur heraus, wenn sie weiß, dass sie ihm gehören. Mala liest mehr darin als Marko.
-4. **Nächster Schritt:** *je nach Stand:* „Frau Wimmer nach „Josef Rugiero ist Giuseppe Ruggiero“ fragen und die Briefe lesen.“ / „Als Mala in der Bahnhofsmission den Koffer mit den Briefen spüren.“ / „„Carmela, 1979“ und „Eine Frau, die weint“ verbinden.“ / „An Gleis 11 mit Peppino reden: „Ich rufe Carmela an.““
+4. **Nächster Schritt:** *je nach Stand:* „Frau Wimmer fragen, ob ich den Koffer sehen kann, und die Briefe lesen.“ / „Als Mala in der Bahnhofsmission den Koffer mit den Briefen spüren.“ / „„Carmela, 1979“ und „Eine Frau, die weint“ verbinden.“ / „An Gleis 11 mit Peppino reden: „Ich rufe Carmela an.““
 
 ### Was Carmela wusste `s4h`
 
@@ -2188,16 +2206,16 @@ Offen, wenn: `N(G,'g4_drei') && !N(G,'g4_versuch1') && !N(G,'g4_versuch2')`
 1. **Problem einordnen:** Um drei: der Gong, Gerda, das „später“, der Kaffee. Was davon macht Alois unruhig?
 2. **Denkrichtung:** Zuschauen reicht nicht. Man muss eins weglassen und sehen, was passiert.
 3. **Konkreter Ansatz:** Herr Kraus kann den Gong abstellen. Und Mala kann Gerda bitten, woanders zu warten. *(Mala: Kraus kann den Gong abstellen. Und ich kann Gerda bitten, woanders zu warten.)*
-4. **Nächster Schritt:** *je nach Stand:* „Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.“ / „ Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.“ / „ Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.“
+4. **Nächster Schritt:** *je nach Stand:* „ Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.“ / „ Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.“ / „Morgen: Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.“ / „k4.g.chimeOff“ / „Bis drei warten: die Uhr im Flur benutzen.“ / „An einem neuen Nachmittag (an der Uhr „Später wiederkommen“) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.“ / „Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.“
 
 ### Der zweite Versuch `g4c`
 
 Offen, wenn: `N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2'))`
 
-1. **Problem einordnen:** Ein Versuch zeigt nur die Hälfte.
-2. **Denkrichtung:** Jetzt das andere weglassen.
+1. **Problem einordnen:** Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.
+2. **Denkrichtung:** Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.
 3. **Konkreter Ansatz:** *je nach Stand:* „Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?“ / „Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.“ / „Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.“
-4. **Nächster Schritt:** *je nach Stand:* „Herrn Kraus bitten, den Gong abzustellen, und an einem neuen Nachmittag bis drei warten.“ / „In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.“ / „An einem neuen Nachmittag (einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.“
+4. **Nächster Schritt:** *je nach Stand:* „An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.“ / „Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren. Dann als Mala Gerda an das Depot erinnern.“ / „Bis drei warten: die Uhr im Flur benutzen.“ / „An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.“
 
 ### Gong und Hand `g4d`
 
@@ -2214,8 +2232,8 @@ Offen, wenn: `N(G,'g4_drei') && !N(G,'g4_depot') && (N(G,'g4_versuch1') \|\| F(G
 
 1. **Problem einordnen:** „Tot“ vergisst er. Jeden Tag neu.
 2. **Denkrichtung:** Was war sein Leben? Welche Wörter hat er? Und wo hat Gerda auf ihn gewartet?
-3. **Konkreter Ansatz:** Die Fotos in seinem Zimmer, Nummer 214.
-4. **Nächster Schritt:** In Zimmer 214 die Fotos ansehen; nach drei, wenn er im Flur ist, als Mala.
+3. **Konkreter Ansatz:** Die Fotos in seinem Zimmer, Nummer 214. Ansehen allein sagt wenig; Mala kann sie spüren, wenn er nicht im Zimmer ist.
+4. **Nächster Schritt:** Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren.
 
 ### Wie man es ihm sagt `g4f`
 
@@ -2242,7 +2260,7 @@ Offen, wenn: `G.phase==='k4_d4' && F(G,'k4.g.decided') && !F(G,'k4.g.thermos') &
 1. **Problem einordnen:** Gerda geht heute. Alois muss es hören.
 2. **Denkrichtung:** In seiner Sprache: Endstation, Feierabend, das Depot.
 3. **Konkreter Ansatz:** Um drei, im Flur.
-4. **Nächster Schritt:** Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.
+4. **Nächster Schritt:** *je nach Stand:* „In der Zwischenwelt mit Gerda reden und ihr die hohe Stufe hinaufhelfen.“ / „Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.“
 
 ### Die Kanne `g4i`
 
@@ -2469,7 +2487,7 @@ Offen, wenn: `P(G,['k5_d2','k5_n1']) && N(G,'s5_brett') && !N(G,'s5_beide')`
 1. **Problem einordnen:** Nada und Zlata müssen sich einigen. Mala entscheidet nicht für sie, ich auch nicht.
 2. **Denkrichtung:** Warum hat jede diesen Namen geschrieben? Das Brett weiß es. Und Nadas Briefe.
 3. **Konkreter Ansatz:** Mala soll das Brett im Flur spüren. Und die Mappe in Lanas Zimmer. *(Mala: Ich spüre das Brett. Und Mamas Mappe.)*
-4. **Nächster Schritt:** Die beiden Nachhall-Notizen im Notizbuch verbinden.
+4. **Nächster Schritt:** *je nach Stand:* „Als Mala das Brett im Flur spüren.“ / „Als Mala das Brett im Flur spüren.“ / „Als Mala die Mappe in Lanas Zimmer spüren.“ / „Als Mala die Mappe in Lanas Zimmer spüren.“ / „Die beiden Nachhall-Notizen im Notizbuch verbinden.“
 
 ### Die Tafel `h5j`
 
@@ -2477,8 +2495,8 @@ Offen, wenn: `G.phase==='k5_d2' && N(G,'s5_beide') && !F(G,'k5.s.mounted')`
 
 1. **Problem einordnen:** *je nach Stand:* „Sie haben sich geeinigt. Jetzt muss es graviert werden.“ / „Beide haben recht. Jede muss hören, was die andere wollte.“
 2. **Denkrichtung:** *je nach Stand:* „Was steht schon auf dem Brett?“ / „Was hat Zlata gewollt, was Nada? Und was steht schon auf dem Brett?“
-3. **Konkreter Ansatz:** *je nach Stand:* „Zlata sagen, warum Nada siebzehn Jahre geschrieben hat.“ / „Nada sagen, warum Zlata „Mala“ geschrieben hat.“ / „Beiden die zwei Hälften vorschlagen: oben die Tafel, unten das Brett.“ / „Zu Nedžad: Name und Geburt aufs Messing. Der Tod steht schon auf dem Brett.“
-4. **Nächster Schritt:** *je nach Stand:* „Mit Nada und Zlata reden, jeder sagen, was die andere wollte, dann die zwei Hälften vorschlagen.“ / „Bei Nedžad gravieren lassen: „LANA DELIĆ“, „3. 3. 1976“, keine dritte Zeile.“ / „Zurück zu Nada: Vlado montiert Tafel und Brett.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Zlata sagen, warum Nada siebzehn Jahre geschrieben hat.“ / „Nada sagen, warum Zlata „Mala“ geschrieben hat.“ / „Was steht schon auf dem Brett, und was hat nur Nada? Das muss ich erst selbst zusammenlegen.“ / „Beiden die zwei Hälften vorschlagen: oben die Tafel, unten das Brett.“ / „Zu Nedžad: Name und Geburt aufs Messing. Der Tod steht schon auf dem Brett.“
+4. **Nächster Schritt:** *je nach Stand:* „Im Notizbuch „Damit man sie findet“ und „Zlatas Brett“ verbinden.“ / „Mit Nada und Zlata reden, jeder sagen, was die andere wollte, dann die zwei Hälften vorschlagen.“ / „Bei Nedžad gravieren lassen: „LANA DELIĆ“, „3. 3. 1976“, keine dritte Zeile.“ / „Zurück zu Nada: Vlado montiert Tafel und Brett.“
 
 ### Hamdija `h5k`
 
@@ -2487,7 +2505,7 @@ Offen, wenn: `G.phase==='k5_d2' && N(G,'b5_hamdija') && !F(G,'k5.b.gone')`
 1. **Problem einordnen:** *je nach Stand:* „Er lässt mich nicht an den Kasten hinter dem Hahn.“ / „Er glaubt mir nicht, dass ich der Junge bin.“ / „Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.“ / „k5.b.listKolar“ / „Er muss mich erkennen.“ / „k5.b.listKolar“ / „Die Liste muss zu Frau Kolar.“ / „Er muss hören, was aus den sieben geworden ist.“ / „Er ist bereit zu gehen.“
 2. **Denkrichtung:** *je nach Stand:* „Was ist im Kasten?“ / „Was weiß nur der Junge von damals?“ / „Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.“ / „k5.b.listKolar“ / „Die gefüllten Kanister. Und der Rechenschieber.“ / „k5.b.listKolar“ / „Drei Tote haben noch keinen Namen.“ / „Sie sind gefunden. Alle sieben.“ / „Er kann jetzt gehen.“
 3. **Konkreter Ansatz:** *je nach Stand:* „Mala geht durch Wände. Auch in einen Blechkasten.“ / „Ich gehe durch den Kasten.“ / „Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.“ / „Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.“ / „In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Ihm beides sagen: die Kanister und den Rechenschieber.“ / „k5.b.listKolar“ / „Die Liste in die Gerichtsmedizin bringen.“ / „Zu Hamdija an den Hahn.“ / „Mala öffnet die Schwelle. Am Hahn.“ / „Ich mache ihm Licht. Am Hahn.“
-4. **Nächster Schritt:** *je nach Stand:* „Als Mala den Kasten hinter dem Hahn ansehen.“ / „Als Mala den Hahn, die Mitte und die Brücke spüren.“ / „Frau Kolar nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Mit Hamdija reden und die Kanister und den Rechenschieber nennen.“ / „k5.b.listKolar“ / „Frau Kolar die Liste geben.“ / „Mit Hamdija reden: Sie sind gefunden.“ / „Als Mala Hamdija hinüberbringen.“
+4. **Nächster Schritt:** *je nach Stand:* „Als Mala den Kasten hinter dem Hahn ansehen.“ / „Als Mala den Hahn, die Mitte und die Brücke spüren.“ / „Frau Kolar nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Den Blechkasten hinter dem Hahn öffnen.“ / „k5.b.listKolar“ / „Mit Hamdija reden und die Kanister und den Rechenschieber nennen.“ / „k5.b.listKolar“ / „Frau Kolar die Liste geben.“ / „Mit Hamdija reden: Sie sind gefunden.“ / „Als Mala Hamdija hinüberbringen.“
 
 ### Lanas Begräbnis `h5fun`
 
@@ -2504,7 +2522,7 @@ Offen, wenn: `G.phase==='k5_d2_n' && !N(G,'f5_jasna')`
 
 1. **Problem einordnen:** *je nach Stand:* „Nicht Nada. Wem dann?“ / „Mala sagt: für Nada. Stimmt das?“
 2. **Denkrichtung:** *je nach Stand:* „Wer war samstags dabei? Und wer kann nicht hinauf?“ / „Wer war samstags dabei? Wer nicht?“
-3. **Konkreter Ansatz:** *je nach Stand:* „Nada nach den Samstagen fragen.“ / „„Für Mama. Wer sonst?“ und „Das war euer Samstag“ verbinden.“ / „Was hat Mama im siebten Stock gesagt?“
+3. **Konkreter Ansatz:** *je nach Stand:* „Nada nach den Samstagen fragen.“ / „„Für Mama. Wer sonst?“ und „Das war euer Samstag“ verbinden.“ / „Was hat Mama an der Treppe im siebten Stock gesagt, bevor Šehić kam?“
 4. **Nächster Schritt:** *je nach Stand:* „Im Notizbuch „Wer sonst?“ und „Euer Samstag“ verbinden.“ / „Im Notizbuch „Nicht Nada“ und „Mama kann nicht hinauf“ verbinden.“
 
 ### Das Totenmahl `h5l2`
@@ -2549,8 +2567,8 @@ Offen, wenn: `G.phase==='k5_sat' && F(G,'k5.sat.knock') && !F(G,'k5.sat.drawn')`
 
 1. **Problem einordnen:** Nada muss es selbst sehen.
 2. **Denkrichtung:** Was kann Mala, wenn ich dabei bin? *(Mala: Was kann ich, wenn er dabei ist?)*
-3. **Konkreter Ansatz:** Die Glastür zum Balkon. Nada steht in der Küche.
-4. **Nächster Schritt:** *je nach Stand:* „Als Marko die Räder zeichnen: die Glastür benutzen.“ / „Als Marko die Glastür anhauchen.“ / „Als Mala auf die beschlagene Scheibe zeichnen.“
+3. **Konkreter Ansatz:** Die Balkontür aus Glas. Nada steht in der Küche.
+4. **Nächster Schritt:** *je nach Stand:* „Als Marko die Räder zeichnen: die Balkontür benutzen.“ / „Als Marko die Balkontür anhauchen (benutzen).“ / „Als Mala auf die beschlagene Balkontür zeichnen.“
 
 ### Hinauf zu Ruža `h5q`
 

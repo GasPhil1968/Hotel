@@ -100,7 +100,7 @@ Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Br
 
 **14. Zwei Namen (Nadas Wohnung)**
 - **[M]** Nach Alipašino Polje, hinauf zu Nada. Mit **Zlata** (Balkon) reden: „Siebzehn Briefe. Jeder fängt mit ihrem Namen an. Damit man sie findet.“
-- **[M]** Mit **Nada** (Küche) reden: „In Skela hat sie selbst ‚Mala‘ gesagt. Zlata hat geschrieben, was sie gehört hat. Damit man sie findet.“, dann „Ein Vorschlag. Für euch beide.“ → „Oben ihr Name. Wie ich sie gerufen habe.“ – „Unten das Brett. Wie Bato es geschnitten hat.“
+- **[M]** Mit **Nada** (Küche) reden: „In Skela hat sie selbst ‚Mala‘ gesagt. Zlata hat geschrieben, was sie gehört hat. Damit man sie findet.“, dann „Ein Vorschlag. Für euch beide.“ → „Oben ihr Name. Wie ich sie gerufen habe.“ – „Unten das Brett. Wie Bato es geschnitten hat.“ Den Vorschlag gibt es erst mit dem Schluss **Zwei Hälften** (Donnerstagabend); fehlt er, sagt Marko, was er im Notizbuch noch zusammenlegen muss.
 - Fehlversuche ohne Strafe: „Beide Namen. Oben und unten.“ zu früh, oder „‚Mala‘ ist der Name, den ich ihr gegeben habe.“ (Mala: „Das war ungeschickt.“).
 
 **15. Die Gravur (Kazandžiluk)**

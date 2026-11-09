@@ -1,5 +1,5 @@
 // Spielstände für Regressionstests laden (aus den Durchläufen abgelegt, siehe "quelle" je Datei) und gezielt verändern.
-// spec: { addNotes, delNotes, setFlags, delFlags, addInv, delInv, pos: '<raum>' (beide, Marko aktiv), malaPos: '<raum>' (nur Mala), active: 'marko'|'mala' }
+// spec: { addNotes, delNotes, setFlags, delFlags, addInv, delInv, pos: '<raum>' (beide, Marko aktiv), malaPos: '<raum>' (nur Mala), active: 'marko'|'mala', rooms: { <raum>: { schlüssel: wert } } }
 const fs = require('fs'), path = require('path');
 async function load(D, name, spec) {
   const d = JSON.parse(fs.readFileSync(path.join(__dirname, name), 'utf8'));
@@ -12,6 +12,7 @@ async function load(D, name, spec) {
     if (s.pos) { const st = M.ROOMS[s.pos].start || [160, 120, 'R']; G.pos.marko = { room: s.pos, x: st[0], y: st[1], f: st[2] || 'R' }; G.pos.mala = { room: s.pos, x: st[0] - 14, y: st[1] - 2, f: st[2] || 'R' }; G.active = 'marko'; }
     if (s.malaPos) { const st = M.ROOMS[s.malaPos].start || [160, 120, 'R']; G.pos.mala = { room: s.malaPos, x: st[0], y: st[1], f: st[2] || 'R' }; }
     if (s.active) G.active = s.active;
+    Object.keys(s.rooms || {}).forEach((r) => { G.rooms[r] = Object.assign(G.rooms[r] || {}, s.rooms[r]); });
     localStorage.setItem('mala.qafx', JSON.stringify({ sv: 2, kind: 'auto', GS: G, at: Date.now() })); M.__speechLog = []; return M.E.loadKey('mala.qafx');
   }, { GS: d.GS, spec: spec || {} });
 }

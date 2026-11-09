@@ -92,7 +92,7 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - **[M]** Emina nach „Elf Minuten“ fragen. Sie fragt zurück: Warum hat er nie geschrieben?
 - **[M]** Šaćir fragen, ob der Soldat etwas dagelassen hat: Er gab Šaćir etwas für Emina, Šaćir gab es Halid.
 - **[G]** Durch die Kammertür gehen und unten am Spiegel spüren: Halid versteckt 1973 eine Blechkasse hinter dem Spiegel. Zurück in die Kafana.
-- **[G]** Emina noch einmal belauschen: Sie geht zu Tante Sabira und lässt den Schlüssel da.
+- Die Kafana einmal verlassen und wieder betreten: Emina geht zu Tante Sabira und lässt den Schlüssel da (oder **[G]** Emina noch einmal belauschen, dann geht sie sofort).
 - **[M]** Lejla fragen, ob sie in die Kammer kommt. Sie schließt auf, weil der Brief jetzt gut ist.
 - **[M]** Bei Nedžad nach „etwas Schmalem, Festem“ fragen → **Stemmeisen**.
 - **[M]** In der Kammer das Stemmeisen auf die Rahmenleiste ziehen → sechs **Briefe** und das **Armband**.
@@ -134,6 +134,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
    - die alte Haltestelle;
    - die **Uhr auf dem Siebener** (Haus 7, B-Phase);
    - die **zwei Kinder** um 11:10, „Mali“.
+   (Fragt man Rade zuerst nach Malas Splitter „Uhr mit leuchtenden Ziffern“, erkennt er die Uhr auch ohne Foto; das Foto erzählt dann noch von den zwei Kindern.)
 2. **Verbinden:** Uhr mit leuchtenden Ziffern + Das Hochhaus mit der Uhr → **Mala kennt das Siebener**. Alipašino Polje erscheint auf dem Stadtplan.
 3. **[M]** Nach Alipašino Polje fahren. Marko erinnert sich: Er hat im Siebener gewohnt.
 4. **[G]** Mit dem Geist **Alija** an der alten Kioskstelle reden und fragen, was die Kleine zuletzt gekauft hat → zwei Fahrscheine „für später“.
@@ -209,7 +210,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 **Haus 7, Eingangshalle**
 - **[M]** Dragica fragen, wer noch hier wohnt und was im Keller war: Zoras Kellerschule.
 - **[M]** Das **Hausbuch** lesen: im 7. Stock die Vukovićs, im 9. Stock die Delićs mit Lana.
-- **Verbinden:** Register aus Split + Hausbuch → **Lana Delić?** Das geht nur mit dem Splitter „Neunter Stock“.
+- **Verbinden:** Register aus Split + Hausbuch → **Lana Delić?** Das geht mit dem Splitter „Neunter Stock“, mit Zoras Helferin (Register + „Zoras Helferin“) oder wenn Mala am Aufzug vom neunten Stock gesprochen hat. Spätestens Zora ruft im Keller „Lana Delić“ beim Namen; wer den Schluss bis dahin nicht gezogen hat, bekommt ihn dort.
 
 **Der Keller**
 - **[G]** Durch die Stahltür gehen und mit der Lehrerin Zora reden: Zeugnisse **mit Stempel**, wenn alle da sind; den Schlüssel findet sie, „wenn es klingelt“.
@@ -279,7 +280,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 - **[M]** Hajra um den Schlüssel zu Großmutters Haus bitten.
 - In Vratnik das Tor aufschließen.
 - **[G]** Den Herd spüren: Großmutter legt im Januar 1994 ein Formular ins Wärmefach.
-- **[M]** Das **Stemmeisen** auf das Wärmefach ziehen → **Rotkreuz-Nachricht**, lesen.
+- **[M]** Das **Stemmeisen** auf das Wärmefach ziehen → **Rotkreuz-Nachricht**; Marko faltet sie gleich auf und liest sie.
   - Wer das Stemmeisen schon zurückgegeben hat: Nedžad leiht es noch einmal („Darf ich mir das Stemmeisen noch einmal leihen?“, im Finale sagt er es von selbst).
 - **Verbinden:**
   - Rotkreuz-Nachricht + Postkarte → **Sie kam mich holen**;
@@ -297,7 +298,7 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 
 ## Epilog – Der erste Schnee
 
-- **[M]** Haus 7, Treppe zu Nada. Die **Rotkreuz-Nachricht** auf Nada ziehen → „Bring sie mir nach Hause.“
+- **[M]** Haus 7, Treppe zu Nada. Die **Rotkreuz-Nachricht** auf Nada ziehen → „Bring sie mir nach Hause.“ (Vor der letzten Nacht nimmt Nada die Nachricht nicht an: „Nicht jetzt, Mali.“)
 - Optional: aus der Pension Ana in München anrufen (geht auch schon im Finale).
 - **[M]** Busbahnhof, bei Fadila eine Fahrkarte nach Mostar kaufen: „Hin und zurück.“
 - **[M]** Den Bus benutzen. Letztes Gespräch mit Mala, Abfahrt.

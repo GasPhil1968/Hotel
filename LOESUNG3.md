@@ -142,7 +142,7 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **Verbinden:** *„Halo! Ima li koga?“* + *Bleistift* → **Es war das Mädchen**. Sie hat selbst geläutet und gerufen.
 
 **15. Die Lichtprobe**
-- **[M]** Das Handy auf **Zlatas Haus** ziehen → „(Ins Dachfenster.)“. Küchen- und Stubenfenster gehen auch; Mala sagt dann „Zu breit.“ und „Zu tief.“
+- **[M]** Das Handy auf **Zlatas Haus** ziehen → „(Ins Dachfenster.)“. Küchen- und Stubenfenster gehen auch; Mala sagt dann „Zu breit.“ und „Zu tief.“ Vorher muss Mala an der Glocke gehört haben, wie die Nacht war (Samstagnacht, Abschnitt 13); sonst sagt Marko, dass er nicht weiß, welches Licht sie suchen soll.
 - **[G]** Am rechten Ufer das ferne Haus ansehen: „Das war es.“ Das Dachfenster ist Batos Kammer.
 - **[G]** Die **Glocke** spüren: Mala ordnet ihren Nachhall: dunkel, Licht, dunkel.
 - **[M]** In Zlatas Küche den **Tisch** benutzen → „(Die Nacht der Reihe nach …)“. Die Karten ordnen:
@@ -156,9 +156,10 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
   8. Am Morgen: Zlata im Schilf (nur, wenn man Zlata nach den Hühnern gefragt hat; sonst sind es sieben Karten)
 
   → „So war es.“ Zwischen dem ersten und dem dritten Läuten hat in Batos Kammer jemand Licht gemacht.
+  Das Ordnen ist kein Muss: Wer Bato gleich nach dem Dachfenster und der Lichtfolge fragt (Abschnitt 16), kommt genauso weiter.
 
 **16. Bato war wach**
-- **[M]** Bato nach *Licht in Batos Kammer* fragen → „Dreimal hat er geläutet, dann war Ruhe.“
+- **[M]** Bato nach *Licht in Batos Kammer* fragen → „Dreimal hat er geläutet, dann war Ruhe.“ Ohne geordnete Nacht geht es auch mit *Dunkel, hell, dunkel* (nach dem Dachfenster): Bato rutscht dasselbe heraus. Mit nur einem der beiden fragt er zurück, was fehlt.
 - **Verbinden:** *dreimal* + *Er hat geschlafen* → **Bato war wach**.
 - **[M]** Bato nach *Bato war wach*, dann nach *Es war das Mädchen* fragen (Reihenfolge beliebig). Er wird unruhig: „Es war ein Soldat.“ Dann gibt er zu: „Ich habe ihn aufgehoben.“ (den Bleistift) und zündet mitten am Tag seine Laterne an. **Pflicht:** Ohne diese Konfrontation endet der Sonntag nicht.
 - **[M]** Zlata: „(Ihr sagen, dass Bato wach war.)“ → „(Mala fragen.)“ Mala schüttelt den Kopf, noch nicht.

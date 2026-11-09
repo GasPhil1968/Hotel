@@ -1,3 +1,26 @@
+DIE STILLEN – ÄNDERUNGEN NACH DER ANALYSE (RON GILBERTS REGELN, MUSS-LISTE P01–P12)
+Ausführlich: ANALYSE_GILBERT.md (Abschnitt G und „Umsetzung“) im Repository.
+
+WAS SICH ÄNDERT
+- Kapitel 2, Finale: Die Rotkreuz-Nachricht wird beim Fund gleich gelesen. Vorher
+  konnte man sie ungelesen Nada geben, dann war das Kapitel nicht mehr zu beenden
+  (ältere Spielstände: Nada gibt sie zurück).
+- Kapitel 2: Emina geht sichtbar zu Tante Sabira, sobald man die Kafana wieder
+  betritt; „Lana Delić?“ geht auch über Zoras Helferin oder Malas Satz am Aufzug;
+  Rade erkennt die leuchtende Uhr auch aus Malas Splitter.
+- Kapitel 3, Sonntag: „Bato war wach“ geht auch ohne das Ordnen der Nacht
+  (Dachfenster und Lichtfolge reichen); die Lichtprobe kommt erst nach der Glocke.
+- Kapitel 4: Ein neuer Nachmittag im Heim beginnt auch über die Uhr („Später
+  wiederkommen“) und auch dann, wenn Mala in Zimmer 214 bleibt.
+- Kapitel 5: „Ein Vorschlag“ erst mit dem Schluss „Zwei Hälften“; gute, aber
+  falsche Ideen zu den Fahrscheinen bekommen eine eigene Antwort.
+- Neutrale Sätze bei Notizen, die nicht zusammenpassen; keine Behauptung mehr,
+  es seien „verschiedene Geschichten“.
+- Gesprächsmenüs schließen, wenn ein neuer Abschnitt beginnt.
+- 53 Hinweisthemen (zwei davon neu) nennen in Stufe 4 jetzt den Schritt, der im
+  jeweiligen Stand wirklich geht; vorher rieten einige zu Erledigtem oder
+  Unmöglichem. Geprüft mit einer neuen Hinweisprobe über 820 Spielstände.
+
 DIE STILLEN – ÄNDERUNGEN: KAPITELWAHL, NEUER NAME UND KAPITEL 5 („ANGEKOMMEN“)
 Ausführlich: BERICHT_K5.md und LOESUNG5.md im Repository.
 

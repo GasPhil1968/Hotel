@@ -9,6 +9,8 @@ function ph(G,list){ return list.indexOf(G.phase)>=0; }
 function fresh(G){ return !F(G,'split.intro.legacy'); }
 function inLimbo(G){ return G.pos && G.pos[G.active] && G.pos[G.active].room==='limbo'; }
 function seen(G,r){ return !!(G.rooms&&G.rooms[r]); }
+function knotOpen(G){ return !!(G.rooms&&G.rooms.ivka&&G.rooms.ivka.knotOpen); }
+function ninaShown(G,k){ return !!(G.rooms&&G.rooms.shop&&G.rooms.shop.shown&&G.rooms.shop.shown[k]); }
 function lvl(G){ return G.flags['c3.lvl']||0; }
 M.HINTS_K1=[
  // ================= Prolog · Dienstag
@@ -36,8 +38,9 @@ M.HINTS_K1=[
  {id:'k1_knot',t:'Der verschnürte Schuhkarton',open:function(G){ return G.phase==='pro' && I(G,'key_ivka') && !I(G,'postcard') && seen(G,'ivka'); },
   s:['Ein Schuhkarton, mit einem festen Knoten verschnürt. Schneiden würde zerstören, was Ivka so sorgfältig verschnürt hat.',
      'Einen festen Knoten löst man mit etwas Dünnem, Spitzem, nicht mit Gewalt. In einer Wohnung, in der gestrickt wurde, liegt so etwas herum.',
-     'Im Nähkorb liegen Stricknadeln.',
-     function(G){ return I(G,'needle')?'Den Schuhkarton mit der Stricknadel benutzen, dann öffnen.':'Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen.'; }]},
+     function(G){ return knotOpen(G)?'Der Knoten ist offen.':'Im Nähkorb liegen Stricknadeln.'; },
+     // Hinweisprobe (P12): Ist der Knoten schon offen, riet Stufe 4 weiter zur Nadel; jetzt fehlt nur das Öffnen
+     function(G){ return knotOpen(G)?'Den Schuhkarton öffnen.':(I(G,'needle')?'Den Schuhkarton mit der Stricknadel benutzen, dann öffnen.':'Eine Stricknadel aus dem Nähkorb nehmen und den Schuhkarton damit benutzen.'); }]},
  {id:'k1_photo',t:'Das Foto im Regal',open:function(G){ return G.phase==='pro' && I(G,'postcard') && !I(G,'photo1'); },
   s:['Die Postkarte nennt ein Boot und einen Freund. Ein Bild fehlt noch dazu.','Ivka hat aufgehoben, was ihr wichtig war. Nicht nur im Karton.','Ein Foto: zwei Männer im Boot.','Das Foto mit den zwei Männern im Boot nehmen.']},
  {id:'k1_list',t:'Wofür hat Ivka gelebt?',open:function(G){ return G.phase==='pro' && I(G,'key_ivka') && seen(G,'ivka') && !N(G,'pro_list'); },
@@ -80,7 +83,7 @@ M.HINTS_K1=[
   s:['Der Band ist gefunden. Herausziehen kann ihn nur einer, der lebt.','Mladen holt ihn, wenn er weiß, wo er suchen soll.','Ein Zahlendreher: 1984 steht bei 1948.','Als Marko Mladen sagen: „Schauen Sie mal im Regal bei 1948.“']},
  {id:'k1_came',t:'Die Fähre fiel aus',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_ferry') && N(G,'c1_boat7') && !N(G,'c1_came'); },
   s:['Die Fähre fuhr an dem Abend nicht. Und doch wollte Tonći um sieben kommen.','Zwei Notizen, die zusammen etwas Neues ergeben.','Tonćis Versprechen auf der Postkarte und der Eintrag im Fahrtenbuch.','Im Notizbuch „Boot um sieben“ mit „Fähre fiel aus“ verbinden.']},
- {id:'k1_dinko1',t:'Dinko an der Matejuška',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother'); },
+ {id:'k1_dinko1',t:'Dinko an der Matejuška',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother') && !F(G,'c1.dinkoTold'); },   // Analyse K1-B14: nach dem Geständnis nicht mehr offen
   s:['Dinko Matić war dabei. Er flickt seine Netze an der Matejuška und will nicht reden.','Fragen helfen bei ihm nicht. Etwas aus der Zeit von damals vielleicht.','Das Foto aus Ivkas Wohnung zeigt Tonći und Dinko auf der ANKICA.','An der Matejuška Dinko das Foto mit den zwei Männern im Boot zeigen.']},
  {id:'k1_shed',t:'Dinkos Schweigen',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_brother') && !N(G,'c1_words'); },
   s:['Dinko wird weicher, aber über die Nacht schweigt er.','Was er nicht sagt, hat er vielleicht aufgehoben. Hinter einer Tür, die zu bleibt.',
@@ -119,7 +122,7 @@ M.HINTS_K1=[
  {id:'k2_tool',t:'Werkzeug für die Ledana',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !I(G,'crowbar') && !I(G,'tickets'); },
   s:['Die alte Ledana ist verfallen. Mit bloßen Händen kommt man da nicht weit.','Wer am Hafen hat Werkzeug und hat Hilfe angeboten?','Dinko an der Matejuška: „Wenn du was brauchst, ich bin hier.“','Dinko nach einem Brecheisen fragen, für die alte Ledana.']},
  {id:'k2_fence',t:'Der Bauzaun',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,'ledana'); },
-  s:['Die Ledana ist eingezäunt.','Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.',{m:'Mala sieht hinter die Fischkisten an der Matejuška.',g:'Ich sehe hinter die Fischkisten an der Matejuška.'},{m:'Zu Mala wechseln und die Fischkisten ansehen.',g:'Zu mir wechseln und die Fischkisten ansehen.'}]},
+  s:['Die Ledana ist eingezäunt.','Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.',{m:'Mala sieht hinter die Fischkisten am Zaun.',g:'Ich sehe hinter die Fischkisten am Zaun.'},{m:'Zu Mala wechseln und die Fischkisten am Zaun ansehen.',g:'Zu mir wechseln und die Fischkisten am Zaun ansehen.'}]},
  {id:'k2_crawl',t:'Durch den Zaun',open:function(G){ return G.phase==='c2' && N(G,'c2_gap') && !seen(G,'ledana'); },
   s:['Hinter den Kisten ist ein loses Zaunfeld.','Mala kann nichts bewegen. Marko schon.','Die Kisten müssen weg, dann geht es durch die Lücke.','Als Marko die Fischkisten schieben und durch die Lücke kriechen.']},
  {id:'k2_luka',t:'Oben in der Ledana',open:function(G){ return G.phase==='c2' && seen(G,'ledana') && !F(G,'found.luka'); },
@@ -136,7 +139,7 @@ M.HINTS_K1=[
   s:['Nina redet nicht über Luka. Was bewahrt sie auf?','Hinter dem Laden ist ein Zimmer, das Kunden nicht betreten.',{m:'Mala geht durch die Tür „Privat“.',g:'Ich gehe durch die Tür „Privat“.'},{m:'Zu Mala wechseln, ins Hinterzimmer gehen und die gerahmte Reservierung ansehen und spüren.',g:'Zu mir wechseln, ins Hinterzimmer gehen und die gerahmte Reservierung ansehen und spüren.'}]},
  {id:'k2_waited',t:'Ist Nina gefahren?',open:function(G){ return G.phase==='c2' && N(G,'c2_unused') && !N(G,'c2_waited'); },
   s:['Ninas Reservierung wurde nie eingelöst.','Wo hätte sie an dem Abend sein sollen?','Luka wollte sie am Kiosk treffen.','Im Notizbuch die nie eingelöste Reservierung mit dem Treffpunkt am Kiosk verbinden.']},
- {id:'k2_brick',t:'Der Briefkasten',open:function(G){ return G.phase==='c2' && N(G,'c2_paper') && !I(G,'note_n'); },
+ {id:'k2_brick',t:'Der Briefkasten',open:function(G){ return G.phase==='c2' && N(G,'c2_paper') && !I(G,'note_n') && !F(G,'c2.brickDone'); },   // Analyse K1-B05: Hat Nina den Zettel, öffnete das Thema wieder und riet zum Spachtel
   s:['Hinter dem lockeren Ziegel an der Rampe steckt ein Papier.',
      function(G){ return N(G,'c2_thin')?'Mit dem Brecheisen käme die halbe Wand mit. Es braucht etwas Dünnes, Flaches.':'Der Ziegel sitzt fest in der Fuge. Gewalt reißt die Wand ein.'; },
      function(G){ return I(G,'spatula')?'Der Spachtel ist dünn genug.':'Etwas Dünnes, Flaches. So etwas verkauft ein Laden, der Bilder rahmt.'; },
@@ -152,10 +155,15 @@ M.HINTS_K1=[
   s:['Der Rekorder läuft, die Kassette ist da.','Zwei Dinge, die zusammengehören.','Die Kassette gehört in den Rekorder.','Die Kassette mit dem Rekorder benutzen.']},
  {id:'k2_luka2',t:'Ninas Zettel',open:function(G){ return G.phase==='c2' && I(G,'note_n') && !F(G,'c2.lukaKnows'); },
   s:['Ninas Zettel von 1999 ist gefunden. Er war für Luka.','Wer einen Brief nie bekommen hat, sollte ihn jetzt hören.','Luka sitzt noch oben in der Ledana.','In der Ledana mit Luka reden und vom Briefkasten erzählen.']},
- {id:'k2_nina2',t:'Nina überzeugen',open:function(G){ return G.phase==='c2' && F(G,'c2.lukaKnows') && I(G,'note_n') && I(G,'radioT') && !F(G,'c2.tonight'); },
+ // Analyse K1-B05: Nina behält den Zettel, sobald Marko ihn zeigt. Offen bleibt das Thema darum mit dem gezeigten Zettel, und Lukas Bitte ist keine Bedingung mehr
+ {id:'k2_nina2',t:'Nina überzeugen',open:function(G){ return G.phase==='c2' && (I(G,'note_n')||ninaShown(G,'note')) && I(G,'tickets') && I(G,'radioT') && !F(G,'c2.tonight'); },
   s:['Nina muss es hören: den Zettel, die Tickets, das Lied.','Sie will nicht an die Rampe, seit Jahren nicht. Sie kommt nur, wenn sie merkt, dass jemand verstanden hat, worauf sie wartet.',
      'Erst die Ledana, dann ihr eigener Zettel, Lukas Tickets, die Kassette. Und wenn sie zögert, etwas über ihr Warten: was Mira gesehen hat, oder was ihre Bilder zeigen.',
-     'Mit Nina reden: „Ich war in der Ledana“, ihr Zettel, die Tickets, die Kassette, „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.']},
+     // Hinweisprobe (P12): nach einem abgebrochenen Gespräch nennt Stufe 4, was Nina noch nicht gesehen hat
+     function(G){ var S=(G.rooms&&G.rooms.shop)||{}, sh=S.shown||{}, o=[];
+       if (!S.started) return 'Mit Nina reden: „Ich war in der Ledana“, ihr Zettel, die Tickets, die Kassette, „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.';
+       if (!sh.note) o.push('ihren Zettel'); if (!sh.tickets) o.push('Lukas Tickets'); if (!sh.tape) o.push('die Kassette');
+       return o.length?'Mit Nina reden und ihr zeigen: '+o.join(', ')+'. Dann „Wollen Sie es hören?“':'Mit Nina reden: „Wollen Sie es hören?“, und dann nach ihrem Warten fragen.'; }]},
  {id:'k2_ramp',t:'An der Rampe',open:function(G){ return G.phase==='c2_night' && !F(G,'c2.release'); },
   s:['Nina ist gekommen. Die Fähre legt bald ab.','Luka hat ein Lied für sie.','Der Rekorder mit der Kassette.','Nina den Rekorder mit der Kassette geben.']},
  {id:'k2_cross',t:'Luka kann gehen',open:function(G){ return F(G,'c2.release') && !F(G,'c2.done') && !inLimbo(G); },
@@ -190,8 +198,8 @@ M.HINTS_K1=[
   s:['Bruno bekommt seinen Satz nicht zusammen. Ihm fehlen Erinnerungen.','Drei Dinge rufen sie zurück: woran er jeden Sonntag dachte, wie seine Tochter spielte, und was er versteckt hat.',
      function(G){ var o=[]; if (!F(G,'c3.ins.danica')) o.push('das Tanzfoto in der Halle'); if (!F(G,'c3.ins.ljerka')) o.push('Ljerkas Klavierschule im Salon'); if (!F(G,'c3.ins.zagreb')) o.push('der Umschlag aus Zagreb im Klavierhocker'); return 'Noch fehlt: '+o.join(', ')+'.'; },
      function(G){ if (!F(G,'c3.ins.danica')) return I(G,'photo2')?'Bruno das Tanzfoto zeigen.':'Das Tanzfoto von der Wand in der Halle nehmen und Bruno zeigen.';
-       if (!F(G,'c3.brunoUp')) return 'Erst Bruno mit Musik in den Salon holen.';
-       if (!F(G,'c3.ins.ljerka')) return I(G,'musicbook')?'Bruno im Salon die Klavierschule zeigen.':'Im Salon das Tuch vom Flügel nehmen, die Klavierschule nehmen und Bruno zeigen.';
+       // Analyse K1-B14: Bruno nimmt die Dinge auch in der Loge an; „erst mit Musik in den Salon holen“ war keine Bedingung
+       if (!F(G,'c3.ins.ljerka')) return I(G,'musicbook')?'Bruno die Klavierschule zeigen.':(seen(G,'salon')?'Im Salon das Tuch vom Flügel nehmen, die Klavierschule nehmen und Bruno zeigen.':(I(G,'keyring')?'Mit dem Schlüsselring die Treppe zum Salon hinaufgehen. Auf dem Flügel liegt Ljerkas Klavierschule.':'Erst den Schlüsselring aus dem Mantel an Haken 13 holen. Dann in den Salon, zu Ljerkas Klavierschule.'));
        return I(G,'envelope')?'Bruno den Umschlag aus Zagreb zeigen.':'Den Klavierhocker mit dem Schlüsselring öffnen und Bruno den Umschlag zeigen.'; }]},
  {id:'k3_translate',t:'Brunos Satz',open:function(G){ return G.phase==='c3_night' && lvl(G)>=3 && !F(G,'c3.translated'); },
   s:['Bruno kann seinen Satz jetzt sagen, als Wortsalat aus drei Sprachen.','Fünf Teile, je drei Fassungen. Bruno schüttelt den Kopf genau dort, wo es nicht stimmt.',

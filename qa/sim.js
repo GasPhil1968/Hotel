@@ -3,6 +3,8 @@
 //   node qa/sim.js --cat A --count 20 --out qa/results/<tag>               einzelne Kategorie
 //   node qa/sim.js --replay <run-id> --from qa/results/<tag>/runs.jsonl    einen Lauf mit gleichem Seed wiederholen (mit Bildbeleg)
 //   node qa/sim.js --canon --out qa/results/canon                          kanonische Aktionsfolge je Kapitel (für Kategorie C)
+//   … --states <ordner>   Spielstände ab der ersten Störung bis zum Kapitelende mitschreiben (je Lauf <ordner>/<lauf>.jsonl, ohne Dubletten);
+//                         für die Hinweisprobe abseits der Musterlösung: node qa/hints/hintprobe.js --states <ordner> (ANALYSE_GILBERT.md, P12)
 // Jede Zeile in runs.jsonl ist ein eigenständiger Lauf: eigene VM, eigener localStorage, eigener Seed.
 'use strict';
 const path = require('path'), fs = require('fs'), cp = require('child_process'), os = require('os');
@@ -66,26 +68,34 @@ async function runOne(spec, opt = {}) {
   const planHooks = (ch, nPoints, nStepsGuess) => { const s = new Set(); for (let k = 0; k < nPoints; k++) s.add(1 + Math.floor(rnd() * Math.max(2, nStepsGuess - 2))); hookPlan[ch] = s; };
   const STEPS_GUESS = { 1: 60, 2: 66, 3: 110, 4: 84 };
   const canon = opt.canon || null;
+  // Stände für die Hinweisprobe (P12): ab der ersten Störung im Kapitel, ohne Dubletten
+  const stSeen = new Set(); let stCh = null;
+  const dumpState = async (label) => { if (!opt.states || stCh !== curCh) return; let g; try { g = await I.ev(() => JSON.parse(JSON.stringify(M.GS))); } catch (e) { return; }
+    const sig = JSON.stringify([g.phase, g.active, g.notes.slice().sort(), g.inv.slice().sort(), Object.keys(g.flags).filter(k => g.flags[k]).sort(), g.pos && g.pos.marko && g.pos.marko.room, g.pos && g.pos.mala && g.pos.mala.room]);
+    if (stSeen.has(sig)) return; stSeen.add(sig); fs.mkdirSync(opt.states, { recursive: true });
+    fs.appendFileSync(path.join(opt.states, spec.runId + '.jsonl'), JSON.stringify({ run: spec.runId, ch: curCh, step: chStep, label: String(label || '').slice(0, 120), GS: g }) + '\n'); };
   const afterStep = async (label) => {
     step++; chStep++;
+    await dumpState(label);
     if (step > spec.stepLimit) { const e = new Error('Schrittlimit erreicht'); e.kind = 'limit'; throw e; }
     const hp = hookPlan[curCh]; if (!hp || !hp.has(chStep)) return;
     const s0 = await I.settle(60000).catch(() => null); if (!s0 || s0.dlg || s0.overlay || s0.screen !== 'game') { res.perturb.push({ ch: curCh, step: chStep, label, skipped: 'nicht ruhig' }); return; }
-    const a = await X.anchor(I); const rec = []; const p = { ch: curCh, step: chStep, label: label.slice(0, 120), anchor: a, kind: spec.cat };
+    const a = await X.anchor(I); const rec = []; const p = { ch: curCh, step: chStep, label: label.slice(0, 120), anchor: a, kind: spec.cat }; stCh = curCh;
     try { await perturbBody(a, rec, p, label); } catch (e) { p.error = String(e.message || e).slice(0, 300); p.rec = rec.slice(-60); res.perturb.push(p); S.tolerant = true; perturbedCh = true; throw e; }
   };
   const perturbBody = async (a, rec, p, label) => {
-    if (spec.cat === 'B') { for (let k = 0; k < spec.actions; k++) await X.randomAction(I, rnd, rec); }
+    if (spec.cat === 'B') { for (let k = 0; k < spec.actions; k++) { await X.randomAction(I, rnd, rec); await dumpState('Zufallsaktion ' + (k + 1) + ' nach „' + label.slice(0, 60) + '“'); } }
     if (spec.cat === 'E') { for (let k = 0; k < spec.bursts; k++) await X.stressBurst(I, rnd, rec); }
     if (spec.cat === 'C') {
       const fut = canon && canon[curCh] ? canon[curCh].filter(x => x.step > chStep && x.step <= chStep + 25 && x.kind === 'act') : [];
       for (let k = 0; k < spec.premature; k++) { const A = await I.ev(X.LIST_ACTIONS); const ok = fut.filter(f => f.room === A.room && f.active === A.active && A.acts.some(z => z[0] === 'act' && z[1] === f.verb && z[2] === f.id));
         if (!ok.length) { rec.push(['premature-none']); continue; } const f = ok[Math.floor(rnd() * ok.length)]; rec.push(['premature', f.verb, f.id, 'aus Schritt ' + f.step]);
         const before = await I.ev(() => ({ n: M.GS.notes.length, inv: M.GS.inv.length, ph: M.GS.phase, f: Object.keys(M.GS.flags).length })); await I.ev((x) => M.TA.act(x[0], x[1], x[2] || undefined), [f.verb, f.id, f.item]); await I.page.waitForTimeout(60); await X.handleOpen(I, rnd, rec, { dlgDepth: 3 });
-        const after = await I.ev(() => ({ n: M.GS.notes.length, inv: M.GS.inv.length, ph: M.GS.phase, f: Object.keys(M.GS.flags).length, said: M.__speechLog ? M.__speechLog.length : null })); rec.push(['premature-effect', before, after]); }
+        const after = await I.ev(() => ({ n: M.GS.notes.length, inv: M.GS.inv.length, ph: M.GS.phase, f: Object.keys(M.GS.flags).length, said: M.__speechLog ? M.__speechLog.length : null })); rec.push(['premature-effect', before, after]); await dumpState('verfrüht: ' + f.verb + ' ' + f.id); }
       for (let k = 0; k < (spec.absence || 0); k++) { const A = await I.ev(X.LIST_ACTIONS); if (A.locs && A.locs.length) { const l = A.locs[Math.floor(rnd() * A.locs.length)]; await X.navigate(I, rnd, rec, (await I.ev((x) => { const L = M.mapLoc(x); return L ? L.to : null; }, l)) || a.room, 8); await I.page.waitForTimeout(2000 + Math.floor(rnd() * 6000)); } }
     }
     if (spec.cat === 'D') { await saveLoadPoint(p); res.perturb.push(p); return; }
+    await dumpState('nach der Störung bei „' + label.slice(0, 60) + '“');
     const back = await X.returnTo(I, rnd, rec, a); p.returned = back.ok; p.end = back.end; p.actions = rec.length; p.rec = rec.slice(0, 400);
     res.perturb.push(p); S.tolerant = true; perturbedCh = true;
   };
@@ -248,7 +258,7 @@ if (process.env.MALA_SIM_CHILD) {
   const HARNESS = require('crypto').createHash('sha1').update(['sim.js', 'vmdriver.js', 'lib/session.js', 'lib/explore.js', 'lib/common.js', 'paths/walkthrough.js', 'paths/walkthrough2.js', 'paths/walkthrough3.js', 'paths/walkthrough4.js'].map(f => fs.readFileSync(path.join(__dirname, f), 'utf8')).join('\n')).digest('hex').slice(0, 10);
   let canon = null; try { canon = JSON.parse(fs.readFileSync(process.env.MALA_CANON, 'utf8')); } catch (e) {}
   process.on('message', async (m) => { if (m.quit) process.exit(0);
-    let r; try { r = await runOne(m.spec, { canon, evidenceDir: m.evidenceDir, render: m.render }); } catch (e) { r = { runId: m.spec.runId, cat: m.spec.cat, seed: m.spec.seed, result: 'infra', reason: 'Harness: ' + (e.stack || e).toString().split('\n').slice(0, 4).join(' | ') }; }
+    let r; try { r = await runOne(m.spec, { canon, evidenceDir: m.evidenceDir, render: m.render, states: m.states }); } catch (e) { r = { runId: m.spec.runId, cat: m.spec.cat, seed: m.spec.seed, result: 'infra', reason: 'Harness: ' + (e.stack || e).toString().split('\n').slice(0, 4).join(' | ') }; }
     r.harness = HARNESS; process.send({ res: r }); });
   process.send({ ready: true });
   return;
@@ -278,7 +288,7 @@ async function main() {
     let alive = 0;
     const spawn = () => { const c = cp.fork(__filename, [], { env: Object.assign({}, process.env, { MALA_SIM_CHILD: '1', MALA_CANON: canonPath }), execArgv: ['--max-old-space-size=2048'] }); alive++;
       let cur = null, runs = 0;   // Kindprozess nach 25 Läufen durch einen neuen ersetzen (Speicher)
-      const feed = () => { if (next >= specs.length || runs++ >= 25) { c.send({ quit: true }); return; } cur = specs[next++]; started++; c.send({ spec: cur, evidenceDir: path.join(out, 'evidence'), render: arg('--render') }); };
+      const feed = () => { if (next >= specs.length || runs++ >= 25) { c.send({ quit: true }); return; } cur = specs[next++]; started++; c.send({ spec: cur, evidenceDir: path.join(out, 'evidence'), render: arg('--render'), states: arg('--states') ? path.resolve(arg('--states')) : null }); };
       c.on('message', (m) => { if (m.ready) return feed(); if (m.res) { m.res.salt = salt; m.res.shaFile = sha; jsonl.write(JSON.stringify(m.res) + '\n'); done++; counts[m.res.result] = (counts[m.res.result] || 0) + 1; cur = null;
         if (done % 10 === 0 || done === specs.length) { const el = (Date.now() - t0) / 1000; process.stdout.write(`[${el.toFixed(0)}s] ${done}/${specs.length} ${JSON.stringify(counts)} ~${((specs.length - done) * el / done / 60).toFixed(0)} min übrig\n`); fs.writeFileSync(path.join(out, 'progress.json'), JSON.stringify({ done, planned: specs.length, started, counts, elapsedS: el })); }
         feed(); } });

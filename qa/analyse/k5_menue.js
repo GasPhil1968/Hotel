@@ -1,4 +1,5 @@
 // K5-B04 (ANALYSE_GILBERT.md): Brauerei zuerst, dann Nedžad „Nadas Tafel …“ → nach dem Abendwechsel bleibt Nedžads Menü offen.
+// Nachstellung des Stands vor P10. Seit P10 endet das Menü beim Abschnittswechsel; geprüft in qa/regress/bug_011_k5_rueckmeldung.js.
 // Aufruf: DUMPS=<ordner> node qa/analyse/k5_menue.js   (braucht <ordner>/k5/014.json aus walkthrough5.js mit MALA_DUMPALL)
 const path = require('path');
 const { open } = require(path.join(__dirname, '..', '..', 'game', 'tools', 'driver.js'));

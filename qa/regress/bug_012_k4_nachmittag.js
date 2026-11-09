@@ -2,8 +2,9 @@
 // (1) Nach einem verbrauchten Nachmittag begann kein neuer, wenn Mala noch in Zimmer 214 stand; der Text sagte „Für heute ist es vorbei“.
 // (2) Die Wanduhr bietet jetzt ausdrücklich „(Später wiederkommen.)“.
 // (3) Die Entscheidung an der Kurve wurde als Notiz exportiert (praktisch immer wahr) statt als Wahl.
+// (4) P07 (K4-B02): vier naheliegende Paare zu Ružas Satz bekamen einen Poolsatz; jetzt zeigen sie auf den fehlenden Zwischenschluss.
 const { open } = require('../vmdriver'); const FX = require('./fixtures/lib');
-module.exports = { id: 'BUG-012', title: 'K4: neuer Nachmittag auch mit Mala in 214; „Später wiederkommen“ an der Uhr; Kurve als Wahl an Kapitel 5', async run(html) {
+module.exports = { id: 'BUG-012', title: 'K4: neuer Nachmittag auch mit Mala in 214; „Später wiederkommen“ an der Uhr; Kurve als Wahl an Kapitel 5; Beinahe-Treffer zu Ružas Satz', async run(html) {
   const D = await open({ seed: 12, html }); const out = [];
   // (1) Stand nach Versuch 1, Mala bleibt an den Fotos in Zimmer 214: Marko geht zu Ana nach Giesing und kommt zurück
   await FX.load(D, 'k4_060_nach_versuch1.json', { malaPos: 'heim214' }); await D.settle();
@@ -24,5 +25,10 @@ module.exports = { id: 'BUG-012', title: 'K4: neuer Nachmittag auch mit Mala in 
   await FX.load(D, 'k4_060_nach_versuch1.json', { addNotes: ['z4_kurve'], setFlags: { 'k4.fin.kurve': false } }); await D.settle();
   const kurve = await D.ev(() => { try { localStorage.removeItem('mala.c4end'); } catch (e) {} M.GS.ended = false; M.endChapter4(M.API); const r = JSON.parse(localStorage.getItem('mala.c4end') || 'null'); return r ? r.kurve : 'fehlt'; });
   const ok3 = kurve === false; out.push('Export kurve bei „Ihr musstet fahren“=' + kurve);
-  return { ok: ok1 && ok2 && ok3, detail: out.join('; ') };
+  // (4) Beinahe-Treffer, nachdem Mala ihre Funde aus der Kiste geteilt hat (vorher bekommt Marko für ihre geheimen Notizen einen ausweichenden Satz)
+  await FX.load(D, 'k4_060_nach_versuch1.json', { addNotes: ['z4_nachricht', 'z4_lesart', 'z4_antrag', 'z4_kode', 'k4_c_vater'], setFlags: { 'k4.r.shared': true } }); await D.settle();
+  const nm = await D.ev(async () => { const r = {}; for (const [a, b] of [['z4_nachricht', 'z4_lesart'], ['z4_nachricht', 'z4_antrag'], ['z4_kode', 'z4_antrag'], ['k4_c_vater', 'z4_lesart']]) { const x = await M.TA.combine(a, b); r[a + '+' + b] = (x && !x.ok && x.t) || ''; } return r; });
+  const ok4 = /erst jede Hälfte für sich/.test(nm['z4_nachricht+z4_lesart']) && /Dazwischen fehlt/.test(nm['z4_nachricht+z4_antrag']) && /was der Kode/.test(nm['z4_kode+z4_antrag']) && /steht in ihrem Antrag/.test(nm['k4_c_vater+z4_lesart']);
+  out.push('vier Beinahe-Treffer=' + ok4 + (ok4 ? '' : ' ' + JSON.stringify(nm)));
+  return { ok: ok1 && ok2 && ok3 && ok4, detail: out.join('; ') };
 } };

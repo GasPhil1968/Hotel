@@ -58,6 +58,21 @@ node qa/browser/uirun.js --engine firefox --device tablet                       
 node qa/browser/scenarios.js --engine chromium|firefox|webkit                     # Einzelszenarien
 ```
 
+## Hinweise abseits der Musterlösung prüfen (ANALYSE_GILBERT.md, P12)
+
+`game/tools/hintcheck.js` prüft die Hinweistexte entlang der Musterlösung. `qa/hints/hintprobe.js` geht weiter: Es lädt jeden Stand,
+führt für jedes offene Hinweisthema die Handlung aus, die Stufe 4 nennt, und verlangt, dass sie möglich ist und das Thema voranbringt
+(Thema schließt, Stufentext ändert sich, eine Notiz, ein Gegenstand, ein Schalter oder Raumzustand aus dem Thema ändert sich, ein neuer Ort).
+Dazu über ganze Folgen: kein Stand ohne offenes Thema, kein Thema, das nach dem Schließen wieder öffnet, keine Lücke in Malas Spur (K2).
+Welche Handlung ein Stufe-4-Satz meint, steht je Thema in `qa/hints/stufe4.js` (am Satz selbst verzweigt, mit den Namen aus dem Satz).
+
+```bash
+MALA_DUMPALL=/tmp/k2 node game/tools/walkthrough2.js                              # Stände der Musterlösung (je Kapitel)
+node qa/sim.js --cat B --count 4 --states /tmp/sim && node qa/sim.js --cat C --count 4 --states /tmp/sim   # Stände aus Zufalls- und Variantenläufen (K1–K4)
+node qa/hints/hintprobe.js --dumps /tmp/k2 --states /tmp/sim --varianten          # prüfen; --varianten: bekannte Stellen abseits der Musterlösung (qa/hints/varianten.js)
+node qa/hints/hintprobe.js --html qa/…/alt.html --dumps … --varianten             # dieselbe Probe gegen einen älteren Build
+```
+
 Einen fehlgeschlagenen Lauf wiederholen: Run-ID und Salz genügen (`makeSpec(cat, nr, salz)` ist deterministisch), z. B.
 `node -e "const s=require('./qa/sim');s.runOne(s.makeSpec('D',77,'erstlauf'),{}).then(r=>console.log(r.result,r.reason))"`.
 

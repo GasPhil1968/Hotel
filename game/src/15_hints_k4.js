@@ -7,6 +7,10 @@
 'use strict';
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; } function I(G,id){ return G.inv.indexOf(id)>=0; }
 function P(G,list){ return list.indexOf(G.phase)>=0; }
+// abends geht Marko nicht mehr aus dem Haus (96_k4_story.js, travelWhy): Schritte an anderen Orten erst morgen (Hinweisprobe, P12)
+function later(G){ return ['k4_pro_n','k4_d1_n','k4_d2_n','k4_d4_n','k4_d5_n'].indexOf(G.phase)>=0; }
+// Nachmittag im Heim schon verbraucht (wie rooms/heim_flur.js: gilt nur im selben Abschnitt)
+function pmUsed(G){ return G.flags['k4.g.pmPhase']===G.phase && (F(G,'k4.g.pmUsed')||F(G,'k4.g.pmBlunt')); }
 function room(G){ return (G.pos&&G.pos.marko&&G.pos.marko.room)||''; }
 function no(G){ return M.k4Variant && M.k4Variant(G)==='no'; }
 M.HINTS_K4=[
@@ -20,7 +24,8 @@ M.HINTS_K4=[
   s:['Der alte Mann am Pfeiler wartet auf seine Ablösung.',
      'Markos Hochdeutsch nimmt er nicht an: „Sie san ned vo do.“ Es fehlt nicht der richtige Satz. Es fehlt die richtige Stimme.',
      'Jemand von hier, der ihn kannte. Am Taxistand lehnt ein alter Münchner.',
-     'Den Taxifahrer am Taxistand bitten, „Feierabend“ zu dem Mann am Pfeiler zu sagen.']},
+     // Analyse K4-B11: die nötige Vorfrage an Wastl fehlte; Wastl hilft erst, wenn Marko von Hansi weiß, worauf er wartet
+     function(G){ return F(G,'k4.h.local')?'Den Taxifahrer am Taxistand fragen, ob er Hansi kannte, und ihn bitten, etwas für ihn zu tun: „Feierabend“ zum Mann am Pfeiler sagen.':'Mit dem Mann am Pfeiler reden: worauf er wartet und wer ihn ablösen darf.'; }]},
  {id:'h4c',t:'Der Schlüssel',open:function(G){ return G.phase==='k4_pro' && N(G,'u4_sms') && !F(G,'k4.p.key'); },
   s:['Mama arbeitet bis zwei. Den Schlüssel hat die Nachbarin.',
      'Anas SMS: „Schlüssel bei Frau Huber, unten links.“',
@@ -30,7 +35,7 @@ M.HINTS_K4=[
   s:['Mama kommt um zwei. Bis dahin ist Zeit.',
      'Die Wohnung erzählt einiges. Und man kann Kaffee kochen.',
      'Großmutters Džezva ist im Gepäck. In der Küche steht ein Herd.',
-     'In der Küche die Džezva benutzen und Kaffee kochen.']},
+     'In der Küche den Herd benutzen und in Großmutters Džezva Kaffee kochen.']},   // Hinweisprobe (P12): die Džezva ist keine Stelle im Raum, gekocht wird am Herd
  {id:'h4e',t:'Mama',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.coffee') && !F(G,'k4.p.jasna'); },
   s:['Mama ist da. Marko hat ihr einiges mitgebracht.',
      'Nadas Gruß. Und eine Nachricht aus Mostar.',
@@ -56,7 +61,8 @@ M.HINTS_K4=[
   s:['Markos Kopf pocht. Irgendwo in der Stadt wartet einer, den Mala noch nicht gefunden hat.',
      'Wo kommen in München Menschen an und fahren ab?',
      {m:'Der Hauptbahnhof. Mala kann sich dort umsehen.',g:'Am Bahnhof. Ich sehe mich um.'},
-     'Als Mala zum Hauptbahnhof gehen und sich an Gleis 11 umsehen. Dann mit Marko hin und mit dem Mann reden.']},
+     // Hinweisprobe (P12): nach Malas Fund nennt Stufe 4 die nächsten Schritte, nicht wieder den ersten
+     function(G){ if (F(G,'k4.s.told')) return 'An Gleis 11 mit dem Mann reden: Wie heißt er weiter?'; if (F(G,'k4.s.found')) return 'Als Marko zum Hauptbahnhof fahren: Mala zeigt ihm den Mann an Gleis 11.'; return 'Als Mala zum Hauptbahnhof gehen und sich an Gleis 11 umsehen. Dann mit Marko hin und mit dem Mann reden.'; }]},
  {id:'d4c',t:'Mamas Brot',open:function(G){ return G.phase==='k4_d1' && !F(G,'k4.d1.bread'); },
   s:['Mama ist bei der Arbeit. Sie war heute Morgen in Eile.',
      'In der Küche liegt etwas, das sie vergessen hat.',
@@ -84,7 +90,7 @@ M.HINTS_K4=[
      'Frau Wimmer in der Bahnhofsmission und die Kioskfrau nach dem Gepäckträger fragen.']},
  {id:'s4b',t:'Bairisch oder Italienisch',open:function(G){ return N(G,'s4_fluch') && N(G,'s4_bairisch') && !N(G,'s4_tarnung'); },
   s:['Die Kioskfrau sagt: ein Urmünchner. Frau Wimmer sagt: Er hat italienisch geflucht.','Einer von beiden irrt. Oder keiner.','Im Notizbuch beide Aussagen nebeneinanderlegen.','„A Urmünchner“ und „Italienisch geflucht“ verbinden.']},
- {id:'s4c',t:'Die Akte',open:function(G){ return P(G,['k4_d2','k4_d3']) && F(G,'k4.s.wimmer') && !N(G,'s4_ausweis'); },   // am Christtag hat kein Amt offen
+ {id:'s4c',t:'Die Akte',open:function(G){ return P(G,['k4_d2','k4_d3']) && F(G,'k4.s.wimmer') && !N(G,'s4_ausweis') && !N(G,'s4_name'); },   // am Christtag hat kein Amt offen; Analyse K4-B11: mit dem Namen erledigt
   s:['Wer ohne Angehörige stirbt, wird von Amts wegen bestattet.','Dafür hat die Stadt eine Akte.','Städtische Friedhöfe, die Verwaltung.','Bei Herrn Obermaier nach der Akte zum Gepäckträger fragen.']},
  {id:'s4d',t:'Nummer 17',open:function(G){ return N(G,'s4_peppino') && N(G,'s4_ausweis') && !N(G,'s4_derselbe') && !N(G,'s4_name'); },
   s:['Peppino an Gleis 11. Josef Rugiero in der Akte.','Beide tragen dieselbe Nummer.','Im Notizbuch „Mi chiamo Peppino“ und „Josef Rugiero“.','Die beiden Notizen verbinden.']},
@@ -92,14 +98,16 @@ M.HINTS_K4=[
   s:['Peppino und Josef Rugiero: derselbe Mann? Eine Nummer allein ist noch kein Name.',
      '„Me l\'hanno preso qui.“ Den Namen hat man ihm hier genommen, an Gleis 11.',
      {m:'Unter Gleis 11 liegt etwas, wo nur Mala hinkommt. Oder in seinem Koffer liegt Post.',g:'Unter dem Gleis ist etwas. Ich komme da hin, du nicht. Oder du liest seine Post.'},
-     'Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.']},
+     // Hinweisprobe (P12): Ist der Bunker schon gesehen, fehlt nur der Schluss
+     function(G){ if (N(G,'s4_bunker') && N(G,'s4_derselbe')) return 'Im Notizbuch „Peppino ist der Sepp (?)“ mit Malas Nachhall aus dem Bunker verbinden.'; return 'Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.'; }]},
  {id:'s4f',t:'Sein Name',open:function(G){ return N(G,'s4_name') && !N(G,'s4_bitte') && !F(G,'k4.s.crossed'); },
   s:['Wir kennen jetzt seinen Namen.','Das muss er hören. In seiner Sprache.','An Gleis 11.','Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.']},
  {id:'s4g',t:'Peppinos Bitte',open:function(G){ return N(G,'s4_bitte') && !F(G,'k4.s.call'); },
   s:['Er will, dass Marko für ihn schreibt: „Cara Carmela, sto bene.“',
      'Was hat Carmela ihm all die Jahre geschrieben? Und was wusste sie?',
      'Die Briefe im Koffer, besonders einer von 1979. Frau Wimmer gibt sie nur heraus, wenn sie weiß, dass sie ihm gehören. Mala liest mehr darin als Marko.',
-     function(G){ if (!F(G,'k4.s.letters')) return 'Frau Wimmer nach „Josef Rugiero ist Giuseppe Ruggiero“ fragen und die Briefe lesen.'; if (!N(G,'s4_carmela_hall')) return 'Als Mala in der Bahnhofsmission den Koffer mit den Briefen spüren.'; if (!N(G,'s4_wusste')) return '„Carmela, 1979“ und „Eine Frau, die weint“ verbinden.'; return 'An Gleis 11 mit Peppino reden: „Ich rufe Carmela an.“'; }]},
+     // Hinweisprobe (P12): Frau Wimmer hat keine Notizfrage; abends geht Marko nicht mehr aus dem Haus
+     function(G){ var m=later(G)?'Morgen: ':''; if (!F(G,'k4.s.letters')) return m+'Frau Wimmer fragen, ob ich den Koffer sehen kann, und die Briefe lesen.'; if (!N(G,'s4_carmela_hall')) return m+'Als Mala in der Bahnhofsmission den Koffer mit den Briefen spüren.'; if (!N(G,'s4_wusste')) return '„Carmela, 1979“ und „Eine Frau, die weint“ verbinden.'; return m+'An Gleis 11 mit Peppino reden: „Ich rufe Carmela an.“'; }]},
  {id:'s4h',t:'Was Carmela wusste',open:function(G){ return N(G,'s4_brief79') && N(G,'s4_carmela_hall') && !N(G,'s4_wusste'); },
   s:['Ein Brief von 1979. Und eine Frau, die beim Schreiben weint.','Was sagt das über Carmela?','Im Notizbuch „Carmela, 1979“ und „Eine Frau, die weint“.','Die beiden Notizen verbinden.']},
  {id:'s4i',t:'Er kann gehen',open:function(G){ return F(G,'k4.s.call') && !F(G,'k4.s.crossed'); },
@@ -113,22 +121,29 @@ M.HINTS_K4=[
   s:['Um drei: der Gong, Gerda, das „später“, der Kaffee. Was davon macht Alois unruhig?',
      'Zuschauen reicht nicht. Man muss eins weglassen und sehen, was passiert.',
      {m:'Herr Kraus kann den Gong abstellen. Und Mala kann Gerda bitten, woanders zu warten.',g:'Kraus kann den Gong abstellen. Und ich kann Gerda bitten, woanders zu warten.'},
-     function(G){ return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+(N(G,'g4_depot')?' Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.':' Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.'); }]},
+     // Hinweisprobe (P12): abends, nach drei und mit abgestelltem Gong nennt Stufe 4, was jetzt geht
+     function(G){ var alt=(N(G,'g4_depot')?' Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.':' Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.');
+       if (later(G)) return 'Morgen: Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; if (F(G,'k4.g.chimeOff')&&!pmUsed(G)) return 'Bis drei warten: die Uhr im Flur benutzen.';
+       if (pmUsed(G)) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt;
+       return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; }]},
  {id:'g4c',t:'Der zweite Versuch',open:function(G){ return N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2')); },
   s:['Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.','Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.',
      function(G){ return N(G,'g4_versuch1')?{m:'Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?',g:'Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.'}:'Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.'; },
-     function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.';
+     function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren. Dann als Mala Gerda an das Depot erinnern.';
+       if (F(G,'k4.g.hall')) return 'Bis drei warten: die Uhr im Flur benutzen.';   // Hinweisprobe (P12): Gerda wartet schon am Fenster
        return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
  {id:'g4d',t:'Gong und Hand',open:function(G){ return N(G,'g4_versuch1') && N(G,'g4_versuch2') && !N(G,'g4_beides'); },
   s:['Zwei Versuche, zwei Ergebnisse.','Was hat jeder Versuch gezeigt?','Im Notizbuch beide Versuche.','Die beiden Versuche verbinden.']},
  {id:'g4e',t:'Sein Leben',open:function(G){ return N(G,'g4_drei') && !N(G,'g4_depot') && (N(G,'g4_versuch1') || F(G,'k4.g.blunt')); },
-  s:['„Tot“ vergisst er. Jeden Tag neu.','Was war sein Leben? Welche Wörter hat er? Und wo hat Gerda auf ihn gewartet?','Die Fotos in seinem Zimmer, Nummer 214.','In Zimmer 214 die Fotos ansehen; nach drei, wenn er im Flur ist, als Mala.']},
+  s:['„Tot“ vergisst er. Jeden Tag neu.','Was war sein Leben? Welche Wörter hat er? Und wo hat Gerda auf ihn gewartet?','Die Fotos in seinem Zimmer, Nummer 214. Ansehen allein sagt wenig; Mala kann sie spüren, wenn er nicht im Zimmer ist.',
+     'Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren.']},   // Hinweisprobe (P12): Ansehen als Marko bringt nichts
  {id:'g4f',t:'Wie man es ihm sagt',open:function(G){ return N(G,'g4_beides') && N(G,'g4_depot') && !N(G,'g4_worte'); },
   s:['Der Gong holt ihn, ihre Hand hält ihn. Und auf den Fotos wartet sie am Depot.','Feierabend, Endstation.','Im Notizbuch „Gong und Nähe“ und „Am Depot“.','Die beiden Notizen verbinden.']},
  {id:'g4g',t:'Gerda',open:function(G){ return N(G,'g4_beides') && !F(G,'k4.g.decided'); },
   s:['Gerda glaubt, sie beruhigt ihn.',{m:'Das muss ihr jemand sagen. Jemand, den sie hört.',g:'Das muss ihr jemand sagen. Mich hört sie.'},{m:'Mala.',g:'Ich.'},'Als Mala mit Gerda reden.']},
  {id:'g4h',t:'Endstation',open:function(G){ return G.phase==='k4_d4' && F(G,'k4.g.decided') && !F(G,'k4.g.thermos') && !I(G,'kanne'); },
-  s:['Gerda geht heute. Alois muss es hören.','In seiner Sprache: Endstation, Feierabend, das Depot.','Um drei, im Flur.','Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.']},
+  s:['Gerda geht heute. Alois muss es hören.','In seiner Sprache: Endstation, Feierabend, das Depot.','Um drei, im Flur.',
+     function(G){ return F(G,'k4.g.goodbye')?'In der Zwischenwelt mit Gerda reden und ihr die hohe Stufe hinaufhelfen.':'Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.'; }]},   // Hinweisprobe (P12): nach „Endstation“ geht es in der Zwischenwelt weiter
  {id:'g4i',t:'Die Kanne',open:function(G){ return I(G,'kanne') && !F(G,'k4.g.thermos'); },
   s:['Gerda hat ihre Kanne hergegeben.','Für wen?','Alois.','Alois die Kanne geben.']},
  // ---------------- Familie: Dienstag bis Freitag

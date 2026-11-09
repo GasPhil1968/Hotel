@@ -1,4 +1,5 @@
 // K2-B01 (ANALYSE_GILBERT.md): ungelesene Rotkreuz-Nachricht im Finale an Nada geben → Kapitel nicht mehr abschließbar.
+// Nachstellung des Stands vor P01. Seit P01 tritt der Fall nicht mehr auf; geprüft wird das jetzt in qa/regress/bug_010_rcm_nada.js.
 // Aufruf: DUMPS=<ordner> node qa/analyse/k2_rotkreuz.js   (braucht <ordner>/k2/62.json aus walkthrough2.js mit MALA_DUMPALL)
 const path = require('path');
 const { open } = require(path.join(__dirname, '..', '..', 'game', 'tools', 'driver.js'));
