@@ -244,7 +244,7 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     const before = await p.evaluate(() => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (/^mala\./.test(k) && k !== 'mala.undo') o[k] = localStorage.getItem(k); } return o; });
     const [dl] = await Promise.all([p.waitForEvent('download'), click(p, 'Sicherung exportieren')]);
     const file = path.join(tmp, dl.suggestedFilename()); await dl.saveAs(file); const bk = JSON.parse(fs.readFileSync(file, 'utf8'));
-    T.ck(/^MALA-Sicherung-\d{4}-\d{2}-\d{2}\.json$/.test(dl.suggestedFilename()), 'Datei „' + dl.suggestedFilename() + '“');
+    T.ck(/^Die-Stillen-Sicherung-\d{4}-\d{2}-\d{2}\.json$/.test(dl.suggestedFilename()), 'Datei „' + dl.suggestedFilename() + '“');
     T.ck(bk.app === 'MALA' && bk.format === 1 && /^[0-9a-f]{8}$/.test(bk.sum) && bk.count === Object.keys(before).length, 'Format 1, Prüfsumme, ' + bk.count + ' Einträge');
     T.ck(JSON.stringify(bk.data) === JSON.stringify(Object.fromEntries(Object.keys(before).sort().map(k => [k, before[k]]))), 'enthält alle MALA-Einträge (Stände, Kapitelmarken, Einstellungen) unverändert');
     // alles löschen, dann über die Dateiauswahl wieder einspielen
@@ -261,7 +261,7 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     // beschädigt / fremd
     const broken = JSON.stringify(Object.assign({}, bk, { data: Object.assign({}, bk.data, { 'mala.c1end': '2' }) }));
     T.ck(await p.evaluate((t) => M.shell.importText(t) === false && /beschädigt/.test(M.shell.toastNow().t) && M.shell.current() === 'load', broken), 'veränderte Datei: „beschädigt (Prüfsumme)“, nichts eingespielt');
-    T.ck(await p.evaluate(() => M.shell.importText('{"hallo":1}') === false && /keine MALA-Sicherung/.test(M.shell.toastNow().t)), 'fremde Datei: „keine MALA-Sicherung“');
+    T.ck(await p.evaluate(() => M.shell.importText('{"hallo":1}') === false && /keine Sicherung von „Die Stillen“/.test(M.shell.toastNow().t)), 'fremde Datei: „keine Sicherung von „Die Stillen““');
     T.ck(await p.evaluate(() => M.shell.importText('kein json') === false), 'kein JSON: abgelehnt');
     // Vorschaubild aus einer Datei: nur PNG-data-URIs werden übernommen
     T.ck(await p.evaluate(() => { const k = 'mala.save.1', d = JSON.parse(localStorage.getItem(k)); d.thumb = 'x) ; background:red'; localStorage.setItem(k, JSON.stringify(d)); return M.E.readEnv(k).thumb === null; }), 'fremdes „Vorschaubild“ wird verworfen (nur PNG-data-URI)');
@@ -272,11 +272,11 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     await done(p);
 
     // ---------------------------------------------------------------- B3-6 Abspann beendeter Kapitel
-    T.section('Abspann beendeter Kapitel unter „Über MALA“');
-    p = await open(b, null); await click(p, 'Über MALA');
+    T.section('Abspann beendeter Kapitel unter „Über „Die Stillen““');
+    p = await open(b, null); await click(p, 'Über „Die Stillen“');
     T.ck(await p.evaluate(() => M.shell.labels().every(l => !/^Abspann/.test(l))), 'ohne beendetes Kapitel kein Abspann-Eintrag');
     await done(p);
-    p = await open(b, null, null, { 'mala.c1end': '1', 'mala.c2end': '1' }); await click(p, 'Über MALA');
+    p = await open(b, null, null, { 'mala.c1end': '1', 'mala.c2end': '1' }); await click(p, 'Über „Die Stillen“');
     T.ck(JSON.stringify(await p.evaluate(() => M.shell.labels().filter(l => /^Abspann/.test(l)))) === JSON.stringify(['Abspann Kapitel 1', 'Abspann Kapitel 2']), 'nach Kapitel 1 und 2: „Abspann Kapitel 1“ und „… 2“');
     await click(p, 'Abspann Kapitel 2'); await p.waitForTimeout(100);
     T.ck(await p.evaluate(() => M.E.screen === 'credits' && M.E.creditLines === M.CREDITS2), 'Abspann von Kapitel 2 läuft');

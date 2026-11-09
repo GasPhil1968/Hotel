@@ -1,4 +1,6 @@
-# MALA – Kapitel 1: Split · Kapitel 2: Sarajevo · Kapitel 3: Mostar · Kapitel 4: München · Kapitel 5: Sarajevo
+# Die Stillen – Kapitel 1: Split · Kapitel 2: Sarajevo · Kapitel 3: Mostar · Kapitel 4: München · Kapitel 5: Sarajevo
+
+*Arbeitstitel: MALA. Der Name „Die Stillen“ kommt aus dem Spiel selbst: So heißt die Rubrik in Vesnas Zeitung, für die Marko Nachrufe auf Menschen schreibt, die allein gestorben sind. Auf Bosnisch/Kroatisch heißt das Spiel „Tihi“. Interne Namen (Speicherschlüssel `mala.*`, Schrift „MALA Pixel“, Dateinamen) sind geblieben, damit alte Spielstände weiter laden.*
 
 Ein ernstes Point-and-Click-Adventure nach dem Vorbild der Blackwell-Reihe, im technischen und ästhetischen Stil des beigelegten „Twenty to Four“ (VGA-Pixelgrafik, alles im Code gemalt und vertont), aber komplett eigenständig.
 

@@ -1,4 +1,4 @@
-# MALA – Kapitel 5: Sarajevo („Angekommen“) · Komplettlösung
+# Die Stillen – Kapitel 5: Sarajevo („Angekommen“) · Komplettlösung
 
 Diese Lösung verrät alles, auch das Ende der Geschichte. Wer erst einmal nur einen Schubs braucht, findet im Spiel unter **Menü → Hinweis …** vier Stufen für jedes offene Problem.
 

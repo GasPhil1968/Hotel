@@ -149,8 +149,8 @@ const DEV = { desktop: { viewport: { width: 1280, height: 800 } }, tablet: { vie
     const ov = await p.evaluate(() => [...document.querySelectorAll('#shell .mi,#shell .lbl,#shell .segp button')].filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent.trim().slice(0, 30)));
     T.ck(ov.length === 0, 'große Schrift: nichts abgeschnitten' + (ov.length ? ' – zu breit: ' + ov.join(' | ') : ''));
     await click(p, 'Pixel'); await click(p, 'normal'); await p.keyboard.press('Escape');
-    await click(p, 'Über MALA'); const ab = await p.evaluate(() => document.querySelector('#shell').textContent);
-    T.ck(/Abspann Kapitel 3/.test(ab) && !/Mitwirkende/.test(ab), 'Über MALA: Abspann beendeter Kapitel, kein Eintrag „Mitwirkende“');
+    await click(p, 'Über „Die Stillen“'); const ab = await p.evaluate(() => document.querySelector('#shell').textContent);
+    T.ck(/Abspann Kapitel 3/.test(ab) && !/Mitwirkende/.test(ab), 'Über „Die Stillen“: Abspann beendeter Kapitel, kein Eintrag „Mitwirkende“');
     await shot(p, 'd16_ueber');
     await p.keyboard.press('Escape');
     const n0 = await p.evaluate(() => document.querySelectorAll('#shell, #shell *').length);

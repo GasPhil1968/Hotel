@@ -32,8 +32,11 @@ Kapitel 5 (1. bis 5. März 2012) ist gebaut, durchgespielt und geprüft. Es ist 
 - **Alte Kapitel:** Die Durchläufe von Kapitel 1, 2, 3 und 4 laufen gegen den Bau mit Kapitel 5 fehlerfrei.
 - **QA-Gerüst:** `qa/sim.js` und `qa/browser/uirun.js` erwarten nach dem Abspann von Kapitel 4 jetzt „Weiter mit Kapitel 5“. Die 4000 Simulationsläufe wurden für diesen Bau nicht wiederholt.
 
+## Neuer Spieltitel
+- Das Spiel heißt „Die Stillen“ (bosnisch „Tihi“), nach Vesnas Zeitungsrubrik aus Kapitel 1; „MALA“ war der Arbeitstitel. Umbenannt sind Titelbild, Kopfzeile im Spiel, „Über“-Seite und ihr Menüeintrag, Abspann aller fünf Kapitel, Hinweise für iPhone/iPad, Name der Sicherungsdatei, Fenster- und App-Titel. Speicherschlüssel `mala.*`, die Kennung in Sicherungsdateien und die Schrift „MALA Pixel“ sind geblieben; alte Spielstände und Sicherungen laden weiter. UI-Tests danach: 306 von 306.
+
 ## Lieferung
-- `web/` (eine `index.html`, Service Worker, Icons, `LIESMICH.txt`, `AENDERUNGEN.txt`) und dasselbe als Netlify-ZIP: `dist/MALA_netlify_oberflaeche.zip` (Prüfsummen in `dist/SHA256SUMS_oberflaeche.txt`).
+- `web/` (eine `index.html`, Service Worker, Icons, `LIESMICH.txt`, `AENDERUNGEN.txt`) und dasselbe als Netlify-ZIP: `dist/Die_Stillen_netlify.zip` (Prüfsummen in `dist/SHA256SUMS_die_stillen.txt`; früher `dist/MALA_netlify_oberflaeche.zip`).
 
 ## Nach der ersten Rückmeldung geändert
 - **Friedhof Bare** zeigt den katholischen Teil: Kreuze aus Stein und Holz, Grabsteine mit eingemeißeltem Kreuz, Einfassungen, rote Grablichter. Vorher standen dort schlanke weiße Stelen, die wie ein muslimischer Friedhof aussahen.

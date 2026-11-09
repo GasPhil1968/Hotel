@@ -21,12 +21,12 @@ M.trAdd('bhs', {
   // Spielmenü
   'Weiterspielen':'Nastavi igru', 'Gespeichert.':'Spremljeno.', 'Hier geht Speichern nicht.':'Ovdje se ne može spremiti.', 'Geladen.':'Učitano.', 'Kein Spielstand.':'Nema spremljene igre.',
   'wartet auf Tippen':'čeka dodir', 'langsam':'sporo', 'normal':'normalno', 'schnell':'brzo', 'an':'uključeno', 'aus':'isključeno',
-  'Vollbild':'Cijeli zaslon', 'Hinweis …':'Savjet …', 'Spielanleitung':'Upute', 'Zum Titelbild':'Na naslovnu stranu', 'MALA – Kapitel 1: Split':'MALA – Poglavlje 1: Split',
+  'Vollbild':'Cijeli zaslon', 'Hinweis …':'Savjet …', 'Spielanleitung':'Upute', 'Zum Titelbild':'Na naslovnu stranu', 'Die Stillen – Kapitel 1: Split':'Tihi – Poglavlje 1: Split', 'DIE STILLEN':'TIHI',
   'Sprache: Bosanski / Hrvatski':'Jezik: bosanski / hrvatski',
   // Titel
   'Fortsetzen':'Nastavi', 'Kapitel 1: Split':'Poglavlje 1: Split', 'Kapitel 2: Sarajevo':'Poglavlje 2: Sarajevo', 'Mitgelieferter Spielstand':'Priložena spremljena igra', 'Mitgelieferte Spielstände':'Priložene spremljene igre', 'Welchen Spielstand laden?':'Koju igru učitati?', 'Split: kurz vor Ivkas Wahrheit':'Split: tik prije Ivkine istine', 'Sarajevo: vor dem Ankaufbuch':'Sarajevo: prije knjige otkupa',
   'Über das Spiel':'O igri', 'Kapitel 1: Split  ·  Kapitel 2: Sarajevo':'Poglavlje 1: Split  ·  Poglavlje 2: Sarajevo',
-  'MALA – Kapitel 1: Split · Kapitel 2: Sarajevo':'MALA – Poglavlje 1: Split · Poglavlje 2: Sarajevo',
+  'Die Stillen – Kapitel 1: Split · Kapitel 2: Sarajevo':'Tihi – Poglavlje 1: Split · Poglavlje 2: Sarajevo',
   'Ein Point-and-Click-Adventure über Menschen,':'Avantura o ljudima',
   'die nicht weiterkommen, und über einen,':'koji ne mogu dalje i o jednome',
   'der mit ihnen reden kann.':'koji s njima može razgovarati.',
@@ -86,13 +86,13 @@ tr2(/^Ja, Platz (\d+) neu beginnen$/, function(m){ return 'Da, kreni ispočetka 
 tr2(/^Auf Platz (\d+) liegt ein Spielstand\. (.+)$/, function(m,tr){ return 'Na mjestu '+m[1]+' već je spremljena igra. '+tr(m[2]); });
 // Oberfläche nach dem UI-Konzept (Phase 1)
 M.trAdd('bhs', {
-  'MALA wird quer gespielt':'MALA se igra vodoravno', 'Dreh dein Gerät ins Querformat.':'Okreni uređaj vodoravno.',
+  '„Die Stillen“ wird quer gespielt':'„Tihi“ se igra vodoravno', 'Dreh dein Gerät ins Querformat.':'Okreni uređaj vodoravno.',
   'Ist die Drehsperre an? Dann spiel hier weiter: Das Bild liegt richtig, sobald du das Gerät drehst.':'Je li uključeno zaključavanje rotacije? Onda igraj ovdje: slika je ispravna čim okreneš uređaj.',
   'Gedreht weiterspielen':'Nastavi igrati okrenuto'
 });
 // Oberfläche nach dem UI-Konzept (Phase 2): HTML-Schicht für Titel, Spielstände, Einstellungen, Pause
 M.trAdd('bhs', {
-  'Fortsetzen':'Nastavi', 'Neues Spiel':'Nova igra', 'Spiel laden':'Učitaj igru', 'Einstellungen':'Postavke', 'Über MALA':'O igri MALA', 'Hauptmenü':'Glavni izbornik',
+  'Fortsetzen':'Nastavi', 'Neues Spiel':'Nova igra', 'Spiel laden':'Učitaj igru', 'Einstellungen':'Postavke', 'Über „Die Stillen“':'O igri „Tihi“', 'Hauptmenü':'Glavni izbornik',
   'Beispielstände':'Ogledne igre', 'Beispiel':'Primjer', 'Kapitel':'Poglavlje', 'von vorn':'ispočetka', 'mit Vorgaben':'s pretpostavkama', 'bisher nur auf Deutsch':'zasad samo na njemačkom',
   'noch nicht erschienen':'još nije objavljeno', 'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.':'Sva tri mjesta su zauzeta: odmah biraš koje će se prebrisati.',
   'Auf welchem Platz?':'Na kojem mjestu?', 'Der Beispielstand wird auf diesen Platz geladen.':'Ogledna igra učitava se na ovo mjesto.', 'Das neue Spiel beginnt auf diesem Platz.':'Nova igra počinje na ovom mjestu.',
@@ -116,7 +116,7 @@ M.trAdd('bhs', {
   'Röhrenbild':'Stari ekran', 'umschalten':'prebaci', 'Ansicht':'Prikaz', 'Nachdenken: Marko fragt sich durch':'Razmišljanje: Marko se propituje', 'Liste: alle offenen Notizen auf einer Seite':'Popis: sve otvorene bilješke na jednoj stranici',
   'Sprache':'Jezik', 'Deutsch':'Njemački', 'Bos./Hrv.':'Bos./Hrv.', 'Bosanski / Hrvatski: Kapitel 2–4 bisher nur auf Deutsch':'Bosanski / Hrvatski: poglavlja 2–4 zasad samo na njemačkom',
   'Der Anrufbeantworter blinkt. Zwei neue Nachrichten.':'Telefonska sekretarica trepće. Dvije nove poruke.',
-  'Abspann':'Odjavna špica', 'Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.':'Point-and-click avantura o ljudima koji ne mogu dalje i o jednome koji može razgovarati s njima.',
+  'Abspann':'Odjavna špica', 'Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.':'Point-and-click avantura o ljudima koji ne mogu dalje i o jednome koji može razgovarati s njima.', '„Die Stillen“ heißt die Rubrik in Vesnas Zeitung, für die Marko schreibt: Nachrufe auf Menschen, die allein gestorben sind.':'„Tihi“ se zove rubrika u Vesninim novinama za koju Marko piše: nekrolozi ljudima koji su umrli sami.',
   'Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.':'Marko je živ. Mala nije. On razgovara sa živima, ona prolazi kroz zidove.',
   'Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.':'Sva grafika, glazba i zvukovi nastaju u samoj igri. Slušalice se isplate.',
   'Steuerung':'Upravljanje', 'Etwas antippen: Ist nur etwas zu sehen, schaut Marko es an. Kann man etwas damit tun, kommt ein kleines Menü.':'Dodirni nešto: ako se samo ima što vidjeti, Marko to pogleda. Ako se s tim može nešto učiniti, pojavi se mali izbornik.',
@@ -147,7 +147,7 @@ tr2(/^Fortsetzung: (.+)$/, function(m){ return 'Nastavak: '+m[1]; });
 tr2(/^Abspann Kapitel (\d)$/, function(m){ return 'Odjavna špica, poglavlje '+m[1]; });
 // Phase 4: Sicherung als Datei, „Zuletzt“-Karte, Namen für Lesezeichen, Schnellvorlauf
 M.trAdd('bhs', {
-  'Diese Datei ist keine MALA-Sicherung.':'Ova datoteka nije sigurnosna kopija igre MALA.', 'Die Sicherung ist beschädigt (Prüfsumme stimmt nicht).':'Sigurnosna kopija je oštećena (kontrolni zbroj se ne slaže).',
+  'Diese Datei ist keine Sicherung von „Die Stillen“.':'Ova datoteka nije sigurnosna kopija igre „Tihi“.', 'Die Sicherung ist beschädigt (Prüfsumme stimmt nicht).':'Sigurnosna kopija je oštećena (kontrolni zbroj se ne slaže).',
   'Sicherung einspielen?':'Vratiti sigurnosnu kopiju?', 'Einspielen':'Vrati', 'Sicherung eingespielt. Einstellungen gelten ab dem nächsten Start.':'Sigurnosna kopija je vraćena. Postavke vrijede od sljedećeg pokretanja.',
   'Sicherung fehlgeschlagen.':'Sigurnosna kopija nije uspjela.', 'Zuletzt':'Prethodno',
   'Lesezeichen benennen':'Imenuj oznaku', 'Name (leer lassen für den Ort):':'Ime (ostavi prazno za mjesto):', 'Benennen …':'Imenuj …', 'Benannt.':'Imenovano.', 'Name entfernt.':'Ime je uklonjeno.',
@@ -160,12 +160,12 @@ tr2(/^Sicherung als Datei gespeichert \((\d+) (?:Eintrag|Einträge)\)\.$/, funct
 M.trAdd('bhs', {
   'Gerade nicht – die Szene läuft.':'Ne sada – scena je u tijeku.', 'Erst das Gespräch beenden.':'Najprije završi razgovor.', 'Erst schließen.':'Najprije zatvori.', 'Hier geht das gerade nicht.':'Ovdje to sada ne ide.',
   'Welches?':'Koje od ovoga?', 'Schließen':'Zatvori', 'Verstanden':'Razumijem', 'iPhone und iPad':'iPhone i iPad', 'Spielstände':'Spremljene igre',
-  'Wischen nach unten beendet es wieder':'Povuci prema dolje za izlaz', 'MALA läuft schon als App vom Home-Bildschirm.':'MALA već radi kao aplikacija s početnog zaslona.',
-  'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten.':'Na iPhoneu: Dijeli → „Dodaj na početni zaslon“. Tada se MALA pokreće bez traka preglednika.',
-  'Tipp für iPhone und iPad: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten, und Safaris Löschung nach sieben Tagen ohne Besuch gilt dort nicht.':'Savjet za iPhone i iPad: Dijeli → „Dodaj na početni zaslon“. Tada se MALA pokreće bez traka preglednika, a Safarijevo brisanje nakon sedam dana bez posjeta tamo ne vrijedi.',
-  'Als App vom Home-Bildschirm hat MALA einen eigenen Speicher. Spielstände aus Safari holst du mit „Sicherung exportieren …“ in Safari und „Sicherung importieren …“ hier herüber (Spiel laden).':'Kao aplikacija s početnog zaslona MALA ima vlastitu memoriju. Spremljene igre iz Safarija preneseš s „Izvezi sigurnosnu kopiju …“ u Safariju i „Uvezi sigurnosnu kopiju …“ ovdje (Učitaj igru).',
-  'Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder Kontrollzentrum), bleibt auch MALA stumm.':'Ako je iPhone utišan (prekidač, tipka Radnja ili Kontrolni centar), i MALA ostaje bez zvuka.',
-  'Safari kann sie löschen, wenn MALA sieben Tage nicht geöffnet wird. Sicher sind sie in der App vom Home-Bildschirm oder als Datei („Sicherung exportieren …“ unter „Spiel laden“).':'Safari ih može izbrisati ako MALA sedam dana nije otvorena. Sigurne su u aplikaciji s početnog zaslona ili kao datoteka („Izvezi sigurnosnu kopiju …“ pod „Učitaj igru“).',
+  'Wischen nach unten beendet es wieder':'Povuci prema dolje za izlaz', 'Das Spiel läuft schon als App vom Home-Bildschirm.':'Igra već radi kao aplikacija s početnog zaslona.',
+  'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet das Spiel ohne Browserleisten.':'Na iPhoneu: Dijeli → „Dodaj na početni zaslon“. Tada se igra pokreće bez traka preglednika.',
+  'Tipp für iPhone und iPad: Teilen → „Zum Home-Bildschirm“. Dann startet das Spiel ohne Browserleisten, und Safaris Löschung nach sieben Tagen ohne Besuch gilt dort nicht.':'Savjet za iPhone i iPad: Dijeli → „Dodaj na početni zaslon“. Tada se igra pokreće bez traka preglednika, a Safarijevo brisanje nakon sedam dana bez posjeta tamo ne vrijedi.',
+  'Als App vom Home-Bildschirm hat das Spiel einen eigenen Speicher. Spielstände aus Safari holst du mit „Sicherung exportieren …“ in Safari und „Sicherung importieren …“ hier herüber (Spiel laden).':'Kao aplikacija s početnog zaslona igra ima vlastitu memoriju. Spremljene igre iz Safarija preneseš s „Izvezi sigurnosnu kopiju …“ u Safariju i „Uvezi sigurnosnu kopiju …“ ovdje (Učitaj igru).',
+  'Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder Kontrollzentrum), bleibt auch das Spiel stumm.':'Ako je iPhone utišan (prekidač, tipka Radnja ili Kontrolni centar), i igra ostaje bez zvuka.',
+  'Safari kann sie löschen, wenn das Spiel sieben Tage nicht geöffnet wird. Sicher sind sie in der App vom Home-Bildschirm oder als Datei („Sicherung exportieren …“ unter „Spiel laden“).':'Safari ih može izbrisati ako igra sedam dana nije otvorena. Sigurne su u aplikaciji s početnog zaslona ili kao datoteka („Izvezi sigurnosnu kopiju …“ pod „Učitaj igru“).',
   'Die App vom Home-Bildschirm speichert getrennt von Safari. Übertragen: „Sicherung exportieren …“ und „… importieren“ unter „Spiel laden“.':'Aplikacija s početnog zaslona sprema odvojeno od Safarija. Prijenos: „Izvezi sigurnosnu kopiju …“ i „Uvezi sigurnosnu kopiju …“ pod „Učitaj igru“.',
   'Feinwahl':'Precizan odabir', 'Finger kurz ruhig halten: Fadenkreuz über dem Finger, Loslassen wählt':'Kratko zadrži prst: križić iznad prsta, otpuštanje odabire'
 });

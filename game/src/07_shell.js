@@ -105,8 +105,8 @@ var SCR={};
 // Touch-Konzept T14: einmaliger Hinweis auf iPhone/iPad – in Safari der Weg auf den Home-Bildschirm (ohne Leisten, ohne 7-Tage-Löschung),
 // in der Home-Bildschirm-App der getrennte Speicher (Spielstände aus Safari kommen über die Sicherung als Datei herüber)
 function platformNote(){ if (!iosDev()) return null;
-  if (standalone()) return lsGet('mala.hint.app')?null:{key:'mala.hint.app',t:'Als App vom Home-Bildschirm hat MALA einen eigenen Speicher. Spielstände aus Safari holst du mit „Sicherung exportieren …“ in Safari und „Sicherung importieren …“ hier herüber (Spiel laden).'};
-  return lsGet('mala.hint.home')?null:{key:'mala.hint.home',t:'Tipp für iPhone und iPad: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten, und Safaris Löschung nach sieben Tagen ohne Besuch gilt dort nicht.'}; }
+  if (standalone()) return lsGet('mala.hint.app')?null:{key:'mala.hint.app',t:'Als App vom Home-Bildschirm hat das Spiel einen eigenen Speicher. Spielstände aus Safari holst du mit „Sicherung exportieren …“ in Safari und „Sicherung importieren …“ hier herüber (Spiel laden).'};
+  return lsGet('mala.hint.home')?null:{key:'mala.hint.home',t:'Tipp für iPhone und iPad: Teilen → „Zum Home-Bildschirm“. Dann startet das Spiel ohne Browserleisten, und Safaris Löschung nach sieben Tagen ohne Besuch gilt dort nicht.'}; }
 // Speicher möglichst dauerhaft anfordern, wo der Browser es ohne Rückfrage entscheidet (WebKit); einmal, beim ersten Tipp
 if (DOM && navigator.storage && navigator.storage.persist && (iosDev()||standalone())) document.addEventListener('pointerdown',function(){ try{ navigator.storage.persisted().then(function(p){ if (!p) return navigator.storage.persist(); }).catch(function(){}); }catch(e){} },{once:true,capture:true});
 SCR.main=function(){ var s=latest(), it=[];
@@ -114,7 +114,7 @@ SCR.main=function(){ var s=latest(), it=[];
   it.push({type:'btn',label:'Neues Spiel',primary:!s,act:newGameFlow});
   it.push({type:'btn',label:'Spiel laden',sub:anyState()?'':'Beispielstände',act:function(){ push('load',{scope:'title'}); }});
   it.push({type:'btn',label:'Einstellungen',act:function(){ push('settings'); }});
-  it.push({type:'btn',label:'Über MALA',act:function(){ push('about'); }});
+  it.push({type:'btn',label:'Über „Die Stillen“',act:function(){ push('about'); }});
   return {layout:'title',items:it,sound:!(M.audioRunning&&M.audioRunning()),note:platformNote()}; };
 SCR.chapters=function(){ var n=firstFree(), it=[];
   for (var c=1;c<=5;c++){ (function(c){ if (!chExists(c)) return; var open=chOpen(c);
@@ -169,11 +169,11 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
   // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm
   if (fsApi()) it.push({type:'seg',label:'Vollbild',sub:iosDev()?'Wischen nach unten beendet es wieder':'',value:-1,options:[[1,'umschalten']],act:function(){ if (M.fullscreen) M.fullscreen(); }});
-  else it.push({type:'hint',label:'Vollbild',sub:standalone()?'MALA läuft schon als App vom Home-Bildschirm.':'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet MALA ohne Browserleisten.'});
+  else it.push({type:'hint',label:'Vollbild',sub:standalone()?'Das Spiel läuft schon als App vom Home-Bildschirm.':'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet das Spiel ohne Browserleisten.'});
   // Touch-Konzept T12/T14: was iOS anders macht – als Hinweis, ohne etwas vorauszusetzen
   if (iosDev()){ it.push({type:'head',label:'iPhone und iPad'});
-    it.push({type:'hint',label:'Ton',sub:'Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder Kontrollzentrum), bleibt auch MALA stumm.'});
-    if (!standalone()) it.push({type:'hint',label:'Spielstände',sub:'Safari kann sie löschen, wenn MALA sieben Tage nicht geöffnet wird. Sicher sind sie in der App vom Home-Bildschirm oder als Datei („Sicherung exportieren …“ unter „Spiel laden“).'});
+    it.push({type:'hint',label:'Ton',sub:'Ist das iPhone stummgeschaltet (Schalter, Aktionstaste oder Kontrollzentrum), bleibt auch das Spiel stumm.'});
+    if (!standalone()) it.push({type:'hint',label:'Spielstände',sub:'Safari kann sie löschen, wenn das Spiel sieben Tage nicht geöffnet wird. Sicher sind sie in der App vom Home-Bildschirm oder als Datei („Sicherung exportieren …“ unter „Spiel laden“).'});
     else it.push({type:'hint',label:'Spielstände',sub:'Die App vom Home-Bildschirm speichert getrennt von Safari. Übertragen: „Sicherung exportieren …“ und „… importieren“ unter „Spiel laden“.'}); }
   it.push({type:'head',label:'Notizbuch'});
   it.push({type:'seg',label:'Ansicht',sub:E.nbStyle()==='think'?'Nachdenken: Marko fragt sich durch':'Liste: alle offenen Notizen auf einer Seite',value:E.nbStyle(),options:[['list','Liste'],['think','Nachdenken']],act:function(v){ E.setNbStyle(v); }});
@@ -182,7 +182,7 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   return {layout:'settings',title:'Einstellungen',items:it,back:true}; };
 SCR.about=function(){ var it=[], done=[]; for (var c=1;c<=5;c++) if (chDone(c)) done.push(c);
   done.forEach(function(c){ it.push({type:'btn',label:'Abspann Kapitel '+c,act:function(){ playCredits(c); }}); });
-  return {layout:'about',title:'Über MALA',text:['Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.','Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.','Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.'],
+  return {layout:'about',title:'Über „Die Stillen“',text:['Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.','„Die Stillen“ heißt die Rubrik in Vesnas Zeitung, für die Marko schreibt: Nachrufe auf Menschen, die allein gestorben sind.','Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.','Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.'],
     places:PLACES.slice(0,Math.min(5,chaptersReached())).join(' · '),items:it,back:true}; };
 SCR.controls=function(){ return {layout:'about',title:'Steuerung',list:[
   'Etwas antippen: Ist nur etwas zu sehen, schaut Marko es an. Kann man etwas damit tun, kommt ein kleines Menü.',
@@ -224,14 +224,14 @@ function fnv(s){ var h=0x811c9dc5; for (var i=0;i<s.length;i++){ h^=s.charCodeAt
 function backupData(){ var out={}, L=LS(); if (!L) return out; var ks=[]; for (var i=0;i<L.length;i++){ var k=L.key(i); if (k && /^mala\./.test(k) && k!=='mala.undo') ks.push(k); } ks.sort().forEach(function(k){ out[k]=L.getItem(k); }); return out; }
 SH.backupText=function(){ var data=backupData(), body=JSON.stringify(data); return JSON.stringify({app:'MALA',format:1,created:new Date().toISOString(),count:Object.keys(data).length,sum:fnv(body),data:data}); };
 SH.importText=function(txt){ var o; try{ o=JSON.parse(txt); }catch(e){ o=null; }
-  if (!o||o.app!=='MALA'||o.format!==1||!o.data||typeof o.data!=='object'){ toast('Diese Datei ist keine MALA-Sicherung.',4500); return false; }
+  if (!o||o.app!=='MALA'||o.format!==1||!o.data||typeof o.data!=='object'){ toast('Diese Datei ist keine Sicherung von „Die Stillen“.',4500); return false; }
   if (fnv(JSON.stringify(o.data))!==o.sum){ toast('Die Sicherung ist beschädigt (Prüfsumme stimmt nicht).',4500); return false; }
   var keys=Object.keys(o.data).filter(function(k){ return /^mala\./.test(k); });
   push('confirm',{title:'Sicherung einspielen?',text:'Alle Spielstände und Einstellungen in diesem Browser werden durch die Sicherung ersetzt: '+entries(keys.length)+', gespeichert '+fmtAt(Date.parse(o.created)||0)+'.',okLabel:'Einspielen',danger:true,ok:function(){
     var L=LS(), old=[]; if (L) for (var i=0;i<L.length;i++){ var k=L.key(i); if (k&&/^mala\./.test(k)) old.push(k); } old.forEach(lsDel); keys.forEach(function(k){ lsSet(k,String(o.data[k])); });
     back(); toast('Sicherung eingespielt. Einstellungen gelten ab dem nächsten Start.',5000); render(true); }}); return true; };
 if (DOM){ M.saveExport=function(){ try{ var txt=SH.backupText(), n=JSON.parse(txt).count, now=new Date(), a=document.createElement('a'), blob=new Blob([txt],{type:'application/json'});
-    a.href=URL.createObjectURL(blob); a.download='MALA-Sicherung-'+now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+'.json'; document.body.appendChild(a); a.click();
+    a.href=URL.createObjectURL(blob); a.download='Die-Stillen-Sicherung-'+now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+'.json'; document.body.appendChild(a); a.click();
     setTimeout(function(){ try{ URL.revokeObjectURL(a.href); a.remove(); }catch(e){} },2000); toast('Sicherung als Datei gespeichert ('+entries(n)+').'); }catch(e){ toast('Sicherung fehlgeschlagen.',4000); } };
   M.saveImport=function(){ var inp=document.createElement('input'); inp.type='file'; inp.accept='application/json,.json'; inp.style.display='none'; document.body.appendChild(inp);
     inp.addEventListener('change',function(){ var f=inp.files&&inp.files[0]; inp.remove(); if (!f) return; var rd=new FileReader(); rd.onload=function(){ SH.importText(String(rd.result||'')); }; rd.readAsText(f); }); inp.click(); }; }
@@ -314,7 +314,7 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
       else if (x.type==='hint') h+='<span class="lbl" style="grid-column:1/-1">'+(x.label?esc(T(x.label)):'')+'<small>'+esc(T(x.sub||''))+'</small></span>'; });
     return h+'</div>'+backBtn+'</div>'; }
   if (v.layout==='about'){ h+='<div class="paper about" role="dialog" aria-label="'+esc(T(v.title))+'"><div class="phead"><h3>'+esc(T(v.title))+'</h3><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div><div class="pmid scroll">';
-    if (v.places) h+='<div class="ctx">MALA – '+esc(v.places)+'</div>'; (v.text||[]).forEach(function(t){ h+='<p>'+esc(T(t))+'</p>'; });
+    if (v.places) h+='<div class="ctx">Die Stillen – '+esc(v.places)+'</div>'; (v.text||[]).forEach(function(t){ h+='<p>'+esc(T(t))+'</p>'; });
     if (v.list) h+='<ul>'+v.list.map(function(t){ return '<li>'+esc(T(t))+'</li>'; }).join('')+'</ul>';
     if (v.items.length) h+='<nav class="menu">'+v.items.map(function(x){ return btnHTML(x,idx(x),'plain'); }).join('')+'</nav>';
     return h+'</div></div>'; }

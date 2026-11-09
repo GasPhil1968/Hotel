@@ -37,7 +37,7 @@ const html = `<!DOCTYPE html>
 <html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#08070d">
-<title>Mala – Split, Sarajevo, Mostar, München</title>
+<title>Die Stillen – Split, Sarajevo, Mostar, München, Sarajevo</title>
 <style>
 ${FONTS}:root{ background:#08070d; }
 html,body{ margin:0; height:100%; background:#08070d; overflow:hidden; touch-action:manipulation; overscroll-behavior:none; }
@@ -51,9 +51,9 @@ body{ display:flex; flex-direction:column; align-items:center; justify-content:c
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Mala">
+<meta name="apple-mobile-web-app-title" content="Die Stillen">
 </head><body>
-<canvas id="game" width="320" height="200" aria-label="Mala – Kapitel 1: Split, Kapitel 2: Sarajevo, Kapitel 3: Mostar, Kapitel 4: München. Ein Point-and-Click-Adventure."></canvas>
+<canvas id="game" width="320" height="200" aria-label="Die Stillen – Kapitel 1: Split, Kapitel 2: Sarajevo, Kapitel 3: Mostar, Kapitel 4: München, Kapitel 5: Sarajevo. Ein Point-and-Click-Adventure."></canvas>
 <div id="hint">Dreh das Gerät quer.</div>
 <script>
 ${js}
@@ -95,7 +95,7 @@ fs.writeFileSync(path.join(OUT, 'index.html'), html);
 // Fassung als claude.ai-Artefakt: ohne eigenes Gerüst (wird beim Veröffentlichen ergänzt), ohne Offline-Teil
 const ai = process.argv.indexOf('--artifact');
 if (ai >= 0) {
-  const page = `<title>Mala in Sarajevo</title>
+  const page = `<title>Die Stillen</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 ${FONTS}:root{ color-scheme:dark; background:#08070d; }
@@ -104,7 +104,7 @@ body{ box-sizing:border-box; display:flex; flex-direction:column; align-items:ce
 #game{ display:block; image-rendering:pixelated; image-rendering:crisp-edges; touch-action:none; cursor:none; background:#08070d; }
 #hint{ display:none; color:#82c1c9; font:13px/1.4 "Courier New",monospace; text-align:center; padding:14px 18px 0; max-width:30em; }
 </style>
-<canvas id="game" width="320" height="200" aria-label="Mala in Split. Ein Point-and-Click-Adventure."></canvas>
+<canvas id="game" width="320" height="200" aria-label="Die Stillen. Ein Point-and-Click-Adventure."></canvas>
 <div id="hint">Dreh das Gerät quer.</div>
 <script>
 window.MALA_FIT=function(){ var b=document.body, cs=getComputedStyle(b); return [b.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight), b.clientHeight]; };

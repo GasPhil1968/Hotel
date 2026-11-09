@@ -307,7 +307,7 @@ M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH3(G)) return; if 
     if (tok===runTok && dayReady(G)) await M.k3DayCheck(A); }).then(function(){ if (tok===runTok) idleRun=false; },function(){ if (tok===runTok) idleRun=false; }); };
 
 // ---------------------------------------------------------------- Ende des Kapitels
-M.CREDITS3=['MALA','Kapitel 3: Mostar','','','Marko Vuković','Mala','','Bato Brkić, der beim dritten Läuten wach war','Mate Zelenika, der auf den Bus aus München wartete','und ein Springer, der jeden Abend springt','',
+M.CREDITS3=['DIE STILLEN','Kapitel 3: Mostar','','','Marko Vuković','Mala','','Bato Brkić, der beim dritten Läuten wach war','Mate Zelenika, der auf den Bus aus München wartete','und ein Springer, der jeden Abend springt','',
   'Zlata · Vlado · Kata','Davor · Lena · Jela','Zdravko · Dino · Maja','Frau Kolar · Ljerka · Nada','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Mostar nachempfunden.','Skela gibt es nicht.','Alle Figuren sind erfunden.','','',
   'Für alle, die noch gesucht werden,','und für alle, die nicht aufhören zu suchen.','','','FORTSETZUNG','Kapitel 4: München','','',''];

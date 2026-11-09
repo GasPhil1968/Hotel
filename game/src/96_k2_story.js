@@ -113,7 +113,7 @@ M.k2StartEpilogue=async function(A){ if (A.flag('k2.epi.started')) return; A.set
   A.phase('k2_epi'); clean(A,['tramkarta_v','ticket_m','photo_stop','chisel','key_kuca','drawing','sweater','ashpage','key_shelter','km','olovka']); A.G.pos.marko={room:'neboder',x:300,y:126,f:'R'}; await A.goto('neboder',{x:300,y:126,f:'R',noEnter:false}); A.save(); };
 
 // ---------------------------------------------------------------- Ende des Kapitels
-M.CREDITS2=['MALA','Kapitel 2: Sarajevo','','','Marko Vuković','Mala','','Tomaž Zupan, der um sieben kam','Ivan Barać, der zurückgeben wollte','Zora Marić, die die Namen bewahrte','und Alija, der Fahrscheine für später verkaufte','',
+M.CREDITS2=['DIE STILLEN','Kapitel 2: Sarajevo','','','Marko Vuković','Mala','','Tomaž Zupan, der um sieben kam','Ivan Barać, der zurückgeben wollte','Zora Marić, die die Namen bewahrte','und Alija, der Fahrscheine für später verkaufte','',
   'Fikret · Senada · Hajra · Rade','Emina · Lejla · Šaćir · Nedžad','Jakob · Amra · Ilija · Milka','Dragica · Nada · Mirza · Sulejman','Selma · Damir · Fadila','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Sarajevo nachempfunden.','Alle Figuren sind erfunden.','','',
   'Für alle, die in Kellern Schule hielten,','und für alle, die noch gesucht werden.','','','FORTSETZUNG','Kapitel 3: Mostar','','',''];

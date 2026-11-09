@@ -99,7 +99,7 @@ const { pw, checker, open, settle, loadSlot, CAPTURE, toPage, HS_POINT } = requi
     // ---------------------------------------------------------------- Hochformat-Hinweis (iPhone 13 hochkant, Touch)
     T.section('Hochformat-Hinweis (iPhone 13 hochkant)');
     const dev = pw.devices['iPhone 13']; p = await open(b, null, { viewport: dev.viewport, deviceScaleFactor: dev.deviceScaleFactor, isMobile: true, hasTouch: true, userAgent: dev.userAgent });
-    T.ck(await p.evaluate(() => document.getElementById('rotnote').classList.contains('on')), 'Hinweis „MALA wird quer gespielt“ erscheint');
+    T.ck(await p.evaluate(() => document.getElementById('rotnote').classList.contains('on')), 'Hinweis „„Die Stillen“ wird quer gespielt“ erscheint');
     const btn = await p.$('#rotnote button'); const bb = btn && await btn.boundingBox(); T.ck(bb && bb.height >= 44, 'Knopf „Gedreht weiterspielen“ ≥ 44 CSS-px hoch (' + (bb && bb.height) + ')');
     if (btn) await btn.tap(); T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on') && localStorage.getItem('mala.rotOk') === '1'), 'nach dem Tipp verborgen und gemerkt');
     // Chromium schreibt localStorage in einem frischen Kontext verzögert weg: ein Neuladen wenige ms nach dem Schreiben kann den Eintrag verlieren (Testumgebung, nicht das Spiel)

@@ -256,6 +256,8 @@ var MF={
 };
 M.microText=function(buf,s,x,y,c){ var cx=x; s.toUpperCase().split('').forEach(function(ch){ var g=(MF[ch]||MF[' ']).split('|'), gw=g[0].length; for (var r=0;r<5;r++) for (var q=0;q<gw;q++) if (g[r][q]==='#') buf.px(cx+q,y+r,c); cx+=gw+1; }); };
 M.microWidth=function(s){ var w=0; s.toUpperCase().split('').forEach(function(ch){ w+=(MF[ch]||MF[' ']).split('|')[0].length+1; }); return Math.max(0,w-1); };
+// Spieltitel (Arbeitstitel war „MALA“; die Speicherschlüssel heißen weiter mala.*)
+M.GAME_TITLE='Die Stillen'; M.GAME_TITLE_BIG='DIE STILLEN';
 // große Schrift (skaliert, mit Schatten)
 M.big=function(buf,s,cx,y,c,scale,shadow){ scale=scale||2; var w=M.textWidth(s), tmp=new Buf(w+2,12,T); M.text(tmp,s,0,2,c); var x0=Math.round(cx-w*scale/2);
   if (shadow!==false) for (var yy=0;yy<tmp.h;yy++) for (var xx=0;xx<tmp.w;xx++) if (tmp.get(xx,yy)!==T) buf.rect(x0+xx*scale+1,y+(yy-2)*scale+1,scale,scale,shadow===undefined?P.k0:shadow);

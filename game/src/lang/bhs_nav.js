@@ -10,7 +10,7 @@
 M.trAdd('bhs', {
   // ---------------------------------------------------------------- 06_ui.js: Knopf, Menüüberschrift, Spielanleitung, Doppelklick
   'Karte': 'Karta',   // Knopf
-  'MALA – Kapitel 2: Sarajevo': 'MALA – Poglavlje 2: Sarajevo',   // Menüüberschrift
+  'Die Stillen – Kapitel 2: Sarajevo': 'Tihi – Poglavlje 2: Sarajevo',   // Menüüberschrift
   '„Zeigen“ markiert kurz alles, was man hier anfassen kann.': '„Pokaži“ nakratko označi sve što se ovdje može dirati.',   // Marko (Anleitung)
   'Ein Tipp auf einen Ausgang, und ich gehe hin. Ein zweiter schneller Tipp, ein Doppelklick mit der Maus, und ich bin sofort draußen.': 'Jedan dodir na izlaz i idem onamo. Još jedan brzi dodir, ili dvostruki klik mišem, i odmah sam vani.',   // Marko (Anleitung)
   '„Karte“ öffnet den Stadtplan, mit der Maus auch die Taste K. Ein Tipp auf einen Ort, und ich gehe hin. „Schließen“ oder Esc, und ich bleibe.': '„Karta“ otvara plan grada, a uz miš i tipka K. Jedan dodir na mjesto i idem onamo. „Zatvori“ ili Esc i ostajem.',   // Marko (Anleitung)

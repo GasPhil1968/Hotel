@@ -312,7 +312,7 @@ M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH4(G)) return; if 
     if (tok===runTok && dayReady(G)) await M.k4DayCheck(A); }).then(function(){ if (tok===runTok) idleRun=false; },function(){ if (tok===runTok) idleRun=false; }); };
 
 // ---------------------------------------------------------------- Ende des Kapitels
-M.CREDITS4=['MALA','Kapitel 4: München','','','Marko Vuković','Mala','','Hansi Kirchmaier, der auf seine Ablösung wartete','Giuseppe Ruggiero, Gepäckträger Nr. 17','Gerda Lechner, die jeden Tag um drei kam','',
+M.CREDITS4=['DIE STILLEN','Kapitel 4: München','','','Marko Vuković','Mala','','Hansi Kirchmaier, der auf seine Ablösung wartete','Giuseppe Ruggiero, Gepäckträger Nr. 17','Gerda Lechner, die jeden Tag um drei kam','',
   'Jasna Vuković','Ana · Tobias · Mia · Niko','Frau Huber und Mucki','Frau Wimmer · Signor Enzo · Herr Obermaier','Alois Lechner · Frau Ertl · Kevin · Herr Kraus','Wastl · Davor · Lena','Frau Kolar · Nada · Carmela','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind München nachempfunden.','Das Haus am Bavariapark gibt es nicht.','Alle Figuren sind erfunden.','','',
   'Für alle, die nicht zurückgekommen sind,','und für alle, die es aussprechen mussten.','','','FORTSETZUNG','Kapitel 5: Sarajevo','','',''];

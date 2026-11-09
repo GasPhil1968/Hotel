@@ -1,4 +1,4 @@
-# MALA – Kapitel 5: Sarajevo
+# Die Stillen – Kapitel 5: Sarajevo
 
 ### Konzept für Geschichte, Figuren und Rätsel des Gesamtfinales (Fassung 2: im Spiel umgesetzt, Abweichungen in Abschnitt 13)
 

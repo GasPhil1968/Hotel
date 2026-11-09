@@ -205,7 +205,7 @@ M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){
   var fx=Math.round((t*3)%380)-40; M.prop.ferry(fb,fx,84,26,true); };
 
 // ---------------------------------------------------------------- Ende
-M.CREDITS=['MALA','Kapitel 1: Split','','','Marko Vuković','Mala','','Ivka Perić, die wartete','Luka Radić, der unterwegs war','Bruno Lalić, der keine Worte mehr hatte','',
+M.CREDITS=['DIE STILLEN','Kapitel 1: Split','','','Marko Vuković','Mala','','Ivka Perić, die wartete','Luka Radić, der unterwegs war','Bruno Lalić, der keine Worte mehr hatte','',
   'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','und Jakov, der Wege fegt, die es nicht mehr gibt','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Split nachempfunden.','Manche gibt es nicht.','','','FORTSETZUNG','Kapitel 2: Sarajevo','','','',''];
 M.endChapter=async function(A){ M.GS.ended=true; if (M.storeC1End) M.storeC1End(M.GS); M.E.markChapterEnd(1);   // Platz bleibt als „Kapitelende“ belegt (UI-Konzept D3) await A.fade(8,1400); M.E.fade=0;

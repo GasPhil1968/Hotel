@@ -262,7 +262,7 @@ M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH5(G)) return; if 
     if (tok===runTok && dayReady(G)) await M.k5DayCheck(A); }).then(function(){ if (tok===runTok) idleRun=false; },function(){ if (tok===runTok) idleRun=false; }); };
 
 // ---------------------------------------------------------------- Ende des Kapitels und der Geschichte
-M.CREDITS5=['MALA','Kapitel 5: Sarajevo','','','Marko Vuković','Lana Delić, die man Mala nannte','','Hamdija Selimović, der am Hahn die Hand hob','',
+M.CREDITS5=['DIE STILLEN','Kapitel 5: Sarajevo','','','Marko Vuković','Lana Delić, die man Mala nannte','','Hamdija Selimović, der am Hahn die Hand hob','',
   'Jasna Vuković · Nada Delić','Zlata · Vlado','Ana · Mia · Niko','Hajra Mešić und Mačak','Rade · Damir · Nedžad','Šehić · Dragica','Frau Kolar','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Sarajevo nachempfunden.','Alle Figuren sind erfunden.','','',
   'Für alle, die angekommen sind,','und für alle, die sie gehen ließen.','','','','ENDE','','',''];

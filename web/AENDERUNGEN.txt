@@ -1,7 +1,11 @@
-MALA – ÄNDERUNGEN: KAPITEL 5 („ANGEKOMMEN“)
+DIE STILLEN – ÄNDERUNGEN: NEUER NAME UND KAPITEL 5 („ANGEKOMMEN“)
 Ausführlich: BERICHT_K5.md und LOESUNG5.md im Repository.
 
 WAS NEU IST
+- Das Spiel heißt jetzt "Die Stillen" (auf Bosnisch/Kroatisch "Tihi"), nach der
+  Zeitungsrubrik, für die Marko schreibt. "MALA" war der Arbeitstitel. Titelbild,
+  Kopfzeile, Abspann, "Über"-Seite und App-Name sind umbenannt; Spielstände,
+  Lesezeichen und Sicherungsdateien gelten weiter.
 - Kapitel 5: Sarajevo, das Finale der Reihe (1. bis 5. März 2012). Spielbar,
   sobald Kapitel 4 zu Ende gespielt ist (oder mit ?kapitel=alle). Nach dem
   Abspann von Kapitel 4 bietet das Titelmenü "Weiter mit Kapitel 5" an.

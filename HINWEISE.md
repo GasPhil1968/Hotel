@@ -1,4 +1,4 @@
-# MALA – Hinweistexte (Entwicklerübersicht)
+# Die Stillen – Hinweistexte (Entwicklerübersicht)
 
 Erzeugt mit `node game/tools/hintdoc.js` aus `game/src/15_hints_k1.js` bis `game/src/15_hints_k5.js`. Enthält Lösungen.
 
