@@ -13303,7 +13303,8 @@ M.HINTS_K5=[
   s:['Mama will unter das Dach, das sie achtzehn Jahre bezahlt hat.','Vratnik, Ružas Haus. Hajra hat den Schlüssel gegeben.',{m:'Im Garten liegt etwas unter einer Plane. Mala spürt mehr als ich.',g:'Im Garten liegt etwas unter der Plane. Ich spüre es.'},
      {m:'Zu Mala wechseln und den Garten spüren. Dann als Marko die Plane heben.',g:'Ich spüre den Garten. Dann soll er die Plane heben.'}]},
  {id:'h5c',t:'Haus 7',open:function(G){ return G.phase==='k5_pro' && N(G,'b5_hand') && !F(G,'k5.p.nada'); },
-  s:['Mama will Haus 7 sehen. Und Nada wartet im neunten Stock.','Alipašino Polje, die Hochhäuser.','Durch die Eingangshalle die Treppe hinauf. Im siebten Stock bleibt Mama stehen.','Mit Mama in den siebten Stock, dann allein weiter hinauf zu Nada.']},
+  s:['Mama will Haus 7 sehen. Und Nada wartet im neunten Stock.','Alipašino Polje, die Hochhäuser.',function(G){ return F(G,'k5.p.seventh')?'Mama bleibt im siebten Stock. Nada wohnt zwei Stockwerke höher.':'Durch die Eingangshalle die Treppe hinauf. Im siebten Stock bleibt Mama stehen.'; },
+     function(G){ return F(G,'k5.p.seventh')?'Die Treppe weiter hinauf zu Nada, allein.':'Mit Mama in den siebten Stock, dann allein weiter hinauf zu Nada.'; }]},   // Hinweisprobe: nach der Szene im siebten Stock nennt der Satz den Rest des Wegs
  // ---------------- Donnerstag
  {id:'h5d',t:'Nadas Tafel',open:function(G){ return G.phase==='k5_d1' && !N(G,'s5_frist'); },
   s:['Nada hat für Lanas Grab eine Tafel bestellt.','Bei einem Kupferschmied, der genau graviert, was man ihm sagt.','Nedžad, in der Kazandžiluk.','Zu Nedžad fahren und nach Nadas Tafel fragen.']},

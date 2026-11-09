@@ -299,7 +299,10 @@ const SPECS = {
   // ================================================================ Kapitel 5: Sarajevo (15_hints_k5.js)
   h5a: () => P.act('use', 'taxi', /Kovači/),
   h5b: () => [P.mala(), P.act('sense', 'garden'), P.marko(), P.act('use', 'garden')],
-  h5c: (t, G) => P.act('walk', (G.rooms && G.rooms.stiege5) ? 'up' : 'stairs'),
+  // Die Szene im siebten Stock kommt beim Betreten des Treppenhauses aus der Halle (k5.p.seventh), mit Mama: über echte Ausgänge gehen,
+  // nicht an die Treppe versetzen (sonst bleibt Mama zurück). Hof → Halle → Treppe; danach allein hinauf.
+  h5c: (t, G) => { const r = G.pos && G.pos.marko && G.pos.marko.room; if (G.flags && G.flags['k5.p.seventh']) return P.act('walk', 'up');
+    return r === 'haustor5' ? [P.act('walk', 'stairs'), P.act('walk', 'up')] : r === 'neboder5' ? [P.act('walk', 'haustor_door'), P.act('walk', 'stairs'), P.act('walk', 'up')] : [P.travel('neboder'), P.act('walk', 'haustor_door'), P.act('walk', 'stairs'), P.act('walk', 'up')]; },
   h5d: () => P.talk('Nedžad', /Tafel/),
   h5e: () => [P.go('Brauerei'), P.mala(), P.act('sense', 'tap')],
   h5f: () => P.act('use', /Fenster/), h5p: () => P.act('use', /Fenster/),
