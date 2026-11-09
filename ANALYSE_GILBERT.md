@@ -1218,7 +1218,24 @@ Alle neuen Kapitel-1-Sätze sind auf Bosnisch/Kroatisch übersetzt (`lang/bhs_k1
 
 ### L.3 Prüfungen
 
-PRUEFUNGEN_PLATZHALTER
+Alle Prüfungen liefen auf dem Stand nach der Umsetzung (Endstand `web/index.html` sha256 `fe6bf51eade8…`, ZIP `dist/Die_Stillen_netlify.zip` sha256 `d4ac10952b72…`). Zwei kleine Nachzüge kamen während der Prüfung dazu (ein Kommentar in `97_k3_peil.js`, der Hinweis „Sein Name“, siehe unten); Hinweisprüfung und Hinweisprobe liefen danach noch einmal vollständig.
+
+| Prüfung | Ergebnis |
+|---|---|
+| Regressionstests (`node qa/regress/run.js`) | 22 von 22 bestanden. Neu: BUG-020 (Abschnittswechsel als Mala, Freitagabend in K5), BUG-021 (Notizbuch-Seiten, Gruppen, erreichbare Antworten, „Spüren“), BUG-022 (unterbrochene Szenen). Alle drei schlagen auf dem alten Stand fehl (BUG-020 der K5-Teil auf dem Stand vor der Muss-Liste). |
+| Durchläufe der Musterlösung | bis zum Abspann, ohne JS-Fehler: Kapitel 1 (62 Schritte), Kapitel 2 (68, in der zweiten Reihenfolge 69), Kapitel 3 (113), Kapitel 4 (85), Kapitel 5 (55, in der Variante 51) |
+| Zusatztests der Kapitel | `k2tests` 33 von 33, `k3tests` 181 von 181, `k4tests` 116 von 116 |
+| Einstieg (`einstiegtests.js`) | 39 von 39 |
+| Hinweisprüfung entlang der Musterlösung (`hintcheck.js`) | bestanden: 383 Stände, 265 Themen (ohne das entfernte d3e), davon 241 an den Meilensteinen offen; die 8 Stellen „zu sichten“ sind dieselbe Wortgleichheit wie in J.3 und K.3 („Fahrschein“ in Kapitel 2) |
+| Hinweisprobe (`qa/hints/hintprobe.js`) | **0 Fehler, 0 zu prüfen** in 1.168 Ständen aus 33 Folgen: 503 Stände der sieben Musterläufe, 643 aus zwölf Simulationsläufen (Kategorien B und C, Start in Kapitel 1–5), 22 aus 14 Varianten (darunter die neuen für die nie offenen Themen). Bestanden haben 1.782 Themen-Stände (1.320 ausgeführte Proben), 183 sind übersprungen. Der erste Lauf meldete zwei Fehler im Simulationslauf C-0002, beide behoben: siehe unten. |
+| Simulation (`qa/sim.js`, Salz „kann“) | 11 von 12 Läufen bis zum Endpunkt. Lauf C-0002 (Start in Kapitel 4) endete nach einer Zufallsstörung als „unentschieden“: Der kanonische Weg erwartete am Dienstag den Aushang, der Tag war aber schon zu Ende, weil der Lauf den Namen früher geschlossen hatte. Die Sackgassen-Sonde findet „kein Softlock (Phase/Kapitel geht weiter)“: Das Sofa führt in den Mittwoch. |
+| Oberfläche (`qa/ui/phase1.js` bis `phase5.js`, `savecompat.js`) | Phase 1: 33/33, Phase 2: 81/81, Phase 3: 52/52, Phase 4: 92/92, Phase 5: 31/31, alte Spielstände: 33/33 |
+| Offline (`offlinetest.js`) | bestanden |
+| Übersetzung (`i18n_check.js` über die geänderten Kapitel-1-Dateien, `06_ui.js`, `05_engine.js`, `08_sense.js`) | 0 fehlende Texte |
+
+**In der Prüfung gefunden.** Der Simulationslauf C-0002 erreichte einen Stand, den keine Musterlösung kennt: Endet der Dienstag in Kapitel 4 mit dem Schluss „Josef Rugiero ist Giuseppe Ruggiero“, ist der Abend da, und der Hinweis „Sein Name“ riet, Sepp an Gleis 11 anzusprechen. Abends ist er nicht dort. Jetzt nennen Stufe 3 und 4 den nächsten Tag (`15_hints_k4.js`). Der zweite gemeldete Fehler lag an der Probe selbst: Die Zuordnung für „Im Heim“ suchte eine „Bank“ im aktuellen Raum (auf der Wiesn) statt der Bank im Heimflur; dort findet Mala Gerda wie vorgesehen.
+
+**Angepasste Prüfwerkzeuge.** `qa/hints/varianten.js` hat zehn neue Abweichungen (17 Stände) für die bisher nie offenen Hinweisthemen; `qa/hints/stufe4.js` elf neue Zuordnungen und zwei angepasste (d4e, s4f). Die Simulation (`qa/lib/explore.js`) und die Fortsetzungsprüfung fragen im Gespräch auch nach Erledigtem und Gehörtem. Die Testschnittstelle `M.TA.pickNote` lässt alle Seiten des Notizbuchs zu und zählt, wenn eine Notiz nicht unter „Offen“ stand (`M.__nbOlder`).
 
 ### L.4 Bewusst nicht geändert
 
