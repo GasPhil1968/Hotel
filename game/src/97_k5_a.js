@@ -318,7 +318,7 @@ async function talkNadaD1(A){ var N=A.npc('nada'), p=ph(A);
     {t:'Die Fahrscheine. Die Samstage …',once:'k5na2',go:async function(A){ await N.say('Fahrscheine? Die hat sie bei Alija gekauft. Mit dem Stern.'); await N.say('Samstags war sie bei euch. Ich war nie dabei. Das war euer Samstag.');
       A.note('f5_eursamstag'); await A.wait(500); await N.say('Keiner von euch hat je geschrieben. Achtzehn Jahre.'); await A.wait(400); await N.say('Sie ist losgefahren, um dich zu holen. Natürlich.');
       await A.wait(500); await N.say('Geh in ihr Zimmer, wenn du willst. Ich lüfte jeden Tag.'); A.setFlag('k5.d1.lana'); A.set('lanaOpen',true); A.rebuild();
-      if (gHere(A)){ await A.wait(300); await A.g('Euer Samstag. Sie hat recht. Sie war nie dabei.'); } }},
+      if (gHere(A)){ await A.wait(300); await A.g('Euer Samstag.'); } }},
     {t:'Wie geht es dir, Nada?',once:'k5na3',go:async function(A){ await N.say('Ich bügle. Seit Januar bügle ich jeden Abend. Hemden, die keiner trägt. Ich rede dabei.'); await N.say('Mit wem, frag nicht. Mit der Wäsche.'); if (gHere(A)){ await A.wait(300); await A.g('Mit mir.'); } }},
     {t:'Kommt Zlata?',once:'k5na4',go:async function(A){ await N.say('Heute Abend. Mit Vlado. Sie bringt etwas mit. Ein Brett, hat sie am Telefon gesagt.'); await N.say('Ich weiß, was auf dem Brett steht.'); }},
     {t:'Bis später, Nada.',bye:true,go:async function(A){ await N.say(A.cycle('k5naB',['Geh. Komm wieder.','Ja. Später.'])); }}
@@ -407,7 +407,7 @@ async function atem(A){ var G=A.G;
   await A.m('Frag mich jetzt.'); await A.g('Nein. Nach dem Begräbnis. Das war abgemacht.'); await A.m('Und wenn ich dann das Falsche sage?'); await A.g('Es gibt kein Falsches. Es gibt nur „nur müde“.');
   await A.narrate('Sie hält die Dose auf dem Schoß, wie immer, eine Hand darauf.');
   await A.m('Und die Dose?'); await A.g('Für Mama. Wer sonst?'); A.note('f5_dose');
-  await A.m('Nada war nie samstags dabei.'); await A.g('Sie ist meine Mutter.'); await A.m('Das ist kein Samstag.'); await A.g('Du bist heute sehr genau.'); await A.m('Ich bin Übersetzer.');
+  await A.m('Und samstags?'); await A.g('Sie ist meine Mutter.'); await A.m('Das ist keine Antwort.'); await A.g('Du bist heute sehr genau.'); await A.m('Ich bin Übersetzer.');
   await A.wait(600); await A.g('Weißt du, was ich will? Nicht Mama. Nicht Zlata. Ich.'); await A.m('Was?');
   await A.g('Noch einmal Samstag. Zehn nach elf. Und diesmal bist du fertig.'); await A.m('Ich war nie fertig.'); await A.g('Eben.');
   await A.narrate('Mačak dreht sich auf den Rücken. Der Beschlag ist weg, die Drei auch.');

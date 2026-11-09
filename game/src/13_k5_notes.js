@@ -72,6 +72,12 @@ var NEAR={
   'f5_dose+j5_treppe':'Nada braucht keine Treppe. Sie wohnt oben. Erst muss ich wissen, wem die Dose nicht gehört.',
   'f5_plaetze+s5_mappe':'Nada hat Briefe geschrieben, keine Fahrscheine gekauft.',
   'f5_dose+f5_tuer':'Mama hat ihr die Tür aufgemacht. Und die Dose? Erst muss ich wissen, ob sie überhaupt Nada gehört.',
+  // Analyse K5-B01: richtige Ideen zu „Wem gehören die Fahrscheine?“ anerkennen und auf das fehlende Stück zeigen
+  'f5_wem+f5_tuer':'Mama. Sie hat jeden Samstag aufgemacht. Aber wozu dann Fahrscheine? Was hat sie an der Treppe gesagt?',
+  'f5_wem+k5_c_muenchen':'„Ich setze mich ans Fenster.“ Zwei Plätze, am Fenster und daneben. Für wen ist der zweite? Und warum fährt sie nicht?',
+  'f5_wem+f5_plaetze':'Lana hat mich jeden Samstag geholt. Wer holt heute wen? Und wer kann wohin nicht?',
+  'f5_wem+j5_nichtdrei':'„Nicht die Drei. Noch nicht.“ Mama weicht aus. Der Drei – und wem noch?',
+  'f5_wem+j5_samstag':'Samstag um elf sperrt Šehić den siebten Stock auf. Mama wird dort sein. Und dann? Was hat sie an der Treppe gesagt?',
   'f5_eursamstag+j5_treppe':'„Euer Samstag“ und eine Treppe, die Mama nicht hinaufkommt. Fast. Mala sagt aber noch: für Nada.',
   'b5_hand+b5_reihe':'Ein Mann, der Kanister ordnet. Und eine Hand auf meinen Augen. Vielleicht derselbe. Das weiß nur der Tag selbst. Mala soll ihn spüren.',
   'b5_hamdija+b5_drei':'Drei ohne Namen. Und ein Mann, der an einem Kasten wacht. Was ist im Kasten?'
@@ -81,9 +87,11 @@ Object.keys(NEAR).forEach(function(k){ var t=NEAR[k]; if (!M.DEDUCE[k] && !M.DED
 var od0=M.onDeduce;
 M.onDeduce=function(to,G){ if (M.chapterOf(G)!==5){ if (od0) return od0(to,G); return; } if (M.k5Queue) M.k5Queue('ded:'+to); };
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Nein. So hängt das nicht zusammen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Ich sollte sie nicht ineinanderschieben.','Nein. Das gehört nicht zusammen, auch wenn alles in dieser Woche passiert.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','So komme ich nicht weiter. Noch nicht.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 var nc0=M.noCombo;

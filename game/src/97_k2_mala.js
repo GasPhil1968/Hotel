@@ -62,7 +62,8 @@ M.k2FinNightOffer=async function(A){ if (A.flag('k2.f2.night')) return true; if 
 M.k2MalaTicket=async function(A){ if (!F(A,'k2.p2.back')) return A.g('Löcher.'); return A.g(A.cycle('gTk',['Löcher. Ich mag Löcher in Fahrscheinen. Sie beweisen, dass man gefahren ist.','Behalte ihn. Den wirft man nicht weg, den ersten.'])); };
 // ---------------------------------------------------------------- Der Karton aus Split
 M.k2OpenKarton=async function(A){ if (F(A,'k2.f2.opened')) return A.m('Der Karton ist offen. Darin nur noch Zeitungspapier von 1994.');
-  if (!N(A,'m2_lana') || !F(A,'k2.s3.done')){ await A.m('Ich halte das Paketband zwischen den Fingern. Noch nicht. Ich weiß noch nicht genug, um es auszuhalten.'); if (A.G.malaOn) await A.g('Du weißt mehr, als du denkst.'); return; }
+  if (!F(A,'k2.s3.done')){ await A.m('Ich halte das Paketband zwischen den Fingern. Noch nicht. Ich weiß noch nicht genug, um es auszuhalten.'); if (A.G.malaOn) await A.g('Du weißt mehr, als du denkst.'); return; }
+  if (!N(A,'m2_lana')){ await A.m('Lana. Zora hat sie beim Namen gerufen. Lana Delić, neunter Stock.'); A.note('m2_lana'); await A.wait(500); }   // Analyse K2-B02: ältere Stände
   A.setFlag('k2.f2.opened'); await A.m('Siebzehn Jahre.'); await A.wait(800); A.sfx('tape'); await A.narrate('Das Paketband reißt mit einem Geräusch, das viel zu laut ist für siebzehn Jahre Stille. Darunter das alte Klebeband, gelb und spröde. Es gibt sofort nach, als hätte es nur auf jemanden gewartet.');
   await A.wait(700); A.take('karton'); A.give('photo_m'); A.give('sweater'); A.give('ticket_m'); A.give('ashpage'); A.give('drawing'); A.sfx('paper');
   await A.m('Obenauf ein Zettel von Sanja: „Ich habe nicht hineingesehen. Das Foto lag im Regal, wie du gesagt hast. Pass auf dich auf.“'); await A.wait(600);

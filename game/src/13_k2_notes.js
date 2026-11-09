@@ -159,7 +159,9 @@ M.defineDeductions({
   'm2_ticket+m2_notrams':{to:'m2_promise',say:'Ein Fahrschein, entwertet für eine Fahrt im November dreiundneunzig. Aber da fuhr keine Bahn. Das war kein Fahrschein. Das war ein Versprechen.'},
   'm2_alija+m2_notrams':{to:'m2_promise',if:function(G){ return has(G,'m2_ticket'); },no:'Zwei Fahrscheine, „für später“. Aber ich habe keinen gesehen.',say:'Zwei Fahrscheine für eine Bahn, die nicht fuhr. Für später. Für nach dem Krieg.'},
   'm2_kids+m2_marko7':{to:'m2_mali',say:'Das Mädchen und der kleine Junge aus dem Siebener, samstags um 11:10. Ich bin samstags zu Großmutter gefahren. Ich war der Junge. Ich war Mali.'},
-  'm2_split_register+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_f_ninth'); },no:'Viele Namen enden auf „ić“. Welches Stockwerk?',say:'„…ić, L., 17.“ Delić, Lana, neunter Stock, geboren 1976. Sie war siebzehn im Winter dreiundneunzig.'},
+  'm2_split_register+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_f_ninth')||has(G,'s3_nada')||!!G.flags['k2.lift.ninth']; },no:'Viele Namen enden auf „ić“. Welches Stockwerk? Irgendwer hat doch vom Neunten gesprochen.',say:'„…ić, L., 17.“ Delić, Lana, neunter Stock, geboren 1976. Sie war siebzehn im Winter dreiundneunzig.'},
+  'm2_split_register+s3_helper':{to:'m2_lana',say:'„…ić, L., 17.“ Und im Klassenbuch: Helferin, Zeichnen, Lana Delić. Siebzehn im Winter dreiundneunzig. Lana Delić, neunter Stock.'},
+  's3_nada+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_split_register'); },no:'Nada vom Neunten. Delić. Aber was hat das mit Mala zu tun?',say:'Nada vom Neunten, seit ihre Tochter weg ist. Im Hausbuch: Delić, Esad, Nada, Lana. Und im Register in Split: „…ić, L., 17“.'},
   'm2_f_ninth+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_split_register'); },no:'Im neunten Stock wohnten die Delić. Aber was hat das mit Mala zu tun?',say:'Neunter Stock: Delić. Lana. Und im Register in Split: „…ić, L., 17, Sarajevo.“'},
   'f2_rcm+f2_postcard':{to:'f2_cameback',say:'„Wenn du nicht kommst, komme ich dich holen.“ Und an ihre Mutter: „Ich hole Mali.“ Sie ist losgefahren. Zu mir.'},
   'f2_cameback+m2_split_register':{to:'f2_whyabreise',say:'Darum steht bei „Abreise“ nichts. Sie ist nicht abgereist. Sie ist aufgebrochen.'},
@@ -168,10 +170,12 @@ M.defineDeductions({
 // nach bestimmten Schlüssen öffnet sich ein Ort auf dem Stadtplan
 M.onDeduce=function(to,G){ if (to==='m2_building'){ G.map.neboder=true; } if (to==='s1_twosevens'){ G.map.ferhadija=true; } };
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen: je nach Figur, Fall und Wiederholung
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Das passt nicht. Noch nicht, oder gar nicht.','Nein. Da ziehe ich einen Faden, der nirgends festgemacht ist.','Klingt gut, stimmt aber nicht. Das kenne ich vom Übersetzen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Die eine weiß nichts von der anderen.','Zwei Fälle. Ich sollte sie nicht vermischen.','Nein. Jeder wartet auf etwas Eigenes.'],
-  mala:['Mala würde sagen: „Du denkst zu viel.“ Vielleicht hat sie recht.','Mit Mala hat das nichts zu tun. Oder ich will es nicht sehen.','Ich suche überall nach ihr. Hier ist sie nicht.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','So komme ich nicht weiter. Noch nicht.','Ein Faden, aber ich weiß nicht, wo er festgemacht ist.','Beim Übersetzen weiß ich: Wenn ein Satz nicht sitzt, fehlt oft ein Wort dazwischen.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.','Daraus wird kein Satz. Vielleicht mit etwas anderem.'],
+  mala:['Mala würde sagen: „Du denkst zu viel.“ Vielleicht hat sie recht.','Ich suche überall nach ihr. So finde ich sie nicht.','Noch nicht. Etwas fehlt dazwischen.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 M.noCombo=function(a,b,G){ var A=M.NOTES[a]||{}, B=M.NOTES[b]||{}; if (M.chapterOf(G)!==2) return 'Das hängt nicht zusammen.';

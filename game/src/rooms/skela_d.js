@@ -74,7 +74,7 @@ async function hutEcho(A){ var G=A.G;
   await A.wait(600); await A.g('Ich habe gezeichnet. Hier, auf dem Mehl.'); await A.wait(500); await A.g('Ich hatte einen Bleistift. Ich habe immer daran gekaut. Mama hat geschimpft.');
   if (A.marko){ await A.m('Und der Motor?'); await A.wait(500); await A.g('Das war er. Er ist gefahren.'); } }
 async function bellEcho(A){ var G=A.G;
-  if (N(G,'a3_roof') && !N(G,'a3_lightseq')) return lightSeq(A);
+  if (N(G,'a3_roof') && !N(G,'a3_lightseq')){ if (!N(G,'a3_bell3')){ A.note('a3_bell3'); A.note('a3_voice'); A.setFlag('k3.n2.bell'); } return lightSeq(A); }   // Analyse K3-B04: ältere Stände
   if (N(G,'a3_bell3')) return A.g(A.cycle('bellE2',['Dreimal. Mit Pausen. Ich habe jedes Mal gewartet, bis der Ton weg war.','„Halo! Ima li koga?“ Ist da jemand? Da war jemand. Ich weiß es jetzt.','Drüben war ein Licht. In einem Fenster. Welchem, weiß ich nicht mehr. Ich weiß es, wenn ich es sehe.']));
   flinch(A); await A.wait(400);
   await A.memory({title:'Nachhall – die Glocke',tint:'ghost',draw:M.mem&&M.mem.k3_bell,lines:['Nacht. Frost am Pfosten. Ein Mädchen zieht am Glockenseil, und die Glocke schlägt.','Sie wartet, bis der Ton über dem Wasser verschwunden ist.','Dann ruft sie hinüber: „Halo! Ima li koga?“ Ist da jemand?','Drüben, in einem der Fenster, ist ein Licht.','Sie läutet noch einmal. Und noch einmal. Dreimal, mit langen Pausen dazwischen.']});

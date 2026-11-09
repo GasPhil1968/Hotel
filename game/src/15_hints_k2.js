@@ -75,7 +75,8 @@ M.HINTS_K2=[
   s:['Emina fragt, warum er nie geschrieben hat. Vielleicht hat er geschrieben.',
      'Briefe gehen durch Hände. Wer hat damals etwas angenommen und weitergegeben?',
      {m:'Šaćir hat etwas weitergegeben. Mala sieht in der verschlossenen Kammer, wohin. Hinein geht es erst, wenn Emina nicht da ist.',g:'Šaćir hat etwas weitergegeben. Ich sehe in der verschlossenen Kammer nach, wohin. Hinein geht es erst, wenn Emina nicht da ist.'},
-     function(G){ return I(G,'chisel')?'Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.':'Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.'; }]},
+     function(G){ if (F(G,'k2.s1.letterFixed') && N(G,'s1_hidden') && !F(G,'k2.s1.eminaAway')) return 'Emina geht nachher zu Tante Sabira: die Kafana einmal verlassen und wieder hineingehen (oder als Mala hinter der Theke lauschen). Dann öffnet Lejla die Kammer.';
+       return I(G,'chisel')?'Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.':'Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.'; }]},
  {id:'s1g',t:'Emina die Wahrheit sagen',open:function(G){ return ph(G,['k2_s1']) && N(G,'s1_missed') && N(G,'s1_betrayal') && !F(G,'k2.s1.emina'); },
   s:['Alles ist beisammen. Emina muss es hören.',
      'Erst Beweise in die Hand, dann die Wahrheit. Die Reihenfolge zählt.',

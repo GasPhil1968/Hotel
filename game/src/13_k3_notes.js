@@ -162,7 +162,8 @@ M.defineDeductions({
   'l3_ljerka_pic+k3_c_name':{to:'l3_onetrail',say:'Unterschrieben mit Mala. Der Name, den ich ihr gegeben habe. Ljerka kannte eine Mala, keine Lana Delić.'},
   'l3_onetrail+k3_c_missing':{to:'l3_twosearches',say:'Nada sucht Lana Delić. Die Spuren liegen unter Mala. Zwei Suchen, die sich nie getroffen haben. Ich frage nach Mala.'},
   'v3_sent+v3_mala_left':{to:'v3_who',say:'„Sie hat mich weggeschickt.“ – „Er ist gefahren.“ Beides kann stimmen. Aber einer von beiden lässt etwas weg. Ich muss mit Mala reden.'},
-  'a3_thrice+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_lightroom'); },no:'Bato zählt die Schläge. Zlata sagt, er hat geschlafen. Aber wann soll er das gehört haben?',say:'„Er hat geschlafen“, sagt Zlata. „Dreimal hat er geläutet“, sagt Bato. Wer mitzählt, schläft nicht. Er war wach.'},
+  // Analyse K3-B01: Ordnen ist freiwillig; Dachfenster und Lichtfolge genügen als Beleg für das Licht
+  'a3_thrice+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_lightroom')||(has(G,'a3_roof')&&has(G,'a3_lightseq')); },no:'Bato zählt die Schläge. Zlata sagt, er hat geschlafen. Aber wann soll er das gehört haben?',say:'„Er hat geschlafen“, sagt Zlata. „Dreimal hat er geläutet“, sagt Bato. Wer mitzählt, schläft nicht. Er war wach.'},
   'a3_lightroom+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_thrice'); },no:'In seiner Kammer hat jemand Licht gemacht. Das kann auch der Wind an der Lampe gewesen sein. Was sagt Bato selbst?',say:'Licht in seiner Kammer, und er hat die Schläge gezählt. Er war wach.'},
   'a3_voice+a3_pencil':{to:'a3_girl',say:'Eine Mädchenstimme ruft über den Fluss. Am Morgen liegt an der Glocke ein angekauter Bleistift. Kein Soldat. Es war das Mädchen.'},
   'a3_voice+a3_soldier':{to:'a3_girl',if:function(G){ return has(G,'a3_pencil'); },no:'Bato sagt: ein Soldat. Mala hat eine Mädchenstimme gehört. Wer hat recht? Ich brauche etwas, das am Morgen noch da war.',say:'Er hielt sie für einen Soldaten. Die Stimme war ein Mädchen. Der Bleistift lag an der Glocke. Es war das Mädchen.'},
@@ -173,6 +174,8 @@ M.defineDeductions({
   'e3_father+e3_kolar':{to:'e3_avoid',say:'Ich suche eine Vermisste für eine Mutter. Meinen Vater habe ich nie gesucht. Ich weiß, was Mala sagen würde.'}
 });
 // Reihenfolge der Nacht: kein fester Schluss, sondern das Ordnen (Overlay) nach dem Schließen des Notizbuchs (97_k3_peil.js, M.k3OrderNight)
+// Analyse K3-B01: naheliegender Fehlgriff mit eigener Antwort
+if (!M.DEDUCE['a3_roof+a3_slept'] && !M.DEDUCE['a3_slept+a3_roof']) M.DEDUCE['a3_roof+a3_slept']=function(A){ M.sfx&&M.sfx('nope'); return {ok:false,t:'Zlata schlief am Herd. Und oben brannte Licht. Wer war oben? Das muss Bato selbst sagen.'}; };
 M.DEDUCE['a3_lightseq+v3_part1']=function(A){ if (A.G.notes.indexOf('a3_lightroom')>=0) return {ok:false,t:'Das habe ich schon geordnet.'}; if (M.k3Queue) M.k3Queue('order');
   return {ok:true,t:'Das lässt sich ordnen. Vlados Zeiten, Malas Läuten, das Licht. Ich lege die Nacht der Reihe nach hin.'}; };
 M.DEDUCE['a3_lightseq+a3_bell3']=function(A){ if (A.G.notes.indexOf('a3_lightroom')>=0) return {ok:false,t:'Das habe ich schon geordnet.'}; if (A.G.notes.indexOf('v3_part1')<0) return {ok:false,t:'Läuten, Licht, Läuten. Aber wann fing die Nacht an? Das weiß nur der Fahrer.'};
@@ -185,11 +188,13 @@ M.onDeduce=function(to,G){ if (M.chapterOf(G)!==3){ if (od0) return od0(to,G); r
   if (to==='l3_person'){ G.map.tepa=true; }
   if (M.k3Queue) M.k3Queue('ded:'+to); };
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen: je nach Fall und Wiederholung
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Das passt nicht. Noch nicht, oder gar nicht.','Nein. Ein Faden, der nirgends festgemacht ist.','Klingt gut. Stimmt nicht. Das kenne ich vom Übersetzen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Die eine weiß nichts von der anderen.','Mate wartet auf seinen Sohn, nicht auf Lana. Ich sollte das nicht vermischen.','Nein. Jeder hier hat seine eigene Nacht.'],
-  mala:['Mala würde sagen: „Du rechnest wieder.“','Mit Mala hat das nichts zu tun. Oder ich will es nicht sehen.','Ich suche überall nach ihr. Hier ist sie nicht.'],
-  peil:['Eine Linie und noch eine Linie. Mein Vater hätte gesagt: Erst messen, dann denken.','Das ist keine Messung. Das ist eine Hoffnung.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','So komme ich nicht weiter. Noch nicht.','Ein Faden, aber ich weiß nicht, wo er festgemacht ist.','Beim Übersetzen weiß ich: Wenn ein Satz nicht sitzt, fehlt oft ein Wort dazwischen.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.','Daraus wird kein Satz. Vielleicht mit etwas anderem.'],
+  mala:['Mala würde sagen: „Du rechnest wieder.“','Ich suche überall nach ihr. So finde ich sie nicht.','Noch nicht. Etwas fehlt dazwischen.'],
+  peil:['Eine Linie und noch eine Linie. Mein Vater hätte gesagt: Erst messen, dann denken.','Für eine Peilung brauche ich zwei Linien, die wirklich zusammengehören.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 var nc0=M.noCombo;

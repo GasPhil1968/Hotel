@@ -79,7 +79,7 @@ M.room('heim',{ name:'Haus am Bavariapark', scape:'k4_heim',
     var fresh=(from==='map') && h.arrive && h.arrive(A);
     if (A.isMala()){ if (A.first('!k4.g.heimM')){ await A.g('Ein Haus voller alter Menschen. Es riecht nach Kaffee und nach etwas Scharfem, Sauberem.'); await A.wait(400); await A.g('Der Mann am Empfang sieht durch mich hindurch. Wie alle hier.'); } return; }
     if (A.first('!k4.g.heim1')){ await A.narrate('Das Haus am Bavariapark. Eine helle Halle, ein Tannenbaum, ein Weihnachtsstern auf der Theke. Es riecht nach Kaffee und Desinfektion.'); if (A.malaHere()){ await A.wait(500); await A.g('Hier arbeitet sie.'); } return; }
-    if (fresh){ await A.narrate('Später. Oben ist wieder Ruhe eingekehrt.'); return; }
+    if (fresh){ await A.narrate('Ein anderer Nachmittag. Oben ist wieder Ruhe eingekehrt, die Uhr im Flur geht auf drei zu.'); return; }
     if (h.fri && h.fri(G) && A.first('!k4.g.heimF')) await A.narrate('Freitag. Der Nebel steht vor der Glastür wie ein zweites Haus.'); }
 });
 })(M);

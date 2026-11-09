@@ -115,10 +115,10 @@ M.HINTS_K4=[
      {m:'Herr Kraus kann den Gong abstellen. Und Mala kann Gerda bitten, woanders zu warten.',g:'Kraus kann den Gong abstellen. Und ich kann Gerda bitten, woanders zu warten.'},
      function(G){ return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+(N(G,'g4_depot')?' Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.':' Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.'); }]},
  {id:'g4c',t:'Der zweite Versuch',open:function(G){ return N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2')); },
-  s:['Ein Versuch zeigt nur die Hälfte.','Jetzt das andere weglassen.',
+  s:['Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.','Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.',
      function(G){ return N(G,'g4_versuch1')?{m:'Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?',g:'Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.'}:'Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.'; },
-     function(G){ if (!N(G,'g4_versuch1')) return 'Herrn Kraus bitten, den Gong abzustellen, und an einem neuen Nachmittag bis drei warten.'; if (!N(G,'g4_depot')) return 'In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.';
-       return 'An einem neuen Nachmittag (einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
+     function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.';
+       return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
  {id:'g4d',t:'Gong und Hand',open:function(G){ return N(G,'g4_versuch1') && N(G,'g4_versuch2') && !N(G,'g4_beides'); },
   s:['Zwei Versuche, zwei Ergebnisse.','Was hat jeder Versuch gezeigt?','Im Notizbuch beide Versuche.','Die beiden Versuche verbinden.']},
  {id:'g4e',t:'Sein Leben',open:function(G){ return N(G,'g4_drei') && !N(G,'g4_depot') && (N(G,'g4_versuch1') || F(G,'k4.g.blunt')); },

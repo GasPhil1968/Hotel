@@ -135,7 +135,12 @@ var NEAR={
   'g4_spaeter+g4_doku':'„Kommt später.“ So steht es in der Akte, und so sagen sie es. Das ist die Regel. Nicht der Grund, warum er friert.',
   'g4_versuch1+g4_depot':'Ein Versuch allein sagt mir nur die Hälfte. Ich brauche beide.',
   'g4_versuch2+g4_depot':'Ein Versuch allein sagt mir nur die Hälfte. Ich brauche beide.',
-  'z4_lesart+z4_kode':'„Nicht zurückgekommen“ und „die es wissen“. Mama sagt, sie kann lesen. Aber was hat sie daraus gemacht? Das steht auf Papier, das ich nicht habe.',
+  'z4_lesart+z4_kode':'„Nicht zurückgekommen“ und „die es wissen“. Mama sagt, sie kann lesen. Aber was hat sie daraus gemacht? Das steht in ihrem Antrag.',
+  // Analyse K4-B02 (P07): die naheliegenden Paare am Höhepunkt zeigen auf den fehlenden Zwischenschluss, statt sie abzuweisen
+  'z4_nachricht+z4_lesart':'Ružas Satz und Mamas Lesart. Da liegt es. Aber erst jede Hälfte für sich: Was hat Mama daraus gemacht? Und was hieß der Satz in Sarajevo?',
+  'z4_nachricht+z4_antrag':'Ružas Satz und Mamas Suchantrag. Dazwischen fehlt, wie Mama den Satz gelesen hat.',
+  'z4_kode+z4_antrag':'„Die es wissen“ und Mamas Antrag. Erst muss ich wissen, was der Kode aus Ružas Satz macht.',
+  'k4_c_vater+z4_lesart':'Papa und Mamas Lesart. „Nicht zurückgekommen“, hat sie gelesen. Was sie daraus gemacht hat, steht in ihrem Antrag.',
   'z4_kolar+z4_kode':'Die Brauerei. Und ein Satz aus den Akten. Ich will die beiden nicht nebeneinanderlegen.',
   'z4_ana2004+z4_kolar':'Ana hat eine Probe gegeben, und Frau Kolar hat ein Grab. Das passt zusammen. Das ist kein Schluss. Das ist ein Ergebnis.',
   'u4_pantoffeln+z4_lesart':'Sie stellt ihm die Hausschuhe hin. Jeden Tag. Weil „nicht zurückgekommen“ heißt: noch nicht.',
@@ -148,10 +153,12 @@ var od0=M.onDeduce;
 M.onDeduce=function(to,G){ if (M.chapterOf(G)!==4){ if (od0) return od0(to,G); return; } if (M.k4Queue) M.k4Queue('ded:'+to); };
 
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Nein. Ein Faden, der nirgends festgemacht ist.','Klingt gut. Stimmt nicht. Das kenne ich vom Übersetzen.','Das passt nicht. Noch nicht, oder gar nicht.'],
-  cross:['Sepp, Gerda, Mama. Jeder hat seine eigene Geschichte. Ich sollte sie nicht ineinanderschieben.','Das sind zwei verschiedene Menschen. Die eine weiß nichts vom anderen.','Nein. Das gehört nicht zusammen, nur weil es in derselben Woche passiert.'],
-  family:['Das ist meine Familie. Da will ich, dass alles zusammenpasst. Tut es nicht.','Ich suche einen Zusammenhang, den ich mir wünsche. Nicht den, der da ist.','Mama würde sagen: „Ne miješaj.“ Misch nicht alles zusammen.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','Ein Faden, aber ich weiß nicht, wo er festgemacht ist.','Beim Übersetzen weiß ich: Wenn ein Satz nicht sitzt, fehlt oft ein Wort dazwischen.','So komme ich nicht weiter. Noch nicht.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.','Daraus wird kein Satz. Vielleicht mit etwas anderem.'],
+  family:['Das ist meine Familie. Ich will es zu schnell zusammenhaben. Erst jedes Stück für sich.','So ergibt es noch keinen Satz. Erst jede Hälfte für sich.','Mama würde sagen: „Polako.“ Langsam. Eins nach dem anderen.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 var nc0=M.noCombo;

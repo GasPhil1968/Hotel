@@ -185,7 +185,7 @@ function missing(G){ var p=G.phase;
   if (p==='k4_pro'){ if (!f(G,'k4.p.hansi')) return 'Am Busbahnhof war noch etwas. Mein Kopf weiß es besser als ich.'; return f(G,'k4.p.coffee')?'Erst Mama. Sie kommt um zwei.':'Erst Mama. Sie kommt um zwei. Bis dahin könnte ich Kaffee kochen, in Großmutters Džezva. Mama soll sie auf dem Herd sehen.'; }
   if (p==='k4_d1'){ if (!has(G,'z4_stiefel')) return 'Ana wollte heute mit den Kindern raus. Mit uns.'; if (!has(G,'s4_peppino')) return 'Mein Kopf pocht. Irgendwo in der Stadt wartet einer.'; if (!has(G,'g4_gerda')) return 'Mama ist bei der Arbeit. Und ich habe den Tag noch nicht zu Ende gedacht.'; }
   if (p==='k4_d2'){ if (!has(G,'z4_ana2004')) return 'Ana. Ich muss mit Ana reden. Nicht am Telefon.'; if (!has(G,'s4_name')) return 'Sepp hat einen Namen. Ich habe ihn noch nicht.'; if (!has(G,'g4_drei')) return 'Und um drei geht im Heim ein alter Mann zum Aufzug. Warum, weiß ich nicht.'; }
-  if (p==='k4_d3'){ if (!f(G,'k4.s.crossed')) return 'Sepp wartet noch auf seinen Brief.'; if (!f(G,'k4.g.decided')) return 'Gerda kommt jeden Tag um drei. Noch.'; if (M.k4Variant(G)==='no' && !f(G,'k4.e.sample2')) return 'Die Probenkarte von Frau Kolar. Heute.'; }
+  if (p==='k4_d3'){ if (!f(G,'k4.s.crossed')) return 'Sepp wartet noch auf seinen Brief.'; if (!f(G,'k4.g.decided')){ var v1=has(G,'g4_versuch1'), v2=has(G,'g4_versuch2'); if (v1!==v2) return 'Gerda kommt jeden Tag um drei. Einen Versuch habe ich gemacht. Einer fehlt – ich gehe hin, sobald ein neuer Nachmittag ist.'; if (v1&&v2) return 'Gerda kommt jeden Tag um drei. Sie muss hören, was die zwei Versuche gezeigt haben.'; return 'Gerda kommt jeden Tag um drei. Noch.'; } if (M.k4Variant(G)==='no' && !f(G,'k4.e.sample2')) return 'Die Probenkarte von Frau Kolar. Heute.'; }
   if (p==='k4_d4'){ if (!f(G,'k4.s.farewell')) return 'Heute ist Donnerstag. Sepps Donnerstag.'; if (!f(G,'k4.g.thermos')) return 'Um drei, im Heim. Heute zum letzten Mal.'; }
   if (p==='k4_d5'){ if (!f(G,'k4.d5.ana')) return 'Ana hat geschrieben: „Komm vorbei.“'; if (!has(G,'z4_zweistaedte')) return 'Ein Satz. Zwei Städte. Ich muss ihn einmal ganz zu Ende denken.'; }
   return null; }
@@ -317,7 +317,7 @@ M.CREDITS4=['DIE STILLEN','Kapitel 4: München','','','Marko Vuković','Mala',''
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind München nachempfunden.','Das Haus am Bavariapark gibt es nicht.','Alle Figuren sind erfunden.','','',
   'Für alle, die nicht zurückgekommen sind,','und für alle, die es aussprechen mussten.','','','FORTSETZUNG','Kapitel 5: Sarajevo','','',''];
 M.endChapter4=async function(A){ var G=A.G; if (G.ended) return; G.ended=true;
-  try{ localStorage.setItem('mala.c4end',JSON.stringify({at:Date.now(),sample:G.flags['k4.c3.sample']!==false,sample2:!!G.flags['k4.e.sample2'],kurve:has(G,'z4_kurve'),slippers:!!G.flags['k4.e.slippers'],
+  try{ localStorage.setItem('mala.c4end',JSON.stringify({at:Date.now(),sample:G.flags['k4.c3.sample']!==false,sample2:!!G.flags['k4.e.sample2'],kurve:!!G.flags['k4.fin.kurve'],slippers:!!G.flags['k4.e.slippers'],
       nada:!!G.flags['k4.e.nada'],fake:G.inv.indexOf('brief_falsch')>=0||!!G.flags['k4.s.fake'],davor:!!G.flags['k4.v.car'],consent2:G.flags['k4.e.consent2']||null,playMs:G.playMs||0}));
   }catch(e){} M.E.markChapterEnd(4);
   await card(A,'','Ende des vierten Kapitels','',5200,'Fortsetzung: Sarajevo');

@@ -65,6 +65,10 @@ async function batoPart(A,which){ var B=A.npc('bato'), G=A.G; if (F(G,'k3.n3.bat
     await A.wait(700); await A.m('Und Zlata gebracht.'); await A.wait(1200); await B.say('Ja.');
     await A.wait(900); A.sfx('lighter'); A.setFlag('k3.bato.lantern'); resync(A); await A.narrate('Er nimmt die Laterne vom Haken und zündet sie an. Mitten am Tag. Dann hängt er sie zurück, das Glas zum Wasser hin.');
     await A.wait(900); await A.m('Er flackert wie eine Kerze im Durchzug. Aber er hält fest. Noch.'); } }
+// Analyse K3-B01: Liegen Dachfenster und Lichtfolge vor, rutscht Bato auch ohne die geordnete Nacht heraus; einzeln fragt er zurück, was fehlt
+async function batoLight(A,which){ var G=A.G, B=A.npc('bato'); if (N(G,'a3_roof') && N(G,'a3_lightseq')) return batoSlip(A);
+  if (which==='roof') return B.say('Meine Kammer hat ein Fenster. Na und? Wann soll da Licht gewesen sein?');
+  return B.say('Läuten, Licht, Läuten. Wo soll das Licht gewesen sein?'); }
 async function batoSlip(A){ var B=A.npc('bato'), G=A.G; if (N(G,'a3_thrice')) return B.say('Ich habe gesagt, was ich gesagt habe. Dreimal. Dann war Ruhe.');
   await A.m('In Ihrer Kammer war Licht. In der Nacht. Zwischen dem ersten und dem dritten Läuten.'); await A.wait(800);
   await B.say('Licht?'); await A.wait(600); await B.say('Ich habe es gleich wieder ausgemacht.'); await A.wait(500); await B.say('Wer nachts Licht macht, hat bald ein Loch im Fenster.');
@@ -89,7 +93,7 @@ async function talkBato(A){ var B=A.npc('bato'), G=A.G;
       a3_grave:'Unter der Quitte ist nichts. Nur Frost.', a3_slept:'Zlata schläft am Herd. Im Winter immer. Oben ist es zu kalt für sie.',
       a3_hut:'Die Hütte ist voll. Mehl und Decken, für die Dörfer. Morgen hole ich es.', a3_stumps:'Die Brücke. Im Sommer. Seitdem fahre ich, und keiner sagt danke.',
       a3_plaque:'Gebaut? Hier wird nichts gebaut. Hier ist Krieg.', a3_neighbor:'Achtundneunzig? Was soll achtundneunzig sein?', l3_survived:'Wer lebt? Wovon reden Sie? Es ist Nacht.',
-      a3_morning:'Am Morgen. Am Morgen sehen wir weiter. Jetzt ist Nacht.', a3_roof:'Meine Kammer. Was ist mit meiner Kammer?', a3_lightseq:'Was zählen Sie da? Läuten, Licht, Läuten? Gehen Sie schlafen.',
+      a3_morning:'Am Morgen. Am Morgen sehen wir weiter. Jetzt ist Nacht.', a3_roof:function(A){ return batoLight(A,'roof'); }, a3_lightseq:function(A){ return batoLight(A,'seq'); },
       a3_bato:'Ja, ich. Bato. Wer sonst.' },'Was? Ich verstehe Sie nicht. Der Fluss ist zu laut.'),
     {t:'(Gehen.)',bye:true,go:async function(A){ await B.say('Und läuten Sie nicht mehr.'); }}
   ]; });
@@ -108,6 +112,7 @@ var LIGHT={ kitchen:['Ich gehe in die Küche und halte das Handy ans breite Fens
 async function lightTest(A,pre){ var G=A.G;
   if (!d3(G)) return A.m(night(G)?'Nicht jetzt. Nicht in dieser Nacht.':'Wozu? Das ist vorbei.');
   if (N(G,'a3_roof')) return A.m('Das kleine Fenster unter dem Dach. Mala hat es erkannt. Mehr Licht braucht es nicht.');
+  if (!N(G,'a3_bell3')) return A.m('Erst muss Mala an der Glocke hören, wie die Nacht war. Sonst weiß ich nicht, welches Licht sie suchen soll.');   // Analyse K3-B04
   if (!F(G,'k3.z.window')){ if (!zlataOut(G)) return A.m('Nicht ohne sie zu fragen. Es ist ihr Haus.'); await permission(A); }
   var c=pre||await A.choose([{t:'(Ins Küchenfenster.)',id:'kitchen',silent:true},{t:'(Ins Stubenfenster.)',id:'stube',silent:true},{t:'(Ins Dachfenster.)',id:'roof',silent:true},{t:'(Lassen.)',id:'no',bye:true,silent:true}],{title:'Das Licht'});
   if (!c||c==='no') return;

@@ -4,6 +4,13 @@
 var P=M.P;
 function open(G){ return G.phase==='k2_s1'||G.phase==='k2_s2'; }
 function eminaHere(G){ return open(G) && !(G.flags['k2.s1.eminaAway'] && !G.flags['k2.s1.eminaBack']); }
+// Analyse K2-B04: Ist Lejla geholfen und weiß Marko, dass hinter dem Spiegel etwas liegt, geht Emina beim nächsten Betreten sichtbar.
+// Vorher ging sie nur, wenn Mala ein zweites Mal lauschte – ein unsichtbarer Auslöser. Das Lauschen bleibt als Abkürzung.
+function eminaGoes(G){ return G.phase==='k2_s1' && G.flags['k2.s1.letterFixed'] && G.notes.indexOf('s1_hidden')>=0 && G.notes.indexOf('s1_away')<0 && !G.flags['k2.s1.eminaAway']; }
+async function eminaLeaves(A){ var E=A.npc('emina'); await A.wait(400);
+  if (E.actor) await E.say('Lejla, ich gehe zu Tante Sabira. Pass auf die Kafana auf. Und auf die Löffel.'); else await A.voice('Hinter der Theke: „Lejla, ich gehe zu Tante Sabira. Pass auf die Kafana auf.“',P.s5);
+  await A.wait(300); A.sfx('door'); A.note('s1_away'); A.setFlag('k2.s1.eminaAway'); A.rebuild();
+  await A.wait(500); if (A.isMala()) await A.g('Sie geht. Jetzt.'); else await A.m('Emina geht. Der Schlüssel zur Kammer bleibt am Haken.'); }
 // ---------------------------------------------------------------- Emina
 async function talkEmina(A){ var E=A.npc('emina'), p=A.G.phase;
   if (p==='k2_s2') return E.say(A.cycle('emS2',['Kaffee? Heute für Sie umsonst. Morgen nicht mehr.','Lejla übt Geige, seit sie den Brief abgeschickt hat. Die Nachbarn beschweren sich. Ich nicht.','Die Bank unter der Uhr ist kalt geworden. Ich sitze trotzdem manchmal drauf.']));
@@ -57,7 +64,7 @@ async function talkLejla(A){ var L=A.npc('lejla'), p=A.G.phase;
     {t:'Was machen Sie, wenn Sie nicht hier sind?',once:'lj3',go:async function(A){ await L.say('Geige. Und Hausaufgaben. Und weg wollen.'); await L.say('Ich bewerbe mich in Wien. Musikgymnasium. Den Brief muss ich auf Deutsch schreiben. Mein Deutsch ist … Google.'); A.setFlag('k2.s1.lejlaLetter'); }},
     {t:'Zeigen Sie mir Ihren Brief nach Wien.',if:A.flag('k2.s1.lejlaLetter')&&!A.flag('k2.s1.letterFixed'),go:function(A){ return lejlaLetter(A,L); }},
     {t:'Kommen Sie in die Kammer?',if:A.hasNote('s1_hidden')&&!A.flag('k2.s1.ostavaOpen'),go:async function(A){ if (!A.flag('k2.s1.letterFixed')){ await L.say('In die Ostava? Da hat Oma den Schlüssel. Um den Hals. Wie eine Nonne.'); await L.say('Warum sollte ich Ihnen da rein helfen? Sie sind ein Fremder mit einem Dalmatiner-Akzent.'); return; }
-        if (!A.flag('k2.s1.eminaAway')){ await L.say('Wenn Oma weg ist. Nicht vorher. Sie hört alles, sogar wenn sie schläft.'); return; } return lejlaOpens(A,L); }},
+        if (!A.flag('k2.s1.eminaAway')){ await L.say('Wenn Oma weg ist. Nicht vorher. Sie hört alles, sogar wenn sie schläft.'); await L.say('Sie geht nachher zu Tante Sabira, wie jeden Sonntag. Kommen Sie dann wieder.'); return; } return lejlaOpens(A,L); }},
     A.askOpt({ s1_waited:'Das hat sie gesagt? Zu mir? Ich dachte, sie redet vom Wetter. Bei Oma ist alles Wetter.', s1_tomaz:'Ein Soldat unter der Uhr? Sie sehen auch zu viele Filme.',
       s1_note:'„Wenn die Kula sieben schlägt“? Das ist so altmodisch, dass es schon wieder schön ist.', s1_twosevens:async function(A){ await L.say('Ha. Zwei Siebenen. Das ist wie bei meinen Eltern: Sie sagt sieben, er kommt um neun.'); await L.say('Wenn du wissen willst, wann damals die Sonne unterging: Der alte Kabiljo in der Passage an der Ferhadija hat alte Takvime. Er hat alles Alte. Er ist selbst alt.'); A.unlock('ferhadija'); },
       s1_nowrite:'Briefe? Oma bekommt keine Briefe. Nur Rechnungen. Und die versteckt sie.', s1_father:'Uropa Halid. Den kenne ich nur vom Foto. Er sieht auf allen Fotos aus, als würde er gleich jemanden rauswerfen.' },'Keine Ahnung. Ich bin sechzehn.'),
@@ -162,6 +169,7 @@ M.room('kafana',{ name:'Kafana „Kula“', scape:'k2_kafana',
       // QA BUG-005: die Figurenliste stand schon vor der Szene; Emina kommt jetzt auch sichtbar zurück (wie in actors())
       if (!A.npc('emina').actor && eminaHere(A.G)){ var e=M.apos('kafana','emina',[190,104,'F']); A.spawn({id:'emina',ch:'emina',x:e[0],y:e[1],f:e[2]||'F',name:'Emina',idle:'pour',speechY:34}); }
       await A.voice('Von der Tür: „Lejla! Wer war in der Kammer?“',P.s5); await A.wait(600); await A.m('Emina. Zurück von Tante Sabira. Früher als gedacht.'); if (A.malaHere()) await A.g('Jetzt.'); }
+    if (eminaGoes(A.G) && !A.flag('k2.s1.eminaBack')) await eminaLeaves(A);
     if (p==='k2_s1' && A.first('k2kfS1')){ await A.m('Warm, dunkel, Kupfer an allen Wänden. Es riecht nach Kaffee und nach etwas, das man früher Tabak nannte.'); } }
 });
 })(M);

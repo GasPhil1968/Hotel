@@ -34,9 +34,11 @@ function norm(G){ if (G.flags['k4.g.pmPhase']!==G.phase){ G.flags['k4.g.pmPhase'
 function used(G){ norm(G); return F(G,'k4.g.pmUsed'); }
 H.norm=norm; H.used=used;
 // Ankunft von draußen: War der Nachmittag vorbei und ist keiner im Haus geblieben, beginnt ein neuer (rooms/heim.js)
-H.arrive=function(A){ var G=A.G; norm(G); if (!F(G,'k4.g.pmUsed')) return false; var other=G.active==='marko'?'mala':'marko', p=G.pos[other];
+// Analyse K4-B01: Kraus' „Heut nimmer“ gilt nur bis zur nächsten Ankunft; Mala zählt als mitgekommen, wenn Marko das Haus verlassen hat
+// (vorher blieb ohne Rückmeldung alles beim Alten, wenn Mala noch in Zimmer 214 stand).
+H.arrive=function(A){ var G=A.G; norm(G); delete G.flags['k4.g.krausNo']; if (!F(G,'k4.g.pmUsed')) return false; var other=G.active==='marko'?'mala':'marko', p=G.pos[other];
   var cur=A.room&&A.room.id, inside=!!(p && /^heim/.test(p.room||'') && p.room!==cur);   // wer mit hereinkommt, ist nicht drin geblieben
-  var stayed=other==='mala'?!!(G.malaOn && inside):inside;
+  var stayed=other==='mala'?false:inside;
   if (stayed) return false; newPm(G); return true; };
 // wer ist wo (aus Schaltern und Phase)
 function aloisAt(G){ if (night(G)) return 'bed'; if (fri(G)) return 'chair'; if (!work(G)) return null; norm(G);
@@ -224,8 +226,8 @@ var KRAUS_ASK={ g4_gong:'Hab i doch gsagt. Vorschrift.', g4_drei:'Der Lechner. J
   g4_versuch1:'Und? Hat’s was bracht?', g4_versuch2:'Mit Gong is er aufgstanden. Des hätt i Eana a so sagn können.', g4_beides:'Wenn S’ meinen.',
   g4_gerda:'D’Frau Lechner. Die hat ma jeden Tag an Gruß gsagt. Auch wenn i unterm Aufzug glegn bin.' };
 async function krausAsk(A){ var G=A.G, K=A.npc('kraus'); norm(G);
-  if (F(G,'k4.g.krausNo')){ await K.say('Heut nimmer. Hab i gsagt.'); return A.m('Heute nicht mehr. Ein anderes Mal, mit einem Grund, den er versteht: Herr Lechner, nicht ein Geist.'); }
-  if (used(G)) return K.say('Heut is eh scho rum. Drei war scho.');
+  if (F(G,'k4.g.krausNo')){ await K.say('Heut nimmer. Hab i gsagt.'); return A.m('Jetzt nicht mehr. Ein andermal, mit einem Grund, den er versteht: Herr Lechner, nicht ein Geist.'); }
+  if (used(G)) return K.say('Jetzt is eh scho rum. Drei war scho. Kommen S’ später wieder.');
   await K.say('Abstelln. Warum?');
   for (var i=0;i<6;i++){ var c=await A.choose([
       {t:'Herr Lechner erschrickt jedes Mal.',id:'ok'},
@@ -331,7 +333,7 @@ async function blunt(A){ var G=A.G, Al=A.npc('alois'), rid=A.room&&A.room.id;
   if (rid==='heim214') await A.goto('heim_flur',{noEnter:true});
   else { var dp=doorPt(); await A.narrate('Sie bringt ihn in sein Zimmer und kommt allein zurück, langsamer als sonst.'); if (Al.actor){ Al.routine(false); await Al.walk(dp[0],dp[1]); A.despawn('alois'); } }
   J=A.npc('jasnaW'); await A.wait(500); await J.say('Das habe ich auch einmal gemacht. Im ersten Jahr.'); await A.wait(900); await J.say('Nie wieder.');
-  await A.wait(700); await J.say('Jetzt ist er eine Stunde für niemanden zu sprechen. Für heute ist es vorbei, Marko.'); await A.wait(500); await A.m('Um drei ist jeden Tag drei. Ich komme wieder, wenn ich weiß, was ich anders mache.');
+  await A.wait(700); await J.say('Jetzt ist er eine Stunde für niemanden zu sprechen. Geh eine Runde, Marko.'); await A.wait(500); await A.m('Um drei ist jeden Tag drei. Ich gehe eine Runde und komme wieder, wenn ich weiß, was ich anders mache.');
   if (A.malaHere()){ await A.wait(600); await A.g('Er hat es gehört. Und gleich wieder verloren.'); } resync(A); }
 H.blunt=blunt;
 // ---------------------------------------------------------------- Donnerstag: die Kanne
@@ -346,14 +348,21 @@ async function thermos(A){ var G=A.G, Al=A.npc('alois'), J=A.npc('jasnaW'); if (
   if (A.malaHere()){ await A.wait(700); await A.g('Sie hat es gesehen.'); }
   await M.k4DayCheck(A); }
 
+// ---------------------------------------------------------------- Ein neuer Nachmittag (Analyse K4-B01)
+// Ein Versuch je Nachmittag. Statt hinaus- und wieder hereinzugehen, kann man an Uhr und Bank ausdrücklich später wiederkommen.
+async function later(A,me){ var G=A.G, blunt=F(G,'k4.g.pmBlunt');
+  if (me){ await A.g(blunt?'Er liegt in seinem Zimmer. Jetzt nicht. Später.':'Drei war schon. Er läuft noch. Bis halb fünf, sagen sie.'); return; }
+  await A.m(blunt?'Mama hat ihn hingelegt, und er sieht an die Decke. Jetzt nicht mehr.':'Drei war schon. Er läuft noch bis halb fünf.');
+  var c=await A.choose([{t:'(Später wiederkommen.)',id:'later'},{t:'(Lassen.)',id:'no',bye:true}],{title:'Ein anderer Nachmittag'}); if (c!=='later') return;
+  await A.fade(8,700); newPm(G); resync(A); await A.wait(300); await A.fade(0,700);
+  await A.narrate('Ein anderer Nachmittag. Oben ist wieder Ruhe eingekehrt, die Uhr im Flur geht auf drei zu.'); }
 // ---------------------------------------------------------------- Bis drei warten
 async function waitThree(A){ var G=A.G, me=A.isMala(); norm(G); var say=function(t){ return me?A.g(t):A.m(t); };
   if (night(G)) return say(me?'Heute Nacht wartet hier keiner auf drei.':'Drei? Es ist kurz vor Mitternacht.');
   if (fri(G)) return A.m('Um drei? Heute wartet hier keiner mehr. Herr Lechner sitzt in seinem Zimmer, mit der Kanne.');
   if (!work(G)) return say('Nicht jetzt.');
   if (gone(G)) return say(me?'Um drei kommt keine mehr.':'Um drei wartet hier keiner mehr. Er sitzt auf der Bank und wartet nicht.');
-  if (F(G,'k4.g.pmBlunt')) return say(me?'Er liegt in seinem Zimmer. Heute nicht mehr.':'Heute nicht mehr. Mama hat ihn hingelegt, und er sieht an die Decke.');
-  if (F(G,'k4.g.pmUsed')) return say(me?'Drei war schon. Er läuft noch. Bis halb fünf, sagen sie.':A.cycle('h4used',['Drei war schon. Für heute ist es vorbei.','Er läuft noch bis halb fünf. Dann ist dieser Nachmittag zu Ende.']));
+  if (F(G,'k4.g.pmBlunt') || F(G,'k4.g.pmUsed')) return later(A,me);
   if (thu(G) && F(G,'k4.g.decided')) return goodbyePrep(A);
   var mk=inFlur(G,'marko'), ml=inFlur(G,'mala');
   if (F(G,'k4.g.hall') && !F(G,'k4.g.decided') && !ml){ if (!me) await A.m('Gerda wartet nur am Fenster, wenn Mala bei ihr bleibt. Mala ist nicht hier.'); }

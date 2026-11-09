@@ -249,6 +249,8 @@ M.k5TalkDamir=async function(A){ var D=A.npc('damir');
 M.k5StanD2Enter=async function(A,from){ if (A.isMala()) return; if (A.first('k5sn2')){ await A.narrate('Nada steht in der Küche. Zlata steht draußen auf dem Balkon, im Mantel, und raucht nicht, weil sie nie geraucht hat. Zwischen ihnen die Balkontür und achtzehn Jahre.');
   if (A.G.malaOn) await A.g('Ich sage nichts. Ich habe es versprochen.'); } };
 M.k5StanTalkD2=async function(A,id){ if (id==='nada') return nadaD2(A); if (id==='zlata') return zlataD2(A); if (id==='vlado') return vladoD2(A); return A.npc(id).say('…'); };
+// Analyse K5-B02: Haben beide gehört, was die andere wollte, sagt Marko, was noch fehlt – ohne den Schluss vorwegzunehmen
+async function twoNamesNext(A){ if (F(A,'k5.s.toNada') && F(A,'k5.s.toZlata') && !has(A,'s5_teile')){ await A.wait(500); await A.m('Beide wollen, dass man sie findet. Aber zwei Namen auf einem Pfosten? Was steht auf dem Brett schon – und was hat nur Nada?'); } }
 async function proposal(A){ if (!has(A,'s5_teile')){ await A.m('Ich weiß noch nicht, wie es aussehen soll. Zwei Namen auf einem Pfosten. Aber wie, ohne dass eine verliert?'); return false; }
   var N=A.npc('nada'), Z=A.npc('zlata');
   await A.narrate('Ich hole Zlata vom Balkon herein. Beide stehen in der Küche, Nada am Herd, Zlata an der Tür.');
@@ -263,8 +265,8 @@ async function nadaD2(A){ var N=A.npc('nada');
     {t:'„Mala“ ist der Name, den ich ihr gegeben habe.',once:'k5n23',if:!F(A,'k5.s.toNada'),go:async function(A){ await N.say('Dein Name. Auf ihrem Grab.'); if (A.G.malaOn){ await A.wait(300); await A.g('Das war ungeschickt.'); } }},
     {t:'In Skela hat sie selbst „Mala“ gesagt. Zlata hat geschrieben, was sie gehört hat. Damit man sie findet.',if:has(A,'s5_beide')&&!F(A,'k5.s.toNada'),go:async function(A){ A.setFlag('k5.s.toNada');
       await A.wait(500); await N.say('Selbst?'); await A.m('Zlata hat es erzählt. In Skela. Sie hat gefragt, und Lana hat „Mala“ gesagt.'); await A.wait(800);
-      await N.say('Damit man sie findet.'); await A.wait(600); await N.say('Wie ich. Siebzehn Januare.'); A.save(); }},
-    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
+      await N.say('Damit man sie findet.'); await A.wait(600); await N.say('Wie ich. Siebzehn Januare.'); A.save(); await twoNamesNext(A); }},
+    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed')&&has(A,'s5_teile'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
     {t:'Ich gehe zu Nedžad.',if:F(A,'k5.s.agreed')&&!F(A,'k5.s.engraved'),bye:true,go:async function(A){ await N.say('Geh. Bis zwölf.'); }},
     {t:'Bis später, Nada.',bye:true,go:async function(A){ await N.say('Ja.'); }}
   ]; }); }
@@ -273,8 +275,8 @@ async function zlataD2(A){ var Z=A.npc('zlata');
     {t:'Warum „Mala“?',once:'k5z21',go:async function(A){ await Z.say('Bei mir hieß sie Mala. So wollte sie es. Ich habe sie gefragt, wie sie heißt, und sie hat „Mala“ gesagt. Die Kleine. Sie hatte Fieber.'); }},
     {t:'Beide Namen. Oben und unten.',once:'k5z22',if:!F(A,'k5.s.toZlata'),go:async function(A){ await Z.say('Dann steht sie da wie eine Fremde mit zwei Namen.'); await A.wait(300); await Z.say('Nein. Das Brett ist, wie es ist. Bato hat geschnitten, was sie gesagt hat.'); }},
     {t:'Siebzehn Briefe. Jeder fängt mit ihrem Namen an. Damit man sie findet.',if:has(A,'s5_beide')&&!F(A,'k5.s.toZlata'),go:async function(A){ A.setFlag('k5.s.toZlata');
-      await A.wait(600); await Z.say('Siebzehn.'); await A.wait(600); await Z.say('Ich habe einmal schneiden lassen. Sie hat siebzehnmal geschrieben.'); await A.wait(400); await Z.say('Damit man sie findet. Wie ich.'); A.save(); }},
-    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
+      await A.wait(600); await Z.say('Siebzehn.'); await A.wait(600); await Z.say('Ich habe einmal schneiden lassen. Sie hat siebzehnmal geschrieben.'); await A.wait(400); await Z.say('Damit man sie findet. Wie ich.'); A.save(); await twoNamesNext(A); }},
+    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed')&&has(A,'s5_teile'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
     {t:'Bis später, Zlata.',bye:true,go:async function(A){ await Z.say('Polako, sine.'); }}
   ]; }); }
 async function vladoD2(A){ var V=A.npc('vlado');

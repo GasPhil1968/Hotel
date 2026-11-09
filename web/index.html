@@ -2213,13 +2213,16 @@ var API={
 M.API=API;
 // Gesprächsschleife: getOpts() -> [{t, go:async fn(A), once:'key', if:bool, bye:true, silent:true, ask:fn(A,noteId)}]
 async function menuLoop(getOpts){
+  // Analyse K5-B04: Hat eine Option den Raum, den Abschnitt oder den Bildschirm gewechselt, ist das Gespräch vorbei.
+  // Vorher stand danach das alte Menü weiter offen, z. B. Nedžads Optionen in Nadas Wohnung.
+  var r0=room, p0=GS.phase, moved=function(){ return room!==r0 || GS.phase!==p0 || E.screen!=='game'; };
   for (var guard=0;guard<80;guard++){
     var opts=getOpts().filter(function(o){ return o && !(('if' in o) && !o.if) && !(o.once && GS.seen['dlg:'+o.once]); });
     if (!opts.length) return;
     var i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!(o.ask||o.noGray)}; }));
     var o=opts[i]; if (o.once) GS.seen['dlg:'+o.once]=1;
-    if (o.ask){ var nid=await pickNote(o.askTitle); if (nid){ var r0=await o.ask(API,nid); if (r0==='bye') return; } continue; }
-    if (o.go){ var r=await o.go(API); if (r==='bye') return; }
+    if (o.ask){ var nid=await pickNote(o.askTitle); if (nid){ var ra=await o.ask(API,nid); if (ra==='bye' || moved()) return; } continue; }
+    if (o.go){ var r=await o.go(API); if (r==='bye' || moved()) return; }
     if (o.bye) return; }
 }
 // Standard-"Frag nach"-Option für eine Person: ask-Tabelle {notizId: handler}, sonst askAny
@@ -4899,7 +4902,9 @@ M.defineDeductions({
   'm2_ticket+m2_notrams':{to:'m2_promise',say:'Ein Fahrschein, entwertet für eine Fahrt im November dreiundneunzig. Aber da fuhr keine Bahn. Das war kein Fahrschein. Das war ein Versprechen.'},
   'm2_alija+m2_notrams':{to:'m2_promise',if:function(G){ return has(G,'m2_ticket'); },no:'Zwei Fahrscheine, „für später“. Aber ich habe keinen gesehen.',say:'Zwei Fahrscheine für eine Bahn, die nicht fuhr. Für später. Für nach dem Krieg.'},
   'm2_kids+m2_marko7':{to:'m2_mali',say:'Das Mädchen und der kleine Junge aus dem Siebener, samstags um 11:10. Ich bin samstags zu Großmutter gefahren. Ich war der Junge. Ich war Mali.'},
-  'm2_split_register+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_f_ninth'); },no:'Viele Namen enden auf „ić“. Welches Stockwerk?',say:'„…ić, L., 17.“ Delić, Lana, neunter Stock, geboren 1976. Sie war siebzehn im Winter dreiundneunzig.'},
+  'm2_split_register+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_f_ninth')||has(G,'s3_nada')||!!G.flags['k2.lift.ninth']; },no:'Viele Namen enden auf „ić“. Welches Stockwerk? Irgendwer hat doch vom Neunten gesprochen.',say:'„…ić, L., 17.“ Delić, Lana, neunter Stock, geboren 1976. Sie war siebzehn im Winter dreiundneunzig.'},
+  'm2_split_register+s3_helper':{to:'m2_lana',say:'„…ić, L., 17.“ Und im Klassenbuch: Helferin, Zeichnen, Lana Delić. Siebzehn im Winter dreiundneunzig. Lana Delić, neunter Stock.'},
+  's3_nada+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_split_register'); },no:'Nada vom Neunten. Delić. Aber was hat das mit Mala zu tun?',say:'Nada vom Neunten, seit ihre Tochter weg ist. Im Hausbuch: Delić, Esad, Nada, Lana. Und im Register in Split: „…ić, L., 17“.'},
   'm2_f_ninth+m2_housebook':{to:'m2_lana',if:function(G){ return has(G,'m2_split_register'); },no:'Im neunten Stock wohnten die Delić. Aber was hat das mit Mala zu tun?',say:'Neunter Stock: Delić. Lana. Und im Register in Split: „…ić, L., 17, Sarajevo.“'},
   'f2_rcm+f2_postcard':{to:'f2_cameback',say:'„Wenn du nicht kommst, komme ich dich holen.“ Und an ihre Mutter: „Ich hole Mali.“ Sie ist losgefahren. Zu mir.'},
   'f2_cameback+m2_split_register':{to:'f2_whyabreise',say:'Darum steht bei „Abreise“ nichts. Sie ist nicht abgereist. Sie ist aufgebrochen.'},
@@ -4908,10 +4913,12 @@ M.defineDeductions({
 // nach bestimmten Schlüssen öffnet sich ein Ort auf dem Stadtplan
 M.onDeduce=function(to,G){ if (to==='m2_building'){ G.map.neboder=true; } if (to==='s1_twosevens'){ G.map.ferhadija=true; } };
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen: je nach Figur, Fall und Wiederholung
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Das passt nicht. Noch nicht, oder gar nicht.','Nein. Da ziehe ich einen Faden, der nirgends festgemacht ist.','Klingt gut, stimmt aber nicht. Das kenne ich vom Übersetzen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Die eine weiß nichts von der anderen.','Zwei Fälle. Ich sollte sie nicht vermischen.','Nein. Jeder wartet auf etwas Eigenes.'],
-  mala:['Mala würde sagen: „Du denkst zu viel.“ Vielleicht hat sie recht.','Mit Mala hat das nichts zu tun. Oder ich will es nicht sehen.','Ich suche überall nach ihr. Hier ist sie nicht.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','So komme ich nicht weiter. Noch nicht.','Ein Faden, aber ich weiß nicht, wo er festgemacht ist.','Beim Übersetzen weiß ich: Wenn ein Satz nicht sitzt, fehlt oft ein Wort dazwischen.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.','Daraus wird kein Satz. Vielleicht mit etwas anderem.'],
+  mala:['Mala würde sagen: „Du denkst zu viel.“ Vielleicht hat sie recht.','Ich suche überall nach ihr. So finde ich sie nicht.','Noch nicht. Etwas fehlt dazwischen.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 M.noCombo=function(a,b,G){ var A=M.NOTES[a]||{}, B=M.NOTES[b]||{}; if (M.chapterOf(G)!==2) return 'Das hängt nicht zusammen.';
@@ -5086,7 +5093,8 @@ M.defineDeductions({
   'l3_ljerka_pic+k3_c_name':{to:'l3_onetrail',say:'Unterschrieben mit Mala. Der Name, den ich ihr gegeben habe. Ljerka kannte eine Mala, keine Lana Delić.'},
   'l3_onetrail+k3_c_missing':{to:'l3_twosearches',say:'Nada sucht Lana Delić. Die Spuren liegen unter Mala. Zwei Suchen, die sich nie getroffen haben. Ich frage nach Mala.'},
   'v3_sent+v3_mala_left':{to:'v3_who',say:'„Sie hat mich weggeschickt.“ – „Er ist gefahren.“ Beides kann stimmen. Aber einer von beiden lässt etwas weg. Ich muss mit Mala reden.'},
-  'a3_thrice+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_lightroom'); },no:'Bato zählt die Schläge. Zlata sagt, er hat geschlafen. Aber wann soll er das gehört haben?',say:'„Er hat geschlafen“, sagt Zlata. „Dreimal hat er geläutet“, sagt Bato. Wer mitzählt, schläft nicht. Er war wach.'},
+  // Analyse K3-B01: Ordnen ist freiwillig; Dachfenster und Lichtfolge genügen als Beleg für das Licht
+  'a3_thrice+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_lightroom')||(has(G,'a3_roof')&&has(G,'a3_lightseq')); },no:'Bato zählt die Schläge. Zlata sagt, er hat geschlafen. Aber wann soll er das gehört haben?',say:'„Er hat geschlafen“, sagt Zlata. „Dreimal hat er geläutet“, sagt Bato. Wer mitzählt, schläft nicht. Er war wach.'},
   'a3_lightroom+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_thrice'); },no:'In seiner Kammer hat jemand Licht gemacht. Das kann auch der Wind an der Lampe gewesen sein. Was sagt Bato selbst?',say:'Licht in seiner Kammer, und er hat die Schläge gezählt. Er war wach.'},
   'a3_voice+a3_pencil':{to:'a3_girl',say:'Eine Mädchenstimme ruft über den Fluss. Am Morgen liegt an der Glocke ein angekauter Bleistift. Kein Soldat. Es war das Mädchen.'},
   'a3_voice+a3_soldier':{to:'a3_girl',if:function(G){ return has(G,'a3_pencil'); },no:'Bato sagt: ein Soldat. Mala hat eine Mädchenstimme gehört. Wer hat recht? Ich brauche etwas, das am Morgen noch da war.',say:'Er hielt sie für einen Soldaten. Die Stimme war ein Mädchen. Der Bleistift lag an der Glocke. Es war das Mädchen.'},
@@ -5097,6 +5105,8 @@ M.defineDeductions({
   'e3_father+e3_kolar':{to:'e3_avoid',say:'Ich suche eine Vermisste für eine Mutter. Meinen Vater habe ich nie gesucht. Ich weiß, was Mala sagen würde.'}
 });
 // Reihenfolge der Nacht: kein fester Schluss, sondern das Ordnen (Overlay) nach dem Schließen des Notizbuchs (97_k3_peil.js, M.k3OrderNight)
+// Analyse K3-B01: naheliegender Fehlgriff mit eigener Antwort
+if (!M.DEDUCE['a3_roof+a3_slept'] && !M.DEDUCE['a3_slept+a3_roof']) M.DEDUCE['a3_roof+a3_slept']=function(A){ M.sfx&&M.sfx('nope'); return {ok:false,t:'Zlata schlief am Herd. Und oben brannte Licht. Wer war oben? Das muss Bato selbst sagen.'}; };
 M.DEDUCE['a3_lightseq+v3_part1']=function(A){ if (A.G.notes.indexOf('a3_lightroom')>=0) return {ok:false,t:'Das habe ich schon geordnet.'}; if (M.k3Queue) M.k3Queue('order');
   return {ok:true,t:'Das lässt sich ordnen. Vlados Zeiten, Malas Läuten, das Licht. Ich lege die Nacht der Reihe nach hin.'}; };
 M.DEDUCE['a3_lightseq+a3_bell3']=function(A){ if (A.G.notes.indexOf('a3_lightroom')>=0) return {ok:false,t:'Das habe ich schon geordnet.'}; if (A.G.notes.indexOf('v3_part1')<0) return {ok:false,t:'Läuten, Licht, Läuten. Aber wann fing die Nacht an? Das weiß nur der Fahrer.'};
@@ -5109,11 +5119,13 @@ M.onDeduce=function(to,G){ if (M.chapterOf(G)!==3){ if (od0) return od0(to,G); r
   if (to==='l3_person'){ G.map.tepa=true; }
   if (M.k3Queue) M.k3Queue('ded:'+to); };
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen: je nach Fall und Wiederholung
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Das passt nicht. Noch nicht, oder gar nicht.','Nein. Ein Faden, der nirgends festgemacht ist.','Klingt gut. Stimmt nicht. Das kenne ich vom Übersetzen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Die eine weiß nichts von der anderen.','Mate wartet auf seinen Sohn, nicht auf Lana. Ich sollte das nicht vermischen.','Nein. Jeder hier hat seine eigene Nacht.'],
-  mala:['Mala würde sagen: „Du rechnest wieder.“','Mit Mala hat das nichts zu tun. Oder ich will es nicht sehen.','Ich suche überall nach ihr. Hier ist sie nicht.'],
-  peil:['Eine Linie und noch eine Linie. Mein Vater hätte gesagt: Erst messen, dann denken.','Das ist keine Messung. Das ist eine Hoffnung.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','So komme ich nicht weiter. Noch nicht.','Ein Faden, aber ich weiß nicht, wo er festgemacht ist.','Beim Übersetzen weiß ich: Wenn ein Satz nicht sitzt, fehlt oft ein Wort dazwischen.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.','Daraus wird kein Satz. Vielleicht mit etwas anderem.'],
+  mala:['Mala würde sagen: „Du rechnest wieder.“','Ich suche überall nach ihr. So finde ich sie nicht.','Noch nicht. Etwas fehlt dazwischen.'],
+  peil:['Eine Linie und noch eine Linie. Mein Vater hätte gesagt: Erst messen, dann denken.','Für eine Peilung brauche ich zwei Linien, die wirklich zusammengehören.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 var nc0=M.noCombo;
@@ -5262,7 +5274,12 @@ var NEAR={
   'g4_spaeter+g4_doku':'„Kommt später.“ So steht es in der Akte, und so sagen sie es. Das ist die Regel. Nicht der Grund, warum er friert.',
   'g4_versuch1+g4_depot':'Ein Versuch allein sagt mir nur die Hälfte. Ich brauche beide.',
   'g4_versuch2+g4_depot':'Ein Versuch allein sagt mir nur die Hälfte. Ich brauche beide.',
-  'z4_lesart+z4_kode':'„Nicht zurückgekommen“ und „die es wissen“. Mama sagt, sie kann lesen. Aber was hat sie daraus gemacht? Das steht auf Papier, das ich nicht habe.',
+  'z4_lesart+z4_kode':'„Nicht zurückgekommen“ und „die es wissen“. Mama sagt, sie kann lesen. Aber was hat sie daraus gemacht? Das steht in ihrem Antrag.',
+  // Analyse K4-B02 (P07): die naheliegenden Paare am Höhepunkt zeigen auf den fehlenden Zwischenschluss, statt sie abzuweisen
+  'z4_nachricht+z4_lesart':'Ružas Satz und Mamas Lesart. Da liegt es. Aber erst jede Hälfte für sich: Was hat Mama daraus gemacht? Und was hieß der Satz in Sarajevo?',
+  'z4_nachricht+z4_antrag':'Ružas Satz und Mamas Suchantrag. Dazwischen fehlt, wie Mama den Satz gelesen hat.',
+  'z4_kode+z4_antrag':'„Die es wissen“ und Mamas Antrag. Erst muss ich wissen, was der Kode aus Ružas Satz macht.',
+  'k4_c_vater+z4_lesart':'Papa und Mamas Lesart. „Nicht zurückgekommen“, hat sie gelesen. Was sie daraus gemacht hat, steht in ihrem Antrag.',
   'z4_kolar+z4_kode':'Die Brauerei. Und ein Satz aus den Akten. Ich will die beiden nicht nebeneinanderlegen.',
   'z4_ana2004+z4_kolar':'Ana hat eine Probe gegeben, und Frau Kolar hat ein Grab. Das passt zusammen. Das ist kein Schluss. Das ist ein Ergebnis.',
   'u4_pantoffeln+z4_lesart':'Sie stellt ihm die Hausschuhe hin. Jeden Tag. Weil „nicht zurückgekommen“ heißt: noch nicht.',
@@ -5275,10 +5292,12 @@ var od0=M.onDeduce;
 M.onDeduce=function(to,G){ if (M.chapterOf(G)!==4){ if (od0) return od0(to,G); return; } if (M.k4Queue) M.k4Queue('ded:'+to); };
 
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Nein. Ein Faden, der nirgends festgemacht ist.','Klingt gut. Stimmt nicht. Das kenne ich vom Übersetzen.','Das passt nicht. Noch nicht, oder gar nicht.'],
-  cross:['Sepp, Gerda, Mama. Jeder hat seine eigene Geschichte. Ich sollte sie nicht ineinanderschieben.','Das sind zwei verschiedene Menschen. Die eine weiß nichts vom anderen.','Nein. Das gehört nicht zusammen, nur weil es in derselben Woche passiert.'],
-  family:['Das ist meine Familie. Da will ich, dass alles zusammenpasst. Tut es nicht.','Ich suche einen Zusammenhang, den ich mir wünsche. Nicht den, der da ist.','Mama würde sagen: „Ne miješaj.“ Misch nicht alles zusammen.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','Ein Faden, aber ich weiß nicht, wo er festgemacht ist.','Beim Übersetzen weiß ich: Wenn ein Satz nicht sitzt, fehlt oft ein Wort dazwischen.','So komme ich nicht weiter. Noch nicht.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.','Daraus wird kein Satz. Vielleicht mit etwas anderem.'],
+  family:['Das ist meine Familie. Ich will es zu schnell zusammenhaben. Erst jedes Stück für sich.','So ergibt es noch keinen Satz. Erst jede Hälfte für sich.','Mama würde sagen: „Polako.“ Langsam. Eins nach dem anderen.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 var nc0=M.noCombo;
@@ -5365,6 +5384,12 @@ var NEAR={
   'f5_dose+j5_treppe':'Nada braucht keine Treppe. Sie wohnt oben. Erst muss ich wissen, wem die Dose nicht gehört.',
   'f5_plaetze+s5_mappe':'Nada hat Briefe geschrieben, keine Fahrscheine gekauft.',
   'f5_dose+f5_tuer':'Mama hat ihr die Tür aufgemacht. Und die Dose? Erst muss ich wissen, ob sie überhaupt Nada gehört.',
+  // Analyse K5-B01: richtige Ideen zu „Wem gehören die Fahrscheine?“ anerkennen und auf das fehlende Stück zeigen
+  'f5_wem+f5_tuer':'Mama. Sie hat jeden Samstag aufgemacht. Aber wozu dann Fahrscheine? Was hat sie an der Treppe gesagt?',
+  'f5_wem+k5_c_muenchen':'„Ich setze mich ans Fenster.“ Zwei Plätze, am Fenster und daneben. Für wen ist der zweite? Und warum fährt sie nicht?',
+  'f5_wem+f5_plaetze':'Lana hat mich jeden Samstag geholt. Wer holt heute wen? Und wer kann wohin nicht?',
+  'f5_wem+j5_nichtdrei':'„Nicht die Drei. Noch nicht.“ Mama weicht aus. Der Drei – und wem noch?',
+  'f5_wem+j5_samstag':'Samstag um elf sperrt Šehić den siebten Stock auf. Mama wird dort sein. Und dann? Was hat sie an der Treppe gesagt?',
   'f5_eursamstag+j5_treppe':'„Euer Samstag“ und eine Treppe, die Mama nicht hinaufkommt. Fast. Mala sagt aber noch: für Nada.',
   'b5_hand+b5_reihe':'Ein Mann, der Kanister ordnet. Und eine Hand auf meinen Augen. Vielleicht derselbe. Das weiß nur der Tag selbst. Mala soll ihn spüren.',
   'b5_hamdija+b5_drei':'Drei ohne Namen. Und ein Mann, der an einem Kasten wacht. Was ist im Kasten?'
@@ -5374,9 +5399,11 @@ Object.keys(NEAR).forEach(function(k){ var t=NEAR[k]; if (!M.DEDUCE[k] && !M.DED
 var od0=M.onDeduce;
 M.onDeduce=function(to,G){ if (M.chapterOf(G)!==5){ if (od0) return od0(to,G); return; } if (M.k5Queue) M.k5Queue('ded:'+to); };
 // ---------------------------------------------------------------- Antworten bei falschen Verbindungen
+// Analyse Muster 7 (P09): Absagen bleiben neutral. Sie behaupten keine Richtung (‚hat nichts mit Mala zu tun‘, ‚nicht vermischen‘, ‚Wunschdenken‘),
+// weil sie sonst gerade die richtige Idee abweisen; Beinahe-Treffer bekommen eigene Sätze.
 var POOL={
-  same:['Zwei Dinge, die nebeneinander liegen. Mehr nicht.','Ich drehe es hin und her. Es greift nicht.','Nein. So hängt das nicht zusammen.'],
-  cross:['Das sind zwei verschiedene Geschichten. Ich sollte sie nicht ineinanderschieben.','Nein. Das gehört nicht zusammen, auch wenn alles in dieser Woche passiert.'],
+  same:['Zwei Dinge, die nebeneinander liegen. Mehr sagen sie mir nicht.','Ich drehe es hin und her. Es greift nicht.','So komme ich nicht weiter. Noch nicht.'],
+  cross:['Das bringt mich hier nicht weiter.','Noch nicht. Etwas fehlt dazwischen.'],
   again:['Das habe ich schon versucht.','Noch einmal dasselbe. Es wird nicht richtiger.']
 };
 var nc0=M.noCombo;
@@ -12484,7 +12511,8 @@ M.HINTS_K2=[
   s:['Emina fragt, warum er nie geschrieben hat. Vielleicht hat er geschrieben.',
      'Briefe gehen durch Hände. Wer hat damals etwas angenommen und weitergegeben?',
      {m:'Šaćir hat etwas weitergegeben. Mala sieht in der verschlossenen Kammer, wohin. Hinein geht es erst, wenn Emina nicht da ist.',g:'Šaćir hat etwas weitergegeben. Ich sehe in der verschlossenen Kammer nach, wohin. Hinein geht es erst, wenn Emina nicht da ist.'},
-     function(G){ return I(G,'chisel')?'Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.':'Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.'; }]},
+     function(G){ if (F(G,'k2.s1.letterFixed') && N(G,'s1_hidden') && !F(G,'k2.s1.eminaAway')) return 'Emina geht nachher zu Tante Sabira: die Kafana einmal verlassen und wieder hineingehen (oder als Mala hinter der Theke lauschen). Dann öffnet Lejla die Kammer.';
+       return I(G,'chisel')?'Lejla helfen, damit Emina geht. Dann in die Kammer, und am Spiegel das Stemmeisen ansetzen.':'Lejla helfen, damit Emina geht. Dann in die Kammer. Am Spiegel hilft ein Stemmeisen: Nedžad leiht seines aus.'; }]},
  {id:'s1g',t:'Emina die Wahrheit sagen',open:function(G){ return ph(G,['k2_s1']) && N(G,'s1_missed') && N(G,'s1_betrayal') && !F(G,'k2.s1.emina'); },
   s:['Alles ist beisammen. Emina muss es hören.',
      'Erst Beweise in die Hand, dann die Wahrheit. Die Reihenfolge zählt.',
@@ -12860,16 +12888,17 @@ M.HINTS_K3=[
      {m:'Mala hat dreimal läuten hören. Und das Licht?',g:'Ich habe dreimal läuten hören. Und das Licht?'},
      'An der Glocke noch einmal spüren.',
      'Als Mala an der Glocke spüren.']},
- {id:'d3e',t:'Die Nacht ordnen',open:function(G){ return N(G,'a3_lightseq') && !N(G,'a3_lightroom'); },
+ // Analyse K3-B01: Das Ordnen der Nacht ist freiwillig; Bato reagiert schon auf Dachfenster und Lichtfolge (d3f). Kein eigenes Thema mehr.
+ {id:'d3e',t:'Die Nacht ordnen',open:function(G){ return false; },
   s:['Läuten, Licht, Läuten. Und davor Vlados Zeiten.',
      'Die Reihenfolge reicht. Minuten braucht es nicht.',
      function(G){ return N(G,'v3_part1')?'Im Notizbuch „Dunkel, hell, dunkel“ und „Ankunft und Abfahrt“ zusammen ansehen.':'Vlados Zeiten fehlen noch: Ankunft und Abfahrt. Er hat sie am Samstag genannt.'; },
      'Die beiden Notizen verbinden und die Karten der Reihe nach legen.']},
- {id:'d3f',t:'Batos Licht',open:function(G){ return N(G,'a3_lightroom') && !N(G,'a3_thrice'); },
-  s:['In Batos Kammer hat jemand Licht gemacht. Das beweist noch nicht, dass er wach war.',
+ {id:'d3f',t:'Batos Licht',open:function(G){ return (N(G,'a3_lightroom')||(N(G,'a3_roof')&&N(G,'a3_lightseq'))) && !N(G,'a3_thrice'); },
+  s:['In Batos Kammer hat jemand Licht gemacht, während Lana läutete. Das beweist noch nicht, dass er wach war.',
      'Was sagt Bato selbst über diese Nacht? Für ihn ist es noch dieselbe Nacht.',
      'Bato im Schuppen auf das Licht ansprechen.',
-     'Bato die Notiz „Licht in Batos Kammer“ zeigen.']},
+     function(G){ return N(G,'a3_lightroom')?'Bato die Notiz „Licht in Batos Kammer“ zeigen.':'Bato „Das Dachfenster“ oder „Dunkel, hell, dunkel“ zeigen.'; }]},
  {id:'d3g',t:'Geschlafen?',open:function(G){ return N(G,'a3_thrice') && !N(G,'a3_awake'); },
   s:['Zlata sagt: Er hat geschlafen. Bato sagt: Dreimal hat er geläutet.','Wer mitzählt, schläft nicht.','Im Notizbuch „Dreimal hat er geläutet“ und „Er hat geschlafen“ zusammen ansehen.','Die beiden Notizen verbinden.']},
  {id:'d3h',t:'Wer hat geläutet?',open:function(G){ return N(G,'a3_voice') && N(G,'a3_pencil') && !N(G,'a3_girl'); },
@@ -12890,7 +12919,7 @@ M.HINTS_K3=[
   s:['Lana hat den Fluss überlebt. Zlata hat sie gefunden.','Zlata weiß mehr, als sie sagt.','Zlata darauf ansprechen.','Zlata die Notiz „Sie hat den Fluss überlebt“ zeigen.']},
  {id:'d3l',t:'Der Soldat',open:function(G){ return N(G,'a3_awake') && N(G,'a3_girl') && !F(G,'k3.bato.uneasy'); },
   s:['Bato hält am Soldaten fest.','Zwei Dinge sprechen dagegen.','Bato mit „Bato war wach“ und „Es war das Mädchen“ ansprechen.','Bato beide Notizen zeigen.']},
- {id:'d3m',t:'Vlado, Teil 2',open:function(G){ return G.phase==='k3_d3' && N(G,'a3_girl') && N(G,'a3_lightroom') && N(G,'l3_survived') && !F(G,'k3.v.part2'); },
+ {id:'d3m',t:'Vlado, Teil 2',open:function(G){ return G.phase==='k3_d3' && N(G,'a3_girl') && (N(G,'a3_lightroom')||N(G,'a3_awake')) && N(G,'l3_survived') && !F(G,'k3.v.part2'); },
   s:['Vlado hat am Samstag nicht alles gesagt.',
      'Jetzt gibt es etwas, das er nicht wegschieben kann: die Glocke, das Licht, den Bleistift, und dass Lana den Fluss überlebt hat.',
      'Zum Vulkanizer.',
@@ -13110,10 +13139,10 @@ M.HINTS_K4=[
      {m:'Herr Kraus kann den Gong abstellen. Und Mala kann Gerda bitten, woanders zu warten.',g:'Kraus kann den Gong abstellen. Und ich kann Gerda bitten, woanders zu warten.'},
      function(G){ return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+(N(G,'g4_depot')?' Oder als Mala Gerda an das Depot erinnern, damit sie am Fenster wartet.':' Gerda dagegen wartet nur woanders, wenn sie an früher denkt: an die Fotos in Zimmer 214.'); }]},
  {id:'g4c',t:'Der zweite Versuch',open:function(G){ return N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2')); },
-  s:['Ein Versuch zeigt nur die Hälfte.','Jetzt das andere weglassen.',
+  s:['Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.','Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.',
      function(G){ return N(G,'g4_versuch1')?{m:'Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?',g:'Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.'}:'Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.'; },
-     function(G){ if (!N(G,'g4_versuch1')) return 'Herrn Kraus bitten, den Gong abzustellen, und an einem neuen Nachmittag bis drei warten.'; if (!N(G,'g4_depot')) return 'In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.';
-       return 'An einem neuen Nachmittag (einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
+     function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'In Zimmer 214 die Fotos ansehen (nach drei, wenn Herr Lechner im Flur ist, kann Mala sie spüren). Dann als Mala Gerda an das Depot erinnern.';
+       return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
  {id:'g4d',t:'Gong und Hand',open:function(G){ return N(G,'g4_versuch1') && N(G,'g4_versuch2') && !N(G,'g4_beides'); },
   s:['Zwei Versuche, zwei Ergebnisse.','Was hat jeder Versuch gezeigt?','Im Notizbuch beide Versuche.','Die beiden Versuche verbinden.']},
  {id:'g4e',t:'Sein Leben',open:function(G){ return N(G,'g4_drei') && !N(G,'g4_depot') && (N(G,'g4_versuch1') || F(G,'k4.g.blunt')); },
@@ -13208,8 +13237,8 @@ M.HINTS_K5=[
  {id:'h5j',t:'Die Tafel',open:function(G){ return G.phase==='k5_d2' && N(G,'s5_beide') && !F(G,'k5.s.mounted'); },
   s:[function(G){ return F(G,'k5.s.agreed')?'Sie haben sich geeinigt. Jetzt muss es graviert werden.':'Beide haben recht. Jede muss hören, was die andere wollte.'; },
      function(G){ return F(G,'k5.s.agreed')?'Was steht schon auf dem Brett?':'Was hat Zlata gewollt, was Nada? Und was steht schon auf dem Brett?'; },
-     function(G){ if (!F(G,'k5.s.toZlata')) return 'Zlata sagen, warum Nada siebzehn Jahre geschrieben hat.'; if (!F(G,'k5.s.toNada')) return 'Nada sagen, warum Zlata „Mala“ geschrieben hat.'; if (!F(G,'k5.s.agreed')) return 'Beiden die zwei Hälften vorschlagen: oben die Tafel, unten das Brett.'; return 'Zu Nedžad: Name und Geburt aufs Messing. Der Tod steht schon auf dem Brett.'; },
-     function(G){ if (!F(G,'k5.s.agreed')) return 'Mit Nada und Zlata reden, jeder sagen, was die andere wollte, dann die zwei Hälften vorschlagen.'; if (!F(G,'k5.s.engraved')) return 'Bei Nedžad gravieren lassen: „LANA DELIĆ“, „3. 3. 1976“, keine dritte Zeile.'; return 'Zurück zu Nada: Vlado montiert Tafel und Brett.'; }]},
+     function(G){ if (!F(G,'k5.s.toZlata')) return 'Zlata sagen, warum Nada siebzehn Jahre geschrieben hat.'; if (!F(G,'k5.s.toNada')) return 'Nada sagen, warum Zlata „Mala“ geschrieben hat.'; if (!F(G,'k5.s.agreed') && !N(G,'s5_teile')) return 'Was steht schon auf dem Brett, und was hat nur Nada? Das muss ich erst selbst zusammenlegen.'; if (!F(G,'k5.s.agreed')) return 'Beiden die zwei Hälften vorschlagen: oben die Tafel, unten das Brett.'; return 'Zu Nedžad: Name und Geburt aufs Messing. Der Tod steht schon auf dem Brett.'; },
+     function(G){ if (!F(G,'k5.s.agreed') && !N(G,'s5_teile')) return 'Im Notizbuch „Damit man sie findet“ und „Zlatas Brett“ verbinden.'; if (!F(G,'k5.s.agreed')) return 'Mit Nada und Zlata reden, jeder sagen, was die andere wollte, dann die zwei Hälften vorschlagen.'; if (!F(G,'k5.s.engraved')) return 'Bei Nedžad gravieren lassen: „LANA DELIĆ“, „3. 3. 1976“, keine dritte Zeile.'; return 'Zurück zu Nada: Vlado montiert Tafel und Brett.'; }]},
  {id:'h5k',t:'Hamdija',open:function(G){ return G.phase==='k5_d2' && N(G,'b5_hamdija') && !F(G,'k5.b.gone'); },
   s:[function(G){ if (!N(G,'b5_kasten')) return 'Er lässt mich nicht an den Kasten hinter dem Hahn.'; if (!N(G,'b5_tag')) return 'Er glaubt mir nicht, dass ich der Junge bin.'; if (!N(G,'b5_drei')) return 'Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Er muss mich erkennen.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste muss zu Frau Kolar.'; if (!F(G,'k5.b.ready')) return 'Er muss hören, was aus den sieben geworden ist.'; return 'Er ist bereit zu gehen.'; },
      function(G){ if (!N(G,'b5_kasten')) return 'Was ist im Kasten?'; if (!N(G,'b5_tag')) return 'Was weiß nur der Junge von damals?'; if (!N(G,'b5_drei')) return 'Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Die gefüllten Kanister. Und der Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Drei Tote haben noch keinen Namen.'; if (!F(G,'k5.b.ready')) return 'Sie sind gefunden. Alle sieben.'; return 'Er kann jetzt gehen.'; },
@@ -13221,7 +13250,7 @@ M.HINTS_K5=[
  {id:'h5l',t:'Wem gehören die Fahrscheine?',open:function(G){ return G.phase==='k5_d2_n' && !N(G,'f5_jasna'); },
   s:[function(G){ return N(G,'f5_wem')?'Nicht Nada. Wem dann?':'Mala sagt: für Nada. Stimmt das?'; },
      function(G){ return N(G,'f5_wem')?'Wer war samstags dabei? Und wer kann nicht hinauf?':'Wer war samstags dabei? Wer nicht?'; },
-     function(G){ if (!N(G,'f5_eursamstag')) return 'Nada nach den Samstagen fragen.'; if (!N(G,'f5_wem')) return '„Für Mama. Wer sonst?“ und „Das war euer Samstag“ verbinden.'; return 'Was hat Mama im siebten Stock gesagt?'; },
+     function(G){ if (!N(G,'f5_eursamstag')) return 'Nada nach den Samstagen fragen.'; if (!N(G,'f5_wem')) return '„Für Mama. Wer sonst?“ und „Das war euer Samstag“ verbinden.'; return 'Was hat Mama an der Treppe im siebten Stock gesagt, bevor Šehić kam?'; },
      function(G){ if (!N(G,'f5_wem')) return 'Im Notizbuch „Wer sonst?“ und „Euer Samstag“ verbinden.'; return 'Im Notizbuch „Nicht Nada“ und „Mama kann nicht hinauf“ verbinden.'; }]},
  {id:'h5l2',t:'Das Totenmahl',open:function(G){ return G.phase==='k5_d2_n' && !F(G,'k5.e.meal'); },
   s:['Alle sitzen an Nadas Tisch.','Zwei Frauen, die achtzehn Jahre nicht miteinander geredet haben.','Mit Mama reden. Und mit Nada.','Mit Mama und mit Nada reden, bis der Abend weitergeht.']},
@@ -51134,7 +51163,7 @@ var HS=[
    g:{look:'Lauter Namen. Manche sind nur noch hier.'}},
  {id:'notices',name:'Schwarzes Brett',look:'Zettel des Hausrats, alle unterschrieben von S. Šehić: „Lift – Reparatur beantragt (1993)“, „Kellerschlüssel nur mit Beschluss“, „Bitte Licht ausmachen. Strom kostet.“',
    read:'„Beschluss des Hausrats vom 4.3.1998: Der Schutzraum bleibt bis auf Weiteres verschlossen. Gez. S. Šehić, Vorsitzender.“',g:{look:'Ein Zettel von 1993 hängt noch: „Kellerschule: Unterricht 9–12 Uhr. Bitte leise auf der Treppe.“'}},
- {id:'elevator',name:'Aufzug',look:'Der Aufzug. „VAN FUNKCIJE“ auf einem Zettel, der so alt ist, dass er selbst ein Denkmal ist.',use:'Ich drücke den Knopf. Nichts. Natürlich nichts.',g:{look:'Er ging nie. Neunter Stock. Ich habe die Stufen gezählt. Hundertvierundvierzig.'}},
+ {id:'elevator',name:'Aufzug',look:'Der Aufzug. „VAN FUNKCIJE“ auf einem Zettel, der so alt ist, dass er selbst ein Denkmal ist.',use:'Ich drücke den Knopf. Nichts. Natürlich nichts.',g:{look:async function(A){ await A.g('Er ging nie. Neunter Stock. Ich habe die Stufen gezählt. Hundertvierundvierzig.'); A.setFlag('k2.lift.ninth'); }}},
  {id:'stairs',name:'Treppe',exit:{to:'stan'},look:'Die Treppe nach oben. Neun Stockwerke bis zu den Delić.',canExit:async function(A){ if (A.G.phase==='k2_s3' && !A.flag('k2.s3.nadaTried')){ A.setFlag('k2.s3.nadaTried'); await A.fade(6,500); A.sfx('steps'); await A.wait(800); await A.fade(0,400);
        await A.narrate('Neunter Stock. Eine Tür mit dem Namen „DELIĆ“. Ich klopfe. Schritte. Durch die Tür eine Frauenstimme: „Ich kaufe nichts. Ich unterschreibe nichts. Gehen Sie.“'); await A.m('Frau Delić, ich …'); await A.narrate('„Gehen Sie.“ Die Schritte entfernen sich.'); if (A.G.malaOn){ await A.wait(800); await A.g('…Die Stimme.'); await A.g('Ich kenne die Stimme.'); } return false; }
      if (A.G.phase==='k2_s3' || A.G.phase==='k2_s3_n'){ await A.m('Nada öffnet nicht. Nicht für einen Fremden.'); return false; }
@@ -51213,9 +51242,11 @@ function norm(G){ if (G.flags['k4.g.pmPhase']!==G.phase){ G.flags['k4.g.pmPhase'
 function used(G){ norm(G); return F(G,'k4.g.pmUsed'); }
 H.norm=norm; H.used=used;
 // Ankunft von draußen: War der Nachmittag vorbei und ist keiner im Haus geblieben, beginnt ein neuer (rooms/heim.js)
-H.arrive=function(A){ var G=A.G; norm(G); if (!F(G,'k4.g.pmUsed')) return false; var other=G.active==='marko'?'mala':'marko', p=G.pos[other];
+// Analyse K4-B01: Kraus' „Heut nimmer“ gilt nur bis zur nächsten Ankunft; Mala zählt als mitgekommen, wenn Marko das Haus verlassen hat
+// (vorher blieb ohne Rückmeldung alles beim Alten, wenn Mala noch in Zimmer 214 stand).
+H.arrive=function(A){ var G=A.G; norm(G); delete G.flags['k4.g.krausNo']; if (!F(G,'k4.g.pmUsed')) return false; var other=G.active==='marko'?'mala':'marko', p=G.pos[other];
   var cur=A.room&&A.room.id, inside=!!(p && /^heim/.test(p.room||'') && p.room!==cur);   // wer mit hereinkommt, ist nicht drin geblieben
-  var stayed=other==='mala'?!!(G.malaOn && inside):inside;
+  var stayed=other==='mala'?false:inside;
   if (stayed) return false; newPm(G); return true; };
 // wer ist wo (aus Schaltern und Phase)
 function aloisAt(G){ if (night(G)) return 'bed'; if (fri(G)) return 'chair'; if (!work(G)) return null; norm(G);
@@ -51403,8 +51434,8 @@ var KRAUS_ASK={ g4_gong:'Hab i doch gsagt. Vorschrift.', g4_drei:'Der Lechner. J
   g4_versuch1:'Und? Hat’s was bracht?', g4_versuch2:'Mit Gong is er aufgstanden. Des hätt i Eana a so sagn können.', g4_beides:'Wenn S’ meinen.',
   g4_gerda:'D’Frau Lechner. Die hat ma jeden Tag an Gruß gsagt. Auch wenn i unterm Aufzug glegn bin.' };
 async function krausAsk(A){ var G=A.G, K=A.npc('kraus'); norm(G);
-  if (F(G,'k4.g.krausNo')){ await K.say('Heut nimmer. Hab i gsagt.'); return A.m('Heute nicht mehr. Ein anderes Mal, mit einem Grund, den er versteht: Herr Lechner, nicht ein Geist.'); }
-  if (used(G)) return K.say('Heut is eh scho rum. Drei war scho.');
+  if (F(G,'k4.g.krausNo')){ await K.say('Heut nimmer. Hab i gsagt.'); return A.m('Jetzt nicht mehr. Ein andermal, mit einem Grund, den er versteht: Herr Lechner, nicht ein Geist.'); }
+  if (used(G)) return K.say('Jetzt is eh scho rum. Drei war scho. Kommen S’ später wieder.');
   await K.say('Abstelln. Warum?');
   for (var i=0;i<6;i++){ var c=await A.choose([
       {t:'Herr Lechner erschrickt jedes Mal.',id:'ok'},
@@ -51510,7 +51541,7 @@ async function blunt(A){ var G=A.G, Al=A.npc('alois'), rid=A.room&&A.room.id;
   if (rid==='heim214') await A.goto('heim_flur',{noEnter:true});
   else { var dp=doorPt(); await A.narrate('Sie bringt ihn in sein Zimmer und kommt allein zurück, langsamer als sonst.'); if (Al.actor){ Al.routine(false); await Al.walk(dp[0],dp[1]); A.despawn('alois'); } }
   J=A.npc('jasnaW'); await A.wait(500); await J.say('Das habe ich auch einmal gemacht. Im ersten Jahr.'); await A.wait(900); await J.say('Nie wieder.');
-  await A.wait(700); await J.say('Jetzt ist er eine Stunde für niemanden zu sprechen. Für heute ist es vorbei, Marko.'); await A.wait(500); await A.m('Um drei ist jeden Tag drei. Ich komme wieder, wenn ich weiß, was ich anders mache.');
+  await A.wait(700); await J.say('Jetzt ist er eine Stunde für niemanden zu sprechen. Geh eine Runde, Marko.'); await A.wait(500); await A.m('Um drei ist jeden Tag drei. Ich gehe eine Runde und komme wieder, wenn ich weiß, was ich anders mache.');
   if (A.malaHere()){ await A.wait(600); await A.g('Er hat es gehört. Und gleich wieder verloren.'); } resync(A); }
 H.blunt=blunt;
 // ---------------------------------------------------------------- Donnerstag: die Kanne
@@ -51525,14 +51556,21 @@ async function thermos(A){ var G=A.G, Al=A.npc('alois'), J=A.npc('jasnaW'); if (
   if (A.malaHere()){ await A.wait(700); await A.g('Sie hat es gesehen.'); }
   await M.k4DayCheck(A); }
 
+// ---------------------------------------------------------------- Ein neuer Nachmittag (Analyse K4-B01)
+// Ein Versuch je Nachmittag. Statt hinaus- und wieder hereinzugehen, kann man an Uhr und Bank ausdrücklich später wiederkommen.
+async function later(A,me){ var G=A.G, blunt=F(G,'k4.g.pmBlunt');
+  if (me){ await A.g(blunt?'Er liegt in seinem Zimmer. Jetzt nicht. Später.':'Drei war schon. Er läuft noch. Bis halb fünf, sagen sie.'); return; }
+  await A.m(blunt?'Mama hat ihn hingelegt, und er sieht an die Decke. Jetzt nicht mehr.':'Drei war schon. Er läuft noch bis halb fünf.');
+  var c=await A.choose([{t:'(Später wiederkommen.)',id:'later'},{t:'(Lassen.)',id:'no',bye:true}],{title:'Ein anderer Nachmittag'}); if (c!=='later') return;
+  await A.fade(8,700); newPm(G); resync(A); await A.wait(300); await A.fade(0,700);
+  await A.narrate('Ein anderer Nachmittag. Oben ist wieder Ruhe eingekehrt, die Uhr im Flur geht auf drei zu.'); }
 // ---------------------------------------------------------------- Bis drei warten
 async function waitThree(A){ var G=A.G, me=A.isMala(); norm(G); var say=function(t){ return me?A.g(t):A.m(t); };
   if (night(G)) return say(me?'Heute Nacht wartet hier keiner auf drei.':'Drei? Es ist kurz vor Mitternacht.');
   if (fri(G)) return A.m('Um drei? Heute wartet hier keiner mehr. Herr Lechner sitzt in seinem Zimmer, mit der Kanne.');
   if (!work(G)) return say('Nicht jetzt.');
   if (gone(G)) return say(me?'Um drei kommt keine mehr.':'Um drei wartet hier keiner mehr. Er sitzt auf der Bank und wartet nicht.');
-  if (F(G,'k4.g.pmBlunt')) return say(me?'Er liegt in seinem Zimmer. Heute nicht mehr.':'Heute nicht mehr. Mama hat ihn hingelegt, und er sieht an die Decke.');
-  if (F(G,'k4.g.pmUsed')) return say(me?'Drei war schon. Er läuft noch. Bis halb fünf, sagen sie.':A.cycle('h4used',['Drei war schon. Für heute ist es vorbei.','Er läuft noch bis halb fünf. Dann ist dieser Nachmittag zu Ende.']));
+  if (F(G,'k4.g.pmBlunt') || F(G,'k4.g.pmUsed')) return later(A,me);
   if (thu(G) && F(G,'k4.g.decided')) return goodbyePrep(A);
   var mk=inFlur(G,'marko'), ml=inFlur(G,'mala');
   if (F(G,'k4.g.hall') && !F(G,'k4.g.decided') && !ml){ if (!me) await A.m('Gerda wartet nur am Fenster, wenn Mala bei ihr bleibt. Mala ist nicht hier.'); }
@@ -51925,7 +51963,7 @@ M.room('heim',{ name:'Haus am Bavariapark', scape:'k4_heim',
     var fresh=(from==='map') && h.arrive && h.arrive(A);
     if (A.isMala()){ if (A.first('!k4.g.heimM')){ await A.g('Ein Haus voller alter Menschen. Es riecht nach Kaffee und nach etwas Scharfem, Sauberem.'); await A.wait(400); await A.g('Der Mann am Empfang sieht durch mich hindurch. Wie alle hier.'); } return; }
     if (A.first('!k4.g.heim1')){ await A.narrate('Das Haus am Bavariapark. Eine helle Halle, ein Tannenbaum, ein Weihnachtsstern auf der Theke. Es riecht nach Kaffee und Desinfektion.'); if (A.malaHere()){ await A.wait(500); await A.g('Hier arbeitet sie.'); } return; }
-    if (fresh){ await A.narrate('Später. Oben ist wieder Ruhe eingekehrt.'); return; }
+    if (fresh){ await A.narrate('Ein anderer Nachmittag. Oben ist wieder Ruhe eingekehrt, die Uhr im Flur geht auf drei zu.'); return; }
     if (h.fri && h.fri(G) && A.first('!k4.g.heimF')) await A.narrate('Freitag. Der Nebel steht vor der Glastür wie ein zweites Haus.'); }
 });
 })(M);
@@ -53370,6 +53408,13 @@ M.room('kuca5',{ name:'Ružas Küche', scape:'k2_kuca', music:function(G){ retur
 var P=M.P;
 function open(G){ return G.phase==='k2_s1'||G.phase==='k2_s2'; }
 function eminaHere(G){ return open(G) && !(G.flags['k2.s1.eminaAway'] && !G.flags['k2.s1.eminaBack']); }
+// Analyse K2-B04: Ist Lejla geholfen und weiß Marko, dass hinter dem Spiegel etwas liegt, geht Emina beim nächsten Betreten sichtbar.
+// Vorher ging sie nur, wenn Mala ein zweites Mal lauschte – ein unsichtbarer Auslöser. Das Lauschen bleibt als Abkürzung.
+function eminaGoes(G){ return G.phase==='k2_s1' && G.flags['k2.s1.letterFixed'] && G.notes.indexOf('s1_hidden')>=0 && G.notes.indexOf('s1_away')<0 && !G.flags['k2.s1.eminaAway']; }
+async function eminaLeaves(A){ var E=A.npc('emina'); await A.wait(400);
+  if (E.actor) await E.say('Lejla, ich gehe zu Tante Sabira. Pass auf die Kafana auf. Und auf die Löffel.'); else await A.voice('Hinter der Theke: „Lejla, ich gehe zu Tante Sabira. Pass auf die Kafana auf.“',P.s5);
+  await A.wait(300); A.sfx('door'); A.note('s1_away'); A.setFlag('k2.s1.eminaAway'); A.rebuild();
+  await A.wait(500); if (A.isMala()) await A.g('Sie geht. Jetzt.'); else await A.m('Emina geht. Der Schlüssel zur Kammer bleibt am Haken.'); }
 // ---------------------------------------------------------------- Emina
 async function talkEmina(A){ var E=A.npc('emina'), p=A.G.phase;
   if (p==='k2_s2') return E.say(A.cycle('emS2',['Kaffee? Heute für Sie umsonst. Morgen nicht mehr.','Lejla übt Geige, seit sie den Brief abgeschickt hat. Die Nachbarn beschweren sich. Ich nicht.','Die Bank unter der Uhr ist kalt geworden. Ich sitze trotzdem manchmal drauf.']));
@@ -53423,7 +53468,7 @@ async function talkLejla(A){ var L=A.npc('lejla'), p=A.G.phase;
     {t:'Was machen Sie, wenn Sie nicht hier sind?',once:'lj3',go:async function(A){ await L.say('Geige. Und Hausaufgaben. Und weg wollen.'); await L.say('Ich bewerbe mich in Wien. Musikgymnasium. Den Brief muss ich auf Deutsch schreiben. Mein Deutsch ist … Google.'); A.setFlag('k2.s1.lejlaLetter'); }},
     {t:'Zeigen Sie mir Ihren Brief nach Wien.',if:A.flag('k2.s1.lejlaLetter')&&!A.flag('k2.s1.letterFixed'),go:function(A){ return lejlaLetter(A,L); }},
     {t:'Kommen Sie in die Kammer?',if:A.hasNote('s1_hidden')&&!A.flag('k2.s1.ostavaOpen'),go:async function(A){ if (!A.flag('k2.s1.letterFixed')){ await L.say('In die Ostava? Da hat Oma den Schlüssel. Um den Hals. Wie eine Nonne.'); await L.say('Warum sollte ich Ihnen da rein helfen? Sie sind ein Fremder mit einem Dalmatiner-Akzent.'); return; }
-        if (!A.flag('k2.s1.eminaAway')){ await L.say('Wenn Oma weg ist. Nicht vorher. Sie hört alles, sogar wenn sie schläft.'); return; } return lejlaOpens(A,L); }},
+        if (!A.flag('k2.s1.eminaAway')){ await L.say('Wenn Oma weg ist. Nicht vorher. Sie hört alles, sogar wenn sie schläft.'); await L.say('Sie geht nachher zu Tante Sabira, wie jeden Sonntag. Kommen Sie dann wieder.'); return; } return lejlaOpens(A,L); }},
     A.askOpt({ s1_waited:'Das hat sie gesagt? Zu mir? Ich dachte, sie redet vom Wetter. Bei Oma ist alles Wetter.', s1_tomaz:'Ein Soldat unter der Uhr? Sie sehen auch zu viele Filme.',
       s1_note:'„Wenn die Kula sieben schlägt“? Das ist so altmodisch, dass es schon wieder schön ist.', s1_twosevens:async function(A){ await L.say('Ha. Zwei Siebenen. Das ist wie bei meinen Eltern: Sie sagt sieben, er kommt um neun.'); await L.say('Wenn du wissen willst, wann damals die Sonne unterging: Der alte Kabiljo in der Passage an der Ferhadija hat alte Takvime. Er hat alles Alte. Er ist selbst alt.'); A.unlock('ferhadija'); },
       s1_nowrite:'Briefe? Oma bekommt keine Briefe. Nur Rechnungen. Und die versteckt sie.', s1_father:'Uropa Halid. Den kenne ich nur vom Foto. Er sieht auf allen Fotos aus, als würde er gleich jemanden rauswerfen.' },'Keine Ahnung. Ich bin sechzehn.'),
@@ -53528,6 +53573,7 @@ M.room('kafana',{ name:'Kafana „Kula“', scape:'k2_kafana',
       // QA BUG-005: die Figurenliste stand schon vor der Szene; Emina kommt jetzt auch sichtbar zurück (wie in actors())
       if (!A.npc('emina').actor && eminaHere(A.G)){ var e=M.apos('kafana','emina',[190,104,'F']); A.spawn({id:'emina',ch:'emina',x:e[0],y:e[1],f:e[2]||'F',name:'Emina',idle:'pour',speechY:34}); }
       await A.voice('Von der Tür: „Lejla! Wer war in der Kammer?“',P.s5); await A.wait(600); await A.m('Emina. Zurück von Tante Sabira. Früher als gedacht.'); if (A.malaHere()) await A.g('Jetzt.'); }
+    if (eminaGoes(A.G) && !A.flag('k2.s1.eminaBack')) await eminaLeaves(A);
     if (p==='k2_s1' && A.first('k2kfS1')){ await A.m('Warm, dunkel, Kupfer an allen Wänden. Es riecht nach Kaffee und nach etwas, das man früher Tabak nannte.'); } }
 });
 })(M);
@@ -56162,7 +56208,7 @@ async function hutEcho(A){ var G=A.G;
   await A.wait(600); await A.g('Ich habe gezeichnet. Hier, auf dem Mehl.'); await A.wait(500); await A.g('Ich hatte einen Bleistift. Ich habe immer daran gekaut. Mama hat geschimpft.');
   if (A.marko){ await A.m('Und der Motor?'); await A.wait(500); await A.g('Das war er. Er ist gefahren.'); } }
 async function bellEcho(A){ var G=A.G;
-  if (N(G,'a3_roof') && !N(G,'a3_lightseq')) return lightSeq(A);
+  if (N(G,'a3_roof') && !N(G,'a3_lightseq')){ if (!N(G,'a3_bell3')){ A.note('a3_bell3'); A.note('a3_voice'); A.setFlag('k3.n2.bell'); } return lightSeq(A); }   // Analyse K3-B04: ältere Stände
   if (N(G,'a3_bell3')) return A.g(A.cycle('bellE2',['Dreimal. Mit Pausen. Ich habe jedes Mal gewartet, bis der Ton weg war.','„Halo! Ima li koga?“ Ist da jemand? Da war jemand. Ich weiß es jetzt.','Drüben war ein Licht. In einem Fenster. Welchem, weiß ich nicht mehr. Ich weiß es, wenn ich es sehe.']));
   flinch(A); await A.wait(400);
   await A.memory({title:'Nachhall – die Glocke',tint:'ghost',draw:M.mem&&M.mem.k3_bell,lines:['Nacht. Frost am Pfosten. Ein Mädchen zieht am Glockenseil, und die Glocke schlägt.','Sie wartet, bis der Ton über dem Wasser verschwunden ist.','Dann ruft sie hinüber: „Halo! Ima li koga?“ Ist da jemand?','Drüben, in einem der Fenster, ist ein Licht.','Sie läutet noch einmal. Und noch einmal. Dreimal, mit langen Pausen dazwischen.']});
@@ -56503,6 +56549,10 @@ async function batoPart(A,which){ var B=A.npc('bato'), G=A.G; if (F(G,'k3.n3.bat
     await A.wait(700); await A.m('Und Zlata gebracht.'); await A.wait(1200); await B.say('Ja.');
     await A.wait(900); A.sfx('lighter'); A.setFlag('k3.bato.lantern'); resync(A); await A.narrate('Er nimmt die Laterne vom Haken und zündet sie an. Mitten am Tag. Dann hängt er sie zurück, das Glas zum Wasser hin.');
     await A.wait(900); await A.m('Er flackert wie eine Kerze im Durchzug. Aber er hält fest. Noch.'); } }
+// Analyse K3-B01: Liegen Dachfenster und Lichtfolge vor, rutscht Bato auch ohne die geordnete Nacht heraus; einzeln fragt er zurück, was fehlt
+async function batoLight(A,which){ var G=A.G, B=A.npc('bato'); if (N(G,'a3_roof') && N(G,'a3_lightseq')) return batoSlip(A);
+  if (which==='roof') return B.say('Meine Kammer hat ein Fenster. Na und? Wann soll da Licht gewesen sein?');
+  return B.say('Läuten, Licht, Läuten. Wo soll das Licht gewesen sein?'); }
 async function batoSlip(A){ var B=A.npc('bato'), G=A.G; if (N(G,'a3_thrice')) return B.say('Ich habe gesagt, was ich gesagt habe. Dreimal. Dann war Ruhe.');
   await A.m('In Ihrer Kammer war Licht. In der Nacht. Zwischen dem ersten und dem dritten Läuten.'); await A.wait(800);
   await B.say('Licht?'); await A.wait(600); await B.say('Ich habe es gleich wieder ausgemacht.'); await A.wait(500); await B.say('Wer nachts Licht macht, hat bald ein Loch im Fenster.');
@@ -56527,7 +56577,7 @@ async function talkBato(A){ var B=A.npc('bato'), G=A.G;
       a3_grave:'Unter der Quitte ist nichts. Nur Frost.', a3_slept:'Zlata schläft am Herd. Im Winter immer. Oben ist es zu kalt für sie.',
       a3_hut:'Die Hütte ist voll. Mehl und Decken, für die Dörfer. Morgen hole ich es.', a3_stumps:'Die Brücke. Im Sommer. Seitdem fahre ich, und keiner sagt danke.',
       a3_plaque:'Gebaut? Hier wird nichts gebaut. Hier ist Krieg.', a3_neighbor:'Achtundneunzig? Was soll achtundneunzig sein?', l3_survived:'Wer lebt? Wovon reden Sie? Es ist Nacht.',
-      a3_morning:'Am Morgen. Am Morgen sehen wir weiter. Jetzt ist Nacht.', a3_roof:'Meine Kammer. Was ist mit meiner Kammer?', a3_lightseq:'Was zählen Sie da? Läuten, Licht, Läuten? Gehen Sie schlafen.',
+      a3_morning:'Am Morgen. Am Morgen sehen wir weiter. Jetzt ist Nacht.', a3_roof:function(A){ return batoLight(A,'roof'); }, a3_lightseq:function(A){ return batoLight(A,'seq'); },
       a3_bato:'Ja, ich. Bato. Wer sonst.' },'Was? Ich verstehe Sie nicht. Der Fluss ist zu laut.'),
     {t:'(Gehen.)',bye:true,go:async function(A){ await B.say('Und läuten Sie nicht mehr.'); }}
   ]; });
@@ -56546,6 +56596,7 @@ var LIGHT={ kitchen:['Ich gehe in die Küche und halte das Handy ans breite Fens
 async function lightTest(A,pre){ var G=A.G;
   if (!d3(G)) return A.m(night(G)?'Nicht jetzt. Nicht in dieser Nacht.':'Wozu? Das ist vorbei.');
   if (N(G,'a3_roof')) return A.m('Das kleine Fenster unter dem Dach. Mala hat es erkannt. Mehr Licht braucht es nicht.');
+  if (!N(G,'a3_bell3')) return A.m('Erst muss Mala an der Glocke hören, wie die Nacht war. Sonst weiß ich nicht, welches Licht sie suchen soll.');   // Analyse K3-B04
   if (!F(G,'k3.z.window')){ if (!zlataOut(G)) return A.m('Nicht ohne sie zu fragen. Es ist ihr Haus.'); await permission(A); }
   var c=pre||await A.choose([{t:'(Ins Küchenfenster.)',id:'kitchen',silent:true},{t:'(Ins Stubenfenster.)',id:'stube',silent:true},{t:'(Ins Dachfenster.)',id:'roof',silent:true},{t:'(Lassen.)',id:'no',bye:true,silent:true}],{title:'Das Licht'});
   if (!c||c==='no') return;
@@ -57001,6 +57052,7 @@ async function rollcall(A){ if (A.flag('k2.s3.free')) return; if (!night(A.G)) r
   await A.wait(500); await Z.say('Du lebst. Und ich nicht.'); await A.wait(1100); await Z.say('Achtundneunzig. Das Herz. Ich habe nie wieder unterrichtet. Ich habe gedacht, ich habe ein Kind nicht beschützt.'); await A.wait(800); await Z.say('Und das Kind hat zwei Finger weniger und eine Mütze und sagt danke.'); Z.mood('sad');
   await A.wait(1000); await A.m('Delić, Lana.'); await A.wait(2200); await A.narrate('Stille. Die Kerzen flackern. Selma sieht sich um, als hätte jemand die Tür aufgemacht.');
   await A.wait(900); await A.g('Prisutna.'); await A.wait(1000); await Z.face('R'); await Z.say('Lana.'); await A.wait(800); await Z.say('Lana, Kind. Du und der kleine Vuković, immer die Straßenbahnen. Er hat sie dir abgemalt, und du hast ihm die Räder beigebracht. Er hat sie nie gekonnt.'); A.note('m2_lana_teacher');
+  if (!A.hasNote('m2_lana')){ await A.wait(700); await A.m('(Leise.) Lana. Lana Delić. Neunter Stock.'); A.note('m2_lana'); }   // Analyse K2-B02: kein Notizbuch-Schloss für das, was hier gesagt wird
   await A.wait(1000); await A.m('…Vuković, Marko.'); await A.wait(800); await A.m('Prisutan.'); await Z.say('Mali. Du hast dein Zeugnis nie abgeholt. Achte Klasse, alles Vierer, und eine Zwei im Zeichnen.'); await A.m('Ich weiß.'); await A.wait(500); await A.m('Jetzt weiß ich es.');
   await A.wait(900); await A.narrate('Ich verteile die Zeugnisse. Für die, die da sind, und für die, die nicht kommen konnten. Die anderen lege ich auf die Bänke. Mit Stempel.'); A.take('svjedocanstva');
   await A.wait(900); await Z.say('Lana. Komm her.'); if (A.malaHere()) await A.walkG(Math.round(Z.actor.x)-22,Math.round(Z.actor.y)+2);
@@ -65886,7 +65938,7 @@ function missing(G){ var p=G.phase;
   if (p==='k4_pro'){ if (!f(G,'k4.p.hansi')) return 'Am Busbahnhof war noch etwas. Mein Kopf weiß es besser als ich.'; return f(G,'k4.p.coffee')?'Erst Mama. Sie kommt um zwei.':'Erst Mama. Sie kommt um zwei. Bis dahin könnte ich Kaffee kochen, in Großmutters Džezva. Mama soll sie auf dem Herd sehen.'; }
   if (p==='k4_d1'){ if (!has(G,'z4_stiefel')) return 'Ana wollte heute mit den Kindern raus. Mit uns.'; if (!has(G,'s4_peppino')) return 'Mein Kopf pocht. Irgendwo in der Stadt wartet einer.'; if (!has(G,'g4_gerda')) return 'Mama ist bei der Arbeit. Und ich habe den Tag noch nicht zu Ende gedacht.'; }
   if (p==='k4_d2'){ if (!has(G,'z4_ana2004')) return 'Ana. Ich muss mit Ana reden. Nicht am Telefon.'; if (!has(G,'s4_name')) return 'Sepp hat einen Namen. Ich habe ihn noch nicht.'; if (!has(G,'g4_drei')) return 'Und um drei geht im Heim ein alter Mann zum Aufzug. Warum, weiß ich nicht.'; }
-  if (p==='k4_d3'){ if (!f(G,'k4.s.crossed')) return 'Sepp wartet noch auf seinen Brief.'; if (!f(G,'k4.g.decided')) return 'Gerda kommt jeden Tag um drei. Noch.'; if (M.k4Variant(G)==='no' && !f(G,'k4.e.sample2')) return 'Die Probenkarte von Frau Kolar. Heute.'; }
+  if (p==='k4_d3'){ if (!f(G,'k4.s.crossed')) return 'Sepp wartet noch auf seinen Brief.'; if (!f(G,'k4.g.decided')){ var v1=has(G,'g4_versuch1'), v2=has(G,'g4_versuch2'); if (v1!==v2) return 'Gerda kommt jeden Tag um drei. Einen Versuch habe ich gemacht. Einer fehlt – ich gehe hin, sobald ein neuer Nachmittag ist.'; if (v1&&v2) return 'Gerda kommt jeden Tag um drei. Sie muss hören, was die zwei Versuche gezeigt haben.'; return 'Gerda kommt jeden Tag um drei. Noch.'; } if (M.k4Variant(G)==='no' && !f(G,'k4.e.sample2')) return 'Die Probenkarte von Frau Kolar. Heute.'; }
   if (p==='k4_d4'){ if (!f(G,'k4.s.farewell')) return 'Heute ist Donnerstag. Sepps Donnerstag.'; if (!f(G,'k4.g.thermos')) return 'Um drei, im Heim. Heute zum letzten Mal.'; }
   if (p==='k4_d5'){ if (!f(G,'k4.d5.ana')) return 'Ana hat geschrieben: „Komm vorbei.“'; if (!has(G,'z4_zweistaedte')) return 'Ein Satz. Zwei Städte. Ich muss ihn einmal ganz zu Ende denken.'; }
   return null; }
@@ -66018,7 +66070,7 @@ M.CREDITS4=['DIE STILLEN','Kapitel 4: München','','','Marko Vuković','Mala',''
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind München nachempfunden.','Das Haus am Bavariapark gibt es nicht.','Alle Figuren sind erfunden.','','',
   'Für alle, die nicht zurückgekommen sind,','und für alle, die es aussprechen mussten.','','','FORTSETZUNG','Kapitel 5: Sarajevo','','',''];
 M.endChapter4=async function(A){ var G=A.G; if (G.ended) return; G.ended=true;
-  try{ localStorage.setItem('mala.c4end',JSON.stringify({at:Date.now(),sample:G.flags['k4.c3.sample']!==false,sample2:!!G.flags['k4.e.sample2'],kurve:has(G,'z4_kurve'),slippers:!!G.flags['k4.e.slippers'],
+  try{ localStorage.setItem('mala.c4end',JSON.stringify({at:Date.now(),sample:G.flags['k4.c3.sample']!==false,sample2:!!G.flags['k4.e.sample2'],kurve:!!G.flags['k4.fin.kurve'],slippers:!!G.flags['k4.e.slippers'],
       nada:!!G.flags['k4.e.nada'],fake:G.inv.indexOf('brief_falsch')>=0||!!G.flags['k4.s.fake'],davor:!!G.flags['k4.v.car'],consent2:G.flags['k4.e.consent2']||null,playMs:G.playMs||0}));
   }catch(e){} M.E.markChapterEnd(4);
   await card(A,'','Ende des vierten Kapitels','',5200,'Fortsetzung: Sarajevo');
@@ -66448,7 +66500,8 @@ M.k2FinNightOffer=async function(A){ if (A.flag('k2.f2.night')) return true; if 
 M.k2MalaTicket=async function(A){ if (!F(A,'k2.p2.back')) return A.g('Löcher.'); return A.g(A.cycle('gTk',['Löcher. Ich mag Löcher in Fahrscheinen. Sie beweisen, dass man gefahren ist.','Behalte ihn. Den wirft man nicht weg, den ersten.'])); };
 // ---------------------------------------------------------------- Der Karton aus Split
 M.k2OpenKarton=async function(A){ if (F(A,'k2.f2.opened')) return A.m('Der Karton ist offen. Darin nur noch Zeitungspapier von 1994.');
-  if (!N(A,'m2_lana') || !F(A,'k2.s3.done')){ await A.m('Ich halte das Paketband zwischen den Fingern. Noch nicht. Ich weiß noch nicht genug, um es auszuhalten.'); if (A.G.malaOn) await A.g('Du weißt mehr, als du denkst.'); return; }
+  if (!F(A,'k2.s3.done')){ await A.m('Ich halte das Paketband zwischen den Fingern. Noch nicht. Ich weiß noch nicht genug, um es auszuhalten.'); if (A.G.malaOn) await A.g('Du weißt mehr, als du denkst.'); return; }
+  if (!N(A,'m2_lana')){ await A.m('Lana. Zora hat sie beim Namen gerufen. Lana Delić, neunter Stock.'); A.note('m2_lana'); await A.wait(500); }   // Analyse K2-B02: ältere Stände
   A.setFlag('k2.f2.opened'); await A.m('Siebzehn Jahre.'); await A.wait(800); A.sfx('tape'); await A.narrate('Das Paketband reißt mit einem Geräusch, das viel zu laut ist für siebzehn Jahre Stille. Darunter das alte Klebeband, gelb und spröde. Es gibt sofort nach, als hätte es nur auf jemanden gewartet.');
   await A.wait(700); A.take('karton'); A.give('photo_m'); A.give('sweater'); A.give('ticket_m'); A.give('ashpage'); A.give('drawing'); A.sfx('paper');
   await A.m('Obenauf ein Zettel von Sanja: „Ich habe nicht hineingesehen. Das Foto lag im Regal, wie du gesagt hast. Pass auf dich auf.“'); await A.wait(600);
@@ -71320,7 +71373,7 @@ async function talkNadaD1(A){ var N=A.npc('nada'), p=ph(A);
     {t:'Die Fahrscheine. Die Samstage …',once:'k5na2',go:async function(A){ await N.say('Fahrscheine? Die hat sie bei Alija gekauft. Mit dem Stern.'); await N.say('Samstags war sie bei euch. Ich war nie dabei. Das war euer Samstag.');
       A.note('f5_eursamstag'); await A.wait(500); await N.say('Keiner von euch hat je geschrieben. Achtzehn Jahre.'); await A.wait(400); await N.say('Sie ist losgefahren, um dich zu holen. Natürlich.');
       await A.wait(500); await N.say('Geh in ihr Zimmer, wenn du willst. Ich lüfte jeden Tag.'); A.setFlag('k5.d1.lana'); A.set('lanaOpen',true); A.rebuild();
-      if (gHere(A)){ await A.wait(300); await A.g('Euer Samstag. Sie hat recht. Sie war nie dabei.'); } }},
+      if (gHere(A)){ await A.wait(300); await A.g('Euer Samstag.'); } }},
     {t:'Wie geht es dir, Nada?',once:'k5na3',go:async function(A){ await N.say('Ich bügle. Seit Januar bügle ich jeden Abend. Hemden, die keiner trägt. Ich rede dabei.'); await N.say('Mit wem, frag nicht. Mit der Wäsche.'); if (gHere(A)){ await A.wait(300); await A.g('Mit mir.'); } }},
     {t:'Kommt Zlata?',once:'k5na4',go:async function(A){ await N.say('Heute Abend. Mit Vlado. Sie bringt etwas mit. Ein Brett, hat sie am Telefon gesagt.'); await N.say('Ich weiß, was auf dem Brett steht.'); }},
     {t:'Bis später, Nada.',bye:true,go:async function(A){ await N.say(A.cycle('k5naB',['Geh. Komm wieder.','Ja. Später.'])); }}
@@ -71409,7 +71462,7 @@ async function atem(A){ var G=A.G;
   await A.m('Frag mich jetzt.'); await A.g('Nein. Nach dem Begräbnis. Das war abgemacht.'); await A.m('Und wenn ich dann das Falsche sage?'); await A.g('Es gibt kein Falsches. Es gibt nur „nur müde“.');
   await A.narrate('Sie hält die Dose auf dem Schoß, wie immer, eine Hand darauf.');
   await A.m('Und die Dose?'); await A.g('Für Mama. Wer sonst?'); A.note('f5_dose');
-  await A.m('Nada war nie samstags dabei.'); await A.g('Sie ist meine Mutter.'); await A.m('Das ist kein Samstag.'); await A.g('Du bist heute sehr genau.'); await A.m('Ich bin Übersetzer.');
+  await A.m('Und samstags?'); await A.g('Sie ist meine Mutter.'); await A.m('Das ist keine Antwort.'); await A.g('Du bist heute sehr genau.'); await A.m('Ich bin Übersetzer.');
   await A.wait(600); await A.g('Weißt du, was ich will? Nicht Mama. Nicht Zlata. Ich.'); await A.m('Was?');
   await A.g('Noch einmal Samstag. Zehn nach elf. Und diesmal bist du fertig.'); await A.m('Ich war nie fertig.'); await A.g('Eben.');
   await A.narrate('Mačak dreht sich auf den Rücken. Der Beschlag ist weg, die Drei auch.');
@@ -71669,6 +71722,8 @@ M.k5TalkDamir=async function(A){ var D=A.npc('damir');
 M.k5StanD2Enter=async function(A,from){ if (A.isMala()) return; if (A.first('k5sn2')){ await A.narrate('Nada steht in der Küche. Zlata steht draußen auf dem Balkon, im Mantel, und raucht nicht, weil sie nie geraucht hat. Zwischen ihnen die Balkontür und achtzehn Jahre.');
   if (A.G.malaOn) await A.g('Ich sage nichts. Ich habe es versprochen.'); } };
 M.k5StanTalkD2=async function(A,id){ if (id==='nada') return nadaD2(A); if (id==='zlata') return zlataD2(A); if (id==='vlado') return vladoD2(A); return A.npc(id).say('…'); };
+// Analyse K5-B02: Haben beide gehört, was die andere wollte, sagt Marko, was noch fehlt – ohne den Schluss vorwegzunehmen
+async function twoNamesNext(A){ if (F(A,'k5.s.toNada') && F(A,'k5.s.toZlata') && !has(A,'s5_teile')){ await A.wait(500); await A.m('Beide wollen, dass man sie findet. Aber zwei Namen auf einem Pfosten? Was steht auf dem Brett schon – und was hat nur Nada?'); } }
 async function proposal(A){ if (!has(A,'s5_teile')){ await A.m('Ich weiß noch nicht, wie es aussehen soll. Zwei Namen auf einem Pfosten. Aber wie, ohne dass eine verliert?'); return false; }
   var N=A.npc('nada'), Z=A.npc('zlata');
   await A.narrate('Ich hole Zlata vom Balkon herein. Beide stehen in der Küche, Nada am Herd, Zlata an der Tür.');
@@ -71683,8 +71738,8 @@ async function nadaD2(A){ var N=A.npc('nada');
     {t:'„Mala“ ist der Name, den ich ihr gegeben habe.',once:'k5n23',if:!F(A,'k5.s.toNada'),go:async function(A){ await N.say('Dein Name. Auf ihrem Grab.'); if (A.G.malaOn){ await A.wait(300); await A.g('Das war ungeschickt.'); } }},
     {t:'In Skela hat sie selbst „Mala“ gesagt. Zlata hat geschrieben, was sie gehört hat. Damit man sie findet.',if:has(A,'s5_beide')&&!F(A,'k5.s.toNada'),go:async function(A){ A.setFlag('k5.s.toNada');
       await A.wait(500); await N.say('Selbst?'); await A.m('Zlata hat es erzählt. In Skela. Sie hat gefragt, und Lana hat „Mala“ gesagt.'); await A.wait(800);
-      await N.say('Damit man sie findet.'); await A.wait(600); await N.say('Wie ich. Siebzehn Januare.'); A.save(); }},
-    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
+      await N.say('Damit man sie findet.'); await A.wait(600); await N.say('Wie ich. Siebzehn Januare.'); A.save(); await twoNamesNext(A); }},
+    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed')&&has(A,'s5_teile'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
     {t:'Ich gehe zu Nedžad.',if:F(A,'k5.s.agreed')&&!F(A,'k5.s.engraved'),bye:true,go:async function(A){ await N.say('Geh. Bis zwölf.'); }},
     {t:'Bis später, Nada.',bye:true,go:async function(A){ await N.say('Ja.'); }}
   ]; }); }
@@ -71693,8 +71748,8 @@ async function zlataD2(A){ var Z=A.npc('zlata');
     {t:'Warum „Mala“?',once:'k5z21',go:async function(A){ await Z.say('Bei mir hieß sie Mala. So wollte sie es. Ich habe sie gefragt, wie sie heißt, und sie hat „Mala“ gesagt. Die Kleine. Sie hatte Fieber.'); }},
     {t:'Beide Namen. Oben und unten.',once:'k5z22',if:!F(A,'k5.s.toZlata'),go:async function(A){ await Z.say('Dann steht sie da wie eine Fremde mit zwei Namen.'); await A.wait(300); await Z.say('Nein. Das Brett ist, wie es ist. Bato hat geschnitten, was sie gesagt hat.'); }},
     {t:'Siebzehn Briefe. Jeder fängt mit ihrem Namen an. Damit man sie findet.',if:has(A,'s5_beide')&&!F(A,'k5.s.toZlata'),go:async function(A){ A.setFlag('k5.s.toZlata');
-      await A.wait(600); await Z.say('Siebzehn.'); await A.wait(600); await Z.say('Ich habe einmal schneiden lassen. Sie hat siebzehnmal geschrieben.'); await A.wait(400); await Z.say('Damit man sie findet. Wie ich.'); A.save(); }},
-    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
+      await A.wait(600); await Z.say('Siebzehn.'); await A.wait(600); await Z.say('Ich habe einmal schneiden lassen. Sie hat siebzehnmal geschrieben.'); await A.wait(400); await Z.say('Damit man sie findet. Wie ich.'); A.save(); await twoNamesNext(A); }},
+    {t:'Ein Vorschlag. Für euch beide.',if:F(A,'k5.s.toNada')&&F(A,'k5.s.toZlata')&&!F(A,'k5.s.agreed')&&has(A,'s5_teile'),go:async function(A){ if (await proposal(A)) return 'bye'; }},
     {t:'Bis später, Zlata.',bye:true,go:async function(A){ await Z.say('Polako, sine.'); }}
   ]; }); }
 async function vladoD2(A){ var V=A.npc('vlado');

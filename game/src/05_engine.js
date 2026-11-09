@@ -317,13 +317,16 @@ var API={
 M.API=API;
 // Gesprächsschleife: getOpts() -> [{t, go:async fn(A), once:'key', if:bool, bye:true, silent:true, ask:fn(A,noteId)}]
 async function menuLoop(getOpts){
+  // Analyse K5-B04: Hat eine Option den Raum, den Abschnitt oder den Bildschirm gewechselt, ist das Gespräch vorbei.
+  // Vorher stand danach das alte Menü weiter offen, z. B. Nedžads Optionen in Nadas Wohnung.
+  var r0=room, p0=GS.phase, moved=function(){ return room!==r0 || GS.phase!==p0 || E.screen!=='game'; };
   for (var guard=0;guard<80;guard++){
     var opts=getOpts().filter(function(o){ return o && !(('if' in o) && !o.if) && !(o.once && GS.seen['dlg:'+o.once]); });
     if (!opts.length) return;
     var i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!(o.ask||o.noGray)}; }));
     var o=opts[i]; if (o.once) GS.seen['dlg:'+o.once]=1;
-    if (o.ask){ var nid=await pickNote(o.askTitle); if (nid){ var r0=await o.ask(API,nid); if (r0==='bye') return; } continue; }
-    if (o.go){ var r=await o.go(API); if (r==='bye') return; }
+    if (o.ask){ var nid=await pickNote(o.askTitle); if (nid){ var ra=await o.ask(API,nid); if (ra==='bye' || moved()) return; } continue; }
+    if (o.go){ var r=await o.go(API); if (r==='bye' || moved()) return; }
     if (o.bye) return; }
 }
 // Standard-"Frag nach"-Option für eine Person: ask-Tabelle {notizId: handler}, sonst askAny
