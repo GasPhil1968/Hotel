@@ -2,6 +2,8 @@
 
 **Analyse aller fünf Kapitel** · Stand 9. November 2026 · Commit `366c256` · keine Spieldateien geändert
 
+> **Nachtrag (Umsetzung):** Die Muss-Liste P01–P12 aus Abschnitt G ist umgesetzt und geprüft. Was geändert wurde, wie es geprüft ist und was die neue Hinweisprobe gefunden hat, steht in **Abschnitt J**. Die Abschnitte A–I beschreiben unverändert den Stand vor der Umsetzung.
+
 Grundlage ist Ron Gilberts Essay „Why Adventure Games Suck And What We Can Do About It“ (1989, veröffentlicht 2004). Untersucht ist die aktuelle Fassung des Spiels; im Auftrag heißt es noch MALA. Der Bericht trennt drei Dinge: was im Essay steht, wie ich es auf ein heutiges Point-and-Click-Adventure übertrage, und welche Maßstäbe eigens für dieses Spiel gelten (M1–M5).
 
 **Lesehilfe.**
@@ -1059,3 +1061,44 @@ Dazu:
 - **Ältere Prüfergebnisse:** Die 4.000 Läufe stammen von der Fassung `5ddc4f3c` (7. 11.); seither sind Kapitel 5, die Kapitelauswahl und Änderungen an Kapitel 4 und 5 dazugekommen. Eine neue Gesamtsimulation einschließlich Kapitel 5 steht aus.
 - **Bosnisch-kroatische Fassung:** Sie umfasst nur Kapitel 1 vollständig und wurde nicht gesondert geprüft. Beinahe-Treffer und neue Sätze aus diesem Bericht müssten übersetzt werden.
 - **Doku gegen Code:** Einzelne Lösungsdokumente nennen veraltete Werte (z. B. die Landmarken der Peilung in `LOESUNG3.md`, Huber „2. Stock“ in `LOESUNG4.md`). Sie sind nicht Teil dieser Bewertung, sollten aber mit den Korrekturen nachgezogen werden.
+
+## J. Umsetzung der Muss-Liste (Nachtrag, 9. November 2026)
+
+### J.1 Was geändert ist
+
+| Nr. | Befund | Umsetzung | Prüfung |
+|---|---|---|---|
+| P01 | K2-B01 | Die Rotkreuz-Nachricht wird beim Aufbrechen des Wärmefachs gleich gelesen (`rooms/kuca.js`). Vor dem Epilog nimmt Nada sie nicht an („Nicht jetzt, Mali.“); ältere Stände, in denen sie Nada schon hat, geben sie über Nada zurück (`rooms/stan.js`). Hinweis f4 kennt das leere Wärmefach. | `qa/regress/bug_010_rcm_nada.js` |
+| P02 | K5-B02 | „Ein Vorschlag“ erst mit „Zwei Hälften“; ohne den Schluss sagt Marko, was er zusammenlegen muss (`97_k5_b.js`). Hinweis h5j Stufe 3/4 zeigt aufs Notizbuch. | `bug_011_k5_rueckmeldung.js` |
+| P03 | K2-B02, K2-B03 | „Lana Delić?“ auch über Register + „Zoras Helferin“ und über Malas Satz am Aufzug; Zora ruft den Namen, wenn der Schluss fehlt; der Karton öffnet sich auch in älteren Ständen (`rooms/skloniste.js`, `rooms/haustor.js`, `13_k2_notes.js`, `97_k2_mala.js`). | `bug_014_k2_lana_emina.js` |
+| P04 | K4-B01 | Ein neuer Nachmittag beginnt auch, wenn Mala in Zimmer 214 bleibt; die Uhr bietet „(Später wiederkommen.)“; Kraus’ Sperre gilt nur für einen Nachmittag; kein Satz behauptet mehr „für heute“ (`rooms/heim_flur.js`, `rooms/heim.js`, `96_k4_story.js`). | `bug_012_k4_nachmittag.js` |
+| P05 | K3-B01, K3-B04 | Bato reagiert auf Dachfenster **und** Lichtfolge; mit nur einem Beleg fragt er zurück; die Lichtprobe kommt erst nach dem Glocken-Nachhall (`rooms/skela_l.js`, `rooms/skela_d.js`, `13_k3_notes.js`). Das Ordnen der Nacht bleibt als Weg. | `bug_013_k3_bato.js` |
+| P06 | K5-B01, K5-B09 | Fünf Beinahe-Treffer zu „Wem gehören die Fahrscheine?“; Vorwegnahmen gekürzt („Euer Samstag.“, „Und samstags?“) (`13_k5_notes.js`, `97_k5_a.js`). | `bug_011_k5_rueckmeldung.js` |
+| P07 | K4-B02 | Vier Beinahe-Treffer zu Ružas Satz, Lesart, Antrag und Kode (`13_k4_notes.js`). | `bug_012_k4_nachmittag.js` |
+| P08 | K2-B04 | Emina geht sichtbar, sobald man die Kafana wieder betritt; das zweite Lauschen bleibt eine Abkürzung (`rooms/kafana.js`). | `bug_014_k2_lana_emina.js` |
+| P09 | Muster 7 | Neutrale Absagesätze in K2–K5 (`13_k2_notes.js` bis `13_k5_notes.js`). | `grep` auf die beanstandeten Sätze: leer |
+| P10 | K5-B04, Muster 9 | `menuLoop` endet, wenn nach einer Option Raum, Abschnitt oder Bildschirm gewechselt hat (`05_engine.js`). | `bug_011_k5_rueckmeldung.js` |
+| P11 | K4-B05 | Die Entscheidung an der Kurve geht als Wahl an Kapitel 5 (`96_k4_story.js`). | `bug_012_k4_nachmittag.js` |
+| P12 | Muster 10 | Neue Hinweisprobe `qa/hints/hintprobe.js` mit der Zuordnung `qa/hints/stufe4.js` und den Varianten `qa/hints/varianten.js`; `qa/sim.js --states` schreibt Stände aus Zufalls- und Variantenläufen mit. | J.2 |
+
+### J.2 Die Hinweisprobe
+
+**Was sie tut.** Für jeden Spielstand und jedes offene Hinweisthema führt sie die Handlung aus, die der Satz der Stufe 4 nennt (Gespräch samt Optionen und Notizfragen, Gegenstand geben oder benutzen, Stelle benutzen, Notizen verbinden, Reise, Wechsel zu Mala, Rätselfelder wie in den Durchläufen). Die Handlung muss möglich sein und das Thema voranbringen: Das Thema schließt, ein Stufentext ändert sich, oder eine Notiz, ein Gegenstand, ein Schalter oder Raumzustand, den das Thema abfragt, ändert sich. Ein neuer Ort zählt nur bei Geh- und Reiseschritten. Über ganze Folgen prüft sie außerdem: kein Stand ohne offenes Thema, kein Thema, das nach dem Schließen wieder öffnet, keine Lücke in Malas Spur.
+
+**Stände.** Die fünf Musterlösungen (je ein Stand pro Schritt), Stände aus acht Läufen der Kategorien B und C von `qa/sim.js` (ab der ersten Störung bis zum Kapitelende, ohne Dubletten) und vier Varianten an den Stellen, die die Analyse abseits der Musterlösung beschrieben hat.
+
+**Ergebnis gegen den alten Stand** (`b34fa14`, Stände seiner Musterlösungen und die Varianten): **122 Fehler** und 4 zu prüfende Zuordnungen in 386 Ständen (574 ausgeführte Proben), darunter alle bekannten Fälle: K1-B05 (Variante: Nach dem abgebrochenen Gespräch öffnet „Der Briefkasten“ wieder und rät, nach dem Spachtel zu fragen – die Option gibt es nicht mehr), K2-B05 (Variante: „Mit dem Datum aus Nedžads Auftragsbuch …“, Nedžad hat ohne das Armband keinen Einstieg), K2-B06 („Malas Splitter mit dem verbinden, was Rade über das Siebener sagt“ – die Notiz fehlt; Strang m1 setzt nach „Das Siebener“ aus), K2-B07 (Stempel „im Schutzraum“; „Damir seine Zeichnung geben“; Variante: leeres Wärmefach), K4-B11 („Feierabend“ ohne die Vorfrage an Wastl) und K5-B02 (Variante: der Vorschlag bringt nichts).
+
+**Ergebnis gegen den neuen Stand:** **0 Fehler, 0 zu prüfen** in 820 Ständen: 381 Stände der fünf Musterlösungen, 434 Stände aus den Zufalls- und Variantenläufen (Kapitel 1–4) und 5 Stände der Varianten. Ausgeführt wurden 1.252 Proben; 133 Themen-Stände sind übersprungen, jeweils mit Begründung (siehe Grenzen).
+
+**Was die Probe zusätzlich gefunden hat.** Über die bekannten Fälle hinaus nannten gut 30 weitere Stufe-4-Sätze einen erledigten oder noch unmöglichen Schritt, etwa: „Wann ist sieben?“ riet zu Lejla, obwohl die Mondzeit von der Tafel bekannt war; „Der verschnürte Schuhkarton“ riet nach dem gelösten Knoten weiter zur Nadel; Šaćir erinnert sich erst mit dem Datum; Lauschen bei Emina wirkt erst nach Markos Frage; Rade ist nachts und im Zwischenspiel nicht da; „Katas E-Mail“ nannte eine Option, die es nicht gibt; in Kapitel 4 riet die Hilfe nach dem abgestellten Gong weiter zu Kraus und nach Malas Fund weiter zum Hauptbahnhof; die Glastür in Kapitel 5 heißt im Spiel „Balkontür“. Insgesamt sind seit der Analyse 53 Hinweisthemen geändert, zwei neu (m1b2 „Das Siebener“, m1f „Ein Versprechen“ gegen die Lücken in Malas Spur). Eine Spieländerung kam hinzu: Rade beantwortet Malas Uhr-Splitter (K2-B06), seine Geschichte von den zwei Kindern bleibt über das Foto erreichbar.
+
+**Grenzen.** Die Probe prüft die erste Handlung eines Satzes und ihre Wirkung, nicht, ob ein Mensch den Satz versteht. Übersprungen werden, mit Begründung in `stufe4.js`: die Peilungen (eigenes Rätselfeld), das Zusammenspiel in zwei Räumen (s3c), geführte Szenen (h5m, h5fun, h5l4), das Sammelthema d3x, das Freitextfeld (e3f), Ljerkas Rückruf nach zwei Ortswechseln (d1i) und Sätze, die selbst „Morgen“ sagen. `qa/sim.js` spielt Kapitel 5 nicht; dort gibt es Stände abseits der Musterlösung nur über die Variante. Spieltests mit Menschen bleiben nötig (Abschnitt I).
+
+### J.3 Übrige Prüfungen
+
+Stand während der Abschlussprüfung (wird nach deren Ende ergänzt):
+
+- **Regressionstests** (`node qa/regress/run.js`): 14 von 14 bestanden, darunter die fünf neuen Tests BUG-010 bis BUG-014.
+- **Durchläufe der Musterlösung:** Kapitel 1 (61 Schritte), Kapitel 2 (67 Schritte) und Kapitel 3 (113 Schritte) bis zum Abspann, keine JS-Fehler. Kapitel 4, Kapitel 5, die zweite Reihenfolge in Kapitel 2 und die übrigen Prüfungen laufen noch.
+- **Übersetzung:** `node game/tools/i18n_check.js game/src/lang game/src/15_hints_k1.js` meldet keine fehlenden, falsch geschlüsselten oder unübersetzten Texte der Kapitel-1-Hinweise.
