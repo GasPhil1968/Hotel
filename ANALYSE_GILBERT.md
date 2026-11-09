@@ -1114,3 +1114,31 @@ Alle Prüfungen liefen auf dem Stand nach der Umsetzung.
 Die Durchläufe der Kapitel 1–3 liefen auf dem Build unmittelbar vor der letzten Hinweiskorrektur (m1b2); sie werten keine Hinweistexte aus. Hinweisprüfung und Hinweisprobe liefen auf dem endgültigen Build.
 
 **Angepasste Prüfwerkzeuge.** `k2tests.js`, `k3tests.js` und `k4tests.js` bedienten das Titelmenü noch über das frühere Canvas-Menü und erwarteten die Kapitel direkt im Hauptmenü. Seit der HTML-Schicht und der Kapitelwahl stehen sie unter „Kapitel wählen“; `k2tests` brach deshalb vor den eigentlichen Tests ab. Die Tests wählen die Einträge jetzt über die HTML-Schicht (`M.shell.pick`). `k4tests` Test 8 erwartet an der Uhr den neuen Satz „Jetzt nicht mehr.“ und die Wahl „(Später wiederkommen.)“ (P04).
+
+## K. Umsetzung der Soll-Liste und der Nebenpunkte (Nachtrag, 9. November 2026)
+
+### K.1 Was geändert ist
+
+| Nr. | Befund | Umsetzung | Prüfung |
+|---|---|---|---|
+| P13 | K5-B07 | Markos Beschlag am Pensionsfenster hält bis zur nächsten Handlung, wie am Samstag (Raum-Check in `rooms/k5_stadt.js`, `97_k5_a.js`, Bild in `97_k5_c.js`); „Zeichne“ gibt es erst nach der Atem-Szene. | `qa/regress/bug_015_k5_fenster_k3_bett.js` |
+| P14 | K4-B04 | Der Prolog endet erst mit „Ich habe Lana gefunden“; der Christtag endet nicht mehr mitten auf der Wiesn, sondern beim Weggehen oder nach „Lana ist tot“ (`96_k4_story.js`: `dayDone`/`dayReady`, `rooms/jwohnung.js`). Neue Hinweisthemen h4e2 „Lana“ und d4f „Ana weiß es noch nicht“. | `bug_016_k4_lana.js` |
+| P15 | K1-B01, K1-B02 | Zdenka erkennt die Kassetten-Idee („Ivkas Radio. Hatte das nicht ein Kassettenfach?“) und schickt nach der Zeitung; mit dem Radio weiß Marko, wo es Batterien gibt, das Fährterminal ist offen (`rooms/varos.js`, `10_items.js`, `17_map.js`). | `bug_017_beinahe_treffer.js` |
+| P16 | K1-B03, K1-B04, K3-B05, K3-B06, K4-B03, K5-B03, K5-B05, K5-B06 | Ivkas Tür nennt das fehlende Stück; Schlüsselring an Treppe und Kette; Beinahe-Treffer zu Ljerkas Vlado und zu zwei Peilungen; Davor und Lena auf „Dragi dida“ und die Einladung; Ausweis + Briefe als weiterer Weg zum Namen, Peppino + Briefe als Beinahe-Treffer; *Damit man sie findet* + *Nadas Tafel* als zweiter Weg zu „Zwei Hälften“; Marko hebt die Plane an; Kanister am Brückenkopf. | `bug_017_beinahe_treffer.js` |
+| P17 | K2-B08, K3-B02, K3-B03, K5-B09 (Muster 8) | Kapitel 3: Die Peilungsschlüsse und „Skela“ zieht Marko beim Schließen des Blatts bzw. beim Lesen der alten Karte selbst (`97_k3_peil.js`); „Er hat mitgezählt“, Malas Gegensatz am Vulkanizer, „kein Vorwurf“ und „das Wort selbst darunter geschrieben“ entfallen. Kapitel 2: Mirza erzählt die Tat und kommt erst nach dem Schluss „Keine Schuld“; Jakob nennt den Verkauf, nicht „geliehen“. Kapitel 5: Die Notiz zum Tag am Hahn sagt nicht mehr, wer festhielt; der Satz zu den Kanistern an Hamdija verlangt „Wer mich festhielt“. | `bug_019_vorgesagte_schluesse.js`, Durchläufe K2/K3/K5 |
+| P18 | K3-B07, K5-B08 | Das Bett am Sonntag nennt die offene Spur nach Person oder Frage, ohne Ort (`d3Missing`); nach „Du bist ein Mann.“ sagt Mala: „Er glaubt dir nicht. Der Tag weiß es. Am Hahn, in der Mitte, an der Brücke.“ | `bug_015_k5_fenster_k3_bett.js` |
+| P19 | K1-B08 | Lauschen als Pflichtschritt: Dinkos „drži …“ wird zur Notiz *Dinkos Murmeln* und öffnet mit Malas Nachhall die Konfrontation (`rooms/matejuska.js`). Finden als Pflichtschritt: Bruno zeigt sich Marko erst, wenn Mala die Loge spürt oder Marko läutet (`reveal` in `rooms/palma.js`); der Hinweis „für Lebende nicht zu sehen“ stimmt damit. | `bug_018_k1_lauschen_finden.js` |
+| P20 | K1-B06 | Dinko erzählt nur seinen Teil; Ivkas zweite Runde verlangt den eigenen Schluss „Tonći kam mit der ANKICA“, Dinkos Geschichte allein beantwortet ihre Frage nicht (`rooms/riva.js`, `11_notes.js`). | `bug_018_k1_lauschen_finden.js` |
+
+Alle neuen Kapitel-1-Sätze sind auf Bosnisch/Kroatisch übersetzt (`lang/bhs_k1_p.js`). Hinweise und Zuordnungen der Hinweisprobe sind an die neuen Schritte angepasst (k1_dinko2, s3e, h5k, h4e2, d4f).
+
+### K.2 Nebenpunkte
+
+- **Kapitel 5 in der Simulation:** `qa/sim.js` startet Läufe der Kategorien B–E auch direkt in Kapitel 5 (Titelmenü, Vorgaben ohne Stand aus Kapitel 4; QA-Pfad `qa/paths/walkthrough5.js`) und spielt bis zum K5-Abspann. Verkettete Läufe ab Kapitel 1–4 enden wie bisher nach Kapitel 4. Mit `--states` entstehen Kapitel-5-Stände für die Hinweisprobe.
+- **Zwei zeitabhängige UI-Prüfungen:** `qa/ui/phase1.js` wartet vor dem Neuladen 2,5 s und wiederholt bei verlorenem Merker einmal; `qa/ui/phase5.js` hält für die Feinwahl 1 s statt 0,6 s (Schwelle 0,4 s).
+- **Lösungsdokumente:** LOESUNG1–5 nennen die neuen Pflichtschritte und Wege; Frau Huber wohnt „unten links“ (wie Anas SMS). Die Landmarken der Peilung in `LOESUNG3.md` stimmten bereits mit dem Code überein.
+- **Prüfwerkzeuge:** Die Durchläufe K1–K3 (und die QA-Pfade K2/K3) folgen den neuen Schritten: Lauschen bei Dinko, Mirza nach dem Schluss, automatische Peilungsschlüsse.
+
+### K.3 Prüfungen
+
+Stand während der Abschlussprüfung (wird nach deren Ende ergänzt): Regressionstests BUG-015 bis BUG-019 bestehen auf dem neuen Stand und schlagen auf dem Stand vor der Soll-Liste fehl; die Durchläufe der Kapitel 1–4 sind mit den neuen Schritten bis zum Abspann gelaufen, ohne JS-Fehler. Vier Simulationsläufe der Kategorie C mit Start in Kapitel 5 erreichen den K5-Abspann.
