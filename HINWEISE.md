@@ -2160,8 +2160,8 @@ Offen, wenn: `N(G,'s4_name') && !N(G,'s4_bitte') && !F(G,'k4.s.crossed')`
 
 1. **Problem einordnen:** Wir kennen jetzt seinen Namen.
 2. **Denkrichtung:** Das muss er hören. In seiner Sprache.
-3. **Konkreter Ansatz:** An Gleis 11.
-4. **Nächster Schritt:** Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.
+3. **Konkreter Ansatz:** *je nach Stand:* „Morgen, an Gleis 11. Heute Abend ist er nicht dort.“
+4. **Nächster Schritt:** *je nach Stand:* „Morgen den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.“ / „Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.“
 
 ### Peppinos Bitte `s4g`
 

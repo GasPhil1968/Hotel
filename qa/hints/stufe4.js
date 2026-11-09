@@ -277,7 +277,7 @@ const SPECS = {
   d4b: (t) => /^An Gleis 11 mit dem Mann/.test(t) ? P.talk('sepp', /Wie heißen Sie weiter/) : /^Als Marko/.test(t) ? P.go('Hauptbahnhof') : [P.mala(), P.go('Hauptbahnhof')],
   d4c: () => P.act('take', 'Tisch'),
   d4d: () => P.give('Mama', /Brotdose/),
-  d4e: () => [P.mala(), P.act('look', /Bank/)],
+  d4e: () => [P.room('heim_flur'), P.mala(), P.act('look', 'bench')],   // die Bank im Heimflur (nicht die auf der Wiesn oder im Eingang)
   n4a: () => P.talk('Mama'),
   n4b: () => [P.mala(), P.act('look', 'box')],
   n4c: () => P.act('use', /Couch/),
@@ -286,7 +286,7 @@ const SPECS = {
   s4c: () => P.talk('Obermaier', /Akte/),
   s4d: () => P.combine(), s4h: () => P.combine(), g4d: () => P.combine(),
   s4e: (t) => /verbinden/.test(t) && !/Luke/.test(t) ? P.combine('s4_derselbe', 's4_bunker') : [P.mala(), P.act('pass', /Luke/)],
-  s4f: () => P.talk(/Sepp|Peppino|Mann/, /Name|Giuseppe|Peppino|Ruggiero/),
+  s4f: (t) => /^Morgen/.test(t) ? P.skip('abends ist er nicht an Gleis 11; der Satz sagt „morgen“') : P.talk(/Sepp|Peppino|Mann/, /Name|Giuseppe|Peppino|Ruggiero/),
   s4g: (t) => /^Als Mala/.test(t) ? [P.mala(), P.act('sense', 'suitcase')] : /Carmela an/.test(t) ? P.talk('sepp', /Carmela/) : /^Frau Wimmer/.test(t) ? P.talk('Wimmer', /Koffer/) : P.combine('s4_brief79', 's4_carmela_hall'),   // „Morgen: …“ überspringt die Probe (siehe LATER)
   s4i: () => [P.mala(), P.nact('cross', /Peppino|Sepp/)],
   s4j: (t, G) => (G.pos && G.pos.marko && G.pos.marko.room === 'jwohnung') ? [P.act('walk', 'door'), P.act('walk', 'exit'), P.travel('hbf'), P.act('walk', 'mission', /Mit seinem Namen/, /Neben sie/)] : [P.travel('hbf'), P.act('walk', 'mission', /Mit seinem Namen/, /Neben sie/)],

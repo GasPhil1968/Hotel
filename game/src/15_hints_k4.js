@@ -111,7 +111,8 @@ M.HINTS_K4=[
      // Hinweisprobe (P12): Ist der Bunker schon gesehen, fehlt nur der Schluss
      function(G){ if (N(G,'s4_bunker') && N(G,'s4_derselbe')) return 'Im Notizbuch „Peppino ist der Sepp (?)“ mit Malas Nachhall aus dem Bunker verbinden.'; return 'Als Mala durch die Luke an Gleis 11 gehen. Oder Frau Wimmer den Koffer öffnen lassen und die Umschläge ansehen. Dann im Notizbuch verbinden.'; }]},
  {id:'s4f',t:'Sein Name',open:function(G){ return N(G,'s4_name') && !N(G,'s4_bitte') && !F(G,'k4.s.crossed'); },
-  s:['Wir kennen jetzt seinen Namen.','Das muss er hören. In seiner Sprache.','An Gleis 11.','Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.']},
+  // Kann-Liste (Hinweisprobe, Simulationslauf): Endet der Tag mit dem Schluss, ist er abends nicht an Gleis 11; dann sagt der Hinweis „morgen“
+  s:['Wir kennen jetzt seinen Namen.','Das muss er hören. In seiner Sprache.',function(G){ return M.k4SeppHere&&!M.k4SeppHere(G)?'Morgen, an Gleis 11. Heute Abend ist er nicht dort.':'An Gleis 11.'; },function(G){ return M.k4SeppHere&&!M.k4SeppHere(G)?'Morgen den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.':'Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.'; }]},
  {id:'s4g',t:'Peppinos Bitte',open:function(G){ return N(G,'s4_bitte') && !F(G,'k4.s.call'); },
   s:['Er will, dass Marko für ihn schreibt: „Cara Carmela, sto bene.“',
      'Was hat Carmela ihm all die Jahre geschrieben? Und was wusste sie?',
