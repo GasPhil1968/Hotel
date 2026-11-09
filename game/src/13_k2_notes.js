@@ -130,7 +130,8 @@ by('s2_stamp',['s2_provenance']); by('s2_ledger',['s2_provenance']); by('s2_ash'
 ['s2_noreturn','s2_desk'].forEach(function(id){ done(id,flag('k2.s2.free')); });
 by('m2_f_clock',['m2_building']); by('m2_clocktower',['m2_building']); by('m2_ticket',['m2_promise']); by('m2_notrams',['m2_promise']); by('m2_kids',['m2_mali']); by('m2_marko7',['m2_mali']);
 by('m2_photo',['m2_clocktower']); done('m2_building',flag('k2.s3.arrived')); done('m2_alija',function(G){ return G.notes.indexOf('m2_ticket')>=0; });
-by('m2_split_register',['f2_whyabreise']); M.NOTES.m2_split_register.doneIf=function(G){ return !!(G.flags&&G.flags['k2.f2.ride']); };   // QA BUG-006: bleibt nach m2_lana sichtbar, weil das Finale es für „Darum steht bei Abreise nichts“ braucht by('m2_housebook',['m2_lana']); by('m2_f_ninth',['m2_lana']); by('m2_split_chalk',['m2_drewtrams']); by('s3_board',['m2_drewtrams']);
+by('m2_split_register',['f2_whyabreise']); M.NOTES.m2_split_register.doneIf=function(G){ return !!(G.flags&&G.flags['k2.f2.ride']); };   // QA BUG-006: bleibt nach m2_lana sichtbar, weil das Finale es für „Darum steht bei Abreise nichts“ braucht
+by('m2_housebook',['m2_lana']); by('m2_f_ninth',['m2_lana']); by('m2_split_chalk',['m2_drewtrams']); by('s3_board',['m2_drewtrams']);   // Analyse K2-B10 (P24): standen versehentlich im Kommentar oben
 by('m2_f_saturday',['m2_mali']); by('m2_f_voice',['m2_mali']); by('m2_f_snow',['f2_memory']); by('m2_split_journal',['f2_whyabreise']);
 ['m2_promise','m2_mali','m2_lana','m2_pupil','m2_drewtrams','m2_lana_teacher','m2_lore'].forEach(function(id){ done(id,flag('k2.f2.opened')); });
 by('s3_guilt',['s3_truth']); by('s3_rescued',['s3_truth']); done('s3_truth',flag('k2.s3.free')); ['s3_register','s3_helper','s3_roll'].forEach(function(id){ done(id,flag('k2.s3.free')); });

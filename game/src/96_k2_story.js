@@ -24,6 +24,9 @@ M.k2In=function(G,list){ return list.indexOf(G.phase)>=0; };
 var C1KEY='mala.c1end';
 M.storeC1End=function(G){ try{ var d={ at:Date.now(), answer:G.flags['i1.answer'], sarajevo:G.flags['i1.sarajevo'], notes:G.notes.filter(function(n){ return /^m_/.test(n); }), playMs:G.playMs||0 };
   localStorage.setItem(C1KEY,JSON.stringify(d)); }catch(e){} };
+// Analyse K3-B10 (Kann-Liste): Ein Ortswechsel bewegt nur die aktive Figur. Endet ein Abschnitt durch Malas Handlung, bliebe Marko
+// am alten Ort; vor den Übergängen spielt deshalb Marko (wie bring() in Kapitel 4 und 5), Mala kommt mit.
+function asMarko(A){ var G=A.G; if (G.active==='mala'){ G.active='marko'; if (M.setGhostAudio) M.setGhostAudio(false); } }
 M.ch2Unlocked=function(){ try{ return !!localStorage.getItem(C1KEY); }catch(e){ return false; } };
 M.k2Carry=function(){ var d=null; try{ d=JSON.parse(localStorage.getItem(C1KEY)||'null'); }catch(e){ d=null; }
   var def={ answer:1, sarajevo:2, notes:['m_register','m_journal','m_chalk','m_tin','m_waited','m_bells','m_31','m_sarajevo'], fromSave:false };
@@ -90,27 +93,27 @@ M.malaLooksAtMarko=function(A){ if (M.chapterOf(A.G)===2 && M.k2MalaLooksAtMarko
 async function card(A,k,t,time,ms){ M.E.screen='card'; await A.card({kicker:k,title:t,time:time,ms:ms||4600}); }
 function clean(A,list){ list.forEach(function(i){ if (A.has(i)) A.take(i); }); }
 M.k2Night0=async function(A){ if (A.flag('k2.pro.night')) return; A.setFlag('k2.pro.night'); await A.fade(8,900); await card(A,'','In der Nacht','Samstag · kurz vor elf',3400);
-  A.phase('k2_pro_n'); A.unlock('carsija'); await A.goto('pansion',{noEnter:false}); A.save(); };
+  A.phase('k2_pro_n'); A.unlock('carsija'); asMarko(A); await A.goto('pansion',{noEnter:false}); A.save(); };
 M.k2StartS1=async function(A){ if (A.flag('k2.s1.started')) return; A.setFlag('k2.s1.started'); await A.fade(8,900); await card(A,'Erster Fall','Sieben am Turm','Sonntag, 20. November · Tag');
-  A.phase('k2_s1'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; await A.goto('pansion',{noEnter:false}); A.save(); };
+  A.phase('k2_s1'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; asMarko(A); await A.goto('pansion',{noEnter:false}); A.save(); };
 M.k2StartS1Night=async function(A){ if (A.flag('k2.s1.night')) return; A.setFlag('k2.s1.night'); await A.fade(8,900); await card(A,'','Die Nacht unter der Uhr','Sonntag · kurz vor elf',3600);
-  A.phase('k2_s1_n'); await A.goto('kula',{noEnter:false}); A.save(); };
+  A.phase('k2_s1_n'); asMarko(A); await A.goto('kula',{noEnter:false}); A.save(); };
 M.k2StartS2=async function(A){ if (A.flag('k2.s2.started')) return; A.setFlag('k2.s2.started'); await A.fade(8,900); await card(A,'Zweiter Fall','Die Leihfrist','Montag, 21. November · Regen');
-  A.phase('k2_s2'); clean(A,['letters_tz','bracelet','lejla_letter','note_e']); A.unlock('ferhadija'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; await A.goto('pansion',{noEnter:false}); A.save(); };
+  A.phase('k2_s2'); clean(A,['letters_tz','bracelet','lejla_letter','note_e']); A.unlock('ferhadija'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; asMarko(A); await A.goto('pansion',{noEnter:false}); A.save(); };
 M.k2StartS2Night=async function(A){ if (A.flag('k2.s2.night')) return; A.setFlag('k2.s2.night'); await A.fade(8,900); await card(A,'','Nach sechs','Montag · Abend, Regen',3600);
-  A.phase('k2_s2_n'); A.unlock('obala'); await A.goto('obala',{noEnter:false}); A.save(); };
+  A.phase('k2_s2_n'); A.unlock('obala'); asMarko(A); await A.goto('obala',{noEnter:false}); A.save(); };
 M.k2StartInterlude=async function(A){ if (A.flag('k2.i.started')) return; A.setFlag('k2.i.started'); await A.fade(8,900); await card(A,'Zwischenspiel','Die Gelbe Bastei','Montag · spät');
-  A.phase('k2_i'); clean(A,['pass','kurrent']); A.unlock('vratnik'); await A.goto('vratnik',{x:470,y:124,f:'R',noEnter:false}); A.save(); };
+  A.phase('k2_i'); clean(A,['pass','kurrent']); A.unlock('vratnik'); asMarko(A); await A.goto('vratnik',{x:470,y:124,f:'R',noEnter:false}); A.save(); };
 M.k2StartS3=async function(A){ if (A.flag('k2.s3.started')) return; A.setFlag('k2.s3.started'); await A.fade(8,900); await card(A,'Dritter Fall','Das verschlossene Zimmer','Dienstag, 22. November · Nebel');
-  A.phase('k2_s3'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; await A.goto('pansion',{noEnter:false}); A.save(); };
+  A.phase('k2_s3'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; asMarko(A); await A.goto('pansion',{noEnter:false}); A.save(); };
 M.k2StartS3Night=async function(A){ if (A.flag('k2.s3.night')) return; A.setFlag('k2.s3.night'); await A.fade(8,900); await card(A,'','Die letzte Stunde','Dienstag · neun Uhr abends',3600);
-  A.phase('k2_s3_n'); await A.goto('haustor',{noEnter:false}); A.save(); };
+  A.phase('k2_s3_n'); asMarko(A); await A.goto('haustor',{noEnter:false}); A.save(); };
 M.k2StartFinale=async function(A){ if (A.flag('k2.f2.started')) return; A.setFlag('k2.f2.started'); await A.fade(8,900); await card(A,'Finale','Malas Spur','Mittwoch, 23. November · klar und kalt');
-  A.phase('k2_fin'); clean(A,['dnevnik','svjedocanstva','pecat','deskkey','zvono']); A.setFlag('k2.f2.dead'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; await A.goto('pansion',{noEnter:false}); A.save(); };
+  A.phase('k2_fin'); clean(A,['dnevnik','svjedocanstva','pecat','deskkey','zvono']); A.setFlag('k2.f2.dead'); A.G.pos.marko={room:'pansion',x:200,y:122,f:'L'}; asMarko(A); await A.goto('pansion',{noEnter:false}); A.save(); };
 M.k2StartFinNight=async function(A){ if (A.flag('k2.f2.night')) return; A.setFlag('k2.f2.night'); await A.fade(8,1100); await card(A,'','Die letzte Fahrt der Drei','Mittwoch · Nacht',4200);
-  A.phase('k2_fin_n'); A.music('k2_finale'); await A.goto('neboder',{x:96,y:126,f:'L',noEnter:false}); A.save(); };
+  A.phase('k2_fin_n'); A.music('k2_finale'); asMarko(A); await A.goto('neboder',{x:96,y:126,f:'L',noEnter:false}); A.save(); };
 M.k2StartEpilogue=async function(A){ if (A.flag('k2.epi.started')) return; A.setFlag('k2.epi.started'); await A.fade(8,1200); await card(A,'Epilog','Der erste Schnee','Donnerstag, 24. November · Morgen');
-  A.phase('k2_epi'); clean(A,['tramkarta_v','ticket_m','photo_stop','chisel','key_kuca','drawing','sweater','ashpage','key_shelter','km','olovka']); A.G.pos.marko={room:'neboder',x:300,y:126,f:'R'}; await A.goto('neboder',{x:300,y:126,f:'R',noEnter:false}); A.save(); };
+  A.phase('k2_epi'); clean(A,['tramkarta_v','ticket_m','photo_stop','chisel','key_kuca','drawing','sweater','ashpage','key_shelter','km','olovka']); A.G.pos.marko={room:'neboder',x:300,y:126,f:'R'}; asMarko(A); await A.goto('neboder',{x:300,y:126,f:'R',noEnter:false}); A.save(); };
 
 // ---------------------------------------------------------------- Ende des Kapitels
 M.CREDITS2=['DIE STILLEN','Kapitel 2: Sarajevo','','','Marko Vuković','Mala','','Tomaž Zupan, der um sieben kam','Ivan Barać, der zurückgeben wollte','Zora Marić, die die Namen bewahrte','und Alija, der Fahrscheine für später verkaufte','',

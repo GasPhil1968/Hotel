@@ -209,6 +209,9 @@ M.k3DayCheck=async function(A){ var G=A.G, R=M.E.room; if (!CH3(G)||G.ended||!R|
   if (p==='k3_epi') return await M.k3StartEpiDay(A), true;
   return false; };
 M.k3DayReady=dayReady;   // für Tests: sind die Pflichtschritte des Tages erledigt?
+// Analyse K3-B10 (Kann-Liste): Ein Ortswechsel bewegt nur die aktive Figur. Endet ein Abschnitt durch Malas Handlung, bliebe Marko
+// am alten Ort; vor den Übergängen spielt deshalb Marko (wie bring() in Kapitel 4 und 5), Mala kommt mit.
+function asMarko(A){ var G=A.G; if (G.active==='mala'){ G.active='marko'; if (M.setGhostAudio) M.setGhostAudio(false); } }
 // das Bett im Zimmer (S1 ruft es auf)
 M.k3Bed=async function(A){ var G=A.G, p=G.phase;
   if (p==='k3_pro_n'){ if (A.flag('k3.p.talk1')) return M.k3StartD1(A); return A.m('Noch nicht. Mala steht draußen auf der Terrasse, als wartete sie auf etwas.'); }
@@ -224,37 +227,37 @@ M.k3Bed=async function(A){ var G=A.G, p=G.phase;
 // ---------------------------------------------------------------- Übergänge
 function wakeAt(A){ var z=M.ART.zimmer, st=(z&&z.start)||[160,124,'L']; A.G.pos.marko={room:'zimmer',x:st[0],y:st[1],f:st[2]||'L'}; return st; }
 M.k3StartEvening0=async function(A){ if (A.flag('k3.ev0.started')) return; A.setFlag('k3.ev0.started'); await A.m('Es wird dunkel. Der Regen hört auf, und der Fluss wird lauter.'); await A.fade(8,900); await card(A,'','Am Abend','Donnerstag · Terrasse der Herberge',3400);
-  A.phase('k3_pro_n'); var h=M.ART.herberge, t=(h&&h.stands&&h.stands.table)||null; await A.goto('herberge',t?{x:t[0],y:t[1],f:t[2]||'R',noEnter:true}:{noEnter:true}); A.music('k3_noc'); A.save();
+  A.phase('k3_pro_n'); var h=M.ART.herberge, t=(h&&h.stands&&h.stands.table)||null; asMarko(A); await A.goto('herberge',t?{x:t[0],y:t[1],f:t[2]||'R',noEnter:true}:{noEnter:true}); A.music('k3_noc'); A.save();
   if (M.k3Talk1) await M.k3Talk1(A); };
 M.k3StartD1=async function(A){ if (A.flag('k3.d1.started')) return; A.setFlag('k3.d1.started'); await A.fade(8,900); await card(A,'Erster Tag','Die Peilung','Freitag, 25. November · Bura');
-  A.phase('k3_d1'); var st=wakeAt(A); await A.goto('zimmer',{x:st[0],y:st[1],f:st[2]||'L',noEnter:false}); A.save(); if (M.k3Wake) await M.k3Wake(A,'k3_d1'); };
+  A.phase('k3_d1'); var st=wakeAt(A); asMarko(A); await A.goto('zimmer',{x:st[0],y:st[1],f:st[2]||'L',noEnter:false}); A.save(); if (M.k3Wake) await M.k3Wake(A,'k3_d1'); };
 M.k3StartD1Night=async function(A){ if (A.flag('k3.d1n.started')) return; A.setFlag('k3.d1n.started'); await A.m('Für heute reicht es. Skela. Und eine Schublade, die nach einem Schlüssel riecht.'); await A.fade(8,900); await card(A,'','Freitag · Nacht','Die Terrasse der Herberge',3400);
-  A.phase('k3_d1_n'); var h=M.ART.herberge, t=(h&&h.stands&&h.stands.table)||null; await A.goto('herberge',t?{x:t[0],y:t[1],f:t[2]||'R',noEnter:true}:{noEnter:true}); A.save();
+  A.phase('k3_d1_n'); var h=M.ART.herberge, t=(h&&h.stands&&h.stands.table)||null; asMarko(A); await A.goto('herberge',t?{x:t[0],y:t[1],f:t[2]||'R',noEnter:true}:{noEnter:true}); A.save();
   if (A.flag('k3.d1.sanja') && !A.flag('k3.d1.ljerka') && M.k3LjerkaCall) await M.k3LjerkaCall(A);
   if (M.k3Father) await M.k3Father(A); };
 M.k3StartD2=async function(A){ if (A.flag('k3.d2.started')) return; A.setFlag('k3.d2.started'); await A.fade(8,900); await card(A,'Zweiter Tag','Markttag','Samstag, 26. November · klar');
-  A.phase('k3_d2'); var st=wakeAt(A); await A.goto('zimmer',{x:st[0],y:st[1],f:st[2]||'L',noEnter:false}); A.save(); if (M.k3Wake) await M.k3Wake(A,'k3_d2'); };
+  A.phase('k3_d2'); var st=wakeAt(A); asMarko(A); await A.goto('zimmer',{x:st[0],y:st[1],f:st[2]||'L',noEnter:false}); A.save(); if (M.k3Wake) await M.k3Wake(A,'k3_d2'); };
 M.k3StartD2Night=async function(A){ if (A.flag('k3.d2n.started')) return; A.setFlag('k3.d2n.started');
   if (!A.flag('k3.d2.nada')){ A.sfx('phone'); await A.wait(700); if (M.k3NadaCall2) await M.k3NadaCall2(A); else { await A.phoneVoice('„Weißt du etwas?“','nada'); await A.m('Ich habe eine Spur.'); A.setFlag('k3.d2.nada','truth'); } }
   await A.fade(8,900); await card(A,'','Die Glocke','Samstag · Nacht',3600);
-  A.phase('k3_d2_n'); await A.goto('herberge',{noEnter:false}); A.save();
+  A.phase('k3_d2_n'); asMarko(A); await A.goto('herberge',{noEnter:false}); A.save();
   await A.g(A.G.flags['k3.z.lost']?'Sie zieht. Nach Süden, aus der Stadt hinaus. Dahin, wo die Eierfrau hingegangen ist.':'Sie zieht. Nach Süden. Ihr nach.'); await A.m('Skela.'); };
 M.k3StartD3=async function(A){ if (A.flag('k3.d3.started')) return; A.setFlag('k3.d3.started'); await A.m('Morgen. Bei Tag.'); A.sfx('taxi'); await A.fade(8,1000);
   await card(A,'Dritter Tag','Zwei Ufer','Sonntag, 27. November · Frost angesagt');
-  A.phase('k3_d3'); var st=wakeAt(A); await A.goto('zimmer',{x:st[0],y:st[1],f:st[2]||'L',noEnter:false}); A.save(); if (M.k3Wake) await M.k3Wake(A,'k3_d3'); };
+  A.phase('k3_d3'); var st=wakeAt(A); asMarko(A); await A.goto('zimmer',{x:st[0],y:st[1],f:st[2]||'L',noEnter:false}); A.save(); if (M.k3Wake) await M.k3Wake(A,'k3_d3'); };
 M.k3StartFinale=async function(A){ if (A.flag('k3.fin.started')) return; A.setFlag('k3.fin.started'); await A.m('Es ist bald elf. Vlado wartet.'); await A.fade(8,1100);
   await card(A,'Finale','Die letzte Fähre','Sonntag, 27. November · Nacht',4600);
   A.phase('k3_fin_n'); clean(A,['deka','kljuc_mate','ulaznica']); await M.k3FinBegin(A); };
-M.k3FinBegin=async function(A){ var v=M.ART.vhof, st=(v&&v.start)||[60,126,'R']; await A.goto('vhof',{x:st[0],y:st[1],f:st[2]||'R',noEnter:true}); A.music('k3_fin'); A.save();
+M.k3FinBegin=async function(A){ var v=M.ART.vhof, st=(v&&v.start)||[60,126,'R']; asMarko(A); await A.goto('vhof',{x:st[0],y:st[1],f:st[2]||'R',noEnter:true}); A.music('k3_fin'); A.save();
   if (M.k3FinDeparture) await M.k3FinDeparture(A); else { await A.narrate('Der TAM springt beim dritten Versuch an. Vlado fährt, zum ersten Mal seit siebzehn Jahren bei Nacht.'); }
   A.setFlag('k3.fin.drive'); await A.fade(8,1200);
-  var sd=M.ART.skela_d, s0=(sd&&sd.start)||[40,126,'R']; await A.goto('skela_d',{x:s0[0],y:s0[1],f:s0[2]||'R',noEnter:true}); A.save();
+  var sd=M.ART.skela_d, s0=(sd&&sd.start)||[40,126,'R']; asMarko(A); await A.goto('skela_d',{x:s0[0],y:s0[1],f:s0[2]||'R',noEnter:true}); A.save();
   if (M.k3FinArrive) await M.k3FinArrive(A); };
 // fester Zwischenstand im Finale (S3)
 M.k3Checkpoint=async function(A,n){ A.setFlag('k3.fin.cp',n); A.save(); };
 M.k3StartEpilogue=async function(A){ if (A.flag('k3.epi.started')) return; A.setFlag('k3.epi.started'); await A.fade(8,1300);
   await card(A,'Epilog','Hin und zurück','Montag, 28. November · Morgen');
-  A.phase('k3_epi'); A.G.malaOn=true; A.G.active='marko'; var h=M.ART.herberge, t=(h&&h.stands&&h.stands.railing)||null; await A.goto('herberge',t?{x:t[0],y:t[1],f:t[2]||'R',noEnter:true}:{noEnter:true}); A.malaJoin({fadeIn:false}); A.music('k3_epi'); A.save();
+  A.phase('k3_epi'); A.G.malaOn=true; A.G.active='marko'; var h=M.ART.herberge, t=(h&&h.stands&&h.stands.railing)||null; asMarko(A); await A.goto('herberge',t?{x:t[0],y:t[1],f:t[2]||'R',noEnter:true}:{noEnter:true}); A.malaJoin({fadeIn:false}); A.music('k3_epi'); A.save();
   if (M.k3NadaCallEpi) await M.k3NadaCallEpi(A); };
 M.k3StartEpiDay=async function(A){ if (A.flag('k3.epid.started')) return; A.setFlag('k3.epid.started'); await A.fade(8,1000); await card(A,'','Gegen Mittag','Montag · Ostbusbahnhof',3200);
   A.phase('k3_epi_d'); A.unlock('vermisst'); await A.goto('ostbus',{noEnter:true}); A.save(); if (M.k3NadaArrives) await M.k3NadaArrives(A); };
