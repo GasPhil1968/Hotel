@@ -99,7 +99,7 @@ var HS_SG=[
  {id:'door7',name:'Wohnungstür',look:function(A){ return A.m(A.S.open7?'Die Tür steht offen. Eine leere Wohnung, Licht vom Balkon, ein Geruch nach frischer Farbe. Am Türrahmen zur Küche Bleistiftstriche, „M“ und „A“.':'Unsere alte Tür. Gepolstert, mit braunem Kunstleder und Ziernägeln. Das Schild ist ab. Man sieht noch die zwei Löcher.'); },
    use:function(A){ return M.k5Door7?M.k5Door7(A):A.m('Zu.'); },open:function(A){ return M.k5Door7?M.k5Door7(A):A.m('Zu.'); },
    g:{look:'Hier habe ich geklopft. Zweimal kurz, einmal lang. Seine Mama hat aufgemacht. Immer seine Mama.',sense:function(A){ return M.k5Door7Sense?M.k5Door7Sense(A):A.g('Hier.'); }}},
- {id:'door7b',name:'Nachbartür',look:'Die Tür der Nachbarn. Ein Kranz aus Plastik und ein Schild: „Obitelj Hodžić“. Dahinter weinen Zwillinge, abwechselnd.',g:{look:'Neue Leute. Die Zwillinge sehen mich. Deshalb weinen sie nicht. Sie lachen. Dann weinen sie wieder.'}},
+ {id:'door7b',name:'Nachbartür',look:'Die Tür der Nachbarn. Ein Kranz aus Plastik und ein Schild: „Obitelj Begić“. Dahinter weinen Zwillinge, abwechselnd.',g:{look:'Neue Leute. Die Zwillinge sehen mich. Deshalb weinen sie nicht. Sie lachen. Dann weinen sie wieder.'}},
  {id:'lift',name:'Aufzugstür',look:'Die Aufzugstür im siebten Stock. „VAN FUNKCIJE“. Hier oben ist der Zettel noch der alte, gelb.',g:{look:'Ging nie.'}},
  {id:'window',name:'Treppenfenster',look:'Das Treppenhausfenster. Durch das Drahtglas sieht man den Hof, die Haltestelle, die Gleise der Drei.',g:{look:'Von hier habe ich die Drei kommen sehen. Dann bin ich los.'}},
  {id:'seven',name:'Stockwerknummer',look:'Eine große „7“ an der Wand, mit Schablone gemalt. Darunter hat ein Kind etwas eingeritzt. Ein Kind von heute.',g:{look:'Sieben.'}},

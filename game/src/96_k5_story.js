@@ -84,7 +84,7 @@ function icon5(b,id,on){ var p=POS5[id], x=p[0], y=p[1], c=on?P.k1:P.e3, fl=on?P
   else if (id==='pivara'){ b.rect(x-6,y-5,7,10,on?P.t2:fl); b.hl(x-6,x,y-5,c); b.vl(x-6,y-5,y+4,c); b.vl(x,y-5,y+4,c); b.rect(x-4,y-9,3,4,c); for (i=0;i<3;i++) b.px(x-5+i*2,y-2,on?P.y3:c);
     b.vl(x+3,y-3,y+1,c); b.hl(x+3,x+6,y-3,c); b.px(x+6,y-2,on?P.a5:c); b.px(x+6,y,on?P.a5:c); b.hl(x+2,x+7,y+4,c); }
   else if (id==='institut'){ b.rect(x-6,y-4,13,9,fl); b.hl(x-7,x+7,y-5,c); b.hl(x-6,x+6,y+4,c); for (i=-4;i<=4;i+=4){ b.rect(x+i-1,y-2,2,2,on?P.b4:c); b.rect(x+i-1,y+1,2,2,on?P.b4:c); } b.rect(x-1,y+1,2,3,c); }
-  else if (id==='bare'){ b.rect(x-3,y-4,7,9,on?P.s5:fl); b.hl(x-2,x+2,y-5,c); b.px(x-3,y-4,c); b.px(x+3,y-4,c); b.vl(x-4,y-3,y+4,c); b.vl(x+4,y-3,y+4,c); b.hl(x-6,x+6,y+5,c); b.hl(x-1,x+1,y-1,on?P.s2:c);
+  else if (id==='bare'){ b.rect(x-3,y-4,7,9,on?P.s5:fl); b.hl(x-2,x+2,y-5,c); b.px(x-3,y-4,c); b.px(x+3,y-4,c); b.vl(x-4,y-3,y+4,c); b.vl(x+4,y-3,y+4,c); b.hl(x-6,x+6,y+5,c); b.vl(x,y-3,y+2,on?P.m1:c); b.hl(x-1,x+1,y-2,on?P.m1:c);
     for (i=-6;i<=-5;i++) b.vl(x+i,y,y+4,on?P.g3:c); b.vl(x+6,y-1,y+4,on?P.g3:c); }
   else if (id==='stanica' && M.paintMap2) return; }
 (function(){ var R=M.ROOMS.map; if (!R) return; var paint0=R.paint;

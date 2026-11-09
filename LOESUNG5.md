@@ -111,7 +111,7 @@ Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Br
 
 ## Lanas Begräbnis (Freitag, 14 Uhr, Friedhof Bare)
 
-- Geführt. Mala neben Nada: „Jetzt passen sie zusammen.“ Zlata setzt den Quittenableger: „Schief.“ Niko winkt zum leeren Platz neben Nada.
+- Geführt, konfessionslos: kein Priester, kein Imam; Lanas Pfosten trägt kein religiöses Zeichen. Ringsum der katholische Teil von Bare. Mala neben Nada: „Jetzt passen sie zusammen.“ Zlata setzt den Quittenableger: „Schief.“ Niko winkt zum leeren Platz neben Nada.
 - „(Eine Schaufel Erde.)“ oder „(Stehen bleiben.)“; beides ist richtig. Mala: „Du hast nicht weggesehen.“
 
 ## Freitag · Abend und Nacht
@@ -157,7 +157,7 @@ Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Br
 
 - **[M]** Stadtplan: **Brauerei**. Den **Kanister** mit dem **Hahn** benutzen: **Kanister mit Wasser**. Keiner wartet.
 - **[M]** Stadtplan: **Vratnik**, durch **Ružas Tor**: „Keinen Tropfen verschüttet.“
-- Zorans Begräbnis (geführt): „Poginuo.“ – „Dann schreiben wir es.“ – „Ich bin ohne dich gefahren. Zurück nicht.“
+- Zorans Begräbnis (geführt), katholisch: Fra Ivo von Sveti Ante in Bistrik, ein Holzkreuz mit Tafel, „Pokoj vječni daruj mu, Gospodine.“ – „I svjetlost vječna svijetlila mu.“, Weihwasser. Für den Stein, der im Sommer kommt: „Poginuo.“ – „Dann schreiben wir es.“ – „Ich bin ohne dich gefahren. Zurück nicht.“ Mama zündet ein Grablicht an.
 - Ružas Küche am Abend: Kolars und Vesnas Nachrichten, das beschlagene Fenster.
 - **[M]** Das **Fenster** benutzen: eine Straßenbahn mit einer Drei, Gesichter in den Fenstern, und die Räder stimmen. → letzte Notiz *Mit Rädern*. „Onkel Marko kann malen!“ – „Seit wann?“ → „Seit Samstag.“ (oder eine der anderen). „Dahinter ist die Stadt.“ Ende, Abspann.
 

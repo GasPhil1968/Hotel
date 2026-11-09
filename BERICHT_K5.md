@@ -6,7 +6,7 @@ Kapitel 5 (1. bis 5. März 2012) ist gebaut, durchgespielt und geprüft. Es ist 
 - **Ablauf:** 8 Abschnitte: Prolog „Ankunft“, Donnerstag, Donnerstagnacht, Freitag, Lanas Begräbnis, Freitagabend mit der Nacht auf der Žuta tabija, Samstag „Zehn nach elf“, Epilog „Montag“ (dazwischen die Karte „Sonntag“). Ein Abschnitt endet erst nach seinen Pflichtschritten; in der Donnerstagnacht geht man in der Pension ins Bett.
 - **Räume:** 14. Drei neue Bilder (Treppenhaus im siebten Stock, An der Brauerei, Friedhof Bare), dazu elf Räume mit Bildern aus Kapitel 2 unter eigenen Kennungen (`stanica5`, `pansion5`, `vratnik5`, `kuca5`, `neboder5`, `haustor5`, `stan5`, `carsija5`, `kazandziluk5`, `tramvaj5`, `institut`). Kapitel 2 bleibt dadurch unberührt.
 - **Stadtplan:** der Plan von Sarajevo aus Kapitel 2 mit neun Orten, vier davon neu (Kazandžiluk als eigener Ort, Brauerei, Gerichtsmedizin, Friedhof Bare) mit eigenen Symbolen.
-- **Figuren:** ein neuer Geist, Hamdija Selimović, Abfüller der Brauerei (Figur und Porträt). Alle anderen Figuren kommen aus Kapitel 2 bis 4.
+- **Figuren:** ein neuer Geist, Hamdija Selimović, Abfüller der Brauerei (Figur und Porträt), und Fra Ivo, Franziskaner von Sveti Ante, der Zorans Begräbnis hält. Alle anderen Figuren kommen aus Kapitel 2 bis 4.
 - **Text:** rund 1100 gesprochene und erzählte Zeilen in drei Szenendateien und den Raumdateien, dazu etwa 380 Beschreibungen. 33 Notizen, 5 Schlüsse (zwei davon als mehrstufige Kette), 4 Gegenstände (Kanister leer und voll, Hamdijas Liste, Malas Dose).
 - **Hinweise:** vier Stufen, 25 Themen.
 - **Ton:** Musik und Klangkulissen aus Kapitel 2 bis 4, zwei neue Kulissen (Brauerei, Bare).
@@ -34,6 +34,12 @@ Kapitel 5 (1. bis 5. März 2012) ist gebaut, durchgespielt und geprüft. Es ist 
 
 ## Lieferung
 - `web/` (eine `index.html`, Service Worker, Icons, `LIESMICH.txt`, `AENDERUNGEN.txt`) und dasselbe als Netlify-ZIP: `dist/MALA_netlify_oberflaeche.zip` (Prüfsummen in `dist/SHA256SUMS_oberflaeche.txt`).
+
+## Nach der ersten Rückmeldung geändert
+- **Friedhof Bare** zeigt den katholischen Teil: Kreuze aus Stein und Holz, Grabsteine mit eingemeißeltem Kreuz, Einfassungen, rote Grablichter. Vorher standen dort schlanke weiße Stelen, die wie ein muslimischer Friedhof aussahen.
+- **Zorans Grab und Begräbnis sind katholisch** (Vuković ist eine katholische Familie): Holzkreuz mit weißer Tafel, Kränze mit Schleifen, Grablichter; Fra Ivo spricht „U ime Oca …“ und „Pokoj vječni“, besprengt den Sarg mit Weihwasser, Mama bekreuzigt sich und zündet ein Grablicht an. „Poginuo“ kommt auf den Stein, der im Sommer kommt; bis dahin steht auf der Tafel am Kreuz Name und Jahre.
+- **Lanas Grab und Begräbnis bleiben konfessionslos** (Entscheidung des Autors): kein Priester, kein Imam, der Eichenpfosten ohne religiöses Zeichen.
+- **Abgleich mit Kapitel 2:** Esad Delić ist 2005 gestorben (nicht 1999); das Hausbuch zeigt dieselben Einträge wie in Kapitel 2; Lana hat Sarajevo im November 1993 mit dem Bus verlassen (Nadas Briefe, Vesnas Artikel, „Ich komme“ am Tor im November 1993); die neuen Nachbarn im siebten Stock heißen Begić.
 
 ## Abweichungen vom Konzept
 - **Der Geist heißt Hamdija Selimović,** nicht Fikret Mulić: In Kapitel 2 gibt es schon einen Fikret (Busbahnhof). Seine Liste ist „H. S., punionica“ unterschrieben.

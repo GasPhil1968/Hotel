@@ -15,6 +15,9 @@ WAS NEU IST
   überschreibt keines.
 - Antworten aus Kapitel 3 und 4 (Zustimmung, Versprechen, Probe, Kurve,
   Pantoffeln, Dose, Davor) verändern Sätze im Finale, nicht sein Ende.
+- Friedhof Bare zeigt den katholischen Teil (Kreuze, Grablichter). Zorans
+  Begräbnis am Montag ist katholisch (Fra Ivo von Sveti Ante), Lanas Begräbnis
+  am Freitag konfessionslos.
 - Alte Spielstände laden unverändert.
 
 ----------------------------------------------------------------------------

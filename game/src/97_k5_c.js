@@ -289,15 +289,21 @@ async function deliverWater(A){ A.take('kanister_voll'); A.setFlag('k5.e.water')
   A.save(); await dayCheck(A); }
 M.k5EpiBare=async function(A,from){ return; };
 M.k5EpiGrave=async function(A){ return A.m('Lanas Pfosten. Der Ableger hat über Nacht ein Blatt mehr. Oder ich habe gestern nicht genau gezählt.'); };
-M.k5EpiBareTalk=async function(A,id){ var t={ jasna:'Ružas Wort.',ana:'Papa.',nada:'Jetzt liegen sie nebeneinander. Nicht ganz. Zwei Reihen.',hajra:'Ich bringe Pita.',kolar:'Ich komme zu allen, die ich gefunden habe.',sehic:'Ich habe es aufgeschrieben.',mia:'Ich habe eine Blume für Opa.',niko:'Wo ist das Mädchen?' }[id]; return A.npc(id).say(t||'…'); };
-M.k5Zoran=async function(A){ if (F(A,'k5.e.zoranDone')) return; var J=A.npc('jasna2'), c=C();
-  await A.narrate('Bare, elf Uhr. Neben Lanas Pfosten, zwei Reihen weiter, ein frisches Doppelgrab.');
-  await A.narrate('Mama, Ana und die Kinder. Nada, Hajra, Herr Šehić, Frau Kolar.');
-  await A.wait(500); await A.narrate('Der Mann von der Friedhofsverwaltung fragt nach dem Text für die Tafel.');
-  await A.npc('jasna2').say('Was wollte Ruža schreiben?'); await A.m('Poginuo.'); await A.wait(500); await A.npc('jasna2').say('Dann schreiben wir es.');
-  await A.wait(500); await A.narrate('ZORAN VUKOVIĆ · 1951 – 1993 · poginuo 19. 4. 1993. Gefallen. Ružas Wort, neunzehn Jahre zu spät, und genau richtig.');
-  await A.wait(600); await A.npc('jasna2').say('Ich bin ohne dich gefahren.'); await A.wait(600); await A.npc('jasna2').say('Zurück nicht.');
+M.k5EpiBareTalk=async function(A,id){ var t={ jasna:'Ružas Wort.',ana:'Papa.',nada:'Jetzt liegen sie nicht weit voneinander. Zwei Reihen.',hajra:'Ich bringe Pita.',kolar:'Ich komme zu allen, die ich gefunden habe.',sehic:'Ich habe es aufgeschrieben.',mia:'Ich habe eine Blume für Opa.',niko:'Wo ist das Mädchen?',fra:'Neka mu je laka zemlja. Möge ihm die Erde leicht sein.' }[id]; return A.npc(id).say(t||'…'); };
+M.k5Zoran=async function(A){ if (F(A,'k5.e.zoranDone')) return; var J=A.npc('jasna2'), Fr=A.npc('fra');
+  await A.narrate('Bare, elf Uhr. Der katholische Teil, zwei Reihen hinter Lanas Pfosten. Ein frisches Doppelgrab und ein Holzkreuz mit einer weißen Tafel: ZORAN VUKOVIĆ · 1951 – 1993.');
+  await A.narrate('Mama, Ana und die Kinder. Nada, Hajra, Herr Šehić, Frau Kolar. Und Fra Ivo von Sveti Ante, der Kirche unten in Bistrik, ein paar Schritte von der Brauerei. Über der braunen Kutte das weiße Chorhemd, eine violette Stola.');
   await A.narrate(F(A,'k5.d2.damir')?'Ich trage den kleinen Sarg mit Herrn Šehić und Damir, der wieder Pause hat.':'Ich trage den kleinen Sarg mit Herrn Šehić und einem Mann von der Verwaltung, der nicht weiß, wen er trägt, und trotzdem vorsichtig ist.');
+  await A.wait(500); await Fr.say('U ime Oca i Sina i Duha Svetoga.'); await A.m('„Im Namen des Vaters und des Sohnes und des Heiligen Geistes.“');
+  await A.narrate('Mama bekreuzigt sich, Ana einen Augenblick später. Ich weiß noch, wie es geht. Großmutter hat es mir in Vratnik beigebracht, vor jedem Essen.');
+  await A.wait(400); await Fr.say('Pokoj vječni daruj mu, Gospodine.'); await A.m('„Herr, gib ihm die ewige Ruhe.“');
+  await J.say('I svjetlost vječna svijetlila mu.'); await A.m('„Und das ewige Licht leuchte ihm.“ Mama sagt es, ohne nachzudenken. Achtzehn Jahre hat sie es nicht gesagt.');
+  await A.wait(400); await A.narrate('Fra Ivo besprengt den Sarg mit Weihwasser, dreimal, dann das Kreuz. Der Sarg geht hinunter. Er ist klein. Mehr ist von Papa nicht übrig.');
+  await A.wait(500); await A.narrate('Der Mann von der Friedhofsverwaltung fragt, was auf dem Stein stehen soll, wenn er im Sommer kommt.');
+  await J.say('Was wollte Ruža schreiben?'); await A.m('Poginuo.'); await A.wait(500); await J.say('Dann schreiben wir es.');
+  await A.wait(500); await A.narrate('ZORAN VUKOVIĆ · 1951 – 1993 · poginuo 19. 4. 1993. Gefallen. Ružas Wort, neunzehn Jahre zu spät, und genau richtig.');
+  await A.wait(600); await J.say('Ich bin ohne dich gefahren.'); await A.wait(600); await J.say('Zurück nicht.');
+  await A.wait(500); await A.narrate('Mama zündet ein rotes Grablicht an und stellt es vor das Kreuz. Nada stellt ein zweites daneben. Mia legt ihre Blume dazu.');
   await A.wait(500); await A.narrate('Mama hat neben Papa Platz gelassen.');
   A.setFlag('k5.e.zoranDone'); A.save(); };
 M.k5Final=async function(A){ if (F(A,'k5.e.final')) return; var c=C(), J=A.npc('jasna'), N=A.npc('nada'), An=A.npc('ana'), H=A.npc('hajra'), K=A.npc('niko');
@@ -313,7 +319,7 @@ M.k5Final=async function(A){ if (F(A,'k5.e.final')) return; var c=C(), J=A.npc('
   await A.m('Ich denke an den Hahn, der läuft. Und an keinen, der wartet.');
   A.sfx('beep'); await A.narrate('Dann Vesna.');
   await A.doc({style:'sms',title:'Vesna',lines:['Die Stillen, Teil drei: Lana Delić. Bekommen. Seite vierzehn. Diesmal kein Zeichen zu viel.']});
-  await A.doc({style:'news',title:'Die Stillen (3): Lana Delić',lines:['Lana Delić wurde am 3. März 1976 in Sarajevo geboren.','Jeden Samstag fuhr sie mit der Linie 3 und holte einen Jungen aus dem siebten Stock.','Im Januar 1994 stieg sie in einen Bus nach Mostar und kam nicht zurück.','Achtzehn Jahre lag sie unter einem Quittenbaum in Skela, unter einem Brett mit dem Namen, den sie selbst gesagt hatte.','Am 2. März 2012 wurde sie auf Bare begraben, mit beiden Namen.','Sie ist am 3. März 2012 angekommen. Ihre Mutter hat es gesagt.']});
+  await A.doc({style:'news',title:'Die Stillen (3): Lana Delić',lines:['Lana Delić wurde am 3. März 1976 in Sarajevo geboren.','Jeden Samstag fuhr sie mit der Linie 3 und holte einen Jungen aus dem siebten Stock.','Im November 1993 verließ sie Sarajevo mit einem Bus. Im Januar 1994 machte sie sich von Split aus auf den Weg zurück, um ihn zu holen, und kam nicht an.','Achtzehn Jahre lag sie unter einem Quittenbaum in Skela, unter einem Brett mit dem Namen, den sie selbst gesagt hatte.','Am 2. März 2012 wurde sie auf Bare begraben, mit beiden Namen.','Sie ist am 3. März 2012 angekommen. Ihre Mutter hat es gesagt.']});
   await A.m('Den letzten Satz habe ich geschrieben, nachdem Nada ihn gesagt hat. Eine Abschrift. Kein Ersatz.');
   if (c.davor){ A.sfx('beep'); await A.narrate('Und Davor, mit einem Foto: ein Feigenzweig in einem Topf auf einem Fensterbrett in Split. Ein grünes Blatt.'); await A.doc({style:'sms',title:'Davor',lines:['Lenina grana. Pustila je list. – Lenas Zweig. Er treibt aus.']}); }
   var ans=A.flag('k5.n2.answer'); await A.wait(400);

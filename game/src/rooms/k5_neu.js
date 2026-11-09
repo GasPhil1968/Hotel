@@ -77,11 +77,11 @@ M.room('institut',{ name:'Gerichtsmedizin', scape:'k3_vermisst', music:'k3_epi',
 // ================================================================ Friedhof Bare
 function funCast(G){ var p=ph(G);
   if (p==='k5_fun' && !f(G,'k5.fun.done')){ var L=['nada','zlata','jasna','ana','mia','niko','hajra','kolar','vlado','dragica','sehic']; if (f(G,'k5.d2.damir')) L.push('damir'); return L; }
-  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia2','niko2','hajra2','sehic2','kolar2'];
+  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia2','niko2','fra','hajra2','sehic2','kolar2'];
   return []; }
-var BCH={ nada:'nada', zlata:'zlata', jasna:'jasnaC', ana:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir' };
+var BCH={ nada:'nada', zlata:'zlata', jasna:'jasnaC', ana:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir', fra:'fra' };
 function bch(k){ return BCH[k.replace('2','')]; }
-var BNAME={ nada:'Nada', zlata:'Zlata', jasna:'Mama', ana:'Ana', mia:'Mia', niko:'Niko', hajra:'Hajra', kolar:'Frau Kolar', vlado:'Vlado', dragica:'Dragica', sehic:'Herr Šehić', damir:'Damir' };
+var BNAME={ nada:'Nada', zlata:'Zlata', jasna:'Mama', ana:'Ana', mia:'Mia', niko:'Niko', hajra:'Hajra', kolar:'Frau Kolar', vlado:'Vlado', dragica:'Dragica', sehic:'Herr Šehić', damir:'Damir', fra:'Fra Ivo' };
 var HS_BA=[
  {id:'exit',name:'Zum Stadtplan',exit:{to:'map'},canExit:async function(A){ if (ph(A.G)==='k5_fun'){ await A.m('Ich bleibe. Bis zum Ende.'); return false; } return true; },look:'Der Weg hinunter zum Tor.',g:{look:'Da unten ist das Tor.'}},
  {id:'grave',name:'Lanas Grab',look:function(A){ return A.m(F(A,'k5.fun.earth')||ph(A.G)==='k5_epi'?'Lanas Grab. Frische Erde, ein Eichenpfosten, oben die Messingtafel, darunter Zlatas Brett. Daneben der Quittenableger, gerade.':'Lanas Grab. Der Pfosten steht. Die Erde liegt daneben, unter einer grünen Matte.'); },
@@ -89,9 +89,9 @@ var HS_BA=[
  {id:'plate',name:'Messingtafel',look:'Die Messingtafel: LANA DELIĆ · 3. 3. 1976. Nedžad hat sie poliert, bis man sich darin spiegelt.',read:'LANA DELIĆ · 3. 3. 1976. Keine dritte Zeile.',g:{look:'So hat Mama mich gerufen.'}},
  {id:'board',name:'Brett',look:'Darunter das Brett aus Skela: MALA · 15.1.1994. Batos Messer, achtzehn Jahre alt.',read:'MALA · 15.1.1994.',g:{look:'So habe ich mich genannt. Am Ende.'}},
  {id:'quince',name:'Quittenableger',look:'Ein Quittenableger aus Skela, kaum ein Meter, an einen Stab gebunden. Zlata hat ihn gesetzt.',g:{look:'Vom Baum in Skela. Darunter habe ich achtzehn Jahre gelegen.'}},
- {id:'grave2',name:'Feld daneben',look:function(A){ return A.m(ph(A.G)==='k5_epi'?'Zorans Grab, ein Doppelgrab. Auf der Tafel: ZORAN VUKOVIĆ · 1951 – 1993 · poginuo 19. 4. 1993. Daneben ist Platz.':'Ein freies Feld, abgesteckt mit Holzpflöcken. Am Montag wird hier Papa begraben.'); },
-   read:function(A){ return A.m(ph(A.G)==='k5_epi'?'„Poginuo.“ Gefallen. Ružas Wort.':'Kein Name. Noch nicht.'); },g:{look:'Hier kommt sein Papa hin. Am Montag.'}},
- {id:'stones',name:'Grabsteine',look:'Weiße Steine, schmal und breit, mit runden und geraden Köpfen. Halbmond, Kreuz, Stern, nichts. Bare nimmt alle.',g:{look:'Viele. Fast alle sind gegangen. Gut.'}},
+ {id:'grave2',name:function(S,G){ return G.phase==='k5_epi'?'Zorans Grab':'Feld daneben'; },look:function(A){ return A.m(ph(A.G)==='k5_epi'?'Papas Grab, ein Doppelgrab. Ein Holzkreuz mit einer weißen Tafel: ZORAN VUKOVIĆ · 1951 – 1993. Kränze mit Schleifen, rote Grablichter. Daneben ist Platz. Im Sommer kommt der Stein.':'Ein freies Feld, zwei Reihen weiter, abgesteckt mit Holzpflöcken. Am Montag wird hier Papa begraben.'); },
+   read:function(A){ return A.m(ph(A.G)==='k5_epi'?'Auf der Tafel am Kreuz: ZORAN VUKOVIĆ · 1951 – 1993. Auf den Stein kommt im Sommer: poginuo 19. 4. 1993. Ružas Wort.':'Kein Name. Noch nicht.'); },g:{look:function(A){ return A.g(ph(A.G)==='k5_epi'?'Sein Papa. Mit einem Kreuz, wie bei Baka.':'Hier kommt sein Papa hin. Am Montag.'); }}},
+ {id:'stones',name:'Gräber',look:'Der katholische Teil von Bare: Kreuze aus Stein und Holz, dunkle Grabsteine mit einem eingemeißelten Kreuz, davor rote Grablichter. Lanas Pfosten steht dazwischen, ohne Kreuz, wie Nada und Zlata es wollten.',g:{look:'Viele. Fast alle sind gegangen. Gut.'}},
  {id:'cypress',name:'Zypresse',look:'Eine Zypresse, schwarzgrün, gerade wie ein Strich.',g:{look:'Sie zeigt nach oben. Wie alle Zypressen. Übertrieben.'}},
  {id:'city',name:'Stadt',look:'Unten die Stadt im Dunst. Die Brauerei, die Baščaršija, ganz hinten die Hochhäuser von Alipašino Polje.',g:{look:'Von hier sieht man den Weg der Drei. Fast ganz.'}},
  {id:'bench',name:'Bank',look:'Eine Bank am Weg. Darauf liegt ein vergessener Handschuh, schwarz, für die linke Hand.',g:{look:'Einer hat einen Handschuh vergessen. Er kommt wieder.'}},

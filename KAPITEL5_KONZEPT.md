@@ -2119,4 +2119,7 @@ Kapitel 5 ist gebaut (`BERICHT_K5.md`, Komplettlösung `LOESUNG5.md`). Die Handl
 | Weg nach Vratnik mit drei Haltepunkten | drei erzählte Haltepunkte in einer Folge, danach Ružas Tor | geführt wie im Konzept, ohne freien Weg |
 | Kolars Anruf am Donnerstag | zu Beginn des Donnerstags | – |
 | Dragicas zweites Gespräch, die Plastikflasche an der Brauerei, ein eigenes Erinnerungsbild für die Dämmerung | nicht umgesetzt; Nachhalle nutzen Bilder aus Kapitel 2 bis 4 | Umfang |
+| Friedhof Bare „für alle Konfessionen“, ohne Zeichen von Glauben | der **katholische Teil** von Bare: Kreuze, Grabsteine mit Kreuz, Grablichter | Rückmeldung des Autors: Vuković ist eine katholische Familie. |
+| Zorans Begräbnis ohne Angabe der Form | **katholisch:** Fra Ivo von Sveti Ante (Bistrik), Holzkreuz mit Tafel, „Pokoj vječni“, Weihwasser; „poginuo“ kommt auf den Stein, der im Sommer kommt | wie oben |
+| Lanas Begräbnis ohne Angabe der Form | **konfessionslos:** kein Priester, kein Imam; der Pfosten ohne religiöses Zeichen | Entscheidung des Autors |
 | Spieldauer 140 bis 160 Minuten (Schätzung) | Musterlösung 81 Minuten Spieltakt (gemessen) | Ein erstes Spielen mit Suchen dauert länger; gemessen ist es nicht. |

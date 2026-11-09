@@ -20,4 +20,20 @@ M.defineChar('hamdija',{
 });
 if (M.PORTRAIT_GHOSTS) M.PORTRAIT_GHOSTS.hamdija=true;
 if (M.CAST_COLORS.hamdija===undefined) M.CAST_COLORS.hamdija=P.v4;
+// Fra Ivo, Franziskaner von Sveti Ante (Bistrik), hält Zorans Begräbnis am Montag: braune Kutte bis zum Boden, darüber das weiße
+// Chorhemd bis über die Hüfte, eine violette Stola. Kopf wie Šehić, kurzes dunkelgraues Haar.
+M.defineChar('fra',{
+  legend:L({h:P.m2,H:P.m1,j:P.m3,g:P.m1,b:P.m2,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
+  heads:base?base.heads:{}, neck:base?base.neck:undefined,
+  torso:{w:12,len:13,col:[P.s5,P.s6,P.s4],buttons:P.s4,side:8},
+  cols:{trou:[P.e1,P.e2,P.e0],trouF:[P.e0,P.e1,P.k1],sleeve:[P.s5,P.s6,P.s4],sleeveF:[P.s4,P.s5,P.s3],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.k1},
+  // unten die braune Kutte bis knapp über die Füße (über den Beinen, nach unten weiter), darüber die violette Stola
+  post:function(b,p,X,Y,hx,hy){ var t=Y+hy-12, y, x, y0=Y+hy+1, y1=Y-2, n=Math.max(1,y1-y0);
+    if (p.v==='F'||p.v==='B'){ for (y=y0;y<=y1;y++){ var hw=4+Math.round((y-y0)/n*2); for (x=X+hx-hw;x<=X+hx+hw;x++) b.px(x,y,(x===X+hx-hw)?P.e2:((x===X+hx+hw)?P.e0:((x+y)%5===0?P.e0:P.e1))); }
+      if (p.v==='F'){ for (y=t;y<=Y+hy+8;y++){ b.px(X+hx-2,y,P.v2); b.px(X+hx+2,y,P.v2); } b.px(X+hx-2,Y+hy+9,P.v3); b.px(X+hx+2,Y+hy+9,P.v3); }
+      else b.hl(X+hx-3,X+hx+3,t,P.v2); }
+    else if (p.v==='S'){ for (y=y0;y<=y1;y++){ var sw=3+Math.round((y-y0)/n); for (x=X+hx-sw;x<=X+hx+sw;x++) b.px(x,y,(x===X+hx+sw)?P.e0:P.e1); }
+      for (y=t+1;y<=Y+hy+8;y++) b.px(X+hx+3,y,P.v2); } }
+});
+if (M.CAST_COLORS.fra===undefined) M.CAST_COLORS.fra=P.e4;
 })(M);

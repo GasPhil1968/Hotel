@@ -201,8 +201,8 @@ M.k5HallEnter=async function(A,from){ var p=ph(A), D=A.npc('dragica'), S=A.npc('
     await A.wait(400); await J.say('Meinen Namen in fremder Schrift. Das ist das Erste hier, was mich nicht vergessen hat.');
     await A.wait(300); await D.say('Der Aufzug geht nicht. Fünfundzwanzig Jahre Aufzug, und er ging vielleicht zwei.'); return; }
   if (p==='k5_sat' && M.k5SatHall) return M.k5SatHall(A,from); };
-M.k5Housebook=async function(A){ await A.doc({style:'log',title:'Kućna knjiga · Ulaz 7 · 1991',lines:['Sprat 7, lijevo: VUKOVIĆ (Zoran, Jasna, Marko, Ana)','Sprat 7, desno: HODŽIĆ (Mirsad, Fatima)','Sprat 9, lijevo: DELIĆ (Esad, Nada, Lana)','Sprat 9, desno: KOVAČ (Dragica, Mirko †1995)','Vodio: S. Šehić, kućni savjet']});
-  if (A.first('k5hb')) await A.m('Siebter Stock links, wir. Neunter Stock links, Delić. Esad, Nada, Lana. Esad ist neunundneunzig gestorben. Nada hat das Kreuz nicht machen lassen.'); };
+M.k5Housebook=async function(A){ await A.doc({style:'register',title:'KUĆNA KNJIGA · Zgrada 7 · 1991',lines:['5. sprat: Hodžić (Senad, Fata, Mirza)','6. sprat: Karić (Edin, Mersiha, Selma)','7. sprat: Vuković (Zoran, Jasna, Marko, Ana)','8. sprat: Kovač (Ivo, Branka, Damir)','9. sprat: Delić (Esad, Nada, Lana)','4. sprat: Marić (Zora), učiteljica']});
+  if (A.first('k5hb')) await A.m('Siebter Stock: wir. Neunter Stock: Delić, Esad, Nada, Lana. Esad ist zweitausendfünf gestorben. Šehić hat im Buch nichts dazugeschrieben. Nada hat ihn nie darum gebeten.'); };
 M.k5TalkDragica=async function(A){ var D=A.npc('dragica'), p=ph(A);
   await A.menuLoop(function(){ return [
     {t:'Wie geht es Ihnen, Dragica?',once:'k5dr1',go:async function(A){ await D.say('Wie soll es gehen. Das Knie, die Treppe, der Aufzug. Und Nada im neunten, die mir jeden Tag Brot mitbringt, weil ich nicht hinunterkomme.'); await D.say('Seit Januar bringt sie zwei Brote. Für wen das zweite ist, weiß ich nicht. Ich frage nicht.'); if (gHere(A)){ await A.wait(300); await A.g('Für mich. Sie isst es abends. Für mich.'); } }},
@@ -229,7 +229,7 @@ M.k5StairsEnter=async function(A,from){ var p=ph(A), J=A.npc('jasna'), S=A.npc('
     if (A.G.malaOn){ await A.wait(600); await A.narrate('Mala steht an der Wand neben der großen Sieben. Sie sagt nichts.'); }
     await A.wait(400); await A.narrate('Unten keucht einer die Treppe herauf. Herr Šehić, mit einem Schlüsselbund, an dem jeder Schlüssel ein Schildchen hat.');
     A.setFlag('k5.p.sehicUp'); A.spawn({id:'sehic',ch:'sehic',x:250,y:121,f:'L',name:'Herr Šehić',speechY:46}); try{ await A.npc('sehic').walk(192,121); }catch(e){}
-    await S.say('Die Wohnung steht leer, gospođo. Die Hodžićs sind nach nebenan, wegen der Zwillinge. Samstag um elf bin ich da, dann sperre ich auf. Wenn Sie wollen.');
+    await S.say('Die Wohnung steht leer, gospođo. Die letzten Mieter sind im Herbst nach Graz gezogen. Samstag um elf bin ich da, dann sperre ich auf. Wenn Sie wollen.');
     A.note('j5_samstag'); await J.say('Samstag.'); await A.wait(300); await J.say('Ja. Samstag.');
     await A.wait(300); await J.say('Ich trinke bei Herrn Šehić einen Kaffee. Geh du hinauf, Marko. Sie wartet.');
     A.setFlag('k5.p.seventh'); A.despawn('jasna'); A.despawn('sehic'); A.rebuild(); A.save(); return; }
@@ -273,7 +273,7 @@ M.k5LanaDoor=async function(A){ if (A.S.lanaOpen) return A.m('Die Tür steht off
   if (ph(A)==='k5_d1' && !has(A,'f5_eursamstag')) return A.m('Ich frage Nada erst. Es ist ihr Zimmer. Es ist Lanas Zimmer.');
   return A.m('Zu.'); };
 M.k5ReadMappe=async function(A){ if (!A.S.lanaOpen) return A.m('Die Tür zu Lanas Zimmer ist zu.');
-  await A.doc({style:'faded',title:'Durchschläge · Služba traženja · 1995–2011',lines:['Tražim svoju kćer Lanu Delić, rođenu 3. 3. 1976. u Sarajevu …','– Ich suche meine Tochter Lana Delić, geboren am 3. 3. 1976 in Sarajevo …','Zadnji put viđena 15. 1. 1994., autobus za Mostar. – Zuletzt gesehen am 15. 1. 1994, Bus nach Mostar.','Molim vas … – Ich bitte Sie …','(siebzehn Durchschläge, einer für jeden Januar; der letzte von 2011)']});
+  await A.doc({style:'faded',title:'Durchschläge · Služba traženja · 1995–2011',lines:['Tražim svoju kćer Lanu Delić, rođenu 3. 3. 1976. u Sarajevu …','– Ich suche meine Tochter Lana Delić, geboren am 3. 3. 1976 in Sarajevo …','Otišla iz Sarajeva autobusom u novembru 1993. Zadnja vijest: razglednica iz Splita, januar 1994.','– Im November 1993 mit einem Bus aus Sarajevo fort. Letzte Nachricht: eine Karte aus Split, Januar 1994.','Molim vas … – Ich bitte Sie …','(siebzehn Durchschläge, einer für jeden Januar; der letzte von 2011)']});
   if (!has(A,'s5_mappe')){ A.note('s5_mappe'); await A.m('Siebzehn Durchschläge. Jeder fängt gleich an. Mit ihrem Namen und ihrem Geburtstag.'); await A.wait(300);
     var N=A.npc('nada'); if (N.actor){ await N.say('Im Januar habe ich zum ersten Mal keinen geschrieben.'); } } };
 M.k5SenseMappe=async function(A){ if (has(A,'s5_nh_mappe')) return A.g('Mamas Januare. Siebzehn.');

@@ -298,7 +298,7 @@ M.k5Funeral=async function(A){ if (F(A,'k5.fun.done')) return;
   if (F(A,'k5.d2.damir')) await A.narrate('Am Weg steht Damir in Uniform, die Mütze in der Hand. Er hat Pause.');
   await A.wait(500); await A.narrate('Der Pfosten steht. Oben die Tafel: LANA DELIĆ · 3. 3. 1976. Darunter das Brett: MALA · 15.1.1994.');
   if (A.G.malaOn){ await A.wait(700); await A.g('Jetzt passen sie zusammen.'); }
-  await A.wait(500); await A.narrate('Ein Mann von der Friedhofsverwaltung liest die Daten vor. Dann sagt keiner etwas. Das ist das Richtige.');
+  await A.wait(500); await A.narrate('Kein Priester, kein Imam. Nada und Zlata haben sich darauf geeinigt, dass für Lana nur ihre Namen sprechen. Ein Mann von der Friedhofsverwaltung liest die Daten vor. Dann sagt keiner etwas. Das ist das Richtige.');
   await A.wait(700); await A.narrate('Zlata kniet sich hin und setzt einen Ableger vom Quittenbaum aus Skela neben den Pfosten. Sie bindet ihn an einen Stab.');
   A.setFlag('k5.fun.quince'); A.set('quince',true); A.rebuild();
   if (A.G.malaOn){ await A.wait(500); await A.g('Schief.'); await A.wait(500); await A.narrate('Zlata rückt ihn gerade, ohne aufzusehen. Sie weiß nicht, warum.'); }
@@ -313,7 +313,8 @@ M.k5Funeral=async function(A){ if (F(A,'k5.fun.done')) return;
 M.k5GraveUse=async function(A){ if (ph(A)==='k5_fun') return A.m('Ich stehe am Grab. Mehr gibt es nicht zu tun. Das ist viel.'); if (M.k5EpiGrave) return M.k5EpiGrave(A); return A.m('…'); };
 M.k5BareTalk=async function(A,id){ if (ph(A)==='k5_epi' && M.k5EpiBareTalk) return M.k5EpiBareTalk(A,id); return A.npc(id).say(A.cycle('k5bt'+id,['…','Ne sada.'])); };
 M.k5BareLook=async function(A,id){ var t={ nada:'Nada, ganz in Schwarz, die Hände ineinander.',zlata:'Zlata, im guten Mantel, Erde an den Knien.',jasna:'Mama. Sie steht ein Stück abseits, neben Ana.',ana:'Ana hält Niko an der Hand. Er zieht.',mia:'Mia, ernst, mit einer Blume, die sie nicht hergeben will.',niko:'Niko winkt.',
-  hajra:'Hajra, mit einem Blech Pita unter einem Tuch. Für nachher.',kolar:'Frau Kolar, am Rand. Sie kommt zu allen, die sie gefunden hat.',vlado:'Vlado, die Mütze in den Händen.',dragica:'Dragica, auf Šehićs Arm.',sehic:'Herr Šehić, mit Krawatte. Er hat sie zweimal gebunden.',damir:'Damir, in Uniform.' }[id];
+  hajra:'Hajra, mit einem Blech Pita unter einem Tuch. Für nachher.',kolar:'Frau Kolar, am Rand. Sie kommt zu allen, die sie gefunden hat.',vlado:'Vlado, die Mütze in den Händen.',dragica:'Dragica, auf Šehićs Arm.',sehic:'Herr Šehić, mit Krawatte. Er hat sie zweimal gebunden.',damir:'Damir, in Uniform.',
+  fra:'Fra Ivo, Franziskaner von Sveti Ante in Bistrik. Braune Kutte, darüber das weiße Chorhemd, eine violette Stola. In der Hand das Weihwasser.' }[id];
   return A.m(t||'…'); };
 
 // ================================================================ Das Totenmahl (Freitagabend bei Nada)

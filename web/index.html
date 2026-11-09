@@ -12156,6 +12156,22 @@ M.defineChar('hamdija',{
 });
 if (M.PORTRAIT_GHOSTS) M.PORTRAIT_GHOSTS.hamdija=true;
 if (M.CAST_COLORS.hamdija===undefined) M.CAST_COLORS.hamdija=P.v4;
+// Fra Ivo, Franziskaner von Sveti Ante (Bistrik), hält Zorans Begräbnis am Montag: braune Kutte bis zum Boden, darüber das weiße
+// Chorhemd bis über die Hüfte, eine violette Stola. Kopf wie Šehić, kurzes dunkelgraues Haar.
+M.defineChar('fra',{
+  legend:L({h:P.m2,H:P.m1,j:P.m3,g:P.m1,b:P.m2,S:P.p4,s:P.p3,t:P.p2,m:P.p1}),
+  heads:base?base.heads:{}, neck:base?base.neck:undefined,
+  torso:{w:12,len:13,col:[P.s5,P.s6,P.s4],buttons:P.s4,side:8},
+  cols:{trou:[P.e1,P.e2,P.e0],trouF:[P.e0,P.e1,P.k1],sleeve:[P.s5,P.s6,P.s4],sleeveF:[P.s4,P.s5,P.s3],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.k1},
+  // unten die braune Kutte bis knapp über die Füße (über den Beinen, nach unten weiter), darüber die violette Stola
+  post:function(b,p,X,Y,hx,hy){ var t=Y+hy-12, y, x, y0=Y+hy+1, y1=Y-2, n=Math.max(1,y1-y0);
+    if (p.v==='F'||p.v==='B'){ for (y=y0;y<=y1;y++){ var hw=4+Math.round((y-y0)/n*2); for (x=X+hx-hw;x<=X+hx+hw;x++) b.px(x,y,(x===X+hx-hw)?P.e2:((x===X+hx+hw)?P.e0:((x+y)%5===0?P.e0:P.e1))); }
+      if (p.v==='F'){ for (y=t;y<=Y+hy+8;y++){ b.px(X+hx-2,y,P.v2); b.px(X+hx+2,y,P.v2); } b.px(X+hx-2,Y+hy+9,P.v3); b.px(X+hx+2,Y+hy+9,P.v3); }
+      else b.hl(X+hx-3,X+hx+3,t,P.v2); }
+    else if (p.v==='S'){ for (y=y0;y<=y1;y++){ var sw=3+Math.round((y-y0)/n); for (x=X+hx-sw;x<=X+hx+sw;x++) b.px(x,y,(x===X+hx+sw)?P.e0:P.e1); }
+      for (y=t+1;y<=Y+hy+8;y++) b.px(X+hx+3,y,P.v2); } }
+});
+if (M.CAST_COLORS.fra===undefined) M.CAST_COLORS.fra=P.e4;
 })(M);
 
 /* ---- 15_hints_k1.js ---- */
@@ -24063,12 +24079,12 @@ M.defineArt('bar',{
 })(M);
 
 /* ---- rooms/art/bare.js ---- */
-/* ===== rooms/art/bare.js — Friedhof Bare, ein Hang über der Stadt (320 px) =====
-   Hinten die Hänge, darunter im Dunst die Dächer der Stadt. Der Friedhof steigt nach hinten an: Reihen weißer Steine, schmal
-   und breit, mit runden und geraden Köpfen, dazwischen Zypressen. Vorn ein Kiesweg mit einer Bank. Rechts der Mitte Lanas
-   Grab: frische Erde, ein Eichenpfosten, oben die Messingtafel, darunter Zlatas Brett, daneben der Quittenableger (S.quince).
-   Links ein freies Feld, am Montag Zorans Doppelgrab mit einer hellen Tafel (S.grave2). Keine Symbole von Glauben oder Partei:
-   das Spiel zeigt Steine. ===== */
+/* ===== rooms/art/bare.js — Friedhof Bare, der katholische Teil, ein Hang über der Stadt (320 px) =====
+   Hinten die Hänge, darunter im Dunst die Dächer der Stadt. Der Friedhof steigt nach hinten an: Reihen von Kreuzen aus Stein und
+   Holz, dunkle und helle Grabsteine mit eingemeißeltem Kreuz, vorn mit Einfassungen und roten Grablichtern, dazwischen Zypressen.
+   Vorn ein Kiesweg mit einer Bank. Rechts der Mitte Lanas Grab, ohne religiöses Zeichen: frische Erde, ein Eichenpfosten, oben die
+   Messingtafel, darunter Zlatas Brett, daneben der Quittenableger (S.quince). Links ein abgestecktes Feld, am Montag Zorans
+   Doppelgrab (S.grave2): ein Holzkreuz mit weißer Tafel, Kränze mit Schleifen, rote Grablichter. ===== */
 (function(M){
 'use strict';
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, R=M.R;
@@ -24102,16 +24118,37 @@ function paintHills(b){ var w=RW(b,RG.hill), x, y;
   M.fogBake(b,function(x,y){ var r=REG[y*W+x]; return r===RG.city?0.5:(r===RG.hill?0.3:0); },{col:P.s5}); }
 function paintSlope(b){ var w=RW(b,RG.slope), x, y;
   for (y=52;y<GY+2;y++) for (x=0;x<W;x++){ var f=fbm(x,y,6,11); w.px(x,y,ra(R('e1 g1 g2 e2 g3'),0.3+(y-52)/70*0.4+(f-0.5)*0.35,x,y)); } }
-function stone(w,x,yb,h,wd,kind,shade){ var x0=x-(wd>>1), y0=yb-h, i, j;
-  for (j=y0;j<yb;j++) for (i=x0;i<x0+wd;i++){ var top=j-y0, cap=kind===1&&top<2&&(i===x0||i===x0+wd-1); if (cap) continue; if (kind===2&&top===0&&(i===x0||i===x0+wd-1)) continue;
-    w.px(i,j,i===x0?P.s6:(i===x0+wd-1?P.s3:(top===0?P.s6:ra(R('s4 s5 s5 s6'),0.55+shade+(hash(i,j)-0.5)*0.15,i,j)))); }
-  if (kind===3){ w.px(x,y0-1,P.s5); w.px(x,y0-2,P.s6); w.hl(x-1,x+1,y0-1,P.s5); } }
-function paintStones(b){ var w=RW(b,RG.stone), r=M.rng(1993), row, k;
+// Grabzeichen eines katholischen Friedhofs: 0 Steinkreuz · 1 dunkler Grabstein (Granit) mit hellem Kreuz · 2 heller Grabstein mit
+// dunklem Kreuz · 3 Holzkreuz. In den vorderen Reihen mit Einfassung, Grablichtern und Blumen.
+function cross(w,x,yb,h,arm,c0,c1,c2){ var y0=yb-h, ya=y0+Math.max(1,Math.round(h*0.28)), i;
+  for (var y=y0;y<yb;y++){ w.px(x,y,c1); if (h>8) w.px(x+1,y,c2); }
+  for (i=-arm;i<=arm+(h>8?1:0);i++) w.px(x+i,ya,i<0?c0:c1);
+  if (h>10) for (i=-arm;i<=arm+1;i++) w.px(x+i,ya+1,c2);
+  w.px(x,y0,c0); }
+function slab(w,x,yb,h,wd,dark,round,shade){ var x0=x-(wd>>1), y0=yb-h, i, j, R0=dark?R('k1 m0 m1 m1'):R('s4 s5 s5 s6');
+  for (j=y0;j<yb;j++) for (i=x0;i<x0+wd;i++){ var top=j-y0; if (round && top===0 && (i===x0||i===x0+wd-1)) continue;
+    w.px(i,j,i===x0?(dark?P.m2:P.s6):(i===x0+wd-1?(dark?P.k1:P.s3):(top===0?(dark?P.m3:P.s6):ra(R0,0.5+shade+(hash(i,j)-0.5)*0.15,i,j)))); }
+  // eingemeißeltes Kreuz oben in der Mitte
+  var cx=x0+(wd>>1), cy=y0+(round?2:1), ch=Math.max(2,Math.min(5,Math.round(h*0.35))), cc=dark?P.s5:P.m1;
+  if (wd>=3){ for (var k=0;k<ch;k++) w.px(cx,cy+k,cc); if (wd>=5){ w.px(cx-1,cy+1,cc); w.px(cx+1,cy+1,cc); } } }
+function nearDecor(w,x,yb,wd,r){ var i;
+  // Einfassung aus Stein als heller Streifen am Fuß
+  for (i=x-(wd>>1)-2;i<=x+(wd>>1)+2;i++){ w.px(i,yb,P.s5); w.px(i,yb+1,P.s3); }
+  // Grablichter: rote und weiße Becher, oben ein Lichtpunkt
+  var n=1+Math.floor(r()*3); for (i=0;i<n;i++){ var lx=x-(wd>>1)+Math.floor(r()*(wd+2)), red=r()<0.7; w.px(lx,yb-1,red?P.r3:P.s6); w.px(lx,yb-2,red?P.r2:P.s5); w.px(lx,yb-3,red?P.r4:P.s6); if (r()<0.6) w.px(lx,yb-4,P.y5); }
+  // Blumen
+  if (r()<0.5){ var fx=x+(wd>>1)+1; w.px(fx,yb-1,P.g2); w.px(fx,yb-2,r()<0.5?P.y4:P.r3); } }
+function paintStones(b){ var w=RW(b,RG.stone), r=M.rng(1993);
   // Reihen nach hinten kleiner, dichter; vorn bleiben Lanas Feld, Zorans Feld und der Weg frei
   var rows=[[60,3,2,10,-0.15],[68,4,2,9,-0.1],[77,5,3,8,-0.05],[88,7,4,7,0],[100,9,5,6,0.05]];
-  rows.forEach(function(rw){ var yb=rw[0], hmax=rw[1]*2+2, wd0=rw[2], step=rw[3]+4;
+  rows.forEach(function(rw){ var yb=rw[0], hmax=rw[1]*2+2, wd0=rw[2], step=rw[3]+4, near=yb>=88;
     for (var x=4+(hash(yb,1)*step|0);x<W-4;x+=step+Math.floor(r()*4)){ if (yb>=86 && ((x>Z.x0-4&&x<Z.x1+4)||(x>LANA.mound.x0-6&&x<LANA.q.x+8))) continue;
-      var h=Math.round(hmax*(0.6+r()*0.6)), wd=wd0+Math.floor(r()*3), kind=Math.floor(r()*4); stone(w,x,yb,h,wd,kind,rw[4]); } }); }
+      var h=Math.round(hmax*(0.6+r()*0.6)), wd=wd0+Math.floor(r()*3), kind=Math.floor(r()*4);
+      if (kind===0) cross(w,x,yb,h+2,Math.max(1,Math.round(h/4)),P.s6,P.s5,P.s3);
+      else if (kind===1) slab(w,x,yb,h,wd+1,true,r()<0.5,rw[4]);
+      else if (kind===2) slab(w,x,yb,h,wd,false,r()<0.6,rw[4]);
+      else cross(w,x,yb,h,Math.max(1,Math.round(h/4)),P.w3,P.w2,P.w0);
+      if (near) nearDecor(w,x,yb,wd+1,r); } }); }
 function cypress(b,x,yb,h){ var w=RW(b,RG.tree);
   for (var y=yb-h;y<yb;y++){ var t=(y-(yb-h))/h, half=Math.round(1+Math.sin(Math.min(1,t*1.15)*Math.PI*0.62)*5); for (var i=-half;i<=half;i++){ var f=fbm(x+i,y,3,13); if (Math.abs(i)===half && f<0.5) continue; w.px(x+i,y,ra(R('k1 w0 e1 g1'),0.3+f*0.5+(i<0?0.12:-0.1),x+i,y)); } }
   for (var y2=yb;y2<yb+3;y2++){ w.px(x,y2,P.w1); w.px(x+1,y2,P.w0); } }
@@ -24125,11 +24162,22 @@ function paintGraves(b,S){ var g=RW(b,RG.grave), br=RW(b,RG.brass), x, y;
     g.px(LANA.board.x0+1,LANA.board.y0+1,P.m2); g.px(LANA.board.x1-2,LANA.board.y0+1,P.m2); }
   // Quittenableger: ein dünner Stamm, ein Stab, drei Blätter
   if (S.quince){ var qx=LANA.q.x; for (y=GY-16;y<GY;y++) g.px(qx,y,P.w1); g.vl(qx+2,GY-14,GY-1,P.w3); g.px(qx+1,GY-10,P.e3); g.px(qx-1,GY-13,P.g3); g.px(qx+1,GY-16,P.g4); g.px(qx-2,GY-15,P.g3); g.px(qx,GY-17,P.g4); }
-  // Zorans Feld
+  // Zorans Feld: am Freitag abgesteckt; am Montag frische Erde unter Kränzen, ein Holzkreuz mit weißer Tafel, rote Grablichter
   if (S.grave2){ for (y=GY-6;y<GY+1;y++) for (x=Z.x0;x<Z.x1;x++){ var dz=(x-(Z.x0+Z.x1)/2)/((Z.x1-Z.x0)/2), tz=GY-1-Math.round((1-dz*dz)*4); if (y<tz) continue; g.px(x,y,ra(R('e0 e1 e2 t1'),0.4+(y-tz)*0.05+(hash(x,y)-0.5)*0.4,x,y)); }
-    for (y=GY-26;y<GY-4;y++) for (x=104;x<118;x++) g.px(x,y,(x===104||y===GY-26)?P.s6:((x===117)?P.s3:ra(R('s4 s5 s6'),0.6+(hash(x,y)-0.5)*0.15,x,y)));
-    for (var l=0;l<3;l++) g.hl(106,115-(l===2?3:0),GY-22+l*4,P.s2);
-    for (var fl=0;fl<6;fl++){ var fx=96+fl*5+(hash(fl,3)*3|0); g.vl(fx,GY-4,GY-1,P.g2); g.px(fx,GY-5,fl%2?P.r3:P.y4); } }
+    // das Holzkreuz
+    var cx=111, ct=GY-32;
+    for (y=ct;y<GY-2;y++){ g.px(cx-1,y,P.w3); g.px(cx,y,P.w2); g.px(cx+1,y,P.w1); }
+    for (x=cx-8;x<=cx+8;x++){ g.px(x,ct+7,x===cx-8?P.w3:P.w2); g.px(x,ct+8,P.w1); }
+    g.hl(cx-1,cx+1,ct,P.w4);
+    // die Tafel am Kreuz
+    for (y=ct+11;y<ct+18;y++) for (x=cx-4;x<=cx+4;x++) g.px(x,y,(y===ct+11||x===cx-4)?P.s6:((y===ct+17||x===cx+4)?P.s3:P.s5));
+    g.hl(cx-3,cx+3,ct+13,P.m1); g.hl(cx-2,cx+2,ct+15,P.m2);
+    // Kränze mit Schleifen auf dem Hügel
+    [[96,GY-4,5],[104,GY-6,4],[121,GY-6,4],[129,GY-4,5]].forEach(function(k,i){ var kx=k[0], ky=k[1], rr=k[2];
+      for (var a=0;a<28;a++){ var an=a/28*Math.PI*2, px=Math.round(kx+Math.cos(an)*rr), py=Math.round(ky+Math.sin(an)*rr*0.55); g.px(px,py,(a%5===0)?[P.r3,P.s6,P.y4,P.r2][i]:(a%2?P.g2:P.g3)); }
+      g.vl(kx-1,ky+1,ky+4,i%2?P.s6:P.k1); g.vl(kx+1,ky+1,ky+5,i%2?P.s6:P.k1); });
+    // rote Grablichter vor dem Kreuz
+    [106,109,113,116].forEach(function(lx,i){ g.px(lx,GY-1,P.r3); g.px(lx,GY-2,P.r2); g.px(lx,GY-3,P.r4); if (i%2===0) g.px(lx,GY-4,P.y5); }); }
   else { for (x=Z.x0+6;x<Z.x1-6;x+=12){ g.vl(x,GY-6,GY-1,P.w2); g.px(x,GY-7,P.w3); } } }
 function paintPath(b){ var w=RW(b,RG.path), x, y;
   for (y=GY+1;y<H;y++) for (x=0;x<W;x++){ var v=0.45+hash(x>>1,y>>1)*0.35+((y-GY)/40)*0.1; if (y===GY+1) v=0.2; w.px(x,y,ra(R('m2 s3 m3 s4 s5'),v,x,y)); }
@@ -24146,12 +24194,12 @@ M.defineArt('bare',{
   width:W, paint:paint, dynamic:dynamic,
   walk:function(x,y){ if (y<115||y>140||x<6||x>314) return false; if (x>20&&x<54&&y<122) return false; return true; }, walkG:function(){ return false; },
   spots:{ exit:[0,112,14,30], grave:[LANA.mound.x0-2,LANA.post.y0-2,LANA.mound.x1-LANA.mound.x0+4,GY-LANA.post.y0+2], plate:[LANA.plate.x0-1,LANA.plate.y0-1,LANA.plate.x1-LANA.plate.x0+2,LANA.plate.y1-LANA.plate.y0+2],
-    board:[LANA.board.x0-1,LANA.board.y0-1,LANA.board.x1-LANA.board.x0+2,LANA.board.y1-LANA.board.y0+2], quince:[LANA.q.x-5,GY-20,12,20], grave2:[Z.x0,GY-28,Z.x1-Z.x0,30],
+    board:[LANA.board.x0-1,LANA.board.y0-1,LANA.board.x1-LANA.board.x0+2,LANA.board.y1-LANA.board.y0+2], quince:[LANA.q.x-5,GY-20,12,20], grave2:[Z.x0,GY-34,Z.x1-Z.x0,36],
     stones:[240,60,50,40], cypress:[54,48,18,52], city:[0,38,320,18], bench:[20,112,34,14], path:[140,124,40,14] },
-  stands:{ exit:[10,128,'L'], grave:[260,123,'L'], plate:[260,123,'L'], board:[260,123,'L'], quince:[260,123,'L'], grave2:[124,124,'L'], stones:[262,122,'B'], cypress:[66,124,'B'], city:[160,128,'B'], bench:[36,127,'B'], path:[160,130,'B'] },
+  stands:{ exit:[10,128,'L'], grave:[260,123,'L'], plate:[260,123,'L'], board:[260,123,'L'], quince:[260,123,'L'], grave2:[188,124,'L'], stones:[262,122,'B'], cypress:[66,124,'B'], city:[160,128,'B'], bench:[36,127,'B'], path:[160,130,'B'] },
   actorPos:{ nada:[188,121,'R'], zlata:[250,121,'L'], jasna:[172,123,'R'], ana:[158,124,'R'], mia:[147,126,'R'], niko:[164,127,'R'], hajra:[272,122,'L'], kolar:[134,123,'R'],
     vlado:[284,121,'L'], dragica:[296,123,'L'], sehic:[308,122,'L'], damir:[120,124,'R'], mala:[196,118,'R'],
-    jasna2:[94,122,'R'], ana2:[80,123,'R'], mia2:[69,126,'R'], niko2:[86,127,'R'], nada2:[132,124,'L'], hajra2:[144,122,'L'], sehic2:[156,122,'L'], kolar2:[168,123,'L'] },
+    jasna2:[95,122,'R'], ana2:[82,123,'R'], mia2:[70,126,'R'], niko2:[89,127,'R'], fra:[126,121,'L'], nada2:[138,124,'L'], hajra2:[150,122,'L'], sehic2:[162,122,'L'], kolar2:[174,123,'L'] },
   start:[30,128,'R'], entries:{ map:[16,128,'R'] }
 });
 })(M);
@@ -52792,7 +52840,7 @@ var HS_SG=[
  {id:'door7',name:'Wohnungstür',look:function(A){ return A.m(A.S.open7?'Die Tür steht offen. Eine leere Wohnung, Licht vom Balkon, ein Geruch nach frischer Farbe. Am Türrahmen zur Küche Bleistiftstriche, „M“ und „A“.':'Unsere alte Tür. Gepolstert, mit braunem Kunstleder und Ziernägeln. Das Schild ist ab. Man sieht noch die zwei Löcher.'); },
    use:function(A){ return M.k5Door7?M.k5Door7(A):A.m('Zu.'); },open:function(A){ return M.k5Door7?M.k5Door7(A):A.m('Zu.'); },
    g:{look:'Hier habe ich geklopft. Zweimal kurz, einmal lang. Seine Mama hat aufgemacht. Immer seine Mama.',sense:function(A){ return M.k5Door7Sense?M.k5Door7Sense(A):A.g('Hier.'); }}},
- {id:'door7b',name:'Nachbartür',look:'Die Tür der Nachbarn. Ein Kranz aus Plastik und ein Schild: „Obitelj Hodžić“. Dahinter weinen Zwillinge, abwechselnd.',g:{look:'Neue Leute. Die Zwillinge sehen mich. Deshalb weinen sie nicht. Sie lachen. Dann weinen sie wieder.'}},
+ {id:'door7b',name:'Nachbartür',look:'Die Tür der Nachbarn. Ein Kranz aus Plastik und ein Schild: „Obitelj Begić“. Dahinter weinen Zwillinge, abwechselnd.',g:{look:'Neue Leute. Die Zwillinge sehen mich. Deshalb weinen sie nicht. Sie lachen. Dann weinen sie wieder.'}},
  {id:'lift',name:'Aufzugstür',look:'Die Aufzugstür im siebten Stock. „VAN FUNKCIJE“. Hier oben ist der Zettel noch der alte, gelb.',g:{look:'Ging nie.'}},
  {id:'window',name:'Treppenfenster',look:'Das Treppenhausfenster. Durch das Drahtglas sieht man den Hof, die Haltestelle, die Gleise der Drei.',g:{look:'Von hier habe ich die Drei kommen sehen. Dann bin ich los.'}},
  {id:'seven',name:'Stockwerknummer',look:'Eine große „7“ an der Wand, mit Schablone gemalt. Darunter hat ein Kind etwas eingeritzt. Ein Kind von heute.',g:{look:'Sieben.'}},
@@ -53073,11 +53121,11 @@ M.room('institut',{ name:'Gerichtsmedizin', scape:'k3_vermisst', music:'k3_epi',
 // ================================================================ Friedhof Bare
 function funCast(G){ var p=ph(G);
   if (p==='k5_fun' && !f(G,'k5.fun.done')){ var L=['nada','zlata','jasna','ana','mia','niko','hajra','kolar','vlado','dragica','sehic']; if (f(G,'k5.d2.damir')) L.push('damir'); return L; }
-  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia2','niko2','hajra2','sehic2','kolar2'];
+  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia2','niko2','fra','hajra2','sehic2','kolar2'];
   return []; }
-var BCH={ nada:'nada', zlata:'zlata', jasna:'jasnaC', ana:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir' };
+var BCH={ nada:'nada', zlata:'zlata', jasna:'jasnaC', ana:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir', fra:'fra' };
 function bch(k){ return BCH[k.replace('2','')]; }
-var BNAME={ nada:'Nada', zlata:'Zlata', jasna:'Mama', ana:'Ana', mia:'Mia', niko:'Niko', hajra:'Hajra', kolar:'Frau Kolar', vlado:'Vlado', dragica:'Dragica', sehic:'Herr Šehić', damir:'Damir' };
+var BNAME={ nada:'Nada', zlata:'Zlata', jasna:'Mama', ana:'Ana', mia:'Mia', niko:'Niko', hajra:'Hajra', kolar:'Frau Kolar', vlado:'Vlado', dragica:'Dragica', sehic:'Herr Šehić', damir:'Damir', fra:'Fra Ivo' };
 var HS_BA=[
  {id:'exit',name:'Zum Stadtplan',exit:{to:'map'},canExit:async function(A){ if (ph(A.G)==='k5_fun'){ await A.m('Ich bleibe. Bis zum Ende.'); return false; } return true; },look:'Der Weg hinunter zum Tor.',g:{look:'Da unten ist das Tor.'}},
  {id:'grave',name:'Lanas Grab',look:function(A){ return A.m(F(A,'k5.fun.earth')||ph(A.G)==='k5_epi'?'Lanas Grab. Frische Erde, ein Eichenpfosten, oben die Messingtafel, darunter Zlatas Brett. Daneben der Quittenableger, gerade.':'Lanas Grab. Der Pfosten steht. Die Erde liegt daneben, unter einer grünen Matte.'); },
@@ -53085,9 +53133,9 @@ var HS_BA=[
  {id:'plate',name:'Messingtafel',look:'Die Messingtafel: LANA DELIĆ · 3. 3. 1976. Nedžad hat sie poliert, bis man sich darin spiegelt.',read:'LANA DELIĆ · 3. 3. 1976. Keine dritte Zeile.',g:{look:'So hat Mama mich gerufen.'}},
  {id:'board',name:'Brett',look:'Darunter das Brett aus Skela: MALA · 15.1.1994. Batos Messer, achtzehn Jahre alt.',read:'MALA · 15.1.1994.',g:{look:'So habe ich mich genannt. Am Ende.'}},
  {id:'quince',name:'Quittenableger',look:'Ein Quittenableger aus Skela, kaum ein Meter, an einen Stab gebunden. Zlata hat ihn gesetzt.',g:{look:'Vom Baum in Skela. Darunter habe ich achtzehn Jahre gelegen.'}},
- {id:'grave2',name:'Feld daneben',look:function(A){ return A.m(ph(A.G)==='k5_epi'?'Zorans Grab, ein Doppelgrab. Auf der Tafel: ZORAN VUKOVIĆ · 1951 – 1993 · poginuo 19. 4. 1993. Daneben ist Platz.':'Ein freies Feld, abgesteckt mit Holzpflöcken. Am Montag wird hier Papa begraben.'); },
-   read:function(A){ return A.m(ph(A.G)==='k5_epi'?'„Poginuo.“ Gefallen. Ružas Wort.':'Kein Name. Noch nicht.'); },g:{look:'Hier kommt sein Papa hin. Am Montag.'}},
- {id:'stones',name:'Grabsteine',look:'Weiße Steine, schmal und breit, mit runden und geraden Köpfen. Halbmond, Kreuz, Stern, nichts. Bare nimmt alle.',g:{look:'Viele. Fast alle sind gegangen. Gut.'}},
+ {id:'grave2',name:function(S,G){ return G.phase==='k5_epi'?'Zorans Grab':'Feld daneben'; },look:function(A){ return A.m(ph(A.G)==='k5_epi'?'Papas Grab, ein Doppelgrab. Ein Holzkreuz mit einer weißen Tafel: ZORAN VUKOVIĆ · 1951 – 1993. Kränze mit Schleifen, rote Grablichter. Daneben ist Platz. Im Sommer kommt der Stein.':'Ein freies Feld, zwei Reihen weiter, abgesteckt mit Holzpflöcken. Am Montag wird hier Papa begraben.'); },
+   read:function(A){ return A.m(ph(A.G)==='k5_epi'?'Auf der Tafel am Kreuz: ZORAN VUKOVIĆ · 1951 – 1993. Auf den Stein kommt im Sommer: poginuo 19. 4. 1993. Ružas Wort.':'Kein Name. Noch nicht.'); },g:{look:function(A){ return A.g(ph(A.G)==='k5_epi'?'Sein Papa. Mit einem Kreuz, wie bei Baka.':'Hier kommt sein Papa hin. Am Montag.'); }}},
+ {id:'stones',name:'Gräber',look:'Der katholische Teil von Bare: Kreuze aus Stein und Holz, dunkle Grabsteine mit einem eingemeißelten Kreuz, davor rote Grablichter. Lanas Pfosten steht dazwischen, ohne Kreuz, wie Nada und Zlata es wollten.',g:{look:'Viele. Fast alle sind gegangen. Gut.'}},
  {id:'cypress',name:'Zypresse',look:'Eine Zypresse, schwarzgrün, gerade wie ein Strich.',g:{look:'Sie zeigt nach oben. Wie alle Zypressen. Übertrieben.'}},
  {id:'city',name:'Stadt',look:'Unten die Stadt im Dunst. Die Brauerei, die Baščaršija, ganz hinten die Hochhäuser von Alipašino Polje.',g:{look:'Von hier sieht man den Weg der Drei. Fast ganz.'}},
  {id:'bench',name:'Bank',look:'Eine Bank am Weg. Darauf liegt ein vergessener Handschuh, schwarz, für die linke Hand.',g:{look:'Einer hat einen Handschuh vergessen. Er kommt wieder.'}},
@@ -53221,7 +53269,7 @@ var HS_VR=[
  {id:'ruza_house',name:'Ružas Haus',look:function(A){ return A.m(F(A,'k5.sat.gate')?'Ružas Haus. Die Tür steht offen. Drinnen knackt der Herd.':'Großmutters Haus. Weiß, klein, das neue Dach dunkelrot. Mama hat es achtzehn Jahre bezahlt, jeden Monat, ohne es zu sehen.'); },
    g:{look:'Das Dach ist neu. Darunter ist alles alt. Gut so.'}},
  {id:'ruza_gate',name:'Ružas Tor',exit:{to:'kuca5'},canExit:async function(A){ return M.k5GateExit?await M.k5GateExit(A):true; },
-   look:'Das Tor in der Mauer, grün gestrichen, die Farbe blättert. Im Sommer 1993 hat hier einer „Ich komme“ gesagt.',
+   look:'Das Tor in der Mauer, grün gestrichen, die Farbe blättert. Im November 1993 hat hier einer „Ich komme“ gesagt.',
    g:{look:'Hier.',sense:function(A){ return A.g(F(A,'k5.sat.gate')?'Offen.':'Hier habe ich „Kommst du?“ gefragt. Und er hat gelogen. Er war vierzehn.'); }}},
  {id:'garden',name:'Garten',look:function(A){ return A.m(F(A,'k5.p.tarp')?'Die Plane ist zurückgeschlagen. Darunter der zweite blaue Kanister und Hajras Holz.':'Ružas Garten. Der Quittenbaum, kahl. An der Mauer ein Haufen unter einer grünen Plane, mit Ziegeln beschwert.'); },
    use:function(A){ return M.k5Garden?M.k5Garden(A):A.m('Eine Plane.'); },open:function(A){ return M.k5Garden?M.k5Garden(A):A.m('Eine Plane.'); },
@@ -66040,7 +66088,7 @@ function icon5(b,id,on){ var p=POS5[id], x=p[0], y=p[1], c=on?P.k1:P.e3, fl=on?P
   else if (id==='pivara'){ b.rect(x-6,y-5,7,10,on?P.t2:fl); b.hl(x-6,x,y-5,c); b.vl(x-6,y-5,y+4,c); b.vl(x,y-5,y+4,c); b.rect(x-4,y-9,3,4,c); for (i=0;i<3;i++) b.px(x-5+i*2,y-2,on?P.y3:c);
     b.vl(x+3,y-3,y+1,c); b.hl(x+3,x+6,y-3,c); b.px(x+6,y-2,on?P.a5:c); b.px(x+6,y,on?P.a5:c); b.hl(x+2,x+7,y+4,c); }
   else if (id==='institut'){ b.rect(x-6,y-4,13,9,fl); b.hl(x-7,x+7,y-5,c); b.hl(x-6,x+6,y+4,c); for (i=-4;i<=4;i+=4){ b.rect(x+i-1,y-2,2,2,on?P.b4:c); b.rect(x+i-1,y+1,2,2,on?P.b4:c); } b.rect(x-1,y+1,2,3,c); }
-  else if (id==='bare'){ b.rect(x-3,y-4,7,9,on?P.s5:fl); b.hl(x-2,x+2,y-5,c); b.px(x-3,y-4,c); b.px(x+3,y-4,c); b.vl(x-4,y-3,y+4,c); b.vl(x+4,y-3,y+4,c); b.hl(x-6,x+6,y+5,c); b.hl(x-1,x+1,y-1,on?P.s2:c);
+  else if (id==='bare'){ b.rect(x-3,y-4,7,9,on?P.s5:fl); b.hl(x-2,x+2,y-5,c); b.px(x-3,y-4,c); b.px(x+3,y-4,c); b.vl(x-4,y-3,y+4,c); b.vl(x+4,y-3,y+4,c); b.hl(x-6,x+6,y+5,c); b.vl(x,y-3,y+2,on?P.m1:c); b.hl(x-1,x+1,y-2,on?P.m1:c);
     for (i=-6;i<=-5;i++) b.vl(x+i,y,y+4,on?P.g3:c); b.vl(x+6,y-1,y+4,on?P.g3:c); }
   else if (id==='stanica' && M.paintMap2) return; }
 (function(){ var R=M.ROOMS.map; if (!R) return; var paint0=R.paint;
@@ -71131,8 +71179,8 @@ M.k5HallEnter=async function(A,from){ var p=ph(A), D=A.npc('dragica'), S=A.npc('
     await A.wait(400); await J.say('Meinen Namen in fremder Schrift. Das ist das Erste hier, was mich nicht vergessen hat.');
     await A.wait(300); await D.say('Der Aufzug geht nicht. Fünfundzwanzig Jahre Aufzug, und er ging vielleicht zwei.'); return; }
   if (p==='k5_sat' && M.k5SatHall) return M.k5SatHall(A,from); };
-M.k5Housebook=async function(A){ await A.doc({style:'log',title:'Kućna knjiga · Ulaz 7 · 1991',lines:['Sprat 7, lijevo: VUKOVIĆ (Zoran, Jasna, Marko, Ana)','Sprat 7, desno: HODŽIĆ (Mirsad, Fatima)','Sprat 9, lijevo: DELIĆ (Esad, Nada, Lana)','Sprat 9, desno: KOVAČ (Dragica, Mirko †1995)','Vodio: S. Šehić, kućni savjet']});
-  if (A.first('k5hb')) await A.m('Siebter Stock links, wir. Neunter Stock links, Delić. Esad, Nada, Lana. Esad ist neunundneunzig gestorben. Nada hat das Kreuz nicht machen lassen.'); };
+M.k5Housebook=async function(A){ await A.doc({style:'register',title:'KUĆNA KNJIGA · Zgrada 7 · 1991',lines:['5. sprat: Hodžić (Senad, Fata, Mirza)','6. sprat: Karić (Edin, Mersiha, Selma)','7. sprat: Vuković (Zoran, Jasna, Marko, Ana)','8. sprat: Kovač (Ivo, Branka, Damir)','9. sprat: Delić (Esad, Nada, Lana)','4. sprat: Marić (Zora), učiteljica']});
+  if (A.first('k5hb')) await A.m('Siebter Stock: wir. Neunter Stock: Delić, Esad, Nada, Lana. Esad ist zweitausendfünf gestorben. Šehić hat im Buch nichts dazugeschrieben. Nada hat ihn nie darum gebeten.'); };
 M.k5TalkDragica=async function(A){ var D=A.npc('dragica'), p=ph(A);
   await A.menuLoop(function(){ return [
     {t:'Wie geht es Ihnen, Dragica?',once:'k5dr1',go:async function(A){ await D.say('Wie soll es gehen. Das Knie, die Treppe, der Aufzug. Und Nada im neunten, die mir jeden Tag Brot mitbringt, weil ich nicht hinunterkomme.'); await D.say('Seit Januar bringt sie zwei Brote. Für wen das zweite ist, weiß ich nicht. Ich frage nicht.'); if (gHere(A)){ await A.wait(300); await A.g('Für mich. Sie isst es abends. Für mich.'); } }},
@@ -71159,7 +71207,7 @@ M.k5StairsEnter=async function(A,from){ var p=ph(A), J=A.npc('jasna'), S=A.npc('
     if (A.G.malaOn){ await A.wait(600); await A.narrate('Mala steht an der Wand neben der großen Sieben. Sie sagt nichts.'); }
     await A.wait(400); await A.narrate('Unten keucht einer die Treppe herauf. Herr Šehić, mit einem Schlüsselbund, an dem jeder Schlüssel ein Schildchen hat.');
     A.setFlag('k5.p.sehicUp'); A.spawn({id:'sehic',ch:'sehic',x:250,y:121,f:'L',name:'Herr Šehić',speechY:46}); try{ await A.npc('sehic').walk(192,121); }catch(e){}
-    await S.say('Die Wohnung steht leer, gospođo. Die Hodžićs sind nach nebenan, wegen der Zwillinge. Samstag um elf bin ich da, dann sperre ich auf. Wenn Sie wollen.');
+    await S.say('Die Wohnung steht leer, gospođo. Die letzten Mieter sind im Herbst nach Graz gezogen. Samstag um elf bin ich da, dann sperre ich auf. Wenn Sie wollen.');
     A.note('j5_samstag'); await J.say('Samstag.'); await A.wait(300); await J.say('Ja. Samstag.');
     await A.wait(300); await J.say('Ich trinke bei Herrn Šehić einen Kaffee. Geh du hinauf, Marko. Sie wartet.');
     A.setFlag('k5.p.seventh'); A.despawn('jasna'); A.despawn('sehic'); A.rebuild(); A.save(); return; }
@@ -71203,7 +71251,7 @@ M.k5LanaDoor=async function(A){ if (A.S.lanaOpen) return A.m('Die Tür steht off
   if (ph(A)==='k5_d1' && !has(A,'f5_eursamstag')) return A.m('Ich frage Nada erst. Es ist ihr Zimmer. Es ist Lanas Zimmer.');
   return A.m('Zu.'); };
 M.k5ReadMappe=async function(A){ if (!A.S.lanaOpen) return A.m('Die Tür zu Lanas Zimmer ist zu.');
-  await A.doc({style:'faded',title:'Durchschläge · Služba traženja · 1995–2011',lines:['Tražim svoju kćer Lanu Delić, rođenu 3. 3. 1976. u Sarajevu …','– Ich suche meine Tochter Lana Delić, geboren am 3. 3. 1976 in Sarajevo …','Zadnji put viđena 15. 1. 1994., autobus za Mostar. – Zuletzt gesehen am 15. 1. 1994, Bus nach Mostar.','Molim vas … – Ich bitte Sie …','(siebzehn Durchschläge, einer für jeden Januar; der letzte von 2011)']});
+  await A.doc({style:'faded',title:'Durchschläge · Služba traženja · 1995–2011',lines:['Tražim svoju kćer Lanu Delić, rođenu 3. 3. 1976. u Sarajevu …','– Ich suche meine Tochter Lana Delić, geboren am 3. 3. 1976 in Sarajevo …','Otišla iz Sarajeva autobusom u novembru 1993. Zadnja vijest: razglednica iz Splita, januar 1994.','– Im November 1993 mit einem Bus aus Sarajevo fort. Letzte Nachricht: eine Karte aus Split, Januar 1994.','Molim vas … – Ich bitte Sie …','(siebzehn Durchschläge, einer für jeden Januar; der letzte von 2011)']});
   if (!has(A,'s5_mappe')){ A.note('s5_mappe'); await A.m('Siebzehn Durchschläge. Jeder fängt gleich an. Mit ihrem Namen und ihrem Geburtstag.'); await A.wait(300);
     var N=A.npc('nada'); if (N.actor){ await N.say('Im Januar habe ich zum ersten Mal keinen geschrieben.'); } } };
 M.k5SenseMappe=async function(A){ if (has(A,'s5_nh_mappe')) return A.g('Mamas Januare. Siebzehn.');
@@ -71646,7 +71694,7 @@ M.k5Funeral=async function(A){ if (F(A,'k5.fun.done')) return;
   if (F(A,'k5.d2.damir')) await A.narrate('Am Weg steht Damir in Uniform, die Mütze in der Hand. Er hat Pause.');
   await A.wait(500); await A.narrate('Der Pfosten steht. Oben die Tafel: LANA DELIĆ · 3. 3. 1976. Darunter das Brett: MALA · 15.1.1994.');
   if (A.G.malaOn){ await A.wait(700); await A.g('Jetzt passen sie zusammen.'); }
-  await A.wait(500); await A.narrate('Ein Mann von der Friedhofsverwaltung liest die Daten vor. Dann sagt keiner etwas. Das ist das Richtige.');
+  await A.wait(500); await A.narrate('Kein Priester, kein Imam. Nada und Zlata haben sich darauf geeinigt, dass für Lana nur ihre Namen sprechen. Ein Mann von der Friedhofsverwaltung liest die Daten vor. Dann sagt keiner etwas. Das ist das Richtige.');
   await A.wait(700); await A.narrate('Zlata kniet sich hin und setzt einen Ableger vom Quittenbaum aus Skela neben den Pfosten. Sie bindet ihn an einen Stab.');
   A.setFlag('k5.fun.quince'); A.set('quince',true); A.rebuild();
   if (A.G.malaOn){ await A.wait(500); await A.g('Schief.'); await A.wait(500); await A.narrate('Zlata rückt ihn gerade, ohne aufzusehen. Sie weiß nicht, warum.'); }
@@ -71661,7 +71709,8 @@ M.k5Funeral=async function(A){ if (F(A,'k5.fun.done')) return;
 M.k5GraveUse=async function(A){ if (ph(A)==='k5_fun') return A.m('Ich stehe am Grab. Mehr gibt es nicht zu tun. Das ist viel.'); if (M.k5EpiGrave) return M.k5EpiGrave(A); return A.m('…'); };
 M.k5BareTalk=async function(A,id){ if (ph(A)==='k5_epi' && M.k5EpiBareTalk) return M.k5EpiBareTalk(A,id); return A.npc(id).say(A.cycle('k5bt'+id,['…','Ne sada.'])); };
 M.k5BareLook=async function(A,id){ var t={ nada:'Nada, ganz in Schwarz, die Hände ineinander.',zlata:'Zlata, im guten Mantel, Erde an den Knien.',jasna:'Mama. Sie steht ein Stück abseits, neben Ana.',ana:'Ana hält Niko an der Hand. Er zieht.',mia:'Mia, ernst, mit einer Blume, die sie nicht hergeben will.',niko:'Niko winkt.',
-  hajra:'Hajra, mit einem Blech Pita unter einem Tuch. Für nachher.',kolar:'Frau Kolar, am Rand. Sie kommt zu allen, die sie gefunden hat.',vlado:'Vlado, die Mütze in den Händen.',dragica:'Dragica, auf Šehićs Arm.',sehic:'Herr Šehić, mit Krawatte. Er hat sie zweimal gebunden.',damir:'Damir, in Uniform.' }[id];
+  hajra:'Hajra, mit einem Blech Pita unter einem Tuch. Für nachher.',kolar:'Frau Kolar, am Rand. Sie kommt zu allen, die sie gefunden hat.',vlado:'Vlado, die Mütze in den Händen.',dragica:'Dragica, auf Šehićs Arm.',sehic:'Herr Šehić, mit Krawatte. Er hat sie zweimal gebunden.',damir:'Damir, in Uniform.',
+  fra:'Fra Ivo, Franziskaner von Sveti Ante in Bistrik. Braune Kutte, darüber das weiße Chorhemd, eine violette Stola. In der Hand das Weihwasser.' }[id];
   return A.m(t||'…'); };
 
 // ================================================================ Das Totenmahl (Freitagabend bei Nada)
@@ -72054,15 +72103,21 @@ async function deliverWater(A){ A.take('kanister_voll'); A.setFlag('k5.e.water')
   A.save(); await dayCheck(A); }
 M.k5EpiBare=async function(A,from){ return; };
 M.k5EpiGrave=async function(A){ return A.m('Lanas Pfosten. Der Ableger hat über Nacht ein Blatt mehr. Oder ich habe gestern nicht genau gezählt.'); };
-M.k5EpiBareTalk=async function(A,id){ var t={ jasna:'Ružas Wort.',ana:'Papa.',nada:'Jetzt liegen sie nebeneinander. Nicht ganz. Zwei Reihen.',hajra:'Ich bringe Pita.',kolar:'Ich komme zu allen, die ich gefunden habe.',sehic:'Ich habe es aufgeschrieben.',mia:'Ich habe eine Blume für Opa.',niko:'Wo ist das Mädchen?' }[id]; return A.npc(id).say(t||'…'); };
-M.k5Zoran=async function(A){ if (F(A,'k5.e.zoranDone')) return; var J=A.npc('jasna2'), c=C();
-  await A.narrate('Bare, elf Uhr. Neben Lanas Pfosten, zwei Reihen weiter, ein frisches Doppelgrab.');
-  await A.narrate('Mama, Ana und die Kinder. Nada, Hajra, Herr Šehić, Frau Kolar.');
-  await A.wait(500); await A.narrate('Der Mann von der Friedhofsverwaltung fragt nach dem Text für die Tafel.');
-  await A.npc('jasna2').say('Was wollte Ruža schreiben?'); await A.m('Poginuo.'); await A.wait(500); await A.npc('jasna2').say('Dann schreiben wir es.');
-  await A.wait(500); await A.narrate('ZORAN VUKOVIĆ · 1951 – 1993 · poginuo 19. 4. 1993. Gefallen. Ružas Wort, neunzehn Jahre zu spät, und genau richtig.');
-  await A.wait(600); await A.npc('jasna2').say('Ich bin ohne dich gefahren.'); await A.wait(600); await A.npc('jasna2').say('Zurück nicht.');
+M.k5EpiBareTalk=async function(A,id){ var t={ jasna:'Ružas Wort.',ana:'Papa.',nada:'Jetzt liegen sie nicht weit voneinander. Zwei Reihen.',hajra:'Ich bringe Pita.',kolar:'Ich komme zu allen, die ich gefunden habe.',sehic:'Ich habe es aufgeschrieben.',mia:'Ich habe eine Blume für Opa.',niko:'Wo ist das Mädchen?',fra:'Neka mu je laka zemlja. Möge ihm die Erde leicht sein.' }[id]; return A.npc(id).say(t||'…'); };
+M.k5Zoran=async function(A){ if (F(A,'k5.e.zoranDone')) return; var J=A.npc('jasna2'), Fr=A.npc('fra');
+  await A.narrate('Bare, elf Uhr. Der katholische Teil, zwei Reihen hinter Lanas Pfosten. Ein frisches Doppelgrab und ein Holzkreuz mit einer weißen Tafel: ZORAN VUKOVIĆ · 1951 – 1993.');
+  await A.narrate('Mama, Ana und die Kinder. Nada, Hajra, Herr Šehić, Frau Kolar. Und Fra Ivo von Sveti Ante, der Kirche unten in Bistrik, ein paar Schritte von der Brauerei. Über der braunen Kutte das weiße Chorhemd, eine violette Stola.');
   await A.narrate(F(A,'k5.d2.damir')?'Ich trage den kleinen Sarg mit Herrn Šehić und Damir, der wieder Pause hat.':'Ich trage den kleinen Sarg mit Herrn Šehić und einem Mann von der Verwaltung, der nicht weiß, wen er trägt, und trotzdem vorsichtig ist.');
+  await A.wait(500); await Fr.say('U ime Oca i Sina i Duha Svetoga.'); await A.m('„Im Namen des Vaters und des Sohnes und des Heiligen Geistes.“');
+  await A.narrate('Mama bekreuzigt sich, Ana einen Augenblick später. Ich weiß noch, wie es geht. Großmutter hat es mir in Vratnik beigebracht, vor jedem Essen.');
+  await A.wait(400); await Fr.say('Pokoj vječni daruj mu, Gospodine.'); await A.m('„Herr, gib ihm die ewige Ruhe.“');
+  await J.say('I svjetlost vječna svijetlila mu.'); await A.m('„Und das ewige Licht leuchte ihm.“ Mama sagt es, ohne nachzudenken. Achtzehn Jahre hat sie es nicht gesagt.');
+  await A.wait(400); await A.narrate('Fra Ivo besprengt den Sarg mit Weihwasser, dreimal, dann das Kreuz. Der Sarg geht hinunter. Er ist klein. Mehr ist von Papa nicht übrig.');
+  await A.wait(500); await A.narrate('Der Mann von der Friedhofsverwaltung fragt, was auf dem Stein stehen soll, wenn er im Sommer kommt.');
+  await J.say('Was wollte Ruža schreiben?'); await A.m('Poginuo.'); await A.wait(500); await J.say('Dann schreiben wir es.');
+  await A.wait(500); await A.narrate('ZORAN VUKOVIĆ · 1951 – 1993 · poginuo 19. 4. 1993. Gefallen. Ružas Wort, neunzehn Jahre zu spät, und genau richtig.');
+  await A.wait(600); await J.say('Ich bin ohne dich gefahren.'); await A.wait(600); await J.say('Zurück nicht.');
+  await A.wait(500); await A.narrate('Mama zündet ein rotes Grablicht an und stellt es vor das Kreuz. Nada stellt ein zweites daneben. Mia legt ihre Blume dazu.');
   await A.wait(500); await A.narrate('Mama hat neben Papa Platz gelassen.');
   A.setFlag('k5.e.zoranDone'); A.save(); };
 M.k5Final=async function(A){ if (F(A,'k5.e.final')) return; var c=C(), J=A.npc('jasna'), N=A.npc('nada'), An=A.npc('ana'), H=A.npc('hajra'), K=A.npc('niko');
@@ -72078,7 +72133,7 @@ M.k5Final=async function(A){ if (F(A,'k5.e.final')) return; var c=C(), J=A.npc('
   await A.m('Ich denke an den Hahn, der läuft. Und an keinen, der wartet.');
   A.sfx('beep'); await A.narrate('Dann Vesna.');
   await A.doc({style:'sms',title:'Vesna',lines:['Die Stillen, Teil drei: Lana Delić. Bekommen. Seite vierzehn. Diesmal kein Zeichen zu viel.']});
-  await A.doc({style:'news',title:'Die Stillen (3): Lana Delić',lines:['Lana Delić wurde am 3. März 1976 in Sarajevo geboren.','Jeden Samstag fuhr sie mit der Linie 3 und holte einen Jungen aus dem siebten Stock.','Im Januar 1994 stieg sie in einen Bus nach Mostar und kam nicht zurück.','Achtzehn Jahre lag sie unter einem Quittenbaum in Skela, unter einem Brett mit dem Namen, den sie selbst gesagt hatte.','Am 2. März 2012 wurde sie auf Bare begraben, mit beiden Namen.','Sie ist am 3. März 2012 angekommen. Ihre Mutter hat es gesagt.']});
+  await A.doc({style:'news',title:'Die Stillen (3): Lana Delić',lines:['Lana Delić wurde am 3. März 1976 in Sarajevo geboren.','Jeden Samstag fuhr sie mit der Linie 3 und holte einen Jungen aus dem siebten Stock.','Im November 1993 verließ sie Sarajevo mit einem Bus. Im Januar 1994 machte sie sich von Split aus auf den Weg zurück, um ihn zu holen, und kam nicht an.','Achtzehn Jahre lag sie unter einem Quittenbaum in Skela, unter einem Brett mit dem Namen, den sie selbst gesagt hatte.','Am 2. März 2012 wurde sie auf Bare begraben, mit beiden Namen.','Sie ist am 3. März 2012 angekommen. Ihre Mutter hat es gesagt.']});
   await A.m('Den letzten Satz habe ich geschrieben, nachdem Nada ihn gesagt hat. Eine Abschrift. Kein Ersatz.');
   if (c.davor){ A.sfx('beep'); await A.narrate('Und Davor, mit einem Foto: ein Feigenzweig in einem Topf auf einem Fensterbrett in Split. Ein grünes Blatt.'); await A.doc({style:'sms',title:'Davor',lines:['Lenina grana. Pustila je list. – Lenas Zweig. Er treibt aus.']}); }
   var ans=A.flag('k5.n2.answer'); await A.wait(400);

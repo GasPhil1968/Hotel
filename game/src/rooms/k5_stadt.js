@@ -108,7 +108,7 @@ var HS_VR=[
  {id:'ruza_house',name:'Ružas Haus',look:function(A){ return A.m(F(A,'k5.sat.gate')?'Ružas Haus. Die Tür steht offen. Drinnen knackt der Herd.':'Großmutters Haus. Weiß, klein, das neue Dach dunkelrot. Mama hat es achtzehn Jahre bezahlt, jeden Monat, ohne es zu sehen.'); },
    g:{look:'Das Dach ist neu. Darunter ist alles alt. Gut so.'}},
  {id:'ruza_gate',name:'Ružas Tor',exit:{to:'kuca5'},canExit:async function(A){ return M.k5GateExit?await M.k5GateExit(A):true; },
-   look:'Das Tor in der Mauer, grün gestrichen, die Farbe blättert. Im Sommer 1993 hat hier einer „Ich komme“ gesagt.',
+   look:'Das Tor in der Mauer, grün gestrichen, die Farbe blättert. Im November 1993 hat hier einer „Ich komme“ gesagt.',
    g:{look:'Hier.',sense:function(A){ return A.g(F(A,'k5.sat.gate')?'Offen.':'Hier habe ich „Kommst du?“ gefragt. Und er hat gelogen. Er war vierzehn.'); }}},
  {id:'garden',name:'Garten',look:function(A){ return A.m(F(A,'k5.p.tarp')?'Die Plane ist zurückgeschlagen. Darunter der zweite blaue Kanister und Hajras Holz.':'Ružas Garten. Der Quittenbaum, kahl. An der Mauer ein Haufen unter einer grünen Plane, mit Ziegeln beschwert.'); },
    use:function(A){ return M.k5Garden?M.k5Garden(A):A.m('Eine Plane.'); },open:function(A){ return M.k5Garden?M.k5Garden(A):A.m('Eine Plane.'); },
