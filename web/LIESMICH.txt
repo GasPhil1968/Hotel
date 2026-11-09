@@ -46,17 +46,21 @@ KAPITEL WÄHLEN
 - Das Hauptmenü hat fünf Einträge: Neues Spiel, Kapitel wählen, Spiel laden,
   Einstellungen, Über "Die Stillen" – mit Spielstand oben zusätzlich
   "Fortsetzen" (der jüngste Stand, mit einem Tipp).
-- "Kapitel wählen" gibt es vom ersten Start an. Alle fünf Kapitel sind wählbar,
-  jedes mit Ort. Ein Kapitel nach einem gespielten startet mit deinem Ende des
-  vorigen; wer später einsteigt, bekommt "Quereinstieg mit Standardantworten"
-  für das Vorherige. Das nächste ungespielte Kapitel ist vorgeschlagen, gespielte
-  tragen "schon gespielt". Wer neu ist, sollte mit Kapitel 1 anfangen.
+- "Kapitel wählen" gibt es vom ersten Start an: fünf Bildkarten in einer Reihe
+  (Split, Sarajevo, Mostar, München, Sarajevo), verbunden durch eine Linie mit
+  Stationen. Eine Karte antippen (oder Pfeiltasten links/rechts) wählt sie;
+  darunter stehen Kapitel, Ort, Prologtitel, Datum, ein Satz zur Stimmung und
+  die Folge der Wahl: "Übernimmt dein Ende von Kapitel 1." oder "Quereinstieg:
+  Standardantworten für Kapitel 1–2." Gespielte Kapitel tragen einen Haken,
+  das zuletzt gespielte einen Pfeil. "Kapitel beginnen" startet; gibt es im
+  Kapitel schon einen Spielstand, steht "Fortsetzen" daneben "Neu beginnen".
+  Wer neu ist, sollte mit Kapitel 1 anfangen.
 - "Neues Spiel" beginnt ohne Fortschritt sofort Kapitel 1; mit Fortschritt öffnet
   es dieselbe Kapitelwahl. Vorhandene Spielstände lassen sich immer laden.
   (Wer die alte Sperre zurückhaben will – Kapitel erst nach dem vorigen –: im
   Quelltext M.CHAPTER_LOCK=true, zum Testen die Adresse mit ?kapitel=sperre.)
-- "Neues Spiel" beginnt auf dem ersten freien Speicherplatz, ohne Rückfrage.
-  Sind alle drei belegt, fragt das Spiel, welcher überschrieben wird.
+- Jeder Kapitelstart ist ein neues Spiel mit der nächsten freien Nummer, ohne
+  Rückfrage; die bisherigen Spiele bleiben (bis zu 24, siehe SPIELSTÄNDE).
 - Wer ein Kapitel zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
   weiterzuspielen (nach Kapitel 4: "Weiter mit Kapitel 5: Sarajevo"). Antworten und Hinweise aus Split (zum Beispiel, was
   Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
@@ -238,8 +242,11 @@ TASTATUR UND MAUS (am Rechner)
 - Das Mausrad blättert außerdem im Notizbuch und im Inventar.
 
 SPIELSTÄNDE
-- Drei Speicherplätze. Auf jedem speichert das Spiel bei jedem Ortswechsel
-  selbst ("Automatisch"). Dazu kommen je Platz drei Lesezeichen: Menü →
+- Jeder Kapitelstart ist ein neues Spiel mit der nächsten freien Nummer
+  ("Spiel 1", "Spiel 2" …); die bisherigen Spiele bleiben. Bis zu 24 Spiele;
+  danach fragt das Spiel beim Start, ob das älteste Spiel ohne Lesezeichen
+  weichen soll. In jedem Spiel speichert das Spiel bei jedem Ortswechsel
+  selbst ("Automatisch"). Dazu kommen je Spiel drei Lesezeichen: Menü →
   Speichern → Lesezeichen antippen. Lesezeichen bleiben, bis du sie selbst
   überschreibst – so lässt sich ein Punkt vor einer Entscheidung festhalten.
   "Benennen …" unter einem Lesezeichen gibt ihm einen eigenen Namen (bis 24
@@ -248,9 +255,10 @@ SPIELSTÄNDE
 - Wer vom Titelbild aus weiterspielt, sieht kurz eine Karte "Zuletzt": Ort
   und die drei zuletzt notierten offenen Notizen, im Wortlaut des Notizbuchs.
   Ein Tipp oder eine Taste schließt sie, sonst verschwindet sie von selbst.
-- Menü → Laden: die Stände dieses Platzes, über "Andere Plätze …" alle.
+- Menü → Laden: die Stände dieses Spiels, über "Andere Spiele …" alle.
+  Im Titelbild zeigt "Spiel laden" alle Spiele, das zuletzt gespielte zuerst.
   Nach dem Laden bietet das Spiel zehn Sekunden lang "Rückgängig" an.
-- Am Kapitelende bleibt der Platz belegt ("Kapitelende"); "Fortsetzen"
+- Am Kapitelende bleibt das Spiel bestehen ("Kapitelende"); "Fortsetzen"
   führt dann zur Karte "Weiter mit Kapitel …".
 - Löschen geht im Titelbild unter "Spiel laden" (mit Rückfrage). Ein
   beschädigter Stand ist als solcher beschriftet und lässt sich nur löschen.
@@ -259,7 +267,7 @@ SPIELSTÄNDE
   noch einmal, verliert aber nichts. Alte Spielstände laden unverändert.
 - "Beispielstände" unter "Spiel laden": ein Stand kurz bevor Marko Ivka die
   Wahrheit sagt (Kapitel 1) und, nach dem Ende von Kapitel 1, einer aus
-  Sarajevo – jeweils auf einen Platz deiner Wahl.
+  Sarajevo – jeweils als neues Spiel.
 - Spielstände liegen nur in diesem Browser auf diesem Gerät. "Spiel laden"
   → "Sicherung exportieren …" speichert alle Stände, Lesezeichen und
   Einstellungen in eine Datei (mit Prüfsumme). "Sicherung importieren …" im

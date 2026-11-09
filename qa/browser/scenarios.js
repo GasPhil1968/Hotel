@@ -29,7 +29,7 @@ const HELPERS = `window.__qa = {
 async function shellClick(page, touch, text) { const loc = page.locator('#shell button:visible', { hasText: text }).first(); await loc.waitFor({ timeout: 6000 }); if (touch) await loc.tap(); else await loc.click(); await page.waitForTimeout(120); }
 // frühere Titelzeilen auf die neuen Wege abbilden: „Kapitel N: Ort“ → Neues Spiel (→ Kapitelwahl), „Platz N“ → Platzwahl (→ Überschreiben), „Fortsetzen“
 async function shellTitle(page, touch, label) { const cur = () => page.evaluate(() => M.shell.current()); const m = String(label).match(/^Kapitel (\d)/);
-  if (m) { await shellClick(page, touch, 'Neues Spiel'); if ((await cur()) === 'chapters') await shellClick(page, touch, 'Kapitel ' + m[1] + ' ·'); return; }
+  if (m) { await shellClick(page, touch, 'Neues Spiel'); if ((await cur()) === 'chapters') { await shellClick(page, touch, 'Kapitel ' + m[1] + ' ·'); await shellClick(page, touch, 'beginnen'); } return; }   // Kapitelwahl „Die Reise“: Karte wählen, dann „Kapitel beginnen“/„Neu beginnen“
   if (/^Platz/.test(label)) { if ((await cur()) === 'slots') { await shellClick(page, touch, label); if ((await cur()) === 'confirm') await shellClick(page, touch, 'Überschreiben'); } return; }
   if (/^Ja/.test(label)) { if ((await cur()) === 'confirm') await shellClick(page, touch, 'Überschreiben'); return; }
   return shellClick(page, touch, label); }

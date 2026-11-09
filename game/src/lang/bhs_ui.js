@@ -183,6 +183,28 @@ M.trAdd('bhs', {
   'Die App vom Home-Bildschirm speichert getrennt von Safari. Übertragen: „Sicherung exportieren …“ und „… importieren“ unter „Spiel laden“.':'Aplikacija s početnog zaslona sprema odvojeno od Safarija. Prijenos: „Izvezi sigurnosnu kopiju …“ i „Uvezi sigurnosnu kopiju …“ pod „Učitaj igru“.',
   'Feinwahl':'Precizan odabir', 'Finger kurz ruhig halten: Fadenkreuz über dem Finger, Loslassen wählt':'Kratko zadrži prst: križić iznad prsta, otpuštanje odabire'
 });
+// Kapitelwahl „Die Reise“ und Spiele statt Plätze (design/KAPITELWAHL.md)
+M.trAdd('bhs', {
+  'Spiel':'Igra', 'Neu beginnen':'Počni ispočetka', 'Kapitel beginnen':'Započni poglavlje', 'schon gespielt':'već odigrano', 'zuletzt hier':'zadnje ovdje', 'Spielstand':'Spremljena igra', 'Von vorn.':'Ispočetka.',
+  'Andere Spiele …':'Ostale igre …', 'Löschen und beginnen':'Izbriši i započni', 'dein bisheriges Spiel bleibt':'tvoja dosadašnja igra ostaje',
+  'Prolog – Die Stillen':'Prolog – Tihi', 'Prolog – Die Linie Drei':'Prolog – Linija tri', 'Prolog – Die Brücke, die alle kennen':'Prolog – Most koji svi znaju', 'Prolog – Heiligabend':'Prolog – Badnjak', 'Prolog – Ankunft':'Prolog – Dolazak',
+  'Dienstag, 15. November 2011':'utorak, 15. studenoga 2011.', 'Samstag, 19. November 2011':'subota, 19. studenoga 2011.', 'Donnerstag, 24. November 2011':'četvrtak, 24. studenoga 2011.', 'Samstag, 24. Dezember 2011':'subota, 24. prosinca 2011.', 'Donnerstag, 1. März 2012':'četvrtak, 1. ožujka 2012.',
+  'Ein Nachruf auf eine Frau, die jeden Abend an der Mole stand.':'Nekrolog ženi koja je svake večeri stajala na molu.', 'Drei Fälle in der Altstadt. Und ein Fahrschein für später.':'Tri slučaja u starom gradu. I jedna karta za poslije.',
+  'Eine Spur, die hinter den Rand des Stadtplans führt.':'Trag koji vodi preko ruba plana grada.', 'Weihnachten bei Mama. An Gleis 11 wartet einer.':'Božić kod mame. Na peronu 11 netko čeka.', 'Zurück nach Haus 7. Der letzte Samstag mit der Drei.':'Natrag u zgradu 7. Posljednja subota s trojkom.'
+});
+var igara=function(n){ n=+n; return (n%10===1&&n%100!==11)?'igra':((n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?'igre':'igara'); };
+tr2(/^Übernimmt dein Ende von Kapitel (\d)\.$/, function(m){ return 'Preuzima tvoj kraj poglavlja '+m[1]+'.'; });
+tr2(/^Quereinstieg: Standardantworten für Kapitel 1–(\d)\.$/, function(m){ return 'Ulazak usred priče: zadani odgovori za poglavlja 1–'+m[1]+'.'; });
+tr2(/^deine (\d+) Spiele bleiben$/, function(m){ return 'tvoje '+m[1]+' '+igara(m[1])+' ostaju'; });
+tr2(/^Beginnt als neues Spiel \(Nr\. (\d+)\) · (.+)\.$/, function(m,tr){ return 'Počinje kao nova igra (br. '+m[1]+') · '+tr(m[2])+'.'; });
+tr2(/^„Neu beginnen“ legt Spiel (\d+) an · (.+)\.$/, function(m,tr){ return '„Počni ispočetka“ stvara igru '+m[1]+' · '+tr(m[2])+'.'; });
+tr2(/^Neues Spiel (\d+) · (.+)\.$/, function(m,tr){ return 'Nova igra '+m[1]+' · '+tr(m[2])+'.'; });
+tr2(/^Gespeichert – Spiel (\d+)$/, function(m){ return 'Spremljeno – igra '+m[1]; });
+tr2(/^Alle (\d+) Spiele sind belegt$/, function(m){ return 'Sve '+m[1]+' igre su zauzete'; });
+tr2(/^Alle (\d+) Spiele sind belegt\. Lösche unter „Spiel laden“ ein Spiel\.$/, function(m){ return 'Sve '+m[1]+' igre su zauzete. Izbriši jednu igru pod „Učitaj igru“.'; });
+tr2(/^Alle (\d+) Spiele sind belegt\. Beim Start fragt das Spiel, ob das älteste Spiel ohne Lesezeichen weichen soll\.$/, function(m){ return 'Sve '+m[1]+' igre su zauzete. Pri pokretanju igra pita smije li najstarija igra bez oznaka ustupiti mjesto.'; });
+tr2(/^Das älteste Spiel ohne Lesezeichen \(Spiel (\d+)\) wird gelöscht, dann beginnt Kapitel (\d)\.$/, function(m){ return 'Najstarija igra bez oznaka (igra '+m[1]+') bit će izbrisana, zatim počinje poglavlje '+m[2]+'.'; });
+tr2(/^Speicher fast voll: (\d+) von (\d+) Spielen\. Lösche Spiele, die du nicht mehr brauchst\.$/, function(m){ return 'Memorija je gotovo puna: '+m[1]+' od '+m[2]+' igara. Izbriši igre koje ti više ne trebaju.'; });
 M.trIgnore && M.trIgnore(['Gegenstand doppelt: ','Notiz doppelt: ','kein Raum ','unbekannte Notiz ','unbekannter Gegenstand ','keine Phase ','kein Hotspot ',' in ','kein Ausgang ','keine Auswahl offen',
   'Option nicht gefunden: ','Gedanke nicht in der Auswahl: ','kein Notizbuch offen','Notiz steht im Notizbuch nicht zur Wahl: ','kein Ort ','Kunst fehlt für ','Spot fehlt: ','keine Farbe ','Escape','Enter','Tab','to left','to bottom','(pointer: coarse)',
   'translate(-50%,-50%) rotate(90deg)','Neue Notiz: ','Das ist ','Benutze ',' mit ','Schlussfolgerung: ','Speichern (Platz ','Laden (Platz ','Text: ','Notizbuch: ','Musik: ','Geräusche: ','Röhrenbild: ',

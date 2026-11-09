@@ -257,7 +257,7 @@ const capTexts = () => { const L = []; const t0 = M.text; M.text = function (b, 
     await click(p, 'Einspielen'); await p.waitForTimeout(150);
     const after = await p.evaluate(() => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (/^mala\./.test(k) && k !== 'mala.undo') o[k] = localStorage.getItem(k); } return o; });
     T.ck(JSON.stringify(Object.keys(after).sort().map(k => [k, after[k]])) === JSON.stringify(Object.keys(before).sort().map(k => [k, before[k]])), 'eingespielt: genau der vorige Stand, Fremdeintrag ersetzt');
-    T.ck(await p.evaluate(() => M.shell.current() === 'load' && /Platz 1/.test(document.querySelector('#shell').textContent)), 'zurück in „Spiel laden“, Stände wieder da');
+    T.ck(await p.evaluate(() => M.shell.current() === 'load' && /Spiel 1/.test(document.querySelector('#shell').textContent)), 'zurück in „Spiel laden“, Stände wieder da');
     // beschädigt / fremd
     const broken = JSON.stringify(Object.assign({}, bk, { data: Object.assign({}, bk.data, { 'mala.c1end': '2' }) }));
     T.ck(await p.evaluate((t) => M.shell.importText(t) === false && /beschädigt/.test(M.shell.toastNow().t) && M.shell.current() === 'load', broken), 'veränderte Datei: „beschädigt (Prüfsumme)“, nichts eingespielt');

@@ -53,9 +53,16 @@ function chLabel(n){ return T('Kapitel')+' '+n; }
 function stOf(n,k){ var key=k?E.keyMark(n,k):E.keyAuto(n), s=E.readEnv(key); if (!s) return null; s.slot=n; s.mark=k||0; if (!k) s.name=null; if (k==='sat') s.name=T('Vor dem Samstag'); return s; }
 function slotStates(n){ var out=[], a=stOf(n,0); if (a) out.push(a); for (var k=1;k<=E.MARKS;k++){ var b=stOf(n,k); if (b) out.push(b); } var z=stOf(n,'sat'); if (z) out.push(z); return out; }
 function playable(s){ return s && (s.kind==='auto'||s.kind==='mark'||(s.kind==='chapterEnd'&&s.next&&chExists(s.next))); }
-function latest(){ var best=null; for (var n=1;n<=E.SLOTS;n++) slotStates(n).forEach(function(s){ if (playable(s) && (!best||s.at>best.at)) best=s; }); return best; }
-function firstFree(){ for (var n=1;n<=E.SLOTS;n++) if (!E.hasSave(n)) return n; return 0; }
-function anyState(){ for (var n=1;n<=E.SLOTS;n++) if (slotStates(n).length) return true; return false; }
+function latest(){ var best=null; E.usedSlots().forEach(function(n){ slotStates(n).forEach(function(s){ if (playable(s) && (!best||s.at>best.at)) best=s; }); }); return best; }
+// Spiele statt Plätze (design/KAPITELWAHL.md, Abschnitt 4): ein Kapitelstart ist immer ein neues Spiel mit der nächsten freien Nummer; E.SLOTS ist nur die Obergrenze
+function firstFree(){ return E.freeSlot(); }
+function anyState(){ return E.usedSlots().length>0; }
+function gameCount(){ return E.usedSlots().length; }
+function gameAt(st){ var m=0; st.forEach(function(s){ if (s.at>m) m=s.at; }); return m; }
+function gameLabel(n,st){ var s=null; st.forEach(function(x){ if (!s||x.at>s.at) s=x; }); var c=s?((s.meta&&s.meta.chapter)||s.chapter||0):0; return T('Spiel')+' '+n+(c?' · '+chLabel(c)+' · '+PLACES[c-1]:''); }
+// ältestes Spiel ohne Lesezeichen (weicht, wenn die Obergrenze erreicht ist – nur nach Rückfrage)
+function oldestPlain(){ var best=null; E.usedSlots().forEach(function(n){ var st=slotStates(n); if (!st.length || st.some(function(s){ return s.kind==='mark'; })) return; var at=gameAt(st); if (!best||at<best.at) best={n:n,at:at,st:st}; }); return best; }
+function delGame(n){ lsDel(E.keyAuto(n)); for (var k=1;k<=E.MARKS;k++) lsDel(E.keyMark(n,k)); lsDel(E.keyMark(n,'sat')); }
 function placeOf(s){ var m=s.meta||{}; if (s.kind==='chapterEnd') return chLabel(s.chapter)+' '+T('fertig'); if (s.name) return s.name; return chLabel(m.chapter||1)+' · '+T(m.roomName||m.phaseShort||''); }
 function summary(s){ if (!s) return T('leer'); if (s.kind==='damaged') return T('Lässt sich nicht lesen'); if (s.kind==='incompatible') return T('Aus einer neueren Fassung'); return placeOf(s)+' · '+fmtDur((s.meta&&s.meta.playMs)||0); }
 function badgeOf(s){ return s.kind==='auto'?T('Automatisch'):(s.kind==='mark'&&s.mark==='sat')?T('Punkt ohne Rückkehr'):s.kind==='mark'?(T('Lesezeichen')+' '+s.mark):s.kind==='chapterEnd'?T('Kapitelende'):s.kind==='incompatible'?T('Inkompatibel'):T('Beschädigt'); }
@@ -83,8 +90,13 @@ M.flashShell=toast;
 
 // ---------------------------------------------------------------- Aktionen
 function startNew(ch,n){ SH.pendCh=0; E.setSlot(n); E.newCh=ch; E.titleMode='main'; E.newGame(ch); }
-function withSlot(purpose,then){ var n=firstFree(); if (n){ then(n,true); return; } push('slots',{purpose:purpose,then:then}); }
-function newGameFlow(){ if (chaptersReached()===1){ withSlot('new',function(n,free){ startNew(1,n); if (free && n>1) toast('Startet auf Platz '+n+'.'); }); return; } push('chapters'); }
+// neues Spiel für Kapitel ch: nächste freie Nummer, die bisherigen Spiele bleiben; an der Obergrenze fragt das Spiel, ob das älteste ohne Lesezeichen weichen soll
+function newGame(ch){ var n=firstFree(), cnt=gameCount();
+  if (n){ startNew(ch,n); if (cnt) toast('Neues Spiel '+n+' · '+(cnt===1?'dein bisheriges Spiel bleibt':'deine '+cnt+' Spiele bleiben')+'.'); return; }
+  var o=oldestPlain(); if (!o){ toast('Alle '+E.SLOTS+' Spiele sind belegt. Lösche unter „Spiel laden“ ein Spiel.',5000); return; }
+  push('confirm',{title:'Alle '+E.SLOTS+' Spiele sind belegt',text:'Das älteste Spiel ohne Lesezeichen (Spiel '+o.n+') wird gelöscht, dann beginnt '+chLabel(ch)+'.',before:o.st[0],okLabel:'Löschen und beginnen',danger:true,
+    ok:function(){ delGame(o.n); SH.stack.pop(); startNew(ch,o.n); }}); }
+function newGameFlow(){ if (chaptersReached()===1){ newGame(1); return; } push('chapters'); }
 function loadState(s,opt){ opt=opt||{}; if (!s) return false; if (s.kind==='chapterEnd'){ E.setSlot(s.slot); push('next',{ch:s.chapter,slot:s.slot}); return true; }
   if (s.kind!=='auto'&&s.kind!=='mark'){ toast(LREASON[s.kind]||LREASON.damaged,4000); return false; }
   var inGame=SH.ctx==='pause', prevSlot=E.slot(); E.setSlot(s.slot);
@@ -100,10 +112,10 @@ function undoLoad(){ var raw=lsGet('mala.undo'); if (!raw) return; try{ var d=JS
 function continueLatest(){ var s=latest(); if (!s){ toast('Kein Spielstand.'); return; } loadState(s); }
 function canMark(){ var r=E.room; if (E.screen!=='game'||!r) return 'screen'; if (r.noSave) return 'nosave'; if (M.GS.ended) return 'ended'; if (E.busy||E.dlg||E.overlay||E.transitioning) return 'busy'; return null; }
 function saveMark(k){ var why=canMark(); if (why){ toast(REASON[why],3500); return false; } var ok=E.saveMark(k); if (ok){ toast('Gespeichert ✓ Lesezeichen '+k); render(true); } else toast(REASON[E.saveReason]||REASON.error,4500); return ok; }
-function toTitle(){ var n=E.slot(); closePause(); E.toTitle(); toast(E.lastSaveOk?('Gespeichert – Platz '+n):'Zum Titelbild.'); }
-function confirmDelete(s,after){ push('confirm',{title:'Spielstand löschen?',text:(T('Platz')+' '+s.slot+' · '+badgeOf(s)+' · '+summary(s)),okLabel:'Löschen',danger:true,before:s,
+function toTitle(){ var n=E.slot(); closePause(); E.toTitle(); toast(E.lastSaveOk?('Gespeichert – Spiel '+n):'Zum Titelbild.'); }
+function confirmDelete(s,after){ push('confirm',{title:'Spielstand löschen?',text:(T('Spiel')+' '+s.slot+' · '+badgeOf(s)+' · '+summary(s)),okLabel:'Löschen',danger:true,before:s,
   ok:function(){ lsDel(s.key); back(); if (after) after(); toast('Gelöscht.'); }}); }
-function startPreset(id){ var p=M.PRESETS&&M.PRESETS[id]; if (!p) return; withSlot('preset',function(n){ if (!E.loadPreset(id,n)) toast(LREASON.damaged,4000); else closeAll(); }); }
+function startPreset(id){ var p=M.PRESETS&&M.PRESETS[id]; if (!p) return; var n=firstFree(); if (!n){ toast('Alle '+E.SLOTS+' Spiele sind belegt. Lösche unter „Spiel laden“ ein Spiel.',5000); return; } if (!E.loadPreset(id,n)) toast(LREASON.damaged,4000); else closeAll(); }
 function presetChapter(p){ try{ return M.chapterOf?M.chapterOf(p.GS):1; }catch(e){ return 1; } }
 function presets(){ return Object.keys(M.PRESETS||{}).filter(function(k){ return k[0]!=='_' && chOpen(presetChapter(M.PRESETS[k])); }); }
 
@@ -125,32 +137,46 @@ SCR.main=function(){ var s=latest(), it=[];
   it.push({type:'btn',label:'Einstellungen',act:function(){ push('settings'); }});
   it.push({type:'btn',label:'Über „Die Stillen“',act:function(){ push('about'); }});
   return {layout:'title',items:it,sound:!(M.audioRunning&&M.audioRunning()),note:platformNote()}; };
-SCR.chapters=function(){ var n=firstFree(), it=[], nx=nextChapter(), fresh=!chDone(1);
-  for (var c=1;c<=5;c++){ (function(c){ if (!chExists(c)) return; var pick=chPick(c);
-    var sub=T(c===1?'von vorn':(chDone(c-1)?'mit deinem Ende von Kapitel '+(c-1):'Quereinstieg mit Standardantworten'));
-    if (chDone(c)) sub+=' · '+T('schon gespielt');
-    if (pick && c>1 && M.lang!=='de') sub+=' · '+T('bisher nur auf Deutsch');
-    it.push(pick?{type:'btn',label:chLabel(c)+' · '+PLACES[c-1],sub:sub,primary:c===nx,act:function(){ withSlot('new',function(m,free){ startNew(c,m); if (free&&m>1) toast('Startet auf Platz '+m+'.'); }); }}
-      :{type:'btn',label:chLabel(c),why:'nach Kapitel '+(c-1),dis:true,lock:true}); })(c); }
-  if (!chExists(5)) it.push({type:'btn',label:chDone(4)?chLabel(5)+' · Sarajevo':chLabel(5),why:'noch nicht erschienen',dis:true,lock:true});
-  if (fresh) it.push({type:'note',label:'Neu hier? Fang mit Kapitel 1 an. Die Kapitel bauen aufeinander auf; wer später einsteigt, bekommt Standardantworten für das Vorherige.'});
-  return {layout:'panel',title:'Kapitel wählen',ctx:n?('Startet auf Platz '+n+' (frei). Deine anderen Spielstände bleiben.'):'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.',items:it,back:true}; };
-SCR.slots=function(p){ var it=[]; for (var n=1;n<=E.SLOTS;n++){ (function(n){ var s=stOf(n,0);
-    it.push({type:'btn',label:T('Platz')+' '+n,sub:s?summary(s):T('leer'),act:function(){ if (!E.hasSave(n)){ p.then(n,true); return; }
-      push('confirm',{title:'Platz '+n+' überschreiben?',text:'Der automatische Stand auf diesem Platz geht verloren. Lesezeichen bleiben.',before:s,okLabel:'Überschreiben',danger:true,ok:function(){ SH.stack.pop(); p.then(n,false); }}); }}); })(n); }
-  return {layout:'panel',title:'Auf welchem Platz?',ctx:p.purpose==='preset'?'Der Beispielstand wird auf diesen Platz geladen.':'Das neue Spiel beginnt auf diesem Platz.',items:it,back:true}; };
-SCR.load=function(p){ var title=p.scope==='title', groups=[], ns=[];
-  if (title||p.all) for (var n=1;n<=E.SLOTS;n++) ns.push(n); else ns.push(E.slot());
-  ns.forEach(function(n){ var st=slotStates(n), cards=[];
+// ---------------------------------------------------------------- Kapitelwahl „Die Reise“ (design/KAPITELWAHL.md, Entwurf A)
+// Fünf Bildkarten (Szenenbilder aus M.CHAPTER_ART), darunter Titel, Datum, die Folge der Wahl und der neueste Spielstand des Kapitels.
+// Einträge mit Aktion: die Karten (Kapitelstart = neues Spiel) und „Fortsetzen“/„Neu beginnen“ bzw. „Kapitel beginnen“ des gewählten Kapitels.
+var CHAP=[ {sub:'Prolog – Die Stillen',when:'Dienstag, 15. November 2011',line:'Ein Nachruf auf eine Frau, die jeden Abend an der Mole stand.'},
+  {sub:'Prolog – Die Linie Drei',when:'Samstag, 19. November 2011',line:'Drei Fälle in der Altstadt. Und ein Fahrschein für später.'},
+  {sub:'Prolog – Die Brücke, die alle kennen',when:'Donnerstag, 24. November 2011',line:'Eine Spur, die hinter den Rand des Stadtplans führt.'},
+  {sub:'Prolog – Heiligabend',when:'Samstag, 24. Dezember 2011',line:'Weihnachten bei Mama. An Gleis 11 wartet einer.'},
+  {sub:'Prolog – Ankunft',when:'Donnerstag, 1. März 2012',line:'Zurück nach Haus 7. Der letzte Samstag mit der Drei.'} ];
+SCR.chapters=function(p){ var nx=nextChapter(), fresh=!chDone(1), cnt=gameCount(), nn=firstFree(), last=latest(), lastCh=last?((last.meta&&last.meta.chapter)||last.chapter||0):0, saves={};
+  E.usedSlots().forEach(function(n){ slotStates(n).forEach(function(s){ if ((s.kind==='auto'||s.kind==='mark') && s.meta && s.meta.chapter){ var c=s.meta.chapter; if (!saves[c]||s.at>saves[c].at) saves[c]=s; } }); });
+  var sel=p.sel||lastCh||nx||1; if (!(sel>=1&&sel<=5)) sel=1; p.sel=sel;   // die Auswahl bleibt im Stapel, bis der Bildschirm geschlossen wird
+  var cards=[], it=[];
+  for (var c=1;c<=5;c++){ (function(c){ var ex=chExists(c), pick=ex&&chPick(c);
+    cards.push({type:'chapter',n:c,label:chLabel(c)+' · '+PLACES[c-1],city:PLACES[c-1],img:(M.CHAPTER_ART||{})[c]||null,done:chDone(c),last:lastCh===c,sel:c===sel,dis:!pick,lock:!pick,
+      why:!ex?'noch nicht erschienen':(!pick?'nach Kapitel '+(c-1):''),save:saves[c]||null,act:pick?function(){ newGame(c); }:null}); })(c); }
+  var cur=cards[sel-1], sv=cur.save, carry=sel===1?'Von vorn.':(chDone(sel-1)?'Übernimmt dein Ende von Kapitel '+(sel-1)+'.':'Quereinstieg: Standardantworten für Kapitel 1–'+(sel-1)+'.');
+  var tags=[]; if (cur.done) tags.push(['done','✓ '+T('schon gespielt')]); if (cur.last) tags.push(['last','▸ '+T('zuletzt hier')]); if (sv) tags.push(['save',T('Spielstand')+' · '+fmtAt(sv.at)]);
+  tags.push(['carry',T(carry)]); if (sel>1 && M.lang!=='de') tags.push(['de',T('bisher nur auf Deutsch')]);
+  cards.forEach(function(cd){ it.push(cd); });
+  if (cur.act){ if (sv){ it.push({type:'btn',label:'Fortsetzen',sub:placeOf(sv),primary:true,act:function(){ loadState(sv); }}); it.push({type:'btn',label:'Neu beginnen',act:cur.act}); }
+    else it.push({type:'btn',label:'Kapitel beginnen',primary:true,act:cur.act}); }
+  var foot=''; if (fresh && !cnt) foot='Neu hier? Fang mit Kapitel 1 an. Die Kapitel bauen aufeinander auf; wer später einsteigt, bekommt Standardantworten für das Vorherige.';
+  else if (!nn) foot='Alle '+E.SLOTS+' Spiele sind belegt. Beim Start fragt das Spiel, ob das älteste Spiel ohne Lesezeichen weichen soll.';
+  else if (cnt) foot=(sv?'„Neu beginnen“ legt Spiel '+nn+' an':'Beginnt als neues Spiel (Nr. '+nn+')')+' · '+(cnt===1?'dein bisheriges Spiel bleibt':'deine '+cnt+' Spiele bleiben')+'.';
+  return {layout:'chapters',title:'Kapitel wählen',cards:cards,sel:sel,detail:{title:chLabel(sel)+' · '+PLACES[sel-1],sub:T(CHAP[sel-1].sub)+' · '+T(CHAP[sel-1].when),line:T(CHAP[sel-1].line),tags:tags,why:cur.dis?T(cur.why):''},foot:foot,items:it,back:true}; };
+SCR.load=function(p){ var title=p.scope==='title', groups=[], ns=[], SS={};
+  if (title||p.all){ ns=E.usedSlots(); ns.forEach(function(n){ SS[n]=slotStates(n); }); ns.sort(function(a,b){ return gameAt(SS[b])-gameAt(SS[a])||a-b; }); }   // alle Spiele, das zuletzt gespielte zuerst
+  else { ns.push(E.slot()); SS[E.slot()]=slotStates(E.slot()); }
+  ns.forEach(function(n){ var st=SS[n], cards=[];
     st.forEach(function(s){ var ok=playable(s);
-      cards.push({type:'state',state:s,badge:badgeOf(s),label:s.kind==='auto'||s.kind==='mark'||s.kind==='chapterEnd'?placeOf(s):T('Platz')+' '+n,
+      cards.push({type:'state',state:s,badge:badgeOf(s),label:s.kind==='auto'||s.kind==='mark'||s.kind==='chapterEnd'?placeOf(s):T('Spiel')+' '+n,
         sub:s.kind==='chapterEnd'?(s.next?T('Weiter mit Kapitel')+' '+s.next:T('Fortsetzung folgt')):(s.kind==='damaged'?T('Lässt sich nicht lesen.'):(s.kind==='incompatible'?T('Aus einer neueren Fassung – bitte aktualisieren.'):fmtAt(s.at)+((s.meta&&s.meta.playMs)?' · '+fmtDur(s.meta.playMs):''))),
         ph:s.meta&&s.meta.chapter?chLabel(s.meta.chapter):'', thumb:s.thumb||null, dis:!ok, act:ok?function(){ loadState(s); }:null,
         del:title?function(){ confirmDelete(s,function(){ render(true); }); }:null}); });
     if (!st.length) cards.push({type:'state',empty:true,badge:T('leer'),label:title?T('Neues Spiel hier'):T('leer'),dis:!title,act:title?function(){ newGameFlow(); }:null});
-    groups.push({type:'group',label:T('Platz')+' '+n+(n===E.slot()&&!title?' · '+T('dieses Spiel'):''),cards:cards}); });
+    groups.push({type:'group',label:gameLabel(n,st)+(n===E.slot()&&!title?' · '+T('dieses Spiel'):''),cards:cards}); });
+  if (title && !ns.length) groups.push({type:'group',label:T('Spiel')+' 1',cards:[{type:'state',empty:true,badge:T('leer'),label:T('Neues Spiel hier'),act:function(){ newGameFlow(); }}]});
   var it=groups.slice();
-  if (!title && !p.all) it.push({type:'btn',label:'Andere Plätze …',act:function(){ push('load',{scope:'pause',all:true}); }});
+  if (title && ns.length>=20) it.push({type:'note',label:'Speicher fast voll: '+ns.length+' von '+E.SLOTS+' Spielen. Lösche Spiele, die du nicht mehr brauchst.'});
+  if (!title && !p.all) it.push({type:'btn',label:'Andere Spiele …',act:function(){ push('load',{scope:'pause',all:true}); }});
   if (title){ var pr=presets(); if (pr.length) it.push({type:'group',label:T('Beispielstände'),note:T('Enthalten Handlung aus den genannten Kapiteln.'),cards:pr.map(function(id){ var P=M.PRESETS[id];
     return {type:'state',preset:true,badge:T('Beispiel'),label:T(P.short||P.title||id),sub:chLabel(presetChapter(P)),act:function(){ startPreset(id); }}; })}); }
   it.push({type:'note',label:'Spielstände liegen nur in diesem Browser auf diesem Gerät.'});
@@ -163,7 +189,7 @@ SCR.save=function(){ var n=E.slot(), why=canMark(), a=stOf(n,0), g=M.GS, it=[];
     it.push({type:'state',state:s,mark:k,badge:T('Lesezeichen')+' '+k,label:s?placeOf(s):T('Hier speichern'),ren:s&&(s.kind==='mark')?function(){ push('rename',{key:s.key,name:s.name||'',def:chLabel((s.meta||{}).chapter||1)+' · '+T((s.meta||{}).roomName||'')}); }:null,sub:s?fmtAt(s.at)+(s.meta?' · '+fmtDur(s.meta.playMs):''):(why?T(REASON[why]):T('jetzt')),ph:s&&s.meta?chLabel(s.meta.chapter):'',thumb:s&&s.thumb||null,empty:!s,dis:!!why,
       act:why?null:function(){ if (!s){ saveMark(k); return; } push('confirm',{title:'Lesezeichen '+k+' überschreiben?',text:'Das bisherige Lesezeichen geht verloren.',before:s,after:{label:T('Neu')+': '+T(E.metaOf(g).roomName||''),sub:T('jetzt'),thumb:M.makeThumb?M.makeThumb():null},okLabel:'Überschreiben',danger:true,ok:function(){ back(); saveMark(k); }}); }}); })(k); }
   var m=E.metaOf(g);
-  return {layout:'paper',title:'Speichern',ctx:T('Platz')+' '+n+' · '+chLabel(m.chapter)+' · '+T(m.roomName||''),
+  return {layout:'paper',title:'Speichern',ctx:T('Spiel')+' '+n+' · '+chLabel(m.chapter)+' · '+T(m.roomName||''),
     info:(a&&a.kind==='auto'?T('Automatisch gespeichert')+' '+ago(a.at)+' – ':'')+T('bei jedem Ortswechsel neu. Lesezeichen bleiben, bis du sie überschreibst.'),items:[{type:'group',cards:it}],back:true}; };
 SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'head',label:'Ton'});
@@ -335,6 +361,13 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
     h+='<div class="paper confirm" role="alertdialog" aria-label="'+esc(T(v.title))+'"><h3>'+esc(T(v.title))+'</h3><div class="ctx">'+esc(T(v.text||''))+'</div>';
     if (v.before) h+='<div class="cards cmp">'+cmp(v.before,T('Bisher'))+(v.after?'<span class="arrow">→</span>'+cmp(v.after):'')+'</div>';
     return h+'<div class="btnrow">'+v.items.map(function(x){ return '<button type="button" class="btn'+(x.danger?' danger':'')+'" data-i="'+idx(x)+'"'+(x.focus?' data-focus="1"':'')+'>'+esc(T(x.label))+'</button>'; }).join('')+'</div></div>'; }
+  if (v.layout==='chapters'){ var d=v.detail; h+='<div class="panel chapters" role="dialog" aria-label="'+esc(T(v.title))+'"><div class="phead"><h3>'+esc(T(v.title))+'</h3><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div><div class="chbody scroll">';
+    h+='<div class="chcards" role="listbox" aria-label="'+esc(T('Kapitel'))+'">'+v.cards.map(function(c){ var mk=c.done?'<span class="mark done">✓</span>':(c.last?'<span class="mark last">▸</span>':(c.lock?'<span class="mark lock">'+LOCK+'</span>':''));
+      return '<button type="button" class="chcard'+(c.dis?' dis':'')+'" role="option" aria-selected="'+(c.sel?'true':'false')+'" data-n="'+c.n+'" data-i="'+idx(c)+'"'+(c.sel?' data-focus="1"':'')+'>'+(c.img?'<span class="ph" style="background-image:url('+c.img+')"></span>':'<span class="ph empty"></span>')+'<span class="num">'+c.n+'</span>'+mk+'<span class="name"><span class="vh">'+esc(chLabel(c.n))+' · </span><b>'+esc(T(c.city))+'</b></span></button>'; }).join('')+'</div>';
+    h+='<div class="route" aria-hidden="true">'+v.cards.map(function(c){ return '<i class="'+(c.sel?'on':(c.done?'done':''))+'"></i>'; }).join('')+'</div>';
+    h+='<div class="chdetail"><div class="t"><div class="title">'+esc(d.title)+'</div><div class="sub">'+esc(d.sub)+'</div><div class="line">'+esc(d.line)+'</div><div class="tags">'+d.tags.map(function(x){ return '<span class="tag '+x[0]+'">'+esc(x[1])+'</span>'; }).join('')+'</div></div>';
+    h+='<div class="r"><div class="btnrow">'+(d.why?'<span class="why">'+LOCK+' '+esc(d.why)+'</span>':'')+v.items.filter(function(x){ return x.type==='btn'; }).map(function(x){ return '<button type="button" class="btn'+(x.primary?' primary':'')+'" data-i="'+idx(x)+'">'+esc(T(x.label))+'</button>'; }).join('')+'</div></div></div>';
+    if (v.foot) h+='<div class="ctx foot">'+esc(T(v.foot))+'</div>'; return h+'</div></div>'; }
   // panel / pause
   var two=v.layout==='pause';
   h+='<div class="panel'+(v.cold?' cold':'')+(two?' pause':'')+'" role="dialog" aria-label="'+esc(T(v.title))+'"><h3>'+esc(T(v.title))+'</h3>'+(v.ctx?'<div class="ctx">'+esc(T(v.ctx))+'</div>':'')+(v.status?'<div class="status">'+esc(v.status)+'</div>':'');
@@ -370,6 +403,9 @@ function onClick(e){ var b=e.target.closest('button');
   if (b.dataset.ren!==undefined){ var rn=xs[+b.dataset.ren]; if (rn&&rn.ren) rn.ren(); return; }
   if (b.dataset.ok!==undefined){ var vv=cur(); if (vv&&vv.ok) vv.ok(); return; }
   if (b.dataset.s!==undefined){ var s=xs[+b.dataset.s]; if (s){ var val=b.dataset.v, o=s.options.filter(function(o){ return String(o[0])===val; })[0]; s.act(o?o[0]:val); if (M.sfx) M.sfx('click'); render(false); } return; }
+  if (b.dataset.n!==undefined && SH.current()==='chapters'){ var tc=top(), nc=+b.dataset.n, xc=xs[+b.dataset.i];
+    if (tc.p.sel!==nc){ tc.p.sel=nc; if (M.sfx) M.sfx('click'); render(false,'[data-n="'+nc+'"]'); return; }   // Karte wählen
+    if (xc&&xc.act){ if (M.sfx) M.sfx('click'); xc.act(); if (cur()) render(false); } else if (xc&&xc.why){ toast(T(xc.label)+': '+T(xc.why)); if (M.sfx) M.sfx('nope'); } return; }   // gewählte Karte noch einmal: beginnen
   if (b.dataset.i!==undefined){ var x=xs[+b.dataset.i]; if (x&&x.act){ if (M.sfx) M.sfx(SH.current()==='load'||SH.current()==='save'?'page':'click'); x.act(); if (cur()) render(false); } } }
 function onInput(e){ var r=e.target; if (!r.dataset||r.dataset.r===undefined) return; var x=vEl()[+r.dataset.r]; if (!x) return; x.act(+r.value); var lab=stage.querySelector('#v'+r.dataset.r); if (lab) lab.textContent=r.value+' %'; }
 function onChange(e){ var r=e.target; if (r.dataset&&r.dataset.r!==undefined && M.sfx) M.sfx('click'); }
@@ -379,6 +415,7 @@ SH.key=function(e){ if (!SH.ctx) return false; var k=e.key;
   if (!DOM) return true; var list=Array.prototype.slice.call(stage.querySelectorAll('button:not([aria-disabled="true"]),input[type=range]')); if (!list.length) return true;
   var i=list.indexOf(document.activeElement);
   if (k==='ArrowDown'||k==='ArrowUp'){ if (document.activeElement&&document.activeElement.type==='range'&&false) return true; var n=i<0?0:(i+(k==='ArrowDown'?1:-1)+list.length)%list.length; list[n].focus(); e.preventDefault&&e.preventDefault(); return true; }
+  if ((k==='ArrowLeft'||k==='ArrowRight') && SH.current()==='chapters'){ var tc=top(), nn=Math.max(1,Math.min(5,(tc.p.sel||1)+(k==='ArrowRight'?1:-1))); if (nn!==tc.p.sel){ tc.p.sel=nn; if (M.sfx) M.sfx('click'); render(false,'[data-n="'+nn+'"]'); } e.preventDefault&&e.preventDefault(); return true; }
   if ((k==='ArrowLeft'||k==='ArrowRight') && document.activeElement && document.activeElement.dataset && document.activeElement.dataset.s!==undefined){ var grp=Array.prototype.slice.call(document.activeElement.parentNode.querySelectorAll('button')), j=grp.indexOf(document.activeElement), nj=Math.max(0,Math.min(grp.length-1,j+(k==='ArrowRight'?1:-1))); grp[nj].focus(); e.preventDefault&&e.preventDefault(); return true; }
   if (k==='Tab') return false;
   return true; };
@@ -448,7 +485,29 @@ var CSS='#shell{position:fixed;inset:0;z-index:12;display:none;--ink0:#08070d;--
 +'#shell .sh-top{position:absolute;pointer-events:none;z-index:3}#shell .sh-toast.on{pointer-events:auto}'
 +'#shell .sh-recap{position:absolute;left:50%;top:max(10px,calc(var(--cy) + var(--u)*6px));transform:translateX(-50%);display:none;width:max-content;max-width:min(calc(var(--u)*200px),calc(100% - 20px));background:rgba(19,17,28,.96);border:calc(var(--u)*1px) solid var(--lamp1);padding:calc(var(--u)*3px) calc(var(--u)*6px);pointer-events:none}'
 +'#shell .sh-recap.on{display:block}#shell .sh-recap .k{color:var(--ghost4)}#shell .sh-recap .p{color:var(--lamp4)}#shell .sh-recap ul{margin:calc(var(--u)*2px) 0 0;padding-left:1.1em}#shell .sh-recap li{color:var(--text)}'
-+'#shell .sh-toast.on{display:flex}#shell:not(.on) .sh-toast.on{position:fixed}';
++'#shell .sh-toast.on{display:flex}#shell:not(.on) .sh-toast.on{position:fixed}'
+// Kapitelwahl „Die Reise“ (design/KAPITELWAHL.md, Entwurf A): Panel über die ganze Breite, fünf Bildkarten, Linie mit Stationen, Detail, Knöpfe
++'#shell .panel.chapters{width:calc(100% - 32px);padding:calc(var(--u)*4px) calc(var(--u)*5px);gap:calc(var(--u)*3px);overflow:hidden}#shell .panel.chapters h3{font-size:calc(var(--fs)*1.6);line-height:calc(var(--lh)*1.4)}'
++'#shell .chbody{display:flex;flex-direction:column;gap:calc(var(--u)*3px);min-height:0;flex:1 1 auto}#shell .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
++'#shell .chcards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*3px)}'
++'#shell .chcard{appearance:none;border:calc(var(--u)*1px) solid var(--lamp1);background:var(--ink0);padding:0;position:relative;overflow:hidden;opacity:.72;text-align:left;color:var(--text);cursor:pointer;min-width:0;display:block}'
++'#shell .chcard .ph{display:block;width:100%;aspect-ratio:320/144;background:var(--ink0) center/cover no-repeat;image-rendering:pixelated}#shell.narrow .chcard .ph{aspect-ratio:320/112}#shell .chcard.dis .ph{filter:grayscale(.7) brightness(.55)}'
++'#shell .chcard .name{position:absolute;left:0;right:0;bottom:0;padding:calc(var(--u)*5px) calc(var(--u)*3px) calc(var(--u)*2px);background:linear-gradient(180deg,rgba(8,7,13,0),rgba(8,7,13,.92) 55%);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#shell .chcard .name b{font-weight:400;color:var(--paper2);font-size:calc(var(--fs)*1.1)}'
++'#shell .chcard .num{position:absolute;left:calc(var(--u)*2px);top:calc(var(--u)*2px);min-width:calc(var(--u)*9px);height:calc(var(--u)*9px);padding:0 calc(var(--u)*2px);display:grid;place-items:center;background:var(--ink0);color:var(--lamp4);border:calc(var(--u)*.5px) solid var(--lamp1);font-size:calc(var(--fs)*.8)}'
++'#shell .chcard .mark{position:absolute;right:calc(var(--u)*2px);top:calc(var(--u)*2px);font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8);padding:0 calc(var(--u)*2px);background:var(--ink0)}#shell .chcard .mark.done{color:var(--lamp4)}#shell .chcard .mark.last{color:var(--ghost5)}'
++'#shell .chcard .mark.lock{color:var(--dis);display:flex;align-items:center;height:calc(var(--lh)*.8)}#shell .chcard .mark .lock{width:calc(var(--u)*5px);height:calc(var(--u)*6px)}'
++'#shell .chcard:hover,#shell .chcard:focus-visible{opacity:1;outline:0;box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4)}'
++'#shell .chcard[aria-selected="true"]{opacity:1;border-color:var(--lamp4);box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4),0 0 calc(var(--u)*8px) rgba(243,199,92,.35);transform:translateY(calc(var(--u)*-1px))}#shell .chcard:focus-visible{outline:calc(var(--u)*1px) solid var(--lamp5);outline-offset:calc(var(--u)*1px)}'
++'#shell .route{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:relative;height:calc(var(--u)*7px);flex:0 0 auto}#shell .route::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:calc(var(--u)*.5px);background:var(--lamp1)}'
++'#shell .route i{position:relative;display:block;width:calc(var(--u)*4px);height:calc(var(--u)*4px);margin:auto;background:var(--lamp1);border-radius:50%;transform:translateY(calc(var(--u)*1.5px))}#shell .route i.on{background:var(--lamp4);box-shadow:0 0 calc(var(--u)*4px) var(--lamp4)}#shell .route i.done{background:var(--lamp3)}'
++'#shell .chdetail{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:calc(var(--u)*3px) calc(var(--u)*6px);align-items:end}#shell .chdetail .t{display:flex;flex-direction:column;gap:calc(var(--u)*1px);min-width:0}'
++'#shell .chdetail .title{font-size:calc(var(--fs)*1.3);line-height:calc(var(--lh)*1.2);color:var(--lamp5)}#shell .chdetail .sub{color:var(--muted)}#shell .chdetail .line{color:var(--paper)}#shell.narrow .chdetail .line{display:none}'
++'#shell .chdetail .r{display:flex;flex-direction:column;align-items:flex-end}#shell .chdetail .why{color:var(--dis);display:inline-flex;align-items:center;gap:calc(var(--u)*2px);min-height:max(44px,calc(var(--u)*16px))}#shell .chdetail .why .lock{width:calc(var(--u)*7px);height:calc(var(--u)*8px)}'
++'#shell .tags{display:flex;gap:calc(var(--u)*2px);flex-wrap:wrap}#shell .tag{font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8);padding:calc(var(--u)*1px) calc(var(--u)*2px);border:calc(var(--u)*.5px) solid var(--muted);color:var(--muted)}'
++'#shell .tag.done{color:var(--lamp4);border-color:var(--lamp1)}#shell .tag.last{color:var(--ghost5);border-color:var(--ghost2)}#shell .tag.save{color:var(--paper);border-color:var(--muted)}'
++'#shell .btn.primary{background:var(--lamp3);color:var(--ink0);border-color:var(--lamp4)}#shell .btn.primary:hover,#shell .btn.primary:focus-visible{background:var(--lamp4);color:var(--ink0)}'
++'@media (max-width:560px){#shell .chdetail{grid-template-columns:1fr}#shell .chdetail .r{align-items:stretch}}'
++'#shell.sz1.narrow .chcard .name{padding-top:calc(var(--u)*3px)}#shell.sz1.narrow .chcard .name b{font-size:calc(var(--fs)*.75)}#shell.sz1.narrow .chcard .num{font-size:calc(var(--fs)*.6);min-width:calc(var(--u)*7px);height:calc(var(--u)*7px)}#shell.sz1.narrow .panel.chapters h3{font-size:calc(var(--fs)*1.2);line-height:calc(var(--lh)*1.1)}';
 // Aufbau erst hier: CSS (oben) ist jetzt belegt
 if (DOM){ if (document.body) build(); else document.addEventListener('DOMContentLoaded',build); }
 // Meldungen auch bei geschlossener Schicht zeigen (Toast liegt im #shell-Element, das dann nur ihn anzeigt)

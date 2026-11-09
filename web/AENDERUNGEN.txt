@@ -1,3 +1,27 @@
+DIE STILLEN – ÄNDERUNGEN: KAPITELWAHL „DIE REISE“ UND SPIELE STATT PLÄTZE (9. NOVEMBER 2026)
+Ausführlich: design/KAPITELWAHL.md im Repository (Entwurf A, Abschnitt 7).
+
+WAS SICH ÄNDERT
+- „Kapitel wählen“ ist neu: fünf Bildkarten mit echten Szenen (Riva, Sahat-
+  kula, Alte Brücke, Gleis 11, Alipašino Polje) in einer Reihe, verbunden
+  durch eine Linie mit Stationen. Eine Karte antippen oder mit den Pfeiltasten
+  wählen; darunter stehen Kapitel, Ort, Prologtitel, Datum, eine Stimmungs-
+  zeile und in einem Satz, was man mitnimmt („Übernimmt dein Ende von
+  Kapitel 1.“ / „Quereinstieg: Standardantworten für Kapitel 1–2.“).
+  Gespielte Kapitel tragen ✓, das zuletzt gespielte ▸. „Kapitel beginnen“
+  startet; hat das Kapitel schon einen Spielstand, gibt es „Fortsetzen“ und
+  „Neu beginnen“. Das Fenster nutzt die ganze Breite und passt auf dem
+  Telefon quer ohne Scrollen.
+- Spiele statt Plätze: Ein Kapitelstart ist immer ein neues Spiel mit der
+  nächsten freien Nummer („Spiel 5“); die bisherigen bleiben. Keine Platzwahl,
+  keine Überschreiben-Frage mehr. Bis zu 24 Spiele; danach fragt das Spiel
+  beim Start, ob das älteste Spiel ohne Lesezeichen weichen soll.
+- „Spiel laden“ zeigt alle Spiele, das zuletzt gespielte zuerst, mit
+  Überschrift „Spiel 3 · Kapitel 2 · Sarajevo“ statt „Platz 1“. Ab 20 Spielen
+  steht dort ein Hinweis „Speicher fast voll“. Im Pausenmenü heißt es
+  „Andere Spiele …“, die Meldung beim Verlassen „Gespeichert – Spiel 3“.
+- Alte Spielstände (Platz 1–3) bleiben gültig; sie heißen jetzt Spiel 1–3.
+
 DIE STILLEN – ÄNDERUNGEN: LESBARE TEXTFARBEN (9. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

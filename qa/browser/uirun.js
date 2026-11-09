@@ -192,7 +192,7 @@ const { launch, contextOpts } = require('./engines');
           if ((await st()).scr !== 'title') { done++; continue; }   // zweiter Tipp der alten Folge („Platz 1“): Spiel läuft schon
           await until(s => s.scr === 'title' && s.title && s.title.length, 600000, 'Titelbild'); const labs = await page.evaluate(() => M.shell.labels()); const w = labs.find(l => /^Weiter mit Kapitel/.test(l));
           const clickT = async (t) => { const loc = page.locator('#shell button:visible', { hasText: t }).first(); await loc.waitFor({ timeout: 8000 }); await loc.click(); await sleep(200); };
-          if (w) await clickT(w); else { await clickT('Neues Spiel'); if (await page.evaluate(() => M.shell.current() === 'chapters')) await clickT('Kapitel 1 ·'); }
+          if (w) await clickT(w); else { await clickT('Neues Spiel'); if (await page.evaluate(() => M.shell.current() === 'chapters')) { await clickT('Kapitel 1 ·'); await clickT('beginnen'); } }
           L('Titel', w || 'Neues Spiel'); await until(s => s.scr !== 'title', 20000, 'Spielstart'); await sleep(300); done++; continue; }
         if (e.scr === 'title') { await until(s => s.scr === 'title' && s.title && s.title.length, 600000, 'Titelbild'); const lab = await page.evaluate((h) => { const i2 = +String(h || '').slice(2); return M.titleLabels()[i2]; }, e.hit); await tapL(e.a[0], e.a[1]); L('Titel', lab); await sleep(200); if (/Platz|Weiter mit/.test(lab || '')) { await until(s => s.scr !== 'title', 20000, 'Spielstart'); await sleep(300); await shot('start_' + (lab || '').replace(/\W+/g, '_').slice(0, 30)); } done++; continue; }
         if (e.ov) { await until(s => s.ov === e.ov, 30000, 'Overlay ' + e.ov + ' für Tipp');

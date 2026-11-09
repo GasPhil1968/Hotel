@@ -12,7 +12,7 @@
 | `assets/MALAPixel.otf` | Webfont aus der Bitmap-Schrift des Spiels (`M.FONT`) |
 | `assets/atkinson-hyperlegible-next-*.woff2` | Leseschrift „Atkinson Hyperlegible Next“ 400/700, latin + latin-ext (aus `@fontsource/atkinson-hyperlegible-next` 5.3.0), Lizenz `assets/AtkinsonHyperlegibleNext-OFL.txt` (SIL OFL 1.1) |
 | `tools/` | Werkzeuge (siehe unten) |
-| `KAPITELWAHL.md`, `prototype/kapitelwahl/` | Zwei Entwürfe für die Kapitelwahl („Die Reise“, „Das Fahrkartenheft“) mit Modell für beliebig viele Spielstände; klickbar in `prototype/kapitelwahl/index.html` (`tools/kapitelshots.js` → Bilder, `tools/buildkapitel.js` → Seite). |
+| `KAPITELWAHL.md`, `prototype/kapitelwahl/` | Zwei Entwürfe für die Kapitelwahl („Die Reise“, „Das Fahrkartenheft“) mit Modell für beliebig viele Spielstände; klickbar in `prototype/kapitelwahl/index.html` (`tools/kapitelshots.js` → Bilder, `tools/buildkapitel.js` → Seite). Umgesetzt ist Entwurf A (Abschnitt 7); `tools/kapitelart.js` erzeugt die fünf Szenenbilder `game/art/kapitel/k1–k5.png` für den Build. |
 
 ## Befehle
 
@@ -23,6 +23,7 @@ node design/tools/vmshots.js                                               # Kap
 OPENTYPE=<pfad>/node_modules/opentype.js node design/tools/makefont.js     # Webfont aus M.FONT (opentype.js@1.3.4 nur zum Bauen)
 node design/tools/assets.js && node design/tools/assets2.js                # Bildmaterial und Hotspots für den Prototyp
 node design/tools/buildproto.js                                            # prototype/index.html (Schriften + Hotspots eingebettet)
+node design/tools/kapitelart.js                                            # Szenenbilder der Kapitelwahl → game/art/kapitel/k1–k5.png (320×144, indiziert)
 node design/tools/protosweep.js                                            # Gesamtprüfung des Prototyps (136 Zustände, Chromium)
 FONTSOURCE=<pfad>/node_modules/@fontsource/atkinson-hyperlegible-next \
 OPENTYPE=<pfad>/node_modules/opentype.js node design/tools/fontcheck.js    # Leseschrift gegen alle Zeichen der Spieltexte → evidence/fontcheck.txt

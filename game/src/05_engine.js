@@ -528,7 +528,7 @@ E.closeCard=closeCard;
 // Modell (UI-Konzept D6/D7): je Platz N ein automatischer Stand (mala.save.N, jeder Ortswechsel, A.save, Titelbild, App-Wechsel) und drei
 // Lesezeichen (mala.mark.N.k), die nur der Spieler schreibt. Hülle: {GS, at, sv:2, meta:{chapter, phase, phaseShort, room, roomName, playMs, kind}, thumb}.
 // Ältere Stände ohne sv laden unverändert. Am Kapitelende bleibt der Platz belegt: {sv:2, kind:'chapterEnd', chapter, next, at, meta}.
-var SAVE='mala.save.', MARK='mala.mark.', SLOTS=3, MARKS=3, SV=2, slot=1;
+var SAVE='mala.save.', MARK='mala.mark.', SLOTS=24, MARKS=3, SV=2, slot=1;   // SLOTS: Obergrenze der Spiele (Spiele statt Plätze, design/KAPITELWAHL.md Abschnitt 4)
 try{ slot=Math.max(1,Math.min(SLOTS,+localStorage.getItem('mala.slot')||1)); }catch(e){}
 function LS(){ return M.storage||localStorage; }
 E.SLOTS=SLOTS; E.MARKS=MARKS; E.SV=SV;
@@ -565,6 +565,12 @@ function autosave(){ if (E.busy){ E.pendingSave=true; return; } saveGame(); }
 function hasSave(n){ try{ return !!LS().getItem(SAVE+(n||slot)); }catch(e){ return false; } }
 E.hasSave=hasSave; E.saveGame=saveGame; M.saveGame=saveGame;
 E.anySave=function(){ for (var n=1;n<=SLOTS;n++) if (hasSave(n)) return true; return false; };
+// Spiele statt Plätze: belegt ist jede Nummer, unter der ein Stand oder ein Lesezeichen liegt; die nächste freie Nummer wird das neue Spiel (0: Obergrenze erreicht)
+E.usedSlots=function(){ var out={}, L; try{ L=LS(); }catch(e){ return []; } if (!L) return [];
+  try{ if (typeof L.length==='number' && typeof L.key==='function'){ for (var i=0;i<L.length;i++){ var k=L.key(i), m=k&&String(k).match(/^mala\.(save|mark)\.(\d+)(\.|$)/); if (m && +m[2]>=1 && +m[2]<=SLOTS) out[+m[2]]=1; } }
+    else for (var n=1;n<=SLOTS;n++){ if (L.getItem(SAVE+n) || L.getItem(MARK+n+'.sat')) { out[n]=1; continue; } for (var j=1;j<=MARKS;j++) if (L.getItem(MARK+n+'.'+j)){ out[n]=1; break; } } }catch(e2){}
+  return Object.keys(out).map(Number).sort(function(a,b){ return a-b; }); };
+E.freeSlot=function(){ var u=E.usedSlots(); for (var n=1;n<=SLOTS;n++) if (u.indexOf(n)<0) return n; return 0; };
 function setGame(ns){ GS=ns; M.GS=ns; }
 // Nachzüge für ältere Spielstände: eine Liste, unabhängig davon, wer M.migrateSave zuletzt gesetzt hat (Karte, Hinweise …)
 M.MIGRATE=M.MIGRATE||[];

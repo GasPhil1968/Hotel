@@ -13,6 +13,9 @@ const files = list(SRC).sort((a, b) => {
   return rank(ka) - rank(kb) || ka.localeCompare(kb);
 });
 let js = 'var M={VERSION:"1.0.0"};\n';
+// Szenenbilder der Kapitelwahl („Die Reise“): game/art/kapitel/kN.png (320×144, indiziert; erzeugt von design/tools/kapitelart.js) als data-URLs
+{ const AD = path.join(__dirname, 'art', 'kapitel'), art = {}; if (fs.existsSync(AD)) for (const f of fs.readdirSync(AD).sort()) { const m = f.match(/^k(\d)\.png$/); if (m) art[m[1]] = 'data:image/png;base64,' + fs.readFileSync(path.join(AD, f)).toString('base64'); }
+  js += 'M.CHAPTER_ART=' + JSON.stringify(art) + ';\n'; }
 const keep = f => { if (!ONLY) return true; const k = path.relative(SRC, f).replace(/\\/g, '/'); if (!k.startsWith('rooms/')) return true; const id = path.basename(k, '.js'); if (k.startsWith('rooms/art/')) return ONLY.indexOf(id) >= 0; return id === 'flat'; };
 for (const f of files.filter(keep)) js += `/* ---- ${path.relative(SRC, f).replace(/\\/g, '/')} ---- */\n` + fs.readFileSync(f, 'utf8') + '\n';
 // Syntaxprüfung je Datei: ein Tippfehler bricht den Bau mit Dateiname und Zeile ab, statt eine leere Seite zu liefern
