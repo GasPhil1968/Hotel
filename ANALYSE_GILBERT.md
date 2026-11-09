@@ -1141,4 +1141,19 @@ Alle neuen Kapitel-1-Sätze sind auf Bosnisch/Kroatisch übersetzt (`lang/bhs_k1
 
 ### K.3 Prüfungen
 
-Stand während der Abschlussprüfung (wird nach deren Ende ergänzt): Regressionstests BUG-015 bis BUG-019 bestehen auf dem neuen Stand und schlagen auf dem Stand vor der Soll-Liste fehl; die Durchläufe der Kapitel 1–4 sind mit den neuen Schritten bis zum Abspann gelaufen, ohne JS-Fehler. Vier Simulationsläufe der Kategorie C mit Start in Kapitel 5 erreichen den K5-Abspann.
+Alle Prüfungen liefen auf dem Stand nach der Umsetzung.
+
+| Prüfung | Ergebnis |
+|---|---|
+| Regressionstests (`node qa/regress/run.js`) | 19 von 19 bestanden. Die neuen Tests BUG-015 bis BUG-019 schlagen auf dem Stand vor der Soll-Liste fehl. |
+| Durchläufe der Musterlösung | bis zum Abspann, ohne JS-Fehler: Kapitel 1 (62 Schritte, neu: Lauschen bei Dinko), Kapitel 2 (68, dazu die zweite Reihenfolge), Kapitel 3 (113), Kapitel 4 (85), Kapitel 5 (55, dazu die Variante mit 51 Schritten) |
+| Zusatztests der Kapitel | `k2tests` 33 von 33, `k3tests` 181 von 181, `k4tests` 116 von 116 |
+| Einstieg (`einstiegtests.js`) | 39 von 39 |
+| Hinweisprüfung entlang der Musterlösung (`hintcheck.js`) | bestanden: 1.195 Stände, 266 Themen, davon 250 offen gewesen; die 10 Stellen „zu sichten“ sind dieselben Wortgleichheiten wie in J.3 |
+| Hinweisprobe (`qa/hints/hintprobe.js`) | **0 Fehler, 0 zu prüfen** in 1.009 Ständen aus 24 Folgen: 383 Stände der fünf Musterlösungen, 399 aus acht Simulationsläufen (Kategorien B und C, Kapitel 1–4), 222 aus sieben Simulationsläufen mit Start in Kapitel 5 und 5 Varianten. Bestanden haben 1.455 Themen-Stände (985 ausgeführte Proben), 154 sind übersprungen. Die neuen Kapitel-5-Stände deckten eine Schwäche auf: „Haus 7“ nannte nach der Szene im siebten Stock noch den erledigten Teil. Der Hinweis nennt jetzt nur noch den Rest des Wegs. |
+| Simulation (`qa/sim.js`) | Kapitel 1–4: 7 von 8 Läufen bis zum Endpunkt; Lauf B-0001 endete nach einer Zufallsstörung in Kapitel 3 als „unentschieden“, die Sackgassen-Sonde findet „kein Softlock (Phase/Kapitel geht weiter)“. Start in Kapitel 5: 5 von 7 Läufen bis zum K5-Abspann (alle vier der Kategorie C); B-0008 und B-0009 fanden nach Zufallsaktionen am Busbahnhof nicht ins Skript zurück, die Sonde findet in beiden Fortschritt (kein Softlock). |
+| Oberfläche (`qa/ui/phase1.js` bis `phase5.js`, `savecompat.js`) | Phase 1: 33/33, Phase 2: 81/81, Phase 3: 52/52, Phase 4: 92/92, Phase 5: 31/31, alte Spielstände: 33/33, im ersten Lauf unter Last; die beiden früher schwankenden Prüfungen bestanden |
+| Offline (`offlinetest.js`) | bestanden |
+| Übersetzung (`i18n_check.js` über die geänderten Kapitel-1-Dateien) | 0 fehlende Texte |
+
+**Angepasste Prüfwerkzeuge.** Die Durchläufe der Kapitel 1–3 und ihre QA-Kopien folgen den neuen Schritten (Lauschen bei Dinko; Mirza nach dem Schluss; Peilungsschlüsse ohne Notizbuch); `k3tests` Test 16 prüft, dass Marko „Skela“ und „zu flach geschnitten“ selbst zieht; die Zuordnung der Hinweisprobe für „Haus 7“ geht über echte Ausgänge, damit Mama mitkommt.
