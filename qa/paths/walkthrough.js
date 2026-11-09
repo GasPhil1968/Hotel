@@ -106,7 +106,8 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.exit('door'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await log('Matejuška'); await shot('matejuska');
     await D.act('use', 'dinko', 'photo1'); await D.drain(); await note('c1_brother');
     await D.switchTo('mala'); await D.exit('shed_door'); await D.drain(); await expect(await room() === 'shed', 'Schuppen'); await shot('shed');
-    await D.act('sense', 'seabag'); await D.drain(); await note('c1_words'); await D.exit('door'); await D.drain(); await D.switchTo('marko'); await log('Seesack');
+    await D.act('sense', 'seabag'); await D.drain(); await note('c1_words'); await D.exit('door'); await D.drain(); await log('Seesack');
+    await D.act('listen', 'dinko'); await D.drain(); await note('c1_drzi'); await D.switchTo('marko'); await log('Mala lauscht: Dinko murmelt „drži“');   // Analyse K1-B08 (P19)
     await talk('dinko', 'Ich weiß, was Tonći', 'Ivka wartet noch'); await flag('c1.dinkoTold'); await inv('gloves'); await inv('letter_t'); await log('Dinkos Geständnis');
     await D.act('use', '_mala', 'letter_t'); await D.drain(); await expect(!(await D.hasNote('c1_letter')), 'Brief noch zu');
     await D.item('read', 'letter_t'); await D.drain(); await note('c1_stuck'); await log('Brief klebt');

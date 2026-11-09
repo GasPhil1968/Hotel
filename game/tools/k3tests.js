@@ -412,9 +412,12 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
     ok(await dlgHas('Von Split hierher') && !(await dlgHas('Von Split nach Skela')), 'Vlado am Freitag vor dem Schluss: „Von Split hierher“, nicht „nach Skela“');
     await bye('(Gehen.)');
     await load('Zdravkos Karte von 1985'); const l2 = await mapLabel('skela'); ok(l2 === 'Skela', 'nach der alten Karte trägt der Plan den Namen: „' + l2 + '“');
-    await clearLog(); await D.ev(() => M.k3Bed(M.API)); await calm(); ok(await said('Ich habe einen Namen auf einer alten Karte'), 'Bett nach der alten Karte, vor dem Schluss: „Ich habe einen Namen …“');
-    await load('Peilung 2 vom Minarett'); await clearLog(); await comb('l3_m1', 'l3_m2', 'l3_flat');
-    ok(await said('Die dritte muss quer dazu kommen') && !(await said('Partisanenfriedhof')), 'nach „zu flach geschnitten“: das Problem, aber kein Partisanenfriedhof im Dialog');
+    // ANALYSE_GILBERT.md K3-B02/B03 (P17): Mit dem Bereich hinter dem Kartenrand zieht Marko „Skela“ beim Lesen der Karte selbst,
+    // die Peilungsschlüsse beim Schließen des Blatts. Einen Stand „alte Karte gelesen, Schluss fehlt“ gibt es daher nicht mehr.
+    ok(await N('l3_skela'), 'nach der alten Karte ist „Skela“ geschlossen, ohne Notizbuch');
+    await clearLog(); await D.ev(() => M.k3Bed(M.API)); await calm(); ok(await said('Vlado. Erst Vlado.'), 'Bett nach der alten Karte: „Vlado. Erst Vlado. Und die Schublade.“');
+    await load('Karte fürs Minarett'); await exit('minaret_door'); await at('minarett'); await clearLog(); await act('use', 'view'); await P.peil('minaret'); await calm();
+    ok(await N('l3_flat') && await said('Die dritte muss quer dazu kommen') && !(await said('Partisanenfriedhof')), 'nach der zweiten Peilung zieht Marko „zu flach geschnitten“ selbst: das Problem, aber kein Partisanenfriedhof im Dialog');
     await load('Sanja angerufen: Ljerka ruft zurück'); await go('starimost'); await clearLog(); await act('use', 'bridgehead'); await P.peil('bridgehead');
     ok(await F('k3.peil.bridgehead') && await said('Ich brauche einen zweiten Standort') && !(await said('Koski-Moschee')), 'nach der ersten Peilung: „Ich brauche einen zweiten Standort“, ohne das Minarett zu nennen');
     ok(await D.ev(() => !!M.GS.map.koski), 'der Plan zeigt die Koski-Moschee als neuen Ort');
