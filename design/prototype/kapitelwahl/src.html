@@ -1,0 +1,282 @@
+<title>Die Stillen – Kapitelwahl</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: eine Lesespalte (max. 1100px); darin je Entwurf ein Gerätefenster mit dem echten Spielbild, per Schalter Telefon quer / Tablet / Desktop.
+   Die Gerätefenster behalten immer die Spielpalette (ein Spielbildschirm hat kein Hellthema); die Seite drumherum folgt dem Thema des Betrachters. */
+@font-face{font-family:"MALA Pixel";src:url(data:font/otf;base64,__FONT__) format("opentype");font-display:block}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:400;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,__ATK400L__) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:400;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,__ATK400E__) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:700;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,__ATK700L__) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:700;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,__ATK700E__) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+:root{--bg:#0c0b12;--surface:#15131e;--fg:#e3d9c0;--muted:#a39882;--accent:#f3c75c;--accent2:#82c1c9;--line:#2a2636;--pix:"MALA Pixel",ui-monospace,monospace;--read:"Atkinson Hyperlegible Next",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#ece5d2;--surface:#f7f2e6;--fg:#13111c;--muted:#5a5248;--accent:#79212e;--accent2:#1f2c50;--line:#cfc3a6;color-scheme:light}}
+:root[data-theme="light"]{--bg:#ece5d2;--surface:#f7f2e6;--fg:#13111c;--muted:#5a5248;--accent:#79212e;--accent2:#1f2c50;--line:#cfc3a6;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--read);font-size:17px;line-height:1.5;padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1100px;margin:0 auto}
+h1,h2,h3{font-family:var(--pix);font-weight:400;margin:0;text-wrap:balance;-webkit-font-smoothing:none}
+h1{font-size:40px;line-height:1.1;color:var(--accent)}
+h2{font-size:28px;line-height:1.2;margin-top:12px}
+h3{font-size:20px;line-height:1.3;color:var(--accent2)}
+p,li{max-width:68ch}
+p{margin:0}
+.lead{font-size:19px;color:var(--muted)}
+header{padding-block:40px 24px;display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-family:var(--pix);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2)}
+section{padding-block:28px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:16px}
+.ist{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px;align-items:start}
+.ist img{width:100%;height:auto;border:1px solid var(--line);image-rendering:auto}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+.sticky .lbl{font-family:var(--pix);font-size:14px;color:var(--muted);margin-right:4px}
+.seg{display:inline-flex;border:1px solid var(--line);background:var(--surface)}
+.seg button{appearance:none;border:0;background:transparent;color:var(--fg);font:inherit;font-family:var(--pix);font-size:15px;padding:8px 12px;cursor:pointer;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.seg button:focus-visible{outline:2px solid var(--accent2);outline-offset:-2px}
+.frame-wrap{width:100%;overflow:hidden;position:relative}
+.frame{transform-origin:0 0;position:relative;overflow:hidden;background:#08070d;border:1px solid var(--line)}
+.cap{font-size:14px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px 28px}
+.notes h3{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-family:var(--pix);font-weight:400;font-size:14px;color:var(--muted)}
+td:first-child{color:var(--muted);white-space:nowrap}
+.tbl{overflow-x:auto}
+.rec{border:1px solid var(--accent);padding:14px 18px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;color:var(--accent2)}
+kbd{font-family:var(--pix);font-size:14px;border:1px solid var(--line);padding:1px 6px}
+@media (max-width:720px){.ist{grid-template-columns:1fr}h1{font-size:32px}body{font-size:16px}}
+
+/* ===== Gerätefenster: Spielpalette (07_shell.js), Einheit --u wie im Spiel (Telefon quer 2, Tablet und Desktop 3) ===== */
+.mock{--u:2;--ink0:#08070d;--ink1:#13111c;--ink2:#1e1b2a;--lamp1:#6a400e;--lamp3:#d99a33;--lamp4:#f3c75c;--lamp5:#fff0a6;--ghost2:#2c6074;--ghost4:#82c1c9;--ghost5:#c3ecee;--paper:#e3d9c0;--paper2:#f5efe0;--pink:#13111c;--pmuted:#5a5248;--seal:#cc5f68;--seal2:#79212e;--text:#e3d9c0;--mmuted:#a39882;--dis:#7d7364;
+  --fs:calc(var(--u)*10px);--lh:calc(var(--u)*12px);position:absolute;inset:0;font-family:var(--pix);font-size:var(--fs);line-height:var(--lh);color:var(--text);-webkit-font-smoothing:none;user-select:none;background:#08070d url(__IMG_title__) center/cover no-repeat;overflow:hidden}
+.mock .dim{position:absolute;inset:0;background:rgba(8,7,13,.74)}
+.mock .panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(100% - 32px);max-height:calc(100% - 16px);background:rgba(19,17,28,.97);border:calc(var(--u)*1px) solid var(--lamp1);box-shadow:0 0 0 calc(var(--u)*1px) var(--ink0),calc(var(--u)*2px) calc(var(--u)*2px) 0 calc(var(--u)*1px) rgba(0,0,0,.55);padding:calc(var(--u)*4px) calc(var(--u)*5px);display:flex;flex-direction:column;gap:calc(var(--u)*3px);overflow:hidden}
+.mock .phead{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*4px)}
+.mock h3{font-family:var(--pix);font-weight:400;margin:0;font-size:calc(var(--fs)*1.6);line-height:calc(var(--lh)*1.4);color:var(--lamp5)}
+.mock .sub{color:var(--mmuted)}
+.mock .small{font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8)}
+.mock button{font:inherit;color:inherit;letter-spacing:0;cursor:pointer}
+.mock .btn{appearance:none;min-height:max(44px,calc(var(--u)*16px));padding:0 calc(var(--u)*7px);background:var(--ink1);color:var(--lamp4);border:calc(var(--u)*1px) solid var(--lamp1);white-space:nowrap}
+.mock .btn:hover,.mock .btn:focus-visible{background:var(--ink2);color:var(--lamp5);box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4);outline:0}
+.mock .btn.primary{background:var(--lamp3);color:var(--ink0);border-color:var(--lamp4)}
+.mock .btn.primary:hover,.mock .btn.primary:focus-visible{background:var(--lamp4);color:var(--ink0)}
+.mock .btnrow{display:flex;gap:calc(var(--u)*3px);flex-wrap:wrap;align-items:center}
+.mock .chips{display:flex;gap:calc(var(--u)*2px);flex-wrap:wrap}
+.mock .chip{font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8);padding:calc(var(--u)*1px) calc(var(--u)*2px);border:calc(var(--u)*.5px) solid var(--mmuted);color:var(--mmuted)}
+.mock .chip.done{color:var(--lamp4);border-color:var(--lamp1)}
+.mock .chip.last{color:var(--ghost5);border-color:var(--ghost2)}
+.mock .chip.save{color:var(--paper);border-color:var(--mmuted)}
+.mock .foot{color:var(--mmuted);font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8)}
+.mock .mtoast{position:absolute;left:50%;bottom:calc(var(--u)*6px);transform:translateX(-50%);background:var(--paper);color:var(--pink);padding:calc(var(--u)*2px) calc(var(--u)*5px);border:calc(var(--u)*1px) solid var(--seal2);opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis}
+.mock .mtoast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.mock *{transition:none !important}}
+
+/* ---- Entwurf A: Die Reise ---- */
+.mock.a .cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(var(--u)*3px)}
+.mock.a .card{appearance:none;border:calc(var(--u)*1px) solid var(--lamp1);background:var(--ink0);padding:0;position:relative;overflow:hidden;opacity:.72;transition:opacity .2s,transform .2s,box-shadow .2s;text-align:left;color:var(--text)}
+.mock.a .card .ph{display:block;width:100%;aspect-ratio:320/144;background:var(--ink0) center/cover no-repeat;image-rendering:pixelated}
+.mock.a .card .name{position:absolute;left:0;right:0;bottom:0;padding:calc(var(--u)*5px) calc(var(--u)*3px) calc(var(--u)*2px);background:linear-gradient(180deg,rgba(8,7,13,0),rgba(8,7,13,.92) 55%);display:flex;align-items:baseline;gap:calc(var(--u)*2px);white-space:nowrap;overflow:hidden}
+.mock.a .card .name b{font-weight:400;color:var(--paper2);font-size:calc(var(--fs)*1.1)}
+.mock.a .card .num{position:absolute;left:calc(var(--u)*2px);top:calc(var(--u)*2px);min-width:calc(var(--u)*9px);height:calc(var(--u)*9px);padding:0 calc(var(--u)*2px);display:grid;place-items:center;background:var(--ink0);color:var(--lamp4);border:calc(var(--u)*.5px) solid var(--lamp1);font-size:calc(var(--fs)*.8)}
+.mock.a .card .mark{position:absolute;right:calc(var(--u)*2px);top:calc(var(--u)*2px);font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8);padding:0 calc(var(--u)*2px);background:var(--ink0)}
+.mock.a .card .mark.done{color:var(--lamp4)}.mock.a .card .mark.last{color:var(--ghost5)}
+.mock.a .card:hover,.mock.a .card:focus-visible{opacity:1;outline:0}
+.mock.a .card[aria-pressed="true"]{opacity:1;border-color:var(--lamp4);box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4),0 0 calc(var(--u)*8px) rgba(243,199,92,.35);transform:translateY(calc(var(--u)*-1px))}
+.mock.a .route{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:relative;height:calc(var(--u)*7px)}
+.mock.a .route::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:calc(var(--u)*.5px);background:var(--lamp1)}
+.mock.a .route i{position:relative;display:block;width:calc(var(--u)*4px);height:calc(var(--u)*4px);margin:auto;background:var(--lamp1);border-radius:50%;transform:translateY(calc(var(--u)*1.5px))}
+.mock.a .route i.on{background:var(--lamp4);box-shadow:0 0 calc(var(--u)*4px) var(--lamp4)}
+.mock.a .route i.done{background:var(--lamp3)}
+.mock.a .detail{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:calc(var(--u)*3px) calc(var(--u)*6px);align-items:end}
+.mock.a .detail .t{display:flex;flex-direction:column;gap:calc(var(--u)*1px);min-width:0}
+.mock.a .detail .title{font-size:calc(var(--fs)*1.3);line-height:calc(var(--lh)*1.2);color:var(--lamp5)}
+.mock.a .detail .line{color:var(--paper)}
+.mock.a .detail .r{display:flex;flex-direction:column;gap:calc(var(--u)*2px);align-items:flex-end}
+.frame.dev-phone .mock.a .detail .line{display:none}
+
+/* ---- Entwurf B: Fahrkartenheft ---- */
+.mock.b .body{display:grid;grid-template-columns:minmax(0,34%) minmax(0,1fr);gap:calc(var(--u)*5px);min-height:0;flex:1 1 auto}
+.frame.dev-desktop .mock.b .body,.frame.dev-tablet .mock.b .body{grid-template-columns:minmax(0,30%) minmax(0,1fr)}
+.mock.b .list{display:flex;flex-direction:column;gap:calc(var(--u)*2px);min-width:0}
+.mock.b .ticket{appearance:none;border:calc(var(--u)*.5px) solid var(--lamp1);background:var(--ink2);color:var(--text);text-align:left;padding:calc(var(--u)*2px) calc(var(--u)*3px) calc(var(--u)*2px) calc(var(--u)*4px);display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:calc(var(--u)*3px);align-items:center;position:relative;min-height:max(44px,calc(var(--u)*17px));border-left:calc(var(--u)*1px) dashed var(--lamp1)}
+.mock.b .ticket .n{font-size:calc(var(--fs)*1.4);line-height:1;color:var(--lamp4);width:calc(var(--u)*9px)}
+.mock.b .ticket .c{display:flex;flex-direction:column;min-width:0}
+.mock.b .ticket .c b{font-weight:400;color:var(--paper2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mock.b .ticket .c span{font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8);color:var(--mmuted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mock.b .ticket:hover,.mock.b .ticket:focus-visible{background:#262232;outline:0;box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4)}
+.mock.b .ticket[aria-pressed="true"]{background:var(--paper);color:var(--pink);border-color:var(--paper2);transform:translateX(calc(var(--u)*2px))}
+.mock.b .ticket[aria-pressed="true"] .n{color:var(--seal2)}.mock.b .ticket[aria-pressed="true"] .c b{color:var(--pink)}.mock.b .ticket[aria-pressed="true"] .c span{color:var(--pmuted)}
+.mock.b .ticket .stamp{position:absolute;right:calc(var(--u)*3px);top:50%;transform:translateY(-50%) rotate(-8deg);font-size:calc(var(--fs)*.7);line-height:1;padding:calc(var(--u)*1px) calc(var(--u)*1.5px);border:calc(var(--u)*.5px) solid var(--seal);color:var(--seal);letter-spacing:.05em}
+.mock.b .ticket[aria-pressed="true"] .stamp{border-color:var(--seal2);color:var(--seal2)}
+.mock.b .ticket .last{position:absolute;right:calc(var(--u)*3px);top:50%;transform:translateY(-50%);color:var(--ghost5);font-size:calc(var(--fs)*.8)}
+.mock.b .prev{display:flex;flex-direction:column;gap:calc(var(--u)*2px);min-width:0;min-height:0}
+.mock.b .pic{position:relative;width:100%;aspect-ratio:320/104;background:var(--ink0) center/cover no-repeat;image-rendering:pixelated;border:calc(var(--u)*1px) solid var(--lamp1);overflow:hidden;flex:0 0 auto}
+.frame.dev-desktop .mock.b .pic,.frame.dev-tablet .mock.b .pic{aspect-ratio:320/144}
+.mock.b .pic .ov{position:absolute;left:0;right:0;bottom:0;padding:calc(var(--u)*6px) calc(var(--u)*4px) calc(var(--u)*2px);background:linear-gradient(180deg,rgba(8,7,13,0),rgba(8,7,13,.9) 60%);display:flex;flex-direction:column}
+.mock.b .pic .ov .k{color:var(--lamp4);font-size:calc(var(--fs)*.8);line-height:calc(var(--lh)*.8)}
+.mock.b .pic .ov .city{font-size:calc(var(--fs)*1.6);line-height:calc(var(--lh)*1.3);color:var(--paper2)}
+.mock.b .pic .ov .s{color:var(--mmuted);font-size:calc(var(--fs)*.9)}
+.mock.b .info{display:flex;flex-direction:column;gap:calc(var(--u)*1px);min-width:0}
+.mock.b .info .when{color:var(--paper)}
+.mock.b .info .carry{color:var(--mmuted);font-size:calc(var(--fs)*.9);line-height:calc(var(--lh)*.9)}
+.mock.b .info .save{color:var(--ghost5);font-size:calc(var(--fs)*.9);line-height:calc(var(--lh)*.9)}
+.mock.b .act{display:flex;justify-content:flex-end;align-items:center;gap:calc(var(--u)*3px);flex-wrap:wrap;margin-top:auto}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Die Stillen · Entwurf · 9. November 2026</div>
+  <h1>Kapitelwahl: zwei Entwürfe</h1>
+  <p class="lead">Die heutige Kapitelwahl ist eine Liste aus Textzeilen in einem schmalen Rahmen. Beide Entwürfe zeigen die fünf Kapitel als Orte mit echten Szenenbildern aus dem Spiel, sagen in einer Zeile, was man mitnimmt, und rechnen mit beliebig vielen Spielständen. Die Fenster unten sind klickbar.</p>
+</header>
+
+<section>
+  <h2>Ist-Zustand</h2>
+  <div class="ist">
+    <img src="__IMG_ist__" alt="Die heutige Kapitelwahl auf dem Telefon: ein schmaler Rahmen mit fünf Textzeilen">
+    <ul>
+      <li><strong>Nur Text.</strong> Fünf gleichförmige Zeilen; die Orte, um die es geht, sind unsichtbar. Nichts lädt zum Antippen ein.</li>
+      <li><strong>Schmaler Rahmen.</strong> Das Fenster nutzt gut ein Drittel der Breite. Dadurch wirkt es wie ein Dialog aus einer Werkzeugoberfläche, nicht wie ein Teil des Spiels.</li>
+      <li><strong>Die wichtige Information steht im Kleingedruckten.</strong> „Quereinstieg mit Standardantworten“ wiederholt sich dreimal und erklärt nicht, was das bedeutet.</li>
+      <li><strong>„Alle drei Plätze sind belegt.“</strong> Der Satz spricht über Technik (Speicherplätze), bevor man gewählt hat, und die Zahl drei ist eine Grenze, die weg soll.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="sticky" role="group" aria-label="Gerät für die Entwürfe">
+  <span class="lbl">Ansicht</span>
+  <div class="seg" id="devseg">
+    <button type="button" data-dev="phone" aria-pressed="true">Telefon quer</button>
+    <button type="button" data-dev="tablet" aria-pressed="false">Tablet</button>
+    <button type="button" data-dev="desktop" aria-pressed="false">Desktop</button>
+  </div>
+  <span class="lbl" id="devinfo"></span>
+</div>
+
+<section id="a">
+  <h2>Entwurf A · „Die Reise“</h2>
+  <p>Fünf Bildkarten in einer Reihe, verbunden durch eine Linie mit Stationen: Split, Sarajevo, Mostar, München, Sarajevo. Die Reihe erzählt, dass die Kapitel aufeinander folgen. Eine Karte antippen wählt sie; darunter stehen Titel, Datum und die Folgen der Wahl, rechts die Handlung.</p>
+  <div class="frame-wrap" id="wrapA"><div class="frame" id="frameA"></div></div>
+  <div class="cap"><span>Klickbar: Karten, Pfeiltasten <kbd>←</kbd> <kbd>→</kbd>, Knöpfe.</span><span>Beispielstand: Kapitel 1 gespielt, Spielstand in Kapitel 2, vier Spiele gespeichert.</span></div>
+  <div class="notes">
+    <div><h3>Was die Karte zeigt</h3><p>Szenenbild des Orts, Nummer, Ortsname. Gespielte Kapitel tragen einen Haken, das zuletzt gespielte einen Pfeil. Nicht gewählte Karten sind leicht abgedunkelt, die gewählte leuchtet im Lampenton.</p></div>
+    <div><h3>Was darunter steht</h3><p>„Kapitel 2 · Sarajevo“, der Prologtitel, das Datum im Spiel. Dann ein Satz, der die Wahl erklärt: „Übernimmt dein Ende von Kapitel 1.“ oder „Quereinstieg: Standardantworten für Kapitel 1–2.“ Nie mehr als eine Zeile.</p></div>
+    <div><h3>Handlung</h3><p>Ein gefüllter Knopf „Kapitel beginnen“. Gibt es in dem Kapitel einen Spielstand, wird „Fortsetzen“ zum gefüllten Knopf und „Neu beginnen“ steht daneben. Die Fußzeile sagt, dass ein neues Spiel entsteht und die bisherigen bleiben.</p></div>
+    <div><h3>Stärken und Grenzen</h3><p>Stark auf dem Telefon quer und auf dem Desktop: alles ist auf einen Blick da, die Reise ist sichtbar. Grenze: Die Karten sind klein; wer Bilder vergleichen will, muss tippen. Mit einem sechsten Kapitel wird die Reihe eng.</p></div>
+  </div>
+</section>
+
+<section id="b">
+  <h2>Entwurf B · „Das Fahrkartenheft“</h2>
+  <p>Links ein Heft mit fünf Fahrkarten, eine je Kapitel, rechts die große Vorschau des gewählten Orts. Fahrkarten ziehen sich durch das ganze Spiel (Alijas Fahrscheine, die Linie Drei, die Busfahrkarten), darum passt das Bild: Eine Karte ziehen heißt, dorthin zu fahren. Die gezogene Karte liegt hell auf dem Stapel, gespielte Kapitel tragen einen Stempel.</p>
+  <div class="frame-wrap" id="wrapB"><div class="frame" id="frameB"></div></div>
+  <div class="cap"><span>Klickbar: Fahrkarten, Pfeiltasten <kbd>↑</kbd> <kbd>↓</kbd>, Knöpfe.</span><span>Derselbe Beispielstand wie oben.</span></div>
+  <div class="notes">
+    <div><h3>Was die Karte zeigt</h3><p>Nummer, Ortsname und eine Zeile Stand: „gespielt“, „Spielstand · gestern“ oder „noch nicht“. Gespielte Kapitel haben den Stempel GESPIELT, das zuletzt gespielte den Pfeil.</p></div>
+    <div><h3>Die Vorschau</h3><p>Das Szenenbild groß, darüber Kapitel, Ort und Prologtitel. Darunter das Datum, der Satz zur Übernahme und, wenn vorhanden, der Spielstand mit Ort und Zeit. Wer liest, bekommt hier mehr als in A, ohne dass die Liste voller wird.</p></div>
+    <div><h3>Handlung</h3><p>Dieselben Knöpfe wie in A, am unteren Rand der Vorschau: gefüllt „Fortsetzen“ oder „Kapitel beginnen“, daneben „Neu beginnen“ und links die Fußzeile zum neuen Spiel.</p></div>
+    <div><h3>Stärken und Grenzen</h3><p>Stark, wenn Kapitel dazukommen (die Liste wächst nach unten) und für alle, die vor dem Start wissen wollen, was sie erwartet. Grenze: Nur ein Bild zur Zeit; die Reihenfolge der Reise ist weniger sichtbar als in A.</p></div>
+  </div>
+</section>
+
+<section id="saves">
+  <h2>Mehr als drei Spielstände</h2>
+  <p>Heute hat das Spiel drei „Plätze“, jeder mit einem automatischen Stand und drei Lesezeichen. Wer ein viertes Spiel beginnt, muss einen Platz überschreiben, und die Kapitelwahl kündigt das an, bevor man überhaupt gewählt hat. Beide Entwürfe gehen von einem anderen Modell aus:</p>
+  <ul>
+    <li><strong>Ein Kapitelstart ist immer ein neues Spiel.</strong> Es bekommt die nächste freie Nummer („Spiel 5“), die bisherigen bleiben. Keine Platzwahl, keine Überschreiben-Frage.</li>
+    <li><strong>Spiele statt Plätze.</strong> Unter „Spiel laden“ stehen alle Spiele mit ihren Lesezeichen, das neueste oben, jedes mit Kapitel, Ort, Zeit und Bild. Löschen ist dort möglich, nirgends sonst.</li>
+    <li><strong>Grenze nur durch den Speicher.</strong> Ein Spiel braucht mit Bildern etwa 100 bis 200 KB; der Browser gibt rund 5 MB. Bei etwa zwanzig Spielen warnt „Spiel laden“ einmal („Speicher fast voll“), und die Kapitelwahl bietet dann an, das älteste Spiel ohne Lesezeichen zu löschen. Vorher spricht sie nie vom Speicher.</li>
+    <li><strong>Fortsetzen pro Kapitel.</strong> Beide Entwürfe zeigen am Kapitel den neuesten Spielstand aus diesem Kapitel und bieten „Fortsetzen“ an. Gibt es mehrere, führt ein Tipp auf die Spielstandzeile zu „Spiel laden“, gefiltert auf das Kapitel.</li>
+  </ul>
+</section>
+
+<section id="vergleich">
+  <h2>Vergleich und Empfehlung</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Kriterium</th><th>A · Die Reise</th><th>B · Das Fahrkartenheft</th></tr></thead>
+    <tbody>
+      <tr><td>Erster Eindruck</td><td>Alle fünf Orte als Bilder nebeneinander; die Reise ist sichtbar.</td><td>Ein großes Bild, eine Liste; ruhiger, mehr Text.</td></tr>
+      <tr><td>Telefon quer (844 × 390)</td><td>Passt ohne Scrollen; Karten 150 px breit.</td><td>Passt ohne Scrollen; Vorschau 58 % der Breite.</td></tr>
+      <tr><td>Hochformat</td><td colspan="2">Das Spiel dreht sich auf dem Telefon ins Querformat; beide Entwürfe brauchen keine eigene Hochkant-Fassung.</td></tr>
+      <tr><td>Mehr Kapitel später</td><td>Bis sechs Karten; danach müsste die Reihe scrollen.</td><td>Die Liste wächst nach unten; die Vorschau bleibt.</td></tr>
+      <tr><td>Information vor dem Start</td><td>Titel, Datum, Übernahme, Spielstand (eine Zeile).</td><td>Dazu Platz für eine Stimmungszeile und den Spielstand mit Bild.</td></tr>
+      <tr><td>Aufwand</td><td>Neuer Bildschirm in <code>07_shell.js</code> (Layout <code>chapters</code>), fünf Szenenbilder beim Bau erzeugt, etwa 180 Zeilen.</td><td>Gleicher Umfang; die Fahrkarte ist ein Stil der bestehenden Menüeinträge.</td></tr>
+      <tr><td>Übersetzung</td><td colspan="2">Beide: etwa zwölf neue Sätze (Bosnisch/Kroatisch), die Ortsnamen bleiben.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="rec">
+    <h3>Empfehlung: A für das Spiel, B als Rückfalloption bei mehr Kapiteln</h3>
+    <p>„Die Reise“ zeigt auf einen Blick, worum es in den Stillen geht: fünf Orte, eine Strecke. Für ein Spiel mit fünf Kapiteln ist das die richtige Verdichtung. Sollte eine sechste Station dazukommen, trägt das Fahrkartenheft weiter.</p>
+    <p>Unabhängig vom Entwurf: Das Modell „Spiele statt Plätze“ gehört zuerst gebaut, weil es den Satz über die belegten Plätze erledigt und „Spiel laden“ mitändert.</p>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+'use strict';
+var IMG={ title:'__IMG_title__', k1:'__IMG_k1_riva__', k2:'__IMG_k2_kula__', k3:'__IMG_k3_starimost__', k4:'__IMG_k4_gleis11__', k5:'__IMG_k5_neboder__' };
+var CH=[
+ {n:1,city:'Split',sub:'Prolog – Die Stillen',when:'Dienstag, 15. November 2011',img:IMG.k1,line:'Ein Nachruf auf eine Frau, die jeden Abend an der Mole stand.'},
+ {n:2,city:'Sarajevo',sub:'Prolog – Die Linie Drei',when:'Samstag, 19. November 2011',img:IMG.k2,line:'Drei Fälle in der Altstadt. Und ein Fahrschein für später.'},
+ {n:3,city:'Mostar',sub:'Prolog – Die Brücke, die alle kennen',when:'Donnerstag, 24. November 2011',img:IMG.k3,line:'Eine Spur, die hinter den Rand des Stadtplans führt.'},
+ {n:4,city:'München',sub:'Prolog – Heiligabend',when:'Samstag, 24. Dezember 2011',img:IMG.k4,line:'Weihnachten bei Mama. An Gleis 11 wartet einer.'},
+ {n:5,city:'Sarajevo',sub:'Prolog – Ankunft',when:'Donnerstag, 1. März 2012',img:IMG.k5,line:'Zurück nach Haus 7. Der letzte Samstag mit der Drei.'}
+];
+// Beispielstand des Spielers: Kapitel 1 gespielt, ein Spielstand in Kapitel 2 (zuletzt gespielt), vier Spiele gespeichert
+var ST={ done:{1:true}, saves:{2:{where:'Kafana „Kula“',when:'gestern 21:14',dur:'1 Std. 40 Min.',game:2}}, latest:2, games:4 };
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function carry(c){ if (c.n===1) return 'Von vorn.'; if (ST.done[c.n-1]) return 'Übernimmt dein Ende von Kapitel '+(c.n-1)+'.'; return 'Quereinstieg: Standardantworten für Kapitel 1–'+(c.n-1)+'.'; }
+function chips(c){ var o=[]; if (ST.done[c.n]) o.push(['done','✓ gespielt']); if (ST.latest===c.n) o.push(['last','▸ zuletzt hier']); if (ST.saves[c.n]) o.push(['save','Spielstand · '+ST.saves[c.n].when]); return o; }
+function actions(c){ var s=ST.saves[c.n], h='';
+  if (s) h+='<button type="button" class="btn primary" data-act="cont">Fortsetzen</button><button type="button" class="btn" data-act="new">Neu beginnen</button>';
+  else h+='<button type="button" class="btn primary" data-act="new">Kapitel beginnen</button>';
+  return h; }
+function foot(c){ return (ST.saves[c.n]?'„Neu beginnen“ legt Spiel '+(ST.games+1)+' an':'Beginnt als neues Spiel (Nr. '+(ST.games+1)+')')+' · deine '+ST.games+' Spiele bleiben.'; }
+function toast(root,t){ var el=root.querySelector('.mtoast'); el.textContent=t; el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove('on'); },2600); }
+function act(root,c,kind){ if (kind==='cont') toast(root,'Spiel '+ST.saves[c.n].game+' wird geladen · '+ST.saves[c.n].where); else toast(root,'Neues Spiel '+(ST.games+1)+' · Kapitel '+c.n+' · '+c.city+' beginnt'); }
+
+// ---------------- Entwurf A
+function renderA(root){ var sel=ST.latest||1;
+  function draw(){ var c=CH[sel-1], h='<div class="dim"></div><div class="panel"><div class="phead"><h3>Kapitel wählen</h3><button type="button" class="btn" data-act="back">Zurück</button></div>';
+    h+='<div class="cards" role="listbox" aria-label="Kapitel">'+CH.map(function(k){ var m=ST.done[k.n]?'<span class="mark done">✓</span>':(ST.latest===k.n?'<span class="mark last">▸</span>':'');
+      return '<button type="button" class="card" role="option" aria-pressed="'+(k.n===sel)+'" data-n="'+k.n+'" aria-label="Kapitel '+k.n+' · '+esc(k.city)+'"><span class="ph" style="background-image:url('+k.img+')"></span><span class="num">'+k.n+'</span>'+m+'<span class="name"><b>'+esc(k.city)+'</b></span></button>'; }).join('')+'</div>';
+    h+='<div class="route" aria-hidden="true">'+CH.map(function(k){ return '<i class="'+(k.n===sel?'on':(ST.done[k.n]?'done':''))+'"></i>'; }).join('')+'</div>';
+    h+='<div class="detail"><div class="t"><div class="title">Kapitel '+c.n+' · '+esc(c.city)+'</div><div class="sub">'+esc(c.sub)+' · '+esc(c.when)+'</div><div class="line">'+esc(c.line)+'</div><div class="chips">'+chips(c).map(function(x){ return '<span class="chip '+x[0]+'">'+esc(x[1])+'</span>'; }).join('')+'<span class="chip">'+esc(carry(c))+'</span></div></div>';
+    h+='<div class="r"><div class="btnrow">'+actions(c)+'</div></div></div>';
+    h+='<div class="foot">'+esc(foot(c))+'</div></div><div class="mtoast" role="status"></div>';
+    root.innerHTML=h; }
+  draw();
+  root.addEventListener('click',function(e){ var b=e.target.closest('button'); if (!b) return; if (b.dataset.n){ sel=+b.dataset.n; draw(); root.querySelector('.card[aria-pressed="true"]').focus(); return; }
+    if (b.dataset.act==='back'){ toast(root,'Zurück zum Titelbild'); return; } act(root,CH[sel-1],b.dataset.act); });
+  root.addEventListener('keydown',function(e){ if (e.key==='ArrowRight'||e.key==='ArrowLeft'){ e.preventDefault(); sel=Math.max(1,Math.min(5,sel+(e.key==='ArrowRight'?1:-1))); draw(); root.querySelector('.card[aria-pressed="true"]').focus(); } }); }
+
+// ---------------- Entwurf B
+function renderB(root){ var sel=ST.latest||1;
+  function stand(k){ if (ST.saves[k.n]) return 'Spielstand · '+ST.saves[k.n].when; if (ST.done[k.n]) return 'gespielt'; return 'noch nicht'; }
+  function draw(){ var c=CH[sel-1], s=ST.saves[c.n], h='<div class="dim"></div><div class="panel"><div class="phead"><h3>Kapitel wählen</h3><button type="button" class="btn" data-act="back">Zurück</button></div><div class="body">';
+    h+='<div class="list" role="listbox" aria-label="Kapitel">'+CH.map(function(k){ var st=ST.done[k.n]?'<span class="stamp">GESPIELT</span>':(ST.latest===k.n?'<span class="last">▸</span>':'');
+      return '<button type="button" class="ticket" role="option" aria-pressed="'+(k.n===sel)+'" data-n="'+k.n+'"><span class="n">'+k.n+'</span><span class="c"><b>'+esc(k.city)+'</b><span>'+esc(stand(k))+'</span></span>'+st+'</button>'; }).join('')+'</div>';
+    h+='<div class="prev"><div class="pic" style="background-image:url('+c.img+')"><div class="ov"><span class="k">Kapitel '+c.n+'</span><span class="city">'+esc(c.city)+'</span><span class="s">'+esc(c.sub)+'</span></div></div>';
+    h+='<div class="info"><div class="when">'+esc(c.when)+'</div><div class="carry">'+esc(carry(c))+(ST.done[c.n]?' Schon gespielt.':'')+'</div>'+(s?'<div class="save">Dein Spielstand: '+esc(s.where)+' · '+esc(s.when)+' · '+esc(s.dur)+'</div>':'')+'<div class="foot">'+esc(foot(c))+'</div></div>';
+    h+='<div class="act"><span class="btnrow">'+actions(c)+'</span></div></div>';
+    h+='</div></div><div class="mtoast" role="status"></div>';
+    root.innerHTML=h; }
+  draw();
+  root.addEventListener('click',function(e){ var b=e.target.closest('button'); if (!b) return; if (b.dataset.n){ sel=+b.dataset.n; draw(); root.querySelector('.ticket[aria-pressed="true"]').focus(); return; }
+    if (b.dataset.act==='back'){ toast(root,'Zurück zum Titelbild'); return; } act(root,CH[sel-1],b.dataset.act); });
+  root.addEventListener('keydown',function(e){ if (e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); sel=Math.max(1,Math.min(5,sel+(e.key==='ArrowDown'?1:-1))); draw(); root.querySelector('.ticket[aria-pressed="true"]').focus(); } }); }
+
+// ---------------- Gerätefenster
+var DEV={ phone:{w:844,h:390,u:2,t:'844 × 390, Einheit 2 (wie iPhone quer)'}, tablet:{w:1024,h:768,u:3,t:'1024 × 768, Einheit 3'}, desktop:{w:1280,h:800,u:3,t:'1280 × 800, Einheit 3'} };
+var dev='phone', frames=[['frameA','wrapA',renderA,'a'],['frameB','wrapB',renderB,'b']];
+function build(){ var d=DEV[dev]; frames.forEach(function(f){ var fr=document.getElementById(f[0]); fr.className='frame dev-'+dev; fr.style.width=d.w+'px'; fr.style.height=d.h+'px';
+    fr.innerHTML='<div class="mock '+f[3]+'" style="--u:'+d.u+'"></div>'; f[2](fr.firstChild); }); document.getElementById('devinfo').textContent=d.t; fit(); }
+function fit(){ var d=DEV[dev]; frames.forEach(function(f){ var wrap=document.getElementById(f[1]), fr=document.getElementById(f[0]), s=Math.min(1,wrap.clientWidth/d.w); fr.style.transform='scale('+s+')'; wrap.style.height=Math.round(d.h*s)+'px'; }); }
+document.getElementById('devseg').addEventListener('click',function(e){ var b=e.target.closest('button'); if (!b) return; dev=b.dataset.dev; this.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); }); try{ localStorage.setItem('kw.dev',dev); }catch(err){} build(); });
+try{ var d0=localStorage.getItem('kw.dev'); if (d0&&DEV[d0]){ dev=d0; document.querySelectorAll('#devseg button').forEach(function(x){ x.setAttribute('aria-pressed',String(x.dataset.dev===dev)); }); } }catch(err){}
+window.addEventListener('resize',fit); build();
+})();
+</script>

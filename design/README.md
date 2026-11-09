@@ -41,3 +41,4 @@ bash design/tools/package_ui.sh            # bauen und dist/MALA_netlify_oberfla
 ```
 
 Geräte sind Playwright-Emulationen (Chromium, WebKit), keine echten Telefone oder Tablets.
+| `KAPITELWAHL.md`, `prototype/kapitelwahl/` | Zwei Entwürfe für die Kapitelwahl („Die Reise“, „Das Fahrkartenheft“) mit Modell für beliebig viele Spielstände; klickbar in `prototype/kapitelwahl/index.html` (`tools/kapitelshots.js` → Bilder, `tools/buildkapitel.js` → Seite). |
