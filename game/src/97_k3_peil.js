@@ -4,6 +4,7 @@
 (function(M){
 'use strict';
 var P=M.P, E=M.E, T=M.T;
+// Vorgabe nur ohne rooms/art/peilung.js (M.PEIL). Gültig sind die Werte dort, auch die Antworten (Kann-Liste: LOESUNG3 folgte versehentlich diesen hier)
 var DEF={ stations:{bridgehead:[150,52],minaret:[158,58],partizan:[96,40]},
   landmarks:{L_church:[118,96],L_crane1:[150,110],L_crane2:[176,118],L_tower:[214,92],L_hum:[60,98],L_velez:[250,70],L_bend:[150,140],L_mill:[132,132]},
   answer:{bridgehead:['L_crane1','L_crane2'],minaret:['L_church','L_crane2'],partizan:['L_tower','L_bend']}, skela:[150,140] };

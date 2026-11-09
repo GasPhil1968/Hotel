@@ -1136,7 +1136,7 @@ Alle neuen Kapitel-1-Sätze sind auf Bosnisch/Kroatisch übersetzt (`lang/bhs_k1
 
 - **Kapitel 5 in der Simulation:** `qa/sim.js` startet Läufe der Kategorien B–E auch direkt in Kapitel 5 (Titelmenü, Vorgaben ohne Stand aus Kapitel 4; QA-Pfad `qa/paths/walkthrough5.js`) und spielt bis zum K5-Abspann. Verkettete Läufe ab Kapitel 1–4 enden wie bisher nach Kapitel 4. Mit `--states` entstehen Kapitel-5-Stände für die Hinweisprobe.
 - **Zwei zeitabhängige UI-Prüfungen:** `qa/ui/phase1.js` wartet vor dem Neuladen 2,5 s und wiederholt bei verlorenem Merker einmal; `qa/ui/phase5.js` hält für die Feinwahl 1 s statt 0,6 s (Schwelle 0,4 s).
-- **Lösungsdokumente:** LOESUNG1–5 nennen die neuen Pflichtschritte und Wege; Frau Huber wohnt „unten links“ (wie Anas SMS). Die Landmarken der Peilung in `LOESUNG3.md` stimmten bereits mit dem Code überein.
+- **Lösungsdokumente:** LOESUNG1–5 nennen die neuen Pflichtschritte und Wege; Frau Huber wohnt „unten links“ (wie Anas SMS). Die Landmarken der Peilung in `LOESUNG3.md` stimmten bereits mit dem Code überein. *[Berichtigt in L.2: Verglichen war mit den Vorgabewerten in `97_k3_peil.js`; gültig sind die aus `rooms/art/peilung.js`, und mit denen stimmten sie nicht.]*
 - **Prüfwerkzeuge:** Die Durchläufe K1–K3 (und die QA-Pfade K2/K3) folgen den neuen Schritten: Lauschen bei Dinko, Mirza nach dem Schluss, automatische Peilungsschlüsse.
 
 ### K.3 Prüfungen
@@ -1157,3 +1157,72 @@ Alle Prüfungen liefen auf dem Stand nach der Umsetzung.
 | Übersetzung (`i18n_check.js` über die geänderten Kapitel-1-Dateien) | 0 fehlende Texte |
 
 **Angepasste Prüfwerkzeuge.** Die Durchläufe der Kapitel 1–3 und ihre QA-Kopien folgen den neuen Schritten (Lauschen bei Dinko; Mirza nach dem Schluss; Peilungsschlüsse ohne Notizbuch); `k3tests` Test 16 prüft, dass Marko „Skela“ und „zu flach geschnitten“ selbst zieht; die Zuordnung der Hinweisprobe für „Haus 7“ geht über echte Ausgänge, damit Mama mitkommt.
+
+## L. Umsetzung der Kann-Liste und der Restpunkte (Nachtrag, 9. November 2026)
+
+### L.1 Kann-Liste P21–P24
+
+| Nr. | Befund | Umsetzung | Prüfung |
+|---|---|---|---|
+| P21 | Muster 1 | „Spüren“ steht jetzt auch an 67 alltäglichen Dingen in 34 Räumen (vorher hatten 166 von 850 Dingen einen Nachhall, jetzt bieten 27 % „Spüren“ an). Die Leertexte sind kurz, in Malas Stimme und je Art fest (Sitzplatz, Fenster, Tür, Bild, Papier, Gerät, Möbel, Ding; je Hotspot immer derselbe Satz). Nicht an Ausgängen, Figuren und Dingen mit eigener Handlung, nicht an Betten und nie dort, wo „hier ist nichts“ erzählerisch falsch wäre: Malas Zuhause und Haus, die Straßenbahn, Vermisstenstelle und Institut, Friedhöfe, Ivkas Mole, Mates Haus. „Zeigen“ färbt diese Stellen wie die mit Nachhall (`08_sense.js`, `06_ui.js`, `05_engine.js`). | `qa/regress/bug_021_notizbuch_spueren.js` |
+| P22 | Muster 6 | „Offen“ ist nach Frage oder Person gruppiert (Feld `g` der Notiz, Überschriften, gruppierte Zeilen 16 statt 20 Punkte hoch, damit weiter etwa fünf Notizen auf eine Seite passen). Quellen eines Schlusses gelten als erledigt, wenn der Spieler keinen ihrer Schlüsse gezogen hat, jeder davon schon erledigt wäre und die Quelle aus derselben Frage stammt. Über alle Stände der fünf Musterlösungen trifft das genau zwei Notizen: `l3_notbridge` (das Beispiel aus Muster 6) und `e3_father` nach dem Anruf bei der Mutter. Zwei weitere Fassungen sind verworfen: Ohne die Bedingung „kein Schluss gezogen“ verschwand „Zwei Siebenen“, das Tomaž nachts hören muss; ohne „dieselbe Frage“ verschwand Malas Splitter (`k3_c_bridge`), der auch ihren Fahrer beschreibt. Erledigtes steht auf der neuen Seite „Erledigt“ (`06_ui.js`). | `bug_021`; Messung über alle Durchlaufstände |
+| P23 | K1-B07 | Seite „Gehört“: alle Notizen des Kapitels, die das Notizbuch nie zeigt (Kapitel 1: 77 aus den Fällen und 20 von Mala, Kapitel 2: 20), darunter „trinaest … Haken“; nur zum Lesen. In Kapitel 3–5 steht alles im Notizbuch, dort erscheint die Seite nicht. Beide neuen Seiten erscheinen erst, wenn etwas darin steht. In der Ansicht „Nachdenken“ stehen Erledigtes und Gehörtes am Ende der Auswahl. Hilfe, LIESMICH und Bosnisch/Kroatisch angepasst. | `bug_021` |
+| P24 | alle *Niedrig*-Befunde | Tote Antworten: 105 Einträge in Gesprächstabellen hingen an Notizen, die das Notizbuch nie zeigte, 259 an Notizen, die als erledigt verschwinden können. Im Gespräch kann man jetzt auch auf „Erledigt“ und „Gehört“ nachfragen; damit sind sie erreichbar. Miras Antwort hing an `c2_tickets`, einer Notiz, die es nicht gibt (jetzt `c2_case`). Die Kapitelbefunde stehen in der Tabelle darunter. | `bug_021`; die fünf Durchläufe |
+
+**P24 je Befund**
+
+| Befund | Umsetzung |
+|---|---|
+| K1-B09 | Brecheisen am Bauzaun mit eigenem Satz („Die Kette ist dicker als das Eisen … Es muss einen anderen Weg geben.“). |
+| K1-B10 | Die Fischkisten lassen sich nach dem Zaunschild auch ohne Malas Blick verschieben; die Hinweise „Der Bauzaun“ und „Durch den Zaun“ rechnen damit. |
+| K1-B11 | Mala sieht Gegenstände im Gepäck mit ihren eigenen Worten (eigener Blick `glook`, sonst ihr Satz beim Zeigen); vorher sprach Marko mit seiner Stimme. Tonćis Brief hat einen eigenen Satz; das Lesen selbst bleibt beim Zeigen. |
+| K1-B12 | Den Spachtel bietet Nina erst an, wenn Marko weiß, dass etwas Dünnes gebraucht wird; Batterien gibt es bei Mira erst mit dem Radio. |
+| K1-B13 | Hat Nina den Zettel schon, erzählt Marko ihn Luka aus dem Gedächtnis; Lukas Bitte entfällt nicht mehr. Der Hinweis „Ninas Zettel“ bleibt dafür offen. |
+| K1-B14 | Die beiden Hinweisbedingungen waren schon mit der Muss-Liste korrigiert (k1_dinko1, k3_ins). |
+| K1-B15 | Tote Antworten: siehe P24. |
+| K1-B16 | Die Nachholregel für die Prolog-Nacht hatte kein `when` und lief nie. Ist die Nacht gespielt, beginnt nach dem Laden der erste Fall; sonst führt das Bett wieder in die Nacht. Vorher blieb ein solcher Stand hängen (`90_story.js`, `rooms/flat.js`). |
+| K1-B17 | Der Dampf wartet, solange Notizbuch, Karte oder ein Brief offen sind. |
+| K2-B09 | Tote Antworten: siehe P24. |
+| K2-B10 | Die vier Erledigt-Regeln, die versehentlich in einem Kommentar standen, gelten wieder. |
+| K2-B11 | Die Treppe führt nur im Finale (wenn Nada öffnet) und im Epilog in Nadas Wohnung; vorher und in der letzten Nacht nicht. |
+| K2-B12 | Widersprüche angeglichen: Ruža ist auf dem Foto, hinter den Kindern die Drei (Nada sagte, Ruža habe es auf der Treppe in Vratnik gemacht); die Kafana gibt es seit 1958 (Emina sagte einmal 1930); die Dachuhr hat auch in Kapitel 5 keine Zeiger; der Aufzug geht „seit dem Krieg“ nicht mehr (Aushang „Reparatur beantragt (1993)“), an allen fünf Stellen. |
+| K2-B13 | Lejlas zweite Briefzeile: Die richtige Fassung war „ich arbeite gern“, so gelogen wie die falsche „fleißig“; jetzt „ich lerne schnell“. |
+| K3-B06 | Davor und Lena waren mit P16 erledigt. Die Eierfrau antwortet auf „Malas Name“ jetzt mit der Frage dahinter („unter welchem Namen hat man sie hier gekannt?“). |
+| K3-B08 | Das Bett am Freitag nennt Vlado erst, wenn Marko den Namen kennt, und die Schublade erst, wenn Kata davon erzählt hat. |
+| K3-B09 | Die Eierfrau geht weiter nach zwei Fragen, wenn Marko den Markt verlässt, aber jetzt warnt jede zweite Frage davor: Mala sieht es an ihren Händen, ohne Mala sieht Marko es selbst. |
+| K3-B10 | siehe L.2. |
+| K3-B11 | `LOESUNG3.md` nannte bei allen drei Peilungen falsche Landmarken: Sie folgte den Vorgabewerten in `97_k3_peil.js`, gültig sind die aus `rooms/art/peilung.js` (Glockenturm und zweiter Kran; Hochhaus und erster Kran; Mühle und Flussbiegung). Die Angabe in K.2, die Landmarken stimmten, war falsch. |
+| K3-B12 | bewusst nicht geändert, siehe L.4. |
+| K3-B13 | bewusst nicht geändert, siehe L.4. |
+| K4-B06 | Endet der Tag gleich nach Sepps Zwischenwelt, sagt Marko „Morgen soll es die Stadt wissen …“ statt einer Aufforderung für jetzt. |
+| K4-B07 | In der Christtagsnacht hat Mama Nachtdienst; das Bild zeigt jetzt ein leeres Bett, die Kiste, das Bett und Malas Sätze sagen dasselbe. |
+| K4-B08 | Mamas Sätze am Donnerstag: erst der Grund zu bleiben, dann „Um zwei fängt mein Dienst an. Bis dahin bleibe ich.“ |
+| K4-B09 | Ohne Mala bemerkt Marko selbst, dass Carmelas Brief von 1979 anders ist, und denkt an Mala. |
+| K4-B10 | „(Nicht lesen.)“ an der Kiste heißt jetzt „(Noch nicht.)“: Es ist ein Aufschub, keine Wahl. |
+| K4-B11 | Handy und Kuli bei Sepp mit eigenen Sätzen; die veralteten Hinweise waren mit der Muss-Liste korrigiert. |
+| K5-B10 | Malas Satz auf der Bastei nach dem eigenen Schluss: „Du weißt, für wen.“ |
+| K5-B12 | Die Absagen an der Gravur zitieren keine Sätze mehr, die nie gefallen sind; Marko denkt selbst, oder wer dabei ist, sagt es jetzt. |
+| K5-B13 | Lanas Zimmer öffnet sich auch über „Darf ich in Lanas Zimmer?“; vorher nur über die Frage nach den Fahrscheinen, ohne Anlass. |
+| K5-B14 | Damir steht auch am Freitagvormittag an seiner Haltestelle („Heute ist ein Begräbnis …“). |
+| K5-B15 | bewusst nicht geändert, siehe L.4. |
+| K5-B16 | Malas Gesprächsmenü bietet auch in Kapitel 5 „Ich komme gerade nicht weiter.“ Frau Kolar sagt nicht mehr immer „Sie sind pünktlich“. Der tote Kanister-Satz: Er fiel auch mit gefülltem Kanister und schickte nachts in einen Garten, der nachts nicht erreichbar war; jetzt fällt er nur ohne beide Kanister, und dann ist Vratnik nachts erreichbar. |
+
+Alle neuen Kapitel-1-Sätze sind auf Bosnisch/Kroatisch übersetzt (`lang/bhs_k1_p.js`, `lang/bhs_k1_e.js`), die neuen Oberflächensätze und Malas Leertexte ebenfalls (`lang/bhs_ui.js`).
+
+### L.2 Restpunkte
+
+- **Abschnittswechsel als Mala (K3-B10).** Nachgestellt und bestätigt: Endete der Freitag durch Malas Handlung, stand Marko danach in der Werkstatt, Mala in der Herberge. Vor den Übergängen in Kapitel 3 spielt jetzt Marko, Mala kommt mit (wie `bring()` in Kapitel 4 und 5). Kapitel 2 hatte dieselbe Lücke und dieselbe Korrektur (`96_k3_story.js`, `96_k2_story.js`).
+- **Gesprächsschleife am Freitagabend (K5-B04, zweiter Fall).** Auf dem Stand vor der Muss-Liste (`b34fa14`) bestätigt: Nach „Mama?“ begann die Nacht auf der Bastei, und das Tischgespräch blieb offen. Die Korrektur der Gesprächsschleife (P10) deckt den Fall ab. `qa/regress/bug_020_abschnittswechsel.js` stellt beide Fälle nach (dazu den Fall in Kapitel 2). Die Teile zu Kapitel 2 und 3 schlagen auf dem Stand vor dieser Umsetzung fehl, der Teil zu Kapitel 5 auf dem Stand vor der Muss-Liste.
+- **Hinweisthemen, die in keinem Durchlauf offen waren.** Von 39 Themen sind 21 offen, sobald man den Stand nach jeder einzelnen Handlung protokolliert statt nur an den Meilensteinen. Für die übrigen 18 stellen neue Varianten in `qa/hints/varianten.js` die Stände mit echten Handlungen her (ein Gespräch früher verlassen, Malas Angebot ablehnen, nach dem ersten Lesen aufhören) oder laden einen Stand, den es wirklich gibt: einen Spielstand von vor der Soll-Liste (Peilungsschlüsse noch nicht selbst gezogen) oder eine beim Laden unterbrochene Szene. Ergebnis: 16 Themen sind damit offen und von der Hinweisprobe geprüft (Stufe 4 ist ausführbar und wirkt); für elf davon gab es noch keine Zuordnung in `qa/hints/stufe4.js`. „Am linken Ufer“ (f3c) ist nur zwischen zwei Schritten einer Szene offen, die nach dem Laden von selbst weiterläuft (geprüft). „Die Nacht ordnen“ (d3e) konnte nie aufgehen (`open: false` seit P05) und ist entfernt.
+- **Dabei gefunden: zwei Hänger nach unterbrochenen Szenen.** Wurde Ljerkas Anruf in Fall 3 (Kapitel 1) unterbrochen, klingelte es nie wieder, und die Wohnungstür blieb zu („Es klingelt schon wieder“), ohne etwas, womit man abnehmen konnte. Wurde Nadas Ankunft im Epilog von Kapitel 3 unterbrochen, kam sie nie. Jetzt klingelt es beim Betreten der Wohnung wieder, am Anrufbeantworter kann man abnehmen, und Nadas Bus kommt, sobald Marko am Ostbusbahnhof ist. Mit der Prolog-Nacht (K1-B16) prüft `qa/regress/bug_022_fortsetzen.js` alle drei; alle drei schlagen auf dem alten Stand fehl.
+
+### L.3 Prüfungen
+
+PRUEFUNGEN_PLATZHALTER
+
+### L.4 Bewusst nicht geändert
+
+- **K3-B12, optionale Szenen ohne Ankündigung.** Abhilfe wäre ein anderer Tagesablauf: Der Abend beginnt erst auf Wunsch, nicht mit dem letzten Pflichtschritt. Das ändert jeden Tageswechsel in Kapitel 3 und alle Durchläufe; die betroffenen Szenen tragen keine Lösung. Für einen Feinschliff zu viel.
+- **K3-B13, Peilung ohne Denkanteil.** Mala nennt die Landmarken, der Spieler tippt sie an. Das ist dieselbe Komfortentscheidung wie in Muster 1, die die Analyse nicht zurücknehmen wollte; verrätselte Beschreibungen würden das Raten zurückbringen, das G9 vermeiden soll.
+- **K5-B15, Lauschen nur am Hahn, keine Wände.** Eine Gestaltungsentscheidung des Kapitels (Mala ist nach Hause gekommen), kein Fehler.
+- **Gegenstände als Schlüssel in Gesprächstabellen** (etwa `photo_full`, `brief1996`): Über das Notizbuch nie erreichbar, aber jede Figur antwortet mit demselben Text, wenn man ihr den Gegenstand zeigt.

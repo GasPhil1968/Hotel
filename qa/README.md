@@ -69,7 +69,8 @@ Welche Handlung ein Stufe-4-Satz meint, steht je Thema in `qa/hints/stufe4.js` (
 ```bash
 MALA_DUMPALL=/tmp/k2 node game/tools/walkthrough2.js                              # Stände der Musterlösung (je Kapitel)
 node qa/sim.js --cat B --count 4 --states /tmp/sim && node qa/sim.js --cat C --count 4 --states /tmp/sim   # Stände aus Zufalls- und Variantenläufen (K1–K4)
-node qa/hints/hintprobe.js --dumps /tmp/k2 --states /tmp/sim --varianten          # prüfen; --varianten: bekannte Stellen abseits der Musterlösung (qa/hints/varianten.js)
+node qa/hints/hintprobe.js --dumps /tmp/k2 --states /tmp/sim --varianten          # prüfen; --varianten: bekannte Stellen abseits der Musterlösung (qa/hints/varianten.js),
+                                                                                  #   seit der Kann-Liste auch die Hinweisthemen, die in keinem Durchlauf offen waren
 node qa/hints/hintprobe.js --html qa/…/alt.html --dumps … --varianten             # dieselbe Probe gegen einen älteren Build
 ```
 

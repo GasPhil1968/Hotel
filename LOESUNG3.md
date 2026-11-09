@@ -91,7 +91,7 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **Verbinden** (empfohlen): *Ljerkas Bild* + *Name* → **Mala und Lana sind eine Spur**. Dann dazu *vermisst* → **Zwei Suchen, die sich nie trafen**.
 
 **10. Die Tepa**
-- **[M]** Die Eierfrau: „Kennen Sie Lana Delić?“, dann „Ich suche ein Mädchen.“ → „Ne.“ – „Jede Mutter sucht ein Kind.“
+- **[M]** Die Eierfrau: „Kennen Sie Lana Delić?“, dann „Ich suche ein Mädchen.“ → „Ne.“ – „Jede Mutter sucht ein Kind.“ Nach der zweiten Frage warnt Mala (ohne Mala Marko selbst), dass sie gleich einpackt; verlässt Marko jetzt den Markt, geht sie.
 - **[G]** Die Nachbarin belauschen: „Sanjam je opet. Treću noć.“
 - **[M]** Die Eierfrau: „Kannten Sie eine Mala?“ → „Ein Freund.“ Das Ei fällt: „Ko ste vi?“ Sie packt zusammen und geht.
 

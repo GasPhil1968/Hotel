@@ -1,3 +1,24 @@
+DIE STILLEN – ÄNDERUNGEN NACH DER ANALYSE, TEIL 3 (KANN-LISTE P21–P24)
+Ausführlich: ANALYSE_GILBERT.md (Abschnitt L) im Repository.
+
+WAS SICH ÄNDERT
+- Notizbuch: „Offen“ ist nach Frage oder Person geordnet. Dazu kommen, sobald
+  etwas darin steht, die Seiten „Erledigt“ und „Gehört“ zum Nachlesen; „Gehört“
+  hat, was Marko gehört hat, aber nie ins Notizbuch kam (vor allem Kapitel 1
+  und 2). Im Gespräch kann man auch danach fragen, damit keine Antwort mehr
+  unerreichbar ist. Notizen, die nur noch zu einem längst bekannten Schluss
+  führen würden, wandern nach „Erledigt“.
+- Mala kann an vielen alltäglichen Dingen „Spüren“ (Bänke, Fenster, Türen,
+  Fotos …) und hört dort einen kurzen, festen Satz. „Spüren“ heißt damit nicht
+  mehr „hier ist etwas“.
+- Viele kleine Korrekturen in allen Kapiteln: eigene Antworten statt
+  Standardsätzen, Fragen erst, wenn es einen Anlass gibt, Widersprüche
+  angeglichen (Foto, Kafana, Dachuhr, Aufzug, Mamas Nachtdienst), Damir in
+  Kapitel 5 auch am Freitag, Hinweise über Mala auch in Kapitel 5.
+- Szenen, die beim Laden unterbrochen wurden, gehen weiter: Ljerkas Anruf
+  (Kapitel 1), Nadas Ankunft (Kapitel 3), die Prolog-Nacht (Kapitel 1). Vorher
+  konnte man dort hängen bleiben.
+
 DIE STILLEN – ÄNDERUNGEN NACH DER ANALYSE, TEIL 2 (SOLL-LISTE P13–P20)
 Ausführlich: ANALYSE_GILBERT.md (Abschnitt K) im Repository.
 

@@ -359,7 +359,7 @@ Offen, wenn: `G.phase==='c2' && N(G,'c2_demolish') && !I(G,'crowbar') && !I(G,'t
 
 ### Der Bauzaun `k2_fence`
 
-Offen, wenn: `G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,'ledana')`
+Offen, wenn: `G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !moved(G) && !seen(G,'ledana')`
 
 1. **Problem einordnen:** Die Ledana ist eingezäunt.
 2. **Denkrichtung:** Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.
@@ -368,12 +368,12 @@ Offen, wenn: `G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,
 
 ### Durch den Zaun `k2_crawl`
 
-Offen, wenn: `G.phase==='c2' && N(G,'c2_gap') && !seen(G,'ledana')`
+Offen, wenn: `G.phase==='c2' && (N(G,'c2_gap')\|\|moved(G)) && !seen(G,'ledana')`
 
 1. **Problem einordnen:** Hinter den Kisten ist ein loses Zaunfeld.
 2. **Denkrichtung:** Mala kann nichts bewegen. Marko schon.
-3. **Konkreter Ansatz:** Die Kisten müssen weg, dann geht es durch die Lücke.
-4. **Nächster Schritt:** Als Marko die Fischkisten schieben und durch die Lücke kriechen.
+3. **Konkreter Ansatz:** *je nach Stand:* „Die Kisten sind weg. Dahinter ist die Lücke.“ / „Die Kisten müssen weg, dann geht es durch die Lücke.“
+4. **Nächster Schritt:** *je nach Stand:* „Als Marko durch die Lücke im Zaun kriechen.“ / „Als Marko die Fischkisten schieben und durch die Lücke kriechen.“
 
 ### Oben in der Ledana `k2_luka`
 
@@ -467,7 +467,7 @@ Offen, wenn: `G.phase==='c2' && I(G,'radioB') && I(G,'cassette')`
 
 ### Ninas Zettel `k2_luka2`
 
-Offen, wenn: `G.phase==='c2' && I(G,'note_n') && !F(G,'c2.lukaKnows')`
+Offen, wenn: `G.phase==='c2' && (I(G,'note_n')\|\|ninaShown(G,'note')) && !F(G,'c2.lukaKnows')`
 
 1. **Problem einordnen:** Ninas Zettel von 1999 ist gefunden. Er war für Luka.
 2. **Denkrichtung:** Wer einen Brief nie bekommen hat, sollte ihn jetzt hören.
@@ -534,8 +534,8 @@ Offen, wenn: `G.phase==='c3' && !F(G,'c3.call')`
 
 1. **Problem einordnen:** Das Telefon klingelt.
 2. **Denkrichtung:** Jemand will etwas.
-3. **Konkreter Ansatz:** Das Telefon in der Wohnung.
-4. **Nächster Schritt:** Ans Telefon gehen.
+3. **Konkreter Ansatz:** Das Telefon steht am Bett, beim Anrufbeantworter.
+4. **Nächster Schritt:** Am Anrufbeantworter abnehmen.
 
 ### Ein Auftrag im Palma `k3_ljerka`
 
@@ -1178,7 +1178,7 @@ Offen, wenn: `G.phase==='k2_epi' && F(G,'k2.epi.nada') && !F(G,'k2.epi.done')`
 3. **Konkreter Ansatz:** Bei Fadila am Busbahnhof gibt es Fahrkarten nach Mostar.
 4. **Nächster Schritt:** Bei Fadila eine Fahrkarte nach Mostar kaufen und in den Bus steigen.
 
-## Kapitel 3: Mostar (86 Themen)
+## Kapitel 3: Mostar (85 Themen)
 
 ### Ankommen `p3a`
 
@@ -1575,15 +1575,6 @@ Offen, wenn: `N(G,'a3_roof') && !N(G,'a3_lightseq')`
 2. **Denkrichtung:** Mala hat dreimal läuten hören. Und das Licht? *(Mala: Ich habe dreimal läuten hören. Und das Licht?)*
 3. **Konkreter Ansatz:** An der Glocke noch einmal spüren.
 4. **Nächster Schritt:** Als Mala an der Glocke spüren.
-
-### Die Nacht ordnen `d3e`
-
-Offen, wenn: `false`
-
-1. **Problem einordnen:** Läuten, Licht, Läuten. Und davor Vlados Zeiten.
-2. **Denkrichtung:** Die Reihenfolge reicht. Minuten braucht es nicht.
-3. **Konkreter Ansatz:** *je nach Stand:* „Im Notizbuch „Dunkel, hell, dunkel“ und „Ankunft und Abfahrt“ zusammen ansehen.“ / „Vlados Zeiten fehlen noch: Ankunft und Abfahrt. Er hat sie am Samstag genannt.“
-4. **Nächster Schritt:** Die beiden Notizen verbinden und die Karten der Reihe nach legen.
 
 ### Batos Licht `d3f`
 
@@ -2432,8 +2423,8 @@ Offen, wenn: `G.phase==='k5_pro' && N(G,'b5_hand') && !F(G,'k5.p.nada')`
 
 1. **Problem einordnen:** Mama will Haus 7 sehen. Und Nada wartet im neunten Stock.
 2. **Denkrichtung:** Alipašino Polje, die Hochhäuser.
-3. **Konkreter Ansatz:** Durch die Eingangshalle die Treppe hinauf. Im siebten Stock bleibt Mama stehen.
-4. **Nächster Schritt:** Mit Mama in den siebten Stock, dann allein weiter hinauf zu Nada.
+3. **Konkreter Ansatz:** *je nach Stand:* „Mama bleibt im siebten Stock. Nada wohnt zwei Stockwerke höher.“ / „Durch die Eingangshalle die Treppe hinauf. Im siebten Stock bleibt Mama stehen.“
+4. **Nächster Schritt:** *je nach Stand:* „Die Treppe weiter hinauf zu Nada, allein.“ / „Mit Mama in den siebten Stock, dann allein weiter hinauf zu Nada.“
 
 ### Nadas Tafel `h5d`
 

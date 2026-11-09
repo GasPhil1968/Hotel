@@ -152,6 +152,12 @@ Seit der Soll-Liste der Analyse (`ANALYSE_GILBERT.md`, Abschnitt K):
 - Zweiter Fall: Mit der Kassette fragt man Zdenka „Ivkas Radio. Hatte das nicht ein Kassettenfach?“; sie will erst die Zeitung lesen. Mit dem Radio weiß Marko, wo es Batterien gibt: Das Fährterminal ist dann offen, auch ohne Sanjas Frage.
 - Dritter Fall, **Pflicht, Finden:** Bruno zeigt sich Marko erst, wenn Mala die Portiersloge spürt (oder Marko die Glocke läutet). Den Schlüsselring kann man auch direkt an Treppe oder Kette benutzen.
 
+Seit der Kann-Liste (`ANALYSE_GILBERT.md`, Abschnitt L):
+- Zweiter Fall: Den Spachtel bietet Nina erst an, wenn Marko weiß, dass etwas Dünnes gebraucht wird (Ziegel versucht, Brecheisen am Ziegel oder Malas Blick auf das Papier). Batterien verkauft Mira erst, wenn Marko das Radio hat.
+- Die Fischkisten am Zaun kann Marko nach dem Zaunschild auch selbst verschieben; Malas Blick dahinter ist nicht mehr nötig.
+- Zeigt Marko Nina ihren Zettel, bevor Luka ihn gehört hat, erzählt er ihn Luka aus dem Gedächtnis („Ich habe euren Briefkasten aufgemacht.“); Lukas Bitte kommt trotzdem.
+- Dritter Fall: Wurde Ljerkas Anruf unterbrochen, klingelt es beim Betreten der Wohnung wieder; abnehmen kann man auch am Anrufbeantworter.
+
 Das Abschiedsgespräch mit Ivka beginnt, wenn alles beisammen ist (Fähre, Brief, Handschuhe), mit dem Brief oder mit den Handschuhen. Fehlt noch etwas, sagt sie zu den Handschuhen nur, dass sie keine trägt.
 
 ## Nach Ivka · Mittwoch, spät
