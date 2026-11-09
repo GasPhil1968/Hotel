@@ -40,8 +40,8 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
   const T = async (nr, name, fn) => { if (ONLY && ONLY.indexOf(String(nr)) < 0) return; line('\n' + nr + '. ' + name); curTest = 'Test ' + nr; const e0 = errs().length;
     try { await fn(); } catch (e) { fails++; line('  FEHL Abbruch: ' + e.message.split('\n')[0]); console.log(e.message.split('\n').slice(1).join('\n')); }
     const e1 = errs(); if (e1.length > e0) { fails++; line('  FEHL JS-Fehler: ' + e1.slice(e0, e0 + 3).map(x => x.split('\n')[0]).join(' | ')); } };
-  const tapTitle = async (label) => D.ev((lb) => { const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lb) >= 0); if (i < 0) throw new Error('Titelzeile fehlt: ' + lb + ' | ' + L.join(' | '));
-    for (let y = 0; y < 200; y++) for (let x = 40; x < 280; x += 2) if (M.uiHit(x, y) === 't:' + i) { M.pointerDown(x, y + 3, true); M.pointerUp(x, y + 3, true); return true; } throw new Error('Zeile nicht antippbar: ' + lb); }, label);
+  // Titelbild wie ein Spieler bedienen: Eintrag der HTML-Schicht (07_shell.js) über seine Beschriftung antippen (M.shell.pick wirkt wie ein Tipp auf den Eintrag)
+  const tapTitle = async (label) => D.ev((lb) => { M.shellSync(); const r = M.shell.pick(lb); if (!r || !r.label) throw new Error('Titelzeile fehlt: ' + lb + ' | ' + M.titleLabels().join(' | ') + ' ' + JSON.stringify(r)); return r.label; }, label);
   // das Bild „Im Bus nach München“ beim Kapitelstart abfangen und seine Zeilen lesen
   const busMemory = async () => { await D.until(s => s.overlay === 'memory', 30000, 'Bild „Im Bus“'); const L = await D.ev(() => M.E.overlay.data.lines.slice()); await D.ev(() => M.TA.closeOverlay()); return L; };
   const start4 = async (c3) => { await D.ev((c) => { M.__speechLog = []; if (c) localStorage.setItem('mala.c3end', JSON.stringify(c)); else localStorage.removeItem('mala.c3end'); M.E.setSlot(2); M.E.newGame(4); }, c3);

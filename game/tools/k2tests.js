@@ -13,17 +13,18 @@ function ok(c, what) { if (c) { pass++; out.push('  ok   ' + what); } else { fai
   const findStep = (label) => { const fsx = fs.readdirSync(DUMPS).filter(f => f.endsWith('.json')).sort(); for (const f of fsx) { const d = JSON.parse(fs.readFileSync(path.join(DUMPS, f), 'utf8')); if (d.label.indexOf(label) >= 0) return d.step; } throw new Error('Schritt nicht gefunden: ' + label); };
   try {
     out.push('Titelmenü und Kapitelwahl');
-    // Bedienung wie ein Spieler: Zeile im Titelmenü suchen und antippen (echter Eingabeweg über pointerDown/pointerUp)
-    const tapTitle = async (label) => D.ev((lb) => { const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lb) >= 0); if (i < 0) throw new Error('Titelzeile fehlt: ' + lb + ' | ' + L.join(' | '));
-      for (let y = 0; y < 200; y++) for (let x = 40; x < 280; x += 2) if (M.uiHit(x, y) === 't:' + i) { M.pointerDown(x, y + 3, true); M.pointerUp(x, y + 3, true); return true; } throw new Error('Zeile nicht antippbar: ' + lb); }, label);
+    // Bedienung wie ein Spieler: Eintrag der HTML-Schicht (07_shell.js) über seine Beschriftung antippen (M.shell.pick wirkt wie ein Tipp auf den Eintrag).
+    // Das Titelmenü listet die Kapitel seit der Kapitelwahl nicht mehr direkt, sondern unter „Kapitel wählen“.
+    const tapTitle = async (label) => D.ev((lb) => { M.shellSync(); const r = M.shell.pick(lb); if (!r || !r.label) throw new Error('Titelzeile fehlt: ' + lb + ' | ' + M.titleLabels().join(' | ') + ' ' + JSON.stringify(r)); return r.label; }, label);
     await D.ev(() => { M.E.toTitle(); M.E.titleMode = 'main'; });
     const labels = await D.ev(() => M.titleLabels());
-    ok(labels.indexOf('Kapitel 1: Split') >= 0 && labels.indexOf('Kapitel 2: Sarajevo') >= 0, 'Hauptmenü zeigt beide Kapitel direkt (' + labels.join(' · ') + ')');
+    ok(labels.indexOf('Kapitel wählen') >= 0, 'Hauptmenü bietet „Kapitel wählen“ (' + labels.join(' · ') + ')');
     ok(await D.ev(() => !M.ch2Unlocked()), 'ohne Split-Ende ist kein Split-Ende gespeichert (es gelten Vorgaben)');
-    await tapTitle('Kapitel 2: Sarajevo'); ok(await D.ev(() => M.E.titleMode === 'slots' && M.E.newCh === 2), 'Kapitel 2 direkt gewählt: sofort die Speicherplätze, keine Sperre und keine Rückfrage');
-    await tapTitle('Platz 2'); if (await D.ev(() => M.E.titleMode === 'confirm')) await tapTitle('Ja');
-    await D.page.waitForTimeout(300); await D.drain();
-    let s = await st(); ok(s.phase === 'k2_pro' && s.room === 'stanica', 'Sarajevo startet direkt aus dem Hauptmenü am Busbahnhof (' + s.phase + ', ' + s.room + ')');
+    await tapTitle('Kapitel wählen'); const chl = await D.ev(() => M.shell.items());
+    const ch2 = chl.find(x => x.label === 'Kapitel 2 · Sarajevo');
+    ok(chl.some(x => x.label === 'Kapitel 1 · Split' && !x.dis) && ch2 && !ch2.dis, 'Kapitelwahl: Split und Sarajevo wählbar, ohne Sperre (' + chl.map(x => x.label + (x.dis ? ' [gesperrt]' : '')).join(' · ') + ')');
+    await tapTitle('Kapitel 2 · Sarajevo'); await D.page.waitForTimeout(300); await D.drain();
+    let s = await st(); ok(s.phase === 'k2_pro' && s.room === 'stanica', 'Kapitel 2 gewählt: Sarajevo startet ohne Rückfrage auf einem freien Platz am Busbahnhof (' + s.phase + ', ' + s.room + ')');
     ok(await D.ev(() => M.GS.flags['k2.c1.answer'] === 1 && M.GS.flags['k2.c1.fromSave'] === false), 'ohne Split: Vorgaben für die Übernahme');
     ok(await D.ev(() => M.GS.notes.indexOf('m2_split_register') >= 0), 'das Register aus Split ist immer im Notizbuch');
     // Übernahme aus Split

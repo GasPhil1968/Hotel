@@ -50,9 +50,8 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
   const T = async (nr, name, fn) => { if (ONLY && ONLY.indexOf(String(nr)) < 0) return; line('\n' + nr + '. ' + name); curTest = 'Test ' + nr; const e0 = errs().length;
     try { await fn(); } catch (e) { fails++; line('  FEHL Abbruch: ' + e.message.split('\n')[0]); console.log(e.message.split('\n').slice(1).join('\n')); }
     const e1 = errs(); if (e1.length > e0) { fails++; line('  FEHL JS-Fehler: ' + e1.slice(e0, e0 + 3).map(x => x.split('\n')[0]).join(' | ')); } };
-  // Titelbild wie ein Spieler bedienen: Zeile suchen und über die Trefferfläche antippen (wie k2tests.js)
-  const tapTitle = async (label) => D.ev((lb) => { const L = M.titleLabels(); const i = L.findIndex(t => t.indexOf(lb) >= 0); if (i < 0) throw new Error('Titelzeile fehlt: ' + lb + ' | ' + L.join(' | '));
-    for (let y = 0; y < 200; y++) for (let x = 40; x < 280; x += 2) if (M.uiHit(x, y) === 't:' + i) { M.pointerDown(x, y + 3, true); M.pointerUp(x, y + 3, true); return true; } throw new Error('Zeile nicht antippbar: ' + lb); }, label);
+  // Titelbild wie ein Spieler bedienen: Eintrag der HTML-Schicht (07_shell.js) über seine Beschriftung antippen (M.shell.pick wirkt wie ein Tipp auf den Eintrag)
+  const tapTitle = async (label) => D.ev((lb) => { M.shellSync(); const r = M.shell.pick(lb); if (!r || !r.label) throw new Error('Titelzeile fehlt: ' + lb + ' | ' + M.titleLabels().join(' | ') + ' ' + JSON.stringify(r)); return r.label; }, label);
   // das Bild „Im Bus“ beim Kapitelstart abfangen und seine Zeilen lesen
   const busMemory = async () => { await D.until(s => s.overlay === 'memory', 30000, 'Bild „Im Bus“'); const L = await D.ev(() => M.E.overlay.data.lines.slice()); await D.ev(() => M.TA.closeOverlay()); return L; };
   const stillPhase = async (p, what) => ok((await st()).phase === p, what + ' (Phase ' + (await st()).phase + ')');
@@ -62,10 +61,12 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
   // ================================================================== 1. Einstieg
   await T(1, 'Einstieg: Titelmenü, Weiter nach dem Ende von Kapitel 2, Übernahme aus Sarajevo', async () => {
     await D.ev(() => { localStorage.removeItem('mala.c2end'); M.E.toTitle(); M.E.titleMode = 'main'; });
+    // seit der Kapitelwahl stehen die Kapitel unter „Kapitel wählen“; ist kein Platz frei, fragt die Schicht nach dem Platz
     const labels = await D.ev(() => M.titleLabels());
-    ok(labels.indexOf('Kapitel 3: Mostar') >= 0, 'Titelmenü zeigt „Kapitel 3: Mostar“ (' + labels.join(' · ') + ')');
-    await tapTitle('Kapitel 3: Mostar'); ok(await D.ev(() => M.E.titleMode === 'slots' && M.E.newCh === 3), 'Kapitel 3 angetippt: die Speicherplätze erscheinen');
-    await tapTitle('Platz 2'); if (await D.ev(() => M.E.titleMode === 'confirm')) await tapTitle('Ja');
+    ok(labels.indexOf('Kapitel wählen') >= 0, 'Titelmenü bietet „Kapitel wählen“ (' + labels.join(' · ') + ')');
+    await tapTitle('Kapitel wählen'); const chl = await D.ev(() => M.shell.items()); const c3i = chl.find(x => x.label === 'Kapitel 3 · Mostar');
+    ok(c3i && !c3i.dis, 'Kapitelwahl zeigt „Kapitel 3 · Mostar“, wählbar (' + chl.map(x => x.label + (x.dis ? ' [gesperrt]' : '')).join(' · ') + ')');
+    await tapTitle('Kapitel 3 · Mostar'); if (await D.ev(() => M.shell.current() === 'slots')) { await tapTitle('Platz 2'); if (await D.ev(() => M.shell.current() === 'confirm')) await tapTitle('Überschreiben'); }
     let mem = await busMemory(); await calm(); await waitDlg('(Antworten.)');
     let s = await st(); ok(s.phase === 'k3_pro' && s.room === 'ostbus', 'Kapitel 3 startet aus dem Titelmenü am Ostbusbahnhof (' + s.phase + ', ' + s.room + ')');
     ok(await D.ev(() => { const c = M.k3Carry; return c.confess === 'came' && c.whyMostar === 'bridge' && !c.hajra && !c.ana && !c.father && !c.fromSave; }), 'ohne Übernahme gelten die Vorgaben (M.k3Carry: came, bridge, keine Pita, kein Vater)');
