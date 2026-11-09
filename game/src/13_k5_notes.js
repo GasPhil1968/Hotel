@@ -61,6 +61,7 @@ done('j5_samstag',after('k5.sat.tickets')); done('k5_c_muenchen',after('k5.e.fun
 M.defineDeductions({
   's5_nh_brett+s5_nh_mappe':{to:'s5_beide',say:'„Damit man sie findet“, hat Zlata gesagt. „Damit man sie findet“, sagt Nada jeden Januar. Beide haben ihren Namen geschrieben, damit man sie findet. Jede einen anderen.'},
   's5_beide+s5_brett':{to:'s5_teile',say:'Das Brett hat den Tod: der Fünfzehnte, und der Name, den sie am Ende selbst gesagt hat. Nadas Tafel braucht nur, was nur Nada hat: den Namen, mit dem sie gerufen wurde, und die Geburt. Zwei Hälften.'},
+  's5_beide+s5_tafel':{to:'s5_teile',say:'Nadas Tafel, der Text offen bis Freitag. Und beide wollten, dass man sie findet. Die Tafel braucht nur, was nur Nada hat: den Namen, mit dem sie gerufen wurde, und die Geburt. Den Tod und „Mala“ hat das Brett. Zwei Hälften.'},   // Analyse K5-B03 (P16)
   'b5_hand+b5_tag':{to:'b5_wer',say:'Der vorn die Hand gehoben hat, ist nach hinten gelaufen und hat mich festgehalten. Dann hat er meine Kanister gefüllt. Hamdija.'},
   'f5_dose+f5_eursamstag':{to:'f5_wem',say:'„Für Mama. Wer sonst?“ Aber Nada war nie samstags dabei. Die Fahrscheine gehören nicht zu Nada. Sie gehören zu den Samstagen.'},
   'f5_wem+j5_treppe':{to:'f5_jasna',say:'Wer war samstags dabei? Mali, Ruža. Und Mama, die die Tür aufgemacht hat. Mama, die nicht in den neunten Stock hinaufkann. Die Fahrscheine sind für sie: damit sie hinaufgeht und Nada holt, wie Lana jeden Samstag mich geholt hat. Zwei Plätze. Am Fenster und daneben.'}

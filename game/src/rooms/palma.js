@@ -9,6 +9,10 @@ function insights(A){ return ['c3.ins.danica','c3.ins.ljerka','c3.ins.zagreb'].f
 async function gainInsight(A,B,item){ var k=INSIGHT[item]; if (!k || A.G.flags[k]) return; A.G.flags[k]=true; var n=insights(A); setLvl(A,n);
   if (n<3){ await A.wait(600); await B.say('… ne … još ne …'); await A.m('Da ist ein Satz in ihm. Er bekommt ihn noch nicht zusammen.'); return; }
   await A.wait(800); await B.say('Ljerka … perdonami … ich habe … tvoje pismo … versteckt … weil … paura … sam … sviraj.'); await A.m('Das ist sein Satz. In drei Sprachen.'); }
+// Analyse K1-B04 (P16): den Schlüsselring „SALON“ an Treppe oder Kette benutzen wirkt wie das Hinaufgehen
+async function keyringUp(A){ if (A.G.phase!=='c3_night') return A.m('Ljerka will nicht, dass jemand hinaufgeht. Noch nicht.');
+  if (!A.S.chainOff){ A.set('chainOff',true); A.sfx('chain'); await A.m('Ich hake die Kette aus. Der große Schlüssel vom Ring passt.'); }
+  return A.goto('salon'); }
 function brunoInLodge(GS){ return GS.phase==='c3_night' && !GS.flags['c3.brunoUp'] && !GS.flags['c3.done']; }
 function brunoInSalon(GS){ return GS.phase==='c3_night' && !!GS.flags['c3.brunoUp'] && !GS.flags['c3.gone']; }
 function ljerkaUp(GS){ return GS.phase==='c3'; }
@@ -206,10 +210,10 @@ var HS=[
    g:{look:'Er hat etwas darin versteckt. Nicht in der Schublade. Darunter.'}},
  {id:'phonebook',name:'Telefonbuch',look:'Das Telefonbuch von Split, 1991. Dick wie ein Ziegelstein.',take:async function(A){ if (A.S.crankFound) return A.m('Darunter ist nichts mehr.'); await A.reach(function(){ A.set('crankFound',true); A.give('crank'); }); await A.m('Unter dem Telefonbuch liegt eine Kurbel. Eine Grammofonkurbel, sorgfältig in ein Tuch gewickelt.'); },
    g:{look:'1991. Damals gab es diese Stadt noch anders.'}},
- {id:'stairs',name:'Treppe zum Salon',exit:{to:'salon',gok:true},look:'Die große Treppe mit rotem Läufer. Oben, auf dem Absatz, die Tür zum Salon.',
+ {id:'stairs',name:'Treppe zum Salon',exit:{to:'salon',gok:true},with:{ keyring:function(A){ return keyringUp(A); } },look:'Die große Treppe mit rotem Läufer. Oben, auf dem Absatz, die Tür zum Salon.',
    canExit:async function(A){ if (A.isMala()) return true; if (A.G.phase!=='c3_night'){ await A.m('Ljerka will nicht, dass jemand hinaufgeht. Noch nicht.'); return false; } if (!A.has('keyring')){ await A.m('Die Salontür oben ist abgeschlossen. Und der Haken für den Schlüssel am Brett ist leer.'); return false; } if (!A.S.chainOff){ A.set('chainOff',true); A.sfx('chain'); await A.m('Ich hake die Kette aus. Der große Schlüssel vom Ring passt.'); } return true; },
    g:{look:'Oben ist der Salon. Die Tür ist abgeschlossen. Für ihn.'}},
- {id:'chain',name:'Kette „ZATVORENO“',vis:function(S){ return !S.chainOff; },look:'Eine Kordel mit einem Messingschild: ZATVORENO. Geschlossen.',g:{look:'Eine Kordel. Für mich ist das nichts.'}},
+ {id:'chain',name:'Kette „ZATVORENO“',vis:function(S){ return !S.chainOff; },look:'Eine Kordel mit einem Messingschild: ZATVORENO. Geschlossen.',with:{ keyring:function(A){ return keyringUp(A); } },g:{look:'Eine Kordel. Für mich ist das nichts.'}},
  {id:'hooks',name:'Garderobenhaken',look:'Eine Reihe Haken mit kleinen Nummern, eins bis zwanzig. An allen nichts, nur an der Dreizehn hängt ein Mantel.',g:{look:'Zwanzig Haken für zwanzig Leute vom Personal. Nur einer ist geblieben.'}},
  {id:'coat13',name:'Mantel an Haken 13',look:'Ein flaschengrüner Portiersmantel mit Messingknöpfen. Der Stoff ist an den Schultern ausgeblichen.',
    use:async function(A){ if (A.has('keyring')) return A.m('Die Taschen sind leer.'); await A.reach(function(){ A.give('keyring'); }); A.sfx('chain'); await A.m('In der Manteltasche: ein Schlüsselring. Ein großer Schlüssel mit dem Schild SALON und ein winziger aus Messing.'); },

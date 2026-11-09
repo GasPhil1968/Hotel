@@ -154,8 +154,9 @@ M.malaToMarko=function(A){ if (CH4(A.G) && M.k4MalaToMarko) return M.k4MalaToMar
 M.malaLooksAtMarko=function(A){ if (CH4(A.G) && M.k4MalaLooksAtMarko) return M.k4MalaLooksAtMarko(A); return ml?ml(A):A.g('Er sieht müde aus.'); };
 
 // ---------------------------------------------------------------- Ein Abschnitt endet erst nach seinen Pflichtschritten
-function dayReady(G){ var p=G.phase;
-  if (p==='k4_pro') return f(G,'k4.p.hansi')&&f(G,'k4.p.jasna');
+// Analyse K4-B04 (P14): Im Prolog gehört „Ich habe Lana gefunden“ dazu; sonst schnitt „(Ein Hemd anziehen.)“ das Gespräch ab.
+function dayDone(G){ var p=G.phase;
+  if (p==='k4_pro') return f(G,'k4.p.hansi')&&f(G,'k4.p.jasna')&&f(G,'k4.p.lana');
   if (p==='k4_d1') return has(G,'s4_peppino')&&has(G,'g4_gerda')&&has(G,'z4_stiefel');
   if (p==='k4_d2') return has(G,'z4_ana2004')&&has(G,'s4_name')&&has(G,'g4_drei');
   if (p==='k4_d3') return f(G,'k4.s.crossed')&&f(G,'k4.g.decided')&&(M.k4Variant(G)==='yes'||f(G,'k4.e.sample2'));
@@ -166,7 +167,12 @@ function dayReady(G){ var p=G.phase;
   if (p==='k4_fin_n') return f(G,'k4.fin.done');
   if (p==='k4_epi') return f(G,'k4.e.done');
   return false; }   // Nächte (Heiligabend, Christtag, Dienstag, Donnerstag) enden im Bett: M.k4Bed
-M.k4DayReady=dayReady;
+// Analyse K4-B04 (P14): Der Christtag endet nicht mitten auf der Wiesn. Kommt die Stiefel-Erinnerung zuletzt, bleibt Zeit für Ana
+// (Straßenbahn, Foto, Lana); der Tag endet beim Weggehen oder nach „Lana ist tot“ (k4.d1.walk).
+function dayReady(G){ if (!dayDone(G)) return false;
+  if (G.phase==='k4_d1' && G.pos && G.pos.marko && G.pos.marko.room==='wiesn' && !f(G,'k4.d1.walk')) return false;
+  return true; }
+M.k4DayReady=dayReady; M.k4DayDone=dayDone;
 M.k4DayCheck=async function(A){ var G=A.G, R=M.E.room; if (!CH4(G)||G.ended||!R||R.noSave) return false; if (!dayReady(G)) return false;
   var p=G.phase;
   if (p==='k4_pro') return await M.k4StartEve(A), true;
@@ -182,7 +188,7 @@ M.k4DayCheck=async function(A){ var G=A.G, R=M.E.room; if (!CH4(G)||G.ended||!R|
   return false; };
 // was fehlt (ohne zu sagen, wo): für das Bett am Tag und für die Hinweise
 function missing(G){ var p=G.phase;
-  if (p==='k4_pro'){ if (!f(G,'k4.p.hansi')) return 'Am Busbahnhof war noch etwas. Mein Kopf weiß es besser als ich.'; return f(G,'k4.p.coffee')?'Erst Mama. Sie kommt um zwei.':'Erst Mama. Sie kommt um zwei. Bis dahin könnte ich Kaffee kochen, in Großmutters Džezva. Mama soll sie auf dem Herd sehen.'; }
+  if (p==='k4_pro'){ if (!f(G,'k4.p.hansi')) return 'Am Busbahnhof war noch etwas. Mein Kopf weiß es besser als ich.'; if (f(G,'k4.p.jasna')&&!f(G,'k4.p.lana')) return 'Mama weiß noch nicht, dass ich Lana gefunden habe.'; return f(G,'k4.p.coffee')?'Erst Mama. Sie kommt um zwei.':'Erst Mama. Sie kommt um zwei. Bis dahin könnte ich Kaffee kochen, in Großmutters Džezva. Mama soll sie auf dem Herd sehen.'; }
   if (p==='k4_d1'){ if (!has(G,'z4_stiefel')) return 'Ana wollte heute mit den Kindern raus. Mit uns.'; if (!has(G,'s4_peppino')) return 'Mein Kopf pocht. Irgendwo in der Stadt wartet einer.'; if (!has(G,'g4_gerda')) return 'Mama ist bei der Arbeit. Und ich habe den Tag noch nicht zu Ende gedacht.'; }
   if (p==='k4_d2'){ if (!has(G,'z4_ana2004')) return 'Ana. Ich muss mit Ana reden. Nicht am Telefon.'; if (!has(G,'s4_name')) return 'Sepp hat einen Namen. Ich habe ihn noch nicht.'; if (!has(G,'g4_drei')) return 'Und um drei geht im Heim ein alter Mann zum Aufzug. Warum, weiß ich nicht.'; }
   if (p==='k4_d3'){ if (!f(G,'k4.s.crossed')) return 'Sepp wartet noch auf seinen Brief.'; if (!f(G,'k4.g.decided')){ var v1=has(G,'g4_versuch1'), v2=has(G,'g4_versuch2'); if (v1!==v2) return 'Gerda kommt jeden Tag um drei. Einen Versuch habe ich gemacht. Einer fehlt – ich gehe hin, sobald ein neuer Nachmittag ist.'; if (v1&&v2) return 'Gerda kommt jeden Tag um drei. Sie muss hören, was die zwei Versuche gezeigt haben.'; return 'Gerda kommt jeden Tag um drei. Noch.'; } if (M.k4Variant(G)==='no' && !f(G,'k4.e.sample2')) return 'Die Probenkarte von Frau Kolar. Heute.'; }

@@ -97,6 +97,15 @@ function d2Missing(G){ if (!(f(G,'k3.z.mala')||f(G,'k3.z.lost'))) return has(G,'
   if (!f(G,'k3.b.arrived')) return f(G,'k3.b.mate')?'Und Mate wartet auf den Bus aus München. Ich habe ihm gesagt, dass ich nachsehe.':'Am Westbusbahnhof kommt heute der Bus aus München. Mate wartet auf ihn.';
   if (f(G,'k3.b.helper') && !f(G,'k3.b.jela')) return 'Ich habe Davor gesagt, ich komme mit. Haus Zelenika, am Südrand, bei den Feigen.';   // zugesagt: erst Jela und das Haus
   return null; }
+// Sonntag (Analyse K3-B07, P18): Was fehlt noch, bevor die Nacht kommt? Spuren nach Person oder Frage, ohne Ort.
+function d3Missing(G){
+  if (!has(G,'l3_survived')) return (has(G,'a3_blanket')&&has(G,'a3_fromzlata'))?'Die Decke und Zlatas Haus. Das gehört zusammen. Ich habe es nur noch nicht zu Ende gedacht.':'Lanas Nacht ist noch offen. Was ist nach dem Fluss mit ihr geschehen?';
+  if (!has(G,'a3_awake')||!has(G,'a3_girl')) return 'Bato. Er weiß mehr über die Glocke, als er sagt. Ich weiß nur noch nicht, womit ich ihn frage.';
+  if (!f(G,'k3.bato.uneasy')) return 'Bato muss beides hören: dass er wach war. Und wer geläutet hat.';
+  if (!f(G,'k3.v.free')) return 'Vlado. Ohne ihn und seinen Lastwagen komme ich heute Nacht nirgendwohin.';
+  if (!f(G,'k3.b.done')) return 'Davor fährt heute. Die Feigen, das Haus. Das will ich nicht halb lassen.';
+  return null; }
+M.k3D3Missing=d3Missing;
 // Grund, warum eine Reise nicht geht: {t, who:'m'|'g', alone:bool} oder null
 function travelWhy(G,L){ var p=G.phase, id=L.id;
   if (p==='k3_fin_n') return {t:'Heute Nacht fährt Vlado. Nicht der Plan.',who:'m'};
@@ -209,7 +218,7 @@ M.k3Bed=async function(A){ var G=A.G, p=G.phase;
     return A.m('Vlado. Erst Vlado. Und die Schublade.'); }
   if (p==='k3_d2'){ var w=d2Missing(G); return A.m(w||'Noch nicht.'); }
   if (p==='k3_d2_n') return A.g('Nicht jetzt. Es zieht. Nach Skela.');
-  if (p==='k3_d3') return A.m(A.cycle('k3bed3',['Heute nicht. Heute Nacht schon gar nicht.','Wenn ich mich jetzt hinlege, verschlafe ich den Frost.']));
+  if (p==='k3_d3'){ var w3=d3Missing(G); return A.m(w3?'Heute nicht. '+w3:A.cycle('k3bed3',['Heute nicht. Heute Nacht schon gar nicht.','Wenn ich mich jetzt hinlege, verschlafe ich den Frost.'])); }
   return A.m('Nicht jetzt.'); };
 
 // ---------------------------------------------------------------- Übergänge

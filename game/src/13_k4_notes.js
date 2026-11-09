@@ -117,6 +117,7 @@ M.defineDeductions({
   's4_derselbe+s4_bunker':{to:'s4_name',say:'„Giuseppe? Das schreibt keiner.“ Ein Beamter, ein Stempel, ein junger Mann, der „Sì“ sagt. Josef Rugiero ist Giuseppe Ruggiero.'},
   's4_derselbe+s4_umschlag':{to:'s4_name',say:'Die Briefe gehen an Giuseppe Ruggiero, Gleis 11. Der Ausweis sagt Josef Rugiero, Gleis 11, Nummer 17. Derselbe Mann, zwei Namen.'},
   's4_bunker+s4_umschlag':{to:'s4_name',say:'Die Briefe gehen an Giuseppe Ruggiero. Im Bunker macht ein Beamter daraus Josef Rugiero, und er sagt „Sì“. Derselbe Mann. Den Namen hat man ihm hier genommen.'},   // Blindtest K4: der Hinweis nannte dieses Paar
+  's4_ausweis+s4_umschlag':{to:'s4_name',say:'Josef Rugiero, Gepäckträger Nr. 17, sagt der Ausweis. Giuseppe Ruggiero, Gleis 11, sagen die Briefe. Ein Buchstabe weniger, ein Name eingedeutscht. Derselbe Mann.'},   // Analyse K4-B03 (P16)
   's4_bunker+s4_ausweis':{to:'s4_name',say:'Im Bunker wird aus Giuseppe ein Josef, aus Ruggiero ein Rugiero. Im Ausweis steht genau das. Josef Rugiero ist Giuseppe Ruggiero.'},
   's4_brief79+s4_carmela_hall':{to:'s4_wusste',say:'„Ich habe dich mit den Koffern gesehen.“ Und eine Frau, die beim Schreiben weint und lächelt. Carmela wusste es. Seit 1979.'},
   'g4_versuch1+g4_versuch2':{to:'g4_beides',say:'Ohne Gong steht er nicht auf, aber er friert, wenn sie bei ihm ist. Mit Gong steht er auf, aber ohne sie friert er nicht. Der Gong holt ihn. Ihre Hand hält ihn fest.'},
@@ -128,6 +129,7 @@ var NEAR={
   's4_peppino+s4_bairisch':'Ein Urmünchner, sagt die Kioskfrau. Ein Peppino, sagt er selbst. Einer von beiden irrt. Oder keiner.',
   's4_peppino+s4_enzo':'Enzo nennt ihn Peppino. Das weiß ich schon von ihm selbst. Was ich nicht weiß, ist sein Nachname.',
   's4_genommen+s4_ausweis':'„Hier genommen“, sagt er. Im Ausweis steht ein Name. Aber wie wird aus einem Namen ein anderer?',
+  's4_peppino+s4_umschlag':'Peppino ruft man einen Giuseppe. Die Briefe gehen an Giuseppe Ruggiero, Gleis 11. Aber begraben wird ein Josef Rugiero. Wie wird aus dem einen der andere?',   // Analyse K4-B03 (P16)
   's4_genommen+s4_peppino':'Peppino ist ein Rufname. Den Nachnamen hat man ihm hier genommen. Wo, sagt er: an Gleis 11.',
   'g4_drei+g4_gong':'Um drei, beim Gong. Vielleicht ist es der Gong. Vielleicht ist es die Uhrzeit. Das sagt mir keine Beobachtung, nur ein Versuch.',
   'g4_drei+g4_kalt':'Er friert, wenn sie kommt. Aber er stand schon auf, bevor sie da war. Zwei Dinge auf einmal. Ich muss sie trennen.',

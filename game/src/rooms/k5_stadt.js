@@ -62,7 +62,7 @@ var HS_PA=[
    use:function(A){ return M.k5Bed(A); }, g:{look:'Darauf liegt Mačak. Er hat mich vermisst. Sagt er.'}},
  {id:'window',name:'Fenster',look:function(A){ return A.m(ph(A.G)==='k5_n1'?'Das Fenster ist kalt. Draußen Frost auf den Grabsteinen von Kovači, weiß vom Februar.':'Das Fenster. Draußen Dächer, Minarette und weiter oben die Grabsteine von Kovači.'); },
    use:function(A){ return M.k5PensionWindow?M.k5PensionWindow(A):A.m('Kalt.'); },
-   g:{look:'In acht Wochen habe ich es an Mamas Fenster versucht. Jeden Abend.',draw:function(A){ return M.k5PensionWindowG?M.k5PensionWindowG(A):A.g('Die Scheibe ist klar.'); },drawIf:function(S,G){ return ph(G)==='k5_n1'; }}},
+   g:{look:'In acht Wochen habe ich es an Mamas Fenster versucht. Jeden Abend.',draw:function(A){ return M.k5PensionWindowG?M.k5PensionWindowG(A):A.g('Die Scheibe ist klar.'); },drawIf:function(S,G){ return ph(G)==='k5_n1' && !!G.flags['k5.n1.atem']; }}},
  {id:'stove',name:'Ofen',look:'Ein Kachelofen. Hajra heizt mit dem Holz, das sie zwanzig Jahre für niemanden gestapelt hat.',use:'Er ist warm. Ich halte die Hände dran, wie Großmutter.',g:{look:'Warm. Ich weiß noch, wie warm ist.'}},
  {id:'table',name:'Tisch',look:function(A){ return A.m(ph(A.G)==='k5_sat'?'Frühstück. Hajra hat für drei gedeckt. Sie hat sich verzählt, sagt sie. Sie hat sich nicht verzählt.':'Ein Tisch mit Wachstuch. Darauf eine Schale mit Äpfeln und eine Džezva, die nicht meine ist.'); },
    use:function(A){ return M.k5PensionTable?M.k5PensionTable(A):A.m('Später.'); },g:{look:'Der leere Stuhl neben ihm. Mačak sitzt davor und starrt. Mich an.'}},
@@ -89,6 +89,8 @@ var HS_PA=[
 M.room('pansion5',{ name:'Pension in Kovači', scape:'k2_pansion', music:function(G){ return ph(G)==='k5_n1'?'k2_noc':(ph(G)==='k5_epi'?'k4_epi':'k2_sarajevo'); },
   state:function(G){ return {coffee:ph(G)==='k5_sat',charging:true,catAt:ph(G)==='k5_n1'?'bed':'window'}; },
   load:function(A){ var r=M.ROOMS['pansion5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
+  // Analyse K5-B07: Markos Beschlag am Fenster hält bis zur nächsten Handlung (Gehen und Figurenwechsel zählen nicht)
+  check:function(A){ var G=A.G; if (G.flags['k5.n1.fogOn']>0){ G.flags['k5.n1.fogOn']--; if (!G.flags['k5.n1.fogOn']) G.flags['k5.n1.fogEnd']=A.gt; } },
   actors:function(S,G){ var L=[];
     if (hajraHere(G)){ var h=M.apos('pansion','hajra',[132,113,'L']); L.push({id:'hajra',ch:'hajra',x:h[0],y:h[1],f:h[2]||'L',name:'Hajra',speechY:42}); }
     if (jasnaInPension(G)) L.push({id:'jasna',ch:ph(G)==='k5_sat'?'jasnaC':'jasna',x:206,y:126,f:'L',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36});

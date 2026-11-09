@@ -153,7 +153,8 @@ M.k5Garden=async function(A){ var p=ph(A), G=A.G;
   if (F(A,'k5.p.tarp')){ if (G.inv.indexOf('kanister')<0 && G.inv.indexOf('kanister_voll')<0 && p!=='k5_pro'){ A.give('kanister'); return A.m('Ich nehme den zweiten Kanister. Auch auf dem steht VUKOVIĆ.'); }
     return A.m('Unter der Plane: Hajras Holz und der zweite Kanister. Einer reicht. Einer hat immer gereicht.'); }
   if (p==='k5_pro' && !F(A,'k5.p.hajra')) return A.m('Ich stehe in einem fremden Garten. Erst der Schlüssel.');
-  if (!F(A,'k5.p.sensed')){ await A.m('Eine grüne Plane, mit Ziegeln beschwert. Darunter Hajras Holz, nehme ich an.'); if (gHere(A)){ await A.wait(300); await A.g('Nicht nur Holz.'); } return; }
+  // Analyse K5-B05 (P16): Marko weiß von Hajra, wo die Kanister stehen. Er darf nachsehen; was er findet, ist Holz – Mala sieht weiter.
+  if (!F(A,'k5.p.sensed')){ await A.reach(); await A.m('Ich hebe eine Ecke der Plane. Nur Holz, ordentlich gestapelt. Die Kanister müssen weiter hinten stehen, unter den Ziegeln.'); if (gHere(A)){ await A.wait(300); await A.g('Nicht nur Holz. Lass mich schauen.'); } return; }
   // die Plane heben: zwei blaue Kanister; Malas Nachhall (Konzept 6.2, Szene 4)
   A.setFlag('k5.p.tarp'); A.sfx('paper');
   await A.narrate('Ich lege die Ziegel ins Gras und schlage die Plane zurück. Holz, ordentlich gestapelt. Und davor zwei blaue Kanister, zwanzig Liter, mit roter Farbe: VUKOVIĆ.');
@@ -371,10 +372,14 @@ M.k5D2Start=async function(A){ var G=A.G;
 M.k5PensionWindow=async function(A){ var p=ph(A);
   if (p!=='k5_n1') return A.m(A.cycle('k5pw',['Draußen die Dächer von Kovači, Minarette, weiter oben die weißen Steine.','Ich sehe hinaus. Die Stadt sieht nicht zurück.']));
   if (!F(A,'k5.n1.home')) return A.m('Kalt.');
-  if (F(A,'k5.n1.atem')){ A.G.flags['k5.n1.fog']=A.gt; A.G.flags['k5.n1.three']=0; A.sfx('gust'); await A.m('Ich hauche die Scheibe an. Der Beschlag hält ein paar Sekunden.'); if (gHere(A)){ await A.g('Ich ziehe eine Linie. Siehst du? Drei Sekunden. Vier.'); } return; }
+  // Analyse K5-B07 (P13): Der Beschlag hält bis zur nächsten Handlung (wie am Samstag), nicht sechs Sekunden ab dem ersten Wort.
+  // k5.n1.fogOn zählt der Raum-Check (rooms/k5_stadt.js) nach jeder Handlung herunter; Malas Zeichnen verbraucht ihn.
+  if (F(A,'k5.n1.atem')){ var held=A.G.flags['k5.n1.fogOn']>0; A.G.flags['k5.n1.fogOn']=2;
+    if (held) return A.m('Der Beschlag hält noch. Jetzt sie.');
+    A.G.flags['k5.n1.fog']=A.gt; A.G.flags['k5.n1.fogEnd']=0; A.G.flags['k5.n1.three']=0; A.sfx('gust'); await A.m('Ich hauche die Scheibe an. Der Beschlag hält, solange ich still stehe.'); if (gHere(A)){ await A.g('Halt still.'); } return; }
   return atem(A); };
 M.k5PensionWindowG=async function(A){ if (ph(A)!=='k5_n1') return A.g('Die Scheibe ist klar.');
-  var t=A.flag('k5.n1.fog'); if (F(A,'k5.n1.atem') && t && A.gt-t<6000){ A.G.flags['k5.n1.three']=A.gt; await A.g('Ich ziehe eine Drei. Sie hält. Dann geht sie mit dem Beschlag.'); return; }
+  if (F(A,'k5.n1.atem') && A.G.flags['k5.n1.fogOn']>0){ A.G.flags['k5.n1.fogOn']=0; A.G.flags['k5.n1.fogEnd']=A.gt; A.G.flags['k5.n1.three']=A.gt; await A.g('Ich ziehe eine Drei. Sie hält. Dann geht sie mit dem Beschlag.'); return; }
   return A.g('Die Scheibe ist klar. Er muss erst hauchen. Nur bei ihm geht es.'); };
 async function atem(A){ var G=A.G;
   A.sfx('gust'); A.G.flags['k5.n1.fog']=A.gt; await A.narrate('Die Scheibe ist kalt. Ich hauche sie an, damit ich hinaussehe.');

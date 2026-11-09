@@ -26,6 +26,7 @@ var HS_PV=[
  {id:'building',name:'Brauerei',look:'Die Brauerei, gelber Backstein, hohe Bogenfenster, ein Schornstein. Es riecht nach Malz. Warm und süß, wie Brot, das man zu lange gebacken hat.',
    g:{look:'Malz. So hat sein Ärmel gerochen.',sense:'Im Krieg hat sie Wasser gegeben, als die Stadt keins hatte. Die Leute haben Schlange gestanden, über die Brücke hinaus.'}},
  {id:'bridge',name:'Brückenkopf',look:'Der Kopf der Brücke über die Miljacka. Bis hierher stand die Schlange damals. Bis hierher und weiter.',
+   with:{ kanister:function(A){ return M.k5QueueCan?M.k5QueueCan(A):A.m('Hier stand man an.'); } },   // Analyse K5-B06 (P16): hinten anstellen, wo die Schlange stand
    g:{look:'Hier stand der Junge. Hinten. Mit zwei blauen Kanistern.',sense:function(A){ return M.k5SenseBridge?M.k5SenseBridge(A):A.g('Wasser. Unten.'); }}},
  {id:'middle',name:'Mitte der Gasse',look:'Die Mitte der Gasse, zwischen Brücke und Hahn. Kopfsteinpflaster, frisch verlegt. Nur ein Fleck ist anders, heller.',
    use:function(A){ return M.k5QueueCan?M.k5QueueCan(A):A.m('Hier stand man an.'); },with:{ kanister:function(A){ return M.k5QueueCan?M.k5QueueCan(A):A.m('Hier stand man an.'); } },

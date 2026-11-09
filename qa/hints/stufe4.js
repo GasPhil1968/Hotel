@@ -259,6 +259,8 @@ const SPECS = {
   h4c: () => [P.act('use', 'huber_door'), P.talk('Huber')],
   h4d: (t) => /Herd/.test(t) ? P.act('use', 'Herd') : P.act('use', 'Džezva'),
   h4e: () => P.talk('Mama'),
+  h4e2: () => P.talk('Mama'),
+  d4f: () => P.talk('Ana'),
   p4a: () => P.act('use', 'Tisch'), f4a: () => P.act('use', 'Tisch'),
   d4a: () => [P.go('Theresienwiese'), P.talk('Ana')],
   d4b: (t) => /^An Gleis 11 mit dem Mann/.test(t) ? P.talk('sepp', /Wie heißen Sie weiter/) : /^Als Marko/.test(t) ? P.go('Hauptbahnhof') : [P.mala(), P.go('Hauptbahnhof')],

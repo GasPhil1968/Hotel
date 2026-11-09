@@ -75,7 +75,7 @@ M.defineItems({
 M.defineCombos({
   'radio+batteries':async function(A){ A.take('radio'); A.take('batteries'); A.give('radioB'); A.sfx('click'); await A.m('Vier Batterien hinein, Deckel zu. Ein Rauschen, dann Stille. Er lebt noch.'); },
   'radioB+cassette':async function(A){ A.take('radioB'); A.take('cassette'); A.give('radioT'); A.sfx('cassette'); await A.m('Die Kassette passt. Ich drücke nicht auf Play. Das ist nicht für mich.'); A.setFlag('c2.tapeIn'); },
-  'radio+cassette':'Die Kassette passt hinein. Aber ohne Batterien dreht sich nichts.',
+  'radio+cassette':async function(A){ await A.m('Die Kassette passt hinein. Aber ohne Batterien dreht sich nichts.'); if (!A.unlocked('terminal')){ A.unlock('terminal'); await A.m('Mono-Batterien. Am Fährterminal ist ein Kiosk.'); } },   // Analyse K1-B02
   'documents+journal':'Das Nachtbuch gehört zu den Dokumenten.',
   'keyring+envelope':'Der kleine Schlüssel hat mit dem Umschlag nichts zu tun. Mit dem Hocker schon.',
   'photo1+postcard':'Dasselbe Jahr. Derselbe Hafen. Derselbe Junge, der „bis bald“ schreibt.',

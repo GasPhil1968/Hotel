@@ -14,7 +14,7 @@ function has(G,id){ return G.notes.indexOf(id)>=0; }
 // know(G): woraus Marko den Ort kennt (Notiz oder Abschnitt). why: was er dazu denkt. Freigabe bleibt bei der Geschichte.
 M.MAP_KNOW={
   terminal:{ch:1, know:function(G){ return has(G,'c2_meet'); },
-    why:'Der Kiosk am Fährterminal. Nach zwölf Jahren? Ich wüsste nicht, wen ich dort fragen soll.'},
+    why:function(G){ return (G.inv.indexOf('radio')>=0&&G.inv.indexOf('batteries')<0)?'Mono-Batterien. Am Fährterminal ist ein Kiosk.':'Der Kiosk am Fährterminal. Nach zwölf Jahren? Ich wüsste nicht, wen ich dort fragen soll.'; }},
   carsija:{ch:2, know:function(G){ return !!G.flags['k2.p1.rode']; },
     why:'Die Baščaršija. Bis dorthin fährt die Eins.'},
   pansion:{ch:2, know:function(G){ return M.chapterOf(G)===2; },

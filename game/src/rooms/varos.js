@@ -68,6 +68,10 @@ async function zdenkaC2(A,Z){
   if (A.first('zdC2')){ await Z.say('Da ist ja der Herr Journalist. Der Wind hat Sie den Hügel hinaufgeweht.'); }
   await A.menuLoop(function(){ return [
     {t:'Ich habe Ihnen die Zeitung mitgebracht.',if:A.has('newspaper')&&!A.flag('c2.radioGiven'),go:function(A){ return giveNewspaper(A,Z); }},
+    // Analyse K1-B01 (P15): wer die Kassette hat, denkt an Ivkas Radiorekorder. Zdenka hat ihn – erst will sie lesen, was über Ivka in der Zeitung steht.
+    {t:'Ivkas Radio. Hatte das nicht ein Kassettenfach?',once:'zdRadio',if:A.has('cassette')&&!A.flag('c2.radioGiven')&&!A.has('newspaper'),go:async function(A){
+      await Z.say('Das Radio? Das habe ich zu mir genommen. Bevor die vom Amt alles wegtragen.'); await A.wait(500); await Z.say('Ein Kassettenfach hat es. Sie hat es nie benutzt. Nur den Seewetterbericht.');
+      await A.wait(500); await Z.say('Sie bekommen es. Aber erst will ich lesen, was Sie über sie geschrieben haben.'); await A.m('Es steht heute in der Glas Rive.'); await Z.say('Dann bringen Sie mir die Zeitung.'); }},
     {t:'Wie geht es Ihnen?',once:'zdH',go:async function(A){ await Z.say('Gestern habe ich um sieben aus dem Fenster gesehen. Aus Gewohnheit. Da war niemand.'); await A.m('Ich glaube, sie ist jetzt zu Hause.'); await Z.say('Wo sonst.'); }},
     {t:'Wissen Sie etwas über die alte Ledana?',once:'zdL',if:A.hasNote('c2_demolish'),go:async function(A){ await Z.say('Die Eisfabrik? Da haben die Fischer früher ihr Eis geholt. Seit dem Krieg verrottet sie. Jetzt wollen sie ein Hotel bauen.'); await Z.say('Da ist ein Junge gestorben, vor Jahren. Die Treppe. Seine Mutter wohnte unten bei der Pjaca. Sie ist nach Zagreb gezogen.'); }},
     A.askOpt({ c2_luka:'Luka? Der mit der Gitarre an der Riva? Ich habe ihm im Sommer immer zehn Kuna in den Hut gelegt. Für die Lieder von früher.', c2_died:'Ein Sturz. Drei Tage hat ihn niemand gefunden. Seine Mutter hat nie wieder gesungen, sagt man.' },'Fragen Sie mich lieber nach Ivka. Da weiß ich Bescheid.'),
@@ -79,7 +83,9 @@ async function giveNewspaper(A,Z){ A.take('newspaper'); A.setFlag('c2.radioGiven
   if (A.G.flags.leadKnit===1){ await A.wait(500); await Z.say('Und die Mützen. Das stimmt. Das hat sonst niemand gewusst.'); }
   await Z.say('Warten Sie.'); await A.fade(6,400); A.sfx('door'); await A.wait(700); await A.fade(0,400);
   await Z.say('Nehmen Sie das Radio. Freitag kommt sowieso alles weg. Sie hat damit jeden Abend den Seewetterbericht gehört.'); A.give('radio');
-  await A.m('Danke. Ich passe darauf auf.'); await Z.say('Batterien hat es keine. Die hat sie immer rausgenommen, damit sie nicht auslaufen. So war sie.'); }
+  await A.m('Danke. Ich passe darauf auf.'); await Z.say('Batterien hat es keine. Die hat sie immer rausgenommen, damit sie nicht auslaufen. So war sie.');
+  // Analyse K1-B02 (P15): Batterien sucht man in einem Laden, nicht bei einem Zeugen
+  if (!A.unlocked('terminal')){ A.unlock('terminal'); await A.m('Mono-Batterien. Am Fährterminal ist ein Kiosk.'); } }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'exit',name:'Zur Stadt',exit:{to:'map'},look:'Die Gasse hinunter, zur Stadt.',noReveal:false},

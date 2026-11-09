@@ -72,6 +72,9 @@ async function talkDavor(A){ var Dv=A.npc('davor'), G=A.G;
       b3_sell:'Montag. Notar. Der hat einen Termin, ich habe einen Termin. So einfach ist das. Hoffe ich.',
       b3_gate:'Am Tor, ja. Wenn ich in den Ferien kam, stand er schon da, wenn der Bus noch an der Kurve war.',
       b3_figs:'Die Feigen. Ich habe sie als Kind eingepackt. Mit ihm. Ich weiß nicht mehr, wie.',
+      // Analyse K3-B06 (P16): die richtige Notiz im richtigen Gespräch bekommt eine eigene Antwort
+      b3_invite:async function(A){ if (!A.flag('k3.b.invite')){ await invite(A); return 'bye'; } await Dv.say('Ich habe es verstanden. Spät. Aber verstanden.'); },
+      b3_pencil:'„Dragi dida.“ Unter jeder Karte? So hat ihn nur einer genannt. Ich. Als ich klein war.',
       photo_full:'Wer ist das? Und der Kleine mit den Ohren, das sind Sie?' },
       'Ich weiß es nicht. Ich weiß hier gar nichts mehr.'),
     {t:'(Gehen.)',bye:true,silent:true}
@@ -84,7 +87,9 @@ async function talkLena(A){ var Ln=A.npc('lena'), G=A.G;
     A.askOpt({
       b3_kidsroom:'Das ist für mich gewesen? Mit Ballons? Ich bin vierzehn.',
       b3_cards:'Er hat meine Karten aufgehoben? Alle? Ich hab gedacht, die liest keiner.',
-      b3_letters:'Papa liest die die ganze Zeit. Und sagt nichts. Und liest wieder.' },
+      b3_letters:'Papa liest die die ganze Zeit. Und sagt nichts. Und liest wieder.',
+      b3_pencil:'„Dragi dida“? Ich hab immer „Lieber Opa“ geschrieben. Er hat das darunter geschrieben? Für mich?',
+      b3_invite:'Ein Zimmer für mich. Und ich wusste nichts davon. Papa auch nicht.' },
       'Keine Ahnung. Frag Papa.'),
     {t:'(Gehen.)',bye:true,silent:true}
   ]; }); }

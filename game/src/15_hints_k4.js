@@ -41,6 +41,11 @@ M.HINTS_K4=[
      'Nadas Gruß. Und eine Nachricht aus Mostar.',
      'Die Dose von Nada geben. Von Lana erzählen. Und das mit der Probe.',
      'Mit Mama reden: ihr Nadas Dose geben, von Lana erzählen, die Probe ansprechen.']},
+ {id:'h4e2',t:'Lana',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.jasna') && !F(G,'k4.p.lana'); },   // Analyse K4-B04 (P14)
+  s:['Mama weiß noch nicht, was in Mostar war.',
+     'Den ganzen Herbst hat Marko gesucht. Mama hat Lana gekannt.',
+     'Mama von Lana erzählen. Sie ist noch in der Küche.',
+     'Mit Mama reden: „Ich muss dir etwas erzählen. Von Lana.“ – „Ich habe Lana gefunden.“']},
  // ---------------- Heiligabend
  {id:'p4a',t:'Heiligabend',open:function(G){ return G.phase==='k4_pro_n' && !F(G,'k4.p.eve'); },
   s:['Heiligabend bei Ana. Die ganze Familie an einem Tisch.',
@@ -57,6 +62,11 @@ M.HINTS_K4=[
      'Auf eine große Wiese, zum Rodeln.',
      'Die Theresienwiese.',
      'Zur Theresienwiese gehen und mit Ana spazieren.']},
+ {id:'d4f',t:'Ana weiß es noch nicht',open:function(G){ return G.phase==='k4_d1' && !F(G,'k4.d1.walk') && !!(M.k4DayDone && M.k4DayDone(G)) && !(M.k4DayReady && M.k4DayReady(G)); },   // Analyse K4-B04 (P14): zuletzt auf der Wiesn
+  s:['Ana ist noch da. Mit den Kindern.',
+     function(G){ return !F(G,'k4.d1.anaLana')?'Ana hat ein Foto auf dem Handy. Von Papa und dem Auto.':(!F(G,'k4.d1.drawing')?'Die Straßenbahn aus Malas Erinnerung. Ana hat sie aufgehoben.':'Ana weiß noch nicht, was mit Lana war.'); },
+     function(G){ return !F(G,'k4.d1.anaLana')?'Ana nach dem Foto fragen.':(!F(G,'k4.d1.drawing')?'Ana von der Straßenbahn erzählen.':'Ana sagen, was mit Lana war. Wer geht, beendet den Tag.'); },
+     function(G){ return !F(G,'k4.d1.anaLana')?'Mit Ana reden: „Zeigst du mir das Foto?“':(!F(G,'k4.d1.drawing')?'Mit Ana reden: „Lana hat dir eine Straßenbahn gemalt.“':'Mit Ana reden: „Ich muss dir etwas sagen. Über Lana.“'); }]},
  {id:'d4b',t:'Wieder der Druck',open:function(G){ return G.phase==='k4_d1' && !N(G,'s4_peppino'); },
   s:['Markos Kopf pocht. Irgendwo in der Stadt wartet einer, den Mala noch nicht gefunden hat.',
      'Wo kommen in München Menschen an und fahren ab?',

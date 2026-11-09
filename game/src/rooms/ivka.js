@@ -12,6 +12,9 @@ var HS=[
    canExit:async function(A){ var a=A.has('postcard'), b=A.has('photo1'), c=A.hasNote('pro_list')||!!A.flag('split.intro.legacy'); if (a&&b&&c) return true;
      if (!a&&!b){ await A.m('Ich habe noch nichts, worüber ich schreiben könnte. Fünfundachtzig Jahre, und ich stehe hier wie ein Möbelpacker.'); return false; }
      if (a&&b){ await A.m('Bis jetzt erzählt hier alles vom Warten. Sie hat auch gelebt. Irgendwo muss das stehen.'); return false; }
+     // Analyse K1-B03 (P16): je fehlendem Stück ein eigener Satz (vorher zeigte der Satz aufs Strickheft, auch wenn Foto oder Karte fehlten)
+     if (!a){ await A.m('Ein Foto habe ich. Aber nichts von dem, was er ihr geschrieben hat.'); return false; }
+     if (!b){ await A.m('Seine Karte habe ich. Aber noch kein Bild von ihm, das ich mitnehmen darf.'); return false; }
      await A.m('Noch etwas. Irgendetwas, das von ihr erzählt. Nicht nur von ihrem Warten.'); return false; },
    look:'Die Tür zur Gasse.',g:{look:'…'}},
  {id:'window',name:'Fenster',look:'Durch die Läden sieht man tief unten die Dächer, dahinter die Riva und die Mole. Das Ende der Mole. Sie konnte es von hier aus sehen.',open:'Ich lasse es, wie sie es gelassen hat.'},

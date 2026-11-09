@@ -46,7 +46,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     if (VAR) { await use('taxi'); await choose('Vratnik.'); await at('vratnik5'); await flag('k5.p.hajra'); await flag('k5.p.gate'); await log('Variante: Taxi nach Vratnik; Hajra kommt mit dem Schlüssel den Hang herauf; Mala am Tor: „Hier.“'); }
     else { await use('taxi'); await choose('Kovači.'); await at('pansion5'); await flag('k5.p.hajra'); await log('Taxi: Mama sagt das Wort nicht, Marko sagt „Kovači.“; Hajra: „Ružina snaha.“, Mačak, der Schlüssel');
     await travel('vratnik', 'vratnik5'); await flag('k5.p.gate'); await log('Vratnik: Mala am Tor: „Hier.“ – „Später.“; Mama geht ins Haus'); }
-    await use('garden'); await log('Die Plane (ohne Mala): „Hajras Holz, nehme ich an.“');
+    await use('garden'); await log('Die Plane (ohne Mala): „Ich hebe eine Ecke der Plane. Nur Holz.“');
     await mala(); await act('sense', 'garden'); await flag('k5.p.sensed'); await marko();
     await use('garden'); await note('b5_hand'); await note('j5_wo'); await inv('kanister'); await shot('kanister'); await log('Mala spürt Blau unter der Plane; Marko hebt sie: Papas Kanister, Malas Nachhall „Nemoj gledati, mali.“; Mama: „Ich will sehen, wo es war.“');
     await travel('neboder', 'neboder5'); await note('j5_nichtdrei'); await log('Taxi nach Alipašino Polje: „Nicht die Drei. Noch nicht.“');

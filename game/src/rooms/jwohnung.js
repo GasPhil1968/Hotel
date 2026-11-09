@@ -112,8 +112,10 @@ async function talkJasnaPro(A){ var J=A.npc('jasna');
     {t:'Wie war die Arbeit?',once:'jpW',go:async function(A){ await J.say('Wie immer. Frau Obermüller hat mich für ihre Tochter gehalten.'); await A.wait(300); await J.say('Ich habe nicht widersprochen. An Heiligabend widerspricht man nicht.'); }},
     {t:'Arbeitest du an Silvester?',once:'jpS',if:F(A,'k4.p.silvester'),go:async function(A){ await J.say('Dieses Jahr nicht.'); await A.wait(700); await J.say('Ich habe getauscht.'); await A.m('Wegen mir?'); await J.say('Wegen einer Kollegin. Sie hat Kinder.'); if (gHere(A)){ await A.wait(400); await A.g('Sie lügt wie du. Kurz.'); } }},
     {t:'Die Pantoffeln an der Tür …',once:'jpP',if:N(A,'u4_pantoffeln'),go:async function(A){ await A.wait(600); await J.say('Was ist mit ihnen?'); await A.wait(900); await A.m('Nichts.'); await J.say('Dann lass sie stehen.'); }},
-    {t:p?'(Ein Hemd anziehen.)':'(Später.)',silent:true,bye:true,go:async function(A){ if (p){ await A.m('Ein Hemd.'); await A.wait(300); await J.say('Das blaue. Ich habe es dir gebügelt. Es liegt auf dem Sofa.'); if (gHere(A)) await A.g('Sie hat dir ein Hemd gebügelt, bevor du da warst.'); } else await J.say('Ich laufe nicht weg. Ich wohne hier.'); }}
+    {t:(p&&F(A,'k4.p.lana'))?'(Ein Hemd anziehen.)':'(Später.)',silent:true,bye:true,go:async function(A){ if (p&&F(A,'k4.p.lana')){ await A.m('Ein Hemd.'); await A.wait(300); await J.say('Das blaue. Ich habe es dir gebügelt. Es liegt auf dem Sofa.'); if (gHere(A)) await A.g('Sie hat dir ein Hemd gebügelt, bevor du da warst.'); } else await J.say('Ich laufe nicht weg. Ich wohne hier.'); }}
   ]; });
+  // Analyse K4-B04 (P14): ohne „Ich habe Lana gefunden“ endet der Prolog nicht; Marko sagt, was fehlt
+  if (F(A,'k4.p.jasna') && !F(A,'k4.p.lana')) await A.m('Und Lana. Mama weiß noch nicht, dass ich sie gefunden habe.');
   if (F(A,'k4.p.jasna')) await M.k4DayCheck(A); }
 M.k4TalkJasnaPro=talkJasnaPro;
 // ---------------------------------------------------------------- Tag 1: die vergessene Brotdose

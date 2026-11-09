@@ -368,8 +368,10 @@ function tram(fb,x,y,cam,o){ var P=M.P, c=P.m2;
       if (G.flags['k5.e.tram']) tram(fb,Math.round(r[0]+r[2]/2-9),Math.round(r[1]+r[3]/2-9),v.cam,{three:true,faces:true,wheels:G.flags['k5.e.wheels']?'round':null}); } };
   // die Pension in der Nacht: der Atem am Fenster, eine Drei
   var Q=M.ROOMS.pansion5, q0=Q&&Q.dynamic;
-  if (Q) Q.dynamic=function(fb,v,S,G){ if (q0) q0(fb,v,S,G); var t=G.flags['k5.n1.fog']; if (G.phase!=='k5_n1' || !t || v.gt-t>6000 || v.gt<t) return;
-    var r=M.spot('pansion','window'); if (!r||!r[2]) return; var a=1-(v.gt-t)/6000, cx=Math.round(r[0]+r[2]/2-6), cy=Math.round(r[1]+r[3]/2-4); fogPatch(fb,cx-4,cy-4,22,18,v.cam,0.7*a);
+  // Markos Beschlag nach der Atem-Szene hält bis zur nächsten Handlung (k5.n1.fogOn) und vergeht danach in sechs Sekunden (k5.n1.fogEnd)
+  if (Q) Q.dynamic=function(fb,v,S,G){ if (q0) q0(fb,v,S,G); var t=G.flags['k5.n1.fog'], hold=G.flags['k5.n1.fogOn']>0, t0=hold?v.gt:(G.flags['k5.n1.fogEnd']||t);
+    if (G.phase!=='k5_n1' || !t || v.gt-t0>6000 || v.gt<t) return;
+    var r=M.spot('pansion','window'); if (!r||!r[2]) return; var a=1-(v.gt-t0)/6000, cx=Math.round(r[0]+r[2]/2-6), cy=Math.round(r[1]+r[3]/2-4); fogPatch(fb,cx-4,cy-4,22,18,v.cam,0.7*a);
     var th=G.flags['k5.n1.three']; if (th && v.gt>=th && v.gt-th<5000) pline(fb,[[cx+4,cy],[cx+8,cy],[cx+6,cy+4],[cx+8,cy+8],[cx+4,cy+8]],v.cam,P.m2); };
 })();
 })(M);

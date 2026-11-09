@@ -154,6 +154,7 @@ M.defineDeductions({
   'l3_m1+l3_m2':{to:'l3_flat',say:'Zwei Linien von fast derselben Stelle. Sie laufen fast nebeneinander her. Irgendwo zwischen hier und dem Meer. Das ist keine Adresse.'},
   'l3_flat+l3_m3':{to:'l3_area',say:'Die dritte Linie kommt von der Seite. Sie schneidet den Streifen fast quer. Übrig bleibt ein Stück Fluss. Südlich der Stadt, hinter dem Rand meines Plans.'},
   'l3_m1+l3_m3':{to:'l3_area',if:function(G){ return has(G,'l3_flat'); },no:'Zwei Linien. Ich brauche alle drei auf einem Blatt.',say:'Brückenkopf, Minarett, Westhang. Drei Linien, ein kurzes Stück Fluss.'},
+  'l3_m2+l3_m3':{to:'l3_area',if:function(G){ return has(G,'l3_flat'); },no:'Zwei Linien. Ich brauche alle drei auf einem Blatt.',say:'Minarett, Westhang, dazu der Brückenkopf. Drei Linien, ein kurzes Stück Fluss.'},   // Analyse K3-B05 (P16)
   'l3_area+l3_oldmap':{to:'l3_skela',say:'Auf der alten Karte, genau in dem Stück Fluss: ein Brückensymbol an einer Biegung. Und ein Name. Skela. Skela heißt Fähre.'},
   'l3_area+l3_current':{to:'l3_skela',if:function(G){ return has(G,'l3_oldmap'); },no:'Dino sagt: an der Biegung bei Skela. Aber wo ist das? Auf meinem Plan gibt es kein Skela. Ich brauche eine Karte, die weiter reicht.',say:'Dino hat recht. Die Biegung, das Stück Fluss, der Name auf der alten Karte. Skela.'},
   'l3_skela+l3_city':{to:'l3_person',say:'Gestern Skela, heute die Altstadt. Ein Ort wandert nicht. Die Leine hängt an jemandem, der heute in der Stadt ist.'},
@@ -174,6 +175,8 @@ M.defineDeductions({
   'e3_father+e3_kolar':{to:'e3_avoid',say:'Ich suche eine Vermisste für eine Mutter. Meinen Vater habe ich nie gesucht. Ich weiß, was Mala sagen würde.'}
 });
 // Reihenfolge der Nacht: kein fester Schluss, sondern das Ordnen (Overlay) nach dem Schließen des Notizbuchs (97_k3_peil.js, M.k3OrderNight)
+// Analyse K3-B05 (P16): Ljerkas Vlado und der rauchende Fahrer aus Malas Splitter – naheliegend, aber noch kein Schluss
+if (!M.DEDUCE['v3_ljerka+k3_c_bridge'] && !M.DEDUCE['k3_c_bridge+v3_ljerka']) M.DEDUCE['v3_ljerka+k3_c_bridge']=function(A){ M.sfx&&M.sfx('nope'); return {ok:false,t:'Ein Raucher am Steuer, Mehl auf der Ladefläche. Ljerkas Vlado und der Fahrer aus Malas Splitter könnten derselbe sein. Erst muss ich ihn finden.'}; };
 // Analyse K3-B01: naheliegender Fehlgriff mit eigener Antwort
 if (!M.DEDUCE['a3_roof+a3_slept'] && !M.DEDUCE['a3_slept+a3_roof']) M.DEDUCE['a3_roof+a3_slept']=function(A){ M.sfx&&M.sfx('nope'); return {ok:false,t:'Zlata schlief am Herd. Und oben brannte Licht. Wer war oben? Das muss Bato selbst sagen.'}; };
 M.DEDUCE['a3_lightseq+v3_part1']=function(A){ if (A.G.notes.indexOf('a3_lightroom')>=0) return {ok:false,t:'Das habe ich schon geordnet.'}; if (M.k3Queue) M.k3Queue('order');
