@@ -8,8 +8,8 @@ M.malaLeashVec=function(G,ma,mk){ if (M.chapterOf(G)!==2) return null; if (G.fla
 // ---------------------------------------------------------------- Splitter: „Neunter Stock“ (nach dem Versprechen)
 M.k2FragNinth=async function(A){ if (!N(A,'m2_promise') || N(A,'m2_f_ninth') || !A.G.malaOn) return false;
   await A.g('Ein Versprechen.'); await A.wait(800); await A.g('Ich habe zwei Fahrscheine gekauft, für eine Fahrt, die es nicht gab. Für später.');
-  await A.memory({title:'Splitter',tint:'ghost',draw:M.mem&&M.mem.k2_ninth,lines:['Ein Treppenhaus ohne Licht. Ein Mädchen steigt die Stufen hinauf, zählt halblaut.','„Hundertzwanzig. Hunderteinundzwanzig.“ Der Aufzug ging nie.','Im neunten Stock bleibt sie stehen und sieht auf die Fahrscheine in ihrer Hand.','Zwei Stockwerke tiefer schlägt eine Tür. Ein Junge ruft: „Mala! Wann?“']});
-  A.note('m2_f_ninth'); await A.g('Neunter Stock. Der Aufzug ging nie. Ich habe die Stufen gezählt.'); await A.wait(600); await A.g('Hundertvierundvierzig.'); A.save(); return true; };
+  await A.memory({title:'Splitter',tint:'ghost',draw:M.mem&&M.mem.k2_ninth,lines:['Ein Treppenhaus ohne Licht. Ein Mädchen steigt die Stufen hinauf, zählt halblaut.','„Hundertzwanzig. Hunderteinundzwanzig.“ Der Aufzug geht schon lange nicht mehr.','Im neunten Stock bleibt sie stehen und sieht auf die Fahrscheine in ihrer Hand.','Zwei Stockwerke tiefer schlägt eine Tür. Ein Junge ruft: „Mala! Wann?“']});
+  A.note('m2_f_ninth'); await A.g('Neunter Stock. Der Aufzug ging nicht mehr. Ich habe die Stufen gezählt.'); await A.wait(600); await A.g('Hundertvierundvierzig.'); A.save(); return true; };
 // ---------------------------------------------------------------- Mala ansehen
 M.k2LookAtMala=async function(A){ var p=A.G.phase;
   if (p==='k2_fin_n') return A.m('Mala. Schnee fällt durch sie hindurch und schmilzt nicht. Sie sieht zum ersten Mal aus, als wäre sie angekommen.');

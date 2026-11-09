@@ -269,7 +269,8 @@ M.PENDING_X=M.PENDING_X||[];
 [ {from:'k3_pro', guard:'k3.ev0.started'}, {from:'k3_pro_n', guard:'k3.d1.started'}, {from:'k3_d1', guard:'k3.d1n.started'}, {from:'k3_d1_n', guard:'k3.d2.started'},
   {from:'k3_d2', guard:'k3.d2n.started'}, {from:'k3_d2_n', guard:'k3.d3.started'}, {from:'k3_d3', guard:'k3.fin.started'},
   {from:'k3_fin_n', guard:'k3.epi.started', when:function(){ return true; }, run:function(A){ return M.k3FinLoad(A); }},
-  {from:'k3_epi', guard:'k3.epid.started'} ].forEach(function(r){ M.PENDING_X.push(r); });
+  {from:'k3_epi', guard:'k3.epid.started'},
+  {from:'k3_epi_d', when:function(G){ return !G.flags['k3.e.nada'] && G.pos && G.pos.marko && G.pos.marko.room==='ostbus'; }, run:function(A){ return M.k3NadaArrives(A); }} ].forEach(function(r){ M.PENDING_X.push(r); });   // Kann-Liste: Nadas Ankunft nach dem Laden fortsetzen
 // nach dem Laden in der Finalnacht: Abfahrt neu, oder die Szene am letzten Zwischenstand fortsetzen (S3: M.k3FinResume)
 M.k3FinLoad=async function(A){ if (A.flag('k3.a.limbo')) return M.k3StartEpilogue(A); if (!A.flag('k3.fin.drive')) return M.k3FinBegin(A); if (M.k3FinResume) return M.k3FinResume(A); };
 

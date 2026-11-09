@@ -218,11 +218,7 @@ M.HINTS_K3=[
      'An der Glocke noch einmal spüren.',
      'Als Mala an der Glocke spüren.']},
  // Analyse K3-B01: Das Ordnen der Nacht ist freiwillig; Bato reagiert schon auf Dachfenster und Lichtfolge (d3f). Kein eigenes Thema mehr.
- {id:'d3e',t:'Die Nacht ordnen',open:function(G){ return false; },
-  s:['Läuten, Licht, Läuten. Und davor Vlados Zeiten.',
-     'Die Reihenfolge reicht. Minuten braucht es nicht.',
-     function(G){ return N(G,'v3_part1')?'Im Notizbuch „Dunkel, hell, dunkel“ und „Ankunft und Abfahrt“ zusammen ansehen.':'Vlados Zeiten fehlen noch: Ankunft und Abfahrt. Er hat sie am Samstag genannt.'; },
-     'Die beiden Notizen verbinden und die Karten der Reihe nach legen.']},
+ // Kann-Liste: das Thema d3e („Die Nacht ordnen“) konnte nie aufgehen (open: false, seit P05 ohne Ordnen) und ist entfernt
  {id:'d3f',t:'Batos Licht',open:function(G){ return (N(G,'a3_lightroom')||(N(G,'a3_roof')&&N(G,'a3_lightseq'))) && !N(G,'a3_thrice'); },
   s:['In Batos Kammer hat jemand Licht gemacht, während Lana läutete. Das beweist noch nicht, dass er wach war.',
      'Was sagt Bato selbst über diese Nacht? Für ihn ist es noch dieselbe Nacht.',

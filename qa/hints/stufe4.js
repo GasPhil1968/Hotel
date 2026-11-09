@@ -84,6 +84,13 @@ const SPECS = {
   k1_sanja: () => P.act('use', 'Markos Tisch', /fest/i),
   k1_verify: () => P.talk('Sanja', /Montag/),
   k1_key: () => P.talk('Zdenka', /Wohnung/),
+  // Kann-Liste: Themen, die in keinem Durchlauf offen waren (Stände aus qa/hints/varianten.js)
+  k1_p31b: () => P.act('use', 'Laptop', /Seite 30/),
+  k1_p31c: () => P.act('use', 'Laptop', /Den Satz fertig/, /rote Druckleuchte/),
+  k1_gasse: () => P.talk('Zdenka', /In ihrem Heft/),
+  k1_return: () => P.talk('Zdenka', /Hier ist Ihr Schlüssel/),
+  k1_test: () => P.talk('_mala', /Dann sieh nach/),
+  k3_call: () => P.act('use', 'Anrufbeantworter'),
   k1_enter: () => P.act('open', 'Ivkas Tür'),
   k1_list: () => P.act('read', 'Nähkorb'),
   k1_knot: (t) => /Schuhkarton öffnen/.test(t) ? P.act('open', 'Schuhkarton') : [P.act('take', 'Nähkorb'), P.use('Schuhkarton', 'needle')],
@@ -218,6 +225,7 @@ const SPECS = {
   n2d: () => P.talk('bato'),
   n2f: () => [P.room('skela_most'), P.act('walk', 'exit_d')],
   d3a: () => P.talk('zlata'),
+  d3b: () => P.talk('Zlata', /Was lag morgens an der Glocke/),
   d3c: () => [P.use('house', 'mobitel', /Dachfenster/), P.mala(), P.act('look', 'far_house')],
   d3d: () => [P.mala(), P.act('sense', /Glocke/)],
   d3f: (t, G) => P.ask('Bato', /Licht in Batos Kammer/.test(t) ? 'a3_lightroom' : (G.notes.indexOf('a3_lightseq') >= 0 ? 'a3_lightseq' : 'a3_roof')),
@@ -243,6 +251,9 @@ const SPECS = {
   f3b2: () => [P.room('skela_most'), P.act('walk', 'exit_l')],
   f3c2: () => P.talk('Zlata', /wach/),
   f3d: () => P.talk('_mala'),
+  f3c: () => P.talk('Zlata'),
+  e3a: () => P.item('use2', 'Handy', null, /Nada in Sarajevo/),
+  e3c: () => P.travel('Ostbusbahnhof'),
   f3e: () => P.act('take', /Seil/),
   e3b: () => [P.go(/Alte Brücke|Brücke/), P.act('use', 'crest')],
   e3d: (t) => /^Nada das Skizzenbuch/.test(t) ? P.give('Nada', 'skizzenbuch') : /^Nada Zlatas Brief/.test(t) ? [P.give('Nada', 'brief1996'), P.give('Nada', 'skizzenbuch')]
@@ -295,6 +306,7 @@ const SPECS = {
   f4d: () => P.act('walk', /214/),
   e4a: () => P.talk('Mama', /Nada wartet/),
   x4fight: () => P.wait(75000), x4bridge: () => P.wait(75000),
+  x4day: () => P.wait(5000),   // der nächste Abschnitt beginnt im Leerlauf von selbst (96_k4_story.js, idleHook)
 
   // ================================================================ Kapitel 5: Sarajevo (15_hints_k5.js)
   h5a: () => P.act('use', 'taxi', /Kovači/),

@@ -58,7 +58,7 @@ var HS_HT=[
  {id:'notices',name:'Aushänge',look:'Aushänge: Stromabschaltung am Dienstag, Hausversammlung am Mittwoch, ein Kater entlaufen, „Mačak, sehr dick, hört auf nichts“. Hajras ist es nicht.',
    g:{look:'Ein Kater. Er kommt zurück. Kater kommen immer zurück.'}},
  {id:'elevator',name:'Aufzug',look:'Der Aufzug. Auf der Tür ein Zettel: „VAN FUNKCIJE“. Außer Betrieb. Derselbe Zettel wie vor achtzehn Jahren, nur weißer.',
-   use:'Ich drücke trotzdem. Es passiert, was seit achtzehn Jahren passiert.',g:{look:'Der ging nie. Wir sind immer gelaufen. Ich schneller.'}},
+   use:'Ich drücke trotzdem. Es passiert, was seit achtzehn Jahren passiert.',g:{look:'Seit dem Krieg nicht mehr. Wir sind immer gelaufen. Ich schneller.'}},
  {id:'stairs',name:'Treppe',exit:{to:'stiege5'},look:'Die Treppe. Grün gestrichen bis auf Schulterhöhe, darüber weiß. Neun Stockwerke.',
    g:{look:'Neun. Ich bin sie jeden Samstag gelaufen. Zum siebten. Dann wieder runter, mit ihm.'}},
  {id:'chair',name:'Stuhl',look:'Dragicas Stuhl neben dem Eingang, mit einem Kissen. Von hier aus sieht sie alles, was kommt und geht.',g:{look:'Sie hat mich nie gesehen. Sie hat alles gesehen.'}},

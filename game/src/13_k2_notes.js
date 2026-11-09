@@ -69,7 +69,7 @@ n('m2_f_saturday','m2','Malas Splitter','Splitter: Samstags','Malas Splitter, al
 n('m2_f_clock','m2','Malas Splitter','Splitter: die leuchtende Uhr','Malas Splitter unter der Kula: „Wir trafen uns auch unter einer Uhr. Einer mit leuchtenden Ziffern.“',{show:true,p:'p:mala',frag:true});
 n('m2_f_voice','m2','Malas Splitter','Splitter: „Halt dich fest, Mali!“','Malas Splitter beim Foto der Haltestelle: Eine Stimme, ihre eigene: „Halt dich fest, Mali!“ Samstag, 11:10.',{show:true,p:'p:mala',frag:true});
 n('m2_f_snow','m2','Malas Splitter','Splitter: der schwarze Schnee','Malas Splitter an der Lateinerbrücke: „Ich habe auch eins gefangen, ein schwarzes Blatt. Ich habe es jemandem geschenkt.“',{show:true,p:'p:mala',frag:true});
-n('m2_f_ninth','m2','Malas Splitter','Splitter: neunter Stock','Malas Splitter: „Neunter Stock. Der Aufzug ging nie. Ich habe die Stufen gezählt.“',{show:true,p:'p:mala',frag:true});
+n('m2_f_ninth','m2','Malas Splitter','Splitter: neunter Stock','Malas Splitter: „Neunter Stock. Der Aufzug ging nicht mehr. Ich habe die Stufen gezählt.“',{show:true,p:'p:mala',frag:true});
 n('m2_photo','m2','Die Drei','Foto: Haltestelle 1987','Ein Foto aus Jakobs Kiste: Haltestelle Alipašino Polje, 1987. Hinter der Straßenbahn ein Hochhaus mit einer Uhr auf dem Dach.',{show:true,p:'i:photo_stop'});
 n('m2_stop','m2','Die Drei','Die alte Haltestelle','Rade: Die Haltestelle Alipašino Polje lag früher anders. Nach dem Krieg wurde sie verlegt.',{p:'p:rade'});
 n('m2_clocktower','m2','Die Drei','Das Hochhaus mit der Uhr','Rade: Nur ein Hochhaus hatte eine Uhr auf dem Dach: das Siebener in der B-Phase. Die Uhr brannte 1992 aus.',{show:true,p:'p:rade'});

@@ -4930,7 +4930,7 @@ n('m2_f_saturday','m2','Malas Splitter','Splitter: Samstags','Malas Splitter, al
 n('m2_f_clock','m2','Malas Splitter','Splitter: die leuchtende Uhr','Malas Splitter unter der Kula: „Wir trafen uns auch unter einer Uhr. Einer mit leuchtenden Ziffern.“',{show:true,p:'p:mala',frag:true});
 n('m2_f_voice','m2','Malas Splitter','Splitter: „Halt dich fest, Mali!“','Malas Splitter beim Foto der Haltestelle: Eine Stimme, ihre eigene: „Halt dich fest, Mali!“ Samstag, 11:10.',{show:true,p:'p:mala',frag:true});
 n('m2_f_snow','m2','Malas Splitter','Splitter: der schwarze Schnee','Malas Splitter an der Lateinerbrücke: „Ich habe auch eins gefangen, ein schwarzes Blatt. Ich habe es jemandem geschenkt.“',{show:true,p:'p:mala',frag:true});
-n('m2_f_ninth','m2','Malas Splitter','Splitter: neunter Stock','Malas Splitter: „Neunter Stock. Der Aufzug ging nie. Ich habe die Stufen gezählt.“',{show:true,p:'p:mala',frag:true});
+n('m2_f_ninth','m2','Malas Splitter','Splitter: neunter Stock','Malas Splitter: „Neunter Stock. Der Aufzug ging nicht mehr. Ich habe die Stufen gezählt.“',{show:true,p:'p:mala',frag:true});
 n('m2_photo','m2','Die Drei','Foto: Haltestelle 1987','Ein Foto aus Jakobs Kiste: Haltestelle Alipašino Polje, 1987. Hinter der Straßenbahn ein Hochhaus mit einer Uhr auf dem Dach.',{show:true,p:'i:photo_stop'});
 n('m2_stop','m2','Die Drei','Die alte Haltestelle','Rade: Die Haltestelle Alipašino Polje lag früher anders. Nach dem Krieg wurde sie verlegt.',{p:'p:rade'});
 n('m2_clocktower','m2','Die Drei','Das Hochhaus mit der Uhr','Rade: Nur ein Hochhaus hatte eine Uhr auf dem Dach: das Siebener in der B-Phase. Die Uhr brannte 1992 aus.',{show:true,p:'p:rade'});
@@ -13071,11 +13071,7 @@ M.HINTS_K3=[
      'An der Glocke noch einmal spüren.',
      'Als Mala an der Glocke spüren.']},
  // Analyse K3-B01: Das Ordnen der Nacht ist freiwillig; Bato reagiert schon auf Dachfenster und Lichtfolge (d3f). Kein eigenes Thema mehr.
- {id:'d3e',t:'Die Nacht ordnen',open:function(G){ return false; },
-  s:['Läuten, Licht, Läuten. Und davor Vlados Zeiten.',
-     'Die Reihenfolge reicht. Minuten braucht es nicht.',
-     function(G){ return N(G,'v3_part1')?'Im Notizbuch „Dunkel, hell, dunkel“ und „Ankunft und Abfahrt“ zusammen ansehen.':'Vlados Zeiten fehlen noch: Ankunft und Abfahrt. Er hat sie am Samstag genannt.'; },
-     'Die beiden Notizen verbinden und die Karten der Reihe nach legen.']},
+ // Kann-Liste: das Thema d3e („Die Nacht ordnen“) konnte nie aufgehen (open: false, seit P05 ohne Ordnen) und ist entfernt
  {id:'d3f',t:'Batos Licht',open:function(G){ return (N(G,'a3_lightroom')||(N(G,'a3_roof')&&N(G,'a3_lightseq'))) && !N(G,'a3_thrice'); },
   s:['In Batos Kammer hat jemand Licht gemacht, während Lana läutete. Das beweist noch nicht, dass er wach war.',
      'Was sagt Bato selbst über diese Nacht? Für ihn ist es noch dieselbe Nacht.',
@@ -53093,7 +53089,7 @@ var HS_HT=[
  {id:'notices',name:'Aushänge',look:'Aushänge: Stromabschaltung am Dienstag, Hausversammlung am Mittwoch, ein Kater entlaufen, „Mačak, sehr dick, hört auf nichts“. Hajras ist es nicht.',
    g:{look:'Ein Kater. Er kommt zurück. Kater kommen immer zurück.'}},
  {id:'elevator',name:'Aufzug',look:'Der Aufzug. Auf der Tür ein Zettel: „VAN FUNKCIJE“. Außer Betrieb. Derselbe Zettel wie vor achtzehn Jahren, nur weißer.',
-   use:'Ich drücke trotzdem. Es passiert, was seit achtzehn Jahren passiert.',g:{look:'Der ging nie. Wir sind immer gelaufen. Ich schneller.'}},
+   use:'Ich drücke trotzdem. Es passiert, was seit achtzehn Jahren passiert.',g:{look:'Seit dem Krieg nicht mehr. Wir sind immer gelaufen. Ich schneller.'}},
  {id:'stairs',name:'Treppe',exit:{to:'stiege5'},look:'Die Treppe. Grün gestrichen bis auf Schulterhöhe, darüber weiß. Neun Stockwerke.',
    g:{look:'Neun. Ich bin sie jeden Samstag gelaufen. Zum siebten. Dann wieder runter, mit ihm.'}},
  {id:'chair',name:'Stuhl',look:'Dragicas Stuhl neben dem Eingang, mit einem Kissen. Von hier aus sieht sie alles, was kommt und geht.',g:{look:'Sie hat mich nie gesehen. Sie hat alles gesehen.'}},
@@ -55519,6 +55515,8 @@ M.room('ostbus',{ name:'Ostbusbahnhof', scape:'k3_ostbus',
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G, p=G.phase;
+    // Kann-Liste (Hinweisthema e3c): Wurde Nadas Ankunft beim Laden unterbrochen, kommt ihr Bus, sobald Marko wieder hier ist (vorher kam sie nie)
+    if (p==='k3_epi_d' && !G.flags['k3.e.nada'] && !A.isMala() && M.k3NadaArrives) return M.k3NadaArrives(A);
     if (!A.malaHere() || A.isMala() || G.flags['mala.lock']) return;
     if (p==='k3_d1' && A.first('obD1')){ await A.m('Bei Bura sieht der Busbahnhof aus wie frisch gewaschen. Man sieht bis zum Velež, jeden Stein.'); await A.g('Der Wind geht durch mich durch. Das kitzelt.'); }
     else if (p==='k3_d2' && A.first('obD2')){ await A.g('Hier zieht es nicht. Es zieht in die Altstadt. Heute.'); }
@@ -66071,7 +66069,8 @@ M.PENDING_X=M.PENDING_X||[];
 [ {from:'k3_pro', guard:'k3.ev0.started'}, {from:'k3_pro_n', guard:'k3.d1.started'}, {from:'k3_d1', guard:'k3.d1n.started'}, {from:'k3_d1_n', guard:'k3.d2.started'},
   {from:'k3_d2', guard:'k3.d2n.started'}, {from:'k3_d2_n', guard:'k3.d3.started'}, {from:'k3_d3', guard:'k3.fin.started'},
   {from:'k3_fin_n', guard:'k3.epi.started', when:function(){ return true; }, run:function(A){ return M.k3FinLoad(A); }},
-  {from:'k3_epi', guard:'k3.epid.started'} ].forEach(function(r){ M.PENDING_X.push(r); });
+  {from:'k3_epi', guard:'k3.epid.started'},
+  {from:'k3_epi_d', when:function(G){ return !G.flags['k3.e.nada'] && G.pos && G.pos.marko && G.pos.marko.room==='ostbus'; }, run:function(A){ return M.k3NadaArrives(A); }} ].forEach(function(r){ M.PENDING_X.push(r); });   // Kann-Liste: Nadas Ankunft nach dem Laden fortsetzen
 // nach dem Laden in der Finalnacht: Abfahrt neu, oder die Szene am letzten Zwischenstand fortsetzen (S3: M.k3FinResume)
 M.k3FinLoad=async function(A){ if (A.flag('k3.a.limbo')) return M.k3StartEpilogue(A); if (!A.flag('k3.fin.drive')) return M.k3FinBegin(A); if (M.k3FinResume) return M.k3FinResume(A); };
 
@@ -66837,8 +66836,8 @@ M.malaLeashVec=function(G,ma,mk){ if (M.chapterOf(G)!==2) return null; if (G.fla
 // ---------------------------------------------------------------- Splitter: „Neunter Stock“ (nach dem Versprechen)
 M.k2FragNinth=async function(A){ if (!N(A,'m2_promise') || N(A,'m2_f_ninth') || !A.G.malaOn) return false;
   await A.g('Ein Versprechen.'); await A.wait(800); await A.g('Ich habe zwei Fahrscheine gekauft, für eine Fahrt, die es nicht gab. Für später.');
-  await A.memory({title:'Splitter',tint:'ghost',draw:M.mem&&M.mem.k2_ninth,lines:['Ein Treppenhaus ohne Licht. Ein Mädchen steigt die Stufen hinauf, zählt halblaut.','„Hundertzwanzig. Hunderteinundzwanzig.“ Der Aufzug ging nie.','Im neunten Stock bleibt sie stehen und sieht auf die Fahrscheine in ihrer Hand.','Zwei Stockwerke tiefer schlägt eine Tür. Ein Junge ruft: „Mala! Wann?“']});
-  A.note('m2_f_ninth'); await A.g('Neunter Stock. Der Aufzug ging nie. Ich habe die Stufen gezählt.'); await A.wait(600); await A.g('Hundertvierundvierzig.'); A.save(); return true; };
+  await A.memory({title:'Splitter',tint:'ghost',draw:M.mem&&M.mem.k2_ninth,lines:['Ein Treppenhaus ohne Licht. Ein Mädchen steigt die Stufen hinauf, zählt halblaut.','„Hundertzwanzig. Hunderteinundzwanzig.“ Der Aufzug geht schon lange nicht mehr.','Im neunten Stock bleibt sie stehen und sieht auf die Fahrscheine in ihrer Hand.','Zwei Stockwerke tiefer schlägt eine Tür. Ein Junge ruft: „Mala! Wann?“']});
+  A.note('m2_f_ninth'); await A.g('Neunter Stock. Der Aufzug ging nicht mehr. Ich habe die Stufen gezählt.'); await A.wait(600); await A.g('Hundertvierundvierzig.'); A.save(); return true; };
 // ---------------------------------------------------------------- Mala ansehen
 M.k2LookAtMala=async function(A){ var p=A.G.phase;
   if (p==='k2_fin_n') return A.m('Mala. Schnee fällt durch sie hindurch und schmilzt nicht. Sie sieht zum ersten Mal aus, als wäre sie angekommen.');

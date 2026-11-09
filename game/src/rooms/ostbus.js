@@ -189,6 +189,8 @@ M.room('ostbus',{ name:'Ostbusbahnhof', scape:'k3_ostbus',
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G, p=G.phase;
+    // Kann-Liste (Hinweisthema e3c): Wurde Nadas Ankunft beim Laden unterbrochen, kommt ihr Bus, sobald Marko wieder hier ist (vorher kam sie nie)
+    if (p==='k3_epi_d' && !G.flags['k3.e.nada'] && !A.isMala() && M.k3NadaArrives) return M.k3NadaArrives(A);
     if (!A.malaHere() || A.isMala() || G.flags['mala.lock']) return;
     if (p==='k3_d1' && A.first('obD1')){ await A.m('Bei Bura sieht der Busbahnhof aus wie frisch gewaschen. Man sieht bis zum Velež, jeden Stein.'); await A.g('Der Wind geht durch mich durch. Das kitzelt.'); }
     else if (p==='k3_d2' && A.first('obD2')){ await A.g('Hier zieht es nicht. Es zieht in die Altstadt. Heute.'); }
