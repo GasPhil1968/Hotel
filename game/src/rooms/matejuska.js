@@ -95,10 +95,13 @@ var HS=[
  {id:'ledana',name:'Die alte Ledana',look:'Die alte Eisfabrik. Rote Ziegel, kaputte Fenster, ein Schriftzug, von dem nur noch LEDA übrig ist.',g:{look:'Da drin ist jemand. Ich höre ihn bis hierher.',sense:'Er wartet. Auf etwas, das gleich passieren soll. Seit Jahren.'}},
  {id:'fence',name:'Bauzaun',look:async function(A){ await A.m('Ein Bauzaun mit Kettentor. „ZABRANJEN PRISTUP – RUŠENJE 21.11.“ Betreten verboten, Abriss am Montag.'); if (A.G.phase==='c2') A.note('c2_demolish'); },
    use:'Zu hoch, und oben Stacheldraht. Ich bin dreiunddreißig, nicht dreizehn.', open:'Das Tor ist mit einer Kette verschlossen.',
+   // Analyse K1-B09 (P24): das Brecheisen am Zaun bekam nur den Standardsatz
+   with:{ crowbar:'Die Kette ist dicker als das Eisen. Und das Tor sieht die halbe Matejuška. Es muss einen anderen Weg geben.' },
    g:{look:'Ein Zaun. Für mich ist das nur Luft.',sense:'Viele kleine Hände haben hier gerüttelt. Kinder.'}},
  {id:'sign',name:'Schild',look:'„ZABRANJEN PRISTUP – RUŠENJE 21.11.“ Betreten verboten. Abriss am einundzwanzigsten.',read:'„Investor: Adriatic Pearl d.o.o. – Hotel mit 120 Zimmern.“ Eine Perle. Natürlich.'},
  {id:'crates',name:'Fischkisten am Zaun',vis:function(S){ return !S.cratesMoved; },look:'Ein Stapel alter Fischkisten am Zaun. Sie stehen ein bisschen zu ordentlich da.',
-   push:async function(A){ if (A.G.phase!=='c2'){ return A.m('Warum sollte ich nachts Fischkisten verschieben?'); } if (!A.hasNote('c2_gap')) return A.m('Warum sollte ich Fischkisten verschieben? Weil sie da sind?');
+   // Analyse K1-B10 (P24): Die Kisten „stehen ein bisschen zu ordentlich da“; wer den Zaun kennt, darf sie auch ohne Malas Blick verschieben
+   push:async function(A){ if (A.G.phase!=='c2'){ return A.m('Warum sollte ich nachts Fischkisten verschieben?'); } if (!A.hasNote('c2_gap') && !A.hasNote('c2_demolish')) return A.m('Fischkisten. Erst will ich wissen, was hinter diesem Zaun ist.');
      await A.anim('push'); A.sfx('stone'); A.set('cratesMoved',true); await A.m('Dahinter: ein Zaunfeld, nur mit Draht festgemacht. Unten ist der Boden blank getreten.'); },
    g:{look:async function(A){ if (A.G.phase!=='c2') return A.g('Alte Kisten.'); await A.g('Hinter den Kisten ist das Zaunfeld lose. Die Kinder kriechen da durch. Ich sehe ihre Spuren.'); A.note('c2_gap'); },
      sense:async function(A){ await A.g('Hinter den Kisten ist das Zaunfeld lose. Die Kinder kriechen da durch.'); A.note('c2_gap'); }}},

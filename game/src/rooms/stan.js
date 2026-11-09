@@ -21,7 +21,8 @@ async function talkNada(A){ var N=A.npc('nada');
     {t:'Haben Sie nie das Zimmer aufgemacht?',once:'naS2',if:A.S.lanaOpen,go:async function(A){ await N.say('Wozu? Damit es nach mir riecht statt nach ihr?'); await A.wait(700); await N.say('Jeden Tag stehe ich vor der Tür. Jeden Tag gehe ich wieder in die Küche.'); }},
     A.askOpt({ f2_memory:async function(A){ await N.say('Du erinnerst dich.'); await A.wait(800); await N.say('Ich dachte, du hast sie vergessen. Du hast nie geschrieben. Keiner von euch hat je geschrieben.'); await A.m('Ich habe sie vergessen. Und jetzt nicht mehr.'); },
       f2_postcard:'„Ich hole Mali.“ Ich habe nie verstanden, was sie damit meinte. Du warst doch in Vratnik. Was gab es da zu holen?', m2_lana:'Lana Delić. Geboren am dritten März sechsundsiebzig. Sie hat geschrien wie eine Sirene, ganze Nächte. Esad hat gesagt, das wird eine Sängerin. Es wurde eine Malerin.',
-      f2_photo:'Mala i Mali. Ruža hat das Foto gemacht, auf der Treppe in Vratnik. Lana hat es überall herumgezeigt. Dann war es weg.', f2_missing:'Vermisst. Das Wort sagen sie beim Roten Kreuz. Ich sage: Sie kommt nicht heim.',
+      // Analyse K2-B12 (P24): Ruža ist auf dem Foto, hinter den Kindern die Drei (12_k2_items.js, 13_k2_notes.js f2_photo, Kapitel 4)
+      f2_photo:'Mala i Mali. Ruža mit euch zwei, an der Haltestelle der Drei. Hinten hat sie es selbst beschriftet. Lana hat es überall herumgezeigt. Dann war es weg.', f2_missing:'Vermisst. Das Wort sagen sie beim Roten Kreuz. Ich sage: Sie kommt nicht heim.',
       f2_rcm:'Eine Nachricht vom Roten Kreuz? An dich? Und Ruža hat …', f2_cameback:'Sie ist losgefahren, um dich zu holen. Natürlich. Natürlich ist sie das.' },'Ich weiß nichts. Ich weiß seit siebzehn Jahren nichts.'),
     ...M.k2Extra('nada',A,N),
     {t:'Danke, Frau Delić.',bye:true,go:async function(A){ await N.say('Nada. Du hast früher Teta Nada gesagt.'); }}

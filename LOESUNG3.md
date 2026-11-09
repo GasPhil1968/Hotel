@@ -52,11 +52,11 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 
 **5. Drei Stationen (Malas Peilung)**
 Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
-- **Station 1, Alte Brücke:** den **Brückenkopf** benutzen. Antippen: **erster Kran** und **zweiter Kran**. Die Koski-Moschee kommt auf den Plan.
-- **Station 2, Koski:** beim Kassierer „Eine Karte fürs Minarett …“ kaufen. Durch die Minaretttür hinauf, den **Ausblick** benutzen. Antippen: **Glockenturm** und **zweiter Kran**.
+- **Station 1, Alte Brücke:** den **Brückenkopf** benutzen. Antippen: **Glockenturm** und **zweiter Kran**. Die Koski-Moschee kommt auf den Plan.
+- **Station 2, Koski:** beim Kassierer „Eine Karte fürs Minarett …“ kaufen. Durch die Minaretttür hinauf, den **Ausblick** benutzen. Antippen: **Hochhaus** und **erster Kran**.
 - Nach der zweiten Peilung zieht Marko den Schluss selbst → **zu flach geschnitten**. Die beiden Fächer schneiden sich so flach, dass ein langer Streifen bleibt. Es braucht einen Standort weit seitlich: drüben, und hoch. Die Straßenbrücke erscheint. Mala sagt: „Über den Fluss. Nein.“
 - **Straßenbrücke:** Mala macht die Augen zu und hält sich an Markos Ärmel fest. **[G]** Man führt Mala bis ans Westende. Bleibt sie stehen, öffnet sie kurz die Augen; das ist ohne Folgen. Drüben ist das Westufer offen (Bulevar, Westbusbahnhof, Partisanenfriedhof).
-- **Station 3, Partisanenfriedhof:** Die Glocken läuten, Mala ist fort. Warten, bis sie zurückkommt: „Zu laut.“ – „Wenn ich es weiß.“ Dann den **Ausblick** benutzen. Antippen: **Hochhaus** und **Flussbiegung**. Mala: „Doch. Wir.“
+- **Station 3, Partisanenfriedhof:** Die Glocken läuten, Mala ist fort. Warten, bis sie zurückkommt: „Zu laut.“ – „Wenn ich es weiß.“ Dann den **Ausblick** benutzen. Antippen: **Mühle** und **Flussbiegung**. Mala: „Doch. Wir.“
 - Nach der dritten Peilung zieht Marko den Schluss selbst → **Der Bereich liegt hinter dem Kartenrand**.
 
 **6. Die Karte von 1985 und Mate**

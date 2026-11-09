@@ -36,6 +36,15 @@ M.trAdd('bhs', {
   'Mala hört hin, was Dinko beim Flicken murmelt.': 'Mala osluškuje što Dinko mrmlja dok krpi.',   // m
   'Ich höre hin, was Dinko beim Flicken murmelt.': 'Ja osluškujem što Dinko mrmlja dok krpi.',   // g
   'Zu Mala wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na Malu i prisluškivati Dinka dok krpi.',   // m
-  'Zu mir wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na mene i prisluškivati Dinka dok krpi.'   // g
+  'Zu mir wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na mene i prisluškivati Dinka dok krpi.',   // g
+  // Kann-Liste P24 (Niedrig-Befunde K1-B09 bis K1-B13)
+  'Die Kette ist dicker als das Eisen. Und das Tor sieht die halbe Matejuška. Es muss einen anderen Weg geben.': 'Lanac je deblji od pajsera. A vrata vidi pola Matejuške. Mora biti neki drugi put.',   // Marko
+  'Fischkisten. Erst will ich wissen, was hinter diesem Zaun ist.': 'Gajbe za ribu. Prvo hoću znati što je iza ove ograde.',   // Marko
+  'Die Kisten sind weg. Dahinter ist die Lücke.': 'Gajbe su maknute. Iza njih je rupa.',   // Hinweis
+  'Als Marko durch die Lücke im Zaun kriechen.': 'Kao Marko se provući kroz rupu u ogradi.',   // Hinweis
+  'Ich habe ihn dir schon gelesen.': 'Već sam ti ga pročitala.',   // Mala
+  'Halt ihn mir hin. Dann lese ich dir, was das Salz gefressen hat.': 'Drži mi ga. Onda ću ti pročitati ono što je so pojela.',   // Mala
+  'Er klebt zusammen. So kann ich die Schrift nicht sehen.': 'Zalijepio se. Ovako ne vidim rukopis.',   // Mala
+  'Da lag ein Zettel. Von Nina. Sie hat ihn jetzt wieder. Aber ich weiß noch, was drinstand.': 'Tamo je bila poruka. Od Nine. Sad je opet kod nje. Ali još znam što je pisalo.'   // Marko
 });
 })(M);

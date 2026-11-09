@@ -21,7 +21,9 @@ M.defineItems({
     look:'Die Zeitung von heute. Seite 14, unten: „Die Stillen“. Mein Text über Ivka Perić.', read:function(A){ return M.readNewspaper(A); }, mala:'Zweitausend Zeichen. Er hat sie gut gewählt.'},
   letter_t:{name:'Tonćis Brief',icon:function(w){ w.rect(6,5,20,15,P.s4); w.hl(8,22,8,P.s2); w.hl(8,18,10,P.s3); w.hl(8,23,12,P.s2); w.hl(8,15,14,P.s3); w.rect(14,9,6,4,P.e3); w.px(20,15,P.e2); },
     look:function(A){ return A.m(A.flag('c1.letterOpen')?'Ein Brief, der 27 Jahre in einem Seesack lag. Das Salz hat die Hälfte der Wörter gefressen.':'Ein Brief, der 27 Jahre in einem Seesack lag. Das Salz hat die Seiten zu einem Stück verbacken.'); },
-    read:function(A){ return M.readToncisLetter(A); }, mala:function(A){ return M.malaReadsLetter(A); }},
+    read:function(A){ return M.readToncisLetter(A); }, mala:function(A){ return M.malaReadsLetter(A); },
+    // Analyse K1-B11 (P24): Malas eigener Blick auf den Brief (das Lesen selbst bleibt beim Zeigen)
+    glook:function(A){ return A.g(A.hasNote('c1_letter')?'Ich habe ihn dir schon gelesen.':(A.flag('c1.letterOpen')?'Halt ihn mir hin. Dann lese ich dir, was das Salz gefressen hat.':'Er klebt zusammen. So kann ich die Schrift nicht sehen.')); }},
   needle:{name:'Stricknadel',icon:function(w){ w.line(5,19,26,5,P.m4); w.line(6,19,27,5,P.m3); w.rect(4,18,3,3,P.r3); w.px(27,4,P.m4); },
     look:'Eine Stricknadel aus Ivkas Nähkorb. Spitz und dünn.', mala:'Damit hat sie für die halbe Gasse gestrickt.'},
   ticket_n:{name:'Ninas Fährticket',icon:function(w){ w.rect(5,8,22,11,P.b4); w.hl(7,22,11,P.b1); w.hl(7,19,13,P.b1); for (var x=6;x<26;x+=2) w.px(x,17,P.b0); w.rect(21,9,4,3,P.r3); },

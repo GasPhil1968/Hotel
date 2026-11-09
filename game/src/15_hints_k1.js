@@ -12,6 +12,7 @@ function seen(G,r){ return !!(G.rooms&&G.rooms[r]); }
 function knotOpen(G){ return !!(G.rooms&&G.rooms.ivka&&G.rooms.ivka.knotOpen); }
 function ninaShown(G,k){ return !!(G.rooms&&G.rooms.shop&&G.rooms.shop.shown&&G.rooms.shop.shown[k]); }
 function lvl(G){ return G.flags['c3.lvl']||0; }
+function moved(G){ return !!(G.rooms&&G.rooms.matejuska&&G.rooms.matejuska.cratesMoved); }   // Analyse K1-B10: Marko kann die Kisten auch ohne Malas Blick verschieben
 M.HINTS_K1=[
  // ================= Prolog · Dienstag
  {id:'k1_msg',t:'Was liegt heute an?',open:function(G){ return G.phase==='pro' && !F(G,'pro.msg'); },
@@ -124,10 +125,10 @@ M.HINTS_K1=[
   s:[{m:'Mala sagt: Da ist noch einer. Aber wo?',g:'Da ist noch einer. Aber wo?'},'In der Bar wird über alles geredet, was in der Stadt passiert.','Sanja weiß, was abgerissen wird. Stipe und Frane wissen, was dort einmal war.','In der Bar Sanja nach der alten Ledana fragen und mit Stipe reden.']},
  {id:'k2_tool',t:'Werkzeug für die Ledana',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !I(G,'crowbar') && !I(G,'tickets'); },
   s:['Die alte Ledana ist verfallen. Mit bloßen Händen kommt man da nicht weit.','Wer am Hafen hat Werkzeug und hat Hilfe angeboten?','Dinko an der Matejuška: „Wenn du was brauchst, ich bin hier.“','Dinko nach einem Brecheisen fragen, für die alte Ledana.']},
- {id:'k2_fence',t:'Der Bauzaun',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,'ledana'); },
+ {id:'k2_fence',t:'Der Bauzaun',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !moved(G) && !seen(G,'ledana'); },
   s:['Die Ledana ist eingezäunt.','Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.',{m:'Mala sieht hinter die Fischkisten am Zaun.',g:'Ich sehe hinter die Fischkisten am Zaun.'},{m:'Zu Mala wechseln und die Fischkisten am Zaun ansehen.',g:'Zu mir wechseln und die Fischkisten am Zaun ansehen.'}]},
- {id:'k2_crawl',t:'Durch den Zaun',open:function(G){ return G.phase==='c2' && N(G,'c2_gap') && !seen(G,'ledana'); },
-  s:['Hinter den Kisten ist ein loses Zaunfeld.','Mala kann nichts bewegen. Marko schon.','Die Kisten müssen weg, dann geht es durch die Lücke.','Als Marko die Fischkisten schieben und durch die Lücke kriechen.']},
+ {id:'k2_crawl',t:'Durch den Zaun',open:function(G){ return G.phase==='c2' && (N(G,'c2_gap')||moved(G)) && !seen(G,'ledana'); },
+  s:['Hinter den Kisten ist ein loses Zaunfeld.','Mala kann nichts bewegen. Marko schon.',function(G){ return moved(G)?'Die Kisten sind weg. Dahinter ist die Lücke.':'Die Kisten müssen weg, dann geht es durch die Lücke.'; },function(G){ return moved(G)?'Als Marko durch die Lücke im Zaun kriechen.':'Als Marko die Fischkisten schieben und durch die Lücke kriechen.'; }]},
  {id:'k2_luka',t:'Oben in der Ledana',open:function(G){ return G.phase==='c2' && seen(G,'ledana') && !F(G,'found.luka'); },
   s:['Oben auf der Empore war einmal jemand. Ist er noch da?','Die Treppe ist morsch. Hinauf kommt nur, wer nichts wiegt.',{m:'Mala geht hinauf.',g:'Ich gehe hinauf.'},{m:'Zu Mala wechseln, hinauf zur Empore und mit dem Jungen dort reden.',g:'Zu mir wechseln, hinauf zur Empore und mit dem Jungen dort reden.'}]},
  {id:'k2_case',t:'Der Kühlraum',open:function(G){ return G.phase==='c2' && F(G,'found.luka') && I(G,'crowbar') && !I(G,'tickets'); },
@@ -156,7 +157,7 @@ M.HINTS_K1=[
      function(G){ return I(G,'batteries')?'Die Batterien in den Rekorder legen.':(G.map&&G.map.terminal?'Bei Mira am Kiosk Batterien kaufen und in den Rekorder legen.':'Sanja fragen, wer damals noch am Hafen war.'); }]},
  {id:'k2_radio3',t:'Abspielbereit',open:function(G){ return G.phase==='c2' && I(G,'radioB') && I(G,'cassette'); },
   s:['Der Rekorder läuft, die Kassette ist da.','Zwei Dinge, die zusammengehören.','Die Kassette gehört in den Rekorder.','Die Kassette mit dem Rekorder benutzen.']},
- {id:'k2_luka2',t:'Ninas Zettel',open:function(G){ return G.phase==='c2' && I(G,'note_n') && !F(G,'c2.lukaKnows'); },
+ {id:'k2_luka2',t:'Ninas Zettel',open:function(G){ return G.phase==='c2' && (I(G,'note_n')||ninaShown(G,'note')) && !F(G,'c2.lukaKnows'); },   // Analyse K1-B13: auch wenn Nina den Zettel schon hat
   s:['Ninas Zettel von 1999 ist gefunden. Er war für Luka.','Wer einen Brief nie bekommen hat, sollte ihn jetzt hören.','Luka sitzt noch oben in der Ledana.','In der Ledana mit Luka reden und vom Briefkasten erzählen.']},
  // Analyse K1-B05: Nina behält den Zettel, sobald Marko ihn zeigt. Offen bleibt das Thema darum mit dem gezeigten Zettel, und Lukas Bitte ist keine Bedingung mehr
  {id:'k2_nina2',t:'Nina überzeugen',open:function(G){ return G.phase==='c2' && (I(G,'note_n')||ninaShown(G,'note')) && I(G,'tickets') && I(G,'radioT') && !F(G,'c2.tonight'); },

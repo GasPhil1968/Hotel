@@ -173,7 +173,7 @@ var HS=[
  {id:'fridge',name:'Kühlschrank',r:R3.rect(72,96,54,98,56,74),st:R3.st(100,60,'L'),look:'Ein Kühlschrank, der seit 1987 brummt.',open:'Eine Zitrone, ein Glas Senf, zwei Bier. Ein Stillleben.',g:{look:'Er brummt. Für mich klingt das wie ein Lied ohne Worte.'}},
  {id:'bed',name:'Bett',r:r(236,262,86,98,12,52),st:R3.st(226,40,'R'),reach:'L',
    look:'Ungemacht. Ich schlafe schlecht, also lohnt sich das Machen nicht.',
-   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); }
+   use:async function(A){ if (A.G.phase==='pro_eve' || (A.G.phase==='pro_night' && !A.flag('split.intro.night'))){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); }
      if (A.G.phase==='i1m') return A.m('Nicht noch einmal. Ich habe zum ersten Mal seit Tagen geschlafen. Das reicht für eine Woche.');
      return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
    g:{look:'Er schläft nicht. Er liegt nur.'}},
@@ -391,7 +391,9 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   noMala:false,
   // QA BUG-003: Ist das Wasser verkocht (Dampf abgelaufen) und die Džezva weder im Inventar noch voll, steht sie leer wieder auf dem Herd.
   // Vorher blieb sie verschwunden: der Weg über den Herd war zu, und die Hinweise schickten weiter an die Spüle.
-  tick:function(A){ var S=A.S; if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
+  // Analyse K1-B17 (P24): Der Dampf wartet, solange Notizbuch, Karte oder ein Brief offen sind (vorher lief die Zeit dabei weiter)
+  tick:function(A,dt){ var S=A.S; if (S.steam && A.gt<S.steam && M.E.overlay && dt) S.steam+=dt;
+    if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     if (p==='c3' && !A.flag('c3.call') && A.first('c3call')){ await M.case3Call(A); } }

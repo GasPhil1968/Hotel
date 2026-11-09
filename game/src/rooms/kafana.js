@@ -76,13 +76,13 @@ M.k2LejlaLetter=async function(A){ var L=A.npc('lejla'); if (A.flag('k2.s1.lette
   await A.doc({style:'letter',title:'Bewerbung – Lejla Kadić',lines:['Sehr geehrte Damen und Herren,','','ich bin sechzehn Jahre und spiele Geige seit neun Jahren.','Ich will bekommen ein Platz in Ihrer Schule.','Mein Lehrer sagt, ich bin begabt, aber faul.','Ich freue mich auf Ihre Antwort und küsse Sie.','','Lejla Kadić, Sarajevo']});
   var res=await A.puzzle({title:'Lejlas Brief verbessern',hint:'Drei Sätze klingen falsch. Tippe auf eine Zeile, um eine bessere Fassung zu wählen, dann „Fertig“.',button:'Fertig',
     slots:[['Ich will bekommen ein Platz in Ihrer Schule.','Ich möchte mich um einen Platz an Ihrer Schule bewerben.','Ich nehme einen Platz in Ihrer Schule.'],
-      ['Mein Lehrer sagt, ich bin begabt, aber faul.','Mein Lehrer hält mich für begabt und fleißig.','Mein Lehrer sagt, ich bin begabt und arbeite gern.'],
+      ['Mein Lehrer sagt, ich bin begabt, aber faul.','Mein Lehrer hält mich für begabt und fleißig.','Mein Lehrer sagt, ich bin begabt und lerne schnell.'],   // Analyse K2-B13 (P24): „arbeite gern“ war so gelogen wie „fleißig“
       ['Ich freue mich auf Ihre Antwort und küsse Sie.','Ich freue mich auf Ihre Antwort. Mit freundlichen Grüßen','Ich warte auf Ihre Antwort, sonst komme ich.']],
     init:[0,0,0],
     check:function(sel){ var ok=[1,2,1], msg=['Lejla: „Das klingt wie ein Roboter, sagt sogar Google.“','Lejla: „Faul ist ehrlich. Aber vielleicht nicht in der ersten Zeile?“ Und „fleißig“ ist gelogen, sagt sie.','Lejla: „Küssen? Im Ernst? Das habe ich aus einem Film. Nein?“'];
       for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msg[i]}; return {ok:true}; }});
   if (!res){ await L.say('Was ist? Ist es so schlimm?'); return; }
-  A.take('lejla_letter'); A.setFlag('k2.s1.letterFixed'); await A.m('„Ich möchte mich um einen Platz an Ihrer Schule bewerben. Mein Lehrer sagt, ich bin begabt und arbeite gern. Mit freundlichen Grüßen.“');
+  A.take('lejla_letter'); A.setFlag('k2.s1.letterFixed'); await A.m('„Ich möchte mich um einen Platz an Ihrer Schule bewerben. Mein Lehrer sagt, ich bin begabt und lerne schnell. Mit freundlichen Grüßen.“');
   await L.say('Das klingt wie eine Erwachsene!'); await L.say('Das klingt wie jemand, der nach Wien darf.'); await A.wait(500); await L.say('Okay, Übersetzer. Ich schulde Ihnen was. Sagen Sie, was.'); A.save(); };
 async function lejlaOpens(A,L){ await L.say('Oma ist bei Tante Sabira. Das dauert, die reden über Krankheiten.'); await L.say('Den Schlüssel hat sie vergessen. Zum ersten Mal in meinem Leben.'); A.sfx('lock'); A.set('ostavaOpen',true); A.setFlag('k2.s1.ostavaOpen');
   await L.say('Zehn Minuten. Wenn Sie was kaputt machen, waren Sie es, nicht ich.'); A.rebuild(); }

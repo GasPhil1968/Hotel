@@ -218,7 +218,9 @@ M.k3Bed=async function(A){ var G=A.G, p=G.phase;
   if (p==='k3_d1_n'){ if (A.flag('k3.d1.father')) return M.k3StartD2(A); return A.m('Noch nicht. Mala sitzt auf der Terrasse und sieht mich an, als wollte sie etwas fragen.'); }
   if (p==='k3_pro') return A.m(dayReady(G)?'Es wird gleich dunkel. Erst will ich noch nach draußen.':A.cycle('k3bed0',['Es ist Mittag. Und ich bin wegen einer Brücke hier, nicht wegen eines Betts.','Später. Erst die Brücke.']));
   if (p==='k3_d1'){ if (!has(G,'l3_skela')) return A.m(has(G,'l3_oldmap')&&has(G,'l3_area')?'Am hellen Tag? Ich habe einen Namen auf einer alten Karte. Mehr noch nicht.':(has(G,'l3_area')?'Am hellen Tag? Ich weiß ungefähr, wo. Hinter dem Rand meines Plans. Mehr nicht.':'Am hellen Tag? Die Leine zeigt irgendwohin, und ich weiß noch nicht, wohin.'));
-    return A.m('Vlado. Erst Vlado. Und die Schublade.'); }
+    // Analyse K3-B08 (P24): den Namen nennt das Bett erst, wenn Marko ihn kennt; die Schublade erst, wenn Kata davon erzählt hat
+    var knows=(M.k3KnowsVlado&&M.k3KnowsVlado(G))||has(G,'v3_ljerka');
+    return A.m(!knows?'Am hellen Tag? Erst den Fahrer. Den, der geraucht und nichts gesagt hat.':(has(G,'v3_typenschein')?'Vlado. Erst Vlado. Und die Schublade.':'Vlado. Erst Vlado.')); }
   if (p==='k3_d2'){ var w=d2Missing(G); return A.m(w||'Noch nicht.'); }
   if (p==='k3_d2_n') return A.g('Nicht jetzt. Es zieht. Nach Skela.');
   if (p==='k3_d3'){ var w3=d3Missing(G); return A.m(w3?'Heute nicht. '+w3:A.cycle('k3bed3',['Heute nicht. Heute Nacht schon gar nicht.','Wenn ich mich jetzt hinlege, verschlafe ich den Frost.'])); }

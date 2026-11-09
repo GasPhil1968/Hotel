@@ -462,7 +462,11 @@ E.exitKey=function(hs){ return (room?room.id:'')+'/'+hs.id; };
 async function doItem(v,id,other){ E.acting=(E.acting||0)+1; try{ return await doItem0(v,id,other); } finally { E.acting--; } }
 async function doItem0(v,id,other){ E.busy=true;
   try{ var it=M.ITEMS[id], ctx={key:'inv:'+id+':'+v,item:id}; API.reach=function(fn){ if (fn) fn(); return Promise.resolve(); };
-    if (GS.active==='mala'){ if (v==='look') await respond(it.look,ctx); else await say(pick(['Nein.','Die bleibt bei mir.']),'mala'); return; }
+    // Analyse K1-B11 (P24): Mala sah Gegenstände mit Markos Worten (und seiner Stimme). Jetzt zuerst ihr eigener Blick (glook),
+    // sonst ihr Satz, wenn man ihr das Ding zeigt (nur Text; Handlungen wie „Mala liest den Brief“ bleiben beim Zeigen).
+    if (GS.active==='mala'){ if (v==='look'){ var gl=it.glook!==undefined?it.glook:((typeof it.mala==='string'||Array.isArray(it.mala))?it.mala:undefined);
+        if (gl===undefined) await respond(it.look,ctx); else if (typeof gl==='function') await respond(gl,ctx); else await say(Array.isArray(gl)?pick(gl):gl,'mala'); }
+      else await say(pick(['Nein.','Die bleibt bei mir.']),'mala'); return; }
     if (other){ var h=M.COMBOS[id+'+'+other]; if (h===undefined) h=M.COMBOS[other+'+'+id];
       if (id===other){ await say('Das ist ein und dasselbe.','marko'); }
       else if (h!==undefined) await respond(h,ctx); else await say(pick(DEF.m.itemitem),'marko'); }

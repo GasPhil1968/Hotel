@@ -29,14 +29,16 @@ async function lukaMarko(A,L){
     {t:'Siehst du nicht, wie kaputt hier alles ist?',once:'lk5',go:async function(A){ await L.say('Die Ledana war immer kaputt. Deshalb ist hier ja keiner. Deshalb treffen wir uns hier.'); }},
     {t:'Warum sieht dich außer uns niemand?',once:'lk6',go:async function(A){ await L.say('Weil ich mich verstecke, Mann. Ninas Vater hat überall Leute.'); await L.say('Und die Typen, die hier manchmal durchlaufen, gucken einfach durch einen durch. Komische Stadt.'); }},
     {t:'Nina hat auf dich gewartet. Am Kiosk.',if:A.hasNote('c2_waited')||A.hasNote('c2_echo')||A.hasNote('c2_mira1'),once:'lk3',go:async function(A){ await L.say('Was? Nein. Die Fähre geht doch erst um neun. Es ist … es ist doch noch hell.'); await L.say('Oder?'); }},
-    {t:'Ich habe euren Briefkasten aufgemacht.',if:A.has('note_n')&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
+    // Analyse K1-B13 (P24): Hat Nina den Zettel schon, erzählt Marko ihn Luka aus dem Gedächtnis (vorher entfiel Lukas Bitte)
+    {t:'Ich habe euren Briefkasten aufgemacht.',if:(A.has('note_n')||ninaKeptNote(A))&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
     A.askOpt({ c2_guitar:'Im Kühlraum, ja. Die Tür klemmt. Mit Gefühl.', c2_meet:'Halb neun. Kiosk. Sie hat ein rotes Kleid an, du kannst sie nicht verfehlen.',
       c2_mailbox:'Der Ziegel. Wenn sie nicht kann, legt sie mir was rein. Sie kann. Heute kann sie.', c2_died:async function(A){ await L.say('Was? Wer?'); await L.say('Red keinen Mist, Mann.'); },
       c2_stairs:'Die Treppe? Ich bin da hundertmal rauf und runter. Die hält.', c2_unused:async function(A){ await L.say('Die Reservierung? Die habe ich ihr gegeben, damit sie die Zeit weiß. Die Tickets habe ich. Zwei, heute früh gekauft.'); },
       c2_demolish:'Abriss? Hier? Die reißen hier nie was ab. Hier passiert nie was.' },'Keine Ahnung, wovon du redest.'),
     {t:'Bis später.',bye:true,go:async function(A){ await L.say('Halb neun!'); }}
   ]; }); }
-async function readNoteToLuka(A,L){ A.setFlag('c2.noteRead'); await A.m('Da lag ein Zettel. Von Nina. Ich lese ihn dir vor.'); await A.anim('read');
+function ninaKeptNote(A){ var sh=A.G.rooms.shop&&A.G.rooms.shop.shown; return !!(sh&&sh.note); }
+async function readNoteToLuka(A,L){ A.setFlag('c2.noteRead'); if (A.has('note_n')){ await A.m('Da lag ein Zettel. Von Nina. Ich lese ihn dir vor.'); await A.anim('read'); } else await A.m('Da lag ein Zettel. Von Nina. Sie hat ihn jetzt wieder. Aber ich weiß noch, was drinstand.');
   await A.m('„L., ich habe am Kiosk bis zum letzten Schiff gewartet. Ich bin nicht wütend. Wenn du es dir anders überlegt hast, sag es mir ins Gesicht. Morgen Abend bin ich wieder da. Immer. N.“');
   await A.wait(900); await L.say('Bis zum letzten Schiff? Aber … das ist doch heute. Ich gehe doch gleich.'); await L.say('Das muss ein alter Zettel sein. Von einem anderen Mal.');
   await A.wait(1100); await L.say('…'); await L.say('Wenn sie denkt, ich hätte sie sitzen lassen …');
@@ -112,7 +114,7 @@ var HS=[
  {id:'gate',name:'Ladetor',look:'Das große Ladetor, offen zum Wasser. Hier fuhren früher die Wagen mit dem Eis hinaus zur Rampe.',g:{look:'Draußen ist der Hafen. Drüben das Fährterminal.'}},
  {id:'ramp',name:'Rampe',look:'Die Rampe hinunter zum Wasser. Gegenüber, quer über den Hafen, liegt das Fährterminal.',g:{look:'Von hier sieht man den Kiosk. Ganz klein.'}},
  {id:'brick',name:'Lockerer Ziegel',vis:function(S){ return !S.brickOut; },look:'Ein Ziegel im Torrahmen, der ein wenig vorsteht. Ein bisschen zu ordentlich für eine Ruine.',
-   take:async function(A){ await A.reach(); await A.m('Er sitzt fest. Mit den Fingern bekomme ich ihn nicht heraus.'); },
+   take:async function(A){ await A.reach(); A.setFlag('c2.brickTried'); await A.m('Er sitzt fest. Mit den Fingern bekomme ich ihn nicht heraus.'); },
    with:{ crowbar:async function(A){ await A.m('Damit breche ich die halbe Wand heraus. Und alles, was dahinter steckt.'); A.note('c2_thin'); },
      spatula:async function(A){ await A.reach(function(){ A.sfx('stone'); A.set('brickOut',true); }); A.sfx('paper'); A.give('note_n'); A.take('spatula'); A.setFlag('c2.brickDone'); await A.m('Der Spachtel gleitet in die Fuge. Der Ziegel gibt nach. Dahinter: ein gefalteter Zettel, zwölf Jahre trocken geblieben.'); await M.readNinasNote(A); } },
    g:{look:async function(A){ await A.g('Hinter dem Ziegel ist ein Hohlraum. Darin steckt ein gefaltetes Papier.'); A.note('c2_paper'); },sense:async function(A){ await A.g('Ein Zettel. Jemand hat ihn am Morgen hineingeschoben, mit nassen Augen und trockenen Händen.'); A.note('c2_paper'); }}},

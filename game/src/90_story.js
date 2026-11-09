@@ -66,7 +66,8 @@ M.migrateSave=function(G){ var f=G.flags||(G.flags={}), inv=G.inv||(G.inv=[]);
 // ältere Fassungen haben dort gespeichert. Beim Laden wird der Wechsel nachgeholt. Ist sein Schalter schon gesetzt, der Abschnitt aber noch der alte
 // (Unterbrechung mitten im Wechsel), wird der Schalter zurückgenommen und der Wechsel neu gestartet oder wieder auslösbar gemacht.
 var PENDING=[
-  {from:'pro_night', run:function(A){ return M.startCase1(A); }},
+  // Analyse K1-B16 (P24): ohne „when“ lief diese Regel nie. Ist die Nacht schon gespielt, beginnt der erste Fall; sonst führt das Bett wieder in die Nacht (flat.js)
+  {from:'pro_night', when:function(G){ return !!G.flags['split.intro.night']; }, run:function(A){ return M.startCase1(A); }},
   {from:'i1m', when:function(G){ return G.flags['i1.done']; }, run:function(A){ return M.startCase2(A); }},
   {from:'c2', guard:'c2.nightStarted', when:function(G){ return G.flags['c2.tonight']; }, run:function(A){ return M.startC2Night(A); }},
   {from:'c2_night', when:function(G){ return G.flags['c2.ninaGone']; }, run:function(A){ return M.interlude2(A); }},

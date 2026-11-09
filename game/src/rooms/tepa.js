@@ -14,6 +14,9 @@ function zRect(S,G){ var a=M.E.ACT&&M.E.ACT.zlata; if (!a||!a.visible) return nu
 function zStand(S,G){ var st=M.stand('tepa','zlata_stand'); if (st) return st; var a=M.E.ACT&&M.E.ACT.zlata; if (!a) return null; return [Math.round(a.x)-26,Math.round(a.y)+4,'R']; }
 // ---------------------------------------------------------------- die Eierfrau
 function asked(A){ A.setFlag('k3.z.asked'); A.setFlag('k3.z.n',(A.flag('k3.z.n')||0)+1); }
+// Analyse K3-B09 (P24): Nach der zweiten Frage packt sie bald ein. Das sagt jetzt jede Frage, und ohne Mala sieht Marko es selbst.
+async function warnLeaving(A){ if ((A.flag('k3.z.n')||0)<2 || N(A,'l3_onetrail') || A.flag('k3.z.warned')) return; A.setFlag('k3.z.warned'); await A.wait(400);
+  if (A.G.malaOn) await A.g('Sie wird gleich gehen. Ich sehe es an ihren Händen.'); else await A.m('Sie zählt ihre Eier zum dritten Mal. Lange bleibt sie nicht mehr.'); }
 async function dreamsLine(A,secondhand){ if (N(A,'l3_dreams')){ return A.g('Sie hat es schon gesagt. Die dritte Nacht.'); }
   if (!secondhand){ await A.g('Sie beugt sich zur Nachbarin hinüber. Ganz leise.'); await A.wait(500); await A.npc('zlata').say('Sanjam je opet. Treću noć.'); await A.wait(500); await A.g('Ich träume wieder von ihr. Die dritte Nacht.'); }
   else { await A.g('Die Nachbarin redet mit dem Honigmann. Über sie.'); await A.wait(500); await A.npc('susjeda').say('Opet je sanja, kaže. Treću noć.'); await A.wait(500); await A.g('Sie träumt wieder von ihr, sagt sie. Die dritte Nacht.'); }
@@ -47,9 +50,9 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
   if (A.first('zlFirst')){ await Z.say('Hladno je danas.'); await A.m('„Kalt heute“, sagt sie. In der Sonne. Sie zieht die Strickjacke enger.');
     if (G.malaOn){ await A.wait(500); await A.g('Marko.'); await A.wait(300); await A.g('Die Leine. Sie endet hier. An ihr.'); } }
   await A.menuLoop(function(){ return [
-    {t:'Kennen Sie Lana Delić?',once:'zl1',go:async function(A){ asked(A); await A.wait(700); await Z.say('Ne.'); await A.wait(500); await A.m('Nein. Einfach nein. Sie sieht mich dabei an, als wäre die Frage zu leicht.'); if (G.malaOn) await A.g('Sie lügt nicht. Den Namen kennt sie nicht.'); }},
+    {t:'Kennen Sie Lana Delić?',once:'zl1',go:async function(A){ asked(A); await A.wait(700); await Z.say('Ne.'); await A.wait(500); await A.m('Nein. Einfach nein. Sie sieht mich dabei an, als wäre die Frage zu leicht.'); if (G.malaOn) await A.g('Sie lügt nicht. Den Namen kennt sie nicht.'); await warnLeaving(A); }},
     {t:'Ich suche ein Mädchen. Siebzehn. Januar vierundneunzig.',once:'zl2',go:async function(A){ asked(A); await A.wait(900); await Z.say('Svaka majka traži dijete.'); await A.m('„Jede Mutter sucht ein Kind.“'); await A.wait(500); await Z.say('Jaja? Orasi?'); await A.m('Eier oder Walnüsse. Für sie ist das Gespräch zu Ende.');
-        if (G.malaOn && (A.flag('k3.z.n')||0)>=2 && !N(A,'l3_onetrail')){ await A.wait(400); await A.g('Sie wird gleich gehen. Ich sehe es an ihren Händen.'); } }},
+        await warnLeaving(A); }},
     {t:'Kannten Sie eine Mala?',silent:true,if:N(A,'l3_onetrail'),go:function(A){ return zlataMala(A,Z); }},
     {t:'Was kosten die Eier?',once:'zl3',go:async function(A){ await Z.say('Deset jaja, tri marke. Domaća. Kokoši trče po dvorištu.'); await A.m('„Zehn Eier, drei Mark. Von hier. Die Hühner laufen im Hof herum.“ Als wäre das eine Auskunft über mich.'); }},
     {t:'Woher kommen Sie?',once:'zl4',go:async function(A){ await Z.say('Odozdo. Niz rijeku.'); await A.m('„Von unten. Den Fluss hinunter.“'); if (G.malaOn){ await A.wait(400); await A.g('Flussab.'); } }},
@@ -57,6 +60,8 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
     A.askOpt({ l3_onetrail:function(A){ return zlataMala(A,Z); },
       v3_mala:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Ne razumijem.'); await A.m('„Ich verstehe nicht.“ Ich verstehe es selbst noch nicht ganz. Mala. Wer hat sie so genannt?'); },
       l3_ljerka_pic:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Ne razumijem.'); await A.m('„Ich verstehe nicht.“ Ein Bild, unterschrieben mit einem Namen. Ich muss erst selbst verstehen, was der Name heißt.'); },
+      // Analyse K3-B06 (P24): „Malas Name“ ist die naheliegende Notiz; vor dem Schluss zeigt die Antwort auf die Frage dahinter
+      k3_c_name:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Jaja? Orasi?'); await A.m('Den Namen Lana Delić kennt sie nicht. Aber unter welchem Namen hat man sie hier gekannt? Erst das, dann frage ich richtig.'); },
       k3_c_missing:async function(A){ await Z.say('Svaka majka traži dijete.'); await A.m('„Jede Mutter sucht ein Kind.“ Zum zweiten Mal. Wie eine Tür, die sie zumacht.'); },
       l3_dreams:async function(A){ await A.wait(700); await Z.say('Jaja? Orasi?'); await A.m('Sie tut, als hätte sie nichts gehört. Ihre Hände zählen die Eier noch einmal.'); } },'Jaja? Orasi?'),
     {t:'Doviđenja.',bye:true,go:async function(A){ await Z.say('Doviđenja.'); }}

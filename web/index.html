@@ -2358,7 +2358,11 @@ E.exitKey=function(hs){ return (room?room.id:'')+'/'+hs.id; };
 async function doItem(v,id,other){ E.acting=(E.acting||0)+1; try{ return await doItem0(v,id,other); } finally { E.acting--; } }
 async function doItem0(v,id,other){ E.busy=true;
   try{ var it=M.ITEMS[id], ctx={key:'inv:'+id+':'+v,item:id}; API.reach=function(fn){ if (fn) fn(); return Promise.resolve(); };
-    if (GS.active==='mala'){ if (v==='look') await respond(it.look,ctx); else await say(pick(['Nein.','Die bleibt bei mir.']),'mala'); return; }
+    // Analyse K1-B11 (P24): Mala sah Gegenstände mit Markos Worten (und seiner Stimme). Jetzt zuerst ihr eigener Blick (glook),
+    // sonst ihr Satz, wenn man ihr das Ding zeigt (nur Text; Handlungen wie „Mala liest den Brief“ bleiben beim Zeigen).
+    if (GS.active==='mala'){ if (v==='look'){ var gl=it.glook!==undefined?it.glook:((typeof it.mala==='string'||Array.isArray(it.mala))?it.mala:undefined);
+        if (gl===undefined) await respond(it.look,ctx); else if (typeof gl==='function') await respond(gl,ctx); else await say(Array.isArray(gl)?pick(gl):gl,'mala'); }
+      else await say(pick(['Nein.','Die bleibt bei mir.']),'mala'); return; }
     if (other){ var h=M.COMBOS[id+'+'+other]; if (h===undefined) h=M.COMBOS[other+'+'+id];
       if (id===other){ await say('Das ist ein und dasselbe.','marko'); }
       else if (h!==undefined) await respond(h,ctx); else await say(pick(DEF.m.itemitem),'marko'); }
@@ -4318,7 +4322,9 @@ M.defineItems({
     look:'Die Zeitung von heute. Seite 14, unten: „Die Stillen“. Mein Text über Ivka Perić.', read:function(A){ return M.readNewspaper(A); }, mala:'Zweitausend Zeichen. Er hat sie gut gewählt.'},
   letter_t:{name:'Tonćis Brief',icon:function(w){ w.rect(6,5,20,15,P.s4); w.hl(8,22,8,P.s2); w.hl(8,18,10,P.s3); w.hl(8,23,12,P.s2); w.hl(8,15,14,P.s3); w.rect(14,9,6,4,P.e3); w.px(20,15,P.e2); },
     look:function(A){ return A.m(A.flag('c1.letterOpen')?'Ein Brief, der 27 Jahre in einem Seesack lag. Das Salz hat die Hälfte der Wörter gefressen.':'Ein Brief, der 27 Jahre in einem Seesack lag. Das Salz hat die Seiten zu einem Stück verbacken.'); },
-    read:function(A){ return M.readToncisLetter(A); }, mala:function(A){ return M.malaReadsLetter(A); }},
+    read:function(A){ return M.readToncisLetter(A); }, mala:function(A){ return M.malaReadsLetter(A); },
+    // Analyse K1-B11 (P24): Malas eigener Blick auf den Brief (das Lesen selbst bleibt beim Zeigen)
+    glook:function(A){ return A.g(A.hasNote('c1_letter')?'Ich habe ihn dir schon gelesen.':(A.flag('c1.letterOpen')?'Halt ihn mir hin. Dann lese ich dir, was das Salz gefressen hat.':'Er klebt zusammen. So kann ich die Schrift nicht sehen.')); }},
   needle:{name:'Stricknadel',icon:function(w){ w.line(5,19,26,5,P.m4); w.line(6,19,27,5,P.m3); w.rect(4,18,3,3,P.r3); w.px(27,4,P.m4); },
     look:'Eine Stricknadel aus Ivkas Nähkorb. Spitz und dünn.', mala:'Damit hat sie für die halbe Gasse gestrickt.'},
   ticket_n:{name:'Ninas Fährticket',icon:function(w){ w.rect(5,8,22,11,P.b4); w.hl(7,22,11,P.b1); w.hl(7,19,13,P.b1); for (var x=6;x<26;x+=2) w.px(x,17,P.b0); w.rect(21,9,4,3,P.r3); },
@@ -12349,6 +12355,7 @@ function seen(G,r){ return !!(G.rooms&&G.rooms[r]); }
 function knotOpen(G){ return !!(G.rooms&&G.rooms.ivka&&G.rooms.ivka.knotOpen); }
 function ninaShown(G,k){ return !!(G.rooms&&G.rooms.shop&&G.rooms.shop.shown&&G.rooms.shop.shown[k]); }
 function lvl(G){ return G.flags['c3.lvl']||0; }
+function moved(G){ return !!(G.rooms&&G.rooms.matejuska&&G.rooms.matejuska.cratesMoved); }   // Analyse K1-B10: Marko kann die Kisten auch ohne Malas Blick verschieben
 M.HINTS_K1=[
  // ================= Prolog · Dienstag
  {id:'k1_msg',t:'Was liegt heute an?',open:function(G){ return G.phase==='pro' && !F(G,'pro.msg'); },
@@ -12461,10 +12468,10 @@ M.HINTS_K1=[
   s:[{m:'Mala sagt: Da ist noch einer. Aber wo?',g:'Da ist noch einer. Aber wo?'},'In der Bar wird über alles geredet, was in der Stadt passiert.','Sanja weiß, was abgerissen wird. Stipe und Frane wissen, was dort einmal war.','In der Bar Sanja nach der alten Ledana fragen und mit Stipe reden.']},
  {id:'k2_tool',t:'Werkzeug für die Ledana',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !I(G,'crowbar') && !I(G,'tickets'); },
   s:['Die alte Ledana ist verfallen. Mit bloßen Händen kommt man da nicht weit.','Wer am Hafen hat Werkzeug und hat Hilfe angeboten?','Dinko an der Matejuška: „Wenn du was brauchst, ich bin hier.“','Dinko nach einem Brecheisen fragen, für die alte Ledana.']},
- {id:'k2_fence',t:'Der Bauzaun',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !seen(G,'ledana'); },
+ {id:'k2_fence',t:'Der Bauzaun',open:function(G){ return G.phase==='c2' && N(G,'c2_demolish') && !N(G,'c2_gap') && !moved(G) && !seen(G,'ledana'); },
   s:['Die Ledana ist eingezäunt.','Ein Zaun hat Lücken. Nicht jede ist von vorn zu sehen.',{m:'Mala sieht hinter die Fischkisten am Zaun.',g:'Ich sehe hinter die Fischkisten am Zaun.'},{m:'Zu Mala wechseln und die Fischkisten am Zaun ansehen.',g:'Zu mir wechseln und die Fischkisten am Zaun ansehen.'}]},
- {id:'k2_crawl',t:'Durch den Zaun',open:function(G){ return G.phase==='c2' && N(G,'c2_gap') && !seen(G,'ledana'); },
-  s:['Hinter den Kisten ist ein loses Zaunfeld.','Mala kann nichts bewegen. Marko schon.','Die Kisten müssen weg, dann geht es durch die Lücke.','Als Marko die Fischkisten schieben und durch die Lücke kriechen.']},
+ {id:'k2_crawl',t:'Durch den Zaun',open:function(G){ return G.phase==='c2' && (N(G,'c2_gap')||moved(G)) && !seen(G,'ledana'); },
+  s:['Hinter den Kisten ist ein loses Zaunfeld.','Mala kann nichts bewegen. Marko schon.',function(G){ return moved(G)?'Die Kisten sind weg. Dahinter ist die Lücke.':'Die Kisten müssen weg, dann geht es durch die Lücke.'; },function(G){ return moved(G)?'Als Marko durch die Lücke im Zaun kriechen.':'Als Marko die Fischkisten schieben und durch die Lücke kriechen.'; }]},
  {id:'k2_luka',t:'Oben in der Ledana',open:function(G){ return G.phase==='c2' && seen(G,'ledana') && !F(G,'found.luka'); },
   s:['Oben auf der Empore war einmal jemand. Ist er noch da?','Die Treppe ist morsch. Hinauf kommt nur, wer nichts wiegt.',{m:'Mala geht hinauf.',g:'Ich gehe hinauf.'},{m:'Zu Mala wechseln, hinauf zur Empore und mit dem Jungen dort reden.',g:'Zu mir wechseln, hinauf zur Empore und mit dem Jungen dort reden.'}]},
  {id:'k2_case',t:'Der Kühlraum',open:function(G){ return G.phase==='c2' && F(G,'found.luka') && I(G,'crowbar') && !I(G,'tickets'); },
@@ -12493,7 +12500,7 @@ M.HINTS_K1=[
      function(G){ return I(G,'batteries')?'Die Batterien in den Rekorder legen.':(G.map&&G.map.terminal?'Bei Mira am Kiosk Batterien kaufen und in den Rekorder legen.':'Sanja fragen, wer damals noch am Hafen war.'); }]},
  {id:'k2_radio3',t:'Abspielbereit',open:function(G){ return G.phase==='c2' && I(G,'radioB') && I(G,'cassette'); },
   s:['Der Rekorder läuft, die Kassette ist da.','Zwei Dinge, die zusammengehören.','Die Kassette gehört in den Rekorder.','Die Kassette mit dem Rekorder benutzen.']},
- {id:'k2_luka2',t:'Ninas Zettel',open:function(G){ return G.phase==='c2' && I(G,'note_n') && !F(G,'c2.lukaKnows'); },
+ {id:'k2_luka2',t:'Ninas Zettel',open:function(G){ return G.phase==='c2' && (I(G,'note_n')||ninaShown(G,'note')) && !F(G,'c2.lukaKnows'); },   // Analyse K1-B13: auch wenn Nina den Zettel schon hat
   s:['Ninas Zettel von 1999 ist gefunden. Er war für Luka.','Wer einen Brief nie bekommen hat, sollte ihn jetzt hören.','Luka sitzt noch oben in der Ledana.','In der Ledana mit Luka reden und vom Briefkasten erzählen.']},
  // Analyse K1-B05: Nina behält den Zettel, sobald Marko ihn zeigt. Offen bleibt das Thema darum mit dem gezeigten Zettel, und Lukas Bitte ist keine Bedingung mehr
  {id:'k2_nina2',t:'Nina überzeugen',open:function(G){ return G.phase==='c2' && (I(G,'note_n')||ninaShown(G,'note')) && I(G,'tickets') && I(G,'radioT') && !F(G,'c2.tonight'); },
@@ -50472,7 +50479,7 @@ var HS=[
  {id:'fridge',name:'Kühlschrank',r:R3.rect(72,96,54,98,56,74),st:R3.st(100,60,'L'),look:'Ein Kühlschrank, der seit 1987 brummt.',open:'Eine Zitrone, ein Glas Senf, zwei Bier. Ein Stillleben.',g:{look:'Er brummt. Für mich klingt das wie ein Lied ohne Worte.'}},
  {id:'bed',name:'Bett',r:r(236,262,86,98,12,52),st:R3.st(226,40,'R'),reach:'L',
    look:'Ungemacht. Ich schlafe schlecht, also lohnt sich das Machen nicht.',
-   use:async function(A){ if (A.G.phase==='pro_eve'){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); }
+   use:async function(A){ if (A.G.phase==='pro_eve' || (A.G.phase==='pro_night' && !A.flag('split.intro.night'))){ if (!A.flag('pro.article')) return A.m('Ich bin nicht müde. Nur leer.'); return goToSleep(A); }
      if (A.G.phase==='i1m') return A.m('Nicht noch einmal. Ich habe zum ersten Mal seit Tagen geschlafen. Das reicht für eine Woche.');
      return A.m('Nicht jetzt. Mein Kopf würde nur wieder über dem Kissen kreisen.'); },
    g:{look:'Er schläft nicht. Er liegt nur.'}},
@@ -50690,7 +50697,9 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   noMala:false,
   // QA BUG-003: Ist das Wasser verkocht (Dampf abgelaufen) und die Džezva weder im Inventar noch voll, steht sie leer wieder auf dem Herd.
   // Vorher blieb sie verschwunden: der Weg über den Herd war zu, und die Hinweise schickten weiter an die Spüle.
-  tick:function(A){ var S=A.S; if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
+  // Analyse K1-B17 (P24): Der Dampf wartet, solange Notizbuch, Karte oder ein Brief offen sind (vorher lief die Zeit dabei weiter)
+  tick:function(A,dt){ var S=A.S; if (S.steam && A.gt<S.steam && M.E.overlay && dt) S.steam+=dt;
+    if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     if (p==='c3' && !A.flag('c3.call') && A.first('c3call')){ await M.case3Call(A); } }
@@ -51379,13 +51388,16 @@ var HS=[
    g:{look:'Lauter Namen. Manche sind nur noch hier.'}},
  {id:'notices',name:'Schwarzes Brett',look:'Zettel des Hausrats, alle unterschrieben von S. Šehić: „Lift – Reparatur beantragt (1993)“, „Kellerschlüssel nur mit Beschluss“, „Bitte Licht ausmachen. Strom kostet.“',
    read:'„Beschluss des Hausrats vom 4.3.1998: Der Schutzraum bleibt bis auf Weiteres verschlossen. Gez. S. Šehić, Vorsitzender.“',g:{look:'Ein Zettel von 1993 hängt noch: „Kellerschule: Unterricht 9–12 Uhr. Bitte leise auf der Treppe.“'}},
- {id:'elevator',name:'Aufzug',look:'Der Aufzug. „VAN FUNKCIJE“ auf einem Zettel, der so alt ist, dass er selbst ein Denkmal ist.',use:'Ich drücke den Knopf. Nichts. Natürlich nichts.',g:{look:async function(A){ await A.g('Er ging nie. Neunter Stock. Ich habe die Stufen gezählt. Hundertvierundvierzig.'); A.setFlag('k2.lift.ninth'); }}},
+ {id:'elevator',name:'Aufzug',look:'Der Aufzug. „VAN FUNKCIJE“ auf einem Zettel, der so alt ist, dass er selbst ein Denkmal ist.',use:'Ich drücke den Knopf. Nichts. Natürlich nichts.',g:{look:async function(A){ await A.g('Seit dem Krieg ging er nicht mehr. Neunter Stock. Ich habe die Stufen gezählt. Hundertvierundvierzig.'); A.setFlag('k2.lift.ninth'); }}},
  {id:'stairs',name:'Treppe',exit:{to:'stan'},look:'Die Treppe nach oben. Neun Stockwerke bis zu den Delić.',canExit:async function(A){ if (A.G.phase==='k2_s3' && !A.flag('k2.s3.nadaTried')){ A.setFlag('k2.s3.nadaTried'); await A.fade(6,500); A.sfx('steps'); await A.wait(800); await A.fade(0,400);
        await A.narrate('Neunter Stock. Eine Tür mit dem Namen „DELIĆ“. Ich klopfe. Schritte. Durch die Tür eine Frauenstimme: „Ich kaufe nichts. Ich unterschreibe nichts. Gehen Sie.“'); await A.m('Frau Delić, ich …'); await A.narrate('„Gehen Sie.“ Die Schritte entfernen sich.'); if (A.G.malaOn){ await A.wait(800); await A.g('…Die Stimme.'); await A.g('Ich kenne die Stimme.'); } return false; }
      if (A.G.phase==='k2_s3' || A.G.phase==='k2_s3_n'){ await A.m('Nada öffnet nicht. Nicht für einen Fremden.'); return false; }
      if (A.G.phase==='k2_fin' && !A.flag('k2.f2.nadaOpen')){ if (!A.hasNote('f2_photo')){ await A.fade(6,400); A.sfx('steps'); await A.wait(600); await A.fade(0,400); await A.narrate('Neunter Stock. Ich klopfe. „Ich kaufe nichts.“ Die Schritte entfernen sich wieder.'); await A.m('Sie öffnet keinem Fremden. Ich bin ein Fremder.'); return false; }
        await A.fade(6,400); A.sfx('steps'); await A.wait(700); await A.fade(0,400); await A.narrate('Neunter Stock. Ich klopfe. „Ich kaufe nichts. Ich unterschreibe nichts.“'); await A.m('Frau Delić. Ich möchte Ihnen nur etwas zeigen. Unter der Tür.');
        await A.narrate('Ich schiebe das Foto unter der Tür durch. Eine lange Stille. Dann eine Kette, ein Riegel, noch ein Riegel.'); A.setFlag('k2.f2.nadaOpen'); return true; }
+     // Analyse K2-B11 (P24): Nadas Wohnung steht nur offen, wenn Nada da ist und öffnet (Finale, Epilog); vorher und in der letzten Nacht nicht
+     if (A.G.phase==='k2_fin_n'){ await A.m('Nicht nach oben. Heute Nacht fährt die Drei, und wir fahren mit.'); return false; }
+     if (A.G.phase!=='k2_fin' && A.G.phase!=='k2_epi'){ await A.m('Oben bei den Delić klopfe ich nicht ohne Grund.'); return false; }
      return true; },
    g:{look:'Hundertvierundvierzig Stufen. Ich habe sie gezählt, jeden Tag, damit ich nicht an anderes denke.'}},
  {id:'chair',name:'Sessel',look:'Dragicas Sessel, mit einer Häkeldecke und einem Kissen, auf dem „Sarajevo 84“ steht. Ein Thron.',g:{look:'Sie sitzt hier, damit jemand da ist, wenn jemand nach Hause kommt.'}},
@@ -53035,7 +53047,7 @@ var HS_NB=[
  {id:'tram',name:'Gleise',look:'Die Gleise der Drei. Zwischen den Schienen wächst im März schon Gras.',g:{look:'Hier fährt sie. Immer noch.'}},
  {id:'tower7',name:'Haus 7',look:function(A){ return A.m(jasnaFollows(A.G)?'Haus 7. Mama legt den Kopf in den Nacken und zählt. „Dritte von links.“ Unsere Loggia.':'Haus 7. Zwölf Stockwerke. Im siebten haben wir gewohnt, im neunten wohnt Nada.'); },
    g:{look:'Neunter Stock, Fenster rechts. Da habe ich gesessen. Acht Wochen.'}},
- {id:'roofclock',name:'Uhr auf dem Dach',look:'Auf dem Dach des Hochhauses gegenüber die ausgebrannte Uhr. Sie zeigt seit zwanzig Jahren dieselbe Zeit. Keiner repariert sie, weil keiner sich einigen kann, welche.',
+ {id:'roofclock',name:'Uhr auf dem Dach',look:'Auf dem Dach des Hochhauses gegenüber die ausgebrannte Uhr, seit zwanzig Jahren ohne Zeiger. Keiner repariert sie, weil keiner sich einigen kann, welche Zeit sie zeigen soll.',
    g:{look:'Sie steht. Wie ich. Fast.'}},
  {id:'haustor_door',name:'Hauseingang',exit:{to:'haustor5'},look:'Der Hauseingang mit der Gegensprechanlage, auf der die Hälfte der Namen mit Kugelschreiber geschrieben ist.',
    g:{look:'Die Tür. Er ist hier jeden Tag rausgerannt. Ich jeden Samstag rein.'}},
@@ -53114,7 +53126,7 @@ var HS_SG=[
    use:function(A){ return M.k5Door7?M.k5Door7(A):A.m('Zu.'); },open:function(A){ return M.k5Door7?M.k5Door7(A):A.m('Zu.'); },
    g:{look:'Hier habe ich geklopft. Zweimal kurz, einmal lang. Seine Mama hat aufgemacht. Immer seine Mama.',sense:function(A){ return M.k5Door7Sense?M.k5Door7Sense(A):A.g('Hier.'); }}},
  {id:'door7b',name:'Nachbartür',look:'Die Tür der Nachbarn. Ein Kranz aus Plastik und ein Schild: „Obitelj Begić“. Dahinter weinen Zwillinge, abwechselnd.',g:{look:'Neue Leute. Die Zwillinge sehen mich. Deshalb weinen sie nicht. Sie lachen. Dann weinen sie wieder.'}},
- {id:'lift',name:'Aufzugstür',look:'Die Aufzugstür im siebten Stock. „VAN FUNKCIJE“. Hier oben ist der Zettel noch der alte, gelb.',g:{look:'Ging nie.'}},
+ {id:'lift',name:'Aufzugstür',look:'Die Aufzugstür im siebten Stock. „VAN FUNKCIJE“. Hier oben ist der Zettel noch der alte, gelb.',g:{look:'Seit dem Krieg nicht mehr.'}},
  {id:'window',name:'Treppenfenster',look:'Das Treppenhausfenster. Durch das Drahtglas sieht man den Hof, die Haltestelle, die Gleise der Drei.',g:{look:'Von hier habe ich die Drei kommen sehen. Dann bin ich los.'}},
  {id:'seven',name:'Stockwerknummer',look:'Eine große „7“ an der Wand, mit Schablone gemalt. Darunter hat ein Kind etwas eingeritzt. Ein Kind von heute.',g:{look:'Sieben.'}},
  {id:'bell',name:'Klingel',look:'Die Klingel neben unserer alten Tür. Sie geht nicht. Sie ging nie. Darum hat Lana geklopft.',g:{look:'Darum habe ich geklopft.'}},
@@ -53704,13 +53716,13 @@ M.k2LejlaLetter=async function(A){ var L=A.npc('lejla'); if (A.flag('k2.s1.lette
   await A.doc({style:'letter',title:'Bewerbung – Lejla Kadić',lines:['Sehr geehrte Damen und Herren,','','ich bin sechzehn Jahre und spiele Geige seit neun Jahren.','Ich will bekommen ein Platz in Ihrer Schule.','Mein Lehrer sagt, ich bin begabt, aber faul.','Ich freue mich auf Ihre Antwort und küsse Sie.','','Lejla Kadić, Sarajevo']});
   var res=await A.puzzle({title:'Lejlas Brief verbessern',hint:'Drei Sätze klingen falsch. Tippe auf eine Zeile, um eine bessere Fassung zu wählen, dann „Fertig“.',button:'Fertig',
     slots:[['Ich will bekommen ein Platz in Ihrer Schule.','Ich möchte mich um einen Platz an Ihrer Schule bewerben.','Ich nehme einen Platz in Ihrer Schule.'],
-      ['Mein Lehrer sagt, ich bin begabt, aber faul.','Mein Lehrer hält mich für begabt und fleißig.','Mein Lehrer sagt, ich bin begabt und arbeite gern.'],
+      ['Mein Lehrer sagt, ich bin begabt, aber faul.','Mein Lehrer hält mich für begabt und fleißig.','Mein Lehrer sagt, ich bin begabt und lerne schnell.'],   // Analyse K2-B13 (P24): „arbeite gern“ war so gelogen wie „fleißig“
       ['Ich freue mich auf Ihre Antwort und küsse Sie.','Ich freue mich auf Ihre Antwort. Mit freundlichen Grüßen','Ich warte auf Ihre Antwort, sonst komme ich.']],
     init:[0,0,0],
     check:function(sel){ var ok=[1,2,1], msg=['Lejla: „Das klingt wie ein Roboter, sagt sogar Google.“','Lejla: „Faul ist ehrlich. Aber vielleicht nicht in der ersten Zeile?“ Und „fleißig“ ist gelogen, sagt sie.','Lejla: „Küssen? Im Ernst? Das habe ich aus einem Film. Nein?“'];
       for (var i=0;i<sel.length;i++) if (sel[i]!==ok[i]) return {ok:false,bad:i,msg:msg[i]}; return {ok:true}; }});
   if (!res){ await L.say('Was ist? Ist es so schlimm?'); return; }
-  A.take('lejla_letter'); A.setFlag('k2.s1.letterFixed'); await A.m('„Ich möchte mich um einen Platz an Ihrer Schule bewerben. Mein Lehrer sagt, ich bin begabt und arbeite gern. Mit freundlichen Grüßen.“');
+  A.take('lejla_letter'); A.setFlag('k2.s1.letterFixed'); await A.m('„Ich möchte mich um einen Platz an Ihrer Schule bewerben. Mein Lehrer sagt, ich bin begabt und lerne schnell. Mit freundlichen Grüßen.“');
   await L.say('Das klingt wie eine Erwachsene!'); await L.say('Das klingt wie jemand, der nach Wien darf.'); await A.wait(500); await L.say('Okay, Übersetzer. Ich schulde Ihnen was. Sagen Sie, was.'); A.save(); };
 async function lejlaOpens(A,L){ await L.say('Oma ist bei Tante Sabira. Das dauert, die reden über Krankheiten.'); await L.say('Den Schlüssel hat sie vergessen. Zum ersten Mal in meinem Leben.'); A.sfx('lock'); A.set('ostavaOpen',true); A.setFlag('k2.s1.ostavaOpen');
   await L.say('Zehn Minuten. Wenn Sie was kaputt machen, waren Sie es, nicht ich.'); A.rebuild(); }
@@ -54483,14 +54495,16 @@ async function lukaMarko(A,L){
     {t:'Siehst du nicht, wie kaputt hier alles ist?',once:'lk5',go:async function(A){ await L.say('Die Ledana war immer kaputt. Deshalb ist hier ja keiner. Deshalb treffen wir uns hier.'); }},
     {t:'Warum sieht dich außer uns niemand?',once:'lk6',go:async function(A){ await L.say('Weil ich mich verstecke, Mann. Ninas Vater hat überall Leute.'); await L.say('Und die Typen, die hier manchmal durchlaufen, gucken einfach durch einen durch. Komische Stadt.'); }},
     {t:'Nina hat auf dich gewartet. Am Kiosk.',if:A.hasNote('c2_waited')||A.hasNote('c2_echo')||A.hasNote('c2_mira1'),once:'lk3',go:async function(A){ await L.say('Was? Nein. Die Fähre geht doch erst um neun. Es ist … es ist doch noch hell.'); await L.say('Oder?'); }},
-    {t:'Ich habe euren Briefkasten aufgemacht.',if:A.has('note_n')&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
+    // Analyse K1-B13 (P24): Hat Nina den Zettel schon, erzählt Marko ihn Luka aus dem Gedächtnis (vorher entfiel Lukas Bitte)
+    {t:'Ich habe euren Briefkasten aufgemacht.',if:(A.has('note_n')||ninaKeptNote(A))&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
     A.askOpt({ c2_guitar:'Im Kühlraum, ja. Die Tür klemmt. Mit Gefühl.', c2_meet:'Halb neun. Kiosk. Sie hat ein rotes Kleid an, du kannst sie nicht verfehlen.',
       c2_mailbox:'Der Ziegel. Wenn sie nicht kann, legt sie mir was rein. Sie kann. Heute kann sie.', c2_died:async function(A){ await L.say('Was? Wer?'); await L.say('Red keinen Mist, Mann.'); },
       c2_stairs:'Die Treppe? Ich bin da hundertmal rauf und runter. Die hält.', c2_unused:async function(A){ await L.say('Die Reservierung? Die habe ich ihr gegeben, damit sie die Zeit weiß. Die Tickets habe ich. Zwei, heute früh gekauft.'); },
       c2_demolish:'Abriss? Hier? Die reißen hier nie was ab. Hier passiert nie was.' },'Keine Ahnung, wovon du redest.'),
     {t:'Bis später.',bye:true,go:async function(A){ await L.say('Halb neun!'); }}
   ]; }); }
-async function readNoteToLuka(A,L){ A.setFlag('c2.noteRead'); await A.m('Da lag ein Zettel. Von Nina. Ich lese ihn dir vor.'); await A.anim('read');
+function ninaKeptNote(A){ var sh=A.G.rooms.shop&&A.G.rooms.shop.shown; return !!(sh&&sh.note); }
+async function readNoteToLuka(A,L){ A.setFlag('c2.noteRead'); if (A.has('note_n')){ await A.m('Da lag ein Zettel. Von Nina. Ich lese ihn dir vor.'); await A.anim('read'); } else await A.m('Da lag ein Zettel. Von Nina. Sie hat ihn jetzt wieder. Aber ich weiß noch, was drinstand.');
   await A.m('„L., ich habe am Kiosk bis zum letzten Schiff gewartet. Ich bin nicht wütend. Wenn du es dir anders überlegt hast, sag es mir ins Gesicht. Morgen Abend bin ich wieder da. Immer. N.“');
   await A.wait(900); await L.say('Bis zum letzten Schiff? Aber … das ist doch heute. Ich gehe doch gleich.'); await L.say('Das muss ein alter Zettel sein. Von einem anderen Mal.');
   await A.wait(1100); await L.say('…'); await L.say('Wenn sie denkt, ich hätte sie sitzen lassen …');
@@ -54566,7 +54580,7 @@ var HS=[
  {id:'gate',name:'Ladetor',look:'Das große Ladetor, offen zum Wasser. Hier fuhren früher die Wagen mit dem Eis hinaus zur Rampe.',g:{look:'Draußen ist der Hafen. Drüben das Fährterminal.'}},
  {id:'ramp',name:'Rampe',look:'Die Rampe hinunter zum Wasser. Gegenüber, quer über den Hafen, liegt das Fährterminal.',g:{look:'Von hier sieht man den Kiosk. Ganz klein.'}},
  {id:'brick',name:'Lockerer Ziegel',vis:function(S){ return !S.brickOut; },look:'Ein Ziegel im Torrahmen, der ein wenig vorsteht. Ein bisschen zu ordentlich für eine Ruine.',
-   take:async function(A){ await A.reach(); await A.m('Er sitzt fest. Mit den Fingern bekomme ich ihn nicht heraus.'); },
+   take:async function(A){ await A.reach(); A.setFlag('c2.brickTried'); await A.m('Er sitzt fest. Mit den Fingern bekomme ich ihn nicht heraus.'); },
    with:{ crowbar:async function(A){ await A.m('Damit breche ich die halbe Wand heraus. Und alles, was dahinter steckt.'); A.note('c2_thin'); },
      spatula:async function(A){ await A.reach(function(){ A.sfx('stone'); A.set('brickOut',true); }); A.sfx('paper'); A.give('note_n'); A.take('spatula'); A.setFlag('c2.brickDone'); await A.m('Der Spachtel gleitet in die Fuge. Der Ziegel gibt nach. Dahinter: ein gefalteter Zettel, zwölf Jahre trocken geblieben.'); await M.readNinasNote(A); } },
    g:{look:async function(A){ await A.g('Hinter dem Ziegel ist ein Hohlraum. Darin steckt ein gefaltetes Papier.'); A.note('c2_paper'); },sense:async function(A){ await A.g('Ein Zettel. Jemand hat ihn am Morgen hineingeschoben, mit nassen Augen und trockenen Händen.'); A.note('c2_paper'); }}},
@@ -54822,10 +54836,13 @@ var HS=[
  {id:'ledana',name:'Die alte Ledana',look:'Die alte Eisfabrik. Rote Ziegel, kaputte Fenster, ein Schriftzug, von dem nur noch LEDA übrig ist.',g:{look:'Da drin ist jemand. Ich höre ihn bis hierher.',sense:'Er wartet. Auf etwas, das gleich passieren soll. Seit Jahren.'}},
  {id:'fence',name:'Bauzaun',look:async function(A){ await A.m('Ein Bauzaun mit Kettentor. „ZABRANJEN PRISTUP – RUŠENJE 21.11.“ Betreten verboten, Abriss am Montag.'); if (A.G.phase==='c2') A.note('c2_demolish'); },
    use:'Zu hoch, und oben Stacheldraht. Ich bin dreiunddreißig, nicht dreizehn.', open:'Das Tor ist mit einer Kette verschlossen.',
+   // Analyse K1-B09 (P24): das Brecheisen am Zaun bekam nur den Standardsatz
+   with:{ crowbar:'Die Kette ist dicker als das Eisen. Und das Tor sieht die halbe Matejuška. Es muss einen anderen Weg geben.' },
    g:{look:'Ein Zaun. Für mich ist das nur Luft.',sense:'Viele kleine Hände haben hier gerüttelt. Kinder.'}},
  {id:'sign',name:'Schild',look:'„ZABRANJEN PRISTUP – RUŠENJE 21.11.“ Betreten verboten. Abriss am einundzwanzigsten.',read:'„Investor: Adriatic Pearl d.o.o. – Hotel mit 120 Zimmern.“ Eine Perle. Natürlich.'},
  {id:'crates',name:'Fischkisten am Zaun',vis:function(S){ return !S.cratesMoved; },look:'Ein Stapel alter Fischkisten am Zaun. Sie stehen ein bisschen zu ordentlich da.',
-   push:async function(A){ if (A.G.phase!=='c2'){ return A.m('Warum sollte ich nachts Fischkisten verschieben?'); } if (!A.hasNote('c2_gap')) return A.m('Warum sollte ich Fischkisten verschieben? Weil sie da sind?');
+   // Analyse K1-B10 (P24): Die Kisten „stehen ein bisschen zu ordentlich da“; wer den Zaun kennt, darf sie auch ohne Malas Blick verschieben
+   push:async function(A){ if (A.G.phase!=='c2'){ return A.m('Warum sollte ich nachts Fischkisten verschieben?'); } if (!A.hasNote('c2_gap') && !A.hasNote('c2_demolish')) return A.m('Fischkisten. Erst will ich wissen, was hinter diesem Zaun ist.');
      await A.anim('push'); A.sfx('stone'); A.set('cratesMoved',true); await A.m('Dahinter: ein Zaunfeld, nur mit Draht festgemacht. Unten ist der Boden blank getreten.'); },
    g:{look:async function(A){ if (A.G.phase!=='c2') return A.g('Alte Kisten.'); await A.g('Hinter den Kisten ist das Zaunfeld lose. Die Kinder kriechen da durch. Ich sehe ihre Spuren.'); A.note('c2_gap'); },
      sense:async function(A){ await A.g('Hinter den Kisten ist das Zaunfeld lose. Die Kinder kriechen da durch.'); A.note('c2_gap'); }}},
@@ -56302,7 +56319,8 @@ async function talkNina(A){ var N=A.npc('nina');
     {t:'(Die Kassette zeigen.)',if:A.S.started&&(A.has('cassette')||A.has('radioT'))&&!shown.tape,go:async function(A){ shown.tape=1; await N.say('„Za Ninu“.'); await A.wait(800); await N.say('Er hat immer Kassetten aufgenommen, mit einem Rekorder vom Flohmarkt. Ich wusste nicht, dass es eine für mich gibt.');
         if (!A.has('radioT')) await N.say('Ich habe nichts mehr, womit ich das abspielen kann. Ich habe alles weggegeben, was Kassetten abspielt.'); }},
     {t:'Wollen Sie es hören?',if:A.S.started&&shown.note&&shown.tickets&&shown.tape&&A.has('radioT'),go:function(A){ return ninaReady(A,N); }},
-    {t:'Ich suche einen Spachtel. Einen dünnen.',if:!A.has('spatula')&&!A.flag('c2.brickDone'),once:'niSp',go:async function(A){ await N.say('Für Rahmen?'); await A.m('Für eine Fuge.'); await N.say('Nehmen Sie den alten. Zwanzig Kuna. Er ist dünn, er biegt sich, aber er bricht nicht.'); A.sfx('coin'); A.give('spatula'); }},
+    // Analyse K1-B12 (P24): erst, wenn Marko weiß, dass etwas Dünnes gebraucht wird (Ziegel versucht oder das Papier dahinter gesehen)
+    {t:'Ich suche einen Spachtel. Einen dünnen.',if:!A.has('spatula')&&!A.flag('c2.brickDone')&&(A.hasNote('c2_thin')||A.hasNote('c2_paper')||A.flag('c2.brickTried')),once:'niSp',go:async function(A){ await N.say('Für Rahmen?'); await A.m('Für eine Fuge.'); await N.say('Nehmen Sie den alten. Zwanzig Kuna. Er ist dünn, er biegt sich, aber er bricht nicht.'); A.sfx('coin'); A.give('spatula'); }},
     {t:'Die Bilder hier … malen Sie die?',once:'ni2',go:async function(A){ await N.say('Ich male, was ich sehe.'); await A.m('Immer dieselbe Fähre?'); await N.say('Ich habe nur eine gesehen.'); }},
     {t:'Was rahmen die Leute so?',once:'ni3',go:async function(A){ await N.say('Hochzeiten. Diplome. Kinder. Und Tote. Die meisten Rahmen sind für Tote, wenn man ehrlich ist.'); }},
     {t:'Kannten Sie Luka Radić?',if:A.hasNote('c2_shop')&&!hasProof(A),go:async function(A){ await N.say('…'); await N.say('Wer hat Ihnen das erzählt? Sanja?'); await N.say('Ich glaube, Sie gehen jetzt besser.'); A.S.closed=true; return 'bye'; }},
@@ -57376,7 +57394,8 @@ async function talkNada(A){ var N=A.npc('nada');
     {t:'Haben Sie nie das Zimmer aufgemacht?',once:'naS2',if:A.S.lanaOpen,go:async function(A){ await N.say('Wozu? Damit es nach mir riecht statt nach ihr?'); await A.wait(700); await N.say('Jeden Tag stehe ich vor der Tür. Jeden Tag gehe ich wieder in die Küche.'); }},
     A.askOpt({ f2_memory:async function(A){ await N.say('Du erinnerst dich.'); await A.wait(800); await N.say('Ich dachte, du hast sie vergessen. Du hast nie geschrieben. Keiner von euch hat je geschrieben.'); await A.m('Ich habe sie vergessen. Und jetzt nicht mehr.'); },
       f2_postcard:'„Ich hole Mali.“ Ich habe nie verstanden, was sie damit meinte. Du warst doch in Vratnik. Was gab es da zu holen?', m2_lana:'Lana Delić. Geboren am dritten März sechsundsiebzig. Sie hat geschrien wie eine Sirene, ganze Nächte. Esad hat gesagt, das wird eine Sängerin. Es wurde eine Malerin.',
-      f2_photo:'Mala i Mali. Ruža hat das Foto gemacht, auf der Treppe in Vratnik. Lana hat es überall herumgezeigt. Dann war es weg.', f2_missing:'Vermisst. Das Wort sagen sie beim Roten Kreuz. Ich sage: Sie kommt nicht heim.',
+      // Analyse K2-B12 (P24): Ruža ist auf dem Foto, hinter den Kindern die Drei (12_k2_items.js, 13_k2_notes.js f2_photo, Kapitel 4)
+      f2_photo:'Mala i Mali. Ruža mit euch zwei, an der Haltestelle der Drei. Hinten hat sie es selbst beschriftet. Lana hat es überall herumgezeigt. Dann war es weg.', f2_missing:'Vermisst. Das Wort sagen sie beim Roten Kreuz. Ich sage: Sie kommt nicht heim.',
       f2_rcm:'Eine Nachricht vom Roten Kreuz? An dich? Und Ruža hat …', f2_cameback:'Sie ist losgefahren, um dich zu holen. Natürlich. Natürlich ist sie das.' },'Ich weiß nichts. Ich weiß seit siebzehn Jahren nichts.'),
     ...M.k2Extra('nada',A,N),
     {t:'Danke, Frau Delić.',bye:true,go:async function(A){ await N.say('Nada. Du hast früher Teta Nada gesagt.'); }}
@@ -58023,6 +58042,9 @@ function zRect(S,G){ var a=M.E.ACT&&M.E.ACT.zlata; if (!a||!a.visible) return nu
 function zStand(S,G){ var st=M.stand('tepa','zlata_stand'); if (st) return st; var a=M.E.ACT&&M.E.ACT.zlata; if (!a) return null; return [Math.round(a.x)-26,Math.round(a.y)+4,'R']; }
 // ---------------------------------------------------------------- die Eierfrau
 function asked(A){ A.setFlag('k3.z.asked'); A.setFlag('k3.z.n',(A.flag('k3.z.n')||0)+1); }
+// Analyse K3-B09 (P24): Nach der zweiten Frage packt sie bald ein. Das sagt jetzt jede Frage, und ohne Mala sieht Marko es selbst.
+async function warnLeaving(A){ if ((A.flag('k3.z.n')||0)<2 || N(A,'l3_onetrail') || A.flag('k3.z.warned')) return; A.setFlag('k3.z.warned'); await A.wait(400);
+  if (A.G.malaOn) await A.g('Sie wird gleich gehen. Ich sehe es an ihren Händen.'); else await A.m('Sie zählt ihre Eier zum dritten Mal. Lange bleibt sie nicht mehr.'); }
 async function dreamsLine(A,secondhand){ if (N(A,'l3_dreams')){ return A.g('Sie hat es schon gesagt. Die dritte Nacht.'); }
   if (!secondhand){ await A.g('Sie beugt sich zur Nachbarin hinüber. Ganz leise.'); await A.wait(500); await A.npc('zlata').say('Sanjam je opet. Treću noć.'); await A.wait(500); await A.g('Ich träume wieder von ihr. Die dritte Nacht.'); }
   else { await A.g('Die Nachbarin redet mit dem Honigmann. Über sie.'); await A.wait(500); await A.npc('susjeda').say('Opet je sanja, kaže. Treću noć.'); await A.wait(500); await A.g('Sie träumt wieder von ihr, sagt sie. Die dritte Nacht.'); }
@@ -58056,9 +58078,9 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
   if (A.first('zlFirst')){ await Z.say('Hladno je danas.'); await A.m('„Kalt heute“, sagt sie. In der Sonne. Sie zieht die Strickjacke enger.');
     if (G.malaOn){ await A.wait(500); await A.g('Marko.'); await A.wait(300); await A.g('Die Leine. Sie endet hier. An ihr.'); } }
   await A.menuLoop(function(){ return [
-    {t:'Kennen Sie Lana Delić?',once:'zl1',go:async function(A){ asked(A); await A.wait(700); await Z.say('Ne.'); await A.wait(500); await A.m('Nein. Einfach nein. Sie sieht mich dabei an, als wäre die Frage zu leicht.'); if (G.malaOn) await A.g('Sie lügt nicht. Den Namen kennt sie nicht.'); }},
+    {t:'Kennen Sie Lana Delić?',once:'zl1',go:async function(A){ asked(A); await A.wait(700); await Z.say('Ne.'); await A.wait(500); await A.m('Nein. Einfach nein. Sie sieht mich dabei an, als wäre die Frage zu leicht.'); if (G.malaOn) await A.g('Sie lügt nicht. Den Namen kennt sie nicht.'); await warnLeaving(A); }},
     {t:'Ich suche ein Mädchen. Siebzehn. Januar vierundneunzig.',once:'zl2',go:async function(A){ asked(A); await A.wait(900); await Z.say('Svaka majka traži dijete.'); await A.m('„Jede Mutter sucht ein Kind.“'); await A.wait(500); await Z.say('Jaja? Orasi?'); await A.m('Eier oder Walnüsse. Für sie ist das Gespräch zu Ende.');
-        if (G.malaOn && (A.flag('k3.z.n')||0)>=2 && !N(A,'l3_onetrail')){ await A.wait(400); await A.g('Sie wird gleich gehen. Ich sehe es an ihren Händen.'); } }},
+        await warnLeaving(A); }},
     {t:'Kannten Sie eine Mala?',silent:true,if:N(A,'l3_onetrail'),go:function(A){ return zlataMala(A,Z); }},
     {t:'Was kosten die Eier?',once:'zl3',go:async function(A){ await Z.say('Deset jaja, tri marke. Domaća. Kokoši trče po dvorištu.'); await A.m('„Zehn Eier, drei Mark. Von hier. Die Hühner laufen im Hof herum.“ Als wäre das eine Auskunft über mich.'); }},
     {t:'Woher kommen Sie?',once:'zl4',go:async function(A){ await Z.say('Odozdo. Niz rijeku.'); await A.m('„Von unten. Den Fluss hinunter.“'); if (G.malaOn){ await A.wait(400); await A.g('Flussab.'); } }},
@@ -58066,6 +58088,8 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
     A.askOpt({ l3_onetrail:function(A){ return zlataMala(A,Z); },
       v3_mala:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Ne razumijem.'); await A.m('„Ich verstehe nicht.“ Ich verstehe es selbst noch nicht ganz. Mala. Wer hat sie so genannt?'); },
       l3_ljerka_pic:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Ne razumijem.'); await A.m('„Ich verstehe nicht.“ Ein Bild, unterschrieben mit einem Namen. Ich muss erst selbst verstehen, was der Name heißt.'); },
+      // Analyse K3-B06 (P24): „Malas Name“ ist die naheliegende Notiz; vor dem Schluss zeigt die Antwort auf die Frage dahinter
+      k3_c_name:async function(A){ if (N(A,'l3_onetrail')) return zlataMala(A,Z); await Z.say('Jaja? Orasi?'); await A.m('Den Namen Lana Delić kennt sie nicht. Aber unter welchem Namen hat man sie hier gekannt? Erst das, dann frage ich richtig.'); },
       k3_c_missing:async function(A){ await Z.say('Svaka majka traži dijete.'); await A.m('„Jede Mutter sucht ein Kind.“ Zum zweiten Mal. Wie eine Tür, die sie zumacht.'); },
       l3_dreams:async function(A){ await A.wait(700); await Z.say('Jaja? Orasi?'); await A.m('Sie tut, als hätte sie nichts gehört. Ihre Hände zählen die Eier noch einmal.'); } },'Jaja? Orasi?'),
     {t:'Doviđenja.',bye:true,go:async function(A){ await Z.say('Doviđenja.'); }}
@@ -58149,7 +58173,8 @@ async function talkMira(A){ var Mi=A.npc('mira');
   if (A.G.phase==='epi') return miraEpi(A,Mi);
   if (A.first('miHello')){ await Mi.say('Zeitung? Zigaretten? Ein Feuerzeug gegen die Bura?'); }
   await A.menuLoop(function(){ return [
-    {t:'Haben Sie Batterien? Mono, für ein altes Radio.',if:!A.has('batteries')&&!A.has('radioB')&&!A.has('radioT'),go:async function(A){ await Mi.say('Mono. Die verlangt keiner mehr. Warten Sie.'); await A.wait(900); A.sfx('coin'); A.give('batteries'); await Mi.say('Vier Stück, die letzten. Ich wickle sie Ihnen ein. Sonst laufen sie aus.'); }},
+    // Analyse K1-B12 (P24): erst mit dem Radio in der Tasche
+    {t:'Haben Sie Batterien? Mono, für ein altes Radio.',if:A.has('radio')&&!A.has('batteries')&&!A.has('radioB')&&!A.has('radioT'),go:async function(A){ await Mi.say('Mono. Die verlangt keiner mehr. Warten Sie.'); await A.wait(900); A.sfx('coin'); A.give('batteries'); await Mi.say('Vier Stück, die letzten. Ich wickle sie Ihnen ein. Sonst laufen sie aus.'); }},
     {t:'Sie arbeiten schon lange hier?',once:'mi1',go:async function(A){ await Mi.say('Seit neunzig. Ich habe drei Fährgesellschaften überlebt, zwei Kriege im Fernsehen und einen Mann.'); await Mi.say('Den Mann habe ich nicht überlebt. Er mich.'); }},
     {t:'Erinnern Sie sich an den August neunundneunzig? An ein Mädchen, das hier gewartet hat?',once:'mi2',if:A.hasNote('c2_meet')||A.hasNote('c2_waited')||A.hasNote('c2_stayed')||A.hasNote('c2_echo'),go:async function(A){ await Mi.say('Neunundneunzig …'); await A.wait(900);
         await Mi.say('Ein Mädchen, ja. Rotes Kleid, eine große Tasche. Sie stand da, bis die Fähre nach Ancona weg war. Dann saß sie auf der Bank, bis die Zeitungen kamen.'); await Mi.say('Ich habe ihr einen Kaffee gegeben. Sie hat kein Wort gesagt. Nicht ein Wort.'); A.note('c2_mira1');
@@ -64165,7 +64190,16 @@ M.trAdd('bhs', {
   'Mala hört hin, was Dinko beim Flicken murmelt.': 'Mala osluškuje što Dinko mrmlja dok krpi.',   // m
   'Ich höre hin, was Dinko beim Flicken murmelt.': 'Ja osluškujem što Dinko mrmlja dok krpi.',   // g
   'Zu Mala wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na Malu i prisluškivati Dinka dok krpi.',   // m
-  'Zu mir wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na mene i prisluškivati Dinka dok krpi.'   // g
+  'Zu mir wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na mene i prisluškivati Dinka dok krpi.',   // g
+  // Kann-Liste P24 (Niedrig-Befunde K1-B09 bis K1-B13)
+  'Die Kette ist dicker als das Eisen. Und das Tor sieht die halbe Matejuška. Es muss einen anderen Weg geben.': 'Lanac je deblji od pajsera. A vrata vidi pola Matejuške. Mora biti neki drugi put.',   // Marko
+  'Fischkisten. Erst will ich wissen, was hinter diesem Zaun ist.': 'Gajbe za ribu. Prvo hoću znati što je iza ove ograde.',   // Marko
+  'Die Kisten sind weg. Dahinter ist die Lücke.': 'Gajbe su maknute. Iza njih je rupa.',   // Hinweis
+  'Als Marko durch die Lücke im Zaun kriechen.': 'Kao Marko se provući kroz rupu u ogradi.',   // Hinweis
+  'Ich habe ihn dir schon gelesen.': 'Već sam ti ga pročitala.',   // Mala
+  'Halt ihn mir hin. Dann lese ich dir, was das Salz gefressen hat.': 'Drži mi ga. Onda ću ti pročitati ono što je so pojela.',   // Mala
+  'Er klebt zusammen. So kann ich die Schrift nicht sehen.': 'Zalijepio se. Ovako ne vidim rukopis.',   // Mala
+  'Da lag ein Zettel. Von Nina. Sie hat ihn jetzt wieder. Aber ich weiß noch, was drinstand.': 'Tamo je bila poruka. Od Nine. Sad je opet kod nje. Ali još znam što je pisalo.'   // Marko
 });
 })(M);
 
@@ -65087,7 +65121,8 @@ M.migrateSave=function(G){ var f=G.flags||(G.flags={}), inv=G.inv||(G.inv=[]);
 // ältere Fassungen haben dort gespeichert. Beim Laden wird der Wechsel nachgeholt. Ist sein Schalter schon gesetzt, der Abschnitt aber noch der alte
 // (Unterbrechung mitten im Wechsel), wird der Schalter zurückgenommen und der Wechsel neu gestartet oder wieder auslösbar gemacht.
 var PENDING=[
-  {from:'pro_night', run:function(A){ return M.startCase1(A); }},
+  // Analyse K1-B16 (P24): ohne „when“ lief diese Regel nie. Ist die Nacht schon gespielt, beginnt der erste Fall; sonst führt das Bett wieder in die Nacht (flat.js)
+  {from:'pro_night', when:function(G){ return !!G.flags['split.intro.night']; }, run:function(A){ return M.startCase1(A); }},
   {from:'i1m', when:function(G){ return G.flags['i1.done']; }, run:function(A){ return M.startCase2(A); }},
   {from:'c2', guard:'c2.nightStarted', when:function(G){ return G.flags['c2.tonight']; }, run:function(A){ return M.startC2Night(A); }},
   {from:'c2_night', when:function(G){ return G.flags['c2.ninaGone']; }, run:function(A){ return M.interlude2(A); }},
@@ -65975,7 +66010,9 @@ M.k3Bed=async function(A){ var G=A.G, p=G.phase;
   if (p==='k3_d1_n'){ if (A.flag('k3.d1.father')) return M.k3StartD2(A); return A.m('Noch nicht. Mala sitzt auf der Terrasse und sieht mich an, als wollte sie etwas fragen.'); }
   if (p==='k3_pro') return A.m(dayReady(G)?'Es wird gleich dunkel. Erst will ich noch nach draußen.':A.cycle('k3bed0',['Es ist Mittag. Und ich bin wegen einer Brücke hier, nicht wegen eines Betts.','Später. Erst die Brücke.']));
   if (p==='k3_d1'){ if (!has(G,'l3_skela')) return A.m(has(G,'l3_oldmap')&&has(G,'l3_area')?'Am hellen Tag? Ich habe einen Namen auf einer alten Karte. Mehr noch nicht.':(has(G,'l3_area')?'Am hellen Tag? Ich weiß ungefähr, wo. Hinter dem Rand meines Plans. Mehr nicht.':'Am hellen Tag? Die Leine zeigt irgendwohin, und ich weiß noch nicht, wohin.'));
-    return A.m('Vlado. Erst Vlado. Und die Schublade.'); }
+    // Analyse K3-B08 (P24): den Namen nennt das Bett erst, wenn Marko ihn kennt; die Schublade erst, wenn Kata davon erzählt hat
+    var knows=(M.k3KnowsVlado&&M.k3KnowsVlado(G))||has(G,'v3_ljerka');
+    return A.m(!knows?'Am hellen Tag? Erst den Fahrer. Den, der geraucht und nichts gesagt hat.':(has(G,'v3_typenschein')?'Vlado. Erst Vlado. Und die Schublade.':'Vlado. Erst Vlado.')); }
   if (p==='k3_d2'){ var w=d2Missing(G); return A.m(w||'Noch nicht.'); }
   if (p==='k3_d2_n') return A.g('Nicht jetzt. Es zieht. Nach Skela.');
   if (p==='k3_d3'){ var w3=d3Missing(G); return A.m(w3?'Heute nicht. '+w3:A.cycle('k3bed3',['Heute nicht. Heute Nacht schon gar nicht.','Wenn ich mich jetzt hinlege, verschlafe ich den Frost.'])); }
@@ -68257,7 +68294,8 @@ var X={
   ]; },
   emina:function(A,E){ return [
     o('xe1','Seit wann gibt es hier keinen Espresso?',true,async function(A){ await E.say('Seit es Espresso gibt.'); await A.wait(500); await E.say('Mein Vater hat gesagt: Kaffee, den man in einer Minute trinkt, hat man nicht verdient.'); }),
-    o('xe2','Wie lange gibt es die Kafana schon?',true,async function(A){ await E.say('Seit meinem Großvater. Neunzehnhundertdreißig. Die Tische sind älter als die Stadtverwaltung und haben mehr gesehen.'); await E.say('Im Krieg war sie zwei Wochen zu. Dann habe ich Kaffee aus Kichererbsen gekocht, und die Leute sind trotzdem gekommen.'); }),
+    // Analyse K2-B12 (P24): Gründungsjahr wie im Gespräch in der Kafana und auf dem Schild „od 1958“
+    o('xe2','Wie lange gibt es die Kafana schon?',true,async function(A){ await E.say('Seit achtundfünfzig. Mein Vater hat sie aufgemacht, mit den Tischen von seinem Vater. Die sind älter als die Stadtverwaltung und haben mehr gesehen.'); await E.say('Im Krieg war sie zwei Wochen zu. Dann habe ich Kaffee aus Kichererbsen gekocht, und die Leute sind trotzdem gekommen.'); }),
     o('xe3','Welche Lieder spielt Ihr Radio?',true,async function(A){ await E.say('Sevdah. Lieder, in denen jemand am Fenster wartet, und der andere kommt nicht.'); await E.say('Die Jungen sagen, das ist traurige Musik. Das ist keine traurige Musik. Das ist genaue Musik.'); })
   ]; },
   nedzad:function(A,N){ return [

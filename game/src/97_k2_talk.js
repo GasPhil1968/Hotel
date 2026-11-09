@@ -48,7 +48,8 @@ var X={
   ]; },
   emina:function(A,E){ return [
     o('xe1','Seit wann gibt es hier keinen Espresso?',true,async function(A){ await E.say('Seit es Espresso gibt.'); await A.wait(500); await E.say('Mein Vater hat gesagt: Kaffee, den man in einer Minute trinkt, hat man nicht verdient.'); }),
-    o('xe2','Wie lange gibt es die Kafana schon?',true,async function(A){ await E.say('Seit meinem Großvater. Neunzehnhundertdreißig. Die Tische sind älter als die Stadtverwaltung und haben mehr gesehen.'); await E.say('Im Krieg war sie zwei Wochen zu. Dann habe ich Kaffee aus Kichererbsen gekocht, und die Leute sind trotzdem gekommen.'); }),
+    // Analyse K2-B12 (P24): Gründungsjahr wie im Gespräch in der Kafana und auf dem Schild „od 1958“
+    o('xe2','Wie lange gibt es die Kafana schon?',true,async function(A){ await E.say('Seit achtundfünfzig. Mein Vater hat sie aufgemacht, mit den Tischen von seinem Vater. Die sind älter als die Stadtverwaltung und haben mehr gesehen.'); await E.say('Im Krieg war sie zwei Wochen zu. Dann habe ich Kaffee aus Kichererbsen gekocht, und die Leute sind trotzdem gekommen.'); }),
     o('xe3','Welche Lieder spielt Ihr Radio?',true,async function(A){ await E.say('Sevdah. Lieder, in denen jemand am Fenster wartet, und der andere kommt nicht.'); await E.say('Die Jungen sagen, das ist traurige Musik. Das ist keine traurige Musik. Das ist genaue Musik.'); })
   ]; },
   nedzad:function(A,N){ return [

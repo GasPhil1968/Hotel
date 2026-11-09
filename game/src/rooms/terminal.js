@@ -7,7 +7,8 @@ async function talkMira(A){ var Mi=A.npc('mira');
   if (A.G.phase==='epi') return miraEpi(A,Mi);
   if (A.first('miHello')){ await Mi.say('Zeitung? Zigaretten? Ein Feuerzeug gegen die Bura?'); }
   await A.menuLoop(function(){ return [
-    {t:'Haben Sie Batterien? Mono, für ein altes Radio.',if:!A.has('batteries')&&!A.has('radioB')&&!A.has('radioT'),go:async function(A){ await Mi.say('Mono. Die verlangt keiner mehr. Warten Sie.'); await A.wait(900); A.sfx('coin'); A.give('batteries'); await Mi.say('Vier Stück, die letzten. Ich wickle sie Ihnen ein. Sonst laufen sie aus.'); }},
+    // Analyse K1-B12 (P24): erst mit dem Radio in der Tasche
+    {t:'Haben Sie Batterien? Mono, für ein altes Radio.',if:A.has('radio')&&!A.has('batteries')&&!A.has('radioB')&&!A.has('radioT'),go:async function(A){ await Mi.say('Mono. Die verlangt keiner mehr. Warten Sie.'); await A.wait(900); A.sfx('coin'); A.give('batteries'); await Mi.say('Vier Stück, die letzten. Ich wickle sie Ihnen ein. Sonst laufen sie aus.'); }},
     {t:'Sie arbeiten schon lange hier?',once:'mi1',go:async function(A){ await Mi.say('Seit neunzig. Ich habe drei Fährgesellschaften überlebt, zwei Kriege im Fernsehen und einen Mann.'); await Mi.say('Den Mann habe ich nicht überlebt. Er mich.'); }},
     {t:'Erinnern Sie sich an den August neunundneunzig? An ein Mädchen, das hier gewartet hat?',once:'mi2',if:A.hasNote('c2_meet')||A.hasNote('c2_waited')||A.hasNote('c2_stayed')||A.hasNote('c2_echo'),go:async function(A){ await Mi.say('Neunundneunzig …'); await A.wait(900);
         await Mi.say('Ein Mädchen, ja. Rotes Kleid, eine große Tasche. Sie stand da, bis die Fähre nach Ancona weg war. Dann saß sie auf der Bank, bis die Zeitungen kamen.'); await Mi.say('Ich habe ihr einen Kaffee gegeben. Sie hat kein Wort gesagt. Nicht ein Wort.'); A.note('c2_mira1');
