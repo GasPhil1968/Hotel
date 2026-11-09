@@ -1,3 +1,18 @@
+DIE STILLEN – ÄNDERUNGEN: TITELMENÜ, FOTO ALS BILD, ZWEI PORTRÄTS (9. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Titelbild: „Fortsetzen“ ist eine Menüzeile wie die anderen (mit Kapitel, Ort
+  und Datum darunter). Die Karte mit Vorschaubild, die die Riva verdeckt hat,
+  ist weg.
+- Das Foto „Mala i Mali · 1988“ wird beim Ansehen als Bild gezeigt: ein alter
+  Farbabzug mit weißem Rand, hinten die Drei an der Haltestelle, davor Ruža,
+  Mali im gestreiften Pullover und das Mädchen mit Zopf, Hand in Hand. Die
+  halbe Hälfte aus dem Karton zeigt nur die linke Seite mit dem Riss. Der Text
+  dazu steht darunter; ein Tipp oder Esc schließt das Bild (Kapitel 2, 4 und 5).
+- Mostar: Die Kioskfrau am Ostbusbahnhof und der Händler im Kujundžiluk haben
+  jetzt gemalte Porträts (wie Marko und Mala) statt des vergrößerten
+  Spielfigur-Kopfs.
+
 DIE STILLEN – ÄNDERUNGEN: KAPITELWAHL „DIE REISE“ UND SPIELE STATT PLÄTZE (9. NOVEMBER 2026)
 Ausführlich: design/KAPITELWAHL.md im Repository (Entwurf A, Abschnitt 7).
 

@@ -38,7 +38,7 @@ M.COMBOS['aushang+photo_full']='Sepp und wir drei an der Haltestelle. Zwei Fotos
 function wrap(id,k,fn){ var it=M.ITEMS[id]; if (!it) return; var o=it[k]; it[k]=function(A){ if (CH4(A.G)){ var r=fn(A); if (r!==undefined) return r; }
   if (typeof o==='function') return o(A); if (o!==undefined) return k==='mala'?A.g(o):A.m(o); return A.m('Das ist '+it.name+'.'); }; }
 wrap('dzezva','look',function(A){ return A.m(A.flag('k4.d1.dzezva')?'Großmutters Džezva. Mama hat sie gestern Abend auf den Herd gestellt, als wäre sie nie fort gewesen.':'Die Džezva meiner Großmutter. Ich habe sie nach München mitgenommen. Mama wird sie erkennen.'); });
-wrap('photo_full','look',function(A){ return A.m('Großmutter Ruža, ich mit zehn, Lana mit Zopf. Hinter uns die Drei. „Mala i Mali · 1988“. Mama hat dieses Foto nie gesehen.'); });
+wrap('photo_full','look',function(A){ return M.showPhoto(A,true,'Großmutter Ruža, ich mit zehn, Lana mit Zopf. Hinter uns die Drei. „Mala i Mali · 1988“. Mama hat dieses Foto nie gesehen.'); });
 wrap('mobitel','look',function(A){ return A.m(A.G.flags['k4.p.key']?'Mein Handy. Anas SMS, Nadas „Jesi li stigao?“, und eine Nummer, die ich nicht anrufe.':'Mein Handy. Eine SMS von Ana.'); });
 // Das Handy: telefonieren. Wen ich anrufen kann, hängt vom Stand der Geschichte ab; die Gespräche schreiben die Skripte (M.K4PHONE[key]).
 M.K4PHONE=M.K4PHONE||{};

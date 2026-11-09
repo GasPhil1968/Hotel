@@ -612,4 +612,45 @@ M.mem.k2_ninth=function(b){ var w=b.w,h=b.h, x, y, i, L=56;
   M.light(b,M.lf.sum(M.lf.k(-1.2),M.lf.beam(20,30,130,76,8,40,2.4),M.lf.pool(19,32,20,34,1.8,1),M.lf.pool(164,26,22,20,0.8,1)));
   edgeDark(b,2.2); };
 
+// ================================================================ Das Foto „Mala i Mali · 1988“ als Bild (Overlay 'photo'; Wunsch des Autors: beim Ansehen das Foto zeigen, nicht nur den Text)
+// Abzug 168 × 112 mit weißem Rand, ein Farbfoto von 1988 (warm, leicht ausgeblichen). Hinter der Haltestelle die Drei, davor Ruža (aus dem
+// Figurenbaukasten, Ivkas Kopftuch und Mantel), Mali im gestreiften Pullover und das Mädchen mit Zopf, Hand in Hand. Als halbes Foto fehlt die rechte Hälfte.
+var PHW=168, PHH=112, PHB=5;
+var PHOTO_TINT=M.tintMake(function(r,g,b){ var L=0.3*r+0.59*g+0.11*b; return [r*0.70+L*0.14+34, g*0.62+L*0.12+24, b*0.46+L*0.10+14]; });
+function photoScene(b){ var w=PHW, h=PHH, x, y;
+  // Himmel, Wohnblöcke von Alipašino Polje, Oberleitung
+  fill(b,0,0,w,h,function(x,y){ return ra(R('b4 b5 s5'),0.25+y/h*0.9+(fbm(x,y,20,5)-0.5)*0.3,x,y); });
+  tower(b,-6,38,8,72,{fl:7,seed:3}); tower(b,120,174,2,72,{fl:8,seed:5}); tower(b,52,96,24,72,{fl:5,seed:9});
+  b.line(0,16,w-1,20,P.k2); b.line(0,19,w-1,23,P.m1); b.vl(146,18,70,P.m1); b.vl(147,18,70,P.m2);
+  // die Drei (nach links, Liniennummer 3), ein Stück Bahnsteig, Asphalt
+  M.scn.tram(b,-52,88,{s:0.42,dir:'L',line:'3'});
+  fill(b,0,88,w,6,function(x,y){ return y===88?P.s5:(y===89?P.s4:ra(R('s2 s3'),0.5+hash(x>>3,y)*0.3,x,y)); });
+  fill(b,0,94,w,h-94,function(x,y){ return ra(R('m0 m1 m2'),0.3+(y-94)/18+(fbm(x,y,5,2)-0.5)*0.5,x,y); });
+  // Haltestellenschild
+  b.vl(24,46,88,P.m2); b.rect(19,38,11,10,P.s6); b.rect(20,39,9,8,P.y4); M.microText(b,'3',22,40,P.k1);
+  // Ruža, von vorn, die Hände vor dem Bauch; Mali und das Mädchen Hand in Hand
+  fig(b,60,100,F({lh:[-4,-20],rh:[4,-20],ho:[0,1]}),'F','ivka');
+  var g=kid(b,116,100,{kind:'girl',f:'L',ln:0.5,lk:-0.15,nf:[2,0,'f'],ff:[-2,0,'f'],nh:[7,-13],fh:[-2,-14],braid:[1.5,8.6],sz:1.02});
+  kid(b,92,100,{kind:'boy',f:'R',ln:0.5,lk:-0.2,nf:[2,0,'f'],ff:[-2,0,'f'],nh:[g.nh[0]-92,g.nh[1]-100],fh:[-3,-14]});
+  // Licht wie ein Nachmittag im Spätsommer, Vignette, dann die Farben des alten Abzugs
+  M.light(b,M.lf.sum(M.lf.k(0.15),M.lf.band(0,h,0.1,-0.5))); edgeDark(b,1.2);
+  M.tintApply(b,PHOTO_TINT);
+  for (y=0;y<h;y++) for (x=0;x<w;x++){ if (hash(x+31,y+7)<0.025) b.px(x,y,M.UP[b.get(x,y)]); }   // Korn
+}
+var PJ=[0,2,3,1,-1,-3,-2,0,2,4,1,-2]; function photoTear(y){ return 96+PJ[(y>>1)%PJ.length]; }
+// der fertige Abzug mit Rand (T außerhalb); half: nur die linke, gerissene Hälfte (Riss wie in photoHalves)
+M.mem.photoPrint=function(full){ var pw=PHW+2*PHB, ph=PHH+2*PHB, out=new M.Buf(pw,ph,T), pic=new M.Buf(PHW,PHH,P.s4), x, y;
+  photoScene(pic); out.rect(0,0,pw,ph,P.s6); for (y=0;y<ph;y++) for (x=0;x<pw;x++){ if (hash(x+3,y+9)<0.02) out.px(x,y,P.s5); }
+  out.blit(pic,PHB,PHB);
+  if (!full){ for (y=0;y<ph;y++){ var t=photoTear(Math.max(0,y-PHB))+PHB; for (x=t;x<pw;x++) out.d[y*pw+x]=T; out.px(t-1,y,((y)&1)?P.s6:P.s5); if (y%3===0) out.px(t-2,y,P.s6); } }
+  else { for (y=PHB;y<ph-PHB;y++){ var t2=photoTear(y-PHB)+PHB; if (y%2===0) out.px(t2,y,M.UP[out.get(t2,y)]); } }   // der Riss bleibt als feine helle Linie
+  return out; };
+function wrapWords(s,maxw){ var out=[], cur=''; String(s||'').split(' ').forEach(function(wd){ var t=cur?cur+' '+wd:wd; if (M.textWidth(t)>maxw && cur){ out.push(cur); cur=wd; } else cur=t; }); if (cur) out.push(cur); return out; }
+M.defineOverlay('photo',function(fb,ov){ var d=ov.data; if (!ov.pic) ov.pic=M.mem.photoPrint(!!d.full);
+  var pw=ov.pic.w, ph=ov.pic.h, x0=(fb.w-pw)>>1, y0=4, x, y;
+  for (y=0;y<ph;y++) for (x=0;x<pw;x++) if (ov.pic.d[y*pw+x]!==T) fb.px(x0+x+3,y0+y+3,P.k0);   // Schatten
+  fb.blit(ov.pic,x0,y0);
+  if (d.text){ var lines=wrapWords(M.trUI?M.trUI(d.text):d.text,292), ty=y0+ph+6; fb.rect(0,ty-4,fb.w,lines.length*9+7,P.k0); lines.forEach(function(l,i){ M.text(fb,l,(fb.w-M.textWidth(l))>>1,ty+i*9,P.s5); }); } });   // dunkles Band hinter den Zeilen (sie liegen über der Leiste)
+M.showPhoto=function(A,full,text){ return A.overlay('photo',{full:!!full,text:text||''}); };
+
 })(M);

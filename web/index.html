@@ -3793,7 +3793,8 @@ function platformNote(){ if (!iosDev()) return null;
 // Speicher möglichst dauerhaft anfordern, wo der Browser es ohne Rückfrage entscheidet (WebKit); einmal, beim ersten Tipp
 if (DOM && navigator.storage && navigator.storage.persist && (iosDev()||standalone())) document.addEventListener('pointerdown',function(){ try{ navigator.storage.persisted().then(function(p){ if (!p) return navigator.storage.persist(); }).catch(function(){}); }catch(e){} },{once:true,capture:true});
 SCR.main=function(){ var s=latest(), it=[];
-  if (s) it.push({type:'card',label:'Fortsetzen',sub:placeOf(s),meta:(s.kind==='chapterEnd'?T('Weiter mit Kapitel')+' '+s.next:fmtAt(s.at)+' · '+fmtDur((s.meta&&s.meta.playMs)||0)),thumb:s.thumb||null,primary:true,act:continueLatest});
+  // „Fortsetzen“ als Menüzeile wie die übrigen (keine Karte mit Bild, die das Titelbild verdeckt; Wunsch des Autors)
+  if (s) it.push({type:'btn',label:'Fortsetzen',sub:placeOf(s)+' · '+(s.kind==='chapterEnd'?T('Weiter mit Kapitel')+' '+s.next:fmtAt(s.at)),primary:true,act:continueLatest});
   it.push({type:'btn',label:'Neues Spiel',primary:!s,act:newGameFlow});
   it.push({type:'btn',label:'Kapitel wählen',act:function(){ push('chapters'); }});
   it.push({type:'btn',label:'Spiel laden',sub:anyState()?'':'Beispielstände',act:function(){ push('load',{scope:'title'}); }});
@@ -4744,10 +4745,10 @@ M.defineItems({
     use:function(A){ return M.k2OpenKarton?M.k2OpenKarton(A):A.m('Noch nicht.'); },
     mala:'Seit siebzehn Jahren zu. Willst du es wirklich wissen?'},
   photo_m:{name:'Halbes Foto',icon:function(w){ w.rect(4,4,20,16,P.s6); w.rect(6,6,16,12,P.b2); w.rect(9,8,4,8,P.q3); w.rect(9,11,4,5,P.r2); for (var y=11;y<16;y+=2) w.hl(9,12,y,P.s5); w.rect(15,7,4,9,P.m3); for (var y2=4;y2<20;y2++) w.px(23+(y2%3===0?1:0),y2,P.s4); },
-    look:'Mein Foto. Ein Junge im gestreiften Pullover, eine alte Frau mit Kopftuch, eine Straßenbahn. Die rechte Kante ist gerissen. Das habe ich nie bemerkt. Oder nie bemerken wollen.',
+    look:function(A){ return M.showPhoto(A,false,'Mein Foto. Ein Junge im gestreiften Pullover, eine alte Frau mit Kopftuch, eine Straßenbahn. Die rechte Kante ist gerissen. Das habe ich nie bemerkt. Oder nie bemerken wollen.'); },
     mala:'Da fehlt jemand. Da, wo deine Hand aufhört.'},
   photo_full:{name:'Das ganze Foto',icon:function(w){ w.rect(3,4,26,16,P.s6); w.rect(5,6,22,12,P.b2); w.rect(8,8,4,8,P.q3); w.rect(8,11,4,5,P.r2); for (var y=11;y<16;y+=2) w.hl(8,11,y,P.s5); w.rect(13,7,4,9,P.m3); w.rect(20,8,4,8,P.p4); w.rect(20,11,4,5,P.c2); w.vl(17,4,19,P.s4); },
-    look:'Großmutter Ruža. Ich, mit zehn, im gestreiften Pullover. Und ein Mädchen mit Zopf, das meine Hand hält. Hinter uns die Drei. Auf der Rückseite: „Mala i Mali · 1988“.',
+    look:function(A){ return M.showPhoto(A,true,'Großmutter Ruža. Ich, mit zehn, im gestreiften Pullover. Und ein Mädchen mit Zopf, das meine Hand hält. Hinter uns die Drei. Auf der Rückseite: „Mala i Mali · 1988“.'); },
     mala:'Das bin ich.'},
   sweater:{name:'Gestreifter Pullover',icon:function(w){ w.poly([[8,6],[24,6],[28,12],[24,13],[24,21],[8,21],[8,13],[4,12]],P.r2); for (var y=8;y<21;y+=3) w.hl(6,26,y,P.s5); w.rect(13,5,6,2,P.k2); },
     look:'Mein Pullover. Rot mit weißen Streifen. Großmutter hat ihn gestrickt, zwei Nummern zu groß, „damit er mitwächst“. Er ist nicht mitgewachsen.',
@@ -4870,7 +4871,7 @@ M.COMBOS['aushang+photo_full']='Sepp und wir drei an der Haltestelle. Zwei Fotos
 function wrap(id,k,fn){ var it=M.ITEMS[id]; if (!it) return; var o=it[k]; it[k]=function(A){ if (CH4(A.G)){ var r=fn(A); if (r!==undefined) return r; }
   if (typeof o==='function') return o(A); if (o!==undefined) return k==='mala'?A.g(o):A.m(o); return A.m('Das ist '+it.name+'.'); }; }
 wrap('dzezva','look',function(A){ return A.m(A.flag('k4.d1.dzezva')?'Großmutters Džezva. Mama hat sie gestern Abend auf den Herd gestellt, als wäre sie nie fort gewesen.':'Die Džezva meiner Großmutter. Ich habe sie nach München mitgenommen. Mama wird sie erkennen.'); });
-wrap('photo_full','look',function(A){ return A.m('Großmutter Ruža, ich mit zehn, Lana mit Zopf. Hinter uns die Drei. „Mala i Mali · 1988“. Mama hat dieses Foto nie gesehen.'); });
+wrap('photo_full','look',function(A){ return M.showPhoto(A,true,'Großmutter Ruža, ich mit zehn, Lana mit Zopf. Hinter uns die Drei. „Mala i Mali · 1988“. Mama hat dieses Foto nie gesehen.'); });
 wrap('mobitel','look',function(A){ return A.m(A.G.flags['k4.p.key']?'Mein Handy. Anas SMS, Nadas „Jesi li stigao?“, und eine Nummer, die ich nicht anrufe.':'Mein Handy. Eine SMS von Ana.'); });
 // Das Handy: telefonieren. Wen ich anrufen kann, hängt vom Stand der Geschichte ab; die Gespräche schreiben die Skripte (M.K4PHONE[key]).
 M.K4PHONE=M.K4PHONE||{};
@@ -17462,6 +17463,101 @@ M.definePortrait('gerda',{ paint:paint });
 if (M.PORTRAIT_GHOSTS) M.PORTRAIT_GHOSTS.gerda=true;
 })(M);
 
+/* ---- portraits/haendler.js ---- */
+/* ===== portraits/haendler.js — Händler (um 65) im Kujundžiluk in Mostar
+   Ockerfarbene Schiebermütze, wettergegerbtes Gesicht mit Lachfältchen, grauer Schnurrbart, graue Brauen und Haarkranz,
+   weißes Hemd mit offenem Kragen, braune Strickweste. Aufgebaut auf dem Bild von Jakov (gleiche Haltung, eigene Mütze, Bart und Farben).
+   Legende: Ziffern Haut (q-Rampe, p5 Licht) · w/W Augenweiß · i Iris · I Wimpern · X Z z y Y Haar, Brauen, Schnurrbart ·
+   a b c d Mütze · u v Schirm · R S T U Hemd · A B C D f F Weste.
+   Varianten: EYES (Lid zu) und MOUTH (Lippen geöffnet) werden über das Grundbild gelegt. */
+(function(M){
+'use strict';
+var P=M.P;
+// Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
+var L={"2":P.q1, "3":P.q2, "4":P.q3, "5":P.q4, "6":P.p5, "k":P.k1, "w":P.s4, "W":P.s3, "i":P.w1, "I":P.h1, "X":P.m1, "Z":P.m3, "z":P.m4, "y":P.s4, "Y":P.s5, "n":P.q1, "a":P.e1, "b":P.e2, "c":P.e3, "d":P.e4, "u":P.k1, "v":P.e1, "R":P.s3, "S":P.s4, "T":P.s5, "U":P.s6, "A":P.w0, "B":P.w1, "C":P.w2, "D":P.w3, "f":P.w2, "F":P.w1, "s":P.q3};
+var BASE=[
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"........................................................",
+"...........................kkkkkkk......................",
+"......................kkkkkccccccckkkkk.................",
+"...................kkkcccacbbbbbbbcbbbbkk...............",
+".................kkcdcbbcbaabbbbbbaabaabbk..............",
+"...............kkdccbcbbbbbbaabbbbababaaabk.............",
+"..............kccbcbbbbbbbbbbbaaaabaaaaaaabk............",
+"..............kbbbbbbbbbbbbbbabaaaaaaaaaaaaak...........",
+".............kcbcbbbbbbbbbabbaaabaaaaaaaaaaak...........",
+".............kbcbbbbbbbbbbbbababaaaaaaaaaaaak...........",
+".............kcbbbbbbbbbabaaaaaauuuuuuuuuuuuuk..........",
+".............kabbbbbaaaaaakkkkkkcccvvvvvvvvccck.........",
+"..............kaaaaazy4555555543333cccccccckkk..........",
+"..............kZZyzzyy4555444444533333333kk.............",
+"..............kZZzyzzy4555555555554443333k..............",
+"..............kZZzzyzy4555555YYyy5554yYy3k..............",
+"..............kZZy455445555Yyyzzzyz5yzzzy4k.............",
+"..............kZZz565445555z45554445445444k.............",
+"..............kZZz5545455555432II23543II3k..............",
+"..............kZZy544545554542WiIW454WiI3k..............",
+"..............kZZz53354554554433345644334k..............",
+"...............kZz532545555556655555644444k.............",
+"...............kZy543545566555544555643444k.............",
+"...............kZz544545566555555555565434k.............",
+"................kZ5545455565554555555566543k............",
+"................kZ4554455555555553455555443k............",
+".................kX45445555555553454323334k.............",
+"..................kX444555555553455555544k..............",
+"..................k44445555555ZZZZZZZZz44k..............",
+"..................k44444555555Zz3nnnnzZ4k...............",
+"..................k444445555555544554454k...............",
+"..................k444444455555554444454k...............",
+"..................k444443455555555665544k...............",
+"..................k444444345555554565544k...............",
+"..................k444444434455555545444k...............",
+"..................k44444444334445555444k................",
+"..................k4444444444344444443k.................",
+"..................k44444444444334443kk..................",
+"...............kkkTDUUUU44444443333k....................",
+"............kkkTDDDCTTTTUUUTTTTTTSSkk...................",
+".........kkkDDDDCCCCSTTTTTTUUTTTTRSSSkk.................",
+".......kkTTTDCCCCCCCCSSTTTTTTUTTTSSSSSSkkk..............",
+"......kTTSSDCCCCCCCCCCDSSTTTTTUTTSRSSSSBAAkkkk..........",
+".....kTSSSSDCCCCCCCCCCCDCSSTTTSRTSSRRSSBABBBATkk........",
+"....kTSSSSSDCCCCCCCCCCCCDCTSSTTTRSSSSRRBABBBBATTkk......",
+"...kTSSSSSSDCCCCCCCCCCCCCDCTTSTTRSSSSSSABBBBBASSSSk.....",
+"..kTRSSSSSDCCCCCCCCCCCCCCCDCTTTTRSSSSSSABBBBBASSSSSk....",
+"..kRRSSSSSDCCCCCCCCCCCCCCCCDCTTTRSSSSSFABBBBBASSSSRSk...",
+"..kRRSSSSSDCCCCCCCCCCCCCCCCCDCTTTRSSSSfABBBBBASSSSRRSk..",
+".kTRRSSSSSDCCCCCCCCCCCCCCCCCCDCTTRSSSSABBBBBBASSSSRRRk..",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCDCTRSSSCABBBBBBASSSSRRRk..",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCCCDCSRSSFABBBBBBASSSSRRRSk.",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCCCCDCRSSfABBBBBBASSSSRRRRk.",
+".kRRRSSSSDCCCCCCCCCCCCCCBBBBBBCCCDRSSABBBBBBBASSSSRRRRk.",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCFCCCfDRCABBBBBBBASSSSRRRRk.",
+".kRRRSSSSDCCCCCCCCCCCCCCCCCCCCfCFCCDCFBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCCfBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBBASSSSRRRRk.",
+".kRRRSSSSSDCCCCCCCCCCCCCCCCCCCCCCCCCFCBBBBBBBASSSSRRRRk."];
+var EYES={x:29,y:22,rows:[
+"455554  5544",
+"5433454 4334",
+" 555     55 "]};
+var MOUTH={x:33,y:33,rows:[
+" w   ",
+"3223 ",
+" 55  ",
+"44444"]};
+function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
+function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
+M.definePortrait('haendler',{ paint:function(b,v){
+  put(b,L,BASE,0,0);
+  if (v.mouth){ patch(b,L,MOUTH); }
+  if (v.eyes){ patch(b,L,EYES); }
+} });
+})(M);
+
 /* ---- portraits/hajra.js ---- */
 /* ===== portraits/hajra.js — Hajra Mešić (72), Pensionswirtin in Kovači
    Rundes, weiches Gesicht mit freundlichen Falten (Krähenfüße, Lachfalten), weißes Haar unter einem locker gebundenen
@@ -18824,6 +18920,101 @@ function paint(b,v){
   M.outline(b,P.k1);
 }
 M.definePortrait('kevin',{ paint:paint });
+})(M);
+
+/* ---- portraits/kioskm.js ---- */
+/* ===== portraits/kioskm.js — Kioskfrau (um 50) am Ostbusbahnhof in Mostar
+   Rotblondes, toupiertes Haar (hoch gekämmt, helle Bögen mit dunklem Kern), braune Brille, türkise Strickjacke mit V-Ausschnitt über cremefarbenem Top;
+   neugierig gehobene Brauen, gutmütiger Blick, etwas Rouge. Aufgebaut auf dem Bild von Mira (gleiche Haltung, eigene Frisur, Brille und Farben).
+   Legende: Ziffern Haut (p-Rampe) · d Rouge · q r s t u v Haar · w Augenweiß · i Iris · I Wimpern · * Glanz · z Z Brauen ·
+   l L n Lippen · F G Brille · + Glasglanz · A B C D E Strickjacke · S U Top.
+   Varianten: EYES (Lid zu) und MOUTH (Lippen geöffnet) werden über das Grundbild gelegt. */
+(function(M){
+'use strict';
+var P=M.P;
+// Pixelkarten 56 × 64: jedes Zeichen ist ein Pixel, "." bleibt durchsichtig. In den Flicken (Varianten) heißt " " unverändert.
+var L={"1":P.p1, "2":P.p2, "3":P.p3, "4":P.p4, "5":P.p5, "k":P.k1, "d":P.d5, "q":P.t1, "r":P.t2, "s":P.t3, "t":P.t4, "u":P.t5, "v":P.d6, "w":P.s5, "i":P.g4, "I":P.h1, "*":P.l1, "z":P.t2, "Z":P.t1, "l":P.r3, "L":P.r4, "n":P.r2, "F":P.w1, "G":P.w2, "+":P.l1, "A":P.a1, "B":P.a2, "C":P.a3, "D":P.a4, "E":P.a5, "S":P.s4, "U":P.s5};
+var BASE=[
+"........................................................",
+".........................kkkkkkk........................",
+"......................kkktuvutskkk......................",
+"....................kktuvuttuvuttskk....................",
+"...................ktsttuvuttsttttsk....................",
+"..................kusttttttusttttssk....................",
+".................kssttttttttstttssskk...................",
+"................kuvuttuvuttttuvusssssk..................",
+"................kustttustuvutusttttsssk.................",
+"...............kttsttttstustttsttrssssrkk...............",
+"..............ktttttuvutttsttttssrtttsrrrk..............",
+"..............ktuvutustuvutttttttttrsssssrk.............",
+".............kttustttstustuuttuttsttsrssrrk.............",
+".............ktttsttttttstuttstssstssstssrk.............",
+"............ktuvuuvutuvut4tss5rsq4srrrsrrrk.............",
+"............ktustusttust44555555444443rrqrk.............",
+"............kttsttsttts344555554444443333rk.............",
+"............ksttttttttt344455544444443333rk.............",
+"............ksstrssstr3344444444444443333rk.............",
+"............ksssrssssr3444444zZZz44544zZ3rk.............",
+"............ktttstttss34444zZ4444Zz44z44Z3k.............",
+"............ktrsstrsss3FFFFFGGGFFFFFGGFFFFk.............",
+"............krrsssrsss34444F421III2F32II1Fk.............",
+".............krrssssss34444F42ww*I343wiI2Fk.............",
+"..............krssssqr34444F443wii3533ii3Fk.............",
+".............krrsq454334444F+443334453+33Fk.............",
+"............krrrrs4334344444FFFFFFF5FFFFF3k.............",
+"............krssss42243445dd54444444453223k.............",
+"............krsqrr4324344ddd44444444445542k.............",
+"............krrqrr344334444444444443444323k.............",
+".............krrsss43r34444444444344212223k.............",
+".............krrsqr3r334444444443444434323k.............",
+"..............krrqr33334444444442lllll223k..............",
+"...............krrr33333444444444nnnnn423k..............",
+"................kkk333334444444443LLL3423k..............",
+"..................k333333444444444333423k...............",
+"..................k333332344444444455423k...............",
+"..................k33333323444444455433k................",
+"..................k3333333234444444323k.................",
+"..................k333333332234444323k..................",
+"..................k33333333332334433k...................",
+"..................k333333333332222kk....................",
+"................kkk3333333333332222k....................",
+".............kkkDDDDD33333333332222k....................",
+"..........kkkDDDDDDDDEB443443333222kk...................",
+"........kkDDDDDDCCCCCCEB5555533332222kkk................",
+".......kDDDDDCCCCCCCCCCEB334333332222CBCkkk.............",
+"......kDDDCCCCCCCCCCCCCEB443333332222CBCCCCkkk..........",
+".....kDDBCCCCCCCCCCCCCCCEB44333332222CBCBBBCCCkk........",
+"....kDDDBCCCCCCCCCCCCCCCCEB4333332222CBCBBBBBBCCk.......",
+"...kDDDDCBCCCCCCCCCCCCCCCCEB333332222BCBBBBBBBBACkk.....",
+"...kDDDDCBCCCCCCCCCCCCCCCCEUBUUUUU2UUBCBBBBBBBABBCCk....",
+"..kBDDDDCBCCCCCCCCCCCCCCCCCECBUUUUUSSBCBBBBBBBABBBBk....",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCEBCUUUUSSBCBBBBBBBABBBBAk...",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCCEBUUUUSSBCBBBBBBBABBBBAAk..",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCCECBUUUSCBCBBBBBBBABBBBAAk..",
+"..kBCCCCCBCCCCCCCCCCCCCCCCCCCCECBUUSCBCBBBBBBBABBBBAAk..",
+"..kBCCCCCCBCCCCCCCCCCCCCCCCCCCCECBUSCBCBBBBBBBABBBBAAk..",
+"..kBCCCCCCBCCCCCCCCCCCCCCCCCCCCCEBUSBCCBBBBBBBABBBBAAk..",
+"..kBCCCCCCBCCCCCCCCCCCCCCCCCCCCCECBSBCCBBBBBBBABBBBAAk..",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCECBBCCBBBBBBBABBBBAAk..",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCCECBCCBBBBBBBABBBBAAAk.",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBBABBBBAAAk.",
+".kBBCCCCCCBCCCCCCCCCCCCCCCCCCCCCCCCCCCCBBBBBBABBBBBAAAk."];
+var EYES={x:29,y:22,rows:[
+"344443  3443",
+"34444   3443",
+" 21112  2112"]};
+var MOUTH={x:34,y:33,rows:[
+" w ",
+"nnn",
+"LLL",
+"333"]};
+function put(b,lg,rows,x0,y0){ for (var j=0;j<rows.length;j++){ var r=rows[j]; for (var i=0;i<r.length;i++){ var ch=r[i]; if (ch===' '||ch==='.') continue; var c=lg[ch]; if (c===undefined) throw new Error('Porträt-Legende ohne '+ch); b.px(x0+i,y0+j,c); } } }
+function patch(b,lg,p){ if (p) put(b,lg,p.rows,p.x,p.y); }
+M.definePortrait('kioskm',{ paint:function(b,v){
+  put(b,L,BASE,0,0);
+  if (v.mouth){ patch(b,L,MOUTH); }
+  if (v.eyes){ patch(b,L,EYES); }
+} });
 })(M);
 
 /* ---- portraits/kolar.js ---- */
@@ -67665,6 +67856,47 @@ M.mem.k2_ninth=function(b){ var w=b.w,h=b.h, x, y, i, L=56;
   for (k=1;k<=N;k++){ var bx=150-(k-1)*RN-6, by=L+k*RS; b.vl(bx,by-21+Math.round(RS*0.5),by-1,P.k2); }
   M.light(b,M.lf.sum(M.lf.k(-1.2),M.lf.beam(20,30,130,76,8,40,2.4),M.lf.pool(19,32,20,34,1.8,1),M.lf.pool(164,26,22,20,0.8,1)));
   edgeDark(b,2.2); };
+
+// ================================================================ Das Foto „Mala i Mali · 1988“ als Bild (Overlay 'photo'; Wunsch des Autors: beim Ansehen das Foto zeigen, nicht nur den Text)
+// Abzug 168 × 112 mit weißem Rand, ein Farbfoto von 1988 (warm, leicht ausgeblichen). Hinter der Haltestelle die Drei, davor Ruža (aus dem
+// Figurenbaukasten, Ivkas Kopftuch und Mantel), Mali im gestreiften Pullover und das Mädchen mit Zopf, Hand in Hand. Als halbes Foto fehlt die rechte Hälfte.
+var PHW=168, PHH=112, PHB=5;
+var PHOTO_TINT=M.tintMake(function(r,g,b){ var L=0.3*r+0.59*g+0.11*b; return [r*0.70+L*0.14+34, g*0.62+L*0.12+24, b*0.46+L*0.10+14]; });
+function photoScene(b){ var w=PHW, h=PHH, x, y;
+  // Himmel, Wohnblöcke von Alipašino Polje, Oberleitung
+  fill(b,0,0,w,h,function(x,y){ return ra(R('b4 b5 s5'),0.25+y/h*0.9+(fbm(x,y,20,5)-0.5)*0.3,x,y); });
+  tower(b,-6,38,8,72,{fl:7,seed:3}); tower(b,120,174,2,72,{fl:8,seed:5}); tower(b,52,96,24,72,{fl:5,seed:9});
+  b.line(0,16,w-1,20,P.k2); b.line(0,19,w-1,23,P.m1); b.vl(146,18,70,P.m1); b.vl(147,18,70,P.m2);
+  // die Drei (nach links, Liniennummer 3), ein Stück Bahnsteig, Asphalt
+  M.scn.tram(b,-52,88,{s:0.42,dir:'L',line:'3'});
+  fill(b,0,88,w,6,function(x,y){ return y===88?P.s5:(y===89?P.s4:ra(R('s2 s3'),0.5+hash(x>>3,y)*0.3,x,y)); });
+  fill(b,0,94,w,h-94,function(x,y){ return ra(R('m0 m1 m2'),0.3+(y-94)/18+(fbm(x,y,5,2)-0.5)*0.5,x,y); });
+  // Haltestellenschild
+  b.vl(24,46,88,P.m2); b.rect(19,38,11,10,P.s6); b.rect(20,39,9,8,P.y4); M.microText(b,'3',22,40,P.k1);
+  // Ruža, von vorn, die Hände vor dem Bauch; Mali und das Mädchen Hand in Hand
+  fig(b,60,100,F({lh:[-4,-20],rh:[4,-20],ho:[0,1]}),'F','ivka');
+  var g=kid(b,116,100,{kind:'girl',f:'L',ln:0.5,lk:-0.15,nf:[2,0,'f'],ff:[-2,0,'f'],nh:[7,-13],fh:[-2,-14],braid:[1.5,8.6],sz:1.02});
+  kid(b,92,100,{kind:'boy',f:'R',ln:0.5,lk:-0.2,nf:[2,0,'f'],ff:[-2,0,'f'],nh:[g.nh[0]-92,g.nh[1]-100],fh:[-3,-14]});
+  // Licht wie ein Nachmittag im Spätsommer, Vignette, dann die Farben des alten Abzugs
+  M.light(b,M.lf.sum(M.lf.k(0.15),M.lf.band(0,h,0.1,-0.5))); edgeDark(b,1.2);
+  M.tintApply(b,PHOTO_TINT);
+  for (y=0;y<h;y++) for (x=0;x<w;x++){ if (hash(x+31,y+7)<0.025) b.px(x,y,M.UP[b.get(x,y)]); }   // Korn
+}
+var PJ=[0,2,3,1,-1,-3,-2,0,2,4,1,-2]; function photoTear(y){ return 96+PJ[(y>>1)%PJ.length]; }
+// der fertige Abzug mit Rand (T außerhalb); half: nur die linke, gerissene Hälfte (Riss wie in photoHalves)
+M.mem.photoPrint=function(full){ var pw=PHW+2*PHB, ph=PHH+2*PHB, out=new M.Buf(pw,ph,T), pic=new M.Buf(PHW,PHH,P.s4), x, y;
+  photoScene(pic); out.rect(0,0,pw,ph,P.s6); for (y=0;y<ph;y++) for (x=0;x<pw;x++){ if (hash(x+3,y+9)<0.02) out.px(x,y,P.s5); }
+  out.blit(pic,PHB,PHB);
+  if (!full){ for (y=0;y<ph;y++){ var t=photoTear(Math.max(0,y-PHB))+PHB; for (x=t;x<pw;x++) out.d[y*pw+x]=T; out.px(t-1,y,((y)&1)?P.s6:P.s5); if (y%3===0) out.px(t-2,y,P.s6); } }
+  else { for (y=PHB;y<ph-PHB;y++){ var t2=photoTear(y-PHB)+PHB; if (y%2===0) out.px(t2,y,M.UP[out.get(t2,y)]); } }   // der Riss bleibt als feine helle Linie
+  return out; };
+function wrapWords(s,maxw){ var out=[], cur=''; String(s||'').split(' ').forEach(function(wd){ var t=cur?cur+' '+wd:wd; if (M.textWidth(t)>maxw && cur){ out.push(cur); cur=wd; } else cur=t; }); if (cur) out.push(cur); return out; }
+M.defineOverlay('photo',function(fb,ov){ var d=ov.data; if (!ov.pic) ov.pic=M.mem.photoPrint(!!d.full);
+  var pw=ov.pic.w, ph=ov.pic.h, x0=(fb.w-pw)>>1, y0=4, x, y;
+  for (y=0;y<ph;y++) for (x=0;x<pw;x++) if (ov.pic.d[y*pw+x]!==T) fb.px(x0+x+3,y0+y+3,P.k0);   // Schatten
+  fb.blit(ov.pic,x0,y0);
+  if (d.text){ var lines=wrapWords(M.trUI?M.trUI(d.text):d.text,292), ty=y0+ph+6; fb.rect(0,ty-4,fb.w,lines.length*9+7,P.k0); lines.forEach(function(l,i){ M.text(fb,l,(fb.w-M.textWidth(l))>>1,ty+i*9,P.s5); }); } });   // dunkles Band hinter den Zeilen (sie liegen über der Leiste)
+M.showPhoto=function(A,full,text){ return A.overlay('photo',{full:!!full,text:text||''}); };
 
 })(M);
 

@@ -130,7 +130,8 @@ function platformNote(){ if (!iosDev()) return null;
 // Speicher möglichst dauerhaft anfordern, wo der Browser es ohne Rückfrage entscheidet (WebKit); einmal, beim ersten Tipp
 if (DOM && navigator.storage && navigator.storage.persist && (iosDev()||standalone())) document.addEventListener('pointerdown',function(){ try{ navigator.storage.persisted().then(function(p){ if (!p) return navigator.storage.persist(); }).catch(function(){}); }catch(e){} },{once:true,capture:true});
 SCR.main=function(){ var s=latest(), it=[];
-  if (s) it.push({type:'card',label:'Fortsetzen',sub:placeOf(s),meta:(s.kind==='chapterEnd'?T('Weiter mit Kapitel')+' '+s.next:fmtAt(s.at)+' · '+fmtDur((s.meta&&s.meta.playMs)||0)),thumb:s.thumb||null,primary:true,act:continueLatest});
+  // „Fortsetzen“ als Menüzeile wie die übrigen (keine Karte mit Bild, die das Titelbild verdeckt; Wunsch des Autors)
+  if (s) it.push({type:'btn',label:'Fortsetzen',sub:placeOf(s)+' · '+(s.kind==='chapterEnd'?T('Weiter mit Kapitel')+' '+s.next:fmtAt(s.at)),primary:true,act:continueLatest});
   it.push({type:'btn',label:'Neues Spiel',primary:!s,act:newGameFlow});
   it.push({type:'btn',label:'Kapitel wählen',act:function(){ push('chapters'); }});
   it.push({type:'btn',label:'Spiel laden',sub:anyState()?'':'Beispielstände',act:function(){ push('load',{scope:'title'}); }});
