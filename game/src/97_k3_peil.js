@@ -97,14 +97,17 @@ M.k3Peil=async function(A,st){ var G=A.G; if (!ST[st]) throw new Error('keine St
   if (!res){ await A.m('Gleich. Ich muss erst sehen, was sie meint.'); return false; }
   A.setFlag('k3.peil.'+st); A.note(ST[st].note); if (st==='bridgehead') A.unlock('koski');
   if (st==='bridgehead'){ await A.m('Ein Strich nach Süden. Mehr nicht.'); if (A.first('!k3.peil.talk')){ await A.g('Ich sehe, du misst.'); await A.m('Und wenn es nicht passt, messen wir noch mal.'); await A.g('Du bist so langweilig, Mali.'); await A.m('Ich weiß.'); } }
-  if (st==='minaret') await A.m('Zwei Linien von fast derselben Stelle. Irgendwo zwischen hier und dem Meer.');
-  if (st==='partizan') await A.m('Jetzt schneiden sie sich richtig.');
+  // Analyse K3-B03 (P17): Was Marko beim Schließen des Blatts sieht, ist der Schluss; er zieht ihn selbst, statt ihn danach im Notizbuch suchen zu lassen
+  if (st==='minaret'){ var r1=(G.notes.indexOf('l3_m1')>=0)?await E.combineNotes('l3_m1','l3_m2'):null; await A.m(r1&&r1.ok&&r1.say?r1.say:'Zwei Linien von fast derselben Stelle. Irgendwo zwischen hier und dem Meer.'); }
+  if (st==='partizan'){ var r2=(G.notes.indexOf('l3_flat')>=0)?await E.combineNotes('l3_flat','l3_m3'):null; await A.m(r2&&r2.ok&&r2.say?r2.say:'Jetzt schneiden sie sich richtig.'); }
   return true; };
 // ---------------------------------------------------------------- Zdravkos alte Karte von 1985 (S2 ruft das am Spot 'oldmap' auf)
 M.k3OldMap=async function(A){ var G=A.G, area=G.notes.indexOf('l3_area')>=0, fans=measured(G);
   await A.overlay('peil',{mode:'view',old:true,skela:true,labelSkela:area,title:'Zdravkos Karte, 1985',fans:area?fans:[],area:area?areaOf(fans):null,
     msg:area?'Meine drei Fächer auf der alten Karte: Wo sie sich schneiden, steht ein einziges Brückensymbol, an einer Biegung. Daneben ein Name.':'Eine vergilbte Straßenkarte, die Dörfer im Süden mit Brücken und Fähren. Ohne meine Linien weiß ich nicht, wo ich suchen soll.'});
   if (G.notes.indexOf('l3_oldmap')<0) A.note('l3_oldmap');
+  // Analyse K3-B02 (P17): Marko liest den Namen auf der Karte; mit den drei Fächern ist das der Schluss „Skela“ (kein Notizbuch-Schloss mehr)
+  if (area && G.notes.indexOf('l3_skela')<0){ var r3=await E.combineNotes('l3_area','l3_oldmap'); if (r3&&r3.ok){ await A.m(r3.say||'Skela.'); return true; } }
   if (area && A.first('!k3.oldmap.name')) await A.m('Skela.'); return true; };
 // ---------------------------------------------------------------- Die Reihenfolge der Nacht (Overlay 'arrange'), aus dem Notizbuch angestoßen
 var WHY={ arr:'Zuerst kamen sie an. Gegen zwanzig vor elf, sagt Vlado.', dep:'Vlado ist um Viertel nach elf gefahren. Geläutet hat sie, als er weg war.',

@@ -102,7 +102,9 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
   // Runde 2: die ANKICA
   await I.say('Ich warte. Ich habe Zeit.');
   for (tries=0;;tries++){ n=await A.askNote('Was sage ich ihr jetzt?',{also:['c1_aboard']});
-    if (n==='c1_came'||n==='c1_story'||n==='c1_aboard'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
+    // Analyse K1-B06 (P20): nur der eigene Schluss „Tonći kam mit der ANKICA“ beantwortet ihre Frage; Dinkos Teil und das Boot allein nicht
+    if (n==='c1_story'||n==='c1_aboard'){ await A.m(n==='c1_story'?'Dinko war in jener Nacht mit ihm auf der ANKICA.':'Tonći und Dinko waren auf der ANKICA, als sie kenterte.'); await I.say('Auf Matićs kleinem Boot? Bei der Bura? Warum sollte er? Er kommt mit der Fähre. Das hat er geschrieben.'); continue; }
+    if (n==='c1_came'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
       await I.say('Mit Matićs kleinem Boot? Bei der Bura?'); await I.say('Dieser Dickkopf. Dieser …'); await A.wait(800); await I.say('Und Dinko?'); await A.m('Dinko hat es geschafft.'); await A.wait(1100); await I.say('…und Tonći nicht.'); break; }
     await roundMiss(A,I,n,tries,['Was hat das mit meinem Sohn zu tun?','Ich verstehe nicht, was Sie meinen.','Sagen Sie, was Sie sagen wollen.']); }
   // Runde 3: der Brief

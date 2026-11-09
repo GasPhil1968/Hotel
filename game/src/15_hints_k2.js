@@ -217,11 +217,12 @@ M.HINTS_K2=[
      // Analyse K2-B07: Den Stempel hat Mirza, nicht der Schutzraum; gestempelt wird an Zoras Pult
      function(G){ return I(G,'pecat')?'Der Stempel ist da. Die Zeugnisse gehören auf Zoras Pult im Schutzraum.':'Mirza hat den alten Schulstempel aufgehoben.'; },
      function(G){ return I(G,'pecat')?'Im Schutzraum den Stempel auf Zoras Pult benutzen.':'Mirza sagen: „Zora wollte Zeugnisse mit Stempel verteilen.“ Er hat den Stempel.'; }]},
+ // Analyse K2-B08 (P17): Mirza kommt erst nach dem eigenen Schluss „Keine Schuld“ (s3_truth)
  {id:'s3e',t:'Wer kommt zur letzten Stunde?',open:function(G){ return ph(G,['k2_s3']) && N(G,'s3_register') && !(F(G,'k2.s3.mirza') && F(G,'k2.s3.selma') && F(G,'k2.s3.damir')); },
   s:['Zora will, dass alle da sind. Drei aus dem Klassenbuch leben noch hier.',
      'Mirza, Selma und Damir. Jeder braucht einen anderen Grund, zu kommen.',
-     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza muss erfahren, was Zora über ihn geschrieben hat'); if (!F(G,'k2.s3.selma')) o.push('Selma braucht eine Hand'); if (!F(G,'k2.s3.damir')) o.push('Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch'); return o.join('. ')+'.'; },
-     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza zeigen, was im Klassenbuch über ihn steht'); if (!F(G,'k2.s3.selma')) o.push('Selma Hilfe anbieten'); if (!F(G,'k2.s3.damir')) o.push('Damir das Klassenbuch zeigen'); return o.join('. ')+'.'; }]},   // Analyse K2-B07: eine „Zeichnung“ als Gegenstand gibt es nicht
+     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push(!N(G,'s3_rescued')?'Mirza muss erfahren, was Zora über ihn geschrieben hat':!N(G,'s3_truth')?'Zora schreibt „Meine Schuld“, Mirza erzählt etwas anderes. Was war es wirklich?':'Mirza kann ihr heute Abend selbst sagen, was war'); if (!F(G,'k2.s3.selma')) o.push('Selma braucht eine Hand'); if (!F(G,'k2.s3.damir')) o.push('Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch'); return o.join('. ')+'.'; },
+     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push(!N(G,'s3_rescued')?'Mirza zeigen, was im Klassenbuch über ihn steht':!N(G,'s3_truth')?'Im Notizbuch „Moja krivica“ und „Sie hat mich hineingetragen“ verbinden':'Mirza in den Keller einladen'); if (!F(G,'k2.s3.selma')) o.push('Selma Hilfe anbieten'); if (!F(G,'k2.s3.damir')) o.push('Damir das Klassenbuch zeigen'); return o.join('. ')+'.'; }]},   // Analyse K2-B07: eine „Zeichnung“ als Gegenstand gibt es nicht
  {id:'s3g',t:'Die letzte Stunde',open:function(G){ return G.phase==='k2_s3_n' && !F(G,'k2.s3.free'); },
   s:['Mirza, Selma und Damir sind gekommen. Zora wartet unten auf ihre Klasse.','Wie beginnt eine Lehrerin ihre Stunde?',
      'Mit dem Klassenbuch auf dem Pult.','Im Schutzraum das Klassenbuch auf Zoras Pult legen.']},

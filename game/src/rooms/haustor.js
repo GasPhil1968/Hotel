@@ -70,11 +70,13 @@ async function talkMirza(A){ var Mz=A.npc('mirza'), p=A.G.phase;
     ...M.k2Extra('mirza',A,Mz),
     {t:'Danke.',bye:true}
   ]; }); }
-async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_rescued')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
+// Analyse K2-B08 (P17): Mirzas Zusage hängt am eigenen Schluss „Keine Schuld“ (s3_truth), nicht an seinem eigenen Satz
+async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_truth')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
+  await A.m('Sie hat ihr Leben lang geglaubt, es war ihre Schuld. Heute Abend ruft sie die Namen auf. Auch Ihren.'); await A.wait(800);
   await Mz.say('Ich komme.'); A.setFlag('k2.s3.mirza'); await Mz.say('Ich bringe Kerzen. Und ich mache das Licht nicht an. Wie damals.'); await M.k2CheckS3Night(A); if (!A.flag('k2.s3.night')) A.save(); return 'bye'; }
-async function mirzaGuilt(A,Mz){ if (A.hasNote('s3_rescued')) return Mz.say('Sie hat mich gerettet. Und sie hat es nie gewusst.');
+async function mirzaGuilt(A,Mz){ if (A.hasNote('s3_rescued')) return Mz.say('Sie hat mich hineingetragen. Ich war neun.');
   await A.m('Im Klassenbuch steht, in Zoras Schrift: „Mirza H. – verwundet. Meine Schuld.“'); await A.wait(1000); await Mz.say('Ihre Schuld?'); await A.wait(800); await Mz.say('Ich bin in der Pause hinausgerannt. Ich wollte meinen Ball holen. Sie hat es mir verboten, und ich bin trotzdem gerannt.');
-  await Mz.say('Dann ist es passiert. Und sie ist hinausgelaufen, in die Splitter, ohne Mantel, und hat mich hineingetragen. Sie hat mich hineingetragen!'); await A.wait(900); await Mz.say('Ihre Schuld? Sie hat mich gerettet.'); A.note('s3_rescued');
+  await Mz.say('Dann ist es passiert. Und sie ist hinausgelaufen, in die Splitter, ohne Mantel, und hat mich hineingetragen. Sie hat mich hineingetragen!'); A.note('s3_rescued');
   await A.wait(700); await Mz.say('Ich habe ihr nie danke gesagt. Ich war neun. Und dann war ich zwanzig, und sie war tot.'); }
 // ---------------------------------------------------------------- Selma
 async function talkSelma(A){ var Se=A.npc('selma');

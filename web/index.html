@@ -4313,7 +4313,8 @@ M.defineNotes({
   c1_bag:{c:'c1',t:'In Dinkos Schuppen liegt ein alter Seesack mit den Buchstaben T.P.'},
   c1_words:{c:'c1',t:'Tonćis letzte Worte im Wasser: „Halt die Tasche! Sie ist für Mama!“',s:'Tonćis letzte Worte.'},
   c1_candle:{c:'c1',t:'An Dinkos Wand: Tonćis Foto, ein Kerzenstummel. Jedes Jahr am 22. Dezember.'},
-  c1_story:{c:'c1',t:'Dinko: Tonći wollte sein Versprechen halten. Sie fuhren trotz Bura mit der ANKICA los.'},
+  c1_story:{c:'c1',t:'Dinko: In der Nacht kenterte die ANKICA vor Sustipan. Dinko hielt die Tasche, Tonći nicht. Warum sie bei der Bura hinausfuhren, sagt er nicht.'},
+  c1_drzi:{c:'c1',t:'Dinko murmelt beim Flicken: „…drži … drži …“ Halt fest. Als hielte er noch immer etwas.',s:'Dinko murmelt „drži“.'},
   c1_stuck:{c:'c1',t:'Tonćis Brief: Das Salz hat die Seiten zusammengebacken. Trocken bekomme ich ihn nicht auf, ohne dass er reißt.'},
   c1_letter:{c:'c1',t:'Tonćis Brief: „Warte nicht mehr an der Mole auf mich. Warte zu Hause, im Warmen.“',s:'Tonćis Brief, ganz gelesen.'},
   c1_plaque:{c:'c1',t:'In Sustipan steht Tonćis Name auf der Tafel „Denen, die das Meer behielt“.'},
@@ -4428,7 +4429,7 @@ var META={
   c1_ferry:['Das Boot','Die Fähre fiel aus'], c1_capsized:['Das Boot','21:40: die ANKICA kentert'], c1_rescued:['Das Boot','Gerettet: nur Dinko'],
   c1_matejuska:['Dinko','Dinko an der Matejuška',['c1_brother','c1_story','c1_bag']], c1_came:['Tonći','Tonći kam mit der ANKICA'], c1_aboard:['Das Boot','Beide auf der ANKICA'],
   c1_never:['Dinko','Dinko war nie bei Ivka'], c1_noglove:['Ivka','Ivka trug nie Handschuhe'], c1_brother:['Dinko','„Er war wie ein Bruder.“',['c1_story']], c1_bag:['Dinko','Der Seesack mit T.P.',['c1_story']],
-  c1_words:['Dinko','Tonćis letzte Worte',['c1_story']], c1_candle:['Dinko','Die Kerze am 22. Dezember',['c1_story']], c1_story:['Dinko','Dinkos Geschichte'], c1_letter:['Tonći','Tonćis Brief, ganz gelesen'],
+  c1_words:['Dinko','Tonćis letzte Worte',['c1_story']], c1_drzi:['Dinko','Dinkos Murmeln',['c1_story']], c1_candle:['Dinko','Die Kerze am 22. Dezember',['c1_story']], c1_story:['Dinko','Dinkos Geschichte'], c1_letter:['Tonći','Tonćis Brief, ganz gelesen'],
   c1_plaque:['Tonći','Die Tafel in Sustipan'], c1_jakov:['Tonći','Ein Mann vor der Tafel'],
   m_find:['Die Stimme','„Ich kann sie finden.“'], m_voice:['Die Stimme','Eine Stimme hinter mir'], m_tram:['Die Stimme','Straßenbahn am Fenster'], m_name:['Mala','Sie heißt Mala'],
   c1_stuck:['Tonći','Der Brief klebt zusammen',flag('c1.letterOpen')], c2_dark:['Die Ledana','Der Kühlraum ist dunkel',['c2_case']], c2_under:['Luka','Unter dem Schutt: ein Koffer',['c2_case']], m_horn:['Mala','Das Fährhorn'], m_bells:['Mala','Die Glocken sind ihr zu laut'], m_leash:['Mala','Die Leine aus Licht'], m_tin:['Mala','Die Blechdose: „Meins.“'],
@@ -4453,7 +4454,7 @@ Object.keys(M.NOTES).forEach(function(id){ if (!M.NOTES[id].g) console.warn('Not
 var PIC={ pro_auftrag:'i:newspaper', pro_zdenka:'p:zdenka', pro_riva:'p:ivka', pro_sohn:'i:photo1', pro_notice:'p:ivka',
   c1_boat7:'i:postcard', c1_dinko:'i:postcard', c1_gift:'i:postcard', c1_ankica:'i:photo1', c1_radio:'i:radio', c1_waits:'p:ivka', c1_date:'p:ivka', c1_askoffice:'p:ivka', c1_years:'p:ivka',
   c1_nobook:'p:mladen', c1_1948:'p:mala', c1_ferry:'p:mladen', c1_capsized:'p:mladen', c1_rescued:'p:dinko', c1_matejuska:'p:dinko', c1_came:'i:photo1', c1_aboard:'i:photo1',
-  c1_never:'p:zdenka', c1_noglove:'i:gloves', c1_brother:'p:dinko', c1_bag:'p:dinko', c1_words:'p:dinko', c1_candle:'p:dinko', c1_story:'p:dinko', c1_stuck:'i:letter_t', c1_letter:'i:letter_t',
+  c1_never:'p:zdenka', c1_noglove:'i:gloves', c1_brother:'p:dinko', c1_bag:'p:dinko', c1_words:'p:dinko', c1_candle:'p:dinko', c1_story:'p:dinko', c1_drzi:'p:dinko', c1_stuck:'i:letter_t', c1_letter:'i:letter_t',
   c1_plaque:'p:jakov', c1_jakov:'p:jakov',
   c2_demolish:'p:sanja', c2_boy:'p:stipe', c2_stairs:'p:dinko', c2_gap:'p:mala', c2_luka:'p:luka', c2_meet:'p:luka', c2_ferry:'i:tickets', c2_date:'p:luka', c2_guitar:'p:luka', c2_mailbox:'p:luka',
   c2_case:'i:tickets', c2_paper:'p:mala', c2_thin:'i:crowbar', c2_dark:'p:mala', c2_under:'p:mala', c2_died:'p:sanja', c2_stayed:'p:sanja', c2_shop:'p:nina', c2_riva:'p:sanja', c2_unused:'i:tickets',
@@ -5343,7 +5344,7 @@ n('b5_hand','b5','Die Hand','Nemoj gledati','Malas Nachhall an Papas Kanistern: 
 n('b5_reihe','b5','Der Hahn','Kanister in die Reihe','Malas Nachhall am Hahn der Brauerei: Nacht, Kanister klappern, eine Männerstimme: „Kanisteri u red! Jedan po jedan!“ – „Kanister in die Reihe! Einer nach dem anderen!“ Er zeigt sich nicht. Er wartet auf Kanister.',{p:'p:mala'});
 n('b5_hamdija','b5','Hamdija','Der Mann am Hahn','An der Brauerei, mit dem blauen Kanister: ein Mann in Gummischürze, die Ärmel nass bis zum Ellbogen. Hamdija, von der Abfüllung. Für ihn ist April 1993. An den Kasten hinter dem Hahn lässt er keinen.');
 n('b5_kasten','b5','Hamdija','Im Kasten','Mala im Blechkasten hinter dem Hahn: ein Einmachglas, darin Papier, zusammengerollt. Und ein Nachhall: Kerzenlicht, ein Mann schreibt und zählt halblaut. „Sedam.“ Sieben.',{p:'p:mala'});
-n('b5_tag','b5','Der Hahn','Der neunzehnte April','Malas Nachhall an drei Stellen. Am Hahn hebt Hamdija die Hand: „Ima pritiska!“, der Druck ist da. Ein Mann in blauer Jacke dreht sich um, zu mir, und ruft. Dann ist es laut. Hamdija läuft nach hinten und hält mir die Augen zu. Später füllt er mir am Hahn beide Kanister. Keiner sagt etwas.',{p:'p:mala'});
+n('b5_tag','b5','Der Hahn','Der neunzehnte April','Malas Nachhall an drei Stellen. Am Hahn hebt Hamdija die Hand: „Ima pritiska!“, der Druck ist da. Ein Mann in blauer Jacke dreht sich um, zu mir, und ruft. Dann ist es laut. Von vorn kommt einer gelaufen, die Ärmel nass, und hält mir die Augen zu. Später füllt mir einer am Hahn beide Kanister. Keiner sagt etwas.',{p:'p:mala'});   // Analyse K5-B09 (P17): wer das war, ist der Schluss b5_wer
 n('b5_drei','b5','Die Liste','Drei ohne Namen','Frau Kolar: Im Grab an der Brauerei lagen sieben. Vier haben einen Namen, drei nicht. „Eine Liste mit Beschreibungen? Dann hätten wir eine Spur.“',{p:'p:kolar'});
 n('b5_liste','b5','Die Liste','Sieben Zeilen','Hamdijas Liste aus dem Einmachglas: sieben Tote an der Mauer unter der Linde, sieben Dinge in sieben Taschen. Nummer drei: „Rechenschieber ‚Z. V.‘ in der Tasche. Der Sohn hat das Wasser nach Hause getragen.“',{p:'i:liste'});
 // ---------------------------------------------------------------- Die Fahrscheine
@@ -12314,7 +12315,10 @@ M.HINTS_K1=[
      {m:'Mala geht durch die verschlossene Tür seines Schuppens. Am Seesack hängt etwas.',g:'Ich gehe durch die verschlossene Tür seines Schuppens. Am Seesack hängt etwas.'},
      {m:'Zu Mala wechseln, in den Schuppen gehen und den Seesack spüren.',g:'Zu mir wechseln, in den Schuppen gehen und den Seesack spüren.'}]},
  {id:'k1_dinko2',t:'Was Tonći im Wasser sagte',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_words') && !F(G,'c1.dinkoTold'); },
-  s:['Tonćis letzte Worte sind bekannt. Dinko hat sie nie jemandem erzählt.','Wer es weiß, kann Dinko sein Schweigen nehmen.','Mit Dinko reden. Was im Wasser gesagt wurde, und dass Ivka noch wartet.','Mit Dinko reden: „Ich weiß, was Tonći im Wasser gesagt hat“, dann „Ivka wartet noch“.']},
+  s:['Tonćis letzte Worte sind bekannt. Dinko hat sie nie jemandem erzählt.',
+     function(G){ return N(G,'c1_drzi')?'Wer es weiß, kann Dinko sein Schweigen nehmen.':'Ob er sie noch mit sich herumträgt? Beim Flicken murmelt er etwas.'; },   // Analyse K1-B08 (P19)
+     function(G){ return N(G,'c1_drzi')?'Mit Dinko reden. Was im Wasser gesagt wurde, und dass Ivka noch wartet.':{m:'Mala hört hin, was Dinko beim Flicken murmelt.',g:'Ich höre hin, was Dinko beim Flicken murmelt.'}; },
+     function(G){ return N(G,'c1_drzi')?'Mit Dinko reden: „Ich weiß, was Tonći im Wasser gesagt hat“, dann „Ivka wartet noch“.':{m:'Zu Mala wechseln und Dinko beim Flicken belauschen.',g:'Zu mir wechseln und Dinko beim Flicken belauschen.'}; }]},
  {id:'k1_steam',t:'Der verklebte Brief',open:function(G){ return ph(G,['c1','c1_night']) && I(G,'letter_t') && !F(G,'c1.letterOpen'); },
   s:['Tonćis Brief ist zu. Das Salz hat die Seiten zusammengebacken.','Trocken reißt er. Papier, das klebt, löst sich mit Wärme und Feuchtigkeit.','Dampf. Zu Hause gibt es Džezva, Spüle und Herd. Eine offene Flamme verbrennt ihn nur.',
      function(G){ return I(G,'dzezvaW')?'In der Wohnung die volle Džezva auf den Herd stellen und dann den Brief am Herd benutzen.':'In der Wohnung die Džezva an der Spüle füllen, auf den Herd stellen und dann den Brief am Herd benutzen.'; }]},
@@ -12667,11 +12671,12 @@ M.HINTS_K2=[
      // Analyse K2-B07: Den Stempel hat Mirza, nicht der Schutzraum; gestempelt wird an Zoras Pult
      function(G){ return I(G,'pecat')?'Der Stempel ist da. Die Zeugnisse gehören auf Zoras Pult im Schutzraum.':'Mirza hat den alten Schulstempel aufgehoben.'; },
      function(G){ return I(G,'pecat')?'Im Schutzraum den Stempel auf Zoras Pult benutzen.':'Mirza sagen: „Zora wollte Zeugnisse mit Stempel verteilen.“ Er hat den Stempel.'; }]},
+ // Analyse K2-B08 (P17): Mirza kommt erst nach dem eigenen Schluss „Keine Schuld“ (s3_truth)
  {id:'s3e',t:'Wer kommt zur letzten Stunde?',open:function(G){ return ph(G,['k2_s3']) && N(G,'s3_register') && !(F(G,'k2.s3.mirza') && F(G,'k2.s3.selma') && F(G,'k2.s3.damir')); },
   s:['Zora will, dass alle da sind. Drei aus dem Klassenbuch leben noch hier.',
      'Mirza, Selma und Damir. Jeder braucht einen anderen Grund, zu kommen.',
-     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza muss erfahren, was Zora über ihn geschrieben hat'); if (!F(G,'k2.s3.selma')) o.push('Selma braucht eine Hand'); if (!F(G,'k2.s3.damir')) o.push('Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch'); return o.join('. ')+'.'; },
-     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push('Mirza zeigen, was im Klassenbuch über ihn steht'); if (!F(G,'k2.s3.selma')) o.push('Selma Hilfe anbieten'); if (!F(G,'k2.s3.damir')) o.push('Damir das Klassenbuch zeigen'); return o.join('. ')+'.'; }]},   // Analyse K2-B07: eine „Zeichnung“ als Gegenstand gibt es nicht
+     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push(!N(G,'s3_rescued')?'Mirza muss erfahren, was Zora über ihn geschrieben hat':!N(G,'s3_truth')?'Zora schreibt „Meine Schuld“, Mirza erzählt etwas anderes. Was war es wirklich?':'Mirza kann ihr heute Abend selbst sagen, was war'); if (!F(G,'k2.s3.selma')) o.push('Selma braucht eine Hand'); if (!F(G,'k2.s3.damir')) o.push('Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch'); return o.join('. ')+'.'; },
+     function(G){ var o=[]; if (!F(G,'k2.s3.mirza')) o.push(!N(G,'s3_rescued')?'Mirza zeigen, was im Klassenbuch über ihn steht':!N(G,'s3_truth')?'Im Notizbuch „Moja krivica“ und „Sie hat mich hineingetragen“ verbinden':'Mirza in den Keller einladen'); if (!F(G,'k2.s3.selma')) o.push('Selma Hilfe anbieten'); if (!F(G,'k2.s3.damir')) o.push('Damir das Klassenbuch zeigen'); return o.join('. ')+'.'; }]},   // Analyse K2-B07: eine „Zeichnung“ als Gegenstand gibt es nicht
  {id:'s3g',t:'Die letzte Stunde',open:function(G){ return G.phase==='k2_s3_n' && !F(G,'k2.s3.free'); },
   s:['Mirza, Selma und Damir sind gekommen. Zora wartet unten auf ihre Klasse.','Wie beginnt eine Lehrerin ihre Stunde?',
      'Mit dem Klassenbuch auf dem Pult.','Im Schutzraum das Klassenbuch auf Zoras Pult legen.']},
@@ -13329,10 +13334,10 @@ M.HINTS_K5=[
      function(G){ if (!F(G,'k5.s.agreed') && !N(G,'s5_teile')) return 'Im Notizbuch „Damit man sie findet“ und „Zlatas Brett“ verbinden.'; if (!F(G,'k5.s.agreed')) return 'Mit Nada und Zlata reden, jeder sagen, was die andere wollte, dann die zwei Hälften vorschlagen.'; if (!F(G,'k5.s.engraved')) return 'Bei Nedžad gravieren lassen: „LANA DELIĆ“, „3. 3. 1976“, keine dritte Zeile.'; return 'Zurück zu Nada: Vlado montiert Tafel und Brett.'; }]},
  // Hinweisprobe (P12): nach „Otvori.“ nennt Stufe 4 das Öffnen des Kastens, nicht wieder das Gespräch
  {id:'h5k',t:'Hamdija',open:function(G){ return G.phase==='k5_d2' && N(G,'b5_hamdija') && !F(G,'k5.b.gone'); },
-  s:[function(G){ if (!N(G,'b5_kasten')) return 'Er lässt mich nicht an den Kasten hinter dem Hahn.'; if (!N(G,'b5_tag')) return 'Er glaubt mir nicht, dass ich der Junge bin.'; if (!N(G,'b5_drei')) return 'Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Er muss mich erkennen.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste muss zu Frau Kolar.'; if (!F(G,'k5.b.ready')) return 'Er muss hören, was aus den sieben geworden ist.'; return 'Er ist bereit zu gehen.'; },
-     function(G){ if (!N(G,'b5_kasten')) return 'Was ist im Kasten?'; if (!N(G,'b5_tag')) return 'Was weiß nur der Junge von damals?'; if (!N(G,'b5_drei')) return 'Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Die gefüllten Kanister. Und der Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Drei Tote haben noch keinen Namen.'; if (!F(G,'k5.b.ready')) return 'Sie sind gefunden. Alle sieben.'; return 'Er kann jetzt gehen.'; },
-     function(G){ if (!N(G,'b5_kasten')) return {m:'Mala geht durch Wände. Auch in einen Blechkasten.',g:'Ich gehe durch den Kasten.'}; if (!N(G,'b5_tag')) return {m:'Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.',g:'Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.'}; if (!N(G,'b5_drei')) return 'In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Ihm beides sagen: die Kanister und den Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste in die Gerichtsmedizin bringen.'; if (!F(G,'k5.b.ready')) return 'Zu Hamdija an den Hahn.'; return {m:'Mala öffnet die Schwelle. Am Hahn.',g:'Ich mache ihm Licht. Am Hahn.'}; },
-     function(G){ if (!N(G,'b5_kasten')) return 'Als Mala den Kasten hinter dem Hahn ansehen.'; if (!N(G,'b5_tag')) return 'Als Mala den Hahn, die Mitte und die Brücke spüren.'; if (!N(G,'b5_drei')) return 'Frau Kolar nach dem Grab an der Brauerei fragen.'; if (F(G,'k5.b.trust')&&!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Den Blechkasten hinter dem Hahn öffnen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Mit Hamdija reden und die Kanister und den Rechenschieber nennen.'; if (!F(G,'k5.b.listKolar')) return 'Frau Kolar die Liste geben.'; if (!F(G,'k5.b.ready')) return 'Mit Hamdija reden: Sie sind gefunden.'; return 'Als Mala Hamdija hinüberbringen.'; }]},
+  s:[function(G){ if (!N(G,'b5_kasten')) return 'Er lässt mich nicht an den Kasten hinter dem Hahn.'; if (!N(G,'b5_tag')) return 'Er glaubt mir nicht, dass ich der Junge bin.'; if (!N(G,'b5_wer')) return 'Einer hat mich damals festgehalten. Wer, habe ich noch nicht zu Ende gedacht.'; if (!N(G,'b5_drei')) return 'Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Er muss mich erkennen.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste muss zu Frau Kolar.'; if (!F(G,'k5.b.ready')) return 'Er muss hören, was aus den sieben geworden ist.'; return 'Er ist bereit zu gehen.'; },
+     function(G){ if (!N(G,'b5_kasten')) return 'Was ist im Kasten?'; if (!N(G,'b5_tag')) return 'Was weiß nur der Junge von damals?'; if (!N(G,'b5_wer')) return 'Die Hand auf den Augen roch nach Malz. Und vorn am Hahn hob einer die Hand.'; if (!N(G,'b5_drei')) return 'Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Die gefüllten Kanister. Und der Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Drei Tote haben noch keinen Namen.'; if (!F(G,'k5.b.ready')) return 'Sie sind gefunden. Alle sieben.'; return 'Er kann jetzt gehen.'; },
+     function(G){ if (!N(G,'b5_kasten')) return {m:'Mala geht durch Wände. Auch in einen Blechkasten.',g:'Ich gehe durch den Kasten.'}; if (!N(G,'b5_tag')) return {m:'Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.',g:'Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.'}; if (!N(G,'b5_wer')) return 'Die Hand an den Kanistern und der Tag am Hahn gehören zusammen.'; if (!N(G,'b5_drei')) return 'In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Ihm beides sagen: die Kanister und den Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste in die Gerichtsmedizin bringen.'; if (!F(G,'k5.b.ready')) return 'Zu Hamdija an den Hahn.'; return {m:'Mala öffnet die Schwelle. Am Hahn.',g:'Ich mache ihm Licht. Am Hahn.'}; },
+     function(G){ if (!N(G,'b5_kasten')) return 'Als Mala den Kasten hinter dem Hahn ansehen.'; if (!N(G,'b5_tag')) return 'Als Mala den Hahn, die Mitte und die Brücke spüren.'; if (!N(G,'b5_wer')) return 'Im Notizbuch „Nemoj gledati“ und „Der neunzehnte April“ verbinden.'; if (!N(G,'b5_drei')) return 'Frau Kolar nach dem Grab an der Brauerei fragen.'; if (F(G,'k5.b.trust')&&!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Den Blechkasten hinter dem Hahn öffnen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Mit Hamdija reden und die Kanister und den Rechenschieber nennen.'; if (!F(G,'k5.b.listKolar')) return 'Frau Kolar die Liste geben.'; if (!F(G,'k5.b.ready')) return 'Mit Hamdija reden: Sie sind gefunden.'; return 'Als Mala Hamdija hinüberbringen.'; }]},
  {id:'h5fun',t:'Lanas Begräbnis',open:function(G){ return G.phase==='k5_fun' && !F(G,'k5.fun.done'); },
   s:['Heute wird Lana begraben.','Alle sind gekommen. Nada und Zlata stehen am Pfosten.','Am Grab gibt es nichts zu lösen.','Eine Wahl am Grab treffen. Beide sind richtig.']},
  // ---------------- Freitagabend
@@ -49049,6 +49054,7 @@ var P=M.P;
 function open(G){ return ['k2_s1','k2_s2','k2_s2_n'].indexOf(G.phase)>=0; }
 function ivanHere(G){ return ['k2_s1','k2_s2','k2_s2_n'].indexOf(G.phase)>=0 && !G.flags['k2.s2.bookTaken']; }
 // ---------------------------------------------------------------- Jakob
+// Analyse K2-B08 (P17): Jakob nennt bei „s2_ledger“ die Beobachtung (verkauft vom Sohn), nicht den Schluss „geliehen“ (s2_provenance)
 async function talkJakob(A){ var J=A.npc('jakob'), p=A.G.phase;
   await A.menuLoop(function(){ return [
     {t:'Haben Sie alte Takvime? Von 1972?',if:A.hasNote('s1_twosevens')&&!A.hasNote('s1_sunset'),once:'jk1',go:async function(A){ await J.say('Takvime! Endlich jemand, der nach etwas Vernünftigem fragt. Alle wollen Postkarten mit der Brücke.'); await J.say('Das Regal dort. Kalendari, takvimi, almanasi. Neunzehnhundert bis heute, mit Lücken. Die Lücken sind die Kriege.'); }},
@@ -49067,7 +49073,7 @@ async function talkJakob(A){ var J=A.npc('jakob'), p=A.G.phase;
     A.askOpt({ s1_sunset:'Sechzehn Uhr sechzehn. Sie haben ein Talent für unwichtige Zahlen. Das mag ich.', s2_ivan:async function(A){ await J.say('Ein alter Mann mit runder Brille, im Sessel?'); await A.wait(700); await J.say('…So sah Professor Barać aus. Er hat in diesem Sessel gesessen, jeden Donnerstag, zwanzig Jahre lang. Bis zweitausenddrei.'); A.note('s2_obit',true); },
       s2_relic:'Eine Reliquie. Ja. Sein Sohn hat das auch gesagt, als er verkaufte. Er hat es nicht angesehen, als ich es einpackte.', s2_fragments:'Asche im Buch? Ich habe sie gesehen. Ich dachte, er hat Brandflecken gesammelt. Alte Männer sammeln seltsame Dinge.',
       m2_photo:'Alipašino Polje, achtundsiebzig, Haltestelle. Ein Fotoklub hat das gemacht. Der ganze Kasten ist aus einem Nachlass in der B-Phase.', s2_buyer:'Frankfurt. Sie zahlen gut. Bücher sind keine Menschen, mein Herr, Bücher darf man verkaufen.',
-      s2_ledger:'Mein Ankaufbuch lügt nicht. Nachlass Professor I. B. Wenn in einem Buch aus diesem Nachlass ein fremder Stempel steckt, dann hat der Professor es nicht gekauft. Dann hat er es geliehen.', s2_stamp:'Ein Leihzettel der Nationalbibliothek. Leser 2204. Wer das war, steht nicht auf dem Zettel. Aber vielleicht in meinem Ankaufbuch, bei dem Nachlass, aus dem das Buch kam.' },'Ich weiß viel. Darüber nicht.'),
+      s2_ledger:'Mein Ankaufbuch lügt nicht. Nachlass Professor I. B., verkauft vom Sohn. Alles, was aus dieser Wohnung kam, steht hier, mit Datum und Preis.', s2_stamp:'Ein Leihzettel der Nationalbibliothek. Leser 2204. Wer das war, steht nicht auf dem Zettel. Aber vielleicht in meinem Ankaufbuch, bei dem Nachlass, aus dem das Buch kam.' },'Ich weiß viel. Darüber nicht.'),
     ...M.k2Extra('jakob',A,J),
     {t:'Danke, Gospodine Kabiljo.',bye:true,go:async function(A){ await J.say(A.cycle('jkBye',['Kommen Sie wieder. Bringen Sie Baklava mit, wie Hajra. Oder lassen Sie es, wie alle anderen.','Lesen Sie etwas Gutes.','Zu ist nur, was keiner aufmacht.'])); }}
   ]; }); }
@@ -51201,11 +51207,13 @@ async function talkMirza(A){ var Mz=A.npc('mirza'), p=A.G.phase;
     ...M.k2Extra('mirza',A,Mz),
     {t:'Danke.',bye:true}
   ]; }); }
-async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_rescued')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
+// Analyse K2-B08 (P17): Mirzas Zusage hängt am eigenen Schluss „Keine Schuld“ (s3_truth), nicht an seinem eigenen Satz
+async function mirzaAsk(A,Mz){ if (!A.hasNote('s3_truth')){ await Mz.say('Nein.'); await A.wait(600); await Mz.say('Ich gehe nicht in diesen Keller. Ich bin da unten fast gestorben.'); return; }
+  await A.m('Sie hat ihr Leben lang geglaubt, es war ihre Schuld. Heute Abend ruft sie die Namen auf. Auch Ihren.'); await A.wait(800);
   await Mz.say('Ich komme.'); A.setFlag('k2.s3.mirza'); await Mz.say('Ich bringe Kerzen. Und ich mache das Licht nicht an. Wie damals.'); await M.k2CheckS3Night(A); if (!A.flag('k2.s3.night')) A.save(); return 'bye'; }
-async function mirzaGuilt(A,Mz){ if (A.hasNote('s3_rescued')) return Mz.say('Sie hat mich gerettet. Und sie hat es nie gewusst.');
+async function mirzaGuilt(A,Mz){ if (A.hasNote('s3_rescued')) return Mz.say('Sie hat mich hineingetragen. Ich war neun.');
   await A.m('Im Klassenbuch steht, in Zoras Schrift: „Mirza H. – verwundet. Meine Schuld.“'); await A.wait(1000); await Mz.say('Ihre Schuld?'); await A.wait(800); await Mz.say('Ich bin in der Pause hinausgerannt. Ich wollte meinen Ball holen. Sie hat es mir verboten, und ich bin trotzdem gerannt.');
-  await Mz.say('Dann ist es passiert. Und sie ist hinausgelaufen, in die Splitter, ohne Mantel, und hat mich hineingetragen. Sie hat mich hineingetragen!'); await A.wait(900); await Mz.say('Ihre Schuld? Sie hat mich gerettet.'); A.note('s3_rescued');
+  await Mz.say('Dann ist es passiert. Und sie ist hinausgelaufen, in die Splitter, ohne Mantel, und hat mich hineingetragen. Sie hat mich hineingetragen!'); A.note('s3_rescued');
   await A.wait(700); await Mz.say('Ich habe ihr nie danke gesagt. Ich war neun. Und dann war ich zwanzig, und sie war tot.'); }
 // ---------------------------------------------------------------- Selma
 async function talkSelma(A){ var Se=A.npc('selma');
@@ -54618,7 +54626,8 @@ async function talkDinko(A){ var D=A.npc('dinko'), p=A.G.phase;
     {t:'Sie kannten ihren Sohn.',once:'di1',go:async function(A){ await D.say('Das ist lange her.'); await D.anim('mend'); }},
     {t:'Ich habe ein Foto von Ihnen und Tonći.',if:A.has('photo1')&&!A.hasNote('c1_brother'),go:function(A){ return showPhoto(A,D); }},
     {t:'Brauchen Sie Hilfe mit dem Netz?',once:'di3',go:async function(A){ await D.say('Kannst du flicken?'); await A.m('Nein.'); await D.say('Dann nicht.'); }},
-    {t:'Ich weiß, was Tonći im Wasser gesagt hat.',if:A.hasNote('c1_words'),go:async function(A){ await confession(A,D); return 'bye'; }},
+    // Analyse K1-B08 (P19): Malas Nachhall am Seesack gibt die Worte; dass Dinko sie bis heute murmelt (Lauschen), gibt Marko den Mut, sie ihm zu sagen
+    {t:'Ich weiß, was Tonći im Wasser gesagt hat.',if:A.hasNote('c1_words')&&A.hasNote('c1_drzi'),go:async function(A){ await confession(A,D); return 'bye'; }},
     A.askOpt({
       c1_rescued:async function(A){ await D.say('Du warst bei Šimić. Ja. Ich war auf der ANKICA. Das steht in eurem Buch. Was willst du noch?'); },
       c1_capsized:async function(A){ await D.say('Vor Sustipan. Der Motor. Mehr gibt es nicht zu sagen.'); },
@@ -54627,7 +54636,7 @@ async function talkDinko(A){ var D=A.npc('dinko'), p=A.G.phase;
       c1_bag:async function(A){ await D.say('Du warst in meinem Schuppen?'); await A.m('Nein.'); await D.say('Dann weißt du nichts.'); },
       c1_candle:async function(A){ await D.say('Woher …'); await D.anim('mend'); await D.say('Lass mich.'); },
       c1_waits:async function(A){ await D.say('Auf der Mole. Jeden Abend. Ich bin siebenundzwanzig Jahre lang einen Umweg gelaufen, um sie nicht zu sehen.'); },
-      c1_words:async function(A){ await confession(A,D); return 'bye'; },
+      c1_words:async function(A){ if (!A.hasNote('c1_drzi')){ await D.say('Du warst nicht dabei. Keiner war dabei.'); return; } await confession(A,D); return 'bye'; },
       c1_brother:'Ich sage es nicht noch einmal.',
       c1_plaque:async function(A){ await D.say('…'); await D.say('Das geht dich nichts an.'); }
     },'Davon weiß ich nichts.'),
@@ -54641,9 +54650,9 @@ async function confession(A,D){ A.music('ghost'); await A.m('„Halt die Tasche.
   if (c===0){ await D.say('Niemand weiß so etwas einfach.'); await A.wait(900); await D.say('…Aber du weißt es.'); }
   else if (c===1){ await D.say('Ivka ist tot.'); await A.m('Trotzdem.'); await A.wait(1500); }
   else { await D.say('Es gibt niemanden, der es erzählen könnte. Außer ihm.'); await A.wait(1200); }
-  await D.say('Die Fähre fiel aus. Bura, Stärke neun. Tonći stand am Kai in Supetar und sagte: „Mama wartet um sieben an der Mole. Bei dem Wetter. Ohne Handschuhe.“');
-  await D.say('Ich habe gesagt, wir fahren morgen. Er hat gesagt, dann steht sie die ganze Nacht da. Ich kannte sie. Er hatte recht.');
-  await D.say('Wir haben die ANKICA genommen. Das Boot meines Vaters. Um halb neun waren wir draußen. Vor Sustipan ist der Motor ausgegangen.');
+  // Analyse K1-B06 (P20): Dinko erzählt seinen Teil. Warum Tonći nicht auf die Fähre gewartet hat, zieht Marko selbst (c1_came).
+  await D.say('Warum wir bei dem Wetter draußen waren? Das war seine Sache. Ich erzähle dir meine.');
+  await D.say('Die ANKICA war das Boot meines Vaters. Ich habe sie losgemacht. Um halb neun waren wir draußen. Vor Sustipan ist der Motor ausgegangen.');
   await D.say('Die Bura hat uns umgedreht wie eine Muschel. Wir hingen am Kiel. Er hat mir die Tasche in die Arme gedrückt. „Drži torbu! Za mamu je!“');
   await A.wait(700); await D.say('Dann kam eine Welle.'); await A.wait(1500);
   await D.say('Am Morgen hat mich die Hafenpolizei aus dem Wasser gezogen. Ihn nicht. Nie.');
@@ -54684,7 +54693,8 @@ var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Zurück in die Stadt.'},
  {id:'dinko',npc:'dinko',name:'Dinko Matić',hgt:38,vis:function(S,GS){ return dinkoHere(GS); },talk:talkDinko,
    look:function(A){ return A.m(A.flag('c1.dinkoTold')?'Dinko flickt weiter, als hätte er nichts gesagt. Seine Hände zittern ein bisschen.':'Ein Fischer um die fünfzig, mit Wollmütze und grauem Bart. Er flickt ein Netz, Masche für Masche, ohne aufzusehen.'); },
-   g:{look:'Er trägt etwas mit sich herum, das schwerer ist als er selbst.',listen:async function(A){ if (A.flag('c1.dinkoTold')) return A.g('Er sagt nichts mehr. Er atmet nur. Leichter als vorhin.'); await A.g('Er murmelt beim Flicken: „…drži … drži …“ Halt fest.'); }},
+   g:{look:'Er trägt etwas mit sich herum, das schwerer ist als er selbst.',listen:async function(A){ if (A.flag('c1.dinkoTold')) return A.g('Er sagt nichts mehr. Er atmet nur. Leichter als vorhin.'); await A.g('Er murmelt beim Flicken: „…drži … drži …“ Halt fest.'); A.note('c1_drzi');
+     if (A.hasNote('c1_words')) await A.g('Drži torbu. Das sagt er bis heute. Sag es ihm, Marko.'); }},
    give:{ photo1:function(A){ return A.hasNote('c1_brother')?A.npc('dinko').say('Ich habe es gesehen. Bring es ihr zurück.'):showPhoto(A,A.npc('dinko')); },
      postcard:async function(A){ await A.npc('dinko').say('„Dinko ide sa mnom.“ Dinko kommt mit.'); await A.wait(800); await A.npc('dinko').say('Ja. Ich bin mitgekommen.'); },
      gloves:'„Bring sie ihr. Nicht mir.“', letter_t:'„Ich habe ihn nie gelesen. Er war nicht für mich.“' }},
@@ -54726,7 +54736,8 @@ var SH=[
  {id:'seabag',name:'Seesack',g:{look:async function(A){ await A.g('Ein Seesack aus Segeltuch, in Plastik gewickelt, damit kein Salz mehr herankommt. Auf dem Stoff, verblichen: T.P.'); A.note('c1_bag'); },
    sense:async function(A){ A.note('c1_bag',true); if (A.hasNote('c1_words')) return A.g('Ich habe es schon gesehen. Einmal reicht.');
      await A.memory({title:'Nachhall – der Seesack',draw:M.mem&&M.mem.storm,tint:'ghost',lines:['Nacht. Schwarzes Wasser. Die Bura reißt die Kämme von den Wellen.','Zwei Jungen am umgedrehten Kiel. Einer drückt dem anderen eine Tasche in den Arm.','„Drži torbu! Za mamu je!“ Halt die Tasche! Sie ist für Mama!','Dann kommt eine Welle. Dann ist nur noch einer da.']});
-     A.note('c1_words'); await A.g('Das hat er siebenundzwanzig Jahre lang allein gewusst.'); }}},
+     A.note('c1_words'); await A.g('Das hat er siebenundzwanzig Jahre lang allein gewusst.');
+     await A.g(A.hasNote('c1_drzi')?'Drži. Das murmelt er bis heute.':'Er trägt es noch mit sich herum. Man hört es, wenn er flickt.'); }}},
  {id:'photo',name:'Foto an der Wand',g:{look:'Ein junger Mann, lachend, mit Steinstaub im Haar. Tonći. Dasselbe Lachen wie auf Ivkas Kredenz.',sense:'Jemand hat es so oft angesehen, dass die Ecken weich geworden sind.'}},
  {id:'candle',name:'Kerzenstummel',g:{look:'Ein Kerzenstummel auf einer Untertasse. Viel Wachs, wenig Kerze.',sense:async function(A){ await A.g('Eine Kerze, einmal im Jahr, am zweiundzwanzigsten Dezember. Er sitzt dann hier, bis sie aus ist.'); A.note('c1_candle'); }}},
  {id:'nets',name:'Netze',g:{look:'Netze, die von den Balken hängen wie Spinnweben eines sehr großen Tieres.'}},
@@ -55439,6 +55450,8 @@ var JOURNAL=['12.6.1960 – Nedjelja. Ples u salonu poslije ponoći. D. i ja. �
 // ---------------------------------------------------------------- Bruno
 async function talkBruno(A){ var B=A.npc('bruno');
   if (A.isMala()) return brunoMala(A,B);
+  // Analyse K1-B08 (P19): Bruno zeigt sich Marko erst, wenn er gefunden ist (Mala spürt die Loge, oder Marko läutet)
+  if (!A.isFound('bruno')) return A.m(A.cycle('brNo',['Der Stuhl in der Loge ist leer. Nur die Mütze. Und doch fühlt es sich an, als säße einer da.','Niemand. Aber die Glocke hat vorhin von selbst geklingelt.']));
   if (A.flag('c3.release')) return A.m('Er sieht mich nicht mehr an. Er wartet auf Mala.');
   if (A.first('brHello')){ await B.say('Buona sera, signore … Dobra večer … Sie wünschen?'); A.note('c3_bruno'); }
   else await B.say(['Signore … ?','Dobra … Sie … wünschen …','Danica … ne … Ljerka …','Ljerka. Sada. Molim.'][Math.min(3,lvl(A))]);
@@ -55486,6 +55499,7 @@ async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übers
   await A.m('„Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“'); await A.wait(900);
   await B.say('Da. Tako.'); await A.wait(600); await B.say('Sada. Molim.'); A.note('c3_message'); A.setFlag('c3.translated'); await A.m('„Jetzt. Bitte.“'); A.save(); }
 async function showToBruno(A,item){ var B=A.npc('bruno');
+  if (!A.isMala() && !A.isFound('bruno')) return A.m('Da ist niemand, dem ich das zeigen könnte. Nur eine Mütze auf dem Stuhl.');
   if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.');
     if (!A.G.flags['c3.ins.danica']){ await A.wait(700); await B.say('… pa je otišla … a ja … sam …'); await A.m('„Und dann ist sie gegangen. Und ich … allein.“'); } return gainInsight(A,B,'photo2'); }
   if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“');
@@ -55621,7 +55635,7 @@ async function readRegister(A){ await A.doc({style:'register',title:'Popis smje�
   if (A.malaHere()){ await A.g('Hör auf zu lesen.'); await A.m('Mala …'); await A.g('Es gibt viele Mädchen aus Sarajevo. Viele mit L.'); } }
 M.room('palma',{ name:'Hotel Palma', scape:'palma', music:function(GS){ return GS.phase==='c3_night'?'case3':'case3'; },
   actors:function(S,GS){ var L=[]; if (ljerkaUp(GS)){ var p=M.apos('palma','ljerka',[92,112,'F']); L.push({id:'ljerka',ch:'ljerka',x:p[0],y:p[1],f:p[2]||'F',name:'Ljerka'}); }
-    if (brunoInLodge(GS)){ var b=M.apos('palma','bruno',[52,108,'F']); L.push({id:'bruno',ch:'bruno',x:b[0],y:b[1],f:b[2]||'F',name:'Bruno',ghost:true,idle:'porter',talk:'porterTalk',anchor:function(){ var q=M.spot('palma','bell'); return [q[0]+(q[2]>>1),q[1]+(q[3]>>1)]; }}); }
+    if (brunoInLodge(GS)){ var b=M.apos('palma','bruno',[52,108,'F']); L.push({id:'bruno',ch:'bruno',x:b[0],y:b[1],f:b[2]||'F',name:'Bruno',ghost:true,reveal:true,idle:'porter',talk:'porterTalk',anchor:function(){ var q=M.spot('palma','bell'); return [q[0]+(q[2]>>1),q[1]+(q[3]>>1)]; }}); }
     if (GS.flags['c3.woke'] && !GS.flags['c3.ljerkaUp']){ var n=M.apos('palma','ljerkaNight',[96,116,'F']); L.push({id:'ljerkaNight',ch:'ljerkaNight',x:n[0],y:n[1],f:n[2]||'F',name:'Ljerka'}); }
     return L; },
   hotspots:HS,
@@ -55992,7 +56006,9 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
   // Runde 2: die ANKICA
   await I.say('Ich warte. Ich habe Zeit.');
   for (tries=0;;tries++){ n=await A.askNote('Was sage ich ihr jetzt?',{also:['c1_aboard']});
-    if (n==='c1_came'||n==='c1_story'||n==='c1_aboard'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
+    // Analyse K1-B06 (P20): nur der eigene Schluss „Tonći kam mit der ANKICA“ beantwortet ihre Frage; Dinkos Teil und das Boot allein nicht
+    if (n==='c1_story'||n==='c1_aboard'){ await A.m(n==='c1_story'?'Dinko war in jener Nacht mit ihm auf der ANKICA.':'Tonći und Dinko waren auf der ANKICA, als sie kenterte.'); await I.say('Auf Matićs kleinem Boot? Bei der Bura? Warum sollte er? Er kommt mit der Fähre. Das hat er geschrieben.'); continue; }
+    if (n==='c1_came'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
       await I.say('Mit Matićs kleinem Boot? Bei der Bura?'); await I.say('Dieser Dickkopf. Dieser …'); await A.wait(800); await I.say('Und Dinko?'); await A.m('Dinko hat es geschafft.'); await A.wait(1100); await I.say('…und Tonći nicht.'); break; }
     await roundMiss(A,I,n,tries,['Was hat das mit meinem Sohn zu tun?','Ich verstehe nicht, was Sie meinen.','Sagen Sie, was Sie sagen wollen.']); }
   // Runde 3: der Brief
@@ -56664,7 +56680,7 @@ async function batoSlip(A){ var B=A.npc('bato'), G=A.G; if (N(G,'a3_thrice')) re
   await A.m('In Ihrer Kammer war Licht. In der Nacht. Zwischen dem ersten und dem dritten Läuten.'); await A.wait(800);
   await B.say('Licht?'); await A.wait(600); await B.say('Ich habe es gleich wieder ausgemacht.'); await A.wait(500); await B.say('Wer nachts Licht macht, hat bald ein Loch im Fenster.');
   await A.wait(900); await B.say('Dreimal hat er geläutet, dann war Ruhe.'); A.note('a3_thrice'); A.setFlag('k3.bato.slip');
-  await A.wait(1200); await A.m('Dreimal.'); await A.wait(500); await A.m('Er hat mitgezählt.'); }
+  await A.wait(1200); await A.m('Dreimal.'); }   // Analyse K3-B03 (P17): „Er hat mitgezählt“ ist der Schluss (a3_awake); der Spieler zieht ihn
 async function talkBato(A){ var B=A.npc('bato'), G=A.G;
   if (A.isMala()) return batoMala(A);
   if (fin(G)) return B.say(F(G,'k3.fin.free')?'Ich warte, bis sie mich holt. Gehen Sie zu ihr.':'Ich warte. Ich habe gelernt zu warten.');
@@ -58976,7 +58992,7 @@ async function part2(A,V){ var K=A.npc('kata'); A.music('k3_duh'); if (V.actor) 
   await A.wait(900); await V.say('Ich gehe nach hinten.'); await hideBack(A,V);
   A.setFlag('k3.v.yard'); A.set('yardOpen',true); A.rebuild(); A.sfx('tarp');
   await A.wait(700); await K.say('Lassen Sie ihn. Das Rolltor ist offen. Gehen Sie ruhig zum Laster, wenn Sie wollen. Heute ist es egal.');
-  await A.wait(600); await A.m('„Sie hat mich weggeschickt.“'); await A.wait(500); await A.m('Gestern hat Mala gesagt: „Er ist gefahren.“');
+  await A.wait(600); await A.m('„Sie hat mich weggeschickt.“');   // Analyse K3-B03 (P17): Malas Gegensatz („Er ist gefahren.“) erinnert der Spieler selbst (v3_who)
   if (A.G.malaOn && A.malaHere()){ await A.wait(700); await A.narrate('Mala steht am Rolltor. Sie sieht mich nicht an.'); }
   A.music('k3_istraga'); }
 // die Botschaft (Konzept 7.2 Schritt 11): der Spieler wählt aus dem Notizbuch; Mala nennt den Satz nie
@@ -59431,7 +59447,7 @@ async function letters(A){ var Dv=A.npc('davor'), G=A.G;
   await A.doc({style:'letter',title:'Mate an Davor',lines:['Mostar, 14. 9. 2003','','Dragi sine,','smokve su rodile. Kad ćete doći?','','Tvoj otac','','Darunter im Karton noch elf Briefe, einer pro Jahr, 1998 bis 2009.','Derselbe Satz in jedem. Nur das Datum wechselt.']});
   if (!A.hasNote('b3_letters')){ await A.m('„Lieber Sohn, die Feigen haben getragen. Wann kommt ihr? Dein Vater.“'); await A.m('Jedes Jahr. Zwölf Briefe, derselbe Satz.'); A.note('b3_letters'); A.setFlag('k3.b.letters');
     if (inside(G)){ await A.wait(700); await Dv.say('Jedes Jahr derselbe Satz. Die Feigen haben getragen. Wann kommt ihr.'); await A.wait(600); await Dv.say('Jedes Jahr ein Vorwurf. Warum kommst du nicht. Warum bist du weg.'); }
-    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Das ist kein Vorwurf.'); await A.wait(500); await A.g('Das weiß ich, weil ich auch nie gesagt habe, was ich meine.'); } } }
+    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('…'); await A.wait(500); await A.g('Ich habe auch nie gesagt, was ich meine.'); } } }   // Analyse K3-B03 (P17): nicht vorwegnehmen, dass es kein Vorwurf ist (b3_invite)
 // ---------------------------------------------------------------- Mates Schublade: Lenas Karten, darunter in Bleistift „Dragi dida.“
 async function drawer(A){ var Dv=A.npc('davor'), G=A.G;
   if (sat(G)) return A.m('Mates Schublade. Davor sitzt daneben. Heute nicht.');
@@ -59441,7 +59457,7 @@ async function drawer(A){ var Dv=A.npc('davor'), G=A.G;
   if (!A.hasNote('b3_cards')){ await A.m('Lenas Postkarten aus München. Jedes Jahr eine, mit Schulfoto. „Lieber Opa.“'); A.note('b3_cards'); A.setFlag('k3.b.cards'); await A.wait(600);
     await A.m('Und unter jedem „Lieber Opa“, mit Bleistift, ganz klein, in einer anderen Schrift: „Dragi dida.“'); A.note('b3_pencil');
     if (inside(G)){ await A.wait(700); await Dv.say('Die Karten. Die hat Lena jedes Jahr geschrieben. Ich habe sie zur Post gebracht.'); await A.wait(500); await Dv.say('Ich wusste nicht, dass er sie aufhebt.'); }
-    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Er hat sich das Wort selbst darunter geschrieben. Damit es richtig heißt.'); } }
+    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Bleistift. Unter jeder Karte dasselbe Wort.'); } }   // Analyse K3-B03 (P17): die Beobachtung, nicht der Schluss (b3_dida)
   else A.note('b3_pencil',true); }
 // ---------------------------------------------------------------- Das Kinderzimmer (Marko geht die halbe Treppe hinauf)
 async function upstairs(A){ var G=A.G, Ln=A.npc('lena');
@@ -64013,7 +64029,30 @@ M.trAdd('bhs', {
   'Mono-Batterien. Am Fährterminal ist ein Kiosk.': 'Mono baterije. Kod trajektnog terminala ima kiosk.',   // Marko
   // K1-B03: Ivkas Tür
   'Ein Foto habe ich. Aber nichts von dem, was er ihr geschrieben hat.': 'Fotografiju imam. Ali ništa od onoga što joj je pisao.',   // Marko
-  'Seine Karte habe ich. Aber noch kein Bild von ihm, das ich mitnehmen darf.': 'Njegovu razglednicu imam. Ali još nijednu njegovu sliku koju smijem ponijeti.'   // Marko
+  'Seine Karte habe ich. Aber noch kein Bild von ihm, das ich mitnehmen darf.': 'Njegovu razglednicu imam. Ali još nijednu njegovu sliku koju smijem ponijeti.',   // Marko
+  // K1-B06 (P20): Dinko erzählt seinen Teil; Ivkas zweite Runde
+  'Dinko: In der Nacht kenterte die ANKICA vor Sustipan. Dinko hielt die Tasche, Tonći nicht. Warum sie bei der Bura hinausfuhren, sagt er nicht.': 'Dinko: U noći se ANKICA prevrnula ispred Sustipana. Dinko je zadržao torbu, Tonći nije. Zašto su po buri isplovili, ne kaže.',   // Notiz
+  'Warum wir bei dem Wetter draußen waren? Das war seine Sache. Ich erzähle dir meine.': 'Zašto smo po tom vremenu bili vani? To je bila njegova stvar. Ja ću ti ispričati svoju.',   // Dinko
+  'Die ANKICA war das Boot meines Vaters. Ich habe sie losgemacht. Um halb neun waren wir draußen. Vor Sustipan ist der Motor ausgegangen.': 'ANKICA je bila očeva barka. Ja sam je odvezao. U pola devet bili smo vani. Ispred Sustipana se ugasio motor.',   // Dinko
+  'Dinko war in jener Nacht mit ihm auf der ANKICA.': 'Dinko je te noći bio s njim na ANKICI.',   // Marko
+  'Auf Matićs kleinem Boot? Bei der Bura? Warum sollte er? Er kommt mit der Fähre. Das hat er geschrieben.': 'Na Matićevoj barkici? Po buri? Zač bi to radija? Dolazi trajekton. To je napisa.',   // Ivka
+  // K1-B08 (P19): Lauschen bei Dinko, Bruno finden
+  'Dinko murmelt beim Flicken: „…drži … drži …“ Halt fest. Als hielte er noch immer etwas.': 'Dok krpi, Dinko mrmlja: „…drži … drži …“ Kao da još uvijek nešto drži.',   // Notiz
+  'Dinko murmelt „drži“.': 'Dinko mrmlja „drži“.',   // Notiz (kurz)
+  'Dinkos Murmeln': 'Dinkovo mrmljanje',   // Notizbuch
+  'Drži torbu. Das sagt er bis heute. Sag es ihm, Marko.': 'Drži torbu. To govori i danas. Reci mu, Marko.',   // Mala
+  'Drži. Das murmelt er bis heute.': 'Drži. To mrmlja i danas.',   // Mala
+  'Er trägt es noch mit sich herum. Man hört es, wenn er flickt.': 'Još to nosi sa sobom. Čuje se kad krpi.',   // Mala
+  'Du warst nicht dabei. Keiner war dabei.': 'Nisi bio tamo. Nitko nije bio tamo.',   // Dinko
+  'Der Stuhl in der Loge ist leer. Nur die Mütze. Und doch fühlt es sich an, als säße einer da.': 'Stolica u portirnici je prazna. Samo kapa. A ipak se čini kao da netko sjedi ondje.',   // Marko
+  'Niemand. Aber die Glocke hat vorhin von selbst geklingelt.': 'Nikoga. Ali zvonce je maloprije zazvonilo samo od sebe.',   // Marko
+  'Da ist niemand, dem ich das zeigen könnte. Nur eine Mütze auf dem Stuhl.': 'Nema nikoga komu bih to mogao pokazati. Samo kapa na stolici.',   // Marko
+  // Hinweise
+  'Ob er sie noch mit sich herumträgt? Beim Flicken murmelt er etwas.': 'Nosi li ih još sa sobom? Dok krpi, nešto mrmlja.',
+  'Mala hört hin, was Dinko beim Flicken murmelt.': 'Mala osluškuje što Dinko mrmlja dok krpi.',   // m
+  'Ich höre hin, was Dinko beim Flicken murmelt.': 'Ja osluškujem što Dinko mrmlja dok krpi.',   // g
+  'Zu Mala wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na Malu i prisluškivati Dinka dok krpi.',   // m
+  'Zu mir wechseln und Dinko beim Flicken belauschen.': 'Prebaciti na mene i prisluškivati Dinka dok krpi.'   // g
 });
 })(M);
 
@@ -69883,14 +69922,17 @@ M.k3Peil=async function(A,st){ var G=A.G; if (!ST[st]) throw new Error('keine St
   if (!res){ await A.m('Gleich. Ich muss erst sehen, was sie meint.'); return false; }
   A.setFlag('k3.peil.'+st); A.note(ST[st].note); if (st==='bridgehead') A.unlock('koski');
   if (st==='bridgehead'){ await A.m('Ein Strich nach Süden. Mehr nicht.'); if (A.first('!k3.peil.talk')){ await A.g('Ich sehe, du misst.'); await A.m('Und wenn es nicht passt, messen wir noch mal.'); await A.g('Du bist so langweilig, Mali.'); await A.m('Ich weiß.'); } }
-  if (st==='minaret') await A.m('Zwei Linien von fast derselben Stelle. Irgendwo zwischen hier und dem Meer.');
-  if (st==='partizan') await A.m('Jetzt schneiden sie sich richtig.');
+  // Analyse K3-B03 (P17): Was Marko beim Schließen des Blatts sieht, ist der Schluss; er zieht ihn selbst, statt ihn danach im Notizbuch suchen zu lassen
+  if (st==='minaret'){ var r1=(G.notes.indexOf('l3_m1')>=0)?await E.combineNotes('l3_m1','l3_m2'):null; await A.m(r1&&r1.ok&&r1.say?r1.say:'Zwei Linien von fast derselben Stelle. Irgendwo zwischen hier und dem Meer.'); }
+  if (st==='partizan'){ var r2=(G.notes.indexOf('l3_flat')>=0)?await E.combineNotes('l3_flat','l3_m3'):null; await A.m(r2&&r2.ok&&r2.say?r2.say:'Jetzt schneiden sie sich richtig.'); }
   return true; };
 // ---------------------------------------------------------------- Zdravkos alte Karte von 1985 (S2 ruft das am Spot 'oldmap' auf)
 M.k3OldMap=async function(A){ var G=A.G, area=G.notes.indexOf('l3_area')>=0, fans=measured(G);
   await A.overlay('peil',{mode:'view',old:true,skela:true,labelSkela:area,title:'Zdravkos Karte, 1985',fans:area?fans:[],area:area?areaOf(fans):null,
     msg:area?'Meine drei Fächer auf der alten Karte: Wo sie sich schneiden, steht ein einziges Brückensymbol, an einer Biegung. Daneben ein Name.':'Eine vergilbte Straßenkarte, die Dörfer im Süden mit Brücken und Fähren. Ohne meine Linien weiß ich nicht, wo ich suchen soll.'});
   if (G.notes.indexOf('l3_oldmap')<0) A.note('l3_oldmap');
+  // Analyse K3-B02 (P17): Marko liest den Namen auf der Karte; mit den drei Fächern ist das der Schluss „Skela“ (kein Notizbuch-Schloss mehr)
+  if (area && G.notes.indexOf('l3_skela')<0){ var r3=await E.combineNotes('l3_area','l3_oldmap'); if (r3&&r3.ok){ await A.m(r3.say||'Skela.'); return true; } }
   if (area && A.first('!k3.oldmap.name')) await A.m('Skela.'); return true; };
 // ---------------------------------------------------------------- Die Reihenfolge der Nacht (Overlay 'arrange'), aus dem Notizbuch angestoßen
 var WHY={ arr:'Zuerst kamen sie an. Gegen zwanzig vor elf, sagt Vlado.', dep:'Vlado ist um Viertel nach elf gefahren. Geläutet hat sie, als er weg war.',
@@ -71703,6 +71745,7 @@ async function hamdijaAppear(A){ var G=A.G;
   A.note('b5_hamdija');
   if (gIn(A)){ await A.wait(300); await A.g('Für ihn ist April. Dreiundneunzig. Er sieht dich nicht. Er sieht den Kanister.'); }
   A.save(); }
+// Analyse K5-B09 (P17): „Sie haben mir danach beide Kanister gefüllt“ erst mit dem eigenen Schluss „Wer mich festhielt“ (b5_wer)
 M.k5TalkHamdija=async function(A){ var H=A.npc('hamdija'), p=ph(A);
   if (!F(A,'k5.b.met')) return A.m('Da ist keiner.');
   if (F(A,'k5.b.away')) return A.m('Er ist weg. Ich muss mich neu anstellen.');
@@ -71713,7 +71756,7 @@ M.k5TalkHamdija=async function(A){ var H=A.npc('hamdija'), p=ph(A);
     {t:'Ich bin der Junge. Mit den zwei Kanistern.',once:'k5hd4',if:p==='k5_d2'&&!F(A,'k5.b.trust'),go:async function(A){ await H.say('Mali ima trinaest, četrnaest godina. Ti si čovjek.'); await A.m('„Der Kleine ist dreizehn, vierzehn. Du bist ein Mann.“');
       // Analyse K5-B08 (P18): wer nachts schon gespürt hat, braucht einen Wink, dass der Tag mehr zeigt
       if (gHere(A) && !(F(A,'k5.b.t1')&&F(A,'k5.b.t2')&&F(A,'k5.b.t3'))){ await A.wait(400); await A.g('Er glaubt dir nicht. Der Tag weiß es. Am Hahn, in der Mitte, an der Brücke.'); } }},
-    {t:'Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.',if:p==='k5_d2'&&has(A,'b5_tag')&&!F(A,'k5.b.say1'),go:async function(A){ A.setFlag('k5.b.say1');
+    {t:'Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.',if:p==='k5_d2'&&has(A,'b5_wer')&&!F(A,'k5.b.say1'),go:async function(A){ A.setFlag('k5.b.say1');
       await A.narrate('Hamdija hält inne. Das Wasser läuft über den Rand eines Kanisters, den es nicht gibt.'); if (!F(A,'k5.b.say2')){ await H.say('To je vidio svako ko je stajao u redu.'); await A.m('„Das hat jeder gesehen, der in der Reihe stand.“'); } else await trust(A); }},
     {t:'Den Rechenschieber haben Sie ihm in die Tasche gesteckt.',if:p==='k5_d2'&&has(A,'b5_drei')&&has(A,'b5_kasten')&&!F(A,'k5.b.say2'),go:async function(A){ A.setFlag('k5.b.say2');
       if (!F(A,'k5.b.say1')){ await H.say('To može reći svako ko je kopao.'); await A.m('„Das kann jeder sagen, der beim Graben dabei war.“'); } else await trust(A); }},

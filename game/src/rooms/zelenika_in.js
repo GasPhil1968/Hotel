@@ -13,7 +13,7 @@ async function letters(A){ var Dv=A.npc('davor'), G=A.G;
   await A.doc({style:'letter',title:'Mate an Davor',lines:['Mostar, 14. 9. 2003','','Dragi sine,','smokve su rodile. Kad ćete doći?','','Tvoj otac','','Darunter im Karton noch elf Briefe, einer pro Jahr, 1998 bis 2009.','Derselbe Satz in jedem. Nur das Datum wechselt.']});
   if (!A.hasNote('b3_letters')){ await A.m('„Lieber Sohn, die Feigen haben getragen. Wann kommt ihr? Dein Vater.“'); await A.m('Jedes Jahr. Zwölf Briefe, derselbe Satz.'); A.note('b3_letters'); A.setFlag('k3.b.letters');
     if (inside(G)){ await A.wait(700); await Dv.say('Jedes Jahr derselbe Satz. Die Feigen haben getragen. Wann kommt ihr.'); await A.wait(600); await Dv.say('Jedes Jahr ein Vorwurf. Warum kommst du nicht. Warum bist du weg.'); }
-    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Das ist kein Vorwurf.'); await A.wait(500); await A.g('Das weiß ich, weil ich auch nie gesagt habe, was ich meine.'); } } }
+    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('…'); await A.wait(500); await A.g('Ich habe auch nie gesagt, was ich meine.'); } } }   // Analyse K3-B03 (P17): nicht vorwegnehmen, dass es kein Vorwurf ist (b3_invite)
 // ---------------------------------------------------------------- Mates Schublade: Lenas Karten, darunter in Bleistift „Dragi dida.“
 async function drawer(A){ var Dv=A.npc('davor'), G=A.G;
   if (sat(G)) return A.m('Mates Schublade. Davor sitzt daneben. Heute nicht.');
@@ -23,7 +23,7 @@ async function drawer(A){ var Dv=A.npc('davor'), G=A.G;
   if (!A.hasNote('b3_cards')){ await A.m('Lenas Postkarten aus München. Jedes Jahr eine, mit Schulfoto. „Lieber Opa.“'); A.note('b3_cards'); A.setFlag('k3.b.cards'); await A.wait(600);
     await A.m('Und unter jedem „Lieber Opa“, mit Bleistift, ganz klein, in einer anderen Schrift: „Dragi dida.“'); A.note('b3_pencil');
     if (inside(G)){ await A.wait(700); await Dv.say('Die Karten. Die hat Lena jedes Jahr geschrieben. Ich habe sie zur Post gebracht.'); await A.wait(500); await Dv.say('Ich wusste nicht, dass er sie aufhebt.'); }
-    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Er hat sich das Wort selbst darunter geschrieben. Damit es richtig heißt.'); } }
+    if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Bleistift. Unter jeder Karte dasselbe Wort.'); } }   // Analyse K3-B03 (P17): die Beobachtung, nicht der Schluss (b3_dida)
   else A.note('b3_pencil',true); }
 // ---------------------------------------------------------------- Das Kinderzimmer (Marko geht die halbe Treppe hinauf)
 async function upstairs(A){ var G=A.G, Ln=A.npc('lena');

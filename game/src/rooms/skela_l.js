@@ -73,7 +73,7 @@ async function batoSlip(A){ var B=A.npc('bato'), G=A.G; if (N(G,'a3_thrice')) re
   await A.m('In Ihrer Kammer war Licht. In der Nacht. Zwischen dem ersten und dem dritten Läuten.'); await A.wait(800);
   await B.say('Licht?'); await A.wait(600); await B.say('Ich habe es gleich wieder ausgemacht.'); await A.wait(500); await B.say('Wer nachts Licht macht, hat bald ein Loch im Fenster.');
   await A.wait(900); await B.say('Dreimal hat er geläutet, dann war Ruhe.'); A.note('a3_thrice'); A.setFlag('k3.bato.slip');
-  await A.wait(1200); await A.m('Dreimal.'); await A.wait(500); await A.m('Er hat mitgezählt.'); }
+  await A.wait(1200); await A.m('Dreimal.'); }   // Analyse K3-B03 (P17): „Er hat mitgezählt“ ist der Schluss (a3_awake); der Spieler zieht ihn
 async function talkBato(A){ var B=A.npc('bato'), G=A.G;
   if (A.isMala()) return batoMala(A);
   if (fin(G)) return B.say(F(G,'k3.fin.free')?'Ich warte, bis sie mich holt. Gehen Sie zu ihr.':'Ich warte. Ich habe gelernt zu warten.');

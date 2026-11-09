@@ -58,6 +58,8 @@ var JOURNAL=['12.6.1960 – Nedjelja. Ples u salonu poslije ponoći. D. i ja. �
 // ---------------------------------------------------------------- Bruno
 async function talkBruno(A){ var B=A.npc('bruno');
   if (A.isMala()) return brunoMala(A,B);
+  // Analyse K1-B08 (P19): Bruno zeigt sich Marko erst, wenn er gefunden ist (Mala spürt die Loge, oder Marko läutet)
+  if (!A.isFound('bruno')) return A.m(A.cycle('brNo',['Der Stuhl in der Loge ist leer. Nur die Mütze. Und doch fühlt es sich an, als säße einer da.','Niemand. Aber die Glocke hat vorhin von selbst geklingelt.']));
   if (A.flag('c3.release')) return A.m('Er sieht mich nicht mehr an. Er wartet auf Mala.');
   if (A.first('brHello')){ await B.say('Buona sera, signore … Dobra večer … Sie wünschen?'); A.note('c3_bruno'); }
   else await B.say(['Signore … ?','Dobra … Sie … wünschen …','Danica … ne … Ljerka …','Ljerka. Sada. Molim.'][Math.min(3,lvl(A))]);
@@ -105,6 +107,7 @@ async function translate(A,B){ var res=await A.puzzle({title:'Brunos Satz übers
   await A.m('„Ljerka, verzeih mir. Ich habe deinen Brief aus Zagreb versteckt, weil ich Angst hatte, allein zu sein. Spiel wieder.“'); await A.wait(900);
   await B.say('Da. Tako.'); await A.wait(600); await B.say('Sada. Molim.'); A.note('c3_message'); A.setFlag('c3.translated'); await A.m('„Jetzt. Bitte.“'); A.save(); }
 async function showToBruno(A,item){ var B=A.npc('bruno');
+  if (!A.isMala() && !A.isFound('bruno')) return A.m('Da ist niemand, dem ich das zeigen könnte. Nur eine Mütze auf dem Stuhl.');
   if (item==='photo2'){ await B.say('Danica.'); await A.wait(800); await B.say('Moja Danica. Svaku nedjelju … poslije ponoći … u salonu.'); A.note('c3_sunday'); await A.m('„Jeden Sonntag, nach Mitternacht, im Salon.“ Seine Stimme ist klarer geworden.');
     if (!A.G.flags['c3.ins.danica']){ await A.wait(700); await B.say('… pa je otišla … a ja … sam …'); await A.m('„Und dann ist sie gegangen. Und ich … allein.“'); } return gainInsight(A,B,'photo2'); }
   if (item==='musicbook'){ await B.say('Ljerka … svirala je … tako lijepo …'); await A.wait(800); await B.say('Zagreb … htjela je … u Zagreb.'); A.note('c3_wanted'); await A.m('„Sie hat so schön gespielt. Sie wollte nach Zagreb.“');
@@ -240,7 +243,7 @@ async function readRegister(A){ await A.doc({style:'register',title:'Popis smje�
   if (A.malaHere()){ await A.g('Hör auf zu lesen.'); await A.m('Mala …'); await A.g('Es gibt viele Mädchen aus Sarajevo. Viele mit L.'); } }
 M.room('palma',{ name:'Hotel Palma', scape:'palma', music:function(GS){ return GS.phase==='c3_night'?'case3':'case3'; },
   actors:function(S,GS){ var L=[]; if (ljerkaUp(GS)){ var p=M.apos('palma','ljerka',[92,112,'F']); L.push({id:'ljerka',ch:'ljerka',x:p[0],y:p[1],f:p[2]||'F',name:'Ljerka'}); }
-    if (brunoInLodge(GS)){ var b=M.apos('palma','bruno',[52,108,'F']); L.push({id:'bruno',ch:'bruno',x:b[0],y:b[1],f:b[2]||'F',name:'Bruno',ghost:true,idle:'porter',talk:'porterTalk',anchor:function(){ var q=M.spot('palma','bell'); return [q[0]+(q[2]>>1),q[1]+(q[3]>>1)]; }}); }
+    if (brunoInLodge(GS)){ var b=M.apos('palma','bruno',[52,108,'F']); L.push({id:'bruno',ch:'bruno',x:b[0],y:b[1],f:b[2]||'F',name:'Bruno',ghost:true,reveal:true,idle:'porter',talk:'porterTalk',anchor:function(){ var q=M.spot('palma','bell'); return [q[0]+(q[2]>>1),q[1]+(q[3]>>1)]; }}); }
     if (GS.flags['c3.woke'] && !GS.flags['c3.ljerkaUp']){ var n=M.apos('palma','ljerkaNight',[96,116,'F']); L.push({id:'ljerkaNight',ch:'ljerkaNight',x:n[0],y:n[1],f:n[2]||'F',name:'Ljerka'}); }
     return L; },
   hotspots:HS,

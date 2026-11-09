@@ -181,7 +181,7 @@ async function part2(A,V){ var K=A.npc('kata'); A.music('k3_duh'); if (V.actor) 
   await A.wait(900); await V.say('Ich gehe nach hinten.'); await hideBack(A,V);
   A.setFlag('k3.v.yard'); A.set('yardOpen',true); A.rebuild(); A.sfx('tarp');
   await A.wait(700); await K.say('Lassen Sie ihn. Das Rolltor ist offen. Gehen Sie ruhig zum Laster, wenn Sie wollen. Heute ist es egal.');
-  await A.wait(600); await A.m('„Sie hat mich weggeschickt.“'); await A.wait(500); await A.m('Gestern hat Mala gesagt: „Er ist gefahren.“');
+  await A.wait(600); await A.m('„Sie hat mich weggeschickt.“');   // Analyse K3-B03 (P17): Malas Gegensatz („Er ist gefahren.“) erinnert der Spieler selbst (v3_who)
   if (A.G.malaOn && A.malaHere()){ await A.wait(700); await A.narrate('Mala steht am Rolltor. Sie sieht mich nicht an.'); }
   A.music('k3_istraga'); }
 // die Botschaft (Konzept 7.2 Schritt 11): der Spieler wählt aus dem Notizbuch; Mala nennt den Satz nie

@@ -135,8 +135,9 @@ const SHOTS = process.argv[2] || null;
     await marko(); await D.exit('shelter_door'); await D.drain(); await at('skloniste'); await D.act('use', 'under_desk'); await D.drain(); await inv('deskkey'); await D.act('open', 'cabinet'); await D.drain(); await inv('dnevnik'); await inv('svjedocanstva');
     await D.item('read', 'dnevnik'); await D.drain(); await note('s3_guilt'); await note('m2_pupil'); await log('Klassenbuch');
     await D.exit('exit'); await D.drain(); await at('haustor');
-    await talk('mirza', 'Zora wollte Zeugnisse'); await inv('pecat'); await D.choose('Nach etwas aus dem Notizbuch'); await D.drain(); await D.pickNote('s3_guilt'); await D.drain(); await D.choose('Kommen Sie heute Abend'); await D.drain(); await flag('k2.s3.mirza'); await note('s3_rescued');
+    await talk('mirza', 'Zora wollte Zeugnisse'); await inv('pecat'); await D.choose('Nach etwas aus dem Notizbuch'); await D.drain(); await D.pickNote('s3_guilt'); await D.drain(); await note('s3_rescued'); await D.choose('Danke.'); await D.drain();
     await comb('s3_guilt', 's3_rescued', 's3_truth'); await log('Mirza: gerettet, nicht verschuldet');
+    await talk('mirza', 'Kommen Sie heute Abend'); await flag('k2.s3.mirza'); await log('Mirza kommt: „Sie hat ihr Leben lang geglaubt, es war ihre Schuld.“');   // Analyse K2-B08: Zusage nach dem Schluss
     await talk('selma', 'Kann ich Ihnen helfen', 'Kommen Sie heute Abend'); await flag('k2.s3.selma'); await log('Selmas Kinderwagen');
     await D.exit('shelter_door'); await D.drain(); await D.act('use', 'desk', 'pecat'); await D.drain(); await flag('k2.s3.stamped'); await D.exit('exit'); await D.drain(); await log('gestempelt');
     await D.exit('exit'); await D.drain(); await toMap(); await go('carsija'); await talk('damir', 'Ihm das Klassenbuch zeigen'); await D.drain(); await flag('k2.s3.damir');

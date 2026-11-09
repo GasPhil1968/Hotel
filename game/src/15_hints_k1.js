@@ -90,7 +90,10 @@ M.HINTS_K1=[
      {m:'Mala geht durch die verschlossene Tür seines Schuppens. Am Seesack hängt etwas.',g:'Ich gehe durch die verschlossene Tür seines Schuppens. Am Seesack hängt etwas.'},
      {m:'Zu Mala wechseln, in den Schuppen gehen und den Seesack spüren.',g:'Zu mir wechseln, in den Schuppen gehen und den Seesack spüren.'}]},
  {id:'k1_dinko2',t:'Was Tonći im Wasser sagte',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_words') && !F(G,'c1.dinkoTold'); },
-  s:['Tonćis letzte Worte sind bekannt. Dinko hat sie nie jemandem erzählt.','Wer es weiß, kann Dinko sein Schweigen nehmen.','Mit Dinko reden. Was im Wasser gesagt wurde, und dass Ivka noch wartet.','Mit Dinko reden: „Ich weiß, was Tonći im Wasser gesagt hat“, dann „Ivka wartet noch“.']},
+  s:['Tonćis letzte Worte sind bekannt. Dinko hat sie nie jemandem erzählt.',
+     function(G){ return N(G,'c1_drzi')?'Wer es weiß, kann Dinko sein Schweigen nehmen.':'Ob er sie noch mit sich herumträgt? Beim Flicken murmelt er etwas.'; },   // Analyse K1-B08 (P19)
+     function(G){ return N(G,'c1_drzi')?'Mit Dinko reden. Was im Wasser gesagt wurde, und dass Ivka noch wartet.':{m:'Mala hört hin, was Dinko beim Flicken murmelt.',g:'Ich höre hin, was Dinko beim Flicken murmelt.'}; },
+     function(G){ return N(G,'c1_drzi')?'Mit Dinko reden: „Ich weiß, was Tonći im Wasser gesagt hat“, dann „Ivka wartet noch“.':{m:'Zu Mala wechseln und Dinko beim Flicken belauschen.',g:'Zu mir wechseln und Dinko beim Flicken belauschen.'}; }]},
  {id:'k1_steam',t:'Der verklebte Brief',open:function(G){ return ph(G,['c1','c1_night']) && I(G,'letter_t') && !F(G,'c1.letterOpen'); },
   s:['Tonćis Brief ist zu. Das Salz hat die Seiten zusammengebacken.','Trocken reißt er. Papier, das klebt, löst sich mit Wärme und Feuchtigkeit.','Dampf. Zu Hause gibt es Džezva, Spüle und Herd. Eine offene Flamme verbrennt ihn nur.',
      function(G){ return I(G,'dzezvaW')?'In der Wohnung die volle Džezva auf den Herd stellen und dann den Brief am Herd benutzen.':'In der Wohnung die Džezva an der Spüle füllen, auf den Herd stellen und dann den Brief am Herd benutzen.'; }]},

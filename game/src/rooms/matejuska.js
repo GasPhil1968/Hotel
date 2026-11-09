@@ -12,7 +12,8 @@ async function talkDinko(A){ var D=A.npc('dinko'), p=A.G.phase;
     {t:'Sie kannten ihren Sohn.',once:'di1',go:async function(A){ await D.say('Das ist lange her.'); await D.anim('mend'); }},
     {t:'Ich habe ein Foto von Ihnen und Tonći.',if:A.has('photo1')&&!A.hasNote('c1_brother'),go:function(A){ return showPhoto(A,D); }},
     {t:'Brauchen Sie Hilfe mit dem Netz?',once:'di3',go:async function(A){ await D.say('Kannst du flicken?'); await A.m('Nein.'); await D.say('Dann nicht.'); }},
-    {t:'Ich weiß, was Tonći im Wasser gesagt hat.',if:A.hasNote('c1_words'),go:async function(A){ await confession(A,D); return 'bye'; }},
+    // Analyse K1-B08 (P19): Malas Nachhall am Seesack gibt die Worte; dass Dinko sie bis heute murmelt (Lauschen), gibt Marko den Mut, sie ihm zu sagen
+    {t:'Ich weiß, was Tonći im Wasser gesagt hat.',if:A.hasNote('c1_words')&&A.hasNote('c1_drzi'),go:async function(A){ await confession(A,D); return 'bye'; }},
     A.askOpt({
       c1_rescued:async function(A){ await D.say('Du warst bei Šimić. Ja. Ich war auf der ANKICA. Das steht in eurem Buch. Was willst du noch?'); },
       c1_capsized:async function(A){ await D.say('Vor Sustipan. Der Motor. Mehr gibt es nicht zu sagen.'); },
@@ -21,7 +22,7 @@ async function talkDinko(A){ var D=A.npc('dinko'), p=A.G.phase;
       c1_bag:async function(A){ await D.say('Du warst in meinem Schuppen?'); await A.m('Nein.'); await D.say('Dann weißt du nichts.'); },
       c1_candle:async function(A){ await D.say('Woher …'); await D.anim('mend'); await D.say('Lass mich.'); },
       c1_waits:async function(A){ await D.say('Auf der Mole. Jeden Abend. Ich bin siebenundzwanzig Jahre lang einen Umweg gelaufen, um sie nicht zu sehen.'); },
-      c1_words:async function(A){ await confession(A,D); return 'bye'; },
+      c1_words:async function(A){ if (!A.hasNote('c1_drzi')){ await D.say('Du warst nicht dabei. Keiner war dabei.'); return; } await confession(A,D); return 'bye'; },
       c1_brother:'Ich sage es nicht noch einmal.',
       c1_plaque:async function(A){ await D.say('…'); await D.say('Das geht dich nichts an.'); }
     },'Davon weiß ich nichts.'),
@@ -35,9 +36,9 @@ async function confession(A,D){ A.music('ghost'); await A.m('„Halt die Tasche.
   if (c===0){ await D.say('Niemand weiß so etwas einfach.'); await A.wait(900); await D.say('…Aber du weißt es.'); }
   else if (c===1){ await D.say('Ivka ist tot.'); await A.m('Trotzdem.'); await A.wait(1500); }
   else { await D.say('Es gibt niemanden, der es erzählen könnte. Außer ihm.'); await A.wait(1200); }
-  await D.say('Die Fähre fiel aus. Bura, Stärke neun. Tonći stand am Kai in Supetar und sagte: „Mama wartet um sieben an der Mole. Bei dem Wetter. Ohne Handschuhe.“');
-  await D.say('Ich habe gesagt, wir fahren morgen. Er hat gesagt, dann steht sie die ganze Nacht da. Ich kannte sie. Er hatte recht.');
-  await D.say('Wir haben die ANKICA genommen. Das Boot meines Vaters. Um halb neun waren wir draußen. Vor Sustipan ist der Motor ausgegangen.');
+  // Analyse K1-B06 (P20): Dinko erzählt seinen Teil. Warum Tonći nicht auf die Fähre gewartet hat, zieht Marko selbst (c1_came).
+  await D.say('Warum wir bei dem Wetter draußen waren? Das war seine Sache. Ich erzähle dir meine.');
+  await D.say('Die ANKICA war das Boot meines Vaters. Ich habe sie losgemacht. Um halb neun waren wir draußen. Vor Sustipan ist der Motor ausgegangen.');
   await D.say('Die Bura hat uns umgedreht wie eine Muschel. Wir hingen am Kiel. Er hat mir die Tasche in die Arme gedrückt. „Drži torbu! Za mamu je!“');
   await A.wait(700); await D.say('Dann kam eine Welle.'); await A.wait(1500);
   await D.say('Am Morgen hat mich die Hafenpolizei aus dem Wasser gezogen. Ihn nicht. Nie.');
@@ -78,7 +79,8 @@ var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Zurück in die Stadt.'},
  {id:'dinko',npc:'dinko',name:'Dinko Matić',hgt:38,vis:function(S,GS){ return dinkoHere(GS); },talk:talkDinko,
    look:function(A){ return A.m(A.flag('c1.dinkoTold')?'Dinko flickt weiter, als hätte er nichts gesagt. Seine Hände zittern ein bisschen.':'Ein Fischer um die fünfzig, mit Wollmütze und grauem Bart. Er flickt ein Netz, Masche für Masche, ohne aufzusehen.'); },
-   g:{look:'Er trägt etwas mit sich herum, das schwerer ist als er selbst.',listen:async function(A){ if (A.flag('c1.dinkoTold')) return A.g('Er sagt nichts mehr. Er atmet nur. Leichter als vorhin.'); await A.g('Er murmelt beim Flicken: „…drži … drži …“ Halt fest.'); }},
+   g:{look:'Er trägt etwas mit sich herum, das schwerer ist als er selbst.',listen:async function(A){ if (A.flag('c1.dinkoTold')) return A.g('Er sagt nichts mehr. Er atmet nur. Leichter als vorhin.'); await A.g('Er murmelt beim Flicken: „…drži … drži …“ Halt fest.'); A.note('c1_drzi');
+     if (A.hasNote('c1_words')) await A.g('Drži torbu. Das sagt er bis heute. Sag es ihm, Marko.'); }},
    give:{ photo1:function(A){ return A.hasNote('c1_brother')?A.npc('dinko').say('Ich habe es gesehen. Bring es ihr zurück.'):showPhoto(A,A.npc('dinko')); },
      postcard:async function(A){ await A.npc('dinko').say('„Dinko ide sa mnom.“ Dinko kommt mit.'); await A.wait(800); await A.npc('dinko').say('Ja. Ich bin mitgekommen.'); },
      gloves:'„Bring sie ihr. Nicht mir.“', letter_t:'„Ich habe ihn nie gelesen. Er war nicht für mich.“' }},
@@ -120,7 +122,8 @@ var SH=[
  {id:'seabag',name:'Seesack',g:{look:async function(A){ await A.g('Ein Seesack aus Segeltuch, in Plastik gewickelt, damit kein Salz mehr herankommt. Auf dem Stoff, verblichen: T.P.'); A.note('c1_bag'); },
    sense:async function(A){ A.note('c1_bag',true); if (A.hasNote('c1_words')) return A.g('Ich habe es schon gesehen. Einmal reicht.');
      await A.memory({title:'Nachhall – der Seesack',draw:M.mem&&M.mem.storm,tint:'ghost',lines:['Nacht. Schwarzes Wasser. Die Bura reißt die Kämme von den Wellen.','Zwei Jungen am umgedrehten Kiel. Einer drückt dem anderen eine Tasche in den Arm.','„Drži torbu! Za mamu je!“ Halt die Tasche! Sie ist für Mama!','Dann kommt eine Welle. Dann ist nur noch einer da.']});
-     A.note('c1_words'); await A.g('Das hat er siebenundzwanzig Jahre lang allein gewusst.'); }}},
+     A.note('c1_words'); await A.g('Das hat er siebenundzwanzig Jahre lang allein gewusst.');
+     await A.g(A.hasNote('c1_drzi')?'Drži. Das murmelt er bis heute.':'Er trägt es noch mit sich herum. Man hört es, wenn er flickt.'); }}},
  {id:'photo',name:'Foto an der Wand',g:{look:'Ein junger Mann, lachend, mit Steinstaub im Haar. Tonći. Dasselbe Lachen wie auf Ivkas Kredenz.',sense:'Jemand hat es so oft angesehen, dass die Ecken weich geworden sind.'}},
  {id:'candle',name:'Kerzenstummel',g:{look:'Ein Kerzenstummel auf einer Untertasse. Viel Wachs, wenig Kerze.',sense:async function(A){ await A.g('Eine Kerze, einmal im Jahr, am zweiundzwanzigsten Dezember. Er sitzt dann hier, bis sie aus ist.'); A.note('c1_candle'); }}},
  {id:'nets',name:'Netze',g:{look:'Netze, die von den Balken hängen wie Spinnweben eines sehr großen Tieres.'}},

@@ -68,7 +68,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await talk('kasir', 'Eine Karte fürs Minarett'); await bye('Danke'); await flag('k3.koski.ticket'); await inv('ulaznica'); await log('Karte fürs Minarett');
     await exit('minaret_door'); await at('minarett'); await act('use', 'view'); await peil('minaret'); await flag('k3.peil.minaret'); await note('l3_m2'); await log('Peilung 2 vom Minarett');
     await exit('stairs'); await at('koski');
-    await comb('l3_m1', 'l3_m2', 'l3_flat'); await expect(await D.ev(() => !!M.GS.map.strassenbr), 'Straßenbrücke auf dem Plan'); await log('Schluss: zu flach geschnitten; Mala: „Über den Fluss. Nein.“');
+    await note('l3_flat'); await calm(); await expect(await D.ev(() => !!M.GS.map.strassenbr), 'Straßenbrücke auf dem Plan'); await log('Schluss: zu flach geschnitten; Mala: „Über den Fluss. Nein.“');
     await go('strassenbr'); await D.until(s => s.active === 'mala' && !s.busy, 30000, 'Mala führt'); await shot('strasse');
     await log('Straßenbrücke: „Das ist eine Straße mit Geländer.“ – Mala macht die Augen zu');
     await D.ev(() => M.E.walkPlayerTo(380, 126)); await D.until(s => s.active === 'marko' && !s.busy, 60000, 'drüben'); await calm(); await flag('k3.mala.crossed');
@@ -77,10 +77,10 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     for (let i = 0; i < 80 && !(await D.flag('k3.bells1')); i++) { await D.page.waitForTimeout(200); await calm(); }
     await flag('k3.bells1'); await expectSaid('Wenn ich es weiß.'); await log('Mala ist zurück: „Zu laut.“ – „Wenn ich es weiß.“');
     await act('use', 'view'); await peil('partizan'); await flag('k3.peil.partizan'); await note('l3_m3'); await log('Peilung 3 am Westhang; „Doch. Wir.“');
-    await comb('l3_flat', 'l3_m3', 'l3_area'); await log('Schluss: der Bereich liegt hinter dem Kartenrand');
+    await note('l3_area'); await calm(); await log('Schluss: der Bereich liegt hinter dem Kartenrand');
     await go('westbus'); await exit('cafe_door'); await at('kafic'); await flag('found.mate'); await note('b3_mate'); await shot('kafic'); await log('Café „Zdravko“: Mala sieht Mate am Fenstertisch');
     await act('look', 'oldmap'); await D.until(s => s.overlay === 'peil', 20000, 'alte Karte'); await D.ev(() => M.k3PeilTap('go')); await calm(); await note('l3_oldmap'); await log('Zdravkos Karte von 1985');
-    await comb('l3_area', 'l3_oldmap', 'l3_skela'); await expect(await D.ev(() => !!M.GS.map.skela), 'Skela auf dem Plan'); await log('Schluss: Skela heißt Fähre');
+    await note('l3_skela'); await calm(); await expect(await D.ev(() => !!M.GS.map.skela), 'Skela auf dem Plan'); await log('Schluss: Skela heißt Fähre');
     await talk('mate', 'Ich suche einen Fahrer', 'Auf Wiedersehen', 'Ich sehe nach'); await note('v3_mate'); await flag('k3.v.known'); await flag('k3.b.promise'); await log('Mate: „Rajić? Der Raucher?“; „Ich sehe nach.“');
     await exit('door'); await go('bulevar'); await exit('to_vulk'); await at('vulkanizer'); await shot('vulk'); await log('Vulkanizer Rajić: Kata und Vlado');
     await talk('vlado', 'Im Januar vierundneunzig'); await bye('(Gehen.)'); await note('v3_denial'); await flag('k3.v.met'); await log('Vlado: „Ich habe nie jemanden mitgenommen. Nie.“');

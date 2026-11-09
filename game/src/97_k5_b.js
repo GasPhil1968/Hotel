@@ -53,6 +53,7 @@ async function hamdijaAppear(A){ var G=A.G;
   A.note('b5_hamdija');
   if (gIn(A)){ await A.wait(300); await A.g('Für ihn ist April. Dreiundneunzig. Er sieht dich nicht. Er sieht den Kanister.'); }
   A.save(); }
+// Analyse K5-B09 (P17): „Sie haben mir danach beide Kanister gefüllt“ erst mit dem eigenen Schluss „Wer mich festhielt“ (b5_wer)
 M.k5TalkHamdija=async function(A){ var H=A.npc('hamdija'), p=ph(A);
   if (!F(A,'k5.b.met')) return A.m('Da ist keiner.');
   if (F(A,'k5.b.away')) return A.m('Er ist weg. Ich muss mich neu anstellen.');
@@ -63,7 +64,7 @@ M.k5TalkHamdija=async function(A){ var H=A.npc('hamdija'), p=ph(A);
     {t:'Ich bin der Junge. Mit den zwei Kanistern.',once:'k5hd4',if:p==='k5_d2'&&!F(A,'k5.b.trust'),go:async function(A){ await H.say('Mali ima trinaest, četrnaest godina. Ti si čovjek.'); await A.m('„Der Kleine ist dreizehn, vierzehn. Du bist ein Mann.“');
       // Analyse K5-B08 (P18): wer nachts schon gespürt hat, braucht einen Wink, dass der Tag mehr zeigt
       if (gHere(A) && !(F(A,'k5.b.t1')&&F(A,'k5.b.t2')&&F(A,'k5.b.t3'))){ await A.wait(400); await A.g('Er glaubt dir nicht. Der Tag weiß es. Am Hahn, in der Mitte, an der Brücke.'); } }},
-    {t:'Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.',if:p==='k5_d2'&&has(A,'b5_tag')&&!F(A,'k5.b.say1'),go:async function(A){ A.setFlag('k5.b.say1');
+    {t:'Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.',if:p==='k5_d2'&&has(A,'b5_wer')&&!F(A,'k5.b.say1'),go:async function(A){ A.setFlag('k5.b.say1');
       await A.narrate('Hamdija hält inne. Das Wasser läuft über den Rand eines Kanisters, den es nicht gibt.'); if (!F(A,'k5.b.say2')){ await H.say('To je vidio svako ko je stajao u redu.'); await A.m('„Das hat jeder gesehen, der in der Reihe stand.“'); } else await trust(A); }},
     {t:'Den Rechenschieber haben Sie ihm in die Tasche gesteckt.',if:p==='k5_d2'&&has(A,'b5_drei')&&has(A,'b5_kasten')&&!F(A,'k5.b.say2'),go:async function(A){ A.setFlag('k5.b.say2');
       if (!F(A,'k5.b.say1')){ await H.say('To može reći svako ko je kopao.'); await A.m('„Das kann jeder sagen, der beim Graben dabei war.“'); } else await trust(A); }},

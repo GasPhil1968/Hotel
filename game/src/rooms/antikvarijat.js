@@ -5,6 +5,7 @@ var P=M.P;
 function open(G){ return ['k2_s1','k2_s2','k2_s2_n'].indexOf(G.phase)>=0; }
 function ivanHere(G){ return ['k2_s1','k2_s2','k2_s2_n'].indexOf(G.phase)>=0 && !G.flags['k2.s2.bookTaken']; }
 // ---------------------------------------------------------------- Jakob
+// Analyse K2-B08 (P17): Jakob nennt bei „s2_ledger“ die Beobachtung (verkauft vom Sohn), nicht den Schluss „geliehen“ (s2_provenance)
 async function talkJakob(A){ var J=A.npc('jakob'), p=A.G.phase;
   await A.menuLoop(function(){ return [
     {t:'Haben Sie alte Takvime? Von 1972?',if:A.hasNote('s1_twosevens')&&!A.hasNote('s1_sunset'),once:'jk1',go:async function(A){ await J.say('Takvime! Endlich jemand, der nach etwas Vernünftigem fragt. Alle wollen Postkarten mit der Brücke.'); await J.say('Das Regal dort. Kalendari, takvimi, almanasi. Neunzehnhundert bis heute, mit Lücken. Die Lücken sind die Kriege.'); }},
@@ -23,7 +24,7 @@ async function talkJakob(A){ var J=A.npc('jakob'), p=A.G.phase;
     A.askOpt({ s1_sunset:'Sechzehn Uhr sechzehn. Sie haben ein Talent für unwichtige Zahlen. Das mag ich.', s2_ivan:async function(A){ await J.say('Ein alter Mann mit runder Brille, im Sessel?'); await A.wait(700); await J.say('…So sah Professor Barać aus. Er hat in diesem Sessel gesessen, jeden Donnerstag, zwanzig Jahre lang. Bis zweitausenddrei.'); A.note('s2_obit',true); },
       s2_relic:'Eine Reliquie. Ja. Sein Sohn hat das auch gesagt, als er verkaufte. Er hat es nicht angesehen, als ich es einpackte.', s2_fragments:'Asche im Buch? Ich habe sie gesehen. Ich dachte, er hat Brandflecken gesammelt. Alte Männer sammeln seltsame Dinge.',
       m2_photo:'Alipašino Polje, achtundsiebzig, Haltestelle. Ein Fotoklub hat das gemacht. Der ganze Kasten ist aus einem Nachlass in der B-Phase.', s2_buyer:'Frankfurt. Sie zahlen gut. Bücher sind keine Menschen, mein Herr, Bücher darf man verkaufen.',
-      s2_ledger:'Mein Ankaufbuch lügt nicht. Nachlass Professor I. B. Wenn in einem Buch aus diesem Nachlass ein fremder Stempel steckt, dann hat der Professor es nicht gekauft. Dann hat er es geliehen.', s2_stamp:'Ein Leihzettel der Nationalbibliothek. Leser 2204. Wer das war, steht nicht auf dem Zettel. Aber vielleicht in meinem Ankaufbuch, bei dem Nachlass, aus dem das Buch kam.' },'Ich weiß viel. Darüber nicht.'),
+      s2_ledger:'Mein Ankaufbuch lügt nicht. Nachlass Professor I. B., verkauft vom Sohn. Alles, was aus dieser Wohnung kam, steht hier, mit Datum und Preis.', s2_stamp:'Ein Leihzettel der Nationalbibliothek. Leser 2204. Wer das war, steht nicht auf dem Zettel. Aber vielleicht in meinem Ankaufbuch, bei dem Nachlass, aus dem das Buch kam.' },'Ich weiß viel. Darüber nicht.'),
     ...M.k2Extra('jakob',A,J),
     {t:'Danke, Gospodine Kabiljo.',bye:true,go:async function(A){ await J.say(A.cycle('jkBye',['Kommen Sie wieder. Bringen Sie Baklava mit, wie Hajra. Oder lassen Sie es, wie alle anderen.','Lesen Sie etwas Gutes.','Zu ist nur, was keiner aufmacht.'])); }}
   ]; }); }
