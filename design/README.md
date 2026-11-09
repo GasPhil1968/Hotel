@@ -12,6 +12,7 @@
 | `assets/MALAPixel.otf` | Webfont aus der Bitmap-Schrift des Spiels (`M.FONT`) |
 | `assets/atkinson-hyperlegible-next-*.woff2` | Leseschrift „Atkinson Hyperlegible Next“ 400/700, latin + latin-ext (aus `@fontsource/atkinson-hyperlegible-next` 5.3.0), Lizenz `assets/AtkinsonHyperlegibleNext-OFL.txt` (SIL OFL 1.1) |
 | `tools/` | Werkzeuge (siehe unten) |
+| `KAPITELWAHL.md`, `prototype/kapitelwahl/` | Zwei Entwürfe für die Kapitelwahl („Die Reise“, „Das Fahrkartenheft“) mit Modell für beliebig viele Spielstände; klickbar in `prototype/kapitelwahl/index.html` (`tools/kapitelshots.js` → Bilder, `tools/buildkapitel.js` → Seite). |
 
 ## Befehle
 
@@ -41,4 +42,3 @@ bash design/tools/package_ui.sh            # bauen und dist/MALA_netlify_oberfla
 ```
 
 Geräte sind Playwright-Emulationen (Chromium, WebKit), keine echten Telefone oder Tablets.
-| `KAPITELWAHL.md`, `prototype/kapitelwahl/` | Zwei Entwürfe für die Kapitelwahl („Die Reise“, „Das Fahrkartenheft“) mit Modell für beliebig viele Spielstände; klickbar in `prototype/kapitelwahl/index.html` (`tools/kapitelshots.js` → Bilder, `tools/buildkapitel.js` → Seite). |
