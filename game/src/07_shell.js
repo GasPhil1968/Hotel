@@ -34,6 +34,14 @@ function chExists(n){ return n===1 || (n===2 && !!M.startChapter2) || (n===3 && 
 function chOpen(n){ return chExists(n) && (n===1 || chDone(n-1) || M.allChapters()); }
 M.chapterOpen=chOpen;
 function chaptersReached(){ var n=1; for (var k=2;k<=5;k++) if (chOpen(k)) n=k; return n; }
+// Kapitelwahl („Kapitel wählen“ im Titelmenü, bei Fortschritt auch „Neues Spiel“): jedes Kapitel ist ab dem ersten Start wählbar (Wunsch des Autors,
+// ersetzt für die Kapitelwahl die Sperre oben). Wer später einsteigt, bekommt Standardantworten für das Vorherige. Die Sperre gilt für die Kapitelwahl
+// nur noch mit M.CHAPTER_LOCK=true oder ?kapitel=sperre (Tests). Beispielstände, Orte im Titel und „Weiter mit Kapitel N“ hängen weiter vom Fortschritt ab.
+M.CHAPTER_LOCK=false;
+M.chapterLock=function(){ if (M.CHAPTER_LOCK) return true; try{ return DOM && /(^|[?&])kapitel=sperre(&|$)/.test(location.search||''); }catch(e){ return false; } };
+function chPick(n){ return chExists(n) && (!M.chapterLock() || chOpen(n)); }
+M.chapterPickable=chPick;
+function nextChapter(){ for (var n=1;n<=5;n++) if (chExists(n) && !chDone(n)) return n; return 0; }
 
 // ---------------------------------------------------------------- Zeit und Spielstände
 function fmtDur(ms){ var m=Math.max(1,Math.round((ms||0)/60000)); return m<60?(m+' '+T('Min.')):(Math.floor(m/60)+' '+T('Std.')+(m%60?' '+(m%60)+' '+T('Min.'):'')); }
@@ -112,18 +120,21 @@ if (DOM && navigator.storage && navigator.storage.persist && (iosDev()||standalo
 SCR.main=function(){ var s=latest(), it=[];
   if (s) it.push({type:'card',label:'Fortsetzen',sub:placeOf(s),meta:(s.kind==='chapterEnd'?T('Weiter mit Kapitel')+' '+s.next:fmtAt(s.at)+' · '+fmtDur((s.meta&&s.meta.playMs)||0)),thumb:s.thumb||null,primary:true,act:continueLatest});
   it.push({type:'btn',label:'Neues Spiel',primary:!s,act:newGameFlow});
+  it.push({type:'btn',label:'Kapitel wählen',act:function(){ push('chapters'); }});
   it.push({type:'btn',label:'Spiel laden',sub:anyState()?'':'Beispielstände',act:function(){ push('load',{scope:'title'}); }});
   it.push({type:'btn',label:'Einstellungen',act:function(){ push('settings'); }});
   it.push({type:'btn',label:'Über „Die Stillen“',act:function(){ push('about'); }});
   return {layout:'title',items:it,sound:!(M.audioRunning&&M.audioRunning()),note:platformNote()}; };
-SCR.chapters=function(){ var n=firstFree(), it=[];
-  for (var c=1;c<=5;c++){ (function(c){ if (!chExists(c)) return; var open=chOpen(c);
-    var sub=c===1?'von vorn':(chDone(c-1)?'mit deinem Ende von Kapitel '+(c-1):'mit Vorgaben');
-    if (open && c>1 && M.lang!=='de') sub=T(sub)+' · '+T('bisher nur auf Deutsch');
-    it.push(open?{type:'btn',label:chLabel(c)+' · '+PLACES[c-1],sub:sub,primary:c===chaptersReached(),act:function(){ withSlot('new',function(m,free){ startNew(c,m); if (free&&m>1) toast('Startet auf Platz '+m+'.'); }); }}
+SCR.chapters=function(){ var n=firstFree(), it=[], nx=nextChapter(), fresh=!chDone(1);
+  for (var c=1;c<=5;c++){ (function(c){ if (!chExists(c)) return; var pick=chPick(c);
+    var sub=T(c===1?'von vorn':(chDone(c-1)?'mit deinem Ende von Kapitel '+(c-1):'Quereinstieg mit Standardantworten'));
+    if (chDone(c)) sub+=' · '+T('schon gespielt');
+    if (pick && c>1 && M.lang!=='de') sub+=' · '+T('bisher nur auf Deutsch');
+    it.push(pick?{type:'btn',label:chLabel(c)+' · '+PLACES[c-1],sub:sub,primary:c===nx,act:function(){ withSlot('new',function(m,free){ startNew(c,m); if (free&&m>1) toast('Startet auf Platz '+m+'.'); }); }}
       :{type:'btn',label:chLabel(c),why:'nach Kapitel '+(c-1),dis:true,lock:true}); })(c); }
   if (!chExists(5)) it.push({type:'btn',label:chDone(4)?chLabel(5)+' · Sarajevo':chLabel(5),why:'noch nicht erschienen',dis:true,lock:true});
-  return {layout:'panel',title:'Neues Spiel',ctx:n?('Startet auf Platz '+n+' (frei). Deine anderen Spielstände bleiben.'):'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.',items:it,back:true}; };
+  if (fresh) it.push({type:'note',label:'Neu hier? Fang mit Kapitel 1 an. Die Kapitel bauen aufeinander auf; wer später einsteigt, bekommt Standardantworten für das Vorherige.'});
+  return {layout:'panel',title:'Kapitel wählen',ctx:n?('Startet auf Platz '+n+' (frei). Deine anderen Spielstände bleiben.'):'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.',items:it,back:true}; };
 SCR.slots=function(p){ var it=[]; for (var n=1;n<=E.SLOTS;n++){ (function(n){ var s=stOf(n,0);
     it.push({type:'btn',label:T('Platz')+' '+n,sub:s?summary(s):T('leer'),act:function(){ if (!E.hasSave(n)){ p.then(n,true); return; }
       push('confirm',{title:'Platz '+n+' überschreiben?',text:'Der automatische Stand auf diesem Platz geht verloren. Lesezeichen bleiben.',before:s,okLabel:'Überschreiben',danger:true,ok:function(){ SH.stack.pop(); p.then(n,false); }}); }}); })(n); }
@@ -327,7 +338,7 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
   // panel / pause
   var two=v.layout==='pause';
   h+='<div class="panel'+(v.cold?' cold':'')+(two?' pause':'')+'" role="dialog" aria-label="'+esc(T(v.title))+'"><h3>'+esc(T(v.title))+'</h3>'+(v.ctx?'<div class="ctx">'+esc(T(v.ctx))+'</div>':'')+(v.status?'<div class="status">'+esc(v.status)+'</div>':'');
-  h+='<nav class="menu'+(two?' two':'')+' scroll">'+v.items.map(function(x){ return btnHTML(x,idx(x)); }).join('')+'</nav>'+(two?'':backBtn)+'</div>';
+  h+='<nav class="menu'+(two?' two':'')+' scroll">'+v.items.map(function(x){ return x.type==='note'?'<div class="ctx foot">'+esc(T(x.label))+'</div>':btnHTML(x,idx(x)); }).join('')+'</nav>'+(two?'':backBtn)+'</div>';
   return h; }
 function render(newScreen,focusSel){ if (!DOM){ return; } if (!root) build(); var v=cur(); vItems=v?flat(v):[];   // Klicks gehören zu genau dieser Darstellung
   if (!v){ root.classList.remove('on'); root.setAttribute('aria-hidden','true'); stage.innerHTML=''; lastHTML=''; if (prevFocus&&prevFocus.focus) try{ prevFocus.focus({preventScroll:true}); }catch(e){} prevFocus=null; return; }
@@ -410,7 +421,8 @@ var CSS='#shell{position:fixed;inset:0;z-index:12;display:none;--ink0:#08070d;--
 +'#shell .btn:hover,#shell .btn:focus-visible{background:var(--ink2);color:var(--lamp5);box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4)}#shell .btn.danger{color:#f0b3b8;border-color:var(--seal2)}#shell .btn.small{min-height:max(36px,calc(var(--u)*12px));padding:0 calc(var(--u)*4px)}'
 +'#shell.titlemode .band{position:absolute;left:0;right:0;top:calc(var(--cy) + var(--ch)*.52);bottom:0;background:linear-gradient(180deg,rgba(8,7,13,0),rgba(8,7,13,.86) 34%)}'
 +'#shell .tmenu{position:absolute;left:calc(var(--cx) + var(--cw)/2);transform:translateX(-50%);bottom:max(16px,calc(100% - var(--cy) - var(--ch) + var(--u)*8px));width:min(calc(var(--u)*150px),calc(var(--cw)*.6))}'
-+'#shell.narrow.titlemode .band{top:0;bottom:0;left:0;right:auto;width:min(46%,calc(var(--u)*175px));background:linear-gradient(90deg,rgba(8,7,13,.94) 64%,rgba(8,7,13,0))}#shell.narrow .tmenu{left:max(14px,env(safe-area-inset-left));top:50%;bottom:auto;transform:translateY(-50%);width:min(calc(var(--u)*118px),34%)}'
++'#shell.narrow.titlemode .band{top:0;bottom:0;left:0;right:auto;width:min(46%,calc(var(--u)*175px));background:linear-gradient(90deg,rgba(8,7,13,.94) 64%,rgba(8,7,13,0))}#shell.narrow .tmenu{left:max(14px,env(safe-area-inset-left));top:50%;bottom:auto;transform:translateY(-50%);width:min(calc(var(--u)*118px),34%);max-height:calc(100% - 12px);overflow-y:auto;overscroll-behavior:contain}'
++'#shell .tmenu>.mi{flex:0 0 auto}@media (max-height:340px){#shell .mi.cont .thumb,#shell .mi.cont .sub+.sub{display:none}}'
 +'#shell .mi.cont{align-items:stretch;color:var(--lamp4);padding-block:calc(var(--u)*2px);border:calc(var(--u)*1px) solid var(--lamp1);margin-bottom:calc(var(--u)*2px)}#shell .mi.cont .thumb{flex:0 0 auto;width:calc(var(--u)*48px);height:calc(var(--u)*21.6px);border:calc(var(--u)*1px) solid var(--lamp1);background:var(--ink0) center/cover no-repeat;image-rendering:pixelated;align-self:center}'
 +'#shell .paper{width:min(calc(var(--u)*290px),calc(100% - 16px));color:var(--pink);background:var(--paper);border:calc(var(--u)*1px) solid #a39882;box-shadow:calc(var(--u)*2px) calc(var(--u)*2px) 0 0 rgba(0,0,0,.6);padding:calc(var(--u)*6px) calc(var(--u)*8px) calc(var(--u)*6px) calc(var(--u)*14px);background-image:linear-gradient(90deg,transparent calc(var(--u)*9px),var(--margin) calc(var(--u)*9px),var(--margin) calc(var(--u)*10px),transparent calc(var(--u)*10px))}'
 +'#shell .paper.about,#shell .paper.confirm{width:min(calc(var(--u)*230px),calc(100% - 16px))}#shell .paper h3,#shell .paper h4{color:var(--seal2)}#shell .paper .ctx{color:var(--pmuted)}#shell .paper p{margin:0}#shell .paper ul{margin:0;padding-left:1.1em}#shell .paper li{margin:0 0 calc(var(--u)*2px)}'

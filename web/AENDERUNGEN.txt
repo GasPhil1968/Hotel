@@ -1,7 +1,16 @@
-DIE STILLEN – ÄNDERUNGEN: NEUER NAME UND KAPITEL 5 („ANGEKOMMEN“)
+DIE STILLEN – ÄNDERUNGEN: KAPITELWAHL, NEUER NAME UND KAPITEL 5 („ANGEKOMMEN“)
 Ausführlich: BERICHT_K5.md und LOESUNG5.md im Repository.
 
 WAS NEU IST
+- Kapitelauswahl gleich am Anfang: Im Hauptmenü steht "Kapitel wählen" direkt
+  unter "Neues Spiel", schon beim allerersten Start. Alle fünf Kapitel sind
+  wählbar; wer später einsteigt, bekommt Standardantworten für das Vorherige.
+  Die frühere Sperre (Kapitel erst nach dem vorigen) ist für die Kapitelwahl
+  aufgehoben; sie lässt sich per Schalter im Quelltext wieder einschalten.
+- Nach dem Abspann von Kapitel 4 fragt das Spiel jetzt gleich "Weiter mit
+  Kapitel 5: Sarajevo?" (vorher erst über die Karte "Fortsetzen").
+- Auf kleinen Bildschirmen (iPhone SE im Querformat) passt das Hauptmenü mit
+  "Fortsetzen" und scrollt, wenn es doch zu hoch ist.
 - Das Spiel heißt jetzt "Die Stillen" (auf Bosnisch/Kroatisch "Tihi"), nach der
   Zeitungsrubrik, für die Marko schreibt. "MALA" war der Arbeitstitel. Titelbild,
   Kopfzeile, Abspann, "Über"-Seite und App-Name sind umbenannt; Spielstände,

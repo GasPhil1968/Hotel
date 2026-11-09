@@ -160,7 +160,8 @@ async function runOne(spec, opt = {}) {
   if (spec.cat !== 'D') { Object.entries(cov.realize).forEach(([k, v]) => { if (v > 1) inv.push('Erkenntnis mehrfach ausgelöst: ' + k + ' ×' + v); }); Object.entries(cov.ends).forEach(([k, v]) => { if (v > 1) inv.push('Kapitelende mehrfach: ' + k + ' ×' + v); }); }
   if (cov.unheld) inv.push('Testadapter: ' + cov.unheld + ' Verbindung(en) mit nicht vorhandenen Notizen');
   const allCh = res.chapters.length === 5 - spec.startCh && res.chapters.every(c => c.ok);
-  const finalOk = allCh && res.chapters[res.chapters.length - 1].finalTitle && res.chapters[res.chapters.length - 1].finalTitle.mode === 'main';
+  const lastT = res.chapters.length && res.chapters[res.chapters.length - 1].finalTitle;
+  const finalOk = allCh && lastT && lastT.mode === 'next' && lastT.next === 5;   // Endpunkt: nach dem Abspann von Kapitel 4 bietet das Spiel „Weiter mit Kapitel 5“ an
   res.errors = errs.slice(0, 12); res.invariants = inv.slice(0, 20); res.failBag = failBag;
   res.lostItems = S.monitor.invChanges.filter(c => c[3].length).slice(0, 80);
   res.trace = fin.trace.length > 6000 ? fin.trace.slice(0, 3000).concat([['…gekürzt', fin.trace.length]]).concat(fin.trace.slice(-2000)) : fin.trace;

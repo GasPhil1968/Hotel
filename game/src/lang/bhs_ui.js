@@ -93,7 +93,8 @@ M.trAdd('bhs', {
 // Oberfläche nach dem UI-Konzept (Phase 2): HTML-Schicht für Titel, Spielstände, Einstellungen, Pause
 M.trAdd('bhs', {
   'Fortsetzen':'Nastavi', 'Neues Spiel':'Nova igra', 'Spiel laden':'Učitaj igru', 'Einstellungen':'Postavke', 'Über „Die Stillen“':'O igri „Tihi“', 'Hauptmenü':'Glavni izbornik',
-  'Beispielstände':'Ogledne igre', 'Beispiel':'Primjer', 'Kapitel':'Poglavlje', 'von vorn':'ispočetka', 'mit Vorgaben':'s pretpostavkama', 'bisher nur auf Deutsch':'zasad samo na njemačkom',
+  'Beispielstände':'Ogledne igre', 'Beispiel':'Primjer', 'Kapitel':'Poglavlje', 'von vorn':'ispočetka', 'Kapitel wählen':'Odaberi poglavlje', 'Quereinstieg mit Standardantworten':'ulazak usred priče sa zadanim odgovorima', 'schon gespielt':'već odigrano',
+  'Neu hier? Fang mit Kapitel 1 an. Die Kapitel bauen aufeinander auf; wer später einsteigt, bekommt Standardantworten für das Vorherige.':'Prvi put ovdje? Počni s poglavljem 1. Poglavlja se nadovezuju jedno na drugo; tko uskoči kasnije, dobiva zadane odgovore za sve prije toga.', 'mit Vorgaben':'s pretpostavkama', 'bisher nur auf Deutsch':'zasad samo na njemačkom',
   'noch nicht erschienen':'još nije objavljeno', 'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.':'Sva tri mjesta su zauzeta: odmah biraš koje će se prebrisati.',
   'Auf welchem Platz?':'Na kojem mjestu?', 'Der Beispielstand wird auf diesen Platz geladen.':'Ogledna igra učitava se na ovo mjesto.', 'Das neue Spiel beginnt auf diesem Platz.':'Nova igra počinje na ovom mjestu.',
   'Der automatische Stand auf diesem Platz geht verloren. Lesezeichen bleiben.':'Automatski spremljena igra na ovom mjestu bit će izgubljena. Oznake ostaju.',

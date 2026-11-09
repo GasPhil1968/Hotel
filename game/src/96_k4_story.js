@@ -321,5 +321,5 @@ M.endChapter4=async function(A){ var G=A.G; if (G.ended) return; G.ended=true;
       nada:!!G.flags['k4.e.nada'],fake:G.inv.indexOf('brief_falsch')>=0||!!G.flags['k4.s.fake'],davor:!!G.flags['k4.v.car'],consent2:G.flags['k4.e.consent2']||null,playMs:G.playMs||0}));
   }catch(e){} M.E.markChapterEnd(4);
   await card(A,'','Ende des vierten Kapitels','',5200,'Fortsetzung: Sarajevo');
-  await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS4; M.E.creditMusic='k4_end'; M.E.afterCredits=null; M.E.startCredits(); };
+  await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS4; M.E.creditMusic='k4_end'; M.E.afterCredits=M.startChapter5?'ch5':null; M.E.startCredits(); };
 })(M);

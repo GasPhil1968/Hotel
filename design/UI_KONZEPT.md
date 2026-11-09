@@ -17,7 +17,7 @@ Kennzeichnung der Aussagen:
 
 | Nr. | Frage | Entscheidung **[E]** | Folgen im Entwurf |
 |---|---|---|---|
-| 1 | Kapitelsperre | **Ja.** Ein Kapitel ist erst nach dem Ende des vorigen startbar. Das ersetzt „ohne Sperre und ohne Rückfrage“ aus `BERICHT_K2.md:14`. | D1 (Kapitelwahl, Beispielstände, Kapitel 5), E Phase 2 (Testschalter, QA-Werkzeuge), F20 |
+| 1 | Kapitelsperre | **Ja.** Ein Kapitel ist erst nach dem Ende des vorigen startbar. Das ersetzt „ohne Sperre und ohne Rückfrage“ aus `BERICHT_K2.md:14`. **Später geändert (Autor, Kapitelwahl am Anfang):** Die Kapitelwahl ist frei; die Sperre bleibt als Schalter (`M.CHAPTER_LOCK`, `?kapitel=sperre`), siehe `BERICHT_K5.md`. | D1 (Kapitelwahl, Beispielstände, Kapitel 5), E Phase 2 (Testschalter, QA-Werkzeuge), F20 |
 | 2 | Ankündigung „Kapitel 5: Sarajevo“ im Abspann von Kapitel 4 | **Bleibt** (`96_k4_story.js:318`). | D3; die Kapitelwahl nennt Sarajevo als Ort von Kapitel 5 erst nach diesem Abspann (D1) |
 | 3 | Liste der Mitwirkenden | **Entfällt.** Kein Eintrag „Mitwirkende“. | D1, D16 |
 | 4 | Leseschrift | Wahl dem Entwurf überlassen → **Atkinson Hyperlegible Next** (OFL 1.1), Abdeckung gegen alle Spieltexte geprüft. | C „Schrift“, D5, E Phase 2, F21 |

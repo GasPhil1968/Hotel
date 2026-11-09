@@ -43,17 +43,22 @@ Vor dem Samstag legt das Spiel einen eigenen Spielstand an ("Vor dem
 Samstag"); danach führt kein Weg zurück in die Tage davor.
 
 KAPITEL WÄHLEN
-- Das Hauptmenü hat vier Einträge: Neues Spiel, Spiel laden, Einstellungen,
-  Über MALA – mit Spielstand oben zusätzlich "Fortsetzen" (der jüngste Stand,
-  mit einem Tipp).
-- Ein Kapitel ist spielbar, sobald das vorige zu Ende gespielt ist. "Neues
-  Spiel" zeigt dann die Kapitelwahl; noch gesperrte Kapitel stehen ohne
-  Ortsnamen und mit Grund darin.
-  Vorhandene Spielstände lassen sich immer laden.
+- Das Hauptmenü hat fünf Einträge: Neues Spiel, Kapitel wählen, Spiel laden,
+  Einstellungen, Über "Die Stillen" – mit Spielstand oben zusätzlich
+  "Fortsetzen" (der jüngste Stand, mit einem Tipp).
+- "Kapitel wählen" gibt es vom ersten Start an. Alle fünf Kapitel sind wählbar,
+  jedes mit Ort. Ein Kapitel nach einem gespielten startet mit deinem Ende des
+  vorigen; wer später einsteigt, bekommt "Quereinstieg mit Standardantworten"
+  für das Vorherige. Das nächste ungespielte Kapitel ist vorgeschlagen, gespielte
+  tragen "schon gespielt". Wer neu ist, sollte mit Kapitel 1 anfangen.
+- "Neues Spiel" beginnt ohne Fortschritt sofort Kapitel 1; mit Fortschritt öffnet
+  es dieselbe Kapitelwahl. Vorhandene Spielstände lassen sich immer laden.
+  (Wer die alte Sperre zurückhaben will – Kapitel erst nach dem vorigen –: im
+  Quelltext M.CHAPTER_LOCK=true, zum Testen die Adresse mit ?kapitel=sperre.)
 - "Neues Spiel" beginnt auf dem ersten freien Speicherplatz, ohne Rückfrage.
   Sind alle drei belegt, fragt das Spiel, welcher überschrieben wird.
-- Wer Split zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
-  weiterzuspielen. Antworten und Hinweise aus Split (zum Beispiel, was
+- Wer ein Kapitel zu Ende spielt, bekommt nach dem Abspann das Angebot, gleich
+  weiterzuspielen (nach Kapitel 4: "Weiter mit Kapitel 5: Sarajevo"). Antworten und Hinweise aus Split (zum Beispiel, was
   Marko Mala auf der Bank an der Riva gesagt hat) kommen mit nach Sarajevo.
   Genauso nach Sarajevo: Was Marko in der Straßenbahn gestanden hat und ob
   er bei Hajra war, kommt mit nach Mostar. Und aus Mostar nach München: was

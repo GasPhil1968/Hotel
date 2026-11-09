@@ -29,20 +29,51 @@ const DEV = { desktop: { viewport: { width: 1280, height: 800 } }, tablet: { vie
     T.ck(await p.evaluate(() => M.E.slot() === 1 && M.shell.ctx === null), 'nur Kapitel 1 erreicht: „Neues Spiel“ startet sofort auf Platz 1');
     await done(p);
 
-    T.section('Kapitelsperre nach Kapitel 1 (k2_start: c1end gesetzt)');
+    T.section('Kapitelwahl: frei wählbar (k2_start: c1end gesetzt)');
     p = await open(b, 'k2_start'); await click(p, 'Neues Spiel'); s = await sh(p);
     T.ck(s.cur === 'chapters', 'Kapitelwahl erscheint, sobald zwei Kapitel erreicht sind');
     const ch = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => ({ t: e.textContent.trim(), dis: e.getAttribute('aria-disabled') === 'true' })));
-    T.ck(ch.some(c => /^Kapitel 1 · Split/.test(c.t) && !c.dis) && ch.some(c => /^Kapitel 2 · Sarajevo/.test(c.t) && !c.dis), 'Kapitel 1 und 2 mit Ort startbar');
-    T.ck(ch.some(c => /^Kapitel 3nach Kapitel 2$/.test(c.t.replace(/\s+/g, ' ').replace(' nach', 'nach')) && c.dis) || ch.some(c => /^Kapitel 3/.test(c.t) && c.dis && !/Mostar/.test(c.t)), 'Kapitel 3 gesperrt, ohne Ortsnamen, mit Grund');
-    T.ck(ch.some(c => /^Kapitel 5/.test(c.t) && c.dis && /nach Kapitel 4/.test(c.t) && !/Sarajevo/.test(c.t)), 'Kapitel 5 gesperrt („nach Kapitel 4“), ohne Ort');
-    T.ck(!ch.some(c => /noch nicht erschienen/.test(c.t)), 'kein „noch nicht erschienen“ mehr: Kapitel 5 ist spielbar');
+    T.ck(ch.length === 5 && ch.every(c => !c.dis) && ['Split', 'Sarajevo', 'Mostar', 'München', 'Sarajevo'].every((o, i) => ch[i].t.indexOf('Kapitel ' + (i + 1) + ' · ' + o) === 0), 'alle fünf Kapitel mit Ort wählbar');
+    T.ck(/mit deinem Ende von Kapitel 1/.test(ch[1].t) && /Quereinstieg mit Standardantworten/.test(ch[2].t) && /schon gespielt/.test(ch[0].t), 'Hinweise je Kapitel: Ende von Kapitel 1 übernommen, Quereinstieg, schon gespielt (' + ch.map(c => c.t.replace(/^Kapitel \d · \S+/, '').trim()).join(' | ') + ')');
+    T.ck(await p.evaluate(() => /Kapitel 2/.test(document.querySelector('#shell .mi.primary').textContent)), 'Vorgeschlagen ist das nächste Kapitel (2)');
+    T.ck(!ch.some(c => /noch nicht erschienen|^Kapitel \dnach/.test(c.t)), 'nichts gesperrt, nichts „noch nicht erschienen“');
     await shot(p, 'f20_kapitelwahl');
     await p.keyboard.press('Escape'); s = await sh(p); T.ck(s.cur === 'main', 'Esc führt aus der Kapitelwahl zurück');
     T.ck(await p.evaluate(() => /Neues Spiel/.test(document.activeElement.textContent)), 'Fokus danach auf dem auslösenden Eintrag (F11)');
     await click(p, 'Spiel laden'); const pr = await p.evaluate(() => [...document.querySelectorAll('#shell .card b')].map(e => e.textContent));
     T.ck(pr.some(t => /Sarajevo: vor dem Ankaufbuch/.test(t)) && pr.some(t => /Ivkas Wahrheit/.test(t)), 'Beispielstände: Kapitel-2-Stand nach c1end sichtbar');
     await shot(p, 'f7_laden_titel');
+    await done(p);
+
+    T.section('Kapitel wählen vom ersten Start an (leerer Speicher)');
+    p = await open(b, null); s = await sh(p);
+    T.ck(s.labels[0] === 'Neues Spiel' && s.labels[1] === 'Kapitel wählen', 'Titelmenü: „Kapitel wählen“ gleich unter „Neues Spiel“ (' + s.labels.join(', ') + ')');
+    await click(p, 'Kapitel wählen'); s = await sh(p);
+    T.ck(s.cur === 'chapters' && await p.evaluate(() => /Kapitel wählen/.test(document.querySelector('#shell h3').textContent)), 'öffnet die Kapitelwahl „Kapitel wählen“');
+    const fc = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => ({ t: e.textContent.trim(), dis: e.getAttribute('aria-disabled') === 'true', prim: e.classList.contains('primary') })));
+    T.ck(fc.length === 5 && fc.every(c => !c.dis), 'alle fünf Kapitel sind ohne Spielstand wählbar');
+    T.ck(/^Kapitel 1 · Split/.test(fc[0].t) && /von vorn/.test(fc[0].t) && fc[0].prim && !fc.slice(1).some(c => c.prim) && fc.slice(1).every(c => /Quereinstieg mit Standardantworten/.test(c.t)), 'Kapitel 1 „von vorn“ ist vorgeschlagen, die übrigen „Quereinstieg mit Standardantworten“');
+    T.ck(await p.evaluate(() => /Neu hier\? Fang mit Kapitel 1 an/.test(document.querySelector('#shell .ctx.foot').textContent)), 'Hinweis für Neulinge: mit Kapitel 1 anfangen');
+    await shot(p, 'k5_kapitel_waehlen');
+    await p.keyboard.press('Escape'); s = await sh(p); T.ck(s.cur === 'main' && await p.evaluate(() => /Kapitel wählen/.test(document.activeElement.textContent)), 'Esc zurück, Fokus auf „Kapitel wählen“');
+    await click(p, 'Kapitel wählen'); await click(p, 'Kapitel 4 · München'); await p.waitForFunction(() => M.E.screen !== 'title', null, { timeout: 8000 });
+    T.ck(await p.evaluate(() => M.GS.phase === 'k4_pro' && M.E.slot() === 1 && !localStorage.getItem('mala.c3end') && !localStorage.getItem('mala.c1end')), 'Kapitel 4 startet direkt (Platz 1, Phase k4_pro), ohne Kapitelmarken zu schreiben');
+    await done(p);
+    p = await open(b, null); await click(p, 'Neues Spiel'); await p.waitForFunction(() => M.E.screen !== 'title', null, { timeout: 8000 });
+    T.ck(await p.evaluate(() => M.chapterOf(M.GS) === 1 && M.E.slot() === 1), '„Neues Spiel“ ohne Fortschritt startet weiter sofort Kapitel 1');
+    await done(p);
+
+    T.section('Kapitelsperre als Schalter (?kapitel=sperre)');
+    process.env.MALA_QUERY = '?kapitel=sperre'; p = await open(b, 'k2_start'); delete process.env.MALA_QUERY;
+    await click(p, 'Kapitel wählen'); s = await sh(p);
+    const lk = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => ({ t: e.textContent.trim(), dis: e.getAttribute('aria-disabled') === 'true' })));
+    T.ck(lk.some(c => /^Kapitel 1 · Split/.test(c.t) && !c.dis) && lk.some(c => /^Kapitel 2 · Sarajevo/.test(c.t) && !c.dis), 'mit Sperre: Kapitel 1 und 2 mit Ort startbar');
+    T.ck(lk.some(c => /^Kapitel 3/.test(c.t) && c.dis && /nach Kapitel 2/.test(c.t) && !/Mostar/.test(c.t)), 'mit Sperre: Kapitel 3 gesperrt, ohne Ortsnamen, mit Grund');
+    T.ck(lk.some(c => /^Kapitel 5/.test(c.t) && c.dis && /nach Kapitel 4/.test(c.t) && !/Sarajevo/.test(c.t)), 'mit Sperre: Kapitel 5 gesperrt („nach Kapitel 4“), ohne Ort');
+    await done(p);
+    process.env.MALA_QUERY = '?kapitel=sperre'; p = await open(b, null); delete process.env.MALA_QUERY;
+    await click(p, 'Kapitel wählen'); const lk0 = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => e.getAttribute('aria-disabled') === 'true'));
+    T.ck(lk0.length === 5 && !lk0[0] && lk0.slice(1).every(Boolean), 'mit Sperre und leerem Speicher: nur Kapitel 1 wählbar');
     await done(p);
 
     T.section('Sperre ohne Marken; ?kapitel=alle; Kapitel 5 nach c4end');
@@ -135,6 +166,20 @@ const DEV = { desktop: { viewport: { width: 1280, height: 800 } }, tablet: { vie
     await shot(p, 'd3_kapitelende');
     await click(p, 'Weiter mit Kapitel 2'); await p.waitForFunction(() => M.E.screen !== 'title', null, { timeout: 5000 });
     T.ck(await p.evaluate(() => M.E.slot() === 1), 'Kapitel 2 startet auf demselben Platz');
+    await done(p);
+    // Ende von Kapitel 4 (Finale folgt): Fortsetzen → „Weiter mit Kapitel 5: Sarajevo“
+    p = await open(b, null, {}, { 'mala.c1end': '1', 'mala.c2end': '1', 'mala.c3end': '1', 'mala.c4end': '{"at":1,"playMs":9000000}', 'mala.save.1': JSON.stringify({ sv: 2, kind: 'chapterEnd', chapter: 4, next: 5, at: Date.now(), playMs: 9000000 }) });
+    await click(p, 'Fortsetzen'); s = await sh(p); T.ck(s.cur === 'next' && s.labels.some(l => /Weiter mit Kapitel 5: Sarajevo/.test(l)), 'Ende von Kapitel 4: Fortsetzen → „Weiter mit Kapitel 5: Sarajevo“');
+    T.ck(await p.evaluate(() => /Ende des vierten Kapitels/.test(document.querySelector('#shell').textContent) && /2 Std\. 30 Min\./.test(document.querySelector('#shell').textContent)), 'Karte nennt „Ende des vierten Kapitels“ und die Spielzeit');
+    await click(p, 'Weiter mit Kapitel 5'); await p.waitForFunction(() => M.E.screen !== 'title', null, { timeout: 8000 });
+    T.ck(await p.evaluate(() => M.chapterOf(M.GS) === 5 && M.GS.phase === 'k5_pro' && M.E.slot() === 1), 'Kapitel 5 startet auf demselben Platz');
+    await done(p);
+    // direkt nach dem Abspann von Kapitel 4: dieselbe Frage (afterCredits)
+    p = await open(b, null, {}, { 'mala.c1end': '1', 'mala.c2end': '1', 'mala.c3end': '1' });
+    await p.evaluate(() => { M.E.afterCredits = 'ch5'; M.E.creditLines = M.CREDITS4; M.E.creditMusic = 'k4_end'; M.TURBO = 60; M.E.startCredits(); });
+    await p.waitForFunction(() => M.E.screen === 'title' && M.E.titleMode === 'next', null, { timeout: 120000 });
+    await p.waitForFunction(() => M.shell.labels().length > 0, null, { timeout: 8000 }).catch(() => {});
+    s = await sh(p); T.ck(s.labels.some(l => /Weiter mit Kapitel 5: Sarajevo/.test(l)), 'nach dem Abspann von Kapitel 4 folgt „Weiter mit Kapitel 5: Sarajevo“ (' + s.labels.join(' | ') + ')');
     await done(p);
 
     // ---------------------------------------------------------------- Einstellungen, Über MALA, Steuerung, F12, F21
