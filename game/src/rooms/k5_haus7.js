@@ -39,6 +39,7 @@ var HS_NB=[
 ];
 M.room('neboder5',{ name:'Alipašino Polje', scape:'k2_neboder', music:function(G){ return ph(G)==='k5_sat'?'k2_mala':'k2_istraga'; },
   state:function(G){ return {tramIn:false}; },
+  load:function(A){ var r=M.ROOMS['neboder5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[]; if (jasnaFollows(G)) L.push({id:'jasna',ch:'jasnaC',x:304,y:122,f:'R',name:'Mama',idle:'waitF',speechY:46}); return L; },
   hotspots:HS_NB,
   entries:{ haustor5:[330,116,'F'], tramvaj5:[118,120,'R'] },
@@ -78,6 +79,7 @@ var HS_HT=[
 ];
 M.room('haustor5',{ name:'Haus 7', scape:'k2_haustor', music:'k2_istraga',
   state:function(G){ return {shelterOpen:false,strollerGone:false}; },
+  load:function(A){ var r=M.ROOMS['haustor5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[], c=hallCast(G);
     if (c.indexOf('dragica')>=0){ var d=M.apos('haustor','dragica',[82,120,'R']); L.push({id:'dragica',ch:'dragica',x:d[0],y:d[1],f:d[2]||'R',name:'Dragica',idle:'sit',talk:'sitTalk',speechY:36}); }
     if (c.indexOf('sehic')>=0){ var s=M.apos('haustor','sehic',[264,113,'L']); L.push({id:'sehic',ch:'sehic',x:s[0],y:s[1],f:s[2]||'L',name:'Herr Šehić',speechY:46}); }
@@ -113,6 +115,7 @@ var HS_SG=[
 ];
 M.room('stiege5',{ name:'Treppenhaus, siebter Stock', scape:'k2_haustor', music:function(G){ return ph(G)==='k5_sat'?'k2_mala':'k2_istraga'; },
   state:function(G){ return {open7:ph(G)==='k5_sat'}; },
+  load:function(A){ var r=M.ROOMS['stiege5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[], p=M.ART.stiege5&&M.ART.stiege5.actorPos||{};
     if (jasnaFollows(G)){ var j=p.jasna||[100,121,'R']; L.push({id:'jasna',ch:'jasnaC',x:j[0],y:j[1],f:j[2],name:'Mama',idle:'waitF',speechY:46}); var s=p.sehic||[192,121,'L']; if (f(G,'k5.p.sehicUp')) L.push({id:'sehic',ch:'sehic',x:s[0],y:s[1],f:s[2],name:'Herr Šehić',speechY:46}); }
     if (satAt7(G)){ var j2=p.jasna_door||[116,119,'L']; L.push({id:'jasna',ch:'jasnaC',x:j2[0],y:j2[1],f:j2[2],name:'Mama',idle:'waitF',speechY:46}); var s2=p.sehic||[192,121,'L']; L.push({id:'sehic',ch:'sehic',x:s2[0],y:s2[1],f:s2[2],name:'Herr Šehić',speechY:46}); }
@@ -170,6 +173,7 @@ var HS_SN=[
   g:{look:function(A){ return M.k5StanLookG?M.k5StanLookG(A,id):A.g('…'); },sense:function(A){ return M.k5StanSenseG?M.k5StanSenseG(A,id):A.g('…'); }}}; }));
 M.room('stan5',{ name:'Nadas Wohnung', scape:'k2_stan', music:function(G){ var p=ph(G); return p==='k5_d2_n'?'vecer':(p==='k5_sat'?'k2_otkrice':(p==='k5_n1'?'k2_noc':'k2_mala')); },
   state:function(G){ return {lanaOpen:f(G,'k5.d1.lana')||ph(G)!=='k5_pro'&&ph(G)!=='k5_d1'}; },
+  load:function(A){ var r=M.ROOMS['stan5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ return stanCast(G).map(function(k){ var p=SPOS[k], id=k.replace(/K$|B$/,''); var sitting=(k==='nada'||k==='jasna'||k==='zlata'||k==='ana');
     return {id:id,ch:SCH[k],x:p[0],y:p[1],f:p[2],name:SNAME[id],idle:sitting?'sit':null,talk:sitting?'sitTalk':null,speechY:sitting?36:(id==='mia'||id==='niko'?30:46)}; }); },
   hotspots:HS_SN,

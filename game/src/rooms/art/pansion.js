@@ -29,7 +29,7 @@ function vn(x,y){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, a=ha
 function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.3,y*4.1+8.1)*0.15; }
 function inWin(x,y){ return x>=WIN.x&&x<WIN.x+WIN.w&&y>=WIN.y&&y<WIN.y+WIN.h; }
 function catOf(S){ return (S && S.catAt==='window')?'window':'bed'; }
-function curS(){ return (M.GS&&M.GS.rooms&&M.GS.rooms.pansion)||{}; }
+function curS(){ var id=(M.E&&M.E.room&&M.E.room.id)||'pansion'; return (M.GS&&M.GS.rooms&&(M.GS.rooms[id]||M.GS.rooms.pansion))||{}; }   // Kapitel 5 nutzt das Bild als pansion5
 // Rechteck/Standpunkt, das je nach Zustand nachgelesen wird (bleibt für die Logik ein gewöhnliches Array)
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 var STOVE_DOOR=(function(){ var p=R3.p(STOVE.X1,86,STOVE.Z0+6), q=R3.p(STOVE.X1,94,STOVE.Z0+13); return [rnd(q[0]),rnd(p[1]),rnd(p[0]-q[0]),rnd(q[1]-p[1])]; })();

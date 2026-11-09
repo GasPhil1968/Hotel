@@ -245,7 +245,7 @@ const { launch, contextOpts } = require('./engines');
   } catch (err) { failure = { at: i, entry: acts[i], msg: String(err.message || err), state: await st().catch(() => null) }; L('ABBRUCH bei Eintrag', i, err.message); await shot('abbruch').catch(() => {}); }
   const end = await page.evaluate(() => ({ c4: !!localStorage.getItem('mala.c4end'), c1: !!localStorage.getItem('mala.c1end'), c2: !!localStorage.getItem('mala.c2end'), c3: !!localStorage.getItem('mala.c3end'), scr: M.E.screen, title: M.E.screen === 'title' ? M.titleLabels() : null })).catch(() => null);
   if (process.env.UIRUN_TRACE || failure) { try { await context.tracing.stop({ path: path.join(OUT, 'trace.zip') }); } catch (e) {} }
-  const ok = !failure && end && end.c1 && end.c2 && end.c3 && end.c4 && end.scr === 'title' && !(end.title || []).some(t => /Weiter mit Kapitel 5/.test(t));
+  const ok = !failure && end && end.c1 && end.c2 && end.c3 && end.c4 && end.scr === 'title' && (end.title || []).some(t => /Weiter mit Kapitel 5/.test(t));   // seit Kapitel 5: nach dem Abspann von Kapitel 4 angeboten
   const res = { engine: ENGINE, browserVersion: browser.version(), device: DEVICE, viewport: vp, touch, url: URL, recording: { seed: REC.seed, sha: REC.sha, entries: acts.length }, ok, actionsDone: done, chapterEnds: chEnds, end, failure, errors, consoleErr, failedReq, hotspotIssues: hsIssues, uiNotes, wallS: (Date.now() - t0) / 1000, shots: shots.map(f => path.basename(f)), log };
   fs.writeFileSync(path.join(OUT, 'result.json'), JSON.stringify(res, null, 1));
   console.log((ok ? 'UI-DURCHLAUF OK ' : 'UI-DURCHLAUF FEHLGESCHLAGEN ') + ENGINE + '/' + DEVICE + ' ' + done + ' Aktionen, ' + res.wallS.toFixed(0) + ' s, Fehler ' + errors.length + (failure ? ' | ' + failure.msg : ''));

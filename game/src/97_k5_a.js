@@ -354,18 +354,31 @@ M.k5Evening=async function(A){ var N=A.npc('nada');
   await A.m('Das Brett lehnt an der Wand. Nadas Tafel liegt bei Nedžad, leer. Zwei Namen für eine. Ich entscheide das nicht.'); };
 M.k5EveLoad=async function(A){ if (!F(A,'k5.n1.eve') && A.room && A.room.id==='stan5') await M.k5Evening(A); };
 
+// ================================================================ Tagesanfänge
+M.k5D1Start=async function(A){ var N=A.npc('nada');
+  A.sfx('phone'); await A.narrate('Mein Telefon klingelt. Frau Kolar, von der Gerichtsmedizin.');
+  await A.phoneVoice('Herr Vuković. Morgen um neun können wir die Identifizierung abschließen. Bringen Sie Ihre Mutter mit, wenn sie will. Sie muss nicht.','kolar');
+  await A.m('Morgen um neun. Ich sage es ihr.'); await A.phoneVoice('Und Herr Vuković: Kommen Sie pünktlich. Das sind hier wenige.','kolar');
+  if (N.actor){ await A.wait(300); await N.say('Die Kolar? Die ruft immer an, wenn man gerade Kaffee eingeschenkt hat.'); }
+  await A.m('Donnerstag. Nadas Tafel ist noch leer. Und die Hand auf meinen Augen hat nach Malz gerochen.'); A.save(); };
+M.k5D2Start=async function(A){ var G=A.G;
+  await A.narrate('Freitag. Es klopft. Zweimal, ungeduldig. Mama, schon im Mantel, vor meiner Tür.');
+  await A.npc('jasna').say('Um neun bei Frau Kolar. Ich komme mit. Ich will ihn sehen.'); await A.m('Ich weiß.');
+  if (G.malaOn){ await A.wait(300); await A.g('Heute Mittag ist mein Begräbnis. Und vorher noch so viel.'); }
+  A.save(); };
+
 // ================================================================ Nacht in der Pension: „Acht Wochen“ (Konzept 9.1)
 M.k5PensionWindow=async function(A){ var p=ph(A);
   if (p!=='k5_n1') return A.m(A.cycle('k5pw',['Draußen die Dächer von Kovači, Minarette, weiter oben die weißen Steine.','Ich sehe hinaus. Die Stadt sieht nicht zurück.']));
   if (!F(A,'k5.n1.home')) return A.m('Kalt.');
-  if (F(A,'k5.n1.atem')){ A.setFlag('k5.n1.fog',A.gt); A.sfx('gust'); await A.m('Ich hauche die Scheibe an. Der Beschlag hält ein paar Sekunden.'); if (gHere(A)){ await A.g('Ich ziehe eine Linie. Siehst du? Drei Sekunden. Vier.'); } return; }
+  if (F(A,'k5.n1.atem')){ A.G.flags['k5.n1.fog']=A.gt; A.G.flags['k5.n1.three']=0; A.sfx('gust'); await A.m('Ich hauche die Scheibe an. Der Beschlag hält ein paar Sekunden.'); if (gHere(A)){ await A.g('Ich ziehe eine Linie. Siehst du? Drei Sekunden. Vier.'); } return; }
   return atem(A); };
 M.k5PensionWindowG=async function(A){ if (ph(A)!=='k5_n1') return A.g('Die Scheibe ist klar.');
-  var t=A.flag('k5.n1.fog'); if (F(A,'k5.n1.atem') && t && A.gt-t<6000){ await A.g('Ich ziehe eine Drei. Sie hält. Dann geht sie mit dem Beschlag.'); return; }
+  var t=A.flag('k5.n1.fog'); if (F(A,'k5.n1.atem') && t && A.gt-t<6000){ A.G.flags['k5.n1.three']=A.gt; await A.g('Ich ziehe eine Drei. Sie hält. Dann geht sie mit dem Beschlag.'); return; }
   return A.g('Die Scheibe ist klar. Er muss erst hauchen. Nur bei ihm geht es.'); };
 async function atem(A){ var G=A.G;
-  A.sfx('gust'); await A.narrate('Die Scheibe ist kalt. Ich hauche sie an, damit ich hinaussehe.');
-  await A.wait(700); await A.narrate('Im Beschlag erscheint eine Linie. Dann eine zweite. Eine Drei.');
+  A.sfx('gust'); A.G.flags['k5.n1.fog']=A.gt; await A.narrate('Die Scheibe ist kalt. Ich hauche sie an, damit ich hinaussehe.');
+  await A.wait(700); A.G.flags['k5.n1.three']=A.gt; await A.narrate('Im Beschlag erscheint eine Linie. Dann eine zweite. Eine Drei.');
   await A.wait(900); await A.m('…'); await A.g('…'); await A.wait(500);
   await A.g('Das war ich.');
   await A.m('In Split. Auf meinem Fenster. Ich habe sie weggewischt.');
@@ -375,7 +388,7 @@ async function atem(A){ var G=A.G;
   for (var k=0;k<3;k++){ var opts=[]; if (!tried.mirror) opts.push({t:'Versuch es auf dem Spiegel.',id:'mirror'}); if (!tried.again) opts.push({t:'Noch einmal.',id:'again'}); if (!opts.length) break;
     var c=await A.choose(opts,{title:'Die Scheibe'}); tried[c]=true;
     if (c==='mirror'){ await A.narrate('Ich drehe im Bad das heiße Wasser auf. Der Spiegel beschlägt. Mala hebt die Hand. Nichts.'); await A.g('Wie bei Mama. Jeden Abend, wenn sie geduscht hatte.'); }
-    else { A.sfx('gust'); await A.narrate('Ich hauche, sie zieht einen Strich. Er hält, bis der Beschlag geht. Drei Sekunden, vielleicht vier.'); } }
+    else { A.sfx('gust'); A.G.flags['k5.n1.fog']=A.gt; A.G.flags['k5.n1.three']=A.gt+600; await A.narrate('Ich hauche, sie zieht einen Strich. Er hält, bis der Beschlag geht. Drei Sekunden, vielleicht vier.'); } }
   await A.narrate('Im Flur steht Mia im Schlafanzug am Fenster und haucht eine Sonne. Sie schläft nebenan, mit Ana und Niko. Mala zeichnet daneben. Nichts.');
   await A.npc('mia').say('Onkel Marko, mit wem redest du?'); await A.m('Mit dem Kater.'); await A.npc('mia').say('Der Kater heißt Mačak. Das heißt Kater.'); await A.narrate('Sie geht.');
   await A.m('Nur bei mir.'); await A.g('Nur in deinem Atem. Das ist kein Kompliment. Du hattest Zwiebeln.');

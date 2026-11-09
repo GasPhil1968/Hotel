@@ -51,7 +51,7 @@ M.startChapter5=async function(A){ var E=M.E; E.busy=true;
     if (c.slippers && M.ITEMS.pantoffeln) A.give('pantoffeln'); if (c.nada && M.ITEMS.dose_voll) A.give('dose_voll');
     ['k5_c_muenchen','k5_c_mala'].forEach(function(id){ A.note(id,true); });
     ['nada','zlata','kolar','vlado','hajra','rade','damir','dragica','sehic','nedzad','jasna','ana','mia','niko','tobias','mala','jasnaW','jasnaC','anaC','miaC','nikoC'].forEach(function(id){ G.flags['met.'+id]=true; });
-    G.flags['k5.moves']=0;
+    G.flags['k5.moves']=0; G.map=G.map||{}; G.map.stanica=true; G.map.pansion=true;   // Busbahnhof und Hajras Pension kennt Marko aus Kapitel 2
     E.screen='card'; await A.card({kicker:'Kapitel 5',title:'Sarajevo',sub:'Prolog – Ankunft',time:'Donnerstag, 1. März 2012 · früh',ms:5200});
     A.music('k2_bus');
     var lines=['Fünfzehn Stunden Bus. Seit Ljubljana sagt Mama nichts. Bei Tarčin wird es hell, und sie sitzt am Fenster und sieht hinaus. Die ganze Zeit.'];
@@ -99,7 +99,7 @@ M.MAP_KNOW.bare={ch:5, know:function(G){ return M.chapterOf(G)===5 && has(G,'s5_
 // ---------------------------------------------------------------- Reisen
 function travelWhy(G,L){ var p=G.phase, id=L.id, alone=G.active==='mala';
   if (alone) return {tg:'Ohne ihn fahre ich nicht durch die Stadt. Nicht in dieser Woche.'};
-  if (p==='k5_pro'){ if (!f(G,'k5.p.hajra') && id!=='pansion') return {t:'Erst zu Hajra. Mama ist seit fünfzehn Stunden unterwegs.'}; return null; }
+  if (p==='k5_pro'){ if (!f(G,'k5.p.taxi')) return {t:'Erst ein Taxi. Mama steht mit den Koffern am Bahnsteig.'}; if (!f(G,'k5.p.hajra') && id!=='pansion') return {t:'Erst zu Hajra. Mama ist seit fünfzehn Stunden unterwegs.'}; return null; }
   if (p==='k5_n1'){ if (id==='pansion'||id==='pivara') return null; return {t:'Es ist Nacht. Die Stadt schläft, und ich sollte es auch.'}; }
   if (p==='k5_d2'){ if (id==='bare') return {t:'Um zwei. Vorher ist da nichts für uns.'}; return null; }
   if (p==='k5_fun') return {t:'Erst das Begräbnis.'};
@@ -219,7 +219,7 @@ M.k5StartZoran=async function(A){ if (A.flag('k5.e.funeral')) return; A.setFlag(
   await bring(A,'bare',{at:standOf('bare','grave2'),noMala:true}); A.music('k3_grob'); A.save();
   if (M.k5Zoran) await M.k5Zoran(A);
   await A.fade(8,1200); await card(A,'','Ružas Küche','Montag · Abend',3600);
-  await bring(A,'kuca5',{at:standOf('kuca5','table'),noMala:true}); A.music('k4_epi'); A.save();
+  await bring(A,'kuca5',{at:[156,128,'L'],noMala:true}); A.music('k4_epi'); A.save();
   if (M.k5Final) await M.k5Final(A); };
 
 // ---------------------------------------------------------------- Laden mitten im Kapitel: unterbrochene Wechsel nachholen
@@ -233,7 +233,7 @@ M.PENDING_X=M.PENDING_X||[];
   {from:'k5_epi', when:function(G){ return G.flags['k5.e.funeral'] && !G.flags['k5.e.done']; }, run:function(A){ return M.k5FinalLoad?M.k5FinalLoad(A):null; }} ].forEach(function(r){ M.PENDING_X.push(r); });
 
 // ---------------------------------------------------------------- Raumwechsel: Zähler, Freigaben aus dem Stand der Geschichte
-function storyOpen(G){ if (!G.map) G.map={}; if (f(G,'k5.p.hajra')){ G.map.pansion=true; G.map.vratnik=true; } if (has(G,'b5_hand')) G.map.neboder=true;
+function storyOpen(G){ if (!G.map) G.map={}; G.map.stanica=true; G.map.pansion=true; if (f(G,'k5.p.hajra')){ G.map.vratnik=true; } if (has(G,'b5_hand')) G.map.neboder=true;
   if (f(G,'k5.d1.started')){ G.map.carsija=true; G.map.kazandziluk=true; G.map.pivara=true; } if (f(G,'k5.d2.started')) G.map.institut=true; if (f(G,'k5.fun.started')) G.map.bare=true; }
 M.MIGRATE.push(function(G){ if (CH5(G)) storyOpen(G); });
 M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,id,from,o); if (!CH5(G)) return; G.flags['k5.moves']=(G.flags['k5.moves']||0)+1; storyOpen(G); }; })(M.onRoomChange);

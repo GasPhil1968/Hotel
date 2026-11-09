@@ -13167,6 +13167,8 @@ M.HINTS_K5=[
      function(G){ return I(G,'kanister')?'Mit dem Kanister nachts zur Brauerei fahren und sich am Hahn anstellen.':'In Vratnik den Kanister holen, dann nachts zur Brauerei.'; }]},
  {id:'h5g2',t:'Schlafen',open:function(G){ return G.phase==='k5_n1' && F(G,'k5.n1.atem') && N(G,'b5_hamdija'); },
   s:['Für heute ist alles getan.','Morgen um neun bei Frau Kolar.','Zurück zu Hajra.','In der Pension ins Bett gehen.']},
+ {id:'h5f0',t:'Gute Nacht',open:function(G){ return G.phase==='k5_n1' && F(G,'k5.n1.eve') && !F(G,'k5.n1.home'); },
+  s:['Es ist spät. Ana bringt die Kinder zu Hajra.','Ich schlafe in der Pension, in Kovači.','Nadas Wohnungstür.','An der Wohnungstür gute Nacht sagen.']},
  // ---------------- Freitag
  {id:'h5h',t:'Frau Kolar',open:function(G){ return G.phase==='k5_d2' && !F(G,'k5.d2.inst'); },
   s:['Um neun bei Frau Kolar.','In der Gerichtsmedizin.','Mama kommt mit. Sie will ihn sehen.','Mit dem Stadtplan zur Gerichtsmedizin fahren.']},
@@ -13183,6 +13185,8 @@ M.HINTS_K5=[
      function(G){ if (!N(G,'b5_kasten')) return 'Was ist im Kasten?'; if (!N(G,'b5_tag')) return 'Was weiß nur der Junge von damals?'; if (!N(G,'b5_drei')) return 'Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Die gefüllten Kanister. Und der Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Drei Tote haben noch keinen Namen.'; if (!F(G,'k5.b.ready')) return 'Sie sind gefunden. Alle sieben.'; return 'Er kann jetzt gehen.'; },
      function(G){ if (!N(G,'b5_kasten')) return {m:'Mala geht durch Wände. Auch in einen Blechkasten.',g:'Ich gehe durch den Kasten.'}; if (!N(G,'b5_tag')) return {m:'Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.',g:'Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.'}; if (!N(G,'b5_drei')) return 'In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Ihm beides sagen: die Kanister und den Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste in die Gerichtsmedizin bringen.'; if (!F(G,'k5.b.ready')) return 'Zu Hamdija an den Hahn.'; return {m:'Mala öffnet die Schwelle. Am Hahn.',g:'Ich mache ihm Licht. Am Hahn.'}; },
      function(G){ if (!N(G,'b5_kasten')) return 'Als Mala den Kasten hinter dem Hahn ansehen.'; if (!N(G,'b5_tag')) return 'Als Mala den Hahn, die Mitte und die Brücke spüren.'; if (!N(G,'b5_drei')) return 'Frau Kolar nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Mit Hamdija reden und die Kanister und den Rechenschieber nennen.'; if (!F(G,'k5.b.listKolar')) return 'Frau Kolar die Liste geben.'; if (!F(G,'k5.b.ready')) return 'Mit Hamdija reden: Sie sind gefunden.'; return 'Als Mala Hamdija hinüberbringen.'; }]},
+ {id:'h5fun',t:'Lanas Begräbnis',open:function(G){ return G.phase==='k5_fun' && !F(G,'k5.fun.done'); },
+  s:['Heute wird Lana begraben.','Alle sind gekommen. Nada und Zlata stehen am Pfosten.','Am Grab gibt es nichts zu lösen.','Eine Wahl am Grab treffen. Beide sind richtig.']},
  // ---------------- Freitagabend
  {id:'h5l',t:'Wem gehören die Fahrscheine?',open:function(G){ return G.phase==='k5_d2_n' && !N(G,'f5_jasna'); },
   s:[function(G){ return N(G,'f5_wem')?'Nicht Nada. Wem dann?':'Mala sagt: für Nada. Stimmt das?'; },
@@ -13191,6 +13195,8 @@ M.HINTS_K5=[
      function(G){ if (!N(G,'f5_wem')) return 'Im Notizbuch „Wer sonst?“ und „Euer Samstag“ verbinden.'; return 'Im Notizbuch „Nicht Nada“ und „Mama kann nicht hinauf“ verbinden.'; }]},
  {id:'h5l2',t:'Das Totenmahl',open:function(G){ return G.phase==='k5_d2_n' && !F(G,'k5.e.meal'); },
   s:['Alle sitzen an Nadas Tisch.','Zwei Frauen, die achtzehn Jahre nicht miteinander geredet haben.','Mit Mama reden. Und mit Nada.','Mit Mama und mit Nada reden, bis der Abend weitergeht.']},
+ {id:'h5l4',t:'Bis es hell wird',open:function(G){ return G.phase==='k5_d2_n' && F(G,'k5.n2.started') && !F(G,'k5.n2.done'); },
+  s:['Die Žuta tabija. Mala hat sich gefragt.','Erst ich. Was will ich? Ehrlich.','„Es gibt kein Falsches. Es gibt nur ‚nur müde‘.“','Antworten. Jede der drei Antworten ist ehrlich.']},
  {id:'h5l3',t:'Der Samstag',open:function(G){ return G.phase==='k5_d2_n' && F(G,'k5.n2.done') && !F(G,'k5.sat.started'); },
   s:['Es wird hell. Morgen ist heute.','Ab hier gibt es kein Zurück in die Tage davor.','Auf der Bastei, wenn du bereit bist.','Die Bank auf der Žuta tabija benutzen und den Samstag beginnen.']},
  // ---------------- Samstag
@@ -13199,6 +13205,10 @@ M.HINTS_K5=[
  {id:'h5n',t:'Nadas Küche',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.knock') && !F(G,'k5.sat.drawn'); },
   s:['Nada muss es selbst sehen.',{m:'Was kann Mala, wenn ich dabei bin?',g:'Was kann ich, wenn er dabei ist?'},'Die Glastür zum Balkon. Nada steht in der Küche.',
      function(G){ var s=G.flags['k5.sat.draw']||0; return s>=4?'Als Marko die Räder zeichnen: die Glastür benutzen.':(s%2===0?'Als Marko die Glastür anhauchen.':'Als Mala auf die beschlagene Scheibe zeichnen.'); }]},
+ {id:'h5q',t:'Hinauf zu Ruža',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.rode') && !F(G,'k5.sat.gate'); },
+  s:['Jeder Samstag hat oben aufgehört. Bei Großmutter, in Vratnik.','Mala will hinauf. Zu Fuß, wie früher.','Die Gasse nach Vratnik, am oberen Ende des Platzes.','Die Gasse nach Vratnik benutzen.']},
+ {id:'h5r',t:'Unter Ružas Dach',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.gate') && !F(G,'k5.sat.done'); },
+  s:['Alle sitzen in Ružas Küche. Sechs Tassen.','Mama hat etwas auf dem Herzen. Ich sehe es an ihren Händen.','Mama am Tisch.','Mit Mama reden.']},
  // ---------------- Montag
  {id:'h5o',t:'Das Wasser',open:function(G){ return G.phase==='k5_epi' && !F(G,'k5.e.water'); },
   s:['Heute wird Papa begraben. Am Abend sitzen wir unter Ružas Dach.','Kaffee braucht Wasser. Das beste der Stadt kommt aus dem Hahn an der Brauerei.',function(G){ return I(G,'kanister_voll')?'Der Kanister ist voll. Er muss nach Vratnik.':'Den blauen Kanister am Hahn füllen.'; },
@@ -13206,8 +13216,8 @@ M.HINTS_K5=[
  {id:'h5p',t:'Die Scheibe',open:function(G){ return G.phase==='k5_epi' && F(G,'k5.e.funeral') && !F(G,'k5.e.done'); },
   s:['Das Fenster neben dem Tisch ist beschlagen.','Lana hat mir das Zeichnen beigebracht. Die Räder habe ich nie gekonnt.','Das Fenster in Ružas Küche.','Das Fenster benutzen.']},
  // ---------------- zwischen zwei Abschnitten
- {id:'x5day',t:'Der Tag geht weiter',open:function(G){ return P(G,['k5_pro','k5_d1','k5_d2']) && !!(M.k5DayReady && M.k5DayReady(G)); },
-  s:[function(G){ return ({k5_pro:'Mama hat Haus 7 gesehen, Nada weiß, dass wir da sind.',k5_d1:'Für den Donnerstag ist alles getan. Es wird Abend.',k5_d2:'Hamdija ist gegangen, die Tafel ist fertig. Es ist bald zwei.'})[G.phase]||'Für jetzt ist alles getan.'; },
+ {id:'x5day',t:'Der Tag geht weiter',open:function(G){ return P(G,['k5_pro','k5_d1','k5_d2','k5_d2_n','k5_epi','k5_fun','k5_sat']) && !!(M.k5DayReady && M.k5DayReady(G)); },
+  s:[function(G){ return ({k5_pro:'Mama hat Haus 7 gesehen, Nada weiß, dass wir da sind.',k5_d1:'Für den Donnerstag ist alles getan. Es wird Abend.',k5_d2:'Hamdija ist gegangen, die Tafel ist fertig. Es ist bald zwei.',k5_d2_n:'Ich weiß, wem die Fahrscheine gehören. Der Abend geht zu Ende.',k5_epi:'Das Wasser ist in Ružas Küche. Gleich ist elf.',k5_fun:'Das Begräbnis ist vorbei.',k5_sat:'Der Samstag ist zu Ende.'})[G.phase]||'Für jetzt ist alles getan.'; },
      'Der Rest kommt von selbst.','Nichts mehr suchen.','Einen Moment warten: Der nächste Abschnitt beginnt von selbst.']}
 ];
 })(M);
@@ -24081,8 +24091,15 @@ function paintSky(b,wea){ var w=RW(b,RG.sky), x, y, sun=wea==='sun';
   for (y=0;y<44;y++) for (x=0;x<W;x++) w.px(x,y,ra(sun?R('b3 b4 b5 s6'):R('m3 m4 s5 s6'),0.25+y/44*0.7+(fbm(x,y,24,2)-0.5)*0.18,x,y)); }
 function paintHills(b){ var w=RW(b,RG.hill), x, y;
   for (x=0;x<W;x++){ var t1=Math.round(20+Math.sin(x*0.013+1.2)*6+Math.sin(x*0.05)*2); for (y=t1;y<52;y++) w.px(x,y,ra(R('e2 g1 e3 g2'),0.6-(y-t1)/50+(fbm(x,y,12,6)-0.5)*0.3,x,y)); }
-  var c=RW(b,RG.city); for (y=40;y<56;y++) for (x=0;x<W;x++){ if (y<40+Math.round(fbm(x,0,10,4)*6)) continue; var roof=hash(x>>2,y>>2); w.px(x,y,P.t3); c.px(x,y,roof<0.25?P.t2:(roof<0.6?P.s4:(roof<0.8?P.s5:P.m3))); }
-  M.fogBake(b,function(x,y){ var r=REG[y*W+x]; return r===RG.city?0.45:(r===RG.hill?0.3:0); },{col:P.s5}); }
+  // die Stadt im Tal: Reihen kleiner Häuser mit roten Dächern, dazwischen Minarette
+  var c=RW(b,RG.city), rr=M.rng(1976), row, i;
+  for (i=0;i<7;i++){ var mx=16+Math.floor(rr()*288); for (y=29;y<46;y++) c.px(mx,y,P.s6); c.px(mx,28,P.s4); c.px(mx,27,P.s4); c.px(mx-1,41,P.s5); c.px(mx+1,41,P.s5); }   // schlanke Minarette: Schaft, Spitze, Umgang weit unten
+  for (row=0;row<3;row++){ var yb=44+row*4;
+    for (x=-2;x<W;){ var hw=3+Math.floor(rr()*5), hh=2+Math.floor(rr()*3), wall=[P.s5,P.s4,P.e4,P.s6][Math.floor(rr()*4)];
+      for (y=yb-hh;y<yb;y++) for (var xx=x;xx<x+hw;xx++) c.px(xx,y,wall);
+      for (var xr=x;xr<x+hw;xr++) c.px(xr,yb-hh,rr()<0.8?P.t2:P.t3); if (rr()<0.5) c.px(x+1,yb-1,P.k2);
+      x+=hw+(rr()<0.35?1:0); } }
+  M.fogBake(b,function(x,y){ var r=REG[y*W+x]; return r===RG.city?0.5:(r===RG.hill?0.3:0); },{col:P.s5}); }
 function paintSlope(b){ var w=RW(b,RG.slope), x, y;
   for (y=52;y<GY+2;y++) for (x=0;x<W;x++){ var f=fbm(x,y,6,11); w.px(x,y,ra(R('e1 g1 g2 e2 g3'),0.3+(y-52)/70*0.4+(f-0.5)*0.35,x,y)); } }
 function stone(w,x,yb,h,wd,kind,shade){ var x0=x-(wd>>1), y0=yb-h, i, j;
@@ -24131,9 +24148,10 @@ M.defineArt('bare',{
   spots:{ exit:[0,112,14,30], grave:[LANA.mound.x0-2,LANA.post.y0-2,LANA.mound.x1-LANA.mound.x0+4,GY-LANA.post.y0+2], plate:[LANA.plate.x0-1,LANA.plate.y0-1,LANA.plate.x1-LANA.plate.x0+2,LANA.plate.y1-LANA.plate.y0+2],
     board:[LANA.board.x0-1,LANA.board.y0-1,LANA.board.x1-LANA.board.x0+2,LANA.board.y1-LANA.board.y0+2], quince:[LANA.q.x-5,GY-20,12,20], grave2:[Z.x0,GY-28,Z.x1-Z.x0,30],
     stones:[240,60,50,40], cypress:[54,48,18,52], city:[0,38,320,18], bench:[20,112,34,14], path:[140,124,40,14] },
-  stands:{ exit:[10,128,'L'], grave:[218,122,'B'], plate:[214,121,'B'], board:[216,121,'B'], quince:[236,121,'B'], grave2:[110,122,'B'], stones:[262,122,'B'], cypress:[66,124,'B'], city:[160,128,'B'], bench:[36,127,'B'], path:[160,130,'B'] },
-  actorPos:{ nada:[196,121,'R'], zlata:[236,121,'L'], jasna:[176,123,'R'], ana:[160,124,'R'], mia:[150,126,'R'], niko:[168,127,'R'], hajra:[254,122,'L'], kolar:[140,123,'R'],
-    vlado:[268,121,'L'], dragica:[282,123,'L'], sehic:[296,122,'L'], damir:[126,124,'R'], mala:[206,119,'R'], jasna2:[100,122,'R'], ana2:[124,123,'L'], nada2:[140,124,'L'] },
+  stands:{ exit:[10,128,'L'], grave:[260,123,'L'], plate:[260,123,'L'], board:[260,123,'L'], quince:[260,123,'L'], grave2:[124,124,'L'], stones:[262,122,'B'], cypress:[66,124,'B'], city:[160,128,'B'], bench:[36,127,'B'], path:[160,130,'B'] },
+  actorPos:{ nada:[188,121,'R'], zlata:[250,121,'L'], jasna:[172,123,'R'], ana:[158,124,'R'], mia:[147,126,'R'], niko:[164,127,'R'], hajra:[272,122,'L'], kolar:[134,123,'R'],
+    vlado:[284,121,'L'], dragica:[296,123,'L'], sehic:[308,122,'L'], damir:[120,124,'R'], mala:[196,118,'R'],
+    jasna2:[94,122,'R'], ana2:[80,123,'R'], mia2:[69,126,'R'], niko2:[86,127,'R'], nada2:[132,124,'L'], hajra2:[144,122,'L'], sehic2:[156,122,'L'], kolar2:[168,123,'L'] },
   start:[30,128,'R'], entries:{ map:[16,128,'R'] }
 });
 })(M);
@@ -37683,7 +37701,7 @@ function vn(x,y){ var xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi, a=ha
 function fbm(x,y){ return vn(x,y)*0.55+vn(x*2.03+5.1,y*2.03+1.7)*0.3+vn(x*4.1+2.3,y*4.1+8.1)*0.15; }
 function inWin(x,y){ return x>=WIN.x&&x<WIN.x+WIN.w&&y>=WIN.y&&y<WIN.y+WIN.h; }
 function catOf(S){ return (S && S.catAt==='window')?'window':'bed'; }
-function curS(){ return (M.GS&&M.GS.rooms&&M.GS.rooms.pansion)||{}; }
+function curS(){ var id=(M.E&&M.E.room&&M.E.room.id)||'pansion'; return (M.GS&&M.GS.rooms&&(M.GS.rooms[id]||M.GS.rooms.pansion))||{}; }   // Kapitel 5 nutzt das Bild als pansion5
 // Rechteck/Standpunkt, das je nach Zustand nachgelesen wird (bleibt für die Logik ein gewöhnliches Array)
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 var STOVE_DOOR=(function(){ var p=R3.p(STOVE.X1,86,STOVE.Z0+6), q=R3.p(STOVE.X1,94,STOVE.Z0+13); return [rnd(q[0]),rnd(p[1]),rnd(p[0]-q[0]),rnd(q[1]-p[1])]; })();
@@ -38451,6 +38469,13 @@ function paintHill(b,tod){ var w=RW(b,RG.hill), x, y;
       if (hash(x>>1,y>>1)<0.05 && y>top+4) c=hash(x,y)<0.5?P.s4:P.t3;                 // Häuser am Hang
       w.px(x,y,c); } }
   if (tod!=='night') M.fogBake(b,function(x,y){ return REG[y*W+x]===RG.hill?0.35:0; },{col:P.m4}); }
+// links hinter dem Brückenkopf: das andere Ufer der Miljacka, Ufermauer, kahle Bäume, ein Haus
+function paintFar(b,tod){ var w=RW(b,RG.hill), x, y;
+  for (y=56;y<WT+18;y++) for (x=0;x<BR.x1+4;x++){ var c; if (y<WT+8){ var f=fbm(x,y,4,21); c=f>0.55?ra(R('e1 w1 e2'),0.3+f*0.4,x,y):ra(R('s4 s5 m4'),0.5+(y-56)/40,x,y);
+      if (x>=8 && x<22 && y>=WT-2){ c=(y===WT-2)?P.t2:((x%5===2&&y>WT+1&&y<WT+5)?P.k2:P.s5); } }
+    else c=ra(R('s2 s3 s4'),0.4+((x+y)%6===0?-0.2:0)+hash(x>>1,y)*0.2,x,y);
+    w.px(x,y,c); }
+  if (tod!=='night') M.fogBake(b,function(x,y){ return (x<BR.x1+4 && y>=56 && y<WT+8)?0.3:0; },{col:P.m4}); }
 function paintBuilding(b){ var w=RW(b,RG.bldg), x, y, X0=150, X1=W, TOPY=22;
   for (y=TOPY;y<WT+4;y++) for (x=X0;x<X1;x++){ var c=ra(R('y1 y2 y2 y3'),0.5+(((y+((x>>3)%2)*2)%5===0)?-0.25:0)+((x%8===0)?-0.2:0)+(hash(x,y)-0.5)*0.15,x,y); w.px(x,y,c); }
   for (x=X0;x<X1;x++){ w.px(x,TOPY,P.t1); w.px(x,TOPY+1,P.t2); w.px(x,TOPY+2,P.y1); }
@@ -38490,7 +38515,7 @@ function paintStreet(b){ var w=RW(b,RG.street), x, y;
   for (y=50;y<WB+4;y++){ w.px(168,y,P.m1); w.px(169,y,P.m2); } w.rect(165,46,8,5,P.m1); w.hl(165,172,46,P.m3); w.hl(166,171,51,P.s4); }
 var LAST=null, TODN='day';
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0); if (tod!=='night') tod='day'; TODN=tod;
-  paintSky(b,tod,wea); paintHill(b,tod); paintBuilding(b); paintLinden(b,tod); paintWall(b,S); paintBridge(b,tod); paintStreet(b);
+  paintSky(b,tod,wea); paintHill(b,tod); paintFar(b,tod); paintBuilding(b); paintLinden(b,tod); paintWall(b,S); paintBridge(b,tod); paintStreet(b);
   M.light(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; var v=0; if (r===RG.street) v+=(y-WB)/40*0.15; if (r===RG.hill) v-=0.05; if (tod==='night') v-=0.45; return v-Math.abs(x-200)/900; });
   var base=b.clone();
   LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,t){ if (t==='day') return; for (var y=40;y<H;y++) for (var x=130;x<210;x++){ var d=Math.hypot(x-169,(y-60)*0.7); if (d<44 && bayer(x,y)<(1-d/44)*0.8) o.px(x,y,M.UP[o.get(x,y)]); } o.hl(166,171,51,P.y5); } });
@@ -52707,6 +52732,7 @@ var HS_NB=[
 ];
 M.room('neboder5',{ name:'Alipašino Polje', scape:'k2_neboder', music:function(G){ return ph(G)==='k5_sat'?'k2_mala':'k2_istraga'; },
   state:function(G){ return {tramIn:false}; },
+  load:function(A){ var r=M.ROOMS['neboder5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[]; if (jasnaFollows(G)) L.push({id:'jasna',ch:'jasnaC',x:304,y:122,f:'R',name:'Mama',idle:'waitF',speechY:46}); return L; },
   hotspots:HS_NB,
   entries:{ haustor5:[330,116,'F'], tramvaj5:[118,120,'R'] },
@@ -52746,6 +52772,7 @@ var HS_HT=[
 ];
 M.room('haustor5',{ name:'Haus 7', scape:'k2_haustor', music:'k2_istraga',
   state:function(G){ return {shelterOpen:false,strollerGone:false}; },
+  load:function(A){ var r=M.ROOMS['haustor5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[], c=hallCast(G);
     if (c.indexOf('dragica')>=0){ var d=M.apos('haustor','dragica',[82,120,'R']); L.push({id:'dragica',ch:'dragica',x:d[0],y:d[1],f:d[2]||'R',name:'Dragica',idle:'sit',talk:'sitTalk',speechY:36}); }
     if (c.indexOf('sehic')>=0){ var s=M.apos('haustor','sehic',[264,113,'L']); L.push({id:'sehic',ch:'sehic',x:s[0],y:s[1],f:s[2]||'L',name:'Herr Šehić',speechY:46}); }
@@ -52781,6 +52808,7 @@ var HS_SG=[
 ];
 M.room('stiege5',{ name:'Treppenhaus, siebter Stock', scape:'k2_haustor', music:function(G){ return ph(G)==='k5_sat'?'k2_mala':'k2_istraga'; },
   state:function(G){ return {open7:ph(G)==='k5_sat'}; },
+  load:function(A){ var r=M.ROOMS['stiege5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[], p=M.ART.stiege5&&M.ART.stiege5.actorPos||{};
     if (jasnaFollows(G)){ var j=p.jasna||[100,121,'R']; L.push({id:'jasna',ch:'jasnaC',x:j[0],y:j[1],f:j[2],name:'Mama',idle:'waitF',speechY:46}); var s=p.sehic||[192,121,'L']; if (f(G,'k5.p.sehicUp')) L.push({id:'sehic',ch:'sehic',x:s[0],y:s[1],f:s[2],name:'Herr Šehić',speechY:46}); }
     if (satAt7(G)){ var j2=p.jasna_door||[116,119,'L']; L.push({id:'jasna',ch:'jasnaC',x:j2[0],y:j2[1],f:j2[2],name:'Mama',idle:'waitF',speechY:46}); var s2=p.sehic||[192,121,'L']; L.push({id:'sehic',ch:'sehic',x:s2[0],y:s2[1],f:s2[2],name:'Herr Šehić',speechY:46}); }
@@ -52838,6 +52866,7 @@ var HS_SN=[
   g:{look:function(A){ return M.k5StanLookG?M.k5StanLookG(A,id):A.g('…'); },sense:function(A){ return M.k5StanSenseG?M.k5StanSenseG(A,id):A.g('…'); }}}; }));
 M.room('stan5',{ name:'Nadas Wohnung', scape:'k2_stan', music:function(G){ var p=ph(G); return p==='k5_d2_n'?'vecer':(p==='k5_sat'?'k2_otkrice':(p==='k5_n1'?'k2_noc':'k2_mala')); },
   state:function(G){ return {lanaOpen:f(G,'k5.d1.lana')||ph(G)!=='k5_pro'&&ph(G)!=='k5_d1'}; },
+  load:function(A){ var r=M.ROOMS['stan5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ return stanCast(G).map(function(k){ var p=SPOS[k], id=k.replace(/K$|B$/,''); var sitting=(k==='nada'||k==='jasna'||k==='zlata'||k==='ana');
     return {id:id,ch:SCH[k],x:p[0],y:p[1],f:p[2],name:SNAME[id],idle:sitting?'sit':null,talk:sitting?'sitTalk':null,speechY:sitting?36:(id==='mia'||id==='niko'?30:46)}; }); },
   hotspots:HS_SN,
@@ -52898,6 +52927,7 @@ var HS_CA=[
 ];
 M.room('carsija5',{ name:'Baščaršija', scape:'k2_carsija', music:function(G){ return ph(G)==='k5_sat'?'k2_mala':'k2_sarajevo'; },
   state:function(G){ return {tramIn:satEnd(G)}; },
+  load:function(A){ var r=M.ROOMS['carsija5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[];
     if (radeHere(G)){ var r=M.apos('carsija','rade',[198,116,'R']); L.push({id:'rade',ch:'rade',x:r[0],y:r[1],f:r[2]||'R',name:'Rade',speechY:46}); }
     if (damirHere(G)){ var d=M.apos('carsija','damir',[136,113,'L']); L.push({id:'damir',ch:'damir',x:d[0],y:d[1],f:d[2]||'L',name:'Damir',speechY:46}); }
@@ -52931,6 +52961,7 @@ var HS_KZ=[
 ];
 M.room('kazandziluk5',{ name:'Kazandžiluk', scape:'k2_kazan', music:'k2_istraga',
   state:function(G){ return {ladderUp:false,bookOut:false}; },
+  load:function(A){ var r=M.ROOMS['kazandziluk5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var p=ph(G); if (!(p==='k5_d1'||p==='k5_d2')) return []; var n=M.apos('kazandziluk','nedzad',[200,116,'R']); return [{id:'nedzad',ch:'nedzad',x:n[0],y:n[1],f:n[2]||'R',name:'Nedžad',speechY:46}]; },
   hotspots:HS_KZ,
   entries:{ carsija5:[14,124,'R'] },
@@ -52952,6 +52983,7 @@ var HS_TR=[
 var TPOS={ jasna:[122,108,'R'], nada:[160,108,'R'], ana:[234,126,'L'], mia:[212,128,'L'], niko:[196,127,'L'] };
 M.room('tramvaj5',{ name:'Straßenbahn, Linie 3', noMap:'Nicht während der Fahrt.', scape:'k2_tram', music:'k2_otkrice',
   state:function(G){ return {line:'3',moving:true,view:'towers'}; },
+  load:function(A){ var r=M.ROOMS['tramvaj5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ if (ph(G)!=='k5_sat') return []; return Object.keys(TPOS).map(function(id){ var p=TPOS[id], sit=id==='jasna'||id==='nada';
     return {id:id,ch:id==='jasna'?'jasnaC':(id==='ana'?'anaC':(id==='mia'?'miaC':(id==='niko'?'nikoC':id))),x:p[0],y:p[1],f:p[2],name:{jasna:'Mama',nada:'Nada',ana:'Ana',mia:'Mia',niko:'Niko'}[id],idle:sit?'sit':null,talk:sit?'sitTalk':null,speechY:sit?36:(id==='ana'?46:30)}; }); },
   hotspots:HS_TR.concat(['jasna','nada','ana','mia','niko'].map(function(id){ return {id:id,npc:id,name:{jasna:'Mama',nada:'Nada',ana:'Ana',mia:'Mia',niko:'Niko'}[id],
@@ -53004,6 +53036,7 @@ var HS_PV=[
 ];
 M.room('pivara',{ name:'An der Brauerei', scape:'k5_pivara', music:function(G){ return ph(G)==='k5_epi'?'k4_epi':(ph(G)==='k5_n1'?'k2_duh':'k2_istraga'); },
   state:function(G){ return {flow:f(G,'k5.e.flow'),boxOpen:f(G,'k5.b.opened')}; },
+  load:function(A){ var r=M.ROOMS['pivara']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ if (!hamdijaHere(G)) return []; var p=M.apos('pivara','hamdija',[214,118,'L']); return [{id:'hamdija',ch:'hamdija',x:p[0],y:p[1],f:p[2]||'L',name:'Hamdija',ghost:true,reveal:true,speechY:46,routine:false}]; },
   hotspots:HS_PV,
   enter:async function(A,from){ if (M.k5PivaraEnter) await M.k5PivaraEnter(A,from); }
@@ -53029,6 +53062,7 @@ var HS_IN=[
 ];
 M.room('institut',{ name:'Gerichtsmedizin', scape:'k3_vermisst', music:'k3_epi',
   state:function(G){ return {}; },
+  load:function(A){ var r=M.ROOMS['institut']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[], p=ph(G); if (p==='k5_d2'||p==='k5_fun'||p==='k5_d2_n'){ var k=M.apos('vermisst','kolar',[196,118,'L']); L.push({id:'kolar',ch:'kolar',x:k[0],y:k[1],f:k[2]||'L',name:'Frau Kolar',idle:'sit',talk:'sitTalk',speechY:36}); }
     if (p==='k5_d2' && f(G,'k5.d2.instIn') && !f(G,'k5.d2.inst')){ var n=M.apos('vermisst','nada',[120,120,'R']); L.push({id:'jasna',ch:'jasnaC',x:n[0],y:n[1],f:n[2]||'R',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36}); }
     return L; },
@@ -53039,9 +53073,10 @@ M.room('institut',{ name:'Gerichtsmedizin', scape:'k3_vermisst', music:'k3_epi',
 // ================================================================ Friedhof Bare
 function funCast(G){ var p=ph(G);
   if (p==='k5_fun' && !f(G,'k5.fun.done')){ var L=['nada','zlata','jasna','ana','mia','niko','hajra','kolar','vlado','dragica','sehic']; if (f(G,'k5.d2.damir')) L.push('damir'); return L; }
-  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia','niko','hajra','sehic','kolar'];
+  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia2','niko2','hajra2','sehic2','kolar2'];
   return []; }
-var BCH={ nada:'nada', nada2:'nada', zlata:'zlata', jasna:'jasnaC', jasna2:'jasnaC', ana:'anaC', ana2:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir' };
+var BCH={ nada:'nada', zlata:'zlata', jasna:'jasnaC', ana:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir' };
+function bch(k){ return BCH[k.replace('2','')]; }
 var BNAME={ nada:'Nada', zlata:'Zlata', jasna:'Mama', ana:'Ana', mia:'Mia', niko:'Niko', hajra:'Hajra', kolar:'Frau Kolar', vlado:'Vlado', dragica:'Dragica', sehic:'Herr Šehić', damir:'Damir' };
 var HS_BA=[
  {id:'exit',name:'Zum Stadtplan',exit:{to:'map'},canExit:async function(A){ if (ph(A.G)==='k5_fun'){ await A.m('Ich bleibe. Bis zum Ende.'); return false; } return true; },look:'Der Weg hinunter zum Tor.',g:{look:'Da unten ist das Tor.'}},
@@ -53058,11 +53093,12 @@ var HS_BA=[
  {id:'bench',name:'Bank',look:'Eine Bank am Weg. Darauf liegt ein vergessener Handschuh, schwarz, für die linke Hand.',g:{look:'Einer hat einen Handschuh vergessen. Er kommt wieder.'}},
  {id:'path',name:'Weg',look:'Der Kiesweg zwischen den Reihen. Er knirscht. Alle gehen leise, und er knirscht trotzdem.',g:{look:'Kies. Er verrät jeden. Mich nicht.'}}
 ].concat(Object.keys(BNAME).map(function(id){ return {id:id,npc:id,name:BNAME[id],talk:function(A){ return M.k5BareTalk?M.k5BareTalk(A,id):A.m('…'); },look:function(A){ return M.k5BareLook?M.k5BareLook(A,id):A.m(BNAME[id]+'.'); },g:{look:'…'}}; }))
- .concat(['jasna2','ana2','nada2'].map(function(k){ var id=k.replace('2',''); return {id:k,npc:k,name:BNAME[id],talk:function(A){ return M.k5BareTalk?M.k5BareTalk(A,id):A.m('…'); },look:function(A){ return M.k5BareLook?M.k5BareLook(A,id):A.m(BNAME[id]+'.'); },g:{look:'…'}}; }));
+ .concat(['jasna2','ana2','nada2','mia2','niko2','hajra2','sehic2','kolar2'].map(function(k){ var id=k.replace('2',''); return {id:k,npc:k,name:BNAME[id],talk:function(A){ return M.k5BareTalk?M.k5BareTalk(A,id):A.m('…'); },look:function(A){ return M.k5BareLook?M.k5BareLook(A,id):A.m(BNAME[id]+'.'); },g:{look:'…'}}; }));
 M.room('bare',{ name:'Friedhof Bare', scape:'k5_bare', music:'k3_grob',
   state:function(G){ return {post:true,quince:f(G,'k5.fun.quince')||ph(G)==='k5_epi',grave2:ph(G)==='k5_epi'}; },
-  actors:function(S,G){ var A0=M.ART.bare&&M.ART.bare.actorPos||{}; return funCast(G).map(function(k){ var p=A0[k]||[160,124,'R'], id=k; var small=k==='mia'||k==='niko';
-    return {id:id,ch:BCH[k],x:p[0],y:p[1],f:p[2],name:BNAME[k.replace('2','')],speechY:small?30:46}; }); },
+  load:function(A){ var r=M.ROOMS['bare']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
+  actors:function(S,G){ var A0=M.ART.bare&&M.ART.bare.actorPos||{}; return funCast(G).map(function(k){ var p=A0[k]||[160,124,'R'], id=k; var small=/^(mia|niko)/.test(k);
+    return {id:id,ch:bch(k),x:p[0],y:p[1],f:p[2],name:BNAME[k.replace('2','')],speechY:small?30:46}; }); },
   hotspots:HS_BA,
   enter:async function(A,from){ if (M.k5BareEnter) await M.k5BareEnter(A,from); }
 });
@@ -53123,6 +53159,7 @@ var HS_ST=[
 ];
 M.room('stanica5',{ name:'Busbahnhof', scape:'k2_stanica', music:'k2_sarajevo',
   state:function(G){ return {tramIn:false,busTo:'muenchen'}; },
+  load:function(A){ var r=M.ROOMS['stanica5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[]; if (ph(G)==='k5_pro' && !f(G,'k5.p.taxi')) L.push({id:'jasna',ch:'jasnaC',x:74,y:122,f:'R',name:'Mama',idle:'waitF',speechY:46}); return L; },
   hotspots:HS_ST,
   enter:async function(A,from){ if (ph(A.G)!=='k5_pro' && A.first('k5stLater')) await A.m('Der Busbahnhof. Von hier fährt Mama am Dienstag zurück.'); }
@@ -53164,6 +53201,7 @@ var HS_PA=[
 ];
 M.room('pansion5',{ name:'Pension in Kovači', scape:'k2_pansion', music:function(G){ return ph(G)==='k5_n1'?'k2_noc':(ph(G)==='k5_epi'?'k4_epi':'k2_sarajevo'); },
   state:function(G){ return {coffee:ph(G)==='k5_sat',charging:true,catAt:ph(G)==='k5_n1'?'bed':'window'}; },
+  load:function(A){ var r=M.ROOMS['pansion5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[];
     if (hajraHere(G)){ var h=M.apos('pansion','hajra',[132,113,'L']); L.push({id:'hajra',ch:'hajra',x:h[0],y:h[1],f:h[2]||'L',name:'Hajra',speechY:42}); }
     if (jasnaInPension(G)) L.push({id:'jasna',ch:ph(G)==='k5_sat'?'jasnaC':'jasna',x:206,y:126,f:'L',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36});
@@ -53215,6 +53253,7 @@ var HS_VR2=HS_VR.concat([
 M.room('vratnik5',{ name:'Vratnik', scape:'k2_vratnik', tod:vratnikTod,
   music:function(G){ var p=ph(G); return p==='k5_d2_n'?'k2_noc':(p==='k5_sat'?'k2_mala':(p==='k5_epi'?'k4_epi':'k2_sjecanje')); },
   state:function(G){ return {}; },
+  load:function(A){ var r=M.ROOMS['vratnik5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:vratnikActors,
   hotspots:HS_VR2,
   entries:{ kuca5:[254,115,'F'] },
@@ -53224,7 +53263,7 @@ M.room('vratnik5',{ name:'Vratnik', scape:'k2_vratnik', tod:vratnikTod,
 // ================================================================ Ružas Küche
 function kucaCast(G){ var p=ph(G); if (p==='k5_pro') return (f(G,'k5.p.inside') && !has(G,'b5_hand'))?['jasna']:[]; if (p==='k5_sat' && f(G,'k5.sat.gate')) return ['jasna','nada','hajra','ana','mia','niko'];
   if (p==='k5_epi' && f(G,'k5.e.funeral')) return ['jasna','nada','hajra','ana','mia','niko']; return []; }
-var KPOS={ jasna:[118,118,'R'], nada:[176,122,'L'], hajra:[204,108,'L'], ana:[96,124,'R'], mia:[140,128,'L'], niko:[156,126,'L'] };
+var KPOS={ jasna:[100,120,'R'], nada:[178,122,'L'], hajra:[210,110,'L'], ana:[80,127,'R'], mia:[124,131,'R'], niko:[138,130,'R'] };
 var KCH={ jasna:'jasna', nada:'nada', hajra:'hajra', ana:'ana', mia:'mia', niko:'niko' };
 var KNAME={ jasna:'Mama', nada:'Nada', hajra:'Hajra', ana:'Ana', mia:'Mia', niko:'Niko' };
 var HS_KU=[
@@ -53243,8 +53282,8 @@ var HS_KU=[
  {id:'window',name:'Fenster',look:function(A){ return A.m(ph(A.G)==='k5_epi'&&F(A,'k5.e.funeral')?'Das Fenster neben dem Tisch ist beschlagen, vom Kaffee und von uns allen.':'Das Küchenfenster. Dahinter das Tal, die Stadt, die Hänge des Trebević.'); },
    use:function(A){ return M.k5KucaWindow?M.k5KucaWindow(A):A.m('Später.'); },
    g:{look:'Durch das Fenster hat sie uns kommen sehen. Ich war immer zuerst da.'}},
- {id:'calendar',name:'Kalender',look:'Ein Kalender von 1993, April. Darauf ein Bild vom Trebević im Schnee. Am Neunzehnten ist nichts angestrichen. Am Zwanzigsten ein Kreuz.',
-   g:{look:'Neunzehnter April. Das Kreuz am Zwanzigsten hat sie gemacht, als sie es wusste.'}},
+ {id:'calendar',name:'Kalender',look:'Ein Kalender, Februar 1994. Darauf der Trebević im Schnee. Seitdem hat keiner umgeblättert. Die Familie aus Foča auch nicht.',
+   g:{look:'Februar vierundneunzig. Da hat Baka aufgehört umzublättern. Ich weiß, warum.'}},
  {id:'sofa',name:'Sofa',look:'Das Sofa unter dem Fenster. Hier hat sie Mittagsschlaf gehalten, mit dem Radio auf dem Bauch.',use:'Ich setze mich. Die Feder in der Mitte ist noch da.',g:{look:'Darauf habe ich gesessen und auf den Kaffee gewartet. Er auch.'}},
  {id:'photo',name:'Foto',look:'Ein Foto über dem Sofa: Ruža mit Zoran als Kind, beide mit der gleichen Mütze.',g:{look:'Sie hat ihn ausgeschimpft, weil die Mütze schief saß. Seine auch.'}},
  {id:'sheets',name:'Tücher',vis:function(S,G){ return ph(G)==='k5_pro'; },look:'Weiße Tücher über den Möbeln. Die Familie aus Foča hat nichts angefasst. Sie haben alles zugedeckt, als wäre es ein Haus, in das einer zurückkommt.',
@@ -53254,6 +53293,7 @@ var HS_KU=[
   give:{ dose_lana:function(A){ return A.m('Die Dose ist nicht mehr meine.'); } },g:{look:'…'}}; }));
 M.room('kuca5',{ name:'Ružas Küche', scape:'k2_kuca', music:function(G){ return ph(G)==='k5_epi'?'k4_epi':'k2_sjecanje'; },
   state:function(G){ return {compOpen:false,msgTaken:true,sheetsOff:ph(G)!=='k5_pro'}; },
+  load:function(A){ var r=M.ROOMS['kuca5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ return kucaCast(G).map(function(id){ var p=KPOS[id]; var sit=id==='jasna'||id==='nada'||id==='ana'; return {id:id,ch:KCH[id],x:p[0],y:p[1],f:p[2],name:KNAME[id],idle:sit&&ph(G)!=='k5_pro'?'sit':null,talk:sit&&ph(G)!=='k5_pro'?'sitTalk':null,speechY:sit?36:(id==='mia'||id==='niko'?30:44)}; }); },
   hotspots:HS_KU,
   entries:{ vratnik5:M.ART.kuca&&M.ART.kuca.entries?M.ART.kuca.entries.vratnik:undefined },
@@ -65967,7 +66007,7 @@ M.startChapter5=async function(A){ var E=M.E; E.busy=true;
     if (c.slippers && M.ITEMS.pantoffeln) A.give('pantoffeln'); if (c.nada && M.ITEMS.dose_voll) A.give('dose_voll');
     ['k5_c_muenchen','k5_c_mala'].forEach(function(id){ A.note(id,true); });
     ['nada','zlata','kolar','vlado','hajra','rade','damir','dragica','sehic','nedzad','jasna','ana','mia','niko','tobias','mala','jasnaW','jasnaC','anaC','miaC','nikoC'].forEach(function(id){ G.flags['met.'+id]=true; });
-    G.flags['k5.moves']=0;
+    G.flags['k5.moves']=0; G.map=G.map||{}; G.map.stanica=true; G.map.pansion=true;   // Busbahnhof und Hajras Pension kennt Marko aus Kapitel 2
     E.screen='card'; await A.card({kicker:'Kapitel 5',title:'Sarajevo',sub:'Prolog – Ankunft',time:'Donnerstag, 1. März 2012 · früh',ms:5200});
     A.music('k2_bus');
     var lines=['Fünfzehn Stunden Bus. Seit Ljubljana sagt Mama nichts. Bei Tarčin wird es hell, und sie sitzt am Fenster und sieht hinaus. Die ganze Zeit.'];
@@ -66015,7 +66055,7 @@ M.MAP_KNOW.bare={ch:5, know:function(G){ return M.chapterOf(G)===5 && has(G,'s5_
 // ---------------------------------------------------------------- Reisen
 function travelWhy(G,L){ var p=G.phase, id=L.id, alone=G.active==='mala';
   if (alone) return {tg:'Ohne ihn fahre ich nicht durch die Stadt. Nicht in dieser Woche.'};
-  if (p==='k5_pro'){ if (!f(G,'k5.p.hajra') && id!=='pansion') return {t:'Erst zu Hajra. Mama ist seit fünfzehn Stunden unterwegs.'}; return null; }
+  if (p==='k5_pro'){ if (!f(G,'k5.p.taxi')) return {t:'Erst ein Taxi. Mama steht mit den Koffern am Bahnsteig.'}; if (!f(G,'k5.p.hajra') && id!=='pansion') return {t:'Erst zu Hajra. Mama ist seit fünfzehn Stunden unterwegs.'}; return null; }
   if (p==='k5_n1'){ if (id==='pansion'||id==='pivara') return null; return {t:'Es ist Nacht. Die Stadt schläft, und ich sollte es auch.'}; }
   if (p==='k5_d2'){ if (id==='bare') return {t:'Um zwei. Vorher ist da nichts für uns.'}; return null; }
   if (p==='k5_fun') return {t:'Erst das Begräbnis.'};
@@ -66135,7 +66175,7 @@ M.k5StartZoran=async function(A){ if (A.flag('k5.e.funeral')) return; A.setFlag(
   await bring(A,'bare',{at:standOf('bare','grave2'),noMala:true}); A.music('k3_grob'); A.save();
   if (M.k5Zoran) await M.k5Zoran(A);
   await A.fade(8,1200); await card(A,'','Ružas Küche','Montag · Abend',3600);
-  await bring(A,'kuca5',{at:standOf('kuca5','table'),noMala:true}); A.music('k4_epi'); A.save();
+  await bring(A,'kuca5',{at:[156,128,'L'],noMala:true}); A.music('k4_epi'); A.save();
   if (M.k5Final) await M.k5Final(A); };
 
 // ---------------------------------------------------------------- Laden mitten im Kapitel: unterbrochene Wechsel nachholen
@@ -66149,7 +66189,7 @@ M.PENDING_X=M.PENDING_X||[];
   {from:'k5_epi', when:function(G){ return G.flags['k5.e.funeral'] && !G.flags['k5.e.done']; }, run:function(A){ return M.k5FinalLoad?M.k5FinalLoad(A):null; }} ].forEach(function(r){ M.PENDING_X.push(r); });
 
 // ---------------------------------------------------------------- Raumwechsel: Zähler, Freigaben aus dem Stand der Geschichte
-function storyOpen(G){ if (!G.map) G.map={}; if (f(G,'k5.p.hajra')){ G.map.pansion=true; G.map.vratnik=true; } if (has(G,'b5_hand')) G.map.neboder=true;
+function storyOpen(G){ if (!G.map) G.map={}; G.map.stanica=true; G.map.pansion=true; if (f(G,'k5.p.hajra')){ G.map.vratnik=true; } if (has(G,'b5_hand')) G.map.neboder=true;
   if (f(G,'k5.d1.started')){ G.map.carsija=true; G.map.kazandziluk=true; G.map.pivara=true; } if (f(G,'k5.d2.started')) G.map.institut=true; if (f(G,'k5.fun.started')) G.map.bare=true; }
 M.MIGRATE.push(function(G){ if (CH5(G)) storyOpen(G); });
 M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,id,from,o); if (!CH5(G)) return; G.flags['k5.moves']=(G.flags['k5.moves']||0)+1; storyOpen(G); }; })(M.onRoomChange);
@@ -71244,18 +71284,31 @@ M.k5Evening=async function(A){ var N=A.npc('nada');
   await A.m('Das Brett lehnt an der Wand. Nadas Tafel liegt bei Nedžad, leer. Zwei Namen für eine. Ich entscheide das nicht.'); };
 M.k5EveLoad=async function(A){ if (!F(A,'k5.n1.eve') && A.room && A.room.id==='stan5') await M.k5Evening(A); };
 
+// ================================================================ Tagesanfänge
+M.k5D1Start=async function(A){ var N=A.npc('nada');
+  A.sfx('phone'); await A.narrate('Mein Telefon klingelt. Frau Kolar, von der Gerichtsmedizin.');
+  await A.phoneVoice('Herr Vuković. Morgen um neun können wir die Identifizierung abschließen. Bringen Sie Ihre Mutter mit, wenn sie will. Sie muss nicht.','kolar');
+  await A.m('Morgen um neun. Ich sage es ihr.'); await A.phoneVoice('Und Herr Vuković: Kommen Sie pünktlich. Das sind hier wenige.','kolar');
+  if (N.actor){ await A.wait(300); await N.say('Die Kolar? Die ruft immer an, wenn man gerade Kaffee eingeschenkt hat.'); }
+  await A.m('Donnerstag. Nadas Tafel ist noch leer. Und die Hand auf meinen Augen hat nach Malz gerochen.'); A.save(); };
+M.k5D2Start=async function(A){ var G=A.G;
+  await A.narrate('Freitag. Es klopft. Zweimal, ungeduldig. Mama, schon im Mantel, vor meiner Tür.');
+  await A.npc('jasna').say('Um neun bei Frau Kolar. Ich komme mit. Ich will ihn sehen.'); await A.m('Ich weiß.');
+  if (G.malaOn){ await A.wait(300); await A.g('Heute Mittag ist mein Begräbnis. Und vorher noch so viel.'); }
+  A.save(); };
+
 // ================================================================ Nacht in der Pension: „Acht Wochen“ (Konzept 9.1)
 M.k5PensionWindow=async function(A){ var p=ph(A);
   if (p!=='k5_n1') return A.m(A.cycle('k5pw',['Draußen die Dächer von Kovači, Minarette, weiter oben die weißen Steine.','Ich sehe hinaus. Die Stadt sieht nicht zurück.']));
   if (!F(A,'k5.n1.home')) return A.m('Kalt.');
-  if (F(A,'k5.n1.atem')){ A.setFlag('k5.n1.fog',A.gt); A.sfx('gust'); await A.m('Ich hauche die Scheibe an. Der Beschlag hält ein paar Sekunden.'); if (gHere(A)){ await A.g('Ich ziehe eine Linie. Siehst du? Drei Sekunden. Vier.'); } return; }
+  if (F(A,'k5.n1.atem')){ A.G.flags['k5.n1.fog']=A.gt; A.G.flags['k5.n1.three']=0; A.sfx('gust'); await A.m('Ich hauche die Scheibe an. Der Beschlag hält ein paar Sekunden.'); if (gHere(A)){ await A.g('Ich ziehe eine Linie. Siehst du? Drei Sekunden. Vier.'); } return; }
   return atem(A); };
 M.k5PensionWindowG=async function(A){ if (ph(A)!=='k5_n1') return A.g('Die Scheibe ist klar.');
-  var t=A.flag('k5.n1.fog'); if (F(A,'k5.n1.atem') && t && A.gt-t<6000){ await A.g('Ich ziehe eine Drei. Sie hält. Dann geht sie mit dem Beschlag.'); return; }
+  var t=A.flag('k5.n1.fog'); if (F(A,'k5.n1.atem') && t && A.gt-t<6000){ A.G.flags['k5.n1.three']=A.gt; await A.g('Ich ziehe eine Drei. Sie hält. Dann geht sie mit dem Beschlag.'); return; }
   return A.g('Die Scheibe ist klar. Er muss erst hauchen. Nur bei ihm geht es.'); };
 async function atem(A){ var G=A.G;
-  A.sfx('gust'); await A.narrate('Die Scheibe ist kalt. Ich hauche sie an, damit ich hinaussehe.');
-  await A.wait(700); await A.narrate('Im Beschlag erscheint eine Linie. Dann eine zweite. Eine Drei.');
+  A.sfx('gust'); A.G.flags['k5.n1.fog']=A.gt; await A.narrate('Die Scheibe ist kalt. Ich hauche sie an, damit ich hinaussehe.');
+  await A.wait(700); A.G.flags['k5.n1.three']=A.gt; await A.narrate('Im Beschlag erscheint eine Linie. Dann eine zweite. Eine Drei.');
   await A.wait(900); await A.m('…'); await A.g('…'); await A.wait(500);
   await A.g('Das war ich.');
   await A.m('In Split. Auf meinem Fenster. Ich habe sie weggewischt.');
@@ -71265,7 +71318,7 @@ async function atem(A){ var G=A.G;
   for (var k=0;k<3;k++){ var opts=[]; if (!tried.mirror) opts.push({t:'Versuch es auf dem Spiegel.',id:'mirror'}); if (!tried.again) opts.push({t:'Noch einmal.',id:'again'}); if (!opts.length) break;
     var c=await A.choose(opts,{title:'Die Scheibe'}); tried[c]=true;
     if (c==='mirror'){ await A.narrate('Ich drehe im Bad das heiße Wasser auf. Der Spiegel beschlägt. Mala hebt die Hand. Nichts.'); await A.g('Wie bei Mama. Jeden Abend, wenn sie geduscht hatte.'); }
-    else { A.sfx('gust'); await A.narrate('Ich hauche, sie zieht einen Strich. Er hält, bis der Beschlag geht. Drei Sekunden, vielleicht vier.'); } }
+    else { A.sfx('gust'); A.G.flags['k5.n1.fog']=A.gt; A.G.flags['k5.n1.three']=A.gt+600; await A.narrate('Ich hauche, sie zieht einen Strich. Er hält, bis der Beschlag geht. Drei Sekunden, vielleicht vier.'); } }
   await A.narrate('Im Flur steht Mia im Schlafanzug am Fenster und haucht eine Sonne. Sie schläft nebenan, mit Ana und Niko. Mala zeichnet daneben. Nichts.');
   await A.npc('mia').say('Onkel Marko, mit wem redest du?'); await A.m('Mit dem Kater.'); await A.npc('mia').say('Der Kater heißt Mačak. Das heißt Kater.'); await A.narrate('Sie geht.');
   await A.m('Nur bei mir.'); await A.g('Nur in deinem Atem. Das ist kein Kompliment. Du hattest Zwiebeln.');
@@ -71925,7 +71978,7 @@ M.k5Farewell=async function(A){ var G=A.G; if (F(A,'k5.sat.gate')) return;
   await A.wait(900); await A.m('Mein Kopf ist still.');
   A.save(); await A.wait(1200); A.music('k2_sjecanje');
   await A.narrate('Ich setze mich in die Küche. Nach einer Weile kommen die Stimmen der anderen die Gasse herauf. Hajra, Mia, die Mütter.');
-  await A.goto('kuca5',{x:M.k5StandOf('kuca5','table')[0],y:M.k5StandOf('kuca5','table')[1],f:'B',noEnter:true});
+  await A.goto('kuca5',{x:156,y:128,f:'L',noEnter:true});
   await M.k5Lunch(A); };
 // ---------------------------------------------------------------- Das Mittagessen unter Ružas Dach (Nachklang)
 M.k5Lunch=async function(A){ if (F(A,'k5.sat.lunch')) return; var N=A.npc('nada'), J=A.npc('jasna');
@@ -72034,19 +72087,50 @@ M.k5Final=async function(A){ if (F(A,'k5.e.final')) return; var c=C(), J=A.npc('
   await A.wait(600); await A.narrate('Das Fenster neben dem Tisch ist beschlagen, vom Kaffee und von uns allen.');
   A.setFlag('k5.e.final'); A.save(); };
 M.k5FinalLoad=async function(A){ if (F(A,'k5.e.done')) return; if (!F(A,'k5.e.zoranDone')){ await M.k5Zoran(A); }
-  if (!A.room || A.room.id!=='kuca5') await M.k5Bring(A,'kuca5',{at:M.k5StandOf('kuca5','table'),noMala:true});
+  if (!A.room || A.room.id!=='kuca5') await M.k5Bring(A,'kuca5',{at:[156,128,'L'],noMala:true});
   if (!F(A,'k5.e.final')) await M.k5Final(A); };
 async function lastDrawing(A){ var An=A.npc('ana'), Mi=A.npc('mia');
-  await A.narrate('Ich zeichne eine Straßenbahn. Die Oberleitung. Den langen Wagen. Vorn eine Drei. In jedes Fenster ein Gesicht, so gut ich kann.');
-  await A.wait(900); await A.narrate('Dann die Räder.'); await A.wait(1400); await A.narrate('Sie stimmen.');
+  A.setFlag('k5.e.tram'); await A.narrate('Ich zeichne eine Straßenbahn. Die Oberleitung. Den langen Wagen. Vorn eine Drei. In jedes Fenster ein Gesicht, so gut ich kann.');
+  await A.wait(900); await A.narrate('Dann die Räder.'); A.setFlag('k5.e.wheels'); await A.wait(1400); await A.narrate('Sie stimmen.');
   A.note('f5_rad'); await A.wait(500);
   await Mi.say('Onkel Marko kann malen!'); await An.say('Seit wann?');
   var c=await A.choose([{t:'Seit Samstag.',id:'a'},{t:'Schon immer. Nur die Räder nicht.',id:'b'},{t:'(Nichts sagen.)',id:'c',silent:true}],{title:'Seit wann?'});
   A.setFlag('k5.e.last',c); if (c==='c') await A.wait(900);
   await A.narrate('Draußen gehen in der Stadt die Lichter an, eins nach dem anderen, bis Ilidža. Der Beschlag wird dünner. Die Straßenbahn geht mit ihm, erst die Räder, dann die Gesichter, zuletzt die Drei.');
+  A.G.flags['k5.e.wheels']=false; await A.wait(700); A.G.flags['k5.e.tram']=false; await A.wait(700); A.setFlag('k5.e.clear');
   await A.wait(800); await A.narrate('Dahinter ist die Stadt.');
   A.music('silence'); await A.wait(4000);
   A.setFlag('k5.e.done'); await dayCheck(A); }
+
+// ================================================================ Sichtbare Zeichnungen auf beschlagenem Glas (Bildebene über den Bildern aus Kapitel 2)
+function fogPatch(fb,x0,y0,w,h,cam,amt){ var P=M.P; for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var dx=(x-(x0+w/2))/(w/2), dy=(y-(y0+h/2))/(h/2), d=dx*dx+dy*dy; if (d>1) continue; if (M.bayer(x,y)<(1-d*0.7)*amt) fb.px(x-cam,y,(d<0.4&&M.bayer(x+3,y)<0.5)?P.s6:P.s5); } }
+function pline(fb,pts,cam,c){ for (var i=0;i<pts.length-1;i++){ var a=pts[i], b=pts[i+1], n=Math.max(1,Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1])); for (var k=0;k<=n;k++) fb.px(Math.round(a[0]+(b[0]-a[0])*k/n)-cam,Math.round(a[1]+(b[1]-a[1])*k/n),c); } }
+// eine Straßenbahn im Beschlag: Fahrdraht, Stromabnehmer, langer Wagen, vorn eine Drei; Gesichter, Räder (eiförmig oder rund)
+function tram(fb,x,y,cam,o){ var P=M.P, c=P.m2;
+  pline(fb,[[x-2,y],[x+20,y]],cam,c); pline(fb,[[x+8,y+1],[x+10,y+5],[x+12,y+1]],cam,c);
+  pline(fb,[[x,y+6],[x+18,y+6],[x+19,y+8],[x+19,y+14],[x,y+14],[x,y+6]],cam,c);
+  if (o.three){ pline(fb,[[x+15,y+8],[x+17,y+8],[x+16,y+10],[x+17,y+12],[x+15,y+12]],cam,c); }
+  for (var i=0;i<3;i++){ var wx=x+2+i*4; pline(fb,[[wx,y+8],[wx+2,y+8],[wx+2,y+11],[wx,y+11],[wx,y+8]],cam,c); if (o.faces) fb.px(wx+1-cam,y+9,P.k2); }
+  if (o.wheels==='egg'){ pline(fb,[[x+3,y+15],[x+5,y+15],[x+6,y+17],[x+4,y+18],[x+2,y+17],[x+3,y+15]],cam,c); pline(fb,[[x+13,y+15],[x+15,y+16],[x+15,y+17],[x+13,y+18],[x+12,y+16],[x+13,y+15]],cam,c); }
+  if (o.wheels==='round'){ [[x+4,y+16],[x+14,y+16]].forEach(function(q){ pline(fb,[[q[0]-1,q[1]-1],[q[0]+1,q[1]-1],[q[0]+2,q[1]],[q[0]+1,q[1]+1],[q[0]-1,q[1]+1],[q[0]-2,q[1]],[q[0]-1,q[1]-1]],cam,c); }); } }
+(function(){ var P=M.P;
+  // Nadas Balkontür am Samstag
+  var R=M.ROOMS.stan5, d0=R&&R.dynamic;
+  if (R) R.dynamic=function(fb,v,S,G){ if (d0) d0(fb,v,S,G);
+    if (G.flags['k5.n1.eve'] && !G.flags['k5.s.mounted']){ var c=v.cam; for (var y=94;y<120;y++) for (var x=54;x<61;x++) fb.px(x-c,y,y>108?(M.bayer(x,y)<0.5?P.m2:P.m3):(x===54?P.w4:(x===60?P.w1:((y-94)%5===2&&x>55&&x<59?P.w0:P.w2)))); }
+    if (G.phase==='k5_sat' && G.flags['k5.sat.knock'] && !G.flags['k5.sat.drawn']){ var s=G.flags['k5.sat.draw']||0; if (!s) return;
+      fogPatch(fb,139,42,22,36,v.cam,s>=2?0.62:0.5); if (s>=2) tram(fb,140,48,v.cam,{three:true,faces:s>=4,wheels:s>=5?'egg':null}); } };
+  // Ružas Küchenfenster am Montagabend
+  var K=M.ROOMS.kuca5, k0=K&&K.dynamic;
+  if (K) K.dynamic=function(fb,v,S,G){ if (k0) k0(fb,v,S,G);
+    if (G.phase==='k5_epi' && G.flags['k5.e.final'] && !G.flags['k5.e.clear']){ var r=M.spot('kuca','window'); if (!r||!r[2]) return; fogPatch(fb,r[0]+3,r[1]+3,r[2]-6,r[3]-6,v.cam,0.6);
+      if (G.flags['k5.e.tram']) tram(fb,Math.round(r[0]+r[2]/2-9),Math.round(r[1]+r[3]/2-9),v.cam,{three:true,faces:true,wheels:G.flags['k5.e.wheels']?'round':null}); } };
+  // die Pension in der Nacht: der Atem am Fenster, eine Drei
+  var Q=M.ROOMS.pansion5, q0=Q&&Q.dynamic;
+  if (Q) Q.dynamic=function(fb,v,S,G){ if (q0) q0(fb,v,S,G); var t=G.flags['k5.n1.fog']; if (G.phase!=='k5_n1' || !t || v.gt-t>6000 || v.gt<t) return;
+    var r=M.spot('pansion','window'); if (!r||!r[2]) return; var a=1-(v.gt-t)/6000, cx=Math.round(r[0]+r[2]/2-6), cy=Math.round(r[1]+r[3]/2-4); fogPatch(fb,cx-4,cy-4,22,18,v.cam,0.7*a);
+    var th=G.flags['k5.n1.three']; if (th && v.gt>=th && v.gt-th<5000) pline(fb,[[cx+4,cy],[cx+8,cy],[cx+6,cy+4],[cx+8,cy+8],[cx+4,cy+8]],v.cam,P.m2); };
+})();
 })(M);
 
 /* ---- 97_k5_mala.js ---- */

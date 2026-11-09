@@ -40,6 +40,7 @@ var HS_PV=[
 ];
 M.room('pivara',{ name:'An der Brauerei', scape:'k5_pivara', music:function(G){ return ph(G)==='k5_epi'?'k4_epi':(ph(G)==='k5_n1'?'k2_duh':'k2_istraga'); },
   state:function(G){ return {flow:f(G,'k5.e.flow'),boxOpen:f(G,'k5.b.opened')}; },
+  load:function(A){ var r=M.ROOMS['pivara']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ if (!hamdijaHere(G)) return []; var p=M.apos('pivara','hamdija',[214,118,'L']); return [{id:'hamdija',ch:'hamdija',x:p[0],y:p[1],f:p[2]||'L',name:'Hamdija',ghost:true,reveal:true,speechY:46,routine:false}]; },
   hotspots:HS_PV,
   enter:async function(A,from){ if (M.k5PivaraEnter) await M.k5PivaraEnter(A,from); }
@@ -65,6 +66,7 @@ var HS_IN=[
 ];
 M.room('institut',{ name:'Gerichtsmedizin', scape:'k3_vermisst', music:'k3_epi',
   state:function(G){ return {}; },
+  load:function(A){ var r=M.ROOMS['institut']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[], p=ph(G); if (p==='k5_d2'||p==='k5_fun'||p==='k5_d2_n'){ var k=M.apos('vermisst','kolar',[196,118,'L']); L.push({id:'kolar',ch:'kolar',x:k[0],y:k[1],f:k[2]||'L',name:'Frau Kolar',idle:'sit',talk:'sitTalk',speechY:36}); }
     if (p==='k5_d2' && f(G,'k5.d2.instIn') && !f(G,'k5.d2.inst')){ var n=M.apos('vermisst','nada',[120,120,'R']); L.push({id:'jasna',ch:'jasnaC',x:n[0],y:n[1],f:n[2]||'R',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36}); }
     return L; },
@@ -75,9 +77,10 @@ M.room('institut',{ name:'Gerichtsmedizin', scape:'k3_vermisst', music:'k3_epi',
 // ================================================================ Friedhof Bare
 function funCast(G){ var p=ph(G);
   if (p==='k5_fun' && !f(G,'k5.fun.done')){ var L=['nada','zlata','jasna','ana','mia','niko','hajra','kolar','vlado','dragica','sehic']; if (f(G,'k5.d2.damir')) L.push('damir'); return L; }
-  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia','niko','hajra','sehic','kolar'];
+  if (p==='k5_epi' && f(G,'k5.e.funeral') && !f(G,'k5.e.zoranDone')) return ['jasna2','ana2','nada2','mia2','niko2','hajra2','sehic2','kolar2'];
   return []; }
-var BCH={ nada:'nada', nada2:'nada', zlata:'zlata', jasna:'jasnaC', jasna2:'jasnaC', ana:'anaC', ana2:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir' };
+var BCH={ nada:'nada', zlata:'zlata', jasna:'jasnaC', ana:'anaC', mia:'miaC', niko:'nikoC', hajra:'hajra', kolar:'kolar', vlado:'vlado', dragica:'dragica', sehic:'sehic', damir:'damir' };
+function bch(k){ return BCH[k.replace('2','')]; }
 var BNAME={ nada:'Nada', zlata:'Zlata', jasna:'Mama', ana:'Ana', mia:'Mia', niko:'Niko', hajra:'Hajra', kolar:'Frau Kolar', vlado:'Vlado', dragica:'Dragica', sehic:'Herr Šehić', damir:'Damir' };
 var HS_BA=[
  {id:'exit',name:'Zum Stadtplan',exit:{to:'map'},canExit:async function(A){ if (ph(A.G)==='k5_fun'){ await A.m('Ich bleibe. Bis zum Ende.'); return false; } return true; },look:'Der Weg hinunter zum Tor.',g:{look:'Da unten ist das Tor.'}},
@@ -94,11 +97,12 @@ var HS_BA=[
  {id:'bench',name:'Bank',look:'Eine Bank am Weg. Darauf liegt ein vergessener Handschuh, schwarz, für die linke Hand.',g:{look:'Einer hat einen Handschuh vergessen. Er kommt wieder.'}},
  {id:'path',name:'Weg',look:'Der Kiesweg zwischen den Reihen. Er knirscht. Alle gehen leise, und er knirscht trotzdem.',g:{look:'Kies. Er verrät jeden. Mich nicht.'}}
 ].concat(Object.keys(BNAME).map(function(id){ return {id:id,npc:id,name:BNAME[id],talk:function(A){ return M.k5BareTalk?M.k5BareTalk(A,id):A.m('…'); },look:function(A){ return M.k5BareLook?M.k5BareLook(A,id):A.m(BNAME[id]+'.'); },g:{look:'…'}}; }))
- .concat(['jasna2','ana2','nada2'].map(function(k){ var id=k.replace('2',''); return {id:k,npc:k,name:BNAME[id],talk:function(A){ return M.k5BareTalk?M.k5BareTalk(A,id):A.m('…'); },look:function(A){ return M.k5BareLook?M.k5BareLook(A,id):A.m(BNAME[id]+'.'); },g:{look:'…'}}; }));
+ .concat(['jasna2','ana2','nada2','mia2','niko2','hajra2','sehic2','kolar2'].map(function(k){ var id=k.replace('2',''); return {id:k,npc:k,name:BNAME[id],talk:function(A){ return M.k5BareTalk?M.k5BareTalk(A,id):A.m('…'); },look:function(A){ return M.k5BareLook?M.k5BareLook(A,id):A.m(BNAME[id]+'.'); },g:{look:'…'}}; }));
 M.room('bare',{ name:'Friedhof Bare', scape:'k5_bare', music:'k3_grob',
   state:function(G){ return {post:true,quince:f(G,'k5.fun.quince')||ph(G)==='k5_epi',grave2:ph(G)==='k5_epi'}; },
-  actors:function(S,G){ var A0=M.ART.bare&&M.ART.bare.actorPos||{}; return funCast(G).map(function(k){ var p=A0[k]||[160,124,'R'], id=k; var small=k==='mia'||k==='niko';
-    return {id:id,ch:BCH[k],x:p[0],y:p[1],f:p[2],name:BNAME[k.replace('2','')],speechY:small?30:46}; }); },
+  load:function(A){ var r=M.ROOMS['bare']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
+  actors:function(S,G){ var A0=M.ART.bare&&M.ART.bare.actorPos||{}; return funCast(G).map(function(k){ var p=A0[k]||[160,124,'R'], id=k; var small=/^(mia|niko)/.test(k);
+    return {id:id,ch:bch(k),x:p[0],y:p[1],f:p[2],name:BNAME[k.replace('2','')],speechY:small?30:46}; }); },
   hotspots:HS_BA,
   enter:async function(A,from){ if (M.k5BareEnter) await M.k5BareEnter(A,from); }
 });

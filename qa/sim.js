@@ -12,7 +12,7 @@ const args = process.argv.slice(2), arg = (k, d) => { const i = args.indexOf(k);
 const PLAN_FULL = { A: 1000, B: 1000, C: 800, D: 600, E: 600 };
 const CH_PATH = { 1: 'walkthrough', 2: 'walkthrough2', 3: 'walkthrough3', 4: 'walkthrough4' };
 const CH_TITLE = { 1: 'Kapitel 1: Split', 2: 'Kapitel 2: Sarajevo', 3: 'Kapitel 3: Mostar', 4: 'Kapitel 4: München' };
-const ENDPOINT = 'K4 Abspann → Titelbild ohne „Weiter mit Kapitel 5“ (Ende des implementierten Umfangs)';
+const ENDPOINT = 'K4 Abspann → Titelbild mit „Weiter mit Kapitel 5“ (Kapitel 5 spielt die Simulation nicht; dafür game/tools/walkthrough5.js)';
 
 // ---------------------------------------------------------------- Spezifikationen (deterministisch aus Kategorie und Index)
 function hashSeed(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -146,7 +146,7 @@ async function runOne(spec, opt = {}) {
       chRes.titleAfter = tn.labels;
       if (ch < 4) { if (tn.labels.indexOf('Weiter mit ' + CH_TITLE[ch + 1].replace('Kapitel', 'Kapitel')) < 0 && !tn.labels.some(l => l.indexOf('Weiter mit Kapitel ' + (ch + 1)) >= 0)) { lastErr = 'Kein „Weiter mit Kapitel ' + (ch + 1) + '“ nach dem Abspann: ' + JSON.stringify(tn.labels); break; }
         await C.tapTitle(I, 'Weiter mit Kapitel ' + (ch + 1)); }
-      else { chRes.finalTitle = tn; if (tn.labels.some(l => /Weiter mit Kapitel 5/.test(l))) failBag.push('unerwartetes Kapitel 5 angeboten'); }
+      else { chRes.finalTitle = tn; if (!tn.labels.some(l => /Weiter mit Kapitel 5/.test(l))) failBag.push('Kapitel 5 nach dem Abspann von Kapitel 4 nicht angeboten'); }
     }
   } catch (e) { lastErr = (e.kind === 'limit' ? 'LIMIT ' : 'EXC ') + (e.message || e); res.exc = String(e.stack || e).split('\n').slice(0, 6).join('\n'); }
   const fin = S.finish();

@@ -32,6 +32,13 @@ function paintHill(b,tod){ var w=RW(b,RG.hill), x, y;
       if (hash(x>>1,y>>1)<0.05 && y>top+4) c=hash(x,y)<0.5?P.s4:P.t3;                 // Häuser am Hang
       w.px(x,y,c); } }
   if (tod!=='night') M.fogBake(b,function(x,y){ return REG[y*W+x]===RG.hill?0.35:0; },{col:P.m4}); }
+// links hinter dem Brückenkopf: das andere Ufer der Miljacka, Ufermauer, kahle Bäume, ein Haus
+function paintFar(b,tod){ var w=RW(b,RG.hill), x, y;
+  for (y=56;y<WT+18;y++) for (x=0;x<BR.x1+4;x++){ var c; if (y<WT+8){ var f=fbm(x,y,4,21); c=f>0.55?ra(R('e1 w1 e2'),0.3+f*0.4,x,y):ra(R('s4 s5 m4'),0.5+(y-56)/40,x,y);
+      if (x>=8 && x<22 && y>=WT-2){ c=(y===WT-2)?P.t2:((x%5===2&&y>WT+1&&y<WT+5)?P.k2:P.s5); } }
+    else c=ra(R('s2 s3 s4'),0.4+((x+y)%6===0?-0.2:0)+hash(x>>1,y)*0.2,x,y);
+    w.px(x,y,c); }
+  if (tod!=='night') M.fogBake(b,function(x,y){ return (x<BR.x1+4 && y>=56 && y<WT+8)?0.3:0; },{col:P.m4}); }
 function paintBuilding(b){ var w=RW(b,RG.bldg), x, y, X0=150, X1=W, TOPY=22;
   for (y=TOPY;y<WT+4;y++) for (x=X0;x<X1;x++){ var c=ra(R('y1 y2 y2 y3'),0.5+(((y+((x>>3)%2)*2)%5===0)?-0.25:0)+((x%8===0)?-0.2:0)+(hash(x,y)-0.5)*0.15,x,y); w.px(x,y,c); }
   for (x=X0;x<X1;x++){ w.px(x,TOPY,P.t1); w.px(x,TOPY+1,P.t2); w.px(x,TOPY+2,P.y1); }
@@ -71,7 +78,7 @@ function paintStreet(b){ var w=RW(b,RG.street), x, y;
   for (y=50;y<WB+4;y++){ w.px(168,y,P.m1); w.px(169,y,P.m2); } w.rect(165,46,8,5,P.m1); w.hl(165,172,46,P.m3); w.hl(166,171,51,P.s4); }
 var LAST=null, TODN='day';
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0); if (tod!=='night') tod='day'; TODN=tod;
-  paintSky(b,tod,wea); paintHill(b,tod); paintBuilding(b); paintLinden(b,tod); paintWall(b,S); paintBridge(b,tod); paintStreet(b);
+  paintSky(b,tod,wea); paintHill(b,tod); paintFar(b,tod); paintBuilding(b); paintLinden(b,tod); paintWall(b,S); paintBridge(b,tod); paintStreet(b);
   M.light(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; var v=0; if (r===RG.street) v+=(y-WB)/40*0.15; if (r===RG.hill) v-=0.05; if (tod==='night') v-=0.45; return v-Math.abs(x-200)/900; });
   var base=b.clone();
   LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,t){ if (t==='day') return; for (var y=40;y<H;y++) for (var x=130;x<210;x++){ var d=Math.hypot(x-169,(y-60)*0.7); if (d<44 && bayer(x,y)<(1-d/44)*0.8) o.px(x,y,M.UP[o.get(x,y)]); } o.hl(166,171,51,P.y5); } });

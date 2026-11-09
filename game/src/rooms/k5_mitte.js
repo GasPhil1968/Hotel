@@ -49,6 +49,7 @@ var HS_CA=[
 ];
 M.room('carsija5',{ name:'Baščaršija', scape:'k2_carsija', music:function(G){ return ph(G)==='k5_sat'?'k2_mala':'k2_sarajevo'; },
   state:function(G){ return {tramIn:satEnd(G)}; },
+  load:function(A){ var r=M.ROOMS['carsija5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[];
     if (radeHere(G)){ var r=M.apos('carsija','rade',[198,116,'R']); L.push({id:'rade',ch:'rade',x:r[0],y:r[1],f:r[2]||'R',name:'Rade',speechY:46}); }
     if (damirHere(G)){ var d=M.apos('carsija','damir',[136,113,'L']); L.push({id:'damir',ch:'damir',x:d[0],y:d[1],f:d[2]||'L',name:'Damir',speechY:46}); }
@@ -82,6 +83,7 @@ var HS_KZ=[
 ];
 M.room('kazandziluk5',{ name:'Kazandžiluk', scape:'k2_kazan', music:'k2_istraga',
   state:function(G){ return {ladderUp:false,bookOut:false}; },
+  load:function(A){ var r=M.ROOMS['kazandziluk5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var p=ph(G); if (!(p==='k5_d1'||p==='k5_d2')) return []; var n=M.apos('kazandziluk','nedzad',[200,116,'R']); return [{id:'nedzad',ch:'nedzad',x:n[0],y:n[1],f:n[2]||'R',name:'Nedžad',speechY:46}]; },
   hotspots:HS_KZ,
   entries:{ carsija5:[14,124,'R'] },
@@ -103,6 +105,7 @@ var HS_TR=[
 var TPOS={ jasna:[122,108,'R'], nada:[160,108,'R'], ana:[234,126,'L'], mia:[212,128,'L'], niko:[196,127,'L'] };
 M.room('tramvaj5',{ name:'Straßenbahn, Linie 3', noMap:'Nicht während der Fahrt.', scape:'k2_tram', music:'k2_otkrice',
   state:function(G){ return {line:'3',moving:true,view:'towers'}; },
+  load:function(A){ var r=M.ROOMS['tramvaj5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ if (ph(G)!=='k5_sat') return []; return Object.keys(TPOS).map(function(id){ var p=TPOS[id], sit=id==='jasna'||id==='nada';
     return {id:id,ch:id==='jasna'?'jasnaC':(id==='ana'?'anaC':(id==='mia'?'miaC':(id==='niko'?'nikoC':id))),x:p[0],y:p[1],f:p[2],name:{jasna:'Mama',nada:'Nada',ana:'Ana',mia:'Mia',niko:'Niko'}[id],idle:sit?'sit':null,talk:sit?'sitTalk':null,speechY:sit?36:(id==='ana'?46:30)}; }); },
   hotspots:HS_TR.concat(['jasna','nada','ana','mia','niko'].map(function(id){ return {id:id,npc:id,name:{jasna:'Mama',nada:'Nada',ana:'Ana',mia:'Mia',niko:'Niko'}[id],

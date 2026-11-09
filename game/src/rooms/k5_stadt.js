@@ -46,6 +46,7 @@ var HS_ST=[
 ];
 M.room('stanica5',{ name:'Busbahnhof', scape:'k2_stanica', music:'k2_sarajevo',
   state:function(G){ return {tramIn:false,busTo:'muenchen'}; },
+  load:function(A){ var r=M.ROOMS['stanica5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[]; if (ph(G)==='k5_pro' && !f(G,'k5.p.taxi')) L.push({id:'jasna',ch:'jasnaC',x:74,y:122,f:'R',name:'Mama',idle:'waitF',speechY:46}); return L; },
   hotspots:HS_ST,
   enter:async function(A,from){ if (ph(A.G)!=='k5_pro' && A.first('k5stLater')) await A.m('Der Busbahnhof. Von hier fährt Mama am Dienstag zurück.'); }
@@ -87,6 +88,7 @@ var HS_PA=[
 ];
 M.room('pansion5',{ name:'Pension in Kovači', scape:'k2_pansion', music:function(G){ return ph(G)==='k5_n1'?'k2_noc':(ph(G)==='k5_epi'?'k4_epi':'k2_sarajevo'); },
   state:function(G){ return {coffee:ph(G)==='k5_sat',charging:true,catAt:ph(G)==='k5_n1'?'bed':'window'}; },
+  load:function(A){ var r=M.ROOMS['pansion5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ var L=[];
     if (hajraHere(G)){ var h=M.apos('pansion','hajra',[132,113,'L']); L.push({id:'hajra',ch:'hajra',x:h[0],y:h[1],f:h[2]||'L',name:'Hajra',speechY:42}); }
     if (jasnaInPension(G)) L.push({id:'jasna',ch:ph(G)==='k5_sat'?'jasnaC':'jasna',x:206,y:126,f:'L',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36});
@@ -138,6 +140,7 @@ var HS_VR2=HS_VR.concat([
 M.room('vratnik5',{ name:'Vratnik', scape:'k2_vratnik', tod:vratnikTod,
   music:function(G){ var p=ph(G); return p==='k5_d2_n'?'k2_noc':(p==='k5_sat'?'k2_mala':(p==='k5_epi'?'k4_epi':'k2_sjecanje')); },
   state:function(G){ return {}; },
+  load:function(A){ var r=M.ROOMS['vratnik5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:vratnikActors,
   hotspots:HS_VR2,
   entries:{ kuca5:[254,115,'F'] },
@@ -147,7 +150,7 @@ M.room('vratnik5',{ name:'Vratnik', scape:'k2_vratnik', tod:vratnikTod,
 // ================================================================ Ružas Küche
 function kucaCast(G){ var p=ph(G); if (p==='k5_pro') return (f(G,'k5.p.inside') && !has(G,'b5_hand'))?['jasna']:[]; if (p==='k5_sat' && f(G,'k5.sat.gate')) return ['jasna','nada','hajra','ana','mia','niko'];
   if (p==='k5_epi' && f(G,'k5.e.funeral')) return ['jasna','nada','hajra','ana','mia','niko']; return []; }
-var KPOS={ jasna:[118,118,'R'], nada:[176,122,'L'], hajra:[204,108,'L'], ana:[96,124,'R'], mia:[140,128,'L'], niko:[156,126,'L'] };
+var KPOS={ jasna:[100,120,'R'], nada:[178,122,'L'], hajra:[210,110,'L'], ana:[80,127,'R'], mia:[124,131,'R'], niko:[138,130,'R'] };
 var KCH={ jasna:'jasna', nada:'nada', hajra:'hajra', ana:'ana', mia:'mia', niko:'niko' };
 var KNAME={ jasna:'Mama', nada:'Nada', hajra:'Hajra', ana:'Ana', mia:'Mia', niko:'Niko' };
 var HS_KU=[
@@ -166,8 +169,8 @@ var HS_KU=[
  {id:'window',name:'Fenster',look:function(A){ return A.m(ph(A.G)==='k5_epi'&&F(A,'k5.e.funeral')?'Das Fenster neben dem Tisch ist beschlagen, vom Kaffee und von uns allen.':'Das Küchenfenster. Dahinter das Tal, die Stadt, die Hänge des Trebević.'); },
    use:function(A){ return M.k5KucaWindow?M.k5KucaWindow(A):A.m('Später.'); },
    g:{look:'Durch das Fenster hat sie uns kommen sehen. Ich war immer zuerst da.'}},
- {id:'calendar',name:'Kalender',look:'Ein Kalender von 1993, April. Darauf ein Bild vom Trebević im Schnee. Am Neunzehnten ist nichts angestrichen. Am Zwanzigsten ein Kreuz.',
-   g:{look:'Neunzehnter April. Das Kreuz am Zwanzigsten hat sie gemacht, als sie es wusste.'}},
+ {id:'calendar',name:'Kalender',look:'Ein Kalender, Februar 1994. Darauf der Trebević im Schnee. Seitdem hat keiner umgeblättert. Die Familie aus Foča auch nicht.',
+   g:{look:'Februar vierundneunzig. Da hat Baka aufgehört umzublättern. Ich weiß, warum.'}},
  {id:'sofa',name:'Sofa',look:'Das Sofa unter dem Fenster. Hier hat sie Mittagsschlaf gehalten, mit dem Radio auf dem Bauch.',use:'Ich setze mich. Die Feder in der Mitte ist noch da.',g:{look:'Darauf habe ich gesessen und auf den Kaffee gewartet. Er auch.'}},
  {id:'photo',name:'Foto',look:'Ein Foto über dem Sofa: Ruža mit Zoran als Kind, beide mit der gleichen Mütze.',g:{look:'Sie hat ihn ausgeschimpft, weil die Mütze schief saß. Seine auch.'}},
  {id:'sheets',name:'Tücher',vis:function(S,G){ return ph(G)==='k5_pro'; },look:'Weiße Tücher über den Möbeln. Die Familie aus Foča hat nichts angefasst. Sie haben alles zugedeckt, als wäre es ein Haus, in das einer zurückkommt.',
@@ -177,6 +180,7 @@ var HS_KU=[
   give:{ dose_lana:function(A){ return A.m('Die Dose ist nicht mehr meine.'); } },g:{look:'…'}}; }));
 M.room('kuca5',{ name:'Ružas Küche', scape:'k2_kuca', music:function(G){ return ph(G)==='k5_epi'?'k4_epi':'k2_sjecanje'; },
   state:function(G){ return {compOpen:false,msgTaken:true,sheetsOff:ph(G)!=='k5_pro'}; },
+  load:function(A){ var r=M.ROOMS['kuca5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
   actors:function(S,G){ return kucaCast(G).map(function(id){ var p=KPOS[id]; var sit=id==='jasna'||id==='nada'||id==='ana'; return {id:id,ch:KCH[id],x:p[0],y:p[1],f:p[2],name:KNAME[id],idle:sit&&ph(G)!=='k5_pro'?'sit':null,talk:sit&&ph(G)!=='k5_pro'?'sitTalk':null,speechY:sit?36:(id==='mia'||id==='niko'?30:44)}; }); },
   hotspots:HS_KU,
   entries:{ vratnik5:M.ART.kuca&&M.ART.kuca.entries?M.ART.kuca.entries.vratnik:undefined },

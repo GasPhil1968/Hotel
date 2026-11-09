@@ -35,7 +35,8 @@ const DEV = { desktop: { viewport: { width: 1280, height: 800 } }, tablet: { vie
     const ch = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => ({ t: e.textContent.trim(), dis: e.getAttribute('aria-disabled') === 'true' })));
     T.ck(ch.some(c => /^Kapitel 1 · Split/.test(c.t) && !c.dis) && ch.some(c => /^Kapitel 2 · Sarajevo/.test(c.t) && !c.dis), 'Kapitel 1 und 2 mit Ort startbar');
     T.ck(ch.some(c => /^Kapitel 3nach Kapitel 2$/.test(c.t.replace(/\s+/g, ' ').replace(' nach', 'nach')) && c.dis) || ch.some(c => /^Kapitel 3/.test(c.t) && c.dis && !/Mostar/.test(c.t)), 'Kapitel 3 gesperrt, ohne Ortsnamen, mit Grund');
-    T.ck(ch.some(c => /^Kapitel 5/.test(c.t) && c.dis && /noch nicht erschienen/.test(c.t) && !/Sarajevo/.test(c.t)), 'Kapitel 5 „noch nicht erschienen“, ohne Ort');
+    T.ck(ch.some(c => /^Kapitel 5/.test(c.t) && c.dis && /nach Kapitel 4/.test(c.t) && !/Sarajevo/.test(c.t)), 'Kapitel 5 gesperrt („nach Kapitel 4“), ohne Ort');
+    T.ck(!ch.some(c => /noch nicht erschienen/.test(c.t)), 'kein „noch nicht erschienen“ mehr: Kapitel 5 ist spielbar');
     await shot(p, 'f20_kapitelwahl');
     await p.keyboard.press('Escape'); s = await sh(p); T.ck(s.cur === 'main', 'Esc führt aus der Kapitelwahl zurück');
     T.ck(await p.evaluate(() => /Neues Spiel/.test(document.activeElement.textContent)), 'Fokus danach auf dem auslösenden Eintrag (F11)');
@@ -54,11 +55,12 @@ const DEV = { desktop: { viewport: { width: 1280, height: 800 } }, tablet: { vie
     await done(p);
     process.env.MALA_QUERY = '?kapitel=alle'; p = await open(b, null); delete process.env.MALA_QUERY;
     await click(p, 'Neues Spiel'); const all = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => ({ t: e.textContent.trim(), dis: e.getAttribute('aria-disabled') === 'true' })));
-    T.ck(all.filter(c => /^Kapitel [1-4] ·/.test(c.t) && !c.dis).length === 4, '?kapitel=alle: Kapitel 1–4 startbar');
+    T.ck(all.filter(c => /^Kapitel [1-5] ·/.test(c.t) && !c.dis).length === 5, '?kapitel=alle: Kapitel 1–5 startbar');
     T.ck(await p.evaluate(() => !localStorage.getItem('mala.c1end') && !localStorage.getItem('mala.c3end')), '… ohne Marken zu schreiben');
     await done(p);
     p = await open(b, 'k4_heim', {}, { 'mala.c4end': '{"at":1}' }); await click(p, 'Neues Spiel');
-    T.ck((await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => e.textContent))).some(t => /Kapitel 5 · Sarajevo/.test(t) && /noch nicht erschienen/.test(t)), 'nach c4end: „Kapitel 5 · Sarajevo – noch nicht erschienen“');
+    const ch5 = await p.evaluate(() => [...document.querySelectorAll('#shell .mi')].map(e => ({ t: e.textContent.trim(), dis: e.getAttribute('aria-disabled') === 'true' })));
+    T.ck(ch5.some(c => /^Kapitel 5 · Sarajevo/.test(c.t) && !c.dis && /mit deinem Ende von Kapitel 4/.test(c.t)), 'nach c4end: „Kapitel 5 · Sarajevo“ startbar, mit dem Ende von Kapitel 4');
     await done(p);
 
     // ---------------------------------------------------------------- F2, F3: neues Spiel mit belegten Plätzen

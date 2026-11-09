@@ -26,8 +26,15 @@ function paintSky(b,wea){ var w=RW(b,RG.sky), x, y, sun=wea==='sun';
   for (y=0;y<44;y++) for (x=0;x<W;x++) w.px(x,y,ra(sun?R('b3 b4 b5 s6'):R('m3 m4 s5 s6'),0.25+y/44*0.7+(fbm(x,y,24,2)-0.5)*0.18,x,y)); }
 function paintHills(b){ var w=RW(b,RG.hill), x, y;
   for (x=0;x<W;x++){ var t1=Math.round(20+Math.sin(x*0.013+1.2)*6+Math.sin(x*0.05)*2); for (y=t1;y<52;y++) w.px(x,y,ra(R('e2 g1 e3 g2'),0.6-(y-t1)/50+(fbm(x,y,12,6)-0.5)*0.3,x,y)); }
-  var c=RW(b,RG.city); for (y=40;y<56;y++) for (x=0;x<W;x++){ if (y<40+Math.round(fbm(x,0,10,4)*6)) continue; var roof=hash(x>>2,y>>2); w.px(x,y,P.t3); c.px(x,y,roof<0.25?P.t2:(roof<0.6?P.s4:(roof<0.8?P.s5:P.m3))); }
-  M.fogBake(b,function(x,y){ var r=REG[y*W+x]; return r===RG.city?0.45:(r===RG.hill?0.3:0); },{col:P.s5}); }
+  // die Stadt im Tal: Reihen kleiner Häuser mit roten Dächern, dazwischen Minarette
+  var c=RW(b,RG.city), rr=M.rng(1976), row, i;
+  for (i=0;i<7;i++){ var mx=16+Math.floor(rr()*288); for (y=29;y<46;y++) c.px(mx,y,P.s6); c.px(mx,28,P.s4); c.px(mx,27,P.s4); c.px(mx-1,41,P.s5); c.px(mx+1,41,P.s5); }   // schlanke Minarette: Schaft, Spitze, Umgang weit unten
+  for (row=0;row<3;row++){ var yb=44+row*4;
+    for (x=-2;x<W;){ var hw=3+Math.floor(rr()*5), hh=2+Math.floor(rr()*3), wall=[P.s5,P.s4,P.e4,P.s6][Math.floor(rr()*4)];
+      for (y=yb-hh;y<yb;y++) for (var xx=x;xx<x+hw;xx++) c.px(xx,y,wall);
+      for (var xr=x;xr<x+hw;xr++) c.px(xr,yb-hh,rr()<0.8?P.t2:P.t3); if (rr()<0.5) c.px(x+1,yb-1,P.k2);
+      x+=hw+(rr()<0.35?1:0); } }
+  M.fogBake(b,function(x,y){ var r=REG[y*W+x]; return r===RG.city?0.5:(r===RG.hill?0.3:0); },{col:P.s5}); }
 function paintSlope(b){ var w=RW(b,RG.slope), x, y;
   for (y=52;y<GY+2;y++) for (x=0;x<W;x++){ var f=fbm(x,y,6,11); w.px(x,y,ra(R('e1 g1 g2 e2 g3'),0.3+(y-52)/70*0.4+(f-0.5)*0.35,x,y)); } }
 function stone(w,x,yb,h,wd,kind,shade){ var x0=x-(wd>>1), y0=yb-h, i, j;
@@ -76,9 +83,10 @@ M.defineArt('bare',{
   spots:{ exit:[0,112,14,30], grave:[LANA.mound.x0-2,LANA.post.y0-2,LANA.mound.x1-LANA.mound.x0+4,GY-LANA.post.y0+2], plate:[LANA.plate.x0-1,LANA.plate.y0-1,LANA.plate.x1-LANA.plate.x0+2,LANA.plate.y1-LANA.plate.y0+2],
     board:[LANA.board.x0-1,LANA.board.y0-1,LANA.board.x1-LANA.board.x0+2,LANA.board.y1-LANA.board.y0+2], quince:[LANA.q.x-5,GY-20,12,20], grave2:[Z.x0,GY-28,Z.x1-Z.x0,30],
     stones:[240,60,50,40], cypress:[54,48,18,52], city:[0,38,320,18], bench:[20,112,34,14], path:[140,124,40,14] },
-  stands:{ exit:[10,128,'L'], grave:[218,122,'B'], plate:[214,121,'B'], board:[216,121,'B'], quince:[236,121,'B'], grave2:[110,122,'B'], stones:[262,122,'B'], cypress:[66,124,'B'], city:[160,128,'B'], bench:[36,127,'B'], path:[160,130,'B'] },
-  actorPos:{ nada:[196,121,'R'], zlata:[236,121,'L'], jasna:[176,123,'R'], ana:[160,124,'R'], mia:[150,126,'R'], niko:[168,127,'R'], hajra:[254,122,'L'], kolar:[140,123,'R'],
-    vlado:[268,121,'L'], dragica:[282,123,'L'], sehic:[296,122,'L'], damir:[126,124,'R'], mala:[206,119,'R'], jasna2:[100,122,'R'], ana2:[124,123,'L'], nada2:[140,124,'L'] },
+  stands:{ exit:[10,128,'L'], grave:[260,123,'L'], plate:[260,123,'L'], board:[260,123,'L'], quince:[260,123,'L'], grave2:[124,124,'L'], stones:[262,122,'B'], cypress:[66,124,'B'], city:[160,128,'B'], bench:[36,127,'B'], path:[160,130,'B'] },
+  actorPos:{ nada:[188,121,'R'], zlata:[250,121,'L'], jasna:[172,123,'R'], ana:[158,124,'R'], mia:[147,126,'R'], niko:[164,127,'R'], hajra:[272,122,'L'], kolar:[134,123,'R'],
+    vlado:[284,121,'L'], dragica:[296,123,'L'], sehic:[308,122,'L'], damir:[120,124,'R'], mala:[196,118,'R'],
+    jasna2:[94,122,'R'], ana2:[80,123,'R'], mia2:[69,126,'R'], niko2:[86,127,'R'], nada2:[132,124,'L'], hajra2:[144,122,'L'], sehic2:[156,122,'L'], kolar2:[168,123,'L'] },
   start:[30,128,'R'], entries:{ map:[16,128,'R'] }
 });
 })(M);

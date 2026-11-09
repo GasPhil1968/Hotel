@@ -27,6 +27,8 @@ M.HINTS_K5=[
      function(G){ return I(G,'kanister')?'Mit dem Kanister nachts zur Brauerei fahren und sich am Hahn anstellen.':'In Vratnik den Kanister holen, dann nachts zur Brauerei.'; }]},
  {id:'h5g2',t:'Schlafen',open:function(G){ return G.phase==='k5_n1' && F(G,'k5.n1.atem') && N(G,'b5_hamdija'); },
   s:['Für heute ist alles getan.','Morgen um neun bei Frau Kolar.','Zurück zu Hajra.','In der Pension ins Bett gehen.']},
+ {id:'h5f0',t:'Gute Nacht',open:function(G){ return G.phase==='k5_n1' && F(G,'k5.n1.eve') && !F(G,'k5.n1.home'); },
+  s:['Es ist spät. Ana bringt die Kinder zu Hajra.','Ich schlafe in der Pension, in Kovači.','Nadas Wohnungstür.','An der Wohnungstür gute Nacht sagen.']},
  // ---------------- Freitag
  {id:'h5h',t:'Frau Kolar',open:function(G){ return G.phase==='k5_d2' && !F(G,'k5.d2.inst'); },
   s:['Um neun bei Frau Kolar.','In der Gerichtsmedizin.','Mama kommt mit. Sie will ihn sehen.','Mit dem Stadtplan zur Gerichtsmedizin fahren.']},
@@ -43,6 +45,8 @@ M.HINTS_K5=[
      function(G){ if (!N(G,'b5_kasten')) return 'Was ist im Kasten?'; if (!N(G,'b5_tag')) return 'Was weiß nur der Junge von damals?'; if (!N(G,'b5_drei')) return 'Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Die gefüllten Kanister. Und der Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Drei Tote haben noch keinen Namen.'; if (!F(G,'k5.b.ready')) return 'Sie sind gefunden. Alle sieben.'; return 'Er kann jetzt gehen.'; },
      function(G){ if (!N(G,'b5_kasten')) return {m:'Mala geht durch Wände. Auch in einen Blechkasten.',g:'Ich gehe durch den Kasten.'}; if (!N(G,'b5_tag')) return {m:'Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.',g:'Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.'}; if (!N(G,'b5_drei')) return 'In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Ihm beides sagen: die Kanister und den Rechenschieber.'; if (!F(G,'k5.b.listKolar')) return 'Die Liste in die Gerichtsmedizin bringen.'; if (!F(G,'k5.b.ready')) return 'Zu Hamdija an den Hahn.'; return {m:'Mala öffnet die Schwelle. Am Hahn.',g:'Ich mache ihm Licht. Am Hahn.'}; },
      function(G){ if (!N(G,'b5_kasten')) return 'Als Mala den Kasten hinter dem Hahn ansehen.'; if (!N(G,'b5_tag')) return 'Als Mala den Hahn, die Mitte und die Brücke spüren.'; if (!N(G,'b5_drei')) return 'Frau Kolar nach dem Grab an der Brauerei fragen.'; if (!I(G,'liste')&&!F(G,'k5.b.listKolar')) return 'Mit Hamdija reden und die Kanister und den Rechenschieber nennen.'; if (!F(G,'k5.b.listKolar')) return 'Frau Kolar die Liste geben.'; if (!F(G,'k5.b.ready')) return 'Mit Hamdija reden: Sie sind gefunden.'; return 'Als Mala Hamdija hinüberbringen.'; }]},
+ {id:'h5fun',t:'Lanas Begräbnis',open:function(G){ return G.phase==='k5_fun' && !F(G,'k5.fun.done'); },
+  s:['Heute wird Lana begraben.','Alle sind gekommen. Nada und Zlata stehen am Pfosten.','Am Grab gibt es nichts zu lösen.','Eine Wahl am Grab treffen. Beide sind richtig.']},
  // ---------------- Freitagabend
  {id:'h5l',t:'Wem gehören die Fahrscheine?',open:function(G){ return G.phase==='k5_d2_n' && !N(G,'f5_jasna'); },
   s:[function(G){ return N(G,'f5_wem')?'Nicht Nada. Wem dann?':'Mala sagt: für Nada. Stimmt das?'; },
@@ -51,6 +55,8 @@ M.HINTS_K5=[
      function(G){ if (!N(G,'f5_wem')) return 'Im Notizbuch „Wer sonst?“ und „Euer Samstag“ verbinden.'; return 'Im Notizbuch „Nicht Nada“ und „Mama kann nicht hinauf“ verbinden.'; }]},
  {id:'h5l2',t:'Das Totenmahl',open:function(G){ return G.phase==='k5_d2_n' && !F(G,'k5.e.meal'); },
   s:['Alle sitzen an Nadas Tisch.','Zwei Frauen, die achtzehn Jahre nicht miteinander geredet haben.','Mit Mama reden. Und mit Nada.','Mit Mama und mit Nada reden, bis der Abend weitergeht.']},
+ {id:'h5l4',t:'Bis es hell wird',open:function(G){ return G.phase==='k5_d2_n' && F(G,'k5.n2.started') && !F(G,'k5.n2.done'); },
+  s:['Die Žuta tabija. Mala hat sich gefragt.','Erst ich. Was will ich? Ehrlich.','„Es gibt kein Falsches. Es gibt nur ‚nur müde‘.“','Antworten. Jede der drei Antworten ist ehrlich.']},
  {id:'h5l3',t:'Der Samstag',open:function(G){ return G.phase==='k5_d2_n' && F(G,'k5.n2.done') && !F(G,'k5.sat.started'); },
   s:['Es wird hell. Morgen ist heute.','Ab hier gibt es kein Zurück in die Tage davor.','Auf der Bastei, wenn du bereit bist.','Die Bank auf der Žuta tabija benutzen und den Samstag beginnen.']},
  // ---------------- Samstag
@@ -59,6 +65,10 @@ M.HINTS_K5=[
  {id:'h5n',t:'Nadas Küche',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.knock') && !F(G,'k5.sat.drawn'); },
   s:['Nada muss es selbst sehen.',{m:'Was kann Mala, wenn ich dabei bin?',g:'Was kann ich, wenn er dabei ist?'},'Die Glastür zum Balkon. Nada steht in der Küche.',
      function(G){ var s=G.flags['k5.sat.draw']||0; return s>=4?'Als Marko die Räder zeichnen: die Glastür benutzen.':(s%2===0?'Als Marko die Glastür anhauchen.':'Als Mala auf die beschlagene Scheibe zeichnen.'); }]},
+ {id:'h5q',t:'Hinauf zu Ruža',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.rode') && !F(G,'k5.sat.gate'); },
+  s:['Jeder Samstag hat oben aufgehört. Bei Großmutter, in Vratnik.','Mala will hinauf. Zu Fuß, wie früher.','Die Gasse nach Vratnik, am oberen Ende des Platzes.','Die Gasse nach Vratnik benutzen.']},
+ {id:'h5r',t:'Unter Ružas Dach',open:function(G){ return G.phase==='k5_sat' && F(G,'k5.sat.gate') && !F(G,'k5.sat.done'); },
+  s:['Alle sitzen in Ružas Küche. Sechs Tassen.','Mama hat etwas auf dem Herzen. Ich sehe es an ihren Händen.','Mama am Tisch.','Mit Mama reden.']},
  // ---------------- Montag
  {id:'h5o',t:'Das Wasser',open:function(G){ return G.phase==='k5_epi' && !F(G,'k5.e.water'); },
   s:['Heute wird Papa begraben. Am Abend sitzen wir unter Ružas Dach.','Kaffee braucht Wasser. Das beste der Stadt kommt aus dem Hahn an der Brauerei.',function(G){ return I(G,'kanister_voll')?'Der Kanister ist voll. Er muss nach Vratnik.':'Den blauen Kanister am Hahn füllen.'; },
@@ -66,8 +76,8 @@ M.HINTS_K5=[
  {id:'h5p',t:'Die Scheibe',open:function(G){ return G.phase==='k5_epi' && F(G,'k5.e.funeral') && !F(G,'k5.e.done'); },
   s:['Das Fenster neben dem Tisch ist beschlagen.','Lana hat mir das Zeichnen beigebracht. Die Räder habe ich nie gekonnt.','Das Fenster in Ružas Küche.','Das Fenster benutzen.']},
  // ---------------- zwischen zwei Abschnitten
- {id:'x5day',t:'Der Tag geht weiter',open:function(G){ return P(G,['k5_pro','k5_d1','k5_d2']) && !!(M.k5DayReady && M.k5DayReady(G)); },
-  s:[function(G){ return ({k5_pro:'Mama hat Haus 7 gesehen, Nada weiß, dass wir da sind.',k5_d1:'Für den Donnerstag ist alles getan. Es wird Abend.',k5_d2:'Hamdija ist gegangen, die Tafel ist fertig. Es ist bald zwei.'})[G.phase]||'Für jetzt ist alles getan.'; },
+ {id:'x5day',t:'Der Tag geht weiter',open:function(G){ return P(G,['k5_pro','k5_d1','k5_d2','k5_d2_n','k5_epi','k5_fun','k5_sat']) && !!(M.k5DayReady && M.k5DayReady(G)); },
+  s:[function(G){ return ({k5_pro:'Mama hat Haus 7 gesehen, Nada weiß, dass wir da sind.',k5_d1:'Für den Donnerstag ist alles getan. Es wird Abend.',k5_d2:'Hamdija ist gegangen, die Tafel ist fertig. Es ist bald zwei.',k5_d2_n:'Ich weiß, wem die Fahrscheine gehören. Der Abend geht zu Ende.',k5_epi:'Das Wasser ist in Ružas Küche. Gleich ist elf.',k5_fun:'Das Begräbnis ist vorbei.',k5_sat:'Der Samstag ist zu Ende.'})[G.phase]||'Für jetzt ist alles getan.'; },
      'Der Rest kommt von selbst.','Nichts mehr suchen.','Einen Moment warten: Der nächste Abschnitt beginnt von selbst.']}
 ];
 })(M);

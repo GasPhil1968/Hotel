@@ -213,7 +213,7 @@ M.k5Farewell=async function(A){ var G=A.G; if (F(A,'k5.sat.gate')) return;
   await A.wait(900); await A.m('Mein Kopf ist still.');
   A.save(); await A.wait(1200); A.music('k2_sjecanje');
   await A.narrate('Ich setze mich in die Küche. Nach einer Weile kommen die Stimmen der anderen die Gasse herauf. Hajra, Mia, die Mütter.');
-  await A.goto('kuca5',{x:M.k5StandOf('kuca5','table')[0],y:M.k5StandOf('kuca5','table')[1],f:'B',noEnter:true});
+  await A.goto('kuca5',{x:156,y:128,f:'L',noEnter:true});
   await M.k5Lunch(A); };
 // ---------------------------------------------------------------- Das Mittagessen unter Ružas Dach (Nachklang)
 M.k5Lunch=async function(A){ if (F(A,'k5.sat.lunch')) return; var N=A.npc('nada'), J=A.npc('jasna');
@@ -322,17 +322,48 @@ M.k5Final=async function(A){ if (F(A,'k5.e.final')) return; var c=C(), J=A.npc('
   await A.wait(600); await A.narrate('Das Fenster neben dem Tisch ist beschlagen, vom Kaffee und von uns allen.');
   A.setFlag('k5.e.final'); A.save(); };
 M.k5FinalLoad=async function(A){ if (F(A,'k5.e.done')) return; if (!F(A,'k5.e.zoranDone')){ await M.k5Zoran(A); }
-  if (!A.room || A.room.id!=='kuca5') await M.k5Bring(A,'kuca5',{at:M.k5StandOf('kuca5','table'),noMala:true});
+  if (!A.room || A.room.id!=='kuca5') await M.k5Bring(A,'kuca5',{at:[156,128,'L'],noMala:true});
   if (!F(A,'k5.e.final')) await M.k5Final(A); };
 async function lastDrawing(A){ var An=A.npc('ana'), Mi=A.npc('mia');
-  await A.narrate('Ich zeichne eine Straßenbahn. Die Oberleitung. Den langen Wagen. Vorn eine Drei. In jedes Fenster ein Gesicht, so gut ich kann.');
-  await A.wait(900); await A.narrate('Dann die Räder.'); await A.wait(1400); await A.narrate('Sie stimmen.');
+  A.setFlag('k5.e.tram'); await A.narrate('Ich zeichne eine Straßenbahn. Die Oberleitung. Den langen Wagen. Vorn eine Drei. In jedes Fenster ein Gesicht, so gut ich kann.');
+  await A.wait(900); await A.narrate('Dann die Räder.'); A.setFlag('k5.e.wheels'); await A.wait(1400); await A.narrate('Sie stimmen.');
   A.note('f5_rad'); await A.wait(500);
   await Mi.say('Onkel Marko kann malen!'); await An.say('Seit wann?');
   var c=await A.choose([{t:'Seit Samstag.',id:'a'},{t:'Schon immer. Nur die Räder nicht.',id:'b'},{t:'(Nichts sagen.)',id:'c',silent:true}],{title:'Seit wann?'});
   A.setFlag('k5.e.last',c); if (c==='c') await A.wait(900);
   await A.narrate('Draußen gehen in der Stadt die Lichter an, eins nach dem anderen, bis Ilidža. Der Beschlag wird dünner. Die Straßenbahn geht mit ihm, erst die Räder, dann die Gesichter, zuletzt die Drei.');
+  A.G.flags['k5.e.wheels']=false; await A.wait(700); A.G.flags['k5.e.tram']=false; await A.wait(700); A.setFlag('k5.e.clear');
   await A.wait(800); await A.narrate('Dahinter ist die Stadt.');
   A.music('silence'); await A.wait(4000);
   A.setFlag('k5.e.done'); await dayCheck(A); }
+
+// ================================================================ Sichtbare Zeichnungen auf beschlagenem Glas (Bildebene über den Bildern aus Kapitel 2)
+function fogPatch(fb,x0,y0,w,h,cam,amt){ var P=M.P; for (var y=y0;y<y0+h;y++) for (var x=x0;x<x0+w;x++){ var dx=(x-(x0+w/2))/(w/2), dy=(y-(y0+h/2))/(h/2), d=dx*dx+dy*dy; if (d>1) continue; if (M.bayer(x,y)<(1-d*0.7)*amt) fb.px(x-cam,y,(d<0.4&&M.bayer(x+3,y)<0.5)?P.s6:P.s5); } }
+function pline(fb,pts,cam,c){ for (var i=0;i<pts.length-1;i++){ var a=pts[i], b=pts[i+1], n=Math.max(1,Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1])); for (var k=0;k<=n;k++) fb.px(Math.round(a[0]+(b[0]-a[0])*k/n)-cam,Math.round(a[1]+(b[1]-a[1])*k/n),c); } }
+// eine Straßenbahn im Beschlag: Fahrdraht, Stromabnehmer, langer Wagen, vorn eine Drei; Gesichter, Räder (eiförmig oder rund)
+function tram(fb,x,y,cam,o){ var P=M.P, c=P.m2;
+  pline(fb,[[x-2,y],[x+20,y]],cam,c); pline(fb,[[x+8,y+1],[x+10,y+5],[x+12,y+1]],cam,c);
+  pline(fb,[[x,y+6],[x+18,y+6],[x+19,y+8],[x+19,y+14],[x,y+14],[x,y+6]],cam,c);
+  if (o.three){ pline(fb,[[x+15,y+8],[x+17,y+8],[x+16,y+10],[x+17,y+12],[x+15,y+12]],cam,c); }
+  for (var i=0;i<3;i++){ var wx=x+2+i*4; pline(fb,[[wx,y+8],[wx+2,y+8],[wx+2,y+11],[wx,y+11],[wx,y+8]],cam,c); if (o.faces) fb.px(wx+1-cam,y+9,P.k2); }
+  if (o.wheels==='egg'){ pline(fb,[[x+3,y+15],[x+5,y+15],[x+6,y+17],[x+4,y+18],[x+2,y+17],[x+3,y+15]],cam,c); pline(fb,[[x+13,y+15],[x+15,y+16],[x+15,y+17],[x+13,y+18],[x+12,y+16],[x+13,y+15]],cam,c); }
+  if (o.wheels==='round'){ [[x+4,y+16],[x+14,y+16]].forEach(function(q){ pline(fb,[[q[0]-1,q[1]-1],[q[0]+1,q[1]-1],[q[0]+2,q[1]],[q[0]+1,q[1]+1],[q[0]-1,q[1]+1],[q[0]-2,q[1]],[q[0]-1,q[1]-1]],cam,c); }); } }
+(function(){ var P=M.P;
+  // Nadas Balkontür am Samstag
+  var R=M.ROOMS.stan5, d0=R&&R.dynamic;
+  if (R) R.dynamic=function(fb,v,S,G){ if (d0) d0(fb,v,S,G);
+    if (G.flags['k5.n1.eve'] && !G.flags['k5.s.mounted']){ var c=v.cam; for (var y=94;y<120;y++) for (var x=54;x<61;x++) fb.px(x-c,y,y>108?(M.bayer(x,y)<0.5?P.m2:P.m3):(x===54?P.w4:(x===60?P.w1:((y-94)%5===2&&x>55&&x<59?P.w0:P.w2)))); }
+    if (G.phase==='k5_sat' && G.flags['k5.sat.knock'] && !G.flags['k5.sat.drawn']){ var s=G.flags['k5.sat.draw']||0; if (!s) return;
+      fogPatch(fb,139,42,22,36,v.cam,s>=2?0.62:0.5); if (s>=2) tram(fb,140,48,v.cam,{three:true,faces:s>=4,wheels:s>=5?'egg':null}); } };
+  // Ružas Küchenfenster am Montagabend
+  var K=M.ROOMS.kuca5, k0=K&&K.dynamic;
+  if (K) K.dynamic=function(fb,v,S,G){ if (k0) k0(fb,v,S,G);
+    if (G.phase==='k5_epi' && G.flags['k5.e.final'] && !G.flags['k5.e.clear']){ var r=M.spot('kuca','window'); if (!r||!r[2]) return; fogPatch(fb,r[0]+3,r[1]+3,r[2]-6,r[3]-6,v.cam,0.6);
+      if (G.flags['k5.e.tram']) tram(fb,Math.round(r[0]+r[2]/2-9),Math.round(r[1]+r[3]/2-9),v.cam,{three:true,faces:true,wheels:G.flags['k5.e.wheels']?'round':null}); } };
+  // die Pension in der Nacht: der Atem am Fenster, eine Drei
+  var Q=M.ROOMS.pansion5, q0=Q&&Q.dynamic;
+  if (Q) Q.dynamic=function(fb,v,S,G){ if (q0) q0(fb,v,S,G); var t=G.flags['k5.n1.fog']; if (G.phase!=='k5_n1' || !t || v.gt-t>6000 || v.gt<t) return;
+    var r=M.spot('pansion','window'); if (!r||!r[2]) return; var a=1-(v.gt-t)/6000, cx=Math.round(r[0]+r[2]/2-6), cy=Math.round(r[1]+r[3]/2-4); fogPatch(fb,cx-4,cy-4,22,18,v.cam,0.7*a);
+    var th=G.flags['k5.n1.three']; if (th && v.gt>=th && v.gt-th<5000) pline(fb,[[cx+4,cy],[cx+8,cy],[cx+6,cy+4],[cx+8,cy+8],[cx+4,cy+8]],v.cam,P.m2); };
+})();
 })(M);
