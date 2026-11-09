@@ -235,7 +235,10 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
     await clearLog(); await act('talk', 'kraus'); await drive(['Können Sie den Gong abstellen', 'Danke'], async s => !s.dlg && !s.overlay, { label: 'Kraus nochmal', strict: false }); ok(await said('Heut nimmer') && !(await F('k4.g.chimeOff')), 'zweiter Versuch am selben Tag: „Heut nimmer.“');
     await exit('door214'); await clearLog(); await act('talk', 'alois'); await drive(['Ihre Frau ist gestorben'], async s => !s.dlg && !s.overlay && (await st()).room === 'heim_flur', { label: 'Alois direkt', strict: false });
     ok(await F('k4.g.blunt') && await said('Nie wieder'), 'Alois direkt „Ihre Frau ist gestorben“: Mama: „Nie wieder.“');
-    await clearLog(); await act('use', 'clock'); ok(await said('Heute nicht mehr'), 'danach heute kein Versuch: „' + (await lastSaid()) + '“'); await calm(); if ((await st()).dlg) await P.bye('(Noch nicht.)', 'Noch nicht');
+    // ein Versuch je Nachmittag; die Uhr bietet ausdrücklich an, später wiederzukommen (ANALYSE_GILBERT.md K4-B01, P04)
+    await clearLog(); await act('use', 'clock'); await calm(); const dl8 = (await st()).dlg || [];
+    ok(await said('Jetzt nicht mehr') && dl8.some(t => t.indexOf('Später wiederkommen') >= 0), 'danach an diesem Nachmittag kein Versuch: „' + (await lastSaid()) + '“, Auswahl ' + dl8.join(' / '));
+    if ((await st()).dlg) await P.bye('(Lassen.)');
     await exit('elevator'); await exit('door'); await travel('westend'); await go('heim'); await exit('elevator');
     await act('talk', 'kraus'); await drive(['Können Sie den Gong abstellen', 'Herr Lechner erschrickt', 'Danke'], async s => !s.dlg && !s.overlay, { label: 'Kraus neu' }); ok(await F('k4.g.chimeOff'), 'an einem neuen Nachmittag geht es weiter: Kraus stellt den Gong ab');
     // zu früh mit Mama reden (Dienstagabend)
