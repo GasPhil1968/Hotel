@@ -12,9 +12,11 @@ const ROOT = path.join(__dirname, '..');
 const args = process.argv.slice(2), arg = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; }, has = (k) => args.indexOf(k) >= 0;
 
 const PLAN_FULL = { A: 1000, B: 1000, C: 800, D: 600, E: 600 };
-const CH_PATH = { 1: 'walkthrough', 2: 'walkthrough2', 3: 'walkthrough3', 4: 'walkthrough4' };
-const CH_TITLE = { 1: 'Kapitel 1: Split', 2: 'Kapitel 2: Sarajevo', 3: 'Kapitel 3: Mostar', 4: 'Kapitel 4: München' };
-const ENDPOINT = 'K4 Abspann → Titelbild mit „Weiter mit Kapitel 5“ (Kapitel 5 spielt die Simulation nicht; dafür game/tools/walkthrough5.js)';
+const CH_PATH = { 1: 'walkthrough', 2: 'walkthrough2', 3: 'walkthrough3', 4: 'walkthrough4', 5: 'walkthrough5' };
+const CH_TITLE = { 1: 'Kapitel 1: Split', 2: 'Kapitel 2: Sarajevo', 3: 'Kapitel 3: Mostar', 4: 'Kapitel 4: München', 5: 'Kapitel 5: Sarajevo' };
+const ENDPOINT = 'K4 Abspann → Titelbild mit „Weiter mit Kapitel 5“ (verkettete Läufe ab Kapitel 1–4)';
+// Kapitel 5 (ANALYSE_GILBERT.md, Soll-Liste, Nebenpunkt): Läufe der Kategorien B–E können direkt in Kapitel 5 beginnen (Titelmenü, Vorgaben ohne Stand aus Kapitel 4)
+const ENDPOINT5 = 'K5 Abspann → Titelbild (Start in Kapitel 5 über das Titelmenü, Vorgaben ohne Stand aus Kapitel 4)';
 
 // ---------------------------------------------------------------- Spezifikationen (deterministisch aus Kategorie und Index)
 function hashSeed(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -25,13 +27,13 @@ function makeSpec(cat, i, salt) {
   const pick = (a) => a[Math.floor(r() * a.length)];
   const v = { nb: r() < 0.3 ? 'think' : 'list', order2: r() < 0.5 ? 'alt' : 'normal', consent: pick(['a', 'b', 'c']), sample: r() < 0.35 ? 'no' : 'yes', konsEarly: r() < 0.5 ? '1' : '0',
     c2: pick(['Ja. Und wenn es zu schwer wird, sage ich es', 'Ja. Diesmal weiß ich, wozu', 'Ich weiß es nicht. Das ist die ehrliche Antwort']) };
-  const startCh = cat === 'A' ? 1 : (1 + Math.floor(r() * 4));
-  const spec = { runId, cat, seed, startCh, variant: v };
-  if (cat === 'A') { spec.goal = 'Kritischer Pfad ab Spielbeginn (Titel → Kapitel 1 → … → Kapitel 4) bis ' + ENDPOINT; }
-  if (cat === 'B') { spec.points = 1 + Math.floor(r() * 3); spec.actions = 15 + Math.floor(r() * 66); spec.goal = 'Zufallserkundung (' + spec.points + '× je ' + spec.actions + ' Aktionen) in Kapitel ' + startCh + ', danach regulär bis ' + ENDPOINT; }
-  if (cat === 'C') { spec.premature = 1 + Math.floor(r() * 3); spec.absence = r() < 0.6 ? 1 + Math.floor(r() * 3) : 0; spec.goal = 'Variierte Reihenfolge (Varianten, ' + spec.premature + ' verfrühte Lösungsversuche, ' + spec.absence + ' Abwesenheiten) ab Kapitel ' + startCh + ' bis ' + ENDPOINT; }
-  if (cat === 'D') { spec.points = 1 + Math.floor(r() * 4); spec.modes = Array.from({ length: spec.points }, () => pick(['fresh', 'fresh', 'same', 'double'])); spec.goal = 'Speichern/Laden an ' + spec.points + ' Stellen (' + spec.modes.join(',') + ') ab Kapitel ' + startCh + ', dann weiter bis ' + ENDPOINT; }
-  if (cat === 'E') { spec.points = 2 + Math.floor(r() * 4); spec.bursts = 3 + Math.floor(r() * 8); spec.goal = 'Belastung/Fehlbedienung (' + spec.points + '× je ' + spec.bursts + ' Stöße) in Kapitel ' + startCh + ', danach bis ' + ENDPOINT; }
+  const startCh = cat === 'A' ? 1 : (1 + Math.floor(r() * 5));
+  const spec = { runId, cat, seed, startCh, variant: v }; const EP = startCh === 5 ? ENDPOINT5 : ENDPOINT;
+  if (cat === 'A') { spec.goal = 'Kritischer Pfad ab Spielbeginn (Titel → Kapitel 1 → … → Kapitel 4) bis ' + EP; }
+  if (cat === 'B') { spec.points = 1 + Math.floor(r() * 3); spec.actions = 15 + Math.floor(r() * 66); spec.goal = 'Zufallserkundung (' + spec.points + '× je ' + spec.actions + ' Aktionen) in Kapitel ' + startCh + ', danach regulär bis ' + EP; }
+  if (cat === 'C') { spec.premature = 1 + Math.floor(r() * 3); spec.absence = r() < 0.6 ? 1 + Math.floor(r() * 3) : 0; spec.goal = 'Variierte Reihenfolge (Varianten, ' + spec.premature + ' verfrühte Lösungsversuche, ' + spec.absence + ' Abwesenheiten) ab Kapitel ' + startCh + ' bis ' + EP; }
+  if (cat === 'D') { spec.points = 1 + Math.floor(r() * 4); spec.modes = Array.from({ length: spec.points }, () => pick(['fresh', 'fresh', 'same', 'double'])); spec.goal = 'Speichern/Laden an ' + spec.points + ' Stellen (' + spec.modes.join(',') + ') ab Kapitel ' + startCh + ', dann weiter bis ' + EP; }
+  if (cat === 'E') { spec.points = 2 + Math.floor(r() * 4); spec.bursts = 3 + Math.floor(r() * 8); spec.goal = 'Belastung/Fehlbedienung (' + spec.points + '× je ' + spec.bursts + ' Stöße) in Kapitel ' + startCh + ', danach bis ' + EP; }
   spec.stepLimit = 12000; spec.wallLimitMs = 900000; spec.vLimitMs = 6 * 3600 * 1000;
   return spec;
 }
@@ -66,7 +68,7 @@ async function runOne(spec, opt = {}) {
   // Haken nach jedem Skriptschritt
   let hookPlan = {};   // ch -> Set(chStep)
   const planHooks = (ch, nPoints, nStepsGuess) => { const s = new Set(); for (let k = 0; k < nPoints; k++) s.add(1 + Math.floor(rnd() * Math.max(2, nStepsGuess - 2))); hookPlan[ch] = s; };
-  const STEPS_GUESS = { 1: 60, 2: 66, 3: 110, 4: 84 };
+  const STEPS_GUESS = { 1: 60, 2: 66, 3: 110, 4: 84, 5: 55 };
   const canon = opt.canon || null;
   // Stände für die Hinweisprobe (P12): ab der ersten Störung im Kapitel, ohne Dubletten
   const stSeen = new Set(); let stCh = null;
@@ -133,12 +135,13 @@ async function runOne(spec, opt = {}) {
     p.diff = diff.slice(0, 30); p.equal = diff.length === 0; res.saveload.push(p);
     if (!p.equal) failBag.push('Save/Load-Abweichung (' + mode + ', K' + curCh + ' Schritt ' + p.step + '): ' + diff.slice(0, 5).join(' | '));
   };
-  const dPlan = {}; if (spec.cat === 'D') for (let k = 0; k < spec.points; k++) { const c = spec.startCh + Math.floor(rnd() * (5 - spec.startCh)); dPlan[c] = (dPlan[c] || 0) + 1; }
+  const lastCh = spec.startCh === 5 ? 5 : 4;   // verkettet bis Kapitel 4; ein Start in Kapitel 5 läuft bis zu dessen Abspann
+  const dPlan = {}; if (spec.cat === 'D') for (let k = 0; k < spec.points; k++) { const c = spec.startCh + Math.floor(rnd() * (lastCh + 1 - spec.startCh)); dPlan[c] = (dPlan[c] || 0) + 1; }
   let lastErr = null;
   try {
     // Kapitelstart über das Titelmenü
     await C.tapTitle(I, CH_TITLE[spec.startCh]); await C.tapTitle(I, 'Platz 1');
-    for (let ch = spec.startCh; ch <= 4; ch++) {
+    for (let ch = spec.startCh; ch <= lastCh; ch++) {
       curCh = ch; chStep = 0; S.tolerant = false;
       if (['B', 'C', 'E'].indexOf(spec.cat) >= 0 && ch === spec.startCh) planHooks(ch, spec.cat === 'C' ? (spec.premature + (spec.absence ? 1 : 0) > 0 ? 1 + Math.floor(rnd() * 2) : 0) : spec.points, STEPS_GUESS[ch]);
       if (spec.cat === 'D') planHooks(ch, dPlan[ch] || 0, STEPS_GUESS[ch]);
@@ -147,16 +150,16 @@ async function runOne(spec, opt = {}) {
       if (ch === 4 && chStart) { const prev = res.chapters.find(c => c.ch === 3 && c.endKey); if (prev) { const e = prev.endKey; if (chStart.k4c3.consent !== e.consent || chStart.k4c3.sample !== !!e.sample || !chStart.k4c3.fromSave) failBag.push('Übernahme K3→K4 falsch: Ende K3 ' + JSON.stringify({ consent: e.consent, sample: e.sample }) + ', Start K4 ' + JSON.stringify(chStart.k4c3)); } }
       const r = await C.runPath(CH_PATH[ch], D, env(ch), null, { afterStep });
       I = S.inner;
-      const endInfo = await I.ev(() => ({ ended: !!M.GS.ended, screen: M.E.screen, key: localStorage.getItem('mala.c' + (M.GS.phase && /^k4/.test(M.GS.phase) ? 4 : /^k3/.test(M.GS.phase) ? 3 : /^k2/.test(M.GS.phase) ? 2 : 1) + 'end'), phase: M.GS.phase }));
+      const endInfo = await I.ev(() => ({ ended: !!M.GS.ended, screen: M.E.screen, key: localStorage.getItem('mala.c' + (M.GS.phase && /^k5/.test(M.GS.phase) ? 5 : M.GS.phase && /^k4/.test(M.GS.phase) ? 4 : /^k3/.test(M.GS.phase) ? 3 : /^k2/.test(M.GS.phase) ? 2 : 1) + 'end'), phase: M.GS.phase }));
       const endKey = I.exportStorage()['mala.c' + ch + 'end'];
       const chRes = { ch, ok: r.ok && !!endKey && endInfo.ended, err: r.err, lines: r.lines.length, last: r.lines.slice(-3), start: chStart, endKey: endKey ? JSON.parse(endKey) : null, skips: S.skips.length, perturbed: perturbedCh && ch === spec.startCh };
       res.chapters.push(chRes); S.skips = [];
       if (!chRes.ok) { lastErr = r.err || 'Kapitelende nicht erreicht'; break; }
       const tn = await C.waitTitleNext(I);
       chRes.titleAfter = tn.labels;
-      if (ch < 4) { if (tn.labels.indexOf('Weiter mit ' + CH_TITLE[ch + 1].replace('Kapitel', 'Kapitel')) < 0 && !tn.labels.some(l => l.indexOf('Weiter mit Kapitel ' + (ch + 1)) >= 0)) { lastErr = 'Kein „Weiter mit Kapitel ' + (ch + 1) + '“ nach dem Abspann: ' + JSON.stringify(tn.labels); break; }
+      if (ch < lastCh) { if (tn.labels.indexOf('Weiter mit ' + CH_TITLE[ch + 1].replace('Kapitel', 'Kapitel')) < 0 && !tn.labels.some(l => l.indexOf('Weiter mit Kapitel ' + (ch + 1)) >= 0)) { lastErr = 'Kein „Weiter mit Kapitel ' + (ch + 1) + '“ nach dem Abspann: ' + JSON.stringify(tn.labels); break; }
         await C.tapTitle(I, 'Weiter mit Kapitel ' + (ch + 1)); }
-      else { chRes.finalTitle = tn; if (!tn.labels.some(l => /Weiter mit Kapitel 5/.test(l))) failBag.push('Kapitel 5 nach dem Abspann von Kapitel 4 nicht angeboten'); }
+      else { chRes.finalTitle = tn; if (lastCh === 4 && !tn.labels.some(l => /Weiter mit Kapitel 5/.test(l))) failBag.push('Kapitel 5 nach dem Abspann von Kapitel 4 nicht angeboten'); }
     }
   } catch (e) { lastErr = (e.kind === 'limit' ? 'LIMIT ' : 'EXC ') + (e.message || e); res.exc = String(e.stack || e).split('\n').slice(0, 6).join('\n'); }
   const fin = S.finish();
@@ -169,9 +172,9 @@ async function runOne(spec, opt = {}) {
   // mehrfach ausgelöste Erkenntnisse/Abschlüsse (Laden im Kategorie-D-Lauf setzt die Zeitlinie zurück, dort nicht gewertet)
   if (spec.cat !== 'D') { Object.entries(cov.realize).forEach(([k, v]) => { if (v > 1) inv.push('Erkenntnis mehrfach ausgelöst: ' + k + ' ×' + v); }); Object.entries(cov.ends).forEach(([k, v]) => { if (v > 1) inv.push('Kapitelende mehrfach: ' + k + ' ×' + v); }); }
   if (cov.unheld) inv.push('Testadapter: ' + cov.unheld + ' Verbindung(en) mit nicht vorhandenen Notizen');
-  const allCh = res.chapters.length === 5 - spec.startCh && res.chapters.every(c => c.ok);
+  const allCh = res.chapters.length === lastCh + 1 - spec.startCh && res.chapters.every(c => c.ok);
   const lastT = res.chapters.length && res.chapters[res.chapters.length - 1].finalTitle;
-  const finalOk = allCh && lastT && lastT.mode === 'next' && lastT.next === 5;   // Endpunkt: nach dem Abspann von Kapitel 4 bietet das Spiel „Weiter mit Kapitel 5“ an
+  const finalOk = allCh && lastT && (lastCh === 5 || (lastT.mode === 'next' && lastT.next === 5));   // Kapitel 5: Abspann und Titelbild erreicht (Kapitelende mala.c5end oben geprüft)   // Endpunkt: nach dem Abspann von Kapitel 4 bietet das Spiel „Weiter mit Kapitel 5“ an
   res.errors = errs.slice(0, 12); res.invariants = inv.slice(0, 20); res.failBag = failBag;
   res.lostItems = S.monitor.invChanges.filter(c => c[3].length).slice(0, 80);
   res.trace = fin.trace.length > 6000 ? fin.trace.slice(0, 3000).concat([['…gekürzt', fin.trace.length]]).concat(fin.trace.slice(-2000)) : fin.trace;
@@ -182,12 +185,12 @@ async function runOne(spec, opt = {}) {
   res.illegalSwitch = (fin.illegal || []).slice(0, 10);
   if (res.illegalSwitch.length) { res.result = 'infra'; res.reason = 'Harness: Figurenwechsel, den die Oberfläche nicht zuließe (canSwitch=false): ' + JSON.stringify(res.illegalSwitch[0]); }
   else if (errs.length || inv.length || failBag.length) { res.result = 'fail'; res.reason = (errs[0] || inv[0] || failBag[0]).split('\n')[0]; }
-  else if (finalOk) { res.result = 'pass'; res.endpoint = ENDPOINT; }
+  else if (finalOk) { res.result = 'pass'; res.endpoint = lastCh === 5 ? ENDPOINT5 : ENDPOINT; }
   else if (lastErr && /^LIMIT/.test(lastErr)) { res.result = 'undecided'; res.reason = lastErr; }
   else if (lastErr && /^EXC/.test(lastErr) && !/Zeitüberschreitung|Erwartung|Option nicht|Gedanke|kein Hotspot|kein Ausgang|Auswahl/.test(lastErr)) { res.result = 'infra'; res.reason = lastErr; }
   else if (perturbedFail) { res.result = 'undecided'; res.reason = 'Fortsetzung nach Störung gescheitert: ' + lastErr; }
   else { res.result = 'fail'; res.reason = 'Regulärer Pfad gescheitert: ' + lastErr; }
-  res.endpointReached = finalOk ? ENDPOINT : null;
+  res.endpointReached = finalOk ? (lastCh === 5 ? ENDPOINT5 : ENDPOINT) : null;
   // Sackgassen-Sonde: Bei „unentschieden“ (Skript fand nach der Störung nicht weiter) prüft eine begrenzte Suche mit regulären Spielerhandlungen
   // (zufällige Aktionen, bevorzugt die im Lösungsweg dieses Kapitels vorkommenden Hotspot-Aktionen, Notizkombinationen, Reisen), ob die
   // Geschichte von diesem Zustand aus noch vorankommt. Keine Flags, kein Teleport. Ergebnis: kein Softlock / Fortschritt möglich / Verdacht.
@@ -202,7 +205,7 @@ const PROBE_SNAP = function () { const G = M.GS; return { phase: G.phase, notes:
 async function probe(I, spec, canon, stuckCh, stuckStep) { const X = require("./lib/explore");
   const t0 = Date.now(); const rnd = require('./vmdriver').mulberry32((spec.seed ^ 0x5eed) >>> 0); const rec = [];
   const s0 = await I.ev(PROBE_SNAP); if (s0.screen !== 'game') return { cls: 'kein Spielbildschirm', start: s0 };
-  const ch = /^k4/.test(s0.phase) ? 4 : /^k3/.test(s0.phase) ? 3 : /^k2/.test(s0.phase) ? 2 : 1; const all0 = (canon && canon[ch]) || []; let win = (ch === stuckCh && stuckStep) ? all0.filter(c => c.step >= stuckStep - 2 && c.step <= stuckStep + 15) : all0; if (!win.length) win = all0; win = win.slice().sort((a, b) => a.step - b.step);   // frühe Schritte bevorzugt (Gewicht rnd³)
+  const ch = /^k5/.test(s0.phase) ? 5 : /^k4/.test(s0.phase) ? 4 : /^k3/.test(s0.phase) ? 3 : /^k2/.test(s0.phase) ? 2 : 1; const all0 = (canon && canon[ch]) || []; let win = (ch === stuckCh && stuckStep) ? all0.filter(c => c.step >= stuckStep - 2 && c.step <= stuckStep + 15) : all0; if (!win.length) win = all0; win = win.slice().sort((a, b) => a.step - b.step);   // frühe Schritte bevorzugt (Gewicht rnd³)
   const can = win.filter(c => c.kind === 'act' || c.kind === 'exit');
   const notePool = win.filter(c => c.kind === 'note'), choosePool = win.filter(c => c.kind === 'choose'), combPool = win.filter(c => c.kind === 'combine');
   const usedN = new Map(); const preferNote = (L) => { const c = notePool.find(x => L.indexOf(x.id) >= 0 && (usedN.get(x) || 0) < 2); if (!c || rnd() < 0.25) return null; usedN.set(c, (usedN.get(c) || 0) + 1); return c.id; };

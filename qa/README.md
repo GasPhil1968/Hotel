@@ -25,7 +25,7 @@ Alles hier prüft die **Produktionsdatei** `web/index.html` (bzw. eine angegeben
 
 ## Was ein „Lauf“ ist
 
-Jede Zeile in `runs.jsonl` ist ein eigenständiger Lauf: neue VM, leerer `localStorage`, eigener Seed (aus Kategorie, Nummer und Salz), Start über das Titelmenü, zusammenhängende Spielerhandlungen bis zum Endpunkt **K4-Abspann → Titelbild mit „Weiter mit Kapitel 5“** (Kapitel 5 spielt die Simulation nicht; es hat einen eigenen Durchlauf, `game/tools/walkthrough5.js`) oder bis zu einer Grenze. Protokolliert werden u. a. Run-ID, Kategorie, Seed, Datei-Hash, Gerüst-Hash, Startzustand, Ziel, Varianten, alle Aktionen (`trace`), Phasen- und Raumfolge, Störungen, Speicherpunkte, Abdeckung, Fehler, Laufzeit, Ergebnis.
+Jede Zeile in `runs.jsonl` ist ein eigenständiger Lauf: neue VM, leerer `localStorage`, eigener Seed (aus Kategorie, Nummer und Salz), Start über das Titelmenü, zusammenhängende Spielerhandlungen bis zum Endpunkt **K4-Abspann → Titelbild mit „Weiter mit Kapitel 5“**. Läufe der Kategorien B–E können seit der Soll-Liste der Analyse auch direkt in **Kapitel 5** beginnen (Titelmenü, Vorgaben ohne Stand aus Kapitel 4, QA-Pfad `paths/walkthrough5.js`); sie laufen bis zum **K5-Abspann** und liefern mit `--states` auch Kapitel-5-Stände für die Hinweisprobe.
 
 Ergebnisse: `pass` (Endpunkt erreicht, keine JS-Fehler, keine Invariantenverletzung), `fail` (JS-Fehler, Invariante, Save/Load-Abweichung oder regulärer Pfad gescheitert), `undecided` (Fortsetzung nach einer Störung nicht gefunden oder Grenze erreicht – **kein** Nachweis eines Softlocks), `infra` (Prüfgerüst, z. B. ein unerlaubter Figurenwechsel des Werkzeugs).
 

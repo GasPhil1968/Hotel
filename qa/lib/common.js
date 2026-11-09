@@ -65,6 +65,6 @@ function diffRelevant(a, b) {
   const cmp = (p, x, y) => { if (JSON.stringify(x) === JSON.stringify(y)) return; if (/^GS\.flags\.[^.]/.test(p) && !x && !y) return; if (x && y && typeof x === 'object' && typeof y === 'object' && !Array.isArray(x)) { new Set([...Object.keys(x), ...Object.keys(y)]).forEach(k => cmp(p + '.' + k, x[k], y[k])); return; } out.push(p + ': ' + JSON.stringify(x) + ' ≠ ' + JSON.stringify(y)); };
   cmp('GS', a, b); return out;
 }
-function chapterOfPhase(ph) { if (!ph) return 0; if (/^k4/.test(ph)) return 4; if (/^k3/.test(ph)) return 3; if (/^k2/.test(ph)) return 2; return 1; }
+function chapterOfPhase(ph) { if (!ph) return 0; if (/^k5/.test(ph)) return 5; if (/^k4/.test(ph)) return 4; if (/^k3/.test(ph)) return 3; if (/^k2/.test(ph)) return 2; return 1; }
 
 module.exports = { ROOT, TOOLS, loadPath, runPath, tapTitle, waitTitleNext, relevant, diffRelevant, chapterOfPhase };

@@ -1,3 +1,25 @@
+DIE STILLEN – ÄNDERUNGEN NACH DER ANALYSE, TEIL 2 (SOLL-LISTE P13–P20)
+Ausführlich: ANALYSE_GILBERT.md (Abschnitt K) im Repository.
+
+WAS SICH ÄNDERT
+- Kapitel 1: Mala muss Dinko beim Flicken belauschen („drži …“), bevor Marko
+  ihn anspricht; Bruno zeigt sich Marko erst, wenn Mala ihn an der Loge
+  spürt (oder die Glocke läutet). Dinko erzählt nur seinen Teil der Nacht,
+  den Rest schließt Marko selbst („Tonći kam mit der ANKICA“).
+- Kapitel 1: Zdenka erkennt die Idee mit Ivkas Radio; mit dem Radio weiß
+  Marko, wo es Batterien gibt. Ivkas Tür sagt, welches Stück noch fehlt; der
+  Schlüsselring passt auch direkt an Treppe und Kette.
+- Kapitel 2: Mirza kommt erst, wenn Marko „Keine Schuld“ selbst geschlossen
+  hat. Figuren sprechen Schlüsse nicht mehr vor (auch in Kapitel 3 und 5).
+- Kapitel 3: Die Peilungsschlüsse und „Skela“ zieht Marko beim Messen und
+  beim Lesen der alten Karte selbst. Am Sonntag sagt das Bett, was noch fehlt.
+- Kapitel 4: Der Prolog endet erst, wenn Marko Mama von Lana erzählt hat; der
+  Christtag endet nicht mehr mitten auf der Wiesn.
+- Kapitel 5: Das Zeichnen am Pensionsfenster gelingt ohne Zeitdruck; Mala
+  gibt am Freitag einen Wink; weitere naheliegende Wege (Tafel, Kanister am
+  Brückenkopf, die Plane anheben).
+- Naheliegende Fehlversuche bekommen an vielen Stellen eine eigene Antwort.
+
 DIE STILLEN – ÄNDERUNGEN NACH DER ANALYSE (RON GILBERTS REGELN, MUSS-LISTE P01–P12)
 Ausführlich: ANALYSE_GILBERT.md (Abschnitt G und „Umsetzung“) im Repository.
 

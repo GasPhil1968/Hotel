@@ -54,15 +54,15 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **Station 1, Alte Brücke:** den **Brückenkopf** benutzen. Antippen: **erster Kran** und **zweiter Kran**. Die Koski-Moschee kommt auf den Plan.
 - **Station 2, Koski:** beim Kassierer „Eine Karte fürs Minarett …“ kaufen. Durch die Minaretttür hinauf, den **Ausblick** benutzen. Antippen: **Glockenturm** und **zweiter Kran**.
-- **Verbinden:** *Linie 1* + *Linie 2* → **zu flach geschnitten**. Die beiden Fächer schneiden sich so flach, dass ein langer Streifen bleibt. Es braucht einen Standort weit seitlich: drüben, und hoch. Die Straßenbrücke erscheint. Mala sagt: „Über den Fluss. Nein.“
+- Nach der zweiten Peilung zieht Marko den Schluss selbst → **zu flach geschnitten**. Die beiden Fächer schneiden sich so flach, dass ein langer Streifen bleibt. Es braucht einen Standort weit seitlich: drüben, und hoch. Die Straßenbrücke erscheint. Mala sagt: „Über den Fluss. Nein.“
 - **Straßenbrücke:** Mala macht die Augen zu und hält sich an Markos Ärmel fest. **[G]** Man führt Mala bis ans Westende. Bleibt sie stehen, öffnet sie kurz die Augen; das ist ohne Folgen. Drüben ist das Westufer offen (Bulevar, Westbusbahnhof, Partisanenfriedhof).
 - **Station 3, Partisanenfriedhof:** Die Glocken läuten, Mala ist fort. Warten, bis sie zurückkommt: „Zu laut.“ – „Wenn ich es weiß.“ Dann den **Ausblick** benutzen. Antippen: **Hochhaus** und **Flussbiegung**. Mala: „Doch. Wir.“
-- **Verbinden:** *zu flach* + *Linie 3* → **Der Bereich liegt hinter dem Kartenrand**.
+- Nach der dritten Peilung zieht Marko den Schluss selbst → **Der Bereich liegt hinter dem Kartenrand**.
 
 **6. Die Karte von 1985 und Mate**
 - Westbusbahnhof → **Café „Zdravko“**. Mala sieht Mate am Fenstertisch, er wartet auf den Bus aus München.
 - **[M]** Zdravkos **alte Karte** an der Wand ansehen (Stadtplan 1985) und „Weiter“ antippen. Sie reicht weiter als der Kiosk-Plan.
-- **Verbinden:** *hinter dem Kartenrand* + *Karte 1985* → **Skela** (das Wort heißt „Fähre“). Skela steht auf dem Plan. Vorher zeigt der Plan den Ort nur als „Hinter dem Kartenrand“ (bis zur alten Karte).
+- Mit dem Bereich hinter dem Kartenrand liest Marko auf der alten Karte selbst → **Skela** (das Wort heißt „Fähre“). Wer die Karte vorher ansieht, verbindet später *hinter dem Kartenrand* + *Karte 1985*. Skela steht auf dem Plan. Vorher zeigt der Plan den Ort nur als „Hinter dem Kartenrand“ (bis zur alten Karte).
 - **[M]** Mit Mate reden: „Ich suche einen Fahrer …“ → „Rajić? Der Raucher?“ Zum Abschied „Auf Wiedersehen, Herr Zelenika.“ Dann „Ich sehe nach.“ Marko verspricht, am Samstag nach dem Bus zu sehen.
 
 **7. Vulkanizer Rajić**

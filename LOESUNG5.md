@@ -74,7 +74,7 @@ Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Br
 
 **10. Die Nacht in der Pension: „Acht Wochen“**
 - **[M]** Das **Fenster** benutzen (anhauchen). Im Beschlag erscheint eine Drei. Mala: „Das war ich.“
-- „Versuch es auf dem Spiegel.“ (nichts) und „Noch einmal.“ (drei, vier Sekunden). Mia im Flur haucht eine Sonne, Mala zeichnet daneben: nichts. „Nur in deinem Atem.“ → Notiz *In meinem Atem*.
+- „Versuch es auf dem Spiegel.“ (nichts) und „Noch einmal.“ (drei, vier Sekunden). Danach kann man selbst üben: Marko haucht das **Fenster** an, Mala **zeichnet** eine Drei. Der Beschlag hält bis zur nächsten Handlung (Analyse K5-B07). Mia im Flur haucht eine Sonne, Mala zeichnet daneben: nichts. „Nur in deinem Atem.“ → Notiz *In meinem Atem*.
 - „Acht Wochen kein Kopfweh.“ (auch die anderen beiden Antworten führen dorthin). Am Ende: „Für Mama. Wer sonst?“ → Notiz *„Wer sonst?“*.
 - Verbinden: *„Wer sonst?“* + *„Euer Samstag“* → **Nicht Nada**. Mala: „…Du hast recht. Mama war nie samstags dabei.“
 
@@ -91,7 +91,7 @@ Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Br
 
 **13. Der neunzehnte April (Brauerei)**
 - **[G]** Den **Hahn**, die **Mitte der Gasse** und den **Brückenkopf** spüren. Am Hahn hebt Hamdija die Hand, „Ima pritiska!“, ein Mann in blauer Jacke dreht sich um; in der Mitte nur ein Ton; an der Brücke die Hand auf den Augen des Jungen, später füllt derselbe Mann beide Kanister. → Notiz *Der neunzehnte April*. Marko: „Papa hat sich umgedreht. Zu mir.“
-- Verbinden: *Nemoj gledati* + *Der neunzehnte April* → **Wer mich festhielt** (optional, aber der Kern der Geschichte).
+- Verbinden: *Nemoj gledati* + *Der neunzehnte April* → **Wer mich festhielt**. Pflicht: erst mit diesem Schluss bietet Marko Hamdija den Satz über die gefüllten Kanister an (Analyse K5-B09).
 - **[M]** Mit Hamdija reden: „Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.“ und „Den Rechenschieber haben Sie ihm in die Tasche gesteckt.“ (Ein Satz allein reicht nicht.) → „Ti si mali.“ – „Otvori.“
 - **[M]** Den **Blechkasten** öffnen: **Hamdijas Liste**, sieben Zeilen; Nummer drei ist Papa → Notiz *Sieben Zeilen*. Mala: „Er hat sich geschämt. Weil er gezählt hat statt zu weinen.“
 - **[M]** Stadtplan: **Gerichtsmedizin**. Frau Kolar die **Liste** geben: drei Beschreibungen, ein Abgleich mit den Familien.
@@ -174,3 +174,10 @@ Stand aus Kapitel 3/4: Zustimmung c (in München „diesmal weiß ich, wozu“),
 - Bastei: „Ich weiß nicht, was ich will …“, „Bist du sicher?“ – „Nein. Nimm sie trotzdem.“
 - Samstag: „(Nichts sagen.)“ an der Tür, „Geh hinauf und klopf.“ („Sag mir nicht, was ich tun soll.“), in der Küche „Das ist …“, am Tor „(Warten.)“, „Noch nicht.“, „(Den Kopf schütteln.)“, Mütze gerade („Wer bist du?“), „(Noch nicht.)“, dann „(Loslassen.)“; in der Drei kauft Marko einen Fahrschein beim Fahrer.
 - Montag: Mama stellt Pantoffeln an die Tür und nimmt sie wieder weg („Er ist ja da.“); Davor schickt ein Foto von Lenas Feigenzweig.
+
+## Weitere Wege seit der Soll-Liste (ANALYSE_GILBERT.md, Abschnitt K)
+
+- *Damit man sie findet* + *Nadas Tafel* ergibt ebenfalls **Zwei Hälften**.
+- Nachts kann man sich mit dem Kanister auch am **Brückenkopf** anstellen.
+- Vor Malas Spüren hebt Marko eine Ecke der Plane: nur Holz, die Kanister stehen weiter hinten.
+- Freitag: Nach „Ich bin der Junge.“ weist Mala auf die drei Stellen hin: „Der Tag weiß es. Am Hahn, in der Mitte, an der Brücke.“

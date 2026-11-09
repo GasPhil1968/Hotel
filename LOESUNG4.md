@@ -21,7 +21,7 @@ Der Weg unten ist der Weg des automatischen Durchlaufs (`game/tools/walkthrough4
 ## Prolog – Heiligabend (Samstag, 24. Dezember)
 
 **1. Ankunft am ZOB**
-- Das Bild „Im Bus nach München“ zeigt die Nacht. Am ZOB schreibt Ana: „Mama arbeitet bis 14 Uhr. Schlüssel bei Frau Huber, 2. Stock.“
+- Das Bild „Im Bus nach München“ zeigt die Nacht. Am ZOB schreibt Ana: „Mama arbeitet bis 14 Uhr. Schlüssel bei Frau Huber, unten links.“
 - **[M]** „(Antworten: „Bin da.“)“ oder „(Nicht antworten.)“; beides geht. Markos Kopf pocht: Hier wartet einer.
 
 **2. Hansi**
@@ -40,6 +40,7 @@ Der Weg unten ist der Weg des automatischen Durchlaufs (`game/tools/walkthrough4
 **4. Mama**
 - **[M]** Den **Herd** benutzen: Kaffee in Großmutters Džezva. Mama kommt heim.
 - Im Gespräch: „(Nadas Dose geben.)“ → „Ich muss dir etwas erzählen. Von Lana.“ → „(Mala fragen.)“ (freiwillig: „Sag es ihr. Sie hat mir die Tür aufgemacht. Jeden Samstag.“) → „Ich habe Lana gefunden.“ → „Mama. Wegen der Probe.“ – „Nicht heute. Heute ist Heiligabend.“ → „(Ein Hemd anziehen.)“
+- Der Prolog endet erst, wenn Marko Mama von Lana erzählt hat; vorher heißt der letzte Eintrag „(Später.)“ statt „(Ein Hemd anziehen.)“ (Analyse K4-B04).
 - Der Abend beginnt von selbst.
 
 ## Heiligabend – Abend bei Ana
@@ -59,6 +60,7 @@ Pflicht: der Spaziergang mit Ana, Peppino, Gerda. Die Reihenfolge ist frei.
 
 **Theresienwiese**
 - **[M]** Mit Ana reden: „Zeigst du mir das Foto?“ → „Lana hat dir eine Straßenbahn gemalt.“ → „Ich weiß es eben.“ → „Ich muss dir etwas sagen. Über Lana.“ → „(Mala fragen.)“ (freiwillig) → „Lana ist tot. Seit Januar vierundneunzig.“ → „(Schweigen.)“ → „Ich gehe noch ein Stück.“ Malas Erinnerung „Die gelben Stiefel“: Ana hat die Straßenbahn noch.
+- Kommt die Wiesn zuletzt (Peppino und Gerda schon erledigt), endet der Christtag nicht mehr mitten im Gespräch: Erst wer geht oder Ana von Lana erzählt, beendet den Tag.
 
 **Hauptbahnhof (Fall A beginnt)**
 - **[G]** Auf der Wiesn zu Mala wechseln und allein über den Plan zum **Hauptbahnhof**. Sie findet an Gleis 11 den Gepäckträger: „Siebzehn. Wie ich, als ich aufgehört habe.“

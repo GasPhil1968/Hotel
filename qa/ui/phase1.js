@@ -103,8 +103,12 @@ const { pw, checker, open, settle, loadSlot, CAPTURE, toPage, HS_POINT } = requi
     const btn = await p.$('#rotnote button'); const bb = btn && await btn.boundingBox(); T.ck(bb && bb.height >= 44, 'Knopf „Gedreht weiterspielen“ ≥ 44 CSS-px hoch (' + (bb && bb.height) + ')');
     if (btn) await btn.tap(); T.ck(await p.evaluate(() => !document.getElementById('rotnote').classList.contains('on') && localStorage.getItem('mala.rotOk') === '1'), 'nach dem Tipp verborgen und gemerkt');
     // Chromium schreibt localStorage in einem frischen Kontext verzögert weg: ein Neuladen wenige ms nach dem Schreiben kann den Eintrag verlieren (Testumgebung, nicht das Spiel)
-    await p.waitForTimeout(800); await p.reload(); await p.waitForFunction(() => window.M && M.E && M.E.screen === 'title' && document.getElementById('rotnote'), null, { timeout: 20000 }); await p.waitForTimeout(300);
-    const rl = await p.evaluate(() => ({ on: document.getElementById('rotnote').classList.contains('on'), ok: localStorage.getItem('mala.rotOk'), keys: Object.keys(localStorage).join(','), ss: sessionStorage.getItem('__i') }));
+    // Chromium übergibt localStorage-Schreibvorgänge gebündelt an den Browserprozess; ein Neuladen kurz danach kann sie verwerfen (Testumgebung,
+    // geprüft: das Spiel ruft dabei weder removeItem noch clear auf, ANALYSE_GILBERT.md J.3). Deshalb 2,5 s warten und bei Verlust einmal wiederholen.
+    const reloadCheck = async (ms) => { await p.waitForTimeout(ms); await p.reload(); await p.waitForFunction(() => window.M && M.E && M.E.screen === 'title' && document.getElementById('rotnote'), null, { timeout: 20000 }); await p.waitForTimeout(300);
+      return p.evaluate(() => ({ on: document.getElementById('rotnote').classList.contains('on'), ok: localStorage.getItem('mala.rotOk'), keys: Object.keys(localStorage).join(','), ss: sessionStorage.getItem('__i') })); };
+    let rl = await reloadCheck(2500);
+    if (rl.on && rl.ok !== '1') { const b2 = await p.$('#rotnote button'); if (b2) await b2.tap(); rl = await reloadCheck(5000); if (!rl.on && rl.ok === '1') rl.retried = true; }
     T.ck(!rl.on && rl.ok === '1', 'nach dem Neuladen nicht erneut' + (rl.on || rl.ok !== '1' ? ' – ' + JSON.stringify(rl) : ''));
     errs.push(...p.errs); await p.context().close();
   } catch (e) { T.ck(false, 'Ausnahme: ' + (e.stack || e).toString().split('\n').slice(0, 3).join(' | ')); }

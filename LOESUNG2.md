@@ -235,9 +235,9 @@ Die Spur kann man vor, zwischen oder nach den Schritten von Fall 2 gehen, sogar 
 **Die Schüler gewinnen**
 - **Mirza:**
   - nach dem Stempel fragen → **Schulstempel**;
-  - nach „Moja krivica“ fragen → „Sie hat mich hineingetragen.“;
-  - dann bitten, heute Abend zu kommen.
+  - nach „Moja krivica“ fragen → „Sie hat mich hineingetragen.“
 - **Verbinden:** Schuld + Gerettet → **Keine Schuld**.
+- **Mirza** erst danach bitten, heute Abend zu kommen: „Sie hat ihr Leben lang geglaubt, es war ihre Schuld.“ – „Ich komme.“ Ohne den Schluss lehnt er ab (Analyse K2-B08).
 - **Selma:** ihren Kinderwagen in den dritten Stock tragen, dann fragen.
 - **[M]** Im Keller den **Stempel auf das Pult** ziehen (die Zeugnisse sind im Inventar) → gestempelt.
 - **Damir:** an der Baščaršija, Fahrer in Pause, ihm das Klassenbuch zeigen (seine Zeichnung).

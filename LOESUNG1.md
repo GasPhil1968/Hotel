@@ -143,7 +143,14 @@ Varoš lässt Marko erst zu, wenn Sanja ihren Brief hat: „Erst Sanja. Triest r
     - Zurück zu Marko: „Schauen Sie mal im Regal bei 1948“.
     - Marko bleibt skeptisch: „Zufall.“
 
-Danach folgt der erste Fall unverändert: Notizbuch „Boot um sieben“ + „Fähre fiel aus“, Matejuška, Seesack, Dinko, Brief über Dampf öffnen, Sustipan, Mala am Poller, die Wahrheit für Ivka, die Zwischenwelt, die Handschuhe.
+Danach folgt der erste Fall: Notizbuch „Boot um sieben“ + „Fähre fiel aus“ → **Tonći kam mit der ANKICA**, Matejuška, Seesack, Dinko, Brief über Dampf öffnen, Sustipan, Mala am Poller, die Wahrheit für Ivka, die Zwischenwelt, die Handschuhe.
+
+Seit der Soll-Liste der Analyse (`ANALYSE_GILBERT.md`, Abschnitt K):
+- **Pflicht, Lauschen:** Als Mala Dinko beim Flicken belauschen: „…drži … drži …“ (Notiz *Dinkos Murmeln*). Erst mit diesem Gemurmel und Malas Nachhall am Seesack sagt Marko zu Dinko: „Ich weiß, was Tonći im Wasser gesagt hat.“
+- Dinko erzählt nur seinen Teil der Nacht. Warum Tonći nicht auf die Fähre gewartet hat, schließt Marko selbst; in Ivkas zweiter Runde zählt nur **Tonći kam mit der ANKICA**. Dinkos Geschichte allein beantwortet ihre Frage nicht („Warum sollte er? Er kommt mit der Fähre.“).
+- Fehlt beim Verlassen von Ivkas Wohnung Foto oder Postkarte, sagt die Tür, welches Stück fehlt.
+- Zweiter Fall: Mit der Kassette fragt man Zdenka „Ivkas Radio. Hatte das nicht ein Kassettenfach?“; sie will erst die Zeitung lesen. Mit dem Radio weiß Marko, wo es Batterien gibt: Das Fährterminal ist dann offen, auch ohne Sanjas Frage.
+- Dritter Fall, **Pflicht, Finden:** Bruno zeigt sich Marko erst, wenn Mala die Portiersloge spürt (oder Marko die Glocke läutet). Den Schlüsselring kann man auch direkt an Treppe oder Kette benutzen.
 
 Das Abschiedsgespräch mit Ivka beginnt, wenn alles beisammen ist (Fähre, Brief, Handschuhe), mit dem Brief oder mit den Handschuhen. Fehlt noch etwas, sagt sie zu den Handschuhen nur, dass sie keine trägt.
 

@@ -82,8 +82,10 @@ const LIST = (n) => { window.__ch = undefined; M.E.busy = true; const labs = ['E
     await p.evaluate(() => { window.__hit = []; M.E.doVerb = async function (v, hs) { window.__hit.push(hs ? hs.id : v); }; M.E.walkPlayerTo = function () { window.__hit.push('walk'); }; });
     await hold(600); const off = await p.evaluate(() => ({ hit: window.__hit.slice(), pop: M.E.pop && M.E.pop.hs && M.E.pop.hs.id })); await p.evaluate(() => { M.E.pop = null; window.__hit = []; });
     T.ck(!M_isBell(off), 'aus (Standard): langer Druck wirkt wie ein Tipp an der Fingerstelle (' + JSON.stringify(off) + ')');
-    await p.evaluate(() => M.fineOn(true)); await hold(600); const on = await p.evaluate(() => ({ hit: window.__hit.slice(), pop: M.E.pop && M.E.pop.hs && M.E.pop.hs.id }));
-    T.ck(M_isBell(on), 'an: 0,6 s halten wählt das Ding 40 CSS-px über dem Finger (' + JSON.stringify(on) + ')'); await p.evaluate(() => M.fineOn(false)); await done(p);
+    // Die Feinwahl greift nach 0,4 s ruhigem Halten. Mit 0,6 s blieben 0,2 s Spielraum; unter Last kamen die Touch-Ereignisse so verzögert an,
+    // dass die Prüfung auf dem alten wie dem neuen Stand schwankte (ANALYSE_GILBERT.md J.3). 1 s Halten prüft dasselbe Verhalten.
+    await p.evaluate(() => M.fineOn(true)); await hold(1000); const on = await p.evaluate(() => ({ hit: window.__hit.slice(), pop: M.E.pop && M.E.pop.hs && M.E.pop.hs.id }));
+    T.ck(M_isBell(on), 'an: 1 s halten wählt das Ding 40 CSS-px über dem Finger (' + JSON.stringify(on) + ')'); await p.evaluate(() => M.fineOn(false)); await done(p);
 
     T.section('Hinweise für iPhone und iPad (E5, T12, T14)');
     const iph = Object.assign({}, pw.devices['iPhone 15 landscape'] || pw.devices['iPhone 13 landscape']); delete iph.defaultBrowserType;

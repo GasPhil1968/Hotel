@@ -254,9 +254,9 @@ Offen, wenn: `ph(G,['c1','c1_night']) && N(G,'c1_brother') && !N(G,'c1_words')`
 Offen, wenn: `ph(G,['c1','c1_night']) && N(G,'c1_words') && !F(G,'c1.dinkoTold')`
 
 1. **Problem einordnen:** Tonćis letzte Worte sind bekannt. Dinko hat sie nie jemandem erzählt.
-2. **Denkrichtung:** Wer es weiß, kann Dinko sein Schweigen nehmen.
-3. **Konkreter Ansatz:** Mit Dinko reden. Was im Wasser gesagt wurde, und dass Ivka noch wartet.
-4. **Nächster Schritt:** Mit Dinko reden: „Ich weiß, was Tonći im Wasser gesagt hat“, dann „Ivka wartet noch“.
+2. **Denkrichtung:** *je nach Stand:* „Wer es weiß, kann Dinko sein Schweigen nehmen.“ / „Ob er sie noch mit sich herumträgt? Beim Flicken murmelt er etwas.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Mit Dinko reden. Was im Wasser gesagt wurde, und dass Ivka noch wartet.“ / „Mala hört hin, was Dinko beim Flicken murmelt.“ / „Ich höre hin, was Dinko beim Flicken murmelt.“
+4. **Nächster Schritt:** *je nach Stand:* „Mit Dinko reden: „Ich weiß, was Tonći im Wasser gesagt hat“, dann „Ivka wartet noch“.“ / „Zu Mala wechseln und Dinko beim Flicken belauschen.“ / „Zu mir wechseln und Dinko beim Flicken belauschen.“
 
 ### Der verklebte Brief `k1_steam`
 
@@ -1058,8 +1058,8 @@ Offen, wenn: `ph(G,['k2_s3']) && N(G,'s3_register') && !(F(G,'k2.s3.mirza') && F
 
 1. **Problem einordnen:** Zora will, dass alle da sind. Drei aus dem Klassenbuch leben noch hier.
 2. **Denkrichtung:** Mirza, Selma und Damir. Jeder braucht einen anderen Grund, zu kommen.
-3. **Konkreter Ansatz:** *je nach Stand:* „Mirza muss erfahren, was Zora über ihn geschrieben hat“ / „Selma braucht eine Hand“ / „Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch“
-4. **Nächster Schritt:** *je nach Stand:* „Mirza zeigen, was im Klassenbuch über ihn steht“ / „Selma Hilfe anbieten“ / „Damir das Klassenbuch zeigen“
+3. **Konkreter Ansatz:** *je nach Stand:* „Mirza muss erfahren, was Zora über ihn geschrieben hat“ / „Zora schreibt „Meine Schuld“, Mirza erzählt etwas anderes. Was war es wirklich?“ / „Mirza kann ihr heute Abend selbst sagen, was war“ / „Selma braucht eine Hand“ / „Damir braucht seine eigene Zeichnung, und die steht im Klassenbuch“
+4. **Nächster Schritt:** *je nach Stand:* „Mirza zeigen, was im Klassenbuch über ihn steht“ / „Im Notizbuch „Moja krivica“ und „Sie hat mich hineingetragen“ verbinden“ / „Mirza in den Keller einladen“ / „Selma Hilfe anbieten“ / „Damir das Klassenbuch zeigen“
 
 ### Die letzte Stunde `s3g`
 
@@ -1954,7 +1954,7 @@ Offen, wenn: `P(G,['k3_pro','k3_d1','k3_d2','k3_d2_n','k3_d3','k3_epi']) && !!(M
 3. **Konkreter Ansatz:** Nichts mehr suchen.
 4. **Nächster Schritt:** Einen Moment warten: Der nächste Abschnitt beginnt von selbst.
 
-## Kapitel 4: München (48 Themen)
+## Kapitel 4: München (50 Themen)
 
 ### Der Kopf pocht `h4a`
 
@@ -2001,6 +2001,15 @@ Offen, wenn: `G.phase==='k4_pro' && F(G,'k4.p.coffee') && !F(G,'k4.p.jasna')`
 3. **Konkreter Ansatz:** Die Dose von Nada geben. Von Lana erzählen. Und das mit der Probe.
 4. **Nächster Schritt:** Mit Mama reden: ihr Nadas Dose geben, von Lana erzählen, die Probe ansprechen.
 
+### Lana `h4e2`
+
+Offen, wenn: `G.phase==='k4_pro' && F(G,'k4.p.jasna') && !F(G,'k4.p.lana')`
+
+1. **Problem einordnen:** Mama weiß noch nicht, was in Mostar war.
+2. **Denkrichtung:** Den ganzen Herbst hat Marko gesucht. Mama hat Lana gekannt.
+3. **Konkreter Ansatz:** Mama von Lana erzählen. Sie ist noch in der Küche.
+4. **Nächster Schritt:** Mit Mama reden: „Ich muss dir etwas erzählen. Von Lana.“ – „Ich habe Lana gefunden.“
+
 ### Heiligabend `p4a`
 
 Offen, wenn: `G.phase==='k4_pro_n' && !F(G,'k4.p.eve')`
@@ -2036,6 +2045,15 @@ Offen, wenn: `G.phase==='k4_d1' && !N(G,'z4_stiefel')`
 2. **Denkrichtung:** Auf eine große Wiese, zum Rodeln.
 3. **Konkreter Ansatz:** Die Theresienwiese.
 4. **Nächster Schritt:** Zur Theresienwiese gehen und mit Ana spazieren.
+
+### Ana weiß es noch nicht `d4f`
+
+Offen, wenn: `G.phase==='k4_d1' && !F(G,'k4.d1.walk') && !!(M.k4DayDone && M.k4DayDone(G)) && !(M.k4DayReady && M.k4DayReady(G))`
+
+1. **Problem einordnen:** Ana ist noch da. Mit den Kindern.
+2. **Denkrichtung:** *je nach Stand:* „k4.d1.anaLana“ / „Ana hat ein Foto auf dem Handy. Von Papa und dem Auto.“ / „Die Straßenbahn aus Malas Erinnerung. Ana hat sie aufgehoben.“ / „Ana weiß noch nicht, was mit Lana war.“
+3. **Konkreter Ansatz:** *je nach Stand:* „k4.d1.anaLana“ / „Ana nach dem Foto fragen.“ / „Ana von der Straßenbahn erzählen.“ / „Ana sagen, was mit Lana war. Wer geht, beendet den Tag.“
+4. **Nächster Schritt:** *je nach Stand:* „k4.d1.anaLana“ / „Mit Ana reden: „Zeigst du mir das Foto?““ / „Mit Ana reden: „Lana hat dir eine Straßenbahn gemalt.““ / „Mit Ana reden: „Ich muss dir etwas sagen. Über Lana.““
 
 ### Wieder der Druck `d4b`
 
@@ -2502,10 +2520,10 @@ Offen, wenn: `G.phase==='k5_d2' && N(G,'s5_beide') && !F(G,'k5.s.mounted')`
 
 Offen, wenn: `G.phase==='k5_d2' && N(G,'b5_hamdija') && !F(G,'k5.b.gone')`
 
-1. **Problem einordnen:** *je nach Stand:* „Er lässt mich nicht an den Kasten hinter dem Hahn.“ / „Er glaubt mir nicht, dass ich der Junge bin.“ / „Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.“ / „k5.b.listKolar“ / „Er muss mich erkennen.“ / „k5.b.listKolar“ / „Die Liste muss zu Frau Kolar.“ / „Er muss hören, was aus den sieben geworden ist.“ / „Er ist bereit zu gehen.“
-2. **Denkrichtung:** *je nach Stand:* „Was ist im Kasten?“ / „Was weiß nur der Junge von damals?“ / „Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.“ / „k5.b.listKolar“ / „Die gefüllten Kanister. Und der Rechenschieber.“ / „k5.b.listKolar“ / „Drei Tote haben noch keinen Namen.“ / „Sie sind gefunden. Alle sieben.“ / „Er kann jetzt gehen.“
-3. **Konkreter Ansatz:** *je nach Stand:* „Mala geht durch Wände. Auch in einen Blechkasten.“ / „Ich gehe durch den Kasten.“ / „Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.“ / „Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.“ / „In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Ihm beides sagen: die Kanister und den Rechenschieber.“ / „k5.b.listKolar“ / „Die Liste in die Gerichtsmedizin bringen.“ / „Zu Hamdija an den Hahn.“ / „Mala öffnet die Schwelle. Am Hahn.“ / „Ich mache ihm Licht. Am Hahn.“
-4. **Nächster Schritt:** *je nach Stand:* „Als Mala den Kasten hinter dem Hahn ansehen.“ / „Als Mala den Hahn, die Mitte und die Brücke spüren.“ / „Frau Kolar nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Den Blechkasten hinter dem Hahn öffnen.“ / „k5.b.listKolar“ / „Mit Hamdija reden und die Kanister und den Rechenschieber nennen.“ / „k5.b.listKolar“ / „Frau Kolar die Liste geben.“ / „Mit Hamdija reden: Sie sind gefunden.“ / „Als Mala Hamdija hinüberbringen.“
+1. **Problem einordnen:** *je nach Stand:* „Er lässt mich nicht an den Kasten hinter dem Hahn.“ / „Er glaubt mir nicht, dass ich der Junge bin.“ / „Einer hat mich damals festgehalten. Wer, habe ich noch nicht zu Ende gedacht.“ / „Für ihn ist April 1993. Er weiß nicht, was aus den Gräbern wurde.“ / „k5.b.listKolar“ / „Er muss mich erkennen.“ / „k5.b.listKolar“ / „Die Liste muss zu Frau Kolar.“ / „Er muss hören, was aus den sieben geworden ist.“ / „Er ist bereit zu gehen.“
+2. **Denkrichtung:** *je nach Stand:* „Was ist im Kasten?“ / „Was weiß nur der Junge von damals?“ / „Die Hand auf den Augen roch nach Malz. Und vorn am Hahn hob einer die Hand.“ / „Frau Kolar weiß, was aus dem Grab an der Brauerei wurde.“ / „k5.b.listKolar“ / „Die gefüllten Kanister. Und der Rechenschieber.“ / „k5.b.listKolar“ / „Drei Tote haben noch keinen Namen.“ / „Sie sind gefunden. Alle sieben.“ / „Er kann jetzt gehen.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Mala geht durch Wände. Auch in einen Blechkasten.“ / „Ich gehe durch den Kasten.“ / „Mala soll den Tag spüren: am Hahn, in der Mitte, an der Brücke.“ / „Ich spüre den Tag: am Hahn, in der Mitte, an der Brücke.“ / „Die Hand an den Kanistern und der Tag am Hahn gehören zusammen.“ / „In der Gerichtsmedizin nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Ihm beides sagen: die Kanister und den Rechenschieber.“ / „k5.b.listKolar“ / „Die Liste in die Gerichtsmedizin bringen.“ / „Zu Hamdija an den Hahn.“ / „Mala öffnet die Schwelle. Am Hahn.“ / „Ich mache ihm Licht. Am Hahn.“
+4. **Nächster Schritt:** *je nach Stand:* „Als Mala den Kasten hinter dem Hahn ansehen.“ / „Als Mala den Hahn, die Mitte und die Brücke spüren.“ / „Im Notizbuch „Nemoj gledati“ und „Der neunzehnte April“ verbinden.“ / „Frau Kolar nach dem Grab an der Brauerei fragen.“ / „k5.b.listKolar“ / „Den Blechkasten hinter dem Hahn öffnen.“ / „k5.b.listKolar“ / „Mit Hamdija reden und die Kanister und den Rechenschieber nennen.“ / „k5.b.listKolar“ / „Frau Kolar die Liste geben.“ / „Mit Hamdija reden: Sie sind gefunden.“ / „Als Mala Hamdija hinüberbringen.“
 
 ### Lanas Begräbnis `h5fun`
 
