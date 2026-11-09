@@ -18,7 +18,7 @@ function touchCap(){ try{ return DOM && ((navigator.maxTouchPoints||0)>0 || matc
 function fsApi(){ try{ var d=DOM&&document.documentElement; return !!(d && (d.requestFullscreen||d.webkitRequestFullscreen)); }catch(e){ return false; } }
 M.iosDev=iosDev; M.standalone=standalone;
 function entries(n){ return n+' '+(n===1?'Eintrag':'Einträge'); }
-var PLACES=['Split','Sarajevo','Mostar','München'], ORD=['ersten','zweiten','dritten','vierten'];
+var PLACES=['Split','Sarajevo','Mostar','München','Sarajevo'], ORD=['ersten','zweiten','dritten','vierten','fünften'];
 
 // ---------------------------------------------------------------- Einstellungen ohne Spielbezug (je Gerät)
 var PREF={ size:lsGet('mala.textsize')==='1'?1:0, font:lsGet('mala.font')==='read'?'read':'pix', motion:lsGet('mala.motion') };
@@ -30,10 +30,10 @@ function setPref(k,v){ PREF[k]=v; if (k==='size') lsSet('mala.textsize',v?'1':'0
 // Testschalter ?kapitel=alle (oder M.DEV_ALL_CHAPTERS in der VM) gibt alles frei, ohne Marken zu schreiben.
 M.allChapters=function(){ if (M.DEV_ALL_CHAPTERS) return true; try{ return DOM && /(^|[?&])kapitel=alle(&|$)/.test(location.search||''); }catch(e){ return false; } };
 function chDone(n){ return !!lsGet('mala.c'+n+'end'); }
-function chExists(n){ return n===1 || (n===2 && !!M.startChapter2) || (n===3 && !!M.startChapter3) || (n===4 && !!M.startChapter4); }
+function chExists(n){ return n===1 || (n===2 && !!M.startChapter2) || (n===3 && !!M.startChapter3) || (n===4 && !!M.startChapter4) || (n===5 && !!M.startChapter5); }
 function chOpen(n){ return chExists(n) && (n===1 || chDone(n-1) || M.allChapters()); }
 M.chapterOpen=chOpen;
-function chaptersReached(){ var n=1; for (var k=2;k<=4;k++) if (chOpen(k)) n=k; return n; }
+function chaptersReached(){ var n=1; for (var k=2;k<=5;k++) if (chOpen(k)) n=k; return n; }
 
 // ---------------------------------------------------------------- Zeit und Spielstände
 function fmtDur(ms){ var m=Math.max(1,Math.round((ms||0)/60000)); return m<60?(m+' '+T('Min.')):(Math.floor(m/60)+' '+T('Std.')+(m%60?' '+(m%60)+' '+T('Min.'):'')); }
@@ -42,15 +42,15 @@ function fmtAt(at){ if (!at) return ''; var d=new Date(at), now=new Date(), hm=p
   if (dd===day) return T('heute')+' '+hm; if (day-dd===86400000) return T('gestern')+' '+hm; return d.getDate()+'. '+(d.getMonth()+1)+'. '+d.getFullYear(); }
 function ago(at){ var s=Math.max(0,Math.round((Date.now()-at)/1000)); if (s<50) return T('gerade eben'); var m=Math.round(s/60); if (m<60) return T('vor')+' '+m+' '+T('Min.'); var h=Math.round(m/60); return T('vor')+' '+h+' '+T('Std.'); }
 function chLabel(n){ return T('Kapitel')+' '+n; }
-function stOf(n,k){ var key=k?E.keyMark(n,k):E.keyAuto(n), s=E.readEnv(key); if (!s) return null; s.slot=n; s.mark=k||0; if (!k) s.name=null; return s; }
-function slotStates(n){ var out=[], a=stOf(n,0); if (a) out.push(a); for (var k=1;k<=E.MARKS;k++){ var b=stOf(n,k); if (b) out.push(b); } return out; }
+function stOf(n,k){ var key=k?E.keyMark(n,k):E.keyAuto(n), s=E.readEnv(key); if (!s) return null; s.slot=n; s.mark=k||0; if (!k) s.name=null; if (k==='sat') s.name=T('Vor dem Samstag'); return s; }
+function slotStates(n){ var out=[], a=stOf(n,0); if (a) out.push(a); for (var k=1;k<=E.MARKS;k++){ var b=stOf(n,k); if (b) out.push(b); } var z=stOf(n,'sat'); if (z) out.push(z); return out; }
 function playable(s){ return s && (s.kind==='auto'||s.kind==='mark'||(s.kind==='chapterEnd'&&s.next&&chExists(s.next))); }
 function latest(){ var best=null; for (var n=1;n<=E.SLOTS;n++) slotStates(n).forEach(function(s){ if (playable(s) && (!best||s.at>best.at)) best=s; }); return best; }
 function firstFree(){ for (var n=1;n<=E.SLOTS;n++) if (!E.hasSave(n)) return n; return 0; }
 function anyState(){ for (var n=1;n<=E.SLOTS;n++) if (slotStates(n).length) return true; return false; }
 function placeOf(s){ var m=s.meta||{}; if (s.kind==='chapterEnd') return chLabel(s.chapter)+' '+T('fertig'); if (s.name) return s.name; return chLabel(m.chapter||1)+' · '+T(m.roomName||m.phaseShort||''); }
 function summary(s){ if (!s) return T('leer'); if (s.kind==='damaged') return T('Lässt sich nicht lesen'); if (s.kind==='incompatible') return T('Aus einer neueren Fassung'); return placeOf(s)+' · '+fmtDur((s.meta&&s.meta.playMs)||0); }
-function badgeOf(s){ return s.kind==='auto'?T('Automatisch'):s.kind==='mark'?(T('Lesezeichen')+' '+s.mark):s.kind==='chapterEnd'?T('Kapitelende'):s.kind==='incompatible'?T('Inkompatibel'):T('Beschädigt'); }
+function badgeOf(s){ return s.kind==='auto'?T('Automatisch'):(s.kind==='mark'&&s.mark==='sat')?T('Punkt ohne Rückkehr'):s.kind==='mark'?(T('Lesezeichen')+' '+s.mark):s.kind==='chapterEnd'?T('Kapitelende'):s.kind==='incompatible'?T('Inkompatibel'):T('Beschädigt'); }
 var REASON={ busy:'Nach der Szene wieder möglich.', nosave:'Hier geht Speichern nicht.', quota:'Speichern fehlgeschlagen: Der Browser-Speicher ist voll.', screen:'Gerade nicht möglich.', ended:'Das Kapitel ist zu Ende.', error:'Speichern fehlgeschlagen.' };
 var LREASON={ damaged:'Dieser Spielstand lässt sich nicht lesen.', incompatible:'Dieser Spielstand stammt aus einer neueren Fassung. Bitte das Spiel aktualisieren.', empty:'Kein Spielstand.', read:'Der Browser-Speicher ist nicht lesbar.', chapterEnd:'Das Kapitel ist zu Ende.' };
 
@@ -117,12 +117,12 @@ SCR.main=function(){ var s=latest(), it=[];
   it.push({type:'btn',label:'Über MALA',act:function(){ push('about'); }});
   return {layout:'title',items:it,sound:!(M.audioRunning&&M.audioRunning()),note:platformNote()}; };
 SCR.chapters=function(){ var n=firstFree(), it=[];
-  for (var c=1;c<=4;c++){ (function(c){ if (!chExists(c)) return; var open=chOpen(c);
+  for (var c=1;c<=5;c++){ (function(c){ if (!chExists(c)) return; var open=chOpen(c);
     var sub=c===1?'von vorn':(chDone(c-1)?'mit deinem Ende von Kapitel '+(c-1):'mit Vorgaben');
     if (open && c>1 && M.lang!=='de') sub=T(sub)+' · '+T('bisher nur auf Deutsch');
     it.push(open?{type:'btn',label:chLabel(c)+' · '+PLACES[c-1],sub:sub,primary:c===chaptersReached(),act:function(){ withSlot('new',function(m,free){ startNew(c,m); if (free&&m>1) toast('Startet auf Platz '+m+'.'); }); }}
       :{type:'btn',label:chLabel(c),why:'nach Kapitel '+(c-1),dis:true,lock:true}); })(c); }
-  it.push({type:'btn',label:chDone(4)?chLabel(5)+' · Sarajevo':chLabel(5),why:'noch nicht erschienen',dis:true,lock:true});
+  if (!chExists(5)) it.push({type:'btn',label:chDone(4)?chLabel(5)+' · Sarajevo':chLabel(5),why:'noch nicht erschienen',dis:true,lock:true});
   return {layout:'panel',title:'Neues Spiel',ctx:n?('Startet auf Platz '+n+' (frei). Deine anderen Spielstände bleiben.'):'Alle drei Plätze sind belegt: Du wählst gleich, welcher überschrieben wird.',items:it,back:true}; };
 SCR.slots=function(p){ var it=[]; for (var n=1;n<=E.SLOTS;n++){ (function(n){ var s=stOf(n,0);
     it.push({type:'btn',label:T('Platz')+' '+n,sub:s?summary(s):T('leer'),act:function(){ if (!E.hasSave(n)){ p.then(n,true); return; }
@@ -180,10 +180,10 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'head',label:'Sprache'});
   it.push({type:'seg',label:'Sprache',sub:'Bosanski / Hrvatski: Kapitel 2–4 bisher nur auf Deutsch',value:M.lang,options:[['de','Deutsch'],['bhs','Bos./Hrv.']],act:function(v){ if (M.setLang) M.setLang(v); }});
   return {layout:'settings',title:'Einstellungen',items:it,back:true}; };
-SCR.about=function(){ var it=[], done=[]; for (var c=1;c<=4;c++) if (chDone(c)) done.push(c);
+SCR.about=function(){ var it=[], done=[]; for (var c=1;c<=5;c++) if (chDone(c)) done.push(c);
   done.forEach(function(c){ it.push({type:'btn',label:'Abspann Kapitel '+c,act:function(){ playCredits(c); }}); });
   return {layout:'about',title:'Über MALA',text:['Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.','Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.','Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.'],
-    places:PLACES.slice(0,Math.min(4,chaptersReached())).join(' · '),items:it,back:true}; };
+    places:PLACES.slice(0,Math.min(5,chaptersReached())).join(' · '),items:it,back:true}; };
 SCR.controls=function(){ return {layout:'about',title:'Steuerung',list:[
   'Etwas antippen: Ist nur etwas zu sehen, schaut Marko es an. Kann man etwas damit tun, kommt ein kleines Menü.',
   'Gegenstände aus der Leiste auf ihr Ziel ziehen – auch auf Mala, wenn sie sich etwas ansehen soll.',
@@ -210,12 +210,12 @@ SCR.rename=function(p){ return {layout:'rename',title:'Lesezeichen benennen',nam
     try{ var d=JSON.parse(lsGet(p.key)||'null'); if (d){ if (v) d.name=v; else delete d.name; lsSet(p.key,JSON.stringify(d)); } }catch(e){} back(); toast(v?'Benannt.':'Name entfernt.'); },items:[],back:true}; };
 SCR.confirm=function(p){ return {layout:'confirm',title:p.title,text:p.text,before:p.before,after:p.after,items:[
   {type:'btn',label:p.okLabel||'OK',danger:!!p.danger,act:p.ok},{type:'btn',label:'Abbrechen',focus:true,act:back}],back:true}; };
-SCR.next=function(p){ var ch=p.ch, nx=ch<4?ch+1:0, rec=null; try{ rec=JSON.parse(lsGet('mala.c'+ch+'end')||'null'); }catch(e){}
+SCR.next=function(p){ var ch=p.ch, nx=ch<5?ch+1:0, rec=null; try{ rec=JSON.parse(lsGet('mala.c'+ch+'end')||'null'); }catch(e){}
   var ms=(rec&&rec.playMs)||0, it=[];
   if (nx && chExists(nx)) it.push({type:'btn',label:'Weiter mit Kapitel '+nx+': '+PLACES[nx-1],primary:true,act:function(){ startNew(nx,p.slot||E.slot()); }});
   it.push({type:'btn',label:'Zum Titelbild',act:function(){ E.titleMode='main'; SH.stack=[{id:'main',p:{}}]; render(true); }});
   return {layout:'endcard',kicker:'Ende des '+ORD[ch-1]+' Kapitels',title:PLACES[ch-1],sub:nx?'Fortsetzung: '+PLACES[nx-1]:(ch===4?'Fortsetzung: Sarajevo':''),time:ms?T('Spielzeit')+' '+fmtDur(ms):'',items:it}; };
-function playCredits(c){ var L=c===1?M.CREDITS:(c===2?M.CREDITS2:(c===3?M.CREDITS3:M.CREDITS4)); if (!L) return; closeAll(); E.creditLines=L; E.creditMusic=['end','k2_end','k3_end','k4_end'][c-1]; E.afterCredits=null; E.startCredits(); }
+function playCredits(c){ var L=c===1?M.CREDITS:(c===2?M.CREDITS2:(c===3?M.CREDITS3:(c===4?M.CREDITS4:M.CREDITS5))); if (!L) return; closeAll(); E.creditLines=L; E.creditMusic=['end','k2_end','k3_end','k4_end',M.K5_END_MUSIC||'k2_end'][c-1]; E.afterCredits=null; E.startCredits(); }
 
 // ---------------------------------------------------------------- Sicherung als Datei (UI-Konzept B3-3)
 // Alle MALA-Einträge dieses Browsers (Spielstände, Lesezeichen, Kapitelmarken, Einstellungen) mit Format, Datum und Prüfsumme.

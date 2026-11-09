@@ -9,7 +9,7 @@
 (function(M){
 'use strict';
 var E=M.E;
-function topics(G){ var ch=M.chapterOf(G); return (ch===4?M.HINTS_K4:(ch===3?M.HINTS_K3:(ch===2?M.HINTS_K2:M.HINTS_K1)))||[]; }
+function topics(G){ var ch=M.chapterOf(G); return (ch===5?M.HINTS_K5:ch===4?M.HINTS_K4:(ch===3?M.HINTS_K3:(ch===2?M.HINTS_K2:M.HINTS_K1)))||[]; }
 M.hintTopics=topics;
 function isOpen(h,G){ try{ return !!h.open(G); }catch(e){ return false; } }
 M.hintsOpen=function(G){ G=G||M.GS; return topics(G).filter(function(h){ return isOpen(h,G); }); };

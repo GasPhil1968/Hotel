@@ -116,7 +116,7 @@ function paintCanopy(b){ var x, y;
   CAN.cols.forEach(function(cx){ for (y=CAN.y1;y<BUS.base;y++){ var t=(y-CAN.y1)/(BUS.base-CAN.y1), hw=rd(lerp(3,1,t)); for (x=cx-hw;x<=cx+hw;x++) b.px(x,y,(x===cx-hw)?P.s4:((x===cx+hw)?P.m1:P.s2)); } b.rect(cx-2,BUS.base-2,5,2,P.m1); });
   // Leuchtröhren
   [30,80,128].forEach(function(x){ b.hl(x-9,x+9,CAN.y1+2,P.s5); b.hl(x-9,x+9,CAN.y1+3,P.m2); b.vl(x-7,CAN.y1,CAN.y1+1,P.m1); b.vl(x+7,CAN.y1,CAN.y1+1,P.m1); }); }
-function busSign(S){ return (S && S.busTo==='mostar')?'MOSTAR':'SPLIT - SARAJEVO'; }
+function busSign(S){ return (S && S.busTo==='mostar')?'MOSTAR':((S && S.busTo==='muenchen')?'MUENCHEN - SARAJEVO':'SPLIT - SARAJEVO'); }   // Kapitel 5: der Bus aus München
 function paintBus(b,tod,S){ var x0=BUS.x0, x1=BUS.x1, top=BUS.top, by=BUS.base, w=x1-x0, sd=BUS.side, x, y;
   // Seite, nach hinten rechts fliehend: Fenster, Gepäckklappen
   b.poly([[x1,top+2],[x1+sd,top-5],[x1+sd,by-12],[x1,by-2]],function(xx,yy){ var u=(xx-x1)/sd, yy0=top+2-u*7, d=yy-yy0, c=P.s4;

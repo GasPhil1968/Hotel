@@ -4,7 +4,7 @@
 M.trAdd('bhs', {
   // Verben und Knöpfe
   'Schau an':'Pogledaj', 'Nimm':'Uzmi', 'Benutze':'Upotrijebi', 'Öffne':'Otvori', 'Schiebe':'Pomakni', 'Rede mit':'Razgovaraj s', 'Lies':'Pročitaj',
-  'Hingehen':'Idi tamo', 'Gib':'Daj', 'Sprich mit':'Razgovaraj s', 'Spüre':'Osjeti', 'Lausche':'Osluhni', 'Hindurchgehen':'Prođi kroz', 'Hinüberbringen':'Prevedi',
+  'Hingehen':'Idi tamo', 'Gib':'Daj', 'Sprich mit':'Razgovaraj s', 'Spüre':'Osjeti', 'Lausche':'Osluhni', 'Hindurchgehen':'Prođi kroz', 'Hinüberbringen':'Prevedi', 'Zeichne':'Crtaj',
   'Notizen':'Bilješke', 'Zeigen':'Pokaži', 'Menü':'Izbornik', 'Nachdenken':'Razmisli', '(Tippen zum Schließen)':'(Dodirni za zatvaranje)',
   'Schimmer':'Odsjaj', 'Mala':'Mala', 'Marko':'Marko',
   // Überlagerungen

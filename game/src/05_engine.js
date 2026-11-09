@@ -334,9 +334,9 @@ API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem 
 // ---------------------------------------------------------------- Hotspots, Verben
 // Marko-Verben und Mala-Verben, mit Anzeige-Text
 var VLABEL={look:'Schau an',take:'Nimm',use:'Benutze',open:'Öffne',push:'Schiebe',talk:'Rede mit',read:'Lies',walk:'Hingehen',give:'Gib',
-  glook:'Schau an',gtalk:'Sprich mit',sense:'Spüre',listen:'Lausche',pass:'Hindurchgehen',cross:'Hinüberbringen'};
+  glook:'Schau an',gtalk:'Sprich mit',sense:'Spüre',listen:'Lausche',pass:'Hindurchgehen',cross:'Hinüberbringen',draw:'Zeichne'};
 E.VLABEL=VLABEL;
-var M_VERBS=['talk','take','open','use','push','read'], G_VERBS=['talk','sense','listen'];
+var M_VERBS=['talk','take','open','use','push','read'], G_VERBS=['talk','sense','listen','draw'];
 function hsRect(h){ if (h.npc){ var a=ACT[h.npc]; if (!a||!actorShown(a)) return null; if (h.r) return typeof h.r==='function'?h.r(S,GS,a):h.r; var hh=h.hgt||48; return [Math.round(a.x)-8,Math.round(a.y)-hh,16,hh]; }
   return typeof h.r==='function'?h.r(S,GS):h.r; }
 E.hsRect=hsRect; E.hsStand=function(h){ return hsStand(h); };
@@ -541,6 +541,9 @@ function saveGame(live){ E.saveReason=null; if (!room||E.screen!=='game'){ E.sav
 E.saveMark=function(k){ E.saveReason=null; if (!room||E.screen!=='game'){ E.saveReason='screen'; return false; } if (room.noSave){ E.saveReason='nosave'; return false; } if (GS.ended){ E.saveReason='ended'; return false; }
   if (busyV||E.dlg||E.overlay||E.transitioning){ E.saveReason='busy'; return false; }
   syncPos(); try{ LS().setItem(MARK+slot+'.'+k,JSON.stringify(envOf(GS,'mark'))); return true; }catch(e){ E.saveReason=quota(e)?'quota':'error'; return false; } };
+// Kapitel 5, Punkt ohne Rückkehr: ein eigener Stand neben den drei Lesezeichen (mala.mark.N.sat, „Vor dem Samstag“). Ihn schreibt die Szene selbst,
+// mitten im Ablauf (die Lesezeichen des Spielers bleiben unberührt); der Stand ist der des Augenblicks vor der Wahl.
+E.saveSpecial=function(k){ if (!room||room.noSave||GS.ended) return false; syncPos(); try{ LS().setItem(MARK+slot+'.'+k,JSON.stringify(envOf(GS,'mark'))); return true; }catch(e){ return false; } };
 // Stand lesen, ohne zu laden: Art (auto, mark, chapterEnd, damaged, incompatible), Metadaten, Vorschaubild
 E.readEnv=function(key){ var raw=null; try{ raw=LS().getItem(key); }catch(e){ return {kind:'damaged',key:key,at:0}; } if (!raw) return null;
   var d; try{ d=JSON.parse(raw); }catch(e){ return {kind:'damaged',key:key,at:0}; } if (!d||typeof d!=='object') return {kind:'damaged',key:key,at:0};
@@ -549,7 +552,7 @@ E.readEnv=function(key){ var raw=null; try{ raw=LS().getItem(key); }catch(e){ re
   if (!d.GS||typeof d.GS!=='object'||!M.PHASES[d.GS.phase]) return {kind:'damaged',key:key,at:d.at||0};
   var meta=d.meta||metaOf(d.GS); return {kind:key.indexOf(MARK)===0?'mark':'auto',key:key,at:d.at||0,meta:meta,thumb:(typeof d.thumb==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(d.thumb))?d.thumb:null,name:(typeof d.name==='string'&&d.name)?d.name.slice(0,24):null}; };
 // Kapitelende: der Platz bleibt belegt, „Fortsetzen“ führt zur Weiter-Karte (UI-Konzept D3)
-E.markChapterEnd=function(ch){ try{ var ms=Math.round(GS.playMs||0); LS().setItem(SAVE+slot,JSON.stringify({sv:SV,kind:'chapterEnd',chapter:ch,next:ch<4?ch+1:null,at:Date.now(),playMs:ms,meta:{chapter:ch,kind:'chapterEnd',playMs:ms,roomName:'',phaseShort:''}})); }catch(e){} };
+E.markChapterEnd=function(ch){ try{ var ms=Math.round(GS.playMs||0); LS().setItem(SAVE+slot,JSON.stringify({sv:SV,kind:'chapterEnd',chapter:ch,next:ch<5?ch+1:null,at:Date.now(),playMs:ms,meta:{chapter:ch,kind:'chapterEnd',playMs:ms,roomName:'',phaseShort:''}})); }catch(e){} };
 function autosave(){ if (E.busy){ E.pendingSave=true; return; } saveGame(); }
 function hasSave(n){ try{ return !!LS().getItem(SAVE+(n||slot)); }catch(e){ return false; } }
 E.hasSave=hasSave; E.saveGame=saveGame; M.saveGame=saveGame;
@@ -582,7 +585,7 @@ function loadData(d){ var prevGS=GS, prevRoom=room&&room.id, prevScreen=E.screen
   catch(e){ console.error(e); if (swapped){ try{ setGame(prevGS); safeGS=null; if (prevScreen==='game' && prevRoom){ loadRoom(prevRoom); var p2=player(); if (p2) setIdle(p2); snapCamera(); E.screen='game'; } else E.screen=prevScreen; }catch(e2){ console.error(e2); } } return false; } }
 E.loadGame=loadGame; M.loadGame=loadGame;
 E.newGame=function(ch){ setGame(freshGame()); safeGS=null; resetTransient(); gameReset(); timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; E.pop=null; M.setGhostAudio(false);
-  if (ch===4 && M.startChapter4) M.startChapter4(API); else if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
+  if (ch===5 && M.startChapter5) M.startChapter5(API); else if (ch===4 && M.startChapter4) M.startChapter4(API); else if (ch===3 && M.startChapter3) M.startChapter3(API); else if (ch===2 && M.startChapter2) M.startChapter2(API); else if (M.startGame) M.startGame(API); };
 E.toTitle=function(){ E.lastSaveOk=saveGame(); M.scapeStop(); resetTransient(); gameReset(); E.screen='title'; E.titleMode='main'; timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.fade=0; E.menu=null; E.pop=null; M.setGhostAudio(false); M.music('title'); };
 
 // ---------------------------------------------------------------- Taktgeber

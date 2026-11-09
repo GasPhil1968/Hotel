@@ -34,7 +34,7 @@ M.mapStoryUnlocks=storyUnlocks;
 M.MIGRATE=M.MIGRATE||[]; M.MIGRATE.push(function(G){ if (!G.mapKnown) G.mapKnown={}; storyUnlocks(G); M.mapRefresh(G); });
 
 // ---------------------------------------------------------------- Orte des Kapitels, Straße eines Raums
-function locs(G){ var ch=M.chapterOf(G||M.GS); return ch===4?(M.MAPLOCS4||[]):(ch===3?(M.MAPLOCS3||[]):(ch===2?(M.MAPLOCS2||[]):M.MAPLOCS)); }
+function locs(G){ var ch=M.chapterOf(G||M.GS); return ch===5?(M.MAPLOCS5||[]):ch===4?(M.MAPLOCS4||[]):(ch===3?(M.MAPLOCS3||[]):(ch===2?(M.MAPLOCS2||[]):M.MAPLOCS)); }
 M.mapLocs=locs;
 function locById(id,G){ return locs(G).filter(function(L){ return L.id===id; })[0]||null; }
 M.mapLoc=locById;
