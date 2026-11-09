@@ -1,10 +1,10 @@
 # MALA – Kapitel 5: Sarajevo
 
-### Konzept für Geschichte, Figuren und Rätsel des Gesamtfinales (Entwurf, Fassung 1, nicht umgesetzt)
+### Konzept für Geschichte, Figuren und Rätsel des Gesamtfinales (Fassung 2: im Spiel umgesetzt, Abweichungen in Abschnitt 13)
 
 Arbeitstitel des Kapitels: **„Angekommen“**
 
-Dieses Dokument ist ein Story- und Quest-Konzept. Es ändert keine Spieldatei, enthält keinen Code und gehört zu keiner Spiel-ZIP.
+Dieses Dokument ist ein Story- und Quest-Konzept. Es enthält keinen Code. Das Spiel setzt es um (`game/src/96_k5_story.js`, `97_k5_*.js`, `rooms/k5_*.js`); wo die Umsetzung abweicht, steht es in Abschnitt 13. Der Geist an der Brauerei heißt im Spiel und hier Hamdija Selimović (im Entwurf: Fikret Mulić).
 
 ---
 
@@ -47,6 +47,7 @@ Dieses Dokument ist ein Story- und Quest-Konzept. Es ändert keine Spieldatei, e
 10. Auflösungsübersicht
 11. Epilog und Endzustände
 12. Kritische Prüfung und Schlussfragen
+13. Umsetzung im Spiel: was anders geworden ist
 
 ---
 
@@ -611,9 +612,9 @@ Die genaue Abfolge steht in 7.3 und 8. In Kürze:
    - Mala zeichnet in Markos Atem und nur dort.
    - Neu geordnet wird die Straßenbahn auf der Scheibe in Split (`flat.js:232`). Das Rätsel aus Kapitel 1 bekommt eine Bedingung, ohne dass Kapitel 1 umgedeutet wird. [N]
 2. **Der Brunnenmann** (Donnerstagnacht und Freitag).
-   - Der Mann, der vorn die Hand hob (`97_k4_fam_b.js:142`), und der Mann, der Marko festhielt (`:41`), sind derselbe: Fikret Mulić, der Abfüller der Brauerei, der 1993 den Hahn verwaltete [N].
+   - Der Mann, der vorn die Hand hob (`97_k4_fam_b.js:142`), und der Mann, der Marko festhielt (`:41`), sind derselbe: Hamdija Selimović, der Abfüller der Brauerei, der 1993 den Hahn verwaltete [N].
    - Er begrub in der Nacht die sieben Toten an der Mauer. Jedem steckte er in die Tasche, was ihn erkennbar machte, und er schrieb eine Liste.
-   - Neu geordnet wird Kolars Satz aus Kapitel 4: Dass man Zoran am Rechenschieber „Z. V.“ erkannte, war kein Zufall. Fikret hat ihn ihm aus der Hand genommen und in die Brusttasche gesteckt.
+   - Neu geordnet wird Kolars Satz aus Kapitel 4: Dass man Zoran am Rechenschieber „Z. V.“ erkannte, war kein Zufall. Hamdija hat ihn ihm aus der Hand genommen und in die Brusttasche gesteckt.
 3. **Zwei Namen, ein Zweck** (Donnerstag und Freitag).
    - Zlata ließ „MALA“ ins Brett schneiden, „damit man sie findet“. Nada schrieb siebzehn Jahre „Lana Delić“, „damit man sie findet“.
    - Neu geordnet werden das Brett aus Kapitel 3 und Nadas Briefe aus Kapitel 2. Beide waren Suche, nicht Besitz.
@@ -731,20 +732,20 @@ Keine dieser Wendungen ändert eine Tatsache aus Kapitel 1 bis 4. Jede ordnet et
 | **Damir** | Fahren | Er fährt die Drei um 11:44. Zu Nada: „Lieber zu viele Fenster als zu wenige.“ (`97_k2_talk.js:138`) |
 | **Šehić** | Dass man weiß, wer hier gewohnt hat (`haustor.js:16`) | Er sperrt die leere Wohnung im siebten Stock auf |
 | **Dragica** | Jasna wiedersehen | Ein Satz zum 19. April, ohne die Frage „für Dragica“ zu klären (1.8) |
-| **Frau Kolar** | Namen | Drei weitere Identifizierungen aus Fikrets Liste (SMS im Epilog) |
+| **Frau Kolar** | Namen | Drei weitere Identifizierungen aus Hamdijas Liste (SMS im Epilog) |
 | **Vlado** | Zlata fahren, etwas mit den Händen tun | Er montiert den Pfosten |
 | **Vesna** | Seite vierzehn | „Die Stillen, Teil drei“ (Epilog) |
 
 ### 5.5 Geister
 
 - **Mala.** Siehe 5.2. Ihr Übergang ist ein eigener Vorgang: keine Erkenntnis des Todes (die hat sie längst), keine Instabilität, sondern eine bewusste Schwelle, die sie selbst öffnet.
-- **Fikret Mulić, der Brunnenmann** [N], Abfüller der Brauerei, 1949 bis 1993 (zu prüfen auf ungewollte reale Namensgleichheit, 12.5):
+- **Hamdija Selimović, der Brunnenmann** [N], Abfüller der Brauerei, 1949 bis 1993 (zu prüfen auf ungewollte reale Namensgleichheit, 12.5):
   - **Eigenes Interesse:** Er will den Familien sagen, wo ihre Toten liegen. Und er will dem Jungen, den er festhielt und dann allein mit dem Wasser weggehen ließ, sagen, wo der Vater begraben ist.
   - **Seine Scham:** „Ich habe gezählt, statt zu weinen.“ Das ist eine [E]-Idee für den früheren Totengräber, `KAPITEL4_KONZEPT.md:1696`.
   - **Sein Zustand:** Er glaubt, es sei April 1993. Er zeigt sich nur Kanistern und lässt niemanden an den Kasten hinter dem Hahn.
   - **Erkenntnis:** Als Marko ihm sagt, dass die Gräber 2003 gefunden wurden und dass die Liste jetzt drei Namen zurückgibt, fragt er: „Koja je godina?“ – „Welches Jahr?“
   - **Übergang:** Mala öffnet die Schwelle, Marko macht den letzten Schritt mit ihm. Im Licht sieht er: „Česma. Teče. I niko ne čeka.“ – „Der Hahn. Er läuft. Und keiner wartet.“
-  - **Fikret ist kein Retter.** Er löst keinen Konflikt der Hauptfiguren. Zorans Identität steht durch den Abgleich fest. Er gibt drei anderen Familien einen Namen und Marko einen Zeugen.
+  - **Hamdija ist kein Retter.** Er löst keinen Konflikt der Hauptfiguren. Zorans Identität steht durch den Abgleich fest. Er gibt drei anderen Familien einen Namen und Marko einen Zeugen.
 - **Keine erlösten Geister kehren zurück.** Jakov, Ivka, Zora, Alija, Bato, Sepp, Gerda und Hansi bleiben gegangen oder, wie Jakov, freiwillig an ihrem Ort.
   - Erwähnt werden sie nur in Malas Sätzen: „Jakov hat gefragt, wo ich hin soll.“ (`sustipan.js`, „Und du, mala? Wo sollst du hin?“)
 
@@ -762,10 +763,10 @@ Keine dieser Wendungen ändert eine Tatsache aus Kapitel 1 bis 4. Jede ordnet et
 | „Wo ich liegen soll, entscheiden Mama und Zlata. Zusammen.“ | `skela_l.js:282` | Rätsel 7.1 |
 | „Wenn wir uns wiedersehen, passen sie zusammen.“ | `97_k2_mala.js:114` | Tafel und Brett |
 | Nada hält den Platz neben sich frei; sieht auf den leeren Platz | `ostbus.js:118`; `skela_l.js:337` | Küche: „Stigla si.“, zum leeren Platz gesagt |
-| „Nemoj gledati, mali.“ – „Ich habe hingeschaut.“ | `97_k4_fam_b.js:41–42` | Fikret; Marko sieht am Tor hin, bis nichts mehr zu sehen ist |
-| „Vorn hebt einer die Hand.“ | `97_k4_fam_b.js:142` | Fikrets Hand: „Ima pritiska!“, „Der Druck ist da!“ |
-| Rechenschieber „Z. V.“ | `13_k4_notes.js:30` | Fikret steckte ihn in die Tasche; Jasna bekommt ihn zurück |
-| Kanister „VUKOVIĆ“ | `97_k4_fam_b.js:34` | Auslöser für Fikret; Wasser am Montag |
+| „Nemoj gledati, mali.“ – „Ich habe hingeschaut.“ | `97_k4_fam_b.js:41–42` | Hamdija; Marko sieht am Tor hin, bis nichts mehr zu sehen ist |
+| „Vorn hebt einer die Hand.“ | `97_k4_fam_b.js:142` | Hamdijas Hand: „Ima pritiska!“, „Der Druck ist da!“ |
+| Rechenschieber „Z. V.“ | `13_k4_notes.js:30` | Hamdija steckte ihn in die Tasche; Jasna bekommt ihn zurück |
+| Kanister „VUKOVIĆ“ | `97_k4_fam_b.js:34` | Auslöser für Hamdija; Wasser am Montag |
 | Ruža wollte „poginuo“ schreiben | `13_k4_notes.js:26` | Zorans Tafel |
 | „Damit er reinkann, wenn er kommt.“ – „Wir können im März drunter sitzen.“ | `97_k4_fam_b.js:255–256` | Mittag am Samstag, Kaffee am Montag |
 | „Dann jetzt. Alle. Bis es hell wird.“ | `97_k4_fam_b.js:209` | die Nacht auf der Žuta tabija |
@@ -788,8 +789,8 @@ Keine dieser Wendungen ändert eine Tatsache aus Kapitel 1 bis 4. Jede ordnet et
 |---|---|---|
 | Prolog | „Ankunft · Donnerstag, 1. März 2012 · früh“ | Dachboden besucht; Haus 7: Jasna im siebten Stock; Nada begrüßt |
 | Tag 1 | „Donnerstag“ | Abend bei Nada mit Zlata erlebt; Brauerei besucht (Kopfweh, Nachhall am Hahn) |
-| Nacht 1 | „Donnerstag · Nacht“ | Atem entdeckt (Gespräch 9.1); Fikret mit dem Kanister gesehen |
-| Tag 2 | „Freitag, 2. März“ | Gerichtsmedizin; Fikret erlöst und Liste bei Kolar (7.2); Tafel graviert und montiert (7.1) |
+| Nacht 1 | „Donnerstag · Nacht“ | Atem entdeckt (Gespräch 9.1); Hamdija mit dem Kanister gesehen |
+| Tag 2 | „Freitag, 2. März“ | Gerichtsmedizin; Hamdija erlöst und Liste bei Kolar (7.2); Tafel graviert und montiert (7.1) |
 | Begräbnis | „Freitag · 14 Uhr · Friedhof Bare“ | durchgehend, ohne Rätsel |
 | Abend 2 | „Freitag · Abend“ | Totenmahl; Zuordnung der Fahrscheine gezogen (7.3, Stufe 1) |
 | Nacht 2 | „Freitag · Nacht · Žuta tabija“ | Gespräch 9.2; danach Punkt ohne Rückkehr |
@@ -862,7 +863,7 @@ Ziel: kein Tutorial. Der Spieler soll merken, dass Marko und Mala eingespielt si
 | Kette | Beginn | Schritte (Kurzform) | Ergebnis | Zusammenlauf |
 |---|---|---|---|---|
 | **A „Lana und Mala“** | Do Abend, Zlata kommt | Nachhall Brett → Nadas Mappe, Nachhall → Übersetzen an beide → Einigung → Nedžads Gravur → Vlado montiert | Pfosten mit Tafel und Brett | Begräbnis Fr 14:00 |
-| **B „Nemoj gledati“** | Do, Dachboden: die Hand | Brauerei: Kopfweh, Nachhall „Kanisteri u red“ → nachts mit dem Kanister: Fikret → Gerichtsmedizin: „drei ohne Namen“ → Kasten: Mala durch die Wand, Fikret überzeugen → Liste → Kolar → Fikrets Erkenntnis und Übergang | Drei Namen; Marko hat einen Zeugen | Begräbnis (Kolar kommt); Montag (Wasser) |
+| **B „Nemoj gledati“** | Do, Dachboden: die Hand | Brauerei: Kopfweh, Nachhall „Kanisteri u red“ → nachts mit dem Kanister: Hamdija → Gerichtsmedizin: „drei ohne Namen“ → Kasten: Mala durch die Wand, Hamdija überzeugen → Liste → Kolar → Hamdijas Erkenntnis und Übergang | Drei Namen; Marko hat einen Zeugen | Begräbnis (Kolar kommt); Montag (Wasser) |
 | **C „Zehn nach elf“** | Do, Gespräch 9.1: „Für Mama. Wer sonst?“ | Vermutung Nada → Nada: „euer Samstag“ → Jasna: Treppe, „Nicht die Drei“ → Fenster und daneben → Zuordnung Jasna → Entscheidung Fr Nacht → Samstag: 7. Stock, Klopfen, Küche (Zeichnung), Drei, Tor | Lana kommt selbst nach Hause; Mala geht | Höhepunkt |
 | Nebenkette „Atem“ | Do Nacht | Entdeckung → zwei Proben → Grenzen | Werkzeug für C | Küche am Samstag |
 | Nebenkette Jasna | Do früh | Dachboden → Haus 7 → Šehićs Angebot → Gerichtsmedizin → Totenmahl | Jasna im siebten Stock am Samstag | C |
@@ -884,7 +885,7 @@ Donnerstagnacht: Pension: ATEM (Pflicht) ── Brauerei mit Kanister: FIKRET (P
                      │                                    │
 Freitag früh:  Gerichtsmedizin („drei ohne Namen“) ───────┤
                      │                                    ▼
-               A: Nachhall Brett + Mappe → Einigung     B: Kasten → Liste → Kolar → Fikret geht
+               A: Nachhall Brett + Mappe → Einigung     B: Kasten → Liste → Kolar → Hamdija geht
                      │        (beide vor 13:30, Reihenfolge frei)
                      ▼
 Freitag 14:00: BEGRÄBNIS (setzt A voraus; B empfohlen, Pflicht vor der Nacht)
@@ -901,9 +902,9 @@ Sonntag (Karte) → Montag: Wasser → Bare → Ružas Küche → letzte Handlun
 - **Parallel möglich:** Am Donnerstag sind alle vier Ziele frei: Nada, Nedžad, Brauerei, Endstation. Am Freitagvormittag sind A und B in beliebiger Reihenfolge lösbar.
 - **Zusammenlauf:** Das Begräbnis braucht A. Die Freitagnacht braucht B und die Zuordnung aus C. Der Samstag braucht den Atem und die Dose.
 - **Ohne Sackgasse:**
-  - Der Kanister bleibt im Inventar, bis Fikret gegangen ist.
+  - Der Kanister bleibt im Inventar, bis Hamdija gegangen ist.
   - Die Tafel kann nicht falsch graviert werden. Nedžad fragt nach, bevor er graviert (7.1).
-  - Wenn der Spieler die Brauerei am Freitag nicht vor 14:00 beendet, geht es nach dem Begräbnis weiter. Kolar ist bis zum Abend erreichbar, und Fikret wartet sowieso.
+  - Wenn der Spieler die Brauerei am Freitag nicht vor 14:00 beendet, geht es nach dem Begräbnis weiter. Kolar ist bis zum Abend erreichbar, und Hamdija wartet sowieso.
 
 ### 6.5 Das Notizbuch: Beobachtung, Vermutung, gesicherte Erkenntnis [N]
 
@@ -922,10 +923,10 @@ Fallkürzel nach dem Muster der früheren Kapitel: `s5` Stein (A), `b5` Brauerei
 | `s5_teile` | Erkenntnis (Verbindung) | „Das Brett hat den Tod. Nadas Tafel braucht nur die Geburt.“ | `s5_beide` + `s5_brett` |
 | `b5_hand` | Beobachtung (Mala) | „Eine Hand auf meinen Augen. Nasser Ärmel. Malz.“ | Dachboden |
 | `b5_reihe` | Beobachtung (Mala) | „Am Hahn, nachts: ‚Kanisteri u red!‘ Er zeigt sich Kanistern.“ | Brauerei Do |
-| `b5_fikret` | Beobachtung | „Ein Mann in Schürze. Er lebt im April 1993. ‚Fass den Kasten nicht an!‘“ | Nacht 1 |
+| `b5_hamdija` | Beobachtung | „Ein Mann in Schürze. Er lebt im April 1993. ‚Fass den Kasten nicht an!‘“ | Nacht 1 |
 | `b5_drei` | Beobachtung | „Kolar: sieben Tote im Grab an der Brauerei, drei ohne Namen.“ | Gerichtsmedizin |
 | `b5_kasten` | Beobachtung (Mala) | „Im Kasten ein Einmachglas, darin Papier, zusammengerollt.“ | Mala durch die Wand |
-| `b5_liste` | Erkenntnis | „Fikrets Liste: sieben Tote, sieben Dinge in sieben Taschen. Nummer drei: Rechenschieber, Z. V.“ | Kasten |
+| `b5_liste` | Erkenntnis | „Hamdijas Liste: sieben Tote, sieben Dinge in sieben Taschen. Nummer drei: Rechenschieber, Z. V.“ | Kasten |
 | `f5_dose` | Vermutung | „Die Dose ist für Nada. Sagt Mala.“ | Gespräch 9.1 |
 | `f5_eursamstag` | Beobachtung | „Nada: ‚Das war euer Samstag. Ich war nie dabei.‘“ | Nada Do |
 | `j5_treppe` | Beobachtung | „Mama kann nicht in den neunten Stock.“ | Haus 7 |
@@ -955,8 +956,8 @@ Fallkürzel nach dem Muster der früheren Kapitel: `s5` Stein (A), `b5` Brauerei
 | Spieltakt der Musterlösung | 150,7 min (`BERICHT_K4.md:25`) | 140 bis 160 min | gleiche Gesprächsdichte; drei Ketten; zwei geführte Abschnitte (Begräbnis, Samstag) |
 | Räume | 18 (`BERICHT_K4.md:7`) | 16 bis 17 (10 aus Kapitel 2, 6 bis 7 neu) | 4.4 |
 | Orte auf dem Stadtplan | 10 | 9 (Sarajevo-Plan aus Kapitel 2, erweitert) | Busbahnhof, Brauerei, Gerichtsmedizin, Bare neu |
-| Erinnerungsbilder | 8 | 7 | Bus, Kanister, 19. April (Fikrets Blick), Brett, Mappe, Samstag (Lana), Dämmerung |
-| Zwischenwelten | 2 | 1 (Fikret, kurz) und Malas Schwelle an Ort und Stelle | – |
+| Erinnerungsbilder | 8 | 7 | Bus, Kanister, 19. April (Hamdijas Blick), Brett, Mappe, Samstag (Lana), Dämmerung |
+| Zwischenwelten | 2 | 1 (Hamdija, kurz) und Malas Schwelle an Ort und Stelle | – |
 | Hinweisthemen | 48 | etwa 40 | weniger Streufälle, dafür mehrstufige Ketten |
 
 - **Schwierigkeit:** Die Rätsel sind nicht schwerer als in Kapitel 4, aber dichter verzahnt. Die schwierigste Leistung ist die mehrstufige Zuordnung der Fahrscheine (7.3).
@@ -1106,49 +1107,49 @@ Fallkürzel nach dem Muster der früheren Kapitel: `s5` Stein (A), `b5` Brauerei
 2. **Folgerung:** Er zeigt sich Kanistern. Auf Ružas Dachboden stehen zwei. Wenn der Spieler keinen mitgenommen hat, sagt Mala: „Auf dem Dachboden stehen zwei. Blau.“
 3. **Nachts mit dem Kanister** (Marko).
    - Ein Mann in Gummischürze erscheint, die Ärmel nass bis zum Ellbogen. Er stellt Marko hinten an.
-   - Er liest „VUKOVIĆ“: „Der Ingenieur ist nach vorn, nach dem Druck fragen. Du wartest.“ Notiz `b5_fikret`.
+   - Er liest „VUKOVIĆ“: „Der Ingenieur ist nach vorn, nach dem Druck fragen. Du wartest.“ Notiz `b5_hamdija`.
    - **Gespräch:**
      - Nach dem Jahr gefragt: „Was reden Sie da. Es ist April.“
-     - Nach seinem Namen: „Fikret. Von der Abfüllung.“
+     - Nach seinem Namen: „Hamdija. Von der Abfüllung.“
      - Nach dem Kasten hinter dem Hahn: „Ne diraj kutiju!“
-   - **Fehlversuch:** Greift Marko trotzdem nach dem Kasten, flackert Fikret und verschwindet. Er erscheint erst wieder, wenn Marko mit dem Kanister neu anstellt. Das ist sichtbare Instabilität, kein Spielverlust.
+   - **Fehlversuch:** Greift Marko trotzdem nach dem Kasten, flackert Hamdija und verschwindet. Er erscheint erst wieder, wenn Marko mit dem Kanister neu anstellt. Das ist sichtbare Instabilität, kein Spielverlust.
    - **Fehlversuch:** „Sie sind tot.“ ergibt: „Was reden Sie da!“ Flackern.
 4. **Durch die Wand** (Wechsel zu Mala).
    - Mala geht in den Blechkasten hinein (sie geht durch Wände, Kapitel 1 bis 4): „Da drin ist ein Einmachglas. Darin Papier, zusammengerollt.“ Notiz `b5_kasten`.
    - Nachhall des Glases: Kerzenlicht in der Mälzerei, ein Mann schreibt und zählt halblaut: „Sedam.“ – „Sieben.“
 5. **Rekonstruktion des 19. April** (Mala an drei Stellen, Marko geht mit).
-   - **Am Hahn:** Fikret hebt die Hand: „Ima pritiska!“ – „Der Druck ist da!“ Ein Mann in blauer Jacke dreht sich um, nach hinten, und ruft etwas.
+   - **Am Hahn:** Hamdija hebt die Hand: „Ima pritiska!“ – „Der Druck ist da!“ Ein Mann in blauer Jacke dreht sich um, nach hinten, und ruft etwas.
    - **In der Mitte der alten Schlange:** Mala bleibt stehen: „Da will ich nicht hin.“ Marko: „Ich gehe mit.“ Wählbar: „(Neben ihr stehen.)“ Hier ist nur ein Ton: laut, dann nicht mehr laut. Mala zeigt nichts weiter. Das Spiel zeigt den Einschlag nicht.
    - **Am Ende der Schlange, an der Brücke:** Ein Junge mit zwei blauen Kanistern. Von vorn kommt einer gelaufen, die Ärmel nass, und legt ihm die Hand über die Augen. „Nemoj gledati, mali.“ Später steht der Junge wieder in der Reihe, und derselbe Mann füllt ihm am Hahn beide Kanister. Keiner sagt etwas.
    - **Folgerung im Notizbuch:** „Der vorn die Hand hob, hat mich festgehalten. Dann hat er meine Kanister gefüllt.“
    - **Und:** „Papa hat sich umgedreht. Zu mir. Er hat ‚Druck‘ gerufen, weil der Druck da war.“
    - Das deckt sich mit Markos eigener Erinnerung: „Er sagt etwas, das ich nicht höre. Ich glaube, er sagt: Druck.“ (`97_k4_fam_b.js:40`)
 6. **Gerichtsmedizin** (Freitag, Marko). Kolar: „Sieben Tote. Vier haben einen Namen. Drei nicht.“ Auf Markos Frage: „Eine Liste mit Beschreibungen? Dann hätten wir eine Spur.“ Notiz `b5_drei`.
-7. **Fikret überzeugen** (Marko, mit Kanister).
+7. **Hamdija überzeugen** (Marko, mit Kanister).
    - Er glaubt nicht, dass dieser Mann der Junge ist: „Der Kleine ist vierzehn.“
-   - Marko braucht etwas, das nur der Junge und Fikret wissen. Aus Schritt 5 kann er es sagen: „Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.“
+   - Marko braucht etwas, das nur der Junge und Hamdija wissen. Aus Schritt 5 kann er es sagen: „Sie haben mir danach beide Kanister gefüllt. Keiner hat etwas gesagt.“
    - Und aus Schritt 4 und Kolars Fund: „Den Rechenschieber haben Sie ihm in die Tasche gesteckt.“
-   - Fikret, lange: „Ti si mali.“ – „Du bist der Kleine.“ Dann: „Otvori.“ – „Mach auf.“
-   - **Alternative:** Ohne den Satz über die Kanister reicht der über den Rechenschieber nicht. Fikret: „Das kann jeder sagen, der beim Graben dabei war.“ Beide Sätze zusammen genügen.
+   - Hamdija, lange: „Ti si mali.“ – „Du bist der Kleine.“ Dann: „Otvori.“ – „Mach auf.“
+   - **Alternative:** Ohne den Satz über die Kanister reicht der über den Rechenschieber nicht. Hamdija: „Das kann jeder sagen, der beim Graben dabei war.“ Beide Sätze zusammen genügen.
 8. **Die Liste** (Marko öffnet den Kasten; Dokument).
    - „Pivara, 19./20. 4. 1993. Ukopani uz zid, ispod lipe.“ – „Begraben an der Mauer, unter der Linde.“
    - Darunter sieben Zeilen, je ein Mensch und ein Ding in der Tasche. Nummer drei: „Muškarac, oko 40, plava jakna. Šiber ‚Z. V.‘ u džepu. Sin (~13) nosio vodu kući.“ – „Mann, etwa 40, blaue Jacke. Rechenschieber ‚Z. V.‘ in der Tasche. Der Sohn (~13) hat das Wasser nach Hause getragen.“
    - Mala liest den Nachhall des Papiers: „Er hat sich geschämt. Weil er gezählt hat statt zu weinen.“ [E-Idee, `KAPITEL4_KONZEPT.md:1696`]
    - Notiz `b5_liste`.
 9. **Zu Kolar** (Stadtplan, Gerichtsmedizin). „Drei Beschreibungen passen zu Nummern ohne Namen. Das reicht für einen Abgleich mit den Familien, die noch suchen.“
-10. **Fikrets Erkenntnis** (Marko). „Sie sind gefunden. Alle sieben. Zweitausenddrei. Und die letzten drei bekommen jetzt ihre Namen.“ – „Koja je godina?“ – „Zweitausendzwölf.“ Fikret wird ruhig. Das Flackern hört auf.
-    - Fikret: „Rekao sam ti da ne gledaš.“ – „Ich habe dir gesagt, du sollst nicht hinschauen.“
+10. **Hamdijas Erkenntnis** (Marko). „Sie sind gefunden. Alle sieben. Zweitausenddrei. Und die letzten drei bekommen jetzt ihre Namen.“ – „Koja je godina?“ – „Zweitausendzwölf.“ Hamdija wird ruhig. Das Flackern hört auf.
+    - Hamdija: „Rekao sam ti da ne gledaš.“ – „Ich habe dir gesagt, du sollst nicht hinschauen.“
     - Marko: „Ich habe hingeschaut.“
-    - Fikret: „Znam. Ti si gledao, a ja sam pisao.“ – „Ich weiß. Du hast hingeschaut, und ich habe geschrieben.“
+    - Hamdija: „Znam. Ti si gledao, a ja sam pisao.“ – „Ich weiß. Du hast hingeschaut, und ich habe geschrieben.“
     - Marko: „Der Rechenschieber. Daran haben sie ihn erkannt.“
-    - Fikret: „Bio je u ruci. Stavio sam mu ga u džep, da ga ne izgubi.“ – „Er war in seiner Hand. Ich habe ihn ihm in die Tasche gesteckt, damit er ihn nicht verliert.“
+    - Hamdija: „Bio je u ruci. Stavio sam mu ga u džep, da ga ne izgubi.“ – „Er war in seiner Hand. Ich habe ihn ihm in die Tasche gesteckt, damit er ihn nicht verliert.“
 11. **Übergang.** Mala öffnet die Schwelle am Hahn. Marko geht mit ihm bis an den Rand (wie `skela_l.js:305–307`).
     - „Was sehen Sie im Licht?“ – „Česma. Teče. I niko ne čeka.“ – „Der Hahn. Er läuft. Und keiner wartet.“
-    - Fikret geht. Der Kopf ist still.
+    - Hamdija geht. Der Kopf ist still.
 
 **Warum beide gebraucht werden**
 - **Mala** findet ihn und rekonstruiert den Tag an drei Orten. Sie sieht ins Innere des Kastens.
-- **Marko** stellt sich mit dem Kanister an und redet mit dem Geist. Er holt bei Kolar das fehlende Wissen, öffnet den Kasten, trägt die Liste zur Gerichtsmedizin und begleitet Fikret bis an den Rand.
+- **Marko** stellt sich mit dem Kanister an und redet mit dem Geist. Er holt bei Kolar das fehlende Wissen, öffnet den Kasten, trägt die Liste zur Gerichtsmedizin und begleitet Hamdija bis an den Rand.
 - Marko allein hätte den Mann nie gesehen. Mala allein hätte nie den Kasten geöffnet oder Kolar erreicht.
 
 **Hinweise** (vier Stufen, für drei Teilziele)
@@ -1162,7 +1163,7 @@ Fallkürzel nach dem Muster der früheren Kapitel: `s5` Stein (A), `b5` Brauerei
 **Ergebnis**
 - Drei Familien bekommen eine Spur. Kolar meldet sich am Montag (11.1).
 - Marko weiß, wer ihn hielt, und dass der Vater sich zu ihm umgedreht hat.
-- Fikret ist gegangen. Mala hat ihren letzten Geist für jemand anderen gefunden.
+- Hamdija ist gegangen. Mala hat ihren letzten Geist für jemand anderen gefunden.
 - Mala, auf dem Rückweg: „Er ist geblieben, bis sie gefunden waren. Ich bin geblieben, bis Mama mich begräbt.“
 
 ---
@@ -1550,7 +1551,7 @@ Schreibweise wie im Spiel: Bosnische Sätze stehen im Original, Marko übersetzt
 
 **Marko:** Dann sag ihn.
 
-**Mala:** Heute Mittag stand mein Name zweimal auf einem Pfosten. Mama und Zlata haben nebeneinander gestanden. Fikret ist gegangen, weil die anderen gefunden sind.
+**Mala:** Heute Mittag stand mein Name zweimal auf einem Pfosten. Mama und Zlata haben nebeneinander gestanden. Hamdija ist gegangen, weil die anderen gefunden sind.
 
 **Mala:** Auf mich wartet keiner mehr. Und ich warte auf keinen. Das ist neu.
 
@@ -1774,10 +1775,10 @@ Schreibweise wie im Spiel: Bosnische Sätze stehen im Original, Marko übersetzt
 
 | Handlungsstrang oder Frage | Belegte Grundlage in Kapitel 1–4 | Bisher geklärt | Auflösung in Kapitel 5 | Spielerhandlung oder Szene | Folge |
 |---|---|---|---|---|---|
-| „Nemoj gledati, mali“: Wer hielt Marko fest? | `97_k4_fam_b.js:41`; `:142` | offen | Fikret Mulić, der Abfüller am Hahn [N] | 7.2 | Marko hat einen Zeugen; drei Namen für Kolar |
+| „Nemoj gledati, mali“: Wer hielt Marko fest? | `97_k4_fam_b.js:41`; `:142` | offen | Hamdija Selimović, der Abfüller am Hahn [N] | 7.2 | Marko hat einen Zeugen; drei Namen für Kolar |
 | Was rief der Vater? „Druck“ | `97_k4_fam_b.js:35`; `:40` | Marko glaubt „Druck“ | Zoran drehte sich zu ihm um und rief, dass der Druck da ist | 7.2, Schritt 5 | Der letzte Ruf des Vaters galt ihm |
-| Die blauen Kanister | `97_k4_fam_b.js:34`; `97_k4_fam_a.js:278–281` | nur Erinnerung | Ružas Dachboden ([E]-Idee, `KAPITEL4_KONZEPT.md:1612`); Auslöser für Fikret | 6.2; 7.2 | Marko trägt am Montag Wasser nach Vratnik |
-| Der Rechenschieber „Z. V.“ | `13_k4_notes.js:30` | Fund im Grab | Fikret steckte ihn in die Tasche; Jasna bekommt ihn | Gerichtsmedizin; 7.2 | „Er hat auf alles seinen Namen geschrieben.“ |
+| Die blauen Kanister | `97_k4_fam_b.js:34`; `97_k4_fam_a.js:278–281` | nur Erinnerung | Ružas Dachboden ([E]-Idee, `KAPITEL4_KONZEPT.md:1612`); Auslöser für Hamdija | 6.2; 7.2 | Marko trägt am Montag Wasser nach Vratnik |
+| Der Rechenschieber „Z. V.“ | `13_k4_notes.js:30` | Fund im Grab | Hamdija steckte ihn in die Tasche; Jasna bekommt ihn | Gerichtsmedizin; 7.2 | „Er hat auf alles seinen Namen geschrieben.“ |
 | Ružas „poginuo“ | `13_k4_notes.js:26`; `97_k4_fam_b.js:47` | Marko bat sie, es nicht zu schreiben | Es steht auf Zorans Tafel | Epilog | Ihr Wort, nach neunzehn Jahren |
 | Ružas Dach | `97_k4_fam_b.js:255–256`; `vratnik.js:48` | bezahlt | Mittag am Samstag, Kaffee am Montag | Epilog | „Es tropft nicht.“ |
 | Die Mütter vom 7. und 9. Stock | `stan.js:15`; `97_k4_fam_b.js:247–251` | ein Anruf | Dose zurück; das Klopfen; „Uđi“; die Drei | Totenmahl; Samstag | Eine Viertelstunde über Plätzchen, freiwillig |
@@ -1892,7 +1893,7 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 - Lana Delić liegt auf Bare unter dem Pfosten „LANA DELIĆ · 3. 3. 1976“ / „MALA · 15.1.1994“, mit einem Quittenableger.
 - Mala ist am 3. März 2012 gegangen. Sie kehrt nicht zurück.
 - Zoran Vuković liegt auf Bare, „poginuo 19. 4. 1993“, in einem Doppelgrab.
-- Fikret ist gegangen. Seine Liste liegt bei Kolar.
+- Hamdija ist gegangen. Seine Liste liegt bei Kolar.
 - Jasna hat die zwei entwerteten Fahrscheine, Nada Lanas Zeichnung von 1990.
 - Marko hat Ružas Džezva und die Kanister.
 
@@ -1949,7 +1950,7 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 
 - **Keine Pixelsuche.** Alle Pflicht-Hotspots haben eigene Namen und liegen in Räumen mit wenigen Dingen.
   - Die Dachbodenluke findet Mala, nicht der Mauszeiger.
-  - Der Kasten an der Brauerei ist groß und wird von Fikret bewacht, also auffällig.
+  - Der Kasten an der Brauerei ist groß und wird von Hamdija bewacht, also auffällig.
 - **Keine versteckten Pflichtgespräche.** Pflichtinformationen kommen aus Gesprächen, die das Spiel ohnehin anstößt: Jasna im siebten Stock, Nada über die Samstage, Kolar. Optionales (Rade, Damir, Dragica) wird nie gebraucht, und was es liefert, gibt es auch auf einem Pflichtweg.
 - **Keine Echtzeit.**
   - Der Beschlag verblasst sichtbar, wartet aber auf die nächste Handlung.
@@ -1959,7 +1960,7 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
   - Bosnische Sätze übersetzt Marko immer.
   - Für die Gravur reicht, was der Spieler erfahren hat: Name, Geburt, Tod auf dem Brett.
 - **Sackgassen konzeptionell geprüft, ohne Spieltest:**
-  - Der Kanister bleibt im Inventar, bis Fikret gegangen ist.
+  - Der Kanister bleibt im Inventar, bis Hamdija gegangen ist.
   - Die Dose bleibt bei Marko, bis die Übergabe stimmt.
   - Falsche Verbindungen kosten nichts.
   - Šehićs Angebot gibt es notfalls am Samstagmorgen.
@@ -1987,8 +1988,8 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 
 | Was | Umfang | Anmerkung |
 |---|---|---|
-| Räume | Busbahnhof, Treppenhaus 7./9. Stock, Dachboden, Brauerei, Friedhof Bare, Gerichtsmedizin | 6 Räume, dazu Fikrets kurzes Licht |
-| Fikret | ein Sprite mit Flackern, Ruhe und Übergang | Muster: Geister aus Kapitel 4 |
+| Räume | Busbahnhof, Treppenhaus 7./9. Stock, Dachboden, Brauerei, Friedhof Bare, Gerichtsmedizin | 6 Räume, dazu Hamdijas kurzes Licht |
+| Hamdija | ein Sprite mit Flackern, Ruhe und Übergang | Muster: Geister aus Kapitel 4 |
 | Beschlag-Ebene | halbtransparente Fläche auf einem Fenster-Hotspot, Linienzüge in Stufen, Ausblenden | kleiner Canvas-Effekt; keine Zeitlogik im Rätsel, nur kosmetisch |
 | Straßenbahn mit Familie | `tramvaj` mit neuer Besetzung und Tagbeleuchtung | – |
 | Erinnerungsbilder | etwa 7 | 6.7 |
@@ -2005,8 +2006,8 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 | N1 | **Malas Finger hinterlässt nur in Markos Atem eine Linie** | [N], Ergänzung | Einzige Regelergänzung. Gestützt auf das Phänomen aus Kapitel 1 (`flat.js:232`; `office.js:59`), nicht auf eine dort genannte Bedingung. Früh gezeigt (Donnerstagnacht), zweimal geprüft, begrenzt. **Ersatzlösung**, falls abgelehnt: Marko zeichnet die Straßenbahn unter Malas Anleitung („Zuerst die Oberleitung. Vier Fenster. In jedes ein Gesicht.“), Nada erkennt Lanas Art. Das kommt ohne neue Regel aus, ist aber schwächer, weil Lanas Hand fehlt. |
 | N2 | Marko hat Mala im Januar nach Sarajevo begleitet und lebt weiter in Split | [N] | Füllt die Lücke zwischen Neujahr und März; widerspricht nichts |
 | N3 | Lanas Begräbnis Freitag, 2. März, auf Bare; Zorans Montag, 5. März, auf Bare | [N] | Termin und Ort im Spiel offen; Recherche zu Bare |
-| N4 | Fikret Mulić, Abfüller der Brauerei, hob vorn die Hand, hielt Marko fest, begrub die sieben und schrieb die Liste | [N] | Füllt zwei offene „einer“ aus Kapitel 4, ohne dem Wortlaut zu widersprechen. Ein neuer Geist mit eigenem Interesse, kein Retter |
-| N5 | Fikret steckte den Rechenschieber in Zorans Tasche | [N] | Deutet einen belegten Fund (`13_k4_notes.js:30`) neu, ohne ihn zu ändern |
+| N4 | Hamdija Selimović, Abfüller der Brauerei, hob vorn die Hand, hielt Marko fest, begrub die sieben und schrieb die Liste | [N] | Füllt zwei offene „einer“ aus Kapitel 4, ohne dem Wortlaut zu widersprechen. Ein neuer Geist mit eigenem Interesse, kein Retter |
+| N5 | Hamdija steckte den Rechenschieber in Zorans Tasche | [N] | Deutet einen belegten Fund (`13_k4_notes.js:30`) neu, ohne ihn zu ändern |
 | N6 | Die Kanister stehen auf Ružas Dachboden | [E]-Idee (`KAPITEL4_KONZEPT.md:1612`), übernommen | Folgt aus Kapitel 4: Marko trug sie zu Baka |
 | N7 | Eine Familie aus Foča wohnte 1994 bis 2003 in Ružas Haus | [N] | Füllt die Lücke aus 1.8, ein Satz von Hajra |
 | N8 | Die Wohnung im siebten Stock steht leer, Šehić hat den Schlüssel | [N] | Recherche zur Eigentumslage nach dem Krieg; erzählerisch nur ein Zugang |
@@ -2036,7 +2037,7 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 8. **Bräuche:** Totenmahl in einer gemischten Familie; Begräbnis am Freitag; Besuch am Geburtstag.
 9. **Die erste Straßenbahn nach dem Stillstand im März 1994:** genaues Datum (Rade sagt nur „März“).
 10. **Sprache:** alle bosnischen Sätze von einer Sprecherin oder einem Sprecher aus Sarajevo prüfen lassen, ijekavisch: „Stigla si“, „Jesam, mama“, „Šuti, Mali“, „Drži se“, „Ima pritiska!“, „Kanisteri u red!“, „Ne diraj kutiju!“, „Koja je godina?“, „Česma. Teče. I niko ne čeka.“, „Tražim svoju kćer …“.
-11. **Namen:** „Fikret Mulić“ auf ungewollte Übereinstimmung mit realen Personen prüfen.
+11. **Namen:** „Hamdija Selimović“ auf ungewollte Übereinstimmung mit realen Personen prüfen.
 
 ### 12.6 Qualitätsprüfung (konzeptionell, kein ausgeführter Spieltest)
 
@@ -2045,7 +2046,7 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 - Kolar ist in Sarajevo, weil sie die Übergabe betreut.
 - Damir fährt nur, wenn Marko ihn eingeladen hat. Sonst fährt ein Fremder, und nichts hängt daran.
 - Nadas Griff in der Drei bleibt bewusst offen und trägt nichts.
-- **Erwogen und verworfen:** Rade als der Mann am Hahn. Das hätte eine Figur mit zu vielen Zufällen beladen (Fahrer der Samstage, Fahrer der ersten Drei, Zeuge). Stattdessen Fikret: Sein Platz am Hahn ist der Grund, warum er dort war.
+- **Erwogen und verworfen:** Rade als der Mann am Hahn. Das hätte eine Figur mit zu vielen Zufällen beladen (Fahrer der Samstage, Fahrer der ersten Drei, Zeuge). Stattdessen Hamdija: Sein Platz am Hahn ist der Grund, warum er dort war.
 
 **Künstliches Schweigen**
 - Mala schweigt bei der Grabtafel, weil sie in Skela gesagt hat, dass Mama und Zlata entscheiden. Das ist ihr Wort, kein Trick.
@@ -2059,7 +2060,7 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 
 **Rückwirkende Widersprüche**
 - Keine Tatsache aus Kapitel 1 bis 4 wird geändert.
-- Fikret füllt zweimal „einer“. Markos Satz „Ich habe die Kanister gefüllt“ (`97_k4_fam_b.js:44`) bleibt wahr: Er stand an, Fikret füllte am Hahn.
+- Hamdija füllt zweimal „einer“. Markos Satz „Ich habe die Kanister gefüllt“ (`97_k4_fam_b.js:44`) bleibt wahr: Er stand an, Hamdija füllte am Hahn.
 - Lanas „Kommst du?“ bleibt 1993 gesagt und gelogen beantwortet.
 
 **Unbegründete neue Kräfte**
@@ -2098,3 +2099,24 @@ Nur gespeicherte Werte können zuverlässig wirken (1.6). Ohne gespeichertes Kap
 9. **Kann der Spieler nach dem Abspann sagen: „Diese Geschichte ist zu Ende erzählt“?**
    - Ja. Lana ist angekommen und gegangen, Zoran hat sein Wort, die Mütter fahren zusammen, Marko zeichnet Räder.
    - Was weitergeht, ist Leben, kein offener Fall.
+
+---
+## 13. Umsetzung im Spiel: was anders geworden ist
+
+Kapitel 5 ist gebaut (`BERICHT_K5.md`, Komplettlösung `LOESUNG5.md`). Die Handlung, die drei Kooperationsrätsel, die Schlüsseldialoge 9.1 bis 9.4 und der Epilog sind umgesetzt wie beschrieben. Abweichungen:
+
+| Konzept | Spiel | Grund |
+|---|---|---|
+| Der Brunnenmann heißt Fikret Mulić | **Hamdija Selimović**, Liste „H. S., punionica“ | In Kapitel 2 gibt es schon einen Fikret (Busbahnhof). In diesem Dokument ist der Name überall ersetzt. |
+| Dachboden mit Kanistern, Hakenstange, Zastava-Schlüssel, Etui | Die Kanister liegen **im Garten unter Hajras Plane** beim Holz; Hajra nennt den Ort bei der Begrüßung. Mala spürt das Blaue, Marko hebt die Plane, Malas Nachhall „Nemoj gledati, mali“. | Kein eigener Raum für den Dachboden; der frühe Erfolg und die neue Frage bleiben erhalten. |
+| Nadas Küchenfenster | Die **gläserne Balkontür** neben Nadas Küchenzeile | Nadas Wohnung aus Kapitel 2 hat keine eigene Küche mit Fenster. |
+| Mala zeichnet (Handlung „Zeichnen“) | eigenes Verb **„Zeichne“**, nur wo Markos Atem eine Scheibe beschlagen hat; die Zeichnung ist im Bild zu sehen und vergeht | – |
+| Zwei Proben des Atems, steuerbar | im Gespräch 9.1 als Auswahl („Versuch es auf dem Spiegel.“ / „Noch einmal.“), Mia erzählt; `a5_grenze` ist Teil von `a5_atem` | weniger Wege für denselben Erkenntnisschritt |
+| Rekonstruktion des 19. April mit Wahl „(Neben ihr stehen.)“ | Mala spürt Hahn, Mitte und Brücke; Marko geht in der Mitte erzählt mit | Die Wahl hätte Marko gehört, während Mala gespielt wird. |
+| Hamdijas Übergang mit kurzem Licht | Malas „Hinüberbringen“ am Hahn, ohne Zwischenwelt; „Česma. Teče. I niko ne čeka.“ | wie im Konzept „an Ort und Stelle“ |
+| Nedžads Zollstock | ein Satz: Vlado hat das Brett gemessen, zweiunddreißig Zentimeter | kein eigener Schritt nötig |
+| Punkt ohne Rückkehr mit eigenem Platz | eigener Stand **„Vor dem Samstag“** neben den Lesezeichen (`mala.mark.N.sat`), Abzeichen „Punkt ohne Rückkehr“ | Lesezeichen des Spielers bleiben unberührt |
+| Weg nach Vratnik mit drei Haltepunkten | drei erzählte Haltepunkte in einer Folge, danach Ružas Tor | geführt wie im Konzept, ohne freien Weg |
+| Kolars Anruf am Donnerstag | zu Beginn des Donnerstags | – |
+| Dragicas zweites Gespräch, die Plastikflasche an der Brauerei, ein eigenes Erinnerungsbild für die Dämmerung | nicht umgesetzt; Nachhalle nutzen Bilder aus Kapitel 2 bis 4 | Umfang |
+| Spieldauer 140 bis 160 Minuten (Schätzung) | Musterlösung 81 Minuten Spieltakt (gemessen) | Ein erstes Spielen mit Suchen dauert länger; gemessen ist es nicht. |

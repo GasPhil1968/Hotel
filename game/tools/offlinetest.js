@@ -36,6 +36,12 @@ const srv = http.createServer((q, r) => { let f = decodeURIComponent(q.url.split
   await page.evaluate(() => { if (M.closeMap) M.closeMap(); M.TURBO = 25; M.E.newGame(4); });
   let s4 = null; for (let i = 0; i < 150; i++) { s4 = await page.evaluate(() => { const ov = M.E.overlay; if (ov && ov.kind === 'memory') M.TA.closeOverlay(); return { phase: M.GS.phase, room: M.TA.status().room }; }); if (s4.phase === 'k4_pro' && s4.room === 'zob') break; await page.waitForTimeout(200); }
   check(s4 && s4.phase === 'k4_pro' && s4.room === 'zob', 'neues Spiel in München startet offline am ZOB (' + (s4 && s4.phase) + ', ' + (s4 && s4.room) + ')');
+  // Kapitel 5 (Sarajevo, Finale) offline: Daten da, ein neues Spiel beginnt am Busbahnhof von Sarajevo
+  const r5 = await page.evaluate(() => ({ k5: (M.HINTS_K5 || []).length, rooms: ['stanica5', 'pivara', 'bare', 'stiege5', 'kuca5'].every(id => M.ROOMS[id] && M.ART[id]), start: typeof M.startChapter5 === 'function' }));
+  check(r5.k5 > 20 && r5.rooms && r5.start, 'Kapitel 5 offline vorhanden (' + r5.k5 + ' Hinweisthemen, Brauerei, Bare, Treppenhaus)');
+  await page.evaluate(() => { if (M.closeMap) M.closeMap(); M.TURBO = 25; M.E.newGame(5); });
+  let s5 = null; for (let i = 0; i < 150; i++) { s5 = await page.evaluate(() => { const ov = M.E.overlay; if (ov && ov.kind === 'memory') M.TA.closeOverlay(); if (M.E.speech) M.E.endSpeech(); return { phase: M.GS.phase, room: M.TA.status().room }; }); if (s5.phase === 'k5_pro' && s5.room === 'stanica5') break; await page.waitForTimeout(100); }
+  check(s5 && s5.phase === 'k5_pro' && s5.room === 'stanica5', 'neues Spiel in Kapitel 5 startet offline am Busbahnhof (' + (s5 && s5.phase) + ', ' + (s5 && s5.room) + ')');
   check(!errs.length, 'keine JS-Fehler' + (errs.length ? ': ' + errs[0] : ''));
   await browser.close(); srv.close(); console.log(ok ? 'OFFLINETEST OK' : 'OFFLINETEST FEHLER'); process.exit(ok ? 0 : 1);
 })();

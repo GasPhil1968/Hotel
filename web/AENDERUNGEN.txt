@@ -1,3 +1,24 @@
+MALA – ÄNDERUNGEN: KAPITEL 5 („ANGEKOMMEN“)
+Ausführlich: BERICHT_K5.md und LOESUNG5.md im Repository.
+
+WAS NEU IST
+- Kapitel 5: Sarajevo, das Finale der Reihe (1. bis 5. März 2012). Spielbar,
+  sobald Kapitel 4 zu Ende gespielt ist (oder mit ?kapitel=alle). Nach dem
+  Abspann von Kapitel 4 bietet das Titelmenü "Weiter mit Kapitel 5" an.
+- Drei neue Schauplätze (Treppenhaus im siebten Stock, An der Brauerei,
+  Friedhof Bare), dazu die Orte aus Kapitel 2 in neuer Lage. Der Stadtplan von
+  Sarajevo hat vier neue Orte.
+- Mala hat ein neues Verb: "Zeichne". Es erscheint nur, wo eine Scheibe von
+  Markos Atem beschlagen ist.
+- Vor dem Samstag legt das Spiel einen eigenen Spielstand an, "Vor dem
+  Samstag". Er steht unter "Spiel laden" neben den Lesezeichen und
+  überschreibt keines.
+- Antworten aus Kapitel 3 und 4 (Zustimmung, Versprechen, Probe, Kurve,
+  Pantoffeln, Dose, Davor) verändern Sätze im Finale, nicht sein Ende.
+- Alte Spielstände laden unverändert.
+
+----------------------------------------------------------------------------
+
 MALA – ÄNDERUNGEN FÜR IPHONE UND IPAD (Touch-Umsetzung E1–E7)
 Stand: Cache-Version mala-split-3ff65a6a92. Ausführlich: design/TOUCH_UMSETZUNG.md im Repository.
 

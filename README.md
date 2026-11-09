@@ -1,4 +1,4 @@
-# MALA – Kapitel 1: Split · Kapitel 2: Sarajevo · Kapitel 3: Mostar
+# MALA – Kapitel 1: Split · Kapitel 2: Sarajevo · Kapitel 3: Mostar · Kapitel 4: München · Kapitel 5: Sarajevo
 
 Ein ernstes Point-and-Click-Adventure nach dem Vorbild der Blackwell-Reihe, im technischen und ästhetischen Stil des beigelegten „Twenty to Four“ (VGA-Pixelgrafik, alles im Code gemalt und vertont), aber komplett eigenständig.
 
@@ -7,6 +7,10 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 **Kapitel 2: Sarajevo.** Marko fährt mit Mala in die Stadt seiner Kindheit. Drei neue Fälle: ein junger Mann, der seit 1972 unter dem Uhrturm wartet; ein Professor, der ein Buch aus der brennenden Nationalbibliothek zurückgeben will; eine Lehrerin, die im Schutzraum eines Hochhauses noch immer Schule hält. Dazu Malas eigene Geschichte. Beide Kapitel lassen sich im Hauptmenü direkt wählen; Sarajevo startet auch ohne Split. Das Spiel läuft immer im Querformat (hochkant dreht sich das Bild mit). Sprachen: Deutsch und Bosnisch/Kroatisch (Kapitel 1 vollständig, Kapitel 2 und 3 vorerst nur Deutsch).
 
 **Kapitel 3: Mostar.** Marko folgt Malas Spur nach Mostar. Ihre Brücke ist nicht die Alte Brücke; eine Peilung von drei Standorten führt zu einer stillgelegten Fähre flussab. Dort warten zwei Geister: Bato, der Fährmann, an seiner Glocke, und Mate Zelenika, der jeden Samstag auf den Bus seines Sohnes aus München wartet. Am Ende ist Mala frei und bleibt, weil sie es will und Marko zustimmt. Kapitel 3 lässt sich im Hauptmenü direkt wählen; nach dem Abspann von Sarajevo heißt es „Weiter mit Kapitel 3: Mostar“.
+
+**Kapitel 4: München.** Heiligabend 2011 bis Neujahr 2012 bei Markos Mutter Jasna, die seit achtzehn Jahren auf Markos Vater wartet. Mala geht jetzt auch allein durch die Stadt. Zwei Geisterfälle, ein Streit, eine Nacht auf der Hackerbrücke, ein Gespräch in der Silvesternacht.
+
+**Kapitel 5: Sarajevo („Angekommen“).** Das Finale. Anfang März 2012 wird Lana begraben, am Tag vor ihrem 36. Geburtstag; Zoran wird identifiziert. Zwei Frauen, zwei Namen für ein Grab; ein Mann an der Brauerei, der seit 1993 die Kanister ordnet; zwei Fahrscheine der Linie 3. Mala kann in Markos Atem zeichnen. An ihrem Samstag fährt sie ein letztes Mal die Drei, und an Ružas Tor sagt Marko die Wahrheit.
 
 ## Inhalt
 
@@ -21,7 +25,11 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 | [`KAPITEL3_KONZEPT.md`](KAPITEL3_KONZEPT.md) | Konzept von Kapitel 3 (Fassung 2, nach der Prüfung): Handlung, Figuren, Orte, Rätselketten, Finale, Audio |
 | [`LOESUNG3.md`](LOESUNG3.md) | Komplettlösung von Kapitel 3 mit allen Varianten |
 | [`BERICHT_K3.md`](BERICHT_K3.md) | Entwicklungs- und Testbericht von Kapitel 3 (was geprüft wurde und was nicht) |
-| [`HINWEISE.md`](HINWEISE.md) | Alle Hinweistexte der drei Kapitel mit ihren Bedingungen (Entwicklerübersicht, enthält Lösungen) |
+| [`KAPITEL4_KONZEPT.md`](KAPITEL4_KONZEPT.md) · [`LOESUNG4.md`](LOESUNG4.md) · [`BERICHT_K4.md`](BERICHT_K4.md) | Kapitel 4: Konzept, Komplettlösung, Entwicklungs- und Testbericht |
+| [`KAPITEL5_KONZEPT.md`](KAPITEL5_KONZEPT.md) | Konzept des Finales (Kapitel 5): Ende von Kapitel 4, drei Finalrichtungen, Handlung, Rätsel, Schlüsseldialoge, Epilog; Abschnitt 13 nennt die Abweichungen der Umsetzung |
+| [`LOESUNG5.md`](LOESUNG5.md) | Komplettlösung von Kapitel 5 mit Variante |
+| [`BERICHT_K5.md`](BERICHT_K5.md) | Entwicklungs- und Testbericht von Kapitel 5 (was geprüft wurde und was nicht) |
+| [`HINWEISE.md`](HINWEISE.md) | Alle Hinweistexte der fünf Kapitel mit ihren Bedingungen (Entwicklerübersicht, enthält Lösungen) |
 | [`BERICHT_PRUEFBERICHT.md`](BERICHT_PRUEFBERICHT.md) | Überarbeitung nach dem externen Prüfbericht (November 2026): blockierende Fehler, Widersprüche, neue Rätselformen, Spannungsbogen, Tests, offene Punkte |
 | [`KONZEPT.md`](KONZEPT.md) | Das vollständige Konzept: Analyse des Originals, Umsetzung der Blackwell-Mechanik, Story, Figuren, 19 Orte, die drei Fälle mit allen Rätseln und Lösungen, Spielzeit, Malas Geheimnis |
 | `web/` | **Das spielbare Spiel** (eine einzige `index.html` + Offline-Service-Worker + Icons). Ordner bei Netlify hochladen oder `index.html` im Browser öffnen. Siehe `web/LIESMICH.txt` |
@@ -38,7 +46,7 @@ node game/build.js --artifact out/mala.html   # zusätzlich eine Fassung für cl
 open web/index.html         # oder bei Netlify hochladen
 ```
 
-Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen · unten links = zwischen Marko und Mala wechseln · „Notizen“ = Notizbuch (zwei Einträge antippen = verbinden; im Menü auf „Nachdenken“ umschaltbar) · „Zeigen“, „Menü“. Hinweise gibt es in allen drei Kapiteln nur auf Wunsch unter „Menü → Hinweis …“, in vier Stufen.
+Steuerung kurz: Tippen = ansehen bzw. Verb-Menü · Ziehen = Gegenstand benutzen · unten links = zwischen Marko und Mala wechseln · „Notizen“ = Notizbuch (zwei Einträge antippen = verbinden; im Menü auf „Nachdenken“ umschaltbar) · „Zeigen“, „Menü“. Hinweise gibt es in allen fünf Kapiteln nur auf Wunsch unter „Menü → Hinweis …“, in vier Stufen.
 
 ## Prüfen
 
@@ -50,6 +58,9 @@ node game/tools/k2tests.js /tmp/d                   # Einzeltests für Kapitel 2
 MALA_DUMPALL=/tmp/d3 node game/tools/walkthrough3.js   # spielt Kapitel 3 durch
 K3T_DUMPS=/tmp/d3t node game/tools/k3tests.js /tmp/d3  # Einzeltests für Kapitel 3 (legt die Stände der Nebenwege ab)
 node game/tools/hintcheck.js /tmp/d3 /tmp/d3t       # Hinweise gegen alle Stände prüfen
+node game/tools/walkthrough4.js                     # spielt Kapitel 4 durch
+MALA_DUMPALL=/tmp/d5 node game/tools/walkthrough5.js   # spielt Kapitel 5 durch (MALA_K5VAR=1: Variante mit Übernahmen und anderen Antworten)
+node game/tools/hintcheck.js /tmp/d5                # Hinweise von Kapitel 5 gegen die Stände prüfen
 node game/tools/hintdoc.js > HINWEISE.md            # Übersicht aller Hinweistexte
 node game/tools/devicetest.js                       # iPad-Ansicht, Touch, offline, Bildzeit
 MALA_DUMPALL=/tmp/k1 node game/tools/walkthrough.js # Spielstände je Schritt für den nächsten Test

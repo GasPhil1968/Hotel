@@ -1,4 +1,5 @@
 MALA – KAPITEL 1: SPLIT · KAPITEL 2: SARAJEVO · KAPITEL 3: MOSTAR · KAPITEL 4: MÜNCHEN
+· KAPITEL 5: SARAJEVO
 iPad- und Browser-Version, deutsch
 
 WORUM ES GEHT
@@ -29,13 +30,24 @@ Nacht auf der Hackerbrücke und ein Gespräch in der Silvesternacht. Geschätzt
 vier bis fünf Stunden. Die Frage, die alles trägt: Was heißt „nicht
 zurückgekommen“?
 
+Kapitel 5 ist das Finale. Anfang März 2012 kommen Marko und seine Mutter
+nach Sarajevo: Lana wird begraben, am Tag vor ihrem 36. Geburtstag, und
+Zoran ist identifiziert. Zwei Frauen streiten höflich um den Namen auf einem
+Grab, an der Brauerei ordnet ein Mann seit 1993 die Kanister, und in Malas
+Dose liegen zwei Fahrscheine der Linie 3. Neu: Mala kann zeichnen, aber nur
+in Markos Atem, auf einer beschlagenen Scheibe (Verb "Zeichne"). Vier Tage,
+ein Samstag um zehn nach elf, ein Montag. Geschätzt zwei bis drei Stunden.
+Die Frage, die alles trägt: Wann ist jemand angekommen?
+Vor dem Samstag legt das Spiel einen eigenen Spielstand an ("Vor dem
+Samstag"); danach führt kein Weg zurück in die Tage davor.
+
 KAPITEL WÄHLEN
 - Das Hauptmenü hat vier Einträge: Neues Spiel, Spiel laden, Einstellungen,
   Über MALA – mit Spielstand oben zusätzlich "Fortsetzen" (der jüngste Stand,
   mit einem Tipp).
 - Ein Kapitel ist spielbar, sobald das vorige zu Ende gespielt ist. "Neues
   Spiel" zeigt dann die Kapitelwahl; noch gesperrte Kapitel stehen ohne
-  Ortsnamen und mit Grund darin. Kapitel 5 ist noch nicht erschienen.
+  Ortsnamen und mit Grund darin.
   Vorhandene Spielstände lassen sich immer laden.
 - "Neues Spiel" beginnt auf dem ersten freien Speicherplatz, ohne Rückfrage.
   Sind alle drei belegt, fragt das Spiel, welcher überschrieben wird.
@@ -45,13 +57,15 @@ KAPITEL WÄHLEN
   Genauso nach Sarajevo: Was Marko in der Straßenbahn gestanden hat und ob
   er bei Hajra war, kommt mit nach Mostar. Und aus Mostar nach München: was
   Marko und Mala am Grab ausgemacht haben und ob Marko seine Probe gegeben hat.
+  Und nach Sarajevo, ins Finale: was am Grab und in München gesagt wurde, das
+  Versprechen, die Probe, die Kurve, die Pantoffeln, Nadas Dose, Davors Angebot.
 
 SPRACHE / JEZIK
 - Unter "Einstellungen" → "Sprache" auf "Bos./Hrv." tippen: Das Spiel wechselt
   auf Bosnisch/Kroatisch. Ist das Gerät auf Bosnisch, Kroatisch oder Serbisch
   eingestellt, beginnt es gleich so. Kapitel 1 (Split)
-  ist vollständig übersetzt, Kapitel 2 bis 4 (Sarajevo, Mostar,
-  München) laufen vorerst auf Deutsch.
+  ist vollständig übersetzt, Kapitel 2 bis 5 (Sarajevo, Mostar,
+  München, Sarajevo) laufen vorerst auf Deutsch.
 - Jede Figur spricht ihre Sprache: Marko Standardkroatisch, mit Mala aber
   Sarajevo-Bosnisch; Mala Bosnisch; Ivka, Zdenka und Jakov Čakavisch aus Split;
   die übrigen Splitter Kroatisch mit einzelnen Split-Wörtern.
