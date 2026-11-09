@@ -20,7 +20,8 @@ M.k5PivaraEnter=async function(A,from){ var p=ph(A);
     if (A.first('k5pv1')){ await A.m('Die Brauerei. Gelber Backstein, ein Schornstein. Es riecht nach Malz, warm und süß.'); await A.m('Und mein Kopf pocht. Zum ersten Mal seit acht Wochen.');
       if (A.G.malaOn){ await A.g('Hier ist einer. Aber er zeigt sich nicht.'); await A.g('Er wartet auf etwas.'); } return; }
     if (p==='k5_n1' && A.first('k5pvN')){ await A.m('Nachts. Keiner am Hahn. Das Wasser läuft in den Trog, leise, als wollte es keinen wecken.');
-      if (!inv(A,'kanister') && A.G.malaOn) await A.g('Ohne Kanister zeigt er sich nicht. In Ružas Garten liegt der zweite.'); }
+      // Analyse K5, toter Text (P24): der Satz fiel auch mit gefülltem Kanister; Ružas Garten ist nachts nur in diesem Fall erreichbar (96_k5_story.js)
+      if (!inv(A,'kanister') && !inv(A,'kanister_voll') && A.G.malaOn) await A.g('Ohne Kanister zeigt er sich nicht. In Ružas Garten liegt der zweite.'); }
     return; }
   if (p==='k5_d2' && F(A,'k5.b.met') && !F(A,'k5.b.gone') && A.first('k5pvD2')){ await A.m('Am Tag. Hamdija steht am Hahn, nass bis zu den Ellbogen, und ordnet Kanister, die keiner sieht. Touristen füllen Flaschen durch ihn hindurch.'); if (A.G.malaOn) await A.g('Er wartet immer noch. Auf die Familien.'); return; }
   if (p==='k5_epi' && M.k5EpiPivara) return M.k5EpiPivara(A,from); };
@@ -155,7 +156,8 @@ M.k5InstEnter=async function(A,from){ var p=ph(A), K=A.npc('kolar');
 M.k5InstExit=async function(A){ return true; };
 async function instScene(A){ var K=A.npc('kolar'), c=C();
   A.setFlag('k5.d2.instIn'); var n=M.apos('vermisst','nada',[120,120,'R']); A.spawn({id:'jasna',ch:'jasnaC',x:n[0],y:n[1],f:n[2]||'R',name:'Mama',idle:'sit',talk:'sitTalk',speechY:36}); var J=A.npc('jasna');
-  await K.say('Gospođo Vuković. Gospodine Vuković. Danke, dass Sie gekommen sind. Neun Uhr. Sie sind pünktlich. Das sind hier wenige.');
+  // Analyse K5 (P24): „Sie sind pünktlich“ galt immer, auch wer erst mittags kam
+  await K.say('Gospođo Vuković. Gospodine Vuković. Danke, dass Sie gekommen sind. Alle beide. Das sind hier wenige.');
   await A.wait(300); await A.narrate('Frau Kolar führt uns einen hellen Gang entlang, in einen Raum ohne Fenster. Auf einem Tisch eine weiße Kiste mit einer Nummer. Daneben, in einem Beutel, ein Rechenschieber. Eingeritzt: Z. V.');
   await J.say('Ich will ihn sehen.'); await A.wait(500);
   await A.narrate('Frau Kolar nickt. Mama legt die Hand auf den Deckel. Sie macht ihn nicht auf. Sie lässt die Hand lange liegen.'); await A.wait(900);
@@ -213,9 +215,11 @@ async function engrave(A){ var N=A.npc('nedzad');
   var res=await A.puzzle({title:'Die Tafel',hint:'Nedžad graviert genau, was ich ihm vorgebe. Tippe auf eine Zeile, um eine andere zu wählen.',button:'So gravieren',
     slots:[['LANA DELIĆ','LANA „MALA“ DELIĆ','MALA'],['3. 3. 1976','1976 – 1994','3. 3. 1976 – 15. 1. 1994'],['(keine dritte Zeile)','STIGLA JE','MALI ČEKA']],
     init:[1,2,1],
-    check:function(sel){ var msg=[[null,'Zlata hat gesagt: „Mala steht doch schon auf dem Brett. Zweimal ist einmal zu viel.“','Nada hat gesagt: „Oben ihr Name. Wie ich sie gerufen habe.“ Nicht „Mala“.'],
-        [null,'Nada: „Sie hatte einen Geburtstag. Den dritten März.“ Ein Jahr allein ist kein Geburtstag.','Nedžad: „Dann steht der Fünfzehnte zweimal da. Einmal auf dem Messing, einmal auf dem Holz. Einmal reicht.“'],
-        [null,'Nada hat gesagt: „Das sage ich, wenn es stimmt. Nicht vorher.“','Mala: „Nein. Er wartet nicht mehr.“']];
+    // Analyse K5-B12 (P24): Die Absagen zitierten Sätze, die nie gefallen sind. Jetzt denkt Marko selbst, oder wer dabei ist, sagt es jetzt.
+    check:function(sel){ var gm=A.G.malaOn&&A.malaHere&&A.malaHere();
+      var msg=[[null,'„Mala“ steht schon auf Zlatas Brett. Zweimal ist einmal zu viel.','Oben gehört ihr Name hin, so wie Nada sie gerufen hat. Nicht „Mala“.'],
+        [null,'Sie hatte einen Geburtstag, den dritten März. Ein Jahr allein ist kein Geburtstag.','Nedžad: „Dann steht der Fünfzehnte zweimal da. Einmal auf dem Messing, einmal auf dem Holz. Einmal reicht.“'],
+        [null,'„Stigla je“, sie ist angekommen. Das darf erst dastehen, wenn es stimmt. Und sagen soll es Nada, nicht ich.',gm?'Mala: „Nein. Er wartet nicht mehr.“':'„Mali čeka“, der Kleine wartet. Ich warte nicht mehr. Das gehört nicht auf ihre Tafel.']];
       for (var i=0;i<sel.length;i++) if (sel[i]!==0) return {ok:false,bad:i,msg:msg[i][sel[i]]}; return {ok:true}; }});
   if (!res){ await N.say('Überlegen Sie. Bis zwölf haben Sie Zeit. Ich nicht.'); return; }
   A.setFlag('k5.s.engraved'); A.sfx('crank'); await A.narrate('Nedžad setzt den Stichel an. Er schlägt, Buchstabe für Buchstabe, und spricht jeden leise mit. Das Ć zuletzt, mit einem eigenen Schlag für den Strich.');
@@ -242,7 +246,7 @@ M.k5TalkRade=async function(A){ var R=A.npc('rade'), p=ph(A);
   ]; }); };
 M.k5TalkDamir=async function(A){ var D=A.npc('damir');
   await A.menuLoop(function(){ return [
-    {t:'Am Freitag ist ein Begräbnis. Auf Bare. Um zwei.',once:'k5dm1',go:async function(A){ await D.say('Wessen?'); await A.m('Lana Delić. Die Kleine von der Drei. Samstags, zehn nach elf.'); await A.wait(500);
+    {t:A.G.phase==='k5_d2'?'Heute ist ein Begräbnis. Auf Bare. Um zwei.':'Am Freitag ist ein Begräbnis. Auf Bare. Um zwei.',once:'k5dm1',go:async function(A){ await D.say('Wessen?'); await A.m('Lana Delić. Die Kleine von der Drei. Samstags, zehn nach elf.'); await A.wait(500);
       await D.say('Um zwei habe ich Pause. Ich komme in Uniform. Meine Mutter sagt, die Toten mögen Uniformen. Sie sehen dann, dass man von der Arbeit kommt.'); A.setFlag('k5.d2.damir'); }},
     {t:'Fahren Sie samstags die Drei?',once:'k5dm2',go:async function(A){ await D.say('Meistens. Samstags fahren die Alten in die Stadt, mit Taschen, und die Jungen aus der Stadt, mit Kopfschmerzen.'); }},
     {t:'Bis bald, Damir.',bye:true,go:async function(A){ await D.say('Doviđenja. Und halten Sie sich fest. Immer festhalten.'); }}
@@ -410,7 +414,8 @@ M.k5Tabija=async function(A){ var G=A.G, c=C();
   await A.g('Jakov hat in Split gefragt, wo ich hin soll. Ich habe es nicht gewusst.'); await A.m('Und jetzt?'); await A.g('Hinauf. Ist nicht weit.');
   await A.wait(600); await A.narrate('Sie macht die Dose auf. Zwei Fahrscheine, nebeneinander, so wie sie sie auf der Bank hineingelegt hat.');
   await A.g('Wer losgelassen hat, kann etwas hergeben.');
-  if (has(A,'f5_jasna')) await A.g('Für deine Mutter. Sie soll Mama holen. So wie ich dich.'); else await A.g('Für Mama. Für die, die sie braucht.');
+  // Analyse K5-B10 (P24): nach dem Schluss des Spielers wiederholt Mala ihn nicht mehr, sie nickt ihn nur ab
+  if (has(A,'f5_jasna')) await A.g('Du weißt, für wen.'); else await A.g('Für Mama. Für die, die sie braucht.');
   for (var k=0;k<3;k++){ var t=await A.choose([{t:'(Die Dose nehmen.)',id:'take',silent:true},{t:'Bist du sicher?',id:'sure'}],{title:'Die Dose'}); if (t==='take') break; await A.g('Nein. Nimm sie trotzdem.'); }
   A.give('dose_lana'); A.sfx('pickup');
   await A.narrate('Sie liegt in meiner Hand. Blech, kalt, mit einer Delle im Deckel.'); await A.m('Sie ist leicht.'); await A.g('Sie war nie schwer. Nur festgehalten.');

@@ -83,7 +83,8 @@ async function readLetters(A,W){ var G=A.G, first=!F(G,'k4.s.letters'), n=0; W=W
       if (!N(G,'s4_brief79')){ A.note('s4_brief79'); A.set('letter79',true); A.rebuild();
         await A.wait(500); await A.m('Der kürzeste Brief von allen. Kein Wetter, keine Mama, nichts aus dem Dorf. Drei Sätze. Und die Schrift zittert.');
         await W.say('Mit de Koffer g’sehn? Wo denn?'); await A.m('Das steht nicht drin.');
-        if (here(A)){ await A.wait(400); await A.g('Der da.'); await A.wait(300); await A.g('Der ist anders als die anderen.'); } } }},
+        // Analyse K4-B09 (P24): ohne Mala bemerkt Marko selbst, dass dieser Brief anders ist, und denkt an sie
+        if (here(A)){ await A.wait(400); await A.g('Der da.'); await A.wait(300); await A.g('Der ist anders als die anderen.'); } else { await A.wait(400); await A.m('Der ist anders als die anderen. Den sollte Mala sehen.'); } } }},
     {t:'(Genug gelesen.)',silent:true,bye:true}
   ]; }); }
 // ---------------------------------------------------------------- Malas Nachhall am Brief von 1979 (s4_carmela_hall)
@@ -138,7 +139,8 @@ async function jasnaRiss(A){ var J=A.npc('jasnaC');
   A.note('z4_riss'); A.setFlag('k4.s.jasna');
   await A.wait(900); await J.anim('wipe'); await A.narrate('Sie wischt sich mit dem Handrücken über die Augen, schnell, als wäre da nur Staub.');
   if (here(A)){ await A.wait(600); await A.g('„Für wen.“'); await A.wait(500); await A.g('Sie hat es laut gesagt, Marko. Zum ersten Mal.'); }
-  await A.wait(700); await J.say('Ich muss zur Arbeit. Um zwei fängt mein Dienst an.'); await A.wait(300); await J.say('Er hat unsere Tasche getragen. Da kann ich ihm einmal nachsehen.'); }
+  // Analyse K4-B08 (P24): erst der Grund zu bleiben, dann die Zeit (vorher klang es, als ginge sie gleich zur Arbeit)
+  await A.wait(700); await J.say('Er hat unsere Tasche getragen. Da kann ich ihm einmal nachsehen.'); await A.wait(300); await J.say('Um zwei fängt mein Dienst an. Bis dahin bleibe ich.'); }
 async function farewell(A){ var G=A.G, W=A.npc('wimmer'); if (F(G,'k4.s.farewell')) return;
   var lk=G.flags['mala.lock'], enzo=F(G,'k4.s.enzoInv'), jas=F(G,'k4.d2.notice'), g2=gast2Here(G); G.flags['mala.lock']=true;
   try{ A.set('fwRun',true); A.set('farewell',true); A.rebuild(); A.music('k4_sepp');

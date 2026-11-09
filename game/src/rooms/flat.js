@@ -138,7 +138,7 @@ var HS=[
  {id:'lamp',name:'Schreibtischlampe',r:[216,58,14,24],st:R3.st(222,22,'B'),look:'Die Lampe hat drei Stellungen: zu hell, zu dunkel und kaputt.',use:'Ich lasse sie, wie sie ist.',g:{look:'Das Licht, unter dem er nachts die fremden Sätze schreibt.'}},
  {id:'answer',name:'Anrufbeantworter',r:[236,74,14,12],st:R3.st(240,14,'B'),reach:'M',
    look:function(A){ return A.S.ansBlink?A.m('Das rote Licht blinkt. Eine Nachricht. Wahrscheinlich Vesna. Es ist immer Vesna.'):A.m('Keine neuen Nachrichten. So ist es mir am liebsten.'); },
-   use:async function(A){ if (!A.S.ansBlink) return A.m('Keine neuen Nachrichten.'); return playMessage(A); },
+   use:async function(A){ if (A.G.phase==='c3' && !A.flag('c3.call')) return M.case3Call(A); if (!A.S.ansBlink) return A.m('Keine neuen Nachrichten.'); return playMessage(A); },   // Fall 3: hier nimmt Marko ab
    g:{look:'Eine Maschine, die für ihn zuhört. Ich kenne das.'}},
  {id:'shelf',name:'Bücherregal',r:[121,28,30,52],st:R3.st(136,20,'B'),look:'Wörterbücher. Deutsch, Italienisch, Englisch. Die einzigen, die mir nie widersprechen.',take:'Ich brauche heute keine Wörter. Ich habe zu viele.',
    use:async function(A){ if (A.G.phase==='pro' && A.hasNote('pro_spia') && !A.flag('pro.translated')){ await A.reach(); return A.m('„Spia“: Leuchte, Kontrolllicht. Auch: Spion. Das Wörterbuch weiß, was das Wort heißt. Welche Leuchte gemeint ist, weiß es nicht.'); } return A.m('Ich schlage nach, was ich schon weiß. Das beruhigt.'); },
@@ -396,7 +396,9 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
     if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
   enter:async function(A,from){ var p=A.G.phase;
     if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
-    if (p==='c3' && !A.flag('c3.call') && A.first('c3call')){ await M.case3Call(A); } }
+    // Analyse, Hinweisthema k3_call (Kann-Liste): Wurde der Anruf unterbrochen (Laden mitten im Gespräch), klingelt es beim Betreten wieder;
+    // vorher galt das nur einmal, die Tür blieb zu („Es klingelt schon wieder“), und es gab nichts, womit man abnehmen konnte
+    if (p==='c3' && !A.flag('c3.call')){ await M.case3Call(A); } }
 });
 M.defineScape('flat',function(o){ var GS=o.GS, w=M.scn.weather(GS), tod=o.tod; return { beds:(w==='rain'?['rainIn','fridge']:(tod==='night'?['room','fridge']:['seaFar','fridge'])), step:'wood',
   ev:tod==='night'?[['horn',40,90,0.5,0.2,0.5],['creak',30,70,0.4,-0.6,0.6]]:[['horn',25,60,0.6,0.1,0.5],['gull',14,30,0.4,0.1,0.6],['scooter',20,45,0.4,-1,1],['drip',3,8,0.5,-0.9,-0.6]] }; });

@@ -45,6 +45,8 @@ M.trAdd('bhs', {
   'Ich habe ihn dir schon gelesen.': 'Već sam ti ga pročitala.',   // Mala
   'Halt ihn mir hin. Dann lese ich dir, was das Salz gefressen hat.': 'Drži mi ga. Onda ću ti pročitati ono što je so pojela.',   // Mala
   'Er klebt zusammen. So kann ich die Schrift nicht sehen.': 'Zalijepio se. Ovako ne vidim rukopis.',   // Mala
-  'Da lag ein Zettel. Von Nina. Sie hat ihn jetzt wieder. Aber ich weiß noch, was drinstand.': 'Tamo je bila poruka. Od Nine. Sad je opet kod nje. Ali još znam što je pisalo.'   // Marko
+  'Da lag ein Zettel. Von Nina. Sie hat ihn jetzt wieder. Aber ich weiß noch, was drinstand.': 'Tamo je bila poruka. Od Nine. Sad je opet kod nje. Ali još znam što je pisalo.',   // Marko
+  'Das Telefon steht am Bett, beim Anrufbeantworter.': 'Telefon je kraj kreveta, uz telefonsku sekretaricu.',   // Hinweis
+  'Am Anrufbeantworter abnehmen.': 'Javiti se na telefonu uz sekretaricu.'   // Hinweis
 });
 })(M);

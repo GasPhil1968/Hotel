@@ -27,8 +27,9 @@ async function readBox(A){ var G=A.G;
     if (!F(A,'k4.d1.boxTry')){ A.setFlag('k4.d1.boxTry');
       await A.g('Das ist nicht meine Kiste.'); await A.wait(900); await A.g('Aber das ist auch nicht ihre Wahrheit allein.'); }
     else { await A.g('Er hat gesagt: frag nicht.'); await A.wait(600); await A.g('Er hat nicht gesagt: lies nicht.'); }
-    var c=await A.choose([{t:'(Lesen.)',id:'read',silent:true},{t:'(Nicht lesen.)',id:'no',silent:true}],{title:'Die Kiste',conv:false});
-    if (c!=='read'){ await A.wait(400); await A.g(A.cycle('gBoxBack',['Nicht so. Nicht wie eine Diebin.','Noch nicht. Ich stehe hier und höre sie atmen. Das Haus atmet mit.'])); return; }
+    // Analyse K4-B10 (P24): „(Nicht lesen.)“ war keine Wahl, die Kiste muss heute Nacht gelesen werden; die Antwort sagt jetzt, was sie ist: ein Aufschub
+    var c=await A.choose([{t:'(Lesen.)',id:'read',silent:true},{t:'(Noch nicht.)',id:'no',silent:true}],{title:'Die Kiste',conv:false});
+    if (c!=='read'){ await A.wait(400); await A.g(A.cycle('gBoxBack',['Nicht so. Nicht wie eine Diebin.','Noch nicht. Ihr Bett ist leer, und trotzdem ist sie überall im Zimmer.'])); return; }
     await readIt(A);
   } finally { G.flags['mala.lock']=false; } }
 async function readIt(A){ var G=A.G; A.music('k4_duh');
@@ -65,7 +66,8 @@ async function readIt(A){ var G=A.G; A.music('k4_duh');
   await A.g('Vermisst.'); await A.wait(700); await A.g('Sie hat „vermisst“ daraus gemacht. Mit Stempel und Unterschrift.'); A.note('z4_antrag');
   A.setFlag('k4.d1.box'); await A.wait(1500);
   A.music('k4_nacht');
-  await A.narrate('Mala nimmt die Hand von der Schranktür. Im Bett atmet Mama, gleichmäßig, unter der gehäkelten Decke.'); await A.wait(900);
+  // Analyse K4-B07 (P24): In der Christtagsnacht hat Mama Nachtdienst (jwohnung.js); vorher „atmete“ sie hier im Bett
+  await A.narrate('Mala nimmt die Hand von der Schranktür. Das Bett ist leer, die gehäkelte Decke glatt gezogen. Mama ist im Nachtdienst.'); await A.wait(900);
   await A.g('Er hat gesagt: frag nicht.'); await A.wait(800); await A.g('Ich frage nicht.'); await A.wait(700); await A.g('Ich sage auch nichts.'); await A.wait(1100); await A.g('Noch nicht.'); }
 M.k4ReadBox=readBox;
 // ---------------------------------------------------------------- Hotspots
@@ -82,9 +84,9 @@ var HS=[
    use:function(A){ return A.m('Nein. Nicht meine Kiste.'); },
    g:{look:function(A){ return readBox(A); },sense:function(A){ return readBox(A); },
      listen:function(A){ return A.g(F(A,'k4.d1.box')?'Still. Für mich ist sie still.':'Papier. Und darunter Stimmen, ganz leise, als redeten Leute in einem anderen Zimmer.'); }}},
- {id:'bed',name:'Bett',look:function(A){ return A.m(night(A.G)?'Mama schläft. Unter der gehäkelten Decke ist sie kleiner als am Tag.':'Das Bett, glatt gezogen, die gehäkelte Decke darauf. Eine Seite ist benutzt. Die andere nie.'); },
+ {id:'bed',name:'Bett',look:function(A){ return A.m(night(A.G)?(readNight(A.G)?'Das Bett ist leer. Mama ist im Nachtdienst.':'Mama schläft. Unter der gehäkelten Decke ist sie kleiner als am Tag.'):'Das Bett, glatt gezogen, die gehäkelte Decke darauf. Eine Seite ist benutzt. Die andere nie.'); },
    use:'Nein.',
-   g:{look:function(A){ return A.g(night(A.G)?'Sie schläft auf der Seite, zur Wand. Die andere Hälfte lässt sie frei.':'An der einen Seite ein ruhiger Abdruck. Die andere Seite ist kalt. Seit dreiundneunzig.'); }}},
+   g:{look:function(A){ return A.g(night(A.G)?(readNight(A.G)?'Leer. Heute Nacht arbeitet sie. Die andere Hälfte lässt sie trotzdem frei.':'Sie schläft auf der Seite, zur Wand. Die andere Hälfte lässt sie frei.'):'An der einen Seite ein ruhiger Abdruck. Die andere Seite ist kalt. Seit dreiundneunzig.'); }}},
  {id:'nightstand',name:'Nachttisch',look:'Ein Nachttisch mit Lampe und einem kleinen Hochzeitsfoto im Silberrahmen: Mama mit Locken, Papa mit Schnurrbart, beide lachen über etwas außerhalb des Bildes.',
    take:'Das Foto nehme ich nicht. Das sieht sie jeden Abend als Letztes.',
    g:{look:'Sie lachen. Über den Fotografen, glaube ich. Er hatte einen Hut auf, der ihm zu groß war.'}},
@@ -98,7 +100,8 @@ var HS=[
 M.room('jschlaf',{ name:'Mamas Schlafzimmer', scape:'k4_jschlaf',
   music:function(G){ return G.tod==='night'?'k4_nacht':'k4_wohnung'; },
   state:function(G){ return {}; },
-  actors:function(S,G){ return []; },
+  // Analyse K4-B07 (P24): nach dem Kaffee springt Mama zum Nachtdienst ein (97_k4_fam_a.js); dann ist das Bett leer (Bild: S.sleeper)
+  actors:function(S,G){ S.sleeper=!readNight(G); return []; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G;
     if (A.isMala()){ if (readNight(G) && A.first('gJsN')){ await A.narrate('Mamas Schlafzimmer, dunkel. Im Bett schläft sie, zur Wand gedreht. Der Schrank steht da wie jemand, der etwas weiß.'); await A.g('Sie schläft.'); await A.wait(400); await A.g('Ich bin leise. Ich bin immer leise.'); } return; }

@@ -180,7 +180,7 @@ M.HINTS_K1=[
   s:['Der Fall ist vorbei. Es ist spät.',{m:'Mala ist noch da.',g:'Ich bin noch da.'},'Reden, oder nach Hause gehen.',{m:'Mit Mala reden.',g:'Mit mir reden.'}]},
  // ================= Dritter Fall · Freitag
  {id:'k3_call',t:'Das Telefon',open:function(G){ return G.phase==='c3' && !F(G,'c3.call'); },
-  s:['Das Telefon klingelt.','Jemand will etwas.','Das Telefon in der Wohnung.','Ans Telefon gehen.']},
+  s:['Das Telefon klingelt.','Jemand will etwas.','Das Telefon steht am Bett, beim Anrufbeantworter.','Am Anrufbeantworter abnehmen.']},   // Kann-Liste: vorher gab es kein „Telefon“ zum Antippen
  {id:'k3_ljerka',t:'Ein Auftrag im Palma',open:function(G){ return G.phase==='c3' && F(G,'c3.call') && !I(G,'documents') && !F(G,'c3.read'); },
   s:['Ljerka Lalić vom Hotel Palma braucht Übersetzungen.','Ein Auftrag beginnt mit einem Gespräch.','Ljerka ist an der Rezeption. Sie ist immer an der Rezeption.','Im Hotel Palma mit Ljerka reden und fragen, was zu übersetzen ist.']},
  {id:'k3_read',t:'Die Mappe',open:function(G){ return G.phase==='c3' && I(G,'documents') && !F(G,'c3.read'); },

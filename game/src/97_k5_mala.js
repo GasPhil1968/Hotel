@@ -32,6 +32,7 @@ M.k5TalkToMala=async function(A){ var p=ph(A), r=A.room.id;
     {t:'Morgen ist dein Begräbnis.',once:'k5mt6',if:p==='k5_n1'||p==='k5_d2',go:async function(A){ await A.g('Ich weiß. Ich war noch nie bei einem Begräbnis. Bei meinem schon gar nicht.'); await A.g('Ich gehe neben Mama. Ganz nah. Sie merkt es nicht. Ich schon.'); }},
     {t:'Wie geht es dir?',go:async function(A){ var t={ k5_pro:'Gut. Ich bin nicht mehr müde vom Warten. Du bist da.',k5_d1:'Ich zähle Stunden. Bis Freitag. Dann zähle ich nicht mehr.',k5_n1:'Mačak ist warm. Ich spüre es nicht. Ich weiß es.',
         k5_d2:'Heute Mittag. Ich bin aufgeregt. Kann man bei seinem eigenen Begräbnis aufgeregt sein?',k5_fun:'Still.',k5_d2_n:'Satt. Vom Zusehen.',k5_sat:'Fertig. Fast.' }[p]||'Gut.'; await A.g(t); }},
+    M.hintTalkOpt(A),   // Analyse K5-B16 (P24): wie in den Kapiteln 1 bis 4 auch hier Hinweise über Mala
     {t:'Später.',bye:true,go:async function(A){ await A.g(A.cycle('k5mtB',['Später. Gut.','Ich bin da.'])); }}
   ]; }); };
 M.k5MalaToMarko=async function(A){ var p=ph(A); var t={ k5_pro:['Du siehst ausgeschlafen aus. Ich sage es so oft, bis du es zugibst.','Mama redet nicht. Sie sieht hin. Das ist mehr.'],

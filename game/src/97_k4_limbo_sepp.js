@@ -68,6 +68,7 @@ M.afterLimbo_sepp=async function(A){ var G=A.G; G.flags['mala.lock']=false; var 
   await A.goto('gleis11',{x:st[0],y:st[1]+4,f:'R',fade:false,noEnter:true}); await A.fade(0,900); A.music('k4_bahnhof');
   await A.wait(800); await A.narrate('Gleis 11. Ein Zug fährt aus, nach Süden. Am Prellbock steht keiner mehr.');
   if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Er hat sich nicht umgedreht.'); await A.m('Gepäckträger drehen sich nicht um. Sie sehen nach vorn, wo der Koffer hin muss.'); }
-  await A.wait(600); await A.m('Die Stadt muss es wissen. Herr Obermaier. Und Frau Wimmer.');
+  // Analyse K4-B06 (P24): Endet der Tag gleich danach, sagt Marko, dass es morgen ist (vorher klang es nach jetzt, dann kam „Morgen ist Donnerstag.“)
+  await A.wait(600); await A.m(M.k4DayReady&&M.k4DayReady(G)?'Morgen soll es die Stadt wissen. Herr Obermaier. Und Frau Wimmer.':'Die Stadt muss es wissen. Herr Obermaier. Und Frau Wimmer.');
   await M.k4DayCheck(A); };
 })(M);

@@ -340,7 +340,9 @@ var HS=[
    look:function(A){ if (!A.isFound('sepp')) return A.m('Am Prellbock ist es kälter als anderswo.');
      if (A.flag('k4.s.call')) return A.m('Peppino am Prellbock. Er trägt einen Koffer, den keiner sieht, und zum ersten Mal sieht er dabei nicht auf die Reisenden. Er sieht auf das Gleis.');
      return A.m('Ein alter Mann in einer blauen Uniformjacke mit Messingknöpfen, blank gewetzt an den Ellbogen. Die Mütze mit der Siebzehn. Schuhe, die einer jeden Tag geputzt hat. Durch ihn hindurch sehe ich den Prellbock.'); },
-   give:{ aushang:'Peppino: „Quello sono io? Sembro vecchio.“ Ob er das ist, fragt er. Er sieht alt aus, findet er.', brief_falsch:'Peppino: „Senza firma. Non vale.“ Ohne Unterschrift gilt er nicht.', photo_full:'Peppino: „Bella famiglia. Tenga stretta questa foto.“ Ich soll das Foto gut festhalten.', vizitka:'Peppino: „Moosach. Da hab i amal an Koffer hintrag’n. Zwanzg Mark Trinkgeld. Nia vergess’n.“' },
+   give:{ aushang:'Peppino: „Quello sono io? Sembro vecchio.“ Ob er das ist, fragt er. Er sieht alt aus, findet er.', brief_falsch:'Peppino: „Senza firma. Non vale.“ Ohne Unterschrift gilt er nicht.', photo_full:'Peppino: „Bella famiglia. Tenga stretta questa foto.“ Ich soll das Foto gut festhalten.', vizitka:'Peppino: „Moosach. Da hab i amal an Koffer hintrag’n. Zwanzg Mark Trinkgeld. Nia vergess’n.“',
+     // Analyse K4-B11 (P24): Handy und Kuli bekamen nur „Das will hier niemand.“
+     mobitel:'Peppino sieht auf das Handy, als wäre es ein Fahrplan aus einer anderen Stadt. „Telefono? No.“ Er schüttelt den Kopf. Telefoniert hat er nie.', olovka:'Peppino: „Grazie, ho la mia.“ Er klopft auf die Brusttasche. Da steckt ein Bleistift, kurz vom vielen Spitzen.' },
    g:{look:function(A){ if (!A.isFound('sepp')) return seppFind(A); return A.g('Ein alter Mann in Uniform. Seine Leine geht nicht zu einem Haus. Sie geht zu der Tür da drüben, zur Bahnhofsmission.'); },
      talk:function(A){ return talkSeppG(A); }, sense:function(A){ return senseSepp(A); },
      cross:function(A){ return crossSepp(A); }, crossIf:function(S,G){ return F(G,'k4.s.call') && !F(G,'k4.s.crossed'); }}}

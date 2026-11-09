@@ -10,7 +10,8 @@ function has(G,id){ return G.notes.indexOf(id)>=0; }
 
 // ================================================================ Baščaršija, Endstation
 function radeHere(G){ var p=ph(G); return p==='k5_d1'||p==='k5_d2'||(p==='k5_sat'&&f(G,'k5.sat.rode')); }
-function damirHere(G){ return ph(G)==='k5_d1'; }
+// Analyse K5-B14 (P24): Damir war nur am Donnerstag da und ohne Warnung verpassbar; am Freitag macht er vor dem Begräbnis noch eine Runde
+function damirHere(G){ return ph(G)==='k5_d1' || ph(G)==='k5_d2'; }
 function satEnd(G){ return ph(G)==='k5_sat' && f(G,'k5.sat.rode') && !f(G,'k5.sat.gate'); }
 var HS_CA=[
  {id:'exit',name:'Zum Stadtplan',exit:{to:'map'},canExit:async function(A){ if (satEnd(A.G)){ await A.m('Nicht der Stadtplan. Heute gehen wir zu Fuß. Hinauf.'); return false; } return true; },

@@ -100,7 +100,8 @@ M.MAP_KNOW.bare={ch:5, know:function(G){ return M.chapterOf(G)===5 && has(G,'s5_
 function travelWhy(G,L){ var p=G.phase, id=L.id, alone=G.active==='mala';
   if (alone) return {tg:'Ohne ihn fahre ich nicht durch die Stadt. Nicht in dieser Woche.'};
   if (p==='k5_pro'){ if (!f(G,'k5.p.taxi')) return {t:'Erst ein Taxi. Mama steht mit den Koffern am Bahnsteig.'}; if (!f(G,'k5.p.hajra') && id!=='pansion') return {t:'Erst zu Hajra. Mama ist seit fünfzehn Stunden unterwegs.'}; return null; }
-  if (p==='k5_n1'){ if (id==='pansion'||id==='pivara') return null; return {t:'Es ist Nacht. Die Stadt schläft, und ich sollte es auch.'}; }
+  // Analyse K5, toter Text (P24): ohne Kanister (nur in alten oder ungewöhnlichen Ständen) bleibt Vratnik nachts erreichbar, damit Hamdija sich zeigen kann
+  if (p==='k5_n1'){ if (id==='pansion'||id==='pivara') return null; if (id==='vratnik' && G.inv.indexOf('kanister')<0 && G.inv.indexOf('kanister_voll')<0 && !has(G,'b5_hamdija')) return null; return {t:'Es ist Nacht. Die Stadt schläft, und ich sollte es auch.'}; }
   if (p==='k5_d2'){ if (id==='bare') return {t:'Um zwei. Vorher ist da nichts für uns.'}; return null; }
   if (p==='k5_fun') return {t:'Erst das Begräbnis.'};
   if (p==='k5_d2_n') return {t:'Heute Abend sind wir bei Nada. Alle.'};

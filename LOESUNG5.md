@@ -48,7 +48,7 @@ Der Weg unten ist der Weg des automatischen Durchlaufs (`game/tools/walkthrough5
 Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Brauerei.
 
 **5. Bei Nada**
-- **[M]** Mit Nada reden: „Die Fahrscheine. Die Samstage …“ → „Das war euer Samstag.“ → Notiz *„Euer Samstag“*. Lanas Zimmer steht jetzt offen.
+- **[M]** Mit Nada reden: „Die Fahrscheine. Die Samstage …“ → „Das war euer Samstag.“ → Notiz *„Euer Samstag“*. Lanas Zimmer steht jetzt offen (es öffnet sich auch mit „Darf ich in Lanas Zimmer?“).
 - **[M]** Lanas **Schreibtisch** lesen: die Mappe mit siebzehn Durchschlägen an den Suchdienst → Notiz *Siebzehn Januare*.
 - **[G]** Den **Schreibtisch** spüren: Nada sagt jeden Januar den Namen laut: „Lana Delić. Da je nađu.“ → Notiz *Den Namen laut*.
 
@@ -57,7 +57,7 @@ Die Reihenfolge ist frei. Pflicht sind Nedžads Frist und der Nachhall an der Br
 
 **7. Endstation (optional)**
 - **[M]** Zu Fuß zurück auf die Baščaršija. Mit Rade reden: „Haben Sie noch die alten Hefte?“ → „Subota, 11:10. Dvoje djece.“ Der Kleine am Fenster, sie daneben → Notiz *Am Fenster und daneben*. (Ohne Rade erinnert sich Mala beim Totenmahl daran.)
-- **[M]** Mit Damir reden: „Am Freitag ist ein Begräbnis …“ → er kommt in Uniform (und fährt am Samstag die Drei).
+- **[M]** Mit Damir reden: „Am Freitag ist ein Begräbnis …“ → er kommt in Uniform (und fährt am Samstag die Drei). Verpasst man ihn, steht er am Freitagvormittag noch einmal an der Haltestelle („Heute ist ein Begräbnis …“).
 
 **8. An der Brauerei**
 - **[M]** Stadtplan: **Brauerei**. Kopfweh. Mala: „Hier ist einer. Aber er zeigt sich nicht.“

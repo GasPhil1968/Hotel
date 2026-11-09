@@ -271,7 +271,7 @@ M.k5NightHome=async function(A){ var N=A.npc('nada');
   A.setFlag('k5.n1.home'); await M.k5Bring(A,'pansion5',{at:M.k5StandOf('pansion5','door')}); A.music('k2_noc'); A.save();
   await A.m('Mein Zimmer unter dem Dach. Mačak liegt quer auf dem Bett, als hätte er es gemietet.'); if (A.G.malaOn){ await A.g('Er hat mich vermisst.'); await A.m('Er vermisst jeden, der ihm Burek gibt.'); } };
 M.k5LanaDoor=async function(A){ if (A.S.lanaOpen) return A.m('Die Tür steht offen. Nada lüftet jeden Tag.');
-  if (ph(A)==='k5_d1' && !has(A,'f5_eursamstag')) return A.m('Ich frage Nada erst. Es ist ihr Zimmer. Es ist Lanas Zimmer.');
+  if (ph(A)==='k5_d1' && !F(A,'k5.d1.lana')) return A.m('Ich frage Nada erst. Es ist ihr Zimmer. Es ist Lanas Zimmer.');
   return A.m('Zu.'); };
 M.k5ReadMappe=async function(A){ if (!A.S.lanaOpen) return A.m('Die Tür zu Lanas Zimmer ist zu.');
   await A.doc({style:'faded',title:'Durchschläge · Služba traženja · 1995–2011',lines:['Tražim svoju kćer Lanu Delić, rođenu 3. 3. 1976. u Sarajevu …','– Ich suche meine Tochter Lana Delić, geboren am 3. 3. 1976 in Sarajevo …','Otišla iz Sarajeva autobusom u novembru 1993. Zadnja vijest: razglednica iz Splita, januar 1994.','– Im November 1993 mit einem Bus aus Sarajevo fort. Letzte Nachricht: eine Karte aus Split, Januar 1994.','Molim vas … – Ich bitte Sie …','(siebzehn Durchschläge, einer für jeden Januar; der letzte von 2011)']});
@@ -316,9 +316,12 @@ M.k5GiveCookies=async function(A,id){ if (ph(A)==='k5_d2_n' && M.k5MealCookies) 
 async function talkNadaD1(A){ var N=A.npc('nada'), p=ph(A);
   await A.menuLoop(function(){ return [
     {t:'Die Tafel bei Nedžad …',if:!has(A,'s5_frist'),once:'k5na1',go:async function(A){ await N.say('Messing. Zweiunddreißig mal zwölf. Nedžad graviert, was man ihm sagt. Ich habe ihm noch nichts gesagt.'); await N.say('Bis Freitag, zwölf Uhr, will er den Text. Er hat es zweimal gesagt.'); if (!has(A,'s5_tafel')) A.note('s5_tafel'); }},
+    // Analyse K5-B13 (P24): Lanas Zimmer öffnete nur die Frage nach den Fahrscheinen, ohne Anlass. Jetzt kann Marko auch einfach fragen (die Tür sagt: „Ich frage Nada erst“).
+    {t:'Darf ich in Lanas Zimmer?',if:!F(A,'k5.d1.lana'),once:'k5na0',go:async function(A){ await N.say('Geh hinein, wenn du willst. Ich lüfte jeden Tag.'); await A.wait(400); await N.say('Ich gehe nicht mit. Ich stehe jeden Morgen in der Tür, das reicht.');
+      A.setFlag('k5.d1.lana'); A.set('lanaOpen',true); A.rebuild(); }},
     {t:'Die Fahrscheine. Die Samstage …',once:'k5na2',go:async function(A){ await N.say('Fahrscheine? Die hat sie bei Alija gekauft. Mit dem Stern.'); await N.say('Samstags war sie bei euch. Ich war nie dabei. Das war euer Samstag.');
       A.note('f5_eursamstag'); await A.wait(500); await N.say('Keiner von euch hat je geschrieben. Achtzehn Jahre.'); await A.wait(400); await N.say('Sie ist losgefahren, um dich zu holen. Natürlich.');
-      await A.wait(500); await N.say('Geh in ihr Zimmer, wenn du willst. Ich lüfte jeden Tag.'); A.setFlag('k5.d1.lana'); A.set('lanaOpen',true); A.rebuild();
+      if (!F(A,'k5.d1.lana')){ await A.wait(500); await N.say('Geh in ihr Zimmer, wenn du willst. Ich lüfte jeden Tag.'); A.setFlag('k5.d1.lana'); A.set('lanaOpen',true); A.rebuild(); }
       if (gHere(A)){ await A.wait(300); await A.g('Euer Samstag.'); } }},
     {t:'Wie geht es dir, Nada?',once:'k5na3',go:async function(A){ await N.say('Ich bügle. Seit Januar bügle ich jeden Abend. Hemden, die keiner trägt. Ich rede dabei.'); await N.say('Mit wem, frag nicht. Mit der Wäsche.'); if (gHere(A)){ await A.wait(300); await A.g('Mit mir.'); } }},
     {t:'Kommt Zlata?',once:'k5na4',go:async function(A){ await N.say('Heute Abend. Mit Vlado. Sie bringt etwas mit. Ein Brett, hat sie am Telefon gesagt.'); await N.say('Ich weiß, was auf dem Brett steht.'); }},

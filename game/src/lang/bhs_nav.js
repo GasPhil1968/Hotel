@@ -475,8 +475,6 @@ M.trAdd('bhs', {
   'Das Telefon klingelt.': 'Telefon zvoni.',
   'Jemand will etwas.': 'Netko nešto hoće.',
   '@mala:Jemand will etwas.': 'Neko nešto hoće.',
-  'Das Telefon in der Wohnung.': 'Telefon u stanu.',
-  'Ans Telefon gehen.': 'Javiti se na telefon.',
   'Ein Auftrag im Palma': 'Posao u Palmi',
   'Ljerka Lalić vom Hotel Palma braucht Übersetzungen.': 'Ljerki Lalić iz hotela Palma trebaju prijevodi.',
   'Ein Auftrag beginnt mit einem Gespräch.': 'Posao počinje razgovorom.',
