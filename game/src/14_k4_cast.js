@@ -1878,9 +1878,9 @@ M.defineChar('beamtin',{
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze (dazu carmela und rosa, nur am Telefon)
-(function(){ var c={ jasna:P.t4, jasnaW:P.t4, jasnaC:P.t4, ana:P.y3, anaC:P.y3, tobias:P.b4, mia:P.d5, miaC:P.d5, niko:P.y5, nikoC:P.y5,
-  huber:P.g5, mucki:P.s4, wastl:P.w5, wimmer:P.v4, enzo:P.r4, obermaier:P.m4,
-  kioskg:P.s4, gast1:P.e4, gast2:P.c4, gast3:P.m3, beamtin:P.s3, carmela:P.t5, rosa:P.p5 };
+(function(){ var c={ jasna:P.t5, jasnaW:P.t5, jasnaC:P.t5, ana:P.y3, anaC:P.y3, tobias:P.b4, mia:P.d5, miaC:P.d5, niko:P.y5, nikoC:P.y5,
+  huber:P.g6, mucki:P.s4, wastl:P.w6, wimmer:P.v4, enzo:P.r5, obermaier:P.m4,
+  kioskg:P.s4, gast1:P.e5, gast2:P.c5, gast3:P.m4, beamtin:P.s4, carmela:P.t5, rosa:P.p5 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

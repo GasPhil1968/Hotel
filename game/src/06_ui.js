@@ -340,10 +340,15 @@ function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.col
   if (top<4) top=4; if (top+lines.length*lh>SH-4 && o.y===undefined) top=Math.max(4,SH-4-lines.length*lh);
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var bx=Math.max(M2,Math.min(W-M2-bw,cx-(bw>>1)));
   var x0=bx-5, x1=bx+bw+5, y0=top-3, y1=top+lines.length*lh+1;
+  // Lesbarkeit (Autor, 9.11.2026): Der Erzähler hat keinen Kasten. Liegt hinter dem Text eine helle Szene (Fassaden, Schnee), steht er dunkel mit
+  // hellem Rand, sonst hell mit dunklem Rand. Gemessen wird die mittlere Helligkeit unter dem Block, einmal je Satz (während einer Blende jedes Bild).
+  var dark=false; if (sp.who==='#'){ if (sp.narDark===undefined || E.fade){ var sum=0, n=0, RGB=M.RGB; for (var yy=Math.max(0,y0);yy<=Math.min(SH-1,y1);yy+=2) for (var xx=Math.max(0,x0);xx<=Math.min(W-1,x1);xx+=2){ var q=RGB[fb.d[yy*W+xx]]; if (!q) continue; sum+=0.2126*q[0]+0.7152*q[1]+0.0722*q[2]; n++; }
+      var d=n?(sum/n)>138:false; if (!E.fade) sp.narDark=d; dark=d; } else dark=sp.narDark; }
   if (sp.who!=='#'){ for (var y=Math.max(0,y0);y<=Math.min(H-1,y1);y++) for (var x=Math.max(0,x0);x<=Math.min(W-1,x1);x++){ var edge=Math.min(x-x0,x1-x,y-y0,y1-y); if (edge<0) continue; if (edge===0&&((x+y)&1)) continue; if ((x===x0||x===x1)&&(y===y0||y===y1)) continue; var k=y*W+x, c=fb.d[k]; c=M.DN[M.DN[M.DN[c]]]; if (edge>1) c=((x+y)&1)?P.k0:M.DN[c]; fb.d[k]=c; } }
   if (o.phone){ M.text(fb,'☎',x0-1,y0,col); }
-  lines.forEach(function(l,i){ var w=M.textWidth(l), x=Math.max(M2,Math.min(W-M2-w,cx-Math.floor(w/2))); if (bw>w&&pos===null) x=bx+((bw-w)>>1); M.text(fb,l,x+1,top+i*lh+1,P.k0); M.text(fb,l,x,top+i*lh,col,P.k0); });
-  if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var tx=Math.min(W-6,bx+bw+3), ty=top+lines.length*lh-5; for (var t=0;t<3;t++) fb.hl(tx-2+t,tx+2-t,ty+t,P.l0); } }
+  lines.forEach(function(l,i){ var w=M.textWidth(l), x=Math.max(M2,Math.min(W-M2-w,cx-Math.floor(w/2))); if (bw>w&&pos===null) x=bx+((bw-w)>>1);
+    if (dark){ M.text(fb,l,x+1,top+i*lh+1,P.l1); M.text(fb,l,x,top+i*lh,P.k1,P.l1); } else { M.text(fb,l,x+1,top+i*lh+1,P.k0); M.text(fb,l,x,top+i*lh,col,P.k0); } });
+  if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var tx=Math.min(W-6,bx+bw+3), ty=top+lines.length*lh-5; for (var t=0;t<3;t++) fb.hl(tx-2+t,tx+2-t,ty+t,dark?P.k1:P.l0); } }
 
 // ---------------------------------------------------------------- Overlays
 function dimAll(n){ for (var i=0;i<W*H;i++){ var c=fb.d[i]; for (var k=0;k<(n||2);k++) c=M.DN[c]; fb.d[i]=c; } }

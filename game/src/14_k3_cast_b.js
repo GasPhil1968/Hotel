@@ -745,7 +745,7 @@ if (M.PORTRAIT_GHOSTS){ M.PORTRAIT_GHOSTS.bato=true; M.PORTRAIT_GHOSTS.mate=true
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ davor:P.s4, lena:P.d5, jela:P.m4, zdravko:P.a6, kolar:P.a5, bato:P.v4, mate:P.v5, springer:P.v3 };
+(function(){ var c={ davor:P.s4, lena:P.d5, jela:P.m4, zdravko:P.a6, kolar:P.a6, bato:P.v4, mate:P.v5, springer:P.v4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

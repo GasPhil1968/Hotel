@@ -1010,7 +1010,7 @@ if (M.PORTRAIT_GHOSTS){ M.PORTRAIT_GHOSTS.hansi=true; M.PORTRAIT_GHOSTS.sepp=tru
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze (nur ergänzen)
-(function(){ var c={ ertl:P.r4, kraus:P.c4, kevin:P.g5, alois:P.e4, pflege1:P.b4, empfang:P.m4, hansi:P.v4, sepp:P.v5, gerda:P.v4 };
+(function(){ var c={ ertl:P.r5, kraus:P.c5, kevin:P.g6, alois:P.e5, pflege1:P.b4, empfang:P.m4, hansi:P.v4, sepp:P.v5, gerda:P.v4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

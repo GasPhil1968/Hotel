@@ -1,3 +1,20 @@
+DIE STILLEN – ÄNDERUNGEN: LESBARE TEXTFARBEN (9. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Erzählertext (ohne Sprechkasten) ist über hellen Szenen nicht mehr beige auf
+  beige: Das Spiel misst die Helligkeit hinter dem Text und schreibt dort
+  dunkel mit hellem Rand (Bahnhof in Split, Theresienwiese im Schnee, helle
+  Fassaden). Über dunklen Szenen bleibt der Text hell, jetzt eine Stufe heller
+  als vorher (Elfenbein statt Beige). Beim Ein- und Ausblenden wird neu
+  gemessen, damit der Text nicht springt.
+- Die Farben der Sprecher im dunklen Sprechkasten sind dort angehoben, wo sie
+  zu dunkel waren (rot, grün, blau, gelbgrau, ocker, braun, violett), z. B.
+  Emina, Dino, Maja, Huber, Wastl, Fra Ivo, Vlado, Kolar, Enzo, Ertl. Alle 99
+  Sprecher erreichen jetzt mindestens das Verhältnis 5,4 : 1 (Richtwert für
+  gut lesbaren Text: 4,5 : 1). Palette und Bilder bleiben; die neuen Töne
+  sind an die Palette angehängt.
+- Untertitel „Lesbar/groß“ sind unverändert (dort gibt es schon einen Kasten).
+
 DIE STILLEN – ÄNDERUNGEN NACH DER ANALYSE, TEIL 3 (KANN-LISTE P21–P24)
 Ausführlich: ANALYSE_GILBERT.md (Abschnitt L) im Repository.
 

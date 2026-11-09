@@ -26,7 +26,9 @@ var PAL_DEF = [
  ['h0','110c0a'],['h1','1f1511'],['h2','312119'],['h3','473024'],
  ['x0','0d202d'],['x1','1a3a4c'],['x2','2c6074'],['x3','4b8f9f'],['x4','82c1c9'],['x5','c3ecee'],['x6','eefbfb'],
  ['v0','1c152d'],['v1','33284f'],['v2','524577'],['v3','7a6fa3'],['v4','afa6d1'],['v5','e0daf2'],
- ['l0','fff2d4'],['l1','fffdf4']
+ ['l0','fff2d4'],['l1','fffdf4'],
+ // hellere Stufen für Sprecherfarben (Lesbarkeit im Sprechkasten, mindestens 4,5:1; angehängt, damit alle Indizes bleiben)
+ ['r5','ec9199'],['g6','b4c07a'],['c5','a9bbd3'],['e5','c9b98a'],['w6','dfb378']
 ];
 var P = {}, RGB = [];
 PAL_DEF.forEach(function(e,i){ P[e[0]]=i; var h=e[1]; RGB.push([parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]); });
@@ -38,18 +40,18 @@ var RAMPS = [
  'k0 k1 k2 n0 n1 n2 n3 n4 n5 l1',
  'k0 s0 s1 s2 s3 s4 s5 s6 l1',
  'k0 t0 t1 t2 t3 t4 t5 l0',
- 'k0 w0 w1 w2 w3 w4 w5 d6',
- 'k0 g0 g1 g2 g3 g4 g5 s5',
+ 'k0 w0 w1 w2 w3 w4 w5 w6 d6',
+ 'k0 g0 g1 g2 g3 g4 g5 g6 s5',
  'k0 a0 a1 a2 a3 a4 a5 a6 l1',
  'n1 b0 b1 b2 b3 b4 b5 l1',
  'k1 d0 d1 d2 d3 d4 d5 d6 l0',
  'k0 y0 y1 y2 y3 y4 y5 l1',
- 'k0 r0 r1 r2 r3 r4 d5',
+ 'k0 r0 r1 r2 r3 r4 r5 d5',
  'k0 m0 m1 m2 m3 m4 s6',
  'k0 p0 p1 p2 p3 p4 p5 l1',
  'k0 q0 q1 q2 q3 q4 p5',
- 'k0 c0 c1 c2 c3 c4 b4',
- 'k0 e0 e1 e2 e3 e4 s5',
+ 'k0 c0 c1 c2 c3 c4 c5 b4',
+ 'k0 e0 e1 e2 e3 e4 e5 s5',
  'k0 h0 h1 h2 h3 w2',
  'k0 x0 x1 x2 x3 x4 x5 x6 l1',
  'k0 v0 v1 v2 v3 v4 v5 l1',

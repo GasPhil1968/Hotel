@@ -1859,8 +1859,8 @@ M.PORTRAIT_GHOSTS.tomaz=true; M.PORTRAIT_GHOSTS.ivan=true; M.PORTRAIT_GHOSTS.zor
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ fikret:P.y4, senada:P.t5, hajra:P.p4, rade:P.n5, emina:P.r4, lejla:P.a5, sacir:P.w5, nedzad:P.t4, jakob:P.s5, amra:P.d6, ilija:P.g5, milka:P.s4,
-  dragica:P.d5, nada:P.m4, mirza:P.b3, sehic:P.e4, selma:P.a6, damir:P.c4, fadila:P.b4, kontrolor:P.m4, babica:P.p5, student:P.y5, tomaz:P.v4, ivan:P.v5, zora:P.v5, alija:P.v4 };
+(function(){ var c={ fikret:P.y4, senada:P.t5, hajra:P.p4, rade:P.n5, emina:P.r5, lejla:P.a6, sacir:P.w6, nedzad:P.t5, jakob:P.s5, amra:P.d6, ilija:P.g6, milka:P.s4,
+  dragica:P.d5, nada:P.m4, mirza:P.b4, sehic:P.e5, selma:P.a6, damir:P.c5, fadila:P.b4, kontrolor:P.m4, babica:P.p5, student:P.y5, tomaz:P.v4, ivan:P.v5, zora:P.v5, alija:P.v4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

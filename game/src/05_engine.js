@@ -283,7 +283,7 @@ var API={
   // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
   crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
   crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
-  narrate:function(t){ return say(t,'#',{color:P.s5}); }, voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
+  narrate:function(t){ return say(t,'#',{color:P.l0}); }, /* Erzähler: heller als Beige; über hellem Grund wechselt 06_ui.js auf dunkle Schrift */ voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
   phoneVoice:function(t,who){ return say(t,'@'+(who||'vesna'),{color:M.CAST_COLORS[who||'vesna']||P.y5,phone:1}); },
   wait:wait, face:function(f){ return faceOn(player(),f); }, walk:function(x,y){ return walkActor(player(),x,y); },
   walkM:function(x,y){ return ACT.marko?walkActor(ACT.marko,x,y):Promise.resolve(); }, walkG:function(x,y){ return ACT.mala?walkActor(ACT.mala,x,y):Promise.resolve(); },

@@ -1224,8 +1224,8 @@ IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ maja:P.g5, dino:P.r4, taxist:P.w5, vlado:P.n4, kata:P.e4, zlata:P.b4, kioskm:P.t5, haendler:P.y4, kasir:P.c4, susjeda:P.g4, komsija:P.e4,
-  aussie1:P.t5, aussie2:P.b3, aussie3:P.y5 };
+(function(){ var c={ maja:P.g6, dino:P.r5, taxist:P.w6, vlado:P.n5, kata:P.e5, zlata:P.b4, kioskm:P.t5, haendler:P.y4, kasir:P.c5, susjeda:P.g6, komsija:P.e5,
+  aussie1:P.t5, aussie2:P.b4, aussie3:P.y5 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

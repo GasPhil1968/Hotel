@@ -35,5 +35,5 @@ M.defineChar('fra',{
     else if (p.v==='S'){ for (y=y0;y<=y1;y++){ var sw=3+Math.round((y-y0)/n); for (x=X+hx-sw;x<=X+hx+sw;x++) b.px(x,y,(x===X+hx+sw)?P.e0:P.e1); }
       for (y=t+1;y<=Y+hy+8;y++) b.px(X+hx+3,y,P.v2); } }
 });
-if (M.CAST_COLORS.fra===undefined) M.CAST_COLORS.fra=P.e4;
+if (M.CAST_COLORS.fra===undefined) M.CAST_COLORS.fra=P.e5;
 })(M);

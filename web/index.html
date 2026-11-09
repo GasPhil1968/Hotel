@@ -57,7 +57,9 @@ var PAL_DEF = [
  ['h0','110c0a'],['h1','1f1511'],['h2','312119'],['h3','473024'],
  ['x0','0d202d'],['x1','1a3a4c'],['x2','2c6074'],['x3','4b8f9f'],['x4','82c1c9'],['x5','c3ecee'],['x6','eefbfb'],
  ['v0','1c152d'],['v1','33284f'],['v2','524577'],['v3','7a6fa3'],['v4','afa6d1'],['v5','e0daf2'],
- ['l0','fff2d4'],['l1','fffdf4']
+ ['l0','fff2d4'],['l1','fffdf4'],
+ // hellere Stufen für Sprecherfarben (Lesbarkeit im Sprechkasten, mindestens 4,5:1; angehängt, damit alle Indizes bleiben)
+ ['r5','ec9199'],['g6','b4c07a'],['c5','a9bbd3'],['e5','c9b98a'],['w6','dfb378']
 ];
 var P = {}, RGB = [];
 PAL_DEF.forEach(function(e,i){ P[e[0]]=i; var h=e[1]; RGB.push([parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]); });
@@ -69,18 +71,18 @@ var RAMPS = [
  'k0 k1 k2 n0 n1 n2 n3 n4 n5 l1',
  'k0 s0 s1 s2 s3 s4 s5 s6 l1',
  'k0 t0 t1 t2 t3 t4 t5 l0',
- 'k0 w0 w1 w2 w3 w4 w5 d6',
- 'k0 g0 g1 g2 g3 g4 g5 s5',
+ 'k0 w0 w1 w2 w3 w4 w5 w6 d6',
+ 'k0 g0 g1 g2 g3 g4 g5 g6 s5',
  'k0 a0 a1 a2 a3 a4 a5 a6 l1',
  'n1 b0 b1 b2 b3 b4 b5 l1',
  'k1 d0 d1 d2 d3 d4 d5 d6 l0',
  'k0 y0 y1 y2 y3 y4 y5 l1',
- 'k0 r0 r1 r2 r3 r4 d5',
+ 'k0 r0 r1 r2 r3 r4 r5 d5',
  'k0 m0 m1 m2 m3 m4 s6',
  'k0 p0 p1 p2 p3 p4 p5 l1',
  'k0 q0 q1 q2 q3 q4 p5',
- 'k0 c0 c1 c2 c3 c4 b4',
- 'k0 e0 e1 e2 e3 e4 s5',
+ 'k0 c0 c1 c2 c3 c4 c5 b4',
+ 'k0 e0 e1 e2 e3 e4 e5 s5',
  'k0 h0 h1 h2 h3 w2',
  'k0 x0 x1 x2 x3 x4 x5 x6 l1',
  'k0 v0 v1 v2 v3 v4 v5 l1',
@@ -1595,7 +1597,7 @@ M.ghostLut=function(ch){ if (GLC[ch]) return GLC[ch]; var mala=ch==='mala', key=
   if (!GLB[key]){ GLB[key]=M.tintIn(ghostFn(mala),mala?GH_ALLOW_M:GH_ALLOW); skinRamp(GLB[key],mala); }
   var t=new Uint8Array(GLB[key]), o=M.GHOST_OVR[ch]||{};
   Object.keys(o).forEach(function(k){ if (P[k]!==undefined && P[o[k]]!==undefined) t[P[k]]=P[o[k]]; }); return (GLC[ch]=t); };
-M.CAST_COLORS={ marko:P.s6, mala:P.x5, zdenka:P.t5, ivka:P.v5, mladen:P.b4, dinko:P.a6, sanja:P.d5, stipe:P.y4, frane:P.w5, nina:P.d6, mira:P.y4, ljerka:P.p5, ljerkaNight:P.p5, luka:P.v4, bruno:P.v5, jakov:P.v4, vesna:P.y5 };
+M.CAST_COLORS={ marko:P.s6, mala:P.x5, zdenka:P.t5, ivka:P.v5, mladen:P.b4, dinko:P.a6, sanja:P.d5, stipe:P.y4, frane:P.w6, nina:P.d6, mira:P.y4, ljerka:P.p5, ljerkaNight:P.p5, luka:P.v4, bruno:P.v5, jakov:P.v4, vesna:P.y5 };
 })(M);
 
 /* ---- 04_audio.js ---- */
@@ -2179,7 +2181,7 @@ var API={
   // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
   crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
   crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
-  narrate:function(t){ return say(t,'#',{color:P.s5}); }, voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
+  narrate:function(t){ return say(t,'#',{color:P.l0}); }, /* Erzähler: heller als Beige; über hellem Grund wechselt 06_ui.js auf dunkle Schrift */ voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
   phoneVoice:function(t,who){ return say(t,'@'+(who||'vesna'),{color:M.CAST_COLORS[who||'vesna']||P.y5,phone:1}); },
   wait:wait, face:function(f){ return faceOn(player(),f); }, walk:function(x,y){ return walkActor(player(),x,y); },
   walkM:function(x,y){ return ACT.marko?walkActor(ACT.marko,x,y):Promise.resolve(); }, walkG:function(x,y){ return ACT.mala?walkActor(ACT.mala,x,y):Promise.resolve(); },
@@ -2911,10 +2913,15 @@ function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.col
   if (top<4) top=4; if (top+lines.length*lh>SH-4 && o.y===undefined) top=Math.max(4,SH-4-lines.length*lh);
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var bx=Math.max(M2,Math.min(W-M2-bw,cx-(bw>>1)));
   var x0=bx-5, x1=bx+bw+5, y0=top-3, y1=top+lines.length*lh+1;
+  // Lesbarkeit (Autor, 9.11.2026): Der Erzähler hat keinen Kasten. Liegt hinter dem Text eine helle Szene (Fassaden, Schnee), steht er dunkel mit
+  // hellem Rand, sonst hell mit dunklem Rand. Gemessen wird die mittlere Helligkeit unter dem Block, einmal je Satz (während einer Blende jedes Bild).
+  var dark=false; if (sp.who==='#'){ if (sp.narDark===undefined || E.fade){ var sum=0, n=0, RGB=M.RGB; for (var yy=Math.max(0,y0);yy<=Math.min(SH-1,y1);yy+=2) for (var xx=Math.max(0,x0);xx<=Math.min(W-1,x1);xx+=2){ var q=RGB[fb.d[yy*W+xx]]; if (!q) continue; sum+=0.2126*q[0]+0.7152*q[1]+0.0722*q[2]; n++; }
+      var d=n?(sum/n)>138:false; if (!E.fade) sp.narDark=d; dark=d; } else dark=sp.narDark; }
   if (sp.who!=='#'){ for (var y=Math.max(0,y0);y<=Math.min(H-1,y1);y++) for (var x=Math.max(0,x0);x<=Math.min(W-1,x1);x++){ var edge=Math.min(x-x0,x1-x,y-y0,y1-y); if (edge<0) continue; if (edge===0&&((x+y)&1)) continue; if ((x===x0||x===x1)&&(y===y0||y===y1)) continue; var k=y*W+x, c=fb.d[k]; c=M.DN[M.DN[M.DN[c]]]; if (edge>1) c=((x+y)&1)?P.k0:M.DN[c]; fb.d[k]=c; } }
   if (o.phone){ M.text(fb,'☎',x0-1,y0,col); }
-  lines.forEach(function(l,i){ var w=M.textWidth(l), x=Math.max(M2,Math.min(W-M2-w,cx-Math.floor(w/2))); if (bw>w&&pos===null) x=bx+((bw-w)>>1); M.text(fb,l,x+1,top+i*lh+1,P.k0); M.text(fb,l,x,top+i*lh,col,P.k0); });
-  if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var tx=Math.min(W-6,bx+bw+3), ty=top+lines.length*lh-5; for (var t=0;t<3;t++) fb.hl(tx-2+t,tx+2-t,ty+t,P.l0); } }
+  lines.forEach(function(l,i){ var w=M.textWidth(l), x=Math.max(M2,Math.min(W-M2-w,cx-Math.floor(w/2))); if (bw>w&&pos===null) x=bx+((bw-w)>>1);
+    if (dark){ M.text(fb,l,x+1,top+i*lh+1,P.l1); M.text(fb,l,x,top+i*lh,P.k1,P.l1); } else { M.text(fb,l,x+1,top+i*lh+1,P.k0); M.text(fb,l,x,top+i*lh,col,P.k0); } });
+  if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var tx=Math.min(W-6,bx+bw+3), ty=top+lines.length*lh-5; for (var t=0;t<3;t++) fb.hl(tx-2+t,tx+2-t,ty+t,dark?P.k1:P.l0); } }
 
 // ---------------------------------------------------------------- Overlays
 function dimAll(n){ for (var i=0;i<W*H;i++){ var c=fb.d[i]; for (var k=0;k<(n||2);k++) c=M.DN[c]; fb.d[i]=c; } }
@@ -7401,8 +7408,8 @@ M.PORTRAIT_GHOSTS.tomaz=true; M.PORTRAIT_GHOSTS.ivan=true; M.PORTRAIT_GHOSTS.zor
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ fikret:P.y4, senada:P.t5, hajra:P.p4, rade:P.n5, emina:P.r4, lejla:P.a5, sacir:P.w5, nedzad:P.t4, jakob:P.s5, amra:P.d6, ilija:P.g5, milka:P.s4,
-  dragica:P.d5, nada:P.m4, mirza:P.b3, sehic:P.e4, selma:P.a6, damir:P.c4, fadila:P.b4, kontrolor:P.m4, babica:P.p5, student:P.y5, tomaz:P.v4, ivan:P.v5, zora:P.v5, alija:P.v4 };
+(function(){ var c={ fikret:P.y4, senada:P.t5, hajra:P.p4, rade:P.n5, emina:P.r5, lejla:P.a6, sacir:P.w6, nedzad:P.t5, jakob:P.s5, amra:P.d6, ilija:P.g6, milka:P.s4,
+  dragica:P.d5, nada:P.m4, mirza:P.b4, sehic:P.e5, selma:P.a6, damir:P.c5, fadila:P.b4, kontrolor:P.m4, babica:P.p5, student:P.y5, tomaz:P.v4, ivan:P.v5, zora:P.v5, alija:P.v4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);
@@ -8155,7 +8162,7 @@ if (M.PORTRAIT_GHOSTS){ M.PORTRAIT_GHOSTS.bato=true; M.PORTRAIT_GHOSTS.mate=true
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ davor:P.s4, lena:P.d5, jela:P.m4, zdravko:P.a6, kolar:P.a5, bato:P.v4, mate:P.v5, springer:P.v3 };
+(function(){ var c={ davor:P.s4, lena:P.d5, jela:P.m4, zdravko:P.a6, kolar:P.a6, bato:P.v4, mate:P.v5, springer:P.v4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);
@@ -9387,8 +9394,8 @@ IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
-(function(){ var c={ maja:P.g5, dino:P.r4, taxist:P.w5, vlado:P.n4, kata:P.e4, zlata:P.b4, kioskm:P.t5, haendler:P.y4, kasir:P.c4, susjeda:P.g4, komsija:P.e4,
-  aussie1:P.t5, aussie2:P.b3, aussie3:P.y5 };
+(function(){ var c={ maja:P.g6, dino:P.r5, taxist:P.w6, vlado:P.n5, kata:P.e5, zlata:P.b4, kioskm:P.t5, haendler:P.y4, kasir:P.c5, susjeda:P.g6, komsija:P.e5,
+  aussie1:P.t5, aussie2:P.b4, aussie3:P.y5 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);
@@ -10406,7 +10413,7 @@ if (M.PORTRAIT_GHOSTS){ M.PORTRAIT_GHOSTS.hansi=true; M.PORTRAIT_GHOSTS.sepp=tru
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze (nur ergänzen)
-(function(){ var c={ ertl:P.r4, kraus:P.c4, kevin:P.g5, alois:P.e4, pflege1:P.b4, empfang:P.m4, hansi:P.v4, sepp:P.v5, gerda:P.v4 };
+(function(){ var c={ ertl:P.r5, kraus:P.c5, kevin:P.g6, alois:P.e5, pflege1:P.b4, empfang:P.m4, hansi:P.v4, sepp:P.v5, gerda:P.v4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);
@@ -12292,9 +12299,9 @@ M.defineChar('beamtin',{
   Object.keys(c).forEach(function(k){ if (M.CONTACT[k]===undefined) M.CONTACT[k]=c[k]; }); })();
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze (dazu carmela und rosa, nur am Telefon)
-(function(){ var c={ jasna:P.t4, jasnaW:P.t4, jasnaC:P.t4, ana:P.y3, anaC:P.y3, tobias:P.b4, mia:P.d5, miaC:P.d5, niko:P.y5, nikoC:P.y5,
-  huber:P.g5, mucki:P.s4, wastl:P.w5, wimmer:P.v4, enzo:P.r4, obermaier:P.m4,
-  kioskg:P.s4, gast1:P.e4, gast2:P.c4, gast3:P.m3, beamtin:P.s3, carmela:P.t5, rosa:P.p5 };
+(function(){ var c={ jasna:P.t5, jasnaW:P.t5, jasnaC:P.t5, ana:P.y3, anaC:P.y3, tobias:P.b4, mia:P.d5, miaC:P.d5, niko:P.y5, nikoC:P.y5,
+  huber:P.g6, mucki:P.s4, wastl:P.w6, wimmer:P.v4, enzo:P.r5, obermaier:P.m4,
+  kioskg:P.s4, gast1:P.e5, gast2:P.c5, gast3:P.m4, beamtin:P.s4, carmela:P.t5, rosa:P.p5 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);
@@ -12337,7 +12344,7 @@ M.defineChar('fra',{
     else if (p.v==='S'){ for (y=y0;y<=y1;y++){ var sw=3+Math.round((y-y0)/n); for (x=X+hx-sw;x<=X+hx+sw;x++) b.px(x,y,(x===X+hx+sw)?P.e0:P.e1); }
       for (y=t+1;y<=Y+hy+8;y++) b.px(X+hx+3,y,P.v2); } }
 });
-if (M.CAST_COLORS.fra===undefined) M.CAST_COLORS.fra=P.e4;
+if (M.CAST_COLORS.fra===undefined) M.CAST_COLORS.fra=P.e5;
 })(M);
 
 /* ---- 15_hints_k1.js ---- */

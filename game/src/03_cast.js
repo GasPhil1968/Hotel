@@ -756,5 +756,5 @@ M.ghostLut=function(ch){ if (GLC[ch]) return GLC[ch]; var mala=ch==='mala', key=
   if (!GLB[key]){ GLB[key]=M.tintIn(ghostFn(mala),mala?GH_ALLOW_M:GH_ALLOW); skinRamp(GLB[key],mala); }
   var t=new Uint8Array(GLB[key]), o=M.GHOST_OVR[ch]||{};
   Object.keys(o).forEach(function(k){ if (P[k]!==undefined && P[o[k]]!==undefined) t[P[k]]=P[o[k]]; }); return (GLC[ch]=t); };
-M.CAST_COLORS={ marko:P.s6, mala:P.x5, zdenka:P.t5, ivka:P.v5, mladen:P.b4, dinko:P.a6, sanja:P.d5, stipe:P.y4, frane:P.w5, nina:P.d6, mira:P.y4, ljerka:P.p5, ljerkaNight:P.p5, luka:P.v4, bruno:P.v5, jakov:P.v4, vesna:P.y5 };
+M.CAST_COLORS={ marko:P.s6, mala:P.x5, zdenka:P.t5, ivka:P.v5, mladen:P.b4, dinko:P.a6, sanja:P.d5, stipe:P.y4, frane:P.w6, nina:P.d6, mira:P.y4, ljerka:P.p5, ljerkaNight:P.p5, luka:P.v4, bruno:P.v5, jakov:P.v4, vesna:P.y5 };
 })(M);
