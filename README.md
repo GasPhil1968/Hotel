@@ -31,6 +31,7 @@ Marko Vuković, Übersetzer in Split, kann mit Menschen reden, die nicht weiterk
 | [`KAPITEL5_KONZEPT.md`](KAPITEL5_KONZEPT.md) | Konzept des Finales (Kapitel 5): Ende von Kapitel 4, drei Finalrichtungen, Handlung, Rätsel, Schlüsseldialoge, Epilog; Abschnitt 13 nennt die Abweichungen der Umsetzung |
 | [`LOESUNG5.md`](LOESUNG5.md) | Komplettlösung von Kapitel 5 mit Variante |
 | [`BERICHT_K5.md`](BERICHT_K5.md) | Entwicklungs- und Testbericht von Kapitel 5 (was geprüft wurde und was nicht) |
+| [`ANALYSE_GILBERT.md`](ANALYSE_GILBERT.md) | Rätseldesign, Geschichte und Figuren aller fünf Kapitel nach Ron Gilberts „Why Adventure Games Suck“ (1989): Prüfraster, Rätselinventar je Kapitel, belegte Befunde mit Schwere, fünf Vorher-nachher-Entwürfe, Umsetzungs- und Prüfplan. Mess- und Nachstellskripte in `qa/analyse/` |
 | [`HINWEISE.md`](HINWEISE.md) | Alle Hinweistexte der fünf Kapitel mit ihren Bedingungen (Entwicklerübersicht, enthält Lösungen) |
 | [`BERICHT_PRUEFBERICHT.md`](BERICHT_PRUEFBERICHT.md) | Überarbeitung nach dem externen Prüfbericht (November 2026): blockierende Fehler, Widersprüche, neue Rätselformen, Spannungsbogen, Tests, offene Punkte |
 | [`KONZEPT.md`](KONZEPT.md) | Das vollständige Konzept: Analyse des Originals, Umsetzung der Blackwell-Mechanik, Story, Figuren, 19 Orte, die drei Fälle mit allen Rätseln und Lösungen, Spielzeit, Malas Geheimnis |
