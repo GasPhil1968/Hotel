@@ -16,6 +16,10 @@ M.trAdd('bhs', {
   'Mir geht nichts im Kopf herum. Noch nicht.':'Ništa mi se ne vrti po glavi. Još ne.', '(Nicht mehr nachdenken.)':'(Prestani razmišljati.)',
   'Worüber denke ich nach?':'O čemu razmišljam?', '(Das passt zu nichts.)':'(To ne ide ni uz što.)', 'Und was gehört dazu?':'A što ide uz to?',
   '(Doch nichts.)':'(Ipak ništa.)', 'Wonach frage ich?':'Što da pitam?', 'Wonach fragen?':'Što pitati?', 'Nach etwas aus dem Notizbuch fragen …':'Pitaj o nečemu iz bilježnice …',
+  // Analyse P22/P23 (Kann-Liste): Seiten des Notizbuchs
+  'Offen':'Otvoreno', 'Erledigt':'Riješeno', 'Gehört':'Čuo sam', 'Erledigt. Antippen zum Nachlesen.':'Riješeno. Dodirni da pročitaš.', 'Was ich gehört habe. Antippen zum Nachlesen.':'Što sam čuo. Dodirni da pročitaš.',
+  '(Erledigtes und Gehörtes nachlesen …)':'(Pročitaj riješeno i čuto …)', 'Was lese ich nach?':'Što da pročitam?', '(Zurück.)':'(Natrag.)', '(Ältere Notizen …)':'(Starije bilješke …)',
+  'Oben im Notizbuch liegen, sobald etwas darin steht, „Erledigt“ und „Gehört“: zum Nachlesen, und im Gespräch auch zum Fragen.':'Gore u bilježnici, čim u njima nešto ima, stoje „Riješeno“ i „Čuo sam“: za čitanje, a u razgovoru i za pitanja.',
   'Das hängt nicht zusammen.':'To nije povezano.', 'Da fehlt noch etwas.':'Tu još nešto nedostaje.', 'Das habe ich schon verstanden.':'To sam već shvatio.',
   'Liste':'popis',
   // Spielmenü
@@ -44,7 +48,7 @@ M.trAdd('bhs', {
   'Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.':'Predmete povučeš iz trake na cilj. I na Malu, ako treba nešto pogledati.',
   'Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.':'Dolje lijevo možeš prebaciti na mene. Ja prolazim kroz zidove, vidim šta on ne vidi i osjetim šta se drži stvari. A ko je pustio, tog ja prevedem.',
   '„Nachdenken“: Ich wähle einen Gedanken und dann einen zweiten, der dazugehört. Passt es, ziehe ich einen Schluss. Im Gespräch kann ich nach jedem Gedanken fragen. Im Menü lässt sich auf ein Notizbuch umschalten.':'„Razmisli“: odaberem jednu misao, pa drugu koja ide uz nju. Ako se slažu, izvučem zaključak. U razgovoru mogu pitati o svakoj misli. U izborniku se može prebaciti na bilježnicu.',
-  '„Notizen“ ist mein Notizbuch. Es steht nur drin, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.':'„Bilješke“ su moja bilježnica. U njoj je samo ono što je još otvoreno. Dodirneš li dvije bilješke jednu za drugom, povežeš ih. U razgovoru mogu pitati o svakoj bilješci. U izborniku se može prebaciti na „Razmisli“.',
+  '„Notizen“ ist mein Notizbuch. Vorn steht, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.':'„Bilješke“ su moja bilježnica. Naprijed je ono što je još otvoreno. Dodirneš li dvije bilješke jednu za drugom, povežeš ih. U razgovoru mogu pitati o svakoj bilješci. U izborniku se može prebaciti na „Razmisli“.',
   '„Zeigen“ markiert kurz alles, was man hier anfassen kann. Doppeltipp auf einen Ausgang bringt mich sofort hin.':'„Pokaži“ nakratko označi sve što se ovdje može dirati. Dvostruki dodir na izlaz odmah me odvede onamo.',
   // Standardsätze Marko
   'Nichts Besonderes.':'Ništa posebno.', 'Ich sehe es an. Es bleibt, was es ist.':'Gledam. Ostaje ono što jest.', 'Da ist nichts, was mir weiterhilft.':'Tu nema ničega što bi mi pomoglo.',
@@ -62,6 +66,15 @@ M.trAdd('bhs', {
   'Nur das Meer.':'Samo more.', 'Nichts, was gesagt wird.':'Ništa se ne govori.', 'Ich kann es nicht anfassen. Das weißt du.':'Ne mogu to dirnuti. Znaš to.', 'Meine Hand geht hindurch.':'Ruka mi prođe kroz to.',
   'Er hört mich nicht.':'Ne čuje me.', 'Sie hört mich nicht. Niemand von ihnen.':'Ne čuje me. Niko od njih.', 'Ohne Marko komme ich nicht weit.':'Bez Marka ne mogu daleko.',
   'Dorthin gehe ich nicht ohne ihn.':'Tamo ne idem bez njega.', 'Die bleibt bei mir.':'Ona ostaje kod mene.',
+  // Analyse P21 (Kann-Liste): „Spüren“ an alltäglichen Dingen (08_sense.js)
+  'Hier haben viele gesessen. Keiner ist geblieben.':'Ovdje su mnogi sjedili. Niko nije ostao.', 'Warm von vielen. Niemand Bestimmtes.':'Toplo od mnogih. Niko poseban.',
+  'Nur Warten. Fremdes Warten, schon kalt.':'Samo čekanje. Tuđe čekanje, već hladno.', 'Viele haben hier hinausgesehen. Keiner ist geblieben.':'Mnogi su odavde gledali napolje. Niko nije ostao.',
+  'Glas merkt sich nichts. Nur die Kälte.':'Staklo ništa ne pamti. Samo hladnoću.', 'Viele Hände. Keine, die noch etwas will.':'Puno ruku. Nijedna koja još nešto hoće.',
+  'Kommen und Gehen. Sonst nichts.':'Dolaze i odlaze. Ništa više.', 'Gesichter. Aber ihr Nachhall ist nicht hier.':'Lica. Ali njihov odjek nije ovdje.',
+  'Nur Papier und Licht. Die Leute darauf sind woanders.':'Samo papir i svjetlo. Ljudi na njima su negdje drugo.', 'Nur Tinte. Keiner hat sich hineingelegt.':'Samo mastilo. Niko nije sebe u to stavio.',
+  'Wörter, aber kein Nachhall.':'Riječi, ali nikakvog odjeka.', 'Viel ist hindurchgegangen. Nichts ist geblieben.':'Puno je kroz to prošlo. Ništa nije ostalo.',
+  'Es zählt nur. Es merkt sich nichts.':'Samo broji. Ništa ne pamti.', 'Gebraucht, jeden Tag. Aber nichts, was hängen bleibt.':'Korišteno, svaki dan. Ali ništa što ostane.',
+  'Benutzt und vergessen. Sonst nichts.':'Korišteno i zaboravljeno. Ništa više.', 'Es gehört jemandem. Aber der ist nicht darin.':'Nečije je. Ali tog nema u njemu.',
   'Er hört mich. Das reicht.':'Čuje me. To je dosta.', 'Er sieht müde aus. Er sieht immer müde aus.':'Izgleda umorno. Uvijek izgleda umorno.',
   '@mala:Nein.':'Ne.', 'Nein.':'Ne.',
   // Hinweise der Seite (Offline-Speicher, Update)

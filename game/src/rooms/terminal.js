@@ -14,7 +14,7 @@ async function talkMira(A){ var Mi=A.npc('mira');
         await Mi.say('Den Jungen hatte ich am Vormittag gesehen. Er hat drüben am Schalter zwei Tickets gekauft und gestrahlt, als hätte er im Lotto gewonnen.'); A.note('c2_mira2');
         await Mi.say('Drei Tage später kam die Polizei und hat mir ein Foto von ihm gezeigt. Da wusste ich es.'); }},
     A.askOpt({ c2_luka:'Luka hieß er? Er hat hier manchmal Zigaretten gekauft. Einzeln. Ich habe ihm immer eine geschenkt.', c2_ferry:'Die nach Ancona fährt immer noch um neun. Dienstags, donnerstags, samstags. Heute auch.',
-      c2_tickets:'Zwei Tickets.', c2_stayed:'Sie ist geblieben? Gut. Hier braucht man Leute, die bleiben.' },'Weiß ich nicht, Schatz. Ich verkaufe Zeitungen, ich lese sie nicht.'),
+      c2_case:'Die zwei Tickets? Er hat sie so vorsichtig eingesteckt, als wären sie aus Glas.', c2_stayed:'Sie ist geblieben? Gut. Hier braucht man Leute, die bleiben.' },'Weiß ich nicht, Schatz. Ich verkaufe Zeitungen, ich lese sie nicht.'),
     {t:'Danke, Gospođa Mira.',bye:true,go:async function(A){ await Mi.say('Mira reicht. Gospođa war meine Mutter.'); }}
   ]; }); }
 async function miraEpi(A,Mi){ if (A.first('miEpi')){ await Mi.say('So früh? Sie sehen aus, als hätten Sie gar nicht geschlafen.'); await A.m('Hab ich auch nicht.'); await Mi.say('Kaffee?'); await A.m('Gern.'); A.sfx('cup');

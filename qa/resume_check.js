@@ -20,7 +20,7 @@ async function drain(I, list, iRef, rnd, rec) {
       if (k < 0) k = o.findIndex(t => /^\((Gehen|Schweigen)|^(Danke|Auf Wiedersehen|Bis |Tschüss|Servus|Später|Ich gehe|Gute)/.test(t)); if (k < 0) k = o.length - 1;
       rec.push(['choose', o[k]]); await I.ev((x) => M.E.chooseDone(x), k); await I.page.waitForTimeout(60); continue; }
     if (s.overlay) { const kind = s.overlay;
-      if (kind === 'notebook') { const L = await I.ev(() => { const d = M.E.overlay.data || {}; return d.mode === 'ask' ? M.E.nbOpen(true, d.also) : []; }); let id = null;
+      if (kind === 'notebook') { const L = await I.ev(() => { const d = M.E.overlay.data || {}; return d.mode === 'ask' ? (M.E.nbAll ? M.E.nbAll(true, d.also) : M.E.nbOpen(true, d.also)) : []; }); let id = null;
         for (let j = iRef.i; j < Math.min(list.length, iRef.i + 10) && !id; j++) if (list[j].kind === 'note' && L.indexOf(list[j].id) >= 0) { id = list[j].id; iRef.i = j + 1; }
         if (id) { rec.push(['note', id]); await I.ev((x) => M.TA.pickNote(x), id).catch(() => {}); } else { rec.push(['close', kind]); await I.ev(() => M.TA.closeOverlay(null)); } }
       else if (kind === 'puzzle') await X.solvePuzzleUI(I, rnd, rec);

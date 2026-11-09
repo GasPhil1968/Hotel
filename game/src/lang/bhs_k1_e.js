@@ -412,7 +412,7 @@ M.trAdd('bhs', {
   // askOpt-Antworten (Mira)
   'Luka hieß er? Er hat hier manchmal Zigaretten gekauft. Einzeln. Ich habe ihm immer eine geschenkt.': 'Luka se zvao? Znao je tu kupiti cigarete. Na komad. Uvijek sam mu jednu poklonila.',
   'Die nach Ancona fährt immer noch um neun. Dienstags, donnerstags, samstags. Heute auch.': 'Onaj za Anconu još uvijek ide u devet. Utorkom, četvrtkom i subotom. Danas isto.',
-  'Zwei Tickets.': 'Dvije karte.',
+  'Die zwei Tickets? Er hat sie so vorsichtig eingesteckt, als wären sie aus Glas.': 'One dvije karte? Spremio ih je tako pažljivo kao da su od stakla.',   // Analyse P24: früher an einer Notiz, die es nicht gibt
   'Sie ist geblieben? Gut. Hier braucht man Leute, die bleiben.': 'Ostala je? Dobro. Ovdje trebaju ljudi koji ostaju.',
   'Weiß ich nicht, Schatz. Ich verkaufe Zeitungen, ich lese sie nicht.': 'Ne znam, srce. Ja novine prodajem, ne čitam ih.',
   'Danke, Gospođa Mira.': 'Hvala, gospođo Mira.',

@@ -428,6 +428,7 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
       if (val!==undefined) await respond(val,ctx);
       else if (isG && hs.npc && ACT[hs.npc] && !ACT[hs.npc].ghost && hs.npc!=='marko' && v==='talk') await say(pick(DEF.g.living),'mala');
       else if (ex && v==='look') await say(isG?'Dort geht es hinaus.':'Da geht es hinaus.',GS.active);
+      else if (isG && v==='sense' && M.senseNeutral && M.senseNeutral(hs,room.id)) await say(M.senseLine(hs,room),'mala');   // Analyse P21: fester Leertext je Ding (08_sense.js)
       else await say(pick((isG?DEF.g:DEF.m)[v]||(isG?DEF.g.look:DEF.m.look)),GS.active); }
     if (room.check) await room.check(API);
   } finally { E.busy=false; } }
@@ -634,7 +635,8 @@ M.TA={
   item:function(verb,id,other){ doItem(verb,id,other); },
   choose:function(sub){ if (!E.dlg) throw new Error('keine Auswahl offen'); var i=E.dlg.opts.findIndex(function(o){ return o.t.indexOf(sub)>=0; }); if (i<0) throw new Error('Option nicht gefunden: '+sub+' | '+E.dlg.opts.map(function(o){ return o.t; }).join(' / ')); E.chooseDone(i); },
   pickNote:function(id){ if (E.dlg){ var k=E.dlg.opts.findIndex(function(o){ return o.id===id; }); if (k<0) throw new Error('Gedanke nicht in der Auswahl: '+id); E.chooseDone(k); return; } if (!E.overlay||E.overlay.kind!=='notebook') throw new Error('kein Notizbuch offen');
-    if (id && E.nbOpen){ var L=E.nbOpen(true,E.overlay.data&&E.overlay.data.also); if (L.indexOf(id)<0) throw new Error('Notiz steht im Notizbuch nicht zur Wahl: '+id); }   // Tests wählen nur, was ein Spieler sehen kann
+    if (id && E.nbOpen){ var al=E.overlay.data&&E.overlay.data.also, L=E.nbAll?E.nbAll(true,al):E.nbOpen(true,al); if (L.indexOf(id)<0) throw new Error('Notiz steht im Notizbuch nicht zur Wahl: '+id);   // Tests wählen nur, was ein Spieler sehen kann
+      if (E.nbOpen(true,al).indexOf(id)<0){ (M.__nbOlder=M.__nbOlder||[]).push(GS.phase+':'+id); if (E.nbTab) E.nbTab(E.nbLists(true,al).done.indexOf(id)>=0?'done':'heard'); } }   // Analyse P22: auf einer anderen Seite als „Offen“ (für die Prüfung gezählt)
     closeOverlay(id); },
   closeOverlay:function(v){ closeOverlay(v); },
   combine:function(a,b){ return combineNotes(a,b); },

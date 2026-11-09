@@ -202,12 +202,13 @@ function hsOpts(hs){ var room=E.room; if (room.noVerbs) return null; var o=[], g
   if (hs===E.MALA_HS){ return [{t:'Rede mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (hs===E.MARKO_HS){ return [{t:'Sprich mit',v:'talk'},{t:'Schau an',v:'look'}]; }
   if (ex) o.push({t:g&&hs.gexit?'Hindurchgehen':'Hingehen',v:g&&hs.gexit?'pass':'walk'});
-  if (g){ var gv=hs.g||{}; if (gv.cross!==undefined && (!gv.crossIf || gv.crossIf(M.RS(room.id),GS()))) o.push({t:E.VLABEL.cross,v:'cross'}); ['talk','sense','listen','draw'].forEach(function(v){ if (gv[v]!==undefined && (v!=='draw' || !gv.drawIf || gv.drawIf(M.RS(room.id),GS()))) o.push({t:E.VLABEL[v==='talk'?'gtalk':v],v:v}); });
+  if (g){ var gv=hs.g||{}, ns=M.senseNeutral&&M.senseNeutral(hs,room.id); if (gv.cross!==undefined && (!gv.crossIf || gv.crossIf(M.RS(room.id),GS()))) o.push({t:E.VLABEL.cross,v:'cross'}); ['talk','sense','listen','draw'].forEach(function(v){ if ((gv[v]!==undefined || (v==='sense'&&ns)) && (v!=='draw' || !gv.drawIf || gv.drawIf(M.RS(room.id),GS()))) o.push({t:E.VLABEL[v==='talk'?'gtalk':v],v:v}); });   // Analyse P21: „Spüren“ auch an alltäglichen Dingen (08_sense.js)
     if (hs.npc && !gv.talk && E.ACT[hs.npc] && E.ACT[hs.npc].ghost) o.push({t:'Sprich mit',v:'talk'}); }
   else { ['talk','take','open','use','push','read'].forEach(function(v){ if (hs[v]!==undefined) o.push({t:E.VLABEL[v],v:v}); }); if (hs.npc && hs.talk===undefined) o.unshift({t:'Rede mit',v:'talk'}); }
   if (!ex && o.length===0) return null;
   if (ex && o.length===1) return null;   // reiner Ausgang: der erste Klick geht los, ein zweiter schneller Klick überspringt den Weg
   o.push({t:'Schau an',v:'look'}); return o; }
+E.hsOpts=hsOpts;   // für Tests: was das Menü an einem Hotspot anbietet
 function itemOpts(id){ if (isG()) return [{t:'Schau an',v:'look'}]; var it=M.ITEMS[id], o=[{t:'Benutze',pend:true}]; ['read','open','use2'].forEach(function(v){ if (it[v]!==undefined) o.push({t:v==='read'?'Lies':(v==='open'?'Öffne':it.use2Label||'Benutze'),v:v}); }); o.push({t:'Schau an',v:'look'}); return o; }
 function openPop(p){ p.room=E.room; p.rh=touchUI?15:POP_RH; p.html=!!(pointer.touch && M.barOn && M.barOn());   // Finger: Aktionsleiste (07_bar.js) statt Menü am Finger (T06)
   var w=M.textWidth(p.title); p.opts.forEach(function(o){ w=Math.max(w,M.textWidth(o.t)); }); w=Math.max(66,w+14);
@@ -458,75 +459,136 @@ OVTAP.glyphs=function(ov,id){ var d=ov.data; if (id==='x'){ E.closeOverlay(null)
 // ---------------------------------------------------------------- Notizbuch: zwei Arten, im Menü umschaltbar
 // „Liste“ (wie in Blackwell): eine Seite, große Schrift, nur offene Hinweise, zwei antippen = verbinden.
 // „Nachdenken“: kein eigener Bildschirm; Marko denkt in der gewohnten Auswahlliste nach, zwei Gedanken = verbinden.
-var NB={sel:null,page:0,msg:null};
-var NB_PER=5, NB_RH=20, NB_Y0=26;   // Zeilen 26–126, Blättern 125–138, Beschreibung und „Danach fragen“ 142–186
+// Analyse P22/P23 (Kann-Liste): Die Liste hat bis zu drei Seiten. „Offen“ ordnet die Notizen nach Frage oder Person;
+// „Erledigt“ und „Gehört“ sind nur zum Lesen. „Gehört“ sammelt, was das Spiel sich im Hintergrund merkt (vor allem Gesagtes
+// in Kapitel 1 und 2, Analyse K1-B07). Im Gespräch kann man auch auf diesen Seiten nachfragen, damit keine Antwort tot bleibt (P24).
+var NB={sel:null,page:0,msg:null,tab:'open'};
+var NB_PER=5, NB_RH=20, NB_Y0=26, NB_HH=10, NB_RH2=16;   // Zeilen 26–126 (gruppiert: Zeilen 16 und Überschriften 10 hoch), Blättern 125–138, Beschreibung und „Danach fragen“ 142–186
 var nbStyle='list'; try{ nbStyle=localStorage.getItem('mala.nbstyle')||'list'; }catch(e){}
 E.nbStyle=function(){ return nbStyle; };
 E.setNbStyle=function(v){ nbStyle=v; try{ localStorage.setItem('mala.nbstyle',v); }catch(e){} layoutBtns(); };
 layoutBtns();
 function nbTargets(){ var t={}; Object.keys(M.DEDUCE).forEach(function(k){ var d=M.DEDUCE[k]; if (d&&d.to) t[d.to]=1; }); return t; }
-function noteDone(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) for (var i=0;i<n.doneBy.length;i++) if (g.notes.indexOf(n.doneBy[i])>=0) return true; return false; }
+function doneOwn(n,g){ if (n.doneIf && n.doneIf(g)) return true; if (n.doneBy) for (var i=0;i<n.doneBy.length;i++) if (g.notes.indexOf(n.doneBy[i])>=0) return true; return false; }
+// Analyse P22 (Muster 6): Quellen eines Schlusses sind erledigt, wenn der Spieler keinen ihrer Schlüsse gezogen hat und jeder davon
+// schon erledigt wäre, weil sein Inhalt auf anderem Weg bekannt wurde (z. B. l3_notbridge + k3_c_bridge → l3_uncounted).
+// Hat er einen Schluss gezogen, entscheiden die eigenen Regeln der Quelle (sie wird im Gespräch vielleicht noch gebraucht: s1_twosevens bei Tomaž).
+// Nur Quellen aus derselben Frage wie der Schluss: Was aus einer anderen Gruppe kommt, trägt mehr (k3_c_bridge ist auch Malas Fahrer).
+var NB_SRC=null;
+function srcIndex(){ if (NB_SRC) return NB_SRC; NB_SRC={}; Object.keys(M.DEDUCE).forEach(function(k){ var d=M.DEDUCE[k]; if (!d||typeof d==='function'||!d.to) return; k.split('+').forEach(function(id){ (NB_SRC[id]=NB_SRC[id]||[]).push(d.to); }); }); return NB_SRC; }
+function spent(id,g){ var ts=srcIndex()[id], n=M.NOTES[id]; if (!ts||!n) return false; for (var i=0;i<ts.length;i++){ var t=M.NOTES[ts[i]]; if (!t || t.g!==n.g || g.notes.indexOf(ts[i])>=0 || !doneOwn(t,g)) return false; } return true; }
+function noteDone(n,g,id){ return doneOwn(n,g) || (!!id && spent(id,g)); }
+E.noteDone=function(id,g){ var n=M.NOTES[id]; return !!n && noteDone(n,g||GS(),id); };
+// zu welchem Kapitel eine Notiz gehört (über die Fälle der Abschnitte); Malas Notizen aus Split gelten in Kapitel 1 und 2
+var NB_CH=null;
+function caseChapter(c){ if (!NB_CH){ NB_CH={}; Object.keys(M.PHASES).forEach(function(p){ var ph=M.PHASES[p], ch=ph.chapter||1; if (ph.case) NB_CH[ph.case]=ch; (ph.cases||[]).forEach(function(x){ NB_CH[x]=ch; }); }); } return NB_CH[c]||0; }
+function inChapter(n,g){ var ch=M.chapterOf?M.chapterOf(g):1; return n.c==='mala'?ch<=2:caseChapter(n.c)===ch; }
 // offene Hinweise des Falls (beim Fragen auch Malas), Schlüsse und Neues zuerst, im Gespräch zuerst die zum Gegenüber
 function nbOpen(ask,also){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, ded=nbTargets(), out=[], who=ask&&E.conv&&E.conv.npc&&E.ACT[E.conv.npc]?E.ACT[E.conv.npc].ch:null;
   var cl=ph.cases, old=function(n){ return !!(cs && n.c && n.c!=='mala' && (cl?cl.indexOf(n.c)<0:n.c!==cs)); };
   var hid=function(id){ return !!(ask && g.active!=='mala' && M.k4NoteHidden && M.k4NoteHidden(id,g)); };   // Kapitel 4: was Mala für sich behält, kennt Marko im Gespräch nicht
-  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || hid(id)) return; if (ask && also && also.indexOf(id)>=0){ out.push(id); return; } if (!n.show || noteDone(n,g)) return; if (n.c==='mala'){ if (!ask) return; } else if (old(n) && !ask) return; out.push(id); });
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || hid(id)) return; if (ask && also && also.indexOf(id)>=0){ out.push(id); return; } if (!n.show || noteDone(n,g,id)) return; if (n.c==='mala'){ if (!ask) return; } else if (old(n) && !ask) return; out.push(id); });
   out.sort(function(a,b){ var A=M.NOTES[a], B=M.NOTES[b], sa=(who&&A.p==='p:'+who?0:2)+(ded[a]?0:1)+(old(A)?4:0), sb=(who&&B.p==='p:'+who?0:2)+(ded[b]?0:1)+(old(B)?4:0); return (sa-sb)||(g.notes.indexOf(b)-g.notes.indexOf(a)); });
   if (ask && M.chapterOf && M.chapterOf(g)===4){ var va=also?out.filter(function(id){ return also.indexOf(id)>=0; }):[], rest=out.filter(function(id){ return va.indexOf(id)<0 && !old(M.NOTES[id]); }), cap=also?Math.max(4,va.length):8;
     out=va.concat(rest).slice(0,cap); out.sort(function(a,b){ return g.notes.indexOf(b)-g.notes.indexOf(a); }); }   // gültige Antworten nicht immer oben: die Reihenfolge verrät nichts
   return out; }
 E.nbOpen=nbOpen;
+// die zwei Seiten zum Lesen: „Erledigt“ (erledigt, beim Blättern auch aus früheren Abschnitten) und „Gehört“ (nie im Notizbuch gezeigt), neueste zuerst
+function nbRest(ask,also){ var g=GS(), ph=M.PHASES[g.phase]||{}, cs=ph.case, cl=ph.cases, open=nbOpen(ask,also), done=[], heard=[];
+  var old=function(n){ return !!(cs && n.c && n.c!=='mala' && (cl?cl.indexOf(n.c)<0:n.c!==cs)); };
+  var hid=function(id){ return !!(ask && g.active!=='mala' && M.k4NoteHidden && M.k4NoteHidden(id,g)); };
+  var capped=ask && M.chapterOf && M.chapterOf(g)===4;   // Kapitel 4 kürzt die offene Liste im Gespräch bewusst; was dort fehlt, kommt nicht über die anderen Seiten zurück
+  g.notes.forEach(function(id){ var n=M.NOTES[id]; if (!n || hid(id) || open.indexOf(id)>=0 || !inChapter(n,g)) return;
+    if (!n.show){ heard.push(id); return; } var dn=noteDone(n,g,id); if (dn || (!ask && old(n))){ if (!capped || dn) done.push(id); } });
+  var newest=function(a,b){ return g.notes.indexOf(b)-g.notes.indexOf(a); }; done.sort(newest); heard.sort(newest);
+  return {open:open,done:done,heard:heard}; }
+E.nbLists=nbRest;
+E.nbAll=function(ask,also){ var L=nbRest(ask,also); return L.open.concat(L.done,L.heard); };
+var NB_TABS=[['open','Offen'],['done','Erledigt'],['heard','Gehört']];
+function nbTabs(L){ return NB_TABS.filter(function(t){ return t[0]==='open' || L[t[0]].length; }); }
+// Gruppen nach Frage oder Person (Feld g der Notiz); die Reihenfolge der Gruppen folgt der ersten Notiz jeder Gruppe in der Liste
+function nbGroups(list){ var out=[], at={}; list.forEach(function(id){ var k=M.NOTES[id].g||''; if (at[k]===undefined){ at[k]=out.length; out.push({k:k,ids:[]}); } out[at[k]].ids.push(id); }); return out; }
+// Seiten aus Zeilen und Gruppenüberschriften; beginnt eine Seite mitten in einer Gruppe, steht die Überschrift noch einmal oben
+function nbPages(list,grouped,rh){ var pages=[], cur=[], h=0, budget=NB_PER*NB_RH; rh=rh||NB_RH;
+  if (!grouped){ for (var i=0;i<list.length;i+=NB_PER) pages.push(list.slice(i,i+NB_PER).map(function(id){ return {id:id}; })); return pages.length?pages:[[]]; }
+  nbGroups(list).forEach(function(gr){ gr.ids.forEach(function(id,j){ var head=(j===0||!cur.length)&&gr.k, need=rh+(head?NB_HH:0);
+      if (h+need>budget && cur.length){ pages.push(cur); cur=[]; h=0; head=!!gr.k; need=rh+(head?NB_HH:0); }
+      if (head){ cur.push({head:gr.k}); h+=NB_HH; } cur.push({id:id}); h+=rh; }); });
+  if (cur.length) pages.push(cur); return pages.length?pages:[[]]; }
 function notesOf(){ return nbOpen(false); }
 E.openNotes=function(){ if (M.onOpenNotes && M.onOpenNotes()) return Promise.resolve();   // ein Raum darf vorher etwas sagen (Morgen nach Ivka)
-  if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; return E.showOverlay('notebook',{mode:'browse'}); };
+  if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; NB.tab='open'; return E.showOverlay('notebook',{mode:'browse'}); };
 function nbButton(x,y,w,t,hot,h){ h=h||13; fb.rect(x,y,w,h,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+h-1,c); fb.vl(x,y,y+h-1,c); fb.vl(x+w-1,y,y+h-1,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+((h-7)>>1),hot?P.r2:P.n1); return [x,y,w,h]; }
 // Variante 1: die Liste
 M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask', g=GS(), ph0=M.PHASES[g.phase]||{}, ded=nbTargets(), i;
-  if (!ov.init){ ov.init=1; NB.page=0; NB.sel=null; NB.msg=null; }
-  paper(30,4,260,188,{lines:[NB_Y0-4,NB_RH],margin:16}); var lay={rows:[],close:null,prev:null,next:null,btn:null};
-  M.text(fb,ask?(d.title||'Wonach fragen?'):'Notizbuch',52,10,P.r2); if (!ask && ph0.short) M.text(fb,ph0.short,52+M.textWidth('Notizbuch')+10,10,P.s1);
+  if (!ov.init){ ov.init=1; NB.page=0; NB.sel=null; NB.msg=null; NB.tab='open'; }
+  paper(30,4,260,188,{lines:[NB_Y0-4,NB_RH],margin:16}); var lay={rows:[],close:null,prev:null,next:null,btn:null,tabs:[]};
+  var L=nbRest(ask,d.also), tabs=nbTabs(L); if (!tabs.some(function(t){ return t[0]===NB.tab; })){ NB.tab='open'; NB.page=0; NB.sel=null; }
   var cl=ask?'Zurück':'X', cw=M.textWidth(cl); lay.close=[282-cw-11,3,cw+16,16]; M.text(fb,cl,282-cw-3,10,hoverUI==='nx'?P.r3:P.s1);
-  var list=nbOpen(ask,d.also), pages=Math.max(1,Math.ceil(list.length/NB_PER)); if (NB.page>=pages) NB.page=pages-1;
+  if (tabs.length<2){ M.text(fb,ask?(d.title||'Wonach fragen?'):'Notizbuch',52,10,P.r2); if (!ask && ph0.short) M.text(fb,ph0.short,52+M.textWidth('Notizbuch')+10,10,P.s1); }
+  else { var tx=50; tabs.forEach(function(t){ var on=NB.tab===t[0], hot=hoverUI==='t:'+t[0], w=M.textWidth(t[1]);
+      if (on){ fb.rect(tx-3,5,w+6,14,P.y4); } M.text(fb,t[1],tx,10,on?P.r2:(hot?P.r3:P.s1)); if (on) fb.hl(tx-1,tx+w,18,P.r3);
+      lay.tabs.push({k:t[0],r:[tx-5,2,w+10,19]}); tx+=w+14; });
+    if (!ask && ph0.short && tx+M.textWidth(ph0.short)<lay.close[0]-2) M.text(fb,ph0.short,tx+2,10,P.s1); }
+  var tab=NB.tab, list=L[tab], grouped=!(ask&&tab==='open'), rh=grouped?NB_RH2:NB_RH, ty=grouped?5:7, pg=nbPages(list,grouped,rh), pages=pg.length; if (NB.page>=pages) NB.page=pages-1;
   if (!list.length) M.text(fb,'Noch nichts, was zusammengehören könnte.',54,NB_Y0+6,P.s1);
-  for (i=NB.page*NB_PER;i<Math.min(list.length,(NB.page+1)*NB_PER);i++){ var id=list[i], n=M.NOTES[id], y=NB_Y0+(i-NB.page*NB_PER)*NB_RH, sel=NB.sel===id, hot=hoverUI==='n:'+id;
-    if (sel) fb.rect(48,y+1,234,NB_RH-3,P.y4); else if (hot) fb.rect(48,y+1,234,NB_RH-3,P.s6);
+  var y=NB_Y0; pg[NB.page].forEach(function(r){
+    if (r.head!==undefined){ var hl=M.trUI?M.trUI(r.head):r.head; M.text(fb,hl,52,y+2,P.s1); fb.hl(52+M.textWidth(hl)+4,280,y+5,P.s3); y+=NB_HH; return; }
+    var id=r.id, n=M.NOTES[id], sel=NB.sel===id, hot=hoverUI==='n:'+id, mark=tab==='open'&&ded[id];
+    if (sel) fb.rect(48,y+1,234,rh-3,P.y4); else if (hot) fb.rect(48,y+1,234,rh-3,P.s6);
     var t=M.trUI?M.trUI(n.s||n.t):(n.s||n.t); while (M.textWidth(t)>214 && t.length>3) t=t.slice(0,-2)+'…';   // erst übersetzen, dann kürzen
-    M.text(fb,t,56,y+7,ded[id]?P.g1:P.n0); if (ded[id]){ fb.px(51,y+9,P.g3); fb.px(50,y+10,P.g3); fb.px(52,y+10,P.g3); fb.px(51,y+11,P.g3); fb.px(51,y+10,P.g2); }
-    if (g.noteNew[id]) fb.rect(276,y+8,3,3,P.r4); lay.rows.push({id:id,r:[48,y,234,NB_RH-1]}); }
+    M.text(fb,t,56,y+ty,mark?P.g1:(tab==='open'?P.n0:P.n1)); if (mark){ var my=y+ty+2; fb.px(51,my,P.g3); fb.px(50,my+1,P.g3); fb.px(52,my+1,P.g3); fb.px(51,my+2,P.g3); fb.px(51,my+1,P.g2); }
+    if (tab==='open' && g.noteNew[id]) fb.rect(276,y+ty+1,3,3,P.r4); lay.rows.push({id:id,r:[48,y,234,rh-1]}); y+=rh; });
   if (pages>1){ M.text(fb,(NB.page+1)+' / '+pages,150,NB_Y0+NB_PER*NB_RH+1,P.s1); if (NB.page>0) lay.prev=nbButton(48,NB_Y0+NB_PER*NB_RH-1,40,'<',hoverUI==='nprev'); if (NB.page<pages-1) lay.next=nbButton(242,NB_Y0+NB_PER*NB_RH-1,40,'>',hoverUI==='nnext'); }
   var by=NB_Y0+NB_PER*NB_RH+16; fb.hl(46,284,by-3,P.s3);
   // Text im unteren Feld: so viele Zeilen, wie Platz ist; wird es eng, rücken die Zeilen zusammen (Blindtest K4: letztes Wort fehlte)
   var fit=function(t,w,y0){ var L=M.wrap(t,w), room=186-y0-1, lh=9; if (L.length*lh>room) lh=8; var n=Math.floor(room/lh); if (L.length>n){ L=L.slice(0,n); L[n-1]=L[n-1].replace(/\s*\S*$/,'')+' …'; } return {L:L,lh:lh}; };
   if (NB.msg){ fb.rect(46,by,238,186-by,NB.msg.ok?P.g5:P.s4); var fm=fit(NB.msg.t,228,by+3); fm.L.forEach(function(l,j){ M.text(fb,l,50,by+3+j*fm.lh,NB.msg.ok?P.g0:P.k1); }); }
   else if (NB.sel && M.NOTES[NB.sel]){ var fs=fit(M.NOTES[NB.sel].t,ask?156:228,by+2); fs.L.forEach(function(l,j){ M.text(fb,l,50,by+2+j*fs.lh,P.n1); }); if (ask){ var bw=Math.max(72,M.textWidth('Danach fragen')+14); lay.btn=nbButton(284-bw,by+12,bw,'Danach fragen',hoverUI==='nb',18); } }
-  else M.wrap(ask?'Antippen, dann „Danach fragen“.':'Eine Notiz antippen, dann eine zweite, die dazu passt.',228).forEach(function(l,j){ M.text(fb,l,50,by+2+j*9,P.s1); });
+  else { var hint=ask?'Antippen, dann „Danach fragen“.':(tab==='open'?'Eine Notiz antippen, dann eine zweite, die dazu passt.':(tab==='done'?'Erledigt. Antippen zum Nachlesen.':'Was ich gehört habe. Antippen zum Nachlesen.')), hy=by+2;
+    if (ask && tabs.length>1){ M.text(fb,d.title||'Wonach fragen?',50,hy,P.r2); hy+=10; }   // der Titel steht oben nicht mehr, wenn dort die Seiten stehen
+    M.wrap(hint,228).forEach(function(l,j){ M.text(fb,l,50,hy+j*9,P.s1); }); }
   ov.lay=lay; });
 function nbAt(x,y){ var ov=E.overlay, lay=ov&&ov.lay; if (!lay) return null; var inR=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; };
   if (inR(lay.close)) return 'nx'; if (inR(lay.btn)) return 'nb'; if (inR(lay.prev)) return 'nprev'; if (inR(lay.next)) return 'nnext';
+  for (var t=0;t<(lay.tabs||[]).length;t++) if (inR(lay.tabs[t].r)) return 't:'+lay.tabs[t].k;
   for (var q=0;q<lay.rows.length;q++) if (inR(lay.rows[q].r)) return 'n:'+lay.rows[q].id; return null; }
 async function notebookTap(x,y){ var ov=E.overlay; if (!ov||!ov.lay) return; var ask=ov.data.mode==='ask', u=nbAt(x,y);
   if (!u){ NB.msg=null; return; }
   if (u==='nx'){ NB.sel=null; NB.msg=null; E.closeOverlay(null); return; }
+  if (u.indexOf('t:')===0){ var k=u.slice(2); if (k!==NB.tab){ NB.tab=k; NB.page=0; NB.sel=null; NB.msg=null; M.sfx('page'); } return; }
   if (u==='nprev'){ NB.page=Math.max(0,NB.page-1); M.sfx('page'); return; } if (u==='nnext'){ NB.page++; M.sfx('page'); return; }
   if (u==='nb'){ if (NB.sel){ var id0=NB.sel; NB.sel=null; E.closeOverlay(id0); M.sfx('page'); } return; }
   var id=u.slice(2); delete GS().noteNew[id]; NB.msg=null;
   if (ask){ if (NB.sel===id){ NB.sel=null; E.closeOverlay(id); M.sfx('page'); return; } NB.sel=id; M.sfx('click'); return; }
+  if (NB.tab!=='open'){ NB.sel=NB.sel===id?null:id; M.sfx('click'); return; }   // Erledigt und Gehört: nur lesen
   if (!NB.sel){ NB.sel=id; M.sfx('click'); return; } if (NB.sel===id){ NB.sel=null; return; }
   var a=NB.sel, res=await E.combineNotes(a,id); NB.msg={ok:res.ok,t:res.ok?('Schlussfolgerung: '+res.t):res.t}; NB.sel=res.ok&&res.to?res.to:null; if (res.ok&&res.to) delete GS().noteNew[res.to]; }
-// Variante 3: Nachdenken in der Auswahlliste
+// für Tests und die Prüfwerkzeuge: eine Seite des Notizbuchs aufschlagen
+E.nbTab=function(k){ if (E.overlay&&E.overlay.kind==='notebook'){ NB.tab=k||'open'; NB.page=0; NB.sel=null; NB.msg=null; } return NB.tab; };
+// Variante 3: Nachdenken in der Auswahlliste (nach Gruppen geordnet; Erledigtes und Gehörtes am Ende zum Nachlesen)
+function thinkOrder(list){ var out=[]; nbGroups(list).forEach(function(gr){ out=out.concat(gr.ids); }); return out; }
 function thinkOpts(list,ex){ return list.filter(function(id){ return id!==ex; }).map(function(id){ var n=M.NOTES[id]; return {t:n.s||n.t,id:id,silent:true,noGray:true}; }); }
+async function thinkRead(A,L){ var more=L.done.concat(L.heard); if (!more.length) return;
+  var r=await A.choose(thinkOpts(more).concat([{t:'(Zurück.)',id:null,silent:true,bye:true,noGray:true}]),{title:'Was lese ich nach?',conv:false});
+  if (r) await A.m(M.NOTES[r].t); }
 M.thinkAbout=async function(){ if (E.busy) return; var A=M.API; E.busy=true;
-  try{ var list=nbOpen(false); if (!list.length){ await A.m('Mir geht nichts im Kopf herum. Noch nicht.'); return; }
+  try{ var L=nbRest(false), list=thinkOrder(L.open), more=L.done.length+L.heard.length;
+    if (!list.length && !more){ await A.m('Mir geht nichts im Kopf herum. Noch nicht.'); return; }
     list.forEach(function(id){ delete GS().noteNew[id]; });
-    var a=await A.choose(thinkOpts(list).concat([{t:'(Nicht mehr nachdenken.)',id:null,silent:true,bye:true,noGray:true}]),{title:'Worüber denke ich nach?',conv:false});
-    if (!a) return; await A.m(M.NOTES[a].t);
+    var extra=more?[{t:'(Erledigtes und Gehörtes nachlesen …)',id:'__more',silent:true,noGray:true}]:[];
+    var a=await A.choose(thinkOpts(list).concat(extra,[{t:'(Nicht mehr nachdenken.)',id:null,silent:true,bye:true,noGray:true}]),{title:'Worüber denke ich nach?',conv:false});
+    if (!a) return; if (a==='__more') return await thinkRead(A,L); await A.m(M.NOTES[a].t);
     var b=await A.choose(thinkOpts(list,a).concat([{t:'(Das passt zu nichts.)',id:null,silent:true,bye:true,noGray:true}]),{title:'Und was gehört dazu?',conv:false});
     if (!b) return; var res=await E.combineNotes(a,b);
     if (res.ok){ await A.m(res.say||res.t); if (res.to) await A.m(M.NOTES[res.to].t); } else await A.m(res.t);
   } finally { E.busy=false; } };
-// im Gespräch fragen: in der Liste oder gleich in der Auswahl
-E.pickNoteThink=async function(title,also){ var list=nbOpen(true,also); if (!list.length) return null; var o=thinkOpts(list).concat([{t:'(Doch nichts.)',id:null,silent:true,bye:true,noGray:true}]);
-  return await M.API.choose(o,{title:title||'Wonach frage ich?'}); };
+// im Gespräch fragen: in der Liste oder gleich in der Auswahl (Erledigtes und Gehörtes über einen eigenen Eintrag)
+E.pickNoteThink=async function(title,also){ var L=nbRest(true,also), more=L.done.concat(L.heard); if (!L.open.length && !more.length) return null;
+  var extra=more.length?[{t:'(Ältere Notizen …)',id:'__more',silent:true,noGray:true}]:[];
+  var r=await M.API.choose(thinkOpts(L.open).concat(extra,[{t:'(Doch nichts.)',id:null,silent:true,bye:true,noGray:true}]),{title:title||'Wonach frage ich?'});
+  if (r!=='__more') return r;
+  return await M.API.choose(thinkOpts(more).concat([{t:'(Doch nichts.)',id:null,silent:true,bye:true,noGray:true}]),{title:title||'Wonach frage ich?'}); };
 E.afterNotes=function(){ };
 
 
@@ -538,7 +600,7 @@ function drawReveal(){ if (!reveal) return; if (E.gt()-reveal.at>REVEAL_MS||E.bu
   E.room.hotspots.forEach(function(h){ if (h.vis&&!h.vis(S,GS())) return; if (h.who==='m'&&g) return; if (h.who==='g'&&!g) return; var r=E.hsRect(h); if (!r) return; if (!E.hsLit(h,r)) return; if (r[2]*r[3]>W*SH*0.25||h.noReveal) return;
     var x=Math.round(r[0]+r[2]/2-cx0), y=Math.round(r[1]+r[3]/2); if (x<-4||x>W+4) return; list.push({h:h,x:Math.max(4,Math.min(W-5,x)),y:Math.max(4,Math.min(SH-5,y)),a:r[2]*r[3]}); });
   list.sort(function(a,b){ return a.a-b.a; }); var pulse=(Math.sin(E.gt()/160)+1)/2, placed=[];
-  list.forEach(function(m){ var ex=uiExit(m.h), col=ex?P.g5:(m.h.npc?P.r4:(g?P.x5:P.y4)), R=2+(M.reduceMotion()?1:Math.round(pulse)); if (g && (m.h.g&&m.h.g.sense)) col=P.x6;
+  list.forEach(function(m){ var ex=uiExit(m.h), col=ex?P.g5:(m.h.npc?P.r4:(g?P.x5:P.y4)), R=2+(M.reduceMotion()?1:Math.round(pulse)); if (g && ((m.h.g&&m.h.g.sense) || (M.senseNeutral&&M.senseNeutral(m.h,E.room.id)))) col=P.x6;   // Analyse P21: dieselbe Farbe für alle Stellen, an denen Mala spüren kann
     for (var dy=-R-1;dy<=R+1;dy++) for (var dx=-R-1;dx<=R+1;dx++){ var d2=dx*dx+dy*dy; if (d2<=(R+1)*(R+1)) fb.px(m.x+dx,m.y+dy,d2<=R*R?col:P.k0); } fb.px(m.x,m.y,P.l1); });
   // Namen: Figuren zuerst; stößt ein Schild an ein anderes, wird es darüber oder weiter unten versucht, statt wegzufallen
   list.slice().sort(function(a,b){ return (b.h.npc?1:0)-(a.h.npc?1:0) || a.a-b.a; }).forEach(function(m){ if (!uiExit(m.h) && !m.h.npc) return; var t=E.nameOf(m.h); if (!t) return; var w=M.textWidth(t), lx=Math.max(1,Math.min(W-1-w,m.x-(w>>1)));
@@ -576,7 +638,8 @@ async function help(){ if (E.busy||E.screen!=='game') return; E.busy=true; try{
   await M.API.m('Gegenstände ziehst du aus der Leiste auf ihr Ziel. Auch auf Mala, wenn sie sich etwas ansehen soll.');
   if (GS().malaOn && !GS().flags['mala.unknown'] && !GS().flags['mala.noSwitch'] && !GS().flags['mala.voice']) await M.API.g('Unten links kannst du zu mir wechseln. Ich gehe durch Wände, sehe, was er nicht sieht, und spüre, was an den Dingen hängt. Und wer losgelassen hat, den bringe ich hinüber.');
   if (E.nbStyle()==='think') await M.API.m('„Nachdenken“: Ich wähle einen Gedanken und dann einen zweiten, der dazugehört. Passt es, ziehe ich einen Schluss. Im Gespräch kann ich nach jedem Gedanken fragen. Im Menü lässt sich auf ein Notizbuch umschalten.');
-  else await M.API.m('„Notizen“ ist mein Notizbuch. Es steht nur drin, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.');
+  else { await M.API.m('„Notizen“ ist mein Notizbuch. Vorn steht, was noch offen ist. Zwei Notizen nacheinander antippen verbindet sie. Im Gespräch kann ich nach jeder Notiz fragen. Im Menü lässt sich auf „Nachdenken“ umschalten.');
+    await M.API.m('Oben im Notizbuch liegen, sobald etwas darin steht, „Erledigt“ und „Gehört“: zum Nachlesen, und im Gespräch auch zum Fragen.'); }
   await M.API.m('„Zeigen“ markiert kurz alles, was man hier anfassen kann.');
   await M.API.m('Ein Tipp auf einen Ausgang, und ich gehe hin. Ein zweiter schneller Tipp, ein Doppelklick mit der Maus, und ich bin sofort draußen.');
   await M.API.m('„Karte“ öffnet den Stadtplan, mit der Maus auch die Taste K. Ein Tipp auf einen Ort, und ich gehe hin. „Schließen“ oder Esc, und ich bleibe.');

@@ -172,14 +172,22 @@ DAS NOTIZBUCH ("Notizen")
   verbinden lassen, und was man am Ende eines Falls sagen muss. Meist sind
   es nur drei bis fünf Einträge.
 - Im Menü umschaltbar: "Notizbuch: Liste" oder "Notizbuch: Nachdenken".
-- Liste: eine Seite, nur was noch offen ist. Eine Notiz antippen, dann
-  eine zweite, die dazu passt = verbinden. Unten steht der ganze Satz.
+- Liste: "Offen" zeigt, was noch offen ist, geordnet nach Frage oder
+  Person. Eine Notiz antippen, dann eine zweite, die dazu passt =
+  verbinden. Unten steht der ganze Satz.
+- Oben gibt es dazu, sobald etwas darin steht, "Erledigt" und "Gehört":
+  zwei Seiten nur zum Nachlesen. "Erledigt" hat, was sich erledigt hat;
+  "Gehört" hat, was Marko gehört hat, aber nie ins Notizbuch kam (vor
+  allem in Kapitel 1 und 2).
 - Nachdenken: Der Knopf heißt dann "Nachdenken". Marko wählt einen
   Gedanken und dann einen zweiten, der dazugehört. Passt es, zieht er
-  einen Schluss.
-- Was erledigt ist, verschwindet in beiden Arten von selbst.
+  einen Schluss. Erledigtes und Gehörtes stehen am Ende der Auswahl.
+- Was erledigt ist, verschwindet von selbst aus "Offen". Auch Notizen,
+  die nur noch zu einem Schluss führen würden, den Marko längst auf
+  anderem Weg weiß.
 - Im Gespräch: "Nach etwas aus dem Notizbuch fragen …", dann den Eintrag
-  wählen. Einträge zur Person, mit der man redet, stehen vorn.
+  wählen. Einträge zur Person, mit der man redet, stehen vorn. Auch nach
+  Erledigtem und Gehörtem kann man fragen.
 
 HILFE
 - Das Spiel sagt nicht, was als Nächstes zu tun ist. Hinsehen, zuhören,
