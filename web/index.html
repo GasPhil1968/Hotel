@@ -12618,8 +12618,8 @@ M.HINTS_K2=[
  {id:'f4',t:'Großmutters Haus',open:function(G){ return G.phase==='k2_fin' && N(G,'f2_postcard') && !N(G,'f2_rcm'); },
   s:['Lana wollte jemanden holen. Damals war das Ziel Großmutters Haus in Vratnik.',
      function(G){ return I(G,'key_kuca')||F(G,'k2.f2.kuca')?'Der Schlüssel zu Großmutters Haus ist da. In der Küche ist etwas zu spüren.':'Wer hat einen Schlüssel zu Großmutters Haus? Jemand, der dreißig Jahre gegenüber wohnte.'; },
-     function(G){ if (!(I(G,'key_kuca')||F(G,'k2.f2.kuca'))) return 'Hajra hat den Schlüssel.'; if (!N(G,'f2_oven')) return {m:'Mala soll in Großmutters Küche den Kohleherd spüren.',g:'Ich soll in Großmutters Küche den Kohleherd spüren.'}; return 'Das Wärmefach am Herd klemmt. Es braucht einen Hebel.'; },
-     function(G){ if (!(I(G,'key_kuca')||F(G,'k2.f2.kuca'))) return 'Hajra nach Großmutters Haus fragen.'; if (!N(G,'f2_oven')) return {m:'Als Mala den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.',g:'Den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.'}; return I(G,'chisel')?'Das Wärmefach mit dem Stemmeisen öffnen.':'Nedžads Stemmeisen holen. Wer es zurückgegeben hat, leiht es noch einmal. Dann das Wärmefach öffnen.'; }]},
+     function(G){ if (!(I(G,'key_kuca')||F(G,'k2.f2.kuca'))) return 'Hajra hat den Schlüssel.'; if (!N(G,'f2_oven')) return {m:'Mala soll in Großmutters Küche den Kohleherd spüren.',g:'Ich soll in Großmutters Küche den Kohleherd spüren.'}; if (I(G,'rcm')) return 'Die Nachricht aus dem Wärmefach ist da. Ich habe sie noch nicht gelesen.'; if (G.rooms&&G.rooms.kuca&&G.rooms.kuca.msgTaken) return 'Die Nachricht liegt jetzt bei Nada.'; return 'Das Wärmefach am Herd klemmt. Es braucht einen Hebel.'; },
+     function(G){ if (!(I(G,'key_kuca')||F(G,'k2.f2.kuca'))) return 'Hajra nach Großmutters Haus fragen.'; if (!N(G,'f2_oven')) return {m:'Als Mala den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.',g:'Den Kohleherd oder das Wärmefach spüren. Dann weiß Marko, was darin liegt.'}; if (I(G,'rcm')) return 'Die Nachricht vom Roten Kreuz lesen.'; if (G.rooms&&G.rooms.kuca&&G.rooms.kuca.msgTaken) return 'Nada hat die Nachricht. Sie mit Nada besprechen.'; return I(G,'chisel')?'Das Wärmefach mit dem Stemmeisen öffnen.':'Nedžads Stemmeisen holen. Wer es zurückgegeben hat, leiht es noch einmal. Dann das Wärmefach öffnen.'; }]},
  {id:'f5',t:'Zwei Nachrichten',open:function(G){ return G.phase==='k2_fin' && N(G,'f2_rcm') && !N(G,'f2_cameback'); },
   s:['Lana hat geschrieben, und ihrer Mutter auch.','Zwei Schriftstücke, die dasselbe erzählen könnten.','Die Nachricht vom Roten Kreuz und die Postkarte.','Im Notizbuch die Rotkreuz-Nachricht mit der Postkarte verbinden.']},
  {id:'f7',t:'Die erste Drei nach dem Krieg',open:function(G){ return G.phase==='k2_fin' && N(G,'f2_cameback') && !F(G,'k2.f2.night'); },
@@ -53904,7 +53904,9 @@ async function pryComp(A){ var S=A.S; if (S.msgTaken) return A.m('Das Wärmefach
     await A.m(A.G.malaOn?'Großmutters Herd aufbrechen, einfach so? Erst will ich wissen, was da drin ist. Mala spürt mehr als ich. Sie soll den Herd spüren.':'Großmutters Herd aufbrechen, einfach so? Erst will ich wissen, warum.'); return; }
   if (!A.has('chisel')){ A.setFlag('k2.f2.needChisel'); await A.m('Die Klappe sitzt fest. Mit den Fingern bekomme ich sie nicht auf. Etwas Schmales, Festes … Nedžads Stemmeisen.'); return; }
   await A.animM('reachM'); A.sfx('creak'); A.set('compOpen',true); await A.m('Das Stemmeisen unter die Klappe. Der Rost knirscht, dann springt sie auf.'); await A.wait(600);
-  await A.reach(); A.set('msgTaken',true); A.give('rcm'); A.sfx('paper'); await A.m('Darin, gefaltet, grau vom Ruß: ein Formular. Oben ein rotes Kreuz.'); A.save(); }
+  await A.reach(); A.set('msgTaken',true); A.give('rcm'); A.sfx('paper'); await A.m('Darin, gefaltet, grau vom Ruß: ein Formular. Oben ein rotes Kreuz.');
+  // Analyse K2-B01: gleich lesen. Vorher lag die Nachricht ungelesen im Inventar; wer sie so Nada gab, verlor sie und mit ihr das Kapitelende.
+  await A.wait(500); await A.m('Ich falte es auseinander.'); await M.k2ReadRCM(A); A.save(); }
 async function senseOven(A){ if (A.hasNote('f2_oven')) return A.g('Ihre Hände. Sie zittern. Sie legt das Papier hinein und macht die Klappe zu.'); A.setFlag('k2.f2.echoOven'); A.rebuild();
        await A.memory({title:'Nachhall – am Herd',tint:'ghost',draw:M.mem&&M.mem.k2_ruza,lines:['Januar 1994. Eine alte Frau mit Kopftuch am Tisch, ein Formular in der Hand. Draußen schießt es, weit weg.','Sie liest es zweimal. Sie weint, ohne Geräusch.','Vom Hof hört man einen Jungen, der Holz hackt.','Sie faltet das Papier und legt es in das Wärmefach. „Für später. Wenn er stärker ist.“']}); A.note('f2_oven');
        await A.g('Sie hat es versteckt. Hier drin. Für später.'); await A.m('Großmutter.'); }
@@ -57068,9 +57070,16 @@ M.room('skloniste',{ name:'Schutzraum', scape:'k2_skloniste', music:function(G){
 'use strict';
 var P=M.P;
 function fin(G){ return G.phase==='k2_fin'; } function epi(G){ return G.phase==='k2_epi'; }
+// Analyse K2-B01: Vor dem Epilog nimmt Nada die Nachricht nicht an (sonst ging sie samt Kapitelende verloren).
+async function nadaNotYet(A,N){ await N.say('Nicht jetzt, Mali. Ich kann heute kein Papier mehr lesen.'); await A.wait(500); await N.say('Bring es mir, wenn du weißt, wo sie ist.'); }
+// Ältere Spielstände: Nada hat die Nachricht schon, Marko hat sie nie gelesen. Sie gibt sie zurück, der Epilog bei ihr kommt später noch einmal.
+function rcmStuck(A){ return fin(A.G) && !A.has('rcm') && !A.hasNote('f2_rcm') && A.flag('k2.epi.nada'); }
+async function rcmBack(A,N){ await A.m('Die Nachricht vom Roten Kreuz … ich habe sie Ihnen gegeben, ohne sie selbst zu lesen.'); await A.wait(500); await N.say('Dann lies sie. Hier.');
+  A.give('rcm'); A.sfx('paper'); A.setFlag('k2.epi.nada',false); await A.wait(400); await M.k2ReadRCM(A); A.save(); }
 async function talkNada(A){ var N=A.npc('nada');
   if (epi(A.G)) return nadaEpi(A,N);
   await A.menuLoop(function(){ return [
+    {t:'Die Nachricht vom Roten Kreuz …',if:rcmStuck(A),go:function(A){ return rcmBack(A,N); }},
     {t:'Ich bin Marko. Vom siebten Stock.',once:'nd0',go:async function(A){ await N.say('Ich weiß, wer du bist. Ich habe dich an den Ohren erkannt, nicht am Foto. Du hattest schon damals Ohren wie ein Pokal.'); await A.wait(700); await N.say('Mali.'); }},
     {t:'Darf ich Lanas Zimmer sehen?',if:!A.S.lanaOpen,go:function(A){ return openRoom(A,N); }},
     {t:'Was ist mit Lana geschehen?',if:A.S.lanaOpen&&!A.hasNote('f2_missing'),go:async function(A){ await N.say('Sie ist im November dreiundneunzig mit einem Bus aus der Stadt. Esad hat ihr den Platz besorgt. Sie hat geweint, weil du nicht da warst.');
@@ -57103,7 +57112,7 @@ var HS=[
  {id:'door',name:'Wohnungstür',exit:{to:'haustor'},look:'Die Wohnungstür, mit drei Riegeln und einer Kette.'},
  {id:'nada',npc:'nada',name:'Nada',hgt:36,vis:function(S,G){ return fin(G)||epi(G); },talk:talkNada,
    look:'Nada Delić. Grau, schmal, müde, die Hände verschränkt, als würde sie sie festhalten. Lanas Augen, nur älter.',
-   give:{ photo_full:async function(A){ var N=A.npc('nada'); await N.say('Das Foto. Dragica hat es gemacht. Lana hat es im November zerrissen. Ich habe ihr gesagt, sie ist verrückt.'); await N.say('Sie hat gesagt: Damit wir uns wiederfinden.'); }, rcm:function(A){ return nadaEpi(A,A.npc('nada')); },
+   give:{ photo_full:async function(A){ var N=A.npc('nada'); await N.say('Das Foto. Dragica hat es gemacht. Lana hat es im November zerrissen. Ich habe ihr gesagt, sie ist verrückt.'); await N.say('Sie hat gesagt: Damit wir uns wiederfinden.'); }, rcm:function(A){ return epi(A.G)?nadaEpi(A,A.npc('nada')):nadaNotYet(A,A.npc('nada')); },
      drawing:'Nada: „Ihre Straßenbahn. Nein … deine. Mit den schiefen Rädern.“', sweater:'Nada: „Ruža hat ihn gestrickt. Lana hat gesagt, du siehst darin aus wie eine Zuckerstange.“' },
    g:{look:'Mama.',listen:async function(A){ await A.g('Sie redet nicht. Sie denkt meinen Namen. Ganz laut.'); }}},
  {id:'table',name:'Tisch',look:'Ein Küchentisch mit Wachstuch, Kirschmuster. Zwei Stühle. Auf dem einen sitzt Nada, auf dem anderen niemand, seit Jahren.',g:{look:'Mein Stuhl. Er wackelt immer noch.'}},

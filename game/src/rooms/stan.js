@@ -3,9 +3,16 @@
 'use strict';
 var P=M.P;
 function fin(G){ return G.phase==='k2_fin'; } function epi(G){ return G.phase==='k2_epi'; }
+// Analyse K2-B01: Vor dem Epilog nimmt Nada die Nachricht nicht an (sonst ging sie samt Kapitelende verloren).
+async function nadaNotYet(A,N){ await N.say('Nicht jetzt, Mali. Ich kann heute kein Papier mehr lesen.'); await A.wait(500); await N.say('Bring es mir, wenn du weißt, wo sie ist.'); }
+// Ältere Spielstände: Nada hat die Nachricht schon, Marko hat sie nie gelesen. Sie gibt sie zurück, der Epilog bei ihr kommt später noch einmal.
+function rcmStuck(A){ return fin(A.G) && !A.has('rcm') && !A.hasNote('f2_rcm') && A.flag('k2.epi.nada'); }
+async function rcmBack(A,N){ await A.m('Die Nachricht vom Roten Kreuz … ich habe sie Ihnen gegeben, ohne sie selbst zu lesen.'); await A.wait(500); await N.say('Dann lies sie. Hier.');
+  A.give('rcm'); A.sfx('paper'); A.setFlag('k2.epi.nada',false); await A.wait(400); await M.k2ReadRCM(A); A.save(); }
 async function talkNada(A){ var N=A.npc('nada');
   if (epi(A.G)) return nadaEpi(A,N);
   await A.menuLoop(function(){ return [
+    {t:'Die Nachricht vom Roten Kreuz …',if:rcmStuck(A),go:function(A){ return rcmBack(A,N); }},
     {t:'Ich bin Marko. Vom siebten Stock.',once:'nd0',go:async function(A){ await N.say('Ich weiß, wer du bist. Ich habe dich an den Ohren erkannt, nicht am Foto. Du hattest schon damals Ohren wie ein Pokal.'); await A.wait(700); await N.say('Mali.'); }},
     {t:'Darf ich Lanas Zimmer sehen?',if:!A.S.lanaOpen,go:function(A){ return openRoom(A,N); }},
     {t:'Was ist mit Lana geschehen?',if:A.S.lanaOpen&&!A.hasNote('f2_missing'),go:async function(A){ await N.say('Sie ist im November dreiundneunzig mit einem Bus aus der Stadt. Esad hat ihr den Platz besorgt. Sie hat geweint, weil du nicht da warst.');
@@ -38,7 +45,7 @@ var HS=[
  {id:'door',name:'Wohnungstür',exit:{to:'haustor'},look:'Die Wohnungstür, mit drei Riegeln und einer Kette.'},
  {id:'nada',npc:'nada',name:'Nada',hgt:36,vis:function(S,G){ return fin(G)||epi(G); },talk:talkNada,
    look:'Nada Delić. Grau, schmal, müde, die Hände verschränkt, als würde sie sie festhalten. Lanas Augen, nur älter.',
-   give:{ photo_full:async function(A){ var N=A.npc('nada'); await N.say('Das Foto. Dragica hat es gemacht. Lana hat es im November zerrissen. Ich habe ihr gesagt, sie ist verrückt.'); await N.say('Sie hat gesagt: Damit wir uns wiederfinden.'); }, rcm:function(A){ return nadaEpi(A,A.npc('nada')); },
+   give:{ photo_full:async function(A){ var N=A.npc('nada'); await N.say('Das Foto. Dragica hat es gemacht. Lana hat es im November zerrissen. Ich habe ihr gesagt, sie ist verrückt.'); await N.say('Sie hat gesagt: Damit wir uns wiederfinden.'); }, rcm:function(A){ return epi(A.G)?nadaEpi(A,A.npc('nada')):nadaNotYet(A,A.npc('nada')); },
      drawing:'Nada: „Ihre Straßenbahn. Nein … deine. Mit den schiefen Rädern.“', sweater:'Nada: „Ruža hat ihn gestrickt. Lana hat gesagt, du siehst darin aus wie eine Zuckerstange.“' },
    g:{look:'Mama.',listen:async function(A){ await A.g('Sie redet nicht. Sie denkt meinen Namen. Ganz laut.'); }}},
  {id:'table',name:'Tisch',look:'Ein Küchentisch mit Wachstuch, Kirschmuster. Zwei Stühle. Auf dem einen sitzt Nada, auf dem anderen niemand, seit Jahren.',g:{look:'Mein Stuhl. Er wackelt immer noch.'}},

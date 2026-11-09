@@ -7,7 +7,9 @@ async function pryComp(A){ var S=A.S; if (S.msgTaken) return A.m('Das Wärmefach
     await A.m(A.G.malaOn?'Großmutters Herd aufbrechen, einfach so? Erst will ich wissen, was da drin ist. Mala spürt mehr als ich. Sie soll den Herd spüren.':'Großmutters Herd aufbrechen, einfach so? Erst will ich wissen, warum.'); return; }
   if (!A.has('chisel')){ A.setFlag('k2.f2.needChisel'); await A.m('Die Klappe sitzt fest. Mit den Fingern bekomme ich sie nicht auf. Etwas Schmales, Festes … Nedžads Stemmeisen.'); return; }
   await A.animM('reachM'); A.sfx('creak'); A.set('compOpen',true); await A.m('Das Stemmeisen unter die Klappe. Der Rost knirscht, dann springt sie auf.'); await A.wait(600);
-  await A.reach(); A.set('msgTaken',true); A.give('rcm'); A.sfx('paper'); await A.m('Darin, gefaltet, grau vom Ruß: ein Formular. Oben ein rotes Kreuz.'); A.save(); }
+  await A.reach(); A.set('msgTaken',true); A.give('rcm'); A.sfx('paper'); await A.m('Darin, gefaltet, grau vom Ruß: ein Formular. Oben ein rotes Kreuz.');
+  // Analyse K2-B01: gleich lesen. Vorher lag die Nachricht ungelesen im Inventar; wer sie so Nada gab, verlor sie und mit ihr das Kapitelende.
+  await A.wait(500); await A.m('Ich falte es auseinander.'); await M.k2ReadRCM(A); A.save(); }
 async function senseOven(A){ if (A.hasNote('f2_oven')) return A.g('Ihre Hände. Sie zittern. Sie legt das Papier hinein und macht die Klappe zu.'); A.setFlag('k2.f2.echoOven'); A.rebuild();
        await A.memory({title:'Nachhall – am Herd',tint:'ghost',draw:M.mem&&M.mem.k2_ruza,lines:['Januar 1994. Eine alte Frau mit Kopftuch am Tisch, ein Formular in der Hand. Draußen schießt es, weit weg.','Sie liest es zweimal. Sie weint, ohne Geräusch.','Vom Hof hört man einen Jungen, der Holz hackt.','Sie faltet das Papier und legt es in das Wärmefach. „Für später. Wenn er stärker ist.“']}); A.note('f2_oven');
        await A.g('Sie hat es versteckt. Hier drin. Für später.'); await A.m('Großmutter.'); }
