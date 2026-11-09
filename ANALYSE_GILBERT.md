@@ -1097,8 +1097,20 @@ Dazu:
 
 ### J.3 Übrige Prüfungen
 
-Stand während der Abschlussprüfung (wird nach deren Ende ergänzt):
+Alle Prüfungen liefen auf dem Stand nach der Umsetzung.
 
-- **Regressionstests** (`node qa/regress/run.js`): 14 von 14 bestanden, darunter die fünf neuen Tests BUG-010 bis BUG-014.
-- **Durchläufe der Musterlösung:** Kapitel 1 (61 Schritte), Kapitel 2 (67 Schritte) und Kapitel 3 (113 Schritte) bis zum Abspann, keine JS-Fehler. Kapitel 4, Kapitel 5, die zweite Reihenfolge in Kapitel 2 und die übrigen Prüfungen laufen noch.
-- **Übersetzung:** `node game/tools/i18n_check.js game/src/lang game/src/15_hints_k1.js` meldet keine fehlenden, falsch geschlüsselten oder unübersetzten Texte der Kapitel-1-Hinweise.
+| Prüfung | Ergebnis |
+|---|---|
+| Regressionstests (`node qa/regress/run.js`) | 14 von 14 bestanden, darunter die neuen Tests BUG-010 bis BUG-014 |
+| Durchläufe der Musterlösung (`game/tools/walkthrough*.js`) | bis zum Abspann, ohne JS-Fehler: Kapitel 1 (61 Schritte), Kapitel 2 (67 Schritte, dazu die zweite Reihenfolge mit `MALA_ORDER=alt`), Kapitel 3 (113), Kapitel 4 (85), Kapitel 5 (55, dazu die Variante mit `MALA_K5VAR=1`, 51 Schritte) |
+| Zusatztests der Kapitel (`k2tests.js`, `k3tests.js`, `k4tests.js`) | 33 von 33, 180 von 180, 116 von 116, dieselben Zahlen wie in den Kapitelberichten |
+| Einstieg (`einstiegtests.js`) | 39 von 39 |
+| Hinweisprüfung entlang der Musterlösung (`hintcheck.js`) | bestanden: 1.155 Stände (Durchläufe und Nebenwege der Zusatztests), 264 Themen, davon 253 offen gewesen, keine Lücke. Die 10 Stellen „zu sichten“ sind Wortgleichheiten: „Fahrschein“ heißt auch Markos entwerteter Straßenbahnschein, „Formular“ auch das abgegebene Formular; gemeint sind Malas und Lanas Fahrscheine, der Fahrschein aus dem Karton und das Formular der Vermisstenstelle. Der Stand vor der Umsetzung meldet auf denselben Ständen dieselben 10 Stellen, und die Hinweisprobe hat die genannten Schritte ausgeführt. |
+| Hinweisprobe (`qa/hints/hintprobe.js`) | 0 Fehler, siehe J.2 |
+| Oberfläche (`qa/ui/phase1.js` bis `phase5.js`, `savecompat.js`) | Phase 1: 33/33, Phase 2: 81/81, Phase 3: 52/52, Phase 4: 92/92, Phase 5: 31/31, alte Spielstände: 33/33. Zwei zeitabhängige Prüfungen schwanken in dieser Umgebung, auf dem neuen wie auf dem alten Stand. In Phase 1 schreibt Chromium den Merker des Hochformat-Hinweises unter Volllast nicht immer rechtzeitig weg; das Spiel löscht ihn nicht (geprüft mit einem Protokoll von `removeItem` und `clear`). In Phase 5 greift die Feinwahl (0,4 s) bei 0,6 s Halten nicht immer. Auf dem freien Rechner bestand Phase 1 im ersten Lauf, Phase 5 in zwei von vier Läufen; im Nachbau der Feinwahl-Prüfung fiel der alte Stand 4 von 11 Mal durch, der neue 1 von 11 Mal. Am Eingabecode hat die Umsetzung nichts geändert. |
+| Offline (`offlinetest.js`) | bestanden, alle fünf Kapitel starten offline |
+| Übersetzung (`i18n_check.js` über die Kapitel-1-Hinweise) | keine fehlenden, falsch geschlüsselten oder unübersetzten Texte |
+
+Die Durchläufe der Kapitel 1–3 liefen auf dem Build unmittelbar vor der letzten Hinweiskorrektur (m1b2); sie werten keine Hinweistexte aus. Hinweisprüfung und Hinweisprobe liefen auf dem endgültigen Build.
+
+**Angepasste Prüfwerkzeuge.** `k2tests.js`, `k3tests.js` und `k4tests.js` bedienten das Titelmenü noch über das frühere Canvas-Menü und erwarteten die Kapitel direkt im Hauptmenü. Seit der HTML-Schicht und der Kapitelwahl stehen sie unter „Kapitel wählen“; `k2tests` brach deshalb vor den eigentlichen Tests ab. Die Tests wählen die Einträge jetzt über die HTML-Schicht (`M.shell.pick`). `k4tests` Test 8 erwartet an der Uhr den neuen Satz „Jetzt nicht mehr.“ und die Wahl „(Später wiederkommen.)“ (P04).
