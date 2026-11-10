@@ -15527,6 +15527,23 @@ scn.tram=function(b,x,baseY,opt){ opt=opt||{}; var s=opt.s||0.6, H=Math.round(80
   return {x0:x,x1:x+L,top:top,bot:baseY,winT:winT,winB:winB}; };
 })(M);
 
+/* ---- portraits/_derive.js ---- */
+/* ===== portraits/_derive.js — abgeleitete Porträts: eine bestehende Vorlage malen, dann Farben je Bildbereich umsetzen (Haar, Mütze,
+   Kleidung, Bart) und Zubehör darüber zeichnen (Brille, Kopfhörer, Stirnlampe, Ausweis). So bekommen Nebenfiguren ein gemaltes
+   Brustbild im selben Stil, ohne dass die Vorlage ein zweites Mal gezeichnet wird. Die Vorlage selbst bleibt unverändert.
+   M.derivePortrait(id, vorlage, { maps:[{r:[x,y,w,h], map:{von:'nach', …}}, …], after:function(b,v){ … } })
+   Die maps gelten nacheinander; innerhalb einer map wird jede Farbe nur einmal umgesetzt (keine Ketten). */
+(function(M){
+'use strict';
+var P=M.P, T=M.T;
+M.derivePortrait=function(id,base,o){ o=o||{};
+  M.definePortrait(id,{ paint:function(b,v){ var d=M.PORTRAITS[base]; if (!d) throw new Error('Porträt-Vorlage fehlt: '+base); d.paint(b,v);
+    (o.maps||[]).forEach(function(m){ var r=m.r||[0,0,b.w,b.h], tab=new Int16Array(256); tab.fill(-1);
+      Object.keys(m.map).forEach(function(k){ if (P[k]===undefined||P[m.map[k]]===undefined) throw new Error('Porträt '+id+': Farbe '+k+'→'+m.map[k]); tab[P[k]]=P[m.map[k]]; });
+      for (var y=Math.max(0,r[1]);y<Math.min(b.h,r[1]+r[3]);y++) for (var x=Math.max(0,r[0]);x<Math.min(b.w,r[0]+r[2]);x++){ var i=y*b.w+x, c=b.d[i]; if (c!==T && tab[c]>=0) b.d[i]=tab[c]; } });
+    if (o.after) o.after(b,v); } }); };
+})(M);
+
 /* ---- portraits/alija.js ---- */
 /* ===== portraits/alija.js — Alija (Geist, um 60, gestorben 1995), Kioskbesitzer (Kapitel 2, Sarajevo)
    Graubraune Tweed-Schiebermütze mit Druckknopf am Schirm, darunter kurzes graues Haar; rundes, freundliches Gesicht mit
@@ -15952,6 +15969,49 @@ function paint(b,v){
 M.definePortrait('ana',{ paint:paint });
 })(M);
 
+/* ---- portraits/aussie1.js ---- */
+/* ===== portraits/aussie1.js — Rucksackreisender aus Australien (um 22) (Kapitel 3): aus Lukas Bild – blondes Haar, orange Funktionsjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('aussie1','luka',{ maps:[
+  {r:[0,0,56,44], map:{h0:'y1', h1:'y2', h2:'y3', h3:'y4'}},
+  {r:[0,44,56,20], map:{r0:'t1', r1:'t2', r2:'t3', r3:'t4', r4:'t5'}}
+] });
+})(M);
+
+/* ---- portraits/aussie2.js ---- */
+/* ===== portraits/aussie2.js — Rucksackreisender aus Australien (um 22) (Kapitel 3): aus Kevins Bild – rotbraunes Haar, blaue Funktionsjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('aussie2','kevin',{ maps:[
+  {r:[0,0,56,44], map:{h0:'w0', h1:'w1', h2:'w2', h3:'w3'}},
+  {r:[0,44,56,20], map:{a4:'b1', a5:'b2', a6:'b3', s6:'b3', s3:'b1'}}
+] });
+})(M);
+
+/* ---- portraits/aussie3.js ---- */
+/* ===== portraits/aussie3.js — Rucksackreisender aus Australien mit Gitarre (um 22) (Kapitel 3): aus Tomažs Bild – langes braunes Haar, grüne Funktionsjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('aussie3','tomaz',{ maps:[
+  {r:[0,44,56,20], map:{w2:'g1', w3:'g2', w4:'g3', w5:'g4', l1:'g5'}}
+] });
+})(M);
+
+/* ---- portraits/babica.js ---- */
+/* ===== portraits/babica.js — alte Frau in der Straßenbahn (Kapitel 2): aus Zlatas Bild – braunes Kopftuch, dunkelgrüner Mantel ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('babica','zlata',{ maps:[
+  {r:[0,0,56,44], map:{n0:'w0', n1:'w1', n2:'w2', n3:'w3', n4:'w4'}},
+  {r:[0,44,56,20], map:{s0:'g0', s1:'g1', s2:'g2', s3:'g3', w3:'g1', w2:'g0', n1:'w1', n2:'w2', n3:'w3', n0:'w0'}}
+] });
+})(M);
+
 /* ---- portraits/bato.js ---- */
 /* ===== portraits/bato.js — Bato Brkić (Geist, † 2006, wirkt 71), Fährmann an der Neretva bei Skela (Kapitel 3)
    Groß und breit: großer Kopf unter einer alten dunklen Schiebermütze (Schirm wirft Schatten auf die Stirn), weißes Haar im Nacken,
@@ -16057,6 +16117,18 @@ function paint(b,v){
 M.definePortrait('bato',{ paint:paint });
 // im Spiel ein Geist: Porträt in seiner Geisterfarbe (M.ghostLut)
 if (M.PORTRAIT_GHOSTS) M.PORTRAIT_GHOSTS.bato=true;
+})(M);
+
+/* ---- portraits/beamtin.js ---- */
+/* ===== portraits/beamtin.js — Schalterbeamtin im Konsulat (um 40) (Kapitel 4): aus Eminas Bild – dunkles Haar im Knoten, dunkelblauer Blazer, weiße Bluse, ohne Ohrringe ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('beamtin','emina',{ maps:[
+  {r:[0,0,56,24], map:{m3:'h2', m2:'h1', m1:'h0'}},
+  {r:[0,22,56,22], map:{y2:'p2', y3:'p3', y5:'p5', m3:'h2', m2:'h1'}},
+  {r:[0,44,56,20], map:{r0:'n0', r1:'n0', r2:'n1', r3:'n2', r4:'n3', m0:'s5', m1:'s6', m2:'s6'}}
+] });
 })(M);
 
 /* ---- portraits/bruno.js ---- */
@@ -16800,6 +16872,18 @@ function paint(b,v){
 M.definePortrait('emina',{ paint:paint });
 })(M);
 
+/* ---- portraits/empfang.js ---- */
+/* ===== portraits/empfang.js — Empfang im Haus am Bavariapark (um 45) (Kapitel 4): aus Šehićs Bild – dunkles Haar, grauer Pullover, ohne Schnurrbart ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('empfang','sehic',{ maps:[
+  {r:[0,0,56,24], map:{m4:'m2', m3:'m1', m2:'m0', m1:'k2'}},
+  {r:[18,32,24,9], map:{m1:'q3', m2:'q4', m3:'q4'}},
+  {r:[0,44,56,20], map:{s1:'m1', s2:'m2', s3:'m3', s4:'m4', w1:'m1', w2:'m2'}}
+] });
+})(M);
+
 /* ---- portraits/enzo.js ---- */
 /* ===== portraits/enzo.js — Signor Enzo Caruso (78), Bar Sport im Bahnhofsviertel (Kapitel 4, München)
    Klein und rund: rundes Gesicht mit vollen Wangen, Glatze mit weißem Haarkranz, dicke schwarze Brille, weißer Schnurrbart und weiße Brauen;
@@ -17243,6 +17327,18 @@ function paint(b,v){
 M.definePortrait('fikret',{ paint:paint });
 })(M);
 
+/* ---- portraits/fra.js ---- */
+/* ===== portraits/fra.js — Fra Ivo, Franziskaner von Sveti Ante (Kapitel 5): aus Šehićs Bild – kurzes dunkelgraues Haar, ohne Schnurrbart, weißes Chorhemd über brauner Kutte, violette Stola ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('fra','sehic',{ maps:[
+  {r:[0,0,56,24], map:{m4:'m3', m3:'m2', m2:'m1', m1:'m0'}},
+  {r:[18,32,24,9], map:{m1:'q3', m2:'q4', m3:'q4'}},
+  {r:[0,44,56,20], map:{s1:'s4', s2:'s5', s3:'s6', s4:'s6', w1:'s3', w2:'s4', b2:'w2', b3:'w2', b4:'w3', n0:'d1', n1:'d2', n2:'d2', n3:'d3'}}
+] });
+})(M);
+
 /* ---- portraits/frane.js ---- */
 /* ===== portraits/frane.js — Frane (70+), Kartenspieler in der Bar „Bura“ =====
    Glatze (Hautfarbe mit Glanzlicht) und weißer Haarkranz, buschige weiße Brauen, kurzer weißer Bart wie bei der Spielfigur,
@@ -17334,6 +17430,38 @@ M.definePortrait('frane',{ paint:function(b,v){
   if (v.eyes && LID) put(b,LID[2],LID[0],LID[1]);
   M.outline(b,P.k1);
 } });
+})(M);
+
+/* ---- portraits/gast1.js ---- */
+/* ===== portraits/gast1.js — Gast der Bahnhofsmission (um 65) (Kapitel 4): aus Dinkos Bild – grauer Vollbart, graue Wollmütze, abgetragener Parka ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('gast1','dinko',{ maps:[
+  {r:[0,0,56,24], map:{n0:'m0', n1:'m1', n2:'m2', n3:'m3'}},
+  {r:[0,22,56,22], map:{m1:'s2', m2:'s3', m3:'s4', g0:'s1', g1:'s2', g2:'s3', g3:'s4'}},
+  {r:[0,44,56,20], map:{g0:'w0', g1:'w1', g2:'w2', g3:'w3'}}
+] });
+})(M);
+
+/* ---- portraits/gast2.js ---- */
+/* ===== portraits/gast2.js — Reisende in der Bahnhofsmission (um 25) (Kapitel 4): aus Sanjas Bild – kurzes schwarzes Haar, gelbe Daunenjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('gast2','sanja',{ maps:[
+  {r:[0,44,56,20], map:{r0:'y1', r1:'y2', r2:'y3', r3:'y4', r4:'y5', m0:'y1', m1:'y2', m2:'y3', m3:'y4', n0:'y1', c1:'y2', k2:'y2'}}
+] });
+})(M);
+
+/* ---- portraits/gast3.js ---- */
+/* ===== portraits/gast3.js — alter Mann in der Bar Sport (um 80) (Kapitel 4): aus Mates Bild – dunkler Hut und Mantel, sehr dünn ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('gast3','mate',{ maps:[
+  {r:[0,0,56,64], map:{m0:'k1', m1:'k2', m2:'s0', m3:'s1', m4:'s2'}}
+] });
 })(M);
 
 /* ---- portraits/gerda.js ---- */
@@ -18718,6 +18846,17 @@ function paint(b,v){
 M.definePortrait('jela',{ paint:paint });
 })(M);
 
+/* ---- portraits/kasir.js ---- */
+/* ===== portraits/kasir.js — Kassierer an der Koski-Moschee (um 30) (Kapitel 3): aus Mirzas Bild – marineblaue Wollmütze, schwarze Daunenjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('kasir','mirza',{ maps:[
+  {r:[0,0,56,32], map:{m0:'n0', m1:'n1', m2:'n2', m3:'n3', m4:'n4'}},
+  {r:[0,44,56,20], map:{b0:'k1', b1:'k2', b2:'s0', b3:'s1', n1:'k1', w1:'k2', w2:'s0', w3:'s1', y3:'s2'}}
+] });
+})(M);
+
 /* ---- portraits/kata.js ---- */
 /* ===== portraits/kata.js — Kata Rajić (29), Vlados Tochter, macht die Notdienste der Werkstatt (Kapitel 3, Mostar)
    Schlank, schmales kantiges Gesicht mit hohen Wangenknochen: kurzes dunkelblondes Haar mit Undercut (Seiten und Nacken
@@ -18920,6 +19059,17 @@ function paint(b,v){
   M.outline(b,P.k1);
 }
 M.definePortrait('kevin',{ paint:paint });
+})(M);
+
+/* ---- portraits/kioskg.js ---- */
+/* ===== portraits/kioskg.js — Kioskfrau an Gleis 11 (um 58) (Kapitel 4): aus Ljerkas Bild – blond gefärbt und hochgesteckt, dunkelrote Strickjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('kioskg','ljerka',{ maps:[
+  {r:[0,0,56,24], map:{s0:'y1', s1:'y2', s2:'y3', s3:'y3', s4:'y4', s5:'y5'}},
+  {r:[0,44,56,20], map:{e1:'r1', e2:'r2', e3:'r3', e4:'r4', w1:'r1'}}
+] });
 })(M);
 
 /* ---- portraits/kioskm.js ---- */
@@ -19138,6 +19288,27 @@ function paint(b,v){
   M.outline(b,P.k1);
 }
 M.definePortrait('kolar',{ paint:paint });
+})(M);
+
+/* ---- portraits/komsija.js ---- */
+/* ===== portraits/komsija.js — Nachbar in Skela mit Hund (um 55) (Kapitel 3): aus Ilijas Bild – dunkle Mütze mit Stirnlampe, orangebraune Arbeitsjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('komsija','ilija',{ maps:[
+  {r:[0,44,56,20], map:{g0:'t0', g1:'t1', g2:'t2', g3:'t3', g4:'t4', y1:'t1', y2:'t2', y4:'t4'}}
+], after:function(b,v){ b.rect(14,16,30,3,P.k2); b.hl(14,43,17,P.k1); b.rect(27,13,10,8,P.k1); b.rect(28,14,8,6,P.m3); b.rect(29,15,6,4,P.y4); b.px(30,16,P.l1); } });
+})(M);
+
+/* ---- portraits/kontrolor.js ---- */
+/* ===== portraits/kontrolor.js — Fahrscheinkontrolleur in der Straßenbahn (Kapitel 2): aus Damirs Bild – ergrautes Haar, dunkelgraue Jacke, weißer Kragen, Ausweis am Band ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('kontrolor','damir',{ maps:[
+  {r:[0,0,56,44], map:{h0:'m1', h1:'m2', h2:'m3', h3:'m4', s6:'p4', s5:'p4', y3:'p3', w4:'p3'}},
+  {r:[0,44,56,20], map:{n0:'k2', n1:'s0', n2:'s1', n3:'s2', n4:'s3', b1:'s3', b2:'s4', b3:'s5', b4:'s6', b5:'s6', r3:'s1', m2:'s1', m3:'s1', m4:'s1'}}
+], after:function(b,v){ b.line(22,46,27,58,P.k2); b.line(36,46,31,58,P.k2); b.rect(26,57,8,6,P.s6); b.rect(27,58,6,1,P.b3); b.rect(27,60,4,1,P.k2); b.rect(27,61,3,1,P.k2); } });
 })(M);
 
 /* ---- portraits/kraus.js ---- */
@@ -21248,6 +21419,17 @@ function paint(b,v){
 M.definePortrait('obermaier',{ paint:paint });
 })(M);
 
+/* ---- portraits/pflege1.js ---- */
+/* ===== portraits/pflege1.js — Pflegerin im Haus am Bavariapark (um 40) (Kapitel 4): aus Lejlas Bild – dunkler Pferdeschwanz, hellblauer Kasack, ohne Creolen ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('pflege1','lejla',{ maps:[
+  {r:[0,22,56,22], map:{y2:'p2', y3:'p3', y4:'p4', y5:'p5'}},
+  {r:[0,44,56,20], map:{s3:'b2', s4:'b3', s5:'b4', s6:'b5', k2:'s5', m1:'b2', m0:'b1', m3:'b3'}}
+] });
+})(M);
+
 /* ---- portraits/rade.js ---- */
 /* ===== portraits/rade.js — Rade Simić (63), Fahrdienstleiter der Straßenbahn (GRAS)
    Groß und hager: langes Gesicht, hohe Stirn mit Geheimratsecken, graues zurückgekämmtes Haar, eingefallene Wangen,
@@ -21759,6 +21941,17 @@ function paint(b,v){
 M.definePortrait('selma',{ paint:paint });
 })(M);
 
+/* ---- portraits/senada.js ---- */
+/* ===== portraits/senada.js — Senada (61), Kiosk am Bahnhof (Kapitel 2): aus Miras Bild – dunkelrotes Haar, dicke graue Strickjacke, oranger Schal, ohne Kette ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('senada','mira',{ maps:[
+  {r:[0,0,56,64], map:{r4:'r3', r3:'r2', r2:'r1', r1:'r0', d5:'r3', y2:'p3', y4:'p4'}},
+  {r:[0,44,56,20], map:{v0:'m0', v1:'m1', v2:'m2', v3:'m3', v4:'m4', s5:'t4', s4:'t3'}}
+] });
+})(M);
+
 /* ---- portraits/sepp.js ---- */
 /* ===== portraits/sepp.js — Giuseppe „Peppino“ Ruggiero, genannt Sepp (Geist, † Dezember 2011, wirkt 72), Gepäckträger Nr. 17 (Kapitel 4, München)
    Schlank und sehr aufrecht: schmales Gesicht, kurzes weißes Haar unter der Mütze, buschige weiße Brauen, dunkle Augen, ein dünner,
@@ -21865,6 +22058,18 @@ M.definePortrait('sepp',{ paint:function(b,v){
 if (M.PORTRAIT_GHOSTS) M.PORTRAIT_GHOSTS.sepp=true;
 })(M);
 
+/* ---- portraits/springer.js ---- */
+/* ===== portraits/springer.js — der Springer (Geist, wirkt 25, 1960er) (Kapitel 3): aus Kevins Bild – pomadisiertes dunkles Haar, nackte Schultern ===== */
+(function(M){
+'use strict';
+var P=M.P;
+if (M.PORTRAIT_GHOSTS) M.PORTRAIT_GHOSTS.springer=true;
+M.derivePortrait('springer','kevin',{ maps:[
+  {r:[0,44,56,20], map:{a6:'p4', a5:'p3', a4:'p2', s6:'p4', s3:'p2', k2:'p2', n2:'p3'}},
+  {r:[0,0,56,24], map:{h3:'h1', w3:'h2', w2:'h1', l1:'h3'}}
+] });
+})(M);
+
 /* ---- portraits/stipe.js ---- */
 /* ===== portraits/stipe.js — Stipe (70+), Kartenspieler in der Bar „Bura“ =====
    Schiebermütze (Khaki-Tweed), wettergegerbtes, faltiges Gesicht mit grauen Stoppeln, alte Jacke in Khaki/Grau über hellem Hemd. */
@@ -21953,6 +22158,28 @@ M.definePortrait('stipe',{ paint:function(b,v){
   if (v.eyes && LID) put(b,LID[2],LID[0],LID[1]);
   M.outline(b,P.k1);
 } });
+})(M);
+
+/* ---- portraits/student.js ---- */
+/* ===== portraits/student.js — Student in der Straßenbahn (Kapitel 2): aus Dinos Bild – dunkelrote Wollmütze, blaue Daunenjacke, Kopfhörer um den Hals ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('student','dino',{ maps:[
+  {r:[0,0,56,24], map:{h0:'r0', h1:'r1', h2:'r2', h3:'r3'}},
+  {r:[0,44,56,20], map:{r0:'b0', r1:'b1', r2:'b2', r3:'b3', r4:'b4', s5:'n1', s4:'n0', s3:'n0', m2:'b1', m3:'b2'}}
+], after:function(b,v){ var pts=[[13,30],[14,20],[18,12],[26,7],[36,6],[44,9],[48,15]]; for (var i=1;i<pts.length;i++){ b.line(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1],P.k1); b.line(pts[i-1][0],pts[i-1][1]+1,pts[i][0],pts[i][1]+1,P.m2); } b.rect(15,28,7,10,P.k1); b.rect(16,29,5,8,P.m2); b.rect(17,30,3,6,P.m1); } });
+})(M);
+
+/* ---- portraits/susjeda.js ---- */
+/* ===== portraits/susjeda.js — Marktnachbarin von Zlata (um 60) (Kapitel 3): aus Hajras Bild – grünes Kopftuch, dicker brauner Mantel ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('susjeda','hajra',{ maps:[
+  {r:[0,44,56,20], map:{g0:'w0', g1:'w1', g2:'w2', g3:'w3', g4:'w4', d3:'w2', d4:'w3', b1:'w1', b2:'w2', b3:'w3', y2:'w2', y3:'w3'}},
+  {r:[0,0,56,44], map:{b0:'g0', b1:'g1', b2:'g2', b3:'g3', b4:'g4', b5:'g5'}}
+] });
 })(M);
 
 /* ---- portraits/taxist.js ---- */

@@ -65,3 +65,13 @@ node game/tools/portraitsheet.js --html <dein-scratchpad>/build/index.html --out
 ```
 
 Das Blatt zeigt je Figur: ruhig, spricht, blinzelt (dunkler Grund), ruhig auf hellem Grund, eingefärbt (wie Geister erscheinen), auf blauem und hellem Grund, und eine Probe mit Textkasten.
+
+## Abgeleitete Porträts (Nebenfiguren)
+
+Nebenfiguren mit wenigen Sätzen bekommen ihr Brustbild aus einer Vorlage: `M.derivePortrait(id, vorlage, { maps, after })` in
+`portraits/_derive.js` malt die Vorlage, setzt dann Farben je Bildbereich um (`maps`: Rechteck `r:[x,y,w,h]` und `map:{von:'nach'}`,
+Palettennamen) und zeichnet Zubehör darüber (`after`: Brille, Kopfhörer, Stirnlampe, Ausweis). Die Vorlage bleibt unverändert.
+Beispiele: `senada` aus `mira`, `kontrolor` aus `damir`, `babica` aus `zlata`, `student` aus `dino`, `springer` aus `kevin`, `kasir` aus `mirza`,
+`susjeda` aus `hajra`, `komsija` aus `ilija`, `aussie1–3` aus `luka`, `kevin`, `tomaz`, `pflege1` aus `lejla`, `empfang` und `fra` aus `sehic`,
+`kioskg` aus `ljerka`, `gast1` aus `dinko`, `gast2` aus `sanja`, `gast3` aus `mate`, `beamtin` aus `emina`. Vorlage und Ableitung sollten
+nicht im selben Kapitel sprechen. Eine Ableitung ist ein Platzhalter mit eigenem Gesicht; wer die Figur wichtiger macht, malt ihr ein eigenes Bild.
