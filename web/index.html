@@ -3925,7 +3925,7 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
 SCR.about=function(){ var it=[], done=[]; for (var c=1;c<=5;c++) if (chDone(c)) done.push(c);
   done.forEach(function(c){ it.push({type:'btn',label:'Abspann Kapitel '+c,act:function(){ playCredits(c); }}); });
   return {layout:'about',title:'Über „Die Stillen“',text:['Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.','„Die Stillen“ heißt die Rubrik in Vesnas Zeitung, für die Marko schreibt: Nachrufe auf Menschen, die allein gestorben sind.','Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.','Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.'],
-    places:PLACES.slice(0,Math.min(5,chaptersReached())).join(' · '),items:it,back:true}; };
+    places:PLACES.slice(0,Math.min(5,chaptersReached())).join(' · '),build:M.BUILD||'',items:it,back:true}; };
 SCR.controls=function(){ return {layout:'about',title:'Steuerung',list:[
   'Etwas antippen: Ist nur etwas zu sehen, schaut Marko es an. Kann man etwas damit tun, kommt ein kleines Menü.',
   'Gegenstände aus der Leiste auf ihr Ziel ziehen – auch auf Mala, wenn sie sich etwas ansehen soll.',
@@ -4041,7 +4041,8 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
   if (v.layout==='title'){ h+='<div class="band"></div><nav class="menu tmenu" aria-label="'+esc(T('Hauptmenü'))+'">';
     v.items.forEach(function(x){ if (x.type==='card') h+='<button type="button" class="mi cont primary" data-i="'+idx(x)+'" data-focus="1">'+(x.thumb?'<span class="thumb" style="background-image:url('+esc(x.thumb)+')"></span>':'')+'<span class="t"><span>'+esc(T(x.label))+'</span><span class="sub">'+esc(x.sub)+'</span><span class="sub">'+esc(x.meta)+'</span></span></button>'; else h+=btnHTML(x,idx(x)); });
     h+='</nav>'; if (v.note) h+='<div class="pnote" role="note"><span>'+esc(T(v.note.t))+'</span><button type="button" class="btn" data-pnote="'+esc(v.note.key)+'">'+esc(T('Verstanden'))+'</button></div>';
-    if (v.sound) h+='<div class="chip">'+esc(T('Ton startet mit dem ersten Tipp'))+'</div>'; return h; }
+    if (v.sound) h+='<div class="chip">'+esc(T('Ton startet mit dem ersten Tipp'))+'</div>';
+    if (M.BUILD) h+='<div class="ver" aria-label="'+esc(T('Fassung'))+'">'+esc(T('Fassung')+' '+M.BUILD)+'</div>'; return h; }
   if (v.layout==='endcard') return '<div class="endcard" role="dialog" aria-label="'+esc(T(v.kicker))+'"><div class="kick">'+esc(T(v.kicker))+'</div><h2>'+esc(T(v.title))+'</h2>'+(v.sub?'<div class="sub">'+esc(T(v.sub))+'</div>':'')+(v.time?'<div class="time">'+esc(v.time)+'</div>':'')+'<nav class="menu">'+v.items.map(function(x){ return btnHTML(x,idx(x)); }).join('')+'</nav></div>';
   if (v.layout==='paper'){ h+='<div class="paper" role="dialog" aria-label="'+esc(T(v.title))+'"><div class="phead"><h3>'+esc(T(v.title))+'</h3><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div><div class="pmid scroll">';
     if (v.ctx) h+='<div class="ctx">'+esc(v.ctx)+'</div>'; if (v.info) h+='<div class="ctx">'+esc(v.info)+'</div>';
@@ -4057,6 +4058,7 @@ function view(v){ var xs=flat(v), idx=function(x){ return xs.indexOf(x); }, h=''
     return h+'</div>'+backBtn+'</div>'; }
   if (v.layout==='about'){ h+='<div class="paper about" role="dialog" aria-label="'+esc(T(v.title))+'"><div class="phead"><h3>'+esc(T(v.title))+'</h3><button type="button" class="btn" data-back="1">'+esc(T('Zurück'))+'</button></div><div class="pmid scroll">';
     if (v.places) h+='<div class="ctx">Die Stillen – '+esc(v.places)+'</div>'; (v.text||[]).forEach(function(t){ h+='<p>'+esc(T(t))+'</p>'; });
+    if (v.build) h+='<div class="ctx foot">'+esc(T('Fassung')+' '+v.build)+'</div>';
     if (v.list) h+='<ul>'+v.list.map(function(t){ return '<li>'+esc(T(t))+'</li>'; }).join('')+'</ul>';
     if (v.items.length) h+='<nav class="menu">'+v.items.map(function(x){ return btnHTML(x,idx(x),'plain'); }).join('')+'</nav>';
     return h+'</div></div>'; }
@@ -4186,6 +4188,7 @@ var CSS='#shell{position:fixed;inset:0;z-index:12;display:none;--ink0:#08070d;--
 +'#shell .endcard{width:min(calc(var(--u)*200px),calc(100% - 16px));text-align:center;align-items:center;background:transparent}#shell .endcard .kick{color:var(--ghost4)}#shell .endcard h2{font-size:calc(var(--fs)*3);line-height:calc(var(--lh)*2.6);color:var(--paper2)}#shell .endcard .sub{color:var(--paper)}#shell .endcard .time{color:var(--ghost4)}#shell .endcard .menu{width:100%}'
 +'#shell .sh-toast{position:absolute;left:50%;top:max(10px,calc(var(--cy) + var(--u)*4px));transform:translateX(-50%);display:none;align-items:center;gap:calc(var(--u)*4px);background:var(--ink1);border:calc(var(--u)*1px) solid var(--ghost2);color:var(--ghost5);padding:calc(var(--u)*2px) calc(var(--u)*6px);z-index:3;max-width:calc(100% - 20px)}'
 +'#shell .pnote{position:absolute;left:calc(var(--cx) + var(--u)*6px);right:calc(100% - var(--cx) - var(--cw) + var(--u)*6px);top:max(10px,calc(var(--cy) + var(--u)*4px));display:flex;gap:calc(var(--u)*6px);align-items:center;background:rgba(8,7,13,.94);border:calc(var(--u)*1px) solid var(--ghost2);color:var(--ghost5);padding:calc(var(--u)*3px) calc(var(--u)*5px);pointer-events:auto;max-width:calc(var(--u)*300px)}#shell .pnote span{flex:1 1 auto;min-width:0}#shell .pnote .btn{flex:0 0 auto;min-height:44px}#shell.titlemode .pnote~.chip{display:none}#shell.narrow .pnote{left:calc(36% + 10px);right:max(10px,env(safe-area-inset-right));flex-direction:column;align-items:flex-start}'
++'#shell .ver{position:absolute;left:max(10px,calc(var(--cx) + var(--u)*4px));bottom:max(6px,calc(100% - var(--cy) - var(--ch) + var(--u)*3px));color:var(--ghost4);opacity:.75;font-size:calc(var(--fs)*.7);line-height:1;pointer-events:none;user-select:none}'
 +'#shell .chip{position:absolute;right:max(10px,calc(100% - var(--cx) - var(--cw) + var(--u)*4px));top:max(10px,calc(var(--cy) + var(--u)*4px));background:rgba(8,7,13,.85);border:calc(var(--u)*1px) solid var(--ghost1);color:var(--ghost4);padding:calc(var(--u)*1px) calc(var(--u)*4px);pointer-events:none}'
 +'#shell .sh-top{position:absolute;pointer-events:none;z-index:3}#shell .sh-toast.on{pointer-events:auto}'
 +'#shell .sh-recap{position:absolute;left:50%;top:max(10px,calc(var(--cy) + var(--u)*6px));transform:translateX(-50%);display:none;width:max-content;max-width:min(calc(var(--u)*200px),calc(100% - 20px));background:rgba(19,17,28,.96);border:calc(var(--u)*1px) solid var(--lamp1);padding:calc(var(--u)*3px) calc(var(--u)*6px);pointer-events:none}'
@@ -65725,7 +65728,7 @@ M.trAdd('bhs', {
   'Esc schließt immer nur das Oberste; ist nichts offen, öffnet Esc dieses Menü.':'Esc uvijek zatvara samo ono najgornje; ako ništa nije otvoreno, Esc otvara ovaj izbornik.',
   'Rechtsklick: Schau an. Leertaste oder Enter: Satz überspringen.':'Desni klik: pogledaj. Razmak ili Enter: preskoči rečenicu.',
   'Pause':'Pauza', 'Hinweise …':'Savjeti …', 'speichert automatisch':'sprema automatski', 'nach der Szene':'nakon scene', 'hier nicht':'ovdje ne',
-  'Spielzeit':'Vrijeme igre', 'Ton startet mit dem ersten Tipp':'Zvuk počinje prvim dodirom', 'Überspringen ▸':'Preskoči ▸', 'heute':'danas', 'gestern':'jučer', 'gerade eben':'upravo', 'vor':'prije', 'Kein Spielstand.':'Nema spremljene igre.'
+  'Spielzeit':'Vrijeme igre', 'Fassung':'Izdanje', 'Ton startet mit dem ersten Tipp':'Zvuk počinje prvim dodirom', 'Überspringen ▸':'Preskoči ▸', 'heute':'danas', 'gestern':'jučer', 'gerade eben':'upravo', 'vor':'prije', 'Kein Spielstand.':'Nema spremljene igre.'
 });
 tr2(/^Startet auf Platz (\d) \(frei\)\. Deine anderen Spielstände bleiben\.$/, function(m){ return 'Počinje na mjestu '+m[1]+' (slobodno). Ostale spremljene igre ostaju.'; });
 tr2(/^Startet auf Platz (\d)\.$/, function(m){ return 'Počinje na mjestu '+m[1]+'.'; });
@@ -73988,6 +73991,7 @@ M.music('title');
 requestAnimationFrame(frame);
 })(M);
 
+M.BUILD="10.11.2026 · e7b82a";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

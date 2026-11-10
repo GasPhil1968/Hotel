@@ -144,7 +144,7 @@ M.trAdd('bhs', {
   'Esc schließt immer nur das Oberste; ist nichts offen, öffnet Esc dieses Menü.':'Esc uvijek zatvara samo ono najgornje; ako ništa nije otvoreno, Esc otvara ovaj izbornik.',
   'Rechtsklick: Schau an. Leertaste oder Enter: Satz überspringen.':'Desni klik: pogledaj. Razmak ili Enter: preskoči rečenicu.',
   'Pause':'Pauza', 'Hinweise …':'Savjeti …', 'speichert automatisch':'sprema automatski', 'nach der Szene':'nakon scene', 'hier nicht':'ovdje ne',
-  'Spielzeit':'Vrijeme igre', 'Ton startet mit dem ersten Tipp':'Zvuk počinje prvim dodirom', 'Überspringen ▸':'Preskoči ▸', 'heute':'danas', 'gestern':'jučer', 'gerade eben':'upravo', 'vor':'prije', 'Kein Spielstand.':'Nema spremljene igre.'
+  'Spielzeit':'Vrijeme igre', 'Fassung':'Izdanje', 'Ton startet mit dem ersten Tipp':'Zvuk počinje prvim dodirom', 'Überspringen ▸':'Preskoči ▸', 'heute':'danas', 'gestern':'jučer', 'gerade eben':'upravo', 'vor':'prije', 'Kein Spielstand.':'Nema spremljene igre.'
 });
 tr2(/^Startet auf Platz (\d) \(frei\)\. Deine anderen Spielstände bleiben\.$/, function(m){ return 'Počinje na mjestu '+m[1]+' (slobodno). Ostale spremljene igre ostaju.'; });
 tr2(/^Startet auf Platz (\d)\.$/, function(m){ return 'Počinje na mjestu '+m[1]+'.'; });

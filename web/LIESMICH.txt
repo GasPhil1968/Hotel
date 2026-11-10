@@ -311,6 +311,10 @@ INSTALLATION AUF DEM IPAD (offline, ohne Zusatz-Apps)
    das Spiel einmal mit Internet starten. Es holt sich die neue Fassung
    und lädt sie auf dem Titelbild von selbst neu (mitten im Spiel erst
    beim nächsten Titelbild; der Spielstand bleibt erhalten).
+   Welche Fassung läuft, steht unten links auf dem Titelbild und unter
+   "Über 'Die Stillen'": Datum des Baus und ein kurzer Fingerabdruck
+   (z. B. "Fassung 10.11.2026 · e7b82a"). Steht dort noch das alte Datum,
+   die Seite mit Internet einmal schließen und neu öffnen.
 Hinweis: Eine direkt geöffnete index.html (Dateien-App) oder der
 claude.ai-Link können nicht offline gespeichert werden; dafür braucht
 Safari eine https-Adresse.

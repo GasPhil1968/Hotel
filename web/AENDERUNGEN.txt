@@ -15,6 +15,11 @@ WARUM
 - Am Samstag selbst bleibt der Schluss wie bisher möglich; der Hinweis führt
   dann wie gehabt hin.
 
+- Neu: Unten links auf dem Titelbild und unter „Über ‚Die Stillen‘“ steht
+  die Fassung (Datum des Baus und ein kurzer Fingerabdruck). So lässt sich
+  am Gerät prüfen, ob die neue Fassung schon läuft; die alte zeigt diese
+  Zeile noch nicht.
+
 GEPRÜFT
 - Stände Samstag, Samstagnacht, Sonntag, Finale, Epilog ohne den Schluss:
   Hinweis nur am Samstag offen; Verbinden am Samstag in Liste und

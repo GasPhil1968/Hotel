@@ -21,6 +21,9 @@ for (const f of files.filter(keep)) js += `/* ---- ${path.relative(SRC, f).repla
 // Syntaxprüfung je Datei: ein Tippfehler bricht den Bau mit Dateiname und Zeile ab, statt eine leere Seite zu liefern
 for (const f of files.filter(keep)) { try { new (require('vm').Script)(fs.readFileSync(f, 'utf8'), { filename: path.relative(SRC, f) }); } catch (e) { console.error('Syntaxfehler: ' + (e.stack || e).toString().split('\n').slice(0, 4).join('\n')); process.exit(1); } }
 if (js.includes('</script')) throw new Error('</script im Quelltext');
+// Fassungsstempel (Titelbild unten links, „Über“): Datum des Baus und Fingerabdruck der Quellen, damit sich am Gerät erkennen lässt, welcher Stand läuft
+{ const d = new Date(), pad = (n) => String(n).padStart(2, '0'), fp = require('crypto').createHash('sha1').update(js).digest('hex').slice(0, 6);
+  js += 'M.BUILD=' + JSON.stringify(pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ' \u00b7 ' + fp) + ';\n'; }
 // Schriften für die HTML-Schicht (07_shell.js): „MALA Pixel“ aus der Spielschrift (design/tools/makefont.js) und die Leseschrift
 // Atkinson Hyperlegible Next (SIL OFL 1.1, game/fonts/AtkinsonHyperlegibleNext-OFL.txt), lokal eingebettet – auch offline.
 const FONTDIR = path.join(__dirname, 'fonts'), b64 = (f) => fs.readFileSync(path.join(FONTDIR, f)).toString('base64');
