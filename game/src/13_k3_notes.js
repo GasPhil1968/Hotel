@@ -133,7 +133,8 @@ by('b3_letters',['b3_invite']); by('b3_kidsroom',['b3_invite']); by('b3_cards',[
 by('e3_father',['e3_avoid']); by('e3_kolar',['e3_avoid']);
 // erledigt durch den Fortgang
 done('p3_sms',function(G){ return G.flags['k3.p.sms']!==undefined; }); done('p3_munich',after('k3.b.arrived')); done('p3_history',after('k3.peil.minaret'));
-done('l3_uncounted',after('k3.d1.skela')); done('l3_current',after('k3.d1.skela')); done('l3_person',after('k3.bato.found')); done('l3_tepa',function(G){ return !!(G.flags['k3.z.mala']||G.flags['k3.z.lost']); });
+done('l3_uncounted',after('k3.d1.skela')); done('l3_current',after('k3.d1.skela')); done('l3_person',after('k3.bato.found'));
+done('l3_skela',after('k3.bato.found'));   // mit „Bato gefunden“ ist die Fähre erreicht: die Peilung ist erledigt, zusammen mit „Die Leine zeigt in die Stadt“ (sonst bliebe eine Quelle offen, deren Partner schon erledigt ist) done('l3_tepa',function(G){ return !!(G.flags['k3.z.mala']||G.flags['k3.z.lost']); });
 ['l3_eggwoman','l3_dreams','l3_zlata_gone'].forEach(function(id){ done(id,after('k3.z.tomorrow')); });
 ['l3_key31','l3_abreise','l3_twosearches'].forEach(function(id){ done(id,after('k3.fin.free')); });
 ['v3_mate','v3_ljerka','v3_where','v3_denial'].forEach(function(id){ done(id,after('k3.v.drawer')); });

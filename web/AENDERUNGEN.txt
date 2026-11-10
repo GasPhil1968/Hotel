@@ -15,6 +15,11 @@ WARUM
 - Am Samstag selbst bleibt der Schluss wie bisher möglich; der Hinweis führt
   dann wie gehabt hin.
 
+- „Skela heißt Fähre“ wandert ab der Nacht in Skela (Bato gefunden) ebenfalls
+  unter „Erledigt“, zusammen mit „Die Leine zeigt in die Stadt“. Bisher blieb
+  sie allein unter „Offen“ stehen und sah aus, als wäre mit ihr noch etwas zu
+  tun. Wer sie im Gespräch braucht (Vlado, Dino, die Kioskfrau), bekommt sie
+  dort weiterhin angeboten.
 - Neu: Unten links auf dem Titelbild und unter „Über ‚Die Stillen‘“ steht
   die Fassung (Datum des Baus und ein kurzer Fingerabdruck). So lässt sich
   am Gerät prüfen, ob die neue Fassung schon läuft; die alte zeigt diese
