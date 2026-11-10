@@ -140,7 +140,7 @@ M.HINTS_K3=[
  {id:'n1b',t:'Schlafen',open:function(G){ return G.phase==='k3_d1_n' && F(G,'k3.d1.father'); },
   s:['Der Freitag ist vorbei.','Morgen ist Samstag.','Das Zimmer ist oben.','Im Zimmer ins Bett gehen.']},
  // ---------------- Zweiter Tag: Markttag
- {id:'d2a',t:'Ein Ort, der wandert',open:function(G){ return N(G,'l3_city') && !N(G,'l3_person'); },
+ {id:'d2a',t:'Ein Ort, der wandert',open:function(G){ return N(G,'l3_city') && !N(G,'l3_person') && !F(G,'k3.z.mala') && !F(G,'k3.z.lost') && !F(G,'k3.bato.found'); },   // nur solange der Schluss noch etwas bringt: wer die Tepa über Maja fand, braucht ihn nicht; ab „Bato gefunden“ liegt „Die Leine zeigt in die Stadt“ unter Erledigt und lässt sich nicht mehr verbinden
   s:['Gestern zeigte die Leine nach Skela, heute in die Stadt. Ein Ort wandert nicht.',
      'Was an einer Leine hängt, muss kein Ort sein.',
      'Im Notizbuch „Skela heißt Fähre“ und „Die Leine zeigt in die Stadt“ zusammen ansehen.',
