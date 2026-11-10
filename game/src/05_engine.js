@@ -86,7 +86,7 @@ function charAnim(a,name){ var ch=M.CHARS[a.ch]; return (ch&&ch.anims&&ch.anims[
 function idleSetFor(a){ if (a.idle){ var an=charAnim(a,a.idle); if (an) return an; } if (a.ghost && a.id==='mala') return a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); return a.f==='F'?A_.idleF:(a.f==='B'?A_.idleB:A_.idleS); }
 function setIdle(a){ a.mode='idle'; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
 function cancelRes(a){ if (a.res){ var r=a.res; a.res=null; r(false); } }
-// Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck, der nach einer Weile wieder verweht (06_ui.js zeichnet sie)
+// Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck von Marko, der nach einer Weile wieder verweht (06_ui.js zeichnet sie); Mala als Geist hinterlässt keine
 E.prints=[];
 function addPrint(a,side){ var dir=a.f==='L'?-1:1; E.prints.push({room:room&&room.id,x:Math.round(a.x+side*2*dir),y:Math.round(a.y-(side<0?0:1)),at:gt,g:!!a.ghost,dir:dir}); if (E.prints.length>240) E.prints.splice(0,E.prints.length-240); }
 function walkActor(a,x,y){ cancelRes(a); var who=a.id==='mala'?'mala':'marko'; var p=nearestPoint(who,x,y);
@@ -107,7 +107,7 @@ function updateActor(a,dt){ if (a.frozen) return;
       a.f=side?(dx<0?'L':'R'):(dy<0?'B':'F');
       var d2=Math.hypot(dx,dy); if (d2<=step){ a.x=tg[0]; a.y=tg[1]; a.path.shift(); if (!a.path.length){ arrive(a); break; } } else { var k=step/d2; a.x+=dx*k; a.y+=dy*k; }
       a.fi=(a.fi+1)%8; if ((a.fi===0||a.fi===4) && !a.ghost && a.id==='marko' && room && !room.noActor) M.footstep((a.x-E.camX-160)/160);
-      if ((a.fi===0||a.fi===4) && room && room.snowPrints && (a.id==='marko'||a.id==='mala')) addPrint(a,a.fi===0?-1:1); } }
+      if ((a.fi===0||a.fi===4) && room && room.snowPrints && a.id==='marko') addPrint(a,a.fi===0?-1:1); } }   // nur Marko: Mala ist ein Geist und hinterlässt keine Spuren
   else if (a.mode==='anim'){ a.ft+=dt; var an=a.anim;
     while (a.mode==='anim' && a.ft>=an[a.fi][1]){ a.ft-=an[a.fi][1]; a.fi++;
       if (a.hooks&&!a.hooks.done&&a.fi===a.hooks.i){ a.hooks.done=true; if (a.hooks.fn) a.hooks.fn(); }

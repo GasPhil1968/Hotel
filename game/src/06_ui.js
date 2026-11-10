@@ -21,7 +21,7 @@ function isG(){ return M.GS.active==='mala'; }
 // Farben der Leiste: Marko warm, Mala kalt
 function ui(){ return isG()?{bg:P.k0,fr:P.x1,tx:P.x3,hi:P.x5,dim:P.x1,sel:P.x0}:{bg:P.k0,fr:P.y1,tx:P.y3,hi:P.y5,dim:P.y0,sel:P.w0}; }
 
-// ---------------------------------------------------------------- Fußspuren im Schnee: Markos Abdrücke drücken den Schnee dunkel ein, Malas sind kalt-blau und schwächer; beide verwehen in gut vierzig Sekunden
+// ---------------------------------------------------------------- Fußspuren im Schnee: Markos Abdrücke drücken den Schnee dunkel ein und verwehen in gut vierzig Sekunden (Mala hinterlässt als Geist keine)
 var PRINT_MS=42000;
 function printItems(view,room){ var L=E.prints, now=view.gt, keep=[], out=[];
   for (var i=0;i<L.length;i++){ var p=L[i], age=now-p.at; if (p.room!==room.id || age>PRINT_MS || age<0) continue; keep.push(p); out.push({print:p,base:p.y-0.5}); }
