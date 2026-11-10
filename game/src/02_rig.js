@@ -219,6 +219,13 @@ A.sit=[[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1}),130
 A.sitTalk=[[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1,hd:'o'}),130],[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[8,-20],fh:[4,-14],sit:1}),130],[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[8,-21],fh:[4,-14],sit:1,hd:'o'}),130],[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1}),150]];
 A.sitF=[[F({h:[0,-13],lf:[-3,0],rf:[3,0],lh:[-6,-12],rh:[6,-12],sit:1}),1300],[F({h:[0,-13],lf:[-3,0],rf:[3,0],lh:[-6,-12],rh:[6,-12],sit:1,hd:'b'}),110]];
 A.smoke=[[S({}),80],[S({nh:[4,-27],it:'cig'}),140],[S({nh:[4,-36],it:'cig',hd:'b'}),700],[S({nh:[5,-30],it:'cig',ho:[0,-1]}),600],[S({nh:[3,-24],it:'cig'}),900],[S({nh:[4,-36],it:'cig',hd:'b'}),600],[S({nh:[3,-24],it:'cig'}),500],[S({}),80]];
+// Telefonieren (Marko, alle Kapitel): dial – das Handy aus der Manteltasche nehmen, mit gesenktem Blick wählen (vier Tipps), ans Ohr; answer – nur herausnehmen und ans Ohr;
+// phoneHold/phoneTalk – am Ohr halten bzw. dabei sprechen (als idle/talk, solange das Gespräch läuft; 05_engine.js phoneIntro/phoneEnd)
+A.dial=[[S({}),80],[S({nh:[3,-18],hd:'b'}),160],[S({nh:[4,-17],it:'phone'}),140],[S({nh:[7,-26],it:'phone',ho:[1,1]}),240],[S({nh:[7,-27],it:'phone',ho:[1,1],fh:[0,-25]}),130],[S({nh:[7,-26],it:'phone',ho:[1,1],fh:[0,-26]}),130],
+  [S({nh:[7,-27],it:'phone',ho:[1,1],fh:[0,-25]}),130],[S({nh:[7,-26],it:'phone',ho:[1,1],fh:[0,-26]}),130],[S({nh:[7,-27],it:'phone',ho:[1,1],fh:[0,-25]}),200],[S({nh:[5,-32],it:'phone'}),110],[S({nh:[2,-37],it:'phone'}),140]];
+A.answer=[[S({}),80],[S({nh:[3,-18],hd:'b'}),140],[S({nh:[4,-17],it:'phone'}),120],[S({nh:[5,-30],it:'phone'}),110],[S({nh:[2,-37],it:'phone'}),120]];
+A.phoneHold=[[S({nh:[2,-37],it:'phone'}),1400],[S({nh:[2,-37],it:'phone',hd:'b'}),110],[S({nh:[2,-37],it:'phone',ho:[0,-1]}),900],[S({nh:[2,-36],it:'phone',ho:[1,0]}),1100]];
+A.phoneTalk=[[S({nh:[2,-37],it:'phone',hd:'o'}),130],[S({nh:[2,-37],it:'phone'}),110],[S({nh:[2,-37],it:'phone',hd:'o',ho:[1,0]}),130],[S({nh:[2,-37],it:'phone',ho:[1,0]}),120],[S({nh:[2,-37],it:'phone',hd:'o'}),120],[S({nh:[2,-37],it:'phone'}),150]];
 A.drink=[[S({}),60],[S({nh:[6,-28],it:'cup'}),160],[S({nh:[4,-36],it:'cup',ln:-1,hd:'b'}),700],[S({nh:[6,-28],it:'cup'}),300],[S({}),80]];
 A.surprise=[[S({}),60],[S({h:[0,-21],hd:'b',nh:[1,-20],fh:[-1,-20]}),90],[S({h:[-1,-24],ln:-2,nh:[5,-33],fh:[-3,-31]}),220],[S({h:[-1,-23],ln:-1,nh:[3,-27],fh:[-2,-26]}),500],[S({}),80]];
 A.headache=[[F({}),60],[F({lh:[-4,-36],rh:[5,-30],hd:'b',ho:[0,1]}),260],[F({lh:[-4,-37],rh:[5,-30],hd:'b',ho:[0,1]}),900],[F({lh:[-4,-36],rh:[5,-30]}),300],[F({}),80]];

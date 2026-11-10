@@ -69,6 +69,8 @@ var SFX={
   cup:function(t){ tone('sine',2600,t,0.15,0.04); tone('sine',3400,t+0.01,0.1,0.02); },
   phone:function(t){ for (var r=0;r<2;r++) for (var i=0;i<10;i++){ tone('square',1250,t+r*1.2+i*0.06,0.03,0.025); tone('square',1560,t+r*1.2+i*0.06+0.03,0.03,0.025); } },
   beep:function(t){ tone('sine',1000,t,0.35,0.05); },
+  ringback:function(t){ for (var r=0;r<2;r++){ tone('sine',425,t+r*1.1,0.8,0.03); tone('sine',450,t+r*1.1,0.8,0.015); } },   // Freizeichen beim Anrufen
+  dialpad:function(t){ [[1336,0],[1209,0.13],[1477,0.27],[1336,0.4]].forEach(function(q){ tone('sine',q[0],t+q[1],0.08,0.03); tone('sine',852,t+q[1],0.08,0.02); }); },   // vier Tasten
   typing:function(t){ for (var i=0;i<10;i++) noise(t+i*0.09+Math.random()*0.03,0.02,0.12,'highpass',2400,1); },
   crowbar:function(t){ noise(t,0.5,0.18,'bandpass',900,6,null,1400); tone('sawtooth',240,t+0.35,0.25,0.06,null,120); noise(t+0.45,0.12,0.25,'highpass',1800,1); },
   stone:function(t){ noise(t,0.35,0.15,'bandpass',600,3,null,400); noise(t+0.3,0.08,0.15,'lowpass',300,1); },

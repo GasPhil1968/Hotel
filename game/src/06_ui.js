@@ -314,7 +314,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
     if (rest>0){ var rt='+'+rest; M.text(fb,rt,ax-(M.textWidth(rt)>>1)+1,WD?y0+28:y1-19,g?P.x4:P.s4); } }   // so viele Antworten folgen noch
   d.lay=lay; }
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
-function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phone||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;
+function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;   // auch am Telefon: die Person am anderen Ende mit Brustbild
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
 function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
@@ -322,6 +322,7 @@ function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==u
     if (!other || other===a){ other=null; var best=1e9, pick=function(npcOnly){ Object.keys(E.ACT).forEach(function(k){ var b=E.ACT[k]; if (b===a||!E.actorShown(b)) return; if (npcOnly && (b.id==='marko'||b.id==='mala')) return; var dd=Math.abs(b.x-a.x); if (dd<best){ best=dd; other=b; } }); };
       pick(a.id==='marko'||a.id==='mala'); if (!other) pick(false); }
     right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
+  else if (o.phone){ var mk=E.ACT.marko; right=!(mk && E.actorShown(mk) && (mk.x-E.camX)>W/2); }   // am Telefon: gegenüber von Marko
   var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
@@ -329,6 +330,7 @@ function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==u
   var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
   fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
   lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
+  if (o.phone) M.text(fb,'☎',right?bx0+2:bx1-10,by1-1,frame);   // Hörer-Zeichen an der Unterkante: die Stimme kommt aus dem Telefon
   if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var ix=bx1-6, iy=by1-6; for (var t=0;t<3;t++) fb.hl(ix-2+t,ix+2-t,iy+t,frame); } }
 
 // ---------------------------------------------------------------- Sprechtext

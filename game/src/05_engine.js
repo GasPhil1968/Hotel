@@ -89,6 +89,15 @@ function cancelRes(a){ if (a.res){ var r=a.res; a.res=null; r(false); } }
 // Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck von Marko, der nach einer Weile wieder verweht (06_ui.js zeichnet sie); Mala als Geist hinterlässt keine
 E.prints=[];
 function addPrint(a,side){ var dir=a.f==='L'?-1:1; E.prints.push({room:room&&room.id,x:Math.round(a.x+side*2*dir),y:Math.round(a.y-(side<0?0:1)),at:gt,g:!!a.ghost,dir:dir}); if (E.prints.length>240) E.prints.splice(0,E.prints.length-240); }
+// Telefonate (alle Kapitel): beim ersten Satz eines Gesprächs nimmt Marko das Handy aus der Tasche und wählt (Tastentöne, Freizeichen) – oder nimmt nur ab, wenn es
+// eben geklingelt hat (A.sfx('phone')). Er hält es am Ohr, bis drei Sekunden lang kein Telefonsatz mehr kam (M.update). Die Person am anderen Ende spricht mit Porträt (06_ui.js).
+var PH={with:null,last:0,rang:0,on:false,prevIdle:null,prevTalk:null};
+function phoneIntro(who){ var a=ACT.marko; if (!a||!actorShown(a)||GS.active!=='marko'||a.mode==='walk'||a.sit) return Promise.resolve();
+  var incoming=(gt-PH.rang)<7000; PH.on=true; PH.with=who; PH.last=gt; PH.prevIdle=a.idle||null; PH.prevTalk=a.talk||null;
+  if (!incoming) wait(560).then(function(){ if (PH.on) M.sfx('dialpad'); });
+  return playAnimOn(a,incoming?'answer':'dial',null,false).then(function(){ a.idle='phoneHold'; a.talk='phoneTalk'; setIdle(a); PH.last=gt; if (incoming) return wait(160); M.sfx('ringback'); return wait(2300).then(function(){ PH.last=gt; }); }); }
+function phoneEnd(){ if (!PH.on) return; PH.on=false; PH.with=null; var a=ACT.marko; if (a){ a.idle=PH.prevIdle; a.talk=PH.prevTalk; if (a.mode==='idle') setIdle(a); } }
+E.phoneEnd=phoneEnd; E.phoneOn=function(){ return PH.on; };
 function walkActor(a,x,y){ cancelRes(a); var who=a.id==='mala'?'mala':'marko'; var p=nearestPoint(who,x,y);
   if (Math.abs(p[0]-a.x)<2&&Math.abs(p[1]-a.y)<2){ a.x=p[0]; a.y=p[1]; if (a.mode==='walk') setIdle(a); return Promise.resolve(true); }
   a.path=findPath(who,a.x,a.y,p[0],p[1]); if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null;
@@ -288,12 +297,14 @@ var API={
   crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
   crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
   narrate:function(t){ return say(t,'#',{color:P.l0}); }, /* Erzähler: heller als Beige; über hellem Grund wechselt 06_ui.js auf dunkle Schrift */ voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
-  phoneVoice:function(t,who){ return say(t,'@'+(who||'vesna'),{color:M.CAST_COLORS[who||'vesna']||P.y5,phone:1}); },
+  phoneVoice:function(t,who){ who=who||'vesna'; var pre=PH.on?Promise.resolve():phoneIntro(who); PH.with=who;
+    return pre.then(function(){ return say(t,'@'+who,{color:M.CAST_COLORS[who]||P.y5,phone:1}); }).then(function(r){ PH.last=gt; return r; }); },
+  phoneHangUp:function(){ phoneEnd(); },
   wait:wait, face:function(f){ return faceOn(player(),f); }, walk:function(x,y){ return walkActor(player(),x,y); },
   walkM:function(x,y){ return ACT.marko?walkActor(ACT.marko,x,y):Promise.resolve(); }, walkG:function(x,y){ return ACT.mala?walkActor(ACT.mala,x,y):Promise.resolve(); },
   anim:function(n,h,hold){ return playAnimOn(player(),n,h,hold); }, animM:function(n,h,hold){ return ACT.marko?playAnimOn(ACT.marko,n,h,hold):Promise.resolve(); }, animG:function(n,h,hold){ return ACT.mala?playAnimOn(ACT.mala,n,h,hold):Promise.resolve(); },
   faceM:function(f){ return faceOn(ACT.marko,f); }, faceG:function(f){ return faceOn(ACT.mala,f); },
-  sfx:function(n){ M.sfx(n); }, music:function(n){ M.music(n); }, ambient:function(n,p,v){ M.ambientEvent(n,p,v); },
+  sfx:function(n){ if (n==='phone') PH.rang=gt; M.sfx(n); }, music:function(n){ M.music(n); }, ambient:function(n,p,v){ M.ambientEvent(n,p,v); },
   set:setR, has:has, give:give, take:take, first:firstTime, cycle:cycle, pick:pick, flag:flag, setFlag:setFlag, npc:npcHandle, R:RS,
   note:function(id,q){ return addNote(id,q); }, hasNote:hasNote, askNote:pickNote,
   choose:choose, overlay:showOverlay,
@@ -491,7 +502,7 @@ function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]
 // QA BUG-002: Spielerfiguren, die beim Raumwechsel noch unterwegs sind, beenden ihren Weg als abgebrochen (sonst bliebe die Aktion ewig offen)
 function placeActors(){ Object.keys(ACT).forEach(function(k){ var a=ACT[k]; if (a && a.player && a.mode==='walk') cancelRes(a); delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
   list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); a.home=[a.x,a.y,a.f]; if (o.routine!==false){ var rt=o.routine||(M.ROUTINES&&M.ROUTINES[o.id]); if (rt) a.routine=rt; } a.rtUntil=gt+1500+Math.random()*4000; ACT[o.id]=a; setIdle(a); }); placePlayers(); }
-function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
+function loadRoom(id){ E.crossing=null; PH.on=false; PH.with=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }
 M.loadRoom=loadRoom;
@@ -620,6 +631,7 @@ var FF_K=10; E.ff=false;
 M.fastForward=function(on){ E.ff=!!on; };
 M.ffActive=function(){ return !!(E.ff && E.busy && !E.dlg && !E.overlay && !paused && E.screen==='game'); };
 M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; var ffk=M.ffActive()?FF_K:1; dt*=M.TURBO*ffk;
+  if (PH.on && !E.speech && !E.dlg && gt-PH.last>3000) phoneEnd();
   // Spielzeit steht beim Lesen (Notizbuch, Karte, Dokumente; UI-Konzept B1-14); der Schnellvorlauf zählt als Echtzeit
   if (!paused){ gt+=dt; if (E.screen==='game' && !GS.ended && !E.overlay) GS.playMs+=dt/(M.TURBO*ffk); if (E.shake>0) E.shake-=dt; tickTimers();
     for (var f=faders.length-1;f>=0;f--){ var F=faders[f]; if (F.f()){ faders.splice(f,1); F.res(); } }

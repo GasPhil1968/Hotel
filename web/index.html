@@ -815,6 +815,13 @@ A.sit=[[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1}),130
 A.sitTalk=[[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1,hd:'o'}),130],[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[8,-20],fh:[4,-14],sit:1}),130],[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[8,-21],fh:[4,-14],sit:1,hd:'o'}),130],[S({h:[0,-13],nf:[9,0,'f'],ff:[7,0,'f'],nh:[6,-14],fh:[4,-14],sit:1}),150]];
 A.sitF=[[F({h:[0,-13],lf:[-3,0],rf:[3,0],lh:[-6,-12],rh:[6,-12],sit:1}),1300],[F({h:[0,-13],lf:[-3,0],rf:[3,0],lh:[-6,-12],rh:[6,-12],sit:1,hd:'b'}),110]];
 A.smoke=[[S({}),80],[S({nh:[4,-27],it:'cig'}),140],[S({nh:[4,-36],it:'cig',hd:'b'}),700],[S({nh:[5,-30],it:'cig',ho:[0,-1]}),600],[S({nh:[3,-24],it:'cig'}),900],[S({nh:[4,-36],it:'cig',hd:'b'}),600],[S({nh:[3,-24],it:'cig'}),500],[S({}),80]];
+// Telefonieren (Marko, alle Kapitel): dial – das Handy aus der Manteltasche nehmen, mit gesenktem Blick wählen (vier Tipps), ans Ohr; answer – nur herausnehmen und ans Ohr;
+// phoneHold/phoneTalk – am Ohr halten bzw. dabei sprechen (als idle/talk, solange das Gespräch läuft; 05_engine.js phoneIntro/phoneEnd)
+A.dial=[[S({}),80],[S({nh:[3,-18],hd:'b'}),160],[S({nh:[4,-17],it:'phone'}),140],[S({nh:[7,-26],it:'phone',ho:[1,1]}),240],[S({nh:[7,-27],it:'phone',ho:[1,1],fh:[0,-25]}),130],[S({nh:[7,-26],it:'phone',ho:[1,1],fh:[0,-26]}),130],
+  [S({nh:[7,-27],it:'phone',ho:[1,1],fh:[0,-25]}),130],[S({nh:[7,-26],it:'phone',ho:[1,1],fh:[0,-26]}),130],[S({nh:[7,-27],it:'phone',ho:[1,1],fh:[0,-25]}),200],[S({nh:[5,-32],it:'phone'}),110],[S({nh:[2,-37],it:'phone'}),140]];
+A.answer=[[S({}),80],[S({nh:[3,-18],hd:'b'}),140],[S({nh:[4,-17],it:'phone'}),120],[S({nh:[5,-30],it:'phone'}),110],[S({nh:[2,-37],it:'phone'}),120]];
+A.phoneHold=[[S({nh:[2,-37],it:'phone'}),1400],[S({nh:[2,-37],it:'phone',hd:'b'}),110],[S({nh:[2,-37],it:'phone',ho:[0,-1]}),900],[S({nh:[2,-36],it:'phone',ho:[1,0]}),1100]];
+A.phoneTalk=[[S({nh:[2,-37],it:'phone',hd:'o'}),130],[S({nh:[2,-37],it:'phone'}),110],[S({nh:[2,-37],it:'phone',hd:'o',ho:[1,0]}),130],[S({nh:[2,-37],it:'phone',ho:[1,0]}),120],[S({nh:[2,-37],it:'phone',hd:'o'}),120],[S({nh:[2,-37],it:'phone'}),150]];
 A.drink=[[S({}),60],[S({nh:[6,-28],it:'cup'}),160],[S({nh:[4,-36],it:'cup',ln:-1,hd:'b'}),700],[S({nh:[6,-28],it:'cup'}),300],[S({}),80]];
 A.surprise=[[S({}),60],[S({h:[0,-21],hd:'b',nh:[1,-20],fh:[-1,-20]}),90],[S({h:[-1,-24],ln:-2,nh:[5,-33],fh:[-3,-31]}),220],[S({h:[-1,-23],ln:-1,nh:[3,-27],fh:[-2,-26]}),500],[S({}),80]];
 A.headache=[[F({}),60],[F({lh:[-4,-36],rh:[5,-30],hd:'b',ho:[0,1]}),260],[F({lh:[-4,-37],rh:[5,-30],hd:'b',ho:[0,1]}),900],[F({lh:[-4,-36],rh:[5,-30]}),300],[F({}),80]];
@@ -1673,6 +1680,8 @@ var SFX={
   cup:function(t){ tone('sine',2600,t,0.15,0.04); tone('sine',3400,t+0.01,0.1,0.02); },
   phone:function(t){ for (var r=0;r<2;r++) for (var i=0;i<10;i++){ tone('square',1250,t+r*1.2+i*0.06,0.03,0.025); tone('square',1560,t+r*1.2+i*0.06+0.03,0.03,0.025); } },
   beep:function(t){ tone('sine',1000,t,0.35,0.05); },
+  ringback:function(t){ for (var r=0;r<2;r++){ tone('sine',425,t+r*1.1,0.8,0.03); tone('sine',450,t+r*1.1,0.8,0.015); } },   // Freizeichen beim Anrufen
+  dialpad:function(t){ [[1336,0],[1209,0.13],[1477,0.27],[1336,0.4]].forEach(function(q){ tone('sine',q[0],t+q[1],0.08,0.03); tone('sine',852,t+q[1],0.08,0.02); }); },   // vier Tasten
   typing:function(t){ for (var i=0;i<10;i++) noise(t+i*0.09+Math.random()*0.03,0.02,0.12,'highpass',2400,1); },
   crowbar:function(t){ noise(t,0.5,0.18,'bandpass',900,6,null,1400); tone('sawtooth',240,t+0.35,0.25,0.06,null,120); noise(t+0.45,0.12,0.25,'highpass',1800,1); },
   stone:function(t){ noise(t,0.35,0.15,'bandpass',600,3,null,400); noise(t+0.3,0.08,0.15,'lowpass',300,1); },
@@ -1988,6 +1997,15 @@ function cancelRes(a){ if (a.res){ var r=a.res; a.res=null; r(false); } }
 // Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck von Marko, der nach einer Weile wieder verweht (06_ui.js zeichnet sie); Mala als Geist hinterlässt keine
 E.prints=[];
 function addPrint(a,side){ var dir=a.f==='L'?-1:1; E.prints.push({room:room&&room.id,x:Math.round(a.x+side*2*dir),y:Math.round(a.y-(side<0?0:1)),at:gt,g:!!a.ghost,dir:dir}); if (E.prints.length>240) E.prints.splice(0,E.prints.length-240); }
+// Telefonate (alle Kapitel): beim ersten Satz eines Gesprächs nimmt Marko das Handy aus der Tasche und wählt (Tastentöne, Freizeichen) – oder nimmt nur ab, wenn es
+// eben geklingelt hat (A.sfx('phone')). Er hält es am Ohr, bis drei Sekunden lang kein Telefonsatz mehr kam (M.update). Die Person am anderen Ende spricht mit Porträt (06_ui.js).
+var PH={with:null,last:0,rang:0,on:false,prevIdle:null,prevTalk:null};
+function phoneIntro(who){ var a=ACT.marko; if (!a||!actorShown(a)||GS.active!=='marko'||a.mode==='walk'||a.sit) return Promise.resolve();
+  var incoming=(gt-PH.rang)<7000; PH.on=true; PH.with=who; PH.last=gt; PH.prevIdle=a.idle||null; PH.prevTalk=a.talk||null;
+  if (!incoming) wait(560).then(function(){ if (PH.on) M.sfx('dialpad'); });
+  return playAnimOn(a,incoming?'answer':'dial',null,false).then(function(){ a.idle='phoneHold'; a.talk='phoneTalk'; setIdle(a); PH.last=gt; if (incoming) return wait(160); M.sfx('ringback'); return wait(2300).then(function(){ PH.last=gt; }); }); }
+function phoneEnd(){ if (!PH.on) return; PH.on=false; PH.with=null; var a=ACT.marko; if (a){ a.idle=PH.prevIdle; a.talk=PH.prevTalk; if (a.mode==='idle') setIdle(a); } }
+E.phoneEnd=phoneEnd; E.phoneOn=function(){ return PH.on; };
 function walkActor(a,x,y){ cancelRes(a); var who=a.id==='mala'?'mala':'marko'; var p=nearestPoint(who,x,y);
   if (Math.abs(p[0]-a.x)<2&&Math.abs(p[1]-a.y)<2){ a.x=p[0]; a.y=p[1]; if (a.mode==='walk') setIdle(a); return Promise.resolve(true); }
   a.path=findPath(who,a.x,a.y,p[0],p[1]); if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null;
@@ -2187,12 +2205,14 @@ var API={
   crossOpen:function(x,y,o){ o=o||{}; E.crossing={x:x,y:y,w:o.w||16,h:o.h||70,at:gt,close:0}; M.sfx('shimmer'); return API.wait(o.wait===undefined?1400:o.wait); },
   crossClose:function(){ if (E.crossing){ E.crossing.close=gt; } return API.wait(1300).then(function(){ E.crossing=null; }); },
   narrate:function(t){ return say(t,'#',{color:P.l0}); }, /* Erzähler: heller als Beige; über hellem Grund wechselt 06_ui.js auf dunkle Schrift */ voice:function(t,col,x,y){ return say(t,'@',{color:col,x:x,y:y}); },
-  phoneVoice:function(t,who){ return say(t,'@'+(who||'vesna'),{color:M.CAST_COLORS[who||'vesna']||P.y5,phone:1}); },
+  phoneVoice:function(t,who){ who=who||'vesna'; var pre=PH.on?Promise.resolve():phoneIntro(who); PH.with=who;
+    return pre.then(function(){ return say(t,'@'+who,{color:M.CAST_COLORS[who]||P.y5,phone:1}); }).then(function(r){ PH.last=gt; return r; }); },
+  phoneHangUp:function(){ phoneEnd(); },
   wait:wait, face:function(f){ return faceOn(player(),f); }, walk:function(x,y){ return walkActor(player(),x,y); },
   walkM:function(x,y){ return ACT.marko?walkActor(ACT.marko,x,y):Promise.resolve(); }, walkG:function(x,y){ return ACT.mala?walkActor(ACT.mala,x,y):Promise.resolve(); },
   anim:function(n,h,hold){ return playAnimOn(player(),n,h,hold); }, animM:function(n,h,hold){ return ACT.marko?playAnimOn(ACT.marko,n,h,hold):Promise.resolve(); }, animG:function(n,h,hold){ return ACT.mala?playAnimOn(ACT.mala,n,h,hold):Promise.resolve(); },
   faceM:function(f){ return faceOn(ACT.marko,f); }, faceG:function(f){ return faceOn(ACT.mala,f); },
-  sfx:function(n){ M.sfx(n); }, music:function(n){ M.music(n); }, ambient:function(n,p,v){ M.ambientEvent(n,p,v); },
+  sfx:function(n){ if (n==='phone') PH.rang=gt; M.sfx(n); }, music:function(n){ M.music(n); }, ambient:function(n,p,v){ M.ambientEvent(n,p,v); },
   set:setR, has:has, give:give, take:take, first:firstTime, cycle:cycle, pick:pick, flag:flag, setFlag:setFlag, npc:npcHandle, R:RS,
   note:function(id,q){ return addNote(id,q); }, hasNote:hasNote, askNote:pickNote,
   choose:choose, overlay:showOverlay,
@@ -2390,7 +2410,7 @@ function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]
 // QA BUG-002: Spielerfiguren, die beim Raumwechsel noch unterwegs sind, beenden ihren Weg als abgebrochen (sonst bliebe die Aktion ewig offen)
 function placeActors(){ Object.keys(ACT).forEach(function(k){ var a=ACT[k]; if (a && a.player && a.mode==='walk') cancelRes(a); delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
   list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); a.home=[a.x,a.y,a.f]; if (o.routine!==false){ var rt=o.routine||(M.ROUTINES&&M.ROUTINES[o.id]); if (rt) a.routine=rt; } a.rtUntil=gt+1500+Math.random()*4000; ACT[o.id]=a; setIdle(a); }); placePlayers(); }
-function loadRoom(id){ E.crossing=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
+function loadRoom(id){ E.crossing=null; PH.on=false; PH.with=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }
 M.loadRoom=loadRoom;
@@ -2519,6 +2539,7 @@ var FF_K=10; E.ff=false;
 M.fastForward=function(on){ E.ff=!!on; };
 M.ffActive=function(){ return !!(E.ff && E.busy && !E.dlg && !E.overlay && !paused && E.screen==='game'); };
 M.update=function(dt){ if (dt>60 && !M.TEST) dt=60; var ffk=M.ffActive()?FF_K:1; dt*=M.TURBO*ffk;
+  if (PH.on && !E.speech && !E.dlg && gt-PH.last>3000) phoneEnd();
   // Spielzeit steht beim Lesen (Notizbuch, Karte, Dokumente; UI-Konzept B1-14); der Schnellvorlauf zählt als Echtzeit
   if (!paused){ gt+=dt; if (E.screen==='game' && !GS.ended && !E.overlay) GS.playMs+=dt/(M.TURBO*ffk); if (E.shake>0) E.shake-=dt; tickTimers();
     for (var f=faders.length-1;f>=0;f--){ var F=faders[f]; if (F.f()){ faders.splice(f,1); F.res(); } }
@@ -2898,7 +2919,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
     if (rest>0){ var rt='+'+rest; M.text(fb,rt,ax-(M.textWidth(rt)>>1)+1,WD?y0+28:y1-19,g?P.x4:P.s4); } }   // so viele Antworten folgen noch
   d.lay=lay; }
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
-function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.phone||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;
+function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;   // auch am Telefon: die Person am anderen Ende mit Brustbild
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
 function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
@@ -2906,6 +2927,7 @@ function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==u
     if (!other || other===a){ other=null; var best=1e9, pick=function(npcOnly){ Object.keys(E.ACT).forEach(function(k){ var b=E.ACT[k]; if (b===a||!E.actorShown(b)) return; if (npcOnly && (b.id==='marko'||b.id==='mala')) return; var dd=Math.abs(b.x-a.x); if (dd<best){ best=dd; other=b; } }); };
       pick(a.id==='marko'||a.id==='mala'); if (!other) pick(false); }
     right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
+  else if (o.phone){ var mk=E.ACT.marko; right=!(mk && E.actorShown(mk) && (mk.x-E.camX)>W/2); }   // am Telefon: gegenüber von Marko
   var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
@@ -2913,6 +2935,7 @@ function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==u
   var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
   fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
   lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
+  if (o.phone) M.text(fb,'☎',right?bx0+2:bx1-10,by1-1,frame);   // Hörer-Zeichen an der Unterkante: die Stimme kommt aus dem Telefon
   if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var ix=bx1-6, iy=by1-6; for (var t=0;t<3;t++) fb.hl(ix-2+t,ix+2-t,iy+t,frame); } }
 
 // ---------------------------------------------------------------- Sprechtext
