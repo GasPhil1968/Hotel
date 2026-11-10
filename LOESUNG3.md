@@ -114,8 +114,8 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 ## Samstagnacht – Die Glocke (Skela)
 
 - Über den Plan nach **Skela**, mit dem Taxi. Am rechten Ufer stehen die Pfeilerstümpfe der alten Fähre.
-- **[G]** Den fernen **Schuppen** ansehen: Mala findet Bato. „Seine Leine hängt an der Glocke.“
-- **[G]** Spüren:
+- **[G]** Den fernen **Schuppen** ansehen: Mala findet Bato. „Seine Leine hängt an der Glocke.“ (Geht auch über die **Glocke**, den **Fluss**, das ferne **Haus** oder den **Baum**: Sobald Mala eines davon ansieht, findet sie ihn. Ohne Bato endet die Nacht nicht.)
+- **[G]** Spüren (lässt sich auch am Sonntag nachholen; der Hinweis „Was die Dinge behalten“ bleibt so lange offen):
   - die **Hütte**;
   - die **Glocke**: dreimal geläutet, „Halo! Ima li koga?“;
   - den **Seilanker**: „Das ist meins.“
