@@ -21,6 +21,18 @@ function isG(){ return M.GS.active==='mala'; }
 // Farben der Leiste: Marko warm, Mala kalt
 function ui(){ return isG()?{bg:P.k0,fr:P.x1,tx:P.x3,hi:P.x5,dim:P.x1,sel:P.x0}:{bg:P.k0,fr:P.y1,tx:P.y3,hi:P.y5,dim:P.y0,sel:P.w0}; }
 
+// ---------------------------------------------------------------- Fußspuren im Schnee: Markos Abdrücke drücken den Schnee dunkel ein, Malas sind kalt-blau und schwächer; beide verwehen in gut vierzig Sekunden
+var PRINT_MS=42000;
+function printItems(view,room){ var L=E.prints, now=view.gt, keep=[], out=[];
+  for (var i=0;i<L.length;i++){ var p=L[i], age=now-p.at; if (p.room!==room.id || age>PRINT_MS || age<0) continue; keep.push(p); out.push({print:p,base:p.y-0.5}); }
+  if (keep.length!==L.length) E.prints=keep; return out; }
+function drawPrint(p,view){ var age=view.gt-p.at, k=1-age/PRINT_MS, al=p.g?0.6*k:k, sx=p.x-view.cam, y0=p.y-1; if (sx<-5||sx>W+5) return;
+  // Abdruck: 5 × 2 Pixel dunkel eingedrückt, darunter ein heller Rand aus aufgeworfenem Schnee; mit dem Alter ausgedünnt (Bayer)
+  for (var dy=-1;dy<=1;dy++) for (var dx=-2;dx<=3;dx++){ var xx=sx+dx*p.dir, yy=y0+dy, rim=(dy===1), edge=(dx===-2||dx===3); if (yy<0||yy>=SH||xx<0||xx>=W) continue;
+    var th=al*(rim?0.7:(edge?0.6:1.3)); if (bayer(xx,yy)>=th) continue;
+    var c=fb.d[yy*W+xx], q=M.RGB[c], lum=q?(q[0]+q[1]+q[2]):0;
+    if (p.g) fb.d[yy*W+xx]=rim?(lum>420?P.b4:P.b2):(edge?P.b2:P.b1);
+    else fb.d[yy*W+xx]=rim?(lum>420?P.s6:M.UP[c]):(edge?(lum>420?P.m2:P.k1):(lum>420?P.m1:P.k0)); } }
 // ---------------------------------------------------------------- Szene
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0&&!M.reduceMotion()?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
@@ -29,6 +41,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
+  if (room.snowPrints) list=list.concat(printItems(view,room));   // Fußspuren: über den Bodenebenen, unter den Figuren
   Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (E.actorShown(a)) list.push({actor:a,base:a.y+(a.base||0)}); });
   list.sort(function(a,b){ return (a.base-b.base)||((a.actor?1:-1)-(b.actor?1:-1)); });
   var tod=view.tod;
@@ -46,6 +59,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o); }
+    else if (l.print) drawPrint(l.print,view);
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });

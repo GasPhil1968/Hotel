@@ -20,7 +20,7 @@ var PATCH={x0:42,x1:82,y0:115,y1:127};                    // heller Fleck im Pfl
 var BOOTH={x0:40,x1:84,top:78,base:118};                  // Umriss der Bude (nur Geistersicht)
 var BUS={x0:50,x1:230,top:50,base:109,door:206,wf:192,wr:98};
 var STELE={x:241,top:62,base:112};
-var BOARD={x0:254,x1:302,y0:60,y1:88,base:112};
+var BOARD={x0:254,x1:302,y0:55,y1:88,base:112};   // Tafel 33 px hoch: Kopfzeile und vier Zeilen mit je einem Pixel Abstand
 var BENCH={x0:308,x1:336,by:116};
 var PILE={x0:338,x1:360,by:117};
 var TAXI={x0:364,x1:420,base:110};
@@ -258,7 +258,7 @@ function paintTaxi(w,we){ var x0=TAXI.x0, by=TAXI.base, L=TAXI.x1-TAXI.x0, x, y,
 // ---------------------------------------------------------------- Stele „BUSSTEIG 14“, Abfahrtsanzeige, Bank, Schneehaufen, Lampe
 var DEPS=[['07:55','ZAGREB','9'],['08:30','BEOGRAD','11'],['09:15','PRAG','6'],['10:00','SPLIT','12'],['10:40','WIEN','3'],['11:20','BUDAPEST','8'],['12:05','LJUBLJANA','5'],['13:30','ROM','2']];
 function boardRows(w,page,lit){ var bd=BOARD; w.rect(bd.x0+2,bd.y0+8,bd.x1-bd.x0-4,bd.y1-bd.y0-10,P.k1);
-  for (var i=0;i<4;i++){ var r=DEPS[(page*4+i)%DEPS.length], yy=bd.y0+9+i*5; M.microText(w,r[0].replace(':',''),bd.x0+3,yy,lit?P.y4:P.y3); sign(w,r[1].slice(0,7),bd.x0+20,yy,lit?P.s5:P.s4); } }
+  for (var i=0;i<4;i++){ var r=DEPS[(page*4+i)%DEPS.length], yy=bd.y0+9+i*6; M.microText(w,r[0].replace(':',''),bd.x0+3,yy,lit?P.y4:P.y3); sign(w,r[1].slice(0,7),bd.x0+20,yy,lit?P.s5:P.s4); } }
 function props(w,we,tod){ var x, y, c;
   w.g=RG.prop; w.s=0;
   // Stele
@@ -430,7 +430,7 @@ function WALK(x,y){ if (y<112||y>140||x<6||x>474) return false;
   if (x>=PILE.x0-2 && x<=PILE.x1+1 && y<PILE.by+2) return false;
   if (x>=STAIR.x0+6 && y<114) return false;
   return true; }
-M.defineArt('zob',{
+M.defineArt('zob',{ snowPrints:true,
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ if (tod==='day'){ var we=weaOf(GS); return we==='fog'?FOGLUT():null; } var key=nkey(tod); if (!key) return null; var Lv=levels(key), l=lightAt(LIT,a.x,a.y-22); return Lv[Math.max(1,Math.min(Lv.length-1,Math.round(l*(Lv.length-1))))].a; },
   spots:{

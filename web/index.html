@@ -1985,6 +1985,9 @@ function charAnim(a,name){ var ch=M.CHARS[a.ch]; return (ch&&ch.anims&&ch.anims[
 function idleSetFor(a){ if (a.idle){ var an=charAnim(a,a.idle); if (an) return an; } if (a.ghost && a.id==='mala') return a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); return a.f==='F'?A_.idleF:(a.f==='B'?A_.idleB:A_.idleS); }
 function setIdle(a){ a.mode='idle'; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
 function cancelRes(a){ if (a.res){ var r=a.res; a.res=null; r(false); } }
+// Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck, der nach einer Weile wieder verweht (06_ui.js zeichnet sie)
+E.prints=[];
+function addPrint(a,side){ var dir=a.f==='L'?-1:1; E.prints.push({room:room&&room.id,x:Math.round(a.x+side*2*dir),y:Math.round(a.y-(side<0?0:1)),at:gt,g:!!a.ghost,dir:dir}); if (E.prints.length>240) E.prints.splice(0,E.prints.length-240); }
 function walkActor(a,x,y){ cancelRes(a); var who=a.id==='mala'?'mala':'marko'; var p=nearestPoint(who,x,y);
   if (Math.abs(p[0]-a.x)<2&&Math.abs(p[1]-a.y)<2){ a.x=p[0]; a.y=p[1]; if (a.mode==='walk') setIdle(a); return Promise.resolve(true); }
   a.path=findPath(who,a.x,a.y,p[0],p[1]); if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null;
@@ -2002,7 +2005,8 @@ function updateActor(a,dt){ if (a.frozen) return;
       if (dist<=0.01 && Math.hypot(dx,dy)>0.01){ step=Math.hypot(dx,dy); }
       a.f=side?(dx<0?'L':'R'):(dy<0?'B':'F');
       var d2=Math.hypot(dx,dy); if (d2<=step){ a.x=tg[0]; a.y=tg[1]; a.path.shift(); if (!a.path.length){ arrive(a); break; } } else { var k=step/d2; a.x+=dx*k; a.y+=dy*k; }
-      a.fi=(a.fi+1)%8; if ((a.fi===0||a.fi===4) && !a.ghost && a.id==='marko' && room && !room.noActor) M.footstep((a.x-E.camX-160)/160); } }
+      a.fi=(a.fi+1)%8; if ((a.fi===0||a.fi===4) && !a.ghost && a.id==='marko' && room && !room.noActor) M.footstep((a.x-E.camX-160)/160);
+      if ((a.fi===0||a.fi===4) && room && room.snowPrints && (a.id==='marko'||a.id==='mala')) addPrint(a,a.fi===0?-1:1); } }
   else if (a.mode==='anim'){ a.ft+=dt; var an=a.anim;
     while (a.mode==='anim' && a.ft>=an[a.fi][1]){ a.ft-=an[a.fi][1]; a.fi++;
       if (a.hooks&&!a.hooks.done&&a.fi===a.hooks.i){ a.hooks.done=true; if (a.hooks.fn) a.hooks.fn(); }
@@ -2567,7 +2571,7 @@ function fallbackArt(id,w){ return { width:w||320, paint:function(S,GS,tod){ var
 M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt für '+id); A=fallbackArt(id,def.width); }
   var spots=A.spots||{}, stands=A.stands||{};
   var hs=(def.hotspots||[]).map(function(h){ if (h.r===undefined && spots[h.id]) h.r=spots[h.id]; if (h.st===undefined && stands[h.id]) h.st=stands[h.id]; if (!h.r && !h.npc){ console.warn('Spot fehlt: '+id+'.'+h.id); h.r=[0,0,0,0]; } return h; });
-  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{}};
+  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints};
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);
   return r; };
@@ -2601,6 +2605,18 @@ function isG(){ return M.GS.active==='mala'; }
 // Farben der Leiste: Marko warm, Mala kalt
 function ui(){ return isG()?{bg:P.k0,fr:P.x1,tx:P.x3,hi:P.x5,dim:P.x1,sel:P.x0}:{bg:P.k0,fr:P.y1,tx:P.y3,hi:P.y5,dim:P.y0,sel:P.w0}; }
 
+// ---------------------------------------------------------------- Fußspuren im Schnee: Markos Abdrücke drücken den Schnee dunkel ein, Malas sind kalt-blau und schwächer; beide verwehen in gut vierzig Sekunden
+var PRINT_MS=42000;
+function printItems(view,room){ var L=E.prints, now=view.gt, keep=[], out=[];
+  for (var i=0;i<L.length;i++){ var p=L[i], age=now-p.at; if (p.room!==room.id || age>PRINT_MS || age<0) continue; keep.push(p); out.push({print:p,base:p.y-0.5}); }
+  if (keep.length!==L.length) E.prints=keep; return out; }
+function drawPrint(p,view){ var age=view.gt-p.at, k=1-age/PRINT_MS, al=p.g?0.6*k:k, sx=p.x-view.cam, y0=p.y-1; if (sx<-5||sx>W+5) return;
+  // Abdruck: 5 × 2 Pixel dunkel eingedrückt, darunter ein heller Rand aus aufgeworfenem Schnee; mit dem Alter ausgedünnt (Bayer)
+  for (var dy=-1;dy<=1;dy++) for (var dx=-2;dx<=3;dx++){ var xx=sx+dx*p.dir, yy=y0+dy, rim=(dy===1), edge=(dx===-2||dx===3); if (yy<0||yy>=SH||xx<0||xx>=W) continue;
+    var th=al*(rim?0.7:(edge?0.6:1.3)); if (bayer(xx,yy)>=th) continue;
+    var c=fb.d[yy*W+xx], q=M.RGB[c], lum=q?(q[0]+q[1]+q[2]):0;
+    if (p.g) fb.d[yy*W+xx]=rim?(lum>420?P.b4:P.b2):(edge?P.b2:P.b1);
+    else fb.d[yy*W+xx]=rim?(lum>420?P.s6:M.UP[c]):(edge?(lum>420?P.m2:P.k1):(lum>420?P.m1:P.k0)); } }
 // ---------------------------------------------------------------- Szene
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0&&!M.reduceMotion()?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
@@ -2609,6 +2625,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
+  if (room.snowPrints) list=list.concat(printItems(view,room));   // Fußspuren: über den Bodenebenen, unter den Figuren
   Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (E.actorShown(a)) list.push({actor:a,base:a.y+(a.base||0)}); });
   list.sort(function(a,b){ return (a.base-b.base)||((a.actor?1:-1)-(b.actor?1:-1)); });
   var tod=view.tod;
@@ -2626,6 +2643,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o); }
+    else if (l.print) drawPrint(l.print,view);
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
@@ -28345,7 +28363,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<30;i++){ var hx=
 // ---------------------------------------------------------------- Lauffläche
 function WALK(x,y){ return y>=114 && y<=136 && x>=6 && x<=394; }
 var RAILTOP=RAIL.top;
-M.defineArt('hacker',{
+M.defineArt('hacker',{ snowPrints:true,
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ if (tod==='day') return null; var key=nkey(tod); if (!key) return null; var Lv=levels(key), l=lightAt(LIT,a.x,a.y-22); return Lv[Math.max(1,Math.min(Lv.length-1,Math.round(l*(Lv.length-1))))].a; },
   spots:{
@@ -48012,7 +48030,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
 
 // ---------------------------------------------------------------- Lauffläche
 function WALK(x,y){ if (y<116||y>140||x<6||x>554) return false; if (x>=BENCH.x0-2 && x<=BENCH.x1+2 && y<BENCH.by+3) return false; for (var i=0;i<LAMPS.length;i++) if (Math.abs(x-LAMPS[i])<3 && y<PATH0+6) return false; return true; }
-M.defineArt('wiesn',{
+M.defineArt('wiesn',{ snowPrints:true,
   width:W, paint:paint, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ if (tod==='day') return null; var key=nkey(tod); if (!key) return null; var Lv=levels(key), l=lightAt(LIT,a.x,a.y-22); return Lv[Math.max(1,Math.min(Lv.length-1,Math.round(l*(Lv.length-1))))].a; },
   spots:{
@@ -49092,7 +49110,7 @@ var PATCH={x0:42,x1:82,y0:115,y1:127};                    // heller Fleck im Pfl
 var BOOTH={x0:40,x1:84,top:78,base:118};                  // Umriss der Bude (nur Geistersicht)
 var BUS={x0:50,x1:230,top:50,base:109,door:206,wf:192,wr:98};
 var STELE={x:241,top:62,base:112};
-var BOARD={x0:254,x1:302,y0:60,y1:88,base:112};
+var BOARD={x0:254,x1:302,y0:55,y1:88,base:112};   // Tafel 33 px hoch: Kopfzeile und vier Zeilen mit je einem Pixel Abstand
 var BENCH={x0:308,x1:336,by:116};
 var PILE={x0:338,x1:360,by:117};
 var TAXI={x0:364,x1:420,base:110};
@@ -49330,7 +49348,7 @@ function paintTaxi(w,we){ var x0=TAXI.x0, by=TAXI.base, L=TAXI.x1-TAXI.x0, x, y,
 // ---------------------------------------------------------------- Stele „BUSSTEIG 14“, Abfahrtsanzeige, Bank, Schneehaufen, Lampe
 var DEPS=[['07:55','ZAGREB','9'],['08:30','BEOGRAD','11'],['09:15','PRAG','6'],['10:00','SPLIT','12'],['10:40','WIEN','3'],['11:20','BUDAPEST','8'],['12:05','LJUBLJANA','5'],['13:30','ROM','2']];
 function boardRows(w,page,lit){ var bd=BOARD; w.rect(bd.x0+2,bd.y0+8,bd.x1-bd.x0-4,bd.y1-bd.y0-10,P.k1);
-  for (var i=0;i<4;i++){ var r=DEPS[(page*4+i)%DEPS.length], yy=bd.y0+9+i*5; M.microText(w,r[0].replace(':',''),bd.x0+3,yy,lit?P.y4:P.y3); sign(w,r[1].slice(0,7),bd.x0+20,yy,lit?P.s5:P.s4); } }
+  for (var i=0;i<4;i++){ var r=DEPS[(page*4+i)%DEPS.length], yy=bd.y0+9+i*6; M.microText(w,r[0].replace(':',''),bd.x0+3,yy,lit?P.y4:P.y3); sign(w,r[1].slice(0,7),bd.x0+20,yy,lit?P.s5:P.s4); } }
 function props(w,we,tod){ var x, y, c;
   w.g=RG.prop; w.s=0;
   // Stele
@@ -49502,7 +49520,7 @@ function WALK(x,y){ if (y<112||y>140||x<6||x>474) return false;
   if (x>=PILE.x0-2 && x<=PILE.x1+1 && y<PILE.by+2) return false;
   if (x>=STAIR.x0+6 && y<114) return false;
   return true; }
-M.defineArt('zob',{
+M.defineArt('zob',{ snowPrints:true,
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ if (tod==='day'){ var we=weaOf(GS); return we==='fog'?FOGLUT():null; } var key=nkey(tod); if (!key) return null; var Lv=levels(key), l=lightAt(LIT,a.x,a.y-22); return Lv[Math.max(1,Math.min(Lv.length-1,Math.round(l*(Lv.length-1))))].a; },
   spots:{

@@ -228,7 +228,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
 
 // ---------------------------------------------------------------- Lauffläche
 function WALK(x,y){ if (y<116||y>140||x<6||x>554) return false; if (x>=BENCH.x0-2 && x<=BENCH.x1+2 && y<BENCH.by+3) return false; for (var i=0;i<LAMPS.length;i++) if (Math.abs(x-LAMPS[i])<3 && y<PATH0+6) return false; return true; }
-M.defineArt('wiesn',{
+M.defineArt('wiesn',{ snowPrints:true,
   width:W, paint:paint, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ if (tod==='day') return null; var key=nkey(tod); if (!key) return null; var Lv=levels(key), l=lightAt(LIT,a.x,a.y-22); return Lv[Math.max(1,Math.min(Lv.length-1,Math.round(l*(Lv.length-1))))].a; },
   spots:{

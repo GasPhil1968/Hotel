@@ -86,6 +86,9 @@ function charAnim(a,name){ var ch=M.CHARS[a.ch]; return (ch&&ch.anims&&ch.anims[
 function idleSetFor(a){ if (a.idle){ var an=charAnim(a,a.idle); if (an) return an; } if (a.ghost && a.id==='mala') return a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); return a.f==='F'?A_.idleF:(a.f==='B'?A_.idleB:A_.idleS); }
 function setIdle(a){ a.mode='idle'; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
 function cancelRes(a){ if (a.res){ var r=a.res; a.res=null; r(false); } }
+// Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck, der nach einer Weile wieder verweht (06_ui.js zeichnet sie)
+E.prints=[];
+function addPrint(a,side){ var dir=a.f==='L'?-1:1; E.prints.push({room:room&&room.id,x:Math.round(a.x+side*2*dir),y:Math.round(a.y-(side<0?0:1)),at:gt,g:!!a.ghost,dir:dir}); if (E.prints.length>240) E.prints.splice(0,E.prints.length-240); }
 function walkActor(a,x,y){ cancelRes(a); var who=a.id==='mala'?'mala':'marko'; var p=nearestPoint(who,x,y);
   if (Math.abs(p[0]-a.x)<2&&Math.abs(p[1]-a.y)<2){ a.x=p[0]; a.y=p[1]; if (a.mode==='walk') setIdle(a); return Promise.resolve(true); }
   a.path=findPath(who,a.x,a.y,p[0],p[1]); if (a.mode!=='walk'){ a.mode='walk'; a.fi=0; a.ft=0; } a.frozen=null;
@@ -103,7 +106,8 @@ function updateActor(a,dt){ if (a.frozen) return;
       if (dist<=0.01 && Math.hypot(dx,dy)>0.01){ step=Math.hypot(dx,dy); }
       a.f=side?(dx<0?'L':'R'):(dy<0?'B':'F');
       var d2=Math.hypot(dx,dy); if (d2<=step){ a.x=tg[0]; a.y=tg[1]; a.path.shift(); if (!a.path.length){ arrive(a); break; } } else { var k=step/d2; a.x+=dx*k; a.y+=dy*k; }
-      a.fi=(a.fi+1)%8; if ((a.fi===0||a.fi===4) && !a.ghost && a.id==='marko' && room && !room.noActor) M.footstep((a.x-E.camX-160)/160); } }
+      a.fi=(a.fi+1)%8; if ((a.fi===0||a.fi===4) && !a.ghost && a.id==='marko' && room && !room.noActor) M.footstep((a.x-E.camX-160)/160);
+      if ((a.fi===0||a.fi===4) && room && room.snowPrints && (a.id==='marko'||a.id==='mala')) addPrint(a,a.fi===0?-1:1); } }
   else if (a.mode==='anim'){ a.ft+=dt; var an=a.anim;
     while (a.mode==='anim' && a.ft>=an[a.fi][1]){ a.ft-=an[a.fi][1]; a.fi++;
       if (a.hooks&&!a.hooks.done&&a.fi===a.hooks.i){ a.hooks.done=true; if (a.hooks.fn) a.hooks.fn(); }
@@ -668,7 +672,7 @@ function fallbackArt(id,w){ return { width:w||320, paint:function(S,GS,tod){ var
 M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt für '+id); A=fallbackArt(id,def.width); }
   var spots=A.spots||{}, stands=A.stands||{};
   var hs=(def.hotspots||[]).map(function(h){ if (h.r===undefined && spots[h.id]) h.r=spots[h.id]; if (h.st===undefined && stands[h.id]) h.st=stands[h.id]; if (!h.r && !h.npc){ console.warn('Spot fehlt: '+id+'.'+h.id); h.r=[0,0,0,0]; } return h; });
-  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{}};
+  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints};
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);
   return r; };

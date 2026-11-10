@@ -268,7 +268,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<30;i++){ var hx=
 // ---------------------------------------------------------------- Lauffläche
 function WALK(x,y){ return y>=114 && y<=136 && x>=6 && x<=394; }
 var RAILTOP=RAIL.top;
-M.defineArt('hacker',{
+M.defineArt('hacker',{ snowPrints:true,
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ if (tod==='day') return null; var key=nkey(tod); if (!key) return null; var Lv=levels(key), l=lightAt(LIT,a.x,a.y-22); return Lv[Math.max(1,Math.min(Lv.length-1,Math.round(l*(Lv.length-1))))].a; },
   spots:{
