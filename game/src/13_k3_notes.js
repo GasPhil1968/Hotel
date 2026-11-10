@@ -113,11 +113,21 @@ n('e3_kolar','e3','Der Vater','„Und Sie?“','Frau Kolar: „Und Sie? Haben Si
 n('e3_avoid','e3','Der Vater','Damit ich ihn nicht suchen muss','Ich suche eine Vermisste für eine Mutter, und den eigenen Vater habe ich nie gesucht. Mala: „Du suchst mich, damit du ihn nicht suchen musst.“',{p:'p:mala'});
 n('e3_mothersample','e3','Der Vater','Die Probe der Mutter','Frau Kolar: „Lebt Ihre Mutter?“ Ihre Probe hilft nur zusammen mit der eines Kindes, meiner oder Anas. „Wir suchen. Wenn er gefunden wurde, können wir ihn zuordnen.“',{p:'p:kolar'});
 n('e3_since','e3','Der Vater','Seit dem Winter','Mala, auf der Brücke: „Danach war ich bei dir. In Vratnik, im Winter. Dann Split. Dann hast du den Karton zugeklebt. Dann war ich leer.“',{p:'p:mala'});
+// ---------------------------------------------------------------- Ausbau (design/K3_AUSBAU.md): Vera, das Lied, Mates Mappe, der Bleistift
+n('v3_blatt','v3','Die Schublade','Das Blatt hat die Tante','Kata: In der Mappe „TAM 4500“ ist alles außer dem Werkspapier. Der Lastwagen war von ihrem Onkel; das Blatt hat die Tante. Vera, drüben, am Markt. Vater und Tante reden seit vierundneunzig nicht.',{p:'p:kata'});
+n('v3_bed','v3','Zwei Fassungen','Das Bett war gemacht','Vera Rajić, Vlados Schwester: Im Januar vierundneunzig sagte Vlado, er bringe ein Mädchen aus Split. Sie machte ein Bett. Niemand kam. Am Morgen saß er im Führerhaus und sagte: „Ich habe nie jemanden mitgenommen.“',{p:'p:susjeda'});
+n('v3_letter','v3','Zwei Fassungen','Veras Brief','Vier Sätze in Veras Worten, von mir aufgeschrieben: das Bett, die Nacht, „Komm es holen.“ Ohne Unterschrift. Er weiß, von wem.',{p:'p:susjeda'});
+n('s3_words','b3','Das Lied','Der Zettel für Bec','Das alte Lied, Strophe für Strophe, in der Reihenfolge der Geschichte: zum Wasser, das Lamm, die Mädchen an den Toren, die eine am Fenster, „Guten Abend“, „Komm heute Abend“. Bec hat es aufgeschrieben.',{p:'p:aussie3'});
+n('b3_hum','b3','Das Lied','Bis zum Fenster','Mate hat beim Warten immer dasselbe gesummt: das Lied vom Fenster. Bis zu der Stelle mit dem Fenster. Weiter nie. Davor kennt es vom Telefon.',{p:'p:mate'});
+n('s3_verse','b3','Das Lied','„Dođi, dragi, doveče“','Die Zeile, die im Lied nach dem Fenster kommt: „Komm, Liebster, komm heute Abend.“ Lena hat sie an der Brücke gelernt. Sie will sie ihrem Großvater sagen.',{p:'p:lena'});
+n('b3_folder','b3','Die Briefe','Zdravkos Schublade','Mala sieht durch das Holz der Thekenschublade: eine Mappe, ein blauer Fahrschein, ein angefangener Brief. Jemand hat die Mappe zweimal zurückgelegt. Zdravko: „Für den, der kommt.“',{p:'p:zdravko'});
+n('b3_coming','b3','Die Briefe','Er wollte kommen','In Mates Mappe: eine Fahrkarte Mostar–München für den 14. März 2010, gekauft am Zwölften. Und ein Brief: „Dragi Davore, dolazim.“ Er ist am Zwölften gestorben.',{p:'p:mate'});
+n('a3_mypencil','a3','Zlata','Mein Bleistift','Zlata hat mir den Bleistift gegeben, für die Mutter. Mala: „Meiner. Ich habe immer daran gekaut. Den hast du jetzt. Mehr von mir hat keiner.“',{p:'p:mala'});
 M.defineNotes(N);
 // ---------------------------------------------------------------- Gruppen und Erledigung
 M.NOTE_GROUPS.p3=['Ankunft']; M.NOTE_GROUPS.l3=['Die Brücke','Die Peilung','Die Leine','Zwei Namen','Lanas Nacht','Aus Sarajevo'];
 M.NOTE_GROUPS.v3=['Der Fahrer','Das Führerhaus','Die Schublade','Zwei Fassungen']; M.NOTE_GROUPS.a3=['Skela','Der Fährmann','Die Lichtprobe','Zlata'];
-M.NOTE_GROUPS.b3=['Mate','Die Zelenikas','Die Briefe']; M.NOTE_GROUPS.e3=['Der Vater'];
+M.NOTE_GROUPS.b3=['Mate','Die Zelenikas','Die Briefe','Das Lied']; M.NOTE_GROUPS.e3=['Der Vater'];
 function by(id,list){ var x=M.NOTES[id]; x.doneBy=(x.doneBy||[]).concat(list); }
 function done(id,fn){ M.NOTES[id].doneIf=fn; }
 function after(f){ return function(G){ return !!G.flags[f]; }; }
@@ -139,6 +149,9 @@ done('l3_skela',after('k3.bato.found')); done('l3_tepa',function(G){ return !!(G
 ['l3_eggwoman','l3_dreams','l3_zlata_gone'].forEach(function(id){ done(id,after('k3.z.tomorrow')); });
 ['l3_key31','l3_abreise','l3_twosearches'].forEach(function(id){ done(id,after('k3.fin.free')); });
 ['v3_mate','v3_ljerka','v3_where','v3_denial'].forEach(function(id){ done(id,after('k3.v.drawer')); });
+/* Ausbau: erledigt durch den Fortgang */
+done('v3_blatt',function(G){ return !!(G.flags['k3.x.pismo']||G.flags['k3.fin.vera']); }); by('v3_bed',['v3_letter']); done('v3_letter',after('k3.v.veraLetter'));
+done('s3_words',after('k3.s.perf')); done('s3_verse',after('k3.b.son')); done('b3_hum',after('k3.b.son')); done('b3_folder',after('k3.b.folder')); done('b3_coming',after('k3.b.noSale'));
 ['v3_hewas','v3_typenschein','v3_drawer','v3_tomorrow'].forEach(function(id){ done(id,after('k3.v.part1')); });
 ['v3_bag','v3_part1','v3_forlater','v3_two'].forEach(function(id){ done(id,after('k3.v.free')); });
 done('v3_who',after('k3.d3.talk2')); done('v3_message',after('k3.v.free')); done('v3_cab',after('k3.v.free')); done('v3_tonight',after('k3.fin.drive'));

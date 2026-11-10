@@ -231,6 +231,38 @@ Am Ende des Sonntags sagt Marko: „Es ist bald elf.“ Dann kommt die Karte „
 
 ---
 
+## Vertiefungen (Ausbau, alle freiwillig, alle getestet)
+
+Die Pflichtschritte oben bleiben die Pflichtschritte. Diese Stränge liegen daneben; das Hinweissystem führt zu ihnen (Themen „Das Lied vom Fenster“, „Die Brücke sehen“, „Dinos Preis“, „Die letzte Strophe“, „Das Blatt“, „Veras Nacht“, „Komm es holen“, „Der Brief in der Tasche“, „Zdravkos Schublade“, „Die Mappe“, „Die Waage“, „Der Bleistift“). Hintergrund: `design/K3_AUSBAU.md`.
+
+**Das Lied vom Fenster (Freitag- oder Samstagnacht, Samstag, Sonntag)**
+- **[M]** Auf der Terrasse Liam: „What’s that song?“, dann „Do you want the words?“ → die sechs Zeilen in die Reihenfolge der Geschichte bringen: zum Wasser · das Lamm · die Mädchen an den Toren · die Liebste am Fenster · „Guten Abend“ · „Komm heute Abend“. Bec schreibt mit.
+- **[M]** Samstag im Hof, nach Jelas Schlüssel: Jela: „Lena wollte die Brücke sehen …“ → „Das Kind muss die Brücke sehen.“ Jela schickt die beiden am Nachmittag zur Brücke.
+- An der Alten Brücke stehen jetzt Davor, Lena und die Australier. **[M]** Dino: „Die Australier wollen am Brückenkopf spielen.“ Dino will eine wahre Geschichte: eine Notiz wählen (der Wartende, die Eierfrau, der Fahrer, Skela, die Brücke, die keiner gezählt hat).
+- **[M]** Liam: „Play it.“ Mit dem Zettel singt er bis zur letzten Strophe. Lena erkennt das Lied vom Telefon; Davor: „Immer vor der Stelle aufgehört.“ Lena lernt „Dođi, dragi, doveče.“ Ohne Zettel hört Liam am Fenster auf; dann die Worte aufschreiben und „Play it again. With the end.“
+- Samstagnacht auf der Terrasse singen die Australier richtig. Mala: „Schön richtig.“
+- **[M]** Sonntag am Tor: Lena: „Du wolltest deinem Großvater etwas sagen“ → „(Ihm die Zeile vom Fenster singen.)“ Mate: „Das ist Davor.“ Das ist der zweite Weg zur ersten Erkenntnis, neben „Došli smo, dida“.
+- Montag: Maja: Die Australier haben mit einem Video bezahlt.
+
+**Vera, Vlados Schwester (Freitag bis Finale)**
+- **[M]** Samstag oder Sonntag bei Kata: „Haben Sie den Typenschein gefunden?“ Das Blatt fehlt. Es hat die Tante, Vera, drüben am Markt.
+- **[M]** Auf der Tepa die Marktfrau: „Sie sind Vera Rajić? Vlados Schwester?“ Dann „Ihr Bruder. Im Januar vierundneunzig.“ → „Das Bett war gemacht“. Die Notiz Vlado zeigen: Er hat sie gehört.
+- **[M]** Wenn Zlata gegangen ist: „Wohin ist sie gegangen?“ Vera gibt Zlatas Waage mit. Samstagnacht in Skela nimmt Zlata sie an der Tür: „Moja vaga.“ Sonntag steht sie auf dem Küchentisch.
+- **[M]** Nach Vlados Teil 2 oder Gespräch 2 im Hof: Vera: „Kata braucht das Werkspapier.“ → „Er soll kommen.“ Dann „(Mala fragen.)“ (Mala: „Sag es ihr. Sie hat das Bett gemacht.“) und „Dann schreiben Sie ihm. Ich übersetze.“ Der Brief hat vier Zeilen à drei Fassungen; richtig: „Vlado.“ · „Ich habe damals ein Bett gemacht.“ · „Sie hat dich weggeschickt. Du bist zurückgekommen.“ · „Komm es holen.“ Jede falsche Fassung bekommt Veras eigene Antwort.
+- **[M]** Den Brief Vlado geben (nach Teil 2). Er liest ihn zweimal und steckt ihn zu den Zigaretten.
+- Im Finale steht Vera am Rolltor und gibt Kata das Blatt. Vlado nickt. Sie geht zurück über die Straße.
+
+**Mates Fahrkarte (Sonntag)**
+- **[G]** Im Café die Schublade unter der Theke ansehen: eine Mappe, ein Fahrschein, ein angefangener Brief. **[M]** Zdravko danach fragen: „Für den, der kommt.“
+- **[M]** Im Hof, nach dem Schlüssel am Tor: Lena: „Zdravkos Café am Westbusbahnhof. Da hat er gewartet.“ Lena geht mit. Im Café findet sie ihn auf dem Foto; Zdravko gibt ihr die Mappe: Fahrkarte Mostar–München für den 14. März 2010, „Dragi Davore, dolazim.“ Lena gibt die Mappe Marko.
+- **[M]** Davor die Mappe geben: „Ich verkaufe nicht am Montag. Im August.“ Der Verkauf bleibt offen.
+- Zdravko und der Taxifahrer am Ostbahnhof kennen einander: eine Firma, zwei Bahnhöfe.
+
+**Der Bleistift (Sonntag, Epilog)**
+- **[M]** Zlata, nach „Was lag morgens an der Glocke?“ und sobald „Zwei Suchen, die sich nie trafen“ bekannt ist: „Der Bleistift. Darf ich ihn mitnehmen?“ Zlata fragt: „Sucht sie jemand?“ „(Mala fragen.)“ oder gleich „Ihre Mutter. Seit siebzehn Jahren.“ → sie gibt ihn: „Za majku.“ Mit „Ich weiß es nicht“ behält sie ihn; die Frage kommt wieder.
+- **[M]** Am rechten Ufer den Bleistift Mala zeigen: „Meiner. Den hast du jetzt. Mehr von mir hat keiner.“
+- Epilog, in der Küche: den Bleistift Nada geben. „Sie hat daran gekaut. Immer.“
+
 ## Varianten und Nebenwege (alle getestet)
 
 - **Westufer vor der Straßenbrücke:**

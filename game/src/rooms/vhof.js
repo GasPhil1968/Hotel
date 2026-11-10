@@ -72,6 +72,20 @@ function roadPic(b){ var w=b.w, h=b.h, x, y, HZ=34, cx=w>>1; b.rect(0,0,w,h,P.k0
   for (x=0;x<w;x++){ var ry=HZ-2-Math.round(4*Math.sin(x*0.05)+3*Math.sin(x*0.13)); for (y=ry;y<HZ;y++) if (M.bayer(x,y)<0.5) b.px(x,y,P.k1); }
   b.rect(0,h-14,w,14,P.k1); b.hl(0,w-1,h-14,P.m0); b.px(58,h-9,P.g3); b.px(59,h-9,P.g3); b.px(63,h-9,P.g2); b.px(70,h-8,P.g2);
   b.hl(150,158,h-16,P.s5); b.px(158,h-16,P.s3); }
+// Ausbau N1: Vera kommt über die Straße, bis zum Rolltor (design/K3_AUSBAU.md F.1)
+async function veraAtGate(A,V,K){ var G=A.G; if (G.flags['k3.fin.vera']) return;
+  await A.wait(900); A.sfx('click'); await A.narrate('Am Rolltor steht jemand. Eine Frau im dicken Mantel, ein grünes Kopftuch, einen Umschlag in der Hand. Sie kommt nicht in den Hof. Sie bleibt im Tor.');
+  var Vr=A.spawn({id:'susjeda',ch:'susjeda',x:16,y:125,f:'R',name:'Vera',speechY:46,routine:false});
+  await A.wait(1000); await Vr.say('Kata hat angerufen.'); await A.wait(700); await Vr.say('Dass er fährt.');
+  await A.wait(1100); await A.narrate('Vlado sieht zum Tor. Er geht nicht hin. Kata geht.'); if (K.actor){ await K.walk(40,125); await K.face('L'); }
+  await A.wait(600); await Vr.say('Das Blatt. Für Graz.'); await A.wait(500); await K.say('Wir verkaufen ihn nicht mehr. Papa fährt wieder.');
+  await A.wait(900); await Vr.say('Dann gehört es in den Lastwagen. Es gehört zu ihm. Nicht zu mir.'); await A.narrate('Sie gibt Kata den Umschlag. Kata nimmt ihn mit beiden Händen.');
+  await A.wait(1200); await A.narrate('Vlado steht an der Fahrertür. Er sieht seine Schwester an. Lange. Dann nickt er. Einmal.'); await A.wait(1300);
+  await Vr.say('Fahr still.'); await A.wait(1000); await A.narrate('Sie dreht sich um und geht. Zurück über die Straße. Allein. Wie immer.');
+  if (Vr.actor){ Vr.idle(null); var w=Vr.walk(-30,126); await A.wait(900); Vr.actor.fadeOut=A.gt; await w; } A.despawn('susjeda');
+  A.setFlag('k3.fin.vera'); if (K.actor){ var kp=M.apos('vhof','kata_n',[150,124,'L']); await K.walk(kp[0],kp[1]); await K.face(kp[2]||'L'); }
+  await A.wait(800); await K.say('Sie hat „fahr still“ gesagt.'); await A.wait(700); await V.say('Das sagt sie, seit ich den Führerschein habe.');
+  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Das ist nicht viel.'); await A.wait(600); await A.m('Das ist eine Straße.'); } }
 M.k3FinDeparture=async function(A){ var G=A.G, V=A.npc('vlado'), K=A.npc('kata');
   A.set('tarpOff',true); A.rebuild();
   await A.narrate('Kurz vor elf. Der Hof ist weiß vom Raureif. Die Plane liegt zusammengelegt am Zaun, und der TAM steht da wie frisch aus dem Werk. Fast.');
@@ -83,6 +97,7 @@ M.k3FinDeparture=async function(A){ var G=A.G, V=A.npc('vlado'), K=A.npc('kata')
   A.sfx('truckStart'); A.set('lights',true); A.rebuild(); await A.wait(600);
   await A.narrate('Beim dritten Mal springt der TAM an, mit einem Husten, der nach seinem Fahrer klingt. Die Scheinwerfer gehen an und legen zwei Kegel auf den Raureif.');
   await K.say('Siehst du, Papa. Er will.');
+  if (G.flags['k3.v.veraLetter']) await veraAtGate(A,V,K);
   var c=await A.choose([{t:'(Einsteigen.)',id:'in',silent:true},{t:'Kata. Danke.',id:'thanks'}],{title:'Der TAM'});
   if (c==='thanks'){ await K.say('Danken Sie ihm. Er fährt. Ich schraube nur.'); }
   await A.narrate('Vlado am Steuer, Kata am Fenster, ich in der Mitte. Mala sitzt da, wo kein Platz ist, und es ist trotzdem Platz.');

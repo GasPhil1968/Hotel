@@ -1,3 +1,38 @@
+DIE STILLEN – ÄNDERUNGEN: KAPITEL 3 „MOSTAR“ AUSGEBAUT (10. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Fünf neue, freiwillige Stränge neben den bisherigen Pflichtschritten; das
+  Hinweissystem (Menü → Hinweis …) führt zu ihnen. Bestehende Spielstände
+  laufen weiter; die neuen Teile lassen sich an jedem passenden Tag anfangen.
+- Das Lied vom Fenster: Liam will den Text; Marko bringt die Strophen in die
+  Reihenfolge der Geschichte. Jela schickt Davor und Lena zur Alten Brücke.
+  Dort spielen die Australier, wenn Dino seine Geschichte bekommt. Lena hört
+  die Strophe, die ihr Großvater nie gesummt hat, und bringt sie ihm am Tor:
+  ein zweiter Weg zu Mates erster Erkenntnis. Samstagnacht singen die
+  Australier richtig. Montag zahlen sie mit einem Video.
+- Vera: Die Marktfrau auf der Tepa ist Vlados Schwester. Sie hat 1994 ein
+  Bett gemacht, und sie hat das Werkspapier des Lastwagens. Marko übersetzt
+  ihren Brief an den Bruder (vier Zeilen, je drei Fassungen). Vlado liest. Im
+  Finale steht Vera am Rolltor und geht zurück über die Straße.
+- Mates Fahrkarte: In Zdravkos Schublade liegt Mates Mappe mit einer
+  Fahrkarte nach München für den Tag nach seinem Tod. Zdravko gibt sie nur
+  dem, der kommt: Lena. Davor verschiebt den Verkauf. Offen bleibt er.
+- Die Waage: Zlata lässt sie beim Weglaufen liegen; Vera gibt sie mit. Nachts
+  in Skela nimmt Zlata sie an der Tür.
+- Der Bleistift: Zlata gibt Lanas Bleistift her, wenn Marko ihr sagt, dass die
+  Mutter sucht. Mala sieht ihn. Nada bekommt ihn.
+- Die Stadt 2011: Taxifahrer und Zdravko waren eine Firma und sind zwei
+  Bahnhöfe; Mala hört am Gymnasium zwei Pausenglocken; Dino erklärt
+  Touristen, dass die Brücke keine Grenze ist; Kata: „Papa fährt nicht rüber.“
+- Zwölf neue Hinweisthemen, neun neue Notizen, vier neue Gegenstände.
+
+GEPRÜFT
+- Musterlösung Kapitel 3 unverändert durchspielbar; Hinweisprobe über
+  Musterlösung und Varianten ohne Befund; 23 Regressionstests, davon einer
+  neu für alle neuen Stränge; Browser-Bilder der neuen Szenen.
+- Konzept, Rätselnetz, historische Einordnung (2011, geteilte Stadt) und
+  Umsetzungsstand: design/K3_AUSBAU.md.
+
 DIE STILLEN – ÄNDERUNGEN: MOSTAR, MALAS HINWEIS „EIN ORT, DER WANDERT“ (10. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

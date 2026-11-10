@@ -1178,7 +1178,7 @@ Offen, wenn: `G.phase==='k2_epi' && F(G,'k2.epi.nada') && !F(G,'k2.epi.done')`
 3. **Konkreter Ansatz:** Bei Fadila am Busbahnhof gibt es Fahrkarten nach Mostar.
 4. **Nächster Schritt:** Bei Fadila eine Fahrkarte nach Mostar kaufen und in den Bus steigen.
 
-## Kapitel 3: Mostar (85 Themen)
+## Kapitel 3: Mostar (97 Themen)
 
 ### Ankommen `p3a`
 
@@ -1416,7 +1416,7 @@ Offen, wenn: `G.phase==='k3_d1_n' && F(G,'k3.d1.father')`
 
 ### Ein Ort, der wandert `d2a`
 
-Offen, wenn: `N(G,'l3_city') && !N(G,'l3_person')`
+Offen, wenn: `N(G,'l3_city') && !N(G,'l3_person') && !F(G,'k3.z.mala') && !F(G,'k3.z.lost') && !F(G,'k3.bato.found')`
 
 1. **Problem einordnen:** Gestern zeigte die Leine nach Skela, heute in die Stadt. Ein Ort wandert nicht.
 2. **Denkrichtung:** Was an einer Leine hängt, muss kein Ort sein.
@@ -1935,6 +1935,114 @@ Offen, wenn: `G.phase==='k3_epi_d' && F(G,'k3.e.mother') && !F(G,'k3.e.bus')`
 2. **Denkrichtung:** Der Bus nach Sarajevo.
 3. **Konkreter Ansatz:** Ostbusbahnhof.
 4. **Nächster Schritt:** Zum Ostbusbahnhof gehen.
+
+### Das Lied vom Fenster `x3a`
+
+Offen, wenn: `P(G,['k3_d1_n','k3_d2_n']) && !F(G,'k3.s.words') && !!(G.seen&&G.seen['dlg:au3'])`
+
+1. **Problem einordnen:** Die Australier singen das alte Lied und kennen den Text nicht. Liam hört auf, wo er den Rest nicht weiß.
+2. **Denkrichtung:** Marko kennt das Lied. Jeder aus Sarajevo kennt es. Es fehlt nur die Reihenfolge, in der die Geschichte geht.
+3. **Konkreter Ansatz:** Liam will die Worte. Bec schreibt mit, wenn einer langsam genug spricht.
+4. **Nächster Schritt:** Auf der Terrasse mit Liam reden: „Do you want the words?“
+
+### Die Brücke sehen `x3b`
+
+Offen, wenn: `!(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.b.jela') && !F(G,'k3.s.trip')`
+
+1. **Problem einordnen:** Lena wollte die Brücke sehen. Davor nicht. Heute will er mit dem Haus allein sein.
+2. **Denkrichtung:** Davor hört auf niemanden. Außer auf Jela.
+3. **Konkreter Ansatz:** Jela entscheidet, ob die beiden gehen. Sie fragt, was Marko denkt.
+4. **Nächster Schritt:** Im Hof mit Jela über die Brücke reden und ihr sagen, dass das Kind sie sehen muss.
+
+### Dinos Preis `x3c`
+
+Offen, wenn: `!(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.s.trip') && !F(G,'k3.s.dinoOk')`
+
+1. **Problem einordnen:** An der Alten Brücke wollen die Australier spielen. Dino lässt sie nicht.
+2. **Denkrichtung:** Dino nimmt kein Geld. Er nimmt Geschichten. Wahre.
+3. **Konkreter Ansatz:** Marko hat Geschichten im Notizbuch: der Wartende, die Eierfrau, der Fahrer.
+4. **Nächster Schritt:** An der Alten Brücke mit Dino reden und ihm eine Geschichte aus dem Notizbuch erzählen.
+
+### Die letzte Strophe `x3d`
+
+Offen, wenn: `!(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.s.trip') && F(G,'k3.s.dinoOk') && !F(G,'k3.s.lenaVerse')`
+
+1. **Problem einordnen:** Lena kennt das Lied vom Telefon. Ihr Großvater hat es gesummt, bis zum Fenster.
+2. **Denkrichtung:** *je nach Stand:* „Die letzte Strophe hat er nie gesungen. Wenn die Australier sie singen, hört Lena sie.“ / „Die Australier kennen den Rest nicht. Marko schon.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Liam soll noch einmal spielen. Diesmal bis zum Ende.“ / „Liam die Worte aufschreiben. Dann spielen lassen.“
+4. **Nächster Schritt:** *je nach Stand:* „An der Alten Brücke die Australier spielen lassen: „Play it again. With the end.““ / „An der Alten Brücke Liam fragen: „Do you want the words?““
+
+### Zdravkos Schublade `x3e`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'b3_folder') && F(G,'k3.b.dead') && !F(G,'k3.b.folder') && !F(G,'k3.s.lenaCafe')`
+
+1. **Problem einordnen:** In Zdravkos Schublade liegt Mates Mappe. Für den, der kommt.
+2. **Denkrichtung:** Davor kommt nicht ins Café. Er ist am Fenster vorbeigegangen wie an einem Schaufenster.
+3. **Konkreter Ansatz:** Lena würde kommen. Sie will sehen, wo ihr Großvater gewartet hat.
+4. **Nächster Schritt:** Im Hof Lena vom Café erzählen, in dem ihr Großvater gewartet hat.
+
+### Die Mappe `x3f`
+
+Offen, wenn: `G.phase==='k3_d3' && I(G,'mapa_mate') && !F(G,'k3.b.noSale')`
+
+1. **Problem einordnen:** Mates Fahrkarte und sein angefangener Brief.
+2. **Denkrichtung:** Das gehört seinem Sohn. Lena will es ihm nicht selbst geben.
+3. **Konkreter Ansatz:** Davor ist im Hof des Hauses.
+4. **Nächster Schritt:** Davor die Mappe geben.
+
+### Das Blatt `x3g`
+
+Offen, wenn: `P(G,['k3_d2','k3_d3']) && N(G,'v3_blatt') && !F(G,'met.vera')`
+
+1. **Problem einordnen:** Das Werkspapier hat die Tante. Vera. Drüben, am Markt.
+2. **Denkrichtung:** Auf der Tepa gibt es einen Gemüsestand mit Kohl.
+3. **Konkreter Ansatz:** Die Marktfrau sagt ihren Namen nicht. Man muss den Namen Rajić sagen.
+4. **Nächster Schritt:** Auf der Tepa die Marktfrau fragen, ob sie Vera Rajić ist.
+
+### Komm es holen `x3h`
+
+Offen, wenn: `P(G,['k3_d2','k3_d3']) && F(G,'met.vera') && F(G,'k3.x.veraAsked') && (N(G,'v3_who')\|\|N(G,'v3_message')) && !F(G,'k3.x.pismo')`
+
+1. **Problem einordnen:** Vera gibt das Blatt nur, wenn Vlado kommt. Er kommt nicht.
+2. **Denkrichtung:** Zwischen den beiden fehlt kein Papier. Es fehlen vier Sätze.
+3. **Konkreter Ansatz:** Vera würde sie sagen. Jemand muss sie so aufschreiben, dass er sie liest. Marko weiß inzwischen, was in der Nacht war.
+4. **Nächster Schritt:** Auf der Tepa Vera anbieten, den Brief zu übersetzen.
+
+### Der Brief in der Tasche `x3i`
+
+Offen, wenn: `I(G,'pismo') && F(G,'k3.v.part2') && !F(G,'k3.v.veraLetter')`
+
+1. **Problem einordnen:** Veras Brief. Vier Sätze.
+2. **Denkrichtung:** Vlado liest, was von ihr kommt, nur, wenn es ihm jemand in die Hand gibt. Kata gibt es ihm nicht.
+3. **Konkreter Ansatz:** Im Vulkanizer.
+4. **Nächster Schritt:** Vlado den Brief geben.
+
+### Die Waage `x3j`
+
+Offen, wenn: `G.phase==='k3_d2_n' && I(G,'vaga') && !F(G,'k3.z.vaga')`
+
+1. **Problem einordnen:** Zlatas Waage. Sie hat sie am Stand gelassen.
+2. **Denkrichtung:** Nachts an eine fremde Tür zu gehen braucht einen Grund. Das ist einer.
+3. **Konkreter Ansatz:** Zlatas Haus steht am linken Ufer, über die neue Brücke.
+4. **Nächster Schritt:** In Skela an Zlatas Haustür klopfen.
+
+### Der Bleistift `x3k`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_pencil') && !I(G,'olovka_mala') && !F(G,'k3.z.pencilGiven') && N(G,'l3_twosearches')`
+
+1. **Problem einordnen:** Zlata hat Lanas Bleistift in der Schublade. Siebzehn Jahre.
+2. **Denkrichtung:** Sie gibt ihn nicht her, solange sie nicht weiß, für wen.
+3. **Konkreter Ansatz:** Sie fragt, ob jemand das Mädchen sucht. Darauf gibt es eine wahre Antwort.
+4. **Nächster Schritt:** Zlata nach dem Bleistift fragen und ihr sagen, dass die Mutter sie sucht.
+
+### Veras Nacht `x3l`
+
+Offen, wenn: `P(G,['k3_d2','k3_d3']) && F(G,'met.vera') && !N(G,'v3_bed')`
+
+1. **Problem einordnen:** Vera und ihr Bruder reden seit vierundneunzig nicht. Nicht wegen dem Krieg, sagt sie.
+2. **Denkrichtung:** Im Januar vierundneunzig wollte Vlado das Mädchen zu seiner Schwester bringen.
+3. **Konkreter Ansatz:** Vera war in jener Nacht wach.
+4. **Nächster Schritt:** Auf der Tepa Vera nach dem Januar vierundneunzig fragen.
 
 ### Der Tag geht zu Ende `x3day`
 

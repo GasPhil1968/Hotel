@@ -197,6 +197,11 @@ const SPECS = {
   p3a: () => P.act('use', 'Kiosk'),
   p3c: () => [P.go(/Alte Brücke|Brücke/), P.talk('_mala')],
   p3d: () => P.act('look', /Widerlager/),
+  // Ausbau (design/K3_AUSBAU.md)
+  x3a: () => P.talk('Liam', /Do you want the words/), x3b: () => P.talk('Jela', /Brücke sehen/, /Kind muss die Brücke/), x3c: () => P.talk('Dino', /Australier wollen/, P.note('Der Wartende')),
+  x3d: (t) => /Play it again/.test(t) ? P.talk('Liam', /Play it again/) : P.talk('Liam', /Do you want the words/), x3e: () => P.talk('Lena', /Zdravkos Café/), x3f: () => P.give('Davor', 'mapa_mate'),
+  x3g: () => P.talk('Marktfrau', /Vera Rajić/), x3h: () => P.talk('Vera', /Dann schreiben Sie ihm/), x3i: () => P.give('Vlado', 'pismo'), x3j: () => P.act('open', 'Haustür'), x3k: () => P.talk('Zlata', /Bleistift. Darf ich/, /Ihre Mutter/),
+  x3l: () => P.talk('Vera', /Januar vierundneunzig/),
   p3e: () => P.combine(), d1h: () => P.combine(), d2a: () => P.combine(), d2d: () => P.combine(), d3g: () => P.combine(), d3h: () => P.combine(), d3j: () => P.combine(), d3n: () => P.combine(),
   p3f: () => P.talk('_mala'), p3h: () => P.talk('_mala'),
   p3g: () => P.act('use', 'steps'),

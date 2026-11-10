@@ -44,6 +44,8 @@ async function zlataComes(A,via){ var G=A.G; if (F(G,'k3.n2.zlataOut')||F(G,'k3.
   else { await A.wait(800); await Z.say('S pijace. Vi ste rekli: Mala.'); await A.m('„Vom Markt. Sie haben gesagt: Mala.“'); }
   await A.wait(900); if (F(G,'k3.n2.zlataName')) await A.m('Gospođo Brkić. Ich heiße Marko Vuković. Ich bin Übersetzer, aus Sarajevo.'); else await A.m('Marko Vuković. Ich bin Übersetzer. Aus Sarajevo.');
   await A.wait(1000); await Z.say('Zlata. Zlata Brkić.'); G.flags['met.zlata']=true; await A.wait(500); await Z.say('Das ist mein Hof. Und es ist Nacht.');
+  if (A.has('vaga')){ await A.wait(800); await A.m('Ihre Waage. Sie haben sie am Stand gelassen. Von der mit dem Kohl.'); await A.animM('give'); A.take('vaga'); A.setFlag('k3.z.vaga'); A.sfx('keyDrop'); await A.wait(900);
+    await Z.say('Moja vaga.'); await A.wait(700); await A.narrate('Sie nimmt sie mit beiden Händen und hält sie, als müsste sie etwas wiegen. Dann sieht sie mich an. Dann über den Fluss, zur Glocke.'); await A.wait(900); await Z.say('Vi ste ovo donijeli. Noću.'); await A.m('„Das haben Sie gebracht. Nachts.“'); }
   await A.wait(800); await Z.say('Idite. Molim vas.'); await A.m('„Gehen Sie. Bitte.“');
   await A.wait(1700); await A.narrate('Sie bleibt stehen. Die Lampe zittert ein wenig. Sie sieht nicht mich an. Sie sieht über den Fluss, zur Glocke.');
   await A.wait(1600); await Z.say('Sutra.'); await A.wait(1100); await Z.say('Danju.'); await A.m('„Morgen. Bei Tag.“');
@@ -145,6 +147,22 @@ async function pencil(A){ var Z=A.npc('zlata'), G=A.G; await A.wait(1000); await
   await Z.say('Bato hat ihn mitgebracht, als er morgens die Decken holte.'); await A.wait(800); await Z.say('Er lag an der Glocke.'); A.note('a3_pencil'); A.setFlag('k3.z.pencil');
   if (N(G,'a3_hut')){ await A.wait(1100); await Z.say('Sie haben mit jemandem geredet, der da war.'); await A.wait(900); await A.m('Ja.'); }
   await A.wait(900); await Z.say('Er gehört in die Schublade.'); await A.narrate('Sie steckt ihn in die Schürzentasche, wie etwas, das man nicht verlieren darf.'); }
+// Ausbau N5: Zlata entscheidet über den Bleistift, je nachdem, was Marko ihr über die Mutter sagt
+M.K3ASK=M.K3ASK||{};
+M.K3ASK.pencil=async function(A){ await A.m('Soll ich ihr sagen, dass deine Mutter dich sucht?'); await A.wait(800); await A.g('Sag es ihr.'); await A.wait(600); await A.g('Sie hat mich gewaschen. Sie darf es wissen.'); A.setFlag('k3.x.pencilOk'); };
+async function pencilAsk(A){ var Z=A.npc('zlata'), G=A.G;
+  await A.m('Der Bleistift. Darf ich ihn mitnehmen?'); await A.wait(1200); await Z.say('Traži li je neko?'); await A.m('„Sucht sie jemand?“');
+  var o=[]; if (M.k3AskOpt){ var ak=M.k3AskOpt(A,'pencil'); if (ak){ ak.silent=true; o.push(ak); } }
+  o.push({t:'Ihre Mutter. Seit siebzehn Jahren.',id:'true'}); o.push({t:'Ich weiß es nicht.',id:'no'});
+  var c=await A.choose(o,{title:'Zlata'});
+  if (c!=='true' && c!=='no'){ if (M.K3ASK.pencil) await M.K3ASK.pencil(A); c=await A.choose([{t:'Ihre Mutter. Seit siebzehn Jahren.',id:'true'},{t:'Ich weiß es nicht.',id:'no'}],{title:'Zlata'}); }
+  if (c==='no'){ await A.wait(1000); await Z.say('Onda ostaje ovdje.'); await A.m('„Dann bleibt er hier.“'); await A.wait(600); await Z.say('Dok ne pita neko ko zna.'); await A.m('„Bis einer fragt, der es weiß.“'); A.setFlag('k3.x.pencilNo'); return; }
+  if (M.k3Skipped && !(M.k3Asked && M.k3Asked(A,'pencil'))) await M.k3Skipped(A,'pencil');
+  await A.m('Ihre Mutter. In Sarajevo. Seit siebzehn Jahren.'); await A.wait(1800); await Z.say('…'); await A.wait(1200); await Z.say('Majka.'); await A.wait(900);
+  await Z.say('Pisala sam. Jednom.'); await A.m('„Ich habe geschrieben. Einmal.“ Mehr sagt sie nicht dazu.'); await A.wait(900);
+  await A.narrate('Zlata geht ins Haus.'); await zlataFetch(A,1400,'drawer'); await A.narrate('Sie kommt zurück und legt mir den Bleistift in die Hand. Kurz, angekaut, die Farbe abgeblättert.');
+  await Z.say('Za majku.'); await A.m('„Für die Mutter.“'); A.give('olovka_mala'); A.setFlag('k3.z.pencilGiven'); A.sfx('keyDrop'); await A.wait(600); await Z.say('Ne za vas.'); await A.m('„Nicht für Sie.“'); await A.m('Nicht für mich.');
+  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Zeig ihn mir. Später. Nicht hier.'); } }
 async function alive(A){ var Z=A.npc('zlata'); if (F(A.G,'k3.z.alive')) return Z.say('Ich habe es gesagt. Mehr nicht.');
   await A.m('Sie hat noch gelebt, als Sie sie gefunden haben.'); await A.wait(2400); await A.narrate('Zlata sagt lange nichts. Die Hühner picken um ihre Gummistiefel.'); await A.wait(2000);
   await Z.say('Ja.'); await A.wait(1000); await Z.say('Im Schilf. Sie hat noch gelebt.'); await A.wait(1500); await A.m('Und dann?'); await A.wait(1200);
@@ -185,11 +203,12 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
     {t:'Und Ihr Mann? Hat er in der Nacht etwas gehört?',if:!N(G,'a3_slept'),go:function(A){ return slept(A); }},
     {t:'(Nach den Hühnern fragen.)',if:!N(G,'a3_morning'),go:function(A){ return hens(A); }},
     {t:'Was lag morgens an der Glocke?',if:(N(G,'a3_slept')||F(G,'k3.z.refused'))&&!N(G,'a3_pencil'),go:function(A){ return pencil(A); }},
+    {t:'Der Bleistift. Darf ich ihn mitnehmen?',if:N(G,'a3_pencil')&&!A.has('olovka_mala')&&!F(G,'k3.z.pencilGiven'),go:function(A){ return pencilAsk(A); }},
     {t:'Darf ich ein Licht in Ihre Fenster halten?',if:N(G,'a3_bell3')&&!F(G,'k3.z.window'),go:function(A){ return permission(A); }},
     {t:'(Ihr sagen, dass Bato wach war.)',if:N(G,'a3_awake'),silent:true,go:function(A){ return tellAwake(A); }},
     N(G,'a3_awake')&&M.k3AskOpt?M.k3AskOpt(A,'zlata_awake'):null,
     A.askOpt({ l3_survived:function(A){ return alive(A); }, a3_awake:function(A){ return tellAwake(A); }, a3_thrice:function(A){ return tellAwake(A); },
-      a3_blanket:'Eine Decke ist eine Decke. Wir hatten damals viele.', a3_fromzlata:'Sie gehört Ihnen nicht. Bringen Sie sie wieder.', a3_pencil:'Er gehört in die Schublade. Nicht in Ihr Buch.',
+      a3_blanket:'Eine Decke ist eine Decke. Wir hatten damals viele.', a3_fromzlata:'Sie gehört Ihnen nicht. Bringen Sie sie wieder.', a3_pencil:function(A){ return F(A.G,'k3.z.pencilGiven')?Z.say('Za majku. Ich habe es gesagt.'):Z.say('Er gehört in die Schublade. Nicht in Ihr Buch.'); }, a3_mypencil:'Za majku.', v3_letter:'Ein Brief an einen Bruder. Ich habe auch einen geschrieben. Einmal.',
       a3_lightroom:'Oben? Da hat er geschlafen. Petroleum hatten wir. Strom nicht.', a3_roof:'Seine Kammer. Ich gehe da nicht mehr hinein.', a3_grave:'Das ist ihr Beet. Mehr sage ich nicht.',
       a3_morning:'Ich habe es gesagt. Am Morgen. Mehr nicht.', a3_alive:'Mehr nicht. Ich habe es versprochen.', photo_full:'Das ist ein Kind. Ich kenne keine Kinder mehr.', k3_c_missing:'Jede Mutter sucht ein Kind.',
       l3_onetrail:'Lana? Ich kenne keine Lana. Ich kannte eine Mala.', l3_twosearches:'Lana? Ich kenne keine Lana.', v3_mala:'Mala. Wie jede.', a3_soldier:'Soldaten? Hier waren keine Soldaten. Nur Hochwasser.',

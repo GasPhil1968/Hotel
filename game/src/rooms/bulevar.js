@@ -13,7 +13,7 @@ var HS=[
    g:{look:function(A){ return A.g(A.flag('k3.v.cab')?'Da hinten steht unser Lastwagen. Ich weiß es, ohne hinzusehen.':'Da hinten riecht es nach Gummi. Und nach Diesel.'); }}},
  {id:'gymnasium',name:'Gymnasium',look:'Das alte Gymnasium. Ocker und Gelb in Streifen, Bögen wie aus einem Bilderbuch. Sie haben es wieder aufgebaut, Stein für Stein, und es sieht aus, als wäre nie etwas gewesen. Fast.',
    use:'Sonntags ist es zu. Und an den anderen Tagen bin ich zu alt dafür.',
-   g:{look:'Drinnen sind Kinder. Ich höre sie, wenn ich will. Ich will nicht.',listen:'Eine Lehrerin diktiert. In der letzten Reihe lacht einer. Wie überall.'}},
+   g:{look:'Drinnen sind Kinder. Ich höre sie, wenn ich will. Ich will nicht.',listen:async function(A){ await A.g('Eine Lehrerin diktiert. In der letzten Reihe lacht einer. Wie überall.'); if (A.G.phase==='k3_d3') return; await A.wait(700); await A.g('Zwei Glocken. Eine, dann eine. Die Kinder laufen zweimal.'); await A.wait(500); await A.g('Dasselbe Haus. Zwei Pausen.'); }}},
  {id:'bank_ruin',name:'Hochhaus',look:'Ein Hochhaus aus Beton und Glas, oder das, was davon übrig ist: das Gerippe. Das Glas ist fort. Der Wind geht durch die Stockwerke, und im fünften wächst ein Bäumchen.',
    use:'Unten ist ein Bauzaun aus Blech. Ich gehe nicht hinein.',
    g:{look:async function(A){ await A.g('…'); await A.wait(1200); await A.narrate('Mala sieht hinauf und sagt nichts.'); },sense:'Nein. Hier nicht.'}},

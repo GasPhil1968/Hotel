@@ -81,6 +81,7 @@ async function vladoD2(A,V){
       v3_mala:'Mala. Wie jede. Das habe ich gesagt.',
       v3_part1:'Viertel nach elf. Das bleibt so.',
       v3_cab:function(A){ return cabEarly(A,V); },
+      v3_bed:function(A){ return veraBed(A,V); },
       k3_c_bridge:async function(A){ await V.say('Mehl und Decken.'); await A.wait(500); await V.say('Graue Decken, mit einem schwarzen Streifen. Armeedecken. Wir hatten zweihundert.'); } },
       ['…','Das weiß ich nicht mehr.','Fragen Sie Kata. Kata weiß alles, was ich vergesse.']),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ await V.say(A.cycle('vlBye2',['…','Morgen ist Sonntag. Sonntags flicke ich trotzdem.'])); }}
@@ -90,6 +91,20 @@ async function vladoD2(A,V){
 async function cabEarly(A,V){ if (A.flag('k3.v.cabHeard')){ await V.say('…'); await A.wait(600); return V.say('Das haben Sie schon einmal gesagt. Lassen Sie das.'); }
   A.setFlag('k3.v.cabHeard'); await A.m('„Halt still.“ – „Ich fahre.“ – „Dann fahr still.“'); await A.wait(1500); await V.say('…'); await A.wait(800); await V.say('Lassen Sie das.'); await A.wait(400);
   await A.m('Er hat es gehört. Aber er glaubt nicht, dass es von ihr kommt. Woher auch.'); }
+// Ausbau N1: Veras Notiz und Veras Brief bei Vlado
+async function veraBed(A,V){ var K=A.npc('kata'); if (A.flag('k3.v.bedHeard')){ await V.say('Vera.'); await A.wait(600); return V.say('Das reicht. Einmal reicht.'); } A.setFlag('k3.v.bedHeard');
+  await A.m('Vera hat ein Bett gemacht. In der Nacht. Mit dem guten Bezug.'); await A.wait(1500); await V.say('Vera.'); await A.wait(900);
+  await V.say('Siebzehn Jahre, und sie erzählt es einem Fremden am Kohlstand.'); await A.wait(800); A.sfx('cough'); await V.anim('cough');
+  if (A.flag('k3.v.part2')){ await V.say('Ja. Ich habe gesagt: Macht ein Bett. Und um zwei habe ich gesagt: Ich habe nie jemanden mitgenommen.'); await A.wait(600); await V.say('Einer von beiden Sätzen war gelogen. Sie wissen, welcher.'); }
+  else { await V.say('Das geht Sie nichts an. Das geht sie nichts an.'); await A.wait(500); await V.say('Reifen. Reden wir über Reifen.'); }
+  await A.wait(700); await K.say('Tante Vera? Du hast nie gesagt, dass sie davon weiß.'); await V.say('Sie weiß nichts. Sie weiß nur, dass ich gelogen habe. Das ist nicht dasselbe.'); }
+async function veraLetter(A,V){ var K=A.npc('kata'); if (A.flag('k3.v.veraLetter')) return V.say('Den habe ich. In der Tasche.');
+  if (!A.flag('k3.v.part2')){ await A.m('Von Vera. Ihrer Schwester.'); await A.wait(900); await V.say('Nicht jetzt.'); await A.wait(500); await V.say('Was sie zu sagen hat, weiß ich. Was ich zu sagen habe, haben Sie noch nicht gehört.'); return; }
+  await A.m('Von Vera.'); await A.animM('give'); A.take('pismo'); A.sfx('paper'); await A.wait(800);
+  if (V.actor) V.idle('quiet'); await A.narrate('Er liest. Er liest es zweimal. Dann faltet er es und steckt es in die Brusttasche, zu den Zigaretten.'); await A.wait(1600);
+  await V.say('…'); await A.wait(1200); await K.say('Was steht drin?'); await A.wait(700); await A.m('Dass sie ein Bett gemacht hat.'); await A.wait(600); await A.m('Und: Komm es holen.');
+  await A.wait(1200); await K.say('Papa.'); await A.wait(900); await V.say('Ich habe es gelesen.'); A.setFlag('k3.v.veraLetter');
+  if (A.G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Er hat nichts gesagt.'); await A.m('Bei ihm ist das ein Satz.'); } }
 async function drawingSilence(A,V,back){ if (back) await A.m('Auf der Rückseite steht: „Für später. Wenn du nach Sarajevo kommst, zeichne ich dich ohne Zigarette.“');
   await A.wait(800); await A.narrate('Vlado sieht auf die Zeichnung. Er sagt nichts. Er zündet sich eine neue Zigarette an, obwohl die alte noch brennt.'); A.sfx('lighter'); await A.wait(900);
   await A.npc('kata').say('Papa. Du hast zwei.'); await A.wait(500); await V.say('Ich weiß.'); }
@@ -120,12 +135,13 @@ async function vladoD3(A,V){
   await A.menuLoop(function(){ return [
     {t:'Ich war in Skela.',if:!A.flag('k3.v.part2'),go:async function(A){ var done=await skela(A,V); if (done) return 'bye'; }},
     {t:'Ich soll Ihnen etwas sagen. Von ihr.',if:A.flag('k3.d3.talk2')&&!A.flag('k3.v.free'),go:async function(A){ var ok=await message(A,V); if (ok) return 'bye'; }},
-    {t:'Ihre Schwester. Wohnt sie noch in Mostar?',once:'vl3a',if:A.flag('k3.v.part2'),go:async function(A){ await V.say('Sie ist tot. Zweitausendzwei.'); await A.wait(700); await V.say('Das Zimmer mit dem Ofen gibt es noch. Da wohnt jetzt ein Student. Er heizt nicht.'); }},
+    {t:'Ihre Schwester. Wohnt sie noch in Mostar?',once:'vl3a',if:A.flag('k3.v.part2'),go:async function(A){ await V.say('Sie ist tot. Zweitausendzwei.'); await A.wait(700); await V.say('Das Zimmer mit dem Ofen gibt es noch. Da wohnt jetzt ein Student. Er heizt nicht.'); if (A.G.flags['met.vera']){ await A.wait(900); await V.say('Die andere lebt. Vera. Das wissen Sie. Sie haben Kohl bei ihr gekauft.'); await A.wait(500); await V.say('Sie hat das Bett gemacht. Das weiß ich auch.'); } }},
     {t:'Haben Sie es noch einmal versucht? Später, bei Tag?',once:'vl3b',if:A.flag('k3.v.part2'),go:async function(A){ await V.say('Ich bin am Sonntag mit der Fähre hinüber. Mit dem Mehl für das andere Dorf.'); await A.wait(800); await V.say('Der Fährmann hat nicht geredet. Seine Frau hat nicht geredet. Ich habe nicht gefragt.'); await A.wait(900); await V.say('Ich habe gedacht: Sie ist ins Wasser. Wer fragt da noch.'); }},
     A.askOpt({
       photo_full:async function(A){ await V.say('Das ist ein Kind.'); await A.wait(700); if (A.flag('k3.v.part2')) await V.say('Mit siebzehn hatte sie denselben Zopf. Und dieselben Augen, wenn sie etwas wollte.'); },
       v3_forlater:'Für später.',
       v3_who:'Wer wen stehen lassen hat? Ich weiß, wer gefahren ist.',
+      v3_bed:function(A){ return veraBed(A,V); }, v3_letter:function(A){ return A.has('pismo')?veraLetter(A,V):V.say('Ein Brief. Dann geben Sie ihn her.'); },
       // nach Gespräch 2 ist der Satz Malas Botschaft: über das Notizbuch gesagt, wirkt er wie über „Ich soll Ihnen etwas sagen“
       v3_cab:async function(A){ if (A.flag('k3.d3.talk2') && !A.flag('k3.v.free')){ await freeVlado(A,V); return 'bye'; } return cabEarly(A,V); } },
       ['…','Das sagt mir nichts.','Kata. Was redet der Mann?']),
@@ -242,6 +258,10 @@ async function talkKata(A){ var K=A.npc('kata'), G=A.G, p=G.phase;
     {t:'Ihr Vater redet nicht viel.',once:'kt2',go:async function(A){ await K.say('Mit Ihnen nicht. Mit Reifen schon.'); await A.wait(500); await K.say('Mit Reifen ist er sehr gesprächig. Hören Sie mal hin, wenn er flickt. Er flucht in drei Sprachen.'); }},
     {t:'Sie machen die Nachtdienste?',once:'kt3',if:!!A.G.seen['dlg:kt2']||A.hasNote('v3_mate'),go:async function(A){ await K.say('Seit ich achtzehn bin. Nachts platzt immer einem ein Reifen, auf der Straße nach Split oder nach Sarajevo.'); await K.say('Papa fährt nachts nicht. Nie. Ich dachte immer, das ist eine Marotte. Wie andere nicht fliegen.'); }},
     {t:'Liegt das noch auf dem Tisch? Die Zeichnung.',once:'kt4',if:p==='k3_d2'&&A.flag('k3.v.drawer'),go:async function(A){ await K.say('Er hat sie nicht wieder weggeschlossen. Er sitzt seit heute früh davor. Und raucht.'); await A.wait(500); await K.say('Wer ist das, die das gezeichnet hat? Sie wissen es. Ich sehe es Ihnen an.'); await A.m('Ein Mädchen aus Sarajevo.'); await K.say('Ein Mädchen. Mit Papa. Im Krieg.'); await A.wait(700); await K.say('Ich will das hören. Aber von ihm.'); }},
+    {t:'Haben Sie den Typenschein gefunden? In der Mappe.',if:p!=='k3_d1'&&A.flag('k3.v.drawer')&&!A.hasNote('v3_blatt'),go:async function(A){ await K.say('Ich habe die Mappe durchgesehen. Zulassung, Rechnungen, Stempel von achtundsiebzig.'); await A.wait(600); await K.say('Der Typenschein ist nicht drin. Das eine Blatt fehlt.');
+        await A.wait(700); await K.say('Der Laster war von meinem Onkel. Das Blatt hat die Tante. Vera. Drüben, am Markt, mit Kohl.'); await A.wait(600); await K.say('Papa und sie reden nicht. Seit vierundneunzig. Ich bin das Telefon zwischen ihnen. Ein schlechtes.');
+        await A.wait(500); await K.say('Papa fährt nicht rüber. Nicht, weil er nicht darf. Weil er dann weiß, was er alles nicht weiß.'); A.note('v3_blatt');
+        if (A.G.malaOn && A.malaHere()){ await A.wait(600); await A.g('Drüben.'); await A.wait(400); await A.g('Das sagen hier alle, und jeder meint eine andere Seite.'); } }},
     {t:'Kann ich den Laster sehen?',if:A.flag('k3.v.part1')&&!A.flag('k3.v.yard'),go:async function(A){ await openYard(A,K); }},
     {t:'Er war zwölf Stunden im Laster. Damals.',once:'kt5',if:A.flag('k3.v.part2'),go:async function(A){ await K.say('Bis es hell war.'); await A.wait(800); await K.say('Mama hat mich vom Fenster weggezogen. Sie hat gesagt: Lass ihn. Ich habe ihn gelassen. Siebzehn Jahre.'); }},
     {t:'Der TAM. Fährt er?',once:'kt6',if:A.flag('k3.v.free'),go:async function(A){ await K.say('Er fährt. Batterie, Öl, Bremsen, Reifen. Zwei Tage habe ich an ihm geschraubt, für Graz.'); await A.wait(400); await K.say('Ich wusste nicht, wofür.'); }},
@@ -253,7 +273,10 @@ async function talkKata(A){ var K=A.npc('kata'), G=A.G, p=G.phase;
       v3_denial:'Nie, sagt er. Bei ihm heißt nie: Fragen Sie nicht weiter.',
       v3_tomorrow:'Morgen heißt bei ihm morgen. Das ist das Einzige, worauf man sich verlassen kann.',
       v3_sent:'Er hat es erzählt. Endlich. Und mir hat er es nicht erzählt, sondern Ihnen.',
-      v3_cab:'„Dann fahr still“? Das klingt nach ihm. Das klingt nach jemandem, der ihn kannte.' },
+      v3_cab:'„Dann fahr still“? Das klingt nach ihm. Das klingt nach jemandem, der ihn kannte.',
+      v3_blatt:'Das Blatt. Bei Tante Vera. Ich kann es holen, sie gibt es mir nicht. „Er soll kommen“, sagt sie. Er kommt nicht. So geht das seit siebzehn Jahren.',
+      v3_bed:'Ein Bett? Davon weiß ich nichts. Ich war zwölf. Ich habe nur gesehen, dass er im Laster saß.',
+      v3_letter:'Ein Brief von Tante Vera? Geben Sie ihn ihm selbst. Von mir nimmt er nichts an, was von ihr kommt.' },
       ['Keine Ahnung.','Fragen Sie Papa. Oder lieber nicht.','Ich mache hier nur die Rechnungen.']),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ await K.say(A.cycle('ktBye',['Ćao.','Und wenn Sie einen Reifen brauchen: Wir haben welche.','Bis morgen. Bei uns ist immer morgen.'])); }}
   ]; }); }
@@ -340,14 +363,14 @@ var HS=[
    look:function(A){ var p=A.G.phase; if (p==='k3_d2') return A.m('Vlado steht an der Maschine und arbeitet nicht. Er raucht und sieht zum Schreibtisch hinüber, wo die Zeichnung liegt.');
      if (A.flag('k3.v.free')) return A.m('Vlado, ohne Zigarette. Er sieht aus wie jemand, der eine Last abgestellt hat und nicht weiß, wohin mit den Armen.');
      return A.m('Ein großer hagerer Mann im blauen Overall, gebeugt über eine Montiermaschine. Graue Stoppeln, tiefe Falten, die Hände schwarz vom Gummi. Die Zigarette im Mundwinkel wippt, wenn er hustet.'); },
-   give:{ photo_full:async function(A){ var V=A.npc('vlado'); await V.say('Das ist ein Kind.'); await A.wait(600); if (!A.flag('k3.v.part1')) await V.say('Ich kenne keine Kinder. Ich kenne Reifen.'); else await V.say('Mit siebzehn hatte sie denselben Zopf.'); },
+   give:{ pismo:function(A){ return veraLetter(A,A.npc('vlado')); }, vaga:'Vlado: „Eine Waage. Für Eier. Hier wiegt man Reifen.“', photo_full:async function(A){ var V=A.npc('vlado'); await V.say('Das ist ein Kind.'); await A.wait(600); if (!A.flag('k3.v.part1')) await V.say('Ich kenne keine Kinder. Ich kenne Reifen.'); else await V.say('Mit siebzehn hatte sie denselben Zopf.'); },
      km:'Vlado: „Für einen Reifen ist das zu wenig. Für nichts ist es zu viel.“', plan:'Vlado: „Ich brauche keinen Plan. Ich weiß, wo die Straßen sind.“', rueckfahrt:'Vlado: „Sarajevo.“ Er sieht lange auf die Karte. „Da wollte sie hin.“' },
    g:{look:function(A){ if (A.flag('k3.v.free')) return A.g('Er ist leiser innen. Zum ersten Mal.'); return A.g(A.flag('k3.v.cab')?'Er ist alt geworden. Die Zigarette nicht.':'Seine Hände. Ich kenne die Hände.'); },
      listen:function(A){ var p=A.G.phase; if (p==='k3_d1') return A.g('Er denkt an nichts. Ganz fest an nichts.'); if (p==='k3_d2' && !A.flag('k3.v.part1')) return A.g('Er sagt in sich hinein: morgen, morgen. Als müsste er es auswendig lernen.'); if (!A.flag('k3.v.part2')) return A.g('Er zählt Schrauben. Halblaut. Wie einer, der nicht denken will.'); return A.g('Er sagt immer wieder: um zwei. Um zwei.'); },
      sense:'An seinen Händen ist Kälte. Alte Kälte, von einer Nacht, in der er gewartet hat.'}},
  {id:'kata',npc:'kata',name:'Kata',hgt:40,talkDist:30,vis:function(S,G){ return day(G); },talk:talkKata,
    look:'Eine junge Frau im Büro hinter der Glaswand. Kurzes dunkelblondes Haar, an der Seite länger, schwarze Fleecejacke mit „RAJIĆ“ auf der Brust. Sie tippt schneller, als ihr Bildschirm mitkommt.',
-   give:{ photo_full:'Kata: „Wer ist das? Ein Kind mit Zopf. Und ein kleiner Junge mit Ohren.“', km:'Kata: „Wir nehmen auch Mark. Für Reifen.“' },
+   give:{ pismo:'Kata: „Von Tante Vera? Geben Sie ihn ihm selbst. Von mir nimmt er nichts, was von ihr kommt.“', photo_full:'Kata: „Wer ist das? Ein Kind mit Zopf. Und ein kleiner Junge mit Ohren.“', km:'Kata: „Wir nehmen auch Mark. Für Reifen.“' },
    g:{look:'Sie ist wütend auf ihn, seit sie zwölf ist. Sie weiß nicht, worauf genau.',listen:'Sie schreibt eine E-Mail, löscht sie und schreibt sie wieder. Dieselbe.'}},
  {id:'desk',name:'Schreibtisch',look:function(A){ return deskLook(A); },read:function(A){ return readDrawing(A); },take:async function(A){ if (A.S.drawerOpen) return A.m('Die Zeichnung und der Schlüssel gehören ihm. Ich nehme sie nicht. Er soll sie nehmen.'); return A.m('Nichts, was mir gehört.'); },
    open:'Drei Schubladen, drei Schlösser.',

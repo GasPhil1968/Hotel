@@ -43,3 +43,4 @@ bash design/tools/package_ui.sh            # bauen und dist/MALA_netlify_oberfla
 ```
 
 Geräte sind Playwright-Emulationen (Chromium, WebKit), keine echten Telefone oder Tablets.
+- `K3_AUSBAU.md`: Ausbau von Kapitel 3 (Mostar): Analyse, Dramaturgie, Rätselnetz, historische Einbindung (2011), Umsetzungsstand und Testbericht.

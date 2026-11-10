@@ -67,6 +67,11 @@ async function talkAussies(A){ var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.n
         await A.m(c==='tr'?'It’s about a girl waiting at a window. He doesn’t come.':'It’s a happy song.');
         if (c==='tr'){ await L.say('Oh.'); await A.wait(400); await L.say('That’s … sad, man.'); await J.say('Awesome, though.'); if (G.malaOn) await A.g('Sie singen es wie ein Trinklied. Das ist auch eine Art, es auszuhalten.'); }
         else { await L.say('See? I told you, Bec.'); if (G.malaOn) await A.g('Du lügst schlecht auf Englisch.'); } }},
+    {t:'Do you want the words?',if:p!=='k3_pro'&&!A.flag('k3.s.words'),go:async function(A){ A.sfx('strum'); await L.say('You know it? The whole thing? The guy in Sarajevo only sang the first bit. Then he cried, then he bought us a round.');
+        await B.say('Write it down for us. Slowly. I’ll do the sounds, you do the meaning.'); await A.m('Jeder in Sarajevo kennt es. Ich auch. Die Frage ist nur, in welcher Reihenfolge die Geschichte geht.');
+        var ok=await M.K3X.songOrder(A); if (!ok) return;
+        await B.say('Got it. Water, lamb, gates, window, good evening, come tonight.'); await L.say('Come tonight. That’s the last line? That’s it?'); await A.m('That’s it. The song stops there.');
+        await A.wait(500); await J.say('Awesome, though.'); if (G.malaOn && A.malaHere()){ await A.wait(600); await A.g('Das Lied ist nicht über ein Mädchen, das wartet.'); await A.m('Doch. Am Ende sagt sie: Komm. Und das Lied hört auf.'); await A.wait(500); await A.g('Dann wartet sie danach.'); } }},
     {t:'Did you climb the minaret?',once:'au4',if:p!=='k3_pro'&&A.flag('k3.peil.bridgehead'),go:async function(A){ await J.say('The one by the river? Yeah! Super narrow stairs. Bec counted. How many?'); await B.say('Eighty-nine. Then I stopped counting and started praying I wouldn’t fall.'); await J.say('The view is awesome.'); }},
     {t:'Good night.',bye:true,go:async function(A){ await J.say(A.cycle('auBye',['Night, mate!','See ya. Bring a drink next time.','Cheers.'])); }}
   ]; }); }
@@ -198,10 +203,14 @@ M.room('herberge',{ name:'Herberge „Neretva“', scape:'k3_herberge',
     if (p==='k3_d1' && A.first('hbD1') && majaHere(G)){ await J.say('Dobro jutro! Bura. Haben Sie das Fenster gehört? Die ganze Nacht.'); await J.say('Bei Bura sieht man vom Minarett der Koski-Moschee bis zu den Bergen im Süden. Die Australier sind schon oben gewesen. Vor dem Frühstück!'); return; }
     if (p==='k3_d2' && !N(A,'l3_tepa') && majaHere(G) && A.first('hbD2')){ await J.say('Dobro jutro. Samstag.'); await tepaLine(A,J); return; }
     if (p==='k3_d3' && A.first('hbD3') && majaHere(G)){ await J.say('Sonntag. Frost heute Nacht, sagt das Radio. Ziehen Sie sich etwas an, Sie sehen aus, als hätten Sie in einem Auto geschlafen.'); await A.m('Fast.'); return; }
-    if (p==='k3_epi_d' && A.first('hbEpiD') && majaHere(G)){ await J.say('Sie sind noch da! Ich dachte, Sie sind weg, ohne zu zahlen. Das machen nur die Australier, und die zahlen mit Liedern.'); return; }
+    if (p==='k3_epi_d' && A.first('hbEpiD') && majaHere(G)){ await J.say('Sie sind noch da! Ich dachte, Sie sind weg, ohne zu zahlen. Das machen nur die Australier, und die zahlen mit Liedern.'); if (A.flag('k3.s.words')){ await A.wait(500); await J.say('Diesmal mit einem Video. Liam singt, und Bec hält einen Zettel ins Bild. Mit Ihrer Schrift.'); } return; }
     if (!A.malaHere() || G.flags['mala.lock']) return;
     if (p==='k3_pro_n' && A.flag('k3.p.talk1') && from!=='zimmer' && A.first('hbN0')){ await A.g('Ich gehe gleich hinunter. Zu den Stufen.'); await A.m('Und ich ins Bett.'); }
     else if (p==='k3_d1_n' && A.flag('k3.d1.father') && A.first('hbN1')){ await A.g('Sie singen immer noch.'); }
+    else if (p==='k3_d2_n' && A.flag('k3.s.words') && aussiesHere(G) && A.first('hbN2song')){ A.music('k3_aussie'); A.sfx('guitar'); await A.wait(900);
+      await A.narrate('Die Australier singen das Lied. Mit Bec\' Zettel auf dem Knie, Strophe für Strophe, bis zur letzten Zeile.'); await A.wait(1200);
+      await A.g('Jetzt singen sie richtig.'); await A.m('Schade?'); await A.wait(700); await A.g('Nein. Schön richtig.');
+      if (A.hasNote('v3_cab')){ await A.wait(900); await A.g('Im Führerhaus habe ich es ihm vorgesungen. Er sagt, falsch.'); await A.wait(400); await A.g('Ich habe nie falsch gesungen.'); } }
     else if (p==='k3_epi' && A.first('hbEpi')){ await A.g('Ganz still. Sogar der Fluss ist leiser.'); } }
 });
 })(M);

@@ -69,6 +69,28 @@ async function windowTable(A,Z,byName){ if (A.hasNote('b3_zdravko')){ await Z.sa
   await Z.say('Er hat auf den Bus aus München gewartet. Jeden Samstag, zwanzig Jahre lang. Sein Sohn ist da unten.'); await A.wait(700);
   await Z.say('Letztes Frühjahr ist er gestorben. Im März.'); await A.wait(600); await Z.say('Ich decke den Tisch nicht ab. Die Tasse stelle ich jeden Morgen umgedreht hin, wie er es gemocht hat.');
   if (A.G.malaOn && A.malaHere() && seen(A)){ await A.wait(800); await A.g('Er hört dich nicht, Mate. Er sieht dich nicht.'); await A.npc('mate').say('Zdravko poliert zu viel. Das war schon immer so.'); } }
+function lenaHere(G){ return G.phase==='k3_d3' && !!G.flags['k3.s.lenaCafe'] && !G.flags['k3.b.folder']; }
+// Ausbau N2: das Summen · N3: Mates Mappe
+async function hum(A,Z){ if (A.hasNote('b3_hum')) return Z.say('Bis zum Fenster. Weiter nie. Das habe ich gesagt.');
+  await Z.say('Gesummt. Ja.'); await A.wait(600); await Z.say('Immer dasselbe. Das alte Lied, das vom Fenster. Bis zu der Stelle mit dem Fenster. Weiter hat er es nie gekonnt.'); await A.wait(500); await Z.say('Oder nie gewollt.');
+  A.note('b3_hum'); await A.wait(700); await Z.say('Ich konnte es nicht mehr hören. Jetzt höre ich es nicht mehr.'); }
+async function folderAsk(A,Z){ var G=A.G; if (G.flags['k3.b.folder']) return Z.say('Die Mappe hat das Mädchen. Dem, der kommt. So war es abgemacht.');
+  await Z.say('Was in der Schublade ist, gehört nicht mir und nicht Ihnen.'); await A.wait(800); await Z.say('Das ist von Mate. Vom Tag, an dem der Kaffee kalt wurde.'); await A.wait(700);
+  await Z.say('Er hat gesagt: Wenn mein Sohn kommt, gib es ihm. Nicht wenn er anruft. Wenn er kommt.'); A.setFlag('k3.b.folderAsked'); await A.wait(800);
+  await Z.say('Er ist am Samstag an meinem Fenster vorbeigegangen. Wie an einem Schaufenster.'); await A.wait(500); await Z.say('Soll er kommen und fragen. Dann kriegt er es.');
+  if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Er wartet auch. Zdravko. Auf einen, der durch die Tür kommt.'); } }
+async function lenaFolder(A){ var G=A.G, Z=A.npc('zdravko'), Ln=A.npc('lena'); if (G.flags['k3.b.folder']||!lenaHere(G)) return;
+  await A.wait(700); await Ln.say('Da ist er.'); await A.wait(500); await Ln.say('Mit Hut. An dem Tisch da.'); await A.narrate('Lena steht vor den Fotos. Sie tippt mit dem Finger auf das Glas, auf den lachenden Mann am Fenstertisch.');
+  await A.wait(900); await A.narrate('Zdravko hört auf zu polieren. Er sieht sie lange an.'); await A.wait(1000); await Z.say('Ti si mala. Lena.'); await Ln.say('Was sagt er?'); await A.m('Dass du die Kleine bist. Lena.');
+  await A.wait(800); await Z.say('Er hat dich mir gezeigt. Jedes Jahr ein Foto. Hier, an der Theke.'); await A.m('Er sagt, dein Großvater hat ihm jedes Jahr dein Foto gezeigt. Hier.');
+  await A.wait(900); A.sfx('drawer'); await A.narrate('Zdravko bückt sich hinter die Theke. Er zieht die Schublade mit dem Messingknopf auf und legt eine Mappe auf das Resopal. Vorsichtig, wie etwas, das noch warm ist.');
+  await Z.say('Onome ko dođe.'); await A.m('„Dem, der kommt.“'); await A.wait(600); await Z.say('Ona je došla.'); await A.m('„Sie ist gekommen.“'); A.setFlag('k3.b.folder'); A.sfx('paper');
+  await A.wait(700); await Ln.say('Was ist das?'); await A.m('Von deinem Großvater. Vom letzten Tag.'); await Ln.say('Mach du auf. Ich … mach du.'); A.give('mapa_mate');
+  await M.K3X.folderDoc(A);
+  await A.wait(900); await Ln.say('Er wollte kommen.'); await A.wait(800); await Ln.say('Zu uns. Nach München.'); await A.wait(1000); await Ln.say('Gib du es Papa. Wenn ich es ihm gebe, macht er das Gesicht.'); await A.m('Welches Gesicht?'); await Ln.say('Das, wo er nichts sagt.');
+  await A.wait(700); await Ln.say('Ich geh zurück. Zu Jela. Die hat Pita gemacht, schon wieder.'); if (Ln.actor){ var d=M.stand('kafic','door')||[40,120,'L']; Ln.idle(null); var w=Ln.walk(d[0],d[1]); await A.wait(800); Ln.actor.fadeOut=A.gt; await w; } A.despawn('lena'); A.rebuild();
+  await A.wait(600); await Z.say('Danke.'); await A.m('Wofür?'); await Z.say('Dass einer gekommen ist.');
+  if (G.malaOn && A.malaHere()){ await A.wait(800); await A.g('Zwölf Jahre fragen, wann sie kommen.'); await A.wait(500); await A.g('Und dann eine Fahrkarte kaufen und nicht fahren.'); await A.m('Er ist gestorben.'); await A.g('Ich weiß. Ich meine: Er hat sich entschieden. Zu spät, aber er hat.'); } }
 async function talkZdravko(A){ var Z=A.npc('zdravko'), p=A.G.phase;
   await A.menuLoop(function(){ return [
     {t:'Eine Kafa, bitte.',go:function(A){ return coffee(A,Z); }},
@@ -76,6 +98,8 @@ async function talkZdravko(A){ var Z=A.npc('zdravko'), p=A.G.phase;
     {t:'Die Karte an der Wand?',once:'zd1',go:async function(A){ await Z.say('Von fünfundachtzig. Damals wusste man noch, wo was ist.'); await A.wait(400); await Z.say('Die Dörfer, die Fähren, jeder Feldweg. Schauen Sie sie an. Sie ist umsonst. Der Kaffee nicht.'); A.setFlag('k3.zd.map'); }},
     {t:'Der Mann mit dem Mädchen. Aus dem Bus aus München.',once:'zd2',if:p==='k3_d2'&&A.flag('k3.b.arrived'),go:async function(A){ await Z.say('Davor. Der Sohn von Dida Mate.'); await A.wait(600); await Z.say('Ich habe ihn erkannt. Am Gang. Er hat mich nicht erkannt. Ich habe zugenommen. Er auch.'); }},
     {t:'Kommt heute ein Bus aus München?',once:'zd3',if:p==='k3_d3',go:async function(A){ await Z.say('Sonntags? Nein. Sonntags kommt aus München nur das Fernsehen.'); }},
+    {t:'Hat Dida Mate beim Warten etwas gesummt?',if:A.hasNote('b3_zdravko')&&!A.hasNote('b3_hum'),go:function(A){ return hum(A,Z); }},
+    {t:'Kennen Sie den Taxifahrer am Ostbahnhof?',once:'zd4',if:A.hasNote('v3_where')||A.flag('k3.x.taxiZd'),go:async function(A){ await Z.say('Den mit dem Mercedes? Wir waren eine Firma. Ein Depot, ein Kaffee um sechs.'); await A.wait(600); await Z.say('Jetzt sind wir zwei Bahnhöfe. Er fährt von drüben, ich schenke hier aus.'); await A.wait(500); await Z.say('Wenn sein Taxi vorbeifährt, hebt er die Hand. Ich auch. Das ist unser Gespräch.'); A.setFlag('k3.x.zdTaxi'); }},
     A.askOpt({
       v3_ljerka:async function(A){ await Z.say('Vlado, der Raucher?'); await A.wait(500); await Z.say('Vlado Rajić. Vulkanizer hinter dem Bulevar. Er kommt jeden Morgen um sieben auf einen Kaffee, steht an der Theke, zahlt und geht.'); await Z.say('Zehn Jahre, und ich weiß nicht, wie seine Stimme klingt.'); if (!A.hasNote('v3_where')) A.note('v3_where'); A.setFlag('k3.v.known'); },
       v3_mate:'Rajić? Der Vulkaniseur? Der kommt jeden Morgen. Wer hat Ihnen von ihm erzählt?',
@@ -85,7 +109,9 @@ async function talkZdravko(A){ var Z=A.npc('zdravko'), p=A.G.phase;
       p3_munich:'Der Bus aus München kommt samstags um sechs. Sagt der Fahrplan. Er kommt, wann er will.',
       photo_full:'Achtundachtzig? Da hatte ich noch Haare. Und das Café hatte noch keinen Fernseher.',
       l3_skela:'Skela? Da sind wir früher zum Baden hingefahren. Mit dem Bus. Den Bus gibt es nicht mehr, die Fähre auch nicht.',
-      l3_area:'Südlich der Stadt? Da ist nur noch Fluss und Dorf. Schauen Sie auf die Karte. Die weiß mehr als ich.' },
+      l3_area:'Südlich der Stadt? Da ist nur noch Fluss und Dorf. Schauen Sie auf die Karte. Die weiß mehr als ich.',
+      b3_folder:function(A){ return folderAsk(A,Z); }, b3_hum:function(A){ return hum(A,Z); }, s3_words:'Die Australier? Die haben hier gesessen und das Lied falsch gesungen. Mate hätte sie verbessert. Bis zum Fenster.',
+      b3_coming:'Eine Fahrkarte. Ja. Ich habe sie ihm verkauft. Hier, an der Theke. Ich habe gesagt: Dida, du fährst? Er hat gesagt: Ich fahre.', vizitka:'Zelenika, München. Dann kommt er also wieder. Gut.' },
       ['Das weiß ich nicht. Ich weiß, wann die Busse fahren.','Fragen Sie mich was Leichteres. Kaffee oder Rakija.']),
     {t:'Danke, Zdravko.',bye:true,go:async function(A){ await Z.say(A.cycle('zdBye',['Bitte. Busse fahren, ich bleibe.','Kommen Sie wieder. Die Tasse steht.'])); }}
   ]; }); }
@@ -105,9 +131,20 @@ var HS=[
    give:{ photo_full:'Mate: „Ein schönes Kind. Meine Enkelin ist auch so. Glaube ich.“', km:'Mate: „Lassen Sie. Ich habe meinen Tee.“', rueckfahrt:'Mate: „Sarajevo. Da fährt einer um sieben. Der ist immer pünktlich. Komisch.“' },
    g:{look:function(A){ if (!A.isFound('mate')) return mateFind(A); return A.g('Mate. Seine Leine geht zum Fenster hinaus, nach Süden. Zu einem Haus, glaube ich. Und in seiner Jackentasche ist etwas Schweres. Ein Schlüssel.'); },
      talk:function(A){ return talkMateG(A); },
+     listen:async function(A){ if (!A.isFound('mate')) return mateFind(A); if (A.hasNote('b3_hum')) return A.g('Er summt. Bis zum Fenster. Dann hört er auf, als käme eine Tür.');
+       await A.g('Er summt.'); await A.wait(700); await A.g('Ein altes Lied. Immer dieselbe Stelle, und dann hört er auf, als käme eine Tür.'); await A.wait(600); await A.g('Das Lied von den Australiern. Nur richtig. Bis zu der Stelle.'); A.note('b3_hum');
+       if (A.marko){ await A.wait(500); await A.m('Bis zu welcher Stelle?'); await A.g('Wo sie am Fenster steht. Weiter kann er es nicht. Oder will nicht.'); } },
      sense:async function(A){ if (!A.isFound('mate')) return mateFind(A); if (A.flag('k3.b.mateSensed')) return A.g('Ein Tor. Ein Pfosten. Ein Bus, der nicht hält.'); A.setFlag('k3.b.mateSensed');
        await A.memory({title:'Nachhall – Mate',tint:'ghost',draw:M.mem&&M.mem.k3_mate,lines:['Ein Gartentor, Abend. Ein Mann mit Hut lehnt am Pfosten, eine Thermoskanne unter dem Arm.','In der Hand ein Schlüssel. Er dreht ihn, steckt ihn ein, holt ihn wieder heraus.','Ein Bus fährt vorbei. Er hält nicht. Der Mann bleibt stehen, bis die Rücklichter weg sind.']});
        await A.g('Er wartet nicht nur hier. Er wartet auch an einem Tor. Mit dem Schlüssel in der Hand.'); }}},
+ {id:'bar_drawer',name:'Schublade unter der Theke',look:'Eine Schublade unter der Theke, mit einem Messingknopf. Zdravko stellt die Tasse darauf ab, wenn er zählt.',
+   open:'Zdravkos Schublade. Ich mache keine fremden Schubladen auf. Schon gar nicht unter seinen Augenbrauen.',use:'Ich mache sie nicht auf.',
+   g:{look:async function(A){ var G=A.G; if (A.hasNote('b3_folder')) return A.g('Die Mappe. Der Fahrschein. Der angefangene Brief. Sie liegen noch da.');
+       await A.g('Durch das Holz: eine Mappe. Darin ein Fahrschein, blau.'); await A.wait(600); await A.g('Und ein Brief, angefangen. Zwei Zeilen.'); await A.wait(800); await A.g('Jemand hat die Mappe zweimal zurückgelegt. Mit beiden Händen.');
+       A.note('b3_folder'); if (A.marko && (A.isFound('mate')||A.hasNote('b3_zdravko'))){ await A.wait(500); await A.m('Mates Mappe?'); await A.g('Sie riecht nach seinem Tee.'); } },
+     sense:'Zwei Hände, die etwas hineinlegen und wieder herausnehmen. Und wieder hinein.'}},
+ {id:'lena_k',npc:'lena',name:'Lena',hgt:44,vis:function(S,G){ return lenaHere(G); },talk:function(A){ return lenaFolder(A); },
+   look:'Lena vor den Fotos an der Wand, den pinken Anorak offen. Sie sucht ein Gesicht.',g:{look:'Sie sucht ihn auf den Fotos. Sie wird ihn finden. Er lacht auf einem.'}},
  {id:'oldmap',name:'Alte Landkarte',look:function(A){ return oldMap(A); },use:function(A){ return oldMap(A); },read:function(A){ return oldMap(A); },
    g:{look:function(A){ return A.g(A.hasNote('l3_skela')?'Skela. Da ist ein kleines Zeichen am Fluss. Ich sehe nicht gern hin.':'Eine Karte. Für mich sind Karten Bilder von Orten, an denen ich nie war.'); }}},
  {id:'bar',name:'Theke',look:'Eine Theke aus Resopal, eine Espressomaschine aus den Achtzigern, Rakijaflaschen mit handgeschriebenen Etiketten. Daneben ein Glas saure Gurken, das niemand bestellt.',
@@ -128,6 +165,7 @@ M.room('kafic',{ name:'Café „Zdravko“', scape:'k3_kafic',
   state:function(G){ return {}; },
   actors:function(S,G){ var L=[], z=M.apos('kafic','zdravko',[192,95,'L']);
     L.push({id:'zdravko',ch:'zdravko',x:z[0],y:z[1],f:z[2]||'L',name:'Zdravko',idle:'polish',speechY:34});
+    if (lenaHere(G)){ var l=M.apos('kafic','lena_k',[300,118,'L']); L.push({id:'lena',ch:'lena',x:l[0],y:l[1],f:l[2]||'L',name:'Lena',speechY:44}); }
     if (mateHere(G)){ var m=M.apos('kafic','mate',[250,118,'R']), w=M.spot('kafic','window_table');
       L.push({id:'mate',ch:'mate',x:m[0],y:m[1],f:m[2]||'R',name:'Mate',ghost:true,reveal:true,idle:'sit',talk:'sitTalk',speechY:38,
         anchor:w[2]?[w[0]+w[2]-6,w[1]+4]:null}); }
@@ -138,6 +176,7 @@ M.room('kafic',{ name:'Café „Zdravko“', scape:'k3_kafic',
     if (M.INTRO && M.INTRO.zdravko && M.isMet && !M.isMet(G,'zdravko') && M.introduce) await M.introduce(A,'zdravko');
     if (mateHere(G) && !A.isFound('mate') && G.malaOn && A.malaHere()) await mateFind(A);
     if (G.phase==='k3_d2' && mateHere(G) && A.isFound('mate') && A.first('kfD2')){ await A.narrate('Mate sitzt wieder am Fenstertisch. Er hat die Thermoskanne aufgeschraubt und wieder zugeschraubt.'); if (A.flag('k3.b.promise')){ await A.npc('mate').say('Sie haben nachgesehen. Danke.'); await A.npc('mate').say('Er kommt mit dem nächsten.'); } }
-    if (G.phase==='k3_d3' && A.first('kfD3')){ await A.m('Der Fenstertisch ist leer. Die Tasse steht umgedreht auf der Untertasse.'); if (G.malaOn && A.malaHere()) await A.g('Er ist nicht hier. Heute wartet er woanders.'); } }
+    if (G.phase==='k3_d3' && A.first('kfD3')){ await A.m('Der Fenstertisch ist leer. Die Tasse steht umgedreht auf der Untertasse.'); if (G.malaOn && A.malaHere()) await A.g('Er ist nicht hier. Heute wartet er woanders.'); }
+    if (lenaHere(G)) await lenaFolder(A); }
 });
 })(M);

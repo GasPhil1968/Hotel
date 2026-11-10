@@ -57,6 +57,12 @@ async function tellAll(A){ var Nd=A.npc('nada'), Z=A.npc('zlata'), G=A.G; if (F(
   await A.wait(1400); await Nd.say('Den Quittenbaum behalten Sie.'); await A.wait(1000); await A.narrate('Zlata nimmt den Kessel vom Feuer. Nada steht auf.');
   await A.wait(800); await Nd.say('Ich will noch einmal zu ihr. Hinaus.');
   A.setFlag('k3.e.inKitchen',false); await A.goto('skela_l',{via:'zlata_k'}); }
+// Ausbau N5: der Bleistift an Nada
+async function pencilToNada(A){ var G=A.G, Nd=A.npc('nada'); if (F(G,'k3.e.pencil')) return Nd.say('Den habe ich. Hier.');
+  await A.m('Das war an der Glocke. Bato hat ihn gefunden. Zlata hat ihn aufgehoben.'); await A.animM('give'); A.take('olovka_mala'); A.setFlag('k3.e.pencil'); A.sfx('keyDrop'); await A.wait(1200);
+  await A.narrate('Nada nimmt den Bleistift. Sie sieht auf das angekaute Ende.'); await A.wait(1000); await Nd.say('Sie hat daran gekaut. Immer.'); await A.wait(800); await Nd.say('Ich habe geschimpft. Jeden Tag habe ich geschimpft.');
+  await A.wait(900); await A.narrate('Sie steckt ihn nicht ein. Sie hält ihn in der Faust, die ganze Zeit, die wir noch in der Küche sind.');
+  if (A.malaHere()){ await A.wait(800); await A.g('Sie schimpft nicht.'); await A.wait(500); await A.g('Ich hätte es gern noch einmal gehört.'); } }
 async function talkNada(A){ var G=A.G, Nd=A.npc('nada');
   if (!F(G,'k3.e.letter')) return Nd.say(A.has('brief1996')?'Was haben Sie da?':'Sie sagt, sie hat etwas für mich. Was?');
   if (!F(G,'k3.e.sketch')) return Nd.say(A.has('skizzenbuch')?'Zeig.':'…');
@@ -87,9 +93,9 @@ var HS=[
      if (epi(G)) return A.m('Nur noch der Bleistift. Der bleibt hier.'); return A.m('Das ist ihre Schublade. Ich mache sie nicht auf.'); },
    use:function(A){ return HS_BY.drawer.open(A); }, take:function(A){ return HS_BY.drawer.open(A); },
    g:{look:function(A){ return A.g(epi(A.G)?'Mein Bleistift. Er war an der Glocke. Bato hat ihn mitgebracht.':'Da drin liegt etwas von mir. Ich sehe es durch das Holz.'); },sense:'Ein Brief, der zurückgekommen ist. Er ist schwer, für so ein dünnes Papier.',listen:'Nichts. Papier schweigt.'}},
- {id:'table',name:'Tisch',look:function(A){ return A.m(kitchen(A.G)?'Der Tisch mit dem Wachstuch. Nada sitzt daran, die Hände um die Handtasche.':'Ein Tisch mit Wachstuch, Brotkrümel, eine Schale mit Walnüssen.'); },
+ {id:'table',name:'Tisch',look:function(A){ return A.m(kitchen(A.G)?'Der Tisch mit dem Wachstuch. Nada sitzt daran, die Hände um die Handtasche.':('Ein Tisch mit Wachstuch, Brotkrümel, eine Schale mit Walnüssen.'+(F(A.G,'k3.z.vaga')?' Und die Federwaage vom Markt, mit der Schale nach oben.':''))); },
    use:function(A){ return order(A); },
-   g:{look:'Hier hat sie gesessen und gewartet, bis ich aufwache. Ich bin einmal aufgewacht.',sense:'Walnüsse. Jeden Samstag auf den Markt. Und sie hat nie einer gefragt, wofür sie das Geld spart.',listen:'Die Uhr in der Stube tickt bis hierher.'}},
+   g:{look:function(A){ return A.g(F(A.G,'k3.z.vaga')?'Ihre Waage steht auf dem Tisch. Du hast sie ihr gebracht. Nachts.':'Hier hat sie gesessen und gewartet, bis ich aufwache. Ich bin einmal aufgewacht.'); },sense:'Walnüsse. Jeden Samstag auf den Markt. Und sie hat nie einer gefragt, wofür sie das Geld spart.',listen:'Die Uhr in der Stube tickt bis hierher.'}},
  {id:'window',name:'Küchenfenster',look:'Das breite Küchenfenster. Dahinter der Hof, der Fluss und drüben, klein, die Glocke.',with:{ mobitel:function(A){ return light(A,'kitchen'); } },
    g:{look:'Von hier sieht man die Glocke. Sie hat am Morgen hinübergesehen. Jeden Morgen.',sense:'Viele Morgen am Fenster. Mit Kaffee.',listen:'Der Fluss. Von hier klingt er freundlich.'}},
  {id:'ladder',name:'Leiter',look:'Eine Holzleiter zu einer Luke in der Decke. Oben ist seine Kammer. Zlata geht da nicht mehr hinauf.',
@@ -104,7 +110,7 @@ var HS=[
    g:{look:'Sie hat mich gehalten. Hier.',sense:'Ihre Hände sind dieselben. Sie reiben jetzt einen Topf statt meiner Hände.',listen:'Sie hat Angst, dass die Mutter sie hasst. Sie hasst sie nicht.'}},
  {id:'nada',npc:'nada',name:'Nada',hgt:36,vis:function(S,G){ return kitchen(G); },talk:function(A){ return talkNada(A); },
    look:function(A){ return A.m(F(A.G,'k3.e.letter')?'Nada am Tisch, vor sich den Brief. Sie liest ihn nicht noch einmal. Sie hält ihn fest.':'Nada am Tisch, den Mantel noch an, die Handtasche auf den Knien. Sie sieht auf das Sofa mit den Decken.'); },
-   give:{ brief1996:function(A){ return letter(A); }, skizzenbuch:function(A){ return sketch(A); }, photo_full:'Nada: „Das Foto habe ich. Ich will ihr Heft.“' },
+   give:{ brief1996:function(A){ return letter(A); }, skizzenbuch:function(A){ return sketch(A); }, olovka_mala:function(A){ return pencilToNada(A); }, photo_full:'Nada: „Das Foto habe ich. Ich will ihr Heft.“' },
    g:{look:'Mama. In der Küche, in der ich gestorben bin. Sie weiß es nicht. Noch nicht.',sense:'Siebzehn Januare. Sie trägt sie alle in der Handtasche.',listen:'Sie atmet, wie sie atmet, wenn sie nicht weinen will.'}}
 ];
 var HS_BY={}; HS.forEach(function(h){ HS_BY[h.id]=h; });
