@@ -30,9 +30,13 @@ var HS_ST=[
  {id:'exchange',name:'Wechselstube',look:'Mjenjačnica. Mama hat ihre Euro schon in München gewechselt. „Damit ich nicht an so einem Schalter stehe.“',g:{look:'Geld für ein Land, das es nicht mehr gibt. Dann für eines, das neu war.'}},
  {id:'atm',name:'Geldautomat',look:'Ein Geldautomat, der freundlich in vier Sprachen nichts ausgibt.',g:{look:'Er piepst. Das ist alles.'}},
  {id:'parcel',name:'Gepäckaufbewahrung',look:'Gepäckaufbewahrung. Ein Mann schläft auf einem Stuhl zwischen Koffern, die nicht seine sind.',g:{look:'Er träumt vom Meer. Ich sehe es nicht. Ich weiß es.'}},
- {id:'taxi',name:'Taxistand',look:'Taxis, gelb und weiß. Ein Fahrer lehnt an der Tür und raucht. Er hebt das Kinn, als ich hinsehe.',
-   use:function(A){ return M.k5Taxi?M.k5Taxi(A):A.m('Später.'); }, talk:function(A){ return M.k5Taxi?M.k5Taxi(A):A.m('Später.'); },
+ {id:'taxi',name:'Taxistand',look:function(A){ return A.m(f(A.G,'k5.p.taxi')||ph(A.G)!=='k5_pro'?'Der Taxistand. Leer, bis auf einen Kippenhaufen neben dem Schild.':'Ein weißes Taxi mit gelbem Schild. Der Fahrer lehnt an der Tür und raucht. Er hebt das Kinn, als ich hinsehe.'); },
+   use:function(A){ return M.k5Taxi?M.k5Taxi(A):A.m('Später.'); }, talk:function(A){ return M.k5TalkTaxi?M.k5TalkTaxi(A):A.m('Später.'); },
    g:{look:'Mama steigt nie in ein Auto, das sie nicht kennt. Heute schon.'}},
+ {id:'taxist',npc:'taxist',name:'Taxifahrer',hgt:46,talk:function(A){ return M.k5TalkTaxi?M.k5TalkTaxi(A):A.m('Später.'); },
+   look:'Der Taxifahrer. Glatze, grauer Schnauzbart, Lederjacke, die Zigarette in der hohlen Hand. Er sieht den Bus an, nicht uns.',
+   give:{ photo_full:async function(A){ var T=A.npc('taxist'); await T.say('Trojka. Na Alipašinom.'); await A.m('„Die Drei. In Alipašino.“ Er gibt es mir zurück und sieht noch einmal auf das Mädchen.'); } },
+   g:{look:'Er wartet. Das kann er. Er steht hier, seit es hell ist, wie ich.'}},
  {id:'station',name:'Bahnhofsgebäude',look:'Das Bahnhofsgebäude, Glas und Beton. Vorn eine Uhr, die stimmt. Das war früher nicht so.',g:{look:'Hier war ich nie. Ich war immer am anderen Ende der Drei.'}},
  {id:'clock',name:'Uhr',look:function(A){ return A.m(ph(A.G)==='k5_pro'?'Sechs Uhr vierzig. Es wird hell.':'Die Uhr geht. Ich sehe trotzdem auf mein Telefon.'); },g:{look:'Zehn nach elf ist erst am Samstag.'}},
  {id:'tram_stop',name:'Haltestelle',look:'Die Haltestelle der Eins. Mama sieht nicht hin.',g:{look:'Die Eins. Nicht die Drei.'}},
@@ -45,9 +49,11 @@ var HS_ST=[
    g:{look:'Sie sieht mich nicht. Sie sieht hin, wo ich stehe, und sieht die Tafel.'}}
 ];
 M.room('stanica5',{ name:'Busbahnhof', scape:'k2_stanica', music:'k2_sarajevo',
-  state:function(G){ return {tramIn:false,busTo:'muenchen'}; },
+  state:function(G){ return {tramIn:false,busTo:'muenchen',taxiGone:!!G.flags['k5.p.taxi'],taxiGo:0}; },   // nach der Fahrt steht das Taxi nicht mehr da
   load:function(A){ var r=M.ROOMS['stanica5']; if (r && r.state) Object.assign(A.S,r.state(A.G)); },
-  actors:function(S,G){ var L=[]; if (ph(G)==='k5_pro' && !f(G,'k5.p.taxi')) L.push({id:'jasna',ch:'jasnaC',x:74,y:122,f:'R',name:'Mama',idle:'waitF',speechY:46}); return L; },
+  actors:function(S,G){ var L=[]; if (ph(G)==='k5_pro' && !f(G,'k5.p.taxi')){ L.push({id:'jasna',ch:'jasnaC',x:74,y:122,f:'R',name:'Mama',idle:'waitF',speechY:46});
+      L.push({id:'taxist',ch:'taxist',x:388,y:117,f:'L',name:'Taxifahrer',idle:'smoke',speechY:46}); }   // der Fahrer lehnt rauchend an der Fahrertür
+    return L; },
   hotspots:HS_ST,
   enter:async function(A,from){ if (ph(A.G)!=='k5_pro' && A.first('k5stLater')) await A.m('Der Busbahnhof. Von hier fährt Mama am Dienstag zurück.'); }
 });

@@ -213,7 +213,7 @@ function paintStreet(b){ var x, y, x0=ROW.x1, x1=STA.x0, vx=416, fl=88, ft=58, f
   b.vl(fx1+3,70,fl,P.k1); b.rect(fx1+2,66,3,5,P.k1); b.px(fx1+3,67,P.r2); b.px(fx1+3,69,P.g2);
   b.rect(fx0+4,fl-4,7,3,P.r2); b.hl(fx0+5,fx0+9,fl-5,P.r1); b.px(fx0+4,fl-2,P.k1); b.px(fx0+10,fl-2,P.k1);
   b.vl(fx0-2,64,fl+1,P.m1); b.hl(fx0-2,fx0+1,64,P.m1); b.px(fx0+1,65,P.s5); STREETLAMP=[fx0+1,65]; }
-function paintTaxi(b,tod){ var x0=TAXI.x0, by=TAXI.base, L=46, x, y;
+function paintTaxi(b,tod,ox,oy,spr){ var x0=ox===undefined?TAXI.x0:ox, by=oy===undefined?TAXI.base:oy, L=46, x, y;   // spr: als Sprite in einen kleinen Puffer (ohne Schneemaske)
   // Karosserie (W123 von der Seite): lange Haube, Kabine, kurzes Heck; Chromleiste, Radläufe
   var prof=[[0,10],[3,11],[10,12],[13,12],[14,17],[17,21],[30,21],[34,16],[36,13],[44,12],[46,10]];
   function topAt(u){ for (var i=0;i<prof.length-1;i++){ var a=prof[i], c=prof[i+1]; if (u>=a[0] && u<=c[0]) return lerp(a[1],c[1],(u-a[0])/Math.max(1,c[0]-a[0])); } return 10; }
@@ -227,7 +227,15 @@ function paintTaxi(b,tod){ var x0=TAXI.x0, by=TAXI.base, L=46, x, y;
   // Dachschild TAXI
   b.rect(x0+19,by-25,11,4,P.y3); b.hl(x0+19,x0+29,by-25,P.y4); M.microText(b,'TAXI',x0+19,by-26+1,P.k1); b.hl(x0+21,x0+27,by-21,P.k2);
   for (x=x0+2;x<x0+L-2;x++) if (bayer(x,by)<0.8) dk(b,x,by,2);
-  TAXISIGN=[x0+19,by-25]; snowRect(x0+14,by-22,20,2); snowRect(x0,by-13,14,2); snowRect(x0+34,by-14,12,2); }
+  if (spr) return; TAXISIGN=[x0+19,by-25]; snowRect(x0+14,by-22,20,2); snowRect(x0,by-13,14,2); snowRect(x0+34,by-14,12,2); }
+// Abfahrt (Kapitel 5): das Taxi fährt die Straße hinauf in die Tiefe – kleiner werdend auf den Fluchtpunkt zu (S.taxiGo: Spielzeit des Starts, S.taxiGone: nicht mehr im Hintergrund)
+var TAXISPR={};
+function taxiSprite(tod){ var k=tod||'day'; if (TAXISPR[k]) return TAXISPR[k]; var b=new M.Buf(50,32,T); paintTaxi(b,tod,2,30,true); TAXISPR[k]=b; return b; }
+function drawTaxiGo(fb,v,S){ var dt=v.gt-S.taxiGo; if (dt<0) dt=0; var k=Math.min(1,dt/3600); if (k>=1) return; var e=k*k*(3-2*k);
+  var x=TAXI.x0+(406-TAXI.x0)*e, y=TAXI.base+(91-TAXI.base)*e, sc=1-0.78*e, spr=taxiSprite(v.tod), w=Math.max(4,Math.round(spr.w*sc)), h=Math.max(3,Math.round(spr.h*sc));
+  var ox=Math.round(x-v.cam), oy=Math.round(y-h+2); if (ox>=fb.w||ox+w<0) return;
+  for (var yy=0;yy<h;yy++) for (var xx=0;xx<w;xx++){ var c=spr.d[Math.min(spr.h-1,Math.floor(yy/sc))*spr.w+Math.min(spr.w-1,Math.floor(xx/sc))]; if (c===T) continue; fb.px(ox+xx,oy+yy,c); }
+  if (k<0.6){ for (var i=0;i<5;i++){ var ph=(v.t*0.5+i/5)%1, ex=Math.round(x-3-ph*8*sc)-v.cam, ey=Math.round(y-3-ph*9); if (bayer(ex,ey)<0.7-ph*0.6) fb.px(ex,ey,v.tod==='day'?P.s4:P.m2); } } }
 
 // ---------------------------------------------------------------- Bahnhof: Flachdach, Glasfront, Uhr, Halle; Haltestelle der Linie 1
 var GLASS=new Uint8Array(W*H);
@@ -306,7 +314,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,T), x, y, s
   stage(b,4,function(){ paintCanopyBack(b); paintRow(b,tod); paintStation(b,tod); });
   stage(b,5,function(){ paintGround(b,wea); });
   if (S.tramIn){ var tb=new M.Buf(W,H,T); M.scn.tram(tb,TRAM.x,TRAM.rail,{s:TRAM.s,line:'1',dir:'L',doors:'open'}); for (var k=0;k<W*H;k++) if (tb.d[k]!==T){ b.d[k]=tb.d[k]; TRAMM[k]=1; DEP[k]=5; } }
-  stage(b,5,function(){ paintShelter(b); paintWire(b); paintBus(b,tod,S); paintCanopy(b); paintBoard(b,tod!=='day'); paintKioskBack(b); paintRack(b); paintTaxi(b,tod); });
+  stage(b,5,function(){ paintShelter(b); paintWire(b); paintBus(b,tod,S); paintCanopy(b); paintBoard(b,tod!=='day'); paintKioskBack(b); paintRack(b); if (!S.taxiGone) paintTaxi(b,tod); });
   var fog=wea==='fog', snow=wea==='snow';
   if (!sunny){ var fk=fog?1:(snow?0.8:0.5), fcol=tod==='night'?P.m1:(tod==='dusk'?P.m2:(tod==='dawn'?P.m3:P.s4));
     M.fogBake(b,function(x,y){ var d=DEP[y*W+x]; if (d===1) return 0.88*fk; if (d===2) return 0.72*fk; if (d===3) return 0.42*fk; if (d===4) return 0.1*fk; return 0; },{col:fcol}); }
@@ -316,14 +324,14 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,T), x, y, s
   for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sk.d[q]; SKYM[q]=1; }
   if (snow||wea==='rain') wetReflect(b,0.5);
   // Schatten: unter dem Dach dunkel, Kontaktschatten; bei klarer Kälte die tiefe Sonne von links
-  M.light(b,M.lf.sum(M.lf.band(118,H,0,-0.4),M.lf.pool((BUS.x0+BUS.x1)/2,BUS.base+1,34,3,-1.1),M.lf.pool((KIO.x0+KIO.x1)/2,KIO.base+1,22,3,-0.9),M.lf.pool(TAXI.x0+23,TAXI.base+1,26,3,-1)),0,0,function(x,y){ return !SKYM[y*W+x]; });
+  M.light(b,M.lf.sum(M.lf.band(118,H,0,-0.4),M.lf.pool((BUS.x0+BUS.x1)/2,BUS.base+1,34,3,-1.1),M.lf.pool((KIO.x0+KIO.x1)/2,KIO.base+1,22,3,-0.9),S.taxiGone?M.lf.k(0):M.lf.pool(TAXI.x0+23,TAXI.base+1,26,3,-1)),0,0,function(x,y){ return !SKYM[y*W+x]; });   // ohne Taxi kein Schatten darunter
   M.light(b,M.lf.k(-0.6),0,0,function(x,y){ return x<CAN.x1+3 && y>CAN.y1 && y<PLAT+8 && !SKYM[y*W+x] && DEP[y*W+x]>=4; });
-  if (sunny) castShadows(b);
+  if (sunny) castShadows(b,S);
   BASE=b.clone();
   shade(b,0,0,todKey(tod,wea),lightsFor(tod,wea,S),function(x,y){ return SKYM[y*W+x]===1; });
   if (tod!=='day') afterLights(b,tod,wea,S);
   LASTB=b; return b; }
-function castShadows(b){ var objs=[[KIO.x0,KIO.x1,KIO.base,22],[TAXI.x0,TAXI.x0+44,TAXI.base,12],[SHEL.x0,SHEL.x1,SHEL.base,16]];
+function castShadows(b,S){ var objs=[[KIO.x0,KIO.x1,KIO.base,22],[SHEL.x0,SHEL.x1,SHEL.base,16]]; if (!(S&&S.taxiGone)) objs.push([TAXI.x0,TAXI.x0+44,TAXI.base,12]);
   LAMPS.forEach(function(l){ objs.push([l.x,l.x+1,l.base,30]); });
   objs.forEach(function(o){ var len=o[3]; for (var j=1;j<=len;j++){ var y=o[2]+Math.round(j*0.45), dx=Math.round(j*0.9); if (y>=H) break; for (var x=o[0]+dx;x<=o[1]+dx;x++){ if (x<0||x>=W) continue; var k=y*W+x; if (SKYM[k]||!PAVE[k]) continue; if (bayer(x,y)<0.9-j/len*0.45) b.px(x,y,M.DN[b.get(x,y)]); } } }); }
 function afterLights(b,tod,wea,S){ var x, y, night=tod==='night', fog=wea==='fog';
@@ -348,7 +356,7 @@ function afterLights(b,tod,wea,S){ var x, y, night=tod==='night', fog=wea==='fog
   for (x=SHEL.x0-3;x<SHEL.x1+3;x++) for (y=SHEL.top+2;y<SHEL.top+8;y++){ var o=BASE.get(x,y); b.px(x,y,o===P.s6?P.l1:(bayer(x,y)<0.5?P.b2:P.b1)); }
   BUSLIGHTS.forEach(function(q){ b.rect(q[0],q[1],4,3,P.y5); b.px(q[0]+1,q[1]+1,P.l1); });
   [30,80,128].forEach(function(xx){ b.hl(xx-9,xx+9,CAN.y1+2,P.l1); b.hl(xx-8,xx+8,CAN.y1+3,P.n5); });
-  paintBoard(b,true); b.rect(TAXISIGN[0],TAXISIGN[1],11,4,P.y4); b.hl(TAXISIGN[0],TAXISIGN[0]+10,TAXISIGN[1],P.y5); M.microText(b,'TAXI',TAXISIGN[0],TAXISIGN[1],P.k1);
+  paintBoard(b,true); if (!(S&&S.taxiGone)){ b.rect(TAXISIGN[0],TAXISIGN[1],11,4,P.y4); b.hl(TAXISIGN[0],TAXISIGN[0]+10,TAXISIGN[1],P.y5); M.microText(b,'TAXI',TAXISIGN[0],TAXISIGN[1],P.k1); }
   M.text(b,'ŽELJEZNIČKA STANICA',STALABEL[0],STALABEL[1],night?P.b3:P.b2);
   // Uhr beleuchtet
   b.ellipse(CLK.cx+0.5,CLK.cy+0.5,CLK.r,CLK.r,P.s6); for (var i=0;i<12;i++){ var a=i/12*Math.PI*2; b.px(rd(CLK.cx+Math.cos(a)*(CLK.r-1.5)),rd(CLK.cy+Math.sin(a)*(CLK.r-1.5)),P.k1); }
@@ -397,6 +405,7 @@ function pigeon(fb,x,y,f,t,i,tint){ var peck=Math.sin(t*2.6+i*2.1)>0.45, step=(M
   if (peck){ px(2,-2,P.m2); px(3,-1,P.m3); px(4,-1,P.t4); } else { px(2,-3,P.a3); px(2,-4,P.m3); px(3,-5,P.m3); px(2,-5,P.m2); px(4,-4,P.t4); } }
 function clockHM(tod,t){ var base=tod==='day'?[11,8]:(tod==='dusk'?[16,42]:(tod==='dawn'?[7,4]:[21,15])), m=base[1]+Math.floor(t/60); return [base[0]+Math.floor(m/60),m%60]; }
 function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, wea=M.scn.weather(GS), tint=tod!=='day'?(M.TINT[tod]||M.TINT.dawn):null, x, y;
+  if (S.taxiGo) drawTaxiGo(fb,v,S);
   // Leuchtschrift am Bus: läuft durch (Mostar steht still)
   var led=BUSLED, txt=busSign(S), lx0=led[0]-cam, lit=tod==='day'?P.y3:P.y4, tw=M.microWidth(txt);
   if (lx0>-led[2] && lx0<fb.w){ var off=(tw<=led[2])?Math.floor((led[2]-tw)/2):(led[2]-Math.floor((t*14)%(tw+led[2]))); var tmp={px:function(px,py,c){ if (px<0||px>=led[2]) return; var X=lx0+px; if (X<0||X>=fb.w) return; fb.px(X,led[1]+py,c); }};

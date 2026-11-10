@@ -592,7 +592,7 @@ function gameReset(){ (M.RESET_HOOKS||[]).forEach(function(f){ try{ f(); }catch(
 // Schlägt das Laden nach dem Austausch des Zustands fehl, kehrt das laufende Spiel unverändert zurück (UI-Konzept B1-11)
 function loadData(d){ var prevGS=GS, prevRoom=room&&room.id, prevScreen=E.screen, swapped=false; try{ var base=validate(d); if (!base) return false;
     M.migrateAll(base); swapped=true;   // ältere Spielstände an den neuen Ablauf anpassen (90_story.js, dann die Nachzüge aus M.MIGRATE)
-    setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT','steam','nudge'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung (QA BUG-004: auch Dampf und Stimmen-Takt)
+    setGame(base); safeGS=null; Object.keys(GS.rooms||{}).forEach(function(r){ ['ferryAt','ferryGo','radioT','steam','nudge','taxiGo'].forEach(function(k){ delete GS.rooms[r][k]; }); }); // Spielzeit-Stempel gelten nur in der laufenden Sitzung (QA BUG-004: auch Dampf und Stimmen-Takt)
     timers.length=0; faders.length=0; E.speech=null; E.overlay=null; E.dlg=null; E.card=null; E.busy=false; E.acting=0; E.menu=null; paused=false; E.fade=0; E.pop=null; E.crossing=null;   // eine abgebrochene Szene bleibt stehen, sie läuft nicht weiter
     resetTransient(); gameReset();
     M.setGhostAudio(GS.active==='mala'); loadRoom(GS.pos[GS.active].room); var pl=player(); if (pl) setIdle(pl); snapCamera(); E.screen='game'; if (room.resume) room.resume(API); if (M.resumePending) Promise.resolve().then(function(){ return M.resumePending(API); }); return true; }

@@ -28,17 +28,38 @@ M.k5Kiosk=async function(A){ var K=A.npc('kioskm');
   await A.m('Einen Fahrschein für die Straßenbahn, bitte.'); await K.say('Jedna karta. Osamdeset feninga.'); await A.m('„Eine Fahrkarte. Achtzig Pfennig.“ Sie sagen hier immer noch Pfennig. Feninga.');
   A.sfx('coin'); A.setFlag('k5.p.ticket'); await A.m('Für die Drei. Wann ich ihn brauche, weiß ich nicht.');
   if (gHere(A)){ await A.wait(300); await A.g('Ich weiß es.'); await A.m('…'); await A.g('Später.'); } };
+// Gespräch mit dem Taxifahrer (sichtbar, mit Porträt); „Sind Sie frei?“ führt zur Fahrt
+M.k5TalkTaxi=async function(A){ var G=A.G, T=A.npc('taxist');
+  if (G.phase!=='k5_pro' || F(A,'k5.p.taxi')) return M.k5Taxi(A);
+  if (A.first('k5txHi')){ await T.say('Dobro jutro. Minhen?'); await A.m('„Guten Morgen. München?“ Er sieht auf die Koffer, nicht auf mich.'); await A.m('München.'); }
+  await A.menuLoop(function(){ return [
+    {t:'Sind Sie frei?',go:async function(A){ await M.k5Taxi(A); return 'bye'; }},
+    {t:'Was kostet es nach Kovači?',once:'k5tx1',go:async function(A){ await T.say('Kovači? Deset maraka. Vratnik petnaest, gore je.'); await A.m('„Zehn Mark. Vratnik fünfzehn, das ist oben.“ Er sagt Mark. Wie Mama.'); }},
+    {t:'Ist das Ihr Wagen?',once:'k5tx2',go:async function(A){ await T.say('Moj. Dvadeset godina. Prije rata je bio bijel, poslije isto.'); await A.m('„Meiner. Zwanzig Jahre. Vor dem Krieg war er weiß, danach auch.“'); await A.wait(300); await A.m('Das ist bei uns nicht anders.'); }},
+    {t:'Rauchen Sie immer so früh?',once:'k5tx3',go:async function(A){ await T.anim('smoke'); await T.say('Od pet. Prvi autobus je u pola šest.'); await A.m('„Seit fünf. Der erste Bus kommt um halb sechs.“');
+        if (gHere(A)){ await A.wait(400); await A.g('Er wartet auch. Nicht auf jemanden. Auf irgendwen.'); } }},
+    {t:'Gleich. Ich hole noch Mama.',bye:true,go:async function(A){ await T.say(A.cycle('k5txBye',['Polako. Nikud ne žurim.','Tu sam.'])); await A.m(A.cycle('k5txBye2',['„Langsam. Ich hab’s nicht eilig.“','„Ich bin da.“'])); }}
+  ]; }); };
+// Einsteigen und Abfahrt: der Fahrer lädt die Koffer ein und steigt ein, Mama hinten, Marko auch; dann fährt das Taxi die Straße hinauf (Kunst: S.taxiGo)
+async function k5TaxiBoard(A,T,J){ var X0=396, BY=118, me=A.npc('marko');
+  await A.narrate('Der Fahrer lädt die Koffer ein, ohne zu fragen.');
+  if (T.actor){ await T.walk(X0+44,BY); await A.wait(350); A.sfx('box'); await A.wait(500); await T.walk(X0+12,BY); await T.face('B'); await A.wait(250); A.sfx('door'); T.hide(); }
+  if (J.actor){ await J.walk(X0+30,BY+1); await J.face('B'); await A.wait(300); A.sfx('door'); J.hide(); }
+  await A.walk(X0+38,BY+2); await A.face('B'); await A.wait(300); A.sfx('door'); if (me.actor) me.hide(); var G0=A.npc('mala'); if (A.G.malaOn && G0.actor && A.malaHere()) G0.hide(); await A.wait(400);   // Mala sitzt dazwischen
+  A.set('taxiGone',true); A.S.taxiGo=A.gt; A.sfx('taxi'); await A.wait(3400); }
 M.k5Taxi=async function(A){ var G=A.G;
   if (G.phase!=='k5_pro') return A.m(A.cycle('k5taxiL',['Ich habe den Stadtplan. Und zwei Füße.','Kein Taxi. Die Stadt ist kleiner, als ich sie in Erinnerung habe.']));
   if (F(A,'k5.p.taxi')) return A.m('Das Taxi ist weg.');
   var T=A.npc('taxist'), J=A.npc('jasna');
-  await A.narrate('Ein weißes Taxi mit gelbem Schild. Der Fahrer tritt die Zigarette aus und lädt die Koffer ein, ohne zu fragen.');
+  if (T.actor){ await T.faceMe(); await A.wait(200); }
+  await A.narrate('Ein weißes Taxi mit gelbem Schild. Der Fahrer tritt die Zigarette aus.');
   await T.say('Gdje ćemo?'); await A.m('„Wohin?“');
   await A.narrate('Mama öffnet den Mund. Sie schließt ihn wieder. Sie sieht auf ihre Handschuhe.');
   var c=await A.choose([{t:'Kovači.',id:'k'},{t:'Vratnik.',id:'v'}],{title:'Wohin?'});
   A.setFlag('k5.p.taxi',c);
   await T.say(c==='k'?'Kovači. Može.':'Vratnik? Gore? Može.'); await A.m(c==='k'?'„Kovači. Geht.“':'„Vratnik? Da hinauf? Geht.“');
   if (c==='v'){ await A.m('Ich rufe Hajra an. Sie hat den Schlüssel.'); await A.phoneVoice('Vratnik? Odmah. Ne diraj ništa!','hajra'); await A.m('„Sofort. Fass nichts an!“'); }
+  await k5TaxiBoard(A,T,J);
   await A.narrate(c==='k'?'Das Taxi fährt am Fluss entlang. Mama sieht hinaus. Vor der Vijećnica macht sie die Augen zu und erst an der Baščaršija wieder auf.'
     :'Das Taxi quält sich die Gassen hinauf, durch Schmelzwasser. Mama hält sich am Griff über der Tür fest, die ganze Zeit.');
   if (gHere(A) || A.G.malaOn) await A.g(c==='k'?'Ich sitze zwischen euch. Keiner merkt es. Wie früher in der Drei.':'Hinauf. Ich kenne jede Kurve.');
