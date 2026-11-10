@@ -39094,25 +39094,24 @@ function slabs(x,y,wet,sd){ var q=slabAt(x,y), id=q.col*131+q.row*7, t=hash(id,s
   if (hash(x*3,y*7)<0.04) c=M.DN[c]; if (wet){ c=M.DN[c]; if (fbm(x*0.25,y*0.9,6,sd+21)>0.62) c=(bayer(x,y)<0.5)?P.m3:P.m2; } return c; }
 // Steinblüte: Schaft, eine bauchige Knospe, oben in zwei oder drei spitze Blätter geöffnet (oder eine Steinzunge);
 // eingemeißelte Blattlinien, grob behauen, im Gegenlicht mit hellem Rand
-function bloom(w,o,lit,wet){ var x0=o.x, by=o.by, h=o.h, y, x, k=o.k%3;
-  var stem=[0.28,0.24,0.32][k], wid=[0.5,0.56,0.36][k]*h, crown=[0.72,0.7,0.86][k], lean=k===2?0.1:0;
-  function hwAt(t){ if (t<stem) return 1.4+t*2.2; var u=(t-stem)/(1-stem); return Math.max(0.7,1.6+Math.pow(Math.sin(Math.pow(u,0.85)*Math.PI),0.75)*wid*0.5*(1-u*0.25)); }
-  for (y=by-h;y<by;y++){ var t=(by-y)/h, hw=hwAt(t), cx=x0+lean*(by-y);
-    for (x=Math.floor(cx-hw-1);x<=Math.ceil(cx+hw+1);x++){ var e=(x+0.5-cx)/hw, out=Math.abs(e)>1;
-      if (!out && t>crown){ var v=(t-crown)/(1-crown);
-        if (k===0) out=Math.abs(e)<v*0.55;                                                                         // zwei Blätter, Kerbe in der Mitte
-        else if (k===1) out=Math.abs(Math.abs(e)-0.45)<v*0.28;                                                     // drei Blätter
-        else out=false;                                                                                            // Steinzunge
-      }
-      if (out){ var nb=false; for (var d=-1;d<=1;d+=2){ var e2=(x+d+0.5-cx)/hw; if (Math.abs(e2)<=1 && !(t>crown && Math.abs(e2)<0.05)) nb=true; } if (nb && Math.abs(e)<1+1.6/hw) w.px(x,y,wet?P.k1:P.s0); continue; }
-      var c=e>0.6?P.s5:(e>0.15?P.s3:(e>-0.5?P.s2:P.s1));
-      if (t>stem+0.06 && Math.abs(Math.abs(e)-0.55*(1-(t-stem)*0.4))<0.07) c=M.DN[c];                                  // Blattlinie
-      if (t>stem && t<stem+0.05) c=M.DN[c];                                                                         // Ring am Schaft
-      if (((x+y*2)&3)===0 && e<0.45) c=M.DN[c];
+function bloom(w,o,lit,wet){ var x0=o.x, by=o.by, h=o.h, k=o.k%3, y, x;
+  // Bogdanovićs Steinblüten: runde, flache Steinscheiben mit gelapptem Rand und Blütenrillen, hochkant auf einem niedrigen Sockel (k: Zahl der Lappen, k=1 mit Loch in der Mitte)
+  var lobes=[8,6,10][k], base=Math.max(2,Math.round(h*0.16)), bw=Math.max(2,Math.round(h*0.2)), r=(h-base)/2, cy=by-base-r, rx=r*[0.94,1,0.9][k], ry=r, boss=[0.3,0.2,0.26][k], hole=k===1;
+  var cut=o.broken?cy-r*0.15:-1e9;
+  for (y=by-base;y<by;y++) for (x=Math.round(x0-bw);x<=Math.round(x0+bw);x++){ var cb=(x>x0+bw*0.4)?P.s4:((x<x0-bw*0.4)?P.s1:P.s2); if (y===by-base) cb=P.s4; if (!lit) cb=M.DN[cb]; if (wet) cb=M.DN[cb]; w.px(x,y,cb); }
+  for (y=Math.floor(cy-ry-2);y<=Math.ceil(cy+ry+1);y++){ if (y<cut+Math.round(Math.sin((o.x+y)*1.3)*1.5)) continue;
+    for (x=Math.floor(x0-rx-2);x<=Math.ceil(x0+rx+2);x++){ var dx=(x+0.5-x0)/rx, dy=(y+0.5-cy)/ry, d=Math.hypot(dx,dy), ang=Math.atan2(dy,dx);
+      var rim=1-0.09*(0.5+0.5*Math.cos(ang*lobes));
+      if (d>rim){ if (d<rim+1.4/r && y>=cut) w.px(x,y,wet?P.k1:P.s0); continue; }
+      var e=dx, c=e>0.6?P.s5:(e>0.15?P.s3:(e>-0.5?P.s2:P.s1));
+      var a2=((ang/(2*Math.PI))*lobes)%1; if (a2<0) a2+=1; var near=Math.min(a2,1-a2);
+      if (near<0.07 && d>boss+0.1 && d<rim-0.08) c=M.DN[c];                                                          // Rillen zwischen den Blättern
+      if (d<boss){ c=hole?(wet?P.k1:P.s0):((dx<-0.4*boss)?P.s4:(dx>0.4*boss?P.s1:P.s3)); } else if (d<boss+0.1) c=M.DN[c];   // Mitte: Loch oder Knauf, Ring darum
+      if (d>rim-0.09) c=M.DN[c];                                                                                        // Kante der Scheibe
+      if (((x+y*2)&3)===0 && e<0.45 && d<rim-0.12) c=M.DN[c];
       if (hash(x*2+o.x,y)<0.05) c=P.e3; if (!lit) c=M.DN[c]; if (wet) c=M.DN[c]; w.px(x,y,c); } }
-  for (x=Math.floor(x0-4);x<=x0+4;x++){ w.px(x,by-1,P.s1); w.px(x,by,P.k2); }
-  if (o.broken){ for (x=x0-2;x<=x0+2;x++) w.px(x,by-h-1,P.s4);
-    var lx=x0+6, ly=by+1; for (var q=0;q<17;q++){ var hh=Math.round(Math.sin(q/16*Math.PI)*4.5); for (var j=0;j<=hh;j++) w.px(lx+q,ly-j,j===hh?P.s4:(q>12?P.s1:P.s2)); w.px(lx+q,ly+1,P.k2); } w.px(lx+15,ly-2,P.s0); w.px(lx+16,ly-1,P.s0); } }
+  if (o.broken){ for (x=Math.floor(x0-rx);x<=x0+rx;x++){ var yb=cut+Math.round(Math.sin((o.x+x)*1.3)*1.5); if (w.get(x,yb+1)!==T) w.px(x,yb,wet?P.s3:P.s5); } }   // Bruchkante hell
+  for (x=Math.floor(x0-bw-2);x<=x0+bw+2;x++){ w.px(x,by,P.k2); } }
 function wallTop(xx){ return 62+Math.pow(cl(xx/WALLC.x1,0,1),1.6)*42; }
 function paintMemorial(w,we,tod){ var x, y, wet=we==='rain', frost=we==='frost';
   // Terrassenfläche aus großen Platten
@@ -56677,7 +56676,7 @@ var HS=[
    use:function(A){ return peil(A); },
    g:{look:function(A){ if (A.flag('k3.peil.partizan')) return A.g('Drei Linien, sagst du. Für mich ist es eine.'); return A.g(A.G.phase==='k3_d1'?'Ich sehe meine Leine. Von hier geht sie ganz anders weg als von drüben. Schräg über die Stadt.':'Meine Leine geht heute woandershin.'); },
      sense:'Viele Hände an der Kante. Leute, die hinuntergesehen haben, sonntags, mit Blumen. Früher.'}},
- {id:'stones',name:'Steinblüten',look:'Steine wie Blüten, oder wie Zungen, oder wie Hände, die sich öffnen. Grau, mit Flechten. Einige sind umgestürzt, einige zerbrochen. Keine Schrift, nirgends.',
+ {id:'stones',name:'Steinblüten',look:'Steinerne Blüten: runde Scheiben mit gelapptem Rand, in der Mitte ein Knauf oder ein Loch, wie Mühlsteine, die aufgeblüht sind. Grau, mit Flechten. Einige sind umgestürzt, eine zerbrochen. Keine Schrift, nirgends.',
    use:'Ich lege eine Hand auf den Stein. Er ist kalt von der Nacht.',take:'Ich nehme hier nichts mit. Nicht einmal einen Splitter.',
    g:{look:'Auf den Steinen stehen Namen. Ganz leise. Wie Kreide unter Wasser. Ich kann sie nicht lesen.',sense:'So viele. Keiner hängt hier fest. Sie sind alle gegangen. Nur die Namen sind geblieben.'}},
  {id:'terraces',name:'Terrassen',look:'Terrassen aus Steinplatten, eine über der anderen, mit Treppen dazwischen. In den Fugen wächst Gras, auf den Treppen liegt Laub vom letzten Jahr. Und vom vorletzten.',

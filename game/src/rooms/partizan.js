@@ -43,7 +43,7 @@ var HS=[
    use:function(A){ return peil(A); },
    g:{look:function(A){ if (A.flag('k3.peil.partizan')) return A.g('Drei Linien, sagst du. Für mich ist es eine.'); return A.g(A.G.phase==='k3_d1'?'Ich sehe meine Leine. Von hier geht sie ganz anders weg als von drüben. Schräg über die Stadt.':'Meine Leine geht heute woandershin.'); },
      sense:'Viele Hände an der Kante. Leute, die hinuntergesehen haben, sonntags, mit Blumen. Früher.'}},
- {id:'stones',name:'Steinblüten',look:'Steine wie Blüten, oder wie Zungen, oder wie Hände, die sich öffnen. Grau, mit Flechten. Einige sind umgestürzt, einige zerbrochen. Keine Schrift, nirgends.',
+ {id:'stones',name:'Steinblüten',look:'Steinerne Blüten: runde Scheiben mit gelapptem Rand, in der Mitte ein Knauf oder ein Loch, wie Mühlsteine, die aufgeblüht sind. Grau, mit Flechten. Einige sind umgestürzt, eine zerbrochen. Keine Schrift, nirgends.',
    use:'Ich lege eine Hand auf den Stein. Er ist kalt von der Nacht.',take:'Ich nehme hier nichts mit. Nicht einmal einen Splitter.',
    g:{look:'Auf den Steinen stehen Namen. Ganz leise. Wie Kreide unter Wasser. Ich kann sie nicht lesen.',sense:'So viele. Keiner hängt hier fest. Sie sind alle gegangen. Nur die Namen sind geblieben.'}},
  {id:'terraces',name:'Terrassen',look:'Terrassen aus Steinplatten, eine über der anderen, mit Treppen dazwischen. In den Fugen wächst Gras, auf den Treppen liegt Laub vom letzten Jahr. Und vom vorletzten.',
