@@ -15969,6 +15969,17 @@ function paint(b,v){
 M.definePortrait('ana',{ paint:paint });
 })(M);
 
+/* ---- portraits/anaC.js ---- */
+/* ===== portraits/anaC.js — Ana draußen (Kapitel 4): dunkelgrüner Parka, gestreifte Wollmütze über dem Pferdeschwanz ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('anaC','ana',{ maps:[
+  {r:[0,44,56,20], map:{y0:'g0', y1:'g1', y2:'g2', y3:'g3', y4:'g4'}},
+  {r:[0,0,56,20], map:{h0:'r1', h1:'r2', h2:'r3', h3:'r3', w2:'r3', p5:'r4'}}
+], after:function(b,v){ for (var y=4;y<20;y+=4) for (var x=0;x<b.w;x++){ var c=b.get(x,y); if (c===P.r2||c===P.r3||c===P.r4) b.px(x,y,P.s5); if (c===P.r1) b.px(x,y,P.s4); } } });
+})(M);
+
 /* ---- portraits/aussie1.js ---- */
 /* ===== portraits/aussie1.js — Rucksackreisender aus Australien (um 22) (Kapitel 3): aus Lukas Bild – blondes Haar, orange Funktionsjacke ===== */
 (function(M){
@@ -18718,6 +18729,26 @@ function paint(b,v){
 M.definePortrait('jasna',{ paint:paint });
 })(M);
 
+/* ---- portraits/jasnaC.js ---- */
+/* ===== portraits/jasnaC.js — Jasna draußen, Silvesternacht (Kapitel 4): dunkelblauer Wollmantel, grauer Schal ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('jasnaC','jasna',{ maps:[
+  {r:[0,44,56,20], map:{r1:'n0', r2:'n1', r3:'n2', r4:'n3', s4:'m2', s5:'m3', s6:'m4', s3:'m1'}}
+] });
+})(M);
+
+/* ---- portraits/jasnaW.js ---- */
+/* ===== portraits/jasnaW.js — Jasna bei der Arbeit im Heim (Kapitel 4): hellblauer Kasack mit Namensschild statt der roten Strickjacke ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('jasnaW','jasna',{ maps:[
+  {r:[0,44,56,20], map:{r1:'b2', r2:'b3', r3:'b4', r4:'b5'}}
+], after:function(b,v){ b.rect(38,54,8,4,P.s6); b.hl(39,45,55,P.b1); b.hl(39,43,56,P.b2); } });
+})(M);
+
 /* ---- portraits/jela.js ---- */
 /* ===== portraits/jela.js — Jela (78), Nachbarin der Zelenikas in Mostar (Kapitel 3)
    Gedrungen und sehr alt: breites, gefurchtes Gesicht, schwere Lider über kleinen, wachen Augen, die weißen Brauen gesenkt und
@@ -18844,6 +18875,81 @@ function paint(b,v){
   M.outline(b,P.k1);
 }
 M.definePortrait('jela',{ paint:paint });
+})(M);
+
+/* ---- portraits/k2m_halid.js ---- */
+/* ===== portraits/k2m_halid.js — Halid (1973) in der Erinnerung (Kapitel 2): dunkles Haar, blaues Arbeitshemd ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k2m_halid','luka',{ maps:[
+  {r:[0,44,56,20], map:{r0:'b0', r1:'b1', r2:'b2', r3:'b3', r4:'b4'}}
+] });
+})(M);
+
+/* ---- portraits/k2m_majstor.js ---- */
+/* ===== portraits/k2m_majstor.js — der alte Kupferschmied (1972) in der Erinnerung (Kapitel 2): weißes Haar und Schnurrbart, Lederschürze statt Weste, ohne Krawatte ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k2m_majstor','mladen',{ maps:[
+  {r:[0,0,56,24], map:{m1:'s3', m2:'s4', m3:'s5', m4:'s6'}},
+  {r:[18,30,24,12], map:{m1:'s3', m2:'s4', m3:'s5', m4:'s6'}},
+  {r:[0,44,56,20], map:{n0:'w0', n1:'w1', n2:'w2', n3:'w3', r1:'s5', r2:'s5', r3:'s6'}}
+] });
+})(M);
+
+/* ---- portraits/k3m_bato.js ---- */
+/* ===== portraits/k3m_bato.js — Bato in der Erinnerung (Kapitel 3): ockerfarbene Mütze, graues Haar und grauer Bart ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k3m_bato','bato',{ maps:[
+  {r:[0,0,56,24], map:{m0:'e0', m1:'e1', m2:'e2', m3:'e3', s3:'m1', s4:'m2', s5:'m3'}},
+  {r:[0,22,56,22], map:{s3:'m1', s4:'m2', s5:'m3', s6:'m4'}}
+] });
+})(M);
+
+/* ---- portraits/k3m_mali.js ---- */
+/* ===== portraits/k3m_mali.js — Mali (der Junge in der Erinnerung) (Kapitel 3): dunkles Haar, gestreifter roter Pullover ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k3m_mali','niko',{ maps:[
+  {r:[0,0,56,44], map:{y1:'h0', y2:'h1', y3:'h2', y4:'h3', y5:'w2'}},
+  {r:[0,44,56,20], map:{b1:'r1', b2:'r2', b3:'r3', y3:'r2', y4:'r3'}}
+] });
+})(M);
+
+/* ---- portraits/k3m_mate.js ---- */
+/* ===== portraits/k3m_mate.js — Mate in der Erinnerung (Kapitel 3): graues statt weißes Haar und Schnurrbart ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k3m_mate','mate',{ maps:[
+  {r:[0,0,56,44], map:{s5:'m3', s6:'m4', s4:'m2'}}
+] });
+})(M);
+
+/* ---- portraits/k3m_vlado.js ---- */
+/* ===== portraits/k3m_vlado.js — Vlado in der Erinnerung (1994) (Kapitel 3): noch dunkles Haar, dunkle Stoppeln ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k3m_vlado','vlado',{ maps:[
+  {r:[0,0,56,44], map:{m0:'h0', m1:'h0', m2:'h1', m3:'h2', m4:'h3'}}
+] });
+})(M);
+
+/* ---- portraits/k3m_zlata.js ---- */
+/* ===== portraits/k3m_zlata.js — Zlata in der Erinnerung (1994) (Kapitel 3): dunkles Haar unter dem Kopftuch, brauner Mantel ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('k3m_zlata','zlata',{ maps:[
+  {r:[0,0,56,24], map:{s3:'h1', s4:'h2', s5:'h3'}},
+  {r:[0,44,56,20], map:{s0:'w0', s1:'w1', s2:'w2', s3:'w3'}}
+] });
 })(M);
 
 /* ---- portraits/kasir.js ---- */
@@ -20508,6 +20614,17 @@ function paint(b,v){
 M.definePortrait('mia',{ paint:paint });
 })(M);
 
+/* ---- portraits/miaC.js ---- */
+/* ===== portraits/miaC.js — Mia draußen (Kapitel 4): lila Schneeanzug, lila Bommelmütze über den Zöpfen ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('miaC','mia',{ maps:[
+  {r:[0,44,56,20], map:{r2:'d1', r3:'d2', r4:'d3', y3:'d3', y4:'d3', y5:'d4'}},
+  {r:[0,0,56,16], map:{w0:'d1', w1:'d2', w2:'d3', w3:'d3', w4:'d4', p5:'d4'}}
+], after:function(b,v){ var T=M.T, L=[], R=[], top=64, y, x; for (y=0;y<b.h;y++){ var l=-1, r=-1; for (x=0;x<b.w;x++){ if (b.d[y*b.w+x]!==T){ if (l<0) l=x; r=x; } } L[y]=l; R[y]=r; if (l>=0 && y<top) top=y; } var cx=Math.round((L[top]+R[top])/2); b.ellipse(cx,top-1,3.2,2.8,P.s6); b.px(cx-1,top-2,P.s5); b.px(cx+1,top,P.s4); for (x=L[top+8];x<=R[top+8];x++){ var c=b.get(x,top+8); if (c===P.d1||c===P.d2||c===P.d3||c===P.d4) b.px(x,top+8,P.s5); } } });
+})(M);
+
 /* ---- portraits/milka.js ---- */
 /* ===== portraits/milka.js — Milka Đurić (85), Nachbarin an der Obala
    Zierlich und sehr alt: schmales Gesicht, eingefallene Wangen, tiefe Falten, schmale Lippen; schwarzes Kopftuch,
@@ -20890,6 +21007,35 @@ function paint(b,v){
 M.definePortrait('mladen',{ paint:paint });
 })(M);
 
+/* ---- portraits/mucki.js ---- */
+/* ===== portraits/mucki.js — Mucki, Frau Hubers Katze (Kapitel 4) =====
+   Dicke grau getigerte Katze, weiße Brust, bernsteinfarbene Augen mit senkrechten Pupillen, rosa Nase; Blick nach rechts.
+   Gezeichnet mit Formen (Ellipsen, Linien) statt Pixelkarte; Varianten: Maul offen (maunzt), Augen zu. */
+(function(M){
+'use strict';
+var P=M.P, T=M.T;
+M.definePortrait('mucki',{ paint:function(b,v){ var x, y;
+  // Körper und Brust
+  b.ellipse(27,58,24,17,P.m2); b.ellipse(22,60,18,12,P.m3); b.ellipse(31,55,9,11,P.s5); b.ellipse(30,57,6,8,P.s6);
+  for (y=42;y<64;y++) for (x=2;x<52;x++){ var c=b.get(x,y); if ((c===P.m2||c===P.m3) && ((x+y*2)%9)<2 && y>44) b.px(x,y,P.m1); }
+  // Kopf, Ohren
+  b.ellipse(30,29,15,13,P.m3); b.ellipse(27,31,12,10,P.m4);
+  b.poly([[17,20],[14,6],[25,15]],P.m3); b.poly([[18,19],[16,9],[23,16]],P.d4); b.poly([[38,15],[46,4],[46,19]],P.m3); b.poly([[39,16],[44,8],[44,18]],P.d4);
+  // Tigerstreifen: Stirn (M), Wangen, Scheitel
+  [[22,18,25,24],[30,16,31,23],[36,17,38,23],[26,14,27,19],[33,13,34,18]].forEach(function(s){ b.line(s[0],s[1],s[2],s[3],P.m1); });
+  b.line(17,32,21,34,P.m1); b.line(16,36,21,37,P.m1); b.line(44,30,41,33,P.m1); b.line(45,34,41,36,P.m1);
+  // Augen
+  var eye=function(ex,ey){ b.ellipse(ex,ey,3.6,2.6,P.y4); b.ellipse(ex-1,ey-1,1.6,1,P.y5); if (v.eyes){ b.ellipse(ex,ey,3.8,2.8,P.m4); b.hl(ex-3,ex+3,ey,P.m1); } else { b.vl(ex,ey-2,ey+2,P.k0); b.px(ex+1,ey-1,P.k0); } };
+  eye(25,30); eye(36,29);
+  // Nase, Maul, Schnurrhaare
+  b.poly([[33,36],[37,36],[35,38]],P.d4); b.px(35,37,P.d5); b.line(35,38,35,40,P.m1); b.line(35,40,32,41,P.m1); b.line(35,40,38,41,P.m1);
+  if (v.mouth){ b.rect(33,41,5,3,P.k1); b.rect(34,42,3,1,P.d4); }
+  [[20,37,6,36],[20,39,6,40],[40,37,54,35],[40,39,54,40]].forEach(function(w){ b.line(w[0],w[1],w[2],w[3],P.s5); });
+  b.px(27,24,P.s6); b.px(43,30,P.s6);
+  M.outline(b,P.k1);
+} });
+})(M);
+
 /* ---- portraits/nada.js ---- */
 /* ===== portraits/nada.js — Nada Delić (61), Lanas Mutter (Kapitel 2, Sarajevo)
    Schmales, müdes Gesicht; graues, kinnlanges glattes Haar (Bob mit Seitenscheitel, Ohr bedeckt, ferne Seite als Streifen
@@ -21208,6 +21354,17 @@ function paint(b,v){
   M.outline(b,P.k1);
 }
 M.definePortrait('niko',{ paint:paint });
+})(M);
+
+/* ---- portraits/nikoC.js ---- */
+/* ===== portraits/nikoC.js — Niko draußen (Kapitel 4): roter Schneeanzug, blaue Mütze mit Ohrenklappen über den Locken ===== */
+(function(M){
+'use strict';
+var P=M.P;
+M.derivePortrait('nikoC','niko',{ maps:[
+  {r:[0,44,56,20], map:{s5:'r3', s4:'r2', s6:'r4', b1:'r1', b2:'r2', b3:'r3'}},
+  {r:[0,0,56,19], map:{y1:'n0', y2:'n1', y3:'n2', y4:'n3', y5:'n4', p5:'n3'}}
+], after:function(b,v){ var T=M.T, L=[], R=[], top=64, y, x; for (y=0;y<b.h;y++){ var l=-1, r=-1; for (x=0;x<b.w;x++){ if (b.d[y*b.w+x]!==T){ if (l<0) l=x; r=x; } } L[y]=l; R[y]=r; if (l>=0 && y<top) top=y; } for (y=24;y<34;y++){ if (L[y]<0) continue; b.rect(L[y]-1,y,5,1,y<26?P.n2:P.n1); b.rect(R[y]-2,y,3,1,P.n1); } b.hl(L[33]-1,L[33]+3,34,P.s4); } });
 })(M);
 
 /* ---- portraits/nina.js ---- */

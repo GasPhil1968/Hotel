@@ -75,3 +75,4 @@ Beispiele: `senada` aus `mira`, `kontrolor` aus `damir`, `babica` aus `zlata`, `
 `susjeda` aus `hajra`, `komsija` aus `ilija`, `aussie1–3` aus `luka`, `kevin`, `tomaz`, `pflege1` aus `lejla`, `empfang` und `fra` aus `sehic`,
 `kioskg` aus `ljerka`, `gast1` aus `dinko`, `gast2` aus `sanja`, `gast3` aus `mate`, `beamtin` aus `emina`. Vorlage und Ableitung sollten
 nicht im selben Kapitel sprechen. Eine Ableitung ist ein Platzhalter mit eigenem Gesicht; wer die Figur wichtiger macht, malt ihr ein eigenes Bild.
+Dazu die Kostüme `jasnaW`, `jasnaC`, `anaC`, `miaC`, `nikoC` (aus `jasna`, `ana`, `mia`, `niko`), die Erinnerungsfiguren `k3m_vlado`, `k3m_zlata`, `k3m_mate`, `k3m_bato` (aus ihren Figuren), `k3m_mali` (aus `niko`), `k2m_halid` (aus `luka`), `k2m_majstor` (aus `mladen`); die Katze `mucki` ist mit Formen gezeichnet (`portraits/mucki.js`). Jede Figur in `M.CHARS` hat damit ein Porträt.
