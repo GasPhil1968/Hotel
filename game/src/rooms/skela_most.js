@@ -10,9 +10,11 @@ function night(G){ return n2(G)||fin(G); }
 function crossing(G){ return fin(G) && F(G,'k3.fin.boarded') && !F(G,'k3.fin.crossed'); }
 function ap(id,fb){ return M.apos('skela_most',id,fb); }
 // ---------------------------------------------------------------- die Spendertafel
-async function plaque(A){ await A.doc({style:'register',title:'Spomen-ploča · 1998',lines:['OVAJ MOST IZGRAĐEN JE 1998. GODINE','DONACIJOM LJUDI IZ SKELE','I PRIJATELJA IZ CIJELOG SVIJETA.','','NEKA SPAJA DVIJE OBALE','I LJUDE NA NJIMA.']});
+async function plaque(A){ await A.doc({style:'register',title:'Spomen-ploča · 1998',lines:['OVAJ MOST IZGRAĐEN JE 1998. GODINE','DONACIJOM LJUDI IZ SKELE','I PRIJATELJA IZ CIJELOG SVIJETA.','','NEKA SPAJA DVIJE OBALE','I LJUDE NA NJIMA.','','Darivatelji: ob. Brkić · ob. Ćorić · ob. Džeko · M. Hadžić, Wien','S. Jurić, Toronto · V. Rajić, Mostar · ob. Vidović · A. Zubac, Sydney']});
   await A.m('„Diese Brücke wurde 1998 gebaut, mit Spenden der Leute aus Skela und von Freunden aus der ganzen Welt. Sie soll die beiden Ufer verbinden. Und die Menschen auf ihnen.“');
   if (!N(A.G,'a3_plaque')){ A.note('a3_plaque'); await A.wait(700); await A.m('Achtundneunzig. Seitdem fährt die Fähre nicht mehr.'); await A.wait(500); await A.m('Von der Glocke steht hier nichts. Die ist einfach hängen geblieben.'); return; }
+  if (!N(A.G,'a3_donor') && (A.hasNote('v3_where')||A.hasNote('v3_mate')||A.G.flags['k3.v.known'])){ await A.wait(600); await A.m('Die Namen der Spender. Familien aus Skela, Wien, Toronto, Sydney.'); await A.wait(800); await A.m('V. Rajić, Mostar.'); await A.wait(900); await A.m('Vlado. Oder einer, der so heißt. Er hat gesagt, er war nie wieder in Skela.'); A.note('a3_donor');
+    if (A.malaHere()){ await A.wait(700); await A.g('Einer, der nie wieder hier war, hat eine Brücke bezahlt.'); await A.wait(400); await A.g('Damit keiner mehr läuten muss.'); } return; }
   if (A.malaHere()) await A.g('Die Menschen auf ihnen. Das hat einer geschrieben, der noch nie hier war.'); }
 // ---------------------------------------------------------------- Finalnacht: von oben die Fähre
 async function crossView(A){ var V=A.npc('vlado'), K=A.npc('kata'); A.music('k3_fin');

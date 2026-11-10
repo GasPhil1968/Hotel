@@ -56,6 +56,11 @@ async function zlataComes(A,via){ var G=A.G; if (F(G,'k3.n2.zlataOut')||F(G,'k3.
 async function batoOpening(A){ var B=A.npc('bato');
   await B.say('Es ist Januar.'); await A.wait(700); await B.say('Die Brücke ist weg.'); await A.wait(900); await B.say('Haben Sie geläutet?'); await A.wait(600); await B.say('Bei Nacht fahre ich nicht.');
   await A.wait(1100); await B.say('Es war ein Mann. Er hat gerufen wie ein Soldat.'); A.note('a3_soldier'); A.setFlag('k3.n2.batoTalk'); }
+// Ausbau P2: Batos eigene Schrift als Beleg
+async function bookShown(A){ var B=A.npc('bato'), G=A.G; if (F(G,'k3.n3.bato.book')) return B.say('Mein Buch. Ich habe es gesehen. Legen Sie es weg.'); A.setFlag('k3.n3.bato.book'); B.agitate(3000);
+  await A.m('Ihr Fährbuch, Bato. Fünfzehnter Januar. Nacht. Glocke dreimal. „Nisam išao.“'); await A.wait(1500); await B.say('Mein Buch.'); await A.wait(800); await B.say('Wer hat Ihnen mein Buch gegeben?'); await A.m('Zlata. Den Schlüssel.');
+  await A.wait(1100); await B.say('Sie kann meine Schrift nicht lesen.'); await A.wait(700); await B.say('Darum habe ich alles hineingeschrieben.'); await A.wait(1000);
+  if (!F(G,'k3.n3.bato.awake')) await batoPart(A,'awake'); else await B.say('Dreimal. Ja. Das steht da, weil ich gezählt habe.'); }
 async function batoPart(A,which){ var B=A.npc('bato'), G=A.G; if (F(G,'k3.n3.bato.'+which)) return B.say('Ich habe es gesagt. Ein Soldat.'); A.setFlag('k3.n3.bato.'+which); B.agitate(2400);
   if (which==='awake'){ await A.m('Sie waren wach, Bato. Sie haben am Fenster gestanden und mitgezählt.'); await A.wait(500); await B.say('Ich …'); await A.wait(800); await B.say('Es war dunkel. Wer im Dunkeln steht, sieht nichts.'); }
   else { await A.m('Es war kein Soldat. Es war ein Mädchen. Sie hat gerufen: Halo, ima li koga? An der Glocke lag ihr Bleistift.'); await A.wait(500); await B.say('Ein Mädchen …'); await A.wait(900); await B.say('Ein Mädchen hat keine Stimme, die über das Wasser geht.'); }
@@ -89,7 +94,7 @@ async function talkBato(A){ var B=A.npc('bato'), G=A.G;
     {t:'Es war ein Mädchen.',if:N(G,'a3_voice')&&!N(G,'a3_girl'),go:async function(A){ await B.say('Ein Mädchen läutet nicht um Mitternacht.'); }},
     {t:'Es war ein Mädchen. Mit einem Bleistift.',if:N(G,'a3_girl')&&!F(G,'k3.n3.bato.girl'),go:function(A){ return batoPart(A,'girl'); }},
     {t:'Sie sind tot, Bato.',go:async function(A){ await A.wait(500); await B.say(A.cycle('btDead',['Was? Der Fluss ist zu laut.','Was sagen Sie? Ich höre nichts. Der Fluss.','Reden Sie lauter. Oder gehen Sie.'])); }},
-    A.askOpt({ a3_lightroom:function(A){ return batoSlip(A); }, a3_awake:function(A){ return batoPart(A,'awake'); }, a3_girl:function(A){ return batoPart(A,'girl'); },
+    A.askOpt({ a3_lightroom:function(A){ return batoSlip(A); }, a3_awake:function(A){ return batoPart(A,'awake'); }, a3_girl:function(A){ return batoPart(A,'girl'); }, a3_book:function(A){ return bookShown(A); }, a3_asked:'Rajić. Am Sonntag. Mit Mehl. Er hat gefragt, ich habe gesagt: niemand. Was hätte ich sagen sollen? Es lag schon unter der Quitte.', a3_box:'Meine Kiste. Da ist mein Buch drin. Fassen Sie das nicht an.',
       a3_thrice:'Ja. Dreimal. Und dann war Ruhe. Was wollen Sie noch?', a3_soldier:'Ein Soldat. Ja.', a3_voice:'Eine Stimme? Bei dem Wasser hört man keine Stimme. Nur das Läuten.',
       a3_bell3:'Wer nachts läutet, kriegt keine Antwort. So ist das hier.', a3_pencil:'Ein Bleistift? Was soll mit einem Bleistift sein? Es ist Nacht.',
       a3_grave:'Unter der Quitte ist nichts. Nur Frost.', a3_slept:'Zlata schläft am Herd. Im Winter immer. Oben ist es zu kalt für sie.',
@@ -147,6 +152,21 @@ async function pencil(A){ var Z=A.npc('zlata'), G=A.G; await A.wait(1000); await
   await Z.say('Bato hat ihn mitgebracht, als er morgens die Decken holte.'); await A.wait(800); await Z.say('Er lag an der Glocke.'); A.note('a3_pencil'); A.setFlag('k3.z.pencil');
   if (N(G,'a3_hut')){ await A.wait(1100); await Z.say('Sie haben mit jemandem geredet, der da war.'); await A.wait(900); await A.m('Ja.'); }
   await A.wait(900); await Z.say('Er gehört in die Schublade.'); await A.narrate('Sie steckt ihn in die Schürzentasche, wie etwas, das man nicht verlieren darf.'); }
+// Ausbau P2: Batos Blechkiste im Schuppen (Schlüssel aus Zlatas Schublade), das Fährbuch
+async function boxOpen(A,withKey){ var G=A.G; if (!d3(G) && !epi(G)) return A.m(night(G)?'Nachts gehe ich nicht in seinen Schuppen. Er steht ja darin.':'Nicht jetzt.');
+  if (G.flags['k3.z.boxOpen']) return boxTake(A);
+  if (!withKey){ await A.m('Ruder, ein Netz, die Wathose, die Laterne. Und unter der Ruderbank eine Blechkiste mit einem kleinen Vorhängeschloss.'); if (A.has('kljucic')) await A.m('Ich habe den Schlüssel von Zlata.'); else await A.m('Verschlossen. Zlata hat seine Sachen. Vielleicht auch seine Schlüssel.'); return; }
+  A.sfx('click'); A.setFlag('k3.z.boxOpen'); A.rebuild(); await A.m('Der kleine Schlüssel passt. Das Schloss geht auf, als hätte es gewartet. In der Kiste: ein Heft in Wachstuch, ein Foto von einer Fähre mit Leuten darauf, eine Pfeife.');
+  await boxTake(A); }
+async function boxTake(A){ var G=A.G; if (!G.flags['k3.z.boxOpen']) return A.m('Die Kiste ist zu.'); if (A.has('knjiga_skele')||G.flags['k3.z.bookTaken']) return A.m('Das Foto und die Pfeife bleiben in der Kiste. Das Heft habe ich.');
+  A.give('knjiga_skele'); A.setFlag('k3.z.bookTaken'); A.sfx('paper'); await A.m('Das Heft. „Knjiga skele.“ Fährbuch. Vorn steht 1976, hinten 1998. Ich nehme es mit. Das Foto und die Pfeife lasse ich liegen.');
+  if (A.malaHere()) await A.g('Lies es. Aber nicht hier, vor ihm.'); else if (G.malaOn){ await A.wait(400); await A.m('Mala wartet drüben an der Glocke. Ich lese es da.'); } }
+async function boxKey(A){ var Z=A.npc('zlata'), G=A.G; if (A.has('kljucic')||G.flags['k3.z.boxKey']) return Z.say('Den Schlüssel haben Sie. Mehr Schlüssel habe ich nicht.');
+  await A.m('Im Schuppen steht Batos Blechkiste. Mit einem kleinen Schloss. Haben Sie den Schlüssel?'); await A.wait(1200); await Z.say('Seine Kiste.'); await A.wait(800); await Z.say('Ich habe nie hineingesehen. Ich kann seine Schrift nicht lesen. Er hat wie ein Arzt geschrieben.');
+  await A.wait(900); await Z.say('Der Schlüssel liegt in der Schublade. Bei den anderen Sachen.'); await A.wait(1300); await A.narrate('Sie sieht mich lange an. Dann geht sie ins Haus.'); await zlataFetch(A,1500,'drawer');
+  await A.narrate('Sie kommt mit einem kleinen Schlüssel an einer Schnur zurück und legt ihn mir in die Hand.'); await Z.say('Nehmen Sie.'); await A.wait(700); await Z.say('Und sagen Sie mir nicht, was drinsteht.'); await A.wait(900); await Z.say('Oder doch. Später. Wenn ich frage.');
+  A.give('kljucic'); A.setFlag('k3.z.boxKey'); A.sfx('keyDrop');
+  if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Sie hat ihn siebzehn Jahre nicht umgedreht.'); } }
 // Ausbau N5: Zlata entscheidet über den Bleistift, je nachdem, was Marko ihr über die Mutter sagt
 M.K3ASK=M.K3ASK||{};
 M.K3ASK.pencil=async function(A){ await A.m('Soll ich ihr sagen, dass deine Mutter dich sucht?'); await A.wait(800); await A.g('Sag es ihr.'); await A.wait(600); await A.g('Sie hat mich gewaschen. Sie darf es wissen.'); A.setFlag('k3.x.pencilOk'); };
@@ -204,11 +224,12 @@ async function talkZlata(A){ var Z=A.npc('zlata'), G=A.G;
     {t:'(Nach den Hühnern fragen.)',if:!N(G,'a3_morning'),go:function(A){ return hens(A); }},
     {t:'Was lag morgens an der Glocke?',if:(N(G,'a3_slept')||F(G,'k3.z.refused'))&&!N(G,'a3_pencil'),go:function(A){ return pencil(A); }},
     {t:'Der Bleistift. Darf ich ihn mitnehmen?',if:N(G,'a3_pencil')&&!A.has('olovka_mala')&&!F(G,'k3.z.pencilGiven'),go:function(A){ return pencilAsk(A); }},
+    {t:'Batos Kiste im Schuppen. Haben Sie den Schlüssel?',if:(N(G,'a3_box')||F(G,'k3.z.boxSeen'))&&!A.has('kljucic')&&!F(G,'k3.z.boxKey'),go:function(A){ return boxKey(A); }},
     {t:'Darf ich ein Licht in Ihre Fenster halten?',if:N(G,'a3_bell3')&&!F(G,'k3.z.window'),go:function(A){ return permission(A); }},
     {t:'(Ihr sagen, dass Bato wach war.)',if:N(G,'a3_awake'),silent:true,go:function(A){ return tellAwake(A); }},
     N(G,'a3_awake')&&M.k3AskOpt?M.k3AskOpt(A,'zlata_awake'):null,
     A.askOpt({ l3_survived:function(A){ return alive(A); }, a3_awake:function(A){ return tellAwake(A); }, a3_thrice:function(A){ return tellAwake(A); },
-      a3_blanket:'Eine Decke ist eine Decke. Wir hatten damals viele.', a3_fromzlata:'Sie gehört Ihnen nicht. Bringen Sie sie wieder.', a3_pencil:function(A){ return F(A.G,'k3.z.pencilGiven')?Z.say('Za majku. Ich habe es gesagt.'):Z.say('Er gehört in die Schublade. Nicht in Ihr Buch.'); }, a3_mypencil:'Za majku.', v3_letter:'Ein Brief an einen Bruder. Ich habe auch einen geschrieben. Einmal.',
+      a3_blanket:'Eine Decke ist eine Decke. Wir hatten damals viele.', a3_fromzlata:'Sie gehört Ihnen nicht. Bringen Sie sie wieder.', a3_pencil:function(A){ return F(A.G,'k3.z.pencilGiven')?Z.say('Za majku. Ich habe es gesagt.'):Z.say('Er gehört in die Schublade. Nicht in Ihr Buch.'); }, a3_mypencil:'Za majku.', a3_box:function(A){ return boxKey(A); }, a3_book:async function(A){ await Z.say('Was steht drin?'); await A.wait(900); await A.m('Dass er dreimal gezählt hat. Und nicht gefahren ist.'); await A.wait(1500); await Z.say('…'); await A.wait(900); await Z.say('Ich habe nicht gefragt. Sie haben es gesagt.'); A.setFlag('k3.z.bookTold'); }, a3_asked:'Rajić hat gefragt? Am Sonntag? Bato hat gesagt: niemand. Zu mir hat er gesagt: Ein Fahrer wollte Mehl.', a3_donor:'Rajić auf der Tafel? Dann hat er mehr gezahlt als alle aus Skela zusammen.', v3_letter:'Ein Brief an einen Bruder. Ich habe auch einen geschrieben. Einmal.',
       a3_lightroom:'Oben? Da hat er geschlafen. Petroleum hatten wir. Strom nicht.', a3_roof:'Seine Kammer. Ich gehe da nicht mehr hinein.', a3_grave:'Das ist ihr Beet. Mehr sage ich nicht.',
       a3_morning:'Ich habe es gesagt. Am Morgen. Mehr nicht.', a3_alive:'Mehr nicht. Ich habe es versprochen.', photo_full:'Das ist ein Kind. Ich kenne keine Kinder mehr.', k3_c_missing:'Jede Mutter sucht ein Kind.',
       l3_onetrail:'Lana? Ich kenne keine Lana. Ich kannte eine Mala.', l3_twosearches:'Lana? Ich kenne keine Lana.', v3_mala:'Mala. Wie jede.', a3_soldier:'Soldaten? Hier waren keine Soldaten. Nur Hochwasser.',
@@ -399,8 +420,13 @@ var HS=[
      return true; },
    g:{look:'Durch diese Tür haben sie mich getragen.',sense:'Viele Hände an der Klinke. Zwei Paar, immer dieselben.',listen:'Der Kessel pfeift. Dann nimmt ihn jemand vom Feuer.'}},
  {id:'shed',name:'Batos Schuppen',look:function(A){ var G=A.G; if (A.isFound('bato') && batoHere(G)) return A.m(night(G)?'Der offene Schuppen am Steg. Darin der alte Mann in Wathose, die Laterne in der Hand. Von nahem sieht man durch ihn hindurch das Ruder an der Wand.':(F(G,'k3.bato.lantern')?'Der Schuppen bei Tag. Die Laterne brennt, mitten am Tag, das Glas zum Wasser hin. Er sitzt daneben und sieht zur Glocke.':'Der Schuppen bei Tag. Ruder, ein Netz, eine Wathose am Haken. Und er, mit der Laterne, am hellen Tag.'));
-     return A.m(F(G,'k3.a.limbo')?'Der Schuppen. Die Laterne hängt am Haken, kalt. Die Wathose daneben.':'Ein offener Holzschuppen am Steg. Ruder, ein Netz, eine Wathose an einem Haken, eine Laterne.'); },
-   g:{look:function(A){ return A.g(F(A.G,'k3.a.limbo')?'Leer. Endlich leer.':'Sein Schuppen. Er hat hier gesessen, siebzehn Jahre Januar.'); },sense:'Teer, Petroleum, nasse Wolle. Und Warten. Das Warten riecht nach Petroleum.',listen:'Die Laterne knistert. Und einer atmet, der nicht mehr atmen muss.'}},
+     if (d3(G) && !F(G,'k3.z.boxSeen')){ A.setFlag('k3.z.boxSeen'); return A.m('Ein offener Holzschuppen am Steg. Ruder, ein Netz, eine Wathose an einem Haken, eine Laterne. Und unter der Ruderbank eine Blechkiste mit einem kleinen Vorhängeschloss. Blechkisten mit Schloss haben einen Grund.'); }
+     return A.m(F(G,'k3.a.limbo')?'Der Schuppen. Die Laterne hängt am Haken, kalt. Die Wathose daneben.':'Ein offener Holzschuppen am Steg. Ruder, ein Netz, eine Wathose an einem Haken, eine Laterne.'+(d3(G)&&!F(G,'k3.z.boxOpen')?' Unter der Bank die Blechkiste.':'')); },
+   open:function(A){ return boxOpen(A); },use:function(A){ return boxOpen(A); },take:function(A){ return boxTake(A); },
+   with:{ kljucic:function(A){ return boxOpen(A,true); } },
+   g:{look:async function(A){ var G=A.G; if (F(G,'k3.a.limbo')) return A.g('Leer. Endlich leer.'); await A.g('Sein Schuppen. Er hat hier gesessen, siebzehn Jahre Januar.');
+       if (d3(G) && !A.hasNote('a3_box')){ await A.wait(700); await A.g('Unter der Ruderbank eine Blechkiste. Durch das Blech: ein Heft in Wachstuch.'); await A.wait(600); await A.g('Seine Schrift. Siebzehn Jahre, eine Zeile pro Tag. Wie Mehl, wie Wasser, wie Fahrgäste.'); A.note('a3_box');
+         if (A.marko){ await A.wait(500); await A.m('Ein Fährbuch.'); await A.g('Verschlossen. Ein kleines Schloss. Den Schlüssel hat er nicht mehr bei sich.'); } } },sense:'Teer, Petroleum, nasse Wolle. Und Warten. Das Warten riecht nach Petroleum.',listen:'Die Laterne knistert. Und einer atmet, der nicht mehr atmen muss.'}},
  {id:'quince',name:'Quittenbaum',look:function(A){ return A.m(night(A.G)?'Ein Quittenbaum, schwarz gegen den Himmel. Eine letzte Quitte hängt noch, gelb wie eine Lampe.':'Ein alter Quittenbaum. Die Blätter sind gefallen, eine einzige Quitte hängt noch, gelb.'); },take:'Die letzte Quitte lasse ich hängen. Die gehört dem Baum.',
    g:{look:'Mein Baum. Er hat mich siebzehn Winter zugedeckt.',sense:'Unter dem Baum ist es warm. Warm wie unter einer Decke.',listen:'Eine Quitte fällt. Dann nichts.'}},
  {id:'grave',name:'Beet',look:async function(A){ var G=A.G; if (night(G) && !atGrave(G)) return A.m('Unter dem Baum ein Beet. Im Dunkeln sehe ich nur, dass dort Blumen sind. Im November.');

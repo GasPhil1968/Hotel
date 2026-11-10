@@ -24,11 +24,27 @@ WAS SICH ÄNDERT
 - Die Stadt 2011: Taxifahrer und Zdravko waren eine Firma und sind zwei
   Bahnhöfe; Mala hört am Gymnasium zwei Pausenglocken; Dino erklärt
   Touristen, dass die Brücke keine Grenze ist; Kata: „Papa fährt nicht rüber.“
-- Zwölf neue Hinweisthemen, neun neue Notizen, vier neue Gegenstände.
+- Gegenstandsrätsel mit sieben neuen Gegenständen:
+  · Das Handschuhfach des TAM klemmt; Mala sieht das Heft darin. Mit dem
+    Schraubenzieher aus Vlados Werkstatt holt Marko das Fahrtenbuch 1994
+    heraus („+1“, „02:00 Skela · nitko“) und Lanas Kassette aus dem Radio.
+    Vlado kann sein eigenes Buch nicht wegreden. Die Kassette spielt der
+    Mercedes am Ostbahnhof: Am Ende der Strophe singt ein Mädchen mit.
+  · Batos Blechkiste im Schuppen: Mala sieht das Fährbuch durch das Blech,
+    Zlata gibt den Schlüssel aus ihrer Schublade, Marko liest Batos Schrift:
+    „zvono 3× · nisam išao · ‚vojnik‘“. Ein dritter Weg zu „Bato war wach“
+    und ein Beleg, den Bato nicht abstreiten kann.
+  · Ein Stück Mehlsack aus der Hütte („SPLIT · XII 1993“) für Vlado.
+  · Die Spendertafel an der neuen Brücke nennt „V. Rajić, Mostar“.
+  · Die zweite Batterie für den TAM kommt aus dem Kofferraum des Taxis am
+    Ostbahnhof; der TAM springt im Finale beim ersten Mal an, und Vlado sagt
+    „Vom Taxi“.
+- Siebzehn neue Hinweisthemen, achtzehn neue Notizen, elf neue Gegenstände,
+  zwei neue Schlussregeln.
 
 GEPRÜFT
 - Musterlösung Kapitel 3 unverändert durchspielbar; Hinweisprobe über
-  Musterlösung und Varianten ohne Befund; 23 Regressionstests, davon einer
+  Musterlösung und Varianten ohne Befund; 24 Regressionstests, davon zwei
   neu für alle neuen Stränge; Browser-Bilder der neuen Szenen.
 - Konzept, Rätselnetz, historische Einordnung (2011, geteilte Stadt) und
   Umsetzungsstand: design/K3_AUSBAU.md.

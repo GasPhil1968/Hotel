@@ -58,6 +58,19 @@ X.pencilMala=async function(A){ var G=A.G; if (N(G,'a3_mypencil')) return A.g(A.
   await A.narrate('Mala sieht auf den Bleistift in meiner Hand, nicht auf mich.'); await A.wait(800);
   await A.g('Den hast du jetzt.'); await A.wait(600); await A.g('Mehr von mir hat keiner.'); A.note('a3_mypencil'); A.setFlag('k3.x.pencilMala');
   if (A.marko){ await A.wait(900); await A.m('Nada bekommt ihn. Morgen.'); await A.g('Ja. Aber bis morgen hast du ihn.'); } };
+// ---------------------------------------------------------------- P1: Vlados Fahrtenbuch (aus dem Handschuhfach des TAM)
+X.logDoc=async function(A){ var G=A.G;
+  await A.doc({style:'faded',title:'PUTNI NALOG · Fahrtenbuch 1994',lines:['12. I.  Mostar – Split        prazno','14. I.  Split – Skela          brašno 40 vr. · deke 200 · +1','        dolazak 22:40 · istovar koliba','        odlazak 23:15','15. I.  02:00 Skela              nitko','        06:30 kuća','16. I.  Mostar – Skela         brašno 20 vr. · (pitao)']});
+  if (!N(G,'v3_log')){ await A.m('Vierzehnter Januar. Split nach Skela. Vierzig Sack Mehl, zweihundert Decken. Und: plus eins.'); await A.wait(800); await A.m('Fünfzehnter, zwei Uhr, Skela: nitko. Niemand.'); await A.wait(600);
+    await A.m('Er ist zurückgefahren. Um zwei. Und hat es aufgeschrieben, wie eine Lieferung.'); A.note('v3_log');
+    if (G.malaOn && A.malaHere()){ await A.wait(800); await A.g('Plus eins.'); await A.wait(500); await A.g('So heiße ich in seinem Buch.'); } } };
+// ---------------------------------------------------------------- P2: Batos Fährbuch (aus der Blechkiste im Schuppen)
+X.ferryDoc=async function(A){ var G=A.G;
+  await A.doc({style:'faded',title:'KNJIGA SKELE · 1994',lines:['12. I.  2 prelaza · brašno','14. I.  roba iz Splita · Rajić · ostavio u kolibi','15. I.  NOĆ · zvono 3× · nisam išao','        „vojnik“','15. I.  jutro · cura u trsci · Zlata · deke','        olovka kod zvona','16. I.  Rajić pita za curu · rekao: nitko','17. I.  dunja · daska · MALA']});
+  if (!N(G,'a3_book')){ await A.m('Fünfzehnter Januar. Nacht. Glocke dreimal. „Nisam išao.“ Ich bin nicht gefahren.'); await A.wait(900); await A.m('Und in Anführungszeichen: Soldat.'); await A.wait(700);
+    await A.m('Er hat es aufgeschrieben. In der Nacht oder am Morgen. Er hat die Schläge gezählt und es aufgeschrieben.'); A.note('a3_book');
+    await A.wait(600); await A.m('Sechzehnter: Rajić fragt nach dem Mädchen. Er hat gesagt: niemand.'); A.note('a3_asked');
+    if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Dreimal. Er hat mitgezählt.'); await A.wait(600); await A.g('Und dann hat er eine Quitte und ein Brett aufgeschrieben. Wie Mehl.'); } } };
 // ---------------------------------------------------------------- N3: Mates Mappe
 X.folderDoc=async function(A){ var G=A.G;
   await A.doc({style:'faded',title:'AUTOBUSNA KARTA · Fahrschein',lines:['MOSTAR (zapad) – MÜNCHEN','14. 03. 2010. · 06:30','jednosmjerna · einfache Fahrt','Sjedalo 7 · Sitz 7','','Plaćeno: 12. 03. 2010.']});

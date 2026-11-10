@@ -122,6 +122,15 @@ n('b3_hum','b3','Das Lied','Bis zum Fenster','Mate hat beim Warten immer dasselb
 n('s3_verse','b3','Das Lied','„Dođi, dragi, doveče“','Die Zeile, die im Lied nach dem Fenster kommt: „Komm, Liebster, komm heute Abend.“ Lena hat sie an der Brücke gelernt. Sie will sie ihrem Großvater sagen.',{p:'p:lena'});
 n('b3_folder','b3','Die Briefe','Zdravkos Schublade','Mala sieht durch das Holz der Thekenschublade: eine Mappe, ein blauer Fahrschein, ein angefangener Brief. Jemand hat die Mappe zweimal zurückgelegt. Zdravko: „Für den, der kommt.“',{p:'p:zdravko'});
 n('b3_coming','b3','Die Briefe','Er wollte kommen','In Mates Mappe: eine Fahrkarte Mostar–München für den 14. März 2010, gekauft am Zwölften. Und ein Brief: „Dragi Davore, dolazim.“ Er ist am Zwölften gestorben.',{p:'p:mate'});
+n('v3_glove','v3','Das Führerhaus','Das Handschuhfach','Mala sieht durch das Blech: Im Handschuhfach des TAM ein Heft voller Zahlen. Und im Radio steckt eine Kassette. Seit siebzehn Jahren.',{p:'p:mala'});
+n('v3_log','v3','Das Führerhaus','Plus eins','Vlados Fahrtenbuch: 14. Januar 1994, Split–Skela, vierzig Sack Mehl, zweihundert Decken, „+1“. 15. Januar, 02:00 Skela: „nitko“. Er ist um zwei zurückgefahren und hat es aufgeschrieben wie eine Lieferung.',{p:'i:putni_nalog'});
+n('v3_tape','v3','Das Führerhaus','„za put · Mala“','Lanas Kassette aus dem Autoradio des TAM, im Taxi abgespielt: das Lied vom Fenster, vom Radio aufgenommen. Für die Fahrt.',{p:'p:mala'});
+n('v3_battery','v3','Die Schublade','Zwei Batterien','Kata: Der TAM braucht zwei Batterien, vierundzwanzig Volt. Eine ist neu, die zweite tot. Sonntag. Niemand verkauft eine.',{p:'p:kata'});
+n('v3_sack','v3','Das Führerhaus','Mehl aus Split','Ein Stück Jute aus der Hütte in Skela: „BRAŠNO · 50 kg · SPLIT · XII 1993“. Das Mehl aus Vlados Ladung ist noch da. Zu Stein geworden.',{p:'i:vreca'});
+n('a3_box','a3','Der Fährmann','Batos Blechkiste','Mala sieht durch das Blech der Kiste unter der Ruderbank: ein Heft in Batos Schrift, siebzehn Jahre, eine Zeile pro Tag. Verschlossen mit einem kleinen Schloss.',{p:'p:mala'});
+n('a3_book','a3','Der Fährmann','„Nisam išao“','Batos Fährbuch, 15. Januar 1994, Nacht: „zvono 3× · nisam išao · ‚vojnik‘“. Er hat die Schläge gezählt und aufgeschrieben, dass er nicht gefahren ist. Er war wach.',{p:'i:knjiga_skele'});
+n('a3_asked','a3','Der Fährmann','„Rajić pita za curu“','Batos Fährbuch, 16. Januar 1994: Rajić fragt nach dem Mädchen. Er hat gesagt: niemand.',{p:'i:knjiga_skele'});
+n('a3_donor','a3','Skela','V. Rajić, Mostar','Auf der Spendertafel der neuen Brücke von 1998, zwischen den Namen aus Skela und aus der Welt: „V. Rajić, Mostar“.',{p:'p:mala'});
 n('a3_mypencil','a3','Zlata','Mein Bleistift','Zlata hat mir den Bleistift gegeben, für die Mutter. Mala: „Meiner. Ich habe immer daran gekaut. Den hast du jetzt. Mehr von mir hat keiner.“',{p:'p:mala'});
 M.defineNotes(N);
 // ---------------------------------------------------------------- Gruppen und Erledigung
@@ -151,7 +160,7 @@ done('l3_skela',after('k3.bato.found')); done('l3_tepa',function(G){ return !!(G
 ['v3_mate','v3_ljerka','v3_where','v3_denial'].forEach(function(id){ done(id,after('k3.v.drawer')); });
 /* Ausbau: erledigt durch den Fortgang */
 done('v3_blatt',function(G){ return !!(G.flags['k3.x.pismo']||G.flags['k3.fin.vera']); }); by('v3_bed',['v3_letter']); done('v3_letter',after('k3.v.veraLetter'));
-done('s3_words',after('k3.s.perf')); done('s3_verse',after('k3.b.son')); done('b3_hum',after('k3.b.son')); done('b3_folder',after('k3.b.folder')); done('b3_coming',after('k3.b.noSale'));
+done('s3_words',after('k3.s.perf')); by('v3_glove',['v3_log']); done('v3_log',after('k3.v.logShown')); done('v3_battery',after('k3.v.battery')); by('a3_box',['a3_book']); by('a3_book',['a3_awake']); done('a3_donor',after('k3.v.donor')); done('v3_sack',after('k3.v.sack')); done('a3_asked',after('k3.v.part2')); done('s3_verse',after('k3.b.son')); done('b3_hum',after('k3.b.son')); done('b3_folder',after('k3.b.folder')); done('b3_coming',after('k3.b.noSale'));
 ['v3_hewas','v3_typenschein','v3_drawer','v3_tomorrow'].forEach(function(id){ done(id,after('k3.v.part1')); });
 ['v3_bag','v3_part1','v3_forlater','v3_two'].forEach(function(id){ done(id,after('k3.v.free')); });
 done('v3_who',after('k3.d3.talk2')); done('v3_message',after('k3.v.free')); done('v3_cab',after('k3.v.free')); done('v3_tonight',after('k3.fin.drive'));
@@ -180,6 +189,8 @@ M.defineDeductions({
   'v3_sent+v3_mala_left':{to:'v3_who',say:'„Sie hat mich weggeschickt.“ – „Er ist gefahren.“ Beides kann stimmen. Aber einer von beiden lässt etwas weg. Ich muss mit Mala reden.'},
   // Analyse K3-B01: Ordnen ist freiwillig; Dachfenster und Lichtfolge genügen als Beleg für das Licht
   'a3_thrice+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_lightroom')||(has(G,'a3_roof')&&has(G,'a3_lightseq')); },no:'Bato zählt die Schläge. Zlata sagt, er hat geschlafen. Aber wann soll er das gehört haben?',say:'„Er hat geschlafen“, sagt Zlata. „Dreimal hat er geläutet“, sagt Bato. Wer mitzählt, schläft nicht. Er war wach.'},
+  'a3_book+a3_slept':{to:'a3_awake',say:'„Er hat geschlafen“, sagt Zlata. „Nisam išao“, schreibt er. Wer nicht fährt, hat entschieden. Er war wach.'},
+  'a3_book+a3_soldier':{to:'a3_awake',if:function(G){ return has(G,'a3_slept'); },no:'Ein Soldat, sagt er. Und schreibt es in Anführungszeichen. Aber was hat Zlata von der Nacht gesagt?',say:'„Soldat“ in Anführungszeichen, in seiner Schrift. Und Zlata sagt, er hat geschlafen. Er hat nicht geschlafen. Er hat gezählt.'},
   'a3_lightroom+a3_slept':{to:'a3_awake',if:function(G){ return has(G,'a3_thrice'); },no:'In seiner Kammer hat jemand Licht gemacht. Das kann auch der Wind an der Lampe gewesen sein. Was sagt Bato selbst?',say:'Licht in seiner Kammer, und er hat die Schläge gezählt. Er war wach.'},
   'a3_voice+a3_pencil':{to:'a3_girl',say:'Eine Mädchenstimme ruft über den Fluss. Am Morgen liegt an der Glocke ein angekauter Bleistift. Kein Soldat. Es war das Mädchen.'},
   'a3_voice+a3_soldier':{to:'a3_girl',if:function(G){ return has(G,'a3_pencil'); },no:'Bato sagt: ein Soldat. Mala hat eine Mädchenstimme gehört. Wer hat recht? Ich brauche etwas, das am Morgen noch da war.',say:'Er hielt sie für einen Soldaten. Die Stimme war ein Mädchen. Der Bleistift lag an der Glocke. Es war das Mädchen.'},

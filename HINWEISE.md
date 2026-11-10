@@ -1178,7 +1178,7 @@ Offen, wenn: `G.phase==='k2_epi' && F(G,'k2.epi.nada') && !F(G,'k2.epi.done')`
 3. **Konkreter Ansatz:** Bei Fadila am Busbahnhof gibt es Fahrkarten nach Mostar.
 4. **Nächster Schritt:** Bei Fadila eine Fahrkarte nach Mostar kaufen und in den Bus steigen.
 
-## Kapitel 3: Mostar (97 Themen)
+## Kapitel 3: Mostar (102 Themen)
 
 ### Ankommen `p3a`
 
@@ -2043,6 +2043,51 @@ Offen, wenn: `P(G,['k3_d2','k3_d3']) && F(G,'met.vera') && !N(G,'v3_bed')`
 2. **Denkrichtung:** Im Januar vierundneunzig wollte Vlado das Mädchen zu seiner Schwester bringen.
 3. **Konkreter Ansatz:** Vera war in jener Nacht wach.
 4. **Nächster Schritt:** Auf der Tepa Vera nach dem Januar vierundneunzig fragen.
+
+### Das Handschuhfach `x3m`
+
+Offen, wenn: `P(G,['k3_d2','k3_d3']) && N(G,'v3_glove') && F(G,'k3.v.yard') && !I(G,'putni_nalog') && !F(G,'k3.v.logShown')`
+
+1. **Problem einordnen:** Mala hat durch das Blech gesehen: Im Handschuhfach des TAM liegt ein Heft voller Zahlen.
+2. **Denkrichtung:** Der Deckel klemmt. Marko bricht nichts auf, aber er kann etwas Dünnes in den Spalt schieben.
+3. **Konkreter Ansatz:** In der Werkstatt liegt Werkzeug herum. Kata gibt es her, wenn man fragt.
+4. **Nächster Schritt:** Den Schraubenzieher von der Montiermaschine nehmen und am Handschuhfach im Hof benutzen.
+
+### Plus eins `x3n`
+
+Offen, wenn: `P(G,['k3_d2','k3_d3']) && N(G,'v3_log') && !F(G,'k3.v.logShown')`
+
+1. **Problem einordnen:** Im Fahrtenbuch steht, was Vlado nicht sagt: plus eins, und zwei Uhr, niemand.
+2. **Denkrichtung:** Ein Buch in seiner Schrift kann er nicht wegreden.
+3. **Konkreter Ansatz:** Vlado steht an der Maschine.
+4. **Nächster Schritt:** Vlado das Fahrtenbuch zeigen oder die Notiz „Plus eins“.
+
+### Batos Kiste `x3o`
+
+Offen, wenn: `G.phase==='k3_d3' && (N(G,'a3_box')\|\|F(G,'k3.z.boxSeen')) && !F(G,'k3.z.boxOpen')`
+
+1. **Problem einordnen:** Unter der Ruderbank in Batos Schuppen steht eine Blechkiste mit einem Heft in seiner Schrift.
+2. **Denkrichtung:** Sie ist verschlossen. Bato hat keinen Schlüssel mehr in der Hand. Jemand Lebendes hat seine Sachen.
+3. **Konkreter Ansatz:** Zlata hat alles aufgehoben. Auch Schlüssel.
+4. **Nächster Schritt:** Zlata nach dem Schlüssel für Batos Kiste fragen, dann die Kiste im Schuppen aufschließen.
+
+### „Nisam išao“ `x3p`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_book') && !F(G,'k3.n3.bato.book') && !F(G,'k3.bato.uneasy')`
+
+1. **Problem einordnen:** Bato hat die Nacht aufgeschrieben: Glocke dreimal, nicht gefahren. In Anführungszeichen: Soldat.
+2. **Denkrichtung:** Seine eigene Schrift ist ein Beleg, den er nicht wegreden kann.
+3. **Konkreter Ansatz:** Bato steht im Schuppen.
+4. **Nächster Schritt:** Bato das Fährbuch zeigen: die Notiz „Nisam išao“.
+
+### Zwei Batterien `x3q`
+
+Offen, wenn: `G.phase==='k3_d3' && N(G,'v3_battery') && !F(G,'k3.v.battery')`
+
+1. **Problem einordnen:** Der TAM braucht zwei Batterien. Kata hat eine. Sonntag.
+2. **Denkrichtung:** Wer in dieser Stadt hat ein altes Auto, das er pflegt, und seit achtzig Ersatz für alles?
+3. **Konkreter Ansatz:** *je nach Stand:* „Die Batterie gehört in den TAM. Kata weiß, wohin.“ / „Der Taxifahrer am Ostbusbahnhof. Er lehnt am Mercedes.“
+4. **Nächster Schritt:** *je nach Stand:* „Kata im Vulkanizer die Batterie geben.“ / „Den Taxifahrer am Ostbusbahnhof nach einer Batterie fragen.“
 
 ### Der Tag geht zu Ende `x3day`
 

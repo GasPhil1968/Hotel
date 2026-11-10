@@ -263,6 +263,29 @@ Die Pflichtschritte oben bleiben die Pflichtschritte. Diese Stränge liegen dane
 - **[M]** Am rechten Ufer den Bleistift Mala zeigen: „Meiner. Den hast du jetzt. Mehr von mir hat keiner.“
 - Epilog, in der Küche: den Bleistift Nada geben. „Sie hat daran gekaut. Immer.“
 
+**Das Handschuhfach und das Fahrtenbuch (Samstag, Sonntag)**
+- **[G]** Im Hof des Vulkanizers das **Führerhaus** ansehen: Mala sieht durch das Blech ein Heft im Handschuhfach und eine Kassette im Radio.
+- **[M]** In der Werkstatt den **Schraubenzieher** von der Montiermaschine nehmen (Kata: „Bringen Sie ihn zurück.“). Im Hof das Führerhaus öffnen, dann den Schraubenzieher auf das **Handschuhfach**: das **Fahrtenbuch 1994**. Lesen: „14. I. Split–Skela · +1“, „15. I. 02:00 Skela · nitko“.
+- **[M]** Den Schraubenzieher auf das **Autoradio**: die **Kassette** „za put · Mala“. Am Ostbusbahnhof auf das **Taxi** ziehen: der Mercedes spielt sie. Am Ende der Strophe singt ein Mädchen mit.
+- **[M]** Vlado das Fahrtenbuch geben oder die Notiz „Plus eins“ zeigen: „Mein Buch.“ Er nennt die zwei Uhr schon am Samstag. Am Sonntag sagt er in Teil 2: „Das wissen Sie aus dem Buch. Jetzt wissen Sie es von mir.“
+
+**Batos Blechkiste und das Fährbuch (Sonntag)**
+- **[G]** Am rechten Ufer den **Schuppen drüben** ansehen: unter der Ruderbank eine Blechkiste, darin ein Heft in Batos Schrift. **[M]** Am linken Ufer den Schuppen ansehen: das Schloss.
+- **[M]** Zlata: „Batos Kiste im Schuppen. Haben Sie den Schlüssel?“ Sie holt ihn aus der Schublade: „Und sagen Sie mir nicht, was drinsteht. Oder doch. Später.“
+- **[M]** Den **Schlüssel** auf **Batos Schuppen**: das **Fährbuch 1994**. Lesen: „15. I. NOĆ · zvono 3× · nisam išao · ‚vojnik‘“, „16. I. Rajić pita za curu · rekao: nitko“.
+- **Verbinden:** *„Nisam išao“* + *„Er hat geschlafen“* → **Bato war wach**. Das ist der dritte Weg neben „Dreimal“ und der geordneten Nacht.
+- **[M]** Bato nach *„Nisam išao“* fragen: „Mein Buch. Wer hat Ihnen mein Buch gegeben?“ Das zählt als Beleg wie „Bato war wach“.
+- **[M]** Zlata nach dem Fährbuch fragen: „Ich habe nicht gefragt. Sie haben es gesagt.“
+
+**Der Mehlsack und die Spendertafel (Sonntag)**
+- **[M]** In der Hütte am rechten Ufer bei Tag am **Mehlsack** ziehen: ein Stück Jute mit dem Stempel „SPLIT · XII 1993“. Vlado geben: „Mein Mehl.“
+- **[M]** Die **Spendertafel** an der neuen Brücke lesen, sobald Vlados Name bekannt ist: „V. Rajić, Mostar“. Vlado die Notiz zeigen: „Zweihundert Mark. Damit keiner mehr nachts läuten muss.“
+
+**Die Batterie (Sonntag, Finale)**
+- **[M]** Nach „Heute Nacht fahre ich“ Kata: „Fährt er wirklich?“ Der TAM braucht zwei Batterien; die zweite ist tot, Sonntag.
+- **[M]** Am Ostbusbahnhof den Taxifahrer: „Haben Sie eine Batterie?“ Er gibt seine Ersatzbatterie, für die Fahrt nach Skela: „Sagen Sie ihm, von wem.“
+- **[M]** Kata die **Batterie** geben. Im Finale springt der TAM beim ersten Mal an; Vlado: „Vom Taxi.“ Er nickt zur Stadt hin. Am Montag fragt der Taxifahrer, was er gesagt hat.
+
 ## Varianten und Nebenwege (alle getestet)
 
 - **Westufer vor der Straßenbrücke:**

@@ -75,6 +75,9 @@ Der Ausbau macht aus diesem Motiv Spielhandlungen: Dinge, die ankommen oder nich
 | **N3 „Mates Fahrkarte“** | Mate hatte eine Fahrkarte nach München gekauft. Zdravko bewahrt sie für den, der kommt. Davor kommt nicht ins Café, Lena schon. Davor verschiebt den Verkauf. | B | Café, Haus Zelenika | Zdravko, Lena, Davor |
 | **N4 „Die Waage“** | Zlata lässt beim Weglaufen ihre Marktwaage liegen. Vera gibt sie Marko mit. Nachts in Skela ist die Waage der Grund, an Zlatas Tür zu stehen. | A | Tepa, Skela | Vera, Zlata |
 | **N5 „Der Bleistift“** | Zlata hat den angekauten Bleistift von der Glocke. Ob sie ihn hergibt, hängt daran, ob Marko ihr die Wahrheit über die Mutter sagt. | A, Epilog | Zlatas Küche | Zlata |
+| **P1 „Das Handschuhfach“** | Mala sieht durch das Blech des TAM ein Heft und eine Kassette. Marko braucht den Schraubenzieher aus Vlados Werkstatt. Das Fahrtenbuch 1994 („+1“, „02:00 Skela · nitko“) ist ein Beleg, den Vlado nicht wegreden kann. Die Kassette spielt der Mercedes am Ostbahnhof. | A | Hof, Vulkanizer, Ostbusbahnhof | Kata, Vlado, Taxifahrer |
+| **P2 „Batos Blechkiste“** | Unter der Ruderbank im Schuppen steht eine verschlossene Kiste mit Batos Fährbuch. Mala sieht hinein, Zlata hat den Schlüssel in ihrer Schublade, Marko liest Batos Schrift: dreimal Glocke, „nisam išao“. Dazu der Mehlsack in der Hütte und die Spendertafel mit Vlados Namen. | A | Skela beide Ufer, neue Brücke, Zlata, Vulkanizer | Zlata, Bato, Vlado |
+| **P3 „Zwei Batterien“** | Der TAM braucht für die Finalnacht eine zweite Batterie. Die liegt im Kofferraum des Taxis am Ostbahnhof. Der Fahrer gibt sie für die Fahrt nach Skela, nicht für Rajić, und will morgen wissen, was Vlado gesagt hat. | Finale | Vulkanizer, Ostbusbahnhof, Hof | Kata, Taxifahrer, Vlado |
 | **E „Die Stadt“** | Kurze Szenen, in denen die Teilung von 2011 sichtbar wird, ohne Monolog. | – | Bulevar, Brücke, beide Busbahnhöfe, Café | Dino, Zdravko, Taxifahrer, Kata, Davor |
 
 Alle neuen Stränge sind **optionale Vertiefungen**; die bisherigen Pflichtschritte bleiben die Pflichtschritte. Grund: Bestehende Spielstände müssen weiter funktionieren (jede Phase bleibt mit dem alten Pflichtweg abschließbar), und die Hinweisprobe darf keine neuen Sackgassen finden. Die Vertiefungen haben aber Folgen in der Pflichthandlung (zweiter Weg zu Mates Erkenntnis, verändertes Finale, veränderter Epilog), und das Hinweissystem führt zu ihnen hin.
@@ -272,6 +275,30 @@ Vera bringt das Papier an das Tor und bleibt am Tor. Vlado nickt. Kata nimmt das
 - **Mala** (`olovka_mala` an Mala): „Meiner. Ich habe immer daran gekaut. Mama hat geschimpft.“ Mala sieht Marko an. „Den hast du jetzt. Mehr von mir hat keiner.“ → `a3_mypencil`.
 - **Epilog** (`zlata_k.js`): Mit `olovka_mala`: Nada bekommt neben Brief und Skizzenbuch den Bleistift. Nada: „Sie hat daran gekaut. Immer.“
 
+### F.7 P1 „Das Handschuhfach“ (Gegenstände: Schraubenzieher, Fahrtenbuch 1994, Kassette)
+
+- **Hof** (`rooms/vhof.js`): Marko öffnet das Führerhaus (unverschlossen, kanon) und sieht hinein; danach sind **Handschuhfach** und **Autoradio** eigene Trefferflächen. Mala, Blick aufs Führerhaus: „Im Handschuhfach, durch das Blech: ein Heft. Voll mit Zahlen.“ → `v3_glove`. Der Deckel klemmt; Marko bricht nichts auf. Mala: „Mit etwas Dünnem, Flachem.“
+- **Werkstatt** (`rooms/vulkanizer.js`): Auf der Montiermaschine liegt ein Schraubenzieher; nehmen geht, sobald der Hof offen ist; Kata: „Bringen Sie ihn zurück. Papa zählt sie.“ Zurückgeben an Kata möglich.
+- Schraubenzieher auf das Handschuhfach → `putni_nalog` (Fahrtenbuch). Lesen (`A.doc`): „14. I. Split – Skela · brašno 40 vr. · deke 200 · +1 · dolazak 22:40 · odlazak 23:15 / 15. I. 02:00 Skela nitko · 06:30 kuća / 16. I. Mostar – Skela (pitao)“ → `v3_log`. Mala: „Plus eins. So heiße ich in seinem Buch.“
+- Schraubenzieher auf das Radio → `kaseta` („za put · Mala“). Am Ostbusbahnhof auf das Taxi: der Mercedes spielt sie (Lied vom Fenster, vom Radio aufgenommen; am Ende singt ein Mädchen mit) → `v3_tape`. Mala: „Das bin ich.“ – „Falsch, oder?“ – „Schön falsch.“
+- Vlado (Buch geben oder `v3_log` zeigen, Samstag nach Teil 1 oder Sonntag): „Mein Buch.“ Kata: „Ich habe ihm den Schraubenzieher gegeben, Papa.“ Vlado: „Plus eins. So schreibt man das. Man schreibt keinen Namen in ein Fahrtenbuch. Zwei Uhr. Ja. Ich war noch mal unten.“ → `v3_two` (zweiter Weg, vor Teil 2). In Teil 2: „Das wissen Sie aus dem Buch. Jetzt wissen Sie es von mir.“
+
+### F.8 P2 „Batos Blechkiste“ (Gegenstände: Schlüssel, Fährbuch, Mehlsack)
+
+- **Rechtes Ufer** (`rooms/skela_d.js`): Mala, Blick auf den Schuppen drüben (Sonntag): die Blechkiste unter der Ruderbank, durch das Blech das Heft in seiner Schrift → `a3_box`. Marko am linken Ufer sieht die Kiste und das Schloss.
+- **Zlata** (`rooms/skela_l.js`): „Batos Kiste. Haben Sie den Schlüssel?“ – „Ich habe nie hineingesehen. Ich kann seine Schrift nicht lesen. Er hat wie ein Arzt geschrieben.“ Sie holt den Schlüssel aus der Schublade: „Und sagen Sie mir nicht, was drinsteht. Oder doch. Später. Wenn ich frage.“ → `kljucic`.
+- Schlüssel auf den Schuppen: die Kiste, darin Heft, Foto der Fähre, Pfeife → `knjiga_skele`. Lesen: „15. I. NOĆ · zvono 3× · nisam išao · ‚vojnik‘ / 15. I. jutro · cura u trsci · Zlata · deke · olovka kod zvona / 16. I. Rajić pita za curu · rekao: nitko / 17. I. dunja · daska · MALA“ → `a3_book`, `a3_asked`.
+- Schlüsse: `a3_book + a3_slept → a3_awake` („Wer nicht fährt, hat entschieden. Er war wach.“); `a3_book + a3_soldier → a3_awake`, wenn `a3_slept` da ist (sonst Beinahe-Treffer mit Rückfrage). Bato, nach `a3_book` gefragt: „Mein Buch. Wer hat Ihnen mein Buch gegeben?“ – „Zlata.“ – „Sie kann meine Schrift nicht lesen. Darum habe ich alles hineingeschrieben.“ Zählt als Beleg wie „Bato war wach“.
+- **Hütte** (`rooms/skela_d.js`), bei Tag: am Mehlsack ziehen → `vreca` („BRAŠNO · 50 kg · SPLIT · XII 1993“) → `v3_sack`. Vlado: „Mein Mehl. Vierzig Sack. Nicht alles, wie ich sehe.“
+- **Spendertafel** (`rooms/skela_most.js`): Namen der Spender, darunter „V. Rajić, Mostar“ → `a3_donor`, sobald Marko Vlados Namen kennt. Vlado: „Zweihundert Mark. Mehr hatte ich nicht. Damit keiner mehr nachts läuten muss.“ Kata: „Papa. Du hast für eine Brücke gezahlt?“ – „Für eine Straße mit Geländer.“
+
+### F.9 P3 „Zwei Batterien“ (Gegenstand: Batterie)
+
+- **Kata** (Sonntag, nach „Heute Nacht fahre ich“): „Vierundzwanzig Volt. Zwei Batterien hintereinander. Eine habe ich neu, die zweite ist tot wie ein Stein. Sonntag.“ → `v3_battery`. Mala: „Wer hat hier eine Batterie und ein Auto, das er liebt?“
+- **Taxifahrer**: „Für wen?“ – „Für den TAM von Vlado Rajić.“ – „Rajić fährt.“ Er gibt die Ersatzbatterie aus dem Kofferraum: „Für die Fahrt nach Skela, nicht für Rajić. Morgen bringen Sie sie zurück. Und Sie sagen ihm, von wem sie ist.“ → `akumulator` („schwer wie ein Kind“).
+- Batterie an Kata: „Vom Taxi. Der flickt seine Reifen bei uns, seit ich denken kann. Zwei. Jetzt sind es zwei.“ → `k3.v.battery`.
+- **Finale** (`rooms/vhof.js`): Der TAM springt beim ersten Mal an. Kata: „Die zweite ist vom Taxi am Ostbahnhof.“ Vlado: „Vom Taxi.“ Er nickt, zur Stadt hin. **Epilog**: der Taxifahrer: „Und was hat er gesagt?“ – „Er hat genickt.“ – „Das ist viel. Für ihn.“
+
 ### F.6 E „Die Stadt“
 
 Zeilen an den in E.2 genannten Stellen. Der Taxifahrer bekommt eine Gesprächszeile „Kennen Sie Zdravko?“ (nach `b3_zdravko`), Zdravko eine Zeile „Kennen Sie den Taxifahrer am Ostbahnhof?“ (nach `v3_where`). Mala am Gymnasium: `g:listen`: „Zwei Glocken. Eine, dann eine. Die Kinder laufen zweimal.“
@@ -301,9 +328,12 @@ Siehe Tabelle am Ende dieses Dokuments (wird mit der Umsetzung gepflegt).
 | N3 Mates Mappe: Schublade (Mala), Zdravkos Bedingung, Lena im Café, die Mappe (A.doc), Davor verschiebt, Jela und Mate reagieren | **umgesetzt** | `rooms/kafic.js`, `rooms/zelenika.js`, `97_k3_ausbau.js` |
 | N4 Waage: Vera gibt sie mit, Zlata nimmt sie an der Tür, Sonntag auf dem Tisch | **umgesetzt** | `rooms/tepa.js`, `rooms/skela_l.js`, `rooms/zlata_k.js` |
 | N5 Bleistift: Zlatas Frage, „Mala fragen“, Mala, Nada im Epilog | **umgesetzt** | `rooms/skela_l.js`, `rooms/zlata_k.js`, `12_k3_items.js` |
+| P1 Handschuhfach: Schraubenzieher, Fahrtenbuch, Kassette, Taxi-Radio, Vlados Reaktion, Teil 2 angepasst | **umgesetzt** | `rooms/vhof.js`, `rooms/vulkanizer.js`, `rooms/ostbus.js`, `97_k3_ausbau.js` |
+| P2 Blechkiste: Malas Blick, Zlatas Schlüssel, Fährbuch, zwei Schlüsse, Bato, Mehlsack, Spendertafel | **umgesetzt** | `rooms/skela_d.js`, `rooms/skela_l.js`, `rooms/skela_most.js`, `13_k3_notes.js` |
+| P3 Batterie: Kata, Taxifahrer, Finale, Epilog | **umgesetzt** | `rooms/vulkanizer.js`, `rooms/ostbus.js`, `rooms/vhof.js` |
 | E Stadt: Taxifahrer/Zdravko, Gymnasium, Dino an der Brücke, Kata | **umgesetzt** | `rooms/ostbus.js`, `rooms/kafic.js`, `rooms/bulevar.js`, `rooms/starimost.js`, `rooms/vulkanizer.js` |
-| Notizen (9), Erledigt-Regeln, Gegenstände (4), Hinweisthemen (12), Probe-Zuordnungen | **umgesetzt** | `13_k3_notes.js`, `12_k3_items.js`, `15_hints_k3.js`, `qa/hints/stufe4.js` |
-| Regressionstest mit Spielständen | **umgesetzt** | `qa/regress/bug_023_k3_ausbau.js`, `qa/regress/fixtures/k3x_*.json` |
+| Notizen (18), Erledigt-Regeln, zwei Schlussregeln, Gegenstände (11), Hinweisthemen (17), Probe-Zuordnungen | **umgesetzt** | `13_k3_notes.js`, `12_k3_items.js`, `15_hints_k3.js`, `qa/hints/stufe4.js` |
+| Regressionstests mit Spielständen | **umgesetzt** | `qa/regress/bug_023_k3_ausbau.js`, `bug_024_k3_gegenstaende.js`, `qa/regress/fixtures/k3x_*.json` |
 | Dokumente: LOESUNG3, HINWEISE (neu erzeugt), AENDERUNGEN | **umgesetzt** | – |
 | Übersetzungen ins Bosnische/Kroatische für die neuen Sätze | **offen** (wie für alle Sätze der Kapitel 2 bis 5: nur Kapitel 1 ist übersetzt) | `lang/` |
 | Neue Grafiken | nicht nötig: alle neuen Szenen nutzen vorhandene Figuren, Räume und Gegenstandssymbole (vier neue Symbole gezeichnet) | – |
@@ -327,12 +357,16 @@ Alle Angaben beziehen sich auf den Bau vom 10. November 2026 (`web/index.html`, 
 | Musterlösung Kapitel 3, alle Pflichtschritte | `node qa/runwalk.js game/tools/walkthrough3.js` | 113 Schritte, keine JS-Fehler |
 | Hinweisprobe: Stufe 4 ausführbar, Abdeckung, Wiederöffnung, Stranglücken; Musterlösung (135 Stände) und Varianten | `node qa/hints/hintprobe.js --dumps … --varianten` | 248 Proben, 0 Fehler, 0 zu prüfen |
 | Die neuen Stränge über Spielerhandlungen (A Freitagnacht, B Samstag, C Samstagnacht, D Sonntag, E Finale; 24 Prüfpunkte) | `node qa/regress/run.js --only BUG-023` | OK |
-| Regression aller behobenen Fehler (Kapitel 1 bis 5) | `node qa/regress/run.js` | 23 OK |
+| Die Gegenstandsrätsel (Schraubenzieher, Handschuhfach, Fahrtenbuch, Kassette im Taxi, Batterie, Mehlsack, Tafel, Blechkiste, Fährbuch, Schluss, Bato, Finale; 21 Prüfpunkte) | `node qa/regress/run.js --only BUG-024` | OK |
+| Regression aller behobenen Fehler (Kapitel 1 bis 5) | `node qa/regress/run.js` | 24 OK |
 | Browser: Tepa mit Vera, Alte Brücke am Samstag (Davor, Lena, Australier, Dino), Café mit Lena, Vera am Rolltor | Playwright, Chromium | Szenen laufen, Figuren stehen frei, keine Konsolenfehler |
 
 **Was nicht geprüft wurde:** menschliche Spieler, echte Spielzeit, Ton, Geräte außer Chromium (Desktop). Die Zahl der Spielerhandlungen in den Vertiefungen (etwa 60 zusätzliche Handlungen mit drei Rätselfeldern) ist gezählt, nicht gemessen; eine Spielzeit wird nicht behauptet.
 
 **Gefundene und behobene Probleme während der Umsetzung:**
+- Der Gegenstand „dnevnik“ gibt es schon in Kapitel 1; das Fahrtenbuch heißt `putni_nalog`.
+- Mala bleibt in Skela am rechten Ufer (kanon); ihr Blick in Batos Kiste geht deshalb vom rechten Ufer aus („Ich sehe von hier, was mir gehört“), Marko sieht die Kiste am linken.
+- Nach „Heute Nacht fahre ich“ war Vlados Gespräch zu; jetzt nimmt er Notizen (Fahrtenbuch, Tafel, Mehlsack) weiter entgegen.
 - Vlados Schwester ist nach Kanon 2002 gestorben (`vulkanizer.js`, Zeile „Sie ist tot. Zweitausendzwei.“). Vera ist deshalb die jüngere von zwei Schwestern; die ältere hatte das Zimmer mit dem Ofen. Vlados Satz ergänzt das, wenn Marko Vera kennt.
 - Der Typenschein liegt laut Freitag in der Mappe. Kata stellt am Samstag beim Durchsehen fest, dass das eine Blatt fehlt (keine Änderung am Freitag).
 - Graz: Nach Vlados Befreiung verkaufen die Rajićs den TAM nicht mehr [B]. Vera bringt das Blatt trotzdem: „Es gehört zum Lastwagen.“
@@ -351,7 +385,7 @@ Alle Angaben beziehen sich auf den Bau vom 10. November 2026 (`web/index.html`, 
 | Handelt Zlata selbst? Sind Davor, Lena, Jela, Zdravko mehr als Hinweisgeber? | Zlata nimmt die Waage und entscheidet über den Bleistift. Jela entscheidet, dass das Kind die Brücke sieht. Davor geht gegen seinen Willen, erinnert sich, verschiebt den Verkauf. Lena lernt die Strophe, geht ins Café, bringt die Mappe. Zdravko hält die Mappe zurück und gibt sie der Richtigen. |
 | Bato und Mate eigenständig, Fälle verbunden? | Beide Fälle unverändert in ihrem Kern. Verbindungen: Zdravko (Karte für A, Mappe und Summen für B), der Taxifahrer (Fahrt nach Skela für A, Zdravkos Kollege), Vera (A) am selben Stand wie Zlata (A), das Lied (Mate, die Australier, Lana im Führerhaus). |
 | Müssen Marko und Mala unterschiedliche Fähigkeiten einsetzen? | Neu: Mala sieht in Zdravkos Schublade, lauscht Mates Summen, wird zweimal gefragt (Vera, Bleistift), sieht ihren Bleistift. Marko ordnet, übersetzt, erzählt Dino, gibt. |
-| Denkarbeit statt Durchklicken? | Drei neue Rätselfelder mit begründeten Fehlantworten (Strophen, Brief), eine Wahl mit Folge (Jela), eine Wahl mit Folge (Zlata), Dinos Geschichte aus dem Notizbuch, zwei Wege zu Mates Erkenntnis. |
+| Denkarbeit statt Durchklicken? | Gegenstandsketten über mehrere Orte: Schraubenzieher → Handschuhfach → Fahrtenbuch → Vlado; Malas Blick → Zlatas Schlüssel → Blechkiste → Fährbuch → Schluss → Bato; Kata → Taxifahrer → Batterie → Finale; Mehlsack und Spendertafel als Belege. Dazu zwei Rätselfelder mit begründeten Fehlantworten (Strophen, Brief), Wahlen mit Folge (Jela, Zlata), Dinos Geschichte aus dem Notizbuch, zwei Wege zu Mates Erkenntnis, drei Wege zu „Bato war wach“. |
 | Mehrere Ziele parallel? | Samstag: Vera, Waage, Jela, Brücke neben Tepa, Vlado, Bus. Sonntag: Strophe, Café, Mappe, Brief, Bleistift neben Fall A und B. Reihenfolge frei (C.1). |
 | Konsequenzen? | Verkauf verschoben, Vera am Tor, Zlatas Waage auf dem Tisch, der Bleistift bei Nada, Mates Erkenntnis über die Strophe, das Lied richtig gesungen, das Video. |
 | Historischer Hintergrund stimmig? | Jahr 2011 (A.4), Brücke von 2004, Teilung als Alltag ohne Seiten (E). Keine Gruppenzugehörigkeit, keine Belehrung. |

@@ -93,10 +93,13 @@ M.k3FinDeparture=async function(A){ var G=A.G, V=A.npc('vlado'), K=A.npc('kata')
   await A.wait(700); await A.narrate('Vlado steht an der Fahrertür. Er hat keine Zigarette im Mund. Er hält eine in der Hand und zündet sie nicht an.');
   if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Er hat sie nicht an.'); }
   await V.say('Steigen Sie ein.'); await A.wait(800);
-  await A.narrate('Er steigt ein. Der Anlasser orgelt. Einmal. Zweimal.'); A.sfx('truckStart'); await A.wait(1700);
-  A.sfx('truckStart'); A.set('lights',true); A.rebuild(); await A.wait(600);
-  await A.narrate('Beim dritten Mal springt der TAM an, mit einem Husten, der nach seinem Fahrer klingt. Die Scheinwerfer gehen an und legen zwei Kegel auf den Raureif.');
-  await K.say('Siehst du, Papa. Er will.');
+  if (G.flags['k3.v.battery']){ await A.narrate('Er steigt ein. Der Anlasser orgelt. Einmal.'); A.sfx('truckStart'); await A.wait(1200); A.set('lights',true); A.rebuild(); await A.wait(600);
+    await A.narrate('Beim ersten Mal springt der TAM an, mit einem Husten, der nach seinem Fahrer klingt. Die Scheinwerfer gehen an und legen zwei Kegel auf den Raureif.');
+    await K.say('Siehst du, Papa. Zwei Batterien. Die zweite ist vom Taxi am Ostbahnhof.'); await A.wait(800); await V.say('Vom Taxi.'); await A.wait(600); await A.narrate('Er sagt es, wie man einen Namen sagt, den man lange nicht gesagt hat. Dann nickt er. Einmal, zur Stadt hin.'); A.setFlag('k3.fin.batteryNod'); }
+  else { await A.narrate('Er steigt ein. Der Anlasser orgelt. Einmal. Zweimal.'); A.sfx('truckStart'); await A.wait(1700);
+    A.sfx('truckStart'); A.set('lights',true); A.rebuild(); await A.wait(600);
+    await A.narrate('Beim dritten Mal springt der TAM an, mit einem Husten, der nach seinem Fahrer klingt. Die Scheinwerfer gehen an und legen zwei Kegel auf den Raureif.');
+    await K.say('Siehst du, Papa. Er will.'); }
   if (G.flags['k3.v.veraLetter']) await veraAtGate(A,V,K);
   var c=await A.choose([{t:'(Einsteigen.)',id:'in',silent:true},{t:'Kata. Danke.',id:'thanks'}],{title:'Der TAM'});
   if (c==='thanks'){ await K.say('Danken Sie ihm. Er fährt. Ich schraube nur.'); }
@@ -119,9 +122,25 @@ var HS=[
    use:function(A){ return A.m(fin(A.G)?'Vlado fährt. Nicht ich.':'Ich habe keinen Schlüssel. Und ich fahre keine Lastwagen. Ich übersetze welche.'); },
    g:{look:'Unser Lastwagen. Ich weiß es, bevor ich ihn erkenne.',sense:'Mehl. Decken. Diesel. Und kalt war es, so kalt.'}},
  {id:'cab',name:'Führerhaus',look:'Das Führerhaus, kantig, verblichenes Blau. Die Rundscheinwerfer sehen aus wie zwei erstaunte Augen. In der Fahrertür ist eine Delle.',
-   open:async function(A){ if (fin(A.G)) return A.m('Gleich. Vlado steigt zuerst ein.'); await A.m('Die Tür ist nicht abgeschlossen. Drinnen riecht es nach altem Diesel und nach etwas Süßem, das ich nicht kenne.'); await A.m('Ich setze mich nicht hinein. Das ist nicht mein Platz.'); },
+   open:async function(A){ if (fin(A.G)) return A.m('Gleich. Vlado steigt zuerst ein.'); await A.m('Die Tür ist nicht abgeschlossen. Drinnen riecht es nach altem Diesel und nach etwas Süßem, das ich nicht kenne.');
+     if (!A.S.cabIn){ A.S.cabIn=true; A.set('cabIn',true); A.rebuild(); await A.m('Ich setze mich nicht hinein. Aber ich sehe hinein: das Armaturenbrett, ein Autoradio mit Kassettenschlitz, ein Handschuhfach.'); return; } await A.m('Ich setze mich nicht hinein. Das ist nicht mein Platz.'); },
    use:function(A){ return A.room.byId.cab.open(A); },
-   g:{look:function(A){ return A.g(A.flag('k3.v.cab')?'Das Licht am Armaturenbrett. Es ist immer noch an.':'Im Führerhaus ist ein blasses Licht, am Armaturenbrett. Da, wo keins sein dürfte.'); },sense:function(A){ return cabSense(A); }}},
+   g:{look:async function(A){ await A.g(A.flag('k3.v.cab')?'Das Licht am Armaturenbrett. Es ist immer noch an.':'Im Führerhaus ist ein blasses Licht, am Armaturenbrett. Da, wo keins sein dürfte.');
+       if (!A.hasNote('v3_glove')){ await A.wait(600); await A.g('Im Handschuhfach, durch das Blech: ein Heft. Voll mit Zahlen, Zeile für Zeile.'); await A.wait(500); await A.g('Und im Radio steckt eine Kassette. Seit damals.'); A.note('v3_glove');
+         if (A.marko){ await A.wait(500); await A.m('Ein Fahrtenbuch?'); await A.g('Zahlen und Daten. Das muss du lesen, nicht ich.'); } } },sense:function(A){ return cabSense(A); }}},
+ {id:'glove',name:'Handschuhfach',vis:function(S,G){ return !!S.cabIn && !fin(G); },look:function(A){ return A.m(A.S.gloveOpen?(A.S.logTaken?'Das Handschuhfach, offen. Leer bis auf eine Sicherung und einen Zahnstocher.':'Das Handschuhfach, offen. Darin ein Heft in Wachstuch.'):'Das Handschuhfach im Armaturenbrett. Der Deckel ist verzogen, der Spalt voller Staub.'); },
+   open:async function(A){ if (A.S.gloveOpen) return A.room.byId.glove.take(A); await A.m('Ich ziehe am Deckel. Er klemmt. Siebzehn Sommer haben ihn verzogen, und ich breche nichts auf, was Vlado gehört.'); if (A.malaHere()&&A.hasNote('v3_glove')) await A.g('Mit etwas Dünnem, Flachem. Nicht mit den Fingern.'); },
+   use:function(A){ return A.room.byId.glove.open(A); },
+   with:{ odvijac:async function(A){ if (A.S.gloveOpen) return A.m('Es ist offen.'); A.sfx('drawer'); A.S.gloveOpen=true; A.set('gloveOpen',true); await A.m('Mit dem Schraubenzieher im Spalt gibt der Deckel nach. Staub. Eine Sicherung, ein Zahnstocher. Und ein Heft in Wachstuch, die Ecken weich.'); await A.room.byId.glove.take(A); } },
+   take:async function(A){ if (!A.S.gloveOpen) return A.m('Erst muss der Deckel auf.'); if (A.S.logTaken) return A.m('Das Heft habe ich.'); A.S.logTaken=true; A.set('logTaken',true); A.give('putni_nalog'); A.sfx('paper'); await A.m('Ein Fahrtenbuch. Vorn steht: 1994. Vlado hat es siebzehn Jahre im Handschuhfach gelassen, als könnte er noch eine Fahrt eintragen.');
+     if (A.malaHere()) await A.g('Lies es. Nicht hier.'); },
+   g:{look:function(A){ return A.g(A.S.gloveOpen?'Offen. Das Heft hat er. Jetzt steht alles drin, was Vlado nicht sagt.':'Das Heft. Ich sehe es. Du musst es herausholen.'); }}},
+ {id:'radio',name:'Autoradio',vis:function(S,G){ return !!S.cabIn && !fin(G); },look:function(A){ return A.m(A.S.tapeTaken?'Das Autoradio. Der Schlitz ist leer.':'Ein Autoradio aus den Achtzigern, eine Kassette halb im Schlitz, als hätte jemand sie herausnehmen wollen und es gelassen.'); },
+   use:'Ohne Batterie spielt es nichts. Und die Kassette sitzt fest.',
+   take:async function(A){ if (A.S.tapeTaken) return A.m('Die Kassette habe ich.'); await A.m('Ich ziehe an der Kassette. Sie sitzt fest, das Band hängt irgendwo im Gerät. Wenn ich reiße, reißt es.'); },
+   with:{ odvijac:async function(A){ if (A.S.tapeTaken) return A.m('Die habe ich.'); A.sfx('click'); A.S.tapeTaken=true; A.set('tapeTaken',true); A.give('kaseta'); await A.m('Mit dem Schraubenzieher drücke ich die Klappe hinunter. Die Kassette kommt heraus, das Band heil. Auf dem Etikett: „za put · Mala“.');
+     if (A.malaHere()){ await A.wait(700); await A.g('Meine.'); await A.wait(500); await A.g('Für die Fahrt. Ich habe sie im Palma vom Radio aufgenommen.'); } } },
+   g:{look:'Da steckt Musik drin. Meine. Ich habe sie laut gestellt, und er hat sie leiser gestellt. Dreimal.'}},
  {id:'tarp',name:'Plane',look:function(A){ return A.m(A.S.tarpOff?'Die Plane liegt zusammengelegt am Zaun.':(A.G.phase==='k3_d1'?'Eine olivgrüne Plane mit Seilen über Pritsche und Kabinendach. Die Bura zerrt an einer Ecke, als wollte sie nachsehen, was darunter ist.':'Eine olivgrüne Plane mit Seilen über Pritsche und Kabinendach.')); },
    take:'Die Plane nehme ich nicht ab. Das ist Vlados Laster. Und Katas, sagt Kata.',use:'Ich hebe eine Ecke an. Darunter Blau, verblichen, und ein Rostfleck in Form einer Insel.',
    g:{look:'Unter der Plane ist es dunkel. Für mich nicht.'}},
@@ -136,7 +155,7 @@ var HS=[
 ];
 M.room('vhof',{ name:'Hof des Vulkanizers', scape:'k3_vhof',
   music:function(G){ return fin(G)?'k3_fin':'k3_istraga'; },
-  state:function(G){ return {tarpOff:false,lights:false}; },
+  state:function(G){ return {tarpOff:false,lights:false,cabIn:!!(G.rooms.vhof&&G.rooms.vhof.cabIn),gloveOpen:!!(G.rooms.vhof&&G.rooms.vhof.gloveOpen),logTaken:!!(G.rooms.vhof&&G.rooms.vhof.logTaken),tapeTaken:!!(G.rooms.vhof&&G.rooms.vhof.tapeTaken)}; },
   actors:function(S,G){ var L=[]; if (fin(G)){ S.tarpOff=true; S.lights=F(G,'k3.fin.departed')||F(G,'k3.fin.drive');
       var v=M.apos('vhof','vlado',[124,117,'L']), k=M.apos('vhof','kata',[44,124,'R']);
       L.push({id:'vlado',ch:'vlado',x:v[0],y:v[1],f:v[2]||'L',name:'Vlado',idle:'quiet',speechY:46,routine:false});
