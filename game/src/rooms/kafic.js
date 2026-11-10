@@ -118,13 +118,16 @@ async function talkZdravko(A){ var Z=A.npc('zdravko'), p=A.G.phase;
 // ---------------------------------------------------------------- die alte Karte
 async function oldMap(A){ var Z=A.npc('zdravko');
   if (!A.flag('k3.zd.map') && A.first('zdMapLine')){ await Z.say('Die Karte? Von fünfundachtzig. Damals wusste man noch, wo was ist.'); A.setFlag('k3.zd.map'); await A.wait(300); }
+  // Revision (Regel 2): mit Mates Garagenschlüssel sucht Marko eine Straße, die es auf seinem Plan nicht gibt
+  if (A.hasNote('b3_garage') && !A.hasNote('b3_street')){ await A.m('Bratstva i jedinstva. Da ist sie, auf der alten Karte: am Bahndamm, bei der Post. Auf meinem Plan steht dort ein anderer Name. Ich müsste beide nebeneinanderlegen.'); return; }
   await M.k3OldMap(A); }
 // ---------------------------------------------------------------- Hotspots
 var HS=[
  {id:'door',name:'Zum Bussteig',exit:{to:'westbus'},look:'Die Glastür zum Bussteig. Draußen fährt ein Bus ab, ohne dass einer winkt.',g:{look:'Draußen sind die Busse. Hier drin die, die auf sie warten.'}},
  {id:'zdravko',npc:'zdravko',name:'Zdravko',hgt:30,talkDist:30,talk:talkZdravko,
    look:'Ein runder Mann hinter der Theke, kahl, mit Brauen wie zwei Bürsten. Weißes Hemd, schwarze Weste, ein Geschirrtuch über der Schulter. Er poliert ein Glas, das längst sauber ist.',
-   give:{ km:async function(A){ await A.npc('zdravko').say('Behalten Sie die. Das nächste Mal.'); }, photo_full:'Zdravko: „Achtundachtzig? Da hatte ich noch Haare.“', vizitka:'Zdravko: „Zelenika, München. Dann kommt er also wieder. Gut.“' },
+   give:{ plan:function(A){ return M.k3StreetCompare?M.k3StreetCompare(A):null; }, kljuc_garaza:'Zdravko: „Ein Garagenschlüssel. Die Sieben. Mate hatte die Garage bei der alten Post. Fragen Sie meine Karte, nicht mich.“',
+     km:async function(A){ await A.npc('zdravko').say('Behalten Sie die. Das nächste Mal.'); }, photo_full:'Zdravko: „Achtundachtzig? Da hatte ich noch Haare.“', vizitka:'Zdravko: „Zelenika, München. Dann kommt er also wieder. Gut.“' },
    g:{look:'Er schaut manchmal zum Fenstertisch. Er weiß nicht, warum.',listen:'Er zählt halblaut die Busse, die einfahren. Er tut das, seit er denken kann.'}},
  {id:'mate',npc:'mate',name:'Mate',hgt:36,vis:function(S,G){ return mateHere(G); },talk:talkMate,
    look:function(A){ if (!A.isFound('mate')) return A.m('Ein leerer Stuhl am Fenstertisch. Daneben eine Thermoskanne, die niemandem gehört.'); return A.m('Ein alter Mann am Fenstertisch, schmal, gebeugt, grauer Filzhut, grauer Anzug aus den Siebzigern, Krawatte. Vor ihm eine Thermoskanne. Durch ihn hindurch sehe ich den Bussteig.'); },
@@ -146,6 +149,7 @@ var HS=[
  {id:'lena_k',npc:'lena',name:'Lena',hgt:44,vis:function(S,G){ return lenaHere(G); },talk:function(A){ return lenaFolder(A); },
    look:'Lena vor den Fotos an der Wand, den pinken Anorak offen. Sie sucht ein Gesicht.',g:{look:'Sie sucht ihn auf den Fotos. Sie wird ihn finden. Er lacht auf einem.'}},
  {id:'oldmap',name:'Alte Landkarte',look:function(A){ return oldMap(A); },use:function(A){ return oldMap(A); },read:function(A){ return oldMap(A); },
+   with:{ plan:function(A){ return M.k3StreetCompare?M.k3StreetCompare(A):A.m('Mein Plan und die alte Karte.'); } },
    g:{look:function(A){ return A.g(A.hasNote('l3_skela')?'Skela. Da ist ein kleines Zeichen am Fluss. Ich sehe nicht gern hin.':'Eine Karte. Für mich sind Karten Bilder von Orten, an denen ich nie war.'); }}},
  {id:'bar',name:'Theke',look:'Eine Theke aus Resopal, eine Espressomaschine aus den Achtzigern, Rakijaflaschen mit handgeschriebenen Etiketten. Daneben ein Glas saure Gurken, das niemand bestellt.',
    use:function(A){ return coffee(A,A.npc('zdravko')); },take:'Die Rakija gehört Zdravko. Und um diese Uhrzeit auch noch dem Teufel.',

@@ -106,7 +106,7 @@ var CAB=null, DASH=null, HL=null, TARPR=null;
 function wheel(w,cx,cy,r){ w.ellipse(cx+0.5,cy+0.5,r,r,function(x,y){ var d=Math.hypot(x+0.5-cx-0.5,y+0.5-cy-0.5)/r, a=Math.atan2(y-cy,x-cx), c=P.k1;
     if (d>0.88) c=((Math.floor(a*r*1.6)&1)?P.k0:P.k2); else if (d<0.6){ c=(d<0.18)?P.m1:((d<0.5)?P.g2:P.g1); if (d<0.5 && d>0.3 && (Math.floor(a*4/Math.PI)&1)) c=P.g3; if (x<cx && y<cy && d<0.45) c=M.UP[c]; } else if (d<0.66) c=P.k0;
     return c; }); }
-function truck(b,x0,gy,tarp,lit){ var w=RW(b,RG.truck), m=RW(b,RG.metal), g=RW(b,RG.glass), x, y, k;
+function truck(b,x0,gy,tarp,lit,S,open){ var w=RW(b,RG.truck), m=RW(b,RG.metal), g=RW(b,RG.glass), x, y, k;
   var BL=R('c1 c2 c3 c4'), fw=x0+30, rw=x0+150;                                   // Radmitten
   // Fahrgestell: Längsträger, Tank, Batteriekasten
   m.rect(x0+10,gy-18,186,4,P.k1); m.hl(x0+10,x0+195,gy-18,P.m1);
@@ -141,6 +141,7 @@ function truck(b,x0,gy,tarp,lit){ var w=RW(b,RG.truck), m=RW(b,RG.metal), g=RW(b
   m.rect(dx0+2,gy-16,dx1-dx0-3,2,P.m2); m.hl(dx0+2,dx1-2,gy-16,P.m4); m.vl(dx0+4,gy-17,gy-14,P.m1);             // Trittstufe
   m.line(cx0-1,ct+7,cx0-6,ct+5,P.k2); m.rect(cx0-9,ct+1,4,10,P.k1); m.vl(cx0-8,ct+2,ct+9,P.m3);                 // Spiegel
   for (k=0;k<3;k++) m.px(dx0+3+k*9,dy0+31,P.c0);                                                                 // Nieten
+  if (open) cabOpen(b,dx0,dx1,dy0,dy1,gy,BL,S);
   // Rückwand der Kabine, Auspuff hinter der Kabine
   w.rect(cx1,ct+3,3,gy-ct-21,BL[0]); m.vl(cx1+3,ct-8,gy-24,P.k2); m.vl(cx1+4,ct-8,gy-24,P.m2); m.rect(cx1+2,ct-10,4,2,P.k1);
   // Pritsche: Holzbordwände mit Stahlrungen, Boden, Rücklicht
@@ -153,6 +154,40 @@ function truck(b,x0,gy,tarp,lit){ var w=RW(b,RG.truck), m=RW(b,RG.metal), g=RW(b
   TRUCKR=[x0-2,ct-12,px1-x0+6,gy-ct+12];
   if (tarp) tarpOver(b,cx0,cx1,px0,px1,ct,pt,pb,gy); }
 var TRUCKR=[0,0,0,0];
+// offene Fahrertür (Revision K3-01): Die Tür schwenkt nach vorn auf und steht schmal, verkürzt, vor dem Kotflügel. In der Öffnung sieht man
+// das Führerhaus von schräg hinten: Lenkrad mit Säule, zwei Rundinstrumente, in der Mitte des Armaturenbretts das Autoradio (mit einer
+// Kassette, die halb aus dem Schlitz ragt, bis Marko sie herausholt), rechts das Handschuhfach mit Chromriegel (offen: Deckel klappt herunter,
+// darin das Heft in gelbem Wachstuch, bis es genommen ist), darunter Sitzbank, Schalthebel, Pedale. RADIO und GLOVE sind die Trefferflächen.
+var RADIO=null, GLOVE=null;
+function cabOpen(b,dx0,dx1,dy0,dy1,gy,BL,S){ var w=RW(b,RG.truck), m=RW(b,RG.metal), g=RW(b,RG.glass), x, y, gOpen=!!(S&&S.gloveOpen), logIn=!(S&&S.logTaken), tapeIn=!(S&&S.tapeTaken);
+  var ix0=dx0+1, ix1=dx1-1, iy0=dy0+1, iy1=dy1-1, DY=dy0+17;                    // Innenraum (29 px breit); DY = Oberkante Armaturenbrett
+  // Rückseite: Innenblech der Beifahrertür, oben ihr Fenster (Himmel), unten dunkel
+  for (y=iy0;y<=iy1;y++) for (x=ix0;x<=ix1;x++){ var c=P.c0; if (y<DY-1){ c=(y<iy0+2||x<ix0+2||x>ix1-2)?P.c1:((y<iy0+7)?P.n2:P.n1); if (((x-ix0)+(y-iy0)*0.8)%13<1) c=P.n3; } else if (y>iy1-5) c=P.k0; else c=(y%5===0)?P.k1:P.c0; g.px(x,y,c); }
+  // Armaturenbrett: schwarzer Kunststoff mit heller Oberkante, Schatten darunter
+  for (y=DY;y<DY+9;y++) for (x=ix0;x<=ix1;x++){ var c2=(y===DY)?P.m2:((y===DY+8)?P.k0:P.k2); if (y===DY+1) c2=P.m1; m.px(x,y,c2); }
+  // Lenkrad links (schräg gesehener Ring, Speiche, Säule), dahinter ein Rundinstrument
+  m.px(ix0+5,DY+3,P.m3); m.px(ix0+6,DY+3,P.g4); m.px(ix0+5,DY+4,P.k0);
+  m.ellipse(ix0+3.5,DY+4.5,4,6,function(px,py){ var d=Math.hypot((px+0.5-ix0-3.5)/4,(py+0.5-DY-4.5)/6); if (d<0.62) return; return (px<ix0+3&&py<DY+4)?P.m3:((py>DY+6)?P.m1:P.m2); });
+  m.line(ix0+1,DY+5,ix0+6,DY+4,P.m1); m.line(ix0+4,DY+6,ix0+6,DY+13,P.k1); m.line(ix0+5,DY+6,ix0+7,DY+13,P.m1);
+  // Autoradio in der Mitte: Blende, Kassettenschlitz, zwei Knöpfe, grüne Skala; die Kassette ragt halb heraus
+  var rx=ix0+8, ry=DY+2; RADIO=[rx-1,ry-4,10,12];
+  m.rect(rx,ry,9,6,P.k1); m.hl(rx,rx+8,ry,P.m2); m.rect(rx+1,ry+1,7,4,P.m1); m.hl(rx+2,rx+6,ry+1,P.k0); m.px(rx+1,ry+3,P.m4); m.px(rx+7,ry+3,P.m4); m.hl(rx+3,rx+5,ry+3,P.g3); m.px(rx+4,ry+3,P.y4);
+  if (tapeIn){ m.rect(rx+2,ry-3,5,3,P.s4); m.hl(rx+2,rx+6,ry-3,P.s5); m.hl(rx+3,rx+5,ry-2,P.r3); }
+  // Handschuhfach rechts: Deckel mit Chromriegel; offen hängt der Deckel herunter, im Fach das Heft in gelbem Wachstuch
+  var gx=ix0+18, gyy=DY+1, gw=ix1-gx+1; GLOVE=[gx,gyy-2,gw+1,12];
+  if (!gOpen){ m.rect(gx,gyy,gw,7,P.k1); m.hl(gx,gx+gw-1,gyy,P.m2); m.vl(gx,gyy,gyy+6,P.m1); m.hl(gx+1,gx+gw-1,gyy+6,P.k0); m.rect(gx+(gw>>1)-1,gyy+2,3,1,P.m4); m.px(gx+(gw>>1),gyy+3,P.m3); }
+  else { m.rect(gx,gyy,gw,6,P.k0); m.hl(gx,gx+gw-1,gyy,P.m1); if (logIn){ m.rect(gx+2,gyy+2,gw-4,3,P.y2); m.hl(gx+2,gx+gw-3,gyy+2,P.y3); m.px(gx+gw-3,gyy+4,P.y1); }
+    m.rect(gx,gyy+6,gw,3,P.m1); m.hl(gx,gx+gw-1,gyy+8,P.m3); m.px(gx+(gw>>1),gyy+7,P.m4); }
+  // Sitzbank (braunes Kunstleder mit Nähten), Lehne rechts, Schalthebel, Pedale
+  for (y=DY+13;y<iy1-3;y++) for (x=ix0+9;x<=ix1;x++){ var c3=(y===DY+13)?P.t2:((y>iy1-6)?P.t0:P.t1); if ((x-ix0)%7===0) c3=P.t0; w.px(x,y,c3); }
+  for (y=DY+11;y<iy1-3;y++) for (x=ix1-3;x<=ix1;x++) w.px(x,y,(x===ix1-3)?P.t2:P.t0);
+  m.line(ix0+12,iy1-4,ix0+10,DY+12,P.m2); m.rect(ix0+9,DY+10,3,2,P.k0); m.px(ix0+9,DY+10,P.m2);
+  m.rect(ix0+1,iy1-6,3,2,P.m2); m.rect(ix0+5,iy1-5,2,2,P.m1);
+  // die aufgeschwenkte Tür: ein schmales, verkürztes Blech vor der Öffnung, Innenverkleidung, Fensterkurbel
+  var t0=dx0-11; for (x=t0;x<dx0;x++){ var u=(x-t0)/(dx0-t0), top=Math.round(lerp(dy0-5,dy0,u)), bot=Math.round(lerp(dy1+5,dy1,u));
+    for (y=top;y<=bot;y++){ var c4=(y<top+17)?((x===t0||y===top)?BL[3]:P.n2):((x===t0)?BL[3]:(x<t0+3?P.c2:P.c1)); if (y===top+17) c4=P.c0; if (x===dx0-1) c4=P.c0; w.px(x,y,c4); } }
+  m.px(dx0-6,dy0+24,P.m4); m.px(dx0-5,dy0+25,P.m3); m.px(dx0-4,dy0+26,P.m2); m.hl(dx0-9,dx0-3,dy0+30,P.c0);
+  DASH=[ix0+2,DY+2,ix1-ix0-3,4]; }
 // Plane: olivgrüne Zeltbahn über Pritsche und Kabinendach, zwischen den Seilen durchhängend, mit senkrechten Falten
 function tarpOver(b,cx0,cx1,px0,px1,ct,pt,pb,gy){ var w=RW(b,RG.tarp), x, y, TR=R('g0 g1 g2 e2 g3 e3');
   var ropes=[]; for (var s=0;s<6;s++) ropes.push(px0+4+Math.round(s*(px1-px0-8)/5));
@@ -203,7 +238,7 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   RW(b,RG.plant).line(246,104,242,80,P.w3); RW(b,RG.plant).line(247,104,243,80,P.w1); for (var bb=0;bb<5;bb++) RW(b,RG.plant).line(244+bb,104,246+bb*2,108,P.e3);
   for (y=rnd(wallY(54,true));y<rnd(wallY(54,false));y++){ mw.px(54,y,P.m3); mw.px(55,y,P.m1); }
   if (!tarp) tarpFolded(b);
-  truck(b,TK.x,GY,tarp,lit);
+  truck(b,TK.x,GY,tarp,lit,S,!!(S&&S.cabIn)&&!fin);
   // Licht und Tageszeit
   var night=tod!=='day';
   if (tod==='day'){ M.light(b,function(x,y){ var g=REG[y*W+x]; if (g===RG.sky||g===RG.far) return 0; var s=0; if (y>GY-2 && x>TK.x+10 && x<TK.x+214 && y<GY+5) s-=1.2; if (g===RG.wall) s-=0.3;
@@ -252,6 +287,8 @@ function actorLut(a,S,GS,tod){ if (tod==='day') return null; var fin=(GS&&GS.pha
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 // Rechtecke aus der Zeichengeometrie (ohne Malen vorausberechnet)
 var CABR=[TK.x+38,GY-74,52,56], TAMR=[TK.x-2,GY-80,200,80];
+// Radio und Handschuhfach, ohne Malen vorausberechnet (dieselbe Rechnung wie in cabOpen; gilt, bevor das Bild einmal gemalt wurde)
+var IX0=TK.x+46+4+1, IX1=TK.x+84-4-1, DY0=GY-68+3+17, RADIO0=[IX0+7,DY0-2,10,12], GLOVE0=[IX0+18,DY0-1,IX1-IX0-18+2,12];
 M.defineArt('vhof',{
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost, actorLut:actorLut,
   spots:{
@@ -259,10 +296,12 @@ M.defineArt('vhof',{
     tam:TAMR,
     cab:CABR,
     tarp:live(4,function(){ return TARPR||[TK.x+60,GY-70,166,48]; }),
+    radio:live(4,function(){ return RADIO||RADIO0; }),
+    glove:live(4,function(){ return GLOVE||GLOVE0; }),
     fence:[GATE[0]-4,56,GATE[1]-GATE[0]+8,48],
     barrels:[294,90,26,34]
   },
-  stands:{ door:[40,122,'L'], tam:[190,120,'B'], cab:[124,118,'B'], tarp:[200,120,'B'], fence:[272,118,'B'], barrels:[286,122,'R'] },
+  stands:{ door:[40,122,'L'], tam:[190,120,'B'], cab:[124,118,'B'], radio:[122,118,'B'], glove:[128,118,'B'], tarp:[200,120,'B'], fence:[272,118,'B'], barrels:[286,122,'R'] },
   actorPos:{ mala:[100,118,'L'], vlado:[124,117,'L'], kata:[49,120,'R'] },
   start:[38,122,'R'], entries:{ vulkanizer:[38,122,'R'] }
 });

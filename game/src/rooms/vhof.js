@@ -95,11 +95,13 @@ M.k3FinDeparture=async function(A){ var G=A.G, V=A.npc('vlado'), K=A.npc('kata')
   await V.say('Steigen Sie ein.'); await A.wait(800);
   if (G.flags['k3.v.battery']){ await A.narrate('Er steigt ein. Der Anlasser orgelt. Einmal.'); A.sfx('truckStart'); await A.wait(1200); A.set('lights',true); A.rebuild(); await A.wait(600);
     await A.narrate('Beim ersten Mal springt der TAM an, mit einem Husten, der nach seinem Fahrer klingt. Die Scheinwerfer gehen an und legen zwei Kegel auf den Raureif.');
-    await K.say('Siehst du, Papa. Zwei Batterien. Die zweite ist vom Taxi am Ostbahnhof.'); await A.wait(800); await V.say('Vom Taxi.'); await A.wait(600); await A.narrate('Er sagt es, wie man einen Namen sagt, den man lange nicht gesagt hat. Dann nickt er. Einmal, zur Stadt hin.'); A.setFlag('k3.fin.batteryNod'); }
+    if (G.flags['k3.b.batFrom']==='mate'){ await K.say('Siehst du, Papa. Zwei Batterien. Die zweite ist aus Mate Zelenikas Mercedes.'); await A.wait(800); await V.say('Zelenika. Der mit der Thermoskanne.'); await A.wait(600);
+      await A.narrate('Er legt die Hand aufs Lenkrad, als müsste er sich bei jemandem bedanken, der nicht da ist. Dann nickt er. Einmal.'); A.setFlag('k3.fin.batteryNod'); }
+    else { await K.say('Siehst du, Papa. Zwei Batterien. Die zweite ist vom Taxi am Ostbahnhof.'); await A.wait(800); await V.say('Vom Taxi.'); await A.wait(600); await A.narrate('Er sagt es, wie man einen Namen sagt, den man lange nicht gesagt hat. Dann nickt er. Einmal, zur Stadt hin.'); A.setFlag('k3.fin.batteryNod'); } }
   else { await A.narrate('Er steigt ein. Der Anlasser orgelt. Einmal. Zweimal.'); A.sfx('truckStart'); await A.wait(1700);
     A.sfx('truckStart'); A.set('lights',true); A.rebuild(); await A.wait(600);
     await A.narrate('Beim dritten Mal springt der TAM an, mit einem Husten, der nach seinem Fahrer klingt. Die Scheinwerfer gehen an und legen zwei Kegel auf den Raureif.');
-    await K.say('Siehst du, Papa. Er will.'); }
+    await K.say(A.hasNote('v3_battery')?'Siehst du, Papa. Die schwache hat gerade noch gereicht. Er will.':'Siehst du, Papa. Er will.'); }
   if (G.flags['k3.v.veraLetter']) await veraAtGate(A,V,K);
   var c=await A.choose([{t:'(Einsteigen.)',id:'in',silent:true},{t:'Kata. Danke.',id:'thanks'}],{title:'Der TAM'});
   if (c==='thanks'){ await K.say('Danken Sie ihm. Er fährt. Ich schraube nur.'); }

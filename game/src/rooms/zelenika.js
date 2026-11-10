@@ -7,6 +7,7 @@ var P=M.P;
 function F(G,k){ return !!G.flags[k]; }
 function N(G,id){ return G.notes.indexOf(id)>=0; }
 function sat(G){ return G.phase==='k3_d2'; } function sun(G){ return G.phase==='k3_d3'; }
+function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
 function mateHere(G){ return sun(G) && !F(G,'k3.b.limbo'); }
 function jelaHere(G){ return (sat(G)&&F(G,'k3.b.arrived')) || sun(G); }
 function davorHere(G){ return (sat(G) && F(G,'k3.b.arrived') && !F(G,'k3.b.jela')) || (sun(G) && F(G,'k3.b.invite')); }
@@ -31,17 +32,50 @@ async function satArrival(A){ var G=A.G, J=A.npc('jela'), Dv=A.npc('davor'), Ln=
   await A.wait(900); await Ln.say('Den hab ich nie gekriegt.'); await A.wait(700); await Ln.say('Ich war ja nie da.'); A.note('b3_lenakey');
   await A.wait(1000); await J.say('A smokve, vidiš li ih? Neumotane.'); await J.say('Lani sam ih ja umotala. Ove godine neću. Neka on.'); await J.say('U nedilju noću udara mraz. Smokve to ne podnose.');
   await A.m('Die Feigen sind nicht eingepackt. Letzten Winter hat sie das gemacht. Dieses Jahr nicht. Er soll es tun. Sonntagnacht kommt Frost, und den halten Feigen nicht aus.'); A.note('b3_figs');
+  if (R2(G)) await tarpLine(A,J);
   await A.wait(600); await J.say('Ovu veliku je posadio devedeset sedme. Kad se mala rodila.'); await A.m('Den großen hat Mate siebenundneunzig gepflanzt. Als die Kleine geboren wurde.'); await Ln.say('Ich? Für mich?'); A.setFlag('k3.b.tree97');
   await A.wait(800); await Dv.say('Teta Jela. U ponedjeljak idem kod notara. Kuća … prodaje se.'); await A.wait(900); await J.say('Znam.'); await A.wait(600); await J.say('Sve ja znam. Ti ništa ne znaš.');
   await A.m('Er geht am Montag zum Notar. Das Haus wird verkauft. Und sie sagt: Ich weiß. Ich weiß alles. Du weißt nichts.'); A.note('b3_sell');
   await Ln.say('Papa?'); await Dv.say('Montag. Das war so ausgemacht.');
   A.setFlag('k3.b.jela');
+  if (R2(G)) await photoGift(A,J,Dv,Ln);
   await A.wait(700); await J.say('Jeste li jeli? Imam pitu.'); await A.m('Ob wir gegessen haben. Sie hat Pita.'); await Ln.say('Was ist Pita?'); await Dv.say('Komm. Erst bringen wir den Koffer rein.');
-  await Dv.say('Herr Marko. Morgen, wenn Sie wollen. Heute … heute will ich mit dem Haus allein sein.');
+  if (R2(G)) await Dv.say('Erst bringen wir den Koffer rein. Dann gehen wir zur Brücke. Bis nachher, Herr Marko.');
+  else await Dv.say('Herr Marko. Morgen, wenn Sie wollen. Heute … heute will ich mit dem Haus allein sein.');
   var hd=M.stand('zelenika','house_door')||[312,116,'B']; var w1=Dv.walk(hd[0],hd[1]-2), w2=Ln.walk(hd[0]-10,hd[1]); await w1; await w2;
   if (Dv.actor) Dv.actor.fadeOut=A.gt; if (Ln.actor) Ln.actor.fadeOut=A.gt; A.sfx('door'); await A.wait(950); Dv.hide(); Ln.hide();
   if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Er ist nicht hier. Mate. Nicht heute.'); await A.m('Er sitzt im Café. Er wartet auf den nächsten Bus.'); await A.g('Und sein Sohn trägt einen Koffer in sein Haus.'); }
   A.music('k3_mate'); await M.k3DayCheck(A); }
+// ---------------------------------------------------------------- Revision (Regel 2): die große Feige braucht Batos Plane; das Foto von 1965
+async function tarpLine(A,J){ if (A.hasNote('b3_tarp')) return;
+  await A.wait(600); await J.say('Za mali ima jute. Za veliki nema.'); await J.say('Lani sam ga pokrila ceradom sa skele. Batinom. Zlata mi je posudila, sestrična mi je. Na proljeće sam je vratila.');
+  await A.m('Für den kleinen Baum reicht die Jute, für den großen nicht. Letzten Winter hat sie ihn mit der Plane von der Fähre in Skela zugedeckt. Batos Plane. Zlata, ihre Cousine, hat sie ihr geliehen. Im Frühling hat sie sie zurückgebracht.');
+  A.note('b3_tarp'); if (A.G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Zlata. Dieselbe Zlata.'); await A.m('Hier kennen sich alle über drei Ecken. Und über einen Fluss.'); } }
+async function photoGift(A,J,Dv,Ln){ var G=A.G; if (A.flag('k3.s.photoTrip')) return;
+  await A.wait(700); await J.say('Čekaj.'); await A.narrate('Jela zieht aus der Schürzentasche ein kleines Schwarzweißfoto mit gezacktem Rand und gibt es Davor.');
+  await J.say('Ovo je Mate nosio u novčaniku. Do zadnjeg dana.'); await A.m('Das hat Mate im Portemonnaie getragen. Bis zum letzten Tag.');
+  await A.wait(900); await Dv.say('Das bin ich. Unter der Brücke. Fünfundsechzig.'); await Ln.say('Du? Voll süß.');
+  await J.say('Vodi dijete na most. Pokaži joj kamen di te otac slika.'); await A.m('Sie sagt: Nimm das Kind mit zur Brücke. Zeig ihr den Stein, wo dein Vater dich fotografiert hat.');
+  await Ln.say('Ja! Die Brücke!'); await A.wait(600); await Dv.say('Ich weiß nicht mehr, welcher Stein es war. Die Brücke ist neu, die Steine sind alt, und ich bin alt.');
+  await Dv.say('Herr Marko. Kommen Sie heute Nachmittag an die Brücke? Mit Ihren Augen finden wir ihn vielleicht.'); await A.m('Ich komme.');
+  A.note('b3_photo65'); A.setFlag('k3.s.trip'); A.setFlag('k3.s.photoTrip');
+  if (G.malaOn && A.malaHere()){ await A.wait(600); await A.g('An die Brücke. Unten, am Wasser.'); await A.wait(400); await A.g('Da gehe ich mit. Unter einer Brücke ist man ja nicht auf ihr.'); } }
+// Sonntag am Tor: Lena zeigt ihrem Großvater die beiden Fotos (der Zweifel vor der Erkenntnis)
+async function photosToMate(A){ var Ln=A.npc('lena'), Mt=A.npc('mate'), G=A.G; if (A.flag('k3.b.doubt')) return;
+  await Ln.say('Ich zeig ihm die Fotos. Auch wenn er nicht guckt.');
+  var g=M.stand('zelenika','gate')||[124,120,'R']; if (Ln.actor){ await Ln.walk(g[0]-6,g[1]+1); await Ln.face('R'); }
+  await A.narrate('Lena hält das alte Foto hoch und daneben ihr Handy, zum Pfosten hin, wo er immer stand.'); await A.wait(1000);
+  if (!mateHere(G) || !A.isFound('mate')){ await Ln.say('Und jetzt? Da ist doch keiner.'); return; }
+  Mt.agitate(2400); await Mt.say('Der Stein.'); await A.wait(800); await Mt.say('Unter der Brücke. Da habe ich ihn hingesetzt. Er wollte nicht stillsitzen. Ich habe geritzt, damit er stillsitzt.');
+  await A.wait(900); await Mt.say('Und das andere?'); await A.wait(800); await Mt.say('Da sitzt ein grauer Mann. Auf Davors Platz. Auf unseren Buchstaben.'); await A.wait(800); await Mt.say('Wer setzt sich auf unseren Stein?');
+  A.note('b3_doubt'); A.setFlag('k3.b.doubt');
+  await Ln.say('Was sagt er?'); await A.m('Er fragt, wer sich auf euren Stein setzt.'); await Ln.say('Papa. Wer denn sonst.');
+  if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Er rechnet. Fünfundsechzig und heute. Er kommt nur noch nicht beim Ergebnis an.'); } }
+// die Feigen, Regel 2: Jute für den kleinen Baum, Batos Plane für den großen
+async function figsTarp(A){ var J=A.npc('jela');
+  if (A.has('cerada')) return figs(A);
+  await J.say('Za mali ima jute. Za veliki treba cerada.'); await A.m('Für den kleinen reicht die Jute. Für den großen braucht es eine Plane. Batos Plane, von der Fähre.');
+  if (!A.hasNote('b3_tarp')) await tarpLine(A,J); }
 // ---------------------------------------------------------------- Sonntag ohne den Samstag (Davor abgesagt, nie hier gewesen): Jela sagt es Marko selbst
 async function sunJela(A){ var G=A.G, J=A.npc('jela'); if (F(G,'k3.b.jela')||F(G,'k3.b.jelaSun')) return;
   await A.wait(700); await A.narrate('Vor dem kleinen Haus nebenan steht eine alte Frau mit braunem Kopftuch, Juteschnüre in der Schürzentasche. Sie sieht mich an, von unten bis oben.');
@@ -52,6 +86,7 @@ async function sunJela(A){ var G=A.G, J=A.npc('jela'); if (F(G,'k3.b.jela')||F(G
   await A.m('Sie sagt: Mate stand immer am Tor, wenn ein Bus kam. Da, am Pfosten. Den Schlüssel bekam der Kleinste.'); A.note('b3_gate');
   await A.wait(900); await J.say('A smokve, vidiš li ih? Neumotane.'); await J.say('Lani sam ih ja umotala. Ove godine neću. Neka on.'); await J.say('Noćas udara mraz.');
   await A.m('Die Feigen sind nicht eingepackt. Letzten Winter hat sie das gemacht. Dieses Jahr nicht. Er soll es tun. Heute Nacht kommt Frost.'); A.note('b3_figs');
+  if (R2(G)) await tarpLine(A,J);
   await A.wait(600); await J.say('Ovu veliku je posadio devedeset sedme. Kad se mala rodila.'); await A.m('Den großen hat Mate siebenundneunzig gepflanzt. Als die Kleine geboren wurde.'); A.setFlag('k3.b.tree97');
   await A.wait(800); await J.say('A sutra ide kod notara.'); await A.wait(600); await J.say('Sve ja znam. On ništa ne zna.'); await A.m('Und morgen geht er zum Notar. Sie weiß alles, sagt sie. Er weiß nichts.'); A.note('b3_sell');
   A.setFlag('k3.b.jelaSun');
@@ -62,7 +97,7 @@ async function talkJela(A){ var J=A.npc('jela'), G=A.G;
     {t:'Sie waren lange seine Nachbarin?',once:'je1',go:async function(A){ await J.say('Trideset godina. Ja sam mu kuhala kad je bio bolestan, on mi je popravljao krov.'); await A.m('Dreißig Jahre. Sie hat für ihn gekocht, wenn er krank war. Er hat ihr das Dach geflickt.'); await J.say('Krov još uvik curi.'); await A.m('Das Dach tropft immer noch.'); }},
     {t:'Wann ist er gestorben?',once:'je2',go:async function(A){ await J.say('U ožujku. Lani.'); await A.wait(600); await J.say('Hladno je bilo za ožujak.'); await A.m('Im März. Letztes Jahr. Es war kalt für März.'); A.setFlag('k3.b.when'); }},
     {t:'Helfen Sie ihm mit den Feigen?',if:sun(G)&&!A.flag('k3.b.invite'),go:async function(A){ await J.say('Neću.'); await A.wait(500); await J.say('Neka on. Ako ga je briga.'); await A.m('Nein. Er soll. Wenn es ihn kümmert.'); }},
-    {t:'Zeigen Sie ihm, wie man die Feigen einpackt?',if:sun(G)&&A.flag('k3.b.invite')&&!A.flag('k3.b.figs'),go:async function(A){ await figs(A); return 'bye'; }},
+    {t:'Zeigen Sie ihm, wie man die Feigen einpackt?',if:sun(G)&&A.flag('k3.b.invite')&&!A.flag('k3.b.figs'),go:async function(A){ if (R2(G)){ await figsTarp(A); if (A.flag('k3.b.figs')) return 'bye'; return; } await figs(A); return 'bye'; }},
     {t:'Lena wollte die Brücke sehen, sagt sie. Davor nicht.',if:sat(G)&&A.flag('k3.b.jela')&&!A.flag('k3.s.trip'),go:async function(A){ await J.say('Mala pita za most. Otac neće.'); await A.m('Die Kleine fragt nach der Brücke. Der Vater will nicht.'); await A.wait(500); await J.say('Šta ti misliš?'); await A.m('Was ich denke, fragt sie.');
         var c=await A.choose([{t:'Das Kind muss die Brücke sehen.',id:'yes'},{t:'Das ist Davors Sache.',id:'no'}],{title:'Jela'});
         if (c==='no'){ await J.say('Sve je njegova stvar. Zato ništa ne biva.'); await A.m('Alles ist seine Sache, sagt sie. Darum wird nichts.'); return; }
@@ -95,7 +130,10 @@ async function figs(A){ var G=A.G, J=A.npc('jela'), Dv=A.npc('davor'), Ln=A.npc(
   if (c==='soft'){ await Ln.say('Das hat sie nicht gesagt. Das war viel länger.'); await A.m('Von unten nach oben. Wie einen Verband am Bein.'); }
   await A.narrate('Davor wickelt. Die Jute rutscht, er fängt sie wieder ein. Jela sieht zu, mit verschränkten Armen.');
   await J.say('Ne tako! I nemoj stezat, nije ti to kravata.'); await A.m('Nicht so fest. Das ist keine Krawatte.'); await Ln.say('Haha. Papa.');
-  await A.narrate('Lena hält die Schnur, Davor wickelt, Jela zeigt mit dem Finger, wo es noch kalt hereinkommt. Der große Baum zuerst, dann der kleine.'); A.sfx('tarp'); await A.wait(700);
+  if (R2(G) && A.has('cerada')){ A.take('cerada'); A.setFlag('k3.b.tarpOn');
+    await A.narrate('Den kleinen Baum wickelt Davor in Jute. Für den großen nehmen wir Batos Plane: Lena fädelt die Schnur durch die Messingösen, Davor zieht sie um den Stamm, Jela zeigt mit dem Finger, wo es noch kalt hereinkommt.'); A.sfx('tarp'); await A.wait(700);
+    await J.say('Ta cerada je pokrivala skelu. Sad pokriva Matinu smokvu.'); await A.m('Die Plane hat die Fähre zugedeckt. Jetzt deckt sie Mates Feige zu.'); }
+  else { await A.narrate('Lena hält die Schnur, Davor wickelt, Jela zeigt mit dem Finger, wo es noch kalt hereinkommt. Der große Baum zuerst, dann der kleine.'); A.sfx('tarp'); await A.wait(700); }
   await J.say('Tako.'); await A.wait(800); await J.say('Tako je Mate radio.'); await A.m('So. So hat Mate es gemacht.');
   await A.wait(900); await Dv.say('So hat er es mir gezeigt. Da war ich sechs.'); await A.wait(500); await Dv.say('Ich hatte es vergessen. Meine Hände nicht.');
   A.setFlag('k3.b.figs'); A.rebuild(); var jp=M.apos('zelenika','jela',[60,117,'R']); J.walk(jp[0],jp[1]);
@@ -119,10 +157,12 @@ async function lenaSentence(A){ var G=A.G, Ln=A.npc('lena'), Mt=A.npc('mate');
     await Ln.say('Das war jetzt doof, oder?'); await A.m('Nein. Es war nur nicht in seiner Sprache.'); return; }
   if (c==='verse'){ A.music('k3_duh'); await A.wait(400); await A.narrate('Lena stellt sich ans Tor. Sie singt, leise, mit dem Akzent von gestern: „Dođi, dragi, doveče.“'); await A.wait(1500);
     if (!mateHere(G)) return;
+    if (R2(G) && !A.flag('k3.b.doubt')){ Mt.agitate(1600); await Mt.say('Doveče …'); await A.wait(800); await Mt.say('Die Stelle. Woher kennt das Kind die Stelle? Davor ist doch noch klein.');
+      await A.m('Er hört es. Aber er wartet auf einen kleinen Jungen. Er muss erst sehen, dass der groß geworden ist.'); A.music('k3_mate'); return; }
     Mt.agitate(3200); await Mt.say('Doveče …'); await A.wait(900); await Mt.say('Die Stelle. Die hat keiner mehr gesungen. Die habe ich immer ausgelassen.'); await A.wait(900);
     await Mt.say('Woher hast du das, Kind?'); await Ln.say('Was sagt er?'); await A.m('Er fragt, woher du das hast.'); await Ln.say('Vom Telefon. Von ihm. Er hat immer davor aufgehört.'); await A.wait(1000);
     await A.narrate('Mate dreht sich um. Er sieht den grauen Mann im Hof an, der zu Weihnachten am Telefon gewartet hat, bis er fertig gesummt hatte. Lange.');
-    await A.wait(900); await Mt.say('Das ist Davor.'); A.setFlag('k3.b.son'); A.setFlag('k3.s.byVerse'); await A.wait(900); await Mt.say('Er hat zugehört. Jedes Jahr. Und ich habe aufgelegt.');
+    await A.wait(900); await Mt.say('Das ist Davor.'); A.setFlag('k3.b.son'); A.setFlag('k3.s.byVerse'); if (R2(G)){ await A.wait(600); await Mt.say('Der graue Mann auf unserem Stein.'); } await A.wait(900); await Mt.say('Er hat zugehört. Jedes Jahr. Und ich habe aufgelegt.');
     if (A.flag('k3.b.figs')){ await A.wait(500); await Mt.say('Und er hat meine Feigen eingepackt.'); }
     await A.wait(700); await Ln.say('Und?'); await A.m('Er hat es gehört. Die Stelle, die er nie gesungen hat.'); await Ln.say('Echt?'); await A.wait(600); await A.m('Echt.');
     if (G.malaOn && A.malaHere()){ await A.wait(800); await A.g('Sie hat ihm das Ende gebracht. Das vom Lied.'); await A.wait(400); await A.g('Er hat seinen Sohn gesehen. Sich selbst noch nicht.'); }
@@ -130,10 +170,12 @@ async function lenaSentence(A){ var G=A.G, Ln=A.npc('lena'), Mt=A.npc('mate');
   // „Došli smo, dida.“ – die erste Erkenntnis: der Sohn
   A.music('k3_duh'); await A.wait(400); await Ln.say('Došli smo, dida.'); await A.wait(1500);
   if (!mateHere(G)) return;
+  if (R2(G) && !A.flag('k3.b.doubt')){ Mt.agitate(1600); await Mt.say('Dida …'); await A.wait(900); await Mt.say('So hat Davor mich genannt. Als er klein war.'); await A.wait(800); await Mt.say('Aber Davor ist klein. Der Mann da im Hof ist grau.');
+    await Ln.say('Und?'); await A.m('Er hört dich. Aber er sucht noch einen Jungen, keinen grauen Mann. Er muss erst sehen, dass der Junge groß geworden ist.'); A.setFlag('k3.b.didaTried'); A.music('k3_mate'); return; }
   Mt.agitate(3200); await Mt.say('Dida …'); await A.wait(1000); await Mt.say('So hat Davor mich genannt. Als er klein war.'); await A.wait(1000);
   await A.narrate('Mate dreht sich um. Er sieht den grauen Mann im Hof an, an dem er gestern vorbeigesehen hat. Lange.');
   await A.wait(900); await Mt.say('Das ist Davor.'); A.setFlag('k3.b.son'); await A.wait(900);
-  await Mt.say('Er ist alt geworden. Wann ist er so alt geworden?');
+  await Mt.say(R2(G)?'Der graue Mann auf unserem Stein. Er ist alt geworden. Wann ist er so alt geworden?':'Er ist alt geworden. Wann ist er so alt geworden?');
   if (A.flag('k3.b.figs')){ await A.wait(500); await Mt.say('Und er hat meine Feigen eingepackt.'); }
   await A.wait(700); await Ln.say('Und?'); await A.m('Er hat es gehört.'); await Ln.say('Echt?'); await A.wait(600); await A.m('Echt.');
   if (G.malaOn && A.malaHere()){ await A.wait(800); await A.g('Er hat seinen Sohn gesehen. Sich selbst noch nicht.'); }
@@ -176,7 +218,18 @@ async function keyToLena(A){ var Ln=A.npc('lena'), Mt=A.npc('mate'); if (!A.has(
   await A.animM('give'); A.take('kljuc_mate'); A.setFlag('k3.b.keyLena'); A.sfx('keyDrop');
   await A.m('Der ist für dich. Er hat ihn für den Kleinsten aufgehoben.'); await A.wait(700); await Ln.say('Für mich?'); await A.wait(900); await Ln.say('Der ist ja warm.'); await A.wait(700); await Ln.say('Den hab ich nie gekriegt.'); await A.m('Jetzt schon.');
   if (mateHere(A.G)){ await A.wait(1000); await Mt.say('Gut.'); await A.wait(700); await Mt.say('So ist es richtig. Den Schlüssel bekommt der Kleinste.'); }
+  if (R2(A.G)) await garageKey(A);
   if (A.G.malaOn && A.malaHere()){ await A.wait(800); await A.switchTo('mala'); await A.wait(500); await A.g('Mate. Ich kann Sie hinüberbringen. Es ist nicht weit.'); await Mt.say('Fährt jetzt einer?'); await A.g('Ja. Jetzt fährt einer.'); } }
+// Regel 2: am Ring hängt ein zweiter, kleiner Schlüssel – Mates Garage mit dem Mercedes (die Batterie für den TAM)
+async function garageKey(A){ var G=A.G, Ln=A.npc('lena'), J=A.npc('jela'), Dv=A.npc('davor'); if (A.flag('k3.b.garageKey')) return;
+  await A.wait(700); await Ln.say('Da hängt noch einer dran. Ein kleiner. Mit einer roten Sieben.');
+  await J.say('Od garaže. Mate je imo garažu u gradu. U Bratstva i jedinstva, kod stare pošte. Tamo mu stoji auto.'); await A.m('Von der Garage. Mate hatte eine Garage in der Stadt, in der Bratstva i jedinstva, bei der alten Post. Da steht sein Auto.');
+  await Dv.say('Der Mercedes. Den hat er nie verkauft. Ich will ihn nicht sehen.'); await A.wait(700);
+  await A.narrate('Lena macht den kleinen Schlüssel vom Ring und hält ihn mir hin. Davor nickt, ohne hinzusehen.'); await Dv.say('Nehmen Sie ihn. Wenn jemand das Auto braucht, soll er es nehmen. Er hätte es so gewollt.');
+  A.give('kljuc_garaza'); A.note('b3_garage'); A.setFlag('k3.b.garageKey'); A.sfx('keyDrop');
+  if (A.hasNote('v3_battery')){ await A.wait(500); await A.m('Ein Auto mit einer Batterie, die keiner braucht.'); }
+  await A.wait(500); await A.m('Bratstva i jedinstva. Auf meinem Plan gibt es keine Straße, die so heißt.');
+  if (G.malaOn && A.malaHere()){ await A.wait(400); await A.g('Früher schon. Jede Stadt hatte eine. Wie einen Bahnhof.'); } }
 async function crossMate(A){ var Mt=A.npc('mate'); A.G.flags['mala.lock']=true; A.music('k3_duh'); var p=Mt.actor?[Math.round(Mt.x),Math.round(Mt.y)]:M.apos('zelenika','mate',[150,115,'R']);
   await A.g('Kommen Sie.'); await Mt.say('Kommt der Übersetzer mit? Ohne ihn verstehe ich die Durchsagen nicht.'); await A.g('Wenn er will.');
   await A.crossOpen(p[0]+22,p[1]+3,{w:18,h:74}); await A.g('Marko. Nimm meine Hand.');
@@ -244,6 +297,7 @@ async function folderToDavor(A){ var G=A.G, Dv=A.npc('davor'), J=A.npc('jela'), 
 async function talkLena(A){ var Ln=A.npc('lena'), G=A.G;
   if (sat(G)) return Ln.say('Was ist Pita?');
   await A.menuLoop(function(){ return [
+    {t:'Zeig ihm die beiden Fotos. Das alte und deins.',if:R2(G)&&A.flag('k3.s.photo')&&A.flag('k3.b.invite')&&!A.flag('k3.b.doubt'),go:async function(A){ await photosToMate(A); }},
     {t:'Du wolltest deinem Großvater etwas sagen.',if:A.flag('k3.b.invite')&&!A.flag('k3.b.son'),go:async function(A){ await lenaSentence(A); if (A.flag('k3.b.son')) return 'bye'; }},
     {t:'Stell dich ans Tor. Halt die Hand auf.',if:A.flag('k3.b.son')&&!A.flag('k3.b.dead'),go:async function(A){ await keyGate(A); return 'bye'; }},
     {t:'Zdravkos Café am Westbusbahnhof. Da hat er gewartet. Jeden Samstag.',if:A.flag('k3.b.dead')&&!A.flag('k3.s.lenaCafe')&&!A.flag('k3.b.folder')&&(A.hasNote('b3_dida')||A.hasNote('b3_hum')||A.hasNote('b3_zdravko')||A.hasNote('b3_folder')),go:async function(A){ var Dv=A.npc('davor'); await Ln.say('Im Café? Wo wir angekommen sind?'); await A.wait(500); await Ln.say('Zeigst du es mir? Wo er gesessen hat?');
@@ -293,6 +347,8 @@ var HS=[
  {id:'figs',name:'Feigenbäume',look:function(A){ return A.m(A.flag('k3.b.figs')?'Die beiden Feigenbäume, in Jute gewickelt und mit Schnur verschnürt. Sie sehen aus wie zwei Pakete, die auf die Post warten.':'Zwei Feigenbäume, kahl, mit glatter grauer Rinde und dicken Ästen. Der große hat eine Astgabel wie eine Hand. Uneingepackt. Heute Nacht soll es frieren.'); },
    use:async function(A){ if (A.flag('k3.b.figs')) return A.m('Eingepackt. Gut eingepackt.'); await A.m(A.cycle('zfUse',['Ich weiß nicht, wie man Feigen einpackt. Jela weiß es.','Wenn ich es mache, erfrieren sie in der Jute. Jela weiß, wie es geht.'])); },
    take:'Im November gibt es keine Feigen. Nur Bäume, die frieren.',
+   with:{ cerada:async function(A){ var G=A.G; if (A.flag('k3.b.figs')) return A.m('Sie sind eingepackt.'); if (!(sun(G)&&A.flag('k3.b.invite'))) return A.m('Das soll Davor machen. Mit Jela. Nicht ich allein, und nicht ohne ihn.'); return figs(A); },
+     deka:'Zlatas Decke? Für den Stamm würde sie reichen, für die Krone nicht. Und sie gehört nicht hierher.', vreca:'Ein Stück Mehlsack. Das wärmt nicht einmal eine Hand.' },
    g:{look:function(A){ return A.g(A.flag('k3.b.figs')?'Jetzt frieren sie nicht.':'Der große ist für das Mädchen gepflanzt. Er weiß es nicht. Sie auch nicht.'); },sense:'Ein Mann, der im Frühjahr ein Loch gräbt und dabei singt. Schlecht. Und ein Datum: siebenundneunzig.'}},
  {id:'fork',name:'Astgabel',vis:function(S,G){ return F(G,'k3.b.keyFree') && !F(G,'k3.b.keyTaken'); },look:'In der Astgabel des großen Feigenbaums liegt ein Schlüssel. Schwer, alt, mit einem Ring.',
    take:function(A){ return takeKey(A); },use:function(A){ return takeKey(A); },
@@ -309,11 +365,13 @@ var HS=[
    g:{look:'Den hat er auch gepflanzt. Den hat er öfter gegossen als sich selbst.'}},
  {id:'jela',npc:'jela',name:'Jela',hgt:40,vis:function(S,G){ return jelaHere(G); },talk:talkJela,
    look:'Eine sehr alte Frau mit braunem Kopftuch, schwarzem Rock und Schürze, gedrungen, die Hände rot von der Kälte. Sie sieht aus, als hätte sie heute schon alle gefüttert, die es nicht wollten.',
-   give:{ photo_full:'Jela: „Lipo dite.“ Ein hübsches Kind.', km:'Jela: „Neću ja tvoje pare. Jesi li jeo?“', kljuc_mate:'Jela: „Ne meni. Maloj.“ Nicht mir. Der Kleinen.', vizitka:'Jela: „München. Neka. Samo neka dođu.“ Soll sein. Hauptsache, sie kommen.' },
+   give:{ cerada:async function(A){ var G=A.G; if (A.flag('k3.b.figs')) return A.npc('jela').say('Već je umotano.'); if (!(sun(G)&&A.flag('k3.b.invite'))){ await A.npc('jela').say('Nek on dođe. Onda.'); return A.m('Er soll kommen, sagt sie. Dann.'); } return figs(A); },
+     photo_full:'Jela: „Lipo dite.“ Ein hübsches Kind.', km:'Jela: „Neću ja tvoje pare. Jesi li jeo?“', kljuc_mate:'Jela: „Ne meni. Maloj.“ Nicht mir. Der Kleinen.', vizitka:'Jela: „München. Neka. Samo neka dođu.“ Soll sein. Hauptsache, sie kommen.' },
    g:{look:'Sie ist wütend, weil sie traurig ist. Bei alten Frauen ist das dasselbe.',listen:function(A){ return A.g(sat(A.G)?'Sie redet mit ihm. Leise. „Vidiš, Mate, došao je.“ Sieh mal, Mate, er ist gekommen.':'Sie zählt die Juteschnüre in ihrer Schürze. Sie hat sie seit Tagen bereit.'); }}},
  {id:'davor',npc:'davor',name:'Davor',hgt:46,vis:function(S,G){ return davorHere(G); },talk:talkDavor,
    look:function(A){ return A.m(A.flag('k3.b.figs')?'Davor, Jutefasern am Mantel. Er sieht auf die eingepackten Bäume, als hätte er etwas zusammengesetzt, das lange zerbrochen war.':'Davor im beigen Trenchcoat, die Brille in der Hand. Er sieht auf das Haus wie auf einen Brief, den er nicht aufmachen will.'); },
-   give:{ kljuc_mate:'Davor: „Nein. Den bekommt der Kleinste. Das war hier immer so.“', mapa_mate:function(A){ return folderToDavor(A); }, photo_full:'Davor: „Wer ist das? Und der Kleine mit den Ohren, das sind Sie?“' },
+   give:{ cerada:async function(A){ var G=A.G; if (A.flag('k3.b.figs')) return A.npc('davor').say('Sie sind eingepackt. Ich habe es nicht vergessen. Meine Hände nicht.'); if (!(sun(G)&&A.flag('k3.b.invite'))) return A.npc('davor').say('Eine Plane? Wofür?'); return figs(A); },
+     kljuc_mate:'Davor: „Nein. Den bekommt der Kleinste. Das war hier immer so.“', mapa_mate:function(A){ return folderToDavor(A); }, photo_full:'Davor: „Wer ist das? Und der Kleine mit den Ohren, das sind Sie?“' },
    g:{look:'Er hat die Haare von damals verloren. Das Lachen auch.',listen:'Er rechnet. Wie viel das Haus wert ist. Und was es kostet, wenn man es behält.'}},
  {id:'lena',npc:'lena',name:'Lena',hgt:44,vis:function(S,G){ return lenaHere(G); },talk:talkLena,
    look:'Lena im pinken Anorak, die Kopfhörer um den Hals. Sie hält das Handy, ohne draufzusehen.',

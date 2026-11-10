@@ -77,7 +77,7 @@ async function talkDino(A){ var D=A.npc('dino'), G=A.G, p=G.phase;
         await D.say('Mein Opa hat da Karten gespielt, unter der Landkarte. Wenn er verloren hat, hat er gesagt, die Karte ist schuld, die hängt schief. Sie hängt wirklich schief.'); A.setFlag('k3.oldmap.told'); }},
     {t:'Kennst du Skela?',if:!!G.map.skela&&!A.flag('k3.dino.ride'),go:async function(A){ await D.say('Skela? Unten an der Biegung. Da holen sie jedes Jahr Holz aus dem Fluss. Und anderes.');
         await D.say('Ich fahr dich hin, wenn du willst. Mit dem Roller. Für zehn Mark und eine Geschichte.'); await A.m('Was für eine Geschichte?'); await D.say('Eine wahre. Unterwegs. Ruf mich an, ich bin in zehn Minuten da.'); A.setFlag('k3.dino.ride'); }},
-    {t:'Die Australier wollen am Brückenkopf spielen.',if:tripHere(G)&&!G.flags['k3.s.dinoOk'],go:function(A){ return dinoRule(A); }},
+    {t:'Die Australier wollen am Brückenkopf spielen.',if:aussiesAtBridge(G)&&!G.flags['k3.s.dinoOk'],go:function(A){ return dinoRule(A); }},
     {t:'Was ist in der Hütte?',once:'dnH',go:async function(A){ await D.say('Der Klub. Handtücher, Fotos von allen, die je gesprungen sind, ein Ofen, der nicht zieht, und der Präsident.'); await D.say('Der Präsident schläft. Er hat dreiundsechzig gesprungen. Jetzt schläft er.'); }},
     A.askOpt({ l3_mybridge:'Pfeiler im Wasser? Nicht hier. Unten in den Dörfern gab es solche. Holz oder Stein, und im Winter hat das Wasser sie geholt.', l3_onearch:'Sag ich doch. Ein Bogen. Mein Opa sagt, wer hier einen Pfeiler bauen wollte, wäre ausgelacht worden. Von der Neretva.',
       l3_down:'Flussab? Da ist nichts. Pappeln, Kies, Dörfer. Und irgendwann das Meer.', p3_munich:'München! Mein Cousin fährt samstags. Er bringt Bier und nimmt Ajvar mit. Das ist der Handel.',
@@ -131,8 +131,20 @@ async function springerTalk(A){ var G=A.G;
     {t:'(Zusehen.)',bye:true,silent:true,go:async function(A){ await A.wait(1200); }}
   ]; }); }
 // ---------------------------------------------------------------- Samstag: Davor und Lena an der Brücke, die Australier, Dinos Regel, das Lied (Ausbau N2, design/K3_AUSBAU.md F.2)
-function tripHere(G){ return G.phase==='k3_d2' && !!G.flags['k3.s.trip']; }
-function aussiesAtBridge(G){ return tripHere(G); }
+function tripHere(G){ return G.phase==='k3_d2' && !!G.flags['k3.s.trip'] && !G.flags['k3.s.down']; }   // Regel 2: während sie unten am Ufer suchen, stehen Davor und Lena nicht oben
+function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
+function downOk(G){ return G.phase==='k3_d2' && R2(G) && !!G.flags['k3.s.trip'] && G.tod==='day'; }
+// Regel 2: Davor gibt Marko das Foto von 1965; die beiden gehen hinunter ans Ufer (rooms/podmost.js)
+async function photoAtBridge(A){ var Dv=A.npc('davor'), Ln=A.npc('lena'), G=A.G;
+  if (G.flags['k3.s.photo']) return Dv.say('Lena hat jetzt beide Fotos. Sie schaut sie dauernd an. Ich auch, wenn sie nicht hinsieht.');
+  await Dv.say('Hier.'); await A.narrate('Davor zieht das kleine Schwarzweißfoto aus der Manteltasche: der Junge auf der Uferplatte, der Bogen, am Rand der runde Turm.');
+  await Dv.say('Unten am Ufer. Auf unserer Seite, beim Turm. Aber welcher Stein? Ich habe es eben von oben versucht. Von oben ist alles anders.');
+  await A.wait(600); await Dv.say('Nehmen Sie es. Sie haben die Augen eines Übersetzers. Sie sehen, was nicht dasteht.'); A.give('foto_1965'); A.sfx('paper');
+  await Ln.say('Wir gehen runter! Über die Stufen da.'); A.setFlag('k3.s.down'); A.rebuild();
+  if (Dv.actor){ var st=M.stand('starimost','steps')||[60,132,'L']; var w1=Dv.walk(st[0],st[1]), w2=Ln.walk(st[0]+10,st[1]); await A.wait(1100); if (Dv.actor) Dv.actor.fadeOut=A.gt; if (Ln.actor) Ln.actor.fadeOut=A.gt; await w1; await w2; }
+  A.despawn('davor'); A.despawn('lena');
+  if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Unten am Wasser. Das ist nicht auf der Brücke. Da komme ich mit.'); } }
+function aussiesAtBridge(G){ return G.phase==='k3_d2' && !!G.flags['k3.s.trip']; }
 var DINO_STORY={ b3_mate:['Ein alter Mann, der zwanzig Jahre auf einen Bus wartet.','Das ist traurig, Mann. Das ist eine gute.'], l3_eggwoman:['Eine Frau, der ein Ei runterfällt, weil einer einen Namen sagt.','Ein Ei. Für ein Ei lass ich jeden spielen.'],
   l3_uncounted:['Eine Brücke, die keiner gezählt hat.','Die kenne ich nicht. Also ist sie wahr.'], v3_mala:['Ein Fahrer, der ein Mädchen mitnimmt, das sich Mala nennt. Wie jede.','Wie jede. Das ist der beste Teil.'],
   v3_part1:['Ein Lastwagen, der um Viertel nach elf wegfährt.','Uhrzeiten sind keine Geschichte. Aber die Nacht dahinter, die schon. Gilt.'], k3_c_bridge:['Ein Lastwagen, Mehl, ein Fahrer, der raucht und nichts sagt.','Das ist mein Opa. Jeder hier hat so einen Opa. Gilt trotzdem.'],
@@ -147,6 +159,7 @@ async function dinoRule(A){ var D=A.npc('dino'), G=A.G; if (G.flags['k3.s.dinoOk
 async function perform(A){ var G=A.G, J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A.npc('davor');
   if (!G.flags['k3.s.dinoOk']) return L.say('The guy with the jacket says no. Something about a story. You speak the language, man, talk to him.');
   if (G.flags['k3.s.perf']) return L.say(G.flags['k3.s.words']?'Again? Sure. Come tonight, that’s the line.':'We stop at the window. That’s all we’ve got.');
+  if (G.flags['k3.s.down']) return L.say('Wait for the girl in the pink jacket, man. She’s down by the water. She wanted to hear it.');
   var words=!!G.flags['k3.s.words']; A.music('k3_aussie'); A.sfx('guitar'); if (L.actor) L.idle('guitar');
   await A.narrate(words?'Liam spielt. Bec hält den Zettel, und er singt die Strophen in der richtigen Reihenfolge, mit allen Fehlern, die man mit einem fremden Alphabet machen kann. Touristen bleiben stehen.':'Liam spielt. Er singt die ersten Zeilen, die er kennt, bis zu der Stelle mit dem Fenster. Dann summt er, weil er den Text nicht mehr weiß.');
   await A.wait(1500); await A.narrate('Lena hört auf, aufs Handy zu sehen. Sie hört zu, den Kopf schief.'); await A.wait(800);
@@ -174,6 +187,7 @@ async function talkLenaBridge(A){ var Ln=A.npc('lena'), G=A.G;
   return Ln.say(A.cycle('lb1',['Voll hoch. Springen die da echt runter?','Jela hat gesagt, ich muss die Brücke sehen. Papa wollte nicht. Jetzt steht er da und sagt nichts.'])); }
 async function talkDavorBridge(A){ var Dv=A.npc('davor'), G=A.G;
   await A.menuLoop(function(){ return [
+    {t:'Zeigen Sie mir das Foto. Ich suche mit.',if:R2(G)&&!G.flags['k3.s.photo']&&!A.has('foto_1965'),go:async function(A){ await photoAtBridge(A); return 'bye'; }},
     {t:'Jela hat Sie hergeschickt.',once:'db1',go:async function(A){ await Dv.say('Jela schickt. Man geht.'); await A.wait(600); await Dv.say('Sie hat uns den Weg erklärt wie in eine andere Stadt. Für sie ist es eine.'); await A.wait(500); await Dv.say('Ich war seit zweiundneunzig nicht hier. Zu Fuß waren es zwanzig Minuten. Heute sind wir mit dem Taxi gefahren.'); }},
     {t:'Wie ist es, wieder hier zu stehen?',once:'db2',go:async function(A){ await Dv.say('Ich habe sie im Fernsehen fallen sehen. In München, im Wohnheim. Alle haben geschrien.'); await A.wait(800); await Dv.say('Jetzt steht sie da, als wäre nichts. Das ist das Schlimme. Nicht, dass sie weg war.'); }},
     {t:'Ihr Vater hat gesummt?',if:A.hasNote('b3_hum'),once:'db3',go:async function(A){ await Dv.say('Am Telefon. Einmal im Jahr, zu Weihnachten. Wenn keiner mehr wusste, was er sagen soll, hat er gesummt.'); await A.wait(600); await Dv.say('Bis zu der Stelle. Dann hat er gesagt: Grüß die Kleine. Und aufgelegt.'); }},
@@ -246,6 +260,10 @@ var HS=[
  {id:'bridgehead',name:'Brückenkopf',look:function(A){ return A.m(A.flag('k3.peil.bridgehead')?'Der Brückenkopf. Von hier aus habe ich die erste Linie gezogen, nach Süden, zwischen zwei Landmarken hindurch.':'Der Brückenkopf, wo die Auffahrt beginnt. Von hier sieht man über den Bogen hinweg flussab: Dächer, das Minarett der Koski-Moschee, drüben ein Glockenturm, zwei Kräne.'); },
    use:useBridgehead,
    g:{look:async function(A){ if (inP(A.G,PRO) && !N(A,'l3_down')) return M.k3BridgeLeash(A); return A.g(A.G.phase==='k3_d2'?'Heute zieht es von hier in die Stadt. Nicht flussab.':'Bis hierher. Weiter gehe ich nicht. Von hier sehe ich, wohin es zieht.'); }}},
+ {id:'down',name:'Hinunter ans Ufer',vis:function(S,G){ return downOk(G); },r:function(){ var s=M.spot('starimost','steps'); return s&&s[2]?[s[0],s[1]+Math.max(0,s[3]-16),s[2],16]:[12,124,88,16]; },
+   exit:{to:'podmost',gok:true},look:'Die Uferstufen hinunter, bis auf die Kiesbank unter dem Bogen.',
+   canExit:async function(A){ if (!A.flag('k3.s.down') && !A.flag('k3.s.photo') && !A.has('foto_1965')){ await A.m('Unten ist nur Kies und Wasser. Erst will ich wissen, was Davor sucht.'); return false; } return true; },
+   g:{look:'Unter die Brücke. Das geht. Unter einer Brücke ist man nicht auf ihr.'}},
  {id:'steps',name:'Uferstufen',look:function(A){ return A.m(A.G.tod==='night'?'Die Uferstufen hinunter zum Wasser, nass, mit einer Laterne am Anfang. Unten ist es so laut, dass man nicht reden kann.':'Steinstufen, die links hinunter zum Wasser führen. Glatt getreten, nass, mit einem rostigen Geländer, an dem man sich besser nicht festhält.'); },
    use:async function(A){ if (inP(A.G,PRO) && A.G.tod!=='night') return followLeash(A); if (A.G.tod==='night') return A.m(A.malaHere()?'Nachts gehe ich diese Stufen nicht hinunter. Mala schon. Wenn sie will.':'Die Stufen nachts? Nein.'); return followLeash(A); },
    gexit:function(S,G){ if (G.pos.marko.room==='herberge' && inP(G,NIGHT)){ var r=M.stand('herberge','railing')||[300,124,'R']; return {to:'herberge',x:r[0],y:r[1],f:r[2]||'R'}; } return null; },
@@ -288,8 +306,8 @@ M.room('starimost',{ name:'Alte Brücke', scape:'k3_starimost',
     if (dinoHere(G) && !S.dinoJump){ var d=M.apos('starimost','dino',[198,115,'R']); L.push({id:'dino',ch:'dino',x:d[0],y:d[1],f:d[2]||'R',name:'Dino',idle:p==='k3_d1'?'smoke':null,speechY:46,
       routine:p==='k3_d1'?[['idle','smoke',6,10],['face','L',2,3],['idle','smoke',5,8],['face','R',2,4]]:[['idle',null,3,6],['anim','stretch'],['idle',null,2,4],['idle','smoke',5,9],['anim','wave'],['idle',null,3,5]]}); }
     if (tripHere(G)){ var dv=M.apos('starimost','davor_b',[120,118,'R']), ln=M.apos('starimost','lena_b',[146,120,'L']);
-      L.push({id:'davor',ch:'davor',x:dv[0],y:dv[1],f:dv[2]||'R',name:'Davor',speechY:46}); L.push({id:'lena',ch:'lena',x:ln[0],y:ln[1],f:ln[2]||'L',name:'Lena',idle:'phone',speechY:44});
-      var a1=M.apos('starimost','aussie1_b',[292,118,'L']), a2=M.apos('starimost','aussie2_b',[314,120,'L']), a3=M.apos('starimost','aussie3_b',[336,118,'L']);
+      L.push({id:'davor',ch:'davor',x:dv[0],y:dv[1],f:dv[2]||'R',name:'Davor',speechY:46}); L.push({id:'lena',ch:'lena',x:ln[0],y:ln[1],f:ln[2]||'L',name:'Lena',idle:'phone',speechY:44}); }
+    if (aussiesAtBridge(G)){ var a1=M.apos('starimost','aussie1_b',[292,118,'L']), a2=M.apos('starimost','aussie2_b',[314,120,'L']), a3=M.apos('starimost','aussie3_b',[336,118,'L']);
       L.push({id:'aussie1',ch:'aussie1',x:a1[0],y:a1[1],f:a1[2]||'L',name:'Josh',speechY:36}); L.push({id:'aussie2',ch:'aussie2',x:a2[0],y:a2[1],f:a2[2]||'L',name:'Bec',speechY:36});
       L.push({id:'aussie3',ch:'aussie3',x:a3[0],y:a3[1],f:a3[2]||'L',name:'Liam',idle:'guitar',talk:'guitarTalk',speechY:36,routine:[['idle','guitar',6,12],['idle',null,3,5]]}); }
     if (springerHere(G)){ var s=M.apos('starimost','springer',[299,99,'F']); L.push({id:'springer',ch:'springer',x:s[0],y:s[1],f:s[2]||'F',name:'Springer',ghost:true,reveal:true,idle:'stand',speechY:50,routine:false}); }

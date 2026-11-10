@@ -14,6 +14,7 @@ var FRUIT={x0:116,x1:178,by:112,top:66};                       // Obststand (fes
 var HONEY={x0:338,x1:388,by:112};                              // Honigstand (fest)
 var NB={x0:196,x1:242,by:115,top:100};                         // Gemüsestand der Nachbarin (Samstag)
 var ZT={x0:250,x1:290,by:117,top:100};                         // Zlatas Klapptisch (Samstag)
+function scaleLeft(GS){ var f=(GS&&GS.flags)||{}; return !!GS && GS.phase==='k3_d2' && !f['k3.x.vaga'] && !f['k3.z.vaga']; }
 var ZLATA=[281,112], SUSJ=[216,110];                           // Füße: Zlata sitzt, die Nachbarin steht
 var STOOL={x:281,seat:100,by:112};
 var SACK={x:244,by:113};
@@ -222,7 +223,9 @@ function tableLayer(S,GS,tod){ var we=weaOf(GS), out=[]; if (!full(S,GS)) return
     w2.rect(z.x0+4,z.top-8,9,4,P.m3); w2.hl(z.x0+4,z.x0+12,z.top-8,P.s4); for (var j2=0;j2<4;j2++) w2.px(z.x0+5+j2*2,z.top-9,j2%2?P.t5:P.s6);
     // Waage: Gestell aus Messing, zwei Schalen
     var sxx=z.x1-8; w2.rect(sxx-1,z.top-8,3,8,P.y1); w2.hl(sxx-6,sxx+6,z.top-9,P.y2); w2.ellipse(sxx-5,z.top-4,3,0.9,P.y3); w2.ellipse(sxx+5,z.top-4,3,0.9,P.y3); w2.vl(sxx-5,z.top-8,z.top-5,P.y1); w2.vl(sxx+5,z.top-8,z.top-5,P.y1); w2.rect(sxx+4,z.top-6,2,2,P.m1); }
-  else { w2.px(z.x0+8,z.top-1,P.e3); w2.px(z.x0+20,z.top-1,P.e4); w2.rect(z.x0+24,z.top-3,8,3,P.m3); }
+  else { w2.px(z.x0+8,z.top-1,P.e3); w2.px(z.x0+20,z.top-1,P.e4); w2.rect(z.x0+24,z.top-3,8,3,P.m3);
+    // Revision K3-04: Die Federwaage bleibt liegen, bis Vera sie Marko gibt (Schalter k3.x.vaga) oder sie bei Zlata ist (k3.z.vaga)
+    if (scaleLeft(GS)){ var sx2=z.x1-9; w2.rect(sx2-1,z.top-6,3,6,P.y1); w2.hl(sx2-6,sx2+6,z.top-7,P.y2); w2.ellipse(sx2-5,z.top-3,3,0.9,P.y3); w2.ellipse(sx2+5,z.top-2,3,0.9,P.y3); w2.vl(sx2-5,z.top-6,z.top-4,P.y1); w2.vl(sx2+5,z.top-6,z.top-3,P.y1); w2.px(sx2+6,z.top-1,P.y4); } }
   if (tod!=='day') M.tintApply(L2,M.TINT[tod]); out.push(L2);
   return out; }
 

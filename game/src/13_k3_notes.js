@@ -120,6 +120,17 @@ n('v3_letter','v3','Zwei Fassungen','Veras Brief','Vier Sätze in Veras Worten, 
 n('s3_words','b3','Das Lied','Der Zettel für Bec','Das alte Lied, Strophe für Strophe, in der Reihenfolge der Geschichte: zum Wasser, das Lamm, die Mädchen an den Toren, die eine am Fenster, „Guten Abend“, „Komm heute Abend“. Bec hat es aufgeschrieben.',{p:'p:aussie3'});
 n('b3_hum','b3','Das Lied','Bis zum Fenster','Mate hat beim Warten immer dasselbe gesummt: das Lied vom Fenster. Bis zu der Stelle mit dem Fenster. Weiter nie. Davor kennt es vom Telefon.',{p:'p:mate'});
 n('s3_verse','b3','Das Lied','„Dođi, dragi, doveče“','Die Zeile, die im Lied nach dem Fenster kommt: „Komm, Liebster, komm heute Abend.“ Lena hat sie an der Brücke gelernt. Sie will sie ihrem Großvater sagen.',{p:'p:lena'});
+/* Revision nach dem Prüfbericht K3 (Regel 2): der Stein unter der Brücke, die Fährplane, die Garage */
+n('b3_photo65','b3','Der Stein','Das Foto von 1965','Jela hat Davor ein Foto gegeben, das Mate immer im Portemonnaie trug: Davor mit fünf auf einer flachen Uferplatte unter der Alten Brücke. Davor findet den Stein nicht mehr.',{p:'p:jela'});
+n('b3_initials','b3','Der Stein','„M · D · 1965“','Unter dem Quader auf der Uferplatte sieht Mala Buchstaben, eingeritzt: „M · D · 1965“. Mate und Davor. Hier hat Mate gestanden und fotografiert.',{p:'p:mala'});
+n('b3_lenaphoto','b3','Der Stein','Zwei Fotos, ein Stein','Davor sitzt auf dem Quader, wo er mit fünf saß. Lena fotografiert ihn. Zwei Fotos, sechsundvierzig Jahre auseinander, derselbe Stein. Sie will sie ihrem Großvater zeigen.',{p:'p:lena'});
+n('b3_doubt','b3','Der Stein','„Wer sitzt auf unserem Stein?“','Mate sieht die beiden Fotos: den Stein mit den Buchstaben, den Jungen, und auf dem neuen einen grauen Mann auf Davors Platz. „Das ist Davors Platz. Wer setzt sich da hin?“ Er zweifelt.',{p:'p:mate'});
+n('b3_tarp','b3','Die Zelenikas','Die große Feige','Jela: Für den großen Baum reicht die Jute nicht. Letzten Winter hat sie ihn mit der alten Plane von der Fähre in Skela zugedeckt. Zlata hat sie ihr geliehen, im Frühling hat Jela sie zurückgebracht.',{p:'p:jela'});
+n('a3_tarp','a3','Der Fährmann','Batos Plane','Die Plane liegt wieder auf Batos altem Ponton am linken Ufer. Bato bewacht sie: „Die Skela fährt morgen früh.“',{p:'p:bato'});
+n('b3_donor','b3','Mate','„M. Zelenika, München“','Auf der Spendertafel der neuen Brücke in Skela, 1998, steht auch: „M. Zelenika, München“. Mates Geld hat die Brücke mitgebaut, die Batos Fähre überflüssig machte.',{p:'p:bato'});
+n('b3_garage','b3','Die Garage','Der kleine Schlüssel','An Mates Schlüsselring hängt ein kleiner Schlüssel mit einer roten Sieben. Jela: Er gehört zu Mates Garage „u Bratstva i jedinstva, kod stare pošte“. Dort steht sein Auto. Davor erlaubt es.',{p:'p:jela'});
+n('b3_street','b3','Die Garage','Ein alter Name','Auf Zdravkos Karte von 1985 läuft die Bratstva i jedinstva von der alten Post am Bahndamm entlang bis zur Flussbiegung. Auf meinem Plan von 2011 liegt dort die Lipova. Dieselbe Straße, ein anderer Name.',{p:'p:zdravko'});
+n('b3_car','b3','Die Garage','Mates Mercedes','In Garage sieben in der Lipova steht Mates heller Mercedes, auf dem Armaturenbrett die Thermoskanne. Die Batterie ist abgeklemmt, wie jeden Winter.',{p:'p:mala'});
 n('b3_folder','b3','Die Briefe','Zdravkos Schublade','Mala sieht durch das Holz der Thekenschublade: eine Mappe, ein blauer Fahrschein, ein angefangener Brief. Jemand hat die Mappe zweimal zurückgelegt. Zdravko: „Für den, der kommt.“',{p:'p:zdravko'});
 n('b3_coming','b3','Die Briefe','Er wollte kommen','In Mates Mappe: eine Fahrkarte Mostar–München für den 14. März 2010, gekauft am Zwölften. Und ein Brief: „Dragi Davore, dolazim.“ Er ist am Zwölften gestorben.',{p:'p:mate'});
 n('v3_glove','v3','Das Führerhaus','Das Handschuhfach','Mala sieht durch das Blech: Im Handschuhfach des TAM ein Heft voller Zahlen. Und im Radio steckt eine Kassette. Seit siebzehn Jahren.',{p:'p:mala'});
@@ -134,9 +145,13 @@ n('a3_donor','a3','Skela','V. Rajić, Mostar','Auf der Spendertafel der neuen Br
 n('a3_mypencil','a3','Zlata','Mein Bleistift','Zlata hat mir den Bleistift gegeben, für die Mutter. Mala: „Meiner. Ich habe immer daran gekaut. Den hast du jetzt. Mehr von mir hat keiner.“',{p:'p:mala'});
 M.defineNotes(N);
 // ---------------------------------------------------------------- Gruppen und Erledigung
+/* Prüfbericht K3-05: Regel 2 – die zweite Batterie ist tot (ohne Ersatz kein Start); Regel 1 (alte Spielstände) – schwach (drei Versuche) */
+Object.defineProperty(M.NOTES.v3_battery,'t',{configurable:true,enumerable:true,get:function(){ var G=M.GS, r2=!!(M.k3R2&&G&&M.k3R2(G));
+  return r2?'Kata: Der TAM braucht zwei Batterien hintereinander, vierundzwanzig Volt. Eine ist neu, die zweite ist tot. Ohne Ersatz dreht der Anlasser nicht. Eine Autobatterie würde für einmal Anlassen reichen. Sonntag, kein Laden hat offen.'
+    :'Kata: Der TAM braucht zwei Batterien hintereinander, vierundzwanzig Volt. Eine ist neu, die zweite ist schwach. Mit Glück springt er beim dritten Mal an, mit einer zweiten beim ersten. Sonntag. Niemand verkauft eine.'; }});
 M.NOTE_GROUPS.p3=['Ankunft']; M.NOTE_GROUPS.l3=['Die Brücke','Die Peilung','Die Leine','Zwei Namen','Lanas Nacht','Aus Sarajevo'];
 M.NOTE_GROUPS.v3=['Der Fahrer','Das Führerhaus','Die Schublade','Zwei Fassungen']; M.NOTE_GROUPS.a3=['Skela','Der Fährmann','Die Lichtprobe','Zlata'];
-M.NOTE_GROUPS.b3=['Mate','Die Zelenikas','Die Briefe','Das Lied']; M.NOTE_GROUPS.e3=['Der Vater'];
+M.NOTE_GROUPS.b3=['Mate','Die Zelenikas','Die Briefe','Das Lied','Der Stein','Die Garage']; M.NOTE_GROUPS.e3=['Der Vater'];
 function by(id,list){ var x=M.NOTES[id]; x.doneBy=(x.doneBy||[]).concat(list); }
 function done(id,fn){ M.NOTES[id].doneIf=fn; }
 function after(f){ return function(G){ return !!G.flags[f]; }; }
@@ -167,6 +182,8 @@ done('v3_who',after('k3.d3.talk2')); done('v3_message',after('k3.v.free')); done
 ['a3_stumps','a3_hut','a3_mine','a3_neighbor','a3_plaque','a3_tomorrow'].forEach(function(id){ done(id,after('k3.fin.free')); });
 ['a3_soldier','a3_bato','a3_awake','a3_girl','a3_lightroom'].forEach(function(id){ done(id,after('k3.fin.bato')); });
 ['a3_grave','a3_morning','a3_alive'].forEach(function(id){ done(id,after('k3.fin.free')); });
+/* Revision (Regel 2) */ done('b3_photo65',after('k3.s.photo')); done('b3_initials',after('k3.s.photo')); done('b3_lenaphoto',after('k3.b.doubt')); done('b3_doubt',after('k3.b.son'));
+done('b3_tarp',after('k3.b.figs')); done('a3_tarp',after('k3.a.tarp')); done('b3_donor',after('k3.fin.bato')); by('b3_garage',['b3_street']); done('b3_street',after('k3.b.garageOpen')); done('b3_car',after('k3.v.battery'));
 ['b3_mate','b3_notson'].forEach(function(id){ done(id,after('k3.b.son')); }); ['b3_gate','b3_lenakey','b3_figs','b3_sell','b3_invite','b3_dida'].forEach(function(id){ done(id,after('k3.b.done')); });
 ['l3_survived','l3_rope','l3_bells'].forEach(function(id){ done(id,after('k3.e.mothers')); });
 ['e3_avoid','e3_mothersample','e3_kolar'].forEach(function(id){ done(id,after('k3.e.mother')); });

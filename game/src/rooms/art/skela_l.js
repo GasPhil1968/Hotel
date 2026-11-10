@@ -288,7 +288,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   NIGHT=tod==='night'; TODN=tod; WEA=wea; FIN=wea==='frost'; WR=wea==='grey'?R('a1 a2 m1 a3 m2 a4 m3'):R('a1 a2 g2 a3 g3 a4 a5');
   paintSky(b,tod,wea); paintHills(b,tod,wea); paintFar(b,tod); paintRiver(b);
   for (var k=0;k<W*H;k++) if (REG[k]===RG.water){ b.d[k]=wcol(k%W,(k/W)|0,0); }
-  paintGround(b); paintJetty(b); paintShed(b); paintYard(b); paintHouse(b); paintQuince(b); paintGrave(b);
+  paintGround(b); paintJetty(b); paintShed(b); paintYard(b); paintPonton(b,GS); paintHouse(b); paintQuince(b); paintGrave(b);
   if (FIN) frostBake(b); else if (GS && GS.phase==='k3_d3') frostLight(b);
   M.light(b,lightFn(tod,wea),0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (r===RG.far) return 0.3; if (r===RG.water) return 0.12; return 0.03; },{col:P.m4});
@@ -305,6 +305,23 @@ function warmPass(o,base,L){ if (!L.length) return; var LT=M.TINT.lamp;
     if (v<0.03) continue; var f2=v*3.3, lv=Math.floor(f2), fr=f2-lv, t=lv===0?fr:(fr-0.5)*1.7+0.5; if (t>bayer(x,y)) lv++; if (lv<=0) continue;
     var c=base.d[k]; o.d[k]=lv===1?M.tintPx(DIMW,c,x,y):(lv===2?M.tintPx(MIDW,c,x,y):(lv===3?M.tintPx(LT,c,x,y):M.UP[M.tintPx(LT,c,x,y)])); } }
 var ZPOS=[272,118];
+// ---------------------------------------------------------------- Revision K3 (Regel 2): das alte Ponton der Fähre, ans Ufer gezogen, unter Batos Plane
+// Bis k3.a.tarp liegt die olivgrüne Plane darüber (Messingösen, Seile zu Steinen); danach sieht man die verwitterten Planken.
+var PONT={x0:172,x1:238,top:101,deck:106,base:113};
+function paintPonton(b,GS){ var w=RW(b,RG.wood), x, y, p=PONT, tarp=!(GS&&GS.flags&&GS.flags['k3.a.tarp']);
+  for (y=p.top;y<p.base;y++) for (x=p.x0+(y<p.deck?2:0);x<p.x1-(y<p.deck?2:0);x++){ var c;
+    if (y<p.deck){ c=((x-p.x0)%7===0)?P.w0:(hash(Math.floor((x-p.x0)/7),3)<0.5?P.w3:P.w2); if (y===p.top) c=P.w4; if (hash(x,y)<0.06) c=P.g2; }
+    else { c=(y===p.deck)?P.m2:((y>p.base-3)?P.w0:P.w1); if (y===p.deck+1) c=P.m1; if (((x-p.x0)%11)===0 && y>p.deck) c=P.m1; }
+    w.px(x,y,c); }
+  for (var k=0;k<4;k++){ var px=p.x0+6+k*18; w.vl(px,p.top-5,p.top,P.m2); w.px(px,p.top-6,P.m3); } w.hl(p.x0+6,p.x0+60,p.top-5,P.m2);   // Geländer
+  if (tarp){ var T2=R('g0 g1 g2 g3');
+  var T3=R('g1 g2 g3 g4 g5');
+  for (x=p.x0-1;x<p.x1+1;x++){ var hem=p.deck+1+((x>>3)&1), tp=p.top-4+((x===p.x0-1||x===p.x1)?2:0); for (y=tp;y<=hem;y++){ var u=(y-tp)/Math.max(1,hem-tp), crease=((x-p.x0+Math.round(y*0.6))%13===0), c2=ra(T3,0.75-u*0.4,x,y);
+      if (y===tp) c2=P.g5; else if (y===tp+1) c2=P.g4; if (crease) c2=P.g1; if (y===hem) c2=P.g0; w.px(x,y,c2); }
+    if ((x-p.x0)%8===3) w.px(x,hem-1,P.y4); }   // Messingösen
+  [[p.x0-4,p.base+1],[p.x1+3,p.base+1]].forEach(function(st,i){ w.rect(st[0]-2,st[1]-3,5,3,P.s3); w.hl(st[0]-2,st[0]+2,st[1]-3,P.s4); b.line(i?p.x1:p.x0,p.deck+3,st[0],st[1]-3,P.e3); }); }
+  // der Hackklotz steht vor dem Ponton: Beilstiel und Klinge noch einmal obenauf
+  var bx=BLOCK.x, by=BLOCK.y; w.line(bx+1,by-9,bx+7,by-18,P.w4); w.rect(bx-1,by-10,4,2,P.m3); w.px(bx-1,by-10,P.m4); }
 
 // ---------------------------------------------------------------- jedes Bild: Wasser, Hühner, Rauch, Laterne, Fenster, Quitte, Fähre
 function tintC(c,x,y){ return (TODN!=='day'&&M.TINT[TODN])?M.tintPx(M.TINT[TODN],c,x,y):c; }
@@ -392,9 +409,9 @@ M.defineArt('skela_l',{
     if (S.lantern) best=Math.max(best,1-Math.hypot(a.x-LANT.x,(a.y-112)*1.5)/50); return best>0.55?M.TINT.lamp.a:(best>0.25?MIDW.a:null); },
   spots:{ to_bridge:[0,90,16,54], house:[HSE.x0,EAVE-RF-2,HSE.w,HSE.base-EAVE+RF+2], house_door:[dr[0]-2,dr[1]-2,dr[2]+4,dr[3]+2], shed:[SHED.x0-4,SHED.top-2,SHED.x1-SHED.x0+8,SHED.base-SHED.top+2],
     quince:[QT.x-20,QT.base-60,40,46], grave:[GRAVE.x0-7,GRAVE.y0-6,GRAVE.x1-GRAVE.x0+9,GRAVE.y1-GRAVE.y0+8], board:[GRAVE.x1+1,GRAVE.y1-17,9,19], landing:[JETTY.x0-2,JETTY.yt-4,JETTY.x1-JETTY.x0+6,JETTY.yb-JETTY.yt+6],
-    hens:[170,118,80,20], woodpile:[WOOD.x0-2,WOOD.base-27,WOOD.x1-WOOD.x0+5,28], far_bell:[FB.bell[0]-10,28,18,24] },
+    ponton:[170,92,72,22], hens:[170,118,80,20], woodpile:[WOOD.x0-2,WOOD.base-27,WOOD.x1-WOOD.x0+5,28], far_bell:[FB.bell[0]-10,28,18,24] },
   stands:{ to_bridge:[12,124,'L'], house:[330,118,'B'], house_door:[dr[0]+12,116,'B'], shed:[120,116,'B'], quince:[436,126,'B'], grave:[437,128,'B'], board:[456,126,'L'], landing:[56,114,'B'],
-    hens:[210,130,'B'], woodpile:[414,118,'B'], far_bell:[160,116,'B'] },
+    hens:[210,130,'B'], woodpile:[414,118,'B'], far_bell:[160,116,'B'], ponton:[204,120,'B'] },
   actorPos:{ zlata:[dr[0]+12,117,'L'], bato:[124,111,'L'], nada:[414,126,'R'], vlado:[214,122,'R'], kata:[236,126,'L'], mala:[462,125,'L'] },
   start:[20,124,'R'], entries:{ skela_most:[16,124,'R'], zlata_k:[dr[0]+12,117,'R'] },
   ferry:FERRY, facRect:facRect

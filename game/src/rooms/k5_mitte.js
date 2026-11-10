@@ -21,9 +21,10 @@ var HS_CA=[
    g:{look:'Hinauf. Zu Großmutter. Da hat jeder Samstag aufgehört.'}},
  {id:'lane_kazan',name:'Kazandžiluk',exit:{to:'kazandziluk5'},canExit:async function(A){ if (satEnd(A.G)){ await A.m('Heute nicht. Nedžad hat seine Arbeit getan.'); return false; } return true; },
    look:'Die Gasse der Kupferschmiede. Es klopft und hämmert, als würde dort einer mit der Zeit streiten.',g:{look:'Da klopft es. Das hat mir immer gefallen.'}},
- {id:'malaBench',name:'Bank an der Haltestelle',look:'Die Bank an der Endstation. Hier hat Mala im Winter gesessen und ist nicht eingestiegen. Keine Drei war die richtige.',
-   g:{look:'Hier habe ich gesessen. „Dann ist es die falsche Zeit.“ Heute ist es die richtige.'}},
- {id:'bench',name:'Bank',look:'Eine Bank. Ein Mann füttert Tauben mit dem Rest von seinem Simit und schimpft mit ihnen.',g:{look:'Er schimpft mit den Tauben, weil keiner sonst zuhört.'}},
+ /* Revision (Prüfbericht K3-01, Nebenbefund K5): Die Bank an der Endstation gab es doppelt – „malaBench“ ohne Fläche im Bild und „bench“ auf derselben
+    gezeichneten Bank. Jetzt ist es eine Bank mit beiden Texten. */
+ {id:'bench',name:'Bank an der Haltestelle',look:'Die Bank an der Endstation. Hier hat Mala im Winter gesessen und ist nicht eingestiegen. Keine Drei war die richtige. Heute füttert ein Mann darauf Tauben mit dem Rest von seinem Simit und schimpft mit ihnen.',
+   g:{look:'Hier habe ich gesessen. „Dann ist es die falsche Zeit.“ Heute ist es die richtige. Der Mann schimpft mit den Tauben, weil keiner sonst zuhört.'}},
  {id:'tram_stop',name:'Endstation',look:function(A){ return A.m(satEnd(A.G)?'Die Endstation. Die Drei steht da, mit offenen Türen. Mama und Nada steigen aus, langsam, wie aus einem Bus nach fünfzehn Stunden.':'Die Endstation der Drei. Eine Schleife, ein Häuschen, ein Fahrplan, den keiner liest, weil die Drei kommt, wann sie kommt.'); },
    use:function(A){ return M.k5CarsijaStop?M.k5CarsijaStop(A):A.m('Die Drei kommt, wann sie kommt.'); },
    g:{look:'Endstation. Hier ist die Drei immer umgekehrt. Ich bin hier immer ausgestiegen.'}},

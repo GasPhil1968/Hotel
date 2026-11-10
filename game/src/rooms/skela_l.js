@@ -10,6 +10,29 @@
 var P=M.P, K3S=M.K3S=M.K3S||{};
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; }
 function n2(G){ return G.phase==='k3_d2_n'; } function d3(G){ return G.phase==='k3_d3'; } function fin(G){ return G.phase==='k3_fin_n'; } function epi(G){ return G.phase==='k3_epi_d'; }
+function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
+// ---------------------------------------------------------------- Revision K3 (Regel 2): Batos Plane auf dem alten Ponton (A → B: Fall Bato öffnet Mates Feigen)
+async function pontonTake(A){ var G=A.G, B=A.npc('bato');
+  if (F(G,'k3.a.tarp')) return A.m('Die Plane habe ich. Das Ponton liegt jetzt nackt da, wie ein Boot, das keiner mehr braucht.');
+  if (!R2(G) || !d3(G)) return A.m('Batos Plane. Die lasse ich, wo sie ist.');
+  if (!A.hasNote('b3_tarp')) return A.m('Eine schwere Plane über dem alten Ponton. Sie gehört hierher. Wofür sollte ich sie nehmen?');
+  if (!F(G,'k3.a.tarpOk')){
+    if (batoHere(G) && A.isFound('bato')){ B.agitate(1600); await B.say('Ne diraj!'); await A.wait(400); await B.say('Die Plane bleibt drauf. Morgen früh fährt die Skela. Bei Frost platzt das Holz.'); }
+    else await A.g('Lass sie. Er passt auf sie auf. Er steht im Schuppen und sieht her.');
+    A.note('a3_tarp');
+    if (G.malaOn && G.pos.mala.room!=='skela_l'){ await A.wait(400); await A.m('Er bewacht eine Fähre, die seit dreizehn Jahren nicht fährt. Solange er glaubt, dass sie morgen fährt, gibt er die Plane nicht her.'); }
+    else await A.m('Er bewacht eine Fähre, die seit dreizehn Jahren nicht fährt. Solange er glaubt, dass sie morgen fährt, gibt er die Plane nicht her.');
+    return; }
+  await A.reach(); A.give('cerada'); A.setFlag('k3.a.tarp'); A.sfx('tarp'); A.rebuild();
+  await A.narrate('Ich löse die Seile von den Steinen und ziehe die Plane herunter. Sie ist schwer und steif vor Kälte. Darunter das Ponton: graue Planken, Moos in den Fugen, ein Geländer aus Rohr.');
+  if (batoHere(G) && A.isFound('bato')){ await A.wait(600); await B.say('…'); await A.wait(500); await A.narrate('Bato sieht nicht her. Er sieht auf den Fluss.'); } }
+async function batoTarp(A){ var B=A.npc('bato'), G=A.G; if (F(G,'k3.a.tarpOk')) return B.say('Ich habe ja gesagt. Nimm sie.');
+  await A.m('Die Plane auf dem Ponton. Jela braucht sie heute Nacht für einen Feigenbaum. Es kommt Frost.'); await A.wait(700);
+  await B.say('Die Plane bleibt auf der Fähre.'); await A.wait(500); await B.say('Für wen?'); await A.m('Für Mate Zelenika. Jelas Nachbarn. Seinen Baum hat er gepflanzt, als seine Enkelin geboren wurde.');
+  await A.wait(1100); await B.say('Zelenika.'); await A.wait(600); await B.say('Der mit dem Mercedes aus Deutschland. Er kam im Sommer mit der Fähre, wenn er Jela besuchte. Hat immer zu viel bezahlt. Ich habe ihn nie gemocht.');
+  await A.wait(1300); B.agitate(2600); await B.say('Ich fahre ja nicht.'); await A.wait(700); await B.say('Ich bin nicht gefahren, als es …'); await A.wait(1500);
+  await B.say('Nimm sie. Bevor ich es mir anders überlege.'); A.setFlag('k3.a.tarpOk');
+  if (G.malaOn){ await A.wait(700); await A.g('Er hat fast gesagt: als es gezählt hat.'); } }
 function night(G){ return n2(G)||fin(G); }
 function crossing(G){ return fin(G) && F(G,'k3.fin.boarded') && !F(G,'k3.fin.crossed'); }
 function atGrave(G){ return fin(G) && F(G,'k3.fin.free') && !F(G,'k3.fin.bond'); }
@@ -93,6 +116,7 @@ async function talkBato(A){ var B=A.npc('bato'), G=A.G;
     {t:'Wer hat geläutet?',if:!F(G,'k3.bato.uneasy'),go:async function(A){ await B.say(A.cycle('btWho',['Ein Mann. Ein Soldat. Einer, der nachts nichts Gutes will.','Ich habe es doch gesagt. Ein Soldat.','Ein Soldat. Wer sonst läutet um Mitternacht.'])); }},
     {t:'Es war ein Mädchen.',if:N(G,'a3_voice')&&!N(G,'a3_girl'),go:async function(A){ await B.say('Ein Mädchen läutet nicht um Mitternacht.'); }},
     {t:'Es war ein Mädchen. Mit einem Bleistift.',if:N(G,'a3_girl')&&!F(G,'k3.n3.bato.girl'),go:function(A){ return batoPart(A,'girl'); }},
+    {t:'Die Plane auf dem Ponton. Jela braucht sie.',if:R2(G)&&d3(G)&&A.hasNote('b3_tarp')&&!F(G,'k3.a.tarpOk'),go:async function(A){ if (!F(G,'k3.bato.uneasy')){ await B.say('Die Plane bleibt auf der Fähre. Morgen früh fahre ich.'); await A.wait(400); await A.m('Er glaubt noch, dass morgen früh eine Fähre fährt. Solange er das glaubt, bekomme ich sie nicht.'); return; } await batoTarp(A); }},
     {t:'Sie sind tot, Bato.',go:async function(A){ await A.wait(500); await B.say(A.cycle('btDead',['Was? Der Fluss ist zu laut.','Was sagen Sie? Ich höre nichts. Der Fluss.','Reden Sie lauter. Oder gehen Sie.'])); }},
     A.askOpt({ a3_lightroom:function(A){ return batoSlip(A); }, a3_awake:function(A){ return batoPart(A,'awake'); }, a3_girl:function(A){ return batoPart(A,'girl'); }, a3_book:function(A){ return bookShown(A); }, a3_asked:'Rajić. Am Sonntag. Mit Mehl. Er hat gefragt, ich habe gesagt: niemand. Was hätte ich sagen sollen? Es lag schon unter der Quitte.', a3_box:'Meine Kiste. Da ist mein Buch drin. Fassen Sie das nicht an.',
       a3_thrice:'Ja. Dreimal. Und dann war Ruhe. Was wollen Sie noch?', a3_soldier:'Ein Soldat. Ja.', a3_voice:'Eine Stimme? Bei dem Wasser hört man keine Stimme. Nur das Läuten.',
@@ -419,6 +443,10 @@ var HS=[
      if (epi(G)){ if (F(G,'k3.e.inKitchen') && !F(G,'k3.e.mothers')) return true; await A.m(F(G,'k3.e.mothers')?'Zlata hat die Tür angelehnt. Drinnen tickt der Herd. Ich lasse sie.':'Erst zum Baum.'); return false; }
      return true; },
    g:{look:'Durch diese Tür haben sie mich getragen.',sense:'Viele Hände an der Klinke. Zwei Paar, immer dieselben.',listen:'Der Kessel pfeift. Dann nimmt ihn jemand vom Feuer.'}},
+ {id:'ponton',name:function(S,G){ return G.flags['k3.a.tarp']?'Altes Ponton':'Ponton unter der Plane'; },
+   look:function(A){ return A.m(A.flag('k3.a.tarp')?'Das alte Ponton der Fähre, ans Ufer gezogen: graue Planken, Moos in den Fugen, ein Geländer aus Rohr. Seit achtundneunzig hat es kein Wasser mehr gesehen.':'Das alte Ponton der Fähre, ans Ufer gezogen. Darüber eine schwere olivgrüne Plane mit Messingösen, die Seile an Steine gebunden. Jemand hat sie sorgfältig festgemacht.'); },
+   take:function(A){ return pontonTake(A); }, use:function(A){ return pontonTake(A); }, open:function(A){ return pontonTake(A); }, push:'Das Ponton bewegt sich nicht. Es hat sich in den Ufersand gesetzt.',
+   g:{look:function(A){ return A.g(A.flag('k3.a.tarp')?'Ohne die Plane sieht es aus wie ein Floß. Ich bin nie damit gefahren.':'Er hat sie jeden Winter darübergelegt, wie eine Decke. Auch jetzt noch. Mit Händen, die nichts mehr halten.'); }}},
  {id:'shed',name:'Batos Schuppen',look:function(A){ var G=A.G; if (A.isFound('bato') && batoHere(G)) return A.m(night(G)?'Der offene Schuppen am Steg. Darin der alte Mann in Wathose, die Laterne in der Hand. Von nahem sieht man durch ihn hindurch das Ruder an der Wand.':(F(G,'k3.bato.lantern')?'Der Schuppen bei Tag. Die Laterne brennt, mitten am Tag, das Glas zum Wasser hin. Er sitzt daneben und sieht zur Glocke.':'Der Schuppen bei Tag. Ruder, ein Netz, eine Wathose am Haken. Und er, mit der Laterne, am hellen Tag.'));
      if (d3(G) && !F(G,'k3.z.boxSeen')){ A.setFlag('k3.z.boxSeen'); return A.m('Ein offener Holzschuppen am Steg. Ruder, ein Netz, eine Wathose an einem Haken, eine Laterne. Und unter der Ruderbank eine Blechkiste mit einem kleinen Vorhängeschloss. Blechkisten mit Schloss haben einen Grund.'); }
      return A.m(F(G,'k3.a.limbo')?'Der Schuppen. Die Laterne hängt am Haken, kalt. Die Wathose daneben.':'Ein offener Holzschuppen am Steg. Ruder, ein Netz, eine Wathose an einem Haken, eine Laterne.'+(d3(G)&&!F(G,'k3.z.boxOpen')?' Unter der Bank die Blechkiste.':'')); },

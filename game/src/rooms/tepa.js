@@ -30,7 +30,7 @@ async function zlataMala(A,Z){ var G=A.G; A.setFlag('k3.z.asked'); G.flags['mala
     if (c==='friend'){ await A.wait(600); await Z.say('Prijatelji ne dolaze nakon sedamnaest godina.'); await A.m('„Freunde kommen nicht nach siebzehn Jahren.“'); }
     else if (c==='search'){ await A.wait(600); await Z.say('Niko je ne traži.'); await A.wait(500); await A.m('„Niemand sucht sie.“ Sie sagt es, als wäre es eine Anordnung.'); }
     else { await A.wait(1600); await Z.say('Idite.'); await A.m('„Gehen Sie.“'); }
-    await A.wait(500); await A.narrate('Sie packt zusammen. Die Eierkartons in den Korb, die Walnüsse in den Sack, die Waage obenauf. Die Nachbarin ruft ihr etwas nach. Sie antwortet nicht.');
+    await A.wait(500); await A.narrate('Sie packt zusammen. Die Eierkartons in den Korb, die Walnüsse in den Sack. Die Federwaage bleibt am Rand des Klapptischs liegen; sie sieht sie nicht. Die Nachbarin ruft ihr etwas nach. Sie antwortet nicht.');
     var a=Z.actor; if (a){ Z.idle(null); a.speed=95; var w=Z.walk(Math.round(a.x)+120,Math.round(a.y)+6); await A.wait(1100); a.fadeOut=A.gt; await w; }
     A.set('zlataGone',true); A.note('l3_eggwoman'); A.setFlag('k3.z.mala'); A.rebuild();
     if (G.malaOn){ await A.wait(600); await A.g('Die Leine.'); await A.wait(500); await A.g('Sie geht mit ihr. Aus der Stadt hinaus. Nach Süden.'); }
@@ -39,7 +39,7 @@ async function zlataMala(A,Z){ var G=A.G; A.setFlag('k3.z.asked'); G.flags['mala
   await M.k3DayCheck(A); return 'bye'; }
 async function zlataLeaves(A){ var G=A.G, Z=A.npc('zlata'); G.flags['mala.lock']=true;
   try{ if (G.malaOn){ await A.g('Marko.'); await A.wait(300); await A.g('Sie packt ein.'); }
-    await A.narrate('Als ich mich zum Gehen wende, legt die Eierfrau die Kartons in ihren Korb. Früher als die anderen. Sie sieht nicht zu mir, und sie sieht nicht zur Nachbarin.');
+    await A.narrate('Als ich mich zum Gehen wende, legt die Eierfrau die Kartons in ihren Korb. Früher als die anderen. Sie sieht nicht zu mir, und sie sieht nicht zur Nachbarin. Die Federwaage bleibt auf dem Tisch.');
     var a=Z.actor; if (a){ Z.idle(null); a.speed=100; var w=Z.walk(Math.round(a.x)+120,Math.round(a.y)+6); await A.wait(1200); a.fadeOut=A.gt; await w; }
     A.set('zlataGone',true); A.setFlag('k3.z.lost'); A.rebuild(); await A.wait(500);
     if (G.malaOn){ await A.g('Die Leine geht ihr nach.'); await A.wait(400); await A.g('Aus der Stadt hinaus. Nach Süden.'); } A.note('l3_zlata_gone');
@@ -75,8 +75,8 @@ async function veraIntro(A,S){ var G=A.G; if (veraKnown(A)) return;
   await A.m('Rajić. Vera Rajić?'); await A.wait(900); await S.say('Wer fragt?'); await A.m('Marko Vuković. Übersetzer, aus Sarajevo. Ich war bei Ihrem Bruder. Und bei Kata.');
   await A.wait(800); await S.say('Kata.'); await A.wait(500); await S.say('Dann bin ich das. Vera. Rajić war ich, Rajić bin ich geblieben, mein Mann hat mir nur den Lastwagen gelassen und den Namen nicht genommen.');
   G.flags['met.vera']=true; A.setFlag('k3.x.vera'); A.rebuild();
-  await A.wait(700); await S.say('Wir waren zwei Schwestern. Die ältere hatte das Zimmer mit dem Ofen. Sie ist zweitausendzwei gestorben. Ich wohne seit sechsundneunzig drüben. Es war eine Wohnung frei, und ich war allein.'); await A.wait(600);
-  await S.say('Mein Bruder fährt nicht mehr. Das sagt man so. Er geht auch nicht. Nicht über die Straße.'); await A.wait(500); await S.say('Man muss nicht über die Straße, wenn man nicht will. Die Stadt hilft einem dabei.');
+  await A.wait(700); await S.say('Wir waren zwei Schwestern. Die ältere hatte das Zimmer mit dem Ofen. Sie ist zweitausendzwei gestorben. Ich wohne seit sechsundneunzig auf dieser Seite, hinter dem Markt. Es war eine Wohnung frei, und ich war allein.'); await A.wait(600);
+  await S.say('Mein Bruder fährt nicht mehr. Das sagt man so. Er geht auch nicht. Nicht über die Straße. Über den Bulevar, meine ich.'); await A.wait(500); await S.say('Man muss nicht über die Straße, wenn man nicht will. Die Stadt hilft einem dabei.');
   if (G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Sie hat seine Hände.'); await A.wait(400); await A.g('Dieselben Hände, mit Kohl statt Reifen.'); } }
 // das gemachte Bett (Notiz v3_bed)
 async function veraBed(A,S){ var G=A.G; if (A.hasNote('v3_bed')) return S.say('Ich habe es gesagt. Ein Bett, und keiner kam.');
@@ -105,8 +105,11 @@ async function veraPaper(A,S){ var G=A.G;
     return; }
   await S.say(A.cycle('vrPaper',['Er soll kommen. Das ist der Preis. Er ist nicht hoch.','Siebzehn Jahre. Eine Straße. Er schafft das, wenn er will.'])); }
 async function veraLetterStart(A,S){ var ok=await M.K3X.veraLetter(A); if (ok && M.k3Skipped && !(M.k3Asked&&M.k3Asked(A,'vera'))) await M.k3Skipped(A,'vera'); return ok; }
-async function talkSusjeda(A){ var S=A.npc('susjeda'), G=A.G, p=G.phase, zg=gone(G), vk=veraKnown(A), canLetter=vk && G.flags['k3.x.veraAsked'] && (A.hasNote('v3_who')||A.hasNote('v3_message')) && !G.flags['k3.x.pismo'];
-  await A.menuLoop(function(){ return [
+// Revision K3-03: Was Vera weiß (Name, Werkspapier gefragt, Brief), wird bei jedem Aufbau des Menüs neu gelesen. Vorher galt der Stand vom
+// Gesprächsbeginn, und nach „Sie sind Vera Rajić?“ fehlten die neuen Fragen, bis man das Gespräch neu anfing.
+async function talkSusjeda(A){ var S=A.npc('susjeda'), G=A.G, p=G.phase;
+  await A.menuLoop(function(){ var zg=gone(G), vk=veraKnown(A), canLetter=vk && G.flags['k3.x.veraAsked'] && (A.hasNote('v3_who')||A.hasNote('v3_message')) && !G.flags['k3.x.pismo'];
+    return [
     {t:'Wer ist die Frau mit den Eiern?',once:'sj1',if:p==='k3_d2',go:async function(A){ await S.say(zg?'Die mit den Eiern? Weg ist sie. Früher als sonst.':'Die mit den Eiern? Von unten, aus einem Dorf an der Biegung. Seit Jahren jeden Samstag.');
         await S.say('Ihr Name? Den sagt sie selbst, wenn sie will. Sie will nie.'); }},
     {t:'Wohin ist sie gegangen?',once:'sj2',if:p==='k3_d2'&&zg,go:async function(A){ await S.say('Nach Hause. Zum Bus. Sie hat nicht einmal ihren Kohl gekauft, den sie jeden Samstag bei mir kauft.'); await S.say('Das hat sie noch nie gemacht. In zehn Jahren nicht.');

@@ -12,10 +12,10 @@ var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, R=M.R;
 var X0=8, Y0=6, X1=312;
 
 M.MAP3_POS={ ostbus:[206,24], vermisst:[244,44], strassenbr:[163,50], koski:[178,68], tepa:[206,76], starimost:[160,86], kujundziluk:[183,93],
-  herberge:[178,114], bulevar:[128,74], westbus:[118,28], partizan:[58,42], zelenika:[108,110], skela:[160,136] };
+  herberge:[178,114], bulevar:[128,74], westbus:[118,28], partizan:[58,42], zelenika:[108,110], skela:[160,136], garaze:[80,80] };
 var NAMES={ ostbus:'Ostbusbahnhof', vermisst:'Vermisstenstelle', strassenbr:'Straßenbrücke', koski:'Koski-Moschee', tepa:'Tepa (Markt)', starimost:'Alte Brücke',
-  kujundziluk:'Kujundžiluk', herberge:'Herberge „Neretva“', bulevar:'Bulevar', westbus:'Westbusbahnhof', partizan:'Partisanenfriedhof', zelenika:'Haus Zelenika', skela:'Skela' };
-var ORDER=['ostbus','vermisst','westbus','partizan','strassenbr','koski','tepa','bulevar','starimost','kujundziluk','zelenika','herberge','skela'];
+  kujundziluk:'Kujundžiluk', herberge:'Herberge „Neretva“', bulevar:'Bulevar', westbus:'Westbusbahnhof', partizan:'Partisanenfriedhof', zelenika:'Haus Zelenika', skela:'Skela', garaze:'Lipova (Garagen)' };
+var ORDER=['ostbus','vermisst','westbus','partizan','garaze','strassenbr','koski','tepa','bulevar','starimost','kujundziluk','zelenika','herberge','skela'];
 
 function cl(v,a,b){ return v<a?a:(v>b?b:v); }
 function rnd(v){ return Math.round(v); }
@@ -90,6 +90,7 @@ function drawIcon3(b,id,on){ var p=M.MAP3_POS[id], x=p[0], y=p[1], c=on?P.k1:P.e
   if (id!=='skela'&&id!=='strassenbr'&&id!=='starimost') for (var yy=y-9;yy<=y+6;yy++) for (var xx=x-11;xx<=x+11;xx++){ var d=Math.hypot((xx-x)/11,(yy-y+1.5)/8); if (d>1) continue; if (d<0.72||bayer(xx,yy)<(1-d)*3.4) b.px(xx,yy,(hash(xx,yy)<0.85)?P.s5:P.s6); }
   switch(id){
     case 'ostbus': case 'westbus': bus(b,x,y,c,f,on); break;
+    case 'garaze': for (i=-1;i<=1;i++){ var gx=x+i*6-2; b.rect(gx,y-3,5,7,on?P.m3:f); b.hl(gx,gx+4,y-3,c); b.vl(gx,y-3,y+3,c); for (q=0;q<3;q++) b.hl(gx+1,gx+3,y-1+q*2,c); } b.hl(x-9,x+9,y+4,c); break;   // drei Garagentore
     case 'vermisst': b.rect(x-5,y-5,11,10,on?P.m3:f); b.hl(x-5,x+5,y-5,c); b.vl(x-5,y-5,y+4,c); b.vl(x+5,y-5,y+4,c); b.hl(x-6,x+6,y+5,c);
       for (i=0;i<3;i++){ b.hl(x-3,x-2,y-3+i*3,on?P.y4:c); b.hl(x+2,x+3,y-3+i*3,on?P.k2:c); } b.rect(x-1,y+2,3,3,c); break;                  // Amtsgebäude
     case 'strassenbr': b.hl(x-8,x+8,y-1,c); b.hl(x-8,x+8,y+1,c); b.hl(x-7,x+7,y,on?P.s6:f); b.vl(x-4,y+2,y+4,c); b.vl(x+4,y+2,y+4,c); b.px(x-8,y-2,c); b.px(x+8,y-2,c); b.px(x-8,y+2,c); b.px(x+8,y+2,c); break;

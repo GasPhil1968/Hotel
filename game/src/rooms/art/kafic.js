@@ -273,6 +273,7 @@ function tableBox(w,t){ var top=function(x,y){ var c=P.e3; if (((x*2+y*7)%17)===
 
 // ---------------------------------------------------------------- Ebenen: Theke (vor Zdravko), Fenstertisch (vor Mates Knien)
 var BY=0, TT=null;
+var DRAWER=(function(){ var ft=R3.p(CNT.X0,CNT.Y0,CNT.Z1); return [rnd(ft[0])+4,rnd(ft[1])+6,16,8]; })();   // Schublade: x, y, b, h (Thekenfront links)
 function layers(S,GS,tod){ var L=[];
   var cr=R3.rect(CNT.X0,CNT.X1,CNT.Y0,FY,CNT.Z0,CNT.Z1), lay=M.layer(cr[0]-2,cr[1]-24,cr[2]+6,cr[3]+26,cr[1]+cr[3]), w=M.lw(lay);
   var ft=R3.p(CNT.X0,CNT.Y0,CNT.Z1), fl=ft[0]; BY=rnd(ft[1]);
@@ -283,6 +284,9 @@ function layers(S,GS,tod){ var L=[];
       c=(p<1)?P.w1:((p===8)?P.w5:pine(x*1.3,y,x,y,0)); if (yy===3) c=P.w1; if (yy>=19 && yy<21) c=P.m2; return c; },
     left:P.w2 });
   var a=R3.p(CNT.X0,CNT.Y0,CNT.Z1), bb=R3.p(CNT.X1,CNT.Y0,CNT.Z1); w.hl(rnd(a[0]),rnd(bb[0]),BY,P.s6);
+  // Schublade in der Thekenfront (Revision K3-01): Rahmen, etwas hellere Blende, Messingknopf, ein Spalt Schatten darüber
+  var dr=DRAWER; w.rect(dr[0],dr[1],dr[2],dr[3],P.w1); w.rect(dr[0]+1,dr[1]+1,dr[2]-2,dr[3]-2,P.w4); w.hl(dr[0]+1,dr[0]+dr[2]-2,dr[1]+1,P.w5); w.hl(dr[0],dr[0]+dr[2]-1,dr[1]-1,P.w0);
+  var kx2=dr[0]+(dr[2]>>1); w.rect(kx2-1,dr[1]+3,3,2,P.y2); w.px(kx2-1,dr[1]+3,P.y4); w.px(kx2+1,dr[1]+4,P.y1);
   // Espressomaschine (Chrom), Tassen obenauf, Siebträger
   var ex=158; w.rect(ex,BY-12,24,12,P.m3); w.hl(ex,ex+23,BY-12,P.m4); w.vl(ex,BY-12,BY-1,P.m4); w.vl(ex+23,BY-12,BY-1,P.m1); w.rect(ex+2,BY-10,20,3,P.r3); w.hl(ex+2,ex+21,BY-10,P.r4);
   w.rect(ex+5,BY-6,4,2,P.k2); w.rect(ex+14,BY-6,4,2,P.k2); w.hl(ex+3,ex+10,BY-5,P.m1); w.hl(ex+12,ex+19,BY-5,P.m1); w.px(ex+11,BY-8,P.y4);
@@ -348,9 +352,10 @@ M.defineArt('kafic',{
     bar:[CR[0],CR[1]-14,Math.min(CR[2],214-CR[0]),CR[3]+14],
     window_table:[216,TR[1]-12,TR[0]+TR[2]+4-216,TR[3]+12],
     tv:[TV.x-5,TV.y-9,27,27],
-    photos:[PH.x,PH.y,PH.w,PH.h+2]
+    photos:[PH.x,PH.y,PH.w,PH.h+2],
+    bar_drawer:[DRAWER[0]-2,DRAWER[1]-2,DRAWER[2]+4,DRAWER[3]+4]
   },
-  stands:{ door:[290,124,'R'], oldmap:[82,116,'B'], bar:[184,116,'B'], window_table:[250,118,'R'], tv:[36,118,'L'], photos:[136,116,'B'] },
+  stands:{ door:[290,124,'R'], oldmap:[82,116,'B'], bar:[184,116,'B'], bar_drawer:[166,116,'B'], window_table:[250,118,'R'], tv:[36,118,'L'], photos:[136,116,'B'] },
   actorPos:{ zdravko:[192,95,'L'], mate:[MATE[0],MATE[1],'R'] },
   start:[288,124,'L'], entries:{ westbus:[288,124,'L'] }
 });

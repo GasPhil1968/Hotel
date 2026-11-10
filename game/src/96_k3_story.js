@@ -19,6 +19,16 @@ M.definePhases({
 function CH3(G){ return M.chapterOf(G||M.GS)===3; }
 function f(G,k){ return !!G.flags[k]; }
 function has(G,id){ return G.notes.indexOf(id)>=0; }
+// ---------------------------------------------------------------- Regelversion (Revision nach dem Prüfbericht K3, design/K3_AUSBAU.md Teil R)
+// 2 = erweiterter Hauptweg: Fotostandort unter der Brücke (Samstag), Fährplane → Feigen → Mates Garage → Batterie (Sonntag) sind Pflicht.
+// 1 = bisheriger Pflichtweg. Neue Spiele beginnen mit 2. Alte Spielstände bis einschließlich Samstag (k3_d2) wechseln auf 2, weil alle neuen
+// Pflichtknoten danach noch erreichbar sind; ab Samstagnacht bleibt es bei 1 (Lenas Foto entsteht am Samstag an der Brücke).
+M.k3Rules=function(G){ G=G||M.GS; return (G&&G.flags&&G.flags['k3.rules'])||1; };
+function R2(G){ return M.k3Rules(G)>=2; }
+M.k3R2=R2;
+var R2PHASES=['k3_pro','k3_pro_n','k3_d1','k3_d1_n','k3_d2'];
+M.MIGRATE=M.MIGRATE||[];
+M.MIGRATE.push(function(G){ if (!CH3(G) || G.flags['k3.rules']!==undefined) return; G.flags['k3.rules']=R2PHASES.indexOf(G.phase)>=0?2:1; });
 async function card(A,k,t,time,ms,sub){ M.E.screen='card'; await A.card({kicker:k,title:t,sub:sub,time:time,ms:ms||4600}); }
 function clean(A,list){ list.forEach(function(i){ if (A.has(i)) A.take(i); }); }
 // eine Szene außerhalb eines laufenden Ablaufs (aus dem Leerlauf): sperrt Eingaben, speichert nicht mittendrin
@@ -40,7 +50,7 @@ Object.defineProperty(M,'k3Carry',{configurable:true,get:function(){ var G=M.GS|
 
 // ---------------------------------------------------------------- Kapitelstart
 M.startChapter3=async function(A){ var E=M.E; E.busy=true;
-  try{ var c=M.k3CarryRead(), G=A.G; M.setPhase('k3_pro');
+  try{ var c=M.k3CarryRead(), G=A.G; M.setPhase('k3_pro'); G.flags['k3.rules']=2;
     G.flags['k3.c2.confess']=c.confess; G.flags['k3.c2.whyMostar']=c.whyMostar; G.flags['k3.c2.hajra']=c.hajra; G.flags['k3.c2.ana']=c.ana; G.flags['k3.c2.father']=c.father; G.flags['k3.c2.fromSave']=c.fromSave;
     G.malaOn=false; G.active='marko'; var st=(M.ART.ostbus&&M.ART.ostbus.start)||[90,124,'R']; G.pos.marko={room:'ostbus',x:st[0],y:st[1],f:st[2]||'R'};
     ['dzezva','mobitel','olovka','km','photo_full','rueckfahrt'].forEach(function(i){ if (M.ITEMS[i] && !A.has(i)) A.give(i); });
@@ -60,7 +70,7 @@ M.startChapter3=async function(A){ var E=M.E; E.busy=true;
   } finally { E.busy=false; } A.save(); };
 
 // ---------------------------------------------------------------- Stadtplan Mostar (der Raum 'map' malt in Kapitel 3 den Plan von Mostar)
-var POS0={ ostbus:[232,34], herberge:[210,74], kujundziluk:[190,84], starimost:[170,90], koski:[184,102], tepa:[230,92], strassenbr:[160,56], bulevar:[118,70], partizan:[58,40], westbus:[110,30], zelenika:[92,112], vermisst:[256,50], skela:[150,134] };
+var POS0={ garaze:[80,80], ostbus:[232,34], herberge:[210,74], kujundziluk:[190,84], starimost:[170,90], koski:[184,102], tepa:[230,92], strassenbr:[160,56], bulevar:[118,70], partizan:[58,40], westbus:[110,30], zelenika:[92,112], vermisst:[256,50], skela:[150,134] };
 function pos3(id){ var P3=M.MAP3_POS||{}; return P3[id]||POS0[id]||[160,72]; }
 var LOC3=[
   {id:'ostbus',     name:'Ostbusbahnhof',      to:'ostbus',     icon:'bus'},
@@ -75,6 +85,7 @@ var LOC3=[
   {id:'westbus',    name:'Westbusbahnhof',     to:'westbus',    icon:'bus'},
   {id:'zelenika',   name:'Haus Zelenika',      to:'zelenika',   icon:'house'},
   {id:'vermisst',   name:'Vermisstenstelle',   to:'vermisst',   icon:'office'},
+  {id:'garaze',     name:'Lipova (Garagen)',   to:'garaze',     icon:'garage'},
   {id:'skela',      name:'Skela',              to:'skela_d',    icon:'ferry'}
 ];
 Object.defineProperty(M,'MAPLOCS3',{configurable:true,get:function(){ return LOC3.map(function(L){ var p=pos3(L.id); return {id:L.id,name:L.name,to:L.to,icon:L.icon,x:p[0],y:p[1],at:null}; }); }});
@@ -91,11 +102,13 @@ M.MAP_KNOW.skela={ch:3, know:function(G){ return has(G,'l3_area'); },
   why:function(G){ return has(G,'l3_oldmap')?'Auf meinem Plan steht es nicht. Nur auf der alten Karte, als Name an einer Biegung.':'Irgendwo da unten, hinter dem Rand meines Plans. Ohne Namen finde ich dort nichts.'; }};
 
 // ---------------------------------------------------------------- Reisen
-var WEST=['bulevar','partizan','westbus','zelenika'], NIGHT_OK=['herberge','starimost','ostbus'];
+var WEST=['bulevar','partizan','westbus','zelenika','garaze'], NIGHT_OK=['herberge','starimost','ostbus'];
 function d2Missing(G){ if (!(f(G,'k3.z.mala')||f(G,'k3.z.lost'))) return has(G,'l3_city')?'Erst will ich wissen, wem die Leine heute nachgeht. Sie zeigt in die Stadt, nicht nach Skela.':'Mala sagt, die Leine zeigt heute woandershin. Erst will ich wissen, wohin.';
   if (!f(G,'k3.v.part1')) return 'Vlado hat gesagt: Kommen Sie morgen. Das ist heute.';
   if (!f(G,'k3.b.arrived')) return f(G,'k3.b.mate')?'Und Mate wartet auf den Bus aus München. Ich habe ihm gesagt, dass ich nachsehe.':'Am Westbusbahnhof kommt heute der Bus aus München. Mate wartet auf ihn.';
   if (f(G,'k3.b.helper') && !f(G,'k3.b.jela')) return 'Ich habe Davor gesagt, ich komme mit. Haus Zelenika, am Südrand, bei den Feigen.';   // zugesagt: erst Jela und das Haus
+  if (R2(G)){ if (!f(G,'k3.b.jela')) return 'Davor und Lena sind mit dem Bus aus München gekommen. Haus Zelenika, am Südrand, bei den Feigen.';
+    if (!f(G,'k3.s.photo')) return 'Davor sucht an der Brücke den Stein von seinem Foto. Ich habe gesagt, ich komme.'; }
   return null; }
 // Sonntag (Analyse K3-B07, P18): Was fehlt noch, bevor die Nacht kommt? Spuren nach Person oder Frage, ohne Ort.
 function d3Missing(G){
@@ -103,7 +116,13 @@ function d3Missing(G){
   if (!has(G,'a3_awake')||!has(G,'a3_girl')) return 'Bato. Er weiß mehr über die Glocke, als er sagt. Ich weiß nur noch nicht, womit ich ihn frage.';
   if (!f(G,'k3.bato.uneasy')) return 'Bato muss beides hören: dass er wach war. Und wer geläutet hat.';
   if (!f(G,'k3.v.free')) return 'Vlado. Ohne ihn und seinen Lastwagen komme ich heute Nacht nirgendwohin.';
-  if (!f(G,'k3.b.done')) return 'Davor fährt heute. Die Feigen, das Haus. Das will ich nicht halb lassen.';
+  if (!f(G,'k3.b.done')){
+    if (R2(G) && has(G,'b3_tarp') && !f(G,'k3.a.tarp') && !f(G,'k3.b.figs')) return 'Der große Feigenbaum braucht Batos Plane. Sie liegt in Skela auf dem alten Ponton, und Bato passt auf sie auf.';
+    return 'Davor fährt heute. Die Feigen, das Haus. Das will ich nicht halb lassen.'; }
+  if (R2(G) && !f(G,'k3.v.battery')){ if (!has(G,'v3_battery')) return 'Vlado will fahren. Ob der TAM das auch will, weiß nur Kata.';
+    if (!f(G,'k3.b.garageKey')) return 'Der TAM braucht eine zweite Batterie. Eine Autobatterie würde reichen. Wer hat ein Auto, das keiner mehr fährt?';
+    if (!has(G,'b3_street')) return 'Mates Garage, in der Bratstva i jedinstva. Die Straße steht auf keinem Plan von heute. Auf einem alten schon.';
+    return 'Mates Garage in der Lipova. Seine Batterie für den TAM.'; }
   return null; }
 M.k3D3Missing=d3Missing;
 // Grund, warum eine Reise nicht geht: {t, who:'m'|'g', alone:bool} oder null
@@ -191,18 +210,57 @@ M.malaLooksAtMarko=function(A){ if (CH3(A.G) && M.k3MalaLooksAtMarko) return M.k
 function dayReady(G){ var p=G.phase;
   if (p==='k3_pro') return has(G,'l3_notbridge')&&has(G,'l3_onedir')&&f(G,'k3.p.checkin');
   if (p==='k3_d1') return has(G,'l3_skela')&&f(G,'k3.v.drawer');
-  if (p==='k3_d2') return (f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived')&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'));
+  if (p==='k3_d2'){ var d2=(f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived');
+    return R2(G) ? (d2&&f(G,'k3.b.jela')&&f(G,'k3.s.photo')) : (d2&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'))); }
   if (p==='k3_d2_n') return f(G,'k3.bato.found')&&f(G,'k3.z.tomorrow')&&G.pos.marko.room==='skela_d';
-  if (p==='k3_d3') return has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.bato.uneasy')&&f(G,'k3.v.free')&&f(G,'k3.b.done');   // Prüfbericht K3: Bato muss beides gehört haben
+  if (p==='k3_d3'){ var d3=has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.bato.uneasy')&&f(G,'k3.v.free')&&f(G,'k3.b.done');   // Prüfbericht K3: Bato muss beides gehört haben
+    return R2(G) ? (d3&&f(G,'k3.v.battery')) : d3; }   // Regel 2: ohne Mates Batterie springt der TAM nicht an (Prüfbericht K3-05)
   if (p==='k3_fin_n') return f(G,'k3.a.limbo');
   if (p==='k3_epi') return f(G,'k3.e.bridge');
   return false; }
 M.k3DayReady=dayReady;
+// ---------------------------------------------------------------- Bewusster Tagesabschluss (Prüfbericht K3-02)
+// Freitag, Samstag und Sonntag enden nicht mehr von selbst, sobald die Pflichtschritte erledigt sind. Marko sagt es einmal („Für heute …“),
+// und der Tag endet erst, wenn der Spieler es will: in der Herberge (Freitag, Samstag), in Vlados Werkstatt (Sonntag) oder am Bett.
+// Vorher nennt Marko, was noch offen ist (Zusagen, Briefe, Batterie); wer trotzdem beendet, stellt es bewusst zurück (Schalter k3.left.*).
+var CONSC={k3_d1:1,k3_d2:1,k3_d3:1};
+function endRoom(G,rid){ var p=G.phase, from=G.flags['k3.lastFrom']||'';
+  if (p==='k3_d1'||p==='k3_d2') return rid==='herberge' && from!=='zimmer';
+  if (p==='k3_d3') return rid==='vulkanizer' && from!=='vhof' && from!=='kafic';
+  return false; }
+// offene Fäden, die mit dem Tag verloren gehen oder auf die jemand wartet: [{k,t}]
+M.k3OpenThreads=function(G){ var p=G.phase, L=[], inv=function(i){ return (G.inv||[]).indexOf(i)>=0; };
+  if (p==='k3_d2'){
+    if (f(G,'k3.s.trip') && !f(G,'k3.s.photo') && !f(G,'k3.s.perf')) L.push({k:'bridge',t:'Davor und Lena sind an der Brücke. Ich habe gesagt, ich komme.'});
+    if ((f(G,'k3.z.mala')||f(G,'k3.z.lost')) && !f(G,'k3.x.vaga') && !f(G,'k3.z.vaga')) L.push({k:'vaga',t:'Zlatas Waage liegt noch auf dem Klapptisch am Markt.'}); }
+  if (p==='k3_d3'){
+    if (inv('pismo')) L.push({k:'pismo',t:'Veras Brief ist noch in meiner Tasche, nicht bei Vlado.'});
+    else if (f(G,'k3.x.veraAsked') && !f(G,'k3.x.pismo')) L.push({k:'vera',t:'Vera wartet. Ihr Brief an Vlado ist nicht geschrieben.'});
+    if (!R2(G) && has(G,'v3_battery') && !f(G,'k3.v.battery')) L.push({k:'battery',t:'Kata wollte eine zweite Batterie für den TAM.'});
+    if (has(G,'b3_folder') && !f(G,'k3.b.folder')) L.push({k:'folder',t:'Mates Mappe liegt noch bei Zdravko.'}); }
+  return L; };
+async function readyNotice(A){ var G=A.G, p=G.phase;
+  if (p==='k3_d1') await A.m('Skela. Und die Schublade. Für heute habe ich, was ich brauche. Wenn ich zurück in der Herberge bin, ist der Tag vorbei.');
+  else if (p==='k3_d2') await A.m('Für heute habe ich das Wichtigste. Wenn ich zurück in die Herberge gehe, ist der Tag vorbei.');
+  else if (p==='k3_d3') await A.m('Bis elf ist noch Zeit. Dann wartet Vlado im Hof. Wenn ich in die Werkstatt gehe, fahren wir.');
+  if (M.k3OpenThreads(G).length && G.malaOn && A.malaHere && A.malaHere()){ await A.wait(400); await A.g('Nicht alles. Du hast noch etwas versprochen.'); } }
+M.k3OfferEnd=async function(A){ var G=A.G, p=G.phase; if (!CONSC[p]||!dayReady(G)) return false; var open=M.k3OpenThreads(G);
+  await A.m(p==='k3_d3'?'Es ist bald elf. Vlado und Kata warten im Hof.':(p==='k3_d1'?'Draußen wird es dunkel. Die Bura hat sich gelegt.':'Es wird Abend. Unten auf der Terrasse zünden sie die Kerzen an.'));
+  for (var i=0;i<open.length;i++) await A.m(open[i].t);
+  var c=await A.choose([{t:p==='k3_d3'?'(Es ist Zeit. Zum Lastwagen.)':'(Den Tag beenden.)',id:'end',silent:true},{t:open.length?'(Noch nicht. Erst das.)':'(Noch nicht.)',id:'not',silent:true,bye:true}],{title:p==='k3_d3'?'Sonntag, kurz vor elf':'Feierabend'});
+  if (c!=='end') return false;
+  open.forEach(function(o){ G.flags['k3.left.'+o.k]=true; });   // bewusst zurückgestellt
+  if (p==='k3_d1') await M.k3StartD1Night(A); else if (p==='k3_d2') await M.k3StartD2Night(A); else await M.k3StartFinale(A);
+  return true; };
+function endPending(G){ var p=G.phase; if (!CONSC[p]||!dayReady(G)) return false; if (!G.flags['k3.ready.'+p]) return true;
+  var R=M.E.room; return !!R && endRoom(G,R.id) && G.flags['k3.endAsk']!==G.flags['k3.moves']; }
+M.k3EndPending=endPending;
 M.k3DayCheck=async function(A){ var G=A.G, R=M.E.room; if (!CH3(G)||G.ended||!R||R.noSave) return false; if (!dayReady(G)) return false;
   var p=G.phase;
+  if (CONSC[p]){ if (!G.flags['k3.ready.'+p]){ G.flags['k3.ready.'+p]=true; await readyNotice(A); }
+    if (endRoom(G,R.id) && G.flags['k3.endAsk']!==G.flags['k3.moves']){ G.flags['k3.endAsk']=G.flags['k3.moves']; return await M.k3OfferEnd(A); }
+    return false; }
   if (p==='k3_pro') return await M.k3StartEvening0(A), true;
-  if (p==='k3_d1') return await M.k3StartD1Night(A), true;
-  if (p==='k3_d2') return await M.k3StartD2Night(A), true;
   if (p==='k3_d2_n') return await M.k3StartD3(A), true;
   if (p==='k3_d3') return await M.k3StartFinale(A), true;
   if (p==='k3_fin_n') return await M.k3StartEpilogue(A), true;
@@ -217,6 +275,7 @@ M.k3Bed=async function(A){ var G=A.G, p=G.phase;
   if (p==='k3_pro_n'){ if (A.flag('k3.p.talk1')) return M.k3StartD1(A); return A.m('Noch nicht. Mala steht draußen auf der Terrasse, als wartete sie auf etwas.'); }
   if (p==='k3_d1_n'){ if (A.flag('k3.d1.father')) return M.k3StartD2(A); return A.m('Noch nicht. Mala sitzt auf der Terrasse und sieht mich an, als wollte sie etwas fragen.'); }
   if (p==='k3_pro') return A.m(dayReady(G)?'Es wird gleich dunkel. Erst will ich noch nach draußen.':A.cycle('k3bed0',['Es ist Mittag. Und ich bin wegen einer Brücke hier, nicht wegen eines Betts.','Später. Erst die Brücke.']));
+  if (CONSC[p] && dayReady(G)){ G.flags['k3.ready.'+p]=true; if (p==='k3_d3') await A.m('Hinlegen? Um elf wartet Vlado.'); return M.k3OfferEnd(A); }
   if (p==='k3_d1'){ if (!has(G,'l3_skela')) return A.m(has(G,'l3_oldmap')&&has(G,'l3_area')?'Am hellen Tag? Ich habe einen Namen auf einer alten Karte. Mehr noch nicht.':(has(G,'l3_area')?'Am hellen Tag? Ich weiß ungefähr, wo. Hinter dem Rand meines Plans. Mehr nicht.':'Am hellen Tag? Die Leine zeigt irgendwohin, und ich weiß noch nicht, wohin.'));
     // Analyse K3-B08 (P24): den Namen nennt das Bett erst, wenn Marko ihn kennt; die Schublade erst, wenn Kata davon erzählt hat
     var knows=(M.k3KnowsVlado&&M.k3KnowsVlado(G))||has(G,'v3_ljerka');
@@ -275,9 +334,9 @@ M.PENDING_X=M.PENDING_X||[];
 M.k3FinLoad=async function(A){ if (A.flag('k3.a.limbo')) return M.k3StartEpilogue(A); if (!A.flag('k3.fin.drive')) return M.k3FinBegin(A); if (M.k3FinResume) return M.k3FinResume(A); };
 
 // ---------------------------------------------------------------- Raumwechsel: Zähler, Ljerkas Rückruf
-function storyOpen(G){ if (G.flags['k3.mala.crossed']){ G.map.bulevar=true; G.map.westbus=true; G.map.partizan=true; } if (has(G,'l3_flat')){ G.map.strassenbr=true; G.map.partizan=true; } if (has(G,'l3_skela')) G.map.skela=true; if (has(G,'l3_person')||has(G,'l3_tepa')) G.map.tepa=true; }
+function storyOpen(G){ if (has(G,'b3_street')) G.map.garaze=true; if (G.flags['k3.mala.crossed']){ G.map.bulevar=true; G.map.westbus=true; G.map.partizan=true; } if (has(G,'l3_flat')){ G.map.strassenbr=true; G.map.partizan=true; } if (has(G,'l3_skela')) G.map.skela=true; if (has(G,'l3_person')||has(G,'l3_tepa')) G.map.tepa=true; }
 M.MIGRATE.push(function(G){ if (CH3(G)) storyOpen(G); });
-M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,id,from,o); if (!CH3(G)) return; G.flags['k3.moves']=(G.flags['k3.moves']||0)+1; storyOpen(G);
+M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,id,from,o); if (!CH3(G)) return; G.flags['k3.moves']=(G.flags['k3.moves']||0)+1; G.flags['k3.lastFrom']=from||''; storyOpen(G);
   if (G.flags['k3.d1.sanja'] && G.flags['k3.d1.sanjaAt']===undefined) G.flags['k3.d1.sanjaAt']=G.flags['k3.moves']-1;
   if (G.flags['k3.d1.sanja'] && !G.flags['k3.d1.ljerka'] && G.flags['k3.moves']>=G.flags['k3.d1.sanjaAt']+2 && G.phase==='k3_d1' && !M.ROOMS[id].noSave) M.k3Queue('ljerka'); }; })(M.onRoomChange);
 
@@ -316,7 +375,7 @@ var idle0=M.idleHook;
 M.idleHook=function(A){ if (idle0) idle0(A); var G=A.G; if (!CH3(G)) return; if (idleRun && Date.now()-idleAt>90000) idleRun=false;   // Sicherung: eine abgebrochene Szene blockiert nicht für immer
   if (idleRun) return; var R=M.E.room; if (!R||R.noSave) return;
   if (G.flags['k3.mala.crossed'] && !G.map.westbus) storyOpen(G);
-  if (!Q.length && !dayReady(G)) return;
+  if (!Q.length && !(dayReady(G) && (!CONSC[G.phase] || endPending(G)))) return;
   idleRun=true; idleAt=Date.now(); var tok=runTok;
   run(A,async function(A){ while (Q.length && tok===runTok){ var k=Q[0]; try{ await react(A,k); } catch(e){ console.error(e); } if (tok!==runTok) return; if (Q[0]===k) Q.shift(); qSave(); }
     if (tok===runTok && dayReady(G)) await M.k3DayCheck(A); }).then(function(){ if (tok===runTok) idleRun=false; },function(){ if (tok===runTok) idleRun=false; }); };

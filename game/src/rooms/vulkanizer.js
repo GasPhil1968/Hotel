@@ -4,6 +4,7 @@
 (function(M){
 'use strict';
 // „(Mala fragen.)“ ist eine Handlung, kein Satz: Marko spricht die Zeile nicht aus (das Gerüst setzt silent nicht)
+function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
 function askM(A,k){ var o=M.k3AskOpt(A,k); if (o) o.silent=true; return o; }
 var P=M.P;
 function F(G,k){ return !!G.flags[k]; }
@@ -93,6 +94,11 @@ async function cabEarly(A,V){ if (A.flag('k3.v.cabHeard')){ await V.say('…'); 
   await A.m('Er hat es gehört. Aber er glaubt nicht, dass es von ihr kommt. Woher auch.'); }
 // Ausbau P3: die Batterie vom Taxi
 async function batteryToKata(A){ var K=A.npc('kata'); if (A.flag('k3.v.battery')) return K.say('Die ist schon drin. Zwei. Er springt an.');
+  if (A.flag('k3.b.batFrom')==='mate'){ await A.animM('give'); A.take('akumulator'); A.setFlag('k3.v.battery'); A.sfx('keyDrop'); await A.wait(600); await K.say('Eine Batterie.'); await A.wait(500); await K.say('Woher?');
+    await A.m('Aus Mate Zelenikas Mercedes. Garage sieben, in der Lipova. Sein Sohn hat es erlaubt.'); await A.wait(800);
+    await K.say('Zelenika. Der vom Café, mit der Thermoskanne? Der hat bei uns jeden Herbst Reifen gekauft. Für ein Auto, das er nie gefahren ist.');
+    await A.wait(600); await K.say('Zwölf Volt, achtundachtzig Amperestunden. Eigentlich zu klein für den TAM. Aber mit der neuen zusammen reicht sie für einmal Anlassen.'); await A.wait(500); await K.say('Mehr brauchen wir nicht. Einmal.');
+    if (A.G.malaOn && A.malaHere()){ await A.wait(700); await A.g('Mate fährt mit. Ein Stück von ihm.'); } return; }
   await A.animM('give'); A.take('akumulator'); A.setFlag('k3.v.battery'); A.sfx('keyDrop'); await A.wait(600); await K.say('Eine Batterie.'); await A.wait(500); await K.say('Woher?'); await A.m('Vom Taxi am Ostbahnhof. Aus dem Kofferraum. Er will sie morgen zurück.');
   await A.wait(900); await K.say('Vom Taxi.'); await A.wait(600); await K.say('Der flickt seine Reifen bei uns, seit ich denken kann. Und redet mit Papa über Reifen. Nur über Reifen.'); await A.wait(500); await K.say('Zwei. Jetzt sind es zwei. Er springt an.');
   await A.wait(600); await A.m('Er sagt: Sagen Sie ihm, von wem sie ist.'); await A.wait(800); await K.say('Das sage ich ihm. Mal sehen, was er dann sagt.');
@@ -288,9 +294,12 @@ async function talkKata(A){ var K=A.npc('kata'), G=A.G, p=G.phase;
         if (A.G.malaOn && A.malaHere()){ await A.wait(600); await A.g('Drüben.'); await A.wait(400); await A.g('Das sagen hier alle, und jeder meint eine andere Seite.'); } }},
     {t:'Kann ich den Laster sehen?',if:A.flag('k3.v.part1')&&!A.flag('k3.v.yard'),go:async function(A){ await openYard(A,K); }},
     {t:'Er war zwölf Stunden im Laster. Damals.',once:'kt5',if:A.flag('k3.v.part2'),go:async function(A){ await K.say('Bis es hell war.'); await A.wait(800); await K.say('Mama hat mich vom Fenster weggezogen. Sie hat gesagt: Lass ihn. Ich habe ihn gelassen. Siebzehn Jahre.'); }},
-    {t:'Fährt er wirklich? Heute Nacht?',if:A.flag('k3.v.free')&&!A.hasNote('v3_battery')&&!A.flag('k3.v.battery'),go:async function(A){ await K.say('Er fährt. Wenn er anspringt.'); await A.wait(600); await K.say('Vierundzwanzig Volt. Zwei Batterien hintereinander. Eine habe ich neu, die zweite ist tot wie ein Stein.'); await A.wait(500); await K.say('Sonntag. Keiner hat offen, und die, die offen haben, haben keine für einen Lastwagen.');
-        await A.wait(600); await K.say('Papa sagt: Dann schieben wir. Papa ist vierundsechzig.'); A.note('v3_battery');
-        if (A.G.malaOn && A.malaHere()){ await A.wait(600); await A.g('Wer hat hier eine Batterie und ein Auto, das er liebt?'); } }},
+    {t:'Fährt er wirklich? Heute Nacht?',if:A.flag('k3.v.free')&&!A.hasNote('v3_battery')&&!A.flag('k3.v.battery'),go:async function(A){ var r2=R2(A.G); await K.say('Er fährt. Wenn er anspringt.'); await A.wait(600);
+        // Prüfbericht K3-05: Regel 2 – die zweite Batterie ist tot, ohne Ersatz kein Start; Regel 1 (alte Spielstände) – schwach, drei Versuche
+        await K.say(r2?'Vierundzwanzig Volt. Zwei Batterien hintereinander. Eine habe ich neu, die zweite ist tot wie ein Stein. Ohne zweite dreht der Anlasser keinen Millimeter.':'Vierundzwanzig Volt. Zwei Batterien hintereinander. Eine habe ich neu, die zweite ist schwach. Mit Glück springt er beim dritten Mal an. Mit einer zweiten beim ersten.');
+        await A.wait(500); await K.say('Sonntag. Keiner hat offen, und die, die offen haben, haben keine für einen Lastwagen.');
+        await A.wait(600); await K.say(r2?'Eine Autobatterie würde reichen. Zwölf Volt. Für einmal Anlassen.':'Papa sagt: Dann schieben wir. Papa ist vierundsechzig.'); A.note('v3_battery');
+        if (A.G.malaOn && A.malaHere()){ await A.wait(600); await A.g(r2?'Eine Batterie, die keiner braucht. In einem Auto, das keiner mehr fährt.':'Wer hat hier eine Batterie und ein Auto, das er liebt?'); } }},
     {t:'Der TAM. Fährt er?',once:'kt6',if:A.flag('k3.v.free'),go:async function(A){ await K.say('Er fährt. Batterie, Öl, Bremsen, Reifen. Zwei Tage habe ich an ihm geschraubt, für Graz.'); await A.wait(400); await K.say('Ich wusste nicht, wofür.'); }},
     A.askOpt({
       v3_drawer:async function(A){ if (!A.flag('k3.v.which')||A.flag('k3.v.drawer')) return K.say('Schubladen? Fragen Sie Papa. Ich frage ihn nie nach Schubladen.'); await K.say('Welche?'); await which(A,K); if (A.flag('k3.v.drawer')) return 'bye'; },
@@ -301,7 +310,7 @@ async function talkKata(A){ var K=A.npc('kata'), G=A.G, p=G.phase;
       v3_tomorrow:'Morgen heißt bei ihm morgen. Das ist das Einzige, worauf man sich verlassen kann.',
       v3_sent:'Er hat es erzählt. Endlich. Und mir hat er es nicht erzählt, sondern Ihnen.',
       v3_cab:'„Dann fahr still“? Das klingt nach ihm. Das klingt nach jemandem, der ihn kannte.',
-      v3_battery:'Zwei Batterien. Ja. Ich habe eine. Wenn Sie eine zweite finden, bin ich Ihnen was schuldig. Reifen fürs Leben.',
+      v3_battery:function(A){ return K.say(R2(A.G)?'Zwei Batterien. Ja. Ich habe eine. Ohne die zweite fährt heute Nacht keiner. Eine Autobatterie reicht. Wenn Sie eine finden, bin ich Ihnen was schuldig. Reifen fürs Leben.':'Zwei Batterien. Ja. Ich habe eine. Wenn Sie eine zweite finden, bin ich Ihnen was schuldig. Reifen fürs Leben.'); },
       v3_log:'Das Fahrtenbuch? Aus dem Handschuhfach? Ich wusste nicht mal, dass es noch da ist. Plus eins. Er hat sie dazugezählt.',
       a3_donor:'Papa hat für eine Brücke gezahlt? Er zahlt nicht mal für den Kaffee bei Zdravko.',
       v3_blatt:'Das Blatt. Bei Tante Vera. Ich kann es holen, sie gibt es mir nicht. „Er soll kommen“, sagt sie. Er kommt nicht. So geht das seit siebzehn Jahren.',
