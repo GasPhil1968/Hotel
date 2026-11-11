@@ -208,7 +208,7 @@ M.room('herberge',{ name:'Herberge „Neretva“', scape:'k3_herberge',
     if (p==='k3_pro_n' && A.flag('k3.p.talk1') && from!=='zimmer' && A.first('hbN0')){ await A.g('Ich gehe gleich hinunter. Zu den Stufen.'); await A.m('Und ich ins Bett.'); }
     else if (p==='k3_d1_n' && A.flag('k3.d1.father') && A.first('hbN1')){ await A.g('Sie singen immer noch.'); }
     else if (p==='k3_d2_n' && A.flag('k3.s.words') && aussiesHere(G) && A.first('hbN2song')){ A.music('k3_aussie'); A.sfx('guitar'); await A.wait(900);
-      await A.narrate('Die Australier singen das Lied. Mit Bec\' Zettel auf dem Knie, Strophe für Strophe, bis zur letzten Zeile.'); await A.wait(1200);
+      if (M.k3HostelSong) await M.k3HostelSong(A); else await A.narrate('Die Australier singen das Lied. Mit Bec\' Zettel auf dem Knie, Strophe für Strophe, bis zur letzten Zeile.'); await A.wait(800);   // gesungen, mit Noten über der Terrasse (97_k3_auftritt.js)
       await A.g('Jetzt singen sie richtig.'); await A.m('Schade?'); await A.wait(700); await A.g('Nein. Schön richtig.');
       if (A.hasNote('v3_cab')){ await A.wait(900); await A.g('Im Führerhaus habe ich es ihm vorgesungen. Er sagt, falsch.'); await A.wait(400); await A.g('Ich habe nie falsch gesungen.'); } }
     else if (p==='k3_epi' && A.first('hbEpi')){ await A.g('Ganz still. Sogar der Fluss ist leiser.'); } }

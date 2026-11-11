@@ -1,0 +1,12 @@
+{
+ "states": 22,
+ "probes": 45,
+ "passed": 44,
+ "skipped": 1,
+ "skipBy": {
+  "Szene läuft nach dem Laden": 1
+ },
+ "fails": [],
+ "warns": [],
+ "noSpec": []
+}

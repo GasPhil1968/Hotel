@@ -156,22 +156,23 @@ async function dinoRule(A){ var D=A.npc('dino'), G=A.G; if (G.flags['k3.s.dinoOk
   var st=DINO_STORY[n]; if (!st){ await D.say('Das ist keine Geschichte. Das ist eine Notiz.'); await A.wait(400); await D.say('Erzähl mir eine, in der einer etwas tut.'); return; }
   await A.narrate('Ich erzähle. '+st[0]); await A.wait(900); await D.say(st[1]); A.setFlag('k3.s.dinoOk'); await A.wait(500);
   await D.say('He, Perth! Spielt. Aber richtig. Und wenn einer von euch springen will: zwanzig Euro.'); await A.npc('aussie1').say('Awesome!'); }
-async function perform(A){ var G=A.G, J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A.npc('davor');
+// Die Aufführung ist eine animierte Szene (97_k3_auftritt.js, M.k3Perform). Hier bleiben Schalter, Notizen und die Sätze der Familie:
+// an der Fensterzeile erkennt Lena das Summen ihres Großvaters, Davor weiß, wo er immer aufgehört hat (family); ohne Text bricht Liam dort ab (missing).
+async function perform(A){ var G=A.G, L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A.npc('davor');
   if (!G.flags['k3.s.dinoOk']) return L.say('The guy with the jacket says no. Something about a story. You speak the language, man, talk to him.');
   if (G.flags['k3.s.perf']) return L.say(G.flags['k3.s.words']?'Again? Sure. Come tonight, that’s the line.':'We stop at the window. That’s all we’ve got.');
   if (G.flags['k3.s.down']) return L.say('Wait for the girl in the pink jacket, man. She’s down by the water. She wanted to hear it.');
-  var words=!!G.flags['k3.s.words']; A.music('k3_aussie'); A.sfx('guitar'); if (L.actor) L.idle('guitar');
-  await A.narrate(words?'Liam spielt. Bec hält den Zettel, und er singt die Strophen in der richtigen Reihenfolge, mit allen Fehlern, die man mit einem fremden Alphabet machen kann. Touristen bleiben stehen.':'Liam spielt. Er singt die ersten Zeilen, die er kennt, bis zu der Stelle mit dem Fenster. Dann summt er, weil er den Text nicht mehr weiß.');
-  await A.wait(1500); await A.narrate('Lena hört auf, aufs Handy zu sehen. Sie hört zu, den Kopf schief.'); await A.wait(800);
-  await Ln.say('Das kenn ich.'); await A.wait(500); await Ln.say('Vom Telefon. Opa hat das gesummt. Wenn er nichts mehr wusste, hat er gesummt.');
-  await A.wait(800); await Dv.say('Immer dasselbe.'); await A.wait(600); await Dv.say('Und immer vor der Stelle aufgehört. Da, wo sie am Fenster steht. Weiter ist er nie gekommen.'); A.note('b3_hum'); A.setFlag('k3.s.perf');
-  if (!words){ await A.wait(900); await Ln.say('Da hört er auch auf? Der mit der Gitarre?'); await A.m('Er kennt den Rest nicht.'); await Ln.say('Und du?'); await A.m('Ich schon. Ich müsste es ihnen aufschreiben.');
-    if (L.actor) L.idle(null); A.music('k3_mostar'); return; }
-  await A.wait(900); A.sfx('strum'); await A.narrate('Liam singt die letzte Strophe. „Dođi, dragi, doveče.“ Dann hört das Lied auf, so wie es aufhört.'); await A.wait(1000);
-  await Ln.say('Was heißt das? Das Letzte. Dođi …'); await A.m('„Dođi, dragi, doveče.“ Komm, Liebster, komm heute Abend.'); await A.wait(700); await Ln.say('Das hat er nie gesungen. Die Stelle.');
+  var words=!!G.flags['k3.s.words'], heard=A.hasNote('b3_hum');
+  var family=async function(A){ await Ln.say('Das kenn ich.'); await A.wait(400); await Ln.say('Vom Telefon. Opa hat das gesummt. Wenn er nichts mehr wusste, hat er gesummt.');
+    await A.wait(600); await Dv.say('Immer dasselbe.'); await A.wait(500); await Dv.say('Und immer vor der Stelle aufgehört. Da, wo sie am Fenster steht. Weiter ist er nie gekommen.'); A.note('b3_hum'); A.setFlag('k3.s.perf'); };
+  var missing=async function(A){ await A.wait(500); await Ln.say('Da hört er auch auf? Der mit der Gitarre?'); await A.m('Er kennt den Rest nicht.'); await Ln.say('Und du?'); await A.m('Ich schon. Ich müsste es ihnen aufschreiben.'); };
+  if (M.k3Perform) await M.k3Perform(A,{words:words,heard:heard,family:family,missing:missing});
+  else { A.music('k3_aussie'); await family(A); A.music('k3_mostar'); }
+  if (!A.flag('k3.s.perf')){ A.note('b3_hum'); A.setFlag('k3.s.perf'); }   // Wiederholung: die Familie kannte das Summen schon
+  if (!words) return;
+  await A.wait(600); await Ln.say('Was heißt das? Das Letzte. Dođi …'); await A.m('„Dođi, dragi, doveče.“ Komm, Liebster, komm heute Abend.'); await A.wait(700); await Ln.say('Das hat er nie gesungen. Die Stelle.');
   await A.wait(600); await Dv.say('Nein. Die nie.'); await A.wait(900); await Ln.say('Dođi, dragi, doveče.'); await A.wait(500); await Ln.say('Das sag ich ihm. Morgen. Am Tor.'); A.note('s3_verse'); A.setFlag('k3.s.lenaVerse');
-  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); }
-  if (L.actor) L.idle(null); A.music('k3_mostar'); }
+  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); } }
 async function talkAussiesBridge(A){ var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), G=A.G;
   await A.menuLoop(function(){ return [
     {t:'What are you doing here?',once:'ab1',go:async function(A){ await J.say('Busking! Bridge, tourists, hat on the ground. Bec’s idea.'); await B.say('Liam’s idea. I just said it out loud.'); await L.say('The guy in the jacket says we need a story first. We don’t have a story. We have a song.'); }},

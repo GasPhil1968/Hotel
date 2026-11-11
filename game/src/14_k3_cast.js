@@ -136,6 +136,10 @@ function gitara(b,x,y,s){ b.ellipse(x+3,y+3,4.5,4,P.w4); b.ellipse(x+6.5,y+0.5,3
   if (s) { b.line(x+5,y+1,x+9,y-1,P.s5); b.px(x+4,y+2,P.s4); } }
 H.k3a_guitar=function(b,x,y){ gitara(b,x,y,0); };
 H.k3a_guitarS=function(b,x,y){ gitara(b,x,y,1); };
+// Aufführung an der Brücke (97_k3_auftritt.js): Bec' Zettel mit dem Liedtext, die Kamera der Touristin, Joshs erste Münze
+H.k3a_sheet=function(b,x,y){ b.rect(x,y-7,6,8,P.s6); b.vl(x+5,y-7,y,P.s5); b.hl(x+1,x+4,y-5,P.b3); b.hl(x+1,x+3,y-3,P.b3); b.hl(x+1,x+4,y-1,P.b3); };
+H.k3a_camera=function(b,x,y){ b.rect(x,y-3,5,3,P.k2); b.px(x+5,y-2,P.m4); b.px(x+5,y-3,P.m2); b.px(x+1,y-4,P.k2); b.px(x+2,y-3,P.m3); };
+H.k3a_coin=function(b,x,y){ b.px(x+2,y-1,P.y5); b.px(x+3,y-1,P.y3); };
 
 // ================================================================ MAJA (28), Herberge „Neretva“: lockerer Knoten mit Stift, dicke schwarze Brille, grüner Strickpullover, Jeans
 var mjS=[
@@ -1214,8 +1218,152 @@ M.defineChar('aussie3',{
     guitarTalk:seq([a3G({nh:[5,-16],hd:'o'}),140],[a3G({nh:[5,-16]}),140]) }
 });
 
+// ---------------------------------------------------------------- die Aufführung an der Brücke (97_k3_auftritt.js): Bewegungen der drei, die Zuhörer
+function addAnims(id,o){ var ch=M.CHARS[id]; Object.keys(o).forEach(function(k){ ch.anims[k]=o[k]; }); }
+// alle: im Takt klatschen (Zuhörer), im Stehen; die Hände treffen sich vor der Brust
+A.clapS=seq([S({nh:[8,-29],fh:[3,-27]}),220],[S({nh:[6,-29],fh:[6,-29]}),130],[S({nh:[8,-29],fh:[3,-27]}),200],[S({nh:[6,-29],fh:[6,-29],hd:'o'}),130]);
+// Josh: klatscht (Takt aus der Szene, siehe K3PERF.J), jubelt, wirft eine Münze
+var J1={open:S({nh:[9,-30],fh:[3,-27]}), hit:S({nh:[7,-29],fh:[6,-29],h:[0,-22],hd:'o'}), up:S({nh:[4,-41],fh:[1,-40],hd:'o'}), up2:S({nh:[6,-39],fh:[2,-41]}),
+  coin:S({nh:[6,-27],it:'k3a_coin'}), toss:S({nh:[12,-33],ln:1}), count:S({nh:[8,-34],hd:'o'})};
+addAnims('aussie1',{ cheer:seq([J1.up,200],[J1.up2,200],[J1.up,200],[J1.up2,200]) });
+// Bec: singt vom Zettel (Kopf leicht gesenkt), wiegt sich; winkt am Ende mit dem Zettel
+var B2=function(o){ return S(Object.assign({nh:[7,-29],fh:[5,-27],it:'k3a_sheet',ho:[0,1]},o||{})); };
+addAnims('aussie2',{
+  sheetSing:seq([B2({hd:'o'}),190],[B2({}),185],[B2({hd:'o',h:[1,-23]}),190],[B2({h:[1,-23]}),185]),
+  sheetHold:seq([B2({}),1500],[B2({hd:'b'}),110],[B2({h:[1,-23]}),900]),
+  sheetWave:seq([S({nh:[5,-41],it:'k3a_sheet',hd:'o'}),220],[S({nh:[8,-38],it:'k3a_sheet'}),220]),
+  // ohne Zettel: singt mit, so weit sie kommt
+  sing:seq([S({hd:'o',ho:[0,-1]}),190],[S({}),185],[S({hd:'o',h:[1,-23]}),190],[S({h:[1,-23]}),185]) });
+// Liam: singt zur Gitarre (Mund oft offen), summt (langsam, Kopf schief), hört auf (Hand auf den Saiten), nickt sitzend zum Dank
+addAnims('aussie3',{
+  guitarSing:seq([a3G({hd:'o'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',hd:'o'}),120],[a3G({ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[0,1],hd:'o'}),120],
+    [a3G({fh:[15,-22],hd:'o'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22]}),120],[a3G({fh:[15,-22],ho:[0,1],hd:'o'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22],ho:[0,1],hd:'o'}),120]),
+  guitarHum:seq([a3G({ho:[1,0]}),300],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[1,0]}),260],[a3G({ho:[1,1],hd:'b'}),320],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[1,1]}),260]),
+  guitarStop:seq([a3G({nh:[5,-16],ho:[0,1]}),1200],[a3G({nh:[5,-16],ho:[0,1],hd:'b'}),110]),
+  guitarBow:seq([a3G({nh:[5,-16]}),120],[a3G({nh:[5,-16],ln:2,ho:[1,1]}),200],[a3G({nh:[5,-16],ln:3,ho:[1,2],hd:'b'}),600],[a3G({nh:[5,-16],ln:1}),160],[a3G({nh:[5,-16]}),200]) });
+M.K3PERF_POSES={J:J1};
+
+// die Touristin: gelbe Regenjacke, kurzes dunkles Haar, Jeans, rote Turnschuhe, Kamera am Riemen
+var tu1S=[
+"............",
+"....kkkkk...",
+"...kHHHHHk..",
+"..kHHHHHHHk.",
+"..kHHHHHHHHk",
+".kHHHHhSSSSk",
+".kHHHhSSSeSk",
+".kHHtSSSSSSSk",
+".kHHtSSrSSk.",
+".kHHktSSmk..",
+"..kk.ktSk...",
+".....kkk....",
+"....kttk....",
+"....ktsk...."];
+var tu1F=[
+"...........",
+"...kkkkk...",
+"..kHHHHHk..",
+".kHHHHHHHk.",
+"kHHHHHHHHHk",
+"kHHSSSSSHHk",
+"kHSeSSSeSHk",
+"kHrSSStSrHk",
+"kHSSSSSSSHk",
+".kHSSmSSHk.",
+"..ktSSStk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+var tu1B=[
+"...........",
+"...kkkkk...",
+"..kHHHHHk..",
+".kHHHHHHHk.",
+"kHHHHHHHHHk",
+"kHHHHhHHHHk",
+"kHHHhHhHHHk",
+"kHHHHhHHHHk",
+"kHHHHHHHHHk",
+".kHHHhHHHk.",
+"..kHHHHHk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+M.defineChar('k3tour1',{
+  legend:L({H:P.h2,h:P.h3,S:P.p4,s:P.p3,t:P.p2,m:P.d3,r:P.d4}),
+  heads:{S:HS(tu1S),F:HS(tu1F),B:{n:tu1B}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
+  torso:{w:11,len:12,col:[P.y4,P.y5,P.y3],collar:[P.y3,P.y3],side:8},
+  coat:{c:[P.y4,P.y5,P.y3],hem:6,w:6},
+  bones:[10,10,7,7], hipY:22, shoulder:4,
+  cols:{trou:[P.b2,P.b3,P.b1],trouF:[P.b1,P.b2,P.b0],sleeve:[P.y4,P.y5,P.y3],sleeveF:[P.y3,P.y4,P.y2],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.r3},
+  // Kamera am Riemen, solange sie sie nicht vor das Auge hält
+  post:function(b,p,X,Y,hx,hy){ if (p.it==='k3a_camera') return; var t=Y+hy-11;
+    if (p.v==='F'){ b.line(X+hx-4,t+1,X+hx+2,t+7,P.k2); b.rect(X+hx+1,t+7,4,3,P.k2); b.px(X+hx+2,t+8,P.m3); }
+    else if (p.v==='S' && !p.sit){ b.rect(X+hx+1,Y+hy-5,4,3,P.k2); b.px(X+hx+5,Y+hy-4,P.m4); } },
+  anims:{ photo:seq([S({nh:[5,-36],fh:[3,-35],it:'k3a_camera'}),700],[S({nh:[5,-36],fh:[3,-35],it:'k3a_camera',hd:'b'}),110],[S({nh:[5,-36],fh:[3,-35],it:'k3a_camera'}),500]),
+    camUp:seq([S({nh:[5,-36],fh:[3,-35],it:'k3a_camera'}),99999]) }
+});
+// der alte Mann aus Mostar: graue Schiebermütze, grauer Schnurrbart, braunes Sakko, leicht gebeugt; er kennt das Lied
+var tu2S=[
+"............",
+"............",
+"...kkkkkk...",
+"..kcCccccck.",
+".kccccccccckk",
+".kHHHhSSSSSk.",
+".kHHhSSSSeSk.",
+".kHHtSSSSSSSk",
+".kHHtSSbbbSk.",
+".kHkktSSmSk..",
+"..kk.ktSSk...",
+".....kkkk....",
+"....kttk.....",
+"....ktsk....."];
+var tu2F=[
+"...........",
+"...........",
+"..kkkkkkk..",
+".kcCccccck.",
+"kccccccccck",
+"kHSSSSSSSHk",
+"kHSeSSSeSHk",
+"kHSSSStSSHk",
+"ktSbbbbbStk",
+".kSSSmSSSk.",
+"..ktSSStk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+var tu2B=[
+"...........",
+"...........",
+"..kkkkkkk..",
+".kcCccccck.",
+"kccccccccck",
+"kHHHHHHHHHk",
+"kHHHhHHHHHk",
+"kHHHHHHHHHk",
+"ktHHHHHHHtk",
+".kHHHHHHHk.",
+"..ktttttk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+M.defineChar('k3tour2',{
+  legend:L({c:P.m2,C:P.m3,H:P.m4,h:P.m3,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m4}),
+  heads:{S:HS(tu2S),F:HS(tu2F),B:{n:tu2B}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
+  torso:{w:12,len:13,col:[P.w2,P.w3,P.w1],buttons:P.w1,collar:[P.w1,P.w1],side:8,hunch:1},
+  coat:{c:[P.w2,P.w3,P.w1],hem:3,w:6},
+  cols:{trou:[P.m1,P.m2,P.m0],trouF:[P.m0,P.m1,P.k1],sleeve:[P.w2,P.w3,P.w1],sleeveF:[P.w1,P.w2,P.w0],hand:[P.q4,P.q3],handF:[P.q3,P.q2],shoe:P.w1},
+  anims:{
+    // singt mit, die Hand auf der Brust
+    singAlong:seq([S({nh:[5,-31],hd:'o'}),420],[S({nh:[5,-31]}),300],[S({nh:[5,-31],hd:'o',ho:[0,-1]}),420],[S({nh:[5,-31]}),300]),
+    // wischt sich über die Augen
+    wipeEye:seq([S({}),80],[S({nh:[5,-38],ho:[0,1],hd:'b'}),900],[S({nh:[4,-30]}),160],[S({}),200]) }
+});
+
 // ---------------------------------------------------------------- alle post()-Haken mit vollständiger Pose aufrufen
-var IDS=['maja','dino','taxist','vlado','kata','zlata','kioskm','haendler','kasir','susjeda','komsija','aussie1','aussie2','aussie3'];
+var IDS=['maja','dino','taxist','vlado','kata','zlata','kioskm','haendler','kasir','susjeda','komsija','aussie1','aussie2','aussie3','k3tour1'];
 IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.post=function(b,p,X,Y,hx,hy){ f(b,full(ch,p,hx,hy),X,Y,hx,hy); }; });
 
 // ---------------------------------------------------------------- Kontaktbild der neuen Animationen (wann die Handlung „passiert“, für npc.anim(name,hook)); vorhandene bleiben
@@ -1225,7 +1373,7 @@ IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
 (function(){ var c={ maja:P.g6, dino:P.r5, taxist:P.w6, vlado:P.n5, kata:P.e5, zlata:P.b4, kioskm:P.t5, haendler:P.y4, kasir:P.c5, susjeda:P.g6, komsija:P.e5,
-  aussie1:P.t5, aussie2:P.b4, aussie3:P.y5 };
+  aussie1:P.t5, aussie2:P.b4, aussie3:P.y5, k3tour1:P.y4, k3tour2:P.m4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);

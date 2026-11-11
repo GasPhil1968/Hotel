@@ -31,7 +31,9 @@ Allgemein: Mostar, Ende November 2011. Feuchtes, mildes bis kaltes Wetter: Jacke
 | `kasir` | Kassierer an der Koski-Moschee, um 30 | Daunenjacke, Wollmütze, Ticketblock | (sitzt im Häuschen) |
 | `susjeda` | Marktnachbarin von Zlata, um 60 | Kopftuch (grün), dicker Mantel, Fingerhandschuhe | `sell` |
 | `komsija` | Nachbar in Skela mit Hund, um 55 | Arbeitsjacke, Stirnlampe; der Hund (klein, gelb) läuft neben ihm (darf eine eigene kleine Figur `pas` sein oder als Teil von `komsija` gezeichnet werden) | `walk`, `stand` |
-| `aussie1`, `aussie2`, `aussie3` | Rucksackreisende aus Australien, um 22 | Funktionsjacken (orange, blau), Mützen, einer mit Gitarre (`aussie3`) | `sit`, `guitar` (`aussie3`, sitzend, spielt) |
+| `aussie1`, `aussie2`, `aussie3` | Rucksackreisende aus Australien, um 22 | Funktionsjacken (orange, blau), Mützen, einer mit Gitarre (`aussie3`) | `sit`, `guitar` (`aussie3`, sitzend, spielt); Aufführung an der Brücke (97_k3_auftritt.js): `cheer` (aussie1, dazu Klatschposen aus der Szene), `sheetSing`, `sheetHold`, `sheetWave`, `sing` (aussie2, mit/ohne Liedzettel), `guitarSing`, `guitarHum`, `guitarStop`, `guitarBow` (aussie3) |
+| `k3tour1` | Touristin an der Alten Brücke (nur bei der Aufführung), um 30 | gelbe Regenjacke, kurzes dunkles Haar, Jeans, rote Turnschuhe, Kamera am Riemen | `photo`, `camUp`, dazu allgemein `clapS` |
+| `k3tour2` | alter Mann aus Mostar (nur bei der Aufführung), um 75 | graue Schiebermütze, grauer Schnurrbart, braunes Sakko, leicht gebeugt; kennt das Lied | `singAlong` (Hand auf der Brust), `wipeEye`, dazu allgemein `clapS` |
 
 ## Geister ohne Gespräch
 

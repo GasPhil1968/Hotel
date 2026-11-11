@@ -64,14 +64,15 @@ M.subsSync=function(){ if (!root) build(); var full=M.subsOn(), F=M.subsFrame?M.
   else { choEl.innerHTML=''; choEl.style.display='none'; }
   // Satz: unten im Bild, über einer offenen Antwortliste; Tippen geht an den Canvas darunter (überspringt wie gewohnt)
   if (sp){ var nm=speakerName(sp), col=speakerColor(sp), voice=!!(sp.opt&&sp.opt.voice);
-    lineEl.innerHTML=(nm?'<span class="who" style="color:'+col+'">'+esc(nm)+': </span>':'')+'<span class="tx'+(voice?' voice':'')+'" style="color:'+col+'">'+esc(T(sp.text))+'</span>'+(waiting?' <span class="more">▸</span>':'');
+    var song=!!(sp.opt&&sp.opt.song), gl=song&&sp.opt.gloss?'<span class="gloss">'+esc(T(sp.opt.gloss))+'</span>':'';   // gesungene Zeile (97_k3_auftritt.js): Noten und darunter die Übersetzung
+    lineEl.innerHTML=(nm?'<span class="who" style="color:'+col+'">'+esc(nm)+': </span>':'')+'<span class="tx'+(voice?' voice':'')+(song?' song':'')+'" style="color:'+col+'">'+(song?'♪ ':'')+esc(T(sp.text))+(song?' ♪':'')+'</span>'+gl+(waiting?' <span class="more">▸</span>':'');
     lineEl.style.left=side+'px'; lineEl.style.width=w+'px'; lineEl.style.display='block';
     lineEl.style.bottom=(d&&g.below?g.H-g.scB+Math.max(4,g.u*2):(d?bot+choEl.getBoundingClientRect().height+Math.max(4,g.u*2):bot))+'px'; }
   else { lineEl.innerHTML=''; lineEl.style.display='none'; } };
 var CSS='#subs{position:fixed;left:0;top:0;z-index:11;pointer-events:none;display:none;--fs:calc(var(--u)*10px);--lh:calc(var(--u)*12px);font-family:"MALA Pixel",ui-monospace,monospace;font-size:var(--fs);line-height:var(--lh);-webkit-font-smoothing:none;color:#e3d9c0;-webkit-user-select:none;user-select:none}'
 +'#subs *{box-sizing:border-box}#subs.on{display:block}#subs.sz1{--fs:calc((var(--u) + 1)*10px);--lh:calc((var(--u) + 1)*12px)}#subs.rd{font-family:"Atkinson Hyperlegible Next","MALA Pixel",system-ui,sans-serif;-webkit-font-smoothing:auto;--lh:calc(var(--fs)*1.3)}'
 +'#subs .sb-line{position:absolute;display:none;background:rgba(8,7,13,.88);border:calc(var(--u)*1px) solid #5a5248;padding:calc(var(--u)*3px) calc(var(--u)*6px)}'
-+'#subs .sb-line .voice{font-style:italic}#subs .sb-line .more{color:#f3c75c;animation:sbblink .8s steps(1) infinite}#subs.rm .sb-line .more{animation:none}@keyframes sbblink{50%{opacity:0}}'
++'#subs .sb-line .voice{font-style:italic}#subs .sb-line .song{font-style:italic}#subs .sb-line .gloss{display:block;color:#a39882}#subs .sb-line .more{color:#f3c75c;animation:sbblink .8s steps(1) infinite}#subs.rm .sb-line .more{animation:none}@keyframes sbblink{50%{opacity:0}}'
 +'#subs .sb-cho{position:absolute;display:none;flex-direction:column;gap:calc(var(--u)*1px);overflow:auto;pointer-events:auto;background:rgba(8,7,13,.96);border:calc(var(--u)*1px) solid #c8bb9f;padding:calc(var(--u)*2px);overscroll-behavior:contain}'
 +'#subs .sb-title{color:#f3c75c;padding:0 calc(var(--u)*3px)}#subs.bl .sb-cho{padding:2px;gap:2px;border-width:2px}#subs.bl .sb-o{min-height:44px}'
 +'#subs .sb-o{appearance:none;border:0;background:transparent;color:#e3d9c0;font:inherit;text-align:left;display:flex;gap:calc(var(--u)*4px);align-items:center;flex:0 0 auto;min-height:max(44px,calc(var(--u)*16px));padding:calc(var(--u)*1px) calc(var(--u)*4px);cursor:pointer}'

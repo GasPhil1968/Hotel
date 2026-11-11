@@ -263,7 +263,8 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), i;
   // Laptop-Bildschirm flimmert leicht
   var lx=LAPSCR[0]-cam; if (lx>-8 && lx<320 && Math.sin(t*1.7)>0.6) fb.px(lx+2,LAPSCR[1]+2,P.s6);
   if (w==='bura'){ M.scn.buraDebris(fb,t,108,140,cam); } }
-function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return x+v.cam>=CORNER.x1 && y>12; }}); }
+function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return x+v.cam>=CORNER.x1 && y>12; }});
+  if (M.k3PerfFront) M.k3PerfFront(fb,v,'herberge'); }   // Noten über der Terrasse, wenn die Australier singen (97_k3_auftritt.js)
 // Geistersicht: am Geländer ein schwacher Abdruck vieler Hände
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<34;i++){ var hx=CORNER.x1+8+Math.floor(hash(i,1)*(W-CORNER.x1-16))-cam, hy=RAIL.top-1+Math.floor(hash(i,2)*2); if (hx<2||hx>316) continue;
     var a=0.55+0.3*Math.sin(t*0.7+i); if (bayer(hx,hy)>a) continue; var warm=hash(i,6)<0.4, c=warm?((hash(i,3)<0.4)?P.v5:P.v3):((hash(i,3)<0.3)?P.x5:P.x3);

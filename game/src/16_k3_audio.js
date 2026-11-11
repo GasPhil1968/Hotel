@@ -328,7 +328,12 @@ var SFX3={
   keyDrop:function(t){ var S=lvl(1.6); [[0,1],[0.1,0.45],[0.16,0.2]].forEach(function(b){ var ti=t+b[0];
       [3150,4720,6180,2400].forEach(function(f,i){ T('sine',f*rnd(0.99,1.01),ti,0.12-i*0.015,0.022*b[1]/(1+i*0.5),S); }); Nz(ti,0.01,0.05*b[1],'highpass',3500,1,S); });
     Nz(t+0.02,0.03,0.05,'bandpass',800,3,S); T('sine',720,t+0.02,0.04,0.02,S); },
-  smsK3:function(){ M.sfx('sms'); }
+  smsK3:function(){ M.sfx('sms'); },
+  // Aufführung an der Brücke (97_k3_auftritt.js): ein Klatscher (Josh, auf 2 und 4), Applaus von vier, fünf Leuten, die Verschlüsse des Gitarrenkoffers
+  k3clap:function(t){ var S=lvl(1.3); Nz(t,0.028,0.15,'bandpass',1500,1.2,S); Nz(t+0.004,0.02,0.06,'highpass',2600,0.8,S); },
+  k3applause:function(t){ var S=lvl(1.1); for (var p=0;p<5;p++){ var pn=K.pan(-0.6+p*0.3,S), f=rnd(1100,2100), n=8+Math.floor(Math.random()*5);
+      for (var i=0;i<n;i++){ var ti=t+p*0.06+i*rnd(0.16,0.24); Nz(ti,0.026,0.11*(1-i/(n+3)),'bandpass',f*rnd(0.92,1.08),1.1,pn); } } },
+  k3latch:function(t){ var S=lvl(1.6); [0,0.17].forEach(function(o){ Nz(t+o,0.012,0.1,'highpass',3000,1,S); T('sine',1900,t+o,0.03,0.02,S); }); Nz(t+0.34,0.14,0.04,'lowpass',500,0.8,S); }
 };
 M.addSfx(SFX3);
 

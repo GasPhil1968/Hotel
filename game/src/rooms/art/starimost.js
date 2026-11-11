@@ -379,6 +379,7 @@ function parapetLayer(x0,x1,base,tod,w){ var L=M.layer(x0,30,x1-x0,84,base), wr=
 function layers(S,GS,tod){ var w=weaOf(GS), out=[];
   out.push(parapetLayer(RAMP.x0,DK.x0,SPRINGER[1]-2,tod,w), parapetLayer(DK.x0,DK.x1+1,SPRINGER[1]-1,tod,w));
   LAMPS.forEach(function(l){ var L=M.layer(l.x-3,l.base-l.h-3,8,l.h+4,l.base), wr=M.lw(L); lampPost(wr,l); finishL(L,tod,w); if (tod!=='day') lampGlass(wr,l); out.push(L); });
+  if (M.k3PerfLayer) out.push(M.k3PerfLayer);   // der offene Gitarrenkoffer der Australier (97_k3_auftritt.js), nach Tiefe einsortiert
   return out; }
 
 // ---------------------------------------------------------------- Bewegung: Wasser, Strudel, Gischt, Möwen, Laternen, Handtuch im Wind
@@ -398,7 +399,8 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), x, y, tin
   if (w==='bura'){ var hx=HUT.x0+4-cam; if (hx>-8 && hx<322) for (var j=0;j<6;j++) for (var k2=0;k2<5;k2++){ var px=hx+k2+rd(Math.sin(t*9+k2*0.8)*k2*0.4), py=75+j+(k2>2?rd(Math.sin(t*11+j)*0.6):0); if (px>=0&&px<320) fb.d[py*320+px]=(k2===0)?P.r4:((j===2)?P.s6:P.r3); } } }
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod;
   if (w==='rain') M.rain(fb,v.t,{n:90,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,slant:0.25});
-  if (w==='bura') M.scn.buraDebris(fb,v.t,108,140,v.cam); }
+  if (w==='bura') M.scn.buraDebris(fb,v.t,108,140,v.cam);
+  if (M.k3PerfFront) M.k3PerfFront(fb,v,'starimost'); }   // Noten, Münzen, Blitz der Aufführung
 // Geistersicht: Maske der kalten Pfützen. Sie hängt nur vom Pflaster ab, nicht von der Zeit, und wird nach jedem Neuzeichnen des Hintergrunds einmal berechnet
 // (vorher lief das Rauschen mit vier Oktaven in jedem Bild für jedes Pflasterpixel).
 var PUDM=null;

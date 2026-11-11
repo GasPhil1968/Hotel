@@ -30,12 +30,12 @@ Nicht geändert: Die neutralen Beschreibungen bleiben verständlich und nennen, 
 
 ### S.2 Ergebnisse auf dem neuen Build
 
-Alle Ergebnisse gelten für denselben Build: Stempel „11.11.2026 · 9b12c2“, `web/index.html` sha256 `35fbb71d1471…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11/` und im Prüfpaket (S.3).
+Alle Ergebnisse gelten für denselben Build (mit der animierten Aufführung aus S.4): Stempel „11.11.2026 · a9bf60“, `web/index.html` sha256 `da5aedf5889f…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11_auftritt/` und im Prüfpaket (S.3); der Lauf vor S.4 steht in `qa/protokolle/k3_2026-11-11/`.
 
 | Art | Werkzeug | Ergebnis |
 |---|---|---|
 | Ganzer Hauptweg, neues Spiel bis zum Abspann | `node game/tools/walkthrough3.js` | 131 Schritte, keine JS-Fehler |
-| Gezielte Tests Kapitel 1–5, davon BUG-025 bis BUG-030 für Kapitel 3 | `node qa/regress/run.js` | 30/30 |
+| Gezielte Tests Kapitel 1–5, davon BUG-025 bis BUG-031 für Kapitel 3 | `node qa/regress/run.js` | 31/31 |
 | Echte Maus und echter Finger (Chromium, Desktop und iPad-Größe) | `node qa/ui/k3_revision.js` | 40/40 Prüfpunkte |
 | Hinweise: Stufe 4 an allen Ständen der Musterlösung und an 22 abweichenden Ständen | `node qa/hints/hintprobe.js --dumps …`, `--varianten` | ohne Befund: 255 + 44 Themen-Stände bestanden, 62 + 1 übersprungen (dieselben Gründe wie in R.8; der Fotovergleich wird mit „Hier stand er.“ ausgeführt) |
 | Menschliche Spielwirkung, Safari/iOS-Gerät, Ton, Spielzeit | – | **nicht geprüft** |
@@ -43,6 +43,21 @@ Alle Ergebnisse gelten für denselben Build: Stempel „11.11.2026 · 9b12c2“,
 ### S.3 Prüfpaket
 
 Die Netlify-ZIP enthält nur das Spiel. Damit die Testzahlen nachprüfbar sind, gibt es daneben `dist/Die_Stillen_Pruefpaket_K3.zip`: derselbe `web/index.html`, die Testwerkzeuge (`qa/regress`, `qa/hints`, `qa/ui`, `qa/vmdriver.js`, `game/tools`), dieser Bericht, `LOESUNG3.md`, `HINWEISE.md`, die Protokolle dieses Laufs und eine Anleitung (`PRUEFPAKET_LIESMICH.txt`). Regressionstests und Hinweisprobe laufen mit Node.js allein; Musterdurchlauf und Bedienprüfung brauchen zusätzlich Playwright mit Chromium.
+
+### S.4 Die Aufführung der Australier als Szene (Wunsch des Autors)
+
+Bisher stand die Aufführung an der Brücke in drei Erzählsätzen. Jetzt ist sie eine Szene (`game/src/97_k3_auftritt.js`, aufgerufen aus `rooms/starimost.js`). Video aus dem Spiel, mit Spielton: `design/k3_revision/auftritt_bruecke.mp4` (73 s).
+
+- **Aufbau:** Die Kamera fährt an den Brückenkopf, Marko tritt zurück, Lena und Davor kommen näher. Josh klappt Liams Gitarrenkoffer auf dem Pflaster auf, wirft die erste Münze hinein („Seed money.“) und zählt ein.
+- **Das Lied** „Kad ja pođoh na Bembašu“ (Volkslied, gemeinfrei; die Musik gab es schon): Liam singt zur Gitarre, Bec vom Zettel, Josh klatscht auf 2 und 4 (Bild und Klatschgeräusch aus derselben Schleife). Die Zeilen stehen im Original im Sprechkasten, mit kleinen Noten und der deutschen Übersetzung darunter. Noten steigen auf, gelb von Liam, weiß von Bec.
+- **Zuhörer:** Eine Touristin bleibt stehen und fotografiert (Blitz), ein alter Mann aus Mostar singt die Zeile mit dem Fenster mit (graue Noten) und wischt sich am Ende über die Augen. Münzen fliegen in den Koffer.
+- **Die Familie:** Lena senkt das Handy. An der Fensterzeile erkennt sie das Summen ihres Großvaters, Davor sagt, wo Mate immer aufgehört hat – und gleich danach hört die Familie zum ersten Mal den Rest des Lieds. Davor sieht beim Fenster weg und danach wieder hin.
+- **Schluss:** letzter Schlag, ein Atemzug Stille, Applaus (Zuhörer, Lena, Dino), Münzen, Liam und Josh verbeugen sich, Bec schwenkt den Zettel, „Thank you, Mostar!“. Der offene Koffer bleibt danach liegen, solange sie am Samstag spielen.
+- **Ohne Text:** Liam kommt bis zur Fensterzeile („samo moja mila draga… na… na…“), summt, hört auf – wie Mate am Telefon. Die Zuhörer gehen, eine Münze aus Mitleid. **Wiederholung mit Ende** (nachdem Marko den Text aufgeschrieben hat): kein zweites Wiedererkennen, die Familie hört das Ende.
+- **Samstagnacht in der Herberge:** zwei gesungene Zeilen mit Noten über der Terrasse statt eines Erzählsatzes.
+- **Neu dafür:** zwei Zuhörerfiguren (`k3tour1`, `k3tour2`, eingetragen in `game/CAST3.md`), Bewegungen der drei Musiker, Liedzettel, Kamera, Münze, Gitarrenkoffer, drei Klangeffekte (Klatschen, Applaus, Kofferverschlüsse), gesungene Zeilen im Sprechkasten und in der Untertitelschicht. Liams Porträt trägt jetzt wie seine Figur eine violette Jacke (vorher grün).
+- **Unverändert:** Schalter und Notizen (`b3_hum`, `s3_verse`, `k3.s.lenaVerse`) und alle Sätze der Familie. Die Aufführung bleibt freiwillig.
+- **Geprüft:** BUG-031 (mit und ohne Text, Wiederholung, Laden mitten in der Szene, Herberge; Reihenfolge der Zeilen, Aufräumen danach); BUG-023 und BUG-030 rufen die Aufführung ebenfalls auf.
 
 ---
 

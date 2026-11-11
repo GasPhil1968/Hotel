@@ -316,6 +316,9 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
 function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;   // auch am Telefon: die Person am anderen Ende mit Brustbild
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
+// kleine Note für gesungene Zeilen: k 0 Achtel, 1 zwei Achtel mit Balken
+var SONG_NOTE=[['..##.','..#.#','..#..','###..','###..'],['.####','.#..#','.#..#','##.##','##.##']];
+function songNote(x,y,col,k){ SONG_NOTE[k].forEach(function(r,j){ for (var i=0;i<r.length;i++) if (r[i]==='#') fb.px(x+i,y+j,col); }); }
 function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
   if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me;
@@ -323,13 +326,15 @@ function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==u
       pick(a.id==='marko'||a.id==='mala'); if (!other) pick(false); }
     right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
   else if (o.phone){ var mk=E.ACT.marko; right=!(mk && E.actorShown(mk) && (mk.x-E.camX)>W/2); }   // am Telefon: gegenüber von Marko
-  var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
-  var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
+  var px=right?W-4-PW:4, lh=10, song=!!o.song, tw=W-PW-30-(song?12:0), lines=M.wrap(sp.text,tw), gls=(song&&o.gloss)?M.wrap(o.gloss,tw):[], bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+(lines.length+gls.length)*lh+9;
+  var bw=0; lines.concat(gls).forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14+(song?12:0)); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
   drawBust(pr.ch,px,4,variant,right); if (noText) return;
   var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
   fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
-  lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
+  // gesungene Zeile (97_k3_auftritt.js): zwei kleine Noten wippen am Rand, darunter gedämpft die Übersetzung
+  var tx0=bx0+7+(song?6:0); lines.forEach(function(l,i){ M.text(fb,l,tx0,by0+5+i*lh,col); });
+  if (song){ var nb=Math.floor(E.gt()/375)%2; songNote(bx0+3,by0+5+nb,col,0); songNote(bx1-9,by0+6-nb,col,1); gls.forEach(function(l,i){ M.text(fb,l,tx0,by0+5+(lines.length+i)*lh,P.s3); }); }
   if (o.phone) M.text(fb,'☎',right?bx0+2:bx1-10,by1-1,frame);   // Hörer-Zeichen an der Unterkante: die Stimme kommt aus dem Telefon
   if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var ix=bx1-6, iy=by1-6; for (var t=0;t<3;t++) fb.hl(ix-2+t,ix+2-t,iy+t,frame); } }
 

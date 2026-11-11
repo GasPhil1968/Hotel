@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Prüfpaket Kapitel 3: dasselbe web/index.html wie im Netlify-ZIP, die Testwerkzeuge, Bericht, Musterlösung, Hinweise und die Protokolle
 # des Laufs, auf dem die Zahlen im Bericht beruhen. Baut NICHT neu (geprüft wird genau die vorhandene Datei).
-#   bash design/tools/package_pruef.sh [protokollordner]     (Standard: qa/protokolle/k3_2026-11-11)
+#   bash design/tools/package_pruef.sh [protokollordner]     (Standard: qa/protokolle/k3_2026-11-11_auftritt)
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-LOGS="${1:-qa/protokolle/k3_2026-11-11}"
+LOGS="${1:-qa/protokolle/k3_2026-11-11_auftritt}"
 OUT=dist/Die_Stillen_Pruefpaket_K3.zip
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 STAMP="$(grep -o 'M.BUILD="[^"]*"' web/index.html | sed 's/M.BUILD="//; s/"$//')"

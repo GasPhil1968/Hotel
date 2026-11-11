@@ -8,13 +8,14 @@
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; }
 var X=M.K3X=M.K3X||{};
 // ---------------------------------------------------------------- N2: das Lied (Markos Übersetzung, in der Reihenfolge der Geschichte)
+// o: die Zeile im Original (Sevdalinka „Kad ja pođoh na Bembašu“, Volkslied, gemeinfrei), gesungen in 97_k3_auftritt.js
 X.SONG=[
-  {id:'water',t:'Als ich hinunterging zum Wasser,',gloss:'So fängt es an. Der Weg zum Wasser.'},
-  {id:'lamb',t:'nahm ich ein weißes Lamm mit mir.',gloss:'Das Lamm nimmt er mit. Warum, sagt das Lied nicht.'},
-  {id:'gates',t:'Alle Mädchen standen an den Toren,',gloss:'Unterwegs die Mädchen. Alle.'},
-  {id:'window',t:'nur meine Liebste am vergitterten Fenster.',gloss:'Nur eine nicht. Sie steht am Fenster.'},
-  {id:'evening',t:'Ich sagte ihr: Guten Abend, Mädchen.',gloss:'Er grüßt. Mehr traut er sich nicht.'},
-  {id:'come',t:'Sie sagte mir: Komm, Liebster, komm heute Abend.',gloss:'Sie sagt: Komm. Da hört das Lied auf.'}];
+  {id:'water',t:'Als ich hinunterging zum Wasser,',gloss:'So fängt es an. Der Weg zum Wasser.',o:'Kad ja pođoh na Bembašu, na Bembašu na vodu,'},
+  {id:'lamb',t:'nahm ich ein weißes Lamm mit mir.',gloss:'Das Lamm nimmt er mit. Warum, sagt das Lied nicht.',o:'ja povedoh bijelo janje, bijelo janje sa sobom.'},
+  {id:'gates',t:'Alle Mädchen standen an den Toren,',gloss:'Unterwegs die Mädchen. Alle.',o:'Sve djevojke Bembašanke na kapiji stajahu,'},
+  {id:'window',t:'nur meine Liebste am vergitterten Fenster.',gloss:'Nur eine nicht. Sie steht am Fenster.',o:'samo moja mila draga na pendžeru stajaše.'},
+  {id:'evening',t:'Ich sagte ihr: Guten Abend, Mädchen.',gloss:'Er grüßt. Mehr traut er sich nicht.',o:'Ja joj rekoh: Dobro veče, dobro veče, djevojče!'},
+  {id:'come',t:'Sie sagte mir: Komm, Liebster, komm heute Abend.',gloss:'Sie sagt: Komm. Da hört das Lied auf.',o:'Ona meni: Dođi, dragi, dođi, dragi, doveče!'}];
 X.SONG_LINE='Dođi, dragi, doveče.';
 var WHY={ water:'Erst geht er zum Wasser. Alles andere passiert unterwegs.', lamb:'Das Lamm nimmt er gleich am Anfang mit. Später hat er keine Hand mehr frei.',
   gates:'Die Mädchen an den Toren sieht er, bevor er seine sieht. Sonst wäre es keine Geschichte.', window:'Erst alle, dann die eine. Das Fenster kommt nach den Toren.',

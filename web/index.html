@@ -2924,6 +2924,9 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
 function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;   // auch am Telefon: die Person am anderen Ende mit Brustbild
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
+// kleine Note für gesungene Zeilen: k 0 Achtel, 1 zwei Achtel mit Balken
+var SONG_NOTE=[['..##.','..#.#','..#..','###..','###..'],['.####','.#..#','.#..#','##.##','##.##']];
+function songNote(x,y,col,k){ SONG_NOTE[k].forEach(function(r,j){ for (var i=0;i<r.length;i++) if (r[i]==='#') fb.px(x+i,y+j,col); }); }
 function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==undefined?o.color:(a&&a.color!==undefined?a.color:(M.CAST_COLORS[pr.ch]!==undefined?M.CAST_COLORS[pr.ch]:P.s6));
   var right=false, me=E.ACT[GS().active], pa=convPartner();
   if (a && E.actorShown(a)){ var other=(a===me)?(pa||null):me;
@@ -2931,13 +2934,15 @@ function drawSpeechBust(sp,pr,noText){ var o=sp.opt||{}, a=pr.a, col=o.color!==u
       pick(a.id==='marko'||a.id==='mala'); if (!other) pick(false); }
     right=other?(a.x>other.x):((a.x-E.camX)>W/2); }
   else if (o.phone){ var mk=E.ACT.marko; right=!(mk && E.actorShown(mk) && (mk.x-E.camX)>W/2); }   // am Telefon: gegenüber von Marko
-  var px=right?W-4-PW:4, lh=10, tw=W-PW-30, lines=M.wrap(sp.text,tw), bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+lines.length*lh+9;
-  var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
+  var px=right?W-4-PW:4, lh=10, song=!!o.song, tw=W-PW-30-(song?12:0), lines=M.wrap(sp.text,tw), gls=(song&&o.gloss)?M.wrap(o.gloss,tw):[], bx0=right?4:PW+10, bx1=right?W-PW-10:W-4, by0=6, by1=by0+(lines.length+gls.length)*lh+9;
+  var bw=0; lines.concat(gls).forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var boxW=Math.min(bx1-bx0,bw+14+(song?12:0)); if (right) bx1=bx0+boxW; else bx1=bx0+boxW;
   var talking=E.gt()-sp.at<Math.min(4500,sp.text.length*55+250), variant=talking?((Math.floor(E.gt()/140)%2)?'o':'n'):idleVariant(0);
   drawBust(pr.ch,px,4,variant,right); if (noText) return;
   var gh=M.PORTRAIT_GHOSTS&&M.PORTRAIT_GHOSTS[pr.ch], frame=pr.ch==='mala'?P.x4:(gh?P.v4:P.s6);
   fb.rect(bx0,by0,bx1-bx0,by1-by0,P.k0); fb.hl(bx0,bx1-1,by0,frame); fb.hl(bx0,bx1-1,by1-1,frame); fb.vl(bx0,by0,by1-1,frame); fb.vl(bx1-1,by0,by1-1,frame);
-  lines.forEach(function(l,i){ M.text(fb,l,bx0+7,by0+5+i*lh,col); });
+  // gesungene Zeile (97_k3_auftritt.js): zwei kleine Noten wippen am Rand, darunter gedämpft die Übersetzung
+  var tx0=bx0+7+(song?6:0); lines.forEach(function(l,i){ M.text(fb,l,tx0,by0+5+i*lh,col); });
+  if (song){ var nb=Math.floor(E.gt()/375)%2; songNote(bx0+3,by0+5+nb,col,0); songNote(bx1-9,by0+6-nb,col,1); gls.forEach(function(l,i){ M.text(fb,l,tx0,by0+5+(lines.length+i)*lh,P.s3); }); }
   if (o.phone) M.text(fb,'☎',right?bx0+2:bx1-10,by1-1,frame);   // Hörer-Zeichen an der Unterkante: die Stimme kommt aus dem Telefon
   if (E.tapText() && E.busy && E.gt()>=sp.until && (Math.floor(E.gt()/400)%2)){ var ix=bx1-6, iy=by1-6; for (var t=0;t<3;t++) fb.hl(ix-2+t,ix+2-t,iy+t,frame); } }
 
@@ -4292,14 +4297,15 @@ M.subsSync=function(){ if (!root) build(); var full=M.subsOn(), F=M.subsFrame?M.
   else { choEl.innerHTML=''; choEl.style.display='none'; }
   // Satz: unten im Bild, über einer offenen Antwortliste; Tippen geht an den Canvas darunter (überspringt wie gewohnt)
   if (sp){ var nm=speakerName(sp), col=speakerColor(sp), voice=!!(sp.opt&&sp.opt.voice);
-    lineEl.innerHTML=(nm?'<span class="who" style="color:'+col+'">'+esc(nm)+': </span>':'')+'<span class="tx'+(voice?' voice':'')+'" style="color:'+col+'">'+esc(T(sp.text))+'</span>'+(waiting?' <span class="more">▸</span>':'');
+    var song=!!(sp.opt&&sp.opt.song), gl=song&&sp.opt.gloss?'<span class="gloss">'+esc(T(sp.opt.gloss))+'</span>':'';   // gesungene Zeile (97_k3_auftritt.js): Noten und darunter die Übersetzung
+    lineEl.innerHTML=(nm?'<span class="who" style="color:'+col+'">'+esc(nm)+': </span>':'')+'<span class="tx'+(voice?' voice':'')+(song?' song':'')+'" style="color:'+col+'">'+(song?'♪ ':'')+esc(T(sp.text))+(song?' ♪':'')+'</span>'+gl+(waiting?' <span class="more">▸</span>':'');
     lineEl.style.left=side+'px'; lineEl.style.width=w+'px'; lineEl.style.display='block';
     lineEl.style.bottom=(d&&g.below?g.H-g.scB+Math.max(4,g.u*2):(d?bot+choEl.getBoundingClientRect().height+Math.max(4,g.u*2):bot))+'px'; }
   else { lineEl.innerHTML=''; lineEl.style.display='none'; } };
 var CSS='#subs{position:fixed;left:0;top:0;z-index:11;pointer-events:none;display:none;--fs:calc(var(--u)*10px);--lh:calc(var(--u)*12px);font-family:"MALA Pixel",ui-monospace,monospace;font-size:var(--fs);line-height:var(--lh);-webkit-font-smoothing:none;color:#e3d9c0;-webkit-user-select:none;user-select:none}'
 +'#subs *{box-sizing:border-box}#subs.on{display:block}#subs.sz1{--fs:calc((var(--u) + 1)*10px);--lh:calc((var(--u) + 1)*12px)}#subs.rd{font-family:"Atkinson Hyperlegible Next","MALA Pixel",system-ui,sans-serif;-webkit-font-smoothing:auto;--lh:calc(var(--fs)*1.3)}'
 +'#subs .sb-line{position:absolute;display:none;background:rgba(8,7,13,.88);border:calc(var(--u)*1px) solid #5a5248;padding:calc(var(--u)*3px) calc(var(--u)*6px)}'
-+'#subs .sb-line .voice{font-style:italic}#subs .sb-line .more{color:#f3c75c;animation:sbblink .8s steps(1) infinite}#subs.rm .sb-line .more{animation:none}@keyframes sbblink{50%{opacity:0}}'
++'#subs .sb-line .voice{font-style:italic}#subs .sb-line .song{font-style:italic}#subs .sb-line .gloss{display:block;color:#a39882}#subs .sb-line .more{color:#f3c75c;animation:sbblink .8s steps(1) infinite}#subs.rm .sb-line .more{animation:none}@keyframes sbblink{50%{opacity:0}}'
 +'#subs .sb-cho{position:absolute;display:none;flex-direction:column;gap:calc(var(--u)*1px);overflow:auto;pointer-events:auto;background:rgba(8,7,13,.96);border:calc(var(--u)*1px) solid #c8bb9f;padding:calc(var(--u)*2px);overscroll-behavior:contain}'
 +'#subs .sb-title{color:#f3c75c;padding:0 calc(var(--u)*3px)}#subs.bl .sb-cho{padding:2px;gap:2px;border-width:2px}#subs.bl .sb-o{min-height:44px}'
 +'#subs .sb-o{appearance:none;border:0;background:transparent;color:#e3d9c0;font:inherit;text-align:left;display:flex;gap:calc(var(--u)*4px);align-items:center;flex:0 0 auto;min-height:max(44px,calc(var(--u)*16px));padding:calc(var(--u)*1px) calc(var(--u)*4px);cursor:pointer}'
@@ -8512,6 +8518,10 @@ function gitara(b,x,y,s){ b.ellipse(x+3,y+3,4.5,4,P.w4); b.ellipse(x+6.5,y+0.5,3
   if (s) { b.line(x+5,y+1,x+9,y-1,P.s5); b.px(x+4,y+2,P.s4); } }
 H.k3a_guitar=function(b,x,y){ gitara(b,x,y,0); };
 H.k3a_guitarS=function(b,x,y){ gitara(b,x,y,1); };
+// Aufführung an der Brücke (97_k3_auftritt.js): Bec' Zettel mit dem Liedtext, die Kamera der Touristin, Joshs erste Münze
+H.k3a_sheet=function(b,x,y){ b.rect(x,y-7,6,8,P.s6); b.vl(x+5,y-7,y,P.s5); b.hl(x+1,x+4,y-5,P.b3); b.hl(x+1,x+3,y-3,P.b3); b.hl(x+1,x+4,y-1,P.b3); };
+H.k3a_camera=function(b,x,y){ b.rect(x,y-3,5,3,P.k2); b.px(x+5,y-2,P.m4); b.px(x+5,y-3,P.m2); b.px(x+1,y-4,P.k2); b.px(x+2,y-3,P.m3); };
+H.k3a_coin=function(b,x,y){ b.px(x+2,y-1,P.y5); b.px(x+3,y-1,P.y3); };
 
 // ================================================================ MAJA (28), Herberge „Neretva“: lockerer Knoten mit Stift, dicke schwarze Brille, grüner Strickpullover, Jeans
 var mjS=[
@@ -9590,8 +9600,152 @@ M.defineChar('aussie3',{
     guitarTalk:seq([a3G({nh:[5,-16],hd:'o'}),140],[a3G({nh:[5,-16]}),140]) }
 });
 
+// ---------------------------------------------------------------- die Aufführung an der Brücke (97_k3_auftritt.js): Bewegungen der drei, die Zuhörer
+function addAnims(id,o){ var ch=M.CHARS[id]; Object.keys(o).forEach(function(k){ ch.anims[k]=o[k]; }); }
+// alle: im Takt klatschen (Zuhörer), im Stehen; die Hände treffen sich vor der Brust
+A.clapS=seq([S({nh:[8,-29],fh:[3,-27]}),220],[S({nh:[6,-29],fh:[6,-29]}),130],[S({nh:[8,-29],fh:[3,-27]}),200],[S({nh:[6,-29],fh:[6,-29],hd:'o'}),130]);
+// Josh: klatscht (Takt aus der Szene, siehe K3PERF.J), jubelt, wirft eine Münze
+var J1={open:S({nh:[9,-30],fh:[3,-27]}), hit:S({nh:[7,-29],fh:[6,-29],h:[0,-22],hd:'o'}), up:S({nh:[4,-41],fh:[1,-40],hd:'o'}), up2:S({nh:[6,-39],fh:[2,-41]}),
+  coin:S({nh:[6,-27],it:'k3a_coin'}), toss:S({nh:[12,-33],ln:1}), count:S({nh:[8,-34],hd:'o'})};
+addAnims('aussie1',{ cheer:seq([J1.up,200],[J1.up2,200],[J1.up,200],[J1.up2,200]) });
+// Bec: singt vom Zettel (Kopf leicht gesenkt), wiegt sich; winkt am Ende mit dem Zettel
+var B2=function(o){ return S(Object.assign({nh:[7,-29],fh:[5,-27],it:'k3a_sheet',ho:[0,1]},o||{})); };
+addAnims('aussie2',{
+  sheetSing:seq([B2({hd:'o'}),190],[B2({}),185],[B2({hd:'o',h:[1,-23]}),190],[B2({h:[1,-23]}),185]),
+  sheetHold:seq([B2({}),1500],[B2({hd:'b'}),110],[B2({h:[1,-23]}),900]),
+  sheetWave:seq([S({nh:[5,-41],it:'k3a_sheet',hd:'o'}),220],[S({nh:[8,-38],it:'k3a_sheet'}),220]),
+  // ohne Zettel: singt mit, so weit sie kommt
+  sing:seq([S({hd:'o',ho:[0,-1]}),190],[S({}),185],[S({hd:'o',h:[1,-23]}),190],[S({h:[1,-23]}),185]) });
+// Liam: singt zur Gitarre (Mund oft offen), summt (langsam, Kopf schief), hört auf (Hand auf den Saiten), nickt sitzend zum Dank
+addAnims('aussie3',{
+  guitarSing:seq([a3G({hd:'o'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',hd:'o'}),120],[a3G({ho:[0,1]}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[0,1],hd:'o'}),120],
+    [a3G({fh:[15,-22],hd:'o'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22]}),120],[a3G({fh:[15,-22],ho:[0,1],hd:'o'}),140],[a3G({nh:[4,-15],it:'k3a_guitarS',fh:[15,-22],ho:[0,1],hd:'o'}),120]),
+  guitarHum:seq([a3G({ho:[1,0]}),300],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[1,0]}),260],[a3G({ho:[1,1],hd:'b'}),320],[a3G({nh:[4,-15],it:'k3a_guitarS',ho:[1,1]}),260]),
+  guitarStop:seq([a3G({nh:[5,-16],ho:[0,1]}),1200],[a3G({nh:[5,-16],ho:[0,1],hd:'b'}),110]),
+  guitarBow:seq([a3G({nh:[5,-16]}),120],[a3G({nh:[5,-16],ln:2,ho:[1,1]}),200],[a3G({nh:[5,-16],ln:3,ho:[1,2],hd:'b'}),600],[a3G({nh:[5,-16],ln:1}),160],[a3G({nh:[5,-16]}),200]) });
+M.K3PERF_POSES={J:J1};
+
+// die Touristin: gelbe Regenjacke, kurzes dunkles Haar, Jeans, rote Turnschuhe, Kamera am Riemen
+var tu1S=[
+"............",
+"....kkkkk...",
+"...kHHHHHk..",
+"..kHHHHHHHk.",
+"..kHHHHHHHHk",
+".kHHHHhSSSSk",
+".kHHHhSSSeSk",
+".kHHtSSSSSSSk",
+".kHHtSSrSSk.",
+".kHHktSSmk..",
+"..kk.ktSk...",
+".....kkk....",
+"....kttk....",
+"....ktsk...."];
+var tu1F=[
+"...........",
+"...kkkkk...",
+"..kHHHHHk..",
+".kHHHHHHHk.",
+"kHHHHHHHHHk",
+"kHHSSSSSHHk",
+"kHSeSSSeSHk",
+"kHrSSStSrHk",
+"kHSSSSSSSHk",
+".kHSSmSSHk.",
+"..ktSSStk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+var tu1B=[
+"...........",
+"...kkkkk...",
+"..kHHHHHk..",
+".kHHHHHHHk.",
+"kHHHHHHHHHk",
+"kHHHHhHHHHk",
+"kHHHhHhHHHk",
+"kHHHHhHHHHk",
+"kHHHHHHHHHk",
+".kHHHhHHHk.",
+"..kHHHHHk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+M.defineChar('k3tour1',{
+  legend:L({H:P.h2,h:P.h3,S:P.p4,s:P.p3,t:P.p2,m:P.d3,r:P.d4}),
+  heads:{S:HS(tu1S),F:HS(tu1F),B:{n:tu1B}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
+  torso:{w:11,len:12,col:[P.y4,P.y5,P.y3],collar:[P.y3,P.y3],side:8},
+  coat:{c:[P.y4,P.y5,P.y3],hem:6,w:6},
+  bones:[10,10,7,7], hipY:22, shoulder:4,
+  cols:{trou:[P.b2,P.b3,P.b1],trouF:[P.b1,P.b2,P.b0],sleeve:[P.y4,P.y5,P.y3],sleeveF:[P.y3,P.y4,P.y2],hand:[P.p4,P.p3],handF:[P.p3,P.p2],shoe:P.r3},
+  // Kamera am Riemen, solange sie sie nicht vor das Auge hält
+  post:function(b,p,X,Y,hx,hy){ if (p.it==='k3a_camera') return; var t=Y+hy-11;
+    if (p.v==='F'){ b.line(X+hx-4,t+1,X+hx+2,t+7,P.k2); b.rect(X+hx+1,t+7,4,3,P.k2); b.px(X+hx+2,t+8,P.m3); }
+    else if (p.v==='S' && !p.sit){ b.rect(X+hx+1,Y+hy-5,4,3,P.k2); b.px(X+hx+5,Y+hy-4,P.m4); } },
+  anims:{ photo:seq([S({nh:[5,-36],fh:[3,-35],it:'k3a_camera'}),700],[S({nh:[5,-36],fh:[3,-35],it:'k3a_camera',hd:'b'}),110],[S({nh:[5,-36],fh:[3,-35],it:'k3a_camera'}),500]),
+    camUp:seq([S({nh:[5,-36],fh:[3,-35],it:'k3a_camera'}),99999]) }
+});
+// der alte Mann aus Mostar: graue Schiebermütze, grauer Schnurrbart, braunes Sakko, leicht gebeugt; er kennt das Lied
+var tu2S=[
+"............",
+"............",
+"...kkkkkk...",
+"..kcCccccck.",
+".kccccccccckk",
+".kHHHhSSSSSk.",
+".kHHhSSSSeSk.",
+".kHHtSSSSSSSk",
+".kHHtSSbbbSk.",
+".kHkktSSmSk..",
+"..kk.ktSSk...",
+".....kkkk....",
+"....kttk.....",
+"....ktsk....."];
+var tu2F=[
+"...........",
+"...........",
+"..kkkkkkk..",
+".kcCccccck.",
+"kccccccccck",
+"kHSSSSSSSHk",
+"kHSeSSSeSHk",
+"kHSSSStSSHk",
+"ktSbbbbbStk",
+".kSSSmSSSk.",
+"..ktSSStk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+var tu2B=[
+"...........",
+"...........",
+"..kkkkkkk..",
+".kcCccccck.",
+"kccccccccck",
+"kHHHHHHHHHk",
+"kHHHhHHHHHk",
+"kHHHHHHHHHk",
+"ktHHHHHHHtk",
+".kHHHHHHHk.",
+"..ktttttk..",
+"...kkkkk...",
+"...ktttk...",
+"...kssk...."];
+M.defineChar('k3tour2',{
+  legend:L({c:P.m2,C:P.m3,H:P.m4,h:P.m3,S:P.q4,s:P.q3,t:P.q2,m:P.q1,b:P.m4}),
+  heads:{S:HS(tu2S),F:HS(tu2F),B:{n:tu2B}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
+  torso:{w:12,len:13,col:[P.w2,P.w3,P.w1],buttons:P.w1,collar:[P.w1,P.w1],side:8,hunch:1},
+  coat:{c:[P.w2,P.w3,P.w1],hem:3,w:6},
+  cols:{trou:[P.m1,P.m2,P.m0],trouF:[P.m0,P.m1,P.k1],sleeve:[P.w2,P.w3,P.w1],sleeveF:[P.w1,P.w2,P.w0],hand:[P.q4,P.q3],handF:[P.q3,P.q2],shoe:P.w1},
+  anims:{
+    // singt mit, die Hand auf der Brust
+    singAlong:seq([S({nh:[5,-31],hd:'o'}),420],[S({nh:[5,-31]}),300],[S({nh:[5,-31],hd:'o',ho:[0,-1]}),420],[S({nh:[5,-31]}),300]),
+    // wischt sich über die Augen
+    wipeEye:seq([S({}),80],[S({nh:[5,-38],ho:[0,1],hd:'b'}),900],[S({nh:[4,-30]}),160],[S({}),200]) }
+});
+
 // ---------------------------------------------------------------- alle post()-Haken mit vollständiger Pose aufrufen
-var IDS=['maja','dino','taxist','vlado','kata','zlata','kioskm','haendler','kasir','susjeda','komsija','aussie1','aussie2','aussie3'];
+var IDS=['maja','dino','taxist','vlado','kata','zlata','kioskm','haendler','kasir','susjeda','komsija','aussie1','aussie2','aussie3','k3tour1'];
 IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.post=function(b,p,X,Y,hx,hy){ f(b,full(ch,p,hx,hy),X,Y,hx,hy); }; });
 
 // ---------------------------------------------------------------- Kontaktbild der neuen Animationen (wann die Handlung „passiert“, für npc.anim(name,hook)); vorhandene bleiben
@@ -9601,7 +9755,7 @@ IDS.forEach(function(id){ var ch=M.CHARS[id], f=ch&&ch.post; if (!f) return; ch.
 
 // ---------------------------------------------------------------- Farben der gesprochenen Sätze
 (function(){ var c={ maja:P.g6, dino:P.r5, taxist:P.w6, vlado:P.n5, kata:P.e5, zlata:P.b4, kioskm:P.t5, haendler:P.y4, kasir:P.c5, susjeda:P.g6, komsija:P.e5,
-  aussie1:P.t5, aussie2:P.b4, aussie3:P.y5 };
+  aussie1:P.t5, aussie2:P.b4, aussie3:P.y5, k3tour1:P.y4, k3tour2:P.m4 };
   Object.keys(c).forEach(function(k){ if (M.CAST_COLORS[k]===undefined) M.CAST_COLORS[k]=c[k]; }); })();
 
 })(M);
@@ -14448,7 +14602,12 @@ var SFX3={
   keyDrop:function(t){ var S=lvl(1.6); [[0,1],[0.1,0.45],[0.16,0.2]].forEach(function(b){ var ti=t+b[0];
       [3150,4720,6180,2400].forEach(function(f,i){ T('sine',f*rnd(0.99,1.01),ti,0.12-i*0.015,0.022*b[1]/(1+i*0.5),S); }); Nz(ti,0.01,0.05*b[1],'highpass',3500,1,S); });
     Nz(t+0.02,0.03,0.05,'bandpass',800,3,S); T('sine',720,t+0.02,0.04,0.02,S); },
-  smsK3:function(){ M.sfx('sms'); }
+  smsK3:function(){ M.sfx('sms'); },
+  // Aufführung an der Brücke (97_k3_auftritt.js): ein Klatscher (Josh, auf 2 und 4), Applaus von vier, fünf Leuten, die Verschlüsse des Gitarrenkoffers
+  k3clap:function(t){ var S=lvl(1.3); Nz(t,0.028,0.15,'bandpass',1500,1.2,S); Nz(t+0.004,0.02,0.06,'highpass',2600,0.8,S); },
+  k3applause:function(t){ var S=lvl(1.1); for (var p=0;p<5;p++){ var pn=K.pan(-0.6+p*0.3,S), f=rnd(1100,2100), n=8+Math.floor(Math.random()*5);
+      for (var i=0;i<n;i++){ var ti=t+p*0.06+i*rnd(0.16,0.24); Nz(ti,0.026,0.11*(1-i/(n+3)),'bandpass',f*rnd(0.92,1.08),1.1,pn); } } },
+  k3latch:function(t){ var S=lvl(1.6); [0,0.17].forEach(function(o){ Nz(t+o,0.012,0.1,'highpass',3000,1,S); T('sine',1900,t+o,0.03,0.02,S); }); Nz(t+0.34,0.14,0.04,'lowpass',500,0.8,S); }
 };
 M.addSfx(SFX3);
 
@@ -16306,12 +16465,13 @@ M.derivePortrait('aussie2','kevin',{ maps:[
 })(M);
 
 /* ---- portraits/aussie3.js ---- */
-/* ===== portraits/aussie3.js — Rucksackreisender aus Australien mit Gitarre (um 22) (Kapitel 3): aus Tomažs Bild – langes braunes Haar, grüne Funktionsjacke ===== */
+/* ===== portraits/aussie3.js — Rucksackreisender aus Australien mit Gitarre (um 22) (Kapitel 3): aus Tomažs Bild – langes braunes Haar,
+   violette Regenjacke wie die Figur (14_k3_cast.js; vorher grün, das passte nicht zur Figur) ===== */
 (function(M){
 'use strict';
 var P=M.P;
 M.derivePortrait('aussie3','tomaz',{ maps:[
-  {r:[0,44,56,20], map:{w2:'g1', w3:'g2', w4:'g3', w5:'g4', l1:'g5'}}
+  {r:[0,44,56,20], map:{w2:'v1', w3:'v2', w4:'v3', w5:'v4', l1:'v5'}}
 ] });
 })(M);
 
@@ -30420,7 +30580,8 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), i;
   // Laptop-Bildschirm flimmert leicht
   var lx=LAPSCR[0]-cam; if (lx>-8 && lx<320 && Math.sin(t*1.7)>0.6) fb.px(lx+2,LAPSCR[1]+2,P.s6);
   if (w==='bura'){ M.scn.buraDebris(fb,t,108,140,cam); } }
-function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return x+v.cam>=CORNER.x1 && y>12; }}); }
+function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return x+v.cam>=CORNER.x1 && y>12; }});
+  if (M.k3PerfFront) M.k3PerfFront(fb,v,'herberge'); }   // Noten über der Terrasse, wenn die Australier singen (97_k3_auftritt.js)
 // Geistersicht: am Geländer ein schwacher Abdruck vieler Hände
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<34;i++){ var hx=CORNER.x1+8+Math.floor(hash(i,1)*(W-CORNER.x1-16))-cam, hy=RAIL.top-1+Math.floor(hash(i,2)*2); if (hx<2||hx>316) continue;
     var a=0.55+0.3*Math.sin(t*0.7+i); if (bayer(hx,hy)>a) continue; var warm=hash(i,6)<0.4, c=warm?((hash(i,3)<0.4)?P.v5:P.v3):((hash(i,3)<0.3)?P.x5:P.x3);
@@ -44163,6 +44324,7 @@ function parapetLayer(x0,x1,base,tod,w){ var L=M.layer(x0,30,x1-x0,84,base), wr=
 function layers(S,GS,tod){ var w=weaOf(GS), out=[];
   out.push(parapetLayer(RAMP.x0,DK.x0,SPRINGER[1]-2,tod,w), parapetLayer(DK.x0,DK.x1+1,SPRINGER[1]-1,tod,w));
   LAMPS.forEach(function(l){ var L=M.layer(l.x-3,l.base-l.h-3,8,l.h+4,l.base), wr=M.lw(L); lampPost(wr,l); finishL(L,tod,w); if (tod!=='day') lampGlass(wr,l); out.push(L); });
+  if (M.k3PerfLayer) out.push(M.k3PerfLayer);   // der offene Gitarrenkoffer der Australier (97_k3_auftritt.js), nach Tiefe einsortiert
   return out; }
 
 // ---------------------------------------------------------------- Bewegung: Wasser, Strudel, Gischt, Möwen, Laternen, Handtuch im Wind
@@ -44182,7 +44344,8 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), x, y, tin
   if (w==='bura'){ var hx=HUT.x0+4-cam; if (hx>-8 && hx<322) for (var j=0;j<6;j++) for (var k2=0;k2<5;k2++){ var px=hx+k2+rd(Math.sin(t*9+k2*0.8)*k2*0.4), py=75+j+(k2>2?rd(Math.sin(t*11+j)*0.6):0); if (px>=0&&px<320) fb.d[py*320+px]=(k2===0)?P.r4:((j===2)?P.s6:P.r3); } } }
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod;
   if (w==='rain') M.rain(fb,v.t,{n:90,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,slant:0.25});
-  if (w==='bura') M.scn.buraDebris(fb,v.t,108,140,v.cam); }
+  if (w==='bura') M.scn.buraDebris(fb,v.t,108,140,v.cam);
+  if (M.k3PerfFront) M.k3PerfFront(fb,v,'starimost'); }   // Noten, Münzen, Blitz der Aufführung
 // Geistersicht: Maske der kalten Pfützen. Sie hängt nur vom Pflaster ab, nicht von der Zeit, und wird nach jedem Neuzeichnen des Hintergrunds einmal berechnet
 // (vorher lief das Rauschen mit vier Oktaven in jedem Bild für jedes Pflasterpixel).
 var PUDM=null;
@@ -53838,7 +54001,7 @@ M.room('herberge',{ name:'Herberge „Neretva“', scape:'k3_herberge',
     if (p==='k3_pro_n' && A.flag('k3.p.talk1') && from!=='zimmer' && A.first('hbN0')){ await A.g('Ich gehe gleich hinunter. Zu den Stufen.'); await A.m('Und ich ins Bett.'); }
     else if (p==='k3_d1_n' && A.flag('k3.d1.father') && A.first('hbN1')){ await A.g('Sie singen immer noch.'); }
     else if (p==='k3_d2_n' && A.flag('k3.s.words') && aussiesHere(G) && A.first('hbN2song')){ A.music('k3_aussie'); A.sfx('guitar'); await A.wait(900);
-      await A.narrate('Die Australier singen das Lied. Mit Bec\' Zettel auf dem Knie, Strophe für Strophe, bis zur letzten Zeile.'); await A.wait(1200);
+      if (M.k3HostelSong) await M.k3HostelSong(A); else await A.narrate('Die Australier singen das Lied. Mit Bec\' Zettel auf dem Knie, Strophe für Strophe, bis zur letzten Zeile.'); await A.wait(800);   // gesungen, mit Noten über der Terrasse (97_k3_auftritt.js)
       await A.g('Jetzt singen sie richtig.'); await A.m('Schade?'); await A.wait(700); await A.g('Nein. Schön richtig.');
       if (A.hasNote('v3_cab')){ await A.wait(900); await A.g('Im Führerhaus habe ich es ihm vorgesungen. Er sagt, falsch.'); await A.wait(400); await A.g('Ich habe nie falsch gesungen.'); } }
     else if (p==='k3_epi' && A.first('hbEpi')){ await A.g('Ganz still. Sogar der Fluss ist leiser.'); } }
@@ -59398,22 +59561,23 @@ async function dinoRule(A){ var D=A.npc('dino'), G=A.G; if (G.flags['k3.s.dinoOk
   var st=DINO_STORY[n]; if (!st){ await D.say('Das ist keine Geschichte. Das ist eine Notiz.'); await A.wait(400); await D.say('Erzähl mir eine, in der einer etwas tut.'); return; }
   await A.narrate('Ich erzähle. '+st[0]); await A.wait(900); await D.say(st[1]); A.setFlag('k3.s.dinoOk'); await A.wait(500);
   await D.say('He, Perth! Spielt. Aber richtig. Und wenn einer von euch springen will: zwanzig Euro.'); await A.npc('aussie1').say('Awesome!'); }
-async function perform(A){ var G=A.G, J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A.npc('davor');
+// Die Aufführung ist eine animierte Szene (97_k3_auftritt.js, M.k3Perform). Hier bleiben Schalter, Notizen und die Sätze der Familie:
+// an der Fensterzeile erkennt Lena das Summen ihres Großvaters, Davor weiß, wo er immer aufgehört hat (family); ohne Text bricht Liam dort ab (missing).
+async function perform(A){ var G=A.G, L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A.npc('davor');
   if (!G.flags['k3.s.dinoOk']) return L.say('The guy with the jacket says no. Something about a story. You speak the language, man, talk to him.');
   if (G.flags['k3.s.perf']) return L.say(G.flags['k3.s.words']?'Again? Sure. Come tonight, that’s the line.':'We stop at the window. That’s all we’ve got.');
   if (G.flags['k3.s.down']) return L.say('Wait for the girl in the pink jacket, man. She’s down by the water. She wanted to hear it.');
-  var words=!!G.flags['k3.s.words']; A.music('k3_aussie'); A.sfx('guitar'); if (L.actor) L.idle('guitar');
-  await A.narrate(words?'Liam spielt. Bec hält den Zettel, und er singt die Strophen in der richtigen Reihenfolge, mit allen Fehlern, die man mit einem fremden Alphabet machen kann. Touristen bleiben stehen.':'Liam spielt. Er singt die ersten Zeilen, die er kennt, bis zu der Stelle mit dem Fenster. Dann summt er, weil er den Text nicht mehr weiß.');
-  await A.wait(1500); await A.narrate('Lena hört auf, aufs Handy zu sehen. Sie hört zu, den Kopf schief.'); await A.wait(800);
-  await Ln.say('Das kenn ich.'); await A.wait(500); await Ln.say('Vom Telefon. Opa hat das gesummt. Wenn er nichts mehr wusste, hat er gesummt.');
-  await A.wait(800); await Dv.say('Immer dasselbe.'); await A.wait(600); await Dv.say('Und immer vor der Stelle aufgehört. Da, wo sie am Fenster steht. Weiter ist er nie gekommen.'); A.note('b3_hum'); A.setFlag('k3.s.perf');
-  if (!words){ await A.wait(900); await Ln.say('Da hört er auch auf? Der mit der Gitarre?'); await A.m('Er kennt den Rest nicht.'); await Ln.say('Und du?'); await A.m('Ich schon. Ich müsste es ihnen aufschreiben.');
-    if (L.actor) L.idle(null); A.music('k3_mostar'); return; }
-  await A.wait(900); A.sfx('strum'); await A.narrate('Liam singt die letzte Strophe. „Dođi, dragi, doveče.“ Dann hört das Lied auf, so wie es aufhört.'); await A.wait(1000);
-  await Ln.say('Was heißt das? Das Letzte. Dođi …'); await A.m('„Dođi, dragi, doveče.“ Komm, Liebster, komm heute Abend.'); await A.wait(700); await Ln.say('Das hat er nie gesungen. Die Stelle.');
+  var words=!!G.flags['k3.s.words'], heard=A.hasNote('b3_hum');
+  var family=async function(A){ await Ln.say('Das kenn ich.'); await A.wait(400); await Ln.say('Vom Telefon. Opa hat das gesummt. Wenn er nichts mehr wusste, hat er gesummt.');
+    await A.wait(600); await Dv.say('Immer dasselbe.'); await A.wait(500); await Dv.say('Und immer vor der Stelle aufgehört. Da, wo sie am Fenster steht. Weiter ist er nie gekommen.'); A.note('b3_hum'); A.setFlag('k3.s.perf'); };
+  var missing=async function(A){ await A.wait(500); await Ln.say('Da hört er auch auf? Der mit der Gitarre?'); await A.m('Er kennt den Rest nicht.'); await Ln.say('Und du?'); await A.m('Ich schon. Ich müsste es ihnen aufschreiben.'); };
+  if (M.k3Perform) await M.k3Perform(A,{words:words,heard:heard,family:family,missing:missing});
+  else { A.music('k3_aussie'); await family(A); A.music('k3_mostar'); }
+  if (!A.flag('k3.s.perf')){ A.note('b3_hum'); A.setFlag('k3.s.perf'); }   // Wiederholung: die Familie kannte das Summen schon
+  if (!words) return;
+  await A.wait(600); await Ln.say('Was heißt das? Das Letzte. Dođi …'); await A.m('„Dođi, dragi, doveče.“ Komm, Liebster, komm heute Abend.'); await A.wait(700); await Ln.say('Das hat er nie gesungen. Die Stelle.');
   await A.wait(600); await Dv.say('Nein. Die nie.'); await A.wait(900); await Ln.say('Dođi, dragi, doveče.'); await A.wait(500); await Ln.say('Das sag ich ihm. Morgen. Am Tor.'); A.note('s3_verse'); A.setFlag('k3.s.lenaVerse');
-  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); }
-  if (L.actor) L.idle(null); A.music('k3_mostar'); }
+  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); } }
 async function talkAussiesBridge(A){ var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), G=A.G;
   await A.menuLoop(function(){ return [
     {t:'What are you doing here?',once:'ab1',go:async function(A){ await J.say('Busking! Bridge, tourists, hat on the ground. Bec’s idea.'); await B.say('Liam’s idea. I just said it out loud.'); await L.say('The guy in the jacket says we need a story first. We don’t have a story. We have a song.'); }},
@@ -70602,6 +70766,176 @@ var IT=M.ITEMS, MI={
 Object.keys(MI).forEach(function(k){ if (IT[k] && IT[k].mala===undefined) IT[k].mala=MI[k]; });
 })(M);
 
+/* ---- 97_k3_auftritt.js ---- */
+/* ===== 97_k3_auftritt.js — Kapitel 3: die Australier spielen das Lied vom Fenster („Kad ja pođoh na Bembašu“) =====
+   Wunsch des Autors nach der zweiten Prüfung: Die Aufführung ist eine Szene, kein Erzähltext.
+   Alte Brücke, Samstag (rooms/starimost.js, perform): Bec klappt Liams Gitarrenkoffer auf, Josh wirft die erste Münze und zählt ein.
+   Liam singt zur Gitarre (Musik k3_aussie, 16_k3_audio.js), Bec vom Zettel, Josh klatscht auf 2 und 4. Zwei Passanten bleiben stehen:
+   eine Touristin fotografiert, ein alter Mann aus Mostar singt die Zeile mit dem Fenster mit. Noten steigen auf, Münzen fliegen in den
+   Koffer. Lena senkt das Handy, Davor sieht beim Fenster weg. An der Fensterzeile erkennt die Familie das Summen des Großvaters; mit dem
+   ganzen Text geht das Lied danach weiter, zum ersten Mal für sie, und endet mit Applaus und Verbeugung. Ohne den Text bricht Liam am
+   Fenster ab wie Mate am Telefon, summt, hört auf, die Zuhörer gehen.
+   Herberge, Samstagnacht (rooms/herberge.js): dieselben Noten über der Terrasse, zwei gesungene Zeilen.
+   Hier ist nur Darstellung: Schalter und Notizen setzt rooms/starimost.js (perform) bzw. rooms/herberge.js. ===== */
+(function(M){
+'use strict';
+var P=M.P, bayer=M.bayer, hash=M.hash;
+var SW=320, SH=144;
+// Zustand der Darstellung (nicht im Spielstand): Noten, Münzen im Flug, Blitz, Gitarrenkoffer
+var PF={ room:null, notes:[], coins:[], flashes:[], src:{}, caseOn:false, caseCoins:0, caseX:284, caseY:131 };
+var CAM=150;   // Blick während der Aufführung: links die Zuhörer, in der Mitte Koffer und Musiker, rechts der Bogen
+M.K3PERF=PF;
+function reset(){ PF.room=null; PF.notes.length=0; PF.coins.length=0; PF.flashes.length=0; PF.src={}; PF.caseOn=false; PF.caseCoins=0;
+  ['starimost','herberge'].forEach(function(id){ var R=M.ROOMS&&M.ROOMS[id]; if (R) delete R.camLock; }); }
+M.RESET_HOOKS=M.RESET_HOOKS||[]; M.RESET_HOOKS.push(reset);
+
+// ---------------------------------------------------------------- Zeichnen
+// Achtelnote und zwei Achtel mit Balken, hell mit dunklem Rand (lesbar vor Himmel, Stein und Wasser)
+var NOTE=[['..##.','..#.#','..#..','###..','###..'],['.####','.#..#','.#..#','##.##','##.##']];
+function on(S,i,j){ return j>=0 && j<S.length && i>=0 && i<S[j].length && S[j][i]==='#'; }
+function px(fb,x,y,c,al){ if (x<0||x>=SW||y<0||y>=SH) return; if (al<1 && bayer(x,y)>=al) return; fb.d[y*SW+x]=c; }
+function drawNote(fb,x,y,k,col,al){ var S=NOTE[k];
+  for (var j=-1;j<=S.length;j++) for (var i=-1;i<=5;i++){ if (on(S,i,j)) continue; if (on(S,i-1,j)||on(S,i+1,j)||on(S,i,j-1)||on(S,i,j+1)) px(fb,x+i,y+j,P.k1,al); }
+  for (var j2=0;j2<S.length;j2++) for (var i2=0;i2<5;i2++) if (on(S,i2,j2)) px(fb,x+i2,y+j2,col,al); }
+// der offene Gitarrenkoffer auf dem Pflaster: Gitarrenform (links der breite Korpus, rechts Hals und Kopf), schwarze Schale, rotes Futter,
+// der Deckel hinten aufgeklappt (man sieht sein Futter); darin die Münzen
+function caseShown(G){ return PF.caseOn || !!(G && G.phase==='k3_d2' && G.flags['k3.s.perf'] && G.flags['k3.s.trip']); }
+var PROF=[3,3.6,4,4,4,3.8,3.4,3,2.6,2.8,3.2,3.3,3.1,2.6,2,1.6,1.5,1.5,1.5,1.5,1.5,1.5,1.6,2.1,2.2,2.2,1.8];   // halbe Höhe je Spalte
+function drawCase(fb,v,S,G){ if (!caseShown(G) || (M.E.room&&M.E.room.id)!=='starimost') return;
+  var n=PF.caseOn?PF.caseCoins:Math.max(PF.caseCoins,6), W=PROF.length, x0=Math.round(PF.caseX-v.cam)-(W>>1), cy=PF.caseY-3, ly=PF.caseY-8;
+  for (var i=0;i<W;i++){ var h=PROF[i], xx=x0+i;
+    // Deckel: flacher, hinten; Rand schwarz, innen dunkelrot
+    var lt=Math.round(ly-h*0.55), lb=Math.round(ly+h*0.35);
+    for (var y=lt;y<=lb;y++) px(fb,xx,y,(y===lt||y===lb||i===0||i===W-1)?P.k1:(y===lt+1?P.k2:P.r2),1);
+    // Schale: Rand schwarz mit hellem Lichtsaum, innen rotes Futter, in der Mitte die Mulde für den Korpus etwas dunkler
+    var t=Math.round(cy-h*0.7), bt=Math.round(cy+h*0.5);
+    for (var y2=t;y2<=bt+1;y2++){ var c;
+      if (y2===t||y2===bt+1||i===0||i===W-1) c=P.k1; else if (y2===t+1||i===1||i===W-2) c=P.m1; else if (y2===bt) c=P.k2; else c=(i<14 && Math.abs(y2-cy)<h*0.35)?P.r2:P.r3;
+      px(fb,xx,y2,c,1); } }
+  px(fb,x0+9,ly+1,P.y4,1); px(fb,x0+17,ly+1,P.y4,1);   // die Verschlüsse
+  for (var k=0;k<n;k++){ var mx=x0+3+Math.floor(hash(k,17)*11), my=cy-1+Math.floor(hash(k,29)*3), gold=hash(k,5)<0.6; px(fb,mx,my,gold?P.y5:P.m4,1); px(fb,mx+1,my,gold?P.y3:P.m3,1); } }
+M.k3CaseShown=caseShown;   // für Tests
+M.k3PerfLayer={draw:drawCase, base:PF.caseY+1};   // nach Tiefe: hinter Marko (y 134), vor Josh (y 118)
+// Noten aus den Quellen, Münzen im Flug, der Blitz der Kamera (über allem in der Szene; starimost.js und herberge.js rufen das in front())
+M.k3PerfFront=function(fb,v,rid){ if (PF.room!==rid) return; var now=v.gt, cam=v.cam, ACT=M.E.ACT;
+  Object.keys(PF.src).forEach(function(k){ var s=PF.src[k], a=ACT[s.actor]; if (!a || !M.E.actorShown(a)) return; if (!s.next || s.next<now-2000) s.next=now;
+    while (s.next<=now){ s.n=(s.n||0)+1; var dir=a.f==='L'?-1:1;
+      PF.notes.push({x:a.x+dir*s.dx+(hash(s.n,3)-0.5)*4, y:a.y-s.dy, t0:s.next, life:s.kind==='hum'?1500:2600, k:hash(s.n,7)<0.35?1:0, col:s.col, hum:s.kind==='hum', dir:hash(s.n,13)<0.5?1:-1});
+      s.next+=s.every*(0.75+hash(s.n,11)*0.5); } });
+  for (var i=PF.notes.length-1;i>=0;i--){ var n=PF.notes[i], age=now-n.t0; if (age<0) continue; if (age>n.life){ PF.notes.splice(i,1); continue; }
+    var u=age/n.life, x=Math.round(n.x+n.dir*age*0.005+Math.sin(age/(n.hum?170:330))*(n.hum?2.5:2)-cam), y=Math.round(n.y-age*(n.hum?0.007:0.013));
+    drawNote(fb,x,y,n.k,n.hum?P.m4:n.col,(1-u*u)*(u<0.08?u/0.08:1)); }
+  for (var c=PF.coins.length-1;c>=0;c--){ var o=PF.coins[c], a2=now-o.t0; if (a2<0) continue; if (a2>o.dur+260){ PF.coins.splice(c,1); continue; }
+    if (a2<=o.dur){ var q=a2/o.dur, cx=Math.round(o.x0+(o.x1-o.x0)*q-cam), cy=Math.round(o.y0+(o.y1-o.y0)*q-o.h*4*q*(1-q)), ph=Math.floor(a2/70)%2;
+      px(fb,cx,cy,P.k1,1); px(fb,cx+1,cy,ph?P.y5:P.y3,1); px(fb,cx,cy-1,ph?P.y3:P.y5,1); px(fb,cx+1,cy-1,P.k1,1); }
+    else { var r=1+Math.round((a2-o.dur)/90), sx=Math.round(o.x1-cam), sy=Math.round(o.y1);   // Funkeln beim Aufkommen
+      [[0,-r],[0,r],[-r,0],[r,0]].forEach(function(d){ px(fb,sx+d[0],sy+d[1],P.l1,1); }); px(fb,sx,sy,P.y5,1); } }
+  for (var f=PF.flashes.length-1;f>=0;f--){ var fl=PF.flashes[f], a3=now-fl.t0; if (a3<0) continue; if (a3>170){ PF.flashes.splice(f,1); continue; }
+    var R=Math.round(6-a3/34), fx=Math.round(fl.x-cam), fy=Math.round(fl.y);
+    for (var yy=-R;yy<=R;yy++) for (var xx=-R;xx<=R;xx++) if (xx*xx+yy*yy<=R*R) px(fb,fx+xx,fy+yy,P.l1,0.85-a3/220);
+    for (var t=R+1;t<R+5;t++){ px(fb,fx+t,fy,P.l1,1); px(fb,fx-t,fy,P.l1,1); px(fb,fx,fy-t,P.l1,1); px(fb,fx,fy+t,P.l1,1); } } };
+
+// ---------------------------------------------------------------- Hilfen für die Szene
+function camClamp(x){ var R=M.E.room; return Math.max(0,Math.min((R.width||320)-SW,Math.round(x))); }
+async function panTo(A,x,ms){ var R=M.E.room, x0=M.E.camX, t0=A.gt, x1=camClamp(x); ms=ms||900; R.camLock=Math.round(x0);
+  for (;;){ var k=Math.min(1,(A.gt-t0)/ms), e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2; R.camLock=Math.round(x0+(x1-x0)*e); if (k>=1) break; await A.wait(16); } }
+function camFree(){ var R=M.E.room; if (R) delete R.camLock; }
+// eine Münze von einer Figur (Hand) in den Koffer werfen; zählt beim Aufkommen
+function toss(A,id){ var a=M.E.ACT[id]; if (!a) return Promise.resolve(); var dir=a.f==='L'?-1:1, dur=620+Math.round(hash(PF.coins.length+PF.caseCoins,3)*160);
+  var o={x0:a.x+dir*8, y0:a.y-28, x1:PF.caseX-8+Math.round(hash(PF.caseCoins,9)*16), y1:PF.caseY-4, t0:A.gt, dur:dur, h:16};
+  PF.coins.push(o); return A.wait(dur).then(function(){ PF.caseCoins++; A.sfx('coin'); }); }
+function flash(A,id){ var a=M.E.ACT[id]; if (!a) return; var dir=a.f==='L'?-1:1; PF.flashes.push({x:a.x+dir*9, y:a.y-37, t0:A.gt}); A.sfx('shutter'); }
+// Josh klatscht auf 2 und 4 (160 Schläge pro Minute: ein Klatscher je 750 ms), Bild und Klang aus derselben Schleife
+function clapLoop(A,J,beat){ var st={on:true}; var Q=M.K3PERF_POSES.J;
+  (async function(){ while (st.on && J.actor){ J.freeze(Q.open); await A.wait(beat*0.8); if (!st.on) break; J.freeze(Q.hit); A.sfx('k3clap'); await A.wait(beat*1.2); }
+    if (J.actor){ J.freeze(null); J.idle(null); } })();
+  return st; }
+async function countIn(A,J){ var Q=M.K3PERF_POSES.J, say=J.say('One, two – one, two, three, four!');
+  for (var i=0;i<4;i++){ J.freeze(Q.hit); A.sfx('k3clap'); await A.wait(140); J.freeze(Q.count); await A.wait(235); }
+  await say; J.freeze(null); }
+function sing(A,L,i,words){ var S=M.K3X.SONG[i]; return L.say(S.o,{song:true,gloss:S.t}); }
+function noteSrc(id,actor,o){ PF.src[id]=Object.assign({actor:actor,dx:6,dy:26,every:560,col:P.y5,kind:'play'},o||{}); }
+
+// ---------------------------------------------------------------- Alte Brücke: die Aufführung
+// o.words: Bec hat den Text (alle sechs Zeilen); o.heard: die Familie kennt das Summen schon (Wiederholung mit dem Ende)
+// o.family(A): Lenas und Davors Wiedererkennen an der Fensterzeile (Notiz und Schalter setzt starimost.js); o.missing(A): ohne Text, nach dem Abbruch
+M.k3Perform=async function(A,o){ o=o||{}; var G=A.G, words=!!o.words, beat=375;
+  var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A.npc('davor'), Dn=A.npc('dino');
+  reset(); PF.room='starimost'; var tours=[];
+  try{
+    // Bühne: der Blick auf den Brückenkopf, Marko tritt zurück, Lena und Davor kommen näher
+    var moves=[panTo(A,CAM,1000)];
+    if (A.marko) moves.push(A.walkM(266,134).then(function(){ return A.faceM('R'); }));
+    if (A.malaHere && A.malaHere() && A.mala) moves.push(A.walkG(204,135).then(function(){ return A.faceG('R'); }));
+    if (Ln.actor) moves.push(Ln.walk(235,127).then(function(){ return Ln.face('R'); }));
+    if (Dv.actor) moves.push(Dv.walk(221,120).then(function(){ return Dv.face('R'); }));
+    if (B.actor && words) B.idle('sheetHold');
+    await Promise.all(moves);
+    // Josh klappt den Gitarrenkoffer auf dem Pflaster auf und wirft die erste Münze hinein
+    if (J.actor){ await J.walk(PF.caseX+2,PF.caseY-6); await J.face('L'); await J.anim('pickup'); }
+    PF.caseOn=true; A.sfx('k3latch'); await A.wait(260);
+    if (J.actor){ await J.walk(292,118); await J.face('L'); J.freeze(M.K3PERF_POSES.J.coin); await A.wait(380); J.freeze(M.K3PERF_POSES.J.toss); var t0=toss(A,'aussie1'); await A.wait(260); J.freeze(null); await J.say('Seed money.'); await t0; }
+    await countIn(A,J);
+    // das Lied
+    A.music('k3_aussie'); L.idle('guitarSing'); if (B.actor) B.idle(words?'sheetSing':'sing'); var clap=clapLoop(A,J,beat);
+    noteSrc('liam','aussie3',{dx:7,dy:24,every:520,col:P.y5}); noteSrc('bec','aussie2',{dx:4,dy:43,every:980,col:P.s6});
+    var T1=null, T2=null;
+    for (var i=0;i<6;i++){
+      if (i===0){   // zwei Passanten bleiben stehen
+        T1=A.spawn({id:'k3tour1',ch:'k3tour1',x:camClamp(CAM)-8,y:128,f:'R',name:'Touristin',speechY:46}); T2=A.spawn({id:'k3tour2',ch:'k3tour2',x:camClamp(CAM)-14,y:119,f:'R',name:'Alter Mann',speechY:46});
+        tours.push('k3tour1','k3tour2'); T1.walk(254,128).then(function(){ T1.face('R'); }); A.wait(700).then(function(){ return T2.walk(248,117); }).then(function(){ T2.face('R'); }); }
+      if (i===1 && Ln.actor){ A.wait(600).then(function(){ Ln.idle(null); Ln.face('R'); }); }   // Lena senkt das Handy
+      if (i===2 && T1){ (async function(){ await A.wait(700); T1.freeze({v:'S',h:[0,-23],nf:[1,0,'f'],ff:[-2,0,'f'],nh:[5,-36],fh:[3,-35],it:'k3a_camera'}); await A.wait(450); flash(A,'k3tour1'); await A.wait(600); T1.freeze(null); })(); }
+      if (i===3){   // das Fenster: der alte Mann singt mit, Davor sieht weg
+        if (T2){ T2.idle('singAlong'); noteSrc('alt','k3tour2',{dx:4,dy:42,every:700,col:P.m4}); }
+        if (Dv.actor) A.wait(500).then(function(){ Dv.face('L'); });
+        if (!words){   // ohne den Text: bis zum Fenster, dann summen, dann nichts
+          await L.say('samo moja mila draga… na… na…',{song:true,gloss:'nur meine Liebste am …'});
+          clap.on=false; L.idle('guitarHum'); PF.src.liam.kind='hum'; PF.src.liam.every=760; delete PF.src.bec; if (B.actor) B.idle(null);
+          if (T2){ T2.idle(null); delete PF.src.alt; }
+          await L.say('Hm-hm-hm, hm-hm … hmm.',{song:true}); A.music(null); L.idle('guitarStop'); PF.src={};
+          await A.wait(900);
+          if (T2){ await T2.anim('shrug'); }
+          if (T1){ A.wait(300).then(function(){ return toss(A,'k3tour1'); }); }
+          await A.wait(500); await J.say('That’s all we’ve got.');
+          if (T1) T1.walk(camClamp(CAM)-20,129); if (T2) A.wait(400).then(function(){ return T2.walk(camClamp(CAM)-24,120); });
+          await A.wait(900); if (o.family) await o.family(A);
+          if (Dv.actor) Dv.face('R');
+          if (o.missing) await o.missing(A);
+          return; } }
+      await sing(A,L,i,words);
+      if (i===3){   // Lena erkennt das Summen ihres Großvaters, Davor erzählt, wo Mate immer aufgehört hat; das Lied läuft leise weiter
+        if (T2){ T2.idle(null); delete PF.src.alt; }
+        if (!o.heard && o.family){ L.idle('guitar'); delete PF.src.bec; if (B.actor) B.idle('sheetHold'); PF.src.liam.every=900; await o.family(A); L.idle('guitarSing'); if (B.actor) B.idle('sheetSing'); noteSrc('bec','aussie2',{dx:4,dy:43,every:980,col:P.s6}); PF.src.liam.every=520; }
+        if (Dv.actor) Dv.face('R'); }
+      if (i===4 && T1){ A.wait(900).then(function(){ return toss(A,'k3tour1'); }); }
+      if (i===5 && T2){ A.wait(700).then(function(){ return T2.anim('wipeEye'); }); } }
+    // Schluss: der letzte Schlag, einen Atemzug Stille, Applaus, Münzen, Verbeugung
+    clap.on=false; PF.src={}; A.music(null); A.sfx('strum'); L.idle('guitarStop'); if (B.actor) B.idle('sheetHold');
+    await A.wait(800);
+    A.sfx('k3applause'); [T1,T2,Ln,Dn].forEach(function(h){ if (h && h.actor) h.idle('clapS'); });
+    if (T1) A.wait(250).then(function(){ return toss(A,'k3tour1'); }); if (T2) A.wait(650).then(function(){ return toss(A,'k3tour2'); });
+    var bows=[L.anim('guitarBow')]; if (J.actor) bows.push(J.anim('bow')); if (B.actor) B.idle('sheetWave'); await Promise.all(bows);
+    await J.say('Thank you, Mostar!');
+    [T1,T2,Ln,Dn].forEach(function(h){ if (h && h.actor) h.idle(null); }); if (B.actor) B.idle(null); L.idle('guitar');
+    if (T1) T1.walk(camClamp(CAM)-20,129); if (T2) A.wait(500).then(function(){ return T2.walk(camClamp(CAM)-24,120); });
+    await A.wait(700);
+  } finally {
+    PF.src={}; camFree(); A.music('k3_mostar');
+    tours.forEach(function(id){ var a=M.E.ACT[id]; if (a){ a.fadeOut=A.gt; } });
+    A.wait(1000).then(function(){ tours.forEach(function(id){ A.despawn(id); }); });
+    if (J.actor){ J.freeze(null); J.idle(null); } if (L.actor) L.idle('guitar'); if (B.actor) B.idle(null);
+    PF.caseOn=false; }   // der Koffer bleibt (caseShown: nach der Aufführung liegt er offen da, solange sie spielen)
+};
+
+// ---------------------------------------------------------------- Herberge, Samstagnacht: dieselben Noten über der Terrasse, zwei Zeilen
+M.k3HostelSong=async function(A){ var L=A.npc('aussie3'); reset(); PF.room='herberge';
+  try{ noteSrc('liam','aussie3',{dx:7,dy:20,every:620,col:P.y5}); noteSrc('bec','aussie2',{dx:4,dy:30,every:1100,col:P.s6});
+    await L.say(M.K3X.SONG[0].o,{song:true,gloss:M.K3X.SONG[0].t}); await A.wait(400);
+    await L.say(M.K3X.SONG[5].o,{song:true,gloss:M.K3X.SONG[5].t}); }
+  finally { PF.src={}; } };
+})(M);
+
 /* ---- 97_k3_ausbau.js ---- */
 /* ===== 97_k3_ausbau.js — Kapitel 3, Ausbau (design/K3_AUSBAU.md): gemeinsame Stücke der neuen Ketten =====
    N1 „Über die Straße“: Veras Brief an Vlado (Übersetzung zwischen zwei Menschen, die eine Sprache sprechen), Malas Zustimmung.
@@ -70613,13 +70947,14 @@ Object.keys(MI).forEach(function(k){ if (IT[k] && IT[k].mala===undefined) IT[k].
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; }
 var X=M.K3X=M.K3X||{};
 // ---------------------------------------------------------------- N2: das Lied (Markos Übersetzung, in der Reihenfolge der Geschichte)
+// o: die Zeile im Original (Sevdalinka „Kad ja pođoh na Bembašu“, Volkslied, gemeinfrei), gesungen in 97_k3_auftritt.js
 X.SONG=[
-  {id:'water',t:'Als ich hinunterging zum Wasser,',gloss:'So fängt es an. Der Weg zum Wasser.'},
-  {id:'lamb',t:'nahm ich ein weißes Lamm mit mir.',gloss:'Das Lamm nimmt er mit. Warum, sagt das Lied nicht.'},
-  {id:'gates',t:'Alle Mädchen standen an den Toren,',gloss:'Unterwegs die Mädchen. Alle.'},
-  {id:'window',t:'nur meine Liebste am vergitterten Fenster.',gloss:'Nur eine nicht. Sie steht am Fenster.'},
-  {id:'evening',t:'Ich sagte ihr: Guten Abend, Mädchen.',gloss:'Er grüßt. Mehr traut er sich nicht.'},
-  {id:'come',t:'Sie sagte mir: Komm, Liebster, komm heute Abend.',gloss:'Sie sagt: Komm. Da hört das Lied auf.'}];
+  {id:'water',t:'Als ich hinunterging zum Wasser,',gloss:'So fängt es an. Der Weg zum Wasser.',o:'Kad ja pođoh na Bembašu, na Bembašu na vodu,'},
+  {id:'lamb',t:'nahm ich ein weißes Lamm mit mir.',gloss:'Das Lamm nimmt er mit. Warum, sagt das Lied nicht.',o:'ja povedoh bijelo janje, bijelo janje sa sobom.'},
+  {id:'gates',t:'Alle Mädchen standen an den Toren,',gloss:'Unterwegs die Mädchen. Alle.',o:'Sve djevojke Bembašanke na kapiji stajahu,'},
+  {id:'window',t:'nur meine Liebste am vergitterten Fenster.',gloss:'Nur eine nicht. Sie steht am Fenster.',o:'samo moja mila draga na pendžeru stajaše.'},
+  {id:'evening',t:'Ich sagte ihr: Guten Abend, Mädchen.',gloss:'Er grüßt. Mehr traut er sich nicht.',o:'Ja joj rekoh: Dobro veče, dobro veče, djevojče!'},
+  {id:'come',t:'Sie sagte mir: Komm, Liebster, komm heute Abend.',gloss:'Sie sagt: Komm. Da hört das Lied auf.',o:'Ona meni: Dođi, dragi, dođi, dragi, doveče!'}];
 X.SONG_LINE='Dođi, dragi, doveče.';
 var WHY={ water:'Erst geht er zum Wasser. Alles andere passiert unterwegs.', lamb:'Das Lamm nimmt er gleich am Anfang mit. Später hat er keine Hand mehr frei.',
   gates:'Die Mädchen an den Toren sieht er, bevor er seine sieht. Sonst wäre es keine Geschichte.', window:'Erst alle, dann die eine. Das Fenster kommt nach den Toren.',
@@ -75576,7 +75911,7 @@ M.music('title');
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="11.11.2026 · 9b12c2";
+M.BUILD="11.11.2026 · a9bf60";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>
