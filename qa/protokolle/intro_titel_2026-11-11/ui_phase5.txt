@@ -1,0 +1,47 @@
+
+Phase 5 · Aktionsleiste und Verb-Menü (E4, T06, K5, K14)
+  ok   Testobjekt mit mehreren Handlungen gefunden (coat13)
+  ok   iPhone SE, Finger: Handlungen als Knöpfe in der Leiste, alle ≥ 44 × 44 CSS-px (Nimm 96×44, Benutze 96×44, Schau an 98×44, ✕ 44×44)
+  ok   Aktionsleiste liegt unter der Szene (verdeckt das Ding nicht)
+  ok   Tipp ins Bild schließt die Leiste, ohne dass die Figur losgeht
+  ok   „✕“ schließt die Leiste
+  ok   „Schau an“ in der Leiste führt die Handlung aus
+  ok   Gegenstand mit einem Tipp gewählt; die Szene bleibt pixelgleich – keine Hervorhebung möglicher Ziele (K13)
+  ok   Leiste des Gegenstands über dem Inventar (Inventar bleibt frei für „Benutze … mit“ anderem Gegenstand)
+  ok   Esc hebt die Gegenstandswahl auf
+  ok   Maus: Menü am Zeiger im Canvas, keine HTML-Leiste (K14)
+  ok   Maus: Gegenstand anklicken öffnet das Menü mit „Benutze“ (wie bisher)
+  ok   Maus: Antwortliste im Canvas (wie bisher)
+
+Phase 5 · Antwortliste bei Fingereingabe (E4, T04, T05, K3, K5)
+  ok   HTML-Liste, Zeilen ≥ 44 CSS-px (44, 44, 44, 44, 44, 44)
+  ok   Tipp ~200 ms nach dem Erscheinen: keine Antwort gewählt (K3)
+  ok   nach 450 ms wählt der Tipp die Antwort
+  ok   Ziffern wählen sofort, ohne Sperre (K3)
+  ok   „✕“ des Notizbuchs als HTML-Knopf 44×44 CSS-px
+  ok   „✕“ schließt das Notizbuch wie Esc
+
+Phase 5 · iPad: Bild oben, Antworten darunter (E6, T22)
+  ok   iPad quer: Bild steht oben (6 px), darunter 204 px frei
+  ok   Antwortliste unter dem Bild, 4 Zeilen ganz sichtbar; Szene und Leiste frei
+  ok   Desktop: Bild bleibt mittig (keine Änderung)
+
+Phase 5 · Gesten (E6, T16)
+  ok   keine globale Sperre: Seite manipulation (Zoom in Menüs), Spielfläche none (manipulation / none)
+
+Phase 5 · Feinwahl (E6, T21)
+  ok   aus (Standard): langer Druck wirkt wie ein Tipp an der Fingerstelle ({"hit":["reception"],"pop":null})
+  ok   an: 1 s halten wählt das Ding 40 CSS-px über dem Finger ({"hit":[],"pop":"bell"})
+
+Phase 5 · Hinweise für iPhone und iPad (E5, T12, T14)
+  ok   Safari (iPhone): einmaliger Hinweis „Zum Home-Bildschirm“, ohne das Titelmenü zu verdecken
+  ok   „Verstanden“: Hinweis kommt nicht wieder
+  ok   Einstellungen: Abschnitt „iPhone und iPad“ mit Stummschalter und Speicherhinweis
+  ok   Home-Bildschirm-App (navigator.standalone): Hinweis auf den getrennten Speicher und die Sicherung
+  ok   Desktop: kein iOS-Hinweis
+
+Phase 5 · Namensfeld über der Bildschirmtastatur (E6, T18, nachgestellt)
+  ok   sichtbare Fläche 150 px hoch (Tastatur offen): Namensfeld bleibt sichtbar (Unterkante 149 px)
+  ok   keine Skriptfehler in der Seite
+
+31/31 bestanden

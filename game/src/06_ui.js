@@ -691,9 +691,14 @@ function journeyLine(){ return ['Split','Sarajevo','Mostar','München','Sarajevo
 M.journeyLine=journeyLine;
 function nextLang(){ var ks=Object.keys(M.LANGS||{de:1}), i=ks.indexOf(M.lang); M.setLang(ks[(i+1)%ks.length]); }
 function titleRowY(i,n){ if (E.titleMode==='main') return n>7?126+i*9:n>6?134+i*9:(n>5?140+i*10:(n>4?144+i*11:150+i*12)); var h=30+n*13, y0=Math.max(4,100-(h>>1)); return y0+24+i*13; }
-function drawTitle(){ if (!TITLE_BG && M.paintTitle) TITLE_BG=M.paintTitle(); fb.rect(0,0,W,H,P.k0); if (TITLE_BG) for (var i=0;i<W*SH;i++) fb.d[i]=TITLE_BG.d[i];
-  var tt=E.gt()/1000*(M.reduceMotion()?0.3:1); if (M.titleDynamic) M.titleDynamic(fb,tt); titleWater(tt);
-  M.big(fb,M.GAME_TITLE_BIG,160,22,P.x5,M.textWidth(M.GAME_TITLE_BIG)*4>300?3:4,P.k0); centerText(journeyLine(),58,P.s5,P.k0);
+// Titelbilder (88_titles.js): vier Bilder mit eigener Bewegung, bei jedem Start ein anderes; ohne M.TITLES das alte Bild (Split)
+var TITLE_ID=null;
+function titleDef(){ var L=M.TITLES; if (L && L.length){ var d=L[(M.titleIndex|0)%L.length]; if (d) return d; } return {id:'split',paint:M.paintTitle,dynamic:M.titleDynamic}; }
+M.titleDef=titleDef;
+function drawTitle(){ var def=titleDef(); if ((!TITLE_BG || TITLE_ID!==def.id) && def.paint){ TITLE_BG=def.paint(); TITLE_ID=def.id; } fb.rect(0,0,W,H,P.k0); if (TITLE_BG) for (var i=0;i<W*SH;i++) fb.d[i]=TITLE_BG.d[i];
+  var tt=(M.__titleT!=null?M.__titleT:E.gt()/1000)*(M.reduceMotion()?0.3:1); if (def.dynamic) def.dynamic(fb,tt); if (def.lower) def.lower(fb,tt,titleWater); else titleWater(tt);
+  if (E.titleInAt){ var fk=1-(E.gt()-E.titleInAt)/1400; if (fk>0){ var fn=Math.round(fk*7); for (var q=0;q<fb.d.length;q++){ var cq=fb.d[q]; for (var r=0;r<fn;r++) cq=M.DN[cq]; fb.d[q]=cq; } } else E.titleInAt=0; }
+  M.big(fb,M.GAME_TITLE_BIG,160,22,def.titleCol||P.x5,M.textWidth(M.GAME_TITLE_BIG)*4>300?3:4,P.k0); centerText(journeyLine(),58,def.lineCol||P.s5,P.k0);
   if (M.shell) return;   // Menüs zeichnet die HTML-Schicht (07_shell.js)
   if (E.titleMode==='about'){ dimAll(2); var lines=[M.startChapter5?'Die Stillen – Split · Sarajevo · Mostar · München · Sarajevo':M.startChapter4?'Die Stillen – Split · Sarajevo · Mostar · München':M.startChapter3?'Die Stillen – Split · Sarajevo · Mostar':'Die Stillen – Kapitel 1: Split · Kapitel 2: Sarajevo','','Ein Point-and-Click-Adventure über Menschen,','die nicht weiterkommen, und über einen,','der mit ihnen reden kann.','','Marko lebt. Mala nicht.','Er spricht mit den Lebenden, sie geht durch Wände.','','Alle Grafik, Musik und Geräusche entstehen','im Spiel selbst. Kopfhörer lohnen sich.']; lines.forEach(function(l,i){ centerText(l,30+i*10,i===0?P.x5:P.s5); }); }
   var opts=titleItems(), boxed=['slots','confirm','next','presets'].indexOf(E.titleMode)>=0; if (boxed){ dimAll(2); var h=30+opts.length*13, y0=Math.max(4,100-(h>>1)); fb.rect(46,y0,228,h,P.k1); fb.hl(46,273,y0,P.x2); fb.hl(46,273,y0+h-1,P.x2); fb.vl(46,y0,y0+h-1,P.x2); fb.vl(273,y0,y0+h-1,P.x2);
@@ -722,7 +727,8 @@ function drawDrag(){ if (!drag||!drag.on||(WIDE&&pointer.y>=1000)) return; var i
   var tgt=null; if (pointer.y<SH && hover && !hover.item) tgt=E.nameOf(hover); else { var u=uiAt(pointer.x,pointer.y); if (u&&u[0]==='i'){ var o=invList()[+u.slice(2)]; if (o&&o!==drag.id) tgt=M.ITEMS[o].name; } }
   var lab=tgt?('Benutze '+it.name+' mit '+tgt):it.name, lw=M.textWidth(lab), lx=Math.max(2,Math.min(W-2-lw,x-(lw>>1))), ly=Math.max(2,iy-11); M.text(fb,lab,lx,ly,tgt?P.l0:P.s4,P.k0); }
 M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); LISTH=SUBS||!!(M.listHtml&&M.listHtml()); SUBW.sp=null; SUBW.dlg=null;
-  if (E.screen==='title') drawTitle();
+  if (E.screen==='intro'){ if (!(M.drawIntro && M.drawIntro(fb)) && E.screen==='title') drawTitle(); }   // Intro vor dem Titel (89_intro.js); am Ende schaltet es selbst auf den Titel
+  else if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
   else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawFocus(); drawFine(); drawTapMark(); drawPop(); drawDrag(); }
@@ -851,8 +857,9 @@ function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay
 M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (fineT&&press&&Math.abs(x-press.x)+Math.abs(y-press.y)>6){ clearTimeout(fineT); fineT=null; } if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 // Testhilfe (Touch-Test): welches Bedienelement liegt an x,y; Beschriftungen der Titelzeilen
 M.uiHit=function(x,y){ return uiAt(x,y); }; M.revealOn=function(){ return !!reveal; }; M.uiHover=function(){ return pointer.show?hoverUI:null; }; M.uiColors=function(){ return ui(); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
-M.pointerDown=function(x,y,touch){ M.audioInit(); if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); if (touch&&!press.ui) fineArm(x,y); else fineOff(); };
-M.pointerUp=function(x,y,touch){ if (fine){ var fq=fineAt(x,y); fineOff(); pointer.down=false; press=null; pointer.show=false; tapStartR=nowR(); hover=null; noFang=true; try{ click(fq[0],fq[1]); } finally { noFang=false; } return; } fineOff();
+M.pointerDown=function(x,y,touch){ M.audioInit(); if (E.screen==='intro'){ if (M.OPENING) M.OPENING.skip(); introUp=true; return; } if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); if (touch&&!press.ui) fineArm(x,y); else fineOff(); };
+var introUp=false;   // der Tipp, der das Intro beendet, löst auf dem Titel nichts aus
+M.pointerUp=function(x,y,touch){ if (introUp){ introUp=false; pointer.down=false; press=null; return; } if (fine){ var fq=fineAt(x,y); fineOff(); pointer.down=false; press=null; pointer.show=false; tapStartR=nowR(); hover=null; noFang=true; try{ click(fq[0],fq[1]); } finally { noFang=false; } return; } fineOff();
   pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
   var pr=press; press=null; tapStartR=pr?pr.tr:nowR(); if (drag){ var dg=drag; drag=null; if (dg.on) dropDrag(dg.id,x,y); return; } if (pr&&pr.swiped) return;
   if (pr && !pr.ui && pr.y<SH && Math.abs(x-pr.x)+Math.abs(y-pr.y)>10 && E.screen==='game' && !E.overlay && !E.dlg) return;   // im Bild gezogen: kein Tippen
@@ -997,7 +1004,7 @@ function dlgKey(k){ var d=E.dlg; if (!d||E.speech) return false; if (d.visTop!==
     if (d.kf<d.top) d.top=d.kf; else if (vis.length && d.kf>vis[vis.length-1]) d.top=Math.min(n-1,d.top+1); return true; }
   if ((k==='Enter'||k===' ') && d.kf!==undefined && d.kf!==null){ M.sfx('click'); E.chooseDone(d.kf); return true; }
   return false; }
-M.key=function(k){ var kl0=String(k).toLowerCase(); if (M.audioInit) M.audioInit(); if (M.shellSync) M.shellSync();
+M.key=function(k){ var kl0=String(k).toLowerCase(); if (M.audioInit) M.audioInit(); if (E.screen==='intro'){ if (M.OPENING) M.OPENING.skip(); return; } if (M.shellSync) M.shellSync();
   if (M.shell && M.shell.ctx==='title'){ if (k==='Escape') M.shell.back(); return; }
   if (E.screen==='card'){ if ((k===' '||k==='Enter'||k==='Escape') && E.card && !E.card.noSkip) E.closeCard(); return; }   // Karte: auch per Taste überspringen (D2)
   if (E.screen==='credits'){ if ((k===' '||k==='Enter'||k==='Escape') && E.gt()-E.creditsAt>3000) creditsDone(); return; }

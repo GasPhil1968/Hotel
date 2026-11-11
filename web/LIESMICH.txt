@@ -42,6 +42,16 @@ Die Frage, die alles trägt: Wann ist jemand angekommen?
 Vor dem Samstag legt das Spiel einen eigenen Spielstand an ("Vor dem
 Samstag"); danach führt kein Weg zurück in die Tage davor.
 
+INTRO UND TITELBILD
+- Beim Start läuft ein kurzes Intro (etwa eine halbe Minute): die Riva bei
+  Nacht, Markos Wohnung, Mala, dann der Titel. Ein Tipp, Klick oder eine
+  Taste überspringt es. Abschalten: Einstellungen → "Intro beim Start".
+  Browser spielen Ton erst nach dem ersten Tipp; mit Ton sieht man das Intro
+  über Einstellungen → "Intro ansehen".
+- Das Titelbild wechselt bei jedem Start: Split bei Nacht, Sarajevo im
+  Novembernebel, die Alte Brücke in Mostar im Regen, München an Heiligabend –
+  jedes mit eigener Bewegung im Hintergrund.
+
 KAPITEL WÄHLEN
 - Das Hauptmenü hat fünf Einträge: Neues Spiel, Kapitel wählen, Spiel laden,
   Einstellungen, Über "Die Stillen" – mit Spielstand oben zusätzlich
@@ -218,7 +228,8 @@ HILFE
   Hinweise, Steuerung, Zum Titelbild. Das Spiel hält an, die Musik wird leiser.
 - "Einstellungen": Lautstärke für Musik, Geräusche und Umgebung; Tempo der
   Sätze und "Weiter erst nach Tippen"; Textgröße und Schrift (Pixel oder eine
-  besonders lesbare Schrift); Bewegung reduzieren; Röhrenbild; Vollbild;
+  besonders lesbare Schrift); Bewegung reduzieren; Röhrenbild; Intro beim
+  Start (an/aus) und – vom Titelbild aus – "Intro ansehen"; Vollbild;
   Notizbuch als Liste oder "Nachdenken"; Sprache.
 - Textgröße "groß" oder Schrift "Lesbar" gelten für die Menüs und für die
   Gespräche: Sätze und Antworten stehen dann als Untertitel unten im Bild,

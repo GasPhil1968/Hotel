@@ -1,0 +1,46 @@
+
+K3-Revision, echte Eingabe · Maus: Führerhaus (Handschuhfach, Radio), Schublade, Fotovergleich, Kartenvergleich
+  ok   Schraubenzieher auf das Handschuhfach gezogen
+  ok   Handschuhfach offen, Fahrtenbuch genommen
+  ok   Schraubenzieher auf das Radio gezogen
+  ok   Kassette herausgeholt
+  ok   Mala: Klick auf die Schublade, „Schau an“ im Menü
+  ok   Mala sieht die Mappe in der Schublade
+  ok   Foto auf den Felsen mit Riss gezogen
+  ok   Vergleichsbild offen
+  ok   vor der Entscheidung kein Urteil, nur die Beobachtung
+  ok   „Hier stand er.“ angeklickt
+  ok   Markos Begründung erst danach
+  ok   „Weiter“ angeklickt
+  ok   r2 ist nicht der Standort
+  ok   an der flachen Platte „Hier stand er.“: Standort gefunden
+  ok   Mala: Klick auf den Quader, „Schau an“
+  ok   Mala sieht „M · D · 1965“
+  ok   Stadtplan auf die alte Karte gezogen
+  ok   Kartenvergleich offen
+  ok   Klick auf die Jasenova: falsch, mit Begründung
+  ok   Klick auf die Lipova: richtig
+  ok   Notiz und Garagen auf dem Plan
+
+K3-Revision, echte Eingabe · Finger (iPad quer): Garage, Haube, Batterie; Fotovergleich; Radio
+  ok   Schlüssel angetippt, dann das vierte Tor
+  ok   ohne Malas Blick schließt Marko nicht auf
+  ok   Mala: Tor antippen (sofort: nur eine Handlung, der Tipp führt sie aus)
+  ok   Mala sieht den Mercedes
+  ok   Tor sieben geöffnet
+  ok   Haube antippen, „Öffne“
+  ok   Haube offen
+  ok   Batterie antippen, „Nimm“
+  ok   Mates Batterie im Inventar
+  ok   Foto antippen, dann den runden Block
+  ok   „Weitersuchen“ angetippt
+  ok   Vergleich geschlossen
+  ok   kein Urteil, kein Standort
+  ok   „Hier stand er.“ angetippt (flache Platte)
+  ok   „Weiter“ angetippt
+  ok   Standort gefunden (Finger)
+  ok   Schraubenzieher antippen, dann das Radio
+  ok   Kassette (Finger)
+  ok   keine Fehler in der Seite
+
+OK · 40/40 Prüfpunkte

@@ -205,6 +205,9 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'seg',label:'Bewegung reduzieren',sub:'kein Wackeln, Pulsieren, Flackern',value:M.reduceMotion()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ setPref('motion',+v===1); }});
   if (M.fineOn && touchCap()) it.push({type:'seg',label:'Feinwahl',sub:'Finger kurz ruhig halten: Fadenkreuz über dem Finger, Loslassen wählt',value:M.fineOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.fineOn(+v===1); }});   // Touch-Konzept T21, Ergänzung
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
+  // Intro (89_intro.js): beim Start an oder aus; vom Titel aus jederzeit ansehen (dann mit Ton)
+  if (M.introOn) it.push({type:'seg',label:'Intro beim Start',sub:'Ein Tipp überspringt es.',value:M.introOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.introOn(+v===1); }});
+  if (M.startIntro && SH.ctx==='title') it.push({type:'seg',label:'Intro',value:-1,options:[[1,'ansehen']],act:function(){ closeAll(); M.startIntro(); }});
   // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm
   if (fsApi()) it.push({type:'seg',label:'Vollbild',sub:iosDev()?'Wischen nach unten beendet es wieder':'',value:-1,options:[[1,'umschalten']],act:function(){ if (M.fullscreen) M.fullscreen(); }});
   else it.push({type:'hint',label:'Vollbild',sub:standalone()?'Das Spiel läuft schon als App vom Home-Bildschirm.':'Auf dem iPhone: Teilen → „Zum Home-Bildschirm“. Dann startet das Spiel ohne Browserleisten.'});
@@ -303,7 +306,8 @@ M.titleLabels=function(){ M.shellSync(); return SH.labels(); };
 // jede Bildaktualisierung (M.update): Schicht an den Spielzustand anpassen
 M.shellSync=function(){
   if (E.screen==='title'){ var wantNext=E.titleMode==='next';
-    if (SH.ctx!=='title'){ openCtx('title',wantNext?'next':'main',wantNext?{ch:(E.nextCh||2)-1}:{}); SH.nextFor=wantNext?E.nextCh:null; }
+    if (SH.ctx!=='title'){ openCtx('title',wantNext?'next':'main',wantNext?{ch:(E.nextCh||2)-1}:{}); SH.nextFor=wantNext?E.nextCh:null;
+      if (DOM && root && E.titleInAt){ root.classList.add('fromintro'); setTimeout(function(){ if (root) root.classList.remove('fromintro'); },1700); } }   // nach dem Intro blendet das Menü weich auf
     else if (wantNext && SH.nextFor!==E.nextCh){ SH.stack=[{id:'main',p:{}},{id:'next',p:{ch:(E.nextCh||2)-1}}]; SH.nextFor=E.nextCh; render(true); }
     return; }
   if (SH.ctx==='title'){ closeAll(); SH.nextFor=null; }
@@ -459,6 +463,7 @@ var CSS='#shell{position:fixed;inset:0;z-index:12;display:none;--ink0:#08070d;--
 +'#shell .mi .lock{width:calc(var(--u)*7px);height:calc(var(--u)*8px);flex:0 0 auto}#shell .mi.danger{color:#f0b3b8}'
 +'#shell .btnrow{display:flex;flex-wrap:wrap;gap:calc(var(--u)*4px);justify-content:flex-end}#shell .btn{appearance:none;cursor:pointer;min-height:max(44px,calc(var(--u)*16px));padding:0 calc(var(--u)*8px);background:var(--ink1);color:var(--lamp4);border:calc(var(--u)*1px) solid var(--lamp1)}'
 +'#shell .btn:hover,#shell .btn:focus-visible{background:var(--ink2);color:var(--lamp5);box-shadow:0 0 0 calc(var(--u)*1px) var(--lamp4)}#shell .btn.danger{color:#f0b3b8;border-color:var(--seal2)}#shell .btn.small{min-height:max(36px,calc(var(--u)*12px));padding:0 calc(var(--u)*4px)}'
++'#shell.fromintro .tmenu,#shell.fromintro .band,#shell.fromintro .ver,#shell.fromintro .chip,#shell.fromintro .pnote{animation:shFromIntro 1.5s ease-out both}@keyframes shFromIntro{0%{opacity:0}30%{opacity:0}100%{opacity:1}}'
 +'#shell.titlemode .band{position:absolute;left:0;right:0;top:calc(var(--cy) + var(--ch)*.52);bottom:0;background:linear-gradient(180deg,rgba(8,7,13,0),rgba(8,7,13,.86) 34%)}'
 +'#shell .tmenu{position:absolute;left:calc(var(--cx) + var(--cw)/2);transform:translateX(-50%);bottom:max(16px,calc(100% - var(--cy) - var(--ch) + var(--u)*8px));width:min(calc(var(--u)*150px),calc(var(--cw)*.6))}'
 +'#shell.narrow.titlemode .band{top:0;bottom:0;left:0;right:auto;width:min(46%,calc(var(--u)*175px));background:linear-gradient(90deg,rgba(8,7,13,.94) 64%,rgba(8,7,13,0))}#shell.narrow .tmenu{left:max(14px,env(safe-area-inset-left));top:50%;bottom:auto;transform:translateY(-50%);width:min(calc(var(--u)*118px),34%);max-height:calc(100% - 12px);overflow-y:auto;overscroll-behavior:contain}'

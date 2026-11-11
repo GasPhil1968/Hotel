@@ -1,3 +1,35 @@
+DIE STILLEN – ÄNDERUNGEN: INTRO UND VIER TITELBILDER (11. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Neues Intro beim Start, etwa eine halbe Minute, ganz in Spielgrafik:
+  Marko geht nachts über die Riva nach Hause („Split, November 2011“),
+  steht in seiner Wohnung am Fenster („Marko schreibt Nachrufe. Auf
+  Menschen, die allein gestorben sind.“), hinter ihm wird Mala sichtbar
+  („Marko lebt. Mala nicht.“), sie geht durch die Wand („Er spricht mit den
+  Lebenden. Sie geht durch Wände.“). Dann erscheint der Schriftzug, und das
+  Titelbild blendet darunter auf. Ein Tipp, Klick oder eine Taste
+  überspringt es jederzeit; „Überspringen ▸“ steht oben rechts.
+- Einstellungen → Darstellung: „Intro beim Start“ (an/aus) und, vom
+  Titelbild aus, „Intro ansehen“. Weil Browser Ton erst nach dem ersten
+  Tipp erlauben, läuft das Intro beim Start meist ohne Ton; über „Intro
+  ansehen“ mit Musik und Geräuschen.
+- Vier Titelbilder statt einem, bei jedem Start ein anderes (der Reihe
+  nach): Split bei Nacht (wie bisher), Sarajevo an der Miljacka im
+  Novembernebel mit der Linie 3 und erstem Schnee, die Alte Brücke in Mostar
+  im Regen mit einem roten Schirm, der hinübergeht, und München an
+  Heiligabend mit Schnee, Christbaum und den Türmen der Frauenkirche. In
+  jedem Bild ist Mala, immer nur als Schimmer.
+- Die Unterzeile im Titel nennt weiterhin nur die Orte, die man schon
+  erreicht hat.
+
+GEPRÜFT
+- Neuer Browsertest: Intro beim Start, Überspringen mit Klick und Taste,
+  Durchlauf bis zum Titel, Einstellungen, Titelwechsel über fünf Starts,
+  Bewegung in allen vier Titelbildern, keine Fehler; alle übrigen Tests.
+
+
+========================================================================
+
 DIE STILLEN – ÄNDERUNGEN: KAMERA AUF DER MOLE, MUSIK NACH DEM TITELBILD (11. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

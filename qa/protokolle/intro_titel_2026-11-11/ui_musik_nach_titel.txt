@@ -1,0 +1,6 @@
+Fassung web/index.html 11.11.2026 · a9714e
+OK     Titelmusik hörbar (-49.6 dBFS)
+OK     A: Titel → Stück: hörbar (-45.0 dBFS)
+OK     B: Titel → aus → nach 0,4 s Stück: hörbar (-45.7 dBFS, Stück case1)
+OK     keine JS-Fehler (0)
+MUSIKTEST OK

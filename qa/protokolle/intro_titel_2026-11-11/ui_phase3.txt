@@ -1,0 +1,62 @@
+
+Phase 3 · Auswahl der Leiste (F22)
+  ok   iPhone 13 quer: Breitbild, Szene 640 × 288 CSS-px
+  ok   iPad quer: gewohnte Leiste
+  ok   Desktop 1280 × 800: gewohnte Leiste
+
+Phase 3 · Bedienung der Breitbild-Leiste (F23)
+  ok   Knöpfe und Felder ≥ 44 CSS-px ({"sw":[55,67],"notes":[55,45],"menu":[55,45],"map":[55,45],"reveal":[55,45],"up":[45,50],"dn":[45,50],"slot0":[53,50]})
+  ok   Pfeile ≥ 44 CSS-px (Touch-Konzept K5)
+  ok   Figurenknopf wechselt die Figur
+  ok   „Zeigen“ markiert die Szene
+  ok   Pfeil rechts blättert das Inventar
+  ok   Pfeil links blättert zurück
+  ok   Gegenstand antippen wählt ihn, Aktionsleiste über dem Inventar (Schau an 98×44, ✕ 44×44)
+  ok   Satzzeile „Benutze … mit …“ (nicht „mit“ sich selbst)
+  ok   „Benutze … mit“ auf einen Hotspot ausgeführt (zwei Tipps)
+  ok   „Schau an“ in der Aktionsleiste: Gegenstand angesehen, Wahl aufgehoben
+  ok   „✕“ hebt die Gegenstandswahl auf
+  ok   Notizen: Notizbuch im gewohnten 320 × 200-Bild
+  ok   nach dem Schließen wieder Breitbild
+  ok   Menü öffnet die Pause
+  ok   Weiterspielen: zurück ins Breitbild
+  ok   Karte öffnet den Stadtplan im gewohnten Bild
+  ok   Stadtplan geschlossen: wieder Breitbild
+  ok   Spielstand nach den Wechseln unverändert (F24)
+
+Phase 3 · Gespräch im Breitbild
+  ok   Finger: Antwortliste als HTML, 5 Zeilen à ≥ 44 CSS-px, ≥ 8 CSS-px über der Unterkante (44, 44, 44, 44, 44; Abstand 7.98, lay false)
+  ok   Leiste nimmt während des Gesprächs keine Eingaben an
+  ok   schmaleres Fenster mitten im Gespräch: gewohnte Leiste, Gespräch bleibt (F25)
+  ok   wieder breit: Breitbild, Gespräch bleibt
+  ok   gewählter Gegenstand bleibt über die Umschaltung erhalten
+  ok   Leiste vollständig im Fenster (Safe-Area echter Geräte nur auf dem Gerät prüfbar)
+
+Phase 3 · Telefon-Layout (Touch-Konzept E3, D1): Maßstab, Aufteilung, Knopfgrößen
+  ok   iPhone SE quer: alle Knöpfe unten, Szene 2.00 CSS-px je Spielpixel (≥ 2)
+  ok   iPhone SE quer: Knöpfe, Felder und Pfeile ≥ 44 × 44 CSS-px (sw 60×45, notes 45×45, menu 45×45, map 45×45, reveal 45×45, up 45×45, dn 45×45, slot0 48×45)
+  ok   iPhone SE quer: keine Überdeckung zwischen Knöpfen und Szene
+  ok   iPhone SE quer: Leiste vollständig im Fenster
+  ok   iPhone SE quer: „Notizen“ öffnet das Notizbuch
+  ok   iPhone SE quer: „Zeigen“ markiert die Szene
+  ok   iPhone SE quer: „Menü“ öffnet die Pause
+  ok   iPhone SE quer: Gegenstand antippen wählt ihn, Aktionsleiste über dem unteren Szenenrand
+  ok   iPhone 16 quer: Seitenknöpfe, Szene 2.00 CSS-px je Spielpixel (≥ 2)
+  ok   iPhone 16 quer: Knöpfe, Felder und Pfeile ≥ 44 × 44 CSS-px (sw 47×67, notes 47×45, menu 47×45, map 47×45, reveal 47×45, up 45×50, dn 45×50, slot0 53×50)
+  ok   iPhone 16 quer: keine Überdeckung zwischen Knöpfen und Szene
+  ok   iPhone 16 quer: Leiste vollständig im Fenster
+  ok   Hysterese: 734 → 738 bleibt, 729 passt nicht mehr → gewohnt, zurück auf 734 bleibt gewohnt, 745 → wieder Telefon-Layout (rails m6 / gewohnt / gewohnt / rails m6)
+  ok   Größenwechsel während des Ziehens: Layout bleibt bis zum Loslassen, danach gewohnte Leiste (true / false)
+  ok   Hochformat: gedrehtes gewohntes Bild; zurück quer: Telefon-Layout
+  ok   nach dem Drehen stimmen die Trefferflächen der Leiste
+  ok   iPhone 13 quer: Seitenknöpfe, Szene 2.00 CSS-px je Spielpixel (≥ 2)
+  ok   iPhone 13 quer: Knöpfe, Felder und Pfeile ≥ 44 × 44 CSS-px (sw 55×67, notes 55×45, menu 55×45, map 55×45, reveal 55×45, up 45×50, dn 45×50, slot0 53×50)
+  ok   iPhone 13 quer: keine Überdeckung zwischen Knöpfen und Szene
+  ok   iPhone 13 quer: Leiste vollständig im Fenster
+  ok   iPhone 17 Pro Max quer: Seitenknöpfe, Szene 2.33 CSS-px je Spielpixel (≥ 2.33)
+  ok   iPhone 17 Pro Max quer: Knöpfe, Felder und Pfeile ≥ 44 × 44 CSS-px (sw 45×67, notes 45×45, menu 45×45, map 45×45, reveal 45×45, up 45×50, dn 45×50, slot0 53×50)
+  ok   iPhone 17 Pro Max quer: keine Überdeckung zwischen Knöpfen und Szene
+  ok   iPhone 17 Pro Max quer: Leiste vollständig im Fenster
+  ok   keine Skriptfehler in der Seite
+
+52/52 bestanden

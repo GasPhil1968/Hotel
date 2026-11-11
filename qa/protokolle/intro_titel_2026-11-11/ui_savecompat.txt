@@ -1,0 +1,39 @@
+
+Spielstände · iPhone 16 quer, Finger
+  ok   k1_start (pro, flat): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_ivka (pro, ivka): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_amt (c1, office): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_brief (c1_night, matejuska): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_luka (c2, ledana): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_bruno (c3_night, palma): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_start (k2_pro, stanica): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_fikret (k2_pro, stanica): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_limbo (k2_i, vratnik): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_skloniste (k2_s3, haustor): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  FEHL k3_peil (k3_d1, starimost): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung – {"got":{"phase":"k3_d1","room":"starimost","inv":7,"notes":13},"want":{"phase":"k3_d1","room":"starimost","inv":7,"notes":13}}
+  FEHL k3_bato (k3_d1, partizan): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung – {"got":{"phase":"k3_d1","room":"partizan","inv":8,"notes":19},"want":{"phase":"k3_d1","room":"partizan","inv":8,"notes":19}}
+  FEHL k3_start (k3_fin_n, skela_d): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung – {"got":{"phase":"k3_fin_n","room":"skela_d","inv":8,"notes":85},"want":{"phase":"k3_fin_n","room":"skela_d","inv":8,"notes":85}}
+  ok   k4_gleis (k4_d1, gleis11): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k4_silvester (k4_d3, balkon): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k4_heim (k4_d3, heim_flur): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+
+Spielstände · Desktop, Maus
+  ok   k1_start (pro, flat): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_ivka (pro, ivka): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_amt (c1, office): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_brief (c1_night, matejuska): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_luka (c2, ledana): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k1_bruno (c3_night, palma): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_start (k2_pro, stanica): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_fikret (k2_pro, stanica): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_limbo (k2_i, vratnik): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k2_skloniste (k2_s3, haustor): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  FEHL k3_peil (k3_d1, starimost): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung – {"got":{"phase":"k3_d1","room":"starimost","inv":7,"notes":13},"want":{"phase":"k3_d1","room":"starimost","inv":7,"notes":13}}
+  FEHL k3_bato (k3_d1, partizan): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung – {"got":{"phase":"k3_d1","room":"partizan","inv":8,"notes":19},"want":{"phase":"k3_d1","room":"partizan","inv":8,"notes":19}}
+  FEHL k3_start (k3_fin_n, skela_d): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung – {"got":{"phase":"k3_fin_n","room":"skela_d","inv":8,"notes":85},"want":{"phase":"k3_fin_n","room":"skela_d","inv":8,"notes":85}}
+  ok   k4_gleis (k4_d1, gleis11): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k4_silvester (k4_d3, balkon): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   k4_heim (k4_d3, heim_flur): geladen, Inhalt gleich, Speichern/Laden ohne Abweichung
+  ok   keine Skriptfehler in der Seite
+
+27/33 bestanden

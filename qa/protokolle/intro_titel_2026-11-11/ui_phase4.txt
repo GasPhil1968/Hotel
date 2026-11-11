@@ -1,0 +1,118 @@
+
+Phase 4 · Untertitelschicht: aus bei Pixel/normal, an über die Einstellungen
+  ok   Pixel + normal: Untertitelschicht aus
+  ok   ohne Schicht zeichnet der Canvas den Satz wie bisher
+  ok   ohne Schicht ist #subs unsichtbar
+  ok   „Schrift: Lesbar“ schaltet die Untertitelschicht ein (mala.font)
+
+Phase 4 · Untertitelschicht: Sätze
+  ok   Satz mit Sprechername in der Schicht („Marko: Das ist ein Satz in der Leseschri…“)
+  ok   Satz in Atkinson Hyperlegible Next
+  ok   der Canvas zeichnet den Satz nicht mehr selbst
+  ok   Satz liegt unten im Spielbild (deckungsgleich mit dem Canvas)
+  ok   Satzkasten lässt Tipps zum Canvas durch
+  ok   Tipp ins Bild überspringt den Satz wie gewohnt
+
+Phase 4 · Untertitelschicht: Antwortlisten (Klick, Ziffern, Pfeile)
+  ok   alle sieben Antworten als Liste (7)
+  ok   keine Canvas-Trefferflächen hinter der Liste (dlg.lay leer)
+  ok   der Canvas zeichnet die Antwortzeilen nicht
+  ok   jede Antwort ≥ 44 CSS-px hoch (48)
+  ok   Klick wählt „Dritte Antwort“
+  ok   Ziffer 5 wählt die fünfte Zeile
+  ok   ↓ ↓ hebt die zweite Zeile hervor
+  ok   Enter wählt die hervorgehobene Zeile
+  ok   Satz steht über der offenen Liste
+  ok   Tipp während des Satzes beendet nur den Satz, die Auswahl bleibt offen
+  ok   bei offener Pause ist die Untertitelschicht ausgeblendet
+
+Phase 4 · Untertitelschicht: Übersetzung wie im Canvas (Bos./Hrv.)
+  ok   Antwort in der Schicht = Canvas-Text („(Otići.)“ / „(Otići.)“)
+
+Phase 4 · Untertitelschicht: große Pixelschrift, Breitbild (iPhone quer) und gedrehtes Hochformat
+  ok   iPhone quer: Breitbild aktiv
+  ok   große Schrift in MALA Pixel (30 px)
+  ok   Satz innerhalb von Bild und Bildschirm
+  ok   Liste innerhalb von Bild und Bildschirm (scrollt bei Bedarf)
+  ok   Antworten ≥ 44 CSS-px hoch
+  ok   Tippen wählt eine Antwort
+  ok   gedrehtes Hochformat: Schicht dreht mit dem Bild (matrix(0, 1, -1, 0, -375, -171))
+  ok   Satz bleibt im Bildschirm
+
+Phase 4 · Überblendung beim Wechsel Breitbild ↔ gewohntes Bild (150 ms)
+  ok   Notizbuch öffnet im gewohnten Bild mit Überblendung (Deckkraft 0.00 → 0.22)
+  ok   nach 150 ms voll sichtbar
+  ok   zurück ins Breitbild ebenfalls mit Überblendung (0.00)
+  ok   „Bewegung reduzieren“: Wechsel ohne Überblendung
+
+Phase 4 · Schnellvorlauf: Esc gedrückt halten während einer Szene
+  ok   gehalten: Schnellvorlauf läuft, keine Pause
+  ok   Anzeige „▸▸“ im Bild
+  ok   Wartezeiten und Wege laufen schneller (Spielzeit ×10.0)
+  ok   Spielzeit im Spielstand zählt weiter als Echtzeit (1.00 ms je ms)
+  ok   loslassen: normal weiter, keine Pause, die Szene läuft weiter
+  ok   kurz gedrückt während der Szene: Pause öffnet (beim Loslassen)
+  ok   bis zum Ende gehalten: die Szene endet regulär (Wartezeit abgelaufen)
+  ok   nach dem Ende der Szene öffnet das Loslassen keine Pause
+  ok   alle 8 Sätze wurden gesagt, in Reihenfolge – nichts übersprungen
+  ok   Sätze enden sofort, auch bei „Weiter erst nach Tippen“ (8 Sätze in 478 ms)
+  ok   ohne Szene öffnet Esc die Pause sofort (beim Drücken)
+  ok   bei offener Auswahl öffnet Esc die Pause, kein Vorlauf
+  ok   Fokusverlust beendet den Schnellvorlauf
+  ok   … und das spätere Loslassen öffnet keine Pause
+  ok   „Steuerung“ erklärt den Schnellvorlauf
+
+Phase 4 · Namen für Lesezeichen
+  ok   Lesezeichen 1 gespeichert
+  ok   „Benennen …“ unter dem Lesezeichen
+  ok   Namensfeld hat den Fokus
+  ok   Enter speichert den Namen, höchstens 24 Zeichen („Vor dem Gespräch mit Fik“)
+  ok   Name liegt im Lesezeichen (mala.mark.1.1)
+  ok   Fokus zurück auf „Benennen …“ (F11)
+  ok   Esc im Namensfeld bricht ab, Name bleibt
+  ok   Tipp neben das Fenster bricht ab (D8), Name bleibt
+  ok   leer gelassen: wieder der Ort („Kapitel 2 · Busbahnhof“)
+  ok   Name erscheint auch beim Laden
+  ok   belegtes Lesezeichen: Rückfrage „überschreiben?“
+  ok   Tipp neben die Rückfrage bricht ab, nichts überschrieben (D8)
+  ok   Überschreiben setzt den Namen zurück (neuer Ort, neuer Stand)
+
+Phase 4 · „Zuletzt“-Karte beim Fortsetzen
+  ok   „Zuletzt“-Karte erscheint nach „Fortsetzen“
+  ok   zeigt Kapitel und Ort („Kapitel 2 · Busbahnhof“)
+  ok   die drei zuletzt notierten offenen Notizen im Wortlaut des Notizbuchs (3)
+  ok   blockiert nichts: Tipp an ihrer Stelle trifft das Spielbild (game)
+  ok   verschwindet nach etwa 9 s von selbst (Rest 8628 ms)
+  ok   eine Taste schließt sie
+  ok   nach 9 s von selbst weg
+  ok   Laden im Spiel: keine Karte, stattdessen „Rückgängig“-Meldung
+  ok   ein Tipp ins Bild schließt sie
+
+Phase 4 · Sicherung als Datei: exportieren, prüfen, einspielen
+  ok   Titel → Spiel laden: exportieren und importieren
+  ok   Datei „Die-Stillen-Sicherung-2026-11-11.json“
+  ok   Format 1, Prüfsumme, 6 Einträge
+  ok   enthält alle MALA-Einträge (Stände, Kapitelmarken, Einstellungen) unverändert
+  ok   Rückfrage „Sicherung einspielen?“ mit Fokus auf „Abbrechen“
+  ok   Rückfrage nennt Zahl der Einträge und Datum
+  ok   eingespielt: genau der vorige Stand, Fremdeintrag ersetzt
+  ok   zurück in „Spiel laden“, Stände wieder da
+  ok   veränderte Datei: „beschädigt (Prüfsumme)“, nichts eingespielt
+  ok   fremde Datei: „keine Sicherung von „Die Stillen““
+  ok   kein JSON: abgelehnt
+  ok   fremdes „Vorschaubild“ wird verworfen (nur PNG-data-URI)
+  ok   im Spiel: nur exportieren (einspielen nur vom Titelbild)
+
+Phase 4 · Abspann beendeter Kapitel unter „Über „Die Stillen““
+  ok   ohne beendetes Kapitel kein Abspann-Eintrag
+  ok   nach Kapitel 1 und 2: „Abspann Kapitel 1“ und „… 2“
+  ok   Abspann von Kapitel 2 läuft
+
+Phase 4 · Neue Texte auf Bosnisch/Kroatisch
+  ok   Sicherung: „Izvezi/Uvezi sigurnosnu kopiju …“
+  ok   Namen und Karte übersetzt (Imenuj … / Prethodno / Imenuj oznaku)
+  ok   Zahlen mit Form (21 unos, 1 unos, 3 unosa)
+  ok   Steuerung: Schnellvorlauf übersetzt
+  ok   keine Skriptfehler in der Seite
+
+92/92 bestanden

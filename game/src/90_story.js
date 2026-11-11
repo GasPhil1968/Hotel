@@ -216,5 +216,5 @@ M.artTestRooms=function(){ Object.keys(M.ART).forEach(function(id){ if (M.ROOMS[
   M.defineRoom({id:id,name:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries,scape:A.scape||id,
     actors:function(){ return Object.keys(A.actorPos||{}).map(function(k){ var p=A.actorPos[k]; return {id:k,ch:p[3]||k,x:p[0],y:p[1],f:p[2]||'L',ghost:!!p[4],idle:p[5]||null}; }).filter(function(a){ return M.CHARS[a.ch]; }); },
     hotspots:Object.keys(A.spots||{}).map(function(k){ return {id:k,name:k,r:A.spots[k],st:(A.stands||{})[k],look:'('+k+')'}; })}); }); };
-M.boot=function(){ M.artTestRooms(); M.E.screen='title'; M.E.titleMode='main'; };
+M.boot=function(){ M.artTestRooms(); if (M.pickTitle) M.pickTitle(); M.E.screen='title'; M.E.titleMode='main'; };
 })(M);

@@ -1,0 +1,45 @@
+
+Phase 1 · Esc-Stapel und Rechtsklick (k1_start)
+  ok   ein Hotspot mit Verb-Menü gefunden
+  ok   Esc bei offenem Verb-Menü schließt nur das Menü (keine Pause)
+  ok   Esc ohne offene Ebene öffnet die Pause
+  ok   Pause liegt in der HTML-Schicht (Meldungen als eigene Marke, nie über Menüzeilen)
+  ok   Esc schließt die Pause wieder
+  ok   Rechtsklick auf „window“ schaut ihn an (Satz/Szene startet)
+  ok   Rechtsklick öffnet kein Verb-Menü
+  ok   Inventarpfeile 16 Spielpixel breit (x 40–55 und 287–302)
+  ok   ohne Mala zeigt der Knopf „Marko“ ohne Pfeil (Marko)
+  ok   „Zeigen“ beschriftet nur Ausgänge und Personen (1 Namen)
+  ok   Spielzeit läuft im Notizbuch nicht weiter (+0 ms in 1 s)
+  ok   Esc schließt das Notizbuch, ohne die Pause zu öffnen
+  ok   Kapitelkarte mit Enter übersprungen
+  ok   Unterzeile im Titel ohne abgeschlossenes Kapitel: „Split“
+
+Phase 1 · Antwortlisten: Ziffern, Pfeile, Mausrad, Touch-Zeilen (k2_fikret)
+  ok   Unterzeile nach Kapitel 1: „Split · Sarajevo“
+  ok   Touch: drei Zeilen à ≥ 15 Spielpixel (15, 15, 15)
+  ok   Touch: Anzahl weiterer Antworten sichtbar (+4)
+  ok   Touch: Zeilen ≥ 24 CSS-px bei diesem Maßstab (60.0)
+  ok   Mausrad blättert die Liste um eine Zeile
+  ok   Ziffer 2 wählt die zweite sichtbare Zeile („Dritte Antwort“ nach dem Blättern)
+  ok   ↓ ↓ Enter wählt die zweite Antwort
+  ok   Maus: vier Zeilen sichtbar (4)
+  ok   Schließen-Fläche ≥ 16 Spielpixel hoch
+  ok   Verb-Menü bei Touch: Zeilen 15 Spielpixel
+  ok   Verb-Menü ≥ 12 Spielpixel neben dem Tippunkt (14)
+
+Phase 1 · Figurenknopf mit Mala (k2_limbo)
+  ok   Knopf nennt das Ziel mit Pfeil (↔ Mala)
+
+Phase 1 · Fließtext ohne Waisen
+  ok   kein einzelnes Wort mitten im Satz auf eigener Zeile (Ich warte jeden Abend an der | Riva auf das Boot aus Ancona, | das nicht kommt, und auf einen | Mann, der nicht mehr da ist, seit | vielen Jahren schon. |  | Deine Ivka)
+  ok   Gruß bleibt eigene Zeile
+
+Phase 1 · Hochformat-Hinweis (iPhone 13 hochkant)
+  ok   Hinweis „„Die Stillen“ wird quer gespielt“ erscheint
+  ok   Knopf „Gedreht weiterspielen“ ≥ 44 CSS-px hoch (44)
+  ok   nach dem Tipp verborgen und gemerkt
+  ok   nach dem Neuladen nicht erneut
+  ok   keine Skriptfehler in der Seite
+
+33/33 bestanden

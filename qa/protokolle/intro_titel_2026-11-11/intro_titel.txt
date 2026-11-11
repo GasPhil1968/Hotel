@@ -1,0 +1,17 @@
+OK     ohne ?intro (Testautomatisierung): direkt der Titel
+OK     mit ?intro=1: das Intro läuft
+OK     Klick überspringt: Titel mit Hauptmenü {"s":"title","ctx":"title","cur":"main","song":"title","dlg":false,"fade":true}
+OK     Musik: das Titelstück
+OK     Menü nach dem Aufblenden sichtbar {"op":1,"n":5}
+OK     ohne Eingabe: nach 28.6 s der Titel
+OK     Hintergrund aufgeblendet, Menü offen
+OK     Leertaste überspringt
+OK     Einstellungen: „Intro beim Start“ und „Intro ansehen“ {"start":true,"see":true}
+OK     „Intro beim Start: aus“ gespeichert (mala.intro=0)
+OK     „Intro ansehen“ startet das Intro
+OK     Esc beendet es wieder
+OK     fünf Starts nacheinander: split → sarajevo → mostar → muenchen → split
+OK     ?titel=mostar wählt fest
+OK     alle vier bewegen sich (geänderte Pixel zwischen 1 s und 4,5 s): split:5248, sarajevo:3120, mostar:2474, muenchen:812
+OK     keine JS-Fehler (0)
+INTRO/TITEL OK

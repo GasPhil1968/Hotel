@@ -142,6 +142,6 @@ function frame(now){ var dt=now-last; last=now;
   requestAnimationFrame(frame); }
 if (M.boot) M.boot();
 M.setCRT(crt);
-M.music('title');
+if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.music('title');   // Intro vor dem Titel (89_intro.js)
 requestAnimationFrame(frame);
 })(M);
