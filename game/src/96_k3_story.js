@@ -228,10 +228,23 @@ function endRoom(G,rid){ var p=G.phase, from=G.flags['k3.lastFrom']||'';
   if (p==='k3_d1'||p==='k3_d2') return rid==='herberge' && from!=='zimmer';
   if (p==='k3_d3') return rid==='vulkanizer' && from!=='vhof' && from!=='kafic';
   return false; }
+// Prüfbericht K3-R2-02: Die Aufführung der Australier an der Brücke ist freiwillig und nur am Samstag möglich. Wer sie angefangen hat (Text
+// aufgeschrieben, Dinos Erlaubnis, eine Aufführung ohne Ende), bekommt sie vor dem Tagesende eigens genannt – unabhängig vom Pflichtfoto.
+function musicOpen(G){ if (!f(G,'k3.s.trip') || f(G,'k3.s.lenaVerse')) return null;
+  var words=f(G,'k3.s.words'), dino=f(G,'k3.s.dinoOk'), perf=f(G,'k3.s.perf'), heard=has(G,'b3_hum');   // b3_hum: die erste Aufführung hat stattgefunden
+  if (perf && !words) return 'Liam ist an der Brücke beim Fenster stecken geblieben. Den Rest des Liedes wollte ich ihm aufschreiben.';
+  if (perf || (heard && words)) return 'Die Australier wollen das Lied an der Brücke noch einmal spielen. Diesmal mit dem Ende.';   // Text nach der ersten Aufführung: perf wurde zurückgesetzt
+  if (words && dino) return 'Die Australier warten an der Brücke. Den Text haben sie, gespielt haben sie noch nicht.';
+  if (dino) return 'Dino lässt die Australier an der Brücke spielen. Gespielt haben sie noch nicht.';
+  if (words) return 'Die Australier haben ihren Text. An der Brücke dürfen sie erst spielen, wenn Dino seine Geschichte hat.';
+  return null; }
+M.k3MusicOpen=musicOpen;
 // offene Fäden, die mit dem Tag verloren gehen oder auf die jemand wartet: [{k,t}]
 M.k3OpenThreads=function(G){ var p=G.phase, L=[], inv=function(i){ return (G.inv||[]).indexOf(i)>=0; };
   if (p==='k3_d2'){
-    if (f(G,'k3.s.trip') && !f(G,'k3.s.photo') && !f(G,'k3.s.perf')) L.push({k:'bridge',t:'Davor und Lena sind an der Brücke. Ich habe gesagt, ich komme.'});
+    var music=musicOpen(G);
+    if (f(G,'k3.s.trip') && !f(G,'k3.s.photo') && !f(G,'k3.s.perf') && !music) L.push({k:'bridge',t:'Davor und Lena sind an der Brücke. Ich habe gesagt, ich komme.'});
+    if (music) L.push({k:'music',t:music});
     if ((f(G,'k3.z.mala')||f(G,'k3.z.lost')) && !f(G,'k3.x.vaga') && !f(G,'k3.z.vaga')) L.push({k:'vaga',t:'Zlatas Waage liegt noch auf dem Klapptisch am Markt.'}); }
   if (p==='k3_d3'){
     if (inv('pismo')) L.push({k:'pismo',t:'Veras Brief ist noch in meiner Tasche, nicht bei Vlado.'});

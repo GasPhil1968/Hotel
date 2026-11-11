@@ -66,7 +66,14 @@ async function toSkela(A){ var L=loc('skela'); if (!L||!A.G.map.skela){ await A.
   if (M.k3TravelWhy && M.k3TravelWhy(A.G,L)){ await M.canTravel(A,L); return false; }
   var ok=await M.canTravel(A,L); if (!ok) return false; await A.goto(L.to,{via:'map'}); return true; }
 async function talkTaxi(A){ var T=A.npc('taxist'), G=A.G, p=G.phase;
-  if (p==='k3_epi_d' && G.flags['k3.v.battery'] && A.first('txEpiBat')){ await T.say('Und? Ist er angesprungen?'); await A.m('Beim ersten Mal.'); await A.wait(700); await T.say('Und was hat er gesagt?'); await A.m(G.flags['k3.fin.batteryNod']?'„Vom Taxi.“ Und er hat genickt. Zur Stadt hin.':'Er hat genickt.'); await A.wait(1000); await T.say('Genickt.'); await A.wait(600); await T.say('Das ist viel. Für ihn.'); await A.wait(500); await T.say('Die Batterie bringt Kata. Sie hat angerufen. Sie kommt mit dem Lastwagen. Hierher.'); return; }
+  // Prüfbericht K3-R2-01: „Vom Taxi“ und die Rückgabe gehören nur zur geliehenen Taxibatterie (alter Weg). Im neuen Weg kam die Batterie aus
+  // Mates Garage; dann eine eigene kurze Szene. Vlados Nicken im Finale (k3.fin.batteryNod) gibt es in beiden Fällen, es sagt nichts über die Herkunft.
+  var mateBat=G.flags['k3.b.batFrom']==='mate', taxiBat=!!G.flags['k3.x.batteryGiven'] && !mateBat;
+  if (p==='k3_epi_d' && G.flags['k3.v.battery'] && mateBat && A.first('txEpiMate')){ await T.say('Rajić ist gefahren. In der Nacht, mit dem TAM. Die halbe Stadt hat ihn gehört.'); await A.wait(700);
+    await A.m('Mit einer Batterie aus Mate Zelenikas Mercedes.'); await A.wait(1000); await T.say('Zelenika.'); await A.wait(600);
+    await T.say('Den Mercedes hat er jeden Winter abgeklemmt und zugedeckt wie ein Pferd. Gefahren ist er nie. Ich habe ihn einmal gefragt, wofür. Er hat gesagt: für später.');
+    await A.wait(900); await T.say('Dann war das später.'); return; }
+  if (p==='k3_epi_d' && G.flags['k3.v.battery'] && taxiBat && A.first('txEpiBat')){ await T.say('Und? Ist er angesprungen?'); await A.m('Beim ersten Mal.'); await A.wait(700); await T.say('Und was hat er gesagt?'); await A.m(G.flags['k3.fin.batteryNod']?'„Vom Taxi.“ Und er hat genickt. Zur Stadt hin.':'Er hat genickt.'); await A.wait(1000); await T.say('Genickt.'); await A.wait(600); await T.say('Das ist viel. Für ihn.'); await A.wait(500); await T.say('Die Batterie bringt Kata. Sie hat angerufen. Sie kommt mit dem Lastwagen. Hierher.'); return; }
   if (p==='k3_epi_d'){ if (A.first('txEpi')){ await T.say('Sarajevo? Mit dem Bus?'); await A.m('Mit dem Bus.'); await T.say('Ich hätte Sie gefahren. Nach Skela waren Sie mir lieber. Da war wenigstens Schweigen im Auto.'); return; } return T.say(A.cycle('txE2',['Sretan put.','Grüßen Sie Sarajevo. Ich war seit einundneunzig nicht da.'])); }
   await A.menuLoop(function(){ return [
     {t:'Fahren Sie mich nach Skela?',if:!!G.map.skela,go:async function(A){ await T.say(A.first('txSk')?'Skela? Unten an der Biegung. Kenne ich.':'Skela. Steigen Sie ein.'); var ok=await toSkela(A); if (ok) return 'bye'; }},

@@ -118,8 +118,13 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await log('Haus Zelenika: Jela mit dem Schlüssel; die große Feige braucht Batos Plane; das Foto von 1965: „Zeig ihr den Stein“');
     await go('starimost'); await talk('davor_b', 'Zeigen Sie mir das Foto'); await calm(); await inv('foto_1965'); await flag('k3.s.down'); await log('an der Brücke: Davor gibt mir das Foto, die beiden gehen ans Ufer');
     await exit('down'); await at('podmost'); await shot('podmost'); await log('unter der Brücke: vier Uferfelsen, auf der Platte ein Quader');
-    await act('use', 'r1', 'foto_1965'); await D.until(s => s.overlay === 'foto65', 20000, 'Vergleich'); await shot('vergleich_r1'); await tapHit('go'); await calm(); await expectSaid('zu nah am Turm'); await log('Vergleich am runden Block: Turm zu groß, Scheitel zu weit rechts');
-    await act('use', 'r3', 'foto_1965'); await D.until(s => s.overlay === 'foto65', 20000, 'Vergleich'); await tapHit('go'); await calm(); await flag('k3.s.spot'); await log('Vergleich an der flachen Platte: Turm und Scheitel stimmen – aber da liegt ein Quader');
+    // zweiter Prüfbericht, Abschnitt 5: Das Fenster zeigt erst Bilder und eine neutrale Beschreibung; der Spieler entscheidet, dann urteilt Marko
+    const ovMsg = () => D.ev(() => (M.E.overlay && M.E.overlay.data && M.E.overlay.data.msg) || '');
+    await act('use', 'r1', 'foto_1965'); await D.until(s => s.overlay === 'foto65', 20000, 'Vergleich'); await shot('vergleich_r1');
+    await expect(!/zu nah|Nein|Genau hier/.test(await ovMsg()), 'vor der Entscheidung kein Urteil'); await tapHit('yes'); await expect(/zu nah am Turm/.test(await ovMsg()), 'nach „Hier stand er.“: Begründung');
+    await tapHit('go'); await calm(); await expectSaid('Zu nah am Turm'); await log('Vergleich am runden Block, „Hier stand er.“ gewählt: nein, Turm zu groß, Scheitel zu weit rechts');
+    await act('use', 'r3', 'foto_1965'); await D.until(s => s.overlay === 'foto65', 20000, 'Vergleich'); await tapHit('yes'); await tapHit('go'); await calm(); await flag('k3.s.spot');
+    await expect(!(await said('durch Stein sehen')), 'kein ungefragter Vorschlag „durch Stein sehen“'); await log('Vergleich an der flachen Platte, „Hier stand er.“: Turm und Scheitel stimmen – aber da liegt ein Quader');
     await mala(); await act('look', 'block'); await note('b3_initials'); await flag('k3.s.initials'); await marko(); await log('Mala sieht durch den Quader: „M · D · 1965“');
     await talk('davor_p'); await calm(); await flag('k3.s.photo'); await note('b3_lenaphoto'); await log('Davor setzt sich auf den Quader, Lena fotografiert ihn; Lena bekommt beide Fotos');
     await flag('k3.ready.k3_d2'); await exit('steps'); await at('starimost'); await go('herberge'); await endDay('(Den Tag beenden.)'); await log('in der Herberge den Samstag beendet');

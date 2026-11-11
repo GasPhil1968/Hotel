@@ -1,0 +1,6 @@
+
+22 Stände in 14 Folgen, 45 Proben ausgeführt (44 Themen-Stände bestanden, 1 übersprungen).
+übersprungen: 1 × Szene läuft nach dem Laden
+HINWEISPROBE OK (0 zu prüfen)
+keine JS-Fehler
+EXIT 0

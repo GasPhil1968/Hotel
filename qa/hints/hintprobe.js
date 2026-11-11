@@ -271,7 +271,7 @@ async function exhaust(D, check, want, log, only) {
       if (['puzzle', 'arrange', 'glyphs'].indexOf(s.overlay) >= 0 && solved < 3) { solved++; const r = await D.ev(() => HP.solve()); log.push('Rätselfeld: ' + r); await wait(D, 60); continue; }
       if (s.overlay === 'peil' && solved < 3) { solved++; await D.ev(() => { if (M.k3PeilTap) M.k3PeilTap('go'); }); await wait(D, 200); log.push('Karte bestätigt'); continue; }
       if (s.overlay === 'karte85' && solved < 3) { solved++; for (const id of ['st_a', 'go']) await tapHit(D, id); await D.until((x) => x.overlay !== 'karte85', 20000, 'Kartenvergleich').catch(() => {}); log.push('Straßen verglichen'); continue; }
-      if (s.overlay === 'foto65') { await tapHit(D, 'go'); await D.until((x) => x.overlay !== 'foto65', 20000, 'Fotovergleich').catch(() => {}); log.push('Foto verglichen'); continue; }
+      if (s.overlay === 'foto65') { const yes = await tapHit(D, 'yes'); await tapHit(D, 'go'); await D.until((x) => x.overlay !== 'foto65', 20000, 'Fotovergleich').catch(() => {}); log.push(yes ? 'Foto verglichen: „Hier stand er.“' : 'Foto angesehen'); continue; }   // Stufe 4 sagt „Hier stand er.“ wählen
       if (s.overlay === 'halves' && solved < 3) { solved++; for (const id of ['sw', 'p1', 'go']) await tapHit(D, id); await D.until((x) => x.overlay !== 'halves', 20000, 'Hälften').catch(() => {}); log.push('Hälften zusammengelegt'); continue; }
       await D.ev(() => M.TA.closeOverlay()); await wait(D, 60); continue;
     }
@@ -282,7 +282,7 @@ async function exhaust(D, check, want, log, only) {
   const d = check(); return d ? { ok: true, why: d } : { ok: false, why: 'keine Wirkung' };
 }
 // Feld eines Rätsels über seine Trefferfläche antippen (wie game/tools/walkthrough2.js)
-async function tapHit(D, id) { await wait(D, 120); await D.ev((i) => { const h = ((M.E.overlay && M.E.overlay.lay && M.E.overlay.lay.hits) || []).find((x) => x.id === i); if (!h) return false; const x = h.r[0] + (h.r[2] >> 1), y = h.r[1] + (h.r[3] >> 1); M.pointerDown(x, y, true); M.pointerUp(x, y, true); return true; }, id); await wait(D, 80); }
+async function tapHit(D, id) { await wait(D, 120); const ok = await D.ev((i) => { const h = ((M.E.overlay && M.E.overlay.lay && M.E.overlay.lay.hits) || []).find((x) => x.id === i); if (!h) return false; const x = h.r[0] + (h.r[2] >> 1), y = h.r[1] + (h.r[3] >> 1); M.pointerDown(x, y, true); M.pointerUp(x, y, true); return true; }, id); await wait(D, 80); return ok; }
 
 // ---------------------------------------------------------------- Hauptprogramm
 (async () => {

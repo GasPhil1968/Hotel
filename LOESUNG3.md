@@ -114,14 +114,15 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 **13a. Der Stein unter der Brücke** (Pflicht)
 - **[M]** An der **Alten Brücke** mit Davor reden: „Zeigen Sie mir das Foto. Ich suche mit.“ Er gibt Marko das Foto; Davor und Lena gehen die Uferstufen hinunter.
 - **[M]** „Hinunter ans Ufer“: unter dem Bogen liegen vier Uferfelsen. Das Foto ansehen: Turm am linken Rand, Scheitel oben in der Mitte, vorn eine flache Platte mit einer Kerbe.
-- **[M]** Das **Foto an den Felsen** benutzen. Ein Vergleichsbild zeigt den Blick von dort; Marko sagt, was nicht passt:
+- **[M]** Das **Foto an den Felsen** benutzen. Ein Vergleichsbild zeigt das alte Foto und den Blick von dort, darunter nur, was man sieht (kein Urteil). Der Spieler entscheidet: **„Hier stand er.“** oder „Weitersuchen“. Erst nach „Hier stand er.“ sagt Marko, was passt:
   - runder Block: Turm mitten im Bild, zu nah;
-  - Felsen mit Riss: Turm noch zu breit, Scheitel rechts;
-  - spitzer Felsen: Turm schmal, Scheitel links, zu weit;
-  - **flache Platte**: alles stimmt. Nur liegt dort ein Quader der alten Brücke.
-- **[G]** Den **Quader** ansehen: Mala sieht darunter die Platte und die Buchstaben **„M · D · 1965“**.
+  - Felsen mit Riss: Turm zu breit, Scheitel rechts;
+  - spitzer Felsen: Turm schmaler als auf dem Foto, Scheitel links, zu weit;
+  - **flache Platte**: alles stimmt. Nur liegt dort ein Quader der alten Brücke; die Platte vom Foto liegt darunter.
+- **[G]** Den **Quader** ansehen: Mala sieht darunter die Platte und die Buchstaben **„M · D · 1965“**. (Das Spiel sagt das nicht von selbst. Wer als Marko versucht, den Quader zu heben oder zu schieben, hört beim zweiten Versuch Mala: „Mit Händen nicht.“)
 - **[M]** Mit **Davor** reden: Er setzt sich auf den Quader, Lena fotografiert ihn. Lena bekommt beide Fotos.
 - **[M]** Zurück in der **Herberge** → „(Den Tag beenden.)“. Nada ruft an: „Weißt du etwas?“ „(Mala fragen.)“ wählen; Mala sagt: „Aber sag ihr nicht nichts.“ Dann „Ich habe eine Spur.“
+- Wer die freiwillige Aufführung der Australier angefangen hat (Text aufgeschrieben, Dinos Erlaubnis oder eine Aufführung ohne Ende), dem nennt Marko sie vor dem Abschluss eigens („Die Australier warten an der Brücke …“). „(Noch nicht. Erst das.)“ lässt sie spielbar: an der Brücke Liam ansprechen → „Play it.“
 
 ---
 
@@ -322,7 +323,8 @@ Pflicht sind die Schritte oben, einschließlich der neuen Abschnitte 13a und 20�
 
 - **Alte Spielstände (Regel 1):** Wer einen Spielstand ab Samstagnacht lädt, spielt den bisherigen Pflichtweg weiter: kein Stein unter der Brücke, keine Plane, keine Garage; die Feigen gehen mit Jute, Mates Erkenntnis ohne Fotos. Auch hier enden die Tage bewusst (Herberge, Werkstatt). Spielstände bis Samstag (einschließlich) wechseln auf den neuen Hauptweg.
 - **Reihenfolge am Sonntag:** Batos Plane gibt es erst nach der Konfrontation mit Bato; die Feigen erst mit der Plane; den Garagenschlüssel erst, wenn Mate den Schlüssel losgelassen hat. Was davor liegt, ist frei: Vlado, Mala, Kata und Zelenika lassen sich in beliebiger Folge besuchen.
-- **Der Fotovergleich:** Jeder Felsen bekommt eine eigene Begründung; das Foto lässt sich beliebig oft vergleichen. Mala sieht unter dem Quader erst etwas, wenn Marko den Standort gefunden hat („Was willst du darunter?“).
+- **Der Fotovergleich:** Erst entscheidet der Spieler („Hier stand er.“ / „Weitersuchen“), dann urteilt Marko; jeder falsche Felsen bekommt eine eigene Begründung, das Foto lässt sich beliebig oft vergleichen. Mala sieht unter dem Quader erst etwas, wenn Marko den Standort gefunden hat („Was willst du darunter?“).
+- **Epilog am Ostbusbahnhof:** Kam die Batterie aus Mates Garage, spricht der Taxifahrer über Mates Mercedes; nur mit der geliehenen Taxibatterie (alte Spielstände) fragt er nach Vlado und der Rückgabe.
 - **Kartenvergleich:** Jede falsche Straße bekommt eine geometrische Begründung; die Karte lässt sich jederzeit wieder öffnen.
 
 - **Westufer vor der Straßenbrücke:**

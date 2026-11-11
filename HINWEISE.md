@@ -2104,8 +2104,8 @@ Offen, wenn: `G.phase==='k3_d2' && R2(G) && I(G,'foto_1965') && !F(G,'k3.s.spot'
 
 1. **Problem einordnen:** Auf dem Foto: der Bogen, am linken Rand ein runder Turm, vorn eine flache Platte mit einer Kerbe.
 2. **Denkrichtung:** Wie groß der Turm im Bild ist und wo der Scheitel des Bogens liegt, hängt davon ab, wo man steht.
-3. **Konkreter Ansatz:** Unten am Ufer liegen vier Felsen. Das Foto an jedem hochhalten und mit dem Blick von dort vergleichen.
-4. **Nächster Schritt:** *je nach Stand:* „Unter der Brücke das Foto an die flache Platte halten.“ / „An der Alten Brücke die Uferstufen hinunter ans Ufer gehen.“
+3. **Konkreter Ansatz:** Unten am Ufer liegen vier Felsen. Das Foto an jedem hochhalten und mit dem Blick von dort vergleichen. Wo Turm und Scheitel aussehen wie auf dem Foto: „Hier stand er.“
+4. **Nächster Schritt:** *je nach Stand:* „Unter der Brücke das Foto an die flache Platte halten und „Hier stand er.“ wählen.“ / „An der Alten Brücke die Uferstufen hinunter ans Ufer gehen.“
 
 ### Unter dem Quader `r3c`
 

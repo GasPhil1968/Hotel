@@ -13510,8 +13510,8 @@ M.HINTS_K3=[
  {id:'r3b',t:'Wo Mate stand',open:function(G){ return G.phase==='k3_d2' && R2(G) && I(G,'foto_1965') && !F(G,'k3.s.spot'); },
   s:['Auf dem Foto: der Bogen, am linken Rand ein runder Turm, vorn eine flache Platte mit einer Kerbe.',
      'Wie groß der Turm im Bild ist und wo der Scheitel des Bogens liegt, hängt davon ab, wo man steht.',
-     'Unten am Ufer liegen vier Felsen. Das Foto an jedem hochhalten und mit dem Blick von dort vergleichen.',
-     function(G){ return G.pos&&G.pos.marko&&G.pos.marko.room==='podmost'?'Unter der Brücke das Foto an die flache Platte halten.':'An der Alten Brücke die Uferstufen hinunter ans Ufer gehen.'; }]},
+     'Unten am Ufer liegen vier Felsen. Das Foto an jedem hochhalten und mit dem Blick von dort vergleichen. Wo Turm und Scheitel aussehen wie auf dem Foto: „Hier stand er.“',
+     function(G){ return G.pos&&G.pos.marko&&G.pos.marko.room==='podmost'?'Unter der Brücke das Foto an die flache Platte halten und „Hier stand er.“ wählen.':'An der Alten Brücke die Uferstufen hinunter ans Ufer gehen.'; }]},
  {id:'r3c',t:'Unter dem Quader',open:function(G){ return G.phase==='k3_d2' && R2(G) && F(G,'k3.s.spot') && !F(G,'k3.s.initials'); },
   s:['Der Standort stimmt. Aber auf der Platte liegt ein schwerer Quader der alten Brücke.',
      'Den Quader hebt keiner. Darunter sehen kann nur eine.',
@@ -56796,7 +56796,14 @@ async function toSkela(A){ var L=loc('skela'); if (!L||!A.G.map.skela){ await A.
   if (M.k3TravelWhy && M.k3TravelWhy(A.G,L)){ await M.canTravel(A,L); return false; }
   var ok=await M.canTravel(A,L); if (!ok) return false; await A.goto(L.to,{via:'map'}); return true; }
 async function talkTaxi(A){ var T=A.npc('taxist'), G=A.G, p=G.phase;
-  if (p==='k3_epi_d' && G.flags['k3.v.battery'] && A.first('txEpiBat')){ await T.say('Und? Ist er angesprungen?'); await A.m('Beim ersten Mal.'); await A.wait(700); await T.say('Und was hat er gesagt?'); await A.m(G.flags['k3.fin.batteryNod']?'„Vom Taxi.“ Und er hat genickt. Zur Stadt hin.':'Er hat genickt.'); await A.wait(1000); await T.say('Genickt.'); await A.wait(600); await T.say('Das ist viel. Für ihn.'); await A.wait(500); await T.say('Die Batterie bringt Kata. Sie hat angerufen. Sie kommt mit dem Lastwagen. Hierher.'); return; }
+  // Prüfbericht K3-R2-01: „Vom Taxi“ und die Rückgabe gehören nur zur geliehenen Taxibatterie (alter Weg). Im neuen Weg kam die Batterie aus
+  // Mates Garage; dann eine eigene kurze Szene. Vlados Nicken im Finale (k3.fin.batteryNod) gibt es in beiden Fällen, es sagt nichts über die Herkunft.
+  var mateBat=G.flags['k3.b.batFrom']==='mate', taxiBat=!!G.flags['k3.x.batteryGiven'] && !mateBat;
+  if (p==='k3_epi_d' && G.flags['k3.v.battery'] && mateBat && A.first('txEpiMate')){ await T.say('Rajić ist gefahren. In der Nacht, mit dem TAM. Die halbe Stadt hat ihn gehört.'); await A.wait(700);
+    await A.m('Mit einer Batterie aus Mate Zelenikas Mercedes.'); await A.wait(1000); await T.say('Zelenika.'); await A.wait(600);
+    await T.say('Den Mercedes hat er jeden Winter abgeklemmt und zugedeckt wie ein Pferd. Gefahren ist er nie. Ich habe ihn einmal gefragt, wofür. Er hat gesagt: für später.');
+    await A.wait(900); await T.say('Dann war das später.'); return; }
+  if (p==='k3_epi_d' && G.flags['k3.v.battery'] && taxiBat && A.first('txEpiBat')){ await T.say('Und? Ist er angesprungen?'); await A.m('Beim ersten Mal.'); await A.wait(700); await T.say('Und was hat er gesagt?'); await A.m(G.flags['k3.fin.batteryNod']?'„Vom Taxi.“ Und er hat genickt. Zur Stadt hin.':'Er hat genickt.'); await A.wait(1000); await T.say('Genickt.'); await A.wait(600); await T.say('Das ist viel. Für ihn.'); await A.wait(500); await T.say('Die Batterie bringt Kata. Sie hat angerufen. Sie kommt mit dem Lastwagen. Hierher.'); return; }
   if (p==='k3_epi_d'){ if (A.first('txEpi')){ await T.say('Sarajevo? Mit dem Bus?'); await A.m('Mit dem Bus.'); await T.say('Ich hätte Sie gefahren. Nach Skela waren Sie mir lieber. Da war wenigstens Schweigen im Auto.'); return; } return T.say(A.cycle('txE2',['Sretan put.','Grüßen Sie Sarajevo. Ich war seit einundneunzig nicht da.'])); }
   await A.menuLoop(function(){ return [
     {t:'Fahren Sie mich nach Skela?',if:!!G.map.skela,go:async function(A){ await T.say(A.first('txSk')?'Skela? Unten an der Biegung. Kenne ich.':'Skela. Steigen Sie ein.'); var ok=await toSkela(A); if (ok) return 'bye'; }},
@@ -57478,6 +57485,16 @@ function rockHS(id,name,look,glook){ return {id:id,name:name,look:look,
   take:'Ein Felsen. Den nimmt keiner mit.',
   with:{ foto_1965:function(A){ return holdPhoto(A,id); }, mobitel:'Ein Foto mit dem Handy? Ich brauche nicht ein neues. Ich brauche den Ort des alten.' },
   g:{look:glook}}; }
+// ---------------------------------------------------------------- Marko am Quader: heben, schieben, nehmen
+// Zweiter Prüfbericht, Abschnitt 5: Dass Mala durch den Stein sehen kann, sagt das Spiel nicht mehr ungefragt. Wer den Standort kennt und es
+// mit den Händen versucht, merkt es selbst; beim zweiten Versuch sagt Mala nur: „Mit Händen nicht.“ (Die Hinweise r3c helfen auf Wunsch.)
+function blockBase(verb){ return verb==='push'?'Er bewegt sich nicht. Er liegt da seit fünfzehn Jahren und hat es nicht eilig.':(verb==='take'?'Zwei Tonnen. Mindestens.':'Zwei Tonnen, mindestens. Den hebt keiner. Und ich schon gar nicht.'); }
+async function tryBlock(A,verb){ var G=A.G;
+  if (!F(G,'k3.s.spot') || F(G,'k3.s.initials') || !famHere(G)) return A.m(blockBase(verb));
+  var n=(G.flags['k3.s.blockTry']||0)+1; G.flags['k3.s.blockTry']=n;
+  if (n===1) return A.m('Zwei Tonnen. Den hebt keiner. Und darunter liegt die Platte, die ich suche.');
+  await A.m(A.cycle('pmTry',['Nichts. Nicht einen Millimeter. Mit den Händen komme ich da nicht drunter.','Er liegt. Ich komme nicht drunter, Davor nicht, keiner.']));
+  if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Mit Händen nicht.'); } }
 // ---------------------------------------------------------------- Mala am Quader: durch den Stein
 async function malaBlock(A){ var G=A.G;
   if (F(G,'k3.s.initials')) return A.g('M · D · 1965. Darunter schläft der Stein vom Foto. Er hat gewartet.');
@@ -57531,8 +57548,8 @@ var HS=[
  rockHS('r1','Runder Felsen','Ein runder Block direkt unter dem Turm, glatt geschliffen, ohne Kanten.','Stein. Durch und durch.'),
  rockHS('r2','Felsen mit Riss','Ein kantiger Felsen mit einem Riss, in dem Moos wächst.','Stein. Im Riss wohnt eine Spinne.'),
  Object.assign(rockHS('r3','Flache Platte','Eine flache, ausgetretene Uferplatte. Auf ihr liegt ein schwerer, behauener Steinblock.',function(A){ return malaBlock(A); }),{}),
- {id:'block',name:'Quader',look:'Ein behauener Kalksteinquader, so groß wie ein Koffer, oben zwei leere Schlitze für Eisenklammern. Ein Stein der alten Brücke. Nach dem Krieg haben Taucher viele aus dem Fluss geholt; die meisten waren zu beschädigt, um sie wieder einzubauen.',
-   use:'Zwei Tonnen, mindestens. Den hebt keiner. Und ich schon gar nicht.',take:'Zwei Tonnen. Mindestens.',push:'Er bewegt sich nicht. Er liegt da seit fünfzehn Jahren und hat es nicht eilig.',
+ {id:'block',name:'Quader',look:function(A){ return A.m('Ein behauener Kalksteinquader, so groß wie ein Koffer, oben zwei leere Schlitze für Eisenklammern. Ein Stein der alten Brücke. Nach dem Krieg haben Taucher viele aus dem Fluss geholt; die meisten waren zu beschädigt, um sie wieder einzubauen.'+(A.flag('k3.s.spot')&&!A.flag('k3.s.initials')?' Darunter liegt die Platte vom Foto.':'')); },
+   use:function(A){ return tryBlock(A,'use'); },take:function(A){ return tryBlock(A,'take'); },push:function(A){ return tryBlock(A,'push'); },
    with:{ foto_1965:function(A){ return holdPhoto(A,'r3'); } },
    g:{look:function(A){ return malaBlock(A); },sense:'Kalt. Aber darunter ist etwas Warmes. Wie eine Hand, die lange auf etwas gelegen hat.'}},
  rockHS('r4','Spitzer Felsen','Ein spitzer Felsen am Wasser. Die Strömung hat ihm eine Nase geschliffen.','Stein. Nass, kalt, sonst nichts.'),
@@ -68001,10 +68018,23 @@ function endRoom(G,rid){ var p=G.phase, from=G.flags['k3.lastFrom']||'';
   if (p==='k3_d1'||p==='k3_d2') return rid==='herberge' && from!=='zimmer';
   if (p==='k3_d3') return rid==='vulkanizer' && from!=='vhof' && from!=='kafic';
   return false; }
+// Prüfbericht K3-R2-02: Die Aufführung der Australier an der Brücke ist freiwillig und nur am Samstag möglich. Wer sie angefangen hat (Text
+// aufgeschrieben, Dinos Erlaubnis, eine Aufführung ohne Ende), bekommt sie vor dem Tagesende eigens genannt – unabhängig vom Pflichtfoto.
+function musicOpen(G){ if (!f(G,'k3.s.trip') || f(G,'k3.s.lenaVerse')) return null;
+  var words=f(G,'k3.s.words'), dino=f(G,'k3.s.dinoOk'), perf=f(G,'k3.s.perf'), heard=has(G,'b3_hum');   // b3_hum: die erste Aufführung hat stattgefunden
+  if (perf && !words) return 'Liam ist an der Brücke beim Fenster stecken geblieben. Den Rest des Liedes wollte ich ihm aufschreiben.';
+  if (perf || (heard && words)) return 'Die Australier wollen das Lied an der Brücke noch einmal spielen. Diesmal mit dem Ende.';   // Text nach der ersten Aufführung: perf wurde zurückgesetzt
+  if (words && dino) return 'Die Australier warten an der Brücke. Den Text haben sie, gespielt haben sie noch nicht.';
+  if (dino) return 'Dino lässt die Australier an der Brücke spielen. Gespielt haben sie noch nicht.';
+  if (words) return 'Die Australier haben ihren Text. An der Brücke dürfen sie erst spielen, wenn Dino seine Geschichte hat.';
+  return null; }
+M.k3MusicOpen=musicOpen;
 // offene Fäden, die mit dem Tag verloren gehen oder auf die jemand wartet: [{k,t}]
 M.k3OpenThreads=function(G){ var p=G.phase, L=[], inv=function(i){ return (G.inv||[]).indexOf(i)>=0; };
   if (p==='k3_d2'){
-    if (f(G,'k3.s.trip') && !f(G,'k3.s.photo') && !f(G,'k3.s.perf')) L.push({k:'bridge',t:'Davor und Lena sind an der Brücke. Ich habe gesagt, ich komme.'});
+    var music=musicOpen(G);
+    if (f(G,'k3.s.trip') && !f(G,'k3.s.photo') && !f(G,'k3.s.perf') && !music) L.push({k:'bridge',t:'Davor und Lena sind an der Brücke. Ich habe gesagt, ich komme.'});
+    if (music) L.push({k:'music',t:music});
     if ((f(G,'k3.z.mala')||f(G,'k3.z.lost')) && !f(G,'k3.x.vaga') && !f(G,'k3.z.vaga')) L.push({k:'vaga',t:'Zlatas Waage liegt noch auf dem Klapptisch am Markt.'}); }
   if (p==='k3_d3'){
     if (inv('pismo')) L.push({k:'pismo',t:'Veras Brief ist noch in meiner Tasche, nicht bei Vlado.'});
@@ -70660,7 +70690,9 @@ X.folderDoc=async function(A){ var G=A.G;
 /* ===== 97_k3_foto.js — Kapitel 3, Revision nach dem Prüfbericht: Mates Foto von 1965 und der Fotostandort unter der Brücke.
    Overlay 'foto65': links der Abzug von 1965 (Davor mit fünf auf einer flachen Platte mit Kerbe, dahinter der Bogen, am linken Rand der Turm
    Tara), rechts – wenn Marko an einem Uferfelsen steht – derselbe Blick von dort, gezeichnet aus derselben Geometrie. Der Spieler vergleicht
-   Turm (Lage, Größe) und Scheitel des Bogens; Marko sagt, was nicht passt. Richtig ist R3 – dort liegt aber ein Quader auf der Platte. ===== */
+   Turm (Lage, Größe) und Scheitel des Bogens und entscheidet selbst: „Hier stand er.“ oder „Weitersuchen“. Erst nach der Entscheidung sagt
+   Marko, was passt oder nicht (zweiter Prüfbericht, Abschnitt 5: keine fertige Schlussfolgerung vor dem Spieler). Richtig ist R3 – dort liegt
+   aber ein Quader auf der Platte. Dass Mala hindurchsehen kann, sagt das Spiel nicht von selbst (podmost.js: erst nach einem Fehlversuch). ===== */
 (function(M){
 'use strict';
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, E=M.E;
@@ -70672,12 +70704,20 @@ var VIEW={
   r2:{tx:0,tw:44,cx:98,r:86,fg:'crack'},
   r3:{tx:0,tw:26,cx:70,r:66,fg:'block'},
   r4:{tx:0,tw:13,cx:50,r:52,fg:'point'} };
+// was man von dort sieht, ohne Urteil (steht im Fenster, bevor der Spieler entscheidet)
+var SEE={
+  r1:'Von hier steht der Turm fast in der Bildmitte und ist sehr breit. Vom Bogen sieht man nur ein Stück Gewölbe rechts oben. Vorn ein runder Block.',
+  r2:'Von hier steht der Turm am linken Rand und ist breit. Der Scheitel des Bogens liegt rechts von der Mitte. Vorn ein Felsen mit einem Riss.',
+  r3:'Von hier steht der Turm am linken Rand und ist schmal. Der Scheitel liegt oben in der Mitte. Vorn eine flache Platte mit einer Kerbe, darauf ein behauener Quader.',
+  r4:'Von hier ist der Turm ein dünner Streifen am linken Rand. Der Scheitel liegt links von der Mitte. Vorn ein spitzer Felsen.' };
+// Markos Urteil, erst nach „Hier stand er.“
 var SAY={
-  r1:'Von hier steht der Turm mitten im Bild, und vom Bogen sehe ich nur ein Stück Gewölbe rechts oben. Auf dem Foto steht der Turm am linken Rand, und der Scheitel ist oben in der Mitte. Ich bin zu nah am Turm.',
-  r2:'Besser. Der Turm ist an den Rand gerückt, aber er ist noch zu breit, und der Scheitel liegt rechts von der Mitte. Ich muss weiter vom Turm weg.',
-  r3:'Turm am linken Rand, so breit wie auf dem Foto. Der Scheitel oben in der Mitte, der Bogen füllt das Bild. Genau hier hat Mate gestanden. Nur vorn stimmt es nicht: Auf dem Foto sitzt der Junge auf einer flachen Platte mit einer Kerbe. Hier liegt ein behauener Quader darauf.',
-  r4:'Jetzt ist der Turm ein schmaler Streifen am Rand, und der Scheitel liegt links von der Mitte. Zu weit weg.' };
-M.K3F={VIEW:VIEW,SAY:SAY};
+  r1:'Nein. Auf dem Foto steht der Turm am linken Rand, und der Scheitel ist oben in der Mitte. Von hier steht der Turm mitten im Bild, und vom Bogen sehe ich nur ein Stück. Ich bin zu nah am Turm.',
+  r2:'Nein. Der Turm steht am Rand, aber er ist breiter als auf dem Foto, und der Scheitel liegt rechts von der Mitte. Ich muss weiter vom Turm weg.',
+  r3:'Ja. Turm am linken Rand, so breit wie auf dem Foto. Der Scheitel oben in der Mitte. Genau hier hat Mate gestanden. Nur vorn: Auf dem Foto ist die Platte mit der Kerbe frei. Hier liegt ein Quader darauf.',
+  r4:'Nein. Hier ist der Turm schmaler als auf dem Foto, und der Scheitel liegt links von der Mitte. Zu weit weg.' };
+var SHORT={ r1:'Nicht hier. Zu nah am Turm.', r2:'Nicht hier. Noch zu nah am Turm.', r4:'Nicht hier. Zu weit weg.' };
+M.K3F={VIEW:VIEW,SEE:SEE,SAY:SAY};
 function sepia(c){ var rgb=M.RGB[c], L=(rgb[0]*0.3+rgb[1]*0.59+rgb[2]*0.11)/255; var S=[P.s0,P.s1,P.s2,P.s3,P.s4,P.s5,P.s6]; return S[Math.max(0,Math.min(6,Math.round(Math.pow(L,1.5)*6.6)))]; }
 // eine Ansicht malen (in einen Puffer PW×PH)
 function view(v,old){ var b=new M.Buf(PW,PH,P.b4), x, y, cy=v.r+18, ro=v.r+6, HZ=58;
@@ -70710,17 +70750,28 @@ M.defineOverlay('foto65',function(fb,ov){ var d=ov.data, hov=M.uiHover?M.uiHover
   if (d.at){ frame(fb,ov.oldPic,20,26,true); frame(fb,ov.herePic,166,26,false); M.text(fb,'1965',20+PW/2-10,26+PH+8,P.k1); M.text(fb,'hier',166+PW/2-8,26+PH+8,P.k1); }
   else { frame(fb,ov.oldPic,92,26,true); M.text(fb,'Hinten mit Bleistift: „Davor, 1965“',92,26+PH+8,P.k1); }
   var msg=d.msg||'', ls=M.wrap(msg,284); ls.slice(0,5).forEach(function(l,i){ M.text(fb,l,18,140+i*9,P.n0); });
-  var bt='Weiter', bw=M.textWidth(bt)+14, bx=300-bw, by=180; fb.rect(bx,by,bw,13,hov==='o:go'?P.n2:P.n1); M.text(fb,bt,bx+7,by+3,P.s6); hits.push({id:'go',r:[bx,by,bw,13]});
+  // Knöpfe: vor der Entscheidung „Hier stand er.“ und „Weitersuchen“, danach „Weiter“ (an der Stelle von „Weitersuchen“, damit ein Doppeltipp
+  // auf „Hier stand er.“ das Fenster nicht gleich schließt)
+  var by=180, btn=function(id,t,x1,main){ var bw=M.textWidth(t)+14, bx=x1-bw; fb.rect(bx,by,bw,13,hov==='o:'+id?(main?P.n2:P.s3):(main?P.n1:P.s2)); M.text(fb,t,bx+7,by+3,P.s6); hits.push({id:id,r:[bx,by,bw,13]}); return bx; };
+  if (d.at && !d.decided){ var nx=btn('no','Weitersuchen',300,false); btn('yes','Hier stand er.',nx-6,true); }
+  else btn('go','Weiter',300,true);
   ov.lay={hits:hits}; });
-if (M.OVTAP) M.OVTAP.foto65=function(ov,id){ if (id==='x'||id==='go'){ M.sfx('page'); E.closeOverlay(true); } };
+if (M.OVTAP) M.OVTAP.foto65=function(ov,id){ var d=ov.data;
+  if (id==='yes' && d.at && !d.decided){ M.sfx('page'); d.decided='yes'; d.ok=(d.at==='r3'); d.msg='Marko: „'+SAY[d.at]+'“'; return; }
+  if (id==='no' && d.at && !d.decided){ M.sfx('page'); d.decided='no'; E.closeOverlay('no'); return; }
+  if (id==='x'||id==='go'){ M.sfx('page'); E.closeOverlay(d.decided||'no'); } };
 // das Foto ansehen (Gegenstand)
 M.k3Foto65Look=async function(A){ await A.overlay('foto65',{msg:'Ein Junge mit kurzen Hosen auf einer flachen Uferplatte, vorn rechts eine Kerbe im Stein. Dahinter der Bogen der alten Brücke, der Scheitel genau oben in der Mitte. Am linken Rand ein runder Turm.'});
   if (A.first('k3.foto65.read')) await A.m('Mate hat unten am Ufer gestanden, unter der Brücke, auf der Seite des runden Turms. Wo genau, sagt mir der Turm: Wie groß er ist und wo er steht, hängt davon ab, wo man steht.'); };
-// das Foto an einem Uferfelsen hochhalten: Vergleich, Markos Urteil; R3 ist der Standort
-M.k3Foto65At=async function(A,rk){ if (!VIEW[rk]) return;
-  await A.overlay('foto65',{at:rk,msg:'Marko: „'+SAY[rk]+'“'}); await A.m(SAY[rk]);
-  if (rk==='r3' && !A.flag('k3.s.spot')){ A.setFlag('k3.s.spot'); A.rebuild(); await A.wait(500); await A.m('Unter dem Quader muss die Platte mit der Kerbe sein. Den Quader hebt keiner. Aber jemand kann durch Stein sehen.');
-    if (A.G.malaOn && A.malaHere()){ await A.wait(400); await A.g('Ich?'); await A.m('Du.'); } } };
+// das Foto an einem Uferfelsen hochhalten: Vergleich; der Spieler entscheidet, dann Markos Urteil. R3 ist der Standort.
+// Die Entscheidung steht in d.decided (gilt auch, wenn das Fenster über „Zurück“, Esc oder ✕ geschlossen wird). Gibt true zurück, wenn der Standort stimmt.
+M.k3Foto65At=async function(A,rk){ if (!VIEW[rk]) return false;
+  var d={at:rk,msg:SEE[rk]}; await A.overlay('foto65',d);
+  if (d.decided!=='yes') return false;
+  if (rk!=='r3'){ await A.m(SHORT[rk]); return false; }
+  if (A.flag('k3.s.spot')){ await A.m('Hier. Die Platte vom Foto liegt unter dem Quader.'); return true; }
+  A.setFlag('k3.s.spot'); A.rebuild(); await A.wait(400); await A.m('Hier hat Mate gestanden. Die Platte vom Foto liegt unter dem Quader.');
+  return true; };
 })(M);
 
 /* ---- 97_k3_garage.js ---- */
@@ -75525,7 +75576,7 @@ M.music('title');
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="11.11.2026 · 402502";
+M.BUILD="11.11.2026 · 9b12c2";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

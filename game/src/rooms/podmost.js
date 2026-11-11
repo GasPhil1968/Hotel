@@ -18,6 +18,16 @@ function rockHS(id,name,look,glook){ return {id:id,name:name,look:look,
   take:'Ein Felsen. Den nimmt keiner mit.',
   with:{ foto_1965:function(A){ return holdPhoto(A,id); }, mobitel:'Ein Foto mit dem Handy? Ich brauche nicht ein neues. Ich brauche den Ort des alten.' },
   g:{look:glook}}; }
+// ---------------------------------------------------------------- Marko am Quader: heben, schieben, nehmen
+// Zweiter Prüfbericht, Abschnitt 5: Dass Mala durch den Stein sehen kann, sagt das Spiel nicht mehr ungefragt. Wer den Standort kennt und es
+// mit den Händen versucht, merkt es selbst; beim zweiten Versuch sagt Mala nur: „Mit Händen nicht.“ (Die Hinweise r3c helfen auf Wunsch.)
+function blockBase(verb){ return verb==='push'?'Er bewegt sich nicht. Er liegt da seit fünfzehn Jahren und hat es nicht eilig.':(verb==='take'?'Zwei Tonnen. Mindestens.':'Zwei Tonnen, mindestens. Den hebt keiner. Und ich schon gar nicht.'); }
+async function tryBlock(A,verb){ var G=A.G;
+  if (!F(G,'k3.s.spot') || F(G,'k3.s.initials') || !famHere(G)) return A.m(blockBase(verb));
+  var n=(G.flags['k3.s.blockTry']||0)+1; G.flags['k3.s.blockTry']=n;
+  if (n===1) return A.m('Zwei Tonnen. Den hebt keiner. Und darunter liegt die Platte, die ich suche.');
+  await A.m(A.cycle('pmTry',['Nichts. Nicht einen Millimeter. Mit den Händen komme ich da nicht drunter.','Er liegt. Ich komme nicht drunter, Davor nicht, keiner.']));
+  if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Mit Händen nicht.'); } }
 // ---------------------------------------------------------------- Mala am Quader: durch den Stein
 async function malaBlock(A){ var G=A.G;
   if (F(G,'k3.s.initials')) return A.g('M · D · 1965. Darunter schläft der Stein vom Foto. Er hat gewartet.');
@@ -71,8 +81,8 @@ var HS=[
  rockHS('r1','Runder Felsen','Ein runder Block direkt unter dem Turm, glatt geschliffen, ohne Kanten.','Stein. Durch und durch.'),
  rockHS('r2','Felsen mit Riss','Ein kantiger Felsen mit einem Riss, in dem Moos wächst.','Stein. Im Riss wohnt eine Spinne.'),
  Object.assign(rockHS('r3','Flache Platte','Eine flache, ausgetretene Uferplatte. Auf ihr liegt ein schwerer, behauener Steinblock.',function(A){ return malaBlock(A); }),{}),
- {id:'block',name:'Quader',look:'Ein behauener Kalksteinquader, so groß wie ein Koffer, oben zwei leere Schlitze für Eisenklammern. Ein Stein der alten Brücke. Nach dem Krieg haben Taucher viele aus dem Fluss geholt; die meisten waren zu beschädigt, um sie wieder einzubauen.',
-   use:'Zwei Tonnen, mindestens. Den hebt keiner. Und ich schon gar nicht.',take:'Zwei Tonnen. Mindestens.',push:'Er bewegt sich nicht. Er liegt da seit fünfzehn Jahren und hat es nicht eilig.',
+ {id:'block',name:'Quader',look:function(A){ return A.m('Ein behauener Kalksteinquader, so groß wie ein Koffer, oben zwei leere Schlitze für Eisenklammern. Ein Stein der alten Brücke. Nach dem Krieg haben Taucher viele aus dem Fluss geholt; die meisten waren zu beschädigt, um sie wieder einzubauen.'+(A.flag('k3.s.spot')&&!A.flag('k3.s.initials')?' Darunter liegt die Platte vom Foto.':'')); },
+   use:function(A){ return tryBlock(A,'use'); },take:function(A){ return tryBlock(A,'take'); },push:function(A){ return tryBlock(A,'push'); },
    with:{ foto_1965:function(A){ return holdPhoto(A,'r3'); } },
    g:{look:function(A){ return malaBlock(A); },sense:'Kalt. Aber darunter ist etwas Warmes. Wie eine Hand, die lange auf etwas gelegen hat.'}},
  rockHS('r4','Spitzer Felsen','Ein spitzer Felsen am Wasser. Die Strömung hat ihm eine Nase geschliffen.','Stein. Nass, kalt, sonst nichts.'),

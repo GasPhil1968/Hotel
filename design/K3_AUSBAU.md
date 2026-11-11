@@ -1,6 +1,6 @@
 # MALA – Kapitel 3 „Mostar“: Ausbau
 
-Konzept, Rätselnetz und Umsetzungsstand für die Erweiterung des dritten Kapitels. Erste Fassung: 10. November 2026. **Revision nach dem externen Prüfbericht: Teil R (unten, zuerst lesen).** Wo die Abschnitte A–I der ersten Fassung durch die Revision überholt sind, steht es dort ausdrücklich.
+Konzept, Rätselnetz und Umsetzungsstand für die Erweiterung des dritten Kapitels. Erste Fassung: 10. November 2026. **Nach der zweiten externen Prüfung: Teil S (zuerst lesen), dann Teil R (Revision nach dem ersten Prüfbericht).** Wo die Abschnitte A–I der ersten Fassung überholt sind, steht es dort ausdrücklich.
 
 Kennzeichnung in diesem Dokument:
 
@@ -11,6 +11,38 @@ Kennzeichnung in diesem Dokument:
 - **[?]** ungeklärte Annahme oder technische Einschränkung.
 
 Die Umsetzung ist in Abschnitt G mit „umgesetzt“, „nur konzipiert“ oder „offen“ ausgewiesen.
+
+---
+
+## S. Zweite Prüfung (11. November 2026): zwei Restbefunde und der Fotovergleich
+
+Die zweite Prüfung (Lieferung „11.11.2026 · 402502“) hat die Kernrevision abgenommen und zwei begrenzte Restfehler sowie einen gestalterischen Punkt benannt. Alle drei sind umgesetzt; sonst ist nichts umgebaut.
+
+### S.1 Befunde und Änderungen
+
+| Befund | Ursache | Änderung | Prüfung |
+|---|---|---|---|
+| **K3-R2-01** Epilog: Der Taxifahrer sagt „Vom Taxi“ und kündigt die Rückgabe an, obwohl die Batterie aus Mates Garage kam | `rooms/ostbus.js` prüfte nur, ob eine Ersatzbatterie eingebaut war; Vlados Nicken im Finale (`k3.fin.batteryNod`) gibt es in beiden Wegen und sagt nichts über die Herkunft | „Vom Taxi“ und die Rückgabe nur noch mit der geliehenen Taxibatterie (`k3.x.batteryGiven`, nicht `k3.b.batFrom = 'mate'`). Mit Mates Batterie eine eigene kurze Szene: „Rajić ist gefahren …“ – „Mit einer Batterie aus Mate Zelenikas Mercedes.“ – „Den Mercedes hat er jeden Winter abgeklemmt … für später.“ – „Dann war das später.“ Ohne Ersatzbatterie (alte Stände, schwache Batterie) das normale Epiloggespräch. | BUG-030 (1): neuer Weg, alter Weg mit Taxibatterie, alter Weg ohne Ersatz; die beiden Batteriewege vorher über den echten Spielstand gespeichert und geladen |
+| **K3-R2-02** Samstagsende: Die vorbereitete Aufführung der Australier fehlt in der Liste offener Zusagen | `M.k3OpenThreads` behandelte Fotoausflug und Aufführung als *eine* Brückenzusage; das erledigte Pflichtfoto unterdrückte die Erinnerung an die unabhängige Musik | Eigener offener Punkt „music“, unabhängig vom Foto, für jeden angefangenen Zustand: Text und Dinos Erlaubnis da, nicht gespielt; nur Erlaubnis; nur Text; Aufführung ohne Ende (Text fehlte noch); Wiederholung mit Ende offen. Je Zustand ein eigener Satz, etwa „Die Australier warten an der Brücke. Den Text haben sie, gespielt haben sie noch nicht.“ Nichts angefangen: keine Warnung, die Aufführung bleibt freiwillig. „Noch nicht“ lässt sie spielbar; wer trotzdem beendet, hat sie bewusst zurückgestellt (`k3.left.music`, getrennt von den anderen Punkten). | BUG-030 (2): fünf Zustände; Ablehnen, danach Aufführung mit Lenas Strophe, Warnung weg; bewusstes Beenden |
+| **Fotovergleich erklärt zu viel** (Gestaltung, kein Fehler) | Das Fenster zeigte Markos fertiges Urteil schon beim Öffnen, er wiederholte es danach, und am richtigen Ort schlug das Spiel selbst vor, durch den Stein zu sehen („Ich?“ – „Du.“) | Das Fenster zeigt zuerst die beiden Bilder und eine neutrale Beschreibung des Blicks („Von hier steht der Turm am linken Rand und ist breit …“). Der Spieler entscheidet: **„Hier stand er.“** oder **„Weitersuchen“**. Erst nach „Hier stand er.“ urteilt Marko (falsch: warum nicht; richtig: der Standort, die Platte liegt unter dem Quader). Kein ungefragter Vorschlag, Mala einzusetzen: Ihr Blick durch Holz und Deckel ist eingeführt (Zdravkos Schublade „Durch das Holz: eine Mappe“, Kapitel 1 und 2). Wer als Marko den Quader zu heben, zu schieben oder zu nehmen versucht, hört beim zweiten Versuch Mala: „Mit Händen nicht.“ Auf Wunsch helfen die Hinweise („Unter dem Quader“, vier Stufen). | BUG-027 (neu: vor der Entscheidung kein Urteil; „Weitersuchen“ bewirkt nichts; kein ungefragter Vorschlag; Versuche am Quader); `qa/ui/k3_revision.js` mit Maus („Hier stand er.“) und Finger („Weitersuchen“, dann „Hier stand er.“) |
+
+Nicht geändert: Die neutralen Beschreibungen bleiben verständlich und nennen, was im Bild zu sehen ist; das Rätsel wird nicht durch weniger Information schwerer, sondern verlangt die eigene Entscheidung. Die Hinweisstufe 4 („Wo Mate stand“) sagt jetzt: „Unter der Brücke das Foto an die flache Platte halten und „Hier stand er.“ wählen.“
+
+### S.2 Ergebnisse auf dem neuen Build
+
+Alle Ergebnisse gelten für denselben Build: Stempel „11.11.2026 · 9b12c2“, `web/index.html` sha256 `35fbb71d1471…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11/` und im Prüfpaket (S.3).
+
+| Art | Werkzeug | Ergebnis |
+|---|---|---|
+| Ganzer Hauptweg, neues Spiel bis zum Abspann | `node game/tools/walkthrough3.js` | 131 Schritte, keine JS-Fehler |
+| Gezielte Tests Kapitel 1–5, davon BUG-025 bis BUG-030 für Kapitel 3 | `node qa/regress/run.js` | 30/30 |
+| Echte Maus und echter Finger (Chromium, Desktop und iPad-Größe) | `node qa/ui/k3_revision.js` | 40/40 Prüfpunkte |
+| Hinweise: Stufe 4 an allen Ständen der Musterlösung und an 22 abweichenden Ständen | `node qa/hints/hintprobe.js --dumps …`, `--varianten` | ohne Befund: 255 + 44 Themen-Stände bestanden, 62 + 1 übersprungen (dieselben Gründe wie in R.8; der Fotovergleich wird mit „Hier stand er.“ ausgeführt) |
+| Menschliche Spielwirkung, Safari/iOS-Gerät, Ton, Spielzeit | – | **nicht geprüft** |
+
+### S.3 Prüfpaket
+
+Die Netlify-ZIP enthält nur das Spiel. Damit die Testzahlen nachprüfbar sind, gibt es daneben `dist/Die_Stillen_Pruefpaket_K3.zip`: derselbe `web/index.html`, die Testwerkzeuge (`qa/regress`, `qa/hints`, `qa/ui`, `qa/vmdriver.js`, `game/tools`), dieser Bericht, `LOESUNG3.md`, `HINWEISE.md`, die Protokolle dieses Laufs und eine Anleitung (`PRUEFPAKET_LIESMICH.txt`). Regressionstests und Hinweisprobe laufen mit Node.js allein; Musterdurchlauf und Bedienprüfung brauchen zusätzlich Playwright mit Chromium.
 
 ---
 
@@ -43,8 +75,8 @@ Zwei Aussagen der ersten Fassung waren falsch und werden hier ausdrücklich zur�
 | Tag | Neuer Pflichtknoten | Art | Wer |
 |---|---|---|---|
 | Sa | Jela gibt Davor das **Foto von 1965** (Davor mit fünf auf einer Uferplatte unter der Brücke) und schickt die beiden an die Brücke | Auslöser | – |
-| Sa | **Fotostandort unter der Brücke** (neuer Ort `podmost`): das Foto an vier Uferfelsen hochhalten; ein Vergleichsbild zeigt den Blick von dort, gerechnet aus derselben Geometrie (Turm Tara: Lage und Breite; Scheitel des Bogens; Form des Felsens). Jede falsche Wahl wird geometrisch begründet. | räumliche Rekonstruktion | Marko |
-| Sa | Auf der richtigen Platte liegt ein **Quader der alten Brücke**; erst wenn Marko den Standort kennt, sieht Mala hindurch: „M · D · 1965“ | Kooperation | Mala |
+| Sa | **Fotostandort unter der Brücke** (neuer Ort `podmost`): das Foto an vier Uferfelsen hochhalten; ein Vergleichsbild zeigt den Blick von dort, gerechnet aus derselben Geometrie (Turm Tara: Lage und Breite; Scheitel des Bogens; Form des Felsens). Jede falsche Wahl wird geometrisch begründet – seit der zweiten Prüfung erst, nachdem der Spieler „Hier stand er.“ gewählt hat (S.1). | räumliche Rekonstruktion | Marko |
+| Sa | Auf der richtigen Platte liegt ein **Quader der alten Brücke**; erst wenn Marko den Standort kennt, sieht Mala hindurch: „M · D · 1965“ (das Spiel schlägt es nicht von selbst vor, S.1) | Kooperation | Mala |
 | Sa | Davor setzt sich auf den Quader, **Lena fotografiert** ihn. Ohne dieses Foto ist der Samstag nicht reif. | Folge | – |
 | So | Mate erkennt seinen Sohn erst, wenn er **beide Fotos** gesehen hat („Wer setzt sich auf unseren Stein?“) und dann die Anrede hört („dida“ oder Lenas Strophe) | zweistufige Erkenntnis | Marko, Lena |
 | So | **Batos Plane**: Die große Feige braucht die Plane, die auf Batos altem Ponton in Skela liegt. Bato bewacht sie, solange er glaubt, dass morgen früh eine Fähre fährt. Erst nach der Konfrontation (er war wach, es war das Mädchen) gibt er sie frei. | Fall A öffnet Fall B | Marko |
@@ -105,7 +137,7 @@ Belege [H]: Monika Palmberger, „Nationalizing the streetscape: the case of str
 - Mates Garagentor: offen nur der gekippte Streifen oben als Stelle, damit Auto, Haube, Batterie, Thermoskanne und Kalender frei antippbar sind.
 - Die Australier warten mit dem Spielen, solange Davor und Lena unten am Ufer suchen.
 
-### R.8 Tests, getrennt nach Art
+### R.8 Tests, getrennt nach Art (Stand der ersten Revision; aktuelle Ergebnisse in S.2)
 
 | Art | Was | Werkzeug | Ergebnis |
 |---|---|---|---|

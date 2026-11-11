@@ -1,7 +1,9 @@
 /* ===== 97_k3_foto.js — Kapitel 3, Revision nach dem Prüfbericht: Mates Foto von 1965 und der Fotostandort unter der Brücke.
    Overlay 'foto65': links der Abzug von 1965 (Davor mit fünf auf einer flachen Platte mit Kerbe, dahinter der Bogen, am linken Rand der Turm
    Tara), rechts – wenn Marko an einem Uferfelsen steht – derselbe Blick von dort, gezeichnet aus derselben Geometrie. Der Spieler vergleicht
-   Turm (Lage, Größe) und Scheitel des Bogens; Marko sagt, was nicht passt. Richtig ist R3 – dort liegt aber ein Quader auf der Platte. ===== */
+   Turm (Lage, Größe) und Scheitel des Bogens und entscheidet selbst: „Hier stand er.“ oder „Weitersuchen“. Erst nach der Entscheidung sagt
+   Marko, was passt oder nicht (zweiter Prüfbericht, Abschnitt 5: keine fertige Schlussfolgerung vor dem Spieler). Richtig ist R3 – dort liegt
+   aber ein Quader auf der Platte. Dass Mala hindurchsehen kann, sagt das Spiel nicht von selbst (podmost.js: erst nach einem Fehlversuch). ===== */
 (function(M){
 'use strict';
 var P=M.P, T=M.T, hash=M.hash, bayer=M.bayer, E=M.E;
@@ -13,12 +15,20 @@ var VIEW={
   r2:{tx:0,tw:44,cx:98,r:86,fg:'crack'},
   r3:{tx:0,tw:26,cx:70,r:66,fg:'block'},
   r4:{tx:0,tw:13,cx:50,r:52,fg:'point'} };
+// was man von dort sieht, ohne Urteil (steht im Fenster, bevor der Spieler entscheidet)
+var SEE={
+  r1:'Von hier steht der Turm fast in der Bildmitte und ist sehr breit. Vom Bogen sieht man nur ein Stück Gewölbe rechts oben. Vorn ein runder Block.',
+  r2:'Von hier steht der Turm am linken Rand und ist breit. Der Scheitel des Bogens liegt rechts von der Mitte. Vorn ein Felsen mit einem Riss.',
+  r3:'Von hier steht der Turm am linken Rand und ist schmal. Der Scheitel liegt oben in der Mitte. Vorn eine flache Platte mit einer Kerbe, darauf ein behauener Quader.',
+  r4:'Von hier ist der Turm ein dünner Streifen am linken Rand. Der Scheitel liegt links von der Mitte. Vorn ein spitzer Felsen.' };
+// Markos Urteil, erst nach „Hier stand er.“
 var SAY={
-  r1:'Von hier steht der Turm mitten im Bild, und vom Bogen sehe ich nur ein Stück Gewölbe rechts oben. Auf dem Foto steht der Turm am linken Rand, und der Scheitel ist oben in der Mitte. Ich bin zu nah am Turm.',
-  r2:'Besser. Der Turm ist an den Rand gerückt, aber er ist noch zu breit, und der Scheitel liegt rechts von der Mitte. Ich muss weiter vom Turm weg.',
-  r3:'Turm am linken Rand, so breit wie auf dem Foto. Der Scheitel oben in der Mitte, der Bogen füllt das Bild. Genau hier hat Mate gestanden. Nur vorn stimmt es nicht: Auf dem Foto sitzt der Junge auf einer flachen Platte mit einer Kerbe. Hier liegt ein behauener Quader darauf.',
-  r4:'Jetzt ist der Turm ein schmaler Streifen am Rand, und der Scheitel liegt links von der Mitte. Zu weit weg.' };
-M.K3F={VIEW:VIEW,SAY:SAY};
+  r1:'Nein. Auf dem Foto steht der Turm am linken Rand, und der Scheitel ist oben in der Mitte. Von hier steht der Turm mitten im Bild, und vom Bogen sehe ich nur ein Stück. Ich bin zu nah am Turm.',
+  r2:'Nein. Der Turm steht am Rand, aber er ist breiter als auf dem Foto, und der Scheitel liegt rechts von der Mitte. Ich muss weiter vom Turm weg.',
+  r3:'Ja. Turm am linken Rand, so breit wie auf dem Foto. Der Scheitel oben in der Mitte. Genau hier hat Mate gestanden. Nur vorn: Auf dem Foto ist die Platte mit der Kerbe frei. Hier liegt ein Quader darauf.',
+  r4:'Nein. Hier ist der Turm schmaler als auf dem Foto, und der Scheitel liegt links von der Mitte. Zu weit weg.' };
+var SHORT={ r1:'Nicht hier. Zu nah am Turm.', r2:'Nicht hier. Noch zu nah am Turm.', r4:'Nicht hier. Zu weit weg.' };
+M.K3F={VIEW:VIEW,SEE:SEE,SAY:SAY};
 function sepia(c){ var rgb=M.RGB[c], L=(rgb[0]*0.3+rgb[1]*0.59+rgb[2]*0.11)/255; var S=[P.s0,P.s1,P.s2,P.s3,P.s4,P.s5,P.s6]; return S[Math.max(0,Math.min(6,Math.round(Math.pow(L,1.5)*6.6)))]; }
 // eine Ansicht malen (in einen Puffer PW×PH)
 function view(v,old){ var b=new M.Buf(PW,PH,P.b4), x, y, cy=v.r+18, ro=v.r+6, HZ=58;
@@ -51,15 +61,26 @@ M.defineOverlay('foto65',function(fb,ov){ var d=ov.data, hov=M.uiHover?M.uiHover
   if (d.at){ frame(fb,ov.oldPic,20,26,true); frame(fb,ov.herePic,166,26,false); M.text(fb,'1965',20+PW/2-10,26+PH+8,P.k1); M.text(fb,'hier',166+PW/2-8,26+PH+8,P.k1); }
   else { frame(fb,ov.oldPic,92,26,true); M.text(fb,'Hinten mit Bleistift: „Davor, 1965“',92,26+PH+8,P.k1); }
   var msg=d.msg||'', ls=M.wrap(msg,284); ls.slice(0,5).forEach(function(l,i){ M.text(fb,l,18,140+i*9,P.n0); });
-  var bt='Weiter', bw=M.textWidth(bt)+14, bx=300-bw, by=180; fb.rect(bx,by,bw,13,hov==='o:go'?P.n2:P.n1); M.text(fb,bt,bx+7,by+3,P.s6); hits.push({id:'go',r:[bx,by,bw,13]});
+  // Knöpfe: vor der Entscheidung „Hier stand er.“ und „Weitersuchen“, danach „Weiter“ (an der Stelle von „Weitersuchen“, damit ein Doppeltipp
+  // auf „Hier stand er.“ das Fenster nicht gleich schließt)
+  var by=180, btn=function(id,t,x1,main){ var bw=M.textWidth(t)+14, bx=x1-bw; fb.rect(bx,by,bw,13,hov==='o:'+id?(main?P.n2:P.s3):(main?P.n1:P.s2)); M.text(fb,t,bx+7,by+3,P.s6); hits.push({id:id,r:[bx,by,bw,13]}); return bx; };
+  if (d.at && !d.decided){ var nx=btn('no','Weitersuchen',300,false); btn('yes','Hier stand er.',nx-6,true); }
+  else btn('go','Weiter',300,true);
   ov.lay={hits:hits}; });
-if (M.OVTAP) M.OVTAP.foto65=function(ov,id){ if (id==='x'||id==='go'){ M.sfx('page'); E.closeOverlay(true); } };
+if (M.OVTAP) M.OVTAP.foto65=function(ov,id){ var d=ov.data;
+  if (id==='yes' && d.at && !d.decided){ M.sfx('page'); d.decided='yes'; d.ok=(d.at==='r3'); d.msg='Marko: „'+SAY[d.at]+'“'; return; }
+  if (id==='no' && d.at && !d.decided){ M.sfx('page'); d.decided='no'; E.closeOverlay('no'); return; }
+  if (id==='x'||id==='go'){ M.sfx('page'); E.closeOverlay(d.decided||'no'); } };
 // das Foto ansehen (Gegenstand)
 M.k3Foto65Look=async function(A){ await A.overlay('foto65',{msg:'Ein Junge mit kurzen Hosen auf einer flachen Uferplatte, vorn rechts eine Kerbe im Stein. Dahinter der Bogen der alten Brücke, der Scheitel genau oben in der Mitte. Am linken Rand ein runder Turm.'});
   if (A.first('k3.foto65.read')) await A.m('Mate hat unten am Ufer gestanden, unter der Brücke, auf der Seite des runden Turms. Wo genau, sagt mir der Turm: Wie groß er ist und wo er steht, hängt davon ab, wo man steht.'); };
-// das Foto an einem Uferfelsen hochhalten: Vergleich, Markos Urteil; R3 ist der Standort
-M.k3Foto65At=async function(A,rk){ if (!VIEW[rk]) return;
-  await A.overlay('foto65',{at:rk,msg:'Marko: „'+SAY[rk]+'“'}); await A.m(SAY[rk]);
-  if (rk==='r3' && !A.flag('k3.s.spot')){ A.setFlag('k3.s.spot'); A.rebuild(); await A.wait(500); await A.m('Unter dem Quader muss die Platte mit der Kerbe sein. Den Quader hebt keiner. Aber jemand kann durch Stein sehen.');
-    if (A.G.malaOn && A.malaHere()){ await A.wait(400); await A.g('Ich?'); await A.m('Du.'); } } };
+// das Foto an einem Uferfelsen hochhalten: Vergleich; der Spieler entscheidet, dann Markos Urteil. R3 ist der Standort.
+// Die Entscheidung steht in d.decided (gilt auch, wenn das Fenster über „Zurück“, Esc oder ✕ geschlossen wird). Gibt true zurück, wenn der Standort stimmt.
+M.k3Foto65At=async function(A,rk){ if (!VIEW[rk]) return false;
+  var d={at:rk,msg:SEE[rk]}; await A.overlay('foto65',d);
+  if (d.decided!=='yes') return false;
+  if (rk!=='r3'){ await A.m(SHORT[rk]); return false; }
+  if (A.flag('k3.s.spot')){ await A.m('Hier. Die Platte vom Foto liegt unter dem Quader.'); return true; }
+  A.setFlag('k3.s.spot'); A.rebuild(); await A.wait(400); await A.m('Hier hat Mate gestanden. Die Platte vom Foto liegt unter dem Quader.');
+  return true; };
 })(M);

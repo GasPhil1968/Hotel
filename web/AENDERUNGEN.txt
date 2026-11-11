@@ -1,3 +1,31 @@
+DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, NACH DER ZWEITEN PRÜFUNG (11. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Der Fotovergleich unter der Brücke lässt dich selbst entscheiden. Das
+  Fenster zeigt das Foto von 1965, den Blick vom Felsen und eine kurze
+  Beschreibung. Du wählst „Hier stand er.“ oder „Weitersuchen“; erst danach
+  sagt Marko, ob es stimmt und warum nicht. Dass Mala durch den Stein sehen
+  kann, sagt dir das Spiel nicht mehr von selbst.
+- Samstagabend: Hast du die Aufführung der Australier an der Brücke
+  angefangen (Text aufgeschrieben, Dinos Erlaubnis, oder sie haben ohne Ende
+  gespielt), nennt Marko sie, bevor der Tag endet. „Noch nicht“ lässt sie
+  spielbar.
+
+BEHOBEN
+- Epilog am Ostbusbahnhof: Kam die Batterie für den TAM aus Mates Garage,
+  spricht der Taxifahrer nicht mehr von seiner eigenen Batterie und ihrer
+  Rückgabe, sondern von Mates Mercedes.
+
+GEPRÜFT
+- Kapitel 3 als neues Spiel bis zum Abspann, 30 gezielte Tests (davon einer
+  neu für diese beiden Fehler), echte Maus und echter Finger im Browser
+  (40 Prüfpunkte), Hinweise an allen Zwischenständen.
+- NICHT geprüft: Wirkung auf Erstspieler, echtes iPhone/iPad, Ton.
+- Testwerkzeuge und Protokolle: Die_Stillen_Pruefpaket_K3.zip.
+
+
+========================================================================
+
 DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, REVISION NACH DEM PRÜFBERICHT (10. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

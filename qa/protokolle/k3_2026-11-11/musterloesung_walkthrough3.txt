@@ -1,0 +1,134 @@
+[2.4s] #1 prolog: Kapitelstart: Karte „Mostar“, Bild „Im Bus“, Ankunft am Ostbusbahnhof, Nadas SMS
+[3.4s] #2 prolog: Nada geantwortet: „Stigao sam. Javim se.“
+[4.1s] #3 prolog: Tafel: MÜNCHEN · subota
+[6.6s] #4 prolog: Stadtplan vom Kiosk
+[8.1s] #5 prolog: Herberge „Neretva“
+[10.8s] #6 prolog: bei Maja eingetragen, Abreise 28.11.
+[13.1s] #7 prolog: Dino stellt sich vor: „A, naš si.“
+[14.2s] #8 prolog: „Ist sie es?“ – Malas Brücke stand im Wasser (Splitter)
+[14.8s] #9 prolog: Einwand: „Kaputt schon. Aber stand sie je im Wasser?“
+[16.1s] #10 prolog: Leine: flussab
+[18.8s] #11 prolog: Dino: gefallen 1993, „Stari most stand nie im Wasser“
+[20.7s] #12 prolog: der Leine am Ufer gefolgt: „Eine Richtung reicht nicht.“
+[26.7s] #13 prolog: Schluss: Nicht die Alte Brücke
+[26.7s] #14 abend: Tagesende: „Es wird dunkel.“ – Terrasse, Gespräch 1 „Mich hast du nicht gefragt“
+[29.0s] #15 abend: Versprechen: „Versprochen.“ – „Mala fragen“ ist offen
+[31.7s] #16 abend: Mala allein an den Uferstufen: der Springer
+[32.9s] #17 abend: Mala klatscht ohne Ton
+[38.1s] #18 abend: Schlaf. Karte „Erster Tag – Die Peilung“, Morgen im Zimmer
+[42.4s] #19 freitag: Sanja angerufen: Ljerka ruft zurück
+[45.1s] #20 freitag: Peilung 1 am Brückenkopf
+[48.1s] #21 freitag: (Anruf) Ljerka ruft zurück: Vlado, der Raucher; Brunos Bild; Schlüssel 31; „Abreise“ leer
+[52.5s] #22 freitag: Karte fürs Minarett
+[56.6s] #23 freitag: Peilung 2 vom Minarett
+[57.3s] #24 freitag: Schluss: zu flach geschnitten; Mala: „Über den Fluss. Nein.“
+[59.2s] #25 freitag: Straßenbrücke: „Das ist eine Straße mit Geländer.“ – Mala macht die Augen zu
+[60.7s] #26 freitag: Mala geht mit geschlossenen Augen hinüber
+[62.7s] #27 freitag: Partisanenfriedhof: Glocken, Mala ist fort
+[63.6s] #28 freitag: Mala ist zurück: „Zu laut.“ – „Wenn ich es weiß.“
+[66.0s] #29 freitag: Peilung 3 am Westhang; „Doch. Wir.“
+[66.3s] #30 freitag: Schluss: der Bereich liegt hinter dem Kartenrand
+[70.5s] #31 freitag: Café „Zdravko“: Mala sieht Mate am Fenstertisch
+[72.5s] #32 freitag: Zdravkos Karte von 1985
+[72.8s] #33 freitag: Schluss: Skela heißt Fähre
+[74.9s] #34 freitag: Mate: „Rajić? Der Raucher?“; „Ich sehe nach.“
+[78.6s] #35 freitag: Vulkanizer Rajić: Kata und Vlado
+[80.4s] #36 freitag: Vlado: „Ich habe nie jemanden mitgenommen. Nie.“
+[84.1s] #37 freitag: Katas E-Mail übersetzt; „Welche?“ – Marko weiß es noch nicht
+[85.7s] #38 freitag: Mala sieht durch das Holz: unten die Mappe „TAM 4500“ und ein Schlüssel „31“
+[87.5s] #39 freitag: Mala im Führerhaus: „Halt still.“ – „Ich fahre.“ – „Dann fahr still.“
+[93.5s] #40 freitag: „Die unterste.“ Zeichnung und Schlüssel 31; Vlado: „Morgen.“
+[93.5s] #41 freitag: der Tag ist reif: „Wenn ich zurück in der Herberge bin, ist der Tag vorbei.“
+[98.0s] #42 freitag: in der Herberge den Tag beendet
+[98.6s] #43 freitag_nacht: Tagesende: Freitag · Nacht, die Australier singen, das Vatergespräch
+[101.7s] #44 freitag_nacht: Schlaf. Samstag: „Sie zeigt heute woandershin. In die Stadt.“
+[102.7s] #45 samstag: Schluss: ein Mensch, kein Ort
+[103.9s] #46 samstag: Maja: Samstags kommen die Leute aus den Dörfern auf die Tepa
+[105.2s] #47 samstag: Schlüsse: Mala und Lana sind eine Spur; zwei Suchen, die sich nie trafen
+[108.8s] #48 samstag: die Eierfrau: „Ne.“ – „Jede Mutter sucht ein Kind.“
+[110.7s] #49 samstag: Mala lauscht: „Sanjam je opet. Treću noć.“
+[113.4s] #50 samstag: „Mala“: das Ei fällt, „Ko ste vi?“, sie packt zusammen
+[116.1s] #51 samstag: die Zeichnung auf Vlados Tisch, Rückseite: „Für später.“
+[120.6s] #52 samstag: Vlado, Teil 1: „Sie hat gesagt, sie heißt Mala. Wie jede.“ – Mala: „Er ist gefahren.“
+[128.3s] #53 samstag: der Bus aus München: „Er kommt mit dem nächsten. Mein Sohn ist jung.“; „Ich komme mit.“
+[139.6s] #54 samstag: Haus Zelenika: Jela mit dem Schlüssel; die große Feige braucht Batos Plane; das Foto von 1965: „Zeig ihr den Stein“
+[143.2s] #55 samstag: an der Brücke: Davor gibt mir das Foto, die beiden gehen ans Ufer
+[144.3s] #56 samstag: unter der Brücke: vier Uferfelsen, auf der Platte ein Quader
+[145.4s] #57 samstag: Vergleich am runden Block, „Hier stand er.“ gewählt: nein, Turm zu groß, Scheitel zu weit rechts
+[146.6s] #58 samstag: Vergleich an der flachen Platte, „Hier stand er.“: Turm und Scheitel stimmen – aber da liegt ein Quader
+[148.7s] #59 samstag: Mala sieht durch den Quader: „M · D · 1965“
+[153.6s] #60 samstag: Davor setzt sich auf den Quader, Lena fotografiert ihn; Lena bekommt beide Fotos
+[155.1s] #61 samstag: in der Herberge den Samstag beendet
+[155.1s] #62 samstag: Tagesende: Nada ruft an: „Weißt du etwas?“
+[157.6s] #63 samstag: Mala gefragt: „Aber sag ihr nicht nichts.“ – „Ich habe eine Spur.“
+[158.2s] #64 samstag_nacht: Karte „Die Glocke · Samstag · Nacht“, Herberge
+[160.7s] #65 samstag_nacht: mit dem Taxi nach Skela; die Pfeilerstümpfe
+[162.9s] #66 samstag_nacht: Mala findet Bato: „Seine Leine hängt an der Glocke.“
+[166.4s] #67 samstag_nacht: Nachhall: Hütte, Glocke („Halo! Ima li koga?“), Seilanker („Das ist meins.“)
+[169.6s] #68 samstag_nacht: Marko läutet: Bato ruft „Geht!“, der Nachbar kommt
+[173.4s] #69 samstag_nacht: über die neue Brücke ans linke Ufer (Mala bleibt)
+[178.2s] #70 samstag_nacht: Bato: „Es war ein Mann. Ein Soldat.“; „tot“ hört er nicht
+[178.5s] #71 samstag_nacht: Zlata mit der Lampe: „Vi.“ … „Sutra. Danju.“
+[182.2s] #72 samstag_nacht: zurück zu Mala; Taxi; Karte „Dritter Tag – Zwei Ufer“
+[185.1s] #73 sonntag: Sonntag in Skela
+[193.7s] #74 sonntag: Zlata: „Er hat geschlafen.“; der Bleistift von der Glocke
+[195.0s] #75 sonntag: das Grab unter dem Quittenbaum
+[195.5s] #76 sonntag: Schluss: Es war das Mädchen
+[199.6s] #77 sonntag: Lichtprobe: das Dachfenster, Batos Kammer
+[201.6s] #78 sonntag: Mala ordnet ihren Nachhall: dunkel, Licht, dunkel
+[206.7s] #79 sonntag: am Küchentisch die Nacht geordnet: Licht in Batos Kammer
+[209.2s] #80 sonntag: Bato: „Dreimal hat er geläutet, dann war Ruhe.“
+[209.8s] #81 sonntag: Widerspruch: Bato war wach
+[213.2s] #82 sonntag: Bato wird unruhig: „Es war ein Soldat.“
+[217.0s] #83 sonntag: Bato: „Nimm sie. Bevor ich es mir anders überlege.“ – die Plane vom Ponton
+[219.1s] #84 sonntag: über den Fluss Mala gefragt: zwei Finger, sie schüttelt den Kopf
+[221.0s] #85 sonntag: Zlata: „Uzmite deku. Hladno je kod vode.“
+[224.4s] #86 sonntag: Mala liest die Decke: „Ich war noch da, Marko.“
+[225.3s] #87 sonntag: Schluss: Sie hat den Fluss überlebt
+[228.4s] #88 sonntag: Zlata: „Ja. Im Schilf. Sie hat noch gelebt.“
+[238.9s] #89 sonntag: Vlado, Teil 2: „Sie hat mich weggeschickt.“ – „Um zwei war ich wieder da.“
+[239.6s] #90 sonntag: Widerspruch: Wer hat wen stehen lassen?
+[248.5s] #91 sonntag: Gespräch 2 „Wie Großmutter“: das Seil; „Ich frage dich, was ich damit machen soll.“
+[253.7s] #92 sonntag: die Botschaft: „Dann fahr still.“ – „Woher …?“ – „Ich bin Übersetzer.“ Vlado fährt heute Nacht
+[255.6s] #93 sonntag: Kata: Die zweite Batterie ist tot; ohne sie dreht der Anlasser nicht
+[257.5s] #94 sonntag: Haus Zelenika am Sonntag: Mate am Pfosten
+[264.4s] #95 sonntag: Mates Briefe, das Kinderzimmer von 1998, Lenas Postkarten mit „Dragi dida“
+[265.5s] #96 sonntag: Schlüsse: eine Einladung, die sich nicht traut; so wollte er heißen
+[270.1s] #97 sonntag: Davor hört die Einladung; Jela gibt nach
+[272.6s] #98 sonntag: Lena zeigt Mate die Fotos: „Wer setzt sich auf unseren Stein?“
+[275.9s] #99 sonntag: „Došli smo, dida.“ – Mate: „Das ist Davor. Der graue Mann auf unserem Stein.“
+[280.6s] #100 sonntag: der Schlüssel am Tor: „Ich bin nicht mehr da.“
+[287.1s] #101 sonntag: die Feigen: Jute für den kleinen, Batos Plane für den großen; der Schlüssel liegt in der Astgabel
+[291.5s] #102 sonntag: den Schlüssel bekommt die Kleinste; der kleine mit der Sieben: Mates Garage „u Bratstva i jedinstva“
+[296.9s] #103 sonntag: Zwischenwelt: „Bitte einsteigen.“ – „Dreißig Jahre habe ich das gehört.“
+[300.1s] #104 sonntag: Davor: „Falls Sie mal in München sind.“
+[303.9s] #105 sonntag: Kartenvergleich 1985/2011: nicht die Jasenova (quer), sondern die Lipova
+[306.3s] #106 sonntag: Lipova: zwei Tore ohne Nummer; an fremden Toren probiert Marko nicht
+[309.1s] #107 sonntag: Mala sieht durch das Blech: der helle Mercedes mit der Thermoskanne; Garage sieben offen
+[311.1s] #108 sonntag: Haube auf, Mates Batterie (abgeklemmt, wie jeden Winter)
+[314.7s] #109 sonntag: Kata: „Eigentlich zu klein für den TAM. Aber für einmal Anlassen reicht sie.“
+[317.6s] #110 sonntag: in der Werkstatt: „Es ist Zeit.“
+[317.6s] #111 finale: Tagesende: „Es ist bald elf.“ Karte „Finale – Die letzte Fähre“, Hof des Vulkanizers
+[320.2s] #112 finale: in Vlados TAM eingestiegen
+[320.5s] #113 finale: die Fahrt mit Vlado und Kata; Ankunft in Skela
+[327.7s] #114 finale: Marko läutet; die Geisterfähre; Batos Erkenntnis: „Steig ein. Diesmal fahre ich.“ (Zwischenstand 1)
+[331.5s] #115 finale: Mala steigt ein
+[340.5s] #116 finale: über die Brücke ans linke Ufer: „Darum die Glocken.“ – „Heute ist einer gekommen.“ (Zwischenstand 2); „Zvono.“; Zlatas Erzählung
+[345.8s] #117 finale: „Bato war wach.“ – Erinnerung „Der Ofen“; die Leine löst sich (Zwischenstand 3)
+[349.4s] #118 finale: am Grab: „Schon wieder.“ – dann gefragt: „Was willst du?“
+[352.5s] #119 finale: Zustimmung b: „Beide.“; der neue Faden (Zwischenstand 4)
+[358.4s] #120 finale: Zwischenwelt: zusammen am Seil; „Oprosti, mala.“ – „Du bist gekommen. Nur später.“
+[363.5s] #121 finale: Karte „Epilog – Hin und zurück“; Morgengrauen: „Teta Nada. Ich habe sie gefunden.“
+[374.2s] #122 epilog: Mala auf dem Scheitel der Brücke: „Aber es ist meine.“; gegen Mittag kommt Nada
+[379.9s] #123 epilog: mit Vlado und Nada nach Skela; „Sedamnaest godina. Svakog petnaestog.“
+[384.9s] #124 epilog: Zlatas Brief von 1996 für Nada, das Skizzenbuch
+[393.1s] #125 epilog: die zwei Mütter: Marko erzählt alles; „Mama.“
+[399.5s] #126 epilog: Vermisstenstelle: Frau Kolar nimmt die Anzeige auf
+[403.4s] #127 epilog: das Formular: „Dann brauche ich ein größeres Feld.“
+[405.5s] #128 epilog: Probe für den Vater abgegeben; „Lebt Ihre Mutter?“
+[409.9s] #129 epilog: der Anruf bei der Mutter: „Komm. Wir reden, wenn du hier bist.“
+[412.1s] #130 epilog: Erinnerungsbild „Im Bus nach Sarajevo“: Nada am Fenster, Mala neben ihr, Marko dahinter
+[412.4s] #131 epilog: Ende des dritten Kapitels · Fortsetzung: München; Abspann
+Spieltakt der Musterlösung (Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 171.8 min
+DURCHLAUF KAPITEL 3 OK: 131 Schritte in 412 s, keine JS-Fehler
+EXIT 0

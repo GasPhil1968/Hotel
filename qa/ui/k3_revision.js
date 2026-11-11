@@ -73,9 +73,11 @@ const sw = async (p, w) => { await p.evaluate((w) => M.TA.switchTo(w), w); await
     p = await openWith(b, DESK, 'k3x_samstag.json', { pos: 'podmost', inv: ['foto_1965'], flags: { 'k3.rules': 2, 'k3.z.mala': true, 'k3.b.arrived': true, 'k3.b.jela': true, 'k3.s.trip': true, 'k3.s.photoTrip': true, 'k3.s.down': true }, notes: ['b3_photo65'] });
     T.ck(await mouseDrag(p, 'foto_1965', 'r2'), 'Foto auf den Felsen mit Riss gezogen'); await wait(p, 600); await p.waitForFunction(() => M.E.overlay && M.E.overlay.kind === 'foto65', null, { timeout: 20000 }).catch(() => {});
     T.ck(await p.evaluate(() => !!(M.E.overlay && M.E.overlay.kind === 'foto65' && M.E.overlay.data.at === 'r2')), 'Vergleichsbild offen'); await shot(p, 'm_vergleich_r2');
+    T.ck(await p.evaluate(() => !/Nein\.|Genau hier|zu nah|weiter vom Turm/.test(M.E.overlay.data.msg || '')), 'vor der Entscheidung kein Urteil, nur die Beobachtung');
+    T.ck(await mouseOv(p, 'yes'), '„Hier stand er.“ angeklickt'); T.ck(await p.evaluate(() => !!(M.E.overlay && /weiter vom Turm weg/.test(M.E.overlay.data.msg || ''))), 'Markos Begründung erst danach');
     T.ck(await mouseOv(p, 'go'), '„Weiter“ angeklickt'); await calm(p); T.ck(!(await flag(p, 'k3.s.spot')), 'r2 ist nicht der Standort');
-    await mouseDrag(p, 'foto_1965', 'r3'); await p.waitForFunction(() => M.E.overlay && M.E.overlay.kind === 'foto65', null, { timeout: 20000 }).catch(() => {}); await mouseOv(p, 'go'); await calm(p);
-    T.ck(await flag(p, 'k3.s.spot'), 'an der flachen Platte: Standort gefunden'); await sw(p, 'mala');
+    await mouseDrag(p, 'foto_1965', 'r3'); await p.waitForFunction(() => M.E.overlay && M.E.overlay.kind === 'foto65', null, { timeout: 20000 }).catch(() => {}); await mouseOv(p, 'yes'); await mouseOv(p, 'go'); await calm(p);
+    T.ck(await flag(p, 'k3.s.spot'), 'an der flachen Platte „Hier stand er.“: Standort gefunden'); await sw(p, 'mala');
     T.ck(await mouseVerb(p, 'block', 'look'), 'Mala: Klick auf den Quader, „Schau an“'); await calm(p); T.ck(await flag(p, 'k3.s.initials'), 'Mala sieht „M · D · 1965“'); await done(p);
     p = await openWith(b, DESK, 'k3x_sonntag.json', { pos: 'kafic', inv: ['plan'], flags: { 'k3.rules': 2 }, notes: ['b3_garage'] });
     T.ck(await mouseDrag(p, 'plan', 'oldmap'), 'Stadtplan auf die alte Karte gezogen'); await p.waitForFunction(() => M.E.overlay && M.E.overlay.kind === 'karte85', null, { timeout: 30000 }).catch(() => {});
@@ -93,7 +95,10 @@ const sw = async (p, w) => { await p.evaluate((w) => M.TA.switchTo(w), w); await
     T.ck(await touchVerb(p, 'battery', 'take'), 'Batterie antippen, „Nimm“'); await calm(p); T.ck(await has(p, 'akumulator'), 'Mates Batterie im Inventar'); await done(p);
     p = await openWith(b, IPAD, 'k3x_samstag.json', { pos: 'podmost', inv: ['foto_1965'], flags: { 'k3.rules': 2, 'k3.s.trip': true, 'k3.s.photoTrip': true, 'k3.s.down': true } });
     T.ck(await touchUse(p, 'foto_1965', 'r1'), 'Foto antippen, dann den runden Block'); await p.waitForFunction(() => M.E.overlay && M.E.overlay.kind === 'foto65', null, { timeout: 20000 }).catch(() => {});
-    T.ck(await touchOv(p, 'go'), '„Weiter“ angetippt'); await calm(p); T.ck(await p.evaluate(() => !M.E.overlay), 'Vergleich geschlossen'); await done(p);
+    T.ck(await touchOv(p, 'no'), '„Weitersuchen“ angetippt'); await calm(p); T.ck(await p.evaluate(() => !M.E.overlay), 'Vergleich geschlossen');
+    T.ck(!(await flag(p, 'k3.s.spot')) && !(await p.evaluate(() => (M.__speechLog || []).some(l => /Zu nah am Turm/.test(l[1])))), 'kein Urteil, kein Standort');
+    await touchUse(p, 'foto_1965', 'r3'); await p.waitForFunction(() => M.E.overlay && M.E.overlay.kind === 'foto65', null, { timeout: 20000 }).catch(() => {});
+    T.ck(await touchOv(p, 'yes'), '„Hier stand er.“ angetippt (flache Platte)'); T.ck(await touchOv(p, 'go'), '„Weiter“ angetippt'); await calm(p); T.ck(await flag(p, 'k3.s.spot'), 'Standort gefunden (Finger)'); await done(p);
     p = await openWith(b, IPAD, 'k3x_sonntag.json', { pos: 'vhof', inv: ['odvijac'], rooms: { vhof: { cabIn: true } } });
     T.ck(await touchUse(p, 'odvijac', 'radio'), 'Schraubenzieher antippen, dann das Radio'); await calm(p); T.ck(await has(p, 'kaseta'), 'Kassette (Finger)'); await done(p);
   } catch (e) { T.ck(false, 'Ausnahme: ' + (e.stack || e).toString().split('\n').slice(0, 3).join(' | ')); }
