@@ -167,6 +167,10 @@ var HS=[
    use:function(A){ return A.m(aussiesHere(A.G)?'Das ist Liams Gitarre. Ich spiele nicht. Ich habe es einmal versucht, mit zwölf, für ein Mädchen, das gelacht hat.':'Ich lasse die Mütze, wo sie ist. Sie kommen wieder.'); },
    take:'Nicht meins.',
    g:{look:'Die Gitarre ist verstimmt. Die Leute nicht. Das ist schön.'}},
+ {id:'tarp',name:'Blaue Plane',vis:function(S,G){ return M.scn.weather(G)==='rain'; },   // Wunsch des Autors: die Australier sitzen nicht im Regen (Kunst: art/herberge.js)
+   look:'Eine blaue Plane über dem Tisch der Australier, mit Wäscheleine an die Pergola gebunden. An der linken Ecke läuft das Wasser ab, genau neben Joshs Stuhl.',
+   take:'Die gehört den Australiern. Ohne sie säßen sie im Regen. Ihre Gitarre auch.',
+   g:{look:'Darunter sind sie trocken. Ich bin überall trocken.'}},
  {id:'lights',name:'Lichterkette',look:function(A){ return A.m(A.G.tod==='night'?'Eine Lichterkette, quer über die Terrasse gespannt. Jede dritte Birne flackert, als hätte sie eine eigene Meinung.':'Eine Lichterkette, tagsüber nur Draht mit kleinen Glasbirnen. Am Weinstock hängt sie fest.'); },
    use:'Der Schalter ist drinnen bei Maja. Ich lasse ihr das Licht.',
    g:{look:'Lauter kleine Lichter. Wie eine Stadt, die man in der Hand halten kann.'}},

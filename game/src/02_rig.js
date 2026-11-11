@@ -78,25 +78,39 @@ M.HELD=HELD;
 
 // ---------------------------------------------------------------- Regenschirm (Kapitel 3, Ankunft im Regen; Posenfeld um, gesetzt in 05_engine.js)
 // um: 2 zu, gehoben · 3 und 4 geht auf · 5 offen (Stufe 1, zu und weggesteckt, wird nicht gemalt: in der fernen Hand hinge er in der
-// Seitenansicht ohnehin unsichtbar hinter Mantel und Beinen). Farben je Figur (def.umbrella: [Stoff, Licht, Schatten, innen]), sonst
-// dunkles Weinrot: hebt sich vom grauen Regen ab und von Markos dunkelblauem Mantel. Stock und Spitze in der Umrissfarbe, damit der
-// Umrissdurchgang sie nicht verdickt.
-var UM_COL=[P.r2,P.r3,P.r1,P.r0], UM_R=[0,0,1,6,10,12], UM_H=[0,0,12,9,7,6], UM_LEN=28;
+// Seitenansicht ohnehin unsichtbar hinter Mantel und Beinen). Farben je Figur (def.umbrella: [Bahn, Licht, Schatten, Naht, Glanz]), sonst
+// Weinrot. Acht Speichen: man sieht fünf Spitzen und vier Bahnen, abwechselnd hell und dunkel (Licht von links oben); zwischen den Spitzen
+// biegt sich die Kante nach oben, an den Spitzen sitzen kleine Metallenden. Stock und Spitze in der Umrissfarbe, damit der Umrissdurchgang
+// sie nicht verdickt. Nach dem Umriss (ohne schwarzen Rand): Tropfen an den Spitzen, Spritzer oben (umWater, Zeitraster 90 ms).
+var UM_COL=[P.r2,P.r3,P.r1,P.r0,P.r4], UM_LEN=28, UM_SHAPE=[null,null,null,{R:6,H:8},{R:10,H:7},{R:13,H:6}];
+var UM_TIPS=[-1,-0.7071,0,0.7071,1];   // cos der sichtbaren Speichen: 180°, 135°, 90°, 45°, 0°
 function umCol(ch){ return ch.umbrella||UM_COL; }
+function umHW(R,H,y){ var e=(H-y)/H; return Math.max(1,Math.round(R*Math.sqrt(Math.max(0,1-e*e)))); }
 // offen oder gehoben: der Stock von der Hand zur Spitze, darunter der Griff als kleiner Haken
 function umStick(b,x,y,ax,ay,dir){ x=Math.round(x); y=Math.round(y); b.line(x,y,Math.round(ax),Math.round(ay),P.k1);
   b.px(x,y+1,P.w2); b.px(x,y+2,P.w2); b.px(x+dir,y+3,P.w2); b.px(x+2*dir,y+2,P.w2); }
 function umCanopy(b,ax,ay,k,ch){ var c=umCol(ch); ax=Math.round(ax); ay=Math.round(ay);
   if (k<=2){ for (var y0=1;y0<12;y0++){ var w=(y0<3||y0>9)?0:1; for (var x0=-w;x0<=w;x0++) b.px(ax+x0,ay+y0,x0<0?c[1]:(x0>0?c[2]:c[0])); } b.px(ax,ay,P.m3); return; }   // zusammengefaltet am oberen Ende
-  var R=UM_R[k], H=UM_H[k], half2=R/2;
-  for (var y=0;y<H;y++){ var e=(H-y)/H, half=Math.max(1,Math.round(R*Math.sqrt(Math.max(0,1-e*e)))), rib=Math.round(half2*(y+1)/H);
-    for (var x=-half;x<=half;x++){ var u=x/R, col=u<-0.42?c[1]:(u>0.5?c[2]:c[0]);
-      if (y<2 && u<0.15) col=c[1];
-      if (y>0 && y<H-1 && (x===rib||x===-rib)) col=c[2];   // zwei Speichen
-      if (y===H-1) col=u<-0.42?c[2]:c[3];                     // Unterkante: man sieht ein wenig hinein
+  var S=UM_SHAPE[k], R=S.R, H=S.H;
+  for (var y=0;y<H;y++){ var hw=umHW(R,H,y);
+    for (var x=-hw;x<=hw;x++){ var u=x/hw, col=u<-0.71?c[0]:(u<0?c[1]:(u<0.71?c[0]:c[2]));   // vier Bahnen
+      if (y>0){ if (x===Math.round(UM_TIPS[1]*hw)) col=c[0]; else if (x===0) col=c[2]; else if (x===Math.round(UM_TIPS[3]*hw)) col=c[3]; }   // Nähte
       b.px(ax+x,ay+y,col); } }
-  for (var i=-2;i<=2;i++) b.px(ax+Math.round(i*half2),ay+H,c[3]);   // Enden der Speichen
-  b.px(ax,ay-1,P.m3); }
+  if (k===5){ b.px(ax-2,ay+1,c[4]); b.px(ax-3,ay+1,c[4]); b.px(ax-4,ay+2,c[4]); b.px(ax-5,ay+3,c[1]); }   // nasser Glanz auf der hellen Bahn
+  for (var j=0;j<UM_TIPS.length;j++){ var tx=Math.round(UM_TIPS[j]*R), cc=j<2?c[0]:c[2];   // Zipfel unter jeder Speiche, dazwischen bleibt die Kante oben
+    b.px(ax+tx,ay+H,cc); if (j>0 && j<4){ b.px(ax+tx-1,ay+H,cc); b.px(ax+tx+1,ay+H,cc); } b.px(ax+tx,ay+H+1,P.m2); }
+  b.px(ax,ay-1,P.m3); b.px(ax,ay-2,P.m4); }
+// Wasser am offenen Schirm: an vier Spitzen fällt ab und zu ein Tropfen, oben springen Spritzer auf (alle 24 Raster wiederholt sich das Bild)
+function umWater(b,ax,ay,t){ var f=Math.floor((t||0)/90)%24, S=UM_SHAPE[5], R=S.R, H=S.H, hash=M.hash;
+  [[-1,0],[-0.7071,5],[0.7071,2],[1,6]].forEach(function(q,j){ var ph=(f+q[1])%8, cyc=Math.floor((f+q[1])/8)%3; if (hash(j*7+cyc,13)<0.35) return;
+    var x=ax+Math.round(q[0]*R), y0=ay+H+2, y=y0+ph*3; if (y>=b.h) return;
+    if (b.get(x,y)===T) b.px(x,y,P.n4); if (ph>0 && b.get(x,y-1)===T) b.px(x,y-1,P.m3); });
+  for (var i=0;i<3;i++){ if (hash(f,i+20)<0.45) continue; var sx=Math.round((hash(f,i+30)*2-1)*(R-2)), top=0; while (top<H && umHW(R,H,top)<Math.abs(sx)) top++;
+    if (b.get(ax+sx,ay+top-1)===T) b.px(ax+sx,ay+top-1,P.s6); } }
+// Lage des offenen Schirms relativ zu den Füßen (Blick nach rechts; nach links spiegeln): für den Regenschatten in 06_ui.js
+M.umAnchor=function(p,chId){ var ch=CH[chId]; if (!ch||!p||!(p.um>=3)) return null; var hx=p.h[0], hy=p.h[1]-(ch.hipY-23), L=ch.tLen, S=UM_SHAPE[p.um], x;
+  if (p.v==='S') x=hx+4+Math.round((p.ln||0)*(L-2)/(L-1))-3; else { var s=p.v==='F'?1:-1; x=hx+s*4; }
+  return {x:x,y:hy-7-UM_LEN,R:S.R,H:S.H}; };
 
 // ---------------------------------------------------------------- Figuren definieren
 /* def: {legend:{zeichen:farbe}, heads:{S:{n,o,b},F:{n,o,b},B:{n}}, neck:{S:[x,y],F:[x,y],B:[x,y]}, torso:{...spec}, torsoS:{...}, torsoB:{...}
@@ -126,7 +140,7 @@ M.headSet=function(rows,skin){ skin=skin||'t'; function rep(rs,from,to){ return 
 // ---------------------------------------------------------------- Pose -> Puffer
 // pose: {v:'S'|'F'|'B', h:[x,y] Hüfte, ln:Vorbeugen, hd:Kopfvariante, ho:[dx,dy], nf/ff:[x,y,schuh], nh/fh:[x,y], lf/rf, lh/rh, it:Ding, sit:bool}
 function render(p,ch,t){
-  var b=new Buf(SW,SHH,T), o=function(q){ return [OX+q[0],OY+q[1]]; }, C=ch.cols, bn=ch.bones;
+  var b=new Buf(SW,SHH,T), o=function(q){ return [OX+q[0],OY+q[1]]; }, C=ch.cols, bn=ch.bones, umA=null;
   var hx=p.h[0], hy=p.h[1]-(ch.hipY-23);
   var L=ch.tLen;
   if (p.v==='S'){
@@ -151,7 +165,7 @@ function render(p,ch,t){
     var nh=p.nh||[hx,hy+2], ne=ik(shN[0],shN[1],nh[0],nh[1],bn[2],bn[3],1);
     limb(b,o(shN),o(ne),ch.armR?ch.armR[0]:1.3,C.sleeve); limb(b,o(ne),o(nh),ch.armR?ch.armR[1]:1.0,ch.cols.arm||C.sleeve); hand(b,OX+nh[0]-0.5,OY+nh[1]-0.5,C.hand);
     if (p.it && HELD[p.it]) HELD[p.it](b,OX+nh[0],OY+nh[1],t);
-    if (um>=2) umCanopy(b,OX+fh[0]-3,OY+fh[1]-UM_LEN,um,ch);
+    if (um>=2){ umA=[OX+fh[0]-3,OY+fh[1]-UM_LEN]; umCanopy(b,umA[0],umA[1],um,ch); }
   } else {
     var front=p.v==='F', tst=front?ch.tF:ch.tB, sw=ch.shoulder;
     var sL=[hx-sw,hy-L+2], sR=[hx+sw,hy-L+2];
@@ -172,10 +186,11 @@ function render(p,ch,t){
     else { drawArms(); b.blit(hsF,OX+hx-nkF[0]+ho2[0],OY+hy-L-nkF[1]+ho2[1]+1); }
     if (front && p.it==='paper'){ b.rect(OX+hx-4,OY+hy-10,9,6,P.s6); b.hl(OX+hx-3,OX+hx+3,OY+hy-9,P.s3); b.hl(OX+hx-3,OX+hx+2,OY+hy-7,P.s3); hand(b,OX+hx-5,OY+hy-8,C.hand); hand(b,OX+hx+4,OY+hy-8,C.hand); }
     if (front && p.it==='tin'){ b.rect(OX+hx-2,OY+hy-9,5,5,P.m3); b.hl(OX+hx-2,OX+hx+2,OY+hy-9,P.m4); b.px(OX+hx+1,OY+hy-7,P.m1); hand(b,OX+hx-4,OY+hy-7,C.hand); hand(b,OX+hx+3,OY+hy-7,C.hand); }
-    if (umF>=2 && umAt){ umStick(b,OX+umAt[0],OY+umAt[1],OX+umAt[0],OY+umAt[1]-UM_LEN,umS); hand(b,OX+umAt[0]-0.5,OY+umAt[1]-0.5,C.hand); umCanopy(b,OX+umAt[0],OY+umAt[1]-UM_LEN,umF,ch); }
+    if (umF>=2 && umAt){ umA=[OX+umAt[0]-umS*3,OY+umAt[1]-UM_LEN]; umStick(b,OX+umAt[0],OY+umAt[1],umA[0],umA[1],umS); hand(b,OX+umAt[0]-0.5,OY+umAt[1]-0.5,C.hand); umCanopy(b,umA[0],umA[1],umF,ch); }   // Stock leicht zum Kopf geneigt
   }
   if (ch.post) ch.post(b,p,OX,OY,hx,hy);
   outlinePass(b,P.k1);
+  if (umA && p.um>=5) umWater(b,umA[0],umA[1],t);
   return b;
 }
 function skirt(b,ch,hx,hy,knees,p,v){ var sk=ch.skirt; if (!sk) return; var top=hy-2, hem=hy+(sk.hem||12), fl=sk.flare||2;
@@ -189,7 +204,7 @@ function coatS(b,ch,hx,hy,knees,p){ var co=ch.coat; if (!co) return; var top=hy-
 function coatF(b,ch,hx,hy,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)), w=co.w||6;
   b.poly([[OX+hx-w,OY+top],[OX+hx+w,OY+top],[OX+hx+w+1,OY+hem],[OX+hx-w-1,OY+hem]],function(x,y){ var u=(x-(OX+hx-w-1))/(2*w+2), c=co.c[0]; if (u<0.2) c=co.c[1]; else if (u>0.8) c=co.c[2]; if (p.v==='F' && Math.abs(x-OX-hx-0.5)<0.6) c=co.c[2]; return c; }); }
 
-M.poseBuf=function(p,chId,t){ var ch=CH[chId]; if (!ch) throw new Error('keine Figur '+chId); var k=JSON.stringify(p)+(p.it==='cig'||p.it==='candle'?Math.floor((t||0)/300)%2:''); return ch.cache[k]||(ch.cache[k]=render(p,ch,t)); };
+M.poseBuf=function(p,chId,t){ var ch=CH[chId]; if (!ch) throw new Error('keine Figur '+chId); var k=JSON.stringify(p)+(p.it==='cig'||p.it==='candle'?Math.floor((t||0)/300)%2:'')+(p.um>=5?'w'+Math.floor((t||0)/90)%24:''); return ch.cache[k]||(ch.cache[k]=render(p,ch,t)); };
 // zeichnen mit Füßen bei (x,y). opt: {lut, alpha 0..1 (gedithert), t (ms, für Schimmer), mask (Uint8Array, 320*144), mv (Maskenwert), scale}
 M.drawPose=function(fb,x,y,pose,facing,chId,opt){ opt=opt||{}; var s=M.poseBuf(pose,chId,opt.t), fl=facing==='L', lut=opt.lut, al=opt.alpha===undefined?1:opt.alpha, t=opt.t||0, sc=opt.scale||1;
   var W=fb.w, H=opt.h||fb.h, mask=opt.mask, mv=opt.mv||0;

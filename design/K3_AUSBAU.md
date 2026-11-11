@@ -30,7 +30,7 @@ Nicht geändert: Die neutralen Beschreibungen bleiben verständlich und nennen, 
 
 ### S.2 Ergebnisse auf dem neuen Build
 
-Alle Ergebnisse gelten für denselben Build (mit der Aufführung aus S.4 und der Ankunft aus S.5): Stempel „11.11.2026 · b5ec6f“, `web/index.html` sha256 `949481850b4b…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11_ankunft/` und im Prüfpaket (S.3); die Läufe davor stehen in `qa/protokolle/k3_2026-11-11_auftritt/` (vor S.5) und `qa/protokolle/k3_2026-11-11/` (vor S.4).
+Alle Ergebnisse gelten für denselben Build (mit der Aufführung aus S.4 und der Ankunft aus S.5, einschließlich Plane und überarbeitetem Schirm): Stempel „11.11.2026 · b17c6d“, `web/index.html` sha256 `79b339c67088…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11_plane/` und im Prüfpaket (S.3); die Läufe davor stehen in `qa/protokolle/k3_2026-11-11_ankunft/` (Ankunft ohne Plane), `qa/protokolle/k3_2026-11-11_auftritt/` (vor S.5) und `qa/protokolle/k3_2026-11-11/` (vor S.4).
 
 | Art | Werkzeug | Ergebnis |
 |---|---|---|
@@ -59,12 +59,14 @@ Bisher stand die Aufführung an der Brücke in drei Erzählsätzen. Jetzt ist si
 - **Unverändert:** Schalter und Notizen (`b3_hum`, `s3_verse`, `k3.s.lenaVerse`) und alle Sätze der Familie. Die Aufführung bleibt freiwillig.
 - **Geprüft:** BUG-031 (mit und ohne Text, Wiederholung, Laden mitten in der Szene, Herberge; Reihenfolge der Zeilen, Aufräumen danach); BUG-023 und BUG-030 rufen die Aufführung ebenfalls auf.
 
-### S.5 Ankunft in Mostar: Regenschirm, erst die Herberge (Wünsche des Autors)
+### S.5 Ankunft in Mostar: Regenschirm, erst die Herberge, die Plane über der Band (Wünsche des Autors)
 
 - **Regenschirm:** Am Donnerstag (Phase `k3_pro`, Wetter Regen) trägt Marko einen dunkelroten Schirm. Die Räume sagen, wo es regnet (`rain` in der Kunst): Busbahnhof außer dem Streifen unter dem Vordach, Terrasse der Herberge, Kujundžiluk, Alte Brücke. `05_engine.js` macht daraus eine Stufe in Markos Pose (weggesteckt → gehoben → geht auf → offen, je 75 ms; beim Raumwechsel sofort), `02_rig.js` malt ihn. Von der Seite hält ihn die ferne Hand, damit die nahe frei bleibt für Gesten, Geben und Aufheben; der Stock läuft hinter dem Kopf, das Dach liegt darüber. Von vorn und von hinten hält Marko ihn seitlich neben dem Kopf. Unter einem Dach ist er weggesteckt: In der fernen Hand hinge er von der Seite unsichtbar hinter Mantel und Beinen. Keinen Schirm gibt es bei Bura, im Regen der anderen Kapitel (dort sagen die Räume nichts) und für Mala.
 - **Erst die Herberge, dann die Brücke:** Der Stadtplan vom Kiosk schaltet nur die Herberge frei. Beim Eintragen bringt Maja die Tasche hinauf und sagt den Weg; erst dann kommen Kujundžiluk und Alte Brücke auf den Plan. Markos Satz am Kiosk: „Erst die Herberge. Ein Zimmer, die Tasche loswerden. Dann die Brücke.“ Der Hinweis zur Brücke (`p3c`) öffnet erst nach dem Eintragen. Alte Spielstände, in denen die Brücke schon auf dem Plan steht, bleiben, wie sie sind.
 - **Kioskfrau:** am Donnerstag „Halten Sie den Schirm gut fest. Morgen kommt die Bura.“ statt „Nehmen Sie eine Zeitung. Gegen den Regen.“ (den Satz sagte sie auch an Tagen ohne Regen); an den anderen Tagen „Nehmen Sie eine Zeitung. Für die Wartezeit.“
-- **Geprüft:** BUG-032 mit einem neuen Spielstand aus der Musterlösung (`k3x_ankunft.json`): Plan, Hinweise, Eintragen, der Schirm an allen Orten, das Aufgehen in Stufen, Raumwechsel, Laden, Bura, Kapitel 1, Mala. Die Musterlösung prüft den Plan nach dem Kauf und nach dem Eintragen.
+- **Die Band unter einer Plane** (zweiter Wunsch): Am Donnerstag hängt über dem Tisch der Australier eine blaue Plane (`art/herberge.js`: `TARP`, nur bei Regen), über die Balken gelegt, vorn tiefer und mit Wäscheleinen am Geländer und am Pfosten festgebunden. Darunter fällt kein Regen. Sie hängt nach links ab: An der Ecke läuft das Wasser auf die Dielen in eine Pfütze, am Saum tropft es. Unter der Plane klappt Marko den Schirm zu. Neuer Hotspot „Blaue Plane“ (nur bei Regen), mit Malas Satz „Darunter sind sie trocken. Ich bin überall trocken.“
+- **Der Schirm, überarbeitet** (das Rot bleibt): acht Speichen; man sieht fünf Spitzen und vier Bahnen, abwechselnd hell und dunkel, mit Nähten, Zipfeln, Metallenden, einer Spitze oben und nassem Glanz. Nach dem Umrissdurchgang gemalt, also ohne schwarzen Rand: Tropfen, die an vier Zipfeln abfallen, und Spritzer oben (Zeitraster 90 ms, das Bild wiederholt sich nach 24 Rastern und bleibt so im Zwischenspeicher der Posen begrenzt). Regenschatten: `06_ui.js` meldet die Fläche unter jedem offenen Schirm (`M.RAIN_SHIELD`, aus `M.umAnchor`), `M.rain` malt dort keine Tropfen. Von vorn und von hinten ist der Stock leicht zum Kopf geneigt, damit das Dach über dem Kopf sitzt, ohne dass der Stock übers Gesicht läuft.
+- **Geprüft:** BUG-032 mit einem neuen Spielstand aus der Musterlösung (`k3x_ankunft.json`): Plan, Hinweise, Eintragen, der Schirm an allen Orten (auch unter der Plane), das Aufgehen in Stufen, Raumwechsel, Laden, Bura, Kapitel 1, Mala, die Plane nur bei Regen, Regenschatten, Tropfen. Die Musterlösung prüft den Plan nach dem Kauf und nach dem Eintragen.
 
 ---
 

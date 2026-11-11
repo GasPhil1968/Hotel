@@ -217,9 +217,10 @@ M.finishTOD=function(b,tod,opt){ opt=opt||{};
 // weicher Lichthof auf dem Framebuffer (für flackernde Lampen in dynamic)
 M.glow=function(fb,cx,cy,r,t,amt,H){ H=H||SH; var f=1+Math.sin(t*7)*0.05+Math.sin(t*19)*0.03; for (var y=Math.floor(cy-r);y<=cy+r;y++) for (var x=Math.floor(cx-r);x<=cx+r;x++){ if (x<0||y<0||x>=fb.w||y>=H) continue; var d=Math.hypot(x-cx,y-cy)/r*f; if (d>1) continue; if (bayer(x,y)<(1-d)*(amt||0.5)){ var k=y*fb.w+x; fb.d[k]=M.UP[fb.d[k]]; } } };
 // Regen als Vordergrund-Overlay
-M.rain=function(fb,t,opt){ opt=opt||{}; var n=opt.n||60, H=opt.h||SH, col=opt.col||P.n3, col2=opt.col2||P.n4, spd=opt.speed||240, slant=opt.slant===undefined?0.2:opt.slant;
+// Unter einem offenen Schirm (M.RAIN_SHIELD: [x0,y0,x1,y1] in Bildpunkten, je Bild aus 06_ui.js) fällt kein Regen
+M.rain=function(fb,t,opt){ opt=opt||{}; var SHL=M.RAIN_SHIELD||[], shielded=function(x,y){ for (var s=0;s<SHL.length;s++){ var q=SHL[s]; if (x>=q[0]&&x<=q[2]&&y>=q[1]&&y<=q[3]) return true; } return false; }; var n=opt.n||60, H=opt.h||SH, col=opt.col||P.n3, col2=opt.col2||P.n4, spd=opt.speed||240, slant=opt.slant===undefined?0.2:opt.slant;
   for (var i=0;i<n;i++){ var x0=Math.floor(hash(i,1)*380)-30, sp=spd*(0.8+hash(i,2)*0.5), y=Math.floor(((t*sp)+hash(i,3)*H)%(H+20))-10, x=x0-Math.floor(y*slant);
-    for (var k=0;k<4;k++){ var yy=y-k, xx=x+Math.floor(k*slant); if (yy<0||yy>=H||xx<0||xx>=fb.w) continue; if (opt.mask && !opt.mask(xx,yy)) continue; fb.d[yy*fb.w+xx]=k===0?col2:col; } } };
+    for (var k=0;k<4;k++){ var yy=y-k, xx=x+Math.floor(k*slant); if (yy<0||yy>=H||xx<0||xx>=fb.w) continue; if (opt.mask && !opt.mask(xx,yy)) continue; if (SHL.length && shielded(xx,yy)) continue; fb.d[yy*fb.w+xx]=k===0?col2:col; } } };
 // Staubkörner im Licht
 M.dust=function(fb,t,x0,y0,w,h,n,col){ for (var i=0;i<(n||14);i++){ var x=Math.floor(x0+((hash(i,7)*w+Math.sin(t*0.3+i)*6)%w+w)%w), y=Math.floor(y0+((hash(i,8)*h+t*(2+hash(i,9)*3))%h)); if (Math.sin(t*1.5+i*2)>0.2) fb.px(x,y,col||P.s5); } };
 })(M);

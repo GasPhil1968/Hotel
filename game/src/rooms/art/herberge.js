@@ -28,6 +28,11 @@ var TBL=[{x0:212,x1:242,top:107,base:124},{x0:326,x1:356,top:107,base:124}];   /
 var BR={cx:362,sp:90,span:22,top:66};                   // Alte Brücke in der Ferne (Bogenmitte, Kämpferlinie, halbe Spannweite, Brüstung)
 var MAJA_Y=106;
 var AUS=[[318,124,'R'],[364,124,'L'],[341,115,'L']];    // aussie1, aussie2 (sitzend vorn), aussie3 (sitzend hinter dem Tisch, mit Gitarre)
+// Plane der Australier über ihrem Tisch, nur bei Regen (Wunsch des Autors: die Band sitzt nicht im Regen). Oben über den Balken gelegt,
+// vorn tiefer, mit Wäscheleinen am Geländer und am Pfosten festgebunden; sie hängt nach links ab, dort läuft das Wasser über die Ecke auf die Dielen.
+var TARP={x0:292,x1:399,top:18,front:34,tilt:7,sag:3,drain:129};
+function tarpEdge(x){ var u=Math.max(0,Math.min(1,(x-TARP.x0)/(TARP.x1-TARP.x0))); return TARP.front+Math.round(TARP.tilt*(1-u)+TARP.sag*Math.sin(Math.PI*u)); }
+function underTarp(x,y){ return x>=TARP.x0-1 && x<=TARP.x1 && y>=TARP.top; }
 function rd(v){ return Math.round(v); }
 function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
 function lerp(a,b,t){ return a+(b-a)*t; }
@@ -173,6 +178,15 @@ function pergola(b,w){ var x, y; PERG.posts.forEach(function(px){ for (y=PERG.be
   vine(sx,PERG.beam+4,1,120); vine(sx,PERG.beam+6,1,80); vine(sx+60,PERG.beam+3,1,150);
   for (var k=0;k<10;k++){ var gx=sx+20+Math.floor(r()*170), gy=PERG.beam+6+Math.floor(r()*6); b.px(gx,gy,P.d1); b.px(gx+1,gy+1,P.d0); }   // vertrocknete Trauben
   if (w==='frost') for (x=CORNER.x1;x<W;x++) if (hash(x,9)<0.7) b.px(x,PERG.beam-1,P.s6); }
+// die blaue Plane von unten: dunkle Unterseite mit Falten, heller Saum mit Ösen, Leinen zum Sparren und zum Pfosten, unten eine Pfütze
+function tarp(b){ var x, y;
+  for (x=TARP.x0;x<=TARP.x1;x++){ var e=tarpEdge(x);
+    for (y=TARP.top;y<=e;y++){ var c=P.b0; if (y<=TARP.top+1) c=P.b1; else if (y>=e-1) c=(y===e)?P.b2:P.b1; else if ((x-y*2+400)%11===0 || (x-y*2+401)%11===0) c=P.b1; b.px(x,y,c); }
+    if ((x-TARP.x0)%9===4) b.px(x,e-1,P.m4);   // Ösen im Saum
+    b.px(x,e+1,P.k1); }
+  b.line(TARP.x0+1,tarpEdge(TARP.x0)+1,TARP.x0-7,RAIL.top-1,P.s4); b.px(TARP.x0-7,RAIL.top,P.s3);   // Leine zum Geländer
+  b.line(PERG.posts[1]-1,tarpEdge(PERG.posts[1])+1,PERG.posts[1],tarpEdge(PERG.posts[1])+6,P.s4);       // Leine um den Pfosten
+  b.ellipse(TARP.x0,TARP.drain,7,1.6,function(xx,yy){ return (xx+yy)%3?P.m1:P.m2; }); }                 // Pfütze unter der Ecke
 var BULBS=[];
 function chain(b){ BULBS=[]; var x0=CORNER.x1-2, x1=W, seg=46, cols=[P.y4,P.r4,P.b3,P.y5,P.g4];
   for (var x=x0;x<x1;x++){ var u=((x-x0)%seg)/seg, y=rd(PERG.beam+4+Math.sin(u*Math.PI)*9); b.px(x,y,P.k1); if ((x-x0)%6===3){ b.px(x,y+1,P.k1); b.px(x,y+2,P.s5); b.px(x,y+3,P.s4); BULBS.push([x,y+2,cols[((x-x0)/6|0)%cols.length]]); } } }
@@ -207,7 +221,7 @@ function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), 
   M.fogBake(b,function(xx,yy){ return (xx>=CORNER.x0 && yy<95)?hz*(1.1-yy/140):0; },{col:fcol});
   for (var q=0;q<W*H;q++) if (b.d[q]===T && sky.d[q]!==T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
   for (y=0;y<RAIL.base;y++) for (x=CORNER.x0;x<W;x++) if (!OUT[y*W+x]) OUT[y*W+x]=1;
-  pergola(b,w); railing(b); deck(b,wet); chain(b);
+  pergola(b,w); railing(b); deck(b,wet); chain(b); if (w==='rain') tarp(b);
   interior(b,tod); corner(b);
   table(b,TBL[0],false); chairBack(b,TBL[0].x0-6,124,'R'); chairBack(b,TBL[0].x1+6,124,'L');
   chairBack(b,AUS[2][0],AUS[2][1],'L',R('s3 s4 s5')); table(b,TBL[1],false); chairBack(b,AUS[0][0],AUS[0][1],'R'); chairBack(b,AUS[1][0],AUS[1][1],'L'); aussieStuff(b,S,tod);
@@ -262,8 +276,12 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), i;
   if (S.aussies){ var gx=AUS[2][0]-4-cam, gy=AUS[2][1]-16; if (gx>-4 && gx<324) for (i=0;i<6;i++){ var X=gx+i, Y=gy+((Math.floor(t*30)+i)%2); if (X>=0&&X<320 && Math.sin(t*2)>-0.2) fb.px(X,Y,P.s6); } }
   // Laptop-Bildschirm flimmert leicht
   var lx=LAPSCR[0]-cam; if (lx>-8 && lx<320 && Math.sin(t*1.7)>0.6) fb.px(lx+2,LAPSCR[1]+2,P.s6);
+  if (w==='rain'){ var px0=TARP.x0-cam, py0=tarpEdge(TARP.x0)+1;   // Wasser läuft an der Ecke der Plane ab, Tropfen am Saum
+    if (px0>-4 && px0<324){ for (i=0;i<7;i++){ var yy=py0+Math.floor((t*110+i*14)%(TARP.drain-py0)); if (px0>=0&&px0<320){ fb.px(px0,yy,P.m4); if (i%2) fb.px(px0,yy-1,P.m3); } }
+      var sp=Math.floor(t*10)%3; if (px0-2-sp>=0) fb.px(px0-2-sp,TARP.drain-1-(sp===1?1:0),P.m4); if (px0+2+sp<320) fb.px(px0+2+sp,TARP.drain-1-(sp===2?1:0),P.m4); }
+    [[322,0.9],[351,1.7],[377,0.4]].forEach(function(q,k){ var X=q[0]-cam; if (X<0||X>=320) return; var e=tarpEdge(q[0])+1, ph=(t*0.8+q[1])%1.6; if (ph<0.25){ fb.px(X,e,P.m4); return; } var Y=e+Math.floor((ph-0.25)*70); if (Y<124) fb.px(X,Y,P.m4); }); }
   if (w==='bura'){ M.scn.buraDebris(fb,t,108,140,cam); } }
-function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ return x+v.cam>=CORNER.x1 && y>12; }});
+function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod; if (w==='rain') M.rain(fb,v.t,{n:70,col:tod==='day'?P.m3:P.n2,col2:tod==='day'?P.m4:P.n3,mask:function(x,y){ var X=x+v.cam; return X>=CORNER.x1 && y>12 && !underTarp(X,y); }});
   if (M.k3PerfFront) M.k3PerfFront(fb,v,'herberge'); }   // Noten über der Terrasse, wenn die Australier singen (97_k3_auftritt.js)
 // Geistersicht: am Geländer ein schwacher Abdruck vieler Hände
 function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam; for (var i=0;i<34;i++){ var hx=CORNER.x1+8+Math.floor(hash(i,1)*(W-CORNER.x1-16))-cam, hy=RAIL.top-1+Math.floor(hash(i,2)*2); if (hx<2||hx>316) continue;
@@ -276,7 +294,7 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>390) return false;
   return true; }
 M.defineArt('herberge',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
-  rain:function(x,y){ return x>=CORNER.x1; },   // Regenschirm (05_engine.js): auf der Terrasse offen, an der Rezeption zu
+  rain:function(x,y){ return x>=CORNER.x1 && !(x>=TARP.x0-6 && x<=TARP.x1); },   // Regenschirm (05_engine.js): auf der Terrasse offen, an der Rezeption und unter der Plane zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; if (tod==='day') return levels(k)[0].a; var l=lightAt(LIT,a.x,a.y-22); return levels(k)[Math.max(1,Math.min(4,Math.round(l*4)))].a; },
   spots:{
     door:[DOOR.x-3,DOOR.y-3,DOOR.w+6,DOOR.h+5],
@@ -288,9 +306,10 @@ M.defineArt('herberge',{
     table:[TBL[0].x0-12,TBL[0].top-6,TBL[0].x1-TBL[0].x0+24,TBL[0].base-TBL[0].top+6],
     guitar:[TBL[1].x0-12,TBL[1].top-8,TBL[1].x1-TBL[1].x0+24,TBL[1].base-TBL[1].top+8],
     lights:[CORNER.x1,PERG.beam-4,W-CORNER.x1,16],
+    tarp:[TARP.x0,TARP.top,TARP.x1-TARP.x0+1,TARP.front+TARP.tilt-TARP.top+2],
     bridge_view:[BR.cx-BR.span-18,BR.top-16,BR.span*2+34,BR.sp-BR.top+20]
   },
-  stands:{ door:[18,116,'B'], desk:[120,116,'B'], bell:[142,116,'B'], register:[108,116,'B'], stairs:[72,114,'B'], railing:[290,114,'B'], table:[227,129,'B'], guitar:[340,130,'B'], lights:[280,118,'B'], bridge_view:[376,116,'B'] },
+  stands:{ door:[18,116,'B'], desk:[120,116,'B'], bell:[142,116,'B'], register:[108,116,'B'], stairs:[72,114,'B'], railing:[290,114,'B'], table:[227,129,'B'], guitar:[340,130,'B'], tarp:[300,128,'B'], lights:[280,118,'B'], bridge_view:[376,116,'B'] },
   actorPos:{ maja:[122,MAJA_Y,'R'], aussie1:[AUS[0][0],AUS[0][1],'R','aussie1',false,'sit'], aussie2:[AUS[1][0],AUS[1][1],'L','aussie2',false,'sit'], aussie3:[AUS[2][0],AUS[2][1],'L','aussie3',false,'guitar'], mala:[300,114,'R'] },
   start:[110,120,'R'], entries:{ map:[18,118,'R'], zimmer:[70,116,'R'] }
 });

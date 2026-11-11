@@ -37,7 +37,7 @@ function drawPrint(p,view){ var age=view.gt-p.at, k=1-age/PRINT_MS, al=p.g?0.6*k
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0&&!M.reduceMotion()?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
   for (var y=0;y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var sx=x+cx-ox; fb.d[row+x]=(sx>=0&&sx<bw)?bg.d[brow+sx]:P.k0; } }
-  mask.fill(0); gmask.fill(0);
+  mask.fill(0); gmask.fill(0); M.RAIN_SHIELD=[];   // Regenschatten unter offenen Schirmen (M.rain in 01_art.js)
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
@@ -58,7 +58,8 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
-      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o); }
+      M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
+      if (p.um>=3 && M.umAnchor){ var ua=M.umAnchor(p,a.ch), sc=a.scale||1; if (ua){ var ux=sx+(f==='L'?-ua.x:ua.x)*sc; M.RAIN_SHIELD.push([ux-(ua.R+1)*sc,a.y-lift+(ua.y-1)*sc,ux+(ua.R+1)*sc,a.y-lift+1]); } } }
     else if (l.print) drawPrint(l.print,view);
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }

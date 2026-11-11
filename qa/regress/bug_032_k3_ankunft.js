@@ -4,6 +4,8 @@
 //     Vordach, Terrasse der Herberge, Kujundžiluk, Brücke), weggesteckt unter dem Vordach, an der Rezeption und im Zimmer; er geht in Stufen auf,
 //     wenn Marko vom Trockenen in den Regen läuft; beim Raumwechsel sofort im richtigen Zustand. Kein Schirm bei Bura, nicht im Regen von
 //     Kapitel 1, nie für Mala. (3) Die Kioskfrau verabschiedet ihn am Donnerstag mit dem Schirm statt mit „Zeitung gegen den Regen“.
+// (4) Zweiter Wunsch: Die Australier sitzen unter einer blauen Plane (nur bei Regen; darunter klappt Marko den Schirm zu); unter Markos
+//     offenem Schirm fällt kein Regen (Regenschatten), an den Spitzen tropft es.
 const { open } = require('../vmdriver'); const FX = require('./fixtures/lib'); const { play } = require('../../game/tools/k3play');
 module.exports = { id: 'BUG-032', title: 'K3: erst die Herberge, dann die Brücke; Markos Regenschirm bei der Ankunft', async run(html) {
   const D = await open({ seed: 32, html, turbo: 25 }); const P = play(D, {}); const out = []; let ok = true;
@@ -35,6 +37,10 @@ module.exports = { id: 'BUG-032', title: 'K3: erst die Herberge, dann die Brück
   const drawn = await D.ev(() => { const q = M.poseS({}); const n = (p) => { const b = M.poseBuf(p, 'marko', 0); let k = 0; for (let y = 0; y < M.SPR.OY - 51; y++) for (let x = 0; x < b.w; x++) if (b.d[y * b.w + x] !== M.T) k++; return k; };
     return { without: n(q), with: n(Object.assign({}, q, { um: 5 })), F: n(Object.assign({}, M.poseF({}), { um: 5 })), B: n(Object.assign({}, M.poseF({}, 'B'), { um: 5 })) }; });
   ck(drawn.without === 0 && drawn.with > 60 && drawn.F > 60 && drawn.B > 60, 'gezeichnet: Schirm über dem Kopf (Seite, vorn, hinten) ' + JSON.stringify(drawn));
+  const drips = await D.ev(() => { const q = Object.assign({}, M.poseS({}), { um: 5 }); let n = 0, frames = 0; for (let t = 0; t < 2160; t += 90) { const b = M.poseBuf(q, 'marko', t); let k = 0; for (let i = 0; i < b.d.length; i++) if (b.d[i] === M.P.n4) k++; if (k) frames++; n += k; } return { n, frames }; });
+  ck(drips.frames >= 6, 'Tropfen an den Spitzen des Schirms (in ' + drips.frames + ' von 24 Bildern)');
+  const shield = await D.ev(() => { M.renderFrame(); const a = M.E.ACT.marko, sx = a.x - Math.round(M.E.camX); return { sh: (M.RAIN_SHIELD || []).map(r => r.map(Math.round)), sx: Math.round(sx), y: Math.round(a.y) }; });
+  ck(shield.sh.length === 1 && shield.sh[0][0] < shield.sx && shield.sh[0][2] > shield.sx && shield.sh[0][1] < shield.y - 50 && shield.sh[0][3] >= shield.y, 'kein Regen unter dem offenen Schirm (Regenschatten ' + JSON.stringify(shield) + ')');
   // (1) Herberge: eintragen → Weg zur Brücke
   await P.travel('herberge'); await P.calm();
   u = await settleUm(); ck(u.st === 1 && u.pose === 0, 'Rezeption: Schirm weggesteckt ' + JSON.stringify(u));
@@ -44,6 +50,8 @@ module.exports = { id: 'BUG-032', title: 'K3: erst die Herberge, dann die Brück
   ck(await map() === 'herberge,kujundziluk,ostbus,starimost', 'nach dem Eintragen: Kujundžiluk und Alte Brücke auf dem Plan (' + await map() + ')');
   ck(await hints() === 'p3c', 'Hinweis: jetzt „Die Brücke, die alle kennen“ (' + await hints() + ')');
   await D.ev(() => { const a = M.E.ACT.marko; a.x = 250; a.y = 124; }); u = await settleUm(); ck(u.pose === 5, 'Terrasse der Herberge im Regen: Schirm offen ' + JSON.stringify(u));
+  ck(await D.ev(() => { const h = M.E.room.byId.tarp; return !!(h && h.vis(M.RS('herberge'), M.GS)); }), 'Herberge im Regen: die blaue Plane über dem Tisch der Australier');
+  await D.ev(() => { const a = M.E.ACT.marko; a.x = 320; a.y = 130; }); u = await settleUm(); ck(u.st === 1 && u.pose === 0, 'unter der Plane: Schirm zu ' + JSON.stringify(u));
   await D.ev(() => { const a = M.E.ACT.marko; a.x = 110; a.y = 120; }); u = await settleUm(); ck(u.st === 1 && u.pose === 0, 'zurück an der Rezeption: wieder zu ' + JSON.stringify(u));
   await P.exit('stairs'); await P.calm(); u = await um(); ck((await D.st()).room === 'zimmer' && u.st === 0 && u.pose === 0, 'im Zimmer: kein Schirm ' + JSON.stringify(u));
   await P.exit('door'); await P.calm();
@@ -56,6 +64,8 @@ module.exports = { id: 'BUG-032', title: 'K3: erst die Herberge, dann die Brück
   u = await um(); ck(u.pose === 5 && (await D.st()).room === 'starimost', 'nach dem Laden an der Brücke: offen ' + JSON.stringify(u));
   // kein Schirm bei Bura (Freitag) und nicht im Regen von Kapitel 1
   await FX.load(D, 'k3_021_ljerka.json', { pos: 'starimost' }); await settle(); u = await um(); ck(u.st === 0 && u.pose === 0, 'Freitag, Bura: kein Schirm ' + JSON.stringify(u));
+  await FX.load(D, 'k3_021_ljerka.json', { pos: 'herberge' }); await settle();
+  ck(await D.ev(() => { const h = M.E.room.byId.tarp; return !!h && !h.vis(M.RS('herberge'), M.GS); }), 'Freitag ohne Regen: keine Plane');
   await FX.load(D, 'k1_02_uebersetzung.json', {}); await settle(); u = await um();
   ck(await D.ev(() => M.scn.weather(M.GS)) === 'rain' && u.st === 0, 'Kapitel 1 im Regen (Split): unverändert ohne Schirm ' + JSON.stringify(u));
   const jsErr = (D.events || []).filter(e => e[0] === 'error').length; ck(jsErr === 0, 'keine JS-Fehler (' + jsErr + ')');
