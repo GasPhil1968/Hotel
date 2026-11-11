@@ -1,0 +1,57 @@
+[2.1s] #1 prolog: Kapitelkarte, im Bus (Erinnerung), Bahnsteig: „Du siehst ausgeschlafen aus.“ – „Acht …“ – „Acht Grad.“
+[3.0s] #2 prolog: Mit Mala reden: „Mit wem redest du?“ – „Mit dem Kiosk.“
+[4.2s] #3 prolog: Kiosk: Fahrschein für die Drei
+[9.8s] #4 prolog: Taxi: Mama sagt das Wort nicht, Marko sagt „Kovači.“; Hajra: „Ružina snaha.“, Mačak, der Schlüssel
+[11.1s] #5 prolog: Vratnik: Mala am Tor: „Hier.“ – „Später.“; Mama geht ins Haus
+[12.1s] #6 prolog: Die Plane (ohne Mala): „Ich hebe eine Ecke der Plane. Nur Holz.“
+[16.0s] #7 prolog: Mala spürt Blau unter der Plane; Marko hebt sie: Papas Kanister, Malas Nachhall „Nemoj gledati, mali.“; Mama: „Ich will sehen, wo es war.“
+[17.2s] #8 prolog: Taxi nach Alipašino Polje: „Nicht die Drei. Noch nicht.“
+[19.8s] #9 prolog: Eingangshalle: Dragica, Šehić und das Hausbuch von 1991
+[23.0s] #10 prolog: Siebter Stock: „Zweimal kurz, einmal lang.“ – „Ich kann da nicht hinauf.“ Šehić: Samstag um elf
+[27.0s] #11 prolog: Nada: die Tafel bei Nedžad, „Es kommt noch jemand.“ Karte „Erster Tag – Donnerstag“
+[28.9s] #12 donnerstag: Nada: „Das war euer Samstag.“ Lanas Zimmer steht offen
+[29.9s] #13 donnerstag: Lanas Schreibtisch: die Mappe, siebzehn Januare
+[31.4s] #14 donnerstag: Mala spürt die Mappe: „Lana Delić. Da je nađu.“
+[35.3s] #15 donnerstag: Nedžad: „Ich graviere, was man mir sagt. Nicht, was man meint.“ Bis Freitag, zwölf
+[38.3s] #16 donnerstag: Rade: „Subota, 11:10. Dvoje djece.“ Der Kleine am Fenster, sie daneben
+[39.6s] #17 donnerstag: Damir kommt am Freitag in Uniform
+[40.5s] #18 donnerstag: An der Brauerei: Kopfweh, „Hier ist einer. Aber er zeigt sich nicht.“
+[45.7s] #19 donnerstag: Mala am Hahn: „Kanisteri u red! Jedan po jedan!“
+[46.0s] #20 donnerstag: Abend bei Nada: Zlata und Vlado mit dem Brett; „Na grobu moje kćerke …“; Ana und die Kinder, Niko sieht Mala
+[47.9s] #21 nacht: Mala spürt das Brett: „Piši kako je rekla. Mala. Da je nađu.“
+[48.5s] #22 nacht: Schluss: Beide haben ihren Namen geschrieben, damit man sie findet
+[49.1s] #23 nacht: Schluss: Zwei Hälften. Oben das Messing, unten das Holz
+[50.5s] #24 nacht: Gute Nacht; die Pension in der Nacht
+[58.5s] #25 nacht: Das kalte Fenster: Mala zeichnet in Markos Atem eine Drei; Spiegel und Mia: nichts. „Für Mama. Wer sonst?“
+[59.0s] #26 nacht: Schluss: Nicht Nada. Die Fahrscheine gehören zu den Samstagen
+[62.1s] #27 nacht: Nachts an der Brauerei, mit dem Kanister: Hamdija erscheint. „Der Ingenieur ist nach vorn, nach dem Druck fragen.“
+[63.6s] #28 nacht: Hamdija: „Es ist April.“ – „Fass den Kasten nicht an!“
+[65.1s] #29 nacht: Mala im Blechkasten: ein Einmachglas, „Sedam.“
+[67.3s] #30 nacht: Schlafen; Karte „Zweiter Tag – Freitag“
+[71.1s] #31 freitag: Gerichtsmedizin: „Zdravo, Zorane.“ Sieben Tote, drei ohne Namen
+[75.4s] #32 freitag: Mala spürt den neunzehnten April an drei Stellen
+[75.9s] #33 freitag: Schluss: Der vorn die Hand hob, hat mich festgehalten
+[78.5s] #34 freitag: „Ti si mali.“ – „Otvori.“
+[80.3s] #35 freitag: Der Kasten: Hamdijas Liste, sieben Zeilen
+[82.9s] #36 freitag: Frau Kolar: drei Beschreibungen, ein Abgleich mit den Familien
+[88.2s] #37 freitag: „Sie sind gefunden.“ Mala bringt Hamdija hinüber: „Česma. Teče. I niko ne čeka.“
+[94.8s] #38 freitag: Übersetzen an beide; die zwei Hälften: „Oben ihr Name.“ – „Unten das Brett.“
+[99.1s] #39 freitag: Nedžads Gravur: LANA DELIĆ · 3. 3. 1976, keine dritte Zeile
+[106.2s] #40 freitag: Vlado: „Drži.“ Die Tafel auf dem Pfosten
+[110.2s] #41 freitag: Lanas Begräbnis: „Jetzt passen sie zusammen.“ Der Ableger, „Schief.“ Eine Schaufel Erde
+[110.5s] #42 freitag: Totenmahl: „Voll.“ – „Hvala.“ Anas Zeichnung: „Uvijek lica u prozorima.“
+[114.6s] #43 tabija: Mala spürt Mama: „Wenn ich ihn mitgenommen hätte …“
+[116.1s] #44 tabija: Schluss: Die Fahrscheine sind für Mama. Am Fenster und daneben
+[123.1s] #45 tabija: Žuta tabija: „Ich will, dass du bleibst.“ – „Ich gehe.“ Die Dose; „Sretan rođendan.“
+[125.7s] #46 tabija: Punkt ohne Rückkehr, eigener Stand „Vor dem Samstag“; Karte „Zehn nach elf“
+[126.9s] #47 samstag: Frühstück: Die Dose am Tisch? „Was soll ich damit hier?“ – „Nicht hier. An der Tür.“
+[135.9s] #48 samstag: Die Fahrscheine an der Tür; Zurücktreten; zehn nach elf: Mala hört ihr eigenes Klopfen. „Uđi.“
+[146.3s] #49 samstag: Anhauchen, zeichnen, anhauchen, zeichnen, die Räder: „Stigla si.“ – „Jesam, mama.“ Die Drei, Endstation, „Dva.“
+[153.7s] #50 samstag: Am Tor: „Kommst du?“ – „Nein.“ Loslassen. „Jetzt bin ich fertig.“ Mittagessen, sechs Tassen
+[156.0s] #51 samstag: „Behalte ich.“; Sonntag; Karte „Epilog – Montag“
+[158.1s] #52 montag: Der Kanister am Hahn: keiner wartet
+[168.2s] #53 montag: Das Wasser in Ružas Küche: „Keinen Tropfen verschüttet.“
+[168.5s] #54 montag: Zorans Begräbnis: „Poginuo.“ Ružas Küche, Kolar, Vesna, das beschlagene Fenster
+[199.4s] #55 montag: Die letzte Zeichnung, mit Rädern; „Dahinter ist die Stadt.“ Ende; Abspann
+Spieltakt der Musterlösung (Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 83.1 min
+DURCHLAUF KAPITEL 5 OK: 55 Schritte in 199 s, keine JS-Fehler

@@ -1,0 +1,13 @@
+OK     Offline-Speicher mit neuer Version mala-split-849468c53b angelegt (mala-split-849468c53b)
+OK     Ohne Netz neu geladen: Spielstand lädt (ledana)
+OK     Hinweisdaten (76 + 54 Themen) und Stadtplan offline vorhanden
+OK     Hinweisgeschichte und bekannte Orte nach dem Offline-Laden erhalten
+OK     Stadtplan öffnet offline
+OK     Kapitel 3 offline vorhanden (117 Hinweisthemen, Stadtplan von Mostar, Räume, Musik)
+OK     neues Spiel in Mostar startet offline am Ostbusbahnhof (k3_pro, ostbus)
+OK     Kapitel 4 offline vorhanden (50 Hinweisthemen, Stadtplan von München, Räume, Musik)
+OK     neues Spiel in München startet offline am ZOB (k4_pro, zob)
+OK     Kapitel 5 offline vorhanden (25 Hinweisthemen, Brauerei, Bare, Treppenhaus)
+OK     neues Spiel in Kapitel 5 startet offline am Busbahnhof (k5_pro, stanica5)
+OK     keine JS-Fehler
+OFFLINETEST OK

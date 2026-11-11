@@ -10,3 +10,6 @@ qa/results/probe*/
 /w*_abbruch.png
 /wt_error.png
 /--*/
+
+# Python-Zwischendateien (Trailer-Skripte)
+__pycache__/

@@ -4,6 +4,11 @@
 var P=M.P;
 function ivkaHere(GS){ return (GS.phase==='c1'||GS.phase==='c1_night') && !GS.flags['c1.done']; }
 function ready(A){ return A.hasNote('c1_ferry') && A.hasNote('c1_letter') && A.has('gloves'); }
+// Begegnung auf der Mole: Sie beginnt, sobald Marko die Mole betritt (x > 430). Ivka steht dann am Molenende außerhalb des Bildes
+// (die Kamera folgt Marko); deshalb schwenkt das Bild zuerst ans Ende der Mole, damit beide zu sehen sind, und wird danach wieder frei.
+async function camToMoleEnd(A){ var R=M.E.room; if (!R) return; var x0=M.E.camX, x1=Math.max(0,(R.width||320)-320), t0=A.gt, ms=900;
+  for (;;){ var k=Math.min(1,(A.gt-t0)/ms), e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2; R.camLock=Math.round(x0+(x1-x0)*e); if (k>=1) break; await A.wait(16); } }
+function camFree(){ var R=M.E.room; if (R) delete R.camLock; }
 // den Brief zeigen oder danach fragen: ist alles beisammen, beginnt das Gespräch, in dem sie es erfährt
 async function letterToIvka(A){ var I=A.npc('ivka'); if (!A.flag('c1.letterOpen')) return A.m('Die Seiten kleben zusammen. So kann ich ihn niemandem vorlesen.');
   if (!A.hasNote('c1_letter')) return A.m('Das Salz hat die Hälfte gefressen. Die Hälfte, auf die es ankommt.');
@@ -19,8 +24,9 @@ async function bollardAttack(A){ A.setFlag('split.intro.dizzy'); var st=M.stand(
   await A.m('Vorbei.'); await A.m('Hier hat sie jeden Abend gestanden. Siebenundzwanzig Jahre. Mir reichen zehn Sekunden.');
   await A.m('Nach Hause. Schreiben, solange ich noch weiß, wo oben ist.'); A.save(); }
 // Mittwoch: Ivka auf der Mole. Neuer Ablauf: Mala geht sichtbar neben ihm, er kennt sie seit dem Abend in seiner Wohnung.
-async function meeting(A){ if (A.flag('mala.voice')) return meetingVoice(A); A.setFlag('c1.met'); var I=A.npc('ivka');
-  await A.face('R'); A.headache(3000); await A.animM('headache'); await A.m('…'); A.sfx('static');
+async function meeting(A){ if (A.flag('mala.voice')) return meetingVoice(A); try { await meetingSeen(A); } finally { camFree(); } }
+async function meetingSeen(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
+  await A.face('R'); A.headache(3000); await A.animM('headache'); await A.m('…'); A.sfx('static'); await camToMoleEnd(A);
   await A.m('Am Ende der Mole steht eine alte Frau. Schwarzer Mantel. Kein Schirm, keine Handschuhe.');
   A.found('ivka'); if (I.actor) I.actor.fadeIn=A.gt; await A.wait(900);
   await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.'); await A.wait(700);
@@ -35,8 +41,9 @@ async function meeting(A){ if (A.flag('mala.voice')) return meetingVoice(A); A.s
   await A.faceM('R'); await A.wait(600); await A.m('Ich gehe jetzt zu ihr. Dann sehe ich, dass sie lebt. Und dann gehe ich nach Hause und schlafe.');
   var ia=I.actor; if (ia){ await A.walk(Math.round(ia.x)-24,Math.round(ia.y)); await A.face('R'); } await M.introduce(A,'ivka'); A.save(); }
 // alte Spielstände in der Stimmenphase: die Begegnung wie bisher, mit der Stimme hinter ihm
-async function meetingVoice(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
-  await A.face('R'); A.headache(4500); await A.animM('headache'); await A.m('…'); A.sfx('static');
+async function meetingVoice(A){ try { await meetingVoiceSeen(A); } finally { camFree(); } }
+async function meetingVoiceSeen(A){ A.setFlag('c1.met'); var I=A.npc('ivka');
+  await A.face('R'); A.headache(4500); await A.animM('headache'); await A.m('…'); A.sfx('static'); await camToMoleEnd(A);
   await A.m('Am Ende der Mole steht eine alte Frau. Schwarzer Mantel. Kein Schirm, keine Handschuhe.');
   A.found('ivka'); if (I.actor) I.actor.fadeIn=A.gt; await A.wait(900);
   await A.m('Den Mantel kenne ich. Er hing gestern an einem Haken in Veli Varoš.'); await A.wait(900);

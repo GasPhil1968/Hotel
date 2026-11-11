@@ -1,0 +1,87 @@
+[1.2s] #1 prolog: Kapitelstart: Karte „München“, Bild „Im Bus nach München“, Ankunft am ZOB, Anas SMS
+[3.5s] #2 prolog: Ana geantwortet: „Bin da.“; Markos Kopf pocht
+[6.4s] #3 prolog: Mala findet Hansi am Pfeiler: „Kirchmaier. Hansi.“
+[11.3s] #4 prolog: Hansi wartet auf seine Ablösung; Marko klingt „wia d’ Zeitung“; „Der Wastl, der wo do drüben lehnt“
+[17.9s] #5 prolog: Wastl löst Hansi ab: „Feierabend, Hansi.“
+[19.0s] #6 prolog: auf der Hackerbrücke
+[20.9s] #7 prolog: Westend, Mamas Haus
+[24.7s] #8 prolog: Frau Huber gibt den Schlüssel; Mucki
+[29.9s] #9 prolog: Mamas Wohnung: Pantoffeln Größe 44, das Foto, die Mappe „Vratnik – krov“
+[30.7s] #10 prolog: 11:10, Malas Klopfen
+[33.1s] #11 prolog: im Schlafzimmer die verschlossene Kiste
+[37.5s] #12 prolog: Kaffee in Großmutters Džezva
+[45.2s] #13 prolog: Mama kommt heim: Nadas Dose, Lana, „Nicht heute. Heute ist Heiligabend.“
+[48.0s] #14 heiligabend: Karte „Heiligabend“, bei Ana in Giesing; Niko sieht Mala
+[49.4s] #15 heiligabend: Tobias lernt Bosnisch aus dem Buch
+[64.6s] #16 heiligabend: das Essen; Schlüsseldialog 1 „Nur müde“; Karte „Erster Tag · Christtag“
+[66.1s] #17 christtag: Mamas vergessene Brotdose
+[67.6s] #18 christtag: Theresienwiese
+[74.8s] #19 christtag: Spaziergang mit Ana: die gelben Stiefel; Lana ist tot
+[77.9s] #20 christtag: Mala fährt allein zum Hauptbahnhof und findet den Gepäckträger an Gleis 11: „Siebzehn. Wie ich, als ich aufgehört habe.“
+[80.0s] #21 christtag: Marko kommt nach; Mala zeigt ihm den Gepäckträger
+[84.1s] #22 christtag: „Mi chiamo Peppino.“ – „Me l’hanno preso qui. Al binario undici.“
+[88.7s] #23 christtag: die Kioskfrau: „A Urmünchner“; unter dem Gleis war ein Bunker; Peppino? Fragen Sie in der Bar Sport
+[95.1s] #24 christtag: Frau Wimmer: „Der Sepp hat italienisch g’flucht“; die Stadt bestattet ihn von Amts wegen
+[95.8s] #25 christtag: Schluss: Er konnte beides
+[102.3s] #26 christtag: Bar Sport: Enzo, „Per noi era Peppino“
+[106.6s] #27 christtag: Haus am Bavariapark: Mama bekommt ihr Brot
+[110.6s] #28 christtag: Mala findet Gerda auf der Bank am Aufzug: „Das macht er immer, der Alois. Bis ich da bin.“
+[116.7s] #29 christtag_abend: Karte „Christtag · Abend“; Mama und die Džezva: „Ich kann lesen.“ Mala ist wach
+[120.9s] #30 christtag_abend: Mala liest die Kiste: Rotkreuz-Nachricht 1993, Suchantrag 1994, Passierschein 1992 (bleibt ihr Geheimnis)
+[123.4s] #31 christtag_abend: Schlaf; Karte „Zweiter Feiertag“, Karte „Zweiter Tag · Der Anruf“
+[128.2s] #32 dienstag: Frau Kolar ruft an: die Brauerei, April 1993, der Rechenschieber „Z. V.“; Anas Probe von 2004; „nije se vratio“ in den Akten
+[129.6s] #33 dienstag: Mala zieht ihren eigenen Schluss: In Sarajevo hieß es tot (bleibt ihr Geheimnis)
+[134.7s] #34 dienstag: Ana gibt zu: 2004 hat sie in München eine Probe gegeben; die Geschwister warten bis nach Neujahr
+[139.8s] #35 dienstag: Herr Obermaier: Gepäckträgerausweis „Josef Rugiero, Nr. 17“; Bestattung von Amts wegen am Donnerstag
+[140.4s] #36 dienstag: Schluss: Peppino ist der Sepp (?)
+[143.2s] #37 dienstag: Mala durch die Luke in den Bunker: der Nachhall von 1962, „Giuseppe? Das schreibt keiner. Josef.“
+[145.3s] #38 dienstag: Mala erzählt Marko vom Bunker
+[145.8s] #39 dienstag: Schluss: Josef Rugiero ist Giuseppe Ruggiero
+[147.3s] #40 dienstag: ein Aushang vom Kiosk: „Wer kannte diesen Mann?“
+[150.4s] #41 dienstag: „Giuseppe Ruggiero.“ – „Adesso scriva. Cara Carmela, sto bene.“
+[156.2s] #42 dienstag: Frau Wimmer öffnet den Koffer: Carmelas Briefe; 1979: „Ti ho visto con le valigie.“
+[158.5s] #43 dienstag: Mala am Brief von 1979: eine Frau, die beim Schreiben weint
+[159.1s] #44 dienstag: Schluss: Carmela wusste es seit 1979
+[165.6s] #45 dienstag: um drei: Alois steht auf, der Gong, Gerda nimmt seine Hand und er friert, „Ihre Gerda kommt später“
+[171.5s] #46 dienstag_abend: Karte „Dienstag · Abend“; Mama sieht den Aushang: Juni 1992, „Polako, gospođo.“
+[173.7s] #47 dienstag_abend: Schlaf; Karte „Dritter Tag · Namen“
+[177.0s] #48 mittwoch: Davors Karte: Anruf; „Ich bin kein Gärtner.“ – er lädt ein nach Moosach
+[180.3s] #49 mittwoch: Moosach: Davors Balkon, Lena und der Feigenzweig
+[182.0s] #50 mittwoch: Mala: Der Zweig schläft nur
+[189.1s] #51 mittwoch: Jela am Telefon: „Pusti ga. Zimi spava. Ne zalijevaj.“; Davor bietet an, an Silvester zu fahren
+[202.1s] #52 mittwoch: Anruf in Pietrafonda Nuova: Carmela, „Lo sapevo. Da trent’anni.“
+[208.9s] #53 mittwoch: Zwischenwelt: Marko trägt den Koffer in den Zug, „Facchino!“
+[210.0s] #54 mittwoch: zurück an Gleis 11
+[212.8s] #55 mittwoch: Frau Wimmer plant den Abschied am Donnerstag
+[215.1s] #56 mittwoch: Enzo kommt zum Abschied
+[218.3s] #57 mittwoch: Herr Obermaier sagt die Bestattung von Amts wegen ab
+[221.0s] #58 mittwoch: Herr Kraus stellt den Gong für heute um drei ab
+[224.9s] #59 mittwoch: Versuch 1 (ohne Gong, Gerda bei ihm): Er steht nicht auf, aber er friert
+[227.7s] #60 mittwoch: Mala an den Fotos in Zimmer 214: Gerda am Depottor, fünfunddreißig Jahre
+[229.8s] #61 mittwoch: hinaus und wieder herein: ein neuer Nachmittag
+[232.3s] #62 mittwoch: Mala bittet Gerda, heute am Fenster zu warten: „Am Fenster. Einmal.“
+[235.9s] #63 mittwoch: Versuch 2 (mit Gong, Gerda am Fenster): Er steht auf, aber er friert nicht
+[237.4s] #64 mittwoch: Schlüsse: Gong und Hand; in seiner Sprache: Feierabend, sie wartet am Depot
+[241.9s] #65 mittwoch: Frau Ertl erlaubt einen Versuch mit der Wahrheit
+[247.6s] #66 mittwoch: Mala sagt es Gerda: „Hat er früher gefroren, wenn Sie da waren?“ – Gerda geht, am Donnerstag
+[248.2s] #67 donnerstag: „Morgen ist Donnerstag.“ Karte „Vierter Tag · Abschiede“; Mamas Zettel: „Ich komme mit“
+[257.7s] #68 donnerstag: Abschied in der Bahnhofsmission, Mama ist dabei: „Ich war auf keiner Beerdigung seit 1992. Ich wusste nicht, für wen.“
+[264.6s] #69 donnerstag: um drei: „Endstation, Herr Lechner.“ – Gerda: „Dann fahr i ei.“ Zwischenwelt
+[269.5s] #70 donnerstag: Zwischenwelt: Marko hilft Gerda die hohe Stufe hinauf; die Kanne wird stofflich
+[274.2s] #71 donnerstag: Alois bekommt die Kanne; Mama hat es gesehen
+[278.1s] #72 streit: Karte „Donnerstag · Abend“; der Streit: „Du hast in meinem Leben gelesen.“ – die Kanister; Mala ist fort
+[280.5s] #73 streit: Schlaf; Karte „Fünfter Tag · Ohne Mala“
+[285.1s] #74 freitag: Ana: „Mama stand bis zur Kurve am Fenster.“
+[286.2s] #75 freitag: Schlüsse: Mama hat „vermisst“ gelesen; sie hat zurückgesehen
+[287.4s] #76 freitag: Schluss: derselbe Satz, zwei Städte
+[299.5s] #77 bruecke: Karte „Freitag · Nacht“; Schlüsseldialog 2 auf der Hackerbrücke: „Ich war dabei.“ Erinnerung „April 1993“
+[299.8s] #78 silvester: Karte „Finale · Silvester“, bei Ana
+[306.2s] #79 silvester: Bleigießen um elf; 23:15: Mama ist fort
+[308.4s] #80 silvester: Mala liest die Spur im Treppenhaus: „Jedan, dva, tri …“; Ana: „Sonst arbeitet sie Silvester.“
+[311.7s] #81 silvester: Davor fährt: „Diesmal ist keiner zu spät.“
+[312.8s] #82 silvester: Kevin an der Tür
+[327.3s] #83 silvester: Zimmer 214: das Silvestergespräch in acht Zügen; „Ich fahre hin.“ Ana kommt um 00:40
+[327.6s] #84 epilog: Karte „Epilog · Neujahr“, Mamas Küche
+[365.1s] #85 epilog: Pantoffeln, Nada, der Nachruf, Malas Frage; Ende des vierten Kapitels · Fortsetzung: Sarajevo; Abspann
+Spieltakt der Musterlösung (Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 152.1 min
+DURCHLAUF KAPITEL 4 OK: 85 Schritte in 365 s, keine JS-Fehler

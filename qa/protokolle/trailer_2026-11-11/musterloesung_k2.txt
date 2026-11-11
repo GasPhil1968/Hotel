@@ -1,0 +1,70 @@
+[1.4s] #1 Ankunft in Sarajevo
+[2.5s] #2 Kune? Ne.
+[7.4s] #3 Fikrets Brief übersetzt, 10 KM
+[7.8s] #4 Fahrschein
+[10.5s] #5 entwertet, Fahrt
+[11.6s] #6 Baščaršija
+[13.8s] #7 Mala kommt mit (Splitter: Samstags)
+[15.9s] #8 Rade kennt Ruža
+[19.3s] #9 Ružas Džezva
+[20.5s] #10 Nacht: jemand singt
+[24.0s] #11 Tomaž unter der Uhr
+[25.5s] #12 Erster Fall
+[28.6s] #13 Zettel und Armband (Mala)
+[28.6s] #14 Zwei Siebenen
+[30.5s] #15 Mala lauscht: Emina hat gewartet
+[34.3s] #16 Lejlas Brief
+[40.5s] #17 Auftragsbuch 1972
+[44.0s] #18 Takvim: 23:16
+[45.9s] #19 Foto der Haltestelle, Splitter
+[49.6s] #20 Elf Minuten, beide haben gewartet
+[51.4s] #21 „Warum hat er nie geschrieben?“
+[54.4s] #22 Halid hat versteckt; Emina geht
+[57.2s] #23 Stemmeisen
+[59.7s] #24 Hinter dem Spiegel
+[61.3s] #25 Briefe übersetzt
+[66.5s] #26 Emina überzeugt, Nacht
+[74.2s] #27 Die Kula schlägt sieben, Erkenntnis
+[81.5s] #28 Tomaž ist hinüber, Splitter: Uhr
+[84.4s] #29 Zweiter Fall
+[85.0s] #30 Vesna ruft an (Kapitel-1-Figur)
+[87.6s] #31 Das Siebener
+[90.8s] #32 Alija: zwei Fahrscheine
+[92.4s] #33 Malas Fahrschein; ich war Mali
+[94.9s] #34 Ein Versprechen; neunter Stock
+[100.0s] #35 Der Leser im Sessel
+[102.6s] #36 Leser 2204
+[105.5s] #37 Petar in Wien
+[110.9s] #38 Schwarzer Schnee
+[116.2s] #39 Kurrent-Tafel und Buch
+[122.1s] #40 Passierschein, Abend
+[129.2s] #41 Vraćeno: Erkenntnis
+[134.6s] #42 Ivan ist hinüber; Zwischenspiel
+[139.7s] #43 Gelbe Bastei
+[141.2s] #44 Dritter Fall
+[144.3s] #45 Sanja schickt den Karton
+[149.6s] #46 Lana Delić?
+[152.6s] #47 Zora im Dunkeln
+[156.3s] #48 Šehićs Schlüssel
+[159.1s] #49 Klingel oben, Schlüssel unten
+[162.6s] #50 Klassenbuch
+[165.5s] #51 Mirza: gerettet, nicht verschuldet
+[166.3s] #52 Mirza kommt: „Sie hat ihr Leben lang geglaubt, es war ihre Schuld.“
+[168.4s] #53 Selmas Kinderwagen
+[169.3s] #54 gestempelt
+[174.0s] #55 Damir kommt; Nacht
+[182.2s] #56 Prisutna. Erkenntnis.
+[187.3s] #57 Zora ist hinüber
+[189.2s] #58 Finale
+[189.9s] #59 SMS: Paket 4471
+[194.7s] #60 Der Karton aus Split ist offen
+[199.1s] #61 Die zwei Hälften. Lana.
+[205.4s] #62 Lanas Zimmer, die Postkarte
+[212.3s] #63 Die Nachricht vom Roten Kreuz
+[214.0s] #64 Die letzte Fahrt
+[226.1s] #65 Beide entwertet, Geständnis
+[230.0s] #66 Die Leine zeigt nach Südwesten
+[233.2s] #67 Nada: Bring sie mir nach Hause
+[237.0s] #68 Abspann
+Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 98.7 min
+DURCHLAUF KAPITEL 2 OK, keine JS-Fehler

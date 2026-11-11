@@ -1,0 +1,65 @@
+[1.0s | Spielzeit 0.4 min] #1 Start flat
+[3.1s | Spielzeit 1.3 min] #2 Anrufbeantworter: Vesna und Sanja
+[6.3s | Spielzeit 2.6 min] #3 Übersetzung abgegeben, Schwindel beim Aufstehen
+[7.4s | Spielzeit 3.1 min] #4 Kaffee
+[8.6s | Spielzeit 3.6 min] #5 Bar „Bura“ am Dienstag
+[13.6s | Spielzeit 5.7 min] #6 Sanjas Brief nach Triest
+[15.1s | Spielzeit 6.3 min] #7 Varoš
+[17.6s | Spielzeit 7.3 min] #8 Schlüssel
+[19.4s | Spielzeit 8.1 min] #9 Knoten gelöst
+[24.5s | Spielzeit 10.2 min] #10 Ivkas Strickheft
+[25.2s | Spielzeit 10.5 min] #11 zurück varos pro
+[29.1s | Spielzeit 12.1 min] #12 Recherche, Erscheinung an der Kirchentreppe
+[31.9s | Spielzeit 13.3 min] #13 Schwindel am letzten Poller
+[33.7s | Spielzeit 14.0 min] #14 Text geschrieben
+[37.8s | Spielzeit 15.7 min] #15 Nacht mit Mala, Fall 1
+[38.5s | Spielzeit 16.0 min] #16 Straßenbahn auf der Scheibe
+[47.2s | Spielzeit 19.7 min] #17 Kennenlernen in der Wohnung
+[47.7s | Spielzeit 19.9 min] #18 Riva
+[51.1s | Spielzeit 21.3 min] #19 Begegnung mit Ivka
+[57.6s | Spielzeit 24.0 min] #20 Praxistest: Marko lässt sie nachsehen
+[59.7s | Spielzeit 24.9 min] #21 1948 gefunden
+[62.4s | Spielzeit 26.0 min] #22 Fahrtenbuch
+[63.9s | Spielzeit 26.6 min] #23 Matejuška
+[65.9s | Spielzeit 27.5 min] #24 Seesack
+[66.3s | Spielzeit 27.6 min] #25 Mala lauscht: Dinko murmelt „drži“
+[70.9s | Spielzeit 29.6 min] #26 Dinkos Geständnis
+[71.4s | Spielzeit 29.8 min] #27 Brief klebt
+[73.7s | Spielzeit 30.7 min] #28 Brief über Dampf geöffnet
+[74.4s | Spielzeit 31.0 min] #29 Mala liest den Brief
+[77.8s | Spielzeit 32.4 min] #30 Mala an der Mole
+[84.8s | Spielzeit 35.3 min] #31 Ivka erkennt, dass sie tot ist
+[89.8s | Spielzeit 37.4 min] #32 Ivka geht ins Licht, mit den Handschuhen
+[94.3s | Spielzeit 39.3 min] #33 Heimweg, Schlaf, Donnerstagmorgen
+[99.6s | Spielzeit 41.5 min] #34 Bura am Morgen
+[104.6s | Spielzeit 43.6 min] #35 Mala liest Sanjas Zettel
+[107.4s | Spielzeit 44.7 min] #36 Sanja bestätigt den Zettel
+[113.4s | Spielzeit 47.2 min] #37 Bank am Morgen → Fall 2 riva
+[117.5s | Spielzeit 49.0 min] #38 Brecheisen
+[120.3s | Spielzeit 50.1 min] #39 Ledana
+[124.0s | Spielzeit 51.7 min] #40 Luka gefunden
+[127.5s | Spielzeit 53.1 min] #41 im Dunkeln: Koffer ausgegraben, Tickets und Kassette
+[131.9s | Spielzeit 55.0 min] #42 Sanja erzählt
+[133.0s | Spielzeit 55.4 min] #43 Peristil
+[136.1s | Spielzeit 56.7 min] #44 Nina hat gewartet
+[138.8s | Spielzeit 57.8 min] #45 Radio
+[142.3s | Spielzeit 59.3 min] #46 Radio mit Kassette
+[144.5s | Spielzeit 60.2 min] #47 Ninas Zettel
+[146.5s | Spielzeit 61.0 min] #48 Luka bittet um das Lied
+[153.6s | Spielzeit 64.0 min] #49 Abend an der Ledana
+[156.5s | Spielzeit 65.2 min] #50 Luka erkennt, dass er tot ist
+[160.6s | Spielzeit 66.9 min] #51 Luka nimmt ein Ticket mit
+[163.9s | Spielzeit 68.3 min] #52 Nina bekommt ihr Ticket
+[168.3s | Spielzeit 70.1 min] #53 Fall 3 flat
+[175.3s | Spielzeit 73.0 min] #54 Übersetzt, Nacht
+[177.5s | Spielzeit 73.9 min] #55 Bruno gefunden
+[180.7s | Spielzeit 75.3 min] #56 Bruno: Danica
+[183.2s | Spielzeit 76.3 min] #57 Musik
+[186.7s | Spielzeit 77.8 min] #58 Satz übersetzt
+[195.3s | Spielzeit 81.4 min] #59 Bruno erkennt, dass er tot ist
+[199.5s | Spielzeit 83.1 min] #60 Die Glocke um sieben
+[202.4s | Spielzeit 84.3 min] #61 Ljerka spielt, Epilog
+[206.3s | Spielzeit 85.9 min] #62 ENDE erreicht: credits Spielzeit (Spieluhr, beschleunigt): 202s
+Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 86.0 min
+DURCHLAUF OK
+keine JS-Fehler

@@ -231,7 +231,8 @@ M.addDrums=function(o){ Object.keys(o).forEach(function(k){ DRUMS[k]=o[k]; }); }
 // Aus der Titelmusik heraus wird weich ausgeblendet, statt hart zu schneiden (UI-Konzept D2); Regen und Wind (Raumklang) setzen davon unabhängig ein
 var musicTm=null;
 M.music=function(name){ if (name===songName) return; var from=songName; songName=name; if (musicTm){ clearTimeout(musicTm); musicTm=null; }
-  var go=function(){ musicTm=null; song=M.SONGS[songName]||null; beatN=0; if (AC) nextBeat=Math.max(AC.currentTime+0.2,nextBeat); gains(); };
+  // eine noch laufende Ausblendung (aus dem Titel) zuerst verwerfen: sonst zieht ihre Rampe die Musik nach dem Wechsel auf null
+  var go=function(){ musicTm=null; song=M.SONGS[songName]||null; beatN=0; if (AC){ nextBeat=Math.max(AC.currentTime+0.2,nextBeat); try{ var t0=AC.currentTime; musG.gain.cancelScheduledValues(t0); musG.gain.setValueAtTime(musG.gain.value,t0); }catch(e){} } gains(); };
   if (AC && from==='title' && musicOn && typeof setTimeout!=='undefined'){ try{ var t=AC.currentTime; musG.gain.cancelScheduledValues(t); musG.gain.setValueAtTime(musG.gain.value,t); musG.gain.linearRampToValueAtTime(0.0001,t+1.6); }catch(e){} song=null; musicTm=setTimeout(go,1700); return; }
   go(); };
 M.audioRunning=function(){ return !!(AC && AC.state==='running'); };

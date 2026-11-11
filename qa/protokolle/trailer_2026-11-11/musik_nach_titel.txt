@@ -1,0 +1,14 @@
+Fassung web/index.html 11.11.2026 · 962623
+OK     Titelmusik hörbar (-49.6 dBFS)
+OK     A: Titel → Stück: hörbar (-45.1 dBFS)
+OK     B: Titel → aus → nach 0,4 s Stück: hörbar (-45.4 dBFS, Stück case1)
+OK     keine JS-Fehler (0)
+MUSIKTEST OK
+
+--- gegen den Build vor der Korrektur (b17c6d):
+Fassung web/index.html aus Commit 5eba7ea (Build b17c6d, vor der Korrektur) 11.11.2026 · b17c6d
+OK     Titelmusik hörbar (-48.7 dBFS)
+OK     A: Titel → Stück: hörbar (-45.1 dBFS)
+FEHLER B: Titel → aus → nach 0,4 s Stück: hörbar (-119.0 dBFS, Stück case1)
+OK     keine JS-Fehler (0)
+MUSIKTEST FEHLGESCHLAGEN
