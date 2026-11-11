@@ -128,7 +128,7 @@ async function open(opts = {}) {
     async choose(sub) { await D.until(s => s.dlg, 20000, 'Auswahl für ' + sub); M.TA.choose(sub); await wait(60); return D.settle(); },
     async pickNote(id) { await D.until(s => s.overlay === 'notebook' || s.dlg, 20000, 'Notizbuch'); M.TA.pickNote(id); await wait(60); return D.settle(); },
     async close(v) { await D.until(s => s.overlay, 20000, 'Overlay'); M.TA.closeOverlay(v); await wait(60); return D.settle(); },
-    async drain(max = 12) { for (let i = 0; i < max; i++) { const s = await D.settle(); if (s.overlay && ['notebook', 'puzzle', 'arrange', 'halves', 'glyphs', 'map', 'peil'].indexOf(s.overlay) < 0) { M.TA.closeOverlay(); await wait(60); continue; } return s; } return D.st(); },
+    async drain(max = 12) { for (let i = 0; i < max; i++) { const s = await D.settle(); if (s.overlay && ['notebook', 'puzzle', 'arrange', 'halves', 'glyphs', 'map', 'peil', 'foto65', 'karte85'].indexOf(s.overlay) < 0) { M.TA.closeOverlay(); await wait(60); continue; } return s; } return D.st(); },
     async combine(a, b) { let r = M.TA.combine(a, b); if (r && typeof r.then === 'function') r = await r; await drainMicro(); return r === undefined ? undefined : JSON.parse(JSON.stringify(r)); },
     async travel(loc) { M.TA.travel(loc); await wait(60); return D.drain(); },
     async switchTo(w) { M.TA.switchTo(w); await wait(100); return D.settle(); },

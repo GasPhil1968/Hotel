@@ -203,7 +203,13 @@ const SPECS = {
   x3g: () => P.talk('Marktfrau', /Vera Rajić/), x3h: () => P.talk('Vera', /Dann schreiben Sie ihm/), x3i: () => P.give('Vlado', 'pismo'), x3j: () => P.act('open', 'Haustür'), x3k: () => P.talk('Zlata', /Bleistift. Darf ich/, /Ihre Mutter/),
   x3l: () => P.talk('Vera', /Januar vierundneunzig/),
   x3m: (t, G) => (G.inv.indexOf('odvijac') >= 0 ? P.use('Handschuhfach', 'odvijac') : P.act('take', 'Montiermaschine')), x3n: () => P.ask('Vlado', 'Plus eins'), x3o: (t, G) => (G.inv.indexOf('kljucic') >= 0 ? P.use('Batos Schuppen', 'kljucic') : P.talk('Zlata', /Batos Kiste/)),
-  x3p: () => P.ask('Bato', 'Nisam išao'), x3q: (t, G) => (G.inv.indexOf('akumulator') >= 0 ? P.give('Kata', 'akumulator') : P.talk('Taxifahrer', /Batterie/)),
+  x3p: () => P.ask('Bato', 'Nisam išao'), x3q: (t, G) => (G.inv.indexOf('akumulator') >= 0 ? P.give('Kata', 'akumulator') : (/Taxifahrer/.test(t) ? P.talk('Taxifahrer', /Batterie/) : (/Astgabel/.test(t) ? [P.act('take', 'Astgabel'), P.give('Lena', 'kljuc_mate')] : (/^Noch nicht/.test(t) ? P.skip('nennt die Abhängigkeit: erst Mates Fall (Themen r3e, r3f, r3g, d3…)') : P.give('Lena', 'kljuc_mate'))))),
+  // Revision (Regel 2)
+  r3a: () => P.talk('Davor', /Foto/), r3b: (t) => (/Uferstufen/.test(t) ? P.act('walk', 'Hinunter ans Ufer') : P.use('Flache Platte', 'foto_1965')),
+  r3c: () => [P.mala(), P.act('look', 'Quader')], r3d: () => P.talk('Davor'), r3e: () => P.talk('Lena', /Fotos/),
+  r3f: (t) => (/Plane vom Ponton/.test(t) ? P.act('take', 'Ponton') : (/über die Plane/.test(t) ? P.talk('Bato', /Plane/) : P.skip('Batos Fall: andere Themen führen'))),
+  r3g: (t) => (/Briefe/.test(t) ? P.skip('Briefe: Thema d3q') : P.talk('Jela', /Feigen/)), r3h: () => P.use('Alte Landkarte', 'plan'),
+  r3i: (t) => (/vierte Tor/.test(t) ? P.use('Garage', 'kljuc_garaza') : [P.mala(), P.act('look', 'g4')]), r3j: (t) => (/^Kata/.test(t) ? P.give('Kata', 'akumulator') : (/Batterie nehmen/.test(t) ? P.act('take', 'Batterie') : P.act('open', 'Motorhaube'))),
   p3e: () => P.combine(), d1h: () => P.combine(), d2a: () => P.combine(), d2d: () => P.combine(), d3g: () => P.combine(), d3h: () => P.combine(), d3j: () => P.combine(), d3n: () => P.combine(),
   p3f: () => P.talk('_mala'), p3h: () => P.talk('_mala'),
   p3g: () => P.act('use', 'steps'),
@@ -270,7 +276,11 @@ const SPECS = {
   e3g: () => P.talk('Kolar'),
   e3h: (t) => /telefonieren/.test(t) ? P.talk('Kolar', /telefonieren/) : P.item('use2', 'mobitel', null, /Mama|Mutter/),
   e3i: () => [P.go('Ostbusbahnhof'), P.act('use', 'bus')],
-  x3day: () => P.wait(75000),
+  // Tagesabschlüsse (je Abschnitt ein Thema): Freitag und Samstag in der Herberge oder im Bett, Sonntag bei Vlado; die übrigen wechseln von selbst
+  x3day: () => P.wait(75000), x3sn: () => P.wait(75000), x3ep: () => P.wait(75000),
+  x3fr: (t) => (/Bett/.test(t) ? [P.room('zimmer'), P.act('use', 'Bett', /Den Tag beenden/)] : P.go('herberge', /Den Tag beenden/)),
+  x3sa: (t) => (/Bett/.test(t) ? [P.room('zimmer'), P.act('use', 'Bett', /Den Tag beenden/)] : P.go('herberge', /Den Tag beenden/)),
+  x3so: () => P.talk('Vlado', /Fahren wir/, /Es ist Zeit/),
   // ================================================================ Kapitel 4: München (15_hints_k4.js)
   h4a: () => [P.mala(), P.act('look', /Pfeiler/)],
   h4b: (t) => /Hansi kannte/.test(t) ? P.talk('wastl', /Kannten Sie/, /Würden Sie/) : /Mann am Pfeiler reden/.test(t) ? P.talk('hansi', /Worauf warten/) : P.talk('wastl', /Feierabend/),

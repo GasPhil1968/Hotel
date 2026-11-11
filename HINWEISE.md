@@ -1178,7 +1178,7 @@ Offen, wenn: `G.phase==='k2_epi' && F(G,'k2.epi.nada') && !F(G,'k2.epi.done')`
 3. **Konkreter Ansatz:** Bei Fadila am Busbahnhof gibt es Fahrkarten nach Mostar.
 4. **Nächster Schritt:** Bei Fadila eine Fahrkarte nach Mostar kaufen und in den Bus steigen.
 
-## Kapitel 3: Mostar (102 Themen)
+## Kapitel 3: Mostar (117 Themen)
 
 ### Ankommen `p3a`
 
@@ -1713,7 +1713,7 @@ Offen, wenn: `N(G,'b3_invite') && !N(G,'b3_dida')`
 
 ### Lenas Satz `d3s`
 
-Offen, wenn: `N(G,'b3_invite') && N(G,'b3_dida') && F(G,'k3.b.invite') && !F(G,'k3.b.son')`
+Offen, wenn: `N(G,'b3_invite') && N(G,'b3_dida') && F(G,'k3.b.invite') && !F(G,'k3.b.son') && (!R2(G) \|\| F(G,'k3.b.doubt'))`
 
 1. **Problem einordnen:** Lena will Mate antworten, auf „Kad ćete doći?“
 2. **Denkrichtung:** Die Antwort auf „Wann kommt ihr?“ ist kurz.
@@ -1731,7 +1731,7 @@ Offen, wenn: `F(G,'k3.b.son') && !F(G,'k3.b.dead')`
 
 ### Die Feigen `d3u`
 
-Offen, wenn: `F(G,'k3.b.dead') && !F(G,'k3.b.figs')`
+Offen, wenn: `F(G,'k3.b.dead') && !F(G,'k3.b.figs') && (!R2(G) \|\| I(G,'cerada'))`
 
 1. **Problem einordnen:** Für heute Nacht ist Frost angesagt.
 2. **Denkrichtung:** Jela weiß, wie man Feigen einpackt. Davor kann es lernen.
@@ -1947,7 +1947,7 @@ Offen, wenn: `P(G,['k3_d1_n','k3_d2_n']) && !F(G,'k3.s.words') && !!(G.seen&&G.s
 
 ### Die Brücke sehen `x3b`
 
-Offen, wenn: `!(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.b.jela') && !F(G,'k3.s.trip')`
+Offen, wenn: `!R2(G) && !(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.b.jela') && !F(G,'k3.s.trip')`
 
 1. **Problem einordnen:** Lena wollte die Brücke sehen. Davor nicht. Heute will er mit dem Haus allein sein.
 2. **Denkrichtung:** Davor hört auf niemanden. Außer auf Jela.
@@ -2082,18 +2082,153 @@ Offen, wenn: `G.phase==='k3_d3' && N(G,'a3_book') && !F(G,'k3.n3.bato.book') && 
 
 ### Zwei Batterien `x3q`
 
-Offen, wenn: `G.phase==='k3_d3' && N(G,'v3_battery') && !F(G,'k3.v.battery')`
+Offen, wenn: `G.phase==='k3_d3' && N(G,'v3_battery') && !F(G,'k3.v.battery') && !(R2(G) && (F(G,'k3.b.garageKey')\|\|N(G,'b3_garage')))`
 
-1. **Problem einordnen:** Der TAM braucht zwei Batterien. Kata hat eine. Sonntag.
-2. **Denkrichtung:** Wer in dieser Stadt hat ein altes Auto, das er pflegt, und seit achtzig Ersatz für alles?
-3. **Konkreter Ansatz:** *je nach Stand:* „Die Batterie gehört in den TAM. Kata weiß, wohin.“ / „Der Taxifahrer am Ostbusbahnhof. Er lehnt am Mercedes.“
-4. **Nächster Schritt:** *je nach Stand:* „Kata im Vulkanizer die Batterie geben.“ / „Den Taxifahrer am Ostbusbahnhof nach einer Batterie fragen.“
+1. **Problem einordnen:** *je nach Stand:* „Der TAM braucht zwei Batterien. Kata hat eine, die zweite ist tot. Ohne sie fährt heute Nacht keiner.“ / „Der TAM braucht zwei Batterien. Kata hat eine. Sonntag.“
+2. **Denkrichtung:** *je nach Stand:* „Eine Autobatterie reicht für einmal Anlassen. Wer hat ein Auto, das keiner mehr fährt?“ / „Wer in dieser Stadt hat ein altes Auto, das er pflegt, und seit achtzig Ersatz für alles?“
+3. **Konkreter Ansatz:** *je nach Stand:* „Die Batterie gehört in den TAM. Kata weiß, wohin.“ / „Der Taxifahrer am Ostbusbahnhof. Er lehnt am Mercedes.“ / „Mate hat seinen Schlüsselring losgelassen. Daran hängt mehr als der Hausschlüssel.“ / „Mate Zelenika hatte ein Auto. Seinen Schlüsselring hält er fest, solange er am Tor wartet.“
+4. **Nächster Schritt:** *je nach Stand:* „Kata im Vulkanizer die Batterie geben.“ / „Den Taxifahrer am Ostbusbahnhof nach einer Batterie fragen.“ / „k3.b.keyTaken“ / „Im Hof von Haus Zelenika Lena Mates Schlüssel geben; am Ring hängt ein kleiner.“ / „Im Hof von Haus Zelenika den Schlüssel aus der Astgabel nehmen und Lena geben.“ / „Noch nicht: Erst muss Mate aufhören zu warten. Dann legt er den Schlüsselring aus der Hand.“
+
+### Der Stein auf dem Foto `r3a`
+
+Offen, wenn: `G.phase==='k3_d2' && R2(G) && F(G,'k3.s.photoTrip') && !F(G,'k3.s.photo') && !I(G,'foto_1965') && !F(G,'k3.s.down')`
+
+1. **Problem einordnen:** Davor sucht den Stein, auf dem ihn sein Vater 1965 unter der Brücke fotografiert hat. Er findet ihn nicht.
+2. **Denkrichtung:** Davor und Lena sind an die Alte Brücke gegangen. Das Foto hat Davor dabei.
+3. **Konkreter Ansatz:** An der Alten Brücke stehen die beiden am Brückenkopf.
+4. **Nächster Schritt:** An der Alten Brücke mit Davor reden: „Zeigen Sie mir das Foto.“
+
+### Wo Mate stand `r3b`
+
+Offen, wenn: `G.phase==='k3_d2' && R2(G) && I(G,'foto_1965') && !F(G,'k3.s.spot')`
+
+1. **Problem einordnen:** Auf dem Foto: der Bogen, am linken Rand ein runder Turm, vorn eine flache Platte mit einer Kerbe.
+2. **Denkrichtung:** Wie groß der Turm im Bild ist und wo der Scheitel des Bogens liegt, hängt davon ab, wo man steht.
+3. **Konkreter Ansatz:** Unten am Ufer liegen vier Felsen. Das Foto an jedem hochhalten und mit dem Blick von dort vergleichen.
+4. **Nächster Schritt:** *je nach Stand:* „Unter der Brücke das Foto an die flache Platte halten.“ / „An der Alten Brücke die Uferstufen hinunter ans Ufer gehen.“
+
+### Unter dem Quader `r3c`
+
+Offen, wenn: `G.phase==='k3_d2' && R2(G) && F(G,'k3.s.spot') && !F(G,'k3.s.initials')`
+
+1. **Problem einordnen:** Der Standort stimmt. Aber auf der Platte liegt ein schwerer Quader der alten Brücke.
+2. **Denkrichtung:** Den Quader hebt keiner. Darunter sehen kann nur eine.
+3. **Konkreter Ansatz:** Mala sieht durch Holz, Blech und Stein.
+4. **Nächster Schritt:** Als Mala den Quader ansehen.
+
+### Davor auf dem Stein `r3d`
+
+Offen, wenn: `G.phase==='k3_d2' && R2(G) && F(G,'k3.s.initials') && !F(G,'k3.s.photo')`
+
+1. **Problem einordnen:** Unter dem Quader sind Buchstaben eingeritzt: M · D · 1965.
+2. **Denkrichtung:** Davor muss es hören. Dann weiß er, dass es sein Stein ist.
+3. **Konkreter Ansatz:** Davor steht unten am Ufer.
+4. **Nächster Schritt:** Unter der Brücke mit Davor reden.
+
+### Zwei Fotos `r3e`
+
+Offen, wenn: `G.phase==='k3_d3' && R2(G) && F(G,'k3.s.photo') && F(G,'k3.b.invite') && !F(G,'k3.b.doubt') && !F(G,'k3.b.son')`
+
+1. **Problem einordnen:** Lena hat zwei Fotos: Davor mit fünf auf dem Stein, und Davor heute auf demselben Stein.
+2. **Denkrichtung:** Mate wartet auf einen kleinen Jungen. Er muss sehen, dass der Junge groß geworden ist.
+3. **Konkreter Ansatz:** Lena will ihm die Fotos am Tor zeigen, da, wo er immer stand.
+4. **Nächster Schritt:** Im Hof Lena bitten, Mate die beiden Fotos zu zeigen.
+
+### Die große Feige `r3f`
+
+Offen, wenn: `G.phase==='k3_d3' && R2(G) && N(G,'b3_tarp') && !F(G,'k3.b.figs') && !I(G,'cerada')`
+
+1. **Problem einordnen:** Für den großen Feigenbaum reicht die Jute nicht. Letzten Winter lag Batos Plane von der Fähre darüber.
+2. **Denkrichtung:** Die Plane ist zurück in Skela, auf Batos altem Ponton am linken Ufer. Bato passt auf sie auf.
+3. **Konkreter Ansatz:** *je nach Stand:* „Bato hat gehört, was in der Nacht war. Vielleicht lässt er die Fähre jetzt los.“ / „Solange Bato glaubt, dass morgen früh eine Fähre fährt, gibt er die Plane nicht her. Erst muss er die Wahrheit über die Nacht hören.“
+4. **Nächster Schritt:** *je nach Stand:* „In Skela am linken Ufer die Plane vom Ponton nehmen.“ / „In Skela mit Bato über die Plane reden.“ / „Bato in Skela beides sagen: dass er wach war und wer geläutet hat.“
+
+### Die Plane `r3g`
+
+Offen, wenn: `G.phase==='k3_d3' && R2(G) && I(G,'cerada') && !F(G,'k3.b.figs')`
+
+1. **Problem einordnen:** Batos Plane. Groß genug für einen Baum.
+2. **Denkrichtung:** Davor soll die Feigen selbst einpacken. Jela zeigt es ihm, wenn er wieder dazugehört.
+3. **Konkreter Ansatz:** *je nach Stand:* „Im Hof von Haus Zelenika.“ / „Erst muss Davor verstehen, was die Briefe seines Vaters sagen wollten.“
+4. **Nächster Schritt:** *je nach Stand:* „Im Hof Jela bitten, Davor das Einpacken zu zeigen.“ / „Im Haus Zelenika Mates Briefe lesen.“
+
+### Bratstva i jedinstva `r3h`
+
+Offen, wenn: `G.phase==='k3_d3' && R2(G) && N(G,'b3_garage') && !N(G,'b3_street')`
+
+1. **Problem einordnen:** Mates Garage liegt „in der Bratstva i jedinstva, bei der alten Post“. Auf Markos Plan gibt es diese Straße nicht.
+2. **Denkrichtung:** Nach dem Krieg wurden die Straßen umbenannt, auf beiden Seiten. Die alten Namen stehen nur noch auf alten Karten.
+3. **Konkreter Ansatz:** In Zdravkos Café hängt eine Karte von 1985.
+4. **Nächster Schritt:** Im Café Zdravko den Stadtplan an die alte Landkarte halten und die Straßen vergleichen.
+
+### Garage sieben `r3i`
+
+Offen, wenn: `G.phase==='k3_d3' && R2(G) && N(G,'b3_street') && !F(G,'k3.b.garageOpen')`
+
+1. **Problem einordnen:** Mates Garage, die Sieben, in der Lipova am Bahndamm.
+2. **Denkrichtung:** Über zwei Toren sind die Nummern abgeblättert. An fremden Toren schließt Marko nicht auf gut Glück.
+3. **Konkreter Ansatz:** Mala sieht durch das Blech, was drinsteht. Mate hatte immer eine Thermoskanne dabei.
+4. **Nächster Schritt:** *je nach Stand:* „In der Lipova das vierte Tor mit dem kleinen Schlüssel öffnen.“ / „In der Lipova als Mala die beiden Tore ohne Nummer ansehen.“
+
+### Mates Batterie `r3j`
+
+Offen, wenn: `G.phase==='k3_d3' && R2(G) && F(G,'k3.b.garageOpen') && !F(G,'k3.v.battery')`
+
+1. **Problem einordnen:** In Mates Mercedes steckt eine Batterie, die keiner mehr braucht. Kata braucht genau so eine.
+2. **Denkrichtung:** *je nach Stand:* „Die Batterie ist da. Sie gehört in den TAM.“ / „Sie sitzt unter der Haube.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Kata sitzt im Vulkanizer.“ / „Die Haube geht von innen auf, die Fahrertür ist offen.“
+4. **Nächster Schritt:** *je nach Stand:* „Kata im Vulkanizer die Batterie geben.“ / „Die Batterie nehmen.“ / „Die Motorhaube öffnen.“
 
 ### Der Tag geht zu Ende `x3day`
 
-Offen, wenn: `P(G,['k3_pro','k3_d1','k3_d2','k3_d2_n','k3_d3','k3_epi']) && !!(M.k3DayReady && M.k3DayReady(G))`
+Offen, wenn: `G.phase==='k3_pro' && !!(M.k3DayReady && M.k3DayReady(G))`
 
-1. **Problem einordnen:** *je nach Stand:* „Die Brücke ist geklärt, das Zimmer genommen. Es wird Abend.“ / „Skela steht auf dem Plan, die Schublade ist offen. Für heute reicht es.“ / „Für den Samstag ist alles getan.“ / „Morgen. Bei Tag.“ / „Alles ist bereit. Um elf kommt Vlado.“ / „Mala war auf der Brücke. Gegen Mittag kommt Nada.“ / „Für heute ist alles getan.“
+1. **Problem einordnen:** Die Brücke ist geklärt, das Zimmer genommen. Es wird Abend.
+2. **Denkrichtung:** Der Rest des Tages kommt von selbst.
+3. **Konkreter Ansatz:** Nichts mehr suchen.
+4. **Nächster Schritt:** Einen Moment warten: Der nächste Abschnitt beginnt von selbst.
+
+### Freitagabend `x3fr`
+
+Offen, wenn: `G.phase==='k3_d1' && !!(M.k3DayReady && M.k3DayReady(G))`
+
+1. **Problem einordnen:** Skela steht auf dem Plan, die Schublade ist offen. Für heute reicht es.
+2. **Denkrichtung:** Der Tag endet erst, wenn Marko es will. Vorher sagt er, was noch offen ist.
+3. **Konkreter Ansatz:** Der Tag endet in der Herberge.
+4. **Nächster Schritt:** *je nach Stand:* „Oben im Zimmer das Bett benutzen.“ / „In die Herberge gehen und den Tag beenden.“
+
+### Samstagabend `x3sa`
+
+Offen, wenn: `G.phase==='k3_d2' && !!(M.k3DayReady && M.k3DayReady(G))`
+
+1. **Problem einordnen:** Für den Samstag ist alles getan.
+2. **Denkrichtung:** Der Tag endet erst, wenn Marko es will. Vorher sagt er, was noch offen ist.
+3. **Konkreter Ansatz:** Der Tag endet in der Herberge.
+4. **Nächster Schritt:** *je nach Stand:* „Oben im Zimmer das Bett benutzen.“ / „In die Herberge gehen und den Tag beenden.“
+
+### Bei Tag `x3sn`
+
+Offen, wenn: `G.phase==='k3_d2_n' && !!(M.k3DayReady && M.k3DayReady(G))`
+
+1. **Problem einordnen:** Morgen. Bei Tag.
+2. **Denkrichtung:** Der Rest der Nacht kommt von selbst.
+3. **Konkreter Ansatz:** Nichts mehr suchen.
+4. **Nächster Schritt:** Einen Moment warten: Der nächste Abschnitt beginnt von selbst.
+
+### Kurz vor elf `x3so`
+
+Offen, wenn: `G.phase==='k3_d3' && !!(M.k3DayReady && M.k3DayReady(G))`
+
+1. **Problem einordnen:** Alles ist bereit. Um elf kommt Vlado.
+2. **Denkrichtung:** Der Tag endet erst, wenn Marko es will. Vorher sagt er, was noch offen ist.
+3. **Konkreter Ansatz:** Vlado und Kata warten in der Werkstatt am Bulevar.
+4. **Nächster Schritt:** In der Werkstatt Vlado fragen, ob ihr fahrt.
+
+### Gegen Mittag `x3ep`
+
+Offen, wenn: `G.phase==='k3_epi' && !!(M.k3DayReady && M.k3DayReady(G))`
+
+1. **Problem einordnen:** Mala war auf der Brücke. Gegen Mittag kommt Nada.
 2. **Denkrichtung:** Der Rest des Tages kommt von selbst.
 3. **Konkreter Ansatz:** Nichts mehr suchen.
 4. **Nächster Schritt:** Einen Moment warten: Der nächste Abschnitt beginnt von selbst.

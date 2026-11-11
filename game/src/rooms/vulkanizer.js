@@ -159,6 +159,8 @@ async function vladoD3(A,V){
   if (A.flag('k3.v.free')){ await V.say(A.cycle('vlF',['Um elf. Im Hof.','Ich habe die Batterie geladen. Kata hat geschimpft. Das ist gut.','Ich fahre. Ich habe es gesagt.']));
     return A.menuLoop(function(){ return [
       A.askOpt({ v3_log:function(A){ return logShown(A,V); }, a3_donor:function(A){ return donorShown(A,V); }, v3_sack:function(A){ return sackShown(A,V); }, a3_asked:'Ich habe gefragt. Am Sonntag. Er hat gesagt: niemand.', v3_battery:'Zwei Batterien. Kata macht das. Kata macht alles, was ich nicht mache.', v3_letter:function(A){ return A.has('pismo')?veraLetter(A,V):V.say('Ein Brief. Dann geben Sie ihn her.'); }, v3_bed:function(A){ return veraBed(A,V); } },['Heute Nacht. Fragen Sie mich morgen.','…']),
+      // Prüfbericht K3-02: Der Sonntag endet bewusst. Wer das Angebot an der Tür abgelehnt hat, fragt hier noch einmal (M.k3OfferEnd nennt Offenes).
+      {t:'Es ist gleich elf. Fahren wir?',if:!!(M.k3DayReady&&M.k3DayReady(A.G)),go:async function(A){ await V.say('Wenn Sie so weit sind.'); if (await M.k3OfferEnd(A)) return 'bye'; }},
       {t:'Bis elf.',bye:true,go:async function(A){ await V.say('Bis elf.'); }} ]; }); }
   if (A.first('vlD3')){ await V.say('Sonntag.'); await A.wait(500); await V.say('Sonntags flicke ich trotzdem.'); }
   await A.menuLoop(function(){ return [

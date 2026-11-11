@@ -22,7 +22,8 @@ module.exports = { id: 'BUG-023', title: 'K3-Ausbau: Lied, Vera, Mappe, Waage, B
   await P.travel('bulevar'); await P.exit('to_vulk'); await P.ask('vlado', 'v3_bed'); await P.bye('(Gehen.)'); ck(await flag('k3.v.bedHeard'), 'Vlado hört vom Bett');
   await P.exit('door'); await P.travel('westbus'); await P.calm(); if (await D.ev(() => !!M.E.dlg)) await P.choose('Ich komme mit'); await P.calm();
   await P.travel('zelenika'); await P.calm(); if (await D.ev(() => !!M.E.dlg)) await P.choose('Jetzt kommt er'); await P.calm();
-  await P.talk('jela', 'Lena wollte die Brücke sehen', 'Das Kind muss die Brücke sehen'); await P.bye('Hvala'); ck(await flag('k3.s.trip'), 'Jela schickt');
+  // Regel 2 (Samstagsstände wechseln dorthin): Jela schickt die beiden mit dem Foto von 1965 selbst an die Brücke
+  ck(await flag('k3.rules') === 2 && await flag('k3.s.trip') && await has('b3_photo65'), 'Jela schickt (mit dem Foto)');
   await P.travel('starimost'); await P.calm(); await P.talk('aussie3_b', 'Play it'); await P.bye('See you'); ck(!(await flag('k3.s.dinoOk')), 'ohne Dino kein Spiel');
   await P.talk('dino', 'Die Australier wollen am Brückenkopf spielen', 'NOTE:b3_mate'); await P.bye('Bis später'); ck(await flag('k3.s.dinoOk'), 'Dinos Geschichte');
   await P.talk('aussie3_b', 'Play it'); await P.bye('See you'); ck(await flag('k3.s.lenaVerse') && await has('b3_hum') && await has('s3_verse'), 'Lenas Strophe');

@@ -1,3 +1,72 @@
+DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, REVISION NACH DEM PRÜFBERICHT (10. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Neuer Hauptweg für neue Spiele (und für Spielstände bis Samstag): Einige
+  neue Rätsel sind jetzt Pflicht, nicht mehr nur Vertiefung.
+- Samstag, unter der Alten Brücke (neuer Ort): Jela gibt Davor ein Foto von
+  1965. Marko hält es an vier Uferfelsen hoch; ein Vergleichsbild zeigt den
+  Blick von dort, jede falsche Stelle wird begründet. Auf der richtigen Platte
+  liegt ein Quader der alten Brücke. Erst Mala sieht darunter die Buchstaben
+  „M · D · 1965“. Davor setzt sich, Lena fotografiert ihn.
+- Sonntag: Mate erkennt seinen Sohn erst, wenn Lena ihm beide Fotos zeigt und
+  ihn dann anspricht.
+- Fall Bato öffnet Fall Mate: Für den großen Feigenbaum reicht die Jute nicht.
+  Batos alte Plane liegt in Skela auf dem Ponton, und Bato bewacht sie, bis er
+  gehört hat, was in jener Nacht wirklich war.
+- Fall Mate öffnet den Weg für Bato: An Mates Schlüsselring hängt ein kleiner
+  Garagenschlüssel. Jela nennt die Garage mit dem alten Straßennamen
+  „Bratstva i jedinstva“. Auf Markos Plan von 2011 gibt es die Straße nicht:
+  Nach dem Krieg wurden die Straßen umbenannt. Bei Zdravko vergleicht Marko
+  die Karte von 1985 mit seinem Plan. In der Garage (neuer Ort) sieht Mala
+  durch das Blech, welches Tor das richtige ist. Mates Batterie bringt den TAM
+  zum Laufen; ohne sie fährt in der Finalnacht keiner nach Skela.
+- Freitag, Samstag und Sonntag enden erst, wenn man es will: in der Herberge
+  oder in Vlados Werkstatt. Vorher sagt Marko, was noch offen ist (eine Zusage,
+  ein Brief). Ein Tag schneidet nichts mehr ab. Wer „Noch nicht“ sagt, beendet
+  den Tag später im Bett, am Sonntag auch bei Vlado („Fahren wir?“).
+
+BEHOBEN
+- Handschuhfach und Autoradio im TAM sowie Zdravkos Schublade waren nicht
+  anklickbar. Das offene Führerhaus und die Schublade sind jetzt gezeichnet.
+- Veras Gespräch zeigt neue Fragen sofort, nicht erst nach einem neuen Ansprechen.
+- Zlata packt die Waage nicht mehr ein, die dann doch am Stand liegt.
+- Kata nennt die zweite Batterie in älteren Spielständen „schwach“ statt „tot“
+  (sie springt dann beim dritten Versuch an); im neuen Hauptweg ist sie tot.
+- Vera wohnt auf der Marktseite; „die Straße“, über die Vlado nicht geht, ist
+  der Bulevar.
+- Hinweise: Der Hinweis zum Tagesende nennt je nach Ort den richtigen Schritt
+  (Bett, Herberge, Vlado) und beginnt jeden Tag wieder bei der ersten Stufe.
+  „Zwei Batterien“ verlangt Mates Schlüssel erst, wenn Mate ihn losgelassen
+  hat, und führt danach über Straße und Garage weiter.
+- Kleinigkeiten in anderen Kapiteln: die Bank an der Endstation (Kapitel 5)
+  gab es doppelt; der Zug an der Hackerbrücke (Kapitel 4), das Schuppenfenster
+  (Kapitel 1) und die Gleise in Alipašino Polje (Kapitel 5) waren nicht
+  anklickbar.
+
+SPIELSTÄNDE
+- Spielstände bis einschließlich Samstag in Mostar spielen nach dem neuen
+  Hauptweg weiter. Spielstände ab Samstagnacht behalten den bisherigen Weg.
+
+GEPRÜFT
+- Kapitel 3 als neues Spiel bis zum Abspann (131 Schritte, keine Fehler).
+- Hinweise an allen 131 Zwischenständen und an 22 abweichenden Ständen: Die
+  Handlung, die der letzte Hinweis nennt, lässt sich ausführen und bringt
+  weiter. Ausgenommen sind Verweise auf andere Themen und einige Rätselfelder
+  (Einzelheiten im Bericht).
+- 29 gezielte Tests, davon fünf neu: Trefferflächen, Tagesabschluss, Brücke,
+  Verflechtung der Fälle, Spielstände und Speichern mitten in den neuen Teilen.
+- Echte Maus und echter Finger im Browser (Desktop und iPad-Größe):
+  Handschuhfach, Radio, Schublade, Fotovergleich, Quader, Kartenvergleich,
+  Garagentor, Haube, Batterie.
+
+NICHT GEPRÜFT
+- Wie das Kapitel auf Menschen wirkt (kein Test mit Erstspielern, keine
+  gemessene Spielzeit), ein echtes iPhone/iPad mit Safari, der Ton.
+- Einzelheiten: design/K3_AUSBAU.md, Teil R.
+
+
+========================================================================
+
 DIE STILLEN – ÄNDERUNGEN: KAPITEL 3 „MOSTAR“ AUSGEBAUT (10. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

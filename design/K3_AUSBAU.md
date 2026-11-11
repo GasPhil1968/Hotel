@@ -1,6 +1,6 @@
 # MALA – Kapitel 3 „Mostar“: Ausbau
 
-Konzept, Rätselnetz und Umsetzungsstand für die Erweiterung des dritten Kapitels. Stand: 10. November 2026.
+Konzept, Rätselnetz und Umsetzungsstand für die Erweiterung des dritten Kapitels. Erste Fassung: 10. November 2026. **Revision nach dem externen Prüfbericht: Teil R (unten, zuerst lesen).** Wo die Abschnitte A–I der ersten Fassung durch die Revision überholt sind, steht es dort ausdrücklich.
 
 Kennzeichnung in diesem Dokument:
 
@@ -11,6 +11,130 @@ Kennzeichnung in diesem Dokument:
 - **[?]** ungeklärte Annahme oder technische Einschränkung.
 
 Die Umsetzung ist in Abschnitt G mit „umgesetzt“, „nur konzipiert“ oder „offen“ ausgewiesen.
+
+---
+
+## R. Revision nach dem Prüfbericht (MALA_Kapitel3_Pruefbericht.md)
+
+Der Prüfbericht hat die erste Fassung als gute erzählerische Grundlage, aber nicht als Umsetzung des Auftrags bewertet. Er hat recht in den Punkten, die zählen: Die neuen Stränge waren alle freiwillig, die alten Tagesabschlüsse schnitten sie ab, drei neue Stellen hatten keine Trefferfläche, die Brücke war kein räumliches Rätsel, die beiden Geisterfälle berührten sich nur thematisch, und die Teilung der Stadt war Atmosphäre, keine Ursache. Diese Revision baut deshalb einen **erweiterten Hauptweg** mit wenigen tragenden neuen Knoten. Die erzählerischen Vertiefungen der ersten Fassung bleiben, als Vertiefungen.
+
+Zwei Aussagen der ersten Fassung waren falsch und werden hier ausdrücklich zurückgenommen:
+- „Keine neuen Trefferflächen“ (Abschnitt G): Handschuhfach, Autoradio und Zdravkos Schublade waren neue Stellen – ohne Fläche im Bild (K3-01).
+- „Alle Pflichtschritte bleiben, Speicherkompatibilität ohne Migration“ (Abschnitt B.2, G): Das hielt den Ausbau unnötig freiwillig. Jetzt gibt es eine Regelversion mit Migration (R.2).
+
+### R.1 Die Befunde und was geändert ist
+
+| Befund | Änderung | Prüfung |
+|---|---|---|
+| **K3-01** Handschuhfach, Radio, Schublade ohne Fläche | Das geöffnete Führerhaus ist gezeichnet (Lenkrad, Radio mit halb herausstehender Kassette, Handschuhfach zu/offen/leer); die Schublade sitzt mit Messingknopf in der Thekenfront. Nebenbefunde in anderen Kapiteln mitbehoben: doppelte Bank in K5 (`carsija5`), negative Breiten beim Zug (K4) und Schuppenfenster (K1), „Gleise“ in K5 ohne Fläche. Die Engine dreht negative Rechtecke jetzt beim Laden um. | BUG-025 (echte Treffererkennung `M.E.hotspotAt`, alle Räume, kein „Spot fehlt“); `qa/ui/k3_revision.js` (echte Maus und echter Finger) |
+| **K3-02** Tageswechsel schneiden Zusagen ab | Freitag, Samstag und Sonntag enden **bewusst**: in der Herberge (Fr, Sa) bzw. in Vlados Werkstatt (So), auch über das Bett. Marko sagt einmal, dass der Tag reif ist; vor dem Beenden nennt er offene Zusagen (Brücke, Waage, Veras Brief, Mates Mappe; in Regel 1 die Batterie). „Noch nicht“ lässt den Tag offen; beim nächsten Betreten fragt das Spiel wieder, jederzeit auch das Bett im Zimmer, am Sonntag Vlado („Es ist gleich elf. Fahren wir?“). Wer trotzdem beendet, stellt die Zusage bewusst zurück (`k3.left.*`). Prolog, Samstagnacht, Finale und Epilog wechseln weiter von selbst (dort gibt es nichts abzuschneiden). | BUG-026 |
+| **K3-03** Veras Menü veraltet | Die Bedingungen werden bei jedem Aufbau des Menüs neu gelesen. | BUG-029 (4) |
+| **K3-04** Zlata packt die Waage ein und lässt sie liegen | Beide Abgänge erzählen jetzt, dass die Waage liegen bleibt; sie ist auf dem leeren Klapptisch gezeichnet, bis Vera sie Marko gibt. | Sichtprüfung (Bildschirmfoto), BUG-023 |
+| **K3-05** „Tote“ Batterie hindert nicht | Regel 2: Die zweite Batterie ist tot; ohne Ersatz ist der Sonntag nicht reif, der TAM springt nicht an. Der Ersatz kommt aus Mates Garage (R.4). Regel 1 (alte Stände): Kata nennt sie **schwach**; ohne Ersatz springt der TAM beim dritten Versuch an, Kata sagt dann „Die schwache hat gerade noch gereicht.“ Die Notiz „Zwei Batterien“ folgt der Regel. | BUG-028 |
+| **K3-06** Einwilligung dokumentiert, nicht verlangt | Entscheidung: **Beziehungswahl, keine Bedingung.** „(Mala fragen.)“ bleibt freiwillig, wie überall im Kapitel; übergeht Marko Mala, sagt sie es ihm („Du hast mich nicht gefragt.“) und zählt mit (`k3.skips`, im Kapitelende gespeichert). Die erste Fassung hatte hier eine Bedingung behauptet; das war falsch dokumentiert. | BUG-023 (Brief ohne und mit Frage) |
+| Veras Wohnort widersprach Kata | Vera wohnt „auf dieser Seite, hinter dem Markt“; „die Straße“, über die Vlado nicht geht, ist der Bulevar. | Text |
+
+### R.2 Regelversion und Spielstände
+
+`k3.rules` = 2 (neuer Hauptweg) oder 1 (bisheriger). Neue Spiele beginnen mit 2. Beim Laden (`M.MIGRATE`) bekommen Stände bis einschließlich Samstag (`k3_pro` … `k3_d2`) die 2, weil alle neuen Pflichtknoten danach noch erreichbar sind; Stände ab Samstagnacht behalten die 1 (Lenas Foto entsteht am Samstag an der Brücke). Auch in Regel 1 enden die Tage bewusst. Geprüft: BUG-029 (Migration je Stand, Regel 1 vollständig spielbar: Feigen mit Jute, Mates Erkenntnis ohne Fotos, Taxi-Batterie).
+
+### R.3 Der erweiterte Hauptweg: was jetzt Pflicht ist
+
+| Tag | Neuer Pflichtknoten | Art | Wer |
+|---|---|---|---|
+| Sa | Jela gibt Davor das **Foto von 1965** (Davor mit fünf auf einer Uferplatte unter der Brücke) und schickt die beiden an die Brücke | Auslöser | – |
+| Sa | **Fotostandort unter der Brücke** (neuer Ort `podmost`): das Foto an vier Uferfelsen hochhalten; ein Vergleichsbild zeigt den Blick von dort, gerechnet aus derselben Geometrie (Turm Tara: Lage und Breite; Scheitel des Bogens; Form des Felsens). Jede falsche Wahl wird geometrisch begründet. | räumliche Rekonstruktion | Marko |
+| Sa | Auf der richtigen Platte liegt ein **Quader der alten Brücke**; erst wenn Marko den Standort kennt, sieht Mala hindurch: „M · D · 1965“ | Kooperation | Mala |
+| Sa | Davor setzt sich auf den Quader, **Lena fotografiert** ihn. Ohne dieses Foto ist der Samstag nicht reif. | Folge | – |
+| So | Mate erkennt seinen Sohn erst, wenn er **beide Fotos** gesehen hat („Wer setzt sich auf unseren Stein?“) und dann die Anrede hört („dida“ oder Lenas Strophe) | zweistufige Erkenntnis | Marko, Lena |
+| So | **Batos Plane**: Die große Feige braucht die Plane, die auf Batos altem Ponton in Skela liegt. Bato bewacht sie, solange er glaubt, dass morgen früh eine Fähre fährt. Erst nach der Konfrontation (er war wach, es war das Mädchen) gibt er sie frei. | Fall A öffnet Fall B | Marko |
+| So | Die Feigen: Jute für den kleinen, Batos Plane für den großen Baum | Fall B | – |
+| So | Am Schlüsselring, den Mate loslässt, hängt ein **kleiner Garagenschlüssel**. Jela nennt die Garage mit dem alten Straßennamen: „u Bratstva i jedinstva, kod stare pošte“. | Fall B öffnet die Lösung für A | Jela, Davor |
+| So | **Kartenvergleich 1985/2011** bei Zdravko: Der alte Name steht auf keinem heutigen Plan. Auf Zdravkos Karte und Markos Plan dieselben Linien (Bahndamm, Flussbiegung, Postblock), andere Namen; die richtige Straße antippen. Falsche Wahlen werden begründet (beginnt nicht am Postblock / läuft quer / heißt auf beiden Karten gleich). | räumliches Kartenrätsel, Teilung | Marko |
+| So | **Garage sieben** (neuer Ort `garaze`): Über zwei Toren sind die Nummern abgeblättert; Marko schließt an fremden Toren nicht auf gut Glück. Mala sieht durch das Blech den Mercedes mit der Thermoskanne. | Kooperation | Mala, Marko |
+| So | Haube öffnen, Mates **Batterie** (abgeklemmt, „wie jeden Winter“), Kata baut sie ein. Ohne sie ist der Sonntag nicht reif. | Fall B löst den Weg zu Fall A | Marko, Kata |
+| Fr/Sa/So | **Bewusster Tagesabschluss** mit Liste offener Zusagen | Struktur | – |
+
+Weiter freiwillig (Vertiefungen der ersten Fassung): das Lied vom Fenster (Liam, Dino, Aufführung, Lenas Strophe – als zweiter Weg zu Mates Erkenntnis), Vera und ihr Brief, Mates Mappe, die Waage, der Bleistift, Handschuhfach und Fahrtenbuch, Batos Blechkiste und Fährbuch, Mehlsack und Spendertafel. Was davon offen ist, wenn ein Tag endet, nennt Marko.
+
+Die Musterlösung (`game/tools/walkthrough3.js`) hat jetzt 131 protokollierte Spielerschritte statt 112 (gezählt an den Protokollzeilen der alten und neuen Fassung; ein Schritt kann mehrere Klicks umfassen).
+
+### R.4 Abhängigkeitsplan der Revision
+
+Fall A = Bato (Skela), Fall B = Mate (Haus Zelenika). Pfeile: „ist Voraussetzung für“.
+
+```
+SAMSTAG
+  Bus aus München ──► Haus Zelenika: Jela (Schlüssel, Feigen, „Batos Plane“) ──► Foto von 1965, Ausflug zur Brücke
+  Foto ──► Brücke: Davor gibt das Foto ──► unter der Brücke: Fotovergleich an R1…R4 ──► Standort R3
+  Standort R3 ──► Mala sieht durch den Quader „M · D · 1965“ ──► Davor sitzt, Lenas Foto ──► Samstag reif
+  (Eierfrau, Vlado Teil 1 wie bisher) ──────────────────────────────────────────────────────► Samstag reif
+SONNTAG
+  Fall A:  Zlata, Lichtprobe, Ordnen ─► „Bato war wach“ + „Es war das Mädchen“ ─► Bato erschüttert ─► Bato gibt die Plane frei   (A)
+                                                                                                         │
+  Fall B:  Briefe ─► Einladung ─► Fotos am Tor (Zweifel) + „dida“/Strophe ─► Mate erkennt Davor ─► Schlüssel am Tor (Tod)        │
+           Plane (aus A) ─────────────────────────────────────────────────────────────► Feigen eingepackt  ◄──────────────────┘   (A → B)
+           Feigen + Tod erkannt ─► Mate legt den Schlüssel in die Astgabel ─► Lena bekommt ihn ─► kleiner Garagenschlüssel
+  Teilung: Garagenschlüssel + alter Straßenname ─► Kartenvergleich 1985/2011 (Zdravko) ─► „Lipova“ ─► Garagen auf dem Plan
+           Garage: Mala sieht Tor 7 ─► Marko schließt auf ─► Haube ─► Batterie ─► Kata baut ein (TAM fährt)                  (B → A)
+  Vlado:   Teil 2 ─► Gespräch „Wie Großmutter“ ─► Botschaft ─► Vlado fährt
+  Sonntag reif = Fall A erschüttert + Vlado fährt + Fall B abgeschlossen + Batterie ─► Werkstatt: „Es ist Zeit.“
+FINALE
+  TAM (mit Mates Batterie) bringt Vlado nach Skela ─► Glocke ─► Batos Erkenntnis an der Fähre (Fall A) ─► …                    (… → A)
+```
+
+**A–B–A im Spiel:** Ein Schritt in Fall A (Bato hört die Wahrheit und lässt die Fähre los) verändert eine Handlungsmöglichkeit in Fall B (ohne seine Plane wird die große Feige nicht eingepackt, Mate lässt nicht los). Das Ergebnis von Fall B (Mates Schlüsselring, sein Auto) wird in Fall A genutzt: Ohne Mates Batterie springt der TAM nicht an, und ohne den TAM kommt Vlado in der Finalnacht nicht nach Skela, wo Bato erkennt, was er getan hat. Im Finale nennt Kata die Herkunft der Batterie, Vlado nickt.
+
+### R.5 Die räumliche Brückenkonstruktion
+
+Der Fotostandort braucht den Brückenort selbst: Bogen, Turm und Uferfelsen sind in Raum und Vergleichsbild aus denselben Zahlen gezeichnet (`M.PODMOST`, `M.K3F.VIEW`). Wo der Turm im Bild steht und wie breit er ist, und wo der Scheitel des Bogens liegt, hängt vom Standort ab; der Spieler liest das am alten Foto ab und vergleicht. Das allein reicht nicht: Auf der richtigen Platte liegt ein Quader, und nur Mala sieht hindurch, und erst, wenn Marko weiß, dass sie dort suchen muss. Beide Figuren sind nötig; die Szene könnte an keinem anderen Platz der Stadt stattfinden.
+
+Belegt ist: Nach der Zerstörung 1993 wurden Steine der alten Brücke aus dem Fluss geholt (Mitte der 1990er Jahre, auch von ungarischen Militärtauchern); die meisten waren für den Wiedereinbau zu beschädigt. Die Steine der Brücke waren mit Eisenklammern verbunden (darum die leeren Klammerschlitze am Quader). Erfunden sind: der Quader auf dieser Platte, die Platte selbst, die Buchstaben, das Foto.
+
+### R.6 Die geteilte Stadt als Lösungsweg (2011)
+
+Der Garagenweg hängt an einer Tatsache der Nachkriegsstadt: Nach 1995 wurden in Mostar die Straßen umbenannt, auf beiden Seiten getrennt; die alten Namen leben in den Köpfen der Älteren weiter, die neuen stehen auf Schildern und Plänen. Jela kennt nur den alten Namen, Markos Plan nur den neuen, Zdravkos Karte von 1985 nur den alten; erst der Vergleich über das, was sich nicht ändert (Bahndamm, Flussbiegung, der Block der alten Post), führt zur Garage. Am Pfosten hängt das neue Schild über dem halb überstrichenen alten.
+
+Belege [H]: Monika Palmberger, „Nationalizing the streetscape: the case of street renaming in Mostar, Bosnia and Herzegovina“; Max-Planck-Institut zur Erforschung multireligiöser und multiethnischer Gesellschaften, Working Paper WP 12-02, „Renaming of public space: a policy of exclusion in Bosnia and Herzegovina“ (2012); Arbeiten zur Nachkriegsrekonstruktion Mostars (E. G. Makas) berichten, dass viele Bewohner die alten Namen weiter benutzen. **Erfunden und bewusst neutral:** „Lipova“, „Brestova“, „Jasenova“ (Baumnamen, ohne nationale Zeichen); dass gerade diese Straße „Bratstva i jedinstva“ hieß (der Name war in Jugoslawien verbreitet), die Garagen, die alte Post an dieser Stelle. Das Spiel nennt keine Seite und keine Gruppe; Zdravko sagt nur: „Auf beiden Seiten, jede für sich.“
+
+### R.7 Konsistenz
+
+- Waage: bleibt beim Abgang sichtbar liegen, Vera gibt sie Marko, Zlata nimmt sie an der Tür, Sonntag steht sie auf ihrem Küchentisch.
+- TAM: Regel 2 – fährt nur mit Mates Batterie (Sonntag sonst nicht reif); Regel 1 – schwache Batterie, drei Versuche, oder die Taxi-Batterie. Kata nennt im Finale die Herkunft.
+- Batos Plane: liegt bis zur Freigabe auf dem Ponton (im Bild), danach liegt das Ponton nackt da, die Plane auf dem großen Feigenbaum.
+- Mates Garagentor: offen nur der gekippte Streifen oben als Stelle, damit Auto, Haube, Batterie, Thermoskanne und Kalender frei antippbar sind.
+- Die Australier warten mit dem Spielen, solange Davor und Lena unten am Ufer suchen.
+
+### R.8 Tests, getrennt nach Art
+
+| Art | Was | Werkzeug | Ergebnis |
+|---|---|---|---|
+| Zustandslogik, ganzer Hauptweg | neues Spiel Kapitel 3 bis zum Abspann, nur Spielerhandlungen über die Test-Schnittstelle (`M.TA`), Overlays über ihre gezeichneten Felder (`M.pointerDown/Up`) | `node game/tools/walkthrough3.js` | 131 Schritte, keine JS-Fehler |
+| Zustandslogik, einzelne Ketten | Tagesabschluss (mit erneutem Angebot über Bett und Vlado); Brückenkette; A–B–A und Straßenname; Regeln, Migration, Speichern, Veras Menü | `qa/regress/run.js --only BUG-026` (bis BUG-029) | alle OK |
+| Reihenfolgen | Fotovergleich in falscher Reihenfolge (R1, R2, R4 vor R3); Mala vor dem Standort; Davor vor den Buchstaben; Plane vor/nach der Konfrontation; Feigen ohne/mit Plane; „dida“ vor/nach den Fotos; Tor ohne/mit Malas Blick; Batterie vor/nach der Haube; drei falsche Straßen vor der richtigen | BUG-027, BUG-028 | alle OK |
+| Reale Bedienung | echte Maus (Ziehen aus dem Inventar, Verb-Menü am Zeiger, Klicks in Overlays) und echter Finger (Gegenstand antippen, dann Ziel; Aktionsleiste; Nachfrage „Welches?“) für Handschuhfach, Radio, Schublade, Fotovergleich, Quader, Kartenvergleich, Garagentor, Haube, Batterie | `node qa/ui/k3_revision.js` (Chromium; Desktop 1280 × 800 und iPad-Emulation 1080 × 810) | 33/33 |
+| Trefferflächen | jede sichtbare Stelle in jedem Raum hat eine Fläche; die neuen Stellen treffen sich selbst | BUG-025 | OK |
+| Speicherung | `M.API.save` → `mala.save.<platz>` → `M.E.loadKey` mitten unter der Brücke und in der Garage; Fortsetzen danach | BUG-029 | OK |
+| Regression | alle 29 gezielten Tests (Kapitel 1–5), davon fünf neu (BUG-025 bis BUG-029) | `node qa/regress/run.js` | 29/29 |
+| Hinweise | Stufe 4 jedes offenen Themas wird im Spiel ausgeführt und muss etwas bewirken; dazu Wiederöffnung und Stranglücken. An allen 131 Ständen der Musterlösung und an 22 Abweichungs-Ständen (andere Reihenfolge, verpasster Schritt, früher Schluss) | `MALA_DUMPALL=… node game/tools/walkthrough3.js`, dann `node qa/hints/hintprobe.js --dumps …` und `--varianten` | ohne Befund: 255 + 44 Themen-Stände bestanden, 62 + 1 übersprungen (Gründe unten) |
+| Historische Prüfung | Quellen in R.5/R.6; was erfunden ist, steht dabei | – | Literatur, kein Gutachten |
+| Menschliche Spielwirkung | **nicht geprüft.** Kein Erstspielertest, keine gemessene Spielzeit, kein Safari/iOS-Gerät, kein Ton. Die Spieltakt-Schätzung des Testtreibers (Pflichtdialoge in Normaltempo) ist keine Spielzeit. | – | offen |
+
+**Alle Ergebnisse gelten für denselben Build** (Stempel „11.11.2026 · 402502“, `web/index.html` sha256 `2740546f3a71…`).
+
+**Was die Hinweisprobe gefunden hat (und was daraufhin geändert wurde).** Der erste Lauf nach der Revision meldete 22 Fehler und 11 Stellen zum Prüfen. Drei echte Mängel:
+1. Der Hinweis zum Tagesende schickte auf eine Reise in die Herberge bzw. zum Bulevar, auch dann, wenn Marko in der Werkstatt, unter der Brücke oder schon in der Herberge stand – von dort geht keine Reise. Außerdem war es *ein* Thema für alle Tage: Die Hinweisgeschichte merkt sich die erreichte Stufe je Thema, am Samstag hätte der Hinweis mit der Stufe vom Freitag angefangen. Jetzt hat jeder Abschnitt ein eigenes Thema (`x3fr`, `x3sa`, `x3so` …); Stufe 4 nennt je nach Ort das Bett im Zimmer oder die Herberge; am Sonntag fragt man Vlado („Es ist gleich elf. Fahren wir?“) – das ist neu und bietet den Abschluss erneut an, wenn man an der Werkstatttür „Noch nicht“ gesagt hat (geprüft in BUG-026).
+2. „Zwei Batterien“ verlangte, Lena Mates Schlüssel zu geben, solange Mate ihn noch festhielt. Jetzt nennt Stufe 4 bis dahin die Abhängigkeit („Noch nicht: Erst muss Mate aufhören zu warten …“), danach Astgabel und Lena.
+3. Nach dem Garagenschlüssel blieb „Zwei Batterien“ beim Kartenvergleich stehen, auch als Straße und Garage längst gefunden waren. Jetzt schließt das Thema mit dem Schlüssel; „Bratstva i jedinstva“, „Garage sieben“ und „Mates Batterie“ führen weiter, „Mates Batterie“ bis zum Einbau bei Kata.
+Die elf Stellen zum Prüfen waren Wortlaut: Stufe 4 nannte „die alte Karte“ und „die flache Platte“ nicht so, wie die Stellen im Bild heißen („Alte Landkarte“, „Flache Platte“). Danach: ohne Befund.
+
+**Übersprungen heißt nicht bestanden.** Von den 62 übersprungenen Themen-Ständen der Musterlösung sind 44 Themen, deren Stufe 4 auf ein anderes, eigens geprüftes Thema verweist (14 × Briefe → `d3q`; 12 × Sammelthema „Bis elf“ → `d3q`–`d3w2`; 10 × Batos Fall → seine Einzelthemen; 8 × „Zwei Batterien“ vor Mates Loslassen → Mates Fall); elf betreffen Rätselfelder, die die Probe nicht selbst löst (Peilung auf Karte und Friedhof, Formular), oder Abläufe, die von selbst kommen (geführte Überquerung, Ljerkas Rückruf); sieben sind Stände, an denen nach dem Laden eine Szene läuft oder das Thema nicht offen ist. Diese Stellen sind über die Musterlösung und die Regressionstests abgedeckt, nicht über die Hinweisprobe.
+
+### R.9 Was offen bleibt
+
+- Ob der Fotovergleich und der Kartenvergleich für Erstspieler zu leicht oder zu schwer sind, ist nicht gemessen. Beide haben vier Wahlen mit Begründung; die Hinweise führen in vier Stufen hin.
+- Die neuen Texte sind nur deutsch (wie das übrige Kapitel 3).
+- Alte Stände ab Samstagnacht sehen die neuen Pflichtknoten nicht (Regel 1). Das ist Absicht, keine Lücke.
 
 ---
 
@@ -80,7 +204,7 @@ Der Ausbau macht aus diesem Motiv Spielhandlungen: Dinge, die ankommen oder nich
 | **P3 „Zwei Batterien“** | Der TAM braucht für die Finalnacht eine zweite Batterie. Die liegt im Kofferraum des Taxis am Ostbahnhof. Der Fahrer gibt sie für die Fahrt nach Skela, nicht für Rajić, und will morgen wissen, was Vlado gesagt hat. | Finale | Vulkanizer, Ostbusbahnhof, Hof | Kata, Taxifahrer, Vlado |
 | **E „Die Stadt“** | Kurze Szenen, in denen die Teilung von 2011 sichtbar wird, ohne Monolog. | – | Bulevar, Brücke, beide Busbahnhöfe, Café | Dino, Zdravko, Taxifahrer, Kata, Davor |
 
-Alle neuen Stränge sind **optionale Vertiefungen**; die bisherigen Pflichtschritte bleiben die Pflichtschritte. Grund: Bestehende Spielstände müssen weiter funktionieren (jede Phase bleibt mit dem alten Pflichtweg abschließbar), und die Hinweisprobe darf keine neuen Sackgassen finden. Die Vertiefungen haben aber Folgen in der Pflichthandlung (zweiter Weg zu Mates Erkenntnis, verändertes Finale, veränderter Epilog), und das Hinweissystem führt zu ihnen hin.
+*(Fassung vom 10.11., überholt – siehe Teil R.)* Alle neuen Stränge sind **optionale Vertiefungen**; die bisherigen Pflichtschritte bleiben die Pflichtschritte. Grund: Bestehende Spielstände müssen weiter funktionieren (jede Phase bleibt mit dem alten Pflichtweg abschließbar), und die Hinweisprobe darf keine neuen Sackgassen finden. Die Vertiefungen haben aber Folgen in der Pflichthandlung (zweiter Weg zu Mates Erkenntnis, verändertes Finale, veränderter Epilog), und das Hinweissystem führt zu ihnen hin.
 
 ### B.3 Was Marko und Mala daraus lernen
 
@@ -344,13 +468,13 @@ Siehe Tabelle am Ende dieses Dokuments (wird mit der Umsetzung gepflegt).
 
 **Speicherkompatibilität:** Alle neuen Prüfungen lesen Schalter mit `!!G.flags[...]`; fehlende Schalter gelten als „nicht geschehen“. Ein alter Stand sieht die neuen Stränge an dem Tag, an dem sie beginnen können (Vera auch am Sonntag; die Waage nur, wenn Zlata am Samstag im selben Stand ging). Keine Migration nötig.
 
-**Touch und Maus:** Alle neuen Interaktionen sind Gesprächszeilen, Gegenstand-auf-Figur, Notiz zeigen, Ordnen- und Übersetzungsfelder der vorhandenen Overlays. Keine neuen Trefferflächen.
+**Touch und Maus:** *(Fassung vom 10.11. – diese Aussage war falsch, siehe Teil R.1, K3-01.)* Handschuhfach, Autoradio und Zdravkos Schublade waren neue Stellen, hatten aber keine Fläche im Bild. Seit der Revision gezeichnet, mit Fläche, mit echter Maus und echtem Finger geprüft.
 
 ---
 
 ## H. Testbericht
 
-Alle Angaben beziehen sich auf den Bau vom 10. November 2026 (`web/index.html`, Fassung mit Stempel auf dem Titelbild).
+*(Erste Fassung. Der Testbericht der Revision steht in Teil R.8; die Musterlösung hat sich geändert, die Zahlen hier gelten für den alten Bau.)* Alle Angaben beziehen sich auf den Bau vom 10. November 2026 (`web/index.html`, Fassung mit Stempel auf dem Titelbild).
 
 | Prüfung | Werkzeug | Ergebnis |
 |---|---|---|
@@ -377,6 +501,8 @@ Alle Angaben beziehen sich auf den Bau vom 10. November 2026 (`web/index.html`, 
 ---
 
 ## I. Prüfung gegen die Vorgaben (Abschnitt 24 des Auftrags)
+
+*(Erste Fassung. Der Prüfbericht hat diese Selbstprüfung zu Recht als zu günstig bewertet; die Punkte Brücke, Fallverflechtung, Teilung, Pflichtumfang und Tests beantwortet Teil R neu.)*
 
 | Frage | Antwort |
 |---|---|

@@ -9,7 +9,8 @@ module.exports = { id: 'BUG-020', title: 'Abschnittswechsel als Mala (K2, K3) un
   const check = (name, ok, extra) => { out.push(name + '=' + ok + (ok || !extra ? '' : ' (' + extra + ')')); if (!ok) all = false; };
   // (1) Freitag in Mostar: alles für den Tag erledigt, Mala spielt, der Abschnitt endet
   await FX.load(D, 'k3_037_kata.json', { addNotes: ['l3_skela'], setFlags: { 'k3.v.drawer': true }, active: 'mala' }); await D.settle();
-  await D.ev(() => M.k3DayCheck(M.API)); await D.drain(); for (let i = 0; i < 20 && (await D.ev(() => M.GS.phase)) === 'k3_d1'; i++) await D.page.waitForTimeout(500);
+  // seit der Revision (Prüfbericht K3-02) endet der Tag bewusst: der Übergang selbst wird aufgerufen, wie in Teil (1b)
+  await D.ev(() => M.k3StartD1Night(M.API)); await D.drain(); for (let i = 0; i < 20 && (await D.ev(() => M.GS.phase)) === 'k3_d1'; i++) await D.page.waitForTimeout(500);
   const s1 = await D.ev(() => ({ ph: M.GS.phase, act: M.GS.active, marko: M.GS.pos.marko.room, mala: M.GS.pos.mala.room }));
   check('K3 Abschnittswechsel als Mala', s1.ph === 'k3_d1_n' && s1.act === 'marko' && s1.marko === 'herberge' && s1.mala === 'herberge', JSON.stringify(s1));
   // (1b) Kapitel 2: Sonntagabend beginnt, während Mala in der Kafana spielt (Übergang direkt aufgerufen)

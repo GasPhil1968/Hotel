@@ -270,6 +270,8 @@ async function exhaust(D, check, want, log, only) {
     if (s.overlay) {
       if (['puzzle', 'arrange', 'glyphs'].indexOf(s.overlay) >= 0 && solved < 3) { solved++; const r = await D.ev(() => HP.solve()); log.push('Rätselfeld: ' + r); await wait(D, 60); continue; }
       if (s.overlay === 'peil' && solved < 3) { solved++; await D.ev(() => { if (M.k3PeilTap) M.k3PeilTap('go'); }); await wait(D, 200); log.push('Karte bestätigt'); continue; }
+      if (s.overlay === 'karte85' && solved < 3) { solved++; for (const id of ['st_a', 'go']) await tapHit(D, id); await D.until((x) => x.overlay !== 'karte85', 20000, 'Kartenvergleich').catch(() => {}); log.push('Straßen verglichen'); continue; }
+      if (s.overlay === 'foto65') { await tapHit(D, 'go'); await D.until((x) => x.overlay !== 'foto65', 20000, 'Fotovergleich').catch(() => {}); log.push('Foto verglichen'); continue; }
       if (s.overlay === 'halves' && solved < 3) { solved++; for (const id of ['sw', 'p1', 'go']) await tapHit(D, id); await D.until((x) => x.overlay !== 'halves', 20000, 'Hälften').catch(() => {}); log.push('Hälften zusammengelegt'); continue; }
       await D.ev(() => M.TA.closeOverlay()); await wait(D, 60); continue;
     }
@@ -297,7 +299,7 @@ async function tapHit(D, id) { await wait(D, 120); await D.ev((i) => { const h =
   for (const seq of seqs) for (const s of seq.states) { const r = await D.ev((gs) => { const G = HP.base(gs); return { ch: M.chapterOf(G), rooms: Object.keys(G.rooms || {}).concat([G.pos.marko && G.pos.marko.room, G.pos.mala && G.pos.mala.room]).filter((x) => x && x !== 'limbo') }; }, s.GS);
     const set = chRooms[r.ch] = chRooms[r.ch] || {}; r.rooms.forEach((x) => { set[x] = 1; }); }
   await D.ev((m) => { HP.chRooms = m; }, Object.fromEntries(Object.entries(chRooms).map(([k, v]) => [k, Object.keys(v)])));
-  const fails = [], warns = [], cache = new Map(); let states = 0, probes = 0, skipped = 0, noSpec = new Set(), okCount = 0;
+  const fails = [], warns = [], cache = new Map(); let states = 0, probes = 0, skipped = 0, noSpec = new Set(), okCount = 0; const skipBy = {}; const skip = (why) => { skipped++; skipBy[why] = (skipBy[why] || 0) + 1; };
   const report = (kind, where, msg) => { const line = kind.padEnd(7) + where + ': ' + msg; (kind === 'PRÜFEN' ? warns : fails).push(line); console.log(line); };
   for (const seq of seqs) {
     const life = {};   // Themen-Lebenslauf in dieser Folge: id -> {opened, closed}
@@ -324,13 +326,13 @@ async function tapHit(D, id) { await wait(D, 120); await D.ev((i) => { const h =
         const sp = SPEC.SPECS[o.id];
         if (!sp) { noSpec.add(o.id); continue; }
         let probe; try { probe = SPEC.normalize(sp(o.t4, info.G, SPEC.P)); } catch (e) { report('FEHLER', where, o.id + ': Zuordnung wirft ' + e.message); continue; }
-        if (probe.skip || SPEC.LATER.test(o.t4)) { skipped++; continue; }
+        if (probe.skip || SPEC.LATER.test(o.t4)) { skip(probe.skip ? 'Zuordnung: ' + probe.skip : 'Satz sagt „Morgen …“'); continue; }
         // Zuordnung und Satz: die genannten Namen müssen im Satz vorkommen
         const miss = SPEC.mentions(probe).filter((m) => !SPEC.inText(m, o.t4)); if (miss.length) report('PRÜFEN', where, o.id + ': Stufe 4 „' + o.t4 + '“ nennt nicht ' + miss.join(', '));
         const key = o.id + '|' + o.t4 + '|' + JSON.stringify(await D.ev((a) => { const G = HP.base(a.gs); return { n: G.notes.slice().sort(), i: G.inv.slice().sort(), f: Object.keys(G.flags).filter((k) => G.flags[k]).sort(), p: G.phase, r: Object.keys(G.rooms || {}).sort(), pos: [G.pos.marko && G.pos.marko.room, G.pos.mala && G.pos.mala.room, G.active] }; }, { gs: s.GS }));
         let res = cache.get(key);
         if (!res) { probes++; res = await runProbe(D, s.GS, o.id, probe); cache.set(key, res); }
-        if (res.skip) { skipped++; continue; }
+        if (res.skip) { skip(res.skip); continue; }
         if (res.ok) { okCount++; if (VERBOSE) console.log('ok     ' + where + ': ' + o.id + ' (' + res.why + ')'); }
         else report('FEHLER', where, o.id + ': Stufe 4 „' + o.t4 + '“ – ' + res.why + (VERBOSE && res.log ? ' [' + res.log.slice(-12).join(' | ') + ']' : ''));
       }
@@ -342,8 +344,9 @@ async function tapHit(D, id) { await wait(D, 120); await D.ev((i) => { const h =
       report('FEHLER', seq.src + ' ' + seq.states[a + 1].label, 'Strang ' + sk + ' setzt aus: nach ' + before.join(',') + ' kein Thema bis ' + seq.states[b].label + ' (' + after.join(',') + ')'); } });
   }
   console.log('\n' + states + ' Stände in ' + seqs.length + ' Folgen, ' + probes + ' Proben ausgeführt (' + okCount + ' Themen-Stände bestanden, ' + skipped + ' übersprungen).');
+  if (skipped) console.log('übersprungen: ' + Object.keys(skipBy).sort((a, b) => skipBy[b] - skipBy[a]).map((k) => skipBy[k] + ' × ' + k).join('; '));
   if (noSpec.size) console.log('Ohne Zuordnung in qa/hints/stufe4.js (nicht geprüft): ' + Array.from(noSpec).sort().join(', '));
-  if (argv('--json')[0]) fs.writeFileSync(argv('--json')[0], JSON.stringify({ states, probes, fails, warns, noSpec: Array.from(noSpec) }, null, 1));
+  if (argv('--json')[0]) fs.writeFileSync(argv('--json')[0], JSON.stringify({ states, probes, passed: okCount, skipped, skipBy, fails, warns, noSpec: Array.from(noSpec) }, null, 1));
   console.log(fails.length ? 'HINWEISPROBE: ' + fails.length + ' Fehler, ' + warns.length + ' zu prüfen' : 'HINWEISPROBE OK (' + warns.length + ' zu prüfen)');
   console.log(D.errors.length ? 'JS-FEHLER:\n' + D.errors.slice(0, 5).join('\n') : 'keine JS-Fehler');
   await D.close2(); process.exit(fails.length ? 1 : 0);

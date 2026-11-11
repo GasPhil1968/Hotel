@@ -245,7 +245,8 @@ async function readyNotice(A){ var G=A.G, p=G.phase;
   else if (p==='k3_d3') await A.m('Bis elf ist noch Zeit. Dann wartet Vlado im Hof. Wenn ich in die Werkstatt gehe, fahren wir.');
   if (M.k3OpenThreads(G).length && G.malaOn && A.malaHere && A.malaHere()){ await A.wait(400); await A.g('Nicht alles. Du hast noch etwas versprochen.'); } }
 M.k3OfferEnd=async function(A){ var G=A.G, p=G.phase; if (!CONSC[p]||!dayReady(G)) return false; var open=M.k3OpenThreads(G);
-  await A.m(p==='k3_d3'?'Es ist bald elf. Vlado und Kata warten im Hof.':(p==='k3_d1'?'Draußen wird es dunkel. Die Bura hat sich gelegt.':'Es wird Abend. Unten auf der Terrasse zünden sie die Kerzen an.'));
+  var inShop=!!(M.E.room&&M.E.room.id==='vulkanizer');
+  await A.m(p==='k3_d3'?(inShop?'Es ist bald elf. Draußen im Hof steht der TAM.':'Es ist bald elf. Vlado und Kata warten im Hof.'):(p==='k3_d1'?'Draußen wird es dunkel. Die Bura hat sich gelegt.':'Es wird Abend. Unten auf der Terrasse zünden sie die Kerzen an.'));
   for (var i=0;i<open.length;i++) await A.m(open[i].t);
   var c=await A.choose([{t:p==='k3_d3'?'(Es ist Zeit. Zum Lastwagen.)':'(Den Tag beenden.)',id:'end',silent:true},{t:open.length?'(Noch nicht. Erst das.)':'(Noch nicht.)',id:'not',silent:true,bye:true}],{title:p==='k3_d3'?'Sonntag, kurz vor elf':'Feierabend'});
   if (c!=='end') return false;

@@ -683,7 +683,10 @@ function fallbackArt(id,w){ return { width:w||320, paint:function(S,GS,tod){ var
   walk:function(x,y){ return y>104&&y<140&&x>6&&x<(w||320)-6; }, spots:{}, stands:{}, actorPos:{}, start:[160,120,'R'], entries:{} }; }
 M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt für '+id); A=fallbackArt(id,def.width); }
   var spots=A.spots||{}, stands=A.stands||{};
-  var hs=(def.hotspots||[]).map(function(h){ if (h.r===undefined && spots[h.id]) h.r=spots[h.id]; if (h.st===undefined && stands[h.id]) h.st=stands[h.id]; if (!h.r && !h.npc){ console.warn('Spot fehlt: '+id+'.'+h.id); h.r=[0,0,0,0]; } return h; });
+  var hs=(def.hotspots||[]).map(function(h){ if (h.r===undefined && spots[h.id]) h.r=spots[h.id]; if (h.st===undefined && stands[h.id]) h.st=stands[h.id]; if (!h.r && !h.npc){ console.warn('Spot fehlt: '+id+'.'+h.id); h.r=[0,0,0,0]; }
+      // Prüfbericht K3-01 (Nebenbefund): Rechtecke aus perspektivischen Ecken können eine negative Breite oder Höhe haben (K4 Zug, K1 Schuppenfenster) – dann trifft sie kein Klick
+      if (Array.isArray(h.r) && h.r.length===4 && !Object.getOwnPropertyDescriptor(h.r,0).get && (h.r[2]<0||h.r[3]<0)){ var q=h.r; h.r=[q[2]<0?q[0]+q[2]:q[0], q[3]<0?q[1]+q[3]:q[1], Math.abs(q[2]), Math.abs(q[3])]; }
+      return h; });
   var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints};
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);

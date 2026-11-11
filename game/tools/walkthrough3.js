@@ -18,7 +18,9 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     if (DUMP) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); fs.writeFileSync(path.join(DUMP, String(step).padStart(3, '0') + '.json'), JSON.stringify({ step, section, label: a.join(' '), GS: g })); } };
   // Spielerhandlungen (gemeinsam mit k3tests.js); Anrufe, die von selbst kommen, werden als eigener Schritt protokolliert
   const P = play(D, { onStep: (t) => log(t) });
-  const { st, fail, expect, note, flag, inv, room, phase, at, inPhase, said, expectSaid, calm, act, exit, choose, pick, dlgHas, waitDlg, talk, ask, bye, comb, mala, marko, travel, go, peil, solve, arrange } = P;
+  const { st, fail, expect, note, flag, inv, room, phase, at, inPhase, said, expectSaid, calm, act, exit, choose, pick, dlgHas, waitDlg, talk, ask, bye, comb, mala, marko, travel, go, peil, solve, arrange, tapHit } = P;
+  // Revision (Regel 2): ein Tag endet bewusst – in der Herberge (Fr, Sa) bzw. in der Werkstatt (So)
+  const endDay = async (label) => { await waitDlg(label, 90000); await choose(label); };
   const shot = async (n) => { if (SHOTS) await D.shot(`${SHOTS}/w3_${String(step).padStart(3, '0')}_${n}.png`); };
   const snapSave = async (name) => { if (!SNAP) return; fs.mkdirSync(SNAP, { recursive: true }); const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); fs.writeFileSync(path.join(SNAP, name + '.json'), JSON.stringify({ step, GS: g })); };
   const snapLoad = async (name) => { const d = JSON.parse(fs.readFileSync(path.join(SNAP, name + '.json'), 'utf8')); step = d.step;
@@ -90,6 +92,8 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await exit('yard_door'); await at('vhof'); await act('sense', 'cab'); await note('v3_cab'); await note('v3_hewas'); await log('Mala im Führerhaus: „Halt still.“ – „Ich fahre.“ – „Dann fahr still.“');
     await exit('door'); await at('vulkanizer'); await marko();
     await talk('kata', 'Die Schublade'); await choose('Die unterste'); await calm(); await flag('k3.v.drawer'); await note('v3_tomorrow'); await log('„Die unterste.“ Zeichnung und Schlüssel 31; Vlado: „Morgen.“');
+    await flag('k3.ready.k3_d1'); await expectSaid('Wenn ich zurück in der Herberge bin'); await log('der Tag ist reif: „Wenn ich zurück in der Herberge bin, ist der Tag vorbei.“');
+    await exit('door'); await go('herberge'); await endDay('(Den Tag beenden.)'); await log('in der Herberge den Tag beendet');
   });
   // ----------------------------------------------------------------------- Freitagnacht: das Vatergespräch
   part('freitag_nacht', async () => {
@@ -110,7 +114,15 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await talk('vlado', 'Der Schlüssel auf Ihrem Tisch'); await waitDlg('Und dann?'); await choose('Und dann?'); await flag('k3.v.part1'); await note('v3_mala'); await note('v3_part1'); await note('v3_mala_left');
     await log('Vlado, Teil 1: „Sie hat gesagt, sie heißt Mala. Wie jede.“ – Mala: „Er ist gefahren.“');
     await exit('door'); await go('westbus'); await waitDlg('Ich komme mit'); await shot('bus'); await choose('Ich komme mit'); await flag('k3.b.arrived'); await note('b3_notson'); await log('der Bus aus München: „Er kommt mit dem nächsten. Mein Sohn ist jung.“; „Ich komme mit.“');
-    await go('zelenika'); await waitDlg('Jetzt kommt er'); await choose('Jetzt kommt er'); await flag('k3.b.jela'); await note('b3_gate'); await note('b3_figs'); await log('Haus Zelenika: Jela mit dem Schlüssel, Marko übersetzt');
+    await go('zelenika'); await waitDlg('Jetzt kommt er'); await choose('Jetzt kommt er'); await calm(); await flag('k3.b.jela'); await note('b3_gate'); await note('b3_figs'); await note('b3_tarp'); await note('b3_photo65'); await flag('k3.s.trip');
+    await log('Haus Zelenika: Jela mit dem Schlüssel; die große Feige braucht Batos Plane; das Foto von 1965: „Zeig ihr den Stein“');
+    await go('starimost'); await talk('davor_b', 'Zeigen Sie mir das Foto'); await calm(); await inv('foto_1965'); await flag('k3.s.down'); await log('an der Brücke: Davor gibt mir das Foto, die beiden gehen ans Ufer');
+    await exit('down'); await at('podmost'); await shot('podmost'); await log('unter der Brücke: vier Uferfelsen, auf der Platte ein Quader');
+    await act('use', 'r1', 'foto_1965'); await D.until(s => s.overlay === 'foto65', 20000, 'Vergleich'); await shot('vergleich_r1'); await tapHit('go'); await calm(); await expectSaid('zu nah am Turm'); await log('Vergleich am runden Block: Turm zu groß, Scheitel zu weit rechts');
+    await act('use', 'r3', 'foto_1965'); await D.until(s => s.overlay === 'foto65', 20000, 'Vergleich'); await tapHit('go'); await calm(); await flag('k3.s.spot'); await log('Vergleich an der flachen Platte: Turm und Scheitel stimmen – aber da liegt ein Quader');
+    await mala(); await act('look', 'block'); await note('b3_initials'); await flag('k3.s.initials'); await marko(); await log('Mala sieht durch den Quader: „M · D · 1965“');
+    await talk('davor_p'); await calm(); await flag('k3.s.photo'); await note('b3_lenaphoto'); await log('Davor setzt sich auf den Quader, Lena fotografiert ihn; Lena bekommt beide Fotos');
+    await flag('k3.ready.k3_d2'); await exit('steps'); await at('starimost'); await go('herberge'); await endDay('(Den Tag beenden.)'); await log('in der Herberge den Samstag beendet');
     await D.until(s => s.dlg && s.dlg.some(t => /Mala fragen/.test(t)), 60000, 'Nadas Anruf'); await log('Tagesende: Nada ruft an: „Weißt du etwas?“');
     await choose('(Mala fragen.)'); await flag('k3.asked.nada2'); await choose('Ich habe eine Spur'); await flag('k3.d2.nada', 'truth'); await log('Mala gefragt: „Aber sag ihr nicht nichts.“ – „Ich habe eine Spur.“');
   });
@@ -140,6 +152,7 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await exit('door'); await at('skela_l'); await ask('bato', 'a3_lightroom'); await bye('(Gehen.)'); await note('a3_thrice'); await flag('k3.bato.slip'); await log('Bato: „Dreimal hat er geläutet, dann war Ruhe.“');
     await comb('a3_thrice', 'a3_slept', 'a3_awake'); await log('Widerspruch: Bato war wach');
     await talk('bato', 'Nach etwas aus dem Notizbuch', 'NOTE:a3_awake', 'Nach etwas aus dem Notizbuch', 'NOTE:a3_girl'); await bye('(Gehen.)'); await flag('k3.bato.uneasy'); await log('Bato wird unruhig: „Es war ein Soldat.“');
+    await talk('bato', 'Die Plane auf dem Ponton'); await bye('(Gehen.)'); await flag('k3.a.tarpOk'); await act('take', 'ponton'); await inv('cerada'); await flag('k3.a.tarp'); await log('Bato: „Nimm sie. Bevor ich es mir anders überlege.“ – die Plane vom Ponton');
     await talk('zlata', '(Ihr sagen, dass Bato wach war.)', '(Mala fragen.)'); await bye('Danke.'); await flag('k3.asked.zlata_awake'); await log('über den Fluss Mala gefragt: zwei Finger, sie schüttelt den Kopf');
     await exit('to_bridge'); await flag('k3.z.deka'); await inv('deka'); await note('a3_fromzlata'); await log('Zlata: „Uzmite deku. Hladno je kod vode.“');
     await exit('exit_d'); await at('skela_d'); await act('use', '_mala', 'deka'); await note('a3_blanket'); await expectSaid('Ich war noch da'); await log('Mala liest die Decke: „Ich war noch da, Marko.“');
@@ -153,18 +166,27 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await flag('k3.d3.talk2'); await flag('k3.d3.talk2v', 'a'); await note('l3_rope'); await note('v3_message'); await log('Gespräch 2 „Wie Großmutter“: das Seil; „Ich frage dich, was ich damit machen soll.“');
     await exit('door'); await at('vulkanizer'); await talk('vlado', 'Ich soll Ihnen etwas sagen', '(Mala fragen.)', '(Ihm sagen', 'NOTE:v3_cab'); await calm();
     await flag('k3.v.free'); await note('v3_tonight'); await log('die Botschaft: „Dann fahr still.“ – „Woher …?“ – „Ich bin Übersetzer.“ Vlado fährt heute Nacht');
+    await talk('kata', 'Fährt er wirklich'); await bye('(Gehen.)'); await note('v3_battery'); await expectSaid('tot wie ein Stein'); await log('Kata: Die zweite Batterie ist tot; ohne sie dreht der Anlasser nicht');
     await exit('door'); await go('zelenika'); await log('Haus Zelenika am Sonntag: Mate am Pfosten');
     await exit('house_door'); await at('zelenika_in'); await talk('davor', 'Darf ich die Briefe lesen'); await bye('(Gehen.)'); await note('b3_letters');
     await act('use', 'stairs'); await note('b3_kidsroom'); await act('open', 'drawer'); await note('b3_cards'); await note('b3_pencil'); await log('Mates Briefe, das Kinderzimmer von 1998, Lenas Postkarten mit „Dragi dida“');
     await comb('b3_letters', 'b3_kidsroom', 'b3_invite'); await comb('b3_cards', 'b3_pencil', 'b3_dida'); await log('Schlüsse: eine Einladung, die sich nicht traut; so wollte er heißen');
     await talk('davor', 'Kad ćete doći'); await calm(); await flag('k3.b.invite'); await at('zelenika'); await log('Davor hört die Einladung; Jela gibt nach');
-    await talk('lena', 'Du wolltest deinem Großvater', 'Došli smo, dida'); await calm(); await flag('k3.b.son'); await log('„Došli smo, dida.“ – Mate: „Das ist Davor.“');
+    await talk('lena', 'Zeig ihm die beiden Fotos'); await bye('(Gehen.)'); await flag('k3.b.doubt'); await note('b3_doubt'); await log('Lena zeigt Mate die Fotos: „Wer setzt sich auf unseren Stein?“');
+    await talk('lena', 'Du wolltest deinem Großvater', 'Došli smo, dida'); await calm(); await flag('k3.b.son'); await log('„Došli smo, dida.“ – Mate: „Das ist Davor. Der graue Mann auf unserem Stein.“');
     await talk('lena', 'Stell dich ans Tor'); await calm(); await flag('k3.b.dead'); await log('der Schlüssel am Tor: „Ich bin nicht mehr da.“');
-    await talk('jela', 'Zeigen Sie ihm'); await choose('Von unten nach oben'); await calm(); await bye('Hvala'); await flag('k3.b.figs'); await flag('k3.b.keyFree'); await log('die Feigen; der Schlüssel liegt in der Astgabel');
-    await act('take', 'fork'); await inv('kljuc_mate'); await act('give', 'lena', 'kljuc_mate'); await flag('k3.b.keyLena'); await log('den Schlüssel bekommt die Kleinste');
+    await talk('jela', 'Zeigen Sie ihm'); await choose('Von unten nach oben'); await calm(); await bye('Hvala'); await flag('k3.b.figs'); await flag('k3.b.tarpOn'); await flag('k3.b.keyFree'); await log('die Feigen: Jute für den kleinen, Batos Plane für den großen; der Schlüssel liegt in der Astgabel');
+    await act('take', 'fork'); await inv('kljuc_mate'); await act('give', 'lena', 'kljuc_mate'); await flag('k3.b.keyLena'); await flag('k3.b.garageKey'); await inv('kljuc_garaza'); await note('b3_garage'); await log('den Schlüssel bekommt die Kleinste; der kleine mit der Sieben: Mates Garage „u Bratstva i jedinstva“');
     await expect((await st()).active === 'mala', 'Mala übernimmt'); await act('cross', 'mate'); await choose('(Ihre Hand nehmen.)'); await at('limbo'); await shot('limbo_mate');
     await act('use', 'prop'); await choose('Bitte einsteigen'); await flag('k3.b.limbo'); await log('Zwischenwelt: „Bitte einsteigen.“ – „Dreißig Jahre habe ich das gehört.“');
-    await exit('arch'); await D.until(s => s.phase === 'k3_fin_n' || s.dlg, 90000, 'Davors Karte, Finale'); await flag('k3.b.done'); await inv('vizitka'); await log('Davor: „Falls Sie mal in München sind.“');
+    await exit('arch'); await D.until(s => s.room === 'zelenika' && !s.busy, 90000, 'Davors Karte'); await calm(); await flag('k3.b.done'); await inv('vizitka'); await log('Davor: „Falls Sie mal in München sind.“');
+    await go('westbus'); await exit('cafe_door'); await at('kafic'); await act('use', 'oldmap', 'plan'); await D.until(s => s.overlay === 'karte85', 30000, 'Kartenvergleich'); await shot('karte85');
+    await tapHit('st_d'); await expect(/quer zum Fluss/.test(await D.ev(() => M.E.overlay.data.msg || '')), 'Begründung Jasenova'); await tapHit('st_a'); await tapHit('go'); await calm(); await note('b3_street'); await log('Kartenvergleich 1985/2011: nicht die Jasenova (quer), sondern die Lipova');
+    await exit('door'); await go('garaze'); await shot('garaze'); await act('use', 'g4', 'kljuc_garaza'); await expectSaid('Welche, weiß ich nicht'); await log('Lipova: zwei Tore ohne Nummer; an fremden Toren probiert Marko nicht');
+    await mala(); await act('look', 'g4'); await flag('k3.b.g7'); await marko(); await act('use', 'g4', 'kljuc_garaza'); await flag('k3.b.garageOpen'); await note('b3_car'); await log('Mala sieht durch das Blech: der helle Mercedes mit der Thermoskanne; Garage sieben offen');
+    await act('open', 'hood'); await act('take', 'battery'); await inv('akumulator'); await flag('k3.b.batFrom', 'mate'); await log('Haube auf, Mates Batterie (abgeklemmt, wie jeden Winter)');
+    await exit('exit'); await go('bulevar'); await exit('to_vulk'); await at('vulkanizer'); await act('give', 'kata', 'akumulator'); await flag('k3.v.battery'); await log('Kata: „Eigentlich zu klein für den TAM. Aber für einmal Anlassen reicht sie.“');
+    await endDay('(Es ist Zeit. Zum Lastwagen.)'); await log('in der Werkstatt: „Es ist Zeit.“');
   });
   // ----------------------------------------------------------------------- Finale: Abfahrt, Glocke, Überfahrt, Zlata, Grab, Zwischenwelt
   part('finale', async () => {

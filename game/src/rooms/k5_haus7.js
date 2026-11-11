@@ -18,7 +18,7 @@ var HS_NB=[
    talk:'„Fahrscheine?“ – „Nur beim Fahrer.“ Alija hätte drei Sätze dazu gesagt.',g:{look:'Alija hatte eine Zange mit einem Stern. Der Junge hat Kopfhörer.'}},
  {id:'tram_stop',name:'Haltestelle',look:'Die Haltestelle der Drei, dreihundert Meter weiter westlich als früher. Ein Häuschen aus Glas.',
    use:function(A){ return M.k5TramStop?M.k5TramStop(A):A.m('Heute nicht.'); },g:{look:'Hier sind wir eingestiegen. Er am Fenster.'}},
- {id:'tram',name:'Gleise',look:'Die Gleise der Drei. Zwischen den Schienen wächst im März schon Gras.',g:{look:'Hier fährt sie. Immer noch.'}},
+ {id:'tram',name:'Gleise',r:[0,96,172,14],look:'Die Gleise der Drei. Zwischen den Schienen wächst im März schon Gras.',g:{look:'Hier fährt sie. Immer noch.'}},   // eigene Fläche: die Kunst aus Kapitel 2 kennt hier nur die Bahn, wenn sie da ist
  {id:'tower7',name:'Haus 7',look:function(A){ return A.m(jasnaFollows(A.G)?'Haus 7. Mama legt den Kopf in den Nacken und zählt. „Dritte von links.“ Unsere Loggia.':'Haus 7. Zwölf Stockwerke. Im siebten haben wir gewohnt, im neunten wohnt Nada.'); },
    g:{look:'Neunter Stock, Fenster rechts. Da habe ich gesessen. Acht Wochen.'}},
  {id:'roofclock',name:'Uhr auf dem Dach',look:'Auf dem Dach des Hochhauses gegenüber die ausgebrannte Uhr, seit zwanzig Jahren ohne Zeiger. Keiner repariert sie, weil keiner sich einigen kann, welche Zeit sie zeigen soll.',

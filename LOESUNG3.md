@@ -10,6 +10,8 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - **„(Mala fragen.)“** ist neu in Kapitel 3. Nach Markos Versprechen am ersten Abend taucht diese Zeile auf, wenn eine Entscheidung Mala betrifft. Man muss sie nicht wählen. Übergeht Marko Mala, merkt sie es sich und sagt es ihm.
 - **Stadtplan:** Das Ostufer ist von Anfang an offen. Ans Westufer geht Mala erst, nachdem sie einmal über die Straßenbrücke gegangen ist. Nach Skela kommt man immer mit dem Taxi; Dinos Roller ist eine Möglichkeit, keine Bedingung.
 - Es gibt keine Sackgassen. Falsche Antworten und falsche Reihenfolgen bekommen eine eigene Antwort und setzen nur zurück.
+- **Tagesende:** Freitag, Samstag und Sonntag enden erst, wenn man es will. Sind die Pflichtschritte erledigt, sagt Marko es einmal. Der Tag endet in der **Herberge** (Freitag, Samstag) oder in **Vlados Werkstatt** (Sonntag), auch über das Bett. Vorher nennt Marko, was noch offen ist (eine Zusage, ein Brief). Wer trotzdem beendet, lässt es bewusst liegen.
+- **Fassung:** Diese Lösung beschreibt den Hauptweg neuer Spiele (Regel 2, seit der Revision nach dem Prüfbericht). Alte Spielstände ab Samstagnacht spielen nach dem bisherigen Weg weiter (Regel 1, siehe „Varianten“). Neu im Hauptweg sind: der Stein unter der Brücke (Samstag), Batos Plane, Mates Garage und die Batterie (Sonntag).
 
 ---
 
@@ -78,7 +80,7 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **[M]** Kata: „Die Schublade.“ → „Die unterste.“ Die Zeichnung und der Schlüssel 31 liegen auf dem Tisch. Vlado sagt: „Morgen.“
 
 **8. Freitagnacht**
-- Die Nacht kommt von selbst. Die Australier singen. Auf der Terrasse findet das Vatergespräch statt.
+- Marko sagt: „Skela. Und die Schublade. Für heute habe ich, was ich brauche.“ **[M]** Zur **Herberge** → „(Den Tag beenden.)“. Die Australier singen. Auf der Terrasse findet das Vatergespräch statt.
 - **[M]** **Bett** → Samstag. Beim Aufwachen sagt Mala: „Sie zeigt heute woandershin. In die Stadt.“
 
 ---
@@ -106,8 +108,20 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 **13. Haus Zelenika**
 - Jela bringt den Schlüssel: „Sad je došao. Kad treba prodavat.“
 - Für Lena übersetzen. Wahr: „Jetzt kommt er. Wenn es ums Verkaufen geht.“ Sanft: „Schön, dass ihr da seid.“ Lena merkt es dann selbst.
-- Jela erzählt drei Dinge: Mate stand am Tor, und den Schlüssel bekam der Kleinste. Die Feigen sind nicht eingepackt, Sonntagnacht kommt Frost. Davor verkauft am Montag.
-- Der Tag endet mit Nadas Anruf: „Weißt du etwas?“ „(Mala fragen.)“ wählen; Mala sagt: „Aber sag ihr nicht nichts.“ Dann „Ich habe eine Spur.“
+- Jela erzählt: Mate stand am Tor, und den Schlüssel bekam der Kleinste. Die Feigen sind nicht eingepackt, Sonntagnacht kommt Frost. Für den kleinen Baum reicht die Jute, für den großen nicht: Letzten Winter lag **Batos Plane** von der Fähre darüber, Zlata (ihre Cousine) hat sie geliehen. Davor verkauft am Montag.
+- Jela gibt Davor ein **Foto von 1965** aus Mates Portemonnaie: Davor mit fünf auf einem flachen Stein unter der Alten Brücke. „Zeig ihr den Stein.“ Davor findet ihn nicht mehr und bittet Marko, am Nachmittag an die Brücke zu kommen.
+
+**13a. Der Stein unter der Brücke** (Pflicht)
+- **[M]** An der **Alten Brücke** mit Davor reden: „Zeigen Sie mir das Foto. Ich suche mit.“ Er gibt Marko das Foto; Davor und Lena gehen die Uferstufen hinunter.
+- **[M]** „Hinunter ans Ufer“: unter dem Bogen liegen vier Uferfelsen. Das Foto ansehen: Turm am linken Rand, Scheitel oben in der Mitte, vorn eine flache Platte mit einer Kerbe.
+- **[M]** Das **Foto an den Felsen** benutzen. Ein Vergleichsbild zeigt den Blick von dort; Marko sagt, was nicht passt:
+  - runder Block: Turm mitten im Bild, zu nah;
+  - Felsen mit Riss: Turm noch zu breit, Scheitel rechts;
+  - spitzer Felsen: Turm schmal, Scheitel links, zu weit;
+  - **flache Platte**: alles stimmt. Nur liegt dort ein Quader der alten Brücke.
+- **[G]** Den **Quader** ansehen: Mala sieht darunter die Platte und die Buchstaben **„M · D · 1965“**.
+- **[M]** Mit **Davor** reden: Er setzt sich auf den Quader, Lena fotografiert ihn. Lena bekommt beide Fotos.
+- **[M]** Zurück in der **Herberge** → „(Den Tag beenden.)“. Nada ruft an: „Weißt du etwas?“ „(Mala fragen.)“ wählen; Mala sagt: „Aber sag ihr nicht nichts.“ Dann „Ich habe eine Spur.“
 
 ---
 
@@ -162,6 +176,7 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **[M]** Bato nach *Licht in Batos Kammer* fragen → „Dreimal hat er geläutet, dann war Ruhe.“ Ohne geordnete Nacht geht es auch mit *Dunkel, hell, dunkel* (nach dem Dachfenster): Bato rutscht dasselbe heraus. Mit nur einem der beiden fragt er zurück, was fehlt.
 - **Verbinden:** *dreimal* + *Er hat geschlafen* → **Bato war wach**.
 - **[M]** Bato nach *Bato war wach*, dann nach *Es war das Mädchen* fragen (Reihenfolge beliebig). Er wird unruhig: „Es war ein Soldat.“ Dann gibt er zu: „Ich habe ihn aufgehoben.“ (den Bleistift) und zündet mitten am Tag seine Laterne an. **Pflicht:** Ohne diese Konfrontation endet der Sonntag nicht.
+- **[M]** Batos Plane (Pflicht): Auf dem alten **Ponton** am linken Ufer liegt die Plane. Vor der Konfrontation verbietet Bato es: „Ne diraj! Morgen früh fährt die Skela.“ Danach mit Bato reden: „Die Plane auf dem Ponton. Jela braucht sie.“ → „Nimm sie. Bevor ich es mir anders überlege.“ Dann die **Plane vom Ponton nehmen**.
 - **[M]** Zlata: „(Ihr sagen, dass Bato wach war.)“ → „(Mala fragen.)“ Mala schüttelt den Kopf, noch nicht.
 - Auf dem Weg zur Brücke gibt Zlata die Decke: „Uzmite deku. Hladno je kod vode.“
 - **[M]** Am rechten Ufer die **Decke** auf Mala ziehen: „Ich war noch da, Marko.“
@@ -187,20 +202,36 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
 - **[M]** Davor: „Kad ćete doći?“ Marko übersetzt, was der Satz meinte: „Kommt doch.“ Alle gehen in den Hof, Jela gibt nach.
 
 **19. Mates zwei Erkenntnisse**
-- **[M]** Lena: „Du wolltest deinem Großvater etwas sagen.“ → „Došli smo, dida.“ Mate: „Das ist Davor.“ (Das ist die erste Erkenntnis.) „Djede“ aus dem Wörterbuch ist richtig, aber nicht seins. Deutsch ist nicht für ihn.
+- **[M]** Lena: „Zeig ihm die beiden Fotos.“ Mate erkennt den Stein und die Buchstaben: „Wer setzt sich auf unseren Stein?“ (Ohne die Fotos hört er „dida“, sucht aber noch einen kleinen Jungen.)
+- **[M]** Lena: „Du wolltest deinem Großvater etwas sagen.“ → „Došli smo, dida.“ Mate: „Das ist Davor. Der graue Mann auf unserem Stein.“ (Das ist die erste Erkenntnis.) „Djede“ aus dem Wörterbuch ist richtig, aber nicht seins. Deutsch ist nicht für ihn. Mit Lenas Strophe von der Brücke geht es auch.
 - **[M]** Lena: „Stell dich ans Tor. Halt die Hand auf.“ Mate legt ihr den Schlüssel in die Hand, seine Hand geht hindurch. Dann: „Ich bin nicht mehr da.“ (Das ist die zweite Erkenntnis.)
-- **[M]** Jela: „Zeigen Sie ihm, wie man die Feigen einpackt?“ → „Von unten nach oben. Wie einen Verband am Bein.“ Davor packt ein. Mate legt den Schlüssel in die Astgabel.
-- **[M]** Den **Schlüssel** aus der Astgabel nehmen und **Lena geben**.
+- **[M]** Jela: „Zeigen Sie ihm, wie man die Feigen einpackt?“ → „Von unten nach oben. Wie einen Verband am Bein.“ Davor packt den kleinen Baum in Jute, den großen in **Batos Plane** (ohne Plane sagt Jela, wofür sie fehlt). Mate legt den Schlüssel in die Astgabel.
+- **[M]** Den **Schlüssel** aus der Astgabel nehmen und **Lena geben**. Am Ring hängt ein **kleiner Schlüssel** mit einer roten Sieben. Jela: Mates Garage, „u Bratstva i jedinstva, kod stare pošte“. Davor gibt ihn Marko: „Wenn jemand das Auto braucht, soll er es nehmen.“
 - **[G]** Mala übernimmt: Hinübergehen zu Mate → „(Ihre Hand nehmen.)“. In der Zwischenwelt die Haltestelle mit dem Feigenkübel benutzen → „Bitte einsteigen.“ Durch das steinerne Tor zurück.
 - Im Hof gibt Davor Marko seine Karte: „Falls Sie mal in München sind.“ Der Verkauf bleibt offen: „Ich kann hier nicht leben. Aber ich kann kommen.“
 
-Am Ende des Sonntags sagt Marko: „Es ist bald elf.“ Dann kommt die Karte „Finale – Die letzte Fähre“.
+### Mates Garage und die Batterie (Pflicht)
+
+**20. Die zweite Batterie**
+- **[M]** Kata (nach Vlados Entscheidung): „Fährt er wirklich? Heute Nacht?“ → Der TAM braucht zwei Batterien hintereinander. Die zweite ist tot; ohne Ersatz dreht der Anlasser nicht. Eine Autobatterie würde für einmal Anlassen reichen.
+
+**21. Ein alter Straßenname**
+- „Bratstva i jedinstva“ steht auf keinem Plan von heute. Nach dem Krieg wurden die Straßen umbenannt.
+- **[M]** Im **Café Zdravko** den **Stadtplan** mit der **alten Karte** benutzen. Zdravko erklärt die Umbenennung. Im Vergleichsbild auf dem Plan von 2011 die Straße antippen, die der alten entspricht: vom Postblock am Bahndamm entlang nach Süden bis zur Flussbiegung → **Lipova**. (Die Brestova beginnt nicht am Postblock, die Jasenova läuft quer, die Omladinska heißt auf beiden Karten gleich.) Die **Garagen in der Lipova** stehen jetzt auf dem Plan.
+
+**22. Garage sieben**
+- Über zwei Toren sind die Nummern abgeblättert; an fremden Toren probiert Marko nicht herum.
+- **[G]** Die Tore ohne Nummer ansehen: hinter dem vierten der helle Mercedes mit der Thermoskanne.
+- **[M]** Das **vierte Tor** mit dem kleinen Schlüssel öffnen, die **Motorhaube** öffnen, die **Batterie** nehmen (abgeklemmt, „wie jeden Winter“).
+- **[M]** Im Vulkanizer **Kata die Batterie geben**: „Eigentlich zu klein für den TAM. Aber für einmal Anlassen reicht sie.“
+
+Danach sagt Marko: „Bis elf ist noch Zeit.“ **[M]** In den **Vulkanizer** gehen (oder ins Bett) → „(Es ist Zeit. Zum Lastwagen.)“. Ist noch etwas offen (etwa Veras Brief), nennt Marko es vorher. Wer „Noch nicht“ gewählt hat, fragt später Vlado in der Werkstatt: „Es ist gleich elf. Fahren wir?“ Dann kommt die Karte „Finale – Die letzte Fähre“.
 
 ---
 
 ## Finale – Die letzte Fähre
 
-- Im Hof des Vulkanizers „(Einsteigen.)“: Vlado fährt den TAM, Kata ist mit dabei.
+- Im Hof des Vulkanizers springt der TAM beim ersten Mal an; Kata: „Die zweite ist aus Mate Zelenikas Mercedes.“ „(Einsteigen.)“: Vlado fährt den TAM, Kata ist mit dabei.
 - In Skela: **[M]** die **Glocke** läuten. Die Geisterfähre kommt. Bato erkennt: „Steig ein. Diesmal fahre ich.“ → **Zwischenstand 1**.
 - **[G]** Den **Anleger** ansehen → „(Einsteigen.)“. Mala fährt mit Bato über den Fluss.
 - **[M]** Über die Brücke ans linke Ufer: „Darum die Glocken.“ – „Heute ist einer gekommen.“ → **Zwischenstand 2**. Zlata erzählt.
@@ -231,17 +262,17 @@ Am Ende des Sonntags sagt Marko: „Es ist bald elf.“ Dann kommt die Karte „
 
 ---
 
-## Vertiefungen (Ausbau, alle freiwillig, alle getestet)
+## Vertiefungen (freiwillig)
 
-Die Pflichtschritte oben bleiben die Pflichtschritte. Diese Stränge liegen daneben; das Hinweissystem führt zu ihnen (Themen „Das Lied vom Fenster“, „Die Brücke sehen“, „Dinos Preis“, „Die letzte Strophe“, „Das Blatt“, „Veras Nacht“, „Komm es holen“, „Der Brief in der Tasche“, „Zdravkos Schublade“, „Die Mappe“, „Die Waage“, „Der Bleistift“). Hintergrund: `design/K3_AUSBAU.md`.
+Pflicht sind die Schritte oben, einschließlich der neuen Abschnitte 13a und 20–22. Diese Stränge liegen daneben; das Hinweissystem führt zu ihnen (Themen „Das Lied vom Fenster“, „Dinos Preis“, „Die letzte Strophe“, „Das Blatt“, „Veras Nacht“, „Komm es holen“, „Der Brief in der Tasche“, „Zdravkos Schublade“, „Die Mappe“, „Die Waage“, „Der Bleistift“). Was davon offen ist, wenn ein Tag endet, nennt Marko vorher. Hintergrund: `design/K3_AUSBAU.md`.
 
 **Das Lied vom Fenster (Freitag- oder Samstagnacht, Samstag, Sonntag)**
 - **[M]** Auf der Terrasse Liam: „What’s that song?“, dann „Do you want the words?“ → die sechs Zeilen in die Reihenfolge der Geschichte bringen: zum Wasser · das Lamm · die Mädchen an den Toren · die Liebste am Fenster · „Guten Abend“ · „Komm heute Abend“. Bec schreibt mit.
-- **[M]** Samstag im Hof, nach Jelas Schlüssel: Jela: „Lena wollte die Brücke sehen …“ → „Das Kind muss die Brücke sehen.“ Jela schickt die beiden am Nachmittag zur Brücke.
-- An der Alten Brücke stehen jetzt Davor, Lena und die Australier. **[M]** Dino: „Die Australier wollen am Brückenkopf spielen.“ Dino will eine wahre Geschichte: eine Notiz wählen (der Wartende, die Eierfrau, der Fahrer, Skela, die Brücke, die keiner gezählt hat).
+- Samstag schickt Jela Davor und Lena an die Brücke (mit dem Foto, Abschnitt 13). In alten Spielständen (Regel 1): Jela: „Lena wollte die Brücke sehen …“ → „Das Kind muss die Brücke sehen.“
+- An der Alten Brücke stehen jetzt Davor, Lena und die Australier. Während Davor und Lena unten am Ufer suchen, wartet Liam mit dem Spielen. **[M]** Dino: „Die Australier wollen am Brückenkopf spielen.“ Dino will eine wahre Geschichte: eine Notiz wählen (der Wartende, die Eierfrau, der Fahrer, Skela, die Brücke, die keiner gezählt hat).
 - **[M]** Liam: „Play it.“ Mit dem Zettel singt er bis zur letzten Strophe. Lena erkennt das Lied vom Telefon; Davor: „Immer vor der Stelle aufgehört.“ Lena lernt „Dođi, dragi, doveče.“ Ohne Zettel hört Liam am Fenster auf; dann die Worte aufschreiben und „Play it again. With the end.“
 - Samstagnacht auf der Terrasse singen die Australier richtig. Mala: „Schön richtig.“
-- **[M]** Sonntag am Tor: Lena: „Du wolltest deinem Großvater etwas sagen“ → „(Ihm die Zeile vom Fenster singen.)“ Mate: „Das ist Davor.“ Das ist der zweite Weg zur ersten Erkenntnis, neben „Došli smo, dida“.
+- **[M]** Sonntag am Tor (nach den Fotos): Lena: „Du wolltest deinem Großvater etwas sagen“ → „(Ihm die Zeile vom Fenster singen.)“ Mate: „Das ist Davor.“ Das ist der zweite Weg zur ersten Erkenntnis, neben „Došli smo, dida“.
 - Montag: Maja: Die Australier haben mit einem Video bezahlt.
 
 **Vera, Vlados Schwester (Freitag bis Finale)**
@@ -267,6 +298,7 @@ Die Pflichtschritte oben bleiben die Pflichtschritte. Diese Stränge liegen dane
 - **[G]** Im Hof des Vulkanizers das **Führerhaus** ansehen: Mala sieht durch das Blech ein Heft im Handschuhfach und eine Kassette im Radio.
 - **[M]** In der Werkstatt den **Schraubenzieher** von der Montiermaschine nehmen (Kata: „Bringen Sie ihn zurück.“). Im Hof das Führerhaus öffnen, dann den Schraubenzieher auf das **Handschuhfach**: das **Fahrtenbuch 1994**. Lesen: „14. I. Split–Skela · +1“, „15. I. 02:00 Skela · nitko“.
 - **[M]** Den Schraubenzieher auf das **Autoradio**: die **Kassette** „za put · Mala“. Am Ostbusbahnhof auf das **Taxi** ziehen: der Mercedes spielt sie. Am Ende der Strophe singt ein Mädchen mit.
+- Radio und Handschuhfach sieht man im geöffneten Führerhaus (erst „Öffne Führerhaus“): links das Lenkrad, in der Mitte das Radio mit der halb herausstehenden Kassette, rechts das Handschuhfach.
 - **[M]** Vlado das Fahrtenbuch geben oder die Notiz „Plus eins“ zeigen: „Mein Buch.“ Er nennt die zwei Uhr schon am Samstag. Am Sonntag sagt er in Teil 2: „Das wissen Sie aus dem Buch. Jetzt wissen Sie es von mir.“
 
 **Batos Blechkiste und das Fährbuch (Sonntag)**
@@ -281,12 +313,17 @@ Die Pflichtschritte oben bleiben die Pflichtschritte. Diese Stränge liegen dane
 - **[M]** In der Hütte am rechten Ufer bei Tag am **Mehlsack** ziehen: ein Stück Jute mit dem Stempel „SPLIT · XII 1993“. Vlado geben: „Mein Mehl.“
 - **[M]** Die **Spendertafel** an der neuen Brücke lesen, sobald Vlados Name bekannt ist: „V. Rajić, Mostar“. Vlado die Notiz zeigen: „Zweihundert Mark. Damit keiner mehr nachts läuten muss.“
 
-**Die Batterie (Sonntag, Finale)**
-- **[M]** Nach „Heute Nacht fahre ich“ Kata: „Fährt er wirklich?“ Der TAM braucht zwei Batterien; die zweite ist tot, Sonntag.
-- **[M]** Am Ostbusbahnhof den Taxifahrer: „Haben Sie eine Batterie?“ Er gibt seine Ersatzbatterie, für die Fahrt nach Skela: „Sagen Sie ihm, von wem.“
-- **[M]** Kata die **Batterie** geben. Im Finale springt der TAM beim ersten Mal an; Vlado: „Vom Taxi.“ Er nickt zur Stadt hin. Am Montag fragt der Taxifahrer, was er gesagt hat.
+**Die Batterie vom Taxi (nur alte Spielstände, Regel 1)**
+- In alten Spielständen ab Samstagnacht ist die zweite Batterie nur **schwach**: Ohne Ersatz springt der TAM beim dritten Versuch an (Kata: „Die schwache hat gerade noch gereicht.“).
+- **[M]** Am Ostbusbahnhof den Taxifahrer: „Haben Sie eine Batterie?“ Er gibt seine Ersatzbatterie: „Sagen Sie ihm, von wem.“ Kata die Batterie geben. Im Finale springt der TAM beim ersten Mal an; Vlado: „Vom Taxi.“
+- Im Hauptweg (Regel 2) kommt die Batterie aus Mates Garage (Abschnitte 20–22); das Taxi bietet keine an.
 
-## Varianten und Nebenwege (alle getestet)
+## Varianten und Nebenwege
+
+- **Alte Spielstände (Regel 1):** Wer einen Spielstand ab Samstagnacht lädt, spielt den bisherigen Pflichtweg weiter: kein Stein unter der Brücke, keine Plane, keine Garage; die Feigen gehen mit Jute, Mates Erkenntnis ohne Fotos. Auch hier enden die Tage bewusst (Herberge, Werkstatt). Spielstände bis Samstag (einschließlich) wechseln auf den neuen Hauptweg.
+- **Reihenfolge am Sonntag:** Batos Plane gibt es erst nach der Konfrontation mit Bato; die Feigen erst mit der Plane; den Garagenschlüssel erst, wenn Mate den Schlüssel losgelassen hat. Was davor liegt, ist frei: Vlado, Mala, Kata und Zelenika lassen sich in beliebiger Folge besuchen.
+- **Der Fotovergleich:** Jeder Felsen bekommt eine eigene Begründung; das Foto lässt sich beliebig oft vergleichen. Mala sieht unter dem Quader erst etwas, wenn Marko den Standort gefunden hat („Was willst du darunter?“).
+- **Kartenvergleich:** Jede falsche Straße bekommt eine geometrische Begründung; die Karte lässt sich jederzeit wieder öffnen.
 
 - **Westufer vor der Straßenbrücke:**
   - Mala geht über keine Brücke. „(Allein gehen.)“ → die Leine zieht, Marko kehrt um.

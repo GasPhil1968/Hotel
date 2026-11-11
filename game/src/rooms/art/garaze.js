@@ -75,6 +75,8 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0); back(b,tod); garages(b,S||{
 function walk(x,y){ return y>=118 && y<=140 && x>=8 && x<=310; }
 var spots={ exit:[0,96,6,48], sign:[4,36,36,22], woman:[WIN[0]-3,WIN[1]-3,9,9] };
 for (var i=0;i<6;i++) spots['g'+(i+1)]=[gx(i)+3,DT-6,GW-3,GY-DT+6];
+// offen: Tor sieben ist nur noch der hochgekippte Streifen oben, damit es Auto, Haube und Kalender nicht überdeckt
+spots.g4=function(S){ return (S&&S.g7open)?[gx(3)+3,DT-6,GW-3,9]:[gx(3)+3,DT-6,GW-3,GY-DT+6]; };
 var X4=gx(3), TOPC=DT+8;
 spots.car=[X4+8,TOPC-3,30,32]; spots.hood=[X4+9,TOPC+5,28,8]; spots.battery=[X4+12,TOPC+6,10,6]; spots.calendar=[X4+33,DT+5,8,10]; spots.thermos=[X4+21,TOPC,8,7];
 var stands={ exit:[10,126,'L'], sign:[30,124,'L'], woman:[80,124,'B'] };

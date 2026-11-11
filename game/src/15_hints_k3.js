@@ -6,6 +6,9 @@
 'use strict';
 function F(G,k){ return !!G.flags[k]; } function N(G,id){ return G.notes.indexOf(id)>=0; } function I(G,id){ return G.inv.indexOf(id)>=0; }
 function P(G,list){ return list.indexOf(G.phase)>=0; }
+function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
+function roomOf(G){ return (G.pos&&G.pos[G.active||'marko']&&G.pos[G.active||'marko'].room)||''; }
+function inHostel(G){ var r=roomOf(G); return r==='herberge'||r==='zimmer'; }
 function inSkela(G){ return /^skela_|^zlata_k$/.test((G.pos&&G.pos.marko&&G.pos.marko.room)||''); }
 function vClosed(G){ return F(G,'k3.v.angry') && (G.flags['k3.moves']||0)<=(G.flags['k3.v.closedAt']||0)+1 && !F(G,'k3.v.drawer'); }
 M.HINTS_K3=[
@@ -276,7 +279,7 @@ M.HINTS_K3=[
      'Kein Wörterbuch. Mates eigene Schrift.',
      'In Mates Schublade in der Stube liegen Lenas Postkarten.',
      function(G){ return (N(G,'b3_cards')&&N(G,'b3_pencil'))?'„Lenas Postkarten“ und „Dragi dida“ verbinden.':'Die Schublade in der Stube öffnen und die Postkarten ansehen.'; }]},
- {id:'d3s',t:'Lenas Satz',open:function(G){ return N(G,'b3_invite') && N(G,'b3_dida') && F(G,'k3.b.invite') && !F(G,'k3.b.son'); },
+ {id:'d3s',t:'Lenas Satz',open:function(G){ return N(G,'b3_invite') && N(G,'b3_dida') && F(G,'k3.b.invite') && !F(G,'k3.b.son') && (!R2(G) || F(G,'k3.b.doubt')); },   // Regel 2: erst die Fotos (r3e)
   s:['Lena will Mate antworten, auf „Kad ćete doći?“',
      'Die Antwort auf „Wann kommt ihr?“ ist kurz.',
      '„Došli smo“ heißt: Wir sind gekommen. Die Anrede steht in Mates Schrift.',
@@ -286,7 +289,7 @@ M.HINTS_K3=[
      function(G){ return N(G,'b3_gate')?'Jela hat erzählt: Mate stand am Tor, und den Schlüssel bekam der Kleinste.':'Mate stand am Tor, wenn ein Bus kam. Und den Schlüssel bekam der Kleinste. Lena weiß es von Jela.'; },
      'Lena ist die Kleinste.',
      'Lena bitten, sich ans Tor zu stellen und die Hand aufzuhalten.']},
- {id:'d3u',t:'Die Feigen',open:function(G){ return F(G,'k3.b.dead') && !F(G,'k3.b.figs'); },
+ {id:'d3u',t:'Die Feigen',open:function(G){ return F(G,'k3.b.dead') && !F(G,'k3.b.figs') && (!R2(G) || I(G,'cerada')); },   // Regel 2: ohne Plane führen r3f/r3g
   s:['Für heute Nacht ist Frost angesagt.','Jela weiß, wie man Feigen einpackt. Davor kann es lernen.','Mit Jela über die Feigen reden und übersetzen.','Jela fragen, und übersetzen, während Davor einpackt.']},
  {id:'d3v',t:'Für den Kleinsten',open:function(G){ return F(G,'k3.b.keyFree') && !F(G,'k3.b.keyLena'); },
   s:['In der Astgabel liegt ein Schlüssel.','Für wen war er immer?','Für den Kleinsten.',function(G){ return F(G,'k3.b.keyTaken')?'Lena den Schlüssel geben.':'Den Schlüssel aus der Astgabel nehmen und Lena geben.'; }]},
@@ -346,7 +349,7 @@ M.HINTS_K3=[
      'Marko kennt das Lied. Jeder aus Sarajevo kennt es. Es fehlt nur die Reihenfolge, in der die Geschichte geht.',
      'Liam will die Worte. Bec schreibt mit, wenn einer langsam genug spricht.',
      'Auf der Terrasse mit Liam reden: „Do you want the words?“']},
- {id:'x3b',t:'Die Brücke sehen',open:function(G){ return !(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.b.jela') && !F(G,'k3.s.trip'); },
+ {id:'x3b',t:'Die Brücke sehen',open:function(G){ return !R2(G) && !(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.b.jela') && !F(G,'k3.s.trip'); },
   s:['Lena wollte die Brücke sehen. Davor nicht. Heute will er mit dem Haus allein sein.',
      'Davor hört auf niemanden. Außer auf Jela.',
      'Jela entscheidet, ob die beiden gehen. Sie fragt, was Marko denkt.',
@@ -421,16 +424,91 @@ M.HINTS_K3=[
      'Seine eigene Schrift ist ein Beleg, den er nicht wegreden kann.',
      'Bato steht im Schuppen.',
      'Bato das Fährbuch zeigen: die Notiz „Nisam išao“.']},
- {id:'x3q',t:'Zwei Batterien',open:function(G){ return G.phase==='k3_d3' && N(G,'v3_battery') && !F(G,'k3.v.battery'); },
-  s:['Der TAM braucht zwei Batterien. Kata hat eine. Sonntag.',
-     'Wer in dieser Stadt hat ein altes Auto, das er pflegt, und seit achtzig Ersatz für alles?',
-     function(G){ return I(G,'akumulator')?'Die Batterie gehört in den TAM. Kata weiß, wohin.':'Der Taxifahrer am Ostbusbahnhof. Er lehnt am Mercedes.'; },
-     function(G){ return I(G,'akumulator')?'Kata im Vulkanizer die Batterie geben.':'Den Taxifahrer am Ostbusbahnhof nach einer Batterie fragen.'; }]},
- // ---------------- zwischen zwei Abschnitten: alles erledigt, der Wechsel kommt von selbst (96_k3_story.js, M.k3DayReady)
- {id:'x3day',t:'Der Tag geht zu Ende',open:function(G){ return P(G,['k3_pro','k3_d1','k3_d2','k3_d2_n','k3_d3','k3_epi']) && !!(M.k3DayReady && M.k3DayReady(G)); },
-  s:[function(G){ return ({k3_pro:'Die Brücke ist geklärt, das Zimmer genommen. Es wird Abend.',k3_d1:'Skela steht auf dem Plan, die Schublade ist offen. Für heute reicht es.',k3_d2:'Für den Samstag ist alles getan.',k3_d2_n:'Morgen. Bei Tag.',k3_d3:'Alles ist bereit. Um elf kommt Vlado.',k3_epi:'Mala war auf der Brücke. Gegen Mittag kommt Nada.'})[G.phase]||'Für heute ist alles getan.'; },
-     'Der Rest des Tages kommt von selbst.',
-     'Nichts mehr suchen.',
-     'Einen Moment warten: Der nächste Abschnitt beginnt von selbst.']}
+ // Regel 2: bis zum Garagenschlüssel; danach führen r3h, r3i und r3j weiter (Straße, Garage, Batterie). Solange Mate seinen Schlüsselring
+ // festhält, nennt Stufe 4 die Abhängigkeit (Mates Fall), nicht einen Schritt, der noch nicht geht.
+ {id:'x3q',t:'Zwei Batterien',open:function(G){ return G.phase==='k3_d3' && N(G,'v3_battery') && !F(G,'k3.v.battery') && !(R2(G) && (F(G,'k3.b.garageKey')||N(G,'b3_garage'))); },
+  s:[function(G){ return R2(G)?'Der TAM braucht zwei Batterien. Kata hat eine, die zweite ist tot. Ohne sie fährt heute Nacht keiner.':'Der TAM braucht zwei Batterien. Kata hat eine. Sonntag.'; },
+     function(G){ return R2(G)?'Eine Autobatterie reicht für einmal Anlassen. Wer hat ein Auto, das keiner mehr fährt?':'Wer in dieser Stadt hat ein altes Auto, das er pflegt, und seit achtzig Ersatz für alles?'; },
+     function(G){ if (I(G,'akumulator')) return 'Die Batterie gehört in den TAM. Kata weiß, wohin.'; if (!R2(G)) return 'Der Taxifahrer am Ostbusbahnhof. Er lehnt am Mercedes.';
+       return F(G,'k3.b.keyFree')?'Mate hat seinen Schlüsselring losgelassen. Daran hängt mehr als der Hausschlüssel.':'Mate Zelenika hatte ein Auto. Seinen Schlüsselring hält er fest, solange er am Tor wartet.'; },
+     function(G){ if (I(G,'akumulator')) return 'Kata im Vulkanizer die Batterie geben.'; if (!R2(G)) return 'Den Taxifahrer am Ostbusbahnhof nach einer Batterie fragen.';
+       if (F(G,'k3.b.keyTaken')) return 'Im Hof von Haus Zelenika Lena Mates Schlüssel geben; am Ring hängt ein kleiner.';
+       if (F(G,'k3.b.keyFree')) return 'Im Hof von Haus Zelenika den Schlüssel aus der Astgabel nehmen und Lena geben.';
+       return 'Noch nicht: Erst muss Mate aufhören zu warten. Dann legt er den Schlüsselring aus der Hand.'; }]},
+ // ---------------- Revision nach dem Prüfbericht (Regel 2): neue Pflichtschritte
+ {id:'r3a',t:'Der Stein auf dem Foto',open:function(G){ return G.phase==='k3_d2' && R2(G) && F(G,'k3.s.photoTrip') && !F(G,'k3.s.photo') && !I(G,'foto_1965') && !F(G,'k3.s.down'); },
+  s:['Davor sucht den Stein, auf dem ihn sein Vater 1965 unter der Brücke fotografiert hat. Er findet ihn nicht.',
+     'Davor und Lena sind an die Alte Brücke gegangen. Das Foto hat Davor dabei.',
+     'An der Alten Brücke stehen die beiden am Brückenkopf.',
+     'An der Alten Brücke mit Davor reden: „Zeigen Sie mir das Foto.“']},
+ {id:'r3b',t:'Wo Mate stand',open:function(G){ return G.phase==='k3_d2' && R2(G) && I(G,'foto_1965') && !F(G,'k3.s.spot'); },
+  s:['Auf dem Foto: der Bogen, am linken Rand ein runder Turm, vorn eine flache Platte mit einer Kerbe.',
+     'Wie groß der Turm im Bild ist und wo der Scheitel des Bogens liegt, hängt davon ab, wo man steht.',
+     'Unten am Ufer liegen vier Felsen. Das Foto an jedem hochhalten und mit dem Blick von dort vergleichen.',
+     function(G){ return G.pos&&G.pos.marko&&G.pos.marko.room==='podmost'?'Unter der Brücke das Foto an die flache Platte halten.':'An der Alten Brücke die Uferstufen hinunter ans Ufer gehen.'; }]},
+ {id:'r3c',t:'Unter dem Quader',open:function(G){ return G.phase==='k3_d2' && R2(G) && F(G,'k3.s.spot') && !F(G,'k3.s.initials'); },
+  s:['Der Standort stimmt. Aber auf der Platte liegt ein schwerer Quader der alten Brücke.',
+     'Den Quader hebt keiner. Darunter sehen kann nur eine.',
+     'Mala sieht durch Holz, Blech und Stein.',
+     'Als Mala den Quader ansehen.']},
+ {id:'r3d',t:'Davor auf dem Stein',open:function(G){ return G.phase==='k3_d2' && R2(G) && F(G,'k3.s.initials') && !F(G,'k3.s.photo'); },
+  s:['Unter dem Quader sind Buchstaben eingeritzt: M · D · 1965.',
+     'Davor muss es hören. Dann weiß er, dass es sein Stein ist.',
+     'Davor steht unten am Ufer.',
+     'Unter der Brücke mit Davor reden.']},
+ {id:'r3e',t:'Zwei Fotos',open:function(G){ return G.phase==='k3_d3' && R2(G) && F(G,'k3.s.photo') && F(G,'k3.b.invite') && !F(G,'k3.b.doubt') && !F(G,'k3.b.son'); },
+  s:['Lena hat zwei Fotos: Davor mit fünf auf dem Stein, und Davor heute auf demselben Stein.',
+     'Mate wartet auf einen kleinen Jungen. Er muss sehen, dass der Junge groß geworden ist.',
+     'Lena will ihm die Fotos am Tor zeigen, da, wo er immer stand.',
+     'Im Hof Lena bitten, Mate die beiden Fotos zu zeigen.']},
+ {id:'r3f',t:'Die große Feige',open:function(G){ return G.phase==='k3_d3' && R2(G) && N(G,'b3_tarp') && !F(G,'k3.b.figs') && !I(G,'cerada'); },
+  s:['Für den großen Feigenbaum reicht die Jute nicht. Letzten Winter lag Batos Plane von der Fähre darüber.',
+     'Die Plane ist zurück in Skela, auf Batos altem Ponton am linken Ufer. Bato passt auf sie auf.',
+     function(G){ return F(G,'k3.bato.uneasy')?'Bato hat gehört, was in der Nacht war. Vielleicht lässt er die Fähre jetzt los.':'Solange Bato glaubt, dass morgen früh eine Fähre fährt, gibt er die Plane nicht her. Erst muss er die Wahrheit über die Nacht hören.'; },
+     function(G){ return F(G,'k3.a.tarpOk')?'In Skela am linken Ufer die Plane vom Ponton nehmen.':(F(G,'k3.bato.uneasy')?'In Skela mit Bato über die Plane reden.':'Bato in Skela beides sagen: dass er wach war und wer geläutet hat.'); }]},
+ {id:'r3g',t:'Die Plane',open:function(G){ return G.phase==='k3_d3' && R2(G) && I(G,'cerada') && !F(G,'k3.b.figs'); },
+  s:['Batos Plane. Groß genug für einen Baum.',
+     'Davor soll die Feigen selbst einpacken. Jela zeigt es ihm, wenn er wieder dazugehört.',
+     function(G){ return F(G,'k3.b.invite')?'Im Hof von Haus Zelenika.':'Erst muss Davor verstehen, was die Briefe seines Vaters sagen wollten.'; },
+     function(G){ return F(G,'k3.b.invite')?'Im Hof Jela bitten, Davor das Einpacken zu zeigen.':'Im Haus Zelenika Mates Briefe lesen.'; }]},
+ {id:'r3h',t:'Bratstva i jedinstva',open:function(G){ return G.phase==='k3_d3' && R2(G) && N(G,'b3_garage') && !N(G,'b3_street'); },
+  s:['Mates Garage liegt „in der Bratstva i jedinstva, bei der alten Post“. Auf Markos Plan gibt es diese Straße nicht.',
+     'Nach dem Krieg wurden die Straßen umbenannt, auf beiden Seiten. Die alten Namen stehen nur noch auf alten Karten.',
+     'In Zdravkos Café hängt eine Karte von 1985.',
+     'Im Café Zdravko den Stadtplan an die alte Landkarte halten und die Straßen vergleichen.']},
+ {id:'r3i',t:'Garage sieben',open:function(G){ return G.phase==='k3_d3' && R2(G) && N(G,'b3_street') && !F(G,'k3.b.garageOpen'); },
+  s:['Mates Garage, die Sieben, in der Lipova am Bahndamm.',
+     'Über zwei Toren sind die Nummern abgeblättert. An fremden Toren schließt Marko nicht auf gut Glück.',
+     'Mala sieht durch das Blech, was drinsteht. Mate hatte immer eine Thermoskanne dabei.',
+     function(G){ return F(G,'k3.b.g7')?'In der Lipova das vierte Tor mit dem kleinen Schlüssel öffnen.':'In der Lipova als Mala die beiden Tore ohne Nummer ansehen.'; }]},
+ {id:'r3j',t:'Mates Batterie',open:function(G){ return G.phase==='k3_d3' && R2(G) && F(G,'k3.b.garageOpen') && !F(G,'k3.v.battery'); },
+  s:['In Mates Mercedes steckt eine Batterie, die keiner mehr braucht. Kata braucht genau so eine.',
+     function(G){ return I(G,'akumulator')?'Die Batterie ist da. Sie gehört in den TAM.':'Sie sitzt unter der Haube.'; },
+     function(G){ return I(G,'akumulator')?'Kata sitzt im Vulkanizer.':'Die Haube geht von innen auf, die Fahrertür ist offen.'; },
+     function(G){ if (I(G,'akumulator')) return 'Kata im Vulkanizer die Batterie geben.'; var r=G.rooms&&G.rooms.garaze; return (r&&r.hood)?'Die Batterie nehmen.':'Die Motorhaube öffnen.'; }]},
+ // ---------------- zwischen zwei Abschnitten: alles erledigt (96_k3_story.js, M.k3DayReady). Freitag, Samstag und Sonntag enden bewusst
+ // (Herberge, Bett oder Werkstatt), die übrigen Abschnitte wechseln von selbst. Je Abschnitt ein eigenes Thema: Die Hinweisgeschichte
+ // (GS.hints) merkt sich die erreichte Stufe je Kennung; ein gemeinsames Thema finge am nächsten Tag mit der Stufe des Vortags an.
+ {id:'x3day',t:'Der Tag geht zu Ende',open:function(G){ return G.phase==='k3_pro' && !!(M.k3DayReady && M.k3DayReady(G)); },
+  s:['Die Brücke ist geklärt, das Zimmer genommen. Es wird Abend.','Der Rest des Tages kommt von selbst.','Nichts mehr suchen.','Einen Moment warten: Der nächste Abschnitt beginnt von selbst.']},
+ {id:'x3fr',t:'Freitagabend',open:function(G){ return G.phase==='k3_d1' && !!(M.k3DayReady && M.k3DayReady(G)); },
+  s:['Skela steht auf dem Plan, die Schublade ist offen. Für heute reicht es.',
+     'Der Tag endet erst, wenn Marko es will. Vorher sagt er, was noch offen ist.',
+     'Der Tag endet in der Herberge.',
+     function(G){ return inHostel(G)?'Oben im Zimmer das Bett benutzen.':'In die Herberge gehen und den Tag beenden.'; }]},
+ {id:'x3sa',t:'Samstagabend',open:function(G){ return G.phase==='k3_d2' && !!(M.k3DayReady && M.k3DayReady(G)); },
+  s:['Für den Samstag ist alles getan.',
+     'Der Tag endet erst, wenn Marko es will. Vorher sagt er, was noch offen ist.',
+     'Der Tag endet in der Herberge.',
+     function(G){ return inHostel(G)?'Oben im Zimmer das Bett benutzen.':'In die Herberge gehen und den Tag beenden.'; }]},
+ {id:'x3sn',t:'Bei Tag',open:function(G){ return G.phase==='k3_d2_n' && !!(M.k3DayReady && M.k3DayReady(G)); },
+  s:['Morgen. Bei Tag.','Der Rest der Nacht kommt von selbst.','Nichts mehr suchen.','Einen Moment warten: Der nächste Abschnitt beginnt von selbst.']},
+ {id:'x3so',t:'Kurz vor elf',open:function(G){ return G.phase==='k3_d3' && !!(M.k3DayReady && M.k3DayReady(G)); },
+  s:['Alles ist bereit. Um elf kommt Vlado.',
+     'Der Tag endet erst, wenn Marko es will. Vorher sagt er, was noch offen ist.',
+     'Vlado und Kata warten in der Werkstatt am Bulevar.',
+     'In der Werkstatt Vlado fragen, ob ihr fahrt.']},
+ {id:'x3ep',t:'Gegen Mittag',open:function(G){ return G.phase==='k3_epi' && !!(M.k3DayReady && M.k3DayReady(G)); },
+  s:['Mala war auf der Brücke. Gegen Mittag kommt Nada.','Der Rest des Tages kommt von selbst.','Nichts mehr suchen.','Einen Moment warten: Der nächste Abschnitt beginnt von selbst.']}
 ];
 })(M);
