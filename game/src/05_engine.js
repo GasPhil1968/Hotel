@@ -169,7 +169,23 @@ function routineTick(a){ if (E.busy || E.dlg || E.overlay || E.screen!=='game' |
 function holdNpc(a){ if (!a||!a.routine) return; if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); } a.rtUntil=gt+9000; }
 E.holdNpc=holdNpc;
 var MOODHD={sad:'s',shock:'w'}, MOODC=new WeakMap();   // Posen sind Cache-Schlüssel (JSON), deshalb keine Zusatzfelder an ihnen
-function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood]; if (!m||!p||(p.hd&&p.hd!=='n')) return p; var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } return c[m]||(c[m]=Object.assign({},p,{hd:m})); }
+function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood];
+  if (m && p && !(p.hd&&p.hd!=='n')){ var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } p=c[m]||(c[m]=Object.assign({},p,{hd:m})); }
+  var u=p?umbrellaStage(a):0; if (u>=2){ var c2=UMBC.get(p); if (!c2){ c2={}; UMBC.set(p,c2); } p=c2[u]||(c2[u]=Object.assign({},p,{um:u})); }
+  return p; }
+// Regenschirm (Wunsch des Autors: Ankunft in Mostar im Regen): Marko trägt einen, wo das Wetter der Phase Regen ist und der Raum es sagt
+// (room.rain aus der Kunst: true, oder (x,y) → im Regen?). Im Regen offen (Stufe 5), unter einem Dach zu und weggesteckt (Stufe 1, nicht
+// gemalt); dazwischen geht er in vier Stufen zu 75 ms auf oder zu. Beim Raumwechsel gilt der neue Zustand sofort.
+var UMBC=new WeakMap();
+function umbrellaWant(a){ if (a.id!=='marko' || !room || !room.rain || !GS || a.ghost) return 0;
+  var w=(M.scn&&M.scn.weather)?M.scn.weather(GS):'calm'; if (w!=='rain') return 0;
+  return (typeof room.rain==='function'?room.rain(a.x,a.y,GS):room.rain)?5:1; }
+function umbrellaStage(a){ var want=umbrellaWant(a); if (!want){ a.umK=0; a.umRoom=null; return 0; }
+  if (a.umRoom!==room || !a.umK){ a.umRoom=room; a.umK=want; a.umT=gt; return want; }
+  var dt=Math.max(0,gt-(a.umT||gt)); a.umT=gt;
+  if (a.umK<want) a.umK=Math.min(want,a.umK+dt/75); else if (a.umK>want) a.umK=Math.max(want,a.umK-dt/75);
+  return Math.round(a.umK); }
+E.umbrellaStage=umbrellaStage;
 function actorPose0(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
     if (a.ghost){ var fl=a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); if (a.id==='mala'){ var wS=anims.walkS||A_.walkS, wF=anims.walkF||A_.walkF, wB=anims.walkB||A_.walkB; return (a.f==='F'?wF:(a.f==='B'?wB:wS))[a.fi%8]; } return fl[0][0]; }
     var wS2=anims.walkS||A_.walkS, wF2=anims.walkF||A_.walkF, wB2=anims.walkB||A_.walkB; return (a.f==='F'?wF2:(a.f==='B'?wB2:wS2))[a.fi%8]; }
@@ -687,7 +703,7 @@ M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt fü
       // Prüfbericht K3-01 (Nebenbefund): Rechtecke aus perspektivischen Ecken können eine negative Breite oder Höhe haben (K4 Zug, K1 Schuppenfenster) – dann trifft sie kein Klick
       if (Array.isArray(h.r) && h.r.length===4 && !Object.getOwnPropertyDescriptor(h.r,0).get && (h.r[2]<0||h.r[3]<0)){ var q=h.r; h.r=[q[2]<0?q[0]+q[2]:q[0], q[3]<0?q[1]+q[3]:q[1], Math.abs(q[2]), Math.abs(q[3])]; }
       return h; });
-  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints};
+  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints,rain:A.rain};
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);
   return r; };

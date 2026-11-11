@@ -23,7 +23,7 @@ M.HINTS_K3=[
      'Die Altstadt liegt am Fluss. Dort gibt es Herbergen.',
      'Die Herberge „Neretva“ steht auf dem Stadtplan.',
      'Zur Herberge gehen und sich bei Maja eintragen.']},
- {id:'p3c',t:'Die Brücke, die alle kennen',open:function(G){ return G.phase==='k3_pro' && I(G,'plan') && !N(G,'l3_mybridge'); },
+ {id:'p3c',t:'Die Brücke, die alle kennen',open:function(G){ return G.phase==='k3_pro' && I(G,'plan') && F(G,'k3.p.checkin') && !N(G,'l3_mybridge'); },
   s:['Mala erinnert sich an eine Brücke, die nicht mehr da war. Die berühmteste Brücke der Stadt war im Krieg auch nicht mehr da.',
      'Ob es diese Brücke war, kann nur Mala sagen. Sie muss sie sehen.',
      'Die Alte Brücke liegt am Ende des Kujundžiluk.',

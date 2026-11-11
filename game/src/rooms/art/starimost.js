@@ -427,6 +427,7 @@ function curS(){ return (M.GS&&M.GS.rooms&&M.GS.rooms.starimost)||{}; }
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 M.defineArt('starimost',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
     exit:[0,58,14,86],

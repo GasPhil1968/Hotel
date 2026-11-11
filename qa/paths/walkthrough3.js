@@ -37,9 +37,10 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await choose('(Antworten.)'); await flag('k3.p.sms', 'yes'); await log('Nada geantwortet: „Stigao sam. Javim se.“');
     await act('read', 'board'); await note('p3_munich'); await log('Tafel: MÜNCHEN · subota');
     await talk('kioskm', 'Einen Stadtplan'); await bye('Danke'); await inv('plan'); await flag('k3.p.plan');
-    await expect(await D.ev(() => !!(M.GS.map.herberge && M.GS.map.kujundziluk && M.GS.map.starimost)), 'Herberge, Kujundžiluk und Alte Brücke auf dem Plan'); await log('Stadtplan vom Kiosk');
+    await expect(await D.ev(() => !!(M.GS.map.herberge && !M.GS.map.kujundziluk && !M.GS.map.starimost)), 'nur die Herberge auf dem Plan (erst die Herberge, dann die Brücke)'); await log('Stadtplan vom Kiosk');
     await go('herberge'); await log('Herberge „Neretva“');
-    await talk('maja', 'Ich möchte mich eintragen'); await choose('(Bei Abreise „28.11.'); await bye('Danke, Maja'); await flag('k3.p.checkin'); await log('bei Maja eingetragen, Abreise 28.11.');
+    await talk('maja', 'Ich möchte mich eintragen'); await choose('(Bei Abreise „28.11.'); await bye('Danke, Maja'); await flag('k3.p.checkin');
+    await expect(await D.ev(() => !!(M.GS.map.kujundziluk && M.GS.map.starimost)), 'nach dem Eintragen: Kujundžiluk und Alte Brücke auf dem Plan (Maja sagt den Weg)'); await log('bei Maja eingetragen, Abreise 28.11.; Maja sagt den Weg zur Brücke');
     await go('starimost'); await shot('starimost');
     if (await dlgHas('Landessprache')) { await choose('(In der Landessprache.)'); await log('Dino stellt sich vor: „A, naš si.“'); }
     await talk('_mala', 'Ist sie es'); await note('l3_mybridge'); await log('„Ist sie es?“ – Malas Brücke stand im Wasser (Splitter)');

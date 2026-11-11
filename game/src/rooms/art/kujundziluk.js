@@ -228,6 +228,7 @@ function WALK(x,y){ if (y<112||y>138||x<6||x>474) return false;
   return true; }
 M.defineArt('kujundziluk',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
     exit:[0,80,10,64],

@@ -1200,7 +1200,7 @@ Offen, wenn: `G.phase==='k3_pro' && I(G,'plan') && !F(G,'k3.p.checkin')`
 
 ### Die Brücke, die alle kennen `p3c`
 
-Offen, wenn: `G.phase==='k3_pro' && I(G,'plan') && !N(G,'l3_mybridge')`
+Offen, wenn: `G.phase==='k3_pro' && I(G,'plan') && F(G,'k3.p.checkin') && !N(G,'l3_mybridge')`
 
 1. **Problem einordnen:** Mala erinnert sich an eine Brücke, die nicht mehr da war. Die berühmteste Brücke der Stadt war im Krieg auch nicht mehr da.
 2. **Denkrichtung:** Ob es diese Brücke war, kann nur Mala sagen. Sie muss sie sehen.

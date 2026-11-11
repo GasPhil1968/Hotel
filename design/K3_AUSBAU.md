@@ -30,14 +30,14 @@ Nicht geändert: Die neutralen Beschreibungen bleiben verständlich und nennen, 
 
 ### S.2 Ergebnisse auf dem neuen Build
 
-Alle Ergebnisse gelten für denselben Build (mit der animierten Aufführung aus S.4): Stempel „11.11.2026 · a9bf60“, `web/index.html` sha256 `da5aedf5889f…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11_auftritt/` und im Prüfpaket (S.3); der Lauf vor S.4 steht in `qa/protokolle/k3_2026-11-11/`.
+Alle Ergebnisse gelten für denselben Build (mit der Aufführung aus S.4 und der Ankunft aus S.5): Stempel „11.11.2026 · b5ec6f“, `web/index.html` sha256 `949481850b4b…`. Die Protokolle liegen in `qa/protokolle/k3_2026-11-11_ankunft/` und im Prüfpaket (S.3); die Läufe davor stehen in `qa/protokolle/k3_2026-11-11_auftritt/` (vor S.5) und `qa/protokolle/k3_2026-11-11/` (vor S.4).
 
 | Art | Werkzeug | Ergebnis |
 |---|---|---|
 | Ganzer Hauptweg, neues Spiel bis zum Abspann | `node game/tools/walkthrough3.js` | 131 Schritte, keine JS-Fehler |
-| Gezielte Tests Kapitel 1–5, davon BUG-025 bis BUG-031 für Kapitel 3 | `node qa/regress/run.js` | 31/31 |
+| Gezielte Tests Kapitel 1–5, davon BUG-025 bis BUG-032 für Kapitel 3 | `node qa/regress/run.js` | 32/32 |
 | Echte Maus und echter Finger (Chromium, Desktop und iPad-Größe) | `node qa/ui/k3_revision.js` | 40/40 Prüfpunkte |
-| Hinweise: Stufe 4 an allen Ständen der Musterlösung und an 22 abweichenden Ständen | `node qa/hints/hintprobe.js --dumps …`, `--varianten` | ohne Befund: 255 + 44 Themen-Stände bestanden, 62 + 1 übersprungen (dieselben Gründe wie in R.8; der Fotovergleich wird mit „Hier stand er.“ ausgeführt) |
+| Hinweise: Stufe 4 an allen Ständen der Musterlösung und an 22 abweichenden Ständen | `node qa/hints/hintprobe.js --dumps …`, `--varianten` | ohne Befund: 253 + 44 Themen-Stände bestanden, 62 + 1 übersprungen (dieselben Gründe wie in R.8; der Fotovergleich wird mit „Hier stand er.“ ausgeführt; zwei Themen-Stände weniger als vor S.5, weil der Hinweis zur Brücke zwischen Stadtplan und Eintragen nicht mehr offen ist) |
 | Menschliche Spielwirkung, Safari/iOS-Gerät, Ton, Spielzeit | – | **nicht geprüft** |
 
 ### S.3 Prüfpaket
@@ -58,6 +58,13 @@ Bisher stand die Aufführung an der Brücke in drei Erzählsätzen. Jetzt ist si
 - **Neu dafür:** zwei Zuhörerfiguren (`k3tour1`, `k3tour2`, eingetragen in `game/CAST3.md`), Bewegungen der drei Musiker, Liedzettel, Kamera, Münze, Gitarrenkoffer, drei Klangeffekte (Klatschen, Applaus, Kofferverschlüsse), gesungene Zeilen im Sprechkasten und in der Untertitelschicht. Liams Porträt trägt jetzt wie seine Figur eine violette Jacke (vorher grün).
 - **Unverändert:** Schalter und Notizen (`b3_hum`, `s3_verse`, `k3.s.lenaVerse`) und alle Sätze der Familie. Die Aufführung bleibt freiwillig.
 - **Geprüft:** BUG-031 (mit und ohne Text, Wiederholung, Laden mitten in der Szene, Herberge; Reihenfolge der Zeilen, Aufräumen danach); BUG-023 und BUG-030 rufen die Aufführung ebenfalls auf.
+
+### S.5 Ankunft in Mostar: Regenschirm, erst die Herberge (Wünsche des Autors)
+
+- **Regenschirm:** Am Donnerstag (Phase `k3_pro`, Wetter Regen) trägt Marko einen dunkelroten Schirm. Die Räume sagen, wo es regnet (`rain` in der Kunst): Busbahnhof außer dem Streifen unter dem Vordach, Terrasse der Herberge, Kujundžiluk, Alte Brücke. `05_engine.js` macht daraus eine Stufe in Markos Pose (weggesteckt → gehoben → geht auf → offen, je 75 ms; beim Raumwechsel sofort), `02_rig.js` malt ihn. Von der Seite hält ihn die ferne Hand, damit die nahe frei bleibt für Gesten, Geben und Aufheben; der Stock läuft hinter dem Kopf, das Dach liegt darüber. Von vorn und von hinten hält Marko ihn seitlich neben dem Kopf. Unter einem Dach ist er weggesteckt: In der fernen Hand hinge er von der Seite unsichtbar hinter Mantel und Beinen. Keinen Schirm gibt es bei Bura, im Regen der anderen Kapitel (dort sagen die Räume nichts) und für Mala.
+- **Erst die Herberge, dann die Brücke:** Der Stadtplan vom Kiosk schaltet nur die Herberge frei. Beim Eintragen bringt Maja die Tasche hinauf und sagt den Weg; erst dann kommen Kujundžiluk und Alte Brücke auf den Plan. Markos Satz am Kiosk: „Erst die Herberge. Ein Zimmer, die Tasche loswerden. Dann die Brücke.“ Der Hinweis zur Brücke (`p3c`) öffnet erst nach dem Eintragen. Alte Spielstände, in denen die Brücke schon auf dem Plan steht, bleiben, wie sie sind.
+- **Kioskfrau:** am Donnerstag „Halten Sie den Schirm gut fest. Morgen kommt die Bura.“ statt „Nehmen Sie eine Zeitung. Gegen den Regen.“ (den Satz sagte sie auch an Tagen ohne Regen); an den anderen Tagen „Nehmen Sie eine Zeitung. Für die Wartezeit.“
+- **Geprüft:** BUG-032 mit einem neuen Spielstand aus der Musterlösung (`k3x_ankunft.json`): Plan, Hinweise, Eintragen, der Schirm an allen Orten, das Aufgehen in Stufen, Raumwechsel, Laden, Bura, Kapitel 1, Mala. Die Musterlösung prüft den Plan nach dem Kauf und nach dem Eintragen.
 
 ---
 

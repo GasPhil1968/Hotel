@@ -672,6 +672,28 @@ var HELD={
 };
 M.HELD=HELD;
 
+// ---------------------------------------------------------------- Regenschirm (Kapitel 3, Ankunft im Regen; Posenfeld um, gesetzt in 05_engine.js)
+// um: 2 zu, gehoben · 3 und 4 geht auf · 5 offen (Stufe 1, zu und weggesteckt, wird nicht gemalt: in der fernen Hand hinge er in der
+// Seitenansicht ohnehin unsichtbar hinter Mantel und Beinen). Farben je Figur (def.umbrella: [Stoff, Licht, Schatten, innen]), sonst
+// dunkles Weinrot: hebt sich vom grauen Regen ab und von Markos dunkelblauem Mantel. Stock und Spitze in der Umrissfarbe, damit der
+// Umrissdurchgang sie nicht verdickt.
+var UM_COL=[P.r2,P.r3,P.r1,P.r0], UM_R=[0,0,1,6,10,12], UM_H=[0,0,12,9,7,6], UM_LEN=28;
+function umCol(ch){ return ch.umbrella||UM_COL; }
+// offen oder gehoben: der Stock von der Hand zur Spitze, darunter der Griff als kleiner Haken
+function umStick(b,x,y,ax,ay,dir){ x=Math.round(x); y=Math.round(y); b.line(x,y,Math.round(ax),Math.round(ay),P.k1);
+  b.px(x,y+1,P.w2); b.px(x,y+2,P.w2); b.px(x+dir,y+3,P.w2); b.px(x+2*dir,y+2,P.w2); }
+function umCanopy(b,ax,ay,k,ch){ var c=umCol(ch); ax=Math.round(ax); ay=Math.round(ay);
+  if (k<=2){ for (var y0=1;y0<12;y0++){ var w=(y0<3||y0>9)?0:1; for (var x0=-w;x0<=w;x0++) b.px(ax+x0,ay+y0,x0<0?c[1]:(x0>0?c[2]:c[0])); } b.px(ax,ay,P.m3); return; }   // zusammengefaltet am oberen Ende
+  var R=UM_R[k], H=UM_H[k], half2=R/2;
+  for (var y=0;y<H;y++){ var e=(H-y)/H, half=Math.max(1,Math.round(R*Math.sqrt(Math.max(0,1-e*e)))), rib=Math.round(half2*(y+1)/H);
+    for (var x=-half;x<=half;x++){ var u=x/R, col=u<-0.42?c[1]:(u>0.5?c[2]:c[0]);
+      if (y<2 && u<0.15) col=c[1];
+      if (y>0 && y<H-1 && (x===rib||x===-rib)) col=c[2];   // zwei Speichen
+      if (y===H-1) col=u<-0.42?c[2]:c[3];                     // Unterkante: man sieht ein wenig hinein
+      b.px(ax+x,ay+y,col); } }
+  for (var i=-2;i<=2;i++) b.px(ax+Math.round(i*half2),ay+H,c[3]);   // Enden der Speichen
+  b.px(ax,ay-1,P.m3); }
+
 // ---------------------------------------------------------------- Figuren definieren
 /* def: {legend:{zeichen:farbe}, heads:{S:{n,o,b},F:{n,o,b},B:{n}}, neck:{S:[x,y],F:[x,y],B:[x,y]}, torso:{...spec}, torsoS:{...}, torsoB:{...}
          cols:{trou:[m,l,s], trouF:[...], sleeve:[...], sleeveF:[...], hand:[c,c2], shoe:col, shoeTop:col}, skirt:{c:[m,l,s],hem,flare}, coat:{c:[m,l,s],hem},
@@ -706,8 +728,9 @@ function render(p,ch,t){
   if (p.v==='S'){
     var ln=p.ln||0, sh=shearS(ch.tS,ln), shx=Math.round(ln*(L-2)/(L-1));
     var shN=[hx+1+shx, hy-L+2], shF=[hx-1+shx, hy-L+2], hipN=[hx+1,hy-1], hipF=[hx-1,hy-1];
-    // ferner Arm
-    var fh=p.fh||[hx-2,hy+2], fe=ik(shF[0],shF[1],fh[0],fh[1],bn[2],bn[3],1);
+    // ferner Arm (mit dem Regenschirm: die ferne Hand hält ihn, die nahe bleibt frei für Gesten und Gegenstände)
+    var um=p.um||0, fh=um>=2?[hx+4+shx,hy-7]:(p.fh||[hx-2,hy+2]), fe=ik(shF[0],shF[1],fh[0],fh[1],bn[2],bn[3],1);
+    if (um>=2) umStick(b,OX+fh[0],OY+fh[1],OX+fh[0]-3,OY+fh[1]-UM_LEN,1);   // Stock hinter Körper und Kopf
     limb(b,o(shF),o(fe),ch.armR?ch.armR[0]:1.3,C.sleeveF); limb(b,o(fe),o(fh),ch.armR?ch.armR[1]:1.0,ch.cols.armF||C.sleeveF); hand(b,OX+fh[0]-0.5,OY+fh[1]-0.5,C.handF);
     // Beine (fern, nah)
     var knees=[];
@@ -724,6 +747,7 @@ function render(p,ch,t){
     var nh=p.nh||[hx,hy+2], ne=ik(shN[0],shN[1],nh[0],nh[1],bn[2],bn[3],1);
     limb(b,o(shN),o(ne),ch.armR?ch.armR[0]:1.3,C.sleeve); limb(b,o(ne),o(nh),ch.armR?ch.armR[1]:1.0,ch.cols.arm||C.sleeve); hand(b,OX+nh[0]-0.5,OY+nh[1]-0.5,C.hand);
     if (p.it && HELD[p.it]) HELD[p.it](b,OX+nh[0],OY+nh[1],t);
+    if (um>=2) umCanopy(b,OX+fh[0]-3,OY+fh[1]-UM_LEN,um,ch);
   } else {
     var front=p.v==='F', tst=front?ch.tF:ch.tB, sw=ch.shoulder;
     var sL=[hx-sw,hy-L+2], sR=[hx+sw,hy-L+2];
@@ -735,12 +759,16 @@ function render(p,ch,t){
     b.blit(tst,OX+hx-ch.tHipF,OY+hy-L+1);
     coatF(b,ch,hx,hy,p);
     var hsF=headStamp(ch,p.v,p.hd||'n'), nkF=ch.neck[p.v]||[5,12], ho2=p.ho||[0,0];
-    var drawArms=function(){ [['lh',sL,-1],['rh',sR,1]].forEach(function(A){ var h=p[A[0]]||[A[1][0]+A[2]*2,hy+2], e=ik(A[1][0],A[1][1],h[0],h[1],bn[2],bn[3],A[2]*(front?1:-1)*0.35);
+    // Regenschirm: von vorn in der rechten Bildhälfte, von hinten in der linken (dieselbe Hand); offen dicht an der Kopfseite, damit der Stock nicht übers Gesicht läuft
+    var umF=p.um||0, umK=front?'rh':'lh', umS=front?1:-1, umH=umF>=2?[hx+umS*7,hy-7]:null, umAt=null;
+    var drawArms=function(){ [['lh',sL,-1],['rh',sR,1]].forEach(function(A){ var h=(umH&&A[0]===umK)?umH:(p[A[0]]||[A[1][0]+A[2]*2,hy+2]), e=ik(A[1][0],A[1][1],h[0],h[1],bn[2],bn[3],A[2]*(front?1:-1)*0.35);
+      if (umH && A[0]===umK) umAt=h;
       limb(b,o(A[1]),o(e),ch.armR?ch.armR[0]+0.1:1.4,C.sleeve); limb(b,o(e),o(h),ch.armR?ch.armR[1]+0.1:1.1,ch.cols.arm||C.sleeve); hand(b,OX+h[0]-0.5,OY+h[1]-0.5,C.hand); }); };
     if (!front){ b.blit(hsF,OX+hx-nkF[0]+ho2[0],OY+hy-L-nkF[1]+ho2[1]+1); drawArms(); }
     else { drawArms(); b.blit(hsF,OX+hx-nkF[0]+ho2[0],OY+hy-L-nkF[1]+ho2[1]+1); }
     if (front && p.it==='paper'){ b.rect(OX+hx-4,OY+hy-10,9,6,P.s6); b.hl(OX+hx-3,OX+hx+3,OY+hy-9,P.s3); b.hl(OX+hx-3,OX+hx+2,OY+hy-7,P.s3); hand(b,OX+hx-5,OY+hy-8,C.hand); hand(b,OX+hx+4,OY+hy-8,C.hand); }
     if (front && p.it==='tin'){ b.rect(OX+hx-2,OY+hy-9,5,5,P.m3); b.hl(OX+hx-2,OX+hx+2,OY+hy-9,P.m4); b.px(OX+hx+1,OY+hy-7,P.m1); hand(b,OX+hx-4,OY+hy-7,C.hand); hand(b,OX+hx+3,OY+hy-7,C.hand); }
+    if (umF>=2 && umAt){ umStick(b,OX+umAt[0],OY+umAt[1],OX+umAt[0],OY+umAt[1]-UM_LEN,umS); hand(b,OX+umAt[0]-0.5,OY+umAt[1]-0.5,C.hand); umCanopy(b,OX+umAt[0],OY+umAt[1]-UM_LEN,umF,ch); }
   }
   if (ch.post) ch.post(b,p,OX,OY,hx,hy);
   outlinePass(b,P.k1);
@@ -2077,7 +2105,23 @@ function routineTick(a){ if (E.busy || E.dlg || E.overlay || E.screen!=='game' |
 function holdNpc(a){ if (!a||!a.routine) return; if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); } a.rtUntil=gt+9000; }
 E.holdNpc=holdNpc;
 var MOODHD={sad:'s',shock:'w'}, MOODC=new WeakMap();   // Posen sind Cache-Schlüssel (JSON), deshalb keine Zusatzfelder an ihnen
-function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood]; if (!m||!p||(p.hd&&p.hd!=='n')) return p; var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } return c[m]||(c[m]=Object.assign({},p,{hd:m})); }
+function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood];
+  if (m && p && !(p.hd&&p.hd!=='n')){ var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } p=c[m]||(c[m]=Object.assign({},p,{hd:m})); }
+  var u=p?umbrellaStage(a):0; if (u>=2){ var c2=UMBC.get(p); if (!c2){ c2={}; UMBC.set(p,c2); } p=c2[u]||(c2[u]=Object.assign({},p,{um:u})); }
+  return p; }
+// Regenschirm (Wunsch des Autors: Ankunft in Mostar im Regen): Marko trägt einen, wo das Wetter der Phase Regen ist und der Raum es sagt
+// (room.rain aus der Kunst: true, oder (x,y) → im Regen?). Im Regen offen (Stufe 5), unter einem Dach zu und weggesteckt (Stufe 1, nicht
+// gemalt); dazwischen geht er in vier Stufen zu 75 ms auf oder zu. Beim Raumwechsel gilt der neue Zustand sofort.
+var UMBC=new WeakMap();
+function umbrellaWant(a){ if (a.id!=='marko' || !room || !room.rain || !GS || a.ghost) return 0;
+  var w=(M.scn&&M.scn.weather)?M.scn.weather(GS):'calm'; if (w!=='rain') return 0;
+  return (typeof room.rain==='function'?room.rain(a.x,a.y,GS):room.rain)?5:1; }
+function umbrellaStage(a){ var want=umbrellaWant(a); if (!want){ a.umK=0; a.umRoom=null; return 0; }
+  if (a.umRoom!==room || !a.umK){ a.umRoom=room; a.umK=want; a.umT=gt; return want; }
+  var dt=Math.max(0,gt-(a.umT||gt)); a.umT=gt;
+  if (a.umK<want) a.umK=Math.min(want,a.umK+dt/75); else if (a.umK>want) a.umK=Math.max(want,a.umK-dt/75);
+  return Math.round(a.umK); }
+E.umbrellaStage=umbrellaStage;
 function actorPose0(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
     if (a.ghost){ var fl=a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); if (a.id==='mala'){ var wS=anims.walkS||A_.walkS, wF=anims.walkF||A_.walkF, wB=anims.walkB||A_.walkB; return (a.f==='F'?wF:(a.f==='B'?wB:wS))[a.fi%8]; } return fl[0][0]; }
     var wS2=anims.walkS||A_.walkS, wF2=anims.walkF||A_.walkF, wB2=anims.walkB||A_.walkB; return (a.f==='F'?wF2:(a.f==='B'?wB2:wS2))[a.fi%8]; }
@@ -2595,7 +2639,7 @@ M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt fü
       // Prüfbericht K3-01 (Nebenbefund): Rechtecke aus perspektivischen Ecken können eine negative Breite oder Höhe haben (K4 Zug, K1 Schuppenfenster) – dann trifft sie kein Klick
       if (Array.isArray(h.r) && h.r.length===4 && !Object.getOwnPropertyDescriptor(h.r,0).get && (h.r[2]<0||h.r[3]<0)){ var q=h.r; h.r=[q[2]<0?q[0]+q[2]:q[0], q[3]<0?q[1]+q[3]:q[1], Math.abs(q[2]), Math.abs(q[3])]; }
       return h; });
-  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints};
+  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints,rain:A.rain};
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);
   return r; };
@@ -13243,7 +13287,7 @@ M.HINTS_K3=[
      'Die Altstadt liegt am Fluss. Dort gibt es Herbergen.',
      'Die Herberge „Neretva“ steht auf dem Stadtplan.',
      'Zur Herberge gehen und sich bei Maja eintragen.']},
- {id:'p3c',t:'Die Brücke, die alle kennen',open:function(G){ return G.phase==='k3_pro' && I(G,'plan') && !N(G,'l3_mybridge'); },
+ {id:'p3c',t:'Die Brücke, die alle kennen',open:function(G){ return G.phase==='k3_pro' && I(G,'plan') && F(G,'k3.p.checkin') && !N(G,'l3_mybridge'); },
   s:['Mala erinnert sich an eine Brücke, die nicht mehr da war. Die berühmteste Brücke der Stadt war im Krieg auch nicht mehr da.',
      'Ob es diese Brücke war, kann nur Mala sagen. Sie muss sie sehen.',
      'Die Alte Brücke liegt am Ende des Kujundžiluk.',
@@ -30593,6 +30637,7 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>390) return false;
   return true; }
 M.defineArt('herberge',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:function(x,y){ return x>=CORNER.x1; },   // Regenschirm (05_engine.js): auf der Terrasse offen, an der Rezeption zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; if (tod==='day') return levels(k)[0].a; var l=lightAt(LIT,a.x,a.y-22); return levels(k)[Math.max(1,Math.min(4,Math.round(l*4)))].a; },
   spots:{
     door:[DOOR.x-3,DOOR.y-3,DOOR.w+6,DOOR.h+5],
@@ -33727,6 +33772,7 @@ function WALK(x,y){ if (y<112||y>138||x<6||x>474) return false;
   return true; }
 M.defineArt('kujundziluk',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
     exit:[0,80,10,64],
@@ -38678,6 +38724,7 @@ function WALK(x,y){ if (y<112||y>140||x<6||x>474) return false;
   return true; }
 M.defineArt('ostbus',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:function(x,y){ return !(x<CAN.x1 && y<=119); },   // Regenschirm (05_engine.js): unter dem Vordach, dicht an den Stützen, bleibt er zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
     exit:[0,96,10,48],
@@ -44372,6 +44419,7 @@ function curS(){ return (M.GS&&M.GS.rooms&&M.GS.rooms.starimost)||{}; }
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 M.defineArt('starimost',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
     exit:[0,58,14,86],
@@ -53815,6 +53863,11 @@ async function checkIn(A){ var J=A.npc('maja'), G=A.G;
   A.setFlag('k3.p.checkin'); A.sfx('keys'); await J.say('Zimmer drei. Oben unter dem Dach. Das mit dem Fenster zum Fluss.'); await A.wait(300);
   await J.say('Sie sind übrigens der älteste Gast seit August.'); await A.m('Danke.'); await J.say('Das war kein Kompliment. Das war Statistik.');
   if (G.malaOn){ await A.wait(500); await A.g('Ein Fenster zum Fluss.'); await A.wait(600); await A.g('Ich gehe nicht ans Fenster.'); }
+  // Wunsch des Autors: erst die Herberge, dann die Brücke. Maja nimmt die Tasche und sagt den Weg; erst jetzt stehen Kujundžiluk und Alte Brücke auf dem Plan.
+  if (G.phase==='k3_pro'){ await A.wait(400); await A.m('Kann die Tasche hierbleiben? Ich will gleich zur Alten Brücke.');
+    await J.say('Die bringe ich Ihnen hinauf. Zur Brücke: raus, links, durch den Kujundžiluk bis ans Ende. Fünf Minuten. Bei Regen zehn, der Kopfstein ist glatt.');
+    ['kujundziluk','starimost'].forEach(function(l){ A.unlock(l); });
+    if (G.malaOn){ await A.wait(400); await A.g('Jetzt?'); await A.m('Jetzt.'); } }
   await M.k3DayCheck(A); }
 // ---------------------------------------------------------------- Maja: „Zwei Sprachen“ (freiwillig)
 async function twoLanguages(A,J){ await J.say('Sie sind Übersetzer?'); await A.m('Ja.'); await J.say('Dann habe ich etwas für Sie. Ein Schreiben vom Amt drüben, für die Kurtaxe. Kroatisch. Hier im Amt nehmen sie es nur auf Bosnisch. Ein Übersetzer will dafür vierzig Mark.');
@@ -56931,10 +56984,10 @@ M.k3NadaSms=async function(A){ if (A.flag('k3.p.sms')!==undefined) return;
 async function buyPlan(A){ var K=A.npc('kioskm');
   if (A.has('plan')) return K.say(A.cycle('kmHave',['Sie haben schon einen. Der hält länger als der Regen.','Noch einen? Mostar ist nicht so groß, wie es sich anfühlt.']));
   await A.m('Einen Stadtplan, bitte.'); await K.say('Plan grada. Pet maraka.'); A.sfx('coin'); await A.wait(300);
-  A.give('plan'); A.setFlag('k3.p.plan'); ['herberge','kujundziluk','starimost'].forEach(function(l){ A.unlock(l); });
+  A.give('plan'); A.setFlag('k3.p.plan'); A.unlock('herberge');   // Wunsch des Autors: erst die Herberge; den Weg zur Brücke sagt Maja (herberge.js)
   await A.narrate('Ich falte ihn unter dem Vordach auf. Mostar von der Nordeinfahrt bis zum Südrand, eins zu zehntausend. Der Fluss geht mitten hindurch, grün gedruckt.');
   await K.say('Schlafen? Die Herberge „Neretva“ in der Altstadt. Billig und warm. Sagen Sie Maja, die vom Kiosk schickt Sie. Dann gibt sie Ihnen das Zimmer mit dem Fenster.');
-  await A.m('Die Herberge, die Altstadt, die Alte Brücke. Für heute reicht das.');
+  await A.m('Erst die Herberge. Ein Zimmer, die Tasche loswerden. Dann die Brücke.');
   if (A.G.malaOn){ await A.wait(400); await A.g('Wo ist der Fluss auf dem Plan?'); await A.m('In der Mitte. Grün.'); await A.g('Er ist nicht grün. Er ist laut.'); } }
 // ---------------------------------------------------------------- die Kioskfrau
 async function talkKiosk(A){ var K=A.npc('kioskm'), G=A.G, p=G.phase;
@@ -56949,7 +57002,7 @@ async function talkKiosk(A){ var K=A.npc('kioskm'), G=A.G, p=G.phase;
         await K.say('Die von früher hängen bei Zdravko an der Wand. Im Café am Westbusbahnhof. Der hat nie etwas abgehängt. Nicht einmal den Kalender von neunzig.'); A.setFlag('k3.oldmap.told'); }},
     {t:'Wann fährt ein Bus nach München?',once:'km3',if:N(A,'p3_munich'),go:async function(A){ await K.say('Samstags. Von hier und von drüben. Hin voll, zurück voll. Dazwischen leer, wie die Häuser.'); }},
     A.askOpt({ p3_munich:'München, samstags, ja. Ich verkaufe denen Zigaretten für die Fahrt. Zwei Stangen, immer zwei.', p3_sms:'Antworten Sie ihr. Wer so schreibt, wartet.', l3_area:'Das ist hinter dem Rand. Meine Pläne haben keinen Süden. Bei Zdravko hängt eine alte Karte, die hat einen.' },'Das steht in keiner Zeitung, die ich habe.'),
-    {t:'Danke.',bye:true,go:async function(A){ await K.say(A.cycle('kmBye',['Bitte.','Nehmen Sie eine Zeitung. Gegen den Regen.','Gute Reise, oder gutes Bleiben.'])); }}
+    {t:'Danke.',bye:true,go:async function(A){ await K.say(A.cycle('kmBye',['Bitte.',p==='k3_pro'?'Halten Sie den Schirm gut fest. Morgen kommt die Bura.':'Nehmen Sie eine Zeitung. Für die Wartezeit.','Gute Reise, oder gutes Bleiben.'])); }}
   ]; }); }
 async function kioskEpi(A,K){ if (A.first('kmEpi')){ await K.say('Fahren Sie?'); await A.m('Nach Sarajevo. Mit dem Bus.'); await K.say('Nehmen Sie eine Postkarte mit. Die Brücke. Damit Sie wiederkommen.'); await A.narrate('Sie schiebt mir eine Karte über die Theke. Die Brücke von heute, im Sommer, mit einem Springer in der Luft. Sie nimmt kein Geld dafür.'); return; }
   return K.say(A.cycle('kmEpi2',['Der Bus wartet nicht. Er tut nur so.','Kommen Sie wieder, wenn es nicht regnet. Es regnet immer, wenn Sie kommen.'])); }
@@ -75911,7 +75964,7 @@ M.music('title');
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="11.11.2026 · a9bf60";
+M.BUILD="11.11.2026 · b5ec6f";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

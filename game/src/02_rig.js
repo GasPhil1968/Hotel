@@ -76,6 +76,28 @@ var HELD={
 };
 M.HELD=HELD;
 
+// ---------------------------------------------------------------- Regenschirm (Kapitel 3, Ankunft im Regen; Posenfeld um, gesetzt in 05_engine.js)
+// um: 2 zu, gehoben · 3 und 4 geht auf · 5 offen (Stufe 1, zu und weggesteckt, wird nicht gemalt: in der fernen Hand hinge er in der
+// Seitenansicht ohnehin unsichtbar hinter Mantel und Beinen). Farben je Figur (def.umbrella: [Stoff, Licht, Schatten, innen]), sonst
+// dunkles Weinrot: hebt sich vom grauen Regen ab und von Markos dunkelblauem Mantel. Stock und Spitze in der Umrissfarbe, damit der
+// Umrissdurchgang sie nicht verdickt.
+var UM_COL=[P.r2,P.r3,P.r1,P.r0], UM_R=[0,0,1,6,10,12], UM_H=[0,0,12,9,7,6], UM_LEN=28;
+function umCol(ch){ return ch.umbrella||UM_COL; }
+// offen oder gehoben: der Stock von der Hand zur Spitze, darunter der Griff als kleiner Haken
+function umStick(b,x,y,ax,ay,dir){ x=Math.round(x); y=Math.round(y); b.line(x,y,Math.round(ax),Math.round(ay),P.k1);
+  b.px(x,y+1,P.w2); b.px(x,y+2,P.w2); b.px(x+dir,y+3,P.w2); b.px(x+2*dir,y+2,P.w2); }
+function umCanopy(b,ax,ay,k,ch){ var c=umCol(ch); ax=Math.round(ax); ay=Math.round(ay);
+  if (k<=2){ for (var y0=1;y0<12;y0++){ var w=(y0<3||y0>9)?0:1; for (var x0=-w;x0<=w;x0++) b.px(ax+x0,ay+y0,x0<0?c[1]:(x0>0?c[2]:c[0])); } b.px(ax,ay,P.m3); return; }   // zusammengefaltet am oberen Ende
+  var R=UM_R[k], H=UM_H[k], half2=R/2;
+  for (var y=0;y<H;y++){ var e=(H-y)/H, half=Math.max(1,Math.round(R*Math.sqrt(Math.max(0,1-e*e)))), rib=Math.round(half2*(y+1)/H);
+    for (var x=-half;x<=half;x++){ var u=x/R, col=u<-0.42?c[1]:(u>0.5?c[2]:c[0]);
+      if (y<2 && u<0.15) col=c[1];
+      if (y>0 && y<H-1 && (x===rib||x===-rib)) col=c[2];   // zwei Speichen
+      if (y===H-1) col=u<-0.42?c[2]:c[3];                     // Unterkante: man sieht ein wenig hinein
+      b.px(ax+x,ay+y,col); } }
+  for (var i=-2;i<=2;i++) b.px(ax+Math.round(i*half2),ay+H,c[3]);   // Enden der Speichen
+  b.px(ax,ay-1,P.m3); }
+
 // ---------------------------------------------------------------- Figuren definieren
 /* def: {legend:{zeichen:farbe}, heads:{S:{n,o,b},F:{n,o,b},B:{n}}, neck:{S:[x,y],F:[x,y],B:[x,y]}, torso:{...spec}, torsoS:{...}, torsoB:{...}
          cols:{trou:[m,l,s], trouF:[...], sleeve:[...], sleeveF:[...], hand:[c,c2], shoe:col, shoeTop:col}, skirt:{c:[m,l,s],hem,flare}, coat:{c:[m,l,s],hem},
@@ -110,8 +132,9 @@ function render(p,ch,t){
   if (p.v==='S'){
     var ln=p.ln||0, sh=shearS(ch.tS,ln), shx=Math.round(ln*(L-2)/(L-1));
     var shN=[hx+1+shx, hy-L+2], shF=[hx-1+shx, hy-L+2], hipN=[hx+1,hy-1], hipF=[hx-1,hy-1];
-    // ferner Arm
-    var fh=p.fh||[hx-2,hy+2], fe=ik(shF[0],shF[1],fh[0],fh[1],bn[2],bn[3],1);
+    // ferner Arm (mit dem Regenschirm: die ferne Hand hält ihn, die nahe bleibt frei für Gesten und Gegenstände)
+    var um=p.um||0, fh=um>=2?[hx+4+shx,hy-7]:(p.fh||[hx-2,hy+2]), fe=ik(shF[0],shF[1],fh[0],fh[1],bn[2],bn[3],1);
+    if (um>=2) umStick(b,OX+fh[0],OY+fh[1],OX+fh[0]-3,OY+fh[1]-UM_LEN,1);   // Stock hinter Körper und Kopf
     limb(b,o(shF),o(fe),ch.armR?ch.armR[0]:1.3,C.sleeveF); limb(b,o(fe),o(fh),ch.armR?ch.armR[1]:1.0,ch.cols.armF||C.sleeveF); hand(b,OX+fh[0]-0.5,OY+fh[1]-0.5,C.handF);
     // Beine (fern, nah)
     var knees=[];
@@ -128,6 +151,7 @@ function render(p,ch,t){
     var nh=p.nh||[hx,hy+2], ne=ik(shN[0],shN[1],nh[0],nh[1],bn[2],bn[3],1);
     limb(b,o(shN),o(ne),ch.armR?ch.armR[0]:1.3,C.sleeve); limb(b,o(ne),o(nh),ch.armR?ch.armR[1]:1.0,ch.cols.arm||C.sleeve); hand(b,OX+nh[0]-0.5,OY+nh[1]-0.5,C.hand);
     if (p.it && HELD[p.it]) HELD[p.it](b,OX+nh[0],OY+nh[1],t);
+    if (um>=2) umCanopy(b,OX+fh[0]-3,OY+fh[1]-UM_LEN,um,ch);
   } else {
     var front=p.v==='F', tst=front?ch.tF:ch.tB, sw=ch.shoulder;
     var sL=[hx-sw,hy-L+2], sR=[hx+sw,hy-L+2];
@@ -139,12 +163,16 @@ function render(p,ch,t){
     b.blit(tst,OX+hx-ch.tHipF,OY+hy-L+1);
     coatF(b,ch,hx,hy,p);
     var hsF=headStamp(ch,p.v,p.hd||'n'), nkF=ch.neck[p.v]||[5,12], ho2=p.ho||[0,0];
-    var drawArms=function(){ [['lh',sL,-1],['rh',sR,1]].forEach(function(A){ var h=p[A[0]]||[A[1][0]+A[2]*2,hy+2], e=ik(A[1][0],A[1][1],h[0],h[1],bn[2],bn[3],A[2]*(front?1:-1)*0.35);
+    // Regenschirm: von vorn in der rechten Bildhälfte, von hinten in der linken (dieselbe Hand); offen dicht an der Kopfseite, damit der Stock nicht übers Gesicht läuft
+    var umF=p.um||0, umK=front?'rh':'lh', umS=front?1:-1, umH=umF>=2?[hx+umS*7,hy-7]:null, umAt=null;
+    var drawArms=function(){ [['lh',sL,-1],['rh',sR,1]].forEach(function(A){ var h=(umH&&A[0]===umK)?umH:(p[A[0]]||[A[1][0]+A[2]*2,hy+2]), e=ik(A[1][0],A[1][1],h[0],h[1],bn[2],bn[3],A[2]*(front?1:-1)*0.35);
+      if (umH && A[0]===umK) umAt=h;
       limb(b,o(A[1]),o(e),ch.armR?ch.armR[0]+0.1:1.4,C.sleeve); limb(b,o(e),o(h),ch.armR?ch.armR[1]+0.1:1.1,ch.cols.arm||C.sleeve); hand(b,OX+h[0]-0.5,OY+h[1]-0.5,C.hand); }); };
     if (!front){ b.blit(hsF,OX+hx-nkF[0]+ho2[0],OY+hy-L-nkF[1]+ho2[1]+1); drawArms(); }
     else { drawArms(); b.blit(hsF,OX+hx-nkF[0]+ho2[0],OY+hy-L-nkF[1]+ho2[1]+1); }
     if (front && p.it==='paper'){ b.rect(OX+hx-4,OY+hy-10,9,6,P.s6); b.hl(OX+hx-3,OX+hx+3,OY+hy-9,P.s3); b.hl(OX+hx-3,OX+hx+2,OY+hy-7,P.s3); hand(b,OX+hx-5,OY+hy-8,C.hand); hand(b,OX+hx+4,OY+hy-8,C.hand); }
     if (front && p.it==='tin'){ b.rect(OX+hx-2,OY+hy-9,5,5,P.m3); b.hl(OX+hx-2,OX+hx+2,OY+hy-9,P.m4); b.px(OX+hx+1,OY+hy-7,P.m1); hand(b,OX+hx-4,OY+hy-7,C.hand); hand(b,OX+hx+3,OY+hy-7,C.hand); }
+    if (umF>=2 && umAt){ umStick(b,OX+umAt[0],OY+umAt[1],OX+umAt[0],OY+umAt[1]-UM_LEN,umS); hand(b,OX+umAt[0]-0.5,OY+umAt[1]-0.5,C.hand); umCanopy(b,OX+umAt[0],OY+umAt[1]-UM_LEN,umF,ch); }
   }
   if (ch.post) ch.post(b,p,OX,OY,hx,hy);
   outlinePass(b,P.k1);

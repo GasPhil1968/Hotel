@@ -22,6 +22,11 @@ async function checkIn(A){ var J=A.npc('maja'), G=A.G;
   A.setFlag('k3.p.checkin'); A.sfx('keys'); await J.say('Zimmer drei. Oben unter dem Dach. Das mit dem Fenster zum Fluss.'); await A.wait(300);
   await J.say('Sie sind übrigens der älteste Gast seit August.'); await A.m('Danke.'); await J.say('Das war kein Kompliment. Das war Statistik.');
   if (G.malaOn){ await A.wait(500); await A.g('Ein Fenster zum Fluss.'); await A.wait(600); await A.g('Ich gehe nicht ans Fenster.'); }
+  // Wunsch des Autors: erst die Herberge, dann die Brücke. Maja nimmt die Tasche und sagt den Weg; erst jetzt stehen Kujundžiluk und Alte Brücke auf dem Plan.
+  if (G.phase==='k3_pro'){ await A.wait(400); await A.m('Kann die Tasche hierbleiben? Ich will gleich zur Alten Brücke.');
+    await J.say('Die bringe ich Ihnen hinauf. Zur Brücke: raus, links, durch den Kujundžiluk bis ans Ende. Fünf Minuten. Bei Regen zehn, der Kopfstein ist glatt.');
+    ['kujundziluk','starimost'].forEach(function(l){ A.unlock(l); });
+    if (G.malaOn){ await A.wait(400); await A.g('Jetzt?'); await A.m('Jetzt.'); } }
   await M.k3DayCheck(A); }
 // ---------------------------------------------------------------- Maja: „Zwei Sprachen“ (freiwillig)
 async function twoLanguages(A,J){ await J.say('Sie sind Übersetzer?'); await A.m('Ja.'); await J.say('Dann habe ich etwas für Sie. Ein Schreiben vom Amt drüben, für die Kurtaxe. Kroatisch. Hier im Amt nehmen sie es nur auf Bosnisch. Ein Übersetzer will dafür vierzig Mark.');

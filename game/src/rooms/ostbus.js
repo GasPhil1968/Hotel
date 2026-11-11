@@ -38,10 +38,10 @@ M.k3NadaSms=async function(A){ if (A.flag('k3.p.sms')!==undefined) return;
 async function buyPlan(A){ var K=A.npc('kioskm');
   if (A.has('plan')) return K.say(A.cycle('kmHave',['Sie haben schon einen. Der hält länger als der Regen.','Noch einen? Mostar ist nicht so groß, wie es sich anfühlt.']));
   await A.m('Einen Stadtplan, bitte.'); await K.say('Plan grada. Pet maraka.'); A.sfx('coin'); await A.wait(300);
-  A.give('plan'); A.setFlag('k3.p.plan'); ['herberge','kujundziluk','starimost'].forEach(function(l){ A.unlock(l); });
+  A.give('plan'); A.setFlag('k3.p.plan'); A.unlock('herberge');   // Wunsch des Autors: erst die Herberge; den Weg zur Brücke sagt Maja (herberge.js)
   await A.narrate('Ich falte ihn unter dem Vordach auf. Mostar von der Nordeinfahrt bis zum Südrand, eins zu zehntausend. Der Fluss geht mitten hindurch, grün gedruckt.');
   await K.say('Schlafen? Die Herberge „Neretva“ in der Altstadt. Billig und warm. Sagen Sie Maja, die vom Kiosk schickt Sie. Dann gibt sie Ihnen das Zimmer mit dem Fenster.');
-  await A.m('Die Herberge, die Altstadt, die Alte Brücke. Für heute reicht das.');
+  await A.m('Erst die Herberge. Ein Zimmer, die Tasche loswerden. Dann die Brücke.');
   if (A.G.malaOn){ await A.wait(400); await A.g('Wo ist der Fluss auf dem Plan?'); await A.m('In der Mitte. Grün.'); await A.g('Er ist nicht grün. Er ist laut.'); } }
 // ---------------------------------------------------------------- die Kioskfrau
 async function talkKiosk(A){ var K=A.npc('kioskm'), G=A.G, p=G.phase;
@@ -56,7 +56,7 @@ async function talkKiosk(A){ var K=A.npc('kioskm'), G=A.G, p=G.phase;
         await K.say('Die von früher hängen bei Zdravko an der Wand. Im Café am Westbusbahnhof. Der hat nie etwas abgehängt. Nicht einmal den Kalender von neunzig.'); A.setFlag('k3.oldmap.told'); }},
     {t:'Wann fährt ein Bus nach München?',once:'km3',if:N(A,'p3_munich'),go:async function(A){ await K.say('Samstags. Von hier und von drüben. Hin voll, zurück voll. Dazwischen leer, wie die Häuser.'); }},
     A.askOpt({ p3_munich:'München, samstags, ja. Ich verkaufe denen Zigaretten für die Fahrt. Zwei Stangen, immer zwei.', p3_sms:'Antworten Sie ihr. Wer so schreibt, wartet.', l3_area:'Das ist hinter dem Rand. Meine Pläne haben keinen Süden. Bei Zdravko hängt eine alte Karte, die hat einen.' },'Das steht in keiner Zeitung, die ich habe.'),
-    {t:'Danke.',bye:true,go:async function(A){ await K.say(A.cycle('kmBye',['Bitte.','Nehmen Sie eine Zeitung. Gegen den Regen.','Gute Reise, oder gutes Bleiben.'])); }}
+    {t:'Danke.',bye:true,go:async function(A){ await K.say(A.cycle('kmBye',['Bitte.',p==='k3_pro'?'Halten Sie den Schirm gut fest. Morgen kommt die Bura.':'Nehmen Sie eine Zeitung. Für die Wartezeit.','Gute Reise, oder gutes Bleiben.'])); }}
   ]; }); }
 async function kioskEpi(A,K){ if (A.first('kmEpi')){ await K.say('Fahren Sie?'); await A.m('Nach Sarajevo. Mit dem Bus.'); await K.say('Nehmen Sie eine Postkarte mit. Die Brücke. Damit Sie wiederkommen.'); await A.narrate('Sie schiebt mir eine Karte über die Theke. Die Brücke von heute, im Sommer, mit einem Springer in der Luft. Sie nimmt kein Geld dafür.'); return; }
   return K.say(A.cycle('kmEpi2',['Der Bus wartet nicht. Er tut nur so.','Kommen Sie wieder, wenn es nicht regnet. Es regnet immer, wenn Sie kommen.'])); }

@@ -320,6 +320,7 @@ function WALK(x,y){ if (y<112||y>140||x<6||x>474) return false;
   return true; }
 M.defineArt('ostbus',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:function(x,y){ return !(x<CAN.x1 && y<=119); },   // Regenschirm (05_engine.js): unter dem Vordach, dicht an den Stützen, bleibt er zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
     exit:[0,96,10,48],

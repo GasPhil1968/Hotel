@@ -21,10 +21,11 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - Der Bus aus Sarajevo kommt an; das Bild „Im Bus“ zeigt die Fahrt. Nada schreibt: „Jesi li stigao? N.“
 - **[M]** „(Antworten.)“ wählen. Marko schreibt: „Stigao sam. Javim se.“
 - **[M]** Die **Tafel** lesen: MÜNCHEN · subota.
-- **[M]** Am Kiosk „Einen Stadtplan …“ kaufen. Herberge, Kujundžiluk und Alte Brücke stehen nun auf dem Plan.
+- **[M]** Am Kiosk „Einen Stadtplan …“ kaufen. Auf dem Plan steht zuerst nur die Herberge: erst ein Zimmer, dann die Brücke. (Es regnet; wo Marko im Regen steht, ist sein Schirm aufgespannt.)
 
 **2. Herberge „Neretva“**
 - **[M]** Mit Maja reden: „Ich möchte mich eintragen.“ Bei Abreise „28.11.“ eintragen oder das Feld leer lassen; beides geht.
+- Maja bringt die Tasche hinauf und erklärt den Weg zur Brücke. Jetzt stehen Kujundžiluk und Alte Brücke auf dem Plan.
 
 **3. Die Alte Brücke**
 - Dino stellt sich vor. „(In der Landessprache.)“ antworten: „A, naš si.“

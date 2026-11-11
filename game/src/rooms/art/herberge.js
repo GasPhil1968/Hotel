@@ -276,6 +276,7 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>390) return false;
   return true; }
 M.defineArt('herberge',{
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
+  rain:function(x,y){ return x>=CORNER.x1; },   // Regenschirm (05_engine.js): auf der Terrasse offen, an der Rezeption zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; if (tod==='day') return levels(k)[0].a; var l=lightAt(LIT,a.x,a.y-22); return levels(k)[Math.max(1,Math.min(4,Math.round(l*4)))].a; },
   spots:{
     door:[DOOR.x-3,DOOR.y-3,DOOR.w+6,DOOR.h+5],
