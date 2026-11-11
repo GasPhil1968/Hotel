@@ -8,57 +8,59 @@ function L(o){ var l={k:P.k1,e:P.k0,w:P.s6}; for (var k in o) l[k]=o[k]; return 
 var HS=M.headSet;
 
 // ---------------------------------------------------------------- MARKO VUKOVIĆ (33): kurzes dunkles Haar, Bartschatten, dunkler Wollmantel
+// Kopf neu gezeichnet (11.11.2026): Haar in Strähnen mit Glanz oben vorn, Schatten unter dem Pony, Ohr mit Muschel, Nasenflügel,
+// Bartstoppeln am Kiefer locker gestreut; die Augenbrauen setzt das Rig (headEnh), damit sie beim Lidschlag und erschrocken mitgehen
 var mkS=[
 "....kkkk....",
-"...kHHhHkk..",
-"..kHHHHHHHk.",
-"..kHHHhHHHHk",
-".kHHHHHHSSHk",
-".kHHHHSSSSSk",
-".kHHtSSSSeSk",
-".kHtSSSSSSSSk",
-"..ktSSSSSSSk",
-"..kbtSSSSmk.",
-"..kbbtSSSk..",
+"...khhjhkk..",
+"..khHhhHHhk.",
+"..kHHHHHHhHk",
+".kHHhHHHHSHk",
+".kHHHHsSSSSk",
+".kHHSsSSSeSk",
+".kHtStSSSSSSk",
+"..ktSsSSSSsk",
+"..kbtbSSSmk.",
+"..kbbtbSSk..",
 "...kbbbbk...",
 "....kttk....",
 "....ktsk...."];
 var mkF=[
 "...kkkkk...",
-"..kHHhHHk..",
-".kHHHHHHHk.",
-"kHHHhHHHHHk",
-"kHHSSSSSHHk",
+"..khhjhHk..",
+".khHhHHHHk.",
+"kHHHhHHHhHk",
+"kHHsSSSsHHk",
 "kHSSSSSSSHk",
 "kHSeSSSeSHk",
 "ktSSSStSStk",
-".kSSSSSSSk.",
+".kSSSSSSsk.",
 ".kbSSmSSbk.",
-".kbbSSSbbk.",
+".kbbsSsbbk.",
 "..kbbbbbk..",
 "...ktttk...",
 "...kssk...."];
 var mkB=[
 "...kkkkk...",
-"..kHHhHHk..",
-".kHHHHHHHk.",
+"..khhjhHk..",
+".khHhHHHHk.",
 "kHHHhHHHHHk",
-"kHHHHHHHHHk",
-"kHHHHHHHHHk",
-"kHHHHHHHHHk",
+"kHhHHHHHHHk",
+"kHHHHHhHHHk",
+"kHHhHHHHHHk",
 "ktHHHHHHHtk",
 ".kHHHHHHHk.",
-".kHHHHHHHk.",
+".kHHHHhHHk.",
 "..kHHHHHk..",
 "...kHHHk...",
 "...ktttk...",
 "...kssk...."];
 M.defineChar('marko',{
   legend:L({H:P.h1,h:P.h2,j:P.h3,S:P.q3,s:P.q2,t:P.q1,m:P.q0,b:P.q1}),
-  heads:{S:HS(mkS),F:HS(mkF),B:{n:mkB}}, neck:{S:[6,13],F:[5,13],B:[5,13]},
+  heads:{S:HS(mkS),F:HS(mkF),B:{n:mkB}}, neck:{S:[6,13],F:[5,13],B:[5,13]}, headAuto:{sheen:false,nose:false,cheek:false,shade:false},
   torso:{w:12,len:13,col:[P.c1,P.c2,P.c0],collar:[P.m3,P.m2],buttons:P.c0,lapel:P.c2,side:8},
   coat:{c:[P.c1,P.c2,P.c0],hem:9,w:6},
-  cols:{trou:[P.k2,P.c0,P.k1],trouF:[P.k1,P.k2,P.k0],sleeve:[P.c1,P.c2,P.c0],sleeveF:[P.c0,P.c1,P.k1],hand:[P.q3,P.q2],handF:[P.q2,P.q1],shoe:P.w1}
+  cols:{trou:[P.k2,P.c0,P.k1],trouF:[P.k1,P.k2,P.k0],sleeve:[P.c1,P.c2,P.c0],sleeveF:[P.c0,P.c1,P.k1],cuff:[P.m2,P.m3,P.m1],cuffF:[P.m1,P.m2,P.m0],hand:[P.q3,P.q2],handF:[P.q2,P.q1],shoe:P.w1}
 });
 
 // ---------------------------------------------------------------- MALA: dunkler Zopf, Jeansjacke, grauer Schal, helle Turnschuhe
@@ -360,7 +362,7 @@ var saF=[
 "...kkkkk...",
 "...ktttk...",
 "...kssk...."];
-var saB=mkB.map(function(r){ return r; });
+var saB=mkB.map(function(r){ return r.split('j').join('h'); });   // Markos Hinterkopf ohne seinen hellsten Glanz (Sanjas Legende kennt kein j)
 M.defineChar('sanja',{
   legend:L({H:P.h0,h:P.h1,S:P.p4,s:P.p3,t:P.p2,m:P.r2}),
   heads:{S:HS(saS),F:HS(saF),B:{n:saB}}, legendB:true,

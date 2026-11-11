@@ -1,3 +1,38 @@
+DIE STILLEN – ÄNDERUNGEN: FIGUREN MIT MEHR ZEICHNUNG, MARKO LOCKERER, NEBENFIGUREN MIT EIGENLEBEN (11. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Alle Figuren sind genauer gezeichnet: Mäntel, Jacken und Kleider haben
+  Licht und Schatten mit weichen, gerasterten Übergängen (wie die
+  Hintergründe), Falten an Achseln, Bund, Knie und Ellbogen, Taschen und
+  einen Gehschlitz am Mantel, Bündchen an den Ärmeln, Hände mit Fingern,
+  Schuhe mit Glanz und Sohle, Schatten hinter dem Arm und unter dem Kinn,
+  eine helle Lichtkante. Gesichter bekommen Augenbrauen, einen Schatten
+  unter der Nase und unter dem Pony, Glanz im Haar.
+- Marko ist von Hand nachgezeichnet (Haarsträhnen, Ohr, Bartstoppeln) und
+  trägt unter dem Mantel ein graues Hemd, das an den Ärmeln hervorschaut.
+- Im Raumlicht (Nacht, Lampen) bleibt diese Zeichnung erhalten; vorher
+  verschwamm sie dort zu einer Fläche.
+- Marko steht locker statt stocksteif, atmet, verlagert das Gewicht, geht
+  leicht vorgeneigt mit schwingenden Armen und dreht sich mit einem kurzen
+  Zwischenbild um. Lässt man ihn stehen, steckt er die Hände in die Taschen,
+  sieht über die Schulter, auf die Uhr, streicht sich übers Kinn, seufzt,
+  richtet den Kragen. Beim Sprechen wechselt er von Satz zu Satz die Geste.
+  Mala sieht sich um, umarmt sich selbst, späht nach vorn.
+- Die Nebenfiguren haben ein Eigenleben: Wer herumsteht, tut ab und zu
+  etwas (umsehen, Arme verschränken, Gewicht verlagern …); wer arbeitet,
+  hält zwischendurch inne; hinter der Theke folgen die Augen Marko; wer
+  ihm den Rücken zudreht, dreht sich um, wenn er hinter ihm stehen bleibt,
+  oder sieht beim Arbeiten über die Schulter; zwei, die beieinander stehen,
+  reden manchmal leise miteinander. Während Szenen und Gesprächen ruht das
+  alles.
+
+GEPRÜFT
+- Neuer Browsertest qa/ui/figuren_leben.js (alle 106 Figuren mit allen
+  Kopfvarianten und Bewegungen ohne Fehler, Gesten nur außerhalb von
+  Szenen, Umdrehen, Schulterblick, Blicke, Sprechgesten, Pausen); alle
+  übrigen Tests und die Musterlösungen aller fünf Kapitel.
+
+
 DIE STILLEN – ÄNDERUNGEN: INTRO UND VIER TITELBILDER (11. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

@@ -1,0 +1,42 @@
+== regress
+     33 OK
+== figuren_leben
+OK     alle Figuren, Kopfvarianten und Animationen zeichnen ohne Fehler (56424)
+OK     Marko: Bündchen, Lichtkante, 22 Farben im Stand
+OK     Detailtabelle unter Nachtlicht: 13 statt 9 Farben
+OK     Marko steht: Geste im Leerlauf (fgChin), Modus bleibt idle
+OK     während einer Szene (E.busy) keine Geste
+OK     beim Gehen keine Geste
+OK     Kraus dreht sich um, wenn Marko hinter ihm steht (Blickrichtung nur gezeichnet, a.f bleibt L)
+OK     … und nach einer Weile wieder zurück
+OK     Dinko sieht beim Flicken über die Schulter, die Tätigkeit (mend) läuft weiter
+OK     Mladen (von vorn) sieht zu Marko hinüber (Blick l)
+OK     Sprechgesten wechseln von Satz zu Satz (talkS3, talkS4, talkS, talkS2)
+OK     Tätigkeiten im Stehen bekommen Pausen (Emina: [["idle","pour",9,16],["idle","pauseS",3,6],["idle","pour",8,15],["skip",0.5,1],)
+OK     beim Umdrehen ein kurzes Bild von vorn (F)
+OK     keine JS-Fehler (0)
+FIGUREN/LEBEN OK
+== phase1
+33/33 bestanden
+== phase2
+90/90 bestanden
+== phase3
+52/52 bestanden
+== phase4
+92/92 bestanden
+== phase5
+31/31 bestanden
+== k3_revision
+OK · 40/40 Prüfpunkte
+== intro_titel
+INTRO/TITEL OK
+== musik
+MUSIKTEST OK
+== offline
+OFFLINETEST OK
+== savecompat
+27/33 bestanden
+== i18n
+}
+
+Node.js v22.23.4

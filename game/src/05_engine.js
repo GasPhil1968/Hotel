@@ -84,7 +84,7 @@ M.onAmbient=function(name,p){ if (!REACT_EV.test(name)) return; var a=ACT.mala; 
   setTimeout(function(){ if (!ACT.mala||ACT.mala!==a||a.mode!=='idle'||E.busy||E.dlg||E.overlay||E.screen!=='game') return; E.lastReact=gt; if (p<-0.25) a.f='L'; else if (p>0.25) a.f='R'; playAnimOn(a,'look'); },500); };
 function charAnim(a,name){ var ch=M.CHARS[a.ch]; return (ch&&ch.anims&&ch.anims[name])||A_[name]; }
 function idleSetFor(a){ if (a.idle){ var an=charAnim(a,a.idle); if (an) return an; } if (a.ghost && a.id==='mala') return a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); return a.f==='F'?A_.idleF:(a.f==='B'?A_.idleB:A_.idleS); }
-function setIdle(a){ a.mode='idle'; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
+function setIdle(a){ a.mode='idle'; a.fid=null; a.anim=idleSetFor(a); a.fi=0; a.ft=0; a.idleT=0; }
 function cancelRes(a){ if (a.res){ var r=a.res; a.res=null; r(false); } }
 // Fußspuren im Schnee (Räume mit snowPrints in der Kunst): je Schrittkontakt ein Abdruck von Marko, der nach einer Weile wieder verweht (06_ui.js zeichnet sie); Mala als Geist hinterlässt keine
 E.prints=[];
@@ -107,8 +107,64 @@ function playAnimOn(a,name,hook,hold){ var an=charAnim(a,name); if (!an){ if (ho
   var v=an[0][0].v; if (v==='S'&&(a.f==='F'||a.f==='B')) a.f='R'; if (v==='B') a.f='B'; if (v==='F') a.f='F';
   if (a.hooks.i===0&&hook){ a.hooks.done=true; hook(); }
   return new Promise(function(r){ a.res=r; }); }
+// ---------------------------------------------------------------- Eigenleben: Sprechgesten, Gesten im Leerlauf, Hinsehen, Umdrehen
+// Sprechen: je Satz eine von mehreren Gesten (erklären mit einer oder beiden Händen, ruhig mit Nicken, offene Hand); eigene talkS einer Figur gehen vor
+var TALK_S=['talkS','talkS2','talkS3','talkS4'], TALK_F=['talkF','talkF2','talkF3'];
+function talkSet(a,v){ var ch=M.CHARS[a.ch], own=ch&&ch.anims&&ch.anims[v==='F'?'talkF':'talkS']; if (own) return own;
+  if (a._sp!==E.speech){ a._sp=E.speech; a._tv=Math.floor(Math.random()*12); } var L=v==='F'?TALK_F:TALK_S; return A_[L[a._tv%L.length]]||A_[L[0]]; }
+// Gesten im Leerlauf: wer ohne eigene Tätigkeit dasteht, tut ab und zu etwas (Hände in die Taschen, über die Schulter sehen, auf die Uhr,
+// Nacken reiben, seufzen, Arme verschränken, Gewicht verlagern …). Marko erst, wenn der Spieler ihn ein paar Sekunden stehen lässt.
+// Nie während einer Szene, eines Gesprächs oder eines Menüs; eine Geste ist nur eine vorübergehende Leerlauffolge (a.fid), der Modus bleibt 'idle'.
+var FID={ mk:{S:[['fgPockets',4],['fgLookBack',2],['fgWatch',1],['fgChin',2],['fgSigh',2],['fgCollar',1],['fgShift',2],['fgArms',1]], F:[['fgPocketsF',2],['fgLookF',3],['fgShiftF',2],['fgArmsF',1]], B:[['fgShiftB',1],['fgLookB',1]]},
+  mala:{S:[['malaLookBack',2],['malaHug',2],['malaPeer',1]], F:[['malaLookF',2]], B:[]},
+  npc:{S:[['look',2],['fgShift',3],['fgChin',1],['fgArms',2],['fgBehind',2],['fgWatch',1],['fgSigh',1],['fgYawn',1],['fgLookBack',1],['fgPockets',2]], F:[['fgLookF',3],['fgShiftF',2],['fgArmsF',2],['rubHands',1],['fgScratchF',1],['fgPocketsF',1]], B:[['fgShiftB',1],['fgLookB',1]]} };
+M.FIDGETS=FID;
+var PAUSE_RE=/^pause/;
+function chatPartner(a){ var best=null, bd=1e9; Object.keys(ACT).forEach(function(k){ var o=ACT[k]; if (o===a||o.player||o.id==='mala'||o.id==='marko'||!o.visible||o.ghost||o.mode!=='idle'||o.frozen||o.sit||!actorShown(o)||(E.speech&&E.speech.who===o.id)) return;
+    var dx=o.x-a.x, dy=Math.abs(o.y-a.y); if (Math.abs(dx)>52||Math.abs(dx)<8||dy>24) return;
+    var aOk=a.f==='F'||(a.f==='R'&&dx>0)||(a.f==='L'&&dx<0), oOk=o.f==='F'||(o.f==='R'&&dx<0)||(o.f==='L'&&dx>0); if (!aOk||!oOk) return; if (Math.abs(dx)<bd){ bd=Math.abs(dx); best=o; } }); return best; }
+function quiet(){ return E.screen==='game' && !E.busy && !E.dlg && !E.overlay && !E.pick; }
+function fidgetTick(a){ if (a.frozen || a.mode!=='idle' || a.fid || a.sit || (a.idle && !PAUSE_RE.test(a.idle)) || (a.ghost && a.id!=='mala') || a.noFidget) return;
+  if (!quiet() || (E.conv && E.conv.npc===a.id)){ a.fidAt=Math.max(a.fidAt||0,gt+2500); return; }
+  if (!a.fidAt){ a.fidAt=gt+3000+Math.random()*7000; return; }
+  if (gt<a.fidAt) return;
+  if (a.player && a.idleT<4000){ a.fidAt=gt+1200; return; }
+  var cur=idleSetFor(a), v0=cur&&cur[0]&&cur[0][0]&&cur[0][0].v, view=v0==='F'?'F':(v0==='B'?'B':'S');   // Ansicht der laufenden Leerlauffolge, nicht a.f
+  // zwei, die nah beieinander stehen und sich zugewandt sind, reden ab und zu miteinander (stumm, nur Mund und Hände); der andere sieht zu
+  if (!a.player && a.id!=='mala' && view!=='B' && Math.random()<0.4){ var pt=chatPartner(a); if (pt){ var chT=M.CHARS[a.ch], own=chT&&chT.anims&&chT.anims[view==='F'?'talkF':'talkS'], L0=view==='F'?TALK_F:TALK_S, ts=own||A_[L0[Math.floor(Math.random()*L0.length)]]||A_.talkS;
+    var rep=ts.concat(ts,ts), dur=0; rep.forEach(function(f){ dur+=f[1]; }); a.fid=rep; a.fidLast='chat'; a.anim=rep; a.fi=0; a.ft=0; pt.listenTo=a; pt.listenUntil=gt+dur+600; a.fidAt=gt+dur+5000+Math.random()*9000; return; } }
+  var ch=M.CHARS[a.ch], set=(ch&&ch.fidgets)||(a.id==='marko'?FID.mk:(a.id==='mala'?FID.mala:FID.npc)), pool=set[view];
+  if (!pool||!pool.length){ a.fidAt=gt+5000; return; }
+  var tot=0, i; for (i=0;i<pool.length;i++) if (pool[i][0]!==a.fidLast) tot+=pool[i][1]; var r=Math.random()*tot, name=pool[0][0];
+  for (i=0;i<pool.length;i++){ if (pool[i][0]===a.fidLast) continue; r-=pool[i][1]; if (r<=0){ name=pool[i][0]; break; } }
+  var an=charAnim(a,name), v=an&&an[0][0].v; if (!an || v!==view){ a.fidAt=gt+2000; return; }
+  a.fid=an; a.fidLast=name; a.anim=an; a.fi=0; a.ft=0; a.fidAt=gt+(a.player?10000:7000)+Math.random()*(a.player?12000:12000); }
+// Hinsehen: Nebenfiguren sehen zu dem, der gerade spricht, oder zu Marko (Mala), wenn er nah vorbeigeht. Von vorn wandern die Augen,
+// in der Seitenansicht dreht sich eine Figur ohne eigene Tätigkeit um, wenn er hinter ihr stehen bleibt, und nach einer Weile wieder zurück.
+function attentionTick(a){ if (a.id==='mala' || a.id==='marko' || !a.visible || a.noLook || a.ghost){ a.glance=null; a.lookF=null; a.headBack=false; return; }
+  var tgt=null, sp=E.speech&&E.speech.who&&ACT[E.speech.who], pl=player(), lis=(a.listenTo && gt<a.listenUntil && a.listenTo.visible)?a.listenTo:null;
+  if (sp && sp!==a && Math.abs(sp.x-a.x)<140 && actorShown(sp)) tgt=sp;
+  else if (lis) tgt=lis;
+  else if (pl && pl!==a && actorShown(pl) && Math.abs(pl.x-a.x)<70 && Math.abs(pl.y-a.y)<46) tgt=pl;
+  // wer spricht, wird angesehen; Marko im Vorbeigehen nur mit Blicken, die kommen und gehen (ein paar Sekunden hin, dann wieder zur Sache)
+  if (tgt && tgt===pl && tgt!==sp){ if (!a.glT || gt>=a.glT){ a.glOn=!a.glOn; a.glT=gt+(a.glOn?2200+Math.random()*2200:2600+Math.random()*4400); } } else { a.glOn=!!tgt; a.glT=0; }
+  a.glance=(tgt && a.glOn && !(E.speech&&E.speech.who===a.id))?(tgt.x<a.x-4?'l':(tgt.x>a.x+4?'r':null)):null;
+  var side=a.f==='L'||a.f==='R', act=!!(a.idle && !PAUSE_RE.test(a.idle)), calm=quiet() && a.mode==='idle' && !a.frozen && !a.sit && !(E.conv&&E.conv.npc===a.id);
+  var near=pl && actorShown(pl) && Math.abs(pl.x-a.x)<54 && Math.abs(pl.y-a.y)<40, behind=!!(near && ((a.f==='R'&&pl.x<a.x-3)||(a.f==='L'&&pl.x>a.x+3)));
+  // mit eigener Tätigkeit (auch im Sitzen): nur der Kopf dreht sich über die Schulter, die Hände arbeiten weiter
+  if (side && act && calm){ if (behind && !a.headBack && gt>(a.lookCool||0)){ if (!a.lookWant) a.lookWant=gt+300+Math.random()*600; else if (gt>=a.lookWant){ a.headBack=true; a.lookUntil=gt+2200+Math.random()*2400; } }
+    else if (!behind) a.lookWant=0;
+    if (a.headBack && (gt>a.lookUntil || !near)){ a.headBack=false; a.lookWant=0; a.lookCool=gt+5000+Math.random()*5000; } }
+  else if (a.headBack){ a.headBack=false; }
+  // ohne Tätigkeit (oder in einer Pause): ganz umdrehen, nach einer Weile wieder zurück
+  if (!side || act || !calm){ if (a.lookF) a.lookF=null; return; }
+  if (behind && !a.lookF && gt>(a.lookCool||0)){ if (!a.lookWant) a.lookWant=gt+350+Math.random()*600; else if (gt>=a.lookWant){ a.lookF=a.f==='R'?'L':'R'; a.lookUntil=gt+4000+Math.random()*3000; a.fid=null; } }
+  else if (!behind && !a.lookF) a.lookWant=0;
+  if (a.lookF){ if (near && pl.mode==='walk') a.lookUntil=Math.max(a.lookUntil,gt+2500); if (gt>a.lookUntil || !near){ if (!near && gt<a.lookUntil-1500) a.lookUntil=gt+1500; else { a.lookF=null; a.lookWant=0; a.lookCool=gt+4000+Math.random()*4000; } } } }
+E.faceOf=function(a){ return a.lookF||a.f; };
 function faceOn(a,f){ if (!a||a.f===f) return Promise.resolve(); a.f=f; if (a.mode!=='anim'&&a.mode!=='walk') setIdle(a); return Promise.resolve(); }
-function updateActor(a,dt){ if (a.frozen) return;
+function updateActor(a,dt){ var ef=a.lookF||a.f; if (ef!==a._pf){ if ((ef==='L'&&a._pf==='R')||(ef==='R'&&a._pf==='L')) a.turnAt=gt; a._pf=ef; }
+  if (a.frozen) return;
   if (a.mode==='walk'){ a.ft+=dt; var spd=a.speed;
     while (a.ft>=spd && a.mode==='walk'){ a.ft-=spd; var tg=a.path[0]; if (!tg){ arrive(a); break; }
       var dx=tg[0]-a.x, dy=tg[1]-a.y, side=Math.abs(dx)>=Math.abs(dy)*0.8, step=side?a.step:2.4, dist=side?Math.abs(dx):Math.abs(dy);
@@ -122,10 +178,13 @@ function updateActor(a,dt){ if (a.frozen) return;
       if (a.hooks&&!a.hooks.done&&a.fi===a.hooks.i){ a.hooks.done=true; if (a.hooks.fn) a.hooks.fn(); }
       if (a.fi>=an.length){ if (a.hooks&&!a.hooks.done&&a.hooks.fn){ a.hooks.done=true; a.hooks.fn(); } var last=an[an.length-1][0]; setIdle(a); if (a.hold){ a.frozen=last; a.hold=false; } var r=a.res; a.res=null; if (r) r(true); break; } } }
   else { var talking=E.speech && E.speech.who===a.id, set;
-    if (talking){ var tn=a.talk?charAnim(a,a.talk):null; set=tn||(a.f==='B'?idleSetFor(a):(a.f==='F'?A_.talkF:A_.talkS)); if (a.idle && /sit|mend|cards|guitar/.test(a.idle) && !tn){ set=charAnim(a,'sitTalk')||idleSetFor(a); } }
+    if (talking){ a.fid=null; var tn=a.talk?charAnim(a,a.talk):null; set=tn||(a.f==='B'?idleSetFor(a):talkSet(a,a.f==='F'?'F':'S')); if (a.idle && /sit|mend|cards|guitar/.test(a.idle) && !tn){ set=charAnim(a,'sitTalk')||idleSetFor(a); } }
+    else if (a.fid) set=a.fid;
     else set=idleSetFor(a);
     if (a.anim!==set){ a.anim=set; a.fi=0; a.ft=0; }
-    a.ft+=dt; a.idleT+=dt; var guard=0; while (a.ft>=a.anim[a.fi][1] && guard++<50){ a.ft-=a.anim[a.fi][1]; a.fi=(a.fi+1)%a.anim.length; }
+    a.ft+=dt; a.idleT+=dt; var guard=0; while (a.ft>=a.anim[a.fi][1] && guard++<50){ a.ft-=a.anim[a.fi][1]; a.fi++; if (a.fi>=a.anim.length){ a.fi=0; if (a.fid && a.anim===a.fid){ a.fid=null; a.anim=idleSetFor(a); } } }
+    if (!talking) fidgetTick(a);
+    if (!a.player) attentionTick(a);
     if (a.routine && !a.player) routineTick(a);
     // Mala folgt Marko, wenn sie nicht gespielt wird
     // nicht, wenn sie sitzt oder die Szene sie festhält (Bank an der Riva, Sustipan, Busbahnhof)
@@ -169,7 +228,10 @@ function routineTick(a){ if (E.busy || E.dlg || E.overlay || E.screen!=='game' |
 function holdNpc(a){ if (!a||!a.routine) return; if (a.mode==='walk'){ cancelRes(a); a.path=[]; a.mode='idle'; setIdle(a); } a.rtUntil=gt+9000; }
 E.holdNpc=holdNpc;
 var MOODHD={sad:'s',shock:'w'}, MOODC=new WeakMap();   // Posen sind Cache-Schlüssel (JSON), deshalb keine Zusatzfelder an ihnen
+var GLC=new WeakMap();
 function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood];
+  if (a.glance && p && p.v==='F' && !m && (!p.hd||p.hd==='n')){ var cg=GLC.get(p); if (!cg){ cg={}; GLC.set(p,cg); } p=cg[a.glance]||(cg[a.glance]=Object.assign({},p,{hd:a.glance})); }
+  if (a.headBack && p && p.v==='S' && !p.hb){ var ch2=GLC.get(p); if (!ch2){ ch2={}; GLC.set(p,ch2); } p=ch2.hb||(ch2.hb=Object.assign({},p,{hb:1})); }
   if (m && p && !(p.hd&&p.hd!=='n')){ var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } p=c[m]||(c[m]=Object.assign({},p,{hd:m})); }
   var u=p?umbrellaStage(a):0; if (u>=2){ var c2=UMBC.get(p); if (!c2){ c2={}; UMBC.set(p,c2); } p=c2[u]||(c2[u]=Object.assign({},p,{um:u})); }
   return p; }
@@ -186,7 +248,12 @@ function umbrellaStage(a){ var want=umbrellaWant(a); if (!want){ a.umK=0; a.umRo
   if (a.umK<want) a.umK=Math.min(want,a.umK+dt/75); else if (a.umK>want) a.umK=Math.max(want,a.umK-dt/75);
   return Math.round(a.umK); }
 E.umbrellaStage=umbrellaStage;
-function actorPose0(a){ if (a.frozen) return a.frozen; if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
+var TURN_MS=95;
+function actorPose0(a){ if (a.frozen) return a.frozen;
+  // beim Umdrehen von links nach rechts (oder zurück) ein kurzes Bild von vorn
+  if (a.turnAt && gt-a.turnAt<TURN_MS && a.mode!=='anim' && !a.sit && !(a.idle&&/sit|mend|cards|guitar|knit/i.test(a.idle))){ var chT=M.CHARS[a.ch], anT=(chT&&chT.anims)||{};
+    if (a.ghost && a.id==='mala' && a.mode!=='walk') return (A_.floatF)[0][0]; return a.mode==='walk'?((anT.walkF||A_.walkF)[a.fi%8]):A_.idleF[0][0]; }
+  if (a.mode==='walk'){ var ch=M.CHARS[a.ch], anims=(ch&&ch.anims)||{};
     if (a.ghost){ var fl=a.f==='F'?A_.floatF:(a.f==='B'?A_.idleB:A_.floatS); if (a.id==='mala'){ var wS=anims.walkS||A_.walkS, wF=anims.walkF||A_.walkF, wB=anims.walkB||A_.walkB; return (a.f==='F'?wF:(a.f==='B'?wB:wS))[a.fi%8]; } return fl[0][0]; }
     var wS2=anims.walkS||A_.walkS, wF2=anims.walkF||A_.walkF, wB2=anims.walkB||A_.walkB; return (a.f==='F'?wF2:(a.f==='B'?wB2:wS2))[a.fi%8]; }
   var fr=a.anim&&a.anim[a.fi]; return fr?fr[0]:A_.idleS[0][0]; }
@@ -517,7 +584,7 @@ function placePlayers(){ ['marko','mala'].forEach(function(k){ var pos=GS.pos[k]
     else if (ACT[k]){ if (ACT[k].mode==='walk') cancelRes(ACT[k]); delete ACT[k]; } }); }   // QA BUG-002: ein laufender Weg endet als abgebrochen, statt ewig offen zu bleiben
 // QA BUG-002: Spielerfiguren, die beim Raumwechsel noch unterwegs sind, beenden ihren Weg als abgebrochen (sonst bliebe die Aktion ewig offen)
 function placeActors(){ Object.keys(ACT).forEach(function(k){ var a=ACT[k]; if (a && a.player && a.mode==='walk') cancelRes(a); delete ACT[k]; }); var list=room.actors?room.actors(S,GS):[];
-  list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); a.home=[a.x,a.y,a.f]; if (o.routine!==false){ var rt=o.routine||(M.ROUTINES&&M.ROUTINES[o.id]); if (rt) a.routine=rt; } a.rtUntil=gt+1500+Math.random()*4000; ACT[o.id]=a; setIdle(a); }); placePlayers(); }
+  list.forEach(function(o){ if (o.vis===false) return; var a=new Actor(o.id,o); a.home=[a.x,a.y,a.f]; if (o.routine!==false){ var rt=o.routine||(M.ROUTINES&&M.ROUTINES[o.id]); if (!rt && M.autoRoutine) rt=M.autoRoutine(o,a); if (rt) a.routine=rt; } a.rtUntil=gt+1500+Math.random()*4000; ACT[o.id]=a; setIdle(a); }); placePlayers(); }
 function loadRoom(id){ E.crossing=null; PH.on=false; PH.with=null; room=M.ROOMS[id]; if (!room) throw new Error('kein Raum '+id); S=RS(id); dirty=true; navDirty=true; lastClick=null; E.room=room;
   placeActors(); E.camX=0; var mus=typeof room.music==='function'?room.music(GS):room.music; if (mus!==undefined && mus!==null) M.music(mus);
   if (room.load) room.load(API); var sc=room.scape||room.id; M.scape(sc,{tod:todOf(),S:S,GS:GS}); }

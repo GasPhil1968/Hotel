@@ -34,6 +34,15 @@ addAnims('dinko',{ sitLook:[[ds({nh:[8,-15],fh:[7,-14],ln:0,ho:[1,-1]}),2200],[d
 // Luka sieht beim Spielen zum Hafen hinüber
 addAnims('luka',{ guitarLook:[[sit({nh:[6,-17],fh:[10,-20],it:'guitar',ho:[1,-1]}),2000],[sit({nh:[6,-17],fh:[10,-20],it:'guitar',ho:[1,-1],hd:'b'}),110],[sit({nh:[6,-18],fh:[10,-20],it:'guitar',ho:[1,-1]}),1400]] });
 
+// ---------------------------------------------------------------- Pausen (11.11.2026): wer im Stehen nur einer Tätigkeit nachgeht und keinen eigenen Ablauf hat,
+// hält ab und zu inne – steht ein paar Sekunden locker da (Gesten, Hinsehen, Umdrehen wie alle anderen, 05_engine.js) und macht dann weiter.
+// Nicht im Sitzen, nicht bei Geistern (sie wiederholen, was sie immer getan haben) und nicht bei Tätigkeiten, die keine Pause vertragen.
+A.pauseS=A.idleS; A.pauseF=A.idleF;
+var NOPAUSE=/^(hold|lamp|listen|teach|stand|play|sled|bed|eat|rock|guitar|cards|domino|mend|knit|porter|type|cook|phone|wait|arms|talk|lean|wave|sit.*)$/;
+M.autoRoutine=function(o,a){ var own=o.idle; if (!own || o.ghost || NOPAUSE.test(own)) return null; var ch=C[o.ch||o.id], an=(ch&&ch.anims&&ch.anims[own])||A[own]; if (!an||!an[0]) return null;
+  var p0=an[0][0]; if (!p0 || p0.sit || p0.v==='B') return null; var pz=p0.v==='F'?'pauseF':'pauseS';
+  var steps=[['idle',own,9,16],['idle',pz,3,6],['idle',own,8,15],['skip',0.5,1],['idle',pz,2,4]];
+  return function(){ if (a.idle && a.idle!==own && a.idle!==pz) return null; return steps; }; };
 // ---------------------------------------------------------------- Tagesabläufe (je Figur; Funktion von Raumzustand, Spielstand und Raum)
 function ph(G,list){ return list.indexOf(G.phase)>=0; }
 M.ROUTINES={

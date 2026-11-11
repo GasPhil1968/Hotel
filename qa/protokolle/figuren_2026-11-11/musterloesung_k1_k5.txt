@@ -1,0 +1,20 @@
+== walkthrough
+Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 86.1 min
+DURCHLAUF OK
+keine JS-Fehler
+== walkthrough2
+[238.0s] #68 Abspann
+Spieltakt der Musterlösung (ohne Umwege, Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 99.2 min
+DURCHLAUF KAPITEL 2 OK, keine JS-Fehler
+== walkthrough3
+[412.7s] #131 epilog: Ende des dritten Kapitels · Fortsetzung: München; Abspann
+Spieltakt der Musterlösung (Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 172.0 min
+DURCHLAUF KAPITEL 3 OK: 131 Schritte in 413 s, keine JS-Fehler
+== walkthrough4
+[364.3s] #85 epilog: Pantoffeln, Nada, der Nachruf, Malas Frage; Ende des vierten Kapitels · Fortsetzung: Sarajevo; Abspann
+Spieltakt der Musterlösung (Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 151.8 min
+DURCHLAUF KAPITEL 4 OK: 85 Schritte in 364 s, keine JS-Fehler
+== walkthrough5
+[200.1s] #55 montag: Die letzte Zeichnung, mit Rädern; „Dahinter ist die Stadt.“ Ende; Abspann
+Spieltakt der Musterlösung (Pflichtdialoge in Normaltempo, inkl. Wartezeiten des Testtreibers): 83.4 min
+DURCHLAUF KAPITEL 5 OK: 55 Schritte in 200 s, keine JS-Fehler

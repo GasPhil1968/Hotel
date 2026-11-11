@@ -46,7 +46,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   list.sort(function(a,b){ return (a.base-b.base)||((a.actor?1:-1)-(b.actor?1:-1)); });
   var tod=view.tod;
   list.forEach(function(l){
-    if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), f=p.v==='S'?(a.f==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
+    if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), af=a.lookF||a.f, f=p.v==='S'?(af==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
       var lift=0;
       if (spirit){
