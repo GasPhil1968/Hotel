@@ -247,6 +247,7 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>310) return false;
   if (Math.abs(x-TREE.x)<5 && y<TREE.base+3) return false;
   return true; }
 M.defineArt('koski',{
+fx:{ lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{

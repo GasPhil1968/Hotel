@@ -61,6 +61,8 @@ function lightsFor(tod){ if (tod==='day') return []; var L=[];
 
 // ---------------------------------------------------------------- Masken
 var DEP=new Uint8Array(W*H), SKYM=new Uint8Array(W*H), PAVE=new Uint8Array(W*H), WINS=[];
+var FARSKY=null, FARM=new Uint8Array(W*H);
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3): 2 Pfütze, 1 nasses Pflaster   // ferne Ebene (Himmel und Velež) für die Parallaxe
 function stage(b,d,fn){ var s=b.d.slice(); fn(); for (var k=0;k<W*H;k++) if (b.d[k]!==s[k]) DEP[k]=d; }
 
 // ---------------------------------------------------------------- Himmel
@@ -229,7 +231,7 @@ function umbrellaMan(b){ var x=372, by=106; b.rect(x-2,by-14,5,10,P.c1); b.vl(x-
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), b=new M.Buf(W,H,T), sky=new M.Buf(W,H,P.k0);
   DEP.fill(0); PAVE.fill(0); GLASS.fill(0); WINS=[];
-  stage(b,1,function(){ paintVelez(b,w); });
+  stage(b,1,function(){ paintVelez(b,w); }); var S1=b.clone();
   stage(b,2,function(){ blocks(b); });
   stage(b,4,function(){ building(b); station(b,tod); });
   stage(b,5,function(){ ground(b,w,S); });
@@ -239,12 +241,18 @@ function paint(S,GS,tod){ var w=weaOf(GS), b=new M.Buf(W,H,T), sky=new M.Buf(W,H
   M.fogBake(b,function(x,y){ var d=DEP[y*W+x]; if (!d) return 0; var a=hz[d-1]; if (w==='rain' && d===1) a=Math.min(1,a+Math.max(0,(46-y)/30)); return a; },{col:fcol});
   if (w==='rain') for (var y2=8;y2<50;y2++) for (var x2=0;x2<W;x2++){ var cv=fbm(x2*0.02,y2*0.09,8); if (DEP[y2*W+x2]===1 && cv>0.5 && bayer(x2,y2)<(cv-0.5)*2.6) b.px(x2,y2,(cv>0.62)?P.s4:P.m3); }
   paintSky(sky,tod,w); SKYM.fill(0); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
+  // ferne Ebene: derselbe Berg mit demselben Dunst über demselben Himmel, ganz (auch, wo die Stadt ihn verdeckt)
+  M.fogBake(S1,function(x,y){ if (S1.d[y*W+x]===T) return 0; var a=hz[0]; if (w==='rain') a=Math.min(1,a+Math.max(0,(46-y)/30)); return a; },{col:fcol});
+  if (w==='rain') for (var y3=8;y3<50;y3++) for (var x3=0;x3<W;x3++){ var cv3=fbm(x3*0.02,y3*0.09,8); if (S1.d[y3*W+x3]!==T && cv3>0.5 && bayer(x3,y3)<(cv3-0.5)*2.6) S1.d[y3*W+x3]=(cv3>0.62)?P.s4:P.m3; }
+  var FAR=sky.clone(); for (var q2=0;q2<W*H;q2++){ if (S1.d[q2]!==T) FAR.d[q2]=S1.d[q2]; FARM[q2]=(SKYM[q2]||DEP[q2]===1)?1:0; }
   puddleReflect(b,sky);
+  REFM.fill(0); for (var r1=GY;r1<H;r1++) for (var r2=0;r2<W;r2++){ var rk=r1*W+r2; if (!PAVE[rk]) continue; REFM[rk]=inPud(r2,r1)?2:(w==='rain'?1:0); }
   if (w==='rain') wetReflect(b);
   M.light(b,M.lf.sum(M.lf.band(118,H,0,-0.35),M.lf.pool((BUS.x0+BUS.x1)/2+6,BUS.base+1,36,3,S.busIn?-1.1:0),M.lf.pool((KIO.x0+KIO.x1)/2,KIO.base+1,22,3,-0.9),M.lf.pool(TAXI.x0+23,TAXI.base+1,26,3,-1)),0,0,function(x,y){ return !SKYM[y*W+x]; });
   M.light(b,M.lf.k(-0.55),0,0,function(x,y){ return x<CAN.x1+3 && y>CAN.y1 && y<BUS.base+6 && !SKYM[y*W+x] && DEP[y*W+x]>=4; });
   BASE=b.clone(); LIT=lightsFor(tod);
   shade(b,0,0,todKey(tod,w),LIT,function(x,y){ return SKYM[y*W+x]===1; });
+  shade(FAR,0,0,todKey(tod,w),LIT,function(x,y){ return S1.d[y*W+x]===T; }); FARSKY=FAR;
   if (tod!=='day') afterLights(b,tod,S);
   LASTB=b; return b; }
 function wetReflect(b){ var src=b.clone(); for (var y=GY+2;y<H;y++){ var d=y-GY, k=0.5-d/70, sy=GY-1-Math.floor(d*0.9); if (k<=0.04||sy<0) continue;
@@ -319,6 +327,8 @@ function WALK(x,y){ if (y<112||y>140||x<6||x>474) return false;
   if (x>=RACK.x0-1 && x<=RACK.x1+1 && y<RACK.base+3) return false;
   return true; }
 M.defineArt('ostbus',{
+fx:{ reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel und Velež als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:function(x,y){ return !(x<CAN.x1 && y<=119); },   // Regenschirm (05_engine.js): unter dem Vordach, dicht an den Stützen, bleibt er zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },

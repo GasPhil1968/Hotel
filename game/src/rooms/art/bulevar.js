@@ -214,9 +214,11 @@ function paintSign(w,wet){ var s=SIGN, x, y; w.g=RG.prop;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, SKYB=null;
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night', wet=we==='rain';
   WE=we; REG.fill(0); LITW.length=0;
-  paintSky(b,tod,we); SKYB=b.clone(); paintFar(w,we,tod);
+  paintSky(b,tod,we); SKYB=b.clone(); FARSKY=SKYB; paintFar(w,we,tod);
   paintGym(w,wet); paintBank(w,wet); paintOld(w,wet);
   paintStreet(w,we);
   TREES.forEach(function(t){ plane(w,t.x,ST.med[0]+2,92,t.s); });
@@ -228,7 +230,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(ST.curb,H,0,-0.35),M.lf.pool(240,GY-6,120,8,-0.35)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day') MLAMPS.forEach(function(lx){ lights.push([lx-8,40,30,0.7,26]); lights.push([lx+10,40,30,0.7,26]); lights.push([lx,112,40,0.5,10]); });
+  var lights=[]; LASTL=lights; if (tod!=='day') MLAMPS.forEach(function(lx){ lights.push([lx-8,40,30,0.7,26]); lights.push([lx+10,40,30,0.7,26]); lights.push([lx,112,40,0.5,10]); });
   BASE=b.clone();
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       LITW.forEach(function(p){ if (hash(p[0]*1.7,p[1]*0.3)>(tod2==='night'?0.35:0.2)) return; for (var yy=p[1];yy<p[1]+3;yy++) for (var xx=p[0];xx<p[0]+3;xx++) if (BASE.get(xx,yy)===P.k2||BASE.get(xx,yy)===P.n0) o.px(xx,yy,(bayer(xx,yy)<0.5)?P.y3:P.y2); });
@@ -240,7 +242,10 @@ function car(fb,x0,by,dir,col,L,tint,cam){ var h=11, x, y;
   for (x=0;x<L;x++){ var u=x/(L-1), fw=dir>0?u:1-u, roof=(fw>0.28&&fw<0.78), top=by-(roof?h:6), y0=roof?top+Math.round(Math.max(0,Math.abs(fw-0.53)-0.18)*12):top;
     for (y=y0;y<by-2;y++){ var c=col[1]; if (y===y0) c=col[2]; if (y>by-5) c=col[0]; if (roof && y>y0 && y<by-6) c=((x%9)===0)?col[0]:(y<y0+2?P.n2:P.n1); px(x0+x,y,c); } }
   [0.2,0.8].forEach(function(f){ var cx=x0+L*f; for (var a=-2;a<=2;a++) for (var b=-2;b<=2;b++) if (a*a+b*b<=5) px(cx+a,by-2+b,(a*a+b*b<=1)?P.m2:P.k1); });
-  px(dir>0?x0+L-1:x0,by-5,P.y4); }
+  px(dir>0?x0+L-1:x0,by-5,P.y4);
+  if (tint){ var fx0=rd(dir>0?x0+L-1:x0)-cam, rx0=rd(dir>0?x0:x0+L-1)-cam; lamps(fb,fx0,rx0,by,dir); } }   // nachts: Scheinwerfer und Rücklicht (Kapitel-3-Grafik)
+function lamps(fb,fx0,rx0,by,dir){ if (fx0>=0&&fx0<320){ fb.px(fx0,by-5,P.y5); fb.px(fx0,by-4,P.y4); } if (rx0>=0&&rx0<320) fb.px(rx0,by-5,P.r4);
+  for (var lx=1;lx<46;lx++) for (var ly=-2;ly<=3;ly++){ if (Math.abs(ly-0.5)>1.2+lx*0.07) continue; var X=fx0+dir*lx, Y=by-4+ly+Math.round(lx*0.12); if (X<0||X>=320||Y<0||Y>=144) continue; if (bayer(X,Y)<0.55-lx/90){ var k=Y*320+X; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } } }
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, we=WE, tod=v.tod, tint=tod!=='day'?M.TINT[tod]:null;
   // ein Auto auf der nahen Spur, selten eins gegenüber
   var per=13, ph=t%per, x0=-50+ph*48; if (x0<W+10) car(fb,x0,ST.nl[1]-1,1,[P.s3,P.s4,P.s5],32,tint,cam);
@@ -262,6 +267,8 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
 // ---------------------------------------------------------------- Lauffläche: unser Gehweg
 function walk(x,y){ if (y<114||y>138||x<6||x>474) return false; if (x>BENCH.x0-1 && x<BENCH.x1+1 && y<BENCH.by+2) return false; if (x>TIRES.x-11 && x<TIRES.x+12 && y<TIRES.by+2) return false; if (Math.abs(x-SIGN.x)<2 && y<SIGN.by+1) return false; return true; }
 M.defineArt('bulevar',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{
     exit:[0,88,12,56], to_vulk:[W-22,100,22,44],

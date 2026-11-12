@@ -184,9 +184,10 @@ function paintCrowd(w,we){ var x, y, k;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, FULL=false;
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), k, night=tod==='night';
   WE=we; REG.fill(0); LITW.length=0; CHIM.length=0; VAL.length=0; FULL=full(S,GS);
-  paintSky(b,tod,we); paintVelez(w,we);
+  paintSky(b,tod,we); FARSKY=b.clone(); paintVelez(w,we);
   paintHouses(w,we); paintGround(w,we);
   // der Brunnen links (Česma): Steinplatte mit Rohr und Becken
   w.g=RG.prop; var fx=FOUNT.x, fy=FOUNT.by; w.rect(fx-6,fy-26,12,26,P.s5); w.vl(fx-6,fy-26,fy-1,P.s6); w.vl(fx+5,fy-26,fy-1,P.s3); w.rect(fx-3,fy-22,6,9,P.s3); w.hl(fx-1,fx+2,fy-14,P.t3); w.px(fx+2,fy-13,P.t2);
@@ -259,6 +260,7 @@ function walk(x,y,S,GS){ if (y<112||y>138||x<6||x>474) return false;
   if (full(S||{},GS||{phase:''}) && ((x>NB.x0-2 && x<NB.x1+2 && y<NB.by+2) || (x>ZT.x0-2 && x<ZT.x1+4 && y<ZT.by+2) || (Math.abs(x-SACK.x)<7 && y<SACK.by+2))) return false;
   return true; }
 M.defineArt('tepa',{
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:tableLayer, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{
     exit:[0,88,12,56],

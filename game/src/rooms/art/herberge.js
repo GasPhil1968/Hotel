@@ -69,6 +69,8 @@ function lightsFor(tod,S){ if (tod==='day') return []; var L=[[84,40,96,56,0.95]
 
 // ---------------------------------------------------------------- Masken
 var SKYM=new Uint8Array(W*H), OUT=new Uint8Array(W*H), WINS=[];
+var FARSKY=null, FARM=null;
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3)   // ferne Ebene (Himmel) für die Parallaxe
 
 // ---------------------------------------------------------------- Draußen: Himmel, Hum, Westufer, Fluss, die Alte Brücke klein
 function paintSky(b,tod,w,GS){ var x, y, i, r=M.rng(5), x0=CORNER.x0;
@@ -214,13 +216,14 @@ var CANDLES=[];
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
   SKYM.fill(0); OUT.fill(0); WINS=[]; CANDLES=[];
-  var sky=new M.Buf(W,H,T); paintSky(sky,tod,w,GS);
+  var sky=new M.Buf(W,H,T); paintSky(sky,tod,w,GS); FARSKY=sky;
   farView(b,tod,w);
   // Dunst über dem Westufer (bei Bura fast keiner)
   var hz={rain:0.55,grey:0.38,calm:0.18,frost:0.15,bura:0.04}[w], fcol=(w==='rain')?(tod==='day'?P.s3:P.m1):(w==='grey'?P.s4:P.b4); if (tod==='night') fcol=P.n0;
   M.fogBake(b,function(xx,yy){ return (xx>=CORNER.x0 && yy<95)?hz*(1.1-yy/140):0; },{col:fcol});
   for (var q=0;q<W*H;q++) if (b.d[q]===T && sky.d[q]!==T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
   for (y=0;y<RAIL.base;y++) for (x=CORNER.x0;x<W;x++) if (!OUT[y*W+x]) OUT[y*W+x]=1;
+  REFM.fill(0); if (wet) for (var rk=0;rk<W*H;rk++) if (OUT[rk]===3) REFM[rk]=1;
   pergola(b,w); railing(b); deck(b,wet); chain(b); if (w==='rain') tarp(b);
   interior(b,tod); corner(b);
   table(b,TBL[0],false); chairBack(b,TBL[0].x0-6,124,'R'); chairBack(b,TBL[0].x1+6,124,'L');
@@ -293,6 +296,8 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>390) return false;
   for (var i=0;i<TBL.length;i++){ var t=TBL[i]; if (x>=t.x0-9 && x<=t.x1+9 && y<t.base+3) return false; }
   return true; }
 M.defineArt('herberge',{
+fx:{ reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:function(x,y){ return x>=CORNER.x1 && !(x>=TARP.x0-6 && x<=TARP.x1); },   // Regenschirm (05_engine.js): auf der Terrasse offen, an der Rezeption und unter der Plane zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; if (tod==='day') return levels(k)[0].a; var l=lightAt(LIT,a.x,a.y-22); return levels(k)[Math.max(1,Math.min(4,Math.round(l*4)))].a; },

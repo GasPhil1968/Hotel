@@ -210,7 +210,7 @@ async function epiStart(A){ var G=A.G; if (A.flag('k3.e.bridgeOn')) return; A.se
 M.k3EpiBridge=async function(A){ var G=A.G; if (A.flag('k3.e.bridge')) return A.m('Tief unten. Immer noch. Aber es ist jetzt anders tief.');
   if (!A.flag('k3.e.bridgeOn')) await epiStart(A); G.flags['mala.lock']=true;
   try{ var cs=M.stand('starimost','crest')||[418,50,'R']; await A.walk(cs[0]-10,cs[1]); await A.face('R'); if (A.malaHere()){ A.placeG(cs[0]+6,cs[1],'L'); }
-    await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.');
+    await (M.k3Close?M.k3Close(A,'scheitel',async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); }):(async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); })());   // Nahaufnahme (97_k3_nah.js)
     await A.wait(1000); var D=A.npc('dino'); if (D.actor) D.hide(); A.set('dinoJump',true); await A.wait(900);
     await A.narrate('Neben uns steigt Dino auf die Brüstung, in der Badehose, blau vor Kälte. Er sieht uns nicht an. Er sieht hinunter, breitet die Arme aus und springt.');
     A.set('dinoJump',false); await A.wait(700); A.sfx('splash'); await A.wait(900);

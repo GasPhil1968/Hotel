@@ -49,6 +49,8 @@ function lightsFor(tod){ if (tod==='day') return []; var L=[]; LAMPS.forEach(fun
 
 // ---------------------------------------------------------------- Masken
 var SKYM=new Uint8Array(W*H), PAVE=new Uint8Array(W*H), WINS=[], CLOTH=[];
+var FARSKY=null, FARM=null;
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3)   // ferne Ebene (Himmel) für die Parallaxe
 
 // ---------------------------------------------------------------- Himmel (nur ein Streifen über den Dächern) und der Blick zur Brücke
 function paintSky(s,tod,w){ var x, y, r=M.rng(3);
@@ -185,11 +187,11 @@ var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=w==='rain', b=new M.Buf(W,H,T), x, y; SKYM.fill(0); PAVE.fill(0); WINS=[]; CHIM=[]; CLOTH=[];
   bridgeOpening(b,tod,w); houses(b,tod); taraTower(b);
   SH.forEach(function(s,i){ shopFront(b,s,i,tod,w); });
-  street(b,wet);
+  street(b,wet); REFM.fill(0); if (wet) for (var r1=GY;r1<H;r1++) for (var r2=0;r2<W;r2++){ if (PAVE[r1*W+r2]) REFM[r1*W+r2]=fbm(r2*0.05,r1*0.25,4)>0.6?2:1; }
   if (tod!=='dawn' && tod!=='night') TOUR.forEach(function(t){ tourist(b,t[0],t[1],t[2],w); });
   LAMPS.forEach(function(l){ lantern(b,l,false); });
   nearEaves(b);
-  var sky=new M.Buf(W,H,P.k0); paintSky(sky,tod,w); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
+  var sky=new M.Buf(W,H,P.k0); paintSky(sky,tod,w); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; } FARSKY=sky;
   // Licht: die Gasse liegt im Schatten der Traufen, Licht fällt schräg auf die Pflastermitte; nasse Steine glänzen
   var sunny=tod==='day'&&(w==='bura'||w==='calm'||w==='frost');
   M.light(b,M.lf.sum(M.lf.band(0,30,-0.2,0),M.lf.band(GY,GY+10,-0.5,0),sunny?M.lf.band(118,144,0,0.25):M.lf.k(0)),0,0,function(xx,yy){ return !SKYM[yy*W+xx] && xx<OPEN.x0; });
@@ -227,6 +229,8 @@ function WALK(x,y){ if (y<112||y>138||x<6||x>474) return false;
   if (Math.abs(x-STOOL[0])<8 && y<STOOL[1]+3) return false;
   return true; }
 M.defineArt('kujundziluk',{
+fx:{ reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },

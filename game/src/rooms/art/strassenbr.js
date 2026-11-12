@@ -150,9 +150,11 @@ function paintBridge(w,we){ var x, y, wet=we==='rain';
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm';
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; DEP.fill(0); REG.fill(0); LIT.length=0;
-  paintSky(b,tod,we); paintHills(w);
+  paintSky(b,tod,we); FARSKY=b.clone(); paintHills(w);
   // Land hinter den Ufern
   w.g=RG.town; w.d=2; for (y=HZ;y<WY+2;y++) for (x=0;x<W;x++){ if (REG[y*W+x]!==RG.sky) continue; w.px(x,y,ra(R('e1 g1 e2 s2 g2 e3'),0.5+(fbm(x*1.1,y*1.9,6,7)-0.5)*0.7,x,y)); }
   paintRiver(w,we); paintBanks(w,we); paintTown(w);
@@ -163,7 +165,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.55:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(WALKY,H,0,-0.3)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ FLAMPS.forEach(function(lx){ lights.push([lx+10,30,26,0.6,40]); }); LAMPS.forEach(function(lx){ lights.push([lx+10,120,34,0.8,20]); }); }
+  var lights=[]; LASTL=lights; if (tod!=='day'){ FLAMPS.forEach(function(lx){ lights.push([lx+10,30,26,0.6,40]); }); LAMPS.forEach(function(lx){ lights.push([lx+10,120,34,0.8,20]); }); }
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       LIT.forEach(function(p){ if (hash(p[0]*1.3,p[1]*2.1)>(tod2==='night'?0.4:0.22)) return; o.px(p[0],p[1],hash(p[0],p[1])<0.5?P.y3:P.y4); });
       FLAMPS.forEach(function(lx){ o.hl(lx+7,lx+12,15,P.l1); o.hl(lx+8,lx+11,16,P.y4); }); } }); }
@@ -190,7 +192,10 @@ function car(fb,x0,by,o,tint,cam){ var L=o.len, h=11, x, y;
   for (x=0;x<L;x++){ var u=x/(L-1), fw=o.dir>0?u:1-u, roof=(fw>0.28&&fw<0.78), top=by-(roof?h:6), y0=roof?top+Math.round(Math.max(0,Math.abs(fw-0.53)-0.18)*12):top;
     for (y=y0;y<by-2;y++){ var c=o.col[1]; if (y===y0) c=o.col[2]; if (y>by-5) c=o.col[0]; if (roof && y>y0 && y<by-6) c=((x%9)===0)?o.col[0]:(y<y0+2?P.n2:P.n1); px(x0+x,y,c); } }
   [0.2,0.8].forEach(function(f){ var cx=x0+L*f; for (var a=-2;a<=2;a++) for (var b=-2;b<=2;b++) if (a*a+b*b<=5) px(cx+a,by-2+b,(a*a+b*b<=1)?P.m2:P.k1); });
-  px(o.dir>0?x0+L-1:x0,by-5,P.y4); px(o.dir>0?x0:x0+L-1,by-5,P.r3); }
+  px(o.dir>0?x0+L-1:x0,by-5,P.y4); px(o.dir>0?x0:x0+L-1,by-5,P.r3);
+  if (tint){ var fx0=rd(o.dir>0?x0+L-1:x0)-cam, rx0=rd(o.dir>0?x0:x0+L-1)-cam; lamps(fb,fx0,rx0,by,o.dir); } }   // nachts: Scheinwerfer und Rücklicht (Kapitel-3-Grafik)
+function lamps(fb,fx0,rx0,by,dir){ if (fx0>=0&&fx0<320){ fb.px(fx0,by-5,P.y5); fb.px(fx0,by-4,P.y4); } if (rx0>=0&&rx0<320) fb.px(rx0,by-5,P.r4);
+  for (var lx=1;lx<46;lx++) for (var ly=-2;ly<=3;ly++){ if (Math.abs(ly-0.5)>1.2+lx*0.07) continue; var X=fx0+dir*lx, Y=by-4+ly+Math.round(lx*0.12); if (X<0||X>=320||Y<0||Y>=144) continue; if (bayer(X,Y)<0.55-lx/90){ var k=Y*320+X; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } } }
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, we=WE, tod=v.tod, tint=tod!=='day'?M.TINT[tod]:null, x, y;
   // Glitzern und Strömung auf dem Wasser
   for (y=VP[1]+4;y<WY;y++){ var x0=Math.max(cam,Math.floor(wl(y))), x1=Math.min(cam+319,Math.ceil(wr(y))); for (x=x0;x<=x1;x++){ var k=y*W+x; if (REG[k]!==RG.water) continue; var d=(y-VP[1])/(WY-VP[1]), u=(x-VP[0])/Math.max(1,(wr(y)-wl(y))/2), z=1/Math.max(0.05,d);
@@ -209,6 +214,8 @@ function front(fb,v,S,GS){ var we=WE;
 // ---------------------------------------------------------------- Lauffläche: der Bürgersteig, von Ufer zu Ufer
 function walk(x,y){ return y>=118 && y<=134 && x>=6 && x<=394; }
 M.defineArt('strassenbr',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:function(S,GS,tod){ return [railLayer(S,GS,tod)]; }, walk:walk, dynamic:dyn, front:front,
   spots:{
     exit_e:[0,80,14,64], exit_w:[W-14,80,14,64],

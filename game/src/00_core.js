@@ -31,9 +31,29 @@ var PAL_DEF = [
  ['r5','ec9199'],['g6','b4c07a'],['c5','a9bbd3'],['e5','c9b98a'],['w6','dfb378']
 ];
 var P = {}, RGB = [];
+// Erweiterung für Kapitel 3 (Mostar, Grafikpunkt 8): farbverschobene Rampen – Schatten kühl und violett, Lichter warm –, jede mit
+// Zwischenstufen (Großbuchstaben, Mittel der Nachbarn) für feinere Übergänge mit weniger Raster. Hinten angehängt: alle bisherigen
+// Indizes bleiben. Die übrigen Kapitel benutzen sie nicht (nächste Farbe und Farbtabellen suchen nur in den ersten NBASE Farben);
+// in Mostar färbt M.PAL3MAP die alten Rampen beim Zeichnen um (06_ui.js), und M.R liefert dort die feineren Rampen (01_art.js).
+//   o Kalkstein (Tenelija, statt s) · u Graustein und Metall (statt m) · j Neretva, smaragdgrün (statt a) · i Laub (statt g)
+//   f Lampenlicht (statt y) · z Erde und Putz (statt e)
+var NBASE = PAL_DEF.length;
+var PAL3_DEF = {
+  o:['332c3a','544a58','7a6e74','a69686','cdbb9c','e9d8b6','f8eed6'],
+  u:['1e1f2e','363849','585a68','868684','b8b4ac'],
+  j:['05151d','0a2730','0e3d42','145a50','247c66','56a888','9cd2b6'],
+  i:['0b1617','152a22','233f28','3a5a2c','5f7a34','92994a','bcbb72'],
+  f:['3a1d10','72381a','a8601e','de9638','f6c768','fff0b8'],
+  z:['2a2022','483a30','69573e','8f7852','b59e6c','d1b984'] };
+function hx2(h){ return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+function rgbHex(q){ return q.map(function(v){ var s=Math.round(v).toString(16); return s.length<2?'0'+s:s; }).join(''); }
+Object.keys(PAL3_DEF).forEach(function(k){ var L=PAL3_DEF[k];
+  L.forEach(function(h,i){ PAL_DEF.push([k+i,h]); });
+  for (var i=0;i<L.length-1;i++){ var a=hx2(L[i]), b=hx2(L[i+1]); PAL_DEF.push([k.toUpperCase()+i,rgbHex([(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2])]); } });
 PAL_DEF.forEach(function(e,i){ P[e[0]]=i; var h=e[1]; RGB.push([parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]); });
 var T = 255;
-M.P=P; M.RGB=RGB; M.T=T; M.NCOL=PAL_DEF.length; M.PNAME=PAL_DEF.map(function(e){ return e[0]; });
+M.P=P; M.RGB=RGB; M.T=T; M.NCOL=PAL_DEF.length; M.NBASE=NBASE; M.PNAME=PAL_DEF.map(function(e){ return e[0]; });
+if (M.NCOL>255) throw new Error('Palette zu groß: '+M.NCOL);
 
 // Rampen (dunkel -> hell). Jede Farbe kennt ihren hellen und dunklen Nachbarn (UP/DN).
 var RAMPS = [
@@ -55,8 +75,16 @@ var RAMPS = [
  'k0 h0 h1 h2 h3 w2',
  'k0 x0 x1 x2 x3 x4 x5 x6 l1',
  'k0 v0 v1 v2 v3 v4 v5 l1',
- 'y5 l0 l1'
+ 'y5 l0 l1',
+ // Kapitel 3 (ganze Stufen; die Zwischenstufen hängen dazwischen, siehe unten)
+ 'k0 o0 o1 o2 o3 o4 o5 o6 l1',
+ 'k0 u0 u1 u2 u3 u4 o6',
+ 'k0 j0 j1 j2 j3 j4 j5 j6 l1',
+ 'k0 i0 i1 i2 i3 i4 i5 i6 o5',
+ 'k0 f0 f1 f2 f3 f4 f5 l1',
+ 'k0 z0 z1 z2 z3 z4 z5 o5'
 ];
+Object.keys(PAL3_DEF).forEach(function(k){ for (var i=0;i<PAL3_DEF[k].length-1;i++) RAMPS.push(k+i+' '+k.toUpperCase()+i+' '+k+(i+1)); });
 var UP=new Uint8Array(256), DN=new Uint8Array(256), home={};
 for (var i=0;i<256;i++){ UP[i]=i; DN[i]=i; }
 RAMPS.forEach(function(r){ var a=r.split(' ').map(function(n){ return P[n]; });
@@ -78,7 +106,7 @@ M.hash=function(x,y){ var s=Math.sin(x*12.9898+y*78.233)*43758.5453; return s-Ma
 // ---------------------------------------------------------------- Farbtabellen: "verwandle, dann nimm die nächste Palettenfarbe", mit Dither zwischen zwei Kandidaten
 function nearest2(r,g,b){
   var best=0, bd=1e12, sec=0, sd=1e12;
-  for (var i=0;i<RGB.length;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11;
+  for (var i=0;i<NBASE;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11;
     if (d<bd){ sec=best; sd=bd; best=i; bd=d; } else if (d<sd){ sec=i; sd=d; } }
   var a=Math.sqrt(bd), s=Math.sqrt(sd), ratio=(a+s)>0? a/(a+s) : 0; // 0 = genau getroffen
   return [best,sec,ratio];
@@ -92,13 +120,21 @@ M.tintMake=function(fn){
   A[T]=T; B[T]=T; return {a:A,b:B,r:R};
 };
 // nächste Palettenfarbe (ohne Dither)
-function nearest1(r,g,b){ var best=0, bd=1e12; for (var i=0;i<RGB.length;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ best=i; bd=d; } } return best; }
+function nearest1(r,g,b,all){ var best=0, bd=1e12, n=all?RGB.length:NBASE; for (var i=0;i<n;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ best=i; bd=d; } } return best; }
 M.nearest=nearest1;
+// Kapitel 3: alte Rampen -> farbverschobene (Umfärben von Hintergrund, Ebenen und Vordergrund; Figuren bleiben, wie sie sind)
+var PAL3MAP=new Uint8Array(256); for (var pm=0;pm<256;pm++) PAL3MAP[pm]=pm;
+[['s','o',7],['m','u',5],['a','j',7],['g','i',7],['y','f',6],['e','z',6]].forEach(function(r){ for (var i=0;i<r[2];i++){ if (P[r[0]+i]!==undefined && P[r[1]+i]!==undefined) PAL3MAP[P[r[0]+i]]=P[r[1]+i]; } });
+M.PAL3MAP=PAL3MAP;
+// feinere Rampe: alte Farben umgefärbt, zwischen zwei benachbarten Stufen derselben Rampe die Zwischenstufe
+M.pal3Ramp=function(a){ var out=[], nm=M.PNAME; for (var i=0;i<a.length;i++){ var c=PAL3MAP[a[i]]; out.push(c); if (i<a.length-1){ var d=PAL3MAP[a[i+1]], n1=nm[c]||'', n2=nm[d]||'';
+    if (n1.length===2 && n2.length===2 && n1[0]===n2[0] && 'oujifz'.indexOf(n1[0])>=0 && Math.abs(+n2[1]-+n1[1])===1){ var mid=P[n1[0].toUpperCase()+Math.min(+n1[1],+n2[1])]; if (mid!==undefined) out.push(mid); } } }
+  return out; };
 // echte Mischfarben im Palettenbild: M.mix(a,b,k8) = nächste Farbe zu a*(1-k)+b*k mit k=k8/8.
 // Für Durchscheinen ohne Raster (Geister, Überblendungen). Tabellen je Stufe werden erst bei Bedarf gefüllt.
 var MIXT=[];
 M.mix=function(a,b,k8){ if (b===T||k8<=0) return a; if (a===T||k8>=8) return b; var t=MIXT[k8]; if (!t){ t=MIXT[k8]=new Uint8Array(65536); t.fill(255); }
-  var key=(a<<8)|b, v=t[key]; if (v===255){ var p=RGB[a], q=RGB[b], f=k8/8; v=t[key]=nearest1(p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f, p[2]+(q[2]-p[2])*f); } return v; };
+  var key=(a<<8)|b, v=t[key]; if (v===255){ var p=RGB[a], q=RGB[b], f=k8/8; v=t[key]=nearest1(p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f, p[2]+(q[2]-p[2])*f, a>=NBASE||b>=NBASE); } return v; };   // mit einer Mostar-Farbe: Ziel auch aus deren Rampen
 // Farbtabelle ohne Dither, deren Ziel nur aus einer Auswahl von Palettenfarben besteht (z. B. kühle, gedämpfte Geisterfarben)
 M.tintIn=function(fn,names){ var A=new Uint8Array(256), allow=names.map(function(n){ return P[n]; }).filter(function(i){ return i!==undefined; });
   for (var i=0;i<256;i++){ if (i>=RGB.length){ A[i]=i; continue; } var q=RGB[i], o=fn(q[0],q[1],q[2],i), r=o[0], g=o[1], b=o[2], best=allow[0], bd=1e12;

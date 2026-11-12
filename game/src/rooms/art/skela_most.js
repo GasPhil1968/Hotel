@@ -119,6 +119,7 @@ function sw(s){ var w=0; s.split('').forEach(function(ch){ w+=M.microWidth(ch===
 
 // ---------------------------------------------------------------- Bild
 var LAST=null;
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0); if (tod!=='night') tod='day'; TODN=tod; WEA=wea; FIN=wea==='frost';
   WR=wea==='grey'?R('a1 a2 m1 a3 m2 a4 m3'):R('a1 a2 g2 a3 g3 a4 a5');
   paintSky(b,tod,wea); paintHills(b,tod,wea); paintView(b,tod);
@@ -128,7 +129,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   M.light(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; var v=0; if (r===RG.deck) v+=(y-DK)/28*0.25; if (r===RG.water||r===RG.cliff||r===RG.bank) v-=0.05; if (wea==='grey') v-=0.15; var cx=(x-160)/220, cy=(y-80)/110; v-=Math.max(0,cx*cx+cy*cy-0.3)*0.5; return v; },0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (y<90 && r!==RG.rail) return 0.25*(1-(y-58)/40); return 0.03; },{col:P.m4});
   if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:-0.8; },0,0);
-  var base=b.clone(), lights=tod==='day'?[]:[[LAMP.x+9,LAMP.top+16,22,26,0.75],[LAMP.x+9,DK+10,64,14,0.8],[LAMP.x+4,DK-8,40,12,0.55]];
+  var base=b.clone(), lights=LASTL=tod==='day'?[]:[[LAMP.x+9,LAMP.top+16,22,26,0.75],[LAMP.x+9,DK+10,64,14,0.8],[LAMP.x+4,DK-8,40,12,0.55]];
   LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,tod){ if (tod==='day') return; warmPass(o,base,lights); o.hl(LAMP.x+8,LAMP.x+10,LAMP.top+3,P.y5); o.px(LAMP.x+9,LAMP.top+3,P.l1); } });
   return LAST; }
 // warme Lichtinseln in Stufen (wie in Vratnik): weich auslaufend statt grob gerastert
@@ -154,6 +155,7 @@ function layers(S,GS,tod){ if (!LAST) return []; var l=M.layer(0,H-7,W,7,H+4), w
   for (var x=0;x<W;x++){ w.px(x,H-6,P.m3); w.px(x,H-5,P.m1); } for (var px=12;px<W;px+=24){ w.vl(px,H-6,H-1,P.m2); w.vl(px+1,H-6,H-1,P.m0); }
   if (tod!=='day') M.tintApply(l,M.TINT[tod]); return [l]; }
 M.defineArt('skela_most',{
+fx:{ lights:function(){ return M.k3LA(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:layers, dynamic:dynamic, front:front,
   walk:function(x,y,S,GS){ return y>=118 && y<=134 && x>=6 && x<=314; }, walkG:function(){ return false; },
   spots:{ exit_d:[0,96,12,48], exit_l:[308,96,12,48], plaque:[PLQ.x0-2,PLQ.y0-2,PLQ.w+4,PLQ.h+4], railing:[70,RT-2,110,DK-RT+2], river:[60,64,124,34], lamp:[LAMP.x-3,LAMP.top-2,16,DK-LAMP.top] },

@@ -231,9 +231,10 @@ function branchTree(w,x,by,h,sd,frost){ var r=M.rng(sd*17+3), cols=[P.e0,P.e1,P.
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', GRASS=[];
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; DEP.fill(0); REG.fill(0); LIT.length=0;
-  paintSky(b,tod,we);
+  paintSky(b,tod,we); FARSKY=b.clone();
   paintHills(w);
   // Land unter dem Horizont
   w.g=RG.land; for (y=HZ;y<H;y++){ w.d=y<64?2:3; for (x=0;x<W;x++){ if (REG[y*W+x]!==RG.sky) continue; var f0=fbm(x*1.1,y*1.9,6,7); w.px(x,y,y<HZ+6?ra(R('e2 e3 s3 e4 s4'),0.55+(f0-0.5)*0.6,x,y):ra(R('e1 g1 e2 s2 g2 e3'),0.5+(f0-0.5)*0.7,x,y)); } }
@@ -284,6 +285,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
 // ---------------------------------------------------------------- Lauffläche: die Terrasse
 function walk(x,y){ if (y<112||y>134||x<10||x>390) return false; if (x>BENCH.x0-2 && x<BENCH.x1+2 && y<BENCH.by+1) return false; if (Math.abs(x-FRONTB.x)<5 && y>130) return false; return true; }
 M.defineArt('partizan',{
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:function(S,GS,tod){ return [frontLayer(S,GS,tod)]; }, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{
     exit:[0,92,12,52],

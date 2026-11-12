@@ -230,6 +230,7 @@ function paintFloor(w,we){ var x, y, wet=we==='rain'; w.d=7; w.g=RG.floor;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm';
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; DEP.fill(0); REG.fill(0); LIT.length=0; CHIM.length=0;
   paintSky(b,tod,we); for (k=0;k<W*H;k++){ DEP[k]=0; REG[k]=RG.sky; }
@@ -249,7 +250,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.55:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),function(xx,yy){ return REG[yy*W+xx]===RG.floor?-0.4:0; }),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ lights.push([BR.cx,BR.deck+6,30,0.5,10]); lights.push([DOOR.x0+9,DOOR.sill-8,12,0.6,20]); }
+  var lights=[]; LASTL=lights; if (tod!=='day'){ lights.push([BR.cx,BR.deck+6,30,0.5,10]); lights.push([DOOR.x0+9,DOOR.sill-8,12,0.6,20]); }
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       LIT.forEach(function(p){ if (hash(p[0]*1.3,p[1]*2.1)>(tod2==='night'?0.42:0.25)) return; for (var yy=p[1];yy<p[1]+p[3];yy++) for (var xx=p[0];xx<p[0]+p[2];xx++) o.px(xx,yy,hash(xx,yy)<0.5?P.y3:P.y4); });
       for (var xx=BR.x0+2;xx<BR.x1-1;xx+=7) o.px(xx,rd(deckY(xx))-2,P.y5); } }); }
@@ -308,6 +309,7 @@ function front(fb,v,S,GS){ var we=WE;
 // ---------------------------------------------------------------- Lauffläche: der schmale Umgang
 function walk(x,y){ return y>=118 && y<=134 && x>=40 && x<=280; }
 M.defineArt('minarett',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:function(S,GS,tod){ return [paraLayer(S,GS,tod)]; }, walk:walk, dynamic:dyn, front:front,
   spots:{
     stairs:[DOOR.x0-3,DOOR.apex-3,DOOR.x1-DOOR.x0+7,DOOR.sill-DOOR.apex+4],

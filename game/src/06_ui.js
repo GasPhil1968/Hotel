@@ -7,6 +7,8 @@ var fb=new Buf(W,H,P.k0); M.fb=fb;
 var mask=new Uint8Array(W*SH);
 // Geisterpixel dieses Bildes (gmask) und ihre Farbe (gcol): spätere Dunkel-Durchgänge lassen sie aus, solange nichts darübergemalt wurde
 var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
+// Figurenpixel dieses Bildes (Mostar: alles andere wird auf die farbverschobenen Rampen umgefärbt, die Figuren nicht)
+var amask=new Uint8Array(W*SH); M.SCENE_AMASK=amask;
 var tapMark=null, snapFx=null, noFang=false;   // Touch-Konzept T01: Tippmarke und Rahmen um das erkannte Ding
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
 // Touch-Layout: größere Zeilen für Antworten und Verb-Menü, sobald mit dem Finger bedient wird (UI-Konzept D9/D10)
@@ -33,18 +35,51 @@ function drawPrint(p,view){ var age=view.gt-p.at, k=1-age/PRINT_MS, al=p.g?0.6*k
     var c=fb.d[yy*W+xx], q=M.RGB[c], lum=q?(q[0]+q[1]+q[2]):0;
     if (p.g) fb.d[yy*W+xx]=rim?(lum>420?P.b4:P.b2):(edge?P.b2:P.b1);
     else fb.d[yy*W+xx]=rim?(lum>420?P.s6:M.UP[c]):(edge?(lum>420?P.m2:P.k1):(lum>420?P.m1:P.k0)); } }
+// ---------------------------------------------------------------- Kapitel 3, Punkt 3: lange Schatten
+// Jede lebende Figur wirft von den (höchstens zwei) stärksten Lampen einen Schatten auf den Boden: die Gestalt, von den Füßen aus von
+// der Lampe weg gelegt (in der Tiefe gestaucht), um so länger, je weiter die Lampe weg ist, zum Ende hin dünner. Gerastert gedunkelt
+// (eine Stufe), jedes Bodenpixel je Lampe nur einmal. Geister werfen keinen Schatten.
+var SHM=new Uint8Array(W*SH);
+function k3Shadows(list,cx,ox,room,S,gs){ var OXs=M.SPR.OX, OYs=M.SPR.OY, gt=E.gt();
+  list.forEach(function(l){ var a=l.actor; if (!a || a.ghost || a.noShadow || !E.actorShown(a)) return; var sxA=a.x-cx+ox; if (sxA<-60||sxA>W+60) return;
+    var LA=M.k3LightsAt(a.x,a.y); if (!LA) return; var p=E.actorPose(a); if (!p || p.sit) return; var spr=M.poseBuf(p,a.ch,gt), af=a.lookF||a.f, fl=(p.v==='S'?(af==='L'):false);
+    LA.forEach(function(q){ var L=q.l, vx=a.x-L.x, vy=Math.max(4,(a.y-(L.fy||a.y-14))*2.2), d=Math.sqrt(vx*vx+vy*vy)||1, ux=vx/d, uy=vy/d, len=Math.max(0.5,Math.min(1.7,0.5+d/70)), dens=Math.min(0.9,q.s*1.35);
+      SHM.fill(0); var any=false;
+      for (var j=0;j<spr.h;j++){ var h=OYs-j; if (h<1) continue; for (var i=0;i<spr.w;i++){ if (spr.d[j*spr.w+(fl?spr.w-1-i:i)]===T) continue; var u=i-OXs;
+        var X=Math.round(sxA+u*0.8*Math.abs(uy)+ux*h*len), Y=Math.round(a.y+uy*h*len*0.42+u*0.45*Math.abs(ux)); if (X<0||X>=W||Y<0||Y>=SH||Y<a.y-4) continue;   // Breite der Gestalt quer zur Schattenrichtung
+        var v=Math.round(255*(1-h/(OYs*0.95))); if (v<1) continue; var k=Y*W+X; if (v>SHM[k]){ SHM[k]=v; any=true; } } }
+      if (!any) return;
+      for (var k2=0;k2<W*SH;k2++){ var v2=SHM[k2]; if (!v2) continue; var X2=k2%W, Y2=(k2/W)|0, f2=v2/255; if (bayer(X2,Y2)>=dens*(0.5+0.5*f2)) continue; var c0=fb.d[k2], c2=M.DN[c0]; if ((f2>0.45 && q.s>0.3) || M.lum(c0)>90) c2=M.DN[c2]; fb.d[k2]=c2; } }); }); }   // nah an den Füßen und auf hellem Grund zwei Stufen
+// ---------------------------------------------------------------- Kapitel 3, Punkt 1: Spiegelungen
+// Lebende Figuren spiegeln sich an den Füßen nach unten, wo der Raum spiegelnden Boden meldet (fx.reflect: 2 Pfütze, 1 nasses
+// Pflaster): eine Stufe dunkler, mit dem Grund gemischt, gerastert und nach unten schwächer, bei Regen in den Pfützen leicht gekräuselt.
+// Geister haben kein Spiegelbild.
+function k3Reflect(list,cx,ox,room,S,gs,tod,pm){ var R=E.k3refl, RM=R.mask, bw=R.w, OXs=M.SPR.OX, OYs=M.SPR.OY, gt=E.gt(), rain=M.scn&&M.scn.weather&&M.scn.weather(gs)==='rain';
+  list.forEach(function(l){ var a=l.actor; if (!a || a.ghost || !E.actorShown(a)) return; var sxA=Math.round(a.x-cx+ox); if (sxA<-40||sxA>W+40) return;
+    var p=E.actorPose(a); if (!p) return; var spr=M.poseBuf(p,a.ch,gt), af=a.lookF||a.f, f=p.v==='S'?(af==='L'?'L':'R'):a.f, fl=f==='L', bx=sxA-OXs+(fl?1:0);
+    var lut=room.actorLut?room.actorLut(a,S,gs,tod):((tod!=='day'&&M.TINT[tod])?M.TINT[tod].a:null); if (lut) lut=M.detailLut(lut);
+    for (var j=0;j<=OYs && j<spr.h;j++){ var h=OYs-j, Y=Math.round(a.y)+h+1; if (Y<0||Y>=SH) continue; var rip=(rain && ((Math.floor(gt/140)+Y)%3===0))?1:0;
+      for (var i=0;i<spr.w;i++){ var c=spr.d[j*spr.w+(fl?spr.w-1-i:i)]; if (c===T) continue; var X=bx+i+rip; if (X<0||X>=W) continue; var wx=X+cx-ox; if (wx<0||wx>=bw) continue;
+        var m=RM[Y*bw+wx]; if (!m) continue; var al=m===2?0.9-h*0.011:0.66-h*0.014; if (al<=0.04 || bayer(X,Y+((m===2&&rain)?(Math.floor(gt/200)&1):0))>=al) continue;
+        var k=Y*W+X, cc=M.DN[lut?lut[c]:c], v=M.mix(fb.d[k],cc,m===2?5:4); fb.d[k]=pm?pm[v]:v; } } }); }
 // ---------------------------------------------------------------- Szene
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0&&!M.reduceMotion()?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
   for (var y=0;y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var sx=x+cx-ox; fb.d[row+x]=(sx>=0&&sx<bw)?bg.d[brow+sx]:P.k0; } }
-  mask.fill(0); gmask.fill(0); M.RAIN_SHIELD=[];   // Regenschatten unter offenen Schirmen (M.rain in 01_art.js)
+  if (E.k3para && M.k3Parallax && M.k3Fx('para',room,gs)) M.k3Parallax(fb,room,cx,ox,SH);   // Mostar: Himmel und Berge langsamer (21_k3_look.js)
+  mask.fill(0); gmask.fill(0); amask.fill(0); M.RAIN_SHIELD=[];   // Regenschatten unter offenen Schirmen (M.rain in 01_art.js)
+  var k3pm=(M.k3Fx && M.k3Fx('pal',room,gs))?M.PAL3MAP:null; M.PAL3=!!k3pm;
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
+  if (M.k3Life) M.k3Life(fb,room,view,S,gs);   // Mostar: Leben im Hintergrund (21_k3_look.js)
+  if (k3pm){ for (var p0=0;p0<W*SH;p0++) fb.d[p0]=k3pm[fb.d[p0]]; }   // Grund schon vor den Figuren umgefärbt (Mischfarben der Geister, Spiegelungen)
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
   if (room.snowPrints) list=list.concat(printItems(view,room));   // Fußspuren: über den Bodenebenen, unter den Figuren
   Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (E.actorShown(a)) list.push({actor:a,base:a.y+(a.base||0)}); });
   list.sort(function(a,b){ return (a.base-b.base)||((a.actor?1:-1)-(b.actor?1:-1)); });
-  var tod=view.tod;
+  var tod=view.tod, k3L=!!(E.k3lights && E.k3lights.length && M.k3Fx('light',room,gs));
+  if (k3L && M.k3Fx('shadow',room,gs)) k3Shadows(list,cx,ox,room,S,gs);   // Mostar: lange Schatten von den Lampen weg (vor den Figuren)
+  if (E.k3refl && E.k3refl.room===room.id && M.k3Fx('reflect',room,gs)) k3Reflect(list,cx,ox,room,S,gs,tod,k3pm);   // Mostar: Spiegelbilder in Pfützen und auf nassem Pflaster
   list.forEach(function(l){
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), af=a.lookF||a.f, f=p.v==='S'?(af==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
@@ -58,13 +93,18 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
+      if (k3pm){ o.mask=amask; o.mv=1; }
+      if (k3L){ var LA=M.k3LightsAt(a.x,a.y); if (LA && LA.length) o.rim=LA.map(function(q){ return {lx:q.l.x-cx+ox,ly:q.l.y,s:q.s,col:q.l.col}; }); }
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
       if (p.um>=3 && M.umAnchor){ var ua=M.umAnchor(p,a.ch), sc=a.scale||1; if (ua){ var ux=sx+(f==='L'?-ua.x:ua.x)*sc; M.RAIN_SHIELD.push([ux-(ua.R+1)*sc,a.y-lift+(ua.y-1)*sc,ux+(ua.R+1)*sc,a.y-lift+1]); } } }
     else if (l.print) drawPrint(l.print,view);
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
+  if (M.k3Breath) M.k3Breath(fb,room,cx,ox,SH);   // Mostar: Atemwolken (21_k3_look.js)
   if (room.front) room.front(fb,view,S,gs);
+  if (k3pm){ for (var pi=0;pi<W*SH;pi++){ if (!amask[pi]) fb.d[pi]=k3pm[fb.d[pi]]; } }
+  M.PAL3=false;
   if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var k0=dy0*W+dx0; if (gmask[k0] && fb.d[k0]===gcol[k0]) continue; var lt=E.litAt(dx0+cx-ox,dy0); if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
@@ -82,6 +122,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   if (M.DEBUG_SPOTS){ var cx1=Math.round(E.camX); for (var wy=0;wy<SH;wy+=3) for (var wx=0;wx<W;wx+=3){ var X=wx+cx1; var mk=room.walk&&room.walk(X,wy,S,gs); var mg=room.walkG&&room.walkG(X,wy,S,gs); if (mk) fb.px(wx,wy,P.b3); else if (mg) fb.px(wx,wy,P.x5); }
     room.hotspots.forEach(function(h){ var r0=E.hsRect(h); if (!r0) return; var X0=r0[0]-cx1, c=h.gexit?P.x6:(h.exit?P.g5:(h.who==='g'?P.x4:P.y4)); fb.hl(X0,X0+r0[2]-1,r0[1],c); fb.hl(X0,X0+r0[2]-1,r0[1]+r0[3]-1,c); fb.vl(X0,r0[1],r0[1]+r0[3]-1,c); fb.vl(X0+r0[2]-1,r0[1],r0[1]+r0[3]-1,c); M.microText(fb,String(h.id).slice(0,10),X0+2,r0[1]+2,c);
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
+  if (E.k3close && M.k3DrawClose) M.k3DrawClose(fb,E.gt(),SH);   // Kapitel 3: Nahaufnahme über der Szene (97_k3_nah.js)
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
 // ---------------------------------------------------------------- Geister in Markos Blick
@@ -113,11 +154,11 @@ function drawGhost(a,p,f,x,y,o){ var s=o.sprite||M.poseBuf(p,a.ch,o.t), G=ghostP
   if (rk>0){ var rim=G.rim, gi=(o.glint!==null&&o.glint!==undefined&&rim.length)?Math.floor(M.hash(o.glint,3.1)*(rim.length/3))*3:-1;
     for (var q=0;q<rim.length;q+=3){ var i=rim[q], j=rim[q+1], Y=by+j; if (Y<0||Y>=SH) continue; var X=bx+(fl?w-1-i:i)+(rows?rows(j):0); if (X<0||X>=W) continue;
       var k=Y*W+X, c=fb.d[k], rc=M.lum(c)>150?R.lo:(rim[q+2]?R.top:R.hi), kk=rk; if (q===gi){ rc=R.glint; kk=Math.min(8,rk+3); }
-      var v=M.mix(c,rc,kk); fb.d[k]=v; if (!nm){ gmask[k]=1; gcol[k]=v; } if (gv) mask[k]=1; } }
+      var v=M.mix(c,rc,kk); fb.d[k]=v; amask[k]=1; if (!nm){ gmask[k]=1; gcol[k]=v; } if (gv) mask[k]=1; } }
   for (var j2=0;j2<h;j2++){ var Y2=by+j2; if (Y2<0||Y2>=SH) continue; var oj=rows?rows(j2):0, row=j2*w;
     for (var i2=0;i2<w;i2++){ var si=fl?w-1-i2:i2, c2=d[row+si]; if (c2===T) continue; var X2=bx+i2+oj; if (X2<0||X2>=W) continue;
       var k2=Y2*W+X2, ty=e[row+si], gc=lut?lut[c2]:c2; if (ty===3 && !gv) gc=M.UP[gc];
-      var aa=(ty===2&&!gv)?Math.min(A8,5):A8, v2=aa>=8?gc:M.mix(fb.d[k2],gc,aa); fb.d[k2]=v2; if (!nm){ gmask[k2]=1; gcol[k2]=v2; } if (gv) mask[k2]=1; } } }
+      var aa=(ty===2&&!gv)?Math.min(A8,5):A8, v2=aa>=8?gc:M.mix(fb.d[k2],gc,aa); fb.d[k2]=v2; amask[k2]=1; if (!nm){ gmask[k2]=1; gcol[k2]=v2; } if (gv) mask[k2]=1; } } }
 var STRB=null;   // ein wiederverwendeter Puffer für die gestreckte Gestalt (weniger Speicherbereinigung während des Effekts)
 function stretched(s,sx,sy){ var OX=M.SPR.OX, OY=M.SPR.OY; if (!STRB||STRB.w!==s.w||STRB.h!==s.h) STRB=new Buf(s.w,s.h,T); var b=STRB; b.d.fill(T); b._g=null; for (var j=0;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sy); if (sj<0||sj>=s.h) continue;
   for (var i=0;i<s.w;i++){ var si=Math.round(OX+(i-OX)/sx); if (si<0||si>=s.w) continue; b.d[j*s.w+i]=s.d[sj*s.w+si]; } } return b; }
@@ -152,7 +193,7 @@ function drawCrossing(c,cam,gt){ var k=Math.min(1,(gt-c.at)/1200); if (c.close) 
     for (var x=Math.max(0,Math.floor(X-hw-10));x<Math.min(W,Math.ceil(X+hw+10));x++){ var d=Math.abs(x-X)/hw, I=(d<1?1-d*d*0.6:Math.max(0,1-(d-1)*hw/10)*0.4)*vy*k; if (I<=0) continue; var q=I-bayer(x+Math.floor(t*6),y)*0.5;
       var kk=y*W+x, cc=fb.d[kk]; if (q>0.75) fb.d[kk]=P.l1; else if (q>0.55) fb.d[kk]=P.l0; else if (q>0.38) fb.d[kk]=P.y5; else if (q>0.2) fb.d[kk]=M.UP[M.UP[cc]]; else if (q>0.05) fb.d[kk]=M.UP[cc]; } }
   for (var i=0;i<10;i++){ var ph=(t*0.25+i*0.13)%1, px=Math.round(X+Math.sin(i*1.9+t)*hw*0.8), py=Math.round(c.y-ph*c.h*1.1); if (px>=0&&px<W&&py>=0&&py<SH&&ph<0.95) fb.d[py*W+px]=P.l1; } }
-function clearMask(l,ox,oy){ for (var j=0;j<l.h;j++){ var y=oy+j; if (y<0||y>=SH) continue; for (var i=0;i<l.w;i++){ if (l.d[j*l.w+i]===T) continue; var x=ox+i; if (x<0||x>=W) continue; mask[y*W+x]=0; } } }
+function clearMask(l,ox,oy){ for (var j=0;j<l.h;j++){ var y=oy+j; if (y<0||y>=SH) continue; for (var i=0;i<l.w;i++){ if (l.d[j*l.w+i]===T) continue; var x=ox+i; if (x<0||x>=W) continue; mask[y*W+x]=0; amask[y*W+x]=0; } } }
 function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ if (Math.abs(dx)>(dy===0?w:w-2)) continue; var px=Math.round(x)+dx, py=Math.round(y)+dy; if (px<0||px>=W||py<0||py>=SH) continue; var c=fb.d[py*W+px]; fb.d[py*W+px]=M.DN[c]; } }
 
 // ---------------------------------------------------------------- Leiste
@@ -315,7 +356,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
     if (rest>0){ var rt='+'+rest; M.text(fb,rt,ax-(M.textWidth(rt)>>1)+1,WD?y0+28:y1-19,g?P.x4:P.s4); } }   // so viele Antworten folgen noch
   d.lay=lay; }
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
-function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;   // auch am Telefon: die Person am anderen Ende mit Brustbild
+function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait||E.k3close) return null;   // in einer Nahaufnahme ohne Brustbild   // auch am Telefon: die Person am anderen Ende mit Brustbild
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
 // kleine Note für gesungene Zeilen: k 0 Achtel, 1 zwei Achtel mit Balken
 var SONG_NOTE=[['..##.','..#.#','..#..','###..','###..'],['.####','.#..#','.#..#','##.##','##.##']];
@@ -359,6 +400,7 @@ function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.col
   if (o.x!==undefined) cx=o.x; if (o.y!==undefined) top=o.y;
   if (sp.who==='#'){ lines=M.wrap(sp.text,240); cx=160; top=Math.max(8,((E.room&&E.room.narrY)||60)-lines.length*lh/2); }   // narrY: Mitte des Erzähltextes je Raum (Fahrtszene: im Himmel)
   if (o.phone){ lines=M.wrap(sp.text,220); cx=160; top=18; }
+  if (E.k3close){ lines=M.wrap(sp.text,240); cx=160; top=6; }   // Nahaufnahme: alle Sätze oben
   if (top<4) top=4; if (top+lines.length*lh>SH-4 && o.y===undefined) top=Math.max(4,SH-4-lines.length*lh);
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var bx=Math.max(M2,Math.min(W-M2-bw,cx-(bw>>1)));
   var x0=bx-5, x1=bx+bw+5, y0=top-3, y1=top+lines.length*lh+1;

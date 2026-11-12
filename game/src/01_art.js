@@ -5,7 +5,7 @@
 var P=M.P, T=M.T, Buf=M.Buf, hash=M.hash, bayer=M.bayer;
 var SH=144;
 M.SH=SH;
-M.R=function(names){ return names.split(' ').map(function(n){ if (P[n]===undefined) throw new Error('keine Farbe '+n); return P[n]; }); };
+M.R=function(names){ var a=names.split(' ').map(function(n){ if (P[n]===undefined) throw new Error('keine Farbe '+n); return P[n]; }); return M.PAL3?M.pal3Ramp(a):a; };   // M.PAL3: Mostar zeichnet mit feineren, farbverschobenen Rampen (00_core.js)
 M.rampAt=function(ramp,v,x,y){ var f=Math.max(0,Math.min(0.9999,v))*(ramp.length-1), i=Math.floor(f), fr=f-i; return ramp[Math.min(ramp.length-1,i+(fr>bayer(x,y)?1:0))]; };
 
 // ---------------------------------------------------------------- Ebenen (Requisiten, die mit Figuren tiefensortiert werden)

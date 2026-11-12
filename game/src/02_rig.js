@@ -167,7 +167,36 @@ M.defineChar=function(id,def){ var d=Object.assign({},def); d.id=id; d.legend=de
   var sc=d.cols.shoe, shoeLeg={k:P.k1,s:sc,l:UP[sc]===sc?sc:UP[sc],d:DN[sc]===P.k0&&sc!==P.k1?P.k1:DN[sc]}; d.shoes={}; Object.keys(SHOES).forEach(function(k){ d.shoes[k]=M.stamp(SHOES[k],shoeLeg); });
   d.anims=def.anims||{}; d.cache={}; d.shear={};
   CH[id]=d; return d; };
-function headStamp(ch,v,k){ var key=v+k; if (!ch.stamps[key]){ var set=ch.heads[v]||ch.heads.S, vv=ch.heads[v]?v:'S'; ch.stamps[key]=M.stamp(headEnh(set[k]||set.n,set.n,vv,ch),ch.legend); } return ch.stamps[key]; }
+function headStamp(ch,v,k,hl){ var key=v+k+(hl?'~'+hl:''); if (!ch.stamps[key]){ var set=ch.heads[v]||ch.heads.S, vv=ch.heads[v]?v:'S', ex=EXPR[k], src=set[k]||(ex?(ex.open?(set.o||set.n):set.n):set.n), rows=headEnh(src,set.n,vv,ch);
+    if (ex && !set[k] && vv!=='B') rows=exprRows(rows,ex,vv,ch.legend); if (hl && vv==='S') rows=hairShift(rows,hl); ch.stamps[key]=M.stamp(rows,ch.legend); } return ch.stamps[key]; }
+// Kapitel 3, Punkt 9: Gesichtsausdrücke, für jede Figur aus ihrem Kopf abgeleitet (nach den automatischen Brauen von headEnh).
+//  sm Lächeln (Mundwinkel hoch, Wange gehoben) · so lächelnd sprechen · fr Stirnrunzeln (Braue zur Nase hin tiefer, Mundwinkel runter)
+//  fo stirnrunzelnd sprechen · br Braue hoch (fragend) · bo fragend sprechen · ow Mund weit offen (Ausruf)
+var EXPR={ sm:{smile:1}, so:{smile:1,open:1}, fr:{frown:1}, fo:{frown:1,open:1}, br:{brow:1}, bo:{brow:1,open:1}, ow:{wide:1,open:1} };
+M.HEAD_EXPR=EXPR;
+function exprRows(rows,ex,v,lg){ var R=rows.map(function(r){ return r.split(''); }), h=R.length, g=function(y,x){ return (y<0||y>=h||x<0||x>=R[y].length)?'.':R[y][x]; };
+  var hasL=function(c){ return !lg || lg[c]!==undefined; }, BRW=hasL('h')?'h':(hasL('H')?'H':'k'), SK=hasL('S')?'S':null, MO=hasL('m')?'m':'k';
+  var skin=function(c){ return c==='S'||c==='s'||c==='t'; }, hairc=function(c){ return c==='H'||c==='h'||c==='j'; }, eyes=[], ey=-1, mouth=[], my=-1;
+  for (var y=0;y<h;y++) for (var x=0;x<R[y].length;x++){ if (R[y][x]==='e' && g(y-1,x)!=='e'){ if (ey<0) ey=y; if (y===ey) eyes.push(x); } }
+  for (var y2=Math.max(0,ey);y2<h;y2++){ var xs=[]; for (var x2=0;x2<R[y2].length;x2++) if (R[y2][x2]==='m'||(R[y2][x2]==='k'&&g(y2-1,x2)==='m')) xs.push(x2); if (R[y2].indexOf('m')>=0){ my=y2; mouth=xs; break; } }
+  if (ey<0) return rows; var put=function(y,x,c,only){ if (c===null||y<0||y>=h||x<0||x>=R[y].length) return; if (only && !only(R[y][x])) return; R[y][x]=c; };
+  var front=v==='S';   // Seite: Blick nach rechts (Gesicht vorn rechts)
+  eyes.forEach(function(ex2,i){ var inner=front?1:(i===0?1:-1), by=ey-1, isBrow=hairc(g(by,ex2));
+    if (ex.brow && (i===0||front)){ if (isBrow){ put(by-1,ex2,g(by,ex2),skin); put(by,ex2,SK); } else put(by-1,ex2,BRW,skin); }
+    if (ex.frown){ if (isBrow) put(by,ex2+inner,g(by,ex2),skin); put(ey,ex2+inner,BRW,skin); if (!front && isBrow) put(by,ex2-inner,SK,hairc); } });
+  if (my>=0 && mouth.length){ var mx0=Math.min.apply(null,mouth), mx1=Math.max.apply(null,mouth);
+    if (ex.smile){ if (front){ put(my-1,mx0-1,MO,skin); put(ey+1,mx0-1,SK,function(c){ return c==='s'; }); } else { put(my-1,mx0-1,MO,skin); put(my-1,mx1+1,MO,skin); put(my,mx0-1,SK,function(c){ return c==='m'; }); } }
+    if (ex.frown){ if (front){ put(my+1,mx0-1,MO,skin); } else { put(my+1,mx0-1,MO,skin); put(my+1,mx1+1,MO,skin); } }
+    if (ex.wide){ for (var xx=mx0;xx<=mx1;xx++){ put(my,xx,'k'); put(my+1,xx,'k',skin); } } }
+  return R.map(function(r){ return r.join(''); }); }
+// Kapitel 3, Punkt 6 (Folgebewegung): langes Haar hinten am Kopf (Zopf, Pferdeschwanz) schwingt nach. Unter der Mundzeile wird das
+// hinterste zusammenhängende Haarstück jeder Zeile versetzt, nach unten zunehmend (an der Spitze um hl Pixel); nach vorn verschwindet
+// es hinter dem Hals, statt ihn zu übermalen.
+function hairShift(rows,hl){ var mr=-1; for (var r=0;r<rows.length;r++) if (rows[r].indexOf('m')>=0){ mr=r; break; } if (mr<0) return rows; var n=rows.length, out=rows.slice();
+  for (var y=mr+1;y<n;y++){ var row=rows[y], x0=0; while (x0<row.length && row[x0]==='.') x0++; var x1=x0; while (x1<row.length && 'kHhj'.indexOf(row[x1])>=0) x1++; if (x1-x0<2) continue;
+    var seg=row.slice(x0,x1); if (!/[Hhj]/.test(seg)) continue; var sh=Math.round(hl*(y-mr)/(n-mr)); if (!sh) continue; var a=row.split(''); for (var i=x0;i<x1;i++) a[i]='.';
+    for (var j=0;j<seg.length;j++){ var X=x0+sh+j; if (X<0||X>=a.length) continue; if (a[X]==='.') a[X]=seg[j]; } out[y]=a.join(''); }
+  return out; }
 // Köpfe: Feinheiten, die alle Figuren bekommen (je Figur abschaltbar: headAuto:false, oder einzeln {brow:false, nose:false, sheen:false, cheek:false}).
 //  Augenbrauen: Haarfarbe über dem Auge, wo dort Haut ist (beim Lidschlag an derselben Stelle, erschrocken eine Zeile höher).
 //  Nase (Seite): ein Schattenpixel unter der Nasenspitze. Haar: Glanz an der oberen Kante zur Lichtseite (Seite vorn, vorn/hinten links).
@@ -236,7 +265,7 @@ function render(p,ch,t){
     b.cur=ID.SKIRT; skirt(b,ch,hx,hy,knees,p,'S');
     // Torso, dann Kopf
     b.cur=ID.TORSO; b.blit(sh.b,OX+hx-ch.tHipS-sh.pad,OY+hy-L+1);
-    var hs=headStamp(ch,'S',p.hd||'n'), nk=ch.neck.S, ho=p.ho||[0,0];
+    var hs=headStamp(ch,'S',p.hd||'n',p.hl||0), nk=ch.neck.S, ho=p.ho||[0,0];
     b.cur=ID.HEAD; if (p.hb) b.blit(hs,OX+hx+shx-(hs.w-1-nk[0])+ho[0],OY+hy-L-nk[1]+ho[1]+1,true); else b.blit(hs,OX+hx+shx-nk[0]+ho[0]+1,OY+hy-L-nk[1]+ho[1]+1);
     b.cur=ID.COAT; coatS(b,ch,hx,hy,knees,p);
     // naher Arm
@@ -313,14 +342,14 @@ function detailPass(b,v){ var W=b.w, H=b.h, d=b.d, id=b.id, n=W*H, mk=new Int8Ar
   }
   for (var j=0;j<n;j++){ if (mk[j]<0){ var c=d[j], c2=DN[c]; if (c2!==c && c!==P.k1 && c!==P.k0) d[j]=c2; } else if (mk[j]>0) d[j]=UP[d[j]]; } }
 function skirt(b,ch,hx,hy,knees,p,v){ var sk=ch.skirt; if (!sk) return; var top=hy-2, hem=hy+(sk.hem||12), fl=sk.flare||2;
-  if (v==='S'){ var xs=[hx-4,hx+4]; if (knees) knees.forEach(function(k){ xs.push(k[0]-2,k[0]+2); }); var lo=Math.min.apply(null,xs)-fl, hi=Math.max.apply(null,xs)+fl; if (p.sit){ lo=hx-4; hi=hx+11; hem=hy+3; }
+  if (v==='S'){ var xs=[hx-4,hx+4]; if (knees) knees.forEach(function(k){ xs.push(k[0]-2,k[0]+2); }); var lo=Math.min.apply(null,xs)-fl, hi=Math.max.apply(null,xs)+fl; if (p.sit){ lo=hx-4; hi=hx+11; hem=hy+3; } else if (p.cl){ lo+=p.cl; hi+=p.cl; }
     b.poly([[OX+hx-4,OY+top],[OX+hx+4,OY+top],[OX+hi,OY+hem],[OX+lo,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), x0=(OX+hx-4)+(lo-(hx-4))*yy, x1=(OX+hx+4)+(hi-(hx+4))*yy, u=(x+0.5-x0)/Math.max(1,x1-x0+1);
       var lv=level(lightAt(u,0.5,true,0)-yy*0.12,x,y), c=shadeCol(sk.c,lv); if (y>=OY+hem-1) c=shadeCol(sk.c,Math.min(lv,0)-1); return c; }); }
-  else { var hm=p.sit?hy+3:hem; b.poly([[OX+hx-5,OY+top],[OX+hx+5,OY+top],[OX+hx+6+fl,OY+hm],[OX+hx-6-fl,OY+hm]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hm-top), u=(x+0.5-(OX+hx-5-(1+fl)*yy))/(10+2*(1+fl)*yy+1);
+  else { var hm=p.sit?hy+3:hem, cs=p.sit?0:(p.cl||0); b.poly([[OX+hx-5,OY+top],[OX+hx+5,OY+top],[OX+hx+6+fl+cs,OY+hm],[OX+hx-6-fl+cs,OY+hm]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hm-top), u=(x+0.5-(OX+hx-5-(1+fl)*yy))/(10+2*(1+fl)*yy+1);
       var lv=level(lightAt(u,0.5,false,0)-yy*0.12,x,y), c=shadeCol(sk.c,lv); if ((x+40)%4===0 && y>OY+top+3) c=shadeCol(sk.c,Math.min(lv,0)-1); if (y>=OY+hm-1) c=shadeCol(sk.c,Math.min(lv,0)-1); return c; }); } }
 // Mantelschöße über den Oberschenkeln: Saum unten dunkler, Gehschlitz hinten, Taschenklappe vorn, Zugfalte zum vorderen Knie
 function coatS(b,ch,hx,hy,knees,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)); var xs=[hx-4,hx+4]; knees.forEach(function(k){ xs.push(Math.round(hx+(k[0]-hx)*((co.hem||8)/11))-1, Math.round(hx+(k[0]-hx)*((co.hem||8)/11))+1); });
-  var lo=Math.min.apply(null,xs)-1, hi=Math.max.apply(null,xs)+1; if (p.sit){ lo=hx-4; hi=hx+9; }
+  var lo=Math.min.apply(null,xs)-1, hi=Math.max.apply(null,xs)+1; if (p.sit){ lo=hx-4; hi=hx+9; } else if (p.cl){ lo+=p.cl; hi+=p.cl; }   // Folgebewegung: Saum schwingt nach
   var C=co.c, D=DN[C[2]];
   b.poly([[OX+hx-4,OY+top],[OX+hx+4,OY+top],[OX+hi,OY+hem],[OX+lo,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), x0=(OX+hx-4)+(lo-(hx-4))*yy, x1=(OX+hx+4)+(hi-(hx+4))*yy, u=(x+0.5-x0)/Math.max(1,x1-x0+1);
     var lv=level(lightAt(u,0.5,true,0)-yy*0.16,x,y), c=shadeCol(C,lv); if (y>=OY+hem-1 && u<0.85 && lv>-2) c=shadeCol(C,lv-1); return c; });
@@ -329,8 +358,8 @@ function coatS(b,ch,hx,hy,knees,p){ var co=ch.coat; if (!co) return; var top=hy-
     // Zugfalte vom Gesäß zum vorderen Knie
     var kf=knees[0][0]>knees[1][0]?knees[0]:knees[1]; if (kf[0]-hx>2.5) crease(b,OX+hx+1,OY+top+2,OX+Math.round(hx+(kf[0]-hx)*0.7),OY+hem-2,C,-1); }
   var px0=OX+hx+1, py=OY+top+2; for (var xx=px0;xx<px0+3;xx++){ if (b.get(xx,py)!==T) b.px(xx,py,D); if (b.get(xx,py-1)!==T) b.px(xx,py-1,C[1]); } }
-function coatF(b,ch,hx,hy,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)), w=co.w||6, C=co.c, D=DN[C[2]];
-  b.poly([[OX+hx-w,OY+top],[OX+hx+w,OY+top],[OX+hx+w+1,OY+hem],[OX+hx-w-1,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), u=(x+0.5-(OX+hx-w-yy))/(2*w+1+2*yy);
+function coatF(b,ch,hx,hy,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)), w=co.w||6, C=co.c, D=DN[C[2]], cl=p.sit?0:(p.cl||0);
+  b.poly([[OX+hx-w,OY+top],[OX+hx+w,OY+top],[OX+hx+w+1+cl,OY+hem],[OX+hx-w-1+cl,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), u=(x+0.5-(OX+hx-w-yy))/(2*w+1+2*yy);
     var lv=level(lightAt(u,0.5,false,0)-yy*0.16,x,y), c=shadeCol(C,lv);
     var dx=x-OX-hx; if (p.v==='F'){ if (Math.abs(dx+0.5)<0.6) c=shadeCol(C,Math.min(lv,0)-1); else if (dx===1 && !co.plain) c=shadeCol(C,lv+1); } else if (!co.plain && dx===0 && y>OY+hem-5) c=D;
     if (y>=OY+hem-1 && lv>-2) c=shadeCol(C,lv-1); return c; });
@@ -346,7 +375,7 @@ var DLUT=typeof WeakMap!=='undefined'?new WeakMap():null, LUM=M.lum, ORD=null, B
 function brighter(c){ if (BRT[c]!==undefined) return BRT[c]; var q=M.RGB[c], out=c; if (q){ for (var f=1.18;f<1.9 && out===c;f+=0.12){ var n=M.nearest(Math.min(255,q[0]*f+5),Math.min(255,q[1]*f+5),Math.min(255,q[2]*f+5)); if (n!==c && LUM(n)>LUM(c)) out=n; } }
   if (out===c && UP[c]!==c && LUM(UP[c])>LUM(c)) out=UP[c]; return (BRT[c]=out); }
 M.detailLut=function(lut){ if (!lut || !DLUT) return lut; var r=DLUT.get(lut); if (r) return r; r=new Uint8Array(256); r.set(lut);
-  if (!ORD){ ORD=[]; for (var i=0;i<M.NCOL;i++) ORD.push(i); ORD.sort(function(a,b){ return LUM(a)-LUM(b); }); }
+  if (!ORD){ ORD=[]; for (var i=0;i<(M.NBASE||M.NCOL);i++) ORD.push(i); ORD.sort(function(a,b){ return LUM(a)-LUM(b); }); }
   for (var k=0;k<ORD.length;k++){ var c=ORD[k], d=DN[c]; if (d===c || d===T || LUM(d)>=LUM(c)) continue; var lo=r[d], hi=r[c];
     if (LUM(hi)<=LUM(lo)+2){ var u=brighter(lo); if (u!==lo) r[c]=u; } }
   DLUT.set(lut,r); return r; };
@@ -359,7 +388,23 @@ M.drawPose=function(fb,x,y,pose,facing,chId,opt){ opt=opt||{}; var s=M.poseBuf(p
     var wob=(al<1 && opt.wobble)? Math.round(Math.sin(t/260+j*0.35)*0.6) : 0;
     for (var i=0;i<W2;i++){ var sx=sc===1?i:Math.min(s.w-1,Math.floor(i/sc)); var c=s.d[sy*s.w+(fl?s.w-1-sx:sx)]; if (c===T) continue; var xx=bx+i+wob; if (xx<0||xx>=W) continue;
       if (al<1 && bayer(xx+shimmer,yy+(shimmer>>1))>=al) continue;
-      fb.d[yy*W+xx]=lut?lut[c]:c; if (mask) mask[yy*W+xx]=mv; } } };
+      fb.d[yy*W+xx]=lut?lut[c]:c; if (mask) mask[yy*W+xx]=mv; } }
+  if (opt.rim && opt.rim.length && sc===1 && al>=1) rimPass(fb,s,bx,by,fl,opt.rim,H,mask,mv); };
+// Kapitel 3, Punkt 2: Licht der Lampen auf der Figur. Jede Lampe (Bildschirmkoordinaten lx/ly, Stärke s, Farbe w/c) färbt die Kante,
+// die ihr zugewandt ist (Nachbarpixel in Richtung Lampe ist leer), in Lampenfarbe – warm aus der Rampe f, kalt aus b; bei starkem Licht
+// eine Stufe dunkler auch das Pixel dahinter. Schwaches Licht gerastert. Steht die Lampe fast genau über/hinter der Figur, bekommen
+// auch die Seiten einen schwachen Saum (Gegenlicht).
+var RIMW=null, RIMC=null;
+function rimCol(c,col){ if (!RIMW){ RIMW=[P.f2,P.f3,P.f4,P.f5]; RIMC=[P.b1,P.b2,P.b4,P.b5]; } var L=M.lum(c), r=col==='c'?RIMC:RIMW; return r[L<55?0:(L<100?1:(L<160?2:3))]; }
+function rimPass(fb,s,bx,by,fl,rims,H,mask,mv){ var W=fb.w, sw=s.w, sh=s.h, d=s.d;
+  function occ(X,Y){ var i=X-bx, j=Y-by; if (i<0||j<0||i>=sw||j>=sh) return false; return d[j*sw+(fl?sw-1-i:i)]!==T; }
+  for (var r=0;r<rims.length;r++){ var R=rims[r], st=R.s, back=Math.abs(R.lx-(bx+sw/2))<14 && R.ly<by+24;
+    for (var j=0;j<sh;j++){ var Y=by+j; if (Y<0||Y>=H) continue; for (var i=0;i<sw;i++){ var X=bx+i; if (X<0||X>=W || !occ(X,Y)) continue;
+      var dx=R.lx-X, dy=R.ly-Y, ax=Math.abs(dx), ay=Math.abs(dy), sx=ax>ay*0.5?(dx>0?1:-1):0, sy=ay>ax*0.5?(dy>0?1:-1):0;
+      var edge=!occ(X+sx,Y+sy), side=false; if (!edge && back) side=(!occ(X-1,Y)||!occ(X+1,Y)) && j<sh*0.75;
+      if (!edge && !side) continue; var k=Y*W+X, a=side?st*0.45:st; if (a<0.55 && bayer(X,Y)>=a/0.55) continue;
+      var c=rimCol(fb.d[k],R.col); fb.d[k]=c; if (mask) mask[k]=mv;
+      if (edge && st>0.7 && occ(X-sx,Y-sy) && bayer(X+1,Y)<st-0.45){ var k2=(Y-sy)*W+(X-sx); if (Y-sy>=0&&Y-sy<H&&X-sx>=0&&X-sx<W) fb.d[k2]=M.DN[c]; } } } } }
 
 // ---------------------------------------------------------------- Posen-Bibliothek
 function S(o){ var p={v:'S',h:[0,-23],nf:[1,0,'f'],ff:[-2,0,'f'],nh:[1,-21],fh:[-2,-21]}; for (var k in o) p[k]=o[k]; return p; }

@@ -171,9 +171,11 @@ function paintBus(w,we,tod){ var b=BUS, x, y, wet=we==='rain'; w.g=RG.bus;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, MUN=false;
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; REG.fill(0); LITW.length=0; MUN=!!S.munich;
-  paintSky(b,tod,we); paintFar(w);
+  paintSky(b,tod,we); FARSKY=b.clone(); paintFar(w);
   paintBay(w,we);
   if (MUN) paintBus(w,we,tod);
   paintCafe(w,we,tod); paintStation(w,we,tod); paintWalk(w,we);
@@ -184,7 +186,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(EDGE,H,0,-0.3),function(xx,yy){ return (xx>CAN.x0 && yy>CAN.y1 && yy<EDGE+30)?-0.45:0; }),0,0,function(xx,yy){ var g=REG[yy*W+xx]; return g!==RG.sky && g!==RG.glass; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ lights.push([WIN.x0+35,WIN.y0+20,50,0.9,30]); lights.push([DOOR.x0+11,DOOR.y0+25,24,0.6,30]); for (var lx=CAN.x0+27;lx<CAN.x1;lx+=58) lights.push([lx,EDGE+8,34,0.6,24]); }
+  var lights=[]; LASTL=lights; if (tod!=='day'){ lights.push([WIN.x0+35,WIN.y0+20,50,0.9,30]); lights.push([DOOR.x0+11,DOOR.y0+25,24,0.6,30]); for (var lx=CAN.x0+27;lx<CAN.x1;lx+=58) lights.push([lx,EDGE+8,34,0.6,24]); }
   for (y=0;y<H;y++) for (x=W-1;x>=0;x--){ k=y*W+x; if (b.d[k]===T) b.d[k]=x+1<W?b.d[k+1]:P.k1; }   // keine durchsichtigen Lücken am Rand (Geister lesen den Grund)
   BASE=b.clone();
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
@@ -211,6 +213,8 @@ function front(fb,v,S,GS){ var we=WE;
 // ---------------------------------------------------------------- Lauffläche: Vorplatz und Bussteig
 function walk(x,y){ if (y<112||y>138||x<6||x>394) return false; if (x>BENCH.x0-1 && x<BENCH.x1+1 && y<BENCH.by+2) return false; if (x<16 && y<114) return false; return true; }
 M.defineArt('westbus',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, walk:walk, dynamic:dyn, front:front,
   spots:{
     exit:[0,70,10,74],

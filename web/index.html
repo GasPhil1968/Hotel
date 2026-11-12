@@ -63,9 +63,29 @@ var PAL_DEF = [
  ['r5','ec9199'],['g6','b4c07a'],['c5','a9bbd3'],['e5','c9b98a'],['w6','dfb378']
 ];
 var P = {}, RGB = [];
+// Erweiterung für Kapitel 3 (Mostar, Grafikpunkt 8): farbverschobene Rampen – Schatten kühl und violett, Lichter warm –, jede mit
+// Zwischenstufen (Großbuchstaben, Mittel der Nachbarn) für feinere Übergänge mit weniger Raster. Hinten angehängt: alle bisherigen
+// Indizes bleiben. Die übrigen Kapitel benutzen sie nicht (nächste Farbe und Farbtabellen suchen nur in den ersten NBASE Farben);
+// in Mostar färbt M.PAL3MAP die alten Rampen beim Zeichnen um (06_ui.js), und M.R liefert dort die feineren Rampen (01_art.js).
+//   o Kalkstein (Tenelija, statt s) · u Graustein und Metall (statt m) · j Neretva, smaragdgrün (statt a) · i Laub (statt g)
+//   f Lampenlicht (statt y) · z Erde und Putz (statt e)
+var NBASE = PAL_DEF.length;
+var PAL3_DEF = {
+  o:['332c3a','544a58','7a6e74','a69686','cdbb9c','e9d8b6','f8eed6'],
+  u:['1e1f2e','363849','585a68','868684','b8b4ac'],
+  j:['05151d','0a2730','0e3d42','145a50','247c66','56a888','9cd2b6'],
+  i:['0b1617','152a22','233f28','3a5a2c','5f7a34','92994a','bcbb72'],
+  f:['3a1d10','72381a','a8601e','de9638','f6c768','fff0b8'],
+  z:['2a2022','483a30','69573e','8f7852','b59e6c','d1b984'] };
+function hx2(h){ return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+function rgbHex(q){ return q.map(function(v){ var s=Math.round(v).toString(16); return s.length<2?'0'+s:s; }).join(''); }
+Object.keys(PAL3_DEF).forEach(function(k){ var L=PAL3_DEF[k];
+  L.forEach(function(h,i){ PAL_DEF.push([k+i,h]); });
+  for (var i=0;i<L.length-1;i++){ var a=hx2(L[i]), b=hx2(L[i+1]); PAL_DEF.push([k.toUpperCase()+i,rgbHex([(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2])]); } });
 PAL_DEF.forEach(function(e,i){ P[e[0]]=i; var h=e[1]; RGB.push([parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]); });
 var T = 255;
-M.P=P; M.RGB=RGB; M.T=T; M.NCOL=PAL_DEF.length; M.PNAME=PAL_DEF.map(function(e){ return e[0]; });
+M.P=P; M.RGB=RGB; M.T=T; M.NCOL=PAL_DEF.length; M.NBASE=NBASE; M.PNAME=PAL_DEF.map(function(e){ return e[0]; });
+if (M.NCOL>255) throw new Error('Palette zu groß: '+M.NCOL);
 
 // Rampen (dunkel -> hell). Jede Farbe kennt ihren hellen und dunklen Nachbarn (UP/DN).
 var RAMPS = [
@@ -87,8 +107,16 @@ var RAMPS = [
  'k0 h0 h1 h2 h3 w2',
  'k0 x0 x1 x2 x3 x4 x5 x6 l1',
  'k0 v0 v1 v2 v3 v4 v5 l1',
- 'y5 l0 l1'
+ 'y5 l0 l1',
+ // Kapitel 3 (ganze Stufen; die Zwischenstufen hängen dazwischen, siehe unten)
+ 'k0 o0 o1 o2 o3 o4 o5 o6 l1',
+ 'k0 u0 u1 u2 u3 u4 o6',
+ 'k0 j0 j1 j2 j3 j4 j5 j6 l1',
+ 'k0 i0 i1 i2 i3 i4 i5 i6 o5',
+ 'k0 f0 f1 f2 f3 f4 f5 l1',
+ 'k0 z0 z1 z2 z3 z4 z5 o5'
 ];
+Object.keys(PAL3_DEF).forEach(function(k){ for (var i=0;i<PAL3_DEF[k].length-1;i++) RAMPS.push(k+i+' '+k.toUpperCase()+i+' '+k+(i+1)); });
 var UP=new Uint8Array(256), DN=new Uint8Array(256), home={};
 for (var i=0;i<256;i++){ UP[i]=i; DN[i]=i; }
 RAMPS.forEach(function(r){ var a=r.split(' ').map(function(n){ return P[n]; });
@@ -110,7 +138,7 @@ M.hash=function(x,y){ var s=Math.sin(x*12.9898+y*78.233)*43758.5453; return s-Ma
 // ---------------------------------------------------------------- Farbtabellen: "verwandle, dann nimm die nächste Palettenfarbe", mit Dither zwischen zwei Kandidaten
 function nearest2(r,g,b){
   var best=0, bd=1e12, sec=0, sd=1e12;
-  for (var i=0;i<RGB.length;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11;
+  for (var i=0;i<NBASE;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11;
     if (d<bd){ sec=best; sd=bd; best=i; bd=d; } else if (d<sd){ sec=i; sd=d; } }
   var a=Math.sqrt(bd), s=Math.sqrt(sd), ratio=(a+s)>0? a/(a+s) : 0; // 0 = genau getroffen
   return [best,sec,ratio];
@@ -124,13 +152,21 @@ M.tintMake=function(fn){
   A[T]=T; B[T]=T; return {a:A,b:B,r:R};
 };
 // nächste Palettenfarbe (ohne Dither)
-function nearest1(r,g,b){ var best=0, bd=1e12; for (var i=0;i<RGB.length;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ best=i; bd=d; } } return best; }
+function nearest1(r,g,b,all){ var best=0, bd=1e12, n=all?RGB.length:NBASE; for (var i=0;i<n;i++){ var q=RGB[i], dr=q[0]-r, dg=q[1]-g, db=q[2]-b, d=dr*dr*0.3+dg*dg*0.59+db*db*0.11; if (d<bd){ best=i; bd=d; } } return best; }
 M.nearest=nearest1;
+// Kapitel 3: alte Rampen -> farbverschobene (Umfärben von Hintergrund, Ebenen und Vordergrund; Figuren bleiben, wie sie sind)
+var PAL3MAP=new Uint8Array(256); for (var pm=0;pm<256;pm++) PAL3MAP[pm]=pm;
+[['s','o',7],['m','u',5],['a','j',7],['g','i',7],['y','f',6],['e','z',6]].forEach(function(r){ for (var i=0;i<r[2];i++){ if (P[r[0]+i]!==undefined && P[r[1]+i]!==undefined) PAL3MAP[P[r[0]+i]]=P[r[1]+i]; } });
+M.PAL3MAP=PAL3MAP;
+// feinere Rampe: alte Farben umgefärbt, zwischen zwei benachbarten Stufen derselben Rampe die Zwischenstufe
+M.pal3Ramp=function(a){ var out=[], nm=M.PNAME; for (var i=0;i<a.length;i++){ var c=PAL3MAP[a[i]]; out.push(c); if (i<a.length-1){ var d=PAL3MAP[a[i+1]], n1=nm[c]||'', n2=nm[d]||'';
+    if (n1.length===2 && n2.length===2 && n1[0]===n2[0] && 'oujifz'.indexOf(n1[0])>=0 && Math.abs(+n2[1]-+n1[1])===1){ var mid=P[n1[0].toUpperCase()+Math.min(+n1[1],+n2[1])]; if (mid!==undefined) out.push(mid); } } }
+  return out; };
 // echte Mischfarben im Palettenbild: M.mix(a,b,k8) = nächste Farbe zu a*(1-k)+b*k mit k=k8/8.
 // Für Durchscheinen ohne Raster (Geister, Überblendungen). Tabellen je Stufe werden erst bei Bedarf gefüllt.
 var MIXT=[];
 M.mix=function(a,b,k8){ if (b===T||k8<=0) return a; if (a===T||k8>=8) return b; var t=MIXT[k8]; if (!t){ t=MIXT[k8]=new Uint8Array(65536); t.fill(255); }
-  var key=(a<<8)|b, v=t[key]; if (v===255){ var p=RGB[a], q=RGB[b], f=k8/8; v=t[key]=nearest1(p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f, p[2]+(q[2]-p[2])*f); } return v; };
+  var key=(a<<8)|b, v=t[key]; if (v===255){ var p=RGB[a], q=RGB[b], f=k8/8; v=t[key]=nearest1(p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f, p[2]+(q[2]-p[2])*f, a>=NBASE||b>=NBASE); } return v; };   // mit einer Mostar-Farbe: Ziel auch aus deren Rampen
 // Farbtabelle ohne Dither, deren Ziel nur aus einer Auswahl von Palettenfarben besteht (z. B. kühle, gedämpfte Geisterfarben)
 M.tintIn=function(fn,names){ var A=new Uint8Array(256), allow=names.map(function(n){ return P[n]; }).filter(function(i){ return i!==undefined; });
   for (var i=0;i<256;i++){ if (i>=RGB.length){ A[i]=i; continue; } var q=RGB[i], o=fn(q[0],q[1],q[2],i), r=o[0], g=o[1], b=o[2], best=allow[0], bd=1e12;
@@ -351,7 +387,7 @@ M.trUI=ui;
 var P=M.P, T=M.T, Buf=M.Buf, hash=M.hash, bayer=M.bayer;
 var SH=144;
 M.SH=SH;
-M.R=function(names){ return names.split(' ').map(function(n){ if (P[n]===undefined) throw new Error('keine Farbe '+n); return P[n]; }); };
+M.R=function(names){ var a=names.split(' ').map(function(n){ if (P[n]===undefined) throw new Error('keine Farbe '+n); return P[n]; }); return M.PAL3?M.pal3Ramp(a):a; };   // M.PAL3: Mostar zeichnet mit feineren, farbverschobenen Rampen (00_core.js)
 M.rampAt=function(ramp,v,x,y){ var f=Math.max(0,Math.min(0.9999,v))*(ramp.length-1), i=Math.floor(f), fr=f-i; return ramp[Math.min(ramp.length-1,i+(fr>bayer(x,y)?1:0))]; };
 
 // ---------------------------------------------------------------- Ebenen (Requisiten, die mit Figuren tiefensortiert werden)
@@ -764,7 +800,36 @@ M.defineChar=function(id,def){ var d=Object.assign({},def); d.id=id; d.legend=de
   var sc=d.cols.shoe, shoeLeg={k:P.k1,s:sc,l:UP[sc]===sc?sc:UP[sc],d:DN[sc]===P.k0&&sc!==P.k1?P.k1:DN[sc]}; d.shoes={}; Object.keys(SHOES).forEach(function(k){ d.shoes[k]=M.stamp(SHOES[k],shoeLeg); });
   d.anims=def.anims||{}; d.cache={}; d.shear={};
   CH[id]=d; return d; };
-function headStamp(ch,v,k){ var key=v+k; if (!ch.stamps[key]){ var set=ch.heads[v]||ch.heads.S, vv=ch.heads[v]?v:'S'; ch.stamps[key]=M.stamp(headEnh(set[k]||set.n,set.n,vv,ch),ch.legend); } return ch.stamps[key]; }
+function headStamp(ch,v,k,hl){ var key=v+k+(hl?'~'+hl:''); if (!ch.stamps[key]){ var set=ch.heads[v]||ch.heads.S, vv=ch.heads[v]?v:'S', ex=EXPR[k], src=set[k]||(ex?(ex.open?(set.o||set.n):set.n):set.n), rows=headEnh(src,set.n,vv,ch);
+    if (ex && !set[k] && vv!=='B') rows=exprRows(rows,ex,vv,ch.legend); if (hl && vv==='S') rows=hairShift(rows,hl); ch.stamps[key]=M.stamp(rows,ch.legend); } return ch.stamps[key]; }
+// Kapitel 3, Punkt 9: Gesichtsausdrücke, für jede Figur aus ihrem Kopf abgeleitet (nach den automatischen Brauen von headEnh).
+//  sm Lächeln (Mundwinkel hoch, Wange gehoben) · so lächelnd sprechen · fr Stirnrunzeln (Braue zur Nase hin tiefer, Mundwinkel runter)
+//  fo stirnrunzelnd sprechen · br Braue hoch (fragend) · bo fragend sprechen · ow Mund weit offen (Ausruf)
+var EXPR={ sm:{smile:1}, so:{smile:1,open:1}, fr:{frown:1}, fo:{frown:1,open:1}, br:{brow:1}, bo:{brow:1,open:1}, ow:{wide:1,open:1} };
+M.HEAD_EXPR=EXPR;
+function exprRows(rows,ex,v,lg){ var R=rows.map(function(r){ return r.split(''); }), h=R.length, g=function(y,x){ return (y<0||y>=h||x<0||x>=R[y].length)?'.':R[y][x]; };
+  var hasL=function(c){ return !lg || lg[c]!==undefined; }, BRW=hasL('h')?'h':(hasL('H')?'H':'k'), SK=hasL('S')?'S':null, MO=hasL('m')?'m':'k';
+  var skin=function(c){ return c==='S'||c==='s'||c==='t'; }, hairc=function(c){ return c==='H'||c==='h'||c==='j'; }, eyes=[], ey=-1, mouth=[], my=-1;
+  for (var y=0;y<h;y++) for (var x=0;x<R[y].length;x++){ if (R[y][x]==='e' && g(y-1,x)!=='e'){ if (ey<0) ey=y; if (y===ey) eyes.push(x); } }
+  for (var y2=Math.max(0,ey);y2<h;y2++){ var xs=[]; for (var x2=0;x2<R[y2].length;x2++) if (R[y2][x2]==='m'||(R[y2][x2]==='k'&&g(y2-1,x2)==='m')) xs.push(x2); if (R[y2].indexOf('m')>=0){ my=y2; mouth=xs; break; } }
+  if (ey<0) return rows; var put=function(y,x,c,only){ if (c===null||y<0||y>=h||x<0||x>=R[y].length) return; if (only && !only(R[y][x])) return; R[y][x]=c; };
+  var front=v==='S';   // Seite: Blick nach rechts (Gesicht vorn rechts)
+  eyes.forEach(function(ex2,i){ var inner=front?1:(i===0?1:-1), by=ey-1, isBrow=hairc(g(by,ex2));
+    if (ex.brow && (i===0||front)){ if (isBrow){ put(by-1,ex2,g(by,ex2),skin); put(by,ex2,SK); } else put(by-1,ex2,BRW,skin); }
+    if (ex.frown){ if (isBrow) put(by,ex2+inner,g(by,ex2),skin); put(ey,ex2+inner,BRW,skin); if (!front && isBrow) put(by,ex2-inner,SK,hairc); } });
+  if (my>=0 && mouth.length){ var mx0=Math.min.apply(null,mouth), mx1=Math.max.apply(null,mouth);
+    if (ex.smile){ if (front){ put(my-1,mx0-1,MO,skin); put(ey+1,mx0-1,SK,function(c){ return c==='s'; }); } else { put(my-1,mx0-1,MO,skin); put(my-1,mx1+1,MO,skin); put(my,mx0-1,SK,function(c){ return c==='m'; }); } }
+    if (ex.frown){ if (front){ put(my+1,mx0-1,MO,skin); } else { put(my+1,mx0-1,MO,skin); put(my+1,mx1+1,MO,skin); } }
+    if (ex.wide){ for (var xx=mx0;xx<=mx1;xx++){ put(my,xx,'k'); put(my+1,xx,'k',skin); } } }
+  return R.map(function(r){ return r.join(''); }); }
+// Kapitel 3, Punkt 6 (Folgebewegung): langes Haar hinten am Kopf (Zopf, Pferdeschwanz) schwingt nach. Unter der Mundzeile wird das
+// hinterste zusammenhängende Haarstück jeder Zeile versetzt, nach unten zunehmend (an der Spitze um hl Pixel); nach vorn verschwindet
+// es hinter dem Hals, statt ihn zu übermalen.
+function hairShift(rows,hl){ var mr=-1; for (var r=0;r<rows.length;r++) if (rows[r].indexOf('m')>=0){ mr=r; break; } if (mr<0) return rows; var n=rows.length, out=rows.slice();
+  for (var y=mr+1;y<n;y++){ var row=rows[y], x0=0; while (x0<row.length && row[x0]==='.') x0++; var x1=x0; while (x1<row.length && 'kHhj'.indexOf(row[x1])>=0) x1++; if (x1-x0<2) continue;
+    var seg=row.slice(x0,x1); if (!/[Hhj]/.test(seg)) continue; var sh=Math.round(hl*(y-mr)/(n-mr)); if (!sh) continue; var a=row.split(''); for (var i=x0;i<x1;i++) a[i]='.';
+    for (var j=0;j<seg.length;j++){ var X=x0+sh+j; if (X<0||X>=a.length) continue; if (a[X]==='.') a[X]=seg[j]; } out[y]=a.join(''); }
+  return out; }
 // Köpfe: Feinheiten, die alle Figuren bekommen (je Figur abschaltbar: headAuto:false, oder einzeln {brow:false, nose:false, sheen:false, cheek:false}).
 //  Augenbrauen: Haarfarbe über dem Auge, wo dort Haut ist (beim Lidschlag an derselben Stelle, erschrocken eine Zeile höher).
 //  Nase (Seite): ein Schattenpixel unter der Nasenspitze. Haar: Glanz an der oberen Kante zur Lichtseite (Seite vorn, vorn/hinten links).
@@ -833,7 +898,7 @@ function render(p,ch,t){
     b.cur=ID.SKIRT; skirt(b,ch,hx,hy,knees,p,'S');
     // Torso, dann Kopf
     b.cur=ID.TORSO; b.blit(sh.b,OX+hx-ch.tHipS-sh.pad,OY+hy-L+1);
-    var hs=headStamp(ch,'S',p.hd||'n'), nk=ch.neck.S, ho=p.ho||[0,0];
+    var hs=headStamp(ch,'S',p.hd||'n',p.hl||0), nk=ch.neck.S, ho=p.ho||[0,0];
     b.cur=ID.HEAD; if (p.hb) b.blit(hs,OX+hx+shx-(hs.w-1-nk[0])+ho[0],OY+hy-L-nk[1]+ho[1]+1,true); else b.blit(hs,OX+hx+shx-nk[0]+ho[0]+1,OY+hy-L-nk[1]+ho[1]+1);
     b.cur=ID.COAT; coatS(b,ch,hx,hy,knees,p);
     // naher Arm
@@ -910,14 +975,14 @@ function detailPass(b,v){ var W=b.w, H=b.h, d=b.d, id=b.id, n=W*H, mk=new Int8Ar
   }
   for (var j=0;j<n;j++){ if (mk[j]<0){ var c=d[j], c2=DN[c]; if (c2!==c && c!==P.k1 && c!==P.k0) d[j]=c2; } else if (mk[j]>0) d[j]=UP[d[j]]; } }
 function skirt(b,ch,hx,hy,knees,p,v){ var sk=ch.skirt; if (!sk) return; var top=hy-2, hem=hy+(sk.hem||12), fl=sk.flare||2;
-  if (v==='S'){ var xs=[hx-4,hx+4]; if (knees) knees.forEach(function(k){ xs.push(k[0]-2,k[0]+2); }); var lo=Math.min.apply(null,xs)-fl, hi=Math.max.apply(null,xs)+fl; if (p.sit){ lo=hx-4; hi=hx+11; hem=hy+3; }
+  if (v==='S'){ var xs=[hx-4,hx+4]; if (knees) knees.forEach(function(k){ xs.push(k[0]-2,k[0]+2); }); var lo=Math.min.apply(null,xs)-fl, hi=Math.max.apply(null,xs)+fl; if (p.sit){ lo=hx-4; hi=hx+11; hem=hy+3; } else if (p.cl){ lo+=p.cl; hi+=p.cl; }
     b.poly([[OX+hx-4,OY+top],[OX+hx+4,OY+top],[OX+hi,OY+hem],[OX+lo,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), x0=(OX+hx-4)+(lo-(hx-4))*yy, x1=(OX+hx+4)+(hi-(hx+4))*yy, u=(x+0.5-x0)/Math.max(1,x1-x0+1);
       var lv=level(lightAt(u,0.5,true,0)-yy*0.12,x,y), c=shadeCol(sk.c,lv); if (y>=OY+hem-1) c=shadeCol(sk.c,Math.min(lv,0)-1); return c; }); }
-  else { var hm=p.sit?hy+3:hem; b.poly([[OX+hx-5,OY+top],[OX+hx+5,OY+top],[OX+hx+6+fl,OY+hm],[OX+hx-6-fl,OY+hm]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hm-top), u=(x+0.5-(OX+hx-5-(1+fl)*yy))/(10+2*(1+fl)*yy+1);
+  else { var hm=p.sit?hy+3:hem, cs=p.sit?0:(p.cl||0); b.poly([[OX+hx-5,OY+top],[OX+hx+5,OY+top],[OX+hx+6+fl+cs,OY+hm],[OX+hx-6-fl+cs,OY+hm]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hm-top), u=(x+0.5-(OX+hx-5-(1+fl)*yy))/(10+2*(1+fl)*yy+1);
       var lv=level(lightAt(u,0.5,false,0)-yy*0.12,x,y), c=shadeCol(sk.c,lv); if ((x+40)%4===0 && y>OY+top+3) c=shadeCol(sk.c,Math.min(lv,0)-1); if (y>=OY+hm-1) c=shadeCol(sk.c,Math.min(lv,0)-1); return c; }); } }
 // Mantelschöße über den Oberschenkeln: Saum unten dunkler, Gehschlitz hinten, Taschenklappe vorn, Zugfalte zum vorderen Knie
 function coatS(b,ch,hx,hy,knees,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)); var xs=[hx-4,hx+4]; knees.forEach(function(k){ xs.push(Math.round(hx+(k[0]-hx)*((co.hem||8)/11))-1, Math.round(hx+(k[0]-hx)*((co.hem||8)/11))+1); });
-  var lo=Math.min.apply(null,xs)-1, hi=Math.max.apply(null,xs)+1; if (p.sit){ lo=hx-4; hi=hx+9; }
+  var lo=Math.min.apply(null,xs)-1, hi=Math.max.apply(null,xs)+1; if (p.sit){ lo=hx-4; hi=hx+9; } else if (p.cl){ lo+=p.cl; hi+=p.cl; }   // Folgebewegung: Saum schwingt nach
   var C=co.c, D=DN[C[2]];
   b.poly([[OX+hx-4,OY+top],[OX+hx+4,OY+top],[OX+hi,OY+hem],[OX+lo,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), x0=(OX+hx-4)+(lo-(hx-4))*yy, x1=(OX+hx+4)+(hi-(hx+4))*yy, u=(x+0.5-x0)/Math.max(1,x1-x0+1);
     var lv=level(lightAt(u,0.5,true,0)-yy*0.16,x,y), c=shadeCol(C,lv); if (y>=OY+hem-1 && u<0.85 && lv>-2) c=shadeCol(C,lv-1); return c; });
@@ -926,8 +991,8 @@ function coatS(b,ch,hx,hy,knees,p){ var co=ch.coat; if (!co) return; var top=hy-
     // Zugfalte vom Gesäß zum vorderen Knie
     var kf=knees[0][0]>knees[1][0]?knees[0]:knees[1]; if (kf[0]-hx>2.5) crease(b,OX+hx+1,OY+top+2,OX+Math.round(hx+(kf[0]-hx)*0.7),OY+hem-2,C,-1); }
   var px0=OX+hx+1, py=OY+top+2; for (var xx=px0;xx<px0+3;xx++){ if (b.get(xx,py)!==T) b.px(xx,py,D); if (b.get(xx,py-1)!==T) b.px(xx,py-1,C[1]); } }
-function coatF(b,ch,hx,hy,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)), w=co.w||6, C=co.c, D=DN[C[2]];
-  b.poly([[OX+hx-w,OY+top],[OX+hx+w,OY+top],[OX+hx+w+1,OY+hem],[OX+hx-w-1,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), u=(x+0.5-(OX+hx-w-yy))/(2*w+1+2*yy);
+function coatF(b,ch,hx,hy,p){ var co=ch.coat; if (!co) return; var top=hy-3, hem=hy+(p.sit?3:(co.hem||8)), w=co.w||6, C=co.c, D=DN[C[2]], cl=p.sit?0:(p.cl||0);
+  b.poly([[OX+hx-w,OY+top],[OX+hx+w,OY+top],[OX+hx+w+1+cl,OY+hem],[OX+hx-w-1+cl,OY+hem]],function(x,y){ var yy=(y-OY-top)/Math.max(1,hem-top), u=(x+0.5-(OX+hx-w-yy))/(2*w+1+2*yy);
     var lv=level(lightAt(u,0.5,false,0)-yy*0.16,x,y), c=shadeCol(C,lv);
     var dx=x-OX-hx; if (p.v==='F'){ if (Math.abs(dx+0.5)<0.6) c=shadeCol(C,Math.min(lv,0)-1); else if (dx===1 && !co.plain) c=shadeCol(C,lv+1); } else if (!co.plain && dx===0 && y>OY+hem-5) c=D;
     if (y>=OY+hem-1 && lv>-2) c=shadeCol(C,lv-1); return c; });
@@ -943,7 +1008,7 @@ var DLUT=typeof WeakMap!=='undefined'?new WeakMap():null, LUM=M.lum, ORD=null, B
 function brighter(c){ if (BRT[c]!==undefined) return BRT[c]; var q=M.RGB[c], out=c; if (q){ for (var f=1.18;f<1.9 && out===c;f+=0.12){ var n=M.nearest(Math.min(255,q[0]*f+5),Math.min(255,q[1]*f+5),Math.min(255,q[2]*f+5)); if (n!==c && LUM(n)>LUM(c)) out=n; } }
   if (out===c && UP[c]!==c && LUM(UP[c])>LUM(c)) out=UP[c]; return (BRT[c]=out); }
 M.detailLut=function(lut){ if (!lut || !DLUT) return lut; var r=DLUT.get(lut); if (r) return r; r=new Uint8Array(256); r.set(lut);
-  if (!ORD){ ORD=[]; for (var i=0;i<M.NCOL;i++) ORD.push(i); ORD.sort(function(a,b){ return LUM(a)-LUM(b); }); }
+  if (!ORD){ ORD=[]; for (var i=0;i<(M.NBASE||M.NCOL);i++) ORD.push(i); ORD.sort(function(a,b){ return LUM(a)-LUM(b); }); }
   for (var k=0;k<ORD.length;k++){ var c=ORD[k], d=DN[c]; if (d===c || d===T || LUM(d)>=LUM(c)) continue; var lo=r[d], hi=r[c];
     if (LUM(hi)<=LUM(lo)+2){ var u=brighter(lo); if (u!==lo) r[c]=u; } }
   DLUT.set(lut,r); return r; };
@@ -956,7 +1021,23 @@ M.drawPose=function(fb,x,y,pose,facing,chId,opt){ opt=opt||{}; var s=M.poseBuf(p
     var wob=(al<1 && opt.wobble)? Math.round(Math.sin(t/260+j*0.35)*0.6) : 0;
     for (var i=0;i<W2;i++){ var sx=sc===1?i:Math.min(s.w-1,Math.floor(i/sc)); var c=s.d[sy*s.w+(fl?s.w-1-sx:sx)]; if (c===T) continue; var xx=bx+i+wob; if (xx<0||xx>=W) continue;
       if (al<1 && bayer(xx+shimmer,yy+(shimmer>>1))>=al) continue;
-      fb.d[yy*W+xx]=lut?lut[c]:c; if (mask) mask[yy*W+xx]=mv; } } };
+      fb.d[yy*W+xx]=lut?lut[c]:c; if (mask) mask[yy*W+xx]=mv; } }
+  if (opt.rim && opt.rim.length && sc===1 && al>=1) rimPass(fb,s,bx,by,fl,opt.rim,H,mask,mv); };
+// Kapitel 3, Punkt 2: Licht der Lampen auf der Figur. Jede Lampe (Bildschirmkoordinaten lx/ly, Stärke s, Farbe w/c) färbt die Kante,
+// die ihr zugewandt ist (Nachbarpixel in Richtung Lampe ist leer), in Lampenfarbe – warm aus der Rampe f, kalt aus b; bei starkem Licht
+// eine Stufe dunkler auch das Pixel dahinter. Schwaches Licht gerastert. Steht die Lampe fast genau über/hinter der Figur, bekommen
+// auch die Seiten einen schwachen Saum (Gegenlicht).
+var RIMW=null, RIMC=null;
+function rimCol(c,col){ if (!RIMW){ RIMW=[P.f2,P.f3,P.f4,P.f5]; RIMC=[P.b1,P.b2,P.b4,P.b5]; } var L=M.lum(c), r=col==='c'?RIMC:RIMW; return r[L<55?0:(L<100?1:(L<160?2:3))]; }
+function rimPass(fb,s,bx,by,fl,rims,H,mask,mv){ var W=fb.w, sw=s.w, sh=s.h, d=s.d;
+  function occ(X,Y){ var i=X-bx, j=Y-by; if (i<0||j<0||i>=sw||j>=sh) return false; return d[j*sw+(fl?sw-1-i:i)]!==T; }
+  for (var r=0;r<rims.length;r++){ var R=rims[r], st=R.s, back=Math.abs(R.lx-(bx+sw/2))<14 && R.ly<by+24;
+    for (var j=0;j<sh;j++){ var Y=by+j; if (Y<0||Y>=H) continue; for (var i=0;i<sw;i++){ var X=bx+i; if (X<0||X>=W || !occ(X,Y)) continue;
+      var dx=R.lx-X, dy=R.ly-Y, ax=Math.abs(dx), ay=Math.abs(dy), sx=ax>ay*0.5?(dx>0?1:-1):0, sy=ay>ax*0.5?(dy>0?1:-1):0;
+      var edge=!occ(X+sx,Y+sy), side=false; if (!edge && back) side=(!occ(X-1,Y)||!occ(X+1,Y)) && j<sh*0.75;
+      if (!edge && !side) continue; var k=Y*W+X, a=side?st*0.45:st; if (a<0.55 && bayer(X,Y)>=a/0.55) continue;
+      var c=rimCol(fb.d[k],R.col); fb.d[k]=c; if (mask) mask[k]=mv;
+      if (edge && st>0.7 && occ(X-sx,Y-sy) && bayer(X+1,Y)<st-0.45){ var k2=(Y-sy)*W+(X-sx); if (Y-sy>=0&&Y-sy<H&&X-sx>=0&&X-sx<W) fb.d[k2]=M.DN[c]; } } } } }
 
 // ---------------------------------------------------------------- Posen-Bibliothek
 function S(o){ var p={v:'S',h:[0,-23],nf:[1,0,'f'],ff:[-2,0,'f'],nh:[1,-21],fh:[-2,-21]}; for (var k in o) p[k]=o[k]; return p; }
@@ -2169,7 +2250,8 @@ E.get=function(){ return {room:room,S:S,GS:GS}; };
 
 // ---------------------------------------------------------------- Bildspeicher
 var bg=null, layers=[], dirty=true;
-function rebuild(){ if (!room) return; var tod=todOf(); bg=room.paint(S,GS,tod); layers=room.layers?room.layers(S,GS,tod):[]; dirty=false; }
+function rebuild(){ if (!room) return; var tod=todOf(); M.PAL3=!!(M.k3Fx && M.k3Fx('pal',room,GS));   // Mostar: feinere, farbverschobene Rampen (21_k3_look.js)
+  try{ bg=room.paint(S,GS,tod); layers=room.layers?room.layers(S,GS,tod):[]; } finally{ M.PAL3=false; } dirty=false; if (M.k3AfterRebuild) M.k3AfterRebuild(room,S,GS,tod,bg,layers); }
 function todOf(){ return (room && room.tod) ? (typeof room.tod==='function'?room.tod(GS):room.tod) : GS.tod; }
 M.todOf=todOf;
 
@@ -2305,7 +2387,7 @@ E.faceOf=function(a){ return a.lookF||a.f; };
 function faceOn(a,f){ if (!a||a.f===f) return Promise.resolve(); a.f=f; if (a.mode!=='anim'&&a.mode!=='walk') setIdle(a); return Promise.resolve(); }
 function updateActor(a,dt){ var ef=a.lookF||a.f; if (ef!==a._pf){ if ((ef==='L'&&a._pf==='R')||(ef==='R'&&a._pf==='L')) a.turnAt=gt; a._pf=ef; }
   if (a.frozen) return;
-  if (a.mode==='walk'){ a.ft+=dt; var spd=a.speed;
+  if (a.mode==='walk'){ a.ft+=dt; var spd=a.speed*(M.k3SpeedK?M.k3SpeedK(a):1);   // Kapitel 3: eigene Gangarten (21_k3_look.js)
     while (a.ft>=spd && a.mode==='walk'){ a.ft-=spd; var tg=a.path[0]; if (!tg){ arrive(a); break; }
       var dx=tg[0]-a.x, dy=tg[1]-a.y, side=Math.abs(dx)>=Math.abs(dy)*0.8, step=side?a.step:2.4, dist=side?Math.abs(dx):Math.abs(dy);
       if (dist<=0.01 && Math.hypot(dx,dy)>0.01){ step=Math.hypot(dx,dy); }
@@ -2374,6 +2456,7 @@ function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood];
   if (a.headBack && p && p.v==='S' && !p.hb){ var ch2=GLC.get(p); if (!ch2){ ch2={}; GLC.set(p,ch2); } p=ch2.hb||(ch2.hb=Object.assign({},p,{hb:1})); }
   if (m && p && !(p.hd&&p.hd!=='n')){ var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } p=c[m]||(c[m]=Object.assign({},p,{hd:m})); }
   var u=p?umbrellaStage(a):0; if (u>=2){ var c2=UMBC.get(p); if (!c2){ c2={}; UMBC.set(p,c2); } p=c2[u]||(c2[u]=Object.assign({},p,{um:u})); }
+  if (p && M.k3Pose) p=M.k3Pose(a,p);   // Kapitel 3: Folgebewegung, Ausdruck (21_k3_look.js)
   return p; }
 // Regenschirm (Wunsch des Autors: Ankunft in Mostar im Regen): Marko trägt einen, wo das Wetter der Phase Regen ist und der Raum es sagt
 // (room.rain aus der Kunst: true, oder (x,y) → im Regen?). Im Regen offen (Stufe 5), unter einem Dach zu und weggesteckt (Stufe 1, nicht
@@ -2431,6 +2514,7 @@ function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null;
   if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
   if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@'){ E.trLast=String(w0).replace(/^@/,''); E.trLastAt=gt; }
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
+    if (M.k3OnSay) try{ M.k3OnSay(E.speech.who,src,dur); }catch(e){}   // Kapitel 3: Gesichtsausdruck zum Satz (21_k3_look.js)
     var sa=ACT[E.speech.who]; if (sa && sa.id!==GS.active && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }
 function endSpeech(){ if (!E.speech) return; var r=E.speech.res; E.speech=null; r(); }
 E.endSpeech=endSpeech;
@@ -2910,7 +2994,7 @@ M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt fü
       // Prüfbericht K3-01 (Nebenbefund): Rechtecke aus perspektivischen Ecken können eine negative Breite oder Höhe haben (K4 Zug, K1 Schuppenfenster) – dann trifft sie kein Klick
       if (Array.isArray(h.r) && h.r.length===4 && !Object.getOwnPropertyDescriptor(h.r,0).get && (h.r[2]<0||h.r[3]<0)){ var q=h.r; h.r=[q[2]<0?q[0]+q[2]:q[0], q[3]<0?q[1]+q[3]:q[1], Math.abs(q[2]), Math.abs(q[3])]; }
       return h; });
-  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints,rain:A.rain};
+  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints,rain:A.rain,farSky:A.farSky,fx:A.fx};   // farSky/fx: Kapitel-3-Grafik (21_k3_look.js)
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);
   return r; };
@@ -2930,6 +3014,8 @@ var fb=new Buf(W,H,P.k0); M.fb=fb;
 var mask=new Uint8Array(W*SH);
 // Geisterpixel dieses Bildes (gmask) und ihre Farbe (gcol): spätere Dunkel-Durchgänge lassen sie aus, solange nichts darübergemalt wurde
 var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
+// Figurenpixel dieses Bildes (Mostar: alles andere wird auf die farbverschobenen Rampen umgefärbt, die Figuren nicht)
+var amask=new Uint8Array(W*SH); M.SCENE_AMASK=amask;
 var tapMark=null, snapFx=null, noFang=false;   // Touch-Konzept T01: Tippmarke und Rahmen um das erkannte Ding
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
 // Touch-Layout: größere Zeilen für Antworten und Verb-Menü, sobald mit dem Finger bedient wird (UI-Konzept D9/D10)
@@ -2956,18 +3042,51 @@ function drawPrint(p,view){ var age=view.gt-p.at, k=1-age/PRINT_MS, al=p.g?0.6*k
     var c=fb.d[yy*W+xx], q=M.RGB[c], lum=q?(q[0]+q[1]+q[2]):0;
     if (p.g) fb.d[yy*W+xx]=rim?(lum>420?P.b4:P.b2):(edge?P.b2:P.b1);
     else fb.d[yy*W+xx]=rim?(lum>420?P.s6:M.UP[c]):(edge?(lum>420?P.m2:P.k1):(lum>420?P.m1:P.k0)); } }
+// ---------------------------------------------------------------- Kapitel 3, Punkt 3: lange Schatten
+// Jede lebende Figur wirft von den (höchstens zwei) stärksten Lampen einen Schatten auf den Boden: die Gestalt, von den Füßen aus von
+// der Lampe weg gelegt (in der Tiefe gestaucht), um so länger, je weiter die Lampe weg ist, zum Ende hin dünner. Gerastert gedunkelt
+// (eine Stufe), jedes Bodenpixel je Lampe nur einmal. Geister werfen keinen Schatten.
+var SHM=new Uint8Array(W*SH);
+function k3Shadows(list,cx,ox,room,S,gs){ var OXs=M.SPR.OX, OYs=M.SPR.OY, gt=E.gt();
+  list.forEach(function(l){ var a=l.actor; if (!a || a.ghost || a.noShadow || !E.actorShown(a)) return; var sxA=a.x-cx+ox; if (sxA<-60||sxA>W+60) return;
+    var LA=M.k3LightsAt(a.x,a.y); if (!LA) return; var p=E.actorPose(a); if (!p || p.sit) return; var spr=M.poseBuf(p,a.ch,gt), af=a.lookF||a.f, fl=(p.v==='S'?(af==='L'):false);
+    LA.forEach(function(q){ var L=q.l, vx=a.x-L.x, vy=Math.max(4,(a.y-(L.fy||a.y-14))*2.2), d=Math.sqrt(vx*vx+vy*vy)||1, ux=vx/d, uy=vy/d, len=Math.max(0.5,Math.min(1.7,0.5+d/70)), dens=Math.min(0.9,q.s*1.35);
+      SHM.fill(0); var any=false;
+      for (var j=0;j<spr.h;j++){ var h=OYs-j; if (h<1) continue; for (var i=0;i<spr.w;i++){ if (spr.d[j*spr.w+(fl?spr.w-1-i:i)]===T) continue; var u=i-OXs;
+        var X=Math.round(sxA+u*0.8*Math.abs(uy)+ux*h*len), Y=Math.round(a.y+uy*h*len*0.42+u*0.45*Math.abs(ux)); if (X<0||X>=W||Y<0||Y>=SH||Y<a.y-4) continue;   // Breite der Gestalt quer zur Schattenrichtung
+        var v=Math.round(255*(1-h/(OYs*0.95))); if (v<1) continue; var k=Y*W+X; if (v>SHM[k]){ SHM[k]=v; any=true; } } }
+      if (!any) return;
+      for (var k2=0;k2<W*SH;k2++){ var v2=SHM[k2]; if (!v2) continue; var X2=k2%W, Y2=(k2/W)|0, f2=v2/255; if (bayer(X2,Y2)>=dens*(0.5+0.5*f2)) continue; var c0=fb.d[k2], c2=M.DN[c0]; if ((f2>0.45 && q.s>0.3) || M.lum(c0)>90) c2=M.DN[c2]; fb.d[k2]=c2; } }); }); }   // nah an den Füßen und auf hellem Grund zwei Stufen
+// ---------------------------------------------------------------- Kapitel 3, Punkt 1: Spiegelungen
+// Lebende Figuren spiegeln sich an den Füßen nach unten, wo der Raum spiegelnden Boden meldet (fx.reflect: 2 Pfütze, 1 nasses
+// Pflaster): eine Stufe dunkler, mit dem Grund gemischt, gerastert und nach unten schwächer, bei Regen in den Pfützen leicht gekräuselt.
+// Geister haben kein Spiegelbild.
+function k3Reflect(list,cx,ox,room,S,gs,tod,pm){ var R=E.k3refl, RM=R.mask, bw=R.w, OXs=M.SPR.OX, OYs=M.SPR.OY, gt=E.gt(), rain=M.scn&&M.scn.weather&&M.scn.weather(gs)==='rain';
+  list.forEach(function(l){ var a=l.actor; if (!a || a.ghost || !E.actorShown(a)) return; var sxA=Math.round(a.x-cx+ox); if (sxA<-40||sxA>W+40) return;
+    var p=E.actorPose(a); if (!p) return; var spr=M.poseBuf(p,a.ch,gt), af=a.lookF||a.f, f=p.v==='S'?(af==='L'?'L':'R'):a.f, fl=f==='L', bx=sxA-OXs+(fl?1:0);
+    var lut=room.actorLut?room.actorLut(a,S,gs,tod):((tod!=='day'&&M.TINT[tod])?M.TINT[tod].a:null); if (lut) lut=M.detailLut(lut);
+    for (var j=0;j<=OYs && j<spr.h;j++){ var h=OYs-j, Y=Math.round(a.y)+h+1; if (Y<0||Y>=SH) continue; var rip=(rain && ((Math.floor(gt/140)+Y)%3===0))?1:0;
+      for (var i=0;i<spr.w;i++){ var c=spr.d[j*spr.w+(fl?spr.w-1-i:i)]; if (c===T) continue; var X=bx+i+rip; if (X<0||X>=W) continue; var wx=X+cx-ox; if (wx<0||wx>=bw) continue;
+        var m=RM[Y*bw+wx]; if (!m) continue; var al=m===2?0.9-h*0.011:0.66-h*0.014; if (al<=0.04 || bayer(X,Y+((m===2&&rain)?(Math.floor(gt/200)&1):0))>=al) continue;
+        var k=Y*W+X, cc=M.DN[lut?lut[c]:c], v=M.mix(fb.d[k],cc,m===2?5:4); fb.d[k]=pm?pm[v]:v; } } }); }
 // ---------------------------------------------------------------- Szene
 function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(room.id), gs=GS(), ghostView=isG()&&!room.noGhostView;
   var ox=E.shake>0&&!M.reduceMotion()?Math.round(Math.sin(E.gt()*0.09)*2):0, cx=Math.round(E.camX), bw=bg.w;
   for (var y=0;y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var sx=x+cx-ox; fb.d[row+x]=(sx>=0&&sx<bw)?bg.d[brow+sx]:P.k0; } }
-  mask.fill(0); gmask.fill(0); M.RAIN_SHIELD=[];   // Regenschatten unter offenen Schirmen (M.rain in 01_art.js)
+  if (E.k3para && M.k3Parallax && M.k3Fx('para',room,gs)) M.k3Parallax(fb,room,cx,ox,SH);   // Mostar: Himmel und Berge langsamer (21_k3_look.js)
+  mask.fill(0); gmask.fill(0); amask.fill(0); M.RAIN_SHIELD=[];   // Regenschatten unter offenen Schirmen (M.rain in 01_art.js)
+  var k3pm=(M.k3Fx && M.k3Fx('pal',room,gs))?M.PAL3MAP:null; M.PAL3=!!k3pm;
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
+  if (M.k3Life) M.k3Life(fb,room,view,S,gs);   // Mostar: Leben im Hintergrund (21_k3_look.js)
+  if (k3pm){ for (var p0=0;p0<W*SH;p0++) fb.d[p0]=k3pm[fb.d[p0]]; }   // Grund schon vor den Figuren umgefärbt (Mischfarben der Geister, Spiegelungen)
   var list=r.layers.filter(function(l){ return !l.hidden && !(l.vis && !l.vis(S,gs)); }).slice();
   if (room.snowPrints) list=list.concat(printItems(view,room));   // Fußspuren: über den Bodenebenen, unter den Figuren
   Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (E.actorShown(a)) list.push({actor:a,base:a.y+(a.base||0)}); });
   list.sort(function(a,b){ return (a.base-b.base)||((a.actor?1:-1)-(b.actor?1:-1)); });
-  var tod=view.tod;
+  var tod=view.tod, k3L=!!(E.k3lights && E.k3lights.length && M.k3Fx('light',room,gs));
+  if (k3L && M.k3Fx('shadow',room,gs)) k3Shadows(list,cx,ox,room,S,gs);   // Mostar: lange Schatten von den Lampen weg (vor den Figuren)
+  if (E.k3refl && E.k3refl.room===room.id && M.k3Fx('reflect',room,gs)) k3Reflect(list,cx,ox,room,S,gs,tod,k3pm);   // Mostar: Spiegelbilder in Pfützen und auf nassem Pflaster
   list.forEach(function(l){
     if (l.actor){ var a=l.actor, sx=a.x-cx+ox; if (sx<-40||sx>W+40) return; var p=E.actorPose(a), af=a.lookF||a.f, f=p.v==='S'?(af==='L'?'L':'R'):a.f, o={t:E.gt(),h:SH,scale:a.scale||1};
       var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
@@ -2981,13 +3100,18 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (!a.noShadow && !spirit) shadow(sx,a.y,Math.round(7*(a.scale||1)));
       if (a.realize && spirit){ drawRealize(a,p,f,sx,a.y-lift,ghostView,o.alpha||1); return; }
       if (gst){ gst.alpha*=(o.alpha===undefined?1:o.alpha); drawGhost(a,p,f,sx,a.y-lift,gst); if (isM && !ghostView) malaMotes(sx,a.y-lift,gst.alpha); return; }
+      if (k3pm){ o.mask=amask; o.mv=1; }
+      if (k3L){ var LA=M.k3LightsAt(a.x,a.y); if (LA && LA.length) o.rim=LA.map(function(q){ return {lx:q.l.x-cx+ox,ly:q.l.y,s:q.s,col:q.l.col}; }); }
       M.drawPose(fb,sx,a.y-lift,p,f,a.ch,o);
       if (p.um>=3 && M.umAnchor){ var ua=M.umAnchor(p,a.ch), sc=a.scale||1; if (ua){ var ux=sx+(f==='L'?-ua.x:ua.x)*sc; M.RAIN_SHIELD.push([ux-(ua.R+1)*sc,a.y-lift+(ua.y-1)*sc,ux+(ua.R+1)*sc,a.y-lift+1]); } } }
     else if (l.print) drawPrint(l.print,view);
     else if (l.draw) l.draw(fb,view,S,gs);
     else { fb.blit(l,l.ox-cx+ox,l.oy); clearMask(l,l.ox-cx+ox,l.oy); }
   });
+  if (M.k3Breath) M.k3Breath(fb,room,cx,ox,SH);   // Mostar: Atemwolken (21_k3_look.js)
   if (room.front) room.front(fb,view,S,gs);
+  if (k3pm){ for (var pi=0;pi<W*SH;pi++){ if (!amask[pi]) fb.d[pi]=k3pm[fb.d[pi]]; } }
+  M.PAL3=false;
   if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var k0=dy0*W+dx0; if (gmask[k0] && fb.d[k0]===gcol[k0]) continue; var lt=E.litAt(dx0+cx-ox,dy0); if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
@@ -3005,6 +3129,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   if (M.DEBUG_SPOTS){ var cx1=Math.round(E.camX); for (var wy=0;wy<SH;wy+=3) for (var wx=0;wx<W;wx+=3){ var X=wx+cx1; var mk=room.walk&&room.walk(X,wy,S,gs); var mg=room.walkG&&room.walkG(X,wy,S,gs); if (mk) fb.px(wx,wy,P.b3); else if (mg) fb.px(wx,wy,P.x5); }
     room.hotspots.forEach(function(h){ var r0=E.hsRect(h); if (!r0) return; var X0=r0[0]-cx1, c=h.gexit?P.x6:(h.exit?P.g5:(h.who==='g'?P.x4:P.y4)); fb.hl(X0,X0+r0[2]-1,r0[1],c); fb.hl(X0,X0+r0[2]-1,r0[1]+r0[3]-1,c); fb.vl(X0,r0[1],r0[1]+r0[3]-1,c); fb.vl(X0+r0[2]-1,r0[1],r0[1]+r0[3]-1,c); M.microText(fb,String(h.id).slice(0,10),X0+2,r0[1]+2,c);
       var st=typeof h.st==='function'?h.st(S,gs):h.st; if (st){ fb.rect(st[0]-cx1-1,st[1]-1,3,3,P.r4); } }); }
+  if (E.k3close && M.k3DrawClose) M.k3DrawClose(fb,E.gt(),SH);   // Kapitel 3: Nahaufnahme über der Szene (97_k3_nah.js)
   if (E.switchFx && E.gt()-E.switchFx<500){ var q=(E.gt()-E.switchFx)/500; for (var j=0;j<W*SH;j++){ if (bayer(j%W,(j/W)|0)>q) fb.d[j]=isG()?M.UP[fb.d[j]]:M.DN[fb.d[j]]; } }
 }
 // ---------------------------------------------------------------- Geister in Markos Blick
@@ -3036,11 +3161,11 @@ function drawGhost(a,p,f,x,y,o){ var s=o.sprite||M.poseBuf(p,a.ch,o.t), G=ghostP
   if (rk>0){ var rim=G.rim, gi=(o.glint!==null&&o.glint!==undefined&&rim.length)?Math.floor(M.hash(o.glint,3.1)*(rim.length/3))*3:-1;
     for (var q=0;q<rim.length;q+=3){ var i=rim[q], j=rim[q+1], Y=by+j; if (Y<0||Y>=SH) continue; var X=bx+(fl?w-1-i:i)+(rows?rows(j):0); if (X<0||X>=W) continue;
       var k=Y*W+X, c=fb.d[k], rc=M.lum(c)>150?R.lo:(rim[q+2]?R.top:R.hi), kk=rk; if (q===gi){ rc=R.glint; kk=Math.min(8,rk+3); }
-      var v=M.mix(c,rc,kk); fb.d[k]=v; if (!nm){ gmask[k]=1; gcol[k]=v; } if (gv) mask[k]=1; } }
+      var v=M.mix(c,rc,kk); fb.d[k]=v; amask[k]=1; if (!nm){ gmask[k]=1; gcol[k]=v; } if (gv) mask[k]=1; } }
   for (var j2=0;j2<h;j2++){ var Y2=by+j2; if (Y2<0||Y2>=SH) continue; var oj=rows?rows(j2):0, row=j2*w;
     for (var i2=0;i2<w;i2++){ var si=fl?w-1-i2:i2, c2=d[row+si]; if (c2===T) continue; var X2=bx+i2+oj; if (X2<0||X2>=W) continue;
       var k2=Y2*W+X2, ty=e[row+si], gc=lut?lut[c2]:c2; if (ty===3 && !gv) gc=M.UP[gc];
-      var aa=(ty===2&&!gv)?Math.min(A8,5):A8, v2=aa>=8?gc:M.mix(fb.d[k2],gc,aa); fb.d[k2]=v2; if (!nm){ gmask[k2]=1; gcol[k2]=v2; } if (gv) mask[k2]=1; } } }
+      var aa=(ty===2&&!gv)?Math.min(A8,5):A8, v2=aa>=8?gc:M.mix(fb.d[k2],gc,aa); fb.d[k2]=v2; amask[k2]=1; if (!nm){ gmask[k2]=1; gcol[k2]=v2; } if (gv) mask[k2]=1; } } }
 var STRB=null;   // ein wiederverwendeter Puffer für die gestreckte Gestalt (weniger Speicherbereinigung während des Effekts)
 function stretched(s,sx,sy){ var OX=M.SPR.OX, OY=M.SPR.OY; if (!STRB||STRB.w!==s.w||STRB.h!==s.h) STRB=new Buf(s.w,s.h,T); var b=STRB; b.d.fill(T); b._g=null; for (var j=0;j<s.h;j++){ var sj=Math.round(OY+(j-OY)/sy); if (sj<0||sj>=s.h) continue;
   for (var i=0;i<s.w;i++){ var si=Math.round(OX+(i-OX)/sx); if (si<0||si>=s.w) continue; b.d[j*s.w+i]=s.d[sj*s.w+si]; } } return b; }
@@ -3075,7 +3200,7 @@ function drawCrossing(c,cam,gt){ var k=Math.min(1,(gt-c.at)/1200); if (c.close) 
     for (var x=Math.max(0,Math.floor(X-hw-10));x<Math.min(W,Math.ceil(X+hw+10));x++){ var d=Math.abs(x-X)/hw, I=(d<1?1-d*d*0.6:Math.max(0,1-(d-1)*hw/10)*0.4)*vy*k; if (I<=0) continue; var q=I-bayer(x+Math.floor(t*6),y)*0.5;
       var kk=y*W+x, cc=fb.d[kk]; if (q>0.75) fb.d[kk]=P.l1; else if (q>0.55) fb.d[kk]=P.l0; else if (q>0.38) fb.d[kk]=P.y5; else if (q>0.2) fb.d[kk]=M.UP[M.UP[cc]]; else if (q>0.05) fb.d[kk]=M.UP[cc]; } }
   for (var i=0;i<10;i++){ var ph=(t*0.25+i*0.13)%1, px=Math.round(X+Math.sin(i*1.9+t)*hw*0.8), py=Math.round(c.y-ph*c.h*1.1); if (px>=0&&px<W&&py>=0&&py<SH&&ph<0.95) fb.d[py*W+px]=P.l1; } }
-function clearMask(l,ox,oy){ for (var j=0;j<l.h;j++){ var y=oy+j; if (y<0||y>=SH) continue; for (var i=0;i<l.w;i++){ if (l.d[j*l.w+i]===T) continue; var x=ox+i; if (x<0||x>=W) continue; mask[y*W+x]=0; } } }
+function clearMask(l,ox,oy){ for (var j=0;j<l.h;j++){ var y=oy+j; if (y<0||y>=SH) continue; for (var i=0;i<l.w;i++){ if (l.d[j*l.w+i]===T) continue; var x=ox+i; if (x<0||x>=W) continue; mask[y*W+x]=0; amask[y*W+x]=0; } } }
 function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ if (Math.abs(dx)>(dy===0?w:w-2)) continue; var px=Math.round(x)+dx, py=Math.round(y)+dy; if (px<0||px>=W||py<0||py>=SH) continue; var c=fb.d[py*W+px]; fb.d[py*W+px]=M.DN[c]; } }
 
 // ---------------------------------------------------------------- Leiste
@@ -3238,7 +3363,7 @@ function drawChoices(){ var d=E.dlg, o=d.opts, g=isG(), WD=!!WIDE, x0=2, w=W-4, 
     if (rest>0){ var rt='+'+rest; M.text(fb,rt,ax-(M.textWidth(rt)>>1)+1,WD?y0+28:y1-19,g?P.x4:P.s4); } }   // so viele Antworten folgen noch
   d.lay=lay; }
 // Sprechtext: Figuren mit Porträt sprechen oben im Kasten neben ihrem Brustbild, alles andere wie gehabt
-function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait) return null;   // auch am Telefon: die Person am anderen Ende mit Brustbild
+function speechPortrait(sp){ var o=sp.opt||{}; if (!sp.who||sp.who==='#'||o.x!==undefined||o.y!==undefined||o.noPortrait||E.k3close) return null;   // in einer Nahaufnahme ohne Brustbild   // auch am Telefon: die Person am anderen Ende mit Brustbild
   var id=sp.who[0]==='@'?sp.who.slice(1):sp.who; if (!id) return null; var a=E.ACT[id], ch=a?a.ch:id; if (!(M.hasPortrait&&M.hasPortrait(ch)) && !M.CHARS[ch]) return null; return {ch:ch,a:a}; }
 // kleine Note für gesungene Zeilen: k 0 Achtel, 1 zwei Achtel mit Balken
 var SONG_NOTE=[['..##.','..#.#','..#..','###..','###..'],['.####','.#..#','.#..#','##.##','##.##']];
@@ -3282,6 +3407,7 @@ function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.col
   if (o.x!==undefined) cx=o.x; if (o.y!==undefined) top=o.y;
   if (sp.who==='#'){ lines=M.wrap(sp.text,240); cx=160; top=Math.max(8,((E.room&&E.room.narrY)||60)-lines.length*lh/2); }   // narrY: Mitte des Erzähltextes je Raum (Fahrtszene: im Himmel)
   if (o.phone){ lines=M.wrap(sp.text,220); cx=160; top=18; }
+  if (E.k3close){ lines=M.wrap(sp.text,240); cx=160; top=6; }   // Nahaufnahme: alle Sätze oben
   if (top<4) top=4; if (top+lines.length*lh>SH-4 && o.y===undefined) top=Math.max(4,SH-4-lines.length*lh);
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var bx=Math.max(M2,Math.min(W-M2-bw,cx-(bw>>1)));
   var x0=bx-5, x1=bx+bw+5, y0=top-3, y1=top+lines.length*lh+1;
@@ -16326,6 +16452,211 @@ scn.tram=function(b,x,baseY,opt){ opt=opt||{}; var s=opt.s||0.6, H=Math.round(80
   return {x0:x,x1:x+L,top:top,bot:baseY,winT:winT,winB:winB}; };
 })(M);
 
+/* ---- 21_k3_look.js ---- */
+/* ===== 21_k3_look.js — Grafik von Kapitel 3 (Mostar): die elf Punkte aus der Grafikliste (design/K3_GRAFIK.md).
+   Hier: welche Räume dazugehören, die Umfärbung auf die farbverschobenen Rampen (Punkt 8, Farben in 00_core.js).
+   Die Wirkungen selbst sitzen dort, wo gezeichnet wird: 06_ui.js (Szene), 02_rig.js (Figuren), 05_engine.js (Abläufe).
+   M.K3LOOK_OFF = true schaltet alles ab (Vergleichsbilder „vorher“, Tests). ===== */
+(function(M){
+'use strict';
+// Räume von Mostar und Skela (nur in Kapitel 3; dieselben Räume in anderen Kapiteln bleiben, wie sie sind)
+var ROOMS='ostbus herberge zimmer kujundziluk starimost koski minarett tepa strassenbr bulevar partizan westbus kafic vulkanizer vhof zelenika zelenika_in podmost garaze vermisst skela_d skela_l skela_most zlata_k k3_fahrt'.split(' ');
+M.K3LOOK_ROOMS={}; ROOMS.forEach(function(id){ M.K3LOOK_ROOMS[id]=1; });
+M.k3LookOn=function(room,GS){ if (M.K3LOOK_OFF || !room || !M.K3LOOK_ROOMS[room.id]) return false; var G=GS||M.GS; return !!(G && M.chapterOf && M.chapterOf(G)===3); };
+// Einzelne Punkte zum Vergleichen abschaltbar: M.K3FX.pal=false usw.
+M.K3FX={ pal:true, para:true, light:true, shadow:true, reflect:true, breath:true, follow:true, life:true, face:true, gait:true, close:true };
+M.k3Fx=function(k,room,GS){ return M.K3FX[k]!==false && M.k3LookOn(room||(M.E&&M.E.room),GS); };
+
+// ---------------------------------------------------------------- Punkt 5: Parallaxe
+// Breite Räume geben ihre ferne Ebene heraus (farSky: Himmel, wo möglich mit den Bergen, ganz gemalt, und die Maske, wo sie im Bild zu
+// sehen ist). Beim Schwenken läuft sie mit dem Faktor k (0,55) mit; in der Raummitte deckt sie sich genau mit dem gemalten Bild.
+var PARA_K={ starimost:0.5, ostbus:0.55, kujundziluk:0.6, bulevar:0.55, tepa:0.55, strassenbr:0.55, partizan:0.55, westbus:0.55, herberge:0.6 };
+// ---------------------------------------------------------------- Punkte 2 und 3: Lampen (aus den Lichtlisten der Räume)
+// Form A der Räume: [x, y, rx, ry, Stärke] (lightsFor), Form B: [x, y, rx, Stärke, ry] (M.finishTOD). Lichtquellen sind die Einträge
+// über dem Boden (y < 100), nicht die Lichtpfützen darunter. Farbe: warm (Glühlampe, Natrium), kalt (Leuchtröhren am Busbahnhof).
+M.k3LA=function(L){ return (L||[]).map(function(l){ return {x:l[0],y:l[1],r:Math.max(l[2],l[3]),k:l[4]}; }); };
+M.k3LB=function(L){ return (L||[]).map(function(l){ return {x:l[0],y:l[1],r:Math.max(l[2],l[4]||l[2]),k:l[3]}; }); };
+var COOL={ ostbus:function(l){ return l.y<50 && l.x<245; }, westbus:function(l){ return l.y>60; } };
+function lightsOf(room,S,GS,tod){ if (!room.fx || !room.fx.lights || tod==='day') return []; var L;
+  try{ L=room.fx.lights(S,GS,tod)||[]; }catch(e){ return []; }
+  var pools=L.filter(function(l){ return l && l.y>=100; });
+  // Fußpunkt der Lampe: die Lichtpfütze direkt darunter (sonst ein Stück hinter der Figur, wie an einer Hauswand)
+  return L.filter(function(l){ return l && l.y<100 && l.k>=0.3; }).map(function(l){ var fy, best=15; pools.forEach(function(q){ var d=Math.abs(q.x-l.x); if (d<best){ best=d; fy=q.y-2; } });
+    return {x:l.x, y:l.y, fy:fy, R:Math.max(46,Math.min(120,l.r*2.6)), k:Math.min(1,l.k), col:(COOL[room.id]&&COOL[room.id](l))?'c':'w'}; }); }
+// die (höchstens zwei) stärksten Lampen für eine Figur: Stärke nach Abstand vom Körper (Hüfte)
+M.k3LightsAt=function(x,y){ var L=M.E.k3lights; if (!L || !L.length) return null; var out=[];
+  for (var i=0;i<L.length;i++){ var l=L[i], dx=l.x-x, dy=(l.y-(y-24))*1.2, d=Math.sqrt(dx*dx+dy*dy); if (d>=l.R) continue; var s=l.k*(1-d/l.R); if (s<0.12) continue; out.push({l:l,s:s,dx:dx}); }
+  out.sort(function(a,b){ return b.s-a.s; }); return out.slice(0,2); };
+M.k3AfterRebuild=function(room,S,GS,tod,bg,layers){ var E=M.E; E.k3para=null; E.k3lights=M.k3Fx('light',room,GS)?lightsOf(room,S,GS,tod):null;
+  E.k3refl=null; if (M.k3Fx('reflect',room,GS) && room.fx && room.fx.reflect){ try{ var rm=room.fx.reflect(); if (rm && rm.length===bg.w*bg.h){ var any=false; for (var q=0;q<rm.length;q+=7) if (rm[q]){ any=true; break; } if (any) E.k3refl={room:room.id,mask:rm,w:bg.w}; } }catch(e){} }
+  if (!M.k3Fx('para',room,GS) || !room.farSky || (room.width||320)<=320) return;
+  var fs=room.farSky(); if (!fs || !fs.buf || !fs.mask) return; var w=bg.w, rows=0;
+  for (var y=0;y<bg.h;y++){ var any=false; for (var x=0;x<w;x++) if (fs.mask[y*w+x]){ any=true; break; } if (any) rows=y+1; }
+  E.k3para={room:room.id, buf:fs.buf, mask:fs.mask, k:PARA_K[room.id]||0.55, c0:(w-320)/2, rows:rows}; };
+// in 06_ui.js nach dem Kopieren des Hintergrunds: ferne Pixel aus der fernen Ebene, um (Kamera − Mitte)·(1 − k) versetzt
+M.k3Parallax=function(fb,room,cx,ox,SH){ var PX=M.E.k3para; if (!PX || PX.room!==room.id) return; var W=fb.w, bw=PX.buf.w, d=PX.buf.d, mk=PX.mask, T=M.T;
+  var off=Math.round((cx-PX.c0)*(1-PX.k)); if (!off) return;
+  for (var y=0;y<PX.rows && y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var wx=x+cx-ox; if (wx<0||wx>=bw||!mk[brow+wx]) continue; var fx=wx-off; if (fx<0) fx=0; else if (fx>=bw) fx=bw-1; var c=d[brow+fx]; if (c!==T) fb.d[row+x]=c; } } };
+})(M);
+(function(M){
+'use strict';
+var P=M.P, T=M.T, bayer=M.bayer;
+// Draußen (Atemwolken, Bura) – Räume ohne Dach über den Figuren
+var OUTDOOR={ostbus:1,kujundziluk:1,starimost:1,koski:1,minarett:1,tepa:1,strassenbr:1,bulevar:1,partizan:1,westbus:1,vhof:1,zelenika:1,podmost:1,skela_d:1,skela_l:1,skela_most:1,garaze:1};
+M.K3_OUTDOOR=OUTDOOR;
+var BURA={k3_d1:1,k3_d1_n:1};
+function seedOf(a){ if (a._sd) return a._sd; var h=7; for (var i=0;i<a.id.length;i++) h=(h*31+a.id.charCodeAt(i))%997; return (a._sd=h+1); }
+
+// ---------------------------------------------------------------- Punkt 6: Folgebewegung (Saum, Rock, langes Haar)
+// Beim Gehen hängt der Saum einen Pixel nach, das Haar eins bis zwei; beim Anhalten schwingt beides vor und pendelt aus, beim Umdrehen
+// ebenso. Bei Bura weht draußen alles nach links (der Wind kommt aus Nordost und fällt zum Meer hin), flatternd. Geister spürt der Wind
+// nicht. Die Werte gehen als Posenfelder cl (Saum) und hl (Haar) an das Rig (02_rig.js); abgeleitete Posen werden zwischengespeichert.
+var PC=new WeakMap();
+function derive(p,cl,hl){ if (!cl && !hl) return p; var c=PC.get(p); if (!c){ c={}; PC.set(p,c); } var k=cl+'|'+hl, q=c[k]; if (!q){ q=Object.assign({},p); if (cl) q.cl=cl; if (hl) q.hl=hl; c[k]=q; } return q; }
+function follow(a,p){ var E=M.E, room=E.room, gt=E.gt(), st=a._fo||(a._fo={mode:a.mode,f:a.f,t:-1e9,kind:0});
+  if (st.mode!==a.mode){ if (st.mode==='walk'){ st.t=gt; st.kind=1; } else if (a.mode==='walk') st.kind=0; st.mode=a.mode; }
+  if (st.f!==a.f){ if (a.mode!=='walk'){ st.t=gt; st.kind=2; } st.f=a.f; }
+  var cl=0, hl=0;
+  if (a.mode==='walk'){ cl=-1; hl=(((a.fi||0)>>1)&1)?-2:-1; }
+  else if (st.kind && gt-st.t<1000){ var t=gt-st.t, sg=st.kind===2?-1:1, amp=st.kind===1?2:1.6; cl=Math.round(sg*amp*Math.cos(t/95)*Math.exp(-t/230)); hl=Math.round(sg*(amp+0.6)*Math.cos(t/125-0.5)*Math.exp(-t/330)); }
+  if (BURA[M.GS.phase] && OUTDOOR[room.id] && !a.ghost){ var sd=seedOf(a), fl=((Math.floor((gt+sd*37)/150)%3)===0)?2:1;
+    if (p.v==='S'){ var dir=(a.f==='L')?1:-1; cl+=dir*fl; hl+=dir*(fl+1); } else cl-=fl; }
+  if (p.v!=='S') hl=0; cl=Math.max(-3,Math.min(3,cl)); hl=Math.max(-3,Math.min(3,hl));
+  return derive(p,cl,hl); }
+// ---------------------------------------------------------------- Punkt 9: Gesichter mit Ausdruck
+// Zu jedem gesprochenen Satz wählt Mostar einen Ausdruck aus dem Wortlaut: Dank, Freude, Lachen → Lächeln; Widerspruch, Ärger,
+// Vorwurf → Stirnrunzeln; Frage → hochgezogene Braue; Ausruf → weiter Mund. Er hält, solange der Satz steht, und kurz danach.
+// Lidschlag, Blicke und die Stimmungen der Geister (traurig, erschrocken) gehen vor. Szenen können ihn setzen: npc.set('k3expr','sm').
+var SMILE=/\b(danke|dank dir|hvala|gut so|schön|freut mich|gern|haha|ha\b|bravo|super|na also|lacht|lächelt|grinst|stimmt genau|genau so)/i,
+    FROWN=/\b(nein|nicht|nie\b|niemals|verdammt|scheiße|lüge|hör auf|lass das|warum nicht|zu spät|keiner|kein\b|vorbei|dummkopf|falsch)/i;
+M.k3ExprFor=function(t){ t=String(t||''); if (/^…|^\.\.\./.test(t)) return null; var q=/\?\s*[»“"]?$/.test(t), ex=/!\s*[»“"]?$/.test(t);
+  if (SMILE.test(t) && !/\bnicht\b/i.test(t)) return 'sm'; if (FROWN.test(t) && (ex || !q)) return 'fr'; if (q) return 'br'; if (ex) return 'ow'; return null; };
+M.k3OnSay=function(who,text,dur){ var E=M.E, room=E.room; if (!room || !M.k3Fx('face',room)) return; var id=String(who||'').replace(/^@/,''), a=E.ACT[id]; if (!a) return;
+  var x=M.k3ExprFor(text); a.k3sayExpr=x; a.k3sayUntil=E.gt()+(dur||1500)+500; };
+var OPEN={sm:'so',fr:'fo',br:'bo',ow:'ow'}, FC=new WeakMap();
+M.k3Face=function(a,p){ if (M.K3FX.face===false) return p; var E=M.E, gt=E.gt(), x=a.k3expr||((a.k3sayUntil>gt)?a.k3sayExpr:null); if (!x || a.mood) return p;
+  var hd=p.hd||'n', k; if (hd==='n') k=x; else if (hd==='o') k=OPEN[x]||x; else return p;   // Lidschlag, Blicke und Varianten der Figur bleiben
+  if (x==='ow' && hd==='n') return p;   // weiter Mund nur in den offenen Bildern
+  var c=FC.get(p); if (!c){ c={}; FC.set(p,c); } return c[k]||(c[k]=Object.assign({},p,{hd:k})); };
+// ---------------------------------------------------------------- Punkt 10: eigene Gangarten
+// alt: gebeugt, Kopf vor, kurze Schritte, kaum Armschwung, langsamer (Jela, Zlata, der alte Mann an der Brücke); leicht gebeugt (Vlado, der Händler)
+// jung: federnd, größere Schritte, mehr Schwung, etwas schneller (Lena) · müde: Kopf gesenkt, hängende Arme, langsamer (Marko nachts)
+var GAIT={ jela:'old', zlata:'old', vlado:'bent', k3tour2:'old', haendler:'bent', lena:'young' };
+var GOPT={ old:{step:0.6,arm:0.35,armY:1,bob:0.5,drop:1,ln:2,ho:[1,1],speed:1.45}, bent:{step:0.8,arm:0.55,armY:1,bob:0.6,drop:0,ln:1,ho:[1,1],speed:1.2}, young:{step:1.15,arm:1.25,armY:0,bob:2,drop:0,ln:1,ho:[0,0],speed:0.85},
+  tired:{step:0.85,arm:0.45,armY:1,bob:0.7,drop:0,ln:1,ho:[0,1],speed:1.22} };
+var NIGHT3={k3_pro_n:1,k3_d1_n:1,k3_d2_n:1,k3_fin_n:1,k3_epi:1};
+function gaitOf(a){ if (a.ghost) return null; if (a.ch==='marko') return NIGHT3[M.GS.phase]?'tired':null; return GAIT[a.ch]||null; }
+var GA={};
+function gaitAnim(kind,v){ var key=kind+v; if (GA[key]) return GA[key]; var A_=M.ANIMS, o=GOPT[kind], base=v==='S'?A_.walkS:(v==='B'?A_.walkB:A_.walkF);
+  GA[key]=base.map(function(p0){ var p=JSON.parse(JSON.stringify(p0)), sx=function(q,k,y){ if (q) { q[0]=Math.round(q[0]*k); if (y) q[1]+=y; } };
+    if (v==='S'){ sx(p.nf,o.step); sx(p.ff,o.step); sx(p.nh,o.arm,o.armY); sx(p.fh,o.arm,o.armY); p.ln=o.ln; }
+    else { if (p.lh) p.lh[1]=Math.round(-21+(p.lh[1]+21)*o.arm)+o.armY; if (p.rh) p.rh[1]=Math.round(-21+(p.rh[1]+21)*o.arm)+o.armY; }
+    if (p.h) p.h[1]=Math.round(-22+(p.h[1]+22)*o.bob)+o.drop; var ho=p.ho||[0,0]; p.ho=[ho[0]+o.ho[0],ho[1]+o.ho[1]]; if (!p.ho[0]&&!p.ho[1]) delete p.ho;
+    return p; }); return GA[key]; }
+M.k3SpeedK=function(a){ var room=M.E.room; if (M.K3FX.gait===false || !room || !M.k3LookOn(room)) return 1; var g=gaitOf(a); return g?GOPT[g].speed:1; };
+M.K3_GAIT=GAIT;
+M.k3Pose=function(a,p){ var room=M.E.room; if (!room || p.sit || !M.k3LookOn(room)) return p;
+  if (M.K3FX.gait!==false && a.mode==='walk'){ var g=gaitOf(a); if (g){ var v=p.v==='S'?'S':(p.v==='B'?'B':'F'); p=gaitAnim(g,v)[(a.fi||0)%8]; } }
+  if (M.K3FX.follow!==false) p=follow(a,p);
+  if (M.k3Face) p=M.k3Face(a,p);
+  return p; };
+
+// ---------------------------------------------------------------- Punkt 4: Atemwolken
+// Draußen in kalten Stunden (Bura am Freitag, alle Nächte, die Frostnacht, das Morgengrauen) sieht man den Atem der Lebenden: alle
+// zwei bis vier Sekunden ein Wölkchen vor dem Mund, beim Sprechen öfter; es steigt, wird größer und vergeht gerastert. Bei Bura reißt
+// es der Wind nach links. Mala atmet nicht.
+var COLD={k3_d1:1,k3_d1_n:1,k3_d2_n:1,k3_fin_n:1,k3_epi:1,k3_pro_n:1};
+M.k3Cold=function(G,room){ return !!(COLD[(G||M.GS).phase] && room && OUTDOOR[room.id]); };
+var PUFFS=[]; M.__k3puffs=PUFFS;
+function mouthOf(a,p){ var ch=M.CHARS[a.ch]; if (!ch || !p || !M.k3RideHeadBox) return null; var hb=M.k3RideHeadBox(a.ch,p,Math.round(a.x),Math.round(a.y)); if (!hb) return null;
+  var face=(p.v==='S')?(a.lookF||a.f):'F';
+  if (face==='F') return {x:hb.x+(hb.w>>1), y:hb.y+hb.h-3, dir:0};
+  if (face==='B') return null;
+  if (face==='L'){ var x0=2*Math.round(a.x)-(hb.x+hb.w)+1; return {x:x0-1, y:hb.y+hb.h-4, dir:-1}; }
+  return {x:hb.x+hb.w, y:hb.y+hb.h-4, dir:1}; }
+M.k3Breath=function(fb,room,cx,ox,SH){ var E=M.E, gt=E.gt(), G=M.GS, W=fb.w; if (!M.k3Fx('breath',room) || !M.k3Cold(G,room)) { PUFFS.length=0; return; }
+  var bura=!!BURA[G.phase], night=M.todOf()!=='day';
+  Object.keys(E.ACT).forEach(function(k){ var a=E.ACT[k]; if (!a || a.ghost || !E.actorShown(a)) return; var sd=seedOf(a);
+    var talking=!!(E.speech && E.speech.who===a.id); if (a._brT===undefined) a._brT=gt+300+(sd%900);
+    if (gt>=a._brT){ var p=E.actorPose(a), m=mouthOf(a,p); if (m) PUFFS.push({x:m.x,y:m.y,dir:m.dir,t0:gt,sd:sd+Math.floor(gt/7)%97});
+      a._brT=gt+(talking?900+(sd%400):2400+((sd*13+Math.floor(gt/1000)*7)%1700)); } });
+  for (var i=PUFFS.length-1;i>=0;i--){ var q=PUFFS[i], age=(gt-q.t0)/1000; if (age>1.6||age<0){ PUFFS.splice(i,1); continue; }
+    var drift=bura?-age*34:q.dir*(2+age*8), X=q.x+drift-cx+ox, Y=q.y-age*5, r=0.8+age*2.4, dens=0.62*(1-age/1.6);
+    var col=night?P.u3:P.o6, col2=night?P.u2:P.o5;
+    for (var yy=Math.floor(Y-r);yy<=Y+r;yy++){ if (yy<0||yy>=SH) continue; for (var xx=Math.floor(X-r-1);xx<=X+r+1;xx++){ if (xx<0||xx>=W) continue;
+      var dx=(xx-X)/(r+0.5), dy=(yy-Y)/(r*0.8+0.4), d=dx*dx+dy*dy; if (d>1) continue; var a2=dens*(1-d*0.7)*(0.75+0.25*Math.sin(q.sd+xx*0.9+yy*1.3)); if (bayer(xx+q.sd,yy)>=a2) continue; var kk=yy*W+xx, bright=M.lum(fb.d[kk])>165; fb.d[kk]=bright?(d<0.35?P.u3:P.u4):(d<0.35?col:col2); } } } };   // vor hellem Grund grau statt weiß
+})(M);
+(function(M){
+'use strict';
+var P=M.P, T=M.T, bayer=M.bayer, hash=M.hash;
+// ---------------------------------------------------------------- Punkt 7: mehr Leben im Hintergrund
+// Klein und am Rand, nie dort, wo Spieler und Figuren handeln; tagsüber anders als nachts. Gezeichnet nach der Raumbewegung (dynamic),
+// vor den Figuren, in den alten Farben (das Umfärben auf die Mostar-Rampen folgt). Jeder Raum bekommt nur, was zu ihm passt.
+function rd(v){ return Math.round(v); }
+function px(fb,x,y,c){ if (x<0||y<0||x>=fb.w||y>=144||c===undefined) return; fb.d[y*fb.w+x]=c; }
+function tint(c,t,x,y){ return t?M.tintPx(t,c,x,y):c; }
+// kleine Gestalt in der Ferne (Größe 1: neun Pixel, 2: sechzehn), zwei Schrittbilder
+var COATS=[[P.c1,P.c2],[P.w1,P.w2],[P.m1,P.m2],[P.r1,P.r2],[P.g1,P.g2],[P.k2,P.m1]];
+function walker(fb,X,Y,s,fr,ci,dir,tn){ var C=COATS[ci%COATS.length], sk=P.p3, hr=(ci%3===0)?P.h2:(ci%3===1?P.w0:P.m3);
+  if (s===1){ for (var y=Y-6;y<Y;y++){ px(fb,X,y,tint(C[0],tn,X,y)); px(fb,X+1,y,tint(C[1],tn,X+1,y)); }
+    px(fb,X,Y-7,tint(sk,tn,X,Y-7)); px(fb,X+1,Y-7,tint(P.p2,tn,X+1,Y-7)); px(fb,X,Y-8,tint(hr,tn,X,Y-8)); px(fb,X+1,Y-8,tint(hr,tn,X+1,Y-8));
+    px(fb,X+(fr?0:1),Y,tint(P.k1,tn,X,Y)); return; }
+  var bx=X-1; for (var y2=Y-12;y2<Y-4;y2++) for (var i=0;i<3;i++) px(fb,bx+i,y2,tint(i===(dir>0?2:0)?C[1]:C[0],tn,bx+i,y2));
+  for (var j=0;j<3;j++) for (var i2=0;i2<3;i2++) px(fb,bx+i2,Y-15+j,tint(j===0?hr:(i2===(dir>0?2:0)?P.p2:sk),tn,bx+i2,Y-15+j));
+  var a=fr?1:-1; px(fb,bx+1+a,Y-4,tint(P.k1,tn,bx+1+a,Y-4)); for (var l=Y-4;l<Y;l++){ px(fb,bx+(fr?0:1),l,tint(P.c0,tn,bx,l)); px(fb,bx+(fr?2:1),l,tint(P.c1,tn,bx+2,l)); }
+  px(fb,bx+(dir>0?3:-1),Y-10+(fr?1:0),tint(sk,tn,bx,Y-10)); }
+// Katze: sitzt, der Schwanz zuckt, manchmal hebt sie den Kopf; schläft sie, atmet sie nur
+function cat(fb,X,Y,t,sd,tn,col,sleep){ var c1=col[0], c2=col[1], up=!sleep && Math.sin(t*0.7+sd)>0.6, tail=Math.floor(t*2.2+sd)%5===0;
+  var R=sleep?['......','.11...','111111','122221']:['1.1...','111...','121...','1121..','11111.','122221'];
+  R.forEach(function(r,j){ for (var i=0;i<r.length;i++){ if (r[i]==='.') continue; var c=r[i]==='1'?c1:c2; px(fb,X+i,Y-R.length+j-(up&&j<3?1:0),tint(c,tn,X+i,Y)); } });
+  if (!sleep){ px(fb,X+1,Y-4-(up?1:0),tint(P.y4,tn,X+1,Y)); var tx=X+6, ty=Y-1; px(fb,tx,ty,tint(c1,tn,tx,ty)); px(fb,tx+1,ty-(tail?2:1),tint(c1,tn,tx,ty)); px(fb,tx+1,ty-(tail?3:2),tint(c1,tn,tx,ty)); }
+  else if (Math.sin(t*1.3+sd)>0) px(fb,X+3,Y-3,tint(c1,tn,X+3,Y)); }
+// Huhn: pickt
+function hen(fb,X,Y,t,sd,dir,tn){ var peck=Math.sin(t*3.1+sd*1.7)>0.5, c=sd%2?P.s5:P.w3, cc=P.r3;
+  var body=[[0,0],[1,0],[2,0],[0,-1],[1,-1],[2,-1],[1,-2]]; body.forEach(function(q){ px(fb,X+q[0]*dir,Y+q[1],tint(c,tn,X,Y)); });
+  var hx=X+3*dir, hy=peck?Y:Y-3; px(fb,hx,hy,tint(c,tn,hx,hy)); px(fb,hx,hy-1,tint(cc,tn,hx,hy)); px(fb,hx+dir,hy,tint(P.y3,tn,hx,hy)); px(fb,X+dir,Y+1,tint(P.y2,tn,X,Y)); }
+// Krähe im Flug: zwei Flügelbilder
+function crow(fb,X,Y,fr,tn){ var c=tint(P.k1,tn,X,Y); px(fb,X,Y,c); px(fb,X+1,Y,c); if (fr){ px(fb,X-1,Y-1,c); px(fb,X-2,Y-2,c); px(fb,X+2,Y-1,c); px(fb,X+3,Y-2,c); } else { px(fb,X-1,Y+1,c); px(fb,X-2,Y+1,c); px(fb,X+2,Y+1,c); px(fb,X+3,Y+1,c); } }
+// Taube auf dem Dachfirst: nickt, trippelt
+function roofBird(fb,X,Y,t,sd,tn){ var nod=Math.sin(t*2.4+sd)>0.4, c=tint(P.m3,tn,X,Y); px(fb,X,Y-1,c); px(fb,X+1,Y-1,c); px(fb,X+2,Y-1,tint(P.m2,tn,X,Y)); px(fb,X,Y-2,c); px(fb,X+(nod?-1:0),Y-(nod?2:3),tint(P.m4,tn,X,Y)); }
+// Rauch aus einem Schornstein: steigt, wird breiter und vergeht; bei Bura reißt er nach links
+function smoke(fb,X,Y,t,i,bura,tn){ for (var q=0;q<7;q++){ var ph=((t*0.22+q/7+i*0.37)%1), sx=X+(bura?-ph*30:Math.sin(ph*5+i)*2+ph*5), sy=Y-ph*(bura?6:20), r=0.6+ph*2.4;
+    for (var yy=Math.floor(sy-r);yy<=sy+r;yy++) for (var xx=Math.floor(sx-r);xx<=sx+r;xx++){ var d=((xx-sx)*(xx-sx)+(yy-sy)*(yy-sy))/(r*r+0.3); if (d>1) continue; if (bayer(xx+q,yy)>=(0.55-ph*0.5)*(1-d*0.5)) continue; px(fb,xx,yy,tint(ph<0.4?P.m4:P.m3,tn,xx,yy)); } } }
+// flackernde Leuchtschrift: helle Pixel im Rechteck gehen kurz aus
+function neon(fb,r,t,cam){ var cyc=t%5.3; if (!((cyc>2.1&&cyc<2.24)||(cyc>2.4&&cyc<2.47)||(cyc>4.0&&cyc<4.35))) return;
+  for (var y=r[1];y<r[1]+r[3];y++) for (var x=r[0];x<r[0]+r[2];x++){ var X=x-cam; if (X<0||X>=fb.w||y<0||y>=144) continue; var k=y*fb.w+X, c=fb.d[k]; if (M.lum(c)>140) fb.d[k]=M.DN[M.DN[c]]; } }
+var COLD={k3_d1:1,k3_d1_n:1,k3_d2_n:1,k3_fin_n:1,k3_epi:1,k3_pro_n:1,k3_epi_d:1,k3_d3:1};
+var LIFE={
+  // Alte Brücke: Leute gehen über den Scheitel (tags), Rauch aus den Kaminen der Altstadt (wenn es kalt ist)
+  starimost:function(fb,v,S,G,c){ var t=v.t, cam=v.cam, fx=c.room.fx; if (fx && fx.deck && v.tod==='day' && c.we!=='rain'){ var X0=fx.deckX[0], X1=fx.deckX[1];
+      for (var i=0;i<3;i++){ var per=38+i*9, ph=((t+i*17)%per)/per, dir=i%2?-1:1, x=dir>0?X0+(X1-X0)*ph:X1-(X1-X0)*ph; if (hash(i,Math.floor((t+i*17)/per))<0.35) continue; walker(fb,rd(x)-cam,fx.deck(rd(x)),1,Math.floor(t*4+i)%2,i+2,dir,c.tn); } }
+    if (fx && fx.chim && COLD[G.phase] && c.we!=='rain') fx.chim().forEach(function(ch,i){ if (i%2) return; smoke(fb,ch[0]-cam,ch[1],t,i,c.we==='bura',c.tn); }); },
+  // Kujundžiluk: eine Katze schläft auf dem Ladentisch des Kupferschmieds, Tauben auf den Firsten
+  kujundziluk:function(fb,v,S,G,c){ var t=v.t, cam=v.cam; if (c.we!=='rain') cat(fb,22-cam,93,t,3,c.tn,[P.k2,P.m1],v.tod!=="day");
+    if (v.tod==='day' && c.we!=='rain') [[100,15],[287,17],[393,25]].forEach(function(b,i){ roofBird(fb,b[0]-cam+rd(Math.sin(t*0.4+i)*2),b[1],t,i,c.tn); }); },
+  // Bulevar: Leute auf dem Gehweg gegenüber
+  bulevar:function(fb,v,S,G,c){ var t=v.t, cam=v.cam; if (v.tod==='night' && G.phase!=='k3_d2_n') return;
+    for (var i=0;i<3;i++){ var sp=14+i*3, per=(560)/sp+6+i*4, ph=(t+i*11)%per, dir=i%2?-1:1, x=dir>0?-30+ph*sp:500-ph*sp; if (x<-20||x>500) continue; walker(fb,rd(x)-cam,89,2,Math.floor(t*5+i)%2,i,dir,c.tn); } },
+  // Westbusbahnhof: die Leuchtschrift des Cafés flackert nachts
+  westbus:function(fb,v,S,G,c){ if (v.tod==='day') return; neon(fb,[24,52,72,11],v.t,v.cam); },
+  // Koski-Moschee: eine Katze auf der Mauer zum Fluss
+  koski:function(fb,v,S,G,c){ if (c.we==='rain') return; cat(fb,298-v.cam,88,v.t,7,c.tn,[P.t3,P.t2],v.tod==='night'); },
+  // Skela: Hühner vor dem Schuppen (tags), Rauch aus den Häusern (wenn es kalt ist), Krähen über den Feldern
+  skela_d:function(fb,v,S,G,c){ var t=v.t, cam=v.cam;
+    if (v.tod==='day') [[118,113,1],[134,112,-1],[150,114,1]].forEach(function(h,i){ hen(fb,h[0]-cam+rd(Math.sin(t*0.3+i*2)*5),h[1],t,i+1,h[2],c.tn); });
+    if (COLD[G.phase] || v.tod!=='day') [[212,47],[337,54],[38,52]].forEach(function(ch,i){ px(fb,ch[0]-cam,ch[1],tint(P.s2,c.tn,0,0)); px(fb,ch[0]+1-cam,ch[1],tint(P.s2,c.tn,0,0)); smoke(fb,ch[0]-cam,ch[1]-1,t,i,c.we==='bura',c.tn); });
+    if (v.tod!=='night') for (var i=0;i<4;i++){ var per=26+i*3, ph=((t+i*5)%per)/per, x=-20+ph*520, y=22+rd(Math.sin(ph*9+i)*5)+i*4; crow(fb,rd(x)-cam,y,Math.floor(t*6+i)%2,c.tn); } },
+  // Tepa: unter dem karierten Tisch schläft eine Katze, tags trippelt eine Taube auf dem Dach des Brunnens
+  tepa:function(fb,v,S,G,c){ if (c.we==='rain') return; cat(fb,362-v.cam,110,v.t,5,c.tn,[P.w2,P.w1],true); },
+  // Partisanenfriedhof: Krähen ziehen über den Hang
+  partizan:function(fb,v,S,G,c){ var t=v.t, cam=v.cam; if (v.tod==='night') return;
+    for (var i=0;i<5;i++){ var a=t*0.25+i*1.3, x=200+Math.cos(a)*(110+i*12), y=26+Math.sin(a*1.7)*8+i*3; crow(fb,rd(x)-cam,rd(y),Math.floor(t*5+i)%2,c.tn); } }
+};
+M.K3_LIFE=LIFE;
+M.k3Life=function(fb,room,view,S,G){ if (!M.k3Fx('life',room,G)) return; var fn=LIFE[room.id]; if (!fn) return; var tod=view.tod, we=M.scn&&M.scn.weather?M.scn.weather(G):'calm';
+  try{ fn(fb,view,S,G,{room:room,we:we,tn:(tod!=='day'&&M.TINT[tod])?M.TINT[tod]:null}); }catch(e){ if (!M._k3lifeErr){ M._k3lifeErr=1; console.error(e); } } };
+})(M);
+
 /* ---- portraits/_derive.js ---- */
 /* ===== portraits/_derive.js — abgeleitete Porträts: eine bestehende Vorlage malen, dann Farben je Bildbereich umsetzen (Haar, Mütze,
    Kleidung, Bart) und Zubehör darüber zeichnen (Brille, Kopfhörer, Stirnlampe, Ausweis). So bekommen Nebenfiguren ein gemaltes
@@ -26634,9 +26965,11 @@ function paintSign(w,wet){ var s=SIGN, x, y; w.g=RG.prop;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, SKYB=null;
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night', wet=we==='rain';
   WE=we; REG.fill(0); LITW.length=0;
-  paintSky(b,tod,we); SKYB=b.clone(); paintFar(w,we,tod);
+  paintSky(b,tod,we); SKYB=b.clone(); FARSKY=SKYB; paintFar(w,we,tod);
   paintGym(w,wet); paintBank(w,wet); paintOld(w,wet);
   paintStreet(w,we);
   TREES.forEach(function(t){ plane(w,t.x,ST.med[0]+2,92,t.s); });
@@ -26648,7 +26981,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(ST.curb,H,0,-0.35),M.lf.pool(240,GY-6,120,8,-0.35)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day') MLAMPS.forEach(function(lx){ lights.push([lx-8,40,30,0.7,26]); lights.push([lx+10,40,30,0.7,26]); lights.push([lx,112,40,0.5,10]); });
+  var lights=[]; LASTL=lights; if (tod!=='day') MLAMPS.forEach(function(lx){ lights.push([lx-8,40,30,0.7,26]); lights.push([lx+10,40,30,0.7,26]); lights.push([lx,112,40,0.5,10]); });
   BASE=b.clone();
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       LITW.forEach(function(p){ if (hash(p[0]*1.7,p[1]*0.3)>(tod2==='night'?0.35:0.2)) return; for (var yy=p[1];yy<p[1]+3;yy++) for (var xx=p[0];xx<p[0]+3;xx++) if (BASE.get(xx,yy)===P.k2||BASE.get(xx,yy)===P.n0) o.px(xx,yy,(bayer(xx,yy)<0.5)?P.y3:P.y2); });
@@ -26660,7 +26993,10 @@ function car(fb,x0,by,dir,col,L,tint,cam){ var h=11, x, y;
   for (x=0;x<L;x++){ var u=x/(L-1), fw=dir>0?u:1-u, roof=(fw>0.28&&fw<0.78), top=by-(roof?h:6), y0=roof?top+Math.round(Math.max(0,Math.abs(fw-0.53)-0.18)*12):top;
     for (y=y0;y<by-2;y++){ var c=col[1]; if (y===y0) c=col[2]; if (y>by-5) c=col[0]; if (roof && y>y0 && y<by-6) c=((x%9)===0)?col[0]:(y<y0+2?P.n2:P.n1); px(x0+x,y,c); } }
   [0.2,0.8].forEach(function(f){ var cx=x0+L*f; for (var a=-2;a<=2;a++) for (var b=-2;b<=2;b++) if (a*a+b*b<=5) px(cx+a,by-2+b,(a*a+b*b<=1)?P.m2:P.k1); });
-  px(dir>0?x0+L-1:x0,by-5,P.y4); }
+  px(dir>0?x0+L-1:x0,by-5,P.y4);
+  if (tint){ var fx0=rd(dir>0?x0+L-1:x0)-cam, rx0=rd(dir>0?x0:x0+L-1)-cam; lamps(fb,fx0,rx0,by,dir); } }   // nachts: Scheinwerfer und Rücklicht (Kapitel-3-Grafik)
+function lamps(fb,fx0,rx0,by,dir){ if (fx0>=0&&fx0<320){ fb.px(fx0,by-5,P.y5); fb.px(fx0,by-4,P.y4); } if (rx0>=0&&rx0<320) fb.px(rx0,by-5,P.r4);
+  for (var lx=1;lx<46;lx++) for (var ly=-2;ly<=3;ly++){ if (Math.abs(ly-0.5)>1.2+lx*0.07) continue; var X=fx0+dir*lx, Y=by-4+ly+Math.round(lx*0.12); if (X<0||X>=320||Y<0||Y>=144) continue; if (bayer(X,Y)<0.55-lx/90){ var k=Y*320+X; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } } }
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, we=WE, tod=v.tod, tint=tod!=='day'?M.TINT[tod]:null;
   // ein Auto auf der nahen Spur, selten eins gegenüber
   var per=13, ph=t%per, x0=-50+ph*48; if (x0<W+10) car(fb,x0,ST.nl[1]-1,1,[P.s3,P.s4,P.s5],32,tint,cam);
@@ -26682,6 +27018,8 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
 // ---------------------------------------------------------------- Lauffläche: unser Gehweg
 function walk(x,y){ if (y<114||y>138||x<6||x>474) return false; if (x>BENCH.x0-1 && x<BENCH.x1+1 && y<BENCH.by+2) return false; if (x>TIRES.x-11 && x<TIRES.x+12 && y<TIRES.by+2) return false; if (Math.abs(x-SIGN.x)<2 && y<SIGN.by+1) return false; return true; }
 M.defineArt('bulevar',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{
     exit:[0,88,12,56], to_vulk:[W-22,100,22,44],
@@ -30723,6 +31061,8 @@ function lightsFor(tod,S){ if (tod==='day') return []; var L=[[84,40,96,56,0.95]
 
 // ---------------------------------------------------------------- Masken
 var SKYM=new Uint8Array(W*H), OUT=new Uint8Array(W*H), WINS=[];
+var FARSKY=null, FARM=null;
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3)   // ferne Ebene (Himmel) für die Parallaxe
 
 // ---------------------------------------------------------------- Draußen: Himmel, Hum, Westufer, Fluss, die Alte Brücke klein
 function paintSky(b,tod,w,GS){ var x, y, i, r=M.rng(5), x0=CORNER.x0;
@@ -30868,13 +31208,14 @@ var CANDLES=[];
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
   SKYM.fill(0); OUT.fill(0); WINS=[]; CANDLES=[];
-  var sky=new M.Buf(W,H,T); paintSky(sky,tod,w,GS);
+  var sky=new M.Buf(W,H,T); paintSky(sky,tod,w,GS); FARSKY=sky;
   farView(b,tod,w);
   // Dunst über dem Westufer (bei Bura fast keiner)
   var hz={rain:0.55,grey:0.38,calm:0.18,frost:0.15,bura:0.04}[w], fcol=(w==='rain')?(tod==='day'?P.s3:P.m1):(w==='grey'?P.s4:P.b4); if (tod==='night') fcol=P.n0;
   M.fogBake(b,function(xx,yy){ return (xx>=CORNER.x0 && yy<95)?hz*(1.1-yy/140):0; },{col:fcol});
   for (var q=0;q<W*H;q++) if (b.d[q]===T && sky.d[q]!==T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
   for (y=0;y<RAIL.base;y++) for (x=CORNER.x0;x<W;x++) if (!OUT[y*W+x]) OUT[y*W+x]=1;
+  REFM.fill(0); if (wet) for (var rk=0;rk<W*H;rk++) if (OUT[rk]===3) REFM[rk]=1;
   pergola(b,w); railing(b); deck(b,wet); chain(b); if (w==='rain') tarp(b);
   interior(b,tod); corner(b);
   table(b,TBL[0],false); chairBack(b,TBL[0].x0-6,124,'R'); chairBack(b,TBL[0].x1+6,124,'L');
@@ -30947,6 +31288,8 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>390) return false;
   for (var i=0;i<TBL.length;i++){ var t=TBL[i]; if (x>=t.x0-9 && x<=t.x1+9 && y<t.base+3) return false; }
   return true; }
 M.defineArt('herberge',{
+fx:{ reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:function(x,y){ return x>=CORNER.x1 && !(x>=TARP.x0-6 && x<=TARP.x1); },   // Regenschirm (05_engine.js): auf der Terrasse offen, an der Rezeption und unter der Plane zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; if (tod==='day') return levels(k)[0].a; var l=lightAt(LIT,a.x,a.y-22); return levels(k)[Math.max(1,Math.min(4,Math.round(l*4)))].a; },
@@ -33650,6 +33993,7 @@ function WALK(x,y){ if (y<112||y>138||x<10||x>310) return false;
   if (Math.abs(x-TREE.x)<5 && y<TREE.base+3) return false;
   return true; }
 M.defineArt('koski',{
+fx:{ lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
   spots:{
@@ -34060,6 +34404,8 @@ function lightsFor(tod){ if (tod==='day') return []; var L=[]; LAMPS.forEach(fun
 
 // ---------------------------------------------------------------- Masken
 var SKYM=new Uint8Array(W*H), PAVE=new Uint8Array(W*H), WINS=[], CLOTH=[];
+var FARSKY=null, FARM=null;
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3)   // ferne Ebene (Himmel) für die Parallaxe
 
 // ---------------------------------------------------------------- Himmel (nur ein Streifen über den Dächern) und der Blick zur Brücke
 function paintSky(s,tod,w){ var x, y, r=M.rng(3);
@@ -34196,11 +34542,11 @@ var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=w==='rain', b=new M.Buf(W,H,T), x, y; SKYM.fill(0); PAVE.fill(0); WINS=[]; CHIM=[]; CLOTH=[];
   bridgeOpening(b,tod,w); houses(b,tod); taraTower(b);
   SH.forEach(function(s,i){ shopFront(b,s,i,tod,w); });
-  street(b,wet);
+  street(b,wet); REFM.fill(0); if (wet) for (var r1=GY;r1<H;r1++) for (var r2=0;r2<W;r2++){ if (PAVE[r1*W+r2]) REFM[r1*W+r2]=fbm(r2*0.05,r1*0.25,4)>0.6?2:1; }
   if (tod!=='dawn' && tod!=='night') TOUR.forEach(function(t){ tourist(b,t[0],t[1],t[2],w); });
   LAMPS.forEach(function(l){ lantern(b,l,false); });
   nearEaves(b);
-  var sky=new M.Buf(W,H,P.k0); paintSky(sky,tod,w); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
+  var sky=new M.Buf(W,H,P.k0); paintSky(sky,tod,w); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; } FARSKY=sky;
   // Licht: die Gasse liegt im Schatten der Traufen, Licht fällt schräg auf die Pflastermitte; nasse Steine glänzen
   var sunny=tod==='day'&&(w==='bura'||w==='calm'||w==='frost');
   M.light(b,M.lf.sum(M.lf.band(0,30,-0.2,0),M.lf.band(GY,GY+10,-0.5,0),sunny?M.lf.band(118,144,0,0.25):M.lf.k(0)),0,0,function(xx,yy){ return !SKYM[yy*W+xx] && xx<OPEN.x0; });
@@ -34238,6 +34584,8 @@ function WALK(x,y){ if (y<112||y>138||x<6||x>474) return false;
   if (Math.abs(x-STOOL[0])<8 && y<STOOL[1]+3) return false;
   return true; }
 M.defineArt('kujundziluk',{
+fx:{ reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
@@ -36778,6 +37126,7 @@ function paintFloor(w,we){ var x, y, wet=we==='rain'; w.d=7; w.g=RG.floor;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm';
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; DEP.fill(0); REG.fill(0); LIT.length=0; CHIM.length=0;
   paintSky(b,tod,we); for (k=0;k<W*H;k++){ DEP[k]=0; REG[k]=RG.sky; }
@@ -36797,7 +37146,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.55:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),function(xx,yy){ return REG[yy*W+xx]===RG.floor?-0.4:0; }),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ lights.push([BR.cx,BR.deck+6,30,0.5,10]); lights.push([DOOR.x0+9,DOOR.sill-8,12,0.6,20]); }
+  var lights=[]; LASTL=lights; if (tod!=='day'){ lights.push([BR.cx,BR.deck+6,30,0.5,10]); lights.push([DOOR.x0+9,DOOR.sill-8,12,0.6,20]); }
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       LIT.forEach(function(p){ if (hash(p[0]*1.3,p[1]*2.1)>(tod2==='night'?0.42:0.25)) return; for (var yy=p[1];yy<p[1]+p[3];yy++) for (var xx=p[0];xx<p[0]+p[2];xx++) o.px(xx,yy,hash(xx,yy)<0.5?P.y3:P.y4); });
       for (var xx=BR.x0+2;xx<BR.x1-1;xx+=7) o.px(xx,rd(deckY(xx))-2,P.y5); } }); }
@@ -36856,6 +37205,7 @@ function front(fb,v,S,GS){ var we=WE;
 // ---------------------------------------------------------------- Lauffläche: der schmale Umgang
 function walk(x,y){ return y>=118 && y<=134 && x>=40 && x<=280; }
 M.defineArt('minarett',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:function(S,GS,tod){ return [paraLayer(S,GS,tod)]; }, walk:walk, dynamic:dyn, front:front,
   spots:{
     stairs:[DOOR.x0-3,DOOR.apex-3,DOOR.x1-DOOR.x0+7,DOOR.sill-DOOR.apex+4],
@@ -38932,6 +39282,8 @@ function lightsFor(tod){ if (tod==='day') return []; var L=[];
 
 // ---------------------------------------------------------------- Masken
 var DEP=new Uint8Array(W*H), SKYM=new Uint8Array(W*H), PAVE=new Uint8Array(W*H), WINS=[];
+var FARSKY=null, FARM=new Uint8Array(W*H);
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3): 2 Pfütze, 1 nasses Pflaster   // ferne Ebene (Himmel und Velež) für die Parallaxe
 function stage(b,d,fn){ var s=b.d.slice(); fn(); for (var k=0;k<W*H;k++) if (b.d[k]!==s[k]) DEP[k]=d; }
 
 // ---------------------------------------------------------------- Himmel
@@ -39100,7 +39452,7 @@ function umbrellaMan(b){ var x=372, by=106; b.rect(x-2,by-14,5,10,P.c1); b.vl(x-
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), b=new M.Buf(W,H,T), sky=new M.Buf(W,H,P.k0);
   DEP.fill(0); PAVE.fill(0); GLASS.fill(0); WINS=[];
-  stage(b,1,function(){ paintVelez(b,w); });
+  stage(b,1,function(){ paintVelez(b,w); }); var S1=b.clone();
   stage(b,2,function(){ blocks(b); });
   stage(b,4,function(){ building(b); station(b,tod); });
   stage(b,5,function(){ ground(b,w,S); });
@@ -39110,12 +39462,18 @@ function paint(S,GS,tod){ var w=weaOf(GS), b=new M.Buf(W,H,T), sky=new M.Buf(W,H
   M.fogBake(b,function(x,y){ var d=DEP[y*W+x]; if (!d) return 0; var a=hz[d-1]; if (w==='rain' && d===1) a=Math.min(1,a+Math.max(0,(46-y)/30)); return a; },{col:fcol});
   if (w==='rain') for (var y2=8;y2<50;y2++) for (var x2=0;x2<W;x2++){ var cv=fbm(x2*0.02,y2*0.09,8); if (DEP[y2*W+x2]===1 && cv>0.5 && bayer(x2,y2)<(cv-0.5)*2.6) b.px(x2,y2,(cv>0.62)?P.s4:P.m3); }
   paintSky(sky,tod,w); SKYM.fill(0); for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sky.d[q]; SKYM[q]=1; }
+  // ferne Ebene: derselbe Berg mit demselben Dunst über demselben Himmel, ganz (auch, wo die Stadt ihn verdeckt)
+  M.fogBake(S1,function(x,y){ if (S1.d[y*W+x]===T) return 0; var a=hz[0]; if (w==='rain') a=Math.min(1,a+Math.max(0,(46-y)/30)); return a; },{col:fcol});
+  if (w==='rain') for (var y3=8;y3<50;y3++) for (var x3=0;x3<W;x3++){ var cv3=fbm(x3*0.02,y3*0.09,8); if (S1.d[y3*W+x3]!==T && cv3>0.5 && bayer(x3,y3)<(cv3-0.5)*2.6) S1.d[y3*W+x3]=(cv3>0.62)?P.s4:P.m3; }
+  var FAR=sky.clone(); for (var q2=0;q2<W*H;q2++){ if (S1.d[q2]!==T) FAR.d[q2]=S1.d[q2]; FARM[q2]=(SKYM[q2]||DEP[q2]===1)?1:0; }
   puddleReflect(b,sky);
+  REFM.fill(0); for (var r1=GY;r1<H;r1++) for (var r2=0;r2<W;r2++){ var rk=r1*W+r2; if (!PAVE[rk]) continue; REFM[rk]=inPud(r2,r1)?2:(w==='rain'?1:0); }
   if (w==='rain') wetReflect(b);
   M.light(b,M.lf.sum(M.lf.band(118,H,0,-0.35),M.lf.pool((BUS.x0+BUS.x1)/2+6,BUS.base+1,36,3,S.busIn?-1.1:0),M.lf.pool((KIO.x0+KIO.x1)/2,KIO.base+1,22,3,-0.9),M.lf.pool(TAXI.x0+23,TAXI.base+1,26,3,-1)),0,0,function(x,y){ return !SKYM[y*W+x]; });
   M.light(b,M.lf.k(-0.55),0,0,function(x,y){ return x<CAN.x1+3 && y>CAN.y1 && y<BUS.base+6 && !SKYM[y*W+x] && DEP[y*W+x]>=4; });
   BASE=b.clone(); LIT=lightsFor(tod);
   shade(b,0,0,todKey(tod,w),LIT,function(x,y){ return SKYM[y*W+x]===1; });
+  shade(FAR,0,0,todKey(tod,w),LIT,function(x,y){ return S1.d[y*W+x]===T; }); FARSKY=FAR;
   if (tod!=='day') afterLights(b,tod,S);
   LASTB=b; return b; }
 function wetReflect(b){ var src=b.clone(); for (var y=GY+2;y<H;y++){ var d=y-GY, k=0.5-d/70, sy=GY-1-Math.floor(d*0.9); if (k<=0.04||sy<0) continue;
@@ -39190,6 +39548,8 @@ function WALK(x,y){ if (y<112||y>140||x<6||x>474) return false;
   if (x>=RACK.x0-1 && x<=RACK.x1+1 && y<RACK.base+3) return false;
   return true; }
 M.defineArt('ostbus',{
+fx:{ reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel und Velež als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:function(x,y){ return !(x<CAN.x1 && y<=119); },   // Regenschirm (05_engine.js): unter dem Vordach, dicht an den Stützen, bleibt er zu
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
@@ -40229,9 +40589,10 @@ function branchTree(w,x,by,h,sd,frost){ var r=M.rng(sd*17+3), cols=[P.e0,P.e1,P.
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', GRASS=[];
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; DEP.fill(0); REG.fill(0); LIT.length=0;
-  paintSky(b,tod,we);
+  paintSky(b,tod,we); FARSKY=b.clone();
   paintHills(w);
   // Land unter dem Horizont
   w.g=RG.land; for (y=HZ;y<H;y++){ w.d=y<64?2:3; for (x=0;x<W;x++){ if (REG[y*W+x]!==RG.sky) continue; var f0=fbm(x*1.1,y*1.9,6,7); w.px(x,y,y<HZ+6?ra(R('e2 e3 s3 e4 s4'),0.55+(f0-0.5)*0.6,x,y):ra(R('e1 g1 e2 s2 g2 e3'),0.5+(f0-0.5)*0.7,x,y)); } }
@@ -40282,6 +40643,7 @@ function ghost(fb,v,S,GS){ var t=v.t, cam=v.cam;
 // ---------------------------------------------------------------- Lauffläche: die Terrasse
 function walk(x,y){ if (y<112||y>134||x<10||x>390) return false; if (x>BENCH.x0-2 && x<BENCH.x1+2 && y<BENCH.by+1) return false; if (Math.abs(x-FRONTB.x)<5 && y>130) return false; return true; }
 M.defineArt('partizan',{
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:function(S,GS,tod){ return [frontLayer(S,GS,tod)]; }, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{
     exit:[0,92,12,52],
@@ -43339,6 +43701,7 @@ function sw(s){ var w=0; s.split('').forEach(function(ch){ w+=M.microWidth(ch===
 
 // ---------------------------------------------------------------- Bild
 var LAST=null;
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.fill(0); if (tod!=='night') tod='day'; TODN=tod; WEA=wea; FIN=wea==='frost';
   WR=wea==='grey'?R('a1 a2 m1 a3 m2 a4 m3'):R('a1 a2 g2 a3 g3 a4 a5');
   paintSky(b,tod,wea); paintHills(b,tod,wea); paintView(b,tod);
@@ -43348,7 +43711,7 @@ function paint(S,GS,tod){ var wea=M.scn.weather(GS), b=new M.Buf(W,H,P.k0); REG.
   M.light(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; var v=0; if (r===RG.deck) v+=(y-DK)/28*0.25; if (r===RG.water||r===RG.cliff||r===RG.bank) v-=0.05; if (wea==='grey') v-=0.15; var cx=(x-160)/220, cy=(y-80)/110; v-=Math.max(0,cx*cx+cy*cy-0.3)*0.5; return v; },0,0);
   if (wea==='grey') M.fogBake(b,function(x,y){ var r=REG[y*W+x]; if (r===RG.sky) return 0; if (r===RG.hill) return 0.35; if (y<90 && r!==RG.rail) return 0.25*(1-(y-58)/40); return 0.03; },{col:P.m4});
   if (FIN) M.light(b,function(x,y){ var r=REG[y*W+x]; return r===RG.sky?0:-0.8; },0,0);
-  var base=b.clone(), lights=tod==='day'?[]:[[LAMP.x+9,LAMP.top+16,22,26,0.75],[LAMP.x+9,DK+10,64,14,0.8],[LAMP.x+4,DK-8,40,12,0.55]];
+  var base=b.clone(), lights=LASTL=tod==='day'?[]:[[LAMP.x+9,LAMP.top+16,22,26,0.75],[LAMP.x+9,DK+10,64,14,0.8],[LAMP.x+4,DK-8,40,12,0.55]];
   LAST=M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, after:function(o,tod){ if (tod==='day') return; warmPass(o,base,lights); o.hl(LAMP.x+8,LAMP.x+10,LAMP.top+3,P.y5); o.px(LAMP.x+9,LAMP.top+3,P.l1); } });
   return LAST; }
 // warme Lichtinseln in Stufen (wie in Vratnik): weich auslaufend statt grob gerastert
@@ -43374,6 +43737,7 @@ function layers(S,GS,tod){ if (!LAST) return []; var l=M.layer(0,H-7,W,7,H+4), w
   for (var x=0;x<W;x++){ w.px(x,H-6,P.m3); w.px(x,H-5,P.m1); } for (var px=12;px<W;px+=24){ w.vl(px,H-6,H-1,P.m2); w.vl(px+1,H-6,H-1,P.m0); }
   if (tod!=='day') M.tintApply(l,M.TINT[tod]); return [l]; }
 M.defineArt('skela_most',{
+fx:{ lights:function(){ return M.k3LA(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:layers, dynamic:dynamic, front:front,
   walk:function(x,y,S,GS){ return y>=118 && y<=134 && x>=6 && x<=314; }, walkG:function(){ return false; },
   spots:{ exit_d:[0,96,12,48], exit_l:[308,96,12,48], plaque:[PLQ.x0-2,PLQ.y0-2,PLQ.w+4,PLQ.h+4], railing:[70,RT-2,110,DK-RT+2], river:[60,64,124,34], lamp:[LAMP.x-3,LAMP.top-2,16,DK-LAMP.top] },
@@ -44533,6 +44897,8 @@ function lightsFor(tod){ if (tod==='day') return []; var L=[];
 
 // ---------------------------------------------------------------- Masken: Tiefe (für Dunst), Himmel, Pflaster, Wasser, Fenster
 var DEP=new Uint8Array(W*H), SKYM=new Uint8Array(W*H), PAVE=new Uint8Array(W*H), WATER=new Uint8Array(W*H), WINS=[];
+var FARSKY=null, FARM=new Uint8Array(W*H);
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3): 2 Pfütze, 1 nasses Pflaster   // ferne Ebene (Himmel, Velež, Hügel, Hum) für die Parallaxe
 function stage(b,d,fn){ var s=b.d.slice(); fn(); for (var k=0;k<W*H;k++) if (b.d[k]!==s[k]) DEP[k]=d; }
 
 // ---------------------------------------------------------------- Himmel
@@ -44799,7 +45165,7 @@ function tinyDino(b,x,by){ b.px(x,by-1,P.p3); b.px(x+1,by-1,P.p3); b.vl(x,by-6,b
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
   DEP.fill(0); PAVE.fill(0); WATER.fill(0); WINS=[]; CHIM=[]; PUDM=null; waterPrep(w);
-  stage(b,1,function(){ paintVelez(b,w); hillsSouth(b,w); hum(b); });
+  stage(b,1,function(){ paintVelez(b,w); hillsSouth(b,w); hum(b); }); var S1=b.clone();
   stage(b,2,function(){ farTown(b); farRiver(b); });
   stage(b,3,function(){ oldTown(b); westBank(b); });
   stage(b,4,function(){ tara(b); halebija(b); hut(b); });
@@ -44813,13 +45179,17 @@ function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), 
   M.fogBake(b,function(xx,yy){ var d=DEP[yy*W+xx]; return d?hz[d-1]:0; },{col:fcol});
   var sk=new M.Buf(W,H,P.k0); paintSky(sk,tod,w,GS); SKYM.fill(0);
   for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sk.d[q]; SKYM[q]=1; }
+  M.fogBake(S1,function(xx,yy){ return S1.d[yy*W+xx]===T?0:hz[0]; },{col:fcol});
   // Licht und Schatten: Kontaktschatten, Schlucht dunkler, nasses Pflaster spiegelt
   M.light(b,M.lf.sum(M.lf.pool(HUT.x0+38,HUT.base+1,40,3,-1),M.lf.pool(AR.cx,AR.sp+8,90,10,-0.45),M.lf.band(126,H,0,-0.3)),0,0,function(xx,yy){ return !SKYM[yy*W+xx] && DEP[yy*W+xx]>=4; });
   if (wet) wetReflect(b);
+  REFM.fill(0); if (wet){ var PM=pudMask(); for (var rk=0;rk<W*H;rk++) if (PAVE[rk]) REFM[rk]=PM[rk]?2:1; }
   BASE=b.clone();
   var key=todKey(tod,w); LIT=lightsFor(tod);
   shade(b,0,0,key,LIT,function(xx,yy){ return SKYM[yy*W+xx]===1; });
-  if (key && tod!=='day'){ var far=levels(key)[0]; for (var k2=0;k2<W*H;k2++){ var dd=DEP[k2]; if ((dd===1||dd===2) && !SKYM[k2]) b.d[k2]=M.tintPx(far,BASE.d[k2],k2%W,(k2/W)|0); } }
+  if (key && tod!=='day'){ var far=levels(key)[0]; for (var k2=0;k2<W*H;k2++){ var dd=DEP[k2]; if ((dd===1||dd===2) && !SKYM[k2]) b.d[k2]=M.tintPx(far,BASE.d[k2],k2%W,(k2/W)|0); if (S1.d[k2]!==T) S1.d[k2]=M.tintPx(far,S1.d[k2],k2%W,(k2/W)|0); } }
+  else if (key) shade(S1,0,0,key,LIT,function(xx,yy){ return S1.d[yy*W+xx]===T; });   // am Tag mit Wolken: dieselbe Schattierung wie im Bild
+  var FAR=sk.clone(); for (var q3=0;q3<W*H;q3++){ if (S1.d[q3]!==T) FAR.d[q3]=S1.d[q3]; FARM[q3]=(SKYM[q3]||DEP[q3]===1)?1:0; } FARSKY=FAR;
   if (tod!=='day') afterLights(b,tod,w,S);
   LASTB=b; return b; }
 function wetReflect(b){ var src=b.clone(); for (var y=109;y<H;y++){ var d=y-107; for (var x=0;x<330;x++){ var k=y*W+x; if (!PAVE[k]) continue; var pud=fbm(x*0.05,y*0.25,4); if (pud<0.56) continue; var sy=107-Math.floor(d*1.1); if (sy<0) continue; var sc=src.d[sy*W+x+((y%3===1)?1:0)]; if (bayer(x,y)<(pud-0.5)*2.2) b.d[k]=M.DN[sc]; } } }
@@ -44885,6 +45255,8 @@ function WALK(x,y,S){ if (S && S.walkBridge && onBridge(x,y)) return true;
 function curS(){ return (M.GS&&M.GS.rooms&&M.GS.rooms.starimost)||{}; }
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 M.defineArt('starimost',{
+fx:{ deck:function(x){ return rd(deckY(x))-DK.par; }, deckX:[DK.x0+8,DK.x1-8], chim:function(){ return CHIM; }, reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel, Velež, Hügel und Hum als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
@@ -45158,9 +45530,11 @@ function paintBridge(w,we){ var x, y, wet=we==='rain';
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm';
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; DEP.fill(0); REG.fill(0); LIT.length=0;
-  paintSky(b,tod,we); paintHills(w);
+  paintSky(b,tod,we); FARSKY=b.clone(); paintHills(w);
   // Land hinter den Ufern
   w.g=RG.town; w.d=2; for (y=HZ;y<WY+2;y++) for (x=0;x<W;x++){ if (REG[y*W+x]!==RG.sky) continue; w.px(x,y,ra(R('e1 g1 e2 s2 g2 e3'),0.5+(fbm(x*1.1,y*1.9,6,7)-0.5)*0.7,x,y)); }
   paintRiver(w,we); paintBanks(w,we); paintTown(w);
@@ -45171,7 +45545,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.55:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(WALKY,H,0,-0.3)),0,0,function(xx,yy){ return REG[yy*W+xx]!==RG.sky; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ FLAMPS.forEach(function(lx){ lights.push([lx+10,30,26,0.6,40]); }); LAMPS.forEach(function(lx){ lights.push([lx+10,120,34,0.8,20]); }); }
+  var lights=[]; LASTL=lights; if (tod!=='day'){ FLAMPS.forEach(function(lx){ lights.push([lx+10,30,26,0.6,40]); }); LAMPS.forEach(function(lx){ lights.push([lx+10,120,34,0.8,20]); }); }
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
       LIT.forEach(function(p){ if (hash(p[0]*1.3,p[1]*2.1)>(tod2==='night'?0.4:0.22)) return; o.px(p[0],p[1],hash(p[0],p[1])<0.5?P.y3:P.y4); });
       FLAMPS.forEach(function(lx){ o.hl(lx+7,lx+12,15,P.l1); o.hl(lx+8,lx+11,16,P.y4); }); } }); }
@@ -45198,7 +45572,10 @@ function car(fb,x0,by,o,tint,cam){ var L=o.len, h=11, x, y;
   for (x=0;x<L;x++){ var u=x/(L-1), fw=o.dir>0?u:1-u, roof=(fw>0.28&&fw<0.78), top=by-(roof?h:6), y0=roof?top+Math.round(Math.max(0,Math.abs(fw-0.53)-0.18)*12):top;
     for (y=y0;y<by-2;y++){ var c=o.col[1]; if (y===y0) c=o.col[2]; if (y>by-5) c=o.col[0]; if (roof && y>y0 && y<by-6) c=((x%9)===0)?o.col[0]:(y<y0+2?P.n2:P.n1); px(x0+x,y,c); } }
   [0.2,0.8].forEach(function(f){ var cx=x0+L*f; for (var a=-2;a<=2;a++) for (var b=-2;b<=2;b++) if (a*a+b*b<=5) px(cx+a,by-2+b,(a*a+b*b<=1)?P.m2:P.k1); });
-  px(o.dir>0?x0+L-1:x0,by-5,P.y4); px(o.dir>0?x0:x0+L-1,by-5,P.r3); }
+  px(o.dir>0?x0+L-1:x0,by-5,P.y4); px(o.dir>0?x0:x0+L-1,by-5,P.r3);
+  if (tint){ var fx0=rd(o.dir>0?x0+L-1:x0)-cam, rx0=rd(o.dir>0?x0:x0+L-1)-cam; lamps(fb,fx0,rx0,by,o.dir); } }   // nachts: Scheinwerfer und Rücklicht (Kapitel-3-Grafik)
+function lamps(fb,fx0,rx0,by,dir){ if (fx0>=0&&fx0<320){ fb.px(fx0,by-5,P.y5); fb.px(fx0,by-4,P.y4); } if (rx0>=0&&rx0<320) fb.px(rx0,by-5,P.r4);
+  for (var lx=1;lx<46;lx++) for (var ly=-2;ly<=3;ly++){ if (Math.abs(ly-0.5)>1.2+lx*0.07) continue; var X=fx0+dir*lx, Y=by-4+ly+Math.round(lx*0.12); if (X<0||X>=320||Y<0||Y>=144) continue; if (bayer(X,Y)<0.55-lx/90){ var k=Y*320+X; fb.d[k]=M.UP[M.UP[fb.d[k]]]; } } }
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam, we=WE, tod=v.tod, tint=tod!=='day'?M.TINT[tod]:null, x, y;
   // Glitzern und Strömung auf dem Wasser
   for (y=VP[1]+4;y<WY;y++){ var x0=Math.max(cam,Math.floor(wl(y))), x1=Math.min(cam+319,Math.ceil(wr(y))); for (x=x0;x<=x1;x++){ var k=y*W+x; if (REG[k]!==RG.water) continue; var d=(y-VP[1])/(WY-VP[1]), u=(x-VP[0])/Math.max(1,(wr(y)-wl(y))/2), z=1/Math.max(0.05,d);
@@ -45217,6 +45594,8 @@ function front(fb,v,S,GS){ var we=WE;
 // ---------------------------------------------------------------- Lauffläche: der Bürgersteig, von Ufer zu Ufer
 function walk(x,y){ return y>=118 && y<=134 && x>=6 && x<=394; }
 M.defineArt('strassenbr',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:function(S,GS,tod){ return [railLayer(S,GS,tod)]; }, walk:walk, dynamic:dyn, front:front,
   spots:{
     exit_e:[0,80,14,64], exit_w:[W-14,80,14,64],
@@ -45738,9 +46117,10 @@ function paintCrowd(w,we){ var x, y, k;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, FULL=false;
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), k, night=tod==='night';
   WE=we; REG.fill(0); LITW.length=0; CHIM.length=0; VAL.length=0; FULL=full(S,GS);
-  paintSky(b,tod,we); paintVelez(w,we);
+  paintSky(b,tod,we); FARSKY=b.clone(); paintVelez(w,we);
   paintHouses(w,we); paintGround(w,we);
   // der Brunnen links (Česma): Steinplatte mit Rohr und Becken
   w.g=RG.prop; var fx=FOUNT.x, fy=FOUNT.by; w.rect(fx-6,fy-26,12,26,P.s5); w.vl(fx-6,fy-26,fy-1,P.s6); w.vl(fx+5,fy-26,fy-1,P.s3); w.rect(fx-3,fy-22,6,9,P.s3); w.hl(fx-1,fx+2,fy-14,P.t3); w.px(fx+2,fy-13,P.t2);
@@ -45813,6 +46193,7 @@ function walk(x,y,S,GS){ if (y<112||y>138||x<6||x>474) return false;
   if (full(S||{},GS||{phase:''}) && ((x>NB.x0-2 && x<NB.x1+2 && y<NB.by+2) || (x>ZT.x0-2 && x<ZT.x1+4 && y<ZT.by+2) || (Math.abs(x-SACK.x)<7 && y<SACK.by+2))) return false;
   return true; }
 M.defineArt('tepa',{
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, layers:tableLayer, walk:walk, dynamic:dyn, front:front, ghost:ghost,
   spots:{
     exit:[0,88,12,56],
@@ -47586,6 +47967,7 @@ function beams(b){ if (!HL) return; var L=M.TINT.lamp;
     if (bayer(x,y)<lev){ var c=M.tintPx(L,b.d[k],x,y); if (onS && a>0.55) c=M.UP[c]; b.d[k]=c; } } }
 
 // ---------------------------------------------------------------- Malen
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), x, y, tarp=tarpOn(S), lit=lightsOn(S), fin=(GS&&GS.phase==='k3_fin_n');
   REG.fill(0);
   sky(b,tod,weather); far(b,tod,weather); fence(b,tod); ground(b,tod,weather); workshop(b,tod,GS,S);
@@ -47601,9 +47983,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   truck(b,TK.x,GY,tarp,lit,S,!!(S&&S.cabIn)&&!fin);
   // Licht und Tageszeit
   var night=tod!=='day';
-  if (tod==='day'){ M.light(b,function(x,y){ var g=REG[y*W+x]; if (g===RG.sky||g===RG.far) return 0; var s=0; if (y>GY-2 && x>TK.x+10 && x<TK.x+214 && y<GY+5) s-=1.2; if (g===RG.wall) s-=0.3;
+  LASTL=[]; if (tod==='day'){ M.light(b,function(x,y){ var g=REG[y*W+x]; if (g===RG.sky||g===RG.far) return 0; var s=0; if (y>GY-2 && x>TK.x+10 && x<TK.x+214 && y<GY+5) s-=1.2; if (g===RG.wall) s-=0.3;
       return s+(weather==='grey'?-0.3:0)+(fbm(x*0.02,y*0.03)-0.5)*0.4-Math.max(0,(y-120)/40)*0.4; }); }
-  else { var lights=[[LAMP[0],LAMP[1]+20,fin?34:56,fin?0.5:0.85,30]]; if (lit) lights.push([TK.x-40,GY+4,90,1.1,24],[TK.x-10,GY-30,30,0.9,18]);
+  else { var lights=[[LAMP[0],LAMP[1]+20,fin?34:56,fin?0.5:0.85,30]]; LASTL=lights; if (lit) lights.push([TK.x-40,GY+4,90,1.1,24],[TK.x-10,GY-30,30,0.9,18]);
     M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, lights:lights }); if (fin) M.darken(b,0,0,W,H,1); }
   if (weather==='frost') frost(b,night);
   if (lit) beams(b);
@@ -47650,6 +48032,7 @@ var CABR=[TK.x+38,GY-74,52,56], TAMR=[TK.x-2,GY-80,200,80];
 // Radio und Handschuhfach, ohne Malen vorausberechnet (dieselbe Rechnung wie in cabOpen; gilt, bevor das Bild einmal gemalt wurde)
 var IX0=TK.x+46+4+1, IX1=TK.x+84-4-1, DY0=GY-68+3+17, RADIO0=[IX0+7,DY0-2,10,12], GLOVE0=[IX0+18,DY0-1,IX1-IX0-18+2,12];
 M.defineArt('vhof',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost, actorLut:actorLut,
   spots:{
     door:[DOOR.x0-2,24,DOOR.x1-DOOR.x0+4,98],
@@ -49015,9 +49398,11 @@ function paintBus(w,we,tod){ var b=BUS, x, y, wet=we==='rain'; w.g=RG.bus;
 
 // ---------------------------------------------------------------- Bild
 var SKYM=new Uint8Array(W*H), WE='calm', BASE=null, MUN=false;
+var FARSKY=null, FARM=null;   // ferne Ebene (Himmel) für die Parallaxe
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k, night=tod==='night';
   WE=we; REG.fill(0); LITW.length=0; MUN=!!S.munich;
-  paintSky(b,tod,we); paintFar(w);
+  paintSky(b,tod,we); FARSKY=b.clone(); paintFar(w);
   paintBay(w,we);
   if (MUN) paintBus(w,we,tod);
   paintCafe(w,we,tod); paintStation(w,we,tod); paintWalk(w,we);
@@ -49028,7 +49413,7 @@ function paint(S,GS,tod){ var we=weaOf(GS), b=new M.Buf(W,H,T), w=RW(b), x, y, k
   var amb=we==='rain'?-0.5:(we==='grey'?-0.3:(we==='bura'?0.1:0));
   M.light(b,M.lf.sum(M.lf.k(amb),M.lf.band(EDGE,H,0,-0.3),function(xx,yy){ return (xx>CAN.x0 && yy>CAN.y1 && yy<EDGE+30)?-0.45:0; }),0,0,function(xx,yy){ var g=REG[yy*W+xx]; return g!==RG.sky && g!==RG.glass; });
   SKYM.fill(0); for (k=0;k<W*H;k++) if (REG[k]===RG.sky) SKYM[k]=1;
-  var lights=[]; if (tod!=='day'){ lights.push([WIN.x0+35,WIN.y0+20,50,0.9,30]); lights.push([DOOR.x0+11,DOOR.y0+25,24,0.6,30]); for (var lx=CAN.x0+27;lx<CAN.x1;lx+=58) lights.push([lx,EDGE+8,34,0.6,24]); }
+  var lights=[]; LASTL=lights; if (tod!=='day'){ lights.push([WIN.x0+35,WIN.y0+20,50,0.9,30]); lights.push([DOOR.x0+11,DOOR.y0+25,24,0.6,30]); for (var lx=CAN.x0+27;lx<CAN.x1;lx+=58) lights.push([lx,EDGE+8,34,0.6,24]); }
   for (y=0;y<H;y++) for (x=W-1;x>=0;x--){ k=y*W+x; if (b.d[k]===T) b.d[k]=x+1<W?b.d[k+1]:P.k1; }   // keine durchsichtigen Lücken am Rand (Geister lesen den Grund)
   BASE=b.clone();
   return M.finishTOD(b,tod,{ sky:function(xx,yy){ return SKYM[yy*W+xx]===1; }, lights:lights, after:function(o,tod2){ if (tod2==='day') return;
@@ -49055,6 +49440,8 @@ function front(fb,v,S,GS){ var we=WE;
 // ---------------------------------------------------------------- Lauffläche: Vorplatz und Bussteig
 function walk(x,y){ if (y<112||y>138||x<6||x>394) return false; if (x>BENCH.x0-1 && x<BENCH.x1+1 && y<BENCH.by+2) return false; if (x<16 && y<114) return false; return true; }
 M.defineArt('westbus',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel als ferne Ebene
   width:W, paint:paint, walk:walk, dynamic:dyn, front:front,
   spots:{
     exit:[0,70,10,74],
@@ -58805,7 +59192,7 @@ async function ring(A){ var G=A.G;
   return A.m('Nicht jetzt.'); }
 async function ringNight(A){ var G=A.G, k=(G.flags['k3.n2.rings']||0)+1, B=bato(A); A.setFlag('k3.n2.rings',k); await reach(A);
   if (k===1){ A.setFlag('k3.n2.rung'); await peal(A,0); flinch(A);
-    await A.m('Ich ziehe am Seil. Die Glocke schlägt einmal, grün und rau, und der Ton geht über das Wasser und kommt vom anderen Ufer zurück.'); await A.wait(900);
+    await (M.k3Close?M.k3Close(A,'glocke',async function(){ await A.m('Ich ziehe am Seil. Die Glocke schlägt einmal, grün und rau, und der Ton geht über das Wasser und kommt vom anderen Ufer zurück.'); await A.wait(900); }):(async function(){ await A.m('Ich ziehe am Seil. Die Glocke schlägt einmal, grün und rau, und der Ton geht über das Wasser und kommt vom anderen Ufer zurück.'); await A.wait(900); })());   // Nahaufnahme (97_k3_nah.js)
     if (A.isFound('bato')){ await A.narrate('Drüben im Schuppen hebt sich die Laterne.'); await A.wait(500); await B.say('Bei Nacht fährt keiner!'); await B.say('Bei Hochwasser nicht!'); await A.wait(600); await B.say('Wer läutet da? Soldaten?'); await A.wait(500); await B.say('Geht!'); }
     else { await A.narrate('Drüben im Schuppen bewegt sich das Licht. Ich höre nichts außer dem Fluss.'); if (A.malaHere()){ await A.wait(400); await A.g('Da ruft einer. Drüben. Er sagt: Bei Nacht fährt keiner. Bei Hochwasser nicht.'); } }
     if (A.malaHere()){ await A.wait(700); await A.g('Hör auf. Bitte.'); }
@@ -58880,7 +59267,7 @@ async function finRealize(A){ var G=A.G, B=bato(A);
   await B.say('Du hast geläutet. Dreimal.'); await A.wait(600); await A.g('Dreimal.');
   B.agitate(3200); await A.wait(500); await B.say('Ich habe am Fenster gestanden.'); await A.wait(800); await B.say('Und am Morgen …'); await A.wait(1300);
   await B.say('Ich habe dich unter die Quitte gelegt. Mit diesen Händen.');
-  await A.wait(800); await A.narrate('Er sieht auf seine Hände. Die Laterne zittert.'); A.music('k3_duh');
+  await (M.k3Close?M.k3Close(A,'haende',async function(){ await A.wait(800); await A.narrate('Er sieht auf seine Hände. Die Laterne zittert.'); }):(async function(){ await A.wait(800); await A.narrate('Er sieht auf seine Hände. Die Laterne zittert.'); })()); A.music('k3_duh');   // Nahaufnahme (97_k3_nah.js)
   await A.realize('bato'); A.setFlag('k3.fin.bato');
   await A.wait(800); await B.say('Siebzehn Jahre.'); await A.wait(900); await B.say('Zweitausendsechs. Im Winter. Ich bin eingeschlafen. Zlata sagt immer, ich hatte einen tiefen Schlaf.');
   await A.wait(700); await B.say('Und dann war wieder Januar.'); await A.wait(1100); await B.say('Dann bin ich …'); await A.wait(1300); await A.g('Ja.');
@@ -59330,7 +59717,7 @@ async function finZlata(A){ var G=A.G; if (!A.room || A.room.id!=='skela_l') awa
       var Z=A.npc('zlata'); A.set('zlataLamp',true); A.rebuild(); A.sfx('door'); await A.wait(800);
       await A.narrate('Die Haustür geht auf. Zlata, den Mantel über dem Nachthemd, die Petroleumlampe in der Hand. Sie geht zum Schuppen, schnell, wie eine Junge.');
       var sh=sl('shed',[330,120,'B']); await Z.walk(sh[0]-26,sh[1]+3); await Z.face('R');
-      await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); A.setFlag('k3.fin.zvono');
+      await (M.k3Close?M.k3Close(A,'laterne',async function(){ await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); }):(async function(){ await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); })()); A.setFlag('k3.fin.zvono');   // Nahaufnahme (97_k3_nah.js)
       // Prüfbericht K3: hat Marko schon am Samstag nachts geläutet, hat Zlata das gehört – dann zählt, dass es diesmal dreimal war, wie damals
       await A.wait(1100); if (G.flags['k3.n2.rings']){ await Z.say('Čula sam zvono. Tri puta. Kao tada.'); await A.m('„Ich habe die Glocke gehört. Dreimal. Wie damals.“'); }
       else { await Z.say('Čula sam zvono. Noću. Prvi put od tada.'); await A.m('„Ich habe die Glocke gehört. In der Nacht. Zum ersten Mal seitdem.“'); }
@@ -59375,7 +59762,7 @@ async function leashFree(A){ var G=A.G; await A.wait(1600); if (G.pos.mala.room=
   A.setFlag('k3.fin.free'); A.sfx('shimmer'); A.rebuild(); await A.wait(2100);
   await A.g('Weg.'); await A.wait(1200); await A.g('Es zieht nichts mehr.'); await A.wait(1500); await A.g('Zum ersten Mal seit dem Fluss.');
   await A.wait(1500); A.music(''); var gr=sl('grave',[408,124,'L']); await A.walkG(gr[0],gr[1]); await A.faceG(gr[2]||'L');
-  await A.narrate('Sie geht zum Quittenbaum. Unter dem Baum bleibt sie stehen.');
+  await (M.k3Close?M.k3Close(A,'quitte',async function(){ await A.narrate('Sie geht zum Quittenbaum. Unter dem Baum bleibt sie stehen.'); await A.wait(600); }):(async function(){ await A.narrate('Sie geht zum Quittenbaum. Unter dem Baum bleibt sie stehen.'); await A.wait(600); })());   // Nahaufnahme (97_k3_nah.js)
   var Z=A.npc('zlata'), zp=ap('zlata',[196,124,'L']); if (Z.actor) Z.walk(zp[0],zp[1]);
   await A.wait(1000); await A.switchTo('marko'); await A.narrate('Zlata geht zurück zu ihrer Tür und hebt die Lampe nicht mehr. Vlado und Kata bleiben am Holzstoß stehen. Keiner sagt etwas.'); }
 // ---------------------------------------------------------------- Am Grab: fragen statt versprechen, die Entscheidung, das neue Band (Zwischenstand 4)
@@ -60208,7 +60595,7 @@ async function epiStart(A){ var G=A.G; if (A.flag('k3.e.bridgeOn')) return; A.se
 M.k3EpiBridge=async function(A){ var G=A.G; if (A.flag('k3.e.bridge')) return A.m('Tief unten. Immer noch. Aber es ist jetzt anders tief.');
   if (!A.flag('k3.e.bridgeOn')) await epiStart(A); G.flags['mala.lock']=true;
   try{ var cs=M.stand('starimost','crest')||[418,50,'R']; await A.walk(cs[0]-10,cs[1]); await A.face('R'); if (A.malaHere()){ A.placeG(cs[0]+6,cs[1],'L'); }
-    await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.');
+    await (M.k3Close?M.k3Close(A,'scheitel',async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); }):(async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); })());   // Nahaufnahme (97_k3_nah.js)
     await A.wait(1000); var D=A.npc('dino'); if (D.actor) D.hide(); A.set('dinoJump',true); await A.wait(900);
     await A.narrate('Neben uns steigt Dino auf die Brüstung, in der Badehose, blau vor Kälte. Er sieht uns nicht an. Er sieht hinunter, breitet die Arme aus und springt.');
     A.set('dinoJump',false); await A.wait(700); A.sfx('splash'); await A.wait(900);
@@ -73606,6 +73993,203 @@ M.mem.k3_drive=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2711), VP=[94,26]
 
 })(M);
 
+/* ---- 97_k3_nah.js ---- */
+/* ===== 97_k3_nah.js — Kapitel 3, Grafikpunkt 11: Nahaufnahmen für Schlüsselmomente.
+   Große Bilder in derselben Pixelgröße und Palette wie die Räume (mit den Mostar-Rampen aus 00_core.js), über der ganzen Szene, während
+   die Sätze des Moments laufen; sie blenden gerastert ein und aus. Die Texte stehen dabei oben, ohne Brustbild.
+     glocke   Samstagnacht, das erste Läuten: die alte Fährglocke, Markos Hand am Seil, drüben das Licht im Schuppen
+     haende   Finale: „Ich habe dich unter die Quitte gelegt. Mit diesen Händen.“ – Batos Hände im Licht der Laterne
+     laterne  Finale: „Zvono.“ – Zlata hebt die Sturmlaterne am Schuppen
+     quitte   Finale: Mala unter dem Quittenbaum, das Brett im Reif
+     scheitel Epilog: „Tief unten.“ – vom Scheitel der Alten Brücke hinunter zur Neretva, Malas Hände auf der Brüstung (Dino springt erst danach, im Raum)
+   M.k3Close(A, id, fn): zeigt das Bild, spielt fn() und blendet aus; ohne Bildschirm (Tests) oder abgeschaltet nur fn(). ===== */
+(function(M){
+'use strict';
+var P=M.P, T=M.T, bayer=M.bayer, hash=M.hash, W=320, H=144;
+function R(s){ return s.split(' ').map(function(n){ if (P[n]===undefined) throw new Error('keine Farbe '+n); return P[n]; }); }
+function ra(r,v,x,y){ return M.rampAt(r,v,x,y); }
+function rd(v){ return Math.round(v); }
+function vn(x,y,s){ var xi=Math.floor(x), yi=Math.floor(y), fx=x-xi, fy=y-yi, h=function(a,b){ return hash(a*1.37+s*7.1,b*1.91+s*3.3); }; fx=fx*fx*(3-2*fx); fy=fy*fy*(3-2*fy);
+  var a=h(xi,yi), b=h(xi+1,yi), c=h(xi,yi+1), d=h(xi+1,yi+1); return a+(b-a)*fx+(c-a)*fy+(a-b-c+d)*fx*fy; }
+function fbm(x,y,s){ return vn(x,y,s)*0.55+vn(x*2.03+5.1,y*2.03+1.7,s)*0.3+vn(x*4.1+2.3,y*4.1+8.1,s)*0.15; }
+function cl(v,a,b){ return v<a?a:(v>b?b:v); }
+// warmes Licht: Pixel um (cx,cy) gerastert heller, innen zwei Stufen
+function glow(b,cx,cy,r,k,col){ for (var y=Math.floor(cy-r);y<=cy+r;y++) for (var x=Math.floor(cx-r);x<=cx+r;x++){ if (x<0||y<0||x>=b.w||y>=b.h) continue; var d=Math.sqrt((x-cx)*(x-cx)+(y-cy)*(y-cy))/r; if (d>=1) continue;
+    var a=(1-d)*(1-d)*k, kk=y*b.w+x; if (bayer(x,y)<a){ var c=b.d[kk]; if (c===T) continue; b.d[kk]=col?M.mix(c,col,Math.min(6,1+Math.round(a*6))):M.UP[c]; if (a>0.6 && bayer(x+2,y+1)<a-0.4) b.d[kk]=M.UP[b.d[kk]]; } } }
+// Formen aus Grundkörpern (Kreis, Ellipse, Kapsel), schattiert über den Abstand zum Rand und eine Lichtrichtung, mit dunkler Kontur.
+// Für Hände, Finger, Ärmel: lesbar statt Kleckse. o: {ramp, light:[lx,ly], alpha (Geist: Rand gerastert), outline, flat}
+function inPart(q,x,y){ if (q.cap){ var a=q.cap, dx=a[2]-a[0], dy=a[3]-a[1], L=dx*dx+dy*dy||1, t=cl(((x-a[0])*dx+(y-a[1])*dy)/L,0,1), px=a[0]+dx*t, py=a[1]+dy*t; return (x-px)*(x-px)+(y-py)*(y-py)<=q.r*q.r; }
+  if (q.ell){ var e=q.ell, u=(x-e[0])/e[2], v=(y-e[1])/e[3]; return u*u+v*v<=1; } return false; }
+function shape(fb,parts,o){ var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; parts.forEach(function(q){ var bx=q.cap?[Math.min(q.cap[0],q.cap[2])-q.r,Math.min(q.cap[1],q.cap[3])-q.r,Math.max(q.cap[0],q.cap[2])+q.r,Math.max(q.cap[1],q.cap[3])+q.r]:[q.ell[0]-q.ell[2],q.ell[1]-q.ell[3],q.ell[0]+q.ell[2],q.ell[1]+q.ell[3]]; x0=Math.min(x0,bx[0]); y0=Math.min(y0,bx[1]); x1=Math.max(x1,bx[2]); y1=Math.max(y1,bx[3]); });
+  x0=Math.floor(x0)-2; y0=Math.floor(y0)-2; x1=Math.ceil(x1)+2; y1=Math.ceil(y1)+2; var w=x1-x0+1, h=y1-y0+1, m=new Int16Array(w*h), id=new Int8Array(w*h);
+  for (var y=0;y<h;y++) for (var x=0;x<w;x++){ for (var i=0;i<parts.length;i++) if (inPart(parts[i],x+x0+0.5,y+y0+0.5)){ m[y*w+x]=99; id[y*w+x]=i; break; } }
+  // Abstand zum Rand (bis 5)
+  for (var d=1;d<=5;d++) for (var y2=0;y2<h;y2++) for (var x2=0;x2<w;x2++){ var k=y2*w+x2; if (m[k]!==99) continue; var nb=[x2>0?m[k-1]:0,x2<w-1?m[k+1]:0,y2>0?m[k-w]:0,y2<h-1?m[k+w]:0]; for (var n=0;n<4;n++) if (nb[n]===d-1){ m[k]=d; break; } }
+  var L=o.light||[-0.6,-0.8], R=o.ramp;
+  for (var y3=0;y3<h;y3++) for (var x3=0;x3<w;x3++){ var k3=y3*w+x3, dv=m[k3]; if (!dv) continue; var X=x3+x0, Y=y3+y0; if (X<0||Y<0||X>=fb.w||Y>=fb.h) continue;
+    var gx=((x3<w-1?Math.min(6,m[k3+1]):0)-(x3>0?Math.min(6,m[k3-1]):0)), gy=((y3<h-1?Math.min(6,m[k3+w]):0)-(y3>0?Math.min(6,m[k3-w]):0)), gl=Math.sqrt(gx*gx+gy*gy)||1;
+    var ed=Math.min(dv,5)/5, lit=(o.flat?0.55:0.5)+(-(gx*L[0]+gy*L[1])/gl)*0.38*(1-ed*0.7)+(o.grad?o.grad(X,Y):0);
+    if (dv===99) lit=0.55; var c=ra(R,cl(lit,0,1),X,Y);
+    if (o.alpha && dv<=2 && bayer(X,Y)<0.35) continue; fb.px(X,Y,c); }
+  if (o.outline!==false){ var oc=o.outline||P.k1; for (var y4=0;y4<h;y4++) for (var x4=0;x4<w;x4++){ var k4=y4*w+x4; if (m[k4]) continue; var adj=(x4>0&&m[k4-1])||(x4<w-1&&m[k4+1])||(y4>0&&m[k4-w])||(y4<h-1&&m[k4+w]); if (adj && !(o.alpha && bayer(x4+x0,y4+y0)<0.5)) fb.px(x4+x0,y4+y0,oc); } }
+  return {x0:x0,y0:y0,w:w,h:h,m:m,id:id}; }
+// Hand, Handfläche nach oben (Finger vom Betrachter weg, leicht gefächert); flip: linke Hand
+function handUp(fb,cx,cy,s,flip,R,line,o){ var f=flip?-1:1, parts=[{ell:[cx,cy,13*s,11*s]}];
+  [[-8,-24,-1.5],[-3,-28,-0.5],[2.5,-27,0.5],[7.5,-22,1.4]].forEach(function(q){ var bx=cx+f*q[0]*s, by=cy-7*s; parts.push({cap:[bx,by,bx+f*q[2]*s*2,cy+q[1]*s],r:2.6*s}); });
+  parts.push({cap:[cx+f*11*s,cy+4*s,cx+f*19*s,cy-6*s],r:3*s});
+  var sh=shape(fb,parts,Object.assign({ramp:R},o||{}));
+  // Gelenkfalten, Handlinien
+  [[-8,-24,-1.5],[-3,-28,-0.5],[2.5,-27,0.5],[7.5,-22,1.4]].forEach(function(q){ for (var j=1;j<=2;j++){ var t=j/3, bx=cx+f*q[0]*s+(f*q[2]*s*2)*t, by=cy-7*s+((cy+q[1]*s)-(cy-7*s))*t; for (var k=-2;k<=1;k++) fb.px(rd(bx+k*s*0.8),rd(by),line); } });
+  for (var a=0;a<10;a++){ fb.px(rd(cx+f*(-8+a*1.6)*s),rd(cy-2*s+Math.sin(a*0.3)*2*s),line); fb.px(rd(cx+f*(-6+a*1.3)*s),rd(cy+3*s+Math.sin(a*0.4+1)*1.5*s),line); }
+  return sh; }
+// Faust um ein senkrechtes Seil oder einen Bügel (von der Seite): vier Fingerrollen, Daumen darüber, Handgelenk
+function fist(fb,cx,cy,s,dir,R,line){ var parts=[], d=dir||1; for (var i=0;i<4;i++){ var y=cy-4.5*s+i*3*s; parts.push({cap:[cx-5*s*d,y,cx+3*s*d,y+0.4*s],r:1.8*s}); }
+  parts.push({cap:[cx-3*s*d,cy-6.5*s,cx+5*s*d,cy-5*s],r:1.9*s}); parts.push({cap:[cx-7*s*d,cy-3*s,cx-9*s*d,cy+8*s],r:3.6*s});
+  shape(fb,parts,{ramp:R,light:[-0.5*d,-0.85]}); for (var i2=1;i2<4;i2++){ var y2=rd(cy-4.5*s+i2*3*s-1.5*s); for (var x=-3;x<=2;x++) fb.px(rd(cx+x*s*d),y2,line); } }
+// Hand von oben, flach aufgelegt (Handrücken): Finger nach oben
+function handFlat(fb,cx,cy,s,flip,R,line,o){ var f=flip?-1:1, parts=[{ell:[cx,cy,9*s,8*s]}];
+  [[-6,-15],[-2,-18],[2,-17],[6,-13]].forEach(function(q){ parts.push({cap:[cx+f*q[0]*s,cy-5*s,cx+f*q[0]*s*1.1,cy+q[1]*s],r:1.9*s}); });
+  parts.push({cap:[cx+f*8*s,cy+2*s,cx+f*14*s,cy-5*s],r:2.2*s});
+  var sh=shape(fb,parts,Object.assign({ramp:R,light:[-0.4,-0.9]},o||{}));
+  [[-6,-15],[-2,-18],[2,-17],[6,-13]].forEach(function(q){ var bx=cx+f*q[0]*s, y=rd(cy-5*s+((q[1]+5)*s)*0.45); fb.px(rd(bx),y,line); fb.px(rd(bx+f*s*0.6),y,line); }); return sh; }
+// Ärmel: gerippter Strick oder Mantelstoff zwischen zwei Punkten
+function sleeve(fb,x0,y0,x1,y1,r,R,rib){ shape(fb,[{cap:[x0,y0,x1,y1],r:r}],{ramp:R,light:[-0.5,-0.8],grad:rib?function(X,Y){ return ((X+Y*2)%5<2)?0.1:0; }:null}); }
+function sky(b,y0,y1,r,seed,stars){ for (var y=y0;y<y1;y++) for (var x=0;x<W;x++) b.px(x,y,ra(r,(y-y0)/(y1-y0)*0.85+(fbm(x*0.02,y*0.05,seed)-0.5)*0.12,x,y));
+  if (stars) for (var i=0;i<stars;i++){ var sx=Math.floor(hash(i,seed)*W), sy=Math.floor(Math.pow(hash(i,seed+1),1.5)*(y1-y0)*0.7)+y0; b.px(sx,sy,hash(i,seed+2)<0.15?P.n5:(hash(i,seed+3)<0.5?P.n4:P.n3)); } }
+// Hand von oben gesehen, Handfläche nach oben (für Batos Hände): Ballen, vier Finger, Daumen; Farben über eine Rampe, Licht von links
+function palmUp(b,cx,cy,s,flip,ramp,lineC,lightX){ var f=flip?-1:1, pts=[];
+  for (var y=Math.floor(cy-12*s);y<=cy+14*s;y++) for (var x=Math.floor(cx-17*s);x<=cx+17*s;x++){ var u=(x-cx)/(16*s), v=(y-cy-2*s)/(12*s), inPalm=u*u+v*v<1;
+      var fing=false, ff=-1; for (var i=0;i<4;i++){ var fx=cx+f*(-9+i*6)*s, fl=(i===0||i===3?15:19)*s, fy0=cy-10*s; if (Math.abs(x-fx)<=2.6*s && y<=fy0+2 && y>=fy0-fl){ var tip=fy0-fl+2.6*s; if (y<tip && (x-fx)*(x-fx)+(y-tip)*(y-tip)>6.8*s*s) continue; fing=true; ff=i; } }
+      var thumb=false, tx=cx+f*15*s, ty=cy+2*s; var du=(x-tx)*0.6-(y-ty)*0.8*f, dv=(x-tx)*0.8*f+(y-ty)*0.6; if (Math.abs(dv)<=3*s && du>-2*s && du<13*s) thumb=true;
+      if (!inPalm && !fing && !thumb) continue;
+      var lt=0.55+(x<lightX?0.18:-0.08)-(y-cy)/(40*s)*0.3+(fbm(x*0.3,y*0.3,4)-0.5)*0.18; if (fing){ var fx2=cx+f*(-9+ff*6)*s; lt+=((x-fx2)*(-f))*0.04; }
+      var c=ra(ramp,cl(lt,0,1),x,y);
+      if (inPalm && !fing){ var l1=Math.abs((y-cy+3*s)-(x-cx)*0.25*f), l2=Math.abs((y-cy-4*s)+(x-cx)*0.3*f); if ((l1<0.6&&Math.abs(u)<0.75)||(l2<0.6&&Math.abs(u)<0.6)) c=lineC; }
+      if (fing && ((y+Math.round(cx))%7===0)) c=lineC;
+      b.px(x,y,c); } }
+
+// ---------------------------------------------------------------- 1 Glocke (Skela, Samstagnacht)
+var GLO={bx:212, top:34, bot:98, piv:28};
+function belR(t){ var sh=1-Math.pow(1-Math.min(1,t/0.2),2); return 9+7*sh+4*t+(t>0.55?Math.pow((t-0.55)/0.45,1.8)*13:0); }   // Haube, Schulter, Flanke, Schlagring
+function paintGlocke(b){ sky(b,0,92,R('k0 k1 n0 n1 n2'),11,110);
+  // drüben das Ufer, ein Licht im Schuppen
+  for (var x=0;x<W;x++){ var top=rd(70+Math.sin(x*0.03)*4+fbm(x*0.05,1,3)*8); for (var y=top;y<92;y++) b.px(x,y,ra(R('k0 k1 n0'),0.3+(y-top)/30,x,y)); }
+  b.rect(54,74,3,2,P.f4); b.px(55,74,P.l0); glow(b,55,75,14,0.8,P.f3);
+  // die Neretva: dunkel, Mondglanz, Nebel über dem Wasser
+  for (var y2=90;y2<H;y2++) for (var x2=0;x2<W;x2++){ var c=ra(R('k0 j0 j1 j2'),0.25+(y2-90)/80+(fbm(x2*0.04,y2*0.3,6)-0.5)*0.3,x2,y2); if (Math.sin(x2*0.21+y2*1.7)>0.96 && x2>60 && x2<140) c=P.u3; b.px(x2,y2,c); }
+  for (var y3=84;y3<96;y3++) for (var x3=0;x3<W;x3++){ var m=fbm(x3*0.03,y3*0.2,9); if (bayer(x3,y3)<(m-0.45)*1.2*(1-Math.abs(y3-90)/7)) b.px(x3,y3,P.u2); }
+  // Glockenstuhl: zwei Pfosten, Querbalken mit Reif
+  var WR=R('k0 w0 w1 w2 w3');
+  [[150,158],[264,272]].forEach(function(p){ for (var y=GLO.piv-6;y<H;y++) for (var x=p[0];x<=p[1];x++){ var u=(x-p[0])/(p[1]-p[0]); b.px(x,y,ra(WR,0.25+(1-u)*0.35+(fbm(x*0.6,y*0.08,2)-0.5)*0.3,x,y)); } });
+  for (var y4=GLO.piv-8;y4<GLO.piv;y4++) for (var x4=140;x4<284;x4++){ b.px(x4,y4,ra(WR,0.3+(y4-GLO.piv+8)/-14+0.4+(fbm(x4*0.08,y4*0.6,5)-0.5)*0.3,x4,y4)); }
+  for (var x5=140;x5<284;x5++){ b.px(x5,GLO.piv-9,(hash(x5,3)<0.55)?P.o6:P.u4); if (hash(x5,4)<0.12) b.px(x5,GLO.piv-10,P.o6); b.px(x5,GLO.piv,P.k0); } }
+function drawBell(fb,ang,t){ var cx=GLO.bx, BR=R('k1 z0 y1 f1 y2 f2 y3 f3'), VG=R('j2 j3 i3 j4');
+  // Joch
+  for (var y=GLO.piv;y<GLO.top+2;y++) for (var x=cx-4;x<=cx+4;x++) fb.px(x+rd(ang*(y-GLO.piv)),y,ra(R('k0 u0 u1 u2'),0.3+(cx+4-x)/14,x,y));
+  for (var y2=GLO.top;y2<=GLO.bot;y2++){ var tt=(y2-GLO.top)/(GLO.bot-GLO.top), r=belR(tt), off=rd(ang*(y2-GLO.piv));
+    for (var x2=Math.floor(cx-r);x2<=cx+r;x2++){ var u=(x2-cx)/r, n=Math.sqrt(Math.max(0,1-u*u)), lt=0.18+n*0.45+(-u)*0.3-(tt>0.9?0.1:0)+(fbm(x2*0.15,y2*0.12,8)-0.5)*0.12;
+      var c=ra(BR,cl(lt,0,1),x2,y2); if (fbm(x2*0.09+3,y2*0.07,12)>0.64 && tt<0.9) c=ra(VG,cl(lt,0,1),x2,y2);   // Grünspan
+      if (Math.abs(u)>0.94) c=P.k1; if (tt>0.97) c=P.k0; if (tt>0.9 && tt<0.93) c=M.UP[c]; fb.px(x2+off,y2,c); } }
+  // Klöppel
+  var kx=cx+rd(ang*(GLO.bot-GLO.piv))+rd(Math.sin(t*2.4)*1.5); fb.ellipse(kx+0.5,GLO.bot+3.5,3,3,P.k1); fb.px(kx,GLO.bot+2,P.u2);
+  return kx; }
+function animGlocke(fb,t){ var ang=0.05*Math.sin(t*2.6)*Math.exp(-t*0.18)+0.006*Math.sin(t*1.1), kx=drawBell(fb,ang,t);
+  // Seil vom Klöppel hinunter zur Hand
+  var hx=196+rd(Math.sin(t*2.6)*2*Math.exp(-t*0.18)), hy=120;
+  for (var y=GLO.bot+6;y<H;y++){ var f=(y-GLO.bot-6)/(hy-GLO.bot-6), x=rd(kx+(hx-kx)*Math.min(1,f)); fb.px(x,y,((y>>1)&1)?P.w3:P.w2); fb.px(x+1,y,P.w1); }
+  // Markos Faust am Seil, der Mantelärmel von links unten (Mondlicht von links oben)
+  sleeve(fb,hx-30,H+6,hx-9,hy+8,9,R('k0 u0 u1 c1 c2'),false);
+  fist(fb,hx-1,hy+2,1.25,1,R('q0 q1 q2 q3'),P.q0);
+  for (var yy=hy-8;yy<hy+12;yy++){ fb.px(hx,yy,((yy>>1)&1)?P.w3:P.w2); fb.px(hx+1,yy,P.w1); }
+  // Reif glitzert
+  for (var i=0;i<6;i++){ var gx=140+rd(hash(i,Math.floor(t*1.5))*144), gy=GLO.piv-9; if ((Math.floor(t*6)+i)%3===0) fb.px(gx,gy,P.l1); } }
+
+// ---------------------------------------------------------------- 2 Batos Hände im Licht der Laterne (Finale)
+function paintHaende(b){ for (var y=0;y<H;y++) for (var x=0;x<W;x++) b.px(x,y,ra(R('k0 k1 n0 k2'),0.2+(y/H)*0.5+(fbm(x*0.02,y*0.04,2)-0.5)*0.2,x,y));
+  for (var y2=104;y2<H;y2++) for (var x2=0;x2<W;x2++){ var c=ra(R('k0 j0 j1'),0.3+(y2-104)/60+(fbm(x2*0.05,y2*0.4,5)-0.5)*0.35,x2,y2), wv=fbm(x2*0.3,y2*0.9,8);
+    if (Math.abs(x2-52-Math.sin(y2*0.7)*3)<6-(y2-104)*0.06 && wv>0.55) c=(wv>0.66)?P.f4:P.f2;   // das Licht der Laterne im Wasser
+    else if (wv>0.74 && hash(x2,y2)<0.3) c=P.j2; b.px(x2,y2,c); }
+}
+function lantern(fb,cx,cy,t,big){ var s=big?1.6:1, fl=0.85+Math.sin(t*9)*0.08+Math.sin(t*23)*0.05;
+  glow(fb,cx,cy,rd(70*s*fl),0.75,P.f3);
+  for (var y=rd(cy-14*s);y<=cy+12*s;y++) for (var x=rd(cx-8*s);x<=cx+8*s;x++){ var u=(x-cx)/(7*s), v=(y-cy)/(9*s); if (u*u+v*v>1) continue; var c=ra(R('f2 f3 f4 f5 l0'),cl(0.95-Math.sqrt(u*u+v*v)*0.7*(1/fl),0,1),x,y); if (Math.abs(u)>0.82) c=P.u1; fb.px(x,y,c); }
+  for (var k=-1;k<=1;k++) fb.line(rd(cx+k*5*s),rd(cy-10*s),rd(cx+k*5*s),rd(cy+9*s),P.u0);
+  fb.rect(rd(cx-9*s),rd(cy-16*s),rd(18*s),rd(3*s),P.u1); fb.rect(rd(cx-10*s),rd(cy+10*s),rd(20*s),rd(5*s),P.u1); fb.hl(rd(cx-10*s),rd(cx+10*s),rd(cy+10*s),P.u2);
+  for (var a=0;a<=16;a++){ var an=Math.PI*a/16; fb.px(rd(cx+Math.cos(an)*6*s),rd(cy-17*s-Math.sin(an)*6*s),P.u0); }   // Tragring
+  fb.px(cx,rd(cy-1),P.l1); fb.px(cx,rd(cy-2),fl>0.9?P.l1:P.f5); }
+function animHaende(fb,t){ lantern(fb,52,62,t,false); var tr=((Math.floor(t*8))%2)?1:0;
+  var HR=R('v0 v1 v2 v3 v4 v5'), SL=R('k1 v0 v1 v2 v3');
+  // dicke Pulloverärmel (als Geist fahl), dann die Hände, Handflächen nach oben
+  sleeve(fb,104+tr,H+14,128+tr,104,15,SL,true); sleeve(fb,226-tr,H+14,202-tr,106,15,SL,true);
+  handUp(fb,134+tr,92,1.5,true,HR,P.v1,{alpha:true,light:[-0.8,-0.6]}); handUp(fb,196-tr,94,1.5,false,HR,P.v1,{alpha:true,light:[-0.8,-0.6]});
+  // warmer Saum zur Laterne hin
+  for (var y=30;y<130;y++) for (var x=100;x<240;x++){ var k=y*W+x, c=fb.d[k], l=fb.d[k-1]; if (!(c===P.v3||c===P.v4||c===P.v5||c===P.v2)) continue; if (l===P.k1) fb.d[k]=(x<170)?P.f4:P.f3; } }
+
+// ---------------------------------------------------------------- 3 Zlatas Sturmlaterne am Schuppen (Finale)
+function paintLaterne(b){ var WR=R('k0 w0 w1 w2');
+  for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var pl=Math.floor(x/17), u=(x%17)/17, c=ra(WR,0.25+(0.5-Math.abs(u-0.5))*0.3+(fbm(pl*3.1,y*0.05,4)-0.5)*0.35,x,y); if (x%17===0) c=P.k0; if (hash(pl,Math.floor(y/9))<0.08 && (y%9)===4) c=P.k1; b.px(x,y,c); }
+  for (var x2=0;x2<W;x2++){ if (hash(x2,7)<0.4) b.px(x2,0,P.o6); }
+}
+function animLaterne(fb,t){ var sw=Math.sin(t*1.3)*1.2, cx=rd(160+sw), cy=72; lantern(fb,cx,cy,t,true);
+  // Bügel und Hand
+  for (var a=0;a<=20;a++){ var ang=Math.PI*(a/20), x=rd(cx+Math.cos(ang)*12), y=rd(cy-40-Math.sin(ang)*10); fb.px(x,y,P.u1); fb.px(x,y+1,P.u0); }
+  sleeve(fb,cx+46,-12,cx+12,cy-62,10,R('k1 u0 u1 u2 u3'),true);
+  fist(fb,cx+2,cy-50,1.35,-1,R('q0 q1 q2 q3'),P.q0);
+  // das Licht von unten auf den Knöcheln
+  for (var y4=cy-46;y4<cy-40;y4++) for (var x4=cx-10;x4<cx+14;x4++){ var c4=fb.get(x4,y4); if (c4===P.q2||c4===P.q3) fb.px(x4,y4,P.f4); else if (c4===P.q1) fb.px(x4,y4,P.f3); } }
+
+// ---------------------------------------------------------------- 4 Unter dem Quittenbaum (Finale)
+var QU=[[188,40],[226,56],[256,34],[146,58]];
+function paintQuitte(b){ sky(b,0,H,R('k0 k1 n0 n1'),23,140);
+  // Boden im Reif
+  for (var y=110;y<H;y++) for (var x=0;x<W;x++){ var c=ra(R('k0 u0 u1 u2 u3'),0.3+(y-110)/50+(fbm(x*0.1,y*0.3,3)-0.5)*0.4,x,y); if (hash(x,y)<0.03) c=P.o6; b.px(x,y,c); }
+  // Äste von rechts oben
+  function branch(x0,y0,a,len,w,d){ var x=x0, y=y0; for (var i=0;i<len;i++){ x+=Math.cos(a); y+=Math.sin(a); a+=Math.sin(i*0.3+d)*0.05; for (var k=-w;k<=w;k++){ b.px(rd(x),rd(y+k),k===-w?P.u2:P.k1); } if (w>0 && i>8 && i%11===0 && d<3) branch(x,y,a+(i%22?0.7:-0.6),len*0.45,Math.max(0,w-1),d+1); } }
+  branch(330,6,Math.PI*0.86,170,2,0); branch(330,30,Math.PI*0.95,140,1,1); branch(300,0,Math.PI*0.7,90,1,1);
+  // das Brett
+  var BR=R('k0 w0 w1 w2 w3'); for (var y2=78;y2<126;y2++) for (var x2=104;x2<132;x2++){ var c2=ra(BR,0.3+(132-x2)/60+(fbm(x2*0.4,y2*0.08,6)-0.5)*0.35,x2,y2); if (x2===104||x2===131||y2===78) c2=P.k0; if (y2===79 && hash(x2,9)<0.7) c2=P.o6; b.px(x2,y2,c2); }
+  for (var x4=108;x4<128;x4+=5) b.px(x4,94,P.k0); }
+function animQuitte(fb,t){ var sw=rd(Math.sin(t*0.8));
+  QU.forEach(function(q,i){ var qx=q[0]+(i%2?sw:0), qy=q[1]; fb.px(qx,qy-6,P.k1); fb.px(qx,qy-5,P.k1);
+    for (var y=qy-4;y<=qy+5;y++) for (var x=qx-4;x<=qx+4;x++){ var dx=(x-qx)/4.5, dy=(y-qy)/5; if (dx*dx+dy*dy>1) continue; fb.px(x,y,ra(R('z1 f2 f3 f4'),cl(0.6-dx*0.4-dy*0.25,0,1),x,y)); } fb.px(qx-2,qy-2,P.f5); });
+  // ein Blatt fällt
+  var ph=(t%9)/9, lx=rd(220-ph*90+Math.sin(ph*14)*8), ly=rd(50+ph*70); if (ph<0.95){ fb.px(lx,ly,P.z3); fb.px(lx+1,ly,P.z2); }
+  // Malas Hand berührt das Brett (als Geist)
+  var GH=R('x1 x2 x3 x4 x5'); sleeve(fb,200,104,150,86,6,R('x0 x1 x2 x3'),false);
+  handFlat(fb,128,80,1.1,true,GH,P.x2,{alpha:true,outline:P.x0});
+  for (var i=0;i<5;i++){ var gx=rd(hash(i,Math.floor(t*2))*W), gy=112+rd(hash(i+3,Math.floor(t*2))*30); fb.px(gx,gy,P.l1); } }
+
+// ---------------------------------------------------------------- 5 Vom Scheitel der Alten Brücke hinunter (Epilog)
+function paintScheitel(b){ var WAT=R('j1 j2 j3 j4 j5'), ST=R('o1 o2 o3 o4 o5');
+  // die Schlucht von oben: Felsen links und rechts, die Neretva dazwischen
+  for (var y=0;y<104;y++) for (var x=0;x<W;x++){ var l=70+Math.sin(y*0.05)*8+fbm(1,y*0.05,3)*14-y*0.25, r=250-Math.sin(y*0.04+1)*8-fbm(2,y*0.05,4)*14+y*0.28, c;
+    if (x>l && x<r){ var u=(x-l)/(r-l), fl=fbm(x*0.06,y*0.012,7), st=fbm(x*0.35,y*0.05,13); c=ra(WAT,cl(0.32+Math.sin(u*Math.PI)*0.28+(fl-0.5)*0.5,0,1),x,y); if (st>0.68) c=M.UP[c]; else if (st<0.26) c=M.DN[c]; if (x<l+3||x>r-3) c=P.j5; }
+    else { var rk=fbm(x*0.08,y*0.1,9); c=ra(ST,cl(0.3+rk*0.6-(x>r?0.15:0),0,1),x,y); if (rk>0.66 && hash(x,y)<0.3) c=P.i2; }
+    b.px(x,y,c); }
+  // die Brüstung vorn: große Steinblöcke
+  for (var y2=100;y2<H;y2++) for (var x2=0;x2<W;x2++){ var bl=Math.floor((x2+(y2>120?18:0))/46), u=((x2+(y2>120?18:0))%46)/46, c2=ra(ST,cl(0.5+(y2<104?0.35:0)-(y2-100)/90+(fbm(bl*3+x2*0.05,y2*0.1,2)-0.5)*0.3,0,1),x2,y2); if (u<0.02||y2===120||y2===100) c2=P.o1; b.px(x2,y2,c2); } }
+function animScheitel(fb,t){
+  // Malas Hände auf der Brüstung (als Geist)
+  var GH=R('x1 x2 x3 x4 x5'), SL=R('x0 x1 x2 x3');
+  sleeve(fb,96,H+10,124,118,9,SL,true); sleeve(fb,226,H+10,198,118,9,SL,true);
+  handFlat(fb,128,112,1.25,true,GH,P.x2,{alpha:true,outline:P.x0}); handFlat(fb,194,112,1.25,false,GH,P.x2,{alpha:true,outline:P.x0});
+  for (var i=0;i<8;i++){ var gx=rd(90+hash(i,Math.floor(t*3))*140), gy=rd(5+hash(i+5,Math.floor(t*3))*90); if (fb.get(gx,gy)===P.j4||fb.get(gx,gy)===P.j5) fb.px(gx,gy,P.j6); } }
+
+var CL={ glocke:{paint:paintGlocke,anim:animGlocke}, haende:{paint:paintHaende,anim:animHaende}, laterne:{paint:paintLaterne,anim:animLaterne}, quitte:{paint:paintQuitte,anim:animQuitte}, scheitel:{paint:paintScheitel,anim:animScheitel} };
+M.K3CLOSE=CL;
+var CACHE={};
+function pic(id){ if (!CACHE[id]){ var b=new M.Buf(W,H,P.k0); CL[id].paint(b); CACHE[id]=b; } return CACHE[id]; }
+var FRAME=new M.Buf(W,H,P.k0);
+// gezeichnet am Ende der Szene (06_ui.js): gerastert ein- und ausblenden
+M.k3DrawClose=function(fb,gt,SH){ var C=M.E.k3close; if (!C || !CL[C.id]) return; var t=(gt-C.t0)/1000, kIn=Math.min(1,t/0.7), kOut=C.out?Math.max(0,1-(gt-C.out)/450):1, k=Math.min(kIn,kOut);
+  var base=pic(C.id); FRAME.d.set(base.d); try{ CL[C.id].anim(FRAME,t); }catch(e){ if (!M._k3closeErr){ M._k3closeErr=1; console.error(e); } }
+  for (var y=0;y<Math.min(SH,H);y++) for (var x=0;x<W;x++){ if (k<1 && bayer(x,y)>=k) continue; var c=FRAME.d[y*W+x]; if (c!==T) fb.d[y*fb.w+x]=c; } };
+M.k3Close=async function(A,id,fn){ var E=M.E; if (A!==M.API || !CL[id] || E.screen!=='game' || !M.k3Fx('close',E.room) || M.TEST_NORIDE){ await fn(); return; }
+  E.k3close={id:id,t0:E.gt(),out:0}; try{ await A.wait(750); await fn(); await A.wait(500); }
+  finally{ if (E.k3close){ E.k3close.out=E.gt(); } await A.wait(460); E.k3close=null; } };
+M.k3ClosePic=function(id,t){ var b=new M.Buf(W,H,P.k0); b.d.set(pic(id).d); CL[id].anim(b,t||1.5); return b; };   // Werkzeuge und Tests
+})(M);
+
 /* ---- 97_k3_peil.js ---- */
 /* ===== 97_k3_peil.js — Kapitel 3: die Peilung (Kartenansicht als eigenes Overlay 'peil'), Zdravkos alte Karte, die Reihenfolge der Nacht =====
    Mala beschreibt die Richtung ihrer Leine über zwei Landmarken; der Spieler wählt diese zwei auf der Karte (kein Zielen mit dem Finger),
@@ -76819,7 +77403,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="12.11.2026 · 6315fc";
+M.BUILD="12.11.2026 · e6e39d";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

@@ -29,7 +29,8 @@ E.get=function(){ return {room:room,S:S,GS:GS}; };
 
 // ---------------------------------------------------------------- Bildspeicher
 var bg=null, layers=[], dirty=true;
-function rebuild(){ if (!room) return; var tod=todOf(); bg=room.paint(S,GS,tod); layers=room.layers?room.layers(S,GS,tod):[]; dirty=false; }
+function rebuild(){ if (!room) return; var tod=todOf(); M.PAL3=!!(M.k3Fx && M.k3Fx('pal',room,GS));   // Mostar: feinere, farbverschobene Rampen (21_k3_look.js)
+  try{ bg=room.paint(S,GS,tod); layers=room.layers?room.layers(S,GS,tod):[]; } finally{ M.PAL3=false; } dirty=false; if (M.k3AfterRebuild) M.k3AfterRebuild(room,S,GS,tod,bg,layers); }
 function todOf(){ return (room && room.tod) ? (typeof room.tod==='function'?room.tod(GS):room.tod) : GS.tod; }
 M.todOf=todOf;
 
@@ -165,7 +166,7 @@ E.faceOf=function(a){ return a.lookF||a.f; };
 function faceOn(a,f){ if (!a||a.f===f) return Promise.resolve(); a.f=f; if (a.mode!=='anim'&&a.mode!=='walk') setIdle(a); return Promise.resolve(); }
 function updateActor(a,dt){ var ef=a.lookF||a.f; if (ef!==a._pf){ if ((ef==='L'&&a._pf==='R')||(ef==='R'&&a._pf==='L')) a.turnAt=gt; a._pf=ef; }
   if (a.frozen) return;
-  if (a.mode==='walk'){ a.ft+=dt; var spd=a.speed;
+  if (a.mode==='walk'){ a.ft+=dt; var spd=a.speed*(M.k3SpeedK?M.k3SpeedK(a):1);   // Kapitel 3: eigene Gangarten (21_k3_look.js)
     while (a.ft>=spd && a.mode==='walk'){ a.ft-=spd; var tg=a.path[0]; if (!tg){ arrive(a); break; }
       var dx=tg[0]-a.x, dy=tg[1]-a.y, side=Math.abs(dx)>=Math.abs(dy)*0.8, step=side?a.step:2.4, dist=side?Math.abs(dx):Math.abs(dy);
       if (dist<=0.01 && Math.hypot(dx,dy)>0.01){ step=Math.hypot(dx,dy); }
@@ -234,6 +235,7 @@ function actorPose(a){ var p=actorPose0(a); var m=a.mood&&MOODHD[a.mood];
   if (a.headBack && p && p.v==='S' && !p.hb){ var ch2=GLC.get(p); if (!ch2){ ch2={}; GLC.set(p,ch2); } p=ch2.hb||(ch2.hb=Object.assign({},p,{hb:1})); }
   if (m && p && !(p.hd&&p.hd!=='n')){ var c=MOODC.get(p); if (!c){ c={}; MOODC.set(p,c); } p=c[m]||(c[m]=Object.assign({},p,{hd:m})); }
   var u=p?umbrellaStage(a):0; if (u>=2){ var c2=UMBC.get(p); if (!c2){ c2={}; UMBC.set(p,c2); } p=c2[u]||(c2[u]=Object.assign({},p,{um:u})); }
+  if (p && M.k3Pose) p=M.k3Pose(a,p);   // Kapitel 3: Folgebewegung, Ausdruck (21_k3_look.js)
   return p; }
 // Regenschirm (Wunsch des Autors: Ankunft in Mostar im Regen): Marko trägt einen, wo das Wetter der Phase Regen ist und der Raum es sagt
 // (room.rain aus der Kunst: true, oder (x,y) → im Regen?). Im Regen offen (Stufe 5), unter einem Dach zu und weggesteckt (Stufe 1, nicht
@@ -291,6 +293,7 @@ function say(text,who,opt){ if (E.speech){ var prev=E.speech.res; E.speech=null;
   if (M.__caps && !M.__capNext){ var ck=(w0==='marko'||w0==='@marko')&&trTo(w0)==='mala'?'marko_an_mala':String(w0||'').replace(/^@/,'')||'x'; if (ck==='#') ck='erzaehler'; if (!M.__caps[ck]) M.__capNext=ck; }   // nur Tests: erster Satz je Sprecher als Bild
   if (w0 && w0!=='marko' && w0!=='@marko' && w0!=='#' && w0!=='@'){ E.trLast=String(w0).replace(/^@/,''); E.trLastAt=gt; }
   return new Promise(function(res){ var dur=Math.max(1400,800+text.length*52)*SPEED[textSpeed]; E.speech={text:text,src:src,until:gt+dur,res:res,who:who||GS.active,at:gt,opt:opt||{}};
+    if (M.k3OnSay) try{ M.k3OnSay(E.speech.who,src,dur); }catch(e){}   // Kapitel 3: Gesichtsausdruck zum Satz (21_k3_look.js)
     var sa=ACT[E.speech.who]; if (sa && sa.id!==GS.active && E.conv && E.conv.room===room) E.conv.npc=sa.id; }); }
 function endSpeech(){ if (!E.speech) return; var r=E.speech.res; E.speech=null; r(); }
 E.endSpeech=endSpeech;
@@ -770,7 +773,7 @@ M.room=function(id,def){ var A=M.ART[id]; if (!A){ console.warn('Kunst fehlt fü
       // Prüfbericht K3-01 (Nebenbefund): Rechtecke aus perspektivischen Ecken können eine negative Breite oder Höhe haben (K4 Zug, K1 Schuppenfenster) – dann trifft sie kein Klick
       if (Array.isArray(h.r) && h.r.length===4 && !Object.getOwnPropertyDescriptor(h.r,0).get && (h.r[2]<0||h.r[3]<0)){ var q=h.r; h.r=[q[2]<0?q[0]+q[2]:q[0], q[3]<0?q[1]+q[3]:q[1], Math.abs(q[2]), Math.abs(q[3])]; }
       return h; });
-  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints,rain:A.rain};
+  var base={id:id,width:A.width||320,paint:A.paint,layers:A.layers,walk:A.walk,walkG:A.walkG,dynamic:A.dynamic,front:A.front,ghost:A.ghost,actorLut:A.actorLut,start:A.start,entries:A.entries||{},snowPrints:!!A.snowPrints,rain:A.rain,farSky:A.farSky,fx:A.fx};   // farSky/fx: Kapitel-3-Grafik (21_k3_look.js)
   var r=M.defineRoom(Object.assign(base,def,{hotspots:hs}));
   if (def.entries) r.entries=Object.assign({},A.entries||{},def.entries);
   return r; };

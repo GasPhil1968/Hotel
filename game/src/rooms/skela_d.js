@@ -115,7 +115,7 @@ async function ring(A){ var G=A.G;
   return A.m('Nicht jetzt.'); }
 async function ringNight(A){ var G=A.G, k=(G.flags['k3.n2.rings']||0)+1, B=bato(A); A.setFlag('k3.n2.rings',k); await reach(A);
   if (k===1){ A.setFlag('k3.n2.rung'); await peal(A,0); flinch(A);
-    await A.m('Ich ziehe am Seil. Die Glocke schlägt einmal, grün und rau, und der Ton geht über das Wasser und kommt vom anderen Ufer zurück.'); await A.wait(900);
+    await (M.k3Close?M.k3Close(A,'glocke',async function(){ await A.m('Ich ziehe am Seil. Die Glocke schlägt einmal, grün und rau, und der Ton geht über das Wasser und kommt vom anderen Ufer zurück.'); await A.wait(900); }):(async function(){ await A.m('Ich ziehe am Seil. Die Glocke schlägt einmal, grün und rau, und der Ton geht über das Wasser und kommt vom anderen Ufer zurück.'); await A.wait(900); })());   // Nahaufnahme (97_k3_nah.js)
     if (A.isFound('bato')){ await A.narrate('Drüben im Schuppen hebt sich die Laterne.'); await A.wait(500); await B.say('Bei Nacht fährt keiner!'); await B.say('Bei Hochwasser nicht!'); await A.wait(600); await B.say('Wer läutet da? Soldaten?'); await A.wait(500); await B.say('Geht!'); }
     else { await A.narrate('Drüben im Schuppen bewegt sich das Licht. Ich höre nichts außer dem Fluss.'); if (A.malaHere()){ await A.wait(400); await A.g('Da ruft einer. Drüben. Er sagt: Bei Nacht fährt keiner. Bei Hochwasser nicht.'); } }
     if (A.malaHere()){ await A.wait(700); await A.g('Hör auf. Bitte.'); }
@@ -190,7 +190,7 @@ async function finRealize(A){ var G=A.G, B=bato(A);
   await B.say('Du hast geläutet. Dreimal.'); await A.wait(600); await A.g('Dreimal.');
   B.agitate(3200); await A.wait(500); await B.say('Ich habe am Fenster gestanden.'); await A.wait(800); await B.say('Und am Morgen …'); await A.wait(1300);
   await B.say('Ich habe dich unter die Quitte gelegt. Mit diesen Händen.');
-  await A.wait(800); await A.narrate('Er sieht auf seine Hände. Die Laterne zittert.'); A.music('k3_duh');
+  await (M.k3Close?M.k3Close(A,'haende',async function(){ await A.wait(800); await A.narrate('Er sieht auf seine Hände. Die Laterne zittert.'); }):(async function(){ await A.wait(800); await A.narrate('Er sieht auf seine Hände. Die Laterne zittert.'); })()); A.music('k3_duh');   // Nahaufnahme (97_k3_nah.js)
   await A.realize('bato'); A.setFlag('k3.fin.bato');
   await A.wait(800); await B.say('Siebzehn Jahre.'); await A.wait(900); await B.say('Zweitausendsechs. Im Winter. Ich bin eingeschlafen. Zlata sagt immer, ich hatte einen tiefen Schlaf.');
   await A.wait(700); await B.say('Und dann war wieder Januar.'); await A.wait(1100); await B.say('Dann bin ich …'); await A.wait(1300); await A.g('Ja.');

@@ -284,7 +284,7 @@ async function finZlata(A){ var G=A.G; if (!A.room || A.room.id!=='skela_l') awa
       var Z=A.npc('zlata'); A.set('zlataLamp',true); A.rebuild(); A.sfx('door'); await A.wait(800);
       await A.narrate('Die Haustür geht auf. Zlata, den Mantel über dem Nachthemd, die Petroleumlampe in der Hand. Sie geht zum Schuppen, schnell, wie eine Junge.');
       var sh=sl('shed',[330,120,'B']); await Z.walk(sh[0]-26,sh[1]+3); await Z.face('R');
-      await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); A.setFlag('k3.fin.zvono');
+      await (M.k3Close?M.k3Close(A,'laterne',async function(){ await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); }):(async function(){ await A.wait(900); await Z.say('Zvono.'); await A.wait(800); await A.m('„Die Glocke.“'); })()); A.setFlag('k3.fin.zvono');   // Nahaufnahme (97_k3_nah.js)
       // Prüfbericht K3: hat Marko schon am Samstag nachts geläutet, hat Zlata das gehört – dann zählt, dass es diesmal dreimal war, wie damals
       await A.wait(1100); if (G.flags['k3.n2.rings']){ await Z.say('Čula sam zvono. Tri puta. Kao tada.'); await A.m('„Ich habe die Glocke gehört. Dreimal. Wie damals.“'); }
       else { await Z.say('Čula sam zvono. Noću. Prvi put od tada.'); await A.m('„Ich habe die Glocke gehört. In der Nacht. Zum ersten Mal seitdem.“'); }
@@ -329,7 +329,7 @@ async function leashFree(A){ var G=A.G; await A.wait(1600); if (G.pos.mala.room=
   A.setFlag('k3.fin.free'); A.sfx('shimmer'); A.rebuild(); await A.wait(2100);
   await A.g('Weg.'); await A.wait(1200); await A.g('Es zieht nichts mehr.'); await A.wait(1500); await A.g('Zum ersten Mal seit dem Fluss.');
   await A.wait(1500); A.music(''); var gr=sl('grave',[408,124,'L']); await A.walkG(gr[0],gr[1]); await A.faceG(gr[2]||'L');
-  await A.narrate('Sie geht zum Quittenbaum. Unter dem Baum bleibt sie stehen.');
+  await (M.k3Close?M.k3Close(A,'quitte',async function(){ await A.narrate('Sie geht zum Quittenbaum. Unter dem Baum bleibt sie stehen.'); await A.wait(600); }):(async function(){ await A.narrate('Sie geht zum Quittenbaum. Unter dem Baum bleibt sie stehen.'); await A.wait(600); })());   // Nahaufnahme (97_k3_nah.js)
   var Z=A.npc('zlata'), zp=ap('zlata',[196,124,'L']); if (Z.actor) Z.walk(zp[0],zp[1]);
   await A.wait(1000); await A.switchTo('marko'); await A.narrate('Zlata geht zurück zu ihrer Tür und hebt die Lampe nicht mehr. Vlado und Kata bleiben am Holzstoß stehen. Keiner sagt etwas.'); }
 // ---------------------------------------------------------------- Am Grab: fragen statt versprechen, die Entscheidung, das neue Band (Zwischenstand 4)

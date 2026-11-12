@@ -1,3 +1,38 @@
+DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, ELF GRAFIKPUNKTE FÜR MOSTAR (12. NOVEMBER 2026)
+
+WAS SICH ÄNDERT (nur in Kapitel 3; die anderen Kapitel sehen aus wie vorher)
+- Palette: 70 neue, farbverschobene Farben mit Zwischenstufen (Kalkstein,
+  Graustein, Neretva, Laub, Lampenlicht, Erde). Mostar wird damit gemalt:
+  warme Lichter, kühle violette Schatten, feinere Übergänge mit weniger
+  Raster, die Neretva smaragdgrün.
+- Spiegelungen: lebende Figuren spiegeln sich in Pfützen und auf nassem
+  Pflaster (Busbahnhof, Alte Brücke, Kujundžiluk, Herbergsterrasse).
+- Lampenlicht: nachts färbt jede nahe Laterne die zugewandte Kante der
+  Figuren in ihrer Farbe; Gegenlicht als Saum.
+- Schlagschatten: lange, gerasterte Schatten von den Laternen weg.
+- Atemwolken: draußen in kalten Stunden und bei Bura.
+- Parallaxe: in den neun breiten Räumen ziehen Himmel und Berge beim
+  Schwenken langsamer vorbei.
+- Folgebewegung: Mantelsäume und Röcke schwingen beim Anhalten nach, langes
+  Haar schwingt mit, bei Bura weht alles mit dem Wind.
+- Leben im Hintergrund: Leute auf der Brücke und am Bulevar, Autos mit
+  Scheinwerfern, Katzen, Tauben, Hühner, Krähen, Kaminrauch, eine
+  flackernde Leuchtschrift.
+- Gesichter: Lächeln, Stirnrunzeln, hochgezogene Braue, weiter Mund – je
+  nach Satz.
+- Gangarten: die Alten gebeugt und langsam, Lena federnd, Marko nachts müde.
+- Nahaufnahmen an fünf Schlüsselmomenten: die Fährglocke, Batos Hände,
+  Zlatas Laterne, das Grab unter der Quitte, der Blick vom Scheitel der
+  Alten Brücke.
+- Mala hat kein Spiegelbild, keinen Atem, keinen Schatten, und der Wind
+  bewegt sie nicht.
+
+GEPRÜFT
+- Neuer Browsertest qa/ui/k3_grafik.js (26 Prüfpunkte: jeder Punkt wirkt,
+  nur in Mostar, abschaltbar); die anderen Kapitel pixelgleich wie vorher;
+  alle übrigen Tests und die Musterlösungen aller fünf Kapitel.
+
+
 DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, DIE FAHRT NACH SKELA ALS SZENE (12. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

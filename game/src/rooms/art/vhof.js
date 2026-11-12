@@ -226,6 +226,7 @@ function beams(b){ if (!HL) return; var L=M.TINT.lamp;
     if (bayer(x,y)<lev){ var c=M.tintPx(L,b.d[k],x,y); if (onS && a>0.55) c=M.UP[c]; b.d[k]=c; } } }
 
 // ---------------------------------------------------------------- Malen
+var LASTL=[];   // Lichter des letzten Bildes (Kapitel-3-Grafik)
 function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), x, y, tarp=tarpOn(S), lit=lightsOn(S), fin=(GS&&GS.phase==='k3_fin_n');
   REG.fill(0);
   sky(b,tod,weather); far(b,tod,weather); fence(b,tod); ground(b,tod,weather); workshop(b,tod,GS,S);
@@ -241,9 +242,9 @@ function paint(S,GS,tod){ var b=new M.Buf(W,H,P.k0), weather=M.scn.weather(GS), 
   truck(b,TK.x,GY,tarp,lit,S,!!(S&&S.cabIn)&&!fin);
   // Licht und Tageszeit
   var night=tod!=='day';
-  if (tod==='day'){ M.light(b,function(x,y){ var g=REG[y*W+x]; if (g===RG.sky||g===RG.far) return 0; var s=0; if (y>GY-2 && x>TK.x+10 && x<TK.x+214 && y<GY+5) s-=1.2; if (g===RG.wall) s-=0.3;
+  LASTL=[]; if (tod==='day'){ M.light(b,function(x,y){ var g=REG[y*W+x]; if (g===RG.sky||g===RG.far) return 0; var s=0; if (y>GY-2 && x>TK.x+10 && x<TK.x+214 && y<GY+5) s-=1.2; if (g===RG.wall) s-=0.3;
       return s+(weather==='grey'?-0.3:0)+(fbm(x*0.02,y*0.03)-0.5)*0.4-Math.max(0,(y-120)/40)*0.4; }); }
-  else { var lights=[[LAMP[0],LAMP[1]+20,fin?34:56,fin?0.5:0.85,30]]; if (lit) lights.push([TK.x-40,GY+4,90,1.1,24],[TK.x-10,GY-30,30,0.9,18]);
+  else { var lights=[[LAMP[0],LAMP[1]+20,fin?34:56,fin?0.5:0.85,30]]; LASTL=lights; if (lit) lights.push([TK.x-40,GY+4,90,1.1,24],[TK.x-10,GY-30,30,0.9,18]);
     M.finishTOD(b,tod,{ sky:function(x,y){ return REG[y*W+x]===RG.sky; }, lights:lights }); if (fin) M.darken(b,0,0,W,H,1); }
   if (weather==='frost') frost(b,night);
   if (lit) beams(b);
@@ -290,6 +291,7 @@ var CABR=[TK.x+38,GY-74,52,56], TAMR=[TK.x-2,GY-80,200,80];
 // Radio und Handschuhfach, ohne Malen vorausberechnet (dieselbe Rechnung wie in cabOpen; gilt, bevor das Bild einmal gemalt wurde)
 var IX0=TK.x+46+4+1, IX1=TK.x+84-4-1, DY0=GY-68+3+17, RADIO0=[IX0+7,DY0-2,10,12], GLOVE0=[IX0+18,DY0-1,IX1-IX0-18+2,12];
 M.defineArt('vhof',{
+fx:{ lights:function(){ return M.k3LB(LASTL); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
   width:W, paint:paint, layers:layers, walk:walk, dynamic:dyn, front:front, ghost:ghost, actorLut:actorLut,
   spots:{
     door:[DOOR.x0-2,24,DOOR.x1-DOOR.x0+4,98],

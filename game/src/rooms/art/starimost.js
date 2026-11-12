@@ -74,6 +74,8 @@ function lightsFor(tod){ if (tod==='day') return []; var L=[];
 
 // ---------------------------------------------------------------- Masken: Tiefe (für Dunst), Himmel, Pflaster, Wasser, Fenster
 var DEP=new Uint8Array(W*H), SKYM=new Uint8Array(W*H), PAVE=new Uint8Array(W*H), WATER=new Uint8Array(W*H), WINS=[];
+var FARSKY=null, FARM=new Uint8Array(W*H);
+var REFM=new Uint8Array(W*H);   // spiegelnder Boden für Figuren (Kapitel 3): 2 Pfütze, 1 nasses Pflaster   // ferne Ebene (Himmel, Velež, Hügel, Hum) für die Parallaxe
 function stage(b,d,fn){ var s=b.d.slice(); fn(); for (var k=0;k<W*H;k++) if (b.d[k]!==s[k]) DEP[k]=d; }
 
 // ---------------------------------------------------------------- Himmel
@@ -340,7 +342,7 @@ function tinyDino(b,x,by){ b.px(x,by-1,P.p3); b.px(x+1,by-1,P.p3); b.vl(x,by-6,b
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
   DEP.fill(0); PAVE.fill(0); WATER.fill(0); WINS=[]; CHIM=[]; PUDM=null; waterPrep(w);
-  stage(b,1,function(){ paintVelez(b,w); hillsSouth(b,w); hum(b); });
+  stage(b,1,function(){ paintVelez(b,w); hillsSouth(b,w); hum(b); }); var S1=b.clone();
   stage(b,2,function(){ farTown(b); farRiver(b); });
   stage(b,3,function(){ oldTown(b); westBank(b); });
   stage(b,4,function(){ tara(b); halebija(b); hut(b); });
@@ -354,13 +356,17 @@ function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), 
   M.fogBake(b,function(xx,yy){ var d=DEP[yy*W+xx]; return d?hz[d-1]:0; },{col:fcol});
   var sk=new M.Buf(W,H,P.k0); paintSky(sk,tod,w,GS); SKYM.fill(0);
   for (var q=0;q<W*H;q++) if (b.d[q]===T){ b.d[q]=sk.d[q]; SKYM[q]=1; }
+  M.fogBake(S1,function(xx,yy){ return S1.d[yy*W+xx]===T?0:hz[0]; },{col:fcol});
   // Licht und Schatten: Kontaktschatten, Schlucht dunkler, nasses Pflaster spiegelt
   M.light(b,M.lf.sum(M.lf.pool(HUT.x0+38,HUT.base+1,40,3,-1),M.lf.pool(AR.cx,AR.sp+8,90,10,-0.45),M.lf.band(126,H,0,-0.3)),0,0,function(xx,yy){ return !SKYM[yy*W+xx] && DEP[yy*W+xx]>=4; });
   if (wet) wetReflect(b);
+  REFM.fill(0); if (wet){ var PM=pudMask(); for (var rk=0;rk<W*H;rk++) if (PAVE[rk]) REFM[rk]=PM[rk]?2:1; }
   BASE=b.clone();
   var key=todKey(tod,w); LIT=lightsFor(tod);
   shade(b,0,0,key,LIT,function(xx,yy){ return SKYM[yy*W+xx]===1; });
-  if (key && tod!=='day'){ var far=levels(key)[0]; for (var k2=0;k2<W*H;k2++){ var dd=DEP[k2]; if ((dd===1||dd===2) && !SKYM[k2]) b.d[k2]=M.tintPx(far,BASE.d[k2],k2%W,(k2/W)|0); } }
+  if (key && tod!=='day'){ var far=levels(key)[0]; for (var k2=0;k2<W*H;k2++){ var dd=DEP[k2]; if ((dd===1||dd===2) && !SKYM[k2]) b.d[k2]=M.tintPx(far,BASE.d[k2],k2%W,(k2/W)|0); if (S1.d[k2]!==T) S1.d[k2]=M.tintPx(far,S1.d[k2],k2%W,(k2/W)|0); } }
+  else if (key) shade(S1,0,0,key,LIT,function(xx,yy){ return S1.d[yy*W+xx]===T; });   // am Tag mit Wolken: dieselbe Schattierung wie im Bild
+  var FAR=sk.clone(); for (var q3=0;q3<W*H;q3++){ if (S1.d[q3]!==T) FAR.d[q3]=S1.d[q3]; FARM[q3]=(SKYM[q3]||DEP[q3]===1)?1:0; } FARSKY=FAR;
   if (tod!=='day') afterLights(b,tod,w,S);
   LASTB=b; return b; }
 function wetReflect(b){ var src=b.clone(); for (var y=109;y<H;y++){ var d=y-107; for (var x=0;x<330;x++){ var k=y*W+x; if (!PAVE[k]) continue; var pud=fbm(x*0.05,y*0.25,4); if (pud<0.56) continue; var sy=107-Math.floor(d*1.1); if (sy<0) continue; var sc=src.d[sy*W+x+((y%3===1)?1:0)]; if (bayer(x,y)<(pud-0.5)*2.2) b.d[k]=M.DN[sc]; } } }
@@ -426,6 +432,8 @@ function WALK(x,y,S){ if (S && S.walkBridge && onBridge(x,y)) return true;
 function curS(){ return (M.GS&&M.GS.rooms&&M.GS.rooms.starimost)||{}; }
 function live(n,fn){ var a=[]; for (var i=0;i<n;i++) (function(i){ Object.defineProperty(a,i,{get:function(){ return fn()[i]; },enumerable:true}); })(i); return a; }
 M.defineArt('starimost',{
+fx:{ deck:function(x){ return rd(deckY(x))-DK.par; }, deckX:[DK.x0+8,DK.x1-8], chim:function(){ return CHIM; }, reflect:function(){ return REFM; }, lights:function(S,GS,tod){ return M.k3LA(lightsFor(tod,S||{})); } },   // Lampen für Licht auf den Figuren und Schatten (Kapitel 3, 21_k3_look.js)
+farSky:function(){ return FARSKY?{buf:FARSKY,mask:FARM||SKYM}:null; },   // Parallaxe in Kapitel 3 (21_k3_look.js): Himmel, Velež, Hügel und Hum als ferne Ebene
   width:W, paint:paint, layers:layers, walk:WALK, dynamic:dyn, front:front, ghost:ghost,
   rain:true,   // Regenschirm (05_engine.js)
   actorLut:function(a,S,GS,tod){ var k=todKey(tod,weaOf(GS)); if (!k) return null; return levels(k)[tod==='day'?0:1].a; },
