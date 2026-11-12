@@ -59,6 +59,9 @@ FIGUREN
   die Taschen, über die Schulter sehen, auf die Uhr …). Die Nebenfiguren
   halten bei der Arbeit inne, sehen zu Marko, drehen sich um, wenn er
   hinter ihnen stehen bleibt. In Szenen und Gesprächen ruht das.
+- In Mostar ist die Fahrt nach Skela zu sehen: das Taxi oder Dinos roter
+  Roller fährt durchs Neretvatal, die Landschaft zieht vorbei, das Gespräch
+  läuft dabei weiter; zurück fährt wieder das Taxi.
 
 KAPITEL WÄHLEN
 - Das Hauptmenü hat fünf Einträge: Neues Spiel, Kapitel wählen, Spiel laden,

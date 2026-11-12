@@ -157,13 +157,16 @@ M.canTravel=async function(A,L){ var G=A.G; if (!CH3(G)) return travel0?travel0(
     if (G.flags['k3.dino.ride'] && G.phase!=='k3_epi_d'){ ride=await A.choose([{t:'(Mit dem Taxi.)',id:'taxi',silent:true},{t:'(Mit Dino auf dem Roller.)',id:'dino',silent:true}],{title:'Nach Skela'})||'taxi'; }
     A.setFlag('k3.ride',ride);
     if (G.phase==='k3_epi_d'){ await A.narrate('Vlado fährt. Nada sitzt neben ihm im Führerhaus und sieht geradeaus. Ich sitze außen, Mala zwischen uns, und keiner sagt etwas.'); return true; }
-    if (ride==='dino' && M.k3DinoRide) await M.k3DinoRide(A);
-    else if (A.first('!k3.taxi1')){ A.sfx('taxi'); await A.narrate('Am Ostbusbahnhof lehnt der Taxifahrer an seinem Mercedes. „Skela? Da ist nichts. Eine Brücke und Hunde.“ Er fährt trotzdem, das Radio laut.'); }
-    else { A.sfx('taxi'); await A.narrate(A.cycle('k3taxi',['Der Taxifahrer fragt nicht mehr. Er dreht das Radio leiser, als wir aus der Stadt sind.','Dasselbe Taxi, dasselbe Radio. „Skela“, sage ich, und er nickt.'])); }
+    // die Fahrt selbst wird gezeigt (rooms/k3_fahrt.js): der Roller mit Dinos Gespräch, sonst das Taxi; die Sätze bleiben dieselben
+    if (ride==='dino' && M.k3DinoRide){ var dFirst=!G.seen['k3.dino.ride1']; await (M.k3Drive?M.k3Drive(A,'dino',function(){ return M.k3DinoRide(A); },{waitStart:dFirst,lead:dFirst?500:900}):M.k3DinoRide(A)); }
+    else if (A.first('!k3.taxi1')){ await (M.k3Drive?M.k3Drive(A,'taxi',async function(){ A.sfx('taxi'); await A.narrate('Am Ostbusbahnhof lehnt der Taxifahrer an seinem Mercedes. „Skela? Da ist nichts. Eine Brücke und Hunde.“ Er fährt trotzdem, das Radio laut.'); }):(async function(){ A.sfx('taxi'); await A.narrate('Am Ostbusbahnhof lehnt der Taxifahrer an seinem Mercedes. „Skela? Da ist nichts. Eine Brücke und Hunde.“ Er fährt trotzdem, das Radio laut.'); })()); }
+    else { var tl=A.cycle('k3taxi',['Der Taxifahrer fragt nicht mehr. Er dreht das Radio leiser, als wir aus der Stadt sind.','Dasselbe Taxi, dasselbe Radio. „Skela“, sage ich, und er nickt.']);
+      await (M.k3Drive?M.k3Drive(A,'taxi',async function(){ A.sfx('taxi'); await A.narrate(tl); }):(async function(){ A.sfx('taxi'); await A.narrate(tl); })()); }
     return true; }
-  if (/^skela_d$/.test(from) && L.id!=='skela'){ if (G.phase!=='k3_epi_d'){ A.sfx('taxi');
-      if (G.flags['k3.ride']==='dino'){ A.setFlag('k3.ride','taxi'); await A.narrate('Dino ist längst weg. Ich rufe das Taxi vom Ostbusbahnhof an. Es kommt nach zwanzig Minuten, mit demselben Radio.'); }
-      else await A.narrate(A.cycle('k3taxiB',['Das Taxi hat an der Straße gewartet. Der Fahrer schläft fast. Er fährt uns zurück in die Stadt.','Zurück nach Mostar. Der Fahrer sagt nichts, und ich sage auch nichts.'])); } }
+  if (/^skela_d$/.test(from) && L.id!=='skela'){ if (G.phase!=='k3_epi_d'){ var back;
+      if (G.flags['k3.ride']==='dino'){ A.setFlag('k3.ride','taxi'); back='Dino ist längst weg. Ich rufe das Taxi vom Ostbusbahnhof an. Es kommt nach zwanzig Minuten, mit demselben Radio.'; }
+      else back=A.cycle('k3taxiB',['Das Taxi hat an der Straße gewartet. Der Fahrer schläft fast. Er fährt uns zurück in die Stadt.','Zurück nach Mostar. Der Fahrer sagt nichts, und ich sage auch nichts.']);
+      await (M.k3Drive?M.k3Drive(A,'taxiBack',async function(){ A.sfx('taxi'); await A.narrate(back); }):(async function(){ A.sfx('taxi'); await A.narrate(back); })()); } }
   return true; };
 // Aus Skela weg geht es nur von der Straße am rechten Ufer
 M.mapOriginWhy=function(G,R){ if (!CH3(G)||!R) return null; if (R.id==='skela_l'||R.id==='skela_most'||R.id==='zlata_k') return G.phase==='k3_epi_d'?'Vlado wartet drüben an der Straße. Erst zurück über die Brücke.':'Das Taxi wartet drüben an der Straße. Erst zurück über die Brücke.'; return null; };
@@ -350,7 +353,7 @@ M.k3FinLoad=async function(A){ if (A.flag('k3.a.limbo')) return M.k3StartEpilogu
 // ---------------------------------------------------------------- Raumwechsel: Zähler, Ljerkas Rückruf
 function storyOpen(G){ if (has(G,'b3_street')) G.map.garaze=true; if (G.flags['k3.mala.crossed']){ G.map.bulevar=true; G.map.westbus=true; G.map.partizan=true; } if (has(G,'l3_flat')){ G.map.strassenbr=true; G.map.partizan=true; } if (has(G,'l3_skela')) G.map.skela=true; if (has(G,'l3_person')||has(G,'l3_tepa')) G.map.tepa=true; }
 M.MIGRATE.push(function(G){ if (CH3(G)) storyOpen(G); });
-M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,id,from,o); if (!CH3(G)) return; G.flags['k3.moves']=(G.flags['k3.moves']||0)+1; G.flags['k3.lastFrom']=from||''; storyOpen(G);
+M.onRoomChange=(function(prev){ return function(G,id,from,o){ if (prev) prev(G,id,from,o); if (!CH3(G)) return; G.flags['k3.moves']=(G.flags['k3.moves']||0)+1; G.flags['k3.lastFrom']=(from==='k3_fahrt'?M.k3RideFrom:from)||''; storyOpen(G);   // nach einer Fahrtszene zählt der Ort, an dem sie begann
   if (G.flags['k3.d1.sanja'] && G.flags['k3.d1.sanjaAt']===undefined) G.flags['k3.d1.sanjaAt']=G.flags['k3.moves']-1;
   if (G.flags['k3.d1.sanja'] && !G.flags['k3.d1.ljerka'] && G.flags['k3.moves']>=G.flags['k3.d1.sanjaAt']+2 && G.phase==='k3_d1' && !M.ROOMS[id].noSave) M.k3Queue('ljerka'); }; })(M.onRoomChange);
 

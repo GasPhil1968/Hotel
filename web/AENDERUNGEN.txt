@@ -1,3 +1,34 @@
+DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, DIE FAHRT NACH SKELA ALS SZENE (12. NOVEMBER 2026)
+
+WAS SICH ÄNDERT
+- Die Fahrt nach Skela wird gezeigt statt nur erzählt. Wer am Stadtplan
+  Skela wählt und „Mit dem Taxi“ fährt, sieht den cremefarbenen Mercedes
+  mit TAXI-Schild durchs Neretvatal fahren: vorn der Fahrer am Lenkrad,
+  hinten Marko, neben ihm Mala als Schimmer. Die Landschaft zieht in
+  mehreren Ebenen vorbei (Berge, Dörfer mit Minaretten, Pappeln,
+  Telegrafenmasten, Leitplanke, die Neretva, Schilf am Ufer).
+- „Mit Dino auf dem Roller“: Dino fährt (roter Helm), Marko sitzt hinter
+  ihm (grauer Helm) und hält sich am Griff fest, Mala dahinter; der gelbe
+  Kinderhelm hängt leer hinten am Roller. Der Roller fährt los, wenn Dino
+  „Halt dich fest“ gesagt hat, und hält bei Skela. Dinos ganzes Gespräch
+  (mit der Auswahl, welche Geschichte Marko erzählt) läuft während der
+  Fahrt; Dino dreht zum Reden den Kopf nach hinten.
+- Zurück aus Skela fährt das Taxi in die andere Richtung.
+- Tag, Nacht und Frost wie die Phase: nachts Mond, Sterne, Scheinwerfer.
+  Dazu Motor- und Fahrtgeräusche.
+- In dieser Szene steht der Erzähltext oben im Himmel, damit er die
+  Fahrenden nicht verdeckt.
+- Die Geschichte ändert sich nicht: dieselben Sätze, dieselbe Auswahl;
+  die Fahrt zählt als ein Ortswechsel wie bisher und wird nie gespeichert.
+
+GEPRÜFT
+- Echte Reisen über den Stadtplan mit Spielständen (Samstag mit Taxi und
+  mit dem Roller, Rückfahrt, Samstagnacht, Sonntag): Szene, Ankunft,
+  Zähler und Mala am Ziel stimmen, keine JS-Fehler.
+- Regression 33/33, K3-Revision 40/40, Musterlösung Kapitel 3, Figurentest,
+  Offline-Test.
+
+
 DIE STILLEN – ÄNDERUNGEN: FIGUREN MIT MEHR ZEICHNUNG, MARKO LOCKERER, NEBENFIGUREN MIT EIGENLEBEN (11. NOVEMBER 2026)
 
 WAS SICH ÄNDERT

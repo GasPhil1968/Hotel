@@ -90,6 +90,7 @@ M.k3DinoRide=async function(A){ var D=A.npc('dino'), G=A.G; A.sfx('scooter');
   await A.narrate('Ich rufe Dino an. Zehn Minuten später steht er mit einem roten Roller vor der Tür. Zwei Helme, einer davon für ein Kind. Ich nehme den anderen.');
   if (G.malaOn) await A.narrate('Mala setzt sich hinter mich. Sie wiegt nichts. Der Roller merkt es trotzdem.');
   await D.say('Halt dich fest. Nicht an mir. Am Griff.');
+  if (M.k3RideGo) M.k3RideGo(A);   // der Roller fährt an (Fahrtszene, rooms/k3_fahrt.js)
   await A.narrate('Wir fahren aus der Stadt, nach Süden, an der Neretva entlang. Der Fluss ist rechts, tief unten, und manchmal blitzt er zwischen den Pappeln auf.');
   await D.say('Weißt du, was das Komische an der Neretva ist? Was in Mostar in den Fluss fällt, kommt an der Biegung bei Skela wieder ans Ufer.');
   await D.say('Da holen sie jedes Jahr Holz raus. Und anderes.'); A.note('l3_current');
@@ -103,6 +104,7 @@ M.k3DinoRide=async function(A){ var D=A.npc('dino'), G=A.G; A.sfx('scooter');
   else if (c==='ferry' && knowsNight){ await A.narrate('Ich erzähle von einer Glocke an einem Fluss und von einem Licht in einem Fenster, das wieder ausging.'); await D.say('Das ist traurig, Mann. Für zehn Mark?'); await A.m('Für fünf.'); await D.say('Für fünf ist es in Ordnung.'); }
   else if (c==='ferry'){ await A.narrate('Ich erzähle von einer Fähre, die nur bei Tag fuhr, und von einem Mädchen, das in der Nacht an den Fluss kam.'); await D.say('Und dann?'); await A.m('Das weiß ich noch nicht.'); await D.say('Dann ist sie noch nicht fertig. Erzähl sie mir, wenn sie fertig ist. Für fünf.'); A.setFlag('k3.dino.owed'); }
   else { await D.say('Dann schuldest du sie mir. Ich merk mir das. Ich merk mir alles, außer Telefonnummern.'); A.setFlag('k3.dino.owed'); }
+  if (M.k3RideStop) M.k3RideStop(A);
   await A.narrate('Bei Skela hält er an, wo die Schotterstraße am Hochufer endet.'); await D.say('Ich warte nicht. Für zurück ruf das Taxi vom Ostbahnhof. Der kommt überallhin, wenn man ihm Zeit lässt.'); };
 // ---------------------------------------------------------------- Nacht: der Springer (Mala allein an den Uferstufen)
 var sjT=0;

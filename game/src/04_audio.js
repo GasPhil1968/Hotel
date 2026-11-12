@@ -118,7 +118,7 @@ var BEDS={
   bura:{type:'bandpass',f:650,q:1.6,v:0.05,swell:0.35}, windHigh:{type:'bandpass',f:1300,q:3,v:0.022,swell:0.4},
   room:{type:'lowpass',f:200,q:0.7,v:0.016}, fridge:{osc:'square',f:50,type:'lowpass',fq:130,q:4,v:0.012}, neon:{osc:'sawtooth',f:100,type:'bandpass',fq:200,q:4,v:0.004},
   crowd:{type:'bandpass',f:850,q:0.8,v:0.03}, crowdFar:{type:'bandpass',f:600,q:1,v:0.016}, pines:{type:'highpass',f:2500,q:0.4,v:0.014,swell:0.4},
-  engine:{osc:'sawtooth',f:44,type:'lowpass',fq:140,q:3,v:0.016}, city:{type:'lowpass',f:380,q:0.7,v:0.018,swell:0.2}, ghost:{type:'bandpass',f:420,q:6,v:0.01,swell:0.5}
+  engine:{osc:'sawtooth',f:44,type:'lowpass',fq:140,q:3,v:0.016}, moped:{osc:'sawtooth',f:86,type:'bandpass',fq:460,q:2.4,v:0.008}, city:{type:'lowpass',f:380,q:0.7,v:0.018,swell:0.2}, ghost:{type:'bandpass',f:420,q:6,v:0.01,swell:0.5}
 };
 var EV={
   gull:function(t,d,v){ var f=1500+Math.random()*500; tone('sine',f,t,0.18,0.03*v,d,f*0.65); tone('sine',f*1.05,t+0.22,0.14,0.025*v,d,f*0.7); if (Math.random()<0.5) tone('sine',f*1.1,t+0.42,0.2,0.02*v,d,f*0.6); },

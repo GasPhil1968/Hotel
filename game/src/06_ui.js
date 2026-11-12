@@ -357,7 +357,7 @@ function drawSpeechPlain(sp){ var o=sp.opt||{}, lh=10, cx=160, top=14, col=o.col
   if (sp.who&&sp.who[0]==='@'){ var nm=sp.who.slice(1); if (M.CAST_COLORS[nm]!==undefined && o.color===undefined) col=M.CAST_COLORS[nm]; }
   if (pos){ cx=pos[0]; top=pos[1]-lines.length*lh-2; }
   if (o.x!==undefined) cx=o.x; if (o.y!==undefined) top=o.y;
-  if (sp.who==='#'){ lines=M.wrap(sp.text,240); cx=160; top=Math.max(8,60-lines.length*lh/2); }
+  if (sp.who==='#'){ lines=M.wrap(sp.text,240); cx=160; top=Math.max(8,((E.room&&E.room.narrY)||60)-lines.length*lh/2); }   // narrY: Mitte des Erzähltextes je Raum (Fahrtszene: im Himmel)
   if (o.phone){ lines=M.wrap(sp.text,220); cx=160; top=18; }
   if (top<4) top=4; if (top+lines.length*lh>SH-4 && o.y===undefined) top=Math.max(4,SH-4-lines.length*lh);
   var bw=0; lines.forEach(function(l){ bw=Math.max(bw,M.textWidth(l)); }); var bx=Math.max(M2,Math.min(W-M2-bw,cx-(bw>>1)));
