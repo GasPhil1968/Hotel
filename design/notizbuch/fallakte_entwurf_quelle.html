@@ -1,0 +1,325 @@
+<title>Fallakte MALA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@font-face{font-family:"MALA Pixel";src:url(__FONT__) format("opentype");font-display:swap}
+/* Layout: ein Pixelbild in Spielauflösung (Palette und Schrift des Spiels), ganzzahlig vergrößert; darüber und darunter nur knapper Rahmentext. */
+:root{ --ink:#08070d; --ink2:#13111c; --paper:#e3d9c0; --muted:#a39882; --lamp:#f3c75c; --seal:#cc5f68;
+  --pix:"MALA Pixel",ui-monospace,monospace; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--pix);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px}
+.wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:14px;align-items:center}
+.top{width:100%;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:space-between}
+h1{font-weight:400;font-size:20px;margin:0;color:var(--lamp)}
+.top p{margin:4px 0 0;color:var(--muted);max-width:64ch;font-size:15px}
+button.reset{font:inherit;font-size:15px;background:var(--ink2);color:var(--paper);border:0;padding:6px 14px;cursor:pointer;
+  box-shadow:0 -3px 0 0 var(--ink),0 3px 0 0 var(--ink),-3px 0 0 0 var(--ink),3px 0 0 0 var(--ink),inset 0 0 0 3px #5a5248}
+button.reset:hover{color:var(--lamp)} button.reset:focus-visible,canvas:focus-visible{outline:3px solid var(--lamp);outline-offset:3px}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;max-width:100%;touch-action:manipulation}
+.legend{width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;font-size:14px;color:var(--muted)}
+.legend b{display:block;font-weight:400;color:var(--paper);font-size:15px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Entwurf 2: die Fallakte in Spielgrafik</h1>
+      <p>Jakovs Fall, mitten im Spiel. Tipp eine Frage an, dann zwei Polaroids als Belege, dann „Beantworten“. Auch falsch probieren.</p></div>
+    <button class="reset" id="reset" type="button">Von vorn</button>
+  </div>
+  <canvas id="cv" tabindex="0" aria-label="Fallakte von Marko, gezeichnet im Pixelstil des Spiels. Bedienung mit Maus oder Finger."></canvas>
+  <div class="sr" id="live" aria-live="polite"></div>
+  <div class="legend">
+    <div><b>Fragen statt Paare</b>Jeder Fall stellt ein paar Fragen. Beantwortet wird mit zwei Belegen.</div>
+    <div><b>Belege sind Polaroids</b>Mit Bild und Titel; der ganze Text erscheint beim Antippen.</div>
+    <div><b>Tipps auf dem Zettel</b>„Ich komme nicht weiter“ gibt die vier Stufen der Hilfe, zu dieser einen Frage.</div>
+    <div><b>Lesezeichen oben</b>Fragen, alle Hinweise als Karteikarten, frühere Fälle als Mappen.</div>
+  </div>
+</div>
+<script>
+var D=__DATA__;
+var PAL=D.pal, RGBI=D.rgbi, FONT=D.font;
+// ---------------------------------------------------------------- Pixelpuffer mit Palettenindizes
+var NAMES={}; Object.keys(PAL).forEach(function(n,i){}); (function(){ var i=0; for (var n in PAL){ NAMES[n]=RGBI.indexOf(PAL[n]); } })();
+function C(n){ return NAMES[n]; }
+var BAY=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5]; function bay(x,y){ return (BAY[(y&3)*4+(x&3)]+0.5)/16; }
+function hsh(x,y){ var h=(x*374761393+y*668265263)|0; h=(h^(h>>>13))*1274126177|0; return ((h^(h>>>16))>>>0)/4294967296; }
+var B={w:0,h:0,d:null,maxY:0};
+function newBuf(w,h){ B.w=w; B.h=h; B.d=new Int16Array(w*h); B.d.fill(-1); B.maxY=0; }
+function px(x,y,c){ x|=0; y|=0; if (x<0||y<0||x>=B.w||y>=B.h||c===undefined||c<0) return; B.d[y*B.w+x]=c; if (y>B.maxY) B.maxY=y; }
+function get(x,y){ if (x<0||y<0||x>=B.w||y>=B.h) return -1; return B.d[y*B.w+x]; }
+function rect(x,y,w,h,c){ for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++) px(i,j,c); }
+function hl(x0,x1,y,c){ for (var i=x0;i<=x1;i++) px(i,y,c); }
+function vl(x,y0,y1,c){ for (var j=y0;j<=y1;j++) px(x,j,c); }
+function frame(x,y,w,h,c){ hl(x,x+w-1,y,c); hl(x,x+w-1,y+h-1,c); vl(x,y,y+h-1,c); vl(x+w-1,y,y+h-1,c); }
+function drect(x,y,w,h,c1,c2,l){ for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++) px(i,j,bay(i,j)<l?c2:c1); }
+function shade(x,y,w,h,l){ for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++){ if (bay(i,j)>=l) continue; var c=get(i,j); if (c>=0) px(i,j,DN(c)); } }
+// dunkler: nächstdunklere Farbe derselben Rampe
+var RAMPS=['k0 k1 k2','n0 n1 n2 n3 n4 n5','s0 s1 s2 s3 s4 s5 s6','t0 t1 t2 t3 t4 t5','w0 w1 w2 w3 w4 w5','g0 g1 g2 g3 g4 g5','a0 a1 a2 a3 a4 a5 a6','b0 b1 b2 b3 b4 b5','y0 y1 y2 y3 y4 y5','r0 r1 r2 r3 r4','m0 m1 m2 m3 m4','e0 e1 e2 e3 e4','x0 x1 x2 x3 x4 x5 x6','h0 h1 h2 h3','p0 p1 p2 p3 p4 p5','c0 c1 c2 c3 c4','q0 q1 q2 q3 q4','d0 d1 d2 d3 d4 d5 d6','v0 v1 v2 v3 v4 v5','l0 l1'];
+var DNM={}; RAMPS.forEach(function(r){ var a=r.split(' ').map(C); for (var i=0;i<a.length;i++) DNM[a[i]]=a[Math.max(0,i-1)]; });
+function DN(c){ return DNM[c]!==undefined?DNM[c]:C('k0'); }
+// Schrift des Spiels
+function glyph(ch){ return FONT[ch]||FONT[ch.toLowerCase()]||FONT['?']; }
+function tw(s,sc){ sc=sc||1; var w=0; for (var i=0;i<s.length;i++) w+=(glyph(s[i])[0]+1)*sc; return Math.max(0,w-sc); }
+function text(s,x,y,c,sc,sh){ sc=sc||1; var cx=x; for (var i=0;i<s.length;i++){ var g=glyph(s[i]), p=g[1]; for (var k=0;k<p.length;k+=2){ if (sh!==undefined) rect(cx+p[k]*sc+sc,y+p[k+1]*sc+sc,sc,sc,sh); rect(cx+p[k]*sc,y+p[k+1]*sc,sc,sc,c); } cx+=(g[0]+1)*sc; } return cx; }
+function wrap(s,w,sc){ var out=[]; String(s).split('\n').forEach(function(par){ var cur=''; par.split(' ').forEach(function(wd){ var t=cur?cur+' '+wd:wd; if (tw(t,sc)>w && cur){ out.push(cur); cur=wd; } else cur=t; }); out.push(cur); }); return out; }
+function para(s,x,y,w,c,lh,sc){ var L=wrap(s,w,sc); L.forEach(function(l,i){ text(l,x,y+i*(lh||10),c,sc); }); return L.length*(lh||10); }
+// Bilder aus dem Spiel (Indizes)
+function blit(im,x,y,sx,sy,w,h,fade){ sx=sx||0; sy=sy||0; w=w||im.w; h=h||im.h; for (var j=0;j<h;j++){ var row=im.rows[sy+j]; if (!row) continue; for (var i=0;i<w;i++){ var ch=row.charCodeAt(sx+i); if (ch===46||isNaN(ch)) continue; var c=ch-48; if (fade && bay(x+i,y+j)<fade) c=C('s5'); px(x+i,y+j,c); } } }
+
+// ---------------------------------------------------------------- Inhalt
+var NOTES={
+  cj_fear:{g:'Jakov',s:'„Morgen kommen sie.“',t:'Jakov in der Nacht: „Morgen kommen sie. Mit Schaufeln und einem Lastwagen.“',p:'p_jakov',src:'Sustipan, Donnerstagnacht'},
+  cj_1958:{g:'Jakov',s:'Für ihn ist es 1958',t:'Für Jakov ist es 1958, der Tag vor der Räumung des Friedhofs. Morgen sollen die Gräber nach Lovrinac.',p:'p_jakov',src:'Sustipan, Gespräch mit Jakov'},
+  cj_anka:{g:'Anka',s:'Er nennt Mala Anka',t:'Jakov hält Mala für ein Mädchen namens Anka: „Geh nicht so nah ans Wasser, Anka.“',p:'p_mala',src:'Sustipan, Mala spricht mit Jakov'},
+  cj_moss:{g:'Anka',s:'Ein Stein, richtig herum',t:'Unter dem Efeu: ein kleiner Grabstein, als einziger richtig herum. Verwittert, nur „NAŠA MALA“ ist noch zu lesen.',p:'p_mala',src:'Sustipan, Efeu an der Mauer'},
+  cj_stone:{g:'Anka',s:'Anka, 1941 – 1947',t:'Durchreibung des Steins: „ANKA · 3. V. 1941 – 9. II. 1947 · NAŠA MALA“. Kein Nachname.',p:'i_zeitung',item:1,src:'Durchreibung mit Zeitung und Kreide'},
+  cj_stipe:{g:'Anka',s:'Der leere Sarg',t:'Stipe: Jakov Matošić, der Totengräber. Seine Anka starb 1947. Bei der Räumung 1958 war ihr Sarg leer. Jakov schwieg; 1959 fand man ihn tot auf der Bank.',p:'p_stipe',src:'Bar „Bura“, nach der Briškula',heard:['Stipe','„Leer! Die Polizei hat Jakov drei Tage gefragt. Er hat nichts gesagt.“']},
+  cj_zdenka:{g:'Anka',s:'Sieben Fähren, unser Baum',t:'Zdenka: Anka zählte jeden Abend die Fähren, bei der siebten schlief sie ein. Zu ihrer Geburt pflanzte Jakov eine Pinie – „naš bor“, unser Baum.',p:'p_zdenka',src:'Veli Varoš, Gespräch mit Zdenka',heard:['Zdenka','„Bei der siebten ist sie immer eingeschlafen.“'],isNew:1},
+  cj_path:{g:'Ankas Baum',s:'Bis zur dritten Pinie',t:'Jakov fegt immer denselben Weg: von der Bank bis zur dritten Pinie. Dort kehrt er um, als stünde da eine Wand.',p:'p_jakov',src:'Sustipan, Jakov beobachtet'},
+  cj_tree:{g:'Ankas Baum',s:'„Unter unserem Baum“',t:'Jakov zu „Anka“: „Unter unserem Baum, ja. Da finden sie dich nicht. Da habe ich dich selbst hingelegt …“',p:'p_jakov',src:'Sustipan, Mala redet mit ihm wie Anka',heard:['Jakov','„… ganz tief, zwischen die Wurzeln. In der Nacht, mit der Laterne …“'],isNew:1},
+  cj_roots:{g:'Ankas Baum',s:'Unter der dritten Pinie',t:'Mala spürt unter der dritten Pinie etwas Kleines, das schläft. „Sie hat keine Angst.“',p:'p_mala',src:'Sustipan, Mala spürt die Pinien'}
+};
+var ORDER=['cj_fear','cj_1958','cj_anka','cj_moss','cj_stone','cj_stipe','cj_zdenka','cj_path','cj_tree','cj_roots'];
+function key(a,b){ return [a,b].sort().join('+'); }
+var QS=[
+  {id:'angst',t:'Wovor hat Jakov Angst?',kind:'done',sub:'im Gespräch beantwortet',ev:['cj_fear','cj_1958'],ans:'Für ihn ist es 1958, die Nacht vor der Räumung. Morgen sollen die Gräber nach Lovrinac – auch das seiner Tochter.'},
+  {id:'wer',t:'Wer war Anka?',kind:'open',lead:'Auf dem Stein steht nur ein Vorname. Welche zwei Hinweise zeigen, wer sie war?',ok:key('cj_stone','cj_stipe'),
+    ans:'Anka Matošić, Jakovs Tochter. Sie starb im Februar 1947 an Diphtherie, fünf Jahre alt. Ihren Stein hat er selbst richtig herum in die Mauer gesetzt.',near:{},
+    hints:['Auf dem Stein steht nur „Anka“. Wer war ihr Vater?','Wer kennt in Split jeden Toten persönlich? Einer hat dir den Nachnamen genannt.','Der Stein in der Mauer und das, was Stipe erzählt hat.','„Anka, 1941 – 1947“ und „Der leere Sarg“.']},
+  {id:'wo',t:'Wo liegt Anka heute?',kind:'open',lead:'Sie sollte in Lovrinac liegen, bei allen aus Sustipan. Welche zwei Hinweise zeigen, wo sie wirklich ist?',ok:key('cj_stipe','cj_tree'),
+    ans:'Jakov hat sie in der Nacht vor der Räumung selbst umgebettet – unter ihren Baum, die dritte Pinie. Deshalb war der Sarg leer. Kein Name steht dort.',near:{},
+    hints:['Jakov hat sie „selbst hingelegt“. Und ihr Sarg war 1958 leer.','Wann hat er sie unter den Baum gelegt? Und warum war der Sarg leer?','Der leere Sarg und „Unter unserem Baum“ gehören zusammen.','„Der leere Sarg“ und „„Unter unserem Baum““.'],unlock:'grab'},
+  {id:'grab',t:'Was fehlt an ihrem Grab?',kind:'task',locked:true,sub:'in Sustipan lösen',
+    tasks:[['Ihr ganzer Name','Vorname und Daten vom Stein, Nachname von Stipe',true],['Mit Kreide an die Pinie','Sanja hat Kreide',false],['Ein Licht','Grablicht von Mira – am Wasser ist es windig',false]],
+    hints:['Unter der dritten Pinie liegt Anka. Kein Name steht dort.','Ein Name muss nicht gemeißelt sein. Und auf jedes Grab gehört ein Licht.','Kreide hat Sanja in der „Bura“, Grablichter hat Mira am Kiosk.','Kreide an den Pinien benutzen, dann das Grablicht – angezündet im Windschatten der Mauer.']},
+  {id:'hidden',t:'Eine Frage hat sich noch nicht gestellt.',kind:'lock'}
+];
+function Q(id){ for (var i=0;i<QS.length;i++) if (QS[i].id===id) return QS[i]; }
+var NW=Q('wer').near, NO=Q('wo').near;
+NW[key('cj_anka','cj_stone')]='Er nennt Mala Anka, und auf dem Stein steht Anka. Aber wessen Kind war sie? Mir fehlt ein Nachname.';
+NW[key('cj_zdenka','cj_stone')]='Zdenka kannte sie, der Stein nennt die Jahre. Aber wie hieß sie ganz? Das hat mir jemand anderes gesagt.';
+NW[key('cj_moss','cj_stipe')]='„Naša mala“ und Stipes Geschichte. Ich ahne es. Aber ohne ihre Jahre kann ich es nicht belegen.';
+NO[key('cj_stipe','cj_path')]='Ihr Sarg war leer, und er fegt bis zur dritten Pinie. Das kann Zufall sein. Was hat er mit diesem Baum zu tun?';
+NO[key('cj_stipe','cj_roots')]='Unter der Pinie schläft etwas. Ihr Sarg war leer. Ich ahne es, aber ich will es von ihm hören. Er sagt es nur Anka.';
+NO[key('cj_zdenka','cj_path')]='Die dritte Pinie ist ihr Baum, und dort hört sein Weg auf. Aber heißt das, dass sie dort liegt? Sie liegt in Lovrinac – oder?';
+NO[key('cj_tree','cj_path')]='Ihr Baum, sein Weg. Aber Anka liegt in Lovrinac, bei allen anderen. Wenn nicht, muss damals etwas passiert sein.';
+NO[key('cj_tree','cj_roots')]='Er hat sie selbst hingelegt, und unter dem Baum schläft etwas. Aber wann? Und warum weiß das niemand?';
+NO[key('cj_zdenka','cj_stipe')]='Ein Baum zu ihrer Geburt, ein leerer Sarg nach der Räumung. Das passt. Aber nur Jakov weiß es sicher.';
+var ARCH=[
+  {t:'Erster Fall',s:'Das Boot um sieben',n:'4 von 4',q:[['Warum kam Tonći nicht?','Die Fähre fiel wegen der Bura aus; er fuhr mit der ANKICA.'],['Was ist mit der ANKICA passiert?','Sie kenterte vor Sustipan. Dinko wurde gerettet.'],['Kann Ivka gehen?','Ja. Mala hat sie hinübergebracht.']]},
+  {t:'Zwischenspiel',s:'Ein gewöhnlicher Morgen',n:'erledigt',q:[['Was ist Mala?','Sie weiß es selbst nicht. Noch nicht.']]},
+  {t:'Zweiter Fall',s:'Das letzte Schiff nach Ancona',n:'5 von 5',q:[['Auf wen wartet Luka?','Auf Nina, August 1999. Sie wartete am Kiosk, er an der Rampe.'],['Was gehört Nina?','Ihr Ticket. Luka hat es all die Jahre aufgehoben.']]}
+];
+
+// ---------------------------------------------------------------- Zustand
+var S;
+function fresh(){ return {tab:'q',sel:'wo',detail:false,done:{angst:1},slots:[],read:null,hints:{},miss:{},seen:{},unlocked:{},fb:null,arch:{}}; }
+function load(){ try{ var j=localStorage.getItem('akte.px.v1'); if (j){ S=Object.assign(fresh(),JSON.parse(j)); return; } }catch(e){} S=fresh(); }
+function save(){ try{ var o=Object.assign({},S); localStorage.setItem('akte.px.v1',JSON.stringify(o)); }catch(e){} }
+var ANIM={thread:null,shake:0,stamp:0};
+function usedIn(id){ return QS.filter(function(q){ return S.done[q.id] && (q.ev?q.ev.indexOf(id)>=0:(q.ok&&q.ok.split('+').indexOf(id)>=0)); }); }
+function vis(q){ return !(q.locked && !S.unlocked[q.id]); }
+function say(s){ var l=document.getElementById('live'); l.textContent=s; }
+
+// ---------------------------------------------------------------- Zeichnen
+var R=[];   // Trefferflächen
+function hit(x,y,w,h,act,id){ R.push({x:x,y:y,w:w,h:h,act:act,id:id}); }
+var HOVER=null;
+function isHot(id){ return HOVER===id; }
+
+function desk(W,H){ for (var y=0;y<H;y++) for (var x=0;x<W;x++){ var g=Math.sin(y*0.31+Math.sin(x*0.013)*2.2)+hsh(x>>3,y)*0.6, c=g>1.05?C('w1'):(g<-0.9?C('h1'):C('w0'));
+  var vx=(x-W/2)/(W*0.62), vy=(y-H/2)/(H*0.8), v=vx*vx+vy*vy; if (v>0.55 && bay(x,y)<(v-0.55)*1.4) c=C('k1'); px(x,y,c); } }
+function paperPage(x,y,w,h,margin){ for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++){ var c=C('s5'); if (hsh(i,j)<0.05) c=C('s4'); else if (hsh(i+3,j)>0.985) c=C('s6'); px(i,j,c); }
+  for (var ly=y+18;ly<y+h-2;ly+=11) for (var i2=x+2;i2<x+w-2;i2++) if (get(i2,ly)===C('s5')||get(i2,ly)===C('s4')) px(i2,ly,bay(i2,ly)<0.6?C('b4'):C('s5'));
+  if (margin) vl(x+margin,y,y+h-1,C('r4')); }
+function cover(x,y,w,h){ rect(x,y,w,h,C('t1')); for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++) if (hsh(i,j)<0.12) px(i,j,C('t0')); else if (hsh(i+7,j)>0.94) px(i,j,C('t2'));
+  frame(x,y,w,h,C('k1')); hl(x+1,x+w-2,y+1,C('t2')); hl(x+1,x+w-2,y+h-2,C('t0'));
+  // Nähte
+  for (var i3=x+3;i3<x+w-3;i3+=3){ px(i3,y+3,C('t3')); px(i3,y+h-4,C('t3')); } for (var j3=y+3;j3<y+h-3;j3+=3){ px(x+3,j3,C('t3')); px(x+w-4,j3,C('t3')); } }
+function spine(x,y,h){ for (var j=y;j<y+h;j++){ px(x-3,j,C('s4')); px(x-2,j,C('s3')); px(x-1,j,C('s2')); px(x,j,C('k2')); px(x+1,j,C('s2')); px(x+2,j,C('s3')); px(x+3,j,C('s4')); } }
+function label(s,x,y,c){ text(s.toUpperCase(),x,y,c||C('s2')); }
+function pin(x,y,col){ col=col||'r'; px(x+1,y+3,C('k1')); px(x+2,y+3,C('k1')); rect(x,y,3,3,C(col+'3')); px(x,y,C(col+'4')); px(x+2,y+2,C(col+'2')); px(x+1,y+1,C(col+'4')); }
+function tick(x,y,c){ px(x,y+3,c); px(x+1,y+4,c); px(x+2,y+5,c); px(x+3,y+4,c); px(x+4,y+3,c); px(x+5,y+2,c); px(x+6,y+1,c); px(x+1,y+3,c); px(x+2,y+4,c); }
+function box(x,y,kind,hot){ var c=kind==='done'?C('g2'):(kind==='task'?C('y2'):(kind==='lock'?C('s3'):C('r2'))); rect(x,y,9,9,C('s6')); frame(x,y,9,9,c); if (hot) frame(x-1,y-1,11,11,C('r3'));
+  if (kind==='done') tick(x+1,y+1,C('g2')); else if (kind==='task'){ vl(x+4,y+2,y+5,C('y2')); px(x+4,y+7,C('y2')); } else if (kind==='lock'){ text('?',x+3,y+1,C('s3')); } }
+function highlighter(x,y,w,h){ for (var j=y;j<y+h;j++) for (var i=x;i<x+w;i++){ var c=get(i,j); if (c===C('s5')||c===C('s4')||c===C('b4')||c===C('s6')) px(i,j,bay(i,j)<0.75?C('y4'):C('y5')); } }
+function photoOf(id){ var n=NOTES[id], im=D.img[n.p]; return {im:im,sx:n.item?0:11,sy:n.item?0:4,w:n.item?32:34,h:n.item?28:34,item:n.item}; }
+// Polaroid: 56 breit, Bildausschnitt 38×36, Titel bis drei Zeilen (feste Höhe, damit die Reihen ruhig stehen)
+var PW=56;
+function polaroid(id,x,y,o){ o=o||{}; var n=NOTES[id], lines=wrap(n.s,PW-6), h=4+36+3+3*9+3, lift=o.sel?-2:0; x+=0; y+=lift;
+  // Schatten
+  for (var j=y+2;j<y+h+2;j++) for (var i=x+2;i<x+PW+2;i++) if (bay(i,j)<(o.sel?0.75:0.5)){ var c=get(i,j); if (c>=0) px(i,j,DN(DN(c))); }
+  rect(x,y,PW,h,C('s6')); frame(x,y,PW,h,o.sel?C('r2'):C('s3')); if (o.sel) frame(x-1,y-1,PW+2,h+2,C('r3'));
+  else if (o.hot) frame(x-1,y-1,PW+2,h+2,C('y3'));
+  var fx=x+9; rect(fx,y+4,38,36,C('k2')); var p=photoOf(id);
+  if (p.item){ rect(fx,y+4,38,36,C('e3')); drect(fx,y+4,38,36,C('e3'),C('e4'),0.3); blit(p.im,fx+3,y+8,0,0,32,28,o.used?0.45:0); }
+  else blit(p.im,fx+2,y+5,p.sx,p.sy,34,34,o.used?0.45:0);
+  frame(fx,y+4,38,36,C('s2'));
+  lines.slice(0,3).forEach(function(l,i){ text(l,x+3,y+43+i*9,o.used?C('s2'):C('n1')); });
+  pin(x+PW/2-1,y-1,o.sel?'r':(o.used?'g':'r'));
+  if (o.isNew){ rect(x+PW-14,y-4,15,7,C('r2')); text('neu',x+PW-13,y-4+0,C('s6')); }
+  if (o.used) tick(x+PW-10,y+h-9,C('g2'));
+  return h; }
+function slotFrame(x,y,w,h,hot){ for (var i=x;i<x+w;i++){ if (((i-x)>>1)%2===0){ px(i,y,C('s2')); px(i,y+h-1,C('s2')); } } for (var j=y;j<y+h;j++){ if (((j-y)>>1)%2===0){ px(x,j,C('s2')); px(x+w-1,j,C('s2')); } }
+  if (hot) frame(x-1,y-1,w+2,h+2,C('y3')); }
+function stampBtn(x,y,w,h,s,on,hot){ var bg=on?(hot?C('r3'):C('r2')):C('s3'); rect(x,y,w,h,bg); frame(x,y,w,h,on?C('r1'):C('s2')); hl(x+1,x+w-2,y+1,on?C('r4'):C('s4')); hl(x+1,x+w-2,y+h-2,on?C('r1'):C('s2'));
+  text(s,x+Math.floor((w-tw(s))/2),y+Math.floor((h-7)/2),on?C('s6'):C('s5')); }
+function linkBtn(s,x,y,id,act,c){ var w=tw(s); text(s,x,y,isHot(id)?C('r3'):(c||C('n2'))); hl(x,x+w-1,y+9,isHot(id)?C('r3'):C('s3')); hit(x-2,y-2,w+4,13,act,id); return w; }
+// Sprechkasten wie im Spiel (dunkel, mit Porträt)
+function speech(x,y,w,who,s,warn){ var L=wrap(s,w-50), h=Math.max(36,L.length*10+16); rect(x,y,w,h,C('k1')); frame(x,y,w,h,warn?C('y3'):C('s3')); frame(x+1,y+1,w-2,h-2,C('k2'));
+  var im=D.img.p_marko; rect(x+4,y+4,34,28,C('n0')); blit(im,x+4,y+4,11,8,34,28); frame(x+4,y+4,34,28,C('s2'));
+  text(who,x+44,y+4,warn?C('y4'):C('s3')); L.forEach(function(l,i){ text(l,x+44,y+14+i*10,C('s5')); }); return h; }
+function postit(x,y,w,q){ var k=S.hints[q.id]||0, lines=[]; for (var i=0;i<k;i++) lines=lines.concat(wrap((i+1)+'. '+q.hints[i],w-12)).concat(['']);
+  var btn=k<4?(k?'Noch ein Tipp ('+(k+1)+'/4)':'Ich komme nicht weiter'):'Das war der letzte Tipp.';
+  var h=8+(lines.length?lines.length*9:0)+14; rect(x,y,w,h,C('y4')); for (var j=y;j<y+h;j++) for (var ii=x;ii<x+w;ii++) if (hsh(ii,j)<0.05) px(ii,j,C('y3'));
+  rect(x,y,w,3,C('y3')); for (var s2=x+w-6;s2<x+w;s2++) for (var t2=y+h-6+(x+w-s2);t2<y+h;t2++) px(s2,t2,-1); // Eselsohr weg
+  for (var e=0;e<6;e++){ px(x+w-6+e,y+h-1-e,C('y2')); }
+  // Klebestreifen
+  drect(x+w/2-10,y-3,20,6,C('s5'),C('s6'),0.5);
+  var yy=y+7; lines.forEach(function(l){ if (l) text(l,x+6,yy,C('y0')); yy+=9; });
+  if (k<4){ var bw=linkBtn(btn,x+6,yy+1,'hint',function(){ S.hints[q.id]=k+1; save(); say(q.hints[k]); draw(); },C('y1')); } else text(btn,x+6,yy+1,C('y1'));
+  return h; }
+function stamp(x,y,s,c){ var w=tw(s,2)+10; frame(x,y,w,20,c); frame(x+1,y+1,w-2,18,c); text(s,x+5,y+3,c,2); for (var j=y;j<y+20;j++) for (var i=x;i<x+w;i++) if (hsh(i,j)<0.12 && get(i,j)===c) px(i,j,C('s5')); return w; }
+function thread(x0,y0,x1,y1,t){ var n=Math.max(20,Math.abs(x1-x0)+Math.abs(y1-y0)), sag=10+Math.abs(x1-x0)*0.08;
+  for (var i=0;i<=n*t;i++){ var u=i/n, x=x0+(x1-x0)*u, y=y0+(y1-y0)*u+Math.sin(Math.PI*u)*sag; px(Math.round(x),Math.round(y)+1,C('r0')); px(Math.round(x),Math.round(y),C('r3')); } }
+
+// ---------------------------------------------------------------- Seiten
+function drawQList(x,y,w,narrow){ var yy=y;
+  label('Offene Fragen',x,yy); yy+=14;
+  var open=QS.filter(function(q){ return !S.done[q.id] && (q.kind==='open'||q.kind==='task') && vis(q); }), done=QS.filter(function(q){ return S.done[q.id]; });
+  function row(q){ var kind=S.done[q.id]?'done':q.kind, L=wrap(q.t,w-18), sub=S.done[q.id]?(q.sub||'beantwortet'):(q.kind==='task'?q.sub:(q.kind==='lock'?'':'offen')), h=L.length*10+(sub?10:0)+4, sel=S.sel===q.id&&!narrow, id='q:'+q.id;
+    if (sel) highlighter(x+12,yy-2,w-12,L.length*10+1);
+    box(x,yy,kind,isHot(id)&&kind!=='lock');
+    L.forEach(function(l,i){ text(l,x+14,yy+1+i*10,kind==='done'?C('s1'):(kind==='lock'?C('s3'):C('n1'))); });
+    if (q.locked && S.unlocked[q.id] && !S.seen[q.id]){ var ex=x+14+tw(L[L.length-1])+4; rect(ex,yy+(L.length-1)*10,15,8,C('r2')); text('neu',ex+1,yy+(L.length-1)*10,C('s6')); }
+    if (sub) text(sub,x+14,yy+1+L.length*10,C('s2'));
+    if (kind!=='lock') hit(x-2,yy-2,w+2,h,function(){ S.sel=q.id; S.slots=[]; S.read=null; S.fb=null; S.seen[q.id]=1; S.detail=true; save(); say(q.t); draw(); },id);
+    yy+=h+4; }
+  open.forEach(row); if (!open.length){ text('Keine offene Frage.',x+14,yy,C('s2')); yy+=14; }
+  yy+=4; label('Beantwortet',x,yy); yy+=14; done.forEach(row); QS.filter(function(q){ return q.kind==='lock'; }).forEach(row);
+  var tot=QS.filter(function(q){ return q.kind!=='lock'; }).length, nd=Object.keys(S.done).length; yy+=6;
+  text(nd+' von '+tot+' beantwortet',x,yy,C('s2')); yy+=11; frame(x,yy,w-4,6,C('s2')); rect(x+1,yy+1,Math.round((w-6)*nd/tot),4,C('g3')); hl(x+1,x+Math.round((w-6)*nd/tot),yy+1,C('g4'));
+  return yy+10-y; }
+function drawDetail(x,y,w,narrow){ var q=Q(S.sel), yy=y;
+  if (narrow){ linkBtn('< Alle Fragen',x,yy,'back',function(){ S.detail=false; save(); draw(); }); yy+=16; }
+  var big=!narrow && tw(q.t,2)<=w; if (big){ text(q.t,x,yy,C('r2'),2); yy+=20; } else { yy+=para(q.t,x,yy,w,C('r2'),10)+4; }
+  if (S.done[q.id]){ var ev=q.ev||q.ok.split('+'), st=Date.now()-ANIM.stamp;
+    stamp(x,yy,'GELÖST',C('g2')); yy+=28;
+    var L=wrap(q.ans,w-14); rect(x,yy,w,L.length*10+10,C('s6')); vl(x,yy,yy+L.length*10+9,C('g3')); vl(x+1,yy,yy+L.length*10+9,C('g3')); L.forEach(function(l,i){ text(l,x+8,yy+5+i*10,C('n1')); }); yy+=L.length*10+20;
+    var gap=narrow?Math.max(8,w-2*PW-4):Math.min(80,w-2*PW-10), xa=x+4, xb=xa+PW+gap, ha=polaroid(ev[0],xa,yy,{}), hb=polaroid(ev[1],xb,yy,{});
+    var tt=ANIM.thread===q.id?Math.min(1,(Date.now()-ANIM.t0)/700):1; thread(xa+PW/2,yy+1,xb+PW/2,yy+1,tt); pin(xa+PW/2-1,yy-1); pin(xb+PW/2-1,yy-1);
+    yy+=Math.max(ha,hb)+8; text(NOTES[ev[0]].src,xa,yy,C('s2')); yy+=10; text(NOTES[ev[1]].src,xa,yy,C('s2')); yy+=14;
+    if (tt<1) requestAnimationFrame(draw); else if (ANIM.thread===q.id) ANIM.thread=null;
+    return yy-y; }
+  if (q.kind==='task'){ yy+=para('Diese Frage löst du nicht im Notizbuch, sondern in Sustipan. Hier steht, was schon da ist.',x,yy,w,C('s1'))+6;
+    q.tasks.forEach(function(t){ box(x,yy,t[2]?'done':'open'); text(t[0],x+14,yy+1,t[2]?C('s1'):C('n1')); yy+=10; yy+=para(t[1],x+14,yy+1,w-14,C('s2'))+6; });
+    yy+=6; yy+=postit(x,yy+4,Math.min(w,240),q)+10; return yy-y; }
+  yy+=para(q.lead,x,yy,w,C('s1'))+8;
+  // Belegfelder und Knopf
+  var sx=ANIM.shake&&Date.now()-ANIM.shake<320?Math.round(Math.sin((Date.now()-ANIM.shake)/22)*2):0; if (sx||ANIM.shake&&Date.now()-ANIM.shake<320) requestAnimationFrame(draw);
+  var sw=PW+8, sh=84, btnw=Math.max(70,tw('Beantworten')+16), oneRow=w>=sw*2+20+btnw+8;
+  var sg=Math.max(4,Math.min(20,w-2*sw));
+  [0,1].forEach(function(i){ var bx=x+sx+i*(sw+sg), id=S.slots[i], hid='slot'+i; slotFrame(bx,yy,sw,sh,isHot(hid));
+    if (id){ polaroid(id,bx+4,yy+4,{}); hit(bx,yy,sw,sh,function(){ S.slots.splice(i,1); S.fb=null; save(); draw(); },hid); text('x',bx+sw-7,yy+1,C('r2')); }
+    else { var ph=wrap('Beleg '+(i+1),sw-6); ph.forEach(function(l,k){ text(l,bx+Math.floor((sw-tw(l))/2),yy+28+k*10,C('s3')); }); } });
+  if (sg>=10) text('+',x+sx+sw+Math.floor(sg/2)-1,yy+30,C('s2'));
+  var bxx=oneRow?x+sw*2+sg+8:x, byy=oneRow?yy+sh/2-9:yy+sh+8, can=S.slots.length===2;
+  stampBtn(bxx,byy,btnw,18,'Beantworten',can,isHot('ans')); if (can) hit(bxx,byy,btnw,18,answer,'ans');
+  yy+=sh+(oneRow?10:34);
+  if (S.read){ var n=NOTES[S.read], L2=wrap(n.t,w-16); var hh=L2.length*10+22; rect(x,yy,w,hh,C('s6')); frame(x,yy,w,hh,C('s3')); hl(x+1,x+w-2,yy+11,C('b4'));
+    text(n.s,x+6,yy+2,C('r2')); L2.forEach(function(l,i){ text(l,x+6,yy+14+i*10,C('n1')); }); yy+=hh+8; }
+  if (S.fb){ yy+=speech(x,yy,w,S.fb.near?'Marko · knapp daneben':'Marko',S.fb.t,S.fb.near)+8; }
+  label('Meine Hinweise zu diesem Fall',x,yy+2); yy+=16;
+  var cols=Math.max(2,Math.floor((w+6)/(PW+8))), cx=0, rowH=0, gx=Math.floor((w-cols*PW)/Math.max(1,cols-1));
+  ORDER.forEach(function(id,i){ var col=i%cols; if (col===0 && i){ yy+=rowH+10; rowH=0; } var px0=x+col*(PW+gx), sel=S.slots.indexOf(id)>=0, used=usedIn(id).length>0, hid='c:'+id;
+    var h=polaroid(id,px0,yy+3,{sel:sel,used:used,hot:isHot(hid),isNew:NOTES[id].isNew&&!S.seen['n_'+id]}); rowH=Math.max(rowH,h+4);
+    hit(px0-1,yy,PW+2,h+6,function(){ toggle(id); },hid); });
+  yy+=rowH+14;
+  if ((S.miss[q.id]||0)>=2 && !(S.hints[q.id])){ text('Zweimal daneben? Ein Tipp hilft.',x,yy,C('y1')); yy+=12; }
+  yy+=postit(x,yy+4,Math.min(w,260),q)+12;
+  return yy-y; }
+function toggle(id){ S.seen['n_'+id]=1; var i=S.slots.indexOf(id); if (i>=0){ S.slots.splice(i,1); if (S.read===id) S.read=null; } else { if (S.slots.length>=2) S.slots.shift(); S.slots.push(id); S.read=id; } S.fb=null; save(); say(NOTES[id].s+': '+NOTES[id].t); draw(); }
+function answer(){ var q=Q(S.sel), k=key(S.slots[0],S.slots[1]);
+  if (k===q.ok){ S.done[q.id]=1; S.slots=[]; S.read=null; S.fb=null; if (q.unlock) S.unlocked[q.unlock]=1; ANIM.thread=q.id; ANIM.t0=Date.now(); ANIM.stamp=Date.now(); save(); say('Gelöst. '+q.ans); draw(); return; }
+  S.miss[q.id]=(S.miss[q.id]||0)+1; var near=q.near[k]; S.fb={near:!!near,t:near||'Das beantwortet die Frage nicht. Die beiden haben miteinander wenig zu tun.'}; ANIM.shake=Date.now(); save(); say(S.fb.t); draw(); }
+
+function drawNotes(x,y,w){ var yy=y, cw=w>=360?Math.floor((w-10)/2):w, cols=w>=360?2:1;
+  ['Jakov','Anka','Ankas Baum'].forEach(function(g){ label(g,x,yy); hl(x+tw(g.toUpperCase())+4,x+w-1,yy+4,C('s3')); yy+=14;
+    var ids=ORDER.filter(function(id){ return NOTES[id].g===g; }), colY=[yy,yy];
+    ids.forEach(function(id,i){ var c=cols===2?(colY[0]<=colY[1]?0:1):0, cx=x+c*(cw+10), cy=colY[c], n=NOTES[id], L=wrap(n.t,cw-56), u=usedIn(id);
+      var hq=n.heard?wrap(n.heard[0]+': '+n.heard[1],cw-62):[], h=Math.max(46,14+L.length*10+12+(hq.length?hq.length*9+8:0)+(u.length?12:0));
+      rect(cx,cy,cw,h,C('s6')); frame(cx,cy,cw,h,C('s3')); hl(cx+1,cx+cw-2,cy+12,C('r4'));
+      for (var j=cy+23;j<cy+h-2;j+=10) for (var ii=cx+48;ii<cx+cw-3;ii++) if (bay(ii,j)<0.5) px(ii,j,C('b4'));
+      var p=photoOf(id); rect(cx+4,cy+4,38,36,C('k2')); if (p.item){ rect(cx+4,cy+4,38,36,C('e3')); blit(p.im,cx+7,cy+8,0,0,32,28); } else blit(p.im,cx+6,cy+5,p.sx,p.sy,34,34); frame(cx+4,cy+4,38,36,C('s2'));
+      text(n.s,cx+48,cy+2,C('r2')); var ty=cy+15; L.forEach(function(l){ text(l,cx+48,ty,C('n1')); ty+=10; });
+      text(n.src,cx+48,ty+1,C('s2')); ty+=12;
+      if (hq.length){ rect(cx+46,ty,cw-50,hq.length*9+5,C('x5')); hq.forEach(function(l,k){ text(l,cx+49,ty+2+k*9,C('x1')); }); ty+=hq.length*9+8; }
+      if (u.length){ tick(cx+48,ty,C('g2')); text('belegt: '+u.map(function(q){ return q.t; }).join(', '),cx+58,ty+1,C('g2')); }
+      if (n.isNew && !S.seen['n_'+id]){ rect(cx+cw-17,cy-3,16,8,C('r2')); text('neu',cx+cw-16,cy-3,C('s6')); }
+      colY[c]=cy+h+8; });
+    yy=Math.max(colY[0],colY[1])+6; });
+  return yy-y; }
+function drawArch(x,y,w){ var yy=y; text('Gelöste Fälle bleiben nachlesbar, stehen aber nicht im Weg.',x,yy,C('s2')); yy+=16;
+  ARCH.forEach(function(a,i){ var open=!!S.arch[i], id='a:'+i, L=open?a.q.reduce(function(acc,q){ return acc.concat([['b',q[0]]],wrap(q[1],w-30).map(function(l){ return ['t',l]; })); },[]):[], h=24+(open?L.length*10+8:0);
+    // Mappe mit Reiter
+    rect(x+8,yy-5,50,6,C('e3')); hl(x+8,x+57,yy-5,C('e4'));
+    rect(x,yy,w,h,C('e3')); frame(x,yy,w,h,C('e1')); hl(x+1,x+w-2,yy+1,C('e4')); if (isHot(id)) frame(x-1,yy-1,w+2,h+2,C('y3'));
+    text(a.t+' · '+a.s,x+8,yy+8,C('e0')); var sw=stamp(x+w-tw('GELÖST',2)-16,yy+2,'GELÖST',C('g1'));
+    if (open){ var ty=yy+24; L.forEach(function(l){ text(l[1],x+(l[0]==='b'?10:18),ty,l[0]==='b'?C('r1'):C('e0')); ty+=10; }); }
+    hit(x,yy,w,h,function(){ S.arch[i]=!S.arch[i]; save(); draw(); },id); yy+=h+12; });
+  return yy-y; }
+
+// Lesezeichen
+var TABS=[['q','Fragen','r'],['n','Hinweise','b'],['a','Frühere Fälle','e']], TABS_N={a:'Archiv'};
+function drawTabs(x,y){ var xx=x; TABS.forEach(function(t){ var lab=(VW<400&&TABS_N[t[0]])||t[1], on=S.tab===t[0], w=tw(lab)+14, h=on?18:14, ty=y+(on?0:4), id='t:'+t[0], r=t[2];
+  var base=r==='r'?C('r2'):(r==='b'?C('b1'):C('e2')), lite=r==='r'?C('r3'):(r==='b'?C('b2'):C('e3')), dark=r==='r'?C('r1'):(r==='b'?C('b0'):C('e1'));
+  rect(xx,ty,w,h+6,isHot(id)&&!on?lite:base); vl(xx,ty,ty+h+5,dark); vl(xx+w-1,ty,ty+h+5,dark); hl(xx,xx+w-1,ty,dark); hl(xx+1,xx+w-2,ty+1,lite);
+  text(lab,xx+7,ty+4,C('s6'));
+  if (t[0]==='q'){ var n=QS.filter(function(q){ return !S.done[q.id]&&(q.kind==='open'||q.kind==='task')&&vis(q); }).length; if (n){ rect(xx+w-3,ty-5,9,9,C('y4')); frame(xx+w-3,ty-5,9,9,C('y1')); text(String(n),xx+w-1,ty-4,C('y0')); } }
+  hit(xx,ty,w,h,function(){ S.tab=t[0]; save(); draw(); },id); xx+=w+3; }); }
+
+// ---------------------------------------------------------------- Aufbau
+var cv=document.getElementById('cv'), ctx=cv.getContext('2d'), SCALE=2, VW=480;
+function layout(){ var avail=Math.min(document.querySelector('.wrap').clientWidth,1200); SCALE=avail>=1400?3:2; VW=Math.max(180,Math.min(560,Math.floor(avail/SCALE))); }
+function draw(){ var W=VW, narrow=W<400; R=[]; newBuf(W,2400);
+  var nbx=narrow?4:10, nby=24, nbw=W-nbx*2;
+  // erst Seiteninhalte auf eine Probe zeichnen, um die Höhe zu kennen: einfach groß zeichnen, Höhe aus dem Inhalt
+  desk(W,2400);
+  var pageY=nby+8, inner=nbw-16, H;
+  // Umschlag unter allem (Höhe später), daher zuerst Inhalt messen
+  var save0=B.d.slice(), R0=R.slice();
+  var contentH=measure(nbx,pageY,nbw,narrow);
+  B.d=save0; R=R0; H=Math.max(narrow?380:300,contentH+pageY+20);
+  cover(nbx-2,nby,nbw+4,H-nby-4);
+  drawTabs(nbx+14,nby-18);
+  var pg=pages(nbx,pageY,nbw,narrow,H-pageY-12);
+  // Kopf
+  var hx=pg.lx+22; text('Fallakte',hx,pageY+4,C('r1'),2);
+  text('Zwischenfall · Der Totengräber',hx,pageY+22,C('s2'));
+  var cy=pageY+36;
+  if (S.tab==='q'){ if (narrow){ if (S.detail) drawDetail(hx,cy,pg.lw-30,true); else drawQList(hx,cy,pg.lw-30,true); }
+    else { drawQList(hx,cy,pg.lw-30,false); drawDetail(pg.rx+14,pageY+8,pg.rw-26,false); } }
+  else if (S.tab==='n') drawNotes(hx,cy,(narrow?pg.lw:pg.lw+pg.rw+8)-30);
+  else drawArch(hx,cy,Math.min(narrow?pg.lw-30:460,(narrow?pg.lw:pg.lw+pg.rw)-30));
+  render(W,H); }
+function pages(nbx,y,nbw,narrow,h){ var lx=nbx+5, full=nbw-10;
+  if (narrow || S.tab!=='q'){ paperPage(lx,y,full,h,16); return {lx:lx,lw:full,rx:lx,rw:0}; }
+  var lw=Math.floor(full*0.38), rx=lx+lw; paperPage(lx,y,lw,h,16); paperPage(rx,y,full-lw,h,0); spine(rx,y,h); return {lx:lx,lw:lw,rx:rx,rw:full-lw}; }
+function measure(nbx,y,nbw,narrow){ var full=nbw-10, lx=nbx+5, hx=lx+22, cy=y+36, h=0;
+  var keepT=ANIM.thread; if (S.tab==='q'){ if (narrow) h=(S.detail?drawDetail(hx,cy,full-30,true):drawQList(hx,cy,full-30,true))+cy-y;
+    else { var lw=Math.floor(full*0.38); h=Math.max(drawQList(hx,cy,lw-30,false)+cy-y, drawDetail(lx+lw+14,y+8,full-lw-26,false)+8); } }
+  else if (S.tab==='n') h=drawNotes(hx,cy,full-30)+cy-y; else h=drawArch(hx,cy,Math.min(narrow?full-30:460,full-30))+cy-y;
+  ANIM.thread=keepT; return h; }
+function render(W,H){ cv.width=W; cv.height=H; cv.style.width=(W*SCALE)+'px'; cv.style.height=(H*SCALE)+'px';
+  var im=ctx.createImageData(W,H), rgb=RGBI.map(function(h){ return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; });
+  for (var i=0;i<W*H;i++){ var c=B.d[i]; if (c<0) c=C('k0'); var q=rgb[c]; im.data[i*4]=q[0]; im.data[i*4+1]=q[1]; im.data[i*4+2]=q[2]; im.data[i*4+3]=255; }
+  ctx.putImageData(im,0,0); }
+function at(e){ var r=cv.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*cv.width, y=(e.clientY-r.top)/r.height*cv.height;
+  for (var i=R.length-1;i>=0;i--){ var h=R[i]; if (x>=h.x&&x<h.x+h.w&&y>=h.y&&y<h.y+h.h) return h; } return null; }
+cv.addEventListener('click',function(e){ var h=at(e); if (h){ h.act(); } });
+cv.addEventListener('mousemove',function(e){ var h=at(e), id=h?h.id:null; cv.style.cursor=h?'pointer':'default'; if (id!==HOVER){ HOVER=id; draw(); } });
+cv.addEventListener('mouseleave',function(){ if (HOVER){ HOVER=null; draw(); } });
+document.getElementById('reset').onclick=function(){ S=fresh(); save(); draw(); };
+window.addEventListener('resize',function(){ layout(); draw(); });
+load(); layout(); draw();
+</script>
