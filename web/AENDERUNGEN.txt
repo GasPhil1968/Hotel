@@ -1,3 +1,15 @@
+DIE STILLEN – NACHTRAG 13. NOVEMBER 2026: FAHRT NACH SKELA ANSEHEN
+
+- Die Fahrt nach Skela (Taxi und Dinos Roller) lässt sich ohne Spielstand
+  ansehen: index.html?fahrt=skela (Taxi oder Roller wählen),
+  index.html?fahrt=zurueck (Rückfahrt), index.html?fahrt=nacht (Taxi in der
+  Samstagnacht). Es wird nichts gespeichert, danach kommt das Titelbild.
+- Im Spiel kommt die Fahrt bei jeder Reise nach Skela am Samstag, in der
+  Samstagnacht und am Sonntag und auf dem Rückweg – über den Stadtplan, das
+  Taxi am Busbahnhof und den Anruf bei Dino. Wer sie nicht sieht, spielt
+  meist noch eine alte, zwischengespeicherte Fassung: unten im Hauptmenü
+  muss „Fassung 13.11.2026“ stehen.
+
 DIE STILLEN – ÄNDERUNGEN: KAPITEL 3, ELF GRAFIKPUNKTE FÜR MOSTAR (12. NOVEMBER 2026)
 
 WAS SICH ÄNDERT (nur in Kapitel 3; die anderen Kapitel sehen aus wie vorher)

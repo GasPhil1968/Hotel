@@ -62,6 +62,15 @@ FIGUREN
 - In Mostar ist die Fahrt nach Skela zu sehen: das Taxi oder Dinos roter
   Roller fährt durchs Neretvatal, die Landschaft zieht vorbei, das Gespräch
   läuft dabei weiter; zurück fährt wieder das Taxi.
+  Die Fahrt kommt, wenn man am Samstag, in der Samstagnacht oder am Sonntag
+  nach Skela fährt (Stadtplan, Taxi am Busbahnhof oder Anruf bei Dino) und
+  wieder zurück; Finale und Epilog fahren mit Vlados Lastwagen ohne Bild.
+  Zum Ansehen ohne Spielstand: index.html?fahrt=skela (Taxi oder Roller
+  wählen), ?fahrt=zurueck, ?fahrt=nacht. Dabei wird nichts gespeichert,
+  danach kommt wieder das Titelbild.
+- Welche Fassung läuft, steht unten im Hauptmenü („Fassung …“). Neue
+  Fassungen lädt das Spiel erst auf dem Titelbild; im Zweifel die Seite bzw.
+  die App einmal ganz schließen und neu öffnen.
 
 MOSTAR
 - Kapitel 3 hat eine eigene, feinere Farbgebung: Kalkstein mit warmen

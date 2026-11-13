@@ -84,7 +84,7 @@ function shotCard(fb,t){ var u=t-CARD_AT; fb.rect(0,0,320,200,P.k0); music('titl
 // ---------------------------------------------------------------- Ablauf, Überspringen, Übergabe an das Titelbild
 M.introWanted=function(){ if (typeof window==='undefined' || typeof document==='undefined') return false; var q='';
   try{ q=location.search||''; }catch(e){}
-  if (/[?&]intro=1(&|$)/.test(q)) return true; if (/[?&]intro=0(&|$)/.test(q)) return false;
+  if (/[?&]intro=1(&|$)/.test(q)) return true; if (/[?&]intro=0(&|$)/.test(q) || /[?&]fahrt=/.test(q)) return false;   // ?fahrt=: Vorschau der Fahrt nach Skela (rooms/k3_fahrt.js)
   try{ if (navigator.webdriver) return false; }catch(e){}
   return lsGet('mala.intro')!=='0'; };
 M.introOn=function(v){ if (v===undefined) return lsGet('mala.intro')!=='0'; try{ localStorage.setItem('mala.intro',v?'1':'0'); }catch(e){} return v; };

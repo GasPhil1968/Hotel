@@ -52,3 +52,14 @@ Auswahl („Mit dem Taxi.“ / „Mit Dino auf dem Roller.“) und alles, was di
 | Übersetzungsprüfung | neu nur „Unterwegs“, „Taxifahrer“, „Dino“, „TAXI“; Kapitel 3 hat noch keine BHS-Fassung |
 
 Video: `design/fahrt/fahrten_skela.mp4` (aufgenommen mit `node design/tools/fahrtvideo.js design/fahrt`: Spielbild vierfach, mit Ton).
+
+## Vorschau ohne Spielstand (13.11.2026)
+
+`index.html?fahrt=skela` (Hinfahrt am Samstag, im Gespräch Taxi oder Roller wählen), `?fahrt=zurueck` (Rückfahrt mit dem Taxi),
+`?fahrt=nacht` (Taxi in der Samstagnacht). Das Intro wird übersprungen; vom Titelbild aus wird ein Samstagsstand nur im Speicher
+aufgebaut, die Reise läuft über `M.canTravel` wie im Spiel, danach lädt die Seite neu zum Titelbild. Gespeichert wird nichts (geprüft:
+Spielstände vorher und nachher gleich). Code: `M.k3RidePreview` am Ende von `game/src/rooms/k3_fahrt.js`.
+
+Anlass: „Taxi und Motorrad nicht gesehen“. Im Spiel liefen alle Wege (Stadtplan, Taxi am Busbahnhof, Anruf bei Dino) mit Szene; die
+wahrscheinlichste Ursache ist eine zwischengespeicherte ältere Fassung (unten im Hauptmenü „Fassung …“ prüfen) oder ein Spielstand nach
+dem Sonntag – Finale und Epilog fahren mit Vlados Lastwagen nur als Satz.

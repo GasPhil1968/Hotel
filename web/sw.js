@@ -1,5 +1,5 @@
 // Offline-Speicher für Mala – Kapitel 1 (Split) bis Kapitel 5 (Sarajevo). VERSION wird beim Bauen aus dem Inhalt gesetzt.
-var VERSION = 'mala-split-c1ff274f05';
+var VERSION = 'mala-split-d3940f213a';
 var FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(FILES.map(function (u) { return new Request(u, { cache: 'reload' }); })); }).then(function () { return self.skipWaiting(); }));   // am HTTP-Cache vorbei, damit ein Update wirklich die neuen Dateien holt

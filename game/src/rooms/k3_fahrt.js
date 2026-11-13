@@ -58,3 +58,18 @@ M.k3Drive=async function(A,kind,fn,opt){ opt=opt||{}; var G=A.G, E=M.E;
   if (!R.stop) R.stop=A.gt;
   await A.wait(1300); };
 })(M);
+// ---------------------------------------------------------------- Vorschau ohne Spielfortschritt: index.html?fahrt=skela | zurueck | nacht
+// Stellt den Samstag in Mostar her (nur im Speicher), fährt über dieselbe Reiseprüfung wie im Spiel (mit der Auswahl Taxi/Roller) und lädt
+// danach das Titelbild neu. Nichts wird gespeichert: die beteiligten Räume gelten für die Dauer der Vorschau als „nicht speichern“.
+M.k3RidePreviewKind=function(){ try{ var m=/[?&]fahrt=([a-z]+)/.exec(location.search||''); return m?m[1]:null; }catch(e){ return null; } };
+M.k3RidePreview=async function(kind){ var A=M.API, E=M.E, G=M.GS, night=kind==='nacht', back=kind==='zurueck';
+  ['ostbus','skela_d','herberge','k3_fahrt'].forEach(function(id){ if (M.ROOMS[id]) M.ROOMS[id].noSave=true; });
+  M.setPhase(night?'k3_d2_n':'k3_d2'); Object.assign(G.flags,{'k3.rules':2,'k3.z.mala':true,'k3.v.part1':true,'k3.b.arrived':true,'k3.b.jela':true,'k3.s.photo':true,'k3.dino.ride':!night&&!back});
+  G.map=G.map||{}; ['ostbus','herberge','kujundziluk','starimost','skela'].forEach(function(k){ G.map[k]=true; }); if (G.inv.indexOf('plan')<0) G.inv.push('plan');
+  var from=back?'skela_d':'ostbus', R=M.ROOMS[from], st=R.start||[160,124,'R']; G.rooms[from]=Object.assign(R.state?R.state(G):{},G.rooms[from]||{});
+  G.malaOn=true; G.pos.marko={room:from,x:st[0],y:st[1],f:'R'}; G.pos.mala={room:from,x:st[0]+24,y:st[1]-2,f:'R'};
+  await M.gotoRoom(from,{fade:false,noEnter:true,noSave:true,x:st[0],y:st[1],f:'R'}); A.malaJoin({fadeIn:false}); E.screen='game'; E.busy=true;
+  try{ await A.wait(1200); var L=M.mapLoc(back?'ostbus':'skela'); var ok=await M.canTravel(A,L);
+    if (ok) await A.goto(L.to,{via:'map',noSave:true,noEnter:true}); await A.wait(2500); }
+  finally{ location.replace(location.pathname); } };
+if (typeof window!=='undefined' && window.addEventListener) window.addEventListener('load',function(){ var k=M.k3RidePreviewKind(); if (!k) return; var iv=setInterval(function(){ if (M.E && M.E.screen==='title'){ clearInterval(iv); M.k3RidePreview(k); } },300); });
