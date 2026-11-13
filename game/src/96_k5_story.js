@@ -52,7 +52,7 @@ M.startChapter5=async function(A){ var E=M.E; E.busy=true;
     ['k5_c_muenchen','k5_c_mala'].forEach(function(id){ A.note(id,true); });
     ['nada','zlata','kolar','vlado','hajra','rade','damir','dragica','sehic','nedzad','jasna','ana','mia','niko','tobias','mala','jasnaW','jasnaC','anaC','miaC','nikoC'].forEach(function(id){ G.flags['met.'+id]=true; });
     G.flags['k5.moves']=0; G.map=G.map||{}; G.map.stanica=true; G.map.pansion=true;   // Busbahnhof und Hajras Pension kennt Marko aus Kapitel 2
-    E.screen='card'; await A.card({kicker:'Kapitel 5',title:'Sarajevo',sub:'Prolog – Ankunft',time:'Donnerstag, 1. März 2012 · früh',ms:5200});
+    await M.kinoIntro(A,5,{kicker:'Kapitel 5',title:'Sarajevo',sub:'Prolog – Ankunft',time:'Donnerstag, 1. März 2012 · früh',ms:5200});
     A.music('k2_bus');
     var lines=['Fünfzehn Stunden Bus. Seit Ljubljana sagt Mama nichts. Bei Tarčin wird es hell, und sie sitzt am Fenster und sieht hinaus. Die ganze Zeit.'];
     lines.push(c.kurve?'Bis zur Kurve hat sie damals zurückgesehen, zweiundneunzig. Jetzt kommt sie von der anderen Seite.':'Sie sieht hin. Das ist neu.');
@@ -271,6 +271,5 @@ M.endChapter5=async function(A){ var G=A.G; if (G.ended) return; G.ended=true;
   try{ localStorage.setItem('mala.c5end',JSON.stringify({at:Date.now(),answer:G.flags['k5.n2.answer']||null,cap:G.flags['k5.sat.cap']||null,silent:G.flags['k5.sat.silent']!==false,
       rade:!!G.flags['k5.d1.radeHeft'],damir:!!G.flags['k5.d2.damir'],flat7:!!G.flags['k5.sat.flat'],playMs:G.playMs||0})); }catch(e){}
   M.E.markChapterEnd(5);
-  await card(A,'','Ende','',5200,'Diese Geschichte ist zu Ende erzählt.');
-  await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS5; M.E.creditMusic=M.K5_END_MUSIC; M.E.afterCredits=null; M.E.startCredits(); };
+  if (await M.kinoOutro(A,5)) M.E.fade=0; else { await card(A,'','Ende','',5200,'Diese Geschichte ist zu Ende erzählt.'); await A.fade(8,1400); } M.E.fade=0; M.E.creditLines=M.CREDITS5; M.E.creditMusic=M.K5_END_MUSIC; M.E.afterCredits=null; M.E.startCredits(); };
 })(M);

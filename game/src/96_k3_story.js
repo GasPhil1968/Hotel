@@ -57,7 +57,7 @@ M.startChapter3=async function(A){ var E=M.E; E.busy=true;
     ['k3_c_bridge','k3_c_name','k3_c_missing','k3_c_promise'].forEach(function(id){ A.note(id,true); });
     A.unlock('ostbus'); G.flags['k3.moves']=0;
     ['nada','ljerka','sanja','vesna','hajra','rade','ana','mala'].forEach(function(id){ G.flags['met.'+id]=true; });   // Bekannte aus Split und Sarajevo
-    E.screen='card'; await A.card({kicker:'Kapitel 3',title:'Mostar',sub:'Prolog – Die Brücke, die alle kennen',time:'Donnerstag, 24. November 2011 · Mittag',ms:5200});
+    await M.kinoIntro(A,3,{kicker:'Kapitel 3',title:'Mostar',sub:'Prolog – Die Brücke, die alle kennen',time:'Donnerstag, 24. November 2011 · Mittag',ms:5200});
     A.music('k3_bus');
     var lines=['In Jablanica hält der Bus zwanzig Minuten. Der Fahrer isst Lamm am Fenster, mit den Fingern, und sieht dabei in den Regen.',
       'Dann kommt die Neretva. Grün. So grün, als hätte sie jemand angemalt, und tief unten zwischen den Felsen.',
@@ -405,6 +405,5 @@ M.CREDITS3=['DIE STILLEN','Kapitel 3: Mostar','','','Marko Vuković','Mala','','
 M.endChapter3=async function(A){ var G=A.G; G.ended=true;
   try{ localStorage.setItem('mala.c3end',JSON.stringify({at:Date.now(),consent:G.flags['k3.fin.consent'],promise:G.flags['k3.p.promise'],talk2:G.flags['k3.d3.talk2v'],sample:!!G.flags['k3.e.sample'],asks:G.flags['k3.askCount']||0,skips:G.flags['k3.skips']||0}));
   }catch(e){} M.E.markChapterEnd(3);
-  await card(A,'','Ende des dritten Kapitels','',5200,'Fortsetzung: München');
-  await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS3; M.E.creditMusic='k3_end'; M.E.afterCredits=M.startChapter4?'ch4':null; M.E.startCredits(); };
+  if (await M.kinoOutro(A,3)) M.E.fade=0; else { await card(A,'','Ende des dritten Kapitels','',5200,'Fortsetzung: München'); await A.fade(8,1400); } M.E.fade=0; M.E.creditLines=M.CREDITS3; M.E.creditMusic='k3_end'; M.E.afterCredits=M.startChapter4?'ch4':null; M.E.startCredits(); };
 })(M);

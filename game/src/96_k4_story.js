@@ -57,7 +57,7 @@ M.startChapter4=async function(A){ var E=M.E; E.busy=true;
     ['k4_c_lana','k4_c_vater'].forEach(function(id){ A.note(id,true); });
     ['zob','westend','hbf'].forEach(function(l){ A.unlock(l); }); G.flags['k4.moves']=0;
     ['nada','kolar','davor','lena','jela','mala','ana','jasna','tobias','mia','niko','anaC','jasnaW','jasnaC','miaC','nikoC'].forEach(function(id){ G.flags['met.'+id]=true; });   // Familie und Bekannte aus Mostar
-    E.screen='card'; await A.card({kicker:'Kapitel 4',title:'München',sub:'Prolog – Heiligabend',time:'Samstag, 24. Dezember 2011 · Morgen',ms:5200});
+    await M.kinoIntro(A,4,{kicker:'Kapitel 4',title:'München',sub:'Prolog – Heiligabend',time:'Samstag, 24. Dezember 2011 · Morgen',ms:5200});
     A.music('k4_bus');
     var lines=['Zehn Stunden Bus. Ab Salzburg schneit es. Mala sitzt am Fenster und zählt die Lichter, die ganze Nacht, laut, auf Bosnisch.'];
     lines.push({a:'Am Grab habe ich „Ja“ gesagt. „Einfach so?“, hat sie gefragt. Seitdem frage ich mich, ob es einfach war.',b:'„Wenn es zu schwer wird, sagen wir es.“ Bisher hat keiner von uns etwas gesagt.',c:'„Frag mich in München noch mal.“ Ab Salzburg sieht sie mich an, als wäre München ein Datum.'}[c.consent]);
@@ -326,6 +326,5 @@ M.endChapter4=async function(A){ var G=A.G; if (G.ended) return; G.ended=true;
   try{ localStorage.setItem('mala.c4end',JSON.stringify({at:Date.now(),sample:G.flags['k4.c3.sample']!==false,sample2:!!G.flags['k4.e.sample2'],kurve:!!G.flags['k4.fin.kurve'],slippers:!!G.flags['k4.e.slippers'],
       nada:!!G.flags['k4.e.nada'],fake:G.inv.indexOf('brief_falsch')>=0||!!G.flags['k4.s.fake'],davor:!!G.flags['k4.v.car'],consent2:G.flags['k4.e.consent2']||null,playMs:G.playMs||0}));
   }catch(e){} M.E.markChapterEnd(4);
-  await card(A,'','Ende des vierten Kapitels','',5200,'Fortsetzung: Sarajevo');
-  await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS4; M.E.creditMusic='k4_end'; M.E.afterCredits=M.startChapter5?'ch5':null; M.E.startCredits(); };
+  if (await M.kinoOutro(A,4)) M.E.fade=0; else { await card(A,'','Ende des vierten Kapitels','',5200,'Fortsetzung: Sarajevo'); await A.fade(8,1400); } M.E.fade=0; M.E.creditLines=M.CREDITS4; M.E.creditMusic='k4_end'; M.E.afterCredits=M.startChapter5?'ch5':null; M.E.startCredits(); };
 })(M);

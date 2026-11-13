@@ -72,6 +72,11 @@ FIGUREN
   Fassungen lädt das Spiel erst auf dem Titelbild; im Zweifel die Seite bzw.
   die App einmal ganz schließen und neu öffnen.
 
+ZWISCHENFILME
+- Vor jedem Kapitel ein kurzes Intro, nach jedem Kapitel ein Outro vor dem
+  Abspann; ein Tipp überspringt sie. Abschalten: Einstellungen →
+  „Zwischenfilme“. Noch einmal ansehen: „Über ‚Die Stillen‘“.
+
 MOSTAR
 - Kapitel 3 hat eine eigene, feinere Farbgebung: Kalkstein mit warmen
   Lichtern und violetten Schatten, die Neretva smaragdgrün.

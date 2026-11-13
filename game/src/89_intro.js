@@ -1,10 +1,11 @@
-/* ===== 89_intro.js — Animiertes Intro vor dem Titelbild (etwa 29 Sekunden, jederzeit überspringbar)
+/* ===== 89_intro.js — Animiertes Intro vor dem Titelbild (etwa 40 Sekunden, jederzeit überspringbar)
    Bildfolge im Breitbild-Streifen (Szene 320×144 bei y 28, oben und unten Schwarz), gezeichnet mit den Räumen des Spiels:
    1 · Riva bei Nacht, Marko geht nach Hause, das Bild folgt ihm („Split, November 2011“).
    2 · Markos Wohnung: er steht am Fenster („Marko schreibt Nachrufe. / Auf Menschen, die allein gestorben sind.“);
        hinter ihm wird Mala sichtbar, er dreht sich um („Marko lebt. Mala nicht.“); sie geht durch die Wand
        („Er spricht mit den Lebenden. / Sie geht durch Wände.“).
-   3 · Titelkarte: „DIE STILLEN“ wird von links nach rechts sichtbar, dann die Unterzeile; das Titelbild blendet darunter auf.
+   3 · Die Reise: Sarajevo im Nebel, Mostar, München im Schnee, Sarajevo im März – Marko geht, Mala folgt.
+   4 · Titelkarte: „DIE STILLEN“ wird von links nach rechts sichtbar, dann die Unterzeile; das Titelbild blendet darunter auf.
    Läuft beim Start (Einstellung „Intro beim Start“, ?intro=0/1), nicht unter Testautomatisierung (navigator.webdriver) und nie
    in der QA-VM; „Intro ansehen“ in den Einstellungen spielt es mit Ton. Spielstand und Räume bleiben unberührt: Die Räume werden
    mit einem eigenen, nicht gespeicherten Spielstand gemalt. ===== */
@@ -12,7 +13,7 @@
 'use strict';
 var P=M.P, bayer=M.bayer;
 var Y0=28, SH=144;                       // Szene im 320×200-Bild: Zeilen 28 … 171
-var RIVA_END=7.6, FLAT_AT=8.0, CARD_AT=25.4, HAND=28.6;
+var RIVA_END=7.6, FLAT_AT=8.0, MONT_AT=25.4, CARD_AT=37.0, HAND=40.2;   // Reise (MONT_AT … CARD_AT): vier Städte, 89_kino.js
 var I={ on:false, at:0, music:null, scape:null };
 M.OPENING=I;
 var SCN=null, CACHE={};
@@ -64,12 +65,23 @@ function shotFlat(fb,t){ var u=t-FLAT_AT;
   var mala={ch:'mala',x:gx,y:gy,f:gf,pose:gpose,ghost:true,alpha:ga};
   ambience('flat'); drawRoom('flat',0,t,[marko,mala]);
   if (ga>0.05) motes(SCN,gx,gy,ga,t);
-  dim(SCN,Math.round((1-ease(u/0.9))*7),0,SH); dim(SCN,Math.round(ease((t-(CARD_AT-0.8))/0.8)*7),0,SH);
+  dim(SCN,Math.round((1-ease(u/0.9))*7),0,SH); dim(SCN,Math.round(ease((t-(MONT_AT-0.8))/0.8)*7),0,SH);
   blitScene(fb);
   line(fb,'Marko schreibt Nachrufe.',181,win(u,0.9,4.1));
   line(fb,'Auf Menschen, die allein gestorben sind.',181,win(u,4.3,7.7));
   line(fb,'Marko lebt. Mala nicht.',181,win(u,8.6,12.3));
   line(fb,'Er spricht mit den Lebenden.',176,win(u,12.6,16.9)); line(fb,'Sie geht durch Wände.',187,win(u,13.0,16.9)); }
+// Die Reise: vier Städte in kurzen Einstellungen, Marko geht, Mala folgt (Räume über 89_kino.js, Mostar mit seinen Farben)
+var TRIP=[{room:'carsija',ph:'k2_pro',y:126,c0:60,c1:200,txt:'Ein halber Name in einem alten Register.'},{room:'starimost',ph:'k3_d2',y:122,c0:20,c1:150,txt:'Eine Spur nach Osten.'},
+  {room:'gleis11',ph:'k4_pro',y:124,c0:200,c1:60,txt:'Vier Städte.',L:true},{room:'vratnik5',ph:'k5_d2',y:124,c0:40,c1:170,txt:'Und ein Mädchen, das nur einer sieht.'}];
+function shotTrip(fb,t){ var u=t-MONT_AT, n=TRIP.length, d=(CARD_AT-MONT_AT)/n, i=Math.min(n-1,Math.floor(u/d)), v=u-i*d, S=TRIP[i];
+  if (!M.kinoRoom){ fb.rect(0,0,320,200,P.k0); return; }
+  music('title'); if (I.scape!=='trip'){ I.scape='trip'; try{ if (M.scapeStop) M.scapeStop(); }catch(e){} }
+  var c=M.kinoRoom(S.room,S.ph), k=v/d, cam=Math.round(S.c0+(S.c1-S.c0)*k), dir=S.L?-1:1, mx=cam+(S.L?230:90)+dir*v*22;
+  var marko={ch:'marko',x:mx,y:S.y,f:S.L?'L':'R',pose:walkPose(Math.abs(mx))}, mala={ch:'mala',x:mx-dir*30,y:S.y-3,f:S.L?'L':'R',pose:floatPose(M.ANIMS.floatS,t),ghost:true,alpha:0.7};
+  M.kinoDrawRoom(c,cam,t,[marko,mala]); var K=M.kinoScene(); for (var q=0;q<SCN.d.length;q++) SCN.d[q]=K.d[q];
+  dim(SCN,Math.round((1-ease(v/0.45))*7),0,SH); dim(SCN,Math.round(ease((v-(d-0.45))/0.45)*7),0,SH);
+  blitScene(fb); line(fb,S.txt,181,win(v,0.3,d-0.2,0.4)); }
 // kalte Lichtpunkte um Mala (wie im Spiel)
 function motes(b,x,y,al,t){ for (var i=0;i<5;i++){ var ph=(t*0.32+i*0.21)%1, px=Math.round(x+Math.sin(i*2.7+t*1.3)*8), py=Math.round(y-10-ph*36); if (ph>0.85||px<0||px>=b.w||py<0||py>=SH) continue; if (bayer(px,py)<al*(1-ph)) b.px(px,py,i%2?P.x5:P.x4); } }
 function blitScene(fb){ var d=fb.d; for (var y=0;y<Y0;y++) for (var x=0;x<320;x++) d[y*320+x]=P.k0; for (var y2=0;y2<SH;y2++){ var o=(y2+Y0)*320, s=y2*320; for (var x2=0;x2<320;x2++) d[o+x2]=SCN.d[s+x2]; } for (var y3=Y0+SH;y3<200;y3++) for (var x3=0;x3<320;x3++) d[y3*320+x3]=P.k0; }
@@ -94,7 +106,7 @@ I.done=function(){ var E=M.E; I.on=false; try{ if (M.scapeStop) M.scapeStop(); }
 I.t=function(){ return I.on?(M.E.gt()-I.at)/1000:0; };
 M.drawIntro=function(fb){ if (!SCN) SCN=new M.Buf(320,SH,P.k0); var t=I.t();
   if (t>=HAND){ I.done(); return false; }
-  if (t<RIVA_END) shotRiva(fb,t); else if (t<FLAT_AT) fb.rect(0,0,320,200,P.k0); else if (t<CARD_AT) shotFlat(fb,t); else shotCard(fb,t);
+  if (t<RIVA_END) shotRiva(fb,t); else if (t<FLAT_AT) fb.rect(0,0,320,200,P.k0); else if (t<MONT_AT) shotFlat(fb,t); else if (t<CARD_AT) shotTrip(fb,t); else shotCard(fb,t);
   if (t>1.5 && t<CARD_AT){ var sk=tr('Überspringen ▸'); M.text(fb,sk,314-M.textWidth(sk),10,P.x3); }   // oben rechts im schwarzen Streifen
   return true; };
 M.INTRO_LEN=HAND;

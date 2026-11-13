@@ -770,6 +770,7 @@ function drawDrag(){ if (!drag||!drag.on||(WIDE&&pointer.y>=1000)) return; var i
   var lab=tgt?('Benutze '+it.name+' mit '+tgt):it.name, lw=M.textWidth(lab), lx=Math.max(2,Math.min(W-2-lw,x-(lw>>1))), ly=Math.max(2,iy-11); M.text(fb,lab,lx,ly,tgt?P.l0:P.s4,P.k0); }
 M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); LISTH=SUBS||!!(M.listHtml&&M.listHtml()); SUBW.sp=null; SUBW.dlg=null;
   if (E.screen==='intro'){ if (!(M.drawIntro && M.drawIntro(fb)) && E.screen==='title') drawTitle(); }   // Intro vor dem Titel (89_intro.js); am Ende schaltet es selbst auf den Titel
+  else if (E.screen==='kino'){ if (!(M.drawKino && M.drawKino(fb))) fb.rect(0,0,W,H,P.k0); }   // Zwischenfilm (89_kino.js)
   else if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
@@ -899,7 +900,7 @@ function updateHover(){ hoverUI=uiAt(pointer.x,pointer.y); if (E.menu||E.overlay
 M.pointerMove=function(x,y,touch){ pointer.x=x; pointer.y=y; pointer.touch=!!touch; pointer.show=true; if (fineT&&press&&Math.abs(x-press.x)+Math.abs(y-press.y)>6){ clearTimeout(fineT); fineT=null; } if (pointer.down&&press&&!drag&&E.screen==='game') dragCheck(x,y); updateHover(); };
 // Testhilfe (Touch-Test): welches Bedienelement liegt an x,y; Beschriftungen der Titelzeilen
 M.uiHit=function(x,y){ return uiAt(x,y); }; M.revealOn=function(){ return !!reveal; }; M.uiHover=function(){ return pointer.show?hoverUI:null; }; M.uiColors=function(){ return ui(); }; M.titleLabels=function(){ return titleItems().map(function(o){ return o.t; }); };
-M.pointerDown=function(x,y,touch){ M.audioInit(); if (E.screen==='intro'){ if (M.OPENING) M.OPENING.skip(); introUp=true; return; } if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); if (touch&&!press.ui) fineArm(x,y); else fineOff(); };
+M.pointerDown=function(x,y,touch){ M.audioInit(); if (E.screen==='intro'){ if (M.OPENING) M.OPENING.skip(); introUp=true; return; } if (E.screen==='kino'){ if (M.KINO_STATE) M.KINO_STATE.skip(); introUp=true; return; } if (touch) touchUI=true; lastIn=touch?'touch':'mouse'; pointer.down=true; drag=null; press={x:x,y:y,ui:(E.screen==='game'?uiAt(x,y):null),t:E.gt(),tr:nowR()}; M.pointerMove(x,y,touch); if (touch&&!press.ui) fineArm(x,y); else fineOff(); };
 var introUp=false;   // der Tipp, der das Intro beendet, löst auf dem Titel nichts aus
 M.pointerUp=function(x,y,touch){ if (introUp){ introUp=false; pointer.down=false; press=null; return; } if (fine){ var fq=fineAt(x,y); fineOff(); pointer.down=false; press=null; pointer.show=false; tapStartR=nowR(); hover=null; noFang=true; try{ click(fq[0],fq[1]); } finally { noFang=false; } return; } fineOff();
   pointer.down=false; M.pointerMove(x,y,touch); if (touch) setTimeout(function(){ if (!pointer.down) pointer.show=false; },350);
@@ -1046,7 +1047,7 @@ function dlgKey(k){ var d=E.dlg; if (!d||E.speech) return false; if (d.visTop!==
     if (d.kf<d.top) d.top=d.kf; else if (vis.length && d.kf>vis[vis.length-1]) d.top=Math.min(n-1,d.top+1); return true; }
   if ((k==='Enter'||k===' ') && d.kf!==undefined && d.kf!==null){ M.sfx('click'); E.chooseDone(d.kf); return true; }
   return false; }
-M.key=function(k){ var kl0=String(k).toLowerCase(); if (M.audioInit) M.audioInit(); if (E.screen==='intro'){ if (M.OPENING) M.OPENING.skip(); return; } if (M.shellSync) M.shellSync();
+M.key=function(k){ var kl0=String(k).toLowerCase(); if (M.audioInit) M.audioInit(); if (E.screen==='intro'){ if (M.OPENING) M.OPENING.skip(); return; } if (E.screen==='kino'){ if (M.KINO_STATE) M.KINO_STATE.skip(); return; } if (M.shellSync) M.shellSync();
   if (M.shell && M.shell.ctx==='title'){ if (k==='Escape') M.shell.back(); return; }
   if (E.screen==='card'){ if ((k===' '||k==='Enter'||k==='Escape') && E.card && !E.card.noSkip) E.closeCard(); return; }   // Karte: auch per Taste überspringen (D2)
   if (E.screen==='credits'){ if ((k===' '||k==='Enter'||k==='Escape') && E.gt()-E.creditsAt>3000) creditsDone(); return; }

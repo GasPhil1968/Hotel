@@ -24,7 +24,7 @@ Räume, Figuren); es gibt keine eingebundenen Bilder.
 ## Intro (`game/src/89_intro.js`)
 
 Breitbild-Streifen (Szene 320 × 144 bei y 28), die Räume des Spiels, gemalt mit einem eigenen, nicht gespeicherten Spielstand
-(Prolog, Nacht). Länge 28,6 s, danach blendet das Titelbild unter dem schon stehenden Schriftzug auf (1,4 s), das Menü weich dazu.
+(Prolog, Nacht). Länge 40,2 s (seit 13.11.2026 mit der Reise durch die vier Städte, siehe `design/ZWISCHENFILME.md`), danach blendet das Titelbild unter dem schon stehenden Schriftzug auf (1,4 s), das Menü weich dazu.
 
 | Zeit | Bild | Text |
 |---|---|---|
@@ -32,7 +32,8 @@ Breitbild-Streifen (Szene 320 × 144 bei y 28), die Räume des Spiels, gemalt mi
 | 8,0–25,4 | Markos Wohnung: er steht am Fenster | „Marko schreibt Nachrufe.“ · „Auf Menschen, die allein gestorben sind.“ |
 | | Mala wird am Regal sichtbar, Marko dreht sich um | „Marko lebt. Mala nicht.“ |
 | | Mala schwebt an ihm vorbei und geht durch die Wand | „Er spricht mit den Lebenden.“ / „Sie geht durch Wände.“ |
-| 25,4–28,6 | Titelkarte: „DIE STILLEN“ wird von links nach rechts aufgedeckt (kalter Schimmer an der Kante), dann die Unterzeile | – |
+| 25,4–37,0 | Die Reise: Baščaršija im Nebel, Alte Brücke, Gleis 11 im Schnee, Vratnik im März – Marko geht, Mala folgt | „Ein halber Name in einem alten Register.“ · „Eine Spur nach Osten.“ · „Vier Städte.“ · „Und ein Mädchen, das nur einer sieht.“ |
+| 37,0–40,2 | Titelkarte: „DIE STILLEN“ wird von links nach rechts aufgedeckt (kalter Schimmer an der Kante), dann die Unterzeile | – |
 
 * **Ton**: Fläche `ghost` und der Raumklang von Riva und Wohnung, ab der Titelkarte das Titelstück, das im Titel weiterläuft.
   Browser spielen Ton erst nach einer ersten Eingabe; beim Start läuft das Intro deshalb meist stumm. Über

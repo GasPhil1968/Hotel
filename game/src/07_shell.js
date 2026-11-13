@@ -207,6 +207,7 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
   // Intro (89_intro.js): beim Start an oder aus; vom Titel aus jederzeit ansehen (dann mit Ton)
   if (M.introOn) it.push({type:'seg',label:'Intro beim Start',sub:'Ein Tipp überspringt es.',value:M.introOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.introOn(+v===1); }});
+  if (M.kinoOn) it.push({type:'seg',label:'Zwischenfilme',sub:'Intro und Outro jedes Kapitels. Ein Tipp überspringt sie.',value:M.kinoOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.kinoOn(+v===1); }});
   if (M.startIntro && SH.ctx==='title') it.push({type:'seg',label:'Intro',value:-1,options:[[1,'ansehen']],act:function(){ closeAll(); M.startIntro(); }});
   // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm
   if (fsApi()) it.push({type:'seg',label:'Vollbild',sub:iosDev()?'Wischen nach unten beendet es wieder':'',value:-1,options:[[1,'umschalten']],act:function(){ if (M.fullscreen) M.fullscreen(); }});
@@ -223,6 +224,9 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   return {layout:'settings',title:'Einstellungen',items:it,back:true}; };
 SCR.about=function(){ var it=[], done=[]; for (var c=1;c<=5;c++) if (chDone(c)) done.push(c);
   done.forEach(function(c){ it.push({type:'btn',label:'Abspann Kapitel '+c,act:function(){ playCredits(c); }}); });
+  // Zwischenfilme (89_kinoszenen.js): Intro jedes erreichten, Outro jedes beendeten Kapitels
+  if (M.KINO && M.kinoStart){ for (var k=1;k<=Math.min(5,chaptersReached());k++) (function(c){ if (M.KINO['k'+c+'_in']) it.push({type:'btn',label:'Intro Kapitel '+c,act:function(){ playKino('k'+c+'_in'); }}); })(k);
+    done.forEach(function(c){ if (M.KINO['k'+c+'_out']) it.push({type:'btn',label:'Outro Kapitel '+c,act:function(){ playKino('k'+c+'_out'); }}); }); }
   return {layout:'about',title:'Über „Die Stillen“',text:['Ein Point-and-Click-Adventure über Menschen, die nicht weiterkommen, und über einen, der mit ihnen reden kann.','„Die Stillen“ heißt die Rubrik in Vesnas Zeitung, für die Marko schreibt: Nachrufe auf Menschen, die allein gestorben sind.','Marko lebt. Mala nicht. Er spricht mit den Lebenden, sie geht durch Wände.','Alle Grafik, Musik und Geräusche entstehen im Spiel selbst. Kopfhörer lohnen sich.'],
     places:PLACES.slice(0,Math.min(5,chaptersReached())).join(' · '),build:M.BUILD||'',items:it,back:true}; };
 SCR.controls=function(){ return {layout:'about',title:'Steuerung',list:[
@@ -256,6 +260,7 @@ SCR.next=function(p){ var ch=p.ch, nx=ch<5?ch+1:0, rec=null; try{ rec=JSON.parse
   if (nx && chExists(nx)) it.push({type:'btn',label:'Weiter mit Kapitel '+nx+': '+PLACES[nx-1],primary:true,act:function(){ startNew(nx,p.slot||E.slot()); }});
   it.push({type:'btn',label:'Zum Titelbild',act:function(){ E.titleMode='main'; SH.stack=[{id:'main',p:{}}]; render(true); }});
   return {layout:'endcard',kicker:'Ende des '+ORD[ch-1]+' Kapitels',title:PLACES[ch-1],sub:nx?'Fortsetzung: '+PLACES[nx-1]:(ch===4?'Fortsetzung: Sarajevo':''),time:ms?T('Spielzeit')+' '+fmtDur(ms):'',items:it}; };
+function playKino(id){ closeAll(); var back=E.screen==='title'?'title':E.screen; M.kinoStart(id,{back:back}); }
 function playCredits(c){ var L=c===1?M.CREDITS:(c===2?M.CREDITS2:(c===3?M.CREDITS3:(c===4?M.CREDITS4:M.CREDITS5))); if (!L) return; closeAll(); E.creditLines=L; E.creditMusic=['end','k2_end','k3_end','k4_end',M.K5_END_MUSIC||'k2_end'][c-1]; E.afterCredits=null; E.startCredits(); }
 
 // ---------------------------------------------------------------- Sicherung als Datei (UI-Konzept B3-3)

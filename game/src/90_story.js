@@ -25,7 +25,7 @@ M.phaseIn=phaseIn;
 M.startGame=async function(A){ var E=M.E; E.busy=true;
   try{ M.setPhase('pro'); M.GS.pos.marko={room:'flat',x:188,y:106,f:'B'}; A.unlock('flat');
     var G=A.G; G.flags['split.intro.v']=2; ['sanja','stipe','frane'].forEach(function(k){ G.flags['met.'+k]=true; });   // die kennt er seit Jahren: keine Vorstellung
-    E.screen='card'; await A.card({kicker:'Prolog',title:'Die Stillen',sub:'Split',time:'Dienstag, 15. November 2011 · Nachmittag',ms:4400});
+    await M.kinoIntro(A,1,{kicker:'Prolog',title:'Die Stillen',sub:'Split',time:'Dienstag, 15. November 2011 · Nachmittag',ms:4400});   // Zwischenfilm statt Karte (89_kinoszenen.js)
     await A.goto('flat',{x:188,y:106,f:'B',noEnter:true});
     A.music('flat'); await A.wait(400); A.sfx('typing');
     await A.narrate('Seit drei Tagen Jugo. Warmer Regen, schwere Luft, und ein Kopf wie Blei.');
@@ -209,7 +209,8 @@ M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){
 M.CREDITS=['DIE STILLEN','Kapitel 1: Split','','','Marko Vuković','Mala','','Ivka Perić, die wartete','Luka Radić, der unterwegs war','Bruno Lalić, der keine Worte mehr hatte','',
   'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','und Jakov, der Wege fegt, die es nicht mehr gibt','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Split nachempfunden.','Manche gibt es nicht.','','','FORTSETZUNG','Kapitel 2: Sarajevo','','','',''];
-M.endChapter=async function(A){ M.GS.ended=true; if (M.storeC1End) M.storeC1End(M.GS); M.E.markChapterEnd(1);   // Platz bleibt als „Kapitelende“ belegt (UI-Konzept D3) await A.fade(8,1400); M.E.fade=0;
+M.endChapter=async function(A){ M.GS.ended=true; if (M.storeC1End) M.storeC1End(M.GS); M.E.markChapterEnd(1);   // Platz bleibt als „Kapitelende“ belegt (UI-Konzept D3)
+  if (await M.kinoOutro(A,1)) M.E.fade=0;
   M.E.creditLines=M.CREDITS; M.E.creditMusic='end'; M.E.afterCredits=M.ROOMS.stanica?'ch2':null; M.E.startCredits(); };
 // Testräume aus reiner Kunst (für die Entwicklung): jede M.ART-Definition ohne Raumlogik wird ein einfacher Raum
 M.artTestRooms=function(){ Object.keys(M.ART).forEach(function(id){ if (M.ROOMS[id]) return; var A=M.ART[id];

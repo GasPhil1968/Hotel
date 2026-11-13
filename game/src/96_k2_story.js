@@ -42,7 +42,7 @@ function applyCarry(A,c){ var G=A.G; G.flags['k2.c1.answer']=c.answer; G.flags['
 M.startChapter2=async function(A){ var E=M.E; E.busy=true;
   try{ var c=M.k2Carry(); M.setPhase('k2_pro'); A.G.malaOn=false; A.G.pos.marko={room:'stanica',x:60,y:124,f:'R'}; applyCarry(A,c);
     ['dzezva','mobitel','olovka'].forEach(function(i){ if (!A.has(i)) A.give(i); }); A.unlock('stanica');
-    E.screen='card'; await A.card({kicker:'Kapitel 2',title:'Sarajevo',sub:'Prolog – Die Linie Drei',time:'Samstag, 19. November 2011 · Nachmittag',ms:5200});
+    await M.kinoIntro(A,2,{kicker:'Kapitel 2',title:'Sarajevo',sub:'Prolog – Die Linie Drei',time:'Samstag, 19. November 2011 · Nachmittag',ms:5200});
     A.music('k2_bus');
     await A.memory({title:'Im Bus',tint:'memory',blank:true,draw:M.mem&&M.mem.k2_bus,lines:['Bei Mostar hält der Bus zwanzig Minuten. Mala steigt nicht aus. Sie sieht auf den Fluss hinunter, bis wir weiterfahren.',
       'Hinter Konjic kommt der Nebel. Die Berge rücken zusammen, als wollten sie die Straße festhalten.','Am Stadtrand steht ein Hochhaus neben dem anderen. Mala hat die Hand an der Scheibe.','Als der Bus in den Bahnhof einfährt, ist der Platz neben mir leer.']});
@@ -121,5 +121,5 @@ M.CREDITS2=['DIE STILLEN','Kapitel 2: Sarajevo','','','Marko Vuković','Mala',''
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Sarajevo nachempfunden.','Alle Figuren sind erfunden.','','',
   'Für alle, die in Kellern Schule hielten,','und für alle, die noch gesucht werden.','','','FORTSETZUNG','Kapitel 3: Mostar','','',''];
 M.endChapter2=async function(A){ M.GS.ended=true; try{ localStorage.setItem('mala.c2end',JSON.stringify({at:Date.now()})); }catch(e){} M.E.markChapterEnd(2);
-  await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS2; M.E.creditMusic='k2_end'; M.E.afterCredits=null; M.E.startCredits(); };
+  if (await M.kinoOutro(A,2)) M.E.fade=0; else await A.fade(8,1400); M.E.fade=0; M.E.creditLines=M.CREDITS2; M.E.creditMusic='k2_end'; M.E.afterCredits=null; M.E.startCredits(); };
 })(M);
