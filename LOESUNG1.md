@@ -221,20 +221,33 @@ Jahre alt. Als die Stadt 1958 den Friedhof räumte, grub er sie in der Nacht dav
 am Meer bleibt; ihren Stein mauerte er richtig herum in die Ufermauer. Bei der Räumung war ihr Sarg leer, Jakov schwieg und starb 1959 auf
 der Bank. Seitdem fegt er den Weg zu ihr und lebt in der Nacht vor der Räumung. Mala hält er für Anka („Ti opet, mala?“).
 
-1. **Sustipan:** mit Jakov reden, „Wer kommt morgen?“ → für ihn ist es 1958. Jakov **ansehen** → er fegt immer bis zur dritten Pinie.
-   Als Mala mit ihm reden → er nennt sie Anka.
-2. **Wer ist Anka?** Als Mala die **Steinmauer spüren** → ein Stein steht richtig herum, unter dem Efeu. Als Marko den **Efeu** ansehen →
-   „ANKA · 1941 – 1947 · NAŠA MALA“, ohne Nachnamen.
-3. **Bar „Bura“:** Stipe und Frane nach Jakov fragen. Stipe erzählt nur, wenn man ihm sagt, was er in der Hand hat. Als Mala **Stipe
-   ansehen** (sie stellt sich hinter ihn): Ass und Drei in Münzen, Bube in Kelchen. Als Marko antworten → Stipe erzählt vom leeren Sarg
-   1958 und von Jakovs Tod 1959.
-4. **Notizbuch:** „Der leere Sarg“ + „Bis zur dritten Pinie“ (oder + „Unter der dritten Pinie“, wenn Mala die Pinien gespürt hat) →
-   **Er hat sie selbst umgebettet.**
-5. **Ein Name und ein Licht:** in der „Bura“ Sanja nach **Kreide** fragen, am Fährhafen bei Mira ein **Grablicht** kaufen. In Sustipan die
-   Kreide an den **Pinien** benutzen (schreibt „ANKA MATOŠIĆ · 1941 – 1947“), dann das Grablicht.
-6. **Finale:** „Sie haben sie damals nicht gefunden. Und heute sucht sie keiner.“ (die beiden anderen Antworten führen zurück), danach eine
-   der beiden Antworten zu „Woher weißt du von ihr?“. Mala: „Ich bin nicht Anka.“ Jakov begreift, wie viel Zeit vergangen ist –
-   dreiundfünfzig Jahre – und **bleibt**: „Jetzt fege ich, weil ich will. Nicht, weil ich Angst habe.“ (wie in den späteren Kapiteln:
-   Jakov bleibt freiwillig). Danach beginnt der **Dritte Fall** am Freitagabend.
+Neun Stufen, jede braucht etwas aus einer anderen (Stand 13.11.2026, zweite Fassung: mehr und schwerere Rätsel).
 
-Hinweise: `kj_talk`, `kj_stone`, `kj_stipe`, `kj_where`, `kj_name`, `kj_light` (`HINWEISE.md`). Test: `qa/regress/bug_034_jakov_fall.js`.
+1. **Sustipan:** mit Jakov reden, „Wer kommt morgen?“ → für ihn ist es 1958. Jakov **ansehen** → er fegt immer bis zur dritten Pinie.
+   Als Mala mit ihm reden → er nennt sie Anka. Marko sagt er nichts über sie („Woher hast du den Namen?“).
+2. **Der Stein:** Als Mala die **Steinmauer spüren** → ein Stein steht richtig herum, unter dem Efeu. Als Marko den **Efeu** ansehen →
+   der Stein ist verwittert, nur „NAŠA MALA“ ist lesbar. Mala erinnert sich an Münzen unter Papier.
+3. **Durchreibung:** in der „Bura“ Sanja nach **Kreide** fragen, am Fährhafen bei Mira eine **Zeitung** kaufen. Die Zeitung am **Efeu**
+   benutzen, mit der Kreide in der Tasche → „ANKA · 3. V. 1941 – 9. II. 1947 · NAŠA MALA“. (Kreide direkt auf den Stein oder die Zeitung
+   ohne Kreide bringen nichts.)
+4. **Briškula in der „Bura“:** Stipe nach Jakov fragen. Er erzählt nur, wenn man ihm sagt, welche drei Karten er hat. Als Mala **Stipe
+   ansehen** → Ass in Münzen, Bube in Kelchen, die dritte nur als gelbe Ecke (gelb = Münzen). Als Mala **Frane ansehen** → auf seinem
+   Stapel liegen alle Münzen außer Ass und Drei. Das Ass hat Stipe offen, also ist die verdeckte die **Drei in Münzen**. Als Marko:
+   „Ass und Drei in Münzen, dazu den Buben in Kelchen.“ → Stipe erzählt vom leeren Sarg 1958 und von Jakovs Tod 1959 und nennt Zdenka.
+   Falsche Hände (König oder Sieben in Münzen, Drei in Kelchen) beenden das Gespräch; man kann es neu versuchen.
+5. **Veli Varoš:** Zdenka, „Kannten Sie Anka Matošić?“ → Anka zählte jeden Abend die Fähren und schlief bei der **siebten** ein; zu ihrer
+   Geburt pflanzte Jakov eine Pinie, „naš bor“ – **unser Baum**.
+6. **Mala spielt Anka:** als Mala mit Jakov reden, „(Mit ihm reden, als wäre ich Anka.)“ (erst nach Zdenka) → „Wie viele Fähren?“ –
+   „Sieben.“ → „Wo schläfst du heute?“ – „Unter unserem Baum.“ → Jakov verplappert sich: „Da habe ich dich selbst hingelegt …“.
+   Andere Antworten beenden das Gespräch.
+7. **Notizbuch:** „Der leere Sarg“ + „„Unter unserem Baum““ → **Er hat sie selbst umgebettet.** Andere Paare (Sarg + Weg, Zdenka + Weg,
+   Baum + Wurzeln …) sind Beinahe-Treffer.
+8. **Ein Name:** die Kreide an den **Pinien** benutzen – erst mit Nachnamen (Stipe) und Daten (Durchreibung) → „ANKA MATOŠIĆ · 3. V. 1941 –
+   9. II. 1947“. **Ein Licht:** bei Mira ein **Grablicht** kaufen (nach Stipes Geschichte). An den Pinien bläst der Wind die Streichhölzer
+   aus; das Grablicht an der **Steinmauer** benutzen (Windschatten) → brennendes Grablicht; das an den Pinien benutzen.
+9. **Finale:** „Sie haben sie damals nicht gefunden. Und heute sucht sie keiner.“, dann „Lesen Sie, was da steht.“ (die anderen Antworten
+   führen zurück). Mala: „Ich bin nicht Anka.“ Jakov begreift, wie viel Zeit vergangen ist – dreiundfünfzig Jahre – und **bleibt**:
+   „Jetzt fege ich, weil ich will. Nicht, weil ich Angst habe.“ (wie in den späteren Kapiteln). Danach beginnt der **Dritte Fall**.
+
+Hinweise: `kj_talk`, `kj_stone`, `kj_rub`, `kj_stipe`, `kj_zdenka`, `kj_tree`, `kj_where`, `kj_name`, `kj_light` (`HINWEISE.md`).
+Test: `qa/regress/bug_034_jakov_fall.js` (20 Prüfungen).

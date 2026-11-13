@@ -4,7 +4,7 @@ Erzeugt mit `node game/tools/hintdoc.js` aus `game/src/15_hints_k1.js` bis `game
 
 Jedes Thema ist ein Rätselabschnitt. „Offen, wenn“ ist die Bedingung im Quelltext (F = Schalter, N = Notiz, I = Inventar). Die Stufen: 1 Problem einordnen · 2 Denkrichtung · 3 Konkreter Ansatz · 4 Nächster Schritt. Stufe 4 kommt nur nach der Rückfrage.
 
-## Kapitel 1: Split (82 Themen)
+## Kapitel 1: Split (85 Themen)
 
 ### Was liegt heute an? `k1_msg`
 
@@ -539,39 +539,66 @@ Offen, wenn: `G.phase==='cj' && !N(G,'cj_1958')`
 
 ### Wer ist Anka? `kj_stone`
 
-Offen, wenn: `G.phase==='cj' && N(G,'cj_1958') && !N(G,'cj_stone')`
+Offen, wenn: `G.phase==='cj' && N(G,'cj_1958') && !N(G,'cj_moss')`
 
 1. **Problem einordnen:** *je nach Stand:* „Jakov nennt Mala „Anka“. Wer war das?“ / „Jakov hat Angst um ein Grab. Um wessen?“
 2. **Denkrichtung:** Mala kann mit Jakov reden. Er hält sie für jemanden. *(Mala: Ich kann mit Jakov reden. Er hält mich für jemanden.)*
-3. **Konkreter Ansatz:** Die Ufermauer ist aus alten Grabsteinen gebaut. Einer ist anders.
+3. **Konkreter Ansatz:** Die Ufermauer ist aus alten Grabsteinen gebaut, alle verkehrt herum. Einer ist anders.
 4. **Nächster Schritt:** *je nach Stand:* „Als Marko den Efeu an der Mauer ansehen.“ / „Zu Mala wechseln und die Steinmauer spüren.“ / „Die Steinmauer spüren.“
+
+### Ein Stein, den keiner lesen kann `kj_rub`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_moss') && !N(G,'cj_stone')`
+
+1. **Problem einordnen:** Die Schrift auf dem Stein ist verwittert. Nur „Naša mala“ ist noch zu lesen.
+2. **Denkrichtung:** Was man nicht mehr sehen kann, kann man manchmal abpausen. Wie Münzen unter Papier.
+3. **Konkreter Ansatz:** Dünnes Papier auf den Stein legen und mit etwas Weichem darüberreiben. Papier gibt es am Kiosk, Kreide hat Sanja.
+4. **Nächster Schritt:** *je nach Stand:* „In der „Bura“ Sanja nach Kreide fragen.“ / „Am Fährhafen bei Mira eine Zeitung kaufen.“ / „Die Zeitung am Efeu in Sustipan benutzen – mit der Kreide in der Tasche.“
 
 ### Ein Stein ohne Nachnamen `kj_stipe`
 
 Offen, wenn: `G.phase==='cj' && N(G,'cj_stone') && !N(G,'cj_stipe')`
 
-1. **Problem einordnen:** Auf dem Stein steht nur „Anka“. Wer war ihr Vater, und was ist passiert?
-2. **Denkrichtung:** Wer kennt in Split jeden Toten persönlich? Leute, die seit vierzig Jahren am selben Tisch sitzen.
-3. **Konkreter Ansatz:** In der „Bura“: Stipe und Frane nach Jakov fragen. Stipe will, dass man errät, was er in der Hand hat.
-4. **Nächster Schritt:** *je nach Stand:* „In der „Bura“ mit Stipe und Frane über Jakov reden.“ / „Zu Mala wechseln und Stipe ansehen – sie sieht ihm in die Karten.“ / „Stipe ansehen – ich sehe ihm in die Karten.“ / „Als Marko mit Stipe reden: „Ass und Drei in Münzen, dazu den Buben in Kelchen.““
+1. **Problem einordnen:** Auf dem Stein steht nur „Anka“. Wer war ihr Vater, und was ist mit ihr passiert?
+2. **Denkrichtung:** Wer kennt in Split jeden Toten persönlich? Zwei, die seit vierzig Jahren am selben Tisch Karten spielen.
+3. **Konkreter Ansatz:** *je nach Stand:* „In der „Bura“ Stipe nach Jakov fragen. Er erzählt nur, wenn man errät, was er in der Hand hat.“ / „Mala kann hinter Stipe stehen, ohne dass er es merkt.“ / „Ich kann hinter Stipe stehen, ohne dass er es merkt.“ / „Zwei Karten sind klar, die dritte zeigt nur eine gelbe Ecke: Münzen. Welche Münzen schon gespielt sind, liegt auf Franes Stapel.“ / „Von den Münzen sind nur Ass und Drei nicht gespielt. Das Ass hält Stipe offen.“
+4. **Nächster Schritt:** *je nach Stand:* „In der „Bura“ mit Stipe über Jakov reden.“ / „Zu Mala wechseln und Stipe ansehen – sie sieht ihm in die Karten.“ / „Stipe ansehen – ich sehe ihm in die Karten.“ / „Zu Mala wechseln und Frane ansehen – sie sieht seinen Stapel.“ / „Frane ansehen – ich sehe seinen Stapel.“ / „Als Marko mit Stipe reden: „Ass und Drei in Münzen, dazu den Buben in Kelchen.““
+
+### Wer kannte Anka? `kj_zdenka`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_stipe') && !N(G,'cj_zdenka')`
+
+1. **Problem einordnen:** Stipe weiß nur, was die Leute erzählt haben. Wer kannte Anka selbst?
+2. **Denkrichtung:** Ein Mädchen in ihrem Alter, das mit ihr auf der Mauer saß.
+3. **Konkreter Ansatz:** Stipe hat einen Namen genannt: Zdenka.
+4. **Nächster Schritt:** In Veli Varoš mit Zdenka reden: „Kannten Sie Anka Matošić?“
+
+### Was nur Anka hören darf `kj_tree`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_zdenka') && !N(G,'cj_tree')`
+
+1. **Problem einordnen:** Einem Fremden sagt Jakov nichts. Aber Mala hält er für Anka.
+2. **Denkrichtung:** Mala kann so mit ihm reden, wie Anka es getan hätte. Jetzt weiß sie genug über sie. *(Mala: Ich kann so mit ihm reden, wie Anka es getan hätte. Jetzt weiß ich genug über sie.)*
+3. **Konkreter Ansatz:** Anka zählte jeden Abend Fähren, bis sie einschlief. Und sie hatte einen Baum, den sie „unseren“ nannte.
+4. **Nächster Schritt:** In Sustipan als Mala mit Jakov reden: „(Mit ihm reden, als wäre ich Anka.)“, dann „Sieben.“ und „Unter unserem Baum.“ *(Mala: In Sustipan mit Jakov reden: „(Mit ihm reden, als wäre ich Anka.)“, dann „Sieben.“ und „Unter unserem Baum.“)*
 
 ### Der leere Sarg `kj_where`
 
-Offen, wenn: `G.phase==='cj' && N(G,'cj_stipe') && !N(G,'cj_where')`
+Offen, wenn: `G.phase==='cj' && N(G,'cj_stipe') && N(G,'cj_tree') && !N(G,'cj_where')`
 
-1. **Problem einordnen:** Ankas Sarg war 1958 leer. Wo ist sie?
-2. **Denkrichtung:** Jakov fegt jeden Tag denselben Weg – und hört an derselben Stelle auf.
-3. **Konkreter Ansatz:** *je nach Stand:* „Im Notizbuch: der leere Sarg und Jakovs Weg gehören zusammen.“ / „In Sustipan Jakov genau ansehen.“
-4. **Nächster Schritt:** *je nach Stand:* „In Sustipan Jakov ansehen.“ / „Im Notizbuch „Der leere Sarg“ mit „Bis zur dritten Pinie“ verbinden.“ / „Im Notizbuch „Der leere Sarg“ mit „Unter der dritten Pinie“ verbinden.“
+1. **Problem einordnen:** Jakov hat sie „selbst hingelegt“. Und ihr Sarg war 1958 leer.
+2. **Denkrichtung:** Wann hat er sie unter den Baum gelegt? Und warum war der Sarg leer, als die Stadt kam?
+3. **Konkreter Ansatz:** Im Notizbuch: der leere Sarg und „Unter unserem Baum“ gehören zusammen.
+4. **Nächster Schritt:** Im Notizbuch „Der leere Sarg“ mit „„Unter unserem Baum““ verbinden.
 
 ### Ein Grab ohne Namen `kj_name`
 
 Offen, wenn: `G.phase==='cj' && N(G,'cj_where') && !F(G,'cj.name')`
 
 1. **Problem einordnen:** Unter der dritten Pinie liegt Anka. Niemand weiß es. Kein Name steht dort.
-2. **Denkrichtung:** Ein Name muss nicht in Stein gemeißelt sein.
-3. **Konkreter Ansatz:** Sanja schreibt jeden Tag mit Kreide auf ihre Tafel.
-4. **Nächster Schritt:** *je nach Stand:* „Die Kreide an den Pinien in Sustipan benutzen.“ / „In der „Bura“ Sanja nach Kreide fragen.“
+2. **Denkrichtung:** Ein Name muss nicht in Stein gemeißelt sein. Aber ganz gehört er dorthin: mit Nachnamen und Daten.
+3. **Konkreter Ansatz:** *je nach Stand:* „Sanja schreibt jeden Tag mit Kreide auf ihre Tafel.“ / „Die Daten stehen auf ihrem Stein in der Mauer – lesbar nur mit einer Durchreibung.“
+4. **Nächster Schritt:** *je nach Stand:* „Die Zeitung am Efeu in Sustipan benutzen – mit der Kreide in der Tasche.“ / „In der „Bura“ Sanja nach Kreide fragen.“ / „Am Fährhafen bei Mira eine Zeitung kaufen.“ / „Die Kreide an den Pinien in Sustipan benutzen.“ / „In der „Bura“ Sanja nach Kreide fragen.“
 
 ### Ein Licht für Anka `kj_light`
 
@@ -579,8 +606,8 @@ Offen, wenn: `G.phase==='cj' && F(G,'cj.name') && !F(G,'cj.done')`
 
 1. **Problem einordnen:** Ihr Name steht jetzt da.
 2. **Denkrichtung:** Hier stellt man auf jedes Grab ein Licht.
-3. **Konkreter Ansatz:** Mira am Kiosk beim Fährhafen hat noch Grablichter von Allerheiligen.
-4. **Nächster Schritt:** *je nach Stand:* „Das Grablicht an den Pinien in Sustipan benutzen.“ / „Am Fährhafen bei Mira ein Grablicht kaufen.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Am Wasser bläst der Wind jedes Streichholz aus. Hinter der Mauer ist es windstill.“ / „Mira am Kiosk beim Fährhafen hat noch Grablichter von Allerheiligen.“
+4. **Nächster Schritt:** *je nach Stand:* „Das brennende Grablicht an den Pinien in Sustipan benutzen.“ / „Das Grablicht an der Steinmauer benutzen – dort im Windschatten anzünden.“ / „Das Grablicht an den Pinien in Sustipan benutzen.“ / „Am Fährhafen bei Mira ein Grablicht kaufen.“
 
 ### Das Telefon `k3_call`
 

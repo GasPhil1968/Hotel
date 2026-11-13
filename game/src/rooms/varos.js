@@ -3,12 +3,13 @@
 'use strict';
 var P=M.P;
 function ph(GS){ return GS.phase; }
-function zdenkaHere(GS){ return ['pro','pro_eve','c1','c2'].indexOf(GS.phase)>=0; }
+function zdenkaHere(GS){ return ['pro','pro_eve','c1','c2','cj'].indexOf(GS.phase)>=0; }
 // ---------------------------------------------------------------- Zdenka
 async function talkZdenka(A){ var Z=A.npc('zdenka'), p=A.G.phase;
   if (p==='pro') return zdenkaPro(A,Z);
   if (p==='c1') return zdenkaC1(A,Z);
   if (p==='c2') return zdenkaC2(A,Z);
+  if (p==='cj' && M.jkZdenka) return M.jkZdenka(A,Z);   // Jakovs Fall (92_jakov.js)
   return Z.say('Gute Nacht, junger Mann.'); }
 async function zdenkaPro(A,Z){
   if (A.first('zdHello')){ await Z.say('Sie sind der von der Zeitung.'); await A.m('Marko Vuković. Vesna Kralj hat mich geschickt. Wegen Gospođa Perić.');
