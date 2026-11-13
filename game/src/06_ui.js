@@ -68,7 +68,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   for (var y=0;y<SH;y++){ var row=y*W, brow=y*bw; for (var x=0;x<W;x++){ var sx=x+cx-ox; fb.d[row+x]=(sx>=0&&sx<bw)?bg.d[brow+sx]:P.k0; } }
   if (E.k3para && M.k3Parallax && M.k3Fx('para',room,gs)) M.k3Parallax(fb,room,cx,ox,SH);   // Mostar: Himmel und Berge langsamer (21_k3_look.js)
   mask.fill(0); gmask.fill(0); amask.fill(0); M.RAIN_SHIELD=[];   // Regenschatten unter offenen Schirmen (M.rain in 01_art.js)
-  var k3pm=(M.k3Fx && M.k3Fx('pal',room,gs))?M.PAL3MAP:null; M.PAL3=!!k3pm;
+  var k3pm=M.k3PalMap?M.k3PalMap(room,gs,M.todOf()):null; M.PAL3=!!k3pm;
   var view={cam:cx-ox,t:E.gt()/1000,gt:E.gt(),tod:M.todOf(),ghost:ghostView};
   if (room.dynamic) room.dynamic(fb,view,S,gs);
   if (M.k3Life) M.k3Life(fb,room,view,S,gs);   // Mostar: Leben im Hintergrund (21_k3_look.js)

@@ -39,12 +39,12 @@ var P = {}, RGB = [];
 //   f Lampenlicht (statt y) · z Erde und Putz (statt e)
 var NBASE = PAL_DEF.length;
 var PAL3_DEF = {
-  o:['332c3a','544a58','7a6e74','a69686','cdbb9c','e9d8b6','f8eed6'],
-  u:['1e1f2e','363849','585a68','868684','b8b4ac'],
-  j:['05151d','0a2730','0e3d42','145a50','247c66','56a888','9cd2b6'],
-  i:['0b1617','152a22','233f28','3a5a2c','5f7a34','92994a','bcbb72'],
-  f:['3a1d10','72381a','a8601e','de9638','f6c768','fff0b8'],
-  z:['2a2022','483a30','69573e','8f7852','b59e6c','d1b984'] };
+  o:['2a2142','4b3d60','786577','ab9484','d8bd98','f0dbb2','fdf3da'],
+  u:['1a1934','333452','57586f','8a8790','c1bbb0'],
+  j:['04141f','07293b','0a4549','0d6858','1c8e6d','48bc93','95e2c1'],
+  i:['0a1419','13291f','1d4525','33632b','5b862f','94a744','c6ca6a'],
+  f:['3c1a0e','78361a','b05e1e','e6973a','fbcb6a','fff2bc'],
+  z:['281c28','4a3532','6f5539','987a4d','c1a26a','dcc28a'] };
 function hx2(h){ return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
 function rgbHex(q){ return q.map(function(v){ var s=Math.round(v).toString(16); return s.length<2?'0'+s:s; }).join(''); }
 Object.keys(PAL3_DEF).forEach(function(k){ var L=PAL3_DEF[k];

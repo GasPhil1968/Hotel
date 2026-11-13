@@ -75,6 +75,8 @@ FIGUREN
 MOSTAR
 - Kapitel 3 hat eine eigene, feinere Farbgebung: Kalkstein mit warmen
   Lichtern und violetten Schatten, die Neretva smaragdgrün.
+  Dazu eine Stimmung je Tageszeit und Wetter: tags warm, nachts tiefblau mit
+  warmen Laternen, im Regen kühl, bei Bura klar.
 - Nachts färben die Laternen die Figuren an der zugewandten Seite und werfen
   lange Schatten; im Regen spiegeln sich die Figuren im nassen Pflaster und
   in den Pfützen. In kalten Nächten und bei Bura sieht man den Atem; der Wind

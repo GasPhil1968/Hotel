@@ -9,8 +9,42 @@ var ROOMS='ostbus herberge zimmer kujundziluk starimost koski minarett tepa stra
 M.K3LOOK_ROOMS={}; ROOMS.forEach(function(id){ M.K3LOOK_ROOMS[id]=1; });
 M.k3LookOn=function(room,GS){ if (M.K3LOOK_OFF || !room || !M.K3LOOK_ROOMS[room.id]) return false; var G=GS||M.GS; return !!(G && M.chapterOf && M.chapterOf(G)===3); };
 // Einzelne Punkte zum Vergleichen abschaltbar: M.K3FX.pal=false usw.
-M.K3FX={ pal:true, para:true, light:true, shadow:true, reflect:true, breath:true, follow:true, life:true, face:true, gait:true, close:true };
+M.K3FX={ pal:true, mood:true, para:true, light:true, shadow:true, reflect:true, breath:true, follow:true, life:true, face:true, gait:true, close:true };
 M.k3Fx=function(k,room,GS){ return M.K3FX[k]!==false && M.k3LookOn(room||(M.E&&M.E.room),GS); };
+
+// ---------------------------------------------------------------- Punkt 8b: Farbstimmung je Tageszeit und Wetter
+// Über die Umfärbung (PAL3MAP) kommt eine Stimmung: tags warmes Licht und kühle, violette Schatten, satter; nachts tiefes Blau und
+// warme Lampen; im Regen kühl und gedämpft; bei Bura klar und hart; in Dämmerung und Morgengrauen Orange gegen Blau. Jede Farbe wird
+// verschoben und auf die nächste Palettenfarbe gelegt (eine feste Farbtabelle, kein Raster). Damit nichts grell oder hart wird:
+// Weicht die Helligkeit zu weit ab oder wird die Farbe viel bunter als vorher, gilt die halbe Verschiebung, sonst die alte Farbe.
+var MOOD={
+  day:  {sat:1.06,con:1.07,mid:128,lw:[5,2,-6],sh:[-2,-6,12]},
+  bura: {sat:1.08,con:1.16,mid:128,lw:[4,4,2],sh:[-6,-6,20]},
+  rain: {sat:0.92,con:1.06,mid:110,lw:[-2,2,6],sh:[-6,-2,12],all:[-5,0,6]},
+  dusk: {sat:1.1,con:1.08,mid:100,lw:[12,4,-10],sh:[-4,-8,16]},
+  night:{sat:1.15,con:1.12,mid:60,night:1,lt:0.1,cm:1.6,ca:24}
+};
+M.K3MOOD=MOOD;
+function moodKey(tod,we){ if (tod==='night') return 'night'; if (tod==='dusk'||tod==='dawn') return 'dusk'; if (we==='rain') return 'rain'; if (we==='bura') return 'bura'; return 'day'; }
+var GRADE={};
+function lum(q){ return (0.3*q[0]+0.59*q[1]+0.11*q[2])/255; }
+function chroma(q){ return Math.max(q[0],q[1],q[2])-Math.min(q[0],q[1],q[2]); }
+function ss(a,b,x){ var t=(x-a)/(b-a); t=t<0?0:t>1?1:t; return t*t*(3-2*t); }
+function gradeOne(q,m,k){ var r=q[0],g=q[1],b=q[2], L=lum(q), gr=(r+g+b)/3, sat=1+(m.sat-1)*k, con=1+(m.con-1)*k;
+  r=gr+(r-gr)*sat; g=gr+(g-gr)*sat; b=gr+(b-gr)*sat; r=m.mid+(r-m.mid)*con; g=m.mid+(g-m.mid)*con; b=m.mid+(b-m.mid)*con;
+  var wL=ss(0.5,0.9,L)*k, wS=ss(0.55,0.1,L)*k;
+  if (m.night){ if ((q[0]-q[2])>40 && L>0.35){ r+=22*k; g+=8*k; b-=20*k; } else { r-=6*wS+4*k; g-=6*wS; b+=18*wS+8*k; } }
+  else { r+=m.lw[0]*wL+m.sh[0]*wS; g+=m.lw[1]*wL+m.sh[1]*wS; b+=m.lw[2]*wL+m.sh[2]*wS; if (m.all){ r+=m.all[0]*k; g+=m.all[1]*k; b+=m.all[2]*k; } }
+  var c=function(v){ return Math.max(0,Math.min(255,v)); }; return M.nearest(c(r),c(g),c(b),true); }
+function gradeMap(key){ var t=GRADE[key]; if (t) return t; var m=MOOD[key], RGB=M.RGB, n=RGB.length, base=M.PAL3MAP; t=new Uint8Array(256);
+  var cache={};
+  for (var i=0;i<256;i++){ var c=base[i]; if (c>=n){ t[i]=c; continue; } if (cache[c]!==undefined){ t[i]=cache[c]; continue; } var q=RGB[c], L=lum(q), C=chroma(q), v=c;
+    for (var k=1;k>0.3;k-=0.5){ var o=gradeOne(q,m,k), p=RGB[o]; if (Math.abs(lum(p)-L)<=(m.lt||0.07) && chroma(p)<=C*(m.cm||1.25)+(m.ca||14)){ v=o; break; } }
+    t[i]=cache[c]=v; }
+  t[M.T]=M.T; return (GRADE[key]=t); }
+// die Farbtabelle für den Raum jetzt: Umfärbung allein (M.K3FX.mood=false) oder mit Stimmung
+M.k3PalMap=function(room,G,tod){ if (!M.k3Fx('pal',room,G)) return null; if (M.K3FX.mood===false) return M.PAL3MAP; var we='calm'; try{ we=(M.scn&&M.scn.weather)?M.scn.weather(G):'calm'; }catch(e){}
+  return gradeMap(moodKey(tod,we)); };
 
 // ---------------------------------------------------------------- Punkt 5: Parallaxe
 // Breite Räume geben ihre ferne Ebene heraus (farSky: Himmel, wo möglich mit den Bergen, ganz gemalt, und die Maske, wo sie im Bild zu

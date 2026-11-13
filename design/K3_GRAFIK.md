@@ -24,6 +24,22 @@ Zwischenstufen und brauchen *weniger* Raster).
 | 10 | Eigene Gangarten | Jela, Zlata, der alte Mann an der Brücke: gebeugt, kurze Schritte, Kopf vor, 1,45× langsamer; Vlado, der Händler: leicht gebeugt; Lena: federnd, größere Schritte, schneller; Marko in den Nächten und am Morgen danach: müde, Kopf gesenkt, hängende Arme. | `21_k3_look.js` |
 | 11 | Nahaufnahmen | Fünf große Bilder an Schlüsselmomenten, gerastert ein- und ausgeblendet, die Sätze laufen oben weiter: die Fährglocke beim ersten Läuten (Samstagnacht), Batos Hände („Mit diesen Händen“), Zlatas Sturmlaterne („Zvono.“), Mala unter dem Quittenbaum, der Blick vom Scheitel der Alten Brücke („Tief unten.“). | `97_k3_nah.js`; Aufrufe in `skela_d.js`, `skela_l.js`, `starimost.js` |
 
+## Nachtrag 13.11.2026: kräftiger
+
+Rückmeldung: „So viel Unterschied sehe ich nicht.“ Stimmt – bei 320 × 144 Pixeln waren die Punkte zu leise, und die neuen Rampen
+waren tagsüber sogar grauer als die alten. Deshalb:
+
+* **Rampen satter** (`00_core.js`, `PAL3_DEF`): Kalkstein mit deutlich violetten Schatten und warmem Creme-Gold im Licht, Graustein
+  violetter, die Neretva leuchtender smaragdgrün, Laub und Erde satter.
+* **Farbstimmung je Tageszeit und Wetter** (`21_k3_look.js`, `M.k3PalMap`, abschaltbar mit `M.K3FX.mood=false`): über der Umfärbung
+  eine feste Farbtabelle je Stimmung – tags warmes Licht und kühle Schatten, nachts tiefes Blau und wärmere Lampen, im Regen kühl
+  und gedämpft, bei Bura klar und hart, in Dämmerung und Morgengrauen Orange gegen Blau. Damit nichts grell oder hart wird, gilt
+  bei zu großem Helligkeitssprung oder zu viel Buntheit die halbe Verschiebung oder die alte Farbe. Kein Raster, keine Farben
+  außerhalb der Palette; die anderen Kapitel bleiben unberührt.
+* Bilder: `farbstimmung_tag.png`, `farbstimmung_wetter.png`, `farbstimmung_nacht.png` (je Zeile vorher | nur Umfärbung | mit Farbstimmung).
+* Geprüft: `qa/ui/k3_grafik.js` 26/26, Regression 33/33, `qa/ui/k3_revision.js` 40/40, Musterlösung Kapitel 3 OK (131 Schritte,
+  keine JS-Fehler), Fahrtvorschau OK.
+
 ## Technik in Kürze
 
 * **Umfärben (8):** `M.PAL3MAP` bildet die alten Rampen *s m a g y e* auf die neuen *o u j i f z* ab. Die Szene wird nach der
