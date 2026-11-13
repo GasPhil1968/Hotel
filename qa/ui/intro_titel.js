@@ -6,7 +6,7 @@
 //  5 Einstellungen: „Intro beim Start“ schaltet und merkt es sich (mala.intro); „Intro ansehen“ spielt es vom Titel aus
 //  6 Titelbilder: bei jedem Start ein anderes – vier Starts nacheinander zeigen Split, Sarajevo, Mostar, München, dann wieder Split;
 //    ?titel=mostar wählt fest; jedes Bild zeichnet sich ohne Fehler und bewegt sich (zwei Zeitpunkte unterscheiden sich)
-//   node qa/ui/intro_titel.js [--html pfad/zu/index.html] [--kurz]   (--kurz: ohne den 29-s-Durchlauf)
+//   node qa/ui/intro_titel.js [--html pfad/zu/index.html] [--kurz]   (--kurz: ohne den 40-s-Durchlauf)
 'use strict';
 const path = require('path'); const { chromium } = require('playwright');
 const a = process.argv.slice(2), hi = a.indexOf('--html'), KURZ = a.includes('--kurz');
@@ -29,8 +29,8 @@ const res = []; const ck = (ok, m) => { res.push([!!ok, m]); console.log((ok ? '
   await p.waitForTimeout(1800); const shown = await p.evaluate(() => { const m = document.querySelector('#shell .tmenu'); if (!m) return null; const st = getComputedStyle(m); return { op: +st.opacity, n: m.querySelectorAll('button').length }; });
   ck(shown && shown.op > 0.95 && shown.n >= 4, 'Menü nach dem Aufblenden sichtbar ' + JSON.stringify(shown)); await p.close();
   // 3
-  if (!KURZ) { p = await open('?intro=1'); const t0 = Date.now(); await p.waitForFunction(() => M.E.screen === 'title', null, { timeout: 45000 }); const dur = (Date.now() - t0) / 1000;
-    ck(dur > 26 && dur < 34, 'ohne Eingabe: nach ' + dur.toFixed(1) + ' s der Titel'); await p.waitForTimeout(1600);
+  if (!KURZ) { p = await open('?intro=1'); const t0 = Date.now(); await p.waitForFunction(() => M.E.screen === 'title', null, { timeout: 60000 }); const dur = (Date.now() - t0) / 1000;
+    ck(dur > 37 && dur < 46, 'ohne Eingabe: nach ' + dur.toFixed(1) + ' s der Titel'); await p.waitForTimeout(1600);
     ck(await p.evaluate(() => !M.E.titleInAt && M.shell.ctx === 'title'), 'Hintergrund aufgeblendet, Menü offen'); await p.close(); }
   // 4
   p = await open('?intro=1'); await p.waitForTimeout(1200); await p.keyboard.press(' '); await p.waitForTimeout(200); ck(await scr(p) === 'title', 'Leertaste überspringt'); await p.close();

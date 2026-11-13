@@ -38,3 +38,14 @@ Outro von Kapitel 5 vor, ihr Weg ins Licht ebenso. Die Texte stammen aus den Sze
 
 `design/kino/zwischenfilme.mp4` (alle elf Filme hintereinander, 1280 × 800, mit Ton) und je Film eine Datei, aufgenommen mit
 `node design/tools/kinovideo.js design/kino`.
+
+## Prüfung (Build 13.11.2026)
+
+| Prüfung | Ergebnis |
+|---|---|
+| alle elf Filme im Browser abgespielt und aufgenommen | ohne JS-Fehler; Längen 26–42 s, zusammen 5:44 min |
+| echter Ablauf mit `?kino=1`, Kapitel 1–5 | Intro statt Karte, Überspringen per Klick, danach Spiel bzw. Busfahrt-Erinnerung wie bisher; Outro vor dem Abspann, Überspringen per Leertaste, dann Abspann |
+| Regression `node qa/regress/run.js` | 33 von 33 OK |
+| `qa/ui/intro_titel.js` (Länge auf 40 s angepasst) | OK |
+| `qa/ui/k3_grafik.js`, `qa/ui/k3_revision.js` | 26/26, 40/40 |
+| Musterlösungen Kapitel 1 und 5 (unter Testautomatisierung, also mit den einfachen Karten) | OK, keine JS-Fehler |
