@@ -2733,6 +2733,7 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
   E.busy=true;
   if ((v==='talk') && hs.npc) convStart(hs.npc);
   try{ var ctx={key:hs.id+':'+v+(withItem?':'+withItem:'')+(isG?':g':''),hs:hs,item:withItem};
+    if (isG && v==='sense' && !withItem && M.atmoPulse){ var pr=hsRect(hs), pl=player(); if (pl) M.atmoPulse(pl.x+(pl.f==='L'?-4:4),pl.y-26,pr?pr[0]+pr[2]/2:undefined,pr?pr[1]+pr[3]/2:undefined); }   // Malas Leuchten (22_atmo.js)
     if (unmetNpc(hs)){ if ((v==='talk'||withItem) && M.introduce) await M.introduce(API,hs.npc); else if (v==='look' && !isG && M.lookUnknown && M.lookUnknown(hs.npc)){ await say(M.lookUnknown(hs.npc),GS.active); return; } }
     API.reach=function(fn){ var an=reachFor(hs); if (!an||isG){ if (fn) fn(); return Promise.resolve(); } return playAnimOn(player(),an,fn); };
     if (withItem){
@@ -3112,7 +3113,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   if (room.front) room.front(fb,view,S,gs);
   if (k3pm){ for (var pi=0;pi<W*SH;pi++){ if (!amask[pi]) fb.d[pi]=k3pm[fb.d[pi]]; } }
   M.PAL3=false;
-  if (M.atmoApply && !ghostView) M.atmoApply(fb,room,view,S,gs,cx,ox,gmask);   // Atmosphäre (Probe, 22_atmo.js; nur mit ?atmo=1)
+  if (M.atmoApply && !ghostView) M.atmoApply(fb,room,view,S,gs,cx,ox,gmask);   // Atmosphäre (22_atmo.js)
   if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var k0=dy0*W+dx0; if (gmask[k0] && fb.d[k0]===gcol[k0]) continue; var lt=E.litAt(dx0+cx-ox,dy0); if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
@@ -3122,7 +3123,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (lv===false){} else if (lv && lv.to) drawLeash(mx0,my0,lv.to[0]-cx+ox,lv.to[1],E.gt(),false,lv.bond); else drawLeash(mx0,my0,mx0+(lv?lv[0]:64),my0+(lv?lv[1]:-58),E.gt(),true); }
     // kalter Schimmer am Rand
     var tt=E.gt()/1000; for (var yy=0;yy<SH;yy++){ var e=Math.min(yy,SH-1-yy); if (e>5) continue; for (var xx=0;xx<W;xx++){ if (bayer(xx+Math.floor(tt*3),yy)<(6-e)/14) fb.d[yy*W+xx]=P.x0; } } }
-  if (M.atmoPulseDraw) M.atmoPulseDraw(fb,view,cx,ox);   // Malas Leuchten beim Spüren (Probe, 22_atmo.js)
+  if (M.atmoPulseDraw) M.atmoPulseDraw(fb,view,cx,ox);   // Malas Leuchten beim Spüren (22_atmo.js)
   if (E.crossing) drawCrossing(E.crossing,cx-ox,E.gt());
   // Kopfschmerz: ein unentdeckter Geist ist nah
   var hidden=!ghostView && Object.keys(E.ACT).some(function(k){ var a=E.ACT[k]; return a.ghost && a.id!=='mala' && a.visible && !E.ghostVisible(a) && !a.noAche; });
@@ -3450,7 +3451,7 @@ M.defineOverlay('doc',function(fb,ov){ var d=ov.data, st=d.style||'letter', w=d.
   if (d.stamp){ var sw=M.textWidth(d.stamp)+8; fb.rect(x+w-sw-10,y+h-20,sw,12,P.r3); fb.rect(x+w-sw-9,y+h-19,sw-2,10,col); M.text(fb,d.stamp,x+w-sw-6,y+h-17,P.r3); } });
 // Nachhall: Erinnerungsbild + Zeilen nacheinander
 M.defineOverlay('memory',function(fb,ov,gt){ var d=ov.data, x0=44, y0=8, w=232, h=104; ov.step=ov.step||0;
-  if (!ov.pic){ var b=new Buf(w,h,P.k0); try{ if (d.draw) d.draw(b,0); }catch(e){ console.error(e); } M.tintApply(b,d.tint==='ghost'?M.TINT.ghost:M.TINT.memory); ov.pic=b; }
+  if (!ov.pic){ var b=new Buf(w,h,P.k0); try{ if (d.draw) d.draw(b,0); }catch(e){ console.error(e); } M.tintApply(b,d.tint==='ghost'?M.TINT.ghost:M.TINT.memory); if (M.atmoFrameBuf) M.atmoFrameBuf(b); ov.pic=b; }
   var k=Math.min(1,(gt-ov.at)/600);
   for (var y=0;y<h;y++) for (var x=0;x<w;x++){ var c=ov.pic.d[y*w+x]; var e=Math.min(x,w-1-x,y,h-1-y); if (e<10 && bayer(x,y)>e/10) c=P.k0; if (bayer(x,y)>k) c=P.k0; fb.px(x0+x,y0+y,c); }
   if (d.anim) d.anim(fb,x0,y0,w,h,(gt-ov.at)/1000);
@@ -4371,6 +4372,7 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
   // Intro (89_intro.js): beim Start an oder aus; vom Titel aus jederzeit ansehen (dann mit Ton)
   if (M.introOn) it.push({type:'seg',label:'Intro beim Start',sub:'Ein Tipp überspringt es.',value:M.introOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.introOn(+v===1); }});
+  if (M.atmoSetting) it.push({type:'seg',label:'Atmosphäre',sub:'Licht und Dunkel, Lichtstrahlen, Staub, Malas Leuchten.',value:M.atmoSetting()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.atmoSetting(+v===1); }});
   if (M.kinoOn) it.push({type:'seg',label:'Zwischenfilme',sub:'Intro und Outro jedes Kapitels. Ein Tipp überspringt sie.',value:M.kinoOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.kinoOn(+v===1); }});
   if (M.startIntro && SH.ctx==='title') it.push({type:'seg',label:'Intro',value:-1,options:[[1,'ansehen']],act:function(){ closeAll(); M.startIntro(); }});
   // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm
@@ -16733,16 +16735,25 @@ M.k3Life=function(fb,room,view,S,G){ if (!M.k3Fx('life',room,G)) return; var fn=
 })(M);
 
 /* ---- 22_atmo.js ---- */
-/* ===== 22_atmo.js — Atmosphäre (Probe): Lichtinseln im Dunkeln, Lichtstrahlen mit Staub, Glut und Funken, Lichthöfe, Malas Leuchten,
+/* ===== 22_atmo.js — Atmosphäre: Lichtinseln im Dunkeln, Lichtstrahlen mit Staub, Glut und Funken, Lichthöfe, Malas Leuchten,
    schwarzer Rahmen für Erinnerungen. Alles wirkt nach dem Zeichnen der Szene auf das fertige Bild (Palettenindizes, gerastert): Figuren
    werden nicht neu gezeichnet, sie werden nur heller oder dunkler, je nachdem, wo sie stehen. Geister (gmask) bleiben im Dunkeln hell.
-   Ein Raum meldet seine Effekte in M.ATMO[raum](S,GS,tod) → {dark, pools, beams, motes, embers, halos, frame}.
-   Eingeschaltet nur mit ?atmo=1 oder M.ATMO_ON=true (Probe; im normalen Spiel bleibt alles wie bisher). ===== */
+   Ein Raum meldet seine Effekte in M.ATMO[raum](S,GS,tod) → {dark, vig, pools, beams, motes, embers, halos}; ohne eigenen Eintrag gilt
+   M.atmoGeneric: nachts Randabdunklung und Lichtinseln an den hellen warmen Lampen des Bildes (selbst gesucht), Mondlicht auf Marko;
+   in Innenräumen tagsüber Staub in der Luft; Dämmerung leicht abgedunkelte Ränder. Erinnerungsbilder bekommen einen ausgefransten
+   schwarzen Rahmen (M.atmoFrameBuf, 06_ui.js), Malas Spüren einen Lichtimpuls (M.atmoPulse, 05_engine.js).
+   Einstellung „Atmosphäre“ (an/aus, Vorgabe an). ?atmo=1 / ?atmo=0 erzwingt; unter Testautomatisierung aus. ===== */
 (function(M){
 'use strict';
 var P=M.P, T=M.T, bayer=M.bayer, hash=M.hash, W=320, SH=144;
 M.ATMO=M.ATMO||{};
-M.atmoOn=function(){ if (M.ATMO_ON!==undefined) return !!M.ATMO_ON; try{ return /[?&]atmo=1/.test(location.search); }catch(e){ return false; } };
+var ON=null;
+function decide(){ var q=''; try{ q=location.search||''; }catch(e){ return false; }
+  if (/[?&]atmo=1(&|$)/.test(q)) return true; if (/[?&]atmo=0(&|$)/.test(q)) return false;
+  try{ if (navigator.webdriver) return false; }catch(e){}
+  try{ return localStorage.getItem('mala.atmo')!=='0'; }catch(e){ return true; } }
+M.atmoOn=function(){ if (M.ATMO_ON!==undefined) return !!M.ATMO_ON; if (ON===null) ON=decide(); return ON; };
+M.atmoSetting=function(v){ if (v===undefined){ try{ return localStorage.getItem('mala.atmo')!=='0'; }catch(e){ return true; } } try{ localStorage.setItem('mala.atmo',v?'1':'0'); }catch(e){} ON=null; return v; };
 // Farbstiche: warm (Flamme), kalt (Mond), Malas Türkis
 var lum=function(r,g,b){ return r*0.3+g*0.59+b*0.11; };
 var WARM=M.tintMake(function(r,g,b){ var L=lum(r,g,b); return [r*0.55+L*0.62+46, g*0.44+L*0.40+18, b*0.18+L*0.08]; });
@@ -16757,7 +16768,9 @@ function flick(t,seed,amt){ return 1-amt*(0.5+0.5*Math.sin(t*7.3+seed)*Math.sin(
 // dark: Grundhelligkeit 0…1 (1 = unverändert), steps: wie viele Stufen das völlige Dunkel ausmacht. pools: [{x,y,rx,ry,amt,col,flicker}]
 // (x in Raumkoordinaten). Im Kern einer warmen Insel wird zusätzlich warm umgefärbt und eine Stufe aufgehellt.
 function darkPass(fb,A,view,cx,ox,gm){ var t=view.t, amb=A.dark, steps=A.steps||5, pools=(A.pools||[]).map(function(p,i){ if (p.follow){ var fa=M.E.ACT[p.follow]; if (!fa || !M.E.actorShown(fa)) return null; p=Object.assign({},p,{x:fa.x,y:fa.y+(p.dy||0)}); } return {x:p.x-cx+ox,y:p.y,rx:p.rx,ry:p.ry||p.rx*0.55,amt:(p.amt||1)*(p.flicker?flick(t,i*3.7,p.flicker):1),col:p.col,core:p.core===undefined?0.72:p.core}; }).filter(Boolean);
+  var vig=A.vig||0;
   for (var y=0;y<SH;y++) for (var x=0;x<W;x++){ var k=y*W+x; if (gm && gm[k]) continue; var L=amb, tc=null, tl=0;
+    if (vig){ var vx=(x-160)/192, vy=(y-72)/108, vv=vx*vx+vy*vy-0.32; if (vv>0) L-=vv*vig; }
     for (var i=0;i<pools.length;i++){ var p=pools[i], dx=(x-p.x)/p.rx, dy=(y-p.y)/p.ry, d=dx*dx+dy*dy; if (d>=1) continue; var v=p.amt*Math.pow(1-d,1.6); L+=v; if (p.col && v>tl){ tl=v; tc=p.col; } }
     var c=fb.d[k];
     if (tc && tl>0.18){ var tt=TINTS[tc], f=Math.min(1,(tl-0.18)*1.6); if (f+(bayer(x,y)-0.5)*0.8>0.5) c=tt.a[c]; if (tl>0.72 && bayer(y,x)<(tl-0.72)*1.6) c=M.UP[c]; }
@@ -16783,7 +16796,7 @@ function beamPass(fb,A,view,cx,ox){ var t=view.t;
       if (X<0||X>=W||Y<0||Y>=SH) continue; fb.d[Y*W+X]=tw>0.8?mc[2]:(tw>0.3?mc[1]:mc[0]); } }); }
 // freie Staubwolke ohne Strahl (motes: {x,y,w,h,n,col})
 function motePass(fb,A,view,cx,ox){ var t=view.t; (A.motes||[]).forEach(function(m,mi){ var mc=m.col==='cold'?[P.n3,P.n4,P.b4]:(m.col==='mala'?[P.x3,P.x4,P.x5]:[P.s4,P.y4,P.y5]);
-  for (var i=0;i<(m.n||20);i++){ var h1=hash(i,mi+5), h2=hash(i+11,mi), h3=hash(i*3,mi+1); var X=Math.round(m.x-cx+ox+((h1*m.w+Math.sin(t*0.3+i)*6+t*(h3-0.5)*3)%m.w+m.w)%m.w), Y=Math.round(m.y+((h2*m.h-t*(2+h3*3))%m.h+m.h)%m.h);
+  for (var i=0;i<(m.n||20);i++){ var h1=hash(i,mi+5), h2=hash(i+11,mi), h3=hash(i*3,mi+1); var X=Math.round((m.screen?m.x:m.x-cx+ox)+((h1*m.w+Math.sin(t*0.3+i)*6+t*(h3-0.5)*3)%m.w+m.w)%m.w), Y=Math.round(m.y+((h2*m.h-t*(2+h3*3))%m.h+m.h)%m.h);
     var tw=Math.sin(t*(1.2+h3*2)+i); if (tw<0 || X<0||X>=W||Y<0||Y>=SH) continue; fb.d[Y*W+X]=tw>0.85?mc[2]:(tw>0.4?mc[1]:mc[0]); } }); }
 
 // ---------------------------------------------------------------- 3 Glut, Funken, Flamme
@@ -16807,6 +16820,7 @@ function haloPass(fb,A,view,cx,ox,gm){ var t=view.t; (A.halos||[]).forEach(funct
 // Licht (wer nah steht, bekommt einen türkisen Saum), und zur gespürten Stelle (tx,ty) zucken verästelte Linien. Dauer 1,6 s.
 var PULSE=null;
 M.atmoPulse=function(x,y,tx,ty,ms){ PULSE={x:x,y:y,tx:tx,ty:ty,t0:M.E.gt(),ms:ms||1600}; };
+M.atmoPulseActive=function(){ return PULSE?(M.E.gt()-PULSE.t0)/PULSE.ms:-1; };
 M.atmoPulseAt=function(x,y,tx,ty,gt){ PULSE={x:x,y:y,tx:tx,ty:ty,t0:gt,ms:1600,fixed:true}; };   // für Standbilder
 function bolt(fb,x0,y0,x1,y1,seed,life,lvl){ var n=Math.max(6,Math.round(Math.hypot(x1-x0,y1-y0)/4)), pts=[[x0,y0]], r=M.rng(seed);
   for (var i=1;i<n;i++){ var f=i/n, j=(r()-0.5)*9*Math.sin(Math.PI*f); var dx=x1-x0, dy=y1-y0, L=Math.hypot(dx,dy)||1; pts.push([x0+dx*f-dy/L*j, y0+dy*f+dx/L*j]); } pts.push([x1,y1]);
@@ -16826,23 +16840,69 @@ function pulsePass(fb,view,cx,ox){ if (!PULSE) return; var gt=view.gt, q=(gt-PUL
 // ---------------------------------------------------------------- 6 Schwarzer Rahmen (Erinnerungen, Träume)
 // frame: {inset, rough, seed} – die Szene sitzt wie herausgeschnitten im Schwarz; der Rand franst unregelmäßig aus und dunkelt nach innen ab.
 var FRAMEC={};
-function frameMask(f){ var key=[f.inset,f.rough,f.seed].join(','); if (FRAMEC[key]) return FRAMEC[key]; var m=new Float32Array(W*SH), sd=f.seed||5, inset=f.inset||10, rough=f.rough||9;
+function frameMask(f,w,h){ var key=[f.inset,f.rough,f.seed,w,h].join(','); if (FRAMEC[key]) return FRAMEC[key]; var m=new Float32Array(w*h), sd=f.seed||5, inset=f.inset||10, rough=f.rough||9;
   function n1(u,o){ return Math.sin(u*0.045+sd+o)*0.5+Math.sin(u*0.11+sd*2.3+o)*0.3+Math.sin(u*0.27+sd*4.1+o)*0.2; }
-  for (var y=0;y<SH;y++) for (var x=0;x<W;x++){ var dl=x-(inset+rough*(1+n1(y,1))), dr=(W-1-x)-(inset+rough*(1+n1(y,2))), dt=y-(inset*0.6+rough*0.8*(1+n1(x,3))), db=(SH-1-y)-(inset*0.9+rough*(1+n1(x,4)));
-    m[y*W+x]=Math.min(dl,dr,dt*1.3,db*1.2); }
+  for (var y=0;y<h;y++) for (var x=0;x<w;x++){ var dl=x-(inset+rough*(1+n1(y,1))), dr=(w-1-x)-(inset+rough*(1+n1(y,2))), dt=y-(inset*0.6+rough*0.8*(1+n1(x,3))), db=(h-1-y)-(inset*0.9+rough*(1+n1(x,4)));
+    m[y*w+x]=Math.min(dl,dr,dt*1.3,db*1.2); }
   return (FRAMEC[key]=m); }
-function framePass(fb,A){ var m=frameMask(A.frame); for (var k=0;k<W*SH;k++){ var d=m[k]; if (d>=10) continue; var x=k%W, y=(k/W)|0; if (d<0){ fb.d[k]=P.k0; continue; } var s=Math.round((10-d)/2.5-bayer(x,y)); if (s>0) fb.d[k]=dn(fb.d[k],s); } }
+function frameBuf(b,f){ var w=b.w, h=b.h, m=frameMask(f,w,h); for (var k=0;k<w*h;k++){ var d=m[k]; if (d>=10) continue; var x=k%w, y=(k/w)|0; if (d<0){ b.d[k]=P.k0; continue; } var s=Math.round((10-d)/2.5-bayer(x,y)); if (s>0) b.d[k]=dn(b.d[k],s); } }
+function framePass(fb,A){ frameBuf(fb,A.frame); }
+// Erinnerungsbilder (232 × 104): die Szene sitzt wie herausgeschnitten im Schwarz
+M.atmoFrameBuf=function(b,seed){ if (!M.atmoOn()) return; frameBuf(b,{inset:3,rough:5,seed:seed||7}); };
 
 // ---------------------------------------------------------------- Einstieg (aus drawScene in 06_ui.js)
-M.atmoApply=function(fb,room,view,S,GS,cx,ox,gm){ if (!M.atmoOn()) return; var f=M.ATMO[room.id], A=null; if (f){ try{ A=f(S,GS,view.tod,view); }catch(e){ A=null; } }
-  if (A){ if (A.dark!==undefined && A.dark<1) darkPass(fb,A,view,cx,ox,gm); if (A.halos) haloPass(fb,A,view,cx,ox,gm); if (A.beams) beamPass(fb,A,view,cx,ox); if (A.motes) motePass(fb,A,view,cx,ox);
+M.atmoApply=function(fb,room,view,S,GS,cx,ox,gm){ if (!M.atmoOn() || room.noAtmo) return; if (room.dark && M.E.darkOn && M.E.darkOn()) return;   // eigene Dunkelheit (Schutzraum, Ledana, Kammer)
+  var f=M.ATMO[room.id], A=null; try{ A=f?f(S,GS,view.tod,view):M.atmoGeneric(room,S,GS,view.tod); }catch(e){ A=null; }
+  if (A){ if ((A.dark!==undefined && A.dark<1) || A.vig) darkPass(fb,A,view,cx,ox,gm); if (A.halos) haloPass(fb,A,view,cx,ox,gm); if (A.beams) beamPass(fb,A,view,cx,ox); if (A.motes) motePass(fb,A,view,cx,ox);
     if (A.embers) emberPass(fb,A,view,cx,ox); if (A.frame) framePass(fb,A); } };
 M.atmoPulseDraw=function(fb,view,cx,ox){ if (M.atmoOn()) pulsePass(fb,view,cx,ox); };   // nach der Geistersicht: Mala spürt ja in ihrem Blick
 
-// ---------------------------------------------------------------- Probe-Räume
+// ---------------------------------------------------------------- Allgemein: jeder Raum ohne eigenen Eintrag
+var INTERIOR={bar:1,barsport:1,ana:1,antikvarijat:1,bmission:1,flat:1,friedamt:1,heim214:1,heim_flur:1,heim_raum:1,ivka:1,jhaus:1,jschlaf:1,jwohnung:1,kafana:1,kafic:1,
+  konsulat:1,kuca:1,office:1,palma:1,pansion:1,shop:1,stan:1,vermisst:1,vijecnica:1,vulkanizer:1,zelenika_in:1,zimmer:1,zlata_k:1,bunker:1,tramvaj:1,haustor:1};
+var WARMC=null, LCACHE={};
+function warmSet(){ if (WARMC) return WARMC; WARMC=new Uint8Array(256); ['y4','y5','l0','l1','d6','w6'].forEach(function(n){ if (P[n]!==undefined) WARMC[P[n]]=1; }); return WARMC; }
+// Lampen selbst finden: helle warme Pixel im fertigen Hintergrund, in Zellen gezählt und zu Lichtquellen gebündelt (Raumkoordinaten).
+// Große Flächen (erleuchtete Fensterfronten, Abendhimmel) sind keine Lampen und fallen heraus.
+function findLamps(room,tod){ var r=M.E.rebuildIfDirty(), bg=r&&r.bg; if (!bg) return []; var key=room.id+'|'+tod, c=LCACHE[key]; if (c && c.bg===bg) return c.L;
+  var ws=warmSet(), cs=8, gw=Math.ceil(bg.w/cs), gh=Math.ceil(bg.h/cs), cnt=new Uint16Array(gw*gh), sx=new Float32Array(gw*gh), sy=new Float32Array(gw*gh), x, y, i;
+  for (y=0;y<bg.h;y++) for (x=0;x<bg.w;x++){ if (!ws[bg.d[y*bg.w+x]]) continue; var g=((y/cs)|0)*gw+((x/cs)|0); cnt[g]++; sx[g]+=x; sy[g]+=y; }
+  var cells=[]; for (i=0;i<gw*gh;i++) if (cnt[i]>=4) cells.push(i); cells.sort(function(a,b){ return cnt[b]-cnt[a]; });
+  var L=[]; cells.forEach(function(i){ var x=sx[i]/cnt[i], y=sy[i]/cnt[i]; for (var j=0;j<L.length;j++){ if (Math.abs(L[j].x-x)<26 && Math.abs(L[j].y-y)<20){ L[j].n+=cnt[i]; return; } } L.push({x:x,y:y,n:cnt[i]}); });
+  L=L.slice(0,10);   // große Flächen (erleuchteter Tisch, Fensterfront) bleiben Lichtquellen, bekommen aber keinen Lichthof
+  LCACHE[key]={bg:bg,L:L}; return L; }
+M.atmoGeneric=function(room,S,G,tod){ var inside=!!INTERIOR[room.id];
+  if (tod==='night'){ var lamps=findLamps(room,tod), pools=[], halos=[];
+    lamps.forEach(function(l){ var r=Math.min(80,22+Math.sqrt(l.n)*5); pools.push({x:l.x,y:l.y+r*0.25,rx:r,ry:r*0.7,amt:0.55,col:'warm',flicker:0.04});
+      if (l.n<60) halos.push({x:l.x,y:l.y,r:Math.min(14,5+Math.sqrt(l.n)*1.4),amt:0.55,col:'warm',flicker:0.04}); });
+    pools.push({follow:'marko',dy:-22,rx:24,ry:36,amt:0.32,col:'cold'});
+    return {dark:inside?0.92:0.8, vig:inside?0.7:0.8, steps:3, pools:pools, halos:halos}; }
+  if (tod==='dusk' || tod==='dawn') return {dark:1, vig:0.7, steps:2};
+  if (inside) return {dark:1, vig:0.55, steps:2, motes:[{x:20,y:18,w:280,h:96,n:14,col:'warm',screen:true}]};
+  return {dark:1, vig:0.3, steps:2}; };
+// Räume mit Fenster: tagsüber zwei Lichtstrahlen vom Fenster auf den Boden (bei Regen schwächer), sonst wie allgemein
+function rain(G){ try{ var w=M.scn&&M.scn.weather&&M.scn.weather(G); return w==='rain'||w==='snow'; }catch(e){ return false; } }
+function winBeams(x0,x1,y0,y1,floorY,G){ var cx=(x0+x1)/2, w=x1-x0, ys=y1-3, sl=Math.max(-0.7,Math.min(0.7,(160-cx)/140)), a=rain(G)?0.35:0.75, fy=floorY||138;
+  if (Math.abs(sl)<0.25) sl=sl<0?-0.25:0.25;   // nie senkrecht: das Licht fällt schräg in den Raum
+  return [0.3,0.72].map(function(f,i){ var bx=x0+w*f; return {x0:bx,y0:ys,x1:bx+sl*(fy-ys),y1:fy,w0:Math.max(4,w*0.2),w1:Math.max(10,w*0.42),amt:a-i*0.06,motes:10}; }); }
+function windowRoom(id,wins,floorY){ M.ATMO[id]=function(S,G,tod){ var R=M.ROOMS[id]; if (tod!=='day') return M.atmoGeneric(R,S,G,tod);
+  var beams=[]; wins.forEach(function(w){ beams=beams.concat(winBeams(w[0],w[1],w[2],w[3],floorY,G)); });
+  return {dark:0.92, vig:0.6, steps:2, beams:beams}; }; }
+windowRoom('zimmer',[[124,168,34,70]]);
+windowRoom('kafana',[[46,90,28,65]]);
+windowRoom('bmission',[[114,196,28,66]]);
+windowRoom('jwohnung',[[236,272,24,70]]);
+windowRoom('jschlaf',[[146,182,28,68]]);
+windowRoom('zelenika_in',[[36,74,30,68]]);
+windowRoom('stan',[[162,194,34,70],[391,419,34,72]]);
+windowRoom('heim_raum',[[116,182,24,80],[186,252,24,80],[256,322,24,80]]);
+windowRoom('pansion',[[128,204,22,72]]);
+
+// ---------------------------------------------------------------- Eigene Einträge
 // Sustipan bei Nacht: Jakovs Grablicht an der Pinie als warme Lichtinsel, die Laterne, sonst Dunkel; Mondlicht kalt über dem Meer.
 M.ATMO.sustipan=function(S,G,tod){ var cand=!!G.flags['cj.candle'], L=[];
-  if (tod==='day') return null;
+  if (tod==='day') return {dark:1, vig:0.3, steps:2};
+  if (tod!=='night') return {dark:1, vig:0.7, steps:2};
   L.push({x:84,y:66,rx:34,ry:30,amt:0.5,col:'warm',flicker:0.05});            // Laternenkopf
   L.push({x:86,y:114,rx:62,ry:20,amt:0.55,col:'warm',flicker:0.05});           // Lichtkreis der Laterne am Boden
   L.push({x:250,y:44,rx:150,ry:44,amt:0.3,col:'cold'});                       // Mondlicht über dem Wasser
@@ -16851,12 +16911,15 @@ M.ATMO.sustipan=function(S,G,tod){ var cand=!!G.flags['cj.candle'], L=[];
   return { dark:0.42, steps:4, pools:L,
     halos:[{x:84,y:66,r:14,amt:0.8,col:'warm',flicker:0.05}].concat(cand?[{x:126,y:108,r:11,amt:0.9,col:'warm',flicker:0.22}]:[]),
     embers:cand?[{x:126,y:109,h:22,spread:3,n:6,flame:true,glass:true}]:[] }; };
-// Bar „Bura“ am Vormittag: Sonne durchs Fenster, zwei Strahlen mit Staub, im Raum etwas dunkler, damit das Licht trägt.
-M.ATMO.bar=function(S,G,tod){ if (tod!=='day') return { dark:0.66, steps:3, pools:[{x:150,y:50,rx:110,ry:70,amt:0.42,col:'warm'},{x:250,y:118,rx:44,ry:22,amt:0.4,col:'warm'}],
+// Bar „Bura“: vormittags Sonne durchs Fenster (zwei Strahlen mit Staub), abends Lampenlicht über Theke und Tisch, die Ecken dunkel.
+M.ATMO.bar=function(S,G,tod){ if (tod!=='day') return { dark:0.66, steps:3, vig:0.5, pools:[{x:150,y:50,rx:110,ry:70,amt:0.42,col:'warm'},{x:250,y:118,rx:44,ry:22,amt:0.4,col:'warm'}],
     motes:[{x:110,y:20,w:120,h:70,n:16,col:'warm'}] };
-  return { dark:0.8, steps:3, pools:[{x:160,y:80,rx:150,ry:70,amt:0.22},{x:262,y:128,rx:60,ry:20,amt:0.3,col:'warm'}],
-    beams:[{x0:232,y0:44,x1:248,y1:138,w0:9,w1:20,amt:1,col:'warm',motes:30},{x0:266,y0:44,x1:294,y1:138,w0:8,w1:18,amt:0.9,col:'warm',motes:24}] }; };
-M.ATMO_FRAME={ inset:8, rough:9, seed:7 };
+  var a=rain(G)?0.5:1;
+  return { dark:0.8, steps:3, pools:[{x:160,y:80,rx:150,ry:70,amt:0.22},{x:262,y:128,rx:60,ry:20,amt:0.3*a,col:'warm'}],
+    beams:[{x0:232,y0:44,x1:248,y1:138,w0:9,w1:20,amt:a,col:'warm',motes:30},{x0:266,y0:44,x1:294,y1:138,w0:8,w1:18,amt:0.9*a,col:'warm',motes:24}] }; };
+// Bunker unter Gleis 11: immer Kunstlicht von der einen Lampe, Staub in der Luft
+M.ATMO.bunker=function(S,G,tod){ return { dark:0.6, vig:0.9, steps:3, pools:[{x:176,y:70,rx:110,ry:70,amt:0.5,col:'warm',flicker:0.05},{follow:'marko',dy:-22,rx:24,ry:36,amt:0.3}],
+  halos:[{x:176,y:20,r:10,amt:0.7,col:'warm',flicker:0.06}], motes:[{x:120,y:24,w:120,h:90,n:18,col:'warm'}] }; };
 })(M);
 
 /* ---- portraits/_derive.js ---- */
@@ -78202,7 +78265,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="13.11.2026 · a42a60";
+M.BUILD="13.11.2026 · d034b8";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

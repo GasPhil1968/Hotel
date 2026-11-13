@@ -207,6 +207,7 @@ SCR.settings=function(){ var ts=E.textSpeed(), tap=E.tapText(), it=[];
   it.push({type:'seg',label:'Röhrenbild',value:(M.crtOn&&M.crtOn())?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ if (M.setCRT) M.setCRT(+v===1); }});
   // Intro (89_intro.js): beim Start an oder aus; vom Titel aus jederzeit ansehen (dann mit Ton)
   if (M.introOn) it.push({type:'seg',label:'Intro beim Start',sub:'Ein Tipp überspringt es.',value:M.introOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.introOn(+v===1); }});
+  if (M.atmoSetting) it.push({type:'seg',label:'Atmosphäre',sub:'Licht und Dunkel, Lichtstrahlen, Staub, Malas Leuchten.',value:M.atmoSetting()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.atmoSetting(+v===1); }});
   if (M.kinoOn) it.push({type:'seg',label:'Zwischenfilme',sub:'Intro und Outro jedes Kapitels. Ein Tipp überspringt sie.',value:M.kinoOn()?1:0,options:[[0,'aus'],[1,'an']],act:function(v){ M.kinoOn(+v===1); }});
   if (M.startIntro && SH.ctx==='title') it.push({type:'seg',label:'Intro',value:-1,options:[[1,'ansehen']],act:function(){ closeAll(); M.startIntro(); }});
   // Touch-Konzept T15: Das iPhone kennt kein Vollbild für Seiten; dort steht stattdessen der Weg über den Home-Bildschirm

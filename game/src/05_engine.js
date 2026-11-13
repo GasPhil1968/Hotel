@@ -512,6 +512,7 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
   E.busy=true;
   if ((v==='talk') && hs.npc) convStart(hs.npc);
   try{ var ctx={key:hs.id+':'+v+(withItem?':'+withItem:'')+(isG?':g':''),hs:hs,item:withItem};
+    if (isG && v==='sense' && !withItem && M.atmoPulse){ var pr=hsRect(hs), pl=player(); if (pl) M.atmoPulse(pl.x+(pl.f==='L'?-4:4),pl.y-26,pr?pr[0]+pr[2]/2:undefined,pr?pr[1]+pr[3]/2:undefined); }   // Malas Leuchten (22_atmo.js)
     if (unmetNpc(hs)){ if ((v==='talk'||withItem) && M.introduce) await M.introduce(API,hs.npc); else if (v==='look' && !isG && M.lookUnknown && M.lookUnknown(hs.npc)){ await say(M.lookUnknown(hs.npc),GS.active); return; } }
     API.reach=function(fn){ var an=reachFor(hs); if (!an||isG){ if (fn) fn(); return Promise.resolve(); } return playAnimOn(player(),an,fn); };
     if (withItem){
