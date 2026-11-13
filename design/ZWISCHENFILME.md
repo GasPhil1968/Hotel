@@ -36,7 +36,7 @@ Outro von Kapitel 5 vor, ihr Weg ins Licht ebenso. Die Texte stammen aus den Sze
 
 ## Video
 
-`design/kino/zwischenfilme.mp4` (alle elf Filme hintereinander, 1280 × 800, mit Ton) und je Film eine Datei, aufgenommen mit
+`design/kino/zwischenfilme.mp4` (alle elf Filme hintereinander, 1280 × 800, mit Ton), aufgenommen mit
 `node design/tools/kinovideo.js design/kino`.
 
 ## Prüfung (Build 13.11.2026)
