@@ -105,6 +105,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
   if (room.front) room.front(fb,view,S,gs);
   if (k3pm){ for (var pi=0;pi<W*SH;pi++){ if (!amask[pi]) fb.d[pi]=k3pm[fb.d[pi]]; } }
   M.PAL3=false;
+  if (M.atmoApply && !ghostView) M.atmoApply(fb,room,view,S,gs,cx,ox,gmask);   // Atmosphäre (Probe, 22_atmo.js; nur mit ?atmo=1)
   if (!ghostView && E.darkOn()){ var tt0=E.gt()/1000; for (var dy0=0;dy0<SH;dy0++) for (var dx0=0;dx0<W;dx0++){ var k0=dy0*W+dx0; if (gmask[k0] && fb.d[k0]===gcol[k0]) continue; var lt=E.litAt(dx0+cx-ox,dy0); if (lt>=0.98) continue; var dk=Math.round((1-lt)*6-bayer(dx0,dy0+Math.floor(tt0*2))*1.2); var c0=fb.d[k0]; for (var q0=0;q0<dk;q0++) c0=M.DN[c0]; fb.d[k0]=c0; } }
   if (ghostView){ var t=M.TINT.ghost; for (var i=0;i<W*SH;i++){ if (mask[i]) continue; var c=fb.d[i]; fb.d[i]=M.tintPx(t,c,i%W,(i/W)|0); }
     if (room.ghost) room.ghost(fb,view,S,gs);
@@ -114,6 +115,7 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       if (lv===false){} else if (lv && lv.to) drawLeash(mx0,my0,lv.to[0]-cx+ox,lv.to[1],E.gt(),false,lv.bond); else drawLeash(mx0,my0,mx0+(lv?lv[0]:64),my0+(lv?lv[1]:-58),E.gt(),true); }
     // kalter Schimmer am Rand
     var tt=E.gt()/1000; for (var yy=0;yy<SH;yy++){ var e=Math.min(yy,SH-1-yy); if (e>5) continue; for (var xx=0;xx<W;xx++){ if (bayer(xx+Math.floor(tt*3),yy)<(6-e)/14) fb.d[yy*W+xx]=P.x0; } } }
+  if (M.atmoPulseDraw) M.atmoPulseDraw(fb,view,cx,ox);   // Malas Leuchten beim Spüren (Probe, 22_atmo.js)
   if (E.crossing) drawCrossing(E.crossing,cx-ox,E.gt());
   // Kopfschmerz: ein unentdeckter Geist ist nah
   var hidden=!ghostView && Object.keys(E.ACT).some(function(k){ var a=E.ACT[k]; return a.ghost && a.id!=='mala' && a.visible && !E.ghostVisible(a) && !a.noAche; });
