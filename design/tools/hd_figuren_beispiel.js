@@ -397,7 +397,7 @@ function blur(src, w, h, r, passes) { let a = Float32Array.from(src), b = new Fl
 function bil(a, w, h, fx, fy, k) { const x = clamp(fx, 0, w - 1.001), y = clamp(fy, 0, h - 1.001), x0 = Math.floor(x), y0 = Math.floor(y), u = x - x0, v = y - y0, i00 = (y0 * w + x0) * 3 + k, i10 = i00 + 3, i01 = i00 + w * 3, i11 = i01 + 3;
   return (a[i00] * (1 - u) + a[i10] * u) * (1 - v) + (a[i01] * (1 - u) + a[i11] * u) * v; }
 // ================================================================ Figuren von Hand (Legende: Zeichen → Farbe); Marko sieht nach links, Mala nach rechts
-const FPAL = {"K": "#0e0b13", "h": "#16100c", "H": "#2a1c14", "i": "#43301f", "j": "#634631", "q": "#4a281d", "s": "#7a4631", "S": "#a4664a", "t": "#c98a66", "T": "#e6ad88", "b": "#7c5444", "d": "#58382c", "e": "#140c0e", "w": "#cdc1b8", "m": "#80382e", "c": "#0d1220", "C": "#161e36", "D": "#223152", "E": "#354b7a", "F": "#566fa0", "v": "#25232d", "V": "#3c3946", "g": "#6e727e", "G": "#adb1bc", "p": "#101016", "P": "#1f1f29", "Q": "#30303c", "R": "#454554", "o": "#190d08", "O": "#3f2318", "u": "#673b25", "U": "#94593a", "y": "#8e94a2", "a": "#1e120b", "A": "#3e2414", "B": "#633a20", "I": "#8a5530", "f": "#8e5a44", "k": "#b57c62", "l": "#d9a486", "n": "#f0c6a8", "J": "#1a2944", "L": "#2a4068", "M": "#40608f", "N": "#6486b8", "x": "#3c3b44", "X": "#5e5d68", "Z": "#8a8996", "z": "#b4b3be", "r": "#121a2e", "W": "#20304e", "Y": "#33486e", "1": "#77736a", "2": "#bdb7a8", "3": "#ece8dc", "4": "#5a1f22"};
+const FPAL = {"K": "#0e0b13", "h": "#16100c", "H": "#2a1c14", "i": "#43301f", "j": "#634631", "q": "#4a281d", "s": "#7a4631", "S": "#a4664a", "t": "#c98a66", "T": "#e6ad88", "b": "#7c5444", "d": "#58382c", "e": "#140c0e", "w": "#cdc1b8", "m": "#80382e", "c": "#0d1220", "C": "#161e36", "D": "#223152", "E": "#354b7a", "F": "#566fa0", "v": "#25232d", "V": "#3c3946", "g": "#6e727e", "G": "#adb1bc", "p": "#101016", "P": "#1f1f29", "Q": "#30303c", "R": "#454554", "o": "#190d08", "O": "#3f2318", "u": "#673b25", "U": "#94593a", "y": "#8e94a2", "a": "#1e120b", "A": "#3e2414", "B": "#633a20", "I": "#8a5530", "f": "#8e5a44", "k": "#b57c62", "l": "#d9a486", "n": "#f0c6a8", "J": "#1a2944", "L": "#2a4068", "M": "#40608f", "N": "#6486b8", "x": "#3c3b44", "X": "#5e5d68", "Z": "#8a8996", "z": "#b4b3be", "r": "#121a2e", "W": "#20304e", "Y": "#33486e", "1": "#77736a", "2": "#bdb7a8", "3": "#ece8dc", "4": "#5a1f22", "5": "#b88566", "6": "#8a5844"};
 const SPR_MARKO = [
 "...........KKKK...........",
 ".........KKjjiiKK.........",
@@ -405,16 +405,16 @@ const SPR_MARKO = [
 ".......KjiiiHHHHHhK.......",
 ".......KiiHHHHHHhhhK......",
 "......KiHHHHHHHhhhhK......",
-"......KHiTTtSHHhhhhK......",
-"......KTThhhtSHhhhhK......",
-".....KTTTwetSShshhhK......",
-".....KTTTttSSSsSshK.......",
-"....KTTTtSSSSSSssK........",
-"....KtsSSSSSSSsqK.........",
-".....KbbmmmbSSsqK.........",
-".....KdbbbbbbsqK..........",
-"......KKdbbbsqK...........",
-".......KsSSsqK............",
+"......KHTTTtHHHhhhhK......",
+"......KTTTTTttSHhhhK......",
+"......KTiiTTiiSSshhK......",
+"......KTTeTTeTSssshK......",
+".....KTTTTTtSSSsshK.......",
+"......KTSTTttSSssK........",
+"......K5TSSSt6SsK.........",
+"......K55TT56SSqK.........",
+".......KK5566sqK..........",
+"........KsSSsqK...........",
 "......KKEFKgGgKCcKK.......",
 "....KKFFEEKgGgKDCccKK.....",
 "...KFFEEEKvVVvKDDCccK.....",
@@ -513,7 +513,7 @@ const SPR_MALA = [
 const hexc = h => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
 // Kontur nur, wo nötig: außen die dunkelste Farbe der Fläche daneben statt Schwarz, unten und zur Schattenseite Schwarz
 function selout(rows) { const h = rows.length, w = rows[0].length, g = (x, y) => (x < 0 || y < 0 || x >= w || y >= h) ? '.' : rows[y][x];
-  const dark = { E: 'C', F: 'D', D: 'C', C: 'c', G: 'g', T: 't', t: 's', S: 's', s: 'q', n: 'l', l: 'k', k: 'f', L: 'J', M: 'L', N: 'M', z: 'Z', Z: 'X', X: 'x', H: 'h', i: 'H', j: 'i', A: 'a', B: 'A', I: 'B', Q: 'P', P: 'p', R: 'Q', W: 'r', Y: 'W', '2': '1', '3': '2', O: 'o', u: 'O', U: 'u', V: 'v', J: 'J' };
+  const dark = { E: 'C', F: 'D', D: 'C', C: 'c', G: 'g', T: 't', t: 's', S: 's', s: 'q', n: 'l', l: 'k', k: 'f', L: 'J', M: 'L', N: 'M', z: 'Z', Z: 'X', X: 'x', H: 'h', i: 'H', j: 'i', A: 'a', B: 'A', I: 'B', Q: 'P', P: 'p', R: 'Q', W: 'r', Y: 'W', '2': '1', '3': '2', O: 'o', u: 'O', U: 'u', V: 'v', J: 'J', '5': 'S', '6': 's' };
   return rows.map((r, y) => r.split('').map((ch, x) => { if (ch !== 'K') return ch; const nb = [g(x + 1, y), g(x, y - 1), g(x - 1, y)].filter(c => c !== '.' && c !== 'K');
     const below = g(x, y + 1) === '.' || g(x, y + 1) === 'K'; if (!nb.length || (below && y > h - 6)) return 'K'; const n = nb[0]; const d = dark[n]; return (x < w * 0.55 && d && g(x + 1, y) !== '.' ) ? d : 'K'; }).join('')); }
 const MK = selout(SPR_MARKO), ML = selout(SPR_MALA);
