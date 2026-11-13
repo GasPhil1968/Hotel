@@ -2,8 +2,8 @@
 (function(M){
 'use strict';
 var P=M.P;
-function open(GS){ return ['pro','c1','c1_night','i1m','c2','c3'].indexOf(GS.phase)>=0; }
-function regulars(GS){ return GS.phase==='c2'||GS.phase==='c1'||GS.phase==='pro'; }   // am Donnerstagmorgen kommen Stipe und Frane erst um elf
+function open(GS){ return ['pro','c1','c1_night','i1m','c2','cj','c3'].indexOf(GS.phase)>=0; }
+function regulars(GS){ return GS.phase==='c2'||GS.phase==='c1'||GS.phase==='pro'||GS.phase==='cj'; }   // am Donnerstagmorgen kommen Stipe und Frane erst um elf
 var MCHAIR=[298,101,'L'], OCHAIR=[259,102,'R'];   // Markos Stuhl am Fenster, der Stuhl gegenüber
 async function sitDown(A){ if (A.S.sat) return; await A.walk(286,114); A.placeM(MCHAIR[0],MCHAIR[1],'L'); A.idleM('sit'); A.S.sat=true; }
 async function talkSanja(A){ var S=A.npc('sanja'), p=A.G.phase;
@@ -21,6 +21,10 @@ async function talkSanja(A){ var S=A.npc('sanja'), p=A.G.phase;
     {t:'Ich glaube, Luka wartet immer noch auf sie.',once:'saWrong',if:p==='c2'&&lukaKnown(A),go:async function(A){ await S.say('…'); await S.say('So redet man nicht über Tote. Nicht in meiner Bar.'); A.S.angry=true; A.G.seen['dlg:saWrong']=0; return 'bye'; }},
     {t:'Wo finde ich Nina?',if:p==='c2'&&A.hasNote('c2_shop'),once:'sa4',go:async function(A){ await S.say('In der Altstadt, hinter dem Peristil. „Okvir“. Sie rahmt Bilder. Andere Leute ihre Erinnerungen.'); await S.say('Lass sie in Ruhe, Marko. Sie hat zwölf Jahre gebraucht, um wieder an der Riva vorbeigehen zu können.'); }},
     {t:'Wer war damals noch am Hafen?',once:'sa5',if:p==='c2'&&A.hasNote('c2_shop'),go:async function(A){ await S.say('Mira am Kiosk beim Fährterminal. Die war damals schon da. Die sieht immer alles. Sie hat damals mit der Polizei geredet.'); A.unlock('terminal'); }},
+    // Jakovs Fall (92_jakov.js): Kreide von der Tafel
+    {t:'Hast du ein Stück Kreide für mich?',once:'saKr',if:p==='cj'&&A.hasNote('cj_where')&&!A.has('kreide'),go:async function(A){ await S.say('Kreide? Wofür?'); await A.m('Für einen Namen.');
+        await A.wait(700); await S.say('Nimm. Die Tageskarte schreibe ich heute sowieso nicht. Es gibt nur Brodet.'); A.give('kreide'); }},
+    {t:'Kanntest du einen Jakov? Totengräber in Sustipan.',once:'saJk',if:p==='cj'&&(A.hasNote('cj_1958')||A.hasNote('cj_stone')||A.hasNote('cj_anka')),go:async function(A){ await S.say('In Sustipan gibt es seit fünfzig Jahren keine Toten mehr, Marko.'); await S.say('Frag die zwei da. Die kennen jeden Toten von Split persönlich.'); }},
     {t:'Wie geht’s dir, Sanja?',once:'sa6',go:async function(A){ await S.say('Die Bura treibt mir die Gäste weg und den Staub herein. Wie immer.'); await S.say('Und dir? Du siehst aus, als hättest du nicht geschlafen.'); await A.m('Wie immer.'); }},
     A.askOpt({ c2_demolish:'Montag. Da kommen die Bagger.', c2_meet:async function(A){ await S.say('Der Kiosk am Fährterminal.'); await A.wait(800); await S.say('Woher weißt du das?'); await A.m('Ich weiß es einfach.'); await S.say('Du machst mir Angst, Marko.'); },
       c2_luka:async function(A){ return sanjaStory(A,S); }, c2_ferry:async function(A){ return sanjaStory(A,S); },
@@ -135,6 +139,7 @@ M.malaReturns=async function(A){ var G=A.G; delete G.flags['split.afterIvka.away
   await A.wait(600); await A.m('Ich glaube dir. Das ist ja das Problem.'); await A.m('Wenn ich dir glaube, glaube ich auch alles, was du über andere siehst. Über Sanja. Über jeden hier.'); await A.g('Dann fang mit etwas Kleinem an. Etwas, das niemandem wehtut.');
   G.flags['mala.lock']=false; A.save(); };
 async function talkRegulars(A){ var St=A.npc('stipe'), Fr=A.npc('frane');
+  if (A.G.phase==='cj' && M.jkRegulars) return M.jkRegulars(A,St,Fr);   // Jakovs Fall: Briškula um eine Geschichte
   if (A.G.phase!=='c2'){ await St.say('Briškula. Wir reden nicht beim Spielen.'); return; }
   if (A.first('regC2')){ await St.say('Montag reißen sie die Ledana ab.'); await Fr.say('Gut. Da ist sowieso nur Unglück drin.'); await St.say('Neunundneunzig, der Junge.'); await Fr.say('Spiel, Stipe.'); A.note('c2_demolish'); A.note('c2_boy'); return; }
   await A.menuLoop(function(){ return [
@@ -151,7 +156,7 @@ var HS=[
    give:{ letter_t:async function(A){ var Sa=A.npc('sanja'); if (A.hasNote('c1_letter')) return Sa.say('Den hast du doch gelesen. Das sehe ich dir an.');   // Sanja sieht, in welchem Zustand der Brief ist
        if (A.flag('c1.letterOpen')){ await Sa.say('Offen ist er. Lesen kann ihn so keiner mehr. Das Salz nimmt die Tinte zuerst.'); return A.m('Ich weiß.'); } return M.steamLetter(A,'bar'); },
      newspaper:'„Behalt sie. Ich habe zwei.“', tickets:async function(A){ var S=A.npc('sanja'); await S.say('Zwei Tickets nach Ancona …'); await A.wait(900); await S.say('Woher hast du die?'); await A.m('Aus der Ledana.'); return sanjaStory(A,S); } }},
- {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:'Er schummelt. Nur ein bisschen. Seit vierzig Jahren.',listen:'Er zählt die Punkte laut und falsch.'}},
+ {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:function(A){ if (A.G.phase==='cj' && M.jkPeek) return M.jkPeek(A); return A.g('Er schummelt. Nur ein bisschen. Seit vierzig Jahren.'); },listen:'Er zählt die Punkte laut und falsch.'}},
  {id:'frane',npc:'frane',name:'Frane',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Frane, Glatze mit weißem Kranz, die Karten fächerförmig vor der Nase.',g:{look:'Er lässt Stipe gewinnen, wenn Stipe traurig ist. Stipe merkt es nicht.',listen:'„Meine Frau hat immer gesagt, ich spiele schlecht.“ Er lächelt dabei.'}},
  {id:'counter',name:'Tresen',look:'Ein Tresen aus Zink und Holz, mit Ringen von zehntausend Tassen.',g:{look:'Hier lehnen sie alle, wenn sie nicht nach Hause wollen.'}},
  {id:'espresso',name:'Espressomaschine',look:'Eine verchromte Espressomaschine, älter als Sanja. Sie faucht wie ein Drache, der Kaffee macht. Aus dem Dampfrohr zischt es.',use:'Niemand außer Sanja fasst diese Maschine an. Niemand.',

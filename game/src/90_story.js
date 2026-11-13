@@ -13,6 +13,7 @@ M.definePhases({
   c2:       {tod:'day',  weather:'bura', case:'c2', title:'Zweiter Fall – Das letzte Schiff nach Ancona', short:'Zweiter Fall', when:'Donnerstag, 17. November · Bura'},
   c2_night: {tod:'night',weather:'bura', case:'c2', title:'Zweiter Fall – Das letzte Schiff nach Ancona', short:'Zweiter Fall, Abend', when:'Donnerstag · Abend'},
   i2:       {tod:'night',weather:'calm', case:'c2', title:'Zwischenspiel – Sustipan', short:'Zwischenspiel', when:'Donnerstag · spät'},
+  cj:       {tod:'day',  weather:'calm', case:'cj', title:'Zwischenfall – Der Totengräber', short:'Zwischenfall', when:'Freitag, 18. November · Vormittag'},
   c3:       {tod:'dusk', weather:'rain', case:'c3', title:'Dritter Fall – Der Nachtportier', short:'Dritter Fall', when:'Freitag, 18. November · Abend'},
   c3_night: {tod:'night',weather:'rain', case:'c3', title:'Dritter Fall – Der Nachtportier', short:'Dritter Fall, Nacht', when:'Freitag · Nacht'},
   epi:      {tod:'dawn', weather:'calm', case:'epi',title:'Epilog – Die Straße nach Osten', short:'Epilog', when:'Samstag, 19. November · Morgengrauen'}
@@ -72,7 +73,8 @@ var PENDING=[
   {from:'c2', guard:'c2.nightStarted', when:function(G){ return G.flags['c2.tonight']; }, run:function(A){ return M.startC2Night(A); }},
   {from:'c2_night', when:function(G){ return G.flags['c2.ninaGone']; }, run:function(A){ return M.interlude2(A); }},
   {from:'i2', when:function(G){ return !G.flags['i2.done']; }, run:function(A){ return M.interlude2(A); }},
-  {from:'i2', when:function(G){ return G.flags['i2.done']; }, run:function(A){ return M.startCase3(A); }},
+  {from:'i2', guard:'cj.started', when:function(G){ return G.flags['i2.done']; }, run:function(A){ return M.startCaseJ(A); }},   // nach dem Zwischenspiel: Jakovs Fall (92_jakov.js)
+  {from:'cj', when:function(G){ return G.flags['cj.done']; }, run:function(A){ return M.startCase3(A); }},
   {from:'c3_night', when:function(G){ return G.flags['c3.done']; }, run:function(A){ return M.startEpilogue(A); }},
   {from:'k2_pro', guard:'k2.pro.night'}, {from:'k2_pro_n', guard:'k2.s1.started'},
   {from:'k2_s1', guard:'k2.s1.night', when:function(G){ return G.flags['k2.s1.emina']; }, run:function(A){ return M.k2StartS1Night(A); }},
@@ -207,7 +209,7 @@ M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){
 
 // ---------------------------------------------------------------- Ende
 M.CREDITS=['DIE STILLEN','Kapitel 1: Split','','','Marko Vuković','Mala','','Ivka Perić, die wartete','Luka Radić, der unterwegs war','Bruno Lalić, der keine Worte mehr hatte','',
-  'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','und Jakov, der Wege fegt, die es nicht mehr gibt','','',
+  'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','Jakov Matošić, der für die Namen fegt','und Anka, unsere Kleine','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Split nachempfunden.','Manche gibt es nicht.','','','FORTSETZUNG','Kapitel 2: Sarajevo','','','',''];
 M.endChapter=async function(A){ M.GS.ended=true; if (M.storeC1End) M.storeC1End(M.GS); M.E.markChapterEnd(1);   // Platz bleibt als „Kapitelende“ belegt (UI-Konzept D3)
   if (await M.kinoOutro(A,1)) M.E.fade=0;

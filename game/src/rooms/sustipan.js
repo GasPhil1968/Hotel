@@ -41,10 +41,14 @@ M.interlude2=async function(A){ M.E.busy=true;
       {t:'(Den Sternen zusehen.)',once:'s4',go:async function(A){ await A.wait(2200); A.sfx('horn'); await A.wait(1400); await A.g('Die Fähre nach Ancona. Sie fährt jetzt ohne die beiden.'); await A.m('Sie fahren trotzdem. Irgendwie.'); }},
       {t:'Gehen wir nach Hause.',bye:true}
     ]; });
-    await A.g('Da ist noch einer. Einer, der nicht schläft.'); await A.m('Wer?'); await A.g('Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.');
-    await A.m('Morgen.'); await A.g('Morgen.'); A.G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i2.done');
+    // Jakovs Fall (92_jakov.js): als sie aufstehen, hört das Kratzen auf
+    A.idleM(null); A.idleG(null); var J=A.npc('jakov');
+    await A.narrate('Als wir aufstehen, hört das Kratzen auf. Jakov steht unter den Pinien, den Besen in beiden Händen, und sieht zur Stadt hinüber.');
+    await J.say('Morgen kommen sie. Mit Schaufeln und einem Lastwagen.'); await A.g('Wer, Jakov?'); await J.say('Die von der Stadt. Achtundfünfzig ist ein schlechtes Jahr für Tote.');
+    if (J.idle) J.idle('sweep'); await A.narrate('Er fegt weiter. Schneller als vorhin.'); await A.g('Er hat Angst, Marko.'); await A.m('Morgen. Bei Tageslicht.');
+    A.G.flags['mala.lock']=false; A.setFlag('i2.done');
   } finally { M.E.busy=false; }
-  await M.startCase3(A); };
+  await M.startCaseJ(A); };
 var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Der Weg zurück in die Stadt.'},
  {id:'jakov',npc:'jakov',name:'Jakov',hgt:46,vis:function(S,GS){ return jakovHere(GS); },talk:talkJakov,

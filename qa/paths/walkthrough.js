@@ -193,6 +193,26 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.exit('arch'); await D.drain(); await expect(await room() === 'ledana', 'zurück an der Rampe');
     await D.act('use', 'nina', 'ticket_n'); await D.drain(); await log('Nina bekommt ihr Ticket'); await shot('sustipan');
     await D.choose('Meine Großmutter'); await D.drain(); await D.choose('Hast du jemanden'); await D.drain(); await D.choose('Gehen wir nach Hause'); await D.drain();
+    // ================= ZWISCHENFALL: Jakov, der Totengräber (92_jakov.js)
+    await expect((await D.st()).phase === 'cj', 'Zwischenfall Jakov'); await note('cj_fear'); await log('Zwischenfall Jakov', await room());
+    await D.exit('door'); await D.travel('sustipan'); await shot('jakov_cj');
+    await talk('jakov', 'Wer kommt morgen', 'Ich lasse Sie fegen'); await note('cj_1958');
+    await D.act('look', 'jakov'); await D.drain(); await note('cj_path');
+    await D.switchTo('mala'); await talk('jakov', 'Lass gut sein'); await note('cj_anka');
+    await D.act('sense', 'wall'); await D.drain(); await flag('cj.stoneSeen');
+    await D.switchTo('marko'); await D.act('look', 'ivy'); await D.drain(); await note('cj_stone'); await log('Ankas Stein');
+    await D.exit('exit'); await D.travel('bar');
+    await talk('stipe', 'Kannten Sie einen Jakov', 'Ich lasse euch spielen'); await flag('cj.bet');
+    await D.switchTo('mala'); await D.act('look', 'stipe'); await D.drain(); await flag('cj.peek');
+    await D.switchTo('marko'); await talk('stipe', 'Ich sage Ihnen', 'Ass und Drei in Münzen'); await note('cj_stipe'); await log('Stipe erzählt');
+    await expect((await D.combine('cj_stipe', 'cj_path')).ok, 'Schluss: Er hat sie selbst umgebettet'); await note('cj_where');
+    await talk('sanja', 'Kreide', 'Danke für den Kaffee'); await inv('kreide');
+    await D.exit('door'); await D.travel('terminal'); await talk('mira', 'Grablichter', 'Danke, Gospođa Mira'); await inv('grablicht');
+    await D.exit('exit'); await D.travel('sustipan');
+    await D.act('use', 'pines', 'kreide'); await D.drain(); await flag('cj.name');
+    await D.act('use', 'pines', 'grablicht'); await D.drain();
+    await D.choose('Sie haben sie damals nicht gefunden'); await D.drain(); await D.choose('Sie fegen jeden Tag'); await D.drain();
+    await flag('cj.done'); await note('cj_done'); await log('Jakov bleibt – freiwillig');
     await expect((await D.st()).phase === 'c3', 'Fall 3'); await flag('c3.call'); await log('Fall 3', await room());
     // ================= FALL 3
     await D.exit('door'); await D.travel('palma'); await shot('palma');

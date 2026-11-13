@@ -210,3 +210,31 @@ Das Abschiedsgespräch mit Ivka beginnt, wenn alles beisammen ist (Fähre, Brief
     - „Gib mir noch einen Tag“ geht auch; dann die Bank später noch einmal benutzen.
 45. Mala: „Da ist noch einer.“ Danach Titelkarte, **Zweiter Fall**. Marko steht an der Riva.
     - In der Bar heißt es jetzt: „Inzwischen sind Stipe und Frane da.“ Weiter wie in `KONZEPT.md`.
+
+## Zwischenfall · Der Totengräber · Freitag, 18. November · Vormittag
+
+Neu seit 13.11.2026 (`game/src/92_jakov.js`). Er beginnt nach dem Zwischenspiel in Sustipan: Als Marko und Mala von der Bank aufstehen,
+sagt Jakov „Morgen kommen sie. Mit Schaufeln und einem Lastwagen.“ Am nächsten Vormittag ist er der Fall.
+
+**Die Geschichte:** Jakov Matošić war Totengräber auf dem Friedhof Sustipan. Seine Tochter Anka starb im Februar 1947 an Diphtherie, fünf
+Jahre alt. Als die Stadt 1958 den Friedhof räumte, grub er sie in der Nacht davor selbst aus und legte sie unter die dritte Pinie, damit sie
+am Meer bleibt; ihren Stein mauerte er richtig herum in die Ufermauer. Bei der Räumung war ihr Sarg leer, Jakov schwieg und starb 1959 auf
+der Bank. Seitdem fegt er den Weg zu ihr und lebt in der Nacht vor der Räumung. Mala hält er für Anka („Ti opet, mala?“).
+
+1. **Sustipan:** mit Jakov reden, „Wer kommt morgen?“ → für ihn ist es 1958. Jakov **ansehen** → er fegt immer bis zur dritten Pinie.
+   Als Mala mit ihm reden → er nennt sie Anka.
+2. **Wer ist Anka?** Als Mala die **Steinmauer spüren** → ein Stein steht richtig herum, unter dem Efeu. Als Marko den **Efeu** ansehen →
+   „ANKA · 1941 – 1947 · NAŠA MALA“, ohne Nachnamen.
+3. **Bar „Bura“:** Stipe und Frane nach Jakov fragen. Stipe erzählt nur, wenn man ihm sagt, was er in der Hand hat. Als Mala **Stipe
+   ansehen** (sie stellt sich hinter ihn): Ass und Drei in Münzen, Bube in Kelchen. Als Marko antworten → Stipe erzählt vom leeren Sarg
+   1958 und von Jakovs Tod 1959.
+4. **Notizbuch:** „Der leere Sarg“ + „Bis zur dritten Pinie“ (oder + „Unter der dritten Pinie“, wenn Mala die Pinien gespürt hat) →
+   **Er hat sie selbst umgebettet.**
+5. **Ein Name und ein Licht:** in der „Bura“ Sanja nach **Kreide** fragen, am Fährhafen bei Mira ein **Grablicht** kaufen. In Sustipan die
+   Kreide an den **Pinien** benutzen (schreibt „ANKA MATOŠIĆ · 1941 – 1947“), dann das Grablicht.
+6. **Finale:** „Sie haben sie damals nicht gefunden. Und heute sucht sie keiner.“ (die beiden anderen Antworten führen zurück), danach eine
+   der beiden Antworten zu „Woher weißt du von ihr?“. Mala: „Ich bin nicht Anka.“ Jakov begreift, wie viel Zeit vergangen ist –
+   dreiundfünfzig Jahre – und **bleibt**: „Jetzt fege ich, weil ich will. Nicht, weil ich Angst habe.“ (wie in den späteren Kapiteln:
+   Jakov bleibt freiwillig). Danach beginnt der **Dritte Fall** am Freitagabend.
+
+Hinweise: `kj_talk`, `kj_stone`, `kj_stipe`, `kj_where`, `kj_name`, `kj_light` (`HINWEISE.md`). Test: `qa/regress/bug_034_jakov_fall.js`.

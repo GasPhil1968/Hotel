@@ -118,6 +118,13 @@ const SPECS = {
   k2_cross: () => [P.mala(), P.nact('cross', 'Luka')],
   k2_fence: (t) => [P.mala(), P.act('look', /am Zaun/.test(t) ? 'crates' : /^Fischkisten$/)],   // zwei Stellen heißen so (am Boot, am Zaun): geprüft wird die, die der Satz nennt
   k2_i2: () => P.talk('_mala'),
+  // Zwischenfall Jakov (game/src/92_jakov.js)
+  kj_talk: () => [P.go('Sustipan'), P.talk('Jakov', /Wer kommt morgen/)],
+  kj_stone: (t) => /Efeu/.test(t) ? [P.go('Sustipan'), P.act('look', /Efeu/)] : [P.go('Sustipan'), P.mala(), P.act('sense', /Steinmauer/)],
+  kj_stipe: (t) => /in die Karten/.test(t) ? [P.go(/Bura/), P.mala(), P.act('look', 'Stipe')] : /Ass und Drei/.test(t) ? [P.go(/Bura/), P.talk('Stipe', /Ich sage Ihnen/, /Ass und Drei/)] : [P.go(/Bura/), P.talk('Stipe', /Jakov/)],
+  kj_where: (t) => /verbinden/.test(t) ? (/dritten Pinie“/.test(t) && /Bis zur/.test(t) ? P.combine('Der leere Sarg', 'Bis zur dritten Pinie') : P.combine('Der leere Sarg', 'Unter der dritten Pinie')) : [P.go('Sustipan'), P.act('look', 'Jakov')],
+  kj_name: (t) => /Kreide an den Pinien/.test(t) ? [P.go('Sustipan'), P.use(/Pinien/, 'kreide')] : [P.go(/Bura/), P.talk('Sanja', /Kreide/)],
+  kj_light: (t) => /Grablicht an den Pinien/.test(t) ? [P.go('Sustipan'), P.use(/Pinien/, 'grablicht')] : [P.go(/Fährhafen/), P.talk('Mira', /Grablicht/)],
   k2_luka: () => [P.mala(), P.talk('luka')],
   k2_luka2: () => P.talk('Luka'),
   k2_news: () => [P.talk('Sanja'), P.talk('Stipe')],

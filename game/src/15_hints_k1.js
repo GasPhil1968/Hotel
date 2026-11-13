@@ -178,6 +178,23 @@ M.HINTS_K1=[
   s:['Luka hat ein Ticket mitgenommen. Das andere ist für Nina.','Sie soll selbst entscheiden, ob sie fährt.','Nina steht noch an der Rampe.','Nina ihr Ticket geben.']},
  {id:'k2_i2',t:'Spät in der Nacht',open:function(G){ return G.phase==='i2'; },
   s:['Der Fall ist vorbei. Es ist spät.',{m:'Mala ist noch da.',g:'Ich bin noch da.'},'Reden, oder nach Hause gehen.',{m:'Mit Mala reden.',g:'Mit mir reden.'}]},
+ // ================= Zwischenfall · Der Totengräber · Freitagvormittag (92_jakov.js)
+ {id:'kj_talk',t:'Jakovs Angst',open:function(G){ return G.phase==='cj' && !N(G,'cj_1958'); },
+  s:['Jakov hat die ganze Nacht gefegt. Er sagt, morgen kommen sie.','Wer Angst hat, erzählt meistens auch, wovor.','In Sustipan mit Jakov reden.','In Sustipan mit Jakov reden und fragen, wer morgen kommt.']},
+ {id:'kj_stone',t:'Wer ist Anka?',open:function(G){ return G.phase==='cj' && N(G,'cj_1958') && !N(G,'cj_stone'); },
+  s:[function(G){ return N(G,'cj_anka')?'Jakov nennt Mala „Anka“. Wer war das?':'Jakov hat Angst um ein Grab. Um wessen?'; },{m:'Mala kann mit Jakov reden. Er hält sie für jemanden.',g:'Ich kann mit Jakov reden. Er hält mich für jemanden.'},
+     'Die Ufermauer ist aus alten Grabsteinen gebaut. Einer ist anders.',
+     function(G){ return F(G,'cj.stoneSeen')?'Als Marko den Efeu an der Mauer ansehen.':{m:'Zu Mala wechseln und die Steinmauer spüren.',g:'Die Steinmauer spüren.'}; }]},
+ {id:'kj_stipe',t:'Ein Stein ohne Nachnamen',open:function(G){ return G.phase==='cj' && N(G,'cj_stone') && !N(G,'cj_stipe'); },
+  s:['Auf dem Stein steht nur „Anka“. Wer war ihr Vater, und was ist passiert?','Wer kennt in Split jeden Toten persönlich? Leute, die seit vierzig Jahren am selben Tisch sitzen.','In der „Bura“: Stipe und Frane nach Jakov fragen. Stipe will, dass man errät, was er in der Hand hat.',
+     function(G){ if (!F(G,'cj.bet')) return 'In der „Bura“ mit Stipe und Frane über Jakov reden.'; if (!F(G,'cj.peek')) return {m:'Zu Mala wechseln und Stipe ansehen – sie sieht ihm in die Karten.',g:'Stipe ansehen – ich sehe ihm in die Karten.'}; return 'Als Marko mit Stipe reden: „Ass und Drei in Münzen, dazu den Buben in Kelchen.“'; }]},
+ {id:'kj_where',t:'Der leere Sarg',open:function(G){ return G.phase==='cj' && N(G,'cj_stipe') && !N(G,'cj_where'); },
+  s:['Ankas Sarg war 1958 leer. Wo ist sie?','Jakov fegt jeden Tag denselben Weg – und hört an derselben Stelle auf.',function(G){ return N(G,'cj_path')||N(G,'cj_roots')?'Im Notizbuch: der leere Sarg und Jakovs Weg gehören zusammen.':'In Sustipan Jakov genau ansehen.'; },
+     function(G){ if (!N(G,'cj_path') && !N(G,'cj_roots')) return 'In Sustipan Jakov ansehen.'; return N(G,'cj_path')?'Im Notizbuch „Der leere Sarg“ mit „Bis zur dritten Pinie“ verbinden.':'Im Notizbuch „Der leere Sarg“ mit „Unter der dritten Pinie“ verbinden.'; }]},
+ {id:'kj_name',t:'Ein Grab ohne Namen',open:function(G){ return G.phase==='cj' && N(G,'cj_where') && !F(G,'cj.name'); },
+  s:['Unter der dritten Pinie liegt Anka. Niemand weiß es. Kein Name steht dort.','Ein Name muss nicht in Stein gemeißelt sein.','Sanja schreibt jeden Tag mit Kreide auf ihre Tafel.',function(G){ return I(G,'kreide')?'Die Kreide an den Pinien in Sustipan benutzen.':'In der „Bura“ Sanja nach Kreide fragen.'; }]},
+ {id:'kj_light',t:'Ein Licht für Anka',open:function(G){ return G.phase==='cj' && F(G,'cj.name') && !F(G,'cj.done'); },
+  s:['Ihr Name steht jetzt da.','Hier stellt man auf jedes Grab ein Licht.','Mira am Kiosk beim Fährhafen hat noch Grablichter von Allerheiligen.',function(G){ return I(G,'grablicht')?'Das Grablicht an den Pinien in Sustipan benutzen.':'Am Fährhafen bei Mira ein Grablicht kaufen.'; }]},
  // ================= Dritter Fall · Freitag
  {id:'k3_call',t:'Das Telefon',open:function(G){ return G.phase==='c3' && !F(G,'c3.call'); },
   s:['Das Telefon klingelt.','Jemand will etwas.','Das Telefon steht am Bett, beim Anrufbeantworter.','Am Anrufbeantworter abnehmen.']},   // Kann-Liste: vorher gab es kein „Telefon“ zum Antippen

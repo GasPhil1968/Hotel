@@ -4,7 +4,7 @@ Erzeugt mit `node game/tools/hintdoc.js` aus `game/src/15_hints_k1.js` bis `game
 
 Jedes Thema ist ein Rätselabschnitt. „Offen, wenn“ ist die Bedingung im Quelltext (F = Schalter, N = Notiz, I = Inventar). Die Stufen: 1 Problem einordnen · 2 Denkrichtung · 3 Konkreter Ansatz · 4 Nächster Schritt. Stufe 4 kommt nur nach der Rückfrage.
 
-## Kapitel 1: Split (76 Themen)
+## Kapitel 1: Split (82 Themen)
 
 ### Was liegt heute an? `k1_msg`
 
@@ -527,6 +527,60 @@ Offen, wenn: `G.phase==='i2'`
 2. **Denkrichtung:** Mala ist noch da. *(Mala: Ich bin noch da.)*
 3. **Konkreter Ansatz:** Reden, oder nach Hause gehen.
 4. **Nächster Schritt:** Mit Mala reden. *(Mala: Mit mir reden.)*
+
+### Jakovs Angst `kj_talk`
+
+Offen, wenn: `G.phase==='cj' && !N(G,'cj_1958')`
+
+1. **Problem einordnen:** Jakov hat die ganze Nacht gefegt. Er sagt, morgen kommen sie.
+2. **Denkrichtung:** Wer Angst hat, erzählt meistens auch, wovor.
+3. **Konkreter Ansatz:** In Sustipan mit Jakov reden.
+4. **Nächster Schritt:** In Sustipan mit Jakov reden und fragen, wer morgen kommt.
+
+### Wer ist Anka? `kj_stone`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_1958') && !N(G,'cj_stone')`
+
+1. **Problem einordnen:** *je nach Stand:* „Jakov nennt Mala „Anka“. Wer war das?“ / „Jakov hat Angst um ein Grab. Um wessen?“
+2. **Denkrichtung:** Mala kann mit Jakov reden. Er hält sie für jemanden. *(Mala: Ich kann mit Jakov reden. Er hält mich für jemanden.)*
+3. **Konkreter Ansatz:** Die Ufermauer ist aus alten Grabsteinen gebaut. Einer ist anders.
+4. **Nächster Schritt:** *je nach Stand:* „Als Marko den Efeu an der Mauer ansehen.“ / „Zu Mala wechseln und die Steinmauer spüren.“ / „Die Steinmauer spüren.“
+
+### Ein Stein ohne Nachnamen `kj_stipe`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_stone') && !N(G,'cj_stipe')`
+
+1. **Problem einordnen:** Auf dem Stein steht nur „Anka“. Wer war ihr Vater, und was ist passiert?
+2. **Denkrichtung:** Wer kennt in Split jeden Toten persönlich? Leute, die seit vierzig Jahren am selben Tisch sitzen.
+3. **Konkreter Ansatz:** In der „Bura“: Stipe und Frane nach Jakov fragen. Stipe will, dass man errät, was er in der Hand hat.
+4. **Nächster Schritt:** *je nach Stand:* „In der „Bura“ mit Stipe und Frane über Jakov reden.“ / „Zu Mala wechseln und Stipe ansehen – sie sieht ihm in die Karten.“ / „Stipe ansehen – ich sehe ihm in die Karten.“ / „Als Marko mit Stipe reden: „Ass und Drei in Münzen, dazu den Buben in Kelchen.““
+
+### Der leere Sarg `kj_where`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_stipe') && !N(G,'cj_where')`
+
+1. **Problem einordnen:** Ankas Sarg war 1958 leer. Wo ist sie?
+2. **Denkrichtung:** Jakov fegt jeden Tag denselben Weg – und hört an derselben Stelle auf.
+3. **Konkreter Ansatz:** *je nach Stand:* „Im Notizbuch: der leere Sarg und Jakovs Weg gehören zusammen.“ / „In Sustipan Jakov genau ansehen.“
+4. **Nächster Schritt:** *je nach Stand:* „In Sustipan Jakov ansehen.“ / „Im Notizbuch „Der leere Sarg“ mit „Bis zur dritten Pinie“ verbinden.“ / „Im Notizbuch „Der leere Sarg“ mit „Unter der dritten Pinie“ verbinden.“
+
+### Ein Grab ohne Namen `kj_name`
+
+Offen, wenn: `G.phase==='cj' && N(G,'cj_where') && !F(G,'cj.name')`
+
+1. **Problem einordnen:** Unter der dritten Pinie liegt Anka. Niemand weiß es. Kein Name steht dort.
+2. **Denkrichtung:** Ein Name muss nicht in Stein gemeißelt sein.
+3. **Konkreter Ansatz:** Sanja schreibt jeden Tag mit Kreide auf ihre Tafel.
+4. **Nächster Schritt:** *je nach Stand:* „Die Kreide an den Pinien in Sustipan benutzen.“ / „In der „Bura“ Sanja nach Kreide fragen.“
+
+### Ein Licht für Anka `kj_light`
+
+Offen, wenn: `G.phase==='cj' && F(G,'cj.name') && !F(G,'cj.done')`
+
+1. **Problem einordnen:** Ihr Name steht jetzt da.
+2. **Denkrichtung:** Hier stellt man auf jedes Grab ein Licht.
+3. **Konkreter Ansatz:** Mira am Kiosk beim Fährhafen hat noch Grablichter von Allerheiligen.
+4. **Nächster Schritt:** *je nach Stand:* „Das Grablicht an den Pinien in Sustipan benutzen.“ / „Am Fährhafen bei Mira ein Grablicht kaufen.“
 
 ### Das Telefon `k3_call`
 

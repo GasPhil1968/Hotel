@@ -13357,6 +13357,23 @@ M.HINTS_K1=[
   s:['Luka hat ein Ticket mitgenommen. Das andere ist für Nina.','Sie soll selbst entscheiden, ob sie fährt.','Nina steht noch an der Rampe.','Nina ihr Ticket geben.']},
  {id:'k2_i2',t:'Spät in der Nacht',open:function(G){ return G.phase==='i2'; },
   s:['Der Fall ist vorbei. Es ist spät.',{m:'Mala ist noch da.',g:'Ich bin noch da.'},'Reden, oder nach Hause gehen.',{m:'Mit Mala reden.',g:'Mit mir reden.'}]},
+ // ================= Zwischenfall · Der Totengräber · Freitagvormittag (92_jakov.js)
+ {id:'kj_talk',t:'Jakovs Angst',open:function(G){ return G.phase==='cj' && !N(G,'cj_1958'); },
+  s:['Jakov hat die ganze Nacht gefegt. Er sagt, morgen kommen sie.','Wer Angst hat, erzählt meistens auch, wovor.','In Sustipan mit Jakov reden.','In Sustipan mit Jakov reden und fragen, wer morgen kommt.']},
+ {id:'kj_stone',t:'Wer ist Anka?',open:function(G){ return G.phase==='cj' && N(G,'cj_1958') && !N(G,'cj_stone'); },
+  s:[function(G){ return N(G,'cj_anka')?'Jakov nennt Mala „Anka“. Wer war das?':'Jakov hat Angst um ein Grab. Um wessen?'; },{m:'Mala kann mit Jakov reden. Er hält sie für jemanden.',g:'Ich kann mit Jakov reden. Er hält mich für jemanden.'},
+     'Die Ufermauer ist aus alten Grabsteinen gebaut. Einer ist anders.',
+     function(G){ return F(G,'cj.stoneSeen')?'Als Marko den Efeu an der Mauer ansehen.':{m:'Zu Mala wechseln und die Steinmauer spüren.',g:'Die Steinmauer spüren.'}; }]},
+ {id:'kj_stipe',t:'Ein Stein ohne Nachnamen',open:function(G){ return G.phase==='cj' && N(G,'cj_stone') && !N(G,'cj_stipe'); },
+  s:['Auf dem Stein steht nur „Anka“. Wer war ihr Vater, und was ist passiert?','Wer kennt in Split jeden Toten persönlich? Leute, die seit vierzig Jahren am selben Tisch sitzen.','In der „Bura“: Stipe und Frane nach Jakov fragen. Stipe will, dass man errät, was er in der Hand hat.',
+     function(G){ if (!F(G,'cj.bet')) return 'In der „Bura“ mit Stipe und Frane über Jakov reden.'; if (!F(G,'cj.peek')) return {m:'Zu Mala wechseln und Stipe ansehen – sie sieht ihm in die Karten.',g:'Stipe ansehen – ich sehe ihm in die Karten.'}; return 'Als Marko mit Stipe reden: „Ass und Drei in Münzen, dazu den Buben in Kelchen.“'; }]},
+ {id:'kj_where',t:'Der leere Sarg',open:function(G){ return G.phase==='cj' && N(G,'cj_stipe') && !N(G,'cj_where'); },
+  s:['Ankas Sarg war 1958 leer. Wo ist sie?','Jakov fegt jeden Tag denselben Weg – und hört an derselben Stelle auf.',function(G){ return N(G,'cj_path')||N(G,'cj_roots')?'Im Notizbuch: der leere Sarg und Jakovs Weg gehören zusammen.':'In Sustipan Jakov genau ansehen.'; },
+     function(G){ if (!N(G,'cj_path') && !N(G,'cj_roots')) return 'In Sustipan Jakov ansehen.'; return N(G,'cj_path')?'Im Notizbuch „Der leere Sarg“ mit „Bis zur dritten Pinie“ verbinden.':'Im Notizbuch „Der leere Sarg“ mit „Unter der dritten Pinie“ verbinden.'; }]},
+ {id:'kj_name',t:'Ein Grab ohne Namen',open:function(G){ return G.phase==='cj' && N(G,'cj_where') && !F(G,'cj.name'); },
+  s:['Unter der dritten Pinie liegt Anka. Niemand weiß es. Kein Name steht dort.','Ein Name muss nicht in Stein gemeißelt sein.','Sanja schreibt jeden Tag mit Kreide auf ihre Tafel.',function(G){ return I(G,'kreide')?'Die Kreide an den Pinien in Sustipan benutzen.':'In der „Bura“ Sanja nach Kreide fragen.'; }]},
+ {id:'kj_light',t:'Ein Licht für Anka',open:function(G){ return G.phase==='cj' && F(G,'cj.name') && !F(G,'cj.done'); },
+  s:['Ihr Name steht jetzt da.','Hier stellt man auf jedes Grab ein Licht.','Mira am Kiosk beim Fährhafen hat noch Grablichter von Allerheiligen.',function(G){ return I(G,'grablicht')?'Das Grablicht an den Pinien in Sustipan benutzen.':'Am Fährhafen bei Mira ein Grablicht kaufen.'; }]},
  // ================= Dritter Fall · Freitag
  {id:'k3_call',t:'Das Telefon',open:function(G){ return G.phase==='c3' && !F(G,'c3.call'); },
   s:['Das Telefon klingelt.','Jemand will etwas.','Das Telefon steht am Bett, beim Anrufbeantworter.','Am Anrufbeantworter abnehmen.']},   // Kann-Liste: vorher gab es kein „Telefon“ zum Antippen
@@ -51814,8 +51831,8 @@ M.room('balkon',{ name:'Davors Balkon', scape:'k4_balkon', music:'k4_muenchen',
 (function(M){
 'use strict';
 var P=M.P;
-function open(GS){ return ['pro','c1','c1_night','i1m','c2','c3'].indexOf(GS.phase)>=0; }
-function regulars(GS){ return GS.phase==='c2'||GS.phase==='c1'||GS.phase==='pro'; }   // am Donnerstagmorgen kommen Stipe und Frane erst um elf
+function open(GS){ return ['pro','c1','c1_night','i1m','c2','cj','c3'].indexOf(GS.phase)>=0; }
+function regulars(GS){ return GS.phase==='c2'||GS.phase==='c1'||GS.phase==='pro'||GS.phase==='cj'; }   // am Donnerstagmorgen kommen Stipe und Frane erst um elf
 var MCHAIR=[298,101,'L'], OCHAIR=[259,102,'R'];   // Markos Stuhl am Fenster, der Stuhl gegenüber
 async function sitDown(A){ if (A.S.sat) return; await A.walk(286,114); A.placeM(MCHAIR[0],MCHAIR[1],'L'); A.idleM('sit'); A.S.sat=true; }
 async function talkSanja(A){ var S=A.npc('sanja'), p=A.G.phase;
@@ -51833,6 +51850,10 @@ async function talkSanja(A){ var S=A.npc('sanja'), p=A.G.phase;
     {t:'Ich glaube, Luka wartet immer noch auf sie.',once:'saWrong',if:p==='c2'&&lukaKnown(A),go:async function(A){ await S.say('…'); await S.say('So redet man nicht über Tote. Nicht in meiner Bar.'); A.S.angry=true; A.G.seen['dlg:saWrong']=0; return 'bye'; }},
     {t:'Wo finde ich Nina?',if:p==='c2'&&A.hasNote('c2_shop'),once:'sa4',go:async function(A){ await S.say('In der Altstadt, hinter dem Peristil. „Okvir“. Sie rahmt Bilder. Andere Leute ihre Erinnerungen.'); await S.say('Lass sie in Ruhe, Marko. Sie hat zwölf Jahre gebraucht, um wieder an der Riva vorbeigehen zu können.'); }},
     {t:'Wer war damals noch am Hafen?',once:'sa5',if:p==='c2'&&A.hasNote('c2_shop'),go:async function(A){ await S.say('Mira am Kiosk beim Fährterminal. Die war damals schon da. Die sieht immer alles. Sie hat damals mit der Polizei geredet.'); A.unlock('terminal'); }},
+    // Jakovs Fall (92_jakov.js): Kreide von der Tafel
+    {t:'Hast du ein Stück Kreide für mich?',once:'saKr',if:p==='cj'&&A.hasNote('cj_where')&&!A.has('kreide'),go:async function(A){ await S.say('Kreide? Wofür?'); await A.m('Für einen Namen.');
+        await A.wait(700); await S.say('Nimm. Die Tageskarte schreibe ich heute sowieso nicht. Es gibt nur Brodet.'); A.give('kreide'); }},
+    {t:'Kanntest du einen Jakov? Totengräber in Sustipan.',once:'saJk',if:p==='cj'&&(A.hasNote('cj_1958')||A.hasNote('cj_stone')||A.hasNote('cj_anka')),go:async function(A){ await S.say('In Sustipan gibt es seit fünfzig Jahren keine Toten mehr, Marko.'); await S.say('Frag die zwei da. Die kennen jeden Toten von Split persönlich.'); }},
     {t:'Wie geht’s dir, Sanja?',once:'sa6',go:async function(A){ await S.say('Die Bura treibt mir die Gäste weg und den Staub herein. Wie immer.'); await S.say('Und dir? Du siehst aus, als hättest du nicht geschlafen.'); await A.m('Wie immer.'); }},
     A.askOpt({ c2_demolish:'Montag. Da kommen die Bagger.', c2_meet:async function(A){ await S.say('Der Kiosk am Fährterminal.'); await A.wait(800); await S.say('Woher weißt du das?'); await A.m('Ich weiß es einfach.'); await S.say('Du machst mir Angst, Marko.'); },
       c2_luka:async function(A){ return sanjaStory(A,S); }, c2_ferry:async function(A){ return sanjaStory(A,S); },
@@ -51947,6 +51968,7 @@ M.malaReturns=async function(A){ var G=A.G; delete G.flags['split.afterIvka.away
   await A.wait(600); await A.m('Ich glaube dir. Das ist ja das Problem.'); await A.m('Wenn ich dir glaube, glaube ich auch alles, was du über andere siehst. Über Sanja. Über jeden hier.'); await A.g('Dann fang mit etwas Kleinem an. Etwas, das niemandem wehtut.');
   G.flags['mala.lock']=false; A.save(); };
 async function talkRegulars(A){ var St=A.npc('stipe'), Fr=A.npc('frane');
+  if (A.G.phase==='cj' && M.jkRegulars) return M.jkRegulars(A,St,Fr);   // Jakovs Fall: Briškula um eine Geschichte
   if (A.G.phase!=='c2'){ await St.say('Briškula. Wir reden nicht beim Spielen.'); return; }
   if (A.first('regC2')){ await St.say('Montag reißen sie die Ledana ab.'); await Fr.say('Gut. Da ist sowieso nur Unglück drin.'); await St.say('Neunundneunzig, der Junge.'); await Fr.say('Spiel, Stipe.'); A.note('c2_demolish'); A.note('c2_boy'); return; }
   await A.menuLoop(function(){ return [
@@ -51963,7 +51985,7 @@ var HS=[
    give:{ letter_t:async function(A){ var Sa=A.npc('sanja'); if (A.hasNote('c1_letter')) return Sa.say('Den hast du doch gelesen. Das sehe ich dir an.');   // Sanja sieht, in welchem Zustand der Brief ist
        if (A.flag('c1.letterOpen')){ await Sa.say('Offen ist er. Lesen kann ihn so keiner mehr. Das Salz nimmt die Tinte zuerst.'); return A.m('Ich weiß.'); } return M.steamLetter(A,'bar'); },
      newspaper:'„Behalt sie. Ich habe zwei.“', tickets:async function(A){ var S=A.npc('sanja'); await S.say('Zwei Tickets nach Ancona …'); await A.wait(900); await S.say('Woher hast du die?'); await A.m('Aus der Ledana.'); return sanjaStory(A,S); } }},
- {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:'Er schummelt. Nur ein bisschen. Seit vierzig Jahren.',listen:'Er zählt die Punkte laut und falsch.'}},
+ {id:'stipe',npc:'stipe',name:'Stipe',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Stipe, Schiebermütze, braunes Sakko, siebzig Jahre Briškula in den Fingern.',g:{look:function(A){ if (A.G.phase==='cj' && M.jkPeek) return M.jkPeek(A); return A.g('Er schummelt. Nur ein bisschen. Seit vierzig Jahren.'); },listen:'Er zählt die Punkte laut und falsch.'}},
  {id:'frane',npc:'frane',name:'Frane',hgt:36,vis:function(S,GS){ return regulars(GS); },talk:talkRegulars,look:'Frane, Glatze mit weißem Kranz, die Karten fächerförmig vor der Nase.',g:{look:'Er lässt Stipe gewinnen, wenn Stipe traurig ist. Stipe merkt es nicht.',listen:'„Meine Frau hat immer gesagt, ich spiele schlecht.“ Er lächelt dabei.'}},
  {id:'counter',name:'Tresen',look:'Ein Tresen aus Zink und Holz, mit Ringen von zehntausend Tassen.',g:{look:'Hier lehnen sie alle, wenn sie nicht nach Hause wollen.'}},
  {id:'espresso',name:'Espressomaschine',look:'Eine verchromte Espressomaschine, älter als Sanja. Sie faucht wie ein Drache, der Kaffee macht. Aus dem Dampfrohr zischt es.',use:'Niemand außer Sanja fasst diese Maschine an. Niemand.',
@@ -60916,10 +60938,14 @@ M.interlude2=async function(A){ M.E.busy=true;
       {t:'(Den Sternen zusehen.)',once:'s4',go:async function(A){ await A.wait(2200); A.sfx('horn'); await A.wait(1400); await A.g('Die Fähre nach Ancona. Sie fährt jetzt ohne die beiden.'); await A.m('Sie fahren trotzdem. Irgendwie.'); }},
       {t:'Gehen wir nach Hause.',bye:true}
     ]; });
-    await A.g('Da ist noch einer. Einer, der nicht schläft.'); await A.m('Wer?'); await A.g('Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.');
-    await A.m('Morgen.'); await A.g('Morgen.'); A.G.flags['mala.lock']=false; A.idleM(null); A.idleG(null); A.setFlag('i2.done');
+    // Jakovs Fall (92_jakov.js): als sie aufstehen, hört das Kratzen auf
+    A.idleM(null); A.idleG(null); var J=A.npc('jakov');
+    await A.narrate('Als wir aufstehen, hört das Kratzen auf. Jakov steht unter den Pinien, den Besen in beiden Händen, und sieht zur Stadt hinüber.');
+    await J.say('Morgen kommen sie. Mit Schaufeln und einem Lastwagen.'); await A.g('Wer, Jakov?'); await J.say('Die von der Stadt. Achtundfünfzig ist ein schlechtes Jahr für Tote.');
+    if (J.idle) J.idle('sweep'); await A.narrate('Er fegt weiter. Schneller als vorhin.'); await A.g('Er hat Angst, Marko.'); await A.m('Morgen. Bei Tageslicht.');
+    A.G.flags['mala.lock']=false; A.setFlag('i2.done');
   } finally { M.E.busy=false; }
-  await M.startCase3(A); };
+  await M.startCaseJ(A); };
 var HS=[
  {id:'exit',name:'In die Stadt',exit:{to:'map'},look:'Der Weg zurück in die Stadt.'},
  {id:'jakov',npc:'jakov',name:'Jakov',hgt:46,vis:function(S,GS){ return jakovHere(GS); },talk:talkJakov,
@@ -61142,13 +61168,16 @@ M.room('tepa',{ name:'Tepa', scape:'k3_tepa',
 (function(M){
 'use strict';
 var P=M.P;
-function miraHere(GS){ return GS.phase==='c2'||GS.phase==='epi'; }
+function miraHere(GS){ return GS.phase==='c2'||GS.phase==='cj'||GS.phase==='epi'; }
 async function talkMira(A){ var Mi=A.npc('mira');
   if (A.G.phase==='epi') return miraEpi(A,Mi);
   if (A.first('miHello')){ await Mi.say('Zeitung? Zigaretten? Ein Feuerzeug gegen die Bura?'); }
   await A.menuLoop(function(){ return [
     // Analyse K1-B12 (P24): erst mit dem Radio in der Tasche
     {t:'Haben Sie Batterien? Mono, für ein altes Radio.',if:A.has('radio')&&!A.has('batteries')&&!A.has('radioB')&&!A.has('radioT'),go:async function(A){ await Mi.say('Mono. Die verlangt keiner mehr. Warten Sie.'); await A.wait(900); A.sfx('coin'); A.give('batteries'); await Mi.say('Vier Stück, die letzten. Ich wickle sie Ihnen ein. Sonst laufen sie aus.'); }},
+    // Jakovs Fall (92_jakov.js): ein Grablicht
+    {t:'Haben Sie Grablichter?',once:'miGl',if:A.G.phase==='cj'&&A.hasNote('cj_where')&&!A.has('grablicht')&&!A.flag('cj.candle'),go:async function(A){ await Mi.say('Für Allerheiligen hatte ich hundert. Drei sind übrig.'); await Mi.say('Für wen ist es denn?');
+        await A.m('Für ein Mädchen. Sie ist siebenundvierzig gestorben.'); await A.wait(800); await Mi.say('Dann ist es Zeit.'); A.sfx('coin'); A.give('grablicht'); await Mi.say('Streichhölzer sind dabei. Gegen die Bura.'); }},
     {t:'Sie arbeiten schon lange hier?',once:'mi1',go:async function(A){ await Mi.say('Seit neunzig. Ich habe drei Fährgesellschaften überlebt, zwei Kriege im Fernsehen und einen Mann.'); await Mi.say('Den Mann habe ich nicht überlebt. Er mich.'); }},
     {t:'Erinnern Sie sich an den August neunundneunzig? An ein Mädchen, das hier gewartet hat?',once:'mi2',if:A.hasNote('c2_meet')||A.hasNote('c2_waited')||A.hasNote('c2_stayed')||A.hasNote('c2_echo'),go:async function(A){ await Mi.say('Neunundneunzig …'); await A.wait(900);
         await Mi.say('Ein Mädchen, ja. Rotes Kleid, eine große Tasche. Sie stand da, bis die Fähre nach Ancona weg war. Dann saß sie auf der Bank, bis die Zeitungen kamen.'); await Mi.say('Ich habe ihr einen Kaffee gegeben. Sie hat kein Wort gesagt. Nicht ein Wort.'); A.note('c2_mira1');
@@ -68879,6 +68908,7 @@ M.definePhases({
   c2:       {tod:'day',  weather:'bura', case:'c2', title:'Zweiter Fall – Das letzte Schiff nach Ancona', short:'Zweiter Fall', when:'Donnerstag, 17. November · Bura'},
   c2_night: {tod:'night',weather:'bura', case:'c2', title:'Zweiter Fall – Das letzte Schiff nach Ancona', short:'Zweiter Fall, Abend', when:'Donnerstag · Abend'},
   i2:       {tod:'night',weather:'calm', case:'c2', title:'Zwischenspiel – Sustipan', short:'Zwischenspiel', when:'Donnerstag · spät'},
+  cj:       {tod:'day',  weather:'calm', case:'cj', title:'Zwischenfall – Der Totengräber', short:'Zwischenfall', when:'Freitag, 18. November · Vormittag'},
   c3:       {tod:'dusk', weather:'rain', case:'c3', title:'Dritter Fall – Der Nachtportier', short:'Dritter Fall', when:'Freitag, 18. November · Abend'},
   c3_night: {tod:'night',weather:'rain', case:'c3', title:'Dritter Fall – Der Nachtportier', short:'Dritter Fall, Nacht', when:'Freitag · Nacht'},
   epi:      {tod:'dawn', weather:'calm', case:'epi',title:'Epilog – Die Straße nach Osten', short:'Epilog', when:'Samstag, 19. November · Morgengrauen'}
@@ -68938,7 +68968,8 @@ var PENDING=[
   {from:'c2', guard:'c2.nightStarted', when:function(G){ return G.flags['c2.tonight']; }, run:function(A){ return M.startC2Night(A); }},
   {from:'c2_night', when:function(G){ return G.flags['c2.ninaGone']; }, run:function(A){ return M.interlude2(A); }},
   {from:'i2', when:function(G){ return !G.flags['i2.done']; }, run:function(A){ return M.interlude2(A); }},
-  {from:'i2', when:function(G){ return G.flags['i2.done']; }, run:function(A){ return M.startCase3(A); }},
+  {from:'i2', guard:'cj.started', when:function(G){ return G.flags['i2.done']; }, run:function(A){ return M.startCaseJ(A); }},   // nach dem Zwischenspiel: Jakovs Fall (92_jakov.js)
+  {from:'cj', when:function(G){ return G.flags['cj.done']; }, run:function(A){ return M.startCase3(A); }},
   {from:'c3_night', when:function(G){ return G.flags['c3.done']; }, run:function(A){ return M.startEpilogue(A); }},
   {from:'k2_pro', guard:'k2.pro.night'}, {from:'k2_pro_n', guard:'k2.s1.started'},
   {from:'k2_s1', guard:'k2.s1.night', when:function(G){ return G.flags['k2.s1.emina']; }, run:function(A){ return M.k2StartS1Night(A); }},
@@ -69073,7 +69104,7 @@ M.titleDynamic=function(fb,t){ for (var y=80;y<144;y++) for (var x=0;x<320;x++){
 
 // ---------------------------------------------------------------- Ende
 M.CREDITS=['DIE STILLEN','Kapitel 1: Split','','','Marko Vuković','Mala','','Ivka Perić, die wartete','Luka Radić, der unterwegs war','Bruno Lalić, der keine Worte mehr hatte','',
-  'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','und Jakov, der Wege fegt, die es nicht mehr gibt','','',
+  'Zdenka · Mladen · Dinko · Sanja','Stipe & Frane · Nina · Mira · Ljerka','Jakov Matošić, der für die Namen fegt','und Anka, unsere Kleine','','',
   'Alle Bilder, Töne und Lieder','entstehen im Spiel selbst.','Die Orte sind Split nachempfunden.','Manche gibt es nicht.','','','FORTSETZUNG','Kapitel 2: Sarajevo','','','',''];
 M.endChapter=async function(A){ M.GS.ended=true; if (M.storeC1End) M.storeC1End(M.GS); M.E.markChapterEnd(1);   // Platz bleibt als „Kapitelende“ belegt (UI-Konzept D3)
   if (await M.kinoOutro(A,1)) M.E.fade=0;
@@ -69112,6 +69143,195 @@ M.malaReadsLetter=async function(A){ if (!A.flag('c1.letterOpen')) return A.g('E
   A.note('c1_letter'); await A.m('„…Warte zu Hause, im Warmen.“'); await A.wait(500); await A.g('Er hat beim Schreiben an sie gedacht. Darum ist es so deutlich.');
   await A.m('Und du? An wen denkst du?'); await A.wait(1200); await A.g('…'); };
 // Erinnerungsbilder: siehe 93_mem.js
+})(M);
+
+/* ---- 92_jakov.js ---- */
+/* ===== 92_jakov.js — Kapitel 1, Zwischenfall „Der Totengräber“ (Freitagvormittag, zwischen dem Zwischenspiel in Sustipan und dem Nachtportier)
+   Jakov Matošić war Totengräber auf dem Friedhof Sustipan. Seine Tochter Anka starb im Februar 1947 an Diphtherie, fünf Jahre alt. Als die Stadt 1958
+   den Friedhof räumte (die Knochen nach Lovrinac, die Steine in die Ufermauer), grub Jakov sie in der Nacht davor selbst aus und legte sie unter die
+   dritte Pinie, damit sie am Meer bleibt. Ihren Stein mauerte er richtig herum in die Mauer. Bei der Räumung war ihr Sarg leer; er hat nie etwas gesagt
+   und starb ein Jahr später (1959) auf der Bank. Seitdem fegt er den Weg zu ihr und lebt in der Nacht vor der Räumung: „Morgen kommen sie.“
+   Lösung: herausfinden, wer Anka war (Stein in der Mauer, Stipes Geschichte nach einer Partie Briškula mit Malas Hilfe), wo sie liegt (Jakovs Weg +
+   der leere Sarg, im Notizbuch verbunden), ihren Namen an die Pinie schreiben (Kreide von Sanja) und ein Grablicht anzünden (von Mira). Dann begreift
+   Jakov, wie viel Zeit vergangen ist – und bleibt trotzdem, freiwillig: für die Namen (so in den späteren Kapiteln). ===== */
+(function(M){
+'use strict';
+var P=M.P;
+function F(A,k){ return A.flag(k); }
+function active(G){ return G.phase==='cj'; }
+
+// ---------------------------------------------------------------- Notizen, Schlüsse, Gegenstände
+M.defineNotes({
+  cj_fear:{c:'cj',t:'Jakov in der Nacht: „Morgen kommen sie. Mit Schaufeln und einem Lastwagen.“'},
+  cj_1958:{c:'cj',t:'Für Jakov ist es 1958, der Tag vor der Räumung des Friedhofs. Morgen sollen die Gräber nach Lovrinac.'},
+  cj_anka:{c:'cj',t:'Jakov hält Mala für ein Mädchen namens Anka: „Geh nicht so nah ans Wasser, Anka.“'},
+  cj_path:{c:'cj',t:'Jakov fegt immer denselben Weg: von der Bank bis zur dritten Pinie. Dort kehrt er um, als stünde da eine Wand.'},
+  cj_stone:{c:'cj',t:'In der Ufermauer steht ein einziger Grabstein richtig herum: „ANKA · 1941 – 1947 · NAŠA MALA“ – unsere Kleine. Kein Nachname.'},
+  cj_stipe:{c:'cj',t:'Stipe: Jakov Matošić, der Totengräber. Seine Anka starb 1947. Bei der Räumung 1958 war ihr Sarg leer. Jakov schwieg; 1959 fand man ihn tot auf der Bank.'},
+  cj_roots:{c:'cj',t:'Mala spürt unter der dritten Pinie etwas Kleines, das schläft. „Sie hat keine Angst.“'},
+  cj_where:{c:'cj',t:'Jakov hat Anka in der Nacht vor der Räumung selbst umgebettet – unter die dritte Pinie. Niemand weiß es. Kein Name steht dort.'},
+  cj_done:{c:'cj',t:'Ankas Name steht an der dritten Pinie, ein Licht brennt. Jakov weiß jetzt, wie viel Zeit vergangen ist. Er bleibt – weil er will.'},
+  m_anka:{c:'mala',t:'Mala zu Jakov: „Ich bin nicht Anka. Aber ich weiß, wie es ist, wenn keiner weiß, wo man liegt.“'}
+});
+var META={ cj_fear:['Jakov','„Morgen kommen sie.“',['cj_1958']], cj_1958:['Jakov','Für ihn ist es 1958',['cj_done']], cj_anka:['Anka','Er nennt Mala Anka',['cj_stone','cj_stipe']],
+  cj_path:['Jakovs Weg','Bis zur dritten Pinie',['cj_where']], cj_stone:['Anka','Ein Stein, richtig herum',['cj_stipe']], cj_stipe:['Anka','Der leere Sarg',['cj_where']],
+  cj_roots:['Jakovs Weg','Unter der dritten Pinie',['cj_where']], cj_where:['Jakovs Weg','Er hat sie selbst umgebettet',function(G){ return !!G.flags['cj.done']; }], cj_done:['Jakov','Er bleibt'],
+  m_anka:['Mala','„Ich bin nicht Anka.“'] };
+var PIC={ cj_fear:'p:jakov', cj_1958:'p:jakov', cj_anka:'p:mala', cj_path:'p:jakov', cj_stone:'p:jakov', cj_stipe:'p:stipe', cj_roots:'p:mala', cj_where:'p:jakov', cj_done:'p:jakov', m_anka:'p:mala' };
+Object.keys(META).forEach(function(id){ var n=M.NOTES[id], m=META[id]; n.g=m[0]; n.s=m[1]; if (Array.isArray(m[2])) n.doneBy=m[2]; else if (typeof m[2]==='function') n.doneIf=m[2]; n.p=PIC[id]; });
+['cj_path','cj_stone','cj_stipe','cj_roots','cj_where'].forEach(function(id){ M.NOTES[id].show=true; });
+M.NOTE_GROUPS.cj=['Jakov','Anka','Jakovs Weg'];
+M.defineDeductions({
+  'cj_stipe+cj_path':{to:'cj_where',say:'Der Sarg war leer, weil er sie vorher geholt hat. Und seitdem fegt er jeden Tag den Weg zu ihr. Bis zur dritten Pinie, nicht weiter.'},
+  'cj_stipe+cj_roots':{to:'cj_where',say:'Ein leerer Sarg in Lovrinac. Und unter der dritten Pinie schläft etwas Kleines. Er hat sie selbst hierhergebracht.'},
+  'cj_stone+cj_path':function(A){ return {ok:false,t:'Ihr Stein steht in der Mauer. Aber sein Weg führt nicht zur Mauer, er führt zu den Pinien. Was ist mit dem Grab passiert?'}; },
+  'cj_stone+cj_roots':function(A){ return {ok:false,t:'Ein Stein ohne Grab, ein Grab ohne Stein. Ich weiß noch nicht, wer sie war und was damals passiert ist.'}; },
+  'cj_path+cj_roots':function(A){ return {ok:false,t:'Er fegt bis zu der Stelle, an der sie liegt. Aber wie kommt sie dorthin, wenn alle Gräber nach Lovrinac gingen?'}; }
+});
+M.defineItems({
+  kreide:{name:'Kreide',icon:function(w){ w.rect(9,13,14,5,P.s5); w.hl(9,22,13,P.s6); w.hl(9,22,17,P.s3); w.rect(22,13,2,5,P.s4); },
+    look:'Ein Stück weiße Kreide von Sanjas Tafel. Damit schreibt sie „Brodet“ und „Heute kein Fisch“.', mala:'Kreide. In der Schule hat sie gequietscht.'},
+  grablicht:{name:'Grablicht',icon:function(w){ w.rect(11,9,10,13,P.r2); w.vl(11,9,21,P.r4); w.vl(20,9,21,P.r1); w.rect(11,7,10,2,P.y3); w.hl(11,20,22,P.r1); w.px(15,12,P.y4); w.px(16,13,P.y3); },
+    look:'Ein rotes Grablicht aus Plastik mit einem Deckel aus Blech. Streichhölzer klemmen am Boden. „Gegen die Bura“, hat Mira gesagt.', mala:'Rot. Auf Allerheiligen stehen sie zu Hunderten da.'}
+});
+
+// ---------------------------------------------------------------- Beginn: Freitagvormittag
+M.startCaseJ=async function(A){ if (A.flag('cj.started')) return; A.setFlag('cj.started'); await A.fade(8,900);
+  M.E.screen='card'; await A.card({kicker:'Zwischenfall',title:'Der Totengräber',time:'Freitag, 18. November · Vormittag',ms:4600});
+  A.phase('cj'); A.G.malaOn=true; A.G.flags['mala.lock']=false; A.G.pos.marko={room:'flat',x:200,y:118,f:'L'};
+  await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); A.malaJoin({x:170,y:120,f:'R'});
+  await A.narrate('Die Bura ist weg. Die Stadt sieht aus wie frisch gewaschen, und das Meer liegt da, als wäre nichts gewesen.');
+  await A.g('Jakov hat die ganze Nacht gefegt. Ich habe es bis hierher gehört.'); await A.m('Den Besen?'); await A.g('Die Angst.');
+  await A.g('Er sagt, morgen kommen sie mit Schaufeln. Geister haben selten Angst, Marko. Sie haben nur Zeit.');
+  A.note('cj_fear'); await A.m('Dann gehen wir nach Sustipan. Bei Tageslicht.'); A.save(); };
+
+// ---------------------------------------------------------------- Sustipan: Jakov, die Mauer, die Pinien
+async function jkTalkMarko(A){ var J=A.npc('jakov');
+  if (A.first('!jkCj')){ await J.say('Nicht jetzt! Siehst du nicht, dass ich zu tun habe?'); await A.m('Gestern Abend hatten Sie mehr Zeit.'); await J.say('Gestern war gestern. Morgen kommen sie.'); }
+  if (F(A,'cj.name') && F(A,'cj.candle')) return jkFinale(A);
+  return A.menuLoop(function(){ return [
+    {t:'Wer kommt morgen?',once:'jkc1',go:async function(A){ await J.say('Die von der Stadt. Mit Schaufeln und einem Lastwagen. Sie graben alles um.'); await J.say('Die Knochen kommen in Kisten mit Nummern nach Lovrinac. Die Steine in die neue Ufermauer. Achtundfünfzig ist ein schlechtes Jahr für Tote.');
+        A.note('cj_1958'); await A.m('Achtundfünfzig.'); if (A.malaHere()) await A.g('Für ihn ist es achtundfünfzig. Der Tag davor.'); }},
+    {t:'Was fegen Sie da so eilig?',once:'jkc2',go:async function(A){ await J.say('Den Weg. Damit sie sehen, dass hier einer aufpasst.'); await J.say('Wo einer aufpasst, graben sie vorsichtiger.'); }},
+    {t:'Wer ist Anka?',once:'jkc3',if:A.hasNote('cj_anka')||A.hasNote('cj_stone'),go:async function(A){ await J.say('Woher hast du den Namen?'); await A.wait(800); await J.say('Geh weg. Ich habe zu tun.'); J.agitate(2600); }},
+    {t:'Warum steht ein Stein in der Mauer richtig herum?',once:'jkc4',if:A.hasNote('cj_stone'),go:async function(A){ await J.say('Den lasst ihr in Ruhe! Der steht richtig. Der bleibt so.'); await J.say('Die anderen haben die Maurer gesetzt, wie sie gerade lagen. Den habe ich selbst gesetzt.'); }},
+    {t:'Ihr Sarg in Lovrinac ist leer, Jakov.',once:'jkc5',if:A.hasNote('cj_stipe')&&!A.hasNote('cj_where'),go:async function(A){ await J.say('…'); await A.wait(900); await J.say('Leer ist besser als fremd.'); }},
+    A.askOpt({ cj_fear:'Morgen. Früh um sechs. Ich habe den Brief von der Stadt gelesen.', cj_1958:'Was soll das heißen, welches Jahr? Achtundfünfzig. Was denn sonst.',
+      cj_path:async function(A){ await J.say('Bis zur dritten Pinie. Weiter muss ich nicht.'); await A.m('Warum nicht?'); await J.say('Weil da der Weg aufhört.'); },
+      cj_stipe:'Stipe. Der hat als Junge unter dem Zaun durchgeschaut, als sie gegraben haben. Der redet viel, wenn er verliert.',
+      cj_where:async function(A){ J.agitate(2400); await J.say('Sie finden sie nicht. Niemand findet sie.'); await A.wait(700); await A.m('Dann weiß auch niemand, wer da liegt. Nicht einmal, wie sie hieß.');
+        await A.wait(900); await J.say('Ich weiß es.'); if (A.malaHere()) await A.g('Und wenn du nicht mehr fegst? Wer weiß es dann?'); },
+      cj_roots:'Was die Wurzeln wissen, wissen nur die Wurzeln.' },'Ich bin nur ein alter Mann mit einem Besen.'),
+    {t:'Ich lasse Sie fegen.',bye:true,go:async function(A){ await J.say('Pass auf, wo du hintrittst.'); }}
+  ]; }); }
+async function jkTalkMala(A){ var J=A.npc('jakov');
+  if (A.first('!jkCjG')){ await J.say('Anka! Da bist du ja. Geh nicht so nah ans Wasser, hörst du?'); await A.g('Ich bin nicht Anka.'); await J.say('Natürlich nicht. Und ich bin nicht dein Vater.'); A.note('cj_anka');
+    await A.wait(600); await J.say('Setz dich auf die Bank und zähl die Fähren. Ich bin gleich fertig.'); }
+  if (F(A,'cj.name') && F(A,'cj.candle')) return jkFinale(A);
+  return A.menuLoop(function(){ return [
+    {t:'Wer ist Anka?',once:'jkg1',go:async function(A){ await J.say('Frag nicht so dumm. Meine Kleine. Sie zählt die Fähren, jeden Abend, laut. Bei der siebten schläft sie ein.'); await A.g('…'); }},
+    {t:'Wohin fegst du?',once:'jkg2',go:async function(A){ await J.say('Bis zu ihr. Nicht weiter.'); await A.wait(700); await J.say('Was rede ich. Bis zur Pinie. Geh spielen.'); }},
+    {t:'Wovor hast du Angst, Jakov?',once:'jkg3',go:async function(A){ await J.say('Dass sie sie finden. Dass sie sie in eine Kiste mit einer Nummer legen, weit weg vom Meer.'); await J.say('Sie hat das Meer gemocht.'); }},
+    {t:'Lass gut sein, Jakov.',bye:true,go:async function(A){ await J.say('Bleib vom Wasser weg.'); }}
+  ]; }); }
+// Finale: Name und Licht an der Pinie
+async function jkFinale(A){ if (F(A,'cj.done')) return; var J=A.npc('jakov'); M.E.busy=true;
+  try{ if (A.isMala && A.isMala() && A.switchTo) await A.switchTo('marko');
+    var pn=M.stand('sustipan','pines')||[150,113,'B']; A.placeM(pn[0]+18,pn[1]+4,'L'); if (A.malaHere()) A.placeG(pn[0]-26,pn[1]+6,'R');
+    await A.narrate('Die kleine Flamme steht still. Kein Wind. Zum ersten Mal, seit ich hierherkomme, ist es in Sustipan ganz ruhig.');
+    await A.wait(600); await J.say('Was machst du da? Lass das. Wenn sie morgen das Licht sehen, graben sie genau da.');
+    for (;;){ var c=await A.choose([{t:'Es kommt niemand mehr, Jakov.',id:'none'},{t:'Sie haben sie damals nicht gefunden. Und heute sucht sie keiner.',id:'found'},{t:'Sie liegt in Lovrinac, bei den anderen.',id:'lov'}],{title:'Jakov'});
+      if (c==='found') break;
+      if (c==='none'){ await J.say('Lüg nicht. Ich habe den Brief von der Stadt gelesen. Morgen früh um sechs.'); continue; }
+      await J.say('Nein! In Lovrinac liegt eine Kiste mit einer Nummer und nichts drin.'); await A.m('…'); }
+    await J.say('Woher weißt du von ihr?');
+    var d=await A.choose([{t:'Sie fegen jeden Tag bis hierher. Nicht einen Schritt weiter.',id:'path'},{t:'Stipe hat es erzählt. Der leere Sarg.',id:'stipe'}],{title:'Jakov'});
+    if (d==='path') await J.say('Einer muss doch den Weg sauber halten. Damit sie ihn findet, wenn sie nach Hause kommt.'); else { await J.say('Stipe. Der hat unter dem Zaun durchgeschaut, der Lausbub.'); await J.say('Damals war er so groß wie sie.'); }
+    await A.wait(700);
+    if (A.malaHere()){ await A.g('Jakov. Schau mich an.'); await J.say('Anka …'); await A.g('Ich bin nicht Anka.'); await A.wait(700);
+      await A.g('Anka liegt da, wo du sie hingelegt hast. Unter der Pinie, am Meer. Und jetzt steht ihr Name dabei.'); A.note('m_anka',true); }
+    await A.wait(600); await J.say('„Anka Matošić. Neunzehnhunderteinundvierzig bis siebenundvierzig.“'); await A.wait(900);
+    await A.realize('jakov');
+    await J.say('Die Pinie … Als ich sie gepflanzt habe, war sie so hoch wie Anka.'); await A.wait(800); await J.say('Wie lange?');
+    await A.m('Dreiundfünfzig Jahre.'); await A.wait(1200);
+    await J.say('Dreiundfünfzig Jahre habe ich einen Weg gefegt, damit keiner merkt, dass am Ende einer liegt.'); if (A.malaHere()) await A.g('Und damit sie nicht allein ist.');
+    var bn=M.stand('sustipan','bench')||[186,112,'B']; if (J.walk) await J.walk(bn[0]-6,bn[1]+2); if (J.idle) J.idle('sit');
+    await A.narrate('Er lehnt den Besen an die Pinie und setzt sich auf die Bank. Das erste Mal, glaube ich, seit neunzehnhundertneunundfünfzig.');
+    if (A.malaHere()){ await A.wait(700); await A.g('Ich kann dir zeigen, wo es weitergeht. Da ist ein Licht. Ivka ist hineingegangen. Luka auch.');
+      await A.wait(900); await J.say('Und wer fegt dann die Wege? Hier liegen hundert Namen, die keiner mehr besucht. Der Bischof. Der Dieb. Die Kinder vom Fieber.');
+      await J.say('Nein, mala. Ich bleibe. Jetzt fege ich, weil ich will. Nicht, weil ich Angst habe.'); await A.wait(900);
+      await J.say('Und du, mala? Wo sollst du hin?'); await A.wait(1100); await A.g('Noch nicht.'); await J.say('Das sagen sie alle.'); }
+    else { await J.say('Geh nach Hause, Junge. Ich bleibe. Jetzt fege ich, weil ich will.'); }
+    A.note('cj_done'); A.setFlag('cj.done'); A.sfx('shimmer'); if (J.idle) J.idle(null); A.save();
+    await A.wait(900);
+    if (A.malaHere()){ await A.g('Da ist noch einer. Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.'); await A.m('Wer?'); await A.g('Heute Abend.'); }
+  } finally { M.E.busy=false; }
+  await M.startCase3(A); }
+M.jakovFinale=jkFinale;
+// Aufrufe aus rooms/sustipan.js
+M.jkTalk=function(A){ return A.isMala()?jkTalkMala(A):jkTalkMarko(A); };
+async function readAnkaStone(A){ await A.doc({style:'faded',title:'Ein Stein, richtig herum',w:200,lines:['ANKA','3. V. 1941 – 9. II. 1947','','NAŠA MALA','','(„Unsere Kleine“)']});
+  if (!A.hasNote('cj_stone')){ A.note('cj_stone'); await A.m('Kein Nachname. Als hätte der, der ihn gesetzt hat, gewusst, dass hier jeder weiß, wer gemeint ist.'); if (A.malaHere()) await A.g('„Naša mala.“ Unsere Kleine.'); } }
+function patchSustipan(){ var R=M.ROOMS.sustipan; if (!R) return; var HS=R.hotspots, byId=function(id){ return HS.filter(function(h){ return h.id===id; })[0]; };
+  var J=byId('jakov'); if (J){ var oT=J.talk, oL=J.look, oG=J.g||{}, oGT=oG.talk;
+    J.talk=function(A){ if (active(A.G)) return M.jkTalk(A); return afterTalk(A,oT); };
+    J.look=function(A){ if (active(A.G)){ if (!A.hasNote('cj_path')){ A.note('cj_path'); return A.m('Er fegt schneller als gestern. Immer dasselbe Stück: von der Bank bis zur dritten Pinie. Dort kehrt er um, als stünde da eine Wand.'); } return A.m('Bank, Pinie, Bank, Pinie. Der Weg ist längst sauber.'); } return typeof oL==='function'?oL(A):A.m(oL); };
+    oG.talk=function(A){ if (active(A.G)) return M.jkTalk(A); return afterTalk(A,oGT||oT); }; J.g=oG; }
+  var W=byId('wall'); if (W){ W.g=W.g||{}; var oWS=W.g.sense;
+    W.g.sense=async function(A){ if (active(A.G)){ A.setFlag('cj.stoneSeen'); return A.g('Die Steine stehen alle Kopf. Alle bis auf einen. Ganz links, unter dem Efeu. Den hat jemand sorgfältig gesetzt. Mit beiden Händen. Und geweint.'); } if (oWS) return typeof oWS==='function'?oWS(A):A.g(oWS); return A.g('Kalt. Und voller Namen, die keiner mehr liest.'); };
+    var oWL=W.look; W.look=function(A){ if (active(A.G) && !F(A,'cj.stoneSeen')) return A.m('Alte Grabsteine, verkehrt herum verbaut. Links wuchert Efeu über die Mauer. Wenn hier einer anders ist, sehe ich ihn nicht.'); return typeof oWL==='function'?oWL(A):A.m(oWL); }; }
+  // Efeu: ein Stein richtig herum (erst, wenn Mala ihn gespürt hat)
+  var IVY={id:'ivy',name:'Efeu an der Mauer',r:[6,86,26,15],st:[40,113,'B'],vis:function(S,GS){ return !!GS.flags['cj.stoneSeen']; },
+    look:async function(A){ if (!A.hasNote('cj_stone')){ if (A.reach) await A.reach(); await A.narrate('Ich schiebe den Efeu beiseite. Darunter ein kleiner Stein aus hellem Kalk, als einziger nicht verkehrt herum.'); } return readAnkaStone(A); },
+    use:function(A){ return this.look(A); }, read:function(A){ return readAnkaStone(A); },
+    g:{look:'Ihr Stein. Er steht richtig herum, damit sie nicht auf dem Kopf steht.',sense:'Hände, die zittern. Mörtel, nachts, im Licht einer Laterne. „Da bleibst du, mala. Da sieht dich keiner, und du siehst das Meer.“'}};
+  IVY.room='sustipan'; HS.splice(HS.indexOf(W)>=0?HS.indexOf(W):HS.length,0,IVY); if (R.byId) R.byId.ivy=IVY;
+  var PN=byId('pines'); if (PN){ PN.g=PN.g||{}; var oPL=PN.look, oPS=PN.g.sense;
+    PN.look=function(A){ if (active(A.G)){ if (F(A,'cj.candle')) return A.m('Ihr Name auf dem flachen Stein zwischen den Wurzeln, daneben das rote Licht.'); if (F(A,'cj.name')) return A.m('„ANKA MATOŠIĆ · 1941 – 1947“, in Kreide auf einem flachen Stein zwischen den Wurzeln. Es fehlt noch etwas.');
+        if (A.hasNote('cj_path')) return A.m('Drei hohe Pinien. Unter der dritten hört Jakovs Weg auf. Zwischen den Wurzeln liegt ein flacher Stein, wie ein Kissen.'); }
+      return typeof oPL==='function'?oPL(A):A.m(oPL); };
+    PN.g.sense=async function(A){ if (active(A.G)){ if (!A.hasNote('cj_roots')){ await A.g('Unter der dritten Pinie. Ganz tief, zwischen den Wurzeln. Etwas Kleines, das schläft.'); await A.g('Sie hat keine Angst. Sie hört das Meer.'); A.note('cj_roots'); return; } return A.g('Sie schläft. Er fegt. So geht das seit Jahren.'); }
+      if (oPS) return typeof oPS==='function'?oPS(A):A.g(oPS); return A.g('Harz. Salz. Und darunter Erde, die sich erinnert.'); };
+    PN.with=Object.assign(PN.with||{},{
+      kreide:async function(A){ if (!active(A.G)) return A.m('Hier schreibt man nichts hin.'); if (F(A,'cj.name')) return A.m('Es steht schon da.');
+        if (!A.hasNote('cj_where')) return A.m('Was soll ich hinschreiben? Ich weiß noch nicht, was hier ist.'); if (!A.hasNote('cj_stipe')) return A.m('„Anka“ allein? Auf dem Stein in der Mauer steht auch nur Anka. Sie hatte einen Nachnamen.');
+        if (A.reach) await A.reach(); A.sfx('write'); await A.narrate('Ich knie mich zwischen die Wurzeln und schreibe auf den flachen Stein, so groß ich kann:');
+        await A.doc({style:'faded',title:'In Kreide',w:200,lines:['ANKA MATOŠIĆ','1941 – 1947']}); A.setFlag('cj.name');
+        if (A.malaHere()) await A.g('Kreide hält nicht lange.'); await A.m('Lange genug, damit es einer liest.'); A.save(); },
+      grablicht:async function(A){ if (!active(A.G)) return A.m('Nicht hier, nicht jetzt.'); if (F(A,'cj.candle')) return A.m('Es brennt.'); if (!F(A,'cj.name')) return A.m('Ein Licht für wen? Erst soll hier stehen, wer hier liegt.');
+        if (A.reach) await A.reach(); A.sfx('match'); A.take('grablicht'); A.setFlag('cj.candle'); await A.narrate('Ich stelle das Grablicht neben den Namen und zünde es an. Mira hatte recht: Das Streichholz brennt beim ersten Mal.'); return jkFinale(A); } }); }
+  R.music=(function(o){ return function(GS){ return GS.phase==='cj'?'ghost':(typeof o==='function'?o(GS):o); }; })(R.music); }
+// ---------------------------------------------------------------- Bar „Bura“: Stipe erzählt, wenn man seine Karten kennt
+// Mala sieht Stipe in die Karten (Stipe als Mala ansehen); Marko sagt ihm dann auf den Kopf zu, was er in der Hand hat.
+var HAND='Ass und Drei in Münzen, dazu den Buben in Kelchen';
+M.jkPeek=async function(A){ if (!A.flag('cj.bet')) return A.g('Er schummelt. Nur ein bisschen. Seit vierzig Jahren.');
+  A.setFlag('cj.peek'); await A.g('Ich stelle mich hinter ihn. Er merkt es nicht. Keiner merkt es.'); await A.g('Ass und Drei in Münzen. Und der Bube in Kelchen. Münzen sind Trumpf.');
+  await A.g('Merk dir das, Marko: Ass, Drei, Münzen. Bube, Kelche.'); };
+M.jkRegulars=async function(A,St,Fr){
+  if (A.flag('cj.told')){ await St.say('Mehr weiß ich nicht. Und spielen will ich mit dir auch nicht mehr.'); await Fr.say('Er ist beleidigt. Ein Jahr wieder, mindestens.'); return; }
+  if (!(A.hasNote('cj_1958')||A.hasNote('cj_stone')||A.hasNote('cj_anka'))){ await St.say('Briškula. Wir reden nicht beim Spielen.'); return; }
+  return A.menuLoop(function(){ return [
+    {t:'Kannten Sie einen Jakov? Totengräber in Sustipan.',once:'rgJ1',go:async function(A){ await St.say('Den Jakov Matošić? Den kannte jeder.'); await Fr.say('Jeder, der alt genug ist.');
+        await St.say('Aber beim Spielen rede ich nicht über Tote. Das bringt Unglück.'); await Fr.say('Er redet nur, wenn er verliert.'); await St.say('Dann redet er nie.');
+        await St.say('Weißt du was? Sag mir, was ich in der Hand habe. Dann erzähle ich dir alles. Frane hat das in vierzig Jahren nicht geschafft.'); await Fr.say('Weil ich nicht schummle.'); A.setFlag('cj.bet'); }},
+    {t:'Ich sage Ihnen, was Sie in der Hand haben.',if:A.flag('cj.bet'),go:async function(A){
+        if (!A.flag('cj.peek')){ await A.m('Ich sitze ihm gegenüber und sehe nur die Rückseiten. Ich müsste hinter ihm stehen.'); if (A.malaHere()) await A.g('Hinter ihm steht keiner. Für ihn.'); return; }
+        var c=await A.choose([{t:'Zwei Asse und eine Sieben.',id:'a'},{t:'Ass und Drei in Münzen, dazu den Buben in Kelchen.',id:'ok'},{t:'König, Pferd und Bube in Schwertern.',id:'b'}],{title:'Stipes Hand'});
+        if (c!=='ok'){ await St.say('Falsch. Wusste ich es doch.'); await Fr.say('Noch einmal, wenn du dich traust.'); return; }
+        await A.wait(600); await St.say('…'); await A.narrate('Stipe legt die Karten offen auf den Tisch. Ass in Münzen, Drei in Münzen, Bube in Kelchen.'); await Fr.say('Er hat gewonnen, Stipe. Erzähl.');
+        await St.say('Jakov Matošić. Totengräber in Sustipan, wie sein Vater. Seine Kleine, die Anka, ist siebenundvierzig gestorben. Diphtherie. Fünf Jahre war sie.');
+        await St.say('Achtundfünfzig haben sie den Friedhof geräumt. Ich war siebzehn und habe mit den anderen Jungen unter dem Zaun durchgeschaut.');
+        await St.say('Als sie Ankas Grab aufgemacht haben, war der Sarg leer. Leer! Die Polizei hat Jakov drei Tage gefragt. Er hat nichts gesagt. Kein Wort.');
+        await Fr.say('Ein Jahr später hat man ihn auf der Bank gefunden. Morgens. Den Besen auf den Knien.'); await St.say('Seitdem sagen die Alten, man soll in Sustipan aufpassen, wo man hintritt.');
+        A.note('cj_stipe'); A.setFlag('cj.told'); await Fr.say('Jetzt spiel, Stipe. Du hast schon genug verloren.'); return 'bye'; }},
+    {t:'Ich lasse euch spielen.',bye:true}
+  ]; }); };
+// nach dem Fall: Jakov fegt ruhiger
+async function afterTalk(A,orig){ if (A.flag('cj.done') && A.first('!jkAfter')){ var J=A.npc('jakov'); await J.say(A.isMala()?'Mala. Die Fähren sind gezählt. Alle sieben.':'Laku noć. Ich fege jetzt nur noch für die Namen. Das ist leichter.'); }
+  return orig(A); }
+patchSustipan();
+
+// Hinweise: game/src/15_hints_k1.js (kj_*)
 })(M);
 
 /* ---- 92_story2.js ---- */
@@ -77758,7 +77978,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="13.11.2026 · 20c161";
+M.BUILD="13.11.2026 · a16dfe";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>
