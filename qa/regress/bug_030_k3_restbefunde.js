@@ -30,31 +30,25 @@ module.exports = { id: 'BUG-030', title: 'K3: Batterieherkunft im Epilog (neu/al
   // (2) Samstag, Regel 2, Pflichtteile fertig, Aufführung vorbereitet
   const sat = { 'k3.rules': 2, 'k3.z.mala': true, 'k3.v.part1': true, 'k3.b.arrived': true, 'k3.b.jela': true, 'k3.s.trip': true, 'k3.s.photoTrip': true, 'k3.s.spot': true, 'k3.s.initials': true, 'k3.s.photo': true, 'k3.x.vaga': true };
   await FX.load(D, 'k3x_samstag.json', { setFlags: Object.assign({ 'k3.s.words': true, 'k3.s.dinoOk': true }, sat), addNotes: ['b3_photo65', 'b3_initials', 'b3_lenaphoto', 's3_words'], pos: 'tepa' }); await settle(); await D.page.waitForTimeout(1200); await P.calm();
-  ck(await D.ev(() => M.k3DayReady(M.GS)), 'Samstag reif (Pflichtfoto fertig)');
-  let th = await D.ev(() => M.k3OpenThreads(M.GS));
-  ck(th.length === 1 && th[0].k === 'music' && /warten an der Brücke/.test(th[0].t), 'offene Liste: die vorbereitete Aufführung ' + JSON.stringify(th));
+  // Wunsch des Autors (14.11.2026): die Aufführung ist Pflicht. Ohne Lenas Strophe ist der Samstag nicht fertig; die Herberge bietet kein Ende an.
+  ck(!(await D.ev(() => M.k3DayReady(M.GS))), 'Samstag nicht reif, solange die Aufführung fehlt');
+  let miss = await D.ev(() => { let t = ''; const A = M.API; return M.k3MusicOpen(M.GS) || ''; });
+  ck(/warten an der Brücke/.test(miss), 'was fehlt: die vorbereitete Aufführung (' + miss + ')');
   await D.ev(() => { M.__speechLog = []; }); await P.travel('herberge'); let s = await D.st();
-  ck(!!s.dlg && s.dlg.some(x => /Den Tag beenden/.test(x)) && s.dlg.some(x => /Noch nicht\. Erst das/.test(x)), 'Herberge fragt, mit „Noch nicht. Erst das.“');
-  ck(/Die Australier warten an der Brücke/.test(await FX.said(D)), 'Marko nennt die Aufführung vor dem Abschluss');
-  await P.choose('Noch nicht'); s = await D.st(); ck(s.phase === 'k3_d2', '„Noch nicht“: Samstag bleibt offen');
-  await P.exit('door'); await P.travel('starimost'); await P.act('talk', 'aussie3_b'); await P.choose('Play it'); await P.calm(); if ((await D.st()).dlg) await P.bye('See you');
-  ck(await D.flag('k3.s.lenaVerse') && await D.hasNote('s3_verse'), 'die Aufführung findet danach noch statt (Lenas Strophe)');
-  th = await D.ev(() => M.k3OpenThreads(M.GS)); ck(th.length === 0, 'danach keine offene Aufführung mehr');
-  // (2) Aufführung ohne Ende (Text fehlte): eigener Warntext
+  ck(!(s.dlg && s.dlg.some(x => /Den Tag beenden/.test(x))), 'Herberge bietet ohne Aufführung kein Tagesende an');
+  await P.travel('starimost'); await P.act('talk', 'aussie3_b'); await P.choose('Play it'); await P.calm(); if ((await D.st()).dlg && await P.dlgHas('See you')) await P.bye('See you');
+  ck(await D.flag('k3.s.lenaVerse') && await D.hasNote('s3_verse'), 'die Aufführung (Lenas Strophe)');
+  ck(await D.flag('k3.s.dinoJump'), 'danach springt Dino von der Brücke');
+  ck(await D.ev(() => M.k3DayReady(M.GS)), 'jetzt ist der Samstag reif');
+  let th = await D.ev(() => M.k3OpenThreads(M.GS)); ck(th.length === 0, 'danach keine offene Aufführung mehr ' + JSON.stringify(th));
+  // Warntexte (jetzt als „Was fehlt noch“): Aufführung ohne Ende, Wiederholung, nur der Text, nichts angefangen
   await FX.load(D, 'k3x_samstag.json', { setFlags: Object.assign({ 'k3.s.dinoOk': true, 'k3.s.perf': true }, sat), addNotes: ['b3_photo65', 'b3_initials', 'b3_lenaphoto', 'b3_hum'], pos: 'tepa' }); await settle();
-  th = await D.ev(() => M.k3OpenThreads(M.GS)); ck(th.some(x => x.k === 'music' && /beim Fenster stecken geblieben/.test(x.t)), 'Aufführung ohne Ende: „Liam ist … stecken geblieben“');
-  // (2) erste Aufführung ohne Ende gehört, danach den Text aufgeschrieben (perf wieder zurückgesetzt): Wiederholung offen
+  ck(/beim Fenster stecken geblieben/.test(await D.ev(() => M.k3MusicOpen(M.GS) || '')), 'Aufführung ohne Ende: „Liam ist … stecken geblieben“');
   await FX.load(D, 'k3x_samstag.json', { setFlags: Object.assign({ 'k3.s.dinoOk': true, 'k3.s.words': true }, sat), addNotes: ['b3_photo65', 'b3_initials', 'b3_lenaphoto', 'b3_hum', 's3_words'], pos: 'tepa' }); await settle();
-  th = await D.ev(() => M.k3OpenThreads(M.GS)); ck(th.some(x => x.k === 'music' && /noch einmal spielen/.test(x.t)), 'Text nach der ersten Aufführung: „noch einmal spielen. Diesmal mit dem Ende.“');
-  // (2) nur der Text, ohne Dinos Erlaubnis
+  ck(/noch einmal spielen/.test(await D.ev(() => M.k3MusicOpen(M.GS) || '')), 'Text nach der ersten Aufführung: „noch einmal spielen. Diesmal mit dem Ende.“');
   await FX.load(D, 'k3x_samstag.json', { setFlags: Object.assign({ 'k3.s.words': true }, sat), addNotes: ['b3_photo65', 'b3_initials', 'b3_lenaphoto', 's3_words'], pos: 'tepa' }); await settle();
-  th = await D.ev(() => M.k3OpenThreads(M.GS)); ck(th.some(x => x.k === 'music' && /wenn Dino seine Geschichte hat/.test(x.t)), 'nur der Text: Dinos Erlaubnis fehlt noch');
-  // (2) nichts angefangen: keine Warnung (die Aufführung bleibt freiwillig)
+  ck(/wenn Dino seine Geschichte hat/.test(await D.ev(() => M.k3MusicOpen(M.GS) || '')), 'nur der Text: Dinos Erlaubnis fehlt noch');
   await FX.load(D, 'k3x_samstag.json', { setFlags: sat, addNotes: ['b3_photo65', 'b3_initials', 'b3_lenaphoto'], pos: 'tepa' }); await settle();
-  th = await D.ev(() => M.k3OpenThreads(M.GS)); ck(th.length === 0, 'nichts angefangen: keine Warnung');
-  // (2) bewusst beenden trotz vorbereiteter Aufführung
-  await FX.load(D, 'k3x_samstag.json', { setFlags: Object.assign({ 'k3.s.words': true, 'k3.s.dinoOk': true }, sat), addNotes: ['b3_photo65', 'b3_initials', 'b3_lenaphoto', 's3_words'], pos: 'tepa' }); await settle(); await D.page.waitForTimeout(1200); await P.calm();
-  await P.travel('herberge'); await D.choose('Den Tag beenden'); for (let i = 0; i < 60; i++) { const x = await D.st(); if (x.phase === 'k3_d2_n' || (x.dlg && x.dlg.some(y => /Mala fragen|Spur/.test(y)))) break; await D.page.waitForTimeout(250); }
-  ck(await D.flag('k3.left.music') === true && await D.flag('k3.d2n.started') === true, 'bewusst beendet: Aufführung als zurückgestellt vermerkt (k3.left.music), die Nacht beginnt');
+  ck(!(await D.ev(() => M.k3DayReady(M.GS))), 'nichts angefangen: Samstag trotzdem nicht reif (Pflicht)');
   return { ok, detail: out.join('; ') };
 } };

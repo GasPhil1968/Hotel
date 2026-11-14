@@ -123,8 +123,15 @@ Mala zeigt auf zwei Landmarken, Marko zeichnet ihre Linie in den Plan.
   - **flache Platte**: alles stimmt. Nur liegt dort ein Quader der alten Brücke; die Platte vom Foto liegt darunter.
 - **[G]** Den **Quader** ansehen: Mala sieht darunter die Platte und die Buchstaben **„M · D · 1965“**. (Das Spiel sagt das nicht von selbst. Wer als Marko versucht, den Quader zu heben oder zu schieben, hört beim zweiten Versuch Mala: „Mit Händen nicht.“)
 - **[M]** Mit **Davor** reden: Er setzt sich auf den Quader, Lena fotografiert ihn. Lena bekommt beide Fotos.
+**13b. Das Lied vom Fenster** (Pflicht, seit 14.11.2026)
+- Erst danach ist der Samstag fertig: Davor und Lena sollen das Lied hören, ganz.
+- **[M]** An der Alten Brücke **Dino**: „Die Australier wollen am Brückenkopf spielen.“ Er will eine wahre Geschichte; eine Notiz wählen, etwa *Der Wartende* (auch: die Eierfrau, der Fahrer, Skela, die Brücke, die keiner gezählt hat).
+- **[M]** **Liam**: „Do you want the words?“ → die sechs Zeilen in die Reihenfolge der Geschichte bringen: zum Wasser · das Lamm · die Mädchen an den Toren · die Liebste am Fenster · „Guten Abend“ · „Komm heute Abend“. (Wer sie schon Freitagnacht auf der Terrasse aufgeschrieben hat, überspringt das.)
+- **[M]** **Liam**: „Play it.“ Die Australier spielen; an der Fensterzeile erkennt Lena das Summen ihres Großvaters, mit dem ganzen Text geht das Lied weiter. Lena lernt „Dođi, dragi, doveče.“
+- Danach springt **Dino** von der Brücke, umsonst, „für die Kleine“: oben auf der Brüstung über dem Scheitel, Kopfsprung, Platschen, ein winkender Kopf im Wasser. Zehn Minuten später kommt er blau die Uferstufen herauf.
+- Ohne Text bricht Liam an der Fensterzeile ab; dann die Worte aufschreiben und „Play it again. With the end.“
+
 - **[M]** Zurück in der **Herberge** → „(Den Tag beenden.)“. Nada ruft an: „Weißt du etwas?“ „(Mala fragen.)“ wählen; Mala sagt: „Aber sag ihr nicht nichts.“ Dann „Ich habe eine Spur.“
-- Wer die freiwillige Aufführung der Australier angefangen hat (Text aufgeschrieben, Dinos Erlaubnis oder eine Aufführung ohne Ende), dem nennt Marko sie vor dem Abschluss eigens („Die Australier warten an der Brücke …“). „(Noch nicht. Erst das.)“ lässt sie spielbar: an der Brücke Liam ansprechen → „Play it.“
 
 ---
 
@@ -269,7 +276,7 @@ Danach sagt Marko: „Bis elf ist noch Zeit.“ **[M]** In den **Vulkanizer** ge
 
 Pflicht sind die Schritte oben, einschließlich der neuen Abschnitte 13a und 20–22. Diese Stränge liegen daneben; das Hinweissystem führt zu ihnen (Themen „Das Lied vom Fenster“, „Dinos Preis“, „Die letzte Strophe“, „Das Blatt“, „Veras Nacht“, „Komm es holen“, „Der Brief in der Tasche“, „Zdravkos Schublade“, „Die Mappe“, „Die Waage“, „Der Bleistift“). Was davon offen ist, wenn ein Tag endet, nennt Marko vorher. Hintergrund: `design/K3_AUSBAU.md`.
 
-**Das Lied vom Fenster (Freitag- oder Samstagnacht, Samstag, Sonntag)**
+**Das Lied vom Fenster – was darüber hinaus geht (Freitag- oder Samstagnacht, Sonntag)** · Die Aufführung selbst ist jetzt Pflicht (Abschnitt 13b).
 - **[M]** Auf der Terrasse Liam: „What’s that song?“, dann „Do you want the words?“ → die sechs Zeilen in die Reihenfolge der Geschichte bringen: zum Wasser · das Lamm · die Mädchen an den Toren · die Liebste am Fenster · „Guten Abend“ · „Komm heute Abend“. Bec schreibt mit.
 - Samstag schickt Jela Davor und Lena an die Brücke (mit dem Foto, Abschnitt 13). In alten Spielständen (Regel 1): Jela: „Lena wollte die Brücke sehen …“ → „Das Kind muss die Brücke sehen.“
 - An der Alten Brücke stehen jetzt Davor, Lena und die Australier. Während Davor und Lena unten am Ufer suchen, wartet Liam mit dem Spielen. **[M]** Dino: „Die Australier wollen am Brückenkopf spielen.“ Dino will eine wahre Geschichte: eine Notiz wählen (der Wartende, die Eierfrau, der Fahrer, Skela, die Brücke, die keiner gezählt hat).

@@ -67,7 +67,8 @@ async function talkDino(A){ var D=A.npc('dino'), G=A.G, p=G.phase;
         await A.wait(300); await D.say('Und die Neretva ist im November ein Pferd, das dich nicht mag.'); }},
     {t:'Stand die Brücke je im Wasser? Auf Pfeilern?',if:(N(A,'l3_mybridge')||A.flag('k3.p.objection'))&&!N(A,'l3_onearch'),go:async function(A){ await D.say('Stari most? Im Wasser?'); await D.say('Nie. Ein Bogen, von Fels zu Fels. Deshalb kann man ja springen.');
         await D.say('Unter einem Pfeiler springt keiner zweimal.'); oneArch(A,'dino'); if (G.malaOn){ await A.wait(400); await A.g('Meine hatte Pfeiler. Drei.'); } }},
-    {t:'Springst du heute?',once:'dnJ',go:async function(A){ if (p==='k3_d1'){ await D.say('Bei Bura? Die drückt dich gegen den Bogen, bevor du unten bist. Heute springt keiner. Heute sitzt man im Café und lügt über den Sommer.'); return; }
+    {t:'Springst du noch mal?',once:'dnJ2',if:!!A.flag('k3.s.dinoJump'),go:async function(A){ await D.say('Einmal am Tag. Sonst glauben die Touristen, das gibt es umsonst.'); await A.wait(300); await D.say('Und ich bin immer noch blau.'); }},
+    {t:'Springst du heute?',once:'dnJ',if:!A.flag('k3.s.dinoJump'),go:async function(A){ if (p==='k3_d1'){ await D.say('Bei Bura? Die drückt dich gegen den Bogen, bevor du unten bist. Heute springt keiner. Heute sitzt man im Café und lügt über den Sommer.'); return; }
         await D.say('Bei dem Wasser? Im November? Für zwanzig Euro springe ich. Für zwanzig Touristen. Heute ist keiner da.'); if (!N(A,'p3_history')) await D.say('Die Neretva ist im November ein Pferd, das dich nicht mag.'); }},
     {t:'Hast du nie Angst?',once:'dnF',go:async function(A){ await D.say('Jedes Mal.'); await A.wait(400); await D.say('Wenn ich keine habe, springe ich nicht. Dann stimmt was nicht. Mit mir oder mit dem Wasser.'); if (G.malaOn) await A.g('Er hat recht. Ich mag ihn.'); }},
     {t:'Willst du hier weg?',once:'dnW',go:async function(A){ await D.say('Alle wollen weg. Ich auch. Nach Deutschland, Schreiner werden. Mein Cousin ist in Stuttgart und hat ein Auto.');
@@ -132,6 +133,27 @@ async function springerTalk(A){ var G=A.G;
     {t:'Hast du Angst?',once:'spr3',go:async function(A){ await A.wait(900); await A.g('Er breitet die Arme aus. Das ist auch eine Antwort.'); }},
     {t:'(Zusehen.)',bye:true,silent:true,go:async function(A){ await A.wait(1200); }}
   ]; }); }
+// ---------------------------------------------------------------- Dinos Sprung (animiert in rooms/art/starimost.js, M.K3JUMP)
+// o.walk: Dino geht vorher zur Auffahrt und blendet aus (Samstag); o.stand: Sekunden auf der Brüstung; o.during(A): Sätze, solange er oben steht.
+M.k3DinoJump=async function(A,o){ o=o||{}; var D=A.npc('dino'), T=M.K3JUMP_T?M.K3JUMP_T(o):{stand:1.4,impact:2.8};
+  if (o.walk && D.actor){ var w=D.walk(250,113); await A.wait(1400); if (D.actor) D.actor.fadeOut=A.gt; await w; await A.wait(400); }
+  if (D.actor){ D.actor.fadeOut=0; D.hide(); } var t0=A.gt; M.K3JUMP={t0:t0,stand:T.stand};
+  try{ if (o.during) await o.during(A);
+    var left=T.impact*1000-(A.gt-t0); if (left>0) await A.wait(left); A.sfx('splash'); await A.wait(2600);
+  } finally { M.K3JUMP=null; } };
+// Samstag nach dem ganzen Lied: Dino springt, umsonst (Wunsch des Autors, 14.11.2026)
+async function dinoJumpForLena(A){ var G=A.G, Ln=A.npc('lena'), Dv=A.npc('davor'), D=A.npc('dino'); if (A.flag('k3.s.dinoJump')) return; A.setFlag('k3.s.dinoJump');
+  var R=M.ROOMS.starimost, lock=R.camLock; R.camLock=150;
+  try{ await A.wait(700); await D.say('So ein Lied, und keiner springt? Nicht an meiner Brücke.'); await A.wait(300); await D.say('Für die Kleine. Umsonst. Sagt es keinem.');
+    await M.k3DinoJump(A,{walk:true,stand:2.6,during:async function(A){ await A.wait(1200); await A.narrate('Oben über dem Scheitel steigt Dino auf die Brüstung, in der Badehose. Er breitet die Arme aus.'); }});
+    await A.narrate('Ein Strich vor dem Bogen, ein Platschen, weißer Schaum. Die Touristen schreien auf. Unten im grünen Wasser ein Kopf, der winkt.');
+    await Ln.say('Der ist gesprungen! Papa! Der ist echt gesprungen!'); await A.wait(400); await Dv.say('Im November.'); await A.wait(500); await Dv.say('Früher sind sie im August gesprungen. Wir haben unten gewartet, mit Handtüchern.');
+    if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Umsonst. Das macht er sonst nie, glaube ich.'); }
+    await A.wait(900); var st=M.stand('starimost','steps')||[60,132,'L']; var d0=M.apos('starimost','dino',[198,115,'R']);
+    if (D.actor){ D.actor.fadeOut=0; D.actor.x=st[0]; D.actor.y=st[1]; D.show(); D.actor.fadeIn=A.gt; await D.walk(d0[0],d0[1]); await D.face('L'); }
+    await A.narrate('Zehn Minuten später kommt er die Uferstufen herauf, die rote Jacke über den Schultern, blau bis an die Lippen.');
+    await D.say('Brrr. Kalt wie die Hölle, wenn die Hölle kalt wäre.'); await A.wait(300); await D.say('Aber das Lied war es wert.');
+  } finally { R.camLock=lock; } }
 // ---------------------------------------------------------------- Samstag: Davor und Lena an der Brücke, die Australier, Dinos Regel, das Lied (Ausbau N2, design/K3_AUSBAU.md F.2)
 function tripHere(G){ return G.phase==='k3_d2' && !!G.flags['k3.s.trip'] && !G.flags['k3.s.down']; }   // Regel 2: während sie unten am Ufer suchen, stehen Davor und Lena nicht oben
 function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
@@ -174,7 +196,8 @@ async function perform(A){ var G=A.G, L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A
   if (!words) return;
   await A.wait(600); await Ln.say('Was heißt das? Das Letzte. Dođi …'); await A.m('„Dođi, dragi, doveče.“ Komm, Liebster, komm heute Abend.'); await A.wait(700); await Ln.say('Das hat er nie gesungen. Die Stelle.');
   await A.wait(600); await Dv.say('Nein. Die nie.'); await A.wait(900); await Ln.say('Dođi, dragi, doveče.'); await A.wait(500); await Ln.say('Das sag ich ihm. Morgen. Am Tor.'); A.note('s3_verse'); A.setFlag('k3.s.lenaVerse');
-  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); } }
+  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); }
+  await dinoJumpForLena(A); }
 async function talkAussiesBridge(A){ var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), G=A.G;
   await A.menuLoop(function(){ return [
     {t:'What are you doing here?',once:'ab1',go:async function(A){ await J.say('Busking! Bridge, tourists, hat on the ground. Bec’s idea.'); await B.say('Liam’s idea. I just said it out loud.'); await L.say('The guy in the jacket says we need a story first. We don’t have a story. We have a song.'); }},
@@ -211,9 +234,8 @@ M.k3EpiBridge=async function(A){ var G=A.G; if (A.flag('k3.e.bridge')) return A.
   if (!A.flag('k3.e.bridgeOn')) await epiStart(A); G.flags['mala.lock']=true;
   try{ var cs=M.stand('starimost','crest')||[418,50,'R']; await A.walk(cs[0]-10,cs[1]); await A.face('R'); if (A.malaHere()){ A.placeG(cs[0]+6,cs[1],'L'); }
     await (M.k3Close?M.k3Close(A,'scheitel',async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); }):(async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); })());   // Nahaufnahme (97_k3_nah.js)
-    await A.wait(1000); var D=A.npc('dino'); if (D.actor) D.hide(); A.set('dinoJump',true); await A.wait(900);
-    await A.narrate('Neben uns steigt Dino auf die Brüstung, in der Badehose, blau vor Kälte. Er sieht uns nicht an. Er sieht hinunter, breitet die Arme aus und springt.');
-    A.set('dinoJump',false); await A.wait(700); A.sfx('splash'); await A.wait(900);
+    await A.wait(1000); var D=A.npc('dino');
+    await M.k3DinoJump(A,{stand:3.4,during:async function(A){ await A.wait(400); await A.narrate('Neben uns steigt Dino auf die Brüstung, in der Badehose, blau vor Kälte. Er sieht uns nicht an. Er sieht hinunter, breitet die Arme aus und springt.'); }});
     await A.narrate('Ein Strich, ein Platschen, ein Kopf im grünen Wasser. Unten schreit er etwas, das nach Kälte klingt.');
     await A.wait(500); await A.narrate('Mala lacht. Laut. Zum ersten Mal, seit wir in Mostar sind.'); await A.g('Er ist verrückt.'); await A.m('Er trainiert.'); await A.g('Für den Sommer.'); await A.wait(1200);
     if (D.actor){ D.show(); D.actor.fadeIn=A.gt; }

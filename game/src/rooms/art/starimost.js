@@ -338,6 +338,39 @@ function tinyPeople(b,w,tod,GS){ if (tod!=='day') return; var list=w==='rain'?[[
 // ---------------------------------------------------------------- Dino klein auf der Brüstung (S.dinoJump)
 function tinyDino(b,x,by){ b.px(x,by-1,P.p3); b.px(x+1,by-1,P.p3); b.vl(x,by-6,by-2,P.c1); b.vl(x+1,by-6,by-2,P.c2); b.rect(x-1,by-11,4,5,P.r3); b.px(x-1,by-11,P.r4); b.hl(x-4,x-2,by-10,P.r3); b.hl(x+3,x+5,by-10,P.r3); b.px(x-5,by-11,P.p3); b.px(x+6,by-11,P.p3); b.rect(x,by-14,2,3,P.p3); b.hl(x,x+1,by-15,P.h1); }
 
+// ---------------------------------------------------------------- Dinos Sprung (animiert, M.K3JUMP={t0,stand}; Ablauf in rooms/starimost.js M.k3DinoJump)
+// Klein auf der Brüstung über dem Scheitel: steht mit ausgebreiteten Armen, geht in die Knie, Kopfsprung, fällt bis in die Neretva, Gischt, Ringe,
+// dann taucht der Kopf flussab wieder auf. Zeiten in Sekunden (Spielzeit): stand, 0,3 Knie, 1,1 Fall, danach Wasser.
+var JMP={crouch:0.3,fall:1.1};
+M.K3JUMP_T=function(o){ var s=(o&&o.stand)||1.4; return {stand:s,impact:s+JMP.crouch+JMP.fall}; };
+function jumpFx(fb,v){ var J=M.K3JUMP; if (!J || !M.E) return; var cam=v.cam, dt=(M.E.gt()-J.t0)/1000, S=J.stand||1.4;
+  var x0=AR.cx-1, by=rd(deckY(AR.cx))-DK.par, SK=P.p3, SK2=P.p2, TR=P.n1, HR=P.h1;
+  function put(x,y,c){ x=rd(x)-cam; y=rd(y); if (x<0||x>=320||y<0||y>=H) return; fb.d[y*320+x]=c; }
+  function body(x,y,crouch,armY){ var d=crouch?2:0;   // stehend, Füße auf y
+    put(x,y,SK2); put(x+1,y,SK2); for (var k=1;k<5-d;k++){ put(x,y-k,SK); put(x+1,y-k,SK2); }
+    var ty=y-5+d; put(x,ty,TR); put(x+1,ty,TR); put(x,ty-1,TR); put(x+1,ty-1,TR);
+    for (var k2=2;k2<6;k2++){ put(x,ty-k2,SK); put(x+1,ty-k2,SK2); }
+    var hy=ty-6; put(x,hy,SK); put(x+1,hy,SK); put(x,hy-1,HR); put(x+1,hy-1,HR);
+    for (var a=1;a<=4;a++){ var ay=ty-4+Math.round(armY*a/4); put(x-a,ay,SK); put(x+1+a,ay,SK); } }
+  if (dt<S){ var br=Math.sin(dt*5)>0.6?-1:0; body(x0,by,false,br); return; }
+  if (dt<S+JMP.crouch){ body(x0,by,true,-3); return; }
+  var u=(dt-S-JMP.crouch)/JMP.fall;
+  if (u<1){ var hx=x0+u*9, top=by-12, hy=top-Math.sin(Math.min(1,u*4)*Math.PI)*4+(WY-12-top)*u*u;
+    if (u<0.22){ // Hechtsprung: waagrecht, gestreckt
+      for (var i=-5;i<=6;i++){ var c=i<-3?SK:(i<-1?TR:(i<4?SK:(i<5?SK:HR))); put(hx+i,hy+Math.abs(i)*0.15,c); if (i>-1&&i<4) put(hx+i,hy+1,SK2); } put(hx+7,hy-1,SK); put(hx+8,hy-1,SK); return; }
+    // kopfüber: oben die Beine, unten Kopf und Hände
+    for (var k=0;k<4;k++){ put(hx,hy+k,SK); put(hx+1,hy+k,SK2); } put(hx,hy+4,TR); put(hx+1,hy+4,TR); put(hx,hy+5,TR); put(hx+1,hy+5,TR);
+    for (var k3=6;k3<10;k3++){ put(hx,hy+k3,SK); put(hx+1,hy+k3,SK2); } put(hx,hy+10,HR); put(hx+1,hy+10,HR); put(hx,hy+11,SK); put(hx+1,hy+11,SK); put(hx,hy+12,SK); put(hx+1,hy+13,SK); return; }
+  // Wasser: Gischt, Ringe, Kopf
+  var ti=dt-S-JMP.crouch-JMP.fall, ix=x0+9, iy=WY+2;
+  if (ti<0.9) for (var n=0;n<16;n++){ var an=(n/15-0.5)*2.2, sp=24+hash(n,7)*30, px=ix+Math.sin(an)*sp*ti*0.6, py=iy-(Math.cos(an)*sp*ti-55*ti*ti); if (py>iy+1) continue; put(px,py,n%3?P.s6:P.s5); if (ti<0.35) put(px,py+1,P.s5); }
+  if (ti<0.25) for (var w=-3;w<=4;w++) put(ix+w,iy-1-((w+4)%3),P.s6);
+  if (ti<2.6){ var r=3+ti*13, al=1-ti/2.6; for (var a2=0;a2<64;a2++){ var th=a2/64*Math.PI*2, rx=ix+Math.cos(th)*r, ry=iy+1+Math.sin(th)*r*0.22; if (bayer(rd(rx),rd(ry))<al*0.8) put(rx,ry,P.s5); }
+    if (ti>0.5){ var r2=2+(ti-0.5)*10; for (var a3=0;a3<48;a3++){ var th2=a3/48*Math.PI*2; if (bayer(a3,3)<al) put(ix+Math.cos(th2)*r2,iy+1+Math.sin(th2)*r2*0.22,P.s4); } } }
+  if (ti>1.3 && ti<6){ var kx=ix+(ti-1.3)*5, ky=iy+Math.round(Math.sin(ti*4)*0.6); put(kx,ky-1,HR); put(kx+1,ky-1,HR); put(kx,ky,SK); put(kx+1,ky,SK2);
+    if (ti>2 && ti<3.2){ put(kx+2,ky-2,SK); put(kx+3,ky-3,SK); }   // winkt
+    put(kx-1,ky+1,P.s5); put(kx+2,ky+1,P.s5); } }
+
 // ---------------------------------------------------------------- Bild
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
@@ -401,6 +434,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), x, y, tin
   else if (w==='bura'||w==='calm'||w==='frost'){ M.glints(fb,AR.cx+12,WY+1,H,30,t,P.l1,cam); }
   // Möwen über der Schlucht
   if (tod!=='night') M.scn.gulls(fb,t,300,14,240,40,w==='rain'?1:3,cam);
+  if (M.K3JUMP) jumpFx(fb,v);   // Dinos Sprung
   // Handtuch am Balkon flattert bei Bura
   if (w==='bura'){ var hx=HUT.x0+4-cam; if (hx>-8 && hx<322) for (var j=0;j<6;j++) for (var k2=0;k2<5;k2++){ var px=hx+k2+rd(Math.sin(t*9+k2*0.8)*k2*0.4), py=75+j+(k2>2?rd(Math.sin(t*11+j)*0.6):0); if (px>=0&&px<320) fb.d[py*320+px]=(k2===0)?P.r4:((j===2)?P.s6:P.r3); } } }
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod;

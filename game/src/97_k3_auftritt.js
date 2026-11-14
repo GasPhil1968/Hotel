@@ -78,7 +78,7 @@ function toss(A,id){ var a=M.E.ACT[id]; if (!a) return Promise.resolve(); var di
 function flash(A,id){ var a=M.E.ACT[id]; if (!a) return; var dir=a.f==='L'?-1:1; PF.flashes.push({x:a.x+dir*9, y:a.y-37, t0:A.gt}); A.sfx('shutter'); }
 // Josh klatscht auf 2 und 4 (160 Schläge pro Minute: ein Klatscher je 750 ms), Bild und Klang aus derselben Schleife
 function clapLoop(A,J,beat){ var st={on:true}; var Q=M.K3PERF_POSES.J;
-  (async function(){ while (st.on && J.actor){ J.freeze(Q.open); await A.wait(beat*0.8); if (!st.on) break; J.freeze(Q.hit); A.sfx('k3clap'); await A.wait(beat*1.2); }
+  st.end=(async function(){ while (st.on && J.actor){ J.freeze(Q.open); await A.wait(beat*0.8); if (!st.on) break; J.freeze(Q.hit); A.sfx('k3clap'); await A.wait(beat*1.2); }
     if (J.actor){ J.freeze(null); J.idle(null); } })();
   return st; }
 async function countIn(A,J){ var Q=M.K3PERF_POSES.J, say=J.say('One, two – one, two, three, four!');
@@ -146,7 +146,9 @@ M.k3Perform=async function(A,o){ o=o||{}; var G=A.G, words=!!o.words, beat=375;
     await A.wait(800);
     A.sfx('k3applause'); [T1,T2,Ln,Dn].forEach(function(h){ if (h && h.actor) h.idle('clapS'); });
     if (T1) A.wait(250).then(function(){ return toss(A,'k3tour1'); }); if (T2) A.wait(650).then(function(){ return toss(A,'k3tour2'); });
-    var bows=[L.anim('guitarBow')]; if (J.actor) bows.push(J.anim('bow')); if (B.actor) B.idle('sheetWave'); await Promise.all(bows);
+    // Die Klatsch-Schleife muss fertig sein, bevor Josh sich verbeugt: ihr letzter Schritt setzt ihn zurück und brach sonst die Verbeugung ab (Szene hing)
+    await clap.end;
+    var bows=[L.anim('guitarBow')]; if (J.actor) bows.push(J.anim('bow')); if (B.actor) B.idle('sheetWave'); await Promise.race([Promise.all(bows),A.wait(3000)]);
     await J.say('Thank you, Mostar!');
     [T1,T2,Ln,Dn].forEach(function(h){ if (h && h.actor) h.idle(null); }); if (B.actor) B.idle(null); L.idle('guitar');
     if (T1) T1.walk(camClamp(CAM)-20,129); if (T2) A.wait(500).then(function(){ return T2.walk(camClamp(CAM)-24,120); });

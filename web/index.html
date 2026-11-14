@@ -14120,8 +14120,8 @@ M.HINTS_K3=[
  {id:'x3c',t:'Dinos Preis',open:function(G){ return !(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.s.trip') && !F(G,'k3.s.dinoOk'); },
   s:['An der Alten Brücke wollen die Australier spielen. Dino lässt sie nicht.',
      'Dino nimmt kein Geld. Er nimmt Geschichten. Wahre.',
-     'Marko hat Geschichten im Notizbuch: der Wartende, die Eierfrau, der Fahrer.',
-     'An der Alten Brücke mit Dino reden und ihm eine Geschichte aus dem Notizbuch erzählen.']},
+     'Marko hat Geschichten gesammelt: der Wartende, die Eierfrau, der Fahrer.',
+     'An der Alten Brücke mit Dino reden: „Die Australier wollen am Brückenkopf spielen.“ Dann eine Geschichte erzählen, etwa „Der Wartende“.']},
  {id:'x3d',t:'Die letzte Strophe',open:function(G){ return !(M.k3DayReady&&M.k3DayReady(G)) && G.phase==='k3_d2' && F(G,'k3.s.trip') && F(G,'k3.s.dinoOk') && !F(G,'k3.s.lenaVerse'); },
   s:['Lena kennt das Lied vom Telefon. Ihr Großvater hat es gesummt, bis zum Fenster.',
      function(G){ return F(G,'k3.s.words')?'Die letzte Strophe hat er nie gesungen. Wenn die Australier sie singen, hört Lena sie.':'Die Australier kennen den Rest nicht. Marko schon.'; },
@@ -45993,6 +45993,39 @@ function tinyPeople(b,w,tod,GS){ if (tod!=='day') return; var list=w==='rain'?[[
 // ---------------------------------------------------------------- Dino klein auf der Brüstung (S.dinoJump)
 function tinyDino(b,x,by){ b.px(x,by-1,P.p3); b.px(x+1,by-1,P.p3); b.vl(x,by-6,by-2,P.c1); b.vl(x+1,by-6,by-2,P.c2); b.rect(x-1,by-11,4,5,P.r3); b.px(x-1,by-11,P.r4); b.hl(x-4,x-2,by-10,P.r3); b.hl(x+3,x+5,by-10,P.r3); b.px(x-5,by-11,P.p3); b.px(x+6,by-11,P.p3); b.rect(x,by-14,2,3,P.p3); b.hl(x,x+1,by-15,P.h1); }
 
+// ---------------------------------------------------------------- Dinos Sprung (animiert, M.K3JUMP={t0,stand}; Ablauf in rooms/starimost.js M.k3DinoJump)
+// Klein auf der Brüstung über dem Scheitel: steht mit ausgebreiteten Armen, geht in die Knie, Kopfsprung, fällt bis in die Neretva, Gischt, Ringe,
+// dann taucht der Kopf flussab wieder auf. Zeiten in Sekunden (Spielzeit): stand, 0,3 Knie, 1,1 Fall, danach Wasser.
+var JMP={crouch:0.3,fall:1.1};
+M.K3JUMP_T=function(o){ var s=(o&&o.stand)||1.4; return {stand:s,impact:s+JMP.crouch+JMP.fall}; };
+function jumpFx(fb,v){ var J=M.K3JUMP; if (!J || !M.E) return; var cam=v.cam, dt=(M.E.gt()-J.t0)/1000, S=J.stand||1.4;
+  var x0=AR.cx-1, by=rd(deckY(AR.cx))-DK.par, SK=P.p3, SK2=P.p2, TR=P.n1, HR=P.h1;
+  function put(x,y,c){ x=rd(x)-cam; y=rd(y); if (x<0||x>=320||y<0||y>=H) return; fb.d[y*320+x]=c; }
+  function body(x,y,crouch,armY){ var d=crouch?2:0;   // stehend, Füße auf y
+    put(x,y,SK2); put(x+1,y,SK2); for (var k=1;k<5-d;k++){ put(x,y-k,SK); put(x+1,y-k,SK2); }
+    var ty=y-5+d; put(x,ty,TR); put(x+1,ty,TR); put(x,ty-1,TR); put(x+1,ty-1,TR);
+    for (var k2=2;k2<6;k2++){ put(x,ty-k2,SK); put(x+1,ty-k2,SK2); }
+    var hy=ty-6; put(x,hy,SK); put(x+1,hy,SK); put(x,hy-1,HR); put(x+1,hy-1,HR);
+    for (var a=1;a<=4;a++){ var ay=ty-4+Math.round(armY*a/4); put(x-a,ay,SK); put(x+1+a,ay,SK); } }
+  if (dt<S){ var br=Math.sin(dt*5)>0.6?-1:0; body(x0,by,false,br); return; }
+  if (dt<S+JMP.crouch){ body(x0,by,true,-3); return; }
+  var u=(dt-S-JMP.crouch)/JMP.fall;
+  if (u<1){ var hx=x0+u*9, top=by-12, hy=top-Math.sin(Math.min(1,u*4)*Math.PI)*4+(WY-12-top)*u*u;
+    if (u<0.22){ // Hechtsprung: waagrecht, gestreckt
+      for (var i=-5;i<=6;i++){ var c=i<-3?SK:(i<-1?TR:(i<4?SK:(i<5?SK:HR))); put(hx+i,hy+Math.abs(i)*0.15,c); if (i>-1&&i<4) put(hx+i,hy+1,SK2); } put(hx+7,hy-1,SK); put(hx+8,hy-1,SK); return; }
+    // kopfüber: oben die Beine, unten Kopf und Hände
+    for (var k=0;k<4;k++){ put(hx,hy+k,SK); put(hx+1,hy+k,SK2); } put(hx,hy+4,TR); put(hx+1,hy+4,TR); put(hx,hy+5,TR); put(hx+1,hy+5,TR);
+    for (var k3=6;k3<10;k3++){ put(hx,hy+k3,SK); put(hx+1,hy+k3,SK2); } put(hx,hy+10,HR); put(hx+1,hy+10,HR); put(hx,hy+11,SK); put(hx+1,hy+11,SK); put(hx,hy+12,SK); put(hx+1,hy+13,SK); return; }
+  // Wasser: Gischt, Ringe, Kopf
+  var ti=dt-S-JMP.crouch-JMP.fall, ix=x0+9, iy=WY+2;
+  if (ti<0.9) for (var n=0;n<16;n++){ var an=(n/15-0.5)*2.2, sp=24+hash(n,7)*30, px=ix+Math.sin(an)*sp*ti*0.6, py=iy-(Math.cos(an)*sp*ti-55*ti*ti); if (py>iy+1) continue; put(px,py,n%3?P.s6:P.s5); if (ti<0.35) put(px,py+1,P.s5); }
+  if (ti<0.25) for (var w=-3;w<=4;w++) put(ix+w,iy-1-((w+4)%3),P.s6);
+  if (ti<2.6){ var r=3+ti*13, al=1-ti/2.6; for (var a2=0;a2<64;a2++){ var th=a2/64*Math.PI*2, rx=ix+Math.cos(th)*r, ry=iy+1+Math.sin(th)*r*0.22; if (bayer(rd(rx),rd(ry))<al*0.8) put(rx,ry,P.s5); }
+    if (ti>0.5){ var r2=2+(ti-0.5)*10; for (var a3=0;a3<48;a3++){ var th2=a3/48*Math.PI*2; if (bayer(a3,3)<al) put(ix+Math.cos(th2)*r2,iy+1+Math.sin(th2)*r2*0.22,P.s4); } } }
+  if (ti>1.3 && ti<6){ var kx=ix+(ti-1.3)*5, ky=iy+Math.round(Math.sin(ti*4)*0.6); put(kx,ky-1,HR); put(kx+1,ky-1,HR); put(kx,ky,SK); put(kx+1,ky,SK2);
+    if (ti>2 && ti<3.2){ put(kx+2,ky-2,SK); put(kx+3,ky-3,SK); }   // winkt
+    put(kx-1,ky+1,P.s5); put(kx+2,ky+1,P.s5); } }
+
 // ---------------------------------------------------------------- Bild
 var BASE=null, LASTB=null, LIT=[];
 function paint(S,GS,tod){ var w=weaOf(GS), wet=wetOf(GS,w), b=new M.Buf(W,H,T), x, y;
@@ -46056,6 +46089,7 @@ function dyn(fb,v,S,GS){ var cam=v.cam, t=v.t, tod=v.tod, w=weaOf(GS), x, y, tin
   else if (w==='bura'||w==='calm'||w==='frost'){ M.glints(fb,AR.cx+12,WY+1,H,30,t,P.l1,cam); }
   // Möwen über der Schlucht
   if (tod!=='night') M.scn.gulls(fb,t,300,14,240,40,w==='rain'?1:3,cam);
+  if (M.K3JUMP) jumpFx(fb,v);   // Dinos Sprung
   // Handtuch am Balkon flattert bei Bura
   if (w==='bura'){ var hx=HUT.x0+4-cam; if (hx>-8 && hx<322) for (var j=0;j<6;j++) for (var k2=0;k2<5;k2++){ var px=hx+k2+rd(Math.sin(t*9+k2*0.8)*k2*0.4), py=75+j+(k2>2?rd(Math.sin(t*11+j)*0.6):0); if (px>=0&&px<320) fb.d[py*320+px]=(k2===0)?P.r4:((j===2)?P.s6:P.r3); } } }
 function front(fb,v,S,GS){ var w=weaOf(GS), tod=v.tod;
@@ -61316,7 +61350,8 @@ async function talkDino(A){ var D=A.npc('dino'), G=A.G, p=G.phase;
         await A.wait(300); await D.say('Und die Neretva ist im November ein Pferd, das dich nicht mag.'); }},
     {t:'Stand die Brücke je im Wasser? Auf Pfeilern?',if:(N(A,'l3_mybridge')||A.flag('k3.p.objection'))&&!N(A,'l3_onearch'),go:async function(A){ await D.say('Stari most? Im Wasser?'); await D.say('Nie. Ein Bogen, von Fels zu Fels. Deshalb kann man ja springen.');
         await D.say('Unter einem Pfeiler springt keiner zweimal.'); oneArch(A,'dino'); if (G.malaOn){ await A.wait(400); await A.g('Meine hatte Pfeiler. Drei.'); } }},
-    {t:'Springst du heute?',once:'dnJ',go:async function(A){ if (p==='k3_d1'){ await D.say('Bei Bura? Die drückt dich gegen den Bogen, bevor du unten bist. Heute springt keiner. Heute sitzt man im Café und lügt über den Sommer.'); return; }
+    {t:'Springst du noch mal?',once:'dnJ2',if:!!A.flag('k3.s.dinoJump'),go:async function(A){ await D.say('Einmal am Tag. Sonst glauben die Touristen, das gibt es umsonst.'); await A.wait(300); await D.say('Und ich bin immer noch blau.'); }},
+    {t:'Springst du heute?',once:'dnJ',if:!A.flag('k3.s.dinoJump'),go:async function(A){ if (p==='k3_d1'){ await D.say('Bei Bura? Die drückt dich gegen den Bogen, bevor du unten bist. Heute springt keiner. Heute sitzt man im Café und lügt über den Sommer.'); return; }
         await D.say('Bei dem Wasser? Im November? Für zwanzig Euro springe ich. Für zwanzig Touristen. Heute ist keiner da.'); if (!N(A,'p3_history')) await D.say('Die Neretva ist im November ein Pferd, das dich nicht mag.'); }},
     {t:'Hast du nie Angst?',once:'dnF',go:async function(A){ await D.say('Jedes Mal.'); await A.wait(400); await D.say('Wenn ich keine habe, springe ich nicht. Dann stimmt was nicht. Mit mir oder mit dem Wasser.'); if (G.malaOn) await A.g('Er hat recht. Ich mag ihn.'); }},
     {t:'Willst du hier weg?',once:'dnW',go:async function(A){ await D.say('Alle wollen weg. Ich auch. Nach Deutschland, Schreiner werden. Mein Cousin ist in Stuttgart und hat ein Auto.');
@@ -61381,6 +61416,27 @@ async function springerTalk(A){ var G=A.G;
     {t:'Hast du Angst?',once:'spr3',go:async function(A){ await A.wait(900); await A.g('Er breitet die Arme aus. Das ist auch eine Antwort.'); }},
     {t:'(Zusehen.)',bye:true,silent:true,go:async function(A){ await A.wait(1200); }}
   ]; }); }
+// ---------------------------------------------------------------- Dinos Sprung (animiert in rooms/art/starimost.js, M.K3JUMP)
+// o.walk: Dino geht vorher zur Auffahrt und blendet aus (Samstag); o.stand: Sekunden auf der Brüstung; o.during(A): Sätze, solange er oben steht.
+M.k3DinoJump=async function(A,o){ o=o||{}; var D=A.npc('dino'), T=M.K3JUMP_T?M.K3JUMP_T(o):{stand:1.4,impact:2.8};
+  if (o.walk && D.actor){ var w=D.walk(250,113); await A.wait(1400); if (D.actor) D.actor.fadeOut=A.gt; await w; await A.wait(400); }
+  if (D.actor){ D.actor.fadeOut=0; D.hide(); } var t0=A.gt; M.K3JUMP={t0:t0,stand:T.stand};
+  try{ if (o.during) await o.during(A);
+    var left=T.impact*1000-(A.gt-t0); if (left>0) await A.wait(left); A.sfx('splash'); await A.wait(2600);
+  } finally { M.K3JUMP=null; } };
+// Samstag nach dem ganzen Lied: Dino springt, umsonst (Wunsch des Autors, 14.11.2026)
+async function dinoJumpForLena(A){ var G=A.G, Ln=A.npc('lena'), Dv=A.npc('davor'), D=A.npc('dino'); if (A.flag('k3.s.dinoJump')) return; A.setFlag('k3.s.dinoJump');
+  var R=M.ROOMS.starimost, lock=R.camLock; R.camLock=150;
+  try{ await A.wait(700); await D.say('So ein Lied, und keiner springt? Nicht an meiner Brücke.'); await A.wait(300); await D.say('Für die Kleine. Umsonst. Sagt es keinem.');
+    await M.k3DinoJump(A,{walk:true,stand:2.6,during:async function(A){ await A.wait(1200); await A.narrate('Oben über dem Scheitel steigt Dino auf die Brüstung, in der Badehose. Er breitet die Arme aus.'); }});
+    await A.narrate('Ein Strich vor dem Bogen, ein Platschen, weißer Schaum. Die Touristen schreien auf. Unten im grünen Wasser ein Kopf, der winkt.');
+    await Ln.say('Der ist gesprungen! Papa! Der ist echt gesprungen!'); await A.wait(400); await Dv.say('Im November.'); await A.wait(500); await Dv.say('Früher sind sie im August gesprungen. Wir haben unten gewartet, mit Handtüchern.');
+    if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Umsonst. Das macht er sonst nie, glaube ich.'); }
+    await A.wait(900); var st=M.stand('starimost','steps')||[60,132,'L']; var d0=M.apos('starimost','dino',[198,115,'R']);
+    if (D.actor){ D.actor.fadeOut=0; D.actor.x=st[0]; D.actor.y=st[1]; D.show(); D.actor.fadeIn=A.gt; await D.walk(d0[0],d0[1]); await D.face('L'); }
+    await A.narrate('Zehn Minuten später kommt er die Uferstufen herauf, die rote Jacke über den Schultern, blau bis an die Lippen.');
+    await D.say('Brrr. Kalt wie die Hölle, wenn die Hölle kalt wäre.'); await A.wait(300); await D.say('Aber das Lied war es wert.');
+  } finally { R.camLock=lock; } }
 // ---------------------------------------------------------------- Samstag: Davor und Lena an der Brücke, die Australier, Dinos Regel, das Lied (Ausbau N2, design/K3_AUSBAU.md F.2)
 function tripHere(G){ return G.phase==='k3_d2' && !!G.flags['k3.s.trip'] && !G.flags['k3.s.down']; }   // Regel 2: während sie unten am Ufer suchen, stehen Davor und Lena nicht oben
 function R2(G){ return !!(M.k3R2 && M.k3R2(G)); }
@@ -61423,7 +61479,8 @@ async function perform(A){ var G=A.G, L=A.npc('aussie3'), Ln=A.npc('lena'), Dv=A
   if (!words) return;
   await A.wait(600); await Ln.say('Was heißt das? Das Letzte. Dođi …'); await A.m('„Dođi, dragi, doveče.“ Komm, Liebster, komm heute Abend.'); await A.wait(700); await Ln.say('Das hat er nie gesungen. Die Stelle.');
   await A.wait(600); await Dv.say('Nein. Die nie.'); await A.wait(900); await Ln.say('Dođi, dragi, doveče.'); await A.wait(500); await Ln.say('Das sag ich ihm. Morgen. Am Tor.'); A.note('s3_verse'); A.setFlag('k3.s.lenaVerse');
-  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); } }
+  if (G.malaOn && A.malaHere()){ await A.wait(900); await A.g('Sie hat es gleich richtig gesagt.'); await A.wait(400); await A.g('Besser als Liam.'); }
+  await dinoJumpForLena(A); }
 async function talkAussiesBridge(A){ var J=A.npc('aussie1'), B=A.npc('aussie2'), L=A.npc('aussie3'), G=A.G;
   await A.menuLoop(function(){ return [
     {t:'What are you doing here?',once:'ab1',go:async function(A){ await J.say('Busking! Bridge, tourists, hat on the ground. Bec’s idea.'); await B.say('Liam’s idea. I just said it out loud.'); await L.say('The guy in the jacket says we need a story first. We don’t have a story. We have a song.'); }},
@@ -61460,9 +61517,8 @@ M.k3EpiBridge=async function(A){ var G=A.G; if (A.flag('k3.e.bridge')) return A.
   if (!A.flag('k3.e.bridgeOn')) await epiStart(A); G.flags['mala.lock']=true;
   try{ var cs=M.stand('starimost','crest')||[418,50,'R']; await A.walk(cs[0]-10,cs[1]); await A.face('R'); if (A.malaHere()){ A.placeG(cs[0]+6,cs[1],'L'); }
     await (M.k3Close?M.k3Close(A,'scheitel',async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); }):(async function(){ await A.wait(700); await A.g('Tief unten.'); await A.wait(600); await A.m('Hast du Angst?'); await A.wait(800); await A.g('Ja.'); await A.wait(500); await A.g('Aber es ist meine.'); })());   // Nahaufnahme (97_k3_nah.js)
-    await A.wait(1000); var D=A.npc('dino'); if (D.actor) D.hide(); A.set('dinoJump',true); await A.wait(900);
-    await A.narrate('Neben uns steigt Dino auf die Brüstung, in der Badehose, blau vor Kälte. Er sieht uns nicht an. Er sieht hinunter, breitet die Arme aus und springt.');
-    A.set('dinoJump',false); await A.wait(700); A.sfx('splash'); await A.wait(900);
+    await A.wait(1000); var D=A.npc('dino');
+    await M.k3DinoJump(A,{stand:3.4,during:async function(A){ await A.wait(400); await A.narrate('Neben uns steigt Dino auf die Brüstung, in der Badehose, blau vor Kälte. Er sieht uns nicht an. Er sieht hinunter, breitet die Arme aus und springt.'); }});
     await A.narrate('Ein Strich, ein Platschen, ein Kopf im grünen Wasser. Unten schreit er etwas, das nach Kälte klingt.');
     await A.wait(500); await A.narrate('Mala lacht. Laut. Zum ersten Mal, seit wir in Mostar sind.'); await A.g('Er ist verrückt.'); await A.m('Er trainiert.'); await A.g('Für den Sommer.'); await A.wait(1200);
     if (D.actor){ D.show(); D.actor.fadeIn=A.gt; }
@@ -70877,7 +70933,8 @@ function d2Missing(G){ if (!(f(G,'k3.z.mala')||f(G,'k3.z.lost'))) return has(G,'
   if (!f(G,'k3.b.arrived')) return f(G,'k3.b.mate')?'Und Mate wartet auf den Bus aus München. Ich habe ihm gesagt, dass ich nachsehe.':'Am Westbusbahnhof kommt heute der Bus aus München. Mate wartet auf ihn.';
   if (f(G,'k3.b.helper') && !f(G,'k3.b.jela')) return 'Ich habe Davor gesagt, ich komme mit. Haus Zelenika, am Südrand, bei den Feigen.';   // zugesagt: erst Jela und das Haus
   if (R2(G)){ if (!f(G,'k3.b.jela')) return 'Davor und Lena sind mit dem Bus aus München gekommen. Haus Zelenika, am Südrand, bei den Feigen.';
-    if (!f(G,'k3.s.photo')) return 'Davor sucht an der Brücke den Stein von seinem Foto. Ich habe gesagt, ich komme.'; }
+    if (!f(G,'k3.s.photo')) return 'Davor sucht an der Brücke den Stein von seinem Foto. Ich habe gesagt, ich komme.';
+    if (f(G,'k3.s.trip') && !f(G,'k3.s.lenaVerse')) return musicOpen(G)||'Die Australier wollen an der Brücke spielen. Und Lena soll das Lied hören, ganz, bis zum Ende.'; }
   return null; }
 // Sonntag (Analyse K3-B07, P18): Was fehlt noch, bevor die Nacht kommt? Spuren nach Person oder Frage, ohne Ort.
 function d3Missing(G){
@@ -70983,7 +71040,8 @@ function dayReady(G){ var p=G.phase;
   if (p==='k3_pro') return has(G,'l3_notbridge')&&has(G,'l3_onedir')&&f(G,'k3.p.checkin');
   if (p==='k3_d1') return has(G,'l3_skela')&&f(G,'k3.v.drawer');
   if (p==='k3_d2'){ var d2=(f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived');
-    return R2(G) ? (d2&&f(G,'k3.b.jela')&&f(G,'k3.s.photo')) : (d2&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'))); }
+    // Wunsch des Autors (14.11.2026): die Aufführung der Australier ist Pflicht, sobald Davor und Lena an der Brücke sind (Lenas Strophe)
+    return R2(G) ? (d2&&f(G,'k3.b.jela')&&f(G,'k3.s.photo')&&(!f(G,'k3.s.trip')||f(G,'k3.s.lenaVerse'))) : (d2&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'))); }
   if (p==='k3_d2_n') return f(G,'k3.bato.found')&&f(G,'k3.z.tomorrow')&&G.pos.marko.room==='skela_d';
   if (p==='k3_d3'){ var d3=has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.bato.uneasy')&&f(G,'k3.v.free')&&f(G,'k3.b.done');   // Prüfbericht K3: Bato muss beides gehört haben
     return R2(G) ? (d3&&f(G,'k3.v.battery')) : d3; }   // Regel 2: ohne Mates Batterie springt der TAM nicht an (Prüfbericht K3-05)
@@ -73662,7 +73720,7 @@ function toss(A,id){ var a=M.E.ACT[id]; if (!a) return Promise.resolve(); var di
 function flash(A,id){ var a=M.E.ACT[id]; if (!a) return; var dir=a.f==='L'?-1:1; PF.flashes.push({x:a.x+dir*9, y:a.y-37, t0:A.gt}); A.sfx('shutter'); }
 // Josh klatscht auf 2 und 4 (160 Schläge pro Minute: ein Klatscher je 750 ms), Bild und Klang aus derselben Schleife
 function clapLoop(A,J,beat){ var st={on:true}; var Q=M.K3PERF_POSES.J;
-  (async function(){ while (st.on && J.actor){ J.freeze(Q.open); await A.wait(beat*0.8); if (!st.on) break; J.freeze(Q.hit); A.sfx('k3clap'); await A.wait(beat*1.2); }
+  st.end=(async function(){ while (st.on && J.actor){ J.freeze(Q.open); await A.wait(beat*0.8); if (!st.on) break; J.freeze(Q.hit); A.sfx('k3clap'); await A.wait(beat*1.2); }
     if (J.actor){ J.freeze(null); J.idle(null); } })();
   return st; }
 async function countIn(A,J){ var Q=M.K3PERF_POSES.J, say=J.say('One, two – one, two, three, four!');
@@ -73730,7 +73788,9 @@ M.k3Perform=async function(A,o){ o=o||{}; var G=A.G, words=!!o.words, beat=375;
     await A.wait(800);
     A.sfx('k3applause'); [T1,T2,Ln,Dn].forEach(function(h){ if (h && h.actor) h.idle('clapS'); });
     if (T1) A.wait(250).then(function(){ return toss(A,'k3tour1'); }); if (T2) A.wait(650).then(function(){ return toss(A,'k3tour2'); });
-    var bows=[L.anim('guitarBow')]; if (J.actor) bows.push(J.anim('bow')); if (B.actor) B.idle('sheetWave'); await Promise.all(bows);
+    // Die Klatsch-Schleife muss fertig sein, bevor Josh sich verbeugt: ihr letzter Schritt setzt ihn zurück und brach sonst die Verbeugung ab (Szene hing)
+    await clap.end;
+    var bows=[L.anim('guitarBow')]; if (J.actor) bows.push(J.anim('bow')); if (B.actor) B.idle('sheetWave'); await Promise.race([Promise.all(bows),A.wait(3000)]);
     await J.say('Thank you, Mostar!');
     [T1,T2,Ln,Dn].forEach(function(h){ if (h && h.actor) h.idle(null); }); if (B.actor) B.idle(null); L.idle('guitar');
     if (T1) T1.walk(camClamp(CAM)-20,129); if (T2) A.wait(500).then(function(){ return T2.walk(camClamp(CAM)-24,120); });
@@ -78923,7 +78983,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="14.11.2026 · 3ab54e";
+M.BUILD="14.11.2026 · b49473";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

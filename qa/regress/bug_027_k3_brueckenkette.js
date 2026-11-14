@@ -33,7 +33,8 @@ module.exports = { id: 'BUG-027', title: 'K3 Regel 2: Fotostandort unter der Br�
   await P.act('use', 'block'); ck(/Mit Händen nicht/.test(await FX.said(D)), 'zweiter Versuch: Mala „Mit Händen nicht.“');
   await P.mala(); await P.act('look', 'block'); ck(await D.flag('k3.s.initials') && await D.hasNote('b3_initials'), 'Mala sieht „M · D · 1965“'); await P.marko();
   await P.act('talk', 'davor_p'); await P.calm(); ck(await D.flag('k3.s.photo') && await D.hasNote('b3_lenaphoto') && !(await D.st()).inv.includes('foto_1965'), 'Davor sitzt, Lena fotografiert, Lena hat beide Fotos');
-  ck(await D.ev(() => M.k3DayReady(M.GS)), 'jetzt ist der Samstag reif');
+  ck(!(await D.ev(() => M.k3DayReady(M.GS))), 'Samstag noch nicht reif: die Aufführung an der Brücke fehlt (Pflicht seit 14.11.2026)');
+  await D.ev(() => { M.GS.flags['k3.s.lenaVerse'] = true; }); ck(await D.ev(() => M.k3DayReady(M.GS)), 'mit Lenas Strophe ist der Samstag reif'); await D.ev(() => { delete M.GS.flags['k3.s.lenaVerse']; });
   ck(!(await D.flag('k3.s.down')), 'die beiden sind wieder oben');
   // Sonntag: Mate und die Fotos
   const base = { 'k3.rules': 2, 'k3.s.photo': true, 'k3.b.invite': true }; const notes = ['b3_invite', 'b3_dida', 'b3_letters', 'b3_kidsroom'];

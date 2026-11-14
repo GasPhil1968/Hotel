@@ -129,7 +129,15 @@ const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || n
     await expect(!(await said('durch Stein sehen')), 'kein ungefragter Vorschlag „durch Stein sehen“'); await log('Vergleich an der flachen Platte, „Hier stand er.“: Turm und Scheitel stimmen – aber da liegt ein Quader');
     await mala(); await act('look', 'block'); await note('b3_initials'); await flag('k3.s.initials'); await marko(); await log('Mala sieht durch den Quader: „M · D · 1965“');
     await talk('davor_p'); await calm(); await flag('k3.s.photo'); await note('b3_lenaphoto'); await log('Davor setzt sich auf den Quader, Lena fotografiert ihn; Lena bekommt beide Fotos');
-    await flag('k3.ready.k3_d2'); await exit('steps'); await at('starimost'); await go('herberge'); await endDay('(Den Tag beenden.)'); await log('in der Herberge den Samstag beendet');
+    await expect(!(await D.ev(() => M.k3DayReady(M.GS))), 'ohne die Aufführung ist der Samstag nicht fertig (Pflicht)');
+    await exit('steps'); await at('starimost');
+    await talk('dino', 'Die Australier wollen', 'NOTE:b3_mate'); await flag('k3.s.dinoOk'); await bye('Bis später'); await log('Dino: „Eine Geschichte. Eine wahre.“ – „Der Wartende“; die Australier dürfen spielen');
+    await talk('aussie3_b', 'Do you want the words'); await arrange(); await calm(); await flag('k3.s.words'); await log('Liam die Worte aufgeschrieben (sechs Zeilen in der Reihenfolge der Geschichte)');
+    if (await dlgHas('Play it.')) await choose('Play it.'); else { await talk('aussie3_b', 'Play it.'); }
+    await calm(); await flag('k3.s.perf'); await flag('k3.s.lenaVerse'); await note('s3_verse'); await flag('k3.s.dinoJump'); await shot('auftritt');
+    await log('Aufführung: Lena erkennt das Summen, lernt „Dođi, dragi, doveče“; Dino springt von der Brücke, umsonst');
+    if ((await D.st()).dlg) await bye('See you');
+    await flag('k3.ready.k3_d2'); await go('herberge'); await endDay('(Den Tag beenden.)'); await log('in der Herberge den Samstag beendet');
     await D.until(s => s.dlg && s.dlg.some(t => /Mala fragen/.test(t)), 60000, 'Nadas Anruf'); await log('Tagesende: Nada ruft an: „Weißt du etwas?“');
     await choose('(Mala fragen.)'); await flag('k3.asked.nada2'); await choose('Ich habe eine Spur'); await flag('k3.d2.nada', 'truth'); await log('Mala gefragt: „Aber sag ihr nicht nichts.“ – „Ich habe eine Spur.“');
   });

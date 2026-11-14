@@ -108,7 +108,8 @@ function d2Missing(G){ if (!(f(G,'k3.z.mala')||f(G,'k3.z.lost'))) return has(G,'
   if (!f(G,'k3.b.arrived')) return f(G,'k3.b.mate')?'Und Mate wartet auf den Bus aus München. Ich habe ihm gesagt, dass ich nachsehe.':'Am Westbusbahnhof kommt heute der Bus aus München. Mate wartet auf ihn.';
   if (f(G,'k3.b.helper') && !f(G,'k3.b.jela')) return 'Ich habe Davor gesagt, ich komme mit. Haus Zelenika, am Südrand, bei den Feigen.';   // zugesagt: erst Jela und das Haus
   if (R2(G)){ if (!f(G,'k3.b.jela')) return 'Davor und Lena sind mit dem Bus aus München gekommen. Haus Zelenika, am Südrand, bei den Feigen.';
-    if (!f(G,'k3.s.photo')) return 'Davor sucht an der Brücke den Stein von seinem Foto. Ich habe gesagt, ich komme.'; }
+    if (!f(G,'k3.s.photo')) return 'Davor sucht an der Brücke den Stein von seinem Foto. Ich habe gesagt, ich komme.';
+    if (f(G,'k3.s.trip') && !f(G,'k3.s.lenaVerse')) return musicOpen(G)||'Die Australier wollen an der Brücke spielen. Und Lena soll das Lied hören, ganz, bis zum Ende.'; }
   return null; }
 // Sonntag (Analyse K3-B07, P18): Was fehlt noch, bevor die Nacht kommt? Spuren nach Person oder Frage, ohne Ort.
 function d3Missing(G){
@@ -214,7 +215,8 @@ function dayReady(G){ var p=G.phase;
   if (p==='k3_pro') return has(G,'l3_notbridge')&&has(G,'l3_onedir')&&f(G,'k3.p.checkin');
   if (p==='k3_d1') return has(G,'l3_skela')&&f(G,'k3.v.drawer');
   if (p==='k3_d2'){ var d2=(f(G,'k3.z.mala')||f(G,'k3.z.lost'))&&f(G,'k3.v.part1')&&f(G,'k3.b.arrived');
-    return R2(G) ? (d2&&f(G,'k3.b.jela')&&f(G,'k3.s.photo')) : (d2&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'))); }
+    // Wunsch des Autors (14.11.2026): die Aufführung der Australier ist Pflicht, sobald Davor und Lena an der Brücke sind (Lenas Strophe)
+    return R2(G) ? (d2&&f(G,'k3.b.jela')&&f(G,'k3.s.photo')&&(!f(G,'k3.s.trip')||f(G,'k3.s.lenaVerse'))) : (d2&&(f(G,'k3.b.jela')||!f(G,'k3.b.helper'))); }
   if (p==='k3_d2_n') return f(G,'k3.bato.found')&&f(G,'k3.z.tomorrow')&&G.pos.marko.room==='skela_d';
   if (p==='k3_d3'){ var d3=has(G,'l3_survived')&&has(G,'a3_awake')&&has(G,'a3_girl')&&f(G,'k3.bato.uneasy')&&f(G,'k3.v.free')&&f(G,'k3.b.done');   // Prüfbericht K3: Bato muss beides gehört haben
     return R2(G) ? (d3&&f(G,'k3.v.battery')) : d3; }   // Regel 2: ohne Mates Batterie springt der TAM nicht an (Prüfbericht K3-05)
