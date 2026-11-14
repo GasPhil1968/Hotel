@@ -311,6 +311,8 @@ function choose(opts,o){ o=o||{}; opts=opts.map(function(x,i){ return typeof x==
   var to0=trTo(GS.active);   // Sprachfassung: an wen die Antwort geht, steht fest, wenn die Auswahl aufgeht – nicht erst nach langer Bedenkzeit
   return new Promise(function(res){ E.dlg={opts:opts,res:res,top:0,title:o.title||null,free:o.free,to:to0,atR:nowR()}; }).then(async function(op){ if (!op.bye && !op.noGray) GS.seen['ask:'+op.t]=1; if (!op.silent) await say(op.t,GS.active,{to:to0}); return op.id; }); }
 E.chooseDone=function(i){ var d=E.dlg; if (!d) return; E.dlg=null; d.res(d.opts[i]); };
+// Themenleiste (24_k3bf.js): eine Wahl aus der Leiste beendet die Auswahl ohne Satz
+E.choosePick=function(){ var d=E.dlg; if (!d) return; E.dlg=null; d.res({id:'__bf',t:'',silent:true,noGray:true,bye:false}); };
 function convStart(npc){ if (!E.conv||E.conv.room!==room) E.conv={room:room,npc:null}; if (npc && ACT[npc]) E.conv.npc=npc; }
 E.convStart=convStart;
 
@@ -328,7 +330,7 @@ async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
 E.combineNotes=combineNotes;
 // im Gespräch eine Notiz auswählen
 // opt.also: Notizen, die in diesem Gespräch gültige Antworten sind; sie stehen zur Wahl, sobald man sie hat, auch wenn das Notizbuch sie sonst ausblendet
-function pickNote(title,opt){ var also=(opt&&opt.also)||null; if (E.nbStyle && E.nbStyle()==='think' && E.pickNoteThink) return E.pickNoteThink(title,also); return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?',also:also},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
+function pickNote(title,opt){ var also=(opt&&opt.also)||null; if (M.k3bf && M.k3bf() && M.bfPickNote) return M.bfPickNote(title,also); if (E.nbStyle && E.nbStyle()==='think' && E.pickNoteThink) return E.pickNoteThink(title,also); return new Promise(function(res){ E.overlay={kind:'notebook',data:{mode:'ask',title:title||'Wonach fragen?',also:also},res:res,at:gt,page:'notes'}; M.sfx('page'); }); }
 
 // ---------------------------------------------------------------- Interaktions-Helfer
 var lastClick=null;
@@ -420,19 +422,24 @@ M.API=API;
 async function menuLoop(getOpts){
   // Analyse K5-B04: Hat eine Option den Raum, den Abschnitt oder den Bildschirm gewechselt, ist das Gespräch vorbei.
   // Vorher stand danach das alte Menü weiter offen, z. B. Nedžads Optionen in Nadas Wohnung.
-  var r0=room, p0=GS.phase, moved=function(){ return room!==r0 || GS.phase!==p0 || E.screen!=='game'; };
+  var r0=room, p0=GS.phase, moved=function(){ return room!==r0 || GS.phase!==p0 || E.screen!=='game'; }, bfNpc=null;
   for (var guard=0;guard<80;guard++){
     var opts=getOpts().filter(function(o){ return o && !(('if' in o) && !o.if) && !(o.once && GS.seen['dlg:'+o.once]); });
     if (!opts.length) return;
-    var i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!(o.ask||o.noGray)}; }));
-    var o=opts[i]; if (o.once) GS.seen['dlg:'+o.once]=1;
+    // Kapitel 3 „wie bei Baphomet“ (24_k3bf.js): statt „Nach etwas aus dem Notizbuch fragen …“ eine Themenleiste unter den Sätzen
+    var bf=M.bfMenuOn?M.bfMenuOn(opts):null; if (bf){ opts=opts.filter(function(o){ return !o.ask; }); bfNpc=bf.npc; E.bfBar={ask:bf.ask,npc:bf.npc,page:0,pick:null,pop:null}; }
+    var i; try{ i=await choose(opts.map(function(o,k){ return {t:o.t,id:k,silent:o.silent||!!o.ask,bye:!!o.bye,ask:!!o.ask,noGray:!!(o.ask||o.noGray)}; })); }
+    finally{ var pk=E.bfBar&&E.bfBar.pick, bar=E.bfBar; E.bfBar=null; }
+    if (i==='__bf' && pk){ var rb=await M.bfDoPick(API,pk,bar); if (rb==='bye' || moved()){ if (M.bfMenuEnd) M.bfMenuEnd(bfNpc); return; } continue; }
+    var o=opts[i]; if (!o) return; if (o.once) GS.seen['dlg:'+o.once]=1;
+    if (o.bye && bfNpc && M.bfMenuEnd) M.bfMenuEnd(bfNpc);
     if (o.ask){ var nid=await pickNote(o.askTitle); if (nid){ var ra=await o.ask(API,nid); if (ra==='bye' || moved()) return; } continue; }
     if (o.go){ var r=await o.go(API); if (r==='bye' || moved()) return; }
     if (o.bye) return; }
 }
 // Standard-"Frag nach"-Option für eine Person: ask-Tabelle {notizId: handler}, sonst askAny
 // Antworten als Text spricht das Gegenüber (vorher sprach sie die gespielte Figur, also mit falschem Porträt)
-API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem Notizbuch fragen …',ask:async function(A,nid){ var h=table[nid]; if (h===undefined) h=fallback; if (typeof h==='function') return await h(A,nid);
+API.askOpt=function(table,fallback,label){ return {t:label||'Nach etwas aus dem Notizbuch fragen …',table:table,ask:async function(A,nid){ var h=table[nid]; if (h===undefined) h=fallback; if (typeof h==='function') return await h(A,nid);
   var line=Array.isArray(h)?pick(h):h; if (typeof line!=='string') return; var who=E.conv&&E.conv.npc; if (who && who!==GS.active && ACT[who]) return await say(line,who); return await API.say(line); }}; };
 
 // ---------------------------------------------------------------- Hotspots, Verben
@@ -517,15 +524,7 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
     API.reach=function(fn){ var an=reachFor(hs); if (!an||isG){ if (fn) fn(); return Promise.resolve(); } return playAnimOn(player(),an,fn); };
     if (withItem){
       if (isG){ await say(withItem==='tin'?pick(['Nein.','Die bleibt bei mir.']):pick(DEF.g.notouch),'mala'); }
-      else { var it=M.ITEMS[withItem], h=hs.with&&hs.with[withItem];
-        if (h===undefined && hs.give && hs.give[withItem]!==undefined){ h=hs.give[withItem];
-          // Reaktion als Text: spricht die beschenkte Figur selbst (vorher sprach sie Marko, mit seinem Porträt)
-          if (hs.npc && hs.npc!==GS.active && ACT[hs.npc] && (typeof h==='string'||Array.isArray(h))){ var gt0=h, gid=hs.npc; h=function(A,c){ return say(Array.isArray(gt0)?cycle((c&&c.key)||gid,gt0):gt0,gid); }; } }
-        if (h===undefined && it.on && it.on[hs.id]!==undefined) h=it.on[hs.id];
-        if (h===undefined && hs===MALA_HS){ h=it.mala!==undefined?it.mala:(M.showToMalaDefault||null); if (typeof h==='string'){ var mt=h; h=function(A){ return A.g(mt); }; }
-          if (GS.flags['mala.voice'] && h){ var h0=h; h=async function(A,c){ await A.m('Ich halte einem Lichtfleck etwas hin. So weit ist es schon.'); return h0(A,c); }; } }
-        if (h===undefined) h=hs.withAny;
-        if (h!==undefined && h!==null) await respond(h,ctx); else await say(pick(hs.npc?DEF.m.give:DEF.m.usewith),'marko'); } }
+      else await useWithItem(hs,withItem,ctx); }
     else { var val=verbHandler(hs,v);
       if (val!==undefined) await respond(val,ctx);
       else if (isG && hs.npc && ACT[hs.npc] && !ACT[hs.npc].ghost && hs.npc!=='marko' && v==='talk') await say(pick(DEF.g.living),'mala');
@@ -535,6 +534,17 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
     if (room.check) await room.check(API);
     if (M.afterAct) await M.afterAct(API);   // Probe Kapitel 1: Schlüsse, die Marko selbst zieht (23_k1probe.js)
   } finally { E.busy=false; } }
+async function useWithItem(hs,withItem,ctx){ var it=M.ITEMS[withItem], h=hs.with&&hs.with[withItem];
+        if (h===undefined && hs.give && hs.give[withItem]!==undefined){ h=hs.give[withItem];
+          // Reaktion als Text: spricht die beschenkte Figur selbst (vorher sprach sie Marko, mit seinem Porträt)
+          if (hs.npc && hs.npc!==GS.active && ACT[hs.npc] && (typeof h==='string'||Array.isArray(h))){ var gt0=h, gid=hs.npc; h=function(A,c){ return say(Array.isArray(gt0)?cycle((c&&c.key)||gid,gt0):gt0,gid); }; } }
+        if (h===undefined && it.on && it.on[hs.id]!==undefined) h=it.on[hs.id];
+        if (h===undefined && hs===MALA_HS){ h=it.mala!==undefined?it.mala:(M.showToMalaDefault||null); if (typeof h==='string'){ var mt=h; h=function(A){ return A.g(mt); }; }
+          if (GS.flags['mala.voice'] && h){ var h0=h; h=async function(A,c){ await A.m('Ich halte einem Lichtfleck etwas hin. So weit ist es schon.'); return h0(A,c); }; } }
+        if (h===undefined) h=hs.withAny;
+        if (h!==undefined && h!==null) await respond(h,ctx); else await say(pick(hs.npc?DEF.m.give:DEF.m.usewith),'marko'); }
+// Themenleiste (24_k3bf.js): einen Gegenstand im Gespräch zeigen – dieselbe Antwort wie „Gib … an …“
+E.giveTo=async function(npc,item){ var hs=npc==='mala'?MALA_HS:null; if (!hs && room) room.hotspots.forEach(function(h){ if (h.npc===npc) hs=h; }); if (!hs) return say(pick(DEF.m.give),'marko'); return useWithItem(hs,item,{key:hs.id+':give:'+item,hs:hs,item:item}); };
 E.doVerb=doVerb;
 function reachFor(hs){ var mode=hs.reach||'M'; if (mode==='none') return null; var r=hsRect(hs), st=hsStand(hs); if (!r||!st) return 'reachM';
   var h=st[1]-(r[1]+r[3]/2); if (r[1]>st[1]-30) h=Math.min(h,st[1]-r[1]-2); var back=st[2]==='B';

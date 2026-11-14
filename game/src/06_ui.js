@@ -203,7 +203,7 @@ function shadow(x,y,w){ for (var dy=-1;dy<=1;dy++) for (var dx=-w;dx<=w;dx++){ i
 // ---------------------------------------------------------------- Leiste
 var BTN_Y=SH+2, INV_Y=161, SLOT_W=40, SLOT_H=36, INV_X=51, INV_N=6, SW_X=2, SW_W=38;
 var BTNS=[{id:'notes',t:'Notizen',x:4},{id:'map',t:'Karte',x:0,right:true},{id:'reveal',t:'Zeigen',x:0,right:true},{id:'menu',t:'Menü',x:0,right:true}];
-function layoutBtns(){ BTNS[0].t=(E.nbStyle&&E.nbStyle()==='think')?'Nachdenken':'Notizen'; var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); }
+function layoutBtns(){ BTNS[0].t=(M.k3bf&&M.k3bf())?'Tagebuch':((E.nbStyle&&E.nbStyle()==='think')?'Nachdenken':'Notizen'); var x=W-4; for (var i=BTNS.length-1;i>=0;i--){ var b=BTNS[i]; b.w=M.textWidth(b.t); if (b.right){ x-=b.w; b.x=x; x-=14; } } var lx=4; BTNS.forEach(function(b){ if (!b.right){ b.x=lx; lx+=b.w+14; } }); }
 layoutBtns();
 function btnAt(x,y){ if (y<SH||y>=SH+15) return null; for (var i=0;i<BTNS.length;i++){ var b=BTNS[i]; if (x>=b.x-5&&x<b.x+b.w+5) return b.id; } return null; }
 function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.id==='reveal'&&reveal); if (b.id==='map' && M.mapBlocked && M.mapBlocked()) on=false; var x0=b.x-4, x1=b.x+b.w+3, y0=BTN_Y, y1=BTN_Y+11;
@@ -213,7 +213,7 @@ function drawButton(b,on){ var c=ui(), hot=hoverUI===b.id&&pointer.show, act=(b.
   M.text(fb,b.t,b.x,BTN_Y+2,!on?P.s2:((hot||act)?c.hi:c.tx));
   if (b.id==='notes' && Object.keys(GS().noteNew).some(function(k){ return M.NOTES[k]&&M.NOTES[k].show; })){ fb.rect(x1-2,y0-1,3,3,P.r4); } }
 function invList(){ return isG()?['tin']:GS().inv; }
-function drawUI(){ if (BTNS.v!==M.trVer){ layoutBtns(); BTNS.v=M.trVer; }   // Knopfbreiten nach Sprache
+function drawUI(){ var bfk=M.trVer+'|'+!!(M.k3bf&&M.k3bf()); if (BTNS.v!==bfk){ layoutBtns(); BTNS.v=bfk; }   // Knopfbreiten nach Sprache
   fb.rect(0,SH,W,H-SH,P.k0); var room=E.room, c=ui();
   if (E.dlg && E.conv) return;
   if (room && room.noVerbs){ var s0=hover?E.nameOf(hover):(room.prompt||''); M.text(fb,s0,Math.max(2,Math.floor((W-M.textWidth(s0))/2)),SH+4,c.tx); drawButton(BTNS.filter(function(b){ return b.id==='menu'; })[0],true); return; }
@@ -589,7 +589,8 @@ function nbPages(list,grouped,rh){ var pages=[], cur=[], h=0, budget=NB_PER*NB_R
       if (head){ cur.push({head:gr.k}); h+=NB_HH; } cur.push({id:id}); h+=rh; }); });
   if (cur.length) pages.push(cur); return pages.length?pages:[[]]; }
 function notesOf(){ return nbOpen(false); }
-E.openNotes=function(){ if (M.onOpenNotes && M.onOpenNotes()) return Promise.resolve();   // ein Raum darf vorher etwas sagen (Morgen nach Ivka)
+E.openNotes=function(){ if (M.onOpenNotes && M.onOpenNotes()) return Promise.resolve();
+  if (M.k3bf && M.k3bf() && M.bfOpenDiary) return M.bfOpenDiary();   // Kapitel 3: Markos Tagebuch (24_k3bf.js)   // ein Raum darf vorher etwas sagen (Morgen nach Ivka)
   if (nbStyle==='think') return M.thinkAbout(); NB.sel=null; NB.page=0; NB.msg=null; NB.tab='open'; return E.showOverlay('notebook',{mode:'browse'}); };
 function nbButton(x,y,w,t,hot,h){ h=h||13; fb.rect(x,y,w,h,hot?P.s6:P.s4); var c=hot?P.r3:P.n1; fb.hl(x,x+w-1,y,c); fb.hl(x,x+w-1,y+h-1,c); fb.vl(x,y,y+h-1,c); fb.vl(x+w-1,y,y+h-1,c); M.text(fb,t,x+((w-M.textWidth(t))>>1),y+((h-7)>>1),hot?P.r2:P.n1); return [x,y,w,h]; }
 // Variante 1: die Liste
@@ -790,7 +791,7 @@ M.renderFrame=function(){ SUBS=!!(M.subsOn&&M.subsOn()); LISTH=SUBS||!!(M.listHt
   else if (E.screen==='title') drawTitle();
   else if (E.screen==='card') drawCard();
   else if (E.screen==='credits') drawCredits();
-  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); drawOverlay(); drawSpeech(); drawFocus(); drawFine(); drawTapMark(); drawPop(); drawDrag(); }
+  else if (E.room && !(E.overlay && E.overlay.data && E.overlay.data.blank)){ drawScene(); drawReveal(); if (!WIDE){ drawUI(); hudRest(); } drawConv(); if (M.bfFrame){ var bfk2=!!(M.k3bf&&M.k3bf()); if (BTNS.bf!==bfk2){ layoutBtns(); BTNS.bf=bfk2; } M.bfFrame(fb,{SH:SH,WIDE:!!WIDE,LISTH:LISTH}); } drawOverlay(); drawSpeech(); drawFocus(); drawFine(); drawTapMark(); drawPop(); drawDrag(); }
   // Prüfbericht K3: Erinnerung vor dem ersten Raum (Kapitelanfang) oder mit data.blank: auf dunklem Grund statt unsichtbar
   else if (E.screen==='game' && (E.overlay || E.speech)){ fb.rect(0,0,W,H,P.k0); drawOverlay(); drawSpeech(); }
   applyFade(); drawFF(); drawMenu(); drawMsg(); drawCursor(); return fb; };
@@ -890,7 +891,8 @@ function uiAt(x,y){
     if (ov.lay && ov.lay.hits){ for (var h=0;h<ov.lay.hits.length;h++) if (inR(ov.lay.hits[h].r)) return 'o:'+ov.lay.hits[h].id; return null; }
     return null; }
   if (E.pop && !E.dlg){ var pr=popAt(x,y); if (pr!==null) return pr>=0?'p:'+pr:'pop'; }
-  if (E.dlg){ var L=E.dlg.lay; if (!L) return null; var inR2=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }; if (inR2(L.close)) return 'cx'; if (inR2(L.up)) return 'cu'; if (inR2(L.dn)) return 'cd'; for (var ri=0;ri<L.rows.length;ri++) if (inR2(L.rows[ri].r)) return 'c:'+L.rows[ri].k; return null; }
+  if (E.dlg){ if (M.bfBarAt){ var bb=M.bfBarAt(x,y); if (bb) return 'bf:'+bb; } var L=E.dlg.lay; if (!L) return null; var inR2=function(r){ return r&&x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]; }; if (inR2(L.close)) return 'cx'; if (inR2(L.up)) return 'cu'; if (inR2(L.dn)) return 'cd'; for (var ri=0;ri<L.rows.length;ri++) if (inR2(L.rows[ri].r)) return 'c:'+L.rows[ri].k; return null; }
+  if (y<SH && M.bfBtnAt && M.bfBtnAt(x,y)) return 'bfh';   // Kapitel 3: Mala-Knopf (24_k3bf.js)
   if (WIDE){ if (y>=1000) return uiAtWide(x,y-1000); return null; }
   if (y>=SH&&y<SH+15){ var bt=btnAt(x,y); if (E.room&&E.room.noVerbs&&bt!=='menu') return null; return bt; }
   if (y<SH) return null; if (E.room&&E.room.noVerbs) return null;
@@ -962,7 +964,9 @@ async function click(x,y){ var now0=E.gt(), prevTap=lastTapT; lastTapT=now0;
       if (u2[0]==='z'){ var zi=+u2.slice(2); ov.sel[zi]=(ov.sel[zi]<0?0:(ov.sel[zi]+1)%ov.data.slots[zi].length); ov.bad=-1; ov.msg=null; M.sfx('page'); } return; }
     E.closeOverlay(); return; }
   if (E.speech && (E.busy||E.dlg)){ if (E.gt()-E.speech.at>200 && now0-prevTap>M.DBL_MS) E.endSpeech(); return; }   // der zweite Tipp eines Doppeltipps überspringt keinen Satz
+  if (E.dlg && !dlgLocked() && M.bfBarTap && M.bfBarTap(x,y)) return;   // Themenleiste (24_k3bf.js)
   if (E.dlg){ var ud=uiAt(x,y), D=E.dlg; if (!ud) return; if ((ud==='cx'||ud[0]==='c'&&ud[1]===':') && dlgLocked()) return; if (ud==='cx'){ var bi=dlgBye(); if (bi>=0) E.chooseDone(bi); return; } if (ud==='cu'){ D.top=Math.max(0,D.top-1); return; } if (ud==='cd'){ D.top=Math.min(D.opts.length-1,D.top+1); return; } if (ud[0]==='c'){ M.sfx('click'); E.chooseDone(+ud.slice(2)); } return; }
+  if (y<SH && M.bfBtnAt && M.bfBtnAt(x,y)){ if (!E.busy) M.bfHint(); return; }
   var uiH=uiAt(x,y);
   if (E.pop && E.pop.hs && lastExit && now0-lastExit.t<=M.DBL_MS && lastExit.key===E.exitKey(E.pop.hs) && !E.busy){ var hp=E.pop.hs; lastExit=null; E.pop=null; E.actionTok(); E.doVerb(isG()&&hp.gexit?'pass':'walk',hp); return; }   // zweiter Tipp eines Doppeltipps auf einen Ausgang mit Menü
   if (E.pop){ var pr=popAt(x,y); if (pr!==null){ if (pr>=0){ M.sfx('click'); popPick(E.pop,E.pop.opts[pr]); } return; } E.pop=null; if (!uiH || y<SH) { if (y<SH) return; } }

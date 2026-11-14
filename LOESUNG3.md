@@ -11,6 +11,7 @@ Diese Lösung verrät alles. Wer erst einmal nur einen Schubs braucht, findet im
 - **Stadtplan:** Das Ostufer ist von Anfang an offen. Ans Westufer geht Mala erst, nachdem sie einmal über die Straßenbrücke gegangen ist. Nach Skela kommt man immer mit dem Taxi; Dinos Roller ist eine Möglichkeit, keine Bedingung.
 - Es gibt keine Sackgassen. Falsche Antworten und falsche Reihenfolgen bekommen eine eigene Antwort und setzen nur zurück.
 - **Tagesende:** Freitag, Samstag und Sonntag enden erst, wenn man es will. Sind die Pflichtschritte erledigt, sagt Marko es einmal. Der Tag endet in der **Herberge** (Freitag, Samstag) oder in **Vlados Werkstatt** (Sonntag), auch über das Bett. Vorher nennt Marko, was noch offen ist (eine Zusage, ein Brief). Wer trotzdem beendet, lässt es bewusst liegen.
+- **Gespräche „wie bei Baphomet“** (Einstellung „Gespräche in Kapitel 3“, Vorgabe): Im Gespräch liegt unter den Sätzen eine Leiste mit Bildern. Ein Thema antippen heißt „danach fragen“, ein Gegenstand heißt „zeigen“. Statt im Notizbuch zu verbinden, zeigt man der richtigen Person das Richtige; die Tabelle steht am Ende („Schlüsse durch Zeigen“). Das Notizbuch heißt „Tagebuch“ und wird nur gelesen. Oben rechts im Bild hilft Mala, wenn man festhängt. Wo diese Lösung „Verbinden“ sagt, gilt im Modus die Tabelle; wo sie „nach … fragen“ sagt, tippt man das Bild an.
 - **Fassung:** Diese Lösung beschreibt den Hauptweg neuer Spiele (Regel 2, seit der Revision nach dem Prüfbericht). Alte Spielstände ab Samstagnacht spielen nach dem bisherigen Weg weiter (Regel 1, siehe „Varianten“). Neu im Hauptweg sind: der Stein unter der Brücke (Samstag), Batos Plane, Mates Garage und die Batterie (Sonntag).
 
 ---
@@ -362,3 +363,23 @@ Pflicht sind die Schritte oben, einschließlich der neuen Abschnitte 13a und 20�
 - Keine Volkszugehörigkeiten, keine religiösen oder nationalen Zeichen.
 - Kein Raten an Stellen, an denen Marko etwas wissen muss.
 - Ob Davor das Haus verkauft, bleibt offen.
+
+## Schlüsse durch Zeigen (Modus „wie bei Baphomet“)
+
+Im Modus gibt es kein Verbinden. Man redet mit der Person und tippt in der Themenleiste die Notiz an. Beide Notizen eines Paares müssen da sein. Die Peilung und Skela zieht Marko wie bisher selbst.
+
+| Statt „Verbinden“ | wem zeigen | was zeigen |
+|---|---|---|
+| Nicht die Alte Brücke | Dino (oder Mala) | *Malas Brücke stand im Wasser* (Mala: *Ein einziger Bogen*) |
+| Eine Brücke, die keiner gezählt hat | Mala (oder Dino) | *Nicht die Alte Brücke* |
+| Ein Mensch, kein Ort | Mala | *Skela heißt Fähre* oder *Die Leine zeigt in die Stadt* |
+| Mala und Lana sind eine Spur | Mala | *„Sie hat gesagt, sie heißt Mala“* oder *„Unterschrieben mit Mala“* |
+| Zwei Suchen, die sich nie trafen | Mala | *Mala und Lana sind eine Spur* |
+| Wer hat wen stehen lassen? | Mala (im Hof beim Lastwagen; Vlado ist nach Teil 2 hinten) | *„Sie hat mich weggeschickt“* |
+| Bato war wach | Zlata (oder Bato) | *„Dreimal hat er geläutet“* (Bato: *„Er hat geschlafen“*) |
+| Es war das Mädchen | Zlata (oder Mala) | *Eine Mädchenstimme* |
+| Sie hat den Fluss überlebt | Mala (oder Zlata) | *Zlatas Decke* |
+| Eine Einladung, die sich nicht traut | Davor (oder Jela) | *Das Kinderzimmer* |
+| So wollte er heißen | Lena (oder Davor, Jela) | *„Dragi dida“* |
+| Damit ich ihn nicht suchen muss | Mala (oder Frau Kolar) | *„Und Sie?“* |
+

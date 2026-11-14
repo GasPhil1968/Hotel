@@ -36,10 +36,29 @@ function play(D, opts = {}) {
   P.opts = async () => ((await D.st()).dlg || []);
   P.dlgHas = async (sub) => (await P.opts()).some(t => t.indexOf(sub) >= 0);
   P.waitDlg = async (sub, ms = 60000) => { await D.until(s => s.dlg && s.dlg.some(t => t.indexOf(sub) >= 0), ms, 'Auswahl „' + sub + '“'); };
-  P.talk = async (id, ...choices) => { await P.act('talk', id); for (const c of choices) { if (c.startsWith('NOTE:')) await P.pick(c.slice(5)); else await P.choose(c); } };
-  P.ask = async (id, noteId, ...more) => P.talk(id, 'Nach etwas aus dem Notizbuch', 'NOTE:' + noteId, ...more);
+  P.talk = async (id, ...choices) => { await P.act('talk', id); const bf = await D.ev(() => !!(M.k3bf && M.k3bf()));
+    for (const c of choices) { if (bf && /^Nach etwas aus dem Notizbuch/.test(c)) continue; if (c.startsWith('NOTE:')) { if (bf) await P.bfNote(c.slice(5)); else await P.pick(c.slice(5)); } else await P.choose(c); } };
+  // Kapitel 3 „wie bei Baphomet“ (MALA_K3BF=1, 24_k3bf.js): Fragen über die Themenleiste statt über das Notizbuch
+  P.bf = () => D.ev(() => !!(M.k3bf && M.k3bf()));
+  P.barPick = async (k, id) => { await D.until(s => s.dlg, 20000, 'Themenleiste'); const ok = await D.ev(([a, b]) => M.bfPick(a, b), [k, id]); await P.expect(ok, 'Themenleiste: ' + k + ' ' + id); await D.page.waitForTimeout(60); return P.calm(); };
+  // eine Notiz wählen: im Gespräch über die Leiste; fragt das Spiel selbst nach einer Notiz (A.askNote), über die Polaroids
+  P.bfNote = async (id) => { const s = await D.until(s => s.dlg || s.overlay === 'evidence', 20000, 'Leiste oder Polaroids');
+    if (s.overlay === 'evidence') { await D.ev((x) => { const ov = M.E.overlay; M.OVTAP.evidence(ov, 'n:' + x); M.OVTAP.evidence(ov, 'n:' + x); }, id); await D.page.waitForTimeout(60); return P.calm(); }
+    return P.barPick('note', id); };
+  P.ask = async (id, noteId, ...more) => { if (await P.bf()) { await P.act('talk', id); await P.bfNote(noteId); for (const c of more) await P.choose(c); return; }
+    return P.talk(id, 'Nach etwas aus dem Notizbuch', 'NOTE:' + noteId, ...more); };
   P.bye = async (...subs) => { for (let i = 0; i < 6; i++) { const s = await D.st(); if (!s.dlg) return; const b = subs.find(x => s.dlg.some(t => t.indexOf(x) >= 0)); if (!b) await P.fail('kein Ausgang aus der Auswahl (' + subs.join(' / ') + ')'); await P.choose(b); } };
-  P.comb = async (a, b, to) => { const r = await D.combine(a, b); await P.expect(r && r.ok, 'Schluss ' + a + ' + ' + b + ' → ' + to + ' | ' + JSON.stringify(r)); await P.note(to); await D.page.waitForTimeout(250); return P.calm(); };
+  // Schluss: klassisch verbinden; im Modus „wie bei Baphomet“ der richtigen Person zeigen (wer da ist), Peilung und Karte zieht Marko selbst
+  P.combBF = async (a, b, to) => { if (await D.hasNote(to)) return P.calm();
+    const plan = await D.ev(([x, y, z]) => { const d = (M.K3BFD || []).find(e => e.to === z); if (!d) return null; const here = [];
+      Object.keys(d.who).forEach(w => { if (w === 'mala') { if (M.API.malaHere()) here.push(w); } else if (M.E.room.hotspots.some(h => h.npc === w && M.E.hsRect(h))) here.push(w); });
+      return { who: here, note: M.k3bfFor(M.GS, here[0], x) ? x : y }; }, [a, b, to]);
+    await P.expect(plan && plan.who.length, 'Schluss ' + to + ': niemand da, dem ich es zeigen kann | ' + JSON.stringify(plan));
+    const w = plan.who[0]; await P.act('talk', w === 'mala' ? '_mala' : w); await P.barPick('note', plan.note); await P.note(to);
+    for (let i = 0; i < 4; i++) { const open = await D.ev(() => !!(M.E.dlg && M.E.bfBar)); if (!open) break;   // nur das eigene Gespräch schließen, keine Szene danach
+      await D.ev(() => { const d = M.E.dlg; const k = d.opts.findIndex(o => o.bye); M.E.chooseDone(k >= 0 ? k : d.opts.length - 1); }); await P.calm(); }
+    return P.calm(); };
+  P.comb = async (a, b, to) => { if (await P.bf()) return P.combBF(a, b, to); const r = await D.combine(a, b); await P.expect(r && r.ok, 'Schluss ' + a + ' + ' + b + ' → ' + to + ' | ' + JSON.stringify(r)); await P.note(to); await D.page.waitForTimeout(250); return P.calm(); };
   P.mala = async () => { await D.switchTo('mala'); const s = await P.calm(); await P.expect(s.active === 'mala', 'Mala gespielt'); };
   P.marko = async () => { await D.switchTo('marko'); const s = await P.calm(); await P.expect(s.active === 'marko', 'Marko gespielt'); };
   P.travel = async (loc) => { await D.ev((l) => M.TA.travel(l), loc); await D.page.waitForTimeout(80); return P.calm(); };

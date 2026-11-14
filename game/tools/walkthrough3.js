@@ -13,6 +13,7 @@ const SHOTS = process.argv[2] || null;
 const DUMP = process.env.MALA_DUMPALL || null, SNAP = process.env.MALA_SNAP || null, FROM = process.env.MALA_FROM || null;
 (async () => {
   const D = await open({ turbo: 25 });
+  if (process.env.MALA_K3BF) await D.ev(() => { M.K3BF = true; });   // Modus „wie bei Baphomet“ (24_k3bf.js)
   const t0 = Date.now(); let step = 0, section = '';
   const log = async (...a) => { step++; console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] #${step} ${section ? section + ': ' : ''}${a.join(' ')}`);
     if (DUMP) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); fs.writeFileSync(path.join(DUMP, String(step).padStart(3, '0') + '.json'), JSON.stringify({ step, section, label: a.join(' '), GS: g })); } };
