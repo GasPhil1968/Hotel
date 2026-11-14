@@ -47,7 +47,7 @@ M.officeTest=async function(A){ if (A.flag('mk.test')) return; A.setFlag('mk.tes
   await A.g('Bei vierundachtzig?'); await A.m('Bei vierundachtzig. Und wenn da nichts ist, bist du der Jugo, und ich gehe morgen zum Arzt.'); await A.g('Abgemacht.');
   A.flash('Unten links kannst du jetzt zu Mala wechseln.'); A.save(); };
 // der Übergang: Marko lässt die Stimme zum ersten Mal zu – als Probe, leise, damit Mladen nichts hört
-M.voiceTest=async function(A){ if (A.flag('mk.test')) return; if (A.flag('split.intro.met')) return M.officeTest(A);   // nach dem Kennenlernen in der Wohnung: nur noch der Test
+M.voiceTest=async function(A){ if (A.flag('mk.test')) return; if (A.flag('split.intro.met')) return M.officeTest(A); if (M.slowMeet && M.slowMeet(A.G)) return M.voiceTestSlow(A);   // nach dem Kennenlernen in der Wohnung: nur noch der Test
   var c=await A.choose([{t:'(Leise:) „Wenn du da bist, dann sieh nach.“',id:'test'},{t:'(Leise:) „Hör auf.“',id:'stop'},{t:'(Weiter so tun, als wäre nichts.)',id:'ignore',silent:true}],{title:'',conv:false});
   if (c==='stop'){ await A.g('Ich habe noch gar nicht angefangen.'); return; }
   if (c==='ignore'){ await A.wait(1100); await A.g('Das tut weh. Ich weiß.'); await A.animM('headache'); return; }
@@ -68,7 +68,8 @@ async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.')
   await readLog(A);
   await Ml.say('Matić … Dinko Matić. Der flickt heute noch seine Netze an der Matejuška. Fragen Sie ihn, wenn Sie den Mut haben.'); A.note('c1_matejuska'); A.unlock('matejuska'); A.unlock('sustipan');
   await A.m('Danke, Gospodine Šimić.'); await Ml.say('Bedanken Sie sich nicht. Das ist kein schöner Eintrag.');
-  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(700); await A.m('…'); await A.g('Bei achtundvierzig.'); await A.m('Zufall.'); } }
+  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(700); await A.m('…'); await A.g('Bei achtundvierzig.'); await A.m('Zufall.'); }
+  if (M.slowMeet && M.slowMeet(A.G)) await M.afterLogSlow(A); }
 async function readLog(A){ await A.doc({style:'log',title:'Lučka kapetanija Split · Brodski dnevnik 1984',w:252,lines:['22.12.1984','Bura, 9–10 Bf. Linija Supetar–Split:','polazak 17:00 otkazan.  Sljedeći: 23.12., 06:00.','','21:40  Ribarska brodica ANKICA (vl. M. Matić)','prevrnuta pred Sustipanom.','Spašen: Dinko Matić (19).  Nestao: Antonio Perić (22).','Potraga obustavljena 27.12.']});
   await A.m('Am zweiundzwanzigsten Dezember: Bura, Stärke neun bis zehn. Die Fähre aus Supetar um fünf fiel aus.'); await A.m('Um 21:40 kenterte das Fischerboot ANKICA vor Sustipan. Gerettet: Dinko Matić, neunzehn. Vermisst: Antonio Perić, zweiundzwanzig.');
   A.note('c1_ferry'); A.note('c1_capsized',true); A.note('c1_rescued',true);

@@ -184,7 +184,8 @@ var HS=[
        if (fresh && !A.flag('pro.translated')){ await A.m('Seite einunddreißig liegt noch auf dem Schreibtisch. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
      // Mittwochabend: bevor er geht, das erste lange Kennenlernen (nur einmal; alte Spielstände in der Stimmenphase behalten den alten Weg)
-     if (p==='c1' && fresh && A.flag('split.intro.v') && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
+     if (p==='c1_night' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.dinkoTold') && !A.flag('split.intro.met')){ if (!A.flag('split.intro.meet')){ await M.slowMeetScene(A); return false; } if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; }   // langsame Begegnung (91_malaweg.js)
+     if (p==='c1' && fresh && A.flag('split.intro.v') && !(M.slowMeet && M.slowMeet(A.G)) && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
      if (p==='c3' && !A.flag('c3.call')){ await A.m('Das Telefon. Es klingelt schon wieder.'); return false; }
      return true; },
    look:'Die Tür. Drei Schlösser, von denen ich zwei benutze.', g:{look:'Seine Tür. Für mich ist sie keine.'}}
@@ -338,6 +339,9 @@ async function askFirstAttack(A){ var G=A.G;
     await A.g('Denk an gestern Abend. An die Dämmerung.'); if (!G.flags['split.intro.dizzy']) break; }
   G.flags['split.intro.first']='told'; await A.g('Ich glaube, es war an der Riva. Ich war dabei. Vor dir hat jemand gewartet.'); A.note('m_first',true); }
 async function endMeeting(A){ var G=A.G; delete G.flags['mala.unknown']; delete G.flags['mala.voice']; G.flags['mala.noSwitch']=true; G.flags['mk.ache']=0; M.E.headache=0; A.note('m_name',true);
+  if (M.slowMeet && M.slowMeet(G)){ delete G.flags['mala.noSwitch']; delete G.flags['mk.outline'];   // langsame Begegnung: nach Dinko, der Brief wartet
+    await A.m('Damit das klar ist: Ich glaube immer noch nicht an dich.'); await A.g('Musst du nicht.'); await A.m('Aber du hast den Seesack gehört. Und Tonćis Brief klebt zusammen.'); await A.g('Dann lesen wir ihn. Zusammen.');
+    A.setFlag('split.intro.met'); G.flags['mala.lock']=false; A.music('flat'); A.save(); return; }
   await A.m('Damit das klar ist: Ich glaube nicht an dich.'); await A.g('Musst du nicht.');
   await A.m('Ich gehe jetzt an die Luft. Vesna hat es verordnet.'); await A.g('Ich komme mit.'); await A.m('Und wenn ich Nein sage?'); await A.g('Dann komme ich trotzdem. Weit weg von dir kann ich nicht.');
   A.setFlag('split.intro.met'); G.flags['mala.lock']=false; A.music('flat'); A.save(); }
@@ -395,6 +399,7 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   tick:function(A,dt){ var S=A.S; if (S.steam && A.gt<S.steam && M.E.overlay && dt) S.steam+=dt;
     if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
   enter:async function(A,from){ var p=A.G.phase;
+    if (p==='c1_night' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.dinkoTold') && !A.flag('split.intro.meet')){ await M.slowMeetScene(A); return; }   // langsame Begegnung (91_malaweg.js)
     if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     // Analyse, Hinweisthema k3_call (Kann-Liste): Wurde der Anruf unterbrochen (Laden mitten im Gespräch), klingelt es beim Betreten wieder;
     // vorher galt das nur einmal, die Tür blieb zu („Es klingelt schon wieder“), und es gab nichts, womit man abnehmen konnte

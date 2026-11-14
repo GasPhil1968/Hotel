@@ -4,7 +4,7 @@ Erzeugt mit `node game/tools/hintdoc.js` aus `game/src/15_hints_k1.js` bis `game
 
 Jedes Thema ist ein Rätselabschnitt. „Offen, wenn“ ist die Bedingung im Quelltext (F = Schalter, N = Notiz, I = Inventar). Die Stufen: 1 Problem einordnen · 2 Denkrichtung · 3 Konkreter Ansatz · 4 Nächster Schritt. Stufe 4 kommt nur nach der Rückfrage.
 
-## Kapitel 1: Split (85 Themen)
+## Kapitel 1: Split (86 Themen)
 
 ### Was liegt heute an? `k1_msg`
 
@@ -161,16 +161,16 @@ Offen, wenn: `ph(G,['pro_eve','pro_night']) && F(G,'pro.article')`
 
 ### Jemand in der Wohnung `k1_meet`
 
-Offen, wenn: `G.phase==='c1' && fresh(G) && F(G,'split.intro.v') && !F(G,'split.intro.met')`
+Offen, wenn: `function(G){ if (M.slowMeet && M.slowMeet(G)) return G.phase==='c1_night' && F(G,'c1.dinkoTold') && !F(G,'split.intro.met'); return G.phase==='c1' && fresh(G) && F(G,'split.intro.v') && !F(G,'split.intro.met')`
 
 1. **Problem einordnen:** Etwas stimmt nicht in der Wohnung. Jemand ist da, den es nicht geben kann.
 2. **Denkrichtung:** Erst prüfen, was wirklich ist: die Tür, und die Gestalt selbst.
-3. **Konkreter Ansatz:** *je nach Stand:* „Beim Gehen zieht es. Von hinten.“ / „Die Tür. Ist sie wirklich abgeschlossen?“ / „Von nahem sieht man mehr. Gegen die Lampe zum Beispiel.“ / „Besuch bietet man etwas an. Aus Gewohnheit: ein Glas Wasser.“
-4. **Nächster Schritt:** *je nach Stand:* „Zur Wohnungstür gehen.“ / „Noch einmal zur Wohnungstür gehen.“ / „Die Gestalt ansehen.“ / „Ihr das Glas Wasser geben, dann fragen: Wer bist du?“ / „Das Glas an der Spüle füllen.“ / „Ein Glas aus dem Regal über der Kochnische nehmen, an der Spüle füllen und ihr geben.“
+3. **Konkreter Ansatz:** *je nach Stand:* „Der Umriss ist den ganzen Abend mitgekommen. Zu Hause wird er mehr.“ / „Beim Gehen zieht es. Von hinten.“ / „Die Tür. Ist sie wirklich abgeschlossen?“ / „Von nahem sieht man mehr. Gegen die Lampe zum Beispiel.“ / „Besuch bietet man etwas an. Aus Gewohnheit: ein Glas Wasser.“
+4. **Nächster Schritt:** *je nach Stand:* „Nach Hause gehen, in Markos Wohnung.“ / „Zur Wohnungstür gehen.“ / „Noch einmal zur Wohnungstür gehen.“ / „Die Gestalt ansehen.“ / „Ihr das Glas Wasser geben, dann fragen: Wer bist du?“ / „Das Glas an der Spüle füllen.“ / „Ein Glas aus dem Regal über der Kochnische nehmen, an der Spüle füllen und ihr geben.“
 
 ### Vor Marko war auch jemand `k1_mole`
 
-Offen, wenn: `G.phase==='c1' && (F(G,'split.intro.met')\|\|!fresh(G)\|\|!F(G,'split.intro.v')) && !F(G,'c1.met')`
+Offen, wenn: `G.phase==='c1' && (F(G,'split.intro.met')\|\|!fresh(G)\|\|!F(G,'split.intro.v')\|\|(M.slowMeet&&M.slowMeet(G))) && !F(G,'c1.met')`
 
 1. **Problem einordnen:** „Und vor dir war auch jemand.“ Am Ort des ersten richtigen Schwindels.
 2. **Denkrichtung:** Der Schwindel kam an der Riva.
@@ -230,6 +230,15 @@ Offen, wenn: `ph(G,['c1','c1_night']) && N(G,'c1_ferry') && N(G,'c1_boat7') && !
 2. **Denkrichtung:** Zwei Notizen, die zusammen etwas Neues ergeben.
 3. **Konkreter Ansatz:** Tonćis Versprechen auf der Postkarte und der Eintrag im Fahrtenbuch.
 4. **Nächster Schritt:** Im Notizbuch „Boot um sieben“ mit „Fähre fiel aus“ verbinden.
+
+### Antonio Perić `k1_dead`
+
+Offen, wenn: `G.phase==='c1' && M.slowMeet && M.slowMeet(G) && F(G,'c1.logRead') && !F(G,'mk.dead')`
+
+1. **Problem einordnen:** Vermisst seit 1984: Antonio Perić. Und an der Mole wartet eine Frau Perić auf ihren Sohn.
+2. **Denkrichtung:** Wann ist Ivka Perić gestorben? Das hast du gestern gelesen.
+3. **Konkreter Ansatz:** An Ivkas Tür in Veli Varoš hängt die Todesanzeige.
+4. **Nächster Schritt:** Nach Veli Varoš gehen.
 
 ### Dinko an der Matejuška `k1_dinko1`
 

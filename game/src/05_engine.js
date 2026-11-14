@@ -376,7 +376,7 @@ var API={
   // Mala spricht. Solange sie nach Ivka für Marko nicht wahrnehmbar ist, kommt keine Zeile durch – auch keine aus verzögerten Abläufen (für Tests gezählt).
   // In der Stimmenphase ist sie nur eine Stimme ohne Porträt; die steigenden Kopfschmerzen gibt es nur noch für alte Spielstände.
   g:function(t,o){ if (GS.flags['split.afterIvka.away']){ E.gSuppressed=(E.gSuppressed||0)+1; return Promise.resolve(); }
-    o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if (GS.flags['mala.voice'] && GS.active==='marko'){ o.voice=true; o.noPortrait=true;
+    o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if ((GS.flags['mala.voice']||GS.flags['mk.outline']) && GS.active==='marko'){ o.voice=true; o.noPortrait=true;
       if (GS.flags['split.intro.legacy']){ GS.flags['mk.ache']=Math.min(9,(GS.flags['mk.ache']||0)+1); E.headache=gt+1500+GS.flags['mk.ache']*120; } else E.headache=Math.max(E.headache||0,gt+1200); M.sfx('static'); }
     return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',o); },
   // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)

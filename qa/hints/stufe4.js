@@ -76,7 +76,8 @@ const SPECS = {
   // ================================================================ Kapitel 1: Split (15_hints_k1.js)
   k1_coffee: () => P.act('take', 'Džezva'),
   k1_msg: () => P.act('use', 'Anrufbeantworter'),
-  k1_meet: () => P.act('walk', /Wohnungstür|Tür/),
+  k1_meet: (t) => /Nach Hause gehen/.test(t) ? P.go('Markos Wohnung') : P.act('walk', /Wohnungstür|Tür/),
+  k1_dead: () => P.go(/Varoš/),
   k1_read: () => P.give('_mala', /Brief/),
   k1_steam: () => [P.act('take', 'Džezva'), P.use('Spüle', 'dzezva'), P.use('Herd', 'dzezvaW'), P.use('Herd', 'letter_t')],
   k1_bench: () => [P.act('use', 'Bank'), P.talk('_mala')],

@@ -33,10 +33,12 @@ M.canTravel=async function(A,L){ var p=A.G.phase, fresh=!A.flag('split.intro.leg
     if (L.id!=='riva' && L.id!=='flat'){ await A.m('Heute nicht mehr.'); return false; } }
   if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.verified')?'Nicht jetzt. Mala will ans Wasser. Und ich habe Fragen, die nicht in die Bar gehören.':(A.flag('split.afterIvka.back')?'Nicht jetzt. Nicht, bevor ich weiß, worauf ich mich einlasse.':(A.flag('split.afterIvka.bar')?'Nicht jetzt. Nicht, bevor ich weiß, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Ohne Kaffee komme ich nicht weit.'))); return false; }
   if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos' && L.id!=='bar'){ await A.m('Nicht jetzt.'); return false; }
+  if (p==='c1' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.logRead') && !A.flag('mk.dead') && L.id==='matejuska'){ await A.m('Erst nach Varoš. Zu Ivkas Tür. Antonio Perić lässt mich nicht los.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
 M.lookAtMala=async function(A){ var p=A.G.phase; if (A.flag('split.intro.meet') && !A.flag('split.intro.met') && M.meetLook) return M.meetLook(A);
+  if (A.flag('mk.outline') && !A.flag('split.intro.meet')) return A.m(A.cycle('mOutL',['Ein Umriss. Schultern, ein Schal. Wo das Gesicht sein müsste, sieht man die Wand.','Wenn ich direkt hinsehe, wird er dünner. Aus dem Augenwinkel ist er fast ein Mädchen.','Ein Umriss, mehr nicht. Mehr will ich auch nicht sehen.']));
   if (A.flag('mala.voice')) return A.m(A.cycle('mVoiceL',['Ein Flimmern in der Luft. Wie über heißem Asphalt. Im November.','Da ist nichts. Nur ein Lichtfleck, der nicht weggeht, wenn ich blinzle.','Wenn ich nicht hinsehe, ist es weg. Fast.']));
   if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.m(A.cycle('mDeny',['Ich sehe nicht hin. Wenn ich nicht hinsehe, ist da niemand.','Jeansjacke, grauer Schal. Ein Mädchen wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Ich sehe nicht hin.','Wenn das Licht von hinten kommt, sieht man durch sie hindurch. Das liegt am Licht.']));
   if (p==='c1'||p==='c1_night') return A.m('Mala. Jeansjacke, grauer Schal, weiße Turnschuhe. Kleidung wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Wenn das Licht von hinten kommt, sieht man durch sie hindurch.');

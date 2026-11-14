@@ -25,7 +25,7 @@ M.phaseIn=phaseIn;
 // Der Prolog beginnt mit Marko allein: an der Arbeit, mit Kopfschmerzen, die er dem Jugo zuschreibt. Mala erscheint erst nach der Recherche.
 M.startGame=async function(A){ var E=M.E; E.busy=true;
   try{ M.setPhase('pro'); M.GS.pos.marko={room:'flat',x:188,y:106,f:'B'}; A.unlock('flat');
-    var G=A.G; G.flags['split.intro.v']=2; ['sanja','stipe','frane'].forEach(function(k){ G.flags['met.'+k]=true; });   // die kennt er seit Jahren: keine Vorstellung
+    var G=A.G; G.flags['split.intro.v']=3; ['sanja','stipe','frane'].forEach(function(k){ G.flags['met.'+k]=true; });   // die kennt er seit Jahren: keine Vorstellung
     await M.kinoIntro(A,1,{kicker:'Prolog',title:'Die Stillen',sub:'Split',time:'Dienstag, 15. November 2011 · Nachmittag',ms:4400});   // Zwischenfilm statt Karte (89_kinoszenen.js)
     await A.goto('flat',{x:188,y:106,f:'B',noEnter:true});
     A.music('flat'); await A.wait(400); A.sfx('typing');
@@ -41,6 +41,8 @@ M.endProVisit=async function(A){ A.phase('pro_eve'); if (A.flag('split.intro.leg
 // Fall 1 beginnt (nach der Nacht)
 // Fall 1 beginnt (nach der Nacht): Mala ist da – aber nur als Stimme und als Flimmern, das Marko überhört
 // Mittwochabend: kein Traumgespräch (das gehört nach Ivka). Nur ein Zimmer, das nicht ganz so ist, wie er es verlassen hat.
+// split.intro.v ≥ 3: die langsame Begegnung – Mala bleibt bis nach Dinkos Geständnis Stimme und Umriss (siehe 91_malaweg.js)
+M.slowMeet=function(G){ G=G||M.GS; return !!G && (G.flags['split.intro.v']||0)>=3 && !G.flags['split.intro.legacy']; };
 M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster Fall',title:'Das Boot um sieben',time:'Mittwoch, 16. November · Abend',ms:4400});
   A.phase('c1'); A.setFlag('mala.voice'); A.setFlag('mala.unknown'); A.G.flags['mk.ache']=0; var F=A.R('flat'); F.tram=true; F.photoUp=true; F.winOpen=false;
   await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); A.malaJoin({x:150,y:116,f:'R',fadeIn:false}); await A.fade(0,600);

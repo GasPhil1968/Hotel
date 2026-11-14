@@ -60,12 +60,12 @@ M.HINTS_K1=[
  {id:'k1_bed',t:'Ein langer Tag',open:function(G){ return ph(G,['pro_eve','pro_night']) && F(G,'pro.article'); },
   s:['Der Text ist geschrieben. Für heute ist es genug.','Was jetzt noch fehlt, ist Schlaf.','Das Bett in der Wohnung.','Das Bett benutzen.']},
  // ================= Erster Fall · Mittwoch
- {id:'k1_meet',t:'Jemand in der Wohnung',open:function(G){ return G.phase==='c1' && fresh(G) && F(G,'split.intro.v') && !F(G,'split.intro.met'); },
+ {id:'k1_meet',t:'Jemand in der Wohnung',open:function(G){ if (M.slowMeet && M.slowMeet(G)) return G.phase==='c1_night' && F(G,'c1.dinkoTold') && !F(G,'split.intro.met'); return G.phase==='c1' && fresh(G) && F(G,'split.intro.v') && !F(G,'split.intro.met'); },
   s:['Etwas stimmt nicht in der Wohnung. Jemand ist da, den es nicht geben kann.','Erst prüfen, was wirklich ist: die Tür, und die Gestalt selbst.',
-     function(G){ if (!F(G,'split.intro.meet')) return 'Beim Gehen zieht es. Von hinten.'; if (!F(G,'split.intro.door')) return 'Die Tür. Ist sie wirklich abgeschlossen?'; if (!F(G,'split.intro.round')) return 'Von nahem sieht man mehr. Gegen die Lampe zum Beispiel.'; return 'Besuch bietet man etwas an. Aus Gewohnheit: ein Glas Wasser.'; },
-     function(G){ if (!F(G,'split.intro.meet')) return 'Zur Wohnungstür gehen.'; if (!F(G,'split.intro.door')) return 'Noch einmal zur Wohnungstür gehen.'; if (!F(G,'split.intro.round')) return 'Die Gestalt ansehen.';
+     function(G){ if (!F(G,'split.intro.meet')) return M.slowMeet&&M.slowMeet(G)?'Der Umriss ist den ganzen Abend mitgekommen. Zu Hause wird er mehr.':'Beim Gehen zieht es. Von hinten.'; if (!F(G,'split.intro.door')) return 'Die Tür. Ist sie wirklich abgeschlossen?'; if (!F(G,'split.intro.round')) return 'Von nahem sieht man mehr. Gegen die Lampe zum Beispiel.'; return 'Besuch bietet man etwas an. Aus Gewohnheit: ein Glas Wasser.'; },
+     function(G){ if (!F(G,'split.intro.meet')) return M.slowMeet&&M.slowMeet(G)?'Nach Hause gehen, in Markos Wohnung.':'Zur Wohnungstür gehen.'; if (!F(G,'split.intro.door')) return 'Noch einmal zur Wohnungstür gehen.'; if (!F(G,'split.intro.round')) return 'Die Gestalt ansehen.';
        if (I(G,'glassW')) return 'Ihr das Glas Wasser geben, dann fragen: Wer bist du?'; if (I(G,'glass')) return 'Das Glas an der Spüle füllen.'; return 'Ein Glas aus dem Regal über der Kochnische nehmen, an der Spüle füllen und ihr geben.'; }]},
- {id:'k1_mole',t:'Vor Marko war auch jemand',open:function(G){ return G.phase==='c1' && (F(G,'split.intro.met')||!fresh(G)||!F(G,'split.intro.v')) && !F(G,'c1.met'); },
+ {id:'k1_mole',t:'Vor Marko war auch jemand',open:function(G){ return G.phase==='c1' && (F(G,'split.intro.met')||!fresh(G)||!F(G,'split.intro.v')||(M.slowMeet&&M.slowMeet(G))) && !F(G,'c1.met'); },
   s:['„Und vor dir war auch jemand.“ Am Ort des ersten richtigen Schwindels.','Der Schwindel kam an der Riva.','Am Ende der Mole, beim letzten Poller.','An der Riva bis ans Ende der Mole gehen.']},
  {id:'k1_ivka1',t:'Worauf wartet Ivka?',open:function(G){ return ph(G,['c1','c1_night']) && F(G,'c1.met') && !N(G,'c1_askoffice'); },
   s:['Ivka wartet auf ein Boot.','Wer wartet, erzählt gern, worauf.','Welches Boot, welcher Tag, und warum es so spät ist.','Mit Ivka reden: welches Boot, welcher Tag, und dass das Boot spät ist.']},
@@ -84,6 +84,8 @@ M.HINTS_K1=[
   s:['Der Band ist gefunden. Herausziehen kann ihn nur einer, der lebt.','Mladen holt ihn, wenn er weiß, wo er suchen soll.','Ein Zahlendreher: 1984 steht bei 1948.','Als Marko Mladen sagen: „Schauen Sie mal im Regal bei 1948.“']},
  {id:'k1_came',t:'Die Fähre fiel aus',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_ferry') && N(G,'c1_boat7') && !N(G,'c1_came'); },
   s:['Die Fähre fuhr an dem Abend nicht. Und doch wollte Tonći um sieben kommen.','Zwei Notizen, die zusammen etwas Neues ergeben.','Tonćis Versprechen auf der Postkarte und der Eintrag im Fahrtenbuch.','Im Notizbuch „Boot um sieben“ mit „Fähre fiel aus“ verbinden.']},
+ {id:'k1_dead',t:'Antonio Perić',open:function(G){ return G.phase==='c1' && M.slowMeet && M.slowMeet(G) && F(G,'c1.logRead') && !F(G,'mk.dead'); },   // langsame Begegnung (91_malaweg.js)
+  s:['Vermisst seit 1984: Antonio Perić. Und an der Mole wartet eine Frau Perić auf ihren Sohn.','Wann ist Ivka Perić gestorben? Das hast du gestern gelesen.','An Ivkas Tür in Veli Varoš hängt die Todesanzeige.','Nach Veli Varoš gehen.']},
  {id:'k1_dinko1',t:'Dinko an der Matejuška',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother') && !F(G,'c1.dinkoTold'); },   // Analyse K1-B14: nach dem Geständnis nicht mehr offen
   s:['Dinko Matić war dabei. Er flickt seine Netze an der Matejuška und will nicht reden.','Fragen helfen bei ihm nicht. Etwas aus der Zeit von damals vielleicht.','Das Foto aus Ivkas Wohnung zeigt Tonći und Dinko auf der ANKICA.','An der Matejuška Dinko das Foto mit den zwei Männern im Boot zeigen.']},
  {id:'k1_shed',t:'Dinkos Schweigen',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_brother') && !N(G,'c1_words'); },

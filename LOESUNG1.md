@@ -102,46 +102,52 @@ Varoš lässt Marko erst zu, wenn Sanja ihren Brief hat: „Erst Sanja. Triest r
 
 ## Erster Fall · Mittwoch, 16. November · Abend
 
-### Wohnung: das Kennenlernen
+Stand 14.11.2026 (neue Spielstände): Die Begegnung mit Mala ist langsamer. Bis nach Dinkos Geständnis bleibt sie Flimmern, Stimme und
+Umriss; erst danach, zu Hause, hat sie ein Gesicht. Dazwischen erkennt Marko an Ivkas Tür, dass er Tote sieht (`game/src/91_malaweg.js`).
+
+### Wohnung: nur ein Flimmern
 
 22. Marko wacht auf; ihm ist schwindlig. Vesna ruft an.
-    - *Optional:* Straßenbahn auf der Scheibe, das Foto liegt jetzt nach oben.
-23. **Pflicht:** zur *Wohnungstür*. „Und dann zieht es. Von hinten.“ Vor dem Bücherregal steht Mala, zum ersten Mal deutlich.
-24. **Pflicht, in beliebiger Reihenfolge:**
-    - *Tür* (noch einmal hingehen): Marko prüft sie, abgeschlossen von innen.
-    - *Mala ansehen*: Marko geht um sie herum; gegen die Lampe sieht man durch sie hindurch.
-    - Danach bietet er ihr aus Gewohnheit Wasser an.
-25. **Pflicht:**
-    - *Wassergläser* (Regal über der Kochnische) nehmen;
-    - das Glas an der *Spüle* füllen;
-    - das *Glas Wasser* Mala geben. Ihre Finger gehen hindurch, sie bewegt es nicht. Marko stellt es auf den Schreibtisch.
-    - „Der Boden steht still.“ Danach kommen die Fragen.
-26. **Gespräch:**
-    - „Wer bist du?“ ist Pflicht und nennt den Namen.
-    - Weitere Fragen: Sehen andere sie? Warum redet sie mit ihm? Was kann sie und was nicht? Seit wann ist sie hier? Warum fühlt er sich anders?
-    - „Genug für heute“ beendet das Gespräch.
-27. **Malas Frage:** Wann ist dir zum ersten Mal der Boden richtig weggekippt? Nicht das Kopfweh, nicht der halbe Schritt beim Aufstehen.
-    - Richtig ist *an der Riva, am letzten Poller*.
-    - Bar und Ivkas Wohnung bekommen eine klärende Rückfrage.
-    - Der Schreibtisch auch: Mala bestätigt, dass er sich dort an der Kante festgehalten hat, und fragt nach dem anderen Moment.
-    - Mala: „Und vor dir war auch jemand.“
-28. Den Figurenwechsel gibt es noch nicht. Jetzt geht die Tür auf.
+    - Hinter ihm flimmert die Luft. *Ansehen*: „Ein Flimmern … wie über heißem Asphalt.“ *Ansprechen*: Er redet nicht mit Lichtflecken.
+    - Die Stimme redet von selbst weiter (in Wohnung, Riva, Varoš, Bar); Marko überhört sie: „Tinnitus.“
+    - *Optional:* Straßenbahn auf der Scheibe.
+23. Die *Wohnungstür* lässt ihn gehen. Das Flimmern kommt mit.
 
-### Riva
+### Riva: eine Stimme hinter ihm
 
-29. Am Ende der Mole steht Ivka, genau am Poller vom Dienstag. Mala: „Du siehst sie also auch.“ Drei Reaktionen, alle führen weiter.
-30. Mit Ivka reden wie bisher; „Fragen Sie im Hafenbüro …“.
+24. Am Ende der Mole steht Ivka, am Poller vom Dienstag. Hinter Marko, ganz nah: „Du siehst sie also auch.“ (Notiz *Eine Stimme hinter mir*)
+    - Nicht umdrehen, „Wer ist da?“ oder laut summen. Alle führen weiter.
+25. Mit Ivka reden wie bisher; „Fragen Sie im Hafenbüro …“. Ihr Atem dampft nicht. „Ich sehe schlecht im Dunkeln.“
 
-### Hafenamt: der erste gemeinsame Praxistest
+### Hafenamt: aus dem Flimmern wird ein Umriss
 
-31. Mladen: „Ich habe eine Frage zu einer Fähre“, dann „Für einen Text …“, dann der Tag (Postkarte). Der Band 1984 fehlt.
-32. Mala: „Ich kann nachsehen.“
-    - **Pflicht:** „(Leise:) Dann sieh nach.“ schaltet den Wechsel frei (unten links).
-    - Wer ablehnt oder schweigt, kann es später über Mala (*Rede mit*) nachholen.
-33. Als Mala ins *Archiv*. Im Fach „1948“ steht ein dickerer Ordner mit ausgeblichenem Rückenschild.
-    - *Ansehen*: nichts mehr zu lesen. **Pflicht:** den Ordner *spüren*. Mala liest die verschwundene Schrift: 1984.
-    - Zurück zu Marko: „Schauen Sie mal im Regal bei 1948“.
-    - Marko bleibt skeptisch: „Zufall.“
+26. Mladen: Frage zu einer Fähre, für einen Text, der Tag (Postkarte). Der Band 1984 fehlt. Die Stimme: „Ich kann nachsehen.“
+27. **Pflicht:** das Flimmern *ansprechen*, dann „(Leise:) Wenn du da bist, dann sieh nach.“
+    - Aus dem Flimmern wird ein **Umriss**: Schultern, ein Schal, kein Gesicht. Der Kopfschmerz wird leiser.
+    - Der Umriss nennt seinen Namen: Mala. Der Figurenwechsel ist frei (unten links).
+28. Als Mala ins *Archiv*, den Ordner im Fach „1948“ *spüren*. Zurück zu Marko: „Schauen Sie mal bei 1948“. Das Fahrtenbuch:
+    die Fähre fiel aus, die ANKICA kenterte, vermisst: Antonio Perić. Marko: „Erst sehe ich nach. An ihrer Tür.“
+
+### Veli Varoš: „Ich sehe Tote.“
+
+29. **Pflicht:** nach Veli Varoš (zur Matejuška lässt Marko sich vorher nicht schicken).
+    - An Ivkas Tür: die Todesanzeige. Begraben am Sonntag, 13. November. Und heute Abend stand sie an der Mole.
+    - Der stärkste Schwindel bisher. „Ich habe ihren Nachruf geschrieben. Und dann habe ich mit ihr geredet.“ – „Ich sehe Tote.“
+    - Auf der Kirchentreppe, wo er am Dienstag jemanden gesehen hat, steht der Umriss: „Nicht alle. Nur die, die noch warten.“
+    - Drei Antworten („Wartest du auch?“, „Warum ich?“, schweigen), alle führen weiter. Notiz *„Ich sehe Tote.“*
+
+Danach wie bisher: Matejuška, Seesack, Dinko belauschen, Dinkos Geständnis.
+
+### Wohnung, nach Dinko: das Kennenlernen
+
+30. Zu Hause (für den Brief über Dampf) steht vor dem Bücherregal ein Mädchen. Ein Gesicht. „Den ganzen Abend warst du hinter mir.“ –
+    „Weil du bei Dinko nicht weggehört hast.“
+31. **Pflicht, in beliebiger Reihenfolge:** die *Tür* prüfen (abgeschlossen, von innen), *Mala ansehen* (um sie herumgehen; gegen die Lampe sieht man durch sie hindurch).
+32. **Pflicht:** *Wassergläser* nehmen, an der *Spüle* füllen, Mala geben. Die Finger gehen hindurch. „Der Boden steht still.“
+33. **Gespräch:** Was kann sie? Seit wann ist sie hier? Sehen andere sie? … „Genug für heute“. Dann Malas Frage nach dem ersten Schwindel
+    (richtig: *an der Riva, am letzten Poller*). Zum Schluss: „Dann lesen wir ihn. Zusammen.“ – weiter mit dem Brief über Dampf.
+
+Ältere Spielstände behalten ihren Weg (Kennenlernen in der Wohnung am Mittwochabend, Praxistest im Hafenamt).
 
 Danach folgt der erste Fall: Notizbuch „Boot um sieben“ + „Fähre fiel aus“ → **Tonći kam mit der ANKICA**, Matejuška, Seesack, Dinko, Brief über Dampf öffnen, Sustipan, Mala am Poller, die Wahrheit für Ivka, die Zwischenwelt, die Handschuhe.
 

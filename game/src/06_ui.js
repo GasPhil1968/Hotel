@@ -86,7 +86,8 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
       var lift=0;
       if (spirit){
-        if (!ghostView && isM && gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; o.wobble=1; var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; lift=1; }   // nur eine Stimme: noch kein Körper, bewusst nur ein Flimmern
+        if (!ghostView && isM && gs.flags['mk.outline'] && !gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; var ph6=tq%6400; o.alpha=0.42+0.06*Math.sin(ph6/6400*Math.PI*2); o.voice=1; lift=1; }   // Umriss (91_malaweg.js): ruhig, blass, kein Gesicht
+        else if (!ghostView && isM && gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; o.wobble=1; var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; lift=1; }   // nur eine Stimme: noch kein Körper, bewusst nur ein Flimmern
         else { gst=ghostIdle(a,p,tq,isM,ghostView); lift=gst.lift; o.alpha=a.alpha||1; } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }

@@ -2599,7 +2599,7 @@ var API={
   // Mala spricht. Solange sie nach Ivka für Marko nicht wahrnehmbar ist, kommt keine Zeile durch – auch keine aus verzögerten Abläufen (für Tests gezählt).
   // In der Stimmenphase ist sie nur eine Stimme ohne Porträt; die steigenden Kopfschmerzen gibt es nur noch für alte Spielstände.
   g:function(t,o){ if (GS.flags['split.afterIvka.away']){ E.gSuppressed=(E.gSuppressed||0)+1; return Promise.resolve(); }
-    o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if (GS.flags['mala.voice'] && GS.active==='marko'){ o.voice=true; o.noPortrait=true;
+    o=Object.assign({color:M.CAST_COLORS.mala},o||{}); if ((GS.flags['mala.voice']||GS.flags['mk.outline']) && GS.active==='marko'){ o.voice=true; o.noPortrait=true;
       if (GS.flags['split.intro.legacy']){ GS.flags['mk.ache']=Math.min(9,(GS.flags['mk.ache']||0)+1); E.headache=gt+1500+GS.flags['mk.ache']*120; } else E.headache=Math.max(E.headache||0,gt+1200); M.sfx('static'); }
     return say(t,(ACT.mala&&actorShown(ACT.mala))?'mala':'@mala',o); },
   // die Schwelle: ein Licht, durch das Mala die Geister hinüberbringt (x,y in Weltkoordinaten, y = Fußpunkt)
@@ -3097,7 +3097,8 @@ function drawScene(){ var r=E.rebuildIfDirty(), bg=r.bg, room=E.room, S=M.RS(roo
       var spirit=a.ghost, isM=a.ch==='mala', tq=E.gt(), gst=null;
       var lift=0;
       if (spirit){
-        if (!ghostView && isM && gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; o.wobble=1; var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; lift=1; }   // nur eine Stimme: noch kein Körper, bewusst nur ein Flimmern
+        if (!ghostView && isM && gs.flags['mk.outline'] && !gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; var ph6=tq%6400; o.alpha=0.42+0.06*Math.sin(ph6/6400*Math.PI*2); o.voice=1; lift=1; }   // Umriss (91_malaweg.js): ruhig, blass, kein Gesicht
+        else if (!ghostView && isM && gs.flags['mala.voice']){ o.lut=M.TINT.malaG.a; o.wobble=1; var ph5=tq%5200; o.alpha=(ph5<260)?0.34:((ph5<420)?0.2:0.1); o.voice=1; lift=1; }   // nur eine Stimme: noch kein Körper, bewusst nur ein Flimmern
         else { gst=ghostIdle(a,p,tq,isM,ghostView); lift=gst.lift; o.alpha=a.alpha||1; } }
       else { if (room.actorLut) o.lut=room.actorLut(a,S,gs,tod); else if (tod!=='day' && M.TINT[tod]) o.lut=M.TINT[tod].a; }
       if (a.fadeIn && E.gt()-a.fadeIn<900){ o.alpha=(o.alpha||1)*Math.min(1,(E.gt()-a.fadeIn)/900); }
@@ -5061,6 +5062,8 @@ M.defineNotes({
   i1_note:{c:'mala',t:'Mala hat Sanjas Zettel hinter dem Tresen gelesen: „Montag geschlossen – Inventur. Stipe und Frane sagen!!“',s:'Sanjas Zettel.'},
   m_voice:{c:'mala',t:'Auf der Mole, hinter mir, eine Stimme: „Du siehst sie also auch.“ Hinter mir war niemand.'},
   m_tram:{c:'mala',t:'Auf der beschlagenen Scheibe in meiner Wohnung: eine Straßenbahn mit einer Drei. Ich habe sie nicht gemalt.'},
+  m_dead:{c:'mala',t:'An Ivkas Tür: begraben am Sonntag. Und heute Abend stand sie an der Mole. Ich sehe Tote. „Nur die, die noch warten.“'},
+  m_outline:{c:'mala',t:'Im Hafenbüro: Aus dem Flimmern wird ein Umriss. Schultern, ein Schal, kein Gesicht. Er hat nachgesehen. Bei achtundvierzig.'},
   m_name:{c:'mala',t:'Sie hat einen Namen: Mala. „So sagt man zu kleinen Mädchen.“ – „Es reicht.“'},
   m_horn:{c:'mala',t:'Mala hält inne, wenn ein Fährenhorn tutet.'},
   m_bells:{c:'mala',t:'Bei den Glocken von Sveti Duje verschwindet Mala für einen Moment. „Zu laut.“'},
@@ -5156,7 +5159,7 @@ var META={
   pro_noone:['Ivka','Laut Stadt: keine Kontakte',['pro_people']], pro_knit:['Ivka','Strickte für die halbe Gasse',['pro_people']], pro_list:['Ivka','Ivkas Strickheft',['pro_gasse']],
   pro_people:['Ivka','Keine Familie heißt nicht: niemand',flag('pro.article')], pro_gasse:['Ivka','„Wer trägt nichts von ihr?“',flag('pro.article')],
   pro_spia:['Arbeit','S. 31: Welche Leuchte?',flag('pro.translated')], pro_red:['Arbeit','S. 30: Rot heißt Druck',flag('pro.translated')],
-  m_window:['Die Stimme','Ein Mädchen in der Scheibe'], m_first:['Mala','Der erste Schwindel'], m_limits:['Mala','Was sie kann und was nicht'], i1_note:['Mala','Sanjas Zettel',flag('split.afterIvka.verified')],
+  m_window:['Die Stimme','Ein Mädchen in der Scheibe'], m_dead:['Die Stimme','„Ich sehe Tote.“'], m_outline:['Die Stimme','Ein Umriss im Hafenbüro'], m_first:['Mala','Der erste Schwindel'], m_limits:['Mala','Was sie kann und was nicht'], i1_note:['Mala','Sanjas Zettel',flag('split.afterIvka.verified')],
   c1_boat7:['Tonći','Das Boot um sieben'], c1_dinko:['Tonći','„Dinko kommt mit.“'], c1_gift:['Tonći','„Ich bringe dir etwas mit.“'], c1_ankica:['Das Boot','Foto: die ANKICA, 1984'],
   c1_radio:['Ivka','Das Radio ging an'], c1_waits:['Ivka','Sie wartet an der Mole'], c1_date:['Ivka','Für sie ist der 22.12.1984'], c1_askoffice:['Ivka','„Fragen Sie im Hafenbüro.“',['c1_ferry']],
   c1_years:['Ivka','Nachhall am Poller'], c1_nobook:['Das Boot','Der Band 1984 fehlt',['c1_1948','c1_ferry']], c1_1948:['Das Boot','Der Band steht bei „1948“',['c1_ferry']],
@@ -13260,12 +13263,12 @@ M.HINTS_K1=[
  {id:'k1_bed',t:'Ein langer Tag',open:function(G){ return ph(G,['pro_eve','pro_night']) && F(G,'pro.article'); },
   s:['Der Text ist geschrieben. Für heute ist es genug.','Was jetzt noch fehlt, ist Schlaf.','Das Bett in der Wohnung.','Das Bett benutzen.']},
  // ================= Erster Fall · Mittwoch
- {id:'k1_meet',t:'Jemand in der Wohnung',open:function(G){ return G.phase==='c1' && fresh(G) && F(G,'split.intro.v') && !F(G,'split.intro.met'); },
+ {id:'k1_meet',t:'Jemand in der Wohnung',open:function(G){ if (M.slowMeet && M.slowMeet(G)) return G.phase==='c1_night' && F(G,'c1.dinkoTold') && !F(G,'split.intro.met'); return G.phase==='c1' && fresh(G) && F(G,'split.intro.v') && !F(G,'split.intro.met'); },
   s:['Etwas stimmt nicht in der Wohnung. Jemand ist da, den es nicht geben kann.','Erst prüfen, was wirklich ist: die Tür, und die Gestalt selbst.',
-     function(G){ if (!F(G,'split.intro.meet')) return 'Beim Gehen zieht es. Von hinten.'; if (!F(G,'split.intro.door')) return 'Die Tür. Ist sie wirklich abgeschlossen?'; if (!F(G,'split.intro.round')) return 'Von nahem sieht man mehr. Gegen die Lampe zum Beispiel.'; return 'Besuch bietet man etwas an. Aus Gewohnheit: ein Glas Wasser.'; },
-     function(G){ if (!F(G,'split.intro.meet')) return 'Zur Wohnungstür gehen.'; if (!F(G,'split.intro.door')) return 'Noch einmal zur Wohnungstür gehen.'; if (!F(G,'split.intro.round')) return 'Die Gestalt ansehen.';
+     function(G){ if (!F(G,'split.intro.meet')) return M.slowMeet&&M.slowMeet(G)?'Der Umriss ist den ganzen Abend mitgekommen. Zu Hause wird er mehr.':'Beim Gehen zieht es. Von hinten.'; if (!F(G,'split.intro.door')) return 'Die Tür. Ist sie wirklich abgeschlossen?'; if (!F(G,'split.intro.round')) return 'Von nahem sieht man mehr. Gegen die Lampe zum Beispiel.'; return 'Besuch bietet man etwas an. Aus Gewohnheit: ein Glas Wasser.'; },
+     function(G){ if (!F(G,'split.intro.meet')) return M.slowMeet&&M.slowMeet(G)?'Nach Hause gehen, in Markos Wohnung.':'Zur Wohnungstür gehen.'; if (!F(G,'split.intro.door')) return 'Noch einmal zur Wohnungstür gehen.'; if (!F(G,'split.intro.round')) return 'Die Gestalt ansehen.';
        if (I(G,'glassW')) return 'Ihr das Glas Wasser geben, dann fragen: Wer bist du?'; if (I(G,'glass')) return 'Das Glas an der Spüle füllen.'; return 'Ein Glas aus dem Regal über der Kochnische nehmen, an der Spüle füllen und ihr geben.'; }]},
- {id:'k1_mole',t:'Vor Marko war auch jemand',open:function(G){ return G.phase==='c1' && (F(G,'split.intro.met')||!fresh(G)||!F(G,'split.intro.v')) && !F(G,'c1.met'); },
+ {id:'k1_mole',t:'Vor Marko war auch jemand',open:function(G){ return G.phase==='c1' && (F(G,'split.intro.met')||!fresh(G)||!F(G,'split.intro.v')||(M.slowMeet&&M.slowMeet(G))) && !F(G,'c1.met'); },
   s:['„Und vor dir war auch jemand.“ Am Ort des ersten richtigen Schwindels.','Der Schwindel kam an der Riva.','Am Ende der Mole, beim letzten Poller.','An der Riva bis ans Ende der Mole gehen.']},
  {id:'k1_ivka1',t:'Worauf wartet Ivka?',open:function(G){ return ph(G,['c1','c1_night']) && F(G,'c1.met') && !N(G,'c1_askoffice'); },
   s:['Ivka wartet auf ein Boot.','Wer wartet, erzählt gern, worauf.','Welches Boot, welcher Tag, und warum es so spät ist.','Mit Ivka reden: welches Boot, welcher Tag, und dass das Boot spät ist.']},
@@ -13284,6 +13287,8 @@ M.HINTS_K1=[
   s:['Der Band ist gefunden. Herausziehen kann ihn nur einer, der lebt.','Mladen holt ihn, wenn er weiß, wo er suchen soll.','Ein Zahlendreher: 1984 steht bei 1948.','Als Marko Mladen sagen: „Schauen Sie mal im Regal bei 1948.“']},
  {id:'k1_came',t:'Die Fähre fiel aus',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_ferry') && N(G,'c1_boat7') && !N(G,'c1_came'); },
   s:['Die Fähre fuhr an dem Abend nicht. Und doch wollte Tonći um sieben kommen.','Zwei Notizen, die zusammen etwas Neues ergeben.','Tonćis Versprechen auf der Postkarte und der Eintrag im Fahrtenbuch.','Im Notizbuch „Boot um sieben“ mit „Fähre fiel aus“ verbinden.']},
+ {id:'k1_dead',t:'Antonio Perić',open:function(G){ return G.phase==='c1' && M.slowMeet && M.slowMeet(G) && F(G,'c1.logRead') && !F(G,'mk.dead'); },   // langsame Begegnung (91_malaweg.js)
+  s:['Vermisst seit 1984: Antonio Perić. Und an der Mole wartet eine Frau Perić auf ihren Sohn.','Wann ist Ivka Perić gestorben? Das hast du gestern gelesen.','An Ivkas Tür in Veli Varoš hängt die Todesanzeige.','Nach Veli Varoš gehen.']},
  {id:'k1_dinko1',t:'Dinko an der Matejuška',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_matejuska') && !N(G,'c1_brother') && !F(G,'c1.dinkoTold'); },   // Analyse K1-B14: nach dem Geständnis nicht mehr offen
   s:['Dinko Matić war dabei. Er flickt seine Netze an der Matejuška und will nicht reden.','Fragen helfen bei ihm nicht. Etwas aus der Zeit von damals vielleicht.','Das Foto aus Ivkas Wohnung zeigt Tonći und Dinko auf der ANKICA.','An der Matejuška Dinko das Foto mit den zwei Männern im Boot zeigen.']},
  {id:'k1_shed',t:'Dinkos Schweigen',open:function(G){ return ph(G,['c1','c1_night']) && N(G,'c1_brother') && !N(G,'c1_words'); },
@@ -53360,7 +53365,8 @@ var HS=[
        if (fresh && !A.flag('pro.translated')){ await A.m('Seite einunddreißig liegt noch auf dem Schreibtisch. Der Kunde will sie heute, und er zahlt nach Seiten.'); return false; } return true; }
      if (p==='pro_eve'||p==='pro_night'){ await A.m('Heute gehe ich nirgendwo mehr hin.'); return false; }
      // Mittwochabend: bevor er geht, das erste lange Kennenlernen (nur einmal; alte Spielstände in der Stimmenphase behalten den alten Weg)
-     if (p==='c1' && fresh && A.flag('split.intro.v') && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
+     if (p==='c1_night' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.dinkoTold') && !A.flag('split.intro.met')){ if (!A.flag('split.intro.meet')){ await M.slowMeetScene(A); return false; } if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; }   // langsame Begegnung (91_malaweg.js)
+     if (p==='c1' && fresh && A.flag('split.intro.v') && !(M.slowMeet && M.slowMeet(A.G)) && !A.flag('split.intro.met')){ if (A.flag('split.intro.meet')){ if (!A.flag('split.intro.door')) await meetDoor(A); else await A.m(A.cycle('meetDoor',['Ich gehe nicht, solange jemand in meiner Wohnung steht, den es nicht gibt.','Erst will ich wissen, wer da steht.'])); return false; } await M.flatMeeting(A); return false; }
      if (p==='c3' && !A.flag('c3.call')){ await A.m('Das Telefon. Es klingelt schon wieder.'); return false; }
      return true; },
    look:'Die Tür. Drei Schlösser, von denen ich zwei benutze.', g:{look:'Seine Tür. Für mich ist sie keine.'}}
@@ -53514,6 +53520,9 @@ async function askFirstAttack(A){ var G=A.G;
     await A.g('Denk an gestern Abend. An die Dämmerung.'); if (!G.flags['split.intro.dizzy']) break; }
   G.flags['split.intro.first']='told'; await A.g('Ich glaube, es war an der Riva. Ich war dabei. Vor dir hat jemand gewartet.'); A.note('m_first',true); }
 async function endMeeting(A){ var G=A.G; delete G.flags['mala.unknown']; delete G.flags['mala.voice']; G.flags['mala.noSwitch']=true; G.flags['mk.ache']=0; M.E.headache=0; A.note('m_name',true);
+  if (M.slowMeet && M.slowMeet(G)){ delete G.flags['mala.noSwitch']; delete G.flags['mk.outline'];   // langsame Begegnung: nach Dinko, der Brief wartet
+    await A.m('Damit das klar ist: Ich glaube immer noch nicht an dich.'); await A.g('Musst du nicht.'); await A.m('Aber du hast den Seesack gehört. Und Tonćis Brief klebt zusammen.'); await A.g('Dann lesen wir ihn. Zusammen.');
+    A.setFlag('split.intro.met'); G.flags['mala.lock']=false; A.music('flat'); A.save(); return; }
   await A.m('Damit das klar ist: Ich glaube nicht an dich.'); await A.g('Musst du nicht.');
   await A.m('Ich gehe jetzt an die Luft. Vesna hat es verordnet.'); await A.g('Ich komme mit.'); await A.m('Und wenn ich Nein sage?'); await A.g('Dann komme ich trotzdem. Weit weg von dir kann ich nicht.');
   A.setFlag('split.intro.met'); G.flags['mala.lock']=false; A.music('flat'); A.save(); }
@@ -53571,6 +53580,7 @@ M.defineRoom({ id:'flat', name:'Markos Wohnung', width:320, scape:'flat',
   tick:function(A,dt){ var S=A.S; if (S.steam && A.gt<S.steam && M.E.overlay && dt) S.steam+=dt;
     if (!S.dzezvaTaken || (S.steam && A.gt<S.steam) || A.has('dzezva') || A.has('dzezvaW')) return; A.set('dzezvaTaken',false); A.set('steam',0); },
   enter:async function(A,from){ var p=A.G.phase;
+    if (p==='c1_night' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.dinkoTold') && !A.flag('split.intro.meet')){ await M.slowMeetScene(A); return; }   // langsame Begegnung (91_malaweg.js)
     if (p==='pro_eve' && A.first('eveEnter')){ await A.m('Wieder zu Hause. Der Regen hat aufgehört, der Kopf nicht.'); }
     // Analyse, Hinweisthema k3_call (Kann-Liste): Wurde der Anruf unterbrochen (Laden mitten im Gespräch), klingelt es beim Betreten wieder;
     // vorher galt das nur einmal, die Tür blieb zu („Es klingelt schon wieder“), und es gab nichts, womit man abnehmen konnte
@@ -58262,7 +58272,7 @@ M.officeTest=async function(A){ if (A.flag('mk.test')) return; A.setFlag('mk.tes
   await A.g('Bei vierundachtzig?'); await A.m('Bei vierundachtzig. Und wenn da nichts ist, bist du der Jugo, und ich gehe morgen zum Arzt.'); await A.g('Abgemacht.');
   A.flash('Unten links kannst du jetzt zu Mala wechseln.'); A.save(); };
 // der Übergang: Marko lässt die Stimme zum ersten Mal zu – als Probe, leise, damit Mladen nichts hört
-M.voiceTest=async function(A){ if (A.flag('mk.test')) return; if (A.flag('split.intro.met')) return M.officeTest(A);   // nach dem Kennenlernen in der Wohnung: nur noch der Test
+M.voiceTest=async function(A){ if (A.flag('mk.test')) return; if (A.flag('split.intro.met')) return M.officeTest(A); if (M.slowMeet && M.slowMeet(A.G)) return M.voiceTestSlow(A);   // nach dem Kennenlernen in der Wohnung: nur noch der Test
   var c=await A.choose([{t:'(Leise:) „Wenn du da bist, dann sieh nach.“',id:'test'},{t:'(Leise:) „Hör auf.“',id:'stop'},{t:'(Weiter so tun, als wäre nichts.)',id:'ignore',silent:true}],{title:'',conv:false});
   if (c==='stop'){ await A.g('Ich habe noch gar nicht angefangen.'); return; }
   if (c==='ignore'){ await A.wait(1100); await A.g('Das tut weh. Ich weiß.'); await A.animM('headache'); return; }
@@ -58283,7 +58293,8 @@ async function fetchBook(A,Ml){ await A.m('Schauen Sie mal bei achtundvierzig.')
   await readLog(A);
   await Ml.say('Matić … Dinko Matić. Der flickt heute noch seine Netze an der Matejuška. Fragen Sie ihn, wenn Sie den Mut haben.'); A.note('c1_matejuska'); A.unlock('matejuska'); A.unlock('sustipan');
   await A.m('Danke, Gospodine Šimić.'); await Ml.say('Bedanken Sie sich nicht. Das ist kein schöner Eintrag.');
-  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(700); await A.m('…'); await A.g('Bei achtundvierzig.'); await A.m('Zufall.'); } }
+  if (A.malaHere() && !A.flag('mk.accept')){ await A.wait(700); await A.m('…'); await A.g('Bei achtundvierzig.'); await A.m('Zufall.'); }
+  if (M.slowMeet && M.slowMeet(A.G)) await M.afterLogSlow(A); }
 async function readLog(A){ await A.doc({style:'log',title:'Lučka kapetanija Split · Brodski dnevnik 1984',w:252,lines:['22.12.1984','Bura, 9–10 Bf. Linija Supetar–Split:','polazak 17:00 otkazan.  Sljedeći: 23.12., 06:00.','','21:40  Ribarska brodica ANKICA (vl. M. Matić)','prevrnuta pred Sustipanom.','Spašen: Dinko Matić (19).  Nestao: Antonio Perić (22).','Potraga obustavljena 27.12.']});
   await A.m('Am zweiundzwanzigsten Dezember: Bura, Stärke neun bis zehn. Die Fähre aus Supetar um fünf fiel aus.'); await A.m('Um 21:40 kenterte das Fischerboot ANKICA vor Sustipan. Gerettet: Dinko Matić, neunzehn. Vermisst: Antonio Perić, zweiundzwanzig.');
   A.note('c1_ferry'); A.note('c1_capsized',true); A.note('c1_rescued',true);
@@ -61964,6 +61975,7 @@ M.room('varos',{ name:'Veli Varoš', scape:'varos',
   actors:function(S,GS){ var L=[]; if (zdenkaHere(GS)){ var p=M.apos('varos','zdenka',[86,122,'R']); L.push({id:'zdenka',ch:'zdenka',x:p[0],y:p[1],f:p[2]||'R',name:'Zdenka',idle:'sit',speechY:40}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
+    if (p==='c1' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.logRead') && !A.flag('mk.dead')){ await M.deadRealize(A); return; }   // langsame Begegnung (91_malaweg.js)
     if (p==='pro' && from==='ivka' && !A.flag('pro.visited')){ A.setFlag('pro.visited'); var Z=A.npc('zdenka'); await A.walk(M.apos('varos','zdenka')[0]+30,M.apos('varos','zdenka')[1]+2); await A.face('L');
       await Z.say('Haben Sie, was Sie brauchen?');
       if (!A.flag('split.intro.legacy')){ await A.m('Fast.'); if (!A.hasNote('pro_people')){ await A.wait(400); await A.m('Ein Heft voller Namen. Und die Stadt schreibt: keine Kontakte.'); } return; }
@@ -69399,7 +69411,7 @@ M.phaseIn=phaseIn;
 // Der Prolog beginnt mit Marko allein: an der Arbeit, mit Kopfschmerzen, die er dem Jugo zuschreibt. Mala erscheint erst nach der Recherche.
 M.startGame=async function(A){ var E=M.E; E.busy=true;
   try{ M.setPhase('pro'); M.GS.pos.marko={room:'flat',x:188,y:106,f:'B'}; A.unlock('flat');
-    var G=A.G; G.flags['split.intro.v']=2; ['sanja','stipe','frane'].forEach(function(k){ G.flags['met.'+k]=true; });   // die kennt er seit Jahren: keine Vorstellung
+    var G=A.G; G.flags['split.intro.v']=3; ['sanja','stipe','frane'].forEach(function(k){ G.flags['met.'+k]=true; });   // die kennt er seit Jahren: keine Vorstellung
     await M.kinoIntro(A,1,{kicker:'Prolog',title:'Die Stillen',sub:'Split',time:'Dienstag, 15. November 2011 · Nachmittag',ms:4400});   // Zwischenfilm statt Karte (89_kinoszenen.js)
     await A.goto('flat',{x:188,y:106,f:'B',noEnter:true});
     A.music('flat'); await A.wait(400); A.sfx('typing');
@@ -69415,6 +69427,8 @@ M.endProVisit=async function(A){ A.phase('pro_eve'); if (A.flag('split.intro.leg
 // Fall 1 beginnt (nach der Nacht)
 // Fall 1 beginnt (nach der Nacht): Mala ist da – aber nur als Stimme und als Flimmern, das Marko überhört
 // Mittwochabend: kein Traumgespräch (das gehört nach Ivka). Nur ein Zimmer, das nicht ganz so ist, wie er es verlassen hat.
+// split.intro.v ≥ 3: die langsame Begegnung – Mala bleibt bis nach Dinkos Geständnis Stimme und Umriss (siehe 91_malaweg.js)
+M.slowMeet=function(G){ G=G||M.GS; return !!G && (G.flags['split.intro.v']||0)>=3 && !G.flags['split.intro.legacy']; };
 M.startCase1=async function(A){ M.E.screen='card'; await A.card({kicker:'Erster Fall',title:'Das Boot um sieben',time:'Mittwoch, 16. November · Abend',ms:4400});
   A.phase('c1'); A.setFlag('mala.voice'); A.setFlag('mala.unknown'); A.G.flags['mk.ache']=0; var F=A.R('flat'); F.tram=true; F.photoUp=true; F.winOpen=false;
   await A.goto('flat',{x:200,y:118,f:'L',noEnter:true}); A.malaJoin({x:150,y:116,f:'R',fadeIn:false}); await A.fade(0,600);
@@ -69622,6 +69636,76 @@ M.malaReadsLetter=async function(A){ if (!A.flag('c1.letterOpen')) return A.g('E
   A.note('c1_letter'); await A.m('„…Warte zu Hause, im Warmen.“'); await A.wait(500); await A.g('Er hat beim Schreiben an sie gedacht. Darum ist es so deutlich.');
   await A.m('Und du? An wen denkst du?'); await A.wait(1200); await A.g('…'); };
 // Erinnerungsbilder: siehe 93_mem.js
+})(M);
+
+/* ---- 91_malaweg.js ---- */
+/* ===== 91_malaweg.js — Kapitel 1: die langsame Begegnung mit Mala (Spielstände mit split.intro.v ≥ 3, M.slowMeet)
+   Stufen: (1) Prolog: Kirchentreppe, Poller, Fensterscheibe (wie bisher). (2) Mittwochabend: nur Flimmern und Stimme; Marko überhört sie,
+   an der Mole spricht sie hinter ihm. (3) Hafenbüro: „Wenn du da bist, dann sieh nach.“ Aus dem Flimmern wird ein Umriss (mk.outline),
+   er nennt seinen Namen, man kann zu ihm wechseln. Gesicht hat er keins. (4) Nach dem Fahrtenbuch: Veli Varoš, Ivkas Tür – die Todesanzeige.
+   Die Frau an der Mole ist seit Sonntag begraben. „Ich sehe Tote.“ (mk.dead). (5) Nach Dinkos Geständnis, zu Hause: aus dem Umriss wird
+   ein Mädchen. Erst jetzt die Tür, das Glas Wasser, die Fragen (flat.js: meetDoor, meetLook, meetGlass, meetTalk). ===== */
+(function(M){
+'use strict';
+// (3) Hafenbüro: Probe mit der Stimme – Umriss statt Gestalt, der Name, der Wechsel
+M.voiceTestSlow=async function(A){ var G=A.G;
+  var c=await A.choose([{t:'(Leise:) „Wenn du da bist, dann sieh nach.“',id:'test'},{t:'(Leise:) „Hör auf.“',id:'stop'},{t:'(Weiter so tun, als wäre nichts.)',id:'ignore',silent:true}],{title:'',conv:false});
+  if (c==='stop'){ await A.g('Ich habe noch gar nicht angefangen.'); return; }
+  if (c==='ignore'){ await A.wait(1100); await A.g('Das tut weh. Ich weiß.'); await A.animM('headache'); return; }
+  A.setFlag('mk.test'); delete G.flags['mala.voice']; A.setFlag('mk.outline'); G.flags['mk.ache']=0; delete G.flags['mala.noSwitch'];
+  if (A.mala){ A.mala.fadeIn=A.gt; } A.sfx('shimmer'); A.music('ghost'); await A.wait(1500);
+  await A.narrate('Das Flimmern zieht sich zusammen. Ein Umriss, nicht mehr: Schultern, ein Schal, eine Hand am Türrahmen des Archivs. Wo das Gesicht sein müsste, sieht man die Wand.');
+  await A.wait(700); await A.m('…'); await A.m('Der Kopfschmerz wird leiser. Nicht weg. Leiser.');
+  await A.m('Wer bist du?'); await A.g('Mala.'); delete G.flags['mala.unknown']; A.note('m_name',true);
+  await A.m('Das ist kein Name. So sagt man zu kleinen Mädchen.'); await A.g('Es reicht.');
+  await A.g('Bei vierundachtzig?'); await A.m('Bei vierundachtzig. Und wenn da nichts ist, bist du der Jugo, und ich gehe morgen zum Arzt.'); await A.g('Abgemacht.');
+  A.note('m_outline'); await A.wait(500); await A.m('Ich rede mit einem Umriss. Leise, damit der Archivar nichts hört. So weit ist es also.');
+  A.music('case1'); A.flash('Unten links kannst du jetzt zu Mala wechseln.'); A.save(); };
+// nach dem Fahrtenbuch: der Name Perić lässt ihn nicht los
+M.afterLogSlow=async function(A){ if (A.flag('mk.dead') || !A.first('!logPeric')) return;
+  await A.wait(600); await A.m('Antonio Perić. Vermisst seit dem zweiundzwanzigsten Dezember vierundachtzig.');
+  await A.m('Ivka Perićs Sohn kam vierundachtzig nicht nach Hause. Das hat Zdenka gesagt. Gestern, als ich die Wohnung einer Toten ausgemessen habe.');
+  await A.m('Und die Frau an der Mole wartet auf ihren Sohn. Auf Tonći. Im Mantel, der in Varoš am Haken hing.'); await A.wait(800);
+  await A.m('Nein. Erst sehe ich nach. An ihrer Tür.'); };
+// (4) Veli Varoš, Ivkas Tür: die Todesanzeige – „Ich sehe Tote.“
+M.deadRealize=async function(A){ var G=A.G; if (A.flag('mk.dead')) return; A.setFlag('mk.dead'); G.flags['mala.lock']=true;
+  try{ var n=M.ROOMS.varos && M.ROOMS.varos.byId && M.ROOMS.varos.byId.notice, st=n&&(typeof n.st==='function'?null:n.st);
+    if (st) await A.walk(st[0],st[1]); else await A.walk(150,120); await A.face('B'); A.music('silence'); await A.wait(500);
+    await A.narrate('Die Todesanzeige hängt noch an Ivkas Tür. Der Wind hat eine Ecke losgerissen.');
+    await A.doc({style:'letter',title:'✝  OSMRTNICA',lines:['Nach kurzer Krankheit verstarb im Alter von 85 Jahren','IVKA PERIĆ','geb. 1926.','','Die Beerdigung fand am Sonntag, 13.11.2011,','auf dem Friedhof Lovrinac statt.','','Es trauern die Nachbarn aus Veli Varoš.']});
+    A.note('pro_notice',true); await A.wait(700);
+    await A.m('Ivka Perić. Begraben am Sonntag.'); await A.wait(900);
+    await A.m('Und heute Abend stand sie an der Mole. In ihrem Mantel. Und hat mich nach dem Boot aus Supetar gefragt.');
+    A.headache(5200); A.shake(420); await A.anim('dizzy'); A.sfx('static'); await A.wait(800);
+    await A.m('Ich habe ihren Nachruf geschrieben. Zweitausend Zeichen. Und dann habe ich mit ihr geredet.');
+    await A.m('Ihr Atem dampft nicht. Die Bura spürt sie nicht. Sie friert nie.'); await A.wait(600);
+    await A.m('Das Flimmern in meiner Wohnung. Die Stimme hinter mir. Der Umriss im Hafenbüro.'); await A.wait(1100);
+    await A.m('Ich sehe …'); await A.wait(1300); await A.m('Ich sehe Tote.');
+    A.music('ghost'); await A.wait(900);
+    var stp=M.stand('varos','steps')||null; if (A.mala && stp) A.placeG(stp[0],stp[1],'L');
+    await A.narrate('Auf der Kirchentreppe, wo gestern Abend jemand stand, steht der Umriss. Er kommt nicht näher.');
+    await A.g('Nicht alle. Nur die, die noch warten.');
+    var c=await A.choose([{t:'„Und du? Wartest du auch?“',id:'you'},{t:'„Warum ich?“',id:'why'},{t:'(Nichts sagen. Atmen.)',id:'quiet',silent:true}],{title:'',conv:false});
+    if (c==='you'){ await A.wait(1100); await A.g('…'); await A.wait(800); await A.g('Nicht heute.'); }
+    else if (c==='why'){ await A.g('Ich weiß es nicht. Vielleicht, weil du zuhörst, wenn alle anderen weghören.'); await A.m('Ich schreibe Nachrufe. Das ist mein Beruf.'); await A.g('Ja. Vielleicht deshalb.'); }
+    else { await A.wait(1600); await A.m('Ein. Aus. Der Boden kommt langsam zurück.'); }
+    await A.wait(600); await A.g('Sie wartet auf einen Satz, Marko. Dinko weiß, warum Tonći nicht kam.');
+    await A.m('Dinko Matić. An der Matejuška.'); A.note('m_dead'); A.music('case1');
+  } finally { G.flags['mala.lock']=false; }
+  A.save(); };
+// (5) zu Hause, nach Dinko: aus dem Umriss wird ein Mädchen
+M.slowMeetScene=async function(A){ var G=A.G; if (A.flag('split.intro.meet')) return; A.setFlag('split.intro.meet'); G.flags['mala.lock']=true; G.seen['dlg:mq1']=1;   // den Namen kennt er seit dem Hafenbüro
+  delete G.flags['mk.outline']; delete G.flags['mala.voice'];
+  await A.wait(500); A.sfx('door'); await A.m('Die Tür fällt hinter mir ins Schloss. Zwei Schlösser. Die Kette.'); await A.wait(700);
+  await A.faceM('L'); var at=[150,116]; if (!A.malaHere()) A.malaJoin({x:at[0],y:at[1],f:'R',fadeIn:false}); A.placeG(at[0],at[1],'R'); if (A.mala) A.mala.fadeIn=A.gt;
+  A.sfx('shimmer'); A.music('ghost'); await A.wait(1700);
+  await A.narrate('Vor dem Bücherregal steht ein Mädchen. Jeansjacke, grauer Schal, weiße Turnschuhe. Ein Gesicht. Sie steht da, als stünde sie dort schon eine Weile.');
+  await A.wait(700); await A.m('…'); await A.m('Den ganzen Abend warst du hinter mir. Ein Flimmern. Eine Stimme. Ein Umriss.');
+  await A.g('Und jetzt siehst du mich.'); await A.m('Warum jetzt?');
+  await A.g('Weil du bei Dinko nicht weggehört hast. Ich habe es am Seesack gehört, und du hast es geglaubt.'); await A.wait(800);
+  await A.m('„Drži, Tonći. Drži.“'); await A.g('Ja.'); await A.wait(900);
+  await A.m('Ich weiß, wie das klingt: Ich sehe ein Mädchen, das es nicht gibt.'); await A.g('Dann prüf es. Das machst du doch sonst auch.');
+  A.save(); };
 })(M);
 
 /* ---- 92_jakov.js ---- */
@@ -69928,10 +70012,12 @@ M.canTravel=async function(A,L){ var p=A.G.phase, fresh=!A.flag('split.intro.leg
     if (L.id!=='riva' && L.id!=='flat'){ await A.m('Heute nicht mehr.'); return false; } }
   if (p==='i1m' && ['flat','riva','bar'].indexOf(L.id)<0){ await A.m(A.flag('split.afterIvka.verified')?'Nicht jetzt. Mala will ans Wasser. Und ich habe Fragen, die nicht in die Bar gehören.':(A.flag('split.afterIvka.back')?'Nicht jetzt. Nicht, bevor ich weiß, worauf ich mich einlasse.':(A.flag('split.afterIvka.bar')?'Nicht jetzt. Nicht, bevor ich weiß, ob ich mir das alles nur einrede.':'Heute Morgen nicht. Ohne Kaffee komme ich nicht weit.'))); return false; }
   if (p==='c1' && !A.flag('c1.met') && L.id!=='riva' && L.id!=='flat' && L.id!=='varos' && L.id!=='bar'){ await A.m('Nicht jetzt.'); return false; }
+  if (p==='c1' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.logRead') && !A.flag('mk.dead') && L.id==='matejuska'){ await A.m('Erst nach Varoš. Zu Ivkas Tür. Antonio Perić lässt mich nicht los.'); return false; }
   if (p==='c3' && !A.flag('c3.call') && L.id!=='flat'){ await A.m('Das Telefon …'); return false; }
   return true; };
 // ---------------------------------------------------------------- Mala: Gespräche mit ihr (Marko klickt Mala an)
 M.lookAtMala=async function(A){ var p=A.G.phase; if (A.flag('split.intro.meet') && !A.flag('split.intro.met') && M.meetLook) return M.meetLook(A);
+  if (A.flag('mk.outline') && !A.flag('split.intro.meet')) return A.m(A.cycle('mOutL',['Ein Umriss. Schultern, ein Schal. Wo das Gesicht sein müsste, sieht man die Wand.','Wenn ich direkt hinsehe, wird er dünner. Aus dem Augenwinkel ist er fast ein Mädchen.','Ein Umriss, mehr nicht. Mehr will ich auch nicht sehen.']));
   if (A.flag('mala.voice')) return A.m(A.cycle('mVoiceL',['Ein Flimmern in der Luft. Wie über heißem Asphalt. Im November.','Da ist nichts. Nur ein Lichtfleck, der nicht weggeht, wenn ich blinzle.','Wenn ich nicht hinsehe, ist es weg. Fast.']));
   if ((p==='c1'||p==='c1_night') && !A.flag('mk.accept')) return A.m(A.cycle('mDeny',['Ich sehe nicht hin. Wenn ich nicht hinsehe, ist da niemand.','Jeansjacke, grauer Schal. Ein Mädchen wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Ich sehe nicht hin.','Wenn das Licht von hinten kommt, sieht man durch sie hindurch. Das liegt am Licht.']));
   if (p==='c1'||p==='c1_night') return A.m('Mala. Jeansjacke, grauer Schal, weiße Turnschuhe. Kleidung wie aus einem Fotoalbum von neunzehnhundertzweiundneunzig. Wenn das Licht von hinten kommt, sieht man durch sie hindurch.');
@@ -78537,7 +78623,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="14.11.2026 · 1f7163";
+M.BUILD="14.11.2026 · 3009f8";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

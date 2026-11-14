@@ -123,6 +123,7 @@ M.room('varos',{ name:'Veli Varoš', scape:'varos',
   actors:function(S,GS){ var L=[]; if (zdenkaHere(GS)){ var p=M.apos('varos','zdenka',[86,122,'R']); L.push({id:'zdenka',ch:'zdenka',x:p[0],y:p[1],f:p[2]||'R',name:'Zdenka',idle:'sit',speechY:40}); } return L; },
   hotspots:HS,
   enter:async function(A,from){ var p=A.G.phase;
+    if (p==='c1' && M.slowMeet && M.slowMeet(A.G) && A.flag('c1.logRead') && !A.flag('mk.dead')){ await M.deadRealize(A); return; }   // langsame Begegnung (91_malaweg.js)
     if (p==='pro' && from==='ivka' && !A.flag('pro.visited')){ A.setFlag('pro.visited'); var Z=A.npc('zdenka'); await A.walk(M.apos('varos','zdenka')[0]+30,M.apos('varos','zdenka')[1]+2); await A.face('L');
       await Z.say('Haben Sie, was Sie brauchen?');
       if (!A.flag('split.intro.legacy')){ await A.m('Fast.'); if (!A.hasNote('pro_people')){ await A.wait(400); await A.m('Ein Heft voller Namen. Und die Stadt schreibt: keine Kontakte.'); } return; }

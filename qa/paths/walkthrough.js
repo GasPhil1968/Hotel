@@ -89,26 +89,22 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await expect((await D.st()).phase === 'c1', 'Fall 1 begonnen'); await log('Nacht mit Mala, Fall 1');
     // ================= FALL 1
     await flag('mala.voice'); await D.act('look', 'window'); await D.drain(); await note('m_tram'); await D.act('use', 'window'); await D.drain(); await log('Straßenbahn auf der Scheibe'); await shot('c1_flat');
-    // das erste lange Kennenlernen, in der Wohnung: Tür, um sie herumgehen, ein Glas Wasser, dann die Fragen
-    await D.exit('door'); await D.drain(); await expect(await room() === 'flat', 'Kennenlernen statt Gehen'); await flag('split.intro.meet'); await expect(!(await D.flag('mala.voice')), 'jetzt eine Gestalt');
-    await D.exit('door'); await D.drain(); await flag('split.intro.door');
-    await D.act('look', '_mala'); await D.drain(); await flag('split.intro.round');
-    await D.act('take', 'glasses'); await D.drain(); await inv('glass'); await D.act('use', 'sink', 'glass'); await D.drain(); await inv('glassW');
-    await D.act('use', '_mala', 'glassW'); await D.choose('Wer bist du?'); await expect(!(await D.ev(() => M.uiHit(20, 170) === 'sw')), 'kein Wechselknopf, solange der Wechsel gesperrt ist'); await D.choose('Was kannst du'); await D.choose('Seit wann'); await D.choose('Genug für heute'); await D.choose('In der Bar'); await D.choose('An der Riva'); await D.drain();
-    await flag('split.intro.met'); await flag('split.intro.glass'); await note('m_name'); await note('m_first'); await expect(!(await D.flag('mala.unknown')), 'Name bekannt');
-    await expect(!(await D.ev(() => M.E.canSwitch())), 'Wechsel erst nach dem Praxistest'); await log('Kennenlernen in der Wohnung'); await shot('c1_meet');
-    await D.exit('door'); await D.drain(); await expect(await room() === 'map', 'jetzt geht er'); await D.travel('riva'); await log('Riva');
-    await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain(); await D.page.waitForTimeout(300); await D.choose('Nicht hinsehen'); await D.drain();
+    // langsame Begegnung (91_malaweg.js): Mala bleibt Flimmern und Stimme; die Wohnung lässt ihn gehen
+    await D.exit('door'); await D.drain(); await expect(await room() === 'map', 'er geht, das Flimmern kommt mit'); await expect(await D.flag('mala.voice'), 'noch Stimme'); await D.travel('riva'); await log('Riva');
+    await D.ev(() => M.E.walkPlayerTo(560, 116)); await D.drain(); await D.page.waitForTimeout(300); await D.choose('Nicht umdrehen'); await D.drain(); await note('m_voice');
     await flag('c1.met'); await expect((await D.st()).dlg === null, 'kein Dialog'); await expect(!(await D.ev(() => M.E.canSwitch())), 'noch kein Wechsel'); await log('Begegnung mit Ivka'); await shot('riva_meet');
     await talk('ivka', 'Welches Boot', 'Welcher Tag', 'Das Boot ist spät', 'Ich gehe ein Stück'); await note('c1_askoffice');
     await D.exit('office_door'); await D.drain(); await expect(await room() === 'office', 'Hafenbüro'); await shot('office');
-    await talk('mladen', 'Frage zu einer Fähre', 'Für einen Text', 'Dann sieh nach', 'Danke. Laku'); await flag('c1.searched'); await flag('mk.test');
-    await expect(await D.ev(() => M.E.canSwitch()), 'Wechsel möglich'); await expect(!(await D.hasNote('m_voice')), 'keine zweite Vorstellung'); await log('Praxistest: Marko lässt sie nachsehen'); await shot('office_test');
+    await talk('mladen', 'Frage zu einer Fähre', 'Für einen Text', 'Danke. Laku'); await flag('c1.searched'); await expect(!(await D.flag('mk.test')), 'Stimme bietet an, er hat noch nicht Ja gesagt');
+    await D.act('talk', '_mala'); await D.drain(); await D.choose('Wenn du da bist'); await D.drain(); await flag('mk.test'); await flag('mk.outline'); await note('m_name'); await note('m_outline');
+    await expect(await D.ev(() => M.E.canSwitch()), 'Wechsel möglich'); await log('Praxistest: Marko lässt sie nachsehen'); await shot('office_test');
     await D.switchTo('mala'); await D.exit('archive_door'); await D.drain(); await expect(await room() === 'archive', 'Archiv'); await shot('archive');
     await D.act('look', 'binder_1948'); await D.drain(); await expect(!(await D.hasNote('c1_1948')), 'Schild ausgeblichen: Ansehen reicht nicht'); await D.act('sense', 'binder_1948'); await D.drain(); await note('c1_1948'); await D.exit('door'); await D.drain(); await D.switchTo('marko'); await log('1948 gefunden');
     await talk('mladen', 'Schauen Sie mal', 'Danke. Laku'); await flag('c1.logRead'); await note('c1_ferry'); await log('Fahrtenbuch');
     let r; if (!NEU){ r = await D.combine('c1_boat7', 'c1_ferry'); await expect(r.ok, 'Kombination c1_came'); await note('c1_came'); }
-    await D.exit('door'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await log('Matejuška'); await shot('matejuska');
+    await D.exit('door'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await expect(await room() === 'map', 'erst zu Ivkas Tür');
+    await D.travel('varos'); await D.drain(); await D.choose('Wartest du auch'); await D.drain(); await flag('mk.dead'); await note('m_dead'); await log('Todesanzeige: Ich sehe Tote'); await shot('varos_dead');
+    await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await log('Matejuška'); await shot('matejuska');
     await D.act('use', 'dinko', 'photo1'); await D.drain(); await note('c1_brother');
     await D.switchTo('mala'); await D.exit('shed_door'); await D.drain(); await expect(await room() === 'shed', 'Schuppen'); await shot('shed');
     await D.act('sense', 'seabag'); await D.drain(); await note('c1_words'); await D.exit('door'); await D.drain(); await log('Seesack');
@@ -117,6 +113,14 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.act('use', '_mala', 'letter_t'); await D.drain(); await expect(!(await D.hasNote('c1_letter')), 'Brief noch zu');
     await D.item('read', 'letter_t'); await D.drain(); await note('c1_stuck'); await log('Brief klebt');
     await D.exit('exit'); await D.drain(); await D.travel('flat'); await D.drain(); await expect(await room() === 'flat', 'Wohnung');
+    // zu Hause: aus dem Umriss wird ein Mädchen – Tür, um sie herumgehen, ein Glas Wasser, dann die Fragen
+    await flag('split.intro.meet'); await expect(!(await D.flag('mk.outline')), 'jetzt eine Gestalt');
+    await D.exit('door'); await D.drain(); await flag('split.intro.door');
+    await D.act('look', '_mala'); await D.drain(); await flag('split.intro.round');
+    await D.act('take', 'glasses'); await D.drain(); await inv('glass'); await D.act('use', 'sink', 'glass'); await D.drain(); await inv('glassW');
+    await D.act('use', '_mala', 'glassW'); await D.drain(); await D.choose('Was kannst du'); await D.drain(); await D.choose('Seit wann'); await D.drain(); await D.choose('Genug für heute'); await D.drain();
+    for (let k = 0; k < 6 && !(await D.flag('split.intro.met')); k++) { const s0 = await D.st(); if (s0.dlg) { await D.ev(() => { const o = M.E.dlg.opts; const i = o.findIndex(x => /Riva|Poller/.test(x.t)); M.TA.choose(o[i >= 0 ? i : o.length - 1].t); }); } await D.drain(); }
+    await flag('split.intro.met'); await flag('split.intro.glass'); await note('m_first'); await expect(await D.ev(() => M.E.canSwitch()), 'Wechsel weiter möglich'); await log('Kennenlernen in der Wohnung'); await shot('c1_meet');
     await D.act('use', 'stove', 'letter_t'); await D.drain(); await expect(!(await D.flag('c1.letterOpen')), 'nicht über der Flamme');
     await D.act('take', 'dzezva'); await D.act('use', 'sink', 'dzezva'); await D.act('use', 'stove', 'dzezvaW'); await D.drain(); await D.act('use', 'stove', 'letter_t'); await D.drain(); await flag('c1.letterOpen'); await log('Brief über Dampf geöffnet');
     await D.act('use', '_mala', 'letter_t'); await D.drain(); await note('c1_letter'); await log('Mala liest den Brief');
