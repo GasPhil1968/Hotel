@@ -92,7 +92,7 @@ M.confront=async function(A,spec){ var key='cx.'+spec.id, r=A.G.flags[key]||0, N
     if (c==='next'){ i=(i+1)%R.st.length; continue; } if (c==='prev'){ i=(i+R.st.length-1)%R.st.length; continue; }
     if (c==='press'){ await lines(A,spec,st.press||[['N','…']]); continue; }
     var ev=await M.pickEvidence(A,{cases:spec.cases,title:'Was halte ich '+spec.dat+' entgegen?'}); if (!ev) continue;
-    if (st.ok && st.ok[ev]){ M.sfx('note'); await lines(A,spec,st.ok[ev]); r++; A.G.flags[key]=r; i=0; said=-1; pat=spec.patience||3; if (R.gain) R.gain.forEach(function(n){ A.note(n); }); A.save(); continue; }
+    if (st.ok && st.ok[ev]){ await lines(A,spec,st.ok[ev]); if (M.stampFx) M.stampFx('GETROFFEN'); r++; A.G.flags[key]=r; i=0; said=-1; pat=spec.patience||3; if (R.gain) R.gain.forEach(function(n){ A.note(n); }); A.save(); continue; }
     if (st.near && st.near[ev]){ await A.m(st.near[ev]); continue; }
     pat--; M.sfx('nope'); A.shake(180); var dm=spec.dismiss||['Was soll das?']; await N.say(dm[(3-pat)%dm.length]);
     if (pat<=0){ await N.say(spec.turn||'Lassen Sie mich.'); await A.m('Jetzt hört er mir nicht mehr zu. Ich versuche es gleich noch einmal.'); return false; } }

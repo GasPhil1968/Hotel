@@ -316,7 +316,7 @@ E.convStart=convStart;
 
 // ---------------------------------------------------------------- Notizen
 function hasNote(id){ return GS.notes.indexOf(id)>=0; }
-function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz '+id); if (hasNote(id)) return false; GS.notes.push(id); if (!M.NOTES[id].show) return true; GS.noteNew[id]=1; if (!quiet){ M.sfx('note'); E.msg={t:'Neue Notiz: '+(M.NOTES[id].s||M.NOTES[id].t),until:gt+3200,note:1}; } return true; }
+function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz '+id); if (hasNote(id)) return false; GS.notes.push(id); if (!M.NOTES[id].show) return true; GS.noteNew[id]=1; if (!quiet){ M.sfx('note'); M.sfx('pen'); E.msg={t:'Neue Notiz: '+(M.NOTES[id].s||M.NOTES[id].t),until:gt+3200,note:1,at:gt}; } return true; }
 E.hasNote=hasNote; E.addNote=addNote;
 // zwei Notizen verbinden
 async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
@@ -324,7 +324,7 @@ async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
   if (typeof d==='function'){ return await d(API)||{ok:true}; }
   if (d.if && !d.if(GS)) { M.sfx('nope'); return {ok:false,t:(typeof d.no==='function'?d.no(GS):d.no)||'Da fehlt noch etwas.'}; }
   if (hasNote(d.to)) return {ok:false,t:'Das habe ich schon verstanden.'};
-  addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
+  addNote(d.to,true); M.sfx('deduce'); if (M.stampFx) M.stampFx('GELÖST'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
 E.combineNotes=combineNotes;
 // im Gespräch eine Notiz auswählen
 // opt.also: Notizen, die in diesem Gespräch gültige Antworten sind; sie stehen zur Wahl, sobald man sie hat, auch wenn das Notizbuch sie sonst ausblendet

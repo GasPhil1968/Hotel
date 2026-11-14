@@ -1972,7 +1972,9 @@ var SFX={
   deduce:function(t){ [440,554,659,880,1109].forEach(function(f,i){ tone('sine',f,t+i*0.08,0.9-i*0.1,0.05); tone('sine',f*2,t+i*0.08,0.3,0.012); }); },
   nope:function(t){ tone('sine',220,t,0.18,0.06,null,180); },
   paper:function(t){ for (var j=0;j<4;j++) noise(t+j*0.05,0.06,0.06,'highpass',2500+Math.random()*2000,0.6); },
-  page:function(t){ noise(t,0.18,0.07,'bandpass',3000,0.8,null,1500); },
+  page:function(t){ noise(t,0.18,0.07,'bandpass',3000,0.8,null,1500); noise(t+0.12,0.14,0.05,'bandpass',2200,0.7,null,900); },   // Umblättern: Anheben und Hinlegen
+  pen:function(t){ for (var j=0;j<8;j++){ noise(t+j*0.055+Math.random()*0.02,0.035+Math.random()*0.02,0.022,'bandpass',3800+Math.random()*2200,3.5); } },   // Markos Stift: leises Kratzen
+  stamp:function(t){ tone('sine',110,t,0.22,0.22,null,48); noise(t,0.08,0.16,'lowpass',520,0.7); noise(t+0.005,0.03,0.05,'bandpass',1600,1.4); },   // Stempel: dumpf
   door:function(t){ noise(t,0.12,0.12,'lowpass',300,1); tone('sine',95,t,0.25,0.12,null,60); },
   creak:function(t){ var o=AC.createOscillator(), g=AC.createGain(), f=AC.createBiquadFilter(); o.type='sawtooth'; o.frequency.setValueAtTime(110,t); o.frequency.linearRampToValueAtTime(160,t+0.5); f.type='bandpass'; f.frequency.value=700; f.Q.value=6; env(g,t,0.05,0.06,0.8); o.connect(f); f.connect(g); g.connect(sfxG); o.start(t); o.stop(t+0.95); },
   lock:function(t){ tone('sine',170,t,0.1,0.15); noise(t+0.07,0.04,0.18,'highpass',2600,1); tone('square',900,t+0.09,0.03,0.04); },
@@ -2537,7 +2539,7 @@ E.convStart=convStart;
 
 // ---------------------------------------------------------------- Notizen
 function hasNote(id){ return GS.notes.indexOf(id)>=0; }
-function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz '+id); if (hasNote(id)) return false; GS.notes.push(id); if (!M.NOTES[id].show) return true; GS.noteNew[id]=1; if (!quiet){ M.sfx('note'); E.msg={t:'Neue Notiz: '+(M.NOTES[id].s||M.NOTES[id].t),until:gt+3200,note:1}; } return true; }
+function addNote(id,quiet){ if (!M.NOTES[id]) throw new Error('unbekannte Notiz '+id); if (hasNote(id)) return false; GS.notes.push(id); if (!M.NOTES[id].show) return true; GS.noteNew[id]=1; if (!quiet){ M.sfx('note'); M.sfx('pen'); E.msg={t:'Neue Notiz: '+(M.NOTES[id].s||M.NOTES[id].t),until:gt+3200,note:1,at:gt}; } return true; }
 E.hasNote=hasNote; E.addNote=addNote;
 // zwei Notizen verbinden
 async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
@@ -2545,7 +2547,7 @@ async function combineNotes(a,b){ var d=M.DEDUCE[a+'+'+b]||M.DEDUCE[b+'+'+a];
   if (typeof d==='function'){ return await d(API)||{ok:true}; }
   if (d.if && !d.if(GS)) { M.sfx('nope'); return {ok:false,t:(typeof d.no==='function'?d.no(GS):d.no)||'Da fehlt noch etwas.'}; }
   if (hasNote(d.to)) return {ok:false,t:'Das habe ich schon verstanden.'};
-  addNote(d.to,true); M.sfx('deduce'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
+  addNote(d.to,true); M.sfx('deduce'); if (M.stampFx) M.stampFx('GELÖST'); GS.flags['deduced.'+d.to]=true; if (M.onDeduce) try{ M.onDeduce(d.to,GS); }catch(e){ console.error(e); } return {ok:true,t:M.NOTES[d.to].t,to:d.to,say:d.say}; }
 E.combineNotes=combineNotes;
 // im Gespräch eine Notiz auswählen
 // opt.also: Notizen, die in diesem Gespräch gültige Antworten sind; sie stehen zur Wahl, sobald man sie hat, auch wenn das Notizbuch sie sonst ausblendet
@@ -3776,7 +3778,19 @@ var busyAt=0; function hudRest(){ if (!E.busy||E.dlg||E.overlay||E.menu||E.scree
 function drawCursor(){ if (!pointer.show||pointer.touch||(WIDE&&pointer.y>=1000)) return; var x=Math.round(pointer.x), y=Math.round(pointer.y), c=hover||hoverUI?((Math.floor(E.gt()/140)%2)?(isG()?P.x5:P.y4):P.s6):(isG()?P.x3:P.y3); if (E.busy&&E.screen==='game'&&!E.dlg) c=P.k2;
   for (var i=2;i<=5;i++){ fb.px(x-i,y,c); fb.px(x+i,y,c); fb.px(x,y-i,c); fb.px(x,y+i,c); } }
 function applyFade(){ var n=Math.round(E.fade); if (n===0) return; var tb=n<0?M.UP:M.DN, m=Math.abs(n); for (var i=0;i<fb.d.length;i++){ var c=fb.d[i]; for (var k=0;k<m;k++) c=tb[c]; fb.d[i]=c; } if (n<=-7){ for (var j=0;j<fb.d.length;j++) if (bayer(j%W,(j/W)|0)<(m-6)/3) fb.d[j]=P.l1; } }
-function drawMsg(){ if (!E.msg||E.gt()>E.msg.until||E.menu) return; var t=E.msg.t, ls=M.wrap(t,250), y=E.screen==='game'?SH-12-ls.length*9:186; ls.forEach(function(l,i){ var w=M.textWidth(l); fb.rect(160-(w>>1)-3,y+i*9-1,w+6,9,P.k1); M.text(fb,l,160-(w>>1),y+i*9,E.msg.note?(isG()?P.x5:P.y4):P.s6); }); }
+// Stempel (Schluss gezogen, Treffer im Kreuzverhör): fällt in 120 ms, liegt, blendet gerastert aus; dumpfer Ton (04_audio.js „stamp“)
+M.stampFx=function(t){ E.stampFx={t:t,at:E.gt()}; M.sfx('stamp'); };
+function drawStamp(){ var s=E.stampFx; if (!s) return; var age=E.gt()-s.at; if (age>1500){ E.stampFx=null; return; } if (E.menu) return;
+  var drop=age<120?Math.round((120-age)/30):0, shake=age>=120&&age<200?((age>>4)&1?1:-1):0, w=M.textWidth(s.t)*2+16, x=160-(w>>1)+shake, y=24-drop, fade=age>1100?(age-1100)/400:0, col=P.r3;
+  for (var j=0;j<24;j++) for (var i=0;i<w;i++){ var X=x+i, Y=y+j, edge=(i<2||i>=w-2||j<2||j>=22); if (!edge) continue; if (fade && bayer(X,Y)<fade) continue; if (M.hash(X,Y)<0.12) continue; fb.px(X,Y,col); }
+  if (fade<1){ var tmp=new M.Buf(w,24,T); M.big(tmp,s.t,w>>1,5,col,2); for (var q=0;q<w*24;q++){ var c=tmp.d[q]; if (c===T) continue; var X2=x+(q%w), Y2=y+((q/w)|0); if (fade && bayer(X2,Y2)<fade) continue; if (M.hash(X2,Y2)<0.1) continue; fb.px(X2,Y2,c); } } }
+// neue Notiz: Markos Stift schreibt die Zeile in 0,7 s, die Spitze läuft mit
+function penAt(x,y){ for (var k=0;k<6;k++){ fb.px(x+1+k,y-1-k,P.s5); fb.px(x+2+k,y-1-k,P.s2); } fb.px(x+7,y-7,P.r3); fb.px(x+8,y-7,P.r2); fb.px(x,y,P.n0); fb.px(x+1,y,P.n1); }
+function drawMsg(){ drawStamp(); if (!E.msg||E.gt()>E.msg.until||E.menu) return; var t=E.msg.t, ls=M.wrap(t,250), y=E.screen==='game'?SH-12-ls.length*9:186;
+  var wr=(E.msg.note&&E.msg.at!==undefined)?Math.min(1,(E.gt()-E.msg.at)/700):1, total=ls.reduce(function(a,l){ return a+l.length; },0), left=Math.ceil(total*wr), pen=null;
+  ls.forEach(function(l,i){ var w=M.textWidth(l), x0=160-(w>>1); fb.rect(x0-3,y+i*9-1,w+6,9,P.k1); var show=l; if (wr<1){ show=l.slice(0,Math.max(0,left)); left-=l.length; if (show.length<l.length && !pen) pen=[x0+M.textWidth(show)+1,y+i*9+6]; }
+    if (show) M.text(fb,show,x0,y+i*9,E.msg.note?(isG()?P.x5:P.y4):P.s6); });
+  if (pen) penAt(pen[0],pen[1]); }
 function drawDrag(){ if (!drag||!drag.on||(WIDE&&pointer.y>=1000)) return; var it=M.ITEMS[drag.id], ic=iconOf(drag.id); var x=Math.round(pointer.x), y=Math.round(pointer.y), ix=x-(ic.w>>1), iy=y-ic.h-8; fb.blit(ic,ix,iy);
   var tgt=null; if (pointer.y<SH && hover && !hover.item) tgt=E.nameOf(hover); else { var u=uiAt(pointer.x,pointer.y); if (u&&u[0]==='i'){ var o=invList()[+u.slice(2)]; if (o&&o!==drag.id) tgt=M.ITEMS[o].name; } }
   var lab=tgt?('Benutze '+it.name+' mit '+tgt):it.name, lw=M.textWidth(lab), lx=Math.max(2,Math.min(W-2-lw,x-(lw>>1))), ly=Math.max(2,iy-11); M.text(fb,lab,lx,ly,tgt?P.l0:P.s4,P.k0); }
@@ -17020,7 +17034,7 @@ M.confront=async function(A,spec){ var key='cx.'+spec.id, r=A.G.flags[key]||0, N
     if (c==='next'){ i=(i+1)%R.st.length; continue; } if (c==='prev'){ i=(i+R.st.length-1)%R.st.length; continue; }
     if (c==='press'){ await lines(A,spec,st.press||[['N','…']]); continue; }
     var ev=await M.pickEvidence(A,{cases:spec.cases,title:'Was halte ich '+spec.dat+' entgegen?'}); if (!ev) continue;
-    if (st.ok && st.ok[ev]){ M.sfx('note'); await lines(A,spec,st.ok[ev]); r++; A.G.flags[key]=r; i=0; said=-1; pat=spec.patience||3; if (R.gain) R.gain.forEach(function(n){ A.note(n); }); A.save(); continue; }
+    if (st.ok && st.ok[ev]){ await lines(A,spec,st.ok[ev]); if (M.stampFx) M.stampFx('GETROFFEN'); r++; A.G.flags[key]=r; i=0; said=-1; pat=spec.patience||3; if (R.gain) R.gain.forEach(function(n){ A.note(n); }); A.save(); continue; }
     if (st.near && st.near[ev]){ await A.m(st.near[ev]); continue; }
     pat--; M.sfx('nope'); A.shake(180); var dm=spec.dismiss||['Was soll das?']; await N.say(dm[(3-pat)%dm.length]);
     if (pat<=0){ await N.say(spec.turn||'Lassen Sie mich.'); await A.m('Jetzt hört er mir nicht mehr zu. Ich versuche es gleich noch einmal.'); return false; } }
@@ -78523,7 +78537,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="14.11.2026 · 67e15d";
+M.BUILD="14.11.2026 · 1f7163";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

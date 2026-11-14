@@ -767,7 +767,19 @@ var busyAt=0; function hudRest(){ if (!E.busy||E.dlg||E.overlay||E.menu||E.scree
 function drawCursor(){ if (!pointer.show||pointer.touch||(WIDE&&pointer.y>=1000)) return; var x=Math.round(pointer.x), y=Math.round(pointer.y), c=hover||hoverUI?((Math.floor(E.gt()/140)%2)?(isG()?P.x5:P.y4):P.s6):(isG()?P.x3:P.y3); if (E.busy&&E.screen==='game'&&!E.dlg) c=P.k2;
   for (var i=2;i<=5;i++){ fb.px(x-i,y,c); fb.px(x+i,y,c); fb.px(x,y-i,c); fb.px(x,y+i,c); } }
 function applyFade(){ var n=Math.round(E.fade); if (n===0) return; var tb=n<0?M.UP:M.DN, m=Math.abs(n); for (var i=0;i<fb.d.length;i++){ var c=fb.d[i]; for (var k=0;k<m;k++) c=tb[c]; fb.d[i]=c; } if (n<=-7){ for (var j=0;j<fb.d.length;j++) if (bayer(j%W,(j/W)|0)<(m-6)/3) fb.d[j]=P.l1; } }
-function drawMsg(){ if (!E.msg||E.gt()>E.msg.until||E.menu) return; var t=E.msg.t, ls=M.wrap(t,250), y=E.screen==='game'?SH-12-ls.length*9:186; ls.forEach(function(l,i){ var w=M.textWidth(l); fb.rect(160-(w>>1)-3,y+i*9-1,w+6,9,P.k1); M.text(fb,l,160-(w>>1),y+i*9,E.msg.note?(isG()?P.x5:P.y4):P.s6); }); }
+// Stempel (Schluss gezogen, Treffer im Kreuzverhör): fällt in 120 ms, liegt, blendet gerastert aus; dumpfer Ton (04_audio.js „stamp“)
+M.stampFx=function(t){ E.stampFx={t:t,at:E.gt()}; M.sfx('stamp'); };
+function drawStamp(){ var s=E.stampFx; if (!s) return; var age=E.gt()-s.at; if (age>1500){ E.stampFx=null; return; } if (E.menu) return;
+  var drop=age<120?Math.round((120-age)/30):0, shake=age>=120&&age<200?((age>>4)&1?1:-1):0, w=M.textWidth(s.t)*2+16, x=160-(w>>1)+shake, y=24-drop, fade=age>1100?(age-1100)/400:0, col=P.r3;
+  for (var j=0;j<24;j++) for (var i=0;i<w;i++){ var X=x+i, Y=y+j, edge=(i<2||i>=w-2||j<2||j>=22); if (!edge) continue; if (fade && bayer(X,Y)<fade) continue; if (M.hash(X,Y)<0.12) continue; fb.px(X,Y,col); }
+  if (fade<1){ var tmp=new M.Buf(w,24,T); M.big(tmp,s.t,w>>1,5,col,2); for (var q=0;q<w*24;q++){ var c=tmp.d[q]; if (c===T) continue; var X2=x+(q%w), Y2=y+((q/w)|0); if (fade && bayer(X2,Y2)<fade) continue; if (M.hash(X2,Y2)<0.1) continue; fb.px(X2,Y2,c); } } }
+// neue Notiz: Markos Stift schreibt die Zeile in 0,7 s, die Spitze läuft mit
+function penAt(x,y){ for (var k=0;k<6;k++){ fb.px(x+1+k,y-1-k,P.s5); fb.px(x+2+k,y-1-k,P.s2); } fb.px(x+7,y-7,P.r3); fb.px(x+8,y-7,P.r2); fb.px(x,y,P.n0); fb.px(x+1,y,P.n1); }
+function drawMsg(){ drawStamp(); if (!E.msg||E.gt()>E.msg.until||E.menu) return; var t=E.msg.t, ls=M.wrap(t,250), y=E.screen==='game'?SH-12-ls.length*9:186;
+  var wr=(E.msg.note&&E.msg.at!==undefined)?Math.min(1,(E.gt()-E.msg.at)/700):1, total=ls.reduce(function(a,l){ return a+l.length; },0), left=Math.ceil(total*wr), pen=null;
+  ls.forEach(function(l,i){ var w=M.textWidth(l), x0=160-(w>>1); fb.rect(x0-3,y+i*9-1,w+6,9,P.k1); var show=l; if (wr<1){ show=l.slice(0,Math.max(0,left)); left-=l.length; if (show.length<l.length && !pen) pen=[x0+M.textWidth(show)+1,y+i*9+6]; }
+    if (show) M.text(fb,show,x0,y+i*9,E.msg.note?(isG()?P.x5:P.y4):P.s6); });
+  if (pen) penAt(pen[0],pen[1]); }
 function drawDrag(){ if (!drag||!drag.on||(WIDE&&pointer.y>=1000)) return; var it=M.ITEMS[drag.id], ic=iconOf(drag.id); var x=Math.round(pointer.x), y=Math.round(pointer.y), ix=x-(ic.w>>1), iy=y-ic.h-8; fb.blit(ic,ix,iy);
   var tgt=null; if (pointer.y<SH && hover && !hover.item) tgt=E.nameOf(hover); else { var u=uiAt(pointer.x,pointer.y); if (u&&u[0]==='i'){ var o=invList()[+u.slice(2)]; if (o&&o!==drag.id) tgt=M.ITEMS[o].name; } }
   var lab=tgt?('Benutze '+it.name+' mit '+tgt):it.name, lw=M.textWidth(lab), lx=Math.max(2,Math.min(W-2-lw,x-(lw>>1))), ly=Math.max(2,iy-11); M.text(fb,lab,lx,ly,tgt?P.l0:P.s4,P.k0); }

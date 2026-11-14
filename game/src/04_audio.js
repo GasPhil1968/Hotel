@@ -49,7 +49,9 @@ var SFX={
   deduce:function(t){ [440,554,659,880,1109].forEach(function(f,i){ tone('sine',f,t+i*0.08,0.9-i*0.1,0.05); tone('sine',f*2,t+i*0.08,0.3,0.012); }); },
   nope:function(t){ tone('sine',220,t,0.18,0.06,null,180); },
   paper:function(t){ for (var j=0;j<4;j++) noise(t+j*0.05,0.06,0.06,'highpass',2500+Math.random()*2000,0.6); },
-  page:function(t){ noise(t,0.18,0.07,'bandpass',3000,0.8,null,1500); },
+  page:function(t){ noise(t,0.18,0.07,'bandpass',3000,0.8,null,1500); noise(t+0.12,0.14,0.05,'bandpass',2200,0.7,null,900); },   // Umblättern: Anheben und Hinlegen
+  pen:function(t){ for (var j=0;j<8;j++){ noise(t+j*0.055+Math.random()*0.02,0.035+Math.random()*0.02,0.022,'bandpass',3800+Math.random()*2200,3.5); } },   // Markos Stift: leises Kratzen
+  stamp:function(t){ tone('sine',110,t,0.22,0.22,null,48); noise(t,0.08,0.16,'lowpass',520,0.7); noise(t+0.005,0.03,0.05,'bandpass',1600,1.4); },   // Stempel: dumpf
   door:function(t){ noise(t,0.12,0.12,'lowpass',300,1); tone('sine',95,t,0.25,0.12,null,60); },
   creak:function(t){ var o=AC.createOscillator(), g=AC.createGain(), f=AC.createBiquadFilter(); o.type='sawtooth'; o.frequency.setValueAtTime(110,t); o.frequency.linearRampToValueAtTime(160,t+0.5); f.type='bandpass'; f.frequency.value=700; f.Q.value=6; env(g,t,0.05,0.06,0.8); o.connect(f); f.connect(g); g.connect(sfxG); o.start(t); o.stop(t+0.95); },
   lock:function(t){ tone('sine',170,t,0.1,0.15); noise(t+0.07,0.04,0.18,'highpass',2600,1); tone('square',900,t+0.09,0.03,0.04); },
