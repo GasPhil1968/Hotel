@@ -352,7 +352,7 @@ M.afterIvkaHome=async function(A){ var G=A.G;
   A.malaLeave(); G.flags['mala.lock']=false; G.flags['split.afterIvka.home']=true; G.flags['split.afterIvka.away']=true; A.idleM(null);
   M.E.screen='card'; await A.card({kicker:'Zwischenspiel',title:'Ein gewöhnlicher Morgen',time:'Donnerstag, 17. November · Morgen',ms:4400});
   A.phase('i1m'); var F=A.R('flat'); F.winOpen=false; await A.goto('flat',{x:232,y:119,f:'R',noEnter:true,fade:false}); A.placeM(232,119,'R'); A.save();
-  await M.morningWake(A); };
+  await M.morningWake(A); if (M.k1Obit) await M.k1Obit(A,'tonci'); };   // Probe Kapitel 1: Tonćis Nachruf
 M.morningWake=async function(A){ A.idleM('sit'); await A.fade(0,1600); A.sfx('gust'); A.music('flat');
   await A.m('Morgen. Licht. Die Bura hat den Himmel blank geputzt.'); await A.wait(600); await A.m('Kein Kopfweh. Zum ersten Mal seit einer Woche kein Kopfweh.');
   await A.wait(800); A.idleM(null); await A.face('L'); await A.wait(700);

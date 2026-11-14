@@ -21,7 +21,8 @@ M.case3CallImpl=async function(A){ A.sfx('phone'); await A.wait(1200); await A.m
   A.setFlag('c3.call'); A.unlock('palma');
   if (A.malaHere()){ await A.g('Das Palma.'); await A.m('Du kennst es?'); await A.wait(900); await A.g('Ich war einmal dort. Glaube ich.'); } A.save(); };
 M.startEpilogue=async function(A){ M.E.screen='card'; await A.card({kicker:'Epilog',title:'Die Straße nach Osten',time:'Samstag, 19. November · Morgengrauen',ms:4600});
-  A.phase('epi'); ['documents','keyring','photo2','musicbook','crank','record'].forEach(function(i){ A.take(i); }); A.G.malaOn=false; A.G.flags['mala.lock']=false; A.G.pos.marko={room:'terminal',x:40,y:124,f:'R'}; A.unlock('terminal'); await A.goto('terminal',{x:40,y:124,f:'R'}); A.save(); };
+  A.phase('epi'); ['documents','keyring','photo2','musicbook','crank','record'].forEach(function(i){ A.take(i); }); A.G.malaOn=false; A.G.flags['mala.lock']=false; A.G.pos.marko={room:'terminal',x:40,y:124,f:'R'}; A.unlock('terminal'); await A.goto('terminal',{x:40,y:124,f:'R'}); A.save();
+  if (M.k1Obit) await M.k1Obit(A,'bruno'); };   // Probe Kapitel 1: Brunos Nachruf
 // Schuppen/Laden: nach Ninas „Heute Abend“ in den Abend wechseln
 var shop=M.ROOMS.shop; if (shop) shop.check=async function(A){ if (A.flag('c2.tonight') && !A.flag('c2.nightStarted')){ await A.wait(600); await M.startC2Night(A); } };
 // Reisebeschränkungen

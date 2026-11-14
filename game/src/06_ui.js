@@ -11,6 +11,7 @@ var gmask=new Uint8Array(W*SH), gcol=new Uint8Array(W*SH);
 var amask=new Uint8Array(W*SH); M.SCENE_AMASK=amask;
 var tapMark=null, snapFx=null, noFang=false;   // Touch-Konzept T01: Tippmarke und Rahmen um das erkannte Ding
 var pointer={x:-99,y:-99,down:false,touch:false,show:false}, hover=null, hoverUI=null, press=null, drag=null, reveal=null, lastTap=null;
+M.uiHover=function(){ return hoverUI; };   // für Overlays aus anderen Dateien (23_k1probe.js)
 // Touch-Layout: größere Zeilen für Antworten und Verb-Menü, sobald mit dem Finger bedient wird (UI-Konzept D9/D10)
 var touchUI=false; try{ touchUI=!!(typeof matchMedia!=='undefined' && matchMedia('(pointer: coarse)').matches); }catch(e){}
 M.touchUI=function(v){ if (v!==undefined) touchUI=!!v; return touchUI; };
@@ -616,7 +617,7 @@ M.defineOverlay('notebook',function(fb,ov,gt){ var d=ov.data, ask=d.mode==='ask'
   var fit=function(t,w,y0){ var L=M.wrap(t,w), room=186-y0-1, lh=9; if (L.length*lh>room) lh=8; var n=Math.floor(room/lh); if (L.length>n){ L=L.slice(0,n); L[n-1]=L[n-1].replace(/\s*\S*$/,'')+' …'; } return {L:L,lh:lh}; };
   if (NB.msg){ fb.rect(46,by,238,186-by,NB.msg.ok?P.g5:P.s4); var fm=fit(NB.msg.t,228,by+3); fm.L.forEach(function(l,j){ M.text(fb,l,50,by+3+j*fm.lh,NB.msg.ok?P.g0:P.k1); }); }
   else if (NB.sel && M.NOTES[NB.sel]){ var fs=fit(M.NOTES[NB.sel].t,ask?156:228,by+2); fs.L.forEach(function(l,j){ M.text(fb,l,50,by+2+j*fs.lh,P.n1); }); if (ask){ var bw=Math.max(72,M.textWidth('Danach fragen')+14); lay.btn=nbButton(284-bw,by+12,bw,'Danach fragen',hoverUI==='nb',18); } }
-  else { var hint=ask?'Antippen, dann „Danach fragen“.':(tab==='open'?'Eine Notiz antippen, dann eine zweite, die dazu passt.':(tab==='done'?'Erledigt. Antippen zum Nachlesen.':'Was ich gehört habe. Antippen zum Nachlesen.')), hy=by+2;
+  else { var hint=ask?'Antippen, dann „Danach fragen“.':(tab==='open'?((M.nbBrowseHint&&M.nbBrowseHint())||'Eine Notiz antippen, dann eine zweite, die dazu passt.'):(tab==='done'?'Erledigt. Antippen zum Nachlesen.':'Was ich gehört habe. Antippen zum Nachlesen.')), hy=by+2;
     if (ask && tabs.length>1){ M.text(fb,d.title||'Wonach fragen?',50,hy,P.r2); hy+=10; }   // der Titel steht oben nicht mehr, wenn dort die Seiten stehen
     M.wrap(hint,228).forEach(function(l,j){ M.text(fb,l,50,hy+j*9,P.s1); }); }
   ov.lay=lay; });

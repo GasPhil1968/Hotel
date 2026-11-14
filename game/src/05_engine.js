@@ -533,6 +533,7 @@ async function doVerb0(v,hs,withItem){ var tok=++actionTok, isG=GS.active==='mal
       else if (isG && v==='sense' && M.senseNeutral && M.senseNeutral(hs,room.id)) await say(M.senseLine(hs,room),'mala');   // Analyse P21: fester Leertext je Ding (08_sense.js)
       else await say(pick((isG?DEF.g:DEF.m)[v]||(isG?DEF.g.look:DEF.m.look)),GS.active); }
     if (room.check) await room.check(API);
+    if (M.afterAct) await M.afterAct(API);   // Probe Kapitel 1: Schlüsse, die Marko selbst zieht (23_k1probe.js)
   } finally { E.busy=false; } }
 E.doVerb=doVerb;
 function reachFor(hs){ var mode=hs.reach||'M'; if (mode==='none') return null; var r=hsRect(hs), st=hsStand(hs); if (!r||!st) return 'reachM';
@@ -752,7 +753,7 @@ M.TA={
       if (E.nbOpen(true,al).indexOf(id)<0){ (M.__nbOlder=M.__nbOlder||[]).push(GS.phase+':'+id); if (E.nbTab) E.nbTab(E.nbLists(true,al).done.indexOf(id)>=0?'done':'heard'); } }   // Analyse P22: auf einer anderen Seite als „Offen“ (für die Prüfung gezählt)
     closeOverlay(id); },
   closeOverlay:function(v){ closeOverlay(v); },
-  combine:function(a,b){ return combineNotes(a,b); },
+  combine:function(a,b){ return E.combineNotes(a,b); },   // über E, damit die Probe in Kapitel 1 (23_k1probe.js) greift
   switchTo:function(w){ return switchTo(w,true); },
   skip:function(){ if (E.speech) endSpeech(); if (E.card) closeCard(); },
   // Reisen wie ein Spieler: über den Stadtplan (öffnet ihn bei Bedarf wie der Knopf „Karte“), mit allen Prüfungen. Kein Teleport.

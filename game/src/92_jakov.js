@@ -77,7 +77,8 @@ M.startCaseJ=async function(A){ if (A.flag('cj.started')) return; A.setFlag('cj.
   await A.narrate('Die Bura ist weg. Die Stadt sieht aus wie frisch gewaschen, und das Meer liegt da, als wäre nichts gewesen.');
   await A.g('Jakov hat die ganze Nacht gefegt. Ich habe es bis hierher gehört.'); await A.m('Den Besen?'); await A.g('Die Angst.');
   await A.g('Er sagt, morgen kommen sie mit Schaufeln. Geister haben selten Angst, Marko. Sie haben nur Zeit.');
-  A.note('cj_fear'); await A.m('Dann gehen wir nach Sustipan. Bei Tageslicht.'); A.save(); };
+  A.note('cj_fear'); await A.m('Dann gehen wir nach Sustipan. Bei Tageslicht.'); A.save();
+  if (M.k1Obit) await M.k1Obit(A,'luka'); };   // Probe Kapitel 1: Lukas Nachruf
 
 // ---------------------------------------------------------------- Sustipan: Jakov
 async function jkTalkMarko(A){ var J=A.npc('jakov');
@@ -87,6 +88,7 @@ async function jkTalkMarko(A){ var J=A.npc('jakov');
     {t:'Wer kommt morgen?',once:'jkc1',go:async function(A){ await J.say('Die von der Stadt. Mit Schaufeln und einem Lastwagen. Sie graben alles um.'); await J.say('Die Knochen kommen in Kisten mit Nummern nach Lovrinac. Die Steine in die neue Ufermauer. Achtundfünfzig ist ein schlechtes Jahr für Tote.');
         A.note('cj_1958'); await A.m('Achtundfünfzig.'); if (A.malaHere()) await A.g('Für ihn ist es achtundfünfzig. Der Tag davor.'); }},
     {t:'Was fegen Sie da so eilig?',once:'jkc2',go:async function(A){ await J.say('Den Weg. Damit sie sehen, dass hier einer aufpasst.'); await J.say('Wo einer aufpasst, graben sie vorsichtiger.'); }},
+    {t:'(Jakov zur Rede stellen.)',if:M.k1neu&&M.k1neu(A.G)&&A.hasNote('cj_stipe')&&!A.hasNote('cj_where'),go:async function(A){ await M.confront(A,M.CX.jakov); }},   // Probe Kapitel 1 (23_k1probe.js)
     {t:'Wer ist Anka?',once:'jkc3',if:A.hasNote('cj_anka')||A.hasNote('cj_moss'),go:async function(A){ await J.say('Woher hast du den Namen?'); await A.wait(800); await J.say('Geh weg. Ich habe zu tun.'); J.agitate(2600);
         if (A.malaHere()) await A.g('Dir sagt er nichts. Du bist ein Fremder mit Fragen. Mir würde er es sagen – mich hält er für sie.'); }},
     {t:'Warum steht ein Stein in der Mauer richtig herum?',once:'jkc4',if:A.hasNote('cj_moss'),go:async function(A){ await J.say('Den lasst ihr in Ruhe! Der steht richtig. Der bleibt so.'); await J.say('Die anderen haben die Maurer gesetzt, wie sie gerade lagen. Den setze ich selbst.'); }},
@@ -158,6 +160,7 @@ async function jkFinale(A){ if (F(A,'cj.done')) return; var J=A.npc('jakov'); M.
     await A.wait(900);
     if (A.malaHere()){ await A.g('Da ist noch einer. Einer, der immer Dienst hat. Er sucht ein Wort. Seit Jahren.'); await A.m('Wer?'); await A.g('Heute Abend.'); }
   } finally { M.E.busy=false; }
+  if (M.k1Obit) await M.k1Obit(A,'anka');   // Probe Kapitel 1: Ankas Nachruf
   await M.startCase3(A); }
 M.jakovFinale=jkFinale;
 M.jkTalk=function(A){ return A.isMala()?jkTalkMala(A):jkTalkMarko(A); };

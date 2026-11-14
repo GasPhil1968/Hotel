@@ -102,8 +102,11 @@ async function talkIvkaMala(A,I){
 async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.gt; A.sfx('horn'); await A.wait(700);
   if (A.malaHere()){ await A.animG('look'); A.note('m_horn',true); }
   await I.say('Das Boot. Da ist es.'); await I.say('Siehst du ihn? Ich sehe ihn nicht.');
+  // Probe Kapitel 1 (23_k1probe.js): Runden 1–2 als Kreuzverhör – Ivka mit Belegen widersprechen
+  if (M.k1neu && M.k1neu(A.G)){ if (!(await M.confront(A,M.CX.ivka))) return; await A.wait(600); }
+  else {
   // Runde 1: die Fähre
-  for (var tries=0;;tries++){ var n=await A.askNote('Was sage ich ihr?',{also:['c1_aboard']});
+  var tries, n; for (tries=0;;tries++){ n=await A.askNote('Was sage ich ihr?',{also:['c1_aboard']});
     if (n==='c1_ferry'){ await A.m('Gospođa Perić. An dem Abend, an dem er kommen wollte, fuhr keine Fähre. Die Bura war zu stark.'); await I.say('Keine Fähre …'); await I.say('Dann kommt er mit der ersten morgen früh. Dann warte ich eben bis morgen.'); break; }
     await roundMiss(A,I,n,tries,['Ich weiß, dass er kommt. Er hat es geschrieben.','Er ist immer zu spät. Aber er kommt.','Das Boot kommt doch gerade. Sehen Sie nicht?']); }
   // Runde 2: die ANKICA
@@ -114,6 +117,7 @@ async function finale(A){ var I=A.npc('ivka'); A.music('ghost'); A.S.ferryAt=A.g
     if (n==='c1_came'){ await A.m('Er hat nicht auf die Fähre gewartet. Er wollte sein Versprechen halten. Er ist mit Dinko auf der ANKICA losgefahren.');
       await I.say('Mit Matićs kleinem Boot? Bei der Bura?'); await I.say('Dieser Dickkopf. Dieser …'); await A.wait(800); await I.say('Und Dinko?'); await A.m('Dinko hat es geschafft.'); await A.wait(1100); await I.say('…und Tonći nicht.'); break; }
     await roundMiss(A,I,n,tries,['Was hat das mit meinem Sohn zu tun?','Ich verstehe nicht, was Sie meinen.','Sagen Sie, was Sie sagen wollen.']); }
+  }
   // Runde 3: der Brief
   await I.say('Dann ist er da draußen. Dann warte ich, bis das Meer ihn bringt. Das Meer bringt alles zurück.');
   for (tries=0;;tries++){ var c=await A.choose([{t:'(Seinen Brief vorlesen.)',id:'letter',silent:true},{t:'„Das Meer bringt ihn nicht zurück.“',id:'hard',silent:true},{t:'„Er ist tot, Gospođa Perić.“',id:'dead',silent:true}],{title:'Ivka'});

@@ -26,11 +26,16 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
   const inv = async (id) => expect((await D.st()).inv.indexOf(id) >= 0, 'Gegenstand ' + id);
   const flag = async (k) => expect(await D.flag(k), 'Flag ' + k);
   const shot = async (n) => { if (SHOTS) await D.shot(`${SHOTS}/wt_${String(step).padStart(3, '0')}_${n}.png`); };
+  // Probe Kapitel 1 (23_k1probe.js): MALA_K1NEU=1 spielt Kreuzverhöre und Nachrufe statt Kombinieren
+  const NEU = !!process.env.MALA_K1NEU;
+  const showEv = async (id) => { await D.choose('Beleg zeigen'); await D.until(s => s.overlay === 'evidence', 20000, 'Belege'); await D.ev((n) => { const ov = M.E.overlay; M.OVTAP.evidence(ov, 'n:' + n); M.OVTAP.evidence(ov, 'n:' + n); }, id); await D.settle(); };
+  const obit = async (key) => { await D.until(s => s.overlay === 'obit', 60000, 'Nachruf ' + key); await D.ev(() => { const ov = M.E.overlay, T = M.OVTAP.obit, B = ov.data.parts.filter(s => typeof s !== 'string'); B.forEach((b, k) => { T(ov, 'b' + k); T(ov, 'w:' + b.a); }); T(ov, 'go'); T(ov, 'go'); }); await D.drain(); await flag('obit.' + key); await log('Nachruf: ' + key); };
   const talk = async (id, ...choices) => { await D.act('talk', id); await D.drain(); for (const c of choices) { await D.choose(c); await D.drain(); } };
   const room = async () => (await D.st()).room;
   try {
     // ================= PROLOG
     if (process.env.MALA_NB) await D.ev((v) => M.E.setNbStyle(v), process.env.MALA_NB);
+    if (NEU) await D.ev(() => { M.K1NEU = true; });
     await D.ev(() => { M.__gt0 = M.E.gt(); if (!window.__QA_CHAINED) { M.E.setSlot(1); M.E.newGame(); } }); await D.drain(); await log('Start', await room()); await shot('start');
     await D.act('use', 'answer'); await D.drain(); await note('pro_auftrag'); await note('pro_noone'); await log('Anrufbeantworter: Vesna und Sanja');
     await expect(await D.flag('met.sanja'), 'Sanja gilt als bekannt');
@@ -68,9 +73,9 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     const rows = think ? await D.ev(() => (M.E.dlg ? M.E.dlg.opts.filter(o => o.id).map(o => 'n:' + o.id) : []))
       : await D.ev(() => { const s = {}; for (let p = 0; p < 4; p++) { for (let y = 0; y < 200; y += 2) for (let x = 0; x < 320; x += 2) { const h = M.uiHit(x, y); if (h && h.indexOf('n:') === 0) s[h] = 1; } } return Object.keys(s); });
     if (think) await D.choose('(Nicht mehr nachdenken.)'); else await D.ev(() => M.TA.closeOverlay()); await D.drain();
-    await expect(rows.includes('n:pro_noone') && rows.includes('n:pro_list'), 'Notizbuch zeigt die Notiz der Stadt und das Strickheft zum Verbinden: ' + rows.join(','));
-    let r0 = await D.combine('pro_noone', 'pro_knit'); await expect(!r0.ok, 'Zdenkas Wort allein reicht nicht');
-    r0 = await D.combine('pro_noone', 'pro_list'); await expect(r0.ok, 'Kombination pro_people'); await note('pro_people');
+    await expect(NEU ? rows.includes('n:pro_people') : (rows.includes('n:pro_noone') && rows.includes('n:pro_list')), 'Notizbuch zeigt die Notiz der Stadt und das Strickheft zum Verbinden: ' + rows.join(','));
+    if (NEU) await note('pro_people'); else { let r0 = await D.combine('pro_noone', 'pro_knit'); await expect(!r0.ok, 'Zdenkas Wort allein reicht nicht');
+    r0 = await D.combine('pro_noone', 'pro_list'); await expect(r0.ok, 'Kombination pro_people'); await note('pro_people'); }
     await talk('zdenka', 'In ihrem Heft stehen Namen', 'Hier ist Ihr Schlüssel'); await note('pro_gasse'); await expect(!(await D.st()).inv.includes('key_ivka'), 'Schlüssel zurück');
     await flag('split.intro.glimpse'); await expect((await D.st()).phase === 'pro_eve', 'Abend'); await log('Recherche, Erscheinung an der Kirchentreppe');
     await D.exit('exit'); await D.drain(); await D.act('walk', 'loc_flat'); await D.drain(); await expect(await room() === 'map', 'erst die Riva');
@@ -102,7 +107,7 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.switchTo('mala'); await D.exit('archive_door'); await D.drain(); await expect(await room() === 'archive', 'Archiv'); await shot('archive');
     await D.act('look', 'binder_1948'); await D.drain(); await expect(!(await D.hasNote('c1_1948')), 'Schild ausgeblichen: Ansehen reicht nicht'); await D.act('sense', 'binder_1948'); await D.drain(); await note('c1_1948'); await D.exit('door'); await D.drain(); await D.switchTo('marko'); await log('1948 gefunden');
     await talk('mladen', 'Schauen Sie mal', 'Danke. Laku'); await flag('c1.logRead'); await note('c1_ferry'); await log('Fahrtenbuch');
-    let r = await D.combine('c1_boat7', 'c1_ferry'); await expect(r.ok, 'Kombination c1_came'); await note('c1_came');
+    let r; if (!NEU){ r = await D.combine('c1_boat7', 'c1_ferry'); await expect(r.ok, 'Kombination c1_came'); await note('c1_came'); }
     await D.exit('door'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await log('Matejuška'); await shot('matejuska');
     await D.act('use', 'dinko', 'photo1'); await D.drain(); await note('c1_brother');
     await D.switchTo('mala'); await D.exit('shed_door'); await D.drain(); await expect(await room() === 'shed', 'Schuppen'); await shot('shed');
@@ -121,13 +126,14 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     if (process.env.MALA_PRESET) { const g = await D.ev(() => { M.saveGame(); return JSON.parse(JSON.stringify(M.GS)); }); require('fs').writeFileSync(process.env.MALA_PRESET, JSON.stringify(g)); console.log('Spielstand gespeichert:', process.env.MALA_PRESET); await D.close2(); process.exit(0); }
     if (process.env.MALA_DUMPS) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); require('fs').writeFileSync(process.env.MALA_DUMPS + '/ivka.json', JSON.stringify(g)); }
     await D.act('use', 'ivka', 'letter_t'); await D.drain();
-    await D.pickNote('c1_ferry'); await D.drain(); await D.pickNote('c1_came'); await D.drain();
+    if (NEU){ await D.choose('Nächste Aussage'); await showEv('c1_ferry'); await D.choose('Nächste Aussage'); await showEv('c1_capsized'); await D.drain(); await note('c1_came'); await log('Kreuzverhör Ivka'); }
+    else { await D.pickNote('c1_ferry'); await D.drain(); await D.pickNote('c1_came'); await D.drain(); }
     await D.choose('Brief vorlesen'); await D.drain(); await D.choose('Handschuhe'); await D.drain(); await D.choose('nicht mehr hier'); await D.drain();
     await flag('c1.release'); await expect((await D.st()).active === 'mala', 'Mala aktiv'); await log('Ivka erkennt, dass sie tot ist'); await shot('ivka_release');
     await inv('gloves'); await D.act('cross', 'ivka'); await D.drain(); await D.choose('Ihre Hand nehmen'); await D.drain(); await expect(await room() === 'limbo', 'Zwischenwelt'); await shot('limbo_ivka');
     await D.exit('arch'); await D.drain(); await expect(await room() === 'limbo', 'noch nicht zurück');
     await talk('ghost', 'Was sehen Sie im Licht', '(Schweigen.)'); await D.act('use', 'ghost', 'gloves'); await D.drain(); await flag('c1.done'); await log('Ivka geht ins Licht, mit den Handschuhen'); await shot('limbo_ivka2');
-    await D.exit('arch'); await D.drain(); await D.until(s => s.phase === 'i1m' && s.room === 'flat' && !s.busy && !s.card, 90000, 'Morgen'); await D.drain(); await log('Heimweg, Schlaf, Donnerstagmorgen'); await shot('i1m_flat');
+    await D.exit('arch'); await D.drain(); if (NEU) await obit('tonci'); await D.until(s => s.phase === 'i1m' && s.room === 'flat' && !s.busy && !s.card, 90000, 'Morgen'); await D.drain(); await log('Heimweg, Schlaf, Donnerstagmorgen'); await shot('i1m_flat');
     // allein: keine Mala, kein Wechsel, keine Geisterzeile
     const away = async (what) => { const g = await D.ev(() => ({ on: M.GS.malaOn, sw: M.E.canSwitch(), away: !!M.GS.flags['split.afterIvka.away'], mala: !!M.ACT.mala })); await expect(!g.on && !g.sw && g.away && !g.mala, 'Mala abwesend: ' + what + ' ' + JSON.stringify(g)); };
     await away('Aufwachen'); await expect(!(await D.st()).inv.includes('gloves'), 'Handschuhe sind drüben geblieben'); await flag('split.afterIvka.wake');
@@ -173,7 +179,7 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await talk('nina', 'Spachtel', 'Danke. Auf Wiedersehen'); await inv('spatula');
     await D.switchTo('mala'); await D.exit('private'); await D.drain(); await expect(await room() === 'backroom', 'Hinterzimmer'); await shot('backroom');
     await D.act('look', 'ticket'); await D.drain(); await D.act('sense', 'ticket'); await D.drain(); await note('c2_unused'); await note('c2_echo'); await D.exit('door'); await D.drain(); await D.switchTo('marko');
-    r = await D.combine('c2_unused', 'c2_meet'); await expect(r.ok, 'Kombination c2_waited'); await log('Nina hat gewartet');
+    if (!NEU){ r = await D.combine('c2_unused', 'c2_meet'); await expect(r.ok, 'Kombination c2_waited'); await log('Nina hat gewartet'); }
     await D.exit('door'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('varos');
     await talk('zdenka', 'Zeitung mitgebracht', 'Bis bald'); await inv('radio'); await log('Radio');
     await D.travel('terminal'); await shot('terminal');
@@ -181,7 +187,9 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.item('use', 'radio', 'batteries'); await D.drain(); await inv('radioB'); await D.item('use', 'radioB', 'cassette'); await D.drain(); await inv('radioT'); await log('Radio mit Kassette');
     await D.exit('exit'); await D.drain(); await D.travel('matejuska'); await D.exit('gap'); await D.drain();
     await D.act('use', 'brick', 'spatula'); await D.drain(); await inv('note_n'); await note('c2_note'); await log('Ninas Zettel');
-    await talk('luka', 'Briefkasten aufgemacht', 'Bis später'); await flag('c2.lukaKnows'); await log('Luka bittet um das Lied');
+    if (NEU){ await D.act('talk', 'luka'); await D.drain(); await D.choose('Luka zur Rede stellen'); await D.choose('Nächste Aussage'); await showEv('c2_echo'); await D.drain(); await note('c2_waited'); await log('Kreuzverhör Luka'); await D.choose('Briefkasten aufgemacht'); await D.drain(); await D.choose('Bis später'); await D.drain(); }
+    else await talk('luka', 'Briefkasten aufgemacht', 'Bis später');
+    await flag('c2.lukaKnows'); await log('Luka bittet um das Lied');
     await D.exit('exit'); await D.drain(); await D.exit('exit'); await D.drain(); await D.travel('oldtown'); await D.exit('shop_door'); await D.drain();
     await talk('nina', 'Ich war in der Ledana', 'Ninas Zettel', 'Er hat es mir gesagt', 'Lukas Tickets', 'Die Kassette', 'Wollen Sie es hören');
     await expect(!(await D.flag('c2.tonight')), 'Nina will zuerst nicht an die Rampe'); await D.pickNote('c2_mira1'); await D.drain(); await D.choose('Dann bin ich da'); await D.drain();
@@ -194,6 +202,7 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.act('use', 'nina', 'ticket_n'); await D.drain(); await log('Nina bekommt ihr Ticket'); await shot('sustipan');
     await D.choose('Meine Großmutter'); await D.drain(); await D.choose('Hast du jemanden'); await D.drain(); await D.choose('Gehen wir nach Hause'); await D.drain();
     // ================= ZWISCHENFALL: Jakov, der Totengräber (92_jakov.js)
+    if (NEU) await obit('luka');
     await expect((await D.st()).phase === 'cj', 'Zwischenfall Jakov'); await note('cj_fear'); await log('Zwischenfall Jakov', await room());
     await D.exit('door'); await D.travel('sustipan'); await shot('jakov_cj');
     await talk('jakov', 'Wer kommt morgen', 'Ich lasse Sie fegen'); await note('cj_1958');
@@ -212,12 +221,15 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await D.exit('exit'); await D.travel('sustipan');
     await D.act('use', 'ivy', 'zeitung'); await D.drain(); await note('cj_stone'); await log('Durchreibung');
     await D.switchTo('mala'); await talk('jakov', 'Mit ihm reden, als wäre ich Anka', 'Sieben.', 'Unter unserem Baum', 'Lass gut sein'); await note('cj_tree'); await D.switchTo('marko');
-    await expect((await D.combine('cj_stipe', 'cj_tree')).ok, 'Schluss: Er hat sie selbst umgebettet'); await note('cj_where');
+    if (NEU){ await D.act('talk', 'jakov'); await D.drain(); await D.choose('Jakov zur Rede stellen'); await D.choose('Nächste Aussage'); await showEv('cj_stipe'); await D.drain(); await D.choose('Nächste Aussage'); await showEv('cj_tree'); await D.drain(); await D.choose('Ich lasse Sie fegen'); await D.drain(); await log('Kreuzverhör Jakov'); }
+    else await expect((await D.combine('cj_stipe', 'cj_tree')).ok, 'Schluss: Er hat sie selbst umgebettet');
+    await note('cj_where');
     await D.act('use', 'pines', 'kreide'); await D.drain(); await flag('cj.name');
     await D.act('use', 'pines', 'grablicht'); await D.drain(); await flag('cj.wind');
     await D.act('use', 'wall', 'grablicht'); await D.drain(); await inv('grablicht_an');
     await D.act('use', 'pines', 'grablicht_an'); await D.drain();
     await D.choose('Sie haben sie damals nicht gefunden'); await D.drain(); await D.choose('Lesen Sie, was da steht'); await D.drain();
+    if (NEU) await obit('anka');
     await flag('cj.done'); await note('cj_done'); await log('Jakov bleibt – freiwillig');
     await expect((await D.st()).phase === 'c3', 'Fall 3'); await flag('c3.call'); await log('Fall 3', await room());
     // ================= FALL 3
@@ -244,7 +256,7 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await expect(await D.ev(() => M.E.overlay && M.E.overlay.sel.every(v => v === -1)), 'Brunos Felder beginnen leer');
     await D.ev(() => { const ov = M.E.overlay, r = ov.data.check([0, 0, 0, 0, 0]); if (r.ok) throw new Error('erste Fassungen sind nicht die Lösung'); const s2 = [1, 2, 0, 1, 2]; if (!ov.data.check(s2).ok) throw new Error('Lösung falsch'); M.TA.closeOverlay(s2); });
     await D.drain(); await D.choose('Laku noć'); await D.drain(); await flag('c3.translated'); await log('Satz übersetzt');
-    r = await D.combine('c3_zagreb', 'c3_accept'); await expect(r.ok, 'Kombination c3_hid');
+    if (NEU) await note('c3_hid'); else { r = await D.combine('c3_zagreb', 'c3_accept'); await expect(r.ok, 'Kombination c3_hid'); }
     await D.exit('door'); await D.drain(); await expect(await room() === 'palma', 'Halle');
     if (process.env.MALA_DUMPS) { const g = await D.ev(() => JSON.parse(JSON.stringify(M.GS))); require('fs').writeFileSync(process.env.MALA_DUMPS + '/bruno.json', JSON.stringify(g)); }
     await D.act('use', 'private'); await D.drain(); await D.choose('Umschlag'); await D.drain(); await D.choose('Brunos Brief'); await D.drain(); await D.choose('Satz sagen'); await D.drain(); await D.choose('Übersetzer'); await D.drain();
@@ -254,6 +266,7 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await talk('ghost_b', 'Wer löst Sie ab', '(Schweigen.)'); await D.act('use', 'prop'); await D.drain(); await flag('c3.gone'); await log('Die Glocke um sieben');
     await D.exit('arch'); await D.drain();
     await flag('c3.done'); await expect((await D.st()).phase === 'epi', 'Epilog'); await log('Ljerka spielt, Epilog'); await shot('epi');
+    if (NEU) await obit('bruno');
     // ================= EPILOG
     await D.act('use', 'ticket_counter'); await D.drain(); await D.choose('Nur hin'); await D.drain(); await inv('busticket'); await flag('epi.mala');
     await D.act('use', 'bus'); await D.drain(); await D.choose('Warst du im Hotel'); await D.drain(); await D.choose('Kommst du mit'); await D.drain(); await D.until(s => s.dlg, 20000, 'letzte Auswahl'); await D.ev(() => M.TA.choose('Es ist Zeit'));

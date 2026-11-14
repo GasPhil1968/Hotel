@@ -28,7 +28,9 @@ async function lukaMarko(A,L){
     {t:'Es ist nicht mehr 1999, Luka.',once:'lkWrong',go:async function(A){ await L.say('Sehr witzig. Und morgen ist Silvester, oder was?'); A.G.seen['dlg:lkWrong']=0; if (A.malaHere()) await A.g('Er hört es nicht. Noch nicht.'); }},
     {t:'Siehst du nicht, wie kaputt hier alles ist?',once:'lk5',go:async function(A){ await L.say('Die Ledana war immer kaputt. Deshalb ist hier ja keiner. Deshalb treffen wir uns hier.'); }},
     {t:'Warum sieht dich außer uns niemand?',once:'lk6',go:async function(A){ await L.say('Weil ich mich verstecke, Mann. Ninas Vater hat überall Leute.'); await L.say('Und die Typen, die hier manchmal durchlaufen, gucken einfach durch einen durch. Komische Stadt.'); }},
-    {t:'Nina hat auf dich gewartet. Am Kiosk.',if:A.hasNote('c2_waited')||A.hasNote('c2_echo')||A.hasNote('c2_mira1'),once:'lk3',go:async function(A){ await L.say('Was? Nein. Die Fähre geht doch erst um neun. Es ist … es ist doch noch hell.'); await L.say('Oder?'); }},
+    // Probe Kapitel 1 (23_k1probe.js): Luka zur Rede stellen statt Notizen verbinden
+    {t:'(Luka zur Rede stellen.)',if:M.k1neu&&M.k1neu(A.G)&&!A.hasNote('c2_waited')&&(A.hasNote('c2_unused')||A.hasNote('c2_echo')||A.hasNote('c2_mira1')),go:async function(A){ await M.confront(A,M.CX.luka); }},
+    {t:'Nina hat auf dich gewartet. Am Kiosk.',if:!(M.k1neu&&M.k1neu(A.G))&&(A.hasNote('c2_waited')||A.hasNote('c2_echo')||A.hasNote('c2_mira1')),once:'lk3',go:async function(A){ await L.say('Was? Nein. Die Fähre geht doch erst um neun. Es ist … es ist doch noch hell.'); await L.say('Oder?'); }},
     // Analyse K1-B13 (P24): Hat Nina den Zettel schon, erzählt Marko ihn Luka aus dem Gedächtnis (vorher entfiel Lukas Bitte)
     {t:'Ich habe euren Briefkasten aufgemacht.',if:(A.has('note_n')||ninaKeptNote(A))&&!A.flag('c2.noteRead'),go:function(A){ return readNoteToLuka(A,L); }},
     A.askOpt({ c2_guitar:'Im Kühlraum, ja. Die Tür klemmt. Mit Gefühl.', c2_meet:'Halb neun. Kiosk. Sie hat ein rotes Kleid an, du kannst sie nicht verfehlen.',
