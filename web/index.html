@@ -76033,6 +76033,60 @@ function handParts(wr,th,open,S,mirror){ var d=dir(th), f=mirror?-1:1, side=dir(
     P.push(cap(b0,e1,0.6*S,0.5*S)); P.push(cap(e1,e2,0.5*S,0.4*S)); }
   var tb=add(wr,d,1.1*S), tm=add(tb,dir(th+(0.95+open*0.45)*f),1.5*S), te=add(tm,dir(th+(0.55+open*0.4)*f),1.4*S); P.push(cap(add(tb,side,-0.6*S*f),tm,0.75*S,0.58*S)); P.push(cap(tm,te,0.58*S,0.45*S));
   return P; }
+// Kopf im Profil: gezeichnet, nicht aus weichen Formen. Umriss als Vieleck im Kopfraster (u nach oben, v nach vorn, Einheit = Spielpixel),
+// jedes Bildpixel wird in dieses Raster zurückgerechnet (dreht sich mit, bleibt scharf). Flächen in drei Hauttönen nach Licht von
+// oben links, dazu gesetzte Formen: Braue, Augenhöhle, Auge mit Weiß und Lid, Nasenflügel und -loch, Lippen, Kinnfalte, Ohr, Haaransatz.
+var HEADP=[[4.5,-0.6],[4.7,0.8],[4.4,2.0],[3.7,3.0],[2.7,3.6],[2.1,3.85],[1.55,3.6],[1.05,3.6],[0.4,4.0],[-0.3,4.65],[-0.75,5.05],[-1.0,4.85],[-1.05,4.4],
+  [-1.45,4.35],[-1.75,4.4],[-2.05,4.2],[-2.2,4.0],[-2.4,4.2],[-2.85,4.2],[-3.25,3.85],[-3.75,4.0],[-4.35,3.95],[-4.85,3.45],[-5.0,2.6],[-4.6,1.5],
+  [-3.9,0.4],[-3.3,-0.4],[-2.4,-1.9],[-1.6,-3.1],[-0.5,-3.95],[0.9,-4.35],[2.3,-4.1],[3.5,-3.25],[4.2,-2.1]];
+var HAIRP=[[5.6,4.4],[3.75,3.35],[3.15,2.7],[3.0,1.9],[2.4,1.35],[1.9,1.2],[1.2,1.15],[0.6,0.85],[1.75,0.25],[1.9,-0.7],[1.5,-1.75],[0.2,-2.0],
+  [-0.9,-2.35],[-1.7,-2.8],[-2.3,-2.6],[-3.4,-3.0],[-3.0,-6],[6,-6],[6.5,4.4]];
+function inPoly(P0,u,v){ var c=false; for (var i=0,j=P0.length-1;i<P0.length;j=i++){ var a=P0[i], b=P0[j]; if ((a[0]>u)!==(b[0]>u) && v<(b[1]-a[1])*(u-a[0])/(b[0]-a[0])+a[1]) c=!c; } return c; }
+function ell(u,v,cu,cv,ru,rv){ var x=(u-cu)/ru, y=(v-cv)/rv; return x*x+y*y<=1; }
+function headCol(u,v,O){ // Farbe an (u,v) oder -1 (außen)
+  var inH=inPoly(HEADP,u,v), inHair=inPoly(HAIRP,u,v)&&(inH||ell(u,v,0.7,-0.3,5.0,4.75)), ear=ell(u,v,0.45,-0.7,1.45,0.95);
+  if (!inH && !inHair) return -1;
+  if (inHair && !ear){ // Haar: kurz, Licht oben hinten, feine Strähnen, nass: blaues Glanzlicht
+    var hl=(u*0.55-v*0.35)/5, st=hash(Math.round(u*2.2),Math.round(v*1.3));
+    if (O.wet && hl>0.46 && hl<0.6 && st<0.3) return P.n4; if (O.wet && hl>0.4 && hl<0.66) return P.h3;
+    var c=hl>0.55?P.h3:hl>0.2?P.h2:P.h1; if (st<0.18) c=P.h1; if (st>0.9 && hl>0.25) c=P.h3; return c; }
+  if (ear){ var ri=ell(u,v,0.45,-0.55,1.0,0.55); if (ri && !ell(u,v,0.3,-0.45,0.55,0.32)) return P.q1; return ri?P.q2:(u>0.9?P.q4:P.q3); }
+  // Gesicht und Schädel: Grundton nach Licht (Kugel um die Kopfmitte, Licht von oben hinten links → Stirn und Wange hell, Kiefer dunkel)
+  var nu=u/5.2, nv=(v-0.6)/4.8, lt=nu*0.62-nv*0.15+0.25;
+  if (v>2.6) lt+=0.18;                                   // Gesichtsfläche nach vorn: Himmelslicht
+  if (u<-2.6 && v<2.6) lt-=0.35;                         // unter dem Kiefer
+  var c2=lt>0.62?P.p4:lt>0.3?P.q4:lt>-0.05?P.q3:P.q2;
+  // Augenhöhle und Schatten unter der Braue
+  if (ell(u,v,1.3,2.85,0.75,0.95)) c2=P.q2;
+  // Braue (dicht, dunkel, leicht gebogen)
+  if (u>1.95 && u<2.6 && v>2.0 && v<3.65 && u<2.6-(v-2.8)*(v-2.8)*0.18) c2=P.h1;
+  // Auge: Weiß, Pupille vorn, Lid darüber, Wimpernschlag dunkel
+  if (ell(u,v,1.3,3.05,0.32,0.42)) c2=P.s5;
+  if (ell(u,v,1.3,3.25,0.3,0.24)) c2=P.k0;
+  if (u>1.6 && u<1.95 && v>2.55 && v<3.45) c2=P.q1;
+  // Wangenknochen hell, Nasolabialfalte dunkel
+  if (ell(u,v,0.0,2.4,0.55,0.9) && c2===P.q3) c2=P.q4;
+  if (u<-0.3 && u>-2.2 && Math.abs(v-(3.45+(u+0.3)*0.25))<0.22) c2=P.q2;
+  // Nase: Flügel und Loch, Unterseite im Schatten
+  if (ell(u,v,-0.75,4.05,0.45,0.5)) c2=P.q2;
+  if (ell(u,v,-0.85,4.25,0.2,0.28)) c2=P.q0;
+  if (u>-0.7 && u<0.6 && v>4.15 && v<4.6 && v-4.15<(0.6-u)*0.45) c2=P.p4;     // Nasenrücken im Licht
+  // Mund: Oberlippe dunkler, Spalt, Unterlippe heller, Mundwinkel
+  if (u<-1.45 && u>-2.05 && v>3.55) c2=P.q2;
+  if (u<=-2.05 && u>-2.32 && v>3.25) c2=P.q0;
+  if (u<=-2.32 && u>-2.85 && v>3.6) c2=P.q4;
+  if (u<-2.85 && u>-3.2 && v>3.3) c2=P.q2;                                       // Kinnfalte
+  // Bartschatten auf Kiefer und Kinn (Raster)
+  if ((u<-2.4 && v<3.4 && v>0.2 || u<-3.3) && c2!==P.q0 && bayer(Math.round(u*4),Math.round(v*4))<0.45) c2=(c2===P.q4||c2===P.p4)?P.q3:P.q2;
+  return c2; }
+function head(fb,HC,HU,HF,S,O){ var R0=6.4*S, x0=Math.floor(HC[0]-R0), y0=Math.floor(HC[1]-R0), n=Math.ceil(2*R0)+1, G=new Int16Array(n*n).fill(-1);
+  for (var y=0;y<n;y++) for (var x=0;x<n;x++){ var dx=(x0+x+0.5-HC[0])/S, dy=(y0+y+0.5-HC[1])/S, u=dx*HU[0]+dy*HU[1], v=dx*HF[0]+dy*HF[1]; G[y*n+x]=headCol(u,v,O); }
+  var lit=function(x,y){ var dx=x0+x+0.5-HC[0], dy=y0+y+0.5-HC[1]; return dx*LX+dy*LY<0; };
+  for (var y2=0;y2<n;y2++) for (var x2=0;x2<n;x2++){ var c=G[y2*n+x2], X=x0+x2, Y=y0+y2;
+    if (c>=0){ fb.px(X,Y,c); continue; }
+    var nb=-1; if (x2>0&&G[y2*n+x2-1]>=0) nb=G[y2*n+x2-1]; else if (x2<n-1&&G[y2*n+x2+1]>=0) nb=G[y2*n+x2+1]; else if (y2>0&&G[(y2-1)*n+x2]>=0) nb=G[(y2-1)*n+x2]; else if (y2<n-1&&G[(y2+1)*n+x2]>=0) nb=G[(y2+1)*n+x2];
+    if (nb<0) continue; var hair=(nb===P.h1||nb===P.h2||nb===P.h3||nb===P.n4);
+    fb.px(X,Y,hair?P.h0:(lit(x2,y2)?P.q1:P.q0)); } }
 function diver(fb,hx,hy,p,S,O){ O=O||{}; FILL=0.32; var bA=p.bA||0, U=[Math.sin(bA),-Math.cos(bA)], F=[Math.cos(bA),Math.sin(bA)], H=[hx,hy];
   function L(u,v){ return [hx+(U[0]*u+F[0]*v)*S, hy+(U[1]*u+F[1]*v)*S]; }
   var td=-bA, jac=p.jacket>0.5, K1=0.9*S, dark0=P.k0;
@@ -76077,21 +76131,7 @@ function diver(fb,hx,hy,p,S,O){ O=O||{}; FILL=0.32; var bA=p.bA||0, U=[Math.sin(
   var nk=p.nk||0, ha=bA+nk, HU=[Math.sin(ha),-Math.cos(ha)], HF=[Math.cos(ha),Math.sin(ha)], HC=add(NB,HU,6.5*S);
   function K(u,v){ return [HC[0]+(HU[0]*u+HF[0]*v)*S, HC[1]+(HU[1]*u+HF[1]*v)*S]; }
   body(fb,[cap(NB,K(-3.6,-0.4),2.3*S,2.05*S),cap(L(17.2,1.2),K(-3.2,1.3),1.0*S,0.9*S)],SK,{k:0.9*S,depth:2*S,line:P.q0,lineLit:P.q1});
-  var HP=[cap(K(0.6,-0.4),K(0.6,-0.4),4.2*S),cap(K(1.2,-1.6),K(-1.0,-1.5),3.6*S,3.4*S),cap(K(-1.0,1.2),K(-3.7,2.5),2.9*S,1.8*S),cap(K(-4.45,3.2),K(-4.45,3.2),1.45*S),
-    cap(K(2.0,3.3),K(1.7,4.1),1.05*S,0.85*S),cap(K(0.9,4.0),K(-1.1,5.5),0.95*S,0.55*S),cap(K(-1.9,4.3),K(-2.0,4.4),0.7*S,0.6*S),cap(K(-2.9,4.15),K(-3.0,4.15),0.6*S,0.55*S)];
-  var hd=body(fb,HP,SK,{k:0.9*S,depth:3.0*S,line:P.q0,lineLit:P.q1,amb:0.3,fill:0.42,tex:function(X,Y,dv){ return 0; }});
-  // Dreitagebart: Kiefer und Kinn, gerastert dunkler
-  if (S>1) for (var bu=-5.2;bu<=-1.2;bu+=0.5) for (var bv=0.6;bv<=4.6;bv+=0.5){ var bp=K(bu,bv), X2=rd(bp[0]), Y2=rd(bp[1]); if (inside(hd,X2,Y2) && hash(X2,Y2)<0.2 && !(bu>-2.4 && bv>3.2)) fb.px(X2,Y2,P.q2); }
-  // Haar: kurz rasiert, Schädelform plus etwas Volumen oben, Strähnen; nass glänzend
-  var HRP=[cap(K(3.0,-2.0),K(3.35,2.0),1.65*S,1.15*S),cap(K(2.3,-3.2),K(-0.3,-3.75),1.55*S,1.2*S),cap(K(3.5,0.0),K(3.5,0.0),1.7*S)];
-  body(fb,HRP,HAIRR,{k:1.2*S,depth:1.6*S,line:P.k0,lineLit:P.k1,amb:0.1,specC:O.wet?P.n3:P.h3,tex:function(X,Y){ return (hash(X,Y>>1)-0.5)*0.35; }});
-  var ear=K(0.2,-0.9); body(fb,[cap(add(ear,HU,0.7*S),add(ear,HU,-0.7*S),0.85*S,0.7*S)],SK,{k:0.5*S,line:P.q0,lineLit:P.q1,amb:0.3,fill:0.3}); if (S>1){ var eh=add(ear,HF,0.1*S); fb.px(rd(eh[0]),rd(eh[1]),P.q1); }
-  if (S>1) for (var so=0;so<5;so++){ var sk=K(1.0+(so%2)*0.5,1.7+so*0.35), Xs=rd(sk[0]), Ys=rd(sk[1]); if (inside(hd,Xs,Ys)) fb.px(Xs,Ys,P.q2); }   // Augenhöhle im Schatten
-  if (S>1){ var ec=K(0.3,-0.7); fb.px(rd(ec[0]),rd(ec[1]),P.q0); }
-  // Auge (Weiß, Iris, Lid), Braue, Nasenloch, Mund
-  var e1=K(1.15,2.55), e2=K(1.15,2.05), lid=K(1.75,2.4); fb.px(rd(e1[0]),rd(e1[1]),P.k0); if (S>1){ fb.px(rd(e2[0]),rd(e2[1]),P.s5); fb.px(rd(lid[0]),rd(lid[1]),P.q0); }
-  for (var bw=0;bw<4;bw++){ var br=K(2.5,1.3+bw*0.75); fb.px(rd(br[0]),rd(br[1]),P.h1); }
-  var nl=K(-0.6,4.0), mo=K(-2.4,3.45), mo2=K(-2.35,4.0); fb.px(rd(nl[0]),rd(nl[1]),P.q1); fb.px(rd(mo[0]),rd(mo[1]),P.q0); if (S>1) fb.px(rd(mo2[0]),rd(mo2[1]),P.q1);
+  head(fb,HC,HU,HF,S,O);
   arm(1,false); FILL=0;
   return {head:HC}; }
 
@@ -79251,7 +79291,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="15.11.2026 · 44586b";
+M.BUILD="15.11.2026 · 2ad02d";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>
