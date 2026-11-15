@@ -1,6 +1,9 @@
 /* ===== rooms/balkon.js — Davors Balkon in Moosach (freiwillig): Lena und der Feigenzweig aus Mostar, ertränkt aus Liebe; der Anruf bei
    Jela („Pusti ga. Zimi spava. Ne zalijevaj.“); Davor über seinen Vater; Davors Angebot zu fahren (k4.v.car, Silvesternacht).
-   Hier auch die Karte: M.k4UseCard und M.K4PHONE.davor (der Anruf, k4.v.called, schaltet Moosach frei). Vorbild: rooms/zelenika.js ===== */
+   Hier auch die Karte: M.k4UseCard und M.K4PHONE.davor (der Anruf, k4.v.called, schaltet Moosach frei). Vorbild: rooms/zelenika.js
+   Kette 4 „Winterschlaf“ (design/K4_RAETSEL.md): Jela sagt auch, die Tüte erstickt ihn, er gehört in Jute wie die Feigen in Mostar
+   (k4.v.jute). Mala weiß von Nada: Kaffeesäcke. Jutesack (Bar Sport) + Schnur (Kiosk) = Wintermantel; auf den Zweig (k4.v.wrapped),
+   erst dann bietet Davor die Fahrt an (k4.v.car). ===== */
 (function(M){
 'use strict';
 function F(G,k){ return !!G.flags[k]; }
@@ -67,13 +70,17 @@ async function jelaCall(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (
   await A.wait(500); await A.phoneVoice('„I reci mu nek dođe u avgustu. Smokve neće čekat.“','jela'); await A.m('Und sag ihm, er soll im August kommen. Die Feigen warten nicht.');
   await Dv.say('Im August. Ja.'); await A.wait(400); await Dv.say('Sagen Sie ihr: im August. Und dass ich esse.');
   await A.m('U avgustu, teta Jela. I jede.'); await A.wait(500); await A.phoneVoice('„Laže.“','jela'); await A.m('„Er lügt.“'); await A.wait(300); await Dv.say('Sie hat recht. Das ist das Schlimme.');
-  A.sfx('hangup'); A.setFlag('k4.v.jela'); A.set('dry',true); A.rebuild();
-  await A.narrate('Lena stellt die Gießkanne in die Ecke, mit der Öffnung zur Wand, damit sie sie nicht mehr ansehen muss.');
+  await A.wait(500); await A.phoneVoice('„I skini tu kesu! Uguši se pod kesom. Umotaj ga u jutu, k’o mi smokve.“','jela');
+  await A.m('Und die Tüte muss weg, sagt sie. Darunter erstickt er. Wickel ihn in Jute, wie wir unsere Feigen.');
+  A.sfx('hangup'); A.setFlag('k4.v.jela'); A.setFlag('k4.v.jute'); A.set('dry',true); A.rebuild();
+  await A.narrate('Lena zieht die Plastiktüte ab und stopft sie in die Jackentasche. Dann stellt sie die Gießkanne in die Ecke, mit der Öffnung zur Wand, damit sie sie nicht mehr ansehen muss.');
   await Ln.say('Okay. Ich hör auf. Aber reden darf ich mit ihm?'); await A.m('Reden darfst du.');
-  if (here(A)){ await A.wait(400); await A.g('Er schläft. Er träumt von einem anderen Sommer.'); }
-  await carOffer(A); }
+  await A.wait(400); await Ln.say('Und Jute? Wo krieg ich denn Jute her? Ich hab nur Tüten. Und Papa hat nur Akten.'); await Dv.say('Ich habe auch Tüten.');
+  if (here(A)){ await A.wait(500); await A.g('Kaffeesäcke.'); await A.wait(400); await A.g('Mama hat jeden November den Oleander auf dem Balkon eingewickelt. Neunter Stock. In Kaffeesäcke, die gab es unten im Laden umsonst.');
+    await A.g('Mit Schnur. Nicht zu fest. Oben Luft.'); await A.wait(300); await A.m('Kaffeesäcke. Wo gibt es in München Kaffeesäcke, die keiner mehr braucht?'); A.setFlag('k4.v.sack'); }
+  else { await A.wait(400); await A.m('Jute. In Sarajevo hatte jeder einen Kaffeesack im Keller. Hier hat jeder Tüten.'); } }
 // ---------------------------------------------------------------- Davors Angebot (k4.v.car)
-async function carOffer(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (F(G,'k4.v.car')) return;
+async function carOffer(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (F(G,'k4.v.car') || !F(G,'k4.v.wrapped')) return;
   await A.wait(600); await Dv.say('Herr Vuković.'); await A.wait(400);
   await Dv.say('Wenn Sie was brauchen. Ich habe ein Auto. Und ich trinke nicht, Lena passt auf.'); await Ln.say('Stimmt. Ich pass auf.');
   A.setFlag('k4.v.car');
@@ -82,6 +89,18 @@ async function carOffer(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (
   else if (c==='nye'){ await Dv.say('Silvester. Gut. An Silvester fährt keiner. Da bin ich der Einzige.'); await Ln.say('Und ich.'); }
   else await Dv.say('Nicht danken. Anrufen.');
   if (here(A)){ await A.wait(400); await A.g('Er meint es so, wie sein Vater es gemeint hätte. Wenn der es hätte sagen können.'); } }
+// ---------------------------------------------------------------- Der Wintermantel (Kette 4)
+async function wrap(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (F(G,'k4.v.wrapped')) return A.m('Er hat seinen Mantel schon.');
+  if (!F(G,'k4.v.jela')) return A.m('Erst will ich wissen, was er braucht. Jela weiß es.');
+  A.take('wintermantel'); A.setFlag('k4.v.wrapped'); A.rebuild();
+  await A.narrate('Ich stülpe Enzos Kaffeesack über den Topf und den Zweig und ziehe die Kioskschnur zweimal herum.');
+  if (here(A)){ await A.g('Nicht so fest.'); await A.wait(300); await A.narrate('Ich lockere die Schnur.'); await A.g('So. Und oben offen.'); }
+  else { await A.m('Nicht zu fest. Oben offen. So hat Nada es gemacht, sagt Mala.'); }
+  await A.wait(500); await Ln.say('Sieht aus wie ein kleiner Mönch.'); await A.wait(400); await Ln.say('Ein Mönch, der nach Kaffee riecht.');
+  await A.wait(500); await Dv.say('Wie bei Jela. Genau so haben sie in Mostar vor dem Tor gestanden, sechs Stück, jeden Winter.');
+  if (here(A)){ await A.wait(400); await A.g('Jetzt schläft er warm.'); }
+  await carOffer(A); }
+
 // ---------------------------------------------------------------- Lena und Davor
 async function talkLena(A){ var Ln=A.npc('lena'), G=A.G;
   await A.menuLoop(function(){ return [
@@ -108,8 +127,12 @@ var HS=[
  {id:'door',name:'Balkontür',exit:{to:'map'},look:'Die Balkontür. Dahinter das Wohnzimmer, dann die Treppe, dann Moosach.',
    canExit:async function(A){ if (A.G.active==='marko' && A.flag('k4.v.visit') && !A.flag('k4.v.car') && zelHere(A.G)) await carOffer(A); return true; },
    g:{look:'Die Tür. Ich brauche sie nicht. Aber es ist höflich.'}},
- {id:'pot',name:'Feigenzweig',look:function(A){ return A.m(A.flag('k4.v.jela')?'Der Feigenzweig, ohne Tüte. Die Erde ist schon etwas trockener. Er sieht nach nichts aus. Er schläft.':'Ein Blumentopf unter einer Plastiktüte. Darin ein kurzer Feigenzweig in schwarzer, nasser Erde. Zwei gelbe Blätter.'); },
-   use:function(A){ return A.m(A.flag('k4.v.jela')?'Nichts tun. Bis August.':'Gießen? Genau das ist das Problem.'); },
+ {id:'pot',name:'Feigenzweig',look:function(A){ if (A.flag('k4.v.wrapped')) return A.m('Der Feigenzweig in Enzos Kaffeesack, die Kioskschnur zweimal herum, oben offen. Er sieht aus wie ein kleiner Mönch. Er schläft warm.');
+     return A.m(A.flag('k4.v.jela')?'Der Feigenzweig, ohne Tüte. Die Erde ist schon etwas trockener. Nackt in der Kälte. Jela sagt: in Jute, wie die Feigen in Mostar.':'Ein Blumentopf unter einer Plastiktüte. Darin ein kurzer Feigenzweig in schwarzer, nasser Erde. Zwei gelbe Blätter.'); },
+   use:function(A){ return A.m(A.flag('k4.v.wrapped')?'Nichts tun. Bis August.':(A.flag('k4.v.jela')?'Nicht gießen. Einwickeln, in Jute. Wie die Feigen in Mostar.':'Gießen? Genau das ist das Problem.')); },
+   with:{ wintermantel:function(A){ return wrap(A); },
+     jute:'Den Sack allein? Beim ersten Wind fliegt er in den Hof von Moosach. Ich brauche etwas zum Festbinden.', schnur:'Schnur allein wärmt nicht. Die braucht etwas, das sie festhält.',
+     aushang:'Papier wird nass und klebt. Dann haben wir wieder eine Tüte, nur schlechter.', vanilice:'Plätzchen für einen Zweig. Lena würde lachen. Der Zweig nicht.' },
    open:'Ich hebe die Tüte an. Darunter riecht es nach nassem Keller. Nicht nach Feige.',take:'Der Topf gehört Lena. Und der Zweig sowieso.',
    g:{look:'Am Zweig ein winziger Schimmer. Wie ein Ast in einem anderen Sommer.',
      sense:async function(A){ if (A.flag('k4.v.sleeps')) return A.g('Er schläft. Ganz tief. Er hat keine Eile.');

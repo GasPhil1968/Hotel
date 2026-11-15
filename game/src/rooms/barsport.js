@@ -41,6 +41,18 @@ async function coffee(A,E){ A.sfx('cups'); await E.anim('espresso');
   await E.say(A.cycle('enCoffee',['Un caffè. Subito.','Un altro? Lei beve come un napoletano.','Caffè. L’unica cosa che qui faccio bene.']));
   await A.m(A.cycle('enCoffeeM',['Der Espresso ist gut. Enzo sieht mir beim Trinken zu, als wäre das eine Prüfung.','Er will kein Geld. „Domani“, sagt er. Morgen. Das sagt er offenbar zu jedem.','Ich trinke ihn in zwei Schlucken, wie man es hier macht. Enzo nickt.'])); }
 var EN_ALSO=['s4_peppino','s4_name','s4_bunker','s4_umschlag','s4_ausweis','s4_wusste','s4_fluch','s4_bairisch','s4_tarnung','s4_derselbe','s4_genommen'];
+// Kette 4 „Winterschlaf“ (design/K4_RAETSEL.md): Enzos leere Kaffeesäcke
+async function sack(A,E){ E=E||A.npc('enzo'); var G=A.G;
+  if (A.has('jute')||A.has('wintermantel')||F(G,'k4.v.wrapped')) return E.say('Uno basta. Per un fico basta uno.');
+  if (!F(G,'k4.v.jute')) return A.m('Kaffeesäcke. In der Ecke stapeln sie sich. Wofür sollte ich einen brauchen?');
+  await A.m('Signor Enzo, avrebbe un sacco di caffè vuoto? Di juta.'); await A.wait(400); await E.say('Un sacco?'); await A.wait(300); await E.say('Per che cosa?');
+  await A.m('Per un fico. Un ramo di fico, da Mostar. Ha freddo.'); await A.wait(800);
+  await E.say('Per un fico.'); await A.wait(500); await E.say('Mio padre in Calabria fasciava i fichi così. Ogni novembre. Con i sacchi del caffè.');
+  await A.narrate('Er holt einen Sack aus der Ecke hinter der Theke, schüttelt ihn aus, dass es nach geröstetem Kaffee staubt, und faltet ihn wie eine Tischdecke.');
+  await E.say('Per un fico si fa tutto.'); A.give('jute'); A.setFlag('k4.v.gotJute');
+  await A.m('Sein Vater hat in Kalabrien die Feigen so eingewickelt, sagt er. Jeden November. Für eine Feige tut man alles.');
+  if (A.G.malaOn && A.malaHere()){ await A.wait(300); await A.g('Er riecht wie der Laden unter uns. Damals.'); } }
+M.k4EnzoSack=sack;
 async function talkEnzo(A){ var E=A.npc('enzo'), G=A.G;
   var table={
     s4_peppino:function(A){ return enzoPeppino(A,E); },
@@ -57,6 +69,7 @@ async function talkEnzo(A){ var E=A.npc('enzo'), G=A.G;
   };
   await A.menuLoop(function(){ var know=N(G,'s4_peppino'), sepp=F(G,'k4.s.wimmer'), after=F(G,'k4.s.call')||F(G,'k4.s.wimmerFw')||F(G,'k4.s.crossed'); return [
     {t:'Un caffè, per favore.',go:function(A){ return coffee(A,E); }},
+    {t:'Haben Sie einen leeren Kaffeesack? Aus Jute.',if:F(G,'k4.v.jute')&&!F(G,'k4.v.wrapped')&&!A.has('jute')&&!A.has('wintermantel'),go:function(A){ return sack(A,E); }},
     {t:'Kennen Sie einen Peppino? Gepäckträger, Nummer siebzehn.',if:know&&!N(G,'s4_enzo'),go:function(A){ return enzoPeppino(A,E); }},
     {t:'Kennen Sie einen Sepp? Vom Bahnhof.',once:'en1',if:sepp,go:async function(A){ await E.say('Sepp? Qui non c’è nessun Sepp.'); await A.wait(400); await E.say('Qui ci sono Peppe, Pino, Totò. Sepp no.'); await A.m('Einen Sepp gibt es hier nicht. Hier gibt es Peppe, Pino, Totò.'); }},
     {t:'Peppino ist tot.',if:N(G,'s4_enzo')&&!F(G,'k4.s.enzoKnows'),go:function(A){ return enzoDead(A,E); }},
@@ -79,7 +92,8 @@ async function clipping(A){ await A.doc({style:'news',title:'Der letzte Gepäckt
   if (A.first('bsClip')) await A.m('Kein Nachname. Auch hier nicht.'); }
 var HS=[
  {id:'door',name:'In die Stadt',exit:{to:'map'},look:'Die Tür mit einer Glocke, die schellt, wenn einer kommt. Draußen das Bahnhofsviertel im Schnee: Gemüseläden, Telefonläden, ein Hotel mit drei Sternen, von denen einer leuchtet.',g:{look:'Draußen die Straße. Die Glocke hat nicht geschellt, als ich kam.'}},
- {id:'counter',name:'Theke',look:'Eine Theke aus Marmorimitat, darauf Zuckertüten in einem Glas, ein Teller mit Cornetti unter einer Haube, die Zeitungen von gestern.',use:function(A){ return coffee(A,A.npc('enzo')); },take:'Die Cornetti sind von heute früh. Enzo sieht mich an, als wüsste er das.',
+ {id:'counter',name:'Theke',look:function(A){ return A.m('Eine Theke aus Marmorimitat, darauf Zuckertüten in einem Glas, ein Teller mit Cornetti unter einer Haube, die Zeitungen von gestern.'+(A.flag('k4.v.jute')&&!A.flag('k4.v.gotJute')?' In der Ecke dahinter ein Stapel leerer Kaffeesäcke aus Jute.':' In der Ecke dahinter leere Kaffeesäcke.')); },use:function(A){ return coffee(A,A.npc('enzo')); },
+   take:function(A){ if (A.flag('k4.v.jute') && !A.flag('k4.v.gotJute')) return sack(A,A.npc('enzo')); return A.m('Die Cornetti sind von heute früh. Enzo sieht mich an, als wüsste er das.'); },
    g:{look:'Er hat die Theke heute schon dreimal gewischt. Sie ist sauber. Er wischt trotzdem.'}},
  {id:'machine',name:'Espressomaschine',look:'Eine Espressomaschine aus Chrom, so alt wie die Bar und viel besser gepflegt als der Rest.',use:function(A){ return coffee(A,A.npc('enzo')); },
    g:{look:'Sie zischt wie ein Zug, der gleich fährt.'}},

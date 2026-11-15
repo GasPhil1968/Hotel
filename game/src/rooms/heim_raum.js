@@ -47,6 +47,16 @@ async function waltz(A){ if (A.flag('k4.g.waltz')) return A.g('Er tritt ihr auf 
   await A.memory({title:'Nachhall – der Walzer',tint:'ghost',lines:['Ein Sommerfest. Die Fenster offen, Lampions, jemand spielt Klavier.','Ein großer Mann in Strickjacke tanzt mit einer kleinen Frau mit Kopftuch.','Sie zählt leise mit: eins, zwei, drei. Er tritt ihr auf die Füße.','Sie sagt nichts. Sie lacht.']});
   A.setFlag('k4.g.waltz'); await A.wait(500); await A.g('Sie haben hier getanzt. Er und sie.'); }
 // ---------------------------------------------------------------- Hotspots
+// Kette 3 „Die Lampe am Tor“: der Papierstern am mittleren Fenster (design/K4_RAETSEL.md)
+async function takeStar(A){ var G=A.G;
+  if (night(G)) return A.m('Nicht jetzt.');
+  if (F(G,'k4.g.starTaken')) return A.m(A.has('stern')?'Der Stern ist schon in meiner Tasche. Er leuchtet durch den Stoff.':'Der Stern hängt jetzt im Flur. Da gehört er hin.');
+  if (A.isMala && A.isMala()) return A.g('Ich kann ihn nicht abnehmen. Marko kann es.');
+  var Mo=A.npc('pflege1');
+  if (Mo && Mo.actor){ await A.m('Darf ich den Stern ausleihen? Für den Flur. Am Fenster hinten ist es dunkel.'); await Mo.say('Den Stern? Nehmen S’ ihn, der hängt eh schief.'); await A.wait(300); await Mo.say('Den hat die Frau Brandl gebastelt. Die faltet seit drei Wochen Sterne. Sie macht Ihnen einen neuen.'); }
+  else await A.narrate('Ich nehme den Stern vom Haken. Das Batteriekästchen baumelt am Kabel. Ich bringe ihn zurück, wenn er seine Arbeit getan hat.');
+  A.give('stern'); A.setFlag('k4.g.starTaken'); A.rebuild();
+  if (A.malaHere()){ await A.wait(300); await A.g(F(G,'k4.g.lampAsk')?'Eine Lampe. Für sie.':'Was willst du mit einem Stern?'); if (!F(G,'k4.g.lampAsk')) await A.m('Weiß ich noch nicht. Er sah aus, als würde er gebraucht.'); } }
 var HS=[
  {id:'door',name:'Flur',exit:{to:'heim_flur'},look:'Die Doppeltür zum Flur. Draußen die Bank und der Aufzug.',g:{look:'Hinaus. Zum Gang, wo sie wartet.'}},
  {id:'tables',name:'Tische',look:function(A){ var G=A.G; if (night(G)) return A.m('Die Tische, die Stühle hochgestellt. Auf einem liegt eine vergessene Papierkrone.');
@@ -56,8 +66,10 @@ var HS=[
    take:function(A){ return A.m(three(A.G)?'Ich nehme mir ein Stück. Er ist trocken und schmeckt nach Orangeat. Weihnachten im Altenheim.':'Noch nicht. Um drei. Hier hat alles seine Uhrzeit.'); },
    use:function(A){ var G=A.G; if (A.malaHere() && N(G,'g4_drei') && A.first('!k4.g.coffeeG')){ return (async function(){ await A.m('Vielleicht ist es der Kaffee. Um drei.'); await A.wait(500); await A.g('Er trinkt keinen. Er wartet.'); })(); } return HS_BY.cake.take(A); },
    g:{look:'Stollen. Er riecht nach etwas, das ich vergessen habe.', sense:'Hände, die jedes Jahr dasselbe backen. In einer großen Küche, für Leute, die sie nie sehen.'}},
- {id:'window',name:'Fenster',look:function(A){ return A.m(night(A.G)?'Die großen Fenster. Über dem Park blühen Raketen auf, lautlos hinter dem Glas.':'Große Fenster zum Bavariapark. Kahle Bäume, Schnee, ein Weg, auf dem niemand geht.'); },
-   g:{look:'Draußen. Die Bewohner sehen hinaus wie ich: als käme gleich jemand.'}},
+ {id:'window',name:function(S,G){ return (G.flags['k4.g.starTaken'])?'Fenster':'Fenster mit Stern'; },look:function(A){ var G=A.G; if (night(G)) return A.m('Die großen Fenster. Über dem Park blühen Raketen auf, lautlos hinter dem Glas.');
+     return A.m(F(G,'k4.g.starTaken')?'Große Fenster zum Bavariapark. Kahle Bäume, Schnee. Am mittleren Fenster fehlt jetzt der Stern. Ein Haken, sonst nichts.':'Große Fenster zum Bavariapark. Kahle Bäume, Schnee, ein Weg, auf dem niemand geht. Am mittleren Fenster hängt ein gelber Papierstern mit einem Lämpchen drin, ein bisschen schief.'); },
+   take:function(A){ return takeStar(A); },
+   g:{look:function(A){ return A.g(F(A.G,'k4.g.starTaken')?'Draußen. Die Bewohner sehen hinaus wie ich: als käme gleich jemand.':'Ein Stern aus Papier, mit einem Licht drin. Draußen ist es hell, er leuchtet trotzdem. Für niemanden.'); }}},
  {id:'tv',name:'Fernseher',look:function(A){ var p=A.G.phase; return A.m(p==='k4_d1'?'Ein Fernseher ohne Ton. Ein Weihnachtsfilm, schwarzweiß. Jemand küsst jemanden im Schnee.':(p==='k4_d4'||p==='k4_d5'?'Ein Fernseher ohne Ton. Skispringen. Einer fliegt, landet, fliegt.':'Ein Fernseher ohne Ton. Wetterkarte. Viel Weiß.')); },
    use:'Ich stelle den Ton nicht an. Hier hat jeder seinen eigenen Ton im Kopf.', g:{look:'Bilder ohne Stimmen. Wie bei mir, nur umgekehrt.'}},
  {id:'tree',name:'Tannenbaum',look:'Ein Tannenbaum mit Strohsternen und einer Lichterkette. Darunter Päckchen, alle gleich groß, jedes mit einem Namen.',take:'Die Päckchen gehören den Bewohnern. Eins hat meinen Namen nicht, das ist richtig so.',

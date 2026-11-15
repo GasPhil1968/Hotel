@@ -1,6 +1,8 @@
 /* ===== rooms/jhaus.js — Mamas Haus im Westend, das Treppenhaus: Frau Huber gibt den Schlüssel und redet (über das Silvester
    der Frau Vuković und die Pantoffeln, „I hab nie gfragt“), Mucki, die Katze, sieht Mala. Schalter: k4.p.key, k4.p.mucki,
-   k4.p.slipHuber, k4.p.silvester. Nachts darf Mala allein hierher (Gerüst), Lebende sprechen sie nicht an. ===== */
+   k4.p.slipHuber, k4.p.silvester. Nachts darf Mala allein hierher (Gerüst), Lebende sprechen sie nicht an.
+   Kette 1 „Mucki wartet auch“ (design/K4_RAETSEL.md): Am Heiligabend liegt Mucki quer auf der Treppe und wartet auf Frau Vuković;
+   an Marko kommt keiner vorbei (k4.p.catBlock). Katzen sehen Mala: Sie redet mit ihr und geht vor, Mucki folgt ihr (k4.p.catMoved). ===== */
 (function(M){
 'use strict';
 var DAYS=['k4_pro','k4_d1','k4_d2','k4_d3','k4_d4','k4_d5'], NIGHTS=['k4_pro_n','k4_d1_n','k4_d2_n','k4_d4_n','k4_d5_n'];
@@ -9,6 +11,31 @@ function night(G){ return NIGHTS.indexOf(G.phase)>=0; }
 function huberHere(G){ return DAYS.indexOf(G.phase)>=0 || G.phase==='k4_epi'; }
 function gHere(A){ return A.G.malaOn && A.malaHere() && !A.isMala(); }
 function catName(S,G){ return G.flags['k4.p.mucki']?'Mucki':'Katze'; }
+function catBlocks(G){ return G.phase==='k4_pro' && !G.flags['k4.p.catMoved']; }          // Mucki liegt quer auf der Treppe
+var CAT_STAIR=[150,112,'F'], CAT_DOOR=[226,121,'R'];
+function catPos(G){ return (G.phase==='k4_pro' && G.flags['k4.p.catMoved'])?CAT_DOOR:M.apos('jhaus','mucki',CAT_STAIR); }
+// Marko will hinauf, Mucki faucht
+async function catBlock(A){ var G=A.G, C=A.npc('mucki'), H=A.npc('huber'), first=!F(A,'k4.p.catBlock'); A.setFlag('k4.p.catBlock');
+  if (C.actor) C.anim('arch'); A.sfx('cat');
+  if (first){ await A.narrate('Auf der dritten Stufe liegt die Katze. Quer. Als ich den Fuß hebe, wird sie doppelt so dick und faucht.');
+    if (huberHere(G)){ await H.say('Jessas, d’ Mucki! Lassen S’ as, de beißt.'); await A.wait(300); await H.say('De liegt do seit in da Fruah. De wart auf d’ Frau Vuković. Jeden Tag um zwoa hockt’s do, wenn’s hoamkimmt.');
+      await H.say('Do kimmt koana vorbei. Mi beißt’s aa.'); }
+    if (gHere(A)){ await A.wait(400); await A.g('Sie wartet. Auf deine Mutter.'); await A.m('Und ich komme nicht vorbei.'); await A.g('Sie sieht mich an. Nicht dich.'); }
+    return; }
+  await A.m(A.cycle('jhCatNo',['Mucki faucht. Sie verteidigt die Treppe wie eine Grenze.','Sie macht einen Buckel. An ihr komme ich nicht vorbei, ohne dass einer von uns blutet.','Ich hebe den Fuß. Sie hebt die Pfote. Ich stelle den Fuß wieder hin.'])); }
+// Mala redet mit Mucki und geht vor: die Katze folgt ihr zu Frau Hubers Tür
+async function catLead(A){ var G=A.G, C=A.npc('mucki'), H=A.npc('huber');
+  await A.g('Du wartest auf sie.'); await A.wait(500); if (C.actor) C.anim('watch'); await A.g('Ich weiß, wie das ist. Man legt sich vor die Tür, damit man es merkt, wenn sie kommt.');
+  await A.wait(400); await A.g('Sie kommt um zwei. Das hat Ana geschrieben. Bis dahin ist es unten wärmer.');
+  await A.wait(500); await A.g('Komm.');
+  var gw=A.walkG?A.walkG(CAT_DOOR[0]+20,CAT_DOOR[1]):null; await A.wait(500);   // Mala geht vor, die Katze hinterher
+  A.sfx('cat'); if (C.actor){ await C.walk(CAT_DOOR[0],CAT_DOOR[1]); await C.face('R'); C.anim('sit'); } if (gw) await gw;
+  A.setFlag('k4.p.catMoved'); A.rebuild();
+  await A.narrate('Die Katze steht auf, streckt sich, eine Pfote nach der anderen, und geht die Stufen hinunter. Hinter etwas her, das nur sie sieht. Vor Frau Hubers Tür setzt sie sich hin.');
+  if (huberHere(G)){ await H.say('Jetzt schau her. D’ Mucki.'); await A.wait(400); await H.say('Wia wenn’s oana führt.'); }
+  await A.wait(400); await A.g('Sie ist mitgekommen. Sie wartet jetzt hier. Das ist auch Warten.');
+  if (G.pos.marko.room==='jhaus' && A.isMala()){ await A.wait(300); await A.g('Die Treppe ist frei, Marko.'); } }
+M.k4CatLead=catLead;
 // ---------------------------------------------------------------- Frau Huber
 async function giveKey(A,H){ var G=A.G; await A.m('Ana schreibt, Sie haben den Schlüssel.');
   await H.say('Freilich hab i’n. Seit zehne in der Früh in der Schürzntaschn. Damit i’n ned verleg.'); await H.anim('key'); A.sfx('keys'); A.setFlag('k4.p.key'); await A.wait(300);
@@ -18,6 +45,9 @@ async function giveKey(A,H){ var G=A.G; await A.m('Ana schreibt, Sie haben den S
 async function talkHuber(A){ var H=A.npc('huber'), G=A.G, p=G.phase;
   await A.menuLoop(function(){ return [
     {t:'Ana schreibt, Sie haben den Schlüssel.',silent:true,if:!F(A,'k4.p.key'),go:function(A){ return giveKey(A,H); }},
+    {t:'Können Sie die Katze nicht von der Treppe nehmen?',once:'hbCat',if:catBlocks(G)&&F(A,'k4.p.catBlock'),go:async function(A){ await H.say('I? Mit meiner Hüft?'); await A.wait(400);
+        await H.say('Und mit am Mannsbild geht’s scho glei ned mit. De mog koane Mannsbilder. Koane Kinder. Koane Postboten.'); await A.wait(300); await H.say('De wart auf d’ Frau Vuković. Da kann ma nix macha. Außer warten.');
+        if (gHere(A)){ await A.wait(400); await A.g('Katzen mögen mich auch nicht. Aber sie sehen mich.'); } }},
     {t:'Arbeitet meine Mutter über die Feiertage?',once:'hb1',if:DAYS.indexOf(p)>=0&&p!=='k4_d5',go:async function(A){ await H.say('Ihre Mama? Jeden Feiertag. Und jedes Silvester. Jeds!');
         await H.say('De andern wolln frei an Silvester. Sie ned. Sie sagt, sie mog des Gschiaß ned. Des Kracha.'); A.setFlag('k4.p.silvester'); await A.wait(300); await A.m('Sie mag das Knallen nicht.'); if (gHere(A)) await A.g('…'); }},
     {t:'Kennen Sie meine Mutter gut?',once:'hb2',go:async function(A){ await H.say('Guat? Mir grüßn uns. Seit siebzehn Jahr. Sie bringt mir d’ Zeitung, i ihr an Kuchn.'); await A.wait(300); await H.say('Mehr red’ ma ned. Des is in München scho a Freundschaft.'); }},
@@ -52,7 +82,8 @@ var HS=[
  {id:'up',name:'Treppe nach oben',exit:{to:'jwohnung'},look:'Eine Holztreppe mit gedrechseltem Geländer. Die Stufen sind in der Mitte ausgetreten, sechzig Jahre Westend.',
    canExit:async function(A){ var G=A.G;
      if (A.isMala()){ if (night(G) || G.pos.marko.room==='jwohnung' || F(A,'k4.p.jasna')) return true; await A.g('Nicht ohne ihn. Das ist die Wohnung seiner Mutter.'); return false; }
-     if (G.phase==='k4_pro' && !F(A,'k4.p.key')){ await A.m(huberHere(G)?'Ohne Schlüssel? Den hat Frau Huber.':'Ich habe keinen Schlüssel.'); return false; } return true; },
+     if (G.phase==='k4_pro' && !F(A,'k4.p.key')){ await A.m(huberHere(G)?'Ohne Schlüssel? Den hat Frau Huber.':'Ich habe keinen Schlüssel.'); return false; }
+     if (catBlocks(G)){ await catBlock(A); return false; } return true; },
    g:{look:'Auf der Treppe liegen Schritte. Viele, immer dieselben, nach oben. Abends am dichtesten.',sense:'Achtzehn Jahre dieselben Schritte. Sie zählt die Stufen nicht. Sie weiß sie.'}},
  {id:'huber_door',name:function(S,G){ return 'Tür von Frau Huber'; },look:function(A){ return A.m(huberHere(A.G)?'Frau Hubers Tür steht offen. Auf der Fußmatte „Grüß Gott“, an der Tür ein Stern aus Stroh. Drinnen läuft ein Radio.':'Frau Hubers Tür, zu. Dahinter läuft leise ein Fernseher.'); },
    open:function(A){ return A.m(huberHere(A.G)?'Sie steht ja schon in der Tür.':'Ich klopfe nicht. Es ist spät, und sie ist einundachtzig.'); },
@@ -70,8 +101,15 @@ var HS=[
  {id:'pram',name:'Kinderwagen',look:'Ein Kinderwagen unter der Treppe, mit einer Decke voller Elefanten.',take:'Der gehört jemandem mit Kind. Und jemandem mit wenig Platz.',
    g:{look:'Ein Kinderwagen. Unter der Treppe schläft er, bis man ihn braucht.'}},
  {id:'cat',npc:'mucki',name:catName,look:catLook,talk:function(A){ return A.m(A.cycle('catT',['Miez.','Mucki. Mucki?','Sie gähnt. Das ist ihre Antwort.'])); },
-   take:'Sie ist sechzehn und dick. Ich will meine Hände behalten.',
-   g:{look:catLookG,talk:async function(A){ await A.g('Hallo, Katze.'); var C=A.npc('mucki'); if (C.actor) C.anim('arch'); A.sfx('cat'); await A.wait(300); await A.g('Sie hört mich. Oder sie hört mich nicht und faucht trotzdem.'); }}},
+   take:async function(A){ if (!catBlocks(A.G)) return A.m('Sie ist sechzehn und dick. Ich will meine Hände behalten.'); var C=A.npc('mucki'); if (C.actor) C.anim('arch'); A.sfx('cat'); A.setFlag('k4.p.catBlock');
+     await A.narrate('Ich greife nach ihr. Sie ist schneller. Drei rote Striche auf meinem Handrücken, sehr ordentlich, wie mit dem Lineal.'); await A.m('Sechzehn Jahre und kein bisschen langsamer.');
+     if (huberHere(A.G)) await A.npc('huber').say('Hob i’s ned gsagt? Koane Mannsbilder.'); },
+   push:function(A){ return catBlocks(A.G)?catBlock(A):A.m('Ich schiebe keine Katze. Katzen schieben einen selbst.'); },
+   with:{ vanilice:'Nadas Plätzchen für eine Katze? Mucki schnuppert und sieht mich an, als hätte ich sie beleidigt. Sie wartet nicht auf Plätzchen.', brot:'Eine Katze, die Brot frisst? Nicht diese.', photo_full:'Sie sieht das Foto an. Dann mich. Dann wieder neben mich.' },
+   g:{look:catLookG,talk:async function(A){ var G=A.G, C=A.npc('mucki');
+       if (catBlocks(G) && F(A,'k4.p.catBlock')) return catLead(A);
+       if (catBlocks(G)){ if (C.actor) C.anim('watch'); await A.g('Hallo, Katze.'); await A.wait(300); await A.g('Sie liegt quer auf der Treppe und sieht zur Haustür. Sie wartet auf jemanden.'); return; }
+       await A.g('Hallo, Katze.'); if (C.actor) C.anim('arch'); A.sfx('cat'); await A.wait(300); await A.g('Sie hört mich. Oder sie hört mich nicht und faucht trotzdem.'); }}},
  {id:'huber',npc:'huber',name:'Frau Huber',vis:function(S,G){ return huberHere(G); },talk:talkHuber,
    look:'Frau Huber. Klein, rund, geblümte Kittelschürze, die Brille an einer Kette. Sie steht in ihrer Tür, als hätte sie seit dem Morgen auf jemanden gewartet.',
    give:{ vanilice:'Frau Huber: „Für mi? Naa, naa. De san für d’ Mama, des riech i durch’s Blech.“', photo_full:'Frau Huber: „A Trambahn! Und Sie, mit de Ohrn! Und des Madl … de schaut, als ob’s glei was anstellt.“' },
@@ -82,7 +120,7 @@ M.room('jhaus',{ name:'Treppenhaus', scape:'k4_jhaus',
   state:function(G){ return {hubOpen:false}; },
   actors:function(S,G){ var L=[]; S.hubOpen=huberHere(G);
     if (huberHere(G)){ var h=M.apos('jhaus','huber',[250,120,'L']); L.push({id:'huber',ch:'huber',x:h[0],y:h[1],f:h[2]||'L',name:'Frau Huber',idle:'talk',speechY:40,routine:[['idle',null,6,10],['anim','pet'],['idle',null,5,9],['anim','talk']]}); }
-    var c=M.apos('jhaus','mucki',[150,112,'F']); L.push({id:'mucki',ch:'mucki',x:c[0],y:c[1],f:c[2]||'F',name:G.flags['k4.p.mucki']?'Mucki':'Katze',idle:'sit',speechY:16,routine:[['idle','sit',6,14],['anim','watch'],['idle','sit',5,10]]});
+    var c=catPos(G); L.push({id:'mucki',ch:'mucki',x:c[0],y:c[1],f:c[2]||'F',name:G.flags['k4.p.mucki']?'Mucki':'Katze',idle:'sit',speechY:16,routine:[['idle','sit',6,14],['anim','watch'],['idle','sit',5,10]]});
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G, p=G.phase;

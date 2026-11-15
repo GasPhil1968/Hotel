@@ -1,7 +1,9 @@
 /* ===== rooms/friedamt.js — Städtische Friedhöfe, Verwaltung: Herr Obermaier und die Akte „unbekannter Mann, ca. 70“.
    In der Mütze lag ein Gepäckträgerausweis: „Josef Rugiero, Gepäckträger Nr. 17“ (s4_ausweis). Bestattung von Amts wegen am
    Donnerstag (s4_termin). Mit dem richtigen Namen sucht er neu („Für uns ist das ein neuer Mensch.“), mit Carmelas Wunsch sagt er
-   die Bestattung ab (k4.s.amtOff). Am Christtag ist das Amt zu (98_k4_intros_bhf.js, Reiseregel). ===== */
+   die Bestattung ab (k4.s.amtOff). Am Christtag ist das Amt zu (98_k4_intros_bhf.js, Reiseregel).
+   Kette 2 „Der nasse Brief“ (design/K4_RAETSEL.md): In der Manteltasche lag ein aufgeweichtes Kuvert. Es gehört den Angehörigen;
+   mit dem richtigen Namen und den Briefen der Schwester (s4_name, s4_umschlag) gibt Obermaier es Marko mit (kuvert, k4.s.kuvert). ===== */
 (function(M){
 'use strict';
 function F(G,k){ return !!G.flags[k]; }
@@ -16,7 +18,7 @@ function askOpt(title,also,table,fb){ return {t:'Nach etwas aus dem Notizbuch fr
 // ---------------------------------------------------------------- Die Akte (s4_ausweis, s4_termin)
 async function file(A,O){ var G=A.G; if (N(G,'s4_ausweis')) return O.say('Josef Rugiero, Nummer siebzehn. Sonst haben wir nichts. Und Rugiero gibt es nicht.');
   await O.anim('file'); await O.say('Der unbekannte Mann vom sechzehnten Dezember. Etwa siebzig. Hauseingang in der Schillerstraße.');
-  await O.say('Keine Papiere, kein Geld, kein Schlüssel. Nur die Mütze.'); await A.wait(500);
+  await O.say('Keine Papiere, kein Geld, kein Schlüssel. Nur die Mütze. Und in der Manteltasche ein Kuvert, aufgeweicht, festgefroren, wieder getrocknet. Lesen kann man nichts. Nicht einmal den Absender.'); await A.wait(500);
   await O.say('Und in der Mütze, hinter dem Futter, das hier.');
   await A.doc({style:'register',title:'DEUTSCHE BUNDESBAHN',lines:['Gepäckträgerausweis Nr. 17','Bahnhof München Hbf','','Name: Rugiero, Josef','geb.: 1939','','gültig bis 31.12.1986','(Lichtbild, fast weiß)']});
   await O.say('Josef Rugiero, Gepäckträger Nummer siebzehn. Seit fünfundzwanzig Jahren ungültig. Er hat ihn trotzdem getragen. In der Mütze, am Kopf.');
@@ -27,12 +29,27 @@ async function file(A,O){ var G=A.G; if (N(G,'s4_ausweis')) return O.say('Josef 
 async function termin(A,O){ if (N(A.G,'s4_termin')) return O.say('Donnerstag. Ohne Grund verschiebe ich nichts. Das ist kein Herz aus Stein, Herr Vuković. Das ist eine Frist.');
   await O.say('Bestattung von Amts wegen. Donnerstag, zwölf Uhr. Feuerbestattung, die Urne ins Gemeinschaftsfeld.'); await A.wait(400);
   await O.say('Wenn sich bis dahin niemand meldet.'); await A.wait(600); await O.say('Es meldet sich fast nie jemand.'); A.note('s4_termin'); A.setFlag('k4.s.amt'); }
+// ---------------------------------------------------------------- Das Kuvert aus der Manteltasche
+function kuvertOk(G){ return N(G,'s4_name') && N(G,'s4_umschlag'); }
+async function kuvert(A,O){ var G=A.G;
+  if (F(G,'k4.s.kuvert')) return O.say('Das Kuvert haben Sie quittiert. Einmal. Mit Ihrem Namen. Das reicht mir.');
+  if (!kuvertOk(G)){ await O.say('Das Kuvert gehört in die Akte. Bis sich jemand meldet, der es haben darf.'); await A.wait(400); await O.say('Angehörige, Herr Vuković. Nicht Übersetzer.');
+    await A.wait(300); await A.m(N(G,'s4_name')?'Wer zu ihm gehört. Seinen Namen weiß ich jetzt. Aber wer ist noch da, außer einem Gleis?':'Wer darf es haben? Wer zu ihm gehört. Dafür muss ich erst wissen, wer er war.'); return; }
+  await O.say('Eine Schwester, sagen Sie. C. Ruggiero, Pietrafonda Nuova.'); await A.wait(400); await O.anim('file');
+  await O.say('Dann gehört ihr, was er bei sich hatte. Viel ist es nicht. Die Mütze bleibt bis zur Überführung hier. Das Kuvert nehmen Sie mit, Sie schreiben ihr ja.');
+  await A.narrate('Er schiebt mir ein Formular hin und ein Kuvert in einer Klarsichthülle. Es ist gewellt wie ein Blatt, das im Regen lag. Auf der Marke: Italia.');
+  await O.say('Hier unterschreiben. Für den Empfang. Mit Ihrem Namen. Einmal reicht.'); await A.m('Ich unterschreibe. Für einen Mann, den ich nie lebend gesehen habe.');
+  A.give('kuvert'); A.setFlag('k4.s.kuvert');
+  await A.wait(400); await O.say('Aufmachen würde ich es nicht mit den Fingern. Das zerfällt Ihnen.');
+  if (here(A)){ await A.wait(400); await A.g('Da drin ist eine Stimme. Ganz zusammengeklebt.'); } }
+
 // ---------------------------------------------------------------- Der richtige Name: ein neuer Mensch
 async function newName(A,O){ var G=A.G; if (F(G,'k4.s.amtName')) return O.say('Giuseppe Ruggiero, mit zwei g. Das Konsulat sucht. Die sind langsam, aber gründlich.');
   await O.say('Ruggiero. Mit zwei g?'); await A.m('Mit zwei g. Und Giuseppe statt Josef. Ein Beamter hat ihn 1962 eingedeutscht, bei der Ankunft.');
   await A.wait(500); await O.anim('write'); await O.say('Dann suche ich anders.'); await A.wait(700);
   await O.say('Das ist nicht dieselbe Person für uns, Herr Vuković. Für uns ist das ein neuer Mensch.');
   await O.say('Geboren neununddreißig, Italien. Ich schreibe noch heute ans Konsulat.'); A.setFlag('k4.s.amtName');
+  if (!F(G,'k4.s.kuvert')){ await A.wait(400); await O.say(N(G,'s4_umschlag')?'Und wenn er eine Schwester hat, dann gehört ihr, was er bei sich hatte.':'Und wenn sich Angehörige finden, gehört ihnen, was er bei sich hatte. Viel ist es nicht.'); }
   if (here(A)){ await A.wait(400); await A.g('Ein neuer Mensch. Mit neunundvierzig Jahren Verspätung.'); } }
 // ---------------------------------------------------------------- Carmelas Wunsch: die Bestattung von Amts wegen wird abgesagt
 async function cancel(A,O){ var G=A.G; if (F(G,'k4.s.amtOff')) return O.say('Abgesagt. Ich habe es zweimal gestempelt. Das mache ich sonst nie.');
@@ -67,6 +84,7 @@ async function talkOber(A){ var O=A.npc('obermaier'), G=A.G;
     {t:'Es geht um den Gepäckträger. Den Sepp, von der Bahnhofsmission.',if:!N(G,'s4_ausweis'),go:function(A){ return file(A,O); }},
     {t:'Was passiert jetzt mit ihm?',if:N(G,'s4_ausweis')&&!N(G,'s4_termin'),go:function(A){ return termin(A,O); }},
     {t:'Seine Schwester will ihn heimholen.',if:call&&!F(G,'k4.s.amtOff'),go:function(A){ return cancel(A,O); }},
+    {t:'Das Kuvert aus seiner Manteltasche …',if:N(G,'s4_ausweis')&&!F(G,'k4.s.kuvert'),go:function(A){ return kuvert(A,O); }},
     {t:'Kann ich die Akte sehen?',once:'ob1',go:async function(A){ await O.say('Nein.'); await A.wait(600); await O.say('Was ich Ihnen zeigen darf, habe ich Ihnen gezeigt. Der Rest ist Amtsgeheimnis. Auch für Übersetzer.'); }},
     {t:'Ich bin … ein Verwandter.',once:'ob2',go:async function(A){ await O.anim('file'); await A.wait(500); await O.say('Herr Vuković. Sie heißen Vuković.'); await A.wait(400); await O.say('Und Frau Wimmer hat Sie mir als Übersetzer angekündigt. Zweimal. Verwandte kündigt sie nicht an. Die kommen nicht.'); }},
     {t:'Wie oft kommt das vor? Dass keiner kommt?',once:'ob3',go:async function(A){ await O.say('Jede Woche. Im Winter öfter.'); await A.wait(500); await O.say('Ich schreibe jeden Namen zweimal. Damit wenigstens einer ihn richtig geschrieben hat.'); }},
@@ -92,7 +110,7 @@ var HS=[
    g:{look:'Stempel. Unter Gleis elf hat auch einer gestempelt.'}},
  {id:'obermaier',npc:'obermaier',name:'Herr Obermaier',hgt:36,talk:talkOber,vis:function(S,G){ return OPEN.indexOf(G.phase)>=0; },
    look:'Ein hagerer Mann am Schreibtisch, der Seitenscheitel wie mit dem Lineal gezogen, grauer Schnurrbart, Lesebrille. Beiges Hemd, dunkle Krawatte, graue Strickjacke. Genau, ohne Wärme, nicht böse.',
-   give:{ aushang:'Herr Obermaier: „Den hat mir Frau Wimmer gefaxt. Zweimal.“', brief_falsch:'Herr Obermaier: „Ohne Unterschrift ist das kein Dokument, Herr Vuković. Das ist ein Wunsch.“', vizitka:'Herr Obermaier: „Zelenika. Den habe ich nicht in der Akte. Gut so.“' },
+   give:{ kuvert:'Herr Obermaier: „Das gehört jetzt der Schwester. Ich habe es ausgetragen. Zurück nehme ich nichts, das macht nur Arbeit.“', brief_dez:'Herr Obermaier: „Italienisch. Das lese ich nicht, das lege ich nicht ab. Das ist privat.“', aushang:'Herr Obermaier: „Den hat mir Frau Wimmer gefaxt. Zweimal.“', brief_falsch:'Herr Obermaier: „Ohne Unterschrift ist das kein Dokument, Herr Vuković. Das ist ein Wunsch.“', vizitka:'Herr Obermaier: „Zelenika. Den habe ich nicht in der Akte. Gut so.“' },
    g:{look:'Er schreibt jeden Namen zweimal. Damit er stimmt.',listen:'Er summt. Ganz leise. Er weiß nicht, dass er summt.'}}
 ];
 M.room('friedamt',{ name:'Städtische Friedhöfe, Verwaltung', scape:'k4_friedamt', music:'k4_muenchen',

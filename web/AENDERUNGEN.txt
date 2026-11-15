@@ -1,3 +1,35 @@
+DIE STILLEN – NACHTRAG 15. NOVEMBER 2026: KAPITEL 4, RÄTSEL STATT NUR GESPRÄCHE
+
+In München öffneten sich die Ermittlungen bisher fast nur durch die richtige
+Gesprächszeile. Jetzt gibt es vier Rätselketten mit Gegenständen, in denen
+Marko und Mala einander brauchen. Die Familienszenen bleiben Gespräche.
+
+- Mucki wartet auch (Heiligabend): Frau Hubers Katze liegt quer auf der Treppe
+  und lässt Marko nicht vorbei. Katzen sehen Mala: Sie redet mit Mucki und geht
+  vor, die Katze folgt ihr.
+
+- Der nasse Brief (Sepp): In Sepps Manteltasche lag ein aufgeweichtes Kuvert.
+  Herr Obermaier gibt es heraus, wenn Name und Schwester bekannt sind. Dampf
+  öffnet es (Frau Wimmers Teekessel oder Mamas Herd): Carmelas letzter Brief,
+  „Wenn du eines Tages anrufen willst“, die Nummer verlaufen. Mala hört im
+  Nachhall, wie Carmela die Ziffern auf Italienisch vorsagt, und spricht sie
+  nach, ohne sie zu verstehen. Marko übersetzt. Erst dann geht der Anruf, und
+  Rosa erzählt, dass er nie angerufen hat. Neues Erinnerungsbild: Carmelas
+  Küche.
+
+- Die Lampe am Tor (Gerda): Gerda wartet nicht am dunklen Fenster. Am Depot
+  hing eine Lampe. Marko hängt den Papierstern aus dem Gemeinschaftsraum ans
+  Fenster am Flurende (er leuchtet dort, bis Silvester), dann sagt sie „Einmal.“
+
+- Winterschlaf (Davor und Lena, freiwillig): Jela sagt, die Plastiktüte
+  erstickt den Feigenzweig, er gehört in Jute. Mala weiß von ihrer Mutter:
+  Kaffeesäcke. Ein Sack von Enzo, Schnur vom Kiosk, zusammen ein Wintermantel.
+  Erst danach bietet Davor die Fahrt an Silvester an.
+
+- Hinweise in vier Stufen für alle vier Ketten, neue Notizen und ein neuer
+  Schluss (Rosas Nummer), Lösungsweg in LOESUNG4.md, Konzept in
+  design/K4_RAETSEL.md.
+
 DIE STILLEN – NACHTRAG 15. NOVEMBER 2026: DINOS SPRUNG
 
 - Der Sprung wird jetzt in doppelter Auflösung gezeichnet, feiner als der Rest

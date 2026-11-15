@@ -215,6 +215,48 @@ async function talkWimmer(A){ var W=A.npc('wimmer'), G=A.G;
 async function tea(A,W){ W=W||A.npc('wimmer'); A.sfx('cups'); await W.anim('pour'); await W.say(A.cycle('wiTea',['Bittschön. Zucker steht da.','No oaner? Der Kessel is groß.']));
   await A.m(A.cycle('wiTeaM',['Der Tee ist schwarz und so süß, dass der Löffel fast steht. Er wärmt bis in die Finger.','Ich trinke ihn im Stehen. Hier trinkt jeder im Stehen, der nicht weiß, wie lange er bleibt.'])); }
 
+// ---------------------------------------------------------------- Kette 2 „Der nasse Brief“ (design/K4_RAETSEL.md)
+// Das Kuvert aus Sepps Manteltasche (friedamt.js) geht mit Dampf auf: an Frau Wimmers Teekessel oder an Mamas Herd (jwohnung.js).
+// Drin Carmelas Dezemberbrief mit Rosas neuer Nummer; nach der Vorwahl ist die Tinte verlaufen (s4_dezember). Marko zeigt den Brief
+// Mala: Im Nachhall sagt Carmela die Ziffern beim Schreiben laut, Mala spricht sie nach, ohne sie zu verstehen (s4_ziffern).
+// Zusammen ergeben sie Rosas Nummer (s4_nummer, Schluss in 13_k4_notes.js); erst damit geht der Anruf (gleis11.js).
+M.k4Steam=async function(A,where){ var G=A.G; if (!A.has('kuvert')) return;
+  if (where==='kessel'){ var W=A.npc('wimmer');
+    await A.m('Frau Wimmer, darf ich etwas über Ihren Kessel halten? Ein Kuvert. Es klebt zusammen.');
+    await W.say('Mit Dampf?'); await A.wait(400); await W.say('Des hat mei Muatter mit de Feldpostbriefe g’macht. Damit da Vater ned merkt, dass s’ scho g’lesen san.');
+    await W.anim('pour'); A.sfx('cups'); await A.wait(500);
+    await A.narrate('Sie dreht den Hahn am Kessel auf, bis es zischt, und hält das Kuvert selbst in den Dampf. Mit zwei Fingern, ganz ruhig, wie einen Verband.');
+    await W.say('So. Jetzt lass’ ma’s a bisserl. Ned ziehn. Des geht von selber.'); }
+  else { await A.narrate('Ich stelle Wasser auf, in Mamas kleinstem Topf. Als es dampft, halte ich das Kuvert darüber, eine Ecke nach der anderen.');
+    if (A.G.malaOn && A.malaHere()) await A.g('Langsam. Baka hat dabei immer gesummt.'); else await A.m('Baka hat dabei immer gesummt. Ich summe nicht. Ich bin zu ungeduldig zum Summen.'); }
+  await A.wait(700); await A.narrate('Die Lagen geben nach, eine nach der anderen. Drinnen ein Blatt, gefaltet, blau beschrieben. Die untere Hälfte ist ein Himmel aus verlaufener Tinte.');
+  A.take('kuvert'); A.give('brief_dez'); A.setFlag('k4.s.steam');
+  if (where==='kessel'){ await A.wait(300); await A.npc('wimmer').say('Italienisch. Des lesen S’. I schenk derweil nach.'); }
+  await M.k4ReadDez(A); };
+M.k4ReadDez=async function(A){ var G=A.G, first=!N(G,'s4_dezember');
+  await A.doc({style:'letter',title:'Pietrafonda Nuova, 2 dicembre 2011',lines:['Caro Giuseppe,','qui tutto bene. Rosa ha finito la scuola.','Il fico davanti alla casa ha fatto tanti','fichi, troppi, come sempre.','Anch’io sto bene.','','Rosa ha il telefono nuovo. Se un giorno','vuoi chiamare: 0971 ~~~ ~~~','','Tua Carmela']});
+  if (!first) return A.m('Null, neun, sieben, eins. Danach sechs blaue Wolken. Und „Wenn du eines Tages anrufen willst“.');
+  await A.m('„Lieber Giuseppe, hier ist alles gut. Rosa ist mit der Schule fertig. Der Feigenbaum vor dem Haus hat viele Feigen gehabt, zu viele, wie immer. Auch mir geht es gut.“');
+  await A.wait(500); await A.m('„Rosa hat ein neues Telefon. Wenn du eines Tages anrufen willst: null, neun, sieben, eins …“'); await A.wait(500); await A.m('Danach ist die Tinte verlaufen. Sechs Ziffern, sechs blaue Wolken.');
+  A.note('s4_dezember');
+  await A.wait(700); await A.m('Wenn du eines Tages anrufen willst. Sie hat ihm ihre Nummer geschickt. Er hat den Brief in der Manteltasche getragen, bis zum Schluss. Angerufen hat er nie.');
+  if (A.G.malaOn && A.malaHere()){ await A.wait(500); await A.g('In dem Blatt ist noch eine Stimme. Zeig es mir.'); } };
+M.k4DezMala=async function(A){ var G=A.G;
+  if (N(G,'s4_ziffern')) return A.g('„Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“ Ich höre sie immer noch. Ich weiß nicht, was es heißt. Du weißt es.');
+  A.music('k4_duh'); await A.g('Halt es still.'); await A.wait(700);
+  await A.memory({title:'Nachhall – Eine Küche im Süden',tint:'ghost',draw:M.mem&&M.mem.k4_carmela,lines:[
+    'Eine Küche mit gekalkten Wänden. Vor dem Fenster ein Feigenbaum ohne Blätter. Am Tisch eine alte Frau mit Brille, ein Blatt vor sich, einen Kuli in der Hand.',
+    'Hinter ihr ein Mädchen mit einem Telefon. Es sagt etwas, ungeduldig und lieb zugleich.',
+    'Die alte Frau schreibt langsam und sagt jede Zahl laut, während sie sie schreibt. Als müsste sie sie erst hören, damit sie stimmt.',
+    '„Zero … nove … sette … uno.“ Pause. „Sette. Tre. Cinque. Otto. Due. Due.“',
+    'Das Mädchen: „Nonna, più grande! Non lo legge nessuno così.“ Die alte Frau lacht und schreibt nicht größer.',
+    'Dann legt sie den Kuli hin und sieht lange auf das Blatt. „Se un giorno vuoi chiamare.“ Sie sagt es zweimal. Beim zweiten Mal leiser.']});
+  A.note('s4_ziffern');
+  await A.wait(400); await A.g('Ich habe kein Wort verstanden. Aber ich kann es nachsagen. Ich habe ein gutes Gedächtnis für Dinge, die ich nicht verstehe.');
+  await A.wait(300); await A.g('Nach dem Anfang hat sie gesagt: „Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“');
+  if (!A.isMala()){ await A.wait(400); await A.m('Zahlen. Das sind Zahlen.'); await A.g('Dann weißt du jetzt mehr als ich.'); }
+  A.music('k4_bahnhof'); };
+
 // ---------------------------------------------------------------- die Gäste
 async function talkGast1(A){ var T=A.npc('gast1'), G=A.G;
   await A.menuLoop(function(){ return [
@@ -235,6 +277,7 @@ var HS=[
  {id:'door',name:'Zum Gleis',exit:{to:'gleis11'},look:'Die Tür zurück zum Bahnsteig. Durch die Scheibe sieht man Gleis 11 und den Prellbock.',g:{look:'Draußen ist der Bahnsteig. Und der Prellbock.'}},
  {id:'counter',name:'Theke mit Teekessel',look:'Eine Theke mit einem Teekessel aus Edelstahl, groß wie ein Feuerlöscher. Daneben Tassen, eine Zuckerdose, ein Teller mit Plätzchen, die keiner selbst gebacken hat.',
    use:function(A){ return tea(A); },take:'Die Plätzchen sind für die Gäste. Ich bin ein halber Gast. Ich nehme ein halbes.',
+   with:{ kuvert:function(A){ return M.k4Steam(A,'kessel'); }, brief_dez:'Der Brief ist offen. Noch mehr Dampf, und die Tinte läuft ganz weg.', dzezva:'Großmutters Džezva unter Frau Wimmers Kessel? Die beiden würden sich streiten.' },
    g:{look:'Tassen, Tee, Zucker. Hier riecht es warm. Für mich riecht nichts mehr warm, aber ich weiß noch, wie das war.'}},
  {id:'urn',name:'Urne',vis:function(S){ return !!S.farewell; },look:'Eine schlichte Urne aus Ton. Daneben Sepps Foto mit der Mütze, die Siebzehn darauf. Eine Tasse Tee, die langsam kalt wird.',
    take:'Nein. Die trägt morgen ein anderer. Einer, der dafür bezahlt wird. Das hätte ihm gefallen.',
@@ -259,7 +302,7 @@ var HS=[
    g:{look:function(A){ return A.g(A.S.letter79?'Der kurze Brief liegt obenauf. Um ihn ist es anders. Wärmer, und nasser.':'Um den Koffer fliegen Briefe. Hunderte. Für mich jedenfalls.'); },sense:function(A){ return senseLetters(A); }}},
  {id:'wimmer',npc:'wimmer',name:'Frau Wimmer',hgt:42,talk:talkWimmer,
    look:'Frau Wimmer hinter der Theke: grauer Bob, Lesebrille auf der Nase, eine fliederfarbene Bluse unter einer dunkelblauen Fleeceweste, das Namensschild an einem Band. Ernst und warm zugleich.',
-   give:{ aushang:'Frau Wimmer: „Den hab i g’macht. Behalten S’ ihn.“', brief_falsch:'Frau Wimmer: „Des is ned meins. Und Ihres a ned, wenn S’ mi fragen.“', photo_full:'Frau Wimmer: „Des san Sie? Mit dene Ohren? Und des Madl daneben?“', vanilice:'Frau Wimmer: „Plätzchen ham ma selber. Behalten S’ de für Ihre Mama.“' },
+   give:{ kuvert:function(A){ return M.k4Steam(A,'kessel'); }, brief_dez:'Frau Wimmer: „Italienisch. Des müssen S’ mir übersetzen. Aber ned jetzt. Wenn’s fertig is.“', aushang:'Frau Wimmer: „Den hab i g’macht. Behalten S’ ihn.“', brief_falsch:'Frau Wimmer: „Des is ned meins. Und Ihres a ned, wenn S’ mi fragen.“', photo_full:'Frau Wimmer: „Des san Sie? Mit dene Ohren? Und des Madl daneben?“', vanilice:'Frau Wimmer: „Plätzchen ham ma selber. Behalten S’ de für Ihre Mama.“' },
    g:{look:'Sie schenkt jedem nach, bevor die Tasse leer ist.',listen:'Sie zählt die Tassen. Eine zu viel. Jeden Tag eine zu viel.'}},
  {id:'gast1',npc:'gast1',name:'Toni',hgt:30,talk:talkGast1,look:'Ein alter Mann mit grauem Vollbart und Wollmütze, ein abgetragener Parka. Er hält die Tasse mit beiden Händen.',
    give:{ aushang:'Toni: „Der Sepp. Freilich. Der hat mir amal den Rucksack trag’n.“', photo_full:'Toni: „Schöne Kinder. Wo san de jetzt?“' },

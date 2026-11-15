@@ -5471,7 +5471,45 @@ M.defineItems({
     look:'Nadas Dose, wieder voll. Mamas Vanilice, noch warm. „Bring sie ihr zurück. Voll.“',
     mala:'Jetzt riecht sie nach beiden Küchen.'}
 });
+// ---------------------------------------------------------------- Rätselketten (design/K4_RAETSEL.md): Sepps Kuvert, der Stern im Heim, der Wintermantel für den Feigenzweig
+M.defineItems({
+  kuvert:{name:'Das nasse Kuvert',icon:function(w){ paper(w,5,6,22,14,P.s4,0); w.hl(5,26,6,P.s5); w.px(9,9,P.b2); w.px(10,10,P.b2); w.px(14,11,P.b3); w.px(15,12,P.b2); w.px(19,10,P.b3); w.hl(6,25,19,P.s2); w.px(7,18,P.s2); w.px(22,8,P.s2); w.rect(20,7,5,4,P.r2); w.px(21,8,P.r3); },
+    look:'Ein Kuvert aus Sepps Manteltasche. Aufgeweicht, festgefroren, wieder getrocknet. Die Lagen kleben aneinander wie ein Blätterteig. Auf der Briefmarke: Italia. Der Stempel: Potenza.',
+    open:'Wenn ich es aufreiße, reiße ich den Brief mit. Papier, das einmal nass war, verzeiht nichts.',
+    use:'Wenn ich es aufreiße, reiße ich den Brief mit. Papier, das einmal nass war, verzeiht nichts.',
+    mala:'Darin ist eine Stimme. Ganz zusammengeklebt. Wenn es offen ist, kann ich sie hören.'},
+  brief_dez:{name:'Carmelas Dezemberbrief',icon:function(w){ paper(w,6,3,20,19,P.s6,5); w.rect(15,15,9,4,P.b3); w.px(16,14,P.b2); w.px(22,19,P.b2); w.px(18,16,P.b4); w.px(20,17,P.b4); },
+    look:function(A){ return M.k4ReadDez?M.k4ReadDez(A):A.m('Carmelas Brief vom Dezember.'); },
+    use:function(A){ return M.k4ReadDez?M.k4ReadDez(A):A.m('Carmelas Brief vom Dezember.'); },
+    mala:function(A){ return M.k4DezMala?M.k4DezMala(A):A.g('Eine Frau, die schreibt.'); }},
+  stern:{name:'Papierstern',icon:function(w){ var cx=16,cy=12; for (var i=0;i<8;i++){ var a=i/8*Math.PI*2, r=(i%2)?4:10; for (var s=0;s<r;s++) w.px(Math.round(cx+Math.sin(a)*s),Math.round(cy-Math.cos(a)*s*0.85),(i%2)?P.y3:P.y4); } w.rect(14,10,5,5,P.y5); w.px(16,12,P.l1); w.vl(16,0,2,P.m2); w.rect(23,19,5,4,P.m2); w.px(25,20,P.r3); },
+    look:'Ein Papierstern aus dem Gemeinschaftsraum, gelb, mit einem Lämpchen drin und einem Batteriekästchen am Kabel. Er hängt ein bisschen schief. Er leuchtet trotzdem.',
+    use:'Er leuchtet schon. Er braucht nur einen Ort, an dem es dunkel ist.',
+    mala:'Ein Licht, das man aufhängen kann. Am Tor hing eine Lampe. Für sie.'},
+  jute:{name:'Jutesack',icon:function(w){ w.rect(6,5,20,16,P.e3); w.rect(6,5,20,2,P.e4); w.hl(6,25,20,P.e1); for (var y=7;y<20;y+=2) for (var x=7;x<25;x+=3) w.px(x+(y%4?1:0),y,P.e2); w.rect(10,10,12,5,P.e2); w.hl(11,20,12,P.r3); w.hl(11,18,13,P.k1); },
+    look:'Ein leerer Kaffeesack aus Jute, aus Enzos Bar. Aufgedruckt: „CAFFÈ · SANTOS · 60 kg“. Er riecht nach geröstetem Kaffee und nach Hafen.',
+    mala:'Kaffeesäcke. Mama hat den Oleander jeden November darin eingewickelt. Im neunten Stock, auf dem Balkon.'},
+  schnur:{name:'Schnur',icon:function(w){ for (var i=0;i<5;i++) w.ellipse(16,12,9-i,6-i*0.8,i%2?P.s4:P.s3); w.ellipse(16,12,3,2,P.s2); w.hl(24,29,14,P.s3); w.px(29,15,P.s3); },
+    look:'Die Schnur von den Zeitungsbündeln am Kiosk. Weißes Plastik, zäh, ein paar Meter. Die Kioskfrau hätte sie weggeworfen.',
+    mala:'Schnur. Nicht zu fest. Sonst schneidet sie ein.'},
+  wintermantel:{name:'Wintermantel für einen Zweig',icon:function(w){ w.rect(9,4,14,18,P.e3); w.rect(9,4,14,2,P.e4); w.hl(9,22,21,P.e1); for (var y=6;y<20;y+=2) for (var x=10;x<22;x+=3) w.px(x+(y%4?1:0),y,P.e2); w.hl(8,23,9,P.s5); w.hl(8,23,16,P.s5); w.px(23,10,P.s4); w.px(24,11,P.s4); },
+    look:'Enzos Kaffeesack, mit der Kioskschnur umwickelt, oben offen. Ein Mantel für einen Zweig aus Mostar.',
+    mala:'Oben offen lassen. Er muss atmen, auch wenn er schläft.'}
+});
 M.COMBOS=M.COMBOS||{};
+M.COMBOS['kuvert+dzezva']=function(A){ return A.m('Dampf. So hat Baka die Briefe aus Belgrad aufgemacht und wieder zugeklebt, damit Djed nichts merkt. Aber dafür brauche ich Feuer unter der Džezva. Oder einen Kessel, der schon kocht.'); };
+M.COMBOS['kuvert+olovka']='Mit dem Kuli aufstechen? Dann habe ich ein Loch im Brief und keinen Brief.';
+M.COMBOS['kuvert+mobitel']='Eine Nummer steht vielleicht drin. Aber ich komme nicht hinein.';
+M.COMBOS['kuvert+aushang']='Sepps Foto und sein letzter Brief. Beide gehören ihm. Aufgehen tut davon keiner.';
+M.COMBOS['brief_dez+mobitel']=function(A){ return A.m('Null, neun, sieben, eins. Und dann sechs blaue Wolken. Ich kann keine Wolke wählen.'); };
+M.COMBOS['jute+schnur']=async function(A){ A.take('jute'); A.take('schnur'); A.give('wintermantel'); A.setFlag('k4.v.mantel');
+  await A.m('Ich schlage den Sack um und lege die Schnur zweimal herum. Oben bleibt er offen. Ein Mantel für einen Zweig.');
+  if (A.G.malaOn && A.malaHere()) await A.g('Nicht zu fest. So.'); };
+M.COMBOS['jute+vanilice']='Kaffeesack und Plätzchendose. Das riecht nach Weihnachten in Sarajevo. Hilft dem Zweig nicht.';
+M.COMBOS['jute+dzezva']='Kaffeesack und Džezva. Das wäre ein schönes Foto. Der Zweig braucht etwas anderes.';
+M.COMBOS['schnur+aushang']='Den Aushang festbinden? Er gehört an die Scheibe vom Kiosk. Die Schnur braucht ein anderer.';
+M.COMBOS['stern+photo_full']='Ein Stern über unserem Foto. Das ist Kitsch. Aber schöner Kitsch.';
+M.COMBOS['stern+kanne']='Licht und Tee. Das gehörte am Depot zusammen. Hier gehört der Stern ans Fenster.';
 M.COMBOS['brot+vanilice']='Brot und Plätzchen. Beides für Mama. Nicht in eine Dose.';
 M.COMBOS['kanne+dzezva']='Kaffee aus der Džezva in Gerdas Kanne? Die gehört nicht mir.';
 M.COMBOS['brief_falsch+olovka']='Noch mehr schreiben macht den Brief nicht wahrer.';
@@ -5491,7 +5529,7 @@ function contacts(A){ var G=A.G, f=function(k){ return !!G.flags[k]; }, out=[];
   out.push({t:'(Nada anrufen.)',id:'nada'});
   if (f('k4.d2.kolar')) out.push({t:'(Frau Kolar anrufen.)',id:'kolar'});
   if (A.has('vizitka')||f('k4.v.called')) out.push({t:'(Davor anrufen.)',id:'davor'});
-  if (f('k4.s.letters')||f('k4.s.call')) out.push({t:'(Carmela anrufen.)',id:'carmela'});
+  if ((f('k4.s.letters')&&G.notes.indexOf('s4_nummer')>=0)||f('k4.s.call')) out.push({t:'(Carmela anrufen.)',id:'carmela'});   // Kette 2: erst mit Rosas Nummer
   return out; }
 var DEFAULT={
   jasna:async function(A){ A.sfx('dial'); await A.wait(900); await A.phoneVoice('„Marko? Ich bin bei der Arbeit. Ist was passiert?“','jasna'); await A.m('Nein. Nichts.'); await A.phoneVoice('„Dann bis heute Abend.“','jasna'); A.sfx('hangup'); },
@@ -6042,6 +6080,9 @@ n('s4_bunker','s4','Der Name','Nachhall im Bunker','Mala im Bunker unter Gleis 1
 n('s4_umschlag','s4','Carmela','Briefe aus dem Süden','In Sepps Koffer: Briefe an „Giuseppe Ruggiero, c/o Bahnhofsmission, Gleis 11“. Absender: C. Ruggiero, Pietrafonda Nuova.',{p:'p:wimmer'});
 n('s4_bitte','s4','Carmela','„Cara Carmela, sto bene“','Sepp, als er hört, dass wir seinen Namen kennen: „Adesso scriva. Cara Carmela, sto bene.“ Jetzt schreiben Sie. Liebe Carmela, mir geht es gut.',{p:'p:sepp'});
 n('s4_brief79','s4','Carmela','Carmela, 1979','Carmela 1979: „Ti ho visto con le valigie. Eri bello come papà. Anche io sto bene.“ Ich habe dich mit den Koffern gesehen. Du warst schön wie Papa. Auch mir geht es gut.',{p:null});
+n('s4_dezember','s4','Carmela','Der Dezemberbrief','Carmelas letzter Brief, aus Sepps Manteltasche: „Rosa hat ein neues Telefon. Wenn du eines Tages anrufen willst: 0971 …“ Nach der Vorwahl ist die Tinte verlaufen. Er hat nie angerufen.',{p:'i:brief_dez'});
+n('s4_ziffern','s4','Carmela','„Sätte, tre, tschinkwe …“','Mala im Nachhall des Dezemberbriefs: Carmela sagt beim Schreiben jede Zahl laut. Nach dem Anfang: „Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“ Mala versteht kein Wort.',{p:'p:mala'});
+n('s4_nummer','s4','Carmela','Rosas Nummer','0971 735822. Die Vorwahl aus dem Brief, der Rest aus Malas Nachhall: sette, tre, cinque, otto, due, due. Sieben, drei, fünf, acht, zwei, zwei.',{p:'i:mobitel'});
 n('s4_carmela_hall','s4','Carmela','Eine Frau, die weint','Mala am Brief von 1979: Eine Frau sitzt an einem Küchentisch und schreibt. Sie weint und lächelt dabei.',{p:'p:mala'});
 // Schlüsse
 n('s4_tarnung','s4','Der Sepp','Er konnte beides','Bairisch wie ein Urmünchner, italienisch geflucht, wenn keiner zuhörte. Er konnte beides. Das Bairische war eine Tarnung.',{p:'p:sepp'});
@@ -6055,7 +6096,7 @@ n('g4_gong','g4','Drei Uhr','Der Gong','Der Aufzug gongt, wenn er hält. Hausmei
 n('g4_kalt','g4','Drei Uhr','Wenn sie seine Hand nimmt','Mala: Gerda steigt mit dem Gong aus dem Aufzug, setzt sich und nimmt seine Hand. Genau dann friert er.',{p:'p:mala'});
 n('g4_spaeter','g4','Drei Uhr','„Sie kommt später“','Eine Pflegerin, jeden Tag um drei: „Ihre Gerda kommt später, Herr Lechner.“ Mama sagt es auch.',{p:'p:jasna'});
 n('g4_doku','g4','Alois','Die Pflegedokumentation','Im Dienstzimmer zeigt mir Mama die Akte: „Ehefrau verst. 3.9. Laut PDL nicht mitteilen. Bei Nachfrage: kommt später.“',{p:'p:jasna'});
-n('g4_depot','g4','Alois','Am Depot','In Zimmer 214 Fotos: eine Trambahn der Linie 19, ein junger Fahrer. Eine Frau mit Thermoskanne am Depottor. Fünfunddreißig Jahre hat Gerda draußen gewartet, wenn er Feierabend hatte. Nie ist sie hineingegangen.',{p:'p:alois'});
+n('g4_depot','g4','Alois','Am Depot','In Zimmer 214 Fotos: eine Trambahn der Linie 19, ein junger Fahrer. Eine Frau mit Thermoskanne am Depottor, unter der Lampe. Fünfunddreißig Jahre hat Gerda draußen gewartet, wenn er Feierabend hatte. Nie ist sie hineingegangen.',{p:'p:alois'});
 n('g4_versuch1','g4','Der Versuch','Gong aus, Gerda bei ihm','Erster Versuch: Der Gong ist aus, Gerda sitzt bei ihm. Er steht nicht auf. Aber als sie seine Hand nimmt, friert er und ruft nach ihr.',{p:'p:alois'});
 n('g4_versuch2','g4','Der Versuch','Gong an, Gerda im Flur','Zweiter Versuch: Der Gong ist an, Gerda wartet am Fenster am Ende des Flurs. Er steht beim Gong auf und geht zum Aufzug. Aber er friert nicht.',{p:'p:alois'});
 // Schlüsse
@@ -6074,7 +6115,7 @@ function after(f){ return function(G){ return !!G.flags[f]; }; }
 by('z4_lesart',['z4_vermisst']); by('z4_antrag',['z4_vermisst']); by('z4_nachricht',['z4_tot']); by('z4_kode',['z4_tot']);
 by('z4_vermisst',['z4_zweistaedte']); by('z4_tot',['z4_zweistaedte']); by('z4_passierschein',['z4_kurve']); by('z4_kurve_ana',['z4_kurve']);
 by('s4_bairisch',['s4_tarnung']); by('s4_fluch',['s4_tarnung']); by('s4_peppino',['s4_derselbe']); by('s4_ausweis',['s4_name']); by('s4_derselbe',['s4_name']);
-by('s4_bunker',['s4_name']); by('s4_umschlag',['s4_name']); by('s4_brief79',['s4_wusste']); by('s4_carmela_hall',['s4_wusste']);
+by('s4_bunker',['s4_name']); by('s4_umschlag',['s4_name']); by('s4_dezember',['s4_nummer']); by('s4_ziffern',['s4_nummer']); by('s4_brief79',['s4_wusste']); by('s4_carmela_hall',['s4_wusste']);
 by('g4_versuch1',['g4_beides']); by('g4_versuch2',['g4_beides']); by('g4_beides',['g4_worte']); by('g4_depot',['g4_worte']);
 done('u4_sms',after('k4.p.key')); done('u4_nichtheute',after('k4.p.talk1')); done('u4_kiste',after('k4.d1.box'));
 done('s4_genommen',function(G){ return has(G,'s4_name'); }); done('s4_termin',after('k4.s.farewell')); done('s4_bitte',after('k4.s.crossed'));
@@ -6107,6 +6148,7 @@ M.defineDeductions({
   's4_bunker+s4_umschlag':{to:'s4_name',say:'Die Briefe gehen an Giuseppe Ruggiero. Im Bunker macht ein Beamter daraus Josef Rugiero, und er sagt „Sì“. Derselbe Mann. Den Namen hat man ihm hier genommen.'},   // Blindtest K4: der Hinweis nannte dieses Paar
   's4_ausweis+s4_umschlag':{to:'s4_name',say:'Josef Rugiero, Gepäckträger Nr. 17, sagt der Ausweis. Giuseppe Ruggiero, Gleis 11, sagen die Briefe. Ein Buchstabe weniger, ein Name eingedeutscht. Derselbe Mann.'},   // Analyse K4-B03 (P16)
   's4_bunker+s4_ausweis':{to:'s4_name',say:'Im Bunker wird aus Giuseppe ein Josef, aus Ruggiero ein Rugiero. Im Ausweis steht genau das. Josef Rugiero ist Giuseppe Ruggiero.'},
+  's4_dezember+s4_ziffern':{to:'s4_nummer',say:'„Sätte, tre, tschinkwe, otto, duhe, duhe.“ Sette, tre, cinque, otto, due, due. Sieben, drei, fünf, acht, zwei, zwei. Vor die Wolken die Vorwahl aus dem Brief: null, neun, sieben, eins. Das ist Rosas Nummer.'},
   's4_brief79+s4_carmela_hall':{to:'s4_wusste',say:'„Ich habe dich mit den Koffern gesehen.“ Und eine Frau, die beim Schreiben weint und lächelt. Carmela wusste es. Seit 1979.'},
   'g4_versuch1+g4_versuch2':{to:'g4_beides',say:'Ohne Gong steht er nicht auf, aber er friert, wenn sie bei ihm ist. Mit Gong steht er auf, aber ohne sie friert er nicht. Der Gong holt ihn. Ihre Hand hält ihn fest.'},
   'g4_beides+g4_depot':{to:'g4_worte',say:'„Tot“ vergisst er. Aber Feierabend kennt er. Fünfunddreißig Jahre hat sie am Depot gewartet. So muss ich es ihm sagen. In seiner Sprache.'}
@@ -6119,6 +6161,10 @@ var NEAR={
   's4_genommen+s4_ausweis':'„Hier genommen“, sagt er. Im Ausweis steht ein Name. Aber wie wird aus einem Namen ein anderer?',
   's4_peppino+s4_umschlag':'Peppino ruft man einen Giuseppe. Die Briefe gehen an Giuseppe Ruggiero, Gleis 11. Aber begraben wird ein Josef Rugiero. Wie wird aus dem einen der andere?',   // Analyse K4-B03 (P16)
   's4_genommen+s4_peppino':'Peppino ist ein Rufname. Den Nachnamen hat man ihm hier genommen. Wo, sagt er: an Gleis 11.',
+  's4_ziffern+s4_umschlag':'Malas Laute und Carmelas Adresse. Die Laute sind Zahlen. Aber wo fangen sie an? Das steht im Dezemberbrief, vor den Wolken.',
+  's4_ziffern+s4_brief79':'Malas Laute gehören zum Dezemberbrief, nicht zu dem von neunundsiebzig.',
+  's4_dezember+s4_umschlag':'Die Adresse habe ich. Die Vorwahl auch. Was fehlt, sind sechs Ziffern unter einer Wolke aus Tinte.',
+  's4_dezember+s4_bitte':'„Wenn du eines Tages anrufen willst.“ Und „Jetzt schreiben Sie“. Er wollte schreiben, nicht anrufen. Aber erst brauche ich die Nummer.',
   'g4_drei+g4_gong':'Um drei, beim Gong. Vielleicht ist es der Gong. Vielleicht ist es die Uhrzeit. Das sagt mir keine Beobachtung, nur ein Versuch.',
   'g4_drei+g4_kalt':'Er friert, wenn sie kommt. Aber er stand schon auf, bevor sie da war. Zwei Dinge auf einmal. Ich muss sie trennen.',
   'g4_gong+g4_kalt':'Gong und Kälte kommen im selben Moment. Was davon ist was? Das sehe ich nur, wenn ich eins weglasse.',
@@ -14310,6 +14356,12 @@ M.HINTS_K4=[
      'Anas SMS: „Schlüssel bei Frau Huber, unten links.“',
      'Im Westend, in Mamas Haus.',
      'Im Treppenhaus bei Frau Huber klingeln.']},
+ // Kette 1 „Mucki wartet auch“ (design/K4_RAETSEL.md)
+ {id:'h4m',t:'Die Katze auf der Treppe',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.catBlock') && !F(G,'k4.p.catMoved'); },
+  s:['Mucki liegt quer auf der Treppe und lässt Marko nicht vorbei.',
+     'Frau Huber sagt: Sie mag keine Mannsbilder. Sie wartet auf Frau Vuković.',
+     {m:'Katzen sehen Mala. Auf Mala hört Mucki vielleicht.',g:'Katzen sehen mich. Vielleicht kommt sie mit, wenn ich vorgehe.'},
+     'Zu Mala wechseln und mit der Katze reden.']},
  {id:'h4d',t:'Warten auf Mama',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.key') && !F(G,'k4.p.jasna') && !F(G,'k4.p.coffee'); },
   s:['Mama kommt um zwei. Bis dahin ist Zeit.',
      'Die Wohnung erzählt einiges. Und man kann Kaffee kochen.',
@@ -14392,6 +14444,18 @@ M.HINTS_K4=[
  {id:'s4f',t:'Sein Name',open:function(G){ return N(G,'s4_name') && !N(G,'s4_bitte') && !F(G,'k4.s.crossed'); },
   // Kann-Liste (Hinweisprobe, Simulationslauf): Endet der Tag mit dem Schluss, ist er abends nicht an Gleis 11; dann sagt der Hinweis „morgen“
   s:['Wir kennen jetzt seinen Namen.','Das muss er hören. In seiner Sprache.',function(G){ return M.k4SeppHere&&!M.k4SeppHere(G)?'Morgen, an Gleis 11. Heute Abend ist er nicht dort.':'An Gleis 11.'; },function(G){ return M.k4SeppHere&&!M.k4SeppHere(G)?'Morgen den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.':'Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.'; }]},
+ // Kette 2 „Der nasse Brief“ (design/K4_RAETSEL.md)
+ {id:'s4n',t:'Eine Nummer in Italien',open:function(G){ return N(G,'s4_wusste') && N(G,'s4_bitte') && !N(G,'s4_nummer') && !F(G,'k4.s.call'); },
+  s:['Carmela anrufen, bei ihm am Gleis. Aber ihre Briefe haben eine Adresse, keine Nummer.',
+     'Sepp hatte etwas bei sich, als er erfror. Die Stadt hat es aufgehoben.',
+     function(G){ if (!F(G,'k4.s.kuvert')) return 'Herr Obermaier hat ein nasses Kuvert aus der Manteltasche. Er gibt es nur, wenn er weiß, wem es gehört: dem richtigen Namen und der Schwester.';
+       if (I(G,'kuvert')) return 'Aufreißen zerreißt es. Papier, das nass war, geht mit Dampf auf. Wo kocht Wasser?';
+       if (!N(G,'s4_ziffern')) return {m:'Unter der verlaufenen Tinte ist noch eine Stimme. Mala kann sie hören.',g:'In dem Brief ist noch eine Stimme. Zeig ihn mir.'};
+       return 'Die Vorwahl steht im Brief. Die Ziffern hat Mala gehört, auf Italienisch.'; },
+     function(G){ var m=later(G)?'Morgen: ':''; if (!F(G,'k4.s.kuvert')) return m+'Bei Herrn Obermaier nach dem Kuvert aus seiner Manteltasche fragen.';
+       if (I(G,'kuvert')) return m+'Das Kuvert auf Frau Wimmers Teekessel in der Bahnhofsmission benutzen (oder auf Mamas Herd).';
+       if (!N(G,'s4_ziffern')) return 'Mala den Dezemberbrief geben.';
+       return '„Der Dezemberbrief“ und „Sätte, tre, tschinkwe …“ verbinden.'; }]},
  {id:'s4g',t:'Peppinos Bitte',open:function(G){ return N(G,'s4_bitte') && !F(G,'k4.s.call'); },
   s:['Er will, dass Marko für ihn schreibt: „Cara Carmela, sto bene.“',
      'Was hat Carmela ihm all die Jahre geschrieben? Und was wusste sie?',
@@ -14416,11 +14480,17 @@ M.HINTS_K4=[
        if (later(G)) return 'Morgen: Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; if (F(G,'k4.g.chimeOff')&&!pmUsed(G)) return 'Bis drei warten: die Uhr im Flur benutzen.';
        if (pmUsed(G)) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt;
        return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; }]},
+ // Kette 3 „Die Lampe am Tor“ (design/K4_RAETSEL.md)
+ {id:'g4l',t:'Ein Licht am Fenster',open:function(G){ return F(G,'k4.g.lampAsk') && !F(G,'k4.g.lamp') && !F(G,'k4.g.decided'); },
+  s:['Gerda würde am Fenster warten. Aber da ist es finster.','Am Depot hing eine Lampe über dem Tor. Unter der Lampe hat er sie gesehen.',
+     function(G){ return I(G,'stern')?'Marko hat ein Licht dabei.':'Im Heim leuchtet es hier und da, es ist ja Weihnachten. Im Gemeinschaftsraum zum Beispiel.'; },
+     function(G){ return I(G,'stern')?'Den Papierstern auf das Fenster am Ende des Flurs benutzen. Dann als Mala Gerda noch einmal bitten.':'Im Gemeinschaftsraum den Papierstern vom Fenster nehmen und an das Fenster am Ende des Flurs hängen. Dann als Mala Gerda noch einmal bitten.'; }]},
  {id:'g4c',t:'Der zweite Versuch',open:function(G){ return N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2')); },
   s:['Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.','Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.',
      function(G){ return N(G,'g4_versuch1')?{m:'Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?',g:'Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.'}:'Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.'; },
      function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren. Dann als Mala Gerda an das Depot erinnern.';
        if (F(G,'k4.g.hall')) return 'Bis drei warten: die Uhr im Flur benutzen.';   // Hinweisprobe (P12): Gerda wartet schon am Fenster
+       if (F(G,'k4.g.lampAsk') && !F(G,'k4.g.lamp')) return 'Den Papierstern aus dem Gemeinschaftsraum an das Fenster am Ende des Flurs hängen, dann als Mala Gerda noch einmal bitten.';   // Kette 3
        return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
  {id:'g4d',t:'Gong und Hand',open:function(G){ return N(G,'g4_versuch1') && N(G,'g4_versuch2') && !N(G,'g4_beides'); },
   s:['Zwei Versuche, zwei Ergebnisse.','Was hat jeder Versuch gezeigt?','Im Notizbuch beide Versuche.','Die beiden Versuche verbinden.']},
@@ -14436,6 +14506,12 @@ M.HINTS_K4=[
      function(G){ return F(G,'k4.g.goodbye')?'In der Zwischenwelt mit Gerda reden und ihr die hohe Stufe hinaufhelfen.':'Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.'; }]},   // Hinweisprobe (P12): nach „Endstation“ geht es in der Zwischenwelt weiter
  {id:'g4i',t:'Die Kanne',open:function(G){ return I(G,'kanne') && !F(G,'k4.g.thermos'); },
   s:['Gerda hat ihre Kanne hergegeben.','Für wen?','Alois.','Alois die Kanne geben.']},
+ // Kette 4 „Winterschlaf“ (freiwillig, design/K4_RAETSEL.md)
+ {id:'v4w',t:'Ein Mantel für den Zweig',open:function(G){ return F(G,'k4.v.jute') && !F(G,'k4.v.wrapped') && P(G,['k4_d1','k4_d2','k4_d3','k4_d4','k4_d5']); },
+  s:['Jela sagt: Der Zweig gehört in Jute, wie die Feigen in Mostar.',
+     {m:'Mala weiß, wie man so etwas macht. Von ihrer Mutter.',g:'Mama hat den Oleander in Kaffeesäcke gewickelt. Mit Schnur.'},
+     function(G){ if (I(G,'wintermantel')) return 'Der Mantel ist fertig.'; return 'Kaffeesäcke gibt es, wo Kaffee nach etwas riecht. Schnur gibt es, wo jeden Morgen Zeitungsbündel ankommen.'; },
+     function(G){ if (I(G,'wintermantel')) return 'In Moosach den Wintermantel auf den Feigenzweig benutzen.'; var a=[]; if (!I(G,'jute')) a.push('In der Bar Sport Enzo nach einem leeren Kaffeesack fragen'); if (!I(G,'schnur')) a.push('am Kiosk an Gleis 11 nach der Schnur von den Zeitungsbündeln fragen'); a.push('Jutesack und Schnur verbinden und in Moosach auf den Zweig benutzen'); return a.join('; ')+'.'; }]},
  // ---------------- Familie: Dienstag bis Freitag
  {id:'z4a',t:'Ana, 2004',open:function(G){ return G.phase==='k4_d2' && F(G,'k4.d2.kolar') && !N(G,'z4_ana2004'); },
   s:['Frau Kolar hat von einer Probe aus München gesprochen.','Ana weiß etwas, das Mama nicht weiß.','In Giesing, bei Ana.','Zu Ana gehen und sie auf die Probe von Frau Kolar ansprechen.']},
@@ -30955,7 +31031,14 @@ function layers(S,GS,tod){ var L=[], night=isNight(S,GS,tod), C=CART;
 // ---------------------------------------------------------------- jedes Bild: Aufzug (Anzeige, Gong-Licht, Tür), Sekundenzeiger, Fenster
 // Ablauf eines Halts in Sekunden: 0–1,2 „E“ mit Pfeil, 1,2–2,4 „1“ mit Pfeil, ab 2,4 „2“; Gong 2,4–3,8 (Licht blinkt), Tür offen 3,6–6,6
 function liftPhase(S,v){ if (!S||!S.lift) return -1; if (typeof S.lift==='number' && S.lift>1000){ var e=(v.gt-S.lift)/1000; return e<0?-1:e; } return v.t%10; }
+// Kette 3 „Die Lampe am Tor“ (design/K4_RAETSEL.md): ein gelber Papierstern mit Lämpchen; im Flur am Fenstergriff, im Gemeinschaftsraum am mittleren Fenster
+M.k4StarDraw=function(fb,cx,cy,t,cam,floorY){ var i, s, x0=cx-cam;
+  M.glow(fb,x0+0.5,cy+0.5,11,t,0.55);
+  for (i=0;i<8;i++){ var a=i/8*Math.PI*2, r=(i%2)?2.6:5.6; for (s=0;s<=r;s+=0.5){ var X=Math.round(x0+Math.sin(a)*s), Y=Math.round(cy-Math.cos(a)*s); if (X>=0&&Y>=0&&X<fb.w&&Y<fb.h) fb.px(X,Y,(i%2)?P.y3:P.y4); } }
+  fb.rect(x0-1,cy-1,3,3,P.y5); fb.px(x0,cy,P.l1); for (s=1;s<6;s++) fb.px(x0,cy-6-s,P.m2);
+  if (floorY){ for (var yy=floorY-2;yy<=floorY+2;yy++) for (var xx=-12;xx<=12;xx++){ var d=Math.hypot(xx/12,(yy-floorY)/2.6); if (d>1) continue; var X2=x0+xx; if (X2<0||X2>=fb.w||yy>=fb.h) continue; if (bayer(X2,yy)<(1-d)*0.55){ var k=yy*fb.w+X2; fb.d[k]=M.UP[fb.d[k]]; } } } };
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam|0, night=isNight(S,GS,v.tod), wea=weaOf(GS), x, y;
+  if (S && S.lamp) M.k4StarDraw(fb,(WIN.x0+WIN.x1)>>1,WIN.y0+14,t,cam,FY+10);
   var e=liftPhase(S,v);
   if (e>=0){ var fl=e<1.2?'E':(e<2.4?'1':'2'); dispDraw(fb,fl,e<2.4,cam);
     var gong=e>=2.4 && e<3.8 && !(S&&S.chimeOff), on=gong && (Math.floor((e-2.4)*5)%2===0);
@@ -31229,6 +31312,7 @@ function layers(S,GS,tod){ var L=[], wea=weaOf(GS), fn=dayFn(wea), cr=[];
 // ---------------------------------------------------------------- jedes Bild: Fernseher, Lichterketten, Schneefall vor dem Fenster
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam|0, wea=weaOf(GS), i;
   tvPic(fb,t,cam);
+  if (M.k4StarDraw && GS && GS.flags && !GS.flags['k4.g.starTaken'] && M.chapterOf && M.chapterOf(GS)===4) M.k4StarDraw(fb,(WINS[1][0]+WINS[1][1])>>1,WY0+12,t,cam,0);   // Kette 3: der Papierstern
   for (i=0;i<LIGHTS.length;i++){ var p=LIGHTS[i], s=Math.sin(t*(0.8+(i%4)*0.2)+i*1.3); if (s>0.6) fb.px(p[0]-cam,p[1],P.y5); }
   for (i=0;i<TLIGHTS.length;i++){ var q=TLIGHTS[i], s2=Math.sin(t*(1.1+(i%3)*0.3)+i*2.1); if (s2>0.5) fb.px(q[0]-cam,q[1],P.y5); }
   if (wea==='snow') M.snow(fb,t,{n:40,cam:cam,mask:function(x,y){ return x>=0&&y>=0&&x<W&&y<H&&WM[y*W+x]===1; },col:P.s6,col2:P.s5,wind:5}); }
@@ -52488,7 +52572,10 @@ M.room('antikvarijat',{ name:'Antiquariat', scape:'k2_antik', music:function(G){
 /* ---- rooms/balkon.js ---- */
 /* ===== rooms/balkon.js — Davors Balkon in Moosach (freiwillig): Lena und der Feigenzweig aus Mostar, ertränkt aus Liebe; der Anruf bei
    Jela („Pusti ga. Zimi spava. Ne zalijevaj.“); Davor über seinen Vater; Davors Angebot zu fahren (k4.v.car, Silvesternacht).
-   Hier auch die Karte: M.k4UseCard und M.K4PHONE.davor (der Anruf, k4.v.called, schaltet Moosach frei). Vorbild: rooms/zelenika.js ===== */
+   Hier auch die Karte: M.k4UseCard und M.K4PHONE.davor (der Anruf, k4.v.called, schaltet Moosach frei). Vorbild: rooms/zelenika.js
+   Kette 4 „Winterschlaf“ (design/K4_RAETSEL.md): Jela sagt auch, die Tüte erstickt ihn, er gehört in Jute wie die Feigen in Mostar
+   (k4.v.jute). Mala weiß von Nada: Kaffeesäcke. Jutesack (Bar Sport) + Schnur (Kiosk) = Wintermantel; auf den Zweig (k4.v.wrapped),
+   erst dann bietet Davor die Fahrt an (k4.v.car). ===== */
 (function(M){
 'use strict';
 function F(G,k){ return !!G.flags[k]; }
@@ -52555,13 +52642,17 @@ async function jelaCall(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (
   await A.wait(500); await A.phoneVoice('„I reci mu nek dođe u avgustu. Smokve neće čekat.“','jela'); await A.m('Und sag ihm, er soll im August kommen. Die Feigen warten nicht.');
   await Dv.say('Im August. Ja.'); await A.wait(400); await Dv.say('Sagen Sie ihr: im August. Und dass ich esse.');
   await A.m('U avgustu, teta Jela. I jede.'); await A.wait(500); await A.phoneVoice('„Laže.“','jela'); await A.m('„Er lügt.“'); await A.wait(300); await Dv.say('Sie hat recht. Das ist das Schlimme.');
-  A.sfx('hangup'); A.setFlag('k4.v.jela'); A.set('dry',true); A.rebuild();
-  await A.narrate('Lena stellt die Gießkanne in die Ecke, mit der Öffnung zur Wand, damit sie sie nicht mehr ansehen muss.');
+  await A.wait(500); await A.phoneVoice('„I skini tu kesu! Uguši se pod kesom. Umotaj ga u jutu, k’o mi smokve.“','jela');
+  await A.m('Und die Tüte muss weg, sagt sie. Darunter erstickt er. Wickel ihn in Jute, wie wir unsere Feigen.');
+  A.sfx('hangup'); A.setFlag('k4.v.jela'); A.setFlag('k4.v.jute'); A.set('dry',true); A.rebuild();
+  await A.narrate('Lena zieht die Plastiktüte ab und stopft sie in die Jackentasche. Dann stellt sie die Gießkanne in die Ecke, mit der Öffnung zur Wand, damit sie sie nicht mehr ansehen muss.');
   await Ln.say('Okay. Ich hör auf. Aber reden darf ich mit ihm?'); await A.m('Reden darfst du.');
-  if (here(A)){ await A.wait(400); await A.g('Er schläft. Er träumt von einem anderen Sommer.'); }
-  await carOffer(A); }
+  await A.wait(400); await Ln.say('Und Jute? Wo krieg ich denn Jute her? Ich hab nur Tüten. Und Papa hat nur Akten.'); await Dv.say('Ich habe auch Tüten.');
+  if (here(A)){ await A.wait(500); await A.g('Kaffeesäcke.'); await A.wait(400); await A.g('Mama hat jeden November den Oleander auf dem Balkon eingewickelt. Neunter Stock. In Kaffeesäcke, die gab es unten im Laden umsonst.');
+    await A.g('Mit Schnur. Nicht zu fest. Oben Luft.'); await A.wait(300); await A.m('Kaffeesäcke. Wo gibt es in München Kaffeesäcke, die keiner mehr braucht?'); A.setFlag('k4.v.sack'); }
+  else { await A.wait(400); await A.m('Jute. In Sarajevo hatte jeder einen Kaffeesack im Keller. Hier hat jeder Tüten.'); } }
 // ---------------------------------------------------------------- Davors Angebot (k4.v.car)
-async function carOffer(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (F(G,'k4.v.car')) return;
+async function carOffer(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (F(G,'k4.v.car') || !F(G,'k4.v.wrapped')) return;
   await A.wait(600); await Dv.say('Herr Vuković.'); await A.wait(400);
   await Dv.say('Wenn Sie was brauchen. Ich habe ein Auto. Und ich trinke nicht, Lena passt auf.'); await Ln.say('Stimmt. Ich pass auf.');
   A.setFlag('k4.v.car');
@@ -52570,6 +52661,18 @@ async function carOffer(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (
   else if (c==='nye'){ await Dv.say('Silvester. Gut. An Silvester fährt keiner. Da bin ich der Einzige.'); await Ln.say('Und ich.'); }
   else await Dv.say('Nicht danken. Anrufen.');
   if (here(A)){ await A.wait(400); await A.g('Er meint es so, wie sein Vater es gemeint hätte. Wenn der es hätte sagen können.'); } }
+// ---------------------------------------------------------------- Der Wintermantel (Kette 4)
+async function wrap(A){ var G=A.G, Dv=A.npc('davor'), Ln=A.npc('lena'); if (F(G,'k4.v.wrapped')) return A.m('Er hat seinen Mantel schon.');
+  if (!F(G,'k4.v.jela')) return A.m('Erst will ich wissen, was er braucht. Jela weiß es.');
+  A.take('wintermantel'); A.setFlag('k4.v.wrapped'); A.rebuild();
+  await A.narrate('Ich stülpe Enzos Kaffeesack über den Topf und den Zweig und ziehe die Kioskschnur zweimal herum.');
+  if (here(A)){ await A.g('Nicht so fest.'); await A.wait(300); await A.narrate('Ich lockere die Schnur.'); await A.g('So. Und oben offen.'); }
+  else { await A.m('Nicht zu fest. Oben offen. So hat Nada es gemacht, sagt Mala.'); }
+  await A.wait(500); await Ln.say('Sieht aus wie ein kleiner Mönch.'); await A.wait(400); await Ln.say('Ein Mönch, der nach Kaffee riecht.');
+  await A.wait(500); await Dv.say('Wie bei Jela. Genau so haben sie in Mostar vor dem Tor gestanden, sechs Stück, jeden Winter.');
+  if (here(A)){ await A.wait(400); await A.g('Jetzt schläft er warm.'); }
+  await carOffer(A); }
+
 // ---------------------------------------------------------------- Lena und Davor
 async function talkLena(A){ var Ln=A.npc('lena'), G=A.G;
   await A.menuLoop(function(){ return [
@@ -52596,8 +52699,12 @@ var HS=[
  {id:'door',name:'Balkontür',exit:{to:'map'},look:'Die Balkontür. Dahinter das Wohnzimmer, dann die Treppe, dann Moosach.',
    canExit:async function(A){ if (A.G.active==='marko' && A.flag('k4.v.visit') && !A.flag('k4.v.car') && zelHere(A.G)) await carOffer(A); return true; },
    g:{look:'Die Tür. Ich brauche sie nicht. Aber es ist höflich.'}},
- {id:'pot',name:'Feigenzweig',look:function(A){ return A.m(A.flag('k4.v.jela')?'Der Feigenzweig, ohne Tüte. Die Erde ist schon etwas trockener. Er sieht nach nichts aus. Er schläft.':'Ein Blumentopf unter einer Plastiktüte. Darin ein kurzer Feigenzweig in schwarzer, nasser Erde. Zwei gelbe Blätter.'); },
-   use:function(A){ return A.m(A.flag('k4.v.jela')?'Nichts tun. Bis August.':'Gießen? Genau das ist das Problem.'); },
+ {id:'pot',name:'Feigenzweig',look:function(A){ if (A.flag('k4.v.wrapped')) return A.m('Der Feigenzweig in Enzos Kaffeesack, die Kioskschnur zweimal herum, oben offen. Er sieht aus wie ein kleiner Mönch. Er schläft warm.');
+     return A.m(A.flag('k4.v.jela')?'Der Feigenzweig, ohne Tüte. Die Erde ist schon etwas trockener. Nackt in der Kälte. Jela sagt: in Jute, wie die Feigen in Mostar.':'Ein Blumentopf unter einer Plastiktüte. Darin ein kurzer Feigenzweig in schwarzer, nasser Erde. Zwei gelbe Blätter.'); },
+   use:function(A){ return A.m(A.flag('k4.v.wrapped')?'Nichts tun. Bis August.':(A.flag('k4.v.jela')?'Nicht gießen. Einwickeln, in Jute. Wie die Feigen in Mostar.':'Gießen? Genau das ist das Problem.')); },
+   with:{ wintermantel:function(A){ return wrap(A); },
+     jute:'Den Sack allein? Beim ersten Wind fliegt er in den Hof von Moosach. Ich brauche etwas zum Festbinden.', schnur:'Schnur allein wärmt nicht. Die braucht etwas, das sie festhält.',
+     aushang:'Papier wird nass und klebt. Dann haben wir wieder eine Tüte, nur schlechter.', vanilice:'Plätzchen für einen Zweig. Lena würde lachen. Der Zweig nicht.' },
    open:'Ich hebe die Tüte an. Darunter riecht es nach nassem Keller. Nicht nach Feige.',take:'Der Topf gehört Lena. Und der Zweig sowieso.',
    g:{look:'Am Zweig ein winziger Schimmer. Wie ein Ast in einem anderen Sommer.',
      sense:async function(A){ if (A.flag('k4.v.sleeps')) return A.g('Er schläft. Ganz tief. Er hat keine Eile.');
@@ -52886,6 +52993,18 @@ async function coffee(A,E){ A.sfx('cups'); await E.anim('espresso');
   await E.say(A.cycle('enCoffee',['Un caffè. Subito.','Un altro? Lei beve come un napoletano.','Caffè. L’unica cosa che qui faccio bene.']));
   await A.m(A.cycle('enCoffeeM',['Der Espresso ist gut. Enzo sieht mir beim Trinken zu, als wäre das eine Prüfung.','Er will kein Geld. „Domani“, sagt er. Morgen. Das sagt er offenbar zu jedem.','Ich trinke ihn in zwei Schlucken, wie man es hier macht. Enzo nickt.'])); }
 var EN_ALSO=['s4_peppino','s4_name','s4_bunker','s4_umschlag','s4_ausweis','s4_wusste','s4_fluch','s4_bairisch','s4_tarnung','s4_derselbe','s4_genommen'];
+// Kette 4 „Winterschlaf“ (design/K4_RAETSEL.md): Enzos leere Kaffeesäcke
+async function sack(A,E){ E=E||A.npc('enzo'); var G=A.G;
+  if (A.has('jute')||A.has('wintermantel')||F(G,'k4.v.wrapped')) return E.say('Uno basta. Per un fico basta uno.');
+  if (!F(G,'k4.v.jute')) return A.m('Kaffeesäcke. In der Ecke stapeln sie sich. Wofür sollte ich einen brauchen?');
+  await A.m('Signor Enzo, avrebbe un sacco di caffè vuoto? Di juta.'); await A.wait(400); await E.say('Un sacco?'); await A.wait(300); await E.say('Per che cosa?');
+  await A.m('Per un fico. Un ramo di fico, da Mostar. Ha freddo.'); await A.wait(800);
+  await E.say('Per un fico.'); await A.wait(500); await E.say('Mio padre in Calabria fasciava i fichi così. Ogni novembre. Con i sacchi del caffè.');
+  await A.narrate('Er holt einen Sack aus der Ecke hinter der Theke, schüttelt ihn aus, dass es nach geröstetem Kaffee staubt, und faltet ihn wie eine Tischdecke.');
+  await E.say('Per un fico si fa tutto.'); A.give('jute'); A.setFlag('k4.v.gotJute');
+  await A.m('Sein Vater hat in Kalabrien die Feigen so eingewickelt, sagt er. Jeden November. Für eine Feige tut man alles.');
+  if (A.G.malaOn && A.malaHere()){ await A.wait(300); await A.g('Er riecht wie der Laden unter uns. Damals.'); } }
+M.k4EnzoSack=sack;
 async function talkEnzo(A){ var E=A.npc('enzo'), G=A.G;
   var table={
     s4_peppino:function(A){ return enzoPeppino(A,E); },
@@ -52902,6 +53021,7 @@ async function talkEnzo(A){ var E=A.npc('enzo'), G=A.G;
   };
   await A.menuLoop(function(){ var know=N(G,'s4_peppino'), sepp=F(G,'k4.s.wimmer'), after=F(G,'k4.s.call')||F(G,'k4.s.wimmerFw')||F(G,'k4.s.crossed'); return [
     {t:'Un caffè, per favore.',go:function(A){ return coffee(A,E); }},
+    {t:'Haben Sie einen leeren Kaffeesack? Aus Jute.',if:F(G,'k4.v.jute')&&!F(G,'k4.v.wrapped')&&!A.has('jute')&&!A.has('wintermantel'),go:function(A){ return sack(A,E); }},
     {t:'Kennen Sie einen Peppino? Gepäckträger, Nummer siebzehn.',if:know&&!N(G,'s4_enzo'),go:function(A){ return enzoPeppino(A,E); }},
     {t:'Kennen Sie einen Sepp? Vom Bahnhof.',once:'en1',if:sepp,go:async function(A){ await E.say('Sepp? Qui non c’è nessun Sepp.'); await A.wait(400); await E.say('Qui ci sono Peppe, Pino, Totò. Sepp no.'); await A.m('Einen Sepp gibt es hier nicht. Hier gibt es Peppe, Pino, Totò.'); }},
     {t:'Peppino ist tot.',if:N(G,'s4_enzo')&&!F(G,'k4.s.enzoKnows'),go:function(A){ return enzoDead(A,E); }},
@@ -52924,7 +53044,8 @@ async function clipping(A){ await A.doc({style:'news',title:'Der letzte Gepäckt
   if (A.first('bsClip')) await A.m('Kein Nachname. Auch hier nicht.'); }
 var HS=[
  {id:'door',name:'In die Stadt',exit:{to:'map'},look:'Die Tür mit einer Glocke, die schellt, wenn einer kommt. Draußen das Bahnhofsviertel im Schnee: Gemüseläden, Telefonläden, ein Hotel mit drei Sternen, von denen einer leuchtet.',g:{look:'Draußen die Straße. Die Glocke hat nicht geschellt, als ich kam.'}},
- {id:'counter',name:'Theke',look:'Eine Theke aus Marmorimitat, darauf Zuckertüten in einem Glas, ein Teller mit Cornetti unter einer Haube, die Zeitungen von gestern.',use:function(A){ return coffee(A,A.npc('enzo')); },take:'Die Cornetti sind von heute früh. Enzo sieht mich an, als wüsste er das.',
+ {id:'counter',name:'Theke',look:function(A){ return A.m('Eine Theke aus Marmorimitat, darauf Zuckertüten in einem Glas, ein Teller mit Cornetti unter einer Haube, die Zeitungen von gestern.'+(A.flag('k4.v.jute')&&!A.flag('k4.v.gotJute')?' In der Ecke dahinter ein Stapel leerer Kaffeesäcke aus Jute.':' In der Ecke dahinter leere Kaffeesäcke.')); },use:function(A){ return coffee(A,A.npc('enzo')); },
+   take:function(A){ if (A.flag('k4.v.jute') && !A.flag('k4.v.gotJute')) return sack(A,A.npc('enzo')); return A.m('Die Cornetti sind von heute früh. Enzo sieht mich an, als wüsste er das.'); },
    g:{look:'Er hat die Theke heute schon dreimal gewischt. Sie ist sauber. Er wischt trotzdem.'}},
  {id:'machine',name:'Espressomaschine',look:'Eine Espressomaschine aus Chrom, so alt wie die Bar und viel besser gepflegt als der Rest.',use:function(A){ return coffee(A,A.npc('enzo')); },
    g:{look:'Sie zischt wie ein Zug, der gleich fährt.'}},
@@ -53178,6 +53299,48 @@ async function talkWimmer(A){ var W=A.npc('wimmer'), G=A.G;
 async function tea(A,W){ W=W||A.npc('wimmer'); A.sfx('cups'); await W.anim('pour'); await W.say(A.cycle('wiTea',['Bittschön. Zucker steht da.','No oaner? Der Kessel is groß.']));
   await A.m(A.cycle('wiTeaM',['Der Tee ist schwarz und so süß, dass der Löffel fast steht. Er wärmt bis in die Finger.','Ich trinke ihn im Stehen. Hier trinkt jeder im Stehen, der nicht weiß, wie lange er bleibt.'])); }
 
+// ---------------------------------------------------------------- Kette 2 „Der nasse Brief“ (design/K4_RAETSEL.md)
+// Das Kuvert aus Sepps Manteltasche (friedamt.js) geht mit Dampf auf: an Frau Wimmers Teekessel oder an Mamas Herd (jwohnung.js).
+// Drin Carmelas Dezemberbrief mit Rosas neuer Nummer; nach der Vorwahl ist die Tinte verlaufen (s4_dezember). Marko zeigt den Brief
+// Mala: Im Nachhall sagt Carmela die Ziffern beim Schreiben laut, Mala spricht sie nach, ohne sie zu verstehen (s4_ziffern).
+// Zusammen ergeben sie Rosas Nummer (s4_nummer, Schluss in 13_k4_notes.js); erst damit geht der Anruf (gleis11.js).
+M.k4Steam=async function(A,where){ var G=A.G; if (!A.has('kuvert')) return;
+  if (where==='kessel'){ var W=A.npc('wimmer');
+    await A.m('Frau Wimmer, darf ich etwas über Ihren Kessel halten? Ein Kuvert. Es klebt zusammen.');
+    await W.say('Mit Dampf?'); await A.wait(400); await W.say('Des hat mei Muatter mit de Feldpostbriefe g’macht. Damit da Vater ned merkt, dass s’ scho g’lesen san.');
+    await W.anim('pour'); A.sfx('cups'); await A.wait(500);
+    await A.narrate('Sie dreht den Hahn am Kessel auf, bis es zischt, und hält das Kuvert selbst in den Dampf. Mit zwei Fingern, ganz ruhig, wie einen Verband.');
+    await W.say('So. Jetzt lass’ ma’s a bisserl. Ned ziehn. Des geht von selber.'); }
+  else { await A.narrate('Ich stelle Wasser auf, in Mamas kleinstem Topf. Als es dampft, halte ich das Kuvert darüber, eine Ecke nach der anderen.');
+    if (A.G.malaOn && A.malaHere()) await A.g('Langsam. Baka hat dabei immer gesummt.'); else await A.m('Baka hat dabei immer gesummt. Ich summe nicht. Ich bin zu ungeduldig zum Summen.'); }
+  await A.wait(700); await A.narrate('Die Lagen geben nach, eine nach der anderen. Drinnen ein Blatt, gefaltet, blau beschrieben. Die untere Hälfte ist ein Himmel aus verlaufener Tinte.');
+  A.take('kuvert'); A.give('brief_dez'); A.setFlag('k4.s.steam');
+  if (where==='kessel'){ await A.wait(300); await A.npc('wimmer').say('Italienisch. Des lesen S’. I schenk derweil nach.'); }
+  await M.k4ReadDez(A); };
+M.k4ReadDez=async function(A){ var G=A.G, first=!N(G,'s4_dezember');
+  await A.doc({style:'letter',title:'Pietrafonda Nuova, 2 dicembre 2011',lines:['Caro Giuseppe,','qui tutto bene. Rosa ha finito la scuola.','Il fico davanti alla casa ha fatto tanti','fichi, troppi, come sempre.','Anch’io sto bene.','','Rosa ha il telefono nuovo. Se un giorno','vuoi chiamare: 0971 ~~~ ~~~','','Tua Carmela']});
+  if (!first) return A.m('Null, neun, sieben, eins. Danach sechs blaue Wolken. Und „Wenn du eines Tages anrufen willst“.');
+  await A.m('„Lieber Giuseppe, hier ist alles gut. Rosa ist mit der Schule fertig. Der Feigenbaum vor dem Haus hat viele Feigen gehabt, zu viele, wie immer. Auch mir geht es gut.“');
+  await A.wait(500); await A.m('„Rosa hat ein neues Telefon. Wenn du eines Tages anrufen willst: null, neun, sieben, eins …“'); await A.wait(500); await A.m('Danach ist die Tinte verlaufen. Sechs Ziffern, sechs blaue Wolken.');
+  A.note('s4_dezember');
+  await A.wait(700); await A.m('Wenn du eines Tages anrufen willst. Sie hat ihm ihre Nummer geschickt. Er hat den Brief in der Manteltasche getragen, bis zum Schluss. Angerufen hat er nie.');
+  if (A.G.malaOn && A.malaHere()){ await A.wait(500); await A.g('In dem Blatt ist noch eine Stimme. Zeig es mir.'); } };
+M.k4DezMala=async function(A){ var G=A.G;
+  if (N(G,'s4_ziffern')) return A.g('„Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“ Ich höre sie immer noch. Ich weiß nicht, was es heißt. Du weißt es.');
+  A.music('k4_duh'); await A.g('Halt es still.'); await A.wait(700);
+  await A.memory({title:'Nachhall – Eine Küche im Süden',tint:'ghost',draw:M.mem&&M.mem.k4_carmela,lines:[
+    'Eine Küche mit gekalkten Wänden. Vor dem Fenster ein Feigenbaum ohne Blätter. Am Tisch eine alte Frau mit Brille, ein Blatt vor sich, einen Kuli in der Hand.',
+    'Hinter ihr ein Mädchen mit einem Telefon. Es sagt etwas, ungeduldig und lieb zugleich.',
+    'Die alte Frau schreibt langsam und sagt jede Zahl laut, während sie sie schreibt. Als müsste sie sie erst hören, damit sie stimmt.',
+    '„Zero … nove … sette … uno.“ Pause. „Sette. Tre. Cinque. Otto. Due. Due.“',
+    'Das Mädchen: „Nonna, più grande! Non lo legge nessuno così.“ Die alte Frau lacht und schreibt nicht größer.',
+    'Dann legt sie den Kuli hin und sieht lange auf das Blatt. „Se un giorno vuoi chiamare.“ Sie sagt es zweimal. Beim zweiten Mal leiser.']});
+  A.note('s4_ziffern');
+  await A.wait(400); await A.g('Ich habe kein Wort verstanden. Aber ich kann es nachsagen. Ich habe ein gutes Gedächtnis für Dinge, die ich nicht verstehe.');
+  await A.wait(300); await A.g('Nach dem Anfang hat sie gesagt: „Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“');
+  if (!A.isMala()){ await A.wait(400); await A.m('Zahlen. Das sind Zahlen.'); await A.g('Dann weißt du jetzt mehr als ich.'); }
+  A.music('k4_bahnhof'); };
+
 // ---------------------------------------------------------------- die Gäste
 async function talkGast1(A){ var T=A.npc('gast1'), G=A.G;
   await A.menuLoop(function(){ return [
@@ -53198,6 +53361,7 @@ var HS=[
  {id:'door',name:'Zum Gleis',exit:{to:'gleis11'},look:'Die Tür zurück zum Bahnsteig. Durch die Scheibe sieht man Gleis 11 und den Prellbock.',g:{look:'Draußen ist der Bahnsteig. Und der Prellbock.'}},
  {id:'counter',name:'Theke mit Teekessel',look:'Eine Theke mit einem Teekessel aus Edelstahl, groß wie ein Feuerlöscher. Daneben Tassen, eine Zuckerdose, ein Teller mit Plätzchen, die keiner selbst gebacken hat.',
    use:function(A){ return tea(A); },take:'Die Plätzchen sind für die Gäste. Ich bin ein halber Gast. Ich nehme ein halbes.',
+   with:{ kuvert:function(A){ return M.k4Steam(A,'kessel'); }, brief_dez:'Der Brief ist offen. Noch mehr Dampf, und die Tinte läuft ganz weg.', dzezva:'Großmutters Džezva unter Frau Wimmers Kessel? Die beiden würden sich streiten.' },
    g:{look:'Tassen, Tee, Zucker. Hier riecht es warm. Für mich riecht nichts mehr warm, aber ich weiß noch, wie das war.'}},
  {id:'urn',name:'Urne',vis:function(S){ return !!S.farewell; },look:'Eine schlichte Urne aus Ton. Daneben Sepps Foto mit der Mütze, die Siebzehn darauf. Eine Tasse Tee, die langsam kalt wird.',
    take:'Nein. Die trägt morgen ein anderer. Einer, der dafür bezahlt wird. Das hätte ihm gefallen.',
@@ -53222,7 +53386,7 @@ var HS=[
    g:{look:function(A){ return A.g(A.S.letter79?'Der kurze Brief liegt obenauf. Um ihn ist es anders. Wärmer, und nasser.':'Um den Koffer fliegen Briefe. Hunderte. Für mich jedenfalls.'); },sense:function(A){ return senseLetters(A); }}},
  {id:'wimmer',npc:'wimmer',name:'Frau Wimmer',hgt:42,talk:talkWimmer,
    look:'Frau Wimmer hinter der Theke: grauer Bob, Lesebrille auf der Nase, eine fliederfarbene Bluse unter einer dunkelblauen Fleeceweste, das Namensschild an einem Band. Ernst und warm zugleich.',
-   give:{ aushang:'Frau Wimmer: „Den hab i g’macht. Behalten S’ ihn.“', brief_falsch:'Frau Wimmer: „Des is ned meins. Und Ihres a ned, wenn S’ mi fragen.“', photo_full:'Frau Wimmer: „Des san Sie? Mit dene Ohren? Und des Madl daneben?“', vanilice:'Frau Wimmer: „Plätzchen ham ma selber. Behalten S’ de für Ihre Mama.“' },
+   give:{ kuvert:function(A){ return M.k4Steam(A,'kessel'); }, brief_dez:'Frau Wimmer: „Italienisch. Des müssen S’ mir übersetzen. Aber ned jetzt. Wenn’s fertig is.“', aushang:'Frau Wimmer: „Den hab i g’macht. Behalten S’ ihn.“', brief_falsch:'Frau Wimmer: „Des is ned meins. Und Ihres a ned, wenn S’ mi fragen.“', photo_full:'Frau Wimmer: „Des san Sie? Mit dene Ohren? Und des Madl daneben?“', vanilice:'Frau Wimmer: „Plätzchen ham ma selber. Behalten S’ de für Ihre Mama.“' },
    g:{look:'Sie schenkt jedem nach, bevor die Tasse leer ist.',listen:'Sie zählt die Tassen. Eine zu viel. Jeden Tag eine zu viel.'}},
  {id:'gast1',npc:'gast1',name:'Toni',hgt:30,talk:talkGast1,look:'Ein alter Mann mit grauem Vollbart und Wollmütze, ein abgetragener Parka. Er hält die Tasse mit beiden Händen.',
    give:{ aushang:'Toni: „Der Sepp. Freilich. Der hat mir amal den Rucksack trag’n.“', photo_full:'Toni: „Schöne Kinder. Wo san de jetzt?“' },
@@ -53937,7 +54101,9 @@ M.drawMarkoPhoto=function(b){ var w=b.w, h=b.h; b.rect(0,0,w,h,P.s4); b.rect(30,
 /* ===== rooms/friedamt.js — Städtische Friedhöfe, Verwaltung: Herr Obermaier und die Akte „unbekannter Mann, ca. 70“.
    In der Mütze lag ein Gepäckträgerausweis: „Josef Rugiero, Gepäckträger Nr. 17“ (s4_ausweis). Bestattung von Amts wegen am
    Donnerstag (s4_termin). Mit dem richtigen Namen sucht er neu („Für uns ist das ein neuer Mensch.“), mit Carmelas Wunsch sagt er
-   die Bestattung ab (k4.s.amtOff). Am Christtag ist das Amt zu (98_k4_intros_bhf.js, Reiseregel). ===== */
+   die Bestattung ab (k4.s.amtOff). Am Christtag ist das Amt zu (98_k4_intros_bhf.js, Reiseregel).
+   Kette 2 „Der nasse Brief“ (design/K4_RAETSEL.md): In der Manteltasche lag ein aufgeweichtes Kuvert. Es gehört den Angehörigen;
+   mit dem richtigen Namen und den Briefen der Schwester (s4_name, s4_umschlag) gibt Obermaier es Marko mit (kuvert, k4.s.kuvert). ===== */
 (function(M){
 'use strict';
 function F(G,k){ return !!G.flags[k]; }
@@ -53952,7 +54118,7 @@ function askOpt(title,also,table,fb){ return {t:'Nach etwas aus dem Notizbuch fr
 // ---------------------------------------------------------------- Die Akte (s4_ausweis, s4_termin)
 async function file(A,O){ var G=A.G; if (N(G,'s4_ausweis')) return O.say('Josef Rugiero, Nummer siebzehn. Sonst haben wir nichts. Und Rugiero gibt es nicht.');
   await O.anim('file'); await O.say('Der unbekannte Mann vom sechzehnten Dezember. Etwa siebzig. Hauseingang in der Schillerstraße.');
-  await O.say('Keine Papiere, kein Geld, kein Schlüssel. Nur die Mütze.'); await A.wait(500);
+  await O.say('Keine Papiere, kein Geld, kein Schlüssel. Nur die Mütze. Und in der Manteltasche ein Kuvert, aufgeweicht, festgefroren, wieder getrocknet. Lesen kann man nichts. Nicht einmal den Absender.'); await A.wait(500);
   await O.say('Und in der Mütze, hinter dem Futter, das hier.');
   await A.doc({style:'register',title:'DEUTSCHE BUNDESBAHN',lines:['Gepäckträgerausweis Nr. 17','Bahnhof München Hbf','','Name: Rugiero, Josef','geb.: 1939','','gültig bis 31.12.1986','(Lichtbild, fast weiß)']});
   await O.say('Josef Rugiero, Gepäckträger Nummer siebzehn. Seit fünfundzwanzig Jahren ungültig. Er hat ihn trotzdem getragen. In der Mütze, am Kopf.');
@@ -53963,12 +54129,27 @@ async function file(A,O){ var G=A.G; if (N(G,'s4_ausweis')) return O.say('Josef 
 async function termin(A,O){ if (N(A.G,'s4_termin')) return O.say('Donnerstag. Ohne Grund verschiebe ich nichts. Das ist kein Herz aus Stein, Herr Vuković. Das ist eine Frist.');
   await O.say('Bestattung von Amts wegen. Donnerstag, zwölf Uhr. Feuerbestattung, die Urne ins Gemeinschaftsfeld.'); await A.wait(400);
   await O.say('Wenn sich bis dahin niemand meldet.'); await A.wait(600); await O.say('Es meldet sich fast nie jemand.'); A.note('s4_termin'); A.setFlag('k4.s.amt'); }
+// ---------------------------------------------------------------- Das Kuvert aus der Manteltasche
+function kuvertOk(G){ return N(G,'s4_name') && N(G,'s4_umschlag'); }
+async function kuvert(A,O){ var G=A.G;
+  if (F(G,'k4.s.kuvert')) return O.say('Das Kuvert haben Sie quittiert. Einmal. Mit Ihrem Namen. Das reicht mir.');
+  if (!kuvertOk(G)){ await O.say('Das Kuvert gehört in die Akte. Bis sich jemand meldet, der es haben darf.'); await A.wait(400); await O.say('Angehörige, Herr Vuković. Nicht Übersetzer.');
+    await A.wait(300); await A.m(N(G,'s4_name')?'Wer zu ihm gehört. Seinen Namen weiß ich jetzt. Aber wer ist noch da, außer einem Gleis?':'Wer darf es haben? Wer zu ihm gehört. Dafür muss ich erst wissen, wer er war.'); return; }
+  await O.say('Eine Schwester, sagen Sie. C. Ruggiero, Pietrafonda Nuova.'); await A.wait(400); await O.anim('file');
+  await O.say('Dann gehört ihr, was er bei sich hatte. Viel ist es nicht. Die Mütze bleibt bis zur Überführung hier. Das Kuvert nehmen Sie mit, Sie schreiben ihr ja.');
+  await A.narrate('Er schiebt mir ein Formular hin und ein Kuvert in einer Klarsichthülle. Es ist gewellt wie ein Blatt, das im Regen lag. Auf der Marke: Italia.');
+  await O.say('Hier unterschreiben. Für den Empfang. Mit Ihrem Namen. Einmal reicht.'); await A.m('Ich unterschreibe. Für einen Mann, den ich nie lebend gesehen habe.');
+  A.give('kuvert'); A.setFlag('k4.s.kuvert');
+  await A.wait(400); await O.say('Aufmachen würde ich es nicht mit den Fingern. Das zerfällt Ihnen.');
+  if (here(A)){ await A.wait(400); await A.g('Da drin ist eine Stimme. Ganz zusammengeklebt.'); } }
+
 // ---------------------------------------------------------------- Der richtige Name: ein neuer Mensch
 async function newName(A,O){ var G=A.G; if (F(G,'k4.s.amtName')) return O.say('Giuseppe Ruggiero, mit zwei g. Das Konsulat sucht. Die sind langsam, aber gründlich.');
   await O.say('Ruggiero. Mit zwei g?'); await A.m('Mit zwei g. Und Giuseppe statt Josef. Ein Beamter hat ihn 1962 eingedeutscht, bei der Ankunft.');
   await A.wait(500); await O.anim('write'); await O.say('Dann suche ich anders.'); await A.wait(700);
   await O.say('Das ist nicht dieselbe Person für uns, Herr Vuković. Für uns ist das ein neuer Mensch.');
   await O.say('Geboren neununddreißig, Italien. Ich schreibe noch heute ans Konsulat.'); A.setFlag('k4.s.amtName');
+  if (!F(G,'k4.s.kuvert')){ await A.wait(400); await O.say(N(G,'s4_umschlag')?'Und wenn er eine Schwester hat, dann gehört ihr, was er bei sich hatte.':'Und wenn sich Angehörige finden, gehört ihnen, was er bei sich hatte. Viel ist es nicht.'); }
   if (here(A)){ await A.wait(400); await A.g('Ein neuer Mensch. Mit neunundvierzig Jahren Verspätung.'); } }
 // ---------------------------------------------------------------- Carmelas Wunsch: die Bestattung von Amts wegen wird abgesagt
 async function cancel(A,O){ var G=A.G; if (F(G,'k4.s.amtOff')) return O.say('Abgesagt. Ich habe es zweimal gestempelt. Das mache ich sonst nie.');
@@ -54003,6 +54184,7 @@ async function talkOber(A){ var O=A.npc('obermaier'), G=A.G;
     {t:'Es geht um den Gepäckträger. Den Sepp, von der Bahnhofsmission.',if:!N(G,'s4_ausweis'),go:function(A){ return file(A,O); }},
     {t:'Was passiert jetzt mit ihm?',if:N(G,'s4_ausweis')&&!N(G,'s4_termin'),go:function(A){ return termin(A,O); }},
     {t:'Seine Schwester will ihn heimholen.',if:call&&!F(G,'k4.s.amtOff'),go:function(A){ return cancel(A,O); }},
+    {t:'Das Kuvert aus seiner Manteltasche …',if:N(G,'s4_ausweis')&&!F(G,'k4.s.kuvert'),go:function(A){ return kuvert(A,O); }},
     {t:'Kann ich die Akte sehen?',once:'ob1',go:async function(A){ await O.say('Nein.'); await A.wait(600); await O.say('Was ich Ihnen zeigen darf, habe ich Ihnen gezeigt. Der Rest ist Amtsgeheimnis. Auch für Übersetzer.'); }},
     {t:'Ich bin … ein Verwandter.',once:'ob2',go:async function(A){ await O.anim('file'); await A.wait(500); await O.say('Herr Vuković. Sie heißen Vuković.'); await A.wait(400); await O.say('Und Frau Wimmer hat Sie mir als Übersetzer angekündigt. Zweimal. Verwandte kündigt sie nicht an. Die kommen nicht.'); }},
     {t:'Wie oft kommt das vor? Dass keiner kommt?',once:'ob3',go:async function(A){ await O.say('Jede Woche. Im Winter öfter.'); await A.wait(500); await O.say('Ich schreibe jeden Namen zweimal. Damit wenigstens einer ihn richtig geschrieben hat.'); }},
@@ -54028,7 +54210,7 @@ var HS=[
    g:{look:'Stempel. Unter Gleis elf hat auch einer gestempelt.'}},
  {id:'obermaier',npc:'obermaier',name:'Herr Obermaier',hgt:36,talk:talkOber,vis:function(S,G){ return OPEN.indexOf(G.phase)>=0; },
    look:'Ein hagerer Mann am Schreibtisch, der Seitenscheitel wie mit dem Lineal gezogen, grauer Schnurrbart, Lesebrille. Beiges Hemd, dunkle Krawatte, graue Strickjacke. Genau, ohne Wärme, nicht böse.',
-   give:{ aushang:'Herr Obermaier: „Den hat mir Frau Wimmer gefaxt. Zweimal.“', brief_falsch:'Herr Obermaier: „Ohne Unterschrift ist das kein Dokument, Herr Vuković. Das ist ein Wunsch.“', vizitka:'Herr Obermaier: „Zelenika. Den habe ich nicht in der Akte. Gut so.“' },
+   give:{ kuvert:'Herr Obermaier: „Das gehört jetzt der Schwester. Ich habe es ausgetragen. Zurück nehme ich nichts, das macht nur Arbeit.“', brief_dez:'Herr Obermaier: „Italienisch. Das lese ich nicht, das lege ich nicht ab. Das ist privat.“', aushang:'Herr Obermaier: „Den hat mir Frau Wimmer gefaxt. Zweimal.“', brief_falsch:'Herr Obermaier: „Ohne Unterschrift ist das kein Dokument, Herr Vuković. Das ist ein Wunsch.“', vizitka:'Herr Obermaier: „Zelenika. Den habe ich nicht in der Akte. Gut so.“' },
    g:{look:'Er schreibt jeden Namen zweimal. Damit er stimmt.',listen:'Er summt. Ganz leise. Er weiß nicht, dass er summt.'}}
 ];
 M.room('friedamt',{ name:'Städtische Friedhöfe, Verwaltung', scape:'k4_friedamt', music:'k4_muenchen',
@@ -54234,7 +54416,13 @@ async function carmelaCall(A){ var G=A.G, Sp=A.npc('sepp'), mh=here(A), tone=nul
     A.sfx('dial'); await A.wait(2200);
     await A.phoneVoice('„Pronto?“','rosa'); await A.m('Buongiorno. Parlo con la famiglia Ruggiero? Mi chiamo Marko Vuković. Chiamo da Monaco.');
     await A.wait(600); await A.phoneVoice('„Da Monaco?“','rosa'); await A.wait(500); await A.phoneVoice('„Sono Rosa. La nipote. Chi cerca?“','rosa');
-    await A.m('Rosa, die Enkelin. Sie fragt, wen ich suche.'); await A.m('La signora Carmela.'); await A.phoneVoice('„La nonna? Di che si tratta?“','rosa');
+    await A.m('Rosa, die Enkelin. Sie fragt, wen ich suche.');
+    // Kette 2 „Der nasse Brief“: die Nummer stand in Carmelas Dezemberbrief
+    await A.phoneVoice('„Ma … questo numero ce l’ha solo la famiglia. Come l’ha avuto?“','rosa'); await A.m('Die Nummer hat nur die Familie, sagt sie. Woher ich sie habe.');
+    await A.m('Da una lettera. Quella di dicembre. Era nella tasca del suo cappotto.'); await A.wait(900);
+    await A.phoneVoice('„La lettera della nonna …“','rosa'); await A.wait(500); await A.phoneVoice('„Gliel’ha scritto lei. Lui non ha mai chiamato. Mai.“','rosa');
+    await A.m('Die Nonna hat ihm die Nummer geschrieben, sagt Rosa. Er hat nie angerufen. Nie.'); Sp.agitate(1600); if (mh) await A.g('Er sieht auf seine Hände.');
+    await A.wait(400); await A.m('La signora Carmela.'); await A.phoneVoice('„La nonna? Di che si tratta?“','rosa');
     // die drei Einstiege (Konzept 7.1, A4)
     for (var guard=0;guard<4 && !tone;guard++){
       var o=[{t:'„Ihr Bruder ist gestorben.“',id:'hard'}];
@@ -54309,6 +54497,8 @@ M.K4PHONE.carmela=async function(A){ var G=A.G;
     if (!N(G,'s4_carmela_hall')) return A.m('Der kurze Brief von neunundsiebzig. Was darin steht, verstehe ich. Was er bedeutet, noch nicht.');
     return A.m('Ein Brief, eine Frau, die beim Schreiben weint. Das gehört zusammen. Erst will ich es zu Ende denken.'); }
   if (!N(G,'s4_bitte')) return A.m('Erst muss er seinen Namen hören. Von mir. Dann rufe ich seine Schwester an.');
+  if (!N(G,'s4_nummer')){ if (N(G,'s4_dezember')) return A.m('Null, neun, sieben, eins. Danach sechs blaue Wolken. Mit einer Vorwahl allein erreiche ich ein ganzes Tal, aber keine Carmela.');
+    return A.m('Pietrafonda Nuova, Provinz Potenza. Eine Adresse auf hundert Umschlägen. Eine Nummer steht auf keinem.'); }
   if (rid(A)!=='gleis11' || !seen(A)) return A.m('Nicht von hier. Wenn ich sie anrufe, dann bei ihm, am Gleis. Er soll ihre Stimme hören.');
   return carmelaCall(A); };
 
@@ -54391,6 +54581,13 @@ async function kioskBunker(A,K){ await K.say('Unter Gleis elf? Do drunt war frü
   await K.say('Do hams de Gastarbeiter hig’schickt, wia s’ kemma san. Stempel drauf, und weiter. Heit spuin s’ do drunt Theater, hob i g’lesen.');
   A.setFlag('k4.s.bunkerKnown'); await A.m('Unter dem Gleis war ein Bunker. Dort hat man die Gastarbeiter hingeschickt, als sie ankamen. Stempel drauf, und weiter.');
   if (here(A)){ await A.wait(400); await A.g('Unter dem Gleis.'); await A.wait(300); await A.g('Da komme ich hin. Du nicht.'); } }
+// Kette 4 „Winterschlaf“: die Schnur von den Zeitungsbündeln
+async function kioskString(A,K){ K=K||A.npc('kioskg');
+  if (A.has('schnur')||A.has('wintermantel')||F(A.G,'k4.v.wrapped')) return K.say('No mehr Schnur? Wos bindn S’ denn, an Christbaam?');
+  await A.m('Die Schnur da, von den Zeitungsbündeln. Brauchen Sie die noch?'); await K.say('De Schnur? De schmeiß i weg. Jeden Tag a Kilo.'); await A.wait(300);
+  await K.anim('sell'); await K.say('Nehmen S’ as. Wos bindn S’ denn?'); await A.m('Einen Feigenbaum ein. Einen kleinen.'); await A.wait(500); await K.say('A Feign. In Moosach, wett i. Ja mei. München wird a Süden.');
+  A.give('schnur'); A.setFlag('k4.v.gotString');
+  if (here(A)){ await A.wait(300); await A.g('Was hat sie gesagt?'); await A.m('Dass München ein Süden wird.'); await A.g('Das glaube ich nicht.'); } }
 async function kioskNotice(A,K){ await K.say('Den Zettel hod d’Frau Wimmer bracht. Nehmen S’ oan mit, i hob an ganzn Stapel.'); A.give('aushang'); A.setFlag('k4.s.notice');
   await A.m('„Wer kannte diesen Mann?“ Darunter ein Foto, so oft kopiert, dass von dem Gesicht vor allem die Mütze übrig ist.'); }
 var KIOSK_ALSO=['s4_peppino','s4_genommen','s4_fluch','s4_enzo','s4_ausweis','s4_name','s4_tarnung','s4_bairisch'];
@@ -54411,6 +54608,7 @@ async function talkKiosk(A){ var K=A.npc('kioskg'), G=A.G;
     {t:'Kennen Sie einen Peppino?',if:N(G,'s4_peppino')&&!A.unlocked('bhfviertel'),go:function(A){ return kioskPeppino(A,K); }},
     {t:'Was war früher unter dem Gleis?',if:N(G,'s4_genommen')&&!F(G,'k4.s.bunkerKnown'),go:function(A){ return kioskBunker(A,K); }},
     {t:'Darf ich einen von den Zetteln mitnehmen?',if:aushangHere(G)&&!A.has('aushang')&&!F(G,'k4.s.notice'),go:function(A){ return kioskNotice(A,K); }},
+    {t:'Die Schnur von den Zeitungsbündeln …',if:F(G,'k4.v.jute')&&!F(G,'k4.v.wrapped')&&!A.has('schnur')&&!A.has('wintermantel'),go:function(A){ return kioskString(A,K); }},
     {t:'Eine Abendzeitung, bitte.',once:'ki1',go:async function(A){ await K.anim('sell'); await K.say('Bittschön. Heit is’s dünn, is ja Feiertag. Mehr Werbung als Zeitung.'); await A.m('Auf Seite drei ein Foto vom Christkindlmarkt, der schon abgebaut wird. Ich lese es nicht.'); }},
     {t:'Wie lange stehen Sie schon hier?',once:'ki2',go:async function(A){ await K.say('Am Gleis? Neunzehn Johr. Im Kiosk a. Davor bei da Post.'); await A.wait(400); await K.say('I kenn jeden, der zwoamal kimmt. Und de, de bloß oamal kemma, de vergiss i glei.'); }},
     askOpt('Wonach frage ich sie?',KIOSK_ALSO,table,async function(A){ await K.say(A.cycle('kiNo',['Des woaß i ned. I verkauf Zeitungen, koa Auskünfte.','Fragen S’ d’Frau Wimmer. De woaß mehr als d’Polizei.'])); }),
@@ -54431,7 +54629,9 @@ var HS=[
  {id:'sign11',name:'Gleisschild „11“',look:'Eine große Elf auf blauem Grund. Darunter die Wagenstandsanzeige, auf der heute nichts steht, was stimmt.',
    g:{look:'Elf. Keine Zahl, die man sich merkt. Außer man ist hier angekommen.'}},
  {id:'kiosk',name:'Kiosk',look:function(A){ return A.m(aushangHere(A.G)?'Ein Kiosk: Zeitungen, Zigaretten, Brezen unter Plastik. An der Scheibe klebt ein Zettel: „Wer kannte diesen Mann?“':'Ein Kiosk: Zeitungen, Zigaretten, Brezen unter Plastik, ein Schild „PRESSE“. Dahinter eine Frau mit Fingerhandschuhen.'); },
-   take:function(A){ if (aushangHere(A.G) && !A.has('aushang') && !A.flag('k4.s.notice')) return kioskNotice(A,A.npc('kioskg')); return A.m('Zeitungen kosten. Und die Kioskfrau sieht alles.'); },
+   take:function(A){ if (aushangHere(A.G) && !A.has('aushang') && !A.flag('k4.s.notice')) return kioskNotice(A,A.npc('kioskg'));
+     if (A.flag('k4.v.jute') && !A.flag('k4.v.wrapped') && !A.has('schnur') && !A.has('wintermantel') && M.K4_DAYS.indexOf(A.G.phase)>=0) return kioskString(A,A.npc('kioskg'));
+     return A.m('Zeitungen kosten. Und die Kioskfrau sieht alles.'); },
    use:function(A){ return A.m('Ich kaufe nichts, was ich nicht lese. Meistens.'); },
    g:{look:'Papier, das jeden Tag neu ist und abends alt.'}},
  {id:'board',name:'Anzeigetafel',look:function(A){ return board(A); },read:function(A){ return board(A); },g:{look:'Lauter Städte. Für mich sind das Wörter, die blinken.'}},
@@ -54772,7 +54972,7 @@ H.aloisAt=aloisAt; H.gerdaAt=gerdaAt;
 function inFlur(G,w){ var p=G.pos[w]; if (w==='mala' && !G.malaOn) return false; return !!(p && p.room==='heim_flur'); }
 H.inFlur=inFlur;
 function clockAnchor(S,G){ if (gone(G)) return null; var s=M.spot('heim_flur','clock'); return s[2]?[s[0]+(s[2]>>1),s[1]+(s[3]>>1)]:null; }
-function sync(S,G){ norm(G); S.night=night(G); S.fireworks=night(G); S.three=work(G) && F(G,'k4.g.pmUsed') && !F(G,'k4.g.pmBlunt'); S.gerdaPos=gerdaAt(G); S.chimeOff=F(G,'k4.g.chimeOff'); S.lift=false; return S; }
+function sync(S,G){ norm(G); S.lamp=F(G,'k4.g.lamp'); S.night=night(G); S.fireworks=night(G); S.three=work(G) && F(G,'k4.g.pmUsed') && !F(G,'k4.g.pmBlunt'); S.gerdaPos=gerdaAt(G); S.chimeOff=F(G,'k4.g.chimeOff'); S.lift=false; return S; }
 function resync(A){ if (A.room && A.room.id==='heim_flur'){ sync(A.S,A.G); } A.rebuild(); }
 // ---------------------------------------------------------------- Ein Fragebaustein: im Gespräch eine Notiz zeigen, immer mit den gültigen Antworten
 H.askOpt=function(npc,title,table,fallback){ return {t:'Nach etwas aus dem Notizbuch fragen …',silent:true,noGray:true,go:async function(A){ var G=A.G;
@@ -54830,15 +55030,28 @@ async function gerdaMala(A){ var G=A.G, Gd=A.npc('gerda');
     {t:'Die Pflegerinnen sagen ihm: Sie kommt später.',once:'h4g6',if:N(G,'g4_spaeter'),go:async function(A){ await Gd.say('Später!'); await A.wait(500); await Gd.say('Ich war nie später. Nicht ein einziges Mal.'); await A.wait(700); await Gd.say('Wenn sie wenigstens sagen täten: Sie ist schon da.'); }},
     {t:'Können Sie heute woanders warten?',if:canPersuade(G)&&!N(G,'g4_depot'),go:async function(A){ await Gd.say('Woanders? Wo denn?'); await A.wait(500); await Gd.say('Um drei bin ich bei ihm. So war das immer.'); await A.wait(500);
       if (A.G.malaOn && A.malaHere()) await A.g('Immer? Früher hat sie woanders gewartet. Bevor er hier drin war. In seinem Zimmer hängen Fotos. Vor drei sitzt er dort im Sessel.'); else await A.m('So war das immer? Früher war er nicht hier drin. Wo hat sie da gewartet? In seinem Zimmer hängen Fotos.'); }},
-    {t:'Sie haben immer draußen gewartet. Am Depot.',if:canPersuade(G)&&N(G,'g4_depot'),silent:true,go:function(A){ return persuade(A); }},
+    {t:'Sie haben immer draußen gewartet. Am Depot.',if:canPersuade(G)&&N(G,'g4_depot')&&!(F(G,'k4.g.lampAsk')&&F(G,'k4.g.lamp')),silent:true,go:function(A){ return persuade(A); }},
+    {t:'Am Fenster brennt jetzt ein Licht.',if:canPersuade(G)&&F(G,'k4.g.lampAsk')&&F(G,'k4.g.lamp'),silent:true,go:function(A){ return persuade(A); }},
     {t:'Sie müssen gehen.',if:!N(G,'g4_beides'),go:async function(A){ await Gd.say('Sie wollen mir meinen Mann wegnehmen?'); await A.wait(800); await A.narrate('Sie rückt auf der Bank ein Stück zur Seite. Dahin, wo um drei sein Platz ist.'); }},
     {t:'(Ihr sagen, was die Versuche gezeigt haben.)',if:N(G,'g4_beides'),silent:true,go:async function(A){ await hardTalk(A); return 'bye'; }},
     H.askOpt('gerda','Was frage ich sie?',GERDA_ASK,'Das versteh ich nicht, Fräulein. Ich bin eine alte Frau.'),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ await Gd.say(hall?'Am Fenster. Einmal.':'Bis drei, Fräulein.'); }}
   ]; }); }
-async function persuade(A){ var Gd=A.npc('gerda');
+// Kette 3 „Die Lampe am Tor“ (design/K4_RAETSEL.md): Gerda wartet nur draußen, wenn dort ein Licht ist wie am Depot. Marko holt den
+// Papierstern aus dem Gemeinschaftsraum (heim_raum.js) und hängt ihn ans Fenster am Flurende (k4.g.lamp); erst dann sagt sie „Einmal.“
+async function persuade(A){ var G=A.G, Gd=A.npc('gerda'), lamp=F(G,'k4.g.lamp');
+  if (lamp && F(G,'k4.g.lampAsk')){ await A.g('Schauen Sie ans Fenster. Da hinten.'); await A.wait(900);
+    await A.narrate('Gerda dreht den Kopf. Am Ende des Flurs hängt der Papierstern im Fenster und legt einen gelben Fleck auf den Boden.');
+    await A.wait(600); await Gd.say('A Lampn.'); await A.wait(900); await Gd.say('Wia am Tor. Da ist er immer von der Kurve hergekommen, und ich bin drunter gestanden, damit er mich gleich sieht.'); }
+  else {
   await A.g('Sie haben immer draußen gewartet. Am Depot. Fünfunddreißig Jahre.'); await A.wait(700); await Gd.say('… Woher wissen Sie das?'); await A.g('Von den Fotos. In seinem Zimmer.');
   await A.wait(800); await Gd.say('Draußen. Ja. Am Tor. Hinein bin ich nie. Das war seine Arbeit.');
+  if (!lamp){ A.setFlag('k4.g.lampAsk'); await A.wait(600); await A.g('Warten Sie heute draußen. Da hinten, am Fenster.'); await A.wait(900);
+    await Gd.say('Am Fenster?'); await A.wait(500); await Gd.say('Da ist’s finster, Fräulein. Am Tor war eine Lampe. Unter der Lampe hat er mich gesehen, schon von der Kurve her.');
+    await A.wait(500); await Gd.say('Im Finstern wart ich nicht. Da sieht er mich ja nicht.');
+    if (inFlur(G,'marko')){ await A.wait(400); await A.g('Marko. Am Fenster ist es dunkel. Sie will ein Licht. Wie am Tor.'); }
+    else { await A.wait(400); await A.g('Ein Licht. Am Fenster. Das kann ich nicht aufhängen. Marko kann es.'); }
+    return; } }
   await A.wait(600); await A.g('Warten Sie heute draußen.'); await A.wait(1700); await Gd.say('Einmal.');
   await A.wait(600); await Gd.say('Da hinten am Fenster. Aber Sie bleiben bei mir, Fräulein. Allein halt ich das nicht aus.');
   A.setFlag('k4.g.hall'); A.rebuild(); }
@@ -55257,10 +55470,17 @@ var HS=[
    g:{look:'Ordner voller Namen. In einem steht seiner.', listen:'Ein Telefon, das gleich klingelt. Dann klingelt es.'}},
  {id:'cart',name:'Wäschewagen',look:'Ein Wäschewagen. Handtücher, Bettzeug, ein Korb mit Waschlappen in drei Farben.',push:'Das ist Mamas Wagen. Den schiebt hier keiner außer ihr.',take:'Von einem Wäschewagen nehme ich nichts. Das ist eine Lebensregel.',
    g:{look:'Frische Wäsche. Sie riecht nach jemandem, der sich Mühe gibt.'}},
- {id:'window',name:'Fenster',look:function(A){ var G=A.G; if (night(G)) return A.m('Das Fenster am Ende des Flurs. Draußen blitzt es grün und rot über dem Park.');
-     return A.m(gerdaAt(G)==='hall' && found(G)?'Das Fenster am Ende des Flurs. Davor steht Gerda und sieht zu ihm hinüber.':'Das Fenster am Ende des Flurs. Verschneite Bäume, der Park, ein Weg, auf dem keiner geht.'); },
+ {id:'window',name:'Fenster',look:function(A){ var G=A.G, st=F(G,'k4.g.lamp');
+     if (night(G)) return A.m(st?'Das Fenster am Ende des Flurs. Der Papierstern hängt noch, und draußen blitzt es grün und rot über dem Park.':'Das Fenster am Ende des Flurs. Draußen blitzt es grün und rot über dem Park.');
+     if (gerdaAt(G)==='hall' && found(G)) return A.m('Das Fenster am Ende des Flurs. Unter dem Stern steht Gerda und sieht zu ihm hinüber.');
+     return A.m(st?'Das Fenster am Ende des Flurs. Der Papierstern hängt am Griff und legt einen gelben Fleck auf den Boden. Eine Lampe am Tor, so gut es geht.':'Das Fenster am Ende des Flurs. Verschneite Bäume, der Park, ein Weg, auf dem keiner geht. Hier hinten ist es dämmrig, auch am Tag.'); },
    open:'Die Fenster gehen hier nur gekippt auf. Für die Bewohner.',
-   g:{look:function(A){ return A.g(N(A.G,'g4_depot')?'Draußen. Am Depot hat sie auch draußen gewartet.':'Bäume. Schnee. Ein Weg, auf dem niemand kommt.'); }, sense:'Hier hat schon mancher gestanden und gewartet. Mit dem Rücken zum Flur.'}},
+   with:{ stern:async function(A){ var G=A.G; A.take('stern'); A.setFlag('k4.g.lamp'); resync(A);
+       await A.narrate('Ich hänge den Papierstern an den Fenstergriff und schalte das Kästchen ein. Ein gelber Fleck fällt auf den Boden, rund wie unter einer Laterne.');
+       await A.m('Eine Lampe am Tor. Aus Papier, mit zwei Batterien. Für eine, die fünfunddreißig Jahre unter einer gewartet hat.');
+       if (A.malaHere()){ await A.wait(400); await A.g('Jetzt sieht er sie. Wenn sie da steht.'); } },
+     kanne:'Die Kanne gehört nicht ans Fenster. Sie gehört ihm.' },
+   g:{look:function(A){ var G=A.G; if (F(G,'k4.g.lamp')) return A.g('Der Stern. Darunter ist es hell genug für eine, die gesehen werden will.'); return A.g(N(G,'g4_depot')?'Draußen. Am Depot hat sie auch draußen gewartet. Unter einer Lampe. Hier ist keine.':'Bäume. Schnee. Ein Weg, auf dem niemand kommt.'); }, sense:'Hier hat schon mancher gestanden und gewartet. Mit dem Rücken zum Flur.'}},
  {id:'rail',name:'Handlauf',look:'Ein Handlauf aus Holz, glatt gerieben. Auf Höhe der Bank ist er heller.',use:'Ich halte mich fest. Einfach so.',
    g:{look:'Hier halten sie sich fest. Ich halte mich an nichts mehr fest. Fast.'}},
  {id:'jasna',npc:'jasnaW',name:'Mama',gname:'Jasna',hgt:44,talk:function(A){ return talkJasna(A); },
@@ -55355,6 +55575,16 @@ async function waltz(A){ if (A.flag('k4.g.waltz')) return A.g('Er tritt ihr auf 
   await A.memory({title:'Nachhall – der Walzer',tint:'ghost',lines:['Ein Sommerfest. Die Fenster offen, Lampions, jemand spielt Klavier.','Ein großer Mann in Strickjacke tanzt mit einer kleinen Frau mit Kopftuch.','Sie zählt leise mit: eins, zwei, drei. Er tritt ihr auf die Füße.','Sie sagt nichts. Sie lacht.']});
   A.setFlag('k4.g.waltz'); await A.wait(500); await A.g('Sie haben hier getanzt. Er und sie.'); }
 // ---------------------------------------------------------------- Hotspots
+// Kette 3 „Die Lampe am Tor“: der Papierstern am mittleren Fenster (design/K4_RAETSEL.md)
+async function takeStar(A){ var G=A.G;
+  if (night(G)) return A.m('Nicht jetzt.');
+  if (F(G,'k4.g.starTaken')) return A.m(A.has('stern')?'Der Stern ist schon in meiner Tasche. Er leuchtet durch den Stoff.':'Der Stern hängt jetzt im Flur. Da gehört er hin.');
+  if (A.isMala && A.isMala()) return A.g('Ich kann ihn nicht abnehmen. Marko kann es.');
+  var Mo=A.npc('pflege1');
+  if (Mo && Mo.actor){ await A.m('Darf ich den Stern ausleihen? Für den Flur. Am Fenster hinten ist es dunkel.'); await Mo.say('Den Stern? Nehmen S’ ihn, der hängt eh schief.'); await A.wait(300); await Mo.say('Den hat die Frau Brandl gebastelt. Die faltet seit drei Wochen Sterne. Sie macht Ihnen einen neuen.'); }
+  else await A.narrate('Ich nehme den Stern vom Haken. Das Batteriekästchen baumelt am Kabel. Ich bringe ihn zurück, wenn er seine Arbeit getan hat.');
+  A.give('stern'); A.setFlag('k4.g.starTaken'); A.rebuild();
+  if (A.malaHere()){ await A.wait(300); await A.g(F(G,'k4.g.lampAsk')?'Eine Lampe. Für sie.':'Was willst du mit einem Stern?'); if (!F(G,'k4.g.lampAsk')) await A.m('Weiß ich noch nicht. Er sah aus, als würde er gebraucht.'); } }
 var HS=[
  {id:'door',name:'Flur',exit:{to:'heim_flur'},look:'Die Doppeltür zum Flur. Draußen die Bank und der Aufzug.',g:{look:'Hinaus. Zum Gang, wo sie wartet.'}},
  {id:'tables',name:'Tische',look:function(A){ var G=A.G; if (night(G)) return A.m('Die Tische, die Stühle hochgestellt. Auf einem liegt eine vergessene Papierkrone.');
@@ -55364,8 +55594,10 @@ var HS=[
    take:function(A){ return A.m(three(A.G)?'Ich nehme mir ein Stück. Er ist trocken und schmeckt nach Orangeat. Weihnachten im Altenheim.':'Noch nicht. Um drei. Hier hat alles seine Uhrzeit.'); },
    use:function(A){ var G=A.G; if (A.malaHere() && N(G,'g4_drei') && A.first('!k4.g.coffeeG')){ return (async function(){ await A.m('Vielleicht ist es der Kaffee. Um drei.'); await A.wait(500); await A.g('Er trinkt keinen. Er wartet.'); })(); } return HS_BY.cake.take(A); },
    g:{look:'Stollen. Er riecht nach etwas, das ich vergessen habe.', sense:'Hände, die jedes Jahr dasselbe backen. In einer großen Küche, für Leute, die sie nie sehen.'}},
- {id:'window',name:'Fenster',look:function(A){ return A.m(night(A.G)?'Die großen Fenster. Über dem Park blühen Raketen auf, lautlos hinter dem Glas.':'Große Fenster zum Bavariapark. Kahle Bäume, Schnee, ein Weg, auf dem niemand geht.'); },
-   g:{look:'Draußen. Die Bewohner sehen hinaus wie ich: als käme gleich jemand.'}},
+ {id:'window',name:function(S,G){ return (G.flags['k4.g.starTaken'])?'Fenster':'Fenster mit Stern'; },look:function(A){ var G=A.G; if (night(G)) return A.m('Die großen Fenster. Über dem Park blühen Raketen auf, lautlos hinter dem Glas.');
+     return A.m(F(G,'k4.g.starTaken')?'Große Fenster zum Bavariapark. Kahle Bäume, Schnee. Am mittleren Fenster fehlt jetzt der Stern. Ein Haken, sonst nichts.':'Große Fenster zum Bavariapark. Kahle Bäume, Schnee, ein Weg, auf dem niemand geht. Am mittleren Fenster hängt ein gelber Papierstern mit einem Lämpchen drin, ein bisschen schief.'); },
+   take:function(A){ return takeStar(A); },
+   g:{look:function(A){ return A.g(F(A.G,'k4.g.starTaken')?'Draußen. Die Bewohner sehen hinaus wie ich: als käme gleich jemand.':'Ein Stern aus Papier, mit einem Licht drin. Draußen ist es hell, er leuchtet trotzdem. Für niemanden.'); }}},
  {id:'tv',name:'Fernseher',look:function(A){ var p=A.G.phase; return A.m(p==='k4_d1'?'Ein Fernseher ohne Ton. Ein Weihnachtsfilm, schwarzweiß. Jemand küsst jemanden im Schnee.':(p==='k4_d4'||p==='k4_d5'?'Ein Fernseher ohne Ton. Skispringen. Einer fliegt, landet, fliegt.':'Ein Fernseher ohne Ton. Wetterkarte. Viel Weiß.')); },
    use:'Ich stelle den Ton nicht an. Hier hat jeder seinen eigenen Ton im Kopf.', g:{look:'Bilder ohne Stimmen. Wie bei mir, nur umgekehrt.'}},
  {id:'tree',name:'Tannenbaum',look:'Ein Tannenbaum mit Strohsternen und einer Lichterkette. Darunter Päckchen, alle gleich groß, jedes mit einem Namen.',take:'Die Päckchen gehören den Bewohnern. Eins hat meinen Namen nicht, das ist richtig so.',
@@ -55868,7 +56100,9 @@ M.readPostcard=async function(A){ await A.doc({style:'postcard',title:'Supetar, 
 /* ---- rooms/jhaus.js ---- */
 /* ===== rooms/jhaus.js — Mamas Haus im Westend, das Treppenhaus: Frau Huber gibt den Schlüssel und redet (über das Silvester
    der Frau Vuković und die Pantoffeln, „I hab nie gfragt“), Mucki, die Katze, sieht Mala. Schalter: k4.p.key, k4.p.mucki,
-   k4.p.slipHuber, k4.p.silvester. Nachts darf Mala allein hierher (Gerüst), Lebende sprechen sie nicht an. ===== */
+   k4.p.slipHuber, k4.p.silvester. Nachts darf Mala allein hierher (Gerüst), Lebende sprechen sie nicht an.
+   Kette 1 „Mucki wartet auch“ (design/K4_RAETSEL.md): Am Heiligabend liegt Mucki quer auf der Treppe und wartet auf Frau Vuković;
+   an Marko kommt keiner vorbei (k4.p.catBlock). Katzen sehen Mala: Sie redet mit ihr und geht vor, Mucki folgt ihr (k4.p.catMoved). ===== */
 (function(M){
 'use strict';
 var DAYS=['k4_pro','k4_d1','k4_d2','k4_d3','k4_d4','k4_d5'], NIGHTS=['k4_pro_n','k4_d1_n','k4_d2_n','k4_d4_n','k4_d5_n'];
@@ -55877,6 +56111,31 @@ function night(G){ return NIGHTS.indexOf(G.phase)>=0; }
 function huberHere(G){ return DAYS.indexOf(G.phase)>=0 || G.phase==='k4_epi'; }
 function gHere(A){ return A.G.malaOn && A.malaHere() && !A.isMala(); }
 function catName(S,G){ return G.flags['k4.p.mucki']?'Mucki':'Katze'; }
+function catBlocks(G){ return G.phase==='k4_pro' && !G.flags['k4.p.catMoved']; }          // Mucki liegt quer auf der Treppe
+var CAT_STAIR=[150,112,'F'], CAT_DOOR=[226,121,'R'];
+function catPos(G){ return (G.phase==='k4_pro' && G.flags['k4.p.catMoved'])?CAT_DOOR:M.apos('jhaus','mucki',CAT_STAIR); }
+// Marko will hinauf, Mucki faucht
+async function catBlock(A){ var G=A.G, C=A.npc('mucki'), H=A.npc('huber'), first=!F(A,'k4.p.catBlock'); A.setFlag('k4.p.catBlock');
+  if (C.actor) C.anim('arch'); A.sfx('cat');
+  if (first){ await A.narrate('Auf der dritten Stufe liegt die Katze. Quer. Als ich den Fuß hebe, wird sie doppelt so dick und faucht.');
+    if (huberHere(G)){ await H.say('Jessas, d’ Mucki! Lassen S’ as, de beißt.'); await A.wait(300); await H.say('De liegt do seit in da Fruah. De wart auf d’ Frau Vuković. Jeden Tag um zwoa hockt’s do, wenn’s hoamkimmt.');
+      await H.say('Do kimmt koana vorbei. Mi beißt’s aa.'); }
+    if (gHere(A)){ await A.wait(400); await A.g('Sie wartet. Auf deine Mutter.'); await A.m('Und ich komme nicht vorbei.'); await A.g('Sie sieht mich an. Nicht dich.'); }
+    return; }
+  await A.m(A.cycle('jhCatNo',['Mucki faucht. Sie verteidigt die Treppe wie eine Grenze.','Sie macht einen Buckel. An ihr komme ich nicht vorbei, ohne dass einer von uns blutet.','Ich hebe den Fuß. Sie hebt die Pfote. Ich stelle den Fuß wieder hin.'])); }
+// Mala redet mit Mucki und geht vor: die Katze folgt ihr zu Frau Hubers Tür
+async function catLead(A){ var G=A.G, C=A.npc('mucki'), H=A.npc('huber');
+  await A.g('Du wartest auf sie.'); await A.wait(500); if (C.actor) C.anim('watch'); await A.g('Ich weiß, wie das ist. Man legt sich vor die Tür, damit man es merkt, wenn sie kommt.');
+  await A.wait(400); await A.g('Sie kommt um zwei. Das hat Ana geschrieben. Bis dahin ist es unten wärmer.');
+  await A.wait(500); await A.g('Komm.');
+  var gw=A.walkG?A.walkG(CAT_DOOR[0]+20,CAT_DOOR[1]):null; await A.wait(500);   // Mala geht vor, die Katze hinterher
+  A.sfx('cat'); if (C.actor){ await C.walk(CAT_DOOR[0],CAT_DOOR[1]); await C.face('R'); C.anim('sit'); } if (gw) await gw;
+  A.setFlag('k4.p.catMoved'); A.rebuild();
+  await A.narrate('Die Katze steht auf, streckt sich, eine Pfote nach der anderen, und geht die Stufen hinunter. Hinter etwas her, das nur sie sieht. Vor Frau Hubers Tür setzt sie sich hin.');
+  if (huberHere(G)){ await H.say('Jetzt schau her. D’ Mucki.'); await A.wait(400); await H.say('Wia wenn’s oana führt.'); }
+  await A.wait(400); await A.g('Sie ist mitgekommen. Sie wartet jetzt hier. Das ist auch Warten.');
+  if (G.pos.marko.room==='jhaus' && A.isMala()){ await A.wait(300); await A.g('Die Treppe ist frei, Marko.'); } }
+M.k4CatLead=catLead;
 // ---------------------------------------------------------------- Frau Huber
 async function giveKey(A,H){ var G=A.G; await A.m('Ana schreibt, Sie haben den Schlüssel.');
   await H.say('Freilich hab i’n. Seit zehne in der Früh in der Schürzntaschn. Damit i’n ned verleg.'); await H.anim('key'); A.sfx('keys'); A.setFlag('k4.p.key'); await A.wait(300);
@@ -55886,6 +56145,9 @@ async function giveKey(A,H){ var G=A.G; await A.m('Ana schreibt, Sie haben den S
 async function talkHuber(A){ var H=A.npc('huber'), G=A.G, p=G.phase;
   await A.menuLoop(function(){ return [
     {t:'Ana schreibt, Sie haben den Schlüssel.',silent:true,if:!F(A,'k4.p.key'),go:function(A){ return giveKey(A,H); }},
+    {t:'Können Sie die Katze nicht von der Treppe nehmen?',once:'hbCat',if:catBlocks(G)&&F(A,'k4.p.catBlock'),go:async function(A){ await H.say('I? Mit meiner Hüft?'); await A.wait(400);
+        await H.say('Und mit am Mannsbild geht’s scho glei ned mit. De mog koane Mannsbilder. Koane Kinder. Koane Postboten.'); await A.wait(300); await H.say('De wart auf d’ Frau Vuković. Da kann ma nix macha. Außer warten.');
+        if (gHere(A)){ await A.wait(400); await A.g('Katzen mögen mich auch nicht. Aber sie sehen mich.'); } }},
     {t:'Arbeitet meine Mutter über die Feiertage?',once:'hb1',if:DAYS.indexOf(p)>=0&&p!=='k4_d5',go:async function(A){ await H.say('Ihre Mama? Jeden Feiertag. Und jedes Silvester. Jeds!');
         await H.say('De andern wolln frei an Silvester. Sie ned. Sie sagt, sie mog des Gschiaß ned. Des Kracha.'); A.setFlag('k4.p.silvester'); await A.wait(300); await A.m('Sie mag das Knallen nicht.'); if (gHere(A)) await A.g('…'); }},
     {t:'Kennen Sie meine Mutter gut?',once:'hb2',go:async function(A){ await H.say('Guat? Mir grüßn uns. Seit siebzehn Jahr. Sie bringt mir d’ Zeitung, i ihr an Kuchn.'); await A.wait(300); await H.say('Mehr red’ ma ned. Des is in München scho a Freundschaft.'); }},
@@ -55920,7 +56182,8 @@ var HS=[
  {id:'up',name:'Treppe nach oben',exit:{to:'jwohnung'},look:'Eine Holztreppe mit gedrechseltem Geländer. Die Stufen sind in der Mitte ausgetreten, sechzig Jahre Westend.',
    canExit:async function(A){ var G=A.G;
      if (A.isMala()){ if (night(G) || G.pos.marko.room==='jwohnung' || F(A,'k4.p.jasna')) return true; await A.g('Nicht ohne ihn. Das ist die Wohnung seiner Mutter.'); return false; }
-     if (G.phase==='k4_pro' && !F(A,'k4.p.key')){ await A.m(huberHere(G)?'Ohne Schlüssel? Den hat Frau Huber.':'Ich habe keinen Schlüssel.'); return false; } return true; },
+     if (G.phase==='k4_pro' && !F(A,'k4.p.key')){ await A.m(huberHere(G)?'Ohne Schlüssel? Den hat Frau Huber.':'Ich habe keinen Schlüssel.'); return false; }
+     if (catBlocks(G)){ await catBlock(A); return false; } return true; },
    g:{look:'Auf der Treppe liegen Schritte. Viele, immer dieselben, nach oben. Abends am dichtesten.',sense:'Achtzehn Jahre dieselben Schritte. Sie zählt die Stufen nicht. Sie weiß sie.'}},
  {id:'huber_door',name:function(S,G){ return 'Tür von Frau Huber'; },look:function(A){ return A.m(huberHere(A.G)?'Frau Hubers Tür steht offen. Auf der Fußmatte „Grüß Gott“, an der Tür ein Stern aus Stroh. Drinnen läuft ein Radio.':'Frau Hubers Tür, zu. Dahinter läuft leise ein Fernseher.'); },
    open:function(A){ return A.m(huberHere(A.G)?'Sie steht ja schon in der Tür.':'Ich klopfe nicht. Es ist spät, und sie ist einundachtzig.'); },
@@ -55938,8 +56201,15 @@ var HS=[
  {id:'pram',name:'Kinderwagen',look:'Ein Kinderwagen unter der Treppe, mit einer Decke voller Elefanten.',take:'Der gehört jemandem mit Kind. Und jemandem mit wenig Platz.',
    g:{look:'Ein Kinderwagen. Unter der Treppe schläft er, bis man ihn braucht.'}},
  {id:'cat',npc:'mucki',name:catName,look:catLook,talk:function(A){ return A.m(A.cycle('catT',['Miez.','Mucki. Mucki?','Sie gähnt. Das ist ihre Antwort.'])); },
-   take:'Sie ist sechzehn und dick. Ich will meine Hände behalten.',
-   g:{look:catLookG,talk:async function(A){ await A.g('Hallo, Katze.'); var C=A.npc('mucki'); if (C.actor) C.anim('arch'); A.sfx('cat'); await A.wait(300); await A.g('Sie hört mich. Oder sie hört mich nicht und faucht trotzdem.'); }}},
+   take:async function(A){ if (!catBlocks(A.G)) return A.m('Sie ist sechzehn und dick. Ich will meine Hände behalten.'); var C=A.npc('mucki'); if (C.actor) C.anim('arch'); A.sfx('cat'); A.setFlag('k4.p.catBlock');
+     await A.narrate('Ich greife nach ihr. Sie ist schneller. Drei rote Striche auf meinem Handrücken, sehr ordentlich, wie mit dem Lineal.'); await A.m('Sechzehn Jahre und kein bisschen langsamer.');
+     if (huberHere(A.G)) await A.npc('huber').say('Hob i’s ned gsagt? Koane Mannsbilder.'); },
+   push:function(A){ return catBlocks(A.G)?catBlock(A):A.m('Ich schiebe keine Katze. Katzen schieben einen selbst.'); },
+   with:{ vanilice:'Nadas Plätzchen für eine Katze? Mucki schnuppert und sieht mich an, als hätte ich sie beleidigt. Sie wartet nicht auf Plätzchen.', brot:'Eine Katze, die Brot frisst? Nicht diese.', photo_full:'Sie sieht das Foto an. Dann mich. Dann wieder neben mich.' },
+   g:{look:catLookG,talk:async function(A){ var G=A.G, C=A.npc('mucki');
+       if (catBlocks(G) && F(A,'k4.p.catBlock')) return catLead(A);
+       if (catBlocks(G)){ if (C.actor) C.anim('watch'); await A.g('Hallo, Katze.'); await A.wait(300); await A.g('Sie liegt quer auf der Treppe und sieht zur Haustür. Sie wartet auf jemanden.'); return; }
+       await A.g('Hallo, Katze.'); if (C.actor) C.anim('arch'); A.sfx('cat'); await A.wait(300); await A.g('Sie hört mich. Oder sie hört mich nicht und faucht trotzdem.'); }}},
  {id:'huber',npc:'huber',name:'Frau Huber',vis:function(S,G){ return huberHere(G); },talk:talkHuber,
    look:'Frau Huber. Klein, rund, geblümte Kittelschürze, die Brille an einer Kette. Sie steht in ihrer Tür, als hätte sie seit dem Morgen auf jemanden gewartet.',
    give:{ vanilice:'Frau Huber: „Für mi? Naa, naa. De san für d’ Mama, des riech i durch’s Blech.“', photo_full:'Frau Huber: „A Trambahn! Und Sie, mit de Ohrn! Und des Madl … de schaut, als ob’s glei was anstellt.“' },
@@ -55950,7 +56220,7 @@ M.room('jhaus',{ name:'Treppenhaus', scape:'k4_jhaus',
   state:function(G){ return {hubOpen:false}; },
   actors:function(S,G){ var L=[]; S.hubOpen=huberHere(G);
     if (huberHere(G)){ var h=M.apos('jhaus','huber',[250,120,'L']); L.push({id:'huber',ch:'huber',x:h[0],y:h[1],f:h[2]||'L',name:'Frau Huber',idle:'talk',speechY:40,routine:[['idle',null,6,10],['anim','pet'],['idle',null,5,9],['anim','talk']]}); }
-    var c=M.apos('jhaus','mucki',[150,112,'F']); L.push({id:'mucki',ch:'mucki',x:c[0],y:c[1],f:c[2]||'F',name:G.flags['k4.p.mucki']?'Mucki':'Katze',idle:'sit',speechY:16,routine:[['idle','sit',6,14],['anim','watch'],['idle','sit',5,10]]});
+    var c=catPos(G); L.push({id:'mucki',ch:'mucki',x:c[0],y:c[1],f:c[2]||'F',name:G.flags['k4.p.mucki']?'Mucki':'Katze',idle:'sit',speechY:16,routine:[['idle','sit',6,14],['anim','watch'],['idle','sit',5,10]]});
     return L; },
   hotspots:HS,
   enter:async function(A,from){ var G=A.G, p=G.phase;
@@ -56235,7 +56505,9 @@ var HS=[
    take:'Ich nehme nichts von der Garderobe. Auch nicht den Schirm. Es schneit, es regnet nicht.',
    g:{look:'Kein Männermantel. Nur die Pantoffeln. Als wäre er nur kurz hinuntergegangen.'}},
  {id:'stove',name:'Herd',look:function(A){ return A.m(A.S.dzezva?'Großmutters Džezva auf der hinteren Platte. Sie sieht aus, als stünde sie hier seit Jahren.':'Ein Elektroherd mit vier Platten, blitzblank. Darüber ein Brett mit Gewürzen, alphabetisch.'); },
-   use:function(A){ return coffee(A); }, with:{ dzezva:function(A){ return coffee(A); }, vanilice:'Nadas Plätzchen gehören nicht auf den Herd. Die sind schon gebacken.' },
+   use:function(A){ return coffee(A); }, with:{ dzezva:function(A){ return coffee(A); }, vanilice:'Nadas Plätzchen gehören nicht auf den Herd. Die sind schon gebacken.',
+     kuvert:function(A){ if (A.G.tod==='night') return A.m('Nicht jetzt. Mama schläft nebenan, und ich will ihr keinen fremden Brief erklären. Morgen.'); return M.k4Steam?M.k4Steam(A,'herd'):A.m('Dampf würde helfen.'); },
+     brief_dez:'Der Brief ist schon offen. Noch mehr Dampf, und die Tinte läuft ganz weg.' },
    g:{look:function(A){ return A.g(A.S.dzezva?'Ružas Džezva auf ihrem Herd. Die beiden kennen sich.':'Ein Herd, an dem jemand jeden Tag kocht und nie für mehr als zwei.'); }}},
  {id:'table',name:'Tisch',look:function(A){ var G=A.G;
      if (G.phase==='k4_epi' && A.S.box) return A.m('Auf dem Tisch steht die Kiste, offen. Daneben drei Tassen und die Dose mit den Vanilice.');
@@ -77072,6 +77344,10 @@ async function hansiTalk(A){ await A.g('Er ist einfach gegangen. Ich musste nich
 async function tinTalk(A){ await A.g('Zwei Fahrscheine. Für die erste Drei nach dem Krieg.'); await A.wait(800); await A.g('Gerda hat ihre Kanne hergegeben. Wer losgelassen hat, kann etwas hergeben.'); await A.wait(700); await A.g('Wenn ich sie hergebe, dann der, die sie braucht.'); await A.m('Wer ist das?'); await A.g('Das weiß ich noch nicht.'); }
 async function gerdaTalk(A){ await A.g('Ich habe ihr gesagt, dass sie gehen muss. Für ihn.'); await A.wait(800); await A.g('Sie ist geblieben, weil sie ihn liebt. Genau das hat ihn frieren lassen.'); await A.wait(700); await A.g('Ich weiß nicht, ob ich das bei mir auch könnte. Gehen, weil ich bleibe.'); }
 async function seppTalk(A){ await A.g('Carmela hat es gewusst. Seit neunundsiebzig. Und hat „Auch mir geht es gut“ geschrieben.'); await A.wait(600); await A.g('Zwei, die sich schonen, und beide wissen es. Vielleicht geht das. Wenn beide es wissen.'); }
+async function juteTalk(A){ await A.m('Jela sagt, der Zweig gehört in Jute. Wie die Feigen in Mostar. Wo nimmt man hier Jute her?'); await A.wait(700);
+  await A.g('Mama hat jeden November den Oleander eingewickelt. Auf dem Balkon, neunter Stock.'); await A.wait(400);
+  await A.g('In Kaffeesäcke. Die gab es unten im Laden umsonst. Und Schnur. Nicht zu fest, oben Luft.'); await A.wait(500);
+  await A.m('Kaffeesäcke. Wer in München hat noch Kaffeesäcke?'); await A.g('Einer, der Kaffee macht, der nach etwas riecht.'); A.setFlag('k4.v.sack'); }
 async function knowTalk(A){ await A.m('Weißt du etwas, das ich wissen sollte?'); await A.wait(1300); await A.g('Ich weiß vieles.'); await A.wait(500); await A.g('Ich frage nicht. Das hast du so gewollt.'); await A.wait(600); await A.m('Das ist keine Antwort.'); await A.g('Nein.'); }
 async function bondTalk(A){ var c=consent();
   if (c==='a'){ await A.g('Am Grab hast du Ja gesagt. Einfach so.'); await A.m('Nicht einfach so.'); await A.g('Hier merkst du, wie wenig einfach.'); }
@@ -77091,6 +77367,7 @@ M.k4TalkToMala=async function(A){ var G=A.G, p=G.phase, r=rid(A);
     o('mgNi','Niko sieht dich.',F(A,'k4.p.niko'),nikoTalk),
     o('mgAn','Ana.',F(A,'k4.d1.walk'),anaTalk),
     o('mgHa','Hansi.',F(A,'k4.p.hansi'),hansiTalk),
+    o('mgJu','Wie wickelt man einen Feigenzweig ein?',F(A,'k4.v.jute')&&!F(A,'k4.v.wrapped')&&!F(A,'k4.v.sack'),juteTalk),
     o('mgKn','Weißt du etwas, das ich wissen sollte?',secret(A)&&F(A,'k4.d2.kolar'),knowTalk),
     o('mgSe','Sepp ist zu Hause.',F(A,'k4.s.crossed'),seppTalk),
     o('mgGe','Gerda ist gegangen.',F(A,'k4.g.decided'),gerdaTalk),
@@ -77496,6 +77773,40 @@ M.mem.k4_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2012), WB=58, WX0=
   var sun=function(x,y){ var u=x-(y-WY0)*1.05-WX0+2; return u>0 && u<WX1-WX0+12 && y>WY0+4; };
   M.light(b,function(x,y){ var v=-0.32; if (sun(x,y)) v+=0.6; var d=Math.hypot((x-110)/150,(y-74)/60); v+=Math.max(0,0.32-d*0.32); return v; });
   edgeDark(b,1.6); };
+
+// ================================================================ Kette 2 (design/K4_RAETSEL.md), Nachhall am Dezemberbrief: Carmelas Küche in Pietrafonda Nuova.
+//    Gekalkte Wand, ein Fenster mit dem kahlen Feigenbaum und Hügeln, eine Hängelampe; am Tisch die alte Carmela mit Brille, ein Blatt,
+//    ein Kuli; hinter ihr Rosa mit einem Telefon. Keine Zeichen außer einem Kalender ohne Bild.
+M.mem.k4_carmela=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2011), FL=78, WX0=150, WX1=212, WY0=10, WY1=54, LX=96, LY=14;
+  fill(b,0,0,w,FL,function(x,y){ return ra(R('s3 s4 s5 s6'),0.55-y/FL*0.2+(fbm(x,y,16,4)-0.5)*0.14,x,y); });
+  fill(b,0,FL,w,h-FL,function(x,y){ var d=(y-FL)/(h-FL); return ((Math.floor((x-116)/(10+d*10))+Math.floor((y-FL)/(3+d*5)))%2)?P.t2:P.t3; }); b.hl(0,w-1,FL,P.t1);
+  // Fenster: Winterhimmel, Hügel, der kahle Feigenbaum mit dicken grauen Ästen
+  fill(b,WX0,WY0,WX1-WX0,WY1-WY0,function(x,y){ return ra(R('b3 b4 b5 s6'),0.25+(y-WY0)/50,x,y); });
+  for (x=WX0;x<WX1;x++){ var hy=WY0+26+rnd(Math.sin(x*0.07)*4+Math.sin(x*0.19)*2); for (y=hy;y<WY1;y++) b.px(x,y,y<hy+2?P.e4:(((x+y)%6===0)?P.e2:P.e3)); }
+  var TX=WX0+34, TB=WY1-1; for (y=TB-18;y<=TB;y++){ b.px(TX,y,P.m2); b.px(TX+1,y,P.m3); }
+  [[-1,-10,-12,-20],[1,-12,12,-22],[0,-16,-4,-26],[1,-6,16,-12],[-1,-4,-14,-8]].forEach(function(a){ b.line(TX+a[0],TB+a[1],TX+a[2],TB+a[3],P.m2); b.line(TX+a[0]+1,TB+a[1],TX+a[2]+1,TB+a[3],P.m3); b.px(TX+a[2],TB+a[3]-1,P.m4); });
+  b.rect(WX0-3,WY0-3,WX1-WX0+6,3,P.s6); b.rect(WX0-4,WY1,WX1-WX0+8,3,P.s5); b.rect(WX0-3,WY0,3,WY1-WY0,P.s6); b.rect(WX1,WY0,3,WY1-WY0,P.s5); b.rect(rnd((WX0+WX1)/2)-1,WY0,2,WY1-WY0,P.s5);
+  // Kalender ohne Bild, Teller am Bord
+  b.rect(20,12,16,20,P.s6); b.rect(20,12,16,5,P.r2); for (y=20;y<30;y+=3) for (x=22;x<34;x+=3) b.px(x,y,P.s2); b.px(28,10,P.k2);
+  b.hl(46,90,30,P.w2); b.hl(46,90,31,P.w1); [[52,25],[64,24],[76,25]].forEach(function(c){ b.ellipse(c[0],c[1],5,5,P.s6); b.ellipse(c[0],c[1],3,3,P.b3); b.ellipse(c[0],c[1],1.5,1.5,P.s6); });
+  // Hängelampe
+  b.vl(LX,0,LY-4,P.k2); b.poly([[LX-9,LY+3],[LX+9,LY+3],[LX+5,LY-3],[LX-5,LY-3]],P.g3); b.hl(LX-9,LX+9,LY+3,P.g2); b.hl(LX-4,LX+4,LY+4,P.y5);
+  // Carmela hinter dem Tisch (sitzend: der Tisch verdeckt sie ab der Hüfte): weißes Haar, dunkle Strickjacke, über das Blatt gebeugt
+  person(b,96,FL+6,52,{dir:1,coat:[P.k2,P.k1,P.k0],hair:P.m2,skin:[P.p2,P.p3,P.p1],long:true});
+  // Tisch mit Wachstuch, darauf das Blatt, der Kuli, eine Tasse
+  var TT=62, TF=70; for (y=TT;y<=TF;y++){ var xa=rnd(lerp(40,32,(y-TT)/(TF-TT))), xb=rnd(lerp(170,178,(y-TT)/(TF-TT))); for (x=xa;x<=xb;x++) b.px(x,y,y===TF?P.r1:((((x>>2)+(y>>1))%2)?P.r3:P.s5)); }
+  fill(b,60,TF+1,90,FL+10-TF,function(x,y){ return ra(R('t1 t2 t3'),0.2+(y-TF)/30,x,y); });   // unter dem Tisch: Schatten, Stuhlbeine
+  b.vl(88,TF+1,FL+8,P.w1); b.vl(104,TF+1,FL+8,P.w1);
+  b.rect(44,TF+1,4,FL+14-TF,P.w1); b.rect(164,TF+1,4,FL+14-TF,P.w1);
+  b.poly([[84,TT+1],[108,TT],[110,TT+6],[86,TT+7]],P.s6); for (i=0;i<4;i++) b.hl(88,104-i*3,TT+2+i,P.b2); b.line(104,TT+4,111,TT-1,P.b1);
+  b.rect(126,TT-5,6,5,P.s6); b.hl(126,131,TT-5,P.s4); b.vl(132,TT-4,TT-2,P.s5);
+  // Rosa hinter ihr, jung, mit Telefon am Ohr
+  person(b,130,FL+2,46,{dir:-1,coat:[P.b2,P.b3,P.b1],hair:P.h2,skin:[P.p3,P.p4,P.p2]}); b.rect(126,FL-41,2,5,P.k1);
+  for (i=0;i<60;i++){ var sx=rg()*w, sy=rg()*FL; if (Math.hypot(sx-LX,(sy-LY-30)*0.8)<44) b.px(rnd(sx),rnd(sy),P.s6); }
+  M.light(b,M.lf.sum(M.lf.k(-0.5),M.lf.pool(LX,LY+40,56,46,1.6,1),M.lf.pool(WX0+30,WY0+20,36,30,0.8,1)));
+  b.hl(LX-4,LX+4,LY+4,P.y5);
+  edgeDark(b,1.8); };
+M.K4_MEM_TINT.k4_carmela='ghost';
 })(M);
 // ================================================================ k4_zaehlen — Malas Nachhall: die Zahlen von Anas Treppenhaus bis zum Park am Heim (Nacht, Nebel)
 (function(M){ var P=M.P;
@@ -79292,7 +79603,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="15.11.2026 · 285d1d";
+M.BUILD="15.11.2026 · 3e7073";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>

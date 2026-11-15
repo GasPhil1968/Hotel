@@ -48,7 +48,7 @@ H.aloisAt=aloisAt; H.gerdaAt=gerdaAt;
 function inFlur(G,w){ var p=G.pos[w]; if (w==='mala' && !G.malaOn) return false; return !!(p && p.room==='heim_flur'); }
 H.inFlur=inFlur;
 function clockAnchor(S,G){ if (gone(G)) return null; var s=M.spot('heim_flur','clock'); return s[2]?[s[0]+(s[2]>>1),s[1]+(s[3]>>1)]:null; }
-function sync(S,G){ norm(G); S.night=night(G); S.fireworks=night(G); S.three=work(G) && F(G,'k4.g.pmUsed') && !F(G,'k4.g.pmBlunt'); S.gerdaPos=gerdaAt(G); S.chimeOff=F(G,'k4.g.chimeOff'); S.lift=false; return S; }
+function sync(S,G){ norm(G); S.lamp=F(G,'k4.g.lamp'); S.night=night(G); S.fireworks=night(G); S.three=work(G) && F(G,'k4.g.pmUsed') && !F(G,'k4.g.pmBlunt'); S.gerdaPos=gerdaAt(G); S.chimeOff=F(G,'k4.g.chimeOff'); S.lift=false; return S; }
 function resync(A){ if (A.room && A.room.id==='heim_flur'){ sync(A.S,A.G); } A.rebuild(); }
 // ---------------------------------------------------------------- Ein Fragebaustein: im Gespräch eine Notiz zeigen, immer mit den gültigen Antworten
 H.askOpt=function(npc,title,table,fallback){ return {t:'Nach etwas aus dem Notizbuch fragen …',silent:true,noGray:true,go:async function(A){ var G=A.G;
@@ -106,15 +106,28 @@ async function gerdaMala(A){ var G=A.G, Gd=A.npc('gerda');
     {t:'Die Pflegerinnen sagen ihm: Sie kommt später.',once:'h4g6',if:N(G,'g4_spaeter'),go:async function(A){ await Gd.say('Später!'); await A.wait(500); await Gd.say('Ich war nie später. Nicht ein einziges Mal.'); await A.wait(700); await Gd.say('Wenn sie wenigstens sagen täten: Sie ist schon da.'); }},
     {t:'Können Sie heute woanders warten?',if:canPersuade(G)&&!N(G,'g4_depot'),go:async function(A){ await Gd.say('Woanders? Wo denn?'); await A.wait(500); await Gd.say('Um drei bin ich bei ihm. So war das immer.'); await A.wait(500);
       if (A.G.malaOn && A.malaHere()) await A.g('Immer? Früher hat sie woanders gewartet. Bevor er hier drin war. In seinem Zimmer hängen Fotos. Vor drei sitzt er dort im Sessel.'); else await A.m('So war das immer? Früher war er nicht hier drin. Wo hat sie da gewartet? In seinem Zimmer hängen Fotos.'); }},
-    {t:'Sie haben immer draußen gewartet. Am Depot.',if:canPersuade(G)&&N(G,'g4_depot'),silent:true,go:function(A){ return persuade(A); }},
+    {t:'Sie haben immer draußen gewartet. Am Depot.',if:canPersuade(G)&&N(G,'g4_depot')&&!(F(G,'k4.g.lampAsk')&&F(G,'k4.g.lamp')),silent:true,go:function(A){ return persuade(A); }},
+    {t:'Am Fenster brennt jetzt ein Licht.',if:canPersuade(G)&&F(G,'k4.g.lampAsk')&&F(G,'k4.g.lamp'),silent:true,go:function(A){ return persuade(A); }},
     {t:'Sie müssen gehen.',if:!N(G,'g4_beides'),go:async function(A){ await Gd.say('Sie wollen mir meinen Mann wegnehmen?'); await A.wait(800); await A.narrate('Sie rückt auf der Bank ein Stück zur Seite. Dahin, wo um drei sein Platz ist.'); }},
     {t:'(Ihr sagen, was die Versuche gezeigt haben.)',if:N(G,'g4_beides'),silent:true,go:async function(A){ await hardTalk(A); return 'bye'; }},
     H.askOpt('gerda','Was frage ich sie?',GERDA_ASK,'Das versteh ich nicht, Fräulein. Ich bin eine alte Frau.'),
     {t:'(Gehen.)',bye:true,silent:true,go:async function(A){ await Gd.say(hall?'Am Fenster. Einmal.':'Bis drei, Fräulein.'); }}
   ]; }); }
-async function persuade(A){ var Gd=A.npc('gerda');
+// Kette 3 „Die Lampe am Tor“ (design/K4_RAETSEL.md): Gerda wartet nur draußen, wenn dort ein Licht ist wie am Depot. Marko holt den
+// Papierstern aus dem Gemeinschaftsraum (heim_raum.js) und hängt ihn ans Fenster am Flurende (k4.g.lamp); erst dann sagt sie „Einmal.“
+async function persuade(A){ var G=A.G, Gd=A.npc('gerda'), lamp=F(G,'k4.g.lamp');
+  if (lamp && F(G,'k4.g.lampAsk')){ await A.g('Schauen Sie ans Fenster. Da hinten.'); await A.wait(900);
+    await A.narrate('Gerda dreht den Kopf. Am Ende des Flurs hängt der Papierstern im Fenster und legt einen gelben Fleck auf den Boden.');
+    await A.wait(600); await Gd.say('A Lampn.'); await A.wait(900); await Gd.say('Wia am Tor. Da ist er immer von der Kurve hergekommen, und ich bin drunter gestanden, damit er mich gleich sieht.'); }
+  else {
   await A.g('Sie haben immer draußen gewartet. Am Depot. Fünfunddreißig Jahre.'); await A.wait(700); await Gd.say('… Woher wissen Sie das?'); await A.g('Von den Fotos. In seinem Zimmer.');
   await A.wait(800); await Gd.say('Draußen. Ja. Am Tor. Hinein bin ich nie. Das war seine Arbeit.');
+  if (!lamp){ A.setFlag('k4.g.lampAsk'); await A.wait(600); await A.g('Warten Sie heute draußen. Da hinten, am Fenster.'); await A.wait(900);
+    await Gd.say('Am Fenster?'); await A.wait(500); await Gd.say('Da ist’s finster, Fräulein. Am Tor war eine Lampe. Unter der Lampe hat er mich gesehen, schon von der Kurve her.');
+    await A.wait(500); await Gd.say('Im Finstern wart ich nicht. Da sieht er mich ja nicht.');
+    if (inFlur(G,'marko')){ await A.wait(400); await A.g('Marko. Am Fenster ist es dunkel. Sie will ein Licht. Wie am Tor.'); }
+    else { await A.wait(400); await A.g('Ein Licht. Am Fenster. Das kann ich nicht aufhängen. Marko kann es.'); }
+    return; } }
   await A.wait(600); await A.g('Warten Sie heute draußen.'); await A.wait(1700); await Gd.say('Einmal.');
   await A.wait(600); await Gd.say('Da hinten am Fenster. Aber Sie bleiben bei mir, Fräulein. Allein halt ich das nicht aus.');
   A.setFlag('k4.g.hall'); A.rebuild(); }
@@ -533,10 +546,17 @@ var HS=[
    g:{look:'Ordner voller Namen. In einem steht seiner.', listen:'Ein Telefon, das gleich klingelt. Dann klingelt es.'}},
  {id:'cart',name:'Wäschewagen',look:'Ein Wäschewagen. Handtücher, Bettzeug, ein Korb mit Waschlappen in drei Farben.',push:'Das ist Mamas Wagen. Den schiebt hier keiner außer ihr.',take:'Von einem Wäschewagen nehme ich nichts. Das ist eine Lebensregel.',
    g:{look:'Frische Wäsche. Sie riecht nach jemandem, der sich Mühe gibt.'}},
- {id:'window',name:'Fenster',look:function(A){ var G=A.G; if (night(G)) return A.m('Das Fenster am Ende des Flurs. Draußen blitzt es grün und rot über dem Park.');
-     return A.m(gerdaAt(G)==='hall' && found(G)?'Das Fenster am Ende des Flurs. Davor steht Gerda und sieht zu ihm hinüber.':'Das Fenster am Ende des Flurs. Verschneite Bäume, der Park, ein Weg, auf dem keiner geht.'); },
+ {id:'window',name:'Fenster',look:function(A){ var G=A.G, st=F(G,'k4.g.lamp');
+     if (night(G)) return A.m(st?'Das Fenster am Ende des Flurs. Der Papierstern hängt noch, und draußen blitzt es grün und rot über dem Park.':'Das Fenster am Ende des Flurs. Draußen blitzt es grün und rot über dem Park.');
+     if (gerdaAt(G)==='hall' && found(G)) return A.m('Das Fenster am Ende des Flurs. Unter dem Stern steht Gerda und sieht zu ihm hinüber.');
+     return A.m(st?'Das Fenster am Ende des Flurs. Der Papierstern hängt am Griff und legt einen gelben Fleck auf den Boden. Eine Lampe am Tor, so gut es geht.':'Das Fenster am Ende des Flurs. Verschneite Bäume, der Park, ein Weg, auf dem keiner geht. Hier hinten ist es dämmrig, auch am Tag.'); },
    open:'Die Fenster gehen hier nur gekippt auf. Für die Bewohner.',
-   g:{look:function(A){ return A.g(N(A.G,'g4_depot')?'Draußen. Am Depot hat sie auch draußen gewartet.':'Bäume. Schnee. Ein Weg, auf dem niemand kommt.'); }, sense:'Hier hat schon mancher gestanden und gewartet. Mit dem Rücken zum Flur.'}},
+   with:{ stern:async function(A){ var G=A.G; A.take('stern'); A.setFlag('k4.g.lamp'); resync(A);
+       await A.narrate('Ich hänge den Papierstern an den Fenstergriff und schalte das Kästchen ein. Ein gelber Fleck fällt auf den Boden, rund wie unter einer Laterne.');
+       await A.m('Eine Lampe am Tor. Aus Papier, mit zwei Batterien. Für eine, die fünfunddreißig Jahre unter einer gewartet hat.');
+       if (A.malaHere()){ await A.wait(400); await A.g('Jetzt sieht er sie. Wenn sie da steht.'); } },
+     kanne:'Die Kanne gehört nicht ans Fenster. Sie gehört ihm.' },
+   g:{look:function(A){ var G=A.G; if (F(G,'k4.g.lamp')) return A.g('Der Stern. Darunter ist es hell genug für eine, die gesehen werden will.'); return A.g(N(G,'g4_depot')?'Draußen. Am Depot hat sie auch draußen gewartet. Unter einer Lampe. Hier ist keine.':'Bäume. Schnee. Ein Weg, auf dem niemand kommt.'); }, sense:'Hier hat schon mancher gestanden und gewartet. Mit dem Rücken zum Flur.'}},
  {id:'rail',name:'Handlauf',look:'Ein Handlauf aus Holz, glatt gerieben. Auf Höhe der Bank ist er heller.',use:'Ich halte mich fest. Einfach so.',
    g:{look:'Hier halten sie sich fest. Ich halte mich an nichts mehr fest. Fast.'}},
  {id:'jasna',npc:'jasnaW',name:'Mama',gname:'Jasna',hgt:44,talk:function(A){ return talkJasna(A); },

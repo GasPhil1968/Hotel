@@ -33,6 +33,8 @@ Der Weg unten ist der Weg des automatischen Durchlaufs (`game/tools/walkthrough4
 **3. Mamas Haus**
 - **[M]** Über die Hackerbrücke, dann auf dem Stadtplan nach **Westend (Mama)**.
 - **[M]** Mit Frau Huber reden: „Ana schreibt, Sie haben den Schlüssel.“ → „Wie heißt Ihre Katze?“ (Mucki) → „Arbeitet meine Mutter über die Feiertage?“ → „Auf Wiedersehen.“ Den Schlüssel gibt es mit der ersten Frage.
+- **[M]** Die **Treppe**: Mucki liegt quer auf der dritten Stufe und faucht („Do kimmt koana vorbei. Mi beißt’s aa.“). Nehmen geht nicht (drei Kratzer), Plätzchen auch nicht.
+- **[G]** Zu Mala wechseln und mit der **Katze** reden: Katzen sehen Mala. Sie geht vor, Mucki folgt ihr zu Frau Hubers Tür („Wia wenn’s oana führt.“).
 - **[M]** Die **Treppe** hinauf in Mamas Wohnung. Die **Pantoffeln** (Größe 44, gerade gestellt), das **Foto**, den **Ordner „Vratnik – krov“** lesen (achtzehn Jahre Geld für Bakas Dach).
 - Beim dritten Hinsehen, spätestens beim Kaffee, klopft Mala um 11:10 wie Lana früher: zweimal kurz, einmal lang. „Ich war nie fertig.“
 - **[M]** Im **Schlafzimmer** die verschlossene **Kiste** im Schrank ansehen.
@@ -102,6 +104,12 @@ Pflicht: Anas Probe von 2004 (gibt in Fassung „ja“ schon Frau Kolar), Sepps 
 - **[G]** Den **Koffer** spüren: eine Frau, die beim Schreiben weint.
 - Verbinden: *Carmela, 1979* + *Eine Frau, die weint* → **Carmela wusste es seit 1979**.
 
+**Rosas Nummer (der nasse Brief)**
+- **[M]** Städtische Friedhöfe, Herr Obermaier: „Das Kuvert aus seiner Manteltasche …“ Mit dem richtigen Namen und den Briefen der Schwester gibt er das **nasse Kuvert** heraus (vorher: „Angehörige, Herr Vuković. Nicht Übersetzer.“).
+- **[M]** Das Kuvert auf Frau Wimmers **Teekessel** (Bahnhofsmission) benutzen, oder auf Mamas **Herd**. Dampf öffnet es: **Carmelas Dezemberbrief**. „Rosa hat ein neues Telefon. Wenn du eines Tages anrufen willst: 0971 …“, danach ist die Tinte verlaufen.
+- **[M]** Den Brief **Mala geben**. **[G]** Nachhall: Carmela sagt beim Schreiben jede Zahl laut. Mala spricht nach: „Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“
+- Verbinden: *Der Dezemberbrief* + *„Sätte, tre, tschinkwe …“* → **Rosas Nummer** (0971 735822). Erst jetzt geht der Anruf bei Carmela.
+
 **Drei Uhr**
 - **[M]** Ins Heim, Flur. Mala muss dabei sein. Die **Uhr** benutzen → „(Bis drei warten.)“. Um drei: Alois steht auf und geht zum Aufzug, der Aufzug **gongt**, Gerda nimmt seine Hand und er **friert**, die Pflegerin sagt: „Ihre Gerda kommt später, Herr Lechner.“
 - Damit endet der Dienstag.
@@ -118,7 +126,10 @@ Pflicht: Sepp geht hinüber, Gerda entscheidet sich. In Fassung „Probe nein“
 **Davor und Lena (freiwillig, aber an Silvester nützlich)**
 - **[M]** Davors **Karte** benutzen (anrufen): „Bei meiner Mutter. Über die Feiertage.“ → „Ich bin kein Gärtner, Lena.“ Moosach erscheint.
 - **[M]** **Moosach**, der Balkon. **[G]** Den Topf mit dem Feigenzweig spüren: Er schläft nur.
-- **[M]** Mit Lena: „Er schläft nur.“ → „Wir rufen Jela an.“ – „Pusti ga. Zimi spava. Ne zalijevaj.“ → „„Sie sagt, du hast es gut gemeint.““ → „Vielleicht an Silvester.“ Davor bietet an, an Silvester zu fahren.
+- **[M]** Mit Lena: „Er schläft nur.“ → „Wir rufen Jela an.“ – „Pusti ga. Zimi spava. Ne zalijevaj.“ → „„Sie sagt, du hast es gut gemeint.““ Jela sagt noch: Die Tüte erstickt ihn, er gehört in Jute, „wie wir unsere Feigen“. Lena: „Wo krieg ich denn Jute her?“
+- **[G]** Mala (ist sie dabei, sagt sie es gleich; sonst im Gespräch mit ihr): Nada hat den Oleander jeden November in **Kaffeesäcke** gewickelt, „nicht zu fest, oben Luft“.
+- **[M]** Bar Sport, Enzo: „Haben Sie einen leeren Kaffeesack?“ – „Per un fico si fa tutto.“ **Jutesack**. Am Kiosk an Gleis 11: „Die Schnur von den Zeitungsbündeln …“ **Schnur**. Beide verbinden: **Wintermantel**.
+- **[M]** In Moosach den Wintermantel auf den **Feigenzweig** benutzen („Sieht aus wie ein kleiner Mönch.“). Dann bietet Davor an zu fahren → „Vielleicht an Silvester.“
 
 **Sepp geht**
 - **[M]** Gleis 11, Peppino: „Ich rufe Carmela an. Hier. Hören Sie zu.“ → „„Ich habe seine Briefe gelesen. Und Ihre.““ – „Lo sapevo. Da trent’anni.“ → „„Seit neunzehnhundertneunundsiebzig?““ → „„Er ist tot. Am sechzehnten Dezember.““ → „„Er hört zu.““
@@ -130,7 +141,9 @@ Pflicht: Sepp geht hinüber, Gerda entscheidet sich. In Fassung „Probe nein“
 - **[M]** Die **Uhr** → „(Bis drei warten.)“. **Versuch 1** (ohne Gong, Gerda bei ihm): Er steht nicht auf, aber er friert.
 - **[G]** In **Zimmer 214** die **Fotos** spüren (nach drei sitzt Alois im Flur; vor drei kann Marko sie auch ansehen): Gerda am Depottor, Linie 19, fünfunddreißig Jahre.
 - **[M]** Ein neuer Nachmittag: an der **Uhr** „(Später wiederkommen.)“ wählen, oder einmal hinaus und wieder herein (Aufzug, Haustür, über den Plan nach Westend und zurück). Es zählt auch, wenn Mala dabei in Zimmer 214 bleibt.
-- **[G]** Mit Gerda: „Sie haben immer draußen gewartet. Am Depot.“ – „Am Fenster. Einmal.“ (Ohne die Fotos wartet sie nicht woanders.)
+- **[G]** Mit Gerda: „Sie haben immer draußen gewartet. Am Depot.“ (Ohne die Fotos wartet sie nicht woanders.) Gerda: „Am Fenster? Da ist’s finster. Am Tor war eine Lampe.“
+- **[M]** Im **Gemeinschaftsraum** den **Papierstern** vom Fenster nehmen (Moni: „Der hängt eh schief.“) und auf das **Fenster** am Ende des Flurs benutzen.
+- **[G]** Mit Gerda: „Am Fenster brennt jetzt ein Licht.“ – „A Lampn. Wie am Tor.“ … „Einmal.“
 - **[M]** Die **Bank** → „(Bis drei warten.)“. **Versuch 2** (mit Gong, Gerda am Fenster): Er steht auf, aber er friert nicht.
 - Verbinden: *Versuch 1* + *Versuch 2* → **Gong und Hand**. Dann *Gong und Hand* + *Am Depot* → **In seiner Sprache**.
 - **[M]** Im Dienstzimmer Frau Ertl nach *In seiner Sprache* fragen: Sie erlaubt einen Versuch mit der Wahrheit. → „Danke, Frau Ertl.“
@@ -205,7 +218,7 @@ Pflicht: Sepp geht hinüber, Gerda entscheidet sich. In Fassung „Probe nein“
   - *Peppino ist der Sepp (?)* + *die Umschläge im Koffer* (Frau Wimmer: „Kann ich den Koffer sehen?“);
   - *Unter Gleis 11* + *Josef Rugiero*, ohne den Zwischenschluss.
 - **Die Versuche um drei** gehen in beiden Reihenfolgen. Für Gerda am Fenster braucht Mala die Fotos aus Zimmer 214. Zwischen zwei Versuchen muss ein neuer Nachmittag beginnen (an der Uhr „(Später wiederkommen.)“ oder hinaus und wieder herein; Mala darf dabei in Zimmer 214 bleiben). Ist Mala um drei nicht im Flur, sagt Marko: „Mala ist nicht hier.“ Die Beobachtung am Dienstag und Versuch 2 brauchen beide im Flur; sonst „(Noch nicht.)“ wählen und Mala holen.
-- **Davor:** Abends ruft Marko nicht an („Jetzt nicht mehr. Morgen.“). Das Angebot für Silvester macht Davor auch ohne Jela, beim Abschied („Ich muss los.“). Ohne Angebot gibt es an Silvester nur Nachttram und zu Fuß.
+- **Davor:** Abends ruft Marko nicht an („Jetzt nicht mehr. Morgen.“). Das Angebot für Silvester macht Davor erst, wenn der Feigenzweig seinen Wintermantel hat. Ohne Angebot gibt es an Silvester nur Nachttram und zu Fuß.
 - **Laden:** An jedem Tageswechsel, auch mitten darin, holt das Spiel den Wechsel nach. Auf der Brücke beginnt Dialog 2 neu, am Silvesterabend geht es weiter bis „Mama ist fort“, in der Silvesternacht vor der Spur steht man bei Ana. Im Gespräch wird an drei Zwischenständen gespeichert; wer dort lädt, macht genau ab dort weiter.
 
 ## Fehlwege (jeder mit eigener Antwort, keiner endet in einer Sackgasse)

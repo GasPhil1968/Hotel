@@ -204,6 +204,7 @@ function layers(S,GS,tod){ var L=[], wea=weaOf(GS), fn=dayFn(wea), cr=[];
 // ---------------------------------------------------------------- jedes Bild: Fernseher, Lichterketten, Schneefall vor dem Fenster
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam|0, wea=weaOf(GS), i;
   tvPic(fb,t,cam);
+  if (M.k4StarDraw && GS && GS.flags && !GS.flags['k4.g.starTaken'] && M.chapterOf && M.chapterOf(GS)===4) M.k4StarDraw(fb,(WINS[1][0]+WINS[1][1])>>1,WY0+12,t,cam,0);   // Kette 3: der Papierstern
   for (i=0;i<LIGHTS.length;i++){ var p=LIGHTS[i], s=Math.sin(t*(0.8+(i%4)*0.2)+i*1.3); if (s>0.6) fb.px(p[0]-cam,p[1],P.y5); }
   for (i=0;i<TLIGHTS.length;i++){ var q=TLIGHTS[i], s2=Math.sin(t*(1.1+(i%3)*0.3)+i*2.1); if (s2>0.5) fb.px(q[0]-cam,q[1],P.y5); }
   if (wea==='snow') M.snow(fb,t,{n:40,cam:cam,mask:function(x,y){ return x>=0&&y>=0&&x<W&&y<H&&WM[y*W+x]===1; },col:P.s6,col2:P.s5,wind:5}); }

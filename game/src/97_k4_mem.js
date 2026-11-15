@@ -385,6 +385,40 @@ M.mem.k4_home=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2012), WB=58, WX0=
   var sun=function(x,y){ var u=x-(y-WY0)*1.05-WX0+2; return u>0 && u<WX1-WX0+12 && y>WY0+4; };
   M.light(b,function(x,y){ var v=-0.32; if (sun(x,y)) v+=0.6; var d=Math.hypot((x-110)/150,(y-74)/60); v+=Math.max(0,0.32-d*0.32); return v; });
   edgeDark(b,1.6); };
+
+// ================================================================ Kette 2 (design/K4_RAETSEL.md), Nachhall am Dezemberbrief: Carmelas Küche in Pietrafonda Nuova.
+//    Gekalkte Wand, ein Fenster mit dem kahlen Feigenbaum und Hügeln, eine Hängelampe; am Tisch die alte Carmela mit Brille, ein Blatt,
+//    ein Kuli; hinter ihr Rosa mit einem Telefon. Keine Zeichen außer einem Kalender ohne Bild.
+M.mem.k4_carmela=function(b){ var w=b.w,h=b.h, x, y, i, rg=M.rng(2011), FL=78, WX0=150, WX1=212, WY0=10, WY1=54, LX=96, LY=14;
+  fill(b,0,0,w,FL,function(x,y){ return ra(R('s3 s4 s5 s6'),0.55-y/FL*0.2+(fbm(x,y,16,4)-0.5)*0.14,x,y); });
+  fill(b,0,FL,w,h-FL,function(x,y){ var d=(y-FL)/(h-FL); return ((Math.floor((x-116)/(10+d*10))+Math.floor((y-FL)/(3+d*5)))%2)?P.t2:P.t3; }); b.hl(0,w-1,FL,P.t1);
+  // Fenster: Winterhimmel, Hügel, der kahle Feigenbaum mit dicken grauen Ästen
+  fill(b,WX0,WY0,WX1-WX0,WY1-WY0,function(x,y){ return ra(R('b3 b4 b5 s6'),0.25+(y-WY0)/50,x,y); });
+  for (x=WX0;x<WX1;x++){ var hy=WY0+26+rnd(Math.sin(x*0.07)*4+Math.sin(x*0.19)*2); for (y=hy;y<WY1;y++) b.px(x,y,y<hy+2?P.e4:(((x+y)%6===0)?P.e2:P.e3)); }
+  var TX=WX0+34, TB=WY1-1; for (y=TB-18;y<=TB;y++){ b.px(TX,y,P.m2); b.px(TX+1,y,P.m3); }
+  [[-1,-10,-12,-20],[1,-12,12,-22],[0,-16,-4,-26],[1,-6,16,-12],[-1,-4,-14,-8]].forEach(function(a){ b.line(TX+a[0],TB+a[1],TX+a[2],TB+a[3],P.m2); b.line(TX+a[0]+1,TB+a[1],TX+a[2]+1,TB+a[3],P.m3); b.px(TX+a[2],TB+a[3]-1,P.m4); });
+  b.rect(WX0-3,WY0-3,WX1-WX0+6,3,P.s6); b.rect(WX0-4,WY1,WX1-WX0+8,3,P.s5); b.rect(WX0-3,WY0,3,WY1-WY0,P.s6); b.rect(WX1,WY0,3,WY1-WY0,P.s5); b.rect(rnd((WX0+WX1)/2)-1,WY0,2,WY1-WY0,P.s5);
+  // Kalender ohne Bild, Teller am Bord
+  b.rect(20,12,16,20,P.s6); b.rect(20,12,16,5,P.r2); for (y=20;y<30;y+=3) for (x=22;x<34;x+=3) b.px(x,y,P.s2); b.px(28,10,P.k2);
+  b.hl(46,90,30,P.w2); b.hl(46,90,31,P.w1); [[52,25],[64,24],[76,25]].forEach(function(c){ b.ellipse(c[0],c[1],5,5,P.s6); b.ellipse(c[0],c[1],3,3,P.b3); b.ellipse(c[0],c[1],1.5,1.5,P.s6); });
+  // Hängelampe
+  b.vl(LX,0,LY-4,P.k2); b.poly([[LX-9,LY+3],[LX+9,LY+3],[LX+5,LY-3],[LX-5,LY-3]],P.g3); b.hl(LX-9,LX+9,LY+3,P.g2); b.hl(LX-4,LX+4,LY+4,P.y5);
+  // Carmela hinter dem Tisch (sitzend: der Tisch verdeckt sie ab der Hüfte): weißes Haar, dunkle Strickjacke, über das Blatt gebeugt
+  person(b,96,FL+6,52,{dir:1,coat:[P.k2,P.k1,P.k0],hair:P.m2,skin:[P.p2,P.p3,P.p1],long:true});
+  // Tisch mit Wachstuch, darauf das Blatt, der Kuli, eine Tasse
+  var TT=62, TF=70; for (y=TT;y<=TF;y++){ var xa=rnd(lerp(40,32,(y-TT)/(TF-TT))), xb=rnd(lerp(170,178,(y-TT)/(TF-TT))); for (x=xa;x<=xb;x++) b.px(x,y,y===TF?P.r1:((((x>>2)+(y>>1))%2)?P.r3:P.s5)); }
+  fill(b,60,TF+1,90,FL+10-TF,function(x,y){ return ra(R('t1 t2 t3'),0.2+(y-TF)/30,x,y); });   // unter dem Tisch: Schatten, Stuhlbeine
+  b.vl(88,TF+1,FL+8,P.w1); b.vl(104,TF+1,FL+8,P.w1);
+  b.rect(44,TF+1,4,FL+14-TF,P.w1); b.rect(164,TF+1,4,FL+14-TF,P.w1);
+  b.poly([[84,TT+1],[108,TT],[110,TT+6],[86,TT+7]],P.s6); for (i=0;i<4;i++) b.hl(88,104-i*3,TT+2+i,P.b2); b.line(104,TT+4,111,TT-1,P.b1);
+  b.rect(126,TT-5,6,5,P.s6); b.hl(126,131,TT-5,P.s4); b.vl(132,TT-4,TT-2,P.s5);
+  // Rosa hinter ihr, jung, mit Telefon am Ohr
+  person(b,130,FL+2,46,{dir:-1,coat:[P.b2,P.b3,P.b1],hair:P.h2,skin:[P.p3,P.p4,P.p2]}); b.rect(126,FL-41,2,5,P.k1);
+  for (i=0;i<60;i++){ var sx=rg()*w, sy=rg()*FL; if (Math.hypot(sx-LX,(sy-LY-30)*0.8)<44) b.px(rnd(sx),rnd(sy),P.s6); }
+  M.light(b,M.lf.sum(M.lf.k(-0.5),M.lf.pool(LX,LY+40,56,46,1.6,1),M.lf.pool(WX0+30,WY0+20,36,30,0.8,1)));
+  b.hl(LX-4,LX+4,LY+4,P.y5);
+  edgeDark(b,1.8); };
+M.K4_MEM_TINT.k4_carmela='ghost';
 })(M);
 // ================================================================ k4_zaehlen — Malas Nachhall: die Zahlen von Anas Treppenhaus bis zum Park am Heim (Nacht, Nebel)
 (function(M){ var P=M.P;

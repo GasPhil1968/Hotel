@@ -117,7 +117,13 @@ async function carmelaCall(A){ var G=A.G, Sp=A.npc('sepp'), mh=here(A), tone=nul
     A.sfx('dial'); await A.wait(2200);
     await A.phoneVoice('„Pronto?“','rosa'); await A.m('Buongiorno. Parlo con la famiglia Ruggiero? Mi chiamo Marko Vuković. Chiamo da Monaco.');
     await A.wait(600); await A.phoneVoice('„Da Monaco?“','rosa'); await A.wait(500); await A.phoneVoice('„Sono Rosa. La nipote. Chi cerca?“','rosa');
-    await A.m('Rosa, die Enkelin. Sie fragt, wen ich suche.'); await A.m('La signora Carmela.'); await A.phoneVoice('„La nonna? Di che si tratta?“','rosa');
+    await A.m('Rosa, die Enkelin. Sie fragt, wen ich suche.');
+    // Kette 2 „Der nasse Brief“: die Nummer stand in Carmelas Dezemberbrief
+    await A.phoneVoice('„Ma … questo numero ce l’ha solo la famiglia. Come l’ha avuto?“','rosa'); await A.m('Die Nummer hat nur die Familie, sagt sie. Woher ich sie habe.');
+    await A.m('Da una lettera. Quella di dicembre. Era nella tasca del suo cappotto.'); await A.wait(900);
+    await A.phoneVoice('„La lettera della nonna …“','rosa'); await A.wait(500); await A.phoneVoice('„Gliel’ha scritto lei. Lui non ha mai chiamato. Mai.“','rosa');
+    await A.m('Die Nonna hat ihm die Nummer geschrieben, sagt Rosa. Er hat nie angerufen. Nie.'); Sp.agitate(1600); if (mh) await A.g('Er sieht auf seine Hände.');
+    await A.wait(400); await A.m('La signora Carmela.'); await A.phoneVoice('„La nonna? Di che si tratta?“','rosa');
     // die drei Einstiege (Konzept 7.1, A4)
     for (var guard=0;guard<4 && !tone;guard++){
       var o=[{t:'„Ihr Bruder ist gestorben.“',id:'hard'}];
@@ -192,6 +198,8 @@ M.K4PHONE.carmela=async function(A){ var G=A.G;
     if (!N(G,'s4_carmela_hall')) return A.m('Der kurze Brief von neunundsiebzig. Was darin steht, verstehe ich. Was er bedeutet, noch nicht.');
     return A.m('Ein Brief, eine Frau, die beim Schreiben weint. Das gehört zusammen. Erst will ich es zu Ende denken.'); }
   if (!N(G,'s4_bitte')) return A.m('Erst muss er seinen Namen hören. Von mir. Dann rufe ich seine Schwester an.');
+  if (!N(G,'s4_nummer')){ if (N(G,'s4_dezember')) return A.m('Null, neun, sieben, eins. Danach sechs blaue Wolken. Mit einer Vorwahl allein erreiche ich ein ganzes Tal, aber keine Carmela.');
+    return A.m('Pietrafonda Nuova, Provinz Potenza. Eine Adresse auf hundert Umschlägen. Eine Nummer steht auf keinem.'); }
   if (rid(A)!=='gleis11' || !seen(A)) return A.m('Nicht von hier. Wenn ich sie anrufe, dann bei ihm, am Gleis. Er soll ihre Stimme hören.');
   return carmelaCall(A); };
 
@@ -274,6 +282,13 @@ async function kioskBunker(A,K){ await K.say('Unter Gleis elf? Do drunt war frü
   await K.say('Do hams de Gastarbeiter hig’schickt, wia s’ kemma san. Stempel drauf, und weiter. Heit spuin s’ do drunt Theater, hob i g’lesen.');
   A.setFlag('k4.s.bunkerKnown'); await A.m('Unter dem Gleis war ein Bunker. Dort hat man die Gastarbeiter hingeschickt, als sie ankamen. Stempel drauf, und weiter.');
   if (here(A)){ await A.wait(400); await A.g('Unter dem Gleis.'); await A.wait(300); await A.g('Da komme ich hin. Du nicht.'); } }
+// Kette 4 „Winterschlaf“: die Schnur von den Zeitungsbündeln
+async function kioskString(A,K){ K=K||A.npc('kioskg');
+  if (A.has('schnur')||A.has('wintermantel')||F(A.G,'k4.v.wrapped')) return K.say('No mehr Schnur? Wos bindn S’ denn, an Christbaam?');
+  await A.m('Die Schnur da, von den Zeitungsbündeln. Brauchen Sie die noch?'); await K.say('De Schnur? De schmeiß i weg. Jeden Tag a Kilo.'); await A.wait(300);
+  await K.anim('sell'); await K.say('Nehmen S’ as. Wos bindn S’ denn?'); await A.m('Einen Feigenbaum ein. Einen kleinen.'); await A.wait(500); await K.say('A Feign. In Moosach, wett i. Ja mei. München wird a Süden.');
+  A.give('schnur'); A.setFlag('k4.v.gotString');
+  if (here(A)){ await A.wait(300); await A.g('Was hat sie gesagt?'); await A.m('Dass München ein Süden wird.'); await A.g('Das glaube ich nicht.'); } }
 async function kioskNotice(A,K){ await K.say('Den Zettel hod d’Frau Wimmer bracht. Nehmen S’ oan mit, i hob an ganzn Stapel.'); A.give('aushang'); A.setFlag('k4.s.notice');
   await A.m('„Wer kannte diesen Mann?“ Darunter ein Foto, so oft kopiert, dass von dem Gesicht vor allem die Mütze übrig ist.'); }
 var KIOSK_ALSO=['s4_peppino','s4_genommen','s4_fluch','s4_enzo','s4_ausweis','s4_name','s4_tarnung','s4_bairisch'];
@@ -294,6 +309,7 @@ async function talkKiosk(A){ var K=A.npc('kioskg'), G=A.G;
     {t:'Kennen Sie einen Peppino?',if:N(G,'s4_peppino')&&!A.unlocked('bhfviertel'),go:function(A){ return kioskPeppino(A,K); }},
     {t:'Was war früher unter dem Gleis?',if:N(G,'s4_genommen')&&!F(G,'k4.s.bunkerKnown'),go:function(A){ return kioskBunker(A,K); }},
     {t:'Darf ich einen von den Zetteln mitnehmen?',if:aushangHere(G)&&!A.has('aushang')&&!F(G,'k4.s.notice'),go:function(A){ return kioskNotice(A,K); }},
+    {t:'Die Schnur von den Zeitungsbündeln …',if:F(G,'k4.v.jute')&&!F(G,'k4.v.wrapped')&&!A.has('schnur')&&!A.has('wintermantel'),go:function(A){ return kioskString(A,K); }},
     {t:'Eine Abendzeitung, bitte.',once:'ki1',go:async function(A){ await K.anim('sell'); await K.say('Bittschön. Heit is’s dünn, is ja Feiertag. Mehr Werbung als Zeitung.'); await A.m('Auf Seite drei ein Foto vom Christkindlmarkt, der schon abgebaut wird. Ich lese es nicht.'); }},
     {t:'Wie lange stehen Sie schon hier?',once:'ki2',go:async function(A){ await K.say('Am Gleis? Neunzehn Johr. Im Kiosk a. Davor bei da Post.'); await A.wait(400); await K.say('I kenn jeden, der zwoamal kimmt. Und de, de bloß oamal kemma, de vergiss i glei.'); }},
     askOpt('Wonach frage ich sie?',KIOSK_ALSO,table,async function(A){ await K.say(A.cycle('kiNo',['Des woaß i ned. I verkauf Zeitungen, koa Auskünfte.','Fragen S’ d’Frau Wimmer. De woaß mehr als d’Polizei.'])); }),
@@ -314,7 +330,9 @@ var HS=[
  {id:'sign11',name:'Gleisschild „11“',look:'Eine große Elf auf blauem Grund. Darunter die Wagenstandsanzeige, auf der heute nichts steht, was stimmt.',
    g:{look:'Elf. Keine Zahl, die man sich merkt. Außer man ist hier angekommen.'}},
  {id:'kiosk',name:'Kiosk',look:function(A){ return A.m(aushangHere(A.G)?'Ein Kiosk: Zeitungen, Zigaretten, Brezen unter Plastik. An der Scheibe klebt ein Zettel: „Wer kannte diesen Mann?“':'Ein Kiosk: Zeitungen, Zigaretten, Brezen unter Plastik, ein Schild „PRESSE“. Dahinter eine Frau mit Fingerhandschuhen.'); },
-   take:function(A){ if (aushangHere(A.G) && !A.has('aushang') && !A.flag('k4.s.notice')) return kioskNotice(A,A.npc('kioskg')); return A.m('Zeitungen kosten. Und die Kioskfrau sieht alles.'); },
+   take:function(A){ if (aushangHere(A.G) && !A.has('aushang') && !A.flag('k4.s.notice')) return kioskNotice(A,A.npc('kioskg'));
+     if (A.flag('k4.v.jute') && !A.flag('k4.v.wrapped') && !A.has('schnur') && !A.has('wintermantel') && M.K4_DAYS.indexOf(A.G.phase)>=0) return kioskString(A,A.npc('kioskg'));
+     return A.m('Zeitungen kosten. Und die Kioskfrau sieht alles.'); },
    use:function(A){ return A.m('Ich kaufe nichts, was ich nicht lese. Meistens.'); },
    g:{look:'Papier, das jeden Tag neu ist und abends alt.'}},
  {id:'board',name:'Anzeigetafel',look:function(A){ return board(A); },read:function(A){ return board(A); },g:{look:'Lauter Städte. Für mich sind das Wörter, die blinken.'}},

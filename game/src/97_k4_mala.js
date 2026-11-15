@@ -51,6 +51,10 @@ async function hansiTalk(A){ await A.g('Er ist einfach gegangen. Ich musste nich
 async function tinTalk(A){ await A.g('Zwei Fahrscheine. Für die erste Drei nach dem Krieg.'); await A.wait(800); await A.g('Gerda hat ihre Kanne hergegeben. Wer losgelassen hat, kann etwas hergeben.'); await A.wait(700); await A.g('Wenn ich sie hergebe, dann der, die sie braucht.'); await A.m('Wer ist das?'); await A.g('Das weiß ich noch nicht.'); }
 async function gerdaTalk(A){ await A.g('Ich habe ihr gesagt, dass sie gehen muss. Für ihn.'); await A.wait(800); await A.g('Sie ist geblieben, weil sie ihn liebt. Genau das hat ihn frieren lassen.'); await A.wait(700); await A.g('Ich weiß nicht, ob ich das bei mir auch könnte. Gehen, weil ich bleibe.'); }
 async function seppTalk(A){ await A.g('Carmela hat es gewusst. Seit neunundsiebzig. Und hat „Auch mir geht es gut“ geschrieben.'); await A.wait(600); await A.g('Zwei, die sich schonen, und beide wissen es. Vielleicht geht das. Wenn beide es wissen.'); }
+async function juteTalk(A){ await A.m('Jela sagt, der Zweig gehört in Jute. Wie die Feigen in Mostar. Wo nimmt man hier Jute her?'); await A.wait(700);
+  await A.g('Mama hat jeden November den Oleander eingewickelt. Auf dem Balkon, neunter Stock.'); await A.wait(400);
+  await A.g('In Kaffeesäcke. Die gab es unten im Laden umsonst. Und Schnur. Nicht zu fest, oben Luft.'); await A.wait(500);
+  await A.m('Kaffeesäcke. Wer in München hat noch Kaffeesäcke?'); await A.g('Einer, der Kaffee macht, der nach etwas riecht.'); A.setFlag('k4.v.sack'); }
 async function knowTalk(A){ await A.m('Weißt du etwas, das ich wissen sollte?'); await A.wait(1300); await A.g('Ich weiß vieles.'); await A.wait(500); await A.g('Ich frage nicht. Das hast du so gewollt.'); await A.wait(600); await A.m('Das ist keine Antwort.'); await A.g('Nein.'); }
 async function bondTalk(A){ var c=consent();
   if (c==='a'){ await A.g('Am Grab hast du Ja gesagt. Einfach so.'); await A.m('Nicht einfach so.'); await A.g('Hier merkst du, wie wenig einfach.'); }
@@ -70,6 +74,7 @@ M.k4TalkToMala=async function(A){ var G=A.G, p=G.phase, r=rid(A);
     o('mgNi','Niko sieht dich.',F(A,'k4.p.niko'),nikoTalk),
     o('mgAn','Ana.',F(A,'k4.d1.walk'),anaTalk),
     o('mgHa','Hansi.',F(A,'k4.p.hansi'),hansiTalk),
+    o('mgJu','Wie wickelt man einen Feigenzweig ein?',F(A,'k4.v.jute')&&!F(A,'k4.v.wrapped')&&!F(A,'k4.v.sack'),juteTalk),
     o('mgKn','Weißt du etwas, das ich wissen sollte?',secret(A)&&F(A,'k4.d2.kolar'),knowTalk),
     o('mgSe','Sepp ist zu Hause.',F(A,'k4.s.crossed'),seppTalk),
     o('mgGe','Gerda ist gegangen.',F(A,'k4.g.decided'),gerdaTalk),

@@ -54,6 +54,9 @@ n('s4_bunker','s4','Der Name','Nachhall im Bunker','Mala im Bunker unter Gleis 1
 n('s4_umschlag','s4','Carmela','Briefe aus dem Süden','In Sepps Koffer: Briefe an „Giuseppe Ruggiero, c/o Bahnhofsmission, Gleis 11“. Absender: C. Ruggiero, Pietrafonda Nuova.',{p:'p:wimmer'});
 n('s4_bitte','s4','Carmela','„Cara Carmela, sto bene“','Sepp, als er hört, dass wir seinen Namen kennen: „Adesso scriva. Cara Carmela, sto bene.“ Jetzt schreiben Sie. Liebe Carmela, mir geht es gut.',{p:'p:sepp'});
 n('s4_brief79','s4','Carmela','Carmela, 1979','Carmela 1979: „Ti ho visto con le valigie. Eri bello come papà. Anche io sto bene.“ Ich habe dich mit den Koffern gesehen. Du warst schön wie Papa. Auch mir geht es gut.',{p:null});
+n('s4_dezember','s4','Carmela','Der Dezemberbrief','Carmelas letzter Brief, aus Sepps Manteltasche: „Rosa hat ein neues Telefon. Wenn du eines Tages anrufen willst: 0971 …“ Nach der Vorwahl ist die Tinte verlaufen. Er hat nie angerufen.',{p:'i:brief_dez'});
+n('s4_ziffern','s4','Carmela','„Sätte, tre, tschinkwe …“','Mala im Nachhall des Dezemberbriefs: Carmela sagt beim Schreiben jede Zahl laut. Nach dem Anfang: „Sätte. Tre. Tschinkwe. Otto. Duhe. Duhe.“ Mala versteht kein Wort.',{p:'p:mala'});
+n('s4_nummer','s4','Carmela','Rosas Nummer','0971 735822. Die Vorwahl aus dem Brief, der Rest aus Malas Nachhall: sette, tre, cinque, otto, due, due. Sieben, drei, fünf, acht, zwei, zwei.',{p:'i:mobitel'});
 n('s4_carmela_hall','s4','Carmela','Eine Frau, die weint','Mala am Brief von 1979: Eine Frau sitzt an einem Küchentisch und schreibt. Sie weint und lächelt dabei.',{p:'p:mala'});
 // Schlüsse
 n('s4_tarnung','s4','Der Sepp','Er konnte beides','Bairisch wie ein Urmünchner, italienisch geflucht, wenn keiner zuhörte. Er konnte beides. Das Bairische war eine Tarnung.',{p:'p:sepp'});
@@ -67,7 +70,7 @@ n('g4_gong','g4','Drei Uhr','Der Gong','Der Aufzug gongt, wenn er hält. Hausmei
 n('g4_kalt','g4','Drei Uhr','Wenn sie seine Hand nimmt','Mala: Gerda steigt mit dem Gong aus dem Aufzug, setzt sich und nimmt seine Hand. Genau dann friert er.',{p:'p:mala'});
 n('g4_spaeter','g4','Drei Uhr','„Sie kommt später“','Eine Pflegerin, jeden Tag um drei: „Ihre Gerda kommt später, Herr Lechner.“ Mama sagt es auch.',{p:'p:jasna'});
 n('g4_doku','g4','Alois','Die Pflegedokumentation','Im Dienstzimmer zeigt mir Mama die Akte: „Ehefrau verst. 3.9. Laut PDL nicht mitteilen. Bei Nachfrage: kommt später.“',{p:'p:jasna'});
-n('g4_depot','g4','Alois','Am Depot','In Zimmer 214 Fotos: eine Trambahn der Linie 19, ein junger Fahrer. Eine Frau mit Thermoskanne am Depottor. Fünfunddreißig Jahre hat Gerda draußen gewartet, wenn er Feierabend hatte. Nie ist sie hineingegangen.',{p:'p:alois'});
+n('g4_depot','g4','Alois','Am Depot','In Zimmer 214 Fotos: eine Trambahn der Linie 19, ein junger Fahrer. Eine Frau mit Thermoskanne am Depottor, unter der Lampe. Fünfunddreißig Jahre hat Gerda draußen gewartet, wenn er Feierabend hatte. Nie ist sie hineingegangen.',{p:'p:alois'});
 n('g4_versuch1','g4','Der Versuch','Gong aus, Gerda bei ihm','Erster Versuch: Der Gong ist aus, Gerda sitzt bei ihm. Er steht nicht auf. Aber als sie seine Hand nimmt, friert er und ruft nach ihr.',{p:'p:alois'});
 n('g4_versuch2','g4','Der Versuch','Gong an, Gerda im Flur','Zweiter Versuch: Der Gong ist an, Gerda wartet am Fenster am Ende des Flurs. Er steht beim Gong auf und geht zum Aufzug. Aber er friert nicht.',{p:'p:alois'});
 // Schlüsse
@@ -86,7 +89,7 @@ function after(f){ return function(G){ return !!G.flags[f]; }; }
 by('z4_lesart',['z4_vermisst']); by('z4_antrag',['z4_vermisst']); by('z4_nachricht',['z4_tot']); by('z4_kode',['z4_tot']);
 by('z4_vermisst',['z4_zweistaedte']); by('z4_tot',['z4_zweistaedte']); by('z4_passierschein',['z4_kurve']); by('z4_kurve_ana',['z4_kurve']);
 by('s4_bairisch',['s4_tarnung']); by('s4_fluch',['s4_tarnung']); by('s4_peppino',['s4_derselbe']); by('s4_ausweis',['s4_name']); by('s4_derselbe',['s4_name']);
-by('s4_bunker',['s4_name']); by('s4_umschlag',['s4_name']); by('s4_brief79',['s4_wusste']); by('s4_carmela_hall',['s4_wusste']);
+by('s4_bunker',['s4_name']); by('s4_umschlag',['s4_name']); by('s4_dezember',['s4_nummer']); by('s4_ziffern',['s4_nummer']); by('s4_brief79',['s4_wusste']); by('s4_carmela_hall',['s4_wusste']);
 by('g4_versuch1',['g4_beides']); by('g4_versuch2',['g4_beides']); by('g4_beides',['g4_worte']); by('g4_depot',['g4_worte']);
 done('u4_sms',after('k4.p.key')); done('u4_nichtheute',after('k4.p.talk1')); done('u4_kiste',after('k4.d1.box'));
 done('s4_genommen',function(G){ return has(G,'s4_name'); }); done('s4_termin',after('k4.s.farewell')); done('s4_bitte',after('k4.s.crossed'));
@@ -119,6 +122,7 @@ M.defineDeductions({
   's4_bunker+s4_umschlag':{to:'s4_name',say:'Die Briefe gehen an Giuseppe Ruggiero. Im Bunker macht ein Beamter daraus Josef Rugiero, und er sagt „Sì“. Derselbe Mann. Den Namen hat man ihm hier genommen.'},   // Blindtest K4: der Hinweis nannte dieses Paar
   's4_ausweis+s4_umschlag':{to:'s4_name',say:'Josef Rugiero, Gepäckträger Nr. 17, sagt der Ausweis. Giuseppe Ruggiero, Gleis 11, sagen die Briefe. Ein Buchstabe weniger, ein Name eingedeutscht. Derselbe Mann.'},   // Analyse K4-B03 (P16)
   's4_bunker+s4_ausweis':{to:'s4_name',say:'Im Bunker wird aus Giuseppe ein Josef, aus Ruggiero ein Rugiero. Im Ausweis steht genau das. Josef Rugiero ist Giuseppe Ruggiero.'},
+  's4_dezember+s4_ziffern':{to:'s4_nummer',say:'„Sätte, tre, tschinkwe, otto, duhe, duhe.“ Sette, tre, cinque, otto, due, due. Sieben, drei, fünf, acht, zwei, zwei. Vor die Wolken die Vorwahl aus dem Brief: null, neun, sieben, eins. Das ist Rosas Nummer.'},
   's4_brief79+s4_carmela_hall':{to:'s4_wusste',say:'„Ich habe dich mit den Koffern gesehen.“ Und eine Frau, die beim Schreiben weint und lächelt. Carmela wusste es. Seit 1979.'},
   'g4_versuch1+g4_versuch2':{to:'g4_beides',say:'Ohne Gong steht er nicht auf, aber er friert, wenn sie bei ihm ist. Mit Gong steht er auf, aber ohne sie friert er nicht. Der Gong holt ihn. Ihre Hand hält ihn fest.'},
   'g4_beides+g4_depot':{to:'g4_worte',say:'„Tot“ vergisst er. Aber Feierabend kennt er. Fünfunddreißig Jahre hat sie am Depot gewartet. So muss ich es ihm sagen. In seiner Sprache.'}
@@ -131,6 +135,10 @@ var NEAR={
   's4_genommen+s4_ausweis':'„Hier genommen“, sagt er. Im Ausweis steht ein Name. Aber wie wird aus einem Namen ein anderer?',
   's4_peppino+s4_umschlag':'Peppino ruft man einen Giuseppe. Die Briefe gehen an Giuseppe Ruggiero, Gleis 11. Aber begraben wird ein Josef Rugiero. Wie wird aus dem einen der andere?',   // Analyse K4-B03 (P16)
   's4_genommen+s4_peppino':'Peppino ist ein Rufname. Den Nachnamen hat man ihm hier genommen. Wo, sagt er: an Gleis 11.',
+  's4_ziffern+s4_umschlag':'Malas Laute und Carmelas Adresse. Die Laute sind Zahlen. Aber wo fangen sie an? Das steht im Dezemberbrief, vor den Wolken.',
+  's4_ziffern+s4_brief79':'Malas Laute gehören zum Dezemberbrief, nicht zu dem von neunundsiebzig.',
+  's4_dezember+s4_umschlag':'Die Adresse habe ich. Die Vorwahl auch. Was fehlt, sind sechs Ziffern unter einer Wolke aus Tinte.',
+  's4_dezember+s4_bitte':'„Wenn du eines Tages anrufen willst.“ Und „Jetzt schreiben Sie“. Er wollte schreiben, nicht anrufen. Aber erst brauche ich die Nummer.',
   'g4_drei+g4_gong':'Um drei, beim Gong. Vielleicht ist es der Gong. Vielleicht ist es die Uhrzeit. Das sagt mir keine Beobachtung, nur ein Versuch.',
   'g4_drei+g4_kalt':'Er friert, wenn sie kommt. Aber er stand schon auf, bevor sie da war. Zwei Dinge auf einmal. Ich muss sie trennen.',
   'g4_gong+g4_kalt':'Gong und Kälte kommen im selben Moment. Was davon ist was? Das sehe ich nur, wenn ich eins weglasse.',

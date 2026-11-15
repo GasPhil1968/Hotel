@@ -31,6 +31,12 @@ M.HINTS_K4=[
      'Anas SMS: „Schlüssel bei Frau Huber, unten links.“',
      'Im Westend, in Mamas Haus.',
      'Im Treppenhaus bei Frau Huber klingeln.']},
+ // Kette 1 „Mucki wartet auch“ (design/K4_RAETSEL.md)
+ {id:'h4m',t:'Die Katze auf der Treppe',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.catBlock') && !F(G,'k4.p.catMoved'); },
+  s:['Mucki liegt quer auf der Treppe und lässt Marko nicht vorbei.',
+     'Frau Huber sagt: Sie mag keine Mannsbilder. Sie wartet auf Frau Vuković.',
+     {m:'Katzen sehen Mala. Auf Mala hört Mucki vielleicht.',g:'Katzen sehen mich. Vielleicht kommt sie mit, wenn ich vorgehe.'},
+     'Zu Mala wechseln und mit der Katze reden.']},
  {id:'h4d',t:'Warten auf Mama',open:function(G){ return G.phase==='k4_pro' && F(G,'k4.p.key') && !F(G,'k4.p.jasna') && !F(G,'k4.p.coffee'); },
   s:['Mama kommt um zwei. Bis dahin ist Zeit.',
      'Die Wohnung erzählt einiges. Und man kann Kaffee kochen.',
@@ -113,6 +119,18 @@ M.HINTS_K4=[
  {id:'s4f',t:'Sein Name',open:function(G){ return N(G,'s4_name') && !N(G,'s4_bitte') && !F(G,'k4.s.crossed'); },
   // Kann-Liste (Hinweisprobe, Simulationslauf): Endet der Tag mit dem Schluss, ist er abends nicht an Gleis 11; dann sagt der Hinweis „morgen“
   s:['Wir kennen jetzt seinen Namen.','Das muss er hören. In seiner Sprache.',function(G){ return M.k4SeppHere&&!M.k4SeppHere(G)?'Morgen, an Gleis 11. Heute Abend ist er nicht dort.':'An Gleis 11.'; },function(G){ return M.k4SeppHere&&!M.k4SeppHere(G)?'Morgen den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.':'Den Mann an Gleis 11 mit seinem richtigen Namen ansprechen.'; }]},
+ // Kette 2 „Der nasse Brief“ (design/K4_RAETSEL.md)
+ {id:'s4n',t:'Eine Nummer in Italien',open:function(G){ return N(G,'s4_wusste') && N(G,'s4_bitte') && !N(G,'s4_nummer') && !F(G,'k4.s.call'); },
+  s:['Carmela anrufen, bei ihm am Gleis. Aber ihre Briefe haben eine Adresse, keine Nummer.',
+     'Sepp hatte etwas bei sich, als er erfror. Die Stadt hat es aufgehoben.',
+     function(G){ if (!F(G,'k4.s.kuvert')) return 'Herr Obermaier hat ein nasses Kuvert aus der Manteltasche. Er gibt es nur, wenn er weiß, wem es gehört: dem richtigen Namen und der Schwester.';
+       if (I(G,'kuvert')) return 'Aufreißen zerreißt es. Papier, das nass war, geht mit Dampf auf. Wo kocht Wasser?';
+       if (!N(G,'s4_ziffern')) return {m:'Unter der verlaufenen Tinte ist noch eine Stimme. Mala kann sie hören.',g:'In dem Brief ist noch eine Stimme. Zeig ihn mir.'};
+       return 'Die Vorwahl steht im Brief. Die Ziffern hat Mala gehört, auf Italienisch.'; },
+     function(G){ var m=later(G)?'Morgen: ':''; if (!F(G,'k4.s.kuvert')) return m+'Bei Herrn Obermaier nach dem Kuvert aus seiner Manteltasche fragen.';
+       if (I(G,'kuvert')) return m+'Das Kuvert auf Frau Wimmers Teekessel in der Bahnhofsmission benutzen (oder auf Mamas Herd).';
+       if (!N(G,'s4_ziffern')) return 'Mala den Dezemberbrief geben.';
+       return '„Der Dezemberbrief“ und „Sätte, tre, tschinkwe …“ verbinden.'; }]},
  {id:'s4g',t:'Peppinos Bitte',open:function(G){ return N(G,'s4_bitte') && !F(G,'k4.s.call'); },
   s:['Er will, dass Marko für ihn schreibt: „Cara Carmela, sto bene.“',
      'Was hat Carmela ihm all die Jahre geschrieben? Und was wusste sie?',
@@ -137,11 +155,17 @@ M.HINTS_K4=[
        if (later(G)) return 'Morgen: Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; if (F(G,'k4.g.chimeOff')&&!pmUsed(G)) return 'Bis drei warten: die Uhr im Flur benutzen.';
        if (pmUsed(G)) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt;
        return 'Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'+alt; }]},
+ // Kette 3 „Die Lampe am Tor“ (design/K4_RAETSEL.md)
+ {id:'g4l',t:'Ein Licht am Fenster',open:function(G){ return F(G,'k4.g.lampAsk') && !F(G,'k4.g.lamp') && !F(G,'k4.g.decided'); },
+  s:['Gerda würde am Fenster warten. Aber da ist es finster.','Am Depot hing eine Lampe über dem Tor. Unter der Lampe hat er sie gesehen.',
+     function(G){ return I(G,'stern')?'Marko hat ein Licht dabei.':'Im Heim leuchtet es hier und da, es ist ja Weihnachten. Im Gemeinschaftsraum zum Beispiel.'; },
+     function(G){ return I(G,'stern')?'Den Papierstern auf das Fenster am Ende des Flurs benutzen. Dann als Mala Gerda noch einmal bitten.':'Im Gemeinschaftsraum den Papierstern vom Fenster nehmen und an das Fenster am Ende des Flurs hängen. Dann als Mala Gerda noch einmal bitten.'; }]},
  {id:'g4c',t:'Der zweite Versuch',open:function(G){ return N(G,'g4_drei') && (N(G,'g4_versuch1')!==N(G,'g4_versuch2')); },
   s:['Ein Versuch zeigt nur die Hälfte. Für den zweiten braucht es einen neuen Nachmittag.','Jetzt das andere weglassen. Wer geht und wiederkommt, hat wieder drei Uhr vor sich.',
      function(G){ return N(G,'g4_versuch1')?{m:'Diesmal mit Gong. Aber Gerda wartet woanders. Bitten hilft nicht; erinnern schon: wo hat sie früher gewartet?',g:'Diesmal mit Gong. Ich bitte Gerda, am Fenster zu warten. Sie hört nur auf das, was früher war.'}:'Diesmal ohne Gong, und Gerda sitzt bei ihm. Herr Kraus.'; },
      function(G){ if (!N(G,'g4_versuch1')) return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) Herrn Kraus bitten, den Gong abzustellen, und bis drei warten.'; if (!N(G,'g4_depot')) return 'Nach drei, wenn Herr Lechner im Flur ist: als Mala in Zimmer 214 das Foto am Tor spüren. Dann als Mala Gerda an das Depot erinnern.';
        if (F(G,'k4.g.hall')) return 'Bis drei warten: die Uhr im Flur benutzen.';   // Hinweisprobe (P12): Gerda wartet schon am Fenster
+       if (F(G,'k4.g.lampAsk') && !F(G,'k4.g.lamp')) return 'Den Papierstern aus dem Gemeinschaftsraum an das Fenster am Ende des Flurs hängen, dann als Mala Gerda noch einmal bitten.';   // Kette 3
        return 'An einem neuen Nachmittag (an der Uhr „Später wiederkommen“ oder einmal hinaus und wieder herein) als Mala Gerda an das Depot erinnern, dann bis drei warten.'; }]},
  {id:'g4d',t:'Gong und Hand',open:function(G){ return N(G,'g4_versuch1') && N(G,'g4_versuch2') && !N(G,'g4_beides'); },
   s:['Zwei Versuche, zwei Ergebnisse.','Was hat jeder Versuch gezeigt?','Im Notizbuch beide Versuche.','Die beiden Versuche verbinden.']},
@@ -157,6 +181,12 @@ M.HINTS_K4=[
      function(G){ return F(G,'k4.g.goodbye')?'In der Zwischenwelt mit Gerda reden und ihr die hohe Stufe hinaufhelfen.':'Bis drei warten und Alois in Trambahnersprache sagen, wo Gerda wartet.'; }]},   // Hinweisprobe (P12): nach „Endstation“ geht es in der Zwischenwelt weiter
  {id:'g4i',t:'Die Kanne',open:function(G){ return I(G,'kanne') && !F(G,'k4.g.thermos'); },
   s:['Gerda hat ihre Kanne hergegeben.','Für wen?','Alois.','Alois die Kanne geben.']},
+ // Kette 4 „Winterschlaf“ (freiwillig, design/K4_RAETSEL.md)
+ {id:'v4w',t:'Ein Mantel für den Zweig',open:function(G){ return F(G,'k4.v.jute') && !F(G,'k4.v.wrapped') && P(G,['k4_d1','k4_d2','k4_d3','k4_d4','k4_d5']); },
+  s:['Jela sagt: Der Zweig gehört in Jute, wie die Feigen in Mostar.',
+     {m:'Mala weiß, wie man so etwas macht. Von ihrer Mutter.',g:'Mama hat den Oleander in Kaffeesäcke gewickelt. Mit Schnur.'},
+     function(G){ if (I(G,'wintermantel')) return 'Der Mantel ist fertig.'; return 'Kaffeesäcke gibt es, wo Kaffee nach etwas riecht. Schnur gibt es, wo jeden Morgen Zeitungsbündel ankommen.'; },
+     function(G){ if (I(G,'wintermantel')) return 'In Moosach den Wintermantel auf den Feigenzweig benutzen.'; var a=[]; if (!I(G,'jute')) a.push('In der Bar Sport Enzo nach einem leeren Kaffeesack fragen'); if (!I(G,'schnur')) a.push('am Kiosk an Gleis 11 nach der Schnur von den Zeitungsbündeln fragen'); a.push('Jutesack und Schnur verbinden und in Moosach auf den Zweig benutzen'); return a.join('; ')+'.'; }]},
  // ---------------- Familie: Dienstag bis Freitag
  {id:'z4a',t:'Ana, 2004',open:function(G){ return G.phase==='k4_d2' && F(G,'k4.d2.kolar') && !N(G,'z4_ana2004'); },
   s:['Frau Kolar hat von einer Probe aus München gesprochen.','Ana weiß etwas, das Mama nicht weiß.','In Giesing, bei Ana.','Zu Ana gehen und sie auf die Probe von Frau Kolar ansprechen.']},

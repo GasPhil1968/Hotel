@@ -1,16 +1,16 @@
 // Rendert alle Erinnerungsbilder (M.mem) mit ihrer Färbung auf ein Blatt: node game/tools/memsheet.js out.png [k2] [web/index.html]
-// Mit „k2“ die Bilder von Kapitel 2 (Färbung so, wie die Szenen sie aufrufen).
+// Mit „k2“ oder „k4“ die Bilder von Kapitel 2 bzw. 4 (Färbung so, wie die Szenen sie aufrufen).
 const { chromium } = require('playwright');
 const path = require('path');
 (async () => {
   const out = process.argv[2] || path.join(__dirname, 'memsheet.png');
   const browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 1400, height: 1000 } });
   page.on('pageerror', e => console.log('PAGEERROR', e.message));
-  const K2 = process.argv[3] === 'k2'; await page.goto('file://' + (process.argv[4] ? path.resolve(process.argv[4]) : path.join(__dirname, '..', '..', 'web', 'index.html')));
+  const K2 = (process.argv[3] === 'k2' || process.argv[3] === 'k4') ? process.argv[3] : null; await page.goto('file://' + (process.argv[4] ? path.resolve(process.argv[4]) : path.join(__dirname, '..', '..', 'web', 'index.html')));
   await page.waitForFunction(() => window.M && M.mem && M.drawPose, null, { timeout: 15000 });
   const dims = await page.evaluate((K2) => {
     let tints = { pier: 'memory', storm: 'ghost', letter: 'ghost', kiosk: 'ghost', guitarcase: 'ghost', fall: 'ghost', bus: 'memory' };
-    if (K2) { tints = {}; Object.keys(M.mem).filter(k => /^k2_/.test(k)).sort().forEach(k => { tints[k] = (M.K2_MEM_TINT && M.K2_MEM_TINT[k]) || 'memory'; }); }
+    if (K2) { const ch = K2, TT = ch === 'k4' ? M.K4_MEM_TINT : M.K2_MEM_TINT; tints = {}; Object.keys(M.mem).filter(k => k.indexOf(ch + '_') === 0).sort().forEach(k => { tints[k] = (TT && TT[k]) || 'memory'; }); }
     const ids = Object.keys(tints), w = 232, h = 104, S = 3, cols = 2, pad = 6;
     const W = cols * (w + pad) + pad, H = Math.ceil(ids.length / cols) * (h + pad) + pad;
     const sheet = new M.Buf(W, H, M.P.s2);

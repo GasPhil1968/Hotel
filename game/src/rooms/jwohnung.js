@@ -156,7 +156,9 @@ var HS=[
    take:'Ich nehme nichts von der Garderobe. Auch nicht den Schirm. Es schneit, es regnet nicht.',
    g:{look:'Kein Männermantel. Nur die Pantoffeln. Als wäre er nur kurz hinuntergegangen.'}},
  {id:'stove',name:'Herd',look:function(A){ return A.m(A.S.dzezva?'Großmutters Džezva auf der hinteren Platte. Sie sieht aus, als stünde sie hier seit Jahren.':'Ein Elektroherd mit vier Platten, blitzblank. Darüber ein Brett mit Gewürzen, alphabetisch.'); },
-   use:function(A){ return coffee(A); }, with:{ dzezva:function(A){ return coffee(A); }, vanilice:'Nadas Plätzchen gehören nicht auf den Herd. Die sind schon gebacken.' },
+   use:function(A){ return coffee(A); }, with:{ dzezva:function(A){ return coffee(A); }, vanilice:'Nadas Plätzchen gehören nicht auf den Herd. Die sind schon gebacken.',
+     kuvert:function(A){ if (A.G.tod==='night') return A.m('Nicht jetzt. Mama schläft nebenan, und ich will ihr keinen fremden Brief erklären. Morgen.'); return M.k4Steam?M.k4Steam(A,'herd'):A.m('Dampf würde helfen.'); },
+     brief_dez:'Der Brief ist schon offen. Noch mehr Dampf, und die Tinte läuft ganz weg.' },
    g:{look:function(A){ return A.g(A.S.dzezva?'Ružas Džezva auf ihrem Herd. Die beiden kennen sich.':'Ein Herd, an dem jemand jeden Tag kocht und nie für mehr als zwei.'); }}},
  {id:'table',name:'Tisch',look:function(A){ var G=A.G;
      if (G.phase==='k4_epi' && A.S.box) return A.m('Auf dem Tisch steht die Kiste, offen. Daneben drei Tassen und die Dose mit den Vanilice.');

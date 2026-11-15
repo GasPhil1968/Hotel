@@ -223,7 +223,14 @@ function layers(S,GS,tod){ var L=[], night=isNight(S,GS,tod), C=CART;
 // ---------------------------------------------------------------- jedes Bild: Aufzug (Anzeige, Gong-Licht, Tür), Sekundenzeiger, Fenster
 // Ablauf eines Halts in Sekunden: 0–1,2 „E“ mit Pfeil, 1,2–2,4 „1“ mit Pfeil, ab 2,4 „2“; Gong 2,4–3,8 (Licht blinkt), Tür offen 3,6–6,6
 function liftPhase(S,v){ if (!S||!S.lift) return -1; if (typeof S.lift==='number' && S.lift>1000){ var e=(v.gt-S.lift)/1000; return e<0?-1:e; } return v.t%10; }
+// Kette 3 „Die Lampe am Tor“ (design/K4_RAETSEL.md): ein gelber Papierstern mit Lämpchen; im Flur am Fenstergriff, im Gemeinschaftsraum am mittleren Fenster
+M.k4StarDraw=function(fb,cx,cy,t,cam,floorY){ var i, s, x0=cx-cam;
+  M.glow(fb,x0+0.5,cy+0.5,11,t,0.55);
+  for (i=0;i<8;i++){ var a=i/8*Math.PI*2, r=(i%2)?2.6:5.6; for (s=0;s<=r;s+=0.5){ var X=Math.round(x0+Math.sin(a)*s), Y=Math.round(cy-Math.cos(a)*s); if (X>=0&&Y>=0&&X<fb.w&&Y<fb.h) fb.px(X,Y,(i%2)?P.y3:P.y4); } }
+  fb.rect(x0-1,cy-1,3,3,P.y5); fb.px(x0,cy,P.l1); for (s=1;s<6;s++) fb.px(x0,cy-6-s,P.m2);
+  if (floorY){ for (var yy=floorY-2;yy<=floorY+2;yy++) for (var xx=-12;xx<=12;xx++){ var d=Math.hypot(xx/12,(yy-floorY)/2.6); if (d>1) continue; var X2=x0+xx; if (X2<0||X2>=fb.w||yy>=fb.h) continue; if (bayer(X2,yy)<(1-d)*0.55){ var k=yy*fb.w+X2; fb.d[k]=M.UP[fb.d[k]]; } } } };
 function dyn(fb,v,S,GS){ var t=v.t, cam=v.cam|0, night=isNight(S,GS,v.tod), wea=weaOf(GS), x, y;
+  if (S && S.lamp) M.k4StarDraw(fb,(WIN.x0+WIN.x1)>>1,WIN.y0+14,t,cam,FY+10);
   var e=liftPhase(S,v);
   if (e>=0){ var fl=e<1.2?'E':(e<2.4?'1':'2'); dispDraw(fb,fl,e<2.4,cam);
     var gong=e>=2.4 && e<3.8 && !(S&&S.chimeOff), on=gong && (Math.floor((e-2.4)*5)%2===0);

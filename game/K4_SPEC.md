@@ -400,6 +400,12 @@ Alle Notizen stehen in `game/src/13_k4_notes.js` (Gerüst). Skripte rufen `A.not
 | `kanne` | S3, Gerda in der Zwischenwelt | an Alois geben (S3) |
 | `pantoffeln` | S1, Epilog | Zorans Pantoffeln |
 | `dose_voll` | S1, Epilog | Jasnas Plätzchen für Nada |
+| `kuvert` | S2, Obermaier (mit `s4_name` und `s4_umschlag`) | Dampf am Teekessel (`bmission`) oder Herd (`jwohnung`) → `brief_dez` |
+| `brief_dez` | S2, aus dem Kuvert | lesen (`s4_dezember`), Mala zeigen (`s4_ziffern`); Schluss `s4_nummer` gibt den Anruf frei |
+| `stern` | S3, Gemeinschaftsraum (Fenster) | ans Fenster am Flurende (`k4.g.lamp`): Gerda wartet dort |
+| `jute`, `schnur`, `wintermantel` | S2, Enzo und Kiosk | `jute`+`schnur` → `wintermantel`, auf den Feigenzweig (`k4.v.wrapped`), dann `k4.v.car` |
+
+Die vier Rätselketten (Mucki, nasser Brief, Lampe am Tor, Winterschlaf) stehen in `design/K4_RAETSEL.md`.
 
 Wer etwas gibt oder nimmt, nutzt `A.give(id)` und `A.take(id)`.
 
