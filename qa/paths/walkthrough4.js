@@ -127,8 +127,6 @@ module.exports = async function (__ctx) { const process = __ctx.proc, console = 
     await comb('s4_dezember', 's4_ziffern', 's4_nummer'); await log('Schluss: Rosas Nummer, 0971 735822');
     await exit('door'); await go('heim'); await exit('elevator'); await at('heim_flur');
     await act('use', 'clock'); await drive(['(Bis drei warten.)'], async () => await N('g4_drei'), { label: 'drei Uhr' });   // mit g4_drei endet der Dienstag von selbst
-    await exit('door'); await go('heim'); await exit('elevator'); await at('heim_flur');
-    await act('use', 'clock'); await drive(['(Bis drei warten.)'], async () => await N('g4_drei'), { label: 'drei Uhr' });   // mit g4_drei endet der Dienstag von selbst
     for (const n of ['g4_drei', 'g4_gong', 'g4_kalt', 'g4_spaeter']) await note(n); await log('um drei: Alois steht auf, der Gong, Gerda nimmt seine Hand und er friert, „Ihre Gerda kommt später“');
   });
   // ----------------------------------------------------------------------- Dienstagabend: Mama erkennt Sepp
