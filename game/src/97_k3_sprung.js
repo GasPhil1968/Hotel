@@ -260,10 +260,11 @@ function render(fb,t,S){ var Wd=world(S), p=poseAt(t), w=VW*S, h=VH*S;
     // Blasen unter Wasser
     if (ti>0.1 && ti<2.6) for (var bq=0;bq<18;bq++){ var by=sY+(44-((ti*28+bq*6.5)%44))*S, bx=eX+(Math.sin(ti*5+bq)*3+(hash(bq,4)-0.5)*10)*S, br=(0.6+hash(bq,12)*1.2)*S; if (by<=sY+2*S) continue;
       for (var ba=0;ba<10;ba++){ var bth=ba/10*Math.PI*2; fb.px(rd(bx+Math.cos(bth)*br),rd(by+Math.sin(bth)*br),P.j6); } fb.px(rd(bx-br*0.4),rd(by-br*0.4),P.s6); }
-    // auftauchen, Wasser aus dem Haar schütteln, mit offener Hand winken
+    // auftauchen, Wasser aus dem Haar schütteln, mit offener Hand winken: Oberarm schräg nach vorn oben, gewinkt wird aus dem Ellbogen
+    // (Beugung immer positiv: der Unterarm klappt zum Kopf hin, nie gegen das Gelenk)
     if (t>SP.surf){ var ts=t-SP.surf, kx=(ex+18+ts*6)*S, rise=sm(ts/0.6), shk=(ts>0.3&&ts<1.0)?Math.sin(ts*38)*1.4:0, bob=Math.sin(ts*3.2)*0.7*S;
       var wav=ts>1.0?Math.sin((ts-1.0)*7)*0.45:0, raise=sm((ts-1.0)/0.45);
-      var pp={bA:0.05+shk*0.04, nk:-0.05+shk*0.12, a:[0.6,(ts>1.0?Math.PI*0.92*raise+wav*raise:0.4)], e:[0.6,(ts>1.0?-0.25+wav*0.3:0.3)], h:[0.1,0.1], k:[0.3,0.3], jacket:0, lift:0, toe:1, open:1};
+      var pp={bA:0.05+shk*0.04, nk:-0.05+shk*0.12, a:[0.6,(ts>1.0?(0.4+(Math.PI*0.8-0.4)*raise)+wav*0.12*raise:0.4)], e:[0.6,(ts>1.0?0.3+(0.2+wav*0.55)*raise:0.3)], h:[0.1,0.1], k:[0.3,0.3], jacket:0, lift:0, toe:1, open:1};
       var tb2=tmpBuf(S); tb2.d.fill(T); var hy2=sY+(26-rise*16)*S+bob; diver(tb2,kx,hy2,pp,S,{wet:true});
       var wl=sY+2*S; for (var y5=0;y5<h;y5++) for (var x5=0;x5<w;x5++){ var c5=tb2.d[y5*w+x5]; if (c5===T) continue; var wline=wl+Math.sin(x5*0.25+ts*5)*0.8*S; if (y5>wline){ if (bayer(x5,y5)<0.5 && y5<wline+10*S) fb.d[y5*w+x5]=P.j3; } else fb.d[y5*w+x5]=c5; }
       // Tropfen aus dem Haar und vom Arm, Kragen aus Schaum, kleine Ringe
