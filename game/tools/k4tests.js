@@ -260,6 +260,10 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
     await load('Herr Obermaier sagt die Bestattung'); await go('heim'); await exit('elevator');
     await exit('door214'); await act('look', 'depot_photo'); ok(await N('g4_depot'), 'vor drei: Marko sieht die Fotos in Zimmer 214 (g4_depot)'); await exit('door');
     await mala(); await act('talk', 'gerda'); await drive(['Sie haben immer draußen gewartet', '(Gehen.)'], async s => !s.dlg && !s.overlay, { label: 'Gerda Fenster' }); await marko();
+    ok(await F('k4.g.lampAsk') && !(await F('k4.g.hall')), 'Kette 3: im Finstern wartet Gerda nicht (k4.g.lampAsk)');
+    await exit('door_raum'); await act('take', 'window'); await exit('door'); await act('use', 'window', 'stern'); ok(await F('k4.g.lamp'), 'der Papierstern hängt am Fenster');
+    await mala(); await act('talk', 'gerda'); await drive(['Am Fenster brennt jetzt ein Licht', '(Gehen.)'], async s => !s.dlg && !s.overlay, { label: 'Gerda Fenster 2' }); await marko();
+    ok(await F('k4.g.hall'), 'mit dem Licht wartet sie am Fenster');
     await clearLog(); await act('use', 'bench'); await drive(['(Bis drei warten.)'], async s => !s.dlg && !s.overlay && await N('g4_versuch2'), { label: 'Versuch 2 zuerst' });
     ok(await N('g4_versuch2') && !(await N('g4_versuch1')), 'Versuch 2 zuerst: er steht auf, aber friert nicht');
     let r = await D.combine('g4_versuch2', 'g4_drei'); await calm(); ok(!(r && r.ok), 'ein Versuch allein ergibt keinen Schluss');
@@ -281,10 +285,13 @@ function ok(c, what) { if (c) { pass++; line('  ok   ' + what); } else { fails++
     await clearLog(); const r = await D.combine('s4_bairisch', 's4_peppino'); await calm(); ok(!(r && r.ok), 'falsche Verbindung s4_bairisch + s4_peppino: eigene Antwort (' + JSON.stringify(r && (r.t || r.msg) || '').slice(0, 80) + ')');
   });
   // ================================================================== 11. Davor
-  await T(11, 'Davor: nachts nicht anrufen, Angebot auch ohne Jela, er fährt an Silvester', async () => {
+  await T(11, 'Davor: nachts nicht anrufen, Angebot erst mit dem Wintermantel, er fährt an Silvester', async () => {
     await load('Karte „Dienstag · Abend“'); await clearLog(); await D.item('use2', 'vizitka'); await calm(); ok(await said('Jetzt nicht mehr. Morgen.'), 'abends: „Jetzt nicht mehr. Morgen.“');
-    await load('Moosach: Davors Balkon'); await act('talk', 'davor'); await drive(['Ich muss los', 'Wofür sollte ich'], async () => await F('k4.v.car'), { label: 'Davor Abschied', strict: false }); await calm();
-    ok(await F('k4.v.car') && !(await F('k4.v.jela')), 'Angebot beim Abschied, auch ohne Jela (k4.v.car)');
+    await load('Moosach: Davors Balkon'); await act('talk', 'davor'); await drive(['Ich muss los'], async s => !s.dlg && !s.overlay, { label: 'Davor Abschied', strict: false }); await calm();
+    ok(!(await F('k4.v.car')), 'Kette 4: ohne Wintermantel kein Angebot beim Abschied');
+    await load('Moosach: Davors Balkon', (g) => { g.flags['k4.v.jela'] = true; g.flags['k4.v.jute'] = true; if (g.inv.indexOf('wintermantel') < 0) g.inv.push('wintermantel'); });
+    await act('use', 'pot', 'wintermantel'); await drive(['Wofür sollte ich'], async () => await F('k4.v.car'), { label: 'Davors Angebot', strict: false }); await calm();
+    ok(await F('k4.v.wrapped') && await F('k4.v.car'), 'Zweig eingewickelt, dann Davors Angebot (k4.v.car)');
     ok(gsOf('Davor fährt').flags['k4.fin.ride'] === 'davor', 'im Durchlauf fährt Davor an Silvester (k4.fin.ride = davor)');
   });
   // ================================================================== 12. Epilog mit Zustimmung c
