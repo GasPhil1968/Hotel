@@ -147,11 +147,11 @@ async function dinoJumpForLena(A){ var G=A.G, Ln=A.npc('lena'), Dv=A.npc('davor'
   var R=M.ROOMS.starimost, lock=R.camLock; R.camLock=150;
   try{ await A.wait(700); await D.say('So ein Lied, und keiner springt? Nicht an meiner Brücke.'); await A.wait(300); await D.say('Für die Kleine. Umsonst. Sagt es keinem.');
     // ausführlich als Nahaufnahme (97_k3_nah.js, „sprung“): Jacke aus, Arme aus, Schwalbe, Füße voran; ohne Nahaufnahmen der kleine Sprung im Raum
-    if (D.actor){ var w=D.walk(250,113); await A.wait(1400); if (D.actor) D.actor.fadeOut=A.gt; await w; await A.wait(300); }
+    if (D.actor){ var w=D.walk(250,113); await A.wait(900); await D.say('Gledajte! Za malu!'); if (D.actor) D.actor.fadeOut=A.gt; await w; await A.wait(300); }   // der Ruf vor der Nahaufnahme: dort stehen keine Sätze
     var shown=false;
     await M.k3Close(A,'sprung',async function(){ var C=M.E.k3close, SPq=M.K3SPRUNG; if (!C || !SPq){ return; } shown=true;
       var at=async function(s){ var ms=C.t0+s*1000-A.gt; if (ms>0) await A.wait(ms); };
-      await at(1.0); D.say('Gledajte! Za malu!'); await at(4.55); A.sfx('whoosh'); await at(SPq.entry); A.sfx('splash'); await at(SPq.entry+0.5); A.sfx('wave');
+      await at(4.55); A.sfx('whoosh'); await at(SPq.entry); A.sfx('splash'); await at(SPq.entry+0.5); A.sfx('wave');
       await at(9.4); A.sfx('k3applause'); await at(SPq.end); });
     if (!shown) await M.k3DinoJump(A,{stand:2.6,during:async function(A){ await A.wait(1200); await A.narrate('Oben über dem Scheitel steigt Dino auf die Brüstung, in der Badehose. Er breitet die Arme aus.'); }});
     else { if (D.actor){ D.actor.fadeOut=0; D.hide(); } var TJ=M.K3JUMP_T?M.K3JUMP_T({stand:1.4}):{impact:2.8}; M.K3JUMP={t0:A.gt-(TJ.impact+1.6)*1000,stand:1.4}; A.wait(4200).then(function(){ M.K3JUMP=null; }); }

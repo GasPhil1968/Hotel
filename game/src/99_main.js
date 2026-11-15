@@ -54,7 +54,15 @@ function wideGeo(){ if (rot || M.WIDE_OFF){ lastG=null; return null; } var dpr=w
   if (!c) return null;
   var cssW=c.Wh*n/dpr, cssH=c.Hh*n/dpr, x0=Math.round(B.x+(B.w-cssW)/2), y0=Math.round(B.y+(B.h-cssH)/2), sxd=c.mode==='rails'?c.rail*n:Math.round((c.Wh*n-320*c.m)/2);
   return {n:n,m:c.m,dpr:dpr,k:k,bh:bh,mode:c.mode,rail:c.rail,sx:sxd/n,S0:c.S0,Wh:c.Wh,Hh:c.Hh,x0:x0,y0:y0,cssW:cssW,cssH:cssH,scene:{x:x0+sxd/dpr,y:y0,w:320*c.m/dpr,h:144*c.m/dpr}}; }
-function setSize(h){ if (cv.height===h) return; cv.width=320; cv.height=h; img=ctx.createImageData(320,h); u32=new Uint32Array(img.data.buffer); ctx.imageSmoothingEnabled=false; }
+function setSize(h){ if (cv.height===h && cv.width===320) return; cv.width=320; cv.height=h; img=ctx.createImageData(320,h); u32=new Uint32Array(img.data.buffer); ctx.imageSmoothingEnabled=false; }
+// Doppelte Auflösung (97_k3_sprung.js): Solange M.k3HdLayer() ein Bild liefert (oder M.HD_ALWAYS, für Videos), ist die Zeichenfläche 640 Pixel breit.
+// Das Spielbild wird verdoppelt, darüber liegt die feine Nahaufnahme. Größe und Lage auf dem Bildschirm (CSS) bleiben, die Eingabe rechnet ohnehin in 320 × 200.
+var imgHD=null, u32HD=null;
+function setSizeHD(h){ if (cv.width===640 && cv.height===h*2 && imgHD) return; cv.width=640; cv.height=h*2; imgHD=ctx.createImageData(640,h*2); u32HD=new Uint32Array(imgHD.data.buffer); ctx.imageSmoothingEnabled=false; }
+function presentHD(fb,h,hd){ setSizeHD(h); var d=fb.d, o=u32HD;
+  for (var y=0;y<h;y++){ var r0=y*1280, r1=r0+640; for (var x=0;x<320;x++){ var c=PAL[d[y*320+x]], k=x*2; o[r0+k]=c; o[r0+k+1]=c; o[r1+k]=c; o[r1+k+1]=c; } }
+  if (hd){ var hdd=hd.d, n=Math.min(hd.h,h*2)*640, T=M.T; for (var i=0;i<n;i++){ var v=hdd[i]; if (v!==T) o[i]=PAL[v]; } }
+  ctx.putImageData(imgHD,0,0); }
 function applyStd(){ setSize(200); hudCv.style.display='none'; cv.style.zIndex=''; cv.style.width=STD.w+'px'; cv.style.height=STD.h+'px';
   if (rot){ cv.style.position='fixed'; cv.style.left='50%'; cv.style.top='50%'; cv.style.transform='translate(-50%,-50%) rotate(90deg)'; }
   else if (STD.top!=null){ cv.style.position='fixed'; cv.style.left=Math.round((window.innerWidth-STD.w)/2)+'px'; cv.style.top=STD.top+'px'; cv.style.transform=''; }   // T22: Tablet, Bild oben
@@ -135,7 +143,9 @@ window.addEventListener('pagehide',function(){ try{ M.saveGame(); }catch(e){} })
 var last=performance.now();
 function frame(now){ var dt=now-last; last=now;
   try{ M.update(dt); var want=!!WG && !!(M.wideWanted&&M.wideWanted()); if (want!==wideOn){ applyWide(want); fadeSwap(); }   // Overlays, Karten, Titel: gewohntes 320×200-Bild
-    var fb=M.renderFrame(), d=fb.d, N=wideOn?46080:64000; for (var i=0;i<N;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0);
+    var fb=M.renderFrame(), d=fb.d, N=wideOn?46080:64000, hdl=M.k3HdLayer?M.k3HdLayer():null;
+    if (hdl || M.HD_ALWAYS) presentHD(fb,wideOn?144:200,hdl);
+    else { if (cv.width!==320) setSize(wideOn?144:200); for (var i=0;i<N;i++) u32[i]=PAL[d[i]]; ctx.putImageData(img,0,0); }
     if (wideOn && himg){ var hb=M.renderHud&&M.renderHud(); if (hb){ var hd=hb.d, nn=Math.min(hd.length,hu32.length); for (var j=0;j<nn;j++) hu32[j]=PAL[hd[j]]; hctx.putImageData(himg,0,0); } }
     if (M.subsSync) M.subsSync(); if (M.barSync) M.barSync();
     if (M.__capNext && M.E.speech){ var ck=M.__capNext; M.__capNext=null; try{ M.__caps[ck]=cv.toDataURL(); }catch(e){} } }catch(err){ console.error(err); }

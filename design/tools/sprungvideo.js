@@ -20,7 +20,7 @@ const dur = (f) => parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_ent
     G.pos.marko = { room: 'starimost', x: 266, y: 134, f: 'R' }; G.pos.mala = { room: 'starimost', x: 204, y: 135, f: 'R' }; G.active = 'marko'; G.malaOn = true;
     localStorage.setItem('mala.qafx', JSON.stringify({ sv: 2, kind: 'auto', GS: G, at: Date.now() })); M.TURBO = 20; M.E.loadKey('mala.qafx'); }, { GS: d.GS, F: FLAGS });
   await p.waitForFunction(() => M.E.screen === 'game' && M.E.room && M.E.room.id === 'starimost' && !M.E.busy, null, { timeout: 30000 }); await p.waitForTimeout(800);
-  await p.evaluate(() => { M.TURBO = 1; M.ROOMS.starimost.camLock = 150; M.audioInit(); M.audioResume(); M.setMusic(true); M.setSound(true); });
+  await p.evaluate(() => { M.TURBO = 1; M.HD_ALWAYS = true; M.ROOMS.starimost.camLock = 150; M.audioInit(); M.audioResume(); M.setMusic(true); M.setSound(true); });
   await p.waitForTimeout(1500);
   await p.evaluate(() => { const cv = document.getElementById('game'); const st = cv.captureStream(30); const au = M.audioStream(); if (au) au.getAudioTracks().forEach(t => st.addTrack(t));
     const mt = ['video/webm;codecs=vp9,opus', 'video/webm'].find(t => MediaRecorder.isTypeSupported(t)); const r = new MediaRecorder(st, { mimeType: mt, videoBitsPerSecond: 8e6, audioBitsPerSecond: 192000 });
