@@ -75991,58 +75991,108 @@ function mixP(a,b,k){ var o={}, kk=sm(k); for (var n in a){ if (Array.isArray(a[
 function poseAt(t){ for (var i=0;i<KP.length-1;i++) if (t<KP[i+1][0]) return mixP(KP[i][1],KP[i+1][1],(t-KP[i][0])/(KP[i+1][0]-KP[i][0])); return KP[KP.length-1][1]; }
 function hipAt(t,p){ var hy0=SP.feet0-28; if (t<SP.leave) return [SP.x0,hy0-(p.lift||0)]; var d=t-SP.leave; return [SP.x0+SP.vx*d, hy0+SP.vy*d+0.5*SP.g*d*d]; }
 
-// ---------------------------------------------------------------- Dino: Gelenkfigur mit Muskeln, Händen und Gesicht
-var SK=R('q1 q2 q3 q4 q4'), SKD=R('q0 q1 q2 q3'), TRR=R('k0 n0 n1 n2 n3'), JAC=R('r1 r2 r3 r4'), JACD=R('r0 r1 r2 r3');
+// ---------------------------------------------------------------- Körper-Renderer: weiche Formen aus Distanzfeldern
+// Teile: {a,b,r0,r1} verjüngte Kapsel (Radius r0 bei a, r1 bei b). Vereinigung mit weichem Übergang (k), Licht aus der Neigung der Fläche
+// (Normale aus dem Distanzfeld), Glanzlicht, Umriss in dunklem Hautton statt Schwarz (auf der Lichtseite eine Stufe heller).
+var LX=-0.45, LY=-0.62, LZ=0.64; (function(){ var l=Math.sqrt(LX*LX+LY*LY+LZ*LZ); LX/=l; LY/=l; LZ/=l; })();
+var FLX=0.78, FLY=0.1, FLZ=0.62, FILL=0;   // Fülllicht von der Gegenseite (Himmel), damit die abgewandte Seite nicht absäuft
+function smin(a,b,k){ var h=Math.max(k-Math.abs(a-b),0)/k; return Math.min(a,b)-h*h*k*0.25; }
+function sdCap(px,py,q){ var ax=q.a[0], ay=q.a[1], bx=q.b[0]-ax, by=q.b[1]-ay, L=bx*bx+by*by||1e-6, tt=((px-ax)*bx+(py-ay)*by)/L; tt=tt<0?0:(tt>1?1:tt); var dx=px-ax-bx*tt, dy=py-ay-by*tt; return Math.sqrt(dx*dx+dy*dy)-(q.r0+(q.r1-q.r0)*tt); }
+function body(fb,parts,RM,o){ o=o||{}; var k=o.k||1, x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  parts.forEach(function(q){ var r=Math.max(q.r0,q.r1)+k; x0=Math.min(x0,q.a[0]-r,q.b[0]-r); y0=Math.min(y0,q.a[1]-r,q.b[1]-r); x1=Math.max(x1,q.a[0]+r,q.b[0]+r); y1=Math.max(y1,q.a[1]+r,q.b[1]+r); });
+  x0=Math.max(-2,Math.floor(x0)-2); y0=Math.max(-2,Math.floor(y0)-2); x1=Math.min(fb.w+1,Math.ceil(x1)+2); y1=Math.min(fb.h+1,Math.ceil(y1)+2); var w=x1-x0+1, h=y1-y0+1; if (w<3||h<3) return;
+  var D=new Float32Array(w*h);
+  for (var y=0;y<h;y++) for (var x=0;x<w;x++){ var px=x0+x+0.5, py=y0+y+0.5, d=1e9; for (var i=0;i<parts.length;i++){ var s=sdCap(px,py,parts[i]); d=(d===1e9)?s:smin(d,s,k); } D[y*w+x]=d; }
+  var dep=o.depth||3, amb=o.amb===undefined?0.18:o.amb, n=RM.length;
+  for (var y2=1;y2<h-1;y2++) for (var x2=1;x2<w-1;x2++){ var kk=y2*w+x2, dv=D[kk], X=x0+x2, Y=y0+y2; if (X<0||Y<0||X>=fb.w||Y>=fb.h) continue;
+    var gx=(D[kk+1]-D[kk-1])*0.5, gy=(D[kk+w]-D[kk-w])*0.5, gl=Math.sqrt(gx*gx+gy*gy)||1, nx=gx/gl, ny=gy/gl;
+    if (dv<0){ var de=Math.min(1,-dv/dep), sx=nx*(1-de), sy=ny*(1-de), sz=0.25+de*0.95, nl=Math.sqrt(sx*sx+sy*sy+sz*sz); sx/=nl; sy/=nl; sz/=nl;
+      var dif=Math.max(0,sx*LX+sy*LY+sz*LZ), v=amb+dif*(1-amb)*0.95, fl=(o.fill===undefined?FILL:o.fill); if (fl) v+=fl*Math.max(0,sx*FLX+sy*FLY+sz*FLZ-0.35); if (o.tex) v+=o.tex(X,Y,dv);
+      var hz=sz+LZ, hl=Math.sqrt((sx*0+LX)*(LX)+(LY)*(LY)+hz*hz)||1, spec=Math.pow(Math.max(0,(sx*LX+sy*LY+sz*(LZ+1))/Math.sqrt(LX*LX+LY*LY+(LZ+1)*(LZ+1))),18);
+      var c=ra(RM,cl(v,0,0.999),X,Y); if (spec>0.55 && o.spec!==false && bayer(X,Y)<spec) c=o.specC||RM[n-1]; if (o.alpha && dv>-1.2 && bayer(X,Y)<0.4) continue; fb.px(X,Y,c); }
+    else if (dv<1.05 && o.line!==false){ var inner=D[kk-1]<0||D[kk+1]<0||D[kk-w]<0||D[kk+w]<0; if (!inner) continue; var lit=(nx*LX+ny*LY)>0.35; fb.px(X,Y,lit?(o.lineLit||RM[1]):(o.line||RM[0])); } }
+  return {x0:x0,y0:y0,w:w,h:h,D:D}; }
+function inside(sh,X,Y){ if (!sh) return false; var x=X-sh.x0, y=Y-sh.y0; return x>=0&&y>=0&&x<sh.w&&y<sh.h&&sh.D[y*sh.w+x]<-0.4; }
+
+// ---------------------------------------------------------------- Dino: anatomische Figur
+var SK=R('q0 q1 q2 q3 q4 p4'), SKD=R('q0 q0 q1 q2 q3'), TRR=R('k0 n0 n1 n2 n3'), JAC=R('r1 r2 r3 r4'), JACD=R('r0 r1 r2 r3'), HAIRR=R('k0 k1 h1 h2 h3');
 function dir(th){ return [Math.sin(th), Math.cos(th)]; }
 function add(p,d,l){ return [p[0]+d[0]*l, p[1]+d[1]*l]; }
-// Hand: Handfläche, vier Finger, Daumen; open 0 = locker gekrümmt, 1 = gespreizt
-function hand(fb,wr,th,open,S,ramp,o,mirror){ var d=dir(th), L=3.2*S, pa=add(wr,d,L), parts=[{cap:[wr[0],wr[1],pa[0],pa[1]],r:1.35*S}], f=mirror?-1:1;
-  for (var i=0;i<4;i++){ var sp=(i-1.5)*(0.12+open*0.22), fl=(i===0||i===3?2.3:2.8)*S*(0.75+open*0.25), cur=(1-open)*0.9*f, fd=dir(th+sp+cur*0.5), b0=add(pa,dir(th+Math.PI/2*f),(i-1.5)*0.55*S), e1=add(b0,fd,fl*0.6), e2=add(e1,dir(th+sp+cur),fl*0.45);
-    parts.push({cap:[b0[0],b0[1],e1[0],e1[1]],r:0.58*S}); parts.push({cap:[e1[0],e1[1],e2[0],e2[1]],r:0.5*S}); }
-  var tb=add(wr,d,1.2*S), td=dir(th+(0.9+open*0.5)*f), te=add(tb,td,2.4*S); parts.push({cap:[tb[0],tb[1],te[0],te[1]],r:0.62*S});
-  shape(fb,parts,Object.assign({},o,{ramp:ramp})); }
-function diver(fb,hx,hy,p,S,O){ O=O||{}; var bA=p.bA||0, U=[Math.sin(bA),-Math.cos(bA)], F=[Math.cos(bA),Math.sin(bA)], H=[hx,hy];
+function cap(a,b,r0,r1){ return {a:a,b:b,r0:r0,r1:(r1===undefined?r0:r1)}; }
+// Glied aus zwei Segmenten (Oberarm/Unterarm oder Oberschenkel/Unterschenkel) mit Muskelwölbungen; perp: Seite „vorn“
+function limbParts(J0,th1,l1,th2,l2,S,spec){ var d1=dir(th1), p1=[Math.cos(th1),-Math.sin(th1)], J1=add(J0,d1,l1*S), d2=dir(th2), p2=[Math.cos(th2),-Math.sin(th2)], J2=add(J1,d2,l2*S), P=[];
+  function at(J,d,pp,u,v,l){ return [J[0]+d[0]*u*l*S+pp[0]*v*S, J[1]+d[1]*u*l*S+pp[1]*v*S]; }
+  P.push(cap(J0,J1,spec.r0*S,spec.r1*S)); P.push(cap(J1,J2,spec.r2*S,spec.r3*S));
+  (spec.b1||[]).forEach(function(m){ P.push(cap(at(J0,d1,p1,m[0],m[2],l1),at(J0,d1,p1,m[1],m[2],l1),m[3]*S,m[4]*S)); });
+  (spec.b2||[]).forEach(function(m){ P.push(cap(at(J1,d2,p2,m[0],m[2],l2),at(J1,d2,p2,m[1],m[2],l2),m[3]*S,m[4]*S)); });
+  return {P:P,J1:J1,J2:J2,d2:d2,p2:p2}; }
+var ARM={r0:2.35,r1:1.7,r2:1.85,r3:1.15, b1:[[0.08,0.32,-0.2,2.75,2.2],[0.3,0.72,0.55,1.55,1.35],[0.25,0.7,-0.5,1.5,1.2]], b2:[[0.04,0.42,0.45,1.75,1.25]]};   // Schulter, Bizeps, Trizeps; Unterarmmuskel
+var LEG={r0:3.7,r1:2.35,r2:2.2,r3:1.15, b1:[[0.12,0.78,0.8,2.8,1.95],[0.18,0.7,-0.75,2.55,1.8],[0.05,0.45,0.0,3.0,2.4]], b2:[[0.08,0.5,-1.05,2.45,1.4],[0.0,0.12,0.6,1.5,1.2],[0.55,0.95,0.15,1.35,1.05]]};   // Quadrizeps, Beinbeuger; Wade, Kniescheibe
+function handParts(wr,th,open,S,mirror){ var d=dir(th), f=mirror?-1:1, side=dir(th+Math.PI/2*f), pa=add(wr,d,3*S), P=[cap(add(wr,d,0.2*S),pa,1.3*S,1.15*S)];
+  for (var i=0;i<4;i++){ var sp=(i-1.5)*(0.1+open*0.24), len=(i===0||i===3?2.2:2.7)*S*(0.78+open*0.22), cur=(1-open)*0.85*f, b0=add(pa,side,(i-1.5)*0.6*S), e1=add(b0,dir(th+sp+cur*0.45),len*0.58), e2=add(e1,dir(th+sp+cur),len*0.46);
+    P.push(cap(b0,e1,0.6*S,0.5*S)); P.push(cap(e1,e2,0.5*S,0.4*S)); }
+  var tb=add(wr,d,1.1*S), tm=add(tb,dir(th+(0.95+open*0.45)*f),1.5*S), te=add(tm,dir(th+(0.55+open*0.4)*f),1.4*S); P.push(cap(add(tb,side,-0.6*S*f),tm,0.75*S,0.58*S)); P.push(cap(tm,te,0.58*S,0.45*S));
+  return P; }
+function diver(fb,hx,hy,p,S,O){ O=O||{}; FILL=0.32; var bA=p.bA||0, U=[Math.sin(bA),-Math.cos(bA)], F=[Math.cos(bA),Math.sin(bA)], H=[hx,hy];
   function L(u,v){ return [hx+(U[0]*u+F[0]*v)*S, hy+(U[1]*u+F[1]*v)*S]; }
-  var o={light:[-0.55,-0.83],outline:P.k0}, td=-bA, jac=p.jacket>0.5;
-  var Sh=L(17,-0.3), NB=L(18.6,0.6);
-  function leg(i,dark){ var r=dark?SKD:SK, th=td+p.h[i], d1=dir(th), kn=add(H,d1,14*S), mid=add(H,d1,7*S), ts=th-p.k[i], d2=dir(ts), an=add(kn,d2,14*S), calf=add(add(kn,d2,4.5*S),dir(ts-Math.PI/2),0.9*S);
-    var ft=dir(ts-(Math.PI/2)*(1-p.toe)*-1); ft=dir(ts+(Math.PI/2)*(1-p.toe)); var toe=add(an,ft,5*S);
-    shape(fb,[{cap:[H[0],H[1],mid[0],mid[1]],r:3.4*S},{cap:[mid[0],mid[1],kn[0],kn[1]],r:2.75*S},{cap:[kn[0],kn[1],calf[0],calf[1]],r:2.55*S},{cap:[calf[0],calf[1],an[0],an[1]],r:1.75*S},{cap:[an[0],an[1],toe[0],toe[1]],r:1.25*S}],Object.assign({},o,{ramp:r}));
-    if (S>1){ var kc=add(kn,dir(th+Math.PI/2),1.4*S); fb.px(rd(kc[0]),rd(kc[1]),dark?P.q0:P.q1); } }   // Kniescheibe
-  function arm(i,dark){ var r=dark?SKD:SK, jr=jac?(dark?JACD:JAC):r, ta=td+p.a[i], d1=dir(ta), el=add(Sh,d1,10*S), dl=add(Sh,d1,3.2*S), tf=ta+p.e[i], d2=dir(tf), wr=add(el,d2,9*S);
-    shape(fb,[{cap:[Sh[0],Sh[1],dl[0],dl[1]],r:(jac?3.1:2.85)*S},{cap:[dl[0],dl[1],el[0],el[1]],r:(jac?2.4:2.15)*S},{cap:[el[0],el[1],wr[0],wr[1]],r:(jac?2.2:1.75)*S}],Object.assign({},o,{ramp:jr}));
-    if (jac){ var cf=add(el,d2,8*S); shape(fb,[{cap:[cf[0],cf[1],wr[0],wr[1]],r:1.9*S}],Object.assign({},o,{ramp:R('s3 s4 s5 s6')})); }   // Bündchen
-    hand(fb,add(wr,d2,0.3*S),tf,p.open,S,r,o,dark); }
-  // hinten: Arm und Bein
+  var td=-bA, jac=p.jacket>0.5, K1=0.9*S, dark0=P.k0;
+  var Sh=L(16.6,-0.4), NB=L(18.4,0.5);
+  function leg(i,dark){ var th=td+p.h[i], ts=th-p.k[i], lp=limbParts(H,th,14,ts,14,S,LEG), an=lp.J2, ft=dir(ts+(Math.PI/2)*(1-p.toe));
+    var heel=add(an,lp.p2,-0.9*S), toe=add(an,ft,5.2*S), mid=add(an,ft,2.6*S);
+    lp.P.push(cap(heel,add(an,lp.d2,-0.4*S),1.3*S,1.2*S)); lp.P.push(cap(an,mid,1.35*S,1.15*S)); lp.P.push(cap(mid,toe,1.1*S,0.75*S));
+    body(fb,lp.P,dark?SKD:SK,{k:1.1*S,depth:2.6*S,line:dark?P.k0:P.q0,lineLit:dark?P.q0:P.q1,amb:dark?0.1:0.2}); }
+  function arm(i,dark){ var ta=td+p.a[i], tf=ta+p.e[i], lp=limbParts(Sh,ta,10,tf,9,S,ARM), wr=add(lp.J2,lp.d2,0.2*S);
+    if (jac){ var JP=[cap(Sh,lp.J1,2.9*S,2.4*S),cap(lp.J1,add(lp.J1,lp.d2,8*S),2.4*S,2.1*S)]; body(fb,JP,dark?JACD:JAC,{k:K1,depth:2.6*S,line:P.k0,lineLit:P.r1});
+      body(fb,[cap(add(lp.J1,lp.d2,7.6*S),add(lp.J1,lp.d2,9*S),2.0*S,1.8*S)],R('s2 s3 s4 s5 s6'),{k:K1,line:P.k1,lineLit:P.s3}); }
+    else body(fb,lp.P,dark?SKD:SK,{k:1.0*S,depth:2.4*S,line:dark?P.k0:P.q0,lineLit:dark?P.q0:P.q1,amb:dark?0.1:0.2});
+    body(fb,handParts(wr,tf,p.open,S,dark),dark?SKD:SK,{k:0.55*S,depth:1.2*S,line:dark?P.k0:P.q0,lineLit:dark?P.q0:P.q1,amb:dark?0.12:0.25}); }
   arm(0,true); leg(0,true);
-  // Rumpf: Becken, Taille, Brustkorb, Schulter
-  var P0=L(0,0), P1=L(7,0.2), P2=L(12.5,1.0), P3=L(16,0.2);
-  shape(fb,[{cap:[P0[0],P0[1],P1[0],P1[1]],r:(jac?5.0:4.35)*S},{cap:[P1[0],P1[1],P2[0],P2[1]],r:(jac?5.4:4.9)*S},{cap:[P2[0],P2[1],P3[0],P3[1]],r:(jac?5.6:5.25)*S}],Object.assign({},o,{ramp:jac?JAC:SK}));
-  if (jac){ for (var q=0;q<=20;q++){ var z=L(1+q*0.8,(jac?4.6:4.2)); fb.px(rd(z[0]),rd(z[1]),P.s6); if (S>1) fb.px(rd(z[0]+F[0]),rd(z[1]+F[1]),P.s5); }   // Reißverschluss, weißes Shirt
-    var cl0=L(16.5,2.5), cl1=L(17.8,-1.5); shape(fb,[{cap:[cl0[0],cl0[1],cl1[0],cl1[1]],r:1.3*S}],Object.assign({},o,{ramp:JACD})); }
-  else if (S>1){ // Brust, Bauch, Hüftlinie, Rippen im Licht
-    for (var a=0;a<7;a++){ var pc=L(12.2-a*0.15,1.2+a*0.6); fb.px(rd(pc[0]),rd(pc[1]),P.q1); }
-    [[9.5,3.4],[9.5,2.0],[7.4,3.6],[7.4,2.1],[5.6,3.5]].forEach(function(m){ var c1=L(m[0],m[1]); fb.px(rd(c1[0]),rd(c1[1]),P.q1); var c2=L(m[0]+0.5,m[1]); fb.px(rd(c2[0]),rd(c2[1]),P.q4); });
-    for (var a2=0;a2<5;a2++){ var lc=L(2.6+a2*0.5,-2.6+a2*0.3); fb.px(rd(lc[0]),rd(lc[1]),P.q1); }
-    var nv=L(4.2,3.7); fb.px(rd(nv[0]),rd(nv[1]),P.q0); }
-  // Badehose
-  var B0=L(-1.6,0.2), B1=L(2.4,0.2); shape(fb,[{cap:[B0[0],B0[1],B1[0],B1[1]],r:4.9*S}],Object.assign({},o,{ramp:TRR}));
-  if (S>1){ for (var bb=-5;bb<=5;bb++){ var wb=L(2.4+0.6,bb*0.85); fb.px(rd(wb[0]),rd(wb[1]),P.n3); } var lg=L(-1.2,4.3); fb.px(rd(lg[0]),rd(lg[1]),P.r3); fb.px(rd(lg[0]+U[0]),rd(lg[1]+U[1]),P.r3); }   // Bund, rote Naht
+  // Rumpf: Becken, Gesäß, Taille, Brustkorb, Brust, Schultern, Nacken
+  var TP=jac?[cap(L(-1,0),L(2.4,0.2),4.9*S,4.8*S),cap(L(2.4,0.2),L(8,0.4),4.7*S,5.0*S),cap(L(8,0.4),L(14,0.6),5.2*S,5.5*S),cap(L(13.8,-0.4),L(17,-0.2),5.0*S,4.0*S),cap(L(-0.6,-1.6),L(-0.6,-1.6),3.6*S)]
+                :[cap(L(-1,0),L(2.2,0.2),4.4*S,4.2*S),cap(L(-0.6,-1.7),L(0.4,-1.7),3.2*S,3.0*S),cap(L(2.2,0.3),L(7.6,0.5),4.0*S,4.15*S),cap(L(7.6,0.5),L(13.4,0.9),4.4*S,4.9*S),
+                  cap(L(11.6,2.3),L(13.6,2.5),2.6*S,2.7*S),cap(L(4.2,1.9),L(9.4,2.2),2.2*S,2.3*S),cap(L(13.8,-0.6),L(17.1,-0.3),4.5*S,3.5*S),cap(L(16.2,-1.2),L(18.3,0.1),2.3*S,1.9*S)];
+  var tor=body(fb,TP,jac?JAC:SK,{k:1.4*S,depth:3.6*S,line:P.k0,lineLit:jac?P.r1:P.q1,amb:0.2});
+  if (jac){ for (var q=0;q<=22;q++){ var z=L(0.6+q*0.75,4.6); fb.px(rd(z[0]),rd(z[1]),P.s6); var z2=L(0.6+q*0.75,4.0); if (S>1) fb.px(rd(z2[0]),rd(z2[1]),q%3?P.s5:P.s4); }
+    var c0=L(16.4,2.6), c1=L(17.8,-1.6); body(fb,[cap(c0,c1,1.3*S,1.2*S)],JACD,{k:K1,line:P.k0}); }
+  else if (S>1){ // Muskelzeichnung, nur auf der Haut: Brustunterkante, Mittellinie, Bauchfelder, Leistenlinie
+    var mk=function(u,v,c){ var m=L(u,v), X=rd(m[0]), Y=rd(m[1]); if (inside(tor,X,Y)) fb.px(X,Y,c); };
+    for (var a=0;a<9;a++){ var uu=11.2-Math.sin(a/8*Math.PI)*0.5, vv=1.2+a*0.5; mk(uu,vv,P.q1); mk(uu+0.45,vv,P.q2); }
+    for (var a2=0;a2<10;a2++) mk(3.8+a2*0.75,3.55,a2%2?P.q2:P.q1);
+    [9.6,8.0,6.4].forEach(function(u){ mk(u,2.6,P.q2); mk(u,3.0,P.q2); mk(u+0.4,2.8,P.q4); });
+    for (var a3=0;a3<6;a3++) mk(2.8+a3*0.55,-2.4+a3*0.45,P.q1);
+    mk(4.6,3.75,P.q0); }
   leg(1,false);
-  // Hals und Kopf
-  var nk=p.nk||0, ha=bA+nk, HU=[Math.sin(ha),-Math.cos(ha)], HF=[Math.cos(ha),Math.sin(ha)], HC=add(NB,HU,6.6*S);
+  // Badehose über dem Ansatz der Beine: Bund, Kordel, rote Naht
+  var BP=[cap(L(-1.1,0.1),L(2.6,0.25),4.45*S,4.3*S),cap(L(-0.5,-1.6),L(0.5,-1.65),3.15*S,2.95*S)], th0=td+p.h[1], th1=td+p.h[0], HM=[];
+  [[th0,4.6],[th1,4.1]].forEach(function(q){ var dd=dir(q[0]), pp=[Math.cos(q[0]),-Math.sin(q[0])], a0=add(add(H,dd,0.4*S),pp,0.15*S), a1=add(add(H,dd,q[1]*S),pp,0.15*S);
+    BP.push(cap(a0,a1,3.75*S,3.55*S)); HM.push([a1,dd,pp]); });
+  var tr=body(fb,BP,TRR,{k:0.5*S,depth:3.4*S,line:P.k0,lineLit:P.n1,amb:0.26,spec:false,tex:function(X,Y){ return (hash(X>>1,Y)-0.5)*0.06; }});
+  if (S>1){ for (var bb=-9;bb<=9;bb++){ var wb=L(2.9,bb*0.5); if (inside(tr,rd(wb[0]),rd(wb[1])+1)||inside(tr,rd(wb[0]),rd(wb[1]))) fb.px(rd(wb[0]),rd(wb[1]),P.n3); }
+    // Saum an den Beinöffnungen (nur die vordere zeigt sich ganz), Falten von der Leiste schräg nach außen
+    HM.forEach(function(m,mi){ for (var hv=-3.4;hv<=3.4;hv+=0.4){ var hp2=add(add(m[0],m[2],hv*S),m[1],-0.5*S), Xh=rd(hp2[0]), Yh=rd(hp2[1]); if (inside(tr,Xh,Yh)) fb.px(Xh,Yh,mi?P.n1:P.k0); } });
+    for (var fo=0;fo<6;fo++){ var f0=add(add(H,dir(th0),(1.0+fo*0.45)*S),[Math.cos(th0),-Math.sin(th0)],(1.6-fo*0.5)*S), Xf=rd(f0[0]), Yf=rd(f0[1]); if (inside(tr,Xf,Yf)) fb.px(Xf,Yf,P.n1); }
+    var kc=L(2.3,4.2); fb.px(rd(kc[0]),rd(kc[1]),P.s5); fb.px(rd(kc[0]-U[0]*S),rd(kc[1]-U[1]*S),P.s5);
+    for (var sn=0;sn<8;sn++){ var sm2=add(H,dir(th0),(0.4+sn*0.55)*S), sd=add(sm2,[Math.cos(th0),-Math.sin(th0)],3.4*S); if (inside(tr,rd(sd[0]),rd(sd[1]))) fb.px(rd(sd[0]),rd(sd[1]),P.r3); } }
+  // Hals, Kopf im Profil, Haar
+  var nk=p.nk||0, ha=bA+nk, HU=[Math.sin(ha),-Math.cos(ha)], HF=[Math.cos(ha),Math.sin(ha)], HC=add(NB,HU,6.5*S);
   function K(u,v){ return [HC[0]+(HU[0]*u+HF[0]*v)*S, HC[1]+(HU[1]*u+HF[1]*v)*S]; }
-  var n0=K(-5.5,-0.6), n1=K(-2,0.2), j0=K(-0.5,0.8), j1=K(-3.6,2.6), ns0=K(0.2,3.6), ns1=K(-0.6,4.9);
-  shape(fb,[{cap:[n0[0],n0[1],n1[0],n1[1]],r:2.1*S}],Object.assign({},o,{ramp:SK}));
-  shape(fb,[{ell:[HC[0],HC[1],4.3*S,4.7*S]},{cap:[j0[0],j0[1],j1[0],j1[1]],r:3.1*S},{cap:[ns0[0],ns0[1],ns1[0],ns1[1]],r:0.75*S}],Object.assign({},o,{ramp:SK}));
-  // Haar: kurz rasiert, oben dichter; nass glänzend, wenn er im Wasser war
-  for (var hu=-5;hu<=5;hu+=1/S) for (var hv=-5;hv<=3.4;hv+=1/S){ var dd=(hu*hu)/(4.5*4.5)+(hv*hv)/(4.9*4.9); if (dd>1.02) continue; var top=hu>1.2-hv*0.25 || (hv<-1.6 && hu>-1.6); if (!top) continue;
-    var pp=K(hu,hv), xq=rd(pp[0]), yq=rd(pp[1]), shn=O.wet&&hash(xq,yq)<0.18; fb.px(xq,yq,shn?P.n3:((hash(xq,yq)<0.3)?P.h1:P.k1)); }
-  var ear=K(0.4,-0.8); shape(fb,[{ell:[ear[0],ear[1],1.2*S,1.6*S]}],Object.assign({},o,{ramp:SKD,outline:P.q0}));
-  var ey=K(1.1,2.3); fb.px(rd(ey[0]),rd(ey[1]),P.k0); if (S>1){ var ey2=K(1.1,1.8); fb.px(rd(ey2[0]),rd(ey2[1]),P.s6); for (var bw=0;bw<3;bw++){ var br=K(2.3,1.4+bw*0.7); fb.px(rd(br[0]),rd(br[1]),P.k1); } }
-  var mo=K(-2.3,3.0), mo2=K(-2.2,3.6); fb.px(rd(mo[0]),rd(mo[1]),P.q0); if (S>1) fb.px(rd(mo2[0]),rd(mo2[1]),P.q0);
-  for (var s1=0;s1<14;s1++){ var su=-1.5-hash(s1,3)*3.2, sv=0.5+hash(s1,4)*3.4, st=K(su,sv); if ((su*su)/(4.3*4.3)+(sv*sv)/(4.7*4.7)<0.95||sv>2) fb.px(rd(st[0]),rd(st[1]),P.q1); }   // Dreitagebart
-  arm(1,false);
+  body(fb,[cap(NB,K(-3.6,-0.4),2.3*S,2.05*S),cap(L(17.2,1.2),K(-3.2,1.3),1.0*S,0.9*S)],SK,{k:0.9*S,depth:2*S,line:P.q0,lineLit:P.q1});
+  var HP=[cap(K(0.6,-0.4),K(0.6,-0.4),4.2*S),cap(K(1.2,-1.6),K(-1.0,-1.5),3.6*S,3.4*S),cap(K(-1.0,1.2),K(-3.7,2.5),2.9*S,1.8*S),cap(K(-4.45,3.2),K(-4.45,3.2),1.45*S),
+    cap(K(2.0,3.3),K(1.7,4.1),1.05*S,0.85*S),cap(K(0.9,4.0),K(-1.1,5.5),0.95*S,0.55*S),cap(K(-1.9,4.3),K(-2.0,4.4),0.7*S,0.6*S),cap(K(-2.9,4.15),K(-3.0,4.15),0.6*S,0.55*S)];
+  var hd=body(fb,HP,SK,{k:0.9*S,depth:3.0*S,line:P.q0,lineLit:P.q1,amb:0.3,fill:0.42,tex:function(X,Y,dv){ return 0; }});
+  // Dreitagebart: Kiefer und Kinn, gerastert dunkler
+  if (S>1) for (var bu=-5.2;bu<=-1.2;bu+=0.5) for (var bv=0.6;bv<=4.6;bv+=0.5){ var bp=K(bu,bv), X2=rd(bp[0]), Y2=rd(bp[1]); if (inside(hd,X2,Y2) && hash(X2,Y2)<0.2 && !(bu>-2.4 && bv>3.2)) fb.px(X2,Y2,P.q2); }
+  // Haar: kurz rasiert, Schädelform plus etwas Volumen oben, Strähnen; nass glänzend
+  var HRP=[cap(K(3.0,-2.0),K(3.35,2.0),1.65*S,1.15*S),cap(K(2.3,-3.2),K(-0.3,-3.75),1.55*S,1.2*S),cap(K(3.5,0.0),K(3.5,0.0),1.7*S)];
+  body(fb,HRP,HAIRR,{k:1.2*S,depth:1.6*S,line:P.k0,lineLit:P.k1,amb:0.1,specC:O.wet?P.n3:P.h3,tex:function(X,Y){ return (hash(X,Y>>1)-0.5)*0.35; }});
+  var ear=K(0.2,-0.9); body(fb,[cap(add(ear,HU,0.7*S),add(ear,HU,-0.7*S),0.85*S,0.7*S)],SK,{k:0.5*S,line:P.q0,lineLit:P.q1,amb:0.3,fill:0.3}); if (S>1){ var eh=add(ear,HF,0.1*S); fb.px(rd(eh[0]),rd(eh[1]),P.q1); }
+  if (S>1) for (var so=0;so<5;so++){ var sk=K(1.0+(so%2)*0.5,1.7+so*0.35), Xs=rd(sk[0]), Ys=rd(sk[1]); if (inside(hd,Xs,Ys)) fb.px(Xs,Ys,P.q2); }   // Augenhöhle im Schatten
+  if (S>1){ var ec=K(0.3,-0.7); fb.px(rd(ec[0]),rd(ec[1]),P.q0); }
+  // Auge (Weiß, Iris, Lid), Braue, Nasenloch, Mund
+  var e1=K(1.15,2.55), e2=K(1.15,2.05), lid=K(1.75,2.4); fb.px(rd(e1[0]),rd(e1[1]),P.k0); if (S>1){ fb.px(rd(e2[0]),rd(e2[1]),P.s5); fb.px(rd(lid[0]),rd(lid[1]),P.q0); }
+  for (var bw=0;bw<4;bw++){ var br=K(2.5,1.3+bw*0.75); fb.px(rd(br[0]),rd(br[1]),P.h1); }
+  var nl=K(-0.6,4.0), mo=K(-2.4,3.45), mo2=K(-2.35,4.0); fb.px(rd(nl[0]),rd(nl[1]),P.q1); fb.px(rd(mo[0]),rd(mo[1]),P.q0); if (S>1) fb.px(rd(mo2[0]),rd(mo2[1]),P.q1);
+  arm(1,false); FILL=0;
   return {head:HC}; }
 
 // ---------------------------------------------------------------- ein Bild
@@ -79201,7 +79251,7 @@ if (M.introWanted && M.introWanted() && M.startIntro) M.startIntro(); else M.mus
 requestAnimationFrame(frame);
 })(M);
 
-M.BUILD="15.11.2026 · d10848";
+M.BUILD="15.11.2026 · 44586b";
 
 </script>
 <div id="offline-note" role="status" style="display:none;position:fixed;top:8px;right:8px;z-index:9;max-width:18em;padding:4px 8px;border:1px solid #2c6074;border-radius:2px;background:rgba(8,7,13,.88);color:#82c1c9;font:12px/1.3 var(--mala-read,system-ui,-apple-system,Helvetica,sans-serif);pointer-events:none;transition:opacity .6s"></div>
