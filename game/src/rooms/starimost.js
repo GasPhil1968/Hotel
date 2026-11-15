@@ -142,16 +142,25 @@ M.k3DinoJump=async function(A,o){ o=o||{}; var D=A.npc('dino'), T=M.K3JUMP_T?M.K
     var left=T.impact*1000-(A.gt-t0); if (left>0) await A.wait(left); A.sfx('splash'); await A.wait(2600);
   } finally { M.K3JUMP=null; } };
 // Samstag nach dem ganzen Lied: Dino springt, umsonst (Wunsch des Autors, 14.11.2026)
+M.k3DinoJumpForLena=function(A){ return dinoJumpForLena(A||M.API); };   // Werkzeuge (Video, Tests)
 async function dinoJumpForLena(A){ var G=A.G, Ln=A.npc('lena'), Dv=A.npc('davor'), D=A.npc('dino'); if (A.flag('k3.s.dinoJump')) return; A.setFlag('k3.s.dinoJump');
   var R=M.ROOMS.starimost, lock=R.camLock; R.camLock=150;
   try{ await A.wait(700); await D.say('So ein Lied, und keiner springt? Nicht an meiner Brücke.'); await A.wait(300); await D.say('Für die Kleine. Umsonst. Sagt es keinem.');
-    await M.k3DinoJump(A,{walk:true,stand:2.6,during:async function(A){ await A.wait(1200); await A.narrate('Oben über dem Scheitel steigt Dino auf die Brüstung, in der Badehose. Er breitet die Arme aus.'); }});
-    await A.narrate('Ein Strich vor dem Bogen, ein Platschen, weißer Schaum. Die Touristen schreien auf. Unten im grünen Wasser ein Kopf, der winkt.');
+    // ausführlich als Nahaufnahme (97_k3_nah.js, „sprung“): Jacke aus, Arme aus, Schwalbe, Füße voran; ohne Nahaufnahmen der kleine Sprung im Raum
+    if (D.actor){ var w=D.walk(250,113); await A.wait(1400); if (D.actor) D.actor.fadeOut=A.gt; await w; await A.wait(300); }
+    var shown=false;
+    await M.k3Close(A,'sprung',async function(){ var C=M.E.k3close, SPq=M.K3SPRUNG; if (!C || !SPq){ return; } shown=true;
+      var at=async function(s){ var ms=C.t0+s*1000-A.gt; if (ms>0) await A.wait(ms); };
+      await at(1.0); D.say('Gledajte! Za malu!'); await at(4.55); A.sfx('whoosh'); await at(SPq.entry); A.sfx('splash'); await at(SPq.entry+0.5); A.sfx('wave');
+      await at(9.4); A.sfx('k3applause'); await at(SPq.end); });
+    if (!shown) await M.k3DinoJump(A,{stand:2.6,during:async function(A){ await A.wait(1200); await A.narrate('Oben über dem Scheitel steigt Dino auf die Brüstung, in der Badehose. Er breitet die Arme aus.'); }});
+    else { if (D.actor){ D.actor.fadeOut=0; D.hide(); } var TJ=M.K3JUMP_T?M.K3JUMP_T({stand:1.4}):{impact:2.8}; M.K3JUMP={t0:A.gt-(TJ.impact+1.6)*1000,stand:1.4}; A.wait(4200).then(function(){ M.K3JUMP=null; }); }
+    await A.narrate(shown?'Die Touristen johlen. Unten im grünen Wasser winkt ein Kopf.':'Ein Strich vor dem Bogen, ein Platschen, weißer Schaum. Die Touristen schreien auf. Unten im grünen Wasser ein Kopf, der winkt.');
     await Ln.say('Der ist gesprungen! Papa! Der ist echt gesprungen!'); await A.wait(400); await Dv.say('Im November.'); await A.wait(500); await Dv.say('Früher sind sie im August gesprungen. Wir haben unten gewartet, mit Handtüchern.');
     if (G.malaOn && A.malaHere()){ await A.wait(500); await A.g('Umsonst. Das macht er sonst nie, glaube ich.'); }
     await A.wait(900); var st=M.stand('starimost','steps')||[60,132,'L']; var d0=M.apos('starimost','dino',[198,115,'R']);
     if (D.actor){ D.actor.fadeOut=0; D.actor.x=st[0]; D.actor.y=st[1]; D.show(); D.actor.fadeIn=A.gt; await D.walk(d0[0],d0[1]); await D.face('L'); }
-    await A.narrate('Zehn Minuten später kommt er die Uferstufen herauf, die rote Jacke über den Schultern, blau bis an die Lippen.');
+    await A.narrate('Zehn Minuten später: die Uferstufen herauf, die Jacke über den Schultern, blau bis an die Lippen.');
     await D.say('Brrr. Kalt wie die Hölle, wenn die Hölle kalt wäre.'); await A.wait(300); await D.say('Aber das Lied war es wert.');
   } finally { R.camLock=lock; } }
 // ---------------------------------------------------------------- Samstag: Davor und Lena an der Brücke, die Australier, Dinos Regel, das Lied (Ausbau N2, design/K3_AUSBAU.md F.2)

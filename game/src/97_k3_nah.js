@@ -6,6 +6,8 @@
      laterne  Finale: „Zvono.“ – Zlata hebt die Sturmlaterne am Schuppen
      quitte   Finale: Mala unter dem Quittenbaum, das Brett im Reif
      scheitel Epilog: „Tief unten.“ – vom Scheitel der Alten Brücke hinunter zur Neretva, Malas Hände auf der Brüstung (Dino springt erst danach, im Raum)
+     sprung   Samstag, nach dem ganzen Lied: Dinos Sprung ausführlich (Jacke aus, Schwalbe, Füße voran, Auftauchen); die Kamera folgt dem Fall.
+              Video: node design/tools/sprungvideo.js <ordner>
    M.k3Close(A, id, fn): zeigt das Bild, spielt fn() und blendet aus; ohne Bildschirm (Tests) oder abgeschaltet nur fn(). ===== */
 (function(M){
 'use strict';
@@ -179,7 +181,121 @@ function animScheitel(fb,t){
   handFlat(fb,128,112,1.25,true,GH,P.x2,{alpha:true,outline:P.x0}); handFlat(fb,194,112,1.25,false,GH,P.x2,{alpha:true,outline:P.x0});
   for (var i=0;i<8;i++){ var gx=rd(90+hash(i,Math.floor(t*3))*140), gy=rd(5+hash(i+5,Math.floor(t*3))*90); if (fb.get(gx,gy)===P.j4||fb.get(gx,gy)===P.j5) fb.px(gx,gy,P.j6); } }
 
-var CL={ glocke:{paint:paintGlocke,anim:animGlocke}, haende:{paint:paintHaende,anim:animHaende}, laterne:{paint:paintLaterne,anim:animLaterne}, quitte:{paint:paintQuitte,anim:animQuitte}, scheitel:{paint:paintScheitel,anim:animScheitel} };
+// ---------------------------------------------------------------- 6 Dinos Sprung (Samstag, nach dem ganzen Lied): ausführlich, die Kamera folgt dem Fall
+// Eine hohe Welt (320 × 470): oben Himmel, Velež und die Stadt am Westufer, links der Querschnitt der Brücke (Brüstung, Fahrbahn, Bogenring),
+// rechts die Schlucht, unten die Neretva. Dino (rund 56 px, Gelenkfigur aus Kapseln) steht in der roten Jacke auf der Brüstung, zieht sie aus und
+// wirft sie weg, schüttelt die Arme aus, breitet sie aus, steht auf den Zehen, geht in die Knie, stößt sich ab: Schwalbe über der Schlucht,
+// kurz vor dem Wasser Arme an den Körper, Füße voran. Gischt, Ringe, Blasen; dann taucht er flussab auf, schüttelt sich und reckt die Faust.
+// Zeiten in Sekunden ab Beginn der Nahaufnahme (M.K3SPRUNG gibt sie an rooms/starimost.js weiter: Ton und Sätze laufen dazu).
+var SP={leave:4.75,entry:7.32,surf:8.8,end:12.2, x0:96, feet0:150, WY:420, WH:470, vx:26, vy:-38, g:111};
+M.K3SPRUNG=SP;
+var SPW=null;
+function sprungWorld(){ if (SPW) return SPW; var b=new M.Buf(W,SP.WH,P.k0), SKYR=R('b3 b4 b5 s6'), ST=R('o1 o2 o3 o4 o5'), CLF=R('m1 m2 c2 m3 c3 s4'), FAR=R('c2 c3 s4 s5'), HAZE=R('j1 j2 c2 c3 s4'), WAT=R('j1 j2 j3 j4 j5');
+  // Himmel, zum Horizont heller
+  for (var y=0;y<160;y++) for (var x=0;x<W;x++) b.px(x,y,ra(SKYR,cl(0.15+y/160*0.8+(fbm(x*0.02,y*0.06,31)-0.5)*0.12,0,1),x,y));
+  // Velež: kahler Bergrücken im Dunst
+  for (var x2=0;x2<W;x2++){ var top=84+Math.sin(x2*0.017)*8+fbm(x2*0.03,1,5)*14; for (var y2=Math.floor(top);y2<160;y2++) b.px(x2,y2,ra(FAR,cl(0.62-(y2-top)/120+(fbm(x2*0.08,y2*0.08,7)-0.5)*0.22,0,1),x2,y2)); }
+  // die Stadt am Westufer, klein und fern: Steinplattendächer, ein Minarett
+  for (var i=0;i<24;i++){ var hx=132+i*7+Math.round(hash(i,4)*4), hw=5+Math.round(hash(i,5)*3), hy=134+Math.round(hash(i,6)*8)+Math.max(0,(i-12));
+    for (var yy=hy;yy<hy+9;yy++) for (var xx=hx;xx<hx+hw;xx++) b.px(xx,yy,yy<hy+2?P.m2:(hash(xx,yy)<0.08?P.s4:P.s5)); if (hash(i,8)<0.6) b.px(hx+2,hy+5,P.m1); }
+  for (var ym=112;ym<140;ym++){ b.px(214,ym,P.s6); b.px(215,ym,P.s5); } b.px(214,111,P.m2); b.px(215,110,P.m2);
+  // die Schlucht: Felswände links und rechts, dazwischen Dunst über dem Fluss
+  for (var y3=140;y3<SP.WY+4;y3++) for (var x3=0;x3<W;x3++){ var lw=54+Math.sin(y3*0.02)*12+fbm(2,y3*0.03,3)*18, rw=274-Math.sin(y3*0.025+1)*10-fbm(3,y3*0.03,4)*22, u=(y3-140)/(SP.WY-140);
+    if ((x3<lw || x3>rw) && y3>146){ var rk=fbm(x3*0.06,y3*0.05,9); var c=ra(CLF,cl(0.85-u*0.55+rk*0.3-0.15,0,1),x3,y3); if (rk>0.6 && hash(x3,y3)<0.3) c=(u<0.5)?P.z2:P.z1; b.px(x3,y3,c); }
+    else if (y3>=148){ var fr=fbm(x3*0.05,y3*0.02,11); var hc=ra(HAZE,cl(0.78-u*0.62+(fr-0.5)*0.2,0,1),x3,y3); if (u>0.78 && fbm(x3*0.08+3,y3*0.3,19)>0.66) hc=P.j4; b.px(x3,y3,hc); } }   // unten glänzt der ferne Fluss
+  // die Neretva: grün, Strudel, nach vorn heller
+  for (var y4=SP.WY;y4<SP.WH;y4++) for (var x4=0;x4<W;x4++){ var u=(y4-SP.WY)/(SP.WH-SP.WY); b.px(x4,y4,ra(WAT,cl(0.62-u*0.45+(fbm(x4*0.04,y4*0.18,13)-0.5)*0.35,0,1),x4,y4)); }
+  // Querschnitt der Brücke links: Brüstung, Fahrbahn, der Bogenring fällt nach links unten weg
+  for (var y5=SP.feet0;y5<SP.WH;y5++) for (var x5=0;x5<132;x5++){ var edge=y5<SP.feet0+34?118:118-Math.pow((y5-SP.feet0-34)/22,1.6)*12; if (x5>edge) continue; if (y5>SP.feet0+34 && x5<edge-34-(y5-SP.feet0)*0.05) continue;
+    var bl=Math.floor((x5+(Math.floor(y5/12)%2)*9)/18), c5=ra(ST,cl(0.72-(x5<edge-3?0:0.25)-(y5-SP.feet0)/500+(fbm(bl*1.7+x5*0.04,y5*0.07,3)-0.5)*0.35,0,1),x5,y5);
+    if (y5%12===0 || (x5+(Math.floor(y5/12)%2)*9)%18===0) c5=P.o1; if (y5===SP.feet0) c5=P.o5; if (x5>=edge-1) c5=P.o1; b.px(x5,y5,c5); }
+  SPW=b; return b; }
+// Gelenkfigur: Winkel von „nach unten“ aus, positiv = nach vorn (+x); bA: Lehne des Rumpfs; a/e: Schulter/Ellbogen; h/k: Hüfte/Knie (je [hinten, vorn])
+var SK=R('q1 q2 q3 q4 q4'), SKD=R('q0 q1 q2 q3'), TRR=R('n0 n1 n2 n3'), JAC=R('r1 r2 r3 r4'), JACD=R('r0 r1 r2 r3'), HAIR=P.k1;
+function dir(th,l){ return [Math.sin(th)*l, Math.cos(th)*l]; }
+function diver(fb,hx,hy,p,clipY){ var bA=p.bA||0, td=-bA, up=dir(Math.PI-bA,18), S=[hx+up[0],hy+up[1]];
+  function limbs(i,dark){ var r=dark?SKD:SK, L=[];
+    var th=td+p.h[i], kne=[hx+dir(th,14)[0],hy+dir(th,14)[1]], ts=th-p.k[i], ft=[kne[0]+dir(ts,14)[0],kne[1]+dir(ts,14)[1]];
+    L.push({parts:[{cap:[hx,hy,kne[0],kne[1]],r:2.8},{cap:[kne[0],kne[1],ft[0],ft[1]],r:2.2},{cap:[ft[0],ft[1],ft[0]+Math.cos(ts)*4,ft[1]-Math.sin(ts)*4*0],r:1.6}],ramp:r});
+    var ta=td+p.a[i], el=[S[0]+dir(ta,10)[0],S[1]+dir(ta,10)[1]], tf=ta+p.e[i], ha=[el[0]+dir(tf,10)[0],el[1]+dir(tf,10)[1]];
+    var jac=p.jacket&&p.jacket>0.5; L.push({parts:[{cap:[S[0],S[1],el[0],el[1]],r:2.1},{cap:[el[0],el[1],ha[0],ha[1]],r:1.7}],ramp:jac?(dark?JACD:JAC):r,hand:ha,handR:r});
+    return L; }
+  var back=limbs(0,true), front=limbs(1,false), o={light:[-0.6,-0.8],outline:P.k0};
+  function draw(it){ var sh=shape(fb,it.parts,Object.assign({},o,{ramp:it.ramp})); if (it.hand) shape(fb,[{ell:[it.hand[0],it.hand[1],1.9,1.9]}],Object.assign({},o,{ramp:it.handR})); }
+  draw(back[1]); draw(back[0]);
+  var jac=p.jacket&&p.jacket>0.5; shape(fb,[{cap:[hx,hy,S[0],S[1]],r:jac?5.8:4.9}],Object.assign({},o,{ramp:jac?JAC:SK}));
+  if (!jac){ var mid=[hx+up[0]*0.55,hy+up[1]*0.55]; fb.px(Math.round(mid[0]+Math.cos(bA)*2),Math.round(mid[1]+Math.sin(bA)*2),P.q1); }   // Brustlinie
+  else { var z=[hx+up[0]*0.1,hy+up[1]*0.1]; for (var q=0;q<10;q++) fb.px(Math.round(z[0]+up[0]*q/10+Math.cos(bA)*3),Math.round(z[1]+up[1]*q/10+Math.sin(bA)*3),P.s6); }   // weißer Streifen
+  shape(fb,[{ell:[hx,hy,5.6,4.2]}],Object.assign({},o,{ramp:TRR}));   // Badehose
+  draw(front[0]);
+  var nk=p.nk||0, hd=dir(Math.PI-bA-nk,7), H=[S[0]+hd[0],S[1]+hd[1]], ha2=-(bA+nk);
+  shape(fb,[{cap:[S[0],S[1],H[0],H[1]],r:2.2}],Object.assign({},o,{ramp:SK}));
+  shape(fb,[{ell:[H[0],H[1],4.4,5.0]}],Object.assign({},o,{ramp:SK}));
+  // Haar (kurz rasiert), Auge, Nase, Ohr, Bartschatten – gedreht mit dem Kopf
+  function rot(dx,dy){ var c=Math.cos(ha2), s=Math.sin(ha2); return [Math.round(H[0]+dx*c-dy*s), Math.round(H[1]+dx*s+dy*c)]; }
+  for (var hx2=-4;hx2<=3;hx2++) for (var hy2=-5;hy2<=-2;hy2++){ if (hx2*hx2/16+hy2*hy2/25>1) continue; if (hy2>-3 && hx2>1) continue; var pp=rot(hx2,hy2); fb.px(pp[0],pp[1],(hx2+hy2)%3?HAIR:P.h1); }
+  var e1=rot(2,-1); fb.px(e1[0],e1[1],P.k0); var n1=rot(4,1); fb.px(n1[0],n1[1],P.q2); var ea=rot(-1,0); fb.px(ea[0],ea[1],P.q1);
+  [[1,3],[2,3],[3,2],[0,3]].forEach(function(d){ var b2=rot(d[0],d[1]); if (hash(b2[0],b2[1])<0.6) fb.px(b2[0],b2[1],P.q1); });
+  draw(front[1]);
+  if (clipY!==undefined) for (var y=Math.max(0,clipY);y<fb.h;y++) for (var x=Math.max(0,Math.floor(hx-40));x<Math.min(W,hx+40);x++){ var c=fb.get(x,y); if (c===SK[0]||c===SK[1]||c===SK[2]||c===SK[3]||c===SK[4]||c===P.k0||c===TRR[1]||c===TRR[2]||c===TRR[3]||c===HAIR) { if (bayer(x,y)<0.75) fb.px(x,y,y%2?P.j3:P.j2); } } }
+// Posen über der Zeit (glatt gemischt)
+function sm(k){ k=cl(k,0,1); return k*k*(3-2*k); }
+function mixP(a,b,k){ var o={}, kk=sm(k); for (var n in a){ if (Array.isArray(a[n])) o[n]=[a[n][0]+(b[n][0]-a[n][0])*kk,a[n][1]+(b[n][1]-a[n][1])*kk]; else o[n]=a[n]+((b[n]===undefined?a[n]:b[n])-a[n])*kk; } return o; }
+var KP=[
+  [0.0, {bA:0, nk:0.25, a:[0.06,-0.04], e:[0.2,0.25], h:[0,0], k:[0,0], jacket:1, lift:0}],
+  [1.0, {bA:0.05, nk:0.3, a:[0.7,0.6], e:[1.7,1.6], h:[0,0], k:[0,0], jacket:1, lift:0}],
+  [1.6, {bA:-0.05, nk:0.1, a:[2.9,2.8], e:[0.35,0.3], h:[0,0], k:[0,0], jacket:1, lift:0}],
+  [1.65,{bA:-0.05, nk:0.1, a:[2.9,2.8], e:[0.35,0.3], h:[0,0], k:[0,0], jacket:0, lift:0}],
+  [2.3, {bA:0, nk:0.05, a:[0.25,-0.2], e:[0.4,0.4], h:[0,0], k:[0,0], jacket:0, lift:0}],
+  [3.1, {bA:0, nk:0, a:[0.25,-0.2], e:[0.4,0.4], h:[0,0], k:[0,0], jacket:0, lift:0}],
+  [3.7, {bA:-0.08, nk:-0.25, a:[-1.9,1.95], e:[0.1,0.1], h:[0,0], k:[0,0], jacket:0, lift:2}],
+  [4.2, {bA:-0.08, nk:-0.25, a:[-1.9,1.95], e:[0.1,0.1], h:[0,0], k:[0,0], jacket:0, lift:2}],
+  [4.55,{bA:0.4, nk:0.1, a:[-2.3,-2.1], e:[0.2,0.2], h:[1.0,0.95], k:[1.6,1.55], jacket:0, lift:-9}],
+  [4.85,{bA:0.35, nk:-0.2, a:[2.3,2.5], e:[0.1,0.1], h:[-0.15,-0.1], k:[0.05,0], jacket:0, lift:0}],
+  [5.6, {bA:1.05, nk:-0.55, a:[-1.65,-2.2], e:[0.1,0.1], h:[-0.1,-0.05], k:[0.1,0.05], jacket:0, lift:0}],
+  [6.6, {bA:1.25, nk:-0.6, a:[-1.7,-2.25], e:[0.1,0.1], h:[-0.15,-0.1], k:[0.15,0.1], jacket:0, lift:0}],
+  [7.1, {bA:0.15, nk:-0.1, a:[0.1,-0.1], e:[0,0], h:[0,0], k:[0,0], jacket:0, lift:0}],
+  [9.9, {bA:0.1, nk:-0.1, a:[0.1,-0.1], e:[0,0], h:[0,0], k:[0,0], jacket:0, lift:0}]];
+function poseAt(t){ for (var i=0;i<KP.length-1;i++) if (t<KP[i+1][0]) return mixP(KP[i][1],KP[i+1][1],(t-KP[i][0])/(KP[i+1][0]-KP[i][0])); return KP[KP.length-1][1]; }
+// Hüfte in Weltkoordinaten
+function hipAt(t,p){ var hy0=SP.feet0-28; if (t<SP.leave) return [SP.x0,hy0-(p.lift||0)];
+  var d=t-SP.leave; return [SP.x0+SP.vx*d, hy0+SP.vy*d+0.5*SP.g*d*d]; }
+function paintSprung(b){ sprungWorld(); }
+function animSprung(fb,t){ var Wd=sprungWorld(), p=poseAt(t);
+  if (t>2.3 && t<3.1){ var sh=Math.sin((t-2.3)*30)*0.35*(1-(t-2.3)/0.8); p.a=[p.a[0]+sh,p.a[1]-sh]; p.e=[p.e[0]+sh*0.6,p.e[1]-sh*0.6]; }   // Arme ausschütteln
+  var hp=hipAt(Math.min(t,SP.entry+0.6),p); if (t>SP.entry) hp=[SP.x0+SP.vx*(SP.entry-SP.leave), Math.min(SP.WY+28, hp[1])];
+  var camY=cl(Math.round(hp[1]-62),70,SP.WH-H); if (t>SP.entry) camY=SP.WH-H;
+  for (var y=0;y<H;y++){ var sy=y+camY, row=sy*W; for (var x=0;x<W;x++) fb.d[y*W+x]=Wd.d[row+x]; }
+  // Wasser bewegt sich
+  for (var y2=Math.max(0,SP.WY-camY);y2<H;y2++) for (var x2=0;x2<W;x2++){ var wy=y2+camY, ph=fbm(x2*0.05+t*0.9,wy*0.2,17); if (ph>0.66) fb.px(x2,y2,P.j5); else if (ph>0.62) fb.px(x2,y2,P.j4); }
+  var ent=SP.entry, ex=SP.x0+SP.vx*(ent-SP.leave), sY=SP.WY-camY;
+  // Dino
+  if (t<ent+0.7) diver(fb,hp[0],hp[1]-camY,p,t>ent-0.2?sY:undefined);
+  // die Jacke fliegt nach links weg und fällt hinter die Brüstung
+  if (t>1.6 && t<3.4){ var dt=t-1.6, jx=SP.x0-6-34*dt, jy=SP.feet0-48-46*dt+0.5*160*dt*dt; if (!(jy>SP.feet0-2 && jx<120)){ var spn=Math.floor(dt*10)%3, sy2=Math.round(jy-camY), sx2=Math.round(jx);
+      shape(fb,spn===0?[{ell:[sx2,sy2,6,3]},{cap:[sx2-5,sy2,sx2-9,sy2+4],r:1.6}]:(spn===1?[{ell:[sx2,sy2,4,5]},{cap:[sx2+2,sy2+3,sx2+6,sy2+7],r:1.6}]:[{ell:[sx2,sy2,5,4]},{cap:[sx2-3,sy2-3,sx2+5,sy2-4],r:1.4}]),{ramp:JAC,outline:P.k0}); } }
+  // Touristen vorn (nur oben): Köpfe und Handys
+  if (camY<150 && t<SP.leave+0.6){ for (var i=0;i<5;i++){ var tx=14+i*30+Math.round(hash(i,2)*8), ty=SP.feet0+68+Math.round(hash(i,3)*6)-camY; if (ty>H+10) continue;
+      shape(fb,[{ell:[tx,ty,7,8]},{cap:[tx-9,ty+14,tx+9,ty+14],r:8}],{ramp:R('k0 k1 k2'),outline:false});
+      if (i!==2){ var px0=tx+(i%2?6:-4), py0=ty-14-Math.round(Math.sin(t*2+i)*1); fb.rect(px0,py0,4,6,P.k1); fb.rect(px0+1,py0+1,2,4,(t>SP.leave&&t<SP.leave+0.3&&i===1)?P.l1:P.n3); shape(fb,[{cap:[px0+2,py0+6,tx,ty+6],r:1.6}],{ramp:R('k0 k1 k2'),outline:false}); } } }
+  // Eintauchen: Krone aus Gischt, Säule, Ringe, Schaum, Blasen
+  if (t>=ent){ var ti=t-ent;
+    if (ti<1.2) for (var n=0;n<46;n++){ var an=(n/45-0.5)*2.6, sp=40+hash(n,7)*70, px=ex+Math.sin(an)*sp*ti*0.7, py=sY-(Math.cos(an)*sp*ti-140*ti*ti); if (py>sY+1) continue; fb.px(Math.round(px),Math.round(py),n%4?P.s6:P.j6); if (ti<0.5) fb.px(Math.round(px),Math.round(py)+1,P.s5); }
+    if (ti<0.7){ var hcol=Math.round(34*Math.sin(Math.min(1,ti/0.7)*Math.PI)); for (var yc=0;yc<hcol;yc++) for (var xc=-2;xc<=2;xc++) if (bayer(ex+xc,sY-yc)<0.85-yc/hcol*0.5) fb.px(Math.round(ex+xc),sY-yc,yc%3?P.s6:P.j6); }
+    for (var rr=0;rr<3;rr++){ var tr=ti-rr*0.45; if (tr<0||tr>3.2) continue; var r0=4+tr*22, al=1-tr/3.2; for (var a2=0;a2<90;a2++){ var th=a2/90*Math.PI*2, rx=ex+Math.cos(th)*r0, ry=sY+2+Math.sin(th)*r0*0.2; if (bayer(Math.round(rx),Math.round(ry))<al*0.9) fb.px(Math.round(rx),Math.round(ry),rr?P.j5:P.s6); } }
+    if (ti<3) for (var f=0;f<40;f++){ var fx=ex+(hash(f,1)-0.5)*30*Math.min(1,ti*2), fy=sY+1+hash(f,2)*4; if (hash(f,3)<1-ti/3) fb.px(Math.round(fx),Math.round(fy),P.s6); }
+    if (ti>0.1 && ti<2.4) for (var bb=0;bb<14;bb++){ var by=sY+44-((ti*30+bb*7)%44), bx=ex+Math.sin(ti*5+bb)*3+(hash(bb,4)-0.5)*10; if (by>sY+2){ fb.px(Math.round(bx),Math.round(by),P.j6); if (bb%3===0) fb.px(Math.round(bx)+1,Math.round(by),P.s6); } }
+    // auftauchen, schütteln, Faust
+    if (t>SP.surf){ var ts=t-SP.surf, kx=ex+18+ts*6, rise=Math.min(1,ts/0.5), ky=sY+8-rise*9+Math.sin(ts*3.2)*0.8, shk=(ts>0.3&&ts<1.0)?Math.sin(ts*40)*1.5:0;
+      shape(fb,[{cap:[kx-8,ky+7,kx+8,ky+7],r:4.5}],{ramp:SK,outline:P.k0});   // Schultern im Wasser
+      shape(fb,[{ell:[kx+shk,ky,4.4,5]}],{ramp:SK,outline:P.k0}); for (var hx3=-4;hx3<=4;hx3++) for (var hy3=-5;hy3<=-2;hy3++) if (hx3*hx3/16+hy3*hy3/25<=1) fb.px(Math.round(kx+shk+hx3),Math.round(ky+hy3),P.k1);
+      fb.px(Math.round(kx+shk+2),Math.round(ky-1),P.k0); fb.px(Math.round(kx+shk+4),Math.round(ky+1),P.q2);
+      if (ts>0.3&&ts<1.2) for (var dd=0;dd<10;dd++){ var da=hash(dd,Math.floor(ts*12))*Math.PI*2; fb.px(Math.round(kx+Math.cos(da)*(7+ts*4)),Math.round(ky-2+Math.sin(da)*4),P.s6); }   // Tropfen
+      if (ts>1.0){ var up=Math.min(1,(ts-1.0)/0.4), wav=Math.sin(ts*6)*0.35, ax=kx+6, ay=ky+4, hx4=ax+Math.sin(0.5+wav)*12*up, hy4=ay-Math.cos(0.3)*18*up; shape(fb,[{cap:[ax,ay,hx4,hy4],r:2.3}],{ramp:SK,outline:P.k0}); shape(fb,[{ell:[hx4,hy4-1,2.8,2.6]}],{ramp:SK,outline:P.k0}); }
+      for (var w2=0;w2<60;w2++){ var th2=w2/60*Math.PI*2, r2=10+((ts*8)%10); if (bayer(w2,5)<0.5) fb.px(Math.round(kx+Math.cos(th2)*r2),Math.round(sY+3+Math.sin(th2)*r2*0.2),P.j5); }
+      // Wasserlinie über dem Körper
+      for (var x6=Math.round(kx-14);x6<kx+14;x6++){ var wy2=Math.round(sY+5+Math.sin(x6*0.5+ts*5)*0.8); for (var y6=wy2;y6<wy2+8;y6++){ var c6=fb.get(x6,y6); if (c6!==undefined && SK.indexOf(c6)>=0 && bayer(x6,y6)<0.8) fb.px(x6,y6,P.j3); } } } } }
+var CL={ glocke:{paint:paintGlocke,anim:animGlocke}, haende:{paint:paintHaende,anim:animHaende}, laterne:{paint:paintLaterne,anim:animLaterne}, quitte:{paint:paintQuitte,anim:animQuitte}, scheitel:{paint:paintScheitel,anim:animScheitel}, sprung:{paint:paintSprung,anim:animSprung} };
 M.K3CLOSE=CL;
 var CACHE={};
 function pic(id){ if (!CACHE[id]){ var b=new M.Buf(W,H,P.k0); CL[id].paint(b); CACHE[id]=b; } return CACHE[id]; }
